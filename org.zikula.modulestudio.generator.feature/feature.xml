@@ -23,33 +23,31 @@
    </url>
 
    <requires>
+      <import plugin="com.ibm.icu" version="4.0.1" match="greaterOrEqual"/>
       <import plugin="de.guite.modulestudio.metamodel"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.apache.ant" version="1.7.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface.text" version="3.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.ecore" version="2.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.osgi" version="3.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.runtime" version="3.4.0" match="greaterOrEqual"/>
       <import plugin="org.antlr.runtime" version="3.0.0" match="greaterOrEqual"/>
+      <import plugin="org.apache.ant" version="1.7.0" match="greaterOrEqual"/>
       <import plugin="org.apache.commons.cli" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.apache.commons.logging" version="1.0.4" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.ecore" version="2.4.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.validation" version="1.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.ecore.xmi"/>
-      <import plugin="org.eclipse.text" version="3.1.0" match="compatible"/>
+      <import plugin="org.eclipse.jface.text" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi" version="3.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.xtend" version="0.7.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtend.typesystem.emf" version="0.7.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xpand" version="0.7.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.mwe.utils" version="0.7.0" match="greaterOrEqual"/>
+      <import plugin="org.apache.commons.lang" version="2.0.0" match="compatible"/>
+      <import plugin="org.apache.commons.logging" version="1.0.0" match="compatible"/>
       <import plugin="org.eclipse.core.resources" version="3.3.0" match="compatible"/>
       <import plugin="org.eclipse.core.runtime" version="3.3.0" match="compatible"/>
       <import plugin="org.eclipse.core.filesystem" version="1.0.0" match="compatible"/>
-      <import plugin="org.eclipse.jdt.debug.ui"/>
-      <import plugin="org.eclipse.jdt.launching"/>
-      <import plugin="org.eclipse.debug.ui"/>
-      <import plugin="org.eclipse.jdt.ui"/>
-      <import plugin="org.eclipse.ui.editors"/>
-      <import plugin="org.eclipse.ui.views"/>
-      <import plugin="org.eclipse.debug.core"/>
-      <import plugin="org.eclipse.ui.workbench.texteditor"/>
-      <import plugin="org.apache.xerces"/>
-      <import plugin="org.eclipse.ui.ide"/>
-      <import feature="de.guite.modulestudio.metamodel.feature" version="1.0.1.qualifier"/>
+      <import plugin="org.eclipse.text" version="3.1.0" match="compatible"/>
+      <import plugin="org.eclipse.emf.common"/>
+      <import plugin="org.eclipse.emf.ecore.xmi"/>
+      <import plugin="org.zikula.modulestudio.generator" version="1.0.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
