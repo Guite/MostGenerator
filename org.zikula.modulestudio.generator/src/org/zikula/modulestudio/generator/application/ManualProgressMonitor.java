@@ -1,4 +1,4 @@
-package de.guite.modulestudio.generator.application;
+package org.zikula.modulestudio.generator.application;
 
 import org.eclipse.emf.mwe.core.WorkflowComponent;
 import org.eclipse.emf.mwe.core.WorkflowContext;

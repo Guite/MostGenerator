@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.guite.modulestudio.generator.application;
+package org.zikula.modulestudio.generator.application;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;

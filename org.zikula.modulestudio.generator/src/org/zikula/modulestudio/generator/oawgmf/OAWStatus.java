@@ -1,4 +1,4 @@
-package de.guite.modulestudio.generator.oawgmf;
+package org.zikula.modulestudio.generator.oawgmf;
 
 import java.util.Set;
 

@@ -1,5 +1,5 @@
-package de.guite.modulestudio.generator.application;
 
+package org.zikula.modulestudio.generator.application;
 
 import java.io.IOException;
 import java.util.HashMap;
