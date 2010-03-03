@@ -1,0 +1,516 @@
+«IMPORT ModuleStudio»
+«IMPORT Persistence»
+«IMPORT Processing»
+«IMPORT Presentation»
+«IMPORT templates::presentation»
+«IMPORT templates::smallstuff»
+«EXTENSION extensions::Utils»
+
+«REM»Entry point for pnForm handler classes«ENDREM»
+«DEFINE Root FOR Module-»
+	«FILE "classes/FormHandler/index.html"»«EXPAND FileHelper::msUrl-»«ENDFILE»
+	«EXPAND Root(this) FOREACH processingContainer.processors.processorStates.select(e|e.type == ProcessorStateType::EDIT)-»
+«IF needsConfig()-»
+«FILE "classes/FormHandler/" + modName() + "_admin_confighandler.class.php"»
+«EXPAND FileHelper::phpFileHeader(this)-»
+
+class «modName()»_admin_configHandler extends pnFormHandler
+{
+    function initialize(&$render)
+    {
+        if (!SecurityUtil::checkPermission('«modName()»::', '::', ACCESS_ADMIN)) {
+            return $render->pnFormRegisterError(LogUtil::registerPermissionError());
+        }
+
+        // assign all module vars
+        $render->assign('config', pnModGetVar('«modName()»'));
+
+        return true;
+    }
+
+
+    function handleCommand(&$render, &$args)
+    {
+        $dom = ZLanguage::getModuleDomain('«modName()»');
+
+        if ($args['commandName'] == 'save') {
+            if (!$render->pnFormIsValid()) {
+                return false;
+            }
+
+            $data = $render->pnFormGetValues();
+
+            // update all module vars
+            if (!pnModSetVars('«modName()»', $data['config'])) {
+                return $render->pnFormSetErrorMsg(__('Error! Failed to set configuration variables.', $dom));
+            }
+
+            LogUtil::registerStatus(__('Done! Module configuration updated.', $dom));
+            pnModCallHooks('module', 'updateconfig', '«modName()»', array('module' => '«modName()»'));
+        }
+        else if ($args['commandName'] == 'cancel') {
+        }
+
+        $url = pnModUrl('«modName()»', 'admin', 'config');
+        return $render->pnFormRedirect($url);
+    }
+}
+«ENDFILE»
+
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE Root(Module module) FOR ProcessorState-»
+	«EXPAND Root(module, stateProcessor, 'edit') FOREACH module.persistenceContainer.tables-»
+«ENDDEFINE»
+
+
+«DEFINE pnFormCreate(String moduleName, Processor proc, String actionName) FOR ProcessorState-»
+    // Create new pnForm reference
+    $render = FormUtil::newpnForm('«moduleName(moduleName)»');
+
+«LET moduleName(moduleName + "_" + dbName(proc.name) + "_" + actionName) AS controllerPraefix-»
+    // include event handler class
+    Loader::requireOnce('modules/«moduleName(moduleName)»/classes/FormHandler/«controllerPraefix»handler.class.php');
+
+    // Execute form using supplied template and page event handler
+    return $render->pnFormExecute('«controllerPraefix».html', new «controllerPraefix»Handler());
+«ENDLET-»
+«ENDDEFINE»
+
+
+
+«REM»pnForm Handler«ENDREM»
+
+
+«REM»Entry point for pnForm handler classes«ENDREM»
+«DEFINE Root(Module module, Processor proc, String actionName) FOR Persistence::Table-»
+«LET dbName(proc.name) AS procName-»
+«FILE "classes/FormHandler/" + moduleName(module.name + "_" + procName + "_" + name + "_" + actionName) + "handler.class.php"»«REM»TODO: EXPAND FileHelper::phpFileHeader«ENDREM»
+«EXPAND FileHelper::phpFileHeader(module)-»
+«EXPAND FormHandler(module, proc, actionName)-»
+«ENDFILE»
+«ENDLET-»
+«ENDDEFINE»
+
+
+«DEFINE FormHandler(Module module, Processor proc, String actionName) FOR Persistence::Table-»
+«LET module.modName() AS modName-»
+«LET dbName(proc.name) AS procName-»
+/**
+ * This handler class handles the page events of the pnForm called by the «moduleName(modName + "_" + procName + "_" + actionName)»() function.
+ * It aims on the «moduleName(name)» object type.
+ *
+ * Member variables in a form handler object are persisted accross different page requests. This means
+ * a member variable $this->X can be set on one request and on the next request it will still contain
+ * the same value.
+ *
+ * A form handler will be notified of various events that happens during it's life-cycle.
+ * When a specific event occurs then the corresponding event handler (class method) will be executed. Handlers
+ * are named exactly like their events - this is how the framework knows which methods to call.
+ *
+ * The list of events is:
+ *
+ * - <b>initialize</b>: this event fires before any of the events for the plugins and can be used to setup
+ *   the form handler. The event handler typically takes care of reading URL variables, access control
+ *   and reading of data from the database.
+ *
+ * - <b>handleCommand</b>: this event is fired by various plugins on the page. Typically it is done by the
+ *   pnFormButton plugin to signal that the user activated a button.
+ *
+ * @package pnForm
+ * @subpackage Base
+ * @author       «module.author»
+ */
+class «moduleName(modName + "_" + procName + "_" + name + "_" + actionName)»Handler extends pnFormHandler
+{
+    // store «moduleName(name)» ID in (persistent) member variable
+    var $«idField()»;
+    var $mode;
+    var $dom;
+
+    /**
+     * Initialize form handler
+     *
+     * This method takes care of all necessary initialisation of our data and form states
+     *
+     * @return bool False in case of initialization errors, otherwise true
+     * @author       «module.author»
+     */
+    function initialize(&$render)
+    {
+        $this->dom = ZLanguage::getModuleDomain('«modName»');
+        $dom = $this->dom;
+«EXPAND initialize(module, proc, actionName, modName, procName)-»
+    }
+
+
+    /**
+     * Command event handler
+     *
+     * This event handler is called when a command is issued by the user. Commands are typically something
+     * that originates from a {@link pnFormButton} plugin. The passed args contains different properties
+     * depending on the command source, but you should at least find a <var>$args['commandName']</var>
+     * value indicating the name of the command. The command name is normally specified by the plugin
+     * that initiated the command.
+     * @see pnFormButton
+     * @see pnFormImageButton
+     * @author       «module.author»
+     */
+    function handleCommand(&$render, &$args)
+    {
+        $dom = $this->dom;
+«EXPAND handleCommand(module, proc, actionName, modName, procName)-»
+    }
+}
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+
+«DEFINE initialize(Module module, Processor proc, String actionName, String modName, String procName) FOR Persistence::Table-»
+        // retrieve the ID of the object we wish to edit
+        // default to 0 (which is a numeric id but an invalid value)
+        // no provided id means that we want to create a new object
+        $this->«idField()» = (int) FormUtil::getPassedValue('«idField()»', 0, 'GET');
+
+«REM»v4bJournal
+    $ve      = FormUtil::getPassedValue ('validationErrors', array());
+    $bp      = FormUtil::getPassedValue ('preview', false);
+«ENDREM»
+
+        $objectType = '«moduleName(name)»';
+«EXPAND ProcHelper::loadObjectClass(modName, false)-»
+
+        $this->mode = 'create';
+        // if «idField()» is not 0, we wish to edit an existing «moduleName(name)»
+        if($this->«idField()») {
+            $this->mode = 'edit';
+
+            if (!SecurityUtil::checkPermission('«modName»:«capitalName(name)»:', '::', ACCESS_EDIT)) {
+                // set an error message and return false
+                return $render->pnFormRegisterError(LogUtil::registerPermissionError());
+            }
+
+«EXPAND ProcHelper::instantiateObject("D", "this->" + idField())-»
+
+«EXPAND ProcHelper::getObjectFromSource("D", idField(), "this->" + idField())-»
+            if (!is_array($objectData) || !isset($objectData['«idField()»']) || !is_numeric($objectData['«idField()»'])) {
+                return $render->pnFormSetErrorMsg(__('No such «formattedName(name)» found.', $dom));
+            }
+
+            // try to guarantee that only one person at a time can be editing this «moduleName(name)»
+            $returnUrl = pnModUrl('«modName»', '«procName»', 'display', array('ot' => $objectType, '«idField()»' => $this->«idField()»));
+            pnModAPIFunc('PageLock', 'user', 'pageLock',
+                                 array('lockName' => "«capitalName(modName)»«capitalName(name)»{$this->«idField()»}",
+                                       'returnUrl' => $returnUrl));
+        }
+        else {
+            if (!SecurityUtil::checkPermission('«modName»:«capitalName(name)»:', '::', ACCESS_ADD)) {
+                return $render->pnFormRegisterError(LogUtil::registerPermissionError());
+            }
+
+«IF columns.typeSelect(Persistence::DateField).size > 0-»
+            $todayDate = date('Y-m-d');
+«ENDIF-»
+«IF columns.typeSelect(Persistence::TimestampField).size > 0-»
+            $thisTime = date('Y-m-d H:i:s');
+«ENDIF-»
+
+            $objectData = Array(«EXPAND FieldAssignment FOREACH columns.reject(e|e.isPrimaryKey) SEPARATOR ','»);
+
+«REM»v4bJournal
+        if ($bp) {
+            $objData = pnSessionGetVar ('journal');
+            pnSessionDelVar ('journal');
+            $object = new $class ();
+            $object->setData ($objData);
+        }
+        elseif ($ve) {
+            $object  = new $class ();
+            $object->getDataFromInput();
+        }
+«ENDREM»
+        }
+
+«FOREACH columns.typeSelect(Persistence::DateField) AS dateField-»
+        if ($objectData['«dateField.name.dbName()»'] == '1900-01-01 00:00:00') {
+            $objectData['«dateField.name.dbName()»'] = null;
+        }
+«ENDFOREACH-»
+
+        // assign data to template
+        $render->assign($objectData);
+
+«REM»
+    // assign the object we loaded above
+    $render->assign($objectType, $«moduleName(name)»);
+«ENDREM»
+
+        // assign mode var to referenced render instance
+        $render->assign('mode', $this->mode);
+
+«REM»v4bJournal
+    $render->assign ('validationErrors', $ve);
+    $render->assign ('button_preview', $bp);
+«ENDREM»
+
+        // everything okay, no initialization errors occured
+        return true;
+«ENDDEFINE»
+
+
+«DEFINE FieldAssignment FOR TableColumn»
+        '«dbName(name)»' => «EXPAND FieldDefaultData»«ENDDEFINE»
+
+«DEFINE FieldDefaultData FOR TableColumn-»
+//TODO: Undefined TableColumn
+«ENDDEFINE»
+
+«DEFINE FieldDefaultData FOR StringField»'«defaultValue»'«ENDDEFINE»
+«DEFINE FieldDefaultData FOR TextField»'«defaultValue»'«ENDDEFINE»
+«DEFINE FieldDefaultData FOR BlobField»'«REM»nothing for now«ENDREM»'«ENDDEFINE»
+
+«DEFINE FieldDefaultData FOR DateField»«IF isMandatory == true»«IF defaultValue.length > 0»«defaultValue»«ELSE»$todayDate«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR TimestampField»«IF isMandatory == true»«IF defaultValue.length > 0»«defaultValue»«ELSE»$thisTime«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR BooleanField»«IF defaultValue == true»true«ELSE»false«ENDIF»«ENDDEFINE»
+
+«DEFINE FieldDefaultData FOR IntegerField-»
+«LET columnTable.tableContainer.relations.select(e|e.target.name == columnTable.name && e.source.idField() == name) AS joins-»
+«IF joins.size > 0-»
+«FOREACH joins AS join-»(int) FormUtil::getPassedValue('«join.source.name.dbName()»id', 0, 'GET')«ENDFOREACH-»
+«ELSE-»
+«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
+«ENDIF-»«ENDLET-»«ENDDEFINE»
+
+«DEFINE FieldDefaultData FOR FloatField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR DecimalField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF»«ENDDEFINE»
+
+
+«DEFINE handleCommand(Module module, Processor proc, String actionName, String modName, String procName) FOR Persistence::Table-»
+        // return url for redirecting
+        $returnUrl = null;
+
+        if ($args['commandName'] != 'delete' && $args['commandName'] != 'cancel') {
+            // do forms validation including checking all validators on the page to validate their input
+            if (!$render->pnFormIsValid()) {
+                return false;
+            }
+        }
+
+        $objectType = '«moduleName(name)»';
+«EXPAND ProcHelper::loadObjectClass(modName, false)-»
+
+        // instantiate the class we just loaded
+        // it will be appropriately initialized but contain no data.
+        $«moduleName(name)» = new $class();
+
+        if ($args['commandName'] == 'create') {
+            // event handling if user clicks on create
+
+			«EXPAND FetchInputDataStart(moduleName(name))-»
+			«EXPAND FetchInputDataEnd(moduleName(name))-»
+
+            // save «moduleName(name)»
+            $«moduleName(name)»->save();
+
+            $this->«idField()» = $«moduleName(name)»->getID();
+            if ($this->«idField()» === false) {
+                return LogUtil::registerError(__('Error! Creation attempt failed.', $dom));
+            }
+
+            LogUtil::registerStatus(__('Done! «formattedNameCapitalized(name)» created.', $dom));
+
+            // redirect to the detail page of the newly created «moduleName(name)»
+            $returnUrl = pnModUrl('«modName»', '«procName»', 'display',
+                                                             array('ot' => '«moduleName(name)»',
+                                                                   '«idField()»' => $this->«idField()»));
+        }
+        elseif ($args['commandName'] == 'update') {
+            // event handling if user clicks on update
+
+			«EXPAND FetchInputDataStart(moduleName(name))-»
+
+            // add persisted primary key to fetched values
+            $«moduleName(name)»Data['«idField()»'] = $this->«idField()»;
+
+			«EXPAND FetchInputDataEnd(moduleName(name))-»
+
+            // save «moduleName(name)»
+            $updateResult = $«moduleName(name)»->save();
+
+            if ($updateResult === false) {
+                return LogUtil::registerError(__('Error! Update attempt failed.', $dom));
+            }
+
+            LogUtil::registerStatus(__('Done! «formattedNameCapitalized(name)» updated.', $dom));
+
+            // redirect to the detail page of the treated «moduleName(name)»
+            $returnUrl = pnModUrl('«modName»', '«procName»', 'display',
+                                                             array('ot' => '«moduleName(name)»',
+                                                                   '«idField()»' => $this->«idField()»));
+        }
+        elseif ($args['commandName'] == 'delete') {
+            // event handling if user clicks on delete
+
+            // Note: No need to check validation when deleting
+
+            if (!SecurityUtil::checkPermission('«modName»:«capitalName(name)»:', '::', ACCESS_DELETE)) {
+                return $render->pnFormRegisterError(LogUtil::registerPermissionError());
+            }
+
+			«EXPAND FetchInputDataStart(moduleName(name))-»
+
+            // add persisted primary key to fetched values
+            $«moduleName(name)»Data['«idField()»'] = $this->«idField()»;
+
+			«EXPAND FetchInputDataEnd(moduleName(name))-»
+
+            // add persisted primary key to fetched values
+            $«moduleName(name)»Data['«idField()»'] = $this->«idField()»;
+
+
+            // delete «moduleName(name)»
+            if ($«moduleName(name)»->delete() === false) {
+                return LogUtil::registerError(__('Error! Deletion attempt failed.', $dom));
+            }
+
+            LogUtil::registerStatus(__('Done! «formattedNameCapitalized(name)» deleted.', $dom));
+
+            // redirect to the list of «moduleName(nameMultiple)»
+            $returnUrl = pnModUrl('«modName»', '«procName»', 'view',
+                                                                 array('ot' => '«moduleName(name)»'));
+        }
+        else if ($args['commandName'] == 'cancel') {
+            // event handling if user clicks on cancel
+
+            if ($this->mode == 'edit') {
+                // redirect to the detail page of the treated «moduleName(name)»
+                $returnUrl = pnModUrl('«modName»', '«procName»', 'display',
+                                                                 array('ot' => '«moduleName(name)»',
+                                                                       '«idField()»' => $this->«idField()»));
+            }
+            else {
+                // redirect to the list of «moduleName(nameMultiple)»
+                $returnUrl = pnModUrl('«modName»', '«procName»', 'view',
+                                                                 array('ot' => '«moduleName(name)»'));
+            }
+        }
+
+
+        if ($returnUrl != null) {
+            if ($this->mode == 'edit') {
+                pnModAPIFunc('PageLock', 'user', 'releaseLock',
+                                 array('lockName' => "«capitalName(modName)»«capitalName(name)»{$this->«idField()»}"));
+            }
+
+            return $render->pnFormRedirect($returnUrl);
+        }
+
+        // We should in principle not end here at all, since the above command handlers should 
+        // match all possible commands, but we return "ok" (true) for all cases.
+        // You could also return $render->pnFormSetErrorMsg('Unexpected command') or just do a pn_die()
+        return true;
+«ENDDEFINE»
+
+
+«DEFINE FetchInputDataStart(String obj) FOR Persistence::Table-»
+            // fetch posted data input values as an associative array
+            $«obj»Data = $render->pnFormGetValues();
+«ENDDEFINE»
+«DEFINE FetchInputDataEnd(String obj) FOR Persistence::Table-»
+«REM»«FOREACH columns AS col-»
+«LET tableContainer.relations.select(e|e.target.name == name && e.source.idField() == col.name) AS joins-»
+«IF joins.size > 0-»
+«FOREACH joins AS join-»
+            $«obj»Data['«join.source.name.dbName()»id'] = (int) FormUtil::getPassedValue('«join.source.name.dbName()»id', 0, 'POST');
+«ENDFOREACH-»
+«ENDIF-»
+«ENDLET-»
+«ENDFOREACH-»«ENDREM»
+
+            // usually one would use $«obj»->getDataFromInput() to get the data, this is the way PNObject works
+            // but since we want also use pnForm we simply assign the fetched data and call the post process functionality here
+            $«obj»->setData($«obj»Data);
+            $«obj»->getDataFromInputPostProcess();
+«ENDDEFINE»
+
+
+«DEFINE pnUserForm(Module module) FOR ProcessorState-»
+
+
+«REM»v4bJournal
+edit:
+    if ($ot == 'journal')
+    {
+        if ($bp) // preview
+        {
+            // if we have an image, it's been uploaded and we treat it as an existing image
+            if ($«moduleName(name)»['image'] && !$_POST['validationErrors']['image'])
+                $«moduleName(name)»['image_existing'] = $«moduleName(name)»['image'];
+
+            $args = array();
+            $args['preview'] = 1;
+            pnSessionSetVar ('journal', $«moduleName(name)»);
+            pnRedirect(pnModURL('v4bJournal', 'user', 'edit', $args));
+            return true;
+        }
+    }
+«ENDREM»
+
+«ENDDEFINE»
+
+
+
+
+
+
+
+
+«DEFINE PNObject_to_integrate FOR Module-»
+
+/**
+ * This function processes a form submitted from the
+ * «modName()»_admin_preferences function.
+ *
+ * @author       «author»
+ */
+function «modName()»_adminform_preferences()
+{
+	«REM»EXPAND PermissionCheck-«ENDREM»
+
+    // ensure that the submit button (rather than cancel) was pressed
+    if (!FormUtil::getPassedValue('submit'))
+    {
+        return pnRedirect(pnModURL('«modName()»', 'admin', 'config'));
+    }
+
+    // retrieve the associative preferences array 
+    $prefs = FormUtil::getPassedValue('preferences', null, 'POST');
+
+    // now for each preference entry, set the appropriate module variable
+«IF persistenceContainer.modvarContainer.modvars.typeSelect(Persistence::ModuleVarBool).size > 0-»
+    // for booleans we use the convention (int)(boolean) to ensure that set values get cast to a 0/1 value
+«ENDIF-»
+«FOREACH persistenceContainer.modvarContainer.modvars AS modvar-»
+    pnModSetVar('«modName()»', '«moduleName(modvar.name)»',    «EXPAND GetVarForPrefPrefix FOR modvar»$prefs['«moduleName(modvar.name)»']);
+«ENDFOREACH-»
+«REM»TODO
+    pnModSetVar('«modName()»', 'pagesize', ($prefs['pagesize'] > 1 ? $prefs['pagesize'] : 10));
+    pnModSetVar ('AutoTest', 'testfield', ($prefs['testfield'] ? 1 : 0));
+«ENDREM»
+
+    // redirect back to to main admin page
+    return pnRedirect(pnModURL('«modName()»', 'admin', 'config'));
+}
+
+
+«ENDDEFINE»
+
+«DEFINE GetVarForPrefPrefix FOR Persistence::ModuleVar»«ENDDEFINE»
+«DEFINE GetVarForPrefPrefix FOR Persistence::ModuleVarInt»(int)«ENDDEFINE»
+«DEFINE GetVarForPrefPrefix FOR Persistence::ModuleVarBool»(int)(boolean)«ENDDEFINE»
+
+«ENDIF-»
+
+«ENDDEFINE»

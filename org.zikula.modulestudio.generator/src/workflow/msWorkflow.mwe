@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workflow>
+	<!-- xmi reader -->
+	<component class="org.eclipse.xtend.typesystem.emf.XmiReader">
+		<!-- read in the given file -->
+		<modelFile value="${modelFile}"/>
+
+		<!-- we need only the root element -->
+		<metaModelPackage value="ModuleStudio.ModuleStudioPackage"/>
+
+		<!-- store it into the output slot called model --> 
+		<outputSlot value="model"/>
+
+		<!-- put only the root element into the output slot
+			 otherwise everything would be collected into a list -->
+		<firstElementOnly value="true"/>
+	</component>
+
+
+	<!-- check components for constraints -->
+	<component class="org.eclipse.xtend.check.CheckComponent">
+		<!-- define all used meta models -->
+		<metaModel id="mmEMF" 			class="org.eclipse.xtend.typesystem.emf.EmfMetaModel">
+			<metaModelPackage value="org.eclipse.emf.ecore.EcorePackage"/>
+		</metaModel>
+		<metaModel id="mmModuleStudio" 	class="org.eclipse.xtend.typesystem.emf.EmfMetaModel">
+			<metaModelPackage value="ModuleStudio.ModuleStudioPackage"/>
+		</metaModel>
+		<metaModel id="mmPersistence" 	class="org.eclipse.xtend.typesystem.emf.EmfMetaModel">
+			<metaModelPackage value="Persistence.PersistencePackage"/>
+		</metaModel>
+		<metaModel id="mmProcessing" 	class="org.eclipse.xtend.typesystem.emf.EmfMetaModel">
+			<metaModelPackage value="Processing.ProcessingPackage"/>
+		</metaModel>
+		<metaModel id="mmPresentation" 	class="org.eclipse.xtend.typesystem.emf.EmfMetaModel">
+			<metaModelPackage value="Presentation.PresentationPackage"/>
+		</metaModel>
+		<metaModel id="mmBehavior" 		class="org.eclipse.xtend.typesystem.emf.EmfMetaModel">
+			<metaModelPackage value="Behavior.BehaviorPackage"/>
+		</metaModel>
+
+		<!-- provide check files -->
+		<checkFile value="../de.guite.modulestudio.metamodel/model/checks/main"/>
+<!--
+		<checkFile value="de::guite::modulestudio::metamodel::model::checks::main"/>
+		<checkFile value="de::guite::modulestudio::metamodel::model::checks::persistence"/>
+		<checkFile value="de::guite::modulestudio::metamodel::model::checks::processing"/>
+		<checkFile value="de::guite::modulestudio::metamodel::model::checks::presentation"/>
+		<checkFile value="de::guite::modulestudio::metamodel::model::checks::behavior"/>
+-->
+		<!-- tell on which part of the model the checks should work (our module with all children) -->
+		<!-- expression value="model" / -->
+		<expression value="model.eAllContents.union({model})"/>
+	</component>
+
+	<!-- add additional fields for ids and relations -->
+	<component class="org.eclipse.xtend.XtendComponent" skipOnErrors="true">
+		<!-- reference all used meta models -->
+		<metaModel idRef="mmEMF" />
+		<metaModel idRef="mmModuleStudio" />
+		<metaModel idRef="mmPersistence" />
+		<metaModel idRef="mmProcessing" />
+		<metaModel idRef="mmPresentation" />
+		<metaModel idRef="mmBehavior" />
+
+	    <invoke value="trafo::PersistenceTransformer::modify(model)"/>
+	    <outputSlot value="newModel" />
+	</component>
+
+	<!-- call generator cartridge -->
+	<cartridge file="msGenerator.mwe"
+	           slot="newModel"
+	           slotFile="${enrichedModelFile}"
+	           srcGenPath="${srcGenPath}"
+	           srcManPath="${srcManPath}">
+	   <mmEMF 			idRef="mmEMF"/>
+	   <mmModuleStudio 	idRef="mmModuleStudio"/>
+	   <mmPersistence 	idRef="mmPersistence"/>
+	   <mmProcessing 	idRef="mmProcessing"/>
+	   <mmPresentation 	idRef="mmPresentation"/>
+	   <mmBehavior 		idRef="mmBehavior"/>
+	</cartridge>
+
+	<!-- TODO: phpXRef -->	
+</workflow>

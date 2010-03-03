@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- processes specific models for other persons -->
+<workflow>
+<!--    <property name="modelName" value="CampManager" />
+    <property name="examplePath" value="/home/axel/projects/GuiteSVN/trunk/models/zikula" />
+-->
+    <property name="modelName" value="bcPromotion" />
+    <property name="examplePath" value="/home/axel" />
+
+	<!-- call file reader workflow and provide required properties -->
+	<cartridge file="msWorkflow.mwe"
+			   modelFile="${examplePath}/${modelName}.msmodule"
+			   enrichedModelFile="${examplePath}/${modelName}_Enriched.msmodule"
+			   srcGenPath="${examplePath}/output/"
+			   srcManPath="${examplePath}/output/src-man"
+			   apiRefPath="${examplePath}/output/phpxref">
+	</cartridge>
+</workflow>

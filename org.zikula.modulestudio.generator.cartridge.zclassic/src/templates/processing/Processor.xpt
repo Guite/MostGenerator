@@ -1,0 +1,202 @@
+«IMPORT ModuleStudio»
+«IMPORT Persistence»
+«IMPORT Processing»
+«IMPORT templates::smallstuff»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::UtilsBO»
+
+«REM»start point for the Processor creation«ENDREM»
+«DEFINE Root FOR Module»
+	«EXPAND Root(this) FOREACH processingContainer.processors-»
+	«IF processingContainer.processors.select(e|e.type == ProcessorType::ADMIN).size > 0-»
+		«FILE "pnadminapi.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND pnAdminAPI»«ENDFILE»
+	«ENDIF-»
+	«FILE "common.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND CommonFunctions-»«ENDFILE»
+«ENDDEFINE»
+
+«DEFINE CommonFunctions FOR Module-»
+/**
+ * returns an array of all allowed object types in «modName()»
+ */
+function «modName()»_getObjectTypes()
+{
+    $allowedObjectTypes = array();
+«FOREACH persistenceContainer.tables AS tab-»
+    $allowedObjectTypes[] = '«moduleName(tab.name)»';
+«ENDFOREACH-»
+    return $allowedObjectTypes;
+}
+
+/**
+ * utility function for managing render templates
+ */
+function «modName()»_processRenderTemplate(&$render, $type, $objectType, $func, $args=array())
+{
+    $template = DataUtil::formatForOS('«modName()»_' . $type . '_' . $objectType . '_' . $func);
+    $tpl = FormUtil::getPassedValue('tpl', isset($args['tpl']) ? $args['tpl'] : '');
+    if (!empty($tpl) && $render->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.htm')) {
+        $template .= '_' . DataUtil::formatForOS($tpl);
+    }
+    $template .= '.htm';
+
+    $raw = FormUtil::getPassedValue('raw', (isset($args['raw']) && is_bool($args['raw'])) ? $args['raw'] : false);
+    if ($raw == true) {
+        // standalone output
+        $render->display($template);
+        return true;
+    }
+
+    // normal output
+    return $render->fetch($template);
+}
+«ENDDEFINE»
+
+«REM»creates a file for every Processor instance«ENDREM»
+«DEFINE Root(Module module) FOR Processor-»
+	«FILE "pn" + dbName(name) + ".php"»«EXPAND FileHelper::phpFileHeader(module)»«EXPAND ProcessorImpl(module)»«ENDFILE»
+«ENDDEFINE»
+
+«REM»file structure implementation«ENDREM»
+«DEFINE ProcessorImpl(Module module) FOR Processor-»
+
+/**
+ * Even though we're handling objects for multiple tables, we only have one function for any use case.
+ * The specific functionality for each object is encapsulated in the actual class implementation within the
+ * module's classes directory while the handling code can remain identical for any number of entities.
+ * This component-based approach allows you to have generic handler code which relies on the functionality
+ * implemented in the object's class in order to achieve it's goals.
+ */
+
+«EXPAND PreloadClasses-»
+
+«EXPAND Root(module) FOREACH processorStates-»
+«IF module.needsConfig() && ProcessorType == 'ADMIN'-»
+
+/*
+ * This function takes care of the module configuration.
+ *
+ * @author       «module.author»
+ * @return       Render output
+ */
+function «module.modName()»_admin_config()
+{
+    // Create new pnForm reference
+    $render = FormUtil::newpnForm('«module.modName()»');
+
+    // include event handler class
+    Loader::requireOnce('modules/«module.modName()»/classes/FormHandler/«module.modName()»_admin_confighandler.class.php');
+«REM»Loader::loadClass ($className, $classPath='includes')«ENDREM»
+
+    // Execute form using supplied template and page event handler
+    return $render->pnFormExecute('«module.modName()»_admin_config.htm', new «module.modName()»_admin_configHandler());
+}
+
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE PreloadClasses FOR Processor-»
+// preload common used classes
+Loader::requireOnce('modules/«processingContainer.processingModule.modName()»/common.php');
+«ENDDEFINE»
+
+
+
+«DEFINE Root(Module module) FOR ProcessorState-»
+
+/**
+«EXPAND StateDoc(module)-»
+ */
+function «module.modName()»_«dbName(stateProcessor.name + '_' + name)»($args)
+{
+«EXPAND StateImpl(module)-»
+}
+«ENDDEFINE»
+
+«DEFINE StateDoc(Module module) FOR ProcessorState-»
+«IF type == ProcessorStateType::MAIN-»
+ * This function is the default function, and is called whenever the
+ * module's «moduleName(stateProcessor.name)» area is called without defining arguments.
+«ELSEIF type == ProcessorStateType::VIEW-»
+ * This function provides a generic item list overview.
+«ELSEIF type == ProcessorStateType::DISPLAY-»
+ * This function provides a generic item detail view.
+«ELSEIF type == ProcessorStateType::EDIT-»
+ * This function provides a generic handling of all edit requests.
+«ELSEIF type == ProcessorStateType::CUSTOM-»
+ * This is a custom function. Documentation for this will be improved in later versions.
+«ENDIF-»
+ *
+ * @author       «module.author»
+ * @params       TODO
+«IF type == ProcessorStateType::VIEW || type == ProcessorStateType::DISPLAY || type == ProcessorStateType::EDIT || type == Processing::ProcessorStateType::DELETE-»
+ * @param        ot             string    treated object type
+«IF type == ProcessorStateType::DELETE-»
+ * @param        id		        int	      ID of the entry
+ * @param        confirmation   boolean   Confirm the deletion, else a confirmation page is displayed
+«ENDIF-»
+«IF type == ProcessorStateType::VIEW-»
+ * @param        sort           string    sorting field
+ * @param        sdir           string    sorting direction
+ * @param        pos            int       current pager position
+«ENDIF-»
+ * @param        tpl            string    name of alternative template (for alternative display options, feeds and xml output)
+ * @param        raw            boolean   optional way to display a template instead of fetching it (needed for standalone output)
+«ENDIF-»
+ * @return       Render output
+«ENDDEFINE»
+
+«DEFINE StateImpl(Module module) FOR ProcessorState-»
+«EXPAND PermissionCheck-»
+«LET module.modName() AS modName-»
+«IF type != ProcessorStateType::MAIN-»
+    // parameter specifying which type of objects we are treating
+    $objectType = FormUtil::getPassedValue('ot', '«module.getLeadObj()»', 'GET');
+
+    if (!in_array($objectType, «modName»_getObjectTypes())) {
+        $objectType = '«module.getLeadObj()»';
+    }
+«ENDIF-»
+«IF type == ProcessorStateType::MAIN-»«EXPAND PStates::Main::Impl(modName)-»
+«ELSEIF type == ProcessorStateType::VIEW-»«EXPAND PStates::View::Impl(modName)-»
+«ELSEIF type == ProcessorStateType::DISPLAY-»«EXPAND PStates::Display::Impl(modName)-»
+«ELSEIF type == ProcessorStateType::EDIT-»«EXPAND PStates::Edit::Impl(modName)-»
+«ELSEIF type == ProcessorStateType::DELETE-»«EXPAND PStates::Delete::Impl(modName)-»
+«ELSEIF type == ProcessorStateType::CUSTOM-»«EXPAND PStates::Custom::Impl(modName)-»
+«ENDIF-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE PermissionCheck FOR ProcessorState-»
+«REM»will be filled by Advices«ENDREM»
+«ENDDEFINE»
+
+
+
+«DEFINE pnAdminAPI FOR Module-»
+/**
+ * get available admin panel links
+ *
+ * @author       «author»
+ * @return       array      array of admin links
+ */
+function «modName()»_adminapi_getlinks()
+{
+    $links = array();
+
+    $dom = ZLanguage::getModuleDomain('«modName()»');
+
+«FOREACH persistenceContainer.tables AS tab-»
+    if (SecurityUtil::checkPermission('«modName()»::', '::', ACCESS_READ)) {
+        $links[] = array('url' => pnModURL('«modName()»', 'admin', 'view', array('ot' => '«moduleName(tab.name)»')),
+                         'text' => __('«formattedNameCapitalized(tab.nameMultiple)»', $dom));
+    }
+«ENDFOREACH-»
+«IF needsConfig()-»
+    if (SecurityUtil::checkPermission('«modName()»::', '::', ACCESS_ADMIN)) {
+        $links[] = array('url' => pnModURL('«modName()»', 'admin', 'config'), 'text' => __('Configuration', $dom));
+    }
+«ENDIF-»
+    return $links;
+}
+«ENDDEFINE»
+

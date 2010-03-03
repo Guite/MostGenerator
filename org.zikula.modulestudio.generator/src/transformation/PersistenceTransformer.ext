@@ -1,0 +1,23 @@
+import ModuleStudio;
+import Persistence;
+extension extensions::Utils;
+
+//extension org::eclipse::xtend::util::stdlib::io;
+
+
+modify(Module this):
+	// handle all tables
+	persistenceContainer.tables.handleTable() ->
+	this;
+
+private handleTable(Table this):
+	// create id field as primary key
+	addPrimaryKey(this) ->
+	addRelationFields(this) ->
+	this;
+
+private boolean addPrimaryKey(Table table)
+	: JAVA trafo.TrafoUtils.addPrimaryKey(Persistence.Table);
+
+private boolean addRelationFields(Table table)
+	: JAVA trafo.TrafoUtils.addRelationFields(Persistence.Table);

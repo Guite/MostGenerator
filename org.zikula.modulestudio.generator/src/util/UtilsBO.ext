@@ -1,0 +1,38 @@
+import ModuleStudio;
+import Persistence;
+import Behavior;
+extension extensions::Utils;
+
+/*
+ * BusinessObject class naming extensions
+ */
+
+cached String classPraefix()
+	: "PN";
+
+cached String classSuffix()
+	: ".class.php";
+
+
+cached String moduleClassName(Module module, Boolean appendArray)
+	: classPraefix() + module.modName().toFirstUpper() + ((appendArray == true) ? "Array" : "");
+
+cached String moduleClassFileName(Module module, Boolean appendArray)
+	: moduleClassName(module, appendArray) + classSuffix();
+
+cached String implClassName(Table obj, Boolean appendArray)
+	: classPraefix() + moduleName(obj.name).toFirstUpper() + ((appendArray == true) ? "Array" : "");
+
+cached String implClassFileName(Table obj, Boolean appendArray)
+	: implClassName(obj, appendArray) + classSuffix();
+
+cached String baseClassName(Table obj, Boolean appendArray)
+	: implClassName(obj, appendArray) + "Base";
+
+cached String baseClassFileName(Table obj, Boolean appendArray)
+	: baseClassName(obj, appendArray) + classSuffix();
+
+
+
+cached Table dataSource(BusinessObject container) :
+	container.behaviorContainer.behaviorModule.persistenceContainer.tables.select(e|e.name == container.name);

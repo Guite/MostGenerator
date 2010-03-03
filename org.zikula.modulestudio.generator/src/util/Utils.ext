@@ -1,0 +1,64 @@
+import ModuleStudio;
+import Persistence;
+import Processing;
+
+
+cached String constantName(ProcessorState this) :
+	"STATE_" + name.toUpperCase();	
+ 
+cached String constantName(Transition this) :
+	"EVENT_" + name.toUpperCase();	
+
+
+/*
+ * naming extensions
+ */
+cached String modName(ModuleStudio::Module this) :
+	moduleName(name);
+
+cached String moduleName(String s)
+	: JAVA extensions.Utils.moduleName(java.lang.String);
+cached String capitalName(String s)
+	: moduleName(s).toFirstUpper();
+cached String dbName(String s)
+	: JAVA extensions.Utils.dbName(java.lang.String);
+cached String formattedName(String s)
+	: JAVA extensions.Utils.formattedName(java.lang.String);
+cached String formattedNameCapitalized(String s)
+	: JAVA extensions.Utils.formattedNameCapitalized(java.lang.String);
+
+
+cached boolean needsConfig(ModuleStudio::Module this) :
+	persistenceContainer.modvarContainer.modvars.size > 0;
+
+
+cached String fullTableName(Table this) :
+	dbName(tableContainer.persistenceModule.prefix + '_' + name);
+
+cached String getLeadObj(Module module)
+	: moduleName(module.persistenceContainer.tables.select(e|e.isLeading == true).get(0).name);
+
+cached String idField(Table table)
+	: dbName(table.columns.select(e|e.isPrimaryKey == true).get(0).name);
+
+cached boolean hasPStates(Processor processor, String type) :
+	switch (type) {
+	   case 'main' : processor.processorStates.select(e|e.type == ProcessorStateType::MAIN).size > 0 
+	   case 'view' : processor.processorStates.select(e|e.type == ProcessorStateType::VIEW).size > 0 
+	   case 'display' : processor.processorStates.select(e|e.type == ProcessorStateType::DISPLAY).size > 0 
+	   case 'edit' : processor.processorStates.select(e|e.type == ProcessorStateType::EDIT).size > 0
+	   case 'delete' : processor.processorStates.select(e|e.type == ProcessorStateType::DELETE).size > 0
+	   case 'custom' : processor.processorStates.select(e|e.type == ProcessorStateType::CUSTOM).size > 0 
+	   default : false 
+	};
+
+
+/*
+ * extensions that are independent of a specific model element,
+ */
+
+cached String timestamp()
+	: JAVA extensions.Utils.timestamp();
+
+cached String subTask(Object monitor, String title)
+	: JAVA extensions.Utils.subTask(org.eclipse.core.runtime.IProgressMonitor, java.lang.String);

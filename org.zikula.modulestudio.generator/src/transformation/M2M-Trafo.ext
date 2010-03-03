@@ -1,0 +1,110 @@
+import ModuleStudio;
+import Persistence;
+
+create Module this duplicate(Module s):
+  	persistenceContainer.tables.addAll(s.persistenceContainer.tables.duplicate()) ->
+  	persistenceContainer.modvarContainer.modvars.addAll(s.persistenceContainer.modvarContainer.modvars.duplicate()) ->
+  	setName(s.name) ->
+  	setAuthor(s.author) ->
+  	setUrl(s.url) ->
+  	setPrefix(s.prefix);
+
+ModuleVar duplicate(ModuleVar old) : null;
+
+create ModuleVarText this duplicate(ModuleVarText old):
+	setName(old.name) -> setValue(old.value) -> setMaxLength(old.maxLength);
+
+create ModuleVarInt this duplicate(ModuleVarInt old):
+	setName(old.name) -> setValue(old.value);
+
+create ModuleVarBool this duplicate(ModuleVarBool old):
+	setName(old.name) -> setValue(old.value);
+
+create ModuleVarFilePath this duplicate(ModuleVarFilePath old):
+	setName(old.name) -> setValue(old.value) ->
+	setIsWithinDocRoot(old.isWithinDocRoot) -> setIsWritable(old.isWritable);
+
+create ModuleVarList this duplicate(ModuleVarList old):
+	items.addAll(old.items.duplicate()) ->
+	setName(old.name) -> setValue(old.value) ->
+	setIsMultiple(old.isMultiple);
+
+create ModuleVarListItem this duplicate(ModuleVarListItem old):
+	setName(old.name) -> setIsDefault(old.isDefault);
+
+
+create Table this duplicate(Table old):
+	columns.addAll(old.columns.duplicate()) ->
+	//relations.addAll(old.relations.duplicate()) ->
+	setName(old.name) ->
+	setUsesStandardFields(old.usesStandardFields);
+
+TableColumn duplicate(TableColumn old) : null;
+
+create StringField this duplicate(StringField old):
+	setName(old.name) ->
+	setIsMandatory(old.isMandatory) ->
+	setDefaultValue(old.defaultValue) ->
+	setIsPrimaryKey(old.isPrimaryKey) ->
+	setLength(old.length);
+
+create TextField this duplicate(TextField old):
+	setName(old.name) ->
+	setIsMandatory(old.isMandatory) ->
+	setDefaultValue(old.defaultValue) ->
+	setIsPrimaryKey(old.isPrimaryKey) ->
+	setType(old.type);
+
+create BlobField this duplicate(BlobField old):
+	setName(old.name) ->
+	setIsMandatory(old.isMandatory) ->
+	setDefaultValue(old.defaultValue) ->
+	setIsPrimaryKey(old.isPrimaryKey);
+
+create DateField this duplicate(DateField old):
+	setName(old.name) ->
+	setIsMandatory(old.isMandatory) ->
+	setDefaultValue(old.defaultValue) ->
+	setIsPrimaryKey(old.isPrimaryKey);
+
+create TimestampField this duplicate(TimestampField old):
+	setName(old.name) ->
+	setIsMandatory(old.isMandatory) ->
+	setDefaultValue(old.defaultValue) ->
+	setIsPrimaryKey(old.isPrimaryKey);
+
+create BooleanField this duplicate(BooleanField old):
+	setName(old.name) ->
+	setIsMandatory(old.isMandatory) ->
+	setDefaultValue(old.defaultValue) ->
+	setIsPrimaryKey(old.isPrimaryKey);
+
+create IntegerField this duplicate(IntegerField old):
+	setName(old.name) ->
+	setIsMandatory(old.isMandatory) ->
+	setDefaultValue(old.defaultValue) ->
+	setIsPrimaryKey(old.isPrimaryKey) ->
+	setLength(old.length);
+
+create DecimalField this duplicate(DecimalField old):
+	setName(old.name) ->
+	setIsMandatory(old.isMandatory) ->
+	setDefaultValue(old.defaultValue) ->
+	setIsPrimaryKey(old.isPrimaryKey) ->
+	setLength(old.length) ->
+	setPrecision(old.precision);
+
+create FloatField this duplicate(FloatField old):
+	setName(old.name) ->
+	setIsMandatory(old.isMandatory) ->
+	setDefaultValue(old.defaultValue) ->
+	setIsPrimaryKey(old.isPrimaryKey) ->
+	setLength(old.length) ->
+	setPrecision(old.precision);
+
+/*
+create Relationship this duplicate(Relationship old):
+	setName(old.name) ->
+	setType(old.type) ->
+	setReference(old.reference.duplicate());
+*/

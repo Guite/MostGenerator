@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- processes whole collection of example models, calls msManual.oaw for each entry -->
+<workflow>
+	<cartridge file="msManual.mwe" folder="customers" modelName="handydb" 		outputDir="HandyDB"></cartridge>
+	<cartridge file="msManual.mwe" folder="customers" modelName="jsRefPool" 	outputDir="jsRefPool"></cartridge>
+	<cartridge file="msManual.mwe" folder="customers" modelName="JugendServer_Materialien" outputDir="jsMaterials"></cartridge>
+
+	<cartridge file="msManual.mwe" folder="examples" modelName="AutoBugs" 		outputDir="AutoBugs"></cartridge>
+	<cartridge file="msManual.mwe" folder="examples" modelName="AutoCocktails" 	outputDir="AutoCocktails"></cartridge>
+	<cartridge file="msManual.mwe" folder="examples" modelName="AutoCustomer" 	outputDir="AutoCustomer"></cartridge>
+	<cartridge file="msManual.mwe" folder="examples" modelName="AutoExchange" 	outputDir="AutoExchange"></cartridge>
+	<cartridge file="msManual.mwe" folder="examples" modelName="AutoMusic" 		outputDir="AutoMusic"></cartridge>
+	<cartridge file="msManual.mwe" folder="examples" modelName="AutoProject" 	outputDir="AutoProject"></cartridge>
+	<cartridge file="msManual.mwe" folder="examples" modelName="AutoRecipes" 	outputDir="AutoRecipes"></cartridge>
+	<cartridge file="msManual.mwe" folder="examples" modelName="AutoSocial" 	outputDir="AutoSocial"></cartridge>
+
+	<!-- cartridge file="msManual.mwe" folder="own" modelName="foo" outputDir="foo"></cartridge -->
+
+	<cartridge file="msManual.mwe" folder="zikula" modelName="ExtensionDB" 		outputDir="Extensions"></cartridge>
+	<cartridge file="msManual.mwe" folder="zikula" modelName="FedoraDocs" 		outputDir="Extensions"></cartridge>
+</workflow>

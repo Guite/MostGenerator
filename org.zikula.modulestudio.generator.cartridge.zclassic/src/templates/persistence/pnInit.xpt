@@ -1,0 +1,341 @@
+«IMPORT ModuleStudio»
+«IMPORT Persistence»
+«IMPORT templates::smallstuff»
+«EXTENSION extensions::Utils»
+
+«REM»Entry point for module initialization«ENDREM»
+«DEFINE Root FOR Module»
+«FILE "pninit.php"-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+«EXPAND InitInfo-»
+«ENDFILE»
+«IF interactiveInstallation == true»«EXPAND pnInit_Templates::Root»«ENDIF»
+«ENDDEFINE»
+
+«DEFINE InitInfo FOR Module-»
+«EXPAND FuncInit-»
+«EXPAND FuncUpdate-»
+«EXPAND FuncDelete-»
+«EXPAND FuncDefaultData-»
+«IF interactiveInstallation == true»«EXPAND InteractiveInstall»«ENDIF»
+«ENDDEFINE»
+
+«DEFINE InteractiveInstall FOR Module-»
+«EXPAND FuncInteractiveInit-»
+«IF needsConfig()»«EXPAND FuncInteractiveInitStep2»«ENDIF»
+«EXPAND FuncInteractiveInitStep3-»
+«EXPAND FuncInteractiveUpdate-»
+«EXPAND FuncInteractiveDelete-»
+«ENDDEFINE»
+
+«DEFINE FuncInit FOR Module-»
+/**
+ * initialise the «modName()» module
+ *
+ * This function is only ever called once during the lifetime of a particular
+ * module instance
+ * This function MUST exist in the pninit file for a module
+ *
+ * @author       «author»
+ * @return       bool       true on success, false otherwise
+ */
+function «modName()»_init()
+{
+«FOREACH persistenceContainer.tables AS tab-»
+    // create the «moduleName(tab.name)» table
+    if (!DBUtil::createTable('«fullTableName(tab)»')) {
+        return false;
+    }
+«ENDFOREACH-»
+
+«REM»
+    // register hook functions
+    if (!pnModRegisterHook('item', 'display', 'GUI', '«modName()»', 'user', 'viewupload')) {
+        return LogUtil::registerError(_REGISTERFAILED . ', Nr. 1');
+    }
+    if (!pnModRegisterHook('item', 'create', 'GUI', '«modName()»', 'user', 'createupload')) {
+        return LogUtil::registerError(_REGISTERFAILED . ', Nr. 2');
+    }
+    if (!pnModRegisterHook('item', 'update', 'GUI', '«modName()»', 'user', 'createupload')) {
+        return LogUtil::registerError(_REGISTERFAILED . ', Nr. 3');
+    }
+    if (!pnModRegisterHook('item', 'delete', 'API', '«modName()»', 'user', 'deleteupload')) {
+        return LogUtil::registerError(_REGISTERFAILED . ', Nr. 4');
+    }
+«ENDREM»
+
+    // set up all our module vars with initial values
+«FOREACH persistenceContainer.modvarContainer.modvars AS modvar-»
+«IF interactiveInstallation == true-»
+    $sessionValue = SessionUtil::getVar('«moduleName(name + '_' + modvar.name)»');
+    pnModSetVar(«modName()», «moduleName(modvar.name)», (($sessionValue <> false) ? «EXPAND ModVarValFromSession FOR modvar» : «EXPAND ModVarValSession2Mod FOR modvar»));
+    SessionUtil::delVar(«moduleName(name + '_' + modvar.name)»);
+«ELSE-»
+    pnModSetVar('«modName()»', '«moduleName(modvar.name)»', «EXPAND ModVarValDirect2Mod FOR modvar»);
+«ENDIF-»
+«ENDFOREACH-»
+
+    // create the default data for «modName()»
+    «modName()»_defaultdata();
+
+    // Initialisation successful
+    return true;
+}
+«ENDDEFINE»
+
+
+«DEFINE IndexStructure FOR TableIndex»
+        '«moduleName(name)»' => «IF indexItems.size > 1»array(«EXPAND IndexField FOREACH indexItems SEPARATOR ', '»)«ELSE»'«dbName(indexItems.get(0).name)»'«ENDIF»«ENDDEFINE»
+«DEFINE IndexField FOR TableIndexItem»'«dbName(name)»'«ENDDEFINE»
+
+«DEFINE ModVarValFromSession FOR ModuleVar»$sessionValue«ENDDEFINE»
+«DEFINE ModVarValFromSession FOR ModuleVarList»serialize($sessionValue)«ENDDEFINE»
+
+«DEFINE ModVarValSession2Mod FOR ModuleVar»'«value»'«ENDDEFINE»
+«DEFINE ModVarValSession2Mod FOR ModuleVarList»serialize(array(«EXPAND ModVarValSession2Mod FOREACH items.select(item|item.isDefault == true) SEPARATOR ', '»))«ENDDEFINE»
+«DEFINE ModVarValSession2Mod FOR ModuleVarListItem»«IF isDefault == true»'«moduleName(name)»'«ENDIF»«ENDDEFINE»
+
+«REM»
+<select name="blabla[]" size="6" multiple>
+Ausgelesen als Array: $blabla["0"];
+«ENDREM»
+
+«DEFINE ModVarValDirect2Mod FOR ModuleVar»'«value»'«ENDDEFINE»
+«DEFINE ModVarValDirect2Mod FOR ModuleVarList»serialize(array(«EXPAND ModVarValDirect2Mod FOREACH items.select(item|item.isDefault == true) SEPARATOR ', '»))«ENDDEFINE»
+«DEFINE ModVarValDirect2Mod FOR ModuleVarListItem»'«moduleName(name)»'«ENDDEFINE»
+
+
+«DEFINE FuncUpdate FOR Module»
+/**
+ * upgrade the «modName()» module from an old version
+ *
+ * This function can be called multiple times
+ * This function MUST exist in the pninit file for a module
+ *
+ * @author       «author»
+ * @param       int        $oldversion version to upgrade from
+ * @return      bool       true on success, false otherwise
+ */
+function «modName()»_upgrade($oldversion)
+{
+/*
+    // Upgrade dependent on old version number
+    switch ($oldversion){
+    case '1.00':
+            «modName()»_createTables_101();
+        break;
+    }
+*/
+
+    // Update successful
+    return true;
+}
+«ENDDEFINE»
+
+«DEFINE FuncDelete FOR Module»
+/**
+ * delete the «modName()» module
+ * This function is only ever called once during the lifetime of a particular
+ * module instance
+ * This function MUST exist in the pninit file for a module
+ *
+ * @author       «author»
+ * @return       bool       true on success, false otherwise
+ */
+function «modName()»_delete()
+{
+«FOREACH persistenceContainer.tables AS tab-»
+    if (!DBUtil::dropTable('«fullTableName(tab)»')) {
+        return false;
+    }
+«ENDFOREACH-»
+
+«REM»
+    // unregister hook functions
+    if (!pnModUnregisterHook('item', 'display', 'GUI', '«modName()»', 'user', 'viewupload')) {
+        return LogUtil::registerError(_UNREGISTERFAILED . ', Nr. 1');
+    }
+    if (!pnModUnregisterHook('item', 'create', 'GUI', '«modName()»', 'user', 'createupload')) {
+        return LogUtil::registerError(_UNREGISTERFAILED . ', Nr. 2');
+    }
+    if (!pnModUnregisterHook('item', 'update', 'GUI', '«modName()»', 'user', 'createupload')) {
+        return LogUtil::registerError(_UNREGISTERFAILED . ', Nr. 3');
+    }
+    if (!pnModUnregisterHook('item', 'delete', 'API', '«modName()»', 'user', 'deleteupload')) {
+        return LogUtil::registerError(_UNREGISTERFAILED . ', Nr. 4');
+    }
+«ENDREM»
+
+    // remove all module vars
+    pnModDelVar('«modName()»');
+
+    // Deletion successful
+    return true;
+}
+«ENDDEFINE»
+
+«DEFINE FuncDefaultData FOR Module»
+/**
+ * create the default data for «modName()»
+ *
+ * This function is only ever called once during the lifetime of a particular
+ * module instance
+ *
+ * @author       «author»
+ * @return       bool       true on success, false otherwise
+ */
+function «modName()»_defaultdata()
+{
+    // ensure that tables are cleared
+    if («EXPAND clearTable FOREACH persistenceContainer.tables SEPARATOR ' ||'») {
+        return false;
+    }
+
+    $dom = ZLanguage::getModuleDomain('«modName()»');
+
+«FOREACH persistenceContainer.tables AS tab-»
+«IF tab.numExampleRows > 0-»
+    // define default data for «moduleName(tab.name)» table
+    $records = array(«EXPAND createExampleRows(this) FOR tab»
+    );
+
+    // insert it into the «moduleName(tab.name)» table
+    DBUtil::insertObjectArray($records, '«dbName(prefix + '_' + tab.name)»', '«dbName(tab.name)»id', true);
+«ENDIF-»
+«ENDFOREACH-»
+
+    // insertion successful
+    return true;
+}
+«ENDDEFINE»
+
+«DEFINE clearTable FOR Table»
+        !DBUtil::deleteWhere('«fullTableName(this)»', '1=1')«ENDDEFINE»
+
+«DEFINE createExampleRows(Module module) FOR Table»
+«FOREACH 1.upTo(numExampleRows) AS number SEPARATOR ','-»
+
+        array(«EXPAND ExampleRow(module, name, number) FOREACH columns SEPARATOR ','»)«ENDFOREACH-»
+«ENDDEFINE»
+«DEFINE ExampleRow(Module module, String tabName, Integer number) FOR TableColumn»
+            '«dbName(name)»' => __('«tabName» «name» «number»', $dom)»«ENDDEFINE»
+
+«DEFINE FuncInteractiveInit FOR Module»
+/**
+ * interactive installation procedure
+ *
+ * @author       «author»
+ * @return       pnRender output
+ */
+function «modName()»_init_interactiveinit()
+{
+    if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+        return LogUtil::registerPermissionError();
+    }
+
+    $render = pnRender::getInstance('«modName()»', false);
+    return $render->fetch('«modName()»_init_interactive.htm');
+} 
+«ENDDEFINE»
+
+«DEFINE FuncInteractiveInitStep2 FOR Module»
+/**
+ * interactive installation procedure step 2
+ *
+ * @author       «author»
+ * @return       pnRender output
+ */
+function «modName()»_init_interactiveinitstep2()
+{
+    if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+        return LogUtil::registerPermissionError();
+    }
+
+    $submit = FormUtil::getPassedValue('submit', null, 'POST');
+    if (!$submit) {
+        $render = pnRender::getInstance('«modName()»', false);
+        $render->assign('authid', SecurityUtil::generateAuthKey('«modName()»'));
+
+        return $render->fetch('«modName()»_init_step2.htm');
+    }
+
+    if (!SecurityUtil::confirmAuthKey()) {
+        LogUtil::registerError(DataUtil::formatForDisplayHTML(_BADAUTHKEY));
+        return pnRedirect(pnModURL('Modules', 'admin', 'view'));
+    }
+
+	«FOREACH persistenceContainer.modvarContainer.modvars AS modvar-»
+    $formValue = FormUtil::getPassedValue('«moduleName(modvar.name)»', «EXPAND ModVarValForm2SessionDefault FOR modvar», 'POST');
+    SessionUtil::setVar('«moduleName(name + '_' + modvar.name)»', $formValue);
+
+«ENDFOREACH-»
+
+    $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST');
+    $activate = (!empty($activate)) ? true : false; 
+
+    return pnRedirect(pnModURL('«modName()»', 'init', 'interactiveinitstep3', array('activate' => $activate)));
+}
+«ENDDEFINE»
+
+«DEFINE ModVarValForm2SessionDefault FOR ModuleVar»'«moduleName(value)»'«ENDDEFINE»
+«DEFINE ModVarValForm2SessionDefault FOR ModuleVarList»serialize(array(«EXPAND ModVarValForm2SessionDefault FOREACH items.select(item|item.isDefault == true) SEPARATOR ', '»))«ENDDEFINE»
+«DEFINE ModVarValForm2SessionDefault FOR ModuleVarListItem»'«moduleName(name)»'«ENDDEFINE»
+
+«DEFINE FuncInteractiveInitStep3 FOR Module»
+/**
+ * interactive installation procedure step 3
+ *
+ * @author       «author»
+ * @return       pnRender output
+ */
+function «modName()»_init_interactiveinitstep3()
+{
+    if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+        return LogUtil::registerPermissionError();
+    }
+    $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST');
+
+    $render = pnRender::getInstance('«modName()»', false);
+    $render->assign('authid', SecurityUtil::generateAuthKey('Modules'));
+    $render->assign('activate', $activate);
+    return $render->fetch('«modName()»_init_step3.htm');
+}
+«ENDDEFINE»
+
+«DEFINE FuncInteractiveUpdate FOR Module»
+/**
+ * interactive update procedure
+ *
+ * @author       «author»
+ * @return       pnRender output
+ */
+function «modName()»_init_interactiveupdate()
+{
+    if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+        return LogUtil::registerPermissionError();
+    }
+
+    // TODO
+
+    return true;
+}
+«ENDDEFINE»
+
+«DEFINE FuncInteractiveDelete FOR Module»
+/**
+ * interactive delete
+ *
+ * @author       «author»
+ * @return       pnRender output
+ */
+function «modName()»_init_interactivedelete()
+{
+    if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+        return LogUtil::registerPermissionError();
+    }
+
+    $render = pnRender::getInstance('«modName()»');
+    $render->assign('authid', SecurityUtil::generateAuthKey('Modules'));
+    return $render->fetch('«modName()»_init_delete.htm');
+}
+«ENDDEFINE»

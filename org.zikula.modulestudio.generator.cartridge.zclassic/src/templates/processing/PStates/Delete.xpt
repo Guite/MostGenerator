@@ -1,0 +1,49 @@
+«IMPORT Processing»
+«IMPORT templates::processing»
+«EXTENSION extensions::Utils»
+
+«DEFINE Impl(String modName) FOR ProcessorState-»
+    «EXPAND ProcHelper::loadObjectClass(modName, false)-»
+    «EXPAND ProcHelper::instantiateObject("", "")-»
+    $idField = $object->getIDField();
+
+    $dom = ZLanguage::getModuleDomain('«moduleName(modName)»');
+
+    // retrieve the ID of the object we wish to view
+    $id = (int) FormUtil::getPassedValue($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, 'GET');
+    if (!$id) {
+        pn_exit('Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
+    }
+
+    $confirmation = (bool) FormUtil::getPassedValue('confirmation', isset($args['confirmation']) ? $args['confirmation'] : false, 'GETPOST');
+
+    if ($confirmation) {
+        $object->setData(array($idField => $id), false);
+
+        if (!$object->delete()) {
+            LogUtil::registerError(__('Error! Deletion attempt failed.', $dom));
+        } else {
+            LogUtil::registerStatus(__('Done! «name» deleted', $dom));
+        }
+    } else {
+    «EXPAND ProcHelper::getObjectFromSource("", "id", "idField")-»
+
+        // get pnRender instance for this module
+        $render = pnRender::getInstance('«modName»', false);
+
+        // assign the object we loaded above.
+        // since the same code is used the handle the entry of the new object,
+        // we need to check wether we have a valid object.
+        // If not, we just pass in an empty data-array.
+        $render->assign($objectType, $objectData);
+
+        // fetch and return the appropriate template
+        return «modName»_processRenderTemplate($render, '«dbName(stateProcessor.name)»', $objectType, 'delete', $args);
+    }
+
+    // redirect to the list of the current object type
+    return pnRedirect(pnModUrl('«modName»', '«dbName(stateProcessor.name)»', «IF stateProcessor.hasPStates('view')-»'view',
+                                                                                array('ot' => $objectType)«ELSE-»'main'«ENDIF-»));
+
+
+«ENDDEFINE»

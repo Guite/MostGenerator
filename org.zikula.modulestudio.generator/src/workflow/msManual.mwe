@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- manual generation of an example model given in ${modelName},
+     calls msWorkflow.mwe with ${outputDir} as output directory -->
+<workflow>
+    <property name="examplePath" value="/home/axel/projects/GuiteSVN/modules/trunk/models/${folder}" />
+
+	<!-- call file reader workflow and provide required properties -->
+	<cartridge file="msWorkflow.mwe"
+			   modelFile="${examplePath}_models/${modelName}.msmodule"
+			   enrichedModelFile="${examplePath}_models/${modelName}_Enriched.msmodule"
+			   srcGenPath="${examplePath}_output/${outputDir}/"
+			   srcManPath="${examplePath}_output/${outputDir}/src-man"
+			   apiRefPath="${examplePath}_output/${outputDir}/phpxref">
+	</cartridge>
+</workflow>
