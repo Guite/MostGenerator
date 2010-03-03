@@ -1,9 +1,6 @@
-package trafo;
+package transformation;
 
 import java.util.Iterator;
-import java.util.List;
-
-import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import Persistence.IntegerField;
 import Persistence.PersistenceContainer;

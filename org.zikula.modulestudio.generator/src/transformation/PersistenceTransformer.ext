@@ -17,7 +17,7 @@ private handleTable(Table this):
 	this;
 
 private boolean addPrimaryKey(Table table)
-	: JAVA trafo.TrafoUtils.addPrimaryKey(Persistence.Table);
+	: JAVA transformation.TrafoUtils.addPrimaryKey(Persistence.Table);
 
 private boolean addRelationFields(Table table)
-	: JAVA trafo.TrafoUtils.addRelationFields(Persistence.Table);
+	: JAVA transformation.TrafoUtils.addRelationFields(Persistence.Table);
