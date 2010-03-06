@@ -8,6 +8,7 @@ import org.eclipse.emf.mwe.core.monitor.NullProgressMonitor;
 import org.eclipse.emf.mwe.core.monitor.ProgressMonitor;
 import org.eclipse.emf.mwe.internal.core.ast.parser.Location;
 
+@SuppressWarnings("restriction")
 public class ManualProgressMonitor implements WorkflowComponent {
 
 	  private String outputSlot = null;
