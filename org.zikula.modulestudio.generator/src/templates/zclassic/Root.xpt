@@ -1,0 +1,45 @@
+«IMPORT ModuleStudio»
+«IMPORT templates::zclassic::behavior»
+«IMPORT templates::zclassic::persistence»
+«IMPORT templates::zclassic::presentation»
+«IMPORT templates::zclassic::processing»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+
+«REM»start point for the generator«ENDREM»
+«DEFINE Root(Object pm) FOR ModuleStudio::Module»
+    «REM»«pm.subTask("Basic information")»«ENDREM»
+	«EXPAND pnVersion::Root»«REM»TODO: remove pn prefix«ENDREM»
+
+	«REM»«pm.subTask("Persistence: Table definitions")»«ENDREM»
+	«EXPAND pnTables::Root»«REM»TODO: remove pn prefix«ENDREM»
+	«REM»«pm.subTask("Persistence: Module initialisation")»«ENDREM»
+	«EXPAND pnInit::Root»«REM»TODO: remove pn prefix«ENDREM»
+
+    «REM»«pm.subTask("Processing: Generic functionality")»«ENDREM»
+	«EXPAND Processor::Root»
+	«REM»«pm.subTask("Processing: Controller classes")»«ENDREM»
+	«EXPAND Controller::Root»
+
+	«REM»«pm.subTask("Behavior: Object classes")»«ENDREM»
+	«EXPAND BusinessObject::Root»
+
+	«REM»«pm.subTask("Presentation: Rendering templates")»«ENDREM»
+	«EXPAND pnRender::Root»«REM»TODO: remove pn prefix«ENDREM»
+	«REM»«pm.subTask("Presentation: Form templates")»«ENDREM»
+	«EXPAND pnForm::Root»«REM»TODO: remove pn prefix«ENDREM»
+	«REM»«pm.subTask("Presentation: Module-specific plugins")»«ENDREM»
+	«EXPAND pnPlugin::Root»«REM»TODO: remove pn prefix«ENDREM»
+	«REM»«pm.subTask("Presentation: CSS definitions")»«ENDREM»
+	«EXPAND pnStyle::Root»«REM»TODO: remove pn prefix«ENDREM»
+
+	«REM»«pm.subTask("Additions: Blocks")»«ENDREM»
+	«EXPAND Blocks::Root»
+	«REM»«pm.subTask("Additions: Translations")»«ENDREM»
+	«EXPAND Translations::Root»
+	«REM»«pm.subTask("Additions: Documentation")»«ENDREM»
+	«EXPAND Docs::Root»
+	«REM»«pm.subTask("Additions: Images")»«ENDREM»
+	«EXPAND pnImages::Root»«REM»TODO: remove pn prefix«ENDREM»
+«ENDDEFINE»
+

@@ -63,12 +63,13 @@
 		<metaModel idRef="mmPresentation" />
 		<metaModel idRef="mmBehavior" />
 
-	    <invoke value="trafo::PersistenceTransformer::modify(model)"/>
+	    <invoke value="transformation::PersistenceTransformer::modify(model)"/>
 	    <outputSlot value="newModel" />
 	</component>
 
 	<!-- call generator cartridge -->
-	<cartridge file="msGenerator.mwe"
+	<cartridge file="workflow/msGenerator.mwe"
+	           cartridgeName="${cartridgeName}"
 	           slot="newModel"
 	           slotFile="${enrichedModelFile}"
 	           srcGenPath="${srcGenPath}"

@@ -1,0 +1,12 @@
+«IMPORT ModuleStudio»
+«EXTENSION extensions::Utils»
+
+«REM»Entry point for all module images«ENDREM»
+«DEFINE Root FOR Module-»
+	«FILE "pnimages/index.html"»«EXPAND FileHelper::msUrl-»«ENDFILE»
+«REM»	«FILE "pnimages/admin.gif"»«EXPAND adminImage»«ENDFILE»«ENDREM»
+«ENDDEFINE»
+
+«REM»Module image for admin area«ENDREM»
+«DEFINE adminImage FOR Module-»
+«ENDDEFINE»

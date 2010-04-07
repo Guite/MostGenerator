@@ -1,0 +1,13 @@
+«IMPORT ModuleStudio»
+«EXTENSION extensions::Utils»
+
+«REM»start point for the generator«ENDREM»
+«DEFINE Root(Object pm) FOR ModuleStudio::Module»
+«FILE "documentation.txt"»
+Hello «author» :-)
+
+This becomes the documentation generator.
+It is going to create a complete set of different documentations for your «moduleName(name)» module.
+«ENDFILE»
+«ENDDEFINE»
+

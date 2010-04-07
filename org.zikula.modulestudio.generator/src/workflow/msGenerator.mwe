@@ -2,7 +2,7 @@
 <workflow>
     <!-- create dummy progress monitor if required (for manual builds) -->
   	<component id="dummyProgressMonitorCreator"
-  			   class="de.guite.modulestudio.generator.application.ManualProgressMonitor">
+  			   class="org.zikula.modulestudio.generator.application.ManualProgressMonitor">
     	<outputSlot value="progressMonitor"/>
   	</component>
 
@@ -26,10 +26,12 @@
 		<metaModel idRef="mmBehavior" /> 
 
 		<!-- XPand entry for "model" slot containing an instance of ModuleStudio.Module -->
-		<expand value="templates::Root::Root(progressMonitor) FOR ${slot}"/>
+        <expand value="templates::${cartridgeName}::Root::Root(progressMonitor) FOR ${slot}"/>
+<!--		<expand value="/org.zikula.modulestudio.generator.cartridge.${cartridgeName}/src/templates::Root::Root(progressMonitor) FOR ${slot}"/>-->
 
 		<!-- advice aop templates to the generator -->
-		<advice value="templates::aspects::Permissions, templates::aspects::ObjectExtensions" />
+        <advice value="templates::${cartridgeName}::aspects::Permissions, templates::${cartridgeName}::aspects::ObjectExtensions" />
+<!--		<advice value="/org.zikula.modulestudio.generator.cartridge.${cartridgeName}/src/templates::aspects::Permissions, templates::aspects::ObjectExtensions" />-->
 
 		<!-- specify where to put the generated code -->
 		<genPath value="${srcGenPath}"/>

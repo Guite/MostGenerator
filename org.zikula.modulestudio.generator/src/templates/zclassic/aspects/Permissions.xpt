@@ -1,0 +1,52 @@
+«IMPORT ModuleStudio»
+«IMPORT Processing»
+«EXTENSION extensions::Utils»
+
+«REM»Definition of permission schema arrays«ENDREM»
+«AROUND templates::smallstuff::pnVersion::PermissionSchema FOR Module-»
+// DEBUG: permission schema aspect starts
+$modversion['securityschema'] = array('«modName()»::' => '::',
+«EXPAND PermissionSchema(modName()) FOREACH persistenceContainer.tables SEPARATOR ','-»);
+// DEBUG: permission schema aspect ends
+«targetDef.proceed()-»
+«ENDAROUND»
+
+«DEFINE PermissionSchema(String modName) FOR Persistence::Table-»
+«LET tableContainer.relations.select(e|e.target.name == name) AS joins-»
+«IF joins.size > 0-»
+«EXPAND PermissionSchema(modName) FOREACH joins SEPARATOR ','-»,
+«ENDIF»
+«ENDLET-»
+'«modName»:«capitalName(name)»:' => '«capitalName(name)»ID::'«ENDDEFINE»
+
+«DEFINE PermissionSchema(String modName) FOR Persistence::Relationship»
+'«modName»:«capitalName(source.name)»:«capitalName(target.name)»' => '«capitalName(source.name)»ID:«capitalName(target.name)»ID:'«ENDDEFINE»
+
+«REM»Permission checks in system use cases«ENDREM»
+«AROUND templates::processing::Processor::PermissionCheck FOR ProcessorState-»
+// DEBUG: permission check aspect starts
+«LET stateProcessor.processingContainer.processingModule.modName() AS modName-»
+«IF stateProcessor.type == ProcessorType::ADMIN-»
+    if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_ADMIN)) {
+        return LogUtil::registerPermissionError(pnModURL('«modName»', 'user', 'main'));
+«ELSE-»
+«IF type == ProcessorStateType::MAIN-»
+    if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_OVERVIEW)) {
+«ELSEIF type == ProcessorStateType::VIEW-»
+    if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_READ)) {
+«ELSEIF type == ProcessorStateType::DISPLAY-»
+    if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_READ)) {
+«ELSEIF type == ProcessorStateType::EDIT-»
+    if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_EDIT)) {
+«ELSEIF type == ProcessorStateType::DELETE-»
+    if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_DELETE)) {
+«ELSEIF type == ProcessorStateType::CUSTOM-»
+    if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_OVERVIEW)) {
+«ENDIF-»
+        return LogUtil::registerPermissionError();
+«ENDIF-»
+    }
+«ENDLET-»
+// DEBUG: permission check aspect ends
+«targetDef.proceed()-»
+«ENDAROUND»

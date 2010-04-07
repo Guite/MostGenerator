@@ -1,0 +1,19 @@
+«IMPORT Behavior»
+«IMPORT templates::smallstuff»
+«EXTENSION extensions::Utils»
+
+«DEFINE Function(String src, String dest) FOR ReplaceOperation-»
+//TODO: Undefined ReplaceOperation
+«ENDDEFINE»
+
+«DEFINE Function(String src, String dest) FOR ReplaceGermanSpecialChars-»
+        // This method is used to transform data acquired from input
+        // in such a way that only 7-bit ASCII characters remain. 
+
+        // initialize transformation parameters
+        $special1 = 'ÄÖÜäöüß';
+        $special2 = 'AOUaous';
+
+        // now perform our transformation 
+        $obj['«dest»'] = strtr($obj['«src»'], $special1, $special2);
+«ENDDEFINE»

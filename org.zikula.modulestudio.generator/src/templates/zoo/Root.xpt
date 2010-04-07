@@ -1,0 +1,13 @@
+«IMPORT ModuleStudio»
+«EXTENSION extensions::Utils»
+
+«REM»start point for the generator«ENDREM»
+«DEFINE Root(Object pm) FOR ModuleStudio::Module»
+«FILE "zoo.txt"»
+Hello «author» :-)
+
+This becomes the zOO application generator.
+It is going to create a zOO application out of your «moduleName(name)» module.
+«ENDFILE»
+«ENDDEFINE»
+

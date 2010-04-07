@@ -4,11 +4,16 @@
 <!--    <property name="modelName" value="CampManager" />
     <property name="examplePath" value="/home/axel/projects/GuiteSVN/trunk/models/zikula" />
 -->
-    <property name="modelName" value="bcPromotion" />
+    <!-- which model ? -->
+    <property name="modelName" value="whFacts" />
+    <!-- where is it ? -->
     <property name="examplePath" value="/home/axel" />
+    <!-- which generator ? -->
+    <property name="cartridgeName" value="zclassic" />
 
 	<!-- call file reader workflow and provide required properties -->
-	<cartridge file="msWorkflow.mwe"
+	<cartridge file="workflow/msWorkflow.mwe"
+	           cartridgeName="${cartridgeName}"
 			   modelFile="${examplePath}/${modelName}.msmodule"
 			   enrichedModelFile="${examplePath}/${modelName}_Enriched.msmodule"
 			   srcGenPath="${examplePath}/output/"

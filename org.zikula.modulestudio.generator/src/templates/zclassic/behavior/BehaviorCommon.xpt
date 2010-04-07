@@ -1,0 +1,22 @@
+«IMPORT Behavior»
+«IMPORT templates::smallstuff»
+«EXTENSION extensions::Utils»
+
+«DEFINE ClassToString(String className) FOR Persistence::Table-»
+    /**
+     * Interceptor being called if an object is used within a string context.
+     * 
+     * @return string
+     */
+    public function __toString() {
+        $string  = 'Instance of the class "«moduleName(className)»' . "\n";
+        $string .= 'Managed table: «moduleName(name)»' . "\n";
+        $string .= 'Table fields:' . "\n";
+«FOREACH columns AS col-»
+        $string .= '        «moduleName(col.name)»' . "\n";
+«ENDFOREACH-»
+        $string .= "\n";
+
+        return $string;
+    }
+«ENDDEFINE»

@@ -1,0 +1,107 @@
+«IMPORT Processing»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+
+«DEFINE Root FOR ModuleStudio::Module»
+	«FILE "pntemplates/index.html"»«ENDFILE»
+«FOREACH processingContainer.processors AS processor-»
+«IF processor.type == ProcessorType::USER
+    || processor.type == ProcessorType::ADMIN
+    || processor.type == ProcessorType::CUSTOMROLE-»
+	«EXPAND HeaderFooter(modName(), processor)-»
+«IF processor.hasPStates('main')-»
+	«EXPAND Pages::Main::Impl(modName(), processor) FOREACH persistenceContainer.tables-»
+«ENDIF-»
+«IF processor.hasPStates('view')-»
+	«EXPAND Pages::View::Impl(modName(), processor, 3) FOREACH persistenceContainer.tables-»
+«ENDIF-»
+«IF processor.hasPStates('display')-»
+	«EXPAND Pages::Display::Impl(modName(), processor) FOREACH persistenceContainer.tables-»
+«ENDIF-»
+«IF processor.hasPStates('delete')-»
+    «EXPAND Pages::Delete::Impl(modName(), processor) FOREACH persistenceContainer.tables-»
+«ENDIF-»
+«ENDIF-»
+«ENDFOREACH-»
+«IF needsConfig()-»
+«FILE "pntemplates/" + modName() + "_admin_config.htm"-»
+<!--[* purpose of this template: module configuration *]-->
+
+<!--[include file="«modName()»_admin_header.htm"]-->
+
+<div class="z-admincontainer">
+<div class="z-adminpageicon"><!--[pnimg modname=core src=configure.gif set=icons/large __alt='Settings']--></div>
+
+<!--[gt text='Settings' assign="templatetitle"]-->
+<!--[pnpagesetvar name="title" value=$templatetitle]-->
+<h2><!--[$templatetitle]--></h2>
+
+<p><!--[gt text='Here you can manage all basic settings for this module.']--></p>
+
+<!--[pnform cssClass="z-form"]-->
+«REM»    <!--[pnformsetinitialfocus inputId=googlemapApiKey]-->«ENDREM»
+
+    <!--[* add validation summary and a <div> element for styling the form *]-->
+    <!--[«dbName(modName())»FormFrame]-->
+«FOREACH persistenceContainer.modvarContainer.modvars AS modvar-»
+        <div class="z-formrow">
+            <!--[pnformlabel for="«moduleName(modvar.name)»" __text='«formattedNameCapitalized(modvar.name)»']-->
+            <!--[pnformtextinput id="«moduleName(modvar.name)»" group="config" maxLength=255 width=20em __title='Input this setting.']-->
+        </div>
+«ENDFOREACH-»
+
+        <!--[pnmodcallhooks hookobject="module" hookaction="modifyconfig" module="«modName()»"]-->
+
+        <div class="z-formbuttons">
+            <!--[pnformbutton commandName="save" __text='Update configuration']-->
+            <!--[pnformbutton commandName="cancel" __text='Cancel']-->
+        </div>
+    <!--[/«dbName(modName())»FormFrame]-->
+<!--[/pnform]-->
+
+</div>
+
+<!--[include file="«modName()»_admin_footer.htm"]-->
+«ENDFILE-»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE HeaderFooter(String modName, Processor processor) FOR ModuleStudio::Module»
+«LET dbName(processor.name) AS procName-»
+«FILE "pntemplates/" + modName + "_" + procName + "_header.htm"-»
+<!--[* purpose of this template: header for «procName» area *]-->
+
+«IF processor.type == ProcessorType::ADMIN-»
+<!--[admincategorymenu xhtml=1]-->
+«ELSE-»
+<!--[insert name="getstatusmsg"]-->
+<br />
+«ENDIF-»
+«REM»
+<!--[pnajaxheader]-->
+<!--[pnpageaddvar name="javascript" value="modules/News/pnjavascript/sizecheck.js"]-->
+«ENDREM»
+«IF processor.type == ProcessorType::ADMIN-»
+<div class="z-adminbox">
+«ELSE-»
+<div class="z-frontendbox">
+«ENDIF-»
+    <h1><!--[gt text='«modName»']--></h1>
+    <div class="z-menu">
+«IF processor.type == ProcessorType::ADMIN-»
+        <!--[moduleadminlinks modname="«modName»"]-->
+«ELSE-»
+        [&nbsp;fill in your menu links here«REM»<a href="<!--[pnmodurl modname="«modName»" type="«procName»" func="view"]-->"><!--[gt text='View items']--></a>«ENDREM»&nbsp;]
+«ENDIF-»
+    </div>
+</div>
+«ENDFILE»
+«FILE "pntemplates/" + modName + "_" + procName + "_footer.htm"-»
+<!--[* purpose of this template: footer for «procName» area *]-->
+
+«EXPAND FileHelper::msWeblink-»
+
+«ENDFILE»
+«ENDLET-»
+«ENDDEFINE»
+

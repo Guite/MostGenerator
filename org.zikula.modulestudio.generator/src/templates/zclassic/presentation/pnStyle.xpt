@@ -1,0 +1,30 @@
+«IMPORT ModuleStudio»
+«IMPORT Processing»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+
+«DEFINE Root FOR Module-»
+«IF processingContainer.processors.processorStates.select(e|e.type == ProcessorStateType::EDIT).size > 0-»
+«FILE "pnstyle/index.html"-»«EXPAND FileHelper::msUrl-»«ENDFILE»
+«FILE "pnstyle/style.css"-»«EXPAND StyleDefines-»
+«ENDFILE»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE StyleDefines FOR Module-»
+div.linktabs {
+    margin-bottom: 10px;
+}
+
+div.«dbName(modName())»RightBox {
+    float: right;
+    margin: 0 1em;
+    padding: .5em;
+    border: 1px solid #666;
+}
+
+div.«dbName(modName())»RightBox p.manageLink {
+    margin-left: 18px;
+}
+
+«ENDDEFINE»

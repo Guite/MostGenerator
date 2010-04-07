@@ -1,0 +1,8 @@
+«IMPORT Behavior»
+«IMPORT templates::smallstuff»
+«IMPORT templates::behavior::transform»
+«EXTENSION extensions::Utils»
+
+«DEFINE Root FOR TransformObject-»
+//TODO: Undefined TransformObject
+«ENDDEFINE»
