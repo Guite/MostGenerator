@@ -1,7 +1,0 @@
-«IMPORT Behavior»
-«IMPORT templates::smallstuff»
-«EXTENSION extensions::Utils»
-
-«DEFINE Function(String src, String dest) FOR ArithmeticOperation-»
-//TODO: Undefined ArithmeticOperation
-«ENDDEFINE»
