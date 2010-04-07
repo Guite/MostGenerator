@@ -140,32 +140,4 @@
          version="0.0.0"
          unpack="false"/>
 
-   <plugin
-         id="org.zikula.modulestudio.generator.cartridge.documentation"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.zikula.modulestudio.generator.cartridge.reporting"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.zikula.modulestudio.generator.cartridge.zclassic"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.zikula.modulestudio.generator.cartridge.zoo"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
 </feature>
