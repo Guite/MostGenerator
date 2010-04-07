@@ -15,7 +15,7 @@
     <!-- call actual generator cartridge -->
     <cartridge file="workflow/cartridge/${cartridgeName}.mwe"
                cartridgeName="${cartridgeName}"
-               slot="slot"
+               slot="${slot}"
                slotFile="${slotFile}"
                srcGenPath="${srcGenPath}"
                srcManPath="${srcManPath}">

@@ -4,8 +4,12 @@
 <workflow>
     <property name="examplePath" value="/home/axel/projects/GuiteSVN/modules/trunk/models/${folder}" />
 
+    <!-- which generator ? -->
+    <property name="cartridgeName" value="zclassic" />
+
 	<!-- call file reader workflow and provide required properties -->
 	<cartridge file="msWorkflow.mwe"
+               cartridgeName="${cartridgeName}"
 			   modelFile="${examplePath}_models/${modelName}.msmodule"
 			   enrichedModelFile="${examplePath}_models/${modelName}_Enriched.msmodule"
 			   srcGenPath="${examplePath}_output/${outputDir}/"
