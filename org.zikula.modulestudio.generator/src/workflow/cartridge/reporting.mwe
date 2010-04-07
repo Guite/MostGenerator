@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workflow>
+    <!-- start generator component -->
+    <component id="generator" class="org.eclipse.xpand2.Generator" skipOnErrors="true">
+        <!-- enforce file encoding since otherwise an error occurs on unix systems -->
+        <!-- fileEncoding value="UTF-8" / -->
+
+        <!-- reference all used meta models -->
+        <metaModel idRef="mmEMF" />
+        <metaModel idRef="mmModuleStudio" /> 
+        <metaModel idRef="mmPersistence" /> 
+        <metaModel idRef="mmProcessing" /> 
+        <metaModel idRef="mmPresentation" /> 
+        <metaModel idRef="mmBehavior" /> 
+
+        <!-- XPand entry for "model" slot containing an instance of ModuleStudio.Module -->
+        <expand value="templates::${cartridgeName}::Root::Root(progressMonitor) FOR ${slot}"/>
+
+        <!-- advice aop templates to the generator -->
+<!--        <advice value="templates::${cartridgeName}::aspects::Permissions, templates::${cartridgeName}::aspects::ObjectExtensions" />-->
+
+        <!-- specify where to put the generated code -->
+        <genPath value="${srcGenPath}"/>
+        <srcPath value="${srcGenPath}"/>
+
+<!-- TODO: replace by outlets
+        <outlet path="${srcGenPath}"/>
+        <outlet name="TO_MAN_SRC" path="${srcManPath}" overwrite="false" /-->
+    </component>
+</workflow>
