@@ -12,8 +12,8 @@
                cartridgeName="${cartridgeName}"
 			   modelFile="${examplePath}_models/${modelName}.msmodule"
 			   enrichedModelFile="${examplePath}_models/${modelName}_Enriched.msmodule"
-			   srcGenPath="${examplePath}_output/${outputDir}/"
-			   srcManPath="${examplePath}_output/${outputDir}/src-man"
-			   apiRefPath="${examplePath}_output/${outputDir}/phpxref">
+			   srcGenPath="${examplePath}_output/${outputDir}/${cartridgeName}/"
+			   srcManPath="${examplePath}_output/${outputDir}/${cartridgeName}/src-man"
+			   apiRefPath="${examplePath}_output/${outputDir}/${cartridgeName}/phpxref">
 	</cartridge>
 </workflow>

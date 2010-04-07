@@ -9,15 +9,16 @@
     <!-- where is it ? -->
     <property name="examplePath" value="/home/axel" />
     <!-- which generator ? -->
-    <property name="cartridgeName" value="zclassic" />
+<!--    <property name="cartridgeName" value="zclassic" />-->
+    <property name="cartridgeName" value="zoo" />
 
 	<!-- call file reader workflow and provide required properties -->
 	<cartridge file="workflow/msWorkflow.mwe"
 	           cartridgeName="${cartridgeName}"
 			   modelFile="${examplePath}/${modelName}.msmodule"
 			   enrichedModelFile="${examplePath}/${modelName}_Enriched.msmodule"
-			   srcGenPath="${examplePath}/output/"
-			   srcManPath="${examplePath}/output/src-man"
-			   apiRefPath="${examplePath}/output/phpxref">
+			   srcGenPath="${examplePath}/output/${cartridgeName}/"
+			   srcManPath="${examplePath}/output/${cartridgeName}/src-man"
+			   apiRefPath="${examplePath}/output/${cartridgeName}/phpxref">
 	</cartridge>
 </workflow>
