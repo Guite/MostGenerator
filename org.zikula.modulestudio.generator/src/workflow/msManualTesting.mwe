@@ -9,8 +9,8 @@
     <!-- where is it ? -->
     <property name="examplePath" value="/home/axel" />
     <!-- which generator ? -->
-<!--    <property name="cartridgeName" value="zclassic" />-->
-    <property name="cartridgeName" value="zoo" />
+    <property name="cartridgeName" value="zclassic" />
+<!--    <property name="cartridgeName" value="zoo" />-->
 
 	<!-- call file reader workflow and provide required properties -->
 	<cartridge file="workflow/msWorkflow.mwe"

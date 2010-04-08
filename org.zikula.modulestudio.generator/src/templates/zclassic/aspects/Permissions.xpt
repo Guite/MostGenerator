@@ -3,7 +3,7 @@
 «EXTENSION extensions::Utils»
 
 «REM»Definition of permission schema arrays«ENDREM»
-«AROUND templates::smallstuff::pnVersion::PermissionSchema FOR Module-»
+«AROUND templates::zclassic::smallstuff::pnVersion::PermissionSchema FOR Module-»
 // DEBUG: permission schema aspect starts
 $modversion['securityschema'] = array('«modName()»::' => '::',
 «EXPAND PermissionSchema(modName()) FOREACH persistenceContainer.tables SEPARATOR ','-»);
@@ -23,7 +23,7 @@ $modversion['securityschema'] = array('«modName()»::' => '::',
 '«modName»:«capitalName(source.name)»:«capitalName(target.name)»' => '«capitalName(source.name)»ID:«capitalName(target.name)»ID:'«ENDDEFINE»
 
 «REM»Permission checks in system use cases«ENDREM»
-«AROUND templates::processing::Processor::PermissionCheck FOR ProcessorState-»
+«AROUND templates::zclassic::processing::Processor::PermissionCheck FOR ProcessorState-»
 // DEBUG: permission check aspect starts
 «LET stateProcessor.processingContainer.processingModule.modName() AS modName-»
 «IF stateProcessor.type == ProcessorType::ADMIN-»

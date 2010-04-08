@@ -1,7 +1,7 @@
 «IMPORT Persistence»
 «EXTENSION extensions::Utils»
 
-«AROUND templates::persistence::pnTables::ObjectExtensions FOR Table-»
+«AROUND templates::zclassic::persistence::pnTables::ObjectExtensions FOR Table-»
     // DEBUG: object extension aspect starts
 
 «IF usesStandardFields == true-»
@@ -47,7 +47,7 @@
 «targetDef.proceed()»
 «ENDAROUND»
 
-«AROUND templates::behavior::BusinessObject::standardSortingFields FOR Persistence::Table-»
+«AROUND templates::zclassic::behavior::BusinessObject::standardSortingFields FOR Persistence::Table-»
 «IF usesStandardFields == true-»,
                      'obj_status',
                      'cr_date',
