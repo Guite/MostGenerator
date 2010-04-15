@@ -239,8 +239,8 @@ listType:
 <!--[$«objName».«dbName(name)»|yesno:true]-->
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR Persistence::DecimalField-»
-<!--[$«objName».«dbName(name)»|numberformat]-->
+<!--[$«objName».«dbName(name)»|formatnumber]-->
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR Persistence::FloatField-»
-<!--[$«objName».«dbName(name)»|numberformat]-->
+<!--[$«objName».«dbName(name)»|formatnumber]-->
 «ENDDEFINE»
