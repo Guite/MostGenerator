@@ -238,3 +238,9 @@ listType:
 «DEFINE DisplayColumnField(String objName) FOR Persistence::BooleanField-»
 <!--[$«objName».«dbName(name)»|yesno:true]-->
 «ENDDEFINE»
+«DEFINE DisplayColumnField(String objName) FOR Persistence::DecimalField-»
+<!--[$«objName».«dbName(name)»|numberformat]-->
+«ENDDEFINE»
+«DEFINE DisplayColumnField(String objName) FOR Persistence::FloatField-»
+<!--[$«objName».«dbName(name)»|numberformat]-->
+«ENDDEFINE»

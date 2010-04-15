@@ -112,6 +112,12 @@
 «DEFINE DisplayColumnField(String objName) FOR Persistence::BooleanField-»
 <!--[$«objName».«dbName(name)»|yesno:true]-->
 «ENDDEFINE»
+«DEFINE DisplayColumnField(String objName) FOR Persistence::DecimalField-»
+<!--[$«objName».«dbName(name)»|numberformat]-->
+«ENDDEFINE»
+«DEFINE DisplayColumnField(String objName) FOR Persistence::FloatField-»
+<!--[$«objName».«dbName(name)»|numberformat]-->
+«ENDDEFINE»
 
 «DEFINE DisplaySubsets(String modName, String procName, Persistence::Table objTable) FOR Persistence::Table-»
 <h3>«nameMultiple.capitalName()»</h3>
