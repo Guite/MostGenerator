@@ -6,9 +6,7 @@
 «DEFINE Root FOR Module-»
 	«FILE "locale/index.html"»«EXPAND FileHelper::msUrl-»«ENDFILE»
 	«FILE "locale/de/index.html"»«EXPAND FileHelper::msUrl-»«ENDFILE»
-	«FILE "locale/en/index.html"»«EXPAND FileHelper::msUrl-»«ENDFILE»
 	«FILE "locale/de/LC_MESSAGES/index.html"»«EXPAND FileHelper::msUrl-»«ENDFILE»
-	«FILE "locale/en/LC_MESSAGES/index.html"»«EXPAND FileHelper::msUrl-»«ENDFILE»
 «ENDDEFINE»
 
 
