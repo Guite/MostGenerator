@@ -218,7 +218,7 @@ function «modName()»_defaultdata()
         array(«EXPAND ExampleRow(module, name, number) FOREACH columns SEPARATOR ','»)«ENDFOREACH-»
 «ENDDEFINE»
 «DEFINE ExampleRow(Module module, String tabName, Integer number) FOR TableColumn»
-            '«dbName(name)»' => __('«tabName» «name» «number»', $dom)»«ENDDEFINE»
+            '«dbName(name)»' => __('«tabName» «name» «number»', $dom)«ENDDEFINE»
 
 «DEFINE FuncInteractiveInit FOR Module»
 /**
