@@ -49,7 +49,7 @@
 
 «IF proc.type == ProcessorType::ADMIN-»
 <div class="z-admincontainer">
-<div class="z-adminpageicon"><!--[pnimg modname="core" src=$adminpageicon set="icons/large" alt=$templatetitle]--></div>
+<div class="z-adminpageicon"><!--[pnimg modname="core" src=$adminpageicon set="icons/large" alt=$templateTitle]--></div>
 «ELSE-»
 <div class="z-frontendcontainer">
 «ENDIF-»
