@@ -9,7 +9,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.mwe.core.resources.ResourceLoaderDefaultImpl;
 
-import ModuleStudio.ModuleStudioPackage;
+import de.guite.modulestudio.metamodel.ModuleStudio.ModuleStudioPackage;
 
 /**
 * This ResourceLoader is capable of loading resources from another plugin.

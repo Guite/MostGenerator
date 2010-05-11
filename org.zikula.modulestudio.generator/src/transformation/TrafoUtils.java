@@ -2,11 +2,12 @@ package transformation;
 
 import java.util.Iterator;
 
-import Persistence.IntegerField;
-import Persistence.PersistenceContainer;
-import Persistence.PersistenceFactory;
-import Persistence.Relationship;
-import Persistence.impl.PersistenceFactoryImpl;
+import de.guite.modulestudio.metamodel.Persistence.IntegerField;
+import de.guite.modulestudio.metamodel.Persistence.PersistenceContainer;
+import de.guite.modulestudio.metamodel.Persistence.PersistenceFactory;
+import de.guite.modulestudio.metamodel.Persistence.Relationship;
+import de.guite.modulestudio.metamodel.Persistence.Table;
+import de.guite.modulestudio.metamodel.Persistence.impl.PersistenceFactoryImpl;
 import extensions.Utils;
 
 /*
@@ -21,7 +22,7 @@ public class TrafoUtils {
 	 * @params    Table          given Table instance
 	 * @return                   flag if insertion was sucessful
 	 */
-	public static boolean addPrimaryKey(Persistence.Table table) {
+	public static boolean addPrimaryKey(Table table) {
 		try {
 			table.getColumns().add(0, createIDColumn(table.getName(), true));
 		}
@@ -38,7 +39,7 @@ public class TrafoUtils {
 	 * @params    Table          given Table instance
 	 * @return                   flag if process was sucessful
 	 */
-	public static boolean addRelationFields(Persistence.Table table) {
+	public static boolean addRelationFields(Table table) {
 		try {
 			PersistenceContainer container = table.getTableContainer();
 			for (Iterator relIter = container.getRelations().iterator(); relIter.hasNext();) {

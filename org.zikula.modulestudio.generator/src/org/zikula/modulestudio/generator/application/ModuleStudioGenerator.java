@@ -11,7 +11,7 @@ import org.eclipse.emf.mwe.core.WorkflowRunner;
 import org.eclipse.emf.mwe.core.monitor.NullProgressMonitor;
 import org.eclipse.emf.mwe.core.resources.ResourceLoaderFactory;
 
-import ModuleStudio.Module;
+import de.guite.modulestudio.metamodel.ModuleStudio.Module;
 
 public class ModuleStudioGenerator {
 

@@ -17,7 +17,7 @@ private handleTable(Table this):
 	this;
 
 private boolean addPrimaryKey(Table table)
-	: JAVA transformation.TrafoUtils.addPrimaryKey(Persistence.Table);
+	: JAVA transformation.TrafoUtils.addPrimaryKey(de.guite.modulestudio.metamodel.Persistence.Table);
 
 private boolean addRelationFields(Table table)
-	: JAVA transformation.TrafoUtils.addRelationFields(Persistence.Table);
+	: JAVA transformation.TrafoUtils.addRelationFields(de.guite.modulestudio.metamodel.Persistence.Table);
