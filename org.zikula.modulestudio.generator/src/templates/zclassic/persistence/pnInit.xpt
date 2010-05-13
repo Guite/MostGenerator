@@ -193,16 +193,16 @@ function «modName()»_defaultdata()
 
     $dom = ZLanguage::getModuleDomain('«modName()»');
 
+«IF persistenceContainer.numExampleRows > 0-»
 «FOREACH persistenceContainer.tables AS tab-»
-«IF tab.numExampleRows > 0-»
     // define default data for «moduleName(tab.name)» table
     $records = array(«EXPAND createExampleRows(this) FOR tab»
     );
 
     // insert it into the «moduleName(tab.name)» table
     DBUtil::insertObjectArray($records, '«dbName(prefix + '_' + tab.name)»', '«dbName(tab.name)»id', true);
-«ENDIF-»
 «ENDFOREACH-»
+«ENDIF-»
 
     // insertion successful
     return true;
@@ -213,7 +213,7 @@ function «modName()»_defaultdata()
         !DBUtil::deleteWhere('«fullTableName(this)»', '1=1')«ENDDEFINE»
 
 «DEFINE createExampleRows(Module module) FOR Table»
-«FOREACH 1.upTo(numExampleRows) AS number SEPARATOR ','-»
+«FOREACH 1.upTo(tableContainer.numExampleRows) AS number SEPARATOR ','-»
 
         array(«EXPAND ExampleRow(module, name, number) FOREACH columns SEPARATOR ','»)«ENDFOREACH-»
 «ENDDEFINE»
