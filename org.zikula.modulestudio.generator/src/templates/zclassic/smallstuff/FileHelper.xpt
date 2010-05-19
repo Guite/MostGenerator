@@ -1,4 +1,4 @@
-«IMPORT ModuleStudio»
+«IMPORT modulestudio»
 «IMPORT templates::zclassic»
 «EXTENSION extensions::Utils»
 

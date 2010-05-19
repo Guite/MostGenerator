@@ -1,5 +1,5 @@
-«IMPORT ModuleStudio»
-«IMPORT Processing»
+«IMPORT modulestudio»
+«IMPORT processing»
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 

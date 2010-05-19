@@ -1,6 +1,6 @@
-import ModuleStudio;
-import Persistence;
-import Processing;
+import modulestudio;
+import persistence;
+import processing;
 
 
 cached String constantName(ProcessorState this) :
@@ -13,7 +13,7 @@ cached String constantName(Transition this) :
 /*
  * naming extensions
  */
-cached String modName(ModuleStudio::Module this) :
+cached String modName(Module this) :
 	moduleName(name);
 
 cached String moduleName(String s)
@@ -28,7 +28,7 @@ cached String formattedNameCapitalized(String s)
 	: JAVA extensions.Utils.formattedNameCapitalized(java.lang.String);
 
 
-cached boolean needsConfig(ModuleStudio::Module this) :
+cached boolean needsConfig(Module this) :
 	persistenceContainer.modvarContainer.modvars.size > 0;
 
 

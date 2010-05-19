@@ -1,8 +1,8 @@
-«IMPORT ModuleStudio»
+«IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 
 «REM»start point for the generator«ENDREM»
-«DEFINE Root(Object pm) FOR ModuleStudio::Module»
+«DEFINE Root(Object pm) FOR Module»
 «FILE "zoo.txt"»
 Hello «author» :-)
 

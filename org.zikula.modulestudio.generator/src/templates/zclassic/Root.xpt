@@ -7,7 +7,7 @@
 «EXTENSION extensions::Utils»
 
 «REM»start point for the generator«ENDREM»
-«DEFINE Root(Object pm) FOR ModuleStudio::Module»
+«DEFINE Root(Object pm) FOR modulestudio::Module»
     «REM»«pm.subTask("Basic information")»«ENDREM»
 	«EXPAND pnVersion::Root»«REM»TODO: remove pn prefix«ENDREM»
 

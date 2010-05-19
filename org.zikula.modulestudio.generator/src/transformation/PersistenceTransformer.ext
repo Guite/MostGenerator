@@ -1,5 +1,5 @@
-import ModuleStudio;
-import Persistence;
+import modulestudio;
+import persistence;
 extension extensions::Utils;
 
 //extension org::eclipse::xtend::util::stdlib::io;

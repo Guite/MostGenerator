@@ -3,6 +3,6 @@
 
 
 «REM»Entry point for the module's blocks«ENDREM»
-«DEFINE Root FOR ModuleStudio::Module-»
+«DEFINE Root FOR modulestudio::Module-»
 «REM»TODO«ENDREM»
 «ENDDEFINE»

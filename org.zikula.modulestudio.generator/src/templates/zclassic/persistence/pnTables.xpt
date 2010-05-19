@@ -1,5 +1,5 @@
-«IMPORT ModuleStudio»
-«IMPORT Persistence»
+«IMPORT modulestudio»
+«IMPORT persistence»
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 

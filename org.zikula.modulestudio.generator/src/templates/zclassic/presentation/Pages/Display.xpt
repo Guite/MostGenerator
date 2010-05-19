@@ -1,7 +1,7 @@
-«IMPORT Processing»
+«IMPORT processing»
 «EXTENSION extensions::Utils»
 
-«DEFINE Impl(String modName, Processor processor) FOR Persistence::Table»
+«DEFINE Impl(String modName, Processor processor) FOR persistence::Table»
 «LET dbName(processor.name) AS procName-»
 «LET moduleName(name) AS objName-»
 «FILE "pntemplates/" + modName + "_" + procName + "_" + objName + "_display.htm"-»
@@ -21,7 +21,7 @@
 <h2><!--[$«objName».«titleField»|pnmodcallhooks]--></h2>
 «ENDLET-»
 
-«LET tableContainer.relations.select(e|e.source.name == name && e.type == Persistence::RelationshipType::ONETOMANY) AS refedElems-»
+«LET tableContainer.relations.select(e|e.source.name == name && e.type == persistence::RelationshipType::ONETOMANY) AS refedElems-»
 «IF refedElems.size > 0-»
 <div class="«modName.dbName()»RightBox">
 «EXPAND DisplaySubsets(modName, procName, this) FOREACH refedElems.target-»
@@ -99,27 +99,27 @@
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE DisplayColumnField(String objName) FOR Persistence::TableColumn-»
+«DEFINE DisplayColumnField(String objName) FOR persistence::TableColumn-»
 <!--[$«objName».«dbName(name)»]-->
 «ENDDEFINE»
 
-«DEFINE DisplayColumnField(String objName) FOR Persistence::DateField-»
+«DEFINE DisplayColumnField(String objName) FOR persistence::DateField-»
 <!--[$«objName».«dbName(name)»|pndate_format:"datebrief"]-->
 «ENDDEFINE»
-«DEFINE DisplayColumnField(String objName) FOR Persistence::TimestampField-»
+«DEFINE DisplayColumnField(String objName) FOR persistence::TimestampField-»
 <!--[$«objName».«dbName(name)»|pndate_format:"datetimebrief"]-->
 «ENDDEFINE»
-«DEFINE DisplayColumnField(String objName) FOR Persistence::BooleanField-»
+«DEFINE DisplayColumnField(String objName) FOR persistence::BooleanField-»
 <!--[$«objName».«dbName(name)»|yesno:true]-->
 «ENDDEFINE»
-«DEFINE DisplayColumnField(String objName) FOR Persistence::DecimalField-»
+«DEFINE DisplayColumnField(String objName) FOR persistence::DecimalField-»
 <!--[$«objName».«dbName(name)»|formatnumber]-->
 «ENDDEFINE»
-«DEFINE DisplayColumnField(String objName) FOR Persistence::FloatField-»
+«DEFINE DisplayColumnField(String objName) FOR persistence::FloatField-»
 <!--[$«objName».«dbName(name)»|formatnumber]-->
 «ENDDEFINE»
 
-«DEFINE DisplaySubsets(String modName, String procName, Persistence::Table objTable) FOR Persistence::Table-»
+«DEFINE DisplaySubsets(String modName, String procName, persistence::Table objTable) FOR persistence::Table-»
 <h3>«nameMultiple.capitalName()»</h3>
 <!--[securityutil_checkpermission component="«modName»::" instance=".*" level="ACCESS_ADMIN" assign="authAdmin"]-->
 <!--[if $authAdmin || $«objTable.name.moduleName()».cr_uid eq $uid]-->

@@ -1,5 +1,5 @@
-«IMPORT ModuleStudio»
-«IMPORT Processing»
+«IMPORT modulestudio»
+«IMPORT processing»
 «EXTENSION extensions::Utils»
 
 «REM»Definition of permission schema arrays«ENDREM»
@@ -11,7 +11,7 @@ $modversion['securityschema'] = array('«modName()»::' => '::',
 «targetDef.proceed()-»
 «ENDAROUND»
 
-«DEFINE PermissionSchema(String modName) FOR Persistence::Table-»
+«DEFINE PermissionSchema(String modName) FOR persistence::Table-»
 «LET tableContainer.relations.select(e|e.target.name == name) AS joins-»
 «IF joins.size > 0-»
 «EXPAND PermissionSchema(modName) FOREACH joins SEPARATOR ','-»,
@@ -19,7 +19,7 @@ $modversion['securityschema'] = array('«modName()»::' => '::',
 «ENDLET-»
 '«modName»:«capitalName(name)»:' => '«capitalName(name)»ID::'«ENDDEFINE»
 
-«DEFINE PermissionSchema(String modName) FOR Persistence::Relationship»
+«DEFINE PermissionSchema(String modName) FOR persistence::Relationship»
 '«modName»:«capitalName(source.name)»:«capitalName(target.name)»' => '«capitalName(source.name)»ID:«capitalName(target.name)»ID:'«ENDDEFINE»
 
 «REM»Permission checks in system use cases«ENDREM»

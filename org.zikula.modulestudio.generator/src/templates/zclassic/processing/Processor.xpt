@@ -1,6 +1,6 @@
-«IMPORT ModuleStudio»
-«IMPORT Persistence»
-«IMPORT Processing»
+«IMPORT modulestudio»
+«IMPORT persistence»
+«IMPORT processing»
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::UtilsBO»
@@ -128,7 +128,7 @@ function «module.modName()»_«dbName(stateProcessor.name + '_' + name)»($args
  *
  * @author       «module.author»
  * @params       TODO
-«IF type == ProcessorStateType::VIEW || type == ProcessorStateType::DISPLAY || type == ProcessorStateType::EDIT || type == Processing::ProcessorStateType::DELETE-»
+«IF type == ProcessorStateType::VIEW || type == ProcessorStateType::DISPLAY || type == ProcessorStateType::EDIT || type == ProcessorStateType::DELETE-»
  * @param        ot             string    treated object type
 «IF type == ProcessorStateType::DELETE-»
  * @param        id		        int	      ID of the entry

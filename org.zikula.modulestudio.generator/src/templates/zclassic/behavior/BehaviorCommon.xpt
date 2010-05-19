@@ -1,8 +1,8 @@
-«IMPORT Behavior»
+«IMPORT behavior»
 «IMPORT templates::smallstuff»
 «EXTENSION extensions::Utils»
 
-«DEFINE ClassToString(String className) FOR Persistence::Table-»
+«DEFINE ClassToString(String className) FOR persistence::Table-»
     /**
      * Interceptor being called if an object is used within a string context.
      * 

@@ -2,12 +2,12 @@ package transformation;
 
 import java.util.Iterator;
 
-import de.guite.modulestudio.metamodel.Persistence.IntegerField;
-import de.guite.modulestudio.metamodel.Persistence.PersistenceContainer;
-import de.guite.modulestudio.metamodel.Persistence.PersistenceFactory;
-import de.guite.modulestudio.metamodel.Persistence.Relationship;
-import de.guite.modulestudio.metamodel.Persistence.Table;
-import de.guite.modulestudio.metamodel.Persistence.impl.PersistenceFactoryImpl;
+import de.guite.modulestudio.metamodel.persistence.IntegerField;
+import de.guite.modulestudio.metamodel.persistence.PersistenceContainer;
+import de.guite.modulestudio.metamodel.persistence.PersistenceFactory;
+import de.guite.modulestudio.metamodel.persistence.Relationship;
+import de.guite.modulestudio.metamodel.persistence.Table;
+import de.guite.modulestudio.metamodel.persistence.impl.PersistenceFactoryImpl;
 import extensions.Utils;
 
 /*

@@ -1,5 +1,5 @@
-«IMPORT ModuleStudio»
-«IMPORT Behavior»
+«IMPORT modulestudio»
+«IMPORT behavior»
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::UtilsBO»
@@ -28,7 +28,7 @@ class PN«modName()»«IF appendArray»Array«ENDIF» extends PNObject«IF appen
 «ENDDEFINE»
 
 
-«DEFINE ObjectClassWrapper(ModuleStudio::Module module, Boolean appendArray) FOR Persistence::Table-»
+«DEFINE ObjectClassWrapper(modulestudio::Module module, Boolean appendArray) FOR persistence::Table-»
 «FILE "classes/Base/" + baseClassFileName(appendArray)»«EXPAND FileHelper::phpFileHeader(module)»
 
 Loader::loadClass('PN«module.modName()»«IF appendArray»Array«ENDIF»', 'modules/«module.modName()»/classes');
@@ -66,7 +66,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 «ENDDEFINE»
 
 
-«DEFINE ObjectClassImpl(ModuleStudio::Module module) FOR Persistence::Table-»
+«DEFINE ObjectClassImpl(modulestudio::Module module) FOR persistence::Table-»
     /**
      * Constructor, init everything to sane defaults and handle parameters.
      * It only needs to set the fields which are used to configure
@@ -126,18 +126,18 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 	«EXPAND BehaviorCommon::ClassToString(baseClassName(false))-»
 «ENDDEFINE»
 
-«DEFINE SelectJoinFieldTableNames(String exludedIdField) FOR Persistence::Table-»
+«DEFINE SelectJoinFieldTableNames(String exludedIdField) FOR persistence::Table-»
 «EXPAND ArrayListEntry('') FOREACH columns.reject(e|e.name == exludedIdField || e.isPrimaryKey) SEPARATOR ', '-»
 «ENDDEFINE»
 
-«DEFINE SelectJoinFieldObjNames(String exludedIdField) FOR Persistence::Table-»
+«DEFINE SelectJoinFieldObjNames(String exludedIdField) FOR persistence::Table-»
 «EXPAND ArrayListEntry(dbName(name) + '_') FOREACH columns.reject(e|e.name == exludedIdField || e.isPrimaryKey) SEPARATOR ', '-»
 «ENDDEFINE»
 
-«DEFINE ArrayListEntry(String entryPrefix) FOR Persistence::TableColumn-»
+«DEFINE ArrayListEntry(String entryPrefix) FOR persistence::TableColumn-»
 '«entryPrefix»«dbName(name)»'«ENDDEFINE»
 
-«DEFINE ObjectJoins FOR Persistence::Table-»
+«DEFINE ObjectJoins FOR persistence::Table-»
 «FOREACH tableContainer.relations.select(e|e.target == this) AS relation-»
         $this->_objJoin[]     = array ('join_table'          => '«fullTableName(relation.source)»',
                                        'join_field'          => array(«EXPAND SelectJoinFieldTableNames(dbName(name)+"id") FOR relation.source-»),
@@ -147,7 +147,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 «ENDFOREACH-»
 «ENDDEFINE»
 
-«DEFINE ObjectPermissionFilters(String modName) FOR Persistence::Table-»
+«DEFINE ObjectPermissionFilters(String modName) FOR persistence::Table-»
         // apply object permission filters
         $this->_objPermissionFilter[] = array('component_left'   => '«modName»',
                                               'component_middle' => '«capitalName(name)»',
@@ -529,7 +529,7 @@ Stats:
 
 
 
-«DEFINE ObjectArrayClassImpl(ModuleStudio::Module module) FOR Persistence::Table-»
+«DEFINE ObjectArrayClassImpl(modulestudio::Module module) FOR persistence::Table-»
     /**
      * Constructor, init everything to sane defaults and handle parameters.
      * It only needs to set the fields which are used to configure
@@ -598,7 +598,7 @@ Stats:
 «EXPAND BehaviorCommon::ClassToString(baseClassName(true))-»
 «ENDDEFINE»
 
-«DEFINE singleSortingField FOR Persistence::TableColumn»
+«DEFINE singleSortingField FOR persistence::TableColumn»
 «LET columnTable.tableContainer.relations.select(e|e.target.name == columnTable.name).select(e|dbName(e.source.name + "id") == dbName(name)) AS joins-»
 «IF joins.size > 0-»
                      '«joins.get(0).source.name.dbName()»_«joins.get(0).source.columns.select(e|e.isLeading == true).get(0).name.dbName()»'«""-»
@@ -607,22 +607,22 @@ Stats:
 «ENDIF-»
 «ENDLET-»«ENDDEFINE»
 
-«DEFINE standardSortingFields FOR Persistence::Table»
+«DEFINE standardSortingFields FOR persistence::Table»
 «REM»will be filled by Advices«ENDREM»
 «ENDDEFINE»
 
-«DEFINE sanitizeForOutput FOR Persistence::TableColumn-»
+«DEFINE sanitizeForOutput FOR persistence::TableColumn-»
         $data['«dbName(name)»'] = ((isset($data['«dbName(name)»']) && !empty($data['«dbName(name)»'])) ? DataUtil::formatForDisplay($data['«dbName(name)»']) : '');
 «ENDDEFINE»
 
-«DEFINE sanitizeForOutput FOR Persistence::TextField-»
+«DEFINE sanitizeForOutput FOR persistence::TextField-»
         $data['«dbName(name)»'] = ((isset($data['«dbName(name)»']) && !empty($data['«dbName(name)»'])) ? DataUtil::formatForDisplayHTML($data['«dbName(name)»']) : '');
 «ENDDEFINE»
 
-«DEFINE sanitizeForOutput FOR Persistence::BooleanField-»
+«DEFINE sanitizeForOutput FOR persistence::BooleanField-»
         $data['«dbName(name)»'] = (bool) $data['«dbName(name)»'];
 «ENDDEFINE»
 
-«DEFINE sanitizeForOutput FOR Persistence::BlobField-»
+«DEFINE sanitizeForOutput FOR persistence::BlobField-»
 «ENDDEFINE»
 

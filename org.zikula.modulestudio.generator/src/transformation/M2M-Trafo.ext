@@ -1,5 +1,5 @@
-import ModuleStudio;
-import Persistence;
+import modulestudio;
+import persistence;
 
 create Module this duplicate(Module s):
   	persistenceContainer.tables.addAll(s.persistenceContainer.tables.duplicate()) ->

@@ -1,5 +1,5 @@
-«IMPORT ModuleStudio»
-«IMPORT Persistence»
+«IMPORT modulestudio»
+«IMPORT persistence»
 «EXTENSION extensions::Utils»
 
 «REM»Entry point for module language defines«ENDREM»

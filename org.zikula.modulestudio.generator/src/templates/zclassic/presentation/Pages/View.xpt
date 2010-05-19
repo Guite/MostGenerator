@@ -1,4 +1,4 @@
-«IMPORT Processing»
+«IMPORT processing»
 «EXTENSION extensions::Utils»
 
 «REM»
@@ -8,7 +8,7 @@ listType:
 	2 = div and dl
 	3 = div and table
 «ENDREM»
-«DEFINE Impl(String modName, Processor processor, Integer listType) FOR Persistence::Table»
+«DEFINE Impl(String modName, Processor processor, Integer listType) FOR persistence::Table»
 «LET dbName(processor.name) AS procName-»
 «LET moduleName(name) AS objName-»
 «FILE "pntemplates/" + modName + "_" + procName + "_" + objName + "_view.htm"-»
@@ -217,30 +217,30 @@ listType:
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE Alignment FOR Persistence::TableColumn»left«ENDDEFINE»
-«DEFINE Alignment FOR Persistence::IntegerField»right«ENDDEFINE»
-«DEFINE Alignment FOR Persistence::DecimalField»right«ENDDEFINE»
-«DEFINE Alignment FOR Persistence::FloatField»right«ENDDEFINE»
-«DEFINE Alignment FOR Persistence::BooleanField»center«ENDDEFINE»
+«DEFINE Alignment FOR persistence::TableColumn»left«ENDDEFINE»
+«DEFINE Alignment FOR persistence::IntegerField»right«ENDDEFINE»
+«DEFINE Alignment FOR persistence::DecimalField»right«ENDDEFINE»
+«DEFINE Alignment FOR persistence::FloatField»right«ENDDEFINE»
+«DEFINE Alignment FOR persistence::BooleanField»center«ENDDEFINE»
 
 
 
-«DEFINE DisplayColumnField(String objName) FOR Persistence::TableColumn-»
+«DEFINE DisplayColumnField(String objName) FOR persistence::TableColumn-»
 <!--[$«objName».«dbName(name)»]-->
 «ENDDEFINE»
 
-«DEFINE DisplayColumnField(String objName) FOR Persistence::DateField-»
+«DEFINE DisplayColumnField(String objName) FOR persistence::DateField-»
 <!--[$«objName».«dbName(name)»|pndate_format:"datebrief"]-->
 «ENDDEFINE»
-«DEFINE DisplayColumnField(String objName) FOR Persistence::TimestampField-»
+«DEFINE DisplayColumnField(String objName) FOR persistence::TimestampField-»
 <!--[$«objName».«dbName(name)»|pndate_format:"datetimebrief"]-->
 «ENDDEFINE»
-«DEFINE DisplayColumnField(String objName) FOR Persistence::BooleanField-»
+«DEFINE DisplayColumnField(String objName) FOR persistence::BooleanField-»
 <!--[$«objName».«dbName(name)»|yesno:true]-->
 «ENDDEFINE»
-«DEFINE DisplayColumnField(String objName) FOR Persistence::DecimalField-»
+«DEFINE DisplayColumnField(String objName) FOR persistence::DecimalField-»
 <!--[$«objName».«dbName(name)»|formatnumber]-->
 «ENDDEFINE»
-«DEFINE DisplayColumnField(String objName) FOR Persistence::FloatField-»
+«DEFINE DisplayColumnField(String objName) FOR persistence::FloatField-»
 <!--[$«objName».«dbName(name)»|formatnumber]-->
 «ENDDEFINE»

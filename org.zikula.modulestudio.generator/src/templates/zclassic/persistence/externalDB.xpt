@@ -1,7 +1,7 @@
 «IMPORT ModuleStudio»
 «EXTENSION extensions::Utils»
 
-«DEFINE ToDo FOR Persistence::PersistenceContainer-»
+«DEFINE ToDo FOR persistence::PersistenceContainer-»
 Info about currently active connection:
 	$dbInfo   = DBConnectionStack::getConnectionInfo($name=null);	// $name = null --> current connection
 

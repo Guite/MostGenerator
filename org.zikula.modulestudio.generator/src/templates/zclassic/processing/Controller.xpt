@@ -1,7 +1,7 @@
-«IMPORT ModuleStudio»
-«IMPORT Persistence»
-«IMPORT Processing»
-«IMPORT Presentation»
+«IMPORT modulestudio»
+«IMPORT persistence»
+«IMPORT processing»
+«IMPORT presentation»
 «IMPORT templates::zclassic::presentation»
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
@@ -84,7 +84,7 @@ class «modName()»_admin_configHandler extends pnFormHandler
 
 
 «REM»Entry point for pnForm handler classes«ENDREM»
-«DEFINE Root(Module module, Processor proc, String actionName) FOR Persistence::Table-»
+«DEFINE Root(Module module, Processor proc, String actionName) FOR Table-»
 «LET dbName(proc.name) AS procName-»
 «FILE "classes/FormHandler/" + moduleName(module.name + "_" + procName + "_" + name + "_" + actionName) + "handler.class.php"»«REM»TODO: EXPAND FileHelper::phpFileHeader«ENDREM»
 «EXPAND FileHelper::phpFileHeader(module)-»
@@ -94,7 +94,7 @@ class «modName()»_admin_configHandler extends pnFormHandler
 «ENDDEFINE»
 
 
-«DEFINE FormHandler(Module module, Processor proc, String actionName) FOR Persistence::Table-»
+«DEFINE FormHandler(Module module, Processor proc, String actionName) FOR Table-»
 «LET module.modName() AS modName-»
 «LET dbName(proc.name) AS procName-»
 /**
@@ -168,7 +168,7 @@ class «moduleName(modName + "_" + procName + "_" + name + "_" + actionName)»Ha
 «ENDDEFINE»
 
 
-«DEFINE initialize(Module module, Processor proc, String actionName, String modName, String procName) FOR Persistence::Table-»
+«DEFINE initialize(Module module, Processor proc, String actionName, String modName, String procName) FOR Table-»
         // retrieve the ID of the object we wish to edit
         // default to 0 (which is a numeric id but an invalid value)
         // no provided id means that we want to create a new object
@@ -210,10 +210,10 @@ class «moduleName(modName + "_" + procName + "_" + name + "_" + actionName)»Ha
                 return $render->pnFormRegisterError(LogUtil::registerPermissionError());
             }
 
-«IF columns.typeSelect(Persistence::DateField).size > 0-»
+«IF columns.typeSelect(DateField).size > 0-»
             $todayDate = date('Y-m-d');
 «ENDIF-»
-«IF columns.typeSelect(Persistence::TimestampField).size > 0-»
+«IF columns.typeSelect(TimestampField).size > 0-»
             $thisTime = date('Y-m-d H:i:s');
 «ENDIF-»
 
@@ -233,7 +233,7 @@ class «moduleName(modName + "_" + procName + "_" + name + "_" + actionName)»Ha
 «ENDREM»
         }
 
-«FOREACH columns.typeSelect(Persistence::DateField) AS dateField-»
+«FOREACH columns.typeSelect(DateField) AS dateField-»
         if ($objectData['«dateField.name.dbName()»'] == '1900-01-01 00:00:00') {
             $objectData['«dateField.name.dbName()»'] = null;
         }
@@ -287,7 +287,7 @@ class «moduleName(modName + "_" + procName + "_" + name + "_" + actionName)»Ha
 «DEFINE FieldDefaultData FOR DecimalField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF»«ENDDEFINE»
 
 
-«DEFINE handleCommand(Module module, Processor proc, String actionName, String modName, String procName) FOR Persistence::Table-»
+«DEFINE handleCommand(Module module, Processor proc, String actionName, String modName, String procName) FOR Table-»
         // return url for redirecting
         $returnUrl = null;
 
@@ -414,11 +414,11 @@ class «moduleName(modName + "_" + procName + "_" + name + "_" + actionName)»Ha
 «ENDDEFINE»
 
 
-«DEFINE FetchInputDataStart(String obj) FOR Persistence::Table-»
+«DEFINE FetchInputDataStart(String obj) FOR Table-»
             // fetch posted data input values as an associative array
             $«obj»Data = $render->pnFormGetValues();
 «ENDDEFINE»
-«DEFINE FetchInputDataEnd(String obj) FOR Persistence::Table-»
+«DEFINE FetchInputDataEnd(String obj) FOR Table-»
 «REM»«FOREACH columns AS col-»
 «LET tableContainer.relations.select(e|e.target.name == name && e.source.idField() == col.name) AS joins-»
 «IF joins.size > 0-»
@@ -489,7 +489,7 @@ function «modName()»_adminform_preferences()
     $prefs = FormUtil::getPassedValue('preferences', null, 'POST');
 
     // now for each preference entry, set the appropriate module variable
-«IF persistenceContainer.modvarContainer.modvars.typeSelect(Persistence::ModuleVarBool).size > 0-»
+«IF persistenceContainer.modvarContainer.modvars.typeSelect(ModuleVarBool).size > 0-»
     // for booleans we use the convention (int)(boolean) to ensure that set values get cast to a 0/1 value
 «ENDIF-»
 «FOREACH persistenceContainer.modvarContainer.modvars AS modvar-»
@@ -507,9 +507,9 @@ function «modName()»_adminform_preferences()
 
 «ENDDEFINE»
 
-«DEFINE GetVarForPrefPrefix FOR Persistence::ModuleVar»«ENDDEFINE»
-«DEFINE GetVarForPrefPrefix FOR Persistence::ModuleVarInt»(int)«ENDDEFINE»
-«DEFINE GetVarForPrefPrefix FOR Persistence::ModuleVarBool»(int)(boolean)«ENDDEFINE»
+«DEFINE GetVarForPrefPrefix FOR ModuleVar»«ENDDEFINE»
+«DEFINE GetVarForPrefPrefix FOR ModuleVarInt»(int)«ENDDEFINE»
+«DEFINE GetVarForPrefPrefix FOR ModuleVarBool»(int)(boolean)«ENDDEFINE»
 
 «ENDIF-»
 

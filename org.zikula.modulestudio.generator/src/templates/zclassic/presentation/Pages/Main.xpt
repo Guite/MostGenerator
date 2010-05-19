@@ -1,7 +1,7 @@
-«IMPORT Processing»
+«IMPORT processing»
 «EXTENSION extensions::Utils»
 
-«DEFINE Impl(String modName, Processor processor) FOR Persistence::Table»
+«DEFINE Impl(String modName, Processor processor) FOR persistence::Table»
 «LET dbName(processor.name) AS procName-»
 «FILE "pntemplates/" + modName + "_" + procName + "_main.htm"-»
 <!--[* purpose of this template: main template for «procName» area *]-->

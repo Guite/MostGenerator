@@ -1,6 +1,6 @@
-import ModuleStudio;
-import Persistence;
-import Behavior;
+import modulestudio;
+import persistence;
+import behavior;
 extension extensions::Utils;
 
 /*

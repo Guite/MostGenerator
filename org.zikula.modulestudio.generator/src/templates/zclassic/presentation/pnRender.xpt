@@ -1,8 +1,8 @@
-«IMPORT Processing»
+«IMPORT processing»
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 
-«DEFINE Root FOR ModuleStudio::Module»
+«DEFINE Root FOR modulestudio::Module»
 	«FILE "pntemplates/index.html"»«ENDFILE»
 «FOREACH processingContainer.processors AS processor-»
 «IF processor.type == ProcessorType::USER
@@ -66,7 +66,7 @@
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE HeaderFooter(String modName, Processor processor) FOR ModuleStudio::Module»
+«DEFINE HeaderFooter(String modName, Processor processor) FOR modulestudio::Module»
 «LET dbName(processor.name) AS procName-»
 «FILE "pntemplates/" + modName + "_" + procName + "_header.htm"-»
 <!--[* purpose of this template: header for «procName» area *]-->
