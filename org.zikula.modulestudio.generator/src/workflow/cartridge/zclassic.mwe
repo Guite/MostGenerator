@@ -25,6 +25,15 @@
 
 <!-- TODO: replace by outlets
         <outlet path="${srcGenPath}"/>
-        <outlet name="TO_MAN_SRC" path="${srcManPath}" overwrite="false" /-->
+        <outlet name="TO_MAN_SRC" path="${srcManPath}" overwrite="false" />
+
+        The Xpand templates contain FILE commands which can refer to outlets.
+        <outlet path="src">
+            <postprocessor class="oaw.xpand2.output.JavaBeautifier"/>
+        </outlet>
+        <outlet name="backendClasses" path="../PrototypeBackend/src" append="false" overwrite="true">
+            <postprocessor class="oaw.xpand2.output.JavaBeautifier"/>
+        </outlet>
+-->
     </component>
 </workflow>
