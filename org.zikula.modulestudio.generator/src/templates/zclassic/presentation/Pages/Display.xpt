@@ -41,16 +41,7 @@
 «ENDLET-»
 «ENDFOREACH-»
 «IF usesStandardFields == true-»
-    <dt><!--[gt text='Meta data']--></dt>
-<!--[if $«objName».cr_uid]-->
-<!--[pnusergetvar name="uname" uid=$«objName».cr_uid assign="cr_uname"]-->
-<!--[pnconfiggetvar name="profilemodule" assign="profilemodule"]-->
-<!--[pnmodurl modname=$profilemodule func="view" uname=$cr_uname assign="cr_profilelink"]-->
-    <dd><!--[gt text='Created by %1$s on %2$s' tag1="<a href='$cr_profilelink'>$cr_uname</a>" tag2=$«objName».cr_date|pndate_format html=true]--></dd>
-<!--[/if]-->
-<!--[pnusergetvar name="uname" uid=$«objName».lu_uid assign="lu_uname"]-->
-<!--[pnmodurl modname=$profilemodule func="view" uname=$lu_uname assign="lu_profilelink"]-->
-    <dd><!--[gt text='Updated by %1$s on %2$s' tag1="<a href='$lu_profilelink'>$lu_uname</a>" tag2=$«objName».lu_date|pndate_format html=true]--></dd>
+    <!--[include file="«modName»_«procName»_include_metadata_display.htm" obj=$«objName»]-->
 «ENDIF-»
 </dl>
 

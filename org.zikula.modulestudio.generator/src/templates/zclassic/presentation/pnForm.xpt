@@ -94,17 +94,7 @@ cssClass="myClass"
     </fieldset>
 «IF usesStandardFields == true-»
 <!--[if $mode ne "create"]-->
-    <fieldset>
-        <legend><!--[gt text='Meta data']--></legend>
-        <ul>
-            <!--[pnusergetvar name="uname" uid=$cr_uid assign="username"]-->
-            <li><!--[gt text='Created by %s' tag1=$username]--></li>
-            <li><!--[gt text='Created on %s' tag1=$cr_date|pndate_format]--></li>
-            <!--[pnusergetvar name="uname" uid=$lu_uid assign="username"]-->
-            <li><!--[gt text='Updated by %s' tag1=$username]--></li>
-            <li><!--[gt text='Updated on %s' tag1=$lu_date|pndate_format]--></li>
-        </ul>
-    </fieldset>
+    <!--[include file="«modName»_«procName»_include_metadata_edit.htm"]-->
 <!--[/if]-->
 «ENDIF-»
 «REM»TODO: check if needed«ENDREM»«""-»
