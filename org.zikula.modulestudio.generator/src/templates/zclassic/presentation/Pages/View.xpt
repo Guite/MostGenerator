@@ -22,12 +22,11 @@ listType:
 <div class="z-frontendcontainer">
 «ENDIF-»
 <!--[gt text='«formattedNameCapitalized(name)» list' assign="templateTitle"]-->
+«IF processor.type == ProcessorType::ADMIN-»
+<div class="z-adminpageicon"><!--[pnimg modname="core" src="windowlist.gif" set="icons/large" alt=$templateTitle]--></div>
+«ENDIF-»
 <!--[pnpagesetvar name="title" value=$templateTitle]-->
 <h2><!--[$templateTitle]--></h2>
-
-«IF processor.type == ProcessorType::ADMIN-»
-<div class="z-adminpageicon"><!--[pnimg modname="core" src="windowlist.gif" set="icons/large" alt=$templatetitle]--></div>
-«ENDIF-»
 
 <!--[securityutil_checkpermission_block component="«modName»::" instance=".*" level="ACCESS_ADD"]-->
 <!--[gt text='Create «formattedName(name)»' assign="createTitle"]-->
