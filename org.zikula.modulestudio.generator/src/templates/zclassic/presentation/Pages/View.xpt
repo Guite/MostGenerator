@@ -54,10 +54,16 @@ listType:
 «ELSE-»
 <table class="z-datatable">
 «ENDIF-»
+    <colgroup>
+«FOREACH columns.reject(e|e.isPrimaryKey) AS column -»
+        <col id="c«column.name.dbName()»" />
+«ENDFOREACH-»
+        <col id="coloptions" />
+    </colgroup>
     <thead>
     <tr>
 «FOREACH columns.reject(e|e.isPrimaryKey) AS column -»
-        <th align="«EXPAND Alignment FOR column-»" valign="middle">
+        <th id="h«column.name.dbName()»" scope="col" align="«EXPAND Alignment FOR column-»" valign="middle">
 «LET tableContainer.relations.select(e|e.target.name == name).select(e|dbName(e.source.name + "id") == dbName(column.name)) AS joins-»
 «IF joins.size > 0-»
 «LET joins.get(0).source.columns.select(e|e.isLeading == true).get(0).name.dbName() AS colName-»
@@ -82,7 +88,7 @@ listType:
             </a>
         </th>
 «ENDFOREACH-»
-        <th align="left" valign="middle"><!--[gt text='Options']--></th>
+        <th id="hoptions" scope="col" align="left" valign="middle"><!--[gt text='Options']--></th>
     </tr>
     </thead>
     <tbody>
@@ -103,7 +109,7 @@ listType:
 «ELSEIF listType == 2-»
         <dd>
 «ELSEIF listType == 3-»
-        <td align="«EXPAND Alignment FOR column-»" valign="top">
+        <td headers="h«column.name.dbName()»" align="«EXPAND Alignment FOR column-»" valign="top">
 «ENDIF-»
 «LET tableContainer.relations.select(e|e.target.name == name).select(e|dbName(e.source.name + "id") == dbName(column.name)) AS joins-»
 «IF column.isLeading == true»
@@ -130,7 +136,7 @@ listType:
 «ELSEIF listType == 2-»
         <dd>
 «ELSEIF listType == 3-»
-        <td align="right" valign="top" style="white-space: nowrap">
+        <td headers="hoptions" align="right" valign="top" style="white-space: nowrap">
 «ENDIF-»
 «IF processor.hasPStates('display')-»
             <a href="<!--[pnmodurl modname="«modName»" type="«procName»" func="display" ot="«objName»" «idField()»=$«objName».«idField()»]-->">
