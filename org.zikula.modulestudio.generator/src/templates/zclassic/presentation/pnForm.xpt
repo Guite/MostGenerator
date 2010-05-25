@@ -191,7 +191,7 @@ type: NORMAL; LARGE; MULTIBYTE; LARGEMULTIBYTE
 «ENDREM»«""-»
 «ENDDEFINE»
 «DEFINE FormField FOR persistence::IntegerField-»
-«LET columnTable.tableContainer.relations.select(e|e.target.name == columnTable.name.dbName()).select(e|dbName(e.source.name + "id") == dbName(name)) AS pointingRelations-»
+«LET columnTable.incoming.select(e|dbName(e.source.name + "id") == dbName(name)) AS pointingRelations-»
 «IF pointingRelations.size > 0-»
 «LET pointingRelations.get(0) AS pointingRelation-»
 «LET pointingRelation.source AS joiningTable-»

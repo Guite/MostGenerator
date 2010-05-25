@@ -21,7 +21,7 @@
 <h2><!--[$«objName».«titleField»|pnmodcallhooks]--></h2>
 «ENDLET-»
 
-«LET tableContainer.relations.select(e|e.source.name == name && e.type == persistence::RelationshipType::ONETOMANY) AS refedElems-»
+«LET outgoing.select(e|e.type == persistence::RelationshipType::ONETOMANY) AS refedElems-»
 «IF refedElems.size > 0-»
 <div class="«modName.dbName()»RightBox">
 «EXPAND DisplaySubsets(modName, procName, this) FOREACH refedElems.target-»
@@ -30,10 +30,10 @@
 
 <dl id="«modName»_body">
 «FOREACH columns.reject(e|e.isLeading || e.isPrimaryKey) AS column-»
-«LET tableContainer.relations.select(e|e.target.name == name).select(e|dbName(e.source.name + "id") == dbName(column.name)) AS joins-»
+«LET incoming.select(e|dbName(e.source.name + "id") == dbName(column.name)) AS joins-»
 «IF joins.size > 0-»
     <dt><!--[gt text='«formattedNameCapitalized(joins.get(0).source.name)»']--></dt>
-<dd>«FOREACH joins AS join SEPARATOR ', '-»<!--[$«objName».«join.source.name.dbName()»_«join.source.columns.select(e|e.isLeading == true).get(0).name.dbName()»«REM»|nl2br«ENDREM»|default:""]-->«ENDFOREACH-»</dd>
+<dd>«FOREACH joins AS join SEPARATOR ', '-»<!--[$«objName».«join.source.name.dbName()»_«join.source.idField()»«REM»|nl2br«ENDREM»|default:""]-->«ENDFOREACH-»</dd>
 «ELSE-»
     <dt><!--[gt text='«formattedNameCapitalized(column.name)»']--></dt>
     <dd>«EXPAND DisplayColumnField(objName) FOR column»</dd>

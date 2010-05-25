@@ -276,7 +276,7 @@ class «moduleName(modName + "_" + procName + "_" + name + "_" + actionName)»Ha
 «DEFINE FieldDefaultData FOR BooleanField»«IF defaultValue == true»true«ELSE»false«ENDIF»«ENDDEFINE»
 
 «DEFINE FieldDefaultData FOR IntegerField-»
-«LET columnTable.tableContainer.relations.select(e|e.target.name == columnTable.name && e.source.idField() == name) AS joins-»
+«LET columnTable.incoming.select(e|e.source.idField() == name) AS joins-»
 «IF joins.size > 0-»
 «FOREACH joins AS join-»(int) FormUtil::getPassedValue('«join.source.name.dbName()»id', 0, 'GET')«ENDFOREACH-»
 «ELSE-»

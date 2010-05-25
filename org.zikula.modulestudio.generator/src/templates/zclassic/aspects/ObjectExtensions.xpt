@@ -10,7 +10,7 @@
     ObjectUtil::addStandardFieldsToTableDataDefinition($columnDef);
 «ENDIF-»
 
-    $tables['«fullTableName(this)»_primary_key_column'] = '«dbName(columns.select(e|e.isPrimaryKey == true).get(0).name)»';
+    $tables['«fullTableName(this)»_primary_key_column'] = '«idField(this)»';
 «IF hasCategorization == true-»
     // enable categorization services
     $tables['«fullTableName(this)»_db_extra_enable_categorization'] = true;

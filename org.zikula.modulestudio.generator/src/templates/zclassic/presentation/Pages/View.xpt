@@ -64,7 +64,7 @@ listType:
     <tr>
 «FOREACH columns.reject(e|e.isPrimaryKey) AS column -»
         <th id="h«column.name.dbName()»" scope="col" align="«EXPAND Alignment FOR column-»" valign="middle">
-«LET tableContainer.relations.select(e|e.target.name == name).select(e|dbName(e.source.name + "id") == dbName(column.name)) AS joins-»
+«LET incoming.select(e|dbName(e.source.name + "id") == dbName(column.name)) AS joins-»
 «IF joins.size > 0-»
 «LET joins.get(0).source.columns.select(e|e.isLeading == true).get(0).name.dbName() AS colName-»
     <!--[if $sort eq "«joins.get(0).source.name.dbName()»_«colName»"]-->
@@ -111,7 +111,7 @@ listType:
 «ELSEIF listType == 3-»
         <td headers="h«column.name.dbName()»" align="«EXPAND Alignment FOR column-»" valign="top">
 «ENDIF-»
-«LET tableContainer.relations.select(e|e.target.name == name).select(e|dbName(e.source.name + "id") == dbName(column.name)) AS joins-»
+«LET incoming.select(e|dbName(e.source.name + "id") == dbName(column.name)) AS joins-»
 «IF column.isLeading == true»
             <!--[$«objName».«dbName(column.name)»|pnmodcallhooks]-->
 «ELSEIF joins.size > 0-»
@@ -223,7 +223,7 @@ listType:
 «ENDDEFINE»
 
 «DEFINE Alignment FOR persistence::TableColumn»left«ENDDEFINE»
-«DEFINE Alignment FOR persistence::IntegerField»«IF columnTable.tableContainer.relations.select(e|e.target.name == columnTable.name).select(e|dbName(e.source.name + "id") == dbName(name)).size > 0-»left«ELSE»right«ENDIF»«ENDDEFINE»
+«DEFINE Alignment FOR persistence::IntegerField»«IF columnTable.incoming.select(e|dbName(e.source.name + "id") == dbName(name)).size > 0-»left«ELSE»right«ENDIF»«ENDDEFINE»
 «DEFINE Alignment FOR persistence::DecimalField»right«ENDDEFINE»
 «DEFINE Alignment FOR persistence::FloatField»right«ENDDEFINE»
 «DEFINE Alignment FOR persistence::BooleanField»center«ENDDEFINE»

@@ -138,7 +138,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 '«entryPrefix»«dbName(name)»'«ENDDEFINE»
 
 «DEFINE ObjectJoins FOR persistence::Table-»
-«FOREACH tableContainer.relations.select(e|e.target == this) AS relation-»
+«FOREACH incoming AS relation-»
         $this->_objJoin[]     = array ('join_table'          => '«fullTableName(relation.source)»',
                                        'join_field'          => array(«EXPAND SelectJoinFieldTableNames(dbName(name)+"id") FOR relation.source-»),
                                        'object_field_name'   => array(«EXPAND SelectJoinFieldObjNames(dbName(name)+"id") FOR relation.source-»),
@@ -157,8 +157,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
                                               'instance_right'   => '',
                                               'level'            => ACCESS_READ);
 
-«LET tableContainer.relations.select(e|e.target.name == name) AS joins-»
-«FOREACH joins AS join-»
+«FOREACH incoming AS join-»
         $this->_objPermissionFilter[] = array('component_left'   => '«modName»',
                                               'component_middle' => '«capitalName(join.source.name)»',
                                               'component_right'  => '«capitalName(name)»',
@@ -168,7 +167,6 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
                                               'level'            => ACCESS_READ);
 
 «ENDFOREACH-»
-«ENDLET-»
 «ENDDEFINE»
 
 
@@ -599,7 +597,7 @@ Stats:
 «ENDDEFINE»
 
 «DEFINE singleSortingField FOR persistence::TableColumn»
-«LET columnTable.tableContainer.relations.select(e|e.target.name == columnTable.name).select(e|dbName(e.source.name + "id") == dbName(name)) AS joins-»
+«LET columnTable.incoming.select(e|dbName(e.source.name + "id") == dbName(name)) AS joins-»
 «IF joins.size > 0-»
                      '«joins.get(0).source.name.dbName()»_«joins.get(0).source.columns.select(e|e.isLeading == true).get(0).name.dbName()»'«""-»
 «ELSE-»
