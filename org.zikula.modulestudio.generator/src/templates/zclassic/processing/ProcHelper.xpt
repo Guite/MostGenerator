@@ -2,7 +2,7 @@
 
 «DEFINE loadObjectClass(String modName, Boolean appendArray) FOR Object-»
         // load the object «IF appendArray»array «ENDIF»class corresponding to $objectType
-        $class = «modName»_DBObject_' . $objectType«IF appendArray» . 'Array'«ENDIF»;
+        $class = '«modName»_DBObject_' . $objectType«IF appendArray» . 'Array'«ENDIF»;
 «ENDDEFINE»
 
 «DEFINE instantiateObject(String initType, String idValue) FOR Object-»

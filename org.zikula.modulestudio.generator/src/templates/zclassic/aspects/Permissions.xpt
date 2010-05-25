@@ -25,25 +25,25 @@ $modversion['securityschema'] = array('«modName()»::' => '::',
 // DEBUG: permission check aspect starts
 «LET stateProcessor.processingContainer.processingModule.modName() AS modName-»
 «IF stateProcessor.type == ProcessorType::ADMIN-»
-    if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_ADMIN)) {
-        return LogUtil::registerPermissionError(ModUtil::url('«modName»', 'user', 'main'));
+        if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_ADMIN)) {
+            return LogUtil::registerPermissionError(ModUtil::url('«modName»', 'user', 'main'));
 «ELSE-»
 «IF type == ProcessorStateType::MAIN-»
-    if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_OVERVIEW)) {
+        if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_OVERVIEW)) {
 «ELSEIF type == ProcessorStateType::VIEW-»
-    if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_READ)) {
+        if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_READ)) {
 «ELSEIF type == ProcessorStateType::DISPLAY-»
-    if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_READ)) {
+        if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_READ)) {
 «ELSEIF type == ProcessorStateType::EDIT-»
-    if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_EDIT)) {
+        if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_EDIT)) {
 «ELSEIF type == ProcessorStateType::DELETE-»
-    if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_DELETE)) {
+        if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_DELETE)) {
 «ELSEIF type == ProcessorStateType::CUSTOM-»
-    if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_OVERVIEW)) {
+        if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_OVERVIEW)) {
 «ENDIF-»
-        return LogUtil::registerPermissionError();
+            return LogUtil::registerPermissionError();
 «ENDIF-»
-    }
+        }
 «ENDLET-»
 // DEBUG: permission check aspect ends
 «targetDef.proceed()-»

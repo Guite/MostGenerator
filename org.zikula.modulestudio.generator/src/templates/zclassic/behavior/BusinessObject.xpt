@@ -29,7 +29,7 @@ class «modName()»_DBObject_«modName()»«IF appendArray»Array«ENDIF» exten
 
 
 «DEFINE ObjectClassWrapper(modulestudio::Module module, Boolean appendArray) FOR persistence::Table-»
-«FILE "classes/Base/" + baseClassFileName(appendArray)»«EXPAND FileHelper::phpFileHeader(module)»
+«FILE "DBObject/Base/" + baseClassFileName(appendArray)»«EXPAND FileHelper::phpFileHeader(module)»
 
 /**
  * This class provides basic functionality of «baseClassName(appendArray)»
@@ -44,7 +44,7 @@ abstract class «baseClassName(appendArray)» extends «module.modName()»_DBObj
 }
 «ENDFILE»
 
-«FILE "classes/" + implClassFileName(appendArray)»«EXPAND FileHelper::phpFileHeader(module)»
+«FILE "DBObject/" + implClassFileName(appendArray)»«EXPAND FileHelper::phpFileHeader(module)»
 
 /**
  * This class implements the functionality of «baseClassName(appendArray)»

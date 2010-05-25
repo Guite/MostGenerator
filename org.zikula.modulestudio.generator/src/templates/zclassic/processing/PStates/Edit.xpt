@@ -8,7 +8,7 @@
         $render = FormUtil::newForm('«modName»');
 
         // build form handler class name
-        $handlerClass = '«modName»_«dbName(stateProcessor.name)»_' . $objectType . 'EditHandler';
+        $handlerClass = '«modName»_FormHandler_«dbName(stateProcessor.name)»_' . $objectType . 'EditHandler';
 
         // execute form using supplied template and page event handler
         return $render->Execute('«modName»_«dbName(stateProcessor.name)»_' . $objectType . '_edit.htm', new $handlerClass());

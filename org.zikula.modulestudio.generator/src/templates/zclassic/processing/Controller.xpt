@@ -14,7 +14,7 @@
 «FILE "FormHandler/admin/configHandler.php"»
 «EXPAND FileHelper::phpFileHeader(this)-»
 
-class «modName()»_admin_configHandler extends Form_Handler
+class «modName()»_FormHandler_admin_configHandler extends Form_Handler
 {
     function initialize(&$render)
     {
@@ -69,7 +69,7 @@ class «modName()»_admin_configHandler extends Form_Handler
     // Create new Form reference
     $render = FormUtil::newForm('«moduleName(moduleName)»');
 
-«LET moduleName(moduleName + "_" + dbName(proc.name) + actionName.toFirstUpper()) AS controllerPraefix-»
+«LET moduleName(moduleName + "_FormHandler_" + dbName(proc.name) + actionName.toFirstUpper()) AS controllerPraefix-»
 
     // Execute form using supplied template and page event handler
     return $render->Execute('«controllerPraefix».html', new «controllerPraefix»Handler());
@@ -80,7 +80,7 @@ class «modName()»_admin_configHandler extends Form_Handler
 «REM»Entry point for Form handler classes«ENDREM»
 «DEFINE Root(Module module, Processor proc, String actionName) FOR Table-»
 «LET dbName(proc.name) AS procName-»
-«FILE "FormHandler/" + moduleName(module.name) + "/" + moduleName(procName) + "/" + moduleName(name) + moduleName(actionName).toFirstUpper() + "Handler.php"»
+«FILE "FormHandler/" + moduleName(procName) + "/" + moduleName(name) + moduleName(actionName).toFirstUpper() + "Handler.php"»
 «EXPAND FileHelper::phpFileHeader(module)-»
 «EXPAND FormHandler(module, proc, actionName)-»
 «ENDFILE»
@@ -116,7 +116,7 @@ class «modName()»_admin_configHandler extends Form_Handler
  * @subpackage Base
  * @author       «module.author»
  */
-class «moduleName(modName + "_" + procName + "_" + name + actionName.toFirstUpper())»Handler extends Form_Handler
+class «moduleName(modName + "_FormHandler_" + procName + "_" + name + actionName.toFirstUpper())»Handler extends Form_Handler
 {
     // store «moduleName(name)» ID in (persistent) member variable
     var $«idField()»;
