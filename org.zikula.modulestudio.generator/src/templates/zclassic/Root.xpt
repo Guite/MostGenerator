@@ -4,42 +4,59 @@
 «IMPORT templates::zclassic::presentation»
 «IMPORT templates::zclassic::processing»
 «IMPORT templates::zclassic::smallstuff»
+
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
 «EXTENSION extensions::Utils»
 
 «REM»start point for the generator«ENDREM»
 «DEFINE Root(Object pm) FOR modulestudio::Module»
     «REM»«pm.subTask("Basic information")»«ENDREM»
+    «info("Generating basic information")»
 	«EXPAND VersionFile::Root»
 
 	«REM»«pm.subTask("Persistence: Table definitions")»«ENDREM»
+    «info("Generating table definitions")»
 	«EXPAND Tables::Root»
 	«REM»«pm.subTask("Persistence: Module initialisation")»«ENDREM»
+    «info("Generating module initialisation")»
 	«EXPAND Init::Root»
 
     «REM»«pm.subTask("Processing: Generic functionality")»«ENDREM»
+    «info("Generating generic processing functionality")»
 	«EXPAND Processor::Root»
 	«REM»«pm.subTask("Processing: Controller classes")»«ENDREM»
+    «info("Generating controller classes")»
 	«EXPAND Controller::Root»
 
 	«REM»«pm.subTask("Behavior: Object classes")»«ENDREM»
+    «info("Generating object classes")»
 	«EXPAND BusinessObject::Root»
 
 	«REM»«pm.subTask("Presentation: Rendering templates")»«ENDREM»
+    «info("Generating rendering templates")»
 	«EXPAND Renderer::Root»
 	«REM»«pm.subTask("Presentation: Form templates")»«ENDREM»
+    «info("Generating form templates")»
 	«EXPAND Forms::Root»
 	«REM»«pm.subTask("Presentation: Module-specific plugins")»«ENDREM»
+    «info("Generating module-specific plugins")»
 	«EXPAND Plugins::Root»
 	«REM»«pm.subTask("Presentation: CSS definitions")»«ENDREM»
+    «info("Generating css definitions")»
 	«EXPAND Styles::Root»
     «REM»«pm.subTask("Presentation: Images")»«ENDREM»
+    «info("Generating images")»
     «EXPAND Images::Root»
 
     «REM»«pm.subTask("Additions: Blocks")»«ENDREM»
+    «info("Generating blocks")»
     «EXPAND Blocks::Root»
     «REM»«pm.subTask("Additions: Translations")»«ENDREM»
+    «info("Generating translations")»
     «EXPAND Translations::Root»
     «REM»«pm.subTask("Additions: Documentation")»«ENDREM»
+    «info("Generating documentation")»
     «EXPAND Docs::Root»
 «ENDDEFINE»
 
