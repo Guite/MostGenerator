@@ -197,7 +197,7 @@ class «module.modName()»_«dbName(name)»api extends AbstractApi
                              'text' => $this->__('«formattedNameCapitalized(tab.nameMultiple)»'));
         }
 «ENDFOREACH-»
-«IF «type == ProcessingType::ADMIN && needsConfig()-»
+«IF type == ProcessorType::ADMIN && module.needsConfig()-»
         if (SecurityUtil::checkPermission('«module.modName()»::', '::', ACCESS_ADMIN)) {
             $links[] = array('url' => ModUtil::url('«module.modName()»', 'admin', 'config'), 'text' => $this->__('Configuration'));
         }
