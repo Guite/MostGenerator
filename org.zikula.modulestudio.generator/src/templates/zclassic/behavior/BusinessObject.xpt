@@ -6,10 +6,10 @@
 
 «REM»Entry point for DBObject implementations«ENDREM»
 «DEFINE Root FOR Module-»
-	«FILE "classes/index.html"»«ENDFILE»
-	«FILE "classes/Base/index.html"»«ENDFILE»
-    «FILE "classes/PN" + modName() + ".class.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND dbObjectModuleClass(false)»«ENDFILE»
-    «FILE "classes/PN" + modName() + "Array.class.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND dbObjectModuleClass(true)»«ENDFILE»
+	«FILE "DBObject/index.html"»«EXPAND FileHelper::msUrl-»«ENDFILE»
+	«FILE "DBObject/Base/index.html"»«ENDFILE»
+    «FILE "DBObject/" + modName() + ".class.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND dbObjectModuleClass(false)»«ENDFILE»
+    «FILE "DBObject/" + modName() + "Array.class.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND dbObjectModuleClass(true)»«ENDFILE»
 
 	«EXPAND ObjectClassWrapper(this, false) FOREACH persistenceContainer.tables-»
 	«REM»EXPAND dbObjectClassWrapper(this) FOREACH behaviorContainer.businessObjects-«ENDREM»
@@ -22,7 +22,7 @@
  * This is a base class encapsulating the generic functionality which is
  * common for all DBObject«IF appendArray»Array«ENDIF» types in the «modName()» module
  */
-class DB«modName()»«IF appendArray»Array«ENDIF» extends DBObject«IF appendArray»Array«ENDIF»
+class «modName()»_DBObject_«modName()»«IF appendArray»Array«ENDIF» extends DBObject«IF appendArray»Array«ENDIF»
 {
 }
 «ENDDEFINE»
@@ -31,12 +31,10 @@ class DB«modName()»«IF appendArray»Array«ENDIF» extends DBObject«IF appen
 «DEFINE ObjectClassWrapper(modulestudio::Module module, Boolean appendArray) FOR persistence::Table-»
 «FILE "classes/Base/" + baseClassFileName(appendArray)»«EXPAND FileHelper::phpFileHeader(module)»
 
-Loader::loadClass('DB«module.modName()»«IF appendArray»Array«ENDIF»', 'modules/«module.modName()»/classes');
-
 /**
  * This class provides basic functionality of «baseClassName(appendArray)»
  */
-abstract class «baseClassName(appendArray)» extends DB«module.modName()»«IF appendArray»Array«ENDIF»
+abstract class «baseClassName(appendArray)» extends «module.modName()»_DBObject_«module.modName()»«IF appendArray»Array«ENDIF»
 {
 «IF appendArray == false-»
 «EXPAND ObjectClassImpl(module)-»
@@ -47,8 +45,6 @@ abstract class «baseClassName(appendArray)» extends DB«module.modName()»«IF
 «ENDFILE»
 
 «FILE "classes/" + implClassFileName(appendArray)»«EXPAND FileHelper::phpFileHeader(module)»
-
-Loader::loadClass('«baseClassName(appendArray)»', 'modules/«module.modName()»/classes/Base');
 
 /**
  * This class implements the functionality of «baseClassName(appendArray)»

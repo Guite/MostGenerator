@@ -8,9 +8,6 @@
 «REM»start point for the Processor creation«ENDREM»
 «DEFINE Root FOR Module»
 	«EXPAND Root(this) FOREACH processingContainer.processors-»
-	«IF processingContainer.processors.select(e|e.type == ProcessorType::ADMIN).size > 0-»
-		«FILE "adminapi.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND AdminAPI»«ENDFILE»
-	«ENDIF-»
 	«FILE "common.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND CommonFunctions-»«ENDFILE»
 «ENDDEFINE»
 
@@ -54,6 +51,7 @@ function «modName()»_processRenderTemplate(&$render, $type, $objectType, $func
 «REM»creates a file for every Processor instance«ENDREM»
 «DEFINE Root(Module module) FOR Processor-»
 	«FILE dbName(name) + ".php"»«EXPAND FileHelper::phpFileHeader(module)»«EXPAND ProcessorImpl(module)»«ENDFILE»
+    «FILE dbName(name) + "api.php"»«EXPAND FileHelper::phpFileHeader(module)»«EXPAND ProcessorApiImpl(module)»«ENDFILE»
 «ENDDEFINE»
 
 «REM»file structure implementation«ENDREM»
@@ -89,10 +87,6 @@ class «module.modName()»_«dbName(name)» extends AbstractController
         // Create new Form reference
         $render = FormUtil::newForm('«module.modName()»');
 
-        // include event handler class
-        Loader::requireOnce('modules/«module.modName()»/classes/FormHandler/«module.modName()»_admin_confighandler.class.php');
-«REM»Loader::loadClass ($className, $classPath='includes')«ENDREM»
-
         // Execute form using supplied template and page event handler
         return $render->Execute('«module.modName()»_admin_config.htm', new «module.modName()»_admin_configHandler());
     }
@@ -103,7 +97,7 @@ class «module.modName()»_«dbName(name)» extends AbstractController
 
 «DEFINE PreloadClasses FOR Processor-»
 // preload common used classes
-Loader::requireOnce('modules/«processingContainer.processingModule.modName()»/common.php');
+include_once 'modules/«processingContainer.processingModule.modName()»/common.php';
 «ENDDEFINE»
 
 
@@ -179,33 +173,33 @@ Loader::requireOnce('modules/«processingContainer.processingModule.modName()»/
 
 
 
-«DEFINE AdminAPI FOR Module-»
+«DEFINE ProcessorApiImpl(Module module) FOR Processor-»
 /**
- * This is the administration api helper class
+ * This is the «name» api helper class.
  *
- * @author       «author»
+ * @author       «module.author»
  */
-class «modName()»_adminapi extends AbstractApi
+class «module.modName()»_«dbName(name)»api extends AbstractApi
 {
     /**
-     * get available admin panel links
+     * get available «name» panel links
      *
-     * @author       «author»
+     * @author       «module.author»
      * @return       array      array of admin links
      */
     public function getlinks()
     {
         $links = array();
 
-«FOREACH persistenceContainer.tables AS tab-»
-        if (SecurityUtil::checkPermission('«modName()»::', '::', ACCESS_READ)) {
-            $links[] = array('url' => ModUtil::url('«modName()»', 'admin', 'view', array('ot' => '«moduleName(tab.name)»')),
+«FOREACH module.persistenceContainer.tables AS tab-»
+        if (SecurityUtil::checkPermission('«module.modName()»::', '::', ACCESS_READ)) {
+            $links[] = array('url' => ModUtil::url('«module.modName()»', 'admin', 'view', array('ot' => '«moduleName(tab.name)»')),
                              'text' => $this->__('«formattedNameCapitalized(tab.nameMultiple)»'));
         }
 «ENDFOREACH-»
-«IF needsConfig()-»
-        if (SecurityUtil::checkPermission('«modName()»::', '::', ACCESS_ADMIN)) {
-            $links[] = array('url' => ModUtil::url('«modName()»', 'admin', 'config'), 'text' => $this->__('Configuration'));
+«IF «type == ProcessingType::ADMIN && needsConfig()-»
+        if (SecurityUtil::checkPermission('«module.modName()»::', '::', ACCESS_ADMIN)) {
+            $links[] = array('url' => ModUtil::url('«module.modName()»', 'admin', 'config'), 'text' => $this->__('Configuration'));
         }
 «ENDIF-»
         return $links;

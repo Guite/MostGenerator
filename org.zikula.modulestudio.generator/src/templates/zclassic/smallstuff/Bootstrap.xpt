@@ -1,0 +1,16 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic»
+«EXTENSION extensions::Utils»
+
+«DEFINE Root FOR Module-»
+«FILE "bootstrap.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND Bootstrap»«ENDFILE»
+«ENDDEFINE»
+
+«DEFINE Bootstrap FOR Module-»
+// feel free to add your initialisation stuff here
+
+// Just an example, this is done by the core automatically
+// ZLoader::addAutoLoader('«modName()»', 'modules', '_');
+// The 1st arg is the namespace (module name), the 2nd is the path and the 3rd is the separator.
+
+«ENDDEFINE»

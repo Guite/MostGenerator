@@ -6,20 +6,20 @@
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 
-«REM»Entry point for pnForm handler classes«ENDREM»
+«REM»Entry point for Form handler classes«ENDREM»
 «DEFINE Root FOR Module-»
-	«FILE "classes/FormHandler/index.html"»«EXPAND FileHelper::msUrl-»«ENDFILE»
+	«FILE "FormHandler/index.html"»«EXPAND FileHelper::msUrl-»«ENDFILE»
 	«EXPAND Root(this) FOREACH processingContainer.processors.processorStates.select(e|e.type == ProcessorStateType::EDIT)-»
 «IF needsConfig()-»
-«FILE "classes/FormHandler/" + modName() + "_admin_confighandler.class.php"»
+«FILE "FormHandler/admin/configHandler.php"»
 «EXPAND FileHelper::phpFileHeader(this)-»
 
-class «modName()»_admin_configHandler extends FormHandler
+class «modName()»_admin_configHandler extends Form_Handler
 {
     function initialize(&$render)
     {
         if (!SecurityUtil::checkPermission('«modName()»::', '::', ACCESS_ADMIN)) {
-            return $render->pnFormRegisterError(LogUtil::registerPermissionError());
+            return $render->RegisterError(LogUtil::registerPermissionError());
         }
 
         // assign all module vars
@@ -34,15 +34,15 @@ class «modName()»_admin_configHandler extends FormHandler
         $dom = ZLanguage::getModuleDomain('«modName()»');
 
         if ($args['commandName'] == 'save') {
-            if (!$render->pnFormIsValid()) {
+            if (!$render->IsValid()) {
                 return false;
             }
 
-            $data = $render->pnFormGetValues();
+            $data = $render->GetValues();
 
             // update all module vars
             if (!ModUtil::setVars('«modName()»', $data['config'])) {
-                return $render->pnFormSetErrorMsg(__('Error! Failed to set configuration variables.', $dom));
+                return $render->SetErrorMsg(__('Error! Failed to set configuration variables.', $dom));
             }
 
             LogUtil::registerStatus(__('Done! Module configuration updated.', $dom));
@@ -52,7 +52,7 @@ class «modName()»_admin_configHandler extends FormHandler
         }
 
         $url = ModUtil::url('«modName()»', 'admin', 'config');
-        return $render->pnFormRedirect($url);
+        return $render->Redirect($url);
     }
 }
 «ENDFILE»
@@ -67,26 +67,20 @@ class «modName()»_admin_configHandler extends FormHandler
 
 «DEFINE FormCreate(String moduleName, Processor proc, String actionName) FOR ProcessorState-»
     // Create new Form reference
-    $render = FormUtil::newpnForm('«moduleName(moduleName)»');
+    $render = FormUtil::newForm('«moduleName(moduleName)»');
 
-«LET moduleName(moduleName + "_" + dbName(proc.name) + "_" + actionName) AS controllerPraefix-»
-    // include event handler class
-    Loader::requireOnce('modules/«moduleName(moduleName)»/classes/FormHandler/«controllerPraefix»handler.class.php');
+«LET moduleName(moduleName + "_" + dbName(proc.name) + actionName.toFirstUpper()) AS controllerPraefix-»
 
     // Execute form using supplied template and page event handler
-    return $render->pnFormExecute('«controllerPraefix».html', new «controllerPraefix»Handler());
+    return $render->Execute('«controllerPraefix».html', new «controllerPraefix»Handler());
 «ENDLET-»
 «ENDDEFINE»
 
 
-
-«REM»pnForm Handler«ENDREM»
-
-
-«REM»Entry point for pnForm handler classes«ENDREM»
+«REM»Entry point for Form handler classes«ENDREM»
 «DEFINE Root(Module module, Processor proc, String actionName) FOR Table-»
 «LET dbName(proc.name) AS procName-»
-«FILE "classes/FormHandler/" + moduleName(module.name + "_" + procName + "_" + name + "_" + actionName) + "handler.class.php"»«REM»TODO: EXPAND FileHelper::phpFileHeader«ENDREM»
+«FILE "FormHandler/" + moduleName(module.name) + "/" + moduleName(procName) + "/" + moduleName(name) + moduleName(actionName).toFirstUpper() + "Handler.php"»
 «EXPAND FileHelper::phpFileHeader(module)-»
 «EXPAND FormHandler(module, proc, actionName)-»
 «ENDFILE»
@@ -98,7 +92,7 @@ class «modName()»_admin_configHandler extends FormHandler
 «LET module.modName() AS modName-»
 «LET dbName(proc.name) AS procName-»
 /**
- * This handler class handles the page events of the pnForm called by the «moduleName(modName + "_" + procName + "_" + actionName)»() function.
+ * This handler class handles the page events of the Form called by the «moduleName(modName + "_" + procName + "_" + actionName)»() function.
  * It aims on the «moduleName(name)» object type.
  *
  * Member variables in a form handler object are persisted accross different page requests. This means
@@ -116,13 +110,13 @@ class «modName()»_admin_configHandler extends FormHandler
  *   and reading of data from the database.
  *
  * - <b>handleCommand</b>: this event is fired by various plugins on the page. Typically it is done by the
- *   pnFormButton plugin to signal that the user activated a button.
+ *   Form_Plugin_Button plugin to signal that the user activated a button.
  *
- * @package pnForm
+ * @package Form
  * @subpackage Base
  * @author       «module.author»
  */
-class «moduleName(modName + "_" + procName + "_" + name + "_" + actionName)»Handler extends pnFormHandler
+class «moduleName(modName + "_" + procName + "_" + name + actionName.toFirstUpper())»Handler extends Form_Handler
 {
     // store «moduleName(name)» ID in (persistent) member variable
     var $«idField()»;
@@ -149,12 +143,12 @@ class «moduleName(modName + "_" + procName + "_" + name + "_" + actionName)»Ha
      * Command event handler
      *
      * This event handler is called when a command is issued by the user. Commands are typically something
-     * that originates from a {@link pnFormButton} plugin. The passed args contains different properties
+     * that originates from a {@link Form_Plugin_Button} plugin. The passed args contains different properties
      * depending on the command source, but you should at least find a <var>$args['commandName']</var>
      * value indicating the name of the command. The command name is normally specified by the plugin
      * that initiated the command.
-     * @see pnFormButton
-     * @see pnFormImageButton
+     * @see Form_Plugin_Button
+     * @see Form_Plugin_ImageButton
      * @author       «module.author»
      */
     function handleCommand(&$render, &$args)
@@ -184,14 +178,14 @@ class «moduleName(modName + "_" + procName + "_" + name + "_" + actionName)»Ha
 
             if (!SecurityUtil::checkPermission('«modName»:«capitalName(name)»:', '::', ACCESS_EDIT)) {
                 // set an error message and return false
-                return $render->pnFormRegisterError(LogUtil::registerPermissionError());
+                return $render->RegisterError(LogUtil::registerPermissionError());
             }
 
 «EXPAND ProcHelper::instantiateObject("D", "this->" + idField())-»
 
 «EXPAND ProcHelper::getObjectFromSource("D", idField(), "this->" + idField())-»
             if (!is_array($objectData) || !isset($objectData['«idField()»']) || !is_numeric($objectData['«idField()»'])) {
-                return $render->pnFormSetErrorMsg(__('No such «formattedName(name)» found.', $dom));
+                return $render->SetErrorMsg(__('No such «formattedName(name)» found.', $dom));
             }
 
             // try to guarantee that only one person at a time can be editing this «moduleName(name)»
@@ -202,7 +196,7 @@ class «moduleName(modName + "_" + procName + "_" + name + "_" + actionName)»Ha
         }
         else {
             if (!SecurityUtil::checkPermission('«modName»:«capitalName(name)»:', '::', ACCESS_ADD)) {
-                return $render->pnFormRegisterError(LogUtil::registerPermissionError());
+                return $render->RegisterError(LogUtil::registerPermissionError());
             }
 
 «IF columns.typeSelect(DateField).size > 0-»
@@ -270,7 +264,7 @@ class «moduleName(modName + "_" + procName + "_" + name + "_" + actionName)»Ha
 
         if ($args['commandName'] != 'delete' && $args['commandName'] != 'cancel') {
             // do forms validation including checking all validators on the page to validate their input
-            if (!$render->pnFormIsValid()) {
+            if (!$render->IsValid()) {
                 return false;
             }
         }
@@ -333,7 +327,7 @@ class «moduleName(modName + "_" + procName + "_" + name + "_" + actionName)»Ha
             // Note: No need to check validation when deleting
 
             if (!SecurityUtil::checkPermission('«modName»:«capitalName(name)»:', '::', ACCESS_DELETE)) {
-                return $render->pnFormRegisterError(LogUtil::registerPermissionError());
+                return $render->RegisterError(LogUtil::registerPermissionError());
             }
 
 			«EXPAND FetchInputDataStart(moduleName(name))-»
@@ -381,19 +375,19 @@ class «moduleName(modName + "_" + procName + "_" + name + "_" + actionName)»Ha
                                  array('lockName' => "«capitalName(modName)»«capitalName(name)»{$this->«idField()»}"));
             }
 
-            return $render->pnFormRedirect($returnUrl);
+            return $render->Redirect($returnUrl);
         }
 
         // We should in principle not end here at all, since the above command handlers should 
         // match all possible commands, but we return "ok" (true) for all cases.
-        // You could also return $render->pnFormSetErrorMsg('Unexpected command') or just do a pn_die()
+        // You could also return $render->SetErrorMsg('Unexpected command')
         return true;
 «ENDDEFINE»
 
 
 «DEFINE FetchInputDataStart(String obj) FOR Table-»
             // fetch posted data input values as an associative array
-            $«obj»Data = $render->pnFormGetValues();
+            $«obj»Data = $render->GetValues();
 «ENDDEFINE»
 «DEFINE FetchInputDataEnd(String obj) FOR Table-»
 «REM»«FOREACH columns AS col-»

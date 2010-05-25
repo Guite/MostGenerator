@@ -3,7 +3,7 @@
 «EXTENSION extensions::Utils»
 
 «DEFINE Root FOR modulestudio::Module»
-	«FILE "templates/index.html"»«ENDFILE»
+	«FILE "templates/index.html"»«EXPAND FileHelper::msUrl-»«ENDFILE»
 «FOREACH processingContainer.processors AS processor-»
 «IF processor.type == ProcessorType::USER
     || processor.type == ProcessorType::ADMIN

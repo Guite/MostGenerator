@@ -29,7 +29,6 @@
         $sortParam = $sort . ' ' . $sdir;
 
         // use FilterUtil to support generic filtering based on an object-oriented approach
-        Loader::loadClass('FilterUtil');
         $fu =& new FilterUtil(array('table' => $objectArray->_objType, array('join' => &$objectArray->_objJoin)));
 
         // you could set explicit filters at this point, something like

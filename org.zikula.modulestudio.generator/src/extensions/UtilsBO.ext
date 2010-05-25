@@ -8,10 +8,10 @@ extension extensions::Utils;
  */
 
 cached String classPraefix()
-	: "DB";
+	: "";//"DB";
 
 cached String classSuffix()
-	: ".class.php";
+	: ".php";//".class.php";
 
 
 cached String moduleClassName(Module module, Boolean appendArray)
@@ -27,7 +27,7 @@ cached String implClassFileName(Table obj, Boolean appendArray)
 	: implClassName(obj, appendArray) + classSuffix();
 
 cached String baseClassName(Table obj, Boolean appendArray)
-	: implClassName(obj, appendArray) + "Base";
+	: implClassName(obj, appendArray) + "_Base";
 
 cached String baseClassFileName(Table obj, Boolean appendArray)
 	: baseClassName(obj, appendArray) + classSuffix();
