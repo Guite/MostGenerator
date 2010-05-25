@@ -193,7 +193,7 @@ function «modName()»_defaultdata()
 
     $dom = ZLanguage::getModuleDomain('«modName()»');
 
-«IF persistenceContainer.numExampleRows > 0-»
+«IF persistenceContainer.select(e|e.isDefaultDataSource).get(0).numExampleRows > 0-»
 «FOREACH persistenceContainer.tables AS tab-»
     // define default data for «moduleName(tab.name)» table
     $records = array(«EXPAND createExampleRows(this) FOR tab»

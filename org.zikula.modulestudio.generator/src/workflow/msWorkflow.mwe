@@ -6,7 +6,7 @@
 		<modelFile value="${modelFile}"/>
 
 		<!-- we need only the root element -->
-		<metaModelPackage value="ModuleStudio.ModuleStudioPackage"/>
+		<metaModelPackage value="de.guite.modulestudio.metamodel.modulestudio.ModuleStudioPackage"/>
 
 		<!-- store it into the output slot called model --> 
 		<outputSlot value="model"/>
@@ -24,19 +24,19 @@
 			<metaModelPackage value="org.eclipse.emf.ecore.EcorePackage"/>
 		</metaModel>
 		<metaModel id="mmModuleStudio" 	class="org.eclipse.xtend.typesystem.emf.EmfMetaModel">
-			<metaModelPackage value="ModuleStudio.ModuleStudioPackage"/>
+			<metaModelPackage value="de.guite.modulestudio.metamodel.modulestudio.ModuleStudioPackage"/>
 		</metaModel>
 		<metaModel id="mmPersistence" 	class="org.eclipse.xtend.typesystem.emf.EmfMetaModel">
-			<metaModelPackage value="Persistence.PersistencePackage"/>
+			<metaModelPackage value="de.guite.modulestudio.metamodel.persistence.PersistencePackage"/>
 		</metaModel>
 		<metaModel id="mmProcessing" 	class="org.eclipse.xtend.typesystem.emf.EmfMetaModel">
-			<metaModelPackage value="Processing.ProcessingPackage"/>
+			<metaModelPackage value="de.guite.modulestudio.metamodel.processing.ProcessingPackage"/>
 		</metaModel>
 		<metaModel id="mmPresentation" 	class="org.eclipse.xtend.typesystem.emf.EmfMetaModel">
-			<metaModelPackage value="Presentation.PresentationPackage"/>
+			<metaModelPackage value="de.guite.modulestudio.metamodel.presentation.PresentationPackage"/>
 		</metaModel>
 		<metaModel id="mmBehavior" 		class="org.eclipse.xtend.typesystem.emf.EmfMetaModel">
-			<metaModelPackage value="Behavior.BehaviorPackage"/>
+			<metaModelPackage value="de.guite.modulestudio.metamodel.behavior.BehaviorPackage"/>
 		</metaModel>
 
 		<!-- provide check files -->
