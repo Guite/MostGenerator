@@ -48,6 +48,7 @@
       <import plugin="org.eclipse.emf.common"/>
       <import plugin="org.eclipse.emf.ecore.xmi"/>
       <import plugin="org.zikula.modulestudio.generator" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtend.util.stdlib"/>
    </requires>
 
    <plugin
