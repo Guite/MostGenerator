@@ -223,7 +223,7 @@ listType:
 «ENDDEFINE»
 
 «DEFINE Alignment FOR persistence::TableColumn»left«ENDDEFINE»
-«DEFINE Alignment FOR persistence::IntegerField»right«ENDDEFINE»
+«DEFINE Alignment FOR persistence::IntegerField»«IF columnTable.tableContainer.relations.select(e|e.target.name == columnTable.name).select(e|dbName(e.source.name + "id") == dbName(name)).size > 0-»left«ELSE»right«ENDIF»«ENDDEFINE»
 «DEFINE Alignment FOR persistence::DecimalField»right«ENDDEFINE»
 «DEFINE Alignment FOR persistence::FloatField»right«ENDDEFINE»
 «DEFINE Alignment FOR persistence::BooleanField»center«ENDDEFINE»
