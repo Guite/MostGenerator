@@ -1,0 +1,142 @@
+«IMPORT processing»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+
+«DEFINE Root FOR modulestudio::Module»
+	«FILE "templates/index.html"»«ENDFILE»
+«FOREACH processingContainer.processors AS processor-»
+«IF processor.type == ProcessorType::USER
+    || processor.type == ProcessorType::ADMIN
+    || processor.type == ProcessorType::CUSTOMROLE-»
+	«EXPAND HeaderFooter(modName(), processor)-»
+«IF processor.hasPStates('main')-»
+	«EXPAND Pages::Main::Impl(modName(), processor) FOREACH persistenceContainer.tables-»
+«ENDIF-»
+«IF processor.hasPStates('view')-»
+	«EXPAND Pages::View::Impl(modName(), processor, 3) FOREACH persistenceContainer.tables-»
+«ENDIF-»
+«IF processor.hasPStates('display')-»
+	«EXPAND Pages::Display::Impl(modName(), processor) FOREACH persistenceContainer.tables-»
+«ENDIF-»
+«IF processor.hasPStates('delete')-»
+    «EXPAND Pages::Delete::Impl(modName(), processor) FOREACH persistenceContainer.tables-»
+«ENDIF-»
+«ENDIF-»
+«EXPAND MetaDataTemplates(modName(), processor)-»
+«ENDFOREACH-»
+«IF needsConfig()-»
+«FILE "templates/" + modName() + "_admin_config.htm"-»
+{* purpose of this template: module configuration *}
+
+{include file="«modName()»_admin_header.htm"}
+
+<div class="z-admincontainer">
+<div class="z-adminpageicon">{img modname=core src=configure.gif set=icons/large __alt='Settings'}</div>
+
+{gt text='Settings' assign="templateTitle"}
+{pagesetvar name="title" value=$templateTitle}
+<h2>{$templateTitle}</h2>
+
+<p>{gt text='Here you can manage all basic settings for this module.'}</p>
+
+{form cssClass="z-form"}
+«REM»    {pnformsetinitialfocus inputId=googlemapApiKey}«ENDREM»
+
+    {* add validation summary and a <div> element for styling the form *}
+    {«dbName(modName())»FormFrame}
+«FOREACH persistenceContainer.modvarContainer.modvars AS modvar-»
+        <div class="z-formrow">
+            {formlabel for="«moduleName(modvar.name)»" __text='«formattedNameCapitalized(modvar.name)»'}
+            {formtextinput id="«moduleName(modvar.name)»" group="config" maxLength=255 width=20em __title='Input this setting.'}
+        </div>
+«ENDFOREACH-»
+
+        {modcallhooks hookobject="module" hookaction="modifyconfig" module="«modName()»"}
+
+        <div class="z-formbuttons">
+            {formbutton commandName="save" __text='Update configuration'}
+            {formbutton commandName="cancel" __text='Cancel'}
+        </div>
+    {/«dbName(modName())»FormFrame}
+{/form}
+
+</div>
+
+{include file="«modName()»_admin_footer.htm"}
+«ENDFILE-»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE HeaderFooter(String modName, Processor processor) FOR modulestudio::Module»
+«LET dbName(processor.name) AS procName-»
+«FILE "templates/" + modName + "_" + procName + "_header.htm"-»
+{* purpose of this template: header for «procName» area *}
+
+«IF processor.type == ProcessorType::ADMIN-»
+{admincategorymenu xhtml=1}
+«ELSE-»
+{insert name="getstatusmsg"}
+<br />
+«ENDIF-»
+«REM»
+{pnajaxheader}
+{pnpageaddvar name="javascript" value="modules/News/pnjavascript/sizecheck.js"}
+«ENDREM»
+«IF processor.type == ProcessorType::ADMIN-»
+<div class="z-adminbox">
+«ELSE-»
+<div class="z-frontendbox">
+«ENDIF-»
+    <h1>{gt text='«modName»'}</h1>
+    <div class="z-menu">
+«IF processor.type == ProcessorType::ADMIN-»
+        {moduleadminlinks modname="«modName»"}
+«ELSE-»
+        [&nbsp;fill in your menu links here«REM»<a href="{modurl modname="«modName»" type="«procName»" func="view"}">{gt text='View items'}</a>«ENDREM»&nbsp;]
+«ENDIF-»
+    </div>
+</div>
+«ENDFILE»
+«FILE "templates/" + modName + "_" + procName + "_footer.htm"-»
+{* purpose of this template: footer for «procName» area *}
+
+«EXPAND FileHelper::msWeblink-»
+
+«ENDFILE»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE MetaDataTemplates(String modName, Processor processor) FOR modulestudio::Module-»
+«LET dbName(processor.name) AS procName-»
+«IF processor.hasPStates('view') || processor.hasPStates('display')-»
+«FILE "templates/" + modName + "_" + procName + "_include_metadata_display.htm"-»
+    <dt>{gt text='Meta data'}</dt>
+{if $obj.cr_uid}
+{usergetvar name="uname" uid=$obj.cr_uid assign="cr_uname"}
+{configgetvar name="profilemodule" assign="profilemodule"}
+{modurl modname=$profilemodule func="view" uname=$cr_uname assign="cr_profilelink"}
+    <dd>{gt text='Created by %1$s on %2$s' tag1="<a href='$cr_profilelink'>$cr_uname</a>" tag2=$obj.cr_date|dateformat html=true}</dd>
+{/if}
+{usergetvar name="uname" uid=$obj.lu_uid assign="lu_uname"}
+{modurl modname=$profilemodule func="view" uname=$lu_uname assign="lu_profilelink"}
+    <dd>{gt text='Updated by %1$s on %2$s' tag1="<a href='$lu_profilelink'>$lu_uname</a>" tag2=$obj.lu_date|dateformat html=true}</dd>
+«ENDFILE»
+«ENDIF»
+
+«IF processor.hasPStates('edit')-»
+«FILE "templates/" + modName + "_" + procName + "_include_metadata_edit.htm"-»
+<fieldset>
+    <legend>{gt text='Meta data'}</legend>
+    <ul>
+        {usergetvar name="uname" uid=$cr_uid assign="username"}
+        <li>{gt text='Created by %s' tag1=$username}</li>
+        <li>{gt text='Created on %s' tag1=$cr_date|dateformat}</li>
+        {usergetvar name="uname" uid=$lu_uid assign="username"}
+        <li>{gt text='Updated by %s' tag1=$username}</li>
+        <li>{gt text='Updated on %s' tag1=$lu_date|dateformat}</li>
+    </ul>
+</fieldset>
+«ENDFILE»
+«ENDIF»
+«ENDLET-»
+«ENDDEFINE»

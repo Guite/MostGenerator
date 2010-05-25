@@ -17,7 +17,7 @@
 «REM»Entry point for pnForm templates«ENDREM»
 «DEFINE Root(String moduleName, Processor proc, String actionName) FOR persistence::Table-»
 «LET dbName(proc.name) AS procName-»
-«FILE "pntemplates/" + moduleName(moduleName + "_" + procName + "_" + name + "_" + actionName) + ".htm"-»
+«FILE "templates/" + moduleName(moduleName + "_" + procName + "_" + name + "_" + actionName) + ".htm"-»
 «EXPAND FormTemplate(moduleName, proc, actionName)-»
 «ENDFILE»
 «ENDLET-»
@@ -102,11 +102,11 @@ cssClass="myClass"
     <fieldset>
         <legend><!--[gt text='Hooks']--></legend>
         <!--[if $mode == "edit"]-->
-            <!--[pnmodcallhooks hookobject="item" hookaction="modify" module="«modName»" hookid="«dbName(name)»`$«idField()»`"]-->
+            <!--[modcallhooks hookobject="item" hookaction="modify" module="«modName»" hookid="«dbName(name)»`$«idField()»`"]-->
         <!--[elseif $mode == "create"]-->
-            <!--[pnmodcallhooks hookobject="item" hookaction="new" module="«modName»"]-->
+            <!--[modcallhooks hookobject="item" hookaction="new" module="«modName»"]-->
         <!--[else]-->«REM»TODO«ENDREM»
-            <!--[pnmodcallhooks hookobject="item" hookaction="modify" module="«modName»" hookid="«dbName(name)»`$«idField()»`"]-->
+            <!--[modcallhooks hookobject="item" hookaction="modify" module="«modName»" hookid="«dbName(name)»`$«idField()»`"]-->
         <!--[/if]-->
     </fieldset>
 *]-->

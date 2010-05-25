@@ -4,10 +4,10 @@
 «DEFINE Impl(String modName, Processor processor) FOR persistence::Table»
 «LET dbName(processor.name) AS procName-»
 «LET moduleName(name) AS objName-»
-«FILE "pntemplates/" + modName + "_" + procName + "_" + objName + "_delete.htm"-»
-<!--[* purpose of this template: delete confirmation template for «procName» area *]-->
+«FILE "templates/" + modName + "_" + procName + "_" + objName + "_delete.htm"-»
+{* purpose of this template: «formattedName(nameMultiple)» delete confirmation view in «procName» area *}
 
-<!--[include file="«modName»_«procName»_header.htm"]-->
+{include file="«modName»_«procName»_header.htm"}
 
 «IF processor.type == ProcessorType::ADMIN-»
 <div class="z-admincontainer">
@@ -15,16 +15,16 @@
 <div class="z-frontendcontainer">
 «ENDIF-»
 
-<p><!--[gt text='Do you really want to delete this «formattedName(name)» ?']--></p>
+<p>{gt text='Do you really want to delete this «formattedName(name)» ?'}</p>
 
-<form action="<!--[pnmodurl modname="«modName»" type="«procName»" func="delete" ot="«objName»" «idField()»=$«objName».«idField()»]-->" method="post">
-	<input type="submit" name="confirmation" value="<!--[gt text='Yes']-->" />
-	<a href="<!--[pnmodurl modname="«modName»" type="«procName»" func="view" ot="«objName»"]-->"><!--[gt text='No']--></a>
+<form action="{modurl modname="«modName»" type="«procName»" func="delete" ot="«objName»" «idField()»=$«objName».«idField()»}" method="post">
+	<input type="submit" name="confirmation" value="{gt text='Yes'}" />
+	<a href="{modurl modname="«modName»" type="«procName»" func="view" ot="«objName»"}">{gt text='No'}</a>
 </form>
 
 </div>
 
-<!--[include file="«modName»_«procName»_footer.htm"]-->
+{include file="«modName»_«procName»_footer.htm"}
 «ENDFILE»
 «ENDLET-»
 «ENDLET-»

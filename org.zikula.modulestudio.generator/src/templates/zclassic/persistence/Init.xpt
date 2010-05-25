@@ -5,11 +5,11 @@
 
 «REM»Entry point for module initialization«ENDREM»
 «DEFINE Root FOR Module»
-«FILE "pninit.php"-»
+«FILE "init.php"-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 «EXPAND InitInfo-»
 «ENDFILE»
-«IF interactiveInstallation == true»«EXPAND pnInit_Templates::Root»«ENDIF»
+«IF interactiveInstallation == true»«EXPAND Init_Templates::Root»«ENDIF»
 «ENDDEFINE»
 
 «DEFINE InitInfo FOR Module-»
@@ -34,7 +34,7 @@
  *
  * This function is only ever called once during the lifetime of a particular
  * module instance
- * This function MUST exist in the pninit file for a module
+ * This function MUST exist in the init.php file for a module
  *
  * @author       «author»
  * @return       bool       true on success, false otherwise
@@ -50,16 +50,16 @@ function «modName()»_init()
 
 «REM»
     // register hook functions
-    if (!pnModRegisterHook('item', 'display', 'GUI', '«modName()»', 'user', 'viewupload')) {
+    if (!ModUtil::registerHook('item', 'display', 'GUI', '«modName()»', 'user', 'viewupload')) {
         return LogUtil::registerError(_REGISTERFAILED . ', Nr. 1');
     }
-    if (!pnModRegisterHook('item', 'create', 'GUI', '«modName()»', 'user', 'createupload')) {
+    if (!ModUtil::registerHook('item', 'create', 'GUI', '«modName()»', 'user', 'createupload')) {
         return LogUtil::registerError(_REGISTERFAILED . ', Nr. 2');
     }
-    if (!pnModRegisterHook('item', 'update', 'GUI', '«modName()»', 'user', 'createupload')) {
+    if (!ModUtil::registerHook('item', 'update', 'GUI', '«modName()»', 'user', 'createupload')) {
         return LogUtil::registerError(_REGISTERFAILED . ', Nr. 3');
     }
-    if (!pnModRegisterHook('item', 'delete', 'API', '«modName()»', 'user', 'deleteupload')) {
+    if (!ModUtil::registerHook('item', 'delete', 'API', '«modName()»', 'user', 'deleteupload')) {
         return LogUtil::registerError(_REGISTERFAILED . ', Nr. 4');
     }
 «ENDREM»
@@ -68,10 +68,10 @@ function «modName()»_init()
 «FOREACH persistenceContainer.modvarContainer.modvars AS modvar-»
 «IF interactiveInstallation == true-»
     $sessionValue = SessionUtil::getVar('«moduleName(name + '_' + modvar.name)»');
-    pnModSetVar(«modName()», «moduleName(modvar.name)», (($sessionValue <> false) ? «EXPAND ModVarValFromSession FOR modvar» : «EXPAND ModVarValSession2Mod FOR modvar»));
+    ModUtil::setVar(«modName()», «moduleName(modvar.name)», (($sessionValue <> false) ? «EXPAND ModVarValFromSession FOR modvar» : «EXPAND ModVarValSession2Mod FOR modvar»));
     SessionUtil::delVar(«moduleName(name + '_' + modvar.name)»);
 «ELSE-»
-    pnModSetVar('«modName()»', '«moduleName(modvar.name)»', «EXPAND ModVarValDirect2Mod FOR modvar»);
+    ModUtil::setVar('«modName()»', '«moduleName(modvar.name)»', «EXPAND ModVarValDirect2Mod FOR modvar»);
 «ENDIF-»
 «ENDFOREACH-»
 
@@ -110,7 +110,7 @@ Ausgelesen als Array: $blabla["0"];
  * upgrade the «modName()» module from an old version
  *
  * This function can be called multiple times
- * This function MUST exist in the pninit file for a module
+ * This function MUST exist in the init.php file for a module
  *
  * @author       «author»
  * @param       int        $oldversion version to upgrade from
@@ -137,7 +137,7 @@ function «modName()»_upgrade($oldversion)
  * delete the «modName()» module
  * This function is only ever called once during the lifetime of a particular
  * module instance
- * This function MUST exist in the pninit file for a module
+ * This function MUST exist in init.php file for a module
  *
  * @author       «author»
  * @return       bool       true on success, false otherwise
@@ -152,22 +152,22 @@ function «modName()»_delete()
 
 «REM»
     // unregister hook functions
-    if (!pnModUnregisterHook('item', 'display', 'GUI', '«modName()»', 'user', 'viewupload')) {
+    if (!ModUtil::unregisterHook('item', 'display', 'GUI', '«modName()»', 'user', 'viewupload')) {
         return LogUtil::registerError(_UNREGISTERFAILED . ', Nr. 1');
     }
-    if (!pnModUnregisterHook('item', 'create', 'GUI', '«modName()»', 'user', 'createupload')) {
+    if (!ModUtil::unregisterHook('item', 'create', 'GUI', '«modName()»', 'user', 'createupload')) {
         return LogUtil::registerError(_UNREGISTERFAILED . ', Nr. 2');
     }
-    if (!pnModUnregisterHook('item', 'update', 'GUI', '«modName()»', 'user', 'createupload')) {
+    if (!ModUtil::unregisterHook('item', 'update', 'GUI', '«modName()»', 'user', 'createupload')) {
         return LogUtil::registerError(_UNREGISTERFAILED . ', Nr. 3');
     }
-    if (!pnModUnregisterHook('item', 'delete', 'API', '«modName()»', 'user', 'deleteupload')) {
+    if (!ModUtil::unregisterHook('item', 'delete', 'API', '«modName()»', 'user', 'deleteupload')) {
         return LogUtil::registerError(_UNREGISTERFAILED . ', Nr. 4');
     }
 «ENDREM»
 
     // remove all module vars
-    pnModDelVar('«modName()»');
+    ModUtil::delVar('«modName()»');
 
     // Deletion successful
     return true;
@@ -225,7 +225,7 @@ function «modName()»_defaultdata()
  * interactive installation procedure
  *
  * @author       «author»
- * @return       pnRender output
+ * @return       Renderer output
  */
 function «modName()»_init_interactiveinit()
 {
@@ -233,7 +233,10 @@ function «modName()»_init_interactiveinit()
         return LogUtil::registerPermissionError();
     }
 
-    $render = pnRender::getInstance('«modName()»', false);
+    // get Renderer instance for this module
+    $render = Renderer::getInstance('«modName()»', false);
+
+    // fetch and return the appropriate template
     return $render->fetch('«modName()»_init_interactive.htm');
 } 
 «ENDDEFINE»
@@ -243,7 +246,7 @@ function «modName()»_init_interactiveinit()
  * interactive installation procedure step 2
  *
  * @author       «author»
- * @return       pnRender output
+ * @return       Renderer output
  */
 function «modName()»_init_interactiveinitstep2()
 {
@@ -253,15 +256,19 @@ function «modName()»_init_interactiveinitstep2()
 
     $submit = FormUtil::getPassedValue('submit', null, 'POST');
     if (!$submit) {
-        $render = pnRender::getInstance('«modName()»', false);
+        // get Renderer instance for this module
+        $render = Renderer::getInstance('«modName()»', false);
+
+        // assign auth key
         $render->assign('authid', SecurityUtil::generateAuthKey('«modName()»'));
 
+        // fetch and return the appropriate template
         return $render->fetch('«modName()»_init_step2.htm');
     }
 
     if (!SecurityUtil::confirmAuthKey()) {
         LogUtil::registerError(DataUtil::formatForDisplayHTML(_BADAUTHKEY));
-        return pnRedirect(pnModURL('Modules', 'admin', 'view'));
+        return System::redirect(ModUtil::url('Modules', 'admin', 'view'));
     }
 
 	«FOREACH persistenceContainer.modvarContainer.modvars AS modvar-»
@@ -273,7 +280,7 @@ function «modName()»_init_interactiveinitstep2()
     $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST');
     $activate = (!empty($activate)) ? true : false; 
 
-    return pnRedirect(pnModURL('«modName()»', 'init', 'interactiveinitstep3', array('activate' => $activate)));
+    return System::redirect(ModUtil::url('«modName()»', 'init', 'interactiveinitstep3', array('activate' => $activate)));
 }
 «ENDDEFINE»
 
@@ -286,7 +293,7 @@ function «modName()»_init_interactiveinitstep2()
  * interactive installation procedure step 3
  *
  * @author       «author»
- * @return       pnRender output
+ * @return       Renderer output
  */
 function «modName()»_init_interactiveinitstep3()
 {
@@ -295,9 +302,16 @@ function «modName()»_init_interactiveinitstep3()
     }
     $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST');
 
-    $render = pnRender::getInstance('«modName()»', false);
+    // get Renderer instance for this module
+    $render = Renderer::getInstance('«modName()»', false);
+
+    // assign auth key
     $render->assign('authid', SecurityUtil::generateAuthKey('Modules'));
+
+    // assign activation flag
     $render->assign('activate', $activate);
+
+    // fetch and return the appropriate template
     return $render->fetch('«modName()»_init_step3.htm');
 }
 «ENDDEFINE»
@@ -307,7 +321,7 @@ function «modName()»_init_interactiveinitstep3()
  * interactive update procedure
  *
  * @author       «author»
- * @return       pnRender output
+ * @return       Renderer output
  */
 function «modName()»_init_interactiveupdate()
 {
@@ -326,7 +340,7 @@ function «modName()»_init_interactiveupdate()
  * interactive delete
  *
  * @author       «author»
- * @return       pnRender output
+ * @return       Renderer output
  */
 function «modName()»_init_interactivedelete()
 {
@@ -334,8 +348,13 @@ function «modName()»_init_interactivedelete()
         return LogUtil::registerPermissionError();
     }
 
-    $render = pnRender::getInstance('«modName()»');
+    // get Renderer instance for this module
+    $render = Renderer::getInstance('«modName()»', false);
+
+    // assign auth key
     $render->assign('authid', SecurityUtil::generateAuthKey('Modules'));
+
+    // fetch and return the appropriate template
     return $render->fetch('«modName()»_init_delete.htm');
 }
 «ENDDEFINE»

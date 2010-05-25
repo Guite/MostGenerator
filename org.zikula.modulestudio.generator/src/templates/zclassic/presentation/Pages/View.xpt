@@ -11,36 +11,36 @@ listType:
 «DEFINE Impl(String modName, Processor processor, Integer listType) FOR persistence::Table»
 «LET dbName(processor.name) AS procName-»
 «LET moduleName(name) AS objName-»
-«FILE "pntemplates/" + modName + "_" + procName + "_" + objName + "_view.htm"-»
-<!--[* purpose of this template: view template for «procName» area *]-->
+«FILE "templates/" + modName + "_" + procName + "_" + objName + "_view.htm"-»
+{* purpose of this template: «formattedName(nameMultiple)» view view in «procName» area *}
 
-<!--[include file="«modName»_«procName»_header.htm"]-->
+{include file="«modName»_«procName»_header.htm"}
 
 «IF processor.type == ProcessorType::ADMIN-»
 <div class="z-admincontainer">
 «ELSE-»
 <div class="z-frontendcontainer">
 «ENDIF-»
-<!--[gt text='«formattedNameCapitalized(name)» list' assign="templateTitle"]-->
+{gt text='«formattedNameCapitalized(name)» list' assign="templateTitle"}
 «IF processor.type == ProcessorType::ADMIN-»
-<div class="z-adminpageicon"><!--[pnimg modname="core" src="windowlist.gif" set="icons/large" alt=$templateTitle]--></div>
+<div class="z-adminpageicon">{img modname="core" src="windowlist.gif" set="icons/large" alt=$templateTitle}</div>
 «ENDIF-»
-<!--[pnpagesetvar name="title" value=$templateTitle]-->
-<h2><!--[$templateTitle]--></h2>
+{pagesetvar name="title" value=$templateTitle}
+<h2>{$templateTitle}</h2>
 
-<!--[securityutil_checkpermission_block component="«modName»::" instance=".*" level="ACCESS_ADD"]-->
-<!--[gt text='Create «formattedName(name)»' assign="createTitle"]-->
-<!--[gt text='Update «formattedName(name)»' assign="editTitle"]-->
-<!--[gt text='Delete «formattedName(name)»' assign="deleteTitle"]-->
+{securityutil_checkpermission_block component="«modName»::" instance=".*" level="ACCESS_ADD"}
+{gt text='Create «formattedName(name)»' assign="createTitle"}
+{gt text='Update «formattedName(name)»' assign="editTitle"}
+{gt text='Delete «formattedName(name)»' assign="deleteTitle"}
 «IF processor.hasPStates('edit')-»
 <p>
-    <a href="<!--[pnmodurl modname="«modName»" type="«procName»" func="edit" ot="«objName»"]-->" title="<!--[$createTitle]-->">
-        <!--[pnimg src="insert_table_row.gif" modname="core" set="icons/extrasmall" __alt='Create']-->
-        <!--[$createTitle]-->
+    <a href="{modurl modname="«modName»" type="«procName»" func="edit" ot="«objName»"}" title="{$createTitle}">
+        {img src="insert_table_row.gif" modname="core" set="icons/extrasmall" __alt='Create'}
+        {$createTitle}
     </a>
 </p>
 «ENDIF»
-<!--[/securityutil_checkpermission_block]-->
+{/securityutil_checkpermission_block}
 
 «IF listType == 0-»
 <ul>
@@ -67,40 +67,30 @@ listType:
 «LET incoming.select(e|dbName(e.source.name + "id") == dbName(column.name)) AS joins-»
 «IF joins.size > 0-»
 «LET joins.get(0).source.columns.select(e|e.isLeading == true).get(0).name.dbName() AS colName-»
-    <!--[if $sort eq "«joins.get(0).source.name.dbName()»_«colName»"]-->
-            <a href="<!--[pnmodurl modname="«modName»" type="«procName»" func="view" ot="«objName»" sort="«joins.get(0).source.name.dbName()»_«colName»" sdir=$sdir]-->" style="font-style: italic">
-    <!--[else]-->
-            <a href="<!--[pnmodurl modname="«modName»" type="«procName»" func="view" ot="«objName»" sort="«joins.get(0).source.name.dbName()»_«colName»" sdir="asc"]-->">
-    <!--[/if]-->
-                <!--[gt text='«joins.get(0).source.name»']-->
+«EXPAND HeaderSortingLink(modName, procName, objName, dbName(joins.get(0).source.name) + '_' + colName, joins.get(0).source.name) FOR column-»
 «ENDLET-»
 «ELSE-»
 «LET dbName(column.name) AS colName-»
-    <!--[if $sort eq "«colName»"]-->
-            <a href="<!--[pnmodurl modname="«modName»" type="«procName»" func="view" ot="«objName»" sort="«colName»" sdir=$sdir]-->" style="font-style: italic">
-    <!--[else]-->
-            <a href="<!--[pnmodurl modname="«modName»" type="«procName»" func="view" ot="«objName»" sort="«colName»" sdir="asc"]-->">
-    <!--[/if]-->
-                <!--[gt text='«formattedNameCapitalized(column.name)»']-->
+«EXPAND HeaderSortingLink(modName, procName, objName, colName, column.name) FOR column-»
 «ENDLET-»
 «ENDIF-»
 «ENDLET-»
             </a>
         </th>
 «ENDFOREACH-»
-        <th id="hoptions" scope="col" align="left" valign="middle"><!--[gt text='Options']--></th>
+        <th id="hoptions" scope="col" align="left" valign="middle">{gt text='Options'}</th>
     </tr>
     </thead>
     <tbody>
 «ENDIF-»
 
-    <!--[foreach from=$objectArray item="«objName»"]-->
+    {foreach from=$objectArray item="«objName»"}
 «IF listType < 2-»
     <li><ul>
 «ELSEIF listType == 2-»
     <dt>
 «ELSEIF listType == 3-»
-    <tr class="<!--[cycle values="z-odd, z-even"]-->">
+    <tr class="{cycle values="z-odd, z-even"}">
 «ENDIF-»
 
 «FOREACH columns.reject(e|e.isPrimaryKey) AS column-»
@@ -113,9 +103,9 @@ listType:
 «ENDIF-»
 «LET incoming.select(e|dbName(e.source.name + "id") == dbName(column.name)) AS joins-»
 «IF column.isLeading == true»
-            <!--[$«objName».«dbName(column.name)»|pnmodcallhooks]-->
+            {$«objName».«dbName(column.name)»|modcallhooks}
 «ELSEIF joins.size > 0-»
-            «FOREACH joins AS join SEPARATOR ', '»<!--[$«objName».«join.source.name.dbName()»_«join.source.columns.select(e|e.isLeading == true).get(0).name.dbName()»«REM»|nl2br«ENDREM»|default:""]-->«ENDFOREACH»
+            «FOREACH joins AS join SEPARATOR ', '»{$«objName».«join.source.name.dbName()»_«join.source.columns.select(e|e.isLeading == true).get(0).name.dbName()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH»
 «ELSE-»
             «EXPAND DisplayColumnField(objName) FOR column-»
 «ENDIF-»
@@ -139,23 +129,23 @@ listType:
         <td headers="hoptions" align="right" valign="top" style="white-space: nowrap">
 «ENDIF-»
 «IF processor.hasPStates('display')-»
-            <a href="<!--[pnmodurl modname="«modName»" type="«procName»" func="display" ot="«objName»" «idField()»=$«objName».«idField()»]-->">
-                <!--[pnimg src="demo.gif" modname="core" set="icons/extrasmall" __alt='Details' __title='Details']-->
+            <a href="{modurl modname="«modName»" type="«procName»" func="display" ot="«objName»" «idField()»=$«objName».«idField()»}">
+                {img src="demo.gif" modname="core" set="icons/extrasmall" __alt='Details' __title='Details'}
             </a>
 «ENDIF-»            
 «IF processor.hasPStates('edit')-»
-    <!--[securityutil_checkpermission_block component="«modName»::" instance=".*" level="ACCESS_EDIT"]-->
-            <a href="<!--[pnmodurl modname="«modName»" type="«procName»" func="edit" ot="«objName»" «idField()»=$«objName».«idField()»]-->">
-                <!--[pnimg src="xedit.gif" modname="core" set="icons/extrasmall" __alt='Edit' __title='Edit']-->
+    {securityutil_checkpermission_block component="«modName»::" instance=".*" level="ACCESS_EDIT"}
+            <a href="{modurl modname="«modName»" type="«procName»" func="edit" ot="«objName»" «idField()»=$«objName».«idField()»}">
+                {img src="xedit.gif" modname="core" set="icons/extrasmall" __alt='Edit' __title='Edit'}
             </a>
-    <!--[/securityutil_checkpermission_block]-->
+    {/securityutil_checkpermission_block}
 «ENDIF-»
 «IF processor.hasPStates('delete')-»
-    <!--[securityutil_checkpermission_block component="«modName»::" instance=".*" level="ACCESS_DELETE"]-->
-            <a href="<!--[pnmodurl modname="«modName»" type="«procName»" func="delete" ot="«objName»" «idField()»=$«objName».«idField()»]-->">
-                <!--[pnimg src="14_layer_deletelayer.gif" modname="core" set="icons/extrasmall" __alt='Delete' __title='Delete']-->
+    {securityutil_checkpermission_block component="«modName»::" instance=".*" level="ACCESS_DELETE"}
+            <a href="{modurl modname="«modName»" type="«procName»" func="delete" ot="«objName»" «idField()»=$«objName».«idField()»}">
+                {img src="14_layer_deletelayer.gif" modname="core" set="icons/extrasmall" __alt='Delete' __title='Delete'}
             </a>
-    <!--[/securityutil_checkpermission_block]-->
+    {/securityutil_checkpermission_block}
 «ENDIF-»
 «IF listType < 2-»
         </li>
@@ -173,16 +163,16 @@ listType:
 «ELSEIF listType == 3-»
     </tr>
 «ENDIF-»
-    <!--[foreachelse]-->
+    {foreachelse}
 «IF listType < 2-»
         <li>
 «ELSEIF listType == 2-»
         <dt>
 «ELSEIF listType == 3-»
-        <tr class="<!--[cycle values="z-odd, z-even"]-->">
+        <tr class="{cycle values="z-odd, z-even"}">
         <td align="left" valign="top" colspan="«columns.size-1+1»">
 «ENDIF-»
-            <!--[gt text='No «formattedName(nameMultiple)» found.']-->
+            {gt text='No «formattedName(nameMultiple)» found.'}
 «IF listType < 2-»
         </li>
 «ELSEIF listType == 2-»
@@ -190,7 +180,7 @@ listType:
 «ELSEIF listType == 3-»
         </td></tr>
 «ENDIF-»
-    <!--[/foreach]-->
+    {/foreach}
 
 «IF listType == 0-»
 </ul>
@@ -203,11 +193,11 @@ listType:
 </table>
 «ENDIF-»
 
-<!--[pager rowcount=$pager.numitems limit=$pager.itemsperpage]-->
+{pager rowcount=$pager.numitems limit=$pager.itemsperpage}
 
 «IF processor.type == ProcessorType::USER-»
-<!--[pnmodurl modname="«modName»" func="view" ot="«objName»" startnum=$startnum assign="returnurl"]-->
-<!--[pnmodcallhooks hookobject="category" hookaction="display" module="«modName»«objName»" returnurl=$returnurl]-->
+{modurl modname="«modName»" func="view" ot="«objName»" startnum=$startnum assign="returnurl"}
+{modcallhooks hookobject="category" hookaction="display" module="«modName»«objName»" returnurl=$returnurl}
 </div>
 
 «ELSEIF processor.type == ProcessorType::ADMIN-»
@@ -216,10 +206,20 @@ listType:
 </div>
 «ENDIF-»
 
-<!--[include file="«modName»_«procName»_footer.htm"]-->
+{include file="«modName»_«procName»_footer.htm"}
 «ENDFILE»
 «ENDLET-»
 «ENDLET-»
+«ENDDEFINE»
+
+«DEFINE HeaderSortingLink(String modName, String procName, String objName, String colName, String label) FOR persistence::TableColumn»
+    {if $sort eq "«colName»"}
+            <a href="{modurl modname="«modName»" type="«procName»" func="view" ot="«objName»" sort="«colName»" sdir=$sdir}" style="font-style: italic">
+    {else}
+            <a href="{modurl modname="«modName»" type="«procName»" func="view" ot="«objName»" sort="«colName»" sdir="asc"}">
+    {/if}
+                {gt text='«formattedNameCapitalized(label)»'}
+            </a>
 «ENDDEFINE»
 
 «DEFINE Alignment FOR persistence::TableColumn»left«ENDDEFINE»
@@ -231,21 +231,21 @@ listType:
 
 
 «DEFINE DisplayColumnField(String objName) FOR persistence::TableColumn-»
-<!--[$«objName».«dbName(name)»]-->
+{$«objName».«dbName(name)»}
 «ENDDEFINE»
 
 «DEFINE DisplayColumnField(String objName) FOR persistence::DateField-»
-<!--[$«objName».«dbName(name)»|pndate_format:"datebrief"]-->
+{$«objName».«dbName(name)»|dateformat:"datebrief"}
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR persistence::TimestampField-»
-<!--[$«objName».«dbName(name)»|pndate_format:"datetimebrief"]-->
+{$«objName».«dbName(name)»|dateformat:"datetimebrief"}
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR persistence::BooleanField-»
-<!--[$«objName».«dbName(name)»|yesno:true]-->
+{$«objName».«dbName(name)»|yesno:true}
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR persistence::DecimalField-»
-<!--[$«objName».«dbName(name)»|formatnumber]-->
+{$«objName».«dbName(name)»|formatnumber}
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR persistence::FloatField-»
-<!--[$«objName».«dbName(name)»|formatnumber]-->
+{$«objName».«dbName(name)»|formatnumber}
 «ENDDEFINE»

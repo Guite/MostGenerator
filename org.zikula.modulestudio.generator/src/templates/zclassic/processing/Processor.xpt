@@ -187,13 +187,13 @@ function «modName()»_adminapi_getlinks()
 
 «FOREACH persistenceContainer.tables AS tab-»
     if (SecurityUtil::checkPermission('«modName()»::', '::', ACCESS_READ)) {
-        $links[] = array('url' => pnModURL('«modName()»', 'admin', 'view', array('ot' => '«moduleName(tab.name)»')),
+        $links[] = array('url' => ModUtil::url('«modName()»', 'admin', 'view', array('ot' => '«moduleName(tab.name)»')),
                          'text' => __('«formattedNameCapitalized(tab.nameMultiple)»', $dom));
     }
 «ENDFOREACH-»
 «IF needsConfig()-»
     if (SecurityUtil::checkPermission('«modName()»::', '::', ACCESS_ADMIN)) {
-        $links[] = array('url' => pnModURL('«modName()»', 'admin', 'config'), 'text' => __('Configuration', $dom));
+        $links[] = array('url' => ModUtil::url('«modName()»', 'admin', 'config'), 'text' => __('Configuration', $dom));
     }
 «ENDIF-»
     return $links;

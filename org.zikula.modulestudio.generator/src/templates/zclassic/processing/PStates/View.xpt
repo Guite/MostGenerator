@@ -21,7 +21,7 @@
     $startnum = (int) FormUtil::getPassedValue('pos', 1, 'GET');
 
     // pagesize is the number of items displayed on a page for pagination
-    $pagesize = pnModGetVar('«modName»', 'pagesize', 10);
+    $pagesize = ModUtil::getVar('«modName»', 'pagesize', 10);
 «REM»TODO«ENDREM»
 
     // convenience vars to make code clearer
@@ -48,8 +48,8 @@
     // get total number of records for building the pagination by method call
     $objcount = $objectArray->getCount($where);
 
-    // get pnRender instance for this module
-    $render = pnRender::getInstance('«modName»', false);
+    // get Renderer instance for this module
+    $render = Renderer::getInstance('«modName»', false);
 
     // assign the object-array we loaded above
     $render->assign('objectArray', $objectData);

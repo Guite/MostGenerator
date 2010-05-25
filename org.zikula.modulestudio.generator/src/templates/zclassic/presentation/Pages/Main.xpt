@@ -3,10 +3,10 @@
 
 «DEFINE Impl(String modName, Processor processor) FOR persistence::Table»
 «LET dbName(processor.name) AS procName-»
-«FILE "pntemplates/" + modName + "_" + procName + "_main.htm"-»
-<!--[* purpose of this template: main template for «procName» area *]-->
+«FILE "templates/" + modName + "_" + procName + "_main.htm"-»
+{* purpose of this template: «formattedName(nameMultiple)» main view in «procName» area *}
 
-<!--[pnmodfunc modname="«modName»" type="«procName»" func="view"]-->
+{modfunc modname="«modName»" type="«procName»" func="view"}
 «ENDFILE»
 «ENDLET-»
 «ENDDEFINE»

@@ -12,11 +12,9 @@ $modversion['securityschema'] = array('«modName()»::' => '::',
 «ENDAROUND»
 
 «DEFINE PermissionSchema(String modName) FOR persistence::Table-»
-«LET tableContainer.relations.select(e|e.target.name == name) AS joins-»
-«IF joins.size > 0-»
-«EXPAND PermissionSchema(modName) FOREACH joins SEPARATOR ','-»,
+«IF incoming.size > 0-»
+«EXPAND PermissionSchema(modName) FOREACH incoming SEPARATOR ','-»,
 «ENDIF»
-«ENDLET-»
 '«modName»:«capitalName(name)»:' => '«capitalName(name)»ID::'«ENDDEFINE»
 
 «DEFINE PermissionSchema(String modName) FOR persistence::Relationship»
@@ -28,7 +26,7 @@ $modversion['securityschema'] = array('«modName()»::' => '::',
 «LET stateProcessor.processingContainer.processingModule.modName() AS modName-»
 «IF stateProcessor.type == ProcessorType::ADMIN-»
     if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_ADMIN)) {
-        return LogUtil::registerPermissionError(pnModURL('«modName»', 'user', 'main'));
+        return LogUtil::registerPermissionError(ModUtil::url('«modName»', 'user', 'main'));
 «ELSE-»
 «IF type == ProcessorStateType::MAIN-»
     if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_OVERVIEW)) {

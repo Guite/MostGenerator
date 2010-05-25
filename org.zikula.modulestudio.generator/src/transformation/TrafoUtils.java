@@ -41,12 +41,9 @@ public class TrafoUtils {
 	 */
 	public static boolean addRelationFields(Table table) {
 		try {
-			PersistenceContainer container = table.getTableContainer();
-			for (Iterator relIter = container.getRelations().iterator(); relIter.hasNext();) {
+			for (Iterator relIter = table.getIncoming().iterator(); relIter.hasNext();) {
 				Relationship rel = (Relationship) relIter.next();
-				if (rel.getTarget().equals(table)) {
-					table.getColumns().add(createIDColumn(rel.getSource().getName(), false));
-				}
+				table.getColumns().add(createIDColumn(rel.getSource().getName(), false));
 			}
 		}
 		catch (Exception e) {

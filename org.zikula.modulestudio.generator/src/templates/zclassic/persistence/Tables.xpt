@@ -5,7 +5,7 @@
 
 «REM»Entry point for module table definition«ENDREM»
 «DEFINE Root FOR Module-»
-«FILE "pntables.php"-»
+«FILE "tables.php"-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 «EXPAND TableInfo-»
 «ENDFILE»
@@ -17,7 +17,7 @@
  *
  * This function is called internally by the core whenever the module is
  * loaded. It delivers the table information to the core.
- * It can be loaded explicitly using the pnModDBInfoLoad() API function.
+ * It can be loaded explicitly using the ModUtil::dbInfoLoad() method.
  *
  * @author       «author»
  * @return       array       The table information.
@@ -29,7 +29,7 @@ function «modName()»_pntables()
 
     $dbdriver = DBConnectionStack::getConnectionDBDriver();
 
-«FOREACH persistenceContainer.tables AS tab-»
+«FOREACH persistenceContainer.select(e|e.isDefaultDataSource).tables AS tab-»
 
     /*
      * definitions for «moduleName(tab.name)» table

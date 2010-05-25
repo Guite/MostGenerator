@@ -15,8 +15,8 @@
 
 «EXPAND ProcHelper::getObjectFromSource("", "id", "idField")-»
 
-    // get pnRender instance for this module
-    $render = pnRender::getInstance('«modName»', false);
+    // get Renderer instance for this module
+    $render = Renderer::getInstance('«modName»', false);
 
     // assign the object we loaded above.
     // since the same code is used the handle the entry of the new object,

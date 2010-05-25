@@ -1,4 +1,4 @@
-«IMPORT ModuleStudio»
+«IMPORT modulestudio»
 «IMPORT templates::zclassic::behavior»
 «IMPORT templates::zclassic::persistence»
 «IMPORT templates::zclassic::presentation»
@@ -9,12 +9,12 @@
 «REM»start point for the generator«ENDREM»
 «DEFINE Root(Object pm) FOR modulestudio::Module»
     «REM»«pm.subTask("Basic information")»«ENDREM»
-	«EXPAND pnVersion::Root»«REM»TODO: remove pn prefix«ENDREM»
+	«EXPAND VersionFile::Root»
 
 	«REM»«pm.subTask("Persistence: Table definitions")»«ENDREM»
-	«EXPAND pnTables::Root»«REM»TODO: remove pn prefix«ENDREM»
+	«EXPAND Tables::Root»
 	«REM»«pm.subTask("Persistence: Module initialisation")»«ENDREM»
-	«EXPAND pnInit::Root»«REM»TODO: remove pn prefix«ENDREM»
+	«EXPAND Init::Root»
 
     «REM»«pm.subTask("Processing: Generic functionality")»«ENDREM»
 	«EXPAND Processor::Root»
@@ -25,21 +25,21 @@
 	«EXPAND BusinessObject::Root»
 
 	«REM»«pm.subTask("Presentation: Rendering templates")»«ENDREM»
-	«EXPAND pnRender::Root»«REM»TODO: remove pn prefix«ENDREM»
+	«EXPAND Renderer::Root»
 	«REM»«pm.subTask("Presentation: Form templates")»«ENDREM»
-	«EXPAND pnForm::Root»«REM»TODO: remove pn prefix«ENDREM»
+	«EXPAND Forms::Root»
 	«REM»«pm.subTask("Presentation: Module-specific plugins")»«ENDREM»
-	«EXPAND pnPlugin::Root»«REM»TODO: remove pn prefix«ENDREM»
+	«EXPAND Plugins::Root»
 	«REM»«pm.subTask("Presentation: CSS definitions")»«ENDREM»
-	«EXPAND pnStyle::Root»«REM»TODO: remove pn prefix«ENDREM»
+	«EXPAND Styles::Root»
+    «REM»«pm.subTask("Presentation: Images")»«ENDREM»
+    «EXPAND Images::Root»
 
-	«REM»«pm.subTask("Additions: Blocks")»«ENDREM»
-	«EXPAND Blocks::Root»
-	«REM»«pm.subTask("Additions: Translations")»«ENDREM»
-	«EXPAND Translations::Root»
-	«REM»«pm.subTask("Additions: Documentation")»«ENDREM»
-	«EXPAND Docs::Root»
-	«REM»«pm.subTask("Additions: Images")»«ENDREM»
-	«EXPAND pnImages::Root»«REM»TODO: remove pn prefix«ENDREM»
+    «REM»«pm.subTask("Additions: Blocks")»«ENDREM»
+    «EXPAND Blocks::Root»
+    «REM»«pm.subTask("Additions: Translations")»«ENDREM»
+    «EXPAND Translations::Root»
+    «REM»«pm.subTask("Additions: Documentation")»«ENDREM»
+    «EXPAND Docs::Root»
 «ENDDEFINE»
 

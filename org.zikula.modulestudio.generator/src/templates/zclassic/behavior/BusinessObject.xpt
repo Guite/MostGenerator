@@ -4,25 +4,25 @@
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::UtilsBO»
 
-«REM»Entry point for PNObject implementations«ENDREM»
+«REM»Entry point for DBObject implementations«ENDREM»
 «DEFINE Root FOR Module-»
 	«FILE "classes/index.html"»«ENDFILE»
 	«FILE "classes/Base/index.html"»«ENDFILE»
-    «FILE "classes/PN" + modName() + ".class.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND pnObjectModuleClass(false)»«ENDFILE»
-    «FILE "classes/PN" + modName() + "Array.class.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND pnObjectModuleClass(true)»«ENDFILE»
+    «FILE "classes/PN" + modName() + ".class.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND dbObjectModuleClass(false)»«ENDFILE»
+    «FILE "classes/PN" + modName() + "Array.class.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND dbObjectModuleClass(true)»«ENDFILE»
 
 	«EXPAND ObjectClassWrapper(this, false) FOREACH persistenceContainer.tables-»
-	«REM»EXPAND pnObjectClassWrapper(this) FOREACH behaviorContainer.businessObjects-«ENDREM»
+	«REM»EXPAND dbObjectClassWrapper(this) FOREACH behaviorContainer.businessObjects-«ENDREM»
 	«EXPAND ObjectClassWrapper(this, true) FOREACH persistenceContainer.tables-»
 «ENDDEFINE»
 
-«REM»Module specific PNObject base class«ENDREM»
-«DEFINE pnObjectModuleClass(Boolean appendArray) FOR Module-»
+«REM»Module specific DBObject base class«ENDREM»
+«DEFINE dbObjectModuleClass(Boolean appendArray) FOR Module-»
 /**
  * This is a base class encapsulating the generic functionality which is
- * common for all PNObject«IF appendArray»Array«ENDIF» types in the «modName()» module
+ * common for all DBObject«IF appendArray»Array«ENDIF» types in the «modName()» module
  */
-class PN«modName()»«IF appendArray»Array«ENDIF» extends PNObject«IF appendArray»Array«ENDIF»
+class DB«modName()»«IF appendArray»Array«ENDIF» extends DBObject«IF appendArray»Array«ENDIF»
 {
 }
 «ENDDEFINE»
@@ -31,12 +31,12 @@ class PN«modName()»«IF appendArray»Array«ENDIF» extends PNObject«IF appen
 «DEFINE ObjectClassWrapper(modulestudio::Module module, Boolean appendArray) FOR persistence::Table-»
 «FILE "classes/Base/" + baseClassFileName(appendArray)»«EXPAND FileHelper::phpFileHeader(module)»
 
-Loader::loadClass('PN«module.modName()»«IF appendArray»Array«ENDIF»', 'modules/«module.modName()»/classes');
+Loader::loadClass('DB«module.modName()»«IF appendArray»Array«ENDIF»', 'modules/«module.modName()»/classes');
 
 /**
  * This class provides basic functionality of «baseClassName(appendArray)»
  */
-abstract class «baseClassName(appendArray)» extends PN«module.modName()»«IF appendArray»Array«ENDIF»
+abstract class «baseClassName(appendArray)» extends DB«module.modName()»«IF appendArray»Array«ENDIF»
 {
 «IF appendArray == false-»
 «EXPAND ObjectClassImpl(module)-»
@@ -84,7 +84,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
     function «baseClassName(false)»($init = null, $key = 0, $field = null)
     {
         // call base class constructor
-        $this->PNObject();
+        $this->DBObject();
 
         // set the tablename this object maps to
 «REM»        $this->_objType       = '«dbName(module.prefix + '_' + dataSource().name)»';«ENDREM»
@@ -102,12 +102,6 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 «EXPAND ObjectJoins-»
 
 «EXPAND ObjectPermissionFilters(module.modName())-»
-
-«REM»
-     PNCategory
-        $this->_objValidation['name']  = array ('name', true, 'noop', '', _CATEGORIES_NAME_EMPTY);
-        $this->_objValidation['value'] = array ('value', true, 'noop', '', _CATEGORIES_VALUE_EMPTY);
-«ENDREM»
 
         // call initialisation routine
         $this->_init($init, $key, $this->_objField);
@@ -191,65 +185,6 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
     {
 «EXPAND GetObjectReference-»
 
-«REM»ExampleObj1
-	«EXPAND --> TransformObject -> ReplaceGermanSpecialChars»
-«ENDREM»
-«REM»v4bJournal
-        if (!$obj['owner_uid'])
-            $obj['owner_uid'] = pnUserGetVar('uid');
-
-        $uploadFile = (isset($_FILES['userfile']['name']) ? $_FILES['userfile']['name'] : null);
-        if ($uploadFile)
-            $obj['image'] = $uploadFile;
-        else
-        if ($obj['image_existing'])
-            $obj['image'] = $obj['image_existing'];
-
-        // date picker can return empty (but set field) which then overwrites cr_date
-        if (isset($obj['cr_date']) && !$obj['cr_date'])
-            unset ($obj['cr_date']);
-
-        if ($uploadFile)
-        {
-            $uploadfile = $_FILES['userfile']['tmp_name'];
-            $origfile   = $_FILES['userfile']['name'];
-            $uname      = pnUserGetVar('uname');
-            $uploaddest = "modules/v4bJournal/img/users/$uname";
-            @mkdir ($uploaddest);
-            if (!file_exists("$uploaddest/index.html"))
-                @touch ("$uploaddest/index.html");
-            Loader::loadClass ('FileUtil');
-            $rc = FileUtil::uploadFile ('userfile', $uploaddest);
-
-            if ($rc)
-            {
-                $_POST['validationErrors']['image'] = _PN_JOURNAL_JOURNAL_ERROR_FILE_UPLOAD.": ".$rc;
-                pnRedirect(pnModURL('v4bJournal', 'user', 'edit', $_POST));
-                return true;
-            }
-
-            if (pnModGetVar('v4bJournal', 'generate_thumbnails', 0) && pnModAvailable('Thumbnail'))
-            {
-                $args = array();
-                $fName = $_FILES['userfile']['name'];
-                $args['filename'] = "$uploaddest/$fName";
-                $args['w'] = pnModGetVar('v4bJournal', 'max_image_size_x', 100);
-                $args['h'] = pnModGetVar('v4bJournal', 'max_image_size_y', 100);
-                pnModLoad ('Thumbnail');
-                $tmbFile = pnModAPIFunc ('Thumbnail', 'user', 'generateThumbnail', $args);
-            }
-        }
-«ENDREM»
-«REM»PNCategory
-    // checkbox has to be explicitely processed
-    if (isset($obj['status'])) {
-        $obj['status'] = 'A';
-    }
-    else {
-        $obj['status'] = 'I';
-    }
-«ENDREM»
-
         // serialize the datafields array in the 'data' field
         $obj['data'] = serialize($obj['datafields']);
 
@@ -317,21 +252,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
     {
 «EXPAND GetObjectReference-»
 
-«REM»PNCategory
-        if (!$obj['security_domain']) {
-            $obj['security_domain'] = 'Categories::';
-        }
-
-        $obj['display_name_org'] = $obj['display_name'];
-        $obj['display_desc_org'] = $obj['display_desc'];
-        $obj['display_name']     = serialize($obj['display_name']);
-        $obj['display_desc']     = serialize($obj['display_desc']);
-
-        // encode slash
-        $obj['name'] = str_replace ('/', '&#47;', $obj['name']);
-«ENDREM»
-
-        return $this->getDataFromInputPostProcess($obj);
+        return true;
     }
 «ENDDEFINE»
 
@@ -345,30 +266,6 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
     {
 «EXPAND GetObjectReference-»
 
-«REM»v4bJournal
-        $privateMode = pnModGetVar ('v4bJournal', 'private_mode');
-
-        if ($objData['permission'] == _PN_PERMISSION_BASIC_PUBLIC || $privateMode)
-        {
-            $ot = 'stats';
-            if (!($class = Loader::loadClassFromModule ('v4bJournal', $ot, false)))
-                v4b_exit ("Unable to load class [$ot] ...");
-
-            $obj = new $class();
-            $obj->save ();
-        }
-
-        $this->genericRSSPostProcess ();
-«ENDREM»
-«REM»PNCategory
-        $obj['display_name'] = $obj['display_name_org'];
-        $obj['display_desc'] = $obj['display_desc_org'];
-        unset ($obj['display_name_org']);
-        unset ($obj['display_desc_org']);
-        unset ($_SESSION['Cache']);
-
-        return $obj;
-«ENDREM»
     	return;
     }
 «ENDDEFINE»
@@ -385,29 +282,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
     {
 «EXPAND GetObjectReference-»
 
-«REM»v4bJournal
-        if ($journal['image_existing'] && !$journal['image'])
-            $journal['image'] = $journal['image_existing'];
-«ENDREM»
-
-«REM»PNCategory
-        Loader::requireOnce('includes/pnobjlib/CategoryUtil.class.php');
-
-        $pid    = (int)$obj['parent_id'];
-        $parent = CategoryUtil::getCategoryByID ($pid);
-
-        $this->insertPreProcess ();
-        $obj =& $this->_objData;
-        $obj['path']  = "$parent[path]/$obj[name]";
-        $obj['ipath'] = "$parent[ipath]/$obj[id]";
-
-        // encode slash
-        $obj['name'] = str_replace ('/', '&#47;', $obj['name']);
-
-        return $obj;
-«ENDREM»
-
-        return $this->getDataFromInputPostProcess ($obj);
+        return true;
     }
 «ENDDEFINE»
 
@@ -422,12 +297,6 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 «EXPAND GetObjectReference-»
 
     	return;
-«REM»v4bJournal
-        $this->genericRSSPostProcess ();
-«ENDREM»
-«REM»PNCategory
-        return $this->insertPostProcess ();
-«ENDREM»
     }
 «ENDDEFINE»
 
@@ -441,7 +310,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
     {
 «EXPAND GetObjectReference-»
 
-        return;
+        return true;
     }
 «ENDDEFINE»
 
@@ -454,35 +323,6 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
     function deletePostProcess($obj = null)
     {
 «EXPAND GetObjectReference-»
-
-«REM»v4bJournal
-        // figure out the latest posting this user has left (after the deletion)
-        $where = 'jjo_owner_uid='. $obj['owner_uid'] . " AND jjo_permission='" . _PN_PERMISSION_BASIC_PUBLIC . "'";
-        $maxID = DBUtil::selectFieldMax ('v4b_journal_journal', 'id', 'MAX', $where);
-
-        // if we have another posting, update the stats table to reflect this
-        if ($maxID)
-        {
-            $count = DBUtil::selectObjectCount ('v4b_journal_journal', $where);
-
-            $obj = array();
-            $obj['uid']         = $obj['owner_uid'];
-            $obj['jid']         = $maxID;
-            $obj['lu_date']     = $obj['cr_date'];
-            $obj['entry_count'] = $count;
-            DBUtil::updateObject ($obj, 'v4b_journal_stats', '', false, 'uid');
-        }
-        else // delete this user's stats entry
-        {
-            DBUtil::deleteObjectByID ('v4b_journal_stats', $obj['owner_uid'], 'uid');
-        }
-
-        $this->genericRSSPostProcess ();
-    }
-
-Stats:
-        $maxID = DBUtil::deleteObjectByID('v4b_journal_journal', 'owner_uid', $obj['owner_uid']);
-«ENDREM»
 
         return;
     }
@@ -497,17 +337,6 @@ Stats:
     function validatePostProcess($obj = null)
     {
 «EXPAND GetObjectReference-»
-
-«REM»PNCategory
-        // ensure that the name we want to use doesn't exist already on this level
-        $name = $obj['name'];
-        $cats = CategoryUtil::getCategoriesByParentID ($obj['parent_id'], '', false, '', '', '', 'name');
-        if (isset($cats[$name]) && $cats[$name]) {
-            $_SESSION['validationErrors'][$this->_objPath]['name'] = "Category $name must be unique under parent";
-            $_SESSION['validationFailedObjects'][$this->_objPath] = $obj;
-            return false;
-        }
-«ENDREM»
 
         return true;
     }
@@ -546,7 +375,7 @@ Stats:
     function «baseClassName(true)»($init = null, $where = '', $orderBy = '', $assocKey = null)
     {
         // call base class constructor
-        $this->PNObjectArray();
+        $this->DBObjectArray();
 
         // set the tablename this object maps to
         $this->_objType       = '«fullTableName()»';

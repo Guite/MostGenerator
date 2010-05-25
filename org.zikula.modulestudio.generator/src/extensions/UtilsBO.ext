@@ -8,7 +8,7 @@ extension extensions::Utils;
  */
 
 cached String classPraefix()
-	: "PN";
+	: "DB";
 
 cached String classSuffix()
 	: ".class.php";
