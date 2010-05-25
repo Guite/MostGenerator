@@ -4,21 +4,21 @@
 
 «DEFINE Impl(String modName) FOR ProcessorState-»
 «IF stateProcessor.type == ProcessorType::USER-»
-    // call view method
-    return «modName»_«dbName(stateProcessor.name)»_view();
+        // call view method
+        return $this->view();
 «ELSEIF stateProcessor.type == ProcessorType::ADMIN-»
 «REM»
 «IF stateProcessor.processingContainer.processingModule.needsConfig()-»
-    // call config method
-    return «modName»_«dbName(stateProcessor.name)»_config();
+        // call config method
+        return $this->config();
 «ELSE-»
 «ENDREM»
-    // call view method
-    return «modName»_«dbName(stateProcessor.name)»_view();
+        // call view method
+        return $this->view();
 «REM»«ENDIF-»«ENDREM»
 «ELSEIF stateProcessor.type == ProcessorType::CUSTOMROLE-»
-    // call view method
-    return «modName»_«dbName(stateProcessor.name)»_view();
+        // call view method
+        return $this->view();
 «ELSEIF stateProcessor.type == ProcessorType::ACCOUNT-»
 «ELSEIF stateProcessor.type == ProcessorType::AJAX-»
 «ELSEIF stateProcessor.type == ProcessorType::SEARCH-»
@@ -27,14 +27,14 @@ New Search API:
 http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «ENDREM»
 «ELSEIF stateProcessor.type == ProcessorType::CUSTOM-»
-    // call view method
-    return «modName»_«moduleName(name)»_view();
+        // call view method
+        return $this->view();
 «ENDIF-»
 «REM»
-    // get Renderer instance for this module
-    $render = Renderer::getInstance('«modName»', false);
+        // get Renderer instance for this module
+        $render = Renderer::getInstance('«modName»', false);
 
-    // fetch and return the appropriate template
-    return $render->fetch('«modName»_«dbName(stateProcessor.name)»_main.htm');
+        // fetch and return the appropriate template
+        return $render->fetch('«modName»_«dbName(stateProcessor.name)»_main.htm');
 «ENDREM»
 «ENDDEFINE»

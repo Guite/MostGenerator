@@ -5,11 +5,8 @@
 «DEFINE Impl(String modName) FOR ProcessorState-»
 «IF stateProcessor.type == ProcessorType::ADMIN
 	&& (name == "config" || name == "modifyconfig" || name == "preferences")-»
-«EXPAND Controller::pnFormCreate(modName, stateProcessor, 'modify')-»
+«EXPAND Controller::FormCreate(modName, stateProcessor, 'modify')-»
 «ELSE-»
-//TODO: custom logic
+        /** TODO: custom logic */
 «ENDIF-»
 «ENDDEFINE»
-
-«REM»TODO: get config into pnForm«ENDREM»
-

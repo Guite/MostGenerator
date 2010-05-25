@@ -40,7 +40,7 @@
 <p>{gt text='Here you can manage all basic settings for this module.'}</p>
 
 {form cssClass="z-form"}
-«REM»    {pnformsetinitialfocus inputId=googlemapApiKey}«ENDREM»
+«REM»    {formsetinitialfocus inputId=googlemapApiKey}«ENDREM»
 
     {* add validation summary and a <div> element for styling the form *}
     {«dbName(modName())»FormFrame}
@@ -79,8 +79,8 @@
 <br />
 «ENDIF-»
 «REM»
-{pnajaxheader}
-{pnpageaddvar name="javascript" value="modules/News/pnjavascript/sizecheck.js"}
+{ajaxheader}
+{pageaddvar name="javascript" value="modules/News/pnjavascript/sizecheck.js"}
 «ENDREM»
 «IF processor.type == ProcessorType::ADMIN-»
 <div class="z-adminbox">

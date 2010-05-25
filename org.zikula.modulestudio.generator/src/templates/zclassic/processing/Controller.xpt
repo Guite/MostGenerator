@@ -14,7 +14,7 @@
 «FILE "classes/FormHandler/" + modName() + "_admin_confighandler.class.php"»
 «EXPAND FileHelper::phpFileHeader(this)-»
 
-class «modName()»_admin_configHandler extends pnFormHandler
+class «modName()»_admin_configHandler extends FormHandler
 {
     function initialize(&$render)
     {
@@ -65,7 +65,7 @@ class «modName()»_admin_configHandler extends pnFormHandler
 «ENDDEFINE»
 
 
-«DEFINE pnFormCreate(String moduleName, Processor proc, String actionName) FOR ProcessorState-»
+«DEFINE FormCreate(String moduleName, Processor proc, String actionName) FOR ProcessorState-»
     // Create new Form reference
     $render = FormUtil::newpnForm('«moduleName(moduleName)»');
 

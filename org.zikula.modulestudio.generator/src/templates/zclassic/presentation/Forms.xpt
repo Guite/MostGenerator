@@ -8,13 +8,13 @@
 	«EXPAND Root(this) FOREACH processingContainer.processors.processorStates.select(e|e.type == ProcessorStateType::EDIT)-»
 «ENDDEFINE»
 
-«REM»Entry point for pnForm templates«ENDREM»
+«REM»Entry point for Form templates«ENDREM»
 «DEFINE Root(Module module) FOR ProcessorState-»
 	«EXPAND Root(module.modName(), stateProcessor, 'edit') FOREACH module.persistenceContainer.tables-»
 «ENDDEFINE»
 
 
-«REM»Entry point for pnForm templates«ENDREM»
+«REM»Entry point for Form templates«ENDREM»
 «DEFINE Root(String moduleName, Processor proc, String actionName) FOR persistence::Table-»
 «LET dbName(proc.name) AS procName-»
 «FILE "templates/" + moduleName(moduleName + "_" + procName + "_" + name + "_" + actionName) + ".htm"-»
@@ -26,105 +26,102 @@
 «DEFINE FormTemplate(String modName, Processor proc, String actionName) FOR persistence::Table-»
 «LET dbName(proc.name) AS procName-»
 «LET dbName(name) AS tabName-»
-<!--[* purpose of this template: build the pnForm to «moduleName(actionName)» an instance of «moduleName(procName)» *]-->
+{* purpose of this template: build the Form to «moduleName(actionName)» an instance of «moduleName(name)» *}
 
-<!--[include file="«modName»_«procName»_header.htm"]-->
+{include file="«modName»_«procName»_header.htm"}
 
-<!--[if $mode == "edit"]-->
-    <!--[gt text='Edit «formattedName(name)»' assign="templateTitle"]-->
+{if $mode eq "edit"}
+    {gt text='Edit «formattedName(name)»' assign="templateTitle"}
 «IF proc.type == ProcessorType::ADMIN-»
-    <!--[assign var="adminpageicon" value="edit.gif"]-->
+    {assign var="adminpageicon" value="edit.gif"}
 «ENDIF-»
-<!--[elseif $mode == "create"]-->
-    <!--[gt text='Create «formattedName(name)»' assign="templateTitle"]-->
+{elseif $mode eq "create"}
+    {gt text='Create «formattedName(name)»' assign="templateTitle"}
 «IF proc.type == ProcessorType::ADMIN-»
-    <!--[assign var="adminpageicon" value="filenew.gif"]-->
+    {assign var="adminpageicon" value="filenew.gif"}
 «ENDIF-»
-<!--[else]-->
-    <!--[gt text='Edit «formattedName(name)»' assign="templateTitle"]-->
+{else}
+    {gt text='Edit «formattedName(name)»' assign="templateTitle"}
 «IF proc.type == ProcessorType::ADMIN-»
-    <!--[assign var="adminpageicon" value="edit.gif"]-->«REM»TODO«ENDREM»
+    {assign var="adminpageicon" value="edit.gif"}«REM»TODO«ENDREM»
 «ENDIF-»
-<!--[/if]-->
+{/if}
 
 «IF proc.type == ProcessorType::ADMIN-»
 <div class="z-admincontainer">
-<div class="z-adminpageicon"><!--[pnimg modname="core" src=$adminpageicon set="icons/large" alt=$templateTitle]--></div>
+<div class="z-adminpageicon">{img modname="core" src=$adminpageicon set="icons/large" alt=$templateTitle}</div>
 «ELSE-»
 <div class="z-frontendcontainer">
 «ENDIF-»
 
-<!--[pnpagesetvar name="title" value=$templateTitle]-->
-<h2><!--[$templateTitle]--></h2>
+{pagesetvar name="title" value=$templateTitle}
+<h2>{$templateTitle}</h2>
 <br />
-<!--[pnform cssClass="z-form"]-->
+{form cssClass="z-form"}
 «REM»
-<!--[pnform enctype="multipart/form-data"]-->
-function smarty_block_pnform($params, $content, &$render)
-{
+{form enctype="multipart/form-data"}
 cssClass="myClass"
     $encodingHtml = (array_key_exists('enctype', $params) ? " enctype=\"$params[enctype]\"" : '');
     $action = htmlspecialchars($_SERVER['REQUEST_URI']);
 
     $render->pnFormPostRender();
 
-    $out  =  "<form id=\"pnFormForm\" {$classString}action=\"$action\" method=\"post\"{$encodingHtml}>";
-}
+    $out  =  "<form id=\"FormForm\" {$classString}action=\"$action\" method=\"post\"{$encodingHtml}>";
 «ENDREM»«""-»
 
-    <!--[* add validation summary and a <div> element for styling the form *]-->
-    <!--[«dbName(modName)»FormFrame]-->
-    <!--[*pnformvalidationsummary*]-->«REM»CSS class summary: 'validationSummary z-errormsg'«ENDREM»
-«REM»<!--[pnformerrormessage id=error]-->«ENDREM»«""-»
+    {* add validation summary and a <div> element for styling the form *}
+    {«dbName(modName)»FormFrame}
+    {*formvalidationsummary*}«REM»CSS class summary: 'validationSummary z-errormsg'«ENDREM»
+«REM»{formerrormessage id=error}«ENDREM»«""-»
 
-    <!--[pnformsetinitialfocus inputId="«dbName(columns.get(1).name)»"]-->
+    {formsetinitialfocus inputId="«dbName(columns.get(1).name)»"}
 «REM»
-  <!--[pnformsetinitialfocus inputId=PluginId doSelect=true]--> <-- for dropdown lists (performs input.select())
+  {formsetinitialfocus inputId=PluginId doSelect=true} <-- for dropdown lists (performs input.select())
 «ENDREM»«""-»
 
     <fieldset>
-        <legend><!--[gt text='Content']--></legend>
+        <legend>{gt text='Content'}</legend>
 «FOREACH columns.reject(e|e.isPrimaryKey) AS col-»
         <div class="z-formrow">
-            <!--[pnformlabel for="«dbName(col.name)»" __text='«formattedNameCapitalized(col.name)»']-->
-«REM» visible=false html=1 cssClass="myClass" pnFormStyledPlugin«ENDREM»«""-»
+            {formlabel for="«dbName(col.name)»" __text='«formattedNameCapitalized(col.name)»'}
+«REM» visible=false html=1 cssClass="myClass" FormStyledPlugin«ENDREM»«""-»
             «EXPAND FormField FOR col»«""-»
         </div>
 «ENDFOREACH-»
     </fieldset>
 «IF usesStandardFields == true-»
-<!--[if $mode ne "create"]-->
-    <!--[include file="«modName»_«procName»_include_metadata_edit.htm"]-->
-<!--[/if]-->
+{if $mode ne "create"}
+    {include file="«modName»_«procName»_include_metadata_edit.htm"}
+{/if}
 «ENDIF-»
 «REM»TODO: check if needed«ENDREM»«""-»
-<!--[*
+{*
     <fieldset>
-        <legend><!--[gt text='Hooks']--></legend>
-        <!--[if $mode == "edit"]-->
-            <!--[modcallhooks hookobject="item" hookaction="modify" module="«modName»" hookid="«dbName(name)»`$«idField()»`"]-->
-        <!--[elseif $mode == "create"]-->
-            <!--[modcallhooks hookobject="item" hookaction="new" module="«modName»"]-->
-        <!--[else]-->«REM»TODO«ENDREM»
-            <!--[modcallhooks hookobject="item" hookaction="modify" module="«modName»" hookid="«dbName(name)»`$«idField()»`"]-->
-        <!--[/if]-->
+        <legend>{gt text='Hooks'}</legend>
+        {if $mode eq "edit"}
+            {modcallhooks hookobject="item" hookaction="modify" module="«modName»" hookid="«dbName(name)»`$«idField()»`"}
+        {elseif $mode eq "create"}
+            {modcallhooks hookobject="item" hookaction="new" module="«modName»"}
+        {else}«REM»TODO«ENDREM»
+            {modcallhooks hookobject="item" hookaction="modify" module="«modName»" hookid="«dbName(name)»`$«idField()»`"}
+        {/if}
     </fieldset>
-*]-->
-    <!--[gt text='Really delete this «formattedName(name)»?' assign="deleteConfirmMsg"]-->
+*}
+    {gt text='Really delete this «formattedName(name)»?' assign="deleteConfirmMsg"}
 
     <div class="z-formbuttons">
-    <!--[if $mode == "edit"]-->
-        <!--[pnformbutton commandName="update" __text='Update «formattedName(name)»']-->
-        <!--[pnformbutton commandName="delete" __text='Delete «formattedName(name)»' confirmMessage=$deleteConfirmMsg]-->
-    <!--[elseif $mode == "create"]-->
-        <!--[pnformbutton commandName="create" __text='Create «formattedName(name)»']-->
-    <!--[else]-->
-        <!--[pnformbutton commandName="update«REM»TODO«ENDREM»" __text='OK']-->
-    <!--[/if]-->
-        <!--[pnformbutton commandName="cancel" __text='Cancel']-->
+    {if $mode eq "edit"}
+        {formbutton commandName="update" __text='Update «formattedName(name)»'}
+        {formbutton commandName="delete" __text='Delete «formattedName(name)»' confirmMessage=$deleteConfirmMsg}
+    {elseif $mode eq "create"}
+        {formbutton commandName="create" __text='Create «formattedName(name)»'}
+    {else}
+        {formbutton commandName="update«REM»TODO«ENDREM»" __text='OK'}
+    {/if}
+        {formbutton commandName="cancel" __text='Cancel'}
     </div>
-  <!--[/«dbName(modName)»FormFrame]-->
-<!--[/pnform]-->
+  {/«dbName(modName)»FormFrame}
+{/form}
 
 «IF proc.type == ProcessorType::ADMIN-»
 </div>
@@ -132,7 +129,7 @@ cssClass="myClass"
 </div>
 «ENDIF-»
 
-<!--[include file="«modName»_«procName»_footer.htm"]-->
+{include file="«modName»_«procName»_footer.htm"}
 «ENDLET-»
 «ENDLET-»
 «ENDDEFINE»
@@ -140,19 +137,19 @@ cssClass="myClass"
 
 
 «DEFINE FormField FOR persistence::TableColumn-»
-<!--[* TODO: Undefined TableColumn *]-->
+{* TODO: Undefined TableColumn *}
 «ENDDEFINE»
 
 
 «DEFINE FormField FOR persistence::StringField-»
-            <!--[pnformtextinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»' textMode="singleline" maxLength=«length»]-->
-«REM» visible=false    readOnly=true  cssClass="myClass" pnFormStyledPlugin (width="80%", width="30em")«ENDREM»«""-»
+            {formtextinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»' textMode="singleline" maxLength=«length»}
+«REM» visible=false    readOnly=true  cssClass="myClass" FormStyledPlugin (width="80%", width="30em")«ENDREM»«""-»
 «ENDDEFINE»
 
 «REM»TODO: textMode="password" for password input fields«ENDREM»
 
 «DEFINE FormField FOR persistence::TextField-»
-            <!--[pnformtextinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»' textMode="multiline" rows="8" cols="50"]-->
+            {formtextinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»' textMode="multiline" rows="8" cols="50"}
 «REM»
 type: NORMAL; LARGE; MULTIBYTE; LARGEMULTIBYTE
     var $group;						// group name for this input
@@ -166,24 +163,24 @@ type: NORMAL; LARGE; MULTIBYTE; LARGEMULTIBYTE
 «ENDREM»«""-»
 «ENDDEFINE»
 «DEFINE FormField FOR persistence::DateField-»«REM»class="date"«ENDREM»
-            <!--[if $mode == "edit"]-->
-                <!--[pnformdateinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»' useSelectionMode=true]-->
-            <!--[else]-->
-                <!--[pnformdateinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»' useSelectionMode=true defaultValue="today"]-->
-            <!--[/if]-->
-«REM» pnFormTextInput		defaults: maxLength = 12; width = '8em';«ENDREM»«""-»
+            {if $mode == "edit"}
+                {formdateinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»' useSelectionMode=true}
+            {else}
+                {formdateinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»' useSelectionMode=true defaultValue="today"}
+            {/if}
+«REM» FormTextInput		defaults: maxLength = 12; width = '8em';«ENDREM»«""-»
 «ENDDEFINE»
 «DEFINE FormField FOR persistence::TimestampField-»
-            <!--[if $mode == "edit"]-->
-                <!--[pnformdateinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»' includeTime=true]-->
-            <!--[else]-->
-                <!--[pnformdateinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»' includeTime=true defaultValue="now"]-->
-            <!--[/if]-->
-«REM» pnFormTextInput		defaults: maxLength = 18; width = '10em';«ENDREM»«""-»
+            {if $mode == "edit"}
+                {formdateinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»' includeTime=true}
+            {else}
+                {formdateinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»' includeTime=true defaultValue="now"}
+            {/if}
+«REM» FormTextInput		defaults: maxLength = 18; width = '10em';«ENDREM»«""-»
 «ENDDEFINE»
 «DEFINE FormField FOR persistence::BooleanField-»«REM»class="cbx"«ENDREM»
-            <!--[pnformcheckbox id="«dbName(name)»" __title='«formattedName(name)» ?']-->
-«REM» visible=false readOnly=true pnFormStyledPlugin«ENDREM»«""-»
+            {formcheckbox id="«dbName(name)»" __title='«formattedName(name)» ?'}
+«REM» visible=false readOnly=true FormStyledPlugin«ENDREM»«""-»
 «REM»
     var $group;					// group name for this input
 								// used to locate data in the render (when databased)
@@ -196,30 +193,30 @@ type: NORMAL; LARGE; MULTIBYTE; LARGEMULTIBYTE
 «LET pointingRelations.get(0) AS pointingRelation-»
 «LET pointingRelation.source AS joiningTable-»
 «REM»Join-Selector«ENDREM»«""-»
-            <!--[pnformdropdownrelationlist id="«joiningTable.idField()»" mandatory=«IF isMandatory-»true«ELSE»false«ENDIF-» module="«columnTable.tableContainer.persistenceModule.modName()»" objecttype="«moduleName(joiningTable.name)»" idField="«joiningTable.idField()»" displayField="«joiningTable.columns.select(e|e.isLeading == true).get(0).name.dbName()»" orderby="«joiningTable.columns.select(e|e.isLeading == true).get(0).name.dbName()»"«IF pointingRelation.type == persistence::RelationshipType::ONETOMANY-» selectionMode="multiple"«ENDIF-»]-->«IF isMandatory-»&nbsp;*«ENDIF-»
+            {formdropdownrelationlist id="«joiningTable.idField()»" mandatory=«IF isMandatory-»true«ELSE»false«ENDIF-» module="«columnTable.tableContainer.persistenceModule.modName()»" objecttype="«moduleName(joiningTable.name)»" idField="«joiningTable.idField()»" displayField="«joiningTable.columns.select(e|e.isLeading == true).get(0).name.dbName()»" orderby="«joiningTable.columns.select(e|e.isLeading == true).get(0).name.dbName()»"«IF pointingRelation.type == persistence::RelationshipType::ONETOMANY-» selectionMode="multiple"«ENDIF-»}«IF isMandatory-»&nbsp;*«ENDIF-»
 «ENDLET-»
 «ENDLET-»
 «ELSE-»
-            <!--[pnformintinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»' maxLength=«length»]-->
-«REM» minValue=123 maxValue=123 pnFormTextInput
+            {formintinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»' maxLength=«length»}
+«REM» minValue=123 maxValue=123 FormTextInput
 defaults: maxLength = 20; width = '6em';«ENDREM»«""-»
 «ENDIF-»
 «ENDLET-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR persistence::FloatField-»
-            <!--[pnformfloatinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»']-->
-«REM» maxLength=«length+3+precision» minValue=123 maxValue=123 pnFormTextInput
+            {formfloatinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»'}
+«REM» maxLength=«length+3+precision» minValue=123 maxValue=123 FormTextInput
 defaults: maxLength = 30; width = '6em';«ENDREM»«""-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR persistence::DecimalField-»
-            <!--[pnformfloatinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»']-->
+            {formfloatinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»'}
 «ENDDEFINE»
 
 
 «DEFINE FormField FOR persistence::BlobField-»
-            <!--[pnformtextinput id="«dbName(name)»" readOnly=true __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»']-->
+            {formtextinput id="«dbName(name)»" readOnly=true __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»'}
 «REM»TODO«ENDREM»«""-»
 «ENDDEFINE»
 
@@ -228,15 +225,15 @@ defaults: maxLength = 30; width = '6em';«ENDREM»«""-»
 «DEFINE OtherFieldsTODO FOR Object-»
 «REM»
 
-<!--[pnformemailinput]-->«REM»class="email" extends pnFormTextInput«END-REM»
+{formemailinput}«REM»class="email" extends FormTextInput«END-REM»
 	$this->maxLength = 100;
 
-<!--[pnformurlinput]-->«REM»class="url" extends pnFormTextInput«END-REM»
+{formurlinput}«REM»class="url" extends FormTextInput«END-REM»
 	$this->maxLength = 2000;
 
 
-<!--[pnformuploadinput]-->«REM»class="upload"«ENDREM»
-«REM» id="bla" [isMandatory=true visible=false readOnly=true pnFormStyledPlugin]«END-REM»
+{formuploadinput}«REM»class="upload"«ENDREM»
+«REM» id="bla" [isMandatory=true visible=false readOnly=true FormStyledPlugin]«END-REM»
     var $group;						// group name for this input
     								// used to locate data in the render (when databased)
     								// and to restrict which plugins to do validation on (to be implemented).
@@ -244,9 +241,9 @@ defaults: maxLength = 30; width = '6em';«ENDREM»«""-»
 
 
 
-function.pnformdropdownlist.php
+formdropdownlist
 
-function.pnformradiobutton.php
+formradiobutton
 
 plus new stuff
 

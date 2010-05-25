@@ -15,9 +15,9 @@
 «ENDDEFINE»
 
 «DEFINE FormFrameBlock FOR Module-»
-require_once 'system/pnForm/plugins/function.pnformvalidationsummary.php';
+require_once 'lib/Form/renderplugins/function.formvalidationsummary.php';
 
-class «dbName(modName())»FormFrame extends pnFormPlugin
+class «dbName(modName())»FormFrame extends FormPlugin
 {
     var $useTabs;
     var $cssClass = 'tabs';
@@ -62,13 +62,13 @@ class «dbName(modName())»FormFrame extends pnFormPlugin
  */
 function smarty_block_«dbName(modName())»FormFrame($params, $content, &$render)
 {
-    // As with all pnForms plugins, we must remember to register our plugin.
+    // As with all Forms plugins, we must remember to register our plugin.
     // In this case we also register a validation summary so we don't have to
     // do that explicitively in the templates.
 
     // We need to concatenate the output of boths plugins.
-    $result = $render->pnFormRegisterPlugin('pnFormValidationSummary', $params);
-    $result .= $render->pnFormRegisterBlock('«dbName(modName())»FormFrame', $params, $content);
+    $result = $render->RegisterPlugin('FormValidationSummary', $params);
+    $result .= $render->RegisterBlock('«dbName(modName())»FormFrame', $params, $content);
 
     return $result;
 }
