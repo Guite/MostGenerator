@@ -1,5 +1,4 @@
 «IMPORT processing»
-«IMPORT templates::processing»
 «EXTENSION extensions::Utils»
 
 «DEFINE Impl(String modName) FOR ProcessorState-»

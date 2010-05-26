@@ -1,5 +1,4 @@
 «IMPORT modulestudio»
-«IMPORT templates::zclassic»
 «EXTENSION extensions::Utils»
 
 «DEFINE phpFileHeader(Module module) FOR Object-»

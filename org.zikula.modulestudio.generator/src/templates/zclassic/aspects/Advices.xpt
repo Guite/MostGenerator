@@ -1,9 +1,7 @@
 «IMPORT modulestudio»
-«IMPORT templates::persistence»
-«IMPORT templates::smallstuff»
 «EXTENSION extensions::Utils»
 
-«AROUND pninit::InitInfo FOR Module-»
+«AROUND some::existing::template::InitInfo FOR Module-»
 	«FOREACH persistenceContainer.tables AS t-»
         // AOP: «t.name»
 	«ENDFOREACH-»

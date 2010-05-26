@@ -1,7 +1,6 @@
 «IMPORT modulestudio»
 «IMPORT processing»
 «IMPORT presentation»
-«IMPORT templates::smallstuff»
 «EXTENSION extensions::Utils»
 
 «DEFINE Root FOR Module-»

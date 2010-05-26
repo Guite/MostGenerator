@@ -1,5 +1,4 @@
 «IMPORT behavior»
-«IMPORT templates::smallstuff»
 «EXTENSION extensions::Utils»
 
 «DEFINE ClassToString(String className) FOR persistence::Table-»

@@ -3,7 +3,7 @@
 «EXTENSION extensions::Utils»
 
 «REM»Definition of permission schema arrays«ENDREM»
-«AROUND templates::zclassic::smallstuff::pnVersion::PermissionSchema FOR Module-»
+«AROUND templates::zclassic::smallstuff::VersionFile::PermissionSchema FOR Module-»
 // DEBUG: permission schema aspect starts
 $modversion['securityschema'] = array('«modName()»::' => '::',
 «EXPAND PermissionSchema(modName()) FOREACH persistenceContainer.tables SEPARATOR ','-»);

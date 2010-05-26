@@ -1,5 +1,4 @@
 «IMPORT modulestudio»
-«IMPORT templates::smallstuff»
 «EXTENSION extensions::Utils»
 
 «REM»Entry point for module documentation«ENDREM»

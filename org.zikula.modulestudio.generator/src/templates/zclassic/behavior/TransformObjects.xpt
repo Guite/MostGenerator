@@ -1,6 +1,4 @@
 «IMPORT behavior»
-«IMPORT templates::smallstuff»
-«IMPORT templates::behavior::transform»
 «EXTENSION extensions::Utils»
 
 «DEFINE Root FOR TransformObject-»

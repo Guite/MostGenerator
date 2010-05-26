@@ -2,7 +2,6 @@
 «IMPORT persistence»
 «IMPORT processing»
 «IMPORT presentation»
-«IMPORT templates::zclassic::presentation»
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 

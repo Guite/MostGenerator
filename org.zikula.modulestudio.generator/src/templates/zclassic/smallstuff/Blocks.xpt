@@ -1,6 +1,4 @@
-«IMPORT templates::smallstuff»
 «EXTENSION extensions::Utils»
-
 
 «REM»Entry point for the module's blocks«ENDREM»
 «DEFINE Root FOR modulestudio::Module-»

@@ -1,7 +1,7 @@
 «IMPORT persistence»
 «EXTENSION extensions::Utils»
 
-«AROUND templates::zclassic::persistence::pnTables::ObjectExtensions FOR Table-»
+«AROUND templates::zclassic::persistence::Tables::ObjectExtensions FOR Table-»
     // DEBUG: object extension aspect starts
 
 «IF usesStandardFields == true-»
