@@ -8,7 +8,6 @@ import org.eclipse.emf.mwe.core.monitor.NullProgressMonitor;
 import org.eclipse.emf.mwe.core.monitor.ProgressMonitor;
 import org.eclipse.emf.mwe.internal.core.ast.parser.Location;
 
-@SuppressWarnings("restriction")
 public class ManualProgressMonitor implements WorkflowComponent {
 
 	  private String outputSlot = null;
@@ -17,7 +16,8 @@ public class ManualProgressMonitor implements WorkflowComponent {
 	    this.outputSlot = outputSlot;
 	  }
 
-	  public void invoke(WorkflowContext ctx, ProgressMonitor monitor, Issues issues) {
+	  @Override
+	public void invoke(WorkflowContext ctx, ProgressMonitor monitor, Issues issues) {
 		  // look if monitor is already there
 		  Boolean monitorFound = false;
 		  for (String currentSlotName : ctx.getSlotNames()) {
@@ -37,6 +37,7 @@ public class ManualProgressMonitor implements WorkflowComponent {
 
 	@Override
 	public void checkConfiguration(Issues issues) {
+		// nothing to do here (yet)
 	}
 
 	@Override

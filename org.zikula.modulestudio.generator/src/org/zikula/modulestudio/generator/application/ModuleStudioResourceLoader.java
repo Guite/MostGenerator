@@ -3,7 +3,6 @@ package org.zikula.modulestudio.generator.application;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;

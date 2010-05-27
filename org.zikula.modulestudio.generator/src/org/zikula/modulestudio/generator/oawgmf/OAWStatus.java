@@ -28,14 +28,17 @@ public class OAWStatus extends Status implements IConstraintStatus {
 		this.target = target;
 	}
 
+	@Override
 	public IModelConstraint getConstraint() {
 		return null;
 	}
 
-	public Set getResultLocus() {
+	@Override
+	public Set<EObject> getResultLocus() {
 		return null;
 	}
 
+	@Override
 	public EObject getTarget() {
 		return target;
 	}

@@ -3,7 +3,6 @@ package transformation;
 import java.util.Iterator;
 
 import de.guite.modulestudio.metamodel.persistence.IntegerField;
-import de.guite.modulestudio.metamodel.persistence.PersistenceContainer;
 import de.guite.modulestudio.metamodel.persistence.PersistenceFactory;
 import de.guite.modulestudio.metamodel.persistence.Relationship;
 import de.guite.modulestudio.metamodel.persistence.Table;
@@ -29,7 +28,9 @@ public class TrafoUtils {
 		catch (Exception e) {
 			return false;
 		}
-		finally {}
+		finally {
+			// nothing to do here (yet)
+		}
 		return true;
 	}
 
@@ -49,7 +50,9 @@ public class TrafoUtils {
 		catch (Exception e) {
 			return false;
 		}
-		finally {}
+		finally {
+			// nothing to do here (yet)
+		}
 		return true;
 	}
 
