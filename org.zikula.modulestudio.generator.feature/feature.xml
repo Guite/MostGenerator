@@ -4,22 +4,24 @@
       label="%featureName"
       version="1.0.0.qualifier"
       provider-name="%providerName"
+      image="most_update_120.jpg"
       plugin="de.guite.modulestudio.branding.ce">
 
-   <description>
+   <description url="%descriptionUrl">
       %description
    </description>
 
-   <copyright>
+   <copyright url="%copyrightUrl">
       %copyright
    </copyright>
 
-   <license url="%licenseURL">
+   <license url="%licenseUrl">
       %license
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://modulestudio.de/eclipse/modulestudio/"/>
+      <update label="%mostUpdateSiteName" url="http://modulestudio.de/updates/"/>
+      <discovery label="%mostUpdateSiteName" url="http://modulestudio.de/updates/"/>
    </url>
 
    <requires>
