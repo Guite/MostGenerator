@@ -4,8 +4,8 @@
       label="%featureName"
       version="1.0.0.qualifier"
       provider-name="%providerName"
-      image="most_update_120.jpg"
-      plugin="de.guite.modulestudio.branding.ce">
+      plugin="de.guite.modulestudio.branding.ce"
+      image="most_update_120.jpg">
 
    <description url="%descriptionUrl">
       %description
@@ -25,22 +25,10 @@
    </url>
 
    <requires>
-      <import plugin="com.ibm.icu" version="4.0.1" match="greaterOrEqual"/>
       <import plugin="de.guite.modulestudio.metamodel"/>
       <import plugin="org.antlr.runtime" version="3.0.0" match="greaterOrEqual"/>
-      <import plugin="org.apache.ant" version="1.7.0" match="greaterOrEqual"/>
       <import plugin="org.apache.commons.cli" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.apache.commons.logging" version="1.0.4" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.runtime" version="3.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.ecore" version="2.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.validation" version="1.2.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface.text" version="3.4.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi" version="3.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui"/>
-      <import plugin="org.eclipse.xtend" version="0.7.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtend.typesystem.emf" version="0.7.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xpand" version="0.7.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.mwe.utils" version="0.7.0" match="greaterOrEqual"/>
       <import plugin="org.apache.commons.lang" version="2.0.0" match="compatible"/>
       <import plugin="org.apache.commons.logging" version="1.0.0" match="compatible"/>
       <import plugin="org.eclipse.core.resources" version="3.3.0" match="compatible"/>
@@ -48,9 +36,20 @@
       <import plugin="org.eclipse.core.filesystem" version="1.0.0" match="compatible"/>
       <import plugin="org.eclipse.text" version="3.1.0" match="compatible"/>
       <import plugin="org.eclipse.emf.common"/>
+      <import plugin="com.ibm.icu" version="4.0.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.ecore" version="2.4.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.ecore.xmi"/>
-      <import plugin="org.zikula.modulestudio.generator" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtend.util.stdlib"/>
+      <import plugin="org.apache.ant" version="1.7.1" match="greaterOrEqual"/>
+      <import plugin="org.apache.commons.logging" version="1.1.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.validation" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtend" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtend.typesystem.emf" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.mwe.utils" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtend.util.stdlib" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xpand" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.mwe2.runtime"/>
    </requires>
 
    <plugin
