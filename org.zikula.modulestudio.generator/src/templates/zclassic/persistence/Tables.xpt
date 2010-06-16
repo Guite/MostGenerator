@@ -22,7 +22,7 @@
  * @author       «author»
  * @return       array       The table information.
  */
-function «modName()»_pntables()
+function «modName()»_tables()
 {
     // Initialise table array
     $tables = array();

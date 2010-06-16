@@ -7,30 +7,30 @@ extension extensions::Utils;
  * BusinessObject class naming extensions
  */
 
-cached String classPraefix()
-	: "";//"DB";
+cached String classPraefix(Module module)
+	: module.modName().toFirstUpper() + '_DBObject_';//"DB";
 
 cached String classSuffix()
 	: ".php";//".class.php";
 
 
 cached String moduleClassName(Module module, Boolean appendArray)
-	: classPraefix() + module.modName().toFirstUpper() + ((appendArray == true) ? "Array" : "");
+	: classPraefix(module) + module.modName().toFirstUpper() + ((appendArray == true) ? "Array" : "");
 
 cached String moduleClassFileName(Module module, Boolean appendArray)
-	: moduleClassName(module, appendArray) + classSuffix();
+	: moduleClassName(module, appendArray).replaceAll('_', '/') + classSuffix();
 
 cached String implClassName(Table obj, Boolean appendArray)
-	: classPraefix() + moduleName(obj.name).toFirstUpper() + ((appendArray == true) ? "Array" : "");
+	: classPraefix(obj.tableContainer.persistenceModule) + moduleName(obj.name).toFirstUpper() + ((appendArray == true) ? "Array" : "");
 
 cached String implClassFileName(Table obj, Boolean appendArray)
-	: implClassName(obj, appendArray) + classSuffix();
+	: implClassName(obj, appendArray).replaceAll('_', '/') + classSuffix();
 
 cached String baseClassName(Table obj, Boolean appendArray)
-	: implClassName(obj, appendArray) + "_Base";
+	: classPraefix(obj.tableContainer.persistenceModule) + 'Base_' + moduleName(obj.name).toFirstUpper() + ((appendArray == true) ? "Array" : "");
 
 cached String baseClassFileName(Table obj, Boolean appendArray)
-	: baseClassName(obj, appendArray) + classSuffix();
+	: baseClassName(obj, appendArray).replaceAll('_', '/') + classSuffix();
 
 
 

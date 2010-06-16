@@ -50,18 +50,20 @@ function «modName()»_processRenderTemplate(&$render, $type, $objectType, $func
 
 «REM»creates a file for every Processor instance«ENDREM»
 «DEFINE Root(Module module) FOR Processor-»
-	«FILE dbName(name) + ".php"»«EXPAND FileHelper::phpFileHeader(module)»«EXPAND ProcessorImpl(module)»«ENDFILE»
-    «FILE dbName(name) + "api.php"»«EXPAND FileHelper::phpFileHeader(module)»«EXPAND ProcessorApiImpl(module)»«ENDFILE»
+	«FILE "lib/" + module.modName().toFirstUpper() + "/" + dbName(name).toFirstUpper() + ".php"»«EXPAND FileHelper::phpFileHeader(module)»«EXPAND ProcessorImpl(module)»«ENDFILE»
+    «FILE "lib/" + module.modName().toFirstUpper() + "/Api/" + dbName(name).toFirstUpper() + ".php"»«EXPAND FileHelper::phpFileHeader(module)»«EXPAND ProcessorApiImpl(module)»«ENDFILE»
 «ENDDEFINE»
 
 «REM»file structure implementation«ENDREM»
 «DEFINE ProcessorImpl(Module module) FOR Processor-»
+«EXPAND PreloadClasses-»
+
 /**
  * This is the «name» controller class providing navigation and interaction functionality
  *
  * @author       «module.author»
  */
-class «module.modName()»_«dbName(name)» extends AbstractController
+class «module.modName().toFirstUpper()»_«dbName(name).toFirstUpper()» extends Zikula_Controller
 {
     /**
      * Even though we're handling objects for multiple tables, we only have one method for any use case.
@@ -70,8 +72,6 @@ class «module.modName()»_«dbName(name)» extends AbstractController
      * This component-based approach allows you to have generic handler code which relies on the functionality
      * implemented in the object's class in order to achieve it's goals.
      */
-
-«EXPAND PreloadClasses-»
 
 «EXPAND Root(module) FOREACH processorStates-»
 «IF module.needsConfig() && ProcessorType == 'ADMIN'-»
@@ -82,13 +82,13 @@ class «module.modName()»_«dbName(name)» extends AbstractController
      * @author       «module.author»
      * @return       Render output
      */
-    public function «module.modName()»_admin_config()
+    public function config()
     {
         // Create new Form reference
         $render = FormUtil::newForm('«module.modName()»');
 
         // Execute form using supplied template and page event handler
-        return $render->Execute('«module.modName()»_admin_config.htm', new «module.modName()»_admin_configHandler());
+        return $render->Execute('«module.modName()»_admin_config.htm', new «module.modName().toFirstUpper()»_Admin_Config());
     }
 
 «ENDIF-»
@@ -179,7 +179,7 @@ include_once 'modules/«processingContainer.processingModule.modName()»/common.
  *
  * @author       «module.author»
  */
-class «module.modName()»_«dbName(name)»api extends AbstractApi
+class «module.modName().toFirstUpper()»_API_«dbName(name).toFirstUpper()» extends Zikula_Api
 {
     /**
      * get available «name» panel links

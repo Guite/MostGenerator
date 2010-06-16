@@ -6,7 +6,11 @@
 «DEFINE Root FOR Module-»
 «IF processingContainer.processors.processorStates.select(e|e.type == ProcessorStateType::EDIT).size > 0-»
 «LET "templates/plugins/" AS pluginDir-»
+«FILE "lib/" + modName().toFirstUpper() + "/Form/Plugin/index.html"»«EXPAND FileHelper::msUrl-»«ENDFILE»
 «FILE pluginDir + "index.html"-»«EXPAND FileHelper::msUrl-»«ENDFILE»
+«FILE 'lib/' + modName().toFirstUpper() + '/Form/Plugin/FormFrame.php'-»«EXPAND FileHelper::phpFileHeader(this)-»
+«EXPAND FormFrameBlockClass-»
+«ENDFILE» 
 «FILE pluginDir + "block." + dbName(modName()) + "FormFrame.php"-»«EXPAND FileHelper::phpFileHeader(this)-»
 «EXPAND FormFrameBlock-»
 «ENDFILE»
@@ -14,10 +18,8 @@
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE FormFrameBlock FOR Module-»
-require_once 'lib/Form/renderplugins/function.formvalidationsummary.php';
-
-class «dbName(modName())»FormFrame extends FormPlugin
+«DEFINE FormFrameBlockClass FOR Module-»
+class «modName().toFirstUpper()»_Form_Plugin_FormFrame extends Form_Plugin
 {
     var $useTabs;
     var $cssClass = 'tabs';
@@ -48,7 +50,9 @@ class «dbName(modName())»FormFrame extends FormPlugin
         return "</div>\n";
     }
 }
+«ENDDEFINE»
 
+«DEFINE FormFrameBlock FOR Module-»
 /**
  * The «dbName(modName())»FormFrame plugin adds styling <div> elements and a validation summary.
  *
@@ -67,8 +71,8 @@ function smarty_block_«dbName(modName())»FormFrame($params, $content, &$render
     // do that explicitively in the templates.
 
     // We need to concatenate the output of boths plugins.
-    $result = $render->RegisterPlugin('FormValidationSummary', $params);
-    $result .= $render->RegisterBlock('«dbName(modName())»FormFrame', $params, $content);
+    $result = $render->RegisterPlugin('Form_Plugin_ValidationSummary', $params);
+    $result .= $render->RegisterBlock('«modName().toFirstUpper()»_Form_Plugin_FormFrame', $params, $content);
 
     return $result;
 }

@@ -7,13 +7,13 @@
 
 «REM»Entry point for Form handler classes«ENDREM»
 «DEFINE Root FOR Module-»
-	«FILE "FormHandler/index.html"»«EXPAND FileHelper::msUrl-»«ENDFILE»
+	«FILE "lib/" + modName().toFirstUpper() + "/Form/Handler/index.html"»«EXPAND FileHelper::msUrl-»«ENDFILE»
 	«EXPAND Root(this) FOREACH processingContainer.processors.processorStates.select(e|e.type == ProcessorStateType::EDIT)-»
 «IF needsConfig()-»
-«FILE "FormHandler/admin/configHandler.php"»
+«FILE "lib/" + modName().toFirstUpper() + "/Form/Handler/Admin/Config.php"»
 «EXPAND FileHelper::phpFileHeader(this)-»
 
-class «modName()»_FormHandler_admin_configHandler extends Form_Handler
+class «modName().toFirstUpper()»_Form_Handler_Admin_Config extends Form_Handler
 {
     function initialize(&$render)
     {
@@ -68,18 +68,18 @@ class «modName()»_FormHandler_admin_configHandler extends Form_Handler
     // Create new Form reference
     $render = FormUtil::newForm('«moduleName(moduleName)»');
 
-«LET moduleName(moduleName + "_FormHandler_" + dbName(proc.name) + actionName.toFirstUpper()) AS controllerPraefix-»
+«LET moduleName(moduleName + "_Form_Handler_" + dbName(proc.name).toFirstUpper() + actionName.toFirstUpper()) AS controllerPraefix-»
 
     // Execute form using supplied template and page event handler
-    return $render->Execute('«controllerPraefix».html', new «controllerPraefix»Handler());
+    return $render->Execute('«controllerPraefix».html', new «controllerPraefix»());
 «ENDLET-»
 «ENDDEFINE»
 
 
 «REM»Entry point for Form handler classes«ENDREM»
 «DEFINE Root(Module module, Processor proc, String actionName) FOR Table-»
-«LET dbName(proc.name) AS procName-»
-«FILE "FormHandler/" + moduleName(procName) + "/" + moduleName(name) + moduleName(actionName).toFirstUpper() + "Handler.php"»
+«LET dbName(proc.name).toFirstUpper() AS procName-»
+«FILE "lib/" + module.modName().toFirstUpper() + "/Form/Handler/" + moduleName(procName) + "/" + moduleName(name).toFirstUpper() + "/" + moduleName(actionName).toFirstUpper() + ".php"»
 «EXPAND FileHelper::phpFileHeader(module)-»
 «EXPAND FormHandler(module, proc, actionName)-»
 «ENDFILE»
@@ -115,7 +115,7 @@ class «modName()»_FormHandler_admin_configHandler extends Form_Handler
  * @subpackage Base
  * @author       «module.author»
  */
-class «moduleName(modName + "_FormHandler_" + procName + "_" + name + actionName.toFirstUpper())»Handler extends Form_Handler
+class «moduleName(modName.toFirstUpper() + "_Form_Handler_" + procName.toFirstUpper() + "_" + name.toFirstUpper() + "_" + actionName.toFirstUpper())» extends Form_Handler
 {
     // store «moduleName(name)» ID in (persistent) member variable
     var $«idField()»;
@@ -180,7 +180,7 @@ class «moduleName(modName + "_FormHandler_" + procName + "_" + name + actionNam
                 return $render->RegisterError(LogUtil::registerPermissionError());
             }
 
-«EXPAND ProcHelper::instantiateObject("D", "this->" + idField())-»
+«EXPAND ProcHelper::instantiateObject("DBObject::GET_FROM_DB", "this->" + idField())-»
 
 «EXPAND ProcHelper::getObjectFromSource("D", idField(), "this->" + idField())-»
             if (!is_array($objectData) || !isset($objectData['«idField()»']) || !is_numeric($objectData['«idField()»'])) {
