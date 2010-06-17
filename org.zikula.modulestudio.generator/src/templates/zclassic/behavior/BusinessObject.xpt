@@ -75,10 +75,10 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
      * @param key         The DB key to use to retrieve the object (optional) (default=null)
      * @param field       The field containing the key value (optional) (default=null)
      */
-    function «baseClassName(false)»($init = null, $key = 0, $field = null)
+    function __construct($init = null, $key = 0, $field = null)
     {
         // call base class constructor
-        $this->DBObject();
+        parent::__construct();
 
         // set the tablename this object maps to
 «REM»        $this->_objType       = '«dbName(module.prefix + '_' + dataSource().name)»';«ENDREM»
@@ -366,10 +366,10 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
      * @param orderBy     The order-by clause to use when retrieving the object array (optional) (default='')
      * @param assocKey    Key field to use for building an associative array (optional) (default=null)
      */
-    function «baseClassName(true)»($init = null, $where = '', $orderBy = '', $assocKey = null)
+    function __construct($init = null, $where = '', $orderBy = '', $assocKey = null)
     {
         // call base class constructor
-        $this->DBObjectArray();
+        parent::__construct();
 
         // set the tablename this object maps to
         $this->_objType       = '«fullTableName()»';
