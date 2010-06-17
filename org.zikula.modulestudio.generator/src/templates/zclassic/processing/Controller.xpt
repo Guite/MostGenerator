@@ -7,7 +7,6 @@
 
 «REM»Entry point for Form handler classes«ENDREM»
 «DEFINE Root FOR Module-»
-	«FILE "lib/" + modName().toFirstUpper() + "/Form/Handler/index.html"»«EXPAND FileHelper::msUrl-»«ENDFILE»
 	«EXPAND Root(this) FOREACH processingContainer.processors.processorStates.select(e|e.type == ProcessorStateType::EDIT)-»
 «IF needsConfig()-»
 «FILE "lib/" + modName().toFirstUpper() + "/Form/Handler/Admin/Config.php"»

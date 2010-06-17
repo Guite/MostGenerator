@@ -6,8 +6,6 @@
 
 «REM»Entry point for DBObject implementations«ENDREM»
 «DEFINE Root FOR Module-»
-	«FILE "lib/" + modName() + "/DBObject/index.html"»«EXPAND FileHelper::msUrl-»«ENDFILE»
-	«FILE "lib/" + modName() + "/DBObject/Base/index.html"»«ENDFILE»
     «FILE "lib/" + moduleClassFileName(this, false)»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND dbObjectModuleClass(false)»«ENDFILE»
     «FILE "lib/" + moduleClassFileName(this, true)»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND dbObjectModuleClass(true)»«ENDFILE»
 

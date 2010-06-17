@@ -1,10 +1,8 @@
 «IMPORT modulestudio»
-«IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 
 «REM»Entry point for all module images«ENDREM»
 «DEFINE Root FOR Module-»
-	«FILE "images/index.html"»«EXPAND FileHelper::msUrl-»«ENDFILE»
 «REM»	«FILE "images/admin.gif"»«EXPAND adminImage»«ENDFILE»«ENDREM»
 «ENDDEFINE»
 

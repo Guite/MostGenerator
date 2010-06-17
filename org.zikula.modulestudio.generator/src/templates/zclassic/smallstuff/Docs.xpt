@@ -3,7 +3,6 @@
 
 «REM»Entry point for module documentation«ENDREM»
 «DEFINE Root FOR Module-»
-	«FILE "docs/index.html"»«EXPAND FileHelper::msUrl-»«ENDFILE»
 	«FILE "docs/credits.txt"»«EXPAND Credits»«ENDFILE»
 	«FILE "docs/changelog.txt"»«EXPAND Changelog»«ENDFILE»
 	«FILE "docs/developers.txt"»«EXPAND DeveloperHints»«ENDFILE»

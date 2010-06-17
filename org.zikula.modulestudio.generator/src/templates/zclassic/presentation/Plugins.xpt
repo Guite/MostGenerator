@@ -6,8 +6,6 @@
 «DEFINE Root FOR Module-»
 «IF processingContainer.processors.processorStates.select(e|e.type == ProcessorStateType::EDIT).size > 0-»
 «LET "templates/plugins/" AS pluginDir-»
-«FILE "lib/" + modName().toFirstUpper() + "/Form/Plugin/index.html"»«EXPAND FileHelper::msUrl-»«ENDFILE»
-«FILE pluginDir + "index.html"-»«EXPAND FileHelper::msUrl-»«ENDFILE»
 «FILE 'lib/' + modName().toFirstUpper() + '/Form/Plugin/FormFrame.php'-»«EXPAND FileHelper::phpFileHeader(this)-»
 «EXPAND FormFrameBlockClass-»
 «ENDFILE» 

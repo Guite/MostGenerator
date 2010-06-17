@@ -1,11 +1,9 @@
 «IMPORT modulestudio»
 «IMPORT processing»
-«IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 
 «DEFINE Root FOR Module-»
 «IF processingContainer.processors.processorStates.select(e|e.type == ProcessorStateType::EDIT).size > 0-»
-«FILE "style/index.html"-»«EXPAND FileHelper::msUrl-»«ENDFILE»
 «FILE "style/style.css"-»«EXPAND StyleDefines-»
 «ENDFILE»
 «ENDIF-»
