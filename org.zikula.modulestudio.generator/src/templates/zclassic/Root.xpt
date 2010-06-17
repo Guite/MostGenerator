@@ -28,6 +28,9 @@
 	«REM»«pm.subTask("Processing: Controller classes")»«ENDREM»
     «info("Generating controller classes")»
 	«EXPAND Controller::Root»
+    «REM»«pm.subTask("Processing: Bootstrapping")»«ENDREM»
+    «info("Generating bootstrapping")»
+    «EXPAND Bootstrap::Root»
 
 	«REM»«pm.subTask("Behavior: Object classes")»«ENDREM»
     «info("Generating object classes")»
