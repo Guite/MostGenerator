@@ -19,7 +19,6 @@ Require-Bundle: de.guite.modulestudio.metamodel,
 Bundle-Vendor: %providerName
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.zikula.modulestudio.generator.application.Activator
-Bundle-Localization: plugin
 Export-Package: org.zikula.modulestudio.generator.application, org.zikula.modulestudio.generator.oawgmf
 Eclipse-BuddyPolicy: dependent
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
