@@ -17,7 +17,7 @@ class «modName().toFirstUpper()»_Form_Handler_Admin_Config extends Form_Handle
     function initialize(&$render)
     {
         if (!SecurityUtil::checkPermission('«modName()»::', '::', ACCESS_ADMIN)) {
-            return $render->RegisterError(LogUtil::registerPermissionError());
+            return $render->registerError(LogUtil::registerPermissionError());
         }
 
         // assign all module vars
@@ -32,15 +32,15 @@ class «modName().toFirstUpper()»_Form_Handler_Admin_Config extends Form_Handle
         $dom = ZLanguage::getModuleDomain('«modName()»');
 
         if ($args['commandName'] == 'save') {
-            if (!$render->IsValid()) {
+            if (!$render->isValid()) {
                 return false;
             }
 
-            $data = $render->GetValues();
+            $data = $render->getValues();
 
             // update all module vars
             if (!ModUtil::setVars('«modName()»', $data['config'])) {
-                return $render->SetErrorMsg(__('Error! Failed to set configuration variables.', $dom));
+                return $render->setErrorMsg(__('Error! Failed to set configuration variables.', $dom));
             }
 
             LogUtil::registerStatus(__('Done! Module configuration updated.', $dom));
@@ -50,7 +50,7 @@ class «modName().toFirstUpper()»_Form_Handler_Admin_Config extends Form_Handle
         }
 
         $url = ModUtil::url('«modName()»', 'admin', 'config');
-        return $render->Redirect($url);
+        return $render->redirect($url);
     }
 }
 «ENDFILE»
@@ -70,7 +70,7 @@ class «modName().toFirstUpper()»_Form_Handler_Admin_Config extends Form_Handle
 «LET moduleName(moduleName + "_Form_Handler_" + dbName(proc.name).toFirstUpper() + actionName.toFirstUpper()) AS controllerPraefix-»
 
     // Execute form using supplied template and page event handler
-    return $render->Execute('«controllerPraefix».html', new «controllerPraefix»());
+    return $render->execute('«controllerPraefix».html', new «controllerPraefix»());
 «ENDLET-»
 «ENDDEFINE»
 
@@ -176,14 +176,14 @@ class «moduleName(modName.toFirstUpper() + "_Form_Handler_" + procName.toFirstU
 
             if (!SecurityUtil::checkPermission('«modName»:«capitalName(name)»:', '::', ACCESS_EDIT)) {
                 // set an error message and return false
-                return $render->RegisterError(LogUtil::registerPermissionError());
+                return $render->registerError(LogUtil::registerPermissionError());
             }
 
 «EXPAND ProcHelper::instantiateObject("DBObject::GET_FROM_DB", "this->" + idField())-»
 
 «EXPAND ProcHelper::getObjectFromSource("D", idField(), "this->" + idField())-»
             if (!is_array($objectData) || !isset($objectData['«idField()»']) || !is_numeric($objectData['«idField()»'])) {
-                return $render->SetErrorMsg(__('No such «formattedName(name)» found.', $dom));
+                return $render->setErrorMsg(__('No such «formattedName(name)» found.', $dom));
             }
 
             // try to guarantee that only one person at a time can be editing this «moduleName(name)»
@@ -194,7 +194,7 @@ class «moduleName(modName.toFirstUpper() + "_Form_Handler_" + procName.toFirstU
         }
         else {
             if (!SecurityUtil::checkPermission('«modName»:«capitalName(name)»:', '::', ACCESS_ADD)) {
-                return $render->RegisterError(LogUtil::registerPermissionError());
+                return $render->registerError(LogUtil::registerPermissionError());
             }
 
 «IF columns.typeSelect(DateField).size > 0-»
@@ -262,7 +262,7 @@ class «moduleName(modName.toFirstUpper() + "_Form_Handler_" + procName.toFirstU
 
         if ($args['commandName'] != 'delete' && $args['commandName'] != 'cancel') {
             // do forms validation including checking all validators on the page to validate their input
-            if (!$render->IsValid()) {
+            if (!$render->isValid()) {
                 return false;
             }
         }
@@ -325,7 +325,7 @@ class «moduleName(modName.toFirstUpper() + "_Form_Handler_" + procName.toFirstU
             // Note: No need to check validation when deleting
 
             if (!SecurityUtil::checkPermission('«modName»:«capitalName(name)»:', '::', ACCESS_DELETE)) {
-                return $render->RegisterError(LogUtil::registerPermissionError());
+                return $render->registerError(LogUtil::registerPermissionError());
             }
 
 			«EXPAND FetchInputDataStart(moduleName(name))-»
@@ -373,19 +373,19 @@ class «moduleName(modName.toFirstUpper() + "_Form_Handler_" + procName.toFirstU
                                  array('lockName' => "«capitalName(modName)»«capitalName(name)»{$this->«idField()»}"));
             }
 
-            return $render->Redirect($returnUrl);
+            return $render->redirect($returnUrl);
         }
 
         // We should in principle not end here at all, since the above command handlers should 
         // match all possible commands, but we return "ok" (true) for all cases.
-        // You could also return $render->SetErrorMsg('Unexpected command')
+        // You could also return $render->setErrorMsg('Unexpected command')
         return true;
 «ENDDEFINE»
 
 
 «DEFINE FetchInputDataStart(String obj) FOR Table-»
             // fetch posted data input values as an associative array
-            $«obj»Data = $render->GetValues();
+            $«obj»Data = $render->getValues();
 «ENDDEFINE»
 «DEFINE FetchInputDataEnd(String obj) FOR Table-»
 «REM»«FOREACH columns AS col-»
