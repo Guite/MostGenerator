@@ -56,7 +56,6 @@ function «modName()»_processRenderTemplate(&$render, $type, $objectType, $func
 
 «REM»file structure implementation«ENDREM»
 «DEFINE ProcessorImpl(Module module) FOR Processor-»
-«EXPAND PreloadClasses-»
 
 /**
  * This is the «name» controller class providing navigation and interaction functionality
@@ -93,11 +92,6 @@ class «module.modName().toFirstUpper()»_«dbName(name).toFirstUpper()» extend
 
 «ENDIF-»
 }
-«ENDDEFINE»
-
-«DEFINE PreloadClasses FOR Processor-»
-// preload common used classes
-include_once 'modules/«processingContainer.processingModule.modName()»/common.php';
 «ENDDEFINE»
 
 
