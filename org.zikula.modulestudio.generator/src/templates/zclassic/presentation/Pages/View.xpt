@@ -16,13 +16,13 @@ listType:
 
 {include file="«modName»_«procName»_header.htm"}
 
-«IF processor.type == ProcessorType::ADMIN-»
+«IF processor.metaType == AdminProcessor-»
 <div class="z-admincontainer">
 «ELSE-»
 <div class="z-frontendcontainer">
 «ENDIF-»
 {gt text='«formattedNameCapitalized(name)» list' assign="templateTitle"}
-«IF processor.type == ProcessorType::ADMIN-»
+«IF processor.metaType == AdminProcessor-»
 <div class="z-adminpageicon">{img modname="core" src="windowlist.gif" set="icons/large" alt=$templateTitle}</div>
 «ENDIF-»
 {pagesetvar name="title" value=$templateTitle}
@@ -49,7 +49,7 @@ listType:
 «ELSEIF listType == 2-»
 <dl>
 «ELSEIF listType == 3-»
-«IF processor.type == ProcessorType::ADMIN-»
+«IF processor.metaType == AdminProcessor-»
 <table class="z-admintable">
 «ELSE-»
 <table class="z-datatable">
@@ -195,12 +195,12 @@ listType:
 
 {pager rowcount=$pager.numitems limit=$pager.itemsperpage}
 
-«IF processor.type == ProcessorType::USER-»
+«IF processor.metaType == UserProcessor-»
 {modurl modname="«modName»" func="view" ot="«objName»" startnum=$startnum assign="returnurl"}
 {modcallhooks hookobject="category" hookaction="display" module="«modName»«objName»" returnurl=$returnurl}
 </div>
 
-«ELSEIF processor.type == ProcessorType::ADMIN-»
+«ELSEIF processor.metaType == AdminProcessor-»
 </div>
 «ELSE-»
 </div>

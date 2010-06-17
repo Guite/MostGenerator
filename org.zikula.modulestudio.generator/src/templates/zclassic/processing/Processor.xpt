@@ -73,7 +73,7 @@ class «module.modName().toFirstUpper()»_«dbName(name).toFirstUpper()» extend
      */
 
 «EXPAND Root(module) FOREACH processorStates-»
-«IF module.needsConfig() && ProcessorType == 'ADMIN'-»
+«IF module.needsConfig() && metaType == AdminProcessor-»
 
     /*
      * This function takes care of the module configuration.
@@ -108,28 +108,28 @@ class «module.modName().toFirstUpper()»_«dbName(name).toFirstUpper()» extend
 «ENDDEFINE»
 
 «DEFINE StateDoc(Module module) FOR ProcessorState-»
-«IF type == ProcessorStateType::MAIN-»
+«IF metaType == MainProcessorState-»
      * This method is the default function, and is called whenever the
      * module's «moduleName(stateProcessor.name)» area is called without defining arguments.
-«ELSEIF type == ProcessorStateType::VIEW-»
+«ELSEIF metaType == ViewProcessorState-»
      * This method provides a generic item list overview.
-«ELSEIF type == ProcessorStateType::DISPLAY-»
+«ELSEIF metaType == DisplayProcessorState-»
      * This method provides a generic item detail view.
-«ELSEIF type == ProcessorStateType::EDIT-»
+«ELSEIF metaType == EditProcessorState-»
      * This method provides a generic handling of all edit requests.
-«ELSEIF type == ProcessorStateType::CUSTOM-»
+«ELSEIF metaType == CustomProcessorState-»
      * This is a custom method. Documentation for this will be improved in later versions.
 «ENDIF-»
      *
      * @author       «module.author»
      * @params       TODO
-«IF type == ProcessorStateType::VIEW || type == ProcessorStateType::DISPLAY || type == ProcessorStateType::EDIT || type == ProcessorStateType::DELETE-»
+«IF metaType == ViewProcessorState || metaType == DisplayProcessorState || metaType == EditProcessorState || metaType == DeleteProcessorState-»
      * @param        ot             string    treated object type
-«IF type == ProcessorStateType::DELETE-»
+«IF metaType == DeleteProcessorState-»
      * @param        id		        int	      ID of the entry
      * @param        confirmation   boolean   Confirm the deletion, else a confirmation page is displayed
 «ENDIF-»
-«IF type == ProcessorStateType::VIEW-»
+«IF metaType == ViewProcessorState-»
      * @param        sort           string    sorting field
      * @param        sdir           string    sorting direction
      * @param        pos            int       current pager position
@@ -143,7 +143,7 @@ class «module.modName().toFirstUpper()»_«dbName(name).toFirstUpper()» extend
 «DEFINE StateImpl(Module module) FOR ProcessorState-»
 «EXPAND PermissionCheck-»
 «LET module.modName() AS modName-»
-«IF type != ProcessorStateType::MAIN-»
+«IF metaType != MainProcessorState-»
         // parameter specifying which type of objects we are treating
         $objectType = FormUtil::getPassedValue('ot', '«module.getLeadObj()»', 'GET');
 
@@ -151,12 +151,13 @@ class «module.modName().toFirstUpper()»_«dbName(name).toFirstUpper()» extend
             $objectType = '«module.getLeadObj()»';
         }
 «ENDIF-»
-«IF type == ProcessorStateType::MAIN-»«EXPAND PStates::Main::Impl(modName)-»
-«ELSEIF type == ProcessorStateType::VIEW-»«EXPAND PStates::View::Impl(modName)-»
-«ELSEIF type == ProcessorStateType::DISPLAY-»«EXPAND PStates::Display::Impl(modName)-»
-«ELSEIF type == ProcessorStateType::EDIT-»«EXPAND PStates::Edit::Impl(modName)-»
-«ELSEIF type == ProcessorStateType::DELETE-»«EXPAND PStates::Delete::Impl(modName)-»
-«ELSEIF type == ProcessorStateType::CUSTOM-»«EXPAND PStates::Custom::Impl(modName)-»
+«REM»TODO: introduce polymorphism here«ENDREM»
+«IF metaType == MainProcessorState-»«EXPAND PStates::Main::Impl(modName)-»
+«ELSEIF metaType == ViewProcessorState-»«EXPAND PStates::View::Impl(modName)-»
+«ELSEIF metaType == DisplayProcessorState-»«EXPAND PStates::Display::Impl(modName)-»
+«ELSEIF metaType == EditProcessorState-»«EXPAND PStates::Edit::Impl(modName)-»
+«ELSEIF metaType == DeleteProcessorState-»«EXPAND PStates::Delete::Impl(modName)-»
+«ELSEIF metaType == CustomProcessorState-»«EXPAND PStates::Custom::Impl(modName)-»
 «ENDIF-»
 «ENDLET-»
 «ENDDEFINE»
@@ -191,7 +192,7 @@ class «module.modName().toFirstUpper()»_API_«dbName(name).toFirstUpper()» ex
                              'text' => $this->__('«formattedNameCapitalized(tab.nameMultiple)»'));
         }
 «ENDFOREACH-»
-«IF type == ProcessorType::ADMIN && module.needsConfig()-»
+«IF metaType == AdminProcessor && module.needsConfig()-»
         if (SecurityUtil::checkPermission('«module.modName()»::', '::', ACCESS_ADMIN)) {
             $links[] = array('url' => ModUtil::url('«module.modName()»', 'admin', 'config'), 'text' => $this->__('Configuration'));
         }

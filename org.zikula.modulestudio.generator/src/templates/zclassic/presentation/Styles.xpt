@@ -3,7 +3,7 @@
 «EXTENSION extensions::Utils»
 
 «DEFINE Root FOR Module-»
-«IF processingContainer.processors.processorStates.select(e|e.type == ProcessorStateType::EDIT).size > 0-»
+«IF processingContainer.processors.processorStates.typeSelect(EditProcessorState).size > 0-»
 «FILE "style/style.css"-»«EXPAND StyleDefines-»
 «ENDFILE»
 «ENDIF-»

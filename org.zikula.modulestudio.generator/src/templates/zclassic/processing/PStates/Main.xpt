@@ -2,10 +2,10 @@
 «EXTENSION extensions::Utils»
 
 «DEFINE Impl(String modName) FOR ProcessorState-»
-«IF stateProcessor.type == ProcessorType::USER-»
+«IF stateProcessor.metaType == UserProcessor-»
         // call view method
         return $this->view();
-«ELSEIF stateProcessor.type == ProcessorType::ADMIN-»
+«ELSEIF stateProcessor.metaType == AdminProcessor-»
 «REM»
 «IF stateProcessor.processingContainer.processingModule.needsConfig()-»
         // call config method
@@ -15,17 +15,17 @@
         // call view method
         return $this->view();
 «REM»«ENDIF-»«ENDREM»
-«ELSEIF stateProcessor.type == ProcessorType::CUSTOMROLE-»
+«ELSEIF stateProcessor.metaType == CustomRoleProcessor-»
         // call view method
         return $this->view();
-«ELSEIF stateProcessor.type == ProcessorType::ACCOUNT-»
-«ELSEIF stateProcessor.type == ProcessorType::AJAX-»
-«ELSEIF stateProcessor.type == ProcessorType::SEARCH-»
+«ELSEIF stateProcessor.metaType == AccountProcessor-»
+«ELSEIF stateProcessor.metaType == AjaxProcessor-»
+«ELSEIF stateProcessor.metaType == SearchProcessor-»
 «REM»
 New Search API:
 http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «ENDREM»
-«ELSEIF stateProcessor.type == ProcessorType::CUSTOM-»
+«ELSEIF stateProcessor.metaType == CustomProcessor-»
         // call view method
         return $this->view();
 «ENDIF-»

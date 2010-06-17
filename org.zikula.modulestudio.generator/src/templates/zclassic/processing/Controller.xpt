@@ -7,7 +7,7 @@
 
 «REM»Entry point for Form handler classes«ENDREM»
 «DEFINE Root FOR Module-»
-	«EXPAND Root(this) FOREACH processingContainer.processors.processorStates.select(e|e.type == ProcessorStateType::EDIT)-»
+	«EXPAND Root(this) FOREACH processingContainer.processors.processorStates.typeSelect(EditProcessorState)-»
 «IF needsConfig()-»
 «FILE "lib/" + modName().toFirstUpper() + "/Form/Handler/Admin/Config.php"»
 «EXPAND FileHelper::phpFileHeader(this)-»

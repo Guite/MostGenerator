@@ -9,7 +9,7 @@
 
 {include file="«modName»_«procName»_header.htm"}
 
-«IF processor.type == ProcessorType::ADMIN-»
+«IF processor.metaType == AdminProcessor-»
 <div class="z-admincontainer">
 «ELSE-»
 <div class="z-frontendcontainer">

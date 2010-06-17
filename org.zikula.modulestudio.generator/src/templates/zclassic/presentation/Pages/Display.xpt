@@ -9,7 +9,7 @@
 
 {include file="«modName»_«procName»_header.htm"}
 
-«IF processor.type == ProcessorType::ADMIN-»
+«IF processor.metaType == AdminProcessor-»
 <div class="z-admincontainer">
 <div class="z-adminpageicon">{img modname="core" src="demo.gif" set="icons/large" __alt='Details'}</div>
 «ELSE-»
@@ -21,7 +21,7 @@
 <h2>{$«objName».«titleField»|modcallhooks}</h2>
 «ENDLET-»
 
-«LET outgoing.select(e|e.type == persistence::RelationshipType::ONETOMANY) AS refedElems-»
+«LET outgoing.typeSelect(persistence::OneToManyRelationship) AS refedElems-»
 «IF refedElems.size > 0-»
 <div class="«modName.dbName()»RightBox">
 «EXPAND DisplaySubsets(modName, procName, this) FOREACH refedElems.target-»
@@ -73,7 +73,7 @@
 {modurl modname="«modName»" type="«procName»" func="display" ot="«objName»" «idField()»=$«objName».«idField()» assign="returnurl"}
 {modcallhooks hookobject="item" hookaction="display" module="«modName»" hookid="«dbName(name)»`$«objName».«idField()»`" returnurl=$returnurl}
 
-«IF processor.type == ProcessorType::ADMIN-»
+«IF processor.metaType == AdminProcessor-»
 </div>
 «ELSE-»
 </div>

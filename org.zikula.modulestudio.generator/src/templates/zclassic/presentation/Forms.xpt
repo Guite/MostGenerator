@@ -4,7 +4,7 @@
 «EXTENSION extensions::Utils»
 
 «DEFINE Root FOR Module-»
-	«EXPAND Root(this) FOREACH processingContainer.processors.processorStates.select(e|e.type == ProcessorStateType::EDIT)-»
+	«EXPAND Root(this) FOREACH processingContainer.processors.processorStates.typeSelect(EditProcessorState)-»
 «ENDDEFINE»
 
 «REM»Entry point for Form templates«ENDREM»
@@ -31,22 +31,22 @@
 
 {if $mode eq "edit"}
     {gt text='Edit «formattedName(name)»' assign="templateTitle"}
-«IF proc.type == ProcessorType::ADMIN-»
+«IF proc.metaType == AdminProcessor-»
     {assign var="adminpageicon" value="edit.gif"}
 «ENDIF-»
 {elseif $mode eq "create"}
     {gt text='Create «formattedName(name)»' assign="templateTitle"}
-«IF proc.type == ProcessorType::ADMIN-»
+«IF proc.metaType == AdminProcessor-»
     {assign var="adminpageicon" value="filenew.gif"}
 «ENDIF-»
 {else}
     {gt text='Edit «formattedName(name)»' assign="templateTitle"}
-«IF proc.type == ProcessorType::ADMIN-»
+«IF proc.metaType == AdminProcessor-»
     {assign var="adminpageicon" value="edit.gif"}«REM»TODO«ENDREM»
 «ENDIF-»
 {/if}
 
-«IF proc.type == ProcessorType::ADMIN-»
+«IF proc.metaType == AdminProcessor-»
 <div class="z-admincontainer">
 <div class="z-adminpageicon">{img modname="core" src=$adminpageicon set="icons/large" alt=$templateTitle}</div>
 «ELSE-»
@@ -122,7 +122,7 @@ cssClass="myClass"
   {/«dbName(modName)»FormFrame}
 {/form}
 
-«IF proc.type == ProcessorType::ADMIN-»
+«IF proc.metaType == AdminProcessor-»
 </div>
 «ELSE-»
 </div>
@@ -192,7 +192,7 @@ type: NORMAL; LARGE; MULTIBYTE; LARGEMULTIBYTE
 «LET pointingRelations.get(0) AS pointingRelation-»
 «LET pointingRelation.source AS joiningTable-»
 «REM»Join-Selector«ENDREM»«""-»
-            {formdropdownrelationlist id="«joiningTable.idField()»" mandatory=«IF isMandatory-»true«ELSE»false«ENDIF-» module="«columnTable.tableContainer.persistenceModule.modName()»" objecttype="«moduleName(joiningTable.name)»" idField="«joiningTable.idField()»" displayField="«joiningTable.columns.select(e|e.isLeading == true).get(0).name.dbName()»" orderby="«joiningTable.columns.select(e|e.isLeading == true).get(0).name.dbName()»"«IF pointingRelation.type == persistence::RelationshipType::ONETOMANY-» selectionMode="multiple"«ENDIF-»}«IF isMandatory-»&nbsp;*«ENDIF-»
+            {formdropdownrelationlist id="«joiningTable.idField()»" mandatory=«IF isMandatory-»true«ELSE»false«ENDIF-» module="«columnTable.tableContainer.persistenceModule.modName()»" objecttype="«moduleName(joiningTable.name)»" idField="«joiningTable.idField()»" displayField="«joiningTable.columns.select(e|e.isLeading == true).get(0).name.dbName()»" orderby="«joiningTable.columns.select(e|e.isLeading == true).get(0).name.dbName()»"«IF pointingRelation.metaType == persistence::OneToManyRelationship-» selectionMode="multiple"«ENDIF-»}«IF isMandatory-»&nbsp;*«ENDIF-»
 «ENDLET-»
 «ENDLET-»
 «ELSE-»

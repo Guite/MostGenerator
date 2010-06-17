@@ -3,7 +3,7 @@
 «EXTENSION extensions::Utils»
 
 «DEFINE Impl(String modName) FOR ProcessorState-»
-«IF stateProcessor.type == ProcessorType::ADMIN
+«IF stateProcessor.metaType == AdminProcessor
 	&& (name == "config" || name == "modifyconfig" || name == "preferences")-»
 «EXPAND Controller::FormCreate(modName, stateProcessor, 'modify')-»
 «ELSE-»

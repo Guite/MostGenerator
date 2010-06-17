@@ -4,9 +4,9 @@
 
 «DEFINE Root FOR modulestudio::Module»
 «FOREACH processingContainer.processors AS processor-»
-«IF processor.type == ProcessorType::USER
-    || processor.type == ProcessorType::ADMIN
-    || processor.type == ProcessorType::CUSTOMROLE-»
+«IF processor.metaType == UserProcessor
+    || processor.metaType == AdminProcessor
+    || processor.metaType == CustomRoleProcessor-»
 	«EXPAND HeaderFooter(modName(), processor)-»
 «IF processor.hasPStates('main')-»
 	«EXPAND Pages::Main::Impl(modName(), processor) FOREACH persistenceContainer.tables-»
@@ -71,7 +71,7 @@
 «FILE "templates/" + modName + "_" + procName + "_header.htm"-»
 {* purpose of this template: header for «procName» area *}
 
-«IF processor.type == ProcessorType::ADMIN-»
+«IF processor.metaType == AdminProcessor-»
 {admincategorymenu xhtml=1}
 «ELSE-»
 {insert name="getstatusmsg"}
@@ -81,14 +81,14 @@
 {ajaxheader}
 {pageaddvar name="javascript" value="modules/News/pnjavascript/sizecheck.js"}
 «ENDREM»
-«IF processor.type == ProcessorType::ADMIN-»
+«IF processor.metaType == AdminProcessor-»
 <div class="z-adminbox">
 «ELSE-»
 <div class="z-frontendbox">
 «ENDIF-»
     <h1>{gt text='«modName»'}</h1>
     <div class="z-menu">
-«IF processor.type == ProcessorType::ADMIN-»
+«IF processor.metaType == AdminProcessor-»
         {moduleadminlinks modname="«modName»"}
 «ELSE-»
         [&nbsp;fill in your menu links here«REM»<a href="{modurl modname="«modName»" type="«procName»" func="view"}">{gt text='View items'}</a>«ENDREM»&nbsp;]

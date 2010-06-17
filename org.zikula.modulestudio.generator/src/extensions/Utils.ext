@@ -43,12 +43,12 @@ cached String idField(Table table)
 
 cached boolean hasPStates(Processor processor, String type) :
 	switch (type) {
-	   case 'main' : processor.processorStates.select(e|e.type == ProcessorStateType::MAIN).size > 0 
-	   case 'view' : processor.processorStates.select(e|e.type == ProcessorStateType::VIEW).size > 0 
-	   case 'display' : processor.processorStates.select(e|e.type == ProcessorStateType::DISPLAY).size > 0 
-	   case 'edit' : processor.processorStates.select(e|e.type == ProcessorStateType::EDIT).size > 0
-	   case 'delete' : processor.processorStates.select(e|e.type == ProcessorStateType::DELETE).size > 0
-	   case 'custom' : processor.processorStates.select(e|e.type == ProcessorStateType::CUSTOM).size > 0 
+	   case 'main'     : processor.processorStates.typeSelect(MainProcessorState).size > 0 
+	   case 'view'     : processor.processorStates.typeSelect(ViewProcessorState).size > 0 
+	   case 'display'  : processor.processorStates.typeSelect(DisplayProcessorState).size > 0 
+	   case 'edit'     : processor.processorStates.typeSelect(EditProcessorState).size > 0
+	   case 'delete'   : processor.processorStates.typeSelect(DeleteProcessorState).size > 0
+	   case 'custom'   : processor.processorStates.typeSelect(CustomProcessorState).size > 0 
 	   default : false 
 	};
 

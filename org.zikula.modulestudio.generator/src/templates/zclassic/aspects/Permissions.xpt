@@ -24,21 +24,21 @@ $modversion['securityschema'] = array('«modName()»::' => '::',
 «AROUND templates::zclassic::processing::Processor::PermissionCheck FOR ProcessorState-»
 // DEBUG: permission check aspect starts
 «LET stateProcessor.processingContainer.processingModule.modName() AS modName-»
-«IF stateProcessor.type == ProcessorType::ADMIN-»
+«IF stateProcessor.metaType == AdminProcessor-»
         if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_ADMIN)) {
             return LogUtil::registerPermissionError(ModUtil::url('«modName»', 'user', 'main'));
 «ELSE-»
-«IF type == ProcessorStateType::MAIN-»
+«IF metaType == MainProcessorState-»
         if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_OVERVIEW)) {
-«ELSEIF type == ProcessorStateType::VIEW-»
+«ELSEIF metaType == ViewProcessorState-»
         if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_READ)) {
-«ELSEIF type == ProcessorStateType::DISPLAY-»
+«ELSEIF metaType == DisplayProcessorState-»
         if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_READ)) {
-«ELSEIF type == ProcessorStateType::EDIT-»
+«ELSEIF metaType == EditProcessorState-»
         if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_EDIT)) {
-«ELSEIF type == ProcessorStateType::DELETE-»
+«ELSEIF metaType == DeleteProcessorState-»
         if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_DELETE)) {
-«ELSEIF type == ProcessorStateType::CUSTOM-»
+«ELSEIF metaType == CustomProcessorState-»
         if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_OVERVIEW)) {
 «ENDIF-»
             return LogUtil::registerPermissionError();
