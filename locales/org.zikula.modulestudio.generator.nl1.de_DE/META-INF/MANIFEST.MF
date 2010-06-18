@@ -1,7 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: %fragmentName
-Bundle-SymbolicName: org.zikula.modulestudio.generator.nl1.de_DE
-Bundle-Version: 1.0.0
-Fragment-Host: org.zikula.modulestudio.generator;bundle-version="[1.0.0,1.1.0)"
-Bundle-Vendor: %providerName
