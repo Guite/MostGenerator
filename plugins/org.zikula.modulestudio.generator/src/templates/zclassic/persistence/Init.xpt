@@ -5,19 +5,30 @@
 
 «REM»Entry point for module initialization«ENDREM»
 «DEFINE Root FOR Module»
-«FILE "init.php"-»
+«FILE "Installer.php"-»
 «EXPAND FileHelper::phpFileHeader(this)-»
-«EXPAND InitInfo-»
+class «modName()»_Installer extends Zikula_Installer
+{
+«EXPAND NormalInstall-»
+}
 «ENDFILE»
-«IF interactiveInstallation == true»«EXPAND Init_Templates::Root»«ENDIF»
+«IF interactiveInstallation == true»
+«FILE "lib/" + modName().toFirstUpper() + "/InteractiveInstaller.php"-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+class «modName()»_Interactiveinstaller extends Zikula_InteractiveInstaller
+{
+«EXPAND InteractiveInstall»
+}
+«ENDFILE»
+«EXPAND Init_Templates::Root»
+«ENDIF»
 «ENDDEFINE»
 
-«DEFINE InitInfo FOR Module-»
+«DEFINE NormalInstall FOR Module-»
 «EXPAND FuncInit-»
 «EXPAND FuncUpdate-»
 «EXPAND FuncDelete-»
 «EXPAND FuncDefaultData-»
-«IF interactiveInstallation == true»«EXPAND InteractiveInstall»«ENDIF»
 «ENDDEFINE»
 
 «DEFINE InteractiveInstall FOR Module-»
@@ -29,23 +40,19 @@
 «ENDDEFINE»
 
 «DEFINE FuncInit FOR Module-»
-/**
- * initialise the «modName()» module
- *
- * This function is only ever called once during the lifetime of a particular
- * module instance
- * This function MUST exist in the init.php file for a module
- *
- * @author       «author»
- * @return       bool       true on success, false otherwise
- */
-function «modName()»_init()
-{
+    /**
+     * initialise the «modName()» module
+     *
+     * @author       «author»
+     * @return       bool       true on success, false otherwise
+     */
+    public function install()
+    {
 «FOREACH persistenceContainer.tables AS tab-»
-    // create the «moduleName(tab.name)» table
-    if (!DBUtil::createTable('«fullTableName(tab)»')) {
-        return false;
-    }
+        // create the «moduleName(tab.name)» table
+        if (!DBUtil::createTable('«fullTableName(tab)»')) {
+            return false;
+        }
 «ENDFOREACH-»
 
 «REM»
@@ -64,23 +71,23 @@ function «modName()»_init()
     }
 «ENDREM»
 
-    // set up all our module vars with initial values
+        // set up all our module vars with initial values
 «FOREACH persistenceContainer.modvarContainer.modvars AS modvar-»
 «IF interactiveInstallation == true-»
-    $sessionValue = SessionUtil::getVar('«moduleName(name + '_' + modvar.name)»');
-    ModUtil::setVar(«modName()», «moduleName(modvar.name)», (($sessionValue <> false) ? «EXPAND ModVarValFromSession FOR modvar» : «EXPAND ModVarValSession2Mod FOR modvar»));
-    SessionUtil::delVar(«moduleName(name + '_' + modvar.name)»);
+        $sessionValue = SessionUtil::getVar('«moduleName(name + '_' + modvar.name)»');
+        ModUtil::setVar(«modName()», «moduleName(modvar.name)», (($sessionValue <> false) ? «EXPAND ModVarValFromSession FOR modvar» : «EXPAND ModVarValSession2Mod FOR modvar»));
+        SessionUtil::delVar(«moduleName(name + '_' + modvar.name)»);
 «ELSE-»
-    ModUtil::setVar('«modName()»', '«moduleName(modvar.name)»', «EXPAND ModVarValDirect2Mod FOR modvar»);
+        ModUtil::setVar('«modName()»', '«moduleName(modvar.name)»', «EXPAND ModVarValDirect2Mod FOR modvar»);
 «ENDIF-»
 «ENDFOREACH-»
 
-    // create the default data for «modName()»
-    «modName()»_defaultdata();
+        // create the default data for «modName()»
+        $this->defaultdata();
 
-    // Initialisation successful
-    return true;
-}
+        // Initialisation successful
+        return true;
+    }
 «ENDDEFINE»
 
 
@@ -106,18 +113,18 @@ Ausgelesen als Array: $blabla["0"];
 
 
 «DEFINE FuncUpdate FOR Module»
-/**
- * upgrade the «modName()» module from an old version
- *
- * This function can be called multiple times
- * This function MUST exist in the init.php file for a module
- *
- * @author       «author»
- * @param       int        $oldversion version to upgrade from
- * @return      bool       true on success, false otherwise
- */
-function «modName()»_upgrade($oldversion)
-{
+    /**
+     * upgrade the «modName()» module from an old version
+     *
+     * This function must consider all the released versions of the module!
+     * If the upgrade fails at some point, it returns the last upgraded version.
+     *
+     * @author       «author»
+     * @param       int        $oldversion version to upgrade from
+     * @return      bool       true on success, false otherwise
+     */
+    public function upgrade($oldversion)
+    {
 /*
     // Upgrade dependent on old version number
     switch ($oldversion){
@@ -127,27 +134,24 @@ function «modName()»_upgrade($oldversion)
     }
 */
 
-    // Update successful
-    return true;
-}
+        // Update successful
+        return true;
+    }
 «ENDDEFINE»
 
 «DEFINE FuncDelete FOR Module»
-/**
- * delete the «modName()» module
- * This function is only ever called once during the lifetime of a particular
- * module instance
- * This function MUST exist in init.php file for a module
- *
- * @author       «author»
- * @return       bool       true on success, false otherwise
- */
-function «modName()»_delete()
-{
+    /**
+     * delete the «modName()» module
+
+     * @author       «author»
+     * @return       bool       true on success, false otherwise
+     */
+    public function uninstall()
+    {
 «FOREACH persistenceContainer.tables AS tab-»
-    if (!DBUtil::dropTable('«fullTableName(tab)»')) {
-        return false;
-    }
+        if (!DBUtil::dropTable('«fullTableName(tab)»')) {
+            return false;
+        }
 «ENDFOREACH-»
 
 «REM»
@@ -166,47 +170,44 @@ function «modName()»_delete()
     }
 «ENDREM»
 
-    // remove all module vars
-    ModUtil::delVar('«modName()»');
+        // remove all module vars
+        ModUtil::delVar('«modName()»');
 
-    // Deletion successful
-    return true;
-}
+        // Deletion successful
+        return true;
+    }
 «ENDDEFINE»
 
 «DEFINE FuncDefaultData FOR Module»
-/**
- * create the default data for «modName()»
- *
- * This function is only ever called once during the lifetime of a particular
- * module instance
- *
- * @author       «author»
- * @return       bool       true on success, false otherwise
- */
-function «modName()»_defaultdata()
-{
-    // ensure that tables are cleared
-    if («EXPAND clearTable FOREACH persistenceContainer.tables SEPARATOR ' ||'») {
-        return false;
-    }
+    /**
+     * create the default data for «modName()»
+     *
+     * @author       «author»
+     * @return       bool       true on success, false otherwise
+     */
+    public function defaultdata()
+    {
+        // ensure that tables are cleared
+        if («EXPAND clearTable FOREACH persistenceContainer.tables SEPARATOR ' ||'») {
+            return false;
+        }
 
-    $dom = ZLanguage::getModuleDomain('«modName()»');
+        $dom = ZLanguage::getModuleDomain('«modName()»');
 
 «IF persistenceContainer.select(e|e.isDefaultDataSource).get(0).numExampleRows > 0-»
 «FOREACH persistenceContainer.tables AS tab-»
-    // define default data for «moduleName(tab.name)» table
-    $records = array(«EXPAND createExampleRows(this) FOR tab»
-    );
+        // define default data for «moduleName(tab.name)» table
+        $records = array(«EXPAND createExampleRows(this) FOR tab»
+        );
 
-    // insert it into the «moduleName(tab.name)» table
-    DBUtil::insertObjectArray($records, '«dbName(prefix + '_' + tab.name)»', '«dbName(tab.name)»id', true);
+        // insert it into the «moduleName(tab.name)» table
+        DBUtil::insertObjectArray($records, '«dbName(prefix + '_' + tab.name)»', '«dbName(tab.name)»id', true);
 «ENDFOREACH-»
 «ENDIF-»
 
-    // insertion successful
-    return true;
-}
+        // insertion successful
+        return true;
+    }
 «ENDDEFINE»
 
 «DEFINE clearTable FOR Table»
@@ -221,67 +222,67 @@ function «modName()»_defaultdata()
             '«dbName(name)»' => __('«tabName» «name» «number»', $dom)«ENDDEFINE»
 
 «DEFINE FuncInteractiveInit FOR Module»
-/**
- * interactive installation procedure
- *
- * @author       «author»
- * @return       Renderer output
- */
-function «modName()»_init_interactiveinit()
-{
-    if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
-        return LogUtil::registerPermissionError();
-    }
+    /**
+     * interactive installation procedure
+     *
+     * @author       «author»
+     * @return       Renderer output
+     */
+    public function install()
+    {
+        if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+            return LogUtil::registerPermissionError();
+        }
 
-    // get Renderer instance for this module
-    $render = Renderer::getInstance('«modName()»', false);
-
-    // fetch and return the appropriate template
-    return $render->fetch('«modName()»_init_interactive.htm');
-} 
-«ENDDEFINE»
-
-«DEFINE FuncInteractiveInitStep2 FOR Module»
-/**
- * interactive installation procedure step 2
- *
- * @author       «author»
- * @return       Renderer output
- */
-function «modName()»_init_interactiveinitstep2()
-{
-    if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
-        return LogUtil::registerPermissionError();
-    }
-
-    $submit = FormUtil::getPassedValue('submit', null, 'POST');
-    if (!$submit) {
         // get Renderer instance for this module
         $render = Renderer::getInstance('«modName()»', false);
 
-        // assign auth key
-        $render->assign('authid', SecurityUtil::generateAuthKey('«modName()»'));
-
         // fetch and return the appropriate template
-        return $render->fetch('«modName()»_init_step2.htm');
-    }
+        return $render->fetch('«modName()»_init_interactive.htm');
+    } 
+«ENDDEFINE»
 
-    if (!SecurityUtil::confirmAuthKey()) {
-        LogUtil::registerError(DataUtil::formatForDisplayHTML(_BADAUTHKEY));
-        return System::redirect(ModUtil::url('Modules', 'admin', 'view'));
-    }
+«DEFINE FuncInteractiveInitStep2 FOR Module»
+    /**
+     * interactive installation procedure step 2
+     *
+     * @author       «author»
+     * @return       Renderer output
+     */
+    public function interactiveinitstep2()
+    {
+        if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+            return LogUtil::registerPermissionError();
+        }
+
+        $submit = FormUtil::getPassedValue('submit', null, 'POST');
+        if (!$submit) {
+            // get Renderer instance for this module
+            $render = Renderer::getInstance('«modName()»', false);
+
+            // assign auth key
+            $render->assign('authid', SecurityUtil::generateAuthKey('«modName()»'));
+
+            // fetch and return the appropriate template
+            return $render->fetch('«modName()»_init_step2.htm');
+        }
+
+        if (!SecurityUtil::confirmAuthKey()) {
+            LogUtil::registerError(DataUtil::formatForDisplayHTML(_BADAUTHKEY));
+            return System::redirect(ModUtil::url('Modules', 'admin', 'view'));
+        }
 
 	«FOREACH persistenceContainer.modvarContainer.modvars AS modvar-»
-    $formValue = FormUtil::getPassedValue('«moduleName(modvar.name)»', «EXPAND ModVarValForm2SessionDefault FOR modvar», 'POST');
-    SessionUtil::setVar('«moduleName(name + '_' + modvar.name)»', $formValue);
+        $formValue = FormUtil::getPassedValue('«moduleName(modvar.name)»', «EXPAND ModVarValForm2SessionDefault FOR modvar», 'POST');
+        SessionUtil::setVar('«moduleName(name + '_' + modvar.name)»', $formValue);
 
 «ENDFOREACH-»
 
-    $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST');
-    $activate = (!empty($activate)) ? true : false; 
+        $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST');
+        $activate = (!empty($activate)) ? true : false; 
 
-    return System::redirect(ModUtil::url('«modName()»', 'init', 'interactiveinitstep3', array('activate' => $activate)));
-}
+        return System::redirect(ModUtil::url('«modName()»', 'init', 'interactiveinitstep3', array('activate' => $activate)));
+    }
 «ENDDEFINE»
 
 «DEFINE ModVarValForm2SessionDefault FOR ModuleVar»'«moduleName(value)»'«ENDDEFINE»
@@ -289,72 +290,72 @@ function «modName()»_init_interactiveinitstep2()
 «DEFINE ModVarValForm2SessionDefault FOR ModuleVarListItem»'«moduleName(name)»'«ENDDEFINE»
 
 «DEFINE FuncInteractiveInitStep3 FOR Module»
-/**
- * interactive installation procedure step 3
- *
- * @author       «author»
- * @return       Renderer output
- */
-function «modName()»_init_interactiveinitstep3()
-{
-    if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
-        return LogUtil::registerPermissionError();
+    /**
+     * interactive installation procedure step 3
+     *
+     * @author       «author»
+     * @return       Renderer output
+     */
+    public function interactiveinitstep3()
+    {
+        if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+            return LogUtil::registerPermissionError();
+        }
+        $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST');
+
+        // get Renderer instance for this module
+        $render = Renderer::getInstance('«modName()»', false);
+
+        // assign auth key
+        $render->assign('authid', SecurityUtil::generateAuthKey('Modules'));
+
+        // assign activation flag
+        $render->assign('activate', $activate);
+
+        // fetch and return the appropriate template
+        return $render->fetch('«modName()»_init_step3.htm');
     }
-    $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST');
-
-    // get Renderer instance for this module
-    $render = Renderer::getInstance('«modName()»', false);
-
-    // assign auth key
-    $render->assign('authid', SecurityUtil::generateAuthKey('Modules'));
-
-    // assign activation flag
-    $render->assign('activate', $activate);
-
-    // fetch and return the appropriate template
-    return $render->fetch('«modName()»_init_step3.htm');
-}
 «ENDDEFINE»
 
 «DEFINE FuncInteractiveUpdate FOR Module»
-/**
- * interactive update procedure
- *
- * @author       «author»
- * @return       Renderer output
- */
-function «modName()»_init_interactiveupdate()
-{
-    if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
-        return LogUtil::registerPermissionError();
+    /**
+     * interactive update procedure
+     *
+     * @author       «author»
+     * @return       Renderer output
+     */
+    function upgrade()
+    {
+        if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+            return LogUtil::registerPermissionError();
+        }
+
+        // TODO
+
+        return true;
     }
-
-    // TODO
-
-    return true;
-}
 «ENDDEFINE»
 
 «DEFINE FuncInteractiveDelete FOR Module»
-/**
- * interactive delete
- *
- * @author       «author»
- * @return       Renderer output
- */
-function «modName()»_init_interactivedelete()
-{
-    if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
-        return LogUtil::registerPermissionError();
+    /**
+     * interactive delete
+     *
+     * @author       «author»
+     * @return       Renderer output
+     */
+    public function uninstall()
+    {
+        if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
+            return LogUtil::registerPermissionError();
+        }
+
+        // get Renderer instance for this module
+        $render = Renderer::getInstance('«modName()»', false);
+
+        // assign auth key
+        $render->assign('authid', SecurityUtil::generateAuthKey('Modules'));
+
+        // fetch and return the appropriate template
+        return $render->fetch('«modName()»_init_delete.htm');
     }
-
-    // get Renderer instance for this module
-    $render = Renderer::getInstance('«modName()»', false);
-
-    // assign auth key
-    $render->assign('authid', SecurityUtil::generateAuthKey('Modules'));
-
-    // fetch and return the appropriate template
-    return $render->fetch('«modName()»_init_delete.htm');
-}
 «ENDDEFINE»
