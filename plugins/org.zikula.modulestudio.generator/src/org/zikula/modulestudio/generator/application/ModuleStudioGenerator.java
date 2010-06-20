@@ -88,7 +88,7 @@ public class ModuleStudioGenerator {
 	public boolean runWorkflow(String outputPath, String cartridgeName, String wfFile) throws CoreException, IOException {
 		setWorkflowFile(wfFile);
 		setCartridgeName(cartridgeName);
-		setOutputPath(outputPath);
+		setOutputPath(outputPath + "/" + cartridgeName);
 		return runWorkflowInternal();
 	}
 
