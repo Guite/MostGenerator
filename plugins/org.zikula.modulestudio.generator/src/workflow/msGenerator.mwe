@@ -7,7 +7,11 @@
   	</component>
 
     <!-- store the enriched model version -->
-    <component class="org.eclipse.xtend.typesystem.emf.XmiWriter" inputSlot="${slot}" modelFile="${slotFile}" />
+    <component class="org.eclipse.emf.mwe.utils.Writer">
+        <modelSlot value="${slot}" />
+        <uri value="${slotFile}" />
+        <cloneSlotContents value="true" />
+    </component>
 
     <!-- clear output directory -->
     <component id="dirCleaner" class="org.eclipse.emf.mwe.utils.DirectoryCleaner" directory="${srcGenPath}" />

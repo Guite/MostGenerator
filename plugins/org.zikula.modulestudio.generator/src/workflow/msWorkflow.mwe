@@ -1,19 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workflow>
-	<!-- xmi reader -->
-	<component class="org.eclipse.xtend.typesystem.emf.XmiReader">
-		<!-- read in the given file -->
-		<modelFile value="${modelFile}"/>
-
-		<!-- we need only the root element -->
-		<metaModelPackage value="de.guite.modulestudio.metamodel.modulestudio.ModuleStudioPackage"/>
-
-		<!-- store it into the output slot called model --> 
-		<outputSlot value="model"/>
-
-		<!-- put only the root element into the output slot
-			 otherwise everything would be collected into a list -->
-		<firstElementOnly value="true"/>
+    <!-- read in the given file -->
+	<component class="org.eclipse.emf.mwe.utils.Reader">
+        <uri value="file://${modelFile}" />
+		<modelSlot value="model"/>
 	</component>
 
 
@@ -75,7 +65,7 @@
 	<cartridge file="workflow/msGenerator.mwe"
 	           cartridgeName="${cartridgeName}"
 	           slot="newModel"
-	           slotFile="${enrichedModelFile}"
+	           slotFile="file://${enrichedModelFile}"
 	           srcGenPath="${srcGenPath}"
 	           srcManPath="${srcManPath}">
 	   <mmEMF 			idRef="mmEMF"/>
