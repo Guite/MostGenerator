@@ -151,14 +151,14 @@ public class ModuleStudioGenerator {
 	 * @return the default workflow file
 	 */
 	private String getDefaultWorkflowFile() {
-		return "msWorkflow.oaw";
+		return "msWorkflow.mwe";
 	}
 
 	/**
 	 * @return the workflow file
 	 */
 	public String getWorkflowFile() {
-		return "src/" + workflowFile;
+		return "src/workflow/" + workflowFile;
 	}
 
 	/**
