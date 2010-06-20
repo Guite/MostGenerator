@@ -41,16 +41,20 @@
 
 		<!-- provide check files -->
 		<checkFile value="../de.guite.modulestudio.metamodel/model/checks/main"/>
-<!--
-		<checkFile value="de::guite::modulestudio::metamodel::model::checks::main"/>
-		<checkFile value="de::guite::modulestudio::metamodel::model::checks::persistence"/>
-		<checkFile value="de::guite::modulestudio::metamodel::model::checks::processing"/>
-		<checkFile value="de::guite::modulestudio::metamodel::model::checks::presentation"/>
-		<checkFile value="de::guite::modulestudio::metamodel::model::checks::behavior"/>
+        <checkFile value="../de.guite.modulestudio.metamodel/model/checks/persistence"/>
+        <checkFile value="../de.guite.modulestudio.metamodel/model/checks/processing"/>
+        <checkFile value="../de.guite.modulestudio.metamodel/model/checks/presentation"/>
+        <checkFile value="../de.guite.modulestudio.metamodel/model/checks/behavior"/>
+<!--		<checkFile value="checks::main"/>
+		<checkFile value="checks::persistence"/>
+		<checkFile value="checks::processing"/>
+		<checkFile value="checks::presentation"/>
+		<checkFile value="checks::behavior"/>
 -->
 		<!-- tell on which part of the model the checks should work (our module with all children) -->
+		<emfAllChildrenSlot value="model"/>
 		<!-- expression value="model" / -->
-		<expression value="model.eAllContents.union({model})"/>
+		<!--<expression value="model.eAllContents.union({model})"/>-->
 	</component>
 
 	<!-- add additional fields for ids and relations -->
