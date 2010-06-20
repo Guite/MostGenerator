@@ -21,6 +21,11 @@ public class ModuleStudioGenerator {
 	private String workflowFile = "";
 
 	/**
+	 * the cartridge name used for selecting actual generator
+	 */
+	private String cartridgeName = "";
+
+	/**
 	 * the output path where generated files will be created
 	 */
 	private String outputPath = "";
@@ -62,24 +67,27 @@ public class ModuleStudioGenerator {
 	/**
 	 * starts the default workflow for a given output path
 	 * @param output path
+	 * @param cartridge name
 	 * @return whether generation was successful
 	 * @throws CoreException 
 	 * @throws IOException 
 	 */
-	public boolean runWorkflow(String outputPath) throws CoreException, IOException {
-		return runWorkflow(outputPath, getDefaultWorkflowFile());
+	public boolean runWorkflow(String outputPath, String cartridgeName) throws CoreException, IOException {
+		return runWorkflow(outputPath, cartridgeName, getDefaultWorkflowFile());
 	}
 
 	/**
 	 * starts a given workflow for a given output path
 	 * @param output path
+	 * @param cartridge name
 	 * @param custom workflow file
 	 * @return whether generation was successful
 	 * @throws CoreException 
 	 * @throws IOException 
 	 */
-	public boolean runWorkflow(String outputPath, String wfFile) throws CoreException, IOException {
+	public boolean runWorkflow(String outputPath, String cartridgeName, String wfFile) throws CoreException, IOException {
 		setWorkflowFile(wfFile);
+		setCartridgeName(cartridgeName);
 		setOutputPath(outputPath);
 		return runWorkflowInternal();
 	}
@@ -91,9 +99,11 @@ public class ModuleStudioGenerator {
 	 * @throws IOException 
 	 */
 	private boolean runWorkflowInternal() throws CoreException, IOException {
-		// directory for generated sources 
+		// cartridgeName
+		addProperty("cartridgeName", cartridgeName);
+		// directory for generated sources
 		addProperty("srcGenPath", getOutputPath());
-		// directory for manual source fragments 
+		// directory for manual source fragments
 		addProperty("srcManPath", getOutputPath() + "/src-man");
 		// directory for phpXRef (TODO: integration) 
 		addProperty("apiRefPath", getOutputPath() + "/phpxref");
@@ -166,6 +176,13 @@ public class ModuleStudioGenerator {
 	 */
 	private void setWorkflowFile(String workflowFile) {
 		this.workflowFile = workflowFile;
+	}
+
+	/**
+	 * @param cartridgeName the cartridgeName to set
+	 */
+	private void setCartridgeName(String cartridgeName) {
+		this.cartridgeName = cartridgeName;
 	}
 
 	/**
