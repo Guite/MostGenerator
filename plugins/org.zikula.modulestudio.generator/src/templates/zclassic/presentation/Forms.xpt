@@ -82,7 +82,7 @@ cssClass="myClass"
         <legend>{gt text='Content'}</legend>
 «FOREACH columns.reject(e|e.isPrimaryKey) AS col-»
         <div class="z-formrow">
-            {formlabel for="«dbName(col.name)»" __text='«formattedNameCapitalized(col.name)»'}
+            {formlabel for="«dbName(col.name)»" __text='«formattedNameCapitalized(col.name)»'«IF col.isMandatory» mandatorysym="1"«ENDIF»}
 «REM» visible=false html=1 cssClass="myClass" FormStyledPlugin«ENDREM»«""-»
             «EXPAND FormField FOR col»«""-»
         </div>
