@@ -4,6 +4,8 @@
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::UtilsBO»
 
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
 «REM»Entry point for DBObject implementations«ENDREM»
 «DEFINE Root FOR Module-»
     «FILE "lib/" + moduleClassFileName(this, false)»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND dbObjectModuleClass(false)»«ENDFILE»
@@ -27,6 +29,7 @@ class «moduleClassName(this, appendArray)» extends DBObject«IF appendArray»A
 
 
 «DEFINE ObjectClassWrapper(modulestudio::Module module, Boolean appendArray) FOR persistence::Table-»
+«info("Generating object class for \"" + name + "\"")»
 «FILE "lib/" + baseClassFileName(appendArray)»«EXPAND FileHelper::phpFileHeader(module)»
 
 /**

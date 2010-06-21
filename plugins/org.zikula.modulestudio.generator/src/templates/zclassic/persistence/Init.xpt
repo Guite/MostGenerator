@@ -217,6 +217,25 @@ Ausgelesen als Array: $blabla["0"];
 «FOREACH 1.upTo(tableContainer.numExampleRows) AS number SEPARATOR ','-»
 
         array(«EXPAND ExampleRow(module, name, number) FOREACH columns SEPARATOR ','»)«ENDFOREACH-»
+«REM»Alternative way to count up values is a stdlib extension for initialising, manipulating and retrieving counters.
+Extension: org::eclipse:xtend:::util::stdlib::counter
+  * int counterInc (Object o)       Increment
+  * int counterDec (Object o)       Decrement
+  * int counterReset (Object o)     Reset (returns always 0)
+  * int counterGet (Object o)       Retrieve current state
+
+Example:
+«DEFINE CounterExtensionsDemo FOR Object» 
+«FILE "CounterExtensions.txt"» 
+  Named counter:
+  inc         : «counterInc("idx")» 
+  inc         : «counterInc("idx")» 
+  inc         : «counterInc("idx")» 
+  reset       : «counterReset("idx")» 
+  inc         : «counterInc("idx")» 
+«ENDFILE» 
+«ENDDEFINE»
+«ENDREM»
 «ENDDEFINE»
 «DEFINE ExampleRow(Module module, String tabName, Integer number) FOR TableColumn»
             '«dbName(name)»' => __('«tabName» «name» «number»', $dom)«ENDDEFINE»
