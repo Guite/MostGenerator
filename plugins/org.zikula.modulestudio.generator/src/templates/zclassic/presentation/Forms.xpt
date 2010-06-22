@@ -192,7 +192,7 @@ type: NORMAL; LARGE; MULTIBYTE; LARGEMULTIBYTE
 «LET pointingRelations.get(0) AS pointingRelation-»
 «LET pointingRelation.source AS joiningTable-»
 «REM»Join-Selector«ENDREM»«""-»
-            {formdropdownrelationlist id="«joiningTable.idField()»" mandatory=«IF isMandatory-»true«ELSE»false«ENDIF-» module="«columnTable.tableContainer.persistenceModule.modName()»" objecttype="«moduleName(joiningTable.name)»" idField="«joiningTable.idField()»" displayField="«joiningTable.columns.select(e|e.isLeading == true).get(0).name.dbName()»" orderby="«joiningTable.columns.select(e|e.isLeading == true).get(0).name.dbName()»"«IF pointingRelation.metaType == persistence::OneToManyRelationship-» selectionMode="multiple"«ENDIF-»}«IF isMandatory-»&nbsp;*«ENDIF-»
+            {formdropdownrelationlist id="«joiningTable.idField()»" mandatory=«IF isMandatory-»true«ELSE»false«ENDIF-» module="«columnTable.tableContainer.persistenceModule.modName()»" objecttype="«moduleName(joiningTable.name)»" idField="«joiningTable.idField()»" displayField="«joiningTable.columns.select(e|e.isLeading == true).get(0).name.dbName()»" orderby="«joiningTable.columns.select(e|e.isLeading == true).get(0).name.dbName()»"«IF pointingRelation.metaType == persistence::OneToManyRelationship-» selectionMode="multiple"«ENDIF-»}«IF isMandatory-»&nbsp;*«ENDIF»
 «ENDLET-»
 «ENDLET-»
 «ELSE-»

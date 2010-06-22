@@ -5,8 +5,10 @@
 «REM»Definition of permission schema arrays«ENDREM»
 «AROUND templates::zclassic::smallstuff::VersionFile::PermissionSchema FOR Module-»
 // DEBUG: permission schema aspect starts
-$modversion['securityschema'] = array('«modName()»::' => '::',
-«EXPAND PermissionSchema(modName()) FOREACH persistenceContainer.tables SEPARATOR ','-»);
+$modversion['securityschema'] = array(
+    '«modName()»::' => '::',
+«EXPAND PermissionSchema(modName()) FOREACH persistenceContainer.tables SEPARATOR ','-»
+);
 // DEBUG: permission schema aspect ends
 «targetDef.proceed()-»
 «ENDAROUND»
@@ -15,10 +17,11 @@ $modversion['securityschema'] = array('«modName()»::' => '::',
 «IF incoming.size > 0-»
 «EXPAND PermissionSchema(modName) FOREACH incoming SEPARATOR ','-»,
 «ENDIF»
-'«modName»:«capitalName(name)»:' => '«capitalName(name)»ID::'«ENDDEFINE»
+    '«modName»:«capitalName(name)»:' => '«capitalName(name)»ID::'«""-»
+«ENDDEFINE»
 
 «DEFINE PermissionSchema(String modName) FOR persistence::Relationship»
-'«modName»:«capitalName(source.name)»:«capitalName(target.name)»' => '«capitalName(source.name)»ID:«capitalName(target.name)»ID:'«ENDDEFINE»
+    '«modName»:«capitalName(source.name)»:«capitalName(target.name)»' => '«capitalName(source.name)»ID:«capitalName(target.name)»ID:'«ENDDEFINE»
 
 «REM»Permission checks in system use cases«ENDREM»
 «AROUND templates::zclassic::processing::Processor::PermissionCheck FOR ProcessorState-»

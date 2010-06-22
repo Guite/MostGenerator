@@ -92,7 +92,7 @@ listType:
 «ELSEIF listType == 3-»
     <tr class="{cycle values="z-odd, z-even"}">
 «ENDIF-»
-
+«""-»
 «FOREACH columns.reject(e|e.isPrimaryKey) AS column-»
 «IF listType < 2-»
         <li>
@@ -102,7 +102,7 @@ listType:
         <td headers="h«column.name.dbName()»" align="«EXPAND Alignment FOR column-»" valign="top">
 «ENDIF-»
 «LET incoming.select(e|dbName(e.source.name + "id") == dbName(column.name)) AS joins-»
-«IF column.isLeading == true»
+«IF column.isLeading == true-»
             {$«objName».«dbName(column.name)»|modcallhooks}
 «ELSEIF joins.size > 0-»
             «FOREACH joins AS join SEPARATOR ', '»{$«objName».«join.source.name.dbName()»_«join.source.columns.select(e|e.isLeading == true).get(0).name.dbName()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH»
@@ -154,8 +154,8 @@ listType:
 «ELSEIF listType == 3-»
         </td>
 «ENDIF-»
-
-
+«""-»
+«""-»
 «IF listType < 2-»
     </ul></li>
 «ELSEIF listType == 2-»
@@ -170,7 +170,7 @@ listType:
         <dt>
 «ELSEIF listType == 3-»
         <tr class="{cycle values="z-odd, z-even"}">
-        <td align="left" valign="top" colspan="«columns.size-1+1»">
+          <td align="left" valign="top" colspan="«columns.size-1+1»">
 «ENDIF-»
             {gt text='No «formattedName(nameMultiple)» found.'}
 «IF listType < 2-»
@@ -178,7 +178,8 @@ listType:
 «ELSEIF listType == 2-»
         </dt>
 «ELSEIF listType == 3-»
-        </td></tr>
+          </td>
+        </tr>
 «ENDIF-»
     {/foreach}
 
@@ -212,7 +213,7 @@ listType:
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE HeaderSortingLink(String modName, String procName, String objName, String colName, String label) FOR persistence::TableColumn»
+«DEFINE HeaderSortingLink(String modName, String procName, String objName, String colName, String label) FOR persistence::TableColumn-»
     {if $sort eq "«colName»"}
             <a href="{modurl modname="«modName»" type="«procName»" func="view" ot="«objName»" sort="«colName»" sdir=$sdir}" style="font-style: italic">
     {else}
@@ -231,21 +232,21 @@ listType:
 
 
 «DEFINE DisplayColumnField(String objName) FOR persistence::TableColumn-»
-{$«objName».«dbName(name)»}
+            {$«objName».«dbName(name)»}
 «ENDDEFINE»
 
 «DEFINE DisplayColumnField(String objName) FOR persistence::DateField-»
-{$«objName».«dbName(name)»|dateformat:"datebrief"}
+            {$«objName».«dbName(name)»|dateformat:"datebrief"}
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR persistence::TimestampField-»
-{$«objName».«dbName(name)»|dateformat:"datetimebrief"}
+            {$«objName».«dbName(name)»|dateformat:"datetimebrief"}
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR persistence::BooleanField-»
-{$«objName».«dbName(name)»|yesno:true}
+            {$«objName».«dbName(name)»|yesno:true}
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR persistence::DecimalField-»
-{$«objName».«dbName(name)»|formatnumber}
+            {$«objName».«dbName(name)»|formatnumber}
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR persistence::FloatField-»
-{$«objName».«dbName(name)»|formatnumber}
+            {$«objName».«dbName(name)»|formatnumber}
 «ENDDEFINE»

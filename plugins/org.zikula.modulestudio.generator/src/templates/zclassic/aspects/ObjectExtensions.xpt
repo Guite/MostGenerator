@@ -53,4 +53,5 @@
                      'cr_date',
                      'cr_uid',
                      'lu_date',
-                     'lu_uid'«ENDIF-»«targetDef.proceed()»«ENDAROUND»
+                     'lu_uid'«ENDIF-»«targetDef.proceed()»«""-»
+«ENDAROUND»

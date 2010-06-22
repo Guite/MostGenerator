@@ -197,7 +197,7 @@ Ausgelesen als Array: $blabla["0"];
 «IF persistenceContainer.select(e|e.isDefaultDataSource).get(0).numExampleRows > 0-»
 «FOREACH persistenceContainer.tables AS tab-»
         // define default data for «moduleName(tab.name)» table
-        $records = array(«EXPAND createExampleRows(this) FOR tab»
+        $records = array(«EXPAND createExampleRows(this) FOR tab-»
         );
 
         // insert it into the «moduleName(tab.name)» table

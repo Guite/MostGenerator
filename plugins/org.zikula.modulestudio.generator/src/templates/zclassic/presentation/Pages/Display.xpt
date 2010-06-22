@@ -33,10 +33,10 @@
 «LET incoming.select(e|dbName(e.source.name + "id") == dbName(column.name)) AS joins-»
 «IF joins.size > 0-»
     <dt>{gt text='«formattedNameCapitalized(joins.get(0).source.name)»'}</dt>
-<dd>«FOREACH joins AS join SEPARATOR ', '-»{$«objName».«join.source.name.dbName()»_«join.source.idField()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH-»</dd>
+    <dd>«FOREACH joins AS join SEPARATOR ', '-»{$«objName».«join.source.name.dbName()»_«join.source.idField()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH-»</dd>
 «ELSE-»
     <dt>{gt text='«formattedNameCapitalized(column.name)»'}</dt>
-    <dd>«EXPAND DisplayColumnField(objName) FOR column»</dd>
+    <dd>«EXPAND DisplayColumnField(objName) FOR column-»</dd>
 «ENDIF-»
 «ENDLET-»
 «ENDFOREACH-»
@@ -91,23 +91,23 @@
 «ENDDEFINE»
 
 «DEFINE DisplayColumnField(String objName) FOR persistence::TableColumn-»
-{$«objName».«dbName(name)»}
+{$«objName».«dbName(name)»}«""-»
 «ENDDEFINE»
 
 «DEFINE DisplayColumnField(String objName) FOR persistence::DateField-»
-{$«objName».«dbName(name)»|dateformat:"datebrief"}
+{$«objName».«dbName(name)»|dateformat:"datebrief"}«""-»
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR persistence::TimestampField-»
-{$«objName».«dbName(name)»|dateformat:"datetimebrief"}
+{$«objName».«dbName(name)»|dateformat:"datetimebrief"}«""-»
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR persistence::BooleanField-»
-{$«objName».«dbName(name)»|yesno:true}
+{$«objName».«dbName(name)»|yesno:true}«""-»
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR persistence::DecimalField-»
-{$«objName».«dbName(name)»|formatnumber}
+{$«objName».«dbName(name)»|formatnumber}«""-»
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR persistence::FloatField-»
-{$«objName».«dbName(name)»|formatnumber}
+{$«objName».«dbName(name)»|formatnumber}«""-»
 «ENDDEFINE»
 
 «DEFINE DisplaySubsets(String modName, String procName, persistence::Table objTable) FOR persistence::Table-»

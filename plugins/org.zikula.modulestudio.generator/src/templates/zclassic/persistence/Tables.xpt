@@ -32,7 +32,7 @@ function «modName()»_tables()
     $dbdriver = DBConnectionStack::getConnectionDBDriver();
 
 «FOREACH persistenceContainer.select(e|e.isDefaultDataSource).tables AS tab-»
-«info("Generating table \"" + tab.name + "\"")»
+«info("Generating table \"" + tab.name + "\"") -> ""-»
     /*
      * definitions for «moduleName(tab.name)» table
      */

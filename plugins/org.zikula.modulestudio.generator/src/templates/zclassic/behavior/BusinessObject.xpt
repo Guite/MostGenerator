@@ -103,13 +103,13 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
         // call initialisation routine
         $this->_init($init, $key, $this->_objField);
     }
-    
+
     function selectPostProcess($data = null)
     {
         if (!$data) {
             $data =& $this->_objData;
         }
-        
+
 «EXPAND sanitizeForOutput FOREACH columns-»
     }
 «REM»	«EXPAND BusinessStateFunction FOREACH businessStates-»«ENDREM»
@@ -410,7 +410,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
     {
         return '«columns.select(e|e.isLeading == true).get(0).name.dbName()»';
     }
-    
+
     function selectPostProcess($all = null)
     {
         foreach ($this->_objData as $k => $data) {
