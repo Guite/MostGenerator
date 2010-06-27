@@ -257,7 +257,7 @@ Example:
         $render = Renderer::getInstance('«modName()»', false);
 
         // fetch and return the appropriate template
-        return $render->fetch('«modName()»_init_interactive.htm');
+        return $render->fetch('«modName()»_init_interactive.tpl');
     } 
 «ENDDEFINE»
 
@@ -283,7 +283,7 @@ Example:
             $render->assign('authid', SecurityUtil::generateAuthKey('«modName()»'));
 
             // fetch and return the appropriate template
-            return $render->fetch('«modName()»_init_step2.htm');
+            return $render->fetch('«modName()»_init_step2.tpl');
         }
 
         if (!SecurityUtil::confirmAuthKey()) {
@@ -332,7 +332,7 @@ Example:
         $render->assign('activate', $activate);
 
         // fetch and return the appropriate template
-        return $render->fetch('«modName()»_init_step3.htm');
+        return $render->fetch('«modName()»_init_step3.tpl');
     }
 «ENDDEFINE»
 
@@ -375,6 +375,6 @@ Example:
         $render->assign('authid', SecurityUtil::generateAuthKey('Modules'));
 
         // fetch and return the appropriate template
-        return $render->fetch('«modName()»_init_delete.htm');
+        return $render->fetch('«modName()»_init_delete.tpl');
     }
 «ENDDEFINE»

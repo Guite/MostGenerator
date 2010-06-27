@@ -70,7 +70,7 @@ class «modName().toFirstUpper()»_Form_Handler_Admin_Config extends Form_Handle
 «LET moduleName(moduleName + "_Form_Handler_" + dbName(proc.name).toFirstUpper() + actionName.toFirstUpper()) AS controllerPraefix-»
 
     // Execute form using supplied template and page event handler
-    return $render->execute('«controllerPraefix».html', new «controllerPraefix»());
+    return $render->execute('«controllerPraefix».tpl', new «controllerPraefix»());
 «ENDLET-»
 «ENDDEFINE»
 

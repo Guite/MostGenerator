@@ -16,7 +16,7 @@
 «REM»Entry point for Form templates«ENDREM»
 «DEFINE Root(String moduleName, Processor proc, String actionName) FOR persistence::Table-»
 «LET dbName(proc.name) AS procName-»
-«FILE "templates/" + moduleName(moduleName + "_" + procName + "_" + name + "_" + actionName) + ".htm"-»
+«FILE "templates/" + moduleName(moduleName + "_" + procName + "_" + name + "_" + actionName) + ".tpl"-»
 «EXPAND FormTemplate(moduleName, proc, actionName)-»
 «ENDFILE»
 «ENDLET-»
@@ -27,7 +27,7 @@
 «LET dbName(name) AS tabName-»
 {* purpose of this template: build the Form to «moduleName(actionName)» an instance of «moduleName(name)» *}
 
-{include file="«modName»_«procName»_header.htm"}
+{include file="«modName»_«procName»_header.tpl"}
 
 {if $mode eq "edit"}
     {gt text='Edit «formattedName(name)»' assign="templateTitle"}
@@ -90,7 +90,7 @@ cssClass="myClass"
     </fieldset>
 «IF usesStandardFields == true-»
 {if $mode ne "create"}
-    {include file="«modName»_«procName»_include_metadata_edit.htm"}
+    {include file="«modName»_«procName»_include_metadata_edit.tpl"}
 {/if}
 «ENDIF-»
 «REM»TODO: check if needed«ENDREM»«""-»
@@ -128,7 +128,7 @@ cssClass="myClass"
 </div>
 «ENDIF-»
 
-{include file="«modName»_«procName»_footer.htm"}
+{include file="«modName»_«procName»_footer.tpl"}
 «ENDLET-»
 «ENDLET-»
 «ENDDEFINE»

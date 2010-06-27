@@ -31,10 +31,10 @@ function «modName()»_processRenderTemplate(&$render, $type, $objectType, $func
 {
     $template = DataUtil::formatForOS('«modName()»_' . $type . '_' . $objectType . '_' . $func);
     $tpl = FormUtil::getPassedValue('tpl', isset($args['tpl']) ? $args['tpl'] : '');
-    if (!empty($tpl) && $render->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.htm')) {
+    if (!empty($tpl) && $render->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.tpl')) {
         $template .= '_' . DataUtil::formatForOS($tpl);
     }
-    $template .= '.htm';
+    $template .= '.tpl';
 
     $raw = FormUtil::getPassedValue('raw', (isset($args['raw']) && is_bool($args['raw'])) ? $args['raw'] : false);
     if ($raw == true) {
@@ -87,7 +87,7 @@ class «module.modName().toFirstUpper()»_«dbName(name).toFirstUpper()» extend
         $render = FormUtil::newForm('«module.modName()»');
 
         // Execute form using supplied template and page event handler
-        return $render->Execute('«module.modName()»_admin_config.htm', new «module.modName().toFirstUpper()»_Admin_Config());
+        return $render->Execute('«module.modName()»_admin_config.tpl', new «module.modName().toFirstUpper()»_Admin_Config());
     }
 
 «ENDIF-»

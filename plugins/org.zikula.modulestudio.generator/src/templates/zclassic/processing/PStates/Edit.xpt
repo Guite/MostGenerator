@@ -10,5 +10,5 @@
         $handlerClass = '«modName.toFirstUpper()»_Form_Handler_«dbName(stateProcessor.name).toFirstUpper()»_' . ucfirst($objectType) . '_Edit';
 
         // execute form using supplied template and page event handler
-        return $render->execute('«modName»_«dbName(stateProcessor.name)»_' . $objectType . '_edit.htm', new $handlerClass());
+        return $render->execute('«modName»_«dbName(stateProcessor.name)»_' . $objectType . '_edit.tpl', new $handlerClass());
 «ENDDEFINE»

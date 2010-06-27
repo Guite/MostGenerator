@@ -2,13 +2,13 @@
 «EXTENSION extensions::Utils»
 
 «DEFINE Root FOR Module»
-    «FILE "templates/" + moduleName(name) + "_init_interactive.htm"»«EXPAND tplInit»«ENDFILE»
+    «FILE "templates/" + moduleName(name) + "_init_interactive.tpl"»«EXPAND tplInit»«ENDFILE»
 «IF needsConfig()-»
-    «FILE "templates/" + moduleName(name) + "_init_step2.htm"»«EXPAND tplInitStep2»«ENDFILE»
+    «FILE "templates/" + moduleName(name) + "_init_step2.tpl"»«EXPAND tplInitStep2»«ENDFILE»
 «ENDIF-»
-    «FILE "templates/" + moduleName(name) + "_init_step3.htm"»«EXPAND tplInitStep3»«ENDFILE»
-    «FILE "templates/" + moduleName(name) + "_init_update.htm"»«EXPAND tplUpdate»«ENDFILE»
-    «FILE "templates/" + moduleName(name) + "_init_delete.htm"»«EXPAND tplDelete»«ENDFILE»
+    «FILE "templates/" + moduleName(name) + "_init_step3.tpl"»«EXPAND tplInitStep3»«ENDFILE»
+    «FILE "templates/" + moduleName(name) + "_init_update.tpl"»«EXPAND tplUpdate»«ENDFILE»
+    «FILE "templates/" + moduleName(name) + "_init_delete.tpl"»«EXPAND tplDelete»«ENDFILE»
 «ENDDEFINE»
 
 «DEFINE tplInit FOR Module-»

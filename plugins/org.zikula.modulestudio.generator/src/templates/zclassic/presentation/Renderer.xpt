@@ -24,10 +24,10 @@
 «EXPAND MetaDataTemplates(modName(), processor)-»
 «ENDFOREACH-»
 «IF needsConfig()-»
-«FILE "templates/" + modName() + "_admin_config.htm"-»
+«FILE "templates/" + modName() + "_admin_config.tpl"-»
 {* purpose of this template: module configuration *}
 
-{include file="«modName()»_admin_header.htm"}
+{include file="«modName()»_admin_header.tpl"}
 
 <div class="z-admincontainer">
 <div class="z-adminpageicon">{img modname=core src=configure.gif set=icons/large __alt='Settings'}</div>
@@ -61,14 +61,14 @@
 
 </div>
 
-{include file="«modName()»_admin_footer.htm"}
+{include file="«modName()»_admin_footer.tpl"}
 «ENDFILE-»
 «ENDIF-»
 «ENDDEFINE»
 
 «DEFINE HeaderFooter(String modName, Processor processor) FOR modulestudio::Module»
 «LET dbName(processor.name) AS procName-»
-«FILE "templates/" + modName + "_" + procName + "_header.htm"-»
+«FILE "templates/" + modName + "_" + procName + "_header.tpl"-»
 {* purpose of this template: header for «procName» area *}
 
 «IF processor.metaType == AdminProcessor-»
@@ -96,7 +96,7 @@
     </div>
 </div>
 «ENDFILE»
-«FILE "templates/" + modName + "_" + procName + "_footer.htm"-»
+«FILE "templates/" + modName + "_" + procName + "_footer.tpl"-»
 {* purpose of this template: footer for «procName» area *}
 
 «EXPAND FileHelper::msWeblink-»
@@ -108,7 +108,7 @@
 «DEFINE MetaDataTemplates(String modName, Processor processor) FOR modulestudio::Module-»
 «LET dbName(processor.name) AS procName-»
 «IF processor.hasPStates('view') || processor.hasPStates('display')-»
-«FILE "templates/" + modName + "_" + procName + "_include_metadata_display.htm"-»
+«FILE "templates/" + modName + "_" + procName + "_include_metadata_display.tpl"-»
     <dt>{gt text='Meta data'}</dt>
 {if $obj.cr_uid}
 {usergetvar name="uname" uid=$obj.cr_uid assign="cr_uname"}
@@ -123,7 +123,7 @@
 «ENDIF»
 
 «IF processor.hasPStates('edit')-»
-«FILE "templates/" + modName + "_" + procName + "_include_metadata_edit.htm"-»
+«FILE "templates/" + modName + "_" + procName + "_include_metadata_edit.tpl"-»
 <fieldset>
     <legend>{gt text='Meta data'}</legend>
     <ul>

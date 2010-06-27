@@ -4,10 +4,10 @@
 «DEFINE Impl(String modName, Processor processor) FOR persistence::Table»
 «LET dbName(processor.name) AS procName-»
 «LET moduleName(name) AS objName-»
-«FILE "templates/" + modName + "_" + procName + "_" + objName + "_display.htm"-»
+«FILE "templates/" + modName + "_" + procName + "_" + objName + "_display.tpl"-»
 {* purpose of this template: «formattedName(nameMultiple)» display view in «procName» area *}
 
-{include file="«modName»_«procName»_header.htm"}
+{include file="«modName»_«procName»_header.tpl"}
 
 «IF processor.metaType == AdminProcessor-»
 <div class="z-admincontainer">
@@ -41,7 +41,7 @@
 «ENDLET-»
 «ENDFOREACH-»
 «IF usesStandardFields == true-»
-    {include file="«modName»_«procName»_include_metadata_display.htm" obj=$«objName»}
+    {include file="«modName»_«procName»_include_metadata_display.tpl" obj=$«objName»}
 «ENDIF-»
 </dl>
 
@@ -84,7 +84,7 @@
 «ENDIF-»
 «ENDLET-»
 
-{include file="«modName»_«procName»_footer.htm"}
+{include file="«modName»_«procName»_footer.tpl"}
 «ENDFILE»
 «ENDLET-»
 «ENDLET-»
