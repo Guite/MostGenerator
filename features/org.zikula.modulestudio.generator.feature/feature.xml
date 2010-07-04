@@ -18,12 +18,12 @@
    <license url="%licenseUrl">
       %license
    </license>
-
+<!--
    <url>
       <update label="%mostUpdateSiteName" url="http://modulestudio.de/updates/"/>
       <discovery label="%mostUpdateSiteName" url="http://modulestudio.de/updates/"/>
    </url>
-
+-->
    <requires>
       <import plugin="de.guite.modulestudio.metamodel"/>
       <import plugin="org.antlr.runtime" version="3.0.0" match="greaterOrEqual"/>
