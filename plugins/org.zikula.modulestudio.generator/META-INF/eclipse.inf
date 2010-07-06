@@ -1,3 +1,0 @@
-# see http://wiki.eclipse.org/JarProcessor_Options
-jarprocessor.exclude.pack=true
-jarprocessor.exclude.children=true
