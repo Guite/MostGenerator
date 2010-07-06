@@ -50,8 +50,8 @@ function «modName()»_processRenderTemplate(&$render, $type, $objectType, $func
 
 «REM»creates a file for every Processor instance«ENDREM»
 «DEFINE Root(Module module) FOR Processor-»
-	«FILE "lib/" + module.modName().toFirstUpper() + "/" + dbName(name).toFirstUpper() + ".php"»«EXPAND FileHelper::phpFileHeader(module)»«EXPAND ProcessorImpl(module)»«ENDFILE»
-    «FILE "lib/" + module.modName().toFirstUpper() + "/Api/" + dbName(name).toFirstUpper() + ".php"»«EXPAND FileHelper::phpFileHeader(module)»«EXPAND ProcessorApiImpl(module)»«ENDFILE»
+	«FILE "lib/" + module.modName() + "/Controller/" + dbName(name).toFirstUpper() + ".php"»«EXPAND FileHelper::phpFileHeader(module)»«EXPAND ProcessorImpl(module)»«ENDFILE»
+    «FILE "lib/" + module.modName() + "/Api/" + dbName(name).toFirstUpper() + ".php"»«EXPAND FileHelper::phpFileHeader(module)»«EXPAND ProcessorApiImpl(module)»«ENDFILE»
 «ENDDEFINE»
 
 «REM»file structure implementation«ENDREM»
