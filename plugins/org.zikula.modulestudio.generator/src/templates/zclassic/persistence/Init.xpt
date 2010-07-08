@@ -245,7 +245,7 @@ Example:
      * interactive installation procedure
      *
      * @author       «author»
-     * @return       Renderer output
+     * @return       Zikula_View output
      */
     public function install()
     {
@@ -253,8 +253,8 @@ Example:
             return LogUtil::registerPermissionError();
         }
 
-        // get Renderer instance for this module
-        $render = Renderer::getInstance('«modName()»', false);
+        // get Zikula_View instance for this module
+        $render = Zikula_View::getInstance('«modName()»', false);
 
         // fetch and return the appropriate template
         return $render->fetch('«modName()»_init_interactive.tpl');
@@ -266,7 +266,7 @@ Example:
      * interactive installation procedure step 2
      *
      * @author       «author»
-     * @return       Renderer output
+     * @return       Zikula_View output
      */
     public function interactiveinitstep2()
     {
@@ -276,8 +276,8 @@ Example:
 
         $submit = FormUtil::getPassedValue('submit', null, 'POST');
         if (!$submit) {
-            // get Renderer instance for this module
-            $render = Renderer::getInstance('«modName()»', false);
+            // get Zikula_View instance for this module
+            $render = Zikula_View::getInstance('«modName()»', false);
 
             // assign auth key
             $render->assign('authid', SecurityUtil::generateAuthKey('«modName()»'));
@@ -313,7 +313,7 @@ Example:
      * interactive installation procedure step 3
      *
      * @author       «author»
-     * @return       Renderer output
+     * @return       Zikula_View output
      */
     public function interactiveinitstep3()
     {
@@ -322,8 +322,8 @@ Example:
         }
         $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST');
 
-        // get Renderer instance for this module
-        $render = Renderer::getInstance('«modName()»', false);
+        // get Zikula_View instance for this module
+        $render = Zikula_View::getInstance('«modName()»', false);
 
         // assign auth key
         $render->assign('authid', SecurityUtil::generateAuthKey('Modules'));
@@ -341,7 +341,7 @@ Example:
      * interactive update procedure
      *
      * @author       «author»
-     * @return       Renderer output
+     * @return       Zikula_View output
      */
     function upgrade()
     {
@@ -360,7 +360,7 @@ Example:
      * interactive delete
      *
      * @author       «author»
-     * @return       Renderer output
+     * @return       Zikula_View output
      */
     public function uninstall()
     {
@@ -368,8 +368,8 @@ Example:
             return LogUtil::registerPermissionError();
         }
 
-        // get Renderer instance for this module
-        $render = Renderer::getInstance('«modName()»', false);
+        // get Zikula_View instance for this module
+        $render = Zikula_View::getInstance('«modName()»', false);
 
         // assign auth key
         $render->assign('authid', SecurityUtil::generateAuthKey('Modules'));

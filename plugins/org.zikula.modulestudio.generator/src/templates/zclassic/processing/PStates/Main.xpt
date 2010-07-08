@@ -30,8 +30,8 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         return $this->view();
 «ENDIF-»
 «REM»
-        // get Renderer instance for this module
-        $render = Renderer::getInstance('«modName»', false);
+        // get Zikula_View instance for this module
+        $render = Zikula_View::getInstance('«modName»', false);
 
         // fetch and return the appropriate template
         return $render->fetch('«modName»_«dbName(stateProcessor.name)»_main.tpl');

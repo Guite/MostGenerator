@@ -47,8 +47,8 @@
         // get total number of records for building the pagination by method call
         $objcount = $objectArray->getCount($where);
 
-        // get Renderer instance for this module
-        $render = Renderer::getInstance('«modName»', false);
+        // get Zikula_View instance for this module
+        $render = Zikula_View::getInstance('«modName»', false);
 
         // assign the object array we loaded above
         $render->assign('objectArray', $objectData);

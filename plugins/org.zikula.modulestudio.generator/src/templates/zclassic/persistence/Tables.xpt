@@ -98,7 +98,7 @@ function «modName()»_tables()
 «DEFINE TypeDef FOR TableColumn-»
 //TODO: Undefined TableColumn
 «ENDDEFINE»
-«DEFINE TypeValue FOR TableColumn»«IF isMandatory == true» NOTNULL«ENDIF»«REM»no default value for text and blob fields, breaks mysql strict mode«ENDREM»«IF metaType.name != "Persistence::TextField" && metaType.name != "Persistence::BlobField"» DEFAULT '«defaultValue»'«ENDIF»«ENDDEFINE»
+«DEFINE TypeValue FOR TableColumn»«IF isMandatory == true» NOTNULL«ENDIF»«REM»no default value for text and blob fields, breaks mysql strict mode«ENDREM»«IF metaType.name != "persistence::TextField" && metaType.name != "persistence::BlobField"» DEFAULT '«defaultValue»'«ENDIF»«ENDDEFINE»
 
 «DEFINE TypeDef FOR StringField»C(«IF length > 0 && length < 256»«length»«ELSE»255«ENDIF»)«ENDDEFINE»
 «DEFINE TypeDef FOR TextField»$«dbName(name)»Type«ENDDEFINE»

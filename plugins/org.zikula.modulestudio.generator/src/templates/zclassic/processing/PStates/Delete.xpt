@@ -26,8 +26,8 @@
         } else {
     «EXPAND ProcHelper::getObjectFromSource("", "id", "idField")-»
 
-            // get Renderer instance for this module
-            $render = Renderer::getInstance('«modName»', false);
+            // get Zikula_View instance for this module
+            $render = Zikula_View::getInstance('«modName»', false);
 
             // assign the object we loaded above
             $render->assign($objectType, $objectData);

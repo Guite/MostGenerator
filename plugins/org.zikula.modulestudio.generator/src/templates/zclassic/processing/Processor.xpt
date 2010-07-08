@@ -62,7 +62,7 @@ function «modName()»_processRenderTemplate(&$render, $type, $objectType, $func
  *
  * @author       «module.author»
  */
-class «module.modName().toFirstUpper()»_«dbName(name).toFirstUpper()» extends Zikula_Controller
+class «module.modName().toFirstUpper()»_Controller_«dbName(name).toFirstUpper()» extends Zikula_Controller
 {
     /**
      * Even though we're handling objects for multiple tables, we only have one method for any use case.
