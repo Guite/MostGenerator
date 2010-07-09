@@ -34,3 +34,20 @@
 «ELSEIF s == "DBObject::GET_FROM_VALIDATION_FAILED" || s == "DBObjectArray::GET_FROM_VALIDATION_FAILED"-»failed validation«""-»
 «ENDIF-»
 «ENDDEFINE»
+
+
+«DEFINE ControllerPostInitialize(Boolean caching) FOR Object-»
+    /**
+     * Post initialise.
+     *
+     * Run after construction.
+     *
+     * @return void
+     */
+    protected function postInitialize()
+    {
+        // Set caching to false by default.
+        $this->view->setCaching(«IF caching-»true«ELSE-»false«ENDIF-»);
+    }
+«ENDDEFINE»
+

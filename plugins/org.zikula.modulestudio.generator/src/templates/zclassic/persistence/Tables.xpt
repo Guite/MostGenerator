@@ -40,8 +40,10 @@ function «modName()»_tables()
     // set the table name combined with prefix
     $tables['«fullTableName(tab)»'] = DBUtil::getLimitedTablename('«fullTableName(tab)»');
 
+«REM»
     // NOT REQUIRED: set the column names
     // NOT REQUIRED: $columns = array(«EXPAND FieldStructure(tab.prefix) FOREACH tab.columns SEPARATOR ','»);
+«ENDREM»
 
     // set the data dictionary for the table columns
 «EXPAND TextTypesMSSQL FOREACH tab.columns-»
@@ -49,7 +51,9 @@ function «modName()»_tables()
 
 «EXPAND ObjectExtensions FOR tab-»
 
+«REM»
     // NOT REQUIRED: $tables['«fullTableName(tab)»_column'] = $columns;
+«ENDREM»
     $tables['«fullTableName(tab)»_column_def'] = $columnDef;
 
 «IF tab.indices.size > 0-»

@@ -25,5 +25,5 @@
         $this->view->assign($objectType, $objectData);
 
         // fetch and return the appropriate template
-        return «modName»_processRenderTemplate($view, '«dbName(stateProcessor.name)»', $objectType, 'display', $args);
+        return «modName»_processRenderTemplate($this->view, '«dbName(stateProcessor.name)»', $objectType, 'display', $args);
 «ENDDEFINE»

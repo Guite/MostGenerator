@@ -32,6 +32,7 @@ class «modName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
 «ENDDEFINE»
 
 «DEFINE InteractiveInstall FOR Module-»
+«EXPAND templates::zclassic::processing::ProcHelper::ControllerPostInitialize(false)-»
 «EXPAND FuncInteractiveInit-»
 «IF needsConfig()»«EXPAND FuncInteractiveInitStep2»«ENDIF»
 «EXPAND FuncInteractiveInitStep3-»
@@ -77,7 +78,7 @@ class «modName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
         ModUtil::setVar(«modName()», «moduleName(modvar.name)», (($sessionValue <> false) ? «EXPAND ModVarValFromSession FOR modvar» : «EXPAND ModVarValSession2Mod FOR modvar»));
         SessionUtil::delVar(«moduleName(name + '_' + modvar.name)»);
 «ELSE-»
-        ModUtil::setVar('«modName()»', '«moduleName(modvar.name)»', «EXPAND ModVarValDirect2Mod FOR modvar»);
+        $this->setVar('«modName()»', '«moduleName(modvar.name)»', «EXPAND ModVarValDirect2Mod FOR modvar»);
 «ENDIF-»
 «ENDFOREACH-»
 

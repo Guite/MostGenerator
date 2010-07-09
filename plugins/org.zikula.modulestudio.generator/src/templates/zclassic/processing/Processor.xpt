@@ -64,13 +64,14 @@ function «modName()»_processRenderTemplate(&$view, $type, $objectType, $func, 
  */
 class «module.modName().toFirstUpper()»_Controller_«dbName(name).toFirstUpper()» extends Zikula_Controller
 {
-    /**
-     * Even though we're handling objects for multiple tables, we only have one method for any use case.
-     * The specific functionality for each object is encapsulated in the actual class implementation within the
-     * module's classes directory while the handling code can remain identical for any number of entities.
-     * This component-based approach allows you to have generic handler code which relies on the functionality
-     * implemented in the object's class in order to achieve it's goals.
-     */
+«IF metaType == AjaxProcessor-»
+    public function _postSetup() 
+    { 
+        // no need for a view so override it. 
+    } 
+«ELSE-»
+«EXPAND ProcHelper::ControllerPostInitialize(true)-»
+«ENDIF-»
 
 «EXPAND Root(module) FOREACH processorStates-»
 «IF module.needsConfig() && metaType == AdminProcessor-»

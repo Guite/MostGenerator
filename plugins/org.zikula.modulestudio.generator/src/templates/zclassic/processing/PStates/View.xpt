@@ -59,10 +59,10 @@
 
         // assign the information required to create the pager
         $this->view->assign('pager', array('numitems'     => $objcount,
-                                       'itemsperpage' => $pagesize));
+                                           'itemsperpage' => $pagesize));
 
         // fetch and return the appropriate template
-        return «modName»_processRenderTemplate($view, '«dbName(stateProcessor.name)»', $objectType, 'view', $args);
+        return «modName»_processRenderTemplate($this->view, '«dbName(stateProcessor.name)»', $objectType, 'view', $args);
 «ENDDEFINE»
 
 «DEFINE ViewDefaultSort FOR ProcessorState-»
