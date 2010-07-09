@@ -21,7 +21,7 @@
         $startnum = (int) FormUtil::getPassedValue('pos', 1, 'GET');
 
         // pagesize is the number of items displayed on a page for pagination
-        $pagesize = ModUtil::getVar('«modName»', 'pagesize', 10);
+        $pagesize = $this->getVar('pagesize', 10);
 «REM»TODO«ENDREM»
 
         // convenience vars to make code clearer
@@ -29,11 +29,11 @@
         $sortParam = $sort . ' ' . $sdir;
 
         // use FilterUtil to support generic filtering based on an object-oriented approach
-        $fu =& new FilterUtil(array('table' => $objectArray->_objType, array('join' => &$objectArray->_objJoin)));
+        $fu = new FilterUtil(array('table' => $objectArray->_objType, array('join' => &$objectArray->_objJoin)));
 
         // you could set explicit filters at this point, something like
         // $fu->setFilter('type:eq:' . $args['type'] . ',id:eq:' . $args['id']);
-        // supported operators: eq, ne, like, lt, le, gt, ge, null, notnull 
+        // supported operators: eq, ne, like, lt, le, gt, ge, null, notnull
 
         // process request input filters and get result for DBUtil
         $ret = $fu->GetSQL();
@@ -47,22 +47,22 @@
         // get total number of records for building the pagination by method call
         $objcount = $objectArray->getCount($where);
 
-        // get Zikula_View instance for this module
-        $render = Zikula_View::getInstance('«modName»', false);
+        // turn off caching
+        $this->view->setCaching(false);
 
         // assign the object array we loaded above
-        $render->assign('objectArray', $objectData);
+        $this->view->assign('objectArray', $objectData);
 
         // assign current sorting information
-        $render->assign('sort', $sort);
-        $render->assign('sdir', ($sdir == 'asc') ? 'desc' : 'asc'); // reverted for links
+        $this->view->assign('sort', $sort);
+        $this->view->assign('sdir', ($sdir == 'asc') ? 'desc' : 'asc'); // reverted for links
 
         // assign the information required to create the pager
-        $render->assign('pager', array('numitems'     => $objcount,
+        $this->view->assign('pager', array('numitems'     => $objcount,
                                        'itemsperpage' => $pagesize));
 
         // fetch and return the appropriate template
-        return «modName»_processRenderTemplate($render, '«dbName(stateProcessor.name)»', $objectType, 'view', $args);
+        return «modName»_processRenderTemplate($view, '«dbName(stateProcessor.name)»', $objectType, 'view', $args);
 «ENDDEFINE»
 
 «DEFINE ViewDefaultSort FOR ProcessorState-»

@@ -26,14 +26,14 @@
         } else {
     «EXPAND ProcHelper::getObjectFromSource("", "id", "idField")-»
 
-            // get Zikula_View instance for this module
-            $render = Zikula_View::getInstance('«modName»', false);
+            // turn off output caching
+            $this->view->setCaching(false);
 
             // assign the object we loaded above
-            $render->assign($objectType, $objectData);
+            $this->view->assign($objectType, $objectData);
 
             // fetch and return the appropriate template
-            return «modName»_processRenderTemplate($render, '«dbName(stateProcessor.name)»', $objectType, 'delete', $args);
+            return «modName»_processRenderTemplate($view, '«dbName(stateProcessor.name)»', $objectType, 'delete', $args);
         }
 
         // redirect to the list of the current object type

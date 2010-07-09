@@ -7,8 +7,8 @@
 
 «REM»start point for the Processor creation«ENDREM»
 «DEFINE Root FOR Module»
-	«EXPAND Root(this) FOREACH processingContainer.processors-»
-	«FILE "common.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND CommonFunctions-»«ENDFILE»
+    «EXPAND Root(this) FOREACH processingContainer.processors-»
+    «FILE "common.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND CommonFunctions-»«ENDFILE»
 «ENDDEFINE»
 
 «DEFINE CommonFunctions FOR Module-»
@@ -27,11 +27,11 @@ function «modName()»_getObjectTypes()
 /**
  * utility function for managing render templates
  */
-function «modName()»_processRenderTemplate(&$render, $type, $objectType, $func, $args=array())
+function «modName()»_processRenderTemplate(&$view, $type, $objectType, $func, $args=array())
 {
     $template = DataUtil::formatForOS('«modName()»_' . $type . '_' . $objectType . '_' . $func);
     $tpl = FormUtil::getPassedValue('tpl', isset($args['tpl']) ? $args['tpl'] : '');
-    if (!empty($tpl) && $render->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.tpl')) {
+    if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.tpl')) {
         $template .= '_' . DataUtil::formatForOS($tpl);
     }
     $template .= '.tpl';
@@ -39,18 +39,18 @@ function «modName()»_processRenderTemplate(&$render, $type, $objectType, $func
     $raw = FormUtil::getPassedValue('raw', (isset($args['raw']) && is_bool($args['raw'])) ? $args['raw'] : false);
     if ($raw == true) {
         // standalone output
-        $render->display($template);
+        $view->display($template);
         return true;
     }
 
     // normal output
-    return $render->fetch($template);
+    return $view->fetch($template);
 }
 «ENDDEFINE»
 
 «REM»creates a file for every Processor instance«ENDREM»
 «DEFINE Root(Module module) FOR Processor-»
-	«FILE "lib/" + module.modName() + "/Controller/" + dbName(name).toFirstUpper() + ".php"»«EXPAND FileHelper::phpFileHeader(module)»«EXPAND ProcessorImpl(module)»«ENDFILE»
+    «FILE "lib/" + module.modName() + "/Controller/" + dbName(name).toFirstUpper() + ".php"»«EXPAND FileHelper::phpFileHeader(module)»«EXPAND ProcessorImpl(module)»«ENDFILE»
     «FILE "lib/" + module.modName() + "/Api/" + dbName(name).toFirstUpper() + ".php"»«EXPAND FileHelper::phpFileHeader(module)»«EXPAND ProcessorApiImpl(module)»«ENDFILE»
 «ENDDEFINE»
 
@@ -78,16 +78,15 @@ class «module.modName().toFirstUpper()»_Controller_«dbName(name).toFirstUpper
     /*
      * This function takes care of the module configuration.
      *
-     * @author       «module.author»
-     * @return       Render output
+     * @return string Output
      */
     public function config()
     {
         // Create new Form reference
-        $render = FormUtil::newForm('«module.modName()»');
+        $view = FormUtil::newForm('«module.modName()»');
 
         // Execute form using supplied template and page event handler
-        return $render->Execute('«module.modName()»_admin_config.tpl', new «module.modName().toFirstUpper()»_Admin_Config());
+        return $view->execute('«module.modName()»_admin_config.tpl', new «module.modName().toFirstUpper()»_Admin_Config());
     }
 
 «ENDIF-»
@@ -121,12 +120,11 @@ class «module.modName().toFirstUpper()»_Controller_«dbName(name).toFirstUpper
      * This is a custom method. Documentation for this will be improved in later versions.
 «ENDIF-»
      *
-     * @author       «module.author»
      * @params       TODO
 «IF metaType == ViewProcessorState || metaType == DisplayProcessorState || metaType == EditProcessorState || metaType == DeleteProcessorState-»
      * @param        ot             string    treated object type
 «IF metaType == DeleteProcessorState-»
-     * @param        id		        int	      ID of the entry
+     * @param        id             int       ID of the entry
      * @param        confirmation   boolean   Confirm the deletion, else a confirmation page is displayed
 «ENDIF-»
 «IF metaType == ViewProcessorState-»
@@ -171,15 +169,12 @@ class «module.modName().toFirstUpper()»_Controller_«dbName(name).toFirstUpper
 «DEFINE ProcessorApiImpl(Module module) FOR Processor-»
 /**
  * This is the «name» api helper class.
- *
- * @author       «module.author»
  */
 class «module.modName().toFirstUpper()»_API_«dbName(name).toFirstUpper()» extends Zikula_Api
 {
     /**
      * get available «name» panel links
      *
-     * @author       «module.author»
      * @return       array      array of admin links
      */
     public function getlinks()

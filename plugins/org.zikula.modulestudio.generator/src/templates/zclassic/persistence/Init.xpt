@@ -13,9 +13,9 @@ class «modName()»_Installer extends Zikula_Installer
 }
 «ENDFILE»
 «IF interactiveInstallation == true»
-«FILE "lib/" + modName().toFirstUpper() + "/InteractiveInstaller.php"-»
+«FILE "lib/" + modName().toFirstUpper() + "/Controller/InteractiveInstaller.php"-»
 «EXPAND FileHelper::phpFileHeader(this)-»
-class «modName()»_Interactiveinstaller extends Zikula_InteractiveInstaller
+class «modName()»_Controller_Interactiveinstaller extends Zikula_InteractiveInstaller
 {
 «EXPAND InteractiveInstall»
 }
@@ -41,10 +41,9 @@ class «modName()»_Interactiveinstaller extends Zikula_InteractiveInstaller
 
 «DEFINE FuncInit FOR Module-»
     /**
-     * initialise the «modName()» module
+     * Initialise the «modName()» module
      *
-     * @author       «author»
-     * @return       bool       true on success, false otherwise
+     * @return boolean True on success, false otherwise.
      */
     public function install()
     {
@@ -114,14 +113,13 @@ Ausgelesen als Array: $blabla["0"];
 
 «DEFINE FuncUpdate FOR Module»
     /**
-     * upgrade the «modName()» module from an old version
+     * Upgrade the «modName()» module from an older version.
      *
-     * This function must consider all the released versions of the module!
      * If the upgrade fails at some point, it returns the last upgraded version.
      *
-     * @author       «author»
-     * @param       int        $oldversion version to upgrade from
-     * @return      bool       true on success, false otherwise
+     * @param integer $oldversion Version to upgrade from.
+     *
+     * @return boolean True on success, false otherwise.
      */
     public function upgrade($oldversion)
     {
@@ -130,7 +128,6 @@ Ausgelesen als Array: $blabla["0"];
     switch ($oldversion){
     case '1.00':
             «modName()»_createTables_101();
-        break;
     }
 */
 
@@ -141,10 +138,9 @@ Ausgelesen als Array: $blabla["0"];
 
 «DEFINE FuncDelete FOR Module»
     /**
-     * delete the «modName()» module
-
-     * @author       «author»
-     * @return       bool       true on success, false otherwise
+     * Uninstall «modName()».
+     *
+     * @return boolean True on success, false otherwise.
      */
     public function uninstall()
     {
@@ -171,7 +167,7 @@ Ausgelesen als Array: $blabla["0"];
 «ENDREM»
 
         // remove all module vars
-        ModUtil::delVar('«modName()»');
+        $this->delVars();
 
         // Deletion successful
         return true;
@@ -191,8 +187,6 @@ Ausgelesen als Array: $blabla["0"];
         if («EXPAND clearTable FOREACH persistenceContainer.tables SEPARATOR ' ||'») {
             return false;
         }
-
-        $dom = ZLanguage::getModuleDomain('«modName()»');
 
 «IF persistenceContainer.select(e|e.isDefaultDataSource).get(0).numExampleRows > 0-»
 «FOREACH persistenceContainer.tables AS tab-»
@@ -225,15 +219,15 @@ Extension: org::eclipse:xtend:::util::stdlib::counter
   * int counterGet (Object o)       Retrieve current state
 
 Example:
-«DEFINE CounterExtensionsDemo FOR Object» 
-«FILE "CounterExtensions.txt"» 
+«DEFINE CounterExtensionsDemo FOR Object»
+«FILE "CounterExtensions.txt"»
   Named counter:
-  inc         : «counterInc("idx")» 
-  inc         : «counterInc("idx")» 
-  inc         : «counterInc("idx")» 
-  reset       : «counterReset("idx")» 
-  inc         : «counterInc("idx")» 
-«ENDFILE» 
+  inc         : «counterInc("idx")»
+  inc         : «counterInc("idx")»
+  inc         : «counterInc("idx")»
+  reset       : «counterReset("idx")»
+  inc         : «counterInc("idx")»
+«ENDFILE»
 «ENDDEFINE»
 «ENDREM»
 «ENDDEFINE»
@@ -242,10 +236,9 @@ Example:
 
 «DEFINE FuncInteractiveInit FOR Module»
     /**
-     * interactive installation procedure
+     * Interactive installation procedure.
      *
-     * @author       «author»
-     * @return       Zikula_View output
+     * @return string|boolean Output.
      */
     public function install()
     {
@@ -253,20 +246,16 @@ Example:
             return LogUtil::registerPermissionError();
         }
 
-        // get Zikula_View instance for this module
-        $render = Zikula_View::getInstance('«modName()»', false);
-
         // fetch and return the appropriate template
-        return $render->fetch('«modName()»_init_interactive.tpl');
-    } 
+        return $this->view->fetch('«modName()»_init_interactive.tpl');
+    }
 «ENDDEFINE»
 
 «DEFINE FuncInteractiveInitStep2 FOR Module»
     /**
-     * interactive installation procedure step 2
+     * Interactive installation procedure step 2.
      *
-     * @author       «author»
-     * @return       Zikula_View output
+     * @return string|boolean Output.
      */
     public function interactiveinitstep2()
     {
@@ -276,14 +265,11 @@ Example:
 
         $submit = FormUtil::getPassedValue('submit', null, 'POST');
         if (!$submit) {
-            // get Zikula_View instance for this module
-            $render = Zikula_View::getInstance('«modName()»', false);
-
             // assign auth key
-            $render->assign('authid', SecurityUtil::generateAuthKey('«modName()»'));
+            $this->view->assign('authid', SecurityUtil::generateAuthKey('«modName()»'));
 
             // fetch and return the appropriate template
-            return $render->fetch('«modName()»_init_step2.tpl');
+            return $this->view->fetch('«modName()»_init_step2.tpl');
         }
 
         if (!SecurityUtil::confirmAuthKey()) {
@@ -291,14 +277,14 @@ Example:
             return System::redirect(ModUtil::url('Modules', 'admin', 'view'));
         }
 
-	«FOREACH persistenceContainer.modvarContainer.modvars AS modvar-»
+    «FOREACH persistenceContainer.modvarContainer.modvars AS modvar-»
         $formValue = FormUtil::getPassedValue('«moduleName(modvar.name)»', «EXPAND ModVarValForm2SessionDefault FOR modvar», 'POST');
         SessionUtil::setVar('«moduleName(name + '_' + modvar.name)»', $formValue);
 
 «ENDFOREACH-»
 
         $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST');
-        $activate = (!empty($activate)) ? true : false; 
+        $activate = (!empty($activate)) ? true : false;
 
         return System::redirect(ModUtil::url('«modName()»', 'init', 'interactiveinitstep3', array('activate' => $activate)));
     }
@@ -310,10 +296,9 @@ Example:
 
 «DEFINE FuncInteractiveInitStep3 FOR Module»
     /**
-     * interactive installation procedure step 3
+     * Interactive installation procedure step 3
      *
-     * @author       «author»
-     * @return       Zikula_View output
+     * @return string|boolean Output.
      */
     public function interactiveinitstep3()
     {
@@ -322,26 +307,22 @@ Example:
         }
         $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST');
 
-        // get Zikula_View instance for this module
-        $render = Zikula_View::getInstance('«modName()»', false);
-
         // assign auth key
-        $render->assign('authid', SecurityUtil::generateAuthKey('Modules'));
+        $this->view->assign('authid', SecurityUtil::generateAuthKey('Modules'));
 
         // assign activation flag
-        $render->assign('activate', $activate);
+        $this->view->assign('activate', $activate);
 
         // fetch and return the appropriate template
-        return $render->fetch('«modName()»_init_step3.tpl');
+        return $this->view->fetch('«modName()»_init_step3.tpl');
     }
 «ENDDEFINE»
 
 «DEFINE FuncInteractiveUpdate FOR Module»
     /**
-     * interactive update procedure
+     * Interactive update procedure
      *
-     * @author       «author»
-     * @return       Zikula_View output
+     * @return string|boolean Output.
      */
     function upgrade()
     {
@@ -357,10 +338,9 @@ Example:
 
 «DEFINE FuncInteractiveDelete FOR Module»
     /**
-     * interactive delete
+     * Interactive delete.
      *
-     * @author       «author»
-     * @return       Zikula_View output
+     * @return string Output.
      */
     public function uninstall()
     {
@@ -368,13 +348,10 @@ Example:
             return LogUtil::registerPermissionError();
         }
 
-        // get Zikula_View instance for this module
-        $render = Zikula_View::getInstance('«modName()»', false);
-
         // assign auth key
-        $render->assign('authid', SecurityUtil::generateAuthKey('Modules'));
+        $this->view->assign('authid', SecurityUtil::generateAuthKey('Modules'));
 
         // fetch and return the appropriate template
-        return $render->fetch('«modName()»_init_delete.tpl');
+        return $this->view->fetch('«modName()»_init_delete.tpl');
     }
 «ENDDEFINE»

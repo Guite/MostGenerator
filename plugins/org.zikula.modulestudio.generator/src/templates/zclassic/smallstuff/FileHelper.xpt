@@ -6,11 +6,10 @@
 /**
  * Zikula Application Framework
  *
- * @copyright (c) Zikula Development Team
- * @link http://www.zikula.org
+ * @copyright «module.author»
+ * @link http://zikula.org
  * @license «module.license»
- * @package Zikula_Generated_Modules
- * @subpackage «module.name»
+ * @package «module.name»
  * @author «module.author»
  * @url «module.url»
  */

@@ -4,12 +4,12 @@
 «EXTENSION extensions::Utils»
 
 «DEFINE Root FOR Module-»
-	«EXPAND Root(this) FOREACH processingContainer.processors.processorStates.typeSelect(EditProcessorState)-»
+    «EXPAND Root(this) FOREACH processingContainer.processors.processorStates.typeSelect(EditProcessorState)-»
 «ENDDEFINE»
 
 «REM»Entry point for Form templates«ENDREM»
 «DEFINE Root(Module module) FOR ProcessorState-»
-	«EXPAND Root(module.modName(), stateProcessor, 'edit') FOREACH module.persistenceContainer.tables-»
+    «EXPAND Root(module.modName(), stateProcessor, 'edit') FOREACH module.persistenceContainer.tables-»
 «ENDDEFINE»
 
 
@@ -63,7 +63,7 @@ cssClass="myClass"
     $encodingHtml = (array_key_exists('enctype', $params) ? " enctype=\"$params[enctype]\"" : '');
     $action = htmlspecialchars($_SERVER['REQUEST_URI']);
 
-    $render->pnFormPostRender();
+    $view->postRender();
 
     $out  =  "<form id=\"FormForm\" {$classString}action=\"$action\" method=\"post\"{$encodingHtml}>";
 «ENDREM»«""-»
@@ -151,11 +151,11 @@ cssClass="myClass"
             {formtextinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»' textMode="multiline" rows="8" cols="50"}
 «REM»
 type: NORMAL; LARGE; MULTIBYTE; LARGEMULTIBYTE
-    var $group;						// group name for this input
-    								// used to locate data in the render (when databased)
-    								// and to restrict which plugins to do validation on (to be implemented).
+    var $group;                     // group name for this input
+                                    // used to locate data in the render (when databased)
+                                    // and to restrict which plugins to do validation on (to be implemented).
 
-    var $size;						// size of HTML input (number of characters)
+    var $size;                      // size of HTML input (number of characters)
 
     // indicates if the input is empty
     function bool isEmpty();
@@ -167,7 +167,7 @@ type: NORMAL; LARGE; MULTIBYTE; LARGEMULTIBYTE
             {else}
                 {formdateinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»' useSelectionMode=true defaultValue="today"}
             {/if}
-«REM» FormTextInput		defaults: maxLength = 12; width = '8em';«ENDREM»«""-»
+«REM» FormTextInput     defaults: maxLength = 12; width = '8em';«ENDREM»«""-»
 «ENDDEFINE»
 «DEFINE FormField FOR persistence::TimestampField-»
             {if $mode == "edit"}
@@ -175,15 +175,15 @@ type: NORMAL; LARGE; MULTIBYTE; LARGEMULTIBYTE
             {else}
                 {formdateinput id="«dbName(name)»" mandatory=«isMandatory» __title='Input the «formattedName(name)» of the «formattedName(columnTable.name)»' includeTime=true defaultValue="now"}
             {/if}
-«REM» FormTextInput		defaults: maxLength = 18; width = '10em';«ENDREM»«""-»
+«REM» FormTextInput     defaults: maxLength = 18; width = '10em';«ENDREM»«""-»
 «ENDDEFINE»
 «DEFINE FormField FOR persistence::BooleanField-»«REM»class="cbx"«ENDREM»
             {formcheckbox id="«dbName(name)»" __title='«formattedName(name)» ?'}
 «REM» visible=false readOnly=true FormStyledPlugin«ENDREM»«""-»
 «REM»
-    var $group;					// group name for this input
-								// used to locate data in the render (when databased)
-								// and to restrict which plugins to do validation on (to be implemented).
+    var $group;                 // group name for this input
+                                // used to locate data in the render (when databased)
+                                // and to restrict which plugins to do validation on (to be implemented).
 «ENDREM»«""-»
 «ENDDEFINE»
 «DEFINE FormField FOR persistence::IntegerField-»
@@ -225,18 +225,18 @@ defaults: maxLength = 30; width = '6em';«ENDREM»«""-»
 «REM»
 
 {formemailinput}«REM»class="email" extends FormTextInput«END-REM»
-	$this->maxLength = 100;
+    $this->maxLength = 100;
 
 {formurlinput}«REM»class="url" extends FormTextInput«END-REM»
-	$this->maxLength = 2000;
+    $this->maxLength = 2000;
 
 
 {formuploadinput}«REM»class="upload"«ENDREM»
 «REM» id="bla" [isMandatory=true visible=false readOnly=true FormStyledPlugin]«END-REM»
-    var $group;						// group name for this input
-    								// used to locate data in the render (when databased)
-    								// and to restrict which plugins to do validation on (to be implemented).
-				default: null
+    var $group;                     // group name for this input
+                                    // used to locate data in the render (when databased)
+                                    // and to restrict which plugins to do validation on (to be implemented).
+                default: null
 
 
 

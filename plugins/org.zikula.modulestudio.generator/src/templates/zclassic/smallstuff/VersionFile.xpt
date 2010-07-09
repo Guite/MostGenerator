@@ -4,7 +4,7 @@
 
 
 «DEFINE Root FOR Module»
-	«FILE "lib/" + modName() + "/Version.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND ModuleInfo»«ENDFILE»
+    «FILE "lib/" + modName() + "/Version.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND ModuleInfo»«ENDFILE»
 «ENDDEFINE»
 
 «DEFINE ModuleInfo FOR Module-»
@@ -21,22 +21,8 @@ class «modName()»_Version extends Zikula_Version
         $meta['url']                  = $this->__('«modName()»');
         // the current module version
         $meta['version']              = '«version»';
-
-«LET "docs" AS docDir-»
-        // file with credit information
-        $meta['credits']              = '«docDir»/credits.txt';
-        // help file
-        $meta['help']                 = '«docDir»/readme.txt';
-        // changelog file
-        $meta['changelog']            = '«docDir»/changelog.txt';
-        // file with license information
-        $meta['license']              = '«docDir»/license.txt';
-«ENDLET-»
-
-        // the module author
-        $meta['author']               = '«author»';
         // module homepage
-        $meta['contact']              = '«url»';
+        $meta['contact']              = '«author», «url»';
 
         // permission schema
 «EXPAND PermissionSchema-»
@@ -61,8 +47,8 @@ class «modName()»_Version extends Zikula_Version
 
 
 «DEFINE ModuleDependency FOR Module-»
-                    array('modname'    => '«moduleName(name)»', 
-                          'minversion' => '0', 
-                          'maxversion' => '«version»', 
+                    array('modname'    => '«moduleName(name)»',
+                          'minversion' => '0',
+                          'maxversion' => '«version»',
                           'status'     => DEPENDENCY_REQUIRED«REM»TODO: RECOMMENDED, CONFLICTS«ENDREM»),
 «ENDDEFINE»

@@ -15,15 +15,15 @@
 
 «EXPAND ProcHelper::getObjectFromSource("", "id", "idField")-»
 
-        // get Zikula_View instance for this module
-        $render = Zikula_View::getInstance('«modName»', false);
+        // turn off output caching
+        $this->view->setCaching(false);
 
         // assign the object we loaded above.
         // since the same code is used the handle the entry of the new object,
         // we need to check wether we have a valid object.
         // If not, we just pass in an empty data-array.
-        $render->assign($objectType, $objectData);
+        $this->view->assign($objectType, $objectData);
 
         // fetch and return the appropriate template
-        return «modName»_processRenderTemplate($render, '«dbName(stateProcessor.name)»', $objectType, 'display', $args);
+        return «modName»_processRenderTemplate($view, '«dbName(stateProcessor.name)»', $objectType, 'display', $args);
 «ENDDEFINE»

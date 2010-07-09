@@ -8,7 +8,7 @@
 «LET "templates/plugins/" AS pluginDir-»
 «FILE 'lib/' + modName().toFirstUpper() + '/Form/Plugin/FormFrame.php'-»«EXPAND FileHelper::phpFileHeader(this)-»
 «EXPAND FormFrameBlockClass-»
-«ENDFILE» 
+«ENDFILE»
 «FILE pluginDir + "block." + dbName(modName()) + "FormFrame.php"-»«EXPAND FileHelper::phpFileHeader(this)-»
 «EXPAND FormFrameBlock-»
 «ENDFILE»
@@ -29,21 +29,21 @@ class «modName().toFirstUpper()»_Form_Plugin_FormFrame extends Form_Plugin
         return __FILE__;
     }
 
-    function create(&$render, &$params)
+    function create(&$view, &$params)
     {
         $this->useTabs = (array_key_exists('useTabs', $params) ? $params['useTabs'] : false);
     }
 
 
     // This is called by the framework before the content of the block is rendered
-    function renderBegin(&$render)
+    function renderBegin(&$view)
     {
         $tabClass = $this->useTabs ? ' '.$this->cssClass : '';
         return "<div class=\"«dbName(modName())»Form{$tabClass}\">\n";
     }
 
     // This is called by the framework after the content of the block is rendered
-    function renderEnd(&$render)
+    function renderEnd(&$view)
     {
         return "</div>\n";
     }
@@ -59,18 +59,18 @@ class «modName().toFirstUpper()»_Form_Plugin_FormFrame extends Form_Plugin
  *
  * @param        array       $params       All attributes passed to this function from the template
  * @param        string      $content      The content of the block
- * @param        object      &$render     Reference to the Smarty object
+ * @param        object      &$view     Reference to the Smarty object
  * @return       string      The output of the plugin
  */
-function smarty_block_«dbName(modName())»FormFrame($params, $content, &$render)
+function smarty_block_«dbName(modName())»FormFrame($params, $content, &$view)
 {
     // As with all Forms plugins, we must remember to register our plugin.
     // In this case we also register a validation summary so we don't have to
     // do that explicitively in the templates.
 
     // We need to concatenate the output of boths plugins.
-    $result = $render->RegisterPlugin('Form_Plugin_ValidationSummary', $params);
-    $result .= $render->RegisterBlock('«modName().toFirstUpper()»_Form_Plugin_FormFrame', $params, $content);
+    $result = $view->registerPlugin('Form_Plugin_ValidationSummary', $params);
+    $result .= $view->registerBlock('«modName().toFirstUpper()»_Form_Plugin_FormFrame', $params, $content);
 
     return $result;
 }
