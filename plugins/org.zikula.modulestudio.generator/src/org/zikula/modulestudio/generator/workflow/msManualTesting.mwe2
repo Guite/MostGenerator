@@ -1,0 +1,35 @@
+module org.zikula.modulestudio.generator.workflow.msManualTesting
+
+/**
+ * This workflow processes specific models.
+ * Useful for testing generation during development.
+ */
+
+// The model to be processed (file name without extension)
+var modelName = "validationTest"
+
+// The path where to find the model, without trailing slash
+//var modelPath = "/home/axel/projects/GuiteSVN/trunk/models/zikula"
+var modelPath = "/home/axel"
+
+// The generator cartridge to execute (zclassic, zoo, documentation, reporting)
+var cartridge = "zclassic"
+
+// Destination folder
+var targetDir = "${modelPath}/output/${modelName}/${cartridge}/${modelName}/"
+
+Workflow {
+    // Call the file reader workflow and provide required properties
+    component = @msWorkflow {
+        modelName = modelName
+        modelPath = modelPath
+        cartridgeName = cartridge
+        targetDir = targetDir
+        // whether to copy the models into the target folder
+        doModelCopy = "true"
+        // whether to output slot dumps (for debug purpose)
+        doSlotDumps = "true"
+        // whether to validate the model before processing
+        doValidation = "true"
+	}
+}

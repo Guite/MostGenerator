@@ -1,0 +1,233 @@
+module org.zikula.modulestudio.generator.workflow.msWorkflow
+
+/**
+ * The inner processing workflow
+ */
+
+import org.eclipse.emf.mwe.utils.StandaloneSetup
+import org.eclipse.emf.mwe.utils.Reader
+import org.eclipse.emf.mwe.core.container.IfComponent
+import org.eclipse.xtend.util.stdlib.SlotPrinter
+import org.eclipse.xtend.check.CheckComponent
+import org.eclipse.xtend.typesystem.emf.EmfMetaModel
+//import org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel
+import org.eclipse.xtend.XtendComponent
+import org.eclipse.emf.mwe.utils.DirectoryCleaner
+import org.eclipse.emf.mwe.utils.FileCopy
+import org.eclipse.emf.mwe.utils.Writer
+import org.eclipse.xpand2.Generator
+
+// The model to be processed (file name without extension)
+var modelName
+// The path where to find the model, without trailing slash
+var modelPath
+// The generator cartridge to execute (zclassic, zoo, documentation, reporting)
+var cartridgeName
+
+// whether to copy the models into the target folder
+var doModelCopy
+
+// whether to output slot dumps
+var doSlotDumps
+// whether to validate the model before processing
+var doValidation
+
+// Destination folder
+var targetDir
+
+// calculated from input vars
+var modelFile = "file://${modelPath}/${modelName}.msmodule"
+// "platform:/resource/${model}"
+
+var enrichedModelFile = "file://${modelPath}/${modelName}_Enriched.msmodule"
+
+var inputSlot = "inputModel"
+var enrichedSlot = "newModel"
+var fileEncoding = "UTF-8"
+var templatesExpand = "templates::${cartridgeName}::Root::Root(null) FOR ${enrichedSlot}"
+//var templatesExpand = "templates::${cartridgeName}::Root::Root(progressMonitor) FOR ${enrichedSlot}"
+var templatesAdvice = "templates::${cartridgeName}::aspects::Permissions, templates::${cartridgeName}::aspects::ObjectExtensions"
+
+Workflow {
+    bean = EmfMetaModel : mmEMF { metaModelPackage = "org.eclipse.emf.ecore.EcorePackage" }
+    bean = EmfMetaModel : mmModuleStudio { metaModelPackage = "de.guite.modulestudio.metamodel.modulestudio.ModuleStudioPackage" }
+    bean = EmfMetaModel : mmPersistence { metaModelPackage = "de.guite.modulestudio.metamodel.persistence.PersistencePackage" }
+    bean = EmfMetaModel : mmProcessing { metaModelPackage = "de.guite.modulestudio.metamodel.processing.ProcessingPackage" }
+    bean = EmfMetaModel : mmPresentation { metaModelPackage = "de.guite.modulestudio.metamodel.presentation.PresentationPackage" }
+    bean = EmfMetaModel : mmBehavior { metaModelPackage = "de.guite.modulestudio.metamodel.behavior.BehaviorPackage" }
+
+    // set up EMF for standalone execution
+    bean = StandaloneSetup {
+        // URI's starting with "platform:/resource/" are normalized to the (canonical) path to the platform URI
+        platformUri = "."
+        registerGeneratedEPackage = "org.eclipse.emf.ecore.EcorePackage"
+        registerGeneratedEPackage = "de.guite.modulestudio.metamodel.modulestudio.ModuleStudioPackage"
+        registerGeneratedEPackage = "de.guite.modulestudio.metamodel.persistence.PersistencePackage"
+        registerGeneratedEPackage = "de.guite.modulestudio.metamodel.processing.ProcessingPackage"
+        registerGeneratedEPackage = "de.guite.modulestudio.metamodel.presentation.PresentationPackage"
+        registerGeneratedEPackage = "de.guite.modulestudio.metamodel.behavior.BehaviorPackage"
+    }
+
+    // read in the given file
+    component = Reader {
+        uri = modelFile
+        modelSlot = inputSlot
+    }
+
+    component = IfComponent {
+        cond = doSlotDumps
+        if = {
+            component = SlotPrinter {
+               // the name of a slot whose content should be dumped
+               slotName = inputSlot
+               // optional message as prefix for the log output
+               message = "Dump of input model"
+               // log level (one of TRACE, DEBUG, INFO, WARN)
+               level = "INFO"
+            }
+        }
+    }
+
+    component = IfComponent {
+        cond = doValidation
+        if = {
+            // check components for constraints
+            component = CheckComponent {
+                // define all used meta models
+                metaModel = mmEMF
+                metaModel = mmModuleStudio
+                metaModel = mmPersistence
+                metaModel = mmProcessing
+                metaModel = mmPresentation
+                metaModel = mmBehavior
+
+	            // provide check files
+	            checkFile = "../de.guite.modulestudio.metamodel/model/checks/main"
+	            checkFile = "../de.guite.modulestudio.metamodel/model/checks/persistence"
+	            checkFile = "../de.guite.modulestudio.metamodel/model/checks/processing"
+	            checkFile = "../de.guite.modulestudio.metamodel/model/checks/presentation"
+	            checkFile = "../de.guite.modulestudio.metamodel/model/checks/behavior"
+//        checkFile = "metamodel::Checks"
+/*
+            checkFile = "checks::main"
+            checkFile = "checks::persistence"
+            checkFile = "checks::processing"
+            checkFile = "checks::presentation"
+            checkFile = "checks::behavior"
+*/
+
+	            // on which part of the model the checks should work (our module with all children)
+	            emfAllChildrenSlot = inputSlot
+/*
+                expression = "model"
+                // expression = "model.eAllContents.union({model})"
+*/
+            }
+        }
+    }
+
+    // add additional fields for ids and relations
+    component = XtendComponent {
+        skipOnErrors = true
+        // reference all used meta models
+        metaModel = mmEMF
+        metaModel = mmModuleStudio
+        metaModel = mmPersistence
+        metaModel = mmProcessing
+        metaModel = mmPresentation
+        metaModel = mmBehavior
+
+        // call actual transformation
+        invoke = "transformation::PersistenceTransformer::modify(${inputSlot})"
+        // define the output slot
+        outputSlot = enrichedSlot
+    }
+
+    component = IfComponent {
+        cond = doSlotDumps
+        if = {
+            component = SlotPrinter {
+               // the name of a slot whose content should be dumped
+               slotName = enrichedSlot
+               // optional message as prefix for the log output
+               message = "Dump of enriched model"
+               // log level (one of TRACE, DEBUG, INFO, WARN)
+               level = "INFO"
+            }
+        }
+    }
+
+
+    // create dummy progress monitor if required (for manual builds)
+/*
+    component = org.zikula.modulestudio.generator.application.ManualProgressMonitor {
+       id = "dummyProgressMonitorCreator"
+       outputSlot = "progressMonitor"
+    }
+*/
+
+    // store the enriched model version
+    component = Writer {
+        modelSlot = enrichedSlot
+        uri = enrichedModelFile
+        cloneSlotContents = true
+    }
+
+    // clear output directory
+    component = DirectoryCleaner {
+       directory = targetDir
+    }
+
+    component = IfComponent {
+        cond = doModelCopy
+        if = {
+            // copy original domain model into target folder
+            component = FileCopy {
+                sourceFile = "bla.foo"
+                targetFile = "${targetDir}/bla.foo"
+            }
+            // copy enriched domain model into target folder
+            component = FileCopy {
+                sourceFile = "bla.foo"
+                targetFile = "${targetDir}/bla.foo"
+            }
+            // copy diagram model into target folder
+            component = FileCopy {
+                sourceFile = "bla.foo"
+                targetFile = "${targetDir}/bla.foo"
+            }
+        }
+    }
+
+    // start generator component
+    component = Generator {
+        // skip this component if there are errors
+        skipOnErrors = true
+        // if automatic hyphenation is enabled, redundant blank lines are avoided automatically
+        automaticHyphens = false
+        // set file encoding of template files
+        fileEncoding = fileEncoding
+
+        // reference all used meta models
+        metaModel = mmEMF
+        metaModel = mmModuleStudio
+        metaModel = mmPersistence
+        metaModel = mmProcessing
+        metaModel = mmPresentation
+        metaModel = mmBehavior
+
+        // expand templates on model slot
+        expand = templatesExpand
+
+        // advice aop templates to the generator
+        advice = templatesAdvice
+
+        // specify where to put the generated code
+        outlet = {
+            //name = "primaryOutlet"
+            path = targetDir
+            fileEncoding = fileEncoding
+        }
+    }
+}
+

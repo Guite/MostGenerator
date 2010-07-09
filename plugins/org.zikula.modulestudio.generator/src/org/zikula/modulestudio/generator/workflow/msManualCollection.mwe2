@@ -1,0 +1,27 @@
+module org.zikula.modulestudio.generator.workflow.msManualCollection
+
+/**
+ * This workflow processes whole collection of example models, calls msManual workflow for each entry.
+ * Allowed cartridges: zclassic, zoo, documentation, reporting
+ */
+
+Workflow {
+    component = @msManual { dir = "customers" name = "handydb"      cartridge = "zclassic" }
+    component = @msManual { dir = "customers" name = "jsRefPool"    cartridge = "zclassic" }
+    component = @msManual { dir = "customers" name = "JugendServer_Materialien" cartridge = "zclassic" }
+
+    component = @msManual { dir = "examples" name = "AutoBugs"      cartridge = "zclassic" }
+    component = @msManual { dir = "examples" name = "AutoCocktails" cartridge = "zclassic" }
+    component = @msManual { dir = "examples" name = "AutoCustomer"  cartridge = "zclassic" }
+    component = @msManual { dir = "examples" name = "AutoExchange"  cartridge = "zclassic" }
+    component = @msManual { dir = "examples" name = "AutoMusic"     cartridge = "zclassic" }
+    component = @msManual { dir = "examples" name = "AutoProject"   cartridge = "zclassic" }
+    component = @msManual { dir = "examples" name = "AutoRecipes"   cartridge = "zclassic" }
+    component = @msManual { dir = "examples" name = "AutoSocial"    cartridge = "zclassic" }
+
+    component = @msManual { dir = "zikula"   name = "Extensions"    cartridge = "zclassic" }
+    component = @msManual { dir = "zikula"   name = "Extensions"    cartridge = "zoo" }
+    component = @msManual { dir = "zikula"   name = "Extensions"    cartridge = "documentation" }
+    component = @msManual { dir = "zikula"   name = "Extensions"    cartridge = "reporting" }
+    component = @msManual { dir = "zikula"   name = "FedoraDocs"    cartridge = "zclassic" }
+}

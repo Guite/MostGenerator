@@ -1,0 +1,36 @@
+module org.zikula.modulestudio.generator.workflow.msManual
+
+/**
+ * This workflow processes a manual generation.
+ * It calls the inner workflow and assigns prepared properties.
+ */
+
+// set from the outside, i.e. by the calling cartridge (e.g. msManualCollection)
+// model name
+var name
+// model folder
+var dir
+// cartridge name (zclassic, zoo, documentation, reporting)
+var cartridge
+
+// The path where to find the model, without trailing slash
+var modelPath = "/home/axel/projects/GuiteSVN/trunk/models/${dir}"
+
+// Destination folder
+var targetDir = "${modelPath}/output/${name}/${cartridge}/${name}/"
+
+Workflow {
+    // Call the file reader workflow and provide required properties
+    component = @msWorkflow {
+        modelName = name
+        modelPath = modelPath
+        cartridgeName = cartridge
+        targetDir = targetDir
+        // whether to copy the models into the target folder
+        doModelCopy = "true"
+        // whether to output slot dumps (for debug purpose)
+        doSlotDumps = "true"
+        // whether to validate the model before processing
+        doValidation = "true"
+    }
+}
