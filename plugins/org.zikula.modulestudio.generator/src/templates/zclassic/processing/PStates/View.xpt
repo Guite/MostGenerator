@@ -50,15 +50,11 @@
         // turn off caching
         $this->view->setCaching(false);
 
-        // assign the object array we loaded above
-        $this->view->assign('objectArray', $objectData);
-
-        // assign current sorting information
-        $this->view->assign('sort', $sort);
-        $this->view->assign('sdir', ($sdir == 'asc') ? 'desc' : 'asc'); // reverted for links
-
-        // assign the information required to create the pager
-        $this->view->assign('pager', array('numitems'     => $objcount,
+        // assign the object data, sorting information and details for creating the pager
+        $this->view->assign('objectArray', $objectData)
+                   ->assign('sort', $sort)
+                   ->assign('sdir', ($sdir == 'asc') ? 'desc' : 'asc') // reverted for links
+                   ->assign('pager', array('numitems'     => $objcount,
                                            'itemsperpage' => $pagesize));
 
         // fetch and return the appropriate template

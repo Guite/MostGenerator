@@ -308,11 +308,9 @@ Example:
         }
         $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST');
 
-        // assign auth key
-        $this->view->assign('authid', SecurityUtil::generateAuthKey('Modules'));
-
-        // assign activation flag
-        $this->view->assign('activate', $activate);
+        // assign auth key and activation flag
+        $this->view->assign('authid', SecurityUtil::generateAuthKey('Modules'))
+                   ->assign('activate', $activate);
 
         // fetch and return the appropriate template
         return $this->view->fetch('«modName()»_init_step3.tpl');

@@ -213,15 +213,7 @@ class «moduleName(modName.toFirstUpper() + "_Form_Handler_" + procName.toFirstU
 «ENDFOREACH-»
 
         // assign data to template
-        $view->assign($objectData);
-
-«REM»
-    // assign the object we loaded above
-    $view->assign($objectType, $«moduleName(name)»);
-«ENDREM»
-
-        // assign mode var to referenced render instance
-        $view->assign('mode', $this->mode);
+        $view->assign($objectData)->assign('mode', $this->mode);
 
         // everything okay, no initialization errors occured
         return true;
