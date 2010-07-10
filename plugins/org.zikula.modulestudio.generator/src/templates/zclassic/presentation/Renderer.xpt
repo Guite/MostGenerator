@@ -86,7 +86,7 @@
 «ELSE-»
 <div class="z-frontendbox">
 «ENDIF-»
-    <h1>{gt text='«modName»'}</h1>
+    <h1>{gt text='«modName.formattedNameCapitalized()»' comment='This is the title of the header template'}</h1>
     <div class="z-menu">
 «IF processor.metaType == AdminProcessor-»
         {moduleadminlinks modname="«modName»"}
