@@ -58,7 +58,7 @@
                                            'itemsperpage' => $pagesize));
 
         // fetch and return the appropriate template
-        return «modName»_processRenderTemplate($this->view, '«dbName(stateProcessor.name)»', $objectType, 'view', $args);
+        return «modName»_Util::processViewTemplate($this->view, '«dbName(stateProcessor.name)»', $objectType, 'view', $args);
 «ENDDEFINE»
 
 «DEFINE ViewDefaultSort FOR ProcessorState-»

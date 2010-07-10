@@ -8,43 +8,46 @@
 «REM»start point for the Processor creation«ENDREM»
 «DEFINE Root FOR Module»
     «EXPAND Root(this) FOREACH processingContainer.processors-»
-    «FILE "common.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND CommonFunctions-»«ENDFILE»
+    «FILE "Util.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND CommonFunctions-»«ENDFILE»
 «ENDDEFINE»
 
 «DEFINE CommonFunctions FOR Module-»
-/**
- * returns an array of all allowed object types in «modName()»
- */
-function «modName()»_getObjectTypes()
+class «modName()»_Util
 {
-    $allowedObjectTypes = array();
+    /**
+     * returns an array of all allowed object types in «modName()»
+     */
+    public static function getObjectTypes()
+    {
+        $allowedObjectTypes = array();
 «FOREACH persistenceContainer.tables AS tab-»
-    $allowedObjectTypes[] = '«moduleName(tab.name)»';
+        $allowedObjectTypes[] = '«moduleName(tab.name)»';
 «ENDFOREACH-»
-    return $allowedObjectTypes;
-}
-
-/**
- * utility function for managing render templates
- */
-function «modName()»_processRenderTemplate(&$view, $type, $objectType, $func, $args=array())
-{
-    $template = DataUtil::formatForOS('«modName()»_' . $type . '_' . $objectType . '_' . $func);
-    $tpl = FormUtil::getPassedValue('tpl', isset($args['tpl']) ? $args['tpl'] : '');
-    if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.tpl')) {
-        $template .= '_' . DataUtil::formatForOS($tpl);
-    }
-    $template .= '.tpl';
-
-    $raw = FormUtil::getPassedValue('raw', (isset($args['raw']) && is_bool($args['raw'])) ? $args['raw'] : false);
-    if ($raw == true) {
-        // standalone output
-        $view->display($template);
-        return true;
+        return $allowedObjectTypes;
     }
 
-    // normal output
-    return $view->fetch($template);
+    /**
+     * utility method for managing view templates
+     */
+    public static function processViewTemplate(&$view, $type, $objectType, $func, $args=array())
+    {
+        $template = DataUtil::formatForOS('«modName()»_' . $type . '_' . $objectType . '_' . $func);
+        $tpl = FormUtil::getPassedValue('tpl', isset($args['tpl']) ? $args['tpl'] : '');
+        if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.tpl')) {
+            $template .= '_' . DataUtil::formatForOS($tpl);
+        }
+        $template .= '.tpl';
+
+        $raw = FormUtil::getPassedValue('raw', (isset($args['raw']) && is_bool($args['raw'])) ? $args['raw'] : false);
+        if ($raw == true) {
+            // standalone output
+            $view->display($template);
+            return true;
+        }
+
+        // normal output
+        return $view->fetch($template);
+    }
 }
 «ENDDEFINE»
 
@@ -146,7 +149,7 @@ class «module.modName().toFirstUpper()»_Controller_«dbName(name).toFirstUpper
         // parameter specifying which type of objects we are treating
         $objectType = FormUtil::getPassedValue('ot', '«module.getLeadObj()»', 'GET');
 
-        if (!in_array($objectType, «modName»_getObjectTypes())) {
+        if (!in_array($objectType, «modName»_Util::getObjectTypes())) {
             $objectType = '«module.getLeadObj()»';
         }
 «ENDIF-»
@@ -184,7 +187,7 @@ class «module.modName().toFirstUpper()»_API_«dbName(name).toFirstUpper()» ex
 
 «FOREACH module.persistenceContainer.tables AS tab-»
         if (SecurityUtil::checkPermission('«module.modName()»::', '::', ACCESS_READ)) {
-            $links[] = array('url' => ModUtil::url('«module.modName()»', 'admin', 'view', array('ot' => '«moduleName(tab.name)»')),
+            $links[] = array('url' => ModUtil::url('«module.modName()»', '«dbName(name)»', 'view', array('ot' => '«moduleName(tab.name)»')),
                              'text' => $this->__('«formattedNameCapitalized(tab.nameMultiple)»'));
         }
 «ENDFOREACH-»
