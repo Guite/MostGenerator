@@ -233,7 +233,7 @@ class «moduleName(modName.toFirstUpper() + "_Form_Handler_" + procName.toFirstU
 
 «DEFINE FieldDefaultData FOR DateField»«IF isMandatory == true»«IF defaultValue.length > 0»«defaultValue»«ELSE»$todayDate«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
 «DEFINE FieldDefaultData FOR TimestampField»«IF isMandatory == true»«IF defaultValue.length > 0»«defaultValue»«ELSE»$thisTime«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
-«DEFINE FieldDefaultData FOR BooleanField»«IF defaultValue == true»true«ELSE»false«ENDIF»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR BooleanField»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF»«ENDDEFINE»
 
 «DEFINE FieldDefaultData FOR IntegerField-»
 «LET columnTable.incoming.select(e|e.source.idField() == name) AS joins-»

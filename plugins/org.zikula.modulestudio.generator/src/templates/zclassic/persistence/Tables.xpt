@@ -115,7 +115,7 @@ function «modName()»_tables()
 «DEFINE TypeValue FOR TimestampField»«IF isMandatory == true» NOTNULL«ENDIF» «IF defaultValue.length > 0»DEFAULT '«defaultValue»'«ELSEIF isMandatory == true»DEFTIMESTAMP«ELSE»DEFAULT NULL«ENDIF»«ENDDEFINE»
 
 «DEFINE TypeDef FOR BooleanField»L«ENDDEFINE»
-«DEFINE TypeValue FOR BooleanField»«IF isMandatory == true» NOTNULL«ENDIF» DEFAULT '«IF defaultValue == true»1«ELSE»0«ENDIF»'«ENDDEFINE»
+«DEFINE TypeValue FOR BooleanField»«IF isMandatory == true» NOTNULL«ENDIF» DEFAULT '«IF defaultValue == true || defaultValue == "true"»1«ELSE»0«ENDIF»'«ENDDEFINE»
 
 «DEFINE TypeDef FOR IntegerField»I«IF length == "1" || length == "2" || length == "4" || length == "8"»«length»«ELSE»4«ENDIF»«ENDDEFINE»
 «DEFINE TypeValue FOR IntegerField»«IF isMandatory == true» NOTNULL«ENDIF» DEFAULT '«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF»'«ENDDEFINE»
