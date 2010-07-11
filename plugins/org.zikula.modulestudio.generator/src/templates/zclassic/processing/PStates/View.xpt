@@ -21,8 +21,10 @@
         $startnum = (int) FormUtil::getPassedValue('pos', 1, 'GET');
 
         // pagesize is the number of items displayed on a page for pagination
-        $pagesize = $this->getVar('pagesize', 10);
-«REM»TODO«ENDREM»
+        $pagesize = (int) FormUtil::getPassedValue('num', 0, 'GET');
+        if ($pagesize == 0) {
+            $pagesize = $this->getVar('pagesize', 10);
+        }
 
         // convenience vars to make code clearer
         $where = '';

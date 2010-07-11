@@ -139,6 +139,7 @@ class «module.modName().toFirstUpper()»_Controller_«dbName(name).toFirstUpper
      * @param        sort           string    sorting field
      * @param        sdir           string    sorting direction
      * @param        pos            int       current pager position
+     * @param        num            int       amount of entries to display
 «ENDIF-»
      * @param        tpl            string    name of alternative template (for alternative display options, feeds and xml output)
      * @param        raw            boolean   optional way to display a template instead of fetching it (needed for standalone output)
