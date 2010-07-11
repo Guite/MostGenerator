@@ -21,7 +21,7 @@
 «ENDDEFINE»
 
 «DEFINE msVersion FOR Module-»
-0.4.10«ENDDEFINE»
+0.5 beta«ENDDEFINE»
 
 «DEFINE msUrl FOR Module-»
 http://modulestudio.de«ENDDEFINE»
