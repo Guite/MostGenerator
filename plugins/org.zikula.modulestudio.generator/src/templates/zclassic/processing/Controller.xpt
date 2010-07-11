@@ -117,7 +117,9 @@ class «moduleName(modName.toFirstUpper() + "_Form_Handler_" + procName.toFirstU
 {
     // store «moduleName(name)» ID in (persistent) member variable
     var $«idField()»;
+    // create or edit
     var $mode;
+    // gettext domain
     var $dom;
 
     /**
@@ -283,7 +285,7 @@ class «moduleName(modName.toFirstUpper() + "_Form_Handler_" + procName.toFirstU
 
             // redirect to the detail page of the newly created «moduleName(name)»
             $returnUrl = ModUtil::url('«modName»', '«procName»', 'display',
-                                                             array('ot' => '«moduleName(name)»',
+                                                             array('ot' => $objectType,
                                                                    '«idField()»' => $this->«idField()»));
         }
         elseif ($args['commandName'] == 'update') {
@@ -307,7 +309,7 @@ class «moduleName(modName.toFirstUpper() + "_Form_Handler_" + procName.toFirstU
 
             // redirect to the detail page of the treated «moduleName(name)»
             $returnUrl = ModUtil::url('«modName»', '«procName»', 'display',
-                                                             array('ot' => '«moduleName(name)»',
+                                                             array('ot' => $objectType,
                                                                    '«idField()»' => $this->«idField()»));
         }
         elseif ($args['commandName'] == 'delete') {
@@ -339,7 +341,7 @@ class «moduleName(modName.toFirstUpper() + "_Form_Handler_" + procName.toFirstU
 
             // redirect to the list of «moduleName(nameMultiple)»
             $returnUrl = ModUtil::url('«modName»', '«procName»', 'view',
-                                                                 array('ot' => '«moduleName(name)»'));
+                                                                 array('ot' => $objectType));
         }
         else if ($args['commandName'] == 'cancel') {
             // event handling if user clicks on cancel
@@ -347,13 +349,13 @@ class «moduleName(modName.toFirstUpper() + "_Form_Handler_" + procName.toFirstU
             if ($this->mode == 'edit') {
                 // redirect to the detail page of the treated «moduleName(name)»
                 $returnUrl = ModUtil::url('«modName»', '«procName»', 'display',
-                                                                 array('ot' => '«moduleName(name)»',
+                                                                 array('ot' => $objectType,
                                                                        '«idField()»' => $this->«idField()»));
             }
             else {
                 // redirect to the list of «moduleName(nameMultiple)»
                 $returnUrl = ModUtil::url('«modName»', '«procName»', 'view',
-                                                                 array('ot' => '«moduleName(name)»'));
+                                                                     array('ot' => $objectType));
             }
         }
 
