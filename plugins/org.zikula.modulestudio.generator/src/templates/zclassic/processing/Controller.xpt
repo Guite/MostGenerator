@@ -328,10 +328,6 @@ class «moduleName(modName.toFirstUpper() + "_Form_Handler_" + procName.toFirstU
 
             «EXPAND FetchInputDataEnd(moduleName(name))-»
 
-            // add persisted primary key to fetched values
-            $«moduleName(name)»Data['«idField()»'] = $this->«idField()»;
-
-
             // delete «moduleName(name)»
             if ($«moduleName(name)»->delete() === false) {
                 return LogUtil::registerError(__('Error! Deletion attempt failed.', $dom));
