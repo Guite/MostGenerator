@@ -243,9 +243,7 @@ Example:
      */
     public function install()
     {
-        if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
-            return LogUtil::registerPermissionError();
-        }
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
         // fetch and return the appropriate template
         return $this->view->fetch('«modName()»_init_interactive.tpl');
@@ -260,9 +258,7 @@ Example:
      */
     public function interactiveinitstep2()
     {
-        if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
-            return LogUtil::registerPermissionError();
-        }
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
         $submit = FormUtil::getPassedValue('submit', null, 'POST');
         if (!$submit) {
@@ -273,9 +269,9 @@ Example:
             return $this->view->fetch('«modName()»_init_step2.tpl');
         }
 
-        if (!SecurityUtil::confirmAuthKey()) {
-            LogUtil::registerError(DataUtil::formatForDisplayHTML(_BADAUTHKEY));
-            return System::redirect(ModUtil::url('Modules', 'admin', 'view'));
+        if(!SecurityUtil::confirmAuthKey()) {
+	        $this->registerError(LogUtil::getErrorMsgAuthid())
+	             ->redirect(ModUtil::url('Modules', 'admin', 'view'));
         }
 
     «FOREACH persistenceContainer.modvarContainer.modvars AS modvar-»
@@ -303,9 +299,8 @@ Example:
      */
     public function interactiveinitstep3()
     {
-        if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
-            return LogUtil::registerPermissionError();
-        }
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+        
         $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST');
 
         // assign auth key and activation flag
@@ -325,9 +320,7 @@ Example:
      */
     function upgrade()
     {
-        if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
-            return LogUtil::registerPermissionError();
-        }
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
         // TODO
 
@@ -343,9 +336,7 @@ Example:
      */
     public function uninstall()
     {
-        if (!SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN)) {
-            return LogUtil::registerPermissionError();
-        }
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
         // assign auth key
         $this->view->assign('authid', SecurityUtil::generateAuthKey('Modules'));

@@ -28,26 +28,21 @@
 // DEBUG: permission check aspect starts
 «LET stateProcessor.processingContainer.processingModule.modName() AS modName-»
 «IF stateProcessor.metaType == AdminProcessor-»
-        if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_ADMIN)) {
-            return LogUtil::registerPermissionError(ModUtil::url('«modName»', 'user', 'main'));
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('«modName»::', '::', ACCESS_ADMIN));
 «ELSE-»
-«IF metaType == MainProcessorState-»
-        if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_OVERVIEW)) {
-«ELSEIF metaType == ViewProcessorState-»
-        if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_READ)) {
-«ELSEIF metaType == DisplayProcessorState-»
-        if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_READ)) {
-«ELSEIF metaType == EditProcessorState-»
-        if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_EDIT)) {
-«ELSEIF metaType == DeleteProcessorState-»
-        if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_DELETE)) {
-«ELSEIF metaType == CustomProcessorState-»
-        if (!SecurityUtil::checkPermission('«modName»::', '::', ACCESS_OVERVIEW)) {
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('«modName»::', '::', «EXPAND getPermissionAccessLevel-»));
 «ENDIF-»
-            return LogUtil::registerPermissionError();
-«ENDIF-»
-        }
 «ENDLET-»
 // DEBUG: permission check aspect ends
 «targetDef.proceed()-»
 «ENDAROUND»
+
+«DEFINE getPermissionAccessLevel FOR ProcessorState-»
+«IF     metaType == MainProcessorState-»ACCESS_OVERVIEW«""-»
+«ELSEIF metaType == ViewProcessorState-»ACCESS_READ«""-»
+«ELSEIF metaType == DisplayProcessorState-»ACCESS_READ«""-»
+«ELSEIF metaType == EditProcessorState-»ACCESS_EDIT«""-»
+«ELSEIF metaType == DeleteProcessorState-»ACCESS_DELETE«""-»
+«ELSEIF metaType == CustomProcessorState-»ACCESS_OVERVIEW
+«ENDIF-»
+«ENDDEFINE»

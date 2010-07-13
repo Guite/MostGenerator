@@ -86,9 +86,7 @@ class «module.modName().toFirstUpper()»_Controller_«dbName(name).toFirstUpper
      */
     public function config()
     {
-        if (!SecurityUtil::checkPermission('«module.modName()»::', '::', ACCESS_ADMIN)) {
-            return LogUtil::registerPermissionError(ModUtil::url('«module.modName()»', 'user', 'main'));
-        }
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('«module.modName()»::', '::', ACCESS_ADMIN));
 
         // Create new Form reference
         $view = FormUtil::newForm('«module.modName()»');

@@ -9,9 +9,8 @@
 
         // retrieve the ID of the object we wish to view
         $id = (int) FormUtil::getPassedValue($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, 'GET');
-        if (!$id) {
-            return LogUtil::registerError('Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
-        }
+        
+        $this->throwNotFoundUnless($id, 'Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
 
         $confirmation = (bool) FormUtil::getPassedValue('confirmation', isset($args['confirmation']) ? $args['confirmation'] : false, 'GETPOST');
 
@@ -19,9 +18,9 @@
             $object->setData(array($idField => $id), false);
 
             if (!$object->delete()) {
-                LogUtil::registerError($this->__('Error! Deletion attempt failed.'));
+                $this->registerError($this->__('Error! Deletion attempt failed.'));
             } else {
-                LogUtil::registerStatus($this->__('Done! «formattedNameCapitalized(name)» deleted.'));
+                $this->registerStatus($this->__('Done! «formattedNameCapitalized(name)» deleted.'));
             }
         } else {
     «EXPAND ProcHelper::getObjectFromSource("", "id", "idField")-»
@@ -37,7 +36,7 @@
         }
 
         // redirect to the list of the current object type
-        return System::redirect(ModUtil::url('«modName»', '«dbName(stateProcessor.name)»', «IF stateProcessor.hasPStates('view')-»'view',
+        $this->redirect(ModUtil::url('«modName»', '«dbName(stateProcessor.name)»', «IF stateProcessor.hasPStates('view')-»'view',
                                                                                     array('ot' => $objectType)«ELSE-»'main'«ENDIF-»));
 
 «ENDDEFINE»

@@ -9,9 +9,8 @@
 
         // retrieve the ID of the object we wish to view
         $id = (int) FormUtil::getPassedValue($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, 'GET');
-        if (!$id) {
-            return LogUtil::registerError('Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
-        }
+        
+        $this->throwNotFoundUnless($id, 'Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
 
 «EXPAND ProcHelper::getObjectFromSource("", "id", "idField")-»
 

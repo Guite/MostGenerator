@@ -20,7 +20,7 @@
         $objectData = $object->get(«IF initType == ""»$«idVar», $«idValue»«ENDIF»);
 «IF initType == ""-»
         if (!is_array($objectData) || !isset($objectData[$«idValue»]) || !is_numeric($objectData[$«idValue»])) {
-            return LogUtil::registerError($this->__('No such item.'));
+            $this->throwNotFound($this->__('No such item.'));
         }
 «ENDIF-»
 «ENDDEFINE»
