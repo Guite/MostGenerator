@@ -88,11 +88,7 @@
 «ENDIF-»
     <h1>{gt text='«modName.formattedNameCapitalized()»' comment='This is the title of the header template'}</h1>
     <div class="z-menu">
-«IF processor.metaType == AdminProcessor-»
-        {moduleadminlinks modname="«modName»"}
-«ELSE-»
-        [&nbsp;fill in your menu links here«REM»<a href="{modurl modname="«modName»" type="«procName»" func="view"}">{gt text='View items'}</a>«ENDREM»&nbsp;]
-«ENDIF-»
+        {modulelinks modname="«modName»" type="«procName»"}
     </div>
 </div>
 «ENDFILE»
