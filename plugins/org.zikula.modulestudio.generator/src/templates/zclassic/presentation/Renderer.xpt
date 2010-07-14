@@ -46,7 +46,7 @@
 «FOREACH persistenceContainer.modvarContainer.modvars AS modvar-»
         <div class="z-formrow">
             {formlabel for="«moduleName(modvar.name)»" __text='«formattedNameCapitalized(modvar.name)»'}
-            {formtextinput id="«moduleName(modvar.name)»" group="config" maxLength=255 width=20em __title='Input this setting.'}
+            «EXPAND InputField FOR modvar-»
         </div>
 «ENDFOREACH-»
 
@@ -64,6 +64,18 @@
 {include file="«modName()»_admin_footer.tpl"}
 «ENDFILE-»
 «ENDIF-»
+«ENDDEFINE»
+
+«DEFINE InputField FOR persistence::ModuleVar»
+{formtextinput id="«moduleName(name)»" group="config" maxLength=255 width=20em __title='Input this setting.'}
+«ENDDEFINE»
+
+«DEFINE InputField FOR persistence::ModuleVarInt»
+{formintinput id="«moduleName(name)»" group="config" maxLength=255 width=20em __title='Input this setting. Only digits are allowed.'}
+«ENDDEFINE»
+
+«DEFINE InputField FOR persistence::ModuleVarBool»
+{formcheckbox id="«moduleName(name)»" group="config"}
 «ENDDEFINE»
 
 «DEFINE HeaderFooter(String modName, Processor processor) FOR modulestudio::Module»
