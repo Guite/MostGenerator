@@ -1,45 +1,46 @@
 import modulestudio;
-import persistence;
 
-create Module this duplicate(Module s):
-  	persistenceContainer.tables.addAll(s.persistenceContainer.tables.duplicate()) ->
-  	persistenceContainer.modvarContainer.modvars.addAll(s.persistenceContainer.modvarContainer.modvars.duplicate()) ->
+// TODO: update this file, it is obsolete (but not used yet anywhere)
+
+create Application this duplicate(Application app):
+  	models.entities.addAll(app.models.entities.duplicate()) ->
+  	models.variables.vars.addAll(s.models.variables.vars.duplicate()) ->
   	setName(s.name) ->
   	setAuthor(s.author) ->
   	setUrl(s.url) ->
   	setPrefix(s.prefix);
 
-ModuleVar duplicate(ModuleVar old) : null;
+Variable duplicate(Variable old) : null;
 
-create ModuleVarText this duplicate(ModuleVarText old):
+create TextVar this duplicate(TextVar old):
 	setName(old.name) -> setValue(old.value) -> setMaxLength(old.maxLength);
 
-create ModuleVarInt this duplicate(ModuleVarInt old):
+create IntVar this duplicate(IntVar old):
 	setName(old.name) -> setValue(old.value);
 
-create ModuleVarBool this duplicate(ModuleVarBool old):
+create BoolVar this duplicate(BoolVar old):
 	setName(old.name) -> setValue(old.value);
 
-create ModuleVarFilePath this duplicate(ModuleVarFilePath old):
+create FilePathVar this duplicate(FilePathVar old):
 	setName(old.name) -> setValue(old.value) ->
 	setIsWithinDocRoot(old.isWithinDocRoot) -> setIsWritable(old.isWritable);
 
-create ModuleVarList this duplicate(ModuleVarList old):
+create ListVar this duplicate(ListVar old):
 	items.addAll(old.items.duplicate()) ->
 	setName(old.name) -> setValue(old.value) ->
 	setIsMultiple(old.isMultiple);
 
-create ModuleVarListItem this duplicate(ModuleVarListItem old):
+create ListVarItem this duplicate(ListVarItem old):
 	setName(old.name) -> setIsDefault(old.isDefault);
 
 
-create Table this duplicate(Table old):
-	columns.addAll(old.columns.duplicate()) ->
+create Entity this duplicate(Entity old):
+	fields.addAll(old.fields.duplicate()) ->
 	//relations.addAll(old.relations.duplicate()) ->
 	setName(old.name) ->
 	setUsesStandardFields(old.usesStandardFields);
 
-TableColumn duplicate(TableColumn old) : null;
+EntityField duplicate(EntityField old) : null;
 
 create StringField this duplicate(StringField old):
 	setName(old.name) ->

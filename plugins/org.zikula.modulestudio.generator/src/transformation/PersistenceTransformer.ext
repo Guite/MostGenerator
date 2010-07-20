@@ -1,23 +1,22 @@
 import modulestudio;
-import persistence;
 extension extensions::Utils;
 
 //extension org::eclipse::xtend::util::stdlib::io;
 
 
-modify(Module this):
-	// handle all tables
-	persistenceContainer.tables.handleTable() ->
+modify(Application this):
+	// handle all entities
+	models.entities.handleEntity() ->
 	this;
 
-private handleTable(Table this):
+private handleEntity(Entity this):
 	// create id field as primary key
 	addPrimaryKey(this) ->
 	addRelationFields(this) ->
 	this;
 
-private boolean addPrimaryKey(Table table)
-	: JAVA transformation.TrafoUtils.addPrimaryKey(de.guite.modulestudio.metamodel.persistence.Table);
+private boolean addPrimaryKey(Entity entity)
+	: JAVA transformation.TrafoUtils.addPrimaryKey(de.guite.modulestudio.metamodel.modulestudio.Entity);
 
-private boolean addRelationFields(Table table)
-	: JAVA transformation.TrafoUtils.addRelationFields(de.guite.modulestudio.metamodel.persistence.Table);
+private boolean addRelationFields(Entity entity)
+	: JAVA transformation.TrafoUtils.addRelationFields(de.guite.modulestudio.metamodel.modulestudio.Entity);

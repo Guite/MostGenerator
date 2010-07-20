@@ -1,32 +1,32 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 
-«DEFINE phpFileHeader(Module module) FOR Object-»
+«DEFINE phpFileHeader(Application app) FOR Object-»
 <?php
 /**
  * Zikula Application Framework
  *
- * @copyright «module.author»
+ * @copyright «app.author»
  * @link http://zikula.org
- * @license «module.license»
- * @package «module.name»
- * @author «module.author»
- * @url «module.url»
+ * @license «app.license»
+ * @package «app.name»
+ * @author «app.author»
+ * @url «app.url»
  */
 
 /**
- * generated at «timestamp()» by ModuleStudio «EXPAND msVersion FOR module» («EXPAND msUrl FOR module»)
+ * generated at «timestamp()» by ModuleStudio «EXPAND msVersion FOR app» («EXPAND msUrl FOR app»)
  */
 
 «ENDDEFINE»
 
-«DEFINE msVersion FOR Module-»
+«DEFINE msVersion FOR Application-»
 0.5 beta«ENDDEFINE»
 
-«DEFINE msUrl FOR Module-»
+«DEFINE msUrl FOR Application-»
 http://modulestudio.de«ENDDEFINE»
 
-«DEFINE msWeblink FOR Module-»
+«DEFINE msWeblink FOR Application-»
 <p style="text-align: center">
     Powered by <a href="«EXPAND msUrl-»" title="Get the MOST out of Zikula!">ModuleStudio «EXPAND msVersion-»</a>
 </p>

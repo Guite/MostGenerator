@@ -2,26 +2,26 @@
 «EXTENSION extensions::Utils»
 
 «REM»Entry point for module documentation«ENDREM»
-«DEFINE Root FOR Module-»
+«DEFINE Root FOR Application-»
     «FILE "docs/credits.txt"»«EXPAND Credits»«ENDFILE»
     «FILE "docs/changelog.txt"»«EXPAND Changelog»«ENDFILE»
     «FILE "docs/developers.txt"»«EXPAND DeveloperHints»«ENDFILE»
-    «FILE "docs/modulestudio.txt"»«EXPAND MSText»«ENDFILE»
+    «FILE "docs/modulestudio.txt"»«EXPAND MostText»«ENDFILE»
     «FILE "docs/readme_de.txt"»«EXPAND ReadmeDE»«ENDFILE»
     «FILE "docs/readme.txt"»«EXPAND Readme»«ENDFILE»
     «FILE "docs/license.txt"»«EXPAND License»«ENDFILE»
 «REM»TODO: generate additional information describing the model itself«ENDREM»
 «ENDDEFINE»
 
-«DEFINE Credits FOR Module-»
+«DEFINE Credits FOR Application-»
 
 «ENDDEFINE»
 
-«DEFINE Changelog FOR Module-»
+«DEFINE Changelog FOR Application-»
 
 «ENDDEFINE»
 
-«DEFINE DeveloperHints FOR Module-»
+«DEFINE DeveloperHints FOR Application-»
 
 
 

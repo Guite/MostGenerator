@@ -25,9 +25,5 @@
                srcManPath="${srcManPath}">
        <mmEMF           idRef="mmEMF"/>
        <mmModuleStudio  idRef="mmModuleStudio"/>
-       <mmPersistence   idRef="mmPersistence"/>
-       <mmProcessing    idRef="mmProcessing"/>
-       <mmPresentation  idRef="mmPresentation"/>
-       <mmBehavior      idRef="mmBehavior"/>
     </cartridge>
 </workflow>

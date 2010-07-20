@@ -42,15 +42,13 @@
 
             <!-- provide check files -->
 		    <checkFile value="../de.guite.modulestudio.metamodel/model/checks/main"/>
-            <checkFile value="../de.guite.modulestudio.metamodel/model/checks/persistence"/>
-            <checkFile value="../de.guite.modulestudio.metamodel/model/checks/processing"/>
-            <checkFile value="../de.guite.modulestudio.metamodel/model/checks/presentation"/>
-            <checkFile value="../de.guite.modulestudio.metamodel/model/checks/behavior"/>
+            <checkFile value="../de.guite.modulestudio.metamodel/model/checks/model"/>
+            <checkFile value="../de.guite.modulestudio.metamodel/model/checks/controller"/>
+            <checkFile value="../de.guite.modulestudio.metamodel/model/checks/view"/>
 <!--		<checkFile value="checks::main"/>
-		   <checkFile value="checks::persistence"/>
-	       <checkFile value="checks::processing"/>
-		   <checkFile value="checks::presentation"/>
-		   <checkFile value="checks::behavior"/>
+		   <checkFile value="checks::model"/>
+	       <checkFile value="checks::controller"/>
+		   <checkFile value="checks::view"/>
 -->
 		    <!-- tell on which part of the model the checks should work (our module with all children) -->
 		    <emfAllChildrenSlot value="model"/>
@@ -64,10 +62,6 @@
 		<!-- reference all used meta models -->
 		<metaModel idRef="mmEMF" />
 		<metaModel idRef="mmModuleStudio" />
-		<metaModel idRef="mmPersistence" />
-		<metaModel idRef="mmProcessing" />
-		<metaModel idRef="mmPresentation" />
-		<metaModel idRef="mmBehavior" />
 
 	    <invoke value="transformation::PersistenceTransformer::modify(model)"/>
 	    <outputSlot value="newModel" />
@@ -90,10 +84,6 @@
 	           srcManPath="${srcManPath}">
 	   <mmEMF 			idRef="mmEMF"/>
 	   <mmModuleStudio 	idRef="mmModuleStudio"/>
-	   <mmPersistence 	idRef="mmPersistence"/>
-	   <mmProcessing 	idRef="mmProcessing"/>
-	   <mmPresentation 	idRef="mmPresentation"/>
-	   <mmBehavior 		idRef="mmBehavior"/>
 	</cartridge>
 
 	<!-- TODO: phpXRef -->	

@@ -8,10 +8,6 @@
         <!-- reference all used meta models -->
         <metaModel idRef="mmEMF" />
         <metaModel idRef="mmModuleStudio" /> 
-        <metaModel idRef="mmPersistence" /> 
-        <metaModel idRef="mmProcessing" /> 
-        <metaModel idRef="mmPresentation" /> 
-        <metaModel idRef="mmBehavior" /> 
 
         <!-- XPand entry for "model" slot containing an instance of ModuleStudio.Module -->
         <expand value="templates::${cartridgeName}::Root::Root(progressMonitor) FOR ${slot}"/>

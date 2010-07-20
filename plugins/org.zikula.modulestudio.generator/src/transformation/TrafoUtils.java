@@ -2,11 +2,11 @@ package transformation;
 
 import java.util.Iterator;
 
-import de.guite.modulestudio.metamodel.persistence.IntegerField;
-import de.guite.modulestudio.metamodel.persistence.PersistenceFactory;
-import de.guite.modulestudio.metamodel.persistence.Relationship;
-import de.guite.modulestudio.metamodel.persistence.Table;
-import de.guite.modulestudio.metamodel.persistence.impl.PersistenceFactoryImpl;
+import de.guite.modulestudio.metamodel.modulestudio.IntegerField;
+import de.guite.modulestudio.metamodel.modulestudio.ModulestudioFactory;
+import de.guite.modulestudio.metamodel.modulestudio.Relationship;
+import de.guite.modulestudio.metamodel.modulestudio.Entity;
+import de.guite.modulestudio.metamodel.modulestudio.impl.ModulestudioFactoryImpl;
 import extensions.Utils;
 
 /*
@@ -18,12 +18,12 @@ public class TrafoUtils {
 	/**
 	 * add a primary key to a table
 	 * 
-	 * @params    Table          given Table instance
+	 * @params    Entity         given Entity instance
 	 * @return                   flag if insertion was sucessful
 	 */
-	public static boolean addPrimaryKey(Table table) {
+	public static boolean addPrimaryKey(Entity entity) {
 		try {
-			table.getColumns().add(0, createIDColumn(table.getName(), true));
+			entity.getFields().add(0, createIDColumn(entity.getName(), true));
 		}
 		catch (Exception e) {
 			return false;
@@ -37,14 +37,14 @@ public class TrafoUtils {
 	/**
 	 * add a relation id fields to a table
 	 * 
-	 * @params    Table          given Table instance
+	 * @params    Entity         given Entity instance
 	 * @return                   flag if process was sucessful
 	 */
-	public static boolean addRelationFields(Table table) {
+	public static boolean addRelationFields(Entity entity) {
 		try {
-			for (Iterator relIter = table.getIncoming().iterator(); relIter.hasNext();) {
+			for (Iterator relIter = entity.getIncoming().iterator(); relIter.hasNext();) {
 				Relationship rel = (Relationship) relIter.next();
-				table.getColumns().add(createIDColumn(rel.getSource().getName(), false));
+				entity.getFields().add(createIDColumn(rel.getSource().getName(), false));
 			}
 		}
 		catch (Exception e) {
@@ -57,10 +57,10 @@ public class TrafoUtils {
 	}
 
 	private static IntegerField createIDColumn(String colName, Boolean isPrimary) {
-		PersistenceFactory factory = new PersistenceFactoryImpl();
+		ModulestudioFactory factory = new ModulestudioFactoryImpl();
 		IntegerField idField = factory.createIntegerField();
 		idField.setName(Utils.dbName(colName + "id"));
-		idField.setIsPrimaryKey(isPrimary);
+		idField.setPrimaryKey(isPrimary);
 		idField.setLength(11);
 		return idField;
 	}
