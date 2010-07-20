@@ -10,14 +10,14 @@
 «EXTENSION extensions::Utils»
 
 «REM»start point for the generator«ENDREM»
-«DEFINE Root(Object pm) FOR modulestudio::Module»
+«DEFINE Root(Object pm) FOR Application»
     «REM»«pm.subTask("Basic information")»«ENDREM»
     «info("Generating basic information")»
 	«EXPAND VersionFile::Root»
 
 	«REM»«pm.subTask("Persistence: Table definitions")»«ENDREM»
     «info("Generating table definitions")»
-	«EXPAND Tables::Root»
+	«EXPAND Entities::Root»
 	«REM»«pm.subTask("Persistence: Module initialisation")»«ENDREM»
     «info("Generating module initialisation")»
 	«EXPAND Init::Root»

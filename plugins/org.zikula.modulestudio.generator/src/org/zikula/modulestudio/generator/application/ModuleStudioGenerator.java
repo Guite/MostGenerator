@@ -11,7 +11,7 @@ import org.eclipse.emf.mwe.core.WorkflowRunner;
 import org.eclipse.emf.mwe.core.monitor.NullProgressMonitor;
 import org.eclipse.emf.mwe.core.resources.ResourceLoaderFactory;
 
-import de.guite.modulestudio.metamodel.modulestudio.Module;
+import de.guite.modulestudio.metamodel.modulestudio.Application;
 
 public class ModuleStudioGenerator {
 
@@ -43,25 +43,25 @@ public class ModuleStudioGenerator {
 	/**
 	 * default constructor
 	 */
-	public ModuleStudioGenerator(Module module, IProgressMonitor monitor) {
+	public ModuleStudioGenerator(Application application, IProgressMonitor monitor) {
 		properties = new HashMap<String, String>();
 
 //obsolete start
-		String modelPath = module.getModelPath();
+		String modelPath = application.getModelPath();
 		// input model file
 		addProperty("modelFile", modelPath);
 
 		// set output model file for M2M transformation
-		addProperty("enrichedModelFile", modelPath.replace(".msmodule", "_Enriched.msmodule"));
+		addProperty("enrichedModelFile", modelPath.replace(".mostapp", "_Enriched.mostapp"));
 //obsolete end
 
 		slotContents = new HashMap<String, Object>();
 		slotContents.put("progressMonitor", monitor);
 		// TODO: retrieve model which is already in memory
 		// strips out table columns
-		// slotContents.put("model", module);
+		// slotContents.put("model", application);
 
-		monitor.beginTask("Generating \"" + module.getName() + " " + module.getVersion() + "\" ...", -1);
+		monitor.beginTask("Generating \"" + application.getName() + " " + application.getVersion() + "\" ...", -1);
 	}
 
 	/**

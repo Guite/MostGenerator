@@ -1,8 +1,8 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 
-«AROUND some::existing::template::InitInfo FOR Module-»
-	«FOREACH persistenceContainer.tables AS t-»
+«AROUND some::existing::template::InitInfo FOR Application-»
+	«FOREACH models.entities AS t-»
         // AOP: «t.name»
 	«ENDFOREACH-»
 

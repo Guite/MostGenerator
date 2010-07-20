@@ -2,12 +2,12 @@
 «EXTENSION extensions::Utils»
 
 «REM»start point for the generator«ENDREM»
-«DEFINE Root(Object pm) FOR Module»
+«DEFINE Root(Object pm) FOR Application»
 «FILE "documentation.txt"»
 Hello «author» :-)
 
 This becomes the documentation generator.
-It is going to create a complete set of different documentations for your «moduleName(name)» module.
+It is going to create a complete set of different documentations for your «appName()» application.
 «ENDFILE»
 «ENDDEFINE»
 

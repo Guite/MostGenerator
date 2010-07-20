@@ -2,12 +2,12 @@
 «EXTENSION extensions::Utils»
 
 «REM»start point for the generator«ENDREM»
-«DEFINE Root(Object pm) FOR Module»
+«DEFINE Root(Object pm) FOR Application»
 «FILE "reporting.txt"»
 Hello «author» :-)
 
 This becomes the reporting generator.
-It is going to create a comprehensive bunch of metrics and reports for your «moduleName(name)» module.
+It is going to create a comprehensive bunch of metrics and reports for your «appName()» application.
 «ENDFILE»
 «ENDDEFINE»
 

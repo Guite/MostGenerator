@@ -1,7 +1,7 @@
-«IMPORT persistence»
+«IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 
-«AROUND templates::zclassic::persistence::Tables::ObjectExtensions FOR Table-»
+«AROUND templates::zclassic::persistence::Entities::ObjectExtensions FOR Entity-»
     // DEBUG: object extension aspect starts
 
 «IF usesStandardFields == true-»
@@ -47,7 +47,7 @@
 «targetDef.proceed()»
 «ENDAROUND»
 
-«AROUND templates::zclassic::behavior::BusinessObject::standardSortingFields FOR persistence::Table-»
+«AROUND templates::zclassic::behavior::BusinessObject::standardSortingFields FOR Entity-»
 «IF usesStandardFields == true-»,
                      'obj_status',
                      'cr_date',

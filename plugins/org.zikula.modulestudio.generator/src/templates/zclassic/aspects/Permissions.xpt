@@ -1,48 +1,47 @@
 «IMPORT modulestudio»
-«IMPORT processing»
 «EXTENSION extensions::Utils»
 
 «REM»Definition of permission schema arrays«ENDREM»
-«AROUND templates::zclassic::smallstuff::VersionFile::PermissionSchema FOR Module-»
+«AROUND templates::zclassic::smallstuff::VersionFile::PermissionSchema FOR Application-»
         // DEBUG: permission schema aspect starts
         $modversion['securityschema'] = array(
-            '«modName()»::' => '::',
-«EXPAND PermissionSchema(modName()) FOREACH persistenceContainer.tables SEPARATOR ','-»
+            '«appName()»::' => '::',
+«EXPAND PermissionSchema(appName()) FOREACH models.entities SEPARATOR ','-»
         );
         // DEBUG: permission schema aspect ends
 «targetDef.proceed()-»
 «ENDAROUND»
 
-«DEFINE PermissionSchema(String modName) FOR persistence::Table-»
+«DEFINE PermissionSchema(String appName) FOR Entity-»
 «IF incoming.size > 0-»
-«EXPAND PermissionSchema(modName) FOREACH incoming SEPARATOR ','-»,
+«EXPAND PermissionSchema(appName) FOREACH incoming SEPARATOR ','-»,
 «ENDIF»
-            '«modName»:«capitalName(name)»:' => '«capitalName(name)»ID::'«""-»
+            '«appName»:«capitalName(name)»:' => '«capitalName(name)»ID::'«""-»
 «ENDDEFINE»
 
-«DEFINE PermissionSchema(String modName) FOR persistence::Relationship»
+«DEFINE PermissionSchema(String modName) FOR Relationship»
             '«modName»:«capitalName(source.name)»:«capitalName(target.name)»' => '«capitalName(source.name)»ID:«capitalName(target.name)»ID:'«ENDDEFINE»
 
 «REM»Permission checks in system use cases«ENDREM»
-«AROUND templates::zclassic::processing::Processor::PermissionCheck FOR ProcessorState-»
+«AROUND templates::zclassic::processing::Controller::PermissionCheck FOR Action-»
 // DEBUG: permission check aspect starts
-«LET stateProcessor.processingContainer.processingModule.modName() AS modName-»
-«IF stateProcessor.metaType == AdminProcessor-»
-        $this->throwForbiddenUnless(SecurityUtil::checkPermission('«modName»::', '::', ACCESS_ADMIN));
+«LET controller.container.application.appName() AS appName-»
+«IF controller.metaType == AdminController-»
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»::', '::', ACCESS_ADMIN));
 «ELSE-»
-        $this->throwForbiddenUnless(SecurityUtil::checkPermission('«modName»::', '::', «EXPAND getPermissionAccessLevel-»));
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»::', '::', «EXPAND getPermissionAccessLevel-»));
 «ENDIF-»
 «ENDLET-»
 // DEBUG: permission check aspect ends
 «targetDef.proceed()-»
 «ENDAROUND»
 
-«DEFINE getPermissionAccessLevel FOR ProcessorState-»
-«IF     metaType == MainProcessorState-»ACCESS_OVERVIEW«""-»
-«ELSEIF metaType == ViewProcessorState-»ACCESS_READ«""-»
-«ELSEIF metaType == DisplayProcessorState-»ACCESS_READ«""-»
-«ELSEIF metaType == EditProcessorState-»ACCESS_EDIT«""-»
-«ELSEIF metaType == DeleteProcessorState-»ACCESS_DELETE«""-»
-«ELSEIF metaType == CustomProcessorState-»ACCESS_OVERVIEW
+«DEFINE getPermissionAccessLevel FOR Action-»
+«IF     metaType == MainAction-»ACCESS_OVERVIEW«""-»
+«ELSEIF metaType == ViewAction-»ACCESS_READ«""-»
+«ELSEIF metaType == DisplayAction-»ACCESS_READ«""-»
+«ELSEIF metaType == EditAction-»ACCESS_EDIT«""-»
+«ELSEIF metaType == DeleteAction-»ACCESS_DELETE«""-»
+«ELSEIF metaType == CustomAction-»ACCESS_OVERVIEW
 «ENDIF-»
 «ENDDEFINE»

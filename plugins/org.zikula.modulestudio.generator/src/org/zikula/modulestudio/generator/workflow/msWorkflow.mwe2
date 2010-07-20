@@ -51,10 +51,6 @@ var templatesAdvice = "templates::${cartridgeName}::aspects::Permissions, templa
 Workflow {
     bean = EmfMetaModel : mmEMF { metaModelPackage = "org.eclipse.emf.ecore.EcorePackage" }
     bean = EmfMetaModel : mmModuleStudio { metaModelPackage = "de.guite.modulestudio.metamodel.modulestudio.ModuleStudioPackage" }
-    bean = EmfMetaModel : mmPersistence { metaModelPackage = "de.guite.modulestudio.metamodel.persistence.PersistencePackage" }
-    bean = EmfMetaModel : mmProcessing { metaModelPackage = "de.guite.modulestudio.metamodel.processing.ProcessingPackage" }
-    bean = EmfMetaModel : mmPresentation { metaModelPackage = "de.guite.modulestudio.metamodel.presentation.PresentationPackage" }
-    bean = EmfMetaModel : mmBehavior { metaModelPackage = "de.guite.modulestudio.metamodel.behavior.BehaviorPackage" }
 
     // set up EMF for standalone execution
     bean = StandaloneSetup {
@@ -62,10 +58,6 @@ Workflow {
         platformUri = "."
         registerGeneratedEPackage = "org.eclipse.emf.ecore.EcorePackage"
         registerGeneratedEPackage = "de.guite.modulestudio.metamodel.modulestudio.ModuleStudioPackage"
-        registerGeneratedEPackage = "de.guite.modulestudio.metamodel.persistence.PersistencePackage"
-        registerGeneratedEPackage = "de.guite.modulestudio.metamodel.processing.ProcessingPackage"
-        registerGeneratedEPackage = "de.guite.modulestudio.metamodel.presentation.PresentationPackage"
-        registerGeneratedEPackage = "de.guite.modulestudio.metamodel.behavior.BehaviorPackage"
     }
 
     // read in the given file
@@ -96,24 +88,18 @@ Workflow {
                 // define all used meta models
                 metaModel = mmEMF
                 metaModel = mmModuleStudio
-                metaModel = mmPersistence
-                metaModel = mmProcessing
-                metaModel = mmPresentation
-                metaModel = mmBehavior
 
 	            // provide check files
 	            checkFile = "../de.guite.modulestudio.metamodel/model/checks/main"
-	            checkFile = "../de.guite.modulestudio.metamodel/model/checks/persistence"
-	            checkFile = "../de.guite.modulestudio.metamodel/model/checks/processing"
-	            checkFile = "../de.guite.modulestudio.metamodel/model/checks/presentation"
-	            checkFile = "../de.guite.modulestudio.metamodel/model/checks/behavior"
+	            checkFile = "../de.guite.modulestudio.metamodel/model/checks/model"
+	            checkFile = "../de.guite.modulestudio.metamodel/model/checks/controller"
+	            checkFile = "../de.guite.modulestudio.metamodel/model/checks/view"
 //        checkFile = "metamodel::Checks"
 /*
             checkFile = "checks::main"
-            checkFile = "checks::persistence"
-            checkFile = "checks::processing"
-            checkFile = "checks::presentation"
-            checkFile = "checks::behavior"
+            checkFile = "checks::model"
+            checkFile = "checks::controller"
+            checkFile = "checks::view"
 */
 
 	            // on which part of the model the checks should work (our module with all children)
@@ -132,10 +118,6 @@ Workflow {
         // reference all used meta models
         metaModel = mmEMF
         metaModel = mmModuleStudio
-        metaModel = mmPersistence
-        metaModel = mmProcessing
-        metaModel = mmPresentation
-        metaModel = mmBehavior
 
         // call actual transformation
         invoke = "transformation::PersistenceTransformer::modify(${inputSlot})"
@@ -211,10 +193,6 @@ Workflow {
         // reference all used meta models
         metaModel = mmEMF
         metaModel = mmModuleStudio
-        metaModel = mmPersistence
-        metaModel = mmProcessing
-        metaModel = mmPresentation
-        metaModel = mmBehavior
 
         // expand templates on model slot
         expand = templatesExpand

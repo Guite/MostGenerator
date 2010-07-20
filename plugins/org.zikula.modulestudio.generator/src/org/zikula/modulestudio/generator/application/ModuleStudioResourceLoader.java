@@ -8,7 +8,7 @@ import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.mwe.core.resources.ResourceLoaderDefaultImpl;
 
-import de.guite.modulestudio.metamodel.modulestudio.ModuleStudioPackage;
+import de.guite.modulestudio.metamodel.modulestudio.ModulestudioPackage;
 
 /**
 * This ResourceLoader is capable of loading resources from another plugin.
@@ -30,7 +30,7 @@ public class ModuleStudioResourceLoader extends ResourceLoaderDefaultImpl {
 	* @throws CoreException
 	*/
 	public ClassLoader createClassLoader() throws CoreException {
-		return ModuleStudioPackage.class.getClassLoader();
+		return ModulestudioPackage.class.getClassLoader();
 	}
 
 //	@Override
