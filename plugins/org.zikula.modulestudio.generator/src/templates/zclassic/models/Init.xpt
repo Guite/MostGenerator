@@ -1,0 +1,346 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+
+«REM»Entry point for module initialization«ENDREM»
+«DEFINE Root FOR Application»
+«FILE "lib/" + appName() + "/Installer.php"-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+class «appName()»_Installer extends Zikula_Installer
+{
+«EXPAND NormalInstall-»
+}
+«ENDFILE»
+«IF interactiveInstallation == true»
+«FILE "lib/" + appName() + "/Controller/InteractiveInstaller.php"-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveInstaller
+{
+«EXPAND InteractiveInstall»
+}
+«ENDFILE»
+«EXPAND Init_Templates::Root»
+«ENDIF»
+«ENDDEFINE»
+
+«DEFINE NormalInstall FOR Application-»
+«EXPAND FuncInit-»
+«EXPAND FuncUpdate-»
+«EXPAND FuncDelete-»
+«EXPAND FuncDefaultData-»
+«ENDDEFINE»
+
+«DEFINE InteractiveInstall FOR Application-»
+«EXPAND templates::zclassic::processing::ProcHelper::ControllerPostInitialize(false)-»
+«EXPAND FuncInteractiveInit-»
+«IF needsConfig()»«EXPAND FuncInteractiveInitStep2»«ENDIF»
+«EXPAND FuncInteractiveInitStep3-»
+«EXPAND FuncInteractiveUpdate-»
+«EXPAND FuncInteractiveDelete-»
+«ENDDEFINE»
+
+«DEFINE FuncInit FOR Application-»
+    /**
+     * Initialise the «appName()» module
+     *
+     * @return boolean True on success, false otherwise.
+     */
+    public function install()
+    {
+«FOREACH models.entities AS entity-»
+        // create the «applicationName(entity.name)» table
+        if (!DBUtil::createTable('«fullEntityName(entity)»')) {
+            return false;
+        }
+«ENDFOREACH-»
+
+«REM»
+    // register hook functions
+    if (!ModUtil::registerHook('item', 'display', 'GUI', '«modName()»', 'user', 'viewupload')) {
+        return LogUtil::registerError(_REGISTERFAILED . ', Nr. 1');
+    }
+    if (!ModUtil::registerHook('item', 'create', 'GUI', '«modName()»', 'user', 'createupload')) {
+        return LogUtil::registerError(_REGISTERFAILED . ', Nr. 2');
+    }
+    if (!ModUtil::registerHook('item', 'update', 'GUI', '«modName()»', 'user', 'createupload')) {
+        return LogUtil::registerError(_REGISTERFAILED . ', Nr. 3');
+    }
+    if (!ModUtil::registerHook('item', 'delete', 'API', '«modName()»', 'user', 'deleteupload')) {
+        return LogUtil::registerError(_REGISTERFAILED . ', Nr. 4');
+    }
+«ENDREM»
+
+        // set up all our module vars with initial values
+«FOREACH models.variables.vars AS modvar-»
+«IF interactiveInstallation == true-»
+        $sessionValue = SessionUtil::getVar('«moduleName(name + '_' + modvar.name)»');
+        ModUtil::setVar(«appName()», «moduleName(modvar.name)», (($sessionValue <> false) ? «EXPAND ModVarValFromSession FOR modvar» : «EXPAND ModVarValSession2Mod FOR modvar»));
+        SessionUtil::delVar(«moduleName(name + '_' + modvar.name)»);
+«ELSE-»
+        $this->setVar('«appame()»', '«moduleName(modvar.name)»', «EXPAND ModVarValDirect2Mod FOR modvar»);
+«ENDIF-»
+«ENDFOREACH-»
+
+        // create the default data for «appName()»
+        $this->defaultdata();
+
+        // Initialisation successful
+        return true;
+    }
+«ENDDEFINE»
+
+
+«DEFINE IndexStructure FOR EntityIndex»
+        '«applicationName(name)»' => «IF items.size > 1»array(«EXPAND IndexField FOREACH items SEPARATOR ', '»)«ELSE»'«dbName(items.get(0).name)»'«ENDIF»«ENDDEFINE»
+«DEFINE IndexField FOR EntityIndexItem»'«dbName(name)»'«ENDDEFINE»
+
+«DEFINE ModVarValFromSession FOR Variable»$sessionValue«ENDDEFINE»
+«DEFINE ModVarValFromSession FOR ListVar»serialize($sessionValue)«ENDDEFINE»
+
+«DEFINE ModVarValSession2Mod FOR Variable»'«value»'«ENDDEFINE»
+«DEFINE ModVarValSession2Mod FOR ListVar»serialize(array(«EXPAND ModVarValSession2Mod FOREACH items.select(item|item.isDefault == true) SEPARATOR ', '»))«ENDDEFINE»
+«DEFINE ModVarValSession2Mod FOR ListVarItem»«IF isDefault == true»'«applicationName(name)»'«ENDIF»«ENDDEFINE»
+
+«REM»
+<select name="blabla[]" size="6" multiple>
+Ausgelesen als Array: $blabla["0"];
+«ENDREM»
+
+«DEFINE ModVarValDirect2Mod FOR Variable»'«value»'«ENDDEFINE»
+«DEFINE ModVarValDirect2Mod FOR ListVar»serialize(array(«EXPAND ModVarValDirect2Mod FOREACH items.select(item|item.isDefault == true) SEPARATOR ', '»))«ENDDEFINE»
+«DEFINE ModVarValDirect2Mod FOR ListVarItem»'«applicationName(name)»'«ENDDEFINE»
+
+
+«DEFINE FuncUpdate FOR Application»
+    /**
+     * Upgrade the «appName()» application from an older version.
+     *
+     * If the upgrade fails at some point, it returns the last upgraded version.
+     *
+     * @param integer $oldversion Version to upgrade from.
+     *
+     * @return boolean True on success, false otherwise.
+     */
+    public function upgrade($oldversion)
+    {
+/*
+    // Upgrade dependent on old version number
+    switch ($oldversion){
+    case '1.00':
+            «appName()»_createTables_101();
+    }
+*/
+
+        // Update successful
+        return true;
+    }
+«ENDDEFINE»
+
+«DEFINE FuncDelete FOR Application»
+    /**
+     * Uninstall «appName()».
+     *
+     * @return boolean True on success, false otherwise.
+     */
+    public function uninstall()
+    {
+«FOREACH models.entities AS entity-»
+        if (!DBUtil::dropTable('«fullEntityName(entity)»')) {
+            return false;
+        }
+«ENDFOREACH-»
+
+«REM»
+    // unregister hook functions
+    if (!ModUtil::unregisterHook('item', 'display', 'GUI', '«modName()»', 'user', 'viewupload')) {
+        return LogUtil::registerError(_UNREGISTERFAILED . ', Nr. 1');
+    }
+    if (!ModUtil::unregisterHook('item', 'create', 'GUI', '«modName()»', 'user', 'createupload')) {
+        return LogUtil::registerError(_UNREGISTERFAILED . ', Nr. 2');
+    }
+    if (!ModUtil::unregisterHook('item', 'update', 'GUI', '«modName()»', 'user', 'createupload')) {
+        return LogUtil::registerError(_UNREGISTERFAILED . ', Nr. 3');
+    }
+    if (!ModUtil::unregisterHook('item', 'delete', 'API', '«modName()»', 'user', 'deleteupload')) {
+        return LogUtil::registerError(_UNREGISTERFAILED . ', Nr. 4');
+    }
+«ENDREM»
+
+        // remove all module vars
+        $this->delVars();
+
+        // Deletion successful
+        return true;
+    }
+«ENDDEFINE»
+
+«DEFINE FuncDefaultData FOR Application»
+    /**
+     * create the default data for «appName()»
+     *
+     * @author       «author»
+     * @return       bool       true on success, false otherwise
+     */
+    public function defaultdata()
+    {
+        // ensure that tables are cleared
+        if («EXPAND clearTable FOREACH models.entities SEPARATOR ' ||'») {
+            return false;
+        }
+
+«IF models.select(e|e.isDefaultDataSource).get(0).numExampleRows > 0-»
+«FOREACH models.entities AS entity-»
+        // define default data for «applicationName(entity.name)» table
+        $records = array(«EXPAND createExampleRows(this) FOR entity-»
+        );
+
+        // insert it into the «applicationName(entity.name)» table
+        DBUtil::insertObjectArray($records, '«dbName(prefix + '_' + entity.name)»', '«dbName(entity.name)»id', true);
+«ENDFOREACH-»
+«ENDIF-»
+
+        // insertion successful
+        return true;
+    }
+«ENDDEFINE»
+
+«DEFINE clearTable FOR Entity»
+        !DBUtil::deleteWhere('«fullEntityName(this)»', '1=1')«ENDDEFINE»
+
+«DEFINE createExampleRows(Application app) FOR Entity»
+«FOREACH 1.upTo(container.numExampleRows) AS number SEPARATOR ','-»
+
+        array(«EXPAND ExampleRow(app, name, number) FOREACH fields SEPARATOR ','»)«ENDFOREACH-»
+«REM»Alternative way to count up values is a stdlib extension for initialising, manipulating and retrieving counters.
+Extension: org::eclipse:xtend:::util::stdlib::counter
+  * int counterInc (Object o)       Increment
+  * int counterDec (Object o)       Decrement
+  * int counterReset (Object o)     Reset (returns always 0)
+  * int counterGet (Object o)       Retrieve current state
+
+Example:
+«DEFINE CounterExtensionsDemo FOR Object»
+«FILE "CounterExtensions.txt"»
+  Named counter:
+  inc         : «counterInc("idx")»
+  inc         : «counterInc("idx")»
+  inc         : «counterInc("idx")»
+  reset       : «counterReset("idx")»
+  inc         : «counterInc("idx")»
+«ENDFILE»
+«ENDDEFINE»
+«ENDREM»
+«ENDDEFINE»
+«DEFINE ExampleRow(Application app, String entityName, Integer number) FOR EntityField»
+            '«dbName(name)»' => __('«entityName» «name» «number»', $dom)«ENDDEFINE»
+
+«DEFINE FuncInteractiveInit FOR Application»
+    /**
+     * Interactive installation procedure.
+     *
+     * @return string|boolean Output.
+     */
+    public function install()
+    {
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+
+        // fetch and return the appropriate template
+        return $this->view->fetch('«appName()»_init_interactive.tpl');
+    }
+«ENDDEFINE»
+
+«DEFINE FuncInteractiveInitStep2 FOR Application»
+    /**
+     * Interactive installation procedure step 2.
+     *
+     * @return string|boolean Output.
+     */
+    public function interactiveinitstep2()
+    {
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+
+        $submit = FormUtil::getPassedValue('submit', null, 'POST');
+        if (!$submit) {
+            // assign auth key
+            $this->view->assign('authid', SecurityUtil::generateAuthKey('«appName()»'));
+
+            // fetch and return the appropriate template
+            return $this->view->fetch('«appName()»_init_step2.tpl');
+        }
+
+        if(!SecurityUtil::confirmAuthKey()) {
+	        $this->registerError(LogUtil::getErrorMsgAuthid())
+	             ->redirect(ModUtil::url('Modules', 'admin', 'view'));
+        }
+
+    «FOREACH models.variables.vars AS modvar-»
+        $formValue = FormUtil::getPassedValue('«moduleName(modvar.name)»', «EXPAND ModVarValForm2SessionDefault FOR modvar», 'POST');
+        SessionUtil::setVar('«moduleName(name + '_' + modvar.name)»', $formValue);
+
+«ENDFOREACH-»
+
+        $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST');
+        $activate = (!empty($activate)) ? true : false;
+
+        return System::redirect(ModUtil::url('«appName()»', 'init', 'interactiveinitstep3', array('activate' => $activate)));
+    }
+«ENDDEFINE»
+
+«DEFINE ModVarValForm2SessionDefault FOR Variable»'«moduleName(value)»'«ENDDEFINE»
+«DEFINE ModVarValForm2SessionDefault FOR ListVar»serialize(array(«EXPAND ModVarValForm2SessionDefault FOREACH items.select(item|item.isDefault == true) SEPARATOR ', '»))«ENDDEFINE»
+«DEFINE ModVarValForm2SessionDefault FOR ListVarItem»'«moduleName(name)»'«ENDDEFINE»
+
+«DEFINE FuncInteractiveInitStep3 FOR Application»
+    /**
+     * Interactive installation procedure step 3
+     *
+     * @return string|boolean Output.
+     */
+    public function interactiveinitstep3()
+    {
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+        
+        $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST');
+
+        // assign auth key and activation flag
+        $this->view->assign('authid', SecurityUtil::generateAuthKey('Modules'))
+                   ->assign('activate', $activate);
+
+        // fetch and return the appropriate template
+        return $this->view->fetch('«appName()»_init_step3.tpl');
+    }
+«ENDDEFINE»
+
+«DEFINE FuncInteractiveUpdate FOR Application»
+    /**
+     * Interactive update procedure
+     *
+     * @return string|boolean Output.
+     */
+    function upgrade()
+    {
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+
+        // TODO
+
+        return true;
+    }
+«ENDDEFINE»
+
+«DEFINE FuncInteractiveDelete FOR Application»
+    /**
+     * Interactive delete.
+     *
+     * @return string Output.
+     */
+    public function uninstall()
+    {
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+
+        // assign auth key
+        $this->view->assign('authid', SecurityUtil::generateAuthKey('Modules'));
+
+        // fetch and return the appropriate template
+        return $this->view->fetch('«appName()»_init_delete.tpl');
+    }
+«ENDDEFINE»

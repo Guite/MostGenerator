@@ -1,5 +1,4 @@
 «IMPORT modulestudio»
-«IMPORT behavior»
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::UtilsBO»
@@ -7,20 +6,19 @@
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «REM»Entry point for DBObject implementations«ENDREM»
-«DEFINE Root FOR Module-»
-    «FILE "lib/" + moduleClassFileName(this, false)»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND dbObjectModuleClass(false)»«ENDFILE»
-    «FILE "lib/" + moduleClassFileName(this, true)»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND dbObjectModuleClass(true)»«ENDFILE»
+«DEFINE Root FOR Application-»
+    «FILE "lib/" + applicationClassFileName(this, false)»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND dbObjectModuleClass(false)»«ENDFILE»
+    «FILE "lib/" + applicationClassFileName(this, true)»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND dbObjectModuleClass(true)»«ENDFILE»
 
-	«EXPAND ObjectClassWrapper(this, false) FOREACH persistenceContainer.tables-»
-	«REM»EXPAND dbObjectClassWrapper(this) FOREACH behaviorContainer.businessObjects-«ENDREM»
-	«EXPAND ObjectClassWrapper(this, true) FOREACH persistenceContainer.tables-»
+	«EXPAND ObjectClassWrapper(this, false) FOREACH models.entities-»
+	«EXPAND ObjectClassWrapper(this, true) FOREACH models.entities-»
 «ENDDEFINE»
 
 «REM»Module specific DBObject base class«ENDREM»
-«DEFINE dbObjectModuleClass(Boolean appendArray) FOR Module-»
+«DEFINE dbObjectModuleClass(Boolean appendArray) FOR Application-»
 /**
  * This is a base class encapsulating the generic functionality which is
- * common for all DBObject«IF appendArray»Array«ENDIF» types in the «modName()» module
+ * common for all DBObject«IF appendArray»Array«ENDIF» types in the «appName()» module
  */
 class «moduleClassName(this, appendArray)» extends DBObject«IF appendArray»Array«ENDIF»
 {
@@ -28,24 +26,24 @@ class «moduleClassName(this, appendArray)» extends DBObject«IF appendArray»A
 «ENDDEFINE»
 
 
-«DEFINE ObjectClassWrapper(modulestudio::Module module, Boolean appendArray) FOR persistence::Table-»
+«DEFINE ObjectClassWrapper(Application app, Boolean appendArray) FOR Entity-»
 «info("Generating object class for \"" + name + "\"")»
-«FILE "lib/" + baseClassFileName(appendArray)»«EXPAND FileHelper::phpFileHeader(module)»
+«FILE "lib/" + baseClassFileName(appendArray)»«EXPAND FileHelper::phpFileHeader(app)»
 
 /**
  * This class provides basic functionality of «baseClassName(appendArray)»
  */
-abstract class «baseClassName(appendArray)» extends «moduleClassName(this.tableContainer.persistenceModule, appendArray)»
+abstract class «baseClassName(appendArray)» extends «moduleClassName(app, appendArray)»
 {
 «IF appendArray == false-»
-«EXPAND ObjectClassImpl(module)-»
+«EXPAND ObjectClassImpl(app)-»
 «ELSE-»
-«EXPAND ObjectArrayClassImpl(module)-»
+«EXPAND ObjectArrayClassImpl(app)-»
 «ENDIF-»
 }
 «ENDFILE»
 
-«FILE "lib/" + implClassFileName(appendArray)»«EXPAND FileHelper::phpFileHeader(module)»
+«FILE "lib/" + implClassFileName(appendArray)»«EXPAND FileHelper::phpFileHeader(app)»
 
 /**
  * This class implements the functionality of «baseClassName(appendArray)»
@@ -63,7 +61,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 «ENDDEFINE»
 
 
-«DEFINE ObjectClassImpl(modulestudio::Module module) FOR persistence::Table-»
+«DEFINE ObjectClassImpl(Application app) FOR Entity-»
     /**
      * Constructor, init everything to sane defaults and handle parameters.
      * It only needs to set the fields which are used to configure
@@ -85,7 +83,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 
         // set the tablename this object maps to
 «REM»        $this->_objType       = '«dbName(module.prefix + '_' + dataSource().name)»';«ENDREM»
-        $this->_objType       = '«fullTableName()»';
+        $this->_objType       = '«fullEntityName()»';
 
         // set the ID field for this object
 «REM»        $this->_objField      = '«dbName(dataSource().name)»id';«ENDREM»
@@ -98,7 +96,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 
 «EXPAND ObjectJoins-»
 
-«EXPAND ObjectPermissionFilters(module.modName())-»
+«EXPAND ObjectPermissionFilters(app.appName())-»
 
         // call initialisation routine
         $this->_init($init, $key, $this->_objField);
@@ -110,25 +108,25 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
             $data =& $this->_objData;
         }
 
-«EXPAND sanitizeForOutput FOREACH columns-»
+«EXPAND sanitizeForOutput FOREACH fields-»
     }
 «REM»	«EXPAND BusinessStateFunction FOREACH businessStates-»«ENDREM»
 
 	«EXPAND BehaviorCommon::ClassToString(baseClassName(false))-»
 «ENDDEFINE»
 
-«DEFINE SelectJoinFieldTableNames(String exludedIdField) FOR persistence::Table-»
-«EXPAND ArrayListEntry('') FOREACH columns.reject(e|e.name == exludedIdField || e.isPrimaryKey) SEPARATOR ', '-»
+«DEFINE SelectJoinFieldTableNames(String exludedIdField) FOR Entity-»
+«EXPAND ArrayListEntry('') FOREACH fields.reject(e|e.name == exludedIdField || e.isPrimaryKey) SEPARATOR ', '-»
 «ENDDEFINE»
 
-«DEFINE SelectJoinFieldObjNames(String exludedIdField) FOR persistence::Table-»
-«EXPAND ArrayListEntry(dbName(name) + '_') FOREACH columns.reject(e|e.name == exludedIdField || e.isPrimaryKey) SEPARATOR ', '-»
+«DEFINE SelectJoinFieldObjNames(String exludedIdField) FOR Entity-»
+«EXPAND ArrayListEntry(dbName(name) + '_') FOREACH fields.reject(e|e.name == exludedIdField || e.isPrimaryKey) SEPARATOR ', '-»
 «ENDDEFINE»
 
-«DEFINE ArrayListEntry(String entryPrefix) FOR persistence::TableColumn-»
+«DEFINE ArrayListEntry(String entryPrefix) FOR EntityField-»
 '«entryPrefix»«dbName(name)»'«ENDDEFINE»
 
-«DEFINE ObjectJoins FOR persistence::Table-»
+«DEFINE ObjectJoins FOR Entity-»
 «FOREACH incoming AS relation-»
         $this->_objJoin[]     = array ('join_table'          => '«fullTableName(relation.source)»',
                                        'join_field'          => array(«EXPAND SelectJoinFieldTableNames(dbName(name)+"id") FOR relation.source-»),
@@ -138,7 +136,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 «ENDFOREACH-»
 «ENDDEFINE»
 
-«DEFINE ObjectPermissionFilters(String modName) FOR persistence::Table-»
+«DEFINE ObjectPermissionFilters(String modName) FOR Entity-»
         // apply object permission filters
         $this->_objPermissionFilter[] = array('component_left'   => '«modName»',
                                               'component_middle' => '«capitalName(name)»',
@@ -161,87 +159,24 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 «ENDDEFINE»
 
 
-«DEFINE BusinessStateFunction FOR BusinessState-»
-//TODO: Undefined State Type
+«DEFINE EventListenerMethod FOR EntityEventListener-»
+//TODO: Undefined Event Listener
 «ENDDEFINE»
-«DEFINE BusinessStateFunction FOR PreProcess-»
+«DEFINE EventListenerMethod FOR PreProcess-»
 //TODO: Undefined PreProcess
 «ENDDEFINE»
-«DEFINE BusinessStateFunction FOR PostProcess-»
+«DEFINE EventListenerMethod FOR PostProcess-»
 //TODO: Undefined PostProcess
 «ENDDEFINE»
 
-«DEFINE BusinessStateFunction FOR getDataFromInputPostProcess-»
-    /**
-     * Post-Process the data after getting it from input.
-     * This method is used to process retrieved array fields which are then stored in the 'data' field/column.
-     *
-     * @param $obj         Override object (optional) (default=null)
-     */
-    function getDataFromInputPostProcess($obj = null)
-    {
-«EXPAND GetObjectReference-»
-
-        // serialize the datafields array in the 'data' field
-        $obj['data'] = serialize($obj['datafields']);
-
-        // we return the data so that this method can be invoked 
-        // with explicit parameters and the return this result.
-        return $obj;
-    }
+«DEFINE EventListenerMethod FOR PreSave-»
+«ENDDEFINE»
+«DEFINE EventListenerMethod FOR PostSave-»
 «ENDDEFINE»
 
-«DEFINE BusinessStateFunction FOR getDataFromSessionPostProcess-»
-    /**
-     * Post-Process the data after getting it from Session.
-     *
-     * @param $obj         Override object (optional) (default=null)
-     */
-    function getDataFromSessionPostProcess($obj = null)
-    {
-«EXPAND GetObjectReference-»
-    }
-«ENDDEFINE»
-
-«DEFINE BusinessStateFunction FOR setDataToSessionPreProcess-»
-    /**
-     * Pre-Process the data before writing it to Session.
-     *
-     * @param $obj         Override object (optional) (default=null)
-     */
-    function setDataToSessionPreProcess($obj = null)
-    {
-«EXPAND GetObjectReference-»
-    }
-«ENDDEFINE»
-
-«DEFINE BusinessStateFunction FOR selectPostProcess-»
-    /**
-     * Post-Process the newly selected object.
-     * This method is used to expand the serialized data stored in $obj['data'].
-     *
-     * @param $obj         Override object (optional) (default=null)
-     *
-     * @return The object's data value
-     */
-    function selectPostProcess($obj = null)
-    {
-«EXPAND GetObjectReference-»
-
-        // serialize the datafields array in the 'data' field
-        $obj['datafields'] = unserialize($obj['data']);
-
-        // we return the data so that this method can be invoked 
-        // with explicit parameters and the return this result.
-        return $obj;
-    }
-«ENDDEFINE»
-
-«DEFINE BusinessStateFunction FOR insertPreProcess-»
+«DEFINE EventListenerMethod FOR PreInsert-»
     /**
      * Pre-Process the data prior to an insert.
-     * This method is used to serialize the array fields which are then stored in the 'data' field/column.
-     * For added consistency, we reuse the getDataFromInputPostProcess method.
      *
      * @param $obj         Override object (optional) (default=null)
      */
@@ -253,7 +188,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
     }
 «ENDDEFINE»
 
-«DEFINE BusinessStateFunction FOR insertPostProcess-»
+«DEFINE EventListenerMethod FOR PostInsert-»
     /**
      * Post-Process the data after an insert.
      *
@@ -267,11 +202,9 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
     }
 «ENDDEFINE»
 
-«DEFINE BusinessStateFunction FOR updatePreProcess-»
+«DEFINE EventListenerMethod FOR PreUpdate-»
     /**
      * Pre-Process the data prior to an update.
-     * This method is used to serialize the array fields which are then stored in the 'data' field/column.
-     * For added consistency, we reuse the getDataFromInputPostProcess method.
      *
      * @param $obj         Override object (optional) (default=null)
      */
@@ -283,7 +216,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
     }
 «ENDDEFINE»
 
-«DEFINE BusinessStateFunction FOR updatePostProcess-»
+«DEFINE EventListenerMethod FOR PostUpdate-»
     /**
      * Post-Process the data after an update.
      *
@@ -297,7 +230,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
     }
 «ENDDEFINE»
 
-«DEFINE BusinessStateFunction FOR deletePreProcess-»
+«DEFINE EventListenerMethod FOR PreDelete-»
     /**
      * Pre-Process the data prior a delete.
      *
@@ -311,7 +244,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
     }
 «ENDDEFINE»
 
-«DEFINE BusinessStateFunction FOR deletePostProcess-»
+«DEFINE EventListenerMethod FOR PostDelete-»
     /**
      * Post-Process the data after a delete.
      *
@@ -325,7 +258,10 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
     }
 «ENDDEFINE»
 
-«DEFINE BusinessStateFunction FOR validatePostProcess-»
+«DEFINE EventListenerMethod FOR PreValidate-»
+«ENDDEFINE»
+
+«DEFINE EventListenerMethod FOR PostValidate-»
     /**
      * Post-Process the basic object validation with class specific logic.
      *
@@ -339,7 +275,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
     }
 «ENDDEFINE»
 
-«DEFINE GetObjectReference FOR BusinessState-»
+«DEFINE GetObjectReference FOR EntityEventListener-»
         // in case we don't get any explicit data array assigned we default to the data the object acquired.
         // Typically this data is acquired from the getDataFromInput() method. 
         if (!$obj)
@@ -353,7 +289,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 
 
 
-«DEFINE ObjectArrayClassImpl(modulestudio::Module module) FOR persistence::Table-»
+«DEFINE ObjectArrayClassImpl(Application app) FOR Entity-»
     /**
      * Constructor, init everything to sane defaults and handle parameters.
      * It only needs to set the fields which are used to configure
@@ -375,7 +311,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
         parent::__construct();
 
         // set the tablename this object maps to
-        $this->_objType       = '«fullTableName()»';
+        $this->_objType       = '«fullEntityName()»';
 «REM»        $this->_objType       = '«dbName(module.prefix + '_' + dataSource().name)»';«ENDREM»
 
         // set the ID field for this object
@@ -389,7 +325,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 
 «EXPAND ObjectJoins-»
 
-«EXPAND ObjectPermissionFilters(module.modName())-»
+«EXPAND ObjectPermissionFilters(app.appName())-»
 
         // call initialization routine
         $this->_init($init, $where, $orderBy, $assocKey);
@@ -400,7 +336,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
      */
     function getAllowedSortingFields()
     {
-        return array(«EXPAND singleSortingField FOREACH columns SEPARATOR ','»«EXPAND standardSortingFields FOR this-»);
+        return array(«EXPAND singleSortingField FOREACH fields SEPARATOR ','»«EXPAND standardSortingFields FOR this-»);
     }
 
     /**
@@ -408,13 +344,13 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
      */
     function getDefaultSortingField()
     {
-        return '«columns.select(e|e.isLeading == true).get(0).name.dbName()»';
+        return '«fields.select(e|e.leading == true).get(0).name.dbName()»';
     }
 
     function selectPostProcess($all = null)
     {
         foreach ($this->_objData as $k => $data) {
-    «EXPAND sanitizeForOutput FOREACH columns»
+    «EXPAND sanitizeForOutput FOREACH fields»
             $this->_objData[$k] = $data;
         }
     }
@@ -422,31 +358,34 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 «EXPAND BehaviorCommon::ClassToString(baseClassName(true))-»
 «ENDDEFINE»
 
-«DEFINE singleSortingField FOR persistence::TableColumn»
-«LET columnTable.incoming.select(e|dbName(e.source.name + "id") == dbName(name)) AS joins-»
+«DEFINE singleSortingField FOR EntityField»
+«LET entity.incoming.select(e|dbName(e.source.name + "id") == dbName(name)) AS joins-»
 «IF joins.size > 0-»
-                     '«joins.get(0).source.name.dbName()»_«joins.get(0).source.columns.select(e|e.isLeading == true).get(0).name.dbName()»'«""-»
+                     '«joins.get(0).source.name.dbName()»_«joins.get(0).source.fields.select(e|e.leading == true).get(0).name.dbName()»'«""-»
 «ELSE-»
                      '«name.dbName()»'«""-»
 «ENDIF-»
 «ENDLET-»«ENDDEFINE»
 
-«DEFINE standardSortingFields FOR persistence::Table»
+«DEFINE standardSortingFields FOR Entity»
 «REM»will be filled by Advices«ENDREM»
 «ENDDEFINE»
 
-«DEFINE sanitizeForOutput FOR persistence::TableColumn-»
+«DEFINE sanitizeForOutput FOR EntityField-»
         $data['«dbName(name)»'] = ((isset($data['«dbName(name)»']) && !empty($data['«dbName(name)»'])) ? DataUtil::formatForDisplay($data['«dbName(name)»']) : '');
 «ENDDEFINE»
 
-«DEFINE sanitizeForOutput FOR persistence::TextField-»
+«DEFINE sanitizeForOutput FOR StringField-»
         $data['«dbName(name)»'] = ((isset($data['«dbName(name)»']) && !empty($data['«dbName(name)»'])) ? DataUtil::formatForDisplayHTML($data['«dbName(name)»']) : '');
 «ENDDEFINE»
 
-«DEFINE sanitizeForOutput FOR persistence::BooleanField-»
+«DEFINE sanitizeForOutput FOR BooleanField-»
         $data['«dbName(name)»'] = (bool) $data['«dbName(name)»'];
 «ENDDEFINE»
 
-«DEFINE sanitizeForOutput FOR persistence::BlobField-»
+«DEFINE sanitizeForOutput FOR BlobField-»
 «ENDDEFINE»
 
+«DEFINE sanitizeForOutput FOR ClobField-»
+        $data['«dbName(name)»'] = ((isset($data['«dbName(name)»']) && !empty($data['«dbName(name)»'])) ? DataUtil::formatForDisplayHTML($data['«dbName(name)»']) : '');
+«ENDDEFINE»

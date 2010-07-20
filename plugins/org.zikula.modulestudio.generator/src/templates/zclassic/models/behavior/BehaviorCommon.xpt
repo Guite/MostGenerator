@@ -1,17 +1,17 @@
-«IMPORT behavior»
+«IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 
-«DEFINE ClassToString(String className) FOR persistence::Table-»
+«DEFINE ClassToString(String className) FOR Entity-»
     /**
      * Interceptor being called if an object is used within a string context.
      * 
      * @return string
      */
     public function __toString() {
-        $string  = 'Instance of the class "«moduleName(className)»' . "\n";
-        $string .= 'Managed table: «moduleName(name)»' . "\n";
+        $string  = 'Instance of the class "«applicationName(className)»' . "\n";
+        $string .= 'Managed table: «applicationName(name)»' . "\n";
         $string .= 'Table fields:' . "\n";
-«FOREACH columns AS col-»
+«FOREACH fields AS col-»
         $string .= '        «moduleName(col.name)»' . "\n";
 «ENDFOREACH-»
         $string .= "\n";

@@ -1,0 +1,441 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+
+«REM»Entry point for Form handler classes«ENDREM»
+«DEFINE Root FOR Application-»
+    «EXPAND Root(this) FOREACH controllers.controllers.actions.typeSelect(EditAction)-»
+«IF needsConfig()-»
+«FILE "lib/" + appName() + "/Form/Handler/Admin/Config.php"»
+«EXPAND FileHelper::phpFileHeader(this)-»
+
+class «appName()»_Form_Handler_Admin_Config extends Form_Handler
+{
+    function initialize(&$view)
+    {
+        if (!SecurityUtil::checkPermission('«appName()»::', '::', ACCESS_ADMIN)) {
+            return $view->registerError(LogUtil::registerPermissionError());
+        }
+
+        // assign all module vars
+        $view->assign('config', $this->getVars());
+
+        return true;
+    }
+
+
+    function handleCommand(&$view, &$args)
+    {
+
+        if ($args['commandName'] == 'save') {
+            if (!$view->isValid()) {
+                return false;
+            }
+
+            $data = $view->getValues();
+
+            // update all module vars
+            if (!ModUtil::setVars('«appName()»', $data['config'])) {
+                return $view->setErrorMsg(__('Error! Failed to set configuration variables.', $dom));
+            }
+
+            LogUtil::registerStatus(__('Done! Module configuration updated.', $dom));
+            ModUtil::callHooks('module', 'updateconfig', '«appName()»', array('module' => '«appName()»'));
+        }
+        else if ($args['commandName'] == 'cancel') {
+        }
+
+        $url = ModUtil::url('«appName()»', 'admin', 'config');
+        return $view->redirect($url);
+    }
+}
+«ENDFILE»
+
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE Root(Application app) FOR Action-»
+    «EXPAND Root(app, controller, 'edit') FOREACH app.models.entities-»
+«ENDDEFINE»
+
+
+«DEFINE FormCreate(String appName, Controller controller, String actionName) FOR Action-»
+    // Create new Form reference
+    $view = FormUtil::newForm('«applicationName(appName)»');
+
+«LET moduleName(appName + "_Form_Handler_" + dbName(controller.name).toFirstUpper() + actionName.toFirstUpper()) AS controllerPraefix-»
+
+    // Execute form using supplied template and page event handler
+    return $view->execute('«controllerPraefix».tpl', new «controllerPraefix»());
+«ENDLET-»
+«ENDDEFINE»
+
+
+«REM»Entry point for Form handler classes«ENDREM»
+«DEFINE Root(Application app, Controller controller, String actionName) FOR Entity-»
+«LET dbName(controller.name).toFirstUpper() AS controllerName-»
+«FILE "lib/" + app.appName() + "/Form/Handler/" + appName(controllerName) + "/" + appName(name).toFirstUpper() + "/" + appName(actionName).toFirstUpper() + ".php"»
+«EXPAND FileHelper::phpFileHeader(app)-»
+«EXPAND FormHandler(app, controller, actionName)-»
+«ENDFILE»
+«ENDLET-»
+«ENDDEFINE»
+
+
+«DEFINE FormHandler(Application app, Controller controller, String actionName) FOR Entity-»
+«LET app.appName() AS appName-»
+«LET dbName(controller.name) AS controllerName-»
+/**
+ * This handler class handles the page events of the Form called by the «applicationName(appName + "_" + controllerName + "_" + actionName)»() function.
+ * It aims on the «appName(name)» object type.
+ *
+ * Member variables in a form handler object are persisted accross different page requests. This means
+ * a member variable $this->X can be set on one request and on the next request it will still contain
+ * the same value.
+ *
+ * A form handler will be notified of various events that happens during it's life-cycle.
+ * When a specific event occurs then the corresponding event handler (class method) will be executed. Handlers
+ * are named exactly like their events - this is how the framework knows which methods to call.
+ *
+ * The list of events is:
+ *
+ * - <b>initialize</b>: this event fires before any of the events for the plugins and can be used to setup
+ *   the form handler. The event handler typically takes care of reading URL variables, access control
+ *   and reading of data from the database.
+ *
+ * - <b>handleCommand</b>: this event is fired by various plugins on the page. Typically it is done by the
+ *   Form_Plugin_Button plugin to signal that the user activated a button.
+ *
+ * @package Form
+ * @subpackage Base
+ * @author       «app.author»
+ */
+class «applicationName(appName.toFirstUpper() + "_Form_Handler_" + controllerName.toFirstUpper() + "_" + name.toFirstUpper() + "_" + actionName.toFirstUpper())» extends Form_Handler
+{
+    // store «appName(name)» ID in (persistent) member variable
+    var $«idField()»;
+    // create or edit
+    var $mode;
+    // gettext domain
+    var $dom;
+
+    /**
+     * Initialize form handler
+     *
+     * This method takes care of all necessary initialisation of our data and form states
+     *
+     * @return bool False in case of initialization errors, otherwise true
+     * @author       «app.author»
+     */
+    function initialize(&$view)
+    {
+        $this->dom = ZLanguage::getModuleDomain('«appName»');
+        $dom = $this->dom;
+«EXPAND initialize(app, controller, actionName, appName, controllerName)-»
+    }
+
+
+    /**
+     * Command event handler
+     *
+     * This event handler is called when a command is issued by the user. Commands are typically something
+     * that originates from a {@link Form_Plugin_Button} plugin. The passed args contains different properties
+     * depending on the command source, but you should at least find a <var>$args['commandName']</var>
+     * value indicating the name of the command. The command name is normally specified by the plugin
+     * that initiated the command.
+     * @see Form_Plugin_Button
+     * @see Form_Plugin_ImageButton
+     * @author       «app.author»
+     */
+    function handleCommand(&$view, &$args)
+    {
+        $dom = $this->dom;
+«EXPAND handleCommand(app, controller, actionName, appName, controllerName)-»
+    }
+}
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+
+«DEFINE initialize(Application app, Controller controller, String actionName, String appName, String controllerName) FOR Entity-»
+        // retrieve the ID of the object we wish to edit
+        // default to 0 (which is a numeric id but an invalid value)
+        // no provided id means that we want to create a new object
+        $this->«idField()» = (int) FormUtil::getPassedValue('«idField()»', 0, 'GET');
+
+        $objectType = '«applicationName(name)»';
+«EXPAND ProcHelper::loadObjectClass(modName, false)-»
+
+        $this->mode = 'create';
+        // if «idField()» is not 0, we wish to edit an existing «applicationName(name)»
+        if($this->«idField()») {
+            $this->mode = 'edit';
+
+            if (!SecurityUtil::checkPermission('«appName»:«capitalName(name)»:', '::', ACCESS_EDIT)) {
+                // set an error message and return false
+                return $view->registerError(LogUtil::registerPermissionError());
+            }
+
+«EXPAND ControllerHelper::instantiateObject("DBObject::GET_FROM_DB", "this->" + idField())-»
+
+«EXPAND ControllerHelper::getObjectFromSource("D", idField(), "this->" + idField())-»
+            if (!is_array($objectData) || !isset($objectData['«idField()»']) || !is_numeric($objectData['«idField()»'])) {
+                return $view->setErrorMsg(__('No such «formattedName(name)» found.', $dom));
+            }
+
+            // try to guarantee that only one person at a time can be editing this «applicationName(name)»
+            $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display', array('ot' => $objectType, '«idField()»' => $this->«idField()»));
+            ModUtil::apiFunc('PageLock', 'user', 'pageLock',
+                                 array('lockName' => "«capitalName(modName)»«capitalName(name)»{$this->«idField()»}",
+                                       'returnUrl' => $returnUrl));
+        }
+        else {
+            if (!SecurityUtil::checkPermission('«appName»:«capitalName(name)»:', '::', ACCESS_ADD)) {
+                return $view->registerError(LogUtil::registerPermissionError());
+            }
+
+«IF fields.typeSelect(DateField).size > 0-»
+            $todayDate = date('Y-m-d');
+«ENDIF-»
+«IF fields.typeSelect(TimestampField).size > 0-»
+            $thisTime = date('Y-m-d H:i:s');
+«ENDIF-»
+
+            $objectData = Array(«EXPAND FieldAssignment FOREACH fields.reject(e|e.primaryKey) SEPARATOR ','»);
+        }
+
+«FOREACH fields.typeSelect(DateField) AS dateField-»
+        if ($objectData['«dateField.name.dbName()»'] == '1900-01-01 00:00:00') {
+            $objectData['«dateField.name.dbName()»'] = null;
+        }
+«ENDFOREACH-»
+
+        // assign data to template
+        $view->assign($objectData)->assign('mode', $this->mode);
+
+        // everything okay, no initialization errors occured
+        return true;
+«ENDDEFINE»
+
+
+«DEFINE FieldAssignment FOR EntityField»
+                '«dbName(name)»' => «EXPAND FieldDefaultData»«ENDDEFINE»
+
+«DEFINE FieldDefaultData FOR EntityField-»
+//TODO: Undefined TableColumn
+«ENDDEFINE»
+
+«DEFINE FieldDefaultData FOR StringField»'«defaultValue»'«ENDDEFINE»
+«DEFINE FieldDefaultData FOR ClobField»'«defaultValue»'«ENDDEFINE»
+«DEFINE FieldDefaultData FOR BlobField»'«REM»nothing for now«ENDREM»'«ENDDEFINE»
+
+«DEFINE FieldDefaultData FOR DateField»«IF mandatory == true»«IF defaultValue.length > 0»«defaultValue»«ELSE»$todayDate«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR TimestampField»«IF mandatory == true»«IF defaultValue.length > 0»«defaultValue»«ELSE»$thisTime«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR BooleanField»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF»«ENDDEFINE»
+
+«DEFINE FieldDefaultData FOR IntegerField-»
+«LET entity.incoming.select(e|e.source.idField() == name) AS joins-»
+«IF joins.size > 0-»
+«FOREACH joins AS join-»(int) FormUtil::getPassedValue('«join.source.name.dbName()»id', 0, 'GET')«ENDFOREACH-»
+«ELSE-»
+«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
+«ENDIF-»«ENDLET-»«ENDDEFINE»
+
+«DEFINE FieldDefaultData FOR FloatField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR DecimalField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF»«ENDDEFINE»
+
+
+«DEFINE handleCommand(Application app, Controller controller, String actionName, String appName, String controllerName) FOR Entity-»
+        // return url for redirecting
+        $returnUrl = null;
+
+        if ($args['commandName'] != 'delete' && $args['commandName'] != 'cancel') {
+            // do forms validation including checking all validators on the page to validate their input
+            if (!$view->isValid()) {
+                return false;
+            }
+        }
+
+        $objectType = '«applicationName(name)»';
+«EXPAND ControllerHelper::loadObjectClass(appName, false)-»
+
+        // instantiate the class we just loaded
+        // it will be appropriately initialized but contain no data.
+        $«applicationName(name)» = new $class();
+
+        if ($args['commandName'] == 'create') {
+            // event handling if user clicks on create
+
+            «EXPAND FetchInputDataStart(applicationName(name))-»
+            «EXPAND FetchInputDataEnd(applicationName(name))-»
+
+            // save «applicationName(name)»
+            $«applicationName(name)»->save();
+
+            $this->«idField()» = $«applicationName(name)»->getID();
+            if ($this->«idField()» === false) {
+                return LogUtil::registerError(__('Error! Creation attempt failed.', $dom));
+            }
+
+            LogUtil::registerStatus(__('Done! «formattedNameCapitalized(name)» created.', $dom));
+
+            // redirect to the detail page of the newly created «applicationName(name)»
+            $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
+                                                             array('ot' => $objectType,
+                                                                   '«idField()»' => $this->«idField()»));
+        }
+        elseif ($args['commandName'] == 'update') {
+            // event handling if user clicks on update
+
+            «EXPAND FetchInputDataStart(applicationName(name))-»
+
+            // add persisted primary key to fetched values
+            $«applicationName(name)»Data['«idField()»'] = $this->«idField()»;
+
+            «EXPAND FetchInputDataEnd(applicationName(name))-»
+
+            // save «applicationName(name)»
+            $updateResult = $«applicationName(name)»->save();
+
+            if ($updateResult === false) {
+                return LogUtil::registerError(__('Error! Update attempt failed.', $dom));
+            }
+
+            LogUtil::registerStatus(__('Done! «formattedNameCapitalized(name)» updated.', $dom));
+
+            // redirect to the detail page of the treated «applicationName(name)»
+            $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
+                                                             array('ot' => $objectType,
+                                                                   '«idField()»' => $this->«idField()»));
+        }
+        elseif ($args['commandName'] == 'delete') {
+            // event handling if user clicks on delete
+
+            // Note: No need to check validation when deleting
+
+            if (!SecurityUtil::checkPermission('«appName»:«capitalName(name)»:', '::', ACCESS_DELETE)) {
+                return $view->registerError(LogUtil::registerPermissionError());
+            }
+
+            «EXPAND FetchInputDataStart(applicationName(name))-»
+
+            // add persisted primary key to fetched values
+            $«applicationName(name)»Data['«idField()»'] = $this->«idField()»;
+
+            «EXPAND FetchInputDataEnd(applicationName(name))-»
+
+            // delete «applicationName(name)»
+            if ($«applicationName(name)»->delete() === false) {
+                return LogUtil::registerError(__('Error! Deletion attempt failed.', $dom));
+            }
+
+            LogUtil::registerStatus(__('Done! «formattedNameCapitalized(name)» deleted.', $dom));
+
+            // redirect to the list of «applicationName(nameMultiple)»
+            $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'view',
+                                                                 array('ot' => $objectType));
+        }
+        else if ($args['commandName'] == 'cancel') {
+            // event handling if user clicks on cancel
+
+            if ($this->mode == 'edit') {
+                // redirect to the detail page of the treated «applicationName(name)»
+                $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
+                                                                 array('ot' => $objectType,
+                                                                       '«idField()»' => $this->«idField()»));
+            }
+            else {
+                // redirect to the list of «applicationName(nameMultiple)»
+                $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'view',
+                                                                     array('ot' => $objectType));
+            }
+        }
+
+
+        if ($returnUrl != null) {
+            if ($this->mode == 'edit') {
+                ModUtil::apiFunc('PageLock', 'user', 'releaseLock',
+                                 array('lockName' => "«capitalName(appName)»«capitalName(name)»{$this->«idField()»}"));
+            }
+
+            return $view->redirect($returnUrl);
+        }
+
+        // We should in principle not end here at all, since the above command handlers should
+        // match all possible commands, but we return "ok" (true) for all cases.
+        // You could also return $view->setErrorMsg('Unexpected command')
+        return true;
+«ENDDEFINE»
+
+
+«DEFINE FetchInputDataStart(String obj) FOR Entity-»
+            // fetch posted data input values as an associative array
+            $«obj»Data = $view->getValues();
+«ENDDEFINE»
+«DEFINE FetchInputDataEnd(String obj) FOR Entity-»
+«REM»«FOREACH columns AS field-»
+«LET entity.relations.select(e|e.target.name == name && e.source.idField() == field.name) AS joins-»
+«IF joins.size > 0-»
+«FOREACH joins AS join-»
+            $«obj»Data['«join.source.name.dbName()»id'] = (int) FormUtil::getPassedValue('«join.source.name.dbName()»id', 0, 'POST');
+«ENDFOREACH-»
+«ENDIF-»
+«ENDLET-»
+«ENDFOREACH-»«ENDREM»
+
+            // usually one would use $«obj»->getDataFromInput() to get the data, this is the way DBObject works
+            // but since we want also use Form we simply assign the fetched data and call the post process functionality here
+            $«obj»->setData($«obj»Data);
+            $«obj»->getDataFromInputPostProcess();
+«ENDDEFINE»
+
+
+
+
+
+
+
+«DEFINE DBObject_to_integrate FOR Application-»
+
+/**
+ * This function processes a form submitted from the
+ * «appName()»_admin_preferences function.
+ *
+ * @author       «author»
+ */
+function «appName()»_adminform_preferences()
+{
+    «REM»EXPAND PermissionCheck-«ENDREM»
+
+    // ensure that the submit button (rather than cancel) was pressed
+    if (!FormUtil::getPassedValue('submit'))
+    {
+        return System::redirect(ModUtil::url('«appName()»', 'admin', 'config'));
+    }
+
+    // retrieve the associative preferences array
+    $prefs = FormUtil::getPassedValue('preferences', null, 'POST');
+
+    // now for each preference entry, set the appropriate module variable
+«IF models.variables.vars.typeSelect(BoolVar).size > 0-»
+    // for booleans we use the convention (int)(boolean) to ensure that set values get cast to a 0/1 value
+«ENDIF-»
+«FOREACH models.variables.vars AS modvar-»
+    ModUtil::setVar('«appName()»', '«applicationName(modvar.name)»',    «EXPAND GetVarForPrefPrefix FOR modvar»$prefs['«applicationName(modvar.name)»']);
+«ENDFOREACH-»
+
+    // redirect back to to main admin page
+    return System::redirect(ModUtil::url('«appName()»', 'admin', 'config'));
+}
+
+
+«ENDDEFINE»
+
+«DEFINE GetVarForPrefPrefix FOR Variable»«ENDDEFINE»
+«DEFINE GetVarForPrefPrefix FOR IntVar»(int)«ENDDEFINE»
+«DEFINE GetVarForPrefPrefix FOR BoolVar»(int)(boolean)«ENDDEFINE»
+
+«ENDIF-»
+
+«ENDDEFINE»

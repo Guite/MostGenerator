@@ -1,4 +1,4 @@
-«IMPORT behavior»
+«IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 
 «DEFINE Function(String src, String dest) FOR ArithmeticOperation-»

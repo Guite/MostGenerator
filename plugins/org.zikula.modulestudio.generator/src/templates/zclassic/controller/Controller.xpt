@@ -1,0 +1,204 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::UtilsBO»
+
+«REM»start point for the Controller creation«ENDREM»
+«DEFINE Root FOR Application»
+    «EXPAND Root(this) FOREACH controllers.controllers-»
+    «FILE "Util.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND CommonFunctions-»«ENDFILE»
+«ENDDEFINE»
+
+«DEFINE CommonFunctions FOR Application-»
+class «appName()»_Util
+{
+    /**
+     * returns an array of all allowed object types in «appName()»
+     */
+    public static function getObjectTypes()
+    {
+        $allowedObjectTypes = array();
+«FOREACH models.entities AS entity-»
+        $allowedObjectTypes[] = '«applicationName(entity.name)»';
+«ENDFOREACH-»
+        return $allowedObjectTypes;
+    }
+
+    /**
+     * utility method for managing view templates
+     */
+    public static function processViewTemplate(&$view, $type, $objectType, $func, $args=array())
+    {
+        $template = DataUtil::formatForOS('«appName()»_' . $type . '_' . $objectType . '_' . $func);
+        $tpl = FormUtil::getPassedValue('tpl', isset($args['tpl']) ? $args['tpl'] : '');
+        if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.tpl')) {
+            $template .= '_' . DataUtil::formatForOS($tpl);
+        }
+        $template .= '.tpl';
+
+        $raw = FormUtil::getPassedValue('raw', (isset($args['raw']) && is_bool($args['raw'])) ? $args['raw'] : false);
+        if ($raw == true) {
+            // standalone output
+            $view->display($template);
+            return true;
+        }
+
+        // normal output
+        return $view->fetch($template);
+    }
+}
+«ENDDEFINE»
+
+«REM»creates a file for every Controller instance«ENDREM»
+«DEFINE Root(Application app) FOR Controller-»
+    «FILE "lib/" + app.appName() + "/Controller/" + dbName(name).toFirstUpper() + ".php"»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ControllerImpl(app)»«ENDFILE»
+    «FILE "lib/" + app.appName() + "/Api/" + dbName(name).toFirstUpper() + ".php"»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ControllerApiImpl(app)»«ENDFILE»
+«ENDDEFINE»
+
+«REM»file structure implementation«ENDREM»
+«DEFINE ControllerImpl(Application app) FOR Controller-»
+
+/**
+ * This is the «name» controller class providing navigation and interaction functionality
+ *
+ * @author       «app.author»
+ */
+class «module.appName()»_Controller_«dbName(name).toFirstUpper()» extends Zikula_Controller
+{
+«IF metaType == AjaxController-»
+    public function _postSetup() 
+    { 
+        // no need for a view so override it. 
+    } 
+«ELSE-»
+«EXPAND ControllerHelper::ControllerPostInitialize(true)-»
+«ENDIF-»
+
+«EXPAND Root(app) FOREACH actions-»
+«IF app.needsConfig() && metaType == AdminController-»
+
+    /*
+     * This function takes care of the module configuration.
+     *
+     * @return string Output
+     */
+    public function config()
+    {
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_ADMIN));
+
+        // Create new Form reference
+        $view = FormUtil::newForm('«app.appName()»');
+
+        // Execute form using supplied template and page event handler
+        return $view->execute('«app.appName()»_admin_config.tpl', new «app.appName()»_Admin_Config());
+    }
+
+«ENDIF-»
+}
+«ENDDEFINE»
+
+
+
+«DEFINE Root(Application app) FOR Action-»
+
+    /**
+«EXPAND ActionDoc(app)-»
+     */
+    public function «dbName(name)»($args)
+    {
+«EXPAND ActionImpl(app)-»
+    }
+«ENDDEFINE»
+
+«DEFINE ActionDoc(Application app) FOR Action-»
+«IF metaType == MainAction-»
+     * This method is the default function, and is called whenever the
+     * module's «applicationName(controller.name)» area is called without defining arguments.
+«ELSEIF metaType == ViewAction-»
+     * This method provides a generic item list overview.
+«ELSEIF metaType == DisplayAction-»
+     * This method provides a generic item detail view.
+«ELSEIF metaType == EditAction-»
+     * This method provides a generic handling of all edit requests.
+«ELSEIF metaType == CustomAction-»
+     * This is a custom method. Documentation for this will be improved in later versions.
+«ENDIF-»
+     *
+     * @params       TODO
+«IF metaType == ViewAction || metaType == DisplayAction || metaType == EditAction || metaType == DeleteAction-»
+     * @param        ot             string    treated object type
+«IF metaType == DeleteAction-»
+     * @param        id             int       ID of the entry
+     * @param        confirmation   boolean   Confirm the deletion, else a confirmation page is displayed
+«ENDIF-»
+«IF metaType == ViewAction-»
+     * @param        sort           string    sorting field
+     * @param        sdir           string    sorting direction
+     * @param        pos            int       current pager position
+     * @param        num            int       amount of entries to display
+«ENDIF-»
+     * @param        tpl            string    name of alternative template (for alternative display options, feeds and xml output)
+     * @param        raw            boolean   optional way to display a template instead of fetching it (needed for standalone output)
+«ENDIF-»
+     * @return       Render output
+«ENDDEFINE»
+
+«DEFINE ActionImpl(Application app) FOR Action-»
+«EXPAND PermissionCheck-»
+«LET app.appName() AS appName-»
+«IF metaType != MainAction-»
+        // parameter specifying which type of objects we are treating
+        $objectType = FormUtil::getPassedValue('ot', '«app.getLeadObj()»', 'GET');
+
+        if (!in_array($objectType, «appName»_Util::getObjectTypes())) {
+            $objectType = '«app.getLeadObj()»';
+        }
+«ENDIF-»
+«REM»TODO: introduce polymorphism here«ENDREM»
+«IF metaType == MainAction-»«EXPAND Actions::Main::Impl(modName)-»
+«ELSEIF metaType == ViewAction-»«EXPAND Actions::View::Impl(modName)-»
+«ELSEIF metaType == DisplayAction-»«EXPAND Actions::Display::Impl(modName)-»
+«ELSEIF metaType == EditAction-»«EXPAND Actions::Edit::Impl(modName)-»
+«ELSEIF metaType == DeleteAction-»«EXPAND Actions::Delete::Impl(modName)-»
+«ELSEIF metaType == CustomAction-»«EXPAND Actions::Custom::Impl(modName)-»
+«ENDIF-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE PermissionCheck FOR Action-»
+«REM»will be filled by Advices«ENDREM»
+«ENDDEFINE»
+
+
+
+«DEFINE ControllerApiImpl(Application app) FOR Controller-»
+/**
+ * This is the «name» api helper class.
+ */
+class «app.appName()»_API_«dbName(name).toFirstUpper()» extends Zikula_Api
+{
+    /**
+     * get available «name» panel links
+     *
+     * @return       array      array of admin links
+     */
+    public function getlinks()
+    {
+        $links = array();
+
+«FOREACH app.models.entities AS entity-»
+        if (SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_READ)) {
+            $links[] = array('url' => ModUtil::url('«app.appName()»', '«dbName(name)»', 'view', array('ot' => '«moduleName(entity.name)»')),
+                             'text' => $this->__('«formattedNameCapitalized(entity.nameMultiple)»'));
+        }
+«ENDFOREACH-»
+«IF metaType == AdminController && app.needsConfig()-»
+        if (SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_ADMIN)) {
+            $links[] = array('url' => ModUtil::url('«app.appName()»', 'admin', 'config'), 'text' => $this->__('Configuration'));
+        }
+«ENDIF-»
+        return $links;
+    }
+}
+«ENDDEFINE»
+
