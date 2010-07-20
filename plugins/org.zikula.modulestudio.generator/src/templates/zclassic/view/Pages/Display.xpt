@@ -23,7 +23,7 @@
 
 «LET outgoing.typeSelect(OneToManyRelationship) AS refedElems-»
 «IF refedElems.size > 0-»
-<div class="«modName.dbName()»RightBox">
+<div class="«appName.dbName()»RightBox">
 «EXPAND DisplaySubsets(appName, controllerName, this) FOREACH refedElems.target-»
 </div>
 «ENDIF-»
@@ -84,7 +84,7 @@
 «ENDIF-»
 «ENDLET-»
 
-{include file="«modName»_«procName»_footer.tpl"}
+{include file="«modName»_«controllerName»_footer.tpl"}
 «ENDFILE»
 «ENDLET-»
 «ENDLET-»
