@@ -1,0 +1,251 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+
+«DEFINE Root FOR Application-»
+    «EXPAND Root(this) FOREACH controllers.controllers.actions.typeSelect(EditAction)-»
+«ENDDEFINE»
+
+«REM»Entry point for Form templates«ENDREM»
+«DEFINE Root(Application app) FOR Action-»
+    «EXPAND Root(app.appName(), controller, 'edit') FOREACH app.models.entities-»
+«ENDDEFINE»
+
+
+«REM»Entry point for Form templates«ENDREM»
+«DEFINE Root(String appName, Controller controller, String actionName) FOR Entity-»
+«LET dbName(controller.name) AS controllerName-»
+«FILE "templates/" + applicationName(appName + "_" + controllerName + "_" + name + "_" + actionName) + ".tpl"-»
+«EXPAND FormTemplate(appName, controller, actionName)-»
+«ENDFILE»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE FormTemplate(String appName, Controller controller, String actionName) FOR Entity-»
+«LET dbName(controller.name) AS controllerName-»
+«LET dbName(name) AS entityName-»
+{* purpose of this template: build the Form to «applicationName(actionName)» an instance of «applicationName(name)» *}
+
+{include file="«appName»_«controllerName»_header.tpl"}
+
+{if $mode eq "edit"}
+    {gt text='Edit «formattedName(name)»' assign="templateTitle"}
+«IF controller.metaType == AdminController-»
+    {assign var="adminpageicon" value="edit.gif"}
+«ENDIF-»
+{elseif $mode eq "create"}
+    {gt text='Create «formattedName(name)»' assign="templateTitle"}
+«IF controller.metaType == AdminController-»
+    {assign var="adminpageicon" value="filenew.gif"}
+«ENDIF-»
+{else}
+    {gt text='Edit «formattedName(name)»' assign="templateTitle"}
+«IF controller.metaType == AdminController-»
+    {assign var="adminpageicon" value="edit.gif"}«REM»TODO«ENDREM»
+«ENDIF-»
+{/if}
+
+«IF controller.metaType == AdminController-»
+<div class="z-admincontainer">
+<div class="z-adminpageicon">{img modname="core" src=$adminpageicon set="icons/large" alt=$templateTitle}</div>
+«ELSE-»
+<div class="z-frontendcontainer">
+«ENDIF-»
+
+{pagesetvar name="title" value=$templateTitle}
+<h2>{$templateTitle}</h2>
+<br />
+{form cssClass="z-form"}
+«REM»
+{form enctype="multipart/form-data"}
+cssClass="myClass"
+    $encodingHtml = (array_key_exists('enctype', $params) ? " enctype=\"$params[enctype]\"" : '');
+    $action = htmlspecialchars($_SERVER['REQUEST_URI']);
+
+    $view->postRender();
+
+    $out  =  "<form id=\"FormForm\" {$classString}action=\"$action\" method=\"post\"{$encodingHtml}>";
+«ENDREM»«""-»
+
+    {* add validation summary and a <div> element for styling the form *}
+    {«dbName(appName)»FormFrame}
+    {*formvalidationsummary*}«REM»CSS class summary: 'validationSummary z-errormsg'«ENDREM»
+«REM»{formerrormessage id=error}«ENDREM»«""-»
+
+    {formsetinitialfocus inputId="«dbName(fields.get(1).name)»"}
+«REM»
+  {formsetinitialfocus inputId=PluginId doSelect=true} <-- for dropdown lists (performs input.select())
+«ENDREM»«""-»
+
+    <fieldset>
+        <legend>{gt text='Content'}</legend>
+«FOREACH fields.reject(e|e.primaryKey) AS field-»
+        <div class="z-formrow">
+            {formlabel for="«dbName(field.name)»" __text='«formattedNameCapitalized(field.name)»'«IF field.mandatory» mandatorysym="1"«ENDIF»}
+«REM» visible=false html=1 cssClass="myClass" FormStyledPlugin«ENDREM»«""-»
+            «EXPAND FormField FOR field»«""-»
+        </div>
+«ENDFOREACH-»
+    </fieldset>
+«IF usesStandardFields == true-»
+{if $mode ne "create"}
+    {include file="«appName»_«controllerName»_include_metadata_edit.tpl"}
+{/if}
+«ENDIF-»
+«REM»TODO: check if needed«ENDREM»«""-»
+{*
+    <fieldset>
+        <legend>{gt text='Hooks'}</legend>
+        {if $mode eq "edit"}
+            {modcallhooks hookobject="item" hookaction="modify" module="«appName»" hookid="«dbName(name)»`$«idField()»`"}
+        {elseif $mode eq "create"}
+            {modcallhooks hookobject="item" hookaction="new" module="«appName»"}
+        {else}«REM»TODO«ENDREM»
+            {modcallhooks hookobject="item" hookaction="modify" module="«appName»" hookid="«dbName(name)»`$«idField()»`"}
+        {/if}
+    </fieldset>
+*}
+    {gt text='Really delete this «formattedName(name)»?' assign="deleteConfirmMsg"}
+
+    <div class="z-formbuttons">
+    {if $mode eq "edit"}
+        {formbutton commandName="update" __text='Update «formattedName(name)»'}
+        {formbutton commandName="delete" __text='Delete «formattedName(name)»' confirmMessage=$deleteConfirmMsg}
+    {elseif $mode eq "create"}
+        {formbutton commandName="create" __text='Create «formattedName(name)»'}
+    {else}
+        {formbutton commandName="update«REM»TODO«ENDREM»" __text='OK'}
+    {/if}
+        {formbutton commandName="cancel" __text='Cancel'}
+    </div>
+  {/«dbName(appName)»FormFrame}
+{/form}
+
+«IF controller.metaType == AdminController-»
+</div>
+«ELSE-»
+</div>
+«ENDIF-»
+
+{include file="«appName»_«controllerName»_footer.tpl"}
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+
+
+«DEFINE FormField FOR EntityField-»
+{* TODO: Undefined EntityField *}
+«ENDDEFINE»
+
+
+«DEFINE FormField FOR StringField-»
+            {formtextinput id="«dbName(name)»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «formattedName(name)» of the «formattedName(entity.name)»' textMode="singleline" maxLength=«length»}
+«REM» visible=false    cssClass="myClass" FormStyledPlugin (width="80%", width="30em")«ENDREM»«""-»
+«ENDDEFINE»
+
+«REM»TODO: textMode="password" for password input fields«ENDREM»
+
+«DEFINE FormField FOR ClobField-»
+            {formtextinput id="«dbName(name)»" mandatory=«mandatory» __title='Input the «formattedName(name)» of the «formattedName(entity.name)»' textMode="multiline" rows="8" cols="50"}
+«REM»
+    var $group;                     // group name for this input
+                                    // used to locate data in the render (when databased)
+                                    // and to restrict which plugins to do validation on (to be implemented).
+
+    var $size;                      // size of HTML input (number of characters)
+
+    // indicates if the input is empty
+    function bool isEmpty();
+«ENDREM»«""-»
+«ENDDEFINE»
+«DEFINE FormField FOR DateField-»«REM»class="date"«ENDREM»
+            {if $mode == "edit"}
+                {formdateinput id="«dbName(name)»" mandatory=«mandatory» __title='Input the «formattedName(name)» of the «formattedName(entity.name)»' useSelectionMode=true}
+            {else}
+                {formdateinput id="«dbName(name)»" mandatory=«mandatory» __title='Input the «formattedName(name)» of the «formattedName(entity.name)»' useSelectionMode=true defaultValue="today"}
+            {/if}
+«REM» FormTextInput     defaults: maxLength = 12; width = '8em';«ENDREM»«""-»
+«ENDDEFINE»
+«DEFINE FormField FOR TimestampField-»
+            {if $mode == "edit"}
+                {formdateinput id="«dbName(name)»" mandatory=«mandatory» __title='Input the «formattedName(name)» of the «formattedName(entity.name)»' includeTime=true}
+            {else}
+                {formdateinput id="«dbName(name)»" mandatory=«mandatory» __title='Input the «formattedName(name)» of the «formattedName(entity.name)»' includeTime=true defaultValue="now"}
+            {/if}
+«REM» FormTextInput     defaults: maxLength = 18; width = '10em';«ENDREM»«""-»
+«ENDDEFINE»
+«DEFINE FormField FOR BooleanField-»«REM»class="cbx"«ENDREM»
+            {formcheckbox id="«dbName(name)»" readOnly=«readonly» __title='«formattedName(name)» ?'}
+«REM» visible=false FormStyledPlugin«ENDREM»«""-»
+«REM»
+    var $group;                 // group name for this input
+                                // used to locate data in the render (when databased)
+                                // and to restrict which plugins to do validation on (to be implemented).
+«ENDREM»«""-»
+«ENDDEFINE»
+«DEFINE FormField FOR IntegerField-»
+«LET entity.incoming.select(e|dbName(e.source.name + "id") == dbName(name)) AS pointingRelations-»
+«IF pointingRelations.size > 0-»
+«LET pointingRelations.get(0) AS pointingRelation-»
+«LET pointingRelation.source AS joiningTable-»
+«REM»Join-Selector«ENDREM»«""-»
+            {formdropdownrelationlist id="«joiningTable.idField()»" mandatory=«IF mandatory-»true«ELSE»false«ENDIF-» module="«entity.container.application.appName()»" objecttype="«applicationName(joiningTable.name)»" idField="«joiningTable.idField()»" displayField="«joiningTable.fields.select(e|e.leading == true).get(0).name.dbName()»" orderby="«joiningTable.fields.select(e|e.leading == true).get(0).name.dbName()»"«IF pointingRelation.metaType == OneToManyRelationship-» selectionMode="multiple"«ENDIF-»}«IF mandatory-»&nbsp;*«ENDIF»
+«ENDLET-»
+«ENDLET-»
+«ELSE-»
+            {formintinput id="«dbName(name)»" mandatory=«mandatory» __title='Input the «formattedName(name)» of the «formattedName(entity.name)»' maxLength=«length»}
+«REM» minValue=123 maxValue=123 FormTextInput
+defaults: maxLength = 20; width = '6em';«ENDREM»«""-»
+«ENDIF-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE FormField FOR FloatField-»
+            {formfloatinput id="«dbName(name)»" mandatory=«mandatory» __title='Input the «formattedName(name)» of the «formattedName(entity.name)»'}
+«REM» maxLength=«length+3+precision» minValue=123 maxValue=123 FormTextInput
+defaults: maxLength = 30; width = '6em';«ENDREM»«""-»
+«ENDDEFINE»
+
+«DEFINE FormField FOR DecimalField-»
+            {formfloatinput id="«dbName(name)»" mandatory=«mandatory» __title='Input the «formattedName(name)» of the «formattedName(entity.name)»'}
+«ENDDEFINE»
+
+
+«DEFINE FormField FOR BlobField-»
+            {formtextinput id="«dbName(name)»" readOnly=«readonly» __title='Input the «formattedName(name)» of the «formattedName(entity.name)»'}
+«REM»TODO«ENDREM»«""-»
+«ENDDEFINE»
+
+«DEFINE FormField FOR EmailField-»
+            {formemailinput id="«dbName(name)»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «formattedName(name)» of the «formattedName(entity.name)»' textMode="singleline" maxLength=«length»}
+«REM» visible=false  cssClass="myClass" FormStyledPlugin (width="80%", width="30em")«ENDREM»«""-»
+«ENDDEFINE»
+
+«DEFINE FormField FOR UrlField-»
+            {formurlinput id="«dbName(name)»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «formattedName(name)» of the «formattedName(entity.name)»' textMode="singleline" maxLength=«length»}
+«REM» visible=false  cssClass="myClass" FormStyledPlugin (width="80%", width="30em")«ENDREM»«""-»
+«ENDDEFINE»
+
+«DEFINE FormField FOR UploadField-»«REM»class="upload"«ENDREM»
+            {formuploadinput id="«dbName(name)»" mandatory=«mandatory» readOnly=«readonly»}
+«REM» visible=false FormStyledPlugin]«END-REM»
+    var $group;                     // group name for this input
+                                    // used to locate data in the render (when databased)
+                                    // and to restrict which plugins to do validation on (to be implemented).
+                default: null
+«ENDREM»
+«ENDDEFINE»
+
+«REM»TODO: UserField, ArrayField, ObjectField, EnumField, etc.«ENDREM»
+
+«DEFINE OtherFieldsTODO FOR Object-»
+«REM»
+formdropdownlist
+
+formradiobutton
+
+plus new stuff
+
+«ENDREM»
+«ENDDEFINE»
+

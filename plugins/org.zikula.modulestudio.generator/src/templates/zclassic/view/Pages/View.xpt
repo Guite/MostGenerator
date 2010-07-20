@@ -1,0 +1,252 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+
+«REM»
+listType:
+	0 = div and ul
+	1 = div and ol
+	2 = div and dl
+	3 = div and table
+«ENDREM»
+«DEFINE Impl(String appName, Controller controller, Integer listType) FOR Entity»
+«LET dbName(controller.name) AS controllerName-»
+«LET moduleName(name) AS objName-»
+«FILE "templates/" + appName + "_" + controllerName + "_" + objName + "_view.tpl"-»
+{* purpose of this template: «formattedName(nameMultiple)» view view in «controllerName» area *}
+
+{include file="«appName»_«controllerName»_header.tpl"}
+
+«IF controller.metaType == AdminController-»
+<div class="z-admincontainer">
+«ELSE-»
+<div class="z-frontendcontainer">
+«ENDIF-»
+{gt text='«formattedNameCapitalized(name)» list' assign="templateTitle"}
+«IF controller.metaType == AdminController-»
+<div class="z-adminpageicon">{img modname="core" src="windowlist.gif" set="icons/large" alt=$templateTitle}</div>
+«ENDIF-»
+{pagesetvar name="title" value=$templateTitle}
+<h2>{$templateTitle}</h2>
+
+{securityutil_checkpermission_block component="«appName»::" instance=".*" level="ACCESS_ADD"}
+{gt text='Create «formattedName(name)»' assign="createTitle"}
+{gt text='Update «formattedName(name)»' assign="editTitle"}
+{gt text='Delete «formattedName(name)»' assign="deleteTitle"}
+«IF controller.hasActions('edit')-»
+<p>
+    <a href="{modurl modname="«appName»" type="«controllerName»" func="edit" ot="«objName»"}" title="{$createTitle}">
+        {img src="insert_table_row.gif" modname="core" set="icons/extrasmall" __alt='Create'}
+        {$createTitle}
+    </a>
+</p>
+«ENDIF»
+{/securityutil_checkpermission_block}
+
+«IF listType == 0-»
+<ul>
+«ELSEIF listType == 1-»
+<ol>
+«ELSEIF listType == 2-»
+<dl>
+«ELSEIF listType == 3-»
+«IF controller.metaType == AdminController-»
+<table class="z-admintable">
+«ELSE-»
+<table class="z-datatable">
+«ENDIF-»
+    <colgroup>
+«FOREACH fields.reject(e|e.primaryKey) AS field -»
+        <col id="c«field.name.dbName()»" />
+«ENDFOREACH-»
+        <col id="coloptions" />
+    </colgroup>
+    <thead>
+    <tr>
+«FOREACH fields.reject(e|e.primaryKey) AS field -»
+        <th id="h«field.name.dbName()»" scope="col" align="«EXPAND Alignment FOR field-»" valign="middle">
+«LET incoming.select(e|dbName(e.source.name + "id") == dbName(field.name)) AS joins-»
+«IF joins.size > 0-»
+«LET joins.get(0).source.fields.select(e|e.leading == true).get(0).name.dbName() AS fieldName-»
+«EXPAND HeaderSortingLink(appName, controllerName, objName, dbName(joins.get(0).source.name) + '_' + fieldName, joins.get(0).source.name) FOR field-»
+«ENDLET-»
+«ELSE-»
+«LET dbName(column.name) AS fieldName-»
+«EXPAND HeaderSortingLink(appName, controllerName, objName, fieldName, field.name) FOR field-»
+«ENDLET-»
+«ENDIF-»
+«ENDLET-»
+            </a>
+        </th>
+«ENDFOREACH-»
+        <th id="hoptions" scope="col" align="left" valign="middle">{gt text='Options'}</th>
+    </tr>
+    </thead>
+    <tbody>
+«ENDIF-»
+
+    {foreach from=$objectArray item="«objName»"}
+«IF listType < 2-»
+    <li><ul>
+«ELSEIF listType == 2-»
+    <dt>
+«ELSEIF listType == 3-»
+    <tr class="{cycle values="z-odd, z-even"}">
+«ENDIF-»
+«""-»
+«FOREACH fields.reject(e|e.primaryKey) AS field-»
+«IF listType < 2-»
+        <li>
+«ELSEIF listType == 2-»
+        <dd>
+«ELSEIF listType == 3-»
+        <td headers="h«field.name.dbName()»" align="«EXPAND Alignment FOR field-»" valign="top">
+«ENDIF-»
+«LET incoming.select(e|dbName(e.source.name + "id") == dbName(field.name)) AS joins-»
+«IF field.leading == true-»
+            {$«objName».«dbName(field.name)»|modcallhooks}
+«ELSEIF joins.size > 0-»
+            «FOREACH joins AS join SEPARATOR ', '»{$«objName».«join.source.name.dbName()»_«join.source.fields.select(e|e.leading == true).get(0).name.dbName()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH»
+«ELSE-»
+            «EXPAND DisplayColumnField(objName) FOR field-»
+«ENDIF-»
+«ENDLET-»
+«IF listType < 2-»
+        </li>
+«ELSEIF listType == 2-»
+        </dd>
+«ELSEIF listType == 3-»
+        </td>
+«ENDIF-»
+«ENDFOREACH-»
+«""-»
+«""-»
+«""-»
+«IF listType < 2-»
+        <li>
+«ELSEIF listType == 2-»
+        <dd>
+«ELSEIF listType == 3-»
+        <td headers="hoptions" align="right" valign="top" style="white-space: nowrap">
+«ENDIF-»
+«IF controller.hasActions('display')-»
+            <a href="{modurl modname="«appName»" type="«controllerName»" func="display" ot="«objName»" «idField()»=$«objName».«idField()»}">
+                {img src="demo.gif" modname="core" set="icons/extrasmall" __alt='Details' __title='Details'}
+            </a>
+«ENDIF-»            
+«IF controller.hasActions('edit')-»
+    {securityutil_checkpermission_block component="«appName»::" instance=".*" level="ACCESS_EDIT"}
+            <a href="{modurl modname="«appName»" type="«controllerName»" func="edit" ot="«objName»" «idField()»=$«objName».«idField()»}">
+                {img src="xedit.gif" modname="core" set="icons/extrasmall" __alt='Edit' __title='Edit'}
+            </a>
+    {/securityutil_checkpermission_block}
+«ENDIF-»
+«IF controller.hasActions('delete')-»
+    {securityutil_checkpermission_block component="«appName»::" instance=".*" level="ACCESS_DELETE"}
+            <a href="{modurl modname="«appName»" type="«controllerName»" func="delete" ot="«objName»" «idField()»=$«objName».«idField()»}">
+                {img src="14_layer_deletelayer.gif" modname="core" set="icons/extrasmall" __alt='Delete' __title='Delete'}
+            </a>
+    {/securityutil_checkpermission_block}
+«ENDIF-»
+«IF listType < 2-»
+        </li>
+«ELSEIF listType == 2-»
+        </dd>
+«ELSEIF listType == 3-»
+        </td>
+«ENDIF-»
+«""-»
+«""-»
+«IF listType < 2-»
+    </ul></li>
+«ELSEIF listType == 2-»
+    </dt>
+«ELSEIF listType == 3-»
+    </tr>
+«ENDIF-»
+    {foreachelse}
+«IF listType < 2-»
+        <li>
+«ELSEIF listType == 2-»
+        <dt>
+«ELSEIF listType == 3-»
+        <tr class="{cycle values="z-odd, z-even"}">
+          <td align="left" valign="top" colspan="«fields.size-1+1»">
+«ENDIF-»
+            {gt text='No «formattedName(nameMultiple)» found.'}
+«IF listType < 2-»
+        </li>
+«ELSEIF listType == 2-»
+        </dt>
+«ELSEIF listType == 3-»
+          </td>
+        </tr>
+«ENDIF-»
+    {/foreach}
+
+«IF listType == 0-»
+</ul>
+«ELSEIF listType == 1-»
+</ol>
+«ELSEIF listType == 2-»
+</dl>
+«ELSEIF listType == 3-»
+    </tbody>
+</table>
+«ENDIF-»
+
+{pager rowcount=$pager.numitems limit=$pager.itemsperpage}
+
+«IF controller.metaType == UserController-»
+{modurl modname="«appName»" func="view" ot="«objName»" startnum=$startnum assign="returnurl"}
+{modcallhooks hookobject="category" hookaction="display" module="«appName»«objName»" returnurl=$returnurl}
+</div>
+
+«ELSEIF controller.metaType == AdminController-»
+</div>
+«ELSE-»
+</div>
+«ENDIF-»
+
+{include file="«appName»_«controllerName»_footer.tpl"}
+«ENDFILE»
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE HeaderSortingLink(String appName, String controllerName, String objName, String fieldName, String label) FOR EntityField-»
+    {if $sort eq "«fieldName»"}
+            <a href="{modurl modname="«appName»" type="«controllerName»" func="view" ot="«objName»" sort="«fieldName»" sdir=$sdir}" style="font-style: italic">
+    {else}
+            <a href="{modurl modname="«appName»" type="«controllerName»" func="view" ot="«objName»" sort="«fieldName»" sdir="asc"}">
+    {/if}
+                {gt text='«formattedNameCapitalized(label)»'}
+            </a>
+«ENDDEFINE»
+
+«DEFINE Alignment FOR EntityField»left«ENDDEFINE»
+«DEFINE Alignment FOR IntegerField»«IF entity.incoming.select(e|dbName(e.source.name + "id") == dbName(name)).size > 0-»left«ELSE»right«ENDIF»«ENDDEFINE»
+«DEFINE Alignment FOR DecimalField»right«ENDDEFINE»
+«DEFINE Alignment FOR FloatField»right«ENDDEFINE»
+«DEFINE Alignment FOR BooleanField»center«ENDDEFINE»
+
+
+
+«DEFINE DisplayColumnField(String objName) FOR EntityField-»
+            {$«objName».«dbName(name)»}
+«ENDDEFINE»
+
+«DEFINE DisplayColumnField(String objName) FOR DateField-»
+            {$«objName».«dbName(name)»|dateformat:"datebrief"}
+«ENDDEFINE»
+«DEFINE DisplayColumnField(String objName) FOR TimestampField-»
+            {$«objName».«dbName(name)»|dateformat:"datetimebrief"}
+«ENDDEFINE»
+«DEFINE DisplayColumnField(String objName) FOR BooleanField-»
+            {$«objName».«dbName(name)»|yesno:true}
+«ENDDEFINE»
+«DEFINE DisplayColumnField(String objName) FOR DecimalField-»
+            {$«objName».«dbName(name)»|formatnumber}
+«ENDDEFINE»
+«DEFINE DisplayColumnField(String objName) FOR FloatField-»
+            {$«objName».«dbName(name)»|formatnumber}
+«ENDDEFINE»

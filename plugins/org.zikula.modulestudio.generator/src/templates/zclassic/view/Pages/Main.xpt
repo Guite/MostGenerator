@@ -1,0 +1,12 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+
+«DEFINE Impl(String appName, Controller controller) FOR Entity»
+«LET dbName(controller.name) AS controllerName-»
+«FILE "templates/" + appName + "_" + controllerName + "_main.tpl"-»
+{* purpose of this template: «formattedName(nameMultiple)» main view in «controllerName» area *}
+
+{modfunc modname="«appName»" type="«controllerName»" func="view"}
+«ENDFILE»
+«ENDLET-»
+«ENDDEFINE»

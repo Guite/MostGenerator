@@ -1,23 +1,22 @@
 «IMPORT modulestudio»
-«IMPORT processing»
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 
-«DEFINE Root FOR Module-»
-«IF processingContainer.processors.processorStates.typeSelect(EditProcessorState).size > 0-»
+«DEFINE Root FOR modulestudio-»
+«IF controllers.controllers.actions.typeSelect(EditAction).size > 0-»
 «LET "templates/plugins/" AS pluginDir-»
-«FILE 'lib/' + modName().toFirstUpper() + '/Form/Plugin/FormFrame.php'-»«EXPAND FileHelper::phpFileHeader(this)-»
+«FILE 'lib/' + appName() + '/Form/Plugin/FormFrame.php'-»«EXPAND FileHelper::phpFileHeader(this)-»
 «EXPAND FormFrameBlockClass-»
 «ENDFILE»
-«FILE pluginDir + "block." + dbName(modName()) + "FormFrame.php"-»«EXPAND FileHelper::phpFileHeader(this)-»
+«FILE pluginDir + "block." + dbName(appName()) + "FormFrame.php"-»«EXPAND FileHelper::phpFileHeader(this)-»
 «EXPAND FormFrameBlock-»
 «ENDFILE»
 «ENDLET-»
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE FormFrameBlockClass FOR Module-»
-class «modName().toFirstUpper()»_Form_Plugin_FormFrame extends Form_Plugin
+«DEFINE FormFrameBlockClass FOR Application-»
+class «appName()»_Form_Plugin_FormFrame extends Form_Plugin
 {
     var $useTabs;
     var $cssClass = 'tabs';
@@ -39,7 +38,7 @@ class «modName().toFirstUpper()»_Form_Plugin_FormFrame extends Form_Plugin
     function renderBegin(&$view)
     {
         $tabClass = $this->useTabs ? ' '.$this->cssClass : '';
-        return "<div class=\"«dbName(modName())»Form{$tabClass}\">\n";
+        return "<div class=\"«dbName(appName())»Form{$tabClass}\">\n";
     }
 
     // This is called by the framework after the content of the block is rendered
@@ -50,9 +49,9 @@ class «modName().toFirstUpper()»_Form_Plugin_FormFrame extends Form_Plugin
 }
 «ENDDEFINE»
 
-«DEFINE FormFrameBlock FOR Module-»
+«DEFINE FormFrameBlock FOR Application-»
 /**
- * The «dbName(modName())»FormFrame plugin adds styling <div> elements and a validation summary.
+ * The «dbName(appName())»FormFrame plugin adds styling <div> elements and a validation summary.
  *
  * Available parameters:
  *   - assign:   If set, the results are assigned to the corresponding variable instead of printed out
@@ -62,7 +61,7 @@ class «modName().toFirstUpper()»_Form_Plugin_FormFrame extends Form_Plugin
  * @param        object      &$view     Reference to the Smarty object
  * @return       string      The output of the plugin
  */
-function smarty_block_«dbName(modName())»FormFrame($params, $content, &$view)
+function smarty_block_«dbName(appName())»FormFrame($params, $content, &$view)
 {
     // As with all Forms plugins, we must remember to register our plugin.
     // In this case we also register a validation summary so we don't have to
@@ -70,7 +69,7 @@ function smarty_block_«dbName(modName())»FormFrame($params, $content, &$view)
 
     // We need to concatenate the output of boths plugins.
     $result = $view->registerPlugin('Form_Plugin_ValidationSummary', $params);
-    $result .= $view->registerBlock('«modName().toFirstUpper()»_Form_Plugin_FormFrame', $params, $content);
+    $result .= $view->registerBlock('«appName()»_Form_Plugin_FormFrame', $params, $content);
 
     return $result;
 }
