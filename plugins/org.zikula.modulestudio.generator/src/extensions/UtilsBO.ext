@@ -1,38 +1,33 @@
 import modulestudio;
-import persistence;
-import behavior;
+
 extension extensions::Utils;
 
 /*
  * BusinessObject class naming extensions
  */
 
-cached String classPraefix(Module module)
-	: module.modName().toFirstUpper() + '_DBObject_';//"DB";
+cached String classPraefix(Application app)
+	: app.modName().toFirstUpper() + '_DBObject_';//"DB";
 
 cached String classSuffix()
 	: ".php";//".class.php";
 
 
-cached String moduleClassName(Module module, Boolean appendArray)
-	: classPraefix(module) + module.modName().toFirstUpper() + ((appendArray == true) ? "Array" : "");
+cached String appClassName(Application app, Boolean appendArray)
+	: classPraefix(app) + app.appName().toFirstUpper() + ((appendArray == true) ? "Array" : "");
 
-cached String moduleClassFileName(Module module, Boolean appendArray)
-	: moduleClassName(module, appendArray).replaceAll('_', '/') + classSuffix();
+cached String appClassFileName(Application app, Boolean appendArray)
+	: appClassName(module, appendArray).replaceAll('_', '/') + classSuffix();
 
-cached String implClassName(Table obj, Boolean appendArray)
-	: classPraefix(obj.tableContainer.persistenceModule) + moduleName(obj.name).toFirstUpper() + ((appendArray == true) ? "Array" : "");
+cached String implClassName(Entity obj, Boolean appendArray)
+	: classPraefix(obj.container.application) + applicationName(obj.name).toFirstUpper() + ((appendArray == true) ? "Array" : "");
 
-cached String implClassFileName(Table obj, Boolean appendArray)
+cached String implClassFileName(Entity obj, Boolean appendArray)
 	: implClassName(obj, appendArray).replaceAll('_', '/') + classSuffix();
 
-cached String baseClassName(Table obj, Boolean appendArray)
-	: classPraefix(obj.tableContainer.persistenceModule) + 'Base_' + moduleName(obj.name).toFirstUpper() + ((appendArray == true) ? "Array" : "");
+cached String baseClassName(Entity obj, Boolean appendArray)
+	: classPraefix(obj.container.application) + 'Base_' + applicationName(obj.name).toFirstUpper() + ((appendArray == true) ? "Array" : "");
 
-cached String baseClassFileName(Table obj, Boolean appendArray)
+cached String baseClassFileName(Entity obj, Boolean appendArray)
 	: baseClassName(obj, appendArray).replaceAll('_', '/') + classSuffix();
 
-
-
-cached Table dataSource(BusinessObject container) :
-	container.behaviorContainer.behaviorModule.persistenceContainer.tables.select(e|e.name == container.name);

@@ -1,25 +1,24 @@
 import modulestudio;
-import persistence;
-import processing;
 
 
-cached String constantName(ProcessorState this) :
-	"STATE_" + name.toUpperCase();	
+/* not used yet, just for testing */
+cached String constantName(Action this) :
+	"ACTION_" + name.toUpperCase();
  
-cached String constantName(Transition this) :
-	"EVENT_" + name.toUpperCase();	
+cached String constantName(ActionEvent this) :
+	"EVENT_" + name.toUpperCase();
 
 
 /*
  * naming extensions
  */
-cached String modName(Module this) :
-	moduleName(name);
+cached String appName(Application this) :
+	applicationName(name).toFirstUpper();
 
-cached String moduleName(String s)
+cached String applicationName(String s)
 	: JAVA extensions.Utils.moduleName(java.lang.String);
 cached String capitalName(String s)
-	: moduleName(s).toFirstUpper();
+	: applicationName(s).toFirstUpper();
 cached String dbName(String s)
 	: JAVA extensions.Utils.dbName(java.lang.String);
 cached String formattedName(String s)
@@ -32,23 +31,23 @@ cached boolean needsConfig(Module this) :
 	persistenceContainer.modvarContainer.modvars.size > 0;
 
 
-cached String fullTableName(Table this) :
-	dbName(tableContainer.persistenceModule.prefix + '_' + name);
+cached String fullEntityName(Entity this) :
+	dbName(container.application.prefix + '_' + name);
 
-cached String getLeadObj(Module module)
-	: moduleName(module.persistenceContainer.tables.select(e|e.isLeading == true).get(0).name);
+cached String getLeadObj(Application application)
+	: applicationName(application.models.entities.select(e|e.leading == true).get(0).name);
 
-cached String idField(Table table)
-	: dbName(table.columns.select(e|e.isPrimaryKey == true).get(0).name);
+cached String idField(Entity entity)
+	: dbName(entity.fields.select(e|e.primaryKey == true).get(0).name);
 
-cached boolean hasPStates(Processor processor, String type) :
+cached boolean hasActions(Controller controller, String type) :
 	switch (type) {
-	   case 'main'     : processor.processorStates.typeSelect(MainProcessorState).size > 0 
-	   case 'view'     : processor.processorStates.typeSelect(ViewProcessorState).size > 0 
-	   case 'display'  : processor.processorStates.typeSelect(DisplayProcessorState).size > 0 
-	   case 'edit'     : processor.processorStates.typeSelect(EditProcessorState).size > 0
-	   case 'delete'   : processor.processorStates.typeSelect(DeleteProcessorState).size > 0
-	   case 'custom'   : processor.processorStates.typeSelect(CustomProcessorState).size > 0 
+	   case 'main'     : controller.actions.typeSelect(MainAction).size > 0 
+	   case 'view'     : controller.actions.typeSelect(ViewAction).size > 0 
+	   case 'display'  : controller.actions.typeSelect(DisplayAction).size > 0 
+	   case 'edit'     : controller.actions.typeSelect(EditAction).size > 0
+	   case 'delete'   : controller.actions.typeSelect(DeleteAction).size > 0
+	   case 'custom'   : controller.actions.typeSelect(CustomAction).size > 0 
 	   default : false 
 	};
 

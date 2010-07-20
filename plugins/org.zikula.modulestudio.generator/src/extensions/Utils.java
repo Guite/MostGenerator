@@ -15,7 +15,7 @@ public class Utils {
 	 * @params    String    given input string
 	 * @return              string formatted for source code usage
 	 */
-	public static String moduleName(String string) {
+	public static String applicationName(String string) {
 		return replaceSpecialChars(string);
 	}
 
@@ -77,7 +77,10 @@ public class Utils {
 	 * @return              string without special characters
 	 */
 	public static String replaceSpecialChars(String string) {
-		return string.replace("Ã¤", "ae").replace("Ã¶", "oe").replace("Ã¼", "ue").replace("ÃŸ", "ss").replaceAll("[\\W]", "");
+		return string.replace("Ä", "Ae").replace("ä", "ae")
+					 .replace("Ö", "Oe").replace("ö", "oe")
+					 .replace("Ü", "Ue").replace("ü", "ue")
+					 .replace("ß", "ss").replaceAll("[\\W]", "");
 	}
 
 
