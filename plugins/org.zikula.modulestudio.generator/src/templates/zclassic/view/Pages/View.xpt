@@ -55,18 +55,18 @@ listType:
 <table class="z-datatable">
 «ENDIF-»
     <colgroup>
-«FOREACH fields.reject(e|e.primaryKey) AS field -»
+«FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field -»
         <col id="c«field.name.dbName()»" />
 «ENDFOREACH-»
         <col id="coloptions" />
     </colgroup>
     <thead>
     <tr>
-«FOREACH fields.reject(e|e.primaryKey) AS field -»
+«FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field -»
         <th id="h«field.name.dbName()»" scope="col" align="«EXPAND Alignment FOR field-»" valign="middle">
 «LET incoming.select(e|dbName(e.source.name + "id") == dbName(field.name)) AS joins-»
 «IF joins.size > 0-»
-«LET joins.get(0).source.fields.select(e|e.leading == true).get(0).name.dbName() AS fieldName-»
+«LET joins.get(0).source.fields.typeSelect(DerivedField).select(e|e.leading == true).get(0).name.dbName() AS fieldName-»
 «EXPAND HeaderSortingLink(appName, controllerName, objName, dbName(joins.get(0).source.name) + '_' + fieldName, joins.get(0).source.name) FOR field-»
 «ENDLET-»
 «ELSE-»
@@ -93,7 +93,7 @@ listType:
     <tr class="{cycle values="z-odd, z-even"}">
 «ENDIF-»
 «""-»
-«FOREACH fields.reject(e|e.primaryKey) AS field-»
+«FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field-»
 «IF listType < 2-»
         <li>
 «ELSEIF listType == 2-»
@@ -105,7 +105,7 @@ listType:
 «IF field.leading == true-»
             {$«objName».«dbName(field.name)»|modcallhooks}
 «ELSEIF joins.size > 0-»
-            «FOREACH joins AS join SEPARATOR ', '»{$«objName».«join.source.name.dbName()»_«join.source.fields.select(e|e.leading == true).get(0).name.dbName()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH»
+            «FOREACH joins AS join SEPARATOR ', '»{$«objName».«join.source.name.dbName()»_«join.source.fields.typeSelect(DerivedField).select(e|e.leading == true).get(0).name.dbName()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH»
 «ELSE-»
             «EXPAND DisplayColumnField(objName) FOR field-»
 «ENDIF-»

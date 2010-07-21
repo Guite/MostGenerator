@@ -78,7 +78,7 @@ cssClass="myClass"
 
     <fieldset>
         <legend>{gt text='Content'}</legend>
-«FOREACH fields.reject(e|e.primaryKey) AS field-»
+«FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field-»
         <div class="z-formrow">
             {formlabel for="«dbName(field.name)»" __text='«formattedNameCapitalized(field.name)»'«IF field.mandatory» mandatorysym="1"«ENDIF»}
 «REM» visible=false html=1 cssClass="myClass" FormStyledPlugin«ENDREM»«""-»
@@ -189,7 +189,7 @@ cssClass="myClass"
 «LET pointingRelations.get(0) AS pointingRelation-»
 «LET pointingRelation.source AS joiningTable-»
 «REM»Join-Selector«ENDREM»«""-»
-            {formdropdownrelationlist id="«joiningTable.idField()»" mandatory=«IF mandatory-»true«ELSE»false«ENDIF-» module="«entity.container.application.appName()»" objecttype="«applicationName(joiningTable.name)»" idField="«joiningTable.idField()»" displayField="«joiningTable.fields.select(e|e.leading == true).get(0).name.dbName()»" orderby="«joiningTable.fields.select(e|e.leading == true).get(0).name.dbName()»"«IF pointingRelation.metaType == OneToManyRelationship-» selectionMode="multiple"«ENDIF-»}«IF mandatory-»&nbsp;*«ENDIF»
+            {formdropdownrelationlist id="«joiningTable.idField()»" mandatory=«IF mandatory-»true«ELSE»false«ENDIF-» module="«entity.container.application.appName()»" objecttype="«applicationName(joiningTable.name)»" idField="«joiningTable.idField()»" displayField="«joiningTable.fields.typeSelect(DerivedField).select(e|e.leading == true).get(0).name.dbName()»" orderby="«joiningTable.fields.typeSelect(DerivedField).select(e|e.leading == true).get(0).name.dbName()»"«IF pointingRelation.metaType == OneToManyRelationship-» selectionMode="multiple"«ENDIF-»}«IF mandatory-»&nbsp;*«ENDIF»
 «ENDLET-»
 «ENDLET-»
 «ELSE-»

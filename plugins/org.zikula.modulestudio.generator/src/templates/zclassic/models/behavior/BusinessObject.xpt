@@ -116,11 +116,11 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 «ENDDEFINE»
 
 «DEFINE SelectJoinFieldTableNames(String exludedIdField) FOR Entity-»
-«EXPAND ArrayListEntry('') FOREACH fields.reject(e|e.name == exludedIdField || e.primaryKey) SEPARATOR ', '-»
+«EXPAND ArrayListEntry('') FOREACH fields.typeSelect(DerivedField).reject(e|e.name == exludedIdField || e.primaryKey) SEPARATOR ', '-»
 «ENDDEFINE»
 
 «DEFINE SelectJoinFieldObjNames(String exludedIdField) FOR Entity-»
-«EXPAND ArrayListEntry(dbName(name) + '_') FOREACH fields.reject(e|e.name == exludedIdField || e.primaryKey) SEPARATOR ', '-»
+«EXPAND ArrayListEntry(dbName(name) + '_') FOREACH fields.typeSelect(DerivedField).reject(e|e.name == exludedIdField || e.primaryKey) SEPARATOR ', '-»
 «ENDDEFINE»
 
 «DEFINE ArrayListEntry(String entryPrefix) FOR EntityField-»
@@ -344,7 +344,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
      */
     function getDefaultSortingField()
     {
-        return '«fields.select(e|e.leading == true).get(0).name.dbName()»';
+        return '«fields.typeSelect(DerivedField).select(e|e.leading == true).get(0).name.dbName()»';
     }
 
     function selectPostProcess($all = null)
@@ -361,7 +361,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 «DEFINE singleSortingField FOR EntityField»
 «LET entity.incoming.select(e|dbName(e.source.name + "id") == dbName(name)) AS joins-»
 «IF joins.size > 0-»
-                     '«joins.get(0).source.name.dbName()»_«joins.get(0).source.fields.select(e|e.leading == true).get(0).name.dbName()»'«""-»
+                     '«joins.get(0).source.name.dbName()»_«joins.get(0).source.fields.typeSelect(DerivedField).select(e|e.leading == true).get(0).name.dbName()»'«""-»
 «ELSE-»
                      '«name.dbName()»'«""-»
 «ENDIF-»

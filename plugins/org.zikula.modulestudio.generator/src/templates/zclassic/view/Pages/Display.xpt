@@ -16,7 +16,7 @@
 <div class="z-frontendcontainer">
 «ENDIF-»
 
-«LET dbName(fields.select(e|e.leading == true).get(0).name) AS titleField-»
+«LET dbName(fields.typeSelect(DerivedField).select(e|e.leading == true).get(0).name) AS titleField-»
 {pagesetvar name="title" value=$«objName».«titleField»}
 <h2>{$«objName».«titleField»|modcallhooks}</h2>
 «ENDLET-»
@@ -29,7 +29,7 @@
 «ENDIF-»
 
 <dl id="«appName»_body">
-«FOREACH fields.reject(e|e.leading || e.primaryKey) AS field-»
+«FOREACH fields.typeSelect(DerivedField).reject(e|e.leading || e.primaryKey) AS field-»
 «LET incoming.select(e|dbName(e.source.name + "id") == dbName(field.name)) AS joins-»
 «IF joins.size > 0-»
     <dt>{gt text='«formattedNameCapitalized(joins.get(0).source.name)»'}</dt>

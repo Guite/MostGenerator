@@ -46,7 +46,7 @@ function «appName()»_tables()
 
     // set the data dictionary for the table columns
 «EXPAND TextTypesMSSQL FOREACH entity.fields-»
-    $columnDef = array(«EXPAND FieldData FOREACH entity.fields SEPARATOR ','»);
+    $columnDef = array(«EXPAND FieldData FOREACH entity.fields.typeSelect(DerivedField) SEPARATOR ','»);
 
 «EXPAND ObjectExtensions FOR entity-»
 
@@ -87,11 +87,11 @@ function «appName()»_tables()
     }
 «ENDDEFINE»
 
-«DEFINE FieldData FOR EntityField»
+«DEFINE FieldData FOR DerivedField»
         '«dbName(name)»' => "«IF primaryKey == true»I NOTNULL AUTO PRIMARY«ELSE»«EXPAND TypeDef»«EXPAND TypeValue»«ENDIF»"«ENDDEFINE»
 
-«DEFINE TypeDef FOR EntityField-»
-//TODO: Undefined EntityField
+«DEFINE TypeDef FOR DerivedField-»
+//TODO: Undefined DerivedField
 «ENDDEFINE»
 «DEFINE TypeValue FOR DerivedField»«IF mandatory == true» NOTNULL«ENDIF»«REM»no default value for text and blob fields, breaks mysql strict mode«ENDREM»«IF metaType.name != "persistence::TextField" && metaType.name != "persistence::BlobField"» DEFAULT '«defaultValue»'«ENDIF»«ENDDEFINE»
 
