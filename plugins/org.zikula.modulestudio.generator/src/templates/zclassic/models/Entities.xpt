@@ -93,7 +93,7 @@ function «appName()»_tables()
 «DEFINE TypeDef FOR DerivedField-»
 //TODO: Undefined DerivedField
 «ENDDEFINE»
-«DEFINE TypeValue FOR DerivedField»«IF mandatory == true» NOTNULL«ENDIF»«REM»no default value for text and blob fields, breaks mysql strict mode«ENDREM»«IF metaType.name != "persistence::TextField" && metaType.name != "persistence::BlobField"» DEFAULT '«defaultValue»'«ENDIF»«ENDDEFINE»
+«DEFINE TypeValue FOR DerivedField»«IF mandatory == true» NOTNULL«ENDIF»«REM»no default value for text and blob fields, breaks mysql strict mode«ENDREM»«IF metaType != BlobField && metaType != ClobField» DEFAULT '«defaultValue»'«ENDIF»«ENDDEFINE»
 
 «DEFINE TypeDef FOR StringField»C(«IF length > 0 && length < 256»«length»«ELSE»255«ENDIF»)«ENDDEFINE»
 «DEFINE TypeDef FOR ClobField»$«dbName(name)»Type«ENDDEFINE»
