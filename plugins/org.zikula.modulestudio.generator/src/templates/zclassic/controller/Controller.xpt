@@ -63,7 +63,7 @@ class «appName()»_Util
  *
  * @author       «app.author»
  */
-class «module.appName()»_Controller_«dbName(name).toFirstUpper()» extends Zikula_Controller
+class «app.appName()»_Controller_«dbName(name).toFirstUpper()» extends Zikula_Controller
 {
 «IF metaType == AjaxController-»
     public function _postSetup() 
@@ -155,12 +155,12 @@ class «module.appName()»_Controller_«dbName(name).toFirstUpper()» extends Zi
         }
 «ENDIF-»
 «REM»TODO: introduce polymorphism here«ENDREM»
-«IF metaType == MainAction-»«EXPAND Actions::Main::Impl(modName)-»
-«ELSEIF metaType == ViewAction-»«EXPAND Actions::View::Impl(modName)-»
-«ELSEIF metaType == DisplayAction-»«EXPAND Actions::Display::Impl(modName)-»
-«ELSEIF metaType == EditAction-»«EXPAND Actions::Edit::Impl(modName)-»
-«ELSEIF metaType == DeleteAction-»«EXPAND Actions::Delete::Impl(modName)-»
-«ELSEIF metaType == CustomAction-»«EXPAND Actions::Custom::Impl(modName)-»
+«IF metaType == MainAction-»«EXPAND Actions::Main::Impl(appName)-»
+«ELSEIF metaType == ViewAction-»«EXPAND Actions::View::Impl(appName)-»
+«ELSEIF metaType == DisplayAction-»«EXPAND Actions::Display::Impl(appName)-»
+«ELSEIF metaType == EditAction-»«EXPAND Actions::Edit::Impl(appName)-»
+«ELSEIF metaType == DeleteAction-»«EXPAND Actions::Delete::Impl(appName)-»
+«ELSEIF metaType == CustomAction-»«EXPAND Actions::Custom::Impl(appName)-»
 «ENDIF-»
 «ENDLET-»
 «ENDDEFINE»
@@ -188,7 +188,7 @@ class «app.appName()»_API_«dbName(name).toFirstUpper()» extends Zikula_Api
 
 «FOREACH app.models.entities AS entity-»
         if (SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_READ)) {
-            $links[] = array('url' => ModUtil::url('«app.appName()»', '«dbName(name)»', 'view', array('ot' => '«moduleName(entity.name)»')),
+            $links[] = array('url' => ModUtil::url('«app.appName()»', '«dbName(name)»', 'view', array('ot' => '«applicationName(entity.name)»')),
                              'text' => $this->__('«formattedNameCapitalized(entity.nameMultiple)»'));
         }
 «ENDFOREACH-»

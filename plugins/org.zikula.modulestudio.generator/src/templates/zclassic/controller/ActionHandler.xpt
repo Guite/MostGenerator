@@ -63,7 +63,7 @@ class «appName()»_Form_Handler_Admin_Config extends Form_Handler
     // Create new Form reference
     $view = FormUtil::newForm('«applicationName(appName)»');
 
-«LET moduleName(appName + "_Form_Handler_" + dbName(controller.name).toFirstUpper() + actionName.toFirstUpper()) AS controllerPraefix-»
+«LET applicationName(appName + "_Form_Handler_" + dbName(controller.name).toFirstUpper() + actionName.toFirstUpper()) AS controllerPraefix-»
 
     // Execute form using supplied template and page event handler
     return $view->execute('«controllerPraefix».tpl', new «controllerPraefix»());
@@ -74,7 +74,7 @@ class «appName()»_Form_Handler_Admin_Config extends Form_Handler
 «REM»Entry point for Form handler classes«ENDREM»
 «DEFINE Root(Application app, Controller controller, String actionName) FOR Entity-»
 «LET dbName(controller.name).toFirstUpper() AS controllerName-»
-«FILE "lib/" + app.appName() + "/Form/Handler/" + appName(controllerName) + "/" + appName(name).toFirstUpper() + "/" + appName(actionName).toFirstUpper() + ".php"»
+«FILE "lib/" + app.appName() + "/Form/Handler/" + applicationName(controllerName) + "/" + applicationName(name).toFirstUpper() + "/" + applicationName(actionName).toFirstUpper() + ".php"»
 «EXPAND FileHelper::phpFileHeader(app)-»
 «EXPAND FormHandler(app, controller, actionName)-»
 «ENDFILE»
@@ -87,7 +87,7 @@ class «appName()»_Form_Handler_Admin_Config extends Form_Handler
 «LET dbName(controller.name) AS controllerName-»
 /**
  * This handler class handles the page events of the Form called by the «applicationName(appName + "_" + controllerName + "_" + actionName)»() function.
- * It aims on the «appName(name)» object type.
+ * It aims on the «applicationName(name)» object type.
  *
  * Member variables in a form handler object are persisted accross different page requests. This means
  * a member variable $this->X can be set on one request and on the next request it will still contain
@@ -112,7 +112,7 @@ class «appName()»_Form_Handler_Admin_Config extends Form_Handler
  */
 class «applicationName(appName.toFirstUpper() + "_Form_Handler_" + controllerName.toFirstUpper() + "_" + name.toFirstUpper() + "_" + actionName.toFirstUpper())» extends Form_Handler
 {
-    // store «appName(name)» ID in (persistent) member variable
+    // store «applicationName(name)» ID in (persistent) member variable
     var $«idField()»;
     // create or edit
     var $mode;
@@ -165,7 +165,7 @@ class «applicationName(appName.toFirstUpper() + "_Form_Handler_" + controllerNa
         $this->«idField()» = (int) FormUtil::getPassedValue('«idField()»', 0, 'GET');
 
         $objectType = '«applicationName(name)»';
-«EXPAND ProcHelper::loadObjectClass(modName, false)-»
+«EXPAND ControllerHelper::loadObjectClass(appName, false)-»
 
         $this->mode = 'create';
         // if «idField()» is not 0, we wish to edit an existing «applicationName(name)»
@@ -187,7 +187,7 @@ class «applicationName(appName.toFirstUpper() + "_Form_Handler_" + controllerNa
             // try to guarantee that only one person at a time can be editing this «applicationName(name)»
             $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display', array('ot' => $objectType, '«idField()»' => $this->«idField()»));
             ModUtil::apiFunc('PageLock', 'user', 'pageLock',
-                                 array('lockName' => "«capitalName(modName)»«capitalName(name)»{$this->«idField()»}",
+                                 array('lockName' => "«capitalName(appName)»«capitalName(name)»{$this->«idField()»}",
                                        'returnUrl' => $returnUrl));
         }
         else {

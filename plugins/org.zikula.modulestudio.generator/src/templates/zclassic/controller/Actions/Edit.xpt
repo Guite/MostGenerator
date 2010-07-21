@@ -10,5 +10,5 @@
         $handlerClass = '«appName.toFirstUpper()»_Form_Handler_«dbName(controller.name).toFirstUpper()»_' . ucfirst($objectType) . '_Edit';
 
         // execute form using supplied template and page event handler
-        return $view->execute('«modName»_«dbName(controller.name)»_' . $objectType . '_edit.tpl', new $handlerClass());
+        return $view->execute('«appName»_«dbName(controller.name)»_' . $objectType . '_edit.tpl', new $handlerClass());
 «ENDDEFINE»

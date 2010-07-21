@@ -7,7 +7,7 @@ extension extensions::Utils;
  */
 
 cached String classPraefix(Application app)
-	: app.modName().toFirstUpper() + '_DBObject_';//"DB";
+	: app.appName().toFirstUpper() + '_DBObject_';//"DB";
 
 cached String classSuffix()
 	: ".php";//".class.php";
@@ -17,7 +17,7 @@ cached String appClassName(Application app, Boolean appendArray)
 	: classPraefix(app) + app.appName().toFirstUpper() + ((appendArray == true) ? "Array" : "");
 
 cached String appClassFileName(Application app, Boolean appendArray)
-	: appClassName(module, appendArray).replaceAll('_', '/') + classSuffix();
+	: appClassName(app, appendArray).replaceAll('_', '/') + classSuffix();
 
 cached String implClassName(Entity obj, Boolean appendArray)
 	: classPraefix(obj.container.application) + applicationName(obj.name).toFirstUpper() + ((appendArray == true) ? "Array" : "");

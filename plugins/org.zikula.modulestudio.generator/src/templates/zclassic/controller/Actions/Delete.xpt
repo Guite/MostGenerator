@@ -1,7 +1,8 @@
 «IMPORT modulestudio»
+«IMPORT templates::zclassic::controller»
 «EXTENSION extensions::Utils»
 
-«DEFINE Impl(String appName) FOR Controller-»
+«DEFINE Impl(String appName) FOR Action-»
     «EXPAND ControllerHelper::loadObjectClass(appName, false)-»
     «EXPAND ControllerHelper::instantiateObject("", "")-»
         $idField = $object->getIDField();

@@ -16,7 +16,7 @@ cached String appName(Application this) :
 	applicationName(name).toFirstUpper();
 
 cached String applicationName(String s)
-	: JAVA extensions.Utils.moduleName(java.lang.String);
+	: JAVA extensions.Utils.applicationName(java.lang.String);
 cached String capitalName(String s)
 	: applicationName(s).toFirstUpper();
 cached String dbName(String s)
@@ -27,8 +27,8 @@ cached String formattedNameCapitalized(String s)
 	: JAVA extensions.Utils.formattedNameCapitalized(java.lang.String);
 
 
-cached boolean needsConfig(Module this) :
-	persistenceContainer.modvarContainer.modvars.size > 0;
+cached boolean needsConfig(Application this) :
+	models.variables.vars.size > 0;
 
 
 cached String fullEntityName(Entity this) :
@@ -38,7 +38,7 @@ cached String getLeadObj(Application application)
 	: applicationName(application.models.entities.select(e|e.leading == true).get(0).name);
 
 cached String idField(Entity entity)
-	: dbName(entity.fields.select(e|e.primaryKey == true).get(0).name);
+	: dbName(entity.fields.typeSelect(IntegerField).select(e|e.primaryKey == true).get(0).name);
 
 cached boolean hasActions(Controller controller, String type) :
 	switch (type) {

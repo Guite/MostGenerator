@@ -1,4 +1,7 @@
 «IMPORT modulestudio»
+«IMPORT templates::zclassic::models»
+«IMPORT templates::zclassic::controller»
+«IMPORT templates::zclassic::view»
 «IMPORT templates::zclassic::smallstuff»
 
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
@@ -11,40 +14,40 @@
     «info("Generating basic information")»
 	«EXPAND VersionFile::Root»
 
-	«REM»«pm.subTask("Persistence: Table definitions")»«ENDREM»
-    «info("Generating table definitions")»
+	«REM»«pm.subTask("Model: Entity definitions")»«ENDREM»
+    «info("Generating entity definitions")»
 	«EXPAND Entities::Root»
-	«REM»«pm.subTask("Persistence: Module initialisation")»«ENDREM»
-    «info("Generating module initialisation")»
+	«REM»«pm.subTask("Model: Application initialisation")»«ENDREM»
+    «info("Generating application initialisation")»
 	«EXPAND Init::Root»
 
-    «REM»«pm.subTask("Processing: Generic functionality")»«ENDREM»
-    «info("Generating generic processing functionality")»
-	«EXPAND Processor::Root»
-	«REM»«pm.subTask("Processing: Controller classes")»«ENDREM»
+    «REM»«pm.subTask("Controller: Controller classes")»«ENDREM»
     «info("Generating controller classes")»
 	«EXPAND Controller::Root»
-    «REM»«pm.subTask("Processing: Bootstrapping")»«ENDREM»
+	«REM»«pm.subTask("Controller: Action handler classes")»«ENDREM»
+    «info("Generating action handler classes")»
+	«EXPAND ActionHandler::Root»
+    «REM»«pm.subTask("Controller: Bootstrapping")»«ENDREM»
     «info("Generating bootstrapping")»
     «EXPAND Bootstrap::Root»
 
-	«REM»«pm.subTask("Behavior: Object classes")»«ENDREM»
+	«REM»«pm.subTask("Model: Object classes")»«ENDREM»
     «info("Generating object classes")»
-	«EXPAND BusinessObject::Root»
+	«EXPAND behavior::BusinessObject::Root»
 
-	«REM»«pm.subTask("Presentation: Rendering templates")»«ENDREM»
-    «info("Generating rendering templates")»
-	«EXPAND Renderer::Root»
-	«REM»«pm.subTask("Presentation: Form templates")»«ENDREM»
+	«REM»«pm.subTask("View: Rendering templates")»«ENDREM»
+    «info("Generating view templates")»
+	«EXPAND View::Root»
+	«REM»«pm.subTask("View: Form templates")»«ENDREM»
     «info("Generating form templates")»
 	«EXPAND Forms::Root»
-	«REM»«pm.subTask("Presentation: Module-specific plugins")»«ENDREM»
-    «info("Generating module-specific plugins")»
+	«REM»«pm.subTask("View: Module-specific plugins")»«ENDREM»
+    «info("Generating application-specific plugins")»
 	«EXPAND Plugins::Root»
-	«REM»«pm.subTask("Presentation: CSS definitions")»«ENDREM»
+	«REM»«pm.subTask("View: CSS definitions")»«ENDREM»
     «info("Generating css definitions")»
 	«EXPAND Styles::Root»
-    «REM»«pm.subTask("Presentation: Images")»«ENDREM»
+    «REM»«pm.subTask("View: Images")»«ENDREM»
     «info("Generating images")»
     «EXPAND Images::Root»
 

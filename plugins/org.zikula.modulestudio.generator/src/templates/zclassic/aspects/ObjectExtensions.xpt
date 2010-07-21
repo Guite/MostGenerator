@@ -1,7 +1,7 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 
-«AROUND templates::zclassic::persistence::Entities::ObjectExtensions FOR Entity-»
+«AROUND templates::zclassic::models::Entities::ObjectExtensions FOR Entity-»
     // DEBUG: object extension aspect starts
 
 «IF usesStandardFields == true-»
@@ -10,44 +10,44 @@
     ObjectUtil::addStandardFieldsToTableDataDefinition($columnDef);
 «ENDIF-»
 
-    $tables['«fullTableName(this)»_primary_key_column'] = '«idField(this)»';
+    $tables['«fullEntityName(this)»_primary_key_column'] = '«idField(this)»';
 «IF hasCategorization == true-»
     // enable categorization services
-    $tables['«fullTableName(this)»_db_extra_enable_categorization'] = true;
+    $tables['«fullEntityName(this)»_db_extra_enable_categorization'] = true;
 «ELSE-»
     // disable categorization services
-    $tables['«fullTableName(this)»_db_extra_enable_categorization'] = false;
+    $tables['«fullEntityName(this)»_db_extra_enable_categorization'] = false;
 «ENDIF-»
 
 «IF hasAttribution == true-»
     // enable attribution services
-    $tables['«fullTableName(this)»_db_extra_enable_attribution'] = true;
+    $tables['«fullEntityName(this)»_db_extra_enable_attribution'] = true;
 «ELSE-»
     // disable attribution services
-    $tables['«fullTableName(this)»_db_extra_enable_attribution'] = false;
+    $tables['«fullEntityName(this)»_db_extra_enable_attribution'] = false;
 «ENDIF-»
 
 «IF hasMetaData == true-»
     // enable meta data
-    $tables['«fullTableName(this)»_db_extra_enable_meta'] = true;
+    $tables['«fullEntityName(this)»_db_extra_enable_meta'] = true;
 «ELSE-»
     // disable meta data
-    $tables['«fullTableName(this)»_db_extra_enable_meta'] = false;
+    $tables['«fullEntityName(this)»_db_extra_enable_meta'] = false;
 «ENDIF-»
 
 «IF hasLogging == true-»
     // enable logging services
-    $tables['«fullTableName(this)»_db_extra_enable_logging'] = true;
+    $tables['«fullEntityName(this)»_db_extra_enable_logging'] = true;
 «ELSE-»
     // disable logging services
-    $tables['«fullTableName(this)»_db_extra_enable_logging'] = false;
+    $tables['«fullEntityName(this)»_db_extra_enable_logging'] = false;
 «ENDIF-»
 
     // DEBUG: object extension aspect ends
 «targetDef.proceed()»
 «ENDAROUND»
 
-«AROUND templates::zclassic::behavior::BusinessObject::standardSortingFields FOR Entity-»
+«AROUND templates::zclassic::models::behavior::BusinessObject::standardSortingFields FOR Entity-»
 «IF usesStandardFields == true-»,
                      'obj_status',
                      'cr_date',

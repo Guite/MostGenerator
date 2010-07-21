@@ -1,10 +1,11 @@
 «IMPORT modulestudio»
+«IMPORT templates::zclassic::controller»
 «EXTENSION extensions::Utils»
 
 «DEFINE Impl(String appName) FOR Action-»
 «IF controller.metaType == AdminController
 	&& (name == "config" || name == "modifyconfig" || name == "preferences")-»
-«EXPAND Controller::FormCreate(appName, controller, 'modify')-»
+«EXPAND ActionHandler::FormCreate(appName, controller, 'modify')-»
 «ELSE-»
         /** TODO: custom logic */
 «ENDIF-»
