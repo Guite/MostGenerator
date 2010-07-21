@@ -24,10 +24,10 @@ class «appName()»_Version extends Zikula_Version
         // permission schema
 «EXPAND PermissionSchema-»
 
-«IF otherModules.size > 0-»
+«IF referredApplications.size > 0-»
         // module dependencies
         $modversion['dependencies'] = array(
-«EXPAND AppDependency FOREACH otherModules SEPARATOR ','-»
+«EXPAND AppDependency FOREACH referredApplications SEPARATOR ','-»
         );
 «ENDIF-»
 
