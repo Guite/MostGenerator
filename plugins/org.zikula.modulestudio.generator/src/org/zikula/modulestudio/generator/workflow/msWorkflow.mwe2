@@ -36,10 +36,10 @@ var doValidation
 var targetDir
 
 // calculated from input vars
-var modelFile = "file://${modelPath}/${modelName}.msmodule"
+var modelFile = "file://${modelPath}/${modelName}.mostapp"
 // "platform:/resource/${model}"
 
-var enrichedModelFile = "file://${modelPath}/${modelName}_Enriched.msmodule"
+var enrichedModelFile = "file://${modelPath}/${modelName}_Enriched.mostapp"
 
 var inputSlot = "inputModel"
 var enrichedSlot = "newModel"

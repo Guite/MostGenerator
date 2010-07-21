@@ -10,8 +10,8 @@
 	<!-- call file reader workflow and provide required properties -->
 	<cartridge file="msWorkflow.mwe"
                cartridgeName="${cartridgeName}"
-			   modelFile="${examplePath}_models/${modelName}.msmodule"
-			   enrichedModelFile="${examplePath}_models/${modelName}_Enriched.msmodule"
+			   modelFile="${examplePath}_models/${modelName}.mostapp"
+			   enrichedModelFile="${examplePath}_models/${modelName}_Enriched.mostapp"
 			   srcGenPath="${examplePath}_output/${outputDir}/${cartridgeName}/"
 			   srcManPath="${examplePath}_output/${outputDir}/${cartridgeName}/src-man"
 			   apiRefPath="${examplePath}_output/${outputDir}/${cartridgeName}/phpxref">
