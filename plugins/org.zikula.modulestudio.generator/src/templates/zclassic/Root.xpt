@@ -1,8 +1,4 @@
 «IMPORT modulestudio»
-«IMPORT templates::zclassic::behavior»
-«IMPORT templates::zclassic::persistence»
-«IMPORT templates::zclassic::presentation»
-«IMPORT templates::zclassic::processing»
 «IMPORT templates::zclassic::smallstuff»
 
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
