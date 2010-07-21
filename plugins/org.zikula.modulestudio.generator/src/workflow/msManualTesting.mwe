@@ -5,7 +5,7 @@
     <property name="examplePath" value="/home/axel/projects/GuiteSVN/trunk/models/zikula" />
 -->
     <!-- which model ? -->
-    <property name="modelName" value="validationTest" />
+    <property name="modelName" value="ValidationTest" />
     <!-- where is it ? -->
     <property name="examplePath" value="/home/axel" />
     <!-- which generator ? -->
