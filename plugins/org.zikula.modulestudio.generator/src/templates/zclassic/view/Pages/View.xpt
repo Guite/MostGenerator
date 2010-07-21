@@ -10,7 +10,7 @@ listType:
 «ENDREM»
 «DEFINE Impl(String appName, Controller controller, Integer listType) FOR Entity»
 «LET dbName(controller.name) AS controllerName-»
-«LET moduleName(name) AS objName-»
+«LET applicationName(name) AS objName-»
 «FILE "templates/" + appName + "_" + controllerName + "_" + objName + "_view.tpl"-»
 {* purpose of this template: «formattedName(nameMultiple)» view view in «controllerName» area *}
 
@@ -70,7 +70,7 @@ listType:
 «EXPAND HeaderSortingLink(appName, controllerName, objName, dbName(joins.get(0).source.name) + '_' + fieldName, joins.get(0).source.name) FOR field-»
 «ENDLET-»
 «ELSE-»
-«LET dbName(column.name) AS fieldName-»
+«LET dbName(field.name) AS fieldName-»
 «EXPAND HeaderSortingLink(appName, controllerName, objName, fieldName, field.name) FOR field-»
 «ENDLET-»
 «ENDIF-»

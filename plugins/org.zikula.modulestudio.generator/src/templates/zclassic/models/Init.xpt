@@ -31,7 +31,7 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
 «ENDDEFINE»
 
 «DEFINE InteractiveInstall FOR Application-»
-«EXPAND templates::zclassic::processing::ProcHelper::ControllerPostInitialize(false)-»
+«EXPAND templates::zclassic::controller::ControllerHelper::ControllerPostInitialize(false)-»
 «EXPAND FuncInteractiveInit-»
 «IF needsConfig()»«EXPAND FuncInteractiveInitStep2»«ENDIF»
 «EXPAND FuncInteractiveInitStep3-»
@@ -73,11 +73,11 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
         // set up all our module vars with initial values
 «FOREACH models.variables.vars AS modvar-»
 «IF interactiveInstallation == true-»
-        $sessionValue = SessionUtil::getVar('«moduleName(name + '_' + modvar.name)»');
-        ModUtil::setVar(«appName()», «moduleName(modvar.name)», (($sessionValue <> false) ? «EXPAND ModVarValFromSession FOR modvar» : «EXPAND ModVarValSession2Mod FOR modvar»));
-        SessionUtil::delVar(«moduleName(name + '_' + modvar.name)»);
+        $sessionValue = SessionUtil::getVar('«applicationName(name + '_' + modvar.name)»');
+        ModUtil::setVar(«appName()», «applicationName(modvar.name)», (($sessionValue <> false) ? «EXPAND ModVarValFromSession FOR modvar» : «EXPAND ModVarValSession2Mod FOR modvar»));
+        SessionUtil::delVar(«applicationName(name + '_' + modvar.name)»);
 «ELSE-»
-        $this->setVar('«appame()»', '«moduleName(modvar.name)»', «EXPAND ModVarValDirect2Mod FOR modvar»);
+        $this->setVar('«appName()»', '«applicationName(modvar.name)»', «EXPAND ModVarValDirect2Mod FOR modvar»);
 «ENDIF-»
 «ENDFOREACH-»
 
@@ -274,8 +274,8 @@ Example:
         }
 
     «FOREACH models.variables.vars AS modvar-»
-        $formValue = FormUtil::getPassedValue('«moduleName(modvar.name)»', «EXPAND ModVarValForm2SessionDefault FOR modvar», 'POST');
-        SessionUtil::setVar('«moduleName(name + '_' + modvar.name)»', $formValue);
+        $formValue = FormUtil::getPassedValue('«applicationName(modvar.name)»', «EXPAND ModVarValForm2SessionDefault FOR modvar», 'POST');
+        SessionUtil::setVar('«applicationName(name + '_' + modvar.name)»', $formValue);
 
 «ENDFOREACH-»
 
@@ -286,9 +286,9 @@ Example:
     }
 «ENDDEFINE»
 
-«DEFINE ModVarValForm2SessionDefault FOR Variable»'«moduleName(value)»'«ENDDEFINE»
+«DEFINE ModVarValForm2SessionDefault FOR Variable»'«applicationName(value)»'«ENDDEFINE»
 «DEFINE ModVarValForm2SessionDefault FOR ListVar»serialize(array(«EXPAND ModVarValForm2SessionDefault FOREACH items.select(item|item.isDefault == true) SEPARATOR ', '»))«ENDDEFINE»
-«DEFINE ModVarValForm2SessionDefault FOR ListVarItem»'«moduleName(name)»'«ENDDEFINE»
+«DEFINE ModVarValForm2SessionDefault FOR ListVarItem»'«applicationName(name)»'«ENDDEFINE»
 
 «DEFINE FuncInteractiveInitStep3 FOR Application»
     /**

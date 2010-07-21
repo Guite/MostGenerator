@@ -1,10 +1,10 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 
-«DEFINE Impl(String modName, Controller controller) FOR Entity»
+«DEFINE Impl(String appName, Controller controller) FOR Entity»
 «LET dbName(controller.name) AS controllerName-»
-«LET moduleName(name) AS objName-»
-«FILE "templates/" + modName + "_" + controllerName + "_" + objName + "_display.tpl"-»
+«LET applicationName(name) AS objName-»
+«FILE "templates/" + appName + "_" + controllerName + "_" + objName + "_display.tpl"-»
 {* purpose of this template: «formattedName(nameMultiple)» display view in «controllerName» area *}
 
 {include file="«appName»_«controllerName»_header.tpl"}
@@ -28,7 +28,7 @@
 </div>
 «ENDIF-»
 
-<dl id="«modName»_body">
+<dl id="«appName»_body">
 «FOREACH fields.reject(e|e.leading || e.primaryKey) AS field-»
 «LET incoming.select(e|dbName(e.source.name + "id") == dbName(field.name)) AS joins-»
 «IF joins.size > 0-»
@@ -36,7 +36,7 @@
     <dd>«FOREACH joins AS join SEPARATOR ', '-»{$«objName».«join.source.name.dbName()»_«join.source.idField()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH-»</dd>
 «ELSE-»
     <dt>{gt text='«formattedNameCapitalized(field.name)»'}</dt>
-    <dd>«EXPAND DisplayColumnField(objName) FOR column-»</dd>
+    <dd>«EXPAND DisplayColumnField(objName) FOR field-»</dd>
 «ENDIF-»
 «ENDLET-»
 «ENDFOREACH-»
@@ -84,7 +84,7 @@
 «ENDIF-»
 «ENDLET-»
 
-{include file="«modName»_«controllerName»_footer.tpl"}
+{include file="«appName»_«controllerName»_footer.tpl"}
 «ENDFILE»
 «ENDLET-»
 «ENDLET-»

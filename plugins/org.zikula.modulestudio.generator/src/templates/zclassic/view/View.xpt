@@ -5,18 +5,18 @@
 «DEFINE Root FOR Application»
 «FOREACH controllers.controllers AS controller-»
 «IF controller.metaType == UserController
-    || processor.metaType == AdminController-»
+    || controller.metaType == AdminController-»
     «EXPAND HeaderFooter(appName(), controller)-»
-«IF processor.hasActions('main')-»
+«IF controller.hasActions('main')-»
     «EXPAND Pages::Main::Impl(appName(), controller) FOREACH models.entities-»
 «ENDIF-»
-«IF processor.hasActions('view')-»
+«IF controller.hasActions('view')-»
     «EXPAND Pages::View::Impl(appName(), controller, 3) FOREACH models.entities-»
 «ENDIF-»
-«IF processor.hasActions('display')-»
+«IF controller.hasActions('display')-»
     «EXPAND Pages::Display::Impl(appName(), controller) FOREACH models.entities-»
 «ENDIF-»
-«IF processor.hasActions('delete')-»
+«IF controller.hasActions('delete')-»
     «EXPAND Pages::Delete::Impl(appName(), controller) FOREACH models.entities-»
 «ENDIF-»
 «ENDIF-»
@@ -44,7 +44,7 @@
     {«dbName(appName())»FormFrame}
 «FOREACH models.variables.vars AS modvar-»
         <div class="z-formrow">
-            {formlabel for="«moduleName(modvar.name)»" __text='«formattedNameCapitalized(modvar.name)»'}
+            {formlabel for="«applicationName(modvar.name)»" __text='«formattedNameCapitalized(modvar.name)»'}
             «EXPAND InputField FOR modvar-»
         </div>
 «ENDFOREACH-»

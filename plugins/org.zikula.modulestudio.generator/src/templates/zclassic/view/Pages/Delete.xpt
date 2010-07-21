@@ -3,7 +3,7 @@
 
 «DEFINE Impl(String appName, Controller controller) FOR Entity»
 «LET dbName(controller.name) AS controllerName-»
-«LET moduleName(name) AS objName-»
+«LET applicationName(name) AS objName-»
 «FILE "templates/" + appName + "_" + controllerName + "_" + objName + "_delete.tpl"-»
 {* purpose of this template: «formattedName(nameMultiple)» delete confirmation view in «controllerName» area *}
 

@@ -2,7 +2,7 @@
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 
-«DEFINE Root FOR modulestudio-»
+«DEFINE Root FOR Application-»
 «IF controllers.controllers.actions.typeSelect(EditAction).size > 0-»
 «LET "templates/plugins/" AS pluginDir-»
 «FILE 'lib/' + appName() + '/Form/Plugin/FormFrame.php'-»«EXPAND FileHelper::phpFileHeader(this)-»

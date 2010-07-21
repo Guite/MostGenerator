@@ -37,7 +37,7 @@ function «appName()»_tables()
      */
 
     // set the table name combined with prefix
-    $tables['«fullEntityName(entity)»'] = DBUtil::getLimitedTablename('«fullEntityName(tab)»');
+    $tables['«fullEntityName(entity)»'] = DBUtil::getLimitedTablename('«fullEntityName(entity)»');
 
 «REM»
     // NOT REQUIRED: set the column names
@@ -91,19 +91,19 @@ function «appName()»_tables()
         '«dbName(name)»' => "«IF primaryKey == true»I NOTNULL AUTO PRIMARY«ELSE»«EXPAND TypeDef»«EXPAND TypeValue»«ENDIF»"«ENDDEFINE»
 
 «DEFINE TypeDef FOR EntityField-»
-//TODO: Undefined TableColumn
+//TODO: Undefined EntityField
 «ENDDEFINE»
-«DEFINE TypeValue FOR EntityField»«IF mandatory == true» NOTNULL«ENDIF»«REM»no default value for text and blob fields, breaks mysql strict mode«ENDREM»«IF metaType.name != "persistence::TextField" && metaType.name != "persistence::BlobField"» DEFAULT '«defaultValue»'«ENDIF»«ENDDEFINE»
+«DEFINE TypeValue FOR DerivedField»«IF mandatory == true» NOTNULL«ENDIF»«REM»no default value for text and blob fields, breaks mysql strict mode«ENDREM»«IF metaType.name != "persistence::TextField" && metaType.name != "persistence::BlobField"» DEFAULT '«defaultValue»'«ENDIF»«ENDDEFINE»
 
 «DEFINE TypeDef FOR StringField»C(«IF length > 0 && length < 256»«length»«ELSE»255«ENDIF»)«ENDDEFINE»
 «DEFINE TypeDef FOR ClobField»$«dbName(name)»Type«ENDDEFINE»
 «DEFINE TypeDef FOR BlobField»B«ENDDEFINE»
 
 «DEFINE TypeDef FOR DateField»D«ENDDEFINE»«REM»1970-01-01«ENDREM»
-«DEFINE TypeValue FOR DateField»«IF mandatory == true» NOTNULL«ENDIF» «IF defaultValue.length > 0»DEFAULT '«defaultValue»'«ELSEIF isMandatory == true»DEFDATE«ELSE»DEFAULT NULL«ENDIF»«ENDDEFINE»
+«DEFINE TypeValue FOR DateField»«IF mandatory == true» NOTNULL«ENDIF» «IF defaultValue.length > 0»DEFAULT '«defaultValue»'«ELSEIF mandatory == true»DEFDATE«ELSE»DEFAULT NULL«ENDIF»«ENDDEFINE»
 
 «DEFINE TypeDef FOR TimestampField»T«ENDDEFINE»«REM»1970-01-01 00:00:00«ENDREM»
-«DEFINE TypeValue FOR TimestampField»«IF mandatory == true» NOTNULL«ENDIF» «IF defaultValue.length > 0»DEFAULT '«defaultValue»'«ELSEIF isMandatory == true»DEFTIMESTAMP«ELSE»DEFAULT NULL«ENDIF»«ENDDEFINE»
+«DEFINE TypeValue FOR TimestampField»«IF mandatory == true» NOTNULL«ENDIF» «IF defaultValue.length > 0»DEFAULT '«defaultValue»'«ELSEIF mandatory == true»DEFTIMESTAMP«ELSE»DEFAULT NULL«ENDIF»«ENDDEFINE»
 
 «DEFINE TypeDef FOR BooleanField»L«ENDDEFINE»
 «DEFINE TypeValue FOR BooleanField»«IF mandatory == true» NOTNULL«ENDIF» DEFAULT '«IF defaultValue == true || defaultValue == "true"»1«ELSE»0«ENDIF»'«ENDDEFINE»

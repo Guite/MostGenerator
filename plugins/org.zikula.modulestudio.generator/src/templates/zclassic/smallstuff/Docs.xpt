@@ -36,7 +36,7 @@ He­re are a few short hints which be­co­me hel­pful for cust­o­mi­zing yo
     * A ver­si­on con­trol sys­tem gi­ves you ano­ther ad­di­tio­nal le­vel of roll­back sa­fe­ty.
 «ENDDEFINE»
 
-«DEFINE MSText FOR Module-»
+«DEFINE MostText FOR Application-»
 
 
 
@@ -45,13 +45,13 @@ for creating modules for the Zikula Application Framework
 If you are interested in a new level of Zikula development, visit «EXPAND FileHelper::msUrl»
 «ENDDEFINE»
 
-«DEFINE ReadmeDE FOR Module-»
+«DEFINE ReadmeDE FOR Application-»
 
 
 
-1) Kopieren Sie «moduleName(name)» in das Verzeichnis modules
+1) Kopieren Sie «appName()» in das Verzeichnis modules
 2) Regenerieren Sie die Liste der Module
-3) Initialisieren und aktivieren Sie «moduleName(name)»
+3) Initialisieren und aktivieren Sie «appName()»
 
 Bei Fragen und anderen Anmerkungen besuchen Sie unsere Homepage «url»
 
@@ -59,13 +59,13 @@ Bei Fragen und anderen Anmerkungen besuchen Sie unsere Homepage «url»
 «url»
 «ENDDEFINE»
 
-«DEFINE Readme FOR Module-»
+«DEFINE Readme FOR Application-»
 
 
 
-1) Copy «moduleName(name)» to your modules folder
+1) Copy «appName()» to your modules folder
 2) Regenerate your modules list
-3) Initialize and activate «moduleName(name)»
+3) Initialize and activate «appName()»
 
 For questions and other remarks visit our homepage «url»
 
@@ -73,7 +73,7 @@ For questions and other remarks visit our homepage «url»
 «url»
 «ENDDEFINE»
 
-«DEFINE License FOR Module-»
+«DEFINE License FOR Application-»
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 

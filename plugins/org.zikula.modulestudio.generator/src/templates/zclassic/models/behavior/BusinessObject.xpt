@@ -7,8 +7,8 @@
 
 «REM»Entry point for DBObject implementations«ENDREM»
 «DEFINE Root FOR Application-»
-    «FILE "lib/" + applicationClassFileName(this, false)»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND dbObjectModuleClass(false)»«ENDFILE»
-    «FILE "lib/" + applicationClassFileName(this, true)»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND dbObjectModuleClass(true)»«ENDFILE»
+    «FILE "lib/" + appClassFileName(this, false)»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND dbObjectModuleClass(false)»«ENDFILE»
+    «FILE "lib/" + appClassFileName(this, true)»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND dbObjectModuleClass(true)»«ENDFILE»
 
 	«EXPAND ObjectClassWrapper(this, false) FOREACH models.entities-»
 	«EXPAND ObjectClassWrapper(this, true) FOREACH models.entities-»
@@ -20,7 +20,7 @@
  * This is a base class encapsulating the generic functionality which is
  * common for all DBObject«IF appendArray»Array«ENDIF» types in the «appName()» module
  */
-class «moduleClassName(this, appendArray)» extends DBObject«IF appendArray»Array«ENDIF»
+class «appClassName(this, appendArray)» extends DBObject«IF appendArray»Array«ENDIF»
 {
 }
 «ENDDEFINE»
@@ -33,7 +33,7 @@ class «moduleClassName(this, appendArray)» extends DBObject«IF appendArray»A
 /**
  * This class provides basic functionality of «baseClassName(appendArray)»
  */
-abstract class «baseClassName(appendArray)» extends «moduleClassName(app, appendArray)»
+abstract class «baseClassName(appendArray)» extends «appClassName(app, appendArray)»
 {
 «IF appendArray == false-»
 «EXPAND ObjectClassImpl(app)-»
@@ -116,11 +116,11 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 «ENDDEFINE»
 
 «DEFINE SelectJoinFieldTableNames(String exludedIdField) FOR Entity-»
-«EXPAND ArrayListEntry('') FOREACH fields.reject(e|e.name == exludedIdField || e.isPrimaryKey) SEPARATOR ', '-»
+«EXPAND ArrayListEntry('') FOREACH fields.reject(e|e.name == exludedIdField || e.primaryKey) SEPARATOR ', '-»
 «ENDDEFINE»
 
 «DEFINE SelectJoinFieldObjNames(String exludedIdField) FOR Entity-»
-«EXPAND ArrayListEntry(dbName(name) + '_') FOREACH fields.reject(e|e.name == exludedIdField || e.isPrimaryKey) SEPARATOR ', '-»
+«EXPAND ArrayListEntry(dbName(name) + '_') FOREACH fields.reject(e|e.name == exludedIdField || e.primaryKey) SEPARATOR ', '-»
 «ENDDEFINE»
 
 «DEFINE ArrayListEntry(String entryPrefix) FOR EntityField-»
@@ -128,7 +128,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 
 «DEFINE ObjectJoins FOR Entity-»
 «FOREACH incoming AS relation-»
-        $this->_objJoin[]     = array ('join_table'          => '«fullTableName(relation.source)»',
+        $this->_objJoin[]     = array ('join_table'          => '«fullEntityName(relation.source)»',
                                        'join_field'          => array(«EXPAND SelectJoinFieldTableNames(dbName(name)+"id") FOR relation.source-»),
                                        'object_field_name'   => array(«EXPAND SelectJoinFieldObjNames(dbName(name)+"id") FOR relation.source-»),
                                        'compare_field_table' => '«dbName(relation.source.name)»id',
