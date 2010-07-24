@@ -11,23 +11,17 @@
  * @license «app.license»
  * @package «app.name»
  * @author «app.author»
- * @url «IF app.url != ""»«app.url»«ELSE»«EXPAND msUrl»«ENDIF»
+ * @url «IF app.url != ""»«app.url»«ELSE»«msUrl()»«ENDIF»
  */
 
 /**
- * generated at «timestamp()» by ModuleStudio «EXPAND msVersion FOR app» («EXPAND msUrl FOR app»)
+ * generated at «timestamp()» by ModuleStudio «msVersion()» («msUrl()»)
  */
 
 «ENDDEFINE»
 
-«DEFINE msVersion FOR Application-»
-0.5 beta«ENDDEFINE»
-
-«DEFINE msUrl FOR Object-»
-http://modulestudio.de«ENDDEFINE»
-
 «DEFINE msWeblink FOR Application-»
 <p style="text-align: center">
-    Powered by <a href="«EXPAND msUrl-»" title="Get the MOST out of Zikula!">ModuleStudio «EXPAND msVersion-»</a>
+    Powered by <a href="«msUrl()-»" title="Get the MOST out of Zikula!">ModuleStudio «msVersion()-»</a>
 </p>
 «ENDDEFINE»

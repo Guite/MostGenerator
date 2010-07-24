@@ -1,6 +1,7 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Function(String src, String dest) FOR ArithmeticOperation-»
-//TODO: Undefined ArithmeticOperation
+«error("Error: undefined arithmetic operation (code 925626)")»
 «ENDDEFINE»

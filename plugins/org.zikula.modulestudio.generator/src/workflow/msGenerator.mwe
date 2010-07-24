@@ -32,7 +32,8 @@
         <expand value="templates::${cartridgeName}::Root::Root(progressMonitor) FOR ${slot}" />
 
         <!-- advice aop templates to the generator -->
-        <advice value="templates::${cartridgeName}::aspects::Permissions, templates::${cartridgeName}::aspects::ObjectExtensions" />
+        <property name="aspectPath" value="templates::${cartridgeName}::aspects::" />
+        <advice value="${aspectPath}Permissions, ${aspectPath}ObjectExtensions" />
 
         <!-- specify where to put the generated code -->
         <!-- default outlet has no name assigned -->

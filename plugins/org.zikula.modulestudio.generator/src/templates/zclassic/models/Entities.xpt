@@ -91,7 +91,7 @@ function «appName()»_tables()
         '«dbName(name)»' => "«IF primaryKey == true»I NOTNULL AUTO PRIMARY«ELSE»«EXPAND TypeDef»«EXPAND TypeValue»«ENDIF»"«ENDDEFINE»
 
 «DEFINE TypeDef FOR DerivedField-»
-//TODO: Undefined DerivedField
+«error("Error: undefined derived field (code 925621)")»
 «ENDDEFINE»
 «DEFINE TypeValue FOR DerivedField»«IF mandatory == true» NOTNULL«ENDIF»«REM»no default value for text and blob fields, breaks mysql strict mode«ENDREM»«IF metaType != BlobField && metaType != ClobField» DEFAULT '«defaultValue»'«ENDIF»«ENDDEFINE»
 

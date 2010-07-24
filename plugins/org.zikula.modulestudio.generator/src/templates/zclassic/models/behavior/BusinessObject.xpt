@@ -2,7 +2,6 @@
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::UtilsBO»
-
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «REM»Entry point for DBObject implementations«ENDREM»
@@ -160,13 +159,13 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 
 
 «DEFINE EventListenerMethod FOR EntityEventListener-»
-//TODO: Undefined Event Listener
+«error("Error: undefined event listener (code 925724)")»
 «ENDDEFINE»
 «DEFINE EventListenerMethod FOR PreProcess-»
-//TODO: Undefined PreProcess
+«error("Error: undefined pre process (code 925725)")»
 «ENDDEFINE»
 «DEFINE EventListenerMethod FOR PostProcess-»
-//TODO: Undefined PostProcess
+«error("Error: undefined post process (code 925726)")»
 «ENDDEFINE»
 
 «DEFINE EventListenerMethod FOR PreSave-»

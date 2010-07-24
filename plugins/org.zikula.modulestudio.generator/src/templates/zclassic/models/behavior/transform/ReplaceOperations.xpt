@@ -1,8 +1,9 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Function(String src, String dest) FOR ReplaceOperation-»
-//TODO: Undefined ReplaceOperation
+«error("Error: undefined replace operation (code 925628)")»
 «ENDDEFINE»
 
 «DEFINE Function(String src, String dest) FOR ReplaceGermanSpecialChars-»

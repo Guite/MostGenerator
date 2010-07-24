@@ -1,6 +1,7 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Root FOR TransformObject-»
-//TODO: Undefined TransformObject
+«error("Error: undefined transform object (code 925625)")»
 «ENDDEFINE»
