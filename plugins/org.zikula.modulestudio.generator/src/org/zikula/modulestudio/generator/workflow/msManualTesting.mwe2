@@ -16,7 +16,7 @@ var modelPath = "/home/axel"
 var cartridge = "zclassic"
 
 // Destination folder
-var targetDir = "${modelPath}/output/${modelName}/${cartridge}/${modelName}/"
+var targetDir = "${modelPath}/output/${modelName}/"
 
 Workflow {
     // Call the file reader workflow and provide required properties

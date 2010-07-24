@@ -33,10 +33,21 @@
       <import plugin="org.eclipse.xtend.util.stdlib" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.xpand" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.wst.common.core"/>
+      <import plugin="org.eclipse.wst.common.emfworkbench.integration"/>
+      <import plugin="org.eclipse.wst.sse.core"/>
+      <import plugin="org.eclipse.wst.validation"/>
    </requires>
 
    <plugin
          id="org.zikula.modulestudio.generator"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.zikula.modulestudio.generator.beautifier"
          download-size="0"
          install-size="0"
          version="0.0.0"

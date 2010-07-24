@@ -11,7 +11,7 @@
  * @license «app.license»
  * @package «app.name»
  * @author «app.author»
- * @url «app.url»
+ * @url «IF app.url != ""»«app.url»«ELSE»«EXPAND msUrl»«ENDIF»
  */
 
 /**
@@ -23,7 +23,7 @@
 «DEFINE msVersion FOR Application-»
 0.5 beta«ENDDEFINE»
 
-«DEFINE msUrl FOR Application-»
+«DEFINE msUrl FOR Object-»
 http://modulestudio.de«ENDDEFINE»
 
 «DEFINE msWeblink FOR Application-»

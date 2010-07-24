@@ -13,7 +13,6 @@
 			   modelFile="${examplePath}_models/${modelName}.mostapp"
 			   enrichedModelFile="${examplePath}_models/${modelName}_Enriched.mostapp"
 			   srcGenPath="${examplePath}_output/${outputDir}/${cartridgeName}/"
-			   srcManPath="${examplePath}_output/${outputDir}/${cartridgeName}/src-man"
 			   apiRefPath="${examplePath}_output/${outputDir}/${cartridgeName}/phpxref">
 	</cartridge>
 </workflow>

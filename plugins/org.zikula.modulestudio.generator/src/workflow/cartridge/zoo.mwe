@@ -2,6 +2,7 @@
 <workflow>
     <!-- start generator component -->
     <component id="generator" class="org.eclipse.xpand2.Generator" skipOnErrors="true">
+        <vetoableCallback idRef="profiler"/>
         <!-- enforce file encoding since otherwise an error occurs on unix systems -->
         <!-- fileEncoding value="UTF-8" / -->
 
@@ -10,26 +11,17 @@
         <metaModel idRef="mmModuleStudio" /> 
 
         <!-- XPand entry for "model" slot containing an instance of ModuleStudio.Module -->
-        <expand value="templates::${cartridgeName}::Root::Root(progressMonitor) FOR ${slot}"/>
+        <expand value="templates::${cartridgeName}::Root::Root(progressMonitor) FOR ${slot}" />
 
         <!-- advice aop templates to the generator -->
 <!--        <advice value="templates::${cartridgeName}::aspects::Permissions, templates::${cartridgeName}::aspects::ObjectExtensions" />-->
 
         <!-- specify where to put the generated code -->
-        <genPath value="${srcGenPath}"/>
-        <srcPath value="${srcGenPath}"/>
-
-<!-- TODO: replace by outlets
-        <outlet path="${srcGenPath}"/>
-        <outlet name="TO_MAN_SRC" path="${srcManPath}" overwrite="false" />
-
-        The Xpand templates contain FILE commands which can refer to outlets.
-        <outlet path="src">
-            <postprocessor class="oaw.xpand2.output.JavaBeautifier"/>
+        <!-- default outlet has no name assigned -->
+        <outlet path="${srcGenPath}" append="false" overwrite="true">
+            <!-- postprocessor class="org.eclipse.xtend.typesystem.xsd.XMLBeautifier" fileExtensions=".xml, .xsd, .wsdd, .wsdl" /-->
+            <postprocessor class="org.zikula.modulestudio.generator.output.PhpBeautifier" />
         </outlet>
-        <outlet name="backendClasses" path="../PrototypeBackend/src" append="false" overwrite="true">
-            <postprocessor class="oaw.xpand2.output.JavaBeautifier"/>
-        </outlet>
--->
+        <!--<outlet name="otherClasses" ... -->
     </component>
 </workflow>

@@ -9,13 +9,16 @@ import org.eclipse.emf.mwe.utils.Reader
 import org.eclipse.emf.mwe.core.container.IfComponent
 import org.eclipse.xtend.util.stdlib.SlotPrinter
 import org.eclipse.xtend.check.CheckComponent
+import org.eclipse.xtend.profiler.ProfilerComponent
 import org.eclipse.xtend.typesystem.emf.EmfMetaModel
 //import org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel
+import org.eclipse.xtend.typesystem.xsd.XMLBeautifier
 import org.eclipse.xtend.XtendComponent
 import org.eclipse.emf.mwe.utils.DirectoryCleaner
 import org.eclipse.emf.mwe.utils.FileCopy
 import org.eclipse.emf.mwe.utils.Writer
 import org.eclipse.xpand2.Generator
+import org.zikula.modulestudio.generator.output.PhpBeautifier
 
 // The model to be processed (file name without extension)
 var modelName
@@ -58,12 +61,20 @@ Workflow {
         platformUri = "."
         registerGeneratedEPackage = "org.eclipse.emf.ecore.EcorePackage"
         registerGeneratedEPackage = "de.guite.modulestudio.metamodel.modulestudio.ModuleStudioPackage"
+        // initialize EPackage for profiler
+        registerGeneratedEPackage = "org.eclipse.xtend.profiler.profilermodel.ModelPackage"
     }
 
     // read in the given file
     component = Reader {
         uri = modelFile
         modelSlot = inputSlot
+    }
+
+    // surround components to be measured with profiler component
+    component = ProfilerComponent : profiler {
+        id = "profiler"
+        resultSlot = "profilingResult"
     }
 
     component = IfComponent {
@@ -85,6 +96,8 @@ Workflow {
         if = {
             // check components for constraints
             component = CheckComponent {
+                vetoableCallback = profiler
+
                 // define all used meta models
                 metaModel = mmEMF
                 metaModel = mmModuleStudio
@@ -114,6 +127,8 @@ Workflow {
 
     // add additional fields for ids and relations
     component = XtendComponent {
+        vetoableCallback = profiler
+
         skipOnErrors = true
         // reference all used meta models
         metaModel = mmEMF
@@ -183,6 +198,8 @@ Workflow {
 
     // start generator component
     component = Generator {
+        vetoableCallback = profiler
+
         // skip this component if there are errors
         skipOnErrors = true
         // if automatic hyphenation is enabled, redundant blank lines are avoided automatically
@@ -201,11 +218,40 @@ Workflow {
         advice = templatesAdvice
 
         // specify where to put the generated code
+        // default outlet has no name assigned
         outlet = {
-            //name = "primaryOutlet"
-            path = targetDir
+            path = "${targetDir}/${cartridgeName}/${modelName}/"
             fileEncoding = fileEncoding
+            append = false
+            overwrite = true
+            /*postprocessor = XmlBeautifier {
+               fileExtensions = ".xml, .xsd, .wsdd, .wsdl"
+            }*/
+            postprocessor = PhpBeautifier {
+            }
         }
+/*           
+        outlet = {
+            name = "otherClasses"
+            ...
+        }
+*/
+    }
+
+    // TODO: phpXRef and other API docs
+
+
+    // generate profiling result
+    component = Generator {
+        fileEncoding = "ISO-8859-1"
+
+        metaModel = mmEMF
+
+        expand = "org::eclipse::xtend::profiler::templates::Html::Main FOR profilingResult"
+        outlet = {
+            overwrite = true
+            path = "${targetDir}/profiling"
+        } 
     }
 }
 

@@ -21,9 +21,9 @@
                cartridgeName="${cartridgeName}"
                slot="${slot}"
                slotFile="${slotFile}"
-               srcGenPath="${srcGenPath}"
-               srcManPath="${srcManPath}">
+               srcGenPath="${srcGenPath}/${cartridgeName}">
        <mmEMF           idRef="mmEMF"/>
        <mmModuleStudio  idRef="mmModuleStudio"/>
+       <profiler idRef="profiler"/>
     </cartridge>
 </workflow>
