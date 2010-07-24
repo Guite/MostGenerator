@@ -37,6 +37,11 @@
       <import plugin="org.eclipse.wst.common.emfworkbench.integration"/>
       <import plugin="org.eclipse.wst.sse.core"/>
       <import plugin="org.eclipse.wst.validation"/>
+      <import feature="org.eclipse.xtend.backend" version="1.0.0.qualifier"/>
+      <import feature="org.eclipse.xtend.backend.uml2types" version="1.0.0.qualifier"/>
+      <import feature="org.eclipse.xtend.backend.xsdtypes" version="1.0.0.qualifier"/>
+      <import feature="org.eclipse.xtend.middleend.xpand" version="1.0.0.qualifier"/>
+      <import feature="org.eclipse.xtend.middleend.xtend" version="1.0.0.qualifier"/>
    </requires>
 
    <plugin

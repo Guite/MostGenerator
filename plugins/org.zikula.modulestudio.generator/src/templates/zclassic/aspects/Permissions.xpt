@@ -6,7 +6,7 @@
         // DEBUG: permission schema aspect starts
         $modversion['securityschema'] = array(
             '«appName()»::' => '::',
-«EXPAND PermissionSchema(appName()) FOREACH models.entities SEPARATOR ','-»
+«EXPAND PermissionSchema(appName()) FOREACH this.models.entities SEPARATOR ','-»
         );
         // DEBUG: permission schema aspect ends
 «targetDef.proceed()-»
@@ -25,8 +25,8 @@
 «REM»Permission checks in system use cases«ENDREM»
 «AROUND templates::zclassic::controller::Controller::PermissionCheck FOR Action-»
 // DEBUG: permission check aspect starts
-«LET controller.container.application.appName() AS appName-»
-«IF controller.metaType == AdminController-»
+«LET this.controller.container.application.appName() AS appName-»
+«IF this.controller.metaType == AdminController-»
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»::', '::', ACCESS_ADMIN));
 «ELSE-»
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»::', '::', «EXPAND getPermissionAccessLevel-»));

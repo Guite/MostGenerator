@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workflow>
     <!-- start generator component -->
-    <component id="generator" class="org.eclipse.xpand2.Generator" skipOnErrors="true">
+    <!-- The middleend component supports all properties of Generator, except collectProfileSummary and verboseProfileFilename -->
+    <component id="generator" class="org.eclipse.xtend.middleend.xpand.XpandComponent" skipOnErrors="true">
+<!--    <component id="generator" class="org.eclipse.xpand2.Generator" skipOnErrors="true">-->
         <vetoableCallback idRef="profiler"/>
         <!-- enforce file encoding since otherwise an error occurs on unix systems -->
         <!-- fileEncoding value="UTF-8" / -->

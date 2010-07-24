@@ -4,14 +4,14 @@
 «AROUND templates::zclassic::models::Entities::ObjectExtensions FOR Entity-»
     // DEBUG: object extension aspect starts
 
-«IF usesStandardFields == true-»
+«IF this.usesStandardFields == true-»
     // add standard fields to the table definition and data dictionary
-    ObjectUtil::addStandardFieldsToTableDefinition($columns, '«dbName(prefix)»_');
+    ObjectUtil::addStandardFieldsToTableDefinition($columns, '«dbName(this.prefix)»_');
     ObjectUtil::addStandardFieldsToTableDataDefinition($columnDef);
 «ENDIF-»
 
     $tables['«fullEntityName(this)»_primary_key_column'] = '«idField(this)»';
-«IF hasCategorization == true-»
+«IF this.hasCategorization == true-»
     // enable categorization services
     $tables['«fullEntityName(this)»_db_extra_enable_categorization'] = true;
 «ELSE-»
@@ -19,7 +19,7 @@
     $tables['«fullEntityName(this)»_db_extra_enable_categorization'] = false;
 «ENDIF-»
 
-«IF hasAttribution == true-»
+«IF this.hasAttribution == true-»
     // enable attribution services
     $tables['«fullEntityName(this)»_db_extra_enable_attribution'] = true;
 «ELSE-»
@@ -27,7 +27,7 @@
     $tables['«fullEntityName(this)»_db_extra_enable_attribution'] = false;
 «ENDIF-»
 
-«IF hasMetaData == true-»
+«IF this.hasMetaData == true-»
     // enable meta data
     $tables['«fullEntityName(this)»_db_extra_enable_meta'] = true;
 «ELSE-»
@@ -35,7 +35,7 @@
     $tables['«fullEntityName(this)»_db_extra_enable_meta'] = false;
 «ENDIF-»
 
-«IF hasLogging == true-»
+«IF this.hasLogging == true-»
     // enable logging services
     $tables['«fullEntityName(this)»_db_extra_enable_logging'] = true;
 «ELSE-»
@@ -48,7 +48,7 @@
 «ENDAROUND»
 
 «AROUND templates::zclassic::models::behavior::BusinessObject::standardSortingFields FOR Entity-»
-«IF usesStandardFields == true-»,
+«IF this.usesStandardFields == true-»,
                      'obj_status',
                      'cr_date',
                      'cr_uid',
