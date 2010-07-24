@@ -16,14 +16,31 @@
     <!-- clear output directory -->
     <component id="dirCleaner" class="org.eclipse.emf.mwe.utils.DirectoryCleaner" directory="${srcGenPath}" />
 
-    <!-- call actual generator cartridge -->
-    <cartridge file="workflow/cartridge/${cartridgeName}.mwe"
-               cartridgeName="${cartridgeName}"
-               slot="${slot}"
-               slotFile="${slotFile}"
-               srcGenPath="${srcGenPath}/${cartridgeName}">
-       <mmEMF           idRef="mmEMF"/>
-       <mmModuleStudio  idRef="mmModuleStudio"/>
-       <profiler idRef="profiler"/>
-    </cartridge>
+    <!-- start generator component -->
+    <!-- The middleend component supports all properties of Generator, except collectProfileSummary and verboseProfileFilename -->
+    <component id="generator" class="org.eclipse.xtend.middleend.xpand.XpandComponent" skipOnErrors="true">
+<!--    <component id="generator" class="org.eclipse.xpand2.Generator" skipOnErrors="true">-->
+        <vetoableCallback idRef="profiler"/>
+        <!-- enforce file encoding since otherwise an error occurs on unix systems -->
+        <!-- fileEncoding value="UTF-8" / -->
+
+        <!-- reference all used meta models -->
+        <metaModel idRef="mmEMF" />
+        <metaModel idRef="mmModuleStudio" /> 
+
+        <!-- XPand entry for "model" slot containing an instance of Modulestudio.Application -->
+        <expand value="templates::${cartridgeName}::Root::Root(progressMonitor) FOR ${slot}" />
+
+        <!-- advice aop templates to the generator -->
+        <advice value="templates::${cartridgeName}::aspects::Permissions, templates::${cartridgeName}::aspects::ObjectExtensions" />
+
+        <!-- specify where to put the generated code -->
+        <!-- default outlet has no name assigned -->
+        <outlet path="${srcGenPath}/${cartridgeName}" append="false" overwrite="true">
+            <!-- postprocessor class="org.eclipse.xtend.typesystem.xsd.XMLBeautifier" fileExtensions=".xml, .xsd, .wsdd, .wsdl" /-->
+            <!--postprocessor class="org.zikula.modulestudio.generator.output.PhpBeautifier" /-->
+        </outlet>
+        <!--<outlet name="otherClasses" ... -->
+    </component>
+
 </workflow>
