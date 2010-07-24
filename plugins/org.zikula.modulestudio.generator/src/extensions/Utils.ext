@@ -1,6 +1,14 @@
 import modulestudio;
 
 
+/* app related functions */
+cached String msVersion() :
+    "0.5 beta";
+cached String msUrl() :
+    "http://modulestudio.de";
+
+
+
 /* not used yet, just for testing */
 cached String constantName(Action this) :
 	"ACTION_" + name.toUpperCase();

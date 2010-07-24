@@ -1,0 +1,42 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+
+«DEFINE CommonFunctions FOR Application-»
+class «appName()»_Util
+{
+    /**
+     * returns an array of all allowed object types in «appName()»
+     */
+    public static function getObjectTypes()
+    {
+        $allowedObjectTypes = array();
+«FOREACH models.entities AS entity-»
+        $allowedObjectTypes[] = '«applicationName(entity.name)»';
+«ENDFOREACH-»
+        return $allowedObjectTypes;
+    }
+
+    /**
+     * utility method for managing view templates
+     */
+    public static function processViewTemplate(&$view, $type, $objectType, $func, $args=array())
+    {
+        $template = DataUtil::formatForOS('«appName()»_' . $type . '_' . $objectType . '_' . $func);
+        $tpl = FormUtil::getPassedValue('tpl', isset($args['tpl']) ? $args['tpl'] : '');
+        if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.tpl')) {
+            $template .= '_' . DataUtil::formatForOS($tpl);
+        }
+        $template .= '.tpl';
+
+        $raw = FormUtil::getPassedValue('raw', (isset($args['raw']) && is_bool($args['raw'])) ? $args['raw'] : false);
+        if ($raw == true) {
+            // standalone output
+            $view->display($template);
+            return true;
+        }
+
+        // normal output
+        return $view->fetch($template);
+    }
+}
+«ENDDEFINE»

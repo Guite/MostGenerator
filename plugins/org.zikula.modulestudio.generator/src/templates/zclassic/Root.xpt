@@ -3,12 +3,15 @@
 «IMPORT templates::zclassic::controller»
 «IMPORT templates::zclassic::view»
 «IMPORT templates::zclassic::smallstuff»
-
+«EXTENSION extensions::Utils»
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
-«EXTENSION extensions::Utils»
+«REM»Entry point for headless calls (e.g. for manual test runs), required also for compiler backend mode«ENDREM»
+«DEFINE Root FOR Application»
+«EXPAND Root(null) FOR this-»
+«ENDDEFINE»
 
-«REM»start point for the generator«ENDREM»
+«REM»Main entry point for the generator«ENDREM»
 «DEFINE Root(Object pm) FOR Application»
     «REM»«pm.subTask("Basic information")»«ENDREM»
     «info("Generating basic information")»
