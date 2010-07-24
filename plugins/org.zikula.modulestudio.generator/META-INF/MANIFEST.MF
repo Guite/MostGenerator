@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.zikula.modulestudio.generator; singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Require-Bundle: de.guite.modulestudio.metamodel,
+Require-Bundle: de.guite.modulestudio.metamodel;bundle-version="1.0.1",
  org.antlr.runtime;bundle-version="3.0.0",
  org.apache.ant;bundle-version="1.7.1",
  org.apache.commons.cli;bundle-version="1.0.0",
