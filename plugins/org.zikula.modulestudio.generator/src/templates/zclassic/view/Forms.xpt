@@ -15,7 +15,7 @@
 «REM»Entry point for Form templates«ENDREM»
 «DEFINE Root(String appName, Controller controller, String actionName) FOR Entity-»
 «LET dbName(controller.name) AS controllerName-»
-«FILE editTemplateFile(controller, name, actionName) + ".tpl"-»
+«FILE editTemplateFile(controller, name, actionName)-»
 «EXPAND FormTemplate(appName, controller, actionName)-»
 «ENDFILE»
 «ENDLET-»

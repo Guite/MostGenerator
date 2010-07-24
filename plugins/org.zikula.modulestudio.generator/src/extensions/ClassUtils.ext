@@ -54,10 +54,13 @@ cached String tempClassConfigHandler(Application app)
     : implClassDefault(app, fillingFormHandler(), prepClassPart('Admin').msconcat('_').msconcat(prepClassPart('Config')));
 
 cached String prepTemplatePart(String origin, String addition)
-    : origin.msconcat(applicationName(addition));
+    : origin.msconcat(addition.toLowerCase());
+
+cached String templateSuffix()
+    : ".tpl";
 
 cached String templateFile(Application app, Controller obj, String entityName, String actionName)
-    : "templates/".msconcat(app.appName()).msconcat('_').prepTemplatePart(obj.name).msconcat('_').prepTemplatePart(entityName).msconcat('_').prepTemplatePart(prepClassPart(actionName));
+    : "templates/".msconcat(app.appName()).msconcat('_').prepTemplatePart(obj.name).msconcat('_').msconcat(applicationName(entityName)).msconcat('_').prepTemplatePart(actionName).msconcat(templateSuffix());
 
 cached String editTemplateFile(Controller obj, String entityName, String actionName)
     : templateFile(obj.container.application, obj, entityName, actionName);

@@ -13,8 +13,8 @@
 
 «REM»creates a file for every Controller instance«ENDREM»
 «DEFINE Root(Application app) FOR Controller-»
-    «FILE implClassController()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ControllerImpl(app)»«ENDFILE»
-    «FILE implClassApi()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ControllerApiImpl(app)»«ENDFILE»
+    «FILE implClassController().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ControllerImpl(app)»«ENDFILE»
+    «FILE implClassApi().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ControllerApiImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
 «REM»file structure implementation«ENDREM»
@@ -25,7 +25,7 @@
  *
  * @author       «app.author»
  */
-class «app.appName()»_Controller_«dbName(name).toFirstUpper()» extends Zikula_Controller
+class «implClassController()» extends Zikula_Controller
 {
 «IF metaType == AjaxController-»
     public function _postSetup() 
@@ -320,7 +320,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 /**
  * This is the «name» api helper class.
  */
-class «app.appName()»_API_«dbName(name).toFirstUpper()» extends Zikula_Api
+class «implClassApi()» extends Zikula_Api
 {
     /**
      * get available «name» panel links
