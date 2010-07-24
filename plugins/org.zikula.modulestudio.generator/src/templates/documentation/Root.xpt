@@ -1,7 +1,12 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 
-«REM»start point for the generator«ENDREM»
+«REM»Entry point for headless calls (e.g. for manual test runs), required also for compiler backend mode«ENDREM»
+«DEFINE Root FOR Application»
+«EXPAND Root(null) FOR this-»
+«ENDDEFINE»
+
+«REM»Main entry point for the generator«ENDREM»
 «DEFINE Root(Object pm) FOR Application»
 «FILE "documentation.txt"»
 Hello «author» :-)
