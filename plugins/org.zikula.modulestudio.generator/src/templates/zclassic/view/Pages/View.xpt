@@ -64,10 +64,10 @@ listType:
     <tr>
 «FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field -»
         <th id="h«field.name.dbName()»" scope="col" align="«EXPAND Alignment FOR field-»" valign="middle">
-«LET incoming.select(e|dbName(e.source.name + "id") == dbName(field.name)) AS joins-»
+«LET incoming.select(e|dbName(e.source.getLeadingField().name) == dbName(field.name)) AS joins-»
 «IF joins.size > 0-»
-«LET joins.get(0).source.fields.typeSelect(DerivedField).select(e|e.leading == true).get(0).name.dbName() AS fieldName-»
-«EXPAND HeaderSortingLink(appName, controllerName, objName, dbName(joins.get(0).source.name) + '_' + fieldName, joins.get(0).source.name) FOR field-»
+«LET joins.get(0).source.idField() AS fieldName-»
+«EXPAND HeaderSortingLink(appName, controllerName, objName, dbName(joins.get(0).source.name).msconcat('_').msconcat(fieldName), joins.get(0).source.name) FOR field-»
 «ENDLET-»
 «ELSE-»
 «LET dbName(field.name) AS fieldName-»
@@ -93,7 +93,7 @@ listType:
     <tr class="{cycle values="z-odd, z-even"}">
 «ENDIF-»
 «""-»
-«FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field-»
+«FOREACH getDerivedFields().reject(e|e.primaryKey) AS field-»
 «IF listType < 2-»
         <li>
 «ELSEIF listType == 2-»
@@ -101,11 +101,11 @@ listType:
 «ELSEIF listType == 3-»
         <td headers="h«field.name.dbName()»" align="«EXPAND Alignment FOR field-»" valign="top">
 «ENDIF-»
-«LET incoming.select(e|dbName(e.source.name + "id") == dbName(field.name)) AS joins-»
+«LET incoming.select(e|dbName(e.source.idFieldName()) == dbName(field.name)) AS joins-»
 «IF field.leading == true-»
             {$«objName».«dbName(field.name)»|modcallhooks}
 «ELSEIF joins.size > 0-»
-            «FOREACH joins AS join SEPARATOR ', '»{$«objName».«join.source.name.dbName()»_«join.source.fields.typeSelect(DerivedField).select(e|e.leading == true).get(0).name.dbName()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH»
+            «FOREACH joins AS join SEPARATOR ', '»{$«objName».«join.source.name.dbName()»_«join.source.idField()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH»
 «ELSE-»
             «EXPAND DisplayColumnField(objName) FOR field-»
 «ENDIF-»
@@ -224,7 +224,7 @@ listType:
 «ENDDEFINE»
 
 «DEFINE Alignment FOR EntityField»left«ENDDEFINE»
-«DEFINE Alignment FOR IntegerField»«IF entity.incoming.select(e|dbName(e.source.name + "id") == dbName(name)).size > 0-»left«ELSE»right«ENDIF»«ENDDEFINE»
+«DEFINE Alignment FOR IntegerField»«IF entity.incoming.select(e|dbName(e.source.idFieldName()) == dbName(name)).size > 0-»left«ELSE»right«ENDIF»«ENDDEFINE»
 «DEFINE Alignment FOR DecimalField»right«ENDDEFINE»
 «DEFINE Alignment FOR FloatField»right«ENDDEFINE»
 «DEFINE Alignment FOR BooleanField»center«ENDDEFINE»

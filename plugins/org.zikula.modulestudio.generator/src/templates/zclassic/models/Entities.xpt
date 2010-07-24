@@ -8,11 +8,11 @@
 «DEFINE Root FOR Application-»
 «FILE "tables.php"-»
 «EXPAND FileHelper::phpFileHeader(this)-»
-«EXPAND TableInfo-»
+«EXPAND EntityInfo-»
 «ENDFILE»
 «ENDDEFINE»
 
-«DEFINE TableInfo FOR Application-»
+«DEFINE EntityInfo FOR Application-»
 /**
  * Populate tables array for «appName()» module
  *
@@ -31,13 +31,13 @@ function «appName()»_tables()
     $dbdriver = DBConnectionStack::getConnectionDBDriver();
 
 «FOREACH models.select(e|e.isDefaultDataSource).entities AS entity-»
-«info("Generating table \"" + entity.name + "\"") -> ""-»
+«info("Generating entity \"" + entity.name + "\"") -> ""-»
     /*
      * definitions for «applicationName(entity.name)» table
      */
 
     // set the table name combined with prefix
-    $tables['«fullEntityName(entity)»'] = DBUtil::getLimitedTablename('«fullEntityName(entity)»');
+    $tables['«entity.fullEntityName()»'] = DBUtil::getLimitedTablename('«fullEntityName(entity)»');
 
 «REM»
     // NOT REQUIRED: set the column names
@@ -51,13 +51,13 @@ function «appName()»_tables()
 «EXPAND ObjectExtensions FOR entity-»
 
 «REM»
-    // NOT REQUIRED: $tables['«fullEntityName(entity)»_column'] = $columns;
+    // NOT REQUIRED: $tables['«entity.fullEntityName()»_column'] = $columns;
 «ENDREM»
-    $tables['«fullEntityName(entity)»_column_def'] = $columnDef;
+    $tables['«entity.fullEntityName()»_column_def'] = $columnDef;
 
 «IF entity.indexes.size > 0-»
     // define additional indexes
-    $tables['«dbName(prefix + '_' + entity.name)»_column_idx'] = array(«EXPAND IndexStructure FOREACH entity.indexes SEPARATOR ','»);
+    $tables['«entity.fullEntityName()»_column_idx'] = array(«EXPAND IndexStructure FOREACH entity.indexes SEPARATOR ','»);
 «ENDIF-»
 «ENDFOREACH-»
 
@@ -91,7 +91,7 @@ function «appName()»_tables()
         '«dbName(name)»' => "«IF primaryKey == true»I NOTNULL AUTO PRIMARY«ELSE»«EXPAND TypeDef»«EXPAND TypeValue»«ENDIF»"«ENDDEFINE»
 
 «DEFINE TypeDef FOR DerivedField-»
-«error("Error: undefined derived field (code 925621)")»
+«error("Error: undefined derived field (code 925621)") -> ""-»
 «ENDDEFINE»
 «DEFINE TypeValue FOR DerivedField»«IF mandatory == true» NOTNULL«ENDIF»«REM»no default value for text and blob fields, breaks mysql strict mode«ENDREM»«IF metaType != BlobField && metaType != ClobField» DEFAULT '«defaultValue»'«ENDIF»«ENDDEFINE»
 

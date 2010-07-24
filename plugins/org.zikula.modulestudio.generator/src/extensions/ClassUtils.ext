@@ -1,0 +1,67 @@
+
+import modulestudio;
+extension org::eclipse::xtend::util::stdlib::io;
+extension extensions::Utils;
+
+/*
+ * BusinessObject class naming extensions
+ */
+
+cached String classPraefix(Application app)
+	: app.appName().msconcat('_');
+
+cached String classSuffix()
+	: ".php";//".class.php";
+
+cached String asFile(String className)
+    : 'lib/'.msconcat(className.replaceAll('_', '/')).msconcat(classSuffix());
+
+
+cached String implClassDefault(Application app, String filling, String suffix)
+    : classPraefix(app).msconcat(filling).msconcat(suffix);
+cached String baseClassDefault(Application app, String filling, String suffix)
+    : implClassDefault(app, filling.msconcat('Base_'), suffix);
+
+
+// TODO: cleanup and refactorings
+
+cached String fillingDbObject() : "DBObject_";
+cached String fillingController() : "Controller_";
+cached String fillingApi() : "Api_";
+cached String fillingFormHandler() : "Form_Handler_";
+
+cached String prepClassPart(String str)
+    : applicationName(str).toFirstUpper();
+
+/** DBObject */
+cached String processArraySuffix(String str, Boolean appendArray)
+    : str.msconcat(((appendArray == true) ? "Array" : ""));
+cached String baseClassDbObject(Entity obj, Boolean appendArray)
+    : baseClassDefault(obj.container.application, fillingDbObject(), prepClassPart(obj.name)).processArraySuffix(appendArray);
+cached String implClassDbObject(Entity obj, Boolean appendArray)
+	: implClassDefault(obj.container.application, fillingDbObject(), prepClassPart(obj.name)).processArraySuffix(appendArray);
+
+/** Controller */
+// TODO: base classes (#56)
+cached String implClassController(Controller obj)
+    : implClassDefault(obj.container.application, fillingController(), prepClassPart(obj.name));
+cached String implClassApi(Controller obj)
+    : implClassDefault(obj.container.application, fillingApi(), prepClassPart(obj.name));
+cached String implClassFormHandler(Controller obj, String entityName, String actionName)
+    : implClassDefault(obj.container.application, fillingFormHandler(), prepClassPart(obj.name).msconcat('_').msconcat(prepClassPart(entityName)).msconcat('_').msconcat(prepClassPart(actionName)));
+
+cached String tempClassConfigHandler(Application app)
+    : implClassDefault(app, fillingFormHandler(), prepClassPart('Admin').msconcat('_').msconcat(prepClassPart('Config')));
+
+cached String prepTemplatePart(String origin, String addition)
+    : origin.msconcat(applicationName(addition));
+
+cached String templateFile(Application app, Controller obj, String entityName, String actionName)
+    : "templates/".msconcat(app.appName()).msconcat('_').prepTemplatePart(obj.name).msconcat('_').prepTemplatePart(entityName).msconcat('_').prepTemplatePart(prepClassPart(actionName));
+
+cached String editTemplateFile(Controller obj, String entityName, String actionName)
+    : templateFile(obj.container.application, obj, entityName, actionName);
+    
+
+
+

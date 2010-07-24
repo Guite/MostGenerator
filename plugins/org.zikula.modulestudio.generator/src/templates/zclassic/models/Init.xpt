@@ -188,14 +188,14 @@ Ausgelesen als Array: $blabla["0"];
             return false;
         }
 
-«IF models.select(e|e.isDefaultDataSource).get(0).numExampleRows > 0-»
+«IF getDefaultDataSource().numExampleRows > 0-»
 «FOREACH models.entities AS entity-»
         // define default data for «applicationName(entity.name)» table
         $records = array(«EXPAND createExampleRows(this) FOR entity-»
         );
 
         // insert it into the «applicationName(entity.name)» table
-        DBUtil::insertObjectArray($records, '«dbName(prefix + '_' + entity.name)»', '«dbName(entity.name)»id', true);
+        DBUtil::insertObjectArray($records, '«entity.fullEntityName()»', '«dbName(entity.name)»id', true);
 «ENDFOREACH-»
 «ENDIF-»
 
@@ -205,7 +205,7 @@ Ausgelesen als Array: $blabla["0"];
 «ENDDEFINE»
 
 «DEFINE clearTable FOR Entity»
-        !DBUtil::deleteWhere('«fullEntityName(this)»', '1=1')«ENDDEFINE»
+        !DBUtil::deleteWhere('«this.fullEntityName()»', '1=1')«ENDDEFINE»
 
 «DEFINE createExampleRows(Application app) FOR Entity»
 «FOREACH 1.upTo(container.numExampleRows) AS number SEPARATOR ','-»

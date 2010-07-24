@@ -16,7 +16,7 @@
 <div class="z-frontendcontainer">
 «ENDIF-»
 
-«LET dbName(fields.typeSelect(DerivedField).select(e|e.leading == true).get(0).name) AS titleField-»
+«LET getLeadingField().name.dbName() AS titleField-»
 {pagesetvar name="title" value=$«objName».«titleField»}
 <h2>{$«objName».«titleField»|modcallhooks}</h2>
 «ENDLET-»
@@ -30,7 +30,7 @@
 
 <dl id="«appName»_body">
 «FOREACH fields.typeSelect(DerivedField).reject(e|e.leading || e.primaryKey) AS field-»
-«LET incoming.select(e|dbName(e.source.name + "id") == dbName(field.name)) AS joins-»
+«LET incoming.select(e|dbName(e.source.idFieldName()) == dbName(field.name)) AS joins-»
 «IF joins.size > 0-»
     <dt>{gt text='«formattedNameCapitalized(joins.get(0).source.name)»'}</dt>
     <dd>«FOREACH joins AS join SEPARATOR ', '-»{$«objName».«join.source.name.dbName()»_«join.source.idField()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH-»</dd>

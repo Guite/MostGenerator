@@ -13,54 +13,54 @@
 
 «REM»Main entry point for the generator«ENDREM»
 «DEFINE Root(Object pm) FOR Application»
-    «REM»«pm.subTask("Basic information")»«ENDREM»
+    «pm.subTask("Basic information")»
     «info("Generating basic information")»
 	«EXPAND VersionFile::Root»
 
-	«REM»«pm.subTask("Model: Entity definitions")»«ENDREM»
+	«pm.subTask("Model: Entity definitions")»
     «info("Generating entity definitions")»
 	«EXPAND Entities::Root»
-	«REM»«pm.subTask("Model: Application initialisation")»«ENDREM»
+	«pm.subTask("Model: Application initialisation")»
     «info("Generating application initialisation")»
 	«EXPAND Init::Root»
 
-    «REM»«pm.subTask("Controller: Controller classes")»«ENDREM»
+    «pm.subTask("Controller: Controller classes")»
     «info("Generating controller classes")»
 	«EXPAND Controller::Root»
-	«REM»«pm.subTask("Controller: Action handler classes")»«ENDREM»
+	«pm.subTask("Controller: Action handler classes")»
     «info("Generating action handler classes")»
 	«EXPAND ActionHandler::Root»
-    «REM»«pm.subTask("Controller: Bootstrapping")»«ENDREM»
+    «pm.subTask("Controller: Bootstrapping")»
     «info("Generating bootstrapping")»
     «EXPAND Bootstrap::Root»
 
-	«REM»«pm.subTask("Model: Object classes")»«ENDREM»
+	«pm.subTask("Model: Object classes")»
     «info("Generating object classes")»
 	«EXPAND behavior::BusinessObject::Root»
 
-	«REM»«pm.subTask("View: Rendering templates")»«ENDREM»
+	«pm.subTask("View: Rendering templates")»
     «info("Generating view templates")»
 	«EXPAND View::Root»
-	«REM»«pm.subTask("View: Form templates")»«ENDREM»
+	«pm.subTask("View: Form templates")»
     «info("Generating form templates")»
 	«EXPAND Forms::Root»
-	«REM»«pm.subTask("View: Module-specific plugins")»«ENDREM»
+	«pm.subTask("View: Module-specific plugins")»
     «info("Generating application-specific plugins")»
 	«EXPAND Plugins::Root»
-	«REM»«pm.subTask("View: CSS definitions")»«ENDREM»
+	«pm.subTask("View: CSS definitions")»
     «info("Generating css definitions")»
 	«EXPAND Styles::Root»
-    «REM»«pm.subTask("View: Images")»«ENDREM»
+    «pm.subTask("View: Images")»
     «info("Generating images")»
     «EXPAND Images::Root»
 
-    «REM»«pm.subTask("Additions: Blocks")»«ENDREM»
+    «pm.subTask("Additions: Blocks")»
     «info("Generating blocks")»
     «EXPAND Blocks::Root»
-    «REM»«pm.subTask("Additions: Translations")»«ENDREM»
+    «pm.subTask("Additions: Translations")»
     «info("Generating translations")»
     «EXPAND Translations::Root»
-    «REM»«pm.subTask("Additions: Documentation")»«ENDREM»
+    «pm.subTask("Additions: Documentation")»
     «info("Generating documentation")»
     «EXPAND Docs::Root»
 «ENDDEFINE»

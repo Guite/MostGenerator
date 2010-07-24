@@ -1,4 +1,6 @@
+
 import modulestudio;
+extension org::eclipse::xtend::util::stdlib::io;
 
 
 /* app related functions */
@@ -16,6 +18,9 @@ cached String constantName(Action this) :
 cached String constantName(ActionEvent this) :
 	"EVENT_" + name.toUpperCase();
 
+// ugly (and temporary) way to bypass that EfficientLazyString can not be compared
+cached String msconcat(String a, String b) :
+    a.replaceAll(a, a + b);
 
 /*
  * naming extensions
@@ -39,14 +44,53 @@ cached boolean needsConfig(Application this) :
 	models.variables.vars.size > 0;
 
 
-cached String fullEntityName(Entity this) :
-	dbName(container.application.prefix + '_' + name);
+// we have to go the ugly way here to bypass that EfficientLazyString can not be compared
+cached String fullEntityName(Entity this)
+    : dbName(name).msconcat("_").msconcat(dbName(container.application.prefix));
+
+
+
+// return model container which are default data sources
+cached getDefaultDataSource(Application this)
+    : models.select(e | e.isDefaultDataSource == true).get(0);
+
+// return all entities with leading = true
+cached getLeadingEntity(Application this)
+    : models.entities.select(e | e.leading == true).get(0);
+// return all derived fields (excluding calculated fields)
+cached getDerivedFields(Entity this)
+    : fields.typeSelect(DerivedField);
+cached getDerivedFieldsWithAlias(Entity this)
+    : getDerivedFields().select(e | e.alias != null && e.alias != "");
+// return all fields with leading = true
+cached getLeadingField(Entity this)
+    : getDerivedFields().select(e | e.leading == true).get(0);
+// return all fields with primaryKey = true
+cached getPrimaryKeyField(Entity this)
+    : getDerivedFields(this).select(e | e.primaryKey == true).get(0);
+
+
 
 cached String getLeadObj(Application application)
-	: applicationName(application.models.entities.select(e|e.leading == true).get(0).name);
+    : applicationName(application.models.entities.select(e|e.leading == true).get(0).name);
 
 cached String idField(Entity entity)
-	: dbName(entity.fields.typeSelect(IntegerField).select(e|e.primaryKey == true).get(0).name);
+    : entity.getPrimaryKeyField().name.dbName();
+
+cached String idFieldName(Entity this)
+    : name.toString().msconcat('id');
+
+
+
+// return all join relations (excluding inheritance)
+cached getJoinRelations(Models this)
+    : relations.typeSelect(JoinRelationship);
+cached getJoinRelationsWithAlias(Models this)
+    : getJoinRelations(this).select(e|e.alias != null && e.alias != "");
+
+
+
+
 
 cached boolean hasActions(Controller controller, String type) :
 	switch (type) {

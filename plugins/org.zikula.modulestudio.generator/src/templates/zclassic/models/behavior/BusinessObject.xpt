@@ -1,38 +1,24 @@
 «IMPORT modulestudio»
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
-«EXTENSION extensions::UtilsBO»
+«EXTENSION extensions::ClassUtils»
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «REM»Entry point for DBObject implementations«ENDREM»
 «DEFINE Root FOR Application-»
-    «FILE "lib/" + appClassFileName(this, false)»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND dbObjectModuleClass(false)»«ENDFILE»
-    «FILE "lib/" + appClassFileName(this, true)»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND dbObjectModuleClass(true)»«ENDFILE»
-
 	«EXPAND ObjectClassWrapper(this, false) FOREACH models.entities-»
 	«EXPAND ObjectClassWrapper(this, true) FOREACH models.entities-»
-«ENDDEFINE»
-
-«REM»Module specific DBObject base class«ENDREM»
-«DEFINE dbObjectModuleClass(Boolean appendArray) FOR Application-»
-/**
- * This is a base class encapsulating the generic functionality which is
- * common for all DBObject«IF appendArray»Array«ENDIF» types in the «appName()» module
- */
-class «appClassName(this, appendArray)» extends DBObject«IF appendArray»Array«ENDIF»
-{
-}
 «ENDDEFINE»
 
 
 «DEFINE ObjectClassWrapper(Application app, Boolean appendArray) FOR Entity-»
 «info("Generating object class for \"" + name + "\"")»
-«FILE "lib/" + baseClassFileName(appendArray)»«EXPAND FileHelper::phpFileHeader(app)»
+«FILE baseClassDbObject(appendArray).asFile()»«EXPAND FileHelper::phpFileHeader(app)»
 
 /**
- * This class provides basic functionality of «baseClassName(appendArray)»
+ * This class provides basic functionality of «baseClassDbObject(appendArray)»
  */
-abstract class «baseClassName(appendArray)» extends «appClassName(app, appendArray)»
+abstract class «baseClassDbObject(appendArray)» extends DBObject«IF appendArray»Array«ENDIF-»
 {
 «IF appendArray == false-»
 «EXPAND ObjectClassImpl(app)-»
@@ -42,12 +28,12 @@ abstract class «baseClassName(appendArray)» extends «appClassName(app, append
 }
 «ENDFILE»
 
-«FILE "lib/" + implClassFileName(appendArray)»«EXPAND FileHelper::phpFileHeader(app)»
+«FILE implClassDbObject(appendArray).asFile()»«EXPAND FileHelper::phpFileHeader(app)»
 
 /**
- * This class implements the functionality of «baseClassName(appendArray)»
+ * This class implements the functionality of «baseClassDbObject(appendArray)»
  */
-class «implClassName(appendArray)» extends «baseClassName(appendArray)»
+class «implClassDbObject(appendArray)» extends «baseClassDbObject(appendArray)»
 {
 // feel free to add your logic here by implementing pre and post process methods
 «IF appendArray == false-»
@@ -111,7 +97,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
     }
 «REM»	«EXPAND BusinessStateFunction FOREACH businessStates-»«ENDREM»
 
-	«EXPAND BehaviorCommon::ClassToString(baseClassName(false))-»
+	«EXPAND BehaviorCommon::ClassToString(baseClassDbObject(false))-»
 «ENDDEFINE»
 
 «DEFINE SelectJoinFieldTableNames(String exludedIdField) FOR Entity-»
@@ -159,13 +145,13 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
 
 
 «DEFINE EventListenerMethod FOR EntityEventListener-»
-«error("Error: undefined event listener (code 925724)")»
+«error("Error: undefined event listener (code 925724)") -> ""-»
 «ENDDEFINE»
 «DEFINE EventListenerMethod FOR PreProcess-»
-«error("Error: undefined pre process (code 925725)")»
+«error("Error: undefined pre process (code 925725)") -> ""-»
 «ENDDEFINE»
 «DEFINE EventListenerMethod FOR PostProcess-»
-«error("Error: undefined post process (code 925726)")»
+«error("Error: undefined post process (code 925726)") -> ""-»
 «ENDDEFINE»
 
 «DEFINE EventListenerMethod FOR PreSave-»
@@ -343,7 +329,7 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
      */
     function getDefaultSortingField()
     {
-        return '«fields.typeSelect(DerivedField).select(e|e.leading == true).get(0).name.dbName()»';
+        return '«idField()»';
     }
 
     function selectPostProcess($all = null)
@@ -354,13 +340,13 @@ class «implClassName(appendArray)» extends «baseClassName(appendArray)»
         }
     }
 
-«EXPAND BehaviorCommon::ClassToString(baseClassName(true))-»
+«EXPAND BehaviorCommon::ClassToString(baseClassDbObject(true))-»
 «ENDDEFINE»
 
 «DEFINE singleSortingField FOR EntityField»
-«LET entity.incoming.select(e|dbName(e.source.name + "id") == dbName(name)) AS joins-»
+«LET entity.incoming.select(e|dbName(e.source.idFieldName()) == dbName(name)) AS joins-»
 «IF joins.size > 0-»
-                     '«joins.get(0).source.name.dbName()»_«joins.get(0).source.fields.typeSelect(DerivedField).select(e|e.leading == true).get(0).name.dbName()»'«""-»
+                     '«joins.get(0).source.name.dbName()»_«joins.get(0).source.idField()»'«""-»
 «ELSE-»
                      '«name.dbName()»'«""-»
 «ENDIF-»

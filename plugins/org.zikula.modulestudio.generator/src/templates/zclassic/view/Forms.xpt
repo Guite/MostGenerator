@@ -1,5 +1,6 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
 
 «DEFINE Root FOR Application-»
     «EXPAND Root(this) FOREACH controllers.controllers.actions.typeSelect(EditAction)-»
@@ -14,7 +15,7 @@
 «REM»Entry point for Form templates«ENDREM»
 «DEFINE Root(String appName, Controller controller, String actionName) FOR Entity-»
 «LET dbName(controller.name) AS controllerName-»
-«FILE "templates/" + applicationName(appName + "_" + controllerName + "_" + name + "_" + actionName) + ".tpl"-»
+«FILE editTemplateFile(controller, name, actionName) + ".tpl"-»
 «EXPAND FormTemplate(appName, controller, actionName)-»
 «ENDFILE»
 «ENDLET-»
@@ -184,12 +185,12 @@ cssClass="myClass"
 «ENDREM»«""-»
 «ENDDEFINE»
 «DEFINE FormField FOR IntegerField-»
-«LET entity.incoming.select(e|dbName(e.source.name + "id") == dbName(name)) AS pointingRelations-»
+«LET entity.incoming.select(e|dbName(e.source.idFieldName()) == dbName(name)) AS pointingRelations-»
 «IF pointingRelations.size > 0-»
 «LET pointingRelations.get(0) AS pointingRelation-»
 «LET pointingRelation.source AS joiningTable-»
 «REM»Join-Selector«ENDREM»«""-»
-            {formdropdownrelationlist id="«joiningTable.idField()»" mandatory=«IF mandatory-»true«ELSE»false«ENDIF-» module="«entity.container.application.appName()»" objecttype="«applicationName(joiningTable.name)»" idField="«joiningTable.idField()»" displayField="«joiningTable.fields.typeSelect(DerivedField).select(e|e.leading == true).get(0).name.dbName()»" orderby="«joiningTable.fields.typeSelect(DerivedField).select(e|e.leading == true).get(0).name.dbName()»"«IF pointingRelation.metaType == OneToManyRelationship-» selectionMode="multiple"«ENDIF-»}«IF mandatory-»&nbsp;*«ENDIF»
+            {formdropdownrelationlist id="«joiningTable.idField()»" mandatory=«IF mandatory-»true«ELSE»false«ENDIF-» module="«entity.container.application.appName()»" objecttype="«applicationName(joiningTable.name)»" idField="«joiningTable.idField()»" displayField="«joiningTable.idField()»" orderby="«joiningTable.idField()»"«IF pointingRelation.metaType == OneToManyRelationship-» selectionMode="multiple"«ENDIF-»}«IF mandatory-»&nbsp;*«ENDIF»
 «ENDLET-»
 «ENDLET-»
 «ELSE-»
