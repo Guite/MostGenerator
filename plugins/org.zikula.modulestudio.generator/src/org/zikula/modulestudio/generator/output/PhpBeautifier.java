@@ -28,22 +28,20 @@ public class PhpBeautifier implements PostProcessor {
         }
 
         // initialize project file structure
-        try {
-            GeneratorFileUtil.initProject();
-        } catch (CoreException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        /**
+         * try { GeneratorFileUtil.initProject(); } catch (CoreException e) { //
+         * TO DO Auto-generated catch block e.printStackTrace(); }
+         */
 
-        String filePath = info.getAbsolutePath();
+        final String filePath = info.getAbsolutePath();
         try {
-            IFile iFile = GeneratorFileUtil
-                    .getIFileFromFile(new File(filePath));
+            final IFile iFile = GeneratorFileUtil.getIFileFromFile(new File(
+                    filePath));
             getCodeFormatter().formatFile(iFile);
             // IDocument doc = new Document(info.getBuffer().toString());
             // getCodeFormatter().getFormatter().setCurrentFile(iFile);
             // getCodeFormatter().format(doc);
-        } catch (CoreException e) {
+        } catch (final CoreException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }

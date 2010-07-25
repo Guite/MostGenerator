@@ -113,6 +113,6 @@
             <metaModelPackage value="org.eclipse.xtend.profiler.profilermodel.ModelPackage"/>
         </metaModel>
         <expand value="org::eclipse::xtend::profiler::templates::Html::Main FOR profilingResult"/> 
-        <outlet overwrite="true" path="${srcGenPath}profiling"/> 
+        <outlet overwrite="true" path="${srcGenPath}/profiling/${cartridgeName}"/> 
     </component> 
 </workflow>

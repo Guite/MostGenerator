@@ -17,6 +17,6 @@
 	           cartridgeName="${cartridgeName}"
 			   modelFile="${examplePath}/${modelName}.mostapp"
 			   enrichedModelFile="${examplePath}/${modelName}_Enriched.mostapp"
-			   srcGenPath="${examplePath}/output/">
+			   srcGenPath="${examplePath}/output">
 	</cartridge>
 </workflow>

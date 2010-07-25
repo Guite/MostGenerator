@@ -276,7 +276,7 @@ Workflow {
 		        expand = "org::eclipse::xtend::profiler::templates::Html::Main FOR profilingResult"
 		        outlet = {
 		            overwrite = true
-		            path = "${targetDir}profiling"
+		            path = "${targetDir}profiling/${cartridgeName}"
 		        } 
 	       }
         }
