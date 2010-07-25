@@ -53,14 +53,14 @@ var templatesAdvice = "templates::${cartridgeName}::aspects::Permissions, templa
 
 Workflow {
     bean = EmfMetaModel : mmEMF { metaModelPackage = "org.eclipse.emf.ecore.EcorePackage" }
-    bean = EmfMetaModel : mmModuleStudio { metaModelPackage = "de.guite.modulestudio.metamodel.modulestudio.ModuleStudioPackage" }
+    bean = EmfMetaModel : mmModuleStudio { metaModelPackage = "de.guite.modulestudio.metamodel.modulestudio.ModulestudioPackage" }
 
     // set up EMF for standalone execution
     bean = StandaloneSetup {
         // URI's starting with "platform:/resource/" are normalized to the (canonical) path to the platform URI
         platformUri = "."
         registerGeneratedEPackage = "org.eclipse.emf.ecore.EcorePackage"
-        registerGeneratedEPackage = "de.guite.modulestudio.metamodel.modulestudio.ModuleStudioPackage"
+        registerGeneratedEPackage = "de.guite.modulestudio.metamodel.modulestudio.ModulestudioPackage"
         // initialize EPackage for profiler
         registerGeneratedEPackage = "org.eclipse.xtend.profiler.profilermodel.ModelPackage"
     }
