@@ -25,11 +25,13 @@ Workflow {
         modelPath = modelPath
         cartridgeName = cartridge
         targetDir = targetDir
-        // whether to copy the models into the target folder
-        doModelCopy = "true"
         // whether to output slot dumps (for debug purpose)
         doSlotDumps = "true"
         // whether to validate the model before processing
         doValidation = "true"
+        // whether to copy the models into the target folder
+        doModelCopy = "true"
+        // whether to create profiler output
+        doProfiling = "true"
 	}
 }

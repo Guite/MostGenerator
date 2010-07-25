@@ -27,22 +27,25 @@ var modelPath
 // The generator cartridge to execute (zclassic, zoo, documentation, reporting)
 var cartridgeName
 
-// whether to copy the models into the target folder
-var doModelCopy
-
 // whether to output slot dumps
 var doSlotDumps
 // whether to validate the model before processing
 var doValidation
+// whether to copy the models into the target folder
+var doModelCopy
+// whether to use the profiler
+var doProfiling
 
 // Destination folder
 var targetDir
 
 // calculated from input vars
-var modelFile = "file://${modelPath}/${modelName}.mostapp"
-// "platform:/resource/${model}"
-
-var enrichedModelFile = "file://${modelPath}/${modelName}_Enriched.mostapp"
+var modelFile = "${modelPath}/${modelName}.mostapp"
+var enrichedModelFile = "${modelPath}/${modelName}_Enriched.mostapp"
+var diagramFile = "${modelPath}/${modelName}.mostdiagram"
+var modelFileCopy = "${targetDir}/${modelName}.mostapp"
+var enrichedModelFileCopy = "${targetDir}/${modelName}_Enriched.mostapp"
+var diagramFileCopy = "${targetDir}/${modelName}.mostdiagram"
 
 var inputSlot = "inputModel"
 var enrichedSlot = "newModel"
@@ -54,6 +57,7 @@ var templatesAdvice = "templates::${cartridgeName}::aspects::Permissions, templa
 Workflow {
     bean = EmfMetaModel : mmEMF { metaModelPackage = "org.eclipse.emf.ecore.EcorePackage" }
     bean = EmfMetaModel : mmModuleStudio { metaModelPackage = "de.guite.modulestudio.metamodel.modulestudio.ModulestudioPackage" }
+    bean = EmfMetaModel : mmProfiler { metaModelPackage = "org.eclipse.xtend.profiler.profilermodel.ModelPackage" }
 
     // set up EMF for standalone execution
     bean = StandaloneSetup {
@@ -80,6 +84,7 @@ Workflow {
     component = IfComponent {
         cond = doSlotDumps
         if = {
+            cond = doSlotDumps
             component = SlotPrinter {
                // the name of a slot whose content should be dumped
                slotName = inputSlot
@@ -94,6 +99,7 @@ Workflow {
     component = IfComponent {
         cond = doValidation
         if = {
+            cond = doValidation
             // check components for constraints
             component = CheckComponent {
                 vetoableCallback = profiler
@@ -103,17 +109,10 @@ Workflow {
                 metaModel = mmModuleStudio
 
 	            // provide check files
-	            checkFile = "../de.guite.modulestudio.metamodel/model/checks/main"
-	            checkFile = "../de.guite.modulestudio.metamodel/model/checks/model"
-	            checkFile = "../de.guite.modulestudio.metamodel/model/checks/controller"
-	            checkFile = "../de.guite.modulestudio.metamodel/model/checks/view"
-//        checkFile = "metamodel::Checks"
-/*
-            checkFile = "checks::main"
-            checkFile = "checks::model"
-            checkFile = "checks::controller"
-            checkFile = "checks::view"
-*/
+	            checkFile = "checks::main"
+	            checkFile = "checks::model"
+	            checkFile = "checks::controller"
+	            checkFile = "checks::view"
 
 	            // on which part of the model the checks should work (our module with all children)
 	            emfAllChildrenSlot = inputSlot
@@ -143,6 +142,7 @@ Workflow {
     component = IfComponent {
         cond = doSlotDumps
         if = {
+            cond = doSlotDumps
             component = SlotPrinter {
                // the name of a slot whose content should be dumped
                slotName = enrichedSlot
@@ -178,20 +178,21 @@ Workflow {
     component = IfComponent {
         cond = doModelCopy
         if = {
+            cond = doModelCopy
             // copy original domain model into target folder
             component = FileCopy {
-                sourceFile = "bla.foo"
-                targetFile = "${targetDir}/bla.foo"
+                sourceFile = modelFile
+                targetFile = modelFileCopy
             }
             // copy enriched domain model into target folder
             component = FileCopy {
-                sourceFile = "bla.foo"
-                targetFile = "${targetDir}/bla.foo"
+                sourceFile = enrichedModelFile
+                targetFile = enrichedModelFileCopy
             }
             // copy diagram model into target folder
             component = FileCopy {
-                sourceFile = "bla.foo"
-                targetFile = "${targetDir}/bla.foo"
+                sourceFile = diagramFile
+                targetFile = diagramFileCopy
             }
         }
     }
@@ -220,17 +221,17 @@ Workflow {
         // specify where to put the generated code
         // default outlet has no name assigned
         outlet = {
-            path = "${targetDir}/${cartridgeName}/${modelName}/"
+            path = "${targetDir}${cartridgeName}/${modelName}/"
             fileEncoding = fileEncoding
             append = false
             overwrite = true
             /*postprocessor = XmlBeautifier {
                fileExtensions = ".xml, .xsd, .wsdd, .wsdl"
             }*/
-            postprocessor = PhpBeautifier {
-            }
+/*            postprocessor = PhpBeautifier {
+            }*/
         }
-/*           
+/*
         outlet = {
             name = "otherClasses"
             ...
@@ -240,18 +241,24 @@ Workflow {
 
     // TODO: phpXRef and other API docs
 
+    component = IfComponent {
+        cond = doProfiling
+        if = {
+            cond = doProfiling
+            // generate profiling result
+            component = Generator {
+                fileEncoding = "ISO-8859-1"
 
-    // generate profiling result
-    component = Generator {
-        fileEncoding = "ISO-8859-1"
+                metaModel = mmEMF
+                metaModel = mmProfiler
 
-        metaModel = mmEMF
-
-        expand = "org::eclipse::xtend::profiler::templates::Html::Main FOR profilingResult"
-        outlet = {
-            overwrite = true
-            path = "${targetDir}/profiling"
-        } 
+		        expand = "org::eclipse::xtend::profiler::templates::Html::Main FOR profilingResult"
+		        outlet = {
+		            overwrite = true
+		            path = "${targetDir}profiling"
+		        } 
+	       }
+        }
     }
 }
 
