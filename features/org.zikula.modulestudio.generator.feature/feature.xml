@@ -20,28 +20,24 @@
    </license>
 
    <requires>
-      <import plugin="de.guite.modulestudio.metamodel"/>
       <import plugin="org.antlr.runtime" version="3.0.0" match="greaterOrEqual"/>
       <import plugin="org.apache.ant" version="1.7.1" match="greaterOrEqual"/>
       <import plugin="org.apache.commons.cli" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.apache.commons.logging" version="1.0.0" match="compatible"/>
       <import plugin="org.eclipse.core.runtime" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.mwe.utils" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.validation" version="1.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xpand" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.xtend" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.xtend.typesystem.emf" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.mwe.utils" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.xtend.util.stdlib" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xpand" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui" version="3.6.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.wst.common.core"/>
-      <import plugin="org.eclipse.wst.common.emfworkbench.integration"/>
       <import plugin="org.eclipse.wst.sse.core"/>
-      <import plugin="org.eclipse.wst.validation"/>
       <import feature="org.eclipse.xtend.backend" version="1.0.0.qualifier"/>
-      <import feature="org.eclipse.xtend.backend.uml2types" version="1.0.0.qualifier"/>
-      <import feature="org.eclipse.xtend.backend.xsdtypes" version="1.0.0.qualifier"/>
       <import feature="org.eclipse.xtend.middleend.xpand" version="1.0.0.qualifier"/>
       <import feature="org.eclipse.xtend.middleend.xtend" version="1.0.0.qualifier"/>
+      <import feature="org.eclipse.xtend.backend.uml2types" version="1.0.0.qualifier"/>
+      <import feature="org.eclipse.xtend.backend.xsdtypes" version="1.0.0.qualifier"/>
    </requires>
 
    <plugin
