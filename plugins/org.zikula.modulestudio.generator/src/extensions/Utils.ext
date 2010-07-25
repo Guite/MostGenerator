@@ -111,8 +111,11 @@ cached boolean hasActions(Controller controller, String type) :
 cached String timestamp()
 	: JAVA extensions.Utils.timestamp();
 
+cached Boolean isProgressMonitor(Object monitor)
+    : JAVA extensions.Utils.isProgressMonitor(java.lang.Object);
+
 cached String subTask(Object monitor, String title)
-    : (monitor != null) ? subTaskJava(monitor, title) : "";
+    : monitor.isProgressMonitor() ? subTaskJava(monitor, title) : "";
 
 cached String subTaskJava(Object monitor, String title)
 	: JAVA extensions.Utils.subTask(org.eclipse.core.runtime.IProgressMonitor, java.lang.String);

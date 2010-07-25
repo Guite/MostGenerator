@@ -17,9 +17,9 @@
     <component id="dirCleaner" class="org.eclipse.emf.mwe.utils.DirectoryCleaner" directory="${srcGenPath}" />
 
     <!-- start generator component -->
-    <!-- The middleend component supports all properties of Generator, except collectProfileSummary and verboseProfileFilename -->
-    <component id="generator" class="org.eclipse.xtend.middleend.xpand.XpandComponent" skipOnErrors="true">
-<!--    <component id="generator" class="org.eclipse.xpand2.Generator" skipOnErrors="true">-->
+    <component class="org.eclipse.xpand2.Generator" fileEncoding="UTF-8" skipOnErrors="true">
+    <!-- middleend needs still uml, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312557
+    <component class="org.eclipse.xtend.middleend.xpand.XpandComponent" fileEncoding="UTF-8" skipOnErrors="true"> -->
         <vetoableCallback idRef="profiler"/>
         <!-- enforce file encoding since otherwise an error occurs on unix systems -->
         <!-- fileEncoding value="UTF-8" / -->
