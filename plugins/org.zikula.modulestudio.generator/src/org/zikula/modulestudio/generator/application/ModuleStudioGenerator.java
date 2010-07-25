@@ -120,6 +120,12 @@ public class ModuleStudioGenerator {
         // save old ClassLoader
         ClassLoader before = Thread.currentThread().getContextClassLoader();
         boolean success = false;
+        /**
+         * IResource resource = givenEditorResource... // set the work folder
+         * properties.put("basedir", getProject().getLocation().toOSString());
+         * // access current resource properties.put("model",
+         * resource.getLocation().toOSString());
+         */
 
         try {
             ModuleStudioResourceLoader resourceLoader = new ModuleStudioResourceLoader();

@@ -127,15 +127,10 @@ public class ModuleStudioGeneratorMwe2 {
         ClassLoader before = Thread.currentThread().getContextClassLoader();
         boolean success = false;
         /**
-         * IResource resource = givenEditorResource // configure properties
-         * passed to the workflow engine // set the work folder
+         * IResource resource = givenEditorResource... // set the work folder
          * properties.put("basedir", getProject().getLocation().toOSString());
          * // access current resource properties.put("model",
          * resource.getLocation().toOSString());
-         * 
-         * // handling error messages prepareLogger(resource); WorkflowRunner
-         * runner = new WorkflowRunner(); runner.run("workflow/generator.oaw",
-         * new NullProgressMonitor(), properties, slotMap); resetLogger();
          */
 
         try {
@@ -153,6 +148,7 @@ public class ModuleStudioGeneratorMwe2 {
             // start it
             // launcher.run(getWorkflowFile(), getProperties());
             runner.run(getWorkflowFile(), getProperties());
+            success = true;
         } finally {
             ResourceLoaderFactory.setCurrentThreadResourceLoader(null);
 
