@@ -116,10 +116,6 @@ public class ModuleStudioGenerator {
         addProperty("cartridgeName", cartridgeName);
         // directory for generated sources
         addProperty("srcGenPath", getOutputPath());
-        // directory for manual source fragments
-        addProperty("srcManPath", getOutputPath() + "/src-man");
-        // directory for phpXRef (TODO: integration)
-        addProperty("apiRefPath", getOutputPath() + "/phpxref");
 
         // save old ClassLoader
         ClassLoader before = Thread.currentThread().getContextClassLoader();
