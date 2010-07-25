@@ -6,6 +6,7 @@ module org.zikula.modulestudio.generator.workflow.msWorkflow
 
 import org.eclipse.emf.mwe.utils.StandaloneSetup
 import org.eclipse.emf.mwe.utils.Reader
+//import org.eclipse.xtext.MweReader <-- this one uses XtextResourceSet and is configured with Guice
 import org.eclipse.emf.mwe.core.container.IfComponent
 import org.eclipse.xtend.middleend.LanguageSetup
 import org.eclipse.xtend.util.stdlib.SlotPrinter
