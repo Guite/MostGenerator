@@ -7,17 +7,21 @@ module org.zikula.modulestudio.generator.workflow.msWorkflow
 import org.eclipse.emf.mwe.utils.StandaloneSetup
 import org.eclipse.emf.mwe.utils.Reader
 import org.eclipse.emf.mwe.core.container.IfComponent
+import org.eclipse.xtend.middleend.LanguageSetup
 import org.eclipse.xtend.util.stdlib.SlotPrinter
-import org.eclipse.xtend.check.CheckComponent
+//import org.eclipse.xtend.check.CheckComponent
+import org.eclipse.xtend.middleend.xtend.CheckComponent
 import org.eclipse.xtend.profiler.ProfilerComponent
 import org.eclipse.xtend.typesystem.emf.EmfMetaModel
 //import org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel
 import org.eclipse.xtend.typesystem.xsd.XMLBeautifier
-import org.eclipse.xtend.XtendComponent
+//import org.eclipse.xtend.XtendComponent
+import org.eclipse.xtend.middleend.xtend.XtendComponent
 import org.eclipse.emf.mwe.utils.DirectoryCleaner
 import org.eclipse.emf.mwe.utils.FileCopy
 import org.eclipse.emf.mwe.utils.Writer
-import org.eclipse.xpand2.Generator
+//import org.eclipse.xpand2.Generator
+import org.eclipse.xtend.middleend.xpand.XpandComponent
 import org.zikula.modulestudio.generator.output.PhpBeautifier
 
 // The model to be processed (file name without extension)
@@ -67,6 +71,22 @@ Workflow {
         registerGeneratedEPackage = "de.guite.modulestudio.metamodel.modulestudio.ModulestudioPackage"
         // initialize EPackage for profiler
         registerGeneratedEPackage = "org.eclipse.xtend.profiler.profilermodel.ModelPackage"
+    }
+
+    /*
+    Multiple languages for code generation, model validation and transformation can be used. 
+    The languages are translated into Xtend Backend code by so called language contributors 
+    a.k.a middleends. As soon as a middleend for OCL is available, OCL will be usable from Xpand/Xtend. 
+     
+    Register the language contributors at the generator backend! 
+    */
+    component = LanguageSetup {
+        // Xtend
+        languageContributor = "org.eclipse.xtend.middleend.xtend.plugin.OldXtendRegistryFactory"
+        // Check
+        languageContributor = "org.eclipse.xtend.middleend.xtend.plugin.OldCheckRegistryFactory"
+        // Xpand
+        languageContributor = "org.eclipse.xtend.middleend.xpand.plugin.OldXpandRegistryFactory"
     }
 
     // read in the given file
@@ -198,7 +218,7 @@ Workflow {
     }
 
     // start generator component
-    component = Generator {
+    component = XpandComponent/*Generator*/ {
         vetoableCallback = profiler
 
         // skip this component if there are errors
@@ -246,7 +266,7 @@ Workflow {
         if = {
             cond = doProfiling
             // generate profiling result
-            component = Generator {
+            component = XpandComponent/*Generator*/ {
                 fileEncoding = "ISO-8859-1"
 
                 metaModel = mmEMF
