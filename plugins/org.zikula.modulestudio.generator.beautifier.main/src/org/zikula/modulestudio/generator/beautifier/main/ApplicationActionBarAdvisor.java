@@ -1,4 +1,4 @@
-package beautifier.main;
+package org.zikula.modulestudio.generator.beautifier.main;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.IWorkbenchWindow;

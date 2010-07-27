@@ -1,4 +1,4 @@
-package beautifier.main;
+package org.zikula.modulestudio.generator.beautifier.main;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;

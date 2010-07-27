@@ -107,17 +107,17 @@ public class SimpleContentFormatter implements IContentFormatter {
 
     public void format(File file) {
         inputFile = file;
-        GeneratorFileUtil.applyFormatterOnSingleFileInEditor(file, this);
+        try {
+            GeneratorFileUtil.applyFormatterOnSingleFileInEditor(file, this);
+        } catch (final Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     @SuppressWarnings("deprecation")
     private IStructuredModel buildStructuredModel(IDocument document)
             throws Exception {
-        /*
-         * if (GeneratorFileUtil.isIndebugMode) {
-         * System.out.println("Current file: " + currentFile.getFullPath() +
-         * ", " + ((currentFile.exists()) ? "existing" : "not existing")); }
-         */
         final IModelManager modelManager = StructuredModelManager
                 .getModelManager();
 

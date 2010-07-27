@@ -13,10 +13,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Region;
-import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -57,7 +55,7 @@ public class GeneratorFileUtil {
     }
 
     public static void applyFormatterOnSingleFileInEditor(File file,
-            SimpleContentFormatter formatter) {
+            SimpleContentFormatter formatter) throws Exception {
         final IFileSystem fileSystem = EFS.getLocalFileSystem();
         final IFileStore fileStore = fileSystem.getStore(file.toURI());
         final IWorkbenchPage page = GeneratorFileUtil.openEditor(fileStore);
@@ -68,14 +66,13 @@ public class GeneratorFileUtil {
         }
 
         final IDocument document = GeneratorFileUtil.getDocumentFromPage(page);
-        final IFile iFile = GeneratorFileUtil.getIFileFromPage(page);
+        if (document == null) {
+            throw new Exception(
+                    "Error: Invalid document content in GeneratorFileUtil detected.");
+        }
         final IEditorPart currentEditor = page.getActiveEditor();
 
         final Region region = new Region(0, document.getLength());
-        // if (GeneratorFileUtil.isIndebugMode) {
-        // System.out.println("Region: " + region.getLength());
-        // }
-        formatter.setCurrentFile(iFile);
         formatter.format(document, region);
 
         if (GeneratorFileUtil.isIndebugMode) {
@@ -84,7 +81,7 @@ public class GeneratorFileUtil {
         // save without confirmation
         page.saveEditor(currentEditor, false);
         // close without saving
-        // page.closeEditor(currentEditor, false);
+        page.closeEditor(currentEditor, false);
     }
 
     public static IWorkbenchPage openEditor(IFileStore fileStore) {
@@ -102,61 +99,18 @@ public class GeneratorFileUtil {
     }
 
     /**
-     * read file and return as IDocument instance
-     * 
-     * @param file
-     * @return
-     */
-    public static IFile getIFileFromPage(IWorkbenchPage page) {
-        final IEditorReference[] editors = page.getEditorReferences();
-
-        IFile file = null;
-        for (final IEditorReference reference : editors) {
-            try {
-                final IEditorInput editorInput = reference.getEditorInput();
-
-                if (!(editorInput instanceof IFileEditorInput)) {
-                    continue;
-                }
-                file = (((IFileEditorInput) editorInput).getFile());
-            } catch (final PartInitException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-        return file;
-    }
-
-    /**
-     * read file and return as IDocument instance
-     * 
      * @param file
      * @return
      */
     public static IDocument getDocumentFromPage(IWorkbenchPage page) {
         final IEditorReference[] editors = page.getEditorReferences();
-
         IDocument document = null;
         for (final IEditorReference reference : editors) {
-            try {
-                final IEditorInput editorInput = reference.getEditorInput();
-                final IFile file;
-
-                if (!(editorInput instanceof IFileEditorInput)) {
-                    continue;
-                }
-                file = (((IFileEditorInput) editorInput).getFile());
-
-                final IEditorPart editor = reference.getEditor(false);
-                if (editor != null && editor instanceof ITextEditor) {
-                    final ITextEditor textEditor = (ITextEditor) editor;
-                    final IDocumentProvider prov = textEditor
-                            .getDocumentProvider();
-                    document = prov.getDocument(textEditor.getEditorInput());
-                }
-            } catch (final PartInitException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+            final IEditorPart editor = reference.getEditor(false);
+            if (editor != null && editor instanceof ITextEditor) {
+                final ITextEditor textEditor = (ITextEditor) editor;
+                final IDocumentProvider prov = textEditor.getDocumentProvider();
+                document = prov.getDocument(textEditor.getEditorInput());
             }
         }
         return document;

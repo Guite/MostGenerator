@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Beautifier Main Application
 Bundle-SymbolicName: org.zikula.modulestudio.generator.beautifier.main;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: beautifier.main.Activator
+Bundle-Activator: org.zikula.modulestudio.generator.beautifier.main.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.zikula.modulestudio.generator.beautifier;bundle-version="1.0.0",

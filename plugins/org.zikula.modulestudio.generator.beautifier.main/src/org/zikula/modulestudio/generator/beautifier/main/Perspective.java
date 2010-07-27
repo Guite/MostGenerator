@@ -1,4 +1,4 @@
-package beautifier.main;
+package org.zikula.modulestudio.generator.beautifier.main;
 
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;

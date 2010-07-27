@@ -7,15 +7,15 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-               class="beautifier.main.Application">
+               class="org.zikula.modulestudio.generator.beautifier.main.Application">
          </run>
       </application>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="RCP Perspective"
-            class="beautifier.main.Perspective"
+            name="Beautifier Perspective"
+            class="org.zikula.modulestudio.generator.beautifier.main.Perspective"
             id="beautifier.main.perspective">
       </perspective>
    </extension>

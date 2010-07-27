@@ -1,10 +1,11 @@
-package beautifier.main;
+package org.zikula.modulestudio.generator.beautifier.main;
 
 import java.io.File;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -31,22 +32,23 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         configurer.setInitialSize(new Point(400, 300));
         configurer.setShowCoolBar(false);
         configurer.setShowStatusLine(false);
-        configurer.setTitle("Hello RCP"); //$NON-NLS-1$
+        configurer.setTitle("Standalone Beautifier Application"); //$NON-NLS-1$
     }
 
     @Override
     public void postWindowOpen() {
+        Integer numFiles = 0;
         try {
-            startTest();
+            numFiles = startBeautifier();
         } catch (final CoreException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        PlatformUI.getWorkbench().close();
+        System.out.println("Done: beautified " + numFiles + " php files.");
     }
 
-    public void startTest() throws CoreException {
-        // System.out.println("Tests started.");
-        // root path
+    public Integer startBeautifier() throws CoreException {
         final String rootPath = "/home/axel/Beautifier_TestFiles/";
         final File dir = new File(rootPath);
 
@@ -60,6 +62,7 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
         for (final File file : fileList) {
             beautifier.formatFile(file);
         }
-        // System.out.println("Tests finished.");
+        // Success, return amount of processed files
+        return fileList.size();
     }
 }
