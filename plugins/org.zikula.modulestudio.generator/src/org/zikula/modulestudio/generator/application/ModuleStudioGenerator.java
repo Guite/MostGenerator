@@ -1,18 +1,14 @@
 package org.zikula.modulestudio.generator.application;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.mwe.core.WorkflowRunner;
 import org.eclipse.emf.mwe.core.monitor.NullProgressMonitor;
 import org.eclipse.emf.mwe.core.resources.ResourceLoaderFactory;
-import org.zikula.modulestudio.generator.beautifier.GeneratorFileUtil;
-import org.zikula.modulestudio.generator.beautifier.formatter.FormatterFacade;
 
 import de.guite.modulestudio.metamodel.modulestudio.Application;
 
@@ -45,6 +41,11 @@ public class ModuleStudioGenerator {
     private Map<String, Object> slotContents = null;
 
     /**
+     * Progress monitor for the ui
+     */
+    private IProgressMonitor progressMonitor = null;
+
+    /**
      * default constructor
      */
     public ModuleStudioGenerator(Application application,
@@ -67,7 +68,8 @@ public class ModuleStudioGenerator {
         // strips out table columns
         // slotContents.put("model", application);
 
-        monitor.beginTask("Generating \"" + application.getName() + " "
+        progressMonitor = monitor;
+        progressMonitor.beginTask("Generating \"" + application.getName() + " "
                 + application.getVersion() + "\" ...", -1);
     }
 
@@ -152,24 +154,6 @@ public class ModuleStudioGenerator {
         }
 
         return success;
-    }
-
-    public void applyBeautifier() throws CoreException {
-        // System.out.println("Tests started.");
-        // root path
-        final File dir = new File(getOutputPath());
-
-        // retrieve files
-        final Vector<File> fileList = new Vector<File>();
-        GeneratorFileUtil.getRecursivePhpFiles(dir, fileList);
-
-        // initialize formatter class
-        final FormatterFacade beautifier = new FormatterFacade();
-        // process files
-        for (final File file : fileList) {
-            beautifier.formatFile(file);
-        }
-        // System.out.println("Tests finished.");
     }
 
     /**

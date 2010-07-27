@@ -1,0 +1,11 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+
+«REM»DUMMY - required (at the moment) by the workflow for calculating pointcuts and advices for aspect oriented templates«ENDREM»
+
+«AROUND templates::zclassic::models::Entities::ObjectExtensions FOR Entity-»
+«targetDef.proceed()»
+«ENDAROUND»
+
+«AROUND templates::zclassic::models::behavior::BusinessObject::standardSortingFields FOR Entity-»
+«ENDAROUND»
