@@ -1,13 +1,17 @@
 package org.zikula.modulestudio.generator.application;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.mwe.core.resources.ResourceLoaderFactory;
 import org.eclipse.emf.mwe2.launch.runtime.Mwe2Runner;
+import org.zikula.modulestudio.generator.beautifier.GeneratorFileUtil;
+import org.zikula.modulestudio.generator.beautifier.formatter.FormatterFacade;
 
 import de.guite.modulestudio.metamodel.modulestudio.Application;
 
@@ -105,9 +109,9 @@ public class ModuleStudioGeneratorMwe2 {
      */
     private boolean runWorkflowInternal() throws CoreException, IOException {
         // The model to be processed (file name without extension)
-        addProperty("modelName", cartridgeName);
+        addProperty("modelName", "TODO");
         // The path where to find the model, without trailing slash
-        addProperty("modelPath", cartridgeName);
+        addProperty("modelPath", "TODO");
         // The generator cartridge to execute
         // (zclassic, zoo, documentation, reporting)
         addProperty("cartridgeName", cartridgeName);
@@ -149,6 +153,7 @@ public class ModuleStudioGeneratorMwe2 {
             // start it
             // launcher.run(getWorkflowFile(), getProperties());
             runner.run(getWorkflowFile(), getProperties());
+
             success = true;
         } finally {
             ResourceLoaderFactory.setCurrentThreadResourceLoader(null);
@@ -158,6 +163,24 @@ public class ModuleStudioGeneratorMwe2 {
         }
 
         return success;
+    }
+
+    public void applyBeautifier() throws CoreException {
+        // System.out.println("Tests started.");
+        // root path
+        final File dir = new File(getOutputPath());
+
+        // retrieve files
+        final Vector<File> fileList = new Vector<File>();
+        GeneratorFileUtil.getRecursivePhpFiles(dir, fileList);
+
+        // initialize formatter class
+        final FormatterFacade beautifier = new FormatterFacade();
+        // process files
+        for (final File file : fileList) {
+            beautifier.formatFile(file);
+        }
+        // System.out.println("Tests finished.");
     }
 
     /**
