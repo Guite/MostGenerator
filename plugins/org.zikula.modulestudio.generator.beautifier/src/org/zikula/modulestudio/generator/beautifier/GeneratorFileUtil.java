@@ -121,6 +121,7 @@ public class GeneratorFileUtil {
      * 
      * @param file
      * @return
+     * @unused
      */
     public static String getFileText(IFile file) {
         try {
