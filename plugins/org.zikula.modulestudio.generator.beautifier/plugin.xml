@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.6"?>
+<plugin>
+   <!--<extension
+         point="org.zikula.modulestudio.generator.beautifier.pdt.ui.phpFormatterProcessor">
+      <processor
+            class="org.zikula.modulestudio.generator.beautifier.formatter.SimpleContentFormatter"
+            id="org.zikula.modulestudio.generator.beautifier.formatter.SimpleContentFormatter"
+            name="org.zikula.modulestudio.generator.beautifier.formatter.SimpleContentFormatter">
+      </processor>
+   </extension>-->
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.zikula.modulestudio.generator.beautifier.formatter.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferenceTransfer">
+      <transfer
+            id="org.zikula.modulestudio.generator.beautifier.formatter.transfer"
+            name="PDT Tools - Formatter Prototype">
+         <mapping scope="instance">
+            <entry
+                  node="org.zikula.modulestudio.generator.beautifier.formatter">
+            </entry>
+         </mapping>
+      </transfer>
+   </extension>
+
+
+
+
+
+
+
+    <!-- PHP Model Handler -->
+    <extension
+        point="org.eclipse.wst.sse.core.modelHandler">
+        <modelHandler
+            default="yes"
+            class="org.zikula.modulestudio.generator.beautifier.pdt.internal.core.documentModel.handler.PHPModelHandler"
+            associatedContentTypeId="org.zikula.modulestudio.generator.beautifier.phpsource"
+            id="org.zikula.modulestudio.generator.beautifier.pdt.core.documentModel.handler">
+        </modelHandler>
+    </extension>
+
+    <!--
+        DocumentFactory extension for PHP: This is needed in order to
+        bootstrap the lookup of the ModelHandler
+    -->
+    <extension
+        point="org.eclipse.core.filebuffers.documentCreation"
+        id="org.zikula.modulestudio.generator.beautifier.pdt.core.documentfactories"
+        name="PHP Document Creation Factory">
+        <!-- This is a base factory class included in WST -->
+        <factory
+            contentTypeId="org.zikula.modulestudio.generator.beautifier.phpsource"
+            class="org.eclipse.wst.sse.core.internal.filebuffers.BasicStructuredDocumentFactory" />
+    </extension>
+
+    <!-- PHP Content Type declaration -->
+    <extension
+        point="org.eclipse.core.contenttype.contentTypes">
+        <content-type
+            base-type="org.eclipse.core.runtime.text"
+            file-extensions="php,php3,php4,php5,phtml,inc,phps,tpl"
+            id="phpsource"
+            name="%content-type.name.0"
+            priority="high">
+        </content-type>
+    </extension>
+
+    <extension
+        id="PHPNature"
+        name="PHP Properties"
+        point="org.eclipse.core.resources.natures">
+        <runtime>
+            <run
+                class="org.zikula.modulestudio.generator.beautifier.pdt.internal.core.project.PHPNature">
+            </run>
+        </runtime>
+    </extension>
+
+    <extension
+        id="PhpDocumentSetupParticipant"
+        name="PhpDocumentSetupParticipant"
+        point="org.eclipse.core.filebuffers.documentSetup">
+        <participant
+            contentTypeId="org.zikula.modulestudio.generator.beautifier.phpsource"
+            class="org.zikula.modulestudio.generator.beautifier.pdt.internal.core.documentModel.PhpDocumentSetupParticipant">
+        </participant>
+    </extension>
+
+
+    <!-- DLTK -->
+    <extension
+        point="org.eclipse.dltk.core.language">
+        <language
+            class="org.zikula.modulestudio.generator.beautifier.pdt.internal.core.PHPLanguageToolkit"
+            nature="org.zikula.modulestudio.generator.beautifier.pdt.core.PHPNature"
+            priority="0">
+        </language>
+    </extension>
+
+    <extension
+        point="org.eclipse.dltk.core.sourceParsers">
+        <parserContribution
+            natureId="org.zikula.modulestudio.generator.beautifier.pdt.core.PHPNature">
+            <parser
+                class="org.zikula.modulestudio.generator.beautifier.pdt.internal.core.compiler.ast.parser.PHPSourceParserFactory"
+                description="Creates PHP source parser"
+                id="org.zikula.modulestudio.generator.beautifier.phpsourceParserFactory"
+                name="PHP source parser factory"
+                priority="0">
+            </parser>
+        </parserContribution>
+    </extension>
+
+    <extension
+        point="org.eclipse.dltk.core.sourceElementParsers">
+        <parser
+            class="org.zikula.modulestudio.generator.beautifier.pdt.internal.core.compiler.ast.parser.PHPSourceElementParser"
+            nature="org.zikula.modulestudio.generator.beautifier.pdt.core.PHPNature"
+            priority="0">
+        </parser>
+    </extension>
+
+    <extension
+        point="org.eclipse.dltk.core.typeEvaluators">
+        <evaluator
+            evaluator="org.zikula.modulestudio.generator.beautifier.pdt.internal.core.typeinference.PHPTypeInferencer"
+            nature="org.zikula.modulestudio.generator.beautifier.pdt.core.PHPNature">
+        </evaluator>
+    </extension>
+
+    <extension
+        point="org.eclipse.dltk.core.buildpathContainerInitializer">
+        <buildpathContainerInitializer
+            class="org.zikula.modulestudio.generator.beautifier.pdt.internal.core.language.LanguageModelInitializer"
+            id="org.zikula.modulestudio.generator.beautifier.pdt.core.LANGUAGE">
+        </buildpathContainerInitializer>
+    </extension>
+
+
+
+
+
+    <!--PHP formatter processoer registration, for PHP Content:-->
+    <extension point="org.eclipse.wst.sse.core.formatProcessors">
+        <processor
+            class="org.zikula.modulestudio.generator.beautifier.pdt.ui.format.PHPFormatProcessorProxy"
+            contentTypeId="org.zikula.modulestudio.generator.beautifier.phpsource ">
+        </processor>
+    </extension>
+
+    <!--PHP Editor:-->
+    <extension point="org.eclipse.ui.editors">
+        <editor class="org.zikula.modulestudio.generator.beautifier.pdt.internal.ui.editor.PHPStructuredEditor"
+            default="true" id="org.zikula.modulestudio.generator.beautifier.pdt.editor"
+            name="%editor.name.0" symbolicFontName="org.eclipse.wst.sse.ui.textfont">
+            <contentTypeBinding contentTypeId="org.zikula.modulestudio.generator.beautifier.phpsource" />
+        </editor>
+    <!--<editor
+        class="org.zikula.modulestudio.generator.beautifier.pdt.internal.ui.editor.UntitledPHPEditor"
+        id="org.zikula.modulestudio.generator.beautifier.pdt.untitledPhpEditor"
+        name="%editor.name.1"
+        symbolicFontName="org.eclipse.wst.sse.ui.textfont">
+    </editor>-->
+    </extension>
+
+
+
+    <!-- Set up a definition for PHP Content Types -->
+    <extension point="org.eclipse.core.expressions.definitions">
+        <definition id="org.zikula.modulestudio.generator.beautifier.pdt.ui.phpContentType.definition">
+            <with variable="activeContexts">
+                <iterate operator="or">
+                    <equals value="org.zikula.modulestudio.generator.beautifier.phpsource" />
+                </iterate>
+            </with>
+        </definition>
+    </extension>
+</plugin>

@@ -2,11 +2,9 @@ package org.zikula.modulestudio.generator.output;
 
 import java.io.File;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.xpand2.output.FileHandle;
 import org.eclipse.xpand2.output.PostProcessor;
-import org.zikula.modulestudio.generator.beautifier.GeneratorFileUtil;
 import org.zikula.modulestudio.generator.beautifier.formatter.FormatterFacade;
 
 public class PhpBeautifier implements PostProcessor {
@@ -35,9 +33,11 @@ public class PhpBeautifier implements PostProcessor {
 
         final String filePath = info.getAbsolutePath();
         try {
-            final IFile iFile = GeneratorFileUtil.getIFileFromFile(new File(
-                    filePath));
-            getCodeFormatter().formatFile(iFile);
+            /*
+             * final IFile iFile = GeneratorFileUtil.getIFileFromFile(new File(
+             * filePath));
+             */
+            getCodeFormatter().formatFile(new File(filePath));
             // IDocument doc = new Document(info.getBuffer().toString());
             // getCodeFormatter().getFormatter().setCurrentFile(iFile);
             // getCodeFormatter().format(doc);

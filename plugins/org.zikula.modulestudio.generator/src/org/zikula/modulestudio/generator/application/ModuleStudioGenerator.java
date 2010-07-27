@@ -48,7 +48,7 @@ public class ModuleStudioGenerator {
         properties = new HashMap<String, String>();
 
         // obsolete start
-        String modelPath = application.getModelPath();
+        final String modelPath = application.getModelPath();
         // input model file
         addProperty("modelFile", modelPath);
 
@@ -100,7 +100,7 @@ public class ModuleStudioGenerator {
             String wfFile) throws CoreException, IOException {
         setWorkflowFile(wfFile);
         setCartridgeName(cartridgeName);
-        setOutputPath(outputPath + "/" + cartridgeName);
+        setOutputPath(outputPath);// + "/" + cartridgeName);
         return runWorkflowInternal();
     }
 
@@ -118,7 +118,8 @@ public class ModuleStudioGenerator {
         addProperty("srcGenPath", getOutputPath());
 
         // save old ClassLoader
-        ClassLoader before = Thread.currentThread().getContextClassLoader();
+        final ClassLoader before = Thread.currentThread()
+                .getContextClassLoader();
         boolean success = false;
         /**
          * IResource resource = givenEditorResource... // set the work folder
@@ -128,13 +129,13 @@ public class ModuleStudioGenerator {
          */
 
         try {
-            ModuleStudioResourceLoader resourceLoader = new ModuleStudioResourceLoader();
+            final ModuleStudioResourceLoader resourceLoader = new ModuleStudioResourceLoader();
             // set oaw's classloader to the current class-loader
             ResourceLoaderFactory
                     .setCurrentThreadResourceLoader(resourceLoader);
 
             // instantiate MWE workflow runner
-            WorkflowRunner runner = new WorkflowRunner();
+            final WorkflowRunner runner = new WorkflowRunner();
 
             // start it
             success = runner.run(getWorkflowFile(), new NullProgressMonitor(),
