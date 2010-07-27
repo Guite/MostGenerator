@@ -8,6 +8,7 @@ import java.util.Vector;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
@@ -57,8 +58,8 @@ public class GeneratorFileUtil {
 
     public static void applyFormatterOnSingleFileInEditor(File file,
             SimpleContentFormatter formatter) {
-        final IFileStore fileStore = EFS.getLocalFileSystem().getStore(
-                file.toURI());
+        final IFileSystem fileSystem = EFS.getLocalFileSystem();
+        final IFileStore fileStore = fileSystem.getStore(file.toURI());
         final IWorkbenchPage page = GeneratorFileUtil.openEditor(fileStore);
 
         if (GeneratorFileUtil.isIndebugMode) {

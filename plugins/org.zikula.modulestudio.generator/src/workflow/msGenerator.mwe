@@ -39,7 +39,8 @@
         <!-- default outlet has no name assigned -->
         <outlet path="${srcGenPath}/${cartridgeName}" append="false" overwrite="true">
             <!-- postprocessor class="org.eclipse.xtend.typesystem.xsd.XMLBeautifier" fileExtensions=".xml, .xsd, .wsdd, .wsdl" /-->
-            <postprocessor class="org.zikula.modulestudio.generator.output.PhpBeautifier" />
+            <!-- we call the php beautifier from MOST as it needs some things which are not available in the workflow context -->
+            <!-- postprocessor class="org.zikula.modulestudio.generator.output.PhpBeautifier" / -->
         </outlet>
         <!--<outlet name="otherClasses" ... -->
     </component>
