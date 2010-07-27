@@ -328,7 +328,8 @@ public class SimpleContentFormatter implements IContentFormatter {
                             docRegion.getLength(), buf);
                 }
                 else {
-                    System.out.println("TETE 3" + docRegion.getType());
+                    // System.out.println("Undesired region type: "
+                    // + docRegion.getType());
                 }
             }
         } catch (final BadLocationException e) {

@@ -14,7 +14,7 @@
     </component>
 
     <!-- clear output directory -->
-    <component id="dirCleaner" class="org.eclipse.emf.mwe.utils.DirectoryCleaner" directory="${srcGenPath}" />
+    <component id="dirCleaner" class="org.eclipse.emf.mwe.utils.DirectoryCleaner" directory="${srcGenPath}/${cartridgeName}" />
 
     <!-- start generator component -->
     <component class="org.eclipse.xpand2.Generator" fileEncoding="UTF-8" skipOnErrors="true">

@@ -193,7 +193,7 @@ Workflow {
 
     // clear output directory
     component = DirectoryCleaner {
-       directory = targetDir
+       directory = "${targetDir}${cartridgeName}"
     }
 
     component = IfComponent {
