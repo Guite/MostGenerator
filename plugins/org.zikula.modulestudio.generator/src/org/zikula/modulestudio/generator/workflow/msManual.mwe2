@@ -11,13 +11,13 @@ var name
 // model folder
 var dir
 // cartridge name (zclassic, zoo, documentation, reporting)
-var cartridge
+var cartridge = "zclassic"
 
 // The path where to find the model, without trailing slash
 var modelPath = "/home/axel/projects/GuiteSVN/trunk/models/${dir}"
 
 // Destination folder
-var targetDir = "${modelPath}/output/${name}/${cartridge}/${name}/"
+var targetDir = "/home/axel/batchOutput/${name}/${cartridge}/${name}/"
 
 Workflow {
     // Call the file reader workflow and provide required properties

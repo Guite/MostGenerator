@@ -6,22 +6,52 @@ module org.zikula.modulestudio.generator.workflow.msManualCollection
  */
 
 Workflow {
-    component = @msManual { dir = "customers" name = "handydb"      cartridge = "zclassic" }
-    component = @msManual { dir = "customers" name = "jsRefPool"    cartridge = "zclassic" }
-    component = @msManual { dir = "customers" name = "JugendServer_Materialien" cartridge = "zclassic" }
+    component = @msManual { dir = "customers/later" name = "GuiAdvert" }
+    component = @msManual { dir = "customers/later" name = "GuiAffiliate" }
+    component = @msManual { dir = "customers/later" name = "GuiCallCenter" }
+    component = @msManual { dir = "customers/later" name = "GuiStockKeeping" }
+    component = @msManual { dir = "customers/later" name = "GuiSubscription" }
+    component = @msManual { dir = "customers" name = "GuiCustomer" }
+    component = @msManual { dir = "customers" name = "GuiErpSync" }
+    component = @msManual { dir = "customers" name = "GuiOrder" }
+    component = @msManual { dir = "customers" name = "GuiPayment" }
+    component = @msManual { dir = "customers" name = "GuiPricing" }
+    component = @msManual { dir = "customers" name = "GuiProduct" }
+    component = @msManual { dir = "customers" name = "GuiPromotion" }
+    component = @msManual { dir = "customers" name = "GuiShipping" }
+    component = @msManual { dir = "customers" name = "GuiShop" }
+    component = @msManual { dir = "customers" name = "HandyDB" }
+    component = @msManual { dir = "customers" name = "JsMaterials" }
+    component = @msManual { dir = "customers" name = "JsRefPool" }
+    component = @msManual { dir = "customers" name = "JuFeBo" }
+    component = @msManual { dir = "customers" name = "LeisurePlaces" }
+    component = @msManual { dir = "customers" name = "MenuSuggestion" }
 
-    component = @msManual { dir = "examples" name = "AutoBugs"      cartridge = "zclassic" }
-    component = @msManual { dir = "examples" name = "AutoCocktails" cartridge = "zclassic" }
-    component = @msManual { dir = "examples" name = "AutoCustomer"  cartridge = "zclassic" }
-    component = @msManual { dir = "examples" name = "AutoExchange"  cartridge = "zclassic" }
-    component = @msManual { dir = "examples" name = "AutoMusic"     cartridge = "zclassic" }
-    component = @msManual { dir = "examples" name = "AutoProject"   cartridge = "zclassic" }
-    component = @msManual { dir = "examples" name = "AutoRecipes"   cartridge = "zclassic" }
-    component = @msManual { dir = "examples" name = "AutoSocial"    cartridge = "zclassic" }
+    component = @msManual { dir = "examples" name = "AutoBugs" }
+    component = @msManual { dir = "examples" name = "AutoCocktails" }
+    component = @msManual { dir = "examples" name = "AutoCustomer" }
+    component = @msManual { dir = "examples" name = "AutoExchange" }
+    component = @msManual { dir = "examples" name = "AutoMusic" }
+    component = @msManual { dir = "examples" name = "AutoProject" }
+    component = @msManual { dir = "examples" name = "AutoRecipes" }
+    component = @msManual { dir = "examples" name = "AutoSocial" }
+    component = @msManual { dir = "examples" name = "FamilyRecipes" }
 
-    component = @msManual { dir = "zikula"   name = "Extensions"    cartridge = "zclassic" }
-    component = @msManual { dir = "zikula"   name = "Extensions"    cartridge = "zoo" }
-    component = @msManual { dir = "zikula"   name = "Extensions"    cartridge = "documentation" }
-    component = @msManual { dir = "zikula"   name = "Extensions"    cartridge = "reporting" }
-    component = @msManual { dir = "zikula"   name = "FedoraDocs"    cartridge = "zclassic" }
+    component = @msManual { dir = "own/most" name = "MostAdmin" }
+    component = @msManual { dir = "own/wh"   name = "WhFacts" }
+    component = @msManual { dir = "own/wh"   name = "WhMedia" }
+    component = @msManual { dir = "own/wh"   name = "WhOffers" }
+
+    component = @msManual { dir = "zikula"   name = "CampManager" }
+    component = @msManual { dir = "zikula"   name = "Connector" }
+    component = @msManual { dir = "zikula"   name = "EbayLister" }
+    component = @msManual { dir = "zikula"   name = "Extensions" }
+    component = @msManual { dir = "zikula"   name = "Extensions" cartridge = "zoo" }
+    component = @msManual { dir = "zikula"   name = "Extensions" cartridge = "documentation" }
+    component = @msManual { dir = "zikula"   name = "Extensions" cartridge = "reporting" }
+    component = @msManual { dir = "zikula"   name = "KnowledgeBase" }
+    component = @msManual { dir = "zikula"   name = "RatedFAQ" }
+    component = @msManual { dir = "zikula"   name = "RosterMod" }
+    component = @msManual { dir = "zikula"   name = "ScheduleManager" }
+    component = @msManual { dir = "zikula"   name = "TroubleShooter" }
 }

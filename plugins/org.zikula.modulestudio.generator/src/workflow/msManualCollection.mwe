@@ -1,21 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- processes whole collection of example models, calls msManual.oaw for each entry -->
 <workflow>
-	<cartridge file="msManual.mwe" folder="customers" modelName="handydb" 		outputDir="HandyDB"></cartridge>
-	<cartridge file="msManual.mwe" folder="customers" modelName="jsRefPool" 	outputDir="jsRefPool"></cartridge>
-	<cartridge file="msManual.mwe" folder="customers" modelName="JugendServer_Materialien" outputDir="jsMaterials"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers/later" modelName="GuiAdvert"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers/later" modelName="GuiAffiliate"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers/later" modelName="GuiCallCenter"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers/later" modelName="GuiStockKeeping"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers/later" modelName="GuiSubscription"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiCustomer"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiErpSync"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiOrder"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiPayment"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiPricing"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiProduct"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiPromotion"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiShipping"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiShop"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="HandyDB"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="JsMaterials"></cartridge>
+	<cartridge file="workflow/msManual.mwe" folder="customers" modelName="JsRefPool"></cartridge>
+	<cartridge file="workflow/msManual.mwe" folder="customers" modelName="JuFeBo"></cartridge>
+	<cartridge file="workflow/msManual.mwe" folder="customers" modelName="LeisurePlaces"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="MenuSuggestion"></cartridge>
 
-	<cartridge file="msManual.mwe" folder="examples" modelName="AutoBugs" 		outputDir="AutoBugs"></cartridge>
-	<cartridge file="msManual.mwe" folder="examples" modelName="AutoCocktails" 	outputDir="AutoCocktails"></cartridge>
-	<cartridge file="msManual.mwe" folder="examples" modelName="AutoCustomer" 	outputDir="AutoCustomer"></cartridge>
-	<cartridge file="msManual.mwe" folder="examples" modelName="AutoExchange" 	outputDir="AutoExchange"></cartridge>
-	<cartridge file="msManual.mwe" folder="examples" modelName="AutoMusic" 		outputDir="AutoMusic"></cartridge>
-	<cartridge file="msManual.mwe" folder="examples" modelName="AutoProject" 	outputDir="AutoProject"></cartridge>
-	<cartridge file="msManual.mwe" folder="examples" modelName="AutoRecipes" 	outputDir="AutoRecipes"></cartridge>
-	<cartridge file="msManual.mwe" folder="examples" modelName="AutoSocial" 	outputDir="AutoSocial"></cartridge>
+	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoBugs"></cartridge>
+	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoCocktails"></cartridge>
+	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoCustomer"></cartridge>
+	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoExchange"></cartridge>
+	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoMusic"></cartridge>
+	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoProject"></cartridge>
+	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoRecipes"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoSocial"></cartridge>
+	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="FamilyRecipes"></cartridge>
 
-	<!-- cartridge file="msManual.mwe" folder="own" modelName="foo" outputDir="foo"></cartridge -->
+    <cartridge file="workflow/msManual.mwe" folder="own/most" modelName="MostAdmin"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="own/wh"   modelName="WhFacts"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="own/wh"   modelName="WhMedia"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="own/wh"   modelName="WhOffers"></cartridge>
 
-	<cartridge file="msManual.mwe" folder="zikula" modelName="ExtensionDB" 		outputDir="Extensions"></cartridge>
-	<cartridge file="msManual.mwe" folder="zikula" modelName="FedoraDocs" 		outputDir="Extensions"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="zikula" modelName="CampManager"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="zikula" modelName="Connector"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="zikula" modelName="EbayLister"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="zikula" modelName="Extensions"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="zikula" modelName="KnowledgeBase"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="zikula" modelName="RatedFAQ"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="zikula" modelName="RosterMod"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="zikula" modelName="ScheduleManager"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="zikula" modelName="TroubleShooter"></cartridge>
 </workflow>

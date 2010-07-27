@@ -3,15 +3,16 @@
      calls msWorkflow.mwe with ${outputDir} as output directory -->
 <workflow>
     <property name="examplePath" value="/home/axel/projects/GuiteSVN/modules/trunk/models/${folder}" />
+    <property name="outputPath" value="/home/axel/batchOutput" />
 
     <!-- which generator ? -->
     <property name="cartridgeName" value="zclassic" />
 
 	<!-- call file reader workflow and provide required properties -->
-	<cartridge file="msWorkflow.mwe"
+	<cartridge file="workflow/msWorkflow.mwe"
                cartridgeName="${cartridgeName}"
-			   modelFile="${examplePath}_models/${modelName}.mostapp"
-			   enrichedModelFile="${examplePath}_models/${modelName}_Enriched.mostapp"
-			   srcGenPath="${examplePath}_output/${outputDir}/${cartridgeName}">
+			   modelFile="${examplePath}/${modelName}.mostapp"
+			   enrichedModelFile="${outputPath}/models/${modelName}_Enriched.mostapp"
+			   srcGenPath="${outputPath}/${modelName}/${cartridgeName}">
 	</cartridge>
 </workflow>
