@@ -28,21 +28,21 @@ class «appName()»_Form_Plugin_FormFrame extends Form_Plugin
         return __FILE__;
     }
 
-    function create(&$view, &$params)
+    function create($view, &$params)
     {
         $this->useTabs = (array_key_exists('useTabs', $params) ? $params['useTabs'] : false);
     }
 
 
     // This is called by the framework before the content of the block is rendered
-    function renderBegin(&$view)
+    function renderBegin($view)
     {
         $tabClass = $this->useTabs ? ' '.$this->cssClass : '';
         return "<div class=\"«dbName(appName())»Form{$tabClass}\">\n";
     }
 
     // This is called by the framework after the content of the block is rendered
-    function renderEnd(&$view)
+    function renderEnd($view)
     {
         return "</div>\n";
     }
@@ -54,14 +54,15 @@ class «appName()»_Form_Plugin_FormFrame extends Form_Plugin
  * The «dbName(appName())»FormFrame plugin adds styling <div> elements and a validation summary.
  *
  * Available parameters:
- *   - assign:   If set, the results are assigned to the corresponding variable instead of printed out
+ *   - assign:   If set, the results are assigned to the corresponding variable instead of printed out.
  *
- * @param        array       $params       All attributes passed to this function from the template
- * @param        string      $content      The content of the block
- * @param        object      &$view     Reference to the Smarty object
- * @return       string      The output of the plugin
+ * @param  array     $params  All attributes passed to this function from the template.
+ * @param  string    $content The content of the block.
+ * @param  Form_View $view    Reference to the view object.
+ *
+ * @return string The output of the plugin.
  */
-function smarty_block_«dbName(appName())»FormFrame($params, $content, &$view)
+function smarty_block_«dbName(appName())»FormFrame($params, $content, $view)
 {
     // As with all Forms plugins, we must remember to register our plugin.
     // In this case we also register a validation summary so we don't have to

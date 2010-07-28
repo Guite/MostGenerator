@@ -41,9 +41,9 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
 
 «DEFINE FuncInit FOR Application-»
     /**
-     * Initialise the «appName()» module
+     * Install the «appName()» module.
      *
-     * @return boolean True on success, false otherwise.
+     * @return boolean True on success, or false.
      */
     public function install()
     {
@@ -176,10 +176,9 @@ Ausgelesen als Array: $blabla["0"];
 
 «DEFINE FuncDefaultData FOR Application»
     /**
-     * create the default data for «appName()»
+     * Create the default data for «appName()».
      *
-     * @author       «author»
-     * @return       bool       true on success, false otherwise
+     * @return boolean True on success, false otherwise.
      */
     public function defaultdata()
     {

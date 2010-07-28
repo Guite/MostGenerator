@@ -26,7 +26,7 @@ class «appName()»_Version extends Zikula_Version
 
 «IF referredApplications.size > 0-»
         // module dependencies
-        $modversion['dependencies'] = array(
+        $meta['dependencies'] = array(
 «EXPAND AppDependency FOREACH referredApplications SEPARATOR ','-»
         );
 «ENDIF-»
@@ -47,5 +47,5 @@ class «appName()»_Version extends Zikula_Version
                     array('modname'    => '«appName()»',
                           'minversion' => '0',
                           'maxversion' => '«version»',
-                          'status'     => DEPENDENCY_REQUIRED«REM»TODO: RECOMMENDED, CONFLICTS«ENDREM»),
+                          'status'     => ModUtil::DEPENDENCY_REQUIRED«REM»TODO: ModUtil::RECOMMENDED, ModUtil::CONFLICTS«ENDREM»),
 «ENDDEFINE»

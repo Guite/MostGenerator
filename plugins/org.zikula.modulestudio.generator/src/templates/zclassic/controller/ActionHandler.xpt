@@ -13,7 +13,7 @@
 
 class «appName()»_Form_Handler_Admin_Config extends Form_Handler
 {
-    function initialize(&$view)
+    function initialize($view)
     {
         if (!SecurityUtil::checkPermission('«appName()»::', '::', ACCESS_ADMIN)) {
             return $view->registerError(LogUtil::registerPermissionError());
@@ -26,7 +26,7 @@ class «appName()»_Form_Handler_Admin_Config extends Form_Handler
     }
 
 
-    function handleCommand(&$view, &$args)
+    function handleCommand($view, &$args)
     {
 
         if ($args['commandName'] == 'save') {
@@ -105,10 +105,6 @@ class «appName()»_Form_Handler_Admin_Config extends Form_Handler
  *
  * - <b>handleCommand</b>: this event is fired by various plugins on the page. Typically it is done by the
  *   Form_Plugin_Button plugin to signal that the user activated a button.
- *
- * @package Form
- * @subpackage Base
- * @author       «app.author»
  */
 class «implClassFormHandler(controller, name, actionName)» extends Form_Handler
 {
@@ -120,14 +116,13 @@ class «implClassFormHandler(controller, name, actionName)» extends Form_Handle
     var $dom;
 
     /**
-     * Initialize form handler
+     * Initialize form handler.
      *
-     * This method takes care of all necessary initialisation of our data and form states
+     * This method takes care of all necessary initialisation of our data and form states.
      *
-     * @return bool False in case of initialization errors, otherwise true
-     * @author       «app.author»
+     * @return boolean False in case of initialization errors, otherwise true.
      */
-    function initialize(&$view)
+    function initialize($view)
     {
         $this->dom = ZLanguage::getModuleDomain('«appName»');
         $dom = $this->dom;
@@ -136,7 +131,7 @@ class «implClassFormHandler(controller, name, actionName)» extends Form_Handle
 
 
     /**
-     * Command event handler
+     * Command event handler.
      *
      * This event handler is called when a command is issued by the user. Commands are typically something
      * that originates from a {@link Form_Plugin_Button} plugin. The passed args contains different properties
@@ -145,9 +140,8 @@ class «implClassFormHandler(controller, name, actionName)» extends Form_Handle
      * that initiated the command.
      * @see Form_Plugin_Button
      * @see Form_Plugin_ImageButton
-     * @author       «app.author»
      */
-    function handleCommand(&$view, &$args)
+    function handleCommand($view, &$args)
     {
         $dom = $this->dom;
 «EXPAND handleCommand(app, controller, actionName, appName, controllerName)-»
@@ -284,8 +278,7 @@ class «implClassFormHandler(controller, name, actionName)» extends Form_Handle
             $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
                                                              array('ot' => $objectType,
                                                                    '«idField()»' => $this->«idField()»));
-        }
-        elseif ($args['commandName'] == 'update') {
+        } else if ($args['commandName'] == 'update') {
             // event handling if user clicks on update
 
             «EXPAND FetchInputDataStart(applicationName(name))-»
@@ -308,8 +301,7 @@ class «implClassFormHandler(controller, name, actionName)» extends Form_Handle
             $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
                                                              array('ot' => $objectType,
                                                                    '«idField()»' => $this->«idField()»));
-        }
-        elseif ($args['commandName'] == 'delete') {
+        } else if ($args['commandName'] == 'delete') {
             // event handling if user clicks on delete
 
             // Note: No need to check validation when deleting
@@ -335,8 +327,7 @@ class «implClassFormHandler(controller, name, actionName)» extends Form_Handle
             // redirect to the list of «applicationName(nameMultiple)»
             $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'view',
                                                                  array('ot' => $objectType));
-        }
-        else if ($args['commandName'] == 'cancel') {
+        } else if ($args['commandName'] == 'cancel') {
             // event handling if user clicks on cancel
 
             if ($this->mode == 'edit') {
@@ -344,8 +335,7 @@ class «implClassFormHandler(controller, name, actionName)» extends Form_Handle
                 $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
                                                                  array('ot' => $objectType,
                                                                        '«idField()»' => $this->«idField()»));
-            }
-            else {
+            } else {
                 // redirect to the list of «applicationName(nameMultiple)»
                 $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'view',
                                                                      array('ot' => $objectType));
@@ -401,8 +391,6 @@ class «implClassFormHandler(controller, name, actionName)» extends Form_Handle
 /**
  * This function processes a form submitted from the
  * «appName()»_admin_preferences function.
- *
- * @author       «author»
  */
 function «appName()»_adminform_preferences()
 {

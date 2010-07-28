@@ -21,9 +21,7 @@
 «DEFINE ControllerImpl(Application app) FOR Controller-»
 
 /**
- * This is the «name» controller class providing navigation and interaction functionality
- *
- * @author       «app.author»
+ * This is the «name» controller class providing navigation and interaction functionality.
  */
 class «implClassController()» extends Zikula_Controller
 {
@@ -102,7 +100,7 @@ class «implClassController()» extends Zikula_Controller
      * @param        tpl            string    name of alternative template (for alternative display options, feeds and xml output)
      * @param        raw            boolean   optional way to display a template instead of fetching it (needed for standalone output)
 «ENDIF-»
-     * @return       Render output
+     * @return mixed Output.
 «ENDDEFINE»
 
 «DEFINE ActionImpl(Application app) FOR Action-»

@@ -14,21 +14,18 @@
 
 «DEFINE EntityInfo FOR Application-»
 /**
- * Populate tables array for «appName()» module
+ * Populate tables array for «appName()» module.
  *
  * This function is called internally by the core whenever the module is
  * loaded. It delivers the table information to the core.
  * It can be loaded explicitly using the ModUtil::dbInfoLoad() method.
  *
- * @author       «author»
- * @return       array       The table information.
+ * @return array The table information.
  */
 function «appName()»_tables()
 {
     // Initialise table array
     $tables = array();
-
-    $dbdriver = DBConnectionStack::getConnectionDBDriver();
 
 «FOREACH models.select(e|e.isDefaultDataSource).entities AS entity-»
 «info("Generating entity \"" + entity.name + "\"") -> ""-»
@@ -72,7 +69,6 @@ function «appName()»_tables()
         '«dbName(name)»' => '«dbName(prefix + '_' + name)»'«ENDDEFINE»
 
 «REM»column data dictionary«ENDREM»
-«REM»http://community.zikula.org/Wiki-AdodbDataDictionary.htm«ENDREM»
 
 «DEFINE TextTypesMSSQL FOR EntityField»«ENDDEFINE»
 «DEFINE TextTypesMSSQL FOR ClobField»

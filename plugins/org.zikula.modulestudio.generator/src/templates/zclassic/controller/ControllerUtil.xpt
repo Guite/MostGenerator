@@ -5,7 +5,7 @@
 class «appName()»_Util
 {
     /**
-     * returns an array of all allowed object types in «appName()»
+     * Returns an array of all allowed object types in «appName()».
      */
     public static function getObjectTypes()
     {
@@ -17,9 +17,9 @@ class «appName()»_Util
     }
 
     /**
-     * utility method for managing view templates
+     * Utility method for managing view templates.
      */
-    public static function processViewTemplate(&$view, $type, $objectType, $func, $args=array())
+    public static function processViewTemplate($view, $type, $objectType, $func, $args=array())
     {
         $template = DataUtil::formatForOS('«appName()»_' . $type . '_' . $objectType . '_' . $func);
         $tpl = FormUtil::getPassedValue('tpl', isset($args['tpl']) ? $args['tpl'] : '');

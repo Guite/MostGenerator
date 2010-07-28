@@ -52,14 +52,14 @@ class «implClassDbObject(appendArray)» extends «baseClassDbObject(appendArray
      * It only needs to set the fields which are used to configure
      * the object's specific properties and actions.
      *
-     * @param init        Initialization value (can be an object or a string directive) (optional) (default=null)
-     *                    If it is an array it is set, otherwise it is interpreted as a string
-     *                    specifying the source from where the data should be retrieved from.
-     *                    Possible values:
-     *                        D (DB), G ($_GET), P ($_POST), R ($_REQUEST), S ($_SESSION), V (failed validation)
+     * @param object|string $init Initialization value (can be an object or a string directive) (optional) (default=null)
+     *                            If it is an array it is set, otherwise it is interpreted as a string
+     *                            specifying the source from where the data should be retrieved from.
+     *                            Possible values:
+     *                            D (DB), G ($_GET), P ($_POST), R ($_REQUEST), S ($_SESSION), V (failed validation).
      *
-     * @param key         The DB key to use to retrieve the object (optional) (default=null)
-     * @param field       The field containing the key value (optional) (default=null)
+     * @param string $key         The DB key to use to retrieve the object (optional) (default=null).
+     * @param string $field       The field containing the key value (optional) (default=null).
      */
     function __construct($init = null, $key = 0, $field = null)
     {
@@ -163,7 +163,9 @@ class «implClassDbObject(appendArray)» extends «baseClassDbObject(appendArray
     /**
      * Pre-Process the data prior to an insert.
      *
-     * @param $obj         Override object (optional) (default=null)
+     * @param array $obj Override object (optional) (default=null).
+     *
+     * @return boolean True.
      */
     function insertPreProcess($obj = null)
     {
@@ -177,7 +179,9 @@ class «implClassDbObject(appendArray)» extends «baseClassDbObject(appendArray
     /**
      * Post-Process the data after an insert.
      *
-     * @param $obj         Override object (optional) (default=null)
+     * @param array $obj Override object (optional) (default=null).
+     *
+     * @return void
      */
     function insertPostProcess($obj = null)
     {
@@ -191,7 +195,9 @@ class «implClassDbObject(appendArray)» extends «baseClassDbObject(appendArray
     /**
      * Pre-Process the data prior to an update.
      *
-     * @param $obj         Override object (optional) (default=null)
+     * @param array $obj Override object (optional) (default=null).
+     *
+     * @return boolean True.
      */
     function updatePreProcess($obj = null)
     {
@@ -205,7 +211,7 @@ class «implClassDbObject(appendArray)» extends «baseClassDbObject(appendArray
     /**
      * Post-Process the data after an update.
      *
-     * @param $obj         Override object (optional) (default=null)
+     * @param array $obj Override object (optional) (default=null).
      */
     function updatePostProcess($obj = null)
     {
@@ -219,7 +225,9 @@ class «implClassDbObject(appendArray)» extends «baseClassDbObject(appendArray
     /**
      * Pre-Process the data prior a delete.
      *
-     * @param $obj         Override object (optional) (default=null)
+     * @param array $obj Override object (optional) (default=null).
+     *
+     * @return boolean True.
      */
     function deletePreProcess($obj = null)
     {
@@ -233,7 +241,9 @@ class «implClassDbObject(appendArray)» extends «baseClassDbObject(appendArray
     /**
      * Post-Process the data after a delete.
      *
-     * @param $obj         Override object (optional) (default=null)
+     * @param array $obj Override object (optional) (default=null).
+     *
+     * @return void
      */
     function deletePostProcess($obj = null)
     {
@@ -250,7 +260,9 @@ class «implClassDbObject(appendArray)» extends «baseClassDbObject(appendArray
     /**
      * Post-Process the basic object validation with class specific logic.
      *
-     * @param $type
+     * @param array $obj Object.
+     *
+     * @return void
      */
     function validatePostProcess($obj = null)
     {
@@ -280,15 +292,15 @@ class «implClassDbObject(appendArray)» extends «baseClassDbObject(appendArray
      * It only needs to set the fields which are used to configure
      * the object's specific properties and actions.
      *
-     * @param init        Initialization value (can be an object or a string directive) (optional) (default=null)
-     *                    If it is an array it is set, otherwise it is interpreted as a string
-     *                    specifying the source from where the data should be retrieved from.
-     *                    Possible values:
-     *                        D (DB), G ($_GET), P ($_POST), R ($_REQUEST), S ($_SESSION), V (failed validation)
+     * @param string|array $init        Initialization value (can be an object or a string directive) (optional) (default=null).
+     *                                  If it is an array it is set, otherwise it is interpreted as a string
+     *                                  specifying the source from where the data should be retrieved from.
+     *                                  Possible values:
+     *                                  D (DB), G ($_GET), P ($_POST), R ($_REQUEST), S ($_SESSION), V (failed validation).
      *
-     * @param where       The where clause to use when retrieving the object array (optional) (default='')
-     * @param orderBy     The order-by clause to use when retrieving the object array (optional) (default='')
-     * @param assocKey    Key field to use for building an associative array (optional) (default=null)
+     * @param string $where             The where clause to use when retrieving the object array (optional) (default='').
+     * @param string $orderBy           The order-by clause to use when retrieving the object array (optional) (default='').
+     * @param string $assocKey          Key field to use for building an associative array (optional) (default=null).
      */
     function __construct($init = null, $where = '', $orderBy = '', $assocKey = null)
     {
@@ -312,12 +324,14 @@ class «implClassDbObject(appendArray)» extends «baseClassDbObject(appendArray
 
 «EXPAND ObjectPermissionFilters(app.appName())-»
 
-        // call initialization routine
+        // Call initialization routine.
         $this->_init($init, $where, $orderBy, $assocKey);
     }
 
     /**
-     * Retrieves an array with all fields which can be used for sorting instances
+     * Retrieves an array with all fields which can be used for sorting instances.
+     *
+     * @return array
      */
     function getAllowedSortingFields()
     {
@@ -325,13 +339,20 @@ class «implClassDbObject(appendArray)» extends «baseClassDbObject(appendArray
     }
 
     /**
-     * Retrieves the default sorting field/expression
+     * Retrieves the default sorting field/expression.
+     *
+     * @return string
      */
     function getDefaultSortingField()
     {
         return '«idField()»';
     }
 
+    /**
+     * SelectPostProcess.
+     *
+     * @return void
+     */
     function selectPostProcess($all = null)
     {
         foreach ($this->_objData as $k => $data) {
