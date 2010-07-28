@@ -3041,7 +3041,6 @@ class CUP$PhpAstParser$actions {
     }
 
     /** Method with the actual generated action code. */
-    @SuppressWarnings("null")
     public final java_cup.runtime.Symbol CUP$PhpAstParser$do_action1(
             int CUP$PhpAstParser$act_num,
             java_cup.runtime.lr_parser CUP$PhpAstParser$parser,
@@ -6272,7 +6271,6 @@ class CUP$PhpAstParser$actions {
     }
 
     /** Method with the actual generated action code. */
-    @SuppressWarnings("null")
     public final java_cup.runtime.Symbol CUP$PhpAstParser$do_action2(
             int CUP$PhpAstParser$act_num,
             java_cup.runtime.lr_parser CUP$PhpAstParser$parser,
@@ -9253,7 +9251,6 @@ class CUP$PhpAstParser$actions {
     }
 
     /** Method with the actual generated action code. */
-    @SuppressWarnings("null")
     public final java_cup.runtime.Symbol CUP$PhpAstParser$do_action3(
             int CUP$PhpAstParser$act_num,
             java_cup.runtime.lr_parser CUP$PhpAstParser$parser,
@@ -12298,7 +12295,6 @@ class CUP$PhpAstParser$actions {
     }
 
     /** Method with the actual generated action code. */
-    @SuppressWarnings("null")
     public final java_cup.runtime.Symbol CUP$PhpAstParser$do_action4(
             int CUP$PhpAstParser$act_num,
             java_cup.runtime.lr_parser CUP$PhpAstParser$parser,

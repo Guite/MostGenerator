@@ -3208,7 +3208,6 @@ public final class ASTRewriteAnalyzer extends AbstractVisitor {
      * Rewrite the parameter's default value of a {@link FormalParameter}
      * @param formalParameter
      */
-    @SuppressWarnings("null")
     private void rewriteFomalParameterDefault(FormalParameter formalParameter) {
         final RewriteEvent event = getEvent(formalParameter,
                 FormalParameter.DEFAULT_VALUE_PROPERTY);
@@ -3692,7 +3691,6 @@ public final class ASTRewriteAnalyzer extends AbstractVisitor {
      * org.eclipse.php.internal.core.ast.visitor.AbstractVisitor#visit(org.eclipse
      * .php.internal.core.ast.nodes.Scalar)
      */
-    @SuppressWarnings("null")
     @Override
     public boolean visit(Scalar scalar) {
         // For now, we ignore the Scalar.TYPE_PROPERTY changes and we only deal

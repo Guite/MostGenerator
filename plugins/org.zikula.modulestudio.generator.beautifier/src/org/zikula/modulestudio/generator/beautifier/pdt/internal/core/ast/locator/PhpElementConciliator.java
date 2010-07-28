@@ -375,7 +375,6 @@ public class PhpElementConciliator {
 
     }
 
-    @SuppressWarnings("null")
     private static boolean checkGlobalIdentifier(ASTNode locateNode) {
         // check if it is a GLOBALS['a'] direction
         if (locateNode.getType() == ASTNode.SCALAR) {

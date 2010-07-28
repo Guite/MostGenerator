@@ -179,7 +179,6 @@ public class SelectionListenerWithASTManager {
             fCurrentJob.schedule();
         }
 
-        @SuppressWarnings("unused")
         protected final IStatus calculateASTandInform(ISourceModule input,
                 ITextSelection selection, IProgressMonitor monitor) {
             if (monitor.isCanceled()) {

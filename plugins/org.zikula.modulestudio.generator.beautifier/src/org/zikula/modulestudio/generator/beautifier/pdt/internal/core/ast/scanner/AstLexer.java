@@ -32,8 +32,6 @@ public interface AstLexer extends Scanner {
 
     public List getCommentList();
 
-    public void setUseAspTagsAsPhp(boolean useAspTagsAsPhp);
-
     public int getCurrentLine();
 
     public int getLength();

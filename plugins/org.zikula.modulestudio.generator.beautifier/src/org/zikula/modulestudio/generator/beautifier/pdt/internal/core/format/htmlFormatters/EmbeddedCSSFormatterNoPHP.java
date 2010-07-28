@@ -144,7 +144,7 @@ public class EmbeddedCSSFormatterNoPHP extends EmbeddedCSSFormatter {
 
     /**
 	 */
-    @SuppressWarnings({ "null", "unused" })
+    @SuppressWarnings({ "unused" })
     @Override
     protected void insertBreakBefore(IDOMNode node,
             HTMLFormatContraints contraints) {

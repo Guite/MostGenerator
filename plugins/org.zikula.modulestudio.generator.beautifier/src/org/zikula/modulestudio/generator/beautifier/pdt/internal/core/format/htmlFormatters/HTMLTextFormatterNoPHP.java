@@ -143,7 +143,7 @@ public class HTMLTextFormatterNoPHP extends HTMLTextFormatter {
 
     /**
 	 */
-    @SuppressWarnings({ "null", "unused" })
+    @SuppressWarnings({ "unused" })
     @Override
     protected void insertBreakBefore(IDOMNode node,
             HTMLFormatContraints contraints) {

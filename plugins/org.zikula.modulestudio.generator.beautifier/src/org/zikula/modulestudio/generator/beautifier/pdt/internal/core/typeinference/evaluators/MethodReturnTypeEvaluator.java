@@ -54,7 +54,6 @@ public class MethodReturnTypeEvaluator extends
         super(goal);
     }
 
-    @SuppressWarnings("null")
     @Override
     public IGoal[] init() {
         final MethodElementReturnTypeGoal goal = (MethodElementReturnTypeGoal) getGoal();

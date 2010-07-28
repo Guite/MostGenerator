@@ -597,7 +597,7 @@ import org.zikula.modulestudio.generator.beautifier.pdt.internal.core.format.IFo
             this.prefix = prefix;
         }
 
-        @SuppressWarnings({ "null", "unused" })
+        @SuppressWarnings({ "unused" })
         @Override
         public String[] getPrefixAndSuffix(int indent, ASTNode node,
                 RewriteEventStore events) {
@@ -630,7 +630,7 @@ import org.zikula.modulestudio.generator.beautifier.pdt.internal.core.format.IFo
             this.prefix = prefix;
         }
 
-        @SuppressWarnings({ "null", "unused" })
+        @SuppressWarnings({ "unused" })
         @Override
         public String[] getPrefixAndSuffix(int indent, ASTNode node,
                 RewriteEventStore events) {

@@ -466,7 +466,6 @@ public class PhpScriptRegion extends ForeignRegion implements IPhpScriptRegion {
             }
         }
 
-        @SuppressWarnings("null")
         @Override
         public int read(char[] b, int off, int len) throws IOException {
             /**
@@ -550,7 +549,6 @@ public class PhpScriptRegion extends ForeignRegion implements IPhpScriptRegion {
             }
         }
 
-        @SuppressWarnings("null")
         @Override
         public int read(char[] b, int off, int len) throws IOException {
             if (b == null) {

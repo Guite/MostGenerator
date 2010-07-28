@@ -94,7 +94,7 @@ public class NamespaceName extends Identifier {
         this.current = current;
     }
 
-    @SuppressWarnings({ "unused", "null" })
+    @SuppressWarnings({ "unused" })
     public NamespaceName(int start, int end, AST ast, List segments,
             boolean global, boolean current) {
         super(start, end, ast,

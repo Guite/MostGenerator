@@ -29,7 +29,6 @@ import java_cup.runtime.lr_parser;
 
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.text.edits.TextEdit;
-import org.zikula.modulestudio.generator.beautifier.pdt.internal.core.CoreMessages;
 import org.zikula.modulestudio.generator.beautifier.pdt.internal.core.PHPVersion;
 import org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.rewrite.ASTRewrite;
 import org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.AstLexer;
@@ -190,25 +189,8 @@ public class AST {
      */
     private AstLexer getLexerInstance(Reader reader, PHPVersion phpVersion,
             boolean aspTagsAsPhp) throws IOException {
-        if (PHPVersion.PHP4 == phpVersion) {
-            final AstLexer lexer4 = getLexer4(reader);
-            lexer4.setUseAspTagsAsPhp(aspTagsAsPhp);
-            return lexer4;
-        }
-        else if (PHPVersion.PHP5 == phpVersion) {
-            final AstLexer lexer5 = getLexer5(reader);
-            lexer5.setUseAspTagsAsPhp(aspTagsAsPhp);
-            return lexer5;
-        }
-        else if (PHPVersion.PHP5_3 == phpVersion) {
-            final AstLexer lexer53 = getLexer53(reader);
-            lexer53.setUseAspTagsAsPhp(aspTagsAsPhp);
-            return lexer53;
-        }
-        else {
-            throw new IllegalArgumentException(
-                    CoreMessages.getString("ASTParser_1") + phpVersion);
-        }
+        final AstLexer lexer53 = getLexer53(reader);
+        return lexer53;
     }
 
     private AstLexer getLexer53(Reader reader) throws IOException {
@@ -218,43 +200,11 @@ public class AST {
         return phpAstLexer5;
     }
 
-    private AstLexer getLexer5(Reader reader) throws IOException {
-        final org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php5.PhpAstLexer phpAstLexer5 = new org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php5.PhpAstLexer(
-                reader);
-        phpAstLexer5.setAST(this);
-        return phpAstLexer5;
-    }
-
-    private AstLexer getLexer4(Reader reader) throws IOException {
-        final org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php4.PhpAstLexer phpAstLexer4 = new org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php4.PhpAstLexer(
-                reader);
-        phpAstLexer4.setAST(this);
-        return phpAstLexer4;
-    }
-
     private lr_parser getParserInstance(PHPVersion phpVersion, Scanner lexer) {
-        if (PHPVersion.PHP4 == phpVersion) {
-            final org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php4.PhpAstParser parser = new org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php4.PhpAstParser(
-                    lexer);
-            parser.setAST(this);
-            return parser;
-        }
-        else if (PHPVersion.PHP5 == phpVersion) {
-            final org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php5.PhpAstParser parser = new org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php5.PhpAstParser(
-                    lexer);
-            parser.setAST(this);
-            return parser;
-        }
-        else if (PHPVersion.PHP5_3 == phpVersion) {
-            final org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php53.PhpAstParser parser = new org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php53.PhpAstParser(
-                    lexer);
-            parser.setAST(this);
-            return parser;
-        }
-        else {
-            throw new IllegalArgumentException(
-                    CoreMessages.getString("ASTParser_1") + phpVersion);
-        }
+        final org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php53.PhpAstParser parser = new org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php53.PhpAstParser(
+                lexer);
+        parser.setAST(this);
+        return parser;
     }
 
     /**

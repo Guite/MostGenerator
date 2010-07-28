@@ -151,7 +151,7 @@ public class HTMLElementFormatterNoPHP extends HTMLElementFormatter {
 
     /**
 	 */
-    @SuppressWarnings({ "null", "unused" })
+    @SuppressWarnings({ "unused" })
     @Override
     protected void insertBreakBefore(IDOMNode node,
             HTMLFormatContraints contraints) {

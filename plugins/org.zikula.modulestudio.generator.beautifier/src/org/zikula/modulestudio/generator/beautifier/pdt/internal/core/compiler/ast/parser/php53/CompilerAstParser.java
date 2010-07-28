@@ -3068,7 +3068,6 @@ class CUP$CompilerAstParser$actions {
     }
 
     /** Method with the actual generated action code. */
-    @SuppressWarnings("null")
     public final java_cup.runtime.Symbol CUP$CompilerAstParser$do_action1(
             int CUP$CompilerAstParser$act_num,
             java_cup.runtime.lr_parser CUP$CompilerAstParser$parser,
@@ -6519,7 +6518,6 @@ class CUP$CompilerAstParser$actions {
     }
 
     /** Method with the actual generated action code. */
-    @SuppressWarnings("null")
     public final java_cup.runtime.Symbol CUP$CompilerAstParser$do_action2(
             int CUP$CompilerAstParser$act_num,
             java_cup.runtime.lr_parser CUP$CompilerAstParser$parser,
@@ -9503,7 +9501,6 @@ class CUP$CompilerAstParser$actions {
     }
 
     /** Method with the actual generated action code. */
-    @SuppressWarnings("null")
     public final java_cup.runtime.Symbol CUP$CompilerAstParser$do_action3(
             int CUP$CompilerAstParser$act_num,
             java_cup.runtime.lr_parser CUP$CompilerAstParser$parser,
@@ -12846,7 +12843,6 @@ class CUP$CompilerAstParser$actions {
     }
 
     /** Method with the actual generated action code. */
-    @SuppressWarnings("null")
     public final java_cup.runtime.Symbol CUP$CompilerAstParser$do_action4(
             int CUP$CompilerAstParser$act_num,
             java_cup.runtime.lr_parser CUP$CompilerAstParser$parser,

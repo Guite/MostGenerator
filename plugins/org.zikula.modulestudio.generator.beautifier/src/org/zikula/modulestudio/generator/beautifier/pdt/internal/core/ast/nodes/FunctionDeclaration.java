@@ -75,7 +75,6 @@ public class FunctionDeclaration extends Statement {
         PROPERTY_DESCRIPTORS = Collections.unmodifiableList(propertyList);
     }
 
-    @SuppressWarnings("null")
     private FunctionDeclaration(int start, int end, AST ast,
             Identifier functionName, FormalParameter[] formalParameters,
             Block body, final boolean isReference) {

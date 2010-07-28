@@ -208,7 +208,6 @@ public class PHPSourceElementRequestor extends SourceElementRequestVisitor {
         return super.endvisit(type);
     }
 
-    @SuppressWarnings("null")
     public boolean visit(LambdaFunctionDeclaration lambdaMethod)
             throws Exception {
 

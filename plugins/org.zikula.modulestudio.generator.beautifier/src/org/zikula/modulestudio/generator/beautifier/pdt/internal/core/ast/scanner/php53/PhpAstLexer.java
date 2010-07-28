@@ -1108,7 +1108,7 @@ public class PhpAstLexer
     private final LinkedList commentList = new LinkedList();
     private String heredoc = null;
     private String nowdoc = null;
-    private boolean asp_tags = false;
+    private final boolean asp_tags = false;
     private final boolean short_tags_allowed = true;
     private final StateStack stack = new StateStack();
     private final char yy_old_buffer[] = new char[ZZ_BUFFERSIZE];
@@ -1146,11 +1146,6 @@ public class PhpAstLexer
         final Comment comment = new Comment(commentStartPosition, leftPosition
                 + getTokenLength(), ast, type);
         commentList.add(comment);
-    }
-
-    @Override
-    public void setUseAspTagsAsPhp(boolean useAspTagsAsPhp) {
-        asp_tags = useAspTagsAsPhp;
     }
 
     private void pushState(int state) {

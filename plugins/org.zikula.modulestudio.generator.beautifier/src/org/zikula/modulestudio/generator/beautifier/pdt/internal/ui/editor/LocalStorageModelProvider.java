@@ -64,7 +64,6 @@ public class LocalStorageModelProvider extends StorageDocumentProvider
                     .fireElementContentAboutToBeReplaced(element);
         }
 
-        @SuppressWarnings("null")
         @Override
         public void elementContentReplaced(Object element) {
             final StorageInfo info = (StorageInfo) getElementInfo(element);
@@ -330,7 +329,6 @@ public class LocalStorageModelProvider extends StorageDocumentProvider
         return model;
     }
 
-    @SuppressWarnings("null")
     @Override
     protected IDocument createDocument(Object element) {
         // The following is largely copied from FileModelProvider

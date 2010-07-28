@@ -1656,7 +1656,6 @@ public class PHPTokenizer implements BlockTokenizer, PHPRegionContext,
      * Return ALL of the regions scannable within the remaining text Note: for
      * verification use
      */
-    @SuppressWarnings("null")
     public final List getRegions() {
         final List tokens = new ArrayList();
         ITextRegion region = null;

@@ -245,7 +245,7 @@ public class PhpFormatter implements IStructuredFormatter {
      * @param lineNumber
      *            TODO: we should invoke document.replace() one and not twice!
      */
-    @SuppressWarnings({ "unused", "null" })
+    @SuppressWarnings({ "unused" })
     private void formatLine(IStructuredDocument document, int lineNumber) {
         resultBuffer.setLength(0);
 

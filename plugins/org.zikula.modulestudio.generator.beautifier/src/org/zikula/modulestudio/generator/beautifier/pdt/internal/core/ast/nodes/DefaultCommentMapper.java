@@ -770,7 +770,6 @@ public class DefaultCommentMapper {
             }
         }
 
-        @SuppressWarnings("null")
         @Override
         public int read(char[] b, int off, int len) throws IOException {
             if (b == null) {

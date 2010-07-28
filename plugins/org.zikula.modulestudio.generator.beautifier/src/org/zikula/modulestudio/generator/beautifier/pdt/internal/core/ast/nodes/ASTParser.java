@@ -35,7 +35,6 @@ import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.ModelException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.zikula.modulestudio.generator.beautifier.pdt.internal.core.CoreMessages;
 import org.zikula.modulestudio.generator.beautifier.pdt.internal.core.PHPVersion;
 
 /**
@@ -222,28 +221,6 @@ public class ASTParser {
                 createEmptyLexer_53());
     }
 
-    // php 5 analysis
-    private static org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php5.PhpAstLexer createEmptyLexer_5() {
-        return new org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php5.PhpAstLexer(
-                ASTParser.EMPTY_STRING_READER);
-    }
-
-    private static org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php5.PhpAstParser createEmptyParser_5() {
-        return new org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php5.PhpAstParser(
-                createEmptyLexer_5());
-    }
-
-    // php 4 analysis
-    private static org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php4.PhpAstLexer createEmptyLexer_4() {
-        return new org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php4.PhpAstLexer(
-                ASTParser.EMPTY_STRING_READER);
-    }
-
-    private static org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php4.PhpAstParser createEmptyParser_4() {
-        return new org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php4.PhpAstParser(
-                createEmptyLexer_4());
-    }
-
     /**
      * @param phpCode
      *            String - represents the source code of the PHP program
@@ -378,52 +355,16 @@ public class ASTParser {
      */
     private static Scanner getLexer(AST ast, Reader reader,
             PHPVersion phpVersion, boolean aspTagsAsPhp) throws IOException {
-        if (PHPVersion.PHP4 == phpVersion) {
-            final org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php4.PhpAstLexer lexer4 = getLexer4(reader);
-            lexer4.setUseAspTagsAsPhp(aspTagsAsPhp);
-            lexer4.setAST(ast);
-            return lexer4;
-        }
-        else if (PHPVersion.PHP5 == phpVersion) {
-            final org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php5.PhpAstLexer lexer5 = getLexer5(reader);
-            lexer5.setUseAspTagsAsPhp(aspTagsAsPhp);
-            lexer5.setAST(ast);
-            return lexer5;
-        }
-        else if (PHPVersion.PHP5_3 == phpVersion) {
-            final org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php53.PhpAstLexer lexer53 = getLexer53(reader);
-            lexer53.setUseAspTagsAsPhp(aspTagsAsPhp);
-            lexer53.setAST(ast);
-            return lexer53;
-        }
-        else {
-            throw new IllegalArgumentException(
-                    CoreMessages.getString("ASTParser_1") + phpVersion);
-        }
+        final org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php53.PhpAstLexer lexer53 = getLexer53(reader);
+        lexer53.setAST(ast);
+        return lexer53;
     }
 
     private static lr_parser getParser(PHPVersion phpVersion, AST ast)
             throws IOException {
-        if (PHPVersion.PHP4 == phpVersion) {
-            final org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php4.PhpAstParser parser = createEmptyParser_4();
-            parser.setAST(ast);
-            return parser;
-        }
-        else if (PHPVersion.PHP5 == phpVersion) {
-            final org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php5.PhpAstParser parser = createEmptyParser_5();
-            parser.setAST(ast);
-            return parser;
-        }
-        else if (PHPVersion.PHP5_3 == phpVersion) {
-            final org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php53.PhpAstParser parser = createEmptyParser_53();
-            parser.setAST(ast);
-            return parser;
-        }
-        else {
-            throw new IllegalArgumentException(
-                    CoreMessages.getString("ASTParser_1") + phpVersion);
-        }
-
+        final org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php53.PhpAstParser parser = createEmptyParser_53();
+        parser.setAST(ast);
+        return parser;
     }
 
     /**
@@ -437,31 +378,5 @@ public class ASTParser {
         phpAstLexer53.yyreset(reader);
         phpAstLexer53.resetCommentList();
         return phpAstLexer53;
-    }
-
-    /**
-     * @param reader
-     * @return the singleton
-     *         {@link org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php5.PhpAstLexer}
-     */
-    private static org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php5.PhpAstLexer getLexer5(
-            Reader reader) throws IOException {
-        final org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php5.PhpAstLexer phpAstLexer5 = createEmptyLexer_5();
-        phpAstLexer5.yyreset(reader);
-        phpAstLexer5.resetCommentList();
-        return phpAstLexer5;
-    }
-
-    /**
-     * @param reader
-     * @return the singleton
-     *         {@link org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php4.PhpAstLexer}
-     */
-    private static org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php4.PhpAstLexer getLexer4(
-            Reader reader) throws IOException {
-        final org.zikula.modulestudio.generator.beautifier.pdt.internal.core.ast.scanner.php4.PhpAstLexer phpAstLexer4 = createEmptyLexer_4();
-        phpAstLexer4.yyreset(reader);
-        phpAstLexer4.resetCommentList();
-        return phpAstLexer4;
     }
 }
