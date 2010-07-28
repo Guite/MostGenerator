@@ -14,6 +14,7 @@
 
 	<!-- call file reader workflow and provide required properties -->
 	<cartridge file="workflow/msWorkflow.mwe"
+	           modelName="${modelName}"
 	           cartridgeName="${cartridgeName}"
 			   modelFile="${examplePath}/${modelName}.mostapp"
 			   enrichedModelFile="${examplePath}/${modelName}_Enriched.mostapp"

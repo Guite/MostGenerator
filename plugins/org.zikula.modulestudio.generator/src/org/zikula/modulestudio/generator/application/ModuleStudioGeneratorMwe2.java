@@ -46,6 +46,10 @@ public class ModuleStudioGeneratorMwe2 {
             IProgressMonitor monitor) {
         properties = new HashMap<String, String>();
 
+        // name of the model / module
+        final String modelName = application.getName();
+        addProperty("modelName", modelName);
+
         // obsolete start
         final String modelPath = application.getModelPath();
         // input model file
@@ -56,9 +60,12 @@ public class ModuleStudioGeneratorMwe2 {
                 modelPath.replace(".mostapp", "_Enriched.mostapp"));
         // obsolete end
 
-        // TODO: retrieve model which is already in memory
-        // strips out table columns
-        // slotContents.put("model", application);
+        /**
+         * IResource resource = givenEditorResource... // set the work folder
+         * properties.put("basedir", getProject().getLocation().toOSString());
+         * // access current resource properties.put("model",
+         * resource.getLocation().toOSString());
+         */
 
         progressMonitor = monitor;
         progressMonitor.beginTask("Generating \"" + application.getName() + " "

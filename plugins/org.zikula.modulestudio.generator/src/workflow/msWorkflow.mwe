@@ -91,10 +91,11 @@
 
 		<!-- call generator cartridge -->
 		<cartridge file="workflow/msGenerator.mwe"
+                   modelName="${modelName}"
 		           cartridgeName="${cartridgeName}"
 		           slot="newModel"
 		           slotFile="file://${enrichedModelFile}"
-		           srcGenPath="${srcGenPath}">
+		           outputFolder="${srcGenPath}/${cartridgeName}">
 		   <mmEMF 			idRef="mmEMF"/>
 		   <mmModuleStudio 	idRef="mmModuleStudio"/>
            <profiler idRef="profiler"/>

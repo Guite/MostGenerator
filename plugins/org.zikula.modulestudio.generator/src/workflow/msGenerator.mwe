@@ -14,7 +14,7 @@
     </component>
 
     <!-- clear output directory -->
-    <component id="dirCleaner" class="org.eclipse.emf.mwe.utils.DirectoryCleaner" directory="${srcGenPath}/${cartridgeName}" />
+    <component id="dirCleaner" class="org.eclipse.emf.mwe.utils.DirectoryCleaner" directory="${outputFolder}" />
 
     <!-- start generator component -->
     <component class="org.eclipse.xpand2.Generator" fileEncoding="UTF-8" skipOnErrors="true">
@@ -37,7 +37,7 @@
 
         <!-- specify where to put the generated code -->
         <!-- default outlet has no name assigned -->
-        <outlet path="${srcGenPath}/${cartridgeName}" append="false" overwrite="true">
+        <outlet path="${outputFolder}/${modelName}" append="false" overwrite="true">
             <!-- postprocessor class="org.eclipse.xtend.typesystem.xsd.XMLBeautifier" fileExtensions=".xml, .xsd, .wsdd, .wsdl" /-->
             <!-- we call the php beautifier from MOST as it needs some things which are not available in the workflow context -->
             <!-- postprocessor class="org.zikula.modulestudio.generator.output.PhpBeautifier" / -->

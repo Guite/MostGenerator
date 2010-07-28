@@ -52,6 +52,10 @@ public class ModuleStudioGenerator {
             IProgressMonitor monitor) {
         properties = new HashMap<String, String>();
 
+        // name of the model / module
+        final String modelName = application.getName();
+        addProperty("modelName", modelName);
+
         // obsolete start
         final String modelPath = application.getModelPath();
         // input model file
