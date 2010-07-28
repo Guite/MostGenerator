@@ -231,7 +231,7 @@ Example:
 «ENDREM»
 «ENDDEFINE»
 «DEFINE ExampleRow(Application app, String entityName, Integer number) FOR EntityField»
-            '«dbName(name)»' => __('«entityName» «name» «number»', $dom)«ENDDEFINE»
+            '«dbName(name)»' => $this->__('«entityName» «name» «number»')«ENDDEFINE»
 
 «DEFINE FuncInteractiveInit FOR Application»
     /**
