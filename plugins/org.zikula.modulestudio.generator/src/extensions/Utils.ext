@@ -81,7 +81,7 @@ cached String idFieldName(Entity this)
     : name.toString().msconcat('id');
 
 cached String actualFieldName(DerivedField this)
-    : ((alias != null && alias != "") ? alias : name;
+    : ((alias != null && alias != "") ? alias : name);
 
 
 // return all join relations (excluding inheritance)

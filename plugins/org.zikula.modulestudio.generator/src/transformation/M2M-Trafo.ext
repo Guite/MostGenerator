@@ -4,11 +4,11 @@ import modulestudio;
 
 create Application this duplicate(Application app):
   	models.entities.addAll(app.models.entities.duplicate()) ->
-  	models.variables.vars.addAll(s.models.variables.vars.duplicate()) ->
-  	setName(s.name) ->
-  	setAuthor(s.author) ->
-  	setUrl(s.url) ->
-  	setPrefix(s.prefix);
+  	models.variables.vars.addAll(app.models.variables.vars.duplicate()) ->
+  	setName(app.name) ->
+  	setAuthor(app.author) ->
+  	setUrl(app.url) ->
+  	setPrefix(app.prefix);
 
 Variable duplicate(Variable old) : null;
 
@@ -23,12 +23,12 @@ create BoolVar this duplicate(BoolVar old):
 
 create FilePathVar this duplicate(FilePathVar old):
 	setName(old.name) -> setValue(old.value) ->
-	setIsWithinDocRoot(old.isWithinDocRoot) -> setIsWritable(old.isWritable);
+	setWithinDocRoot(old.withinDocRoot) -> setWritable(old.writable);
 
 create ListVar this duplicate(ListVar old):
 	items.addAll(old.items.duplicate()) ->
 	setName(old.name) -> setValue(old.value) ->
-	setIsMultiple(old.isMultiple);
+	setMultiple(old.multiple);
 
 create ListVarItem this duplicate(ListVarItem old):
 	setName(old.name) -> setIsDefault(old.isDefault);
@@ -44,64 +44,63 @@ EntityField duplicate(EntityField old) : null;
 
 create StringField this duplicate(StringField old):
 	setName(old.name) ->
-	setIsMandatory(old.isMandatory) ->
+	setMandatory(old.mandatory) ->
 	setDefaultValue(old.defaultValue) ->
-	setIsPrimaryKey(old.isPrimaryKey) ->
+	setPrimaryKey(old.primaryKey) ->
 	setLength(old.length);
 
 create TextField this duplicate(TextField old):
 	setName(old.name) ->
-	setIsMandatory(old.isMandatory) ->
+	setMandatory(old.mandatory) ->
 	setDefaultValue(old.defaultValue) ->
-	setIsPrimaryKey(old.isPrimaryKey) ->
-	setType(old.type);
+    setPrimaryKey(old.primaryKey) ->
+    setLength(old.length);
 
 create BlobField this duplicate(BlobField old):
 	setName(old.name) ->
-	setIsMandatory(old.isMandatory) ->
+	setMandatory(old.mandatory) ->
 	setDefaultValue(old.defaultValue) ->
-	setIsPrimaryKey(old.isPrimaryKey);
+	setPrimaryKey(old.primaryKey);
 
 create DateField this duplicate(DateField old):
 	setName(old.name) ->
-	setIsMandatory(old.isMandatory) ->
+	setMandatory(old.mandatory) ->
 	setDefaultValue(old.defaultValue) ->
-	setIsPrimaryKey(old.isPrimaryKey);
+	setPrimaryKey(old.primaryKey);
 
 create TimestampField this duplicate(TimestampField old):
 	setName(old.name) ->
-	setIsMandatory(old.isMandatory) ->
-	setDefaultValue(old.defaultValue) ->
-	setIsPrimaryKey(old.isPrimaryKey);
+    setMandatory(old.mandatory) ->
+    setDefaultValue(old.defaultValue) ->
+    setPrimaryKey(old.primaryKey);
 
 create BooleanField this duplicate(BooleanField old):
 	setName(old.name) ->
-	setIsMandatory(old.isMandatory) ->
-	setDefaultValue(old.defaultValue) ->
-	setIsPrimaryKey(old.isPrimaryKey);
+    setMandatory(old.mandatory) ->
+    setDefaultValue(old.defaultValue) ->
+    setPrimaryKey(old.primaryKey);
 
 create IntegerField this duplicate(IntegerField old):
 	setName(old.name) ->
-	setIsMandatory(old.isMandatory) ->
+	setMandatory(old.mandatory) ->
 	setDefaultValue(old.defaultValue) ->
-	setIsPrimaryKey(old.isPrimaryKey) ->
+	setPrimaryKey(old.primaryKey) ->
 	setLength(old.length);
 
 create DecimalField this duplicate(DecimalField old):
 	setName(old.name) ->
-	setIsMandatory(old.isMandatory) ->
+	setMandatory(old.mandatory) ->
 	setDefaultValue(old.defaultValue) ->
-	setIsPrimaryKey(old.isPrimaryKey) ->
+	setPrimaryKey(old.primaryKey) ->
 	setLength(old.length) ->
-	setPrecision(old.precision);
+	setScale(old.scale);
 
 create FloatField this duplicate(FloatField old):
 	setName(old.name) ->
-	setIsMandatory(old.isMandatory) ->
+	setMandatory(old.mandatory) ->
 	setDefaultValue(old.defaultValue) ->
-	setIsPrimaryKey(old.isPrimaryKey) ->
-	setLength(old.length) ->
-	setPrecision(old.precision);
+	setPrimaryKey(old.primaryKey) ->
+	setLength(old.length);
 
 /*
 create Relationship this duplicate(Relationship old):
@@ -109,3 +108,4 @@ create Relationship this duplicate(Relationship old):
 	setType(old.type) ->
 	setReference(old.reference.duplicate());
 */
+
