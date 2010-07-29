@@ -1,0 +1,68 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE SetUpRelations FOR Entity-»
+        /**
+         * Relations
+         */
+«IF outgoing.typeSelect(JoinRelationship).size > 0-»
+        // outgoing relations
+«FOREACH outgoing.typeSelect(JoinRelationship) AS relation-»
+«EXPAND RelationDefinition(relation, false)-»
+«ENDFOREACH-»
+
+«ENDIF-»
+«IF incoming.typeSelect(JoinRelationship).size > 0-»
+        // incoming relations
+«FOREACH incoming.typeSelect(JoinRelationship) AS relation-»
+«EXPAND RelationDefinition(relation, true)-»
+«ENDFOREACH-»
+
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE RelationDefinition(JoinRelationship relation, Boolean incoming) FOR Entity-»
+        $this->has«IF relation.metaType == OneToOneRelationship-»One«ELSE-»Many«ENDIF-»('«relation.target.implClassModelRecord()»«IF relation.alias != null && relation.alias != ""-» as «relation.alias.formatForCode()»«ENDIF-»', array(
+                // linked field in the defining class
+                'local' => '«IF incoming == true-»«relation.target.idField()»«ELSE-»«relation.source.idField()»«ENDIF-»',
+                // linked field in the linked class
+                'foreign' => '«IF incoming == true-»«relation.source.idField()»«ELSE-»«relation.target.idField()»«ENDIF-»',«REM»Rule: always place the foreign key in the owned class«ENDREM»«""-»
+«IF relation.metaType == ManyToManyRelationship-»,
+                // name of the many-to-many association class
+                'refClass' => '«((ManyToManyRelationship)relation).refClass.formatForCode()»',
+«ENDIF-»
+                // true indicates the owning side (owning the foreign key)
+                'owningSide' => «IF incoming == true-»false«ELSE-»true«ENDIF-»,
+«IF relation.metaType != ManyToManyRelationship && relation.foreignKeyName != null && relation.foreignKeyName != ""-»
+                'foreignKeyName' => '«relation.foreignKeyName»',
+«ENDIF-»
+«EXPAND CascadeInfo FOR relation-»
+            )
+        );
+«ENDDEFINE»
+
+«DEFINE CascadeInfo FOR JoinRelationship-»
+                'onDelete' => '«cascadeTypeUpdate.asConstant()-»',
+                'onUpdate' => '«cascadeTypeDelete.asConstant()-»',
+                'cascade' => '«IF cascadeTypeDelete.asConstant() == "CASCADE" && source.tableType.asConstant() == "MYISAM"-»array('delete')«ELSE-»''«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE SubClasses FOR Entity-»
+«LET getChildRelationsWithAggregation() AS aggregatedChildren-»
+«IF aggregatedChildren.size > 0-»
+        $keyField = 'type';
+        $this->setSubclasses(array(
+«EXPAND SubClass FOREACH aggregatedChildren-»
+            )
+        );
+«ENDIF-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE SubClass FOR InheritanceRelationship-»
+                '«source.name.formatForCode()»' => array($keyField => «source.name.formatForCode()»)
+«ENDDEFINE»
+
+

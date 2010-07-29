@@ -192,7 +192,7 @@ cssClass="myClass"
 «LET pointingRelations.get(0) AS pointingRelation-»
 «LET pointingRelation.source AS joiningTable-»
 «REM»Join-Selector«ENDREM»«""-»
-            {formdropdownrelationlist id="«joiningTable.idField()»" mandatory=«IF mandatory-»true«ELSE»false«ENDIF-» module="«entity.container.application.appName()»" objecttype="«joiningTable.name.formatForCode()»" idField="«joiningTable.idField()»" displayField="«joiningTable.idField()»" orderby="«joiningTable.idField()»"«IF pointingRelation.metaType == OneToManyRelationship-» selectionMode="multiple"«ENDIF-»}«IF mandatory-»&nbsp;*«ENDIF»
+            {formdropdownrelationlist id="«joiningTable.idField()»" mandatory=«mandatory.displayBool()» module="«entity.container.application.appName()»" objecttype="«joiningTable.name.formatForCode()»" idField="«joiningTable.idField()»" displayField="«joiningTable.idField()»" orderby="«joiningTable.idField()»"«IF pointingRelation.metaType == OneToManyRelationship-» selectionMode="multiple"«ENDIF-»}«IF mandatory-»&nbsp;*«ENDIF»
 «ENDLET-»
 «ENDLET-»
 «ELSE-»

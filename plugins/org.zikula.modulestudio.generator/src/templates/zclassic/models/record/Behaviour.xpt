@@ -1,0 +1,130 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE SetUpBehaviour FOR Entity-»
+        /**
+         * Behaviours
+         */
+«IF versionable-»
+        // Ability to track versions and switch between them
+        $auditLog = new Doctrine_Template_Versionable(array(
+                'versionColumn' => '«versionableField.formatForDB()»',
+                'className' => '%CLASS%Version',
+                // turn «IF versionableHistory»on«ELSE»off«ENDIF» the audit log history
+                'auditLog' => «versionableHistory.displayBool()»
+            )
+        );
+«ENDIF-»
+«IF searchable-»
+        // Search support
+        $search = new Doctrine_Template_Searchable(array(
+                'fields' => array('«searchableFields.replaceAll(", ", "', '")»'),
+                // «IF !searchableBatchUpdates»don't «ENDIF»use batch updates for index table instead of direct update functionality 
+                'batchUpdate' => «searchableBatchUpdates.displayBool()»
+            )
+        );
+«ENDIF-»
+«IF sluggable-»
+        // Automatic permalink generation
+        $slug = new Doctrine_Template_Sluggable(array(
+«IF sluggableFieldName != null && sluggableFieldName != ""-»
+                'name'      => '«sluggableFieldName.formatForDB()»',
+«ENDIF-»
+«IF sluggableFieldAlias != null && sluggableFieldAlias != ""-»
+                'alias'     => '«sluggableFieldAlias.formatForDB()»',
+«ENDIF-»
+                'type'      => 'string',
+                'unique'    => «sluggableUnique.displayBool()»
+                'fields'    => array('«sluggableFields.replaceAll(", ", "', '")»'),
+                'canUpdate' => «sluggableCanUpdate.displayBool()»
+            )
+        );
+«ENDIF-»
+«IF i18n-»
+        // Internationalisation (content in multiple language)
+        $i18n = new Doctrine_Template_I18n(array(
+                'className' => '%CLASS%Translation',
+                'fields'    => array('«i18nFields.replaceAll(", ", "', '")»'),
+                'type'      => 'string',
+                'length'    => 2
+            )
+        );
+«ENDIF-»
+
+«IF i18n-»
+«IF versionable || sluggable || searchable-»
+        $i18n
+«IF versionable»->addChild($auditLog)«ENDIF»
+«IF searchable»->addChild($search)«ENDIF»
+«IF sluggable»->addChild($slug)«ENDIF»
+«ENDIF-»
+        $this->actAs($i18n);
+«ELSE-»
+«IF versionable-»
+        $this->actAs($auditLog);
+«ENDIF-»
+«IF searchable-»
+        $this->actAs($search);
+«ENDIF-»
+«IF sluggable-»
+        $this->actAs($slug);
+«ENDIF-»
+«ENDIF-»
+
+«IF nestedSet-»
+        // Nested set for hierarchical data structures
+        $this->actAs('NestedSet', array(
+                'hasManyRoots' => «nestedSetHasManyRoots.displayBool()»,
+                'rootColumnName' => '«nestedSetRootField.formatForDB()»'
+            )
+        );
+«ENDIF-»
+«IF geographical-»
+        // Coordinate fields and distance calculation
+        $this->actAs('Geographical');
+«ENDIF-»
+«IF softDelete-»
+        // Mark items as removed instead of really deleting them
+        $this->actAs('SoftDelete');
+«ENDIF-»
+«IF timestampable-»
+        // Automatic timestamp creations
+        $this->actAs('Timestampable', array(
+                'created' => array(
+«IF timestampableEnableCreated-»
+                    'name' => '«timestampableFieldCreated.formatForDB()»',
+                    'type' => 'timestamp'
+«ELSE-»
+                    'disabled' => true
+«ENDIF-»
+                ),
+                'updated' => array(
+«IF timestampableEnableUpdated-»
+                    'name' => '«timestampableFieldUpdated.formatForDB()»',
+                    'type' => 'timestamp',
+                    'onInsert' => true
+«ELSE-»
+                    'disabled' => true
+«ENDIF-»
+                )
+            )
+        );
+«ENDIF-»
+«IF zikulaStandardFields-»
+        // Zikula standard fields (obj_status, cr_uid, cr_date, lu_uid, lu_date)
+        $this->actAs('StandardFields');
+«ENDIF-»
+
+        /**
+         * Event listeners registrations
+         */
+«REM»TODO«ENDREM»
+
+«EXPAND ObjectExtensions-»«REM»Obsolete, but kept for Aspect Orientation«ENDREM»«""-»
+«ENDDEFINE»
+
+«DEFINE ObjectExtensions FOR Entity»
+«REM»will be filled by Advices«ENDREM»
+«ENDDEFINE»

@@ -1,0 +1,208 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE SetTableDefinition FOR Entity-»
+        $this->setTableName('«fullEntityName()»');
+
+        /**
+         * Columns
+         */
+«EXPAND FieldSetColumn FOREACH fields-»
+
+        $this->option('type', '«tableType.asConstant()»');
+        $this->option('collate', '«IF collate != null && collate != ""-»«collate»«ELSE-»utf8_unicode_ci«ENDIF-»');
+        $this->option('charset', '«IF charset != null && charset != ""-»«collate»«ELSE-»utf8«ENDIF-»');
+«IF indexes.size > 0»
+        /**
+         * Indexes
+         */
+«EXPAND Index FOREACH indexes-»
+«ENDIF-»
+«ENDDEFINE»
+
+
+«REM»column definition«ENDREM»
+«DEFINE FieldSetColumn FOR EntityField-»
+«error("Error: undefined entity field type (code 592354)") -> ""-»
+«ENDDEFINE»
+«DEFINE FieldSetColumn FOR DerivedField-»
+        $this->hasColumn(«EXPAND FieldSetColumnDetails-», array(
+«EXPAND FieldSetColumnOptions»
+            )
+        );
+«ENDDEFINE»
+«DEFINE FieldSetColumn FOR CalculatedField-»
+«REM»Nothing at the moment«ENDREM»
+«ENDDEFINE»
+«DEFINE FieldDefaultData FOR EntityField-»
+«error("Error: undefined entity field type (code 592374)") -> ""-»
+«ENDDEFINE»
+«DEFINE FieldDefaultData FOR DerivedField-»
+«error("Error: undefined derived field type (code 592376)") -> ""-»
+«ENDDEFINE»
+«DEFINE FieldDefaultData FOR CalculatedField-»
+«error("Error: undefined calculated field type (code 592378)") -> ""-»
+«ENDDEFINE»
+
+«DEFINE FieldSetColumnDetails FOR DerivedField-»'«EXPAND FieldName-»', '«EXPAND FieldType-»', «EXPAND FieldLength-»«ENDDEFINE»
+
+«DEFINE FieldName FOR DerivedField-»«name.formatForCode()»«IF alias != null && alias != ""-» as «alias.formatForCode()»«ENDIF-»«ENDDEFINE»
+
+«DEFINE FieldType FOR DerivedField-»«metaType.toString().replaceAll("modulestudio::", "").replaceAll("Field", "").toLowerCase()»«ENDDEFINE»
+«REM»required for own types like user, email, url, upload«ENDREM» 
+«DEFINE FieldType FOR AbstractIntegerField-»integer«ENDDEFINE»
+«DEFINE FieldType FOR AbstractStringField-»string«ENDDEFINE»
+
+«DEFINE FieldLength FOR DerivedField-»null«ENDDEFINE»
+«DEFINE FieldLength FOR AbstractIntegerField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR FloatField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR DecimalField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR AbstractStringField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR ArrayField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+
+«DEFINE FieldSetColumnOptions FOR DerivedField-»
+                'type' => '«EXPAND FieldType-»',
+«IF primaryKey == true-»
+                'primary' => true,
+                'autoincrement' => true,
+«ENDIF-»
+«IF defaultValue != null && defaultValue != ""-»
+                'default' => «EXPAND FieldDefaultValue-»,
+«ENDIF-»
+«EXPAND FieldSetColumnAdditionalOptions-»
+                // ensure «IF notnull»the«ELSE-»no«ENDIF-» 'not null' constraint«IF notnull» in both application and database level«ENDIF»
+                'notnull' => «notnull.displayBool()»,
+«IF unique-»
+                // check if value is unique in its database table
+                'unique' => true,
+«ENDIF-»
+«IF readonly-»
+                // check if field is modified and if it is returns false to force a field as readonly
+                'readonly' => true,
+«ENDIF-»
+                'length' => «EXPAND FieldLength-»
+«ENDDEFINE»
+
+«DEFINE FieldDefaultValue FOR DerivedField-»
+«error("Error: undefined default value definition for derived field type (code 3982562)") -> ""-»
+«ENDDEFINE»
+«DEFINE FieldDefaultValueNumber FOR DerivedField-»«defaultValue»«ENDDEFINE»
+«DEFINE FieldDefaultValueText FOR DerivedField-»'«defaultValue»'«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR BooleanField-»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR IntegerField-»«EXPAND FieldDefaultValueNumber-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR FloatField-»«EXPAND FieldDefaultValueNumber-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR DecimalField-»«EXPAND FieldDefaultValueNumber-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR StringField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR TextField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR EmailField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR UrlField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR UploadField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR UserField-»«EXPAND FieldDefaultValueNumber-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR ArrayField-»«EXPAND FieldDefaultValueNumber-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR EnumField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR ObjectField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR BlobField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR ClobField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR TimestampField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR DateField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR TimeField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR GzipField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+
+
+«DEFINE FieldSetColumnAdditionalOptions FOR DerivedField-»«ENDDEFINE»
+
+«DEFINE FieldSetColumnAdditionalOptions FOR IntegerField-»
+«IF unsigned-»
+                // Check if given value is unsigned (note: this is not portable)
+                'unsigned' => true,
+«ENDIF-»
+«IF minValue != 0 || maxValue != 0-»
+                // Check if value is in range specified by arguments
+                'range' => array(«minValue», «maxValue»),
+«ENDIF-»
+«IF creditCard-»
+                // check if value is a well formated credit card number
+                'creditcard' => true,
+«ENDIF-»
+«ENDDEFINE»
+«DEFINE FieldSetColumnAdditionalOptions FOR DecimalField-»
+                'scale' => «scale.toInteger()»,
+«ENDDEFINE»
+«DEFINE FieldSetColumnAdditionalOptionsCommon FOR AbstractStringField-»
+«IF fixed-»
+                'fixed' => true,
+«ENDIF-»
+«IF nospace-»
+                // check if value has no space chars
+                'nospace' => true,
+«ENDIF-»
+«IF minLength != null && minLength > 0-»
+                // check if value satisfies the minimum length
+                'minlength' => «minLength»,
+«ENDIF-»
+«IF regexp != null && regexp != ""-»
+                // check if value matches a regular expression
+                'regexp' => '«regexp»',
+«ENDIF-»
+
+«ENDDEFINE»
+«DEFINE FieldSetColumnAdditionalOptions FOR AbstractStringField-»
+«EXPAND FieldSetColumnAdditionalOptionsCommon-»
+«ENDDEFINE»
+«DEFINE FieldSetColumnAdditionalOptions FOR StringField-»
+«EXPAND FieldSetColumnAdditionalOptionsCommon-»
+«IF country-»
+                // check if value is a valid country code
+                'country' => true,
+«ENDIF-»
+«IF ipaddress-»
+                // check if value is a valid ip address
+                'ip' => true,
+«ENDIF-»
+«IF htmlcolor-»
+                // check if value is a valid html colour
+                'htmlcolor' => true,
+«ENDIF-»
+«IF usstate-»
+                // check if value is a valid US state code
+                'usstate' => true,
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE FieldSetColumnAdditionalOptions FOR EmailField-»
+«EXPAND FieldSetColumnAdditionalOptionsCommon-»
+                // check if value is a valid email address
+                'email' => true,
+«ENDDEFINE»
+«DEFINE FieldSetColumnAdditionalOptions FOR TimestampField-»
+«IF past-»
+                // check if value is a date in the past
+                'past' => true,
+«ELSEIF future-»
+                // check if value is a date in the future
+                'future' => true,
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE Index FOR EntityIndex-»
+        $this->index('«name.formatForDB()»', array(
+                'fields' => array(
+«EXPAND IndexField FOREACH items SEPARATOR ','»
+                ),
+«IF primary == true-»
+                'primary' => true,
+«ENDIF-»
+                'type' => '«type.asConstant()»'
+            )
+        );
+«ENDDEFINE»
+«DEFINE IndexField FOR EntityIndexItem-»
+                    '«name.formatForDB()»' => array(
+«IF length != null && length != ""-»
+                        'length' => «length»,
+«ENDIF-»
+                        'sorting' => '«IF sorting == EntityIndexSortingType::DESC-»DESC«ELSE-»ASC«ENDIF-»'
+                    )
+«ENDDEFINE»

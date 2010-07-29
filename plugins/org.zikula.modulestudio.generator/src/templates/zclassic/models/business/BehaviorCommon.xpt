@@ -1,0 +1,21 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+
+«DEFINE ClassToString(String className) FOR Entity-»
+    /**
+     * Interceptor being called if an object is used within a string context.
+     * 
+     * @return string
+     */
+    public function __toString() {
+        $string  = 'Instance of the class "«className.formatForCode()»' . "\n";
+        $string .= 'Managed table: «name.formatForCode()»' . "\n";
+        $string .= 'Table fields:' . "\n";
+«FOREACH fields AS col-»
+        $string .= '        «col.name.formatForCode()»' . "\n";
+«ENDFOREACH-»
+        $string .= "\n";
+
+        return $string;
+    }
+«ENDDEFINE»
