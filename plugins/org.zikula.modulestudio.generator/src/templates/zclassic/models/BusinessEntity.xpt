@@ -382,9 +382,11 @@ class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntit
         $data['«name.formatForDB()»'] = ((isset($data['«name.formatForDB()»']) && !empty($data['«name.formatForDB()»'])) ? DataUtil::formatForDisplay($data['«name.formatForDB()»']) : '');
 «ENDDEFINE»
 
-«DEFINE sanitizeForOutput FOR StringField-»
+«DEFINE sanitizeForOutputHTML FOR EntityField-»
         $data['«name.formatForDB()»'] = ((isset($data['«name.formatForDB()»']) && !empty($data['«name.formatForDB()»'])) ? DataUtil::formatForDisplayHTML($data['«name.formatForDB()»']) : '');
 «ENDDEFINE»
+
+«DEFINE sanitizeForOutput FOR StringField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
 
 «DEFINE sanitizeForOutput FOR BooleanField-»
         $data['«name.formatForDB()»'] = (bool) $data['«name.formatForDB()»'];
@@ -393,6 +395,6 @@ class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntit
 «DEFINE sanitizeForOutput FOR BlobField-»
 «ENDDEFINE»
 
-«DEFINE sanitizeForOutput FOR ClobField-»
-        $data['«name.formatForDB()»'] = ((isset($data['«name.formatForDB()»']) && !empty($data['«name.formatForDB()»'])) ? DataUtil::formatForDisplayHTML($data['«name.formatForDB()»']) : '');
-«ENDDEFINE»
+«DEFINE sanitizeForOutput FOR TextField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
+«DEFINE sanitizeForOutput FOR ClobField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
+

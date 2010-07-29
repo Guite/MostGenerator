@@ -143,10 +143,11 @@ cssClass="myClass"
             {formtextinput id="«name.formatForDB()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=«length»}
 «REM» visible=false    cssClass="myClass" FormStyledPlugin (width="80%", width="30em")«ENDREM»«""-»
 «ENDDEFINE»
+«DEFINE FormField FOR TextField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
 
 «REM»TODO: textMode="password" for password input fields«ENDREM»
 
-«DEFINE FormField FOR ClobField-»
+«DEFINE FormFieldTextarea FOR DerivedField-»
             {formtextinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="multiline" rows="8" cols="50"}
 «REM»
     var $group;                     // group name for this input
@@ -159,6 +160,7 @@ cssClass="myClass"
     function bool isEmpty();
 «ENDREM»«""-»
 «ENDDEFINE»
+«DEFINE FormField FOR ClobField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
 «DEFINE FormField FOR DateField-»«REM»class="date"«ENDREM»
             {if $mode == "edit"}
                 {formdateinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true}
