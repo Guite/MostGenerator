@@ -90,11 +90,11 @@ cached String prepTemplatePart(String origin, String addition)
 cached String templateSuffix()
     : ".tpl";
 
-cached String templateFile(Application app, Controller obj, String entityName, String actionName)
-    : "templates/".msconcat(app.appName()).msconcat('_').prepTemplatePart(obj.name).msconcat('_').msconcat(formatForCode(entityName)).msconcat('_').prepTemplatePart(actionName).msconcat(templateSuffix());
+cached String templateFile(Controller obj, String entityName, String actionName)
+    : "templates/".msconcat(obj.name.formatForDB()).msconcat('/').msconcat(formatForCode(entityName)).msconcat('_').prepTemplatePart(actionName).msconcat(templateSuffix());
 
 cached String editTemplateFile(Controller obj, String entityName, String actionName)
-    : templateFile(obj.container.application, obj, entityName, actionName);
+    : templateFile(obj, entityName, actionName);
     
 
 

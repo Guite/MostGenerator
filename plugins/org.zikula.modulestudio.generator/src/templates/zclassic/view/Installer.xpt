@@ -2,13 +2,13 @@
 «EXTENSION extensions::Utils»
 
 «DEFINE Root FOR Application»
-    «FILE "templates/" + appName() + "_init_interactive.tpl"»«EXPAND tplInit»«ENDFILE»
+    «FILE "templates/init/interactive.tpl"»«EXPAND tplInit»«ENDFILE»
 «IF needsConfig()-»
-    «FILE "templates/" + appName() + "_init_step2.tpl"»«EXPAND tplInitStep2»«ENDFILE»
+    «FILE "templates/init/step2.tpl"»«EXPAND tplInitStep2»«ENDFILE»
 «ENDIF-»
-    «FILE "templates/" + appName() + "_init_step3.tpl"»«EXPAND tplInitStep3»«ENDFILE»
-    «FILE "templates/" + appName() + "_init_update.tpl"»«EXPAND tplUpdate»«ENDFILE»
-    «FILE "templates/" + appName() + "_init_delete.tpl"»«EXPAND tplDelete»«ENDFILE»
+    «FILE "templates/init/step3.tpl"»«EXPAND tplInitStep3»«ENDFILE»
+    «FILE "templates/init/update.tpl"»«EXPAND tplUpdate»«ENDFILE»
+    «FILE "templates/init/delete.tpl"»«EXPAND tplDelete»«ENDFILE»
 «ENDDEFINE»
 
 «DEFINE tplInit FOR Application-»

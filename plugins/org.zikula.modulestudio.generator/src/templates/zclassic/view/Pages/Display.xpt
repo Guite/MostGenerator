@@ -4,10 +4,10 @@
 «DEFINE Impl(String appName, Controller controller) FOR Entity»
 «LET controller.name.formatForDB() AS controllerName-»
 «LET name.formatForCode() AS objName-»
-«FILE "templates/" + appName + "_" + controllerName + "_" + objName + "_display.tpl"-»
+«FILE "templates/" + controllerName + "/" + objName + "_display.tpl"-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» display view in «controllerName» area *}
 
-{include file="«appName»_«controllerName»_header.tpl"}
+{include file="«controllerName»/header.tpl"}
 
 «IF controller.metaType == AdminController-»
 <div class="z-admincontainer">
@@ -73,18 +73,18 @@
 {modurl modname="«appName»" type="«controllerName»" func="display" ot="«objName»" «idField()»=$«objName».«idField()» assign="returnurl"}
 {modcallhooks hookobject="item" hookaction="display" module="«appName»" hookid="«name.formatForDB()»`$«objName».«idField()»`" returnurl=$returnurl}
 
+«IF refedElems.size > 0-»
+<br style="clear: right" />
+«ENDIF-»
+
 «IF controller.metaType == AdminController-»
 </div>
 «ELSE-»
 </div>
 «ENDIF-»
-
-«IF refedElems.size > 0-»
-<br style="clear: right" />
-«ENDIF-»
 «ENDLET-»
 
-{include file="«appName»_«controllerName»_footer.tpl"}
+{include file="«controllerName»/footer.tpl"}
 «ENDFILE»
 «ENDLET-»
 «ENDLET-»

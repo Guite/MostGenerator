@@ -23,10 +23,10 @@
 «EXPAND MetaDataTemplates(appName(), controller)-»
 «ENDFOREACH-»
 «IF needsConfig()-»
-«FILE "templates/" + appName() + "_admin_config.tpl"-»
+«FILE "templates/admin/config.tpl"-»
 {* purpose of this template: module configuration *}
 
-{include file="«appName()»_admin_header.tpl"}
+{include file="admin/header.tpl"}
 
 <div class="z-admincontainer">
 <div class="z-adminpageicon">{img modname=core src=configure.gif set=icons/large __alt='Settings'}</div>
@@ -60,7 +60,7 @@
 
 </div>
 
-{include file="«appName()»_admin_footer.tpl"}
+{include file="admin/footer.tpl"}
 «ENDFILE-»
 «ENDIF-»
 «ENDDEFINE»
@@ -79,7 +79,7 @@
 
 «DEFINE HeaderFooter(String appName, Controller controller) FOR Application»
 «LET controller.name.formatForDB() AS controllerName-»
-«FILE "templates/" + appName + "_" + controllerName + "_header.tpl"-»
+«FILE "templates/" + controllerName + "/header.tpl"-»
 {* purpose of this template: header for «controllerName» area *}
 
 «IF controller.metaType == AdminController-»
@@ -99,7 +99,7 @@
     </div>
 </div>
 «ENDFILE»
-«FILE "templates/" + appName + "_" + controllerName + "_footer.tpl"-»
+«FILE "templates/" + controllerName + "/footer.tpl"-»
 {* purpose of this template: footer for «controllerName» area *}
 
 «EXPAND FileHelper::msWeblink-»
@@ -111,7 +111,7 @@
 «DEFINE MetaDataTemplates(String appName, Controller controller) FOR Application-»
 «LET controller.name.formatForDB() AS controllerName-»
 «IF controller.hasActions('view') || controller.hasActions('display')-»
-«FILE "templates/" + appName + "_" + controllerName + "_include_metadata_display.tpl"-»
+«FILE "templates/" + controllerName + "/include_metadata_display.tpl"-»
     <dt>{gt text='Meta data'}</dt>
 {if $obj.cr_uid}
 {usergetvar name="uname" uid=$obj.cr_uid assign="cr_uname"}
@@ -126,7 +126,7 @@
 «ENDIF»
 
 «IF controller.hasActions('edit')-»
-«FILE "templates/" + appName + "_" + controllerName + "_include_metadata_edit.tpl"-»
+«FILE "templates/" + controllerName + "/include_metadata_edit.tpl"-»
 <fieldset>
     <legend>{gt text='Meta data'}</legend>
     <ul>

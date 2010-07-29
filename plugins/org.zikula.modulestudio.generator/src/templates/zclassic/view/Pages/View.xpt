@@ -11,10 +11,10 @@ listType:
 «DEFINE Impl(String appName, Controller controller, Integer listType) FOR Entity»
 «LET controller.name.formatForDB() AS controllerName-»
 «LET name.formatForCode() AS objName-»
-«FILE "templates/" + appName + "_" + controllerName + "_" + objName + "_view.tpl"-»
+«FILE "templates/" + controllerName + "/" + objName + "_view.tpl"-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» view view in «controllerName» area *}
 
-{include file="«appName»_«controllerName»_header.tpl"}
+{include file="«controllerName»/header.tpl"}
 
 «IF controller.metaType == AdminController-»
 <div class="z-admincontainer">
@@ -207,7 +207,7 @@ listType:
 </div>
 «ENDIF-»
 
-{include file="«appName»_«controllerName»_footer.tpl"}
+{include file="«controllerName»/footer.tpl"}
 «ENDFILE»
 «ENDLET-»
 «ENDLET-»
