@@ -25,6 +25,10 @@
     «info("Generating table classes")»
     «EXPAND Table::Root»
 
+    «pm.subTask("Model: Listener classes")»
+    «info("Generating event listener classes")»
+    «EXPAND EventListener::Root-»
+
     «pm.subTask("Model: Business entity classes")»
     «info("Generating business entity classes")»
     «EXPAND BusinessEntity::Root»

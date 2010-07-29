@@ -2,19 +2,21 @@
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «REM»Entry point for Doctrine table classes«ENDREM»
 «DEFINE Root FOR Application-»
     «EXPAND Root(this) FOREACH models.entities-»
+    «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»
 «ENDDEFINE»
 
 «REM»creates a table class file for every Entity instance«ENDREM»
 «DEFINE Root(Application app) FOR Entity-»
 «info("Generating table classes for entity \"" + name + "\"") -> ""-»
-    «FILE baseClassModelTable(false).asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelTableBaseImpl(app)»«ENDFILE»
-    «FILE implClassModelTable(false).asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelTableImpl(app)»«ENDFILE»
+«IF !isInheriting()-»
+    «FILE baseClassModelTable().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelTableBaseImpl(app)»«ENDFILE»
+«ENDIF-»
+    «FILE implClassModelTable().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelTableImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
 «REM»base implementation«ENDREM»
@@ -26,9 +28,9 @@
  *
  * This is the base table class for «name.formatForDisplay()» entities
  */
-class «baseClassModelTable(false)» extends Doctrine_Table
+class «baseClassModelTable()» extends Doctrine_Table
 {
-
+    // Nothing to do yet.
 }
 «ENDDEFINE»
 
@@ -41,7 +43,47 @@ class «baseClassModelTable(false)» extends Doctrine_Table
  *
  * This is the concrete table class for «name.formatForDisplay()» entities
  */
-class «implClassModelTable(false)» extends «baseClassModelTable(false)»
+class «implClassModelTable()» extends «IF isInheriting()»«parentType().implClassModelTable()»«ELSE»«baseClassModelTable()»«ENDIF-»
+{
+    // feel free to add your own methods here
+}
+«ENDDEFINE»
+
+
+«REM»creates a reference table class file for every many-to-many relationship instance«ENDREM»
+«DEFINE Root(Application app) FOR ManyToManyRelationship-»
+    «FILE baseClassModelRefTable().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefTableBaseImpl(app)»«ENDFILE»
+    «FILE implClassModelRefTable().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefTableImpl(app)»«ENDFILE»
+«ENDDEFINE»
+
+
+«REM»base implementation«ENDREM»
+«DEFINE ModelRefTableBaseImpl(Application app) FOR ManyToManyRelationship-»
+
+/**
+ * Doctrine_Table class used to implement own special entity methods.
+ * For example it can provide convenience methods for performing certain DQL queries.
+ *
+ * This is the base table class for the many to many relationship
+ * between «source.name.formatForDisplay()» and «target.name.formatForDisplay()» entities.
+ */
+class «baseClassModelRefTable()» extends Doctrine_Table
+{
+
+}
+«ENDDEFINE»
+
+«REM»concrete implementation stub«ENDREM»
+«DEFINE ModelRefTableImpl(Application app) FOR ManyToManyRelationship-»
+
+/**
+ * Doctrine_Table class used to implement own special entity methods.
+ * For example it can provide convenience methods for performing certain DQL queries.
+ *
+ * This is the concrete table class for the many to many relationship
+ * between «source.name.formatForDisplay()» and «target.name.formatForDisplay()» entities.
+ */
+class «implClassModelRefTable()» extends «baseClassModelRefTable()»
 {
     // feel free to add your own methods here
 }

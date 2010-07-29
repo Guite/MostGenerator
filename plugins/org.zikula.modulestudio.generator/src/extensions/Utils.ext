@@ -39,6 +39,8 @@ cached String formatForDisplay(String s)
 cached String formatForDisplayCapitalized(String s)
 	: JAVA extensions.Utils.formatForDisplayCapitalized(java.lang.String);
 
+cached String displayBool(Boolean b)
+    : ((b) ? 'true' : 'false');
 
 cached boolean needsConfig(Application this) :
 	models.variables.vars.size > 0;
@@ -90,6 +92,19 @@ cached getJoinRelations(Models this)
 cached getJoinRelationsWithAlias(Models this)
     : getJoinRelations(this).select(e|e.alias != null && e.alias != "");
 
+cached isInheriting(Entity this)
+    : outgoing.typeSelect(InheritanceRelationship).size > 0;
+cached InheritanceRelationship getInheritanceRelation(Entity this)
+    : outgoing.typeSelect(InheritanceRelationship).get(0);
+cached Entity parentType(Entity this)
+    : getInheritanceRelation().target;
+
+cached isInheriter(Entity this)
+    : outgoing.typeSelect(InheritanceRelationship).size > 0;
+cached getChildRelations(Entity this)
+    : incoming.typeSelect(InheritanceRelationship);
+cached getChildRelationsWithAggregation(Entity this)
+    : getChildRelations().select(e|e.strategy == InheritancyStrategyType::COLUMNAGGREGATION);
 
 
 
@@ -102,8 +117,37 @@ cached boolean hasActions(Controller controller, String type) :
 	   case 'edit'     : controller.actions.typeSelect(EditAction).size > 0
 	   case 'delete'   : controller.actions.typeSelect(DeleteAction).size > 0
 	   case 'custom'   : controller.actions.typeSelect(CustomAction).size > 0 
-	   default : false 
+	   default : false
 	};
+
+
+/*
+ * constants and labels for Doctrine
+ */
+cached String asConstant(DbTableType obj) :
+    switch (obj) {
+       case DbTableType::MYISAM : 'MYISAM'
+       case DbTableType::INNODB : 'INNODB'
+       default : ''
+    };
+cached String asConstant(EntityIndexType obj) :
+    switch (obj) {
+       case EntityIndexType::UNIQUE     : 'unique'
+       case EntityIndexType::FULLTEXT   : 'fulltext'
+       case EntityIndexType::GIST       : 'gist'
+       case EntityIndexType::GIN        : 'gin'
+       default : ''
+    };
+cached String asConstant(CascadeType obj) :
+    switch (obj) {
+       case CascadeType::CASCADE        : 'CASCADE'
+       case CascadeType::SETNULL        : 'SET NULL'
+       case CascadeType::NOACTION       : 'NO ACTION'
+       case CascadeType::RESTRICT       : 'RESTRICT'
+       case CascadeType::SETDEFAULT     : 'SET DEFAULT'
+       default : ''
+    };
+
 
 
 /*

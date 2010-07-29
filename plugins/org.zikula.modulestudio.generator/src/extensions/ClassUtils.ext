@@ -37,13 +37,26 @@ cached String processCollectionSuffix(String str, Boolean isCollection)
     : str.msconcat(((isCollection == true) ? "Collection" : ""));
 
 /** Model classes */
-cached String baseClassModelRecord(Entity obj, Boolean isCollection)
+cached String baseClassModelRecord(Entity obj)
     : baseClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name));
-cached String implClassModelRecord(Entity obj, Boolean isCollection)
+cached String implClassModelRecord(Entity obj)
     : implClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name));
-cached String baseClassModelTable(Entity obj, Boolean isCollection)
+cached String baseClassModelTable(Entity obj)
     : baseClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name.msconcat("Table")));
-cached String implClassModelTable(Entity obj, Boolean isCollection)
+cached String implClassModelTable(Entity obj)
+    : implClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name.msconcat("Table")));
+cached String baseClassModelListener(Entity obj)
+    : baseClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name.msconcat("Listener")));
+cached String implClassModelListener(Entity obj)
+    : implClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name.msconcat("Listener")));
+
+cached String baseClassModelRefRecord(ManyToManyRelationship obj)
+    : baseClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name));
+cached String implClassModelRefRecord(ManyToManyRelationship obj)
+    : implClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name));
+cached String baseClassModelRefTable(ManyToManyRelationship obj)
+    : baseClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name.msconcat("Table")));
+cached String implClassModelRefTable(ManyToManyRelationship obj)
     : implClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name.msconcat("Table")));
 
 /** Business classes */

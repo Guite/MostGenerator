@@ -1,0 +1,209 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«REM»Entry point for Doctrine listener classes«ENDREM»
+«DEFINE Root FOR Application-»
+    «EXPAND Root(this) FOREACH models.entities-»
+«ENDDEFINE»
+
+«REM»creates a listener class file for every Entity instance«ENDREM»
+«DEFINE Root(Application app) FOR Entity-»
+«info("Generating listener classes for entity \"" + name + "\"") -> ""-»
+«REM»Later: «EXPAND EventListenerMethod FOREACH listeners-»«ENDREM»«""-»
+«IF !isInheriting()-»
+    «FILE baseClassModelListener().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelListenerBaseImpl(app)»«ENDFILE»
+«ENDIF-»
+    «FILE implClassModelListener().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelListenerImpl(app)»«ENDFILE»
+«ENDDEFINE»
+
+«REM»base implementation«ENDREM»
+«DEFINE ModelListenerBaseImpl(Application app) FOR Entity-»
+
+/**
+ * Doctrine_Record_Listener class used to listen for and hook into events.
+ *
+ * This is the base listener class for «name.formatForDisplay()» entities
+ */
+class «baseClassModelListener()» extends Doctrine_Record_Listener
+{
+«EXPAND stubMethodsForNow-»
+}
+«ENDDEFINE»
+
+«REM»concrete implementation stub«ENDREM»
+«DEFINE ModelListenerImpl(Application app) FOR Entity-»
+
+/**
+ * Doctrine_Record_Listener class used to listen for and hook into events.
+ *
+ * This is the concrete listener class for «name.formatForDisplay()» entities
+ */
+class «implClassModelListener()» extends «IF isInheriting()»«parentType().implClassModelListener()»«ELSE»«baseClassModelListener()»«ENDIF-»
+{
+    // feel free to add your own methods here
+}
+«ENDDEFINE»
+
+
+
+
+«DEFINE EventListenerMethod FOR EntityEventListener-»
+«error("Error: undefined event listener type (code 925724)") -> ""-»
+«ENDDEFINE»
+«DEFINE EventListenerMethod FOR PreProcess-»
+«error("Error: undefined pre process type (code 925725)") -> ""-»
+«ENDDEFINE»
+«DEFINE EventListenerMethod FOR PostProcess-»
+«error("Error: undefined post process type (code 925726)") -> ""-»
+«ENDDEFINE»
+
+
+«REM»Temporary hack«ENDREM»
+«DEFINE stubMethodsForNow FOR Entity-»
+
+«REM»«DEFINE EventListenerMethod FOR PreSave-»«ENDREM»
+    /**
+     * Pre-Process the data prior to a save operation.
+     *
+     * @param Doctrine_Event $event Event object
+     *
+     * @return void.
+     */
+    public function preSave(Doctrine_Event $event)
+    {
+        //echo 'saving a record ...';
+    }
+«REM»«ENDDEFINE»«ENDREM»
+
+«REM»«DEFINE EventListenerMethod FOR PostSave-»«ENDREM»
+    /**
+     * Post-Process the data after a save operation.
+     *
+     * @param Doctrine_Event $event Event object
+     *
+     * @return void.
+     */
+    public function postSave(Doctrine_Event $event)
+    {
+        //echo 'saved a record ...';
+    }
+«REM»«ENDDEFINE»«ENDREM»
+
+«REM»«DEFINE EventListenerMethod FOR PreUpdate-»«ENDREM»
+    /**
+     * Pre-Process the data prior to an update operation.
+     *
+     * @param Doctrine_Event $event Event object
+     *
+     * @return void.
+     */
+    function preUpdate(Doctrine_Event $event)
+    {
+        //echo 'updating a record ...';
+    }
+«REM»«ENDDEFINE»«ENDREM»
+
+«REM»«DEFINE EventListenerMethod FOR PostUpdate-»«ENDREM»
+    /**
+     * Post-Process the data after an update operation.
+     *
+     * @param Doctrine_Event $event Event object
+     *
+     * @return void.
+     */
+    function postUpdate(Doctrine_Event $event)
+    {
+        //echo 'updated a record ...';
+    }
+«REM»«ENDDEFINE»«ENDREM»
+
+«REM»«DEFINE EventListenerMethod FOR PreInsert-»«ENDREM»
+    /**
+     * Pre-Process the data prior to an insert operation.
+     *
+     * @param Doctrine_Event $event Event object
+     *
+     * @return void.
+     */
+    function preInsert(Doctrine_Event $event)
+    {
+        //echo 'inserting a record ...';
+
+        return true;
+    }
+«REM»«ENDDEFINE»«ENDREM»
+
+«REM»«DEFINE EventListenerMethod FOR PostInsert-»«ENDREM»
+    /**
+     * Post-Process the data after an insert operation.
+     *
+     * @param Doctrine_Event $event Event object
+     *
+     * @return void.
+     */
+    function postInsert(Doctrine_Event $event)
+    {
+        //echo 'inserted a record ...';
+
+        return;
+    }
+«REM»«ENDDEFINE»«ENDREM»
+
+«REM»«DEFINE EventListenerMethod FOR PreDelete-»«ENDREM»
+    /**
+     * Pre-Process the data prior a delete operation.
+     *
+     * @param Doctrine_Event $event Event object
+     *
+     * @return void.
+     */
+    function preDelete(Doctrine_Event $event)
+    {
+        //echo 'deleting a record ...';
+    }
+«REM»«ENDDEFINE»«ENDREM»
+
+«REM»«DEFINE EventListenerMethod FOR PostDelete-»«ENDREM»
+    /**
+     * Post-Process the data after a delete.
+     *
+     * @param Doctrine_Event $event Event object
+     *
+     * @return void
+     */
+    function postDelete(Doctrine_Event $event)
+    {
+        //echo 'deleted a record ...';
+    }
+«REM»«ENDDEFINE»«ENDREM»
+
+«REM»«DEFINE EventListenerMethod FOR PreValidate-»«ENDREM»
+    /**
+     * Pre-Process the validation process with class specific logic.
+     *
+     * @param Doctrine_Event $event Event object
+     *
+     * @return void.
+     */
+    function preValidate(Doctrine_Event $event)
+    {
+        //echo 'validating a record ...';
+    }
+«REM»«ENDDEFINE»«ENDREM»
+
+«REM»«DEFINE EventListenerMethod FOR PostValidate-»«ENDREM»
+    /**
+     * Post-Process the validation process with class specific logic.
+     *
+     * @param Doctrine_Event $event Event object
+     *
+     * @return void.
+     */
+    function postValidate(Doctrine_Event $event)
+    {
+        //echo 'validated a record ...';
+    }
+«ENDDEFINE»

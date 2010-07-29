@@ -1,3 +1,4 @@
+«EXTENSION extensions::Utils»
 
 
 «DEFINE loadObjectClass(String appName, Boolean appendArray) FOR Object-»
@@ -47,7 +48,7 @@
     protected function postInitialize()
     {
         // Set caching to false by default.
-        $this->view->setCaching(«IF caching-»true«ELSE-»false«ENDIF-»);
+        $this->view->setCaching(«caching.displayBool()»);
     }
 «ENDDEFINE»
 

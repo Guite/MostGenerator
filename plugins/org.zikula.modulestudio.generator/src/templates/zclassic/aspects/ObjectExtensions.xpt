@@ -1,9 +1,9 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 
-«AROUND templates::zclassic::models::Entities::ObjectExtensions FOR Entity-»
+«AROUND templates::zclassic::models::record::Behaviour::ObjectExtensions FOR Entity-»
     // DEBUG: object extension aspect starts
-
+/**
 «IF this.usesStandardFields == true-»
     // add standard fields to the table definition and data dictionary
     ObjectUtil::addStandardFieldsToTableDefinition($columns, '«this.prefix.formatForDB()»_');
@@ -42,7 +42,7 @@
     // disable logging services
     $tables['«fullEntityName(this)»_db_extra_enable_logging'] = false;
 «ENDIF-»
-
+*/
     // DEBUG: object extension aspect ends
 «targetDef.proceed()»
 «ENDAROUND»

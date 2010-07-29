@@ -1,6 +1,6 @@
 «IMPORT modulestudio»
 «IMPORT templates::zclassic::smallstuff»
-«IMPORT templates::zclassic::models::behavior»
+«IMPORT templates::zclassic::models::business»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
@@ -36,12 +36,13 @@ abstract class «baseClassBusinessEntity(isCollection)» extends DBObject«IF is
  */
 class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntity(isCollection)»
 {
-// feel free to add your logic here by implementing pre and post process methods
+    // feel free to add your logic here by implementing pre and post process methods
 «IF isCollection == false-»
 «REM»«EXPAND ObjectClassImpl(module)»«ENDREM»«""-»
 «ELSE-»
 «REM»«EXPAND ObjectArrayClassImpl(module)»«ENDREM»«""-»
 «ENDIF-»
+    // TODO: this is currently in work
 }
 «ENDFILE»
 «ENDDEFINE»
@@ -145,133 +146,6 @@ class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntit
 «ENDDEFINE»
 
 
-«DEFINE EventListenerMethod FOR EntityEventListener-»
-«error("Error: undefined event listener type (code 925724)") -> ""-»
-«ENDDEFINE»
-«DEFINE EventListenerMethod FOR PreProcess-»
-«error("Error: undefined pre process type (code 925725)") -> ""-»
-«ENDDEFINE»
-«DEFINE EventListenerMethod FOR PostProcess-»
-«error("Error: undefined post process type (code 925726)") -> ""-»
-«ENDDEFINE»
-
-«DEFINE EventListenerMethod FOR PreSave-»
-«ENDDEFINE»
-«DEFINE EventListenerMethod FOR PostSave-»
-«ENDDEFINE»
-
-«DEFINE EventListenerMethod FOR PreInsert-»
-    /**
-     * Pre-Process the data prior to an insert.
-     *
-     * @param array $obj Override object (optional) (default=null).
-     *
-     * @return boolean True.
-     */
-    function insertPreProcess($obj = null)
-    {
-«EXPAND GetObjectReference-»
-
-        return true;
-    }
-«ENDDEFINE»
-
-«DEFINE EventListenerMethod FOR PostInsert-»
-    /**
-     * Post-Process the data after an insert.
-     *
-     * @param array $obj Override object (optional) (default=null).
-     *
-     * @return void
-     */
-    function insertPostProcess($obj = null)
-    {
-«EXPAND GetObjectReference-»
-
-    	return;
-    }
-«ENDDEFINE»
-
-«DEFINE EventListenerMethod FOR PreUpdate-»
-    /**
-     * Pre-Process the data prior to an update.
-     *
-     * @param array $obj Override object (optional) (default=null).
-     *
-     * @return boolean True.
-     */
-    function updatePreProcess($obj = null)
-    {
-«EXPAND GetObjectReference-»
-
-        return true;
-    }
-«ENDDEFINE»
-
-«DEFINE EventListenerMethod FOR PostUpdate-»
-    /**
-     * Post-Process the data after an update.
-     *
-     * @param array $obj Override object (optional) (default=null).
-     */
-    function updatePostProcess($obj = null)
-    {
-«EXPAND GetObjectReference-»
-
-    	return;
-    }
-«ENDDEFINE»
-
-«DEFINE EventListenerMethod FOR PreDelete-»
-    /**
-     * Pre-Process the data prior a delete.
-     *
-     * @param array $obj Override object (optional) (default=null).
-     *
-     * @return boolean True.
-     */
-    function deletePreProcess($obj = null)
-    {
-«EXPAND GetObjectReference-»
-
-        return true;
-    }
-«ENDDEFINE»
-
-«DEFINE EventListenerMethod FOR PostDelete-»
-    /**
-     * Post-Process the data after a delete.
-     *
-     * @param array $obj Override object (optional) (default=null).
-     *
-     * @return void
-     */
-    function deletePostProcess($obj = null)
-    {
-«EXPAND GetObjectReference-»
-
-        return;
-    }
-«ENDDEFINE»
-
-«DEFINE EventListenerMethod FOR PreValidate-»
-«ENDDEFINE»
-
-«DEFINE EventListenerMethod FOR PostValidate-»
-    /**
-     * Post-Process the basic object validation with class specific logic.
-     *
-     * @param array $obj Object.
-     *
-     * @return void
-     */
-    function validatePostProcess($obj = null)
-    {
-«EXPAND GetObjectReference-»
-
-        return true;
-    }
-«ENDDEFINE»
 
 «DEFINE GetObjectReference FOR EntityEventListener-»
         // in case we don't get any explicit data array assigned we default to the data the object acquired.
