@@ -75,14 +75,20 @@ class «appName()»_Form_Handler_Admin_Config extends Form_Handler
 
 «REM»Entry point for Form handler classes«ENDREM»
 «DEFINE Root(Application app, Controller controller, String actionName) FOR Entity-»
+«info("Generating \"" + controller.name + "\" form handler classes for \"" + name + "_" + actionName + "\"") -> ""-»
+«FILE baseClassFormHandler(controller, name, actionName).asFile()»
+«EXPAND FileHelper::phpFileHeader(app)-»
+«EXPAND FormHandlerBaseImpl(app, controller, actionName)-»
+«ENDFILE»
 «FILE implClassFormHandler(controller, name, actionName).asFile()»
 «EXPAND FileHelper::phpFileHeader(app)-»
-«EXPAND FormHandler(app, controller, actionName)-»
+«EXPAND FormHandlerImpl(app, controller, actionName)-»
 «ENDFILE»
 «ENDDEFINE»
 
 
-«DEFINE FormHandler(Application app, Controller controller, String actionName) FOR Entity-»
+«REM»base implementation«ENDREM»
+«DEFINE FormHandlerBaseImpl(Application app, Controller controller, String actionName) FOR Entity-»
 «LET app.appName() AS appName-»
 «LET dbName(controller.name) AS controllerName-»
 /**
@@ -146,6 +152,23 @@ class «implClassFormHandler(controller, name, actionName)» extends Form_Handle
         $dom = $this->dom;
 «EXPAND handleCommand(app, controller, actionName, appName, controllerName)-»
     }
+}
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+
+«REM»concrete implementation stub«ENDREM»
+«DEFINE FormHandlerImpl(Application app, Controller controller, String actionName) FOR Entity-»
+«LET app.appName() AS appName-»
+«LET dbName(controller.name) AS controllerName-»
+/**
+ * This handler class handles the page events of the Form called by the «applicationName(appName.msconcat("_").msconcat(controllerName).msconcat("_").msconcat(actionName))»() function.
+ * It aims on the «applicationName(name)» object type.
+ */
+class «implClassFormHandler(controller, name, actionName)» extends «baseClassFormHandler(controller, name, actionName)»
+{
+    // feel free to extend the base handler class here
 }
 «ENDLET-»
 «ENDLET-»

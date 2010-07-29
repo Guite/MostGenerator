@@ -1,16 +1,79 @@
 «IMPORT modulestudio»
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
 
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
-«REM»Entry point for module table definition«ENDREM»
+«REM»Entry point for Doctrine record classes«ENDREM»
 «DEFINE Root FOR Application-»
+    «EXPAND Root(this) FOREACH models.entities-»
+
 «FILE "tables.php"-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 «EXPAND EntityInfo-»
 «ENDFILE»
 «ENDDEFINE»
+
+«REM»creates a record class file for every Entity instance«ENDREM»
+«DEFINE Root(Application app) FOR Entity-»
+«info("Generating record classes for entity \"" + name + "\"") -> ""-»
+    «FILE baseClassModelRecord(false).asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRecordBaseImpl(app)»«ENDFILE»
+    «FILE implClassModelRecord(false).asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRecordImpl(app)»«ENDFILE»
+«ENDDEFINE»
+
+«REM»base implementation«ENDREM»
+«DEFINE ModelRecordBaseImpl(Application app) FOR Entity-»
+
+/**
+ * Model class that defines the entity structure and behaviours.
+ *
+ * This is the base record class for «name.formattedName()» entities
+ */
+class «baseClassModelRecord(false)» extends Doctrine_Record
+{
+«EXPAND RecordInfo-»
+}
+«ENDDEFINE»
+
+«REM»concrete implementation stub«ENDREM»
+«DEFINE ModelRecordImpl(Application app) FOR Entity-»
+
+/**
+ * Model class that defines the entity structure and behaviours.
+ *
+ * This is the concrete table class for «name.formattedName()» entities
+ */
+class «implClassModelRecord(false)» extends «baseClassModelRecord(false)»
+{
+}
+«ENDDEFINE»
+
+
+«DEFINE RecordInfo FOR Application-»
+    /**
+     * Set table definition.
+     *
+     * @return void
+     */
+    public function setTableDefinition()
+    {
+        $this->setTableName('exampledoctrine_users');
+        $this->hasColumn('username', 'string', 255);
+        $this->hasColumn('password', 'string', 255);
+    }
+
+    /**
+     * Record setup.
+     *
+     * @return void
+     */
+    public function setUp()
+    {
+        $this->actAs('Timestampable');
+    }
+«ENDDEFINE»
+
 
 «DEFINE EntityInfo FOR Application-»
 /**
@@ -116,7 +179,6 @@ function «appName()»_tables()
 
 «DEFINE IndexStructure FOR EntityIndex»
         '«dbName(name)»' => «IF items.size > 1»array(«EXPAND IndexField FOREACH items SEPARATOR ', '»)«ELSE»'«dbName(items.get(0).name)»'«ENDIF»«ENDDEFINE»
-
 «DEFINE IndexField FOR EntityIndexItem»'«dbName(name)»'«ENDDEFINE»
 
 

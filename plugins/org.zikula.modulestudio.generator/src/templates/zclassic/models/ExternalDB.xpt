@@ -2,6 +2,13 @@
 «EXTENSION extensions::Utils»
 
 «DEFINE ToDo FOR Models-»
+
+http://www.doctrine-project.org/projects/orm/1.2/docs/manual/introduction-to-connections/en
+http://www.doctrine-project.org/projects/orm/1.2/docs/manual/connections/en
+http://www.doctrine-project.org/projects/orm/1.2/docs/manual/database-abstraction-layer/en
+http://www.doctrine-project.org/projects/orm/1.2/docs/cookbook/master-and-slave-connections/en
+
+
 Info about currently active connection:
 	$dbInfo   = DBConnectionStack::getConnectionInfo($name=null);	// $name = null --> current connection
 

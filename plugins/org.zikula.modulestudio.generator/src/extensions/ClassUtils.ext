@@ -4,7 +4,7 @@ extension org::eclipse::xtend::util::stdlib::io;
 extension extensions::Utils;
 
 /*
- * BusinessObject class naming extensions
+ * Class naming extensions
  */
 
 cached String classPraefix(Application app)
@@ -25,34 +25,52 @@ cached String baseClassDefault(Application app, String filling, String suffix)
 
 // TODO: cleanup and refactorings
 
-cached String fillingDbObject() : "DBObject_";
+cached String fillingModel() : "Model_";
+cached String fillingBusinessEntity() : "BusinessEntity_";
 cached String fillingController() : "Controller_";
 cached String fillingApi() : "Api_";
 cached String fillingFormHandler() : "Form_Handler_";
 
 cached String prepClassPart(String str)
     : applicationName(str).toFirstUpper();
+cached String processCollectionSuffix(String str, Boolean isCollection)
+    : str.msconcat(((isCollection == true) ? "Collection" : ""));
 
-/** DBObject */
-cached String processArraySuffix(String str, Boolean appendArray)
-    : str.msconcat(((appendArray == true) ? "Array" : ""));
-cached String baseClassDbObject(Entity obj, Boolean appendArray)
-    : baseClassDefault(obj.container.application, fillingDbObject(), prepClassPart(obj.name)).processArraySuffix(appendArray);
-cached String implClassDbObject(Entity obj, Boolean appendArray)
-	: implClassDefault(obj.container.application, fillingDbObject(), prepClassPart(obj.name)).processArraySuffix(appendArray);
+/** Model classes */
+cached String baseClassModelRecord(Entity obj, Boolean isCollection)
+    : baseClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name));
+cached String implClassModelRecord(Entity obj, Boolean isCollection)
+    : implClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name));
+cached String baseClassModelTable(Entity obj, Boolean isCollection)
+    : baseClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name.msconcat("Table")));
+cached String implClassModelTable(Entity obj, Boolean isCollection)
+    : implClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name.msconcat("Table")));
+
+/** Business classes */
+cached String baseClassBusinessEntity(Entity obj, Boolean isCollection)
+    : baseClassDefault(obj.container.application, fillingBusinessEntity(), prepClassPart(obj.name)).processCollectionSuffix(isCollection);
+cached String implClassBusinessEntity(Entity obj, Boolean isCollection)
+	: implClassDefault(obj.container.application, fillingBusinessEntity(), prepClassPart(obj.name)).processCollectionSuffix(isCollection);
 
 /** Controller */
-// TODO: base classes (#56)
+cached String baseClassController(Controller obj)
+    : baseClassDefault(obj.container.application, fillingController(), prepClassPart(obj.name));
 cached String implClassController(Controller obj)
     : implClassDefault(obj.container.application, fillingController(), prepClassPart(obj.name));
+cached String baseClassApi(Controller obj)
+    : baseClassDefault(obj.container.application, fillingApi(), prepClassPart(obj.name));
 cached String implClassApi(Controller obj)
     : implClassDefault(obj.container.application, fillingApi(), prepClassPart(obj.name));
+cached String baseClassFormHandler(Controller obj, String entityName, String actionName)
+    : baseClassDefault(obj.container.application, fillingFormHandler(), prepClassPart(obj.name).msconcat('_').msconcat(prepClassPart(entityName)).msconcat('_').msconcat(prepClassPart(actionName)));
 cached String implClassFormHandler(Controller obj, String entityName, String actionName)
     : implClassDefault(obj.container.application, fillingFormHandler(), prepClassPart(obj.name).msconcat('_').msconcat(prepClassPart(entityName)).msconcat('_').msconcat(prepClassPart(actionName)));
+
 
 cached String tempClassConfigHandler(Application app)
     : implClassDefault(app, fillingFormHandler(), prepClassPart('Admin').msconcat('_').msconcat(prepClassPart('Config')));
 
+/** Templates */
 cached String prepTemplatePart(String origin, String addition)
     : origin.msconcat(addition.toLowerCase());
 

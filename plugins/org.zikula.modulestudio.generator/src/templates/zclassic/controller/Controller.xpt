@@ -11,19 +11,23 @@
 «ENDDEFINE»
 
 
-«REM»creates a file for every Controller instance«ENDREM»
+«REM»creates controller and api class files for every Controller instance«ENDREM»
 «DEFINE Root(Application app) FOR Controller-»
+«info("Generating \"" + name + "\" controller classes")»
+    «FILE baseClassController().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ControllerBaseImpl(app)»«ENDFILE»
     «FILE implClassController().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ControllerImpl(app)»«ENDFILE»
+«info("Generating \"" + name + "\" api classes")»
+    «FILE baseClassApi().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ControllerApiBaseImpl(app)»«ENDFILE»
     «FILE implClassApi().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ControllerApiImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
-«REM»file structure implementation«ENDREM»
-«DEFINE ControllerImpl(Application app) FOR Controller-»
+«REM»base implementation«ENDREM»
+«DEFINE ControllerBaseImpl(Application app) FOR Controller-»
 
 /**
  * This is the «name» controller class providing navigation and interaction functionality.
  */
-class «implClassController()» extends Zikula_Controller
+class «baseClassController()» extends Zikula_Controller
 {
 «IF metaType == AjaxController-»
     public function _postSetup() 
@@ -34,7 +38,7 @@ class «implClassController()» extends Zikula_Controller
 «EXPAND ControllerHelper::ControllerPostInitialize(true)-»
 «ENDIF-»
 
-«EXPAND Root(app) FOREACH actions-»
+«EXPAND Action::Root(app) FOREACH actions-»
 «IF app.needsConfig() && metaType == AdminController-»
 
     /*
@@ -58,267 +62,26 @@ class «implClassController()» extends Zikula_Controller
 «ENDDEFINE»
 
 
+«REM»concrete implementation stub«ENDREM»
+«DEFINE ControllerImpl(Application app) FOR Controller-»
 
-«DEFINE Root(Application app) FOR Action-»
-
-    /**
-«EXPAND ActionDoc(app)-»
-     */
-    public function «dbName(name)»($args)
-    {
-«EXPAND ActionImpl(app)-»
-    }
-«ENDDEFINE»
-
-«DEFINE ActionDoc(Application app) FOR Action-»
-«IF metaType == MainAction-»
-     * This method is the default function, and is called whenever the
-     * module's «applicationName(controller.name)» area is called without defining arguments.
-«ELSEIF metaType == ViewAction-»
-     * This method provides a generic item list overview.
-«ELSEIF metaType == DisplayAction-»
-     * This method provides a generic item detail view.
-«ELSEIF metaType == EditAction-»
-     * This method provides a generic handling of all edit requests.
-«ELSEIF metaType == CustomAction-»
-     * This is a custom method. Documentation for this will be improved in later versions.
-«ENDIF-»
-     *
-     * @params       TODO
-«IF metaType == ViewAction || metaType == DisplayAction || metaType == EditAction || metaType == DeleteAction-»
-     * @param        ot             string    treated object type
-«IF metaType == DeleteAction-»
-     * @param        id             int       ID of the entry
-     * @param        confirmation   boolean   Confirm the deletion, else a confirmation page is displayed
-«ENDIF-»
-«IF metaType == ViewAction-»
-     * @param        sort           string    sorting field
-     * @param        sdir           string    sorting direction
-     * @param        pos            int       current pager position
-     * @param        num            int       amount of entries to display
-«ENDIF-»
-     * @param        tpl            string    name of alternative template (for alternative display options, feeds and xml output)
-     * @param        raw            boolean   optional way to display a template instead of fetching it (needed for standalone output)
-«ENDIF-»
-     * @return mixed Output.
-«ENDDEFINE»
-
-«DEFINE ActionImpl(Application app) FOR Action-»
-«EXPAND PermissionCheck-»
-«LET app.appName() AS appName-»
-«IF metaType != MainAction-»
-        // parameter specifying which type of objects we are treating
-        $objectType = FormUtil::getPassedValue('ot', '«app.getLeadObj()»', 'GET');
-
-        if (!in_array($objectType, «appName»_Util::getObjectTypes())) {
-            $objectType = '«app.getLeadObj()»';
-        }
-«ENDIF-»
-«EXPAND ActionImplBody(appName)-»
-«ENDLET-»
-«ENDDEFINE»
-
-«DEFINE PermissionCheck FOR Action-»
-«REM»will be filled by Advices«ENDREM»
-«ENDDEFINE»
-
-«DEFINE ActionImplBody(String appName) FOR Action-»
-«error("Error: undefined action (code 925727)") -> ""-»
-«ENDDEFINE»
-
-«DEFINE ActionImplBody(String appName) FOR MainAction-»
-«IF controller.metaType == UserController-»
-        // call view method
-        return $this->view();
-«ELSEIF controller.metaType == AdminController-»
-«REM»
-«IF controller.container.application.needsConfig()-»
-        // call config method
-        return $this->config();
-«ELSE-»
-«ENDREM»
-        // call view method
-        return $this->view();
-«REM»«ENDIF-»«ENDREM»
-«ELSEIF controller.metaType == AccountController-»
-«ELSEIF controller.metaType == AjaxController-»
-«ELSEIF controller.metaType == SearchController-»
-«REM»
-New Search API:
-http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
-«ENDREM»
-«ELSEIF controller.metaType == CustomController-»
-        // call view method
-        return $this->view();
-«ENDIF-»
-«REM»
-        // turn off caching
-        $this->view->setCaching(false);
-
-        // fetch and return the appropriate template
-        return $this->view->fetch('«appName»_«dbName(controller.name)»_main.tpl');
-«ENDREM»
-«ENDDEFINE»
-
-«DEFINE ActionImplBody(String appName) FOR ViewAction-»
-«EXPAND ControllerHelper::loadObjectClass(appName, true)-»
-
-        // instantiate the object-array
-        $objectArray = new $class();
-
-        // parameter for used sorting field
-        $sort = FormUtil::getPassedValue('sort', '', 'GET');
-«EXPAND DefaultSorting-»
-
-        // parameter for used sort order
-        $sdir = FormUtil::getPassedValue('sdir', '', 'GET');
-        if ($sdir != 'asc' && $sdir != 'desc') $sdir = 'asc';
-
-«REM»TODO«ENDREM»
-        // startnum is the current offset which is used to calculate the pagination
-        $startnum = (int) FormUtil::getPassedValue('pos', 1, 'GET');
-
-        // pagesize is the number of items displayed on a page for pagination
-        $pagesize = (int) FormUtil::getPassedValue('num', 0, 'GET');
-        if ($pagesize == 0) {
-            $pagesize = $this->getVar('pagesize', 10);
-        }
-
-        // convenience vars to make code clearer
-        $where = '';
-        $sortParam = $sort . ' ' . $sdir;
-
-        // use FilterUtil to support generic filtering based on an object-oriented approach
-        $fu = new FilterUtil(array('table' => $objectArray->_objType, array('join' => &$objectArray->_objJoin)));
-
-        // you could set explicit filters at this point, something like
-        // $fu->setFilter('type:eq:' . $args['type'] . ',id:eq:' . $args['id']);
-        // supported operators: eq, ne, like, lt, le, gt, ge, null, notnull
-
-        // process request input filters and get result for DBUtil
-        $ret = $fu->GetSQL();
-        $where = $ret['where'];
-
-        // get() returns the cached object fetched from the DB during object instantiation
-        // get() with parameters always performs a new select
-        // while the result will be saved in the object, we assign in to a local variable for convenience.
-        $objectData = $objectArray->get($where, $sortParam, $startnum-1, $pagesize);
-
-        // get total number of records for building the pagination by method call
-        $objcount = $objectArray->getCount($where);
-
-        // turn off caching
-        $this->view->setCaching(false);
-
-        // assign the object data, sorting information and details for creating the pager
-        $this->view->assign('objectArray', $objectData)
-                   ->assign('sort', $sort)
-                   ->assign('sdir', ($sdir == 'asc') ? 'desc' : 'asc') // reverted for links
-                   ->assign('pager', array('numitems'     => $objcount,
-                                           'itemsperpage' => $pagesize));
-
-        // fetch and return the appropriate template
-        return «appName»_Util::processViewTemplate($this->view, '«dbName(controller.name)»', $objectType, 'view', $args);
-«ENDDEFINE»
-
-«DEFINE DefaultSorting FOR ViewAction-»
-        if (empty($sort) || !in_array($sort, $objectArray->getAllowedSortingFields())) {
-            $sort = $objectArray->getDefaultSortingField();
-        }
+/**
+ * This is the «name» controller class providing navigation and interaction functionality.
+ */
+class «implClassController()» extends «baseClassController()»
+{
+    // feel free to add your own controller methods here
+}
 «ENDDEFINE»
 
 
-«DEFINE ActionImplBody(String appName) FOR DisplayAction-»
-«EXPAND ControllerHelper::loadObjectClass(appName, false)-»
-«EXPAND ControllerHelper::instantiateObject("", "")-»
-        $idField = $object->getIDField();
-
-        // retrieve the ID of the object we wish to view
-        $id = (int) FormUtil::getPassedValue($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, 'GET');
-        
-        $this->throwNotFoundUnless($id, 'Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
-
-«EXPAND ControllerHelper::getObjectFromSource("", "id", "idField")-»
-
-        // turn off output caching
-        $this->view->setCaching(false);
-
-        // assign the object we loaded above.
-        // since the same code is used the handle the entry of the new object,
-        // we need to check wether we have a valid object.
-        // If not, we just pass in an empty data-array.
-        $this->view->assign($objectType, $objectData);
-
-        // fetch and return the appropriate template
-        return «appName»_Util::processViewTemplate($this->view, '«dbName(controller.name)»', $objectType, 'display', $args);
-«ENDDEFINE»
-
-«DEFINE ActionImplBody(String appName) FOR EditAction-»
-«REM»«EXPAND Controller::pnFormCreate(appName, controller.name, 'edit')-»«ENDREM»
-        // create new Form reference
-        $view = FormUtil::newForm('«appName»');
-
-        // build form handler class name
-        $handlerClass = '«appName.toFirstUpper()»_Form_Handler_«dbName(controller.name).toFirstUpper()»_' . ucfirst($objectType) . '_Edit';
-
-        // execute form using supplied template and page event handler
-        return $view->execute('«appName»_«dbName(controller.name)»_' . $objectType . '_edit.tpl', new $handlerClass());
-«ENDDEFINE»
-
-«DEFINE ActionImplBody(String appName) FOR DeleteAction-»
-    «EXPAND ControllerHelper::loadObjectClass(appName, false)-»
-    «EXPAND ControllerHelper::instantiateObject("", "")-»
-        $idField = $object->getIDField();
-
-        // retrieve the ID of the object we wish to view
-        $id = (int) FormUtil::getPassedValue($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, 'GET');
-        
-        $this->throwNotFoundUnless($id, 'Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
-
-        $confirmation = (bool) FormUtil::getPassedValue('confirmation', isset($args['confirmation']) ? $args['confirmation'] : false, 'GETPOST');
-
-        if ($confirmation) {
-            $object->setData(array($idField => $id), false);
-
-            if (!$object->delete()) {
-                $this->registerError($this->__('Error! Deletion attempt failed.'));
-            } else {
-                $this->registerStatus($this->__('Done! «formattedNameCapitalized(name)» deleted.'));
-            }
-        } else {
-    «EXPAND ControllerHelper::getObjectFromSource("", "id", "idField")-»
-
-            // turn off output caching
-            $this->view->setCaching(false);
-
-            // assign the object we loaded above
-            $this->view->assign($objectType, $objectData);
-
-            // fetch and return the appropriate template
-            return «appName»_Util::processViewTemplate($this->view, '«dbName(controller.name)»', $objectType, 'delete', $args);
-        }
-
-        // redirect to the list of the current object type
-        $this->redirect(ModUtil::url('«appName»', '«dbName(controller.name)»', «IF controller.hasActions('view')-»'view',
-                                                                                    array('ot' => $objectType)«ELSE-»'main'«ENDIF-»));
-
-«ENDDEFINE»
-
-«DEFINE ActionImplBody(String appName) FOR CustomAction-»
-«IF controller.metaType == AdminController
-    && (name == "config" || name == "modifyconfig" || name == "preferences")-»
-«EXPAND ActionHandler::FormCreate(appName, controller, 'modify')-»
-«ELSE-»
-        /** TODO: custom logic */
-«ENDIF-»
-«ENDDEFINE»
 
 
-«DEFINE ControllerApiImpl(Application app) FOR Controller-»
+«DEFINE ControllerApiBaseImpl(Application app) FOR Controller-»
 /**
  * This is the «name» api helper class.
  */
-class «implClassApi()» extends Zikula_Api
+class «baseClassApi()» extends Zikula_Api
 {
     /**
      * get available «name» panel links
@@ -345,3 +108,12 @@ class «implClassApi()» extends Zikula_Api
 }
 «ENDDEFINE»
 
+«DEFINE ControllerApiImpl(Application app) FOR Controller-»
+/**
+ * This is the «name» api helper class.
+ */
+class «implClassApi()» extends «baseClassApi()»
+{
+    // feel free to add own api methods here
+}
+«ENDDEFINE»

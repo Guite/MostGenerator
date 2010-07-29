@@ -17,13 +17,21 @@
     «info("Generating basic information")»
 	«EXPAND VersionFile::Root»
 
-	«pm.subTask("Model: Entity definitions")»
-    «info("Generating entity definitions")»
-	«EXPAND Entities::Root»
-	«pm.subTask("Model: Application initialisation")»
-    «info("Generating application initialisation")»
-	«EXPAND Init::Root»
+	«pm.subTask("Model: Record classes")»
+    «info("Generating record classes")»
+	«EXPAND Record::Root»
 
+    «pm.subTask("Model: Table classes")»
+    «info("Generating table classes")»
+    «EXPAND Table::Root»
+
+    «pm.subTask("Model: Business entity classes")»
+    «info("Generating business entity classes")»
+    «EXPAND BusinessEntity::Root»
+
+	«pm.subTask("Controller: Application installer")»
+    «info("Generating application installer")»
+	«EXPAND controller::Installer::Root»
     «pm.subTask("Controller: Controller classes")»
     «info("Generating controller classes")»
 	«EXPAND Controller::Root»
@@ -33,10 +41,6 @@
     «pm.subTask("Controller: Bootstrapping")»
     «info("Generating bootstrapping")»
     «EXPAND Bootstrap::Root»
-
-	«pm.subTask("Model: Object classes")»
-    «info("Generating object classes")»
-	«EXPAND behavior::BusinessObject::Root»
 
 	«pm.subTask("View: Rendering templates")»
     «info("Generating view templates")»

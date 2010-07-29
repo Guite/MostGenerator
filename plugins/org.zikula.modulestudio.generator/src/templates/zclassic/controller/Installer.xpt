@@ -1,11 +1,15 @@
 «IMPORT modulestudio»
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
 
-«REM»Entry point for module initialization«ENDREM»
+«REM»Entry point for application installer«ENDREM»
 «DEFINE Root FOR Application»
 «FILE "lib/" + appName() + "/Installer.php"-»
 «EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Installer
+ */
 class «appName()»_Installer extends Zikula_Installer
 {
 «EXPAND NormalInstall-»
@@ -14,12 +18,15 @@ class «appName()»_Installer extends Zikula_Installer
 «IF interactiveInstallation == true»
 «FILE "lib/" + appName() + "/Controller/InteractiveInstaller.php"-»
 «EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Interactive installer
+ */
 class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveInstaller
 {
 «EXPAND InteractiveInstall»
 }
 «ENDFILE»
-«EXPAND Init_Templates::Root»
+«EXPAND templates::zclassic::view::Installer::Root»
 «ENDIF»
 «ENDDEFINE»
 
@@ -41,18 +48,18 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
 
 «DEFINE FuncInit FOR Application-»
     /**
-     * Install the «appName()» module.
+     * Install the «appName()» application.
      *
      * @return boolean True on success, or false.
      */
     public function install()
     {
-«FOREACH models.entities AS entity-»
-        // create the «applicationName(entity.name)» table
-        if (!DBUtil::createTable('«fullEntityName(entity)»')) {
+        // create all tables from according model definitions
+        try {
+            DoctrineUtil::createTablesFromModels('«appName()»');
+        } catch (Exception $e) { 
             return false;
         }
-«ENDFOREACH-»
 
 «REM»
     // register hook functions
@@ -70,7 +77,8 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
     }
 «ENDREM»
 
-        // set up all our module vars with initial values
+«IF models.variables.size > 0-»
+        // set up all our vars with initial values
 «FOREACH models.variables.vars AS modvar-»
 «IF interactiveInstallation == true-»
         $sessionValue = SessionUtil::getVar('«applicationName(name + '_' + modvar.name)»');
@@ -80,6 +88,7 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
         $this->setVar('«appName()»', '«applicationName(modvar.name)»', «EXPAND ModVarValDirect2Mod FOR modvar»);
 «ENDIF-»
 «ENDFOREACH-»
+«ENDIF-»
 
         // create the default data for «appName()»
         $this->defaultdata();
@@ -90,21 +99,12 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
 «ENDDEFINE»
 
 
-«DEFINE IndexStructure FOR EntityIndex»
-        '«applicationName(name)»' => «IF items.size > 1»array(«EXPAND IndexField FOREACH items SEPARATOR ', '»)«ELSE»'«dbName(items.get(0).name)»'«ENDIF»«ENDDEFINE»
-«DEFINE IndexField FOR EntityIndexItem»'«dbName(name)»'«ENDDEFINE»
-
 «DEFINE ModVarValFromSession FOR Variable»$sessionValue«ENDDEFINE»
 «DEFINE ModVarValFromSession FOR ListVar»serialize($sessionValue)«ENDDEFINE»
 
 «DEFINE ModVarValSession2Mod FOR Variable»'«value»'«ENDDEFINE»
 «DEFINE ModVarValSession2Mod FOR ListVar»serialize(array(«EXPAND ModVarValSession2Mod FOREACH items.select(item|item.isDefault == true) SEPARATOR ', '»))«ENDDEFINE»
 «DEFINE ModVarValSession2Mod FOR ListVarItem»«IF isDefault == true»'«applicationName(name)»'«ENDIF»«ENDDEFINE»
-
-«REM»
-<select name="blabla[]" size="6" multiple>
-Ausgelesen als Array: $blabla["0"];
-«ENDREM»
 
 «DEFINE ModVarValDirect2Mod FOR Variable»'«value»'«ENDDEFINE»
 «DEFINE ModVarValDirect2Mod FOR ListVar»serialize(array(«EXPAND ModVarValDirect2Mod FOREACH items.select(item|item.isDefault == true) SEPARATOR ', '»))«ENDDEFINE»
@@ -123,13 +123,16 @@ Ausgelesen als Array: $blabla["0"];
      */
     public function upgrade($oldversion)
     {
-/*
-    // Upgrade dependent on old version number
-    switch ($oldversion){
-    case '1.00':
-            «appName()»_createTables_101();
-    }
-*/
+    /*
+        // Upgrade dependent on old version number
+        switch ($oldversion) {
+            case 1.0:
+                // do something
+                // DoctrineUtil::*() for adding/dropping columns/index and so on
+                // last do DoctrineUtil::createTablesFromModels('«appName()»');
+                // to create any new tables
+        }
+    */
 
         // Update successful
         return true;
@@ -145,9 +148,7 @@ Ausgelesen als Array: $blabla["0"];
     public function uninstall()
     {
 «FOREACH models.entities AS entity-»
-        if (!DBUtil::dropTable('«fullEntityName(entity)»')) {
-            return false;
-        }
+        DoctrineUtil::dropTable('«fullEntityName(entity)»');
 «ENDFOREACH-»
 
 «REM»
@@ -166,8 +167,11 @@ Ausgelesen als Array: $blabla["0"];
     }
 «ENDREM»
 
+«IF models.variables.size > 0-»
         // remove all module vars
         $this->delVars();
+
+«ENDIF-»
 
         // Deletion successful
         return true;
@@ -178,60 +182,40 @@ Ausgelesen als Array: $blabla["0"];
     /**
      * Create the default data for «appName()».
      *
-     * @return boolean True on success, false otherwise.
+     * @return void
      */
     public function defaultdata()
     {
         // ensure that tables are cleared
-        if («EXPAND clearTable FOREACH models.entities SEPARATOR ' ||'») {
-            return false;
-        }
+        $doctrine = Doctrine_Manager::getInstance()->getCurrentConnection()->getDbh();
+«FOREACH models.entities AS entity-»
+        $doctrine->query('TRUNCATE TABLE «fullEntityName(entity)»');
+«ENDFOREACH-»
+        unset($doctrine);
 
 «IF getDefaultDataSource().numExampleRows > 0-»
-«FOREACH models.entities AS entity-»
-        // define default data for «applicationName(entity.name)» table
-        $records = array(«EXPAND createExampleRows(this) FOR entity-»
-        );
-
-        // insert it into the «applicationName(entity.name)» table
-        DBUtil::insertObjectArray($records, '«entity.fullEntityName()»', '«dbName(entity.name)»id', true);
-«ENDFOREACH-»
+«EXPAND createExampleRows(this) FOREACH models.entities-»
 «ENDIF-»
 
-        // insertion successful
+        // Insertion successful
         return true;
     }
 «ENDDEFINE»
 
-«DEFINE clearTable FOR Entity»
-        !DBUtil::deleteWhere('«this.fullEntityName()»', '1=1')«ENDDEFINE»
-
 «DEFINE createExampleRows(Application app) FOR Entity»
+«LET applicationName(name) AS entityName-»
+        // define default data for entity «entityName»
 «FOREACH 1.upTo(container.numExampleRows) AS number SEPARATOR ','-»
+        $«entityName» = new «implClassModelRecord(false)»();
+«FOREACH fields AS fld-»
+        $«entityName»->«applicationName(name)» = $this->__('«entityName» «name» «number»');
+«ENDFOREACH-»
+        // could also use $«entityName»->merge($arrayObj); where $arrayObj is index array of field => value.
+        $«entityName»->save();
 
-        array(«EXPAND ExampleRow(app, name, number) FOREACH fields SEPARATOR ','»)«ENDFOREACH-»
-«REM»Alternative way to count up values is a stdlib extension for initialising, manipulating and retrieving counters.
-Extension: org::eclipse:xtend:::util::stdlib::counter
-  * int counterInc (Object o)       Increment
-  * int counterDec (Object o)       Decrement
-  * int counterReset (Object o)     Reset (returns always 0)
-  * int counterGet (Object o)       Retrieve current state
-
-Example:
-«DEFINE CounterExtensionsDemo FOR Object»
-«FILE "CounterExtensions.txt"»
-  Named counter:
-  inc         : «counterInc("idx")»
-  inc         : «counterInc("idx")»
-  inc         : «counterInc("idx")»
-  reset       : «counterReset("idx")»
-  inc         : «counterInc("idx")»
-«ENDFILE»
+«ENDFOREACH-»
+«ENDLET-»
 «ENDDEFINE»
-«ENDREM»
-«ENDDEFINE»
-«DEFINE ExampleRow(Application app, String entityName, Integer number) FOR EntityField»
-            '«dbName(name)»' => $this->__('«entityName» «name» «number»')«ENDDEFINE»
 
 «DEFINE FuncInteractiveInit FOR Application»
     /**

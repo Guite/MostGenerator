@@ -1,5 +1,6 @@
 «IMPORT modulestudio»
 «IMPORT templates::zclassic::smallstuff»
+«IMPORT templates::zclassic::models::behavior»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
@@ -11,32 +12,32 @@
 «ENDDEFINE»
 
 
-«DEFINE ObjectClassWrapper(Application app, Boolean appendArray) FOR Entity-»
-«info("Generating object class for \"" + name + "\"")»
-«FILE baseClassDbObject(appendArray).asFile()»«EXPAND FileHelper::phpFileHeader(app)»
+«DEFINE ObjectClassWrapper(Application app, Boolean isCollection) FOR Entity-»
+«info("Generating business classes for \"" + name + "\"") -> ""-»
+«FILE baseClassBusinessEntity(isCollection).asFile()»«EXPAND FileHelper::phpFileHeader(app)»
 
 /**
- * This class provides basic functionality of «baseClassDbObject(appendArray)»
+ * This class provides basic functionality of «baseClassBusinessEntity(isCollection)»
  */
-abstract class «baseClassDbObject(appendArray)» extends DBObject«IF appendArray»Array«ENDIF-»
+abstract class «baseClassBusinessEntity(isCollection)» extends DBObject«IF isCollection»Array«ENDIF-»
 {
-«IF appendArray == false-»
-«EXPAND ObjectClassImpl(app)-»
+«IF isCollection == false-»
+«EXPAND ObjectClassBaseImpl(app)-»
 «ELSE-»
-«EXPAND ObjectArrayClassImpl(app)-»
+«EXPAND ObjectArrayClassBaseImpl(app)-»
 «ENDIF-»
 }
 «ENDFILE»
 
-«FILE implClassDbObject(appendArray).asFile()»«EXPAND FileHelper::phpFileHeader(app)»
+«FILE implClassBusinessEntity(isCollection).asFile()»«EXPAND FileHelper::phpFileHeader(app)»
 
 /**
- * This class implements the functionality of «baseClassDbObject(appendArray)»
+ * This class implements the functionality of «baseClassBusinessEntity(isCollection)»
  */
-class «implClassDbObject(appendArray)» extends «baseClassDbObject(appendArray)»
+class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntity(isCollection)»
 {
 // feel free to add your logic here by implementing pre and post process methods
-«IF appendArray == false-»
+«IF isCollection == false-»
 «REM»«EXPAND ObjectClassImpl(module)»«ENDREM»«""-»
 «ELSE-»
 «REM»«EXPAND ObjectArrayClassImpl(module)»«ENDREM»«""-»
@@ -46,7 +47,7 @@ class «implClassDbObject(appendArray)» extends «baseClassDbObject(appendArray
 «ENDDEFINE»
 
 
-«DEFINE ObjectClassImpl(Application app) FOR Entity-»
+«DEFINE ObjectClassBaseImpl(Application app) FOR Entity-»
     /**
      * Constructor, init everything to sane defaults and handle parameters.
      * It only needs to set the fields which are used to configure
@@ -97,7 +98,7 @@ class «implClassDbObject(appendArray)» extends «baseClassDbObject(appendArray
     }
 «REM»	«EXPAND BusinessStateFunction FOREACH businessStates-»«ENDREM»
 
-	«EXPAND BehaviorCommon::ClassToString(baseClassDbObject(false))-»
+	«EXPAND BehaviorCommon::ClassToString(baseClassBusinessEntity(false))-»
 «ENDDEFINE»
 
 «DEFINE SelectJoinFieldTableNames(String exludedIdField) FOR Entity-»
@@ -286,7 +287,7 @@ class «implClassDbObject(appendArray)» extends «baseClassDbObject(appendArray
 
 
 
-«DEFINE ObjectArrayClassImpl(Application app) FOR Entity-»
+«DEFINE ObjectArrayClassBaseImpl(Application app) FOR Entity-»
     /**
      * Constructor, init everything to sane defaults and handle parameters.
      * It only needs to set the fields which are used to configure
@@ -361,7 +362,7 @@ class «implClassDbObject(appendArray)» extends «baseClassDbObject(appendArray
         }
     }
 
-«EXPAND BehaviorCommon::ClassToString(baseClassDbObject(true))-»
+«EXPAND BehaviorCommon::ClassToString(baseClassBusinessEntity(true))-»
 «ENDDEFINE»
 
 «DEFINE singleSortingField FOR EntityField»
