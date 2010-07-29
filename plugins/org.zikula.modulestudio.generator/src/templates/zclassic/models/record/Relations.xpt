@@ -46,7 +46,7 @@
 «DEFINE CascadeInfo FOR JoinRelationship-»
                 'onDelete' => '«cascadeTypeUpdate.asConstant()-»',
                 'onUpdate' => '«cascadeTypeDelete.asConstant()-»',
-                'cascade' => «IF cascadeTypeDelete.asConstant() == "CASCADE" && source.tableType.asConstant() == "MYISAM"-»array('delete')«ELSE-»''«ENDIF-»
+                'cascade' => «IF cascadeTypeDelete.asConstant() == "CASCADE" && source.tableType.asConstant() == "MYISAM"»array('delete')«ELSE»''«ENDIF»
 «ENDDEFINE»
 
 «DEFINE SubClasses FOR Entity-»

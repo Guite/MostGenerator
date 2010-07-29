@@ -64,7 +64,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 «REM»Temporary hack«ENDREM»
 «DEFINE stubMethodsForNow FOR Entity-»
 
-«REM»«DEFINE EventListenerMethod FOR PreSave-»«ENDREM»
+«REM»«DEFINE EventListenerMethod FOR PreSave-»«ENDREM»«""-»
     /**
      * Pre-Process the data prior to a save operation.
      *
@@ -76,9 +76,9 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     {
         //echo 'saving a record ...';
     }
-«REM»«ENDDEFINE»«ENDREM»
+«REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PostSave-»«ENDREM»
+«REM»«DEFINE EventListenerMethod FOR PostSave-»«ENDREM»«""-»
     /**
      * Post-Process the data after a save operation.
      *
@@ -90,9 +90,9 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     {
         //echo 'saved a record ...';
     }
-«REM»«ENDDEFINE»«ENDREM»
+«REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PreUpdate-»«ENDREM»
+«REM»«DEFINE EventListenerMethod FOR PreUpdate-»«ENDREM»«""-»
     /**
      * Pre-Process the data prior to an update operation.
      *
@@ -104,9 +104,9 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     {
         //echo 'updating a record ...';
     }
-«REM»«ENDDEFINE»«ENDREM»
+«REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PostUpdate-»«ENDREM»
+«REM»«DEFINE EventListenerMethod FOR PostUpdate-»«ENDREM»«""-»
     /**
      * Post-Process the data after an update operation.
      *
@@ -118,9 +118,9 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     {
         //echo 'updated a record ...';
     }
-«REM»«ENDDEFINE»«ENDREM»
+«REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PreInsert-»«ENDREM»
+«REM»«DEFINE EventListenerMethod FOR PreInsert-»«ENDREM»«""-»
     /**
      * Pre-Process the data prior to an insert operation.
      *
@@ -134,9 +134,9 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 
         return true;
     }
-«REM»«ENDDEFINE»«ENDREM»
+«REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PostInsert-»«ENDREM»
+«REM»«DEFINE EventListenerMethod FOR PostInsert-»«ENDREM»«""-»
     /**
      * Post-Process the data after an insert operation.
      *
@@ -150,9 +150,9 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 
         return;
     }
-«REM»«ENDDEFINE»«ENDREM»
+«REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PreDelete-»«ENDREM»
+«REM»«DEFINE EventListenerMethod FOR PreDelete-»«ENDREM»«""-»
     /**
      * Pre-Process the data prior a delete operation.
      *
@@ -164,9 +164,9 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     {
         //echo 'deleting a record ...';
     }
-«REM»«ENDDEFINE»«ENDREM»
+«REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PostDelete-»«ENDREM»
+«REM»«DEFINE EventListenerMethod FOR PostDelete-»«ENDREM»«""-»
     /**
      * Post-Process the data after a delete.
      *
@@ -178,9 +178,9 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     {
         //echo 'deleted a record ...';
     }
-«REM»«ENDDEFINE»«ENDREM»
+«REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PreValidate-»«ENDREM»
+«REM»«DEFINE EventListenerMethod FOR PreValidate-»«ENDREM»«""-»
     /**
      * Pre-Process the validation process with class specific logic.
      *
@@ -192,9 +192,9 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     {
         //echo 'validating a record ...';
     }
-«REM»«ENDDEFINE»«ENDREM»
+«REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PostValidate-»«ENDREM»
+«REM»«DEFINE EventListenerMethod FOR PostValidate-»«ENDREM»«""-»
     /**
      * Post-Process the validation process with class specific logic.
      *
