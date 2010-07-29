@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workflow>
-    <property name="print.slot.dumps" value='false' />
-    <property name="do.validation" value='true' />
+    <property name="doSlotDumps" value='false' />
+    <property name="doValidation" value='true' />
+    <property name="doModelCopy" value='true' />
+    <property name="doProfiling" value='true' />
 
     <bean class="org.eclipse.emf.mwe.utils.StandaloneSetup">
         <platformUri value=".."/>
@@ -38,7 +40,7 @@
     <component id="profiler" class="org.eclipse.xtend.profiler.ProfilerComponent"> 
         <resultSlot value="profilingResult" /> 
 
-	    <if cond="${print.slot.dumps}">
+	    <if cond="${doSlotDumps}">
 	        <component class="org.eclipse.xtend.util.stdlib.SlotPrinter">
 	            <slotName value="model" /><!-- the name of a slot whose content should be dumped -->
 	            <message value="Dump of input model" /><!-- optional message as prefix for the log output -->
@@ -46,7 +48,7 @@
 	        </component>
 	    </if>
 
-	    <if cond="${do.validation}">
+	    <if cond="${doValidation}">
 	        <!-- check components for constraints -->
 	        <component class="org.eclipse.xtend.check.CheckComponent">
 	        <!-- middleend needs still uml, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312557
@@ -81,7 +83,7 @@
 		    <outputSlot value="newModel" />
 		</component>
 
-	    <if cond="${print.slot.dumps}">
+	    <if cond="${doSlotDumps}">
 	        <component class="org.eclipse.xtend.util.stdlib.SlotPrinter">
 		        <slotName value="newModel" /><!-- the name of a slot whose content should be dumped -->
 		        <message value="Dump of enriched model" /><!-- optional message as prefix for the log output -->
@@ -95,7 +97,8 @@
 		           cartridgeName="${cartridgeName}"
 		           slot="newModel"
 		           slotFile="file://${enrichedModelFile}"
-		           outputFolder="${srcGenPath}/${cartridgeName}">
+		           outputFolder="${srcGenPath}/${cartridgeName}"
+		           doModelCopy="${doModelCopy}">
 		   <mmEMF 			idRef="mmEMF"/>
 		   <mmModuleStudio 	idRef="mmModuleStudio"/>
            <profiler idRef="profiler"/>
@@ -105,15 +108,17 @@
 
     </component>
 
-    <!-- generate profiling result -->
-    <component class="org.eclipse.xpand2.Generator" fileEncoding="ISO-8859-1">
-    <!-- middleend needs still uml, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312557
-    <component class="org.eclipse.xtend.middleend.xpand.XpandComponent" fileEncoding="ISO-8859-1"> -->
-        <metaModel idRef="mmEMF"/> 
-        <metaModel id="mmEMF"           class="org.eclipse.xtend.typesystem.emf.EmfMetaModel">
-            <metaModelPackage value="org.eclipse.xtend.profiler.profilermodel.ModelPackage"/>
-        </metaModel>
-        <expand value="org::eclipse::xtend::profiler::templates::Html::Main FOR profilingResult"/> 
-        <outlet overwrite="true" path="${srcGenPath}/profiling/${cartridgeName}"/> 
-    </component> 
+    <if cond="${doProfiling}">
+	    <!-- generate profiling result -->
+	    <component class="org.eclipse.xpand2.Generator" fileEncoding="ISO-8859-1">
+	    <!-- middleend needs still uml, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312557
+	    <component class="org.eclipse.xtend.middleend.xpand.XpandComponent" fileEncoding="ISO-8859-1"> -->
+	        <metaModel idRef="mmEMF"/> 
+	        <metaModel id="mmEMF"           class="org.eclipse.xtend.typesystem.emf.EmfMetaModel">
+	            <metaModelPackage value="org.eclipse.xtend.profiler.profilermodel.ModelPackage"/>
+	        </metaModel>
+	        <expand value="org::eclipse::xtend::profiler::templates::Html::Main FOR profilingResult"/> 
+	        <outlet overwrite="true" path="${srcGenPath}/profiling/${cartridgeName}"/> 
+	    </component>
+    </if> 
 </workflow>

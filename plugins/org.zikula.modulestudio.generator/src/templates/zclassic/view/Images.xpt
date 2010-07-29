@@ -3,11 +3,13 @@
 
 «REM»Entry point for all module images«ENDREM»
 «DEFINE Root FOR Application-»
-«REM»This index.html file will be removed later. At the moment we need them to create according directories.«ENDREM»
+«REM»This index.html file will be removed later. At the moment we need it to create according directories.«ENDREM»
     «FILE "images/index.html"»«msUrl()-»«ENDFILE»
-«REM»	«FILE "images/admin.gif"»«EXPAND adminImage»«ENDFILE»«ENDREM»
+	«REM»«FILE "images/admin.gif"»«EXPAND AdminImageCE-»«ENDFILE»«ENDREM»
 «ENDDEFINE»
 
-«REM»Module image for admin area«ENDREM»
-«DEFINE adminImage FOR Application-»
-«ENDDEFINE»
+«REM»admin icon 48x48«ENDREM»
+«DEFINE AdminImageCE FOR Application-»«ENDDEFINE»
+«DEFINE AdminImageSE FOR Application-»«ENDDEFINE»
+«DEFINE AdminImagePE FOR Application-»«ENDDEFINE»
+«DEFINE AdminImageEE FOR Application-»«ENDDEFINE»

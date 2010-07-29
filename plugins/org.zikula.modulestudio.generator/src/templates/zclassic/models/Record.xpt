@@ -66,17 +66,18 @@ class «implClassModelRecord(false)» extends «baseClassModelRecord(false)»
      */
     public function setUp()
     {
-«EXPAND SetUpBehaviour-»
+«EXPAND SetUpImpl-»
     }
 «ENDDEFINE»
 
 «DEFINE SetTableDefinition FOR Entity-»
         $this->setTableName('«fullEntityName()»');
 «EXPAND FieldSetColumn FOREACH fields-»
+«REM»TODO
 «IF indexes.size > 0-»
     // define additional indexes
     $tables['«fullEntityName()»_column_idx'] = array(«EXPAND IndexStructure FOREACH indexes SEPARATOR ','»);
-«ENDIF-»
+«ENDIF-»«ENDREM»
 «ENDDEFINE»
 
 
@@ -86,7 +87,7 @@ class «implClassModelRecord(false)» extends «baseClassModelRecord(false)»
 «ENDDEFINE»
 «DEFINE FieldSetColumn FOR DerivedField-»
         $this->hasColumn(«EXPAND FieldSetColumnDetails-», array(
-«EXPAND FieldSetColumnOptions-»
+«EXPAND FieldSetColumnOptions»
             )
         );
 «ENDDEFINE»
@@ -112,79 +113,109 @@ class «implClassModelRecord(false)» extends «baseClassModelRecord(false)»
 «DEFINE FieldType FOR AbstractIntegerField-»integer«ENDDEFINE»
 «DEFINE FieldType FOR AbstractStringField-»string«ENDDEFINE»
 
-«DEFINE FieldLength FOR DerivedField-»
-«error("Error: undefined length for derived field type (code 348673)") -> ""-»
-«ENDDEFINE»
-
-«REM»
-Column length: an integer that specifies the column length.
-The length is different depending on the type of column you are using:
-    * integer - Length is the the number of bytes the integer occupies.
-    * string - Number of the characters allowed in the string.
-    * float/decimal - Total number of characters allowed excluding the decimal.
-    * enum - If using native enum length does not apply but if using emulated enums then it is just the string length of the column value.
-«ENDREM»
-«REM»
-        $this->hasColumn('username', 'string', 255);
-        $this->hasColumn('password', 'string', 255);
-        $this->hasColumn('id', 'integer', 8, array('type' => 'integer', 'length' => 8, 'primary' => true, 'autoincrement' => true));
-        $this->hasColumn('first_name', 'string', 255, array('type' => 'string', 'length' => 255));
-        $this->hasColumn('last_name', 'string', 255, array('type' => 'string', 'length' => 255));
-        $this->hasColumn('username', 'string', 255, array('type' => 'string', 'length' => 255));
-        $this->hasColumn('password', 'string', 255, array('type' => 'string', 'length' => 255));
-        $this->hasColumn('type', 'string', 255, array('type' => 'string', 'length' => 255));
-        $this->hasColumn('is_active', 'integer', 1, array('type' => 'integer', 'length' => 1, 'default' => '1'));
-        $this->hasColumn('is_super_admin', 'integer', 1, array('type' => 'integer', 'length' => 1, 'default' => '0'));
-        $this->hasColumn('created_at', 'timestamp', null, array('type' => 'timestamp', 'notnull' => true));
-        $this->hasColumn('updated_at', 'timestamp', null, array('type' => 'timestamp', 'notnull' => true));
-«ENDREM»
+«DEFINE FieldLength FOR DerivedField-»null«ENDDEFINE»
+«DEFINE FieldLength FOR AbstractIntegerField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR FloatField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR DecimalField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR AbstractStringField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR ArrayField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
 
 «DEFINE FieldSetColumnOptions FOR DerivedField-»
-                'default' => 'default username',
-                'unsigned' => true
+                'type' => '«EXPAND FieldType-»',
+                'notnull' => «IF notnull»true«ELSE-»false«ENDIF-»,
+«IF primaryKey == true-»
+                'primary' => true,
+                'autoincrement' => true,
+«ENDIF-»
+«IF unique == true-»
+                'unique' => true,
+«ENDIF-»
+«IF defaultValue != null && defaultValue != ""-»
+                'default' => «EXPAND FieldDefaultValue-»,
+«ENDIF-»
+«EXPAND FieldSetColumnAdditionalOptions-»
+                'length' => «EXPAND FieldLength-»
 «ENDDEFINE»
 
-«DEFINE FieldStructure(String prefix) FOR EntityField»
-        '«name.formatForCode()»' => '«formatForDB(prefix + '_' + name)»'«ENDDEFINE»
-
-
-«DEFINE FieldData FOR DerivedField»
-        '«name.formatForCode()»' => "«IF primaryKey == true»I NOTNULL AUTO PRIMARY«ELSE»«EXPAND TypeDef»«EXPAND TypeValue»«ENDIF»"«ENDDEFINE»
-
-«DEFINE TypeDef FOR DerivedField-»
-«error("Error: undefined derived field type (code 925621)") -> ""-»
+«DEFINE FieldDefaultValue FOR DerivedField-»
+«error("Error: undefined default value definition for derived field type (code 3982562)") -> ""-»
 «ENDDEFINE»
-«DEFINE TypeValue FOR DerivedField»«IF mandatory == true» NOTNULL«ENDIF»«REM»no default value for text and blob fields, breaks mysql strict mode«ENDREM»«IF metaType != BlobField && metaType != ClobField» DEFAULT '«defaultValue»'«ENDIF»«ENDDEFINE»
-
-«DEFINE TypeDef FOR StringField»C(«IF length > 0 && length < 256»«length»«ELSE»255«ENDIF»)«ENDDEFINE»
-«DEFINE TypeDef FOR ClobField»$«name.formatForCode()»Type«ENDDEFINE»
-«DEFINE TypeDef FOR BlobField»B«ENDDEFINE»
-
-«DEFINE TypeDef FOR DateField»D«ENDDEFINE»«REM»1970-01-01«ENDREM»
-«DEFINE TypeValue FOR DateField»«IF mandatory == true» NOTNULL«ENDIF» «IF defaultValue.length > 0»DEFAULT '«defaultValue»'«ELSEIF mandatory == true»DEFDATE«ELSE»DEFAULT NULL«ENDIF»«ENDDEFINE»
-
-«DEFINE TypeDef FOR TimestampField»T«ENDDEFINE»«REM»1970-01-01 00:00:00«ENDREM»
-«DEFINE TypeValue FOR TimestampField»«IF mandatory == true» NOTNULL«ENDIF» «IF defaultValue.length > 0»DEFAULT '«defaultValue»'«ELSEIF mandatory == true»DEFTIMESTAMP«ELSE»DEFAULT NULL«ENDIF»«ENDDEFINE»
-
-«DEFINE TypeDef FOR BooleanField»L«ENDDEFINE»
-«DEFINE TypeValue FOR BooleanField»«IF mandatory == true» NOTNULL«ENDIF» DEFAULT '«IF defaultValue == true || defaultValue == "true"»1«ELSE»0«ENDIF»'«ENDDEFINE»
-
-«DEFINE TypeDef FOR IntegerField»I«IF length == "1" || length == "2" || length == "4" || length == "8"»«length»«ELSE»4«ENDIF»«ENDDEFINE»
-«DEFINE TypeValue FOR IntegerField»«IF mandatory == true» NOTNULL«ENDIF» DEFAULT '«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF»'«ENDDEFINE»
-
-«DEFINE TypeDef FOR FloatField»F«IF length > 0»(«length»)«ELSE»(10.2)«ENDIF»«ENDDEFINE»
-«DEFINE TypeValue FOR FloatField»«IF mandatory == true» NOTNULL«ENDIF» DEFAULT '«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF»'«ENDDEFINE»
-
-«DEFINE TypeDef FOR DecimalField»N«IF length > 0»(«length».«scale»)«ELSE»(10.2)«ENDIF»«ENDDEFINE»
-«DEFINE TypeValue FOR DecimalField»«IF mandatory == true» NOTNULL«ENDIF» DEFAULT «IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF»«ENDDEFINE»
+«DEFINE FieldDefaultValueNumber FOR DerivedField-»«defaultValue»«ENDDEFINE»
+«DEFINE FieldDefaultValueText FOR DerivedField-»'«defaultValue»'«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR BooleanField-»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR IntegerField-»«EXPAND FieldDefaultValueNumber-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR FloatField-»«EXPAND FieldDefaultValueNumber-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR DecimalField-»«EXPAND FieldDefaultValueNumber-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR StringField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR TextField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR EmailField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR UrlField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR UploadField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR UserField-»«EXPAND FieldDefaultValueNumber-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR ArrayField-»«EXPAND FieldDefaultValueNumber-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR EnumField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR ObjectField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR BlobField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR ClobField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR TimestampField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR DateField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR TimeField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR GzipField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
 
 
+«DEFINE FieldSetColumnAdditionalOptions FOR DerivedField-»«ENDDEFINE»
+
+«DEFINE FieldSetColumnAdditionalOptions FOR IntegerField-»
+                'unsigned' => «IF unsigned-»true«ELSE-»false«ENDIF-»,
+«ENDDEFINE»
+«DEFINE FieldSetColumnAdditionalOptions FOR DecimalField-»
+                'scale' => «scale.toInteger()»,
+«ENDDEFINE»
+«DEFINE FieldSetColumnAdditionalOptions FOR AbstractStringField-»
+                'fixed' => «IF fixed-»true«ELSE-»false«ENDIF-»,
+«ENDDEFINE»
+
+
+«REM»TODO
 «DEFINE IndexStructure FOR EntityIndex»
         '«name.formatForDB()»' => «IF items.size > 1»array(«EXPAND IndexField FOREACH items SEPARATOR ', '»)«ELSE»'«formatForDB(items.get(0).name)»'«ENDIF»«ENDDEFINE»
 «DEFINE IndexField FOR EntityIndexItem»'«name.formatForDB()»'«ENDDEFINE»
+«ENDREM»
 
+«DEFINE SetUpImpl FOR Entity-»
+«EXPAND SetUpRelations»
+«EXPAND SetUpBehaviour»
+«ENDDEFINE»
+
+«DEFINE SetUpRelations FOR Entity-»
+«IF outgoing.typeSelect(JoinRelationship).size > 0-»
+        // relations
+«FOREACH outgoing.typeSelect(JoinRelationship) AS relation-»
+        $this->has«IF relation.metaType == OneToOneRelationship-»One«ELSE-»Many«ENDIF-»('«relation.target.implClassModelRecord(false)»«IF relation.alias != null && relation.alias != ""-» as «relation.alias.formatForCode()»«ENDIF-»', array(
+                // linked field in the defining class
+                'local' => '«idField()»',
+                // linked field in the linked class
+                'foreign' => '«relation.target.idField()»',
+«IF relation.metaType == ManyToManyRelationship-»,
+                // name of the many-to-many association class
+                'refClass' => 'TODO',
+«ENDIF-»
+                // true indicates the owning side (owning the foreign key)
+                'owningSide' => true«REM»TRUEFALSE,
+        onDelete      Yes         The onDelete integrity action that is applied on the foreign key constraint
+                                  when the tables are created by Doctrine.
+        onUpdate      Yes         The onUpdate integrity action that is applied on the foreign key constraint
+                                  when the tables are created by Doctrine.
+        cascade       Yes         Specify application level cascading operations. Currently only delete is supported«ENDREM»
+            )
+        );
+«ENDFOREACH-»
+«ENDIF-»
+
+«ENDDEFINE»
 
 «DEFINE SetUpBehaviour FOR Entity-»
+        // behaviours
         $this->actAs('Timestampable');
 «EXPAND ObjectExtensions-»
 «ENDDEFINE»

@@ -3,7 +3,7 @@
 
 «REM»Entry point for module language defines«ENDREM»
 «DEFINE Root FOR Application-»
-«REM»These index.html files will be removed later. At the moment we need them to create according directories.«ENDREM»
+«REM»These index.html files will be removed later. At the moment we need it to create according directories.«ENDREM»
 	«FILE "locale/index.html"»«msUrl()-»«ENDFILE»
 	«FILE "locale/de/index.html"»«msUrl()-»«ENDFILE»
 	«FILE "locale/de/LC_MESSAGES/index.html"»«msUrl()-»«ENDFILE»

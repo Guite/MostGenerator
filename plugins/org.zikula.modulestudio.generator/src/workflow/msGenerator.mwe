@@ -16,6 +16,24 @@
     <!-- clear output directory -->
     <component id="dirCleaner" class="org.eclipse.emf.mwe.utils.DirectoryCleaner" directory="${outputFolder}" />
 
+    <!--<if cond="${doModelCopy}">
+        <!- - copy original domain model into target folder - ->
+        <component class="org.eclipse.emf.mwe.utils.FileCopy">
+            <sourceFile value="${modelFile}" />
+            <targetFile value="${modelFileCopy}" />
+        </component>
+        <!- - copy enriched domain model into target folder - ->
+        <component class="org.eclipse.emf.mwe.utils.FileCopy">
+            <sourceFile value="${enrichedModelFile}" />
+            <targetFile value="${enrichedModelFileCopy}" />
+        </component>
+        <!- - copy diagram model into target folder - ->
+        <component class="org.eclipse.emf.mwe.utils.FileCopy">
+            <sourceFile value="${diagramFile}" />
+            <targetFile value="${diagramFileCopy}" />
+        </component>
+    </if>-->
+
     <!-- start generator component -->
     <component class="org.eclipse.xpand2.Generator" fileEncoding="UTF-8" skipOnErrors="true">
     <!-- middleend needs still uml, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312557
