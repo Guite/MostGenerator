@@ -22,8 +22,9 @@
 
 /**
  * Doctrine_Table class used to implement own special entity methods.
+ * For example it can provide convenience methods for performing certain DQL queries.
  *
- * This is the base table class for «name.formattedName()» entities
+ * This is the base table class for «name.formatForDisplay()» entities
  */
 class «baseClassModelTable(false)» extends Doctrine_Table
 {
@@ -36,11 +37,12 @@ class «baseClassModelTable(false)» extends Doctrine_Table
 
 /**
  * Doctrine_Table class used to implement own special entity methods.
+ * For example it can provide convenience methods for performing certain DQL queries.
  *
- * This is the concrete table class for «name.formattedName()» entities
+ * This is the concrete table class for «name.formatForDisplay()» entities
  */
 class «implClassModelTable(false)» extends «baseClassModelTable(false)»
 {
-// feel free to add your own methods here
+    // feel free to add your own methods here
 }
 «ENDDEFINE»

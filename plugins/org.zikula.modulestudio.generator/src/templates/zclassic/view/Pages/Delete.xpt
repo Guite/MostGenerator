@@ -2,10 +2,10 @@
 «EXTENSION extensions::Utils»
 
 «DEFINE Impl(String appName, Controller controller) FOR Entity»
-«LET dbName(controller.name) AS controllerName-»
-«LET applicationName(name) AS objName-»
+«LET controller.name.formatForDB() AS controllerName-»
+«LET name.formatForCode() AS objName-»
 «FILE "templates/" + appName + "_" + controllerName + "_" + objName + "_delete.tpl"-»
-{* purpose of this template: «formattedName(nameMultiple)» delete confirmation view in «controllerName» area *}
+{* purpose of this template: «nameMultiple.formatForDisplay()» delete confirmation view in «controllerName» area *}
 
 {include file="«appName»_«controllerName»_header.tpl"}
 
@@ -15,7 +15,7 @@
 <div class="z-frontendcontainer">
 «ENDIF-»
 
-<p>{gt text='Do you really want to delete this «formattedName(name)» ?'}</p>
+<p>{gt text='Do you really want to delete this «name.formatForDisplay()» ?'}</p>
 
 <form action="{modurl modname="«appName»" type="«controllerName»" func="delete" ot="«objName»" «idField()»=$«objName».«idField()»}" method="post">
 	<input type="submit" name="confirmation" value="{gt text='Yes'}" />

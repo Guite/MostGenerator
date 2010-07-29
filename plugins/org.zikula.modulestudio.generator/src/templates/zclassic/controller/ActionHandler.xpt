@@ -63,9 +63,9 @@ class «appName()»_Form_Handler_Admin_Config extends Form_Handler
 
 «DEFINE FormCreate(String appName, Controller controller, String actionName) FOR Action-»
     // Create new Form reference
-    $view = FormUtil::newForm('«applicationName(appName)»');
+    $view = FormUtil::newForm('«appName.formatForCode()»');
 
-«LET applicationName(appName.msconcat("_Form_Handler_").msconcat(prepClassPart(controller.name)).msconcat(prepClassPart(actionName))) AS controllerPraefix-»
+«LET formatForCode(appName.msconcat("_Form_Handler_").msconcat(prepClassPart(controller.name)).msconcat(prepClassPart(actionName))) AS controllerPraefix-»
 
     // Execute form using supplied template and page event handler
     return $view->execute('«controllerPraefix».tpl', new «controllerPraefix»());
@@ -90,10 +90,10 @@ class «appName()»_Form_Handler_Admin_Config extends Form_Handler
 «REM»base implementation«ENDREM»
 «DEFINE FormHandlerBaseImpl(Application app, Controller controller, String actionName) FOR Entity-»
 «LET app.appName() AS appName-»
-«LET dbName(controller.name) AS controllerName-»
+«LET controller.name.formatForDB() AS controllerName-»
 /**
- * This handler class handles the page events of the Form called by the «applicationName(appName.msconcat("_").msconcat(controllerName).msconcat("_").msconcat(actionName))»() function.
- * It aims on the «applicationName(name)» object type.
+ * This handler class handles the page events of the Form called by the «formatForCode(appName.msconcat("_").msconcat(controllerName).msconcat("_").msconcat(actionName))»() function.
+ * It aims on the «name.formatForDisplay()» object type.
  *
  * Member variables in a form handler object are persisted accross different page requests. This means
  * a member variable $this->X can be set on one request and on the next request it will still contain
@@ -114,7 +114,7 @@ class «appName()»_Form_Handler_Admin_Config extends Form_Handler
  */
 class «implClassFormHandler(controller, name, actionName)» extends Form_Handler
 {
-    // store «applicationName(name)» ID in (persistent) member variable
+    // store «name.formatForCode()» ID in (persistent) member variable
     var $«idField()»;
     // create or edit
     var $mode;
@@ -161,10 +161,10 @@ class «implClassFormHandler(controller, name, actionName)» extends Form_Handle
 «REM»concrete implementation stub«ENDREM»
 «DEFINE FormHandlerImpl(Application app, Controller controller, String actionName) FOR Entity-»
 «LET app.appName() AS appName-»
-«LET dbName(controller.name) AS controllerName-»
+«LET controller.name.formatForDB() AS controllerName-»
 /**
- * This handler class handles the page events of the Form called by the «applicationName(appName.msconcat("_").msconcat(controllerName).msconcat("_").msconcat(actionName))»() function.
- * It aims on the «applicationName(name)» object type.
+ * This handler class handles the page events of the Form called by the «formatForCode(appName.msconcat("_").msconcat(controllerName).msconcat("_").msconcat(actionName))»() function.
+ * It aims on the «name.formatForDisplay()» object type.
  */
 class «implClassFormHandler(controller, name, actionName)» extends «baseClassFormHandler(controller, name, actionName)»
 {
@@ -181,11 +181,11 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         // no provided id means that we want to create a new object
         $this->«idField()» = (int) FormUtil::getPassedValue('«idField()»', 0, 'GET');
 
-        $objectType = '«applicationName(name)»';
+        $objectType = '«name.formatForCode()»';
 «EXPAND ControllerHelper::loadObjectClass(appName, false)-»
 
         $this->mode = 'create';
-        // if «idField()» is not 0, we wish to edit an existing «applicationName(name)»
+        // if «idField()» is not 0, we wish to edit an existing «name.formatForDisplay()»
         if($this->«idField()») {
             $this->mode = 'edit';
 
@@ -198,10 +198,10 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
 «EXPAND ControllerHelper::getObjectFromSource("D", idField(), "this->" + idField())-»
             if (!is_array($objectData) || !isset($objectData['«idField()»']) || !is_numeric($objectData['«idField()»'])) {
-                return $view->setErrorMsg(__('No such «formattedName(name)» found.', $dom));
+                return $view->setErrorMsg(__('No such «name.formatForDisplay()» found.', $dom));
             }
 
-            // try to guarantee that only one person at a time can be editing this «applicationName(name)»
+            // try to guarantee that only one person at a time can be editing this «name.formatForDisplay()»
             $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display', array('ot' => $objectType, '«idField()»' => $this->«idField()»));
             ModUtil::apiFunc('PageLock', 'user', 'pageLock',
                                  array('lockName' => "«capitalName(appName)»«capitalName(name)»{$this->«idField()»}",
@@ -223,8 +223,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         }
 
 «FOREACH fields.typeSelect(DateField) AS dateField-»
-        if ($objectData['«dateField.name.dbName()»'] == '1900-01-01 00:00:00') {
-            $objectData['«dateField.name.dbName()»'] = null;
+        if ($objectData['«dateField.name.formatForDB()»'] == '1900-01-01 00:00:00') {
+            $objectData['«dateField.name.formatForDB()»'] = null;
         }
 «ENDFOREACH-»
 
@@ -237,10 +237,16 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
 
 «DEFINE FieldAssignment FOR EntityField»
-                '«dbName(name)»' => «EXPAND FieldDefaultData»«ENDDEFINE»
+                '«name.formatForDB()»' => «EXPAND FieldDefaultData»«ENDDEFINE»
 
 «DEFINE FieldDefaultData FOR EntityField-»
-«error("Error: undefined entity field (code 925624)") -> ""-»
+«error("Error: undefined entity field type (code 925624)") -> ""-»
+«ENDDEFINE»
+«DEFINE FieldDefaultData FOR DerivedField-»
+«error("Error: undefined derived field type (code 925627)") -> ""-»
+«ENDDEFINE»
+«DEFINE FieldDefaultData FOR CalculatedField-»
+«error("Error: undefined calculated field type (code 925628)") -> ""-»
 «ENDDEFINE»
 
 «DEFINE FieldDefaultData FOR StringField»'«defaultValue»'«ENDDEFINE»
@@ -254,7 +260,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «DEFINE FieldDefaultData FOR IntegerField-»
 «LET entity.incoming.select(e|e.source.idField() == name) AS joins-»
 «IF joins.size > 0-»
-«FOREACH joins AS join-»(int) FormUtil::getPassedValue('«join.source.name.dbName()»id', 0, 'GET')«ENDFOREACH-»
+«FOREACH joins AS join-»(int) FormUtil::getPassedValue('«join.source.name.formatForDB()»id', 0, 'GET')«ENDFOREACH-»
 «ELSE-»
 «IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
 «ENDIF-»«ENDLET-»«ENDDEFINE»
@@ -274,53 +280,53 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             }
         }
 
-        $objectType = '«applicationName(name)»';
+        $objectType = '«name.formatForCode()»';
 «EXPAND ControllerHelper::loadObjectClass(appName, false)-»
 
         // instantiate the class we just loaded
         // it will be appropriately initialized but contain no data.
-        $«applicationName(name)» = new $class();
+        $«name.formatForCode()» = new $class();
 
         if ($args['commandName'] == 'create') {
             // event handling if user clicks on create
 
-            «EXPAND FetchInputDataStart(applicationName(name))-»
-            «EXPAND FetchInputDataEnd(applicationName(name))-»
+            «EXPAND FetchInputDataStart(name.formatForCode())-»
+            «EXPAND FetchInputDataEnd(name.formatForCode())-»
 
-            // save «applicationName(name)»
-            $«applicationName(name)»->save();
+            // save «name.formatForCode()»
+            $«name.formatForCode()»->save();
 
-            $this->«idField()» = $«applicationName(name)»->getID();
+            $this->«idField()» = $«name.formatForCode()»->getID();
             if ($this->«idField()» === false) {
                 return LogUtil::registerError(__('Error! Creation attempt failed.', $dom));
             }
 
-            LogUtil::registerStatus(__('Done! «formattedNameCapitalized(name)» created.', $dom));
+            LogUtil::registerStatus(__('Done! «name.formatForDisplayCapitalized()» created.', $dom));
 
-            // redirect to the detail page of the newly created «applicationName(name)»
+            // redirect to the detail page of the newly created «name.formatForCode()»
             $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
                                                              array('ot' => $objectType,
                                                                    '«idField()»' => $this->«idField()»));
         } else if ($args['commandName'] == 'update') {
             // event handling if user clicks on update
 
-            «EXPAND FetchInputDataStart(applicationName(name))-»
+            «EXPAND FetchInputDataStart(name.formatForCode())-»
 
             // add persisted primary key to fetched values
-            $«applicationName(name)»Data['«idField()»'] = $this->«idField()»;
+            $«name.formatForCode()»Data['«idField()»'] = $this->«idField()»;
 
-            «EXPAND FetchInputDataEnd(applicationName(name))-»
+            «EXPAND FetchInputDataEnd(name.formatForCode())-»
 
-            // save «applicationName(name)»
-            $updateResult = $«applicationName(name)»->save();
+            // save «name.formatForCode()»
+            $updateResult = $«name.formatForCode()»->save();
 
             if ($updateResult === false) {
                 return LogUtil::registerError(__('Error! Update attempt failed.', $dom));
             }
 
-            LogUtil::registerStatus(__('Done! «formattedNameCapitalized(name)» updated.', $dom));
+            LogUtil::registerStatus(__('Done! «name.formatForDisplayCapitalized()» updated.', $dom));
 
-            // redirect to the detail page of the treated «applicationName(name)»
+            // redirect to the detail page of the treated «name.formatForCode()»
             $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
                                                              array('ot' => $objectType,
                                                                    '«idField()»' => $this->«idField()»));
@@ -333,33 +339,33 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 return $view->registerError(LogUtil::registerPermissionError());
             }
 
-            «EXPAND FetchInputDataStart(applicationName(name))-»
+            «EXPAND FetchInputDataStart(name.formatForCode())-»
 
             // add persisted primary key to fetched values
-            $«applicationName(name)»Data['«idField()»'] = $this->«idField()»;
+            $«name.formatForCode()»Data['«idField()»'] = $this->«idField()»;
 
-            «EXPAND FetchInputDataEnd(applicationName(name))-»
+            «EXPAND FetchInputDataEnd(name.formatForCode())-»
 
-            // delete «applicationName(name)»
-            if ($«applicationName(name)»->delete() === false) {
+            // delete «name.formatForCode()»
+            if ($«name.formatForCode()»->delete() === false) {
                 return LogUtil::registerError(__('Error! Deletion attempt failed.', $dom));
             }
 
-            LogUtil::registerStatus(__('Done! «formattedNameCapitalized(name)» deleted.', $dom));
+            LogUtil::registerStatus(__('Done! «name.formatForDisplayCapitalized()» deleted.', $dom));
 
-            // redirect to the list of «applicationName(nameMultiple)»
+            // redirect to the list of «nameMultiple.formatForCode()»
             $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'view',
                                                                  array('ot' => $objectType));
         } else if ($args['commandName'] == 'cancel') {
             // event handling if user clicks on cancel
 
             if ($this->mode == 'edit') {
-                // redirect to the detail page of the treated «applicationName(name)»
+                // redirect to the detail page of the treated «name.formatForCode()»
                 $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
                                                                  array('ot' => $objectType,
                                                                        '«idField()»' => $this->«idField()»));
             } else {
-                // redirect to the list of «applicationName(nameMultiple)»
+                // redirect to the list of «nameMultiple.formatForCode()»
                 $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'view',
                                                                      array('ot' => $objectType));
             }
@@ -433,7 +439,7 @@ function «appName()»_adminform_preferences()
     // for booleans we use the convention (int)(boolean) to ensure that set values get cast to a 0/1 value
 «ENDIF-»
 «FOREACH models.variables.vars AS modvar-»
-    ModUtil::setVar('«appName()»', '«applicationName(modvar.name)»',    «EXPAND GetVarForPrefPrefix FOR modvar»$prefs['«applicationName(modvar.name)»']);
+    ModUtil::setVar('«appName()»', '«modvar.name.formatForCode()»',    «EXPAND GetVarForPrefPrefix FOR modvar»$prefs['«modvar.name.formatForCode()»']);
 «ENDFOREACH-»
 
     // redirect back to to main admin page

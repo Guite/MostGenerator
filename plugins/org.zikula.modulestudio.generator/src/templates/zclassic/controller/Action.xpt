@@ -8,7 +8,7 @@
     /**
 «EXPAND ActionDoc(app)-»
      */
-    public function «dbName(name)»($args)
+    public function «name.formatForDB()»($args)
     {
 «EXPAND ActionImpl(app)-»
     }
@@ -17,7 +17,7 @@
 «DEFINE ActionDoc(Application app) FOR Action-»
 «IF metaType == MainAction-»
      * This method is the default function, and is called whenever the
-     * module's «applicationName(controller.name)» area is called without defining arguments.
+     * module's «controller.name.formatForCode()» area is called without defining arguments.
 «ELSEIF metaType == ViewAction-»
      * This method provides a generic item list overview.
 «ELSEIF metaType == DisplayAction-»
@@ -67,7 +67,7 @@
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR Action-»
-«error("Error: undefined action (code 925727)") -> ""-»
+«error("Error: undefined action type (code 925727)") -> ""-»
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR MainAction-»
@@ -162,7 +162,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
                                            'itemsperpage' => $pagesize));
 
         // fetch and return the appropriate template
-        return «appName»_Util::processViewTemplate($this->view, '«dbName(controller.name)»', $objectType, 'view', $args);
+        return «appName»_Util::processViewTemplate($this->view, '«controller.name.formatForDB()»', $objectType, 'view', $args);
 «ENDDEFINE»
 
 «DEFINE DefaultSorting FOR ViewAction-»
@@ -194,7 +194,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $this->view->assign($objectType, $objectData);
 
         // fetch and return the appropriate template
-        return «appName»_Util::processViewTemplate($this->view, '«dbName(controller.name)»', $objectType, 'display', $args);
+        return «appName»_Util::processViewTemplate($this->view, '«controller.name.formatForDB()»', $objectType, 'display', $args);
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR EditAction-»
@@ -203,10 +203,10 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $view = FormUtil::newForm('«appName»');
 
         // build form handler class name
-        $handlerClass = '«appName.toFirstUpper()»_Form_Handler_«dbName(controller.name).toFirstUpper()»_' . ucfirst($objectType) . '_Edit';
+        $handlerClass = '«appName.toFirstUpper()»_Form_Handler_«controller.name.formatForDB().toFirstUpper()»_' . ucfirst($objectType) . '_Edit';
 
         // execute form using supplied template and page event handler
-        return $view->execute('«appName»_«dbName(controller.name)»_' . $objectType . '_edit.tpl', new $handlerClass());
+        return $view->execute('«appName»_«controller.name.formatForDB()»_' . $objectType . '_edit.tpl', new $handlerClass());
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR DeleteAction-»
@@ -227,7 +227,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
             if (!$object->delete()) {
                 $this->registerError($this->__('Error! Deletion attempt failed.'));
             } else {
-                $this->registerStatus($this->__('Done! «formattedNameCapitalized(name)» deleted.'));
+                $this->registerStatus($this->__('Done! «name.formatForDisplayCapitalized()» deleted.'));
             }
         } else {
     «EXPAND ControllerHelper::getObjectFromSource("", "id", "idField")-»
@@ -239,11 +239,11 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
             $this->view->assign($objectType, $objectData);
 
             // fetch and return the appropriate template
-            return «appName»_Util::processViewTemplate($this->view, '«dbName(controller.name)»', $objectType, 'delete', $args);
+            return «appName»_Util::processViewTemplate($this->view, '«controller.name.formatForDB()»', $objectType, 'delete', $args);
         }
 
         // redirect to the list of the current object type
-        $this->redirect(ModUtil::url('«appName»', '«dbName(controller.name)»', «IF controller.hasActions('view')-»'view',
+        $this->redirect(ModUtil::url('«appName»', '«controller.name.formatForDB()»', «IF controller.hasActions('view')-»'view',
                                                                                     array('ot' => $objectType)«ELSE-»'main'«ENDIF-»));
 
 «ENDDEFINE»

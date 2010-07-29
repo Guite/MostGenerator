@@ -7,7 +7,7 @@
 «REM»start point for the Controller creation«ENDREM»
 «DEFINE Root FOR Application»
     «EXPAND Root(this) FOREACH controllers.controllers-»
-    «FILE "Util.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND ControllerUtil::CommonFunctions-»«ENDFILE»
+    «FILE "Util.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UtilMethods::CommonFunctions-»«ENDFILE»
 «ENDDEFINE»
 
 
@@ -94,8 +94,8 @@ class «baseClassApi()» extends Zikula_Api
 
 «FOREACH app.models.entities AS entity-»
         if (SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_READ)) {
-            $links[] = array('url' => ModUtil::url('«app.appName()»', '«dbName(name)»', 'view', array('ot' => '«applicationName(entity.name)»')),
-                             'text' => $this->__('«formattedNameCapitalized(entity.nameMultiple)»'));
+            $links[] = array('url' => ModUtil::url('«app.appName()»', '«name.formatForDB()»', 'view', array('ot' => '«entity.name.formatForCode()»')),
+                             'text' => $this->__('«entity.nameMultiple.formatForDisplayCapitalized()»'));
         }
 «ENDFOREACH-»
 «IF metaType == AdminController && app.needsConfig()-»

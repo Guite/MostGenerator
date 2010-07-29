@@ -16,9 +16,9 @@ public class Utils {
      * @params String given input string
      * @return string formatted for source code usage
      */
-    public static String applicationName(String string) {
+    public static String formatForCode(String string) {
         if (isInDebugMode) {
-            System.out.println("applicationName (" + string + ")");
+            System.out.println("formatForDisplay (" + string + ")");
         }
         return replaceSpecialChars(string);
     }
@@ -27,9 +27,9 @@ public class Utils {
      * @params String given input string
      * @return string formatted for database usage
      */
-    public static String dbName(String string) {
+    public static String formatForDB(String string) {
         if (isInDebugMode) {
-            System.out.println("dbName (" + string + ")");
+            System.out.println("formatForDB (" + string + ")");
         }
         return replaceSpecialChars(string).toLowerCase();
     }
@@ -39,17 +39,17 @@ public class Utils {
      * @return string formatted (e.g. federalStateName becomes federal state
      *         names)
      */
-    public static String formattedName(String string) {
+    public static String formatForDisplay(String string) {
         if (isInDebugMode) {
-            System.out.println("formattedName (" + string + ")");
+            System.out.println("formatForDisplay (" + string + ")");
         }
         String result = "";
-        String helpString = replaceSpecialChars(string);
+        final String helpString = replaceSpecialChars(string);
 
-        char[] helpChars = helpString.toCharArray();
+        final char[] helpChars = helpString.toCharArray();
 
-        for (char c : helpChars) {
-            String sc = String.valueOf(c);
+        for (final char c : helpChars) {
+            final String sc = String.valueOf(c);
             if (sc.matches("[A-Z]")) {
                 result += " ";
             }
@@ -64,18 +64,18 @@ public class Utils {
      * @return string formatted (e.g. federalStateName becomes Federal state
      *         names)
      */
-    public static String formattedNameCapitalized(String string) {
+    public static String formatForDisplayCapitalized(String string) {
         if (isInDebugMode) {
-            System.out.println("formattedNameCapitalized (" + string + ")");
+            System.out.println("formatForDisplayCapitalized (" + string + ")");
         }
         String result = "";
-        String helpString = replaceSpecialChars(string);
+        final String helpString = replaceSpecialChars(string);
 
-        char[] helpChars = helpString.toCharArray();
+        final char[] helpChars = helpString.toCharArray();
 
         int i = 0;
-        for (char c : helpChars) {
-            String sc = String.valueOf(c);
+        for (final char c : helpChars) {
+            final String sc = String.valueOf(c);
             if (sc.matches("[A-Z]")) {
                 result += " ";
             }

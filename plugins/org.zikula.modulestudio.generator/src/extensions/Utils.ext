@@ -26,18 +26,18 @@ cached String msconcat(String a, String b) :
  * naming extensions
  */
 cached String appName(Application this) :
-	applicationName(name).toFirstUpper();
+	name.formatForCode().toFirstUpper();
 
-cached String applicationName(String s)
-	: JAVA extensions.Utils.applicationName(java.lang.String);
+cached String formatForCode(String s)
+	: JAVA extensions.Utils.formatForCode(java.lang.String);
 cached String capitalName(String s)
-	: applicationName(s).toFirstUpper();
-cached String dbName(String s)
-	: JAVA extensions.Utils.dbName(java.lang.String);
-cached String formattedName(String s)
-	: JAVA extensions.Utils.formattedName(java.lang.String);
-cached String formattedNameCapitalized(String s)
-	: JAVA extensions.Utils.formattedNameCapitalized(java.lang.String);
+	: s.formatForCode().toFirstUpper();
+cached String formatForDB(String s)
+	: JAVA extensions.Utils.formatForDB(java.lang.String);
+cached String formatForDisplay(String s)
+	: JAVA extensions.Utils.formatForDisplay(java.lang.String);
+cached String formatForDisplayCapitalized(String s)
+	: JAVA extensions.Utils.formatForDisplayCapitalized(java.lang.String);
 
 
 cached boolean needsConfig(Application this) :
@@ -46,7 +46,7 @@ cached boolean needsConfig(Application this) :
 
 // we have to go the ugly way here to bypass that EfficientLazyString can not be compared
 cached String fullEntityName(Entity this)
-    : dbName(name).msconcat("_").msconcat(dbName(container.application.prefix));
+    : name.formatForDB().msconcat("_").msconcat(container.application.prefix.formatForDB());
 
 
 
@@ -72,14 +72,16 @@ cached getPrimaryKeyField(Entity this)
 
 
 cached String getLeadObj(Application application)
-    : applicationName(application.models.entities.select(e|e.leading == true).get(0).name);
+    : application.models.entities.select(e|e.leading == true).get(0).name.formatForCode();
 
 cached String idField(Entity entity)
-    : entity.getPrimaryKeyField().name.dbName();
+    : entity.getPrimaryKeyField().name.formatForDB();
 
 cached String idFieldName(Entity this)
     : name.toString().msconcat('id');
 
+cached String actualFieldName(DerivedField this)
+    : ((alias != null && alias != "") ? alias : name;
 
 
 // return all join relations (excluding inheritance)

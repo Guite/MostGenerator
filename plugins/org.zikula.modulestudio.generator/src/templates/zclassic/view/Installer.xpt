@@ -48,8 +48,8 @@
         <input type="hidden" name="authid" value="{$authid}" />
 
 	«FOREACH models.variables.vars AS modvar-»
-        <label for="«applicationName(name + '_' + modvar.name)»" style="float: left; width: 20em">{gt text='«modvar.name»'}</label>
-        <input id="«applicationName(name + '_' + modvar.name)»" type="text" name="«applicationName(modvar.name)»" value="«modvar.value»" size="40" />
+        <label for="«formatForCode(name + '_' + modvar.name)»" style="float: left; width: 20em">{gt text='«modvar.name»'}</label>
+        <input id="«formatForCode(name + '_' + modvar.name)»" type="text" name="«formatForCode(modvar.name)»" value="«modvar.value»" size="40" />
         <br style="clear: left" /><br />
 
 «ENDFOREACH-»

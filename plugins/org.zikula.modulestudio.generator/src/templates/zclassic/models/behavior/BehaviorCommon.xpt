@@ -8,11 +8,11 @@
      * @return string
      */
     public function __toString() {
-        $string  = 'Instance of the class "«applicationName(className)»' . "\n";
-        $string .= 'Managed table: «applicationName(name)»' . "\n";
+        $string  = 'Instance of the class "«className.formatForCode()»' . "\n";
+        $string .= 'Managed table: «name.formatForCode()»' . "\n";
         $string .= 'Table fields:' . "\n";
 «FOREACH fields AS col-»
-        $string .= '        «applicationName(col.name)»' . "\n";
+        $string .= '        «col.name.formatForCode()»' . "\n";
 «ENDFOREACH-»
         $string .= "\n";
 

@@ -2,10 +2,10 @@
 «EXTENSION extensions::Utils»
 
 «DEFINE Impl(String appName, Controller controller) FOR Entity»
-«LET dbName(controller.name) AS controllerName-»
-«LET applicationName(name) AS objName-»
+«LET controller.name.formatForDB() AS controllerName-»
+«LET name.formatForCode() AS objName-»
 «FILE "templates/" + appName + "_" + controllerName + "_" + objName + "_display.tpl"-»
-{* purpose of this template: «formattedName(nameMultiple)» display view in «controllerName» area *}
+{* purpose of this template: «nameMultiple.formatForDisplay()» display view in «controllerName» area *}
 
 {include file="«appName»_«controllerName»_header.tpl"}
 
@@ -16,26 +16,26 @@
 <div class="z-frontendcontainer">
 «ENDIF-»
 
-«LET getLeadingField().name.dbName() AS titleField-»
+«LET getLeadingField().name.formatForDB() AS titleField-»
 {pagesetvar name="title" value=$«objName».«titleField»}
 <h2>{$«objName».«titleField»|modcallhooks}</h2>
 «ENDLET-»
 
 «LET outgoing.typeSelect(OneToManyRelationship) AS refedElems-»
 «IF refedElems.size > 0-»
-<div class="«appName.dbName()»RightBox">
+<div class="«appName.formatForDB()»RightBox">
 «EXPAND DisplaySubsets(appName, controllerName, this) FOREACH refedElems.target-»
 </div>
 «ENDIF-»
 
 <dl id="«appName»_body">
 «FOREACH fields.typeSelect(DerivedField).reject(e|e.leading || e.primaryKey) AS field-»
-«LET incoming.select(e|dbName(e.source.idFieldName()) == dbName(field.name)) AS joins-»
+«LET incoming.select(e|formatForDB(e.source.idFieldName()) == formatForDB(field.name)) AS joins-»
 «IF joins.size > 0-»
-    <dt>{gt text='«formattedNameCapitalized(joins.get(0).source.name)»'}</dt>
-    <dd>«FOREACH joins AS join SEPARATOR ', '-»{$«objName».«join.source.name.dbName()»_«join.source.idField()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH-»</dd>
+    <dt>{gt text='«formatForDisplayCapitalized(joins.get(0).source.name)»'}</dt>
+    <dd>«FOREACH joins AS join SEPARATOR ', '-»{$«objName».«join.source.name.formatForDB()»_«join.source.idField()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH-»</dd>
 «ELSE-»
-    <dt>{gt text='«formattedNameCapitalized(field.name)»'}</dt>
+    <dt>{gt text='«field.name.formatForDisplayCapitalized()»'}</dt>
     <dd>«EXPAND DisplayColumnField(objName) FOR field-»</dd>
 «ENDIF-»
 «ENDLET-»
@@ -71,7 +71,7 @@
 </p>
 
 {modurl modname="«appName»" type="«controllerName»" func="display" ot="«objName»" «idField()»=$«objName».«idField()» assign="returnurl"}
-{modcallhooks hookobject="item" hookaction="display" module="«appName»" hookid="«dbName(name)»`$«objName».«idField()»`" returnurl=$returnurl}
+{modcallhooks hookobject="item" hookaction="display" module="«appName»" hookid="«name.formatForDB()»`$«objName».«idField()»`" returnurl=$returnurl}
 
 «IF controller.metaType == AdminController-»
 </div>
@@ -91,32 +91,32 @@
 «ENDDEFINE»
 
 «DEFINE DisplayColumnField(String objName) FOR EntityField-»
-{$«objName».«dbName(name)»}«""-»
+{$«objName».«name.formatForDB()»}«""-»
 «ENDDEFINE»
 
 «DEFINE DisplayColumnField(String objName) FOR DateField-»
-{$«objName».«dbName(name)»|dateformat:"datebrief"}«""-»
+{$«objName».«name.formatForDB()»|dateformat:"datebrief"}«""-»
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR TimestampField-»
-{$«objName».«dbName(name)»|dateformat:"datetimebrief"}«""-»
+{$«objName».«name.formatForDB()»|dateformat:"datetimebrief"}«""-»
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR BooleanField-»
-{$«objName».«dbName(name)»|yesno:true}«""-»
+{$«objName».«name.formatForDB()»|yesno:true}«""-»
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR DecimalField-»
-{$«objName».«dbName(name)»|formatnumber}«""-»
+{$«objName».«name.formatForDB()»|formatnumber}«""-»
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR FloatField-»
-{$«objName».«dbName(name)»|formatnumber}«""-»
+{$«objName».«name.formatForDB()»|formatnumber}«""-»
 «ENDDEFINE»
 
 «DEFINE DisplaySubsets(String appName, String controllerName, Entity objEntity) FOR Entity-»
-<h3>«nameMultiple.formattedNameCapitalized()»</h3>
+<h3>«nameMultiple.formatForDisplayCapitalized()»</h3>
 {securityutil_checkpermission component="«appName»::" instance=".*" level="ACCESS_ADMIN" assign="authAdmin"}
-{if $authAdmin || $«objEntity.name.applicationName()».cr_uid eq $uid}
+{if $authAdmin || $«objEntity.name.formatForCode()».cr_uid eq $uid}
 <p class="manageLink">
-    {gt text='Create «formattedName(name)»' assign="createTitle"}
-    <a href="{modurl modname="«appName»" type="«controllerName»" func="edit" ot="«applicationName(name)»" «objEntity.idField()»=$«objEntity.name.applicationName()».«objEntity.idField()»}" title="{$createTitle}">
+    {gt text='Create «name.formatForDisplay()»' assign="createTitle"}
+    <a href="{modurl modname="«appName»" type="«controllerName»" func="edit" ot="«name.formatForCode()»" «objEntity.idField()»=$«objEntity.name.formatForCode()».«objEntity.idField()»}" title="{$createTitle}">
         {img src="insert_table_row.gif" modname="core" set="icons/extrasmall" __alt='Create'}
         {$createTitle}
     </a>

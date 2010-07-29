@@ -8,7 +8,7 @@
 «FILE 'lib/' + appName() + '/Form/Plugin/FormFrame.php'-»«EXPAND FileHelper::phpFileHeader(this)-»
 «EXPAND FormFrameBlockClass-»
 «ENDFILE»
-«FILE pluginDir + "block." + dbName(appName()) + "FormFrame.php"-»«EXPAND FileHelper::phpFileHeader(this)-»
+«FILE pluginDir + "block." + formatForDB(appName()) + "FormFrame.php"-»«EXPAND FileHelper::phpFileHeader(this)-»
 «EXPAND FormFrameBlock-»
 «ENDFILE»
 «ENDLET-»
@@ -38,7 +38,7 @@ class «appName()»_Form_Plugin_FormFrame extends Form_Plugin
     function renderBegin($view)
     {
         $tabClass = $this->useTabs ? ' '.$this->cssClass : '';
-        return "<div class=\"«dbName(appName())»Form{$tabClass}\">\n";
+        return "<div class=\"«appName().formatForDB()»Form{$tabClass}\">\n";
     }
 
     // This is called by the framework after the content of the block is rendered
@@ -51,7 +51,7 @@ class «appName()»_Form_Plugin_FormFrame extends Form_Plugin
 
 «DEFINE FormFrameBlock FOR Application-»
 /**
- * The «dbName(appName())»FormFrame plugin adds styling <div> elements and a validation summary.
+ * The «appName().formatForDB()»FormFrame plugin adds styling <div> elements and a validation summary.
  *
  * Available parameters:
  *   - assign:   If set, the results are assigned to the corresponding variable instead of printed out.
@@ -62,7 +62,7 @@ class «appName()»_Form_Plugin_FormFrame extends Form_Plugin
  *
  * @return string The output of the plugin.
  */
-function smarty_block_«dbName(appName())»FormFrame($params, $content, $view)
+function smarty_block_«appName().formatForDB()»FormFrame($params, $content, $view)
 {
     // As with all Forms plugins, we must remember to register our plugin.
     // In this case we also register a validation summary so we don't have to

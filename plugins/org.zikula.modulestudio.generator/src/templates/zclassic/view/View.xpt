@@ -41,10 +41,10 @@
 «REM»    {formsetinitialfocus inputId=googlemapApiKey}«ENDREM»
 
     {* add validation summary and a <div> element for styling the form *}
-    {«dbName(appName())»FormFrame}
+    {«appName().formatForDB()»FormFrame}
 «FOREACH models.variables.vars AS modvar-»
         <div class="z-formrow">
-            {formlabel for="«applicationName(modvar.name)»" __text='«formattedNameCapitalized(modvar.name)»'}
+            {formlabel for="«modvar.name.formatForCode()»" __text='«modvar.name.formatForDisplayCapitalized()»'}
             «EXPAND InputField FOR modvar-»
         </div>
 «ENDFOREACH-»
@@ -55,7 +55,7 @@
             {formbutton commandName="save" __text='Update configuration'}
             {formbutton commandName="cancel" __text='Cancel'}
         </div>
-    {/«dbName(appName())»FormFrame}
+    {/«appName().formatForDB()»FormFrame}
 {/form}
 
 </div>
@@ -66,19 +66,19 @@
 «ENDDEFINE»
 
 «DEFINE InputField FOR Variable»
-{formtextinput id="«applicationName(name)»" group="config" maxLength=255 width=20em __title='Input this setting.'}
+{formtextinput id="«name.formatForCode()»" group="config" maxLength=255 width=20em __title='Input this setting.'}
 «ENDDEFINE»
 
 «DEFINE InputField FOR IntVar»
-{formintinput id="«applicationName(name)»" group="config" maxLength=255 width=20em __title='Input this setting. Only digits are allowed.'}
+{formintinput id="«name.formatForCode()»" group="config" maxLength=255 width=20em __title='Input this setting. Only digits are allowed.'}
 «ENDDEFINE»
 
 «DEFINE InputField FOR BoolVar»
-{formcheckbox id="«applicationName(name)»" group="config"}
+{formcheckbox id="«name.formatForCode()»" group="config"}
 «ENDDEFINE»
 
 «DEFINE HeaderFooter(String appName, Controller controller) FOR Application»
-«LET dbName(controller.name) AS controllerName-»
+«LET controller.name.formatForDB() AS controllerName-»
 «FILE "templates/" + appName + "_" + controllerName + "_header.tpl"-»
 {* purpose of this template: header for «controllerName» area *}
 
@@ -93,7 +93,7 @@
 «ELSE-»
 <div class="z-frontendbox">
 «ENDIF-»
-    <h1>{gt text='«appName.formattedNameCapitalized()»' comment='This is the title of the header template'}</h1>
+    <h1>{gt text='«appName.formatForDisplayCapitalized()»' comment='This is the title of the header template'}</h1>
     <div class="z-menu">
         {modulelinks modname="«appName»" type="«controllerName»"}
     </div>
@@ -109,7 +109,7 @@
 «ENDDEFINE»
 
 «DEFINE MetaDataTemplates(String appName, Controller controller) FOR Application-»
-«LET dbName(controller.name) AS controllerName-»
+«LET controller.name.formatForDB() AS controllerName-»
 «IF controller.hasActions('view') || controller.hasActions('display')-»
 «FILE "templates/" + appName + "_" + controllerName + "_include_metadata_display.tpl"-»
     <dt>{gt text='Meta data'}</dt>

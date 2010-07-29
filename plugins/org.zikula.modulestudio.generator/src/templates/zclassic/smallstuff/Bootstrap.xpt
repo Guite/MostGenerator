@@ -6,6 +6,22 @@
 «ENDDEFINE»
 
 «DEFINE Bootstrap FOR Application-»
+
+// setup Doctrine
+spl_autoload_register(array('Doctrine_Core', 'modelsAutoload'));
+// get instance of Doctrine manager
+$manager = Doctrine_Manager::getInstance();
+«IF getDefaultDataSource().loadingType == ModelLoadingType::CONSERVATIVE-»
+// initialise conservative (lazy) loading - ideal method for a production environment
+// this will lazy load all of the models instead of loading them all when model loading is executed.
+$manager->setAttribute(Doctrine_Core::ATTR_MODEL_LOADING, Doctrine_Core::MODEL_LOADING_CONSERVATIVE);
+«ELSEIF getDefaultDataSource().loadingType == ModelLoadingType::AGGRESSIVE-»
+// initialise aggressive loading - does simply include all php files
+// downside: waste of performance
+$manager->setAttribute(Doctrine_Core::ATTR_MODEL_LOADING, Doctrine_Core::MODEL_LOADING_AGGRESSIVE);
+«ENDIF-»
+
+
 // feel free to add your initialisation stuff here
 
 // Just an example, this is done by the core automatically

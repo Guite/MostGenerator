@@ -11,7 +11,7 @@ class «appName()»_Util
     {
         $allowedObjectTypes = array();
 «FOREACH models.entities AS entity-»
-        $allowedObjectTypes[] = '«applicationName(entity.name)»';
+        $allowedObjectTypes[] = '«entity.name.formatForCode()»';
 «ENDFOREACH-»
         return $allowedObjectTypes;
     }

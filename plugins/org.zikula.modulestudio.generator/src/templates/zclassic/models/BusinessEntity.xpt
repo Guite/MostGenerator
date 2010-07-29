@@ -73,12 +73,12 @@ class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntit
 
         // set the ID field for this object
 «REM»        $this->_objField      = '«dbName(dataSource().name)»id';«ENDREM»
-        $this->_objField      = '«dbName(name)»id';
+        $this->_objField      = '«name.formatForDB()»id';
 
         // set the access path under which the object's
         // input data can be retrieved upon input
 «REM»        $this->_objPath       = '«dbName(dataSource().name)»';«ENDREM»
-        $this->_objPath       = '«dbName(name)»';
+        $this->_objPath       = '«name.formatForDB()»';
 
 «EXPAND ObjectJoins-»
 
@@ -106,19 +106,19 @@ class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntit
 «ENDDEFINE»
 
 «DEFINE SelectJoinFieldObjNames(String exludedIdField) FOR Entity-»
-«EXPAND ArrayListEntry(dbName(name) + '_') FOREACH fields.typeSelect(DerivedField).reject(e|e.name == exludedIdField || e.primaryKey) SEPARATOR ', '-»
+«EXPAND ArrayListEntry(formatForDB(name) + '_') FOREACH fields.typeSelect(DerivedField).reject(e|e.name == exludedIdField || e.primaryKey) SEPARATOR ', '-»
 «ENDDEFINE»
 
 «DEFINE ArrayListEntry(String entryPrefix) FOR EntityField-»
-'«entryPrefix»«dbName(name)»'«ENDDEFINE»
+'«entryPrefix»«name.formatForDB()»'«ENDDEFINE»
 
 «DEFINE ObjectJoins FOR Entity-»
 «FOREACH incoming AS relation-»
         $this->_objJoin[]     = array ('join_table'          => '«fullEntityName(relation.source)»',
-                                       'join_field'          => array(«EXPAND SelectJoinFieldTableNames(dbName(name)+"id") FOR relation.source-»),
-                                       'object_field_name'   => array(«EXPAND SelectJoinFieldObjNames(dbName(name)+"id") FOR relation.source-»),
-                                       'compare_field_table' => '«dbName(relation.source.name)»id',
-                                       'compare_field_join'  => '«dbName(relation.source.name)»id');
+                                       'join_field'          => array(«EXPAND SelectJoinFieldTableNames(formatForDB(name) + "id") FOR relation.source-»),
+                                       'object_field_name'   => array(«EXPAND SelectJoinFieldObjNames(formatForDB(name) + "id") FOR relation.source-»),
+                                       'compare_field_table' => '«formatForDB(relation.source.name)»id',
+                                       'compare_field_join'  => '«formatForDB(relation.source.name)»id');
 «ENDFOREACH-»
 «ENDDEFINE»
 
@@ -127,7 +127,7 @@ class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntit
         $this->_objPermissionFilter[] = array('component_left'   => '«modName»',
                                               'component_middle' => '«capitalName(name)»',
                                               'component_right'  => '',
-                                              'instance_left'    => '«dbName(name)»id',
+                                              'instance_left'    => '«name.formatForDB()»id',
                                               'instance_middle'  => '',
                                               'instance_right'   => '',
                                               'level'            => ACCESS_READ);
@@ -136,8 +136,8 @@ class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntit
         $this->_objPermissionFilter[] = array('component_left'   => '«modName»',
                                               'component_middle' => '«capitalName(join.source.name)»',
                                               'component_right'  => '«capitalName(name)»',
-                                              'instance_left'    => '«dbName(join.source.name)»id',
-                                              'instance_middle'  => '«dbName(name)»id',
+                                              'instance_left'    => '«join.source.name.formatForDB()»id',
+                                              'instance_middle'  => '«name.formatForDB()»id',
                                               'instance_right'   => '',
                                               'level'            => ACCESS_READ);
 
@@ -146,13 +146,13 @@ class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntit
 
 
 «DEFINE EventListenerMethod FOR EntityEventListener-»
-«error("Error: undefined event listener (code 925724)") -> ""-»
+«error("Error: undefined event listener type (code 925724)") -> ""-»
 «ENDDEFINE»
 «DEFINE EventListenerMethod FOR PreProcess-»
-«error("Error: undefined pre process (code 925725)") -> ""-»
+«error("Error: undefined pre process type (code 925725)") -> ""-»
 «ENDDEFINE»
 «DEFINE EventListenerMethod FOR PostProcess-»
-«error("Error: undefined post process (code 925726)") -> ""-»
+«error("Error: undefined post process type (code 925726)") -> ""-»
 «ENDDEFINE»
 
 «DEFINE EventListenerMethod FOR PreSave-»
@@ -313,13 +313,13 @@ class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntit
 «REM»        $this->_objType       = '«dbName(module.prefix + '_' + dataSource().name)»';«ENDREM»
 
         // set the ID field for this object
-        $this->_objField      = '«dbName(name)»id';
+        $this->_objField      = '«name.formatForDB()»id';
 «REM»        $this->_objField      = '«dbName(dataSource().name)»id';«ENDREM»
 «REM»TODO«ENDREM»
 
         // set the access path under which the object's
         // input data can be retrieved upon input
-        $this->_objPath       = '«dbName(name)»_array';
+        $this->_objPath       = '«name.formatForDB()»_array';
 
 «EXPAND ObjectJoins-»
 
@@ -366,11 +366,11 @@ class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntit
 «ENDDEFINE»
 
 «DEFINE singleSortingField FOR EntityField»
-«LET entity.incoming.select(e|dbName(e.source.idFieldName()) == dbName(name)) AS joins-»
+«LET entity.incoming.select(e|formatForDB(e.source.idFieldName()) == formatForDB(name)) AS joins-»
 «IF joins.size > 0-»
-                     '«joins.get(0).source.name.dbName()»_«joins.get(0).source.idField()»'«""-»
+                     '«joins.get(0).source.name.formatForDB()»_«joins.get(0).source.idField()»'«""-»
 «ELSE-»
-                     '«name.dbName()»'«""-»
+                     '«name.formatForDB()»'«""-»
 «ENDIF-»
 «ENDLET-»«ENDDEFINE»
 
@@ -379,20 +379,20 @@ class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntit
 «ENDDEFINE»
 
 «DEFINE sanitizeForOutput FOR EntityField-»
-        $data['«dbName(name)»'] = ((isset($data['«dbName(name)»']) && !empty($data['«dbName(name)»'])) ? DataUtil::formatForDisplay($data['«dbName(name)»']) : '');
+        $data['«name.formatForDB()»'] = ((isset($data['«name.formatForDB()»']) && !empty($data['«name.formatForDB()»'])) ? DataUtil::formatForDisplay($data['«name.formatForDB()»']) : '');
 «ENDDEFINE»
 
 «DEFINE sanitizeForOutput FOR StringField-»
-        $data['«dbName(name)»'] = ((isset($data['«dbName(name)»']) && !empty($data['«dbName(name)»'])) ? DataUtil::formatForDisplayHTML($data['«dbName(name)»']) : '');
+        $data['«name.formatForDB()»'] = ((isset($data['«name.formatForDB()»']) && !empty($data['«name.formatForDB()»'])) ? DataUtil::formatForDisplayHTML($data['«name.formatForDB()»']) : '');
 «ENDDEFINE»
 
 «DEFINE sanitizeForOutput FOR BooleanField-»
-        $data['«dbName(name)»'] = (bool) $data['«dbName(name)»'];
+        $data['«name.formatForDB()»'] = (bool) $data['«name.formatForDB()»'];
 «ENDDEFINE»
 
 «DEFINE sanitizeForOutput FOR BlobField-»
 «ENDDEFINE»
 
 «DEFINE sanitizeForOutput FOR ClobField-»
-        $data['«dbName(name)»'] = ((isset($data['«dbName(name)»']) && !empty($data['«dbName(name)»'])) ? DataUtil::formatForDisplayHTML($data['«dbName(name)»']) : '');
+        $data['«name.formatForDB()»'] = ((isset($data['«name.formatForDB()»']) && !empty($data['«name.formatForDB()»'])) ? DataUtil::formatForDisplayHTML($data['«name.formatForDB()»']) : '');
 «ENDDEFINE»

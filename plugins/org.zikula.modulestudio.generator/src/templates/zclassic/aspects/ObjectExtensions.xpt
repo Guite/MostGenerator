@@ -6,7 +6,7 @@
 
 «IF this.usesStandardFields == true-»
     // add standard fields to the table definition and data dictionary
-    ObjectUtil::addStandardFieldsToTableDefinition($columns, '«dbName(this.prefix)»_');
+    ObjectUtil::addStandardFieldsToTableDefinition($columns, '«this.prefix.formatForDB()»_');
     ObjectUtil::addStandardFieldsToTableDataDefinition($columnDef);
 «ENDIF-»
 

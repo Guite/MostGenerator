@@ -22,7 +22,7 @@ public class TrafoUtils {
     public static boolean addPrimaryKey(Entity entity) {
         try {
             entity.getFields().add(0, createIDColumn(entity.getName(), true));
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return false;
         } finally {
             // nothing to do here (yet)
@@ -38,12 +38,12 @@ public class TrafoUtils {
      */
     public static boolean addRelationFields(Entity entity) {
         try {
-            for (Object element : entity.getIncoming()) {
-                Relationship rel = (Relationship) element;
+            for (final Object element : entity.getIncoming()) {
+                final Relationship rel = (Relationship) element;
                 entity.getFields().add(
                         createIDColumn(rel.getSource().getName(), false));
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             return false;
         } finally {
             // nothing to do here (yet)
@@ -52,9 +52,9 @@ public class TrafoUtils {
     }
 
     private static IntegerField createIDColumn(String colName, Boolean isPrimary) {
-        ModulestudioFactory factory = new ModulestudioFactoryImpl();
-        IntegerField idField = factory.createIntegerField();
-        idField.setName(Utils.dbName(colName + "id"));
+        final ModulestudioFactory factory = new ModulestudioFactoryImpl();
+        final IntegerField idField = factory.createIntegerField();
+        idField.setName(Utils.formatForDB(colName + "id"));
         idField.setPrimaryKey(isPrimary);
         idField.setLength(11);
         return idField;

@@ -81,11 +81,11 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
         // set up all our vars with initial values
 «FOREACH models.variables.vars AS modvar-»
 «IF interactiveInstallation == true-»
-        $sessionValue = SessionUtil::getVar('«applicationName(name + '_' + modvar.name)»');
-        ModUtil::setVar(«appName()», «applicationName(modvar.name)», (($sessionValue <> false) ? «EXPAND ModVarValFromSession FOR modvar» : «EXPAND ModVarValSession2Mod FOR modvar»));
-        SessionUtil::delVar(«applicationName(name + '_' + modvar.name)»);
+        $sessionValue = SessionUtil::getVar('«formatForCode(name + '_' + modvar.name)»');
+        ModUtil::setVar(«appName()», «modvar.name.formatForCode()», (($sessionValue <> false) ? «EXPAND ModVarValFromSession FOR modvar» : «EXPAND ModVarValSession2Mod FOR modvar»));
+        SessionUtil::delVar(«formatForCode(name + '_' + modvar.name)»);
 «ELSE-»
-        $this->setVar('«appName()»', '«applicationName(modvar.name)»', «EXPAND ModVarValDirect2Mod FOR modvar»);
+        $this->setVar('«appName()»', '«modvar.name.formatForCode()»', «EXPAND ModVarValDirect2Mod FOR modvar»);
 «ENDIF-»
 «ENDFOREACH-»
 «ENDIF-»
@@ -104,11 +104,11 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
 
 «DEFINE ModVarValSession2Mod FOR Variable»'«value»'«ENDDEFINE»
 «DEFINE ModVarValSession2Mod FOR ListVar»serialize(array(«EXPAND ModVarValSession2Mod FOREACH items.select(item|item.isDefault == true) SEPARATOR ', '»))«ENDDEFINE»
-«DEFINE ModVarValSession2Mod FOR ListVarItem»«IF isDefault == true»'«applicationName(name)»'«ENDIF»«ENDDEFINE»
+«DEFINE ModVarValSession2Mod FOR ListVarItem»«IF isDefault == true»'«name.formatForCode()»'«ENDIF»«ENDDEFINE»
 
 «DEFINE ModVarValDirect2Mod FOR Variable»'«value»'«ENDDEFINE»
 «DEFINE ModVarValDirect2Mod FOR ListVar»serialize(array(«EXPAND ModVarValDirect2Mod FOREACH items.select(item|item.isDefault == true) SEPARATOR ', '»))«ENDDEFINE»
-«DEFINE ModVarValDirect2Mod FOR ListVarItem»'«applicationName(name)»'«ENDDEFINE»
+«DEFINE ModVarValDirect2Mod FOR ListVarItem»'«name.formatForCode()»'«ENDDEFINE»
 
 
 «DEFINE FuncUpdate FOR Application»
@@ -133,6 +133,7 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
                 // to create any new tables
         }
     */
+«REM»http://www.doctrine-project.org/projects/orm/1.2/docs/manual/migrations/en«ENDREM»
 
         // Update successful
         return true;
@@ -203,12 +204,12 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
 «ENDDEFINE»
 
 «DEFINE createExampleRows(Application app) FOR Entity»
-«LET applicationName(name) AS entityName-»
-        // define default data for entity «entityName»
+«LET name.formatForCode() AS entityName-»
+        // define default data for entity «name.formatForDisplay()»
 «FOREACH 1.upTo(container.numExampleRows) AS number SEPARATOR ','-»
         $«entityName» = new «implClassModelRecord(false)»();
-«FOREACH fields AS fld-»
-        $«entityName»->«applicationName(name)» = $this->__('«entityName» «name» «number»');
+«FOREACH fields.typeSelect(DerivedField) AS fld-»
+        $«entityName»->«fld.actualFieldName().formatForCode()» = $this->__('«name.formatForDisplayCapitalized()» «fld.actualFieldName().formatForDisplay()» «number»');
 «ENDFOREACH-»
         // could also use $«entityName»->merge($arrayObj); where $arrayObj is index array of field => value.
         $«entityName»->save();
@@ -257,8 +258,8 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
         }
 
     «FOREACH models.variables.vars AS modvar-»
-        $formValue = FormUtil::getPassedValue('«applicationName(modvar.name)»', «EXPAND ModVarValForm2SessionDefault FOR modvar», 'POST');
-        SessionUtil::setVar('«applicationName(name + '_' + modvar.name)»', $formValue);
+        $formValue = FormUtil::getPassedValue('«modvar.name.formatForCode()»', «EXPAND ModVarValForm2SessionDefault FOR modvar», 'POST');
+        SessionUtil::setVar('«formatForCode(name + '_' + modvar.name)»', $formValue);
 
 «ENDFOREACH-»
 
@@ -269,9 +270,9 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
     }
 «ENDDEFINE»
 
-«DEFINE ModVarValForm2SessionDefault FOR Variable»'«applicationName(value)»'«ENDDEFINE»
+«DEFINE ModVarValForm2SessionDefault FOR Variable»'«value.formatForCode()»'«ENDDEFINE»
 «DEFINE ModVarValForm2SessionDefault FOR ListVar»serialize(array(«EXPAND ModVarValForm2SessionDefault FOREACH items.select(item|item.isDefault == true) SEPARATOR ', '»))«ENDDEFINE»
-«DEFINE ModVarValForm2SessionDefault FOR ListVarItem»'«applicationName(name)»'«ENDDEFINE»
+«DEFINE ModVarValForm2SessionDefault FOR ListVarItem»'«name.formatForCode()»'«ENDDEFINE»
 
 «DEFINE FuncInteractiveInitStep3 FOR Application»
     /**

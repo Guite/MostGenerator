@@ -32,7 +32,7 @@ cached String fillingApi() : "Api_";
 cached String fillingFormHandler() : "Form_Handler_";
 
 cached String prepClassPart(String str)
-    : applicationName(str).toFirstUpper();
+    : formatForCode(str).toFirstUpper();
 cached String processCollectionSuffix(String str, Boolean isCollection)
     : str.msconcat(((isCollection == true) ? "Collection" : ""));
 
@@ -78,7 +78,7 @@ cached String templateSuffix()
     : ".tpl";
 
 cached String templateFile(Application app, Controller obj, String entityName, String actionName)
-    : "templates/".msconcat(app.appName()).msconcat('_').prepTemplatePart(obj.name).msconcat('_').msconcat(applicationName(entityName)).msconcat('_').prepTemplatePart(actionName).msconcat(templateSuffix());
+    : "templates/".msconcat(app.appName()).msconcat('_').prepTemplatePart(obj.name).msconcat('_').msconcat(formatForCode(entityName)).msconcat('_').prepTemplatePart(actionName).msconcat(templateSuffix());
 
 cached String editTemplateFile(Controller obj, String entityName, String actionName)
     : templateFile(obj.container.application, obj, entityName, actionName);

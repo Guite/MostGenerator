@@ -13,14 +13,14 @@ div.linktabs {
     margin-bottom: 10px;
 }
 
-div.«dbName(appName())»RightBox {
+div.«appName().formatForDB()»RightBox {
     float: right;
     margin: 0 1em;
     padding: .5em;
     border: 1px solid #666;
 }
 
-div.«dbName(appName())»RightBox p.manageLink {
+div.«appName().formatForDB()»RightBox p.manageLink {
     margin-left: 18px;
 }
 
