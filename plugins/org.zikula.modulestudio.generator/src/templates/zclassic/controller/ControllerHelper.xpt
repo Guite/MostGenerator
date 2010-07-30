@@ -1,39 +1,23 @@
 «EXTENSION extensions::Utils»
 
 
-«DEFINE loadObjectClass(String appName, Boolean appendArray) FOR Object-»
-        // load the object «IF appendArray»array «ENDIF»class corresponding to $objectType
-        $class = '«appName»_DBObject_' . ucfirst($objectType)«IF appendArray» . 'Array'«ENDIF»;
+«DEFINE loadBusinessObjectClass(String appName, Boolean isCollection) FOR Object-»
+        // load the «IF isCollection»collection«ELSE»entity«ENDIF» class corresponding to $objectType
+        $class = '«appName»_BusinessEntity_' . ucfirst($objectType)«IF isCollection» . 'Collection'«ENDIF»;
 «ENDDEFINE»
 
-«DEFINE instantiateObject(String initType, String idValue) FOR Object-»
-        // instantiate object model«IF initType != ""» and get the object of the specified ID from «EXPAND ObjectDataSource(initType)»«ENDIF»
-        $object = new $class(«IF initType != ""»«initType», $«idValue»«ENDIF»);
+«DEFINE instantiateObject(String idValue) FOR Object-»
+        $object = new $class($«idValue»);
 «ENDDEFINE»
 
 
-«DEFINE getObjectFromSource(String initType, String idVar, String idValue) FOR Object-»
-        // assign object data«IF initType != ""» fetched from «EXPAND ObjectDataSource(initType)-» during object instantiation«ENDIF»
-«IF initType == ""-»
-        // this performs a new database select operation
-«ENDIF-»
+«DEFINE retrieveEntityFromModel(String idVar, String idValue) FOR Object-»
+        // assign object data fetched from the database
         // while the result will be saved within the object, we assign it to a local variable for convenience
-        $objectData = $object->get(«IF initType == ""»$«idVar», $«idValue»«ENDIF»);
-«IF initType == ""-»
+        $objectData = $object->selectById($«idValue»);
         if (!is_array($objectData) || !isset($objectData[$«idValue»]) || !is_numeric($objectData[$«idValue»])) {
             $this->throwNotFound($this->__('No such item.'));
         }
-«ENDIF-»
-«ENDDEFINE»
-
-«DEFINE ObjectDataSource(String s) FOR Object-»
-«IF s == "DBObject::GET_FROM_DB" || s == "DBObjectArray::GET_FROM_DB"-»the database«""-»
-«ELSEIF s == "DBObject::GET_FROM_GET" || s == "DBObjectArray::GET_FROM_GET"-»$_GET«""-»
-«ELSEIF s == "DBObject::GET_FROM_POST" || s == "DBObjectArray::GET_FROM_POST"-»$_POST«""-»
-«ELSEIF s == "DBObject::GET_FROM_REQUEST" || s == "DBObjectArray::GET_FROM_REQUEST"-»$_REQUEST«""-»
-«ELSEIF s == "DBObject::GET_FROM_SESSION" || s == "DBObjectArray::GET_FROM_SESSION"-»$_SESSION«""-»
-«ELSEIF s == "DBObject::GET_FROM_VALIDATION_FAILED" || s == "DBObjectArray::GET_FROM_VALIDATION_FAILED"-»failed validation«""-»
-«ENDIF-»
 «ENDDEFINE»
 
 

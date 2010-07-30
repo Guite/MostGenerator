@@ -12,7 +12,7 @@
 
 «REM»creates a business entity and a collection class file for every Entity instance«ENDREM»
 «DEFINE BusinessEntityWrapper(Application app, Boolean isCollection) FOR Entity-»
-«info("Generating business classes for entity \"" + name + "\"") -> ""-»
+«info("Generating business " + ((isCollection) ? 'collection' : 'entity') +  " classes for entity \"" + name + "\"") -> ""-»
 «IF !isInheriting()-»
     «FILE baseClassBusinessEntity(isCollection).asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessEntityBaseImplSwitch(app, isCollection)»«ENDFILE»
 «ENDIF-»
@@ -32,7 +32,7 @@ abstract class «baseClassBusinessEntity(isCollection)»«IF isCollection»/* ex
 «IF isCollection == false-»
 «EXPAND business::Entity::BusinessEntityBaseImpl(app)-»
 «ELSE-»
-«EXPAND business::Collection::BusinessEntityCollectionBaseImpl(app)-»
+«EXPAND business::EntityCollection::BusinessEntityCollectionBaseImpl(app)-»
 «ENDIF-»
 }
 «ENDDEFINE»

@@ -1,8 +1,10 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Impl(String appName, Controller controller) FOR Entity»
 «LET controller.name.formatForDB() AS controllerName-»
+«info("Generating " + controllerName + " main templates for entity \"" + name + "\"") -> ""-»
 «FILE "templates/" + controllerName + "/main.tpl"-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» main view in «controllerName» area *}
 

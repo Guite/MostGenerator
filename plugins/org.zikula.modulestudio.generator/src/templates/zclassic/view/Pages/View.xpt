@@ -1,5 +1,6 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «REM»
 listType:
@@ -10,6 +11,7 @@ listType:
 «ENDREM»
 «DEFINE Impl(String appName, Controller controller, Integer listType) FOR Entity»
 «LET controller.name.formatForDB() AS controllerName-»
+«info("Generating " + controllerName + " view templates for entity \"" + name + "\"") -> ""-»
 «LET name.formatForCode() AS objName-»
 «FILE "templates/" + controllerName + "/" + objName + "_view.tpl"-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» view view in «controllerName» area *}
@@ -84,7 +86,7 @@ listType:
     <tbody>
 «ENDIF-»
 
-    {foreach from=$objectArray item="«objName»"}
+    {foreach item="«objName»" from=$items}
 «IF listType < 2-»
     <li><ul>
 «ELSEIF listType == 2-»

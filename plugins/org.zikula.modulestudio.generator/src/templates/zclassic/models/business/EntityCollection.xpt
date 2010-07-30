@@ -59,7 +59,75 @@
      */
     public function select()
     {
-        $table = Doctrine_Core::getTable(«implClassModelRecord()»);
+        $query = _intBaseQuery();
+        return _intTable()->execute($query);
+    }
+
+    /**
+     * Select with a given where clause.
+     *
+     * @param string $where             The where clause to use when retrieving the object array (optional) (default='').
+     * @param string $orderBy           The order-by clause to use when retrieving the object array (optional) (default='').
+     * @return Doctrine_Collection collection containing retrieved Doctrine_Record instances
+     */
+    public function selectWhere($where = '', $orderBy = '')
+    {
+        $this->_intWhere = $where;
+        $this->_intOrderBy = $orderBy;
+        return $this->select();
+    }
+
+    /**
+     * Select with a given where clause.
+     *
+     * @param string $where             The where clause to use when retrieving the object array (optional) (default='').
+     * @param string $orderBy           The order-by clause to use when retrieving the object array (optional) (default='').
+     * @param integer $currentPage      Where to start selection
+     * @param integer $resultsPerPage   Amount of items to select
+     * @return Doctrine_Collection collection containing retrieved Doctrine_Record instances
+     */
+    public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25)
+    {
+«REM»TODO: see http://www.doctrine-project.org/projects/orm/1.2/docs/manual/utilities/en
+        //$pager->setCountQuery($query);
+«ENDREM»«""-»
+        $this->_intWhere = $where;
+        $this->_intOrderBy = $orderBy;
+		$pager = new Doctrine_Pager(
+		      _intBaseQuery(),
+		      $currentPage,
+		      $resultsPerPage
+		);
+
+        return $pager->execute();
+    }
+
+    /**
+     * Select count with a given where clause.
+     *
+     * @param string $where             The where clause to use when retrieving the object count (optional) (default='').
+     * @return integer amount of affected records
+     */
+    public function selectCount($where = '')
+    {
+        $this->_intWhere = $where;
+        $query = Doctrine_Query::create()
+            ->select('COUNT(e.«idField()»)')
+            ->from('«implClassModelRecord()» e');
+        if (!empty($this->_intWhere)) {
+            $query->where($this->_intWhere);
+        }
+
+        return _intTable()->execute($query);
+    }
+
+    /**
+     * Build a generic Doctrine query supporting WHERE and ORDER BY
+     *
+     * @return Doctrine_Query query instance to be further processed
+     */
+    private function _intBaseQuery()
+    {
         $query = Doctrine_Query::create()
             ->select('e.*')
             ->from('«implClassModelRecord()» e');
@@ -69,21 +137,17 @@
         if (!empty($this->_intOrderBy)) {
             $query->orderBy($this->_intOrderBy);
         }
-
-        return $table->execute($query);
+        return $query;
     }
 
     /**
-     * Select with a given where clause.
+     * Convenience method to get table managed by record
      *
-     * @param string $where             The where clause to use when retrieving the object array (optional) (default='').
-     * @return Doctrine_Collection collection containing retrieved Doctrine_Record instances
+     * @return Doctrine_Table table being managed by the record referenced by this collection
      */
-    public function selectWhere($where = '', $orderBy = '')
+    private function _intTable()
     {
-        $this->_intWhere = $where;
-        $this->_intOrderBy = $orderBy;
-        return $this->select();
+        return Doctrine_Core::getTable(«implClassModelRecord()»);
     }
 
     /**

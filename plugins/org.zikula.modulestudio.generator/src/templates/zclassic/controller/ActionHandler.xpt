@@ -38,10 +38,10 @@ class «appName()»_Form_Handler_Admin_Config extends Form_Handler
 
             // update all module vars
             if (!ModUtil::setVars('«appName()»', $data['config'])) {
-                return $view->setErrorMsg(__('Error! Failed to set configuration variables.', $dom));
+                return $view->setErrorMsg($this->__('Error! Failed to set configuration variables.')));
             }
 
-            LogUtil::registerStatus(__('Done! Module configuration updated.', $dom));
+            LogUtil::registerStatus($this->__('Done! Module configuration updated.'));
             ModUtil::callHooks('module', 'updateconfig', '«appName()»', array('module' => '«appName()»'));
         }
         else if ($args['commandName'] == 'cancel') {
@@ -114,12 +114,21 @@ class «appName()»_Form_Handler_Admin_Config extends Form_Handler
  */
 class «implClassFormHandler(controller, name, actionName)» extends Form_Handler
 {
-    // store «name.formatForCode()» ID in (persistent) member variable
-    var $«idField()»;
+    /**
+     * Persistent member vars
+     */
+
+    // id of «name.formatForDisplay()»
+    private $«idField()»;
+
     // create or edit
-    var $mode;
-    // gettext domain
-    var $dom;
+    private $mode;
+
+    // treated object type
+    private $objectType;
+
+    // url to redirect to
+    private $returnUrl = null;
 
     /**
      * Initialize form handler.
@@ -130,8 +139,6 @@ class «implClassFormHandler(controller, name, actionName)» extends Form_Handle
      */
     function initialize($view)
     {
-        $this->dom = ZLanguage::getModuleDomain('«appName»');
-        $dom = $this->dom;
 «EXPAND initialize(app, controller, actionName, appName, controllerName)-»
     }
 
@@ -149,7 +156,6 @@ class «implClassFormHandler(controller, name, actionName)» extends Form_Handle
      */
     function handleCommand($view, &$args)
     {
-        $dom = $this->dom;
 «EXPAND handleCommand(app, controller, actionName, appName, controllerName)-»
     }
 }
@@ -181,12 +187,12 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         // no provided id means that we want to create a new object
         $this->«idField()» = (int) FormUtil::getPassedValue('«idField()»', 0, 'GET');
 
-        $objectType = '«name.formatForCode()»';
-«EXPAND ControllerHelper::loadObjectClass(appName, false)-»
+        $this->objectType = '«name.formatForCode()»';
+«EXPAND ControllerHelper::loadBusinessObjectClass(appName, false)-»
 
         $this->mode = 'create';
         // if «idField()» is not 0, we wish to edit an existing «name.formatForDisplay()»
-        if($this->«idField()») {
+        if ($this->«idField()») {
             $this->mode = 'edit';
 
             if (!SecurityUtil::checkPermission('«appName»:«name.formatForCodeCapital()»:', '::', ACCESS_EDIT)) {
@@ -194,15 +200,12 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 return $view->registerError(LogUtil::registerPermissionError());
             }
 
-«EXPAND ControllerHelper::instantiateObject("DBObject::GET_FROM_DB", "this->" + idField())-»
+«EXPAND ControllerHelper::instantiateObject("this->" + idField())-»
 
-«EXPAND ControllerHelper::getObjectFromSource("D", idField(), "this->" + idField())-»
-            if (!is_array($objectData) || !isset($objectData['«idField()»']) || !is_numeric($objectData['«idField()»'])) {
-                return $view->setErrorMsg(__('No such «name.formatForDisplay()» found.', $dom));
-            }
+«EXPAND ControllerHelper::retrieveEntityFromModel(idField(), "this->" + idField())-»
 
             // try to guarantee that only one person at a time can be editing this «name.formatForDisplay()»
-            $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display', array('ot' => $objectType, '«idField()»' => $this->«idField()»));
+            $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display', array('ot' => $this->objectType, '«idField()»' => $this->«idField()»));
             ModUtil::apiFunc('PageLock', 'user', 'pageLock',
                                  array('lockName' => "«appName»«name.formatForCodeCapital()»{$this->«idField()»}",
                                        'returnUrl' => $returnUrl));
@@ -212,11 +215,14 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 return $view->registerError(LogUtil::registerPermissionError());
             }
 
+«IF fields.typeSelect(TimestampField).size > 0-»
+            $thisTimestamp = date('Y-m-d H:i:s');
+«ENDIF-»
 «IF fields.typeSelect(DateField).size > 0-»
             $todayDate = date('Y-m-d');
 «ENDIF-»
-«IF fields.typeSelect(TimestampField).size > 0-»
-            $thisTime = date('Y-m-d H:i:s');
+«IF fields.typeSelect(TimeField).size > 0-»
+            $thisTime = date('H:i:s');
 «ENDIF-»
 
             $objectData = Array(«EXPAND FieldAssignment FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) SEPARATOR ','»);
@@ -249,14 +255,11 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «error("Error: undefined calculated field type (code 925628)") -> ""-»
 «ENDDEFINE»
 
-«DEFINE FieldDefaultData FOR StringField»'«defaultValue»'«ENDDEFINE»
-«DEFINE FieldDefaultData FOR ClobField»'«defaultValue»'«ENDDEFINE»
-«DEFINE FieldDefaultData FOR BlobField»'«REM»nothing for now«ENDREM»'«ENDDEFINE»
-
-«DEFINE FieldDefaultData FOR DateField»«IF mandatory == true»«IF defaultValue.length > 0»«defaultValue»«ELSE»$todayDate«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
-«DEFINE FieldDefaultData FOR TimestampField»«IF mandatory == true»«IF defaultValue.length > 0»«defaultValue»«ELSE»$thisTime«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE FieldDefaultDataText FOR DerivedField-»'«defaultValue»'«ENDDEFINE»
 «DEFINE FieldDefaultData FOR BooleanField»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF»«ENDDEFINE»
-
+«DEFINE FieldDefaultData FOR AbstractIntegerField-»
+«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
+«ENDDEFINE»
 «DEFINE FieldDefaultData FOR IntegerField-»
 «LET entity.incoming.select(e|e.source.idField() == name) AS joins-»
 «IF joins.size > 0-»
@@ -264,14 +267,25 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ELSE-»
 «IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
 «ENDIF-»«ENDLET-»«ENDDEFINE»
-
 «DEFINE FieldDefaultData FOR FloatField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF»«ENDDEFINE»
-«DEFINE FieldDefaultData FOR DecimalField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR DecimalField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0.00«ENDIF»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR StringField-»«EXPAND FieldDefaultDataText-»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR TextField-»«EXPAND FieldDefaultDataText-»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR EmailField-»«EXPAND FieldDefaultDataText-»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR UrlField-»«EXPAND FieldDefaultDataText-»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR UploadField-»«EXPAND FieldDefaultDataText-»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR ArrayField»array()«ENDDEFINE»
+«DEFINE FieldDefaultData FOR EnumField»array()«ENDDEFINE»
+«DEFINE FieldDefaultData FOR ObjectField»null«ENDDEFINE»
+«DEFINE FieldDefaultData FOR BlobField»'«REM»nothing for now«ENDREM»'«ENDDEFINE»
+«DEFINE FieldDefaultData FOR ClobField»«EXPAND FieldDefaultDataText-»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR TimestampField»«IF mandatory == true»«IF defaultValue.length > 0»«defaultValue»«ELSE»$thisTimestamp«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR DateField»«IF mandatory == true»«IF defaultValue.length > 0»«defaultValue»«ELSE»$todayDate«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR TimeField»«IF mandatory == true»«IF defaultValue.length > 0»«defaultValue»«ELSE»$thisTime«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR GzipField-»«EXPAND FieldDefaultDataText-»«ENDDEFINE»
 
 
 «DEFINE handleCommand(Application app, Controller controller, String actionName, String appName, String controllerName) FOR Entity-»
-        // return url for redirecting
-        $returnUrl = null;
 
         if ($args['commandName'] != 'delete' && $args['commandName'] != 'cancel') {
             // do forms validation including checking all validators on the page to validate their input
@@ -280,55 +294,57 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             }
         }
 
-        $objectType = '«name.formatForCode()»';
-«EXPAND ControllerHelper::loadObjectClass(appName, false)-»
+        $this->objectType = '«name.formatForCode()»';
+«EXPAND ControllerHelper::loadBusinessObjectClass(appName, false)-»
 
-        // instantiate the class we just loaded
-        // it will be appropriately initialized but contain no data.
-        $«name.formatForCode()» = new $class();
+        $«name.formatForCode()» = null;
+        if ($args['commandName'] == 'create') {
+            // instantiate the class we just loaded
+            $«name.formatForCode()» = new $class();
+        }
+        else {
+«EXPAND ControllerHelper::instantiateObject("this->" + idField())-»
+
+«EXPAND ControllerHelper::retrieveEntityFromModel(idField(), "this->" + idField())-»
+            $«name.formatForCode()» = $object;
+        }
 
         if ($args['commandName'] == 'create') {
             // event handling if user clicks on create
 
-            «EXPAND FetchInputDataStart(name.formatForCode())-»
-            «EXPAND FetchInputDataEnd(name.formatForCode())-»
+            «EXPAND FetchInputData(name.formatForCode())-»
 
-            // save «name.formatForCode()»
+            // save «name.formatForDisplay()»
             $«name.formatForCode()»->save();
 
             $this->«idField()» = $«name.formatForCode()»->getID();
             if ($this->«idField()» === false) {
-                return LogUtil::registerError(__('Error! Creation attempt failed.', $dom));
+                return LogUtil::registerError($this->__('Error! Creation attempt failed.'));
             }
 
-            LogUtil::registerStatus(__('Done! «name.formatForDisplayCapitalized()» created.', $dom));
+            LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapitalized()» created.'));
 
             // redirect to the detail page of the newly created «name.formatForCode()»
-            $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
-                                                             array('ot' => $objectType,
+            $this->returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
+                                                             array('ot' => $this->objectType,
                                                                    '«idField()»' => $this->«idField()»));
         } else if ($args['commandName'] == 'update') {
             // event handling if user clicks on update
 
-            «EXPAND FetchInputDataStart(name.formatForCode())-»
+            «EXPAND FetchInputData(name.formatForCode())-»
 
-            // add persisted primary key to fetched values
-            $«name.formatForCode()»Data['«idField()»'] = $this->«idField()»;
-
-            «EXPAND FetchInputDataEnd(name.formatForCode())-»
-
-            // save «name.formatForCode()»
+            // save «name.formatForDisplay()»
             $updateResult = $«name.formatForCode()»->save();
 
             if ($updateResult === false) {
-                return LogUtil::registerError(__('Error! Update attempt failed.', $dom));
+                return LogUtil::registerError($this->__('Error! Update attempt failed.'));
             }
 
-            LogUtil::registerStatus(__('Done! «name.formatForDisplayCapitalized()» updated.', $dom));
+            LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapitalized()» updated.'));
 
             // redirect to the detail page of the treated «name.formatForCode()»
-            $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
-                                                             array('ot' => $objectType,
+            $this->returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
+                                                             array('ot' => $this->objectType,
                                                                    '«idField()»' => $this->«idField()»));
         } else if ($args['commandName'] == 'delete') {
             // event handling if user clicks on delete
@@ -339,46 +355,41 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 return $view->registerError(LogUtil::registerPermissionError());
             }
 
-            «EXPAND FetchInputDataStart(name.formatForCode())-»
+            «EXPAND FetchInputData(name.formatForCode())-»
 
-            // add persisted primary key to fetched values
-            $«name.formatForCode()»Data['«idField()»'] = $this->«idField()»;
-
-            «EXPAND FetchInputDataEnd(name.formatForCode())-»
-
-            // delete «name.formatForCode()»
+            // delete «name.formatForDisplay()»
             if ($«name.formatForCode()»->delete() === false) {
-                return LogUtil::registerError(__('Error! Deletion attempt failed.', $dom));
+                return LogUtil::registerError($this->__('Error! Deletion attempt failed.'));
             }
 
-            LogUtil::registerStatus(__('Done! «name.formatForDisplayCapitalized()» deleted.', $dom));
+            LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapitalized()» deleted.'));
 
             // redirect to the list of «nameMultiple.formatForCode()»
-            $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'view',
-                                                                 array('ot' => $objectType));
+            $this->returnUrl = ModUtil::url('«appName»', '«controllerName»', 'view',
+                                                                 array('ot' => $this->objectType));
         } else if ($args['commandName'] == 'cancel') {
             // event handling if user clicks on cancel
 
             if ($this->mode == 'edit') {
                 // redirect to the detail page of the treated «name.formatForCode()»
-                $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
-                                                                 array('ot' => $objectType,
+                $this->returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
+                                                                 array('ot' => $this->objectType,
                                                                        '«idField()»' => $this->«idField()»));
             } else {
                 // redirect to the list of «nameMultiple.formatForCode()»
-                $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'view',
-                                                                     array('ot' => $objectType));
+                $this->returnUrl = ModUtil::url('«appName»', '«controllerName»', 'view',
+                                                                     array('ot' => $this->objectType));
             }
         }
 
 
-        if ($returnUrl != null) {
+        if ($this->returnUrl != null) {
             if ($this->mode == 'edit') {
                 ModUtil::apiFunc('PageLock', 'user', 'releaseLock',
                                  array('lockName' => "«appName»«name.formatForCodeCapital()»{$this->«idField()»}"));
             }
 
-            return $view->redirect($returnUrl);
+            return $view->redirect($this->returnUrl);
         }
 
         // We should in principle not end here at all, since the above command handlers should
@@ -388,25 +399,20 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDDEFINE»
 
 
-«DEFINE FetchInputDataStart(String obj) FOR Entity-»
+«DEFINE FetchInputData(String obj) FOR Entity-»
             // fetch posted data input values as an associative array
-            $«obj»Data = $view->getValues();
-«ENDDEFINE»
-«DEFINE FetchInputDataEnd(String obj) FOR Entity-»
+            $formData = $view->getValues();
 «REM»«FOREACH columns AS field-»
 «LET entity.relations.select(e|e.target.name == name && e.source.idField() == field.name) AS joins-»
 «IF joins.size > 0-»
 «FOREACH joins AS join-»
-            $«obj»Data['«join.source.name.dbName()»id'] = (int) FormUtil::getPassedValue('«join.source.name.dbName()»id', 0, 'POST');
+            $formData['«join.source.idField()»'] = (int) FormUtil::getPassedValue('«join.source.idField()»', 0, 'POST');
 «ENDFOREACH-»
 «ENDIF-»
 «ENDLET-»
 «ENDFOREACH-»«ENDREM»
-
-            // usually one would use $«obj»->getDataFromInput() to get the data, this is the way DBObject works
-            // but since we want also use Form we simply assign the fetched data and call the post process functionality here
-            $«obj»->setData($«obj»Data);
-            $«obj»->getDataFromInputPostProcess();
+            // assign fetched data
+            $«obj»->merge($formData);
 «ENDDEFINE»
 
 

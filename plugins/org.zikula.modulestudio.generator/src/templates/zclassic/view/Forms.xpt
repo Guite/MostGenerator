@@ -1,6 +1,7 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Root FOR Application-»
     «EXPAND Root(this) FOREACH controllers.controllers.actions.typeSelect(EditAction)-»
@@ -14,6 +15,7 @@
 
 «REM»Entry point for Form templates«ENDREM»
 «DEFINE Root(String appName, Controller controller, String actionName) FOR Entity-»
+«info("Generating edit form templates for entity \"" + name + "\"") -> ""-»
 «LET controller.name.formatForDB() AS controllerName-»
 «FILE editTemplateFile(controller, name, actionName)-»
 «EXPAND FormTemplate(appName, controller, actionName)-»

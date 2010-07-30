@@ -72,8 +72,8 @@
 
 «DEFINE ActionImplBody(String appName) FOR MainAction-»
 «IF controller.metaType == UserController-»
-        // call view method
-        return $this->view();
+        // return main template
+        return $this->view->fetch('«controller.name.formatForDB()»/main.tpl');
 «ELSEIF controller.metaType == AdminController-»
 «REM»
 «IF controller.container.application.needsConfig()-»
@@ -81,8 +81,8 @@
         return $this->config();
 «ELSE-»
 «ENDREM»
-        // call view method
-        return $this->view();
+        // return main template
+        return $this->view->fetch('«controller.name.formatForDB()»/main.tpl');
 «REM»«ENDIF-»«ENDREM»
 «ELSEIF controller.metaType == AccountController-»
 «ELSEIF controller.metaType == AjaxController-»
@@ -92,23 +92,16 @@ New Search API:
 http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «ENDREM»
 «ELSEIF controller.metaType == CustomController-»
-        // call view method
-        return $this->view();
+        // return main template
+        return $this->view->fetch('«controller.name.formatForDB()»/main.tpl');
 «ENDIF-»
-«REM»
-        // turn off caching
-        $this->view->setCaching(false);
-
-        // fetch and return the appropriate template
-        return $this->view->fetch('«appName»_«dbName(controller.name)»_main.tpl');
-«ENDREM»
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR ViewAction-»
-«EXPAND ControllerHelper::loadObjectClass(appName, true)-»
+«EXPAND ControllerHelper::loadBusinessObjectClass(appName, true)-»
 
         // instantiate the object-array
-        $objectArray = new $class();
+        $objectCollection = new $class();
 
         // parameter for used sorting field
         $sort = FormUtil::getPassedValue('sort', '', 'GET');
@@ -119,21 +112,21 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         if ($sdir != 'asc' && $sdir != 'desc') $sdir = 'asc';
 
 «REM»TODO«ENDREM»
-        // startnum is the current offset which is used to calculate the pagination
-        $startnum = (int) FormUtil::getPassedValue('pos', 1, 'GET');
+        // the current offset which is used to calculate the pagination
+        $currentPage = (int) FormUtil::getPassedValue('pos', 1, 'GET');
 
-        // pagesize is the number of items displayed on a page for pagination
-        $pagesize = (int) FormUtil::getPassedValue('num', 0, 'GET');
-        if ($pagesize == 0) {
-            $pagesize = $this->getVar('pagesize', 10);
+        // the number of items displayed on a page for pagination
+        $resultsPerPage = (int) FormUtil::getPassedValue('num', 0, 'GET');
+        if ($resultsPerPage == 0) {
+            $resultsPerPage = $this->getVar('pagesize', 10);
         }
 
         // convenience vars to make code clearer
         $where = '';
         $sortParam = $sort . ' ' . $sdir;
-
+«REM»TODO
         // use FilterUtil to support generic filtering based on an object-oriented approach
-        $fu = new FilterUtil(array('table' => $objectArray->_objType, array('join' => &$objectArray->_objJoin)));
+        $fu = new FilterUtil(array('table' => $objectCollection->_intObjectType, array('join' => &$objectCollection->_objJoin)));
 
         // you could set explicit filters at this point, something like
         // $fu->setFilter('type:eq:' . $args['type'] . ',id:eq:' . $args['id']);
@@ -142,23 +135,22 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         // process request input filters and get result for DBUtil
         $ret = $fu->GetSQL();
         $where = $ret['where'];
-
-        // get() returns the cached object fetched from the DB during object instantiation
-        // get() with parameters always performs a new select
+«ENDREM»
+        // get objects from database
         // while the result will be saved in the object, we assign in to a local variable for convenience.
-        $objectData = $objectArray->get($where, $sortParam, $startnum-1, $pagesize);
+        $objectData = $objectCollection->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
 
         // get total number of records for building the pagination by method call
-        $objcount = $objectArray->getCount($where);
+        $objectCount = $objectCollection->selectCount($where);
 
         // turn off caching
         $this->view->setCaching(false);
 
         // assign the object data, sorting information and details for creating the pager
-        $this->view->assign('objectArray', $objectData)
+        $this->view->assign('items', $objectCollection)
                    ->assign('sort', $sort)
                    ->assign('sdir', ($sdir == 'asc') ? 'desc' : 'asc') // reverted for links
-                   ->assign('pager', array('numitems'     => $objcount,
+                   ->assign('pager', array('numitems'     => $objectCount,
                                            'itemsperpage' => $pagesize));
 
         // fetch and return the appropriate template
@@ -166,31 +158,28 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «ENDDEFINE»
 
 «DEFINE DefaultSorting FOR ViewAction-»
-        if (empty($sort) || !in_array($sort, $objectArray->_intGetAllowedSortingFields())) {
-            $sort = $objectArray->_intGetDefaultSortingField();
+        if (empty($sort) || !in_array($sort, $objectCollection->_intGetAllowedSortingFields())) {
+            $sort = $objectCollection->_intGetDefaultSortingField();
         }
 «ENDDEFINE»
 
 
 «DEFINE ActionImplBody(String appName) FOR DisplayAction-»
-«EXPAND ControllerHelper::loadObjectClass(appName, false)-»
-«EXPAND ControllerHelper::instantiateObject("", "")-»
-        $idField = $object->getIDField();
+«EXPAND ControllerHelper::loadBusinessObjectClass(appName, false)-»
+«EXPAND ControllerHelper::instantiateObject("")-»
+        $idField = $object->get_intIdField();
 
         // retrieve the ID of the object we wish to view
         $id = (int) FormUtil::getPassedValue($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, 'GET');
-        
+
         $this->throwNotFoundUnless($id, 'Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
 
-«EXPAND ControllerHelper::getObjectFromSource("", "id", "idField")-»
+«EXPAND ControllerHelper::retrieveEntityFromModel("id", "idField")-»
 
         // turn off output caching
         $this->view->setCaching(false);
 
         // assign the object we loaded above.
-        // since the same code is used the handle the entry of the new object,
-        // we need to check wether we have a valid object.
-        // If not, we just pass in an empty data-array.
         $this->view->assign($objectType, $objectData);
 
         // fetch and return the appropriate template
@@ -198,7 +187,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR EditAction-»
-«REM»«EXPAND Controller::pnFormCreate(appName, controller.name, 'edit')-»«ENDREM»
+«REM»«EXPAND ActionHandler::FormCreate(appName, controller.name, 'edit')-»«ENDREM»
         // create new Form reference
         $view = FormUtil::newForm('«appName»');
 
@@ -210,8 +199,8 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR DeleteAction-»
-    «EXPAND ControllerHelper::loadObjectClass(appName, false)-»
-    «EXPAND ControllerHelper::instantiateObject("", "")-»
+    «EXPAND ControllerHelper::loadBusinessObjectClass(appName, false)-»
+    «EXPAND ControllerHelper::instantiateObject("")-»
         $idField = $object->getIDField();
 
         // retrieve the ID of the object we wish to view
@@ -230,7 +219,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
                 $this->registerStatus($this->__('Done! «name.formatForDisplayCapitalized()» deleted.'));
             }
         } else {
-    «EXPAND ControllerHelper::getObjectFromSource("", "id", "idField")-»
+    «EXPAND ControllerHelper::retrieveEntityFromModel("id", "idField")-»
 
             // turn off output caching
             $this->view->setCaching(false);
