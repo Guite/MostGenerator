@@ -48,7 +48,7 @@ cached boolean needsConfig(Application this) :
 
 // we have to go the ugly way here to bypass that EfficientLazyString can not be compared
 cached String fullEntityName(Entity this)
-    : name.formatForDB().msconcat("_").msconcat(container.application.prefix.formatForDB());
+    : container.application.prefix.formatForDB().msconcat("_").msconcat(name.formatForDB());
 
 
 

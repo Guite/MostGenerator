@@ -195,7 +195,7 @@
 «ENDDEFINE»
 «DEFINE IndexField FOR EntityIndexItem-»
                     '«name.formatForDB()»' => array(
-«IF length != null && length != ""-»
+«IF length != null && length != "" && length > 0-»
                         'length' => «length»,
 «ENDIF-»
                         'sorting' => '«IF sorting == EntityIndexSortingType::DESC-»DESC«ELSE-»ASC«ENDIF-»'
