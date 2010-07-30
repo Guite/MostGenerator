@@ -166,8 +166,8 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «ENDDEFINE»
 
 «DEFINE DefaultSorting FOR ViewAction-»
-        if (empty($sort) || !in_array($sort, $objectArray->getAllowedSortingFields())) {
-            $sort = $objectArray->getDefaultSortingField();
+        if (empty($sort) || !in_array($sort, $objectArray->_intGetAllowedSortingFields())) {
+            $sort = $objectArray->_intGetDefaultSortingField();
         }
 «ENDDEFINE»
 

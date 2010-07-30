@@ -1,0 +1,87 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE BusinessEntityBaseImpl(Application app) FOR Entity»
+    /**
+     * @var string The tablename this object maps to
+     */
+    protected string $_intObjectType = '«fullEntityName()»';
+
+    /**
+     * @var string The id field for this object
+     */
+    protected string $_intIdField = '«idField()»';
+
+    /**
+     * @var integer The id for this object
+     */
+    protected string $_intId = 0;
+
+«EXPAND fieldMemberVar FOREACH fields.typeSelect(DerivedField)»
+«EXPAND fieldMemberVar FOREACH outgoing.typeSelect(JoinRelationship)»
+
+    /**
+     * Constructor.
+     *
+     * @param integer $id         The id to use to retrieve the object (optional) (default=null).
+     */
+    function __construct($id = 0)
+    {
+        $this->_intObjectType = '«fullEntityName()»';
+        $this->_intIdField = '«name.formatForDB()»id';
+        $this->_intId = $id;
+
+«REM»«EXPAND ObjectPermissionFilters(app.appName())-»«ENDREM»«""-»
+    }
+
+    /**
+     * Select object from model (e.g. from database).
+     * For now we use Doctrine records, but as the controllers communicate only with
+     * business entities, we can exchange the model behind it without any subsequent
+     * efforts on the controller layer.
+     *
+     * @param integer $id         The id to use to retrieve the object (optional) (default=null).
+     * @return Doctrine_Record retrieved Doctrine_Record instance
+     */
+    public function selectById($id = 0)
+    {
+        if ($id == 0 && $this->_intId == 0) {
+            return LogUtil::registerArgsError();
+        }
+        if ($id > 0) {
+            $this->_intId = $id;
+        }
+        $table = Doctrine_Core::getTable(«implClassModelRecord()»);
+        return $table->find($this->_intId);
+    }
+
+«EXPAND FileHelper::GetterAndSetterMethods('_intObjectType', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('_intIdField', 'string')»
+
+«EXPAND fieldAccessors FOREACH fields.typeSelect(DerivedField)»
+«EXPAND outgoingRelationAccessors FOREACH outgoing.typeSelect(JoinRelationship)»
+
+«EXPAND FileHelper::ClassToString(baseClassBusinessEntity(false))-»
+«ENDDEFINE»
+
+«REM»Note we use protected and not private to let the dev change things in concrete implementations«ENDREM»
+«DEFINE fieldMemberVar FOR DerivedField»
+«EXPAND FileHelper::MemberVar(name.formatForCode(), fieldTypeAsString(), "")»
+«ENDDEFINE»
+«DEFINE fieldMemberVar FOR ArrayField-»
+«EXPAND FileHelper::MemberVar(name.formatForCode(), fieldTypeAsString(), " = array()")»
+«ENDDEFINE»
+«DEFINE fieldMemberVar FOR JoinRelationship»
+«EXPAND FileHelper::MemberVar(target.name.formatForCode(), target.implClassBusinessEntity((metaType != OneToOneRelationship)), "")»
+«ENDDEFINE»
+
+«DEFINE fieldAccessors FOR DerivedField»
+«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode(), fieldTypeAsString())»
+«ENDDEFINE»
+
+«DEFINE outgoingRelationAccessors FOR JoinRelationship»
+«EXPAND FileHelper::GetterAndSetterMethods(target.name.formatForCode(), target.implClassBusinessEntity((metaType != OneToOneRelationship)))»
+«ENDDEFINE»

@@ -58,7 +58,10 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
         try {
             DoctrineUtil::createTablesFromModels('«appName()»');
         } catch (Exception $e) { 
-            return false;
+            if (System::isDevelopmentMode()) {
+                LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
+            }
+            return LogUtil::registerError($this->__f('An error was encountered while creating the tables for the %1$s module.', array($this->getName())));
         }
 
 «REM»
@@ -148,9 +151,16 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
      */
     public function uninstall()
     {
+        try {
 «FOREACH models.entities AS entity-»
-        DoctrineUtil::dropTable('«fullEntityName(entity)»');
+            DoctrineUtil::dropTable('«fullEntityName(entity)»');
 «ENDFOREACH-»
+        } catch (Exception $e) {
+            if (System::isDevelopmentMode()) {
+                LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
+            }
+            return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %1$s module.', array($this->getName())));
+        }
 
 «REM»
     // unregister hook functions
@@ -188,9 +198,9 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
     public function defaultdata()
     {
         // ensure that tables are cleared
-        $doctrine = Doctrine_Manager::getInstance()->getCurrentConnection()->getDbh();
 «FOREACH models.entities AS entity-»
-        $doctrine->query('TRUNCATE TABLE «fullEntityName(entity)»');
+        Doctrine_Core::getTable(«entity.implClassModelRecord()»)
+            ->truncateTable();
 «ENDFOREACH-»
         unset($doctrine);
 

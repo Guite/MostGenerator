@@ -66,7 +66,7 @@
      *
      * @return «type»
      */
-    public get«name.toFirstUpper()»()
+    public function get«name.toFirstUpper()»()
     {
         return $this->«name»;
     }
@@ -79,7 +79,7 @@
      * @param «type» $«name»
      * @return void
      */
-    public set«name.toFirstUpper()»($«name»)
+    public function set«name.toFirstUpper()»($«name»)
     {
         $this->«name» = $«name»;
     }

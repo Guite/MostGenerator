@@ -1,0 +1,120 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE BusinessEntityCollectionBaseImpl(Application app) FOR Entity»
+    /**
+     * @var array  Reference to list of «nameMultiple.formatForDisplay()».
+     */
+    protected «implClassBusinessEntity(false)»[] «nameMultiple.formatForCode()» = null;
+
+    /**
+     * @var string The tablename this object maps to
+     */
+    protected string $_intObjectType = '«fullEntityName()»';
+
+    /**
+     * @var string The id field for this object
+     */
+    protected string $_intIdField = '«idField()»';
+
+    /**
+     * @var string Optional where clause for selection
+     */
+    protected string $_intWhere = '';
+
+    /**
+     * @var string Optional order clause for selection
+     */
+    protected string $_intOrderBy = '';
+
+    /**
+     * @var string The default sorting field/expression.
+     */
+    protected string $_intDefaultSortingField = '«getLeadingField().name.formatForCode()»';
+
+
+    /**
+     * Constructor.
+     *
+     * @param string $where             The where clause to use when retrieving the object array (optional) (default='').
+     * @param string $orderBy           The order-by clause to use when retrieving the object array (optional) (default='').
+     */
+    function __construct($where = '', $orderBy = '')
+    {
+        $this->_intWhere = $where;
+        $this->_intOrderBy = $orderBy;
+«REM»«EXPAND ObjectPermissionFilters(app.appName())-»«ENDREM»«""-»
+    }
+
+    /**
+     * Select object collection from model (e.g. from database).
+     * For now we use Doctrine records, but as the controllers communicate only with
+     * business entities, we can exchange the model behind it without any subsequent
+     * efforts on the controller layer.
+     *
+     * @return Doctrine_Collection collection containing retrieved Doctrine_Record instances
+     */
+    public function select()
+    {
+        $table = Doctrine_Core::getTable(«implClassModelRecord()»);
+        $query = Doctrine_Query::create()
+            ->select('e.*')
+            ->from('«implClassModelRecord()» e');
+        if (!empty($this->_intWhere)) {
+            $query->where($this->_intWhere);
+        }
+        if (!empty($this->_intOrderBy)) {
+            $query->orderBy($this->_intOrderBy);
+        }
+
+        return $table->execute($query);
+    }
+
+    /**
+     * Select with a given where clause.
+     *
+     * @param string $where             The where clause to use when retrieving the object array (optional) (default='').
+     * @return Doctrine_Collection collection containing retrieved Doctrine_Record instances
+     */
+    public function selectWhere($where = '', $orderBy = '')
+    {
+        $this->_intWhere = $where;
+        $this->_intOrderBy = $orderBy;
+        return $this->select();
+    }
+
+    /**
+     * Retrieves an array with all fields which can be used for sorting instances.
+     *
+     * @return array
+     */
+    public function get_intAllowedSortingFields()
+    {
+        return array(«EXPAND singleSortingField FOREACH fields SEPARATOR ','»«EXPAND standardSortingFields FOR this-»
+        );
+    }
+
+«EXPAND FileHelper::GetterAndSetterMethods(nameMultiple.formatForCode(), implClassBusinessEntity(false))»
+«EXPAND FileHelper::GetterAndSetterMethods('_intObjectType', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('_intIdField', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('_intDefaultSortingField', 'string')»
+
+«EXPAND FileHelper::ClassToString(baseClassBusinessEntity(true))-»
+«ENDDEFINE»
+
+«DEFINE singleSortingField FOR EntityField»
+«LET entity.incoming.select(e|formatForDB(e.source.idFieldName()) == formatForDB(name)) AS joins-»
+«IF joins.size > 0-»
+                     '«joins.get(0).source.name.formatForDB()»_«joins.get(0).source.idField()»'«""-»
+«ELSE-»
+                     '«name.formatForDB()»'«""-»
+«ENDIF-»
+«ENDLET-»«ENDDEFINE»
+
+«DEFINE standardSortingFields FOR Entity»
+«REM»will be filled by Advices«ENDREM»
+«ENDDEFINE»
+

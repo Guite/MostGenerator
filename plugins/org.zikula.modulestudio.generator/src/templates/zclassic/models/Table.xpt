@@ -37,6 +37,13 @@ class «baseClassModelTable()» extends Doctrine_Table
     {
         $this->addRecordListener(new «baseClassModelListener()»());
     }
+
+    public function truncateTable()
+    {
+        $q = Doctrine_Query::create()
+            ->delete('«implClassModelRecord()»');
+        $q->execute();
+    }
 }
 «ENDDEFINE»
 
@@ -51,7 +58,7 @@ class «baseClassModelTable()» extends Doctrine_Table
  */
 class «implClassModelTable()» extends «IF isInheriting()»«parentType().implClassModelTable()»«ELSE»«baseClassModelTable()»«ENDIF»
 {
-    // feel free to add your own methods here
+    // feel free to add your own methods here, like for example reusable DQL queries
 }
 «ENDDEFINE»
 
@@ -75,7 +82,12 @@ class «implClassModelTable()» extends «IF isInheriting()»«parentType().impl
  */
 class «baseClassModelRefTable()» extends Doctrine_Table
 {
-
+    public function truncateTable()
+    {
+        $q = Doctrine_Query::create()
+            ->delete('«implClassModelRefRecord()»');
+        $q->execute();
+    }
 }
 «ENDDEFINE»
 
@@ -91,6 +103,6 @@ class «baseClassModelRefTable()» extends Doctrine_Table
  */
 class «implClassModelRefTable()» extends «baseClassModelRefTable()»
 {
-    // feel free to add your own methods here
+    // feel free to add your own methods here, like for example reusable DQL queries
 }
 «ENDDEFINE»

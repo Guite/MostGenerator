@@ -30,9 +30,9 @@
 abstract class «baseClassBusinessEntity(isCollection)»«IF isCollection»/* extends Zikula_Collection_Container*/«ENDIF»
 {
 «IF isCollection == false-»
-«EXPAND BusinessEntityBaseImpl(app)-»
+«EXPAND business::Entity::BusinessEntityBaseImpl(app)-»
 «ELSE-»
-«EXPAND BusinessEntityCollectionBaseImpl(app)-»
+«EXPAND business::Collection::BusinessEntityCollectionBaseImpl(app)-»
 «ENDIF-»
 }
 «ENDDEFINE»
@@ -52,54 +52,6 @@ class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntit
 «ENDDEFINE»
 
 
-«DEFINE BusinessEntityBaseImpl(Application app) FOR Entity»
-«EXPAND fieldMemberVar FOREACH fields.typeSelect(DerivedField)»
-«EXPAND fieldMemberVar FOREACH outgoing.typeSelect(JoinRelationship)»
-
-    /**
-     * Constructor.
-     *
-     * @param string $key         The DB key to use to retrieve the object (optional) (default=null).
-     * @param string $field       The field containing the key value (optional) (default=null).
-     */
-    function __construct($key = 0, $field = null)
-    {
-        // call base class constructor
-        parent::__construct();
-
-        // set the tablename this object maps to
-        $this->_objType       = '«fullEntityName()»';
-
-        // set the ID field for this object
-        $this->_objField      = '«name.formatForDB()»id';
-
-«REM»«EXPAND ObjectPermissionFilters(app.appName())-»«ENDREM»«""-»
-    }
-
-«EXPAND fieldAccessors FOREACH fields.typeSelect(DerivedField)»
-«EXPAND outgoingRelationAccessors FOREACH outgoing.typeSelect(JoinRelationship)»
-
-«EXPAND FileHelper::ClassToString(baseClassBusinessEntity(false))-»
-«ENDDEFINE»
-
-«REM»Note we use protected and not private to let the dev change things in concrete implementations«ENDREM»
-«DEFINE fieldMemberVar FOR DerivedField»
-«EXPAND FileHelper::MemberVar(name.formatForCode(), fieldTypeAsString(), "")»
-«ENDDEFINE»
-«DEFINE fieldMemberVar FOR ArrayField-»
-«EXPAND FileHelper::MemberVar(name.formatForCode(), fieldTypeAsString(), " = array()")»
-«ENDDEFINE»
-«DEFINE fieldMemberVar FOR JoinRelationship»
-«EXPAND FileHelper::MemberVar(target.name.formatForCode(), target.implClassBusinessEntity((metaType != OneToOneRelationship)), "")»
-«ENDDEFINE»
-
-«DEFINE fieldAccessors FOR DerivedField»
-«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode(), fieldTypeAsString())»
-«ENDDEFINE»
-
-«DEFINE outgoingRelationAccessors FOR JoinRelationship»
-«EXPAND FileHelper::GetterAndSetterMethods(target.name.formatForCode(), target.implClassBusinessEntity((metaType != OneToOneRelationship)))»
-«ENDDEFINE»
 
 «DEFINE ObjectPermissionFilters(String modName) FOR Entity-»
         // apply object permission filters
@@ -126,69 +78,5 @@ class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntit
 
 
 
-«DEFINE BusinessEntityCollectionBaseImpl(Application app) FOR Entity»
-    /**
-     * @var array  Reference to list of «nameMultiple.formatForDisplay()».
-     */
-    protected «implClassBusinessEntity(false)»[] «nameMultiple.formatForCode()» = null;
-
-    /**
-     * @var string The tablename this object maps to
-     */
-    protected string $objectType = '«fullEntityName()»';
-
-    /**
-     * @var string The id field for this object
-     */
-    protected string $idField = '«idField()»';
-
-    /**
-     * @var string The default sorting field/expression.
-     */
-    protected string $defaultSortingField = '«getLeadingField().name.formatForCode()»';
-
-
-    /**
-     * Constructor.
-     *
-     * @param string $where             The where clause to use when retrieving the object array (optional) (default='').
-     * @param string $orderBy           The order-by clause to use when retrieving the object array (optional) (default='').
-     */
-    function __construct($where = '', $orderBy = '')
-    {
-«REM»«EXPAND ObjectPermissionFilters(app.appName())-»«ENDREM»«""-»
-    }
-
-    /**
-     * Retrieves an array with all fields which can be used for sorting instances.
-     *
-     * @return array
-     */
-    function getAllowedSortingFields()
-    {
-        return array(«EXPAND singleSortingField FOREACH fields SEPARATOR ','»«EXPAND standardSortingFields FOR this-»
-        );
-    }
-
-«EXPAND FileHelper::GetterAndSetterMethods(nameMultiple.formatForCode(), implClassBusinessEntity(false))»
-«EXPAND FileHelper::GetterAndSetterMethods('objectType', 'string')»
-«EXPAND FileHelper::GetterAndSetterMethods('idField', 'string')»
-«EXPAND FileHelper::GetterAndSetterMethods('defaultSortingField', 'string')»
-
-«EXPAND FileHelper::ClassToString(baseClassBusinessEntity(true))-»
-«ENDDEFINE»
-
-«DEFINE singleSortingField FOR EntityField»
-«LET entity.incoming.select(e|formatForDB(e.source.idFieldName()) == formatForDB(name)) AS joins-»
-«IF joins.size > 0-»
-                     '«joins.get(0).source.name.formatForDB()»_«joins.get(0).source.idField()»'«""-»
-«ELSE-»
-                     '«name.formatForDB()»'«""-»
-«ENDIF-»
-«ENDLET-»«ENDDEFINE»
-
-«DEFINE standardSortingFields FOR Entity»
-«REM»will be filled by Advices«ENDREM»
-«ENDDEFINE»
 
 
