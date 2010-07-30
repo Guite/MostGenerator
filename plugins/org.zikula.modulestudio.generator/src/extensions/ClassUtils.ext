@@ -51,13 +51,13 @@ cached String implClassModelListener(Entity obj)
     : implClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name.msconcat("Listener")));
 
 cached String baseClassModelRefRecord(ManyToManyRelationship obj)
-    : baseClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name));
+    : baseClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.refClass));
 cached String implClassModelRefRecord(ManyToManyRelationship obj)
-    : implClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name));
+    : implClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.refClass));
 cached String baseClassModelRefTable(ManyToManyRelationship obj)
-    : baseClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name.msconcat("Table")));
+    : baseClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.refClass.msconcat("Table")));
 cached String implClassModelRefTable(ManyToManyRelationship obj)
-    : implClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name.msconcat("Table")));
+    : implClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.refClass.msconcat("Table")));
 
 /** Business classes */
 cached String baseClassBusinessEntity(Entity obj, Boolean isCollection)

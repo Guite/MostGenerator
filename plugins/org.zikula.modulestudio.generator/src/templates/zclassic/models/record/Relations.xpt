@@ -31,7 +31,7 @@
                 'foreign' => '«IF incoming == true-»«relation.source.idField()»«ELSE-»«relation.target.idField()»«ENDIF-»',«REM»Rule: always place the foreign key in the owned class«ENDREM»«""-»
 «IF relation.metaType == ManyToManyRelationship-»
                 // name of the many-to-many association class
-                'refClass' => '«((ManyToManyRelationship)relation).refClass.formatForCode()»',
+                'refClass' => '«((ManyToManyRelationship)relation).implClassModelRefRecord()»',
 «ENDIF-»
                 // true indicates the owning side (owning the foreign key)
                 'owningSide' => «IF incoming == true-»false«ELSE-»true«ENDIF-»,
