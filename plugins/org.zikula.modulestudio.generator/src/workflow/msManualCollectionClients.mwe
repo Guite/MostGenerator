@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- processes whole collection of example models, calls msManual.oaw for each entry -->
+<workflow>
+    <cartridge file="workflow/msManual.mwe" folder="customers/later" modelName="GuiAdvert"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers/later" modelName="GuiAffiliate"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers/later" modelName="GuiCallCenter"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers/later" modelName="GuiStockKeeping"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers/later" modelName="GuiSubscription"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiCustomer"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiErpSync"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiOrder"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiPayment"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiPricing"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiProduct"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiPromotion"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiShipping"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiShop"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="HandyDB"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="JsMaterials"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="JsRefPool"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="JuFeBo"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="LeisurePlaces"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="MenuSuggestion"></cartridge>
+</workflow>
