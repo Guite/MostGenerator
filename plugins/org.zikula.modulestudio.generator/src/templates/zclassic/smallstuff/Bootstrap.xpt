@@ -7,36 +7,6 @@
 
 «DEFINE Bootstrap FOR Application-»
 
-// setup Doctrine
-spl_autoload_register(array('Doctrine_Core', 'modelsAutoload'));
-// get instance of Doctrine manager
-$manager = Doctrine_Manager::getInstance();
-
-// turn on identifier quoting so that the reserved word is escaped with quotes
-$manager->setAttribute(Doctrine_Core::Doctrine_Core::ATTR_QUOTE_IDENTIFIER, true);
-
-// turn on full export settings
-$manager->setAttribute(Doctrine_Core::ATTR_EXPORT, Doctrine_Core::EXPORT_ALL);
-
-// turn on full validation
-$manager->setAttribute(Doctrine_Core::ATTR_VALIDATE, Doctrine_Core::VALIDATE_ALL);
-
-«IF getDefaultDataSource().loadingType == ModelLoadingType::CONSERVATIVE-»
-// initialise conservative (lazy) loading - ideal method for a production environment
-// this will lazy load all of the models instead of loading them all when model loading is executed.
-$manager->setAttribute(Doctrine_Core::ATTR_MODEL_LOADING, Doctrine_Core::MODEL_LOADING_CONSERVATIVE);
-«ELSEIF getDefaultDataSource().loadingType == ModelLoadingType::AGGRESSIVE-»
-// initialise aggressive loading - does simply include all php files
-// downside: waste of performance
-$manager->setAttribute(Doctrine_Core::ATTR_MODEL_LOADING, Doctrine_Core::MODEL_LOADING_AGGRESSIVE);
-«ENDIF-»
-
-
-
 // feel free to add your initialisation stuff here
-
-// Just an example, this is done by the core automatically
-// ZLoader::addAutoLoader('«appName()»', 'modules', '_');
-// The 1st arg is the namespace (module name), the 2nd is the path and the 3rd is the separator.
 
 «ENDDEFINE»

@@ -36,7 +36,7 @@
                 'alias'     => '«sluggableFieldAlias.formatForDB()»',
 «ENDIF-»
                 'type'      => 'string',
-                'unique'    => «sluggableUnique.displayBool()»
+                'unique'    => «sluggableUnique.displayBool()»,
                 'fields'    => array('«sluggableFields.replaceAll(", ", "', '")»'),
                 'canUpdate' => «sluggableCanUpdate.displayBool()»
             )
@@ -58,7 +58,7 @@
         $i18n
 «IF versionable»->addChild($auditLog)«ENDIF»
 «IF searchable»->addChild($search)«ENDIF»
-«IF sluggable»->addChild($slug)«ENDIF»
+«IF sluggable»->addChild($slug)«ENDIF»;
 «ENDIF-»
         $this->actAs($i18n);
 «ELSE-»
@@ -114,7 +114,7 @@
 «ENDIF-»
 «IF zikulaStandardFields-»
         // Zikula standard fields (obj_status, cr_uid, cr_date, lu_uid, lu_date)
-        $this->actAs('StandardFields');
+        $this->actAs('Zikula_Doctrine_Template_StandardFields');
 «ENDIF-»
 
         /**

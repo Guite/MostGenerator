@@ -29,7 +29,7 @@
                 'local' => '«IF incoming == true-»«relation.target.idField()»«ELSE-»«relation.source.idField()»«ENDIF-»',
                 // linked field in the linked class
                 'foreign' => '«IF incoming == true-»«relation.source.idField()»«ELSE-»«relation.target.idField()»«ENDIF-»',«REM»Rule: always place the foreign key in the owned class«ENDREM»«""-»
-«IF relation.metaType == ManyToManyRelationship-»,
+«IF relation.metaType == ManyToManyRelationship-»
                 // name of the many-to-many association class
                 'refClass' => '«((ManyToManyRelationship)relation).refClass.formatForCode()»',
 «ENDIF-»
