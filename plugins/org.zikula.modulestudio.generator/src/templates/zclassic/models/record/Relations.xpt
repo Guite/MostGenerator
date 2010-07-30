@@ -24,17 +24,17 @@
 «ENDDEFINE»
 
 «DEFINE RelationDefinition(JoinRelationship relation, Boolean incoming) FOR Entity-»
-        $this->has«IF relation.metaType == OneToOneRelationship-»One«ELSE-»Many«ENDIF-»('«IF incoming == true-»«relation.source.implClassModelRecord()»«ELSE-»«relation.target.implClassModelRecord()»«ENDIF-»«IF relation.alias != null && relation.alias != ""-» as «relation.alias.formatForCode()»«ENDIF-»', array(
+        $this->has«IF relation.metaType == OneToOneRelationship || (incoming && relation.metaType == OneToManyRelationship)-»One«ELSE-»Many«ENDIF-»('«IF incoming-»«relation.source.implClassModelRecord()»«ELSE-»«relation.target.implClassModelRecord()»«ENDIF-»«IF relation.alias != null && relation.alias != ""-» as «relation.alias.formatForCode()»«ENDIF-»', array(
                 // linked field in the defining class
-                'local' => '«REM»«IF incoming == true-»«relation.target.idField()»«ELSE-»«ENDREM»«relation.source.idField()»«REM»«ENDIF-»«ENDREM»',
+                'local' => '«relation.source.idField()»',
                 // linked field in the linked class
-                'foreign' => '«REM»«IF incoming == true-»«relation.source.idField()»«ELSE-»«ENDREM»«relation.target.idField()»«REM»«ENDIF-»«ENDREM»',«REM»Rule: always place the foreign key in the owned class«ENDREM»
+                'foreign' => '«IF relation.metaType == ManyToManyRelationship-»«relation.target.idField()»«ELSE-»«relation.source.idField()»«ENDIF-»',«REM»Rule: always place the foreign key in the owned class«ENDREM»
 «IF relation.metaType == ManyToManyRelationship-»
                 // name of the many-to-many association class
                 'refClass' => '«((ManyToManyRelationship)relation).implClassModelRefRecord()»',
 «ENDIF-»
                 // true indicates the owning side (owning the foreign key)
-                'owningSide' => «IF incoming == true-»false«ELSE-»true«ENDIF-»,
+                'owningSide' => «(!incoming).displayBool()»,
 «IF relation.metaType != ManyToManyRelationship && relation.foreignKeyName != null && relation.foreignKeyName != ""-»
                 'foreignKeyName' => '«relation.foreignKeyName»',
 «ENDIF-»
@@ -52,7 +52,6 @@
 «DEFINE SubClasses FOR Entity-»
 «LET getChildRelationsWithAggregation() AS aggregatedChildren-»
 «IF aggregatedChildren.size > 0»
-        $keyField = 'type';
         $this->setSubclasses(array(
 «EXPAND SubClass FOREACH aggregatedChildren-»
             )
@@ -62,7 +61,7 @@
 «ENDDEFINE»
 
 «DEFINE SubClass FOR InheritanceRelationship-»
-                '«source.name.formatForCode()»' => array($keyField => '«source.name.formatForCode()»')
+                '«source.name.formatForCode()»' => array('«columnAggregationField.formatForCode()»' => '«source.name.formatForCode()»')
 «ENDDEFINE»
 
 

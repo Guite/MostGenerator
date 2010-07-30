@@ -179,6 +179,6 @@
 «ENDLET-»«ENDDEFINE»
 
 «DEFINE standardSortingFields FOR Entity»
-«REM»will be filled by Advices«ENDREM»
+«REM»will be filled by Advices (Aspect Orientation)«ENDREM»
 «ENDDEFINE»
 

@@ -89,7 +89,7 @@ cssClass="myClass"
         </div>
 «ENDFOREACH-»
     </fieldset>
-«IF usesStandardFields == true-»
+«IF standardFields-»
 {if $mode ne "create"}
     {include file="«appName»_«controllerName»_include_metadata_edit.tpl"}
 {/if}

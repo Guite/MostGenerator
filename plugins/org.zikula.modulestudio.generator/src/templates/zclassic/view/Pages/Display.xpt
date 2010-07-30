@@ -42,7 +42,7 @@
 «ENDIF-»
 «ENDLET-»
 «ENDFOREACH-»
-«IF usesStandardFields == true-»
+«IF standardFields-»
     {include file="«appName»_«controllerName»_include_metadata_display.tpl" obj=$«objName»}
 «ENDIF-»
 </dl>

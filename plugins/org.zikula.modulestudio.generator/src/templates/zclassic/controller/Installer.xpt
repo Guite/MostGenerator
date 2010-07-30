@@ -2,6 +2,7 @@
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «REM»Entry point for application installer«ENDREM»
 «DEFINE Root FOR Application»
@@ -94,7 +95,8 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
 «ENDIF-»
 
         // create the default data for «appName()»
-        $this->defaultdata();
+        //$this->defaultdata();
+        // TODO: deactivated for now because constraints prevent data creation in random order
 
         // Initialisation successful
         return true;
@@ -219,7 +221,7 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
 «FOREACH 1.upTo(container.numExampleRows) AS number-»
         $«entityName» = new «implClassModelRecord()»();
 «FOREACH fields.typeSelect(DerivedField) AS fld-»
-        $«entityName»->«fld.actualFieldName().formatForCode()» = $this->__('«name.formatForDisplayCapitalized()» «fld.actualFieldName().formatForDisplay()» «number»');
+        $«entityName»->«fld.actualFieldName().formatForCode()» = «EXPAND ExampleRowValue(number) FOR fld-»;
 «ENDFOREACH-»
         // could also use $«entityName»->merge($arrayObj); where $arrayObj is index array of field => value.
         $«entityName»->save();
@@ -227,6 +229,35 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
 «ENDFOREACH-»
 «ENDLET-»
 «ENDDEFINE»
+
+«DEFINE ExampleRowValue(Integer number) FOR DerivedField-»
+«error("Error: undefined example value definition for derived field type " + metaType.toString() + " (code 4837264)") -> ""-»
+«ENDDEFINE»
+«DEFINE ExampleRowValueNumber(Integer number) FOR DerivedField-»«number»«ENDDEFINE»
+«DEFINE ExampleRowValueText(Integer number) FOR DerivedField-»
+$this->__('«entity.name.formatForDisplayCapitalized()» «actualFieldName().formatForDisplay()» «number»')«""-»
+«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR BooleanField-»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR IntegerField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR FloatField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR DecimalField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR StringField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR TextField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR EmailField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR UrlField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR UploadField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR UserField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR ArrayField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR EnumField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR ObjectField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR BlobField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR ClobField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR TimestampField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR DateField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR TimeField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR GzipField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+
+
 
 «DEFINE FuncInteractiveInit FOR Application»
     /**

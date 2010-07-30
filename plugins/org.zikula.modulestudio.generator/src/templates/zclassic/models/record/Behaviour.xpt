@@ -112,19 +112,15 @@
             )
         );
 «ENDIF-»
-«IF zikulaStandardFields-»
-        // Zikula standard fields (obj_status, cr_uid, cr_date, lu_uid, lu_date)
-        $this->actAs('Zikula_Doctrine_Template_StandardFields');
-«ENDIF-»
 
         /**
          * Event listeners registrations
          */
-«REM»TODO«ENDREM»
+        $this->addListener(new «implClassModelListener()»());
 
-«EXPAND ObjectExtensions-»«REM»Obsolete, but kept for Aspect Orientation«ENDREM»«""-»
+«EXPAND ObjectExtensions-»
 «ENDDEFINE»
 
 «DEFINE ObjectExtensions FOR Entity»
-«REM»will be filled by Advices«ENDREM»
+«REM»will be filled by Advices (Aspect Orientation)«ENDREM»
 «ENDDEFINE»

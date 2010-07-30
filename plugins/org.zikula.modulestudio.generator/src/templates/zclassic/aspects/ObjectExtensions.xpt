@@ -3,52 +3,36 @@
 
 «AROUND templates::zclassic::models::record::Behaviour::ObjectExtensions FOR Entity-»
     // DEBUG: object extension aspect starts
-«REM»
-«IF this.usesStandardFields == true-»
-    // add standard fields to the table definition and data dictionary
-    ObjectUtil::addStandardFieldsToTableDefinition($columns, '«this.prefix.formatForDB()»_');
-    ObjectUtil::addStandardFieldsToTableDataDefinition($columnDef);
+«IF standardFields-»
+        // Zikula standard fields (obj_status, cr_uid, cr_date, lu_uid, lu_date)
+        $this->actAs('Zikula_Doctrine_Template_StandardFields');
 «ENDIF-»
-
-    $tables['«fullEntityName(this)»_primary_key_column'] = '«idField(this)»';
-«IF this.hasCategorization == true-»
-    // enable categorization services
-    $tables['«fullEntityName(this)»_db_extra_enable_categorization'] = true;
-«ELSE-»
-    // disable categorization services
-    $tables['«fullEntityName(this)»_db_extra_enable_categorization'] = false;
+«IF categorisable-»
+        // Categorisable support
+        //$this->actAs('Zikula_Doctrine_Template_Categorisable');
+        // TODO: reenable in generator after it has been commited into the core
 «ENDIF-»
-
-«IF this.hasAttribution == true-»
-    // enable attribution services
-    $tables['«fullEntityName(this)»_db_extra_enable_attribution'] = true;
-«ELSE-»
-    // disable attribution services
-    $tables['«fullEntityName(this)»_db_extra_enable_attribution'] = false;
+«IF attributable-»
+        // Attributable support
+        //$this->actAs('Zikula_Doctrine_Template_Attributable');
+        // TODO: reenable in generator after it has been commited into the core
 «ENDIF-»
-
-«IF this.hasMetaData == true-»
-    // enable meta data
-    $tables['«fullEntityName(this)»_db_extra_enable_meta'] = true;
-«ELSE-»
-    // disable meta data
-    $tables['«fullEntityName(this)»_db_extra_enable_meta'] = false;
+«IF metaData-»
+        // Enhanced meta data support
+        //$this->actAs('Zikula_Doctrine_Template_MetaData');
+        // TODO: reenable in generator after it has been commited into the core
 «ENDIF-»
-
-«IF this.hasLogging == true-»
-    // enable logging services
-    $tables['«fullEntityName(this)»_db_extra_enable_logging'] = true;
-«ELSE-»
-    // disable logging services
-    $tables['«fullEntityName(this)»_db_extra_enable_logging'] = false;
+«IF loggable-»
+        // enable Logging
+        //$this->actAs('Zikula_Doctrine_Template_Logging');
+        // TODO: reenable in generator after it has been commited into the core
 «ENDIF-»
-«ENDREM»
     // DEBUG: object extension aspect ends
 «targetDef.proceed()»
 «ENDAROUND»
 
 «AROUND templates::zclassic::models::behavior::BusinessObject::standardSortingFields FOR Entity-»
-«IF this.usesStandardFields == true-»,
+«IF this.standardFields == true-»,
                      'obj_status',
                      'cr_date',
                      'cr_uid',

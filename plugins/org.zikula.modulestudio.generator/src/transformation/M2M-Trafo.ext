@@ -38,7 +38,7 @@ create Entity this duplicate(Entity old):
 	fields.addAll(old.fields.duplicate()) ->
 	//relations.addAll(old.relations.duplicate()) ->
 	setName(old.name) ->
-	setUsesStandardFields(old.usesStandardFields);
+	setStandardFields(old.standardFields);
 
 EntityField duplicate(EntityField old) : null;
 
