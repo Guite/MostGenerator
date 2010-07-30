@@ -100,7 +100,7 @@ cached Entity parentType(Entity this)
     : getInheritanceRelation().target;
 
 cached isInheriter(Entity this)
-    : outgoing.typeSelect(InheritanceRelationship).size > 0;
+    : incoming.typeSelect(InheritanceRelationship).size > 0;
 cached getChildRelations(Entity this)
     : incoming.typeSelect(InheritanceRelationship);
 cached getChildRelationsWithAggregation(Entity this)

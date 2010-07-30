@@ -51,7 +51,7 @@
 
 «DEFINE SubClasses FOR Entity-»
 «LET getChildRelationsWithAggregation() AS aggregatedChildren-»
-«IF aggregatedChildren.size > 0-»
+«IF aggregatedChildren.size > 0»
         $keyField = 'type';
         $this->setSubclasses(array(
 «EXPAND SubClass FOREACH aggregatedChildren-»
@@ -62,7 +62,7 @@
 «ENDDEFINE»
 
 «DEFINE SubClass FOR InheritanceRelationship-»
-                '«source.name.formatForCode()»' => array($keyField => «source.name.formatForCode()»)
+                '«source.name.formatForCode()»' => array($keyField => '«source.name.formatForCode()»')
 «ENDDEFINE»
 
 
