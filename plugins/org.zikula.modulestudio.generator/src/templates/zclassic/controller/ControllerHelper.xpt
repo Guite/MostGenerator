@@ -7,7 +7,7 @@
 «ENDDEFINE»
 
 «DEFINE instantiateObject(String idValue) FOR Object-»
-        $object = new $class($«idValue»);
+        $object = new $class(«REM»$«idValue»«ENDREM»);
 «ENDDEFINE»
 
 

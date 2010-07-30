@@ -7,7 +7,7 @@
 «REM»start point for the Controller creation«ENDREM»
 «DEFINE Root FOR Application»
     «EXPAND Root(this) FOREACH controllers.controllers-»
-    «FILE "Util.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UtilMethods::CommonFunctions-»«ENDFILE»
+    «FILE "lib/".msconcat(appName()).msconcat("/Util.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UtilMethods::CommonFunctions-»«ENDFILE»
 «ENDDEFINE»
 
 

@@ -8,17 +8,17 @@
     /**
      * @var string The tablename this object maps to
      */
-    protected string $_intObjectType = '«fullEntityName()»';
+    protected $_intObjectType = '«fullEntityName()»';
 
     /**
      * @var string The id field for this object
      */
-    protected string $_intIdField = '«idField()»';
+    protected $_intIdField = '«idField()»';
 
     /**
      * @var integer The id for this object
      */
-    protected string $_intId = 0;
+    protected $_intId = 0;
 
 «EXPAND fieldMemberVar FOREACH fields.typeSelect(DerivedField)»
 «EXPAND fieldMemberVar FOREACH outgoing.typeSelect(JoinRelationship)»

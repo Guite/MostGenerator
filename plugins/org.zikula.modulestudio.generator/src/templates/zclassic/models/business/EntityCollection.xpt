@@ -6,34 +6,34 @@
 
 «DEFINE BusinessEntityCollectionBaseImpl(Application app) FOR Entity»
     /**
-     * @var array  Reference to list of «nameMultiple.formatForDisplay()».
+     * @var array  Reference to list of «nameMultiple.formatForDisplay()» («implClassBusinessEntity(false)»)
      */
-    protected «implClassBusinessEntity(false)»[] «nameMultiple.formatForCode()» = null;
+    protected $«nameMultiple.formatForCode()» = array();
 
     /**
      * @var string The tablename this object maps to
      */
-    protected string $_intObjectType = '«fullEntityName()»';
+    protected $_intObjectType = '«fullEntityName()»';
 
     /**
      * @var string The id field for this object
      */
-    protected string $_intIdField = '«idField()»';
+    protected $_intIdField = '«idField()»';
 
     /**
      * @var string Optional where clause for selection
      */
-    protected string $_intWhere = '';
+    protected $_intWhere = '';
 
     /**
      * @var string Optional order clause for selection
      */
-    protected string $_intOrderBy = '';
+    protected $_intOrderBy = '';
 
     /**
      * @var string The default sorting field/expression.
      */
-    protected string $_intDefaultSortingField = '«getLeadingField().name.formatForCode()»';
+    protected $_intDefaultSortingField = '«getLeadingField().name.formatForCode()»';
 
 
     /**
