@@ -153,7 +153,7 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
     {
         try {
 «FOREACH models.entities AS entity-»
-            DoctrineUtil::dropTable('«fullEntityName(entity)»');
+            DoctrineUtil::dropTable('«implClassModelRecord(entity)»');
 «ENDFOREACH-»
         } catch (Exception $e) {
             if (System::isDevelopmentMode()) {
