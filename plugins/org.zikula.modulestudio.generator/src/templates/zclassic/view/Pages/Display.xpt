@@ -124,9 +124,9 @@
 {/if}
 
 <ul>
-<li>«name.capitalName()» 1</li>
-<li>«name.capitalName()» 2</li>
-<li>«name.capitalName()» 3</li>
+<li>«name.formatForCodeCapital()» 1</li>
+<li>«name.formatForCodeCapital()» 2</li>
+<li>«name.formatForCodeCapital()» 3</li>
 <li>...</li>
 </ul>
 «ENDDEFINE»

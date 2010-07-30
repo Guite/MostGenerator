@@ -206,7 +206,7 @@ class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveIn
 «DEFINE createExampleRows(Application app) FOR Entity»
 «LET name.formatForCode() AS entityName-»
         // define default data for entity «name.formatForDisplay()»
-«FOREACH 1.upTo(container.numExampleRows) AS number SEPARATOR ','-»
+«FOREACH 1.upTo(container.numExampleRows) AS number-»
         $«entityName» = new «implClassModelRecord()»();
 «FOREACH fields.typeSelect(DerivedField) AS fld-»
         $«entityName»->«fld.actualFieldName().formatForCode()» = $this->__('«name.formatForDisplayCapitalized()» «fld.actualFieldName().formatForDisplay()» «number»');

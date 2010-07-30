@@ -25,7 +25,7 @@
 /**
  * Model class that defines the entity structure and behaviours.
  *
- * This is the base record class for «name.formatForDisplay()» entities
+ * This is the base record class for «name.formatForDisplay()» entities.
  */
 class «baseClassModelRecord()» extends Doctrine_Record
 {
@@ -39,9 +39,9 @@ class «baseClassModelRecord()» extends Doctrine_Record
 /**
  * Model class that defines the entity structure and behaviours.
  *
- * This is the concrete table class for «name.formatForDisplay()» entities
+ * This is the concrete table class for «name.formatForDisplay()» entities.
  */
-class «implClassModelRecord()» extends «IF isInheriting()»«parentType().implClassModelRecord()»«ELSE»«baseClassModelRecord()»«ENDIF-»
+class «implClassModelRecord()» extends «IF isInheriting()»«parentType().implClassModelRecord()»«ELSE»«baseClassModelRecord()»«ENDIF»
 {
     // feel free to add your own methods here
 }

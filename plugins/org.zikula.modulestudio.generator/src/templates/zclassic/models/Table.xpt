@@ -26,11 +26,17 @@
  * Doctrine_Table class used to implement own special entity methods.
  * For example it can provide convenience methods for performing certain DQL queries.
  *
- * This is the base table class for «name.formatForDisplay()» entities
+ * This is the base table class for «name.formatForDisplay()» entities.
  */
 class «baseClassModelTable()» extends Doctrine_Table
 {
-    // Nothing to do yet.
+    /**
+     * Hook into the constructor process
+     */
+    public function construct()
+    {
+        $this->addRecordListener(new «baseClassModelListener()»());
+    }
 }
 «ENDDEFINE»
 
@@ -41,9 +47,9 @@ class «baseClassModelTable()» extends Doctrine_Table
  * Doctrine_Table class used to implement own special entity methods.
  * For example it can provide convenience methods for performing certain DQL queries.
  *
- * This is the concrete table class for «name.formatForDisplay()» entities
+ * This is the concrete table class for «name.formatForDisplay()» entities.
  */
-class «implClassModelTable()» extends «IF isInheriting()»«parentType().implClassModelTable()»«ELSE»«baseClassModelTable()»«ENDIF-»
+class «implClassModelTable()» extends «IF isInheriting()»«parentType().implClassModelTable()»«ELSE»«baseClassModelTable()»«ENDIF»
 {
     // feel free to add your own methods here
 }

@@ -25,3 +25,63 @@
     Powered by <a href="«msUrl()-»" title="Get the MOST out of Zikula!">ModuleStudio «msVersion()-»</a>
 </p>
 «ENDDEFINE»
+
+
+
+«DEFINE ClassToString(String className) FOR Entity-»
+    /**
+     * Interceptor being called if an object is used within a string context.
+     *
+     * @return string
+     */
+    public function __toString() {
+        $string  = 'Instance of the class "«className.formatForCode()»' . "\n";
+        $string .= 'Managed table: «name.formatForCode()»' . "\n";
+        $string .= 'Entity fields:' . "\n";
+«FOREACH fields AS col-»
+        $string .= '        «col.name.formatForCode()»' . "\n";
+«ENDFOREACH-»
+        $string .= "\n";
+
+        return $string;
+    }
+«ENDDEFINE»
+
+
+«DEFINE MemberVar(String name, String type, String init) FOR Object-»
+    /**
+     * @var «type» $«name»
+     */
+    protected $«name»«init»;
+«ENDDEFINE»
+
+«DEFINE GetterAndSetterMethods(String name, String type) FOR Object-»
+«EXPAND GetterMethod(name, type)»
+«EXPAND SetterMethod(name, type)»
+«ENDDEFINE»
+
+«DEFINE GetterMethod(String name, String type) FOR Object-»
+    /**
+     * get «name.formatForDisplay()»
+     *
+     * @return «type»
+     */
+    public get«name.toFirstUpper()»()
+    {
+        return $this->«name»;
+    }
+«ENDDEFINE»
+
+«DEFINE SetterMethod(String name, String type) FOR Object-»
+    /**
+     * set «name.formatForDisplay()»
+     *
+     * @param «type» $«name»
+     * @return void
+     */
+    public set«name.toFirstUpper()»($«name»)
+    {
+        $this->«name» = $«name»;
+    }
+«ENDDEFINE»
+

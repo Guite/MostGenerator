@@ -1,132 +1,110 @@
 «IMPORT modulestudio»
 «IMPORT templates::zclassic::smallstuff»
-«IMPORT templates::zclassic::models::business»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
-«REM»Entry point for DBObject implementations«ENDREM»
+«REM»Entry point for Business entity classes«ENDREM»
 «DEFINE Root FOR Application-»
-	«EXPAND ObjectClassWrapper(this, false) FOREACH models.entities-»
-	«EXPAND ObjectClassWrapper(this, true) FOREACH models.entities-»
+	«EXPAND BusinessEntityWrapper(this, false) FOREACH models.entities-»
+	«EXPAND BusinessEntityWrapper(this, true) FOREACH models.entities-»
 «ENDDEFINE»
 
+«REM»creates a business entity and a collection class file for every Entity instance«ENDREM»
+«DEFINE BusinessEntityWrapper(Application app, Boolean isCollection) FOR Entity-»
+«info("Generating business classes for entity \"" + name + "\"") -> ""-»
+«IF !isInheriting()-»
+    «FILE baseClassBusinessEntity(isCollection).asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessEntityBaseImplSwitch(app, isCollection)»«ENDFILE»
+«ENDIF-»
+    «FILE implClassBusinessEntity(isCollection).asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessEntityImplSwitch(app, isCollection)»«ENDFILE»
+«ENDDEFINE»
 
-«DEFINE ObjectClassWrapper(Application app, Boolean isCollection) FOR Entity-»
-«info("Generating business classes for \"" + name + "\"") -> ""-»
-«FILE baseClassBusinessEntity(isCollection).asFile()»«EXPAND FileHelper::phpFileHeader(app)»
+«REM»base implementation«ENDREM»
+«DEFINE BusinessEntityBaseImplSwitch(Application app, Boolean isCollection) FOR Entity-»
 
 /**
- * This class provides basic functionality of «baseClassBusinessEntity(isCollection)»
+ * Business entity «IF isCollection»collection «ENDIF»class for communication with controllers and encapsulating model details.
+ *
+ * This is the base business class for «name.formatForDisplay()» entities.
  */
-abstract class «baseClassBusinessEntity(isCollection)» extends DBObject«IF isCollection»Array«ENDIF-»
+abstract class «baseClassBusinessEntity(isCollection)»«IF isCollection»/* extends Zikula_Collection_Container*/«ENDIF»
 {
 «IF isCollection == false-»
-«EXPAND ObjectClassBaseImpl(app)-»
+«EXPAND BusinessEntityBaseImpl(app)-»
 «ELSE-»
-«EXPAND ObjectArrayClassBaseImpl(app)-»
+«EXPAND BusinessEntityCollectionBaseImpl(app)-»
 «ENDIF-»
 }
-«ENDFILE»
+«ENDDEFINE»
 
-«FILE implClassBusinessEntity(isCollection).asFile()»«EXPAND FileHelper::phpFileHeader(app)»
+«REM»concrete implementation stub«ENDREM»
+«DEFINE BusinessEntityImplSwitch(Application app, Boolean isCollection) FOR Entity-»
 
 /**
- * This class implements the functionality of «baseClassBusinessEntity(isCollection)»
+ * Business entity «IF isCollection»collection «ENDIF»class for communication with controllers and encapsulating model details.
+ *
+ * This is the concrete business class for «name.formatForDisplay()» entities.
  */
 class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntity(isCollection)»
 {
-    // feel free to add your logic here by implementing pre and post process methods
-«IF isCollection == false-»
-«REM»«EXPAND ObjectClassImpl(module)»«ENDREM»«""-»
-«ELSE-»
-«REM»«EXPAND ObjectArrayClassImpl(module)»«ENDREM»«""-»
-«ENDIF-»
-    // TODO: this is currently in work
+    // feel free to add your own additions here
 }
-«ENDFILE»
 «ENDDEFINE»
 
 
-«DEFINE ObjectClassBaseImpl(Application app) FOR Entity-»
+«DEFINE BusinessEntityBaseImpl(Application app) FOR Entity»
+«EXPAND fieldMemberVar FOREACH fields.typeSelect(DerivedField)»
+«EXPAND fieldMemberVar FOREACH outgoing.typeSelect(JoinRelationship)»
+
     /**
-     * Constructor, init everything to sane defaults and handle parameters.
-     * It only needs to set the fields which are used to configure
-     * the object's specific properties and actions.
-     *
-     * @param object|string $init Initialization value (can be an object or a string directive) (optional) (default=null)
-     *                            If it is an array it is set, otherwise it is interpreted as a string
-     *                            specifying the source from where the data should be retrieved from.
-     *                            Possible values:
-     *                            D (DB), G ($_GET), P ($_POST), R ($_REQUEST), S ($_SESSION), V (failed validation).
+     * Constructor.
      *
      * @param string $key         The DB key to use to retrieve the object (optional) (default=null).
      * @param string $field       The field containing the key value (optional) (default=null).
      */
-    function __construct($init = null, $key = 0, $field = null)
+    function __construct($key = 0, $field = null)
     {
         // call base class constructor
         parent::__construct();
 
         // set the tablename this object maps to
-«REM»        $this->_objType       = '«dbName(module.prefix + '_' + dataSource().name)»';«ENDREM»
         $this->_objType       = '«fullEntityName()»';
 
         // set the ID field for this object
-«REM»        $this->_objField      = '«dbName(dataSource().name)»id';«ENDREM»
         $this->_objField      = '«name.formatForDB()»id';
 
-        // set the access path under which the object's
-        // input data can be retrieved upon input
-«REM»        $this->_objPath       = '«dbName(dataSource().name)»';«ENDREM»
-        $this->_objPath       = '«name.formatForDB()»';
-
-«EXPAND ObjectJoins-»
-
-«EXPAND ObjectPermissionFilters(app.appName())-»
-
-        // call initialisation routine
-        $this->_init($init, $key, $this->_objField);
+«REM»«EXPAND ObjectPermissionFilters(app.appName())-»«ENDREM»«""-»
     }
 
-    function selectPostProcess($data = null)
-    {
-        if (!$data) {
-            $data =& $this->_objData;
-        }
+«EXPAND fieldAccessors FOREACH fields.typeSelect(DerivedField)»
+«EXPAND outgoingRelationAccessors FOREACH outgoing.typeSelect(JoinRelationship)»
 
-«EXPAND sanitizeForOutput FOREACH fields-»
-    }
-«REM»	«EXPAND BusinessStateFunction FOREACH businessStates-»«ENDREM»
-
-	«EXPAND BehaviorCommon::ClassToString(baseClassBusinessEntity(false))-»
+«EXPAND FileHelper::ClassToString(baseClassBusinessEntity(false))-»
 «ENDDEFINE»
 
-«DEFINE SelectJoinFieldTableNames(String exludedIdField) FOR Entity-»
-«EXPAND ArrayListEntry('') FOREACH fields.typeSelect(DerivedField).reject(e|e.name == exludedIdField || e.primaryKey) SEPARATOR ', '-»
+«REM»Note we use protected and not private to let the dev change things in concrete implementations«ENDREM»
+«DEFINE fieldMemberVar FOR DerivedField»
+«EXPAND FileHelper::MemberVar(name.formatForCode(), fieldTypeAsString(), "")»
+«ENDDEFINE»
+«DEFINE fieldMemberVar FOR ArrayField-»
+«EXPAND FileHelper::MemberVar(name.formatForCode(), fieldTypeAsString(), " = array()")»
+«ENDDEFINE»
+«DEFINE fieldMemberVar FOR JoinRelationship»
+«EXPAND FileHelper::MemberVar(target.name.formatForCode(), target.implClassBusinessEntity((metaType != OneToOneRelationship)), "")»
 «ENDDEFINE»
 
-«DEFINE SelectJoinFieldObjNames(String exludedIdField) FOR Entity-»
-«EXPAND ArrayListEntry(formatForDB(name) + '_') FOREACH fields.typeSelect(DerivedField).reject(e|e.name == exludedIdField || e.primaryKey) SEPARATOR ', '-»
+«DEFINE fieldAccessors FOR DerivedField»
+«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode(), fieldTypeAsString())»
 «ENDDEFINE»
 
-«DEFINE ArrayListEntry(String entryPrefix) FOR EntityField-»
-'«entryPrefix»«name.formatForDB()»'«ENDDEFINE»
-
-«DEFINE ObjectJoins FOR Entity-»
-«FOREACH incoming AS relation-»
-        $this->_objJoin[]     = array ('join_table'          => '«fullEntityName(relation.source)»',
-                                       'join_field'          => array(«EXPAND SelectJoinFieldTableNames(formatForDB(name) + "id") FOR relation.source-»),
-                                       'object_field_name'   => array(«EXPAND SelectJoinFieldObjNames(formatForDB(name) + "id") FOR relation.source-»),
-                                       'compare_field_table' => '«formatForDB(relation.source.name)»id',
-                                       'compare_field_join'  => '«formatForDB(relation.source.name)»id');
-«ENDFOREACH-»
+«DEFINE outgoingRelationAccessors FOR JoinRelationship»
+«EXPAND FileHelper::GetterAndSetterMethods(target.name.formatForCode(), target.implClassBusinessEntity((metaType != OneToOneRelationship)))»
 «ENDDEFINE»
 
 «DEFINE ObjectPermissionFilters(String modName) FOR Entity-»
         // apply object permission filters
         $this->_objPermissionFilter[] = array('component_left'   => '«modName»',
-                                              'component_middle' => '«capitalName(name)»',
+                                              'component_middle' => '«name.formatForCodeCapital()»',
                                               'component_right'  => '',
                                               'instance_left'    => '«name.formatForDB()»id',
                                               'instance_middle'  => '',
@@ -135,8 +113,8 @@ class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntit
 
 «FOREACH incoming AS join-»
         $this->_objPermissionFilter[] = array('component_left'   => '«modName»',
-                                              'component_middle' => '«capitalName(join.source.name)»',
-                                              'component_right'  => '«capitalName(name)»',
+                                              'component_middle' => '«join.source.name.formatForCodeCapital()»',
+                                              'component_right'  => '«name.formatForCodeCapital()»',
                                               'instance_left'    => '«join.source.name.formatForDB()»id',
                                               'instance_middle'  => '«name.formatForDB()»id',
                                               'instance_right'   => '',
@@ -147,60 +125,38 @@ class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntit
 
 
 
-«DEFINE GetObjectReference FOR EntityEventListener-»
-        // in case we don't get any explicit data array assigned we default to the data the object acquired.
-        // Typically this data is acquired from the getDataFromInput() method. 
-        if (!$obj)
-            $obj = &$this->_objData;
-«ENDDEFINE»
 
-
-
-
-
-
-
-
-«DEFINE ObjectArrayClassBaseImpl(Application app) FOR Entity-»
+«DEFINE BusinessEntityCollectionBaseImpl(Application app) FOR Entity»
     /**
-     * Constructor, init everything to sane defaults and handle parameters.
-     * It only needs to set the fields which are used to configure
-     * the object's specific properties and actions.
-     *
-     * @param string|array $init        Initialization value (can be an object or a string directive) (optional) (default=null).
-     *                                  If it is an array it is set, otherwise it is interpreted as a string
-     *                                  specifying the source from where the data should be retrieved from.
-     *                                  Possible values:
-     *                                  D (DB), G ($_GET), P ($_POST), R ($_REQUEST), S ($_SESSION), V (failed validation).
+     * @var array  Reference to list of «nameMultiple.formatForDisplay()».
+     */
+    protected «implClassBusinessEntity(false)»[] «nameMultiple.formatForCode()» = null;
+
+    /**
+     * @var string The tablename this object maps to
+     */
+    protected string $objectType = '«fullEntityName()»';
+
+    /**
+     * @var string The id field for this object
+     */
+    protected string $idField = '«idField()»';
+
+    /**
+     * @var string The default sorting field/expression.
+     */
+    protected string $defaultSortingField = '«getLeadingField().name.formatForCode()»';
+
+
+    /**
+     * Constructor.
      *
      * @param string $where             The where clause to use when retrieving the object array (optional) (default='').
      * @param string $orderBy           The order-by clause to use when retrieving the object array (optional) (default='').
-     * @param string $assocKey          Key field to use for building an associative array (optional) (default=null).
      */
-    function __construct($init = null, $where = '', $orderBy = '', $assocKey = null)
+    function __construct($where = '', $orderBy = '')
     {
-        // call base class constructor
-        parent::__construct();
-
-        // set the tablename this object maps to
-        $this->_objType       = '«fullEntityName()»';
-«REM»        $this->_objType       = '«dbName(module.prefix + '_' + dataSource().name)»';«ENDREM»
-
-        // set the ID field for this object
-        $this->_objField      = '«name.formatForDB()»id';
-«REM»        $this->_objField      = '«dbName(dataSource().name)»id';«ENDREM»
-«REM»TODO«ENDREM»
-
-        // set the access path under which the object's
-        // input data can be retrieved upon input
-        $this->_objPath       = '«name.formatForDB()»_array';
-
-«EXPAND ObjectJoins-»
-
-«EXPAND ObjectPermissionFilters(app.appName())-»
-
-        // Call initialization routine.
-        $this->_init($init, $where, $orderBy, $assocKey);
+«REM»«EXPAND ObjectPermissionFilters(app.appName())-»«ENDREM»«""-»
     }
 
     /**
@@ -210,33 +166,16 @@ class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntit
      */
     function getAllowedSortingFields()
     {
-        return array(«EXPAND singleSortingField FOREACH fields SEPARATOR ','»«EXPAND standardSortingFields FOR this-»);
+        return array(«EXPAND singleSortingField FOREACH fields SEPARATOR ','»«EXPAND standardSortingFields FOR this-»
+        );
     }
 
-    /**
-     * Retrieves the default sorting field/expression.
-     *
-     * @return string
-     */
-    function getDefaultSortingField()
-    {
-        return '«idField()»';
-    }
+«EXPAND FileHelper::GetterAndSetterMethods(nameMultiple.formatForCode(), implClassBusinessEntity(false))»
+«EXPAND FileHelper::GetterAndSetterMethods('objectType', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('idField', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('defaultSortingField', 'string')»
 
-    /**
-     * SelectPostProcess.
-     *
-     * @return void
-     */
-    function selectPostProcess($all = null)
-    {
-        foreach ($this->_objData as $k => $data) {
-    «EXPAND sanitizeForOutput FOREACH fields»
-            $this->_objData[$k] = $data;
-        }
-    }
-
-«EXPAND BehaviorCommon::ClassToString(baseClassBusinessEntity(true))-»
+«EXPAND FileHelper::ClassToString(baseClassBusinessEntity(true))-»
 «ENDDEFINE»
 
 «DEFINE singleSortingField FOR EntityField»
@@ -252,23 +191,4 @@ class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntit
 «REM»will be filled by Advices«ENDREM»
 «ENDDEFINE»
 
-«DEFINE sanitizeForOutput FOR EntityField-»
-        $data['«name.formatForDB()»'] = ((isset($data['«name.formatForDB()»']) && !empty($data['«name.formatForDB()»'])) ? DataUtil::formatForDisplay($data['«name.formatForDB()»']) : '');
-«ENDDEFINE»
-
-«DEFINE sanitizeForOutputHTML FOR EntityField-»
-        $data['«name.formatForDB()»'] = ((isset($data['«name.formatForDB()»']) && !empty($data['«name.formatForDB()»'])) ? DataUtil::formatForDisplayHTML($data['«name.formatForDB()»']) : '');
-«ENDDEFINE»
-
-«DEFINE sanitizeForOutput FOR StringField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
-
-«DEFINE sanitizeForOutput FOR BooleanField-»
-        $data['«name.formatForDB()»'] = (bool) $data['«name.formatForDB()»'];
-«ENDDEFINE»
-
-«DEFINE sanitizeForOutput FOR BlobField-»
-«ENDDEFINE»
-
-«DEFINE sanitizeForOutput FOR TextField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
-«DEFINE sanitizeForOutput FOR ClobField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
 

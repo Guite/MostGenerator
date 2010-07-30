@@ -30,7 +30,7 @@ cached String appName(Application this) :
 
 cached String formatForCode(String s)
 	: JAVA extensions.Utils.formatForCode(java.lang.String);
-cached String capitalName(String s)
+cached String formatForCodeCapital(String s)
 	: s.formatForCode().toFirstUpper();
 cached String formatForDB(String s)
 	: JAVA extensions.Utils.formatForDB(java.lang.String);
@@ -153,6 +153,14 @@ cached String asConstant(CascadeType obj) :
 /*
  * extensions that are independent of a specific model element,
  */
+
+cached String fieldTypeAsString(DerivedField f)
+    : f.metaType.toString().replaceAll("modulestudio::", "").replaceAll("Field", "").toLowerCase();
+// required for own sub types like user, email, url, upload 
+cached String fieldTypeAsString(AbstractIntegerField f)
+    : 'integer';
+cached String fieldTypeAsString(AbstractStringField f)
+    : 'string';
 
 cached String timestamp()
 	: JAVA extensions.Utils.timestamp();

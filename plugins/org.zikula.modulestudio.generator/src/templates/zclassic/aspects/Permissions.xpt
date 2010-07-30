@@ -16,11 +16,11 @@
 «IF incoming.size > 0-»
 «EXPAND PermissionSchema(appName) FOREACH incoming SEPARATOR ','-»,
 «ENDIF»
-            '«appName»:«capitalName(name)»:' => '«capitalName(name)»ID::'«""-»
+            '«appName»:«name.formatForCodeCapital()»:' => '«name.formatForCodeCapital()»ID::'«""-»
 «ENDDEFINE»
 
 «DEFINE PermissionSchema(String modName) FOR Relationship»
-            '«modName»:«capitalName(source.name)»:«capitalName(target.name)»' => '«capitalName(source.name)»ID:«capitalName(target.name)»ID:'«ENDDEFINE»
+            '«modName»:«source.name.formatForCodeCapital()»:«target.name.formatForCodeCapital()»' => '«source.name.formatForCodeCapital()»ID:«target.name.formatForCodeCapital()»ID:'«ENDDEFINE»
 
 «REM»Permission checks in system use cases«ENDREM»
 «AROUND templates::zclassic::controller::Controller::PermissionCheck FOR Action-»

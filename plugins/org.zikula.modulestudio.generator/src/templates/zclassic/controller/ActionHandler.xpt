@@ -189,7 +189,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         if($this->«idField()») {
             $this->mode = 'edit';
 
-            if (!SecurityUtil::checkPermission('«appName»:«capitalName(name)»:', '::', ACCESS_EDIT)) {
+            if (!SecurityUtil::checkPermission('«appName»:«name.formatForCodeCapital()»:', '::', ACCESS_EDIT)) {
                 // set an error message and return false
                 return $view->registerError(LogUtil::registerPermissionError());
             }
@@ -204,11 +204,11 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             // try to guarantee that only one person at a time can be editing this «name.formatForDisplay()»
             $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display', array('ot' => $objectType, '«idField()»' => $this->«idField()»));
             ModUtil::apiFunc('PageLock', 'user', 'pageLock',
-                                 array('lockName' => "«capitalName(appName)»«capitalName(name)»{$this->«idField()»}",
+                                 array('lockName' => "«appName»«name.formatForCodeCapital()»{$this->«idField()»}",
                                        'returnUrl' => $returnUrl));
         }
         else {
-            if (!SecurityUtil::checkPermission('«appName»:«capitalName(name)»:', '::', ACCESS_ADD)) {
+            if (!SecurityUtil::checkPermission('«appName»:«name.formatForCodeCapital()»:', '::', ACCESS_ADD)) {
                 return $view->registerError(LogUtil::registerPermissionError());
             }
 
@@ -335,7 +335,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
             // Note: No need to check validation when deleting
 
-            if (!SecurityUtil::checkPermission('«appName»:«capitalName(name)»:', '::', ACCESS_DELETE)) {
+            if (!SecurityUtil::checkPermission('«appName»:«name.formatForCodeCapital()»:', '::', ACCESS_DELETE)) {
                 return $view->registerError(LogUtil::registerPermissionError());
             }
 
@@ -375,7 +375,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         if ($returnUrl != null) {
             if ($this->mode == 'edit') {
                 ModUtil::apiFunc('PageLock', 'user', 'releaseLock',
-                                 array('lockName' => "«capitalName(appName)»«capitalName(name)»{$this->«idField()»}"));
+                                 array('lockName' => "«appName»«name.formatForCodeCapital()»{$this->«idField()»}"));
             }
 
             return $view->redirect($returnUrl);

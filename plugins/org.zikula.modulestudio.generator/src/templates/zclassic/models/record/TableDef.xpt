@@ -46,14 +46,9 @@
 «error("Error: undefined calculated field type (code 592378)") -> ""-»
 «ENDDEFINE»
 
-«DEFINE FieldSetColumnDetails FOR DerivedField-»'«EXPAND FieldName-»', '«EXPAND FieldType-»', «EXPAND FieldLength-»«ENDDEFINE»
+«DEFINE FieldSetColumnDetails FOR DerivedField-»'«EXPAND FieldName-»', '«fieldTypeAsString()»', «EXPAND FieldLength-»«ENDDEFINE»
 
 «DEFINE FieldName FOR DerivedField-»«name.formatForCode()»«IF alias != null && alias != ""-» as «alias.formatForCode()»«ENDIF-»«ENDDEFINE»
-
-«DEFINE FieldType FOR DerivedField-»«metaType.toString().replaceAll("modulestudio::", "").replaceAll("Field", "").toLowerCase()»«ENDDEFINE»
-«REM»required for own types like user, email, url, upload«ENDREM» 
-«DEFINE FieldType FOR AbstractIntegerField-»integer«ENDDEFINE»
-«DEFINE FieldType FOR AbstractStringField-»string«ENDDEFINE»
 
 «DEFINE FieldLength FOR DerivedField-»null«ENDDEFINE»
 «DEFINE FieldLength FOR AbstractIntegerField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
@@ -63,7 +58,7 @@
 «DEFINE FieldLength FOR ArrayField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
 
 «DEFINE FieldSetColumnOptions FOR DerivedField-»
-                'type' => '«EXPAND FieldType-»',
+                'type' => '«fieldTypeAsString()»',
 «IF primaryKey == true-»
                 'primary' => true,
                 'autoincrement' => true,

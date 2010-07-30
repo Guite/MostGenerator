@@ -25,7 +25,7 @@
 /**
  * Doctrine_Record_Listener class used to listen for and hook into events.
  *
- * This is the base listener class for «name.formatForDisplay()» entities
+ * This is the base listener class for «name.formatForDisplay()» entities.
  */
 class «baseClassModelListener()» extends Doctrine_Record_Listener
 {
@@ -39,9 +39,9 @@ class «baseClassModelListener()» extends Doctrine_Record_Listener
 /**
  * Doctrine_Record_Listener class used to listen for and hook into events.
  *
- * This is the concrete listener class for «name.formatForDisplay()» entities
+ * This is the concrete listener class for «name.formatForDisplay()» entities.
  */
-class «implClassModelListener()» extends «IF isInheriting()»«parentType().implClassModelListener()»«ELSE»«baseClassModelListener()»«ENDIF-»
+class «implClassModelListener()» extends «IF isInheriting()»«parentType().implClassModelListener()»«ELSE»«baseClassModelListener()»«ENDIF»
 {
     // feel free to add your own methods here
 }
@@ -66,6 +66,38 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 
 «REM»«DEFINE EventListenerMethod FOR PreSave-»«ENDREM»«""-»
     /**
+     * Pre-Process the data prior to a hydrate operation.
+     *
+     * @param Doctrine_Event $event Event object
+     *
+     * @return void.
+     */
+    public function preHydrate(Doctrine_Event $event)
+    {
+        // echo 'selecting a record ...';
+    }
+«REM»«ENDDEFINE»«ENDREM»«""-»
+
+«REM»«DEFINE EventListenerMethod FOR PostSave-»«ENDREM»«""-»
+    /**
+     * Post-Process the data after a hydrate operation.
+     *
+     * @param Doctrine_Event $event Event object
+     *
+     * @return void.
+     */
+    public function postHydrate(Doctrine_Event $event)
+    {
+        // echo 'selected a record ...';
+
+        $data = $event->data;
+    «EXPAND sanitizeForOutput FOREACH fields»
+        $event->data = $data;
+    }
+«REM»«ENDDEFINE»«ENDREM»«""-»
+
+«REM»«DEFINE EventListenerMethod FOR PreSave-»«ENDREM»«""-»
+    /**
      * Pre-Process the data prior to a save operation.
      *
      * @param Doctrine_Event $event Event object
@@ -74,7 +106,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
      */
     public function preSave(Doctrine_Event $event)
     {
-        //echo 'saving a record ...';
+        // echo 'saving a record ...';
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -88,7 +120,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
      */
     public function postSave(Doctrine_Event $event)
     {
-        //echo 'saved a record ...';
+        // echo 'saved a record ...';
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -102,7 +134,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
      */
     function preUpdate(Doctrine_Event $event)
     {
-        //echo 'updating a record ...';
+        // echo 'updating a record ...';
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -116,7 +148,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
      */
     function postUpdate(Doctrine_Event $event)
     {
-        //echo 'updated a record ...';
+        // echo 'updated a record ...';
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -130,7 +162,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
      */
     function preInsert(Doctrine_Event $event)
     {
-        //echo 'inserting a record ...';
+        // echo 'inserting a record ...';
 
         return true;
     }
@@ -146,7 +178,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
      */
     function postInsert(Doctrine_Event $event)
     {
-        //echo 'inserted a record ...';
+        // echo 'inserted a record ...';
 
         return;
     }
@@ -162,7 +194,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
      */
     function preDelete(Doctrine_Event $event)
     {
-        //echo 'deleting a record ...';
+        // echo 'deleting a record ...';
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -176,7 +208,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
      */
     function postDelete(Doctrine_Event $event)
     {
-        //echo 'deleted a record ...';
+        // echo 'deleted a record ...';
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -190,7 +222,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
      */
     function preValidate(Doctrine_Event $event)
     {
-        //echo 'validating a record ...';
+        // echo 'validating a record ...';
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -204,6 +236,26 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
      */
     function postValidate(Doctrine_Event $event)
     {
-        //echo 'validated a record ...';
+        // echo 'validated a record ...';
     }
 «ENDDEFINE»
+
+
+
+
+«DEFINE sanitizeForOutput FOR EntityField-»
+        $data['«name.formatForDB()»'] = ((isset($data['«name.formatForDB()»']) && !empty($data['«name.formatForDB()»'])) ? DataUtil::formatForDisplay($data['«name.formatForDB()»']) : '');
+«ENDDEFINE»
+
+«DEFINE sanitizeForOutputHTML FOR EntityField-»
+        $data['«name.formatForDB()»'] = ((isset($data['«name.formatForDB()»']) && !empty($data['«name.formatForDB()»'])) ? DataUtil::formatForDisplayHTML($data['«name.formatForDB()»']) : '');
+«ENDDEFINE»
+
+«DEFINE sanitizeForOutput FOR BooleanField-»
+        $data['«name.formatForDB()»'] = (bool) $data['«name.formatForDB()»'];
+«ENDDEFINE»
+«DEFINE sanitizeForOutput FOR StringField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
+«DEFINE sanitizeForOutput FOR TextField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
+«DEFINE sanitizeForOutput FOR ClobField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
+«DEFINE sanitizeForOutput FOR BlobField-»«ENDDEFINE»
+
