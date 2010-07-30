@@ -3,5 +3,5 @@
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Root FOR TransformObject-»
-«error("Error: undefined transform object (code 925625)") -> ""-»
+«error("Error: undefined transform object type " + metaType.toString() + " (code 925625)") -> ""-»
 «ENDDEFINE»

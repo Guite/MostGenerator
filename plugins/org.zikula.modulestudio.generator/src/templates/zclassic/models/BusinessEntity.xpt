@@ -52,7 +52,7 @@ class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntit
 «ENDDEFINE»
 
 
-
+«REM»TODO: to be replaced with Doctrine«ENDREM»
 «DEFINE ObjectPermissionFilters(String modName) FOR Entity-»
         // apply object permission filters
         $this->_objPermissionFilter[] = array('component_left'   => '«modName»',

@@ -67,7 +67,7 @@
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR Action-»
-«error("Error: undefined action type (code 925727)") -> ""-»
+«error("Error: undefined action type " + metaType.toString() + " (code 925727)") -> ""-»
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR MainAction-»
@@ -205,7 +205,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
         // retrieve the ID of the object we wish to view
         $id = (int) FormUtil::getPassedValue($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, 'GET');
-        
+
         $this->throwNotFoundUnless($id, 'Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
 
         $confirmation = (bool) FormUtil::getPassedValue('confirmation', isset($args['confirmation']) ? $args['confirmation'] : false, 'GETPOST');

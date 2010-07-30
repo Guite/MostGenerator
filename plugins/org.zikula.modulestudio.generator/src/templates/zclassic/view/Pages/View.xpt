@@ -77,7 +77,6 @@ listType:
 «ENDLET-»
 «ENDIF-»
 «ENDLET-»
-            </a>
         </th>
 «ENDFOREACH-»
         <th id="hoptions" scope="col" align="left" valign="middle">{gt text='Options'}</th>

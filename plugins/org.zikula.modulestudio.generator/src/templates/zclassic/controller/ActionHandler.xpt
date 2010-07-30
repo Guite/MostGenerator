@@ -246,13 +246,13 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 '«name.formatForDB()»' => «EXPAND FieldDefaultData»«ENDDEFINE»
 
 «DEFINE FieldDefaultData FOR EntityField-»
-«error("Error: undefined entity field type (code 925624)") -> ""-»
+«error("Error: undefined entity field type " + metaType.toString() + " (code 925624)") -> ""-»
 «ENDDEFINE»
 «DEFINE FieldDefaultData FOR DerivedField-»
-«error("Error: undefined derived field type (code 925627)") -> ""-»
+«error("Error: undefined derived field type " + metaType.toString() + " (code 925627)") -> ""-»
 «ENDDEFINE»
 «DEFINE FieldDefaultData FOR CalculatedField-»
-«error("Error: undefined calculated field type (code 925628)") -> ""-»
+«error("Error: undefined calculated field type " + metaType.toString() + " (code 925628)") -> ""-»
 «ENDDEFINE»
 
 «DEFINE FieldDefaultDataText FOR DerivedField-»'«defaultValue»'«ENDDEFINE»
@@ -279,10 +279,10 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «DEFINE FieldDefaultData FOR ObjectField»null«ENDDEFINE»
 «DEFINE FieldDefaultData FOR BlobField»'«REM»nothing for now«ENDREM»'«ENDDEFINE»
 «DEFINE FieldDefaultData FOR ClobField»«EXPAND FieldDefaultDataText-»«ENDDEFINE»
-«DEFINE FieldDefaultData FOR TimestampField»«IF mandatory == true»«IF defaultValue.length > 0»«defaultValue»«ELSE»$thisTimestamp«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
-«DEFINE FieldDefaultData FOR DateField»«IF mandatory == true»«IF defaultValue.length > 0»«defaultValue»«ELSE»$todayDate«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
-«DEFINE FieldDefaultData FOR TimeField»«IF mandatory == true»«IF defaultValue.length > 0»«defaultValue»«ELSE»$thisTime«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
-«DEFINE FieldDefaultValue FOR GzipField-»«EXPAND FieldDefaultDataText-»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR TimestampField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»$thisTimestamp«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR DateField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»$todayDate«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR TimeField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»$thisTime«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE FieldDefaultData FOR GzipField-»«EXPAND FieldDefaultDataText-»«ENDDEFINE»
 
 
 «DEFINE handleCommand(Application app, Controller controller, String actionName, String appName, String controllerName) FOR Entity-»

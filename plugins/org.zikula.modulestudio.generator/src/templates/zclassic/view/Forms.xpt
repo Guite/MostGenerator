@@ -137,120 +137,124 @@ cssClass="myClass"
 
 
 «DEFINE FormField FOR EntityField-»
-{* TODO: Undefined EntityField *}
+«error("Error: undefined entity field type " + metaType.toString() + " (code 902386)") -> ""-»
+«ENDDEFINE»
+«DEFINE FormField FOR DerivedField-»
+«error("Error: undefined derived field type " + metaType.toString() + " (code 902387)") -> ""-»
+«ENDDEFINE»
+«DEFINE FormField FOR CalculatedField-»
+«error("Error: undefined calculated field type " + metaType.toString() + " (code 902388)") -> ""-»
 «ENDDEFINE»
 
 
-«DEFINE FormField FOR StringField-»
-            {formtextinput id="«name.formatForDB()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=«length»}
-«REM» visible=false    cssClass="myClass" FormStyledPlugin (width="80%", width="30em")«ENDREM»«""-»
-«ENDDEFINE»
-«DEFINE FormField FOR TextField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
-
-«REM»TODO: textMode="password" for password input fields«ENDREM»
-
-«DEFINE FormFieldTextarea FOR DerivedField-»
-            {formtextinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="multiline" rows="8" cols="50"}
-«REM»
-    var $group;                     // group name for this input
-                                    // used to locate data in the render (when databased)
-                                    // and to restrict which plugins to do validation on (to be implemented).
-
-    var $size;                      // size of HTML input (number of characters)
-
-    // indicates if the input is empty
-    function bool isEmpty();
-«ENDREM»«""-»
-«ENDDEFINE»
-«DEFINE FormField FOR ClobField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
-«DEFINE FormField FOR DateField-»«REM»class="date"«ENDREM»
-            {if $mode == "edit"}
-                {formdateinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true}
-            {else}
-                {formdateinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true defaultValue="today"}
-            {/if}
-«REM» FormTextInput     defaults: maxLength = 12; width = '8em';«ENDREM»«""-»
-«ENDDEFINE»
-«DEFINE FormField FOR TimestampField-»
-            {if $mode == "edit"}
-                {formdateinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true}
-            {else}
-                {formdateinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true defaultValue="now"}
-            {/if}
-«REM» FormTextInput     defaults: maxLength = 18; width = '10em';«ENDREM»«""-»
-«ENDDEFINE»
 «DEFINE FormField FOR BooleanField-»«REM»class="cbx"«ENDREM»
             {formcheckbox id="«name.formatForDB()»" readOnly=«readonly» __title='«name.formatForDisplay()» ?'}
 «REM» visible=false FormStyledPlugin«ENDREM»«""-»
 «REM»
-    var $group;                 // group name for this input
-                                // used to locate data in the render (when databased)
-                                // and to restrict which plugins to do validation on (to be implemented).
+    var $group;                 // group name for sub arrays
 «ENDREM»«""-»
 «ENDDEFINE»
+
 «DEFINE FormField FOR IntegerField-»
 «LET entity.incoming.select(e|formatForDB(e.source.idFieldName()) == name.formatForDB()) AS pointingRelations-»
 «IF pointingRelations.size > 0-»
 «LET pointingRelations.get(0) AS pointingRelation-»
 «LET pointingRelation.source AS joiningTable-»
-«REM»Join-Selector«ENDREM»«""-»
+«REM»Join-selector«ENDREM»«""-»
             {formdropdownrelationlist id="«joiningTable.idField()»" mandatory=«mandatory.displayBool()» module="«entity.container.application.appName()»" objecttype="«joiningTable.name.formatForCode()»" idField="«joiningTable.idField()»" displayField="«joiningTable.idField()»" orderby="«joiningTable.idField()»"«IF pointingRelation.metaType == OneToManyRelationship-» selectionMode="multiple"«ENDIF-»}«IF mandatory-»&nbsp;*«ENDIF»
 «ENDLET-»
 «ENDLET-»
 «ELSE-»
-            {formintinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«length»}
-«REM» minValue=123 maxValue=123 FormTextInput
-defaults: maxLength = 20; width = '6em';«ENDREM»«""-»
+            {formintinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«length»«IF minValue != 0 || maxValue != 0-» minValue=«minValue» maxValue=«maxValue»«ENDIF»}
+«REM»TODO: general attributes from FormTextInput«ENDREM»«""-»
 «ENDIF-»
 «ENDLET-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR FloatField-»
             {formfloatinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'}
-«REM» maxLength=«length+3+precision» minValue=123 maxValue=123 FormTextInput
-defaults: maxLength = 30; width = '6em';«ENDREM»«""-»
+«REM»TODO: general attributes from FormTextInput, minValue=123 maxValue=123«ENDREM»«""-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR DecimalField-»
-            {formfloatinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'}
+            {formfloatinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=maxLength=«(length+3+scale)»}
 «ENDDEFINE»
 
+«DEFINE FormField FOR StringField-»
+            {formtextinput id="«name.formatForDB()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=«length»}
+«REM»TODO: visible=false    cssClass="myClass" FormStyledPlugin (width="80%", width="30em"), textMode="password" for password input fields«ENDREM»«""-»
+«ENDDEFINE»
 
-«DEFINE FormField FOR BlobField-»
-            {formtextinput id="«name.formatForDB()»" readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'}
-«REM»TODO«ENDREM»«""-»
+«DEFINE FormField FOR TextField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
+
+«DEFINE FormFieldTextarea FOR DerivedField-»
+            {formtextinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="multiline" rows="8" cols="50"}
+«REM»
+    var $group;                     // group name for sub arrays
+    var $size;                      // size of HTML input (number of characters)
+«ENDREM»«""-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR EmailField-»
             {formemailinput id="«name.formatForDB()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=«length»}
-«REM» visible=false  cssClass="myClass" FormStyledPlugin (width="80%", width="30em")«ENDREM»«""-»
+«REM»TODO: visible=false cssClass="myClass" FormStyledPlugin (width="80%", width="30em")«ENDREM»«""-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR UrlField-»
             {formurlinput id="«name.formatForDB()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=«length»}
-«REM» visible=false  cssClass="myClass" FormStyledPlugin (width="80%", width="30em")«ENDREM»«""-»
+«REM»TODO: visible=false cssClass="myClass" FormStyledPlugin (width="80%", width="30em")«ENDREM»«""-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR UploadField-»«REM»class="upload"«ENDREM»
             {formuploadinput id="«name.formatForDB()»" mandatory=«mandatory» readOnly=«readonly»}
-«REM» visible=false FormStyledPlugin]«END-REM»
-    var $group;                     // group name for this input
-                                    // used to locate data in the render (when databased)
-                                    // and to restrict which plugins to do validation on (to be implemented).
-                default: null
-«ENDREM»
+«REM»TODO: visible=false FormStyledPlugin
+    var $group;                     // group name for sub arrays
+«ENDREM»«""-»
 «ENDDEFINE»
 
-«REM»TODO: UserField, ArrayField, ObjectField, EnumField, etc.«ENDREM»
-
-«DEFINE OtherFieldsTODO FOR Object-»
-«REM»
-formdropdownlist
-
-formradiobutton
-
-plus new stuff
-
-«ENDREM»
+«DEFINE FormField FOR UserField-»
+            // TODO: support user selector with auto completion
+            {formintinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«length»}
+«REM»TODO: general attributes from FormTextInput«ENDREM»«""-»
 «ENDDEFINE»
+
+«REM»TODO: find a better way for editing«ENDREM»
+«DEFINE FormField FOR ArrayField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
+
+«REM»TODO: support formdropdownlist or formradiobutton«ENDREM»
+«DEFINE FormField FOR EnumField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
+
+«REM»TODO: find a better way for editing«ENDREM»
+«DEFINE FormField FOR ObjectField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
+
+«REM»TODO: find a better way for editing«ENDREM»
+«DEFINE FormField FOR BlobField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
+
+«DEFINE FormField FOR ClobField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
+
+«DEFINE FormField FOR TimestampField-»
+            {if $mode == "edit"}
+                {formdateinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true}
+            {else}
+                {formdateinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true defaultValue="now"}
+            {/if}
+«REM»TODO: general attributes from FormTextInput«ENDREM»«""-»
+«ENDDEFINE»
+
+«DEFINE FormField FOR DateField-»«REM»class="date"«ENDREM»
+            {if $mode == "edit"}
+                {formdateinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true}
+            {else}
+                {formdateinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true defaultValue="today"}
+            {/if}
+«REM»TODO: general attributes from FormTextInput«ENDREM»«""-»
+«ENDDEFINE»
+
+«REM»TODO: support time fields in Zikula core«ENDREM»
+«DEFINE FormField FOR TimeField-»
+            {formtextinput id="«name.formatForDB()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=8}
+«REM»TODO: visible=false    cssClass="myClass" FormStyledPlugin (width="80%", width="30em"), textMode="password" for password input fields«ENDREM»«""-»
+«ENDDEFINE»
+
+«DEFINE FormField FOR GzipField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
 

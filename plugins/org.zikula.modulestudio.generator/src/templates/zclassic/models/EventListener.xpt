@@ -51,13 +51,13 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 
 
 «DEFINE EventListenerMethod FOR EntityEventListener-»
-«error("Error: undefined event listener type (code 925724)") -> ""-»
+«error("Error: undefined event listener type " + metaType.toString() + " (code 925724)") -> ""-»
 «ENDDEFINE»
 «DEFINE EventListenerMethod FOR PreProcess-»
-«error("Error: undefined pre process type (code 925725)") -> ""-»
+«error("Error: undefined pre process type " + metaType.toString() + " (code 925725)") -> ""-»
 «ENDDEFINE»
 «DEFINE EventListenerMethod FOR PostProcess-»
-«error("Error: undefined post process type (code 925726)") -> ""-»
+«error("Error: undefined post process type " + metaType.toString() + " (code 925726)") -> ""-»
 «ENDDEFINE»
 
 

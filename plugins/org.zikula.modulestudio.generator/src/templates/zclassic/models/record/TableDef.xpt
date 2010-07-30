@@ -25,7 +25,7 @@
 
 «REM»column definition«ENDREM»
 «DEFINE FieldSetColumn FOR EntityField-»
-«error("Error: undefined entity field type (code 592354)") -> ""-»
+«error("Error: undefined entity field type " + metaType.toString() + " (code 592354)") -> ""-»
 «ENDDEFINE»
 «DEFINE FieldSetColumn FOR DerivedField-»
         $this->hasColumn(«EXPAND FieldSetColumnDetails-», array(
@@ -37,13 +37,13 @@
 «REM»Nothing at the moment«ENDREM»
 «ENDDEFINE»
 «DEFINE FieldDefaultData FOR EntityField-»
-«error("Error: undefined entity field type (code 592374)") -> ""-»
+«error("Error: undefined entity field type " + metaType.toString() + " (code 592374)") -> ""-»
 «ENDDEFINE»
 «DEFINE FieldDefaultData FOR DerivedField-»
-«error("Error: undefined derived field type (code 592376)") -> ""-»
+«error("Error: undefined derived field type " + metaType.toString() + " (code 592376)") -> ""-»
 «ENDDEFINE»
 «DEFINE FieldDefaultData FOR CalculatedField-»
-«error("Error: undefined calculated field type (code 592378)") -> ""-»
+«error("Error: undefined calculated field type " + metaType.toString() + " (code 592378)") -> ""-»
 «ENDDEFINE»
 
 «DEFINE FieldSetColumnDetails FOR DerivedField-»'«EXPAND FieldName-»', '«fieldTypeAsString()»', «EXPAND FieldLength-»«ENDDEFINE»
@@ -81,7 +81,7 @@
 «ENDDEFINE»
 
 «DEFINE FieldDefaultValue FOR DerivedField-»
-«error("Error: undefined default value definition for derived field type (code 3982562)") -> ""-»
+«error("Error: undefined default value definition for derived field type " + metaType.toString() + " (code 3982562)") -> ""-»
 «ENDDEFINE»
 «DEFINE FieldDefaultValueNumber FOR DerivedField-»«defaultValue»«ENDDEFINE»
 «DEFINE FieldDefaultValueText FOR DerivedField-»'«defaultValue»'«ENDDEFINE»
