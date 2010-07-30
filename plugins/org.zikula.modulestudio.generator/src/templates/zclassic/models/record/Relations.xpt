@@ -24,11 +24,11 @@
 «ENDDEFINE»
 
 «DEFINE RelationDefinition(JoinRelationship relation, Boolean incoming) FOR Entity-»
-        $this->has«IF relation.metaType == OneToOneRelationship-»One«ELSE-»Many«ENDIF-»('«relation.target.implClassModelRecord()»«IF relation.alias != null && relation.alias != ""-» as «relation.alias.formatForCode()»«ENDIF-»', array(
+        $this->has«IF relation.metaType == OneToOneRelationship-»One«ELSE-»Many«ENDIF-»('«IF incoming == true-»«relation.source.implClassModelRecord()»«ELSE-»«relation.target.implClassModelRecord()»«ENDIF-»«IF relation.alias != null && relation.alias != ""-» as «relation.alias.formatForCode()»«ENDIF-»', array(
                 // linked field in the defining class
-                'local' => '«IF incoming == true-»«relation.target.idField()»«ELSE-»«relation.source.idField()»«ENDIF-»',
+                'local' => '«REM»«IF incoming == true-»«relation.target.idField()»«ELSE-»«ENDREM»«relation.source.idField()»«REM»«ENDIF-»«ENDREM»',
                 // linked field in the linked class
-                'foreign' => '«IF incoming == true-»«relation.source.idField()»«ELSE-»«relation.target.idField()»«ENDIF-»',«REM»Rule: always place the foreign key in the owned class«ENDREM»«""-»
+                'foreign' => '«REM»«IF incoming == true-»«relation.source.idField()»«ELSE-»«ENDREM»«relation.target.idField()»«REM»«ENDIF-»«ENDREM»',«REM»Rule: always place the foreign key in the owned class«ENDREM»
 «IF relation.metaType == ManyToManyRelationship-»
                 // name of the many-to-many association class
                 'refClass' => '«((ManyToManyRelationship)relation).implClassModelRefRecord()»',

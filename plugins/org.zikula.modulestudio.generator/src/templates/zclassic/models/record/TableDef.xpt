@@ -13,7 +13,7 @@
 
         $this->option('type', '«tableType.asConstant()»');
         $this->option('collate', '«IF collate != null && collate != ""-»«collate»«ELSE-»utf8_unicode_ci«ENDIF-»');
-        $this->option('charset', '«IF charset != null && charset != ""-»«collate»«ELSE-»utf8«ENDIF-»');
+        $this->option('charset', '«IF charset != null && charset != ""-»«charset»«ELSE-»utf8«ENDIF-»');
 «IF indexes.size > 0»
         /**
          * Indexes
@@ -63,7 +63,7 @@
                 'primary' => true,
                 'autoincrement' => true,
 «ENDIF-»
-«IF defaultValue != null && defaultValue != ""-»
+«IF metaType != BlobField && metaType != ClobField && defaultValue != null && defaultValue != ""-»
                 'default' => «EXPAND FieldDefaultValue-»,
 «ENDIF-»
 «EXPAND FieldSetColumnAdditionalOptions-»
