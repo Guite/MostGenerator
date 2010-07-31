@@ -38,8 +38,6 @@
         $this->_intObjectType = '«fullEntityName()»';
         $this->_intIdField = '«name.formatForDB()»id';
         $this->_intId = $id;
-
-«REM»«EXPAND ObjectPermissionFilters(app.appName())-»«ENDREM»«""-»
     }
 
     /**

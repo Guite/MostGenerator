@@ -51,32 +51,3 @@ class «implClassBusinessEntity(isCollection)» extends «IF isInheriting()»«p
 }
 «ENDDEFINE»
 
-
-«REM»TODO: to be replaced with Doctrine«ENDREM»
-«DEFINE ObjectPermissionFilters(String modName) FOR Entity-»
-        // apply object permission filters
-        $this->_objPermissionFilter[] = array('component_left'   => '«modName»',
-                                              'component_middle' => '«name.formatForCodeCapital()»',
-                                              'component_right'  => '',
-                                              'instance_left'    => '«name.formatForDB()»id',
-                                              'instance_middle'  => '',
-                                              'instance_right'   => '',
-                                              'level'            => ACCESS_READ);
-
-«FOREACH incoming AS join-»
-        $this->_objPermissionFilter[] = array('component_left'   => '«modName»',
-                                              'component_middle' => '«join.source.name.formatForCodeCapital()»',
-                                              'component_right'  => '«name.formatForCodeCapital()»',
-                                              'instance_left'    => '«join.source.name.formatForDB()»id',
-                                              'instance_middle'  => '«name.formatForDB()»id',
-                                              'instance_right'   => '',
-                                              'level'            => ACCESS_READ);
-
-«ENDFOREACH-»
-«ENDDEFINE»
-
-
-
-
-
-

@@ -46,7 +46,6 @@
     {
         $this->set_intWhere($where);
         $this->set_intOrderBy($orderBy);
-«REM»«EXPAND ObjectPermissionFilters(app.appName())-»«ENDREM»«""-»
     }
 
     /**
