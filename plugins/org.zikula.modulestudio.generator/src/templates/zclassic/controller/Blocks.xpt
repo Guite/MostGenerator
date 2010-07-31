@@ -1,7 +1,0 @@
-«IMPORT modulestudio»
-«EXTENSION extensions::Utils»
-
-«REM»Entry point for the module's blocks«ENDREM»
-«DEFINE Root FOR Application-»
-«REM»TODO«ENDREM»
-«ENDDEFINE»

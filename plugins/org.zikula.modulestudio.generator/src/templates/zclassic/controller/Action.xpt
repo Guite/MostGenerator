@@ -52,10 +52,10 @@
 «LET app.appName() AS appName-»
 «IF metaType != MainAction-»
         // parameter specifying which type of objects we are treating
-        $objectType = FormUtil::getPassedValue('ot', '«app.getLeadObj()»', 'GET');
+        $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'GET');
 
         if (!in_array($objectType, «appName»_Util::getObjectTypes())) {
-            $objectType = '«app.getLeadObj()»';
+            $objectType = '«app.getLeadingEntity().name.formatForCode()»';
         }
 «ENDIF-»
 «EXPAND ActionImplBody(appName)-»
@@ -100,7 +100,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «DEFINE ActionImplBody(String appName) FOR ViewAction-»
 «EXPAND ControllerHelper::loadBusinessObjectClass(appName, true)-»
 
-        // instantiate the object-array
+        // instantiate the object collection
         $objectCollection = new $class();
 
         // parameter for used sorting field
@@ -124,7 +124,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         // convenience vars to make code clearer
         $where = '';
         $sortParam = $sort . ' ' . $sdir;
-«REM»TODO
+/** TODO
         // use FilterUtil to support generic filtering based on an object-oriented approach
         $fu = new FilterUtil(array('table' => $objectCollection->_intObjectType, array('join' => &$objectCollection->_objJoin)));
 
@@ -132,10 +132,10 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         // $fu->setFilter('type:eq:' . $args['type'] . ',id:eq:' . $args['id']);
         // supported operators: eq, ne, like, lt, le, gt, ge, null, notnull
 
-        // process request input filters and get result for DBUtil
+        // process request input filters and get result for DQL
         $ret = $fu->GetSQL();
         $where = $ret['where'];
-«ENDREM»
+*/
         // get objects from database
         // while the result will be saved in the object, we assign in to a local variable for convenience.
         $objectData = $objectCollection->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);

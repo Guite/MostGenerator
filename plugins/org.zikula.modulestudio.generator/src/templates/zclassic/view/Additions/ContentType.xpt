@@ -1,0 +1,74 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE Root FOR Application-»
+«FOREACH models.entities AS entity-»
+«FILE "templates/contenttype/itemlist_".msconcat(entity.name.formatForCode().toFirstUpper()).msconcat('_display_description.tpl')-»
+{* Purpose of this template: Display «entity.nameMultiple.formatForDisplay()» within an external context *}
+
+<dl>
+{foreach item="item" from=$items}
+    <dt>{$item.«entity.getLeadingField().actualFieldName().formatForCode()»}</dt>
+«IF entity.fields.typeSelect(TextField).size > 0-»
+{if $item.«entity.fields.typeSelect(TextField).get(0).actualFieldName().formatForCode()»}
+    <dd>{$item.«entity.fields.typeSelect(TextField).get(0).actualFieldName().formatForCode()»|truncate:200:"..."}</dd>
+{/if}
+«ENDIF-»
+    <dd>«EXPAND DetailLink(appName()) FOR entity-»</dd>
+{foreachelse}
+    <dt>{gt text='No entries found.'}</dt>
+{/foreach}
+</dl>
+«ENDFILE»
+«FILE "templates/contenttype/itemlist_".msconcat(entity.name.formatForCode().toFirstUpper()).msconcat('_display.tpl')-»
+{* Purpose of this template: Display «entity.nameMultiple.formatForDisplay()» within an external context *}
+
+{foreach item="item" from=$items}
+    <h3>{$item.«entity.getLeadingField().name.formatForCode()»}</h3>
+    <p>«EXPAND DetailLink(appName()) FOR entity-»</p>
+{/foreach}
+«ENDFILE»
+«ENDFOREACH-»
+«FILE "templates/contenttype/itemlist_edit.tpl"-»
+{* Purpose of this template: edit view of generic item list content type *}
+
+<div class="z-adminformrow">
+    {formlabel for='«appName()»_objecttype' __text='Object type'}
+    {«appName().formatForDB()»SelectorObjectTypes assign="allObjectTypes"}
+    {formdropdownlist id='«appName()»_objecttype' dataField='objectType' group='data' mandatory=true items=$allObjectTypes}
+</div>
+
+<div class="z-formrow">
+    {formlabel __text='Sorting'}
+    {formradiobutton id='«appName()»_srandom' value='random' dataField='sorting' group='data' mandatory=true}
+    {formlabel for='«appName()»_srandom' __text='Random'}
+    {formradiobutton id='«appName()»_snewest' value='newest' dataField='sorting' group='data' mandatory=true}
+    {formlabel for='«appName()»_snewest' __text='Newest'}
+    {formradiobutton id='«appName()»_sdefault' value='default' dataField='sorting' group='data' mandatory=true}
+    {formlabel for='«appName()»_sdefault' __text='Default'}
+</div>
+
+<div class="z-formrow">
+    {formlabel for='«appName()»_amount' __text='Amount'}
+    {formtextinput id='«appName()»_amount' dataField='amount' group='data' mandatory=true maxLength=2}
+</div>
+
+<div class="z-formrow">
+    {formlabel for='«appName()»_template' __text='Template File'}
+    {«appName().formatForDB()»SelectorTemplates assign="allTemplates"}
+    {formdropdownlist id='«appName()»_template' dataField='template' group='data' mandatory=true items=$allTemplates}
+</div>
+
+<div class="z-formrow">
+    {formlabel for='«appName()»_filter' __text='Filter (export option)'}
+    {formtextinput id='«appName()»_filter' dataField='filter' group='data' mandatory=false maxLength=255}
+    <div class="z-formnote">(<!--[gt text='Syntax examples']-->: <kbd>name:like:foobar</kbd> <!--[gt text='or']--> <kbd>status:ne:3</kbd>)</div>
+</div>
+«ENDFILE»
+«ENDDEFINE»
+
+«DEFINE DetailLink(String appName) FOR Entity-»
+<a href="{modurl modname="«appName»" type="user" func="display" ot=$objectType «idField()»=$item.«idField()»}">{gt text='Read more'}</a>«""-»
+«ENDDEFINE»
+

@@ -130,27 +130,36 @@
      */
     private function _intBaseQuery()
     {
+        $selection = 'e.*';
+        if ($this->_intOrderBy == 'RAND()') {
+            $selection .= ', RANDOM() rand';
+        }
         $query = Doctrine_Query::create()
-            ->select('e.*')
+            ->select($selection)
             ->from('«implClassModelRecord()» e');
         if (!empty($this->_intWhere)) {
             $query->where('e.' . $this->_intWhere);
         }
         if (!empty($this->_intOrderBy)) {
-«IF i18n-»
-            // HACK FOR I18n behavior
-            $sortParts = explode(' ', $this->_intOrderBy);
-            $sortField = $sortParts[0];
-            if (in_array($sortField, array('«i18nFields.replaceAll(", ", "', '")»'))) {
-                $query->leftJoin('e.Translation t')
-                      ->orderBy('t.' . $this->_intOrderBy);
+            if ($this->_intOrderBy == 'RAND()') {
+                $query->orderBy('rand');
             }
             else {
-                $query->orderBy('e.' . $this->_intOrderBy);
-            }
+«IF i18n-»
+                // HACK FOR I18n behavior
+                $sortParts = explode(' ', $this->_intOrderBy);
+                $sortField = $sortParts[0];
+                if (in_array($sortField, array('«i18nFields.replaceAll(", ", "', '")»'))) {
+                    $query->leftJoin('e.Translation t')
+                          ->orderBy('t.' . $this->_intOrderBy);
+                }
+                else {
+                    $query->orderBy('e.' . $this->_intOrderBy);
+                }
 «ELSE-»
-            $query->orderBy('e.' . $this->_intOrderBy);
+                $query->orderBy('e.' . $this->_intOrderBy);
 «ENDIF-»
+            }
         }
         return $query;
     }

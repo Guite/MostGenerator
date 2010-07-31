@@ -1,0 +1,36 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE Root FOR Application-»
+«FILE "templates/plugins/function.".msconcat(appName().formatForDB()).msconcat('SelectorObjectTypes.php')-»«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * The «appName().formatForDB()»SelectorObjectTypes plugin provides items for a dropdown selector.
+ *
+ * Available parameters:
+ *   - assign:   If set, the results are assigned to the corresponding variable instead of printed out.
+ *
+ * @param  array     $params  All attributes passed to this function from the template.
+ * @param  Form_View $view    Reference to the view object.
+ *
+ * @return string The output of the plugin.
+ */
+function smarty_function_«appName().formatForDB()»SelectorObjectTypes.php($params, $view)
+{
+    $result = array();
+    $dom = ZLanguage::getModuleDomain('«appName()»');
+
+«FOREACH models.entities AS entity-»
+    $result[] = array('text' => '«entity.nameMultiple.formatForDisplayCapital()»', 'value' => '«entity.name.formatForCode()»');
+«ENDFOREACH-»
+
+    if (array_key_exists('assign', $params)) {
+        $render->assign($params['assign'], $result);
+        return;
+    }
+    return $result;
+}
+«ENDFILE»
+«ENDDEFINE»
+

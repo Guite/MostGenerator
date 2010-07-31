@@ -46,7 +46,7 @@
     {«appName().formatForDB()»FormFrame}
 «FOREACH models.variables.vars AS modvar-»
         <div class="z-formrow">
-            {formlabel for="«modvar.name.formatForCode()»" __text='«modvar.name.formatForDisplayCapitalized()»'}
+            {formlabel for="«modvar.name.formatForCode()»" __text='«modvar.name.formatForDisplayCapital()»'}
             «EXPAND InputField FOR modvar-»
         </div>
 «ENDFOREACH-»
@@ -95,7 +95,7 @@
 «ELSE-»
 <div class="z-frontendbox">
 «ENDIF-»
-    <h1>{gt text='«appName.formatForDisplayCapitalized()»' comment='This is the title of the header template'}</h1>
+    <h1>{gt text='«appName.formatForDisplayCapital()»' comment='This is the title of the header template'}</h1>
     <div class="z-menu">
         {modulelinks modname="«appName»" type="«controllerName»"}
     </div>

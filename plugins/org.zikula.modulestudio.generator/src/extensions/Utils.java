@@ -64,9 +64,9 @@ public class Utils {
      * @return string formatted (e.g. federalStateName becomes Federal state
      *         names)
      */
-    public static String formatForDisplayCapitalized(String string) {
+    public static String formatForDisplayCapital(String string) {
         if (isInDebugMode) {
-            System.out.println("formatForDisplayCapitalized (" + string + ")");
+            System.out.println("formatForDisplayCapital(" + string + ")");
         }
         String result = "";
         final String helpString = replaceSpecialChars(string);

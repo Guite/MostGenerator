@@ -96,7 +96,7 @@ class «baseClassApi()» extends Zikula_Api
 «FOREACH app.models.entities AS entity-»
         if (SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_«IF metaType == AdminController»ADMIN«ELSE»READ«ENDIF»)) {
             $links[] = array('url' => ModUtil::url('«app.appName()»', '«name.formatForDB()»', 'view', array('ot' => '«entity.name.formatForCode()»')),
-                             'text' => $this->__('«entity.nameMultiple.formatForDisplayCapitalized()»'));
+                             'text' => $this->__('«entity.nameMultiple.formatForDisplayCapital()»'));
         }
 «ENDFOREACH-»
 «IF metaType == AdminController && app.needsConfig()-»

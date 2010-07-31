@@ -36,8 +36,8 @@ cached String formatForDB(String s)
 	: JAVA extensions.Utils.formatForDB(java.lang.String);
 cached String formatForDisplay(String s)
 	: JAVA extensions.Utils.formatForDisplay(java.lang.String);
-cached String formatForDisplayCapitalized(String s)
-	: JAVA extensions.Utils.formatForDisplayCapitalized(java.lang.String);
+cached String formatForDisplayCapital(String s)
+	: JAVA extensions.Utils.formatForDisplayCapital(java.lang.String);
 
 cached String displayBool(Boolean b)
     : ((b) ? 'true' : 'false');
@@ -72,9 +72,6 @@ cached getPrimaryKeyField(Entity this)
     : getDerivedFields(this).select(e | e.primaryKey == true).get(0);
 
 
-
-cached String getLeadObj(Application application)
-    : application.models.entities.select(e|e.leading == true).get(0).name.formatForCode();
 
 cached String idField(Entity entity)
     : entity.getPrimaryKeyField().name.formatForDB();

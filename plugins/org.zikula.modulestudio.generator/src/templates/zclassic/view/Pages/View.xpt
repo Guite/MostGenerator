@@ -23,7 +23,7 @@ listType:
 «ELSE-»
 <div class="z-frontendcontainer">
 «ENDIF-»
-{gt text='«name.formatForDisplayCapitalized()» list' assign="templateTitle"}
+{gt text='«name.formatForDisplayCapital()» list' assign="templateTitle"}
 «IF controller.metaType == AdminController-»
 <div class="z-adminpageicon">{img modname="core" src="windowlist.gif" set="icons/large" alt=$templateTitle}</div>
 «ENDIF-»
@@ -218,7 +218,7 @@ listType:
     {else}
             <a href="{modurl modname="«appName»" type="«controllerName»" func="view" ot="«objName»" sort="«fieldName»" sdir="asc"}">
     {/if}
-                {gt text='«label.formatForDisplayCapitalized()»'}
+                {gt text='«label.formatForDisplayCapital()»'}
             </a>
 «ENDDEFINE»
 

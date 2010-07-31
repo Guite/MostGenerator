@@ -342,7 +342,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 return LogUtil::registerError($this->__('Error! Creation attempt failed.'));
             }
 
-            LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapitalized()» created.'));
+            LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» created.'));
 
             // redirect to the detail page of the newly created «name.formatForCode()»
             $this->returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
@@ -360,7 +360,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 return LogUtil::registerError($this->__('Error! Update attempt failed.'));
             }
 
-            LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapitalized()» updated.'));
+            LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» updated.'));
 
             // redirect to the detail page of the treated «name.formatForCode()»
             $this->returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
@@ -382,7 +382,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 return LogUtil::registerError($this->__('Error! Deletion attempt failed.'));
             }
 
-            LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapitalized()» deleted.'));
+            LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» deleted.'));
 
             // redirect to the list of «nameMultiple.formatForCode()»
             $this->returnUrl = ModUtil::url('«appName»', '«controllerName»', 'view',

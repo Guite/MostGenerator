@@ -1,0 +1,235 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE Root FOR Application-»
+«FILE "lib/".msconcat(appName()).msconcat('/Block/Base/ItemList.php')-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Generic item list block base class
+ */
+class «appName()»_Block_Base_ItemList extends Zikula_Block
+{
+«EXPAND ListBlockImpl-»
+}
+«ENDFILE»
+
+«FILE "lib/".msconcat(appName()).msconcat('/Block/ItemList.php')-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Generic item list block implementation class
+ */
+class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
+{
+    // feel free to extend the item list block here
+}
+«ENDFILE»
+
+«EXPAND templates::zclassic::view::Additions::Blocks::Root»
+«ENDDEFINE»
+
+«DEFINE ListBlockImpl FOR Application-»
+    /**
+     * Initialise the block
+     */
+    public function init()
+    {
+        SecurityUtil::registerPermissionSchema('«appName()»:ItemListBlock:', 'Block title::');
+    }
+
+    /**
+     * Get information on the block
+     *
+     * @return       array       The block information
+     */
+    public function info()
+    {
+        return array('module'           => '«appName()»',
+                     'text_type'        => $this->__('Item list'),
+                     'text_type_long'   => $this->__('Show a list of «appName()» items based on different criteria.'),
+                     'allow_multiple'   => true,
+                     'form_content'     => false,
+                     'form_refresh'     => false,
+                     'show_preview'     => true,
+                     'admin_tableless'  => true,
+                     'requirement'      => '');
+    }
+
+    /**
+     * Display the block
+     *
+     * @param        array       $blockinfo a blockinfo structure
+     * @return       output      the rendered bock
+     */
+    public function display($blockinfo)
+    {
+        // only show block content if the user has the required permissions
+        if (!SecurityUtil::checkPermission('«appName()»:FactListBlock:', "$blockinfo[title]::", ACCESS_OVERVIEW)) {
+            return false;
+        }
+
+        // check if the module is available at all
+        if (!pnModAvailable('«appName()»')) {
+            return false;
+        }
+
+        // get current block content
+        $vars = BlockUtil::varsFromContent($blockinfo['content']);
+        $vars['bid'] = $blockinfo['bid'];
+
+        // set default values for all params which are not properly set
+        if (!isset($vars['objectType']) || empty($vars['objectType'])) {
+            $vars['objectType'] = '«getLeadingEntity().name.formatForCode()»';
+        }
+        if (!isset($vars['sorting']) || empty($vars['sorting'])) {
+            $vars['sorting'] = 'default';
+        }
+        if (!isset($vars['amount']) || !is_numeric($vars['amount'])) {
+            $vars['amount'] = 5;
+        }
+        if (!isset($vars['template'])) {
+            $vars['template'] = 'itemlist_' . ucwords($vars['objectType']) . '_display.tpl';
+        }
+        if (!isset($vars['filter'])) {
+            $vars['filter'] = '';
+        }
+
+        $objectType = $vars['objectType'];
+«EXPAND templates::zclassic::controller::ControllerHelper::loadBusinessObjectClass(appName(), true)-»
+
+        // instantiate the object collection
+        $objectCollection = new $class();
+
+/** TODO
+        if (!empty($vars['filter'])) {
+            // use FilterUtil to support generic filtering based on an object-oriented approach
+            $fu = new FilterUtil(array('table' => $objectCollection->_intObjectType, array('join' => &$objectCollection->_objJoin)));
+
+            $fu->setFilter($vars['filter']);
+            // supported operators: eq, ne, like, lt, le, gt, ge, null, notnull
+
+            // process request input filters and get result for DQL
+            $ret = $fu->GetSQL();
+            $where = $ret['where'];
+        }
+*/
+        $sortParam = '';
+        if ($vars['sorting'] == 'random') $sortParam = 'RAND()';
+        elseif ($vars['sorting'] == 'newest') $sortParam = $objectCollection->get_intIdField() . ' DESC';
+        elseif ($vars['sorting'] == 'default') $sortParam = $objectCollection->get_intDefaultSortingField() . ' ASC';
+
+        // get objects from database
+        // while the result will be saved in the object, we assign in to a local variable for convenience.
+        $objectData = $objectCollection->selectWherePaginated($vars['filter'], $sortParam, -1, $vars['amount']);
+
+        $this->view->setCaching(false);
+
+        // assign block vars and fetched data
+        $this->view->assign('vars', $vars)
+                   ->assign('objectType', $objectType)
+                   ->assign('items', $objectData);
+
+        // set a block title
+        if (empty($blockinfo['title'])) {
+            $blockinfo['title'] = $this->__('«appName()» items');
+        }
+
+        $output = '';
+        $templateForObjectType = str_replace('itemlist_', 'itemlist_' . ucwords($objectType) . '_', $vars['template']);
+        if ($this->view->template_exists('contenttype/' . $templateForObjectType)) {
+            $output = $this->view->fetch('contenttype/' . $templateForObjectType);
+        }
+        elseif ($this->view->template_exists('contenttype/' . $vars['template'])) {
+            $output = $this->view->fetch('contenttype/' . $vars['template']);
+        }
+        elseif ($this->view->template_exists('block/' . $templateForObjectType)) {
+            $output = $this->view->fetch('block/' . $templateForObjectType);
+        }
+        elseif ($this->view->template_exists('block/' . $vars['template'])) {
+            $output = $this->view->fetch('block/' . $vars['template']);
+        }
+        else {
+            $output = $this->view->fetch('block/itemlist.tpl');
+        }
+
+        $blockinfo['content'] = $output;
+
+        // return the block to the theme
+        return BlockUtil::themeBlock($blockinfo);
+    }
+
+    /**
+     * Modify block settings
+     *
+     * @param        array       $blockinfo a blockinfo structure
+     * @return       output      the block form
+     */
+    public function modify($blockinfo)
+    {
+        // Get current content
+        $vars = BlockUtil::varsFromContent($blockinfo['content']);
+
+        // set default values for all params which are not properly set
+        if (!isset($vars['objectType']) || empty($vars['objectType'])) {
+            $vars['objectType'] = '«getLeadingEntity().name.formatForCode()»';
+        }
+        if (!isset($vars['sorting']) || empty($vars['sorting'])) {
+            $vars['sorting'] = 'default';
+        }
+        if (!isset($vars['amount']) || !is_numeric($vars['amount'])) {
+            $vars['amount'] = 5;
+        }
+        if (!isset($vars['template'])) {
+            $vars['template'] = 'itemlist_' . $vars['objectType'] . '_display.tpl';
+        }
+        if (!isset($vars['filter'])) {
+            $vars['filter'] = '';
+        }
+
+        $this->view->setCaching(false);
+
+        // assign the approriate values
+        $this->view->assign($vars);
+
+        // clear the block cache
+        $this->view->clear_cache('block/itemlist_display.tpl');
+        $this->view->clear_cache('block/itemlist_' . ucwords($vars['objectType']) . '_display.tpl');
+        $this->view->clear_cache('block/itemlist_display_description.tpl');
+        $this->view->clear_cache('block/itemlist_' . ucwords($vars['objectType']) . '_display_description.tpl');
+
+        // Return the output that has been generated by this function
+        return $this->view->fetch('block/itemlist_modify.tpl');
+    }
+
+    /**
+     * Update block settings
+     *
+     * @param        array       $blockinfo a blockinfo structure
+     * @return       $blockinfo  the modified blockinfo structure
+     */
+    public function update($blockinfo)
+    {
+        // Get current content
+        $vars = BlockUtil::varsFromContent($blockinfo['content']);
+
+        $vars['objectType'] = FormUtil::getPassedValue('objecttype', '«getLeadingEntity().name.formatForCode()»', 'POST');
+        $vars['sorting'] = FormUtil::getPassedValue('sorting', 'default', 'POST');
+        $vars['amount'] = (int) FormUtil::getPassedValue('amount', 5, 'POST');
+        $vars['template'] = FormUtil::getPassedValue('template', '', 'POST');
+        $vars['filter'] = FormUtil::getPassedValue('filter', '', 'POST');
+
+        // write back the new contents
+        $blockinfo['content'] = BlockUtil::varsToContent($vars);
+
+        // clear the block cache
+        $this->view->clear_cache('block/itemlist_display.tpl');
+        $this->view->clear_cache('block/itemlist_' . ucwords($vars['objectType']) . '_display.tpl');
+        $this->view->clear_cache('block/itemlist_display_description.tpl');
+        $this->view->clear_cache('block/itemlist_' . ucwords($vars['objectType']) . '_display_description.tpl');
+
+        return $blockinfo;
+    }
+
+«ENDDEFINE»
+

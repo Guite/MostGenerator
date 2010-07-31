@@ -1,0 +1,172 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE Root FOR Application-»
+«FILE "lib/".msconcat(appName()).msconcat('/ContentTypes/Base/ItemList.php')-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Generic item list content plugin base class
+ */
+class «appName()»_Api_Base_ContentTypes_itemListPlugin extends contentTypeBase
+{
+«EXPAND ContentTypeImpl-»
+}
+«ENDFILE»
+
+«FILE "lib/".msconcat(appName()).msconcat('/ContentTypes/ItemList.php')-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Generic item list content plugin implementation class
+ */
+class «appName()»_Api_ContentTypes_itemListPlugin extends «appName()»_Api_Base_ContentTypes_itemListPlugin
+{
+    // feel free to extend the content type here
+}
+
+function «appName()»_Api_ContentTypes_itemlist($args)
+{
+    return new «appName()»_Api_ContentTypes_itemListPlugin();
+}
+«ENDFILE»
+
+«EXPAND templates::zclassic::view::Additions::ContentType::Root»
+«ENDDEFINE»
+
+«DEFINE ContentTypeImpl FOR Application-»
+    private $objectType;
+    private $sorting;
+    private $amount;
+    private $template;
+    private $filter;
+
+    public function getModule()
+    {
+        return '«appName()»';
+    }
+
+    public function getName()
+    {
+        return 'itemlist';
+    }
+
+    public function getTitle()
+    {
+        $dom = ZLanguage::getModuleDomain('«appName()»');
+        return __('«appName()» items', $dom);
+    }
+
+    public function getDescription()
+    {
+        $dom = ZLanguage::getModuleDomain('«appName()»');
+        return __('Display «appName()» items.', $dom);
+    }
+
+    public function loadData(&$data)
+    {
+        if (!isset($data['objectType']))
+            $data['objectType'] = '«getLeadingEntity().name.formatForCode()»';
+        $this->objectType = $data['objectType'];
+
+        if (!isset($data['sorting']))
+            $data['sorting'] = 'default';
+        if (!isset($data['amount']))
+            $data['amount'] = 1;
+        if (!isset($data['template']))
+            $data['template'] = 'itemlist_' . ucwords($this->objectType) . '_display.tpl';
+        if (!isset($data['filter']))
+            $data['filter'] = '';
+
+        $this->sorting = $data['sorting'];
+        $this->amount = $data['amount'];
+        $this->template = $data['template'];
+        $this->filter = $data['filter'];
+    }
+
+    public function display()
+    {
+        $dom = ZLanguage::getModuleDomain('«appName()»');
+
+        $objectType = $this->objectType;
+
+«EXPAND templates::zclassic::controller::ControllerHelper::loadBusinessObjectClass(appName(), true)-»
+
+        // instantiate the object collection
+        $objectCollection = new $class();
+
+/** TODO
+        if (!empty($this->filter)) {
+            // use FilterUtil to support generic filtering based on an object-oriented approach
+            $fu = new FilterUtil(array('table' => $objectCollection->_intObjectType, array('join' => &$objectCollection->_objJoin)));
+
+            $fu->setFilter($this->filter);
+            // supported operators: eq, ne, like, lt, le, gt, ge, null, notnull
+
+            // process request input filters and get result for DQL
+            $ret = $fu->GetSQL();
+            $where = $ret['where'];
+        }
+*/
+        $sortParam = '';
+        if ($this->sorting == 'random') $sortParam = 'RAND()';
+        elseif ($this->sorting == 'newest') $sortParam = $objectCollection->get_intIdField() . ' DESC';
+        elseif ($this->sorting == 'default') $sortParam = $objectCollection->get_intDefaultSortingField() . ' ASC';
+
+        $resultsPerPage = (($this->amount) ? $this->amount : 1);
+
+        // get objects from database
+        // while the result will be saved in the object, we assign in to a local variable for convenience.
+        $objectData = $objectCollection->selectWherePaginated($this->filter, $sortParam, -1, $resultsPerPage);
+
+        // get total number of records for building the pagination by method call
+        //$objectCount = $objectCollection->selectCount($where);
+
+        $this->view->setCaching(false);
+
+        $data = array('objectType' => $this->objectType, 'sorting' => $this->sorting, 'amount' => $this->amount, 'filter' => $this->filter, 'template' => $this->template);
+
+        // assign block vars and fetched data
+        $this->view->assign('vars', $data)
+                   ->assign('objectType', $this->objectType)
+                   ->assign('items', $objectData);
+
+        $output = '';
+        if (!empty($this->template) && $this->view->template_exists('contenttype/' . $this->template)) {
+            $output = $this->view->fetch('contenttype/' . $this->template);
+        }
+        $templateForObjectType = str_replace('itemlist_', 'itemlist_' . ucwords($this->objectType) . '_', $this->template);
+        if ($this->view->template_exists('contenttype/' . $templateForObjectType)) {
+            $output = $this->view->fetch('contenttype/' . $templateForObjectType);
+        }
+        elseif ($this->view->template_exists('contenttype/' . $this->template)) {
+            $output = $this->view->fetch('contenttype/' . $this->template);
+        }
+        else {
+            $output = $this->view->fetch('contenttype/itemlist_display.tpl');
+        }
+
+        return $output;
+    }
+
+    public function displayEditing()
+    {
+        return $this->display();
+    }
+
+    public function getDefaultData()
+    {
+        return array('objectType' => '«getLeadingEntity().name.formatForCode()»',
+                     'sorting' => 'default',
+                     'amount' => 1,
+                     'template' => 'itemlist_display.html',
+                     'filter' => '');
+    }
+
+    public function startEditing($view)
+    {
+        $dom = ZLanguage::getModuleDomain('«appName()»');
+        array_push($view->plugins_dir, 'modules/«appName()»/templates/plugins');
+    }
+«ENDDEFINE»
+

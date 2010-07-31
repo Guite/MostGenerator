@@ -64,7 +64,13 @@
 
     «pm.subTask("Additions: Blocks")»
     «info("Generating blocks")»
-    «EXPAND Blocks::Root»
+    «EXPAND controller::apis::Blocks::Root»
+    «pm.subTask("Additions: Content type api")»
+    «info("Generating content type api")»
+    «EXPAND controller::apis::ContentType::Root»
+    «pm.subTask("Additions: Mailz api")»
+    «info("Generating mailz api")»
+    «EXPAND controller::apis::Mailz::Root»
     «pm.subTask("Additions: Translations")»
     «info("Generating translations")»
     «EXPAND Translations::Root»

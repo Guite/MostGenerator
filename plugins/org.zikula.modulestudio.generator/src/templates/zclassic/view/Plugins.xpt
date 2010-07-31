@@ -1,77 +1,9 @@
 «IMPORT modulestudio»
-«IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 
 «DEFINE Root FOR Application-»
-«IF controllers.controllers.actions.typeSelect(EditAction).size > 0-»
-«LET "templates/plugins/" AS pluginDir-»
-«FILE 'lib/' + appName() + '/Form/Plugin/FormFrame.php'-»«EXPAND FileHelper::phpFileHeader(this)-»
-«EXPAND FormFrameBlockClass-»
-«ENDFILE»
-«FILE pluginDir + "block." + formatForDB(appName()) + "FormFrame.php"-»«EXPAND FileHelper::phpFileHeader(this)-»
-«EXPAND FormFrameBlock-»
-«ENDFILE»
-«ENDLET-»
-«ENDIF-»
+«EXPAND Plugins::FormFrame::Root-»
+«EXPAND Plugins::SelectorObjectTypes::Root-»
+«EXPAND Plugins::SelectorTemplates::Root-»
 «ENDDEFINE»
 
-«DEFINE FormFrameBlockClass FOR Application-»
-class «appName()»_Form_Plugin_FormFrame extends Form_Plugin
-{
-    var $useTabs;
-    var $cssClass = 'tabs';
-
-    // Plugins MUST implement this function as it is stated here.
-    // The information is used to re-establish the plugins on postback.
-    function getFilename()
-    {
-        return __FILE__;
-    }
-
-    function create($view, &$params)
-    {
-        $this->useTabs = (array_key_exists('useTabs', $params) ? $params['useTabs'] : false);
-    }
-
-
-    // This is called by the framework before the content of the block is rendered
-    function renderBegin($view)
-    {
-        $tabClass = $this->useTabs ? ' '.$this->cssClass : '';
-        return "<div class=\"«appName().formatForDB()»Form{$tabClass}\">\n";
-    }
-
-    // This is called by the framework after the content of the block is rendered
-    function renderEnd($view)
-    {
-        return "</div>\n";
-    }
-}
-«ENDDEFINE»
-
-«DEFINE FormFrameBlock FOR Application-»
-/**
- * The «appName().formatForDB()»FormFrame plugin adds styling <div> elements and a validation summary.
- *
- * Available parameters:
- *   - assign:   If set, the results are assigned to the corresponding variable instead of printed out.
- *
- * @param  array     $params  All attributes passed to this function from the template.
- * @param  string    $content The content of the block.
- * @param  Form_View $view    Reference to the view object.
- *
- * @return string The output of the plugin.
- */
-function smarty_block_«appName().formatForDB()»FormFrame($params, $content, $view)
-{
-    // As with all Forms plugins, we must remember to register our plugin.
-    // In this case we also register a validation summary so we don't have to
-    // do that explicitively in the templates.
-
-    // We need to concatenate the output of boths plugins.
-    $result = $view->registerPlugin('Form_Plugin_ValidationSummary', $params);
-    $result .= $view->registerBlock('«appName()»_Form_Plugin_FormFrame', $params, $content);
-
-    return $result;
-}
-«ENDDEFINE»

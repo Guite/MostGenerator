@@ -1,0 +1,28 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE Root FOR Application-»
+«FOREACH models.entities AS entity-»
+«FILE "templates/mailz/itemlist_".msconcat(entity.name.formatForCode().toFirstUpper()).msconcat('.tpl')-»
+{* Purpose of this template: Display «entity.nameMultiple.formatForDisplay()» in mailings *}
+{*
+<ul>
+{foreach item="item" from=$items}
+    <li>
+«EXPAND MailzEntry(appName()) FOR entity-»
+    </li>
+{foreachelse}
+    <li>{gt text='No «entity.nameMultiple.formatForDisplay()» found.'}</li>
+{/foreach}
+</ul>
+*}
+
+{include file="contenttype/itemlist_«entity.name.formatForCode().toFirstUpper()»_display_description.tpl"}
+«ENDFILE»
+«ENDFOREACH-»
+«ENDDEFINE»
+
+«DEFINE MailzEntry(String appName) FOR Entity-»
+        <a href="{modurl modname="«appName»" type="user" func="display" ot=$objectType «idField()»=$item.«idField()»}">{$item.«getLeadingField().name.formatForCode()»}</a>
+«ENDDEFINE»
