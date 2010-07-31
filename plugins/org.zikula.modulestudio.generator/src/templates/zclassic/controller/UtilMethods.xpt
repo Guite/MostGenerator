@@ -9,6 +9,8 @@ class «appName()»_Base_Util
 {
     /**
      * Returns an array of all allowed object types in «appName()».
+     *
+     * @return array list of allowed object types
      */
     public static function getObjectTypes()
     {
@@ -17,6 +19,26 @@ class «appName()»_Base_Util
         $allowedObjectTypes[] = '«entity.name.formatForCode()»';
 «ENDFOREACH-»
         return $allowedObjectTypes;
+    }
+
+    /**
+     * Returns an array of all allowed object types in the generic block.
+     *
+     * @return array list of allowed object types
+     */
+    public static function getObjectTypesBlock()
+    {
+        return self::getObjectTypes();
+    }
+
+    /**
+     * Returns an array of all allowed object types in the content type api.
+     *
+     * @return array list of allowed object types
+     */
+    public static function getObjectTypesContent()
+    {
+        return self::getObjectTypes();
     }
 
     /**

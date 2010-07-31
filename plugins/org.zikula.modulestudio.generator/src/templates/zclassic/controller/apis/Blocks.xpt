@@ -219,6 +219,10 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
         $vars['template'] = FormUtil::getPassedValue('template', '', 'POST');
         $vars['filter'] = FormUtil::getPassedValue('filter', '', 'POST');
 
+        if (!in_array($vars['objectType'], «appName()»_Util::getObjectTypesBlock())) {
+            $vars['objectType'] = '«getLeadingEntity().name.formatForCode()»';
+        }
+
         // write back the new contents
         $blockinfo['content'] = BlockUtil::varsToContent($vars);
 
