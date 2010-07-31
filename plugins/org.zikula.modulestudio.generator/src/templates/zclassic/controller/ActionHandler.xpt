@@ -8,10 +8,13 @@
 «DEFINE Root FOR Application-»
     «EXPAND Root(this) FOREACH controllers.controllers.actions.typeSelect(EditAction)-»
 «IF needsConfig()-»
-«FILE tempClassConfigHandler().asFile()»
+«FILE tempBaseClassConfigHandler().asFile()»
 «EXPAND FileHelper::phpFileHeader(this)-»
 
-class «appName()»_Form_Handler_Admin_Config extends Form_Handler
+/**
+ * Configuration handler base class
+ */
+class «tempBaseClassConfigHandler()» extends Form_Handler
 {
     function initialize($view)
     {
@@ -50,6 +53,19 @@ class «appName()»_Form_Handler_Admin_Config extends Form_Handler
         $url = ModUtil::url('«appName()»', 'admin', 'config');
         return $view->redirect($url);
     }
+}
+«ENDFILE»
+
+«FILE tempImplClassConfigHandler().asFile()»
+«EXPAND FileHelper::phpFileHeader(this)-»
+
+
+/**
+ * Configuration handler implementation class
+ */
+class «tempImplClassConfigHandler()» extends «tempBaseClassConfigHandler()»
+{
+    // feel free to extend the base handler class here
 }
 «ENDFILE»
 

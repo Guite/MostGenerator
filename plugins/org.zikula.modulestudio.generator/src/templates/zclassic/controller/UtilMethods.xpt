@@ -1,8 +1,11 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 
-«DEFINE CommonFunctions FOR Application-»
-class «appName()»_Util
+«DEFINE CommonFunctionsBase FOR Application-»
+/**
+ * Utility helper base class
+ */
+class «appName()»_Base_Util
 {
     /**
      * Returns an array of all allowed object types in «appName()».
@@ -38,5 +41,15 @@ class «appName()»_Util
         // normal output
         return $view->fetch($template);
     }
+}
+«ENDDEFINE»
+
+«DEFINE CommonFunctionsImpl FOR Application-»
+/**
+ * Utility helper implementation class
+ */
+class «appName()»_Util extends «appName()»_Base_Util
+{
+    // feel free to add your own convenience methods here
 }
 «ENDDEFINE»

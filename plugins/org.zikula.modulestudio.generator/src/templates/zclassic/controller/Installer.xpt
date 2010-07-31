@@ -6,25 +6,47 @@
 
 «REM»Entry point for application installer«ENDREM»
 «DEFINE Root FOR Application»
-«FILE "lib/" + appName() + "/Installer.php"-»
+«FILE "lib/" + appName() + "/Base/Installer.php"-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
- * Installer
+ * Installer base class
  */
-class «appName()»_Installer extends Zikula_Installer
+class «appName()»_Base_Installer extends Zikula_Installer
 {
 «EXPAND NormalInstall-»
 }
 «ENDFILE»
+
+«FILE "lib/" + appName() + "/Installer.php"-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Installer implementation class
+ */
+class «appName()»_Installer extends «appName()»_Base_Installer
+{
+    // feel free to extend the installer here
+}
+«ENDFILE»
+
 «IF interactiveInstallation == true»
+«FILE "lib/" + appName() + "/Controller/Base/InteractiveInstaller.php"-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Interactive installer base class
+ */
+class «appName()»_Controller_Base_Interactiveinstaller extends Zikula_InteractiveInstaller
+{
+«EXPAND InteractiveInstall»
+}
+«ENDFILE»
 «FILE "lib/" + appName() + "/Controller/InteractiveInstaller.php"-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
- * Interactive installer
+ * Interactive installer implementation class
  */
-class «appName()»_Controller_Interactiveinstaller extends Zikula_InteractiveInstaller
+class «appName()»_Controller_Interactiveinstaller extends «appName()»_Controller_Base_Interactiveinstaller
 {
-«EXPAND InteractiveInstall»
+    // feel free to extend the installer here
 }
 «ENDFILE»
 «EXPAND templates::zclassic::view::Installer::Root»

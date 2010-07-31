@@ -80,7 +80,9 @@ cached String implClassFormHandler(Controller obj, String entityName, String act
     : implClassDefault(obj.container.application, fillingFormHandler(), prepClassPart(obj.name).msconcat('_').msconcat(prepClassPart(entityName)).msconcat('_').msconcat(prepClassPart(actionName)));
 
 
-cached String tempClassConfigHandler(Application app)
+cached String tempBaseClassConfigHandler(Application app)
+    : baseClassDefault(app, fillingFormHandler(), prepClassPart('Admin').msconcat('_').msconcat(prepClassPart('Config')));
+cached String tempImplClassConfigHandler(Application app)
     : implClassDefault(app, fillingFormHandler(), prepClassPart('Admin').msconcat('_').msconcat(prepClassPart('Config')));
 
 /** Templates */
