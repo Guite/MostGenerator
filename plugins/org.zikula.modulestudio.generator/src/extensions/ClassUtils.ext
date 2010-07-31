@@ -81,9 +81,9 @@ cached String implClassFormHandler(Controller obj, String entityName, String act
 
 
 cached String tempBaseClassConfigHandler(Application app)
-    : baseClassDefault(app, fillingFormHandler(), prepClassPart('Admin').msconcat('_').msconcat(prepClassPart('Config')));
+    : baseClassDefault(app, fillingFormHandler(), prepClassPart(app.configController().toFirstUpper()).msconcat('_').msconcat(prepClassPart('Config')));
 cached String tempImplClassConfigHandler(Application app)
-    : implClassDefault(app, fillingFormHandler(), prepClassPart('Admin').msconcat('_').msconcat(prepClassPart('Config')));
+    : implClassDefault(app, fillingFormHandler(), prepClassPart(app.configController().toFirstUpper()).msconcat('_').msconcat(prepClassPart('Config')));
 
 /** Templates */
 cached String prepTemplatePart(String origin, String addition)

@@ -50,7 +50,7 @@ class «tempBaseClassConfigHandler()» extends Form_Handler
         else if ($args['commandName'] == 'cancel') {
         }
 
-        $url = ModUtil::url('«appName()»', 'admin', 'config');
+        $url = ModUtil::url('«appName()»', '«configController().formatForDB()»', 'config');
         return $view->redirect($url);
     }
 }

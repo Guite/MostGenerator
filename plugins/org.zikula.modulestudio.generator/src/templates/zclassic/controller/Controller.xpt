@@ -40,10 +40,10 @@ class «baseClassController()» extends Zikula_Controller
 «ENDIF-»
 
 «EXPAND Action::Root(app) FOREACH actions-»
-«IF app.needsConfig() && metaType == AdminController-»
+«IF app.needsConfig() && app.configControllerType() == metaType.toString()-»
 
     /*
-     * This function takes care of the module configuration.
+     * This function takes care of the application configuration.
      *
      * @return string Output
      */
@@ -55,7 +55,7 @@ class «baseClassController()» extends Zikula_Controller
         $view = FormUtil::newForm('«app.appName()»');
 
         // Execute form using supplied template and page event handler
-        return $view->execute('admin/config.tpl', new «app.appName()»_Form_Handler_Admin_Config());
+        return $view->execute('«app.configController().formatForDB()»/config.tpl', new «app.appName()»_Form_Handler_«app.configController().formatForDB().toFirstUpper()»_Config());
     }
 
 «ENDIF-»
@@ -99,9 +99,9 @@ class «baseClassApi()» extends Zikula_Api
                              'text' => $this->__('«entity.nameMultiple.formatForDisplayCapital()»'));
         }
 «ENDFOREACH-»
-«IF metaType == AdminController && app.needsConfig()-»
+«IF app.needsConfig() && metaType.toString() == app.configControllerType()-»
         if (SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_ADMIN)) {
-            $links[] = array('url' => ModUtil::url('«app.appName()»', 'admin', 'config'), 'text' => $this->__('Configuration'));
+            $links[] = array('url' => ModUtil::url('«app.appName()»', '«app.configController().formatForDB()»', 'config'), 'text' => $this->__('Configuration'));
         }
 «ENDIF-»
         return $links;

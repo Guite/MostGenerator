@@ -1,0 +1,61 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE ConfigImpl FOR Application»
+«info("Generating config template") -> ""-»
+«FILE "templates/".msconcat(configController().formatForDB()).msconcat('/config.tpl')-»
+{* purpose of this template: module configuration *}
+
+{include file="«configController().formatForDB()»/header.tpl"}
+«IF configController().formatForDB() == 'admin'-»
+<div class="z-admincontainer">
+<div class="z-adminpageicon">{img modname=core src=configure.gif set=icons/large __alt='Settings'}</div>
+«ELSE-»
+<div class="z-frontendcontainer">
+«ENDIF-»
+
+{gt text='Settings' assign="templateTitle"}
+{pagesetvar name="title" value=$templateTitle}
+<h2>{$templateTitle}</h2>
+
+<p>{gt text='Here you can manage all basic settings for this application.'}</p>
+
+{form cssClass="z-form"}
+«REM»    {formsetinitialfocus inputId=googlemapApiKey}«ENDREM»
+
+    {* add validation summary and a <div> element for styling the form *}
+    {«appName().formatForDB()»FormFrame}
+«FOREACH models.variables.vars AS modvar-»
+        <div class="z-formrow">
+            {formlabel for="«modvar.name.formatForCode()»" __text='«modvar.name.formatForDisplayCapital()»'}
+            «EXPAND InputField FOR modvar-»
+        </div>
+«ENDFOREACH-»
+
+        {modcallhooks hookobject="module" hookaction="modifyconfig" module="«appName()»"}
+
+        <div class="z-formbuttons">
+            {formbutton commandName="save" __text='Update configuration'}
+            {formbutton commandName="cancel" __text='Cancel'}
+        </div>
+    {/«appName().formatForDB()»FormFrame}
+{/form}
+
+</div>
+
+{include file="«configController().formatForDB()»/footer.tpl"}
+«ENDFILE-»
+«ENDDEFINE»
+
+«DEFINE InputField FOR Variable»
+{formtextinput id="«name.formatForCode()»" group="config" maxLength=255 width=20em __title='Input this setting.'}
+«ENDDEFINE»
+
+«DEFINE InputField FOR IntVar»
+{formintinput id="«name.formatForCode()»" group="config" maxLength=255 width=20em __title='Input this setting. Only digits are allowed.'}
+«ENDDEFINE»
+
+«DEFINE InputField FOR BoolVar»
+{formcheckbox id="«name.formatForCode()»" group="config"}
+«ENDDEFINE»

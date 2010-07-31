@@ -43,8 +43,15 @@ cached String displayBool(Boolean b)
     : ((b) ? 'true' : 'false');
 
 cached boolean needsConfig(Application this) :
-	models.variables.vars.size > 0;
+	(models.variables.vars.size > 0);
 
+cached String configControllerType(Application this) :
+    ((controllers.controllers.typeSelect(AdminController).size > 0) ? 'modulestudio::AdminController'
+        : ((controllers.controllers.typeSelect(UserController).size > 0) ? 'modulestudio::UserController'
+            : controllers.controllers.get(0).metaType.toString()
+    ));
+cached String configController(Application this) :
+    configControllerType().replaceAll('modulestudio::', '').replaceAll('Controller', '');
 
 // we have to go the ugly way here to bypass that EfficientLazyString can not be compared
 cached String fullEntityName(Entity this)
