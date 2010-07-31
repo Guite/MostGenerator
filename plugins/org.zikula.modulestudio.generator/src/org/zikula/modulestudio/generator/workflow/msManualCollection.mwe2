@@ -11,6 +11,7 @@ Workflow {
     component = @msManual { dir = "customers/later" name = "GuiCallCenter" }
     component = @msManual { dir = "customers/later" name = "GuiStockKeeping" }
     component = @msManual { dir = "customers/later" name = "GuiSubscription" }
+    component = @msManual { dir = "customers" name = "FreestyleModels" }
     component = @msManual { dir = "customers" name = "GuiCustomer" }
     component = @msManual { dir = "customers" name = "GuiErpSync" }
     component = @msManual { dir = "customers" name = "GuiOrder" }
