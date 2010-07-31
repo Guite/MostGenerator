@@ -150,6 +150,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $this->view->assign('items', $objectData)
                    ->assign('sort', $sort)
                    ->assign('sdir', ($sdir == 'asc') ? 'desc' : 'asc') // reverted for links
+                   ->assign('currentPage', $currentPage)
                    ->assign('pager', array('numitems'     => $objectCount,
                                            'itemsperpage' => $resultsPerPage));
 

@@ -196,7 +196,7 @@ listType:
 {pager rowcount=$pager.numitems limit=$pager.itemsperpage}
 
 «IF controller.metaType == UserController-»
-{modurl modname="«appName»" func="view" ot="«objName»" startnum=$startnum assign="returnurl"}
+{modurl modname="«appName»" func="view" ot="«objName»" pos=$currentPage assign="returnurl"}
 {modcallhooks hookobject="category" hookaction="display" module="«appName»«objName»" returnurl=$returnurl}
 </div>
 
