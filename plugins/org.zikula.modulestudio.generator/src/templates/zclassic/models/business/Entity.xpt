@@ -6,6 +6,11 @@
 
 «DEFINE BusinessEntityBaseImpl(Application app) FOR Entity»
     /**
+     * @var array  Reference to treated «name.formatForDisplay()» model («implClassModelRecord()»)
+     */
+    protected $«name.formatForCode()» = null;
+
+    /**
      * @var string The tablename this object maps to
      */
     protected $_intObjectType = '«fullEntityName()»';
@@ -44,9 +49,10 @@
      * efforts on the controller layer.
      *
      * @param integer $id         The id to use to retrieve the object (optional) (default=null).
-     * @return Doctrine_Record retrieved Doctrine_Record instance
+     * @param boolean $asArray    Whether to return the result as array instead as record object (optional) (default=true).
+     * @return array|Doctrine_Record retrieved data array or Doctrine_Record instance
      */
-    public function selectById($id = 0)
+    public function selectById($id = 0, $asArray = true)
     {
         if ($id == 0 && $this->_intId == 0) {
             return LogUtil::registerArgsError();
@@ -54,12 +60,63 @@
         if ($id > 0) {
             $this->_intId = $id;
         }
-        $table = Doctrine_Core::getTable(«implClassModelRecord()»);
-        return $table->find($this->_intId);
+        $table = Doctrine_Core::getTable('«implClassModelRecord()»');
+
+        $q = $table->createQuery('e')
+                   ->where('e.' . $this->_intIdField . ' = ?', $this->_intId);
+
+        $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
+        return $q->fetchOne(array(), $fetchType);
     }
 
+    /**
+     * Convenience merge method delegating to treated «implClassModelRecord()» instance
+     *
+     * @param array data fields
+     */
+    public function merge(array $data)
+    {
+        return $this->get«name.formatForCodeCapital()»()->merge($data);
+    }
+
+    /**
+     * Convenience save method delegating to treated «implClassModelRecord()» instance
+     */
+    public function save()
+    {
+        $result = $this->get«name.formatForCodeCapital()»()->save();
+        $this->set_intId($this->«name.formatForCode()»[$this->_intIdField]);
+        return $result;
+    }
+
+    /**
+     * Convenience delete method delegating to treated «implClassModelRecord()» instance
+     */
+    public function delete()
+    {
+        $result = $this->get«name.formatForCodeCapital()»()->delete();
+        $this->set_intId(0);
+        $this->«name.formatForCode()» = null;
+        return $result;
+    }
+
+    /**
+     * get «name.formatForDisplay()»
+     *
+     * @return «implClassModelRecord()»
+     */
+    public function get«name.toFirstUpper()»()
+    {
+        if (is_null($this->«name.formatForCode()»)) {
+            $this->set«name.formatForCodeCapital()»(new «implClassModelRecord()»());
+        }
+        return $this->«name.formatForCode()»;
+    }
+
+«EXPAND FileHelper::SetterMethod(name.formatForCode(), implClassModelRecord())»
 «EXPAND FileHelper::GetterAndSetterMethods('_intObjectType', 'string')»
 «EXPAND FileHelper::GetterAndSetterMethods('_intIdField', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('_intId', 'integer')»
 
 «EXPAND fieldAccessors FOREACH fields.typeSelect(DerivedField)»
 «EXPAND outgoingRelationAccessors FOREACH outgoing.typeSelect(JoinRelationship)»
@@ -79,7 +136,7 @@
 «ENDDEFINE»
 
 «DEFINE fieldAccessors FOR DerivedField»
-«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode(), fieldTypeAsString())»
+«EXPAND FileHelper::GetterAndSetterMethodsDelegate(name.formatForCode(), fieldTypeAsString(), entity.name)»
 «ENDDEFINE»
 
 «DEFINE outgoingRelationAccessors FOR JoinRelationship»

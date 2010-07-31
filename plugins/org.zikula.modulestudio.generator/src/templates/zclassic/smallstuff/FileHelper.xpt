@@ -85,3 +85,38 @@
     }
 «ENDDEFINE»
 
+«DEFINE GetterAndSetterMethodsDelegate(String name, String type, String delegate) FOR Object-»
+«EXPAND GetterMethodDelegate(name, type, delegate)»
+«EXPAND SetterMethodDelegate(name, type, delegate)»
+«ENDDEFINE»
+
+«DEFINE GetterMethodDelegate(String name, String type, String delegate) FOR Object-»
+    /**
+     * get «name.formatForDisplay()»
+     *
+     * @return «type»
+     */
+    public function get«name.toFirstUpper()»()
+    {
+        if (!is_null($this->«delegate») && ($this->«name» == null || !$this->«name»)) {
+            $this->«name» = $this->«delegate»['«name»'];
+        }
+        return $this->«name»;
+    }
+«ENDDEFINE»
+
+«DEFINE SetterMethodDelegate(String name, String type, String delegate) FOR Object-»
+    /**
+     * set «name.formatForDisplay()»
+     *
+     * @param «type» $«name»
+     * @return void
+     */
+    public function set«name.toFirstUpper()»($«name»)
+    {
+        $this->«name» = $«name»;
+        if (!is_null($this->«delegate»)) {
+            $this->«delegate»['«name»'] = $this->«name»;
+        }
+    }
+«ENDDEFINE»

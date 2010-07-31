@@ -11,12 +11,17 @@
 «ENDDEFINE»
 
 
-«DEFINE retrieveEntityFromModel(String idVar, String idValue) FOR Object-»
+«DEFINE retrieveEntityFromModel(String idVar, String idValue, Boolean isHandler) FOR Object-»
         // assign object data fetched from the database
         // while the result will be saved within the object, we assign it to a local variable for convenience
         $objectData = $object->selectById($«idValue»);
-        if (!is_array($objectData) || !isset($objectData[$«idValue»]) || !is_numeric($objectData[$«idValue»])) {
+        if (!is_array($objectData) || !isset($objectData[$«idVar»]) || !is_numeric($objectData[$«idVar»])) {
+«IF isHandler-»
+            return $view->registerError($this->__('No such item.'));
+«REM»            $this->throwNotFound($this->__('No such item.'));        Form_Handler does not inherit from Zikula_Base (yet)«ENDREM»«""-»
+«ELSE-»
             $this->throwNotFound($this->__('No such item.'));
+«ENDIF-»
         }
 «ENDDEFINE»
 

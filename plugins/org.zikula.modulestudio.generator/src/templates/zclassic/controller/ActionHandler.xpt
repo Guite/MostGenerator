@@ -20,7 +20,7 @@ class «appName()»_Form_Handler_Admin_Config extends Form_Handler
         }
 
         // assign all module vars
-        $view->assign('config', $this->getVars());
+        $view->assign('config', ModUtil::getVar('«appName()»'«REM»$this->getVars() Form_Handler does not inherit from Zikula_Base (yet)«ENDREM»));
 
         return true;
     }
@@ -38,7 +38,7 @@ class «appName()»_Form_Handler_Admin_Config extends Form_Handler
 
             // update all module vars
             if (!ModUtil::setVars('«appName()»', $data['config'])) {
-                return $view->setErrorMsg($this->__('Error! Failed to set configuration variables.')));
+                return $view->setErrorMsg($this->__('Error! Failed to set configuration variables.'));
             }
 
             LogUtil::registerStatus($this->__('Done! Module configuration updated.'));
@@ -112,7 +112,7 @@ class «appName()»_Form_Handler_Admin_Config extends Form_Handler
  * - <b>handleCommand</b>: this event is fired by various plugins on the page. Typically it is done by the
  *   Form_Plugin_Button plugin to signal that the user activated a button.
  */
-class «implClassFormHandler(controller, name, actionName)» extends Form_Handler
+class «baseClassFormHandler(controller, name, actionName)» extends Form_Handler
 {
     /**
      * Persistent member vars
@@ -188,6 +188,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $this->«idField()» = (int) FormUtil::getPassedValue('«idField()»', 0, 'GET');
 
         $this->objectType = '«name.formatForCode()»';
+        $objectType = $this->objectType;
 «EXPAND ControllerHelper::loadBusinessObjectClass(appName, false)-»
 
         $this->mode = 'create';
@@ -202,7 +203,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
 «EXPAND ControllerHelper::instantiateObject("this->" + idField())-»
 
-«EXPAND ControllerHelper::retrieveEntityFromModel(idField(), "this->" + idField())-»
+«EXPAND ControllerHelper::retrieveEntityFromModel(idField(), "this->" + idField(), true)-»
 
             // try to guarantee that only one person at a time can be editing this «name.formatForDisplay()»
             $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display', array('ot' => $this->objectType, '«idField()»' => $this->«idField()»));
@@ -229,8 +230,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         }
 
 «FOREACH fields.typeSelect(DateField) AS dateField-»
-        if ($objectData['«dateField.name.formatForDB()»'] == '1900-01-01 00:00:00') {
-            $objectData['«dateField.name.formatForDB()»'] = null;
+        if ($objectData['«dateField.name.formatForCode()»'] == '1900-01-01 00:00:00') {
+            $objectData['«dateField.name.formatForCode()»'] = null;
         }
 «ENDFOREACH-»
 
@@ -243,7 +244,9 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
 
 «DEFINE FieldAssignment FOR EntityField»
-                '«name.formatForDB()»' => «EXPAND FieldDefaultData»«ENDDEFINE»
+                '«name.formatForCode()»' => «EXPAND FieldDefaultData»«ENDDEFINE»
+«DEFINE FieldAssignment FOR DerivedField»
+                '«actualFieldName()»' => «EXPAND FieldDefaultData»«ENDDEFINE»
 
 «DEFINE FieldDefaultData FOR EntityField-»
 «error("Error: undefined entity field type " + metaType.toString() + " (code 925624)") -> ""-»
@@ -263,7 +266,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «DEFINE FieldDefaultData FOR IntegerField-»
 «LET entity.incoming.select(e|e.source.idField() == name) AS joins-»
 «IF joins.size > 0-»
-«FOREACH joins AS join-»(int) FormUtil::getPassedValue('«join.source.name.formatForDB()»id', 0, 'GET')«ENDFOREACH-»
+«FOREACH joins AS join-»(int) FormUtil::getPassedValue('«join.source.idField()»', 0, 'GET')«ENDFOREACH-»
 «ELSE-»
 «IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
 «ENDIF-»«ENDLET-»«ENDDEFINE»
@@ -295,6 +298,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         }
 
         $this->objectType = '«name.formatForCode()»';
+        $objectType = $this->objectType;
 «EXPAND ControllerHelper::loadBusinessObjectClass(appName, false)-»
 
         $«name.formatForCode()» = null;
@@ -305,7 +309,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         else {
 «EXPAND ControllerHelper::instantiateObject("this->" + idField())-»
 
-«EXPAND ControllerHelper::retrieveEntityFromModel(idField(), "this->" + idField())-»
+«EXPAND ControllerHelper::retrieveEntityFromModel(idField(), "this->" + idField(), true)-»
             $«name.formatForCode()» = $object;
         }
 
@@ -317,7 +321,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             // save «name.formatForDisplay()»
             $«name.formatForCode()»->save();
 
-            $this->«idField()» = $«name.formatForCode()»->getID();
+            $this->«idField()» = $«name.formatForCode()»->get_intId();
             if ($this->«idField()» === false) {
                 return LogUtil::registerError($this->__('Error! Creation attempt failed.'));
             }

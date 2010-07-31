@@ -43,26 +43,26 @@
 «ENDLET-»
 «ENDFOREACH-»
 «IF standardFields-»
-    {include file="«appName»_«controllerName»_include_metadata_display.tpl" obj=$«objName»}
+    {include file="«controllerName»/include_metadata_display.tpl" obj=$«objName»}
 «ENDIF-»
 </dl>
 
 <p>
 «IF controller.hasActions('edit')-»
-    {securityutil_checkpermission_block component="«appName»::" instance=".*" level="ACCESS_EDIT"}
+    {checkpermissionblock component="«appName»::" instance=".*" level="ACCESS_EDIT"}
         <a href="{modurl modname="«appName»" type="«controllerName»" func="edit" ot="«objName»" «idField()»=$«objName».«idField()»}" title="{gt text='Edit'}">
             {img src="xedit.gif" modname="core" set="icons/extrasmall" __alt='Edit' __title='Edit'}
             {gt text='Edit'}
         </a>
-    {/securityutil_checkpermission_block}
+    {/checkpermissionblock}
 «ENDIF-»
 «IF controller.hasActions('delete')-»
-    {securityutil_checkpermission_block component="«appName»::" instance=".*" level="ACCESS_DELETE"}
+    {checkpermissionblock component="«appName»::" instance=".*" level="ACCESS_DELETE"}
         <a href="{modurl modname="«appName»" type="«controllerName»" func="delete" ot="«objName»" «idField()»=$«objName».«idField()»}" title="{gt text='Delete'}">
             {img src="14_layer_deletelayer.gif" modname="core" set="icons/extrasmall" __alt='Delete' __title='Delete'}
             {gt text='Delete'}
         </a>
-    {/securityutil_checkpermission_block}
+    {/checkpermissionblock}
 «ENDIF-»
 «IF controller.hasActions('view')-»
     <a href="{modurl modname="«appName»" type="«controllerName»" func="view" ot="«objName»"}" title="{gt text='Back to overview'}">
@@ -114,7 +114,7 @@
 
 «DEFINE DisplaySubsets(String appName, String controllerName, Entity objEntity) FOR Entity-»
 <h3>«nameMultiple.formatForDisplayCapitalized()»</h3>
-{securityutil_checkpermission component="«appName»::" instance=".*" level="ACCESS_ADMIN" assign="authAdmin"}
+{checkpermission component="«appName»::" instance=".*" level="ACCESS_ADMIN" assign="authAdmin"}
 {if $authAdmin || $«objEntity.name.formatForCode()».cr_uid eq $uid}
 <p class="manageLink">
     {gt text='Create «name.formatForDisplay()»' assign="createTitle"}

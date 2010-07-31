@@ -30,7 +30,7 @@ listType:
 {pagesetvar name="title" value=$templateTitle}
 <h2>{$templateTitle}</h2>
 
-{securityutil_checkpermission_block component="«appName»::" instance=".*" level="ACCESS_ADD"}
+{checkpermissionblock component="«appName»::" instance=".*" level="ACCESS_ADD"}
 {gt text='Create «name.formatForDisplay()»' assign="createTitle"}
 {gt text='Update «name.formatForDisplay()»' assign="editTitle"}
 {gt text='Delete «name.formatForDisplay()»' assign="deleteTitle"}
@@ -42,7 +42,7 @@ listType:
     </a>
 </p>
 «ENDIF»
-{/securityutil_checkpermission_block}
+{/checkpermissionblock}
 
 «IF listType == 0-»
 <ul>
@@ -69,12 +69,10 @@ listType:
 «LET incoming.select(e|formatForDB(e.source.getLeadingField().name) == field.name.formatForDB()) AS joins-»
 «IF joins.size > 0-»
 «LET joins.get(0).source.idField() AS fieldName-»
-«EXPAND HeaderSortingLink(appName, controllerName, objName, formatForDB(joins.get(0).source.name).msconcat('_').msconcat(fieldName), joins.get(0).source.name) FOR field-»
+«EXPAND HeaderSortingLink(appName, controllerName, objName, joins.get(0).source.name.formatForDB().msconcat('_').msconcat(fieldName), joins.get(0).source.name) FOR field-»
 «ENDLET-»
 «ELSE-»
-«LET field.name.formatForDB() AS fieldName-»
-«EXPAND HeaderSortingLink(appName, controllerName, objName, fieldName, field.name) FOR field-»
-«ENDLET-»
+«EXPAND HeaderSortingLink(appName, controllerName, objName, field.name.formatForCode(), field.name) FOR field-»
 «ENDIF-»
 «ENDLET-»
         </th>
@@ -135,18 +133,18 @@ listType:
             </a>
 «ENDIF-»            
 «IF controller.hasActions('edit')-»
-    {securityutil_checkpermission_block component="«appName»::" instance=".*" level="ACCESS_EDIT"}
+    {checkpermissionblock component="«appName»::" instance=".*" level="ACCESS_EDIT"}
             <a href="{modurl modname="«appName»" type="«controllerName»" func="edit" ot="«objName»" «idField()»=$«objName».«idField()»}">
                 {img src="xedit.gif" modname="core" set="icons/extrasmall" __alt='Edit' __title='Edit'}
             </a>
-    {/securityutil_checkpermission_block}
+    {/checkpermissionblock}
 «ENDIF-»
 «IF controller.hasActions('delete')-»
-    {securityutil_checkpermission_block component="«appName»::" instance=".*" level="ACCESS_DELETE"}
+    {checkpermissionblock component="«appName»::" instance=".*" level="ACCESS_DELETE"}
             <a href="{modurl modname="«appName»" type="«controllerName»" func="delete" ot="«objName»" «idField()»=$«objName».«idField()»}">
                 {img src="14_layer_deletelayer.gif" modname="core" set="icons/extrasmall" __alt='Delete' __title='Delete'}
             </a>
-    {/securityutil_checkpermission_block}
+    {/checkpermissionblock}
 «ENDIF-»
 «IF listType < 2-»
         </li>

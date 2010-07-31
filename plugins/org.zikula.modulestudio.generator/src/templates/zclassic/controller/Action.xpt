@@ -147,19 +147,19 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $this->view->setCaching(false);
 
         // assign the object data, sorting information and details for creating the pager
-        $this->view->assign('items', $objectCollection)
+        $this->view->assign('items', $objectData)
                    ->assign('sort', $sort)
                    ->assign('sdir', ($sdir == 'asc') ? 'desc' : 'asc') // reverted for links
                    ->assign('pager', array('numitems'     => $objectCount,
-                                           'itemsperpage' => $pagesize));
+                                           'itemsperpage' => $resultsPerPage));
 
         // fetch and return the appropriate template
         return «appName»_Util::processViewTemplate($this->view, '«controller.name.formatForDB()»', $objectType, 'view', $args);
 «ENDDEFINE»
 
 «DEFINE DefaultSorting FOR ViewAction-»
-        if (empty($sort) || !in_array($sort, $objectCollection->_intGetAllowedSortingFields())) {
-            $sort = $objectCollection->_intGetDefaultSortingField();
+        if (empty($sort) || !in_array($sort, $objectCollection->get_intAllowedSortingFields())) {
+            $sort = $objectCollection->get_intDefaultSortingField();
         }
 «ENDDEFINE»
 
@@ -174,7 +174,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
         $this->throwNotFoundUnless($id, 'Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
 
-«EXPAND ControllerHelper::retrieveEntityFromModel("id", "idField")-»
+«EXPAND ControllerHelper::retrieveEntityFromModel("idField", "id", false)-»
 
         // turn off output caching
         $this->view->setCaching(false);
@@ -195,13 +195,13 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $handlerClass = '«appName.toFirstUpper()»_Form_Handler_«controller.name.formatForDB().toFirstUpper()»_' . ucfirst($objectType) . '_Edit';
 
         // execute form using supplied template and page event handler
-        return $view->execute('«appName»_«controller.name.formatForDB()»_' . $objectType . '_edit.tpl', new $handlerClass());
+        return $view->execute('«controller.name.formatForDB()»/' . $objectType . '_edit.tpl', new $handlerClass());
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR DeleteAction-»
     «EXPAND ControllerHelper::loadBusinessObjectClass(appName, false)-»
     «EXPAND ControllerHelper::instantiateObject("")-»
-        $idField = $object->getIDField();
+        $idField = $object->get_intIdField();
 
         // retrieve the ID of the object we wish to view
         $id = (int) FormUtil::getPassedValue($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, 'GET');
@@ -211,15 +211,15 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $confirmation = (bool) FormUtil::getPassedValue('confirmation', isset($args['confirmation']) ? $args['confirmation'] : false, 'GETPOST');
 
         if ($confirmation) {
-            $object->setData(array($idField => $id), false);
+            $object->merge(array($idField => $id));
 
             if (!$object->delete()) {
                 $this->registerError($this->__('Error! Deletion attempt failed.'));
             } else {
-                $this->registerStatus($this->__('Done! «name.formatForDisplayCapitalized()» deleted.'));
+                $this->registerStatus($this->__('Done! Item deleted.'));
             }
         } else {
-    «EXPAND ControllerHelper::retrieveEntityFromModel("id", "idField")-»
+    «EXPAND ControllerHelper::retrieveEntityFromModel("idField", "id", false)-»
 
             // turn off output caching
             $this->view->setCaching(false);

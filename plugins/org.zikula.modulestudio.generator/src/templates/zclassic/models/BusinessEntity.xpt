@@ -45,7 +45,7 @@ abstract class «baseClassBusinessEntity(isCollection)»«IF isCollection»/* ex
  *
  * This is the concrete business class for «name.formatForDisplay()» entities.
  */
-class «implClassBusinessEntity(isCollection)» extends «baseClassBusinessEntity(isCollection)»
+class «implClassBusinessEntity(isCollection)» extends «IF isInheriting()»«parentType().implClassBusinessEntity(isCollection)»«ELSE»«baseClassBusinessEntity(isCollection)»«ENDIF»
 {
     // feel free to add your own additions here
 }

@@ -28,7 +28,7 @@
 «LET name.formatForDB() AS entityName-»
 {* purpose of this template: build the Form to «actionName.formatForDisplay()» an instance of «name.formatForDisplay()» *}
 
-{include file="«appName»_«controllerName»_header.tpl"}
+{include file="«controllerName»/header.tpl"}
 
 {if $mode eq "edit"}
     {gt text='Edit «name.formatForCode()»' assign="templateTitle"}
@@ -57,17 +57,7 @@
 {pagesetvar name="title" value=$templateTitle}
 <h2>{$templateTitle}</h2>
 <br />
-{form cssClass="z-form"}
-«REM»
-{form enctype="multipart/form-data"}
-cssClass="myClass"
-    $encodingHtml = (array_key_exists('enctype', $params) ? " enctype=\"$params[enctype]\"" : '');
-    $action = htmlspecialchars($_SERVER['REQUEST_URI']);
-
-    $view->postRender();
-
-    $out  =  "<form id=\"FormForm\" {$classString}action=\"$action\" method=\"post\"{$encodingHtml}>";
-«ENDREM»«""-»
+{form «IF fields.typeSelect(UploadField).size > 0»enctype="multipart/form-data" «ENDIF»cssClass="z-form"}
 
     {* add validation summary and a <div> element for styling the form *}
     {«appName.formatForDB()»FormFrame}
@@ -91,7 +81,7 @@ cssClass="myClass"
     </fieldset>
 «IF standardFields-»
 {if $mode ne "create"}
-    {include file="«appName»_«controllerName»_include_metadata_edit.tpl"}
+    {include file="«controllerName»/include_metadata_edit.tpl"}
 {/if}
 «ENDIF-»
 «REM»TODO: check if needed«ENDREM»«""-»
@@ -129,7 +119,7 @@ cssClass="myClass"
 </div>
 «ENDIF-»
 
-{include file="«appName»_«controllerName»_footer.tpl"}
+{include file="«controllerName»/footer.tpl"}
 «ENDLET-»
 «ENDLET-»
 «ENDDEFINE»
@@ -161,7 +151,9 @@ cssClass="myClass"
 «LET pointingRelations.get(0) AS pointingRelation-»
 «LET pointingRelation.source AS joiningTable-»
 «REM»Join-selector«ENDREM»«""-»
-            {formdropdownrelationlist id="«joiningTable.idField()»" mandatory=«mandatory.displayBool()» module="«entity.container.application.appName()»" objecttype="«joiningTable.name.formatForCode()»" idField="«joiningTable.idField()»" displayField="«joiningTable.idField()»" orderby="«joiningTable.idField()»"«IF pointingRelation.metaType == OneToManyRelationship-» selectionMode="multiple"«ENDIF-»}«IF mandatory-»&nbsp;*«ENDIF»
+            // TODO: reenable selector for related objects
+«REM»TODO: FIX THIS            {formdropdownrelationlist id="«joiningTable.idField()»" mandatory=«mandatory.displayBool()» module="«entity.container.application.appName()»" objecttype="«joiningTable.name.formatForCode()»" idField="«joiningTable.idField()»" displayField="«joiningTable.idField()»" orderby="«joiningTable.idField()»"«IF pointingRelation.metaType == OneToManyRelationship-» selectionMode="multiple"«ENDIF-»}«IF mandatory-»&nbsp;*«ENDIF»«ENDREM»«""-»
+            {formintinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«length»«IF minValue != 0 || maxValue != 0-» minValue=«minValue» maxValue=«maxValue»«ENDIF»}
 «ENDLET-»
 «ENDLET-»
 «ELSE-»
@@ -177,7 +169,7 @@ cssClass="myClass"
 «ENDDEFINE»
 
 «DEFINE FormField FOR DecimalField-»
-            {formfloatinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=maxLength=«(length+3+scale)»}
+            {formfloatinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«(length+3+scale)»}
 «ENDDEFINE»
 
 «DEFINE FormField FOR StringField-»

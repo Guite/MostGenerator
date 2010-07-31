@@ -6,7 +6,7 @@
 
 «DEFINE BusinessEntityCollectionBaseImpl(Application app) FOR Entity»
     /**
-     * @var array  Reference to list of «nameMultiple.formatForDisplay()» («implClassBusinessEntity(false)»)
+     * @var array  Reference to list of «nameMultiple.formatForDisplay()» model («implClassModelRecord()»)
      */
     protected $«nameMultiple.formatForCode()» = array();
 
@@ -33,7 +33,7 @@
     /**
      * @var string The default sorting field/expression.
      */
-    protected $_intDefaultSortingField = '«getLeadingField().name.formatForCode()»';
+    protected $_intDefaultSortingField = '«getLeadingField().actualFieldName().formatForCode()»';
 
 
     /**
@@ -44,8 +44,8 @@
      */
     function __construct($where = '', $orderBy = '')
     {
-        $this->_intWhere = $where;
-        $this->_intOrderBy = $orderBy;
+        $this->set_intWhere($where);
+        $this->set_intOrderBy($orderBy);
 «REM»«EXPAND ObjectPermissionFilters(app.appName())-»«ENDREM»«""-»
     }
 
@@ -59,8 +59,9 @@
      */
     public function select()
     {
-        $query = _intBaseQuery();
-        return _intTable()->execute($query);
+        $query = $this->_intBaseQuery();
+        $this->set«nameMultiple.formatForCodeCapital()»($this->_intTable()->«REM»execute«ENDREM»fetchArray($query));
+        return $this->get«nameMultiple.formatForCodeCapital()»();
     }
 
     /**
@@ -72,8 +73,8 @@
      */
     public function selectWhere($where = '', $orderBy = '')
     {
-        $this->_intWhere = $where;
-        $this->_intOrderBy = $orderBy;
+        $this->set_intWhere($where);
+        $this->set_intOrderBy($orderBy);
         return $this->select();
     }
 
@@ -84,22 +85,25 @@
      * @param string $orderBy           The order-by clause to use when retrieving the object array (optional) (default='').
      * @param integer $currentPage      Where to start selection
      * @param integer $resultsPerPage   Amount of items to select
-     * @return Doctrine_Collection collection containing retrieved Doctrine_Record instances
+     * @param boolean $asArray          Whether to return the result as array instead as record object (optional) (default=true).
+     * @return array|Doctrine_Collection retrieved data array or collection containing retrieved Doctrine_Record instances
      */
-    public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25)
+    public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $asArray = true)
     {
+        $this->set_intWhere($where);
+        $this->set_intOrderBy($orderBy);
 «REM»TODO: see http://www.doctrine-project.org/projects/orm/1.2/docs/manual/utilities/en
         //$pager->setCountQuery($query);
 «ENDREM»«""-»
-        $this->_intWhere = $where;
-        $this->_intOrderBy = $orderBy;
 		$pager = new Doctrine_Pager(
-		      _intBaseQuery(),
+		      $this->_intBaseQuery(),
 		      $currentPage,
 		      $resultsPerPage
 		);
 
-        return $pager->execute();
+        $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
+        $this->set«nameMultiple.formatForCodeCapital()»($pager->execute(array(), $fetchType));
+        return $this->get«nameMultiple.formatForCodeCapital()»();
     }
 
     /**
@@ -110,15 +114,14 @@
      */
     public function selectCount($where = '')
     {
-        $this->_intWhere = $where;
+        $this->set_intWhere($where);
         $query = Doctrine_Query::create()
-            ->select('COUNT(e.«idField()»)')
+            ->select('COUNT(e.«idField()») AS num«nameMultiple.formatForCodeCapital()»')
             ->from('«implClassModelRecord()» e');
         if (!empty($this->_intWhere)) {
             $query->where($this->_intWhere);
         }
-
-        return _intTable()->execute($query);
+        return $query->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
     }
 
     /**
@@ -132,10 +135,23 @@
             ->select('e.*')
             ->from('«implClassModelRecord()» e');
         if (!empty($this->_intWhere)) {
-            $query->where($this->_intWhere);
+            $query->where('e.' . $this->_intWhere);
         }
         if (!empty($this->_intOrderBy)) {
-            $query->orderBy($this->_intOrderBy);
+«IF i18n-»
+            // HACK FOR I18n behavior
+            $sortParts = explode(' ', $this->_intOrderBy);
+            $sortField = $sortParts[0];
+            if (in_array($sortField, array('«i18nFields.replaceAll(", ", "', '")»'))) {
+                $query->leftJoin('e.Translation t')
+                      ->orderBy('t.' . $this->_intOrderBy);
+            }
+            else {
+                $query->orderBy('e.' . $this->_intOrderBy);
+            }
+«ELSE-»
+            $query->orderBy('e.' . $this->_intOrderBy);
+«ENDIF-»
         }
         return $query;
     }
@@ -147,7 +163,7 @@
      */
     private function _intTable()
     {
-        return Doctrine_Core::getTable(«implClassModelRecord()»);
+        return Doctrine_Core::getTable('«implClassModelRecord()»');
     }
 
     /**
@@ -161,22 +177,28 @@
         );
     }
 
-«EXPAND FileHelper::GetterAndSetterMethods(nameMultiple.formatForCode(), implClassBusinessEntity(false))»
+«EXPAND FileHelper::GetterAndSetterMethods(nameMultiple.formatForCode(), 'array')»
 «EXPAND FileHelper::GetterAndSetterMethods('_intObjectType', 'string')»
 «EXPAND FileHelper::GetterAndSetterMethods('_intIdField', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('_intWhere', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('_intOrderBy', 'string')»
 «EXPAND FileHelper::GetterAndSetterMethods('_intDefaultSortingField', 'string')»
 
 «EXPAND FileHelper::ClassToString(baseClassBusinessEntity(true))-»
 «ENDDEFINE»
 
-«DEFINE singleSortingField FOR EntityField»
+«DEFINE singleSortingField FOR EntityField»«REM»DUMMY«ENDREM»«ENDDEFINE»
+«DEFINE singleSortingField FOR DerivedField»
 «LET entity.incoming.select(e|formatForDB(e.source.idFieldName()) == formatForDB(name)) AS joins-»
 «IF joins.size > 0-»
                      '«joins.get(0).source.name.formatForDB()»_«joins.get(0).source.idField()»'«""-»
 «ELSE-»
-                     '«name.formatForDB()»'«""-»
+                     '«actualFieldName().formatForDB()»'«""-»
 «ENDIF-»
 «ENDLET-»«ENDDEFINE»
+«DEFINE singleSortingField FOR CalculatedField»
+                     '«name.formatForDB()»'«""-»
+«ENDDEFINE»
 
 «DEFINE standardSortingFields FOR Entity»
 «REM»will be filled by Advices (Aspect Orientation)«ENDREM»

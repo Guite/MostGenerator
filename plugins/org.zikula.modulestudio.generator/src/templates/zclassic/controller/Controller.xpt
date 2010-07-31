@@ -54,7 +54,7 @@ class «baseClassController()» extends Zikula_Controller
         $view = FormUtil::newForm('«app.appName()»');
 
         // Execute form using supplied template and page event handler
-        return $view->execute('«app.appName()»_admin_config.tpl', new «app.appName()»_Admin_Config());
+        return $view->execute('admin/config.tpl', new «app.appName()»_Form_Handler_Admin_Config());
     }
 
 «ENDIF-»
