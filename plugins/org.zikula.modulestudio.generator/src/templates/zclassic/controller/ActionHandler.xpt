@@ -218,8 +218,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             }
 
 «EXPAND ControllerHelper::instantiateObject("this->" + idField())-»
-
-«EXPAND ControllerHelper::retrieveEntityFromModel(idField(), "this->" + idField(), true)-»
+            $idField = '«idField()»'; 
+«EXPAND ControllerHelper::retrieveEntityFromModel('idField', "this->" + idField(), true)-»
 
             // try to guarantee that only one person at a time can be editing this «name.formatForDisplay()»
             $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display', array('ot' => $this->objectType, '«idField()»' => $this->«idField()»));
@@ -325,7 +325,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         else {
 «EXPAND ControllerHelper::instantiateObject("this->" + idField())-»
 
-«EXPAND ControllerHelper::retrieveEntityFromModel(idField(), "this->" + idField(), true)-»
+            $idField = '«idField()»'; 
+«EXPAND ControllerHelper::retrieveEntityFromModel('idField', "this->" + idField(), true)-»
             $«name.formatForCode()» = $object;
         }
 
