@@ -32,7 +32,7 @@
 
 <dl id="«appName»_body">
 «FOREACH fields.typeSelect(DerivedField).reject(e|e.leading || e.primaryKey) AS field-»
-«LET incoming.select(e|formatForDB(e.source.idFieldName()) == formatForDB(field.name)) AS joins-»
+«LET incoming.select(e|e.source.idField() == field.name.formatForDB()) AS joins-»
 «IF joins.size > 0-»
     <dt>{gt text='«joins.get(0).source.name.formatForDisplayCapital()»'}</dt>
     <dd>«FOREACH joins AS join SEPARATOR ', '-»{$«objName».«join.source.name.formatForDB()»_«join.source.idField()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH-»</dd>

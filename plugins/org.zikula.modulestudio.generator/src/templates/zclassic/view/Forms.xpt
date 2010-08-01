@@ -146,7 +146,7 @@
 «ENDDEFINE»
 
 «DEFINE FormField FOR IntegerField-»
-«LET entity.incoming.select(e|formatForDB(e.source.idFieldName()) == name.formatForDB()) AS pointingRelations-»
+«LET entity.incoming.select(e|e.source.idField() == name.formatForDB()) AS pointingRelations-»
 «IF pointingRelations.size > 0-»
 «LET pointingRelations.get(0) AS pointingRelation-»
 «LET pointingRelation.source AS joiningTable-»

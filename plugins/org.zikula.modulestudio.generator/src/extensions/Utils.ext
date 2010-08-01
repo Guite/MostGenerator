@@ -83,9 +83,6 @@ cached getPrimaryKeyField(Entity this)
 cached String idField(Entity entity)
     : entity.getPrimaryKeyField().name.formatForDB();
 
-cached String idFieldName(Entity this)
-    : name.toString().msconcat('id');
-
 cached String actualFieldName(DerivedField this)
     : ((alias != null && alias != "") ? alias : name);
 
@@ -93,8 +90,6 @@ cached String actualFieldName(DerivedField this)
 // return all join relations (excluding inheritance)
 cached getJoinRelations(Models this)
     : relations.typeSelect(JoinRelationship);
-cached getJoinRelationsWithAlias(Models this)
-    : getJoinRelations(this).select(e|e.alias != null && e.alias != "");
 
 cached isInheriting(Entity this)
     : outgoing.typeSelect(InheritanceRelationship).size > 0;
@@ -110,7 +105,8 @@ cached getChildRelations(Entity this)
 cached getChildRelationsWithAggregation(Entity this)
     : getChildRelations().select(e|e.strategy == InheritancyStrategyType::COLUMNAGGREGATION);
 
-
+cached relationFieldName(Entity refEntity, String refField)
+    : (refField.toLowerCase() == 'id') ? refEntity.idField() : refField.formatForDB();
 
 
 cached boolean hasActions(Controller controller, String type) :

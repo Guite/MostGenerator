@@ -10,35 +10,35 @@
 «IF outgoing.typeSelect(JoinRelationship).size > 0-»
         // outgoing relations
 «FOREACH outgoing.typeSelect(JoinRelationship) AS relation-»
-«EXPAND RelationDefinition(relation, false)-»
+«EXPAND RelationDefinition(false) FOR relation-»
 «ENDFOREACH-»
 
 «ENDIF-»
 «IF incoming.typeSelect(JoinRelationship).size > 0-»
         // incoming relations
 «FOREACH incoming.typeSelect(JoinRelationship) AS relation-»
-«EXPAND RelationDefinition(relation, true)-»
+«EXPAND RelationDefinition(true) FOR relation-»
 «ENDFOREACH-»
 
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE RelationDefinition(JoinRelationship relation, Boolean incoming) FOR Entity-»
-        $this->has«IF relation.metaType == OneToOneRelationship || (incoming && relation.metaType == OneToManyRelationship)-»One«ELSE-»Many«ENDIF-»('«IF incoming-»«relation.source.implClassModelRecord()»«ELSE-»«relation.target.implClassModelRecord()»«ENDIF-»«IF relation.alias != null && relation.alias != ""-» as «relation.alias.formatForCode()»«ENDIF-»', array(
+«DEFINE RelationDefinition(Boolean incoming) FOR JoinRelationship-»
+        $this->has«IF metaType == OneToOneRelationship || (incoming && metaType == OneToManyRelationship)-»One«ELSE»Many«ENDIF»('«IF incoming-»«source.implClassModelRecord()»«IF sourceAlias != null && sourceAlias != ""-» as «sourceAlias.formatForCode()»«ENDIF»«ELSE»«target.implClassModelRecord()»«IF targetAlias != null && targetAlias != ""-» as «targetAlias.formatForCode()»«ENDIF»«ENDIF»', array(
                 // linked field in the defining class
-                'local' => '«relation.source.idField()»',
+                'local' => '«source.relationFieldName(sourceField)»',
                 // linked field in the linked class
-                'foreign' => '«IF relation.metaType == ManyToManyRelationship-»«relation.target.idField()»«ELSE-»«relation.source.idField()»«ENDIF-»',«REM»Rule: always place the foreign key in the owned class«ENDREM»
-«IF relation.metaType == ManyToManyRelationship-»
+                'foreign' => '«IF metaType == ManyToManyRelationship-»«target.relationFieldName(targetField)»«ELSE»«source.relationFieldName(sourceField)»«ENDIF»',«REM»Rule: always place the foreign key in the owned class«ENDREM»
+«IF metaType == ManyToManyRelationship-»
                 // name of the many-to-many association class
-                'refClass' => '«((ManyToManyRelationship)relation).implClassModelRefRecord()»',
+                'refClass' => '«((ManyToManyRelationship)this).implClassModelRefRecord()»',
 «ENDIF-»
                 // true indicates the owning side (owning the foreign key)
                 'owningSide' => «(!incoming).displayBool()»,
-«IF relation.metaType != ManyToManyRelationship && relation.foreignKeyName != null && relation.foreignKeyName != ""-»
-                'foreignKeyName' => '«relation.foreignKeyName»',
+«IF metaType != ManyToManyRelationship && foreignKeyName != null && foreignKeyName != ""-»
+                'foreignKeyName' => '«foreignKeyName»',
 «ENDIF-»
-«EXPAND CascadeInfo FOR relation-»
+«EXPAND CascadeInfo-»
             )
         );
 «ENDDEFINE»

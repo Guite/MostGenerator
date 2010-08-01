@@ -100,7 +100,7 @@ listType:
 «ELSEIF listType == 3-»
         <td headers="h«field.name.formatForDB()»" align="«EXPAND Alignment FOR field-»" valign="top">
 «ENDIF-»
-«LET incoming.select(e|formatForDB(e.source.idFieldName()) == field.name.formatForDB()) AS joins-»
+«LET incoming.select(e|e.source.idField() == field.name.formatForDB()) AS joins-»
 «IF field.leading == true-»
             {$«objName».«field.name.formatForDB()»|modcallhooks}
 «ELSEIF joins.size > 0-»
@@ -223,7 +223,7 @@ listType:
 «ENDDEFINE»
 
 «DEFINE Alignment FOR EntityField»left«ENDDEFINE»
-«DEFINE Alignment FOR IntegerField»«IF entity.incoming.select(e|formatForDB(e.source.idFieldName()) == formatForDB(name)).size > 0-»left«ELSE»right«ENDIF»«ENDDEFINE»
+«DEFINE Alignment FOR IntegerField»«IF entity.incoming.select(e|e.source.idField() == name.formatForDB()).size > 0-»left«ELSE»right«ENDIF»«ENDDEFINE»
 «DEFINE Alignment FOR DecimalField»right«ENDDEFINE»
 «DEFINE Alignment FOR FloatField»right«ENDDEFINE»
 «DEFINE Alignment FOR BooleanField»center«ENDDEFINE»

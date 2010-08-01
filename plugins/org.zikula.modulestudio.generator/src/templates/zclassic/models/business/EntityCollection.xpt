@@ -197,7 +197,7 @@
 
 «DEFINE singleSortingField FOR EntityField»«REM»DUMMY«ENDREM»«ENDDEFINE»
 «DEFINE singleSortingField FOR DerivedField»
-«LET entity.incoming.select(e|formatForDB(e.source.idFieldName()) == formatForDB(name)) AS joins-»
+«LET entity.incoming.select(e|formatForDB(e.source.idField()) == formatForDB(name)) AS joins-»
 «IF joins.size > 0-»
                      '«joins.get(0).source.name.formatForDB()»_«joins.get(0).source.idField()»'«""-»
 «ELSE-»
