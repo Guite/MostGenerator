@@ -62,6 +62,9 @@
     «info("Generating images")»
     «EXPAND Images::Root»
 
+    «pm.subTask("Additions: Example data")»
+    «info("Generating example data")»
+    «EXPAND smallstuff::ExampleData::Root»
     «pm.subTask("Additions: Blocks")»
     «info("Generating blocks")»
     «EXPAND controller::apis::Blocks::Root»
