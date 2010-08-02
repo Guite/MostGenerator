@@ -32,6 +32,7 @@ Workflow {
     component = @msManual { dir = "examples" name = "AutoCocktails" }
     component = @msManual { dir = "examples" name = "AutoCustomer" }
     component = @msManual { dir = "examples" name = "AutoExchange" }
+    component = @msManual { dir = "examples" name = "AutoMixtapes" }
     component = @msManual { dir = "examples" name = "AutoMusic" }
     component = @msManual { dir = "examples" name = "AutoProject" }
     component = @msManual { dir = "examples" name = "AutoRecipes" }

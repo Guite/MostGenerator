@@ -5,6 +5,7 @@
 	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoCocktails"></cartridge>
 	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoCustomer"></cartridge>
 	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoExchange"></cartridge>
+	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoMixtapes"></cartridge>
 	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoMusic"></cartridge>
 	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoProject"></cartridge>
 	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoRecipes"></cartridge>
