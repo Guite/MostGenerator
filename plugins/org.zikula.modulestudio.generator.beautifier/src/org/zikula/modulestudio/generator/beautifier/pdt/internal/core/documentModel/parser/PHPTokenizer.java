@@ -1662,9 +1662,7 @@ public class PHPTokenizer implements BlockTokenizer, PHPRegionContext,
         try {
             region = getNextToken();
             while (region != null) {
-                if (region != null) {
-                    tokens.add(region);
-                }
+                tokens.add(region);
                 region = getNextToken();
             }
         } catch (final StackOverflowError e) {

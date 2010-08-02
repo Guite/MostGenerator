@@ -217,10 +217,10 @@ public class SelectionListenerWithASTManager {
             } catch (final OperationCanceledException e) {
                 // thrown when canceling the AST creation
             } catch (final ModelException e) {
-                new Status(Status.ERROR, PHPUiPlugin.ID,
+                return new Status(Status.ERROR, PHPUiPlugin.ID,
                         "error retrieving AST from Provider");
             } catch (final IOException e) {
-                new Status(Status.ERROR, PHPUiPlugin.ID,
+                return new Status(Status.ERROR, PHPUiPlugin.ID,
                         "error retrieving AST from Provider");
             }
             return Status.CANCEL_STATUS;

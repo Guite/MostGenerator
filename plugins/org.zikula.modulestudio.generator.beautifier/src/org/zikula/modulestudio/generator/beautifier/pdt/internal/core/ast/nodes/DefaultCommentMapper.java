@@ -795,9 +795,7 @@ public class DefaultCommentMapper {
                 if (c == -1) {
                     break;
                 }
-                if (b != null) {
-                    b[off + i] = (char) c;
-                }
+                b[off + i] = (char) c;
             }
             return i;
         }

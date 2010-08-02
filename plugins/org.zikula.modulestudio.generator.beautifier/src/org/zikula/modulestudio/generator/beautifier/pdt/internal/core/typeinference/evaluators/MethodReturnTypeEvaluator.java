@@ -106,9 +106,9 @@ public class MethodReturnTypeEvaluator extends
                     }
                 }
             }
-            if (method != null) {
-                resolveMagicMethodDeclaration(method, methodName);
-            }
+            // if (method != null) {
+            resolveMagicMethodDeclaration(method, methodName);
+            // }
         }
 
         return subGoals.toArray(new IGoal[subGoals.size()]);

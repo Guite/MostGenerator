@@ -503,9 +503,7 @@ public class PhpScriptRegion extends ForeignRegion implements IPhpScriptRegion {
                     if (c == -1) {
                         break;
                     }
-                    if (b != null) {
-                        b[off + i] = (char) c;
-                    }
+                    b[off + i] = (char) c;
                 }
             } catch (final IOException ee) {
             }
@@ -575,9 +573,7 @@ public class PhpScriptRegion extends ForeignRegion implements IPhpScriptRegion {
                     if (c == -1) {
                         break;
                     }
-                    if (b != null) {
-                        b[off + i] = (char) c;
-                    }
+                    b[off + i] = (char) c;
                 }
             } catch (final IOException ee) {
             }

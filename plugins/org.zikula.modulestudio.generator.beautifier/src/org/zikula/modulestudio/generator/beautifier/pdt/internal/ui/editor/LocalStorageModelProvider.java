@@ -135,7 +135,7 @@ public class LocalStorageModelProvider extends StorageDocumentProvider
             fireElementContentReplaced(element);
             fireElementDirtyStateChanged(element, false);
 
-            if (info != null && info.fModel != null) {
+            if (/* info != null && */info.fModel != null) {
                 info.fModel.connect(info.fDocument);
             }
         }
@@ -420,9 +420,9 @@ public class LocalStorageModelProvider extends StorageDocumentProvider
                     }
 
                 }
-                if (document == null) {
-                    document = model.getStructuredDocument();
-                }
+                // if (document == null) {
+                document = model.getStructuredDocument();
+                // }
             }
         }
         return document;

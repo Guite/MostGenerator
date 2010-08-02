@@ -148,7 +148,6 @@ public class HTMLFormatterNoPHP extends HTMLFormatter {
 
     /**
 	 */
-    @SuppressWarnings({ "unused" })
     @Override
     protected void insertBreakBefore(IDOMNode node,
             HTMLFormatContraints contraints) {
@@ -176,9 +175,9 @@ public class HTMLFormatterNoPHP extends HTMLFormatter {
                     textFormatter.formatText(text, contraints,
                             HTMLTextFormatter.FORMAT_TAIL);
 
-                    if (node == null) {
-                        return;
-                    }
+                    // if (node == null) {
+                    // return;
+                    // }
 
                     if (node.hasChildNodes()) { // container
                         formatChildNodes(node, contraints);

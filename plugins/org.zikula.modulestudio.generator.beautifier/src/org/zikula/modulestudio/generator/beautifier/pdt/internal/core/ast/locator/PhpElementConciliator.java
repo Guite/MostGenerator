@@ -445,7 +445,7 @@ public class PhpElementConciliator {
             }
             parent = parent.getParent();
         }
-        return parent == null;
+        return true;// parent == null;
     }
 
     private static boolean checkGlobalVariable(Variable locateNode) {

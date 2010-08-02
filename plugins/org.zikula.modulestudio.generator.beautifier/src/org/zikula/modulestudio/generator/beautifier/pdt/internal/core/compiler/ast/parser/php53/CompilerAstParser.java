@@ -3432,7 +3432,7 @@ class CUP$CompilerAstParser$actions {
             case 12: // top_statement ::= T_HALT_COMPILER T_OPEN_PARENTHESE
                      // T_CLOSE_PARENTHESE T_SEMICOLON
             {
-                Statement RESULT = null;
+                final Statement RESULT = null;
                 final int statementleft = ((java_cup.runtime.Symbol) CUP$CompilerAstParser$stack
                         .elementAt(CUP$CompilerAstParser$top - 0)).left;
                 final int statementright = ((java_cup.runtime.Symbol) CUP$CompilerAstParser$stack
@@ -3441,7 +3441,7 @@ class CUP$CompilerAstParser$actions {
                         .elementAt(CUP$CompilerAstParser$top - 0)).value;
 
                 // Note: we never generate T_HALT_COMPILER
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$CompilerAstParser$result = new java_cup.runtime.Symbol(
                         8/* top_statement */,
@@ -4129,7 +4129,7 @@ class CUP$CompilerAstParser$actions {
             case 34: // inner_statement ::= T_HALT_COMPILER T_OPEN_PARENTHESE
                      // T_CLOSE_PARENTHESE T_SEMICOLON
             {
-                Statement RESULT = null;
+                final Statement RESULT = null;
                 final int haltleft = ((java_cup.runtime.Symbol) CUP$CompilerAstParser$stack
                         .elementAt(CUP$CompilerAstParser$top - 3)).left;
                 final int haltright = ((java_cup.runtime.Symbol) CUP$CompilerAstParser$stack
@@ -4144,7 +4144,7 @@ class CUP$CompilerAstParser$actions {
                         .elementAt(CUP$CompilerAstParser$top - 1)).value;
 
                 // Note: we never generate K_HALT_COMPILER
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$CompilerAstParser$result = new java_cup.runtime.Symbol(
                         11/* inner_statement */,
@@ -6495,9 +6495,9 @@ class CUP$CompilerAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 99: // extends_from ::=
             {
-                TypeReference RESULT = null;
+                final TypeReference RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$CompilerAstParser$result = new java_cup.runtime.Symbol(
                         99/* extends_from */,
@@ -6800,9 +6800,9 @@ class CUP$CompilerAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 111: // foreach_optional_arg ::=
             {
-                Expression RESULT = null;
+                final Expression RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$CompilerAstParser$result = new java_cup.runtime.Symbol(
                         16/* foreach_optional_arg */,
@@ -7623,9 +7623,9 @@ class CUP$CompilerAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 138: // else_single ::=
             {
-                Statement RESULT = null;
+                final Statement RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$CompilerAstParser$result = new java_cup.runtime.Symbol(
                         28/* else_single */,
@@ -7663,9 +7663,9 @@ class CUP$CompilerAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 140: // new_else_single ::=
             {
-                Statement RESULT = null;
+                final Statement RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$CompilerAstParser$result = new java_cup.runtime.Symbol(
                         29/* new_else_single */,
@@ -8008,7 +8008,7 @@ class CUP$CompilerAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 151: // parameter ::= error
             {
-                FormalParameter RESULT = null;
+                final FormalParameter RESULT = null;
                 final int theErrorleft = ((java_cup.runtime.Symbol) CUP$CompilerAstParser$stack
                         .elementAt(CUP$CompilerAstParser$top - 0)).left;
                 final int theErrorright = ((java_cup.runtime.Symbol) CUP$CompilerAstParser$stack
@@ -8017,7 +8017,7 @@ class CUP$CompilerAstParser$actions {
                         .elementAt(CUP$CompilerAstParser$top - 0)).value;
 
                 parser.reportError(new ASTError(theErrorleft, theErrorright));
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$CompilerAstParser$result = new java_cup.runtime.Symbol(
                         34/* parameter */,
@@ -8032,9 +8032,9 @@ class CUP$CompilerAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 152: // optional_class_type ::=
             {
-                TypeReference RESULT = null;
+                final TypeReference RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$CompilerAstParser$result = new java_cup.runtime.Symbol(
                         102/* optional_class_type */,
@@ -8970,7 +8970,7 @@ class CUP$CompilerAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 181: // method_body ::= T_SEMICOLON
             {
-                Statement RESULT = null;
+                final Statement RESULT = null;
                 final int endleft = ((java_cup.runtime.Symbol) CUP$CompilerAstParser$stack
                         .elementAt(CUP$CompilerAstParser$top - 0)).left;
                 final int endright = ((java_cup.runtime.Symbol) CUP$CompilerAstParser$stack
@@ -8983,7 +8983,7 @@ class CUP$CompilerAstParser$actions {
                 methodDeclaration.getBody().setStart(endleft);
                 methodDeclaration.getBody().setEnd(endright);
                 methodDeclaration.setEnd(endright);
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$CompilerAstParser$result = new java_cup.runtime.Symbol(
                         83/* method_body */,
@@ -8999,7 +8999,7 @@ class CUP$CompilerAstParser$actions {
             case 182: // method_body ::= T_CURLY_OPEN inner_statement_list
                       // T_CURLY_CLOSE
             {
-                Statement RESULT = null;
+                final Statement RESULT = null;
                 final int startleft = ((java_cup.runtime.Symbol) CUP$CompilerAstParser$stack
                         .elementAt(CUP$CompilerAstParser$top - 2)).left;
                 final int startright = ((java_cup.runtime.Symbol) CUP$CompilerAstParser$stack
@@ -9026,7 +9026,7 @@ class CUP$CompilerAstParser$actions {
                 methodDeclaration.getBody().getStatements().clear();
                 methodDeclaration.getBody().acceptStatements(statementList);
                 methodDeclaration.setEnd(endright);
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$CompilerAstParser$result = new java_cup.runtime.Symbol(
                         83/* method_body */,
@@ -9115,9 +9115,9 @@ class CUP$CompilerAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 186: // method_modifiers ::=
             {
-                CompilerAstParser.ModifierDocPair RESULT = null;
+                final CompilerAstParser.ModifierDocPair RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$CompilerAstParser$result = new java_cup.runtime.Symbol(
                         82/* method_modifiers */,
@@ -11927,9 +11927,9 @@ class CUP$CompilerAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 276: // lexical_vars ::=
             {
-                List RESULT = null;
+                final List RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$CompilerAstParser$result = new java_cup.runtime.Symbol(
                         31/* lexical_vars */,
@@ -12952,9 +12952,9 @@ class CUP$CompilerAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 304: // exit_expr ::=
             {
-                Expression RESULT = null;
+                final Expression RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$CompilerAstParser$result = new java_cup.runtime.Symbol(
                         48/* exit_expr */,
@@ -12969,9 +12969,9 @@ class CUP$CompilerAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 305: // exit_expr ::= T_OPEN_PARENTHESE T_CLOSE_PARENTHESE
             {
-                Expression RESULT = null;
+                final Expression RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$CompilerAstParser$result = new java_cup.runtime.Symbol(
                         48/* exit_expr */,
@@ -14515,9 +14515,9 @@ class CUP$CompilerAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 360: // method_or_not ::=
             {
-                PHPCallArgumentsList RESULT = null;
+                final PHPCallArgumentsList RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$CompilerAstParser$result = new java_cup.runtime.Symbol(
                         88/* method_or_not */,
@@ -14984,9 +14984,9 @@ class CUP$CompilerAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 376: // dim_offset ::=
             {
-                Expression RESULT = null;
+                final Expression RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$CompilerAstParser$result = new java_cup.runtime.Symbol(
                         60/* dim_offset */,
@@ -15408,9 +15408,9 @@ class CUP$CompilerAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 391: // assignment_list_element ::=
             {
-                Expression RESULT = null;
+                final Expression RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$CompilerAstParser$result = new java_cup.runtime.Symbol(
                         66/* assignment_list_element */,

@@ -3221,10 +3221,10 @@ public final class ASTRewriteAnalyzer extends AbstractVisitor {
                 case RewriteEvent.INSERTED:
                     final Scalar scalar = (Scalar) event.getNewValue();
                     final String scalarValue = scalar.getStringValue();
-                    if (scalar != null) {
-                        doTextInsert(formalParameter.getStart(), " = "
-                                + scalarValue, getEditGroup(event));
-                    }
+                    // if (scalar != null) {
+                    doTextInsert(formalParameter.getStart(), " = "
+                            + scalarValue, getEditGroup(event));
+                    // }
                     break;
                 case RewriteEvent.REMOVED:
                     final ASTNode originalValue = (ASTNode) event
@@ -3701,22 +3701,21 @@ public final class ASTRewriteAnalyzer extends AbstractVisitor {
             if (newValue == null) {
                 newValue = "";
             }
-            if (event != null) {
-                final int kind = event.getChangeKind();
-                switch (kind) {
-                    case RewriteEvent.REPLACED:
-                        doTextReplace(scalar.getStart(), scalar.getLength(),
-                                newValue, getEditGroup(event));
-                        break;
-                    case RewriteEvent.INSERTED:
-                        doTextInsert(scalar.getStart(), newValue,
-                                getEditGroup(event));
-                        break;
-                    case RewriteEvent.REMOVED:
-                        doTextRemove(scalar.getStart(), scalar.getLength(),
-                                getEditGroup(event));
-                        break;
-                }
+
+            final int kind = event.getChangeKind();
+            switch (kind) {
+                case RewriteEvent.REPLACED:
+                    doTextReplace(scalar.getStart(), scalar.getLength(),
+                            newValue, getEditGroup(event));
+                    break;
+                case RewriteEvent.INSERTED:
+                    doTextInsert(scalar.getStart(), newValue,
+                            getEditGroup(event));
+                    break;
+                case RewriteEvent.REMOVED:
+                    doTextRemove(scalar.getStart(), scalar.getLength(),
+                            getEditGroup(event));
+                    break;
             }
         }
         return false;

@@ -228,19 +228,19 @@ public class PHPSourceElementRequestor extends SourceElementRequestVisitor {
                 .getArguments();
         final StringBuilder metadata = new StringBuilder();
         final String[] parameters = new String[arguments.size()];
-        if (arguments != null) {
-            final Iterator<FormalParameter> i = arguments.iterator();
-            int indx = 0;
-            while (i.hasNext()) {
-                final Argument arg = i.next();
-                metadata.append(arg.getName());
-                parameters[indx] = arg.getName();
-                indx++;
-                if (i.hasNext()) {
-                    metadata.append(",");
-                }
+        // if (arguments != null) {
+        final Iterator<FormalParameter> i = arguments.iterator();
+        int indx = 0;
+        while (i.hasNext()) {
+            final Argument arg = i.next();
+            metadata.append(arg.getName());
+            parameters[indx] = arg.getName();
+            indx++;
+            if (i.hasNext()) {
+                metadata.append(",");
             }
         }
+        // }
 
         // Add method declaration:
         for (final PHPSourceElementRequestorExtension visitor : extensions) {

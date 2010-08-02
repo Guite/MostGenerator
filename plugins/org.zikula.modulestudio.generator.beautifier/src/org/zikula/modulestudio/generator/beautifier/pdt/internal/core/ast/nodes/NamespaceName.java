@@ -94,7 +94,6 @@ public class NamespaceName extends Identifier {
         this.current = current;
     }
 
-    @SuppressWarnings({ "unused" })
     public NamespaceName(int start, int end, AST ast, List segments,
             boolean global, boolean current) {
         super(start, end, ast,
@@ -102,9 +101,9 @@ public class NamespaceName extends Identifier {
                         (Identifier[]) segments.toArray(new Identifier[segments
                                 .size()]), global, current));
 
-        if (segments == null) {
-            throw new IllegalArgumentException();
-        }
+        /*
+         * if (segments == null) { throw new IllegalArgumentException(); }
+         */
         final Iterator<Identifier> it = segments.iterator();
         while (it.hasNext()) {
             this.segments.add(it.next());

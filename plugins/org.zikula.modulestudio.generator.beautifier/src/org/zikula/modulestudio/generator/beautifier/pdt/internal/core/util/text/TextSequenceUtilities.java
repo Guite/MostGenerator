@@ -56,7 +56,6 @@ public final class TextSequenceUtilities {
      * @param sourceOffset
      * @return
      */
-    @SuppressWarnings({ "unused" })
     public static String getTypeByAbsoluteOffset(TextSequence textSequence,
             int sourceOffset) {
         final IStructuredDocumentRegion source = textSequence.getSource();
@@ -78,10 +77,10 @@ public final class TextSequenceUtilities {
                 return null;
             }
         }
-        if (tRegion != null) {
-            return tRegion.getType();
-        }
-        return null;
+        // if (tRegion != null) {
+        return tRegion.getType();
+        // }
+        // return null;
     }
 
     // //////////////////////////////////////////////////////////////////////////////////////////////

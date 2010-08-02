@@ -54,7 +54,11 @@
 «DEFINE FieldLength FOR AbstractIntegerField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
 «DEFINE FieldLength FOR FloatField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
 «DEFINE FieldLength FOR DecimalField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
-«DEFINE FieldLength FOR AbstractStringField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR StringField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR EmailField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR UrlField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR UploadField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR EnumField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
 «DEFINE FieldLength FOR ArrayField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
 
 «DEFINE FieldSetColumnOptions FOR DerivedField-»

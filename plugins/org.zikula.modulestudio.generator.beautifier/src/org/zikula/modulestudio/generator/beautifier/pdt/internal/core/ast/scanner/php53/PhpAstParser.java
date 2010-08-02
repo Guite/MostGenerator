@@ -3320,7 +3320,7 @@ class CUP$PhpAstParser$actions {
             case 10: // top_statement ::= T_HALT_COMPILER T_OPEN_PARENTHESE
                      // T_CLOSE_PARENTHESE T_SEMICOLON
             {
-                Statement RESULT = null;
+                final Statement RESULT = null;
                 final int statementleft = ((java_cup.runtime.Symbol) CUP$PhpAstParser$stack
                         .elementAt(CUP$PhpAstParser$top - 0)).left;
                 final int statementright = ((java_cup.runtime.Symbol) CUP$PhpAstParser$stack
@@ -3329,7 +3329,7 @@ class CUP$PhpAstParser$actions {
                         .elementAt(CUP$PhpAstParser$top - 0)).value;
 
                 // Note: we never generate T_HALT_COMPILER
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$PhpAstParser$result = new java_cup.runtime.Symbol(
                         6/* top_statement */,
@@ -3835,7 +3835,7 @@ class CUP$PhpAstParser$actions {
             case 27: // inner_statement ::= T_HALT_COMPILER T_OPEN_PARENTHESE
                      // T_CLOSE_PARENTHESE T_SEMICOLON
             {
-                Statement RESULT = null;
+                final Statement RESULT = null;
                 final int haltleft = ((java_cup.runtime.Symbol) CUP$PhpAstParser$stack
                         .elementAt(CUP$PhpAstParser$top - 3)).left;
                 final int haltright = ((java_cup.runtime.Symbol) CUP$PhpAstParser$stack
@@ -3850,7 +3850,7 @@ class CUP$PhpAstParser$actions {
                         .elementAt(CUP$PhpAstParser$top - 1)).value;
 
                 // Note: we never generate K_HALT_COMPILER
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$PhpAstParser$result = new java_cup.runtime.Symbol(
                         9/* inner_statement */,
@@ -5762,9 +5762,9 @@ class CUP$PhpAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 80: // extends_from ::=
             {
-                Expression RESULT = null;
+                final Expression RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$PhpAstParser$result = new java_cup.runtime.Symbol(
                         95/* extends_from */,
@@ -5955,9 +5955,9 @@ class CUP$PhpAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 89: // foreach_optional_arg ::=
             {
-                Expression RESULT = null;
+                final Expression RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$PhpAstParser$result = new java_cup.runtime.Symbol(
                         14/* foreach_optional_arg */,
@@ -6808,9 +6808,9 @@ class CUP$PhpAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 116: // else_single ::=
             {
-                Statement RESULT = null;
+                final Statement RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$PhpAstParser$result = new java_cup.runtime.Symbol(
                         26/* else_single */,
@@ -6848,9 +6848,9 @@ class CUP$PhpAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 118: // new_else_single ::=
             {
-                Statement RESULT = null;
+                final Statement RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$PhpAstParser$result = new java_cup.runtime.Symbol(
                         27/* new_else_single */,
@@ -7155,9 +7155,9 @@ class CUP$PhpAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 128: // optional_class_type ::=
             {
-                Expression RESULT = null;
+                final Expression RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$PhpAstParser$result = new java_cup.runtime.Symbol(
                         98/* optional_class_type */,
@@ -7935,9 +7935,9 @@ class CUP$PhpAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 154: // method_body ::= T_SEMICOLON
             {
-                Block RESULT = null;
+                final Block RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$PhpAstParser$result = new java_cup.runtime.Symbol(
                         81/* method_body */,
@@ -8034,9 +8034,9 @@ class CUP$PhpAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 158: // method_modifiers ::=
             {
-                Integer RESULT = null;
+                final Integer RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$PhpAstParser$result = new java_cup.runtime.Symbol(
                         80/* method_modifiers */,
@@ -10766,9 +10766,9 @@ class CUP$PhpAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 248: // lexical_vars ::=
             {
-                List RESULT = null;
+                final List RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$PhpAstParser$result = new java_cup.runtime.Symbol(
                         29/* lexical_vars */,
@@ -11693,9 +11693,9 @@ class CUP$PhpAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 276: // exit_expr ::=
             {
-                Expression RESULT = null;
+                final Expression RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$PhpAstParser$result = new java_cup.runtime.Symbol(
                         46/* exit_expr */,
@@ -11710,9 +11710,9 @@ class CUP$PhpAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 277: // exit_expr ::= T_OPEN_PARENTHESE T_CLOSE_PARENTHESE
             {
-                Expression RESULT = null;
+                final Expression RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$PhpAstParser$result = new java_cup.runtime.Symbol(
                         46/* exit_expr */,
@@ -13201,9 +13201,9 @@ class CUP$PhpAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 332: // method_or_not ::=
             {
-                List RESULT = null;
+                final List RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$PhpAstParser$result = new java_cup.runtime.Symbol(
                         84/* method_or_not */,
@@ -13644,9 +13644,9 @@ class CUP$PhpAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 348: // dim_offset ::=
             {
-                Expression RESULT = null;
+                final Expression RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$PhpAstParser$result = new java_cup.runtime.Symbol(
                         58/* dim_offset */,
@@ -14052,9 +14052,9 @@ class CUP$PhpAstParser$actions {
                 /* . . . . . . . . . . . . . . . . . . . . */
             case 363: // assignment_list_element ::=
             {
-                VariableBase RESULT = null;
+                final VariableBase RESULT = null;
 
-                RESULT = null;
+                // RESULT = null;
 
                 CUP$PhpAstParser$result = new java_cup.runtime.Symbol(
                         64/* assignment_list_element */,

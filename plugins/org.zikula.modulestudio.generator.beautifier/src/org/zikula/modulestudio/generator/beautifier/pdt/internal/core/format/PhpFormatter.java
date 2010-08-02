@@ -245,7 +245,6 @@ public class PhpFormatter implements IStructuredFormatter {
      * @param lineNumber
      *            TODO: we should invoke document.replace() one and not twice!
      */
-    @SuppressWarnings({ "unused" })
     private void formatLine(IStructuredDocument document, int lineNumber) {
         resultBuffer.setLength(0);
 
@@ -328,13 +327,9 @@ public class PhpFormatter implements IStructuredFormatter {
              * PHPRegionTypes.WHITESPACE) { //meaning we got previos line last
              * token firstTokenInLine =
              * sdRegion.getRegionAtCharacterOffset(sdRegion.getStartOffset() +
-             * firstTokenInLine.getEnd()); }
+             * firstTokenInLine.getEnd()); } // if the next char is not from
+             * this line if (firstTokenInLine == null) { return; }
              */
-
-            // if the next char is not from this line
-            if (firstTokenInLine == null) {
-                return;
-            }
 
             final String firstTokenType = firstTokenInLine.getType();
             if (firstTokenType == PHPRegionTypes.PHP_CASE

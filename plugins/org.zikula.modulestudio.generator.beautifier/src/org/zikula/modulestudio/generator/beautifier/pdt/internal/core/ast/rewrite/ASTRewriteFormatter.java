@@ -597,21 +597,21 @@ import org.zikula.modulestudio.generator.beautifier.pdt.internal.core.format.IFo
             this.prefix = prefix;
         }
 
-        @SuppressWarnings({ "unused" })
         @Override
         public String[] getPrefixAndSuffix(int indent, ASTNode node,
                 RewriteEventStore events) {
             final String nodeString = ASTRewriteFlattener
                     .asString(node, events);
-            String str = this.prefix + nodeString;
+            final String str = this.prefix + nodeString;
             final Position pos = new Position(this.start, this.prefix.length()
                     + 1 - this.start);
 
             final TextEdit res = null; // formatString(CodeFormatter.K_STATEMENTS,
                                        // str, 0, str.length(), indent);
-            if (res != null) {
-                str = evaluateFormatterEdit(str, res, new Position[] { pos });
-            }
+            /**
+             * if (res != null) { str = evaluateFormatterEdit(str, res, new
+             * Position[] { pos }); }
+             */
             return new String[] {
                     str.substring(pos.offset + 1, pos.offset + pos.length - 1),
                     "" }; //$NON-NLS-1$
@@ -630,7 +630,6 @@ import org.zikula.modulestudio.generator.beautifier.pdt.internal.core.format.IFo
             this.prefix = prefix;
         }
 
-        @SuppressWarnings({ "unused" })
         @Override
         public String[] getPrefixAndSuffix(int indent, ASTNode node,
                 RewriteEventStore events) {
@@ -639,7 +638,7 @@ import org.zikula.modulestudio.generator.beautifier.pdt.internal.core.format.IFo
             final int nodeStart = this.prefix.length();
             final int nodeEnd = nodeStart + nodeString.length() - 1;
 
-            String str = this.prefix + nodeString + this.suffix;
+            final String str = this.prefix + nodeString + this.suffix;
 
             final Position pos1 = new Position(this.start, nodeStart + 1
                     - this.start);
@@ -647,10 +646,10 @@ import org.zikula.modulestudio.generator.beautifier.pdt.internal.core.format.IFo
 
             final TextEdit res = null; // formatString(CodeFormatter.K_STATEMENTS,
                                        // str, 0, str.length(), indent);
-            if (res != null) {
-                str = evaluateFormatterEdit(str, res, new Position[] { pos1,
-                        pos2 });
-            }
+            /*
+             * if (res != null) { str = evaluateFormatterEdit(str, res, new
+             * Position[] { pos1, pos2 }); }
+             */
             return new String[] {
                     str.substring(pos1.offset + 1, pos1.offset + pos1.length
                             - 1),

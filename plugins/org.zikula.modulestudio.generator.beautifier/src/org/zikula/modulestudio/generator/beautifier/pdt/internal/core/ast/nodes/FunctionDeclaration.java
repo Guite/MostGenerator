@@ -86,11 +86,11 @@ public class FunctionDeclaration extends Statement {
 
         setIsReference(isReference);
         setFunctionName(functionName);
-        if (formalParameters != null) {
-            for (final FormalParameter formalParameter : formalParameters) {
-                this.formalParameters.add(formalParameter);
-            }
+        // if (formalParameters != null) {
+        for (final FormalParameter formalParameter : formalParameters) {
+            this.formalParameters.add(formalParameter);
         }
+        // }
         if (body != null) {
             setBody(body);
         }
