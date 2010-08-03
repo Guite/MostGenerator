@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- processes whole collection of example models, calls msManual.oaw for each entry -->
+<!-- processes whole collection of example models, calls msManual.mwe for each entry -->
 <workflow>
 	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoBugs"></cartridge>
 	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoCocktails"></cartridge>
