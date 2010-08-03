@@ -28,39 +28,10 @@
         // TODO: reenable in generator after it has been commited into the core
 «ENDIF-»
 
-«EXPAND ObjectPermissionFilters(container.application.appName())»
-
     // DEBUG: object extension aspect ends
 «targetDef.proceed()»
 «ENDAROUND»
 
-«DEFINE ObjectPermissionFilters(String appName) FOR Entity-»
-        // apply permission filters on querying objects
-        $permissionFilters = array();
-        $permissionFilters[] = array('component_left'   => '«appName»',
-                                     'component_middle' => '«name.formatForCodeCapital()»',
-                                     'component_right'  => '',
-                                     'instance_left'    => '«idField()»',
-                                     'instance_middle'  => '',
-                                     'instance_right'   => '',
-                                     'level'            => ACCESS_READ);
-
-«FOREACH incoming AS join-»
-        $permissionFilters[] = array('component_left'   => '«appName»',
-                                     'component_middle' => '«join.source.name.formatForCodeCapital()»',
-                                     'component_right'  => '«name.formatForCodeCapital()»',
-                                     'instance_left'    => '«join.source.idField()»',
-                                     'instance_middle'  => '«idField()»',
-                                     'instance_right'   => '',
-                                     'level'            => ACCESS_READ);
-
-«ENDFOREACH-»
-        /**$this->actAs('Zikula_Doctrine_Template_PermissionFilter', array(
-            'module' => '«appName»',
-            'filters' => $permissionFilters
-        ));*/
-        // TODO: reenable in generator after it has been commited into the core
-«ENDDEFINE»
 
 «AROUND templates::zclassic::models::behavior::BusinessObject::standardSortingFields FOR Entity-»
 «IF this.standardFields == true-»,
