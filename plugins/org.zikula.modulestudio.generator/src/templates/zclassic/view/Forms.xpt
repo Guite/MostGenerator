@@ -80,22 +80,22 @@
 «ENDFOREACH-»
     </fieldset>
 «IF standardFields-»
-	{if $mode ne "create"}
-	    {include file="«controllerName»/include_metadata_edit.tpl"}
-	{/if}
+    {if $mode ne "create"}
+        {include file="«controllerName»/include_metadata_edit.tpl"}
+    {/if}
 «ENDIF-»
 
-	{if $mode eq "edit"}
-	    {modcallhooks hookobject="item" hookaction="modify" module="«appName»" hookid="«name.formatForDB()»`$«idField()»`" implode=false}
-	{elseif $mode eq "create"}
-	    {modcallhooks hookobject="item" hookaction="new" module="«appName»" implode=false}
-	{else}
-	    {modcallhooks hookobject="item" hookaction="modify" module="«appName»" hookid="«name.formatForDB()»`$«idField()»`" implode=false}
-	{/if}
-	{if count($hooks) > 0}
+    {if $mode eq "edit"}
+        {modcallhooks hookobject="item" hookaction="modify" module="«appName»" hookid="«name.formatForDB()»`$«idField()»`" implode=false}
+    {elseif $mode eq "create"}
+        {modcallhooks hookobject="item" hookaction="new" module="«appName»" implode=false}
+    {else}
+        {modcallhooks hookobject="item" hookaction="modify" module="«appName»" hookid="«name.formatForDB()»`$«idField()»`" implode=false}
+    {/if}
+    {if count($hooks) > 0}
         <fieldset>
             <legend>{gt text='Hooks'}</legend>
-            {foreach item="hook" from=$hooks}
+            {foreach key="hookName" item="hook" from=$hooks}
             <div class="z-formrow">
                 {$hook}
             </div>
