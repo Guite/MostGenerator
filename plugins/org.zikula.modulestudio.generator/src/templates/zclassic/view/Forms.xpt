@@ -73,7 +73,7 @@
         <legend>{gt text='Content'}</legend>
 «FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field-»
         <div class="z-formrow">
-            {formlabel for="«field.name.formatForDB()»" __text='«field.name.formatForDisplayCapital()»'«IF field.mandatory» mandatorysym="1"«ENDIF»}
+            {formlabel for="«field.name.formatForDB()»" __text='«field.name.formatForDisplayCapital()»'«IF field.mandatory» mandatorysym="1"«ENDIF»}«IF field.metaType == UploadField»<br />{* break required for Google Chrome *}«ENDIF»
 «REM» visible=false html=1 cssClass="myClass" FormStyledPlugin«ENDREM»«""-»
             «EXPAND FormField FOR field»«""-»
         </div>
