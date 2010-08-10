@@ -105,16 +105,16 @@
 
     {gt text='Really delete this «name.formatForDisplay()»?' assign="deleteConfirmMsg"}
 
-    <div class="z-formbuttons">
+    <div class="z-buttons z-formbuttons">
     {if $mode eq "edit"}
-        {formbutton commandName="update" __text='Update «name.formatForDisplay()»'}
+        {formbutton commandName="update" __text='Update «name.formatForDisplay()»' class='z-bt-ok'}
         {formbutton commandName="delete" __text='Delete «name.formatForDisplay()»' confirmMessage=$deleteConfirmMsg}
     {elseif $mode eq "create"}
-        {formbutton commandName="create" __text='Create «name.formatForDisplay()»'}
+        {formbutton commandName="create" __text='Create «name.formatForDisplay()»' class='z-bt-ok'}
     {else}
-        {formbutton commandName="update«REM»TODO«ENDREM»" __text='OK'}
+        {formbutton commandName="update«REM»TODO«ENDREM»" __text='OK' class='z-bt-ok'}
     {/if}
-        {formbutton commandName="cancel" __text='Cancel'}
+        {formbutton commandName="cancel" __text='Cancel' class='z-bt-cancel'}
     </div>
   {/«appName.formatForDB()»FormFrame}
 {/form}

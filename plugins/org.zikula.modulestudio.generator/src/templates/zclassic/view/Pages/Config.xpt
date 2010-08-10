@@ -36,9 +36,9 @@
 
                 {modcallhooks hookobject="module" hookaction="modifyconfig" module="«appName()»"}
 
-                <div class="z-formbuttons">
-                    {formbutton commandName="save" __text='Update configuration'}
-                    {formbutton commandName="cancel" __text='Cancel'}
+                <div class="z-buttons z-formbuttons">
+                    {formbutton commandName="save" __text='Update configuration' class='z-bt-ok'}
+                    {formbutton commandName="cancel" __text='Cancel' class='z-bt-cancel'}
                 </div>
             </fieldset>
         {/«appName().formatForDB()»FormFrame}
