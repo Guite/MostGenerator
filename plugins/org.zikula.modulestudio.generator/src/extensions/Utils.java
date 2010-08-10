@@ -56,7 +56,7 @@ public class Utils {
             result += sc.toLowerCase();
         }
 
-        return result;
+        return result.trim();
     }
 
     /**

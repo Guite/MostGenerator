@@ -18,32 +18,23 @@ listType:
 
 {include file="«controllerName»/header.tpl"}
 
-«IF controller.metaType == AdminController-»
-<div class="z-admincontainer">
-«ELSE-»
-<div class="z-frontendcontainer">
-«ENDIF-»
+<div class="z-«IF controller.metaType == AdminController-»admin«ELSE»frontend«ENDIF»container">
 {gt text='«name.formatForDisplayCapital()» list' assign="templateTitle"}
 «IF controller.metaType == AdminController-»
-<div class="z-adminpageicon">{img modname="core" src="windowlist.gif" set="icons/large" alt=$templateTitle}</div>
+    <div class="z-adminpageicon">{img modname="core" src="windowlist.gif" set="icons/large" alt=$templateTitle}</div>
 «ENDIF-»
-{pagesetvar name="title" value=$templateTitle}
-<h2>{$templateTitle}</h2>
+    {pagesetvar name="title" value=$templateTitle}
+    <h2>{$templateTitle}</h2>
 
-{checkpermissionblock component="«appName»::" instance=".*" level="ACCESS_ADD"}
-{gt text='Create «name.formatForDisplay()»' assign="createTitle"}
-{gt text='Update «name.formatForDisplay()»' assign="editTitle"}
-{gt text='Delete «name.formatForDisplay()»' assign="deleteTitle"}
 «IF controller.hasActions('edit')-»
-<p>
-    <a href="{modurl modname="«appName»" type="«controllerName»" func="edit" ot="«objName»"}" title="{$createTitle}">
-        {img src="insert_table_row.gif" modname="core" set="icons/extrasmall" __alt='Create'}
-        {$createTitle}
-    </a>
-</p>
-«ENDIF»
-{/checkpermissionblock}
+    {checkpermissionblock component="«appName»::" instance=".*" level="ACCESS_ADD"}
+        {gt text='Create «name.formatForDisplay()»' assign="createTitle"}
+        <a href="{modurl modname="«appName»" type="«controllerName»" func="edit" ot="«objName»"}" title="{$createTitle}" class="validationtestIconNew">
+            {$createTitle}
+        </a>
+    {/checkpermissionblock}
 
+«ENDIF»
 «IF listType == 0-»
 <ul>
 «ELSEIF listType == 1-»
@@ -51,11 +42,7 @@ listType:
 «ELSEIF listType == 2-»
 <dl>
 «ELSEIF listType == 3-»
-«IF controller.metaType == AdminController-»
-<table class="z-admintable">
-«ELSE-»
-<table class="z-datatable">
-«ENDIF-»
+<table class="z-«IF controller.metaType == AdminController-»admin«ELSE»data«ENDIF»table">
     <colgroup>
 «FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field -»
         <col id="c«field.name.formatForDB()»" />
@@ -168,7 +155,7 @@ listType:
 «ELSEIF listType == 2-»
         <dt>
 «ELSEIF listType == 3-»
-        <tr class="{cycle values="z-odd, z-even"}">
+        <tr class="z-«IF controller.metaType == AdminController-»admin«ELSE»data«ENDIF»tableempty">
           <td align="left" valign="top" colspan="«fields.size-1+1»">
 «ENDIF-»
             {gt text='No «nameMultiple.formatForDisplay()» found.'}
@@ -193,18 +180,13 @@ listType:
 </table>
 «ENDIF-»
 
-{pager rowcount=$pager.numitems limit=$pager.itemsperpage}
+    {pager rowcount=$pager.numitems limit=$pager.itemsperpage}
 
 «IF controller.metaType == UserController-»
-{modurl modname="«appName»" func="view" ot="«objName»" pos=$currentPage assign="returnurl"}
-{modcallhooks hookobject="category" hookaction="display" module="«appName»«objName»" returnurl=$returnurl}
-</div>
-
-«ELSEIF controller.metaType == AdminController-»
-</div>
-«ELSE-»
-</div>
+    {modurl modname="«appName»" func="view" ot="«objName»" pos=$currentPage assign="returnurl"}
+    {modcallhooks hookobject="category" hookaction="display" module="«appName»«objName»" returnurl=$returnurl}
 «ENDIF-»
+</div>
 
 {include file="«controllerName»/footer.tpl"}
 «ENDFILE»

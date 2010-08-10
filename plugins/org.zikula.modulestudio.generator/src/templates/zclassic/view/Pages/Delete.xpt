@@ -16,14 +16,27 @@
 «ELSE-»
 <div class="z-frontendcontainer">
 «ENDIF-»
+{gt text='Delete «name.formatForDisplay()»' assign="templateTitle"}
+«IF controller.metaType == AdminController-»
+    <div class="z-adminpageicon">{img modname="core" src="demo.gif" set="icons/large" __alt='Details'}</div>
+«ENDIF-»
 
-<p>{gt text='Do you really want to delete this «name.formatForDisplay()» ?'}</p>
+    {pagesetvar name="title" value=$templateTitle}
+    <h2>{$templateTitle}</h2>
 
-<form action="{modurl modname="«appName»" type="«controllerName»" func="delete" ot="«objName»" «idField()»=$«objName».«idField()»}" method="post">
-	<input type="submit" name="confirmation" value="{gt text='Yes'}" />
-	<a href="{modurl modname="«appName»" type="«controllerName»" func="view" ot="«objName»"}">{gt text='No'}</a>
-</form>
+    <p class="z-warningmsg">{gt text='Do you really want to delete this «name.formatForDisplay()» ?'}</p>
 
+    <form class="z-form" action="{modurl modname="«appName»" type="«controllerName»" func="delete" ot="«objName»" «idField()»=$«objName».«idField()»}" method="post">
+        <div>
+            <fieldset>
+                <legend>{gt text='Confirmation prompt'}</legend>
+                <div class="z-buttons z-formbuttons">
+                    {button src=button_ok.gif set=icons/small __alt="Delete" __title="Delete"}
+                    <a href="{modurl modname="«appName»" type="«controllerName»" func="view" ot="«objName»"}">{img modname=core src=button_cancel.gif set=icons/small __alt="Cancel" __title="Cancel"} {gt text='Cancel'}</a>
+                </div>
+            </fieldset>
+        </div>
+    </form>
 </div>
 
 {include file="«controllerName»/footer.tpl"}

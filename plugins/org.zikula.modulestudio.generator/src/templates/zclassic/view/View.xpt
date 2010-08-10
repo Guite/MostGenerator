@@ -35,21 +35,17 @@
 {* purpose of this template: header for «controllerName» area *}
 
 «IF controller.metaType == AdminController-»
-{admincategorymenu xhtml=1}
-«ELSE-»
-{insert name="getstatusmsg"}
-<br />
+{admincategorymenu}
 «ENDIF-»
-«IF controller.metaType == AdminController-»
-<div class="z-adminbox">
-«ELSE-»
-<div class="z-frontendbox">
-«ENDIF-»
+<div class="z-«IF controller.metaType == AdminController»admin«ELSE»frontend«ENDIF»box">
     <h1>{gt text='«appName.formatForDisplayCapital()»' comment='This is the title of the header template'}</h1>
     <div class="z-menu">
         {modulelinks modname="«appName»" type="«controllerName»"}
     </div>
 </div>
+«IF controller.metaType != AdminController-»
+{insert name="getstatusmsg"}
+«ENDIF-»
 «ENDFILE»
 «FILE "templates/" + controllerName + "/footer.tpl"-»
 {* purpose of this template: footer for «controllerName» area *}
