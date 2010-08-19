@@ -194,7 +194,11 @@ public class ModuleStudioGenerator {
      * @return the workflow file
      */
     public String getWorkflowFile() {
-        return "src/workflow/" + workflowFile;
+        /**
+         * FIXME: src/ is needed when starting from IDE only; TODO: change
+         * build.properties accordingly
+         */
+        return /* "src/ */"workflow/" + workflowFile;
     }
 
     /**

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workflow>
     <property name="doSlotDumps" value='false' />
-    <property name="doValidation" value='true' />
+<!-- ATM only for starting from inside IDE, deactivate for starting from exported product -->
+<!--    <property name="doValidation" value='true' />-->
+    <property name="doValidation" value='false' />
     <property name="doModelCopy" value='true' />
     <property name="doProfiling" value='true' />
 
@@ -59,7 +61,7 @@
 	            <metaModel id="mmModuleStudio" 	class="org.eclipse.xtend.typesystem.emf.EmfMetaModel">
 	                <metaModelPackage value="de.guite.modulestudio.metamodel.modulestudio.ModulestudioPackage"/>
 	            </metaModel>
-<property name="checks.path" value="../de.guite.modulestudio.metamodel/model/checks/" />
+		<property name="checks.path" value="../de.guite.modulestudio.metamodel/model/checks/" />
 	            <!-- provide check files -->
                 <checkFile value="${checks.path}main"/>
                 <checkFile value="${checks.path}model"/>
