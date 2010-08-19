@@ -2,6 +2,7 @@
 <workflow>
     <property name="doSlotDumps" value='false' />
 <!-- ATM only for starting from inside IDE, deactivate for starting from exported product -->
+<!-- IMPORTANT: switch OFF for RELEASE -->
 <!--    <property name="doValidation" value='true' />-->
     <property name="doValidation" value='false' />
     <property name="doModelCopy" value='true' />
