@@ -34,7 +34,7 @@
                 'refClass' => '«((ManyToManyRelationship)this).implClassModelRefRecord()»',
 «ENDIF-»
                 // true indicates the owning side (owning the foreign key)
-                'owningSide' => «(!incoming).displayBool()»,
+                'owningSide' => «(incoming).displayBool()»,
 «IF metaType != ManyToManyRelationship && foreignKeyName != null && foreignKeyName != ""-»
                 'foreignKeyName' => '«foreignKeyName»',
 «ENDIF-»
