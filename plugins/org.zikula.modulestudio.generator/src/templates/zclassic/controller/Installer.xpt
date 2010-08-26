@@ -177,7 +177,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     {
         try {
 «FOREACH models.entities AS entity-»
-            DoctrineUtil::dropTable('«entity.implClassModelRecord()»');
+            DoctrineUtil::dropTable('«entity.fullEntityName()»');
 «ENDFOREACH-»
         } catch (Exception $e) {
             if (System::isDevelopmentMode()) {
