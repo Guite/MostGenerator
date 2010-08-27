@@ -16,7 +16,7 @@
  *
  * @return string The output of the plugin.
  */
-function smarty_function_«appName().formatForDB()»SelectorTemplates.php($params, $view)
+function smarty_function_«appName().formatForDB()»SelectorTemplates($params, $view)
 {
     $result = array();
     $dom = ZLanguage::getModuleDomain('«appName()»');

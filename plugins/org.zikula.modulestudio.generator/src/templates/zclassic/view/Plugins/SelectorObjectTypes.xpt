@@ -16,7 +16,7 @@
  *
  * @return string The output of the plugin.
  */
-function smarty_function_«appName().formatForDB()»SelectorObjectTypes.php($params, $view)
+function smarty_function_«appName().formatForDB()»SelectorObjectTypes($params, $view)
 {
     $result = array();
     $dom = ZLanguage::getModuleDomain('«appName()»');
