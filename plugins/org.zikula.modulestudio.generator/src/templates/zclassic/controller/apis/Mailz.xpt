@@ -9,7 +9,7 @@
 /**
  * Mailz api base class
  */
-class «appName()»_Api_Base_Mailz extends «appName()»_Base_Installer
+class «appName()»_Api_Base_Mailz extends Zikula_Api
 {
 «EXPAND MailzImpl-»
 }
