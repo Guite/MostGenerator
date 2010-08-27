@@ -35,7 +35,6 @@ class «baseClassModelTable()» extends Doctrine_Table
      */
     public function construct()
     {
-        $this->addRecordListener(new «baseClassModelListener()»());
     }
 
     public function truncateTable()
