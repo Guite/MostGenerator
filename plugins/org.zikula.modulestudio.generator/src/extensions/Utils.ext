@@ -108,8 +108,9 @@ cached getChildRelations(Entity this)
 cached getChildRelationsWithAggregation(Entity this)
     : getChildRelations().select(e|e.strategy == InheritancyStrategyType::COLUMNAGGREGATION);
 
+/* if we have id or fooid return fooid; otherwise return the actual field name of the referenced field */
 cached relationFieldName(Entity refEntity, String refField)
-    : (refField.toLowerCase() == 'id') ? refEntity.idField() : refField.formatForDB();
+    : (refField.toLowerCase() == 'id' || refField.toLowerCase() == refEntity.idField()) ? refEntity.idField() : refEntity.fields.select(e|e.name == refField).get(0).actualFieldName().formatForCode();
 
 
 cached boolean hasActions(Controller controller, String type) :

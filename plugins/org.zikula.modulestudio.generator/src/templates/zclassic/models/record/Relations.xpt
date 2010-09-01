@@ -28,7 +28,7 @@
                 // linked field in the defining class
                 'local' => '«source.relationFieldName(sourceField)»',
                 // linked field in the linked class
-                'foreign' => '«IF metaType == ManyToManyRelationship-»«target.relationFieldName(targetField)»«ELSE»«source.relationFieldName(sourceField)»«ENDIF»',«REM»Rule: always place the foreign key in the owned class«ENDREM»
+                'foreign' => '«target.relationFieldName(targetField)»',
 «IF metaType == ManyToManyRelationship-»
                 // name of the many-to-many association class
                 'refClass' => '«((ManyToManyRelationship)this).implClassModelRefRecord()»',

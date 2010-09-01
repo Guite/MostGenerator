@@ -2,8 +2,8 @@ package transformation;
 
 import de.guite.modulestudio.metamodel.modulestudio.Entity;
 import de.guite.modulestudio.metamodel.modulestudio.IntegerField;
+import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship;
 import de.guite.modulestudio.metamodel.modulestudio.ModulestudioFactory;
-import de.guite.modulestudio.metamodel.modulestudio.Relationship;
 import de.guite.modulestudio.metamodel.modulestudio.impl.ModulestudioFactoryImpl;
 import extensions.Utils;
 
@@ -33,13 +33,16 @@ public class TrafoUtils {
     /**
      * add a relation id fields to a table
      * 
+     * @param JoinRelationship
+     *            the relationship to be referenced
      * @params Entity given Entity instance
      * @return flag if process was sucessful
      */
-    public static boolean addRelationFields(Entity entity) {
+    public static boolean addRelationField(JoinRelationship rel, Entity entity) {
         try {
-            for (final Object element : entity.getIncoming()) {
-                final Relationship rel = (Relationship) element;
+            final String idFieldName = rel.getSource().getName() + "id";
+            if (rel.getTargetField() != "id"
+                    && rel.getTargetField() != idFieldName) {
                 entity.getFields().add(
                         createIDColumn(rel.getSource().getName(), false));
             }
@@ -54,9 +57,10 @@ public class TrafoUtils {
     private static IntegerField createIDColumn(String colName, Boolean isPrimary) {
         final ModulestudioFactory factory = new ModulestudioFactoryImpl();
         final IntegerField idField = factory.createIntegerField();
-        idField.setName(Utils.formatForDB(colName + "id"));
-        idField.setPrimaryKey(isPrimary);
+        idField.setName(Utils.formatForDB(colName) + "id");
         idField.setLength(11);
+        idField.setPrimaryKey(isPrimary);
+        idField.setUnsigned(false);
         return idField;
     }
 }
