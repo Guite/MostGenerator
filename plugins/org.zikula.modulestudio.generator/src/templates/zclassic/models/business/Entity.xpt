@@ -64,7 +64,11 @@
                    ->where('e.' . $this->_intIdField . ' = ?', $this->_intId);
 
         $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
-        return $q->fetchOne(array(), $fetchType);
+        $item = $q->fetchOne(array(), $fetchType);
+        if (!$asArray) {
+            $this->set«name.formatForCodeCapital()»($item);
+        }
+        return $item;
     }
 
     /**

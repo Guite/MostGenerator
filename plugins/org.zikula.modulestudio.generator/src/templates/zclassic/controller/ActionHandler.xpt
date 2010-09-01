@@ -330,10 +330,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         }
         else {
 «EXPAND ControllerHelper::instantiateObject("this->" + idField())-»
-
-            $idField = '«idField()»'; 
-«EXPAND ControllerHelper::retrieveEntityFromModel('idField', "this->" + idField(), true)-»
-            $«name.formatForCode()» = $object;
+            $«name.formatForCode()» = $object->selectById($this->«idField()», false);
         }
 
         «EXPAND FetchInputData(name.formatForCode())-»
