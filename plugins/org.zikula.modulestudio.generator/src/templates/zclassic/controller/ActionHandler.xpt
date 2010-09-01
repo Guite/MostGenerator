@@ -306,6 +306,12 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
 «DEFINE handleCommand(Application app, Controller controller, String actionName, String appName, String controllerName) FOR Entity-»
 
+        if ($args['commandName'] == 'delete') {
+            if (!SecurityUtil::checkPermission('«appName»:«name.formatForCodeCapital()»:', '::', ACCESS_DELETE)) {
+                return $view->registerError(LogUtil::registerPermissionError());
+            }
+        }
+
         if ($args['commandName'] != 'delete' && $args['commandName'] != 'cancel') {
             // do forms validation including checking all validators on the page to validate their input
             if (!$view->isValid()) {
@@ -330,10 +336,10 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             $«name.formatForCode()» = $object;
         }
 
+        «EXPAND FetchInputData(name.formatForCode())-»
+
         if ($args['commandName'] == 'create') {
             // event handling if user clicks on create
-
-            «EXPAND FetchInputData(name.formatForCode())-»
 
             // save «name.formatForDisplay()»
             $«name.formatForCode()»->save();
@@ -352,8 +358,6 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         } else if ($args['commandName'] == 'update') {
             // event handling if user clicks on update
 
-            «EXPAND FetchInputData(name.formatForCode())-»
-
             // save «name.formatForDisplay()»
             $updateResult = $«name.formatForCode()»->save();
 
@@ -369,14 +373,6 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                                                                    '«idField()»' => $this->«idField()»));
         } else if ($args['commandName'] == 'delete') {
             // event handling if user clicks on delete
-
-            // Note: No need to check validation when deleting
-
-            if (!SecurityUtil::checkPermission('«appName»:«name.formatForCodeCapital()»:', '::', ACCESS_DELETE)) {
-                return $view->registerError(LogUtil::registerPermissionError());
-            }
-
-            «EXPAND FetchInputData(name.formatForCode())-»
 
             // delete «name.formatForDisplay()»
             if ($«name.formatForCode()»->delete() === false) {
