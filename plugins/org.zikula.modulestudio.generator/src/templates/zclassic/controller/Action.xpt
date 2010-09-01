@@ -212,7 +212,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $confirmation = (bool) FormUtil::getPassedValue('confirmation', isset($args['confirmation']) ? $args['confirmation'] : false, 'GETPOST');
 
         if ($confirmation) {
-            $object->merge(array($idField => $id));
+            $object->selectById($id, false);
 
             if (!$object->delete()) {
                 $this->registerError($this->__('Error! Deletion attempt failed.'));

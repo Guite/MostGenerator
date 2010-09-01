@@ -28,6 +28,7 @@
 
     <form class="z-form" action="{modurl modname="«appName»" type="«controllerName»" func="delete" ot="«objName»" «idField()»=$«objName».«idField()»}" method="post">
         <div>
+            <input type="hidden" id="confirmation" name="confirmation" value="1" />
             <fieldset>
                 <legend>{gt text='Confirmation prompt'}</legend>
                 <div class="z-buttons z-formbuttons">
