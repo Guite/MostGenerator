@@ -259,15 +259,15 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 
 
 «DEFINE sanitizeForOutput FOR EntityField-»
-        $data['«name.formatForDB()»'] = ((isset($data['«name.formatForDB()»']) && !empty($data['«name.formatForDB()»'])) ? DataUtil::formatForDisplay($data['«name.formatForDB()»']) : '');
+        $data['«actualFieldName().formatForCode()»'] = ((isset($data['«actualFieldName().formatForCode()»']) && !empty($data['«actualFieldName().formatForCode()»'])) ? DataUtil::formatForDisplay($data['«actualFieldName().formatForCode()»']) : '');
 «ENDDEFINE»
 
 «DEFINE sanitizeForOutputHTML FOR EntityField-»
-        $data['«name.formatForDB()»'] = ((isset($data['«name.formatForDB()»']) && !empty($data['«name.formatForDB()»'])) ? DataUtil::formatForDisplayHTML($data['«name.formatForDB()»']) : '');
+        $data['«actualFieldName().formatForCode()»'] = ((isset($data['«actualFieldName().formatForCode()»']) && !empty($data['«actualFieldName().formatForCode()»'])) ? DataUtil::formatForDisplayHTML($data['«actualFieldName().formatForCode()»']) : '');
 «ENDDEFINE»
 
 «DEFINE sanitizeForOutput FOR BooleanField-»
-        $data['«name.formatForDB()»'] = (bool) $data['«name.formatForDB()»'];
+        $data['«actualFieldName().formatForCode()»'] = (bool) $data['«actualFieldName().formatForCode()»'];
 «ENDDEFINE»
 «DEFINE sanitizeForOutput FOR StringField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
 «DEFINE sanitizeForOutput FOR TextField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
