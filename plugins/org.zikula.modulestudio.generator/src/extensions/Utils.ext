@@ -83,6 +83,9 @@ cached getPrimaryKeyField(Entity this)
 cached String idField(Entity entity)
     : entity.getPrimaryKeyField().name.formatForDB();
 
+cached String actualFieldName(EntityField this)
+    : name;
+
 cached String actualFieldName(DerivedField this)
     : ((alias != null && alias != "") ? alias : name);
 

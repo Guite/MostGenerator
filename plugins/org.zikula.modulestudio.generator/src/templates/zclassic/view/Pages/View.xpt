@@ -45,21 +45,21 @@ listType:
 <table class="z-«IF controller.metaType == AdminController-»admin«ELSE»data«ENDIF»table">
     <colgroup>
 «FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field -»
-        <col id="c«field.name.formatForDB()»" />
+        <col id="c«field.actualFieldName().formatForDB()»" />
 «ENDFOREACH-»
         <col id="coloptions" />
     </colgroup>
     <thead>
     <tr>
 «FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field -»
-        <th id="h«field.name.formatForDB()»" scope="col" align="«EXPAND Alignment FOR field-»" valign="middle">
+        <th id="h«field.actualFieldName().formatForDB()»" scope="col" align="«EXPAND Alignment FOR field-»" valign="middle">
 «LET incoming.select(e|formatForDB(e.source.getLeadingField().name) == field.name.formatForDB()) AS joins-»
 «IF joins.size > 0-»
 «LET joins.get(0).source.idField() AS fieldName-»
 «EXPAND HeaderSortingLink(appName, controllerName, objName, joins.get(0).source.name.formatForDB().msconcat('_').msconcat(fieldName), joins.get(0).source.name) FOR field-»
 «ENDLET-»
 «ELSE-»
-«EXPAND HeaderSortingLink(appName, controllerName, objName, field.name.formatForCode(), field.name) FOR field-»
+«EXPAND HeaderSortingLink(appName, controllerName, objName, field.actualFieldName().formatForCode(), field.actualFieldName()) FOR field-»
 «ENDIF-»
 «ENDLET-»
         </th>
@@ -85,11 +85,11 @@ listType:
 «ELSEIF listType == 2-»
         <dd>
 «ELSEIF listType == 3-»
-        <td headers="h«field.name.formatForDB()»" align="«EXPAND Alignment FOR field-»" valign="top">
+        <td headers="h«field.actualFieldName().formatForDB()»" align="«EXPAND Alignment FOR field-»" valign="top">
 «ENDIF-»
 «LET incoming.select(e|e.source.idField() == field.name.formatForDB()) AS joins-»
 «IF field.leading == true-»
-            {$«objName».«field.name.formatForDB()»|modcallhooks}
+            {$«objName».«field.actualFieldName().formatForCode()»|modcallhooks}
 «ELSEIF joins.size > 0-»
             «FOREACH joins AS join SEPARATOR ', '»{$«objName».«join.source.name.formatForDB()»_«join.source.idField()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH»
 «ELSE-»
@@ -213,21 +213,21 @@ listType:
 
 
 «DEFINE DisplayColumnField(String objName) FOR EntityField-»
-            {$«objName».«name.formatForDB()»}
+            {$«objName».«name.formatForCode()»}
 «ENDDEFINE»
 
 «DEFINE DisplayColumnField(String objName) FOR DateField-»
-            {$«objName».«name.formatForDB()»|dateformat:"datebrief"}
+            {$«objName».«actualFieldName().formatForCode()»|dateformat:"datebrief"}
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR TimestampField-»
-            {$«objName».«name.formatForDB()»|dateformat:"datetimebrief"}
+            {$«objName».«actualFieldName().formatForCode()»|dateformat:"datetimebrief"}
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR BooleanField-»
-            {$«objName».«name.formatForDB()»|yesno:true}
+            {$«objName».«actualFieldName().formatForCode()»|yesno:true}
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR DecimalField-»
-            {$«objName».«name.formatForDB()»|formatnumber}
+            {$«objName».«actualFieldName().formatForCode()»|formatnumber}
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR FloatField-»
-            {$«objName».«name.formatForDB()»|formatnumber}
+            {$«objName».«actualFieldName().formatForCode()»|formatnumber}
 «ENDDEFINE»

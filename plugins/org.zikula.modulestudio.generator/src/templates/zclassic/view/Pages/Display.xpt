@@ -18,7 +18,7 @@
 <div class="z-frontendcontainer">
 «ENDIF-»
 
-«LET getLeadingField().name.formatForDB() AS titleField-»
+«LET getLeadingField().name.formatForCode() AS titleField-»
 {pagesetvar name="title" value=$«objName».«titleField»}
 <h2>{$«objName».«titleField»|modcallhooks}</h2>
 «ENDLET-»
@@ -37,7 +37,7 @@
     <dt>{gt text='«joins.get(0).source.name.formatForDisplayCapital()»'}</dt>
     <dd>«FOREACH joins AS join SEPARATOR ', '-»{$«objName».«join.source.name.formatForDB()»_«join.source.idField()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH-»</dd>
 «ELSE-»
-    <dt>{gt text='«field.name.formatForDisplayCapital()»'}</dt>
+    <dt>{gt text='«field.actualFieldName().formatForDisplayCapital()»'}</dt>
     <dd>«EXPAND DisplayColumnField(objName) FOR field-»</dd>
 «ENDIF-»
 «ENDLET-»
@@ -93,23 +93,23 @@
 «ENDDEFINE»
 
 «DEFINE DisplayColumnField(String objName) FOR EntityField-»
-{$«objName».«name.formatForDB()»}«""-»
+{$«objName».«name.formatForCode()»}«""-»
 «ENDDEFINE»
 
 «DEFINE DisplayColumnField(String objName) FOR DateField-»
-{$«objName».«name.formatForDB()»|dateformat:"datebrief"}«""-»
+{$«objName».«actualFieldName().formatForCode()»|dateformat:"datebrief"}«""-»
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR TimestampField-»
-{$«objName».«name.formatForDB()»|dateformat:"datetimebrief"}«""-»
+{$«objName».«actualFieldName().formatForCode()»|dateformat:"datetimebrief"}«""-»
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR BooleanField-»
-{$«objName».«name.formatForDB()»|yesno:true}«""-»
+{$«objName».«actualFieldName().formatForCode()»|yesno:true}«""-»
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR DecimalField-»
-{$«objName».«name.formatForDB()»|formatnumber}«""-»
+{$«objName».«actualFieldName().formatForCode()»|formatnumber}«""-»
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR FloatField-»
-{$«objName».«name.formatForDB()»|formatnumber}«""-»
+{$«objName».«actualFieldName().formatForCode()»|formatnumber}«""-»
 «ENDDEFINE»
 
 «DEFINE DisplaySubsets(String appName, String controllerName, Entity objEntity) FOR Entity-»
