@@ -155,11 +155,9 @@
 «LET entity.incoming.select(e|e.source.idField() == name.formatForDB()) AS pointingRelations-»
 «IF pointingRelations.size > 0-»
 «LET pointingRelations.get(0) AS pointingRelation-»
-«LET pointingRelation.source AS joiningTable-»
-«REM»Join-selector«ENDREM»«""-»
-            // TODO: reenable selector for related objects
-«REM»TODO: FIX THIS            {formdropdownrelationlist id="«joiningTable.idField()»" mandatory=«mandatory.displayBool()» module="«entity.container.application.appName()»" objecttype="«joiningTable.name.formatForCode()»" idField="«joiningTable.idField()»" displayField="«joiningTable.idField()»" orderby="«joiningTable.idField()»"«IF pointingRelation.metaType == OneToManyRelationship-» selectionMode="multiple"«ENDIF-»}«IF mandatory-»&nbsp;*«ENDIF»«ENDREM»«""-»
-            {formintinput id="«name.formatForDB()»" mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«length»«IF minValue != 0 || maxValue != 0-» minValue=«minValue» maxValue=«maxValue»«ENDIF»}
+«LET pointingRelation.source AS joiningEntity-»
+«REM»Join-selector; if the where param is an array then [0] is the DQL and [1] the place holder values [example: array('status = ?', 'XY')]. Otherwise use normal syntax like [where="active = true"].«ENDREM»«""-»
+            {formdropdownrelationlist id="«joiningEntity.idField()»" mandatory=«mandatory.displayBool()» recordClass="«joiningEntity.implClassModelRecord()»" displayField="«joiningEntity.getLeadingField().actualFieldName().formatForDisplay()»" orderby="«joiningEntity.idField()»"«IF pointingRelation.metaType == OneToManyRelationship-» selectionMode="multiple"«ENDIF-»}«IF mandatory-»&nbsp;*«ENDIF»
 «ENDLET-»
 «ENDLET-»
 «ELSE-»
