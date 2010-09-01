@@ -33,12 +33,13 @@
                 // name of the many-to-many association class
                 'refClass' => '«((ManyToManyRelationship)this).implClassModelRefRecord()»',
 «ENDIF-»
-                // true indicates the owning side (owning the foreign key)
-                'owningSide' => «(incoming).displayBool()»,
 «IF metaType != ManyToManyRelationship && foreignKeyName != null && foreignKeyName != ""-»
                 'foreignKeyName' => '«foreignKeyName»',
 «ENDIF-»
-«EXPAND CascadeInfo-»
+                // true indicates the owning side (owning the foreign key)
+                'owningSide' => «(incoming).displayBool()»«IF incoming-»,«ENDIF-»
+«REM»incoming == owningSide because owning == where FK is«ENDREM»«""-»
+«IF incoming-»«EXPAND CascadeInfo-»«ENDIF-»
             )
         );
 «ENDDEFINE»
