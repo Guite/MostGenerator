@@ -201,11 +201,11 @@
 «IF joins.size > 0-»
                      '«joins.get(0).source.name.formatForDB()»_«joins.get(0).source.idField()»'«""-»
 «ELSE-»
-                     '«actualFieldName().formatForDB()»'«""-»
+                     '«actualFieldName().formatForCode()»'«""-»
 «ENDIF-»
 «ENDLET-»«ENDDEFINE»
 «DEFINE singleSortingField FOR CalculatedField»
-                     '«name.formatForDB()»'«""-»
+                     '«actualFieldName().formatForCode()»'«""-»
 «ENDDEFINE»
 
 «DEFINE standardSortingFields FOR Entity»

@@ -124,17 +124,17 @@
 
 «REM»Note we use protected and not private to let the dev change things in concrete implementations«ENDREM»
 «DEFINE fieldMemberVar FOR DerivedField»
-«EXPAND FileHelper::MemberVar(name.formatForCode(), fieldTypeAsString(), "")»
+«EXPAND FileHelper::MemberVar(actualFieldName().formatForCode(), fieldTypeAsString(), "")»
 «ENDDEFINE»
 «DEFINE fieldMemberVar FOR ArrayField-»
-«EXPAND FileHelper::MemberVar(name.formatForCode(), fieldTypeAsString(), " = array()")»
+«EXPAND FileHelper::MemberVar(actualFieldName().formatForCode(), fieldTypeAsString(), " = array()")»
 «ENDDEFINE»
 «DEFINE fieldMemberVar FOR JoinRelationship»
 «EXPAND FileHelper::MemberVar(target.name.formatForCode(), target.implClassBusinessEntity((metaType != OneToOneRelationship)), "")»
 «ENDDEFINE»
 
 «DEFINE fieldAccessors FOR DerivedField»
-«EXPAND FileHelper::GetterAndSetterMethodsDelegate(name.formatForCode(), fieldTypeAsString(), entity.name)»
+«EXPAND FileHelper::GetterAndSetterMethodsDelegate(actualFieldName().formatForCode(), fieldTypeAsString(), entity.name)»
 «ENDDEFINE»
 
 «DEFINE outgoingRelationAccessors FOR JoinRelationship»
