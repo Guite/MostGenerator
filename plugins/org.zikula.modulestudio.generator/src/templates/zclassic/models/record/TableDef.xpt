@@ -190,11 +190,11 @@
                 'fields' => array(
 «EXPAND IndexField FOREACH items SEPARATOR ','»
                 ),
-«IF primary == true-»
-                'primary' => true,
-«ENDIF-»
 «IF type != EntityIndexType::NORMAL-» 
-                'type' => '«type.asConstant()»'
+                'type' => '«type.asConstant()»'«IF primary == true-»,«ENDIF-»
+«ENDIF-»
+«IF primary == true-»
+                'primary' => true
 «ENDIF-»
             )
         );
