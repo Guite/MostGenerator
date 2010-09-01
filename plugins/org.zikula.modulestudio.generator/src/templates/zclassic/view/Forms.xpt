@@ -157,7 +157,7 @@
 «LET pointingRelations.get(0) AS pointingRelation-»
 «LET pointingRelation.source AS joiningEntity-»
 «REM»Join-selector; if the where param is an array then [0] is the DQL and [1] the place holder values [example: array('status = ?', 'XY')]. Otherwise use normal syntax like [where="active = true"].«ENDREM»«""-»
-            {formdropdownrelationlist id="«joiningEntity.idField()»" mandatory=«mandatory.displayBool()» recordClass="«joiningEntity.implClassModelRecord()»" displayField="«joiningEntity.getLeadingField().actualFieldName().formatForDisplay()»" orderby="«joiningEntity.idField()»"«IF pointingRelation.metaType == OneToManyRelationship-» selectionMode="multiple"«ENDIF-»}«IF mandatory-»&nbsp;*«ENDIF»
+            {formdropdownrelationlist id="«joiningEntity.idField()»" mandatory=«mandatory.displayBool()» recordClass="«joiningEntity.implClassModelRecord()»" displayField="«joiningEntity.getLeadingField().actualFieldName().formatForCode()»" orderby="«joiningEntity.idField()»"«IF pointingRelation.metaType == OneToManyRelationship-» selectionMode="multiple"«ENDIF-»}«IF mandatory-»&nbsp;*«ENDIF»
 «ENDLET-»
 «ENDLET-»
 «ELSE-»
