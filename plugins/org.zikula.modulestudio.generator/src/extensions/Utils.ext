@@ -132,6 +132,7 @@ cached String asConstant(DbTableType obj) :
     };
 cached String asConstant(EntityIndexType obj) :
     switch (obj) {
+       case EntityIndexType::NORMAL     : ''/*dummy*/
        case EntityIndexType::UNIQUE     : 'unique'
        case EntityIndexType::FULLTEXT   : 'fulltext'
        case EntityIndexType::GIST       : 'gist'

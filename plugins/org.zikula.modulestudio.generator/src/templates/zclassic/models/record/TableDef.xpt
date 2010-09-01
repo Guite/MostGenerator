@@ -193,7 +193,9 @@
 «IF primary == true-»
                 'primary' => true,
 «ENDIF-»
+«IF type != EntityIndexType::NORMAL-» 
                 'type' => '«type.asConstant()»'
+«ENDIF-»
             )
         );
 «ENDDEFINE»
