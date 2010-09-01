@@ -41,8 +41,8 @@ public class TrafoUtils {
     public static boolean addRelationField(JoinRelationship rel, Entity entity) {
         try {
             final String idFieldName = rel.getSource().getName() + "id";
-            if (rel.getTargetField() != "id"
-                    && rel.getTargetField() != idFieldName) {
+            if (rel.getTargetField() == "id"
+                    || rel.getTargetField() == idFieldName) {
                 entity.getFields().add(
                         createIDColumn(rel.getSource().getName(), false));
             }
@@ -60,7 +60,8 @@ public class TrafoUtils {
         idField.setName(Utils.formatForDB(colName) + "id");
         idField.setLength(11);
         idField.setPrimaryKey(isPrimary);
-        idField.setUnsigned(false);
+        idField.setUnique(true);
+        idField.setUnsigned(true);
         return idField;
     }
 }

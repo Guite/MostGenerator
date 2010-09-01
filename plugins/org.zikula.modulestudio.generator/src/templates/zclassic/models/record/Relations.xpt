@@ -24,11 +24,14 @@
 «ENDDEFINE»
 
 «DEFINE RelationDefinition(Boolean incoming) FOR JoinRelationship-»
+«IF source == target-»«REM»TODO«ENDREM»
+/** self relations are not working yet, see http://code.zikula.org/generator/ticket/75
+«ENDIF-»
         $this->has«IF metaType == OneToOneRelationship || (incoming && metaType == OneToManyRelationship)-»One«ELSE»Many«ENDIF»('«IF incoming-»«source.implClassModelRecord()»«IF sourceAlias != null && sourceAlias != ""-» as «sourceAlias.formatForCode()»«ENDIF»«ELSE»«target.implClassModelRecord()»«IF targetAlias != null && targetAlias != ""-» as «targetAlias.formatForCode()»«ENDIF»«ENDIF»', array(
                 // linked field in the defining class
-                'local' => '«source.relationFieldName(sourceField)»',
+                'local' => '«IF incoming-»«target.relationFieldName(targetField)»«ELSE-»«source.relationFieldName(sourceField)»«ENDIF-»',
                 // linked field in the linked class
-                'foreign' => '«target.relationFieldName(targetField)»',
+                'foreign' => '«IF incoming-»«source.relationFieldName(sourceField)»«ELSE-»«target.relationFieldName(targetField)»«ENDIF-»',
 «IF metaType == ManyToManyRelationship-»
                 // name of the many-to-many association class
                 'refClass' => '«((ManyToManyRelationship)this).implClassModelRefRecord()»',
@@ -37,16 +40,23 @@
                 'foreignKeyName' => '«foreignKeyName»',
 «ENDIF-»
                 // true indicates the owning side (owning the foreign key)
-                'owningSide' => «(incoming).displayBool()»«IF incoming-»,«ENDIF-»
+                'owningSide' => «(incoming).displayBool()»«IF incoming»,«ENDIF»
 «REM»incoming == owningSide because owning == where FK is«ENDREM»«""-»
 «IF incoming-»«EXPAND CascadeInfo-»«ENDIF-»
             )
         );
+«IF source == target-»«REM»TODO«ENDREM»
+*/
+«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE CascadeInfo FOR JoinRelationship-»
-                'onDelete' => '«cascadeTypeUpdate.asConstant()-»',
-                'onUpdate' => '«cascadeTypeDelete.asConstant()-»',
+«IF cascadeTypeUpdate != CascadeType::NONE-» 
+                'onUpdate' => '«cascadeTypeUpdate.asConstant()-»',
+«ENDIF-»
+«IF cascadeTypeDelete != CascadeType::NONE-» 
+                'onDelete' => '«cascadeTypeDelete.asConstant()-»',
+«ENDIF-»
                 'cascade' => «IF cascadeTypeDelete.asConstant() == "CASCADE" && source.tableType.asConstant() == "MYISAM"»array('delete')«ELSE»''«ENDIF»
 «ENDDEFINE»
 

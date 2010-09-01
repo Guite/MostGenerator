@@ -145,6 +145,7 @@ cached String asConstant(EntityIndexType obj) :
     };
 cached String asConstant(CascadeType obj) :
     switch (obj) {
+       case CascadeType::NONE           : ''/*dummy*/
        case CascadeType::CASCADE        : 'CASCADE'
        case CascadeType::SETNULL        : 'SET NULL'
        case CascadeType::NOACTION       : 'NO ACTION'
