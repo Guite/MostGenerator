@@ -9,7 +9,7 @@
     <property name="cartridgeName" value="zclassic" />
 
 	<!-- call file reader workflow and provide required properties -->
-	<cartridge file="workflow/msWorkflow.mwe"
+	<cartridge file="workflow/msWorkflowManual.mwe"
                modelName="${modelName}"
                cartridgeName="${cartridgeName}"
 			   modelFile="${examplePath}/${modelName}.mostapp"

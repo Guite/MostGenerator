@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- inner workflow for generation from inside MOST -->
 <workflow>
     <property name="doSlotDumps" value='false' />
-<!-- ATM only for starting from inside IDE, deactivate for starting from exported product -->
-<!-- IMPORTANT: switch OFF for RELEASE -->
-<!--    <property name="doValidation" value='true' />-->
+<!-- deactivate validation for starting from exported product -->
     <property name="doValidation" value='false' />
     <property name="doModelCopy" value='true' />
     <property name="doProfiling" value='true' />

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- inner workflow for manual generation executions -->
+<workflow>
+    <property name="doSlotDumps" value='false' />
+    <property name="doValidation" value='true' />
+    <property name="doModelCopy" value='true' />
+    <property name="doProfiling" value='true' />
+
+    <bean class="org.eclipse.emf.mwe.utils.StandaloneSetup">
+        <platformUri value=".."/>
+        <!-- initialize EPackage for profiler -->
+        <registerGeneratedEPackage value="org.eclipse.xtend.profiler.profilermodel.ModelPackage" />
+    </bean>
+
+    <!-- instantiate metamodel -->
+    <bean id="mmEMF" class="org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel" />
+
+    <!--
+    Multiple languages for code generation, model validation and transformation can be used. 
+    The languages are translated into Xtend Backend code by so called language contributors 
+    a.k.a middleends. As soon as a middleend for OCL is available, OCL will be usable from Xpand/Xtend. 
+     
+    Register the language contributors at the generator backend! 
+    -->
+    <!--component class="org.eclipse.xtend.middleend.LanguageSetup">
+        <!- - Xtend - ->
+        <languageContributor value="org.eclipse.xtend.middleend.xtend.plugin.OldXtendRegistryFactory"/>
+        <!- - Check - ->
+        <languageContributor value="org.eclipse.xtend.middleend.xtend.plugin.OldCheckRegistryFactory"/>
+        <!- - Xpand - ->
+        <languageContributor value="org.eclipse.xtend.middleend.xpand.plugin.OldXpandRegistryFactory"/>
+    </component-->
+
+    <!-- read in the given file -->
+    <component class="org.eclipse.emf.mwe.utils.Reader">
+        <uri value="file://${modelFile}" />
+        <modelSlot value="model"/>
+    </component>
+
+    <!-- surround components to be measured with profiler component -->
+    <component id="profiler" class="org.eclipse.xtend.profiler.ProfilerComponent"> 
+        <resultSlot value="profilingResult" /> 
+
+        <if cond="${doSlotDumps}">
+            <component class="org.eclipse.xtend.util.stdlib.SlotPrinter">
+                <slotName value="model" /><!-- the name of a slot whose content should be dumped -->
+                <message value="Dump of input model" /><!-- optional message as prefix for the log output -->
+                <level value="INFO" /><!-- log level (one of TRACE, DEBUG, INFO, WARN) -->
+            </component>
+        </if>
+
+        <if cond="${doValidation}">
+            <!-- check components for constraints -->
+            <component class="org.eclipse.xtend.check.CheckComponent">
+            <!-- middleend needs still uml, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312557
+            <component class="org.eclipse.xtend.middleend.xtend.CheckComponent"> -->
+                <vetoableCallback idRef="profiler"/>
+                <!-- define all used meta models -->
+                <metaModel idRef="mmEMF" />
+                <metaModel id="mmModuleStudio"  class="org.eclipse.xtend.typesystem.emf.EmfMetaModel">
+                    <metaModelPackage value="de.guite.modulestudio.metamodel.modulestudio.ModulestudioPackage"/>
+                </metaModel>
+        <property name="checks.path" value="../de.guite.modulestudio.metamodel/model/checks/" />
+                <!-- provide check files -->
+                <checkFile value="${checks.path}main"/>
+                <checkFile value="${checks.path}model"/>
+                <checkFile value="${checks.path}controller"/>
+                <checkFile value="${checks.path}view"/>
+
+                <!-- tell on which part of the model the checks should work (our module with all children) -->
+                <emfAllChildrenSlot value="model"/>
+            </component>
+        </if>
+
+        <!-- add additional fields for ids and relations -->
+        <component class="org.eclipse.xtend.XtendComponent" skipOnErrors="true">
+            <!-- middleend needs still uml, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312557
+            <component id="generator" class="org.eclipse.xtend.middleend.xtend.XtendComponent" skipOnErrors="true"> -->
+            <vetoableCallback idRef="profiler"/>
+            <!-- reference all used meta models -->
+            <metaModel idRef="mmEMF" />
+            <metaModel idRef="mmModuleStudio" />
+            <invoke value="transformation::PersistenceTransformer::modify(model)"/>
+            <outputSlot value="newModel" />
+        </component>
+
+        <if cond="${doSlotDumps}">
+            <component class="org.eclipse.xtend.util.stdlib.SlotPrinter">
+                <slotName value="newModel" /><!-- the name of a slot whose content should be dumped -->
+                <message value="Dump of enriched model" /><!-- optional message as prefix for the log output -->
+                <level value="INFO" /><!-- log level (one of TRACE, DEBUG, INFO, WARN) -->
+           </component>
+       </if>
+
+        <!-- call generator cartridge -->
+        <cartridge file="workflow/msGenerator.mwe"
+                   modelName="${modelName}"
+                   cartridgeName="${cartridgeName}"
+                   slot="newModel"
+                   slotFile="file://${enrichedModelFile}"
+                   outputFolder="${srcGenPath}/${cartridgeName}"
+                   doModelCopy="${doModelCopy}">
+           <mmEMF           idRef="mmEMF"/>
+           <mmModuleStudio  idRef="mmModuleStudio"/>
+           <profiler idRef="profiler"/>
+        </cartridge>
+
+    <!-- TODO: phpXRef and other API docs -->
+
+    </component>
+
+    <if cond="${doProfiling}">
+        <!-- generate profiling result -->
+        <component class="org.eclipse.xpand2.Generator" fileEncoding="ISO-8859-1">
+        <!-- middleend needs still uml, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312557
+        <component class="org.eclipse.xtend.middleend.xpand.XpandComponent" fileEncoding="ISO-8859-1"> -->
+            <metaModel idRef="mmEMF"/> 
+            <metaModel id="mmEMF"           class="org.eclipse.xtend.typesystem.emf.EmfMetaModel">
+                <metaModelPackage value="org.eclipse.xtend.profiler.profilermodel.ModelPackage"/>
+            </metaModel>
+            <expand value="org::eclipse::xtend::profiler::templates::Html::Main FOR profilingResult"/> 
+            <outlet overwrite="true" path="${srcGenPath}/profiling/${cartridgeName}"/> 
+        </component>
+    </if> 
+</workflow>
