@@ -16,6 +16,13 @@
  */
 class «tempBaseClassConfigHandler()» extends Form_Handler
 {
+    /**
+     * Initialize form handler.
+     *
+     * This method takes care of all necessary initialisation of our data and form states.
+     *
+     * @return boolean False in case of initialization errors, otherwise true.
+     */
     function initialize($view)
     {
         if (!SecurityUtil::checkPermission('«appName()»::', '::', ACCESS_ADMIN)) {
@@ -25,10 +32,30 @@ class «tempBaseClassConfigHandler()» extends Form_Handler
         // assign all module vars
         $view->assign('config', ModUtil::getVar('«appName()»'«REM»$this->getVars() Form_Handler does not inherit from Zikula_Base (yet)«ENDREM»));
 
+        $this->initializeAdditions($view);
+
+        // everything okay, no initialization errors occured
         return true;
     }
 
+    /**
+     * Method stub for own additions in subclasses.
+     */
+    function initializeAdditions($view)
+    {
+    }
 
+    /**
+     * Command event handler.
+     *
+     * This event handler is called when a command is issued by the user. Commands are typically something
+     * that originates from a {@link Form_Plugin_Button} plugin. The passed args contains different properties
+     * depending on the command source, but you should at least find a <var>$args['commandName']</var>
+     * value indicating the name of the command. The command name is normally specified by the plugin
+     * that initiated the command.
+     * @see Form_Plugin_Button
+     * @see Form_Plugin_ImageButton
+     */
     function handleCommand($view, &$args)
     {
 
@@ -156,8 +183,19 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
     function initialize($view)
     {
 «EXPAND initialize(app, controller, actionName, appName, controllerName)-»
+
+        $this->initializeAdditions($view);
+
+        // everything okay, no initialization errors occured
+        return true;
     }
 
+    /**
+     * Method stub for own additions in subclasses.
+     */
+    function initializeAdditions($view)
+    {
+    }
 
     /**
      * Command event handler.
@@ -253,9 +291,6 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         // assign data to template
         $view->assign($objectData)->assign('mode', $this->mode);
-
-        // everything okay, no initialization errors occured
-        return true;
 «ENDDEFINE»
 
 
