@@ -4,7 +4,7 @@
 «REM»Definition of permission schema arrays«ENDREM»
 «AROUND templates::zclassic::smallstuff::VersionFile::PermissionSchema FOR Application-»
         // DEBUG: permission schema aspect starts
-        $modversion['securityschema'] = array(
+        $meta['securityschema'] = array(
             '«appName()»::' => '::',
 «EXPAND PermissionSchema(appName()) FOREACH this.models.entities SEPARATOR ','-»
         );
