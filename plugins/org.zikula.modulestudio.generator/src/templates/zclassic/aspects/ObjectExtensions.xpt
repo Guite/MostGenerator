@@ -9,23 +9,19 @@
 «ENDIF-»
 «IF categorisable-»
         // Categorisable support
-        //$this->actAs('Zikula_Doctrine_Template_Categorisable');
-        // TODO: reenable in generator after it has been commited into the core
+        $this->actAs('Zikula_Doctrine_Template_Categorisable');
 «ENDIF-»
 «IF attributable-»
         // Attributable support
-        //$this->actAs('Zikula_Doctrine_Template_Attributable');
-        // TODO: reenable in generator after it has been commited into the core
+        $this->actAs('Zikula_Doctrine_Template_Attributable');
 «ENDIF-»
 «IF metaData-»
         // Enhanced meta data support
-        //$this->actAs('Zikula_Doctrine_Template_MetaData');
-        // TODO: reenable in generator after it has been commited into the core
+        $this->actAs('Zikula_Doctrine_Template_MetaData');
 «ENDIF-»
 «IF loggable-»
         // enable Logging
-        //$this->actAs('Zikula_Doctrine_Template_Logging');
-        // TODO: reenable in generator after it has been commited into the core
+        $this->actAs('Zikula_Doctrine_Template_Logging');
 «ENDIF-»
 
     // DEBUG: object extension aspect ends
