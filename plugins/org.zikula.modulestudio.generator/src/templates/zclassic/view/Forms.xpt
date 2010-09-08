@@ -73,7 +73,7 @@
         <legend>{gt text='Content'}</legend>
 «FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field-»
         <div class="z-formrow">
-            {formlabel for="«field.actualFieldName().formatForCode()»" __text='«field.actualFieldName().formatForDisplayCapital()»'«IF field.mandatory» mandatorysym="1"«ENDIF»}«IF field.metaType == UploadField»<br />{* break required for Google Chrome *}«ENDIF»
+            {formlabel for="«field.actualFieldName().formatForCode()»" __text='«EXPAND FormLabel FOR field»'«IF field.mandatory» mandatorysym="1"«ENDIF»}«IF field.metaType == UploadField»<br />{* break required for Google Chrome *}«ENDIF»
 «REM» visible=false html=1 cssClass="myClass" FormStyledPlugin«ENDREM»«""-»
             «EXPAND FormField FOR field»«""-»
         </div>
@@ -132,6 +132,38 @@
 
 
 
+«DEFINE FormLabel FOR EntityField-»
+«error("Error: undefined entity field type " + metaType.toString() + " (code 902346)") -> ""-»
+«ENDDEFINE»
+«DEFINE FormLabel FOR DerivedField-»
+«actualFieldName().formatForDisplayCapital()-»
+«ENDDEFINE»
+«DEFINE FormLabel FOR CalculatedField-»
+«error("Error: undefined calculated field type " + metaType.toString() + " (code 902348)") -> ""-»
+«ENDDEFINE»
+
+
+«DEFINE FormLabel FOR IntegerField-»
+«LET entity.incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == name.formatForDB()) AS pointingRelations-»
+«IF pointingRelations.size > 0-»
+«LET pointingRelations.get(0) AS pointingRelation-»
+«LET pointingRelation.source AS joiningEntity-»
+«IF pointingRelation.sourceAlias != null && pointingRelation.sourceAlias != ""-»
+«pointingRelation.sourceAlias.formatForDisplayCapital()»
+«ELSE-»
+«IF pointingRelation.metaType == OneToOneRelationship-»«joiningEntity.name.formatForDisplayCapital()»«ELSE-»«joiningEntity.nameMultiple.formatForDisplayCapital()»«ENDIF-»
+«ENDIF-»
+«ENDLET-»
+«ENDLET-»
+«ELSE-»
+«actualFieldName().formatForDisplayCapital()-»
+«ENDIF-»
+«ENDLET-»
+«ENDDEFINE»
+
+
+
+
 «DEFINE FormField FOR EntityField-»
 «error("Error: undefined entity field type " + metaType.toString() + " (code 902386)") -> ""-»
 «ENDDEFINE»
@@ -152,7 +184,7 @@
 «ENDDEFINE»
 
 «DEFINE FormField FOR IntegerField-»
-«LET entity.incoming.select(e|e.source.idField() == name.formatForDB()) AS pointingRelations-»
+«LET entity.incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == name.formatForDB()) AS pointingRelations-»
 «IF pointingRelations.size > 0-»
 «LET pointingRelations.get(0) AS pointingRelation-»
 «LET pointingRelation.source AS joiningEntity-»

@@ -205,7 +205,7 @@ listType:
 «ENDDEFINE»
 
 «DEFINE Alignment FOR EntityField»left«ENDDEFINE»
-«DEFINE Alignment FOR IntegerField»«IF entity.incoming.select(e|e.source.idField() == name.formatForDB()).size > 0-»left«ELSE»right«ENDIF»«ENDDEFINE»
+«DEFINE Alignment FOR IntegerField»«IF entity.incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == name.formatForDB()).size > 0-»left«ELSE»right«ENDIF»«ENDDEFINE»
 «DEFINE Alignment FOR DecimalField»right«ENDDEFINE»
 «DEFINE Alignment FOR FloatField»right«ENDDEFINE»
 «DEFINE Alignment FOR BooleanField»center«ENDDEFINE»
