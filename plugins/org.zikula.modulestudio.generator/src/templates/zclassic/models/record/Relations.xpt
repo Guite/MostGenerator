@@ -29,17 +29,35 @@
 «ENDIF-»
         $this->has«IF metaType == OneToOneRelationship || (incoming && metaType == OneToManyRelationship)-»One«ELSE»Many«ENDIF»('«IF incoming-»«source.implClassModelRecord()»«IF sourceAlias != null && sourceAlias != ""-» as «sourceAlias.formatForCode()»«ENDIF»«ELSE»«target.implClassModelRecord()»«IF targetAlias != null && targetAlias != ""-» as «targetAlias.formatForCode()»«ENDIF»«ENDIF»', array(
                 // linked field in the defining class
-                'local' => '«IF incoming-»«target.relationFieldName(targetField)»«ELSE-»«source.relationFieldName(sourceField)»«ENDIF-»',
+                'local' => '«IF !incoming-»«source.relationFieldName(sourceField)»«ELSE-»«target.relationFieldName(targetField)»«ENDIF-»',
                 // linked field in the linked class
                 'foreign' => '«IF incoming-»«source.relationFieldName(sourceField)»«ELSE-»«target.relationFieldName(targetField)»«ENDIF-»',
-«IF metaType == ManyToManyRelationship-»
-                // name of the many-to-many association class
-                'refClass' => '«((ManyToManyRelationship)this).implClassModelRefRecord()»',
-«ENDIF-»
-«IF metaType != ManyToManyRelationship && foreignKeyName != null && foreignKeyName != ""-»
+«IF foreignKeyName != null && foreignKeyName != ""-»
                 'foreignKeyName' => '«foreignKeyName»',
 «ENDIF-»
                 // true indicates the owning side (owning the foreign key)
+                'owningSide' => «(incoming).displayBool()»«IF incoming»,«ENDIF»
+«REM»incoming == owningSide because owning == where FK is«ENDREM»«""-»
+«IF incoming-»«EXPAND CascadeInfo-»«ENDIF-»
+            )
+        );
+«IF source == target-»«REM»TODO«ENDREM»
+*/
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE RelationDefinition(Boolean incoming) FOR ManyToManyRelationship-»
+«IF source == target-»«REM»TODO«ENDREM»
+/** self relations are not working yet, see http://code.zikula.org/generator/ticket/75
+«ENDIF-»
+        $this->hasMany('«IF incoming-»«source.implClassModelRecord()»«IF sourceAlias != null && sourceAlias != ""-» as «sourceAlias.formatForCode()»«ENDIF»«ELSE»«target.implClassModelRecord()»«IF targetAlias != null && targetAlias != ""-» as «targetAlias.formatForCode()»«ENDIF»«ENDIF»', array(
+                // linked field in the defining class
+                'local' => '«target.relationFieldName(targetField)»',
+                // linked field in the linked class
+                'foreign' => '«source.relationFieldName(sourceField)»',
+                // name of the many-to-many association class
+                'refClass' => '«implClassModelRefRecord()»',
+«REM»                // true indicates the owning side (owning the foreign key)
                 'owningSide' => «(incoming).displayBool()»«IF incoming»,«ENDIF»
 «REM»incoming == owningSide because owning == where FK is«ENDREM»«""-»
 «IF incoming-»«EXPAND CascadeInfo-»«ENDIF-»
