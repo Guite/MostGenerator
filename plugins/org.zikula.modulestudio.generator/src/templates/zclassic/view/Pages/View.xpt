@@ -53,7 +53,7 @@ listType:
     <tr>
 «FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field -»
         <th id="h«field.actualFieldName().formatForDB()»" scope="col" align="«EXPAND Alignment FOR field-»" valign="middle">
-«LET incoming.select(e|formatForDB(e.source.getLeadingField().name) == field.name.formatForDB()) AS joins-»
+«LET incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == name.formatForDB()) AS joins-»
 «IF joins.size > 0-»
 «LET joins.get(0).source.idField() AS fieldName-»
 «EXPAND HeaderSortingLink(appName, controllerName, objName, joins.get(0).source.name.formatForDB().msconcat('_').msconcat(fieldName), joins.get(0).source.name) FOR field-»
