@@ -9,7 +9,8 @@
 «ENDIF-»
 «IF categorisable-»
         // Categorisable support
-        $this->actAs('Zikula_Doctrine_Template_Categorisable');
+        //$this->actAs('Zikula_Doctrine_Template_Categorisable');
+        // TODO: reenable this after http://code.zikula.org/core/ticket/2523 has been fixed
 «ENDIF-»
 «IF attributable-»
         // Attributable support
