@@ -6,12 +6,12 @@
     	<outputSlot value="progressMonitor"/>
   	</component>
 
-    <!-- store the enriched model version -->
+    <!-- store the enriched model version - ->
     <component class="org.eclipse.emf.mwe.utils.Writer">
         <modelSlot value="${slot}" />
         <uri value="${slotFile}" />
         <cloneSlotContents value="true" />
-    </component>
+    </component>-->
 
     <!-- clear output directory -->
     <component id="dirCleaner" class="org.eclipse.emf.mwe.utils.DirectoryCleaner" directory="${outputFolder}" />

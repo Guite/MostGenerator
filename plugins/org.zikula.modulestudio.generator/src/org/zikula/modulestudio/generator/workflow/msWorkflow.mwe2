@@ -185,11 +185,11 @@ Workflow {
 */
 
     // store the enriched model version
-    component = Writer {
+    /*component = Writer {
         modelSlot = enrichedSlot
         uri = enrichedModelFile
         cloneSlotContents = true
-    }
+    }*/
 
     // clear output directory
     component = DirectoryCleaner {
