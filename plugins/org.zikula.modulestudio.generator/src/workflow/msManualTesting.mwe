@@ -1,23 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- processes specific models for other persons -->
 <workflow>
-<!--    <property name="modelName" value="CampManager" />
-    <property name="examplePath" value="/home/axel/projects/GuiteSVN/trunk/models/zikula" />
--->
     <!-- which model ? -->
-    <property name="modelName" value="ValidationTest" />
+    <property name="modelName" value="MyModel" />
     <!-- where is it ? -->
-    <property name="examplePath" value="/home/axel" />
-    <!-- which generator ? -->
-    <property name="cartridgeName" value="zclassic" />
-<!--    <property name="cartridgeName" value="zoo" />-->
+    <property name="modelPath" value="/home/axel/projects/GuiteSVN/modules/trunk/models" />
 
 	<!-- call file reader workflow and provide required properties -->
 	<cartridge file="workflow/msWorkflowManual.mwe"
 	           modelName="${modelName}"
-	           cartridgeName="${cartridgeName}"
-			   modelFile="${examplePath}/${modelName}.mostapp"
-			   enrichedModelFile="${examplePath}/${modelName}_Enriched.mostapp"
-			   srcGenPath="${examplePath}/output">
+	           cartridgeName="zclassic"
+			   modelFile="${modelPath}/${modelName}.mostapp"
+			   enrichedModelFile="${modelPath}/${modelName}_Enriched.mostapp"
+			   srcGenPath="/home/axel/output">
 	</cartridge>
 </workflow>
