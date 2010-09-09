@@ -150,7 +150,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     {
         // echo 'updated a record ...';
 
-        $this->updateHooks('update');
+        $this->updateHooks($event, 'update');
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -180,7 +180,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     {
         // echo 'inserted a record ...';
 
-        $this->updateHooks('create');
+        $this->updateHooks($event, 'create');
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -210,7 +210,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     {
         // echo 'deleted a record ...';
 
-        $this->updateHooks('delete');
+        $this->updateHooks($event, 'delete');
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -244,7 +244,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     /**
      * Helper method to call api item hooks after according actions
      */
-    private function updateHooks($mode = '') {
+    private function updateHooks(Doctrine_Event $event, $mode = '') {
         if (!in_array($mode, array('create', 'update', 'delete'))) {
             return true;
         }
