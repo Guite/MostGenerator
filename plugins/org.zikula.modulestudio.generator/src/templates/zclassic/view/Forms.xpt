@@ -151,9 +151,9 @@
 «LET pointingRelations.get(0) AS pointingRelation-»
 «LET pointingRelation.source AS joiningEntity-»
 «IF pointingRelation.sourceAlias != null && pointingRelation.sourceAlias != ""-»
-«pointingRelation.sourceAlias.formatForDisplayCapital()»
+«pointingRelation.sourceAlias.formatForDisplayCapital()-»
 «ELSE-»
-«IF pointingRelation.metaType == OneToOneRelationship-»«joiningEntity.name.formatForDisplayCapital()»«ELSE-»«joiningEntity.nameMultiple.formatForDisplayCapital()»«ENDIF-»
+«IF pointingRelation.metaType == OneToOneRelationship-»«joiningEntity.name.formatForDisplayCapital()»«ELSE-»«joiningEntity.nameMultiple.formatForDisplayCapital()»«ENDIF-»«""-»
 «ENDIF-»
 «ENDLET-»
 «ENDLET-»
