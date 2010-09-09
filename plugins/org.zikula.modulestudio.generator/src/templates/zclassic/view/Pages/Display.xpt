@@ -111,6 +111,15 @@
 «DEFINE DisplayColumnField(String objName) FOR FloatField-»
 {$«objName».«actualFieldName().formatForCode()»|formatnumber}«""-»
 «ENDDEFINE»
+«DEFINE DisplayColumnField(String objName) FOR UploadField-»
+<a href="{$«objName».«actualFieldName().formatForCode()»FullPathURL}" title="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}">
+{if $«objName».«actualFieldName().formatForCode()»IsImage}
+    <img src="{$«objName».«actualFieldName().formatForCode()»|«entity.container.application.appName().formatForDB()»ImageThumb:$«objName».«actualFieldName().formatForCode()»FullPath:250:150}" width="250" height="150" alt="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
+{else}
+    {gt text='Download'}
+{/if}
+</a>
+«ENDDEFINE»
 
 «DEFINE DisplaySubsets(String appName, String controllerName, Entity objEntity) FOR Entity-»
 <h3>«nameMultiple.formatForDisplayCapital()»</h3>

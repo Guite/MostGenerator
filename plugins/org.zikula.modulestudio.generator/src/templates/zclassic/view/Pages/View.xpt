@@ -115,8 +115,8 @@ listType:
         <td headers="hoptions" align="right" valign="top" style="white-space: nowrap">
 «ENDIF-»
 «IF controller.hasActions('display')-»
-            <a href="{modurl modname="«appName»" type="«controllerName»" func="display" ot="«objName»" «idField()»=$«objName».«idField()»}">
-                {img src="demo.gif" modname="core" set="icons/extrasmall" __alt='Details' __title='Details'}
+            <a href="{modurl modname="«appName»" type="«controllerName»" func="display" ot="«objName»" «idField()»=$«objName».«idField()»}" title="{$«objName».«getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}">
+                {img src="demo.gif" modname="core" set="icons/extrasmall" __alt='Details'}
             </a>
 «ENDIF-»            
 «IF controller.hasActions('edit')-»
@@ -230,4 +230,13 @@ listType:
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR FloatField-»
             {$«objName».«actualFieldName().formatForCode()»|formatnumber}
+«ENDDEFINE»
+«DEFINE DisplayColumnField(String objName) FOR UploadField-»
+            <a href="{$«objName».«actualFieldName().formatForCode()»FullPathURL}" title="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}">
+            {if $«objName».«actualFieldName().formatForCode()»IsImage}
+                <img src="{$«objName».«actualFieldName().formatForCode()»|«entity.container.application.appName().formatForDB()»ImageThumb:$«objName».«actualFieldName().formatForCode()»FullPath:50:40}" width="50" height="40" alt="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
+            {else}
+                {gt text='Download'}
+            {/if}
+            </a>
 «ENDDEFINE»
