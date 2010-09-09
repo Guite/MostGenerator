@@ -60,7 +60,7 @@ public class TrafoUtils {
         idField.setName(Utils.formatForDB(colName) + "id");
         idField.setLength(11);
         idField.setPrimaryKey(isPrimary);
-        idField.setUnique(true);
+        idField.setUnique(isPrimary);
         idField.setUnsigned(true);
         return idField;
     }
