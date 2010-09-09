@@ -24,6 +24,7 @@ class «appName()»_Base_Factory
      * @return mixed business entity or collection class instance
      */
     public static function getBusinessObjectCommon($useCollection = false, $objectType = '«getLeadingEntity().name.formatForCode()»', $context = '', $args = array())
+    {
         if (!in_array($objectType, «appName()»_Util::getObjectTypes($context, $args))) {
             $objectType = '«getLeadingEntity().name.formatForCode()»';
         }
@@ -45,6 +46,7 @@ class «appName()»_Base_Factory
      * @return mixed business entity class instance
      */
     public static function getBusinessEntity($objectType = '«getLeadingEntity().name.formatForCode()»', $context = '', $useCollection = false, $args = array())
+    {
         return self::getBusinessObjectCommon(false, $objectType, $context, $args);
     }
 
@@ -57,6 +59,7 @@ class «appName()»_Base_Factory
      * @return mixed business collection class instance
      */
     public static function getBusinessCollection($objectType = '«getLeadingEntity().name.formatForCode()»', $context = '', $args = array())
+    {
         return self::getBusinessObjectCommon(true, $objectType, $context, $args);
     }
 }
