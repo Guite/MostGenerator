@@ -487,8 +487,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «IF uploadFields.size > 0-»
         $uploadManager = new «app.appName()»_UploadHandler();
 
-        $uploadFields = array(«FOREACH uploadFields AS uploadField SEPARATOR ", "»'«name.formatForCode()»'«ENDFOREACH»);
-        $uploadFieldsMandatory = array(«FOREACH uploadFields.select(e|e.mandatory) AS uploadField SEPARATOR ", "»'«name.formatForCode()»'«ENDFOREACH»);
+        $uploadFields = array(«FOREACH uploadFields AS uploadField SEPARATOR ", "»'«uploadField.name.formatForCode()»'«ENDFOREACH»);
+        $uploadFieldsMandatory = array(«FOREACH uploadFields.select(e|e.mandatory) AS uploadField SEPARATOR ", "»'«uploadField.name.formatForCode()»'«ENDFOREACH»);
         foreach ($uploadFields as $uploadField) {
             if (!$formData[$uploadField] || $formData[$uploadField]['size'] == 0) {
                 // no file uploaded
