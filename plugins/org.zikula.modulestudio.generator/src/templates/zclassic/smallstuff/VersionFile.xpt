@@ -24,9 +24,15 @@ class «appName()»_Version extends Zikula_Version
         // permission schema
 «EXPAND PermissionSchema-»
 
-«IF referredApplications.size > 0-»
+«IF hasUploads() || referredApplications.size > 0-»
         // module dependencies
         $meta['dependencies'] = array(
+«IF hasUploads()-»
+                    array('modname'    => 'Thumbnail',
+                          'minversion' => '1.2.1',
+                          'maxversion' => '',
+                          'status'     => ModUtil::DEPENDENCY_RECOMMENDED),
+«ENDIF-»
 «EXPAND AppDependency FOREACH referredApplications SEPARATOR ','-»
         );
 «ENDIF-»
@@ -45,7 +51,7 @@ class «appName()»_Version extends Zikula_Version
 
 «DEFINE AppDependency FOR Application-»
                     array('modname'    => '«appName()»',
-                          'minversion' => '0',
-                          'maxversion' => '«version»',
-                          'status'     => ModUtil::DEPENDENCY_REQUIRED«REM»TODO: ModUtil::RECOMMENDED, ModUtil::CONFLICTS«ENDREM»),
+                          'minversion' => '«version»',
+                          'maxversion' => '',
+                          'status'     => ModUtil::DEPENDENCY_REQUIRED«REM»TODO: ModUtil::RECOMMENDED, ModUtil::CONFLICTS«ENDREM»)
 «ENDDEFINE»

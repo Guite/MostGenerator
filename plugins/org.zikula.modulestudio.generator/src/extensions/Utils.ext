@@ -90,6 +90,14 @@ cached String actualFieldName(DerivedField this)
     : ((alias != null && alias != "") ? alias : name);
 
 
+cached boolean hasUploads(Application this) :
+    (models.entities.fields.typeSelect(UploadField).size > 0);
+
+cached String subFolderPathSegment(UploadField this) :
+    (subFolderName != null && subFolderName != "") ? subFolderName.formatForDB() : name.formatForDB();
+
+
+
 // return all join relations (excluding inheritance)
 cached getJoinRelations(Models this)
     : relations.typeSelect(JoinRelationship);

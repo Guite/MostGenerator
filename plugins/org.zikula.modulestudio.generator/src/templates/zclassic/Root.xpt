@@ -76,9 +76,14 @@
     «EXPAND controller::apis::Mailz::Root»
     «pm.subTask("Additions: Translations")»
     «info("Generating translations")»
-    «EXPAND Translations::Root»
+    «EXPAND smallstuff::Translations::Root»
     «pm.subTask("Additions: Documentation")»
     «info("Generating documentation")»
-    «EXPAND Docs::Root»
+    «EXPAND smallstuff::Docs::Root»
+«IF hasUploads()-»
+    «pm.subTask("Additions: Upload folders")»
+    «info("Generating upload folders")»
+    «EXPAND smallstuff::FileHelper::CreateUploadFolders»
+«ENDIF-»
 «ENDDEFINE»
 

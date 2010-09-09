@@ -56,6 +56,50 @@ class «appName()»_Base_Util
         // normal output
         return $view->fetch($template);
     }
+«IF hasUploads()-»
+
+    /**
+     * Retrieve the base path for given object type and upload field combination.
+     *
+     * @param        objectType     string        name of treated entity type
+     * @param        fieldName      string        name of upload field
+     * @param        args           array         additional arguments
+     * @return mixed Output.
+     */
+    public static function getFileBaseFolder($objectType, $fieldName)
+    {
+        if (!in_array($objectType, self::getObjectTypes())) {
+            $objectType = '«getLeadingEntity().name.formatForCode()»';
+        }
+
+	    $basePath = 'modules/«appName()»/files/';
+
+        switch ($objectType) {
+«FOREACH models.entities AS entity-»
+«LET entity.fields.typeSelect(UploadField) AS uploadFields-»
+«IF uploadFields.size > 0-»
+            case '«entity.name.formatForCode()»':
+«IF uploadFields.size > 1-»
+                            $basePath .= '«entity.nameMultiple.formatForDB()»/';
+                            switch ($fieldName) {
+«FOREACH uploadFields AS uploadField-»
+                                case '«entity.name.formatForCode()»':
+                                    $basePath .= '«uploadField.subFolderPathSegment()»/';
+                                    break;
+«ENDFOREACH-»
+                            }
+«ELSE-»
+                            $basePath .= '«entity.nameMultiple.formatForDB()»/«uploadFields.get(0).subFolderPathSegment()»/';
+«ENDIF-»
+                            break;
+«ENDIF-»
+«ENDLET-»
+«ENDFOREACH-»
+        }
+
+	    return $basePath;
+    }
+«ENDIF-»
 }
 «ENDDEFINE»
 

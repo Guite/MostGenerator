@@ -209,6 +209,21 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     function postDelete(Doctrine_Event $event)
     {
         // echo 'deleted a record ...';
+«LET fields.typeSelect(UploadField) AS uploadFields-»
+«IF uploadFields.size > 0-»
+
+        $data = $event->data;
+        $uploadFields = array(«FOREACH uploadFields AS uploadField SEPARATOR ","»'«name.formatForCode()»'«ENDFOREACH»);
+        foreach ($uploadFields as $uploadField) {
+            if (empty($data[$uploadField])) {
+                continue;
+            }
+            $basePath = «container.application.appName()»_Util::getFileBaseFolder('«name.formatForCode()»', $uploadField);
+            unlink($basePath . $data[$uploadField]);
+            /** TODO: remove thumbnails, too - see http://code.zikula.org/generator/ticket/82 for more information */
+        }
+«ENDIF-»
+«ENDLET-»
 
         $this->updateHooks($event, 'delete');
     }

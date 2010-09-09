@@ -6,7 +6,7 @@
         // DEBUG: permission schema aspect starts
         $meta['securityschema'] = array(
             '«appName()»::' => '::',
-«EXPAND PermissionSchema(appName()) FOREACH this.models.entities SEPARATOR ','-»
+«EXPAND PermissionSchema(appName()) FOREACH this.models.entities SEPARATOR ','»
         );
         // DEBUG: permission schema aspect ends
 «targetDef.proceed()-»
