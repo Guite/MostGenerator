@@ -13,9 +13,9 @@
 «REM»This index.html files will be removed later. At the moment we need them to create according directories.«ENDREM»
     «FILE "files/index.html"»«msUrl()-»«ENDFILE»
 «FOREACH getUploadEntities() AS entity-»
+    «FILE "files/" + entity.nameMultiple.formatForDB() + "/index.html"»«msUrl()-»«ENDFILE»
 «LET entity.fields.typeSelect(UploadField) AS uploadFields-»
 «IF uploadFields.size > 1-»
-    «FILE "files/" + entity.nameMultiple.formatForDB() + "/index.html"»«msUrl()-»«ENDFILE»
 «FOREACH uploadFields AS uploadField-»
     «FILE "files/" + entity.nameMultiple.formatForDB() + "/" + uploadField.subFolderPathSegment() + "/index.html"»«msUrl()-»«ENDFILE»
 «ENDFOREACH-»
