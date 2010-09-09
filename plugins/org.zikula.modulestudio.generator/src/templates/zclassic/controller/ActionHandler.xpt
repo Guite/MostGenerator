@@ -243,7 +243,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         $this->objectType = '«name.formatForCode()»';
         $objectType = $this->objectType;
-«EXPAND ControllerHelper::loadBusinessObjectClass(appName, false)-»
+«EXPAND ControllerHelper::instantiateBusinessObject(appName, false)-»
 
         $this->mode = 'create';
         // if «idField()» is not 0, we wish to edit an existing «name.formatForDisplay()»
@@ -255,7 +255,6 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 return $view->registerError(LogUtil::registerPermissionError());
             }
 
-«EXPAND ControllerHelper::instantiateObject("this->" + idField())-»
             $idField = '«idField()»'; 
 «EXPAND ControllerHelper::retrieveEntityFromModel('idField', "this->" + idField(), true)-»
 
@@ -356,7 +355,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         $this->objectType = '«name.formatForCode()»';
         $objectType = $this->objectType;
-«EXPAND ControllerHelper::loadBusinessObjectClass(appName, false)-»
+«EXPAND ControllerHelper::instantiateBusinessObject(appName, false)-»
 
         $«name.formatForCode()» = null;
         if ($args['commandName'] == 'create') {
@@ -364,7 +363,6 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             $«name.formatForCode()» = new $class();
         }
         else {
-«EXPAND ControllerHelper::instantiateObject("this->" + idField())-»
             $object->selectById($this->«idField()», false);
             $«name.formatForCode()» = $object;
         }

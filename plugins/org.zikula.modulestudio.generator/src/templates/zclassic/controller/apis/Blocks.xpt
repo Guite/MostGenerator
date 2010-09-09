@@ -95,11 +95,13 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
             $vars['filter'] = '';
         }
 
-        $objectType = $vars['objectType'];
-«EXPAND templates::zclassic::controller::ControllerHelper::loadBusinessObjectClass(appName(), true)-»
+        if (!isset($vars['objectType']) || !in_array($vars['objectType'], «appName()»_Util::getObjectTypes('block'))) {
+            $vars['objectType'] = '«getLeadingEntity().name.formatForCode()»';
+        }
 
-        // instantiate the object collection
-        $objectCollection = new $class();
+        $objectType = $vars['objectType'];
+
+«EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(appName(), true)-»
 
 /** TODO
         if (!empty($vars['filter'])) {

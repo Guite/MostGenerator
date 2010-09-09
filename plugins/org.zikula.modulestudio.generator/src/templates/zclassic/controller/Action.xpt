@@ -98,10 +98,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR ViewAction-»
-«EXPAND ControllerHelper::loadBusinessObjectClass(appName, true)-»
-
-        // instantiate the object collection
-        $objectCollection = new $class();
+«EXPAND ControllerHelper::instantiateBusinessObject(appName, true)-»
 
         // parameter for used sorting field
         $sort = FormUtil::getPassedValue('sort', '', 'GET');
@@ -166,8 +163,8 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
 
 «DEFINE ActionImplBody(String appName) FOR DisplayAction-»
-«EXPAND ControllerHelper::loadBusinessObjectClass(appName, false)-»
-«EXPAND ControllerHelper::instantiateObject("")-»
+«EXPAND ControllerHelper::instantiateBusinessObject(appName, false)-»
+
         $idField = $object->get_intIdField();
 
         // retrieve the ID of the object we wish to view
@@ -200,8 +197,8 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR DeleteAction-»
-    «EXPAND ControllerHelper::loadBusinessObjectClass(appName, false)-»
-    «EXPAND ControllerHelper::instantiateObject("")-»
+«EXPAND ControllerHelper::instantiateBusinessObject(appName, false)-»
+
         $idField = $object->get_intIdField();
 
         // retrieve the ID of the object we wish to view

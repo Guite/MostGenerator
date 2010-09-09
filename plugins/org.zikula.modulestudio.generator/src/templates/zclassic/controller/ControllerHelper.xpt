@@ -1,15 +1,9 @@
 «EXTENSION extensions::Utils»
 
-
-«DEFINE loadBusinessObjectClass(String appName, Boolean isCollection) FOR Object-»
-        // load the «IF isCollection»collection«ELSE»entity«ENDIF» class corresponding to $objectType
-        $class = '«appName»_BusinessEntity_' . ucfirst($objectType)«IF isCollection» . 'Collection'«ENDIF»;
+«DEFINE instantiateBusinessObject(String appName, Boolean isCollection) FOR Object-»
+        // instantiate a new «IF isCollection»collection«ELSE»entity«ENDIF» corresponding to $objectType
+        $object«IF isCollection»Collection«ENDIF» = «appName»_Factory::getBusiness«IF isCollection»Collection«ELSE»Entity«ENDIF»($objectType);
 «ENDDEFINE»
-
-«DEFINE instantiateObject(String idValue) FOR Object-»
-        $object = new $class(«REM»$«idValue»«ENDREM»);
-«ENDDEFINE»
-
 
 «DEFINE retrieveEntityFromModel(String idVar, String idValue, Boolean isHandler) FOR Object-»
         // assign object data fetched from the database

@@ -10,10 +10,16 @@ class «appName()»_Base_Util
     /**
      * Returns an array of all allowed object types in «appName()».
      *
+     * @param        context        string        usage context (allowed values: controllerAction, block, contentType, mailz)
+     * @param        args           array         additional arguments
      * @return array list of allowed object types
      */
-    public static function getObjectTypes()
+    public static function getObjectTypes($context = '', $args = array())
     {
+        if (!in_array($context, array('controllerAction', 'block', 'contentType', 'mailz'))) {
+            $context = 'controllerAction';
+        }
+
         $allowedObjectTypes = array();
 «FOREACH models.entities AS entity-»
         $allowedObjectTypes[] = '«entity.name.formatForCode()»';
@@ -22,27 +28,14 @@ class «appName()»_Base_Util
     }
 
     /**
-     * Returns an array of all allowed object types in the generic block.
-     *
-     * @return array list of allowed object types
-     */
-    public static function getObjectTypesBlock()
-    {
-        return self::getObjectTypes();
-    }
-
-    /**
-     * Returns an array of all allowed object types in the content type api.
-     *
-     * @return array list of allowed object types
-     */
-    public static function getObjectTypesContent()
-    {
-        return self::getObjectTypes();
-    }
-
-    /**
      * Utility method for managing view templates.
+     *
+     * @param        view           Zikula_View   reference to view object
+     * @param        type           string        current type (admin, user, ...)
+     * @param        objectType     string        name of treated entity type
+     * @param        func           string        current function (main, view, ...)
+     * @param        args           array         additional arguments
+     * @return mixed Output.
      */
     public static function processViewTemplate($view, $type, $objectType, $func, $args=array())
     {

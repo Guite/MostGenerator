@@ -65,7 +65,7 @@ function «appName()»_Api_ContentTypes_itemlist($args)
 
     public function loadData(&$data)
     {
-        if (!isset($data['objectType']) || !in_array($vars['objectType'], «appName()»_Util::getObjectTypesContent())) {
+        if (!isset($data['objectType']) || !in_array($vars['objectType'], «appName()»_Util::getObjectTypes('contentType'))) {
             $data['objectType'] = '«getLeadingEntity().name.formatForCode()»';
         }
 
@@ -92,10 +92,7 @@ function «appName()»_Api_ContentTypes_itemlist($args)
 
         $objectType = $this->objectType;
 
-«EXPAND templates::zclassic::controller::ControllerHelper::loadBusinessObjectClass(appName(), true)-»
-
-        // instantiate the object collection
-        $objectCollection = new $class();
+«EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(appName(), true)-»
 
 /** TODO
         if (!empty($this->filter)) {

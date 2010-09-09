@@ -9,6 +9,8 @@
     «EXPAND Root(this) FOREACH controllers.controllers-»
     «FILE "lib/".msconcat(appName()).msconcat("/Base/Util.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UtilMethods::CommonFunctionsBase-»«ENDFILE»
     «FILE "lib/".msconcat(appName()).msconcat("/Util.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UtilMethods::CommonFunctionsImpl-»«ENDFILE»
+    «FILE "lib/".msconcat(appName()).msconcat("/Base/Factory.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND Factory::BusinessFactoryBase-»«ENDFILE»
+    «FILE "lib/".msconcat(appName()).msconcat("/Factory.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND Factory::BusinessFactoryImpl-»«ENDFILE»
 «ENDDEFINE»
 
 

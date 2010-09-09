@@ -70,10 +70,7 @@ class «appName()»_Api_Mailz extends «appName()»_Api_Base_Mailz
 // Array ( [uid] => 5 [contenttype] => h [pluginid] => 1 [nid] => 1 [last] => 0000-00-00 00:00:00 [params] => Array ( [] => ) ) 1
 
         $objectType = '«getLeadingEntity().name.formatForCode()»';
-«EXPAND templates::zclassic::controller::ControllerHelper::loadBusinessObjectClass(appName(), true)-»
-
-        // instantiate the object collection
-        $objectCollection = new $class();
+«EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(appName(), true)-»
 
 /** TODO
         Loader::LoadClass('FilterUtil');
