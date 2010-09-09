@@ -94,7 +94,7 @@
     {else}
         {modcallhooks hookobject="item" hookaction="modify" module="«appName»" hookid="«name.formatForDB()»`$«idField()»`" implode=false}
     {/if}
-    {if count($hooks) > 0}
+    {if is_array($hooks) && isset($hooks[0])}
         <fieldset>
             <legend>{gt text='Hooks'}</legend>
             {foreach key="hookName" item="hook" from=$hooks}
