@@ -72,11 +72,13 @@
     <fieldset>
         <legend>{gt text='Content'}</legend>
 «FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field-»
+«IF field.metaType != ArrayField && field.metaType != ObjectField-»
         <div class="z-formrow">
             {formlabel for="«field.actualFieldName().formatForCode()»" __text='«EXPAND FormLabel FOR field»'«IF field.mandatory» mandatorysym="1"«ENDIF»}«IF field.metaType == UploadField»<br />{* break required for Google Chrome *}«ENDIF»
 «REM» visible=false html=1 cssClass="myClass" FormStyledPlugin«ENDREM»«""-»
             «EXPAND FormField FOR field»«""-»
         </div>
+«ENDIF-»
 «ENDFOREACH-»
     </fieldset>
 «IF standardFields-»
