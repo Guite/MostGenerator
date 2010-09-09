@@ -21,7 +21,7 @@
         // Search support
         $search = new Doctrine_Template_Searchable(array(
                 'fields' => array('«searchableFields.replaceAll(", ", "', '")»'),
-                // «IF !searchableBatchUpdates»don't «ENDIF»use batch updates for index table instead of direct update functionality 
+                // «IF !searchableBatchUpdates»don't «ENDIF»use batch updates for index table instead of direct update functionality
                 'batchUpdate' => «searchableBatchUpdates.displayBool()»
             )
         );
