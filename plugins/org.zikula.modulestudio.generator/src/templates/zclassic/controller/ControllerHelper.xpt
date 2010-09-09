@@ -1,8 +1,8 @@
 «EXTENSION extensions::Utils»
 
-«DEFINE instantiateBusinessObject(String appName, Boolean isCollection) FOR Object-»
+«DEFINE instantiateBusinessObject(String appName, Boolean isCollection, String context) FOR Object-»
         // instantiate a new «IF isCollection»collection«ELSE»entity«ENDIF» corresponding to $objectType
-        $object«IF isCollection»Collection«ENDIF» = «appName»_Factory::getBusiness«IF isCollection»Collection«ELSE»Entity«ENDIF»($objectType);
+        $object«IF isCollection»Collection«ENDIF» = «appName»_Factory::getBusiness«IF isCollection»Collection«ELSE»Entity«ENDIF»($objectType, '«context»');
 «ENDDEFINE»
 
 «DEFINE retrieveEntityFromModel(String idVar, String idValue, Boolean isHandler) FOR Object-»

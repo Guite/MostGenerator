@@ -253,7 +253,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         $this->objectType = '«name.formatForCode()»';
         $objectType = $this->objectType;
-«EXPAND ControllerHelper::instantiateBusinessObject(appName, false)-»
+«EXPAND ControllerHelper::instantiateBusinessObject(appName, false, 'actionHandler')-»
 
         $this->mode = 'create';
         // if «idField()» is not 0, we wish to edit an existing «name.formatForDisplay()»
@@ -365,7 +365,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         $this->objectType = '«name.formatForCode()»';
         $objectType = $this->objectType;
-«EXPAND ControllerHelper::instantiateBusinessObject(appName, false)-»
+«EXPAND ControllerHelper::instantiateBusinessObject(appName, false, 'actionHandler')-»
 
         $«name.formatForCode()» = null;
         if ($args['commandName'] == 'create') {

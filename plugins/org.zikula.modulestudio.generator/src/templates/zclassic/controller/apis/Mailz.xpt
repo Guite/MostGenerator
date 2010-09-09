@@ -54,8 +54,8 @@ class «appName()»_Api_Mailz extends «appName()»_Api_Base_Mailz
         return $plugins;
     }
 
-    /*
-     * get content for plugins
+    /**
+     * Get content for plugins
      *
      * @param   $args['pluginid']       int         id number of plugin (internal id for this module, see getPlugins method)
      * @param   $args['params']         string      optional, show specific one or all otherwise
@@ -70,7 +70,7 @@ class «appName()»_Api_Mailz extends «appName()»_Api_Base_Mailz
 // Array ( [uid] => 5 [contenttype] => h [pluginid] => 1 [nid] => 1 [last] => 0000-00-00 00:00:00 [params] => Array ( [] => ) ) 1
 
         $objectType = '«getLeadingEntity().name.formatForCode()»';
-«EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(appName(), true)-»
+«EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(appName(), true, 'mailz')-»
 
 /** TODO
         Loader::LoadClass('FilterUtil');

@@ -70,7 +70,7 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
         }
 
         // check if the module is available at all
-        if (!pnModAvailable('«appName()»')) {
+        if (!ModUtil::available('«appName()»')) {
             return false;
         }
 
@@ -101,7 +101,7 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
 
         $objectType = $vars['objectType'];
 
-«EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(appName(), true)-»
+«EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(appName(), true, 'block')-»
 
 /** TODO
         if (!empty($vars['filter'])) {

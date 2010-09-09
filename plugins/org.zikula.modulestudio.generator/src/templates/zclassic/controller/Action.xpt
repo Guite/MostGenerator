@@ -98,7 +98,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR ViewAction-»
-«EXPAND ControllerHelper::instantiateBusinessObject(appName, true)-»
+«EXPAND ControllerHelper::instantiateBusinessObject(appName, true, 'controllerAction')-»
 
         // parameter for used sorting field
         $sort = FormUtil::getPassedValue('sort', '', 'GET');
@@ -163,7 +163,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
 
 «DEFINE ActionImplBody(String appName) FOR DisplayAction-»
-«EXPAND ControllerHelper::instantiateBusinessObject(appName, false)-»
+«EXPAND ControllerHelper::instantiateBusinessObject(appName, false, 'controllerAction')-»
 
         $idField = $object->get_intIdField();
 
@@ -197,7 +197,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR DeleteAction-»
-«EXPAND ControllerHelper::instantiateBusinessObject(appName, false)-»
+«EXPAND ControllerHelper::instantiateBusinessObject(appName, false, 'controllerAction')-»
 
         $idField = $object->get_intIdField();
 

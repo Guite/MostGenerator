@@ -27,7 +27,7 @@ class «appName()»_Base_Factory
         if (!in_array($objectType, «appName()»_Util::getObjectTypes($context, $args))) {
             $objectType = '«getLeadingEntity().name.formatForCode()»';
         }
-        if (!in_array($context, array('controllerAction', 'block', 'contentType', 'mailz'))) {
+        if (!in_array($context, array('controllerAction', 'actionHandler', 'block', 'contentType', 'mailz'))) {
             $context = 'controllerAction';
         }
 
@@ -39,7 +39,7 @@ class «appName()»_Base_Factory
      * Returns a business entity object according given parameters.
      *
      * @param        objectType     string        name of treated entity type
-     * @param        context        string        usage context (allowed values: controllerAction, block, contentType, mailz)
+     * @param        context        string        usage context (allowed values: controllerAction, actionHandler, block, contentType, mailz)
      * @param        useCollection  boolean       whether to return a business or an entity class instance
      * @param        args           array         additional arguments
      * @return mixed business entity class instance
@@ -52,7 +52,7 @@ class «appName()»_Base_Factory
      * Returns a business collection object according given parameters.
      *
      * @param        objectType     string        name of treated entity type
-     * @param        context        string        usage context (allowed values: controllerAction, block, contentType, mailz)
+     * @param        context        string        usage context (allowed values: controllerAction, actionHandler, block, contentType, mailz)
      * @param        args           array         additional arguments
      * @return mixed business collection class instance
      */
