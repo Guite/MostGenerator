@@ -212,6 +212,16 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
     {
 «EXPAND handleCommand(app, controller, actionName, appName, controllerName)-»
     }
+«IF fields.typeSelect(UploadField).size > 0-»
+
+    /**
+     * Helper method to process upload fields
+     */
+    private function handleUploads($formData)
+    {
+«EXPAND handleUploads(app)-»
+    }
+«ENDIF-»
 }
 «ENDLET-»
 «ENDLET-»
@@ -255,7 +265,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 return $view->registerError(LogUtil::registerPermissionError());
             }
 
-            $idField = '«idField()»'; 
+            $idField = '«idField()»';
 «EXPAND ControllerHelper::retrieveEntityFromModel('idField', "this->" + idField(), true)-»
 
             // try to guarantee that only one person at a time can be editing this «name.formatForDisplay()»
@@ -459,54 +469,42 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDIF-»
 «ENDLET-»
 «ENDFOREACH-»«ENDREM»
-            // assign fetched data
-            $«obj»->merge($formData);
+«IF fields.typeSelect(UploadField).size > 0-»
+
+        if ($args['commandName'] == 'create' || $args['commandName'] == 'update') {
+            $formData = $this->handleUploads($formData);
+        }
+«ENDIF-»
+
+        // assign fetched data
+        $«obj»->merge($formData);
 «ENDDEFINE»
 
 
 
+«DEFINE handleUploads(Application app) FOR Entity-»
+«LET fields.typeSelect(UploadField) AS uploadFields-»
+«IF uploadFields.size > 0-»
+        $uploadManager = new «app.appName()»_UploadHandler();
 
+        $uploadFields = array(«FOREACH uploadFields AS uploadField SEPARATOR ", "»'«name.formatForCode()»'«ENDFOREACH»);
+        $uploadFieldsMandatory = array(«FOREACH uploadFields.select(e|e.mandatory) AS uploadField SEPARATOR ", "»'«name.formatForCode()»'«ENDFOREACH»);
+        foreach ($uploadFields as $uploadField) {
+            if (!$formData[$uploadField] || $formData[$uploadField]['size'] == 0) {
+                // no file uploaded
+                unset($formData[$uploadField]);
+                continue;
+            }
 
+            $formData[$uploadField] = $uploadManager->performFileUpload($this->objectType, $formData, $uploadField);
+            if (in_array(uploadField, $uploadFieldsMandatory) && $formData[$uploadField] === false) {
+                // mandatory upload has not been completed successfully
+                return false;
+            }
 
-
-«DEFINE DBObject_to_integrate FOR Application-»
-
-/**
- * This function processes a form submitted from the
- * «appName()»_admin_preferences function.
- */
-function «appName()»_adminform_preferences()
-{
-    «REM»EXPAND PermissionCheck-«ENDREM»
-
-    // ensure that the submit button (rather than cancel) was pressed
-    if (!FormUtil::getPassedValue('submit'))
-    {
-        return System::redirect(ModUtil::url('«appName()»', 'admin', 'config'));
-    }
-
-    // retrieve the associative preferences array
-    $prefs = FormUtil::getPassedValue('preferences', null, 'POST');
-
-    // now for each preference entry, set the appropriate module variable
-«IF models.variables.vars.typeSelect(BoolVar).size > 0-»
-    // for booleans we use the convention (int)(boolean) to ensure that set values get cast to a 0/1 value
+            // upload succeeded
+        }
 «ENDIF-»
-«FOREACH models.variables.vars AS modvar-»
-    ModUtil::setVar('«appName()»', '«modvar.name.formatForCode()»',    «EXPAND GetVarForPrefPrefix FOR modvar»$prefs['«modvar.name.formatForCode()»']);
-«ENDFOREACH-»
-
-    // redirect back to to main admin page
-    return System::redirect(ModUtil::url('«appName()»', 'admin', 'config'));
-}
-
-
-«ENDDEFINE»
-
-«DEFINE GetVarForPrefPrefix FOR Variable»«ENDDEFINE»
-«DEFINE GetVarForPrefPrefix FOR IntVar»(int)«ENDDEFINE»
-«DEFINE GetVarForPrefPrefix FOR BoolVar»(int)(boolean)«ENDDEFINE»
-
-«ENDIF-»
-
+«ENDLET-»
+        return $formData;
 «ENDDEFINE»

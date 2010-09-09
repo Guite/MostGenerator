@@ -1,5 +1,12 @@
 «IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
+
+«REM»start point for the Util class creation«ENDREM»
+«DEFINE Root FOR Application»
+    «FILE "lib/".msconcat(appName()).msconcat("/Base/Util.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND CommonFunctionsBase-»«ENDFILE»
+    «FILE "lib/".msconcat(appName()).msconcat("/Util.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND CommonFunctionsImpl-»«ENDFILE»
+«ENDDEFINE»
 
 «DEFINE CommonFunctionsBase FOR Application-»
 /**
@@ -75,15 +82,14 @@ class «appName()»_Base_Util
 	    $basePath = 'modules/«appName()»/files/';
 
         switch ($objectType) {
-«FOREACH models.entities AS entity-»
+«FOREACH getUploadEntities() AS entity-»
 «LET entity.fields.typeSelect(UploadField) AS uploadFields-»
-«IF uploadFields.size > 0-»
             case '«entity.name.formatForCode()»':
 «IF uploadFields.size > 1-»
                             $basePath .= '«entity.nameMultiple.formatForDB()»/';
                             switch ($fieldName) {
 «FOREACH uploadFields AS uploadField-»
-                                case '«entity.name.formatForCode()»':
+                                case '«uploadField.name.formatForCode()»':
                                     $basePath .= '«uploadField.subFolderPathSegment()»/';
                                     break;
 «ENDFOREACH-»
@@ -92,7 +98,6 @@ class «appName()»_Base_Util
                             $basePath .= '«entity.nameMultiple.formatForDB()»/«uploadFields.get(0).subFolderPathSegment()»/';
 «ENDIF-»
                             break;
-«ENDIF-»
 «ENDLET-»
 «ENDFOREACH-»
         }

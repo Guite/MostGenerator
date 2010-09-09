@@ -1,0 +1,243 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+
+«REM»Entry point for upload handler«ENDREM»
+«DEFINE Root FOR Application-»
+    «EXPAND CreateUploadFolders-»
+    «FILE "lib/".msconcat(appName()).msconcat("/Base/UploadHandler.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UploadHandlerBase-»«ENDFILE»
+    «FILE "lib/".msconcat(appName()).msconcat("/UploadHandler.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UploadHandlerImpl-»«ENDFILE»
+«ENDDEFINE»
+
+«DEFINE CreateUploadFolders FOR Application-»
+«REM»This index.html files will be removed later. At the moment we need them to create according directories.«ENDREM»
+    «FILE "files/index.html"»«msUrl()-»«ENDFILE»
+«FOREACH getUploadEntities() AS entity-»
+«LET entity.fields.typeSelect(UploadField) AS uploadFields-»
+«IF uploadFields.size > 1-»
+    «FILE "files/" + entity.nameMultiple.formatForDB() + "/index.html"»«msUrl()-»«ENDFILE»
+«FOREACH uploadFields AS uploadField-»
+    «FILE "files/" + entity.nameMultiple.formatForDB() + "/" + uploadField.subFolderPathSegment() + "/index.html"»«msUrl()-»«ENDFILE»
+«ENDFOREACH-»
+«ELSE-»
+    «FILE "files/" + entity.nameMultiple.formatForDB() + "/" + uploadFields.get(0).subFolderPathSegment() + "/index.html"»«msUrl()-»«ENDFILE»
+«ENDIF-»
+«ENDLET-»
+«ENDFOREACH-»
+        }
+
+«ENDDEFINE»
+
+
+«DEFINE UploadHandlerBase FOR Application-»
+/**
+ * Upload handler base class
+ */
+class «appName()»_Base_UploadHandler
+{
+    /**
+     * @var array list of object types with upload fields
+     */
+    private $allowedObjectTypes;
+
+    /**
+     * Constructor initialising the supported object types
+     */
+    public function __construct()
+    {
+        $this->allowedObjectTypes = array(«FOREACH getUploadEntities() AS entity SEPARATOR ", "»'«name.formatForCode()»'«ENDFOREACH»);
+    }
+
+    /**
+     * Process a file upload.
+     *
+     * @param        objectType     string        currently treated entity type
+     * @param        fileData       string        form data array
+     * @param        fieldName      string        name of upload field
+     * @return string the resulting file name
+     */
+    public function performFileUpload($objectType, $fileData, $fieldName)
+    {
+        if (!in_array($objectType, $this->allowedObjectTypes)) {
+            return false;
+        }
+
+        $file = $fileData[$fieldName];
+        if ((!is_array($file)) || (is_array($file) && ($file['error'] != '0'))) {
+            if (is_array($file)) {
+                return $this->handleError($file);
+            }
+            return LogUtil::registerError('No file found (23846)');
+        }
+
+        $fileName = $file['name'];
+        $extensionarr = split("\.", $fileName);
+        $extension = $extensionarr[count($extensionarr) - 1];
+
+        // start extension checks
+        $allowedExtensions = array();
+        switch ($objectType) {
+«FOREACH getUploadEntities() AS entity-»
+«LET entity.fields.typeSelect(UploadField) AS uploadFields-»
+            case '«entity.name.formatForCode()»':
+«IF uploadFields.size > 1-»
+                            switch ($fieldName) {
+«FOREACH uploadFields AS uploadField-»
+                                case '«uploadField.name.formatForCode()»':
+                                    $allowedExtensions = array('«uploadField.allowedExtensions.replaceAll(", ", "', '")»');
+                                    break;
+«ENDFOREACH-»
+                            }
+«ELSE-»
+                            $allowedExtensions = array('«uploadFields.get(0).allowedExtensions.replaceAll(", ", "', '")»');
+«ENDIF-»
+                            break;
+«ENDLET-»
+«ENDFOREACH-»
+        }
+
+        if (!empty($allowedExtensions)) {
+            $extensionCheck = in_array($extension, $allowedExtensions);
+            if ($extensionCheck === false) {
+                // fail silently, this skips this upload field
+                return '';
+            }
+        }
+
+        if (in_array($extension, array('gif', 'jpeg', 'jpg', 'png'))) {
+            $imgInfo = getimagesize($file['tmp_name']);
+            if (!is_array($imgInfo) || !$imgInfo[0] || !$imgInfo[1]) {
+                // fail silently, this skips this upload field
+                return '';
+            }
+        }
+
+        // retrieve the final file name
+        $basePath = «appName()»_Util::getFileBaseFolder($objectType);
+        $fileName = $this->determineFileName($objectType, $fieldName, $basePath, $fileName, $extension);
+
+        if (!move_uploaded_file($file['tmp_name'], $basePath . $fileName)) {
+            return LogUtil::registerError('Error during moving your file (34352).');
+        }
+
+        return $fileName;
+    }
+
+    /**
+     * Determines the final filename for a given input filename.
+     * It considers different strategies for computing the result.
+     *
+     * @param        objectType     string        currently treated entity type
+     * @param        fieldName      string        name of upload field
+     * @param        basePath       string        base path for file storage
+     * @param        fileName       string        input file name
+     * @param        extension      string        input file extension
+     * @return string the resulting file name
+     */
+    private function determineFileName($objectType, $fieldName, $basePath, $fileName, $extension)
+    {
+        $backupFileName = $fileName;
+
+        $namingScheme = 0;
+
+        switch ($objectType) {
+«FOREACH getUploadEntities() AS entity-»
+«LET entity.fields.typeSelect(UploadField) AS uploadFields-»
+            case '«entity.name.formatForCode()»':
+«IF uploadFields.size > 1-»
+                            switch ($fieldName) {
+«FOREACH uploadFields AS uploadField-»
+                                case '«uploadField.name.formatForCode()»':
+                                    $namingScheme = «uploadField.namingSchemeAsInt()»;
+                                    break;
+«ENDFOREACH-»
+                            }
+«ELSE-»
+                            $namingScheme = «uploadFields.get(0).namingSchemeAsInt()»;
+«ENDIF-»
+                            break;
+«ENDLET-»
+«ENDFOREACH-»
+        }
+
+
+        $iterIndex = -1;
+        do {
+            if ($namingScheme == 0) {
+                // original file name
+                $fileNameCharCount = strlen($fileName);
+                for ($y = 0; $y < $filenameCharCount; $y++) {
+                    if (!ereg("([0-9A-Za-z_\.])", $fileName[$y])) {
+                        $fileName[$y] = '_';
+                    }
+                }
+                // append incremented number
+                if ($iterIndex > 0) {
+                    // strip off extension
+                    $fileName = str_replace('.' . $extension, '', $backupFileName);
+                    // add iterated number
+                    $fileName .= (string) ++$iterIndex;
+                    // readd extension
+                    $fileName .= '.' . $extension;
+                }
+                else $iterIndex++;
+            } else if ($namingScheme == 1) {
+                // md5 name
+                $fileName = md5(uniqid(mt_rand(), TRUE)) . '.' . $extension;
+            } else if ($namingScheme == 2) {
+                // prefix with random number
+                $fileName = $fieldName . mt_rand(1, 999999) . '.' . $extension;
+            }
+        }
+        while (file_exists($basePath . $fileName)); // repeat until we have a new name
+
+        // return the new file name
+        return $fileName;
+    }
+
+    /**
+     * Error handling helper method.
+     *
+     * @param        file           array         file array from $_FILES
+     * @return boolean false
+     */
+    private function handleError($file)
+    {
+        $errmsg = '';
+        switch ($file['error']) {
+            case UPLOAD_ERR_OK: //no error; possible file attack!
+                $errmsg = 'Unknown error';
+                break;
+            case UPLOAD_ERR_INI_SIZE: //uploaded file exceeds the upload_max_filesize directive in php.ini
+                $errmsg = 'File too big';
+                break;
+            case UPLOAD_ERR_FORM_SIZE: //uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the html form
+                $errmsg = 'File too big';
+                break;
+            case UPLOAD_ERR_PARTIAL: //uploaded file was only partially uploaded
+                $errmsg = 'File uploaded partially';
+                break;
+            case UPLOAD_ERR_NO_FILE: //no file was uploaded
+                $errmsg = 'No file uploaded';
+                break;
+            case UPLOAD_ERR_NO_TMP_DIR: //missing a temporary folder
+                $errmsg = 'No tmp folder';
+                break;
+            default: //a default (error, just in case!  :)
+                $errmsg = 'Unknown error';
+                break;
+        }
+        return LogUtil::registerError('Error with upload: ' . $errmsg);
+    }
+}
+«ENDDEFINE»
+
+«DEFINE UploadHandlerImpl FOR Application-»
+/**
+ * Upload handler implementation class
+ */
+class «appName()»_UploadHandler extends «appName()»_Base_UploadHandler
+{
+    // feel free to add your upload handler enhancements here
+}
+«ENDDEFINE»

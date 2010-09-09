@@ -90,13 +90,22 @@ cached String actualFieldName(DerivedField this)
     : ((alias != null && alias != "") ? alias : name);
 
 
-cached boolean hasUploads(Application this) :
-    (models.entities.fields.typeSelect(UploadField).size > 0);
+cached boolean hasUploads(Application this)
+    : (models.entities.fields.typeSelect(UploadField).size > 0);
 
-cached String subFolderPathSegment(UploadField this) :
-    (subFolderName != null && subFolderName != "") ? subFolderName.formatForDB() : name.formatForDB();
+cached getUploadEntities(Application this)
+    : (models.entities.select(e|e.fields.typeSelect(UploadField).size > 0));
 
+cached String subFolderPathSegment(UploadField this)
+    : (subFolderName != null && subFolderName != "") ? subFolderName.formatForDB() : name.formatForDB();
 
+cached String namingSchemeAsInt(UploadField this) :
+    switch (namingScheme) {
+       case UploadNamingScheme::ORIGINALWITHCOUNTER    : '0'
+       case UploadNamingScheme::RANDOMCHECKSUM         : '1'
+       case UploadNamingScheme::FIELDNAMEWITHCOUNTER   : '2'
+       default: '0'
+    };
 
 // return all join relations (excluding inheritance)
 cached getJoinRelations(Models this)

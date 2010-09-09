@@ -213,7 +213,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 «IF uploadFields.size > 0-»
 
         $data = $event->data;
-        $uploadFields = array(«FOREACH uploadFields AS uploadField SEPARATOR ","»'«name.formatForCode()»'«ENDFOREACH»);
+        $uploadFields = array(«FOREACH uploadFields AS uploadField SEPARATOR ", "»'«name.formatForCode()»'«ENDFOREACH»);
         foreach ($uploadFields as $uploadField) {
             if (empty($data[$uploadField])) {
                 continue;

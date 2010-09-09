@@ -121,24 +121,3 @@
     }
 «ENDDEFINE»
 
-«DEFINE CreateUploadFolders FOR Application-»
-«REM»This index.html files will be removed later. At the moment we need them to create according directories.«ENDREM»
-    «FILE "files/index.html"»«msUrl()-»«ENDFILE»
-«FOREACH models.entities AS entity-»
-«LET entity.fields.typeSelect(UploadField) AS uploadFields-»
-«IF uploadFields.size > 0-»
-«IF uploadFields.size > 1-»
-    «FILE "files/" + entity.nameMultiple.formatForDB() + "/index.html"»«msUrl()-»«ENDFILE»
-«FOREACH uploadFields AS uploadField-»
-    «FILE "files/" + entity.nameMultiple.formatForDB() + "/" + uploadField.subFolderPathSegment() + "/index.html"»«msUrl()-»«ENDFILE»
-«ENDFOREACH-»
-«ELSE-»
-    «FILE "files/" + entity.nameMultiple.formatForDB() + "/" + uploadFields.get(0).subFolderPathSegment() + "/index.html"»«msUrl()-»«ENDFILE»
-«ENDIF-»
-«ENDIF-»
-«ENDLET-»
-«ENDFOREACH-»
-        }
-
-«ENDDEFINE»
-

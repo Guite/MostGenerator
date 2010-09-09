@@ -68,6 +68,11 @@
     «pm.subTask("Additions: Blocks")»
     «info("Generating blocks")»
     «EXPAND controller::apis::Blocks::Root»
+«IF hasUploads()-»
+    «pm.subTask("Additions: Upload handlers")»
+    «info("Generating upload handlers")»
+    «EXPAND controller::Uploads::Root»
+«ENDIF-»
     «pm.subTask("Additions: Content type api")»
     «info("Generating content type api")»
     «EXPAND controller::apis::ContentType::Root»
@@ -80,10 +85,5 @@
     «pm.subTask("Additions: Documentation")»
     «info("Generating documentation")»
     «EXPAND smallstuff::Docs::Root»
-«IF hasUploads()-»
-    «pm.subTask("Additions: Upload folders")»
-    «info("Generating upload folders")»
-    «EXPAND smallstuff::FileHelper::CreateUploadFolders»
-«ENDIF-»
 «ENDDEFINE»
 
