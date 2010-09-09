@@ -112,6 +112,12 @@ cached getChildRelationsWithAggregation(Entity this)
 cached relationFieldName(Entity refEntity, String refField)
     : (refField.toLowerCase() == 'id' || refField.toLowerCase() == refEntity.idField()) ? refEntity.idField() : refEntity.fields.select(e|e.name == refField).get(0).actualFieldName().formatForCode();
 
+/* get local field for 1:1 and 1:n */ 
+cached getRelationLocalField(JoinRelationship this, Boolean incoming)
+    : (!incoming) ? source.relationFieldName(sourceField) : ((targetField != "id" && targetField != (target.name + "id")) ? target.relationFieldName(targetField) : source.relationFieldName(sourceField));
+/* get foreign field for 1:1 and 1:n */ 
+cached getRelationForeignField(JoinRelationship this, Boolean incoming)
+    : (incoming) ? source.relationFieldName(sourceField) : ((targetField != "id" && targetField != (target.name + "id")) ? target.relationFieldName(targetField) : source.relationFieldName(sourceField));
 
 cached boolean hasActions(Controller controller, String type) :
 	switch (type) {

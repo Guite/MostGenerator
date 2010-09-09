@@ -29,9 +29,9 @@
 «ENDIF-»
         $this->has«IF metaType == OneToOneRelationship || (incoming && metaType == OneToManyRelationship)-»One«ELSE»Many«ENDIF»('«IF incoming-»«source.implClassModelRecord()»«IF sourceAlias != null && sourceAlias != ""-» as «sourceAlias.formatForCode()»«ENDIF»«ELSE»«target.implClassModelRecord()»«IF targetAlias != null && targetAlias != ""-» as «targetAlias.formatForCode()»«ENDIF»«ENDIF»', array(
                 // linked field in the defining class
-                'local' => '«IF !incoming-»«source.relationFieldName(sourceField)»«ELSE-»«target.relationFieldName(targetField)»«ENDIF-»',
+                'local' => '«getRelationLocalField(incoming)»',
                 // linked field in the linked class
-                'foreign' => '«IF incoming-»«source.relationFieldName(sourceField)»«ELSE-»«target.relationFieldName(targetField)»«ENDIF-»',
+                'foreign' => '«getRelationForeignField(incoming)»',
 «IF foreignKeyName != null && foreignKeyName != ""-»
                 'foreignKeyName' => '«foreignKeyName»',
 «ENDIF-»
