@@ -31,17 +31,17 @@
 {include file="«controllerName»/header.tpl"}
 
 {if $mode eq "edit"}
-    {gt text='Edit «name.formatForCode()»' assign="templateTitle"}
+    {gt text='Edit «name.formatForDisplay()»' assign="templateTitle"}
 «IF controller.metaType == AdminController-»
     {assign var="adminpageicon" value="edit.gif"}
 «ENDIF-»
 {elseif $mode eq "create"}
-    {gt text='Create «name.formatForCode()»' assign="templateTitle"}
+    {gt text='Create «name.formatForDisplay()»' assign="templateTitle"}
 «IF controller.metaType == AdminController-»
     {assign var="adminpageicon" value="filenew.gif"}
 «ENDIF-»
 {else}
-    {gt text='Edit «name.formatForCode()»' assign="templateTitle"}
+    {gt text='Edit «name.formatForDisplay()»' assign="templateTitle"}
 «IF controller.metaType == AdminController-»
     {assign var="adminpageicon" value="edit.gif"}«REM»TODO«ENDREM»
 «ENDIF-»
