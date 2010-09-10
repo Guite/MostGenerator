@@ -16,6 +16,12 @@ listType:
 «FILE "templates/" + controllerName + "/" + objName + "_view.tpl"-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» view view in «controllerName» area *}
 
+«IF fields.typeSelect(UploadField).size > 0-»
+{pageaddvar name="javascript" value="javascript/ajax/proto_scriptaculous.combined.min.js"}
+{pageaddvar name="javascript" value="javascript/helpers/Zikula.js"}
+{pageaddvar name="javascript" value="javascript/helpers/ZikulaImageViewer.js"}
+«ENDIF-»
+
 {include file="«controllerName»/header.tpl"}
 
 <div class="z-«IF controller.metaType == AdminController-»admin«ELSE»frontend«ENDIF»container">
@@ -229,7 +235,7 @@ listType:
             {if $«objName».«actualFieldName().formatForCode()» gt 0}{$«objName».«actualFieldName().formatForCode()»|userprofilelink}{else}-{/if}«""-»
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR UploadField-»
-            <a href="{$«objName».«actualFieldName().formatForCode()»FullPathURL}" title="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}">
+            <a href="{$«objName».«actualFieldName().formatForCode()»FullPathURL}" title="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}"{if $«objName».«actualFieldName().formatForCode()»IsImage} rel="imageviewer[«entity.nameMultiple.formatForDB()»]"{/if}>
             {if $«objName».«actualFieldName().formatForCode()»IsImage}
                 <img src="{$«objName».«actualFieldName().formatForCode()»|«entity.container.application.appName().formatForDB()»ImageThumb:$«objName».«actualFieldName().formatForCode()»FullPath:50:40}" width="50" height="40" alt="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
             {else}
