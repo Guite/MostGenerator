@@ -318,9 +318,9 @@
             <input type="hidden" id="«realName»" name="«realName»" value="{«realName»}" />
             {if $mode ne "create" && $«realName»}<div class="z-formnote"><a href="{modurl modname="Users" type="admin" func="modify" userid=$«realName»}" title="{gt text="Switch to the user administration"}">{gt text="Manage user"}</a></div>{/if}
 «IF mandatory-»
-            {«entity.container.application.appName()»ValidationError id="«realName»" class="required"}
+            {«entity.container.application.appName().formatForDB()»ValidationError id="«realName»" class="required"}
 «ENDIF-»
-            {«entity.container.application.appName()»ValidationError id="«realName»" class="validate-alphanum"}
+            {«entity.container.application.appName().formatForDB()»ValidationError id="«realName»" class="validate-alphanum"}
 «ENDLET»
 «ENDDEFINE»
 
