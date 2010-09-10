@@ -96,12 +96,6 @@
 {$«objName».«name.formatForCode()»}«""-»
 «ENDDEFINE»
 
-«DEFINE DisplayColumnField(String objName) FOR DateField-»
-{$«objName».«actualFieldName().formatForCode()»|dateformat:"datebrief"}«""-»
-«ENDDEFINE»
-«DEFINE DisplayColumnField(String objName) FOR TimestampField-»
-{$«objName».«actualFieldName().formatForCode()»|dateformat:"datetimebrief"}«""-»
-«ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR BooleanField-»
 {$«objName».«actualFieldName().formatForCode()»|yesno:true}«""-»
 «ENDDEFINE»
@@ -111,6 +105,9 @@
 «DEFINE DisplayColumnField(String objName) FOR FloatField-»
 {$«objName».«actualFieldName().formatForCode()»|formatnumber}«""-»
 «ENDDEFINE»
+«DEFINE DisplayColumnField(String objName) FOR UserField-»
+{if $«objName».«actualFieldName().formatForCode()» gt 0}{$«objName».«actualFieldName().formatForCode()»|userprofilelink}{else}-{/if}«""-»
+«ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR UploadField-»
 <a href="{$«objName».«actualFieldName().formatForCode()»FullPathURL}" title="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}">
 {if $«objName».«actualFieldName().formatForCode()»IsImage}
@@ -119,6 +116,12 @@
     {gt text='Download'}
 {/if}
 </a>
+«ENDDEFINE»
+«DEFINE DisplayColumnField(String objName) FOR DateField-»
+{$«objName».«actualFieldName().formatForCode()»|dateformat:"datebrief"}«""-»
+«ENDDEFINE»
+«DEFINE DisplayColumnField(String objName) FOR TimestampField-»
+{$«objName».«actualFieldName().formatForCode()»|dateformat:"datetimebrief"}«""-»
 «ENDDEFINE»
 
 «DEFINE DisplaySubsets(String appName, String controllerName, Entity objEntity) FOR Entity-»
