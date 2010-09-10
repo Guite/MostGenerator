@@ -249,11 +249,11 @@
 
 «DEFINE FormField FOR UserField-»
 «LET actualFieldName().formatForCode() AS realName»
-            <div id="«realName»liveusersearch" class="liveusersearch z-hide">
+            <div id="«realName»liveusersearch" class="«entity.container.application.appName().formatForDB()»LiveSearchUser z-hide">
                 {formtextinput id="«realName»desc" mandatory=«mandatory» readOnly=«readonly» __title='Input a part of the user name to search' maxLength=«length»«REM»TODOcssClass="required validate-alphanum"«ENDREM»}
                 «REM»TODO{«entity.container.application.appName()»ValidationError id="«realName»" class="required"}«ENDREM»
                 {img id="ajax_indicator" style="display: none" modname='core' set='icons/extrasmall' src="indicator_circle.gif" alt=""}
-                <div id="«realName»desc_choices" class="«entity.container.application.appName()»userautocomplete"></div>
+                <div id="«realName»desc_choices" class="«entity.container.application.appName().formatForDB()»AutoCompleteUser"></div>
                 <script type="text/javascript">
                 //<![CDATA[
                     {{if $mode ne "create" && $«realName» gt 0}}
