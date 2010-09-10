@@ -146,7 +146,8 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         // assign the object data, sorting information and details for creating the pager
         $this->view->assign('items', $objectData)
                    ->assign('sort', $sort)
-                   ->assign('sdir', ($sdir == 'asc') ? 'desc' : 'asc') // reverted for links
+                   ->assign('sdir', $sdir)
+                   ->assign('sdirReverse', ($sdir == 'asc') ? 'desc' : 'asc') // reverted for links
                    ->assign('currentPage', $currentPage)
                    ->assign('pager', array('numitems'     => $objectCount,
                                            'itemsperpage' => $resultsPerPage));

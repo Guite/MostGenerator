@@ -9,6 +9,10 @@
 «ENDDEFINE»
 
 «DEFINE StyleDefines FOR Application-»
+a.currentSortingLink {
+    font-style: italic;
+}
+
 div.linktabs {
     margin-bottom: 10px;
 }

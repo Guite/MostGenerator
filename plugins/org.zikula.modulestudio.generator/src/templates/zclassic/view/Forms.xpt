@@ -333,7 +333,7 @@
 «DEFINE FormField FOR ClobField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
 
 «DEFINE FormField FOR TimestampField-»
-            {if $mode == "edit"}
+            {if $mode eq "edit"}
                 {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true«EXPAND FieldValidationCssClass»}
             {else}
                 {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true defaultValue="now"«EXPAND FieldValidationCssClass»}
@@ -342,7 +342,7 @@
 «ENDDEFINE»
 
 «DEFINE FormField FOR DateField-»«REM»class="date"«ENDREM»
-            {if $mode == "edit"}
+            {if $mode eq "edit"}
                 {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true«EXPAND FieldValidationCssClass»}
             {else}
                 {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true defaultValue="today"«EXPAND FieldValidationCssClass»}

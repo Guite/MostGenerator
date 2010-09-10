@@ -198,11 +198,8 @@ listType:
 «ENDDEFINE»
 
 «DEFINE HeaderSortingLink(String appName, String controllerName, String objName, String fieldName, String label) FOR EntityField-»
-    {if $sort eq "«fieldName»"}
-            <a href="{modurl modname="«appName»" type="«controllerName»" func="view" ot="«objName»" sort="«fieldName»" sdir=$sdir}" style="font-style: italic">
-    {else}
-            <a href="{modurl modname="«appName»" type="«controllerName»" func="view" ot="«objName»" sort="«fieldName»" sdir="asc"}">
-    {/if}
+            {capture assign="sortDirection"}{if $sort eq "«fieldName»"}{$sdirReverse}{else}asc{/if}{/capture}
+            <a href="{modurl modname="«appName»" type="«controllerName»" func="view" ot="«objName»" sort="«fieldName»" sdir=$sortDirection}"{if $sort eq "«fieldName»"} class="currentSortingLink"{/if}>
                 {gt text='«label.formatForDisplayCapital()»'}
             </a>
 «ENDDEFINE»
