@@ -265,7 +265,7 @@
 
 «DEFINE FormField FOR StringField-»
             {formtextinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=«length»«EXPAND FieldValidationCssClass»}
-«REM»TODO: visible=false    cssClass="myClass" FormStyledPlugin (width="80%", width="30em"), textMode="password" for password input fields«ENDREM»«""-»
+«REM»TODO: visible=false    FormStyledPlugin (width="80%", width="30em"), textMode="password" for password input fields«ENDREM»«""-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR TextField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
@@ -280,12 +280,12 @@
 
 «DEFINE FormField FOR EmailField-»
             {formemailinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=«length»«EXPAND FieldValidationCssClass»}
-«REM»TODO: visible=false cssClass="myClass" FormStyledPlugin (width="80%", width="30em")«ENDREM»«""-»
+«REM»TODO: visible=false FormStyledPlugin (width="80%", width="30em")«ENDREM»«""-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR UrlField-»
             {formurlinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=«length»«EXPAND FieldValidationCssClass»}
-«REM»TODO: visible=false cssClass="myClass" FormStyledPlugin (width="80%", width="30em")«ENDREM»«""-»
+«REM»TODO: visible=false FormStyledPlugin (width="80%", width="30em")«ENDREM»«""-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR UploadField-»«REM»class="upload"«ENDREM»
@@ -338,26 +338,26 @@
 
 «DEFINE FormField FOR TimestampField-»
             {if $mode == "edit"}
-                {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true}
+                {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true«EXPAND FieldValidationCssClass»}
             {else}
-                {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true defaultValue="now"}
+                {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true defaultValue="now"«EXPAND FieldValidationCssClass»}
             {/if}
 «REM»TODO: general attributes from FormTextInput«ENDREM»«""-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR DateField-»«REM»class="date"«ENDREM»
             {if $mode == "edit"}
-                {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true}
+                {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true«EXPAND FieldValidationCssClass»}
             {else}
-                {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true defaultValue="today"}
+                {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true defaultValue="today"«EXPAND FieldValidationCssClass»}
             {/if}
 «REM»TODO: general attributes from FormTextInput«ENDREM»«""-»
 «ENDDEFINE»
 
 «REM»TODO: support time fields in Zikula core«ENDREM»
 «DEFINE FormField FOR TimeField-»
-            {formtextinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=8}
-«REM»TODO: visible=false    cssClass="myClass" FormStyledPlugin (width="80%", width="30em"), textMode="password" for password input fields«ENDREM»«""-»
+            {formtextinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=8«EXPAND FieldValidationCssClass»}
+«REM»TODO: visible=false    FormStyledPlugin (width="80%", width="30em"), textMode="password" for password input fields«ENDREM»«""-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR GzipField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
