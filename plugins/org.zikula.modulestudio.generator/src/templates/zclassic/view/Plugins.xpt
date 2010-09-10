@@ -6,5 +6,6 @@
 «EXPAND Plugins::SelectorObjectTypes::Root-»
 «EXPAND Plugins::SelectorTemplates::Root-»
 «EXPAND Plugins::ImageThumb::Root-»
+«EXPAND Plugins::ValidationError::Root-»
 «ENDDEFINE»
 

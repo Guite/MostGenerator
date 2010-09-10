@@ -38,7 +38,7 @@ class «appName()»_Form_Plugin_FormFrame extends Form_Plugin
     // This is called by the framework before the content of the block is rendered
     function renderBegin($view)
     {
-        $tabClass = $this->useTabs ? ' '.$this->cssClass : '';
+        $tabClass = $this->useTabs ? ' ' . $this->cssClass : '';
         return "<div class=\"«appName().formatForDB()»Form{$tabClass}\">\n";
     }
 

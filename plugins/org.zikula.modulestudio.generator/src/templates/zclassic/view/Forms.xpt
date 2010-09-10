@@ -28,8 +28,9 @@
 «LET name.formatForDB() AS entityName-»
 {* purpose of this template: build the Form to «actionName.formatForDisplay()» an instance of «name.formatForDisplay()» *}
 
-«IF fields.typeSelect(UserField).size > 0-»
 {pageaddvar name="javascript" value="javascript/ajax/proto_scriptaculous.combined.min.js"}
+{pageaddvar name="javascript" value="javascript/ajax/validation.min.js"}
+«IF fields.typeSelect(UserField).size > 0-»
 {pageaddvar name="javascript" value="javascript/helpers/Zikula.js"}
 «ENDIF-»
 
@@ -69,19 +70,15 @@
     {*formvalidationsummary*}«REM»CSS class summary: 'validationSummary z-errormsg'«ENDREM»
 «REM»{formerrormessage id=error}«ENDREM»«""-»
 
-    {formsetinitialfocus inputId="«fields.get(1).actualFieldName().formatForCode()»"}
-«REM»
-  {formsetinitialfocus inputId=PluginId doSelect=true} <-- for dropdown lists (performs input.select())
-«ENDREM»«""-»
+    {formsetinitialfocus inputId="«fields.typeSelect(DerivedField).reject(e|e.primaryKey).get(0).actualFieldName().formatForCode()»"}
+«REM»{formsetinitialfocus inputId=PluginId doSelect=true} <-- for dropdown lists (performs input.select())«ENDREM»«""-»
 
     <fieldset>
         <legend>{gt text='Content'}</legend>
 «FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field-»
 «IF field.metaType != ArrayField && field.metaType != ObjectField-»
         <div class="z-formrow">
-            {formlabel for="«field.actualFieldName().formatForCode()»" __text='«EXPAND FormLabel FOR field»'«IF field.mandatory» mandatorysym="1"«ENDIF»}«IF field.metaType == UploadField»<br />{* break required for Google Chrome *}«ENDIF»
-«REM» visible=false html=1 cssClass="myClass" FormStyledPlugin«ENDREM»«""-»
-            «EXPAND FormField FOR field»«""-»
+            «EXPAND FormRow FOR field»«""-»
         </div>
 «ENDIF-»
 «ENDFOREACH-»
@@ -114,14 +111,14 @@
 
     <div class="z-buttons z-formbuttons">
     {if $mode eq "edit"}
-        {formbutton commandName="update" __text='Update «name.formatForDisplay()»' class='z-bt-save'}
-        {formbutton commandName="delete" __text='Delete «name.formatForDisplay()»' class='z-bt-delete' confirmMessage=$deleteConfirmMsg}
+        {formbutton id="btnUpdate" commandName="update" __text='Update «name.formatForDisplay()»' class='z-bt-save'}
+        {formbutton id="btnDelete" commandName="delete" __text='Delete «name.formatForDisplay()»' class='z-bt-delete' confirmMessage=$deleteConfirmMsg}
     {elseif $mode eq "create"}
-        {formbutton commandName="create" __text='Create «name.formatForDisplay()»' class='z-bt-ok'}
+        {formbutton id="btnCreate" commandName="create" __text='Create «name.formatForDisplay()»' class='z-bt-ok'}
     {else}
-        {formbutton commandName="update«REM»TODO«ENDREM»" __text='OK' class='z-bt-ok'}
+        {formbutton id="btnUpdate" commandName="update«REM»TODO«ENDREM»" __text='OK' class='z-bt-ok'}
     {/if}
-        {formbutton commandName="cancel" __text='Cancel' class='z-bt-cancel'}
+        {formbutton id="btnCancel" commandName="cancel" __text='Cancel' class='z-bt-cancel'}
     </div>
   {/«appName.formatForDB()»FormFrame}
 {/form}
@@ -132,11 +129,46 @@
 </div>
 «ENDIF-»
 
+<script type="text/javascript">
+//<![CDATA[
+
+    document.observe('dom:loaded', function() {
+        var valid = new Validation('FormForm', {onSubmit: false, immediate : true});
+        {{if $mode ne "create"}}
+            var result = valid.validate();
+        {{/if}}
+
+        $('{{if $mode eq "create"}}btnCreate{{else}}btnUpdate{{/if}}').observe('click', function(event) {
+            var result = valid.validate();
+            if (!result) {
+                Event.stop(event);
+            }
+            else {
+                $$('div.z-formbuttons input').each(function(btn) {
+                    btn.hide();
+                });
+            }
+            return result;
+        });
+    });
+
+//]]>
+</script>
+
 {include file="«controllerName»/footer.tpl"}
 «ENDLET-»
 «ENDLET-»
 «ENDDEFINE»
 
+«DEFINE FormRow FOR DerivedField-»
+            {formlabel for="«actualFieldName().formatForCode()»" __text='«EXPAND FormLabel»'«IF mandatory» mandatorysym="1"«ENDIF»}«IF metaType == UploadField»<br />{* break required for Google Chrome *}«ENDIF»
+«REM» visible=false html=1 FormStyledPlugin«ENDREM»«""-»
+            «EXPAND FormField-»
+«IF mandatory-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id="«actualFieldName().formatForCode()»" class="required"}
+«ENDIF-»
+            «EXPAND AdditionalValidationMessages-»
+«ENDDEFINE»
 
 
 «DEFINE FormLabel FOR EntityField-»
@@ -170,6 +202,23 @@
 
 
 
+«DEFINE AdditionalValidationMessages FOR DerivedField-»«ENDDEFINE»
+«DEFINE AdditionalValidationMessages FOR AbstractIntegerField-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id="«actualFieldName().formatForCode()»" class="validate-digits"}
+«ENDDEFINE»
+«DEFINE AdditionalValidationMessages FOR DecimalField-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id="«actualFieldName().formatForCode()»" class="validate-number"}
+«ENDDEFINE»
+«DEFINE AdditionalValidationMessages FOR FloatField-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id="«actualFieldName().formatForCode()»" class="validate-number"}
+«ENDDEFINE»
+«DEFINE AdditionalValidationMessages FOR EmailField-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id="«actualFieldName().formatForCode()»" class="validate-email"}
+«ENDDEFINE»
+«DEFINE AdditionalValidationMessages FOR UrlField-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id="«actualFieldName().formatForCode()»" class="validate-url"}
+«ENDDEFINE»
+
 
 «DEFINE FormField FOR EntityField-»
 «error("Error: undefined entity field type " + metaType.toString() + " (code 902386)") -> ""-»
@@ -181,9 +230,8 @@
 «error("Error: undefined calculated field type " + metaType.toString() + " (code 902388)") -> ""-»
 «ENDDEFINE»
 
-
-«DEFINE FormField FOR BooleanField-»«REM»class="cbx"«ENDREM»
-            {formcheckbox id="«actualFieldName().formatForCode()»" readOnly=«readonly» __title='«actualFieldName().formatForDisplay()» ?'}
+«DEFINE FormField FOR BooleanField-»
+            {formcheckbox id="«actualFieldName().formatForCode()»" readOnly=«readonly» __title='«actualFieldName().formatForDisplay()» ?'«IF mandatory» cssClass="required"«ENDIF»}
 «REM» visible=false FormStyledPlugin«ENDREM»«""-»
 «REM»
     var $group;                 // group name for sub arrays
@@ -200,30 +248,30 @@
 «ENDLET-»
 «ENDLET-»
 «ELSE-»
-            {formintinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«length»«IF minValue != 0 || maxValue != 0-» minValue=«minValue» maxValue=«maxValue»«ENDIF»}
+            {formintinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«length»«IF minValue != 0 || maxValue != 0-» minValue=«minValue» maxValue=«maxValue»«ENDIF»«EXPAND FieldValidationCssClass»}
 «REM»TODO: general attributes from FormTextInput«ENDREM»«""-»
 «ENDIF-»
 «ENDLET-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR FloatField-»
-            {formfloatinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»'}
+            {formfloatinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»'«EXPAND FieldValidationCssClass»}
 «REM»TODO: general attributes from FormTextInput, minValue=123 maxValue=123«ENDREM»«""-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR DecimalField-»
-            {formfloatinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«(length+3+scale)»}
+            {formfloatinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«(length+3+scale)»«EXPAND FieldValidationCssClass»}
 «ENDDEFINE»
 
 «DEFINE FormField FOR StringField-»
-            {formtextinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=«length»}
+            {formtextinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=«length»«EXPAND FieldValidationCssClass»}
 «REM»TODO: visible=false    cssClass="myClass" FormStyledPlugin (width="80%", width="30em"), textMode="password" for password input fields«ENDREM»«""-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR TextField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
 
 «DEFINE FormFieldTextarea FOR DerivedField-»
-            {formtextinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="multiline" rows="8" cols="50"}
+            {formtextinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="multiline" rows="8" cols="50"«EXPAND FieldValidationCssClass»}
 «REM»
     var $group;                     // group name for sub arrays
     var $size;                      // size of HTML input (number of characters)
@@ -231,17 +279,17 @@
 «ENDDEFINE»
 
 «DEFINE FormField FOR EmailField-»
-            {formemailinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=«length»}
+            {formemailinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=«length»«EXPAND FieldValidationCssClass»}
 «REM»TODO: visible=false cssClass="myClass" FormStyledPlugin (width="80%", width="30em")«ENDREM»«""-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR UrlField-»
-            {formurlinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=«length»}
+            {formurlinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=«length»«EXPAND FieldValidationCssClass»}
 «REM»TODO: visible=false cssClass="myClass" FormStyledPlugin (width="80%", width="30em")«ENDREM»«""-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR UploadField-»«REM»class="upload"«ENDREM»
-            {formuploadinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly»}
+            {formuploadinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly»«EXPAND FieldValidationCssClass»}
 «REM»TODO: visible=false FormStyledPlugin
     var $group;                     // group name for sub arrays
 «ENDREM»«""-»
@@ -250,8 +298,7 @@
 «DEFINE FormField FOR UserField-»
 «LET actualFieldName().formatForCode() AS realName»
             <div id="«realName»liveusersearch" class="«entity.container.application.appName().formatForDB()»LiveSearchUser z-hide">
-                {formtextinput id="«realName»desc" mandatory=«mandatory» readOnly=«readonly» __title='Input a part of the user name to search' maxLength=«length»«REM»TODOcssClass="required validate-alphanum"«ENDREM»}
-                «REM»TODO{«entity.container.application.appName()»ValidationError id="«realName»" class="required"}«ENDREM»
+                {formtextinput id="«realName»desc" mandatory=«mandatory» readOnly=«readonly» __title='Input a part of the user name to search' maxLength=«length» cssClass="«IF mandatory»required «ENDIF»validate-alphanum"}
                 {img id="ajax_indicator" style="display: none" modname='core' set='icons/extrasmall' src="indicator_circle.gif" alt=""}
                 <div id="«realName»desc_choices" class="«entity.container.application.appName().formatForDB()»AutoCompleteUser"></div>
                 <script type="text/javascript">
@@ -274,6 +321,10 @@
             </div>
             <input type="hidden" id="«realName»" name="«realName»" value="{«realName»}" />
             {if $mode ne "create" && $«realName»}<div class="z-formnote"><a href="{modurl modname="Users" type="admin" func="modify" userid=$«realName»}" title="{gt text="Switch to the user administration"}">{gt text="Manage user"}</a></div>{/if}
+«IF mandatory-»
+            {«entity.container.application.appName()»ValidationError id="«realName»" class="required"}
+«ENDIF-»
+            {«entity.container.application.appName()»ValidationError id="«realName»" class="validate-alphanum"}
 «ENDLET»
 «ENDDEFINE»
 
@@ -310,4 +361,13 @@
 «ENDDEFINE»
 
 «DEFINE FormField FOR GzipField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
+
+«DEFINE FieldValidationCssClass FOR DerivedField-»«IF mandatory» cssClass="required"«ENDIF»«ENDDEFINE»
+«DEFINE FieldValidationCssClass FOR AbstractIntegerField-» cssClass="«IF mandatory»required «ENDIF»validate-digits"«ENDDEFINE»
+«DEFINE FieldValidationCssClass FOR DecimalField-» cssClass="«IF mandatory»required «ENDIF»validate-number"«ENDDEFINE»
+«DEFINE FieldValidationCssClass FOR FloatField-» cssClass="«IF mandatory»required «ENDIF»validate-number"«ENDDEFINE»
+«DEFINE FieldValidationCssClass FOR EmailField-» cssClass="«IF mandatory»required «ENDIF»validate-email"«ENDDEFINE»
+«DEFINE FieldValidationCssClass FOR UrlField-» cssClass="«IF mandatory»required «ENDIF»validate-url"«ENDDEFINE»
+
+
 

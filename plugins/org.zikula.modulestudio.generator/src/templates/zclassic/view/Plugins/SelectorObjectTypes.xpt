@@ -26,7 +26,7 @@ function smarty_function_«appName().formatForDB()»SelectorObjectTypes($params,
 «ENDFOREACH-»
 
     if (array_key_exists('assign', $params)) {
-        $render->assign($params['assign'], $result);
+        $view->assign($params['assign'], $result);
         return;
     }
     return $result;

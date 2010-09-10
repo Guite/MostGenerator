@@ -31,6 +31,27 @@ div.«appName().formatForDB()»RightBox p.manageLink {
     padding: 0 0 0 20px;
 }
 
+/** validation **/
+input.required, textarea.required {
+    border: 1px solid #00a8e6;
+}
+input.validation-failed, textarea.validation-failed {
+    border: 1px solid #f30;
+    color : #f30;
+}
+input.validation-passed, textarea.validation-passed {
+    border: 1px solid #0c0;
+    color : #000;
+}
+
+.validation-advice {
+    margin: 5px 0;
+    padding: 5px;
+    background-color: #f90;
+    color : #fff;
+    font-weight: 700;
+}
+
 «LET models.entities.fields.typeSelect(UserField) AS userFields-»
 «LET models.relations.typeSelect(JoinRelationship) AS joinRelations-»
 «IF joinRelations.size > 0 || userFields.size > 0-»

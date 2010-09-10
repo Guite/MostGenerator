@@ -25,7 +25,7 @@ function smarty_function_«appName().formatForDB()»SelectorTemplates($params, $
     $result[] = array('text' => 'With description', 'value' => 'itemlist_display_description.tpl');
 
     if (array_key_exists('assign', $params)) {
-        $render->assign($params['assign'], $result);
+        $view->assign($params['assign'], $result);
         return;
     }
     return $result;
