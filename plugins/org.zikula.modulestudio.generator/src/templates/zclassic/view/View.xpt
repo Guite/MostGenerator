@@ -34,6 +34,12 @@
 «FILE "templates/" + controllerName + "/header.tpl"-»
 {* purpose of this template: header for «controllerName» area *}
 
+{pageaddvar name="javascript" value="javascript/ajax/proto_scriptaculous.combined.min.js"}
+{pageaddvar name="javascript" value="javascript/ajax/validation.min.js"}
+{pageaddvar name="javascript" value="javascript/helpers/Zikula.js"}
+{pageaddvar name="javascript" value="javascript/helpers/Zikula.UI.js"}
+{pageaddvar name="javascript" value="javascript/helpers/ZikulaImageViewer.js"}
+
 «IF controller.metaType == AdminController-»
 {admincategorymenu}
 «ENDIF-»

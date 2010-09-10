@@ -28,12 +28,6 @@
 «LET name.formatForDB() AS entityName-»
 {* purpose of this template: build the Form to «actionName.formatForDisplay()» an instance of «name.formatForDisplay()» *}
 
-{pageaddvar name="javascript" value="javascript/ajax/proto_scriptaculous.combined.min.js"}
-{pageaddvar name="javascript" value="javascript/ajax/validation.min.js"}
-«IF fields.typeSelect(UserField).size > 0-»
-{pageaddvar name="javascript" value="javascript/helpers/Zikula.js"}
-«ENDIF-»
-
 {include file="«controllerName»/header.tpl"}
 
 {if $mode eq "edit"}
@@ -150,6 +144,8 @@
             }
             return result;
         });
+
+        Zikula.UI.Tooltips($$('.«appName.formatForDB()»FormTooltips'));
     });
 
 //]]>
@@ -161,7 +157,7 @@
 «ENDDEFINE»
 
 «DEFINE FormRow FOR DerivedField-»
-            {formlabel for="«actualFieldName().formatForCode()»" __text='«EXPAND FormLabel»'«IF mandatory» mandatorysym="1"«ENDIF»}«IF metaType == UploadField»<br />{* break required for Google Chrome *}«ENDIF»
+            {formlabel for="«actualFieldName().formatForCode()»" __text='«EXPAND FormLabel»'«IF mandatory» mandatorysym="1"«ENDIF»«IF documentation != null && documentation != ""-» class="«entity.container.application.appName().formatForDB()»FormTooltips" title="«documentation.replaceAll('"', '\"')»"«ENDIF-»}«IF metaType == UploadField»<br />{* break required for Google Chrome *}«ENDIF»
 «REM» visible=false html=1 FormStyledPlugin«ENDREM»«""-»
             «EXPAND FormField-»
 «IF mandatory-»

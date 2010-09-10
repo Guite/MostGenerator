@@ -16,12 +16,6 @@ listType:
 «FILE "templates/" + controllerName + "/" + objName + "_view.tpl"-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» view view in «controllerName» area *}
 
-«IF fields.typeSelect(UploadField).size > 0-»
-{pageaddvar name="javascript" value="javascript/ajax/proto_scriptaculous.combined.min.js"}
-{pageaddvar name="javascript" value="javascript/helpers/Zikula.js"}
-{pageaddvar name="javascript" value="javascript/helpers/ZikulaImageViewer.js"}
-«ENDIF-»
-
 {include file="«controllerName»/header.tpl"}
 
 <div class="z-«IF controller.metaType == AdminController-»admin«ELSE»frontend«ENDIF»container">
@@ -31,6 +25,9 @@ listType:
 «ENDIF-»
     {pagesetvar name="title" value=$templateTitle}
     <h2>{$templateTitle}</h2>
+«IF documentation != null && documentation != ""-»
+    <p class="sectiondesc">«documentation»</p>
+«ENDIF-»
 
 «IF controller.hasActions('edit')-»
     {checkpermissionblock component="«appName»::" instance=".*" level="ACCESS_ADD"}

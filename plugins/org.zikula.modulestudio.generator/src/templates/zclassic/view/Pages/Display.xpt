@@ -9,12 +9,6 @@
 «FILE "templates/" + controllerName + "/" + objName + "_display.tpl"-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» display view in «controllerName» area *}
 
-«IF fields.typeSelect(UploadField).size > 0-»
-{pageaddvar name="javascript" value="javascript/ajax/proto_scriptaculous.combined.min.js"}
-{pageaddvar name="javascript" value="javascript/helpers/Zikula.js"}
-{pageaddvar name="javascript" value="javascript/helpers/ZikulaImageViewer.js"}
-«ENDIF-»
-
 {include file="«controllerName»/header.tpl"}
 
 «IF controller.metaType == AdminController-»
