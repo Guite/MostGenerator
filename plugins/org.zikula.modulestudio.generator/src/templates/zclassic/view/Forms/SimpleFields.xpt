@@ -1,0 +1,202 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE FormRow FOR DerivedField-»
+            {formlabel for="«actualFieldName().formatForCode()»" __text='«EXPAND FormLabel»'«IF mandatory» mandatorysym="1"«ENDIF»«IF documentation != null && documentation != ""-» class="«entity.container.application.appName().formatForDB()»FormTooltips" title="«documentation.replaceAll('"', '\"')»"«ENDIF-»}«IF metaType == UploadField»<br />{* break required for Google Chrome *}«ENDIF»
+            «EXPAND FormField-»
+«IF mandatory-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id="«actualFieldName().formatForCode()»" class="required"}
+«ENDIF-»
+            «EXPAND AdditionalValidationMessages-»
+«ENDDEFINE»
+
+
+«DEFINE FormLabel FOR EntityField-»
+«error("Error: undefined entity field type " + metaType.toString() + " (code 902346)") -> ""-»
+«ENDDEFINE»
+«DEFINE FormLabel FOR DerivedField-»
+«actualFieldName().formatForDisplayCapital()-»
+«ENDDEFINE»
+«DEFINE FormLabel FOR CalculatedField-»
+«error("Error: undefined calculated field type " + metaType.toString() + " (code 902348)") -> ""-»
+«ENDDEFINE»
+
+
+«DEFINE FormLabel FOR IntegerField-»
+«LET entity.incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == name.formatForDB()) AS pointingRelations-»
+«IF pointingRelations.size > 0-»
+«LET pointingRelations.get(0) AS pointingRelation-»
+«LET pointingRelation.source AS joiningEntity-»
+«IF pointingRelation.sourceAlias != null && pointingRelation.sourceAlias != ""-»
+«pointingRelation.sourceAlias.formatForDisplayCapital()-»
+«ELSE-»
+«IF pointingRelation.metaType == OneToOneRelationship-»«joiningEntity.name.formatForDisplayCapital()»«ELSE-»«joiningEntity.nameMultiple.formatForDisplayCapital()»«ENDIF-»«""-»
+«ENDIF-»
+«ENDLET-»
+«ENDLET-»
+«ELSE-»
+«actualFieldName().formatForDisplayCapital()-»
+«ENDIF-»
+«ENDLET-»
+«ENDDEFINE»
+
+
+
+«DEFINE AdditionalValidationMessages FOR DerivedField-»«ENDDEFINE»
+«DEFINE AdditionalValidationMessages FOR AbstractIntegerField-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id="«actualFieldName().formatForCode()»" class="validate-digits"}
+«ENDDEFINE»
+«DEFINE AdditionalValidationMessages FOR DecimalField-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id="«actualFieldName().formatForCode()»" class="validate-number"}
+«ENDDEFINE»
+«DEFINE AdditionalValidationMessages FOR FloatField-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id="«actualFieldName().formatForCode()»" class="validate-number"}
+«ENDDEFINE»
+«DEFINE AdditionalValidationMessages FOR EmailField-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id="«actualFieldName().formatForCode()»" class="validate-email"}
+«ENDDEFINE»
+«DEFINE AdditionalValidationMessages FOR UrlField-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id="«actualFieldName().formatForCode()»" class="validate-url"}
+«ENDDEFINE»
+
+
+«DEFINE FormField FOR EntityField-»
+«error("Error: undefined entity field type " + metaType.toString() + " (code 902386)") -> ""-»
+«ENDDEFINE»
+«DEFINE FormField FOR DerivedField-»
+«error("Error: undefined derived field type " + metaType.toString() + " (code 902387)") -> ""-»
+«ENDDEFINE»
+«DEFINE FormField FOR CalculatedField-»
+«error("Error: undefined calculated field type " + metaType.toString() + " (code 902388)") -> ""-»
+«ENDDEFINE»
+
+«DEFINE FormField FOR BooleanField-»
+            {formcheckbox id="«actualFieldName().formatForCode()»" readOnly=«readonly» __title='«actualFieldName().formatForDisplay()» ?'«IF mandatory» cssClass="required"«ENDIF»}
+«REM»TODO: group: group name for sub arrays«ENDREM»«""-»
+«ENDDEFINE»
+
+«DEFINE FormField FOR IntegerField-»
+«LET entity.incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == name.formatForDB()) AS pointingRelations-»
+«IF pointingRelations.size > 0-»
+«LET pointingRelations.get(0) AS pointingRelation-»
+«LET pointingRelation.source AS joiningEntity-»
+«REM»Join-selector; if the where param is an array then [0] is the DQL and [1] the place holder values [example: array('status = ?', 'XY')]. Otherwise use normal syntax like [where="active = true"].«ENDREM»«""-»
+            {formdropdownrelationlist id="«joiningEntity.idField()»" mandatory=«mandatory.displayBool()» recordClass="«joiningEntity.implClassModelRecord()»" displayField="«joiningEntity.getLeadingField().actualFieldName().formatForCode()»" orderby="«joiningEntity.idField()»"«IF pointingRelation.metaType == OneToManyRelationship-»«REM» selectionMode="multiple"«ENDREM»«ENDIF-»}
+«ENDLET-»
+«ENDLET-»
+«ELSE-»
+            {formintinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«length»«IF minValue != 0 || maxValue != 0-» minValue=«minValue» maxValue=«maxValue»«ENDIF»«EXPAND FieldValidationCssClass»}
+«ENDIF-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE FormField FOR FloatField-»
+            {formfloatinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»'«EXPAND FieldValidationCssClass»}
+«REM»TODO: minValue=123, maxValue=123«ENDREM»«""-»
+«ENDDEFINE»
+
+«DEFINE FormField FOR DecimalField-»
+            {formfloatinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«(length+3+scale)»«EXPAND FieldValidationCssClass»}
+«ENDDEFINE»
+
+«DEFINE FormField FOR StringField-»
+            {formtextinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=«length»«EXPAND FieldValidationCssClass»}
+«REM»TODO: textMode="password" for password input fields«ENDREM»«""-»
+«ENDDEFINE»
+
+«DEFINE FormField FOR TextField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
+
+«DEFINE FormFieldTextarea FOR DerivedField-»
+            {formtextinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="multiline" rows="6«REM»8«ENDREM»" cols="50"«EXPAND FieldValidationCssClass»}
+«REM»TODO: group: group name for sub arrays«ENDREM»«""-»
+«ENDDEFINE»
+
+«DEFINE FormField FOR EmailField-»
+            {formemailinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=«length»«EXPAND FieldValidationCssClass»}
+«ENDDEFINE»
+
+«DEFINE FormField FOR UrlField-»
+            {formurlinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=«length»«EXPAND FieldValidationCssClass»}
+«ENDDEFINE»
+
+«DEFINE FormField FOR UploadField-»«REM»class="upload"«ENDREM»
+            {formuploadinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly»«EXPAND FieldValidationCssClass»}
+«REM»TODO: group: group name for sub arrays«ENDREM»«""-»
+«ENDDEFINE»
+
+«DEFINE FormField FOR UserField-»
+«LET actualFieldName().formatForCode() AS realName»
+            <div id="«realName»liveusersearch" class="«entity.container.application.appName().formatForDB()»LiveSearchUser z-hide">
+                {formtextinput id="«realName»desc" mandatory=«mandatory» readOnly=«readonly» __title='Input a part of the user name to search' maxLength=«length» cssClass="«IF mandatory»required «ENDIF»validate-alphanum"}
+                {img id="ajax_indicator" style="display: none" modname='core' set='icons/extrasmall' src="indicator_circle.gif" alt=""}
+                <div id="«realName»desc_choices" class="«entity.container.application.appName().formatForDB()»AutoCompleteUser"></div>
+                <script type="text/javascript">
+                //<![CDATA[
+                    {{if $mode ne "create" && $«realName» gt 0}}
+                        $('«realName»desc').value = '{{usergetvar name=uname uid=$«realName»}}';
+                    {{/if}}
+                    $('«realName»liveusersearch').removeClassName('z-hide');
+                    new Ajax.Autocompleter('«realName»desc', '«realName»desc_choices', Zikula.Config['baseURL'] + 'ajax.php?module=«entity.container.application.appName()»&func=get«entity.name.formatForCodeCapital()»«realName.formatForCodeCapital()»Users',
+                        {
+                            paramName: 'fragment',
+                            minChars: 3,
+                            afterUpdateElement: function(data) {
+                                $('«realName»').value = $($(data).value).value;
+                            }
+                        }
+                    );
+                //]]>
+                </script>
+            </div>
+            <input type="hidden" id="«realName»" name="«realName»" value="{«realName»}" />
+            {if $mode ne "create" && $«realName»}<div class="z-formnote"><a href="{modurl modname="Users" type="admin" func="modify" userid=$«realName»}" title="{gt text="Switch to the user administration"}">{gt text="Manage user"}</a></div>{/if}
+«IF mandatory-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id="«realName»" class="required"}
+«ENDIF-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id="«realName»" class="validate-alphanum"}
+«ENDLET»
+«ENDDEFINE»
+
+«REM»TODO: support formdropdownlist or formradiobutton«ENDREM»
+«DEFINE FormField FOR EnumField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
+
+«REM»TODO: find a better way for editing«ENDREM»
+«DEFINE FormField FOR BlobField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
+
+«DEFINE FormField FOR ClobField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
+
+«DEFINE FormField FOR TimestampField-»
+            {if $mode eq "edit"}
+                {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true«EXPAND FieldValidationCssClass»}
+            {else}
+                {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true defaultValue="now"«EXPAND FieldValidationCssClass»}
+            {/if}
+«REM»TODO: visible=false«ENDREM»«""-»
+«ENDDEFINE»
+
+«DEFINE FormField FOR DateField-»
+            {if $mode eq "edit"}
+                {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true«EXPAND FieldValidationCssClass»}
+            {else}
+                {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true defaultValue="today"«EXPAND FieldValidationCssClass»}
+            {/if}
+«ENDDEFINE»
+
+«DEFINE FormField FOR TimeField-»
+            /**
+             * TODO: support time fields in Zikula, see http://code.zikula.org/core/ticket/2445
+             */ 
+            {formtextinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=8«EXPAND FieldValidationCssClass»}
+«ENDDEFINE»
+
+«DEFINE FormField FOR GzipField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
+
+«DEFINE FieldValidationCssClass FOR DerivedField-»«IF mandatory» cssClass="required"«ENDIF»«ENDDEFINE»
+«DEFINE FieldValidationCssClass FOR AbstractIntegerField-» cssClass="«IF mandatory»required «ENDIF»validate-digits"«ENDDEFINE»
+«DEFINE FieldValidationCssClass FOR DecimalField-» cssClass="«IF mandatory»required «ENDIF»validate-number"«ENDDEFINE»
+«DEFINE FieldValidationCssClass FOR FloatField-» cssClass="«IF mandatory»required «ENDIF»validate-number"«ENDDEFINE»
+«DEFINE FieldValidationCssClass FOR EmailField-» cssClass="«IF mandatory»required «ENDIF»validate-email"«ENDDEFINE»
+«DEFINE FieldValidationCssClass FOR UrlField-» cssClass="«IF mandatory»required «ENDIF»validate-url"«ENDDEFINE»
+
