@@ -28,6 +28,11 @@
 «LET name.formatForDB() AS entityName-»
 {* purpose of this template: build the Form to «actionName.formatForDisplay()» an instance of «name.formatForDisplay()» *}
 
+«IF fields.typeSelect(UserField).size > 0-»
+{pageaddvar name="javascript" value="javascript/ajax/proto_scriptaculous.combined.min.js"}
+{pageaddvar name="javascript" value="javascript/helpers/Zikula.js"}
+«ENDIF-»
+
 {include file="«controllerName»/header.tpl"}
 
 {if $mode eq "edit"}
@@ -243,19 +248,37 @@
 «ENDDEFINE»
 
 «DEFINE FormField FOR UserField-»
-            {* TODO: support user selector with auto completion *}
-            {formintinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«length»}
-«REM»TODO: general attributes from FormTextInput«ENDREM»«""-»
+«LET actualFieldName().formatForCode() AS realName»
+            <div id="«realName»liveusersearch" class="liveusersearch z-hide">
+                {formtextinput id="«realName»desc" mandatory=«mandatory» readOnly=«readonly» __title='Input a part of the user name to search' maxLength=«length»«REM»TODOcssClass="required validate-alphanum"«ENDREM»}
+                «REM»TODO{«entity.container.application.appName()»ValidationError id="«realName»" class="required"}«ENDREM»
+                {img id="ajax_indicator" style="display: none" modname='core' set='icons/extrasmall' src="indicator_circle.gif" alt=""}
+                <div id="«realName»desc_choices" class="«entity.container.application.appName()»userautocomplete"></div>
+                <script type="text/javascript">
+                //<![CDATA[
+                    {{if $mode ne "create" && $«realName» gt 0}}
+                        $('«realName»desc').value = '{{usergetvar name=uname uid=$«realName»}}';
+                    {{/if}}
+                    $('«realName»liveusersearch').removeClassName('z-hide');
+                    new Ajax.Autocompleter('«realName»desc', '«realName»desc_choices', Zikula.Config['baseURL'] + 'ajax.php?module=«entity.container.application.appName()»&func=get«entity.name.formatForCodeCapital()»«realName.formatForCodeCapital()»Users',
+                        {
+                            paramName: 'fragment',
+                            minChars: 3,
+                            afterUpdateElement: function(data) {
+                                $('«realName»').value = $($(data).value).value;
+                            }
+                        }
+                    );
+                //]]>
+                </script>
+            </div>
+            <input type="hidden" id="«realName»" name="«realName»" value="{«realName»}" />
+            {if $mode ne "create" && $«realName»}<div class="z-formnote"><a href="{modurl modname="Users" type="admin" func="modify" userid=$«realName»}" title="{gt text="Switch to the user administration"}">{gt text="Manage user"}</a></div>{/if}
+«ENDLET»
 «ENDDEFINE»
-
-«REM»TODO: find a better way for editing«ENDREM»
-«DEFINE FormField FOR ArrayField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
 
 «REM»TODO: support formdropdownlist or formradiobutton«ENDREM»
 «DEFINE FormField FOR EnumField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
-
-«REM»TODO: find a better way for editing«ENDREM»
-«DEFINE FormField FOR ObjectField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
 
 «REM»TODO: find a better way for editing«ENDREM»
 «DEFINE FormField FOR BlobField-»«EXPAND FormFieldTextarea»«ENDDEFINE»

@@ -31,4 +31,48 @@ div.«appName().formatForDB()»RightBox p.manageLink {
     padding: 0 0 0 20px;
 }
 
+«LET models.entities.fields.typeSelect(UserField) AS userFields-»
+«IF userFields.size > 0-»
+div.liveusersearch {
+    margin: 1em 0 1em 0;
+}
+
+div.«appName()»autocomplete,
+div.«appName()»userautocomplete {
+    position: absolute;
+    width: 25em;
+    background-color: white;
+    border: 1px solid #888;
+    margin: 0;
+    padding: 0;
+}
+
+div.«appName()»autocomplete ul,
+div.«appName()»userautocomplete ul {
+    margin: 0;
+    padding: 0;
+}
+div.«appName()»autocomplete ul {
+    list-style-image: url("../../../images/icons/extrasmall/tab_right.gif");
+}
+div.«appName()»userautocomplete ul {
+    list-style-image: url("../../../images/icons/extrasmall/edit_user.gif");
+}
+
+div.«appName()»autocomplete ul li,
+div.«appName()»userautocomplete ul li {
+    margin: 0;
+    padding: 0.1em 0 0.1em 0;
+    line-height: 1.4em;
+    cursor: pointer;
+}
+
+div.«appName()»autocomplete ul li.selected,
+div.«appName()»userautocomplete ul li.selected {
+    background-color: #ffb;
+}
+
+«ENDIF-»
+«ENDLET-»
+
 «ENDDEFINE»

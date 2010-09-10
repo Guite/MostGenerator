@@ -31,10 +31,10 @@
 class «baseClassController()» extends Zikula_Controller
 {
 «IF metaType == AjaxController-»
-    public function _postSetup() 
-    { 
-        // no need for a view so override it. 
-    } 
+    public function _postSetup()
+    {
+        // no need for a view so override it.
+    }
 «ELSE-»
 «EXPAND ControllerHelper::ControllerPostInitialize(true)-»
 «ENDIF-»
@@ -57,7 +57,49 @@ class «baseClassController()» extends Zikula_Controller
         // Execute form using supplied template and page event handler
         return $view->execute('«app.configController().formatForDB()»/config.tpl', new «app.appName()»_Form_Handler_«app.configController().formatForDB().toFirstUpper()»_Config());
     }
+«ENDIF-»
+«IF metaType == AjaxController-»
+«LET app.models.entities.fields.typeSelect(UserField) AS userFields-»
+«IF userFields.size > 0-»
+«FOREACH userFields AS userField-»
+    public function get«userField.entity.name.formatForCodeCapital()»«userField.actualFieldName().formatForCodeCapital()»Users()
+    {
+        return $this->getCommonUsersList();
+    }
+«ENDFOREACH-»
 
+    public function getCommonUsersList()
+    {
+        if (!SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_READ)) {
+            return true;
+        }
+
+        $fragment = FormUtil::getpassedValue('fragment');
+
+        ModUtil::dbInfoLoad('Users');
+        $tables = DBUtil::getTables();
+
+        $userscolumn = $tables['users_column'];
+
+        $where = 'WHERE ' . $userscolumn['uname'] . ' REGEXP \'(' . DataUtil::formatForStore($fragment) . ')\'';
+        $results = DBUtil::selectObjectArray('users', $where);
+
+        $out = '<ul>';
+        if (is_array($results) && count($results) > 0) {
+            foreach($results as $result) {
+                $out .= '<li>' . DataUtil::formatForDisplay($result['uname']) .'<input type="hidden" id="' . DataUtil::formatForDisplay($result['uname']) . '" value="' . $result['uid'] . '" /></li>';
+            }
+        }
+        $out .= '</ul>';
+        echo DataUtil::convertToUTF8($out);
+        return true;
+    }
+
+«ENDIF-»
+«ENDLET-»
+«IF app.models.relations.typeSelect(JoinRelationship).size > 0-»
+«REM»TODO«ENDREM»
+«ENDIF-»
 «ENDIF-»
 }
 «ENDDEFINE»
