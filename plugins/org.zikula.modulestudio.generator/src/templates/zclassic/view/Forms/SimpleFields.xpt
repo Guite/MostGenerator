@@ -88,12 +88,12 @@
 «ENDLET-»
 «ENDLET-»
 «ELSE-»
-«ENDREM»
+«ENDREM»«""-»
             {formintinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«length»«IF minValue != 0 || maxValue != 0-» minValue=«minValue» maxValue=«maxValue»«ENDIF»«EXPAND FieldValidationCssClass»}
 «REM»
 «ENDIF-»
 «ENDLET-»
-«ENDREM»
+«ENDREM»«""-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR FloatField-»
