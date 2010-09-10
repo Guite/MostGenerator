@@ -118,11 +118,13 @@ class «baseClassModelRefRecord()» extends Doctrine_Record
     public function setTableDefinition()
     {
         $this->hasColumn('«source.idField()»', 'integer', null, array(
+                'type' => 'integer',
                 'primary' => true
             )
         );
 
         $this->hasColumn('«target.idField()»', 'integer', null, array(
+                'type' => 'integer',
                 'primary' => true
             )
         );

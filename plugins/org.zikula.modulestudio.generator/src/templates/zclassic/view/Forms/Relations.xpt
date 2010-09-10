@@ -7,10 +7,8 @@
 «LET getEditStageCode(incoming) AS stageCode-»
 «IF (!incoming && stageCode == 2) || (incoming && (stageCode == 1 || stageCode == 3))-»
     <fieldset>
-«IF !incoming-»
-«EXPAND ActiveParentImpl-»
-«ELSE-»
-«EXPAND PassiveChildImpl(stageCode)-»
+«IF !incoming-»«EXPAND ActiveParentImpl-»
+«ELSE-»«EXPAND PassiveChildImpl(stageCode)-»
 «ENDIF-»
     </fieldset>
 «ENDIF-»
@@ -19,27 +17,18 @@
 
 «DEFINE ActiveParentImpl FOR JoinRelationship-»
         <legend>{gt text='«IF this.metaType == OneToOneRelationship»«target.name.formatForDisplayCapital()»«ELSE»«target.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
-
         <div class="z-formrow">
-«IF this.metaType == OneToOneRelationship-»
-            <p>TODO ADD: button to create a new «target.name.formatForDisplay()» with inline editing (form dialog)</p>
-            <p>TODO EDIT: display of related «target.name.formatForDisplay()» with inline editing (form dialog)</p>
-«ELSE-»
-            <p>TODO ADD: button to create new «target.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
-            <p>TODO EDIT: list of related «target.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
+«IF this.metaType == OneToOneRelationship-»«EXPAND Component_ParentEditing(target, false)-»
+«ELSE-»«EXPAND Component_ParentEditing(target, true)-»
 «ENDIF-»
         </div>
 «ENDDEFINE»
 
 «DEFINE PassiveChildImpl(Integer stageCode) FOR JoinRelationship-»
         <legend>{gt text='«IF this.metaType == OneToOneRelationship»«source.name.formatForDisplayCapital()»«ELSE»«source.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
-
         <div class="z-formrow">
-            <p>TODO SELECT: AutoComplete field for choosing the «source.name.formatForDisplay()» (including preselection if mode is edit or the ID is given by $_GET)</p>
-«IF stageCode == 3-»
-            <p>TODO ADD: button to create a new «source.name.formatForDisplay()» with inline editing (form dialog)</p>
-            <p>TODO EDIT: display of related «source.name.formatForDisplay()» with inline editing (form dialog)</p>
-«ENDIF-»
+«EXPAND Component_AutoComplete(source, false)-»
+«IF stageCode == 3-»«EXPAND Component_ChildEditing(source, false)-»«ENDIF-»
         </div>
 «ENDDEFINE»
 
@@ -48,21 +37,9 @@
 «IF stageCode == 1 || stageCode == 3-»
     <fieldset>
         <legend>{gt text='«IF incoming»«source.nameMultiple.formatForDisplayCapital()»«ELSE»«target.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
-
         <div class="z-formrow">
-            <p>blablabla</p>
-«IF !incoming-»
-            <p>TODO SELECT: AutoComplete field for choosing the «target.nameMultiple.formatForDisplay()»</p>
-«IF stageCode == 3-»
-            <p>TODO ADD: button to create new «target.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
-            <p>TODO EDIT: list of related «target.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
-«ENDIF»
-«ELSE-»
-            <p>TODO SELECT: AutoComplete field for choosing the «source.nameMultiple.formatForDisplay()»</p>
-«IF stageCode == 3-»
-            <p>TODO ADD: button to create new «source.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
-            <p>TODO EDIT: list of related «source.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
-«ENDIF-»
+«IF !incoming-»«EXPAND ManyToManyHandling(source, target, stageCode)-»
+«ELSE-»«EXPAND ManyToManyHandling(target, source, stageCode)-»
 «ENDIF-»
         </div>
     </fieldset>
@@ -70,4 +47,38 @@
 «ENDLET-»
 «ENDDEFINE»
 
+«DEFINE ManyToManyHandling(Entity source, Entity target, Integer stageCode) FOR ManyToManyRelationship-»
+«EXPAND Component_AutoComplete(target, true)-»
+«IF stageCode == 3-»
+«EXPAND Component_ChildEditing(source, true)-»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE Component_AutoComplete(Entity targetEntity, Boolean many) FOR JoinRelationship-»
+«IF !many-»
+            <p>TODO SELECT: AutoComplete field for choosing the «targetEntity.name.formatForDisplay()» (including preselection if mode is edit or the ID is given by $_GET)</p>
+«ELSE-»
+            <p>TODO SELECT: AutoComplete field for choosing the «targetEntity.nameMultiple.formatForDisplay()»</p>
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE Component_ParentEditing(Entity targetEntity, Boolean many) FOR JoinRelationship-»
+«IF !many-»
+            <p>TODO ADD: button to create a new «targetEntity.name.formatForDisplay()» with inline editing (form dialog)</p>
+            <p>TODO EDIT: display of related «targetEntity.name.formatForDisplay()» with inline editing (form dialog)</p>
+«ELSE-»
+            <p>TODO ADD: button to create new «targetEntity.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
+            <p>TODO EDIT: list of related «targetEntity.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE Component_ChildEditing(Entity targetEntity, Boolean many) FOR JoinRelationship-»
+«IF !many-»
+            <p>TODO ADD: button to create a new «targetEntity.name.formatForDisplay()» with inline editing (form dialog)</p>
+            <p>TODO EDIT: display of related «targetEntity.name.formatForDisplay()» with inline editing (form dialog)</p>
+«ELSE-»
+            <p>TODO ADD: button to create new «targetEntity.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
+            <p>TODO EDIT: list of related «targetEntity.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
+«ENDIF-»
+«ENDDEFINE»
 
