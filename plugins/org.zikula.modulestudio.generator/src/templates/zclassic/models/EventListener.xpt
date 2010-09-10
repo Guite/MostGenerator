@@ -290,13 +290,13 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 «DEFINE sanitizeForOutput FOR TextField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
 «DEFINE sanitizeForOutput FOR UploadField-»
 «LET actualFieldName().formatForCode() AS realName-»
-        $extensionarr = split("\.", $data['«realName»']);
+        $extensionarr = explode('.', $data['«realName»']);
         $data['«realName»Extension'] = $extensionarr[count($extensionarr) - 1];
         $data['«realName»IsImage'] = (in_array($data['«realName»Extension'], array('gif', 'jpeg', 'jpg', 'png')) ? true : false);
         if (!empty($data['«realName»']) && FormUtil::getPassedValue('func', 'main', 'GETPOST') != 'edit') {
             $basePath = «entity.container.application.appName()»_Util::getFileBaseFolder('«entity.name.formatForCode()»', '«realName»');
             $data['«realName»FullPath'] = $basePath .  $data['«realName»'];
-            $data['«realName»FullPathURL'] = pnGetBaseURL() .  $data['«realName»FullPath'];
+            $data['«realName»FullPathURL'] = System::getBaseUrl() .  $data['«realName»FullPath'];
         }
 «ENDLET-»
 «ENDDEFINE»

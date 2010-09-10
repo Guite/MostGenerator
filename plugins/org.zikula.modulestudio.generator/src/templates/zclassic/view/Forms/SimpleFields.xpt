@@ -125,9 +125,10 @@
             {formurlinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=«length»«EXPAND FieldValidationCssClass»}
 «ENDDEFINE»
 
-«DEFINE FormField FOR UploadField-»«REM»class="upload"«ENDREM»
+«DEFINE FormField FOR UploadField-»
             {formuploadinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly»«EXPAND FieldValidationCssClass»}
 «REM»TODO: group: group name for sub arrays«ENDREM»«""-»
+            <div class="z-formnote">{gt text='Allowed file extensions:'} «allowedExtensions»</div>
 «ENDDEFINE»
 
 «DEFINE FormField FOR UserField-»

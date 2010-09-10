@@ -38,7 +38,7 @@
 {pageaddvar name="javascript" value="javascript/ajax/validation.min.js"}
 {pageaddvar name="javascript" value="javascript/helpers/Zikula.js"}
 {pageaddvar name="javascript" value="javascript/helpers/Zikula.UI.js"}
-{pageaddvar name="javascript" value="javascript/helpers/ZikulaImageViewer.js"}
+{pageaddvar name="javascript" value="javascript/helpers/Zikula.ImageViewer.js"}
 
 «IF controller.metaType == AdminController-»
 {admincategorymenu}

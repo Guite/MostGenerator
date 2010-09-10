@@ -45,7 +45,7 @@ class «appName()»_Base_UploadHandler
      */
     public function __construct()
     {
-        $this->allowedObjectTypes = array(«FOREACH getUploadEntities() AS entity SEPARATOR ", "»'«name.formatForCode()»'«ENDFOREACH»);
+        $this->allowedObjectTypes = array(«FOREACH getUploadEntities() AS entity SEPARATOR ", "»'«entity.name.formatForCode()»'«ENDFOREACH»);
     }
 
     /**
