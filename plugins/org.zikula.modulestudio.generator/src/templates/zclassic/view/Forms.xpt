@@ -61,16 +61,18 @@
 
     {* add validation summary and a <div> element for styling the form *}
     {«appName.formatForDB()»FormFrame}
-    {*formvalidationsummary*}«REM»CSS class summary: 'validationSummary z-errormsg'«ENDREM»
-«REM»{formerrormessage id=error}«ENDREM»«""-»
+    {*formvalidationsummary*}
+    {*formerrormessage id=error*}
 
     {formsetinitialfocus inputId="«fields.typeSelect(DerivedField).reject(e|e.primaryKey).get(0).actualFieldName().formatForCode()»"}
 «REM»{formsetinitialfocus inputId=PluginId doSelect=true} <-- for dropdown lists (performs input.select())«ENDREM»«""-»
 
     <fieldset>
         <legend>{gt text='Content'}</legend>
-«FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field-»
-«IF field.metaType != ArrayField && field.metaType != ObjectField-»
+«REM»No input fields for primary key, array fields and object fields«ENDREM»«""-»
+«FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey || e.metaType == ArrayField || e.metaType == ObjectField) AS field-»
+«REM»No input fields for foreign keys, relations are processed further down«ENDREM»«""-»
+«IF incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == field.name.formatForDB()).isEmpty-»
         <div class="z-formrow">
             «EXPAND Forms::SimpleFields::FormRow FOR field»«""-»
         </div>
@@ -82,6 +84,8 @@
         {include file="«controllerName»/include_metadata_edit.tpl"}
     {/if}
 «ENDIF-»
+    «EXPAND Forms::Relations::Root(true) FOREACH incoming.typeSelect(JoinRelationship)-»
+    «EXPAND Forms::Relations::Root(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 
     {if $mode eq "edit"}
         {modcallhooks hookobject="item" hookaction="modify" module="«appName»" hookid="«name.formatForDB()»`$«idField()»`" implode=false}

@@ -136,6 +136,37 @@ cached getRelationLocalField(JoinRelationship this, Boolean incoming)
 cached getRelationForeignField(JoinRelationship this, Boolean incoming)
     : (incoming) ? source.relationFieldName(sourceField) : ((targetField != "id" && targetField != (target.name + "id")) ? target.relationFieldName(targetField) : source.relationFieldName(sourceField));
 
+/* retrieve integer value defining which relation edit type will be implemented
+ * this mapping is done to have a more appropriate logic inside the generator
+ * possible values:
+ *    0    Nothing is being done
+ *    1    Select related object
+ *    2    Create and edit related object
+ *    3    Combination of 1 and 2
+ */
+cached Integer getEditStageCode(JoinRelationship this, Boolean incoming) :
+    switch (editType) {
+       case RelationEditType::ACTIVE_NONE_PASSIVE_CHOOSE    : ((incoming) ? 1 : 0)
+       case RelationEditType::ACTIVE_NONE_PASSIVE_EDIT      : ((incoming) ? 3 : 0)
+       case RelationEditType::ACTIVE_CHOOSE_PASSIVE_NONE    : ((incoming) ? 3 : 2)  // invalid --> default as fallback
+       case RelationEditType::ACTIVE_EDIT_PASSIVE_CHOOSE    : ((incoming) ? 1 : 2)
+       case RelationEditType::ACTIVE_EDIT_PASSIVE_EDIT      : ((incoming) ? 3 : 2)  // default
+       case RelationEditType::ACTIVE_EDIT_PASSIVE_NONE      : ((incoming) ? 3 : 2)  // invalid --> default as fallback
+       default: ((incoming) ? 3 : 2)
+    };
+
+/* specialisation for many-to-many relations */
+cached Integer getEditStageCode(ManyToManyRelationship this, Boolean incoming) :
+    switch (editType) {
+       case RelationEditType::ACTIVE_NONE_PASSIVE_CHOOSE    : ((incoming) ? 1 : 0)
+       case RelationEditType::ACTIVE_NONE_PASSIVE_EDIT      : ((incoming) ? 3 : 0)
+       case RelationEditType::ACTIVE_CHOOSE_PASSIVE_NONE    : ((incoming) ? 0 : 1)
+       case RelationEditType::ACTIVE_EDIT_PASSIVE_CHOOSE    : ((incoming) ? 1 : 3)
+       case RelationEditType::ACTIVE_EDIT_PASSIVE_EDIT      : ((incoming) ? 3 : 3)  // default
+       case RelationEditType::ACTIVE_EDIT_PASSIVE_NONE      : ((incoming) ? 0 : 3)
+       default: ((incoming) ? 3 : 3)
+    };
+
 cached boolean hasActions(Controller controller, String type) :
 	switch (type) {
 	   case 'main'     : controller.actions.typeSelect(MainAction).size > 0 

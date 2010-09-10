@@ -1,0 +1,73 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«REM»Entry point for form sections treating related objects«ENDREM»
+«DEFINE Root(Boolean incoming) FOR JoinRelationship-»
+«LET getEditStageCode(incoming) AS stageCode-»
+«IF (!incoming && stageCode == 2) || (incoming && (stageCode == 1 || stageCode == 3))-»
+    <fieldset>
+«IF !incoming-»
+«EXPAND ActiveParentImpl-»
+«ELSE-»
+«EXPAND PassiveChildImpl(stageCode)-»
+«ENDIF-»
+    </fieldset>
+«ENDIF-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE ActiveParentImpl FOR JoinRelationship-»
+        <legend>{gt text='«IF this.metaType == OneToOneRelationship»«target.name.formatForDisplayCapital()»«ELSE»«target.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
+
+        <div class="z-formrow">
+«IF this.metaType == OneToOneRelationship-»
+            <p>TODO ADD: button to create a new «target.name.formatForDisplay()» with inline editing (form dialog)</p>
+            <p>TODO EDIT: display of related «target.name.formatForDisplay()» with inline editing (form dialog)</p>
+«ELSE-»
+            <p>TODO ADD: button to create new «target.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
+            <p>TODO EDIT: list of related «target.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
+«ENDIF-»
+        </div>
+«ENDDEFINE»
+
+«DEFINE PassiveChildImpl(Integer stageCode) FOR JoinRelationship-»
+        <legend>{gt text='«IF this.metaType == OneToOneRelationship»«source.name.formatForDisplayCapital()»«ELSE»«source.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
+
+        <div class="z-formrow">
+            <p>TODO SELECT: AutoComplete field for choosing the «source.name.formatForDisplay()» (including preselection if mode is edit or the ID is given by $_GET)</p>
+«IF stageCode == 3-»
+            <p>TODO ADD: button to create a new «source.name.formatForDisplay()» with inline editing (form dialog)</p>
+            <p>TODO EDIT: display of related «source.name.formatForDisplay()» with inline editing (form dialog)</p>
+«ENDIF-»
+        </div>
+«ENDDEFINE»
+
+«DEFINE Root(Boolean incoming) FOR ManyToManyRelationship-»
+«LET getEditStageCode(incoming) AS stageCode-»
+«IF stageCode == 1 || stageCode == 3-»
+    <fieldset>
+        <legend>{gt text='«IF incoming»«source.nameMultiple.formatForDisplayCapital()»«ELSE»«target.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
+
+        <div class="z-formrow">
+            <p>blablabla</p>
+«IF !incoming-»
+            <p>TODO SELECT: AutoComplete field for choosing the «target.nameMultiple.formatForDisplay()»</p>
+«IF stageCode == 3-»
+            <p>TODO ADD: button to create new «target.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
+            <p>TODO EDIT: list of related «target.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
+«ENDIF»
+«ELSE-»
+            <p>TODO SELECT: AutoComplete field for choosing the «source.nameMultiple.formatForDisplay()»</p>
+«IF stageCode == 3-»
+            <p>TODO ADD: button to create new «source.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
+            <p>TODO EDIT: list of related «source.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
+«ENDIF-»
+«ENDIF-»
+        </div>
+    </fieldset>
+«ENDIF-»
+«ENDLET-»
+«ENDDEFINE»
+
+

@@ -78,18 +78,22 @@
 «ENDDEFINE»
 
 «DEFINE FormField FOR IntegerField-»
+«REM»commented out because relations are processed independently now; this code here remains temporarily just for safety
 «LET entity.incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == name.formatForDB()) AS pointingRelations-»
 «IF pointingRelations.size > 0-»
 «LET pointingRelations.get(0) AS pointingRelation-»
 «LET pointingRelation.source AS joiningEntity-»
-«REM»Join-selector; if the where param is an array then [0] is the DQL and [1] the place holder values [example: array('status = ?', 'XY')]. Otherwise use normal syntax like [where="active = true"].«ENDREM»«""-»
-            {formdropdownrelationlist id="«joiningEntity.idField()»" mandatory=«mandatory.displayBool()» recordClass="«joiningEntity.implClassModelRecord()»" displayField="«joiningEntity.getLeadingField().actualFieldName().formatForCode()»" orderby="«joiningEntity.idField()»"«IF pointingRelation.metaType == OneToManyRelationship-»«REM» selectionMode="multiple"«ENDREM»«ENDIF-»}
+«REM»Join-selector; if the where param is an array then [0] is the DQL and [1] the place holder values [example: array('status = ?', 'XY')]. Otherwise use normal syntax like [where="active = true"].«END REM»«""-»
+            {formdropdownrelationlist id="«joiningEntity.idField()»" mandatory=«mandatory.displayBool()» recordClass="«joiningEntity.implClassModelRecord()»" displayField="«joiningEntity.getLeadingField().actualFieldName().formatForCode()»" orderby="«joiningEntity.idField()»"«IF pointingRelation.metaType == OneToManyRelationship-»«REM» selectionMode="multiple"«END-REM»«ENDIF-»}
 «ENDLET-»
 «ENDLET-»
 «ELSE-»
+«ENDREM»
             {formintinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«length»«IF minValue != 0 || maxValue != 0-» minValue=«minValue» maxValue=«maxValue»«ENDIF»«EXPAND FieldValidationCssClass»}
+«REM»
 «ENDIF-»
 «ENDLET-»
+«ENDREM»
 «ENDDEFINE»
 
 «DEFINE FormField FOR FloatField-»
