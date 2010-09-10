@@ -271,7 +271,7 @@
 «DEFINE FormField FOR TextField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
 
 «DEFINE FormFieldTextarea FOR DerivedField-»
-            {formtextinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="multiline" rows="8" cols="50"«EXPAND FieldValidationCssClass»}
+            {formtextinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="multiline" rows="6«REM»8«ENDREM»" cols="50"«EXPAND FieldValidationCssClass»}
 «REM»
     var $group;                     // group name for sub arrays
     var $size;                      // size of HTML input (number of characters)
