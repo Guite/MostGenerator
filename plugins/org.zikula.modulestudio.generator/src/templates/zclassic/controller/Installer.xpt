@@ -176,9 +176,16 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     public function uninstall()
     {
         try {
-«FOREACH models.entities AS entity-»
-            DoctrineUtil::dropTable('«entity.fullEntityName()»');
-«ENDFOREACH-»
+«LET models.getJoinRelations() AS joinRelations-»
+«IF joinRelations.size > 0-»
+            // remove all foreign keys
+«EXPAND RemoveForeignKey FOREACH joinRelations-»
+            // TODO: rename to dropForeignKey after http://code.zikula.org/core/ticket/2531 has been fixed
+«ENDIF-»
+
+«ENDLET-»
+            // remove tables
+«EXPAND RemoveTable FOREACH models.entities-»
         } catch (Exception $e) {
             if (System::isDevelopmentMode()) {
                 LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
@@ -211,6 +218,16 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         // Deletion successful
         return true;
     }
+«ENDDEFINE»
+
+«DEFINE RemoveForeignKey FOR JoinRelationship-»
+            DoctrineUtil::droppedForeignKey('«target.fullEntityName()»', array('name' => '«source.relationFieldName(sourceField)»'));
+            DoctrineUtil::dropIndex('«target.fullEntityName()»', '«source.relationFieldName(sourceField)»');
+«ENDDEFINE»
+«DEFINE RemoveForeignKey FOR ManyToManyRelationship-»
+«ENDDEFINE»
+«DEFINE RemoveTable FOR Entity-»
+            DoctrineUtil::dropTable('«fullEntityName()»');
 «ENDDEFINE»
 
 «DEFINE FuncDefaultData FOR Application»
