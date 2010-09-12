@@ -176,10 +176,10 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     public function uninstall()
     {
         try {
+            $dbPrefix = System::getVar('prefix');
 «LET models.getJoinRelations() AS joinRelations-»
 «IF joinRelations.size > 0-»
             // remove all foreign keys and indexes
-            $dbPrefix = System::getVar('prefix');
 «EXPAND RemoveForeignKey FOREACH joinRelations-»
             // TODO: rename to dropForeignKey after http://code.zikula.org/core/ticket/2531 has been fixed
 «ENDIF-»
@@ -233,6 +233,9 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «DEFINE RemoveForeignKey FOR ManyToManyRelationship-»
 «ENDDEFINE»
 «DEFINE RemoveTable FOR Entity-»
+«IF sluggable-»
+            DoctrineUtil::dropIndex('«fullEntityName()»', $dbPrefix . '_«fullEntityName()»_sluggable');
+«ENDIF-»
             DoctrineUtil::dropTable('«fullEntityName()»');
 «ENDDEFINE»
 
