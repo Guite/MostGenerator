@@ -225,7 +225,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «IF foreignKeyName != null && foreignKeyName != ""-»
             $foreignKeyName = '«foreignKeyName.formatForCode()»';
 «ELSE-»
-            $foreignKeyName = $dbPrefix . '_«target.fullEntityName()»_«getRelationLocalField(false)»_' . $dbPrefix . '_«source.fullEntityName()»_«getRelationLocalField(true)»';
+            $foreignKeyName = $dbPrefix . '_«target.fullEntityName()»_«getRelationLocalField(true)»_' . $dbPrefix . '_«source.fullEntityName()»_«getRelationLocalField(false)»';
 «ENDIF-»
             DoctrineUtil::droppedForeignKey('«target.fullEntityName()»', array('name' => $foreignKeyName));
             DoctrineUtil::dropIndex('«target.fullEntityName()»', '«source.relationFieldName(sourceField)»');
