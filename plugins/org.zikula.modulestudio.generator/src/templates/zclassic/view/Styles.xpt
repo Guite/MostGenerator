@@ -9,6 +9,7 @@
 «ENDDEFINE»
 
 «DEFINE StyleDefines FOR Application-»
+«LET prefix.formatForDB() AS prefixSmall-»
 a.currentSortingLink {
     font-style: italic;
 }
@@ -34,7 +35,12 @@ div.«appName().formatForDB()»RightBox p.manageLink {
     margin: 1em 0;
     padding: 0 0 0 20px;
 }
+«EXPAND ValidationStyles-»
+«EXPAND AutoCompletion(prefixSmall)-»
+«ENDLET-»
+«ENDDEFINE»
 
+«DEFINE ValidationStyles FOR Application-»
 /** validation **/
 input.required, textarea.required {
     border: 1px solid #00a8e6;
@@ -55,18 +61,20 @@ input.validation-passed, textarea.validation-passed {
     color : #fff;
     font-weight: 700;
 }
+«ENDDEFINE»
 
+«DEFINE AutoCompletion(String prefixSmall) FOR Application-»
 «LET models.entities.fields.typeSelect(UserField) AS userFields-»
 «LET models.relations.typeSelect(JoinRelationship) AS joinRelations-»
 «IF joinRelations.size > 0 || userFields.size > 0-»
 «IF userFields.size > 0-»
-div.«appName().formatForDB()»LiveSearchUser {
+div.«prefixSmall»LiveSearchUser {
     margin: 0;
 }
 
 «ENDIF-»
-div.«appName().formatForDB()»AutoComplete«IF userFields.size > 0-»,
-div.«appName().formatForDB()»AutoCompleteUser«ENDIF-» {
+div.«prefixSmall»AutoComplete«IF userFields.size > 0-»,
+div.«prefixSmall»AutoCompleteUser«ENDIF-» {
     position: absolute;
     width: 25em;
     background-color: white;
@@ -75,40 +83,48 @@ div.«appName().formatForDB()»AutoCompleteUser«ENDIF-» {
     padding: 0;
 }
 
-div.«appName().formatForDB()»AutoComplete ul«IF userFields.size > 0-»,
-div.«appName().formatForDB()»AutoCompleteUser ul«ENDIF-» {
+div.«prefixSmall»AutoComplete ul«IF userFields.size > 0-»,
+div.«prefixSmall»AutoCompleteUser ul«ENDIF-» {
     margin: 0;
     padding: 0;
 }
-div.«appName().formatForDB()»AutoComplete ul {
-    list-style-image: url("../../../images/icons/extrasmall/tab_right.gif");
-}
-«IF userFields.size > 0-»
-div.«appName().formatForDB()»AutoCompleteUser ul {
-    list-style-image: url("../../../images/icons/extrasmall/edit_user.gif");
-}
-«ENDIF-»
 
-div.«appName().formatForDB()»AutoComplete ul li«IF userFields.size > 0-»,
-div.«appName().formatForDB()»AutoCompleteUser ul li«ENDIF-» {
+div.«prefixSmall»AutoComplete ul li«IF userFields.size > 0-»,
+div.«prefixSmall»AutoCompleteUser ul li«ENDIF-» {
     margin: 0;
-    padding: 0.1em 0 0.1em 0;
+    padding: 0.2em 0 0.2em 20px;
+    list-style-type: none;
     line-height: 1.4em;
     cursor: pointer;
+    display: block;
+    background-position: 2px 2px;
+    background-repeat: no-repeat;
 }
 
-div.«appName().formatForDB()»AutoComplete ul li.selected«IF userFields.size > 0-»,
-div.«appName().formatForDB()»AutoCompleteUser ul li.selected«ENDIF-» {
+div.«prefixSmall»AutoComplete ul {
+    background-image: url("../../../images/icons/extrasmall/tab_right.gif");
+}
+«IF userFields.size > 0-»
+div.«prefixSmall»AutoCompleteUser ul {
+    background-image: url("../../../images/icons/extrasmall/edit_user.gif");
+}
+«ENDIF-»
+div.«prefixSmall»AutoCompleteWithImage ul li {
+    background-image: url(../../../images/icons/extrasmall/agt_Multimedia.gif);
+}
+
+div.«prefixSmall»AutoComplete ul li.selected«IF userFields.size > 0-»,
+div.«prefixSmall»AutoCompleteUser ul li.selected«ENDIF-» {
     background-color: #ffb;
 }
 
 «IF joinRelations.size > 0-»
-div.«appName().formatForDB()»AutoComplete ul li div.itemtitle {
+div.«prefixSmall»AutoComplete ul li div.itemtitle {
     font-weight: 700;
     font-size: 12px;
     line-height: 1.2em;
 }
-div.«appName().formatForDB()»AutoComplete ul li div.itemdesc {
+div.«prefixSmall»AutoComplete ul li div.itemdesc {
     font-size: 10px;
     color: #888;
 }
