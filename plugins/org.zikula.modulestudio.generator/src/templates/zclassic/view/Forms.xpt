@@ -21,8 +21,8 @@
 «EXPAND FormTemplate(appName, controller, actionName)-»
 «ENDFILE»
 «ENDLET-»
-«EXPAND Forms::Relations::Root(controller, false, true) FOREACH incoming.typeSelect(JoinRelationship)-»
-«EXPAND Forms::Relations::Root(controller, false, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
+«EXPAND FormComponents::Relations::Root(controller, false, true) FOREACH incoming.typeSelect(JoinRelationship)-»
+«EXPAND FormComponents::Relations::Root(controller, false, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 «ENDDEFINE»
 
 «DEFINE FormTemplate(String appName, Controller controller, String actionName) FOR Entity-»
@@ -77,7 +77,7 @@
 «REM»No input fields for foreign keys, relations are processed further down«ENDREM»«""-»
 «IF incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == field.name.formatForDB()).isEmpty-»
         <div class="z-formrow">
-            «EXPAND Forms::SimpleFields::FormRow FOR field»«""-»
+            «EXPAND FormComponents::SimpleFields::FormRow FOR field»«""-»
         </div>
 «ENDIF-»
 «ENDFOREACH-»
@@ -87,8 +87,8 @@
         {include file="«controllerName»/include_metadata_edit.tpl"}
     {/if}
 «ENDIF-»
-«EXPAND Forms::Relations::Root(controller, true, true) FOREACH incoming.typeSelect(JoinRelationship)-»
-«EXPAND Forms::Relations::Root(controller, true, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
+«EXPAND FormComponents::Relations::Root(controller, true, true) FOREACH incoming.typeSelect(JoinRelationship)-»
+«EXPAND FormComponents::Relations::Root(controller, true, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 
     {if $mode eq "edit"}
         {modcallhooks hookobject="item" hookaction="modify" module="«appName»" hookid="«name.formatForDB()»`$«idField()»`" implode=false}
