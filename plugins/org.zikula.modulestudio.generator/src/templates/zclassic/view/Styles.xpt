@@ -67,6 +67,18 @@ input.validation-passed, textarea.validation-passed {
 «LET models.entities.fields.typeSelect(UserField) AS userFields-»
 «LET models.relations.typeSelect(JoinRelationship) AS joinRelations-»
 «IF joinRelations.size > 0 || userFields.size > 0-»
+«IF joinRelations.size > 0-»
+div.«prefixSmall»RelationLeftSide {
+float: left;
+width: 25%;
+}
+
+div.«prefixSmall»RelationRightSide {
+float: right;
+width: 65%;
+}
+
+«ENDIF-»
 «IF userFields.size > 0-»
 div.«prefixSmall»LiveSearchUser {
     margin: 0;
@@ -127,6 +139,10 @@ div.«prefixSmall»AutoComplete ul li div.itemtitle {
 div.«prefixSmall»AutoComplete ul li div.itemdesc {
     font-size: 10px;
     color: #888;
+}
+
+button.«prefixSmall»InlineButton {
+    margin-top: 1em;
 }
 «ENDIF-»
 

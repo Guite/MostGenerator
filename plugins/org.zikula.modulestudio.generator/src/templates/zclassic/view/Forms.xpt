@@ -132,7 +132,11 @@
 
 <script type="text/javascript">
 //<![CDATA[
-
+«REM»not ready yet
+{img modname="core" set="icons/extrasmall" src="editdelete.gif" assign="removeImageArray"}
+    var removeImage = '<img src="{{$removeImageArray.src}}" width="16" height="16" alt="" />';
+    var excludeListCollectionItems = '';
+«ENDREM»
     document.observe('dom:loaded', function() {
 «LET getDerivedFields().typeSelect(UserField) AS userFields-»
 «IF userFields.size > 0-»
@@ -147,6 +151,10 @@
 «ENDFOREACH-»
 «ENDIF-»
 «ENDLET-»
+
+«REM»not ready yet
+        whmedInitCollectionItemsForm();
+«ENDREM»
 
         var valid = new Validation('FormForm', {onSubmit: false, immediate : true});
         {{if $mode ne "create"}}

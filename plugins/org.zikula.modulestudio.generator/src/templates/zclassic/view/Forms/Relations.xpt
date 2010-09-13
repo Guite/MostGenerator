@@ -29,7 +29,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 <fieldset>
     <legend>{gt text='«IF this.metaType == OneToOneRelationship»«target.name.formatForDisplayCapital()»«ELSE»«target.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
     <div class="z-formrow">
-«EXPAND Component_ParentEditing(target, (this.metaType != OneToOneRelationship))-»
+«EXPAND Component_ParentEditing(controller, target, (this.metaType != OneToOneRelationship))-»
     </div>
 </fieldset>
 «ENDFILE-»
@@ -46,8 +46,8 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 <fieldset>
     <legend>{gt text='«IF this.metaType == OneToOneRelationship»«source.name.formatForDisplayCapital()»«ELSE»«source.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
     <div class="z-formrow">
-«EXPAND Component_AutoComplete(source, false)-»
-«IF stageCode == 3-»«EXPAND Component_ChildEditing(source, false)-»«ENDIF-»
+«EXPAND Component_AutoComplete(controller, source, false)-»
+«IF stageCode == 3-»«EXPAND Component_ChildEditing(controller, source, false)-»«ENDIF-»
     </div>
 </fieldset>
 «ENDFILE-»
@@ -58,15 +58,15 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «LET getEditStageCode(incoming) AS stageCode-»
 «IF stageCode == 1 || stageCode == 3-»
 «IF onlyInclude-»
-    {include file="«templateFile(controller, ((incoming) ? source.name : target.name), 'include_select'.msconcat((stageCode == 3) ? 'edit' : '').msconcat('Many'))»"}
+    {include file="«templateFile(controller, ((incoming) ? source.name : target.name), 'include_select'.msconcat((stageCode == 3) ? 'Edit' : '').msconcat('Many'))»"}
 «ELSE-»
 «info("Generating " + controller.name.formatForDB() + " edit inclusion templates for entity \"" + ((incoming) ? source.name.formatForDisplay() : target.name.formatForDisplay()) + "\"") -> ""-»
-«FILE templateFile(controller, ((incoming) ? source.name : target.name), 'include_select'.msconcat((stageCode == 3) ? 'edit' : '').msconcat('Many'))-»
+«FILE templateFile(controller, ((incoming) ? source.name : target.name), 'include_select'.msconcat((stageCode == 3) ? 'Edit' : '').msconcat('Many'))-»
 <fieldset>
     <legend>{gt text='«IF incoming»«source.nameMultiple.formatForDisplayCapital()»«ELSE»«target.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
     <div class="z-formrow">
-«IF !incoming-»«EXPAND ManyToManyHandling(source, target, stageCode)-»
-«ELSE-»«EXPAND ManyToManyHandling(target, source, stageCode)-»
+«IF !incoming-»«EXPAND ManyToManyHandling(controller, source, target, stageCode)-»
+«ELSE-»«EXPAND ManyToManyHandling(controller, target, source, stageCode)-»
 «ENDIF-»
     </div>
 </fieldset>
@@ -76,22 +76,54 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE ManyToManyHandling(Entity source, Entity target, Integer stageCode) FOR ManyToManyRelationship-»
-«EXPAND Component_AutoComplete(target, true)-»
+«DEFINE ManyToManyHandling(Controller controller, Entity source, Entity target, Integer stageCode) FOR ManyToManyRelationship-»
+«EXPAND Component_AutoComplete(controller, target, true)-»
 «IF stageCode == 3-»
-«EXPAND Component_ChildEditing(target, true)-»
+«EXPAND Component_ChildEditing(controller, target, true)-»
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE Component_AutoComplete(Entity targetEntity, Boolean many) FOR JoinRelationship-»
+«DEFINE Component_AutoComplete(Controller controller, Entity targetEntity, Boolean many) FOR JoinRelationship-»
+«LET container.application.prefix.formatForDB() AS prefixSmall-»
+    <div class="«prefixSmall»RelationRightSide">
 «IF !many-»
             <p>TODO SELECT: AutoComplete field for choosing the «targetEntity.name.formatForDisplay()» (including preselection if mode is edit or the ID is given by $_GET)</p>
 «ELSE-»
             <p>TODO SELECT: AutoComplete field for choosing the «targetEntity.nameMultiple.formatForDisplay()»</p>
 «ENDIF-»
+
+        <a id="«prefixSmall»addcollectionitem" href="javascript:void(0);" style="display: none">{gt text='Add assignment'}</a>
+
+        <div id="«prefixSmall»collectionitemaddfields">
+            <label for="newcollectionitem">{gt text='Find media item'}</label>
+            <br />
+            <input type="text" name="«prefixSmall»newcollectionitem" id="«prefixSmall»newcollectionitem" value="" size="42" />
+            <input type="hidden" name="«prefixSmall»newcollectionitemid" id="«prefixSmall»newcollectionitemid" value="" />
+            {img id="ajax_indicator" style="display: none" modname="core" set="icons/extrasmall" src="indicator_circle.gif" alt=""}<br />
+
+            <div id="«prefixSmall»newcollectionitem_choices" class="«prefixSmall»AutoComplete"></div>
+
+            <input type="button" id="«prefixSmall»collectionitemdoadd" name="collectionitemdoadd" value="{gt text='Add'}" class="«prefixSmall»InlineButton" />
+            <input type="button" id="«prefixSmall»collectionitemdocancel" name="collectionitemdocancel" value="{gt text='Cancel'}" class="«prefixSmall»InlineButton" />
+{if $side ne "collection"}«REM»TODO«ENDREM»«""-»
+            <input type="button" id="«prefixSmall»collectionitemdonew" name="collectionitemdonew" value="{gt text='Create new collection'}" class="«prefixSmall»InlineButton" />
+{/if}
+        </div>
+        <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
+    </div>
+    <div class="«prefixSmall»RelationRightSide">
+        {if $userCollectionItems ne ""}«REM»TODO«ENDREM»«""-»
+            {* the user has submitted something *}
+            {include file="«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_selectEditItemList.htm" items=$userCollectionItems}
+        {elseif $mode ne 'create'}
+            {include file="«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_selectEditItemList.htm" items=$collectionItems}
+        {/if}
+    </div>
+    <br style="clear: both" />
+«ENDLET-»
 «ENDDEFINE»
 
-«DEFINE Component_ParentEditing(Entity targetEntity, Boolean many) FOR JoinRelationship-»
+«DEFINE Component_ParentEditing(Controller controller, Entity targetEntity, Boolean many) FOR JoinRelationship-»
 «IF !many-»
             <p>TODO ADD: button to create a new «targetEntity.name.formatForDisplay()» with inline editing (form dialog)</p>
             <p>TODO EDIT: display of related «targetEntity.name.formatForDisplay()» with inline editing (form dialog)</p>
@@ -101,7 +133,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE Component_ChildEditing(Entity targetEntity, Boolean many) FOR JoinRelationship-»
+«DEFINE Component_ChildEditing(Controller controller, Entity targetEntity, Boolean many) FOR JoinRelationship-»
 «IF !many-»
             <p>TODO ADD: button to create a new «targetEntity.name.formatForDisplay()» with inline editing (form dialog)</p>
             <p>TODO EDIT: display of related «targetEntity.name.formatForDisplay()» with inline editing (form dialog)</p>

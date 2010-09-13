@@ -84,8 +84,12 @@ function «prefixSmall»InitRelationItemsForm()
                     $('«prefixSmall»collectionitemdoadd').disabled = false;
             }
     };
-    autoCompleter = new Ajax.Autocompleter('«prefixSmall»newcollectionitem', '«prefixSmall»newcollectionitem_choices',
-                                            Zikula.Config['baseURL'] + 'ajax.php?module=«appName()»&func=getItemList', acOptions);
+    new Ajax.Autocompleter(
+        '«prefixSmall»newcollectionitem',
+        '«prefixSmall»newcollectionitem_choices',
+        Zikula.Config['baseURL'] + 'ajax.php?module=«appName()»&func=getItemList',
+        acOptions
+    );
 
     $('«prefixSmall»collectionitemdoadd').observe('click', function() {
         var newTitle = $F('«prefixSmall»newcollectionitem');
