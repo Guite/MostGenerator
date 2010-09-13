@@ -1,6 +1,7 @@
 «IMPORT modulestudio»
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
 
 «DEFINE Root FOR Application-»
 «IF hasUploads()-»

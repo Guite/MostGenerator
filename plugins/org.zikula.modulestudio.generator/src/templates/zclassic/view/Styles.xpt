@@ -65,8 +65,8 @@ div.«appName().formatForDB()»LiveSearchUser {
 }
 
 «ENDIF-»
-div.«appName().formatForDB()»AutoComplete,
-div.«appName().formatForDB()»AutoCompleteUser {
+div.«appName().formatForDB()»AutoComplete«IF userFields.size > 0-»,
+div.«appName().formatForDB()»AutoCompleteUser«ENDIF-» {
     position: absolute;
     width: 25em;
     background-color: white;
@@ -75,30 +75,45 @@ div.«appName().formatForDB()»AutoCompleteUser {
     padding: 0;
 }
 
-div.«appName().formatForDB()»AutoComplete ul,
-div.«appName().formatForDB()»AutoCompleteUser ul {
+div.«appName().formatForDB()»AutoComplete ul«IF userFields.size > 0-»,
+div.«appName().formatForDB()»AutoCompleteUser ul«ENDIF-» {
     margin: 0;
     padding: 0;
 }
 div.«appName().formatForDB()»AutoComplete ul {
     list-style-image: url("../../../images/icons/extrasmall/tab_right.gif");
 }
+«IF userFields.size > 0-»
 div.«appName().formatForDB()»AutoCompleteUser ul {
     list-style-image: url("../../../images/icons/extrasmall/edit_user.gif");
 }
+«ENDIF-»
 
-div.«appName().formatForDB()»AutoComplete ul li,
-div.«appName().formatForDB()»AutoCompleteUser ul li {
+div.«appName().formatForDB()»AutoComplete ul li«IF userFields.size > 0-»,
+div.«appName().formatForDB()»AutoCompleteUser ul li«ENDIF-» {
     margin: 0;
     padding: 0.1em 0 0.1em 0;
     line-height: 1.4em;
     cursor: pointer;
 }
 
-div.«appName().formatForDB()»AutoComplete ul li.selected,
-div.«appName().formatForDB()»AutoCompleteUser ul li.selected {
+div.«appName().formatForDB()»AutoComplete ul li.selected«IF userFields.size > 0-»,
+div.«appName().formatForDB()»AutoCompleteUser ul li.selected«ENDIF-» {
     background-color: #ffb;
 }
+
+«IF joinRelations.size > 0-»
+div.«appName().formatForDB()»AutoComplete ul li div.itemtitle {
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 1.2em;
+}
+div.«appName().formatForDB()»AutoComplete ul li div.itemdesc {
+    font-size: 10px;
+    color: #888;
+}
+«ENDIF-»
+
 «ENDIF-»
 «ENDLET-»
 «ENDLET-»

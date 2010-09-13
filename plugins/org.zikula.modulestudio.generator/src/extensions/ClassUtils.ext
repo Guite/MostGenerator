@@ -93,11 +93,13 @@ cached String templateSuffix()
     : ".tpl";
 
 cached String templateFile(Controller obj, String entityName, String actionName)
-    : "templates/".msconcat(obj.name.formatForDB()).msconcat('/').msconcat(formatForCode(entityName)).msconcat('_').prepTemplatePart(actionName).msconcat(templateSuffix());
+    : "templates/".msconcat(obj.name.formatForDB()).msconcat('/').msconcat(formatForCode(entityName)).msconcat('/').prepTemplatePart(actionName).msconcat(templateSuffix());
 
 cached String editTemplateFile(Controller obj, String entityName, String actionName)
     : templateFile(obj, entityName, actionName);
     
 
+cached String viewPluginFilePath(Application app, String pluginType, String pluginName)
+    : 'templates/plugins/'.msconcat(pluginType).msconcat('.').msconcat(app.appName().formatForDB()).msconcat(pluginName).msconcat('.php');
 
 

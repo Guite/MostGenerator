@@ -46,7 +46,7 @@ class «appName()»_Base_Util
      */
     public static function processViewTemplate($view, $type, $objectType, $func, $args=array())
     {
-        $template = DataUtil::formatForOS($type . '/' . $objectType . '_' . $func);
+        $template = DataUtil::formatForOS($type . '/' . $objectType . '/' . $func);
         $tpl = FormUtil::getPassedValue('tpl', isset($args['tpl']) ? $args['tpl'] : '');
         if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.tpl')) {
             $template .= '_' . DataUtil::formatForOS($tpl);

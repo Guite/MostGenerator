@@ -194,7 +194,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $handlerClass = '«appName.toFirstUpper()»_Form_Handler_«controller.name.formatForDB().toFirstUpper()»_' . ucfirst($objectType) . '_Edit';
 
         // execute form using supplied template and page event handler
-        return $view->execute('«controller.name.formatForDB()»/' . $objectType . '_edit.tpl', new $handlerClass());
+        return $view->execute('«controller.name.formatForDB()»/' . $objectType . '/edit.tpl', new $handlerClass());
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR DeleteAction-»
