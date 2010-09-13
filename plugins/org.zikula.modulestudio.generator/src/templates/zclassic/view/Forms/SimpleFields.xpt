@@ -150,6 +150,7 @@
                 {img id="ajax_indicator" style="display: none" modname='core' set='icons/extrasmall' src="indicator_circle.gif" alt=""}
                 <div id="«realName»desc_choices" class="«entity.container.application.prefix.formatForDB()»AutoCompleteUser"></div>
             </div>
+            <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
             <input type="hidden" id="«realName»" name="«realName»" value="{«realName»}" />
             {if $mode ne "create" && $«realName»}<div class="z-formnote"><a href="{modurl modname="Users" type="admin" func="modify" userid=$«realName»}" title="{gt text="Switch to the user administration"}">{gt text="Manage user"}</a></div>{/if}
 «ENDLET»
