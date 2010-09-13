@@ -104,6 +104,51 @@ class «appName()»_Base_Util
 
 	    return $basePath;
     }
+
+    /**
+     * display a given file size in a readable format
+     *
+     * @param        size           string        file size in bytes
+     * @param        nodesc         boolean       if set to true the description will not be appended
+     * @param        onlydesc       boolean       if set to true only the description will be returned
+     * @return string file size in a readable form
+     */
+    public static function getReadableFileSize($size, $nodesc = false, $onlydesc = false)
+    {
+        $dom = ZLanguage::getModuleDomain('«appName()»');
+        $sizeDesc = __('Bytes', $dom);
+        if ($size >= 1024) {
+            $size /= 1024;
+            $sizeDesc = __('KB', $dom);
+        }
+        if ($size >= 1024) {
+            $size /= 1024;
+            $sizeDesc = __('MB', $dom);
+        }
+        if ($size >= 1024) {
+            $size /= 1024;
+            $sizeDesc = __('GB', $dom);
+        }
+        $sizeDesc = '&nbsp;' . $sizeDesc;
+
+        // format number
+        $dec_point = ',';
+        $thousands_separator = '.';
+        if ($size - number_format($size, 0) >= 0.005) {
+            $size = number_format($size, 2, $dec_point, $thousands_separator);
+        } else {
+            $size = number_format($size, 0, '', $thousands_separator);
+        }
+
+        // append size descriptor if desired
+        if (!$nodesc) {
+            $size .= $sizeDesc;
+        }
+
+        // return either only the description or the complete string
+        $result = ($onlydesc) ? $sizeDesc : $size;
+        return $result;
+    }
 «ENDIF-»
 }
 «ENDDEFINE»

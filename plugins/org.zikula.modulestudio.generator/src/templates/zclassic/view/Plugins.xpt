@@ -5,7 +5,10 @@
 «EXPAND Plugins::FormFrame::Root-»
 «EXPAND Plugins::SelectorObjectTypes::Root-»
 «EXPAND Plugins::SelectorTemplates::Root-»
-«EXPAND Plugins::ImageThumb::Root-»
 «EXPAND Plugins::ValidationError::Root-»
+«IF hasUploads()-»
+«EXPAND Plugins::ImageThumb::Root-»
+«EXPAND Plugins::GetFileSize::Root-»
+«ENDIF-»
 «ENDDEFINE»
 

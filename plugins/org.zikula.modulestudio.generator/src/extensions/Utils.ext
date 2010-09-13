@@ -222,6 +222,9 @@ cached String fieldTypeAsString(AbstractIntegerField f)
 cached String fieldTypeAsString(AbstractStringField f)
     : 'string';
 
+cached String viewPluginFilePath(Application app, String pluginType, String pluginName)
+    : 'templates/plugins/'.msconcat(pluginType).msconcat('.').msconcat(app.appName().formatForDB()).msconcat(pluginName).msconcat('.php');
+
 cached String timestamp()
 	: JAVA extensions.Utils.timestamp();
 

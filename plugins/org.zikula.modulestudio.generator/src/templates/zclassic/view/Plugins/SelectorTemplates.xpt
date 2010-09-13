@@ -4,7 +4,7 @@
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Root FOR Application-»
-«FILE "templates/plugins/function.".msconcat(appName().formatForDB()).msconcat('SelectorTemplates.php')-»«EXPAND FileHelper::phpFileHeader(this)-»
+«FILE viewPluginFilePath(this, 'function', 'SelectorTemplates')-»«EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * The «appName().formatForDB()»SelectorTemplates plugin provides items for a dropdown selector.
  *

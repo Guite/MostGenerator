@@ -4,7 +4,7 @@
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Root FOR Application-»
-«FILE "templates/plugins/function.".msconcat(appName().formatForDB()).msconcat('ValidationError.php')-»«EXPAND FileHelper::phpFileHeader(this)-»
+«FILE viewPluginFilePath(this, 'function', 'ValidationError')-»«EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * The «appName().formatForDB()»ValidationError plugin returns appropriate (and multilingual) error messages for different validation error types.
  *

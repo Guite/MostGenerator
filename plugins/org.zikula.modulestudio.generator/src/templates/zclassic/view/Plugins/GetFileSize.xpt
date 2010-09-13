@@ -1,0 +1,42 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+
+«DEFINE Root FOR Application-»
+«IF hasUploads()-»
+«FILE viewPluginFilePath(this, 'modifier', 'GetFileSize')-»«EXPAND FileHelper::phpFileHeader(this)-»
+«EXPAND GetFileSize-»
+«ENDFILE»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE GetFileSize FOR Application-»
+/**
+ * The «appName().formatForDB()»GetThumb modifier displays the size of a given file in a readable way
+ *
+ * @param        size           string        file size in bytes
+ * @param        filepath       string        The input file path including file name (if file size is not known)
+ * @param        nodesc         boolean       if set to true the description will not be appended
+ * @param        onlydesc       boolean       if set to true only the description will be returned
+ * @return string file size in a readable form
+ */
+function smarty_modifier_«appName().formatForDB()»GetFileSize($size = 0, $filepath = '', $nodesc = false, $onlydesc = false)
+{
+    if (!is_numeric($size)) {
+        $size = (int) $size;
+    }
+    if (!$size) {
+        if (empty($filepath) || !file_exists($filepath)) {
+            return '';
+        }
+        $size = filesize($filepath);
+    }
+    if (!$size) {
+        return '';
+    }
+
+    $result = «appName()»_Util::getReadableFileSize($size, $nodesc, $onlydesc);
+
+    return $result;
+}
+«ENDDEFINE»

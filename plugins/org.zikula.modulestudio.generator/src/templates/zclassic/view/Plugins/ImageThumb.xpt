@@ -4,17 +4,15 @@
 
 «DEFINE Root FOR Application-»
 «IF hasUploads()-»
-«LET "templates/plugins/" AS pluginDir-»
-«FILE pluginDir.msconcat('modifier.').msconcat(appName().formatForDB()).msconcat('ImageThumb.php')-»«EXPAND FileHelper::phpFileHeader(this)-»
+«FILE viewPluginFilePath(this, 'modifier', 'ImageThumb')-»«EXPAND FileHelper::phpFileHeader(this)-»
 «EXPAND ImageThumbModifier-»
 «ENDFILE»
-«ENDLET-»
 «ENDIF-»
 «ENDDEFINE»
 
 «DEFINE ImageThumbModifier FOR Application-»
 /**
- * The «appName().formatForDB()»ImageThumb plugin displays a thumbnail image
+ * The «appName().formatForDB()»ImageThumb modifier displays a thumbnail image
  *
  * @param  string    $filename   The input file name.
  * @param  string    $filename   The input file path (including file name).

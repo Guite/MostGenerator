@@ -229,13 +229,17 @@ listType:
             {if $«objName».«actualFieldName().formatForCode()» gt 0}{$«objName».«actualFieldName().formatForCode()»|userprofilelink}{else}-{/if}«""-»
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR UploadField-»
-            <a href="{$«objName».«actualFieldName().formatForCode()»FullPathURL}" title="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}"{if $«objName».«actualFieldName().formatForCode()»IsImage} rel="imageviewer[«entity.nameMultiple.formatForDB()»]"{/if}>
-            {if $«objName».«actualFieldName().formatForCode()»IsImage}
-                <img src="{$«objName».«actualFieldName().formatForCode()»|«entity.container.application.appName().formatForDB()»ImageThumb:$«objName».«actualFieldName().formatForCode()»FullPath:50:40}" width="50" height="40" alt="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
+«LET entity.container.application.appName().formatForDB() AS appNameSmall-»
+«LET actualFieldName().formatForCode() AS realName-»
+            <a href="{$«objName».«realName»FullPathURL}" title="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}"{if $«objName».«realName»IsImage} rel="imageviewer[«entity.nameMultiple.formatForDB()»]"{/if}>
+            {if $«objName».«realName»IsImage}
+                <img src="{$«objName».«realName»|«appNameSmall»ImageThumb:$«objName».«realName»FullPath:50:40}" width="50" height="40" alt="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
             {else}
-                {gt text='Download'}
+                {gt text='Download'} ({$«objName».«realName»FullPath|«appNameSmall»GetFileSize:false:false})
             {/if}
             </a>
+«ENDLET-»
+«ENDLET-»
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR DateField-»
             {$«objName».«actualFieldName().formatForCode()»|dateformat:"datebrief"}
