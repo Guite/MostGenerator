@@ -181,7 +181,6 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «IF joinRelations.size > 0-»
             // remove all foreign keys and indexes
 «EXPAND RemoveForeignKey FOREACH joinRelations-»
-            // TODO: rename to dropForeignKey after http://code.zikula.org/core/ticket/2531 has been fixed
 «ENDIF-»
 
 «ENDLET-»
@@ -227,7 +226,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ELSE-»
             $foreignKeyName = $dbPrefix . '_«target.fullEntityName()»_«getRelationLocalField(true)»_' . $dbPrefix . '_«source.fullEntityName()»_«getRelationLocalField(false)»';
 «ENDIF-»
-            DoctrineUtil::droppedForeignKey('«target.fullEntityName()»', array('name' => $foreignKeyName));
+            DoctrineUtil::dropForeignKey('«target.fullEntityName()»', array('name' => $foreignKeyName));
             DoctrineUtil::dropIndex('«target.fullEntityName()»', '«IF targetField == "id" || targetField == (target.name.formatForDB() + "id")»«source.relationFieldName(sourceField)»«ELSE»«target.relationFieldName(targetField)»«ENDIF»');
 «ENDDEFINE»
 «DEFINE RemoveForeignKey FOR ManyToManyRelationship-»
