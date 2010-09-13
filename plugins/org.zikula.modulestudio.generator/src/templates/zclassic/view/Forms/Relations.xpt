@@ -22,10 +22,10 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «REM»Parent/active/source view for 1:1 and 1:n«ENDREM»
 «DEFINE ActiveParentImpl(Controller controller, Boolean onlyInclude) FOR JoinRelationship-»
 «IF onlyInclude-»
-    {include file="«templateFile(controller, target.name, 'include_select'.msconcat(getTargetMultiplicity()))»"}
+    {include file="«templateFile(controller, target.name, 'include_createChildItem'.msconcat(getTargetMultiplicity()))»"}
 «ELSE-»
 «info("Generating " + controller.name.formatForDB() + " edit inclusion templates for entity \"" + target.name.formatForDisplay() + "\"") -> ""-»
-«FILE templateFile(controller, target.name, 'include_select'.msconcat(getTargetMultiplicity()))-»
+«FILE templateFile(controller, target.name, 'include_createChildItem'.msconcat(getTargetMultiplicity()))-»
 <fieldset>
     <legend>{gt text='«IF this.metaType == OneToOneRelationship»«target.name.formatForDisplayCapital()»«ELSE»«target.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
     <div class="z-formrow">
@@ -39,10 +39,10 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «REM»Child/passive/target view for 1:1 and 1:n«ENDREM»
 «DEFINE PassiveChildImpl(Controller controller, Boolean onlyInclude, Integer stageCode) FOR JoinRelationship-»
 «IF onlyInclude-»
-    {include file="«templateFile(controller, source.name, 'include_selectOne')»"}
+    {include file="«templateFile(controller, source.name, 'include_select'.msconcat((stageCode == 3) ? 'edit' : '').msconcat('One'))»"}
 «ELSE-»
 «info("Generating " + controller.name.formatForDB() + " edit inclusion templates for entity \"" + source.name.formatForDisplay() + "\"") -> ""-»
-«FILE templateFile(controller, source.name, 'include_selectOne')-»
+«FILE templateFile(controller, source.name, 'include_select'.msconcat((stageCode == 3) ? 'edit' : '').msconcat('One'))-»
 <fieldset>
     <legend>{gt text='«IF this.metaType == OneToOneRelationship»«source.name.formatForDisplayCapital()»«ELSE»«source.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
     <div class="z-formrow">
@@ -58,10 +58,10 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «LET getEditStageCode(incoming) AS stageCode-»
 «IF stageCode == 1 || stageCode == 3-»
 «IF onlyInclude-»
-    {include file="«templateFile(controller, ((incoming) ? source.name : target.name), 'include_selectMany')»"}
+    {include file="«templateFile(controller, ((incoming) ? source.name : target.name), 'include_select'.msconcat((stageCode == 3) ? 'edit' : '').msconcat('Many'))»"}
 «ELSE-»
 «info("Generating " + controller.name.formatForDB() + " edit inclusion templates for entity \"" + ((incoming) ? source.name.formatForDisplay() : target.name.formatForDisplay()) + "\"") -> ""-»
-«FILE templateFile(controller, ((incoming) ? source.name : target.name), 'include_selectMany')-»
+«FILE templateFile(controller, ((incoming) ? source.name : target.name), 'include_select'.msconcat((stageCode == 3) ? 'edit' : '').msconcat('Many'))-»
 <fieldset>
     <legend>{gt text='«IF incoming»«source.nameMultiple.formatForDisplayCapital()»«ELSE»«target.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
     <div class="z-formrow">

@@ -93,7 +93,7 @@ cached String templateSuffix()
     : ".tpl";
 
 cached String templateFile(Controller obj, String entityName, String actionName)
-    : "templates/".msconcat(obj.name.formatForDB()).msconcat('/').msconcat(formatForCode(entityName)).msconcat('/').prepTemplatePart(actionName).msconcat(templateSuffix());
+    : "templates/".msconcat(obj.name.formatForDB()).msconcat('/').msconcat(formatForCode(entityName)).msconcat('/').msconcat(actionName).msconcat(templateSuffix());
 
 cached String editTemplateFile(Controller obj, String entityName, String actionName)
     : templateFile(obj, entityName, actionName);
