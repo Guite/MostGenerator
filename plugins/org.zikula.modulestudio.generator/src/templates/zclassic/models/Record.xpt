@@ -12,7 +12,7 @@
 
 «REM»creates a record class file for every Entity instance«ENDREM»
 «DEFINE Root(Application app) FOR Entity-»
-«info("Generating record classes for entity \"" + name + "\"") -> ""-»
+«info("Generating record classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «IF !isInheriting()-»
     «FILE baseClassModelRecord().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRecordBaseImpl(app)»«ENDFILE»
 «ENDIF-»

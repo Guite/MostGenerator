@@ -136,6 +136,11 @@ cached getRelationLocalField(JoinRelationship this, Boolean incoming)
 cached getRelationForeignField(JoinRelationship this, Boolean incoming)
     : (incoming) ? source.relationFieldName(sourceField) : ((targetField != "id" && targetField != (target.name + "id")) ? target.relationFieldName(targetField) : source.relationFieldName(sourceField));
 
+cached String getTargetMultiplicity(JoinRelationship this)
+    : 'Many';
+cached String getTargetMultiplicity(OneToOneRelationship this)
+    : 'One';
+
 /* retrieve integer value defining which relation edit type will be implemented
  * this mapping is done to have a more appropriate logic inside the generator
  * possible values:
@@ -166,6 +171,8 @@ cached Integer getEditStageCode(ManyToManyRelationship this, Boolean incoming) :
        case RelationEditType::ACTIVE_EDIT_PASSIVE_NONE      : ((incoming) ? 0 : 3)
        default: ((incoming) ? 3 : 3)
     };
+
+
 
 cached boolean hasActions(Controller controller, String type) :
 	switch (type) {

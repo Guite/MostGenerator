@@ -5,7 +5,6 @@
 
 «DEFINE Root FOR Application»
 «FOREACH controllers.controllers AS controller-»
-«info("Generating " + controller.name.formatForDB() + " view templates for entity \"" + name + "\"") -> ""-»
 «IF controller.metaType == UserController
     || controller.metaType == AdminController-»
     «EXPAND HeaderFooter(appName(), controller)-»

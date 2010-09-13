@@ -15,12 +15,14 @@
 
 «REM»Entry point for Form templates«ENDREM»
 «DEFINE Root(String appName, Controller controller, String actionName) FOR Entity-»
-«info("Generating edit form templates for entity \"" + name + "\"") -> ""-»
+«info("Generating edit form templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «LET controller.name.formatForDB() AS controllerName-»
 «FILE editTemplateFile(controller, name, actionName)-»
 «EXPAND FormTemplate(appName, controller, actionName)-»
 «ENDFILE»
 «ENDLET-»
+«EXPAND Forms::Relations::Root(controller, false, true) FOREACH incoming.typeSelect(JoinRelationship)-»
+«EXPAND Forms::Relations::Root(controller, false, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 «ENDDEFINE»
 
 «DEFINE FormTemplate(String appName, Controller controller, String actionName) FOR Entity-»
@@ -85,8 +87,8 @@
         {include file="«controllerName»/include_metadata_edit.tpl"}
     {/if}
 «ENDIF-»
-    «EXPAND Forms::Relations::Root(true) FOREACH incoming.typeSelect(JoinRelationship)-»
-    «EXPAND Forms::Relations::Root(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
+«EXPAND Forms::Relations::Root(controller, true, true) FOREACH incoming.typeSelect(JoinRelationship)-»
+«EXPAND Forms::Relations::Root(controller, true, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 
     {if $mode eq "edit"}
         {modcallhooks hookobject="item" hookaction="modify" module="«appName»" hookid="«name.formatForDB()»`$«idField()»`" implode=false}

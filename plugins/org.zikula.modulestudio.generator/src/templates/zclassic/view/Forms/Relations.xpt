@@ -1,48 +1,77 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
-«REM»Entry point for form sections treating related objects«ENDREM»
-«DEFINE Root(Boolean incoming) FOR JoinRelationship-»
+«REM»
+Entry point for form sections treating related objects.
+Note many-to-many is handled in a separate define further down.
+If onlyInclude is true then only the Smarty include is created, otherwise the included file.
+«ENDREM»
+«DEFINE Root(Controller controller, Boolean onlyInclude, Boolean incoming) FOR JoinRelationship-»
 «LET getEditStageCode(incoming) AS stageCode-»
+«REM»Look if we have to do anything by checking stage codes which represent different edit behaviors«ENDREM»«""-»
 «IF (!incoming && stageCode == 2) || (incoming && (stageCode == 1 || stageCode == 3))-»
-    <fieldset>
-«IF !incoming-»«EXPAND ActiveParentImpl-»
-«ELSE-»«EXPAND PassiveChildImpl(stageCode)-»
+«IF !incoming-»«EXPAND ActiveParentImpl(controller, onlyInclude)-»
+«ELSE-»«EXPAND PassiveChildImpl(controller, onlyInclude, stageCode)-»
 «ENDIF-»
-    </fieldset>
 «ENDIF-»
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE ActiveParentImpl FOR JoinRelationship-»
-        <legend>{gt text='«IF this.metaType == OneToOneRelationship»«target.name.formatForDisplayCapital()»«ELSE»«target.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
-        <div class="z-formrow">
-«IF this.metaType == OneToOneRelationship-»«EXPAND Component_ParentEditing(target, false)-»
-«ELSE-»«EXPAND Component_ParentEditing(target, true)-»
+«REM»Parent/active/source view for 1:1 and 1:n«ENDREM»
+«DEFINE ActiveParentImpl(Controller controller, Boolean onlyInclude) FOR JoinRelationship-»
+«IF onlyInclude-»
+    {include file="«templateFile(controller, target.name, 'include_select'.msconcat(getTargetMultiplicity()))»"}
+«ELSE-»
+«info("Generating " + controller.name.formatForDB() + " edit inclusion templates for entity \"" + target.name.formatForDisplay() + "\"") -> ""-»
+«FILE templateFile(controller, target.name, 'include_select'.msconcat(getTargetMultiplicity()))-»
+<fieldset>
+    <legend>{gt text='«IF this.metaType == OneToOneRelationship»«target.name.formatForDisplayCapital()»«ELSE»«target.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
+    <div class="z-formrow">
+«EXPAND Component_ParentEditing(target, (this.metaType != OneToOneRelationship))-»
+    </div>
+</fieldset>
+«ENDFILE-»
 «ENDIF-»
-        </div>
 «ENDDEFINE»
 
-«DEFINE PassiveChildImpl(Integer stageCode) FOR JoinRelationship-»
-        <legend>{gt text='«IF this.metaType == OneToOneRelationship»«source.name.formatForDisplayCapital()»«ELSE»«source.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
-        <div class="z-formrow">
+«REM»Child/passive/target view for 1:1 and 1:n«ENDREM»
+«DEFINE PassiveChildImpl(Controller controller, Boolean onlyInclude, Integer stageCode) FOR JoinRelationship-»
+«IF onlyInclude-»
+    {include file="«templateFile(controller, source.name, 'include_selectOne')»"}
+«ELSE-»
+«info("Generating " + controller.name.formatForDB() + " edit inclusion templates for entity \"" + source.name.formatForDisplay() + "\"") -> ""-»
+«FILE templateFile(controller, source.name, 'include_selectOne')-»
+<fieldset>
+    <legend>{gt text='«IF this.metaType == OneToOneRelationship»«source.name.formatForDisplayCapital()»«ELSE»«source.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
+    <div class="z-formrow">
 «EXPAND Component_AutoComplete(source, false)-»
 «IF stageCode == 3-»«EXPAND Component_ChildEditing(source, false)-»«ENDIF-»
-        </div>
+    </div>
+</fieldset>
+«ENDFILE-»
+«ENDIF-»
 «ENDDEFINE»
 
-«DEFINE Root(Boolean incoming) FOR ManyToManyRelationship-»
+«DEFINE Root(Controller controller, Boolean incoming, Boolean onlyInclude) FOR ManyToManyRelationship-»
 «LET getEditStageCode(incoming) AS stageCode-»
 «IF stageCode == 1 || stageCode == 3-»
-    <fieldset>
-        <legend>{gt text='«IF incoming»«source.nameMultiple.formatForDisplayCapital()»«ELSE»«target.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
-        <div class="z-formrow">
+«IF onlyInclude-»
+    {include file="«templateFile(controller, ((incoming) ? source.name : target.name), 'include_selectMany')»"}
+«ELSE-»
+«info("Generating " + controller.name.formatForDB() + " edit inclusion templates for entity \"" + ((incoming) ? source.name.formatForDisplay() : target.name.formatForDisplay()) + "\"") -> ""-»
+«FILE templateFile(controller, ((incoming) ? source.name : target.name), 'include_selectMany')-»
+<fieldset>
+    <legend>{gt text='«IF incoming»«source.nameMultiple.formatForDisplayCapital()»«ELSE»«target.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
+    <div class="z-formrow">
 «IF !incoming-»«EXPAND ManyToManyHandling(source, target, stageCode)-»
 «ELSE-»«EXPAND ManyToManyHandling(target, source, stageCode)-»
 «ENDIF-»
-        </div>
-    </fieldset>
+    </div>
+</fieldset>
+«ENDFILE-»
+«ENDIF-»
 «ENDIF-»
 «ENDLET-»
 «ENDDEFINE»
@@ -50,7 +79,7 @@
 «DEFINE ManyToManyHandling(Entity source, Entity target, Integer stageCode) FOR ManyToManyRelationship-»
 «EXPAND Component_AutoComplete(target, true)-»
 «IF stageCode == 3-»
-«EXPAND Component_ChildEditing(source, true)-»
+«EXPAND Component_ChildEditing(target, true)-»
 «ENDIF-»
 «ENDDEFINE»
 
@@ -81,4 +110,3 @@
             <p>TODO EDIT: list of related «targetEntity.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
 «ENDIF-»
 «ENDDEFINE»
-

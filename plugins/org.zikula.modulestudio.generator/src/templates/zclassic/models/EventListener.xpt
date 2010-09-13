@@ -11,7 +11,7 @@
 
 «REM»creates a listener class file for every Entity instance«ENDREM»
 «DEFINE Root(Application app) FOR Entity-»
-«info("Generating listener classes for entity \"" + name + "\"") -> ""-»
+«info("Generating listener classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «REM»Later: «EXPAND EventListenerMethod FOREACH listeners-»«ENDREM»«""-»
 «IF !isInheriting()-»
     «FILE baseClassModelListener().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelListenerBaseImpl(app)»«ENDFILE»

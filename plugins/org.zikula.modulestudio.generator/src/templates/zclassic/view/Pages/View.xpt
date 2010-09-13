@@ -12,7 +12,7 @@ listType:
 «ENDREM»
 «DEFINE Impl(String appName, Controller controller, Integer listType) FOR Entity»
 «LET controller.name.formatForDB() AS controllerName-»
-«info("Generating " + controllerName + " view templates for entity \"" + name + "\"") -> ""-»
+«info("Generating " + controllerName + " view templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «LET name.formatForCode() AS objName-»
 «FILE templateFile(controller, name, 'view')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» view view in «controllerName» area *}

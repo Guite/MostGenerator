@@ -5,7 +5,7 @@
 
 «DEFINE Impl(String appName, Controller controller) FOR Entity»
 «LET controller.name.formatForDB() AS controllerName-»
-«info("Generating " + controllerName + " delete templates for entity \"" + name + "\"") -> ""-»
+«info("Generating " + controllerName + " delete templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «LET name.formatForCode() AS objName-»
 «FILE templateFile(controller, name, 'delete')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» delete confirmation view in «controllerName» area *}

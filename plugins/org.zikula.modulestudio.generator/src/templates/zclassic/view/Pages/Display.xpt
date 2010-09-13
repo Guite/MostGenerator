@@ -5,7 +5,7 @@
 
 «DEFINE Impl(String appName, Controller controller) FOR Entity»
 «LET controller.name.formatForDB() AS controllerName-»
-«info("Generating " + controllerName + " display templates for entity \"" + name + "\"") -> ""-»
+«info("Generating " + controllerName + " display templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «LET name.formatForCode() AS objName-»
 «FILE templateFile(controller, name, 'display')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» display view in «controllerName» area *}
