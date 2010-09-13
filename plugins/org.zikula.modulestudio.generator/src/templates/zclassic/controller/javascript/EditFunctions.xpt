@@ -1,0 +1,239 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«REM»start point for the javascript file with edit functionality«ENDREM»
+«DEFINE Root FOR Application-»
+«LET prefix.formatForDB() AS prefixSmall-»
+«FILE 'javascript/'.msconcat(appName()).msconcat('_editFunctions.js')-»
+<!--
+
+«EXPAND InitUserField-»
+«EXPAND RelationFunctions(prefixSmall)-»
+
+-->
+«ENDFILE»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE InitUserField FOR Application-»
+«IF models.entities.getDerivedFields().typeSelect(UserField).size > 0-»
+function «prefix.formatForDB()»InitUserField(fieldName, getterName)
+{
+    if (!$(fieldName + 'liveusersearch')) {
+        return;
+    }
+    $(fieldName + 'liveusersearch').removeClassName('z-hide');
+    new Ajax.Autocompleter(
+        fieldName + 'desc',
+        fieldName + 'desc_choices',
+        Zikula.Config['baseURL'] + 'ajax.php?module=«appName()»&func=' + getterName,
+        {
+            paramName: 'fragment',
+            minChars: 3,
+            afterUpdateElement: function(data) {
+                $(fieldName).value = $($(data).value).value;
+            }
+        }
+    );
+}
+
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE RelationFunctions(String prefixSmall) FOR Application-»
+«IF models.relations.size > 0-»
+«EXPAND InitRelatedItemsForm(prefixSmall)-»
+«EXPAND RemoveRelatedItem(prefixSmall)-»
+«EXPAND ResetRelatedItemForm(prefixSmall)-»
+«EXPAND ToggleRelatedItemForm(prefixSmall)-»
+«EXPAND FakeKeyPress(prefixSmall)-»
+«EXPAND ResetCreateRelatedItemForm(prefixSmall)-»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE InitRelatedItemsForm(String prefixSmall) FOR Application-»
+function «prefixSmall»InitRelationItemsForm()
+{
+    excludedItemIDs = $F('«prefixSmall»collectionitemexcludelist');
+    $('«prefixSmall»addcollectionitem').observe('click', «prefixSmall»ToggleCollectionItemForm);
+    «prefixSmall»ResetCollectionItemForm();
+
+    mediaItemPreview = '';
+    var wantedType = ($F('«prefixSmall»collectionitemview') == 'mediaItem') ? 'mediaCollection' : 'mediaItem';
+
+    var acOptions = {
+            paramName: 'fragment',
+            minChars: 2,
+            callback: function(inputField, defaultQueryString) {
+                    // Called just before the Request is actually made, allowing to modify the querystring that is sent to the server.
+                    defaultQueryString += '&ot=' + wantedType + '&exclude=' + excludedItemIDs;
+                    return defaultQueryString;
+            },
+            afterUpdateElement: function(inputField, selectedListItem) {
+                    // Called after the input element has been updated (i.e. when the user has selected an entry).
+                    // This function is called after the built-in function that adds the list item text to the input field.
+                    var componentName = $F(inputField);
+                    $('«prefixSmall»newcollectionitemid').value = selectedListItem.id;
+                    if (wantedType == 'mediaItem') {
+                        mediaItemPreview = $('itempreview' + selectedListItem.id).innerHTML;
+                    }
+
+                    $('«prefixSmall»newcollectionitem').disabled = true;
+                    $('«prefixSmall»collectionitemdoadd').disabled = false;
+            }
+    };
+    autoCompleter = new Ajax.Autocompleter('«prefixSmall»newcollectionitem', '«prefixSmall»newcollectionitem_choices',
+                                            Zikula.Config['baseURL'] + 'ajax.php?module=«appName()»&func=getItemList', acOptions);
+
+    $('«prefixSmall»collectionitemdoadd').observe('click', function() {
+        var newTitle = $F('«prefixSmall»newcollectionitem');
+
+        var itemID = $F('«prefixSmall»newcollectionitemid');
+        var itemsCount = $F('«prefixSmall»collectionitemcount');
+        var itemNr = ++itemsCount;
+        var idPrefix = '«prefixSmall»collectionitem' + itemNr;
+        var li = Builder.node('li', {id: 'item_' + itemNr}, newTitle);
+
+        var fldItemID = Builder.node('input', {id: idPrefix + 'itemid', name: idPrefix + 'itemid', type: 'hidden', value: itemID});
+        var removeLink = Builder.node('a', {id: idPrefix + 'remove', href: 'javascript:«prefixSmall»RemoveCollectionItem(' + itemID + ', ' + itemNr + ');'}, 'remove');
+
+        li.appendChild(fldItemID);
+        li.appendChild(removeLink);
+        if (wantedType) {
+            var fldPreview = Builder.node('div', {id: idPrefix + 'preview', name: idPrefix + 'preview'}, '');
+            fldPreview.update(mediaItemPreview);
+            li.appendChild(fldPreview);
+        }
+
+        $('«prefixSmall»collectionitems').appendChild(li);
+        $('«prefixSmall»collectionitemcount').value = itemsCount;
+
+        // show image link
+        removeLink.update(' ' + removeImage);
+
+        if (excludedItemIDs != '') {
+            excludedItemIDs += ',';
+        }
+        excludedItemIDs += itemID;
+        $('«prefixSmall»collectionitemexcludelist').value = excludedItemIDs;
+
+        «prefixSmall»ResetCollectionItemForm();
+    });
+    $('«prefixSmall»collectionitemdocancel').observe('click', «prefixSmall»ResetCollectionItemForm);
+
+    if ($('«prefixSmall»newcollectionform')) {
+        $('«prefixSmall»newcollectionform').hide();
+        $('«prefixSmall»collectionitemdonew').observe('click', function() {
+            $('createnewcollection_title').value = $F('«prefixSmall»newcollectionitem');
+            $('«prefixSmall»newcollectionform').show();
+            «prefixSmall»ResetCollectionItemForm(); // hide
+        });
+
+        $('«prefixSmall»createcollectionsave').observe('click', function() {
+            if ($F('createnewcollection_title') == '') {
+                alert('Bitte einen Titel für die Collection eingeben!');
+                return false;
+            }
+
+            $('«prefixSmall»createcollectionsave').disabled = true;
+            $('«prefixSmall»createcollectioncancel').disabled = true;
+
+            var pars = 'module=«appName()»&func=createCollection'
+                        + '&title=' + encodeURIComponent($F('createnewcollection_title'))
+                        + '&description=' + encodeURIComponent($F('createnewcollection_description'));
+
+            var myAjax = new Ajax.Request('ajax.php', {
+                method: 'post',
+                parameters: pars,
+                onSuccess: function(req) {
+                    var json = pndejsonize(req.responseText);
+                    if (json.mediacollectionid) {
+                        $('«prefixSmall»newcollectionitem').value = $F('createnewcollection_title');
+                        «prefixSmall»ToggleCollectionItemForm();
+                        «prefixSmall»ResetCreateCollectionForm();
+                        $('«prefixSmall»newcollectionform').hide();
+                        //«prefixSmall»FakeKeyPress('«prefixSmall»newcollectionitem');
+                        $('«prefixSmall»newcollectionitem').activate();
+                    }
+                    else alert('Leider ist beim Anlegen der Collection ein Fehler aufgetreten.');
+                    $('«prefixSmall»createcollectionsave').disabled = false;
+                    $('«prefixSmall»createcollectioncancel').disabled = false;
+                }
+            });
+        });
+        $('«prefixSmall»createcollectioncancel').observe('click', «prefixSmall»ResetCreateCollectionForm);
+    }
+}
+«ENDDEFINE»
+
+«DEFINE RemoveRelatedItem(String prefixSmall) FOR Application-»
+function «prefixSmall»RemoveRelatedItem(itemID, itemNr)
+{
+    var expludedIDs = excludedItemIDs.split(',');
+    expludedIDs = expludedIDs.without(itemID);
+    excludedItemIDs = expludedIDs.join(',');
+    $('«prefixSmall»collectionitemexcludelist').value = excludedItemIDs;
+
+    $('item_' + itemNr).remove();
+
+    /* renumbering will be done later
+    var itemsCount = $F('«prefixSmall»collectionitemcount');
+    $('«prefixSmall»collectionitemcount').value = --itemsCount;*/
+}
+«ENDDEFINE»
+
+«DEFINE ResetRelatedItemForm(String prefixSmall) FOR Application-»
+function «prefixSmall»ResetCollectionItemForm()
+{
+    «prefixSmall»ToggleCollectionItemForm();
+
+    $('«prefixSmall»newcollectionitem').disabled = false;
+    $('«prefixSmall»newcollectionitem').value = '';
+
+    $('«prefixSmall»collectionitemdoadd').disabled = true;
+}
+«ENDDEFINE»
+
+«DEFINE ToggleRelatedItemForm(String prefixSmall) FOR Application-»
+function «prefixSmall»ToggleCollectionItemForm()
+{
+    $('«prefixSmall»addcollectionitem').toggle();
+    $('«prefixSmall»collectionitemaddfields').toggle();
+}
+«ENDDEFINE»
+
+«DEFINE FakeKeyPress(String prefixSmall) FOR Application-»
+«REM»trying activate() instead - see http://stackoverflow.com/questions/124935/how-do-i-make-an-ajax-autocompleter-perform-a-request-without-typing
+function «prefixSmall»FakeKeyPress(input_id) {
+    var input = $(input_id);
+    if (input.fireEvent) {
+      // ie stuff
+      var evt = document.createEventObject();
+      evt.keyCode = 67;
+      $(input_id).fireEvent("onKeyDown", evt);
+    } else {
+      // firefox stuff
+      var evt = document.createEvent("KeyboardEvent");
+      evt.initKeyEvent('keydown', true, true, null, false, false, false, false, 27, 0);
+      var canceled = !$(input_id).dispatchEvent(evt);
+    }
+}«ENDREM»
+«ENDDEFINE»
+
+«DEFINE ResetCreateRelatedItemForm(String prefixSmall) FOR Application-»
+function «prefixSmall»ResetCreateCollectionForm(objectType)
+{
+    if (!$('«prefixSmall»new' + objectType + 'form')) {
+        return;
+    }
+    $('«prefixSmall»new' + objectType + 'form').hide();
+
+    $('createnew' + objectType + '_title').value = '';
+    $('createnew' + objectType + '_description').update('');
+}
+«ENDDEFINE»
+
+
+

@@ -29,6 +29,7 @@
 {* purpose of this template: build the Form to «actionName.formatForDisplay()» an instance of «name.formatForDisplay()» *}
 
 {include file="«controllerName»/header.tpl"}
+{pageaddvar name="javascript" value="modules/«appName»/javascript/«appName»_editFunctions.js"}
 
 {if $mode eq "edit"}
     {gt text='Edit «name.formatForDisplay()»' assign="templateTitle"}
@@ -131,6 +132,20 @@
 //<![CDATA[
 
     document.observe('dom:loaded', function() {
+«LET getDerivedFields().typeSelect(UserField) AS userFields-»
+«IF userFields.size > 0-»
+        // initialise auto completion for user fields
+«FOREACH userFields AS userField-»
+«LET userField.actualFieldName().formatForCode() AS realName»
+        {{if $mode ne "create" && $«realName» gt 0}}
+            $('«realName»desc').value = '{{usergetvar name=uname uid=$«realName»}}';
+        {{/if}}
+        «container.application.prefix.formatForDB()»InitUserField('«realName»', 'get«name.formatForCodeCapital()»«realName.formatForCodeCapital()»Users');
+«ENDLET-»
+«ENDFOREACH-»
+«ENDIF-»
+«ENDLET-»
+
         var valid = new Validation('FormForm', {onSubmit: false, immediate : true});
         {{if $mode ne "create"}}
             var result = valid.validate();

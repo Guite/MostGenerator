@@ -9,6 +9,9 @@
     «EXPAND Root(this) FOREACH controllers.controllers-»
     «EXPAND UtilMethods::Root»
     «EXPAND Factory::Root»
+«IF controllers.controllers.actions.typeSelect(EditAction).size > 0-»
+    «EXPAND javascript::EditFunctions::Root»
+«ENDIF-»
 «ENDDEFINE»
 
 
@@ -87,7 +90,7 @@ class «baseClassController()» extends Zikula_Controller
         $out = '<ul>';
         if (is_array($results) && count($results) > 0) {
             foreach($results as $result) {
-                $out .= '<li>' . DataUtil::formatForDisplay($result['uname']) .'<input type="hidden" id="' . DataUtil::formatForDisplay($result['uname']) . '" value="' . $result['uid'] . '" /></li>';
+                $out .= '<li>' . DataUtil::formatForDisplay($result['uname']) . '<input type="hidden" id="' . DataUtil::formatForDisplay($result['uname']) . '" value="' . $result['uid'] . '" /></li>';
             }
         }
         $out .= '</ul>';

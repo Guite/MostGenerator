@@ -126,7 +126,16 @@
 «ENDDEFINE»
 
 «DEFINE FormField FOR UploadField-»
+«IF mandatory-»
+{if $mode eq "create"}
             {formuploadinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly»«EXPAND FieldValidationCssClass»}
+{else}
+            {formuploadinput id="«actualFieldName().formatForCode()»" mandatory=false readOnly=«readonly»«EXPAND FieldValidationCssClass»}
+{/if}
+«ELSE-»
+            {formuploadinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly»«EXPAND FieldValidationCssClass»}
+«ENDIF-»
+
 «REM»TODO: group: group name for sub arrays«ENDREM»«""-»
             <div class="z-formnote">{gt text='Allowed file extensions:'} «allowedExtensions»</div>
 «ENDDEFINE»
@@ -137,23 +146,6 @@
                 {formtextinput id="«realName»desc" mandatory=«mandatory» readOnly=«readonly» __title='Input a part of the user name to search' maxLength=«length» cssClass="«IF mandatory»required «ENDIF»validate-alphanum"}
                 {img id="ajax_indicator" style="display: none" modname='core' set='icons/extrasmall' src="indicator_circle.gif" alt=""}
                 <div id="«realName»desc_choices" class="«entity.container.application.appName().formatForDB()»AutoCompleteUser"></div>
-                <script type="text/javascript">
-                //<![CDATA[
-                    {{if $mode ne "create" && $«realName» gt 0}}
-                        $('«realName»desc').value = '{{usergetvar name=uname uid=$«realName»}}';
-                    {{/if}}
-                    $('«realName»liveusersearch').removeClassName('z-hide');
-                    new Ajax.Autocompleter('«realName»desc', '«realName»desc_choices', Zikula.Config['baseURL'] + 'ajax.php?module=«entity.container.application.appName()»&func=get«entity.name.formatForCodeCapital()»«realName.formatForCodeCapital()»Users',
-                        {
-                            paramName: 'fragment',
-                            minChars: 3,
-                            afterUpdateElement: function(data) {
-                                $('«realName»').value = $($(data).value).value;
-                            }
-                        }
-                    );
-                //]]>
-                </script>
             </div>
             <input type="hidden" id="«realName»" name="«realName»" value="{«realName»}" />
             {if $mode ne "create" && $«realName»}<div class="z-formnote"><a href="{modurl modname="Users" type="admin" func="modify" userid=$«realName»}" title="{gt text="Switch to the user administration"}">{gt text="Manage user"}</a></div>{/if}
