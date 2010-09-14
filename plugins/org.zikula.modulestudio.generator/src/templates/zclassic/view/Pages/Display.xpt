@@ -105,7 +105,21 @@
 {$«objName».«actualFieldName().formatForCode()»|formatnumber}«""-»
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR UserField-»
-{if $«objName».«actualFieldName().formatForCode()» gt 0}{$«objName».«actualFieldName().formatForCode()»|userprofilelink}{else}-{/if}«""-»
+{if $«objName».«actualFieldName().formatForCode()» gt 0}{$«objName».«actualFieldName().formatForCode()»|userprofilelink}{else}&nbsp;{/if}«""-»
+«ENDDEFINE»
+«DEFINE DisplayColumnField(String objName) FOR EmailField-»
+{if $«objName».«actualFieldName().formatForCode()» ne ""}
+    <a href="mailto:{$«objName».«actualFieldName().formatForCode()»}" title="{gt text="Send an email"}">
+        {$«objName».«actualFieldName().formatForCode()»}
+    </a>
+{else}&nbsp;{/if}«""-»
+«ENDDEFINE»
+«DEFINE DisplayColumnField(String objName) FOR UrlField-»
+{if $«objName».«actualFieldName().formatForCode()» ne ""}
+    <a href="{$«objName».«actualFieldName().formatForCode()»}" title="{gt text="Visit this page"}">
+        {$«objName».«actualFieldName().formatForCode()»}
+    </a>
+{else}&nbsp;{/if}«""-»
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR UploadField-»
 «LET entity.container.application.appName().formatForDB() AS appNameSmall-»
@@ -127,13 +141,13 @@
 {$«objName».«actualFieldName().formatForCode()»|dateformat:"datetimebrief"}«""-»
 «ENDDEFINE»
 
-«DEFINE DisplayRelatedItems(String appName, Controller controller, Entity objEntity) FOR Entity-»
+«DEFINE DisplayRelatedItems(String appName, Controller controller, Entity relatedEntity) FOR Entity-»
 <h3>«nameMultiple.formatForDisplayCapital()»</h3>
 {checkpermission component="«appName»::" instance=".*" level="ACCESS_ADMIN" assign="authAdmin"}
-{if $authAdmin || $«objEntity.name.formatForCode()».cr_uid eq $uid}
+{if $authAdmin || $«relatedEntity.name.formatForCode()».cr_uid eq $uid}
 <p class="manageLink">
     {gt text='Create «name.formatForDisplay()»' assign="createTitle"}
-    <a href="{modurl modname="«appName»" type="«controller.name()»" func="edit" ot="«name.formatForCode()»" «objEntity.idField()»=$«objEntity.name.formatForCode()».«objEntity.idField()»}" title="{$createTitle}">
+    <a href="{modurl modname="«appName»" type="«controller.name()»" func="edit" ot="«name.formatForCode()»" «relatedEntity.idField()»=$«relatedEntity.name.formatForCode()».«relatedEntity.idField()»}" title="{$createTitle}">
         {img src="insert_table_row.gif" modname="core" set="icons/extrasmall" __alt='Create'}
         {$createTitle}
     </a>

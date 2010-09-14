@@ -96,7 +96,7 @@ listType:
 «ELSEIF joins.size > 0-»
             «FOREACH joins AS join SEPARATOR ', '»{$«objName».«join.source.name.formatForDB()»_«join.source.idField()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH»
 «ELSE-»
-            «EXPAND DisplayColumnField(objName) FOR field-»
+«EXPAND DisplayColumnField(objName) FOR field-»
 «ENDIF-»
 «ENDLET-»
 «IF listType < 2-»
@@ -225,7 +225,21 @@ listType:
             {$«objName».«actualFieldName().formatForCode()»|formatnumber}
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR UserField-»
-            {if $«objName».«actualFieldName().formatForCode()» gt 0}{$«objName».«actualFieldName().formatForCode()»|userprofilelink}{else}-{/if}«""-»
+            {if $«objName».«actualFieldName().formatForCode()» gt 0}{$«objName».«actualFieldName().formatForCode()»|userprofilelink}{else}&nbsp;{/if}«""-»
+«ENDDEFINE»
+«DEFINE DisplayColumnField(String objName) FOR EmailField-»
+            {if $«objName».«actualFieldName().formatForCode()» ne ""}
+                <a href="mailto:{$«objName».«actualFieldName().formatForCode()»}" title="{gt text="Send an email"}">
+                    {$«objName».«actualFieldName().formatForCode()»}
+                </a>
+            {else}&nbsp;{/if}«""-»
+«ENDDEFINE»
+«DEFINE DisplayColumnField(String objName) FOR UrlField-»
+            {if $«objName».«actualFieldName().formatForCode()» ne ""}
+                <a href="{$«objName».«actualFieldName().formatForCode()»}" title="{gt text="Visit this page"}">
+                    {$«objName».«actualFieldName().formatForCode()»}
+                </a>
+            {else}&nbsp;{/if}«""-»
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR UploadField-»
 «LET entity.container.application.appName().formatForDB() AS appNameSmall-»

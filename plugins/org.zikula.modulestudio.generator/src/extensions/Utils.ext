@@ -123,6 +123,11 @@ cached boolean hasUploadFields(Entity this) :
 cached getUploadFields(Entity this) :
     fields.typeSelect(UploadField);
 
+cached boolean hasImageFields(Entity this) :
+    (getImageFields().size > 0);
+cached getImageFields(Entity this) :
+    getUploadFields().select(e|e.allowedExtensions.split(", ").forAll(ext|ext == 'gif' || ext == 'jpeg' || ext == 'jpg' || ext == 'png'));
+
 
 
 cached String idField(Entity entity) :

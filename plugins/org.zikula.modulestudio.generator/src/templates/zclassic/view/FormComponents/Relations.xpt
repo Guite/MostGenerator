@@ -152,10 +152,12 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
     <li id="{$idPrefix}">
     {$relatedItem.«targetEntity.getLeadingField().actualFieldName().formatForCode()»}
  <a id="{$idPrefix}remove" href="javascript:«app.prefix()»RemoveRelatedItem('«uniqueNameForJs»', {$relatedItem.«targetEntity.idField()»});">{$removeImage}</a>
-«REM»{if isset($side) && $side eq "collection"}
+«IF targetEntity.hasImageFields()-»
 <br />
-{«app.prefix()»GetInlineSnippet mediaItem=$mediaItem thumbWidth=200}
-{/if}«ENDREM»«""-»
+«LET targetEntity.getImageFields().get(0) AS imageField-»
+<img src="{$relatedItem.«imageField.actualFieldName().formatForCode()»|«app.appName().formatForDB()»ImageThumb:$relatedItem.«imageField.actualFieldName().formatForCode()»FullPath:50:40}" width="50" height="40" alt="{$relatedItem.«targetEntity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
+«ENDLET-»
+«ENDIF-»
     </li>
 {/foreach}
 </ul>
