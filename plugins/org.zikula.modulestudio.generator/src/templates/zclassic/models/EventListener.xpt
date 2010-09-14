@@ -211,7 +211,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     function postDelete(Doctrine_Event $event)
     {
         // echo 'deleted a record ...';
-«LET fields.typeSelect(UploadField) AS uploadFields-»
+«LET getUploadFields() AS uploadFields-»
 «IF uploadFields.size > 0-»
 
         $data = $event->data;

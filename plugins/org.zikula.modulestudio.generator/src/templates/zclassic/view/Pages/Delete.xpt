@@ -4,19 +4,13 @@
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Impl(String appName, Controller controller) FOR Entity»
-«LET controller.name.formatForDB() AS controllerName-»
-«info("Generating " + controllerName + " delete templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
-«LET name.formatForCode() AS objName-»
+«info("Generating " + controller.name() + " delete templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «FILE templateFile(controller, name, 'delete')-»
-{* purpose of this template: «nameMultiple.formatForDisplay()» delete confirmation view in «controllerName» area *}
+{* purpose of this template: «nameMultiple.formatForDisplay()» delete confirmation view in «controller.name()» area *}
 
-{include file="«controllerName»/header.tpl"}
+{include file="«controller.name()»/header.tpl"}
 
-«IF controller.metaType == AdminController-»
-<div class="z-admincontainer">
-«ELSE-»
-<div class="z-frontendcontainer">
-«ENDIF-»
+<div class="z-«IF controller.metaType == AdminController-»admin«ELSE-»frontend«ENDIF-»container">
 {gt text='Delete «name.formatForDisplay()»' assign="templateTitle"}
 «IF controller.metaType == AdminController-»
     <div class="z-adminpageicon">{img modname="core" src="demo.gif" set="icons/large" __alt='Details'}</div>
@@ -27,22 +21,20 @@
 
     <p class="z-warningmsg">{gt text='Do you really want to delete this «name.formatForDisplay()» ?'}</p>
 
-    <form class="z-form" action="{modurl modname="«appName»" type="«controllerName»" func="delete" ot="«objName»" «idField()»=$«objName».«idField()»}" method="post">
+    <form class="z-form" action="{modurl modname="«appName»" type="«controller.name()»" func="delete" ot="«name.formatForCode()»" «idField()»=$«name.formatForCode()».«idField()»}" method="post">
         <div>
             <input type="hidden" id="confirmation" name="confirmation" value="1" />
             <fieldset>
                 <legend>{gt text='Confirmation prompt'}</legend>
                 <div class="z-buttons z-formbuttons">
                     {button src=button_ok.gif set=icons/small __alt="Delete" __title="Delete"}
-                    <a href="{modurl modname="«appName»" type="«controllerName»" func="view" ot="«objName»"}">{img modname=core src=button_cancel.gif set=icons/small __alt="Cancel" __title="Cancel"} {gt text='Cancel'}</a>
+                    <a href="{modurl modname="«appName»" type="«controller.name()»" func="view" ot="«name.formatForCode()»"}">{img modname=core src=button_cancel.gif set=icons/small __alt="Cancel" __title="Cancel"} {gt text='Cancel'}</a>
                 </div>
             </fieldset>
         </div>
     </form>
 </div>
 
-{include file="«controllerName»/footer.tpl"}
+{include file="«controller.name()»/footer.tpl"}
 «ENDFILE»
-«ENDLET-»
-«ENDLET-»
 «ENDDEFINE»

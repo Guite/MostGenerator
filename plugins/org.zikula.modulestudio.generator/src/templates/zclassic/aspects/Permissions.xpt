@@ -36,12 +36,11 @@
 «targetDef.proceed()-»
 «ENDAROUND»
 
-«DEFINE getPermissionAccessLevel FOR Action-»
-«IF     metaType == MainAction-»ACCESS_OVERVIEW«""-»
-«ELSEIF metaType == ViewAction-»ACCESS_READ«""-»
-«ELSEIF metaType == DisplayAction-»ACCESS_READ«""-»
-«ELSEIF metaType == EditAction-»ACCESS_EDIT«""-»
-«ELSEIF metaType == DeleteAction-»ACCESS_DELETE«""-»
-«ELSEIF metaType == CustomAction-»ACCESS_OVERVIEW
-«ENDIF-»
-«ENDDEFINE»
+«DEFINE getPermissionAccessLevel FOR Action»«ENDDEFINE»
+«DEFINE getPermissionAccessLevel FOR MainAction»ACCESS_OVERVIEW«ENDDEFINE»
+«DEFINE getPermissionAccessLevel FOR ViewAction»ACCESS_READ«ENDDEFINE»
+«DEFINE getPermissionAccessLevel FOR DisplayAction»ACCESS_READ«ENDDEFINE»
+«DEFINE getPermissionAccessLevel FOR EditAction»ACCESS_EDIT«ENDDEFINE»
+«DEFINE getPermissionAccessLevel FOR DeleteAction»ACCESS_DELETE«ENDDEFINE»
+«DEFINE getPermissionAccessLevel FOR CustomAction»ACCESS_OVERVIEW«ENDDEFINE»
+

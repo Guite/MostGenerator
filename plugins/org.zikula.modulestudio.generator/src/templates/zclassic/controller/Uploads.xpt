@@ -14,7 +14,7 @@
     «FILE "files/index.html"»«msUrl()-»«ENDFILE»
 «FOREACH getUploadEntities() AS entity-»
     «FILE "files/" + entity.nameMultiple.formatForDB() + "/index.html"»«msUrl()-»«ENDFILE»
-«LET entity.fields.typeSelect(UploadField) AS uploadFields-»
+«LET entity.getUploadFields() AS uploadFields-»
 «IF uploadFields.size > 1-»
 «FOREACH uploadFields AS uploadField-»
     «FILE "files/" + entity.nameMultiple.formatForDB() + "/" + uploadField.subFolderPathSegment() + "/index.html"»«msUrl()-»«ENDFILE»
@@ -78,7 +78,7 @@ class «appName()»_Base_UploadHandler
         $allowedExtensions = array();
         switch ($objectType) {
 «FOREACH getUploadEntities() AS entity-»
-«LET entity.fields.typeSelect(UploadField) AS uploadFields-»
+«LET entity.getUploadFields() AS uploadFields-»
             case '«entity.name.formatForCode()»':
 «IF uploadFields.size > 1-»
                             switch ($fieldName) {
@@ -142,7 +142,7 @@ class «appName()»_Base_UploadHandler
 
         switch ($objectType) {
 «FOREACH getUploadEntities() AS entity-»
-«LET entity.fields.typeSelect(UploadField) AS uploadFields-»
+«LET entity.getUploadFields() AS uploadFields-»
             case '«entity.name.formatForCode()»':
 «IF uploadFields.size > 1-»
                             switch ($fieldName) {

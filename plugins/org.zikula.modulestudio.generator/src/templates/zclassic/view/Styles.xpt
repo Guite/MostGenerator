@@ -9,7 +9,6 @@
 «ENDDEFINE»
 
 «DEFINE StyleDefines FOR Application-»
-«LET prefix.formatForDB() AS prefixSmall-»
 a.currentSortingLink {
     font-style: italic;
 }
@@ -36,8 +35,7 @@ div.«appName().formatForDB()»RightBox p.manageLink {
     padding: 0 0 0 20px;
 }
 «EXPAND ValidationStyles-»
-«EXPAND AutoCompletion(prefixSmall)-»
-«ENDLET-»
+«EXPAND AutoCompletion-»
 «ENDDEFINE»
 
 «DEFINE ValidationStyles FOR Application-»
@@ -63,30 +61,30 @@ input.validation-passed, textarea.validation-passed {
 }
 «ENDDEFINE»
 
-«DEFINE AutoCompletion(String prefixSmall) FOR Application-»
-«LET models.entities.fields.typeSelect(UserField) AS userFields-»
-«LET models.relations.typeSelect(JoinRelationship) AS joinRelations-»
-«IF joinRelations.size > 0 || userFields.size > 0-»
+«DEFINE AutoCompletion FOR Application-»
+«LET hasUserFields() AS hasUserFields-»
+«LET models.getJoinRelations() AS joinRelations-»
+«IF joinRelations.size > 0 || hasUserFields-»
 «IF joinRelations.size > 0-»
-div.«prefixSmall»RelationLeftSide {
+div.«prefix()»RelationLeftSide {
 float: left;
 width: 25%;
 }
 
-div.«prefixSmall»RelationRightSide {
+div.«prefix()»RelationRightSide {
 float: right;
 width: 65%;
 }
 
 «ENDIF-»
-«IF userFields.size > 0-»
-div.«prefixSmall»LiveSearchUser {
+«IF hasUserFields-»
+div.«prefix()»LiveSearchUser {
     margin: 0;
 }
 
 «ENDIF-»
-div.«prefixSmall»AutoComplete«IF userFields.size > 0-»,
-div.«prefixSmall»AutoCompleteUser«ENDIF-» {
+div.«prefix()»AutoComplete«IF hasUserFields-»,
+div.«prefix()»AutoCompleteUser«ENDIF-» {
     position: absolute;
     width: 25em;
     background-color: white;
@@ -95,14 +93,14 @@ div.«prefixSmall»AutoCompleteUser«ENDIF-» {
     padding: 0;
 }
 
-div.«prefixSmall»AutoComplete ul«IF userFields.size > 0-»,
-div.«prefixSmall»AutoCompleteUser ul«ENDIF-» {
+div.«prefix()»AutoComplete ul«IF hasUserFields-»,
+div.«prefix()»AutoCompleteUser ul«ENDIF-» {
     margin: 0;
     padding: 0;
 }
 
-div.«prefixSmall»AutoComplete ul li«IF userFields.size > 0-»,
-div.«prefixSmall»AutoCompleteUser ul li«ENDIF-» {
+div.«prefix()»AutoComplete ul li«IF hasUserFields-»,
+div.«prefix()»AutoCompleteUser ul li«ENDIF-» {
     margin: 0;
     padding: 0.2em 0 0.2em 20px;
     list-style-type: none;
@@ -113,35 +111,35 @@ div.«prefixSmall»AutoCompleteUser ul li«ENDIF-» {
     background-repeat: no-repeat;
 }
 
-div.«prefixSmall»AutoComplete ul {
+div.«prefix()»AutoComplete ul {
     background-image: url("../../../images/icons/extrasmall/tab_right.gif");
 }
-«IF userFields.size > 0-»
+«IF hasUserFields-»
 div.«prefixSmall»AutoCompleteUser ul {
     background-image: url("../../../images/icons/extrasmall/edit_user.gif");
 }
 «ENDIF-»
-div.«prefixSmall»AutoCompleteWithImage ul li {
+div.«prefix()»AutoCompleteWithImage ul li {
     background-image: url(../../../images/icons/extrasmall/agt_Multimedia.gif);
 }
 
-div.«prefixSmall»AutoComplete ul li.selected«IF userFields.size > 0-»,
-div.«prefixSmall»AutoCompleteUser ul li.selected«ENDIF-» {
+div.«prefix()»AutoComplete ul li.selected«IF hasUserFields-»,
+div.«prefix()»AutoCompleteUser ul li.selected«ENDIF-» {
     background-color: #ffb;
 }
 
 «IF joinRelations.size > 0-»
-div.«prefixSmall»AutoComplete ul li div.itemtitle {
+div.«prefix()»AutoComplete ul li div.itemtitle {
     font-weight: 700;
     font-size: 12px;
     line-height: 1.2em;
 }
-div.«prefixSmall»AutoComplete ul li div.itemdesc {
+div.«prefix()»AutoComplete ul li div.itemdesc {
     font-size: 10px;
     color: #888;
 }
 
-button.«prefixSmall»InlineButton {
+button.«prefix()»InlineButton {
     margin-top: 1em;
 }
 «ENDIF-»

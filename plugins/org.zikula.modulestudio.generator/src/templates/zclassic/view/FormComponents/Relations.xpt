@@ -8,28 +8,30 @@ Entry point for form sections treating related objects.
 Note many-to-many is handled in a separate define further down.
 If onlyInclude is true then only the Smarty include is created, otherwise the included file.
 «ENDREM»
-«DEFINE Root(Controller controller, Boolean onlyInclude, Boolean incoming) FOR JoinRelationship-»
+«DEFINE Root(Application app, Controller controller, Boolean onlyInclude, Boolean incoming) FOR JoinRelationship-»
 «LET getEditStageCode(incoming) AS stageCode-»
 «REM»Look if we have to do anything by checking stage codes which represent different edit behaviors«ENDREM»«""-»
 «IF (!incoming && stageCode == 2) || (incoming && (stageCode == 1 || stageCode == 3))-»
-«IF !incoming-»«EXPAND ActiveParentImpl(controller, onlyInclude)-»
-«ELSE-»«EXPAND PassiveChildImpl(controller, onlyInclude, stageCode)-»
+«IF !incoming-»«EXPAND ActiveParentImpl(app, controller, onlyInclude)-»
+«ELSE-»«EXPAND PassiveChildImpl(app, controller, onlyInclude, stageCode)-»
 «ENDIF-»
 «ENDIF-»
 «ENDLET-»
 «ENDDEFINE»
 
 «REM»Parent/active/source view for 1:1 and 1:n«ENDREM»
-«DEFINE ActiveParentImpl(Controller controller, Boolean onlyInclude) FOR JoinRelationship-»
+«DEFINE ActiveParentImpl(Application app, Controller controller, Boolean onlyInclude) FOR JoinRelationship-»
 «IF onlyInclude-»
-    {include file="«templateFile(controller, target.name, 'include_createChildItem'.msconcat(getTargetMultiplicity()))»"}
+    {include file="«controller.name.formatForDB()»/«target.name.formatForCode()»/include_createChildItem«getTargetMultiplicity()».tpl"}
 «ELSE-»
 «info("Generating " + controller.name.formatForDB() + " edit inclusion templates for entity \"" + target.name.formatForDisplay() + "\"") -> ""-»
 «FILE templateFile(controller, target.name, 'include_createChildItem'.msconcat(getTargetMultiplicity()))-»
+{* purpose of this template: inclusion template for managing related «target.getEntityNameSingularPlural(this.metaType != OneToOneRelationship).formatForDisplayCapital()» in «controller.name.formatForDB()» area *}
+
 <fieldset>
-    <legend>{gt text='«IF this.metaType == OneToOneRelationship»«target.name.formatForDisplayCapital()»«ELSE»«target.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
+    <legend>{gt text='«target.getEntityNameSingularPlural(this.metaType != OneToOneRelationship).formatForDisplayCapital()»'}</legend>
     <div class="z-formrow">
-«EXPAND Component_ParentEditing(controller, target, (this.metaType != OneToOneRelationship))-»
+«EXPAND Component_ParentEditing(app, controller, target, (this.metaType != OneToOneRelationship))-»
     </div>
 </fieldset>
 «ENDFILE-»
@@ -37,59 +39,67 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «ENDDEFINE»
 
 «REM»Child/passive/target view for 1:1 and 1:n«ENDREM»
-«DEFINE PassiveChildImpl(Controller controller, Boolean onlyInclude, Integer stageCode) FOR JoinRelationship-»
+«DEFINE PassiveChildImpl(Application app, Controller controller, Boolean onlyInclude, Integer stageCode) FOR JoinRelationship-»
 «IF onlyInclude-»
-    {include file="«templateFile(controller, source.name, 'include_select'.msconcat((stageCode == 3) ? 'edit' : '').msconcat('One'))»"}
+    {include file="«controller.name.formatForDB()»/«source.name.formatForCode()»/include_select«((stageCode == 3) ? 'Edit' : '')»One.tpl"}
 «ELSE-»
 «info("Generating " + controller.name.formatForDB() + " edit inclusion templates for entity \"" + source.name.formatForDisplay() + "\"") -> ""-»
-«FILE templateFile(controller, source.name, 'include_select'.msconcat((stageCode == 3) ? 'edit' : '').msconcat('One'))-»
+«FILE templateFile(controller, source.name, 'include_select'.msconcat((stageCode == 3) ? 'Edit' : '').msconcat('One'))-»
+{* purpose of this template: inclusion template for managing related «source.getEntityNameSingularPlural(this.metaType != OneToOneRelationship).formatForDisplayCapital()» in «controller.name.formatForDB()» area *}
+
 <fieldset>
-    <legend>{gt text='«IF this.metaType == OneToOneRelationship»«source.name.formatForDisplayCapital()»«ELSE»«source.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
+    <legend>{gt text='«source.getEntityNameSingularPlural(this.metaType != OneToOneRelationship).formatForDisplayCapital()»'}</legend>
     <div class="z-formrow">
-«EXPAND Component_AutoComplete(controller, source, false, true)-»
-«IF stageCode == 3-»«EXPAND Component_ChildEditing(controller, source, false)-»«ENDIF-»
+«EXPAND Component_AutoComplete(app, controller, source, false, true, (stageCode == 3))-»
+«IF stageCode == 3-»«EXPAND Component_ChildEditing(app, controller, source, false)-»«ENDIF-»
     </div>
 </fieldset>
+«ENDFILE-»
+
+«FILE templateFile(controller, source.name, 'include_select'.msconcat((stageCode == 3) ? 'Edit' : '').msconcat('ItemListOne'))-»
+«EXPAND Component_ItemList(app, controller, source, false, true, (stageCode == 3))-»
 «ENDFILE-»
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE Root(Controller controller, Boolean incoming, Boolean onlyInclude) FOR ManyToManyRelationship-»
+«DEFINE Root(Application app, Controller controller, Boolean incoming, Boolean onlyInclude) FOR ManyToManyRelationship-»
 «LET getEditStageCode(incoming) AS stageCode-»
 «IF stageCode == 1 || stageCode == 3-»
 «IF onlyInclude-»
-    {include file="«templateFile(controller, ((incoming) ? source.name : target.name), 'include_select'.msconcat((stageCode == 3) ? 'Edit' : '').msconcat('Many'))»"}
+    {include file="«controller.name.formatForDB()»/«((incoming) ? source.name : target.name).formatForCode()»/include_select«((stageCode == 3) ? 'Edit' : '')»Many.tpl"}
 «ELSE-»
 «info("Generating " + controller.name.formatForDB() + " edit inclusion templates for entity \"" + ((incoming) ? source.name.formatForDisplay() : target.name.formatForDisplay()) + "\"") -> ""-»
 «FILE templateFile(controller, ((incoming) ? source.name : target.name), 'include_select'.msconcat((stageCode == 3) ? 'Edit' : '').msconcat('Many'))-»
 <fieldset>
     <legend>{gt text='«IF incoming»«source.nameMultiple.formatForDisplayCapital()»«ELSE»«target.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
     <div class="z-formrow">
-«IF !incoming-»«EXPAND ManyToManyHandling(controller, source, target, false, stageCode)-»
-«ELSE-»«EXPAND ManyToManyHandling(controller, target, source, true, stageCode)-»
+«IF !incoming-»«EXPAND ManyToManyHandling(app, controller, source, target, false, stageCode)-»
+«ELSE-»«EXPAND ManyToManyHandling(app, controller, target, source, true, stageCode)-»
 «ENDIF-»
     </div>
 </fieldset>
+«ENDFILE-»
+
+«FILE templateFile(controller, ((incoming) ? source.name : target.name), 'include_select'.msconcat((stageCode == 3) ? 'Edit' : '').msconcat('ItemListMany'))-»
+«EXPAND Component_ItemList(app, controller, ((incoming) ? source : target), true, incoming, (stageCode == 3))-»
 «ENDFILE-»
 «ENDIF-»
 «ENDIF-»
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE ManyToManyHandling(Controller controller, Entity source, Entity target, Boolean incoming, Integer stageCode) FOR ManyToManyRelationship-»
-«EXPAND Component_AutoComplete(controller, target, true, incoming)-»
+«DEFINE ManyToManyHandling(Application app, Controller controller, Entity source, Entity target, Boolean incoming, Integer stageCode) FOR ManyToManyRelationship-»
+«EXPAND Component_AutoComplete(app, controller, target, true, incoming, (stageCode == 3))-»
 «IF stageCode == 3-»
-«EXPAND Component_ChildEditing(controller, target, true)-»
+«EXPAND Component_ChildEditing(app, controller, target, true)-»
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE Component_AutoComplete(Controller controller, Entity targetEntity, Boolean many, Boolean incoming) FOR JoinRelationship-»
-«LET container.application.prefix.formatForDB() AS prefixSmall-»
-«LET ((!many) ? targetEntity.name.formatForCode() : targetEntity.nameMultiple.formatForCode()) AS targetEntityName-»
-«LET relationFieldName(targetEntity, ((incoming) ? target.relationFieldName(targetField) : source.relationFieldName(sourceField))) AS uniqueFieldName-»
-«LET prefixSmall.msconcat(targetEntityName).msconcat('_').msconcat(uniqueFieldName) AS uniqueNameForJs-»
-    <div class="«prefixSmall»RelationRightSide">
-            <p>TODO SELECT: AutoComplete field for choosing the «targetEntityName».</p>
+«DEFINE Component_AutoComplete(Application app, Controller controller, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) FOR JoinRelationship-»
+«LET getRelationAliasName(!incoming).formatForCode() AS relationAliasName-»
+«LET getUniqueRelationNameForJs(app, targetEntity, many, incoming, relationAliasName) AS uniqueNameForJs-»
+    <div class="«app.prefix()»RelationRightSide">
+            <p>TODO SELECT: AutoComplete field for choosing the «targetEntity.name.formatForDisplay()».</p>
 «IF !many-»
             <p>TODO: Preselection if mode is edit or the ID is given by $_GET.</p>
 «ENDIF-»
@@ -97,38 +107,63 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
         <a id="«uniqueNameForJs»AddLink" href="javascript:void(0);" style="display: none">{gt text='Add «targetEntity.name.formatForDisplay()»'}</a>
 «ENDIF-»
         <div id="«uniqueNameForJs»AddFields">
-            <label for="«uniqueNameForJs»SelectItem">{gt text='Find «targetEntity.name.formatForDisplay()»'}</label>
+            <label for="«uniqueNameForJs»Selector">{gt text='Find «targetEntity.name.formatForDisplay()»'}</label>
             <br />
-            <input type="text" name="«uniqueNameForJs»SelectItem" id="«uniqueNameForJs»SelectItem" value="" size="42" />
-            <input type="hidden" name="«uniqueNameForJs»SelectItemId" id="«uniqueNameForJs»SelectItemId" value="" />
+            <input type="text" name="«uniqueNameForJs»Selector" id="«uniqueNameForJs»Selector" value="" size="42" />
+            <input type="hidden" name="«uniqueNameForJs»SelectorId" id="«uniqueNameForJs»SelectorId" value="" />
             {img id="ajax_indicator" style="display: none" modname="core" set="icons/extrasmall" src="indicator_circle.gif" alt=""}<br />
 
-            <div id="«prefixSmall»newcollectionitem_choices" class="«prefixSmall»AutoComplete"></div>
+            <div id="«uniqueNameForJs»SelectorChoices" class="«app.prefix()»AutoComplete"></div>
 
-            <input type="button" id="«uniqueNameForJs»SelectItemDoAdd" name="«uniqueNameForJs»SelectItemDoAdd" value="{gt text='Add'}" class="«prefixSmall»InlineButton" />
-            <input type="button" id="«uniqueNameForJs»SelectItemDoCancel" name="«uniqueNameForJs»SelectItemDoCancel" value="{gt text='Cancel'}" class="«prefixSmall»InlineButton" />
-«REM»TODO{if $side ne "collection"}TODO
-            <input type="button" id="«uniqueNameForJs»SelectItemDoNew" name="«uniqueNameForJs»SelectItemDoNew" value="{gt text='Create new «targetEntity.name.formatForDisplay()»'}" class="«prefixSmall»InlineButton" />
-{/if}«ENDREM»«""-»
+            <input type="button" id="«uniqueNameForJs»SelectorDoAdd" name="«uniqueNameForJs»SelectorDoAdd" value="{gt text='Add'}" class="«app.prefix()»InlineButton" />
+            <input type="button" id="«uniqueNameForJs»SelectorDoCancel" name="«uniqueNameForJs»SelectorDoCancel" value="{gt text='Cancel'}" class="«app.prefix()»InlineButton" />
+«IF includeEditing-»
+            <input type="button" id="«uniqueNameForJs»SelectorDoNew" name="«uniqueNameForJs»SelectorDoNew" value="{gt text='Create new «targetEntity.name.formatForDisplay()»'}" class="«app.prefix()»InlineButton" />
+«ENDIF-»
         </div>
         <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
     </div>
-    <div class="«prefixSmall»RelationRightSide">
-        TODO«REM»{if $userCollectionItems ne ""}
+    <div class="«app.prefix()»RelationRightSide">
+        {if isset($user«relationAliasName.toFirstUpper()») && $user«relationAliasName.toFirstUpper()» ne ""}
             {* the user has submitted something *}
-            {include file="«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_selectEditItemList.htm" items=$userCollectionItems}
+            {include file="«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl" items=$user«relationAliasName.toFirstUpper()»}
         {elseif $mode ne 'create'}
-            {include file="«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_selectEditItemList.htm" items=$collectionItems}
-        {/if}«ENDREM»«""-»
+            {include file="«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl" items=$«relationAliasName»}
+        {/if}
     </div>
     <br style="clear: both" />
 «ENDLET-»
 «ENDLET-»
+«ENDDEFINE»
+
+«DEFINE Component_ItemList(Application app, Controller controller, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) FOR JoinRelationship-»
+«LET getRelationAliasName(!incoming).formatForCode() AS relationAliasName-»
+«LET getUniqueRelationNameForJs(app, targetEntity, many, incoming, relationAliasName) AS uniqueNameForJs-»
+{* purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplayCapital()» in «controller.name.formatForDB()» area *}
+
+{img modname="core" set="icons/extrasmall" src="editdelete.gif" assign="removeImageArray"}
+{assign var="removeImage" value="<img src=\"`$removeImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
+
+<input type="hidden" id="«uniqueNameForJs»ExcludeList" name="«uniqueNameForJs»ExcludeList" value="{foreach name="relLoop" item="relatedItem" from=$items}{$relatedItem.«targetEntity.idField()»}{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}" />
+
+<ul id="«uniqueNameForJs»ReferenceList">
+{foreach name="relLoop" item="relatedItem" from=$items}
+{assign var="idPrefix" value="«uniqueNameForJs»Reference_`$relatedItem.«targetEntity.idField()»`"}
+    <li id="{$idPrefix}">
+    {$relatedItem.«targetEntity.getLeadingField().actualFieldName().formatForCode()»}
+ <a id="{$idPrefix}remove" href="javascript:«app.prefix()»RemoveRelatedItem('«uniqueNameForJs»', {$relatedItem.«targetEntity.idField()»});">{$removeImage}</a>
+«REM»{if isset($side) && $side eq "collection"}
+<br />
+{«app.prefix()»GetInlineSnippet mediaItem=$mediaItem thumbWidth=200}
+{/if}«ENDREM»
+    </li>
+{/foreach}
+</ul>
 «ENDLET-»
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE Component_ParentEditing(Controller controller, Entity targetEntity, Boolean many) FOR JoinRelationship-»
+«DEFINE Component_ParentEditing(Application app, Controller controller, Entity targetEntity, Boolean many) FOR JoinRelationship-»
 «IF !many-»
             <p>TODO ADD: button to create a new «targetEntity.name.formatForDisplay()» with inline editing (form dialog)</p>
             <p>TODO EDIT: display of related «targetEntity.name.formatForDisplay()» with inline editing (form dialog)</p>
@@ -138,7 +173,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE Component_ChildEditing(Controller controller, Entity targetEntity, Boolean many) FOR JoinRelationship-»
+«DEFINE Component_ChildEditing(Application app, Controller controller, Entity targetEntity, Boolean many) FOR JoinRelationship-»
 «IF !many-»
             <p>TODO ADD: button to create a new «targetEntity.name.formatForDisplay()» with inline editing (form dialog)</p>
             <p>TODO EDIT: display of related «targetEntity.name.formatForDisplay()» with inline editing (form dialog)</p>

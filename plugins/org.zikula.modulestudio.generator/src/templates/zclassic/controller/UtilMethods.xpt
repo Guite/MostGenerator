@@ -83,7 +83,7 @@ class «appName()»_Base_Util
 
         switch ($objectType) {
 «FOREACH getUploadEntities() AS entity-»
-«LET entity.fields.typeSelect(UploadField) AS uploadFields-»
+«LET entity.getUploadFields() AS uploadFields-»
             case '«entity.name.formatForCode()»':
 «IF uploadFields.size > 1-»
                             $basePath .= '«entity.nameMultiple.formatForDB()»/';

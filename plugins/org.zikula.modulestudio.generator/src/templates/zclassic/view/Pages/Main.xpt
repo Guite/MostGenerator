@@ -3,12 +3,10 @@
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Impl(String appName, Controller controller) FOR Entity»
-«LET controller.name.formatForDB() AS controllerName-»
-«info("Generating " + controllerName + " main templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
-«FILE "templates/" + controllerName + "/main.tpl"-»
-{* purpose of this template: «nameMultiple.formatForDisplay()» main view in «controllerName» area *}
+«info("Generating " + controller.name() + " main templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
+«FILE "templates/".msconcat(controller.name()).msconcat("/main.tpl")-»
+{* purpose of this template: «nameMultiple.formatForDisplay()» main view in «controller.name()» area *}
 
-{modfunc modname="«appName»" type="«controllerName»" func="view"}
+{modfunc modname="«appName»" type="«controller.name()»" func="view"}
 «ENDFILE»
-«ENDLET-»
 «ENDDEFINE»

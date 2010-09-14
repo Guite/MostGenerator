@@ -5,21 +5,22 @@
 
 «REM»start point for the javascript file with edit functionality«ENDREM»
 «DEFINE Root FOR Application-»
-«LET prefix.formatForDB() AS prefixSmall-»
 «FILE 'javascript/'.msconcat(appName()).msconcat('_editFunctions.js')-»
 <!--
 
 «EXPAND InitUserField-»
-«EXPAND RelationFunctions(prefixSmall)-»
+«EXPAND RelationFunctions-»
 
 -->
 «ENDFILE»
-«ENDLET-»
 «ENDDEFINE»
 
 «DEFINE InitUserField FOR Application-»
-«IF models.entities.getDerivedFields().typeSelect(UserField).size > 0-»
-function «prefix.formatForDB()»InitUserField(fieldName, getterName)
+«IF hasUserFields()-»
+/**
+ * Initialise a user field with autocompletion.
+ */
+function «prefix()»InitUserField(fieldName, getterName)
 {
     if (!$(fieldName + 'liveusersearch')) {
         return;
@@ -42,174 +43,178 @@ function «prefix.formatForDB()»InitUserField(fieldName, getterName)
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE RelationFunctions(String prefixSmall) FOR Application-»
+«DEFINE RelationFunctions FOR Application-»
 «IF models.relations.size > 0-»
-«EXPAND InitRelatedItemsForm(prefixSmall)-»
-«EXPAND RemoveRelatedItem(prefixSmall)-»
-«EXPAND ResetRelatedItemForm(prefixSmall)-»
-«EXPAND ToggleRelatedItemForm(prefixSmall)-»
-«EXPAND FakeKeyPress(prefixSmall)-»
-«EXPAND ResetCreateRelatedItemForm(prefixSmall)-»
+«EXPAND InitRelatedItemsForm(prefix())-»
+«EXPAND RemoveRelatedItem-»
+«EXPAND ResetRelatedItemForm-»
+«EXPAND ToggleRelatedItemForm-»
+«EXPAND FakeKeyPress-»
+«EXPAND ResetCreateRelatedItemForm-»
 «ENDIF-»
 «ENDDEFINE»
 
 «DEFINE InitRelatedItemsForm(String prefixSmall) FOR Application-»
-function «prefixSmall»InitRelationItemsForm()
+/**
+ * Initialise a relation field section with autocompletion and optional edit capabilities
+ */
+function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditing)
 {
-    excludedItemIDs = $F('«prefixSmall»collectionitemexcludelist');
-    $('«prefixSmall»addcollectionitem').observe('click', «prefixSmall»ToggleCollectionItemForm);
-    «prefixSmall»ResetCollectionItemForm();
+    $(idPrefix + 'AddLink').observe('click', «prefixSmall»ToggleRelatedItemForm);
+    «prefixSmall»ResetRelatedItemForm();
 
-    mediaItemPreview = '';
-    var wantedType = ($F('«prefixSmall»collectionitemview') == 'mediaItem') ? 'mediaCollection' : 'mediaItem';
+    itemPreview = '';
 
     var acOptions = {
             paramName: 'fragment',
             minChars: 2,
             callback: function(inputField, defaultQueryString) {
                     // Called just before the Request is actually made, allowing to modify the querystring that is sent to the server.
-                    defaultQueryString += '&ot=' + wantedType + '&exclude=' + excludedItemIDs;
+                    defaultQueryString += '&ot=' + objectType + '&exclude=' + $F(idPrefix + 'ExcludeList');
                     return defaultQueryString;
             },
             afterUpdateElement: function(inputField, selectedListItem) {
                     // Called after the input element has been updated (i.e. when the user has selected an entry).
                     // This function is called after the built-in function that adds the list item text to the input field.
                     var componentName = $F(inputField);
-                    $('«prefixSmall»newcollectionitemid').value = selectedListItem.id;
-                    if (wantedType == 'mediaItem') {
-                        mediaItemPreview = $('itempreview' + selectedListItem.id).innerHTML;
+                    $(idPrefix + 'SelectorId').value = selectedListItem.id;
+                    if (objectType == 'mediaItem') {
+                        itemPreview = $('itempreview' + selectedListItem.id).innerHTML;
                     }
-
-                    $('«prefixSmall»newcollectionitem').disabled = true;
-                    $('«prefixSmall»collectionitemdoadd').disabled = false;
+                    if (includeEditing) {
+                        $('«prefixSmall»newcollectionitem').disabled = true;
+                        $(idPrefix + 'SelectorDoAdd').disabled = false;
+                    }
             }
     };
     new Ajax.Autocompleter(
-        '«prefixSmall»newcollectionitem',
-        '«prefixSmall»newcollectionitem_choices',
+        idPrefix + 'Selector',
+        idPrefix + 'SelectorChoices',
         Zikula.Config['baseURL'] + 'ajax.php?module=«appName()»&func=getItemList',
         acOptions
     );
 
-    $('«prefixSmall»collectionitemdoadd').observe('click', function() {
-        var newTitle = $F('«prefixSmall»newcollectionitem');
-
-        var itemID = $F('«prefixSmall»newcollectionitemid');
-        var itemsCount = $F('«prefixSmall»collectionitemcount');
-        var itemNr = ++itemsCount;
-        var idPrefix = '«prefixSmall»collectionitem' + itemNr;
-        var li = Builder.node('li', {id: 'item_' + itemNr}, newTitle);
-
-        var fldItemID = Builder.node('input', {id: idPrefix + 'itemid', name: idPrefix + 'itemid', type: 'hidden', value: itemID});
-        var removeLink = Builder.node('a', {id: idPrefix + 'remove', href: 'javascript:«prefixSmall»RemoveCollectionItem(' + itemID + ', ' + itemNr + ');'}, 'remove');
-
-        li.appendChild(fldItemID);
+    $(idPrefix + 'SelectorDoAdd').observe('click', function() {
+        var newTitle = $F(prefix + 'Selector');
+        var itemID = $F(idPrefix + 'SelectorId');
+        var li = Builder.node('li', {id: idPrefix + 'Reference_' + itemID}, newTitle);
+        var removeLink = Builder.node('a', {id: idPrefix + 'remove', href: 'javascript:«prefixSmall»RemoveRelatedItem(\'' + idPrefix + '\', ' + itemID + ');'}, 'remove');
         li.appendChild(removeLink);
-        if (wantedType) {
+        if (objectType == 'mediaItem') {
             var fldPreview = Builder.node('div', {id: idPrefix + 'preview', name: idPrefix + 'preview'}, '');
             fldPreview.update(mediaItemPreview);
             li.appendChild(fldPreview);
         }
-
-        $('«prefixSmall»collectionitems').appendChild(li);
-        $('«prefixSmall»collectionitemcount').value = itemsCount;
+        $(idPrefix + 'ReferenceList').appendChild(li);
 
         // show image link
         removeLink.update(' ' + removeImage);
 
+        var excludedItemIDs = $F(idPrefix + 'ExcludeList');
         if (excludedItemIDs != '') {
             excludedItemIDs += ',';
         }
         excludedItemIDs += itemID;
-        $('«prefixSmall»collectionitemexcludelist').value = excludedItemIDs;
+        $(idPrefix + 'ExcludeList').value = excludedItemIDs;
 
-        «prefixSmall»ResetCollectionItemForm();
+        «prefixSmall»ResetRelatedItemForm();
     });
-    $('«prefixSmall»collectionitemdocancel').observe('click', «prefixSmall»ResetCollectionItemForm);
+    $(idPrefix + 'SelectorDoCancel').observe('click', «prefixSmall»ResetRelatedItemForm);
 
-    if ($('«prefixSmall»newcollectionform')) {
-        $('«prefixSmall»newcollectionform').hide();
-        $('«prefixSmall»collectionitemdonew').observe('click', function() {
-            $('createnewcollection_title').value = $F('«prefixSmall»newcollectionitem');
-            $('«prefixSmall»newcollectionform').show();
-            «prefixSmall»ResetCollectionItemForm(); // hide
-        });
-
-        $('«prefixSmall»createcollectionsave').observe('click', function() {
-            if ($F('createnewcollection_title') == '') {
-                alert('Bitte einen Titel für die Collection eingeben!');
-                return false;
-            }
-
-            $('«prefixSmall»createcollectionsave').disabled = true;
-            $('«prefixSmall»createcollectioncancel').disabled = true;
-
-            var pars = 'module=«appName()»&func=createCollection'
-                        + '&title=' + encodeURIComponent($F('createnewcollection_title'))
-                        + '&description=' + encodeURIComponent($F('createnewcollection_description'));
-
-            var myAjax = new Ajax.Request('ajax.php', {
-                method: 'post',
-                parameters: pars,
-                onSuccess: function(req) {
-                    var json = pndejsonize(req.responseText);
-                    if (json.mediacollectionid) {
-                        $('«prefixSmall»newcollectionitem').value = $F('createnewcollection_title');
-                        «prefixSmall»ToggleCollectionItemForm();
-                        «prefixSmall»ResetCreateCollectionForm();
-                        $('«prefixSmall»newcollectionform').hide();
-                        //«prefixSmall»FakeKeyPress('«prefixSmall»newcollectionitem');
-                        $('«prefixSmall»newcollectionitem').activate();
-                    }
-                    else alert('Leider ist beim Anlegen der Collection ein Fehler aufgetreten.');
-                    $('«prefixSmall»createcollectionsave').disabled = false;
-                    $('«prefixSmall»createcollectioncancel').disabled = false;
-                }
-            });
-        });
-        $('«prefixSmall»createcollectioncancel').observe('click', «prefixSmall»ResetCreateCollectionForm);
+    if (!includeEditing || !$('«prefixSmall»newcollectionform')) {
+        return;
     }
+
+    // from here inline editing will be handled
+    $('«prefixSmall»newcollectionform').hide();
+    $('«prefixSmall»collectionitemdonew').observe('click', function() {
+        $('createnewcollection_title').value = $F('«prefixSmall»newcollectionitem');
+        $('«prefixSmall»newcollectionform').show();
+        «prefixSmall»ResetRelatedItemForm(); // hide
+    });
+
+    $('«prefixSmall»createcollectionsave').observe('click', function() {
+        if ($F('createnewcollection_title') == '') {
+            alert('Please enter a title for the new item!');
+            return false;
+        }
+
+        $('«prefixSmall»createcollectionsave').disabled = true;
+        $('«prefixSmall»createcollectioncancel').disabled = true;
+
+        var pars = 'module=«appName()»&func=createCollection'
+                    + '&title=' + encodeURIComponent($F('createnewcollection_title'))
+                    + '&description=' + encodeURIComponent($F('createnewcollection_description'));
+
+        var myAjax = new Ajax.Request('ajax.php', {
+            method: 'post',
+            parameters: pars,
+            onSuccess: function(req) {
+                var json = pndejsonize(req.responseText);
+                if (json.mediacollectionid) {
+                    $('«prefixSmall»newcollectionitem').value = $F('createnewcollection_title');
+                    «prefixSmall»ToggleRelatedItemForm();
+                    «prefixSmall»ResetCreateRelatedItemForm();
+                    $('«prefixSmall»newcollectionform').hide();
+                    //«prefixSmall»FakeKeyPress('«prefixSmall»newcollectionitem');
+                    $('«prefixSmall»newcollectionitem').activate();
+                }
+                else alert('Error! Could not create the new item.');
+                $('«prefixSmall»createcollectionsave').disabled = false;
+                $('«prefixSmall»createcollectioncancel').disabled = false;
+            }
+        });
+    });
+    $('«prefixSmall»createcollectioncancel').observe('click', «prefixSmall»ResetCreateRelatedItemForm);
 }
 «ENDDEFINE»
 
-«DEFINE RemoveRelatedItem(String prefixSmall) FOR Application-»
-function «prefixSmall»RemoveRelatedItem(itemID, itemNr)
+«DEFINE RemoveRelatedItem FOR Application-»
+/**
+ * Removes a related item from the list of selected ones.
+ */
+function «prefix()»RemoveRelatedItem(idPrefix, itemID)
 {
-    var expludedIDs = excludedItemIDs.split(',');
-    expludedIDs = expludedIDs.without(itemID);
-    excludedItemIDs = expludedIDs.join(',');
-    $('«prefixSmall»collectionitemexcludelist').value = excludedItemIDs;
-
-    $('item_' + itemNr).remove();
-
-    /* renumbering will be done later
-    var itemsCount = $F('«prefixSmall»collectionitemcount');
-    $('«prefixSmall»collectionitemcount').value = --itemsCount;*/
+    var excludedItemIDs = $F(idPrefix + 'ExcludeList');
+    var excludedIDs = excludedItemIDs.split(',');
+    excludedIDs = excludedIDs.without(itemID);
+    excludedItemIDs = excludedIDs.join(',');
+    $(idPrefix + 'ReferenceList').value = excludedItemIDs;
+    $(idPrefix + 'Reference_' + itemID).remove();
 }
 «ENDDEFINE»
 
-«DEFINE ResetRelatedItemForm(String prefixSmall) FOR Application-»
-function «prefixSmall»ResetCollectionItemForm()
+«DEFINE ResetRelatedItemForm FOR Application-»
+/**
+ * Resets an auto completion field.
+ */
+function «prefix()»ResetRelatedItemForm()
 {
-    «prefixSmall»ToggleCollectionItemForm();
+    «prefix()»ToggleRelatedItemForm();
 
-    $('«prefixSmall»newcollectionitem').disabled = false;
-    $('«prefixSmall»newcollectionitem').value = '';
+    $('«prefix()»newcollectionitem').disabled = false;
+    $('«prefix()»newcollectionitem').value = '';
 
-    $('«prefixSmall»collectionitemdoadd').disabled = true;
+    $('«prefix()»collectionitemdoadd').disabled = true;
 }
 «ENDDEFINE»
 
-«DEFINE ToggleRelatedItemForm(String prefixSmall) FOR Application-»
-function «prefixSmall»ToggleCollectionItemForm()
+«DEFINE ToggleRelatedItemForm FOR Application-»
+/**
+ * Toggles the fields of an auto completion field.
+ */
+function «prefix()»ToggleRelatedItemForm()
 {
-    $('«prefixSmall»addcollectionitem').toggle();
-    $('«prefixSmall»collectionitemaddfields').toggle();
+    $('«prefix()»addcollectionitem').toggle();
+    $('«prefix()»collectionitemaddfields').toggle();
 }
 «ENDDEFINE»
 
-«DEFINE FakeKeyPress(String prefixSmall) FOR Application-»
+«DEFINE FakeKeyPress FOR Application-»
 «REM»trying activate() instead - see http://stackoverflow.com/questions/124935/how-do-i-make-an-ajax-autocompleter-perform-a-request-without-typing
+/**
+ * Performs a key press to activate auto completion automatically.
+ */
 function «prefixSmall»FakeKeyPress(input_id) {
     var input = $(input_id);
     if (input.fireEvent) {
@@ -226,13 +231,16 @@ function «prefixSmall»FakeKeyPress(input_id) {
 }«ENDREM»
 «ENDDEFINE»
 
-«DEFINE ResetCreateRelatedItemForm(String prefixSmall) FOR Application-»
-function «prefixSmall»ResetCreateCollectionForm(objectType)
+«DEFINE ResetCreateRelatedItemForm FOR Application-»
+/**
+ * Resets the form for editing a related object or creating a new one.
+ */
+function «prefix()»ResetCreateRelatedItemForm(objectType)
 {
-    if (!$('«prefixSmall»new' + objectType + 'form')) {
+    if (!$('«prefix()»new' + objectType + 'form')) {
         return;
     }
-    $('«prefixSmall»new' + objectType + 'form').hide();
+    $('«prefix()»new' + objectType + 'form').hide();
 
     $('createnew' + objectType + '_title').value = '';
     $('createnew' + objectType + '_description').update('');

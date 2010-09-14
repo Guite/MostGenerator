@@ -49,17 +49,15 @@
 
 «DEFINE ActionImpl(Application app) FOR Action-»
 «EXPAND PermissionCheck-»
-«LET app.appName() AS appName-»
 «IF metaType != MainAction-»
         // parameter specifying which type of objects we are treating
         $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'GET');
 
-        if (!in_array($objectType, «appName»_Util::getObjectTypes())) {
+        if (!in_array($objectType, «app.appName()»_Util::getObjectTypes())) {
             $objectType = '«app.getLeadingEntity().name.formatForCode()»';
         }
 «ENDIF-»
-«EXPAND ActionImplBody(appName)-»
-«ENDLET-»
+«EXPAND ActionImplBody(app.appName())-»
 «ENDDEFINE»
 
 «DEFINE PermissionCheck FOR Action-»
@@ -73,7 +71,7 @@
 «DEFINE ActionImplBody(String appName) FOR MainAction-»
 «IF controller.metaType == UserController-»
         // return main template
-        return $this->view->fetch('«controller.name.formatForDB()»/main.tpl');
+        return $this->view->fetch('«controller.name()»/main.tpl');
 «ELSEIF controller.metaType == AdminController-»
 «REM»
 «IF controller.container.application.needsConfig()-»
@@ -82,7 +80,7 @@
 «ELSE-»
 «ENDREM»
         // return main template
-        return $this->view->fetch('«controller.name.formatForDB()»/main.tpl');
+        return $this->view->fetch('«controller.name()»/main.tpl');
 «REM»«ENDIF-»«ENDREM»
 «ELSEIF controller.metaType == AccountController-»
 «ELSEIF controller.metaType == AjaxController-»
@@ -93,7 +91,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «ENDREM»
 «ELSEIF controller.metaType == CustomController-»
         // return main template
-        return $this->view->fetch('«controller.name.formatForDB()»/main.tpl');
+        return $this->view->fetch('«controller.name()»/main.tpl');
 «ENDIF-»
 «ENDDEFINE»
 
@@ -153,7 +151,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
                                            'itemsperpage' => $resultsPerPage));
 
         // fetch and return the appropriate template
-        return «appName»_Util::processViewTemplate($this->view, '«controller.name.formatForDB()»', $objectType, 'view', $args);
+        return «appName»_Util::processViewTemplate($this->view, '«controller.name()»', $objectType, 'view', $args);
 «ENDDEFINE»
 
 «DEFINE DefaultSorting FOR ViewAction-»
@@ -182,7 +180,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $this->view->assign($objectType, $objectData);
 
         // fetch and return the appropriate template
-        return «appName»_Util::processViewTemplate($this->view, '«controller.name.formatForDB()»', $objectType, 'display', $args);
+        return «appName»_Util::processViewTemplate($this->view, '«controller.name()»', $objectType, 'display', $args);
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR EditAction-»
@@ -191,10 +189,10 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $view = FormUtil::newForm('«appName»');
 
         // build form handler class name
-        $handlerClass = '«appName.toFirstUpper()»_Form_Handler_«controller.name.formatForDB().toFirstUpper()»_' . ucfirst($objectType) . '_Edit';
+        $handlerClass = '«appName.toFirstUpper()»_Form_Handler_«controller.name().toFirstUpper()»_' . ucfirst($objectType) . '_Edit';
 
         // execute form using supplied template and page event handler
-        return $view->execute('«controller.name.formatForDB()»/' . $objectType . '/edit.tpl', new $handlerClass());
+        return $view->execute('«controller.name()»/' . $objectType . '/edit.tpl', new $handlerClass());
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR DeleteAction-»
@@ -227,11 +225,11 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
             $this->view->assign($objectType, $objectData);
 
             // fetch and return the appropriate template
-            return «appName»_Util::processViewTemplate($this->view, '«controller.name.formatForDB()»', $objectType, 'delete', $args);
+            return «appName»_Util::processViewTemplate($this->view, '«controller.name()»', $objectType, 'delete', $args);
         }
 
         // redirect to the list of the current object type
-        $this->redirect(ModUtil::url('«appName»', '«controller.name.formatForDB()»', «IF controller.hasActions('view')-»'view',
+        $this->redirect(ModUtil::url('«appName»', '«controller.name()»', «IF controller.hasActions('view')-»'view',
                                                                                     array('ot' => $objectType)«ELSE-»'main'«ENDIF-»));
 
 «ENDDEFINE»

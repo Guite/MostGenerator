@@ -18,7 +18,6 @@ cached String constantName(Action this) :
 cached String constantName(ActionEvent this) :
 	"EVENT_" + name.toUpperCase();
 
-// ugly (and temporary) way to bypass that EfficientLazyString can not be compared
 cached String msconcat(String a, String b) :
     a.replaceAll(a, a + b);
 
@@ -28,22 +27,50 @@ cached String msconcat(String a, String b) :
 cached String appName(Application this) :
 	name.formatForCode().toFirstUpper();
 
-cached String formatForCode(String s)
-	: JAVA extensions.Utils.formatForCode(java.lang.String);
-cached String formatForCodeCapital(String s)
-	: s.formatForCode().toFirstUpper();
-cached String formatForDB(String s)
-	: JAVA extensions.Utils.formatForDB(java.lang.String);
-cached String formatForDisplay(String s)
-	: JAVA extensions.Utils.formatForDisplay(java.lang.String);
-cached String formatForDisplayCapital(String s)
-	: JAVA extensions.Utils.formatForDisplayCapital(java.lang.String);
+cached String prefix(Application this) :
+    prefix.formatForDB();
 
-cached String displayBool(Boolean b)
-    : ((b) ? 'true' : 'false');
+cached String formatForCode(String s) :
+	JAVA extensions.Utils.formatForCode(java.lang.String);
+cached String formatForCodeCapital(String s) :
+	s.formatForCode().toFirstUpper();
+cached String formatForDB(String s) :
+	JAVA extensions.Utils.formatForDB(java.lang.String);
+cached String formatForDisplay(String s) :
+	JAVA extensions.Utils.formatForDisplay(java.lang.String);
+cached String formatForDisplayCapital(String s) :
+	JAVA extensions.Utils.formatForDisplayCapital(java.lang.String);
+
+cached String displayBool(Boolean b) :
+    ((b) ? 'true' : 'false');
+
+
+// return all entities with leading = true
+cached getLeadingEntity(Application this) :
+    models.entities.select(e | e.leading == true).get(0);
+
+cached boolean hasUserFields(Application this) :
+    (getUserFields().size > 0);
+
+cached getUserFields(Application this) :
+    models.entities.fields.typeSelect(UserField);
+
+cached boolean hasUploads(Application this) :
+    (models.entities.fields.typeSelect(UploadField).size > 0);
+
+cached getUploadEntities(Application this) :
+    (models.entities.select(e|e.fields.typeSelect(UploadField).size > 0));
+
+
+
+cached boolean hasEditActions(Application this) :
+    (getEditActions().size > 0);
+
+cached getEditActions(Application this) :
+    controllers.controllers.actions.typeSelect(EditAction);
 
 cached boolean needsConfig(Application this) :
-	(models.variables.vars.size > 0);
+    (models.variables.vars.size > 0);
 
 cached String configControllerType(Application this) :
     ((controllers.controllers.typeSelect(AdminController).size > 0) ? 'modulestudio::AdminController'
@@ -53,51 +80,64 @@ cached String configControllerType(Application this) :
 cached String configController(Application this) :
     configControllerType().replaceAll('modulestudio::', '').replaceAll('Controller', '');
 
-// we have to go the ugly way here to bypass that EfficientLazyString can not be compared
-cached String fullEntityName(Entity this)
-    : container.application.prefix.formatForDB().msconcat("_").msconcat(name.formatForDB());
+cached String getUniqueRelationNameForJs(JoinRelationship this, Application app, Entity targetEntity, Boolean many, Boolean incoming, String relationAliasName) :
+    let uniqueFieldName = relationFieldName(targetEntity, ((incoming) ? targetField : sourceField)) :
+    app.prefix()
+    .msconcat(targetEntity.getEntityNameSingularPlural(many).formatForCode())
+    .msconcat('_TEST')
+    .msconcat(uniqueFieldName)
+    .msconcat('ENDTEST_')
+    .msconcat(relationAliasName);
 
+
+
+cached String fullEntityName(Entity this) :
+    container.application.prefix().msconcat("_").msconcat(name.formatForDB());
+
+cached String getEntityNameSingularPlural(Entity this, Boolean usePlural) :
+    ((usePlural) ? nameMultiple : name);
 
 
 // return model container which are default data sources
-cached getDefaultDataSource(Application this)
-    : models.select(e | e.isDefaultDataSource == true).get(0);
+cached getDefaultDataSource(Application this) :
+    models.select(e | e.isDefaultDataSource == true).get(0);
 
-// return all entities with leading = true
-cached getLeadingEntity(Application this)
-    : models.entities.select(e | e.leading == true).get(0);
 // return all derived fields (excluding calculated fields)
-cached getDerivedFields(Entity this)
-    : fields.typeSelect(DerivedField);
-cached getDerivedFieldsWithAlias(Entity this)
-    : getDerivedFields().select(e | e.alias != null && e.alias != "");
+cached getDerivedFields(Entity this) :
+    fields.typeSelect(DerivedField);
+cached getUniqueDerivedFields(Entity this) :
+    getDerivedFields().select(e|e.unique);
+cached getDerivedFieldsWithAlias(Entity this) :
+    getDerivedFields().select(e | e.alias != null && e.alias != "");
 // return all fields with leading = true
-cached getLeadingField(Entity this)
-    : getDerivedFields().select(e | e.leading == true).get(0);
+cached getLeadingField(Entity this) :
+    getDerivedFields().select(e | e.leading == true).get(0);
 // return all fields with primaryKey = true
-cached getPrimaryKeyField(Entity this)
-    : getDerivedFields(this).select(e | e.primaryKey == true).get(0);
+cached getPrimaryKeyField(Entity this) :
+    getDerivedFields(this).select(e | e.primaryKey == true).get(0);
+cached getUserFields(Entity this) :
+    fields.typeSelect(UserField);
+cached boolean hasUploadFields(Entity this) :
+    (getUploadFields().size > 0);
+cached getUploadFields(Entity this) :
+    fields.typeSelect(UploadField);
 
 
 
-cached String idField(Entity entity)
-    : entity.getPrimaryKeyField().name.formatForDB();
+cached String idField(Entity entity) :
+    entity.getPrimaryKeyField().name.formatForDB();
 
-cached String actualFieldName(EntityField this)
-    : name;
+cached String actualFieldName(EntityField this) :
+    name;
 
-cached String actualFieldName(DerivedField this)
-    : ((alias != null && alias != "") ? alias : name);
+cached String actualFieldName(DerivedField this) :
+    ((alias != null && alias != "") ? alias : name);
 
+cached getPointingRelations(IntegerField this) :
+    entity.incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == name.formatForDB());
 
-cached boolean hasUploads(Application this)
-    : (models.entities.fields.typeSelect(UploadField).size > 0);
-
-cached getUploadEntities(Application this)
-    : (models.entities.select(e|e.fields.typeSelect(UploadField).size > 0));
-
-cached String subFolderPathSegment(UploadField this)
-    : (subFolderName != null && subFolderName != "") ? subFolderName.formatForDB() : name.formatForDB();
+cached String subFolderPathSegment(UploadField this) :
+    (subFolderName != null && subFolderName != "") ? subFolderName.formatForDB() : name.formatForDB();
 
 cached String namingSchemeAsInt(UploadField this) :
     switch (namingScheme) {
@@ -108,38 +148,38 @@ cached String namingSchemeAsInt(UploadField this) :
     };
 
 // return all join relations (excluding inheritance)
-cached getJoinRelations(Models this)
-    : relations.typeSelect(JoinRelationship);
+cached getJoinRelations(Models this) :
+    relations.typeSelect(JoinRelationship);
 
-cached isInheriting(Entity this)
-    : outgoing.typeSelect(InheritanceRelationship).size > 0;
-cached InheritanceRelationship getInheritanceRelation(Entity this)
-    : outgoing.typeSelect(InheritanceRelationship).get(0);
-cached Entity parentType(Entity this)
-    : getInheritanceRelation().target;
+cached isInheriting(Entity this) :
+    outgoing.typeSelect(InheritanceRelationship).size > 0;
+cached InheritanceRelationship getInheritanceRelation(Entity this) :
+    outgoing.typeSelect(InheritanceRelationship).get(0);
+cached Entity parentType(Entity this) :
+    getInheritanceRelation().target;
 
-cached isInheriter(Entity this)
-    : incoming.typeSelect(InheritanceRelationship).size > 0;
-cached getChildRelations(Entity this)
-    : incoming.typeSelect(InheritanceRelationship);
-cached getChildRelationsWithAggregation(Entity this)
-    : getChildRelations().select(e|e.strategy == InheritancyStrategyType::COLUMNAGGREGATION);
+cached isInheriter(Entity this) :
+    incoming.typeSelect(InheritanceRelationship).size > 0;
+cached getChildRelations(Entity this) :
+    incoming.typeSelect(InheritanceRelationship);
+cached getChildRelationsWithAggregation(Entity this) :
+    getChildRelations().select(e|e.strategy == InheritancyStrategyType::COLUMNAGGREGATION);
 
 /* if we have id or fooid return fooid; otherwise return the actual field name of the referenced field */
-cached relationFieldName(Entity refEntity, String refField)
-    : (refField.toLowerCase() == 'id' || refField.toLowerCase() == refEntity.idField()) ? refEntity.idField() : refEntity.fields.select(e|e.name == refField).get(0).actualFieldName().formatForCode();
+cached relationFieldName(Entity refEntity, String refField) :
+    (refField.toLowerCase() == 'id' || refField.toLowerCase() == refEntity.idField()) ? refEntity.idField() : refEntity.fields.select(e|e.name == refField).get(0).actualFieldName().formatForCode();
 
 /* get local field for 1:1 and 1:n */ 
-cached getRelationLocalField(JoinRelationship this, Boolean incoming)
-    : (!incoming) ? source.relationFieldName(sourceField) : ((targetField != "id" && targetField != (target.name + "id")) ? target.relationFieldName(targetField) : source.relationFieldName(sourceField));
+cached getRelationLocalField(JoinRelationship this, Boolean incoming) :
+    (!incoming) ? source.relationFieldName(sourceField) : ((targetField != "id" && targetField != (target.name + "id")) ? target.relationFieldName(targetField) : source.relationFieldName(sourceField));
 /* get foreign field for 1:1 and 1:n */ 
-cached getRelationForeignField(JoinRelationship this, Boolean incoming)
-    : (incoming) ? source.relationFieldName(sourceField) : ((targetField != "id" && targetField != (target.name + "id")) ? target.relationFieldName(targetField) : source.relationFieldName(sourceField));
+cached getRelationForeignField(JoinRelationship this, Boolean incoming) :
+    (incoming) ? source.relationFieldName(sourceField) : ((targetField != "id" && targetField != (target.name + "id")) ? target.relationFieldName(targetField) : source.relationFieldName(sourceField));
 
-cached String getTargetMultiplicity(JoinRelationship this)
-    : 'Many';
-cached String getTargetMultiplicity(OneToOneRelationship this)
-    : 'One';
+cached String getTargetMultiplicity(JoinRelationship this) :
+    'Many';
+cached String getTargetMultiplicity(OneToOneRelationship this) :
+    'One';
 
 /* retrieve integer value defining which relation edit type will be implemented
  * this mapping is done to have a more appropriate logic inside the generator
@@ -173,6 +213,8 @@ cached Integer getEditStageCode(ManyToManyRelationship this, Boolean incoming) :
     };
 
 
+cached String name(Controller this) :
+    name.formatForDB();
 
 cached boolean hasActions(Controller controller, String type) :
 	switch (type) {
@@ -221,22 +263,23 @@ cached String asConstant(CascadeType obj) :
  * extensions that are independent of a specific model element,
  */
 
-cached String fieldTypeAsString(DerivedField f)
-    : f.metaType.toString().replaceAll("modulestudio::", "").replaceAll("Field", "").toLowerCase();
+cached String fieldTypeAsString(DerivedField f) :
+    f.metaType.toString().replaceAll("modulestudio::", "").replaceAll("Field", "").toLowerCase();
 // required for own sub types like user, email, url, upload 
-cached String fieldTypeAsString(AbstractIntegerField f)
-    : 'integer';
-cached String fieldTypeAsString(AbstractStringField f)
-    : 'string';
+cached String fieldTypeAsString(AbstractIntegerField f) :
+    'integer';
+cached String fieldTypeAsString(AbstractStringField f) :
+    'string';
 
-cached String timestamp()
-	: JAVA extensions.Utils.timestamp();
+cached String timestamp() :
+	JAVA extensions.Utils.timestamp();
 
-cached Boolean isProgressMonitor(Object monitor)
-    : JAVA extensions.Utils.isProgressMonitor(java.lang.Object);
+cached Boolean isProgressMonitor(Object monitor) :
+    JAVA extensions.Utils.isProgressMonitor(java.lang.Object);
 
-cached String subTask(Object monitor, String title)
-    : monitor.isProgressMonitor() ? subTaskJava(monitor, title) : "";
+cached String subTask(Object monitor, String title) :
+    monitor.isProgressMonitor() ? subTaskJava(monitor, title) : "";
 
-cached String subTaskJava(Object monitor, String title)
-	: JAVA extensions.Utils.subTask(org.eclipse.core.runtime.IProgressMonitor, java.lang.String);
+cached String subTaskJava(Object monitor, String title) :
+	JAVA extensions.Utils.subTask(org.eclipse.core.runtime.IProgressMonitor, java.lang.String);
+

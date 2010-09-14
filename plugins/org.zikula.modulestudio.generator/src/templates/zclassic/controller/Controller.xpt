@@ -9,7 +9,7 @@
     «EXPAND Root(this) FOREACH controllers.controllers-»
     «EXPAND UtilMethods::Root»
     «EXPAND Factory::Root»
-«IF controllers.controllers.actions.typeSelect(EditAction).size > 0-»
+«IF hasEditActions()-»
     «EXPAND javascript::EditFunctions::Root»
 «ENDIF-»
 «ENDDEFINE»
@@ -62,7 +62,7 @@ class «baseClassController()» extends Zikula_Controller
     }
 «ENDIF-»
 «IF metaType == AjaxController-»
-«LET app.models.entities.fields.typeSelect(UserField) AS userFields-»
+«LET app.getUserFields() AS userFields-»
 «IF userFields.size > 0-»
 «FOREACH userFields AS userField-»
     public function get«userField.entity.name.formatForCodeCapital()»«userField.actualFieldName().formatForCodeCapital()»Users()
@@ -100,7 +100,7 @@ class «baseClassController()» extends Zikula_Controller
 
 «ENDIF-»
 «ENDLET-»
-«IF app.models.relations.typeSelect(JoinRelationship).size > 0-»
+«IF app.models.getJoinRelations().size > 0-»
 «REM»TODO«ENDREM»
 «ENDIF-»
 «ENDIF-»
@@ -140,7 +140,7 @@ class «baseClassApi()» extends Zikula_Api
 
 «FOREACH app.models.entities AS entity-»
         if (SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_«IF metaType == AdminController»ADMIN«ELSE»READ«ENDIF»)) {
-            $links[] = array('url' => ModUtil::url('«app.appName()»', '«name.formatForDB()»', 'view', array('ot' => '«entity.name.formatForCode()»')),
+            $links[] = array('url' => ModUtil::url('«app.appName()»', '«name()»', 'view', array('ot' => '«entity.name.formatForCode()»')),
                              'text' => $this->__('«entity.nameMultiple.formatForDisplayCapital()»'));
         }
 «ENDFOREACH-»

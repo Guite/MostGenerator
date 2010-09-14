@@ -38,19 +38,21 @@ class «appName()»_Api_Mailz extends «appName()»_Api_Base_Mailz
      */
     public function getPlugins($args)
     {
+«LET getLeadingEntity().nameMultiple.formatForDisplay() AS itemDesc-»
         $plugins = array();
         $plugins[] = array(
             'pluginid'      => 1,
             'module'        => '«appName()»',
-            'title'         => $this->__('3 newest «getLeadingEntity().nameMultiple.formatForDisplay()»'),
-            'description'   => $this->__('A list of the three newest «getLeadingEntity().nameMultiple.formatForDisplay()».')
+            'title'         => $this->__('3 newest «itemDesc»'),
+            'description'   => $this->__('A list of the three newest «itemDesc».')
         );
         $plugins[] = array(
             'pluginid'      => 2,
             'module'        => '«appName()»',
-            'title'         => $this->__('3 random «getLeadingEntity().nameMultiple.formatForDisplay()»'),
-            'description'   => $this->__('A list of three random «getLeadingEntity().nameMultiple.formatForDisplay()».')
+            'title'         => $this->__('3 random «itemDesc»'),
+            'description'   => $this->__('A list of three random «itemDesc».')
         );
+«ENDLET-»
         return $plugins;
     }
 
@@ -68,8 +70,8 @@ class «appName()»_Api_Mailz extends «appName()»_Api_Base_Mailz
     {
 // $args is something like:
 // Array ( [uid] => 5 [contenttype] => h [pluginid] => 1 [nid] => 1 [last] => 0000-00-00 00:00:00 [params] => Array ( [] => ) ) 1
-
-        $objectType = '«getLeadingEntity().name.formatForCode()»';
+«LET getLeadingEntity() AS leadingEntity-»
+        $objectType = '«leadingEntity.name.formatForCode()»';
 «EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(appName(), true, 'mailz')-»
 
 /** TODO
@@ -102,14 +104,14 @@ class «appName()»_Api_Mailz extends «appName()»_Api_Base_Mailz
             $output .= "\n";
             foreach ($objectData as $object) {
                 $counter++;
-                $output .= $counter . '. ' . $object['«getLeadingEntity().getLeadingField().name.formatForCode()»'] . "\n";
+                $output .= $counter . '. ' . $object['«leadingEntity.getLeadingField().name.formatForCode()»'] . "\n";
             }
         } else {
             $this->view->setCaching(false);
 
             //$data = array('sorting' => $this->sorting, 'amount' => $this->amount, 'filter' => $this->filter, 'template' => $this->template);
             //$this->view->assign('vars', $data);
-            $this->view->assign('objectType', '«getLeadingEntity().name.formatForCode()»')
+            $this->view->assign('objectType', '«leadingEntity.name.formatForCode()»')
                        ->assign('items', $objectData);
 
             //$output = $this->view->fetch('contenttype/itemlist_display.html');
@@ -117,6 +119,7 @@ class «appName()»_Api_Mailz extends «appName()»_Api_Base_Mailz
         }
         return $output;
     }
+«ENDLET-»
 
 «ENDDEFINE»
 

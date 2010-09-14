@@ -11,13 +11,12 @@ listType:
 	3 = div and table
 «ENDREM»
 «DEFINE Impl(String appName, Controller controller, Integer listType) FOR Entity»
-«LET controller.name.formatForDB() AS controllerName-»
-«info("Generating " + controllerName + " view templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
+«info("Generating " + controller.name() + " view templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «LET name.formatForCode() AS objName-»
 «FILE templateFile(controller, name, 'view')-»
-{* purpose of this template: «nameMultiple.formatForDisplay()» view view in «controllerName» area *}
+{* purpose of this template: «nameMultiple.formatForDisplay()» view view in «controller.name()» area *}
 
-{include file="«controllerName»/header.tpl"}
+{include file="«controller.name()»/header.tpl"}
 
 <div class="z-«IF controller.metaType == AdminController-»admin«ELSE»frontend«ENDIF»container">
 {gt text='«name.formatForDisplayCapital()» list' assign="templateTitle"}
@@ -33,7 +32,7 @@ listType:
 «IF controller.hasActions('edit')-»
     {checkpermissionblock component="«appName»::" instance=".*" level="ACCESS_ADD"}
         {gt text='Create «name.formatForDisplay()»' assign="createTitle"}
-        <a href="{modurl modname="«appName»" type="«controllerName»" func="edit" ot="«objName»"}" title="{$createTitle}" class="validationtestIconNew">
+        <a href="{modurl modname="«appName»" type="«controller.name()»" func="edit" ot="«objName»"}" title="{$createTitle}" class="validationtestIconNew">
             {$createTitle}
         </a>
     {/checkpermissionblock}
@@ -60,10 +59,10 @@ listType:
 «LET incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == name.formatForDB()) AS joins-»
 «IF joins.size > 0-»
 «LET joins.get(0).source.idField() AS fieldName-»
-«EXPAND HeaderSortingLink(appName, controllerName, objName, joins.get(0).source.name.formatForDB().msconcat('_').msconcat(fieldName), joins.get(0).source.name) FOR field-»
+«EXPAND HeaderSortingLink(appName, controller, objName, joins.get(0).source.name.formatForDB().msconcat('_').msconcat(fieldName), joins.get(0).source.name) FOR field-»
 «ENDLET-»
 «ELSE-»
-«EXPAND HeaderSortingLink(appName, controllerName, objName, field.actualFieldName().formatForCode(), field.actualFieldName()) FOR field-»
+«EXPAND HeaderSortingLink(appName, controller, objName, field.actualFieldName().formatForCode(), field.actualFieldName()) FOR field-»
 «ENDIF-»
 «ENDLET-»
         </th>
@@ -119,20 +118,20 @@ listType:
         <td headers="hoptions" align="right" valign="top" style="white-space: nowrap">
 «ENDIF-»
 «IF controller.hasActions('display')-»
-            <a href="{modurl modname="«appName»" type="«controllerName»" func="display" ot="«objName»" «idField()»=$«objName».«idField()»}" title="{$«objName».«getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}">
+            <a href="{modurl modname="«appName»" type="«controller.name()»" func="display" ot="«objName»" «idField()»=$«objName».«idField()»}" title="{$«objName».«getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}">
                 {img src="demo.gif" modname="core" set="icons/extrasmall" __alt='Details'}
             </a>
 «ENDIF-»            
 «IF controller.hasActions('edit')-»
     {checkpermissionblock component="«appName»::" instance=".*" level="ACCESS_EDIT"}
-            <a href="{modurl modname="«appName»" type="«controllerName»" func="edit" ot="«objName»" «idField()»=$«objName».«idField()»}">
+            <a href="{modurl modname="«appName»" type="«controller.name()»" func="edit" ot="«objName»" «idField()»=$«objName».«idField()»}">
                 {img src="xedit.gif" modname="core" set="icons/extrasmall" __alt='Edit' __title='Edit'}
             </a>
     {/checkpermissionblock}
 «ENDIF-»
 «IF controller.hasActions('delete')-»
     {checkpermissionblock component="«appName»::" instance=".*" level="ACCESS_DELETE"}
-            <a href="{modurl modname="«appName»" type="«controllerName»" func="delete" ot="«objName»" «idField()»=$«objName».«idField()»}">
+            <a href="{modurl modname="«appName»" type="«controller.name()»" func="delete" ot="«objName»" «idField()»=$«objName».«idField()»}">
                 {img src="14_layer_deletelayer.gif" modname="core" set="icons/extrasmall" __alt='Delete' __title='Delete'}
             </a>
     {/checkpermissionblock}
@@ -192,15 +191,14 @@ listType:
 «ENDIF-»
 </div>
 
-{include file="«controllerName»/footer.tpl"}
+{include file="«controller.name()»/footer.tpl"}
 «ENDFILE»
-«ENDLET-»
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE HeaderSortingLink(String appName, String controllerName, String objName, String fieldName, String label) FOR EntityField-»
+«DEFINE HeaderSortingLink(String appName, Controller controller, String objName, String fieldName, String label) FOR EntityField-»
             {assign var="sortDirection" value="asc"}{if $sort eq "«fieldName»"}{assign var="sortDirection" value=$sdirReverse}{/if}
-            <a href="{modurl modname="«appName»" type="«controllerName»" func="view" ot="«objName»" sort="«fieldName»" sdir=$sortDirection}"{if $sort eq "«fieldName»"} class="currentSortingLink"{/if}>
+            <a href="{modurl modname="«appName»" type="«controller.name()»" func="view" ot="«objName»" sort="«fieldName»" sdir=$sortDirection}"{if $sort eq "«fieldName»"} class="currentSortingLink"{/if}>
                 {gt text='«label.formatForDisplayCapital()»'}
             </a>
 «ENDDEFINE»

@@ -29,9 +29,8 @@
 «ENDDEFINE»
 
 «DEFINE HeaderFooter(String appName, Controller controller) FOR Application»
-«LET controller.name.formatForDB() AS controllerName-»
-«FILE "templates/" + controllerName + "/header.tpl"-»
-{* purpose of this template: header for «controllerName» area *}
+«FILE "templates/".msconcat(controller.name()).msconcat("/header.tpl")-»
+{* purpose of this template: header for «controller.name()» area *}
 
 {pageaddvar name="javascript" value="javascript/ajax/proto_scriptaculous.combined.min.js"}
 {pageaddvar name="javascript" value="javascript/ajax/validation.min.js"}
@@ -52,19 +51,17 @@
 {insert name="getstatusmsg"}
 «ENDIF-»
 «ENDFILE»
-«FILE "templates/" + controllerName + "/footer.tpl"-»
+«FILE "templates/".msconcat(controller.name()).msconcat("/footer.tpl")-»
 {* purpose of this template: footer for «controllerName» area *}
 
 «EXPAND FileHelper::msWeblink-»
 
 «ENDFILE»
-«ENDLET-»
 «ENDDEFINE»
 
 «DEFINE MetaDataTemplates(String appName, Controller controller) FOR Application-»
-«LET controller.name.formatForDB() AS controllerName-»
 «IF controller.hasActions('view') || controller.hasActions('display')-»
-«FILE "templates/" + controllerName + "/include_metadata_display.tpl"-»
+«FILE "templates/".msconcat(controller.name()).msconcat("/include_metadata_display.tpl")-»
     <dt>{gt text='Meta data'}</dt>
 {configgetvar name="profilemodule" assign="profileModule"}
 {if $obj.cr_uid}
@@ -89,7 +86,7 @@
 «ENDIF»
 
 «IF controller.hasActions('edit')-»
-«FILE "templates/" + controllerName + "/include_metadata_edit.tpl"-»
+«FILE "templates/".msconcat(controller.name()).msconcat("/include_metadata_edit.tpl")-»
 <fieldset>
     <legend>{gt text='Meta data'}</legend>
     <ul>
@@ -105,5 +102,4 @@
 </fieldset>
 «ENDFILE»
 «ENDIF»
-«ENDLET-»
 «ENDDEFINE»

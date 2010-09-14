@@ -9,29 +9,26 @@
 
 «REM»Entry point for Form templates«ENDREM»
 «DEFINE Root(Application app) FOR Action-»
-    «EXPAND Root(app.appName(), controller, 'edit') FOREACH app.models.entities-»
+    «EXPAND Root(app, controller, 'edit') FOREACH app.models.entities-»
 «ENDDEFINE»
 
 
 «REM»Entry point for Form templates«ENDREM»
-«DEFINE Root(String appName, Controller controller, String actionName) FOR Entity-»
+«DEFINE Root(Application app, Controller controller, String actionName) FOR Entity-»
 «info("Generating edit form templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
-«LET controller.name.formatForDB() AS controllerName-»
 «FILE editTemplateFile(controller, name, actionName)-»
-«EXPAND FormTemplate(appName, controller, actionName)-»
+«EXPAND FormTemplate(app, controller, actionName)-»
 «ENDFILE»
-«ENDLET-»
-«EXPAND FormComponents::Relations::Root(controller, false, true) FOREACH incoming.typeSelect(JoinRelationship)-»
-«EXPAND FormComponents::Relations::Root(controller, false, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
+«EXPAND FormComponents::Relations::Root(app, controller, false, true) FOREACH incoming.typeSelect(JoinRelationship)-»
+«EXPAND FormComponents::Relations::Root(app, controller, false, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 «ENDDEFINE»
 
-«DEFINE FormTemplate(String appName, Controller controller, String actionName) FOR Entity-»
-«LET controller.name.formatForDB() AS controllerName-»
+«DEFINE FormTemplate(Application app, Controller controller, String actionName) FOR Entity-»
 «LET name.formatForDB() AS entityName-»
 {* purpose of this template: build the Form to «actionName.formatForDisplay()» an instance of «name.formatForDisplay()» *}
 
-{include file="«controllerName»/header.tpl"}
-{pageaddvar name="javascript" value="modules/«appName»/javascript/«appName»_editFunctions.js"}
+{include file="«controller.name()»/header.tpl"}
+{pageaddvar name="javascript" value="modules/«app.appName()»/javascript/«app.appName()»_editFunctions.js"}
 
 {if $mode eq "edit"}
     {gt text='Edit «name.formatForDisplay()»' assign="templateTitle"}
@@ -60,20 +57,20 @@
 {pagesetvar name="title" value=$templateTitle}
 <h2>{$templateTitle}</h2>
 <br />
-{form «IF fields.typeSelect(UploadField).size > 0»enctype="multipart/form-data" «ENDIF»cssClass="z-form"}
+{form «IF hasUploadFields()»enctype="multipart/form-data" «ENDIF»cssClass="z-form"}
 
     {* add validation summary and a <div> element for styling the form *}
-    {«appName.formatForDB()»FormFrame}
+    {«app.appName().formatForDB()»FormFrame}
     {*formvalidationsummary*}
     {*formerrormessage id=error*}
 
-    {formsetinitialfocus inputId="«fields.typeSelect(DerivedField).reject(e|e.primaryKey).get(0).actualFieldName().formatForCode()»"}
+    {formsetinitialfocus inputId="«getDerivedFields().reject(e|e.primaryKey).get(0).actualFieldName().formatForCode()»"}
 «REM»{formsetinitialfocus inputId=PluginId doSelect=true} <-- for dropdown lists (performs input.select())«ENDREM»«""-»
 
     <fieldset>
         <legend>{gt text='Content'}</legend>
 «REM»No input fields for primary key, array fields and object fields«ENDREM»«""-»
-«FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey || e.metaType == ArrayField || e.metaType == ObjectField) AS field-»
+«FOREACH getDerivedFields().reject(e|e.primaryKey || e.metaType == ArrayField || e.metaType == ObjectField) AS field-»
 «REM»No input fields for foreign keys, relations are processed further down«ENDREM»«""-»
 «IF incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == field.name.formatForDB()).isEmpty-»
         <div class="z-formrow">
@@ -84,18 +81,18 @@
     </fieldset>
 «IF standardFields-»
     {if $mode ne "create"}
-        {include file="«controllerName»/include_metadata_edit.tpl"}
+        {include file="«controller.name()»/include_metadata_edit.tpl"}
     {/if}
 «ENDIF-»
 «EXPAND FormComponents::Relations::Root(controller, true, true) FOREACH incoming.typeSelect(JoinRelationship)-»
 «EXPAND FormComponents::Relations::Root(controller, true, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 
     {if $mode eq "edit"}
-        {modcallhooks hookobject="item" hookaction="modify" module="«appName»" hookid="«name.formatForDB()»`$«idField()»`" implode=false}
+        {modcallhooks hookobject="item" hookaction="modify" module="«app.appName()»" hookid="«name.formatForDB()»`$«idField()»`" implode=false}
     {elseif $mode eq "create"}
-        {modcallhooks hookobject="item" hookaction="new" module="«appName»" implode=false}
+        {modcallhooks hookobject="item" hookaction="new" module="«app.appName()»" implode=false}
     {else}
-        {modcallhooks hookobject="item" hookaction="modify" module="«appName»" hookid="«name.formatForDB()»`$«idField()»`" implode=false}
+        {modcallhooks hookobject="item" hookaction="modify" module="«app.appName()»" hookid="«name.formatForDB()»`$«idField()»`" implode=false}
     {/if}
     {if is_array($hooks) && isset($hooks[0])}
         <fieldset>
@@ -121,7 +118,7 @@
     {/if}
         {formbutton id="btnCancel" commandName="cancel" __text='Cancel' class='z-bt-cancel'}
     </div>
-  {/«appName.formatForDB()»FormFrame}
+  {/«app.appName().formatForDB()»FormFrame}
 {/form}
 
 «IF controller.metaType == AdminController-»
@@ -132,13 +129,11 @@
 
 <script type="text/javascript">
 //<![CDATA[
-«REM»not ready yet
-{img modname="core" set="icons/extrasmall" src="editdelete.gif" assign="removeImageArray"}
+{{img modname="core" set="icons/extrasmall" src="editdelete.gif" assign="removeImageArray"}}
     var removeImage = '<img src="{{$removeImageArray.src}}" width="16" height="16" alt="" />';
-    var excludeListCollectionItems = '';
-«ENDREM»
+
     document.observe('dom:loaded', function() {
-«LET getDerivedFields().typeSelect(UserField) AS userFields-»
+«LET getUserFields() AS userFields-»
 «IF userFields.size > 0-»
         // initialise auto completion for user fields
 «FOREACH userFields AS userField-»
@@ -146,14 +141,14 @@
         {{if $mode ne "create" && $«realName» gt 0}}
             $('«realName»desc').value = '{{usergetvar name=uname uid=$«realName»}}';
         {{/if}}
-        «container.application.prefix.formatForDB()»InitUserField('«realName»', 'get«name.formatForCodeCapital()»«realName.formatForCodeCapital()»Users');
+        «app.prefix()»InitUserField('«realName»', 'get«name.formatForCodeCapital()»«realName.formatForCodeCapital()»Users');
 «ENDLET-»
 «ENDFOREACH-»
 «ENDIF-»
 «ENDLET-»
 
 «REM»not ready yet
-        whmedInitCollectionItemsForm();
+        «container.application.prefix()»InitCollectionItemsForm();
 «ENDREM»
 
         var valid = new Validation('FormForm', {onSubmit: false, immediate : true});
@@ -174,14 +169,13 @@
             return result;
         });
 
-        Zikula.UI.Tooltips($$('.«appName.formatForDB()»FormTooltips'));
+        Zikula.UI.Tooltips($$('.«app.appName().formatForDB()»FormTooltips'));
     });
 
 //]]>
 </script>
 
-{include file="«controllerName»/footer.tpl"}
-«ENDLET-»
+{include file="«controller.name()»/footer.tpl"}
 «ENDLET-»
 «ENDDEFINE»
 

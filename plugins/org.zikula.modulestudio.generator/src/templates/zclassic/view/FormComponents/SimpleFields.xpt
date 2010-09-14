@@ -25,16 +25,14 @@
 
 
 «DEFINE FormLabel FOR IntegerField-»
-«LET entity.incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == name.formatForDB()) AS pointingRelations-»
+«LET getPointingRelations() AS pointingRelations-»
 «IF pointingRelations.size > 0-»
 «LET pointingRelations.get(0) AS pointingRelation-»
-«LET pointingRelation.source AS joiningEntity-»
 «IF pointingRelation.sourceAlias != null && pointingRelation.sourceAlias != ""-»
 «pointingRelation.sourceAlias.formatForDisplayCapital()-»
 «ELSE-»
-«IF pointingRelation.metaType == OneToOneRelationship-»«joiningEntity.name.formatForDisplayCapital()»«ELSE-»«joiningEntity.nameMultiple.formatForDisplayCapital()»«ENDIF-»«""-»
+«pointingRelation.source.getEntityNameSingularPlural(pointingRelation.metaType != OneToOneRelationship)-»
 «ENDIF-»
-«ENDLET-»
 «ENDLET-»
 «ELSE-»
 «actualFieldName().formatForDisplayCapital()-»
@@ -82,7 +80,7 @@
 
 «DEFINE FormField FOR IntegerField-»
 «REM»commented out because relations are processed independently now; this code here remains temporarily just for safety
-«LET entity.incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == name.formatForDB()) AS pointingRelations-»
+«LET getPointingRelations() AS pointingRelations-»
 «IF pointingRelations.size > 0-»
 «LET pointingRelations.get(0) AS pointingRelation-»
 «LET pointingRelation.source AS joiningEntity-»
@@ -145,10 +143,10 @@
 
 «DEFINE FormField FOR UserField-»
 «LET actualFieldName().formatForCode() AS realName»
-            <div id="«realName»liveusersearch" class="«entity.container.application.prefix.formatForDB()»LiveSearchUser z-hide">
+            <div id="«realName»liveusersearch" class="«entity.container.application.prefix()»LiveSearchUser z-hide">
                 {formtextinput id="«realName»desc" mandatory=«mandatory» readOnly=«readonly» __title='Input a part of the user name to search' maxLength=«length» cssClass="«IF mandatory»required «ENDIF»validate-alphanum"}
                 {img id="ajax_indicator" style="display: none" modname='core' set='icons/extrasmall' src="indicator_circle.gif" alt=""}
-                <div id="«realName»desc_choices" class="«entity.container.application.prefix.formatForDB()»AutoCompleteUser"></div>
+                <div id="«realName»desc_choices" class="«entity.container.application.prefix()»AutoCompleteUser"></div>
             </div>
             <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
             <input type="hidden" id="«realName»" name="«realName»" value="{«realName»}" />
@@ -165,7 +163,7 @@
 «DEFINE FormField FOR ClobField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
 
 «DEFINE FormField FOR TimestampField-»
-            {if $mode eq "edit"}
+            {if $mode ne "create"}
                 {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true«EXPAND FieldValidationCssClass»}
             {else}
                 {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true defaultValue="now"«EXPAND FieldValidationCssClass»}
@@ -174,7 +172,7 @@
 «ENDDEFINE»
 
 «DEFINE FormField FOR DateField-»
-            {if $mode eq "edit"}
+            {if $mode ne "create"}
                 {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true«EXPAND FieldValidationCssClass»}
             {else}
                 {formdateinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true defaultValue="today"«EXPAND FieldValidationCssClass»}

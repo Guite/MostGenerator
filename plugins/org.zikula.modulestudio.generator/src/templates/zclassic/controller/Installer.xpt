@@ -254,7 +254,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         unset($doctrine);
 
 «IF getDefaultDataSource().numExampleRows > 0-»
-        // TODO: test this
+        // TODO: test this, see http://code.zikula.org/generator/ticket/64
         //Doctrine_Parser::load('modules/«appName()»/docs/exampleData.yml', 'yml');
 «ENDIF-»
 

@@ -6,7 +6,7 @@
 
 «REM»Entry point for Form handler classes«ENDREM»
 «DEFINE Root FOR Application-»
-    «EXPAND Root(this) FOREACH controllers.controllers.actions.typeSelect(EditAction)-»
+    «EXPAND Root(this) FOREACH getEditActions()-»
 «IF needsConfig()-»
 «FILE tempBaseClassConfigHandler().asFile()»
 «EXPAND FileHelper::phpFileHeader(this)-»
@@ -212,7 +212,7 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
     {
 «EXPAND handleCommand(app, controller, actionName, appName, controllerName)-»
     }
-«IF fields.typeSelect(UploadField).size > 0-»
+«IF hasUploadFields()-»
 
     /**
      * Helper method to process upload fields
@@ -222,7 +222,7 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
 «EXPAND handleUploads(app)-»
     }
 «ENDIF-»
-«LET getDerivedFields().select(e|e.unique) AS uniqueFields-»
+«LET getUniqueDerivedFields() AS uniqueFields-»
 «IF uniqueFields.size > 0-»
 «EXPAND checkForUniqueValues(app) FOREACH uniqueFields-»
 «ENDIF-»
@@ -235,18 +235,14 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
 
 «REM»concrete implementation stub«ENDREM»
 «DEFINE FormHandlerImpl(Application app, Controller controller, String actionName) FOR Entity-»
-«LET app.appName() AS appName-»
-«LET controller.name.formatForDB() AS controllerName-»
 /**
- * This handler class handles the page events of the Form called by the «formatForCode(appName.msconcat("_").msconcat(controllerName).msconcat("_").msconcat(actionName))»() function.
+ * This handler class handles the page events of the Form called by the «formatForCode(app.appName().msconcat("_").msconcat(controller.name()).msconcat("_").msconcat(actionName))»() function.
  * It aims on the «name.formatForDisplay()» object type.
  */
 class «implClassFormHandler(controller, name, actionName)» extends «baseClassFormHandler(controller, name, actionName)»
 {
     // feel free to extend the base handler class here
 }
-«ENDLET-»
-«ENDLET-»
 «ENDDEFINE»
 
 
@@ -294,7 +290,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             $thisTime = date('H:i:s');
 «ENDIF-»
 
-            $objectData = Array(«EXPAND FieldAssignment FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) SEPARATOR ','»);
+            $objectData = Array(«EXPAND FieldAssignment FOREACH getDerivedFields().reject(e|e.primaryKey) SEPARATOR ','»);
         }
 
 «FOREACH fields.typeSelect(DateField) AS dateField-»
@@ -329,9 +325,9 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
 «ENDDEFINE»
 «DEFINE FieldDefaultData FOR IntegerField-»
-«LET entity.incoming.select(e|e.source.idField() == name) AS joins-»
-«IF joins.size > 0-»
-«FOREACH joins AS join-»(int) FormUtil::getPassedValue('«join.source.idField()»', 0, 'GET')«ENDFOREACH-»
+«LET getPointingRelations() AS pointingRelations-»
+«IF pointingRelations.size > 0-»
+«FOREACH pointingRelations AS pointingRelation-»(int) FormUtil::getPassedValue('«pointingRelation.source.idField()»', 0, 'GET')«ENDFOREACH-»
 «ELSE-»
 «IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
 «ENDIF-»«ENDLET-»«ENDDEFINE»
@@ -470,9 +466,9 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDIF-»
 «ENDLET-»
 «ENDFOREACH-»«ENDREM»
-«LET getDerivedFields().select(e|e.unique && !e.primaryKey) AS uniqueFields-»
-«LET fields.typeSelect(UserField) AS userFields-»
-«LET fields.typeSelect(UploadField) AS uploadFields-»
+«LET getUniqueDerivedFields().reject(e|e.primaryKey) AS uniqueFields-»
+«LET getUserFields() AS userFields-»
+«LET getUploadFields() AS uploadFields-»
 «IF uniqueFields.size > 0 || userFields.size > 0 || uploadFields.size > 0-»
 
         if ($args['commandName'] == 'create' || $args['commandName'] == 'update') {
@@ -513,7 +509,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
 
 «DEFINE handleUploads(Application app) FOR Entity-»
-«LET fields.typeSelect(UploadField) AS uploadFields-»
+«LET getUploadFields() AS uploadFields-»
 «IF uploadFields.size > 0-»
         $uploadManager = new «app.appName()»_UploadHandler();
 

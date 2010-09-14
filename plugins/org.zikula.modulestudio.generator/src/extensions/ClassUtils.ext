@@ -103,3 +103,11 @@ cached String viewPluginFilePath(Application app, String pluginType, String plug
     : 'templates/plugins/'.msconcat(pluginType).msconcat('.').msconcat(app.appName().formatForDB()).msconcat(pluginName).msconcat('.php');
 
 
+cached String getRelationAliasName(JoinRelationship this, Boolean useTarget)
+    : ((useTarget)
+        ? ((targetAlias != null && targetAlias != "") ? targetAlias : target.implClassModelRecord())
+        : ((sourceAlias != null && sourceAlias != "") ? sourceAlias : source.implClassModelRecord())
+    );
+
+
+
