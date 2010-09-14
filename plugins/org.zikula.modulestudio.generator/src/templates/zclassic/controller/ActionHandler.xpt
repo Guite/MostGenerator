@@ -7,96 +7,7 @@
 «REM»Entry point for Form handler classes«ENDREM»
 «DEFINE Root FOR Application-»
     «EXPAND Root(this) FOREACH getEditActions()-»
-«IF needsConfig()-»
-«FILE tempBaseClassConfigHandler().asFile()»
-«EXPAND FileHelper::phpFileHeader(this)-»
-
-/**
- * Configuration handler base class
- */
-class «tempBaseClassConfigHandler()» extends Form_Handler
-{
-    /**
-     * Initialize form handler.
-     *
-     * This method takes care of all necessary initialisation of our data and form states.
-     *
-     * @return boolean False in case of initialization errors, otherwise true.
-     */
-    function initialize($view)
-    {
-        if (!SecurityUtil::checkPermission('«appName()»::', '::', ACCESS_ADMIN)) {
-            return $view->registerError(LogUtil::registerPermissionError());
-        }
-
-        // assign all module vars
-        $view->assign('config', ModUtil::getVar('«appName()»'«REM»$this->getVars() Form_Handler does not inherit from Zikula_Base (yet)«ENDREM»));
-
-        $this->initializeAdditions($view);
-
-        // everything okay, no initialization errors occured
-        return true;
-    }
-
-    /**
-     * Method stub for own additions in subclasses.
-     */
-    function initializeAdditions($view)
-    {
-    }
-
-    /**
-     * Command event handler.
-     *
-     * This event handler is called when a command is issued by the user. Commands are typically something
-     * that originates from a {@link Form_Plugin_Button} plugin. The passed args contains different properties
-     * depending on the command source, but you should at least find a <var>$args['commandName']</var>
-     * value indicating the name of the command. The command name is normally specified by the plugin
-     * that initiated the command.
-     * @see Form_Plugin_Button
-     * @see Form_Plugin_ImageButton
-     */
-    function handleCommand($view, &$args)
-    {
-
-        if ($args['commandName'] == 'save') {
-            if (!$view->isValid()) {
-                return false;
-            }
-
-            $data = $view->getValues();
-
-            // update all module vars
-            if (!ModUtil::setVars('«appName()»', $data['config'])) {
-                return $view->setErrorMsg($this->__('Error! Failed to set configuration variables.'));
-            }
-
-            LogUtil::registerStatus($this->__('Done! Module configuration updated.'));
-            ModUtil::callHooks('module', 'updateconfig', '«appName()»', array('module' => '«appName()»'));
-        }
-        else if ($args['commandName'] == 'cancel') {
-        }
-
-        $url = ModUtil::url('«appName()»', '«configController().formatForDB()»', 'config');
-        return $view->redirect($url);
-    }
-}
-«ENDFILE»
-
-«FILE tempImplClassConfigHandler().asFile()»
-«EXPAND FileHelper::phpFileHeader(this)-»
-
-
-/**
- * Configuration handler implementation class
- */
-class «tempImplClassConfigHandler()» extends «tempBaseClassConfigHandler()»
-{
-    // feel free to extend the base handler class here
-}
-«ENDFILE»
-
-«ENDIF-»
+«EXPAND templates::zclassic::controller::actionHandler::Config::Root-»
 «ENDDEFINE»
 
 «DEFINE Root(Application app) FOR Action-»
@@ -132,10 +43,8 @@ class «tempImplClassConfigHandler()» extends «tempBaseClassConfigHandler()»
 
 «REM»base implementation«ENDREM»
 «DEFINE FormHandlerBaseImpl(Application app, Controller controller, String actionName) FOR Entity-»
-«LET app.appName() AS appName-»
-«LET controller.name.formatForDB() AS controllerName-»
 /**
- * This handler class handles the page events of the Form called by the «formatForCode(appName.msconcat("_").msconcat(controllerName).msconcat("_").msconcat(actionName))»() function.
+ * This handler class handles the page events of the Form called by the «formatForCode(app.appName().msconcat("_").msconcat(controller.name()).msconcat("_").msconcat(actionName))»() function.
  * It aims on the «name.formatForDisplay()» object type.
  *
  * Member variables in a form handler object are persisted accross different page requests. This means
@@ -182,7 +91,7 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
      */
     function initialize($view)
     {
-«EXPAND initialize(app, controller, actionName, appName, controllerName)-»
+«EXPAND initialize(app, controller, actionName)-»
 
         $this->initializeAdditions($view);
 
@@ -210,8 +119,11 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
      */
     function handleCommand($view, &$args)
     {
-«EXPAND handleCommand(app, controller, actionName, appName, controllerName)-»
+«EXPAND handleCommand(app, controller, actionName)-»
     }
+
+«EXPAND retrieveRelatedObjects(app)-»
+
 «IF hasUploadFields()-»
 
     /**
@@ -228,8 +140,6 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
 «ENDIF-»
 «ENDLET-»
 }
-«ENDLET-»
-«ENDLET-»
 «ENDDEFINE»
 
 
@@ -246,7 +156,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDDEFINE»
 
 
-«DEFINE initialize(Application app, Controller controller, String actionName, String appName, String controllerName) FOR Entity-»
+«DEFINE initialize(Application app, Controller controller, String actionName) FOR Entity-»
         // retrieve the ID of the object we wish to edit
         // default to 0 (which is a numeric id but an invalid value)
         // no provided id means that we want to create a new object
@@ -254,14 +164,14 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         $this->objectType = '«name.formatForCode()»';
         $objectType = $this->objectType;
-«EXPAND ControllerHelper::instantiateBusinessObject(appName, false, 'actionHandler')-»
+«EXPAND ControllerHelper::instantiateBusinessObject(app.appName(), false, 'actionHandler')-»
 
         $this->mode = 'create';
         // if «idField()» is not 0, we wish to edit an existing «name.formatForDisplay()»
         if ($this->«idField()») {
             $this->mode = 'edit';
 
-            if (!SecurityUtil::checkPermission('«appName»:«name.formatForCodeCapital()»:', '::', ACCESS_EDIT)) {
+            if (!SecurityUtil::checkPermission('«app.appName()»:«name.formatForCodeCapital()»:', '::', ACCESS_EDIT)) {
                 // set an error message and return false
                 return $view->registerError(LogUtil::registerPermissionError());
             }
@@ -270,27 +180,21 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «EXPAND ControllerHelper::retrieveEntityFromModel('idField', "this->" + idField(), true)-»
 
             // try to guarantee that only one person at a time can be editing this «name.formatForDisplay()»
-            $returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display', array('ot' => $this->objectType, '«idField()»' => $this->«idField()»));
+            $returnUrl = ModUtil::url('«app.appName()»', '«controller.name()»', 'display', array('ot' => $this->objectType, '«idField()»' => $this->«idField()»));
             ModUtil::apiFunc('PageLock', 'user', 'pageLock',
-                                 array('lockName' => "«appName»«name.formatForCodeCapital()»{$this->«idField()»}",
+                                 array('lockName' => "«app.appName()»«name.formatForCodeCapital()»{$this->«idField()»}",
                                        'returnUrl' => $returnUrl));
         }
         else {
-            if (!SecurityUtil::checkPermission('«appName»:«name.formatForCodeCapital()»:', '::', ACCESS_ADD)) {
+            if (!SecurityUtil::checkPermission('«app.appName()»:«name.formatForCodeCapital()»:', '::', ACCESS_ADD)) {
                 return $view->registerError(LogUtil::registerPermissionError());
             }
 
-«IF fields.typeSelect(TimestampField).size > 0-»
-            $thisTimestamp = date('Y-m-d H:i:s');
-«ENDIF-»
-«IF fields.typeSelect(DateField).size > 0-»
-            $todayDate = date('Y-m-d');
-«ENDIF-»
-«IF fields.typeSelect(TimeField).size > 0-»
-            $thisTime = date('H:i:s');
-«ENDIF-»
+            // retrieve array with default data values
+            $objectData = $object->getNewArrayWithDefaultData();
 
-            $objectData = Array(«EXPAND FieldAssignment FOREACH getDerivedFields().reject(e|e.primaryKey) SEPARATOR ','»);
+«EXPAND InitRelatedObjectDefault(true) FOREACH incoming.typeSelect(JoinRelationship)-»
+«EXPAND InitRelatedObjectDefault(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
         }
 
 «FOREACH fields.typeSelect(DateField) AS dateField-»
@@ -304,55 +208,51 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDDEFINE»
 
 
-«DEFINE FieldAssignment FOR EntityField»
-                '«name.formatForCode()»' => «EXPAND FieldDefaultData»«ENDDEFINE»
-«DEFINE FieldAssignment FOR DerivedField»
-                '«actualFieldName()»' => «EXPAND FieldDefaultData»«ENDDEFINE»
-
-«DEFINE FieldDefaultData FOR EntityField-»
-«error("Error: undefined entity field type " + metaType.toString() + " (code 925624)") -> ""-»
-«ENDDEFINE»
-«DEFINE FieldDefaultData FOR DerivedField-»
-«error("Error: undefined derived field type " + metaType.toString() + " (code 925627)") -> ""-»
-«ENDDEFINE»
-«DEFINE FieldDefaultData FOR CalculatedField-»
-«error("Error: undefined calculated field type " + metaType.toString() + " (code 925628)") -> ""-»
+«DEFINE InitRelatedObjectDefault(Boolean incoming) FOR JoinRelationship-»
+«LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
+«LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
+            $objectData['«relationAliasName»'] = $this->retrieveRelatedObjects('«((incoming) ? source : target).name.formatForCode()»', '«relationAliasName.formatForDB()»', «IF !many»false«ELSE»true«ENDIF»);
+«ENDLET-»
+«ENDLET-»
 «ENDDEFINE»
 
-«DEFINE FieldDefaultDataText FOR DerivedField-»'«defaultValue»'«ENDDEFINE»
-«DEFINE FieldDefaultData FOR BooleanField»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF»«ENDDEFINE»
-«DEFINE FieldDefaultData FOR AbstractIntegerField-»
-«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
+«DEFINE retrieveRelatedObjects(Application app) FOR Entity-»
+    /**
+     * Select a related object in create mode.
+     *
+     * @return array single result or list of results
+     */
+    function retrieveRelatedObjects($objectType, $relationInputFieldName, $many = false, $source = 'GET')
+    {
+        $idField = strtolower($objectType) . 'id';
+        $factoryContext = 'controllerAction';
+        $objectCollection = «app.appName()»_Factory::getBusinessCollection($objectType, $factoryContext);
+        $where = '';
+        $sortParam = $objectCollection->get_intDefaultSortingField() . ' asc';
+        if ($many) {
+            $inputValue = FormUtil::getPassedValue($relationInputFieldName, '', $source);
+            if (empty($inputValue)) {
+                return array();
+            }
+            // TODO: move into Doctrine_Table subclasses and refactor to Doctrine_Query instance.
+            $where = $idField . ' IN (' . DataUtil::formatForStore($inputValue) . ')';
+        }
+        else {
+            $inputValue = (int) FormUtil::getPassedValue($relationInputFieldName, 0, $source);
+            if ($inputValue == 0) {
+                return array();
+            }
+            // TODO: move into Doctrine_Table subclasses and refactor to Doctrine_Query instance.
+            $where = $idField . ' = \'' . DataUtil::formatForStore($inputValue) . '\'';
+        }
+        return $objectCollection->selectWherePaginated($where, $sortParam, 1, 50);
+    }
 «ENDDEFINE»
-«DEFINE FieldDefaultData FOR IntegerField-»
-«LET getPointingRelations() AS pointingRelations-»
-«IF pointingRelations.size > 0-»
-«FOREACH pointingRelations AS pointingRelation-»(int) FormUtil::getPassedValue('«pointingRelation.source.idField()»', 0, 'GET')«ENDFOREACH-»
-«ELSE-»
-«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
-«ENDIF-»«ENDLET-»«ENDDEFINE»
-«DEFINE FieldDefaultData FOR FloatField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF»«ENDDEFINE»
-«DEFINE FieldDefaultData FOR DecimalField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0.00«ENDIF»«ENDDEFINE»
-«DEFINE FieldDefaultData FOR StringField-»«EXPAND FieldDefaultDataText-»«ENDDEFINE»
-«DEFINE FieldDefaultData FOR TextField-»«EXPAND FieldDefaultDataText-»«ENDDEFINE»
-«DEFINE FieldDefaultData FOR EmailField-»«EXPAND FieldDefaultDataText-»«ENDDEFINE»
-«DEFINE FieldDefaultData FOR UrlField-»«EXPAND FieldDefaultDataText-»«ENDDEFINE»
-«DEFINE FieldDefaultData FOR UploadField-»«EXPAND FieldDefaultDataText-»«ENDDEFINE»
-«DEFINE FieldDefaultData FOR ArrayField»array()«ENDDEFINE»
-«DEFINE FieldDefaultData FOR EnumField»array()«ENDDEFINE»
-«DEFINE FieldDefaultData FOR ObjectField»null«ENDDEFINE»
-«DEFINE FieldDefaultData FOR BlobField»'«REM»nothing for now«ENDREM»'«ENDDEFINE»
-«DEFINE FieldDefaultData FOR ClobField»«EXPAND FieldDefaultDataText-»«ENDDEFINE»
-«DEFINE FieldDefaultData FOR TimestampField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»$thisTimestamp«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
-«DEFINE FieldDefaultData FOR DateField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»$todayDate«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
-«DEFINE FieldDefaultData FOR TimeField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»$thisTime«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
-«DEFINE FieldDefaultData FOR GzipField-»«EXPAND FieldDefaultDataText-»«ENDDEFINE»
 
-
-«DEFINE handleCommand(Application app, Controller controller, String actionName, String appName, String controllerName) FOR Entity-»
+«DEFINE handleCommand(Application app, Controller controller, String actionName) FOR Entity-»
 
         if ($args['commandName'] == 'delete') {
-            if (!SecurityUtil::checkPermission('«appName»:«name.formatForCodeCapital()»:', '::', ACCESS_DELETE)) {
+            if (!SecurityUtil::checkPermission('«app.appName()»:«name.formatForCodeCapital()»:', '::', ACCESS_DELETE)) {
                 return $view->registerError(LogUtil::registerPermissionError());
             }
         }
@@ -368,16 +268,20 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
 «IF controller.hasActions('view')-»
         // redirect to the list of «nameMultiple.formatForCode()»
-        $this->returnUrl = ModUtil::url('«appName»', '«controller.name()»', 'view',
+        $this->returnUrl = ModUtil::url('«app.appName()»', '«controller.name()»', 'view',
                                                              array('ot' => $this->objectType));
 «ELSEIF controller.hasActions('main')-»
         // redirect to the main page
-        $this->returnUrl = ModUtil::url('«appName»', '«controller.name()»', 'main');
+        $this->returnUrl = ModUtil::url('«app.appName()»', '«controller.name()»', 'main');
 «ELSE-»
         $this->returnUrl = System::getHomepageUrl();
 «ENDIF-»
+
+«EXPAND ReassignRelatedObjects(true) FOREACH incoming.typeSelect(JoinRelationship)-»
+«EXPAND ReassignRelatedObjects(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
+
         $objectType = $this->objectType;
-«EXPAND ControllerHelper::instantiateBusinessObject(appName, false, 'actionHandler')-»
+«EXPAND ControllerHelper::instantiateBusinessObject(app.appName(), false, 'actionHandler')-»
 
         $«name.formatForCode()» = null;
         if ($args['commandName'] != 'create') {
@@ -385,7 +289,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         }
         $«name.formatForCode()» = $object;
 
-        «EXPAND FetchInputData(name.formatForCode())-»
+«EXPAND FetchInputData(name.formatForCode())-»
 
         if ($args['commandName'] == 'create') {
             // event handling if user clicks on create
@@ -402,7 +306,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «IF controller.hasActions('display')-»
 
             // redirect to the detail page of the newly created «name.formatForCode()»
-            $this->returnUrl = ModUtil::url('«appName»', '«controller.name()»', 'display',
+            $this->returnUrl = ModUtil::url('«app.appName()»', '«controller.name()»', 'display',
                                                              array('ot' => $this->objectType,
                                                                    '«idField()»' => $this->«idField()»));
 «ENDIF-»
@@ -420,7 +324,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «IF controller.hasActions('display')-»
 
             // redirect to the detail page of the treated «name.formatForCode()»
-            $this->returnUrl = ModUtil::url('«appName»', '«controller.name()»', 'display',
+            $this->returnUrl = ModUtil::url('«app.appName()»', '«controller.name()»', 'display',
                                                              array('ot' => $this->objectType,
                                                                    '«idField()»' => $this->«idField()»));
 «ENDIF-»
@@ -433,17 +337,13 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             }
 
             LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» deleted.'));
-
-            // redirect to the list of «nameMultiple.formatForCode()»
-            $this->returnUrl = ModUtil::url('«appName»', '«controllerName»', 'view',
-                                                                 array('ot' => $this->objectType));
         } else if ($args['commandName'] == 'cancel') {
             // event handling if user clicks on cancel
 «IF controller.hasActions('display')-»
 
             if ($this->mode == 'edit') {
                 // redirect to the detail page of the treated «name.formatForCode()»
-                $this->returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
+                $this->returnUrl = ModUtil::url('«app.appName()»', '«controller.name()»', 'display',
                                                                  array('ot' => $this->objectType,
                                                                        '«idField()»' => $this->«idField()»));
             }
@@ -454,7 +354,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         if ($this->returnUrl != null) {
             if ($this->mode == 'edit') {
                 ModUtil::apiFunc('PageLock', 'user', 'releaseLock',
-                                 array('lockName' => "«appName»«name.formatForCodeCapital()»{$this->«idField()»}"));
+                                 array('lockName' => "«app.appName()»«name.formatForCodeCapital()»{$this->«idField()»}"));
             }
 
             return $view->redirect($this->returnUrl);
@@ -467,14 +367,24 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDDEFINE»
 
 
+«DEFINE ReassignRelatedObjects(Boolean incoming) FOR JoinRelationship-»
+«LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
+«LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
+        // reassign the «((incoming) ? target : source).getEntityNameSingularPlural(many).formatForDisplay()» eventually chosen by the user
+        $view->assign('user«relationAliasName.toFirstUpper()»', $this->retrieveRelatedObjects('«((incoming) ? target : source).name.formatForCode()»', '«relationAliasName.formatForDB()»', «IF !many»false«ELSE»true«ENDIF», 'POST'));
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+
 «DEFINE FetchInputData(String obj) FOR Entity-»
-            // fetch posted data input values as an associative array
-            $formData = $view->getValues();
+        // fetch posted data input values as an associative array
+        $formData = $view->getValues();
 «REM»«FOREACH columns AS field-»
 «LET entity.relations.select(e|e.target.name == name && e.source.idField() == field.name) AS joins-»
 «IF joins.size > 0-»
 «FOREACH joins AS join-»
-            $formData['«join.source.idField()»'] = (int) FormUtil::getPassedValue('«join.source.idField()»', 0, 'POST');
+        $formData['«join.source.idField()»'] = (int) FormUtil::getPassedValue('«join.source.idField()»', 0, 'POST');
 «ENDFOREACH-»
 «ENDIF-»
 «ENDLET-»

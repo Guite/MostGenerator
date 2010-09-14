@@ -99,10 +99,6 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(app, targetEntity, many, incoming, relationAliasName) AS uniqueNameForJs-»
     <div class="«app.prefix()»RelationRightSide">
-«IF !many-»
-            <p>TODO: Preselection if ID is given in $_GET.</p>
-«ENDIF-»
-
         <a id="«uniqueNameForJs»AddLink" href="javascript:void(0);" style="display: none">{gt text='«IF !many-»Set«ELSE»Add«ENDIF» «targetEntity.name.formatForDisplay()»'}</a>
         <div id="«uniqueNameForJs»AddFields">
             <label for="«uniqueNameForJs»Selector">{gt text='Find «targetEntity.name.formatForDisplay()»'}</label>
@@ -110,8 +106,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
             <input type="text" name="«uniqueNameForJs»Selector" id="«uniqueNameForJs»Selector" value="" size="42" />
             <input type="hidden" name="«uniqueNameForJs»SelectorId" id="«uniqueNameForJs»SelectorId" value="" />
             <input type="hidden" name="«uniqueNameForJs»Scope" id="«uniqueNameForJs»Scope" value="«IF !many»0«ELSE»1«ENDIF»" />
-            {img id="ajax_indicator" style="display: none" modname="core" set="icons/extrasmall" src="indicator_circle.gif" alt=""}<br />
-
+            {img id="ajax_indicator" style="display: none" modname="core" set="icons/extrasmall" src="indicator_circle.gif" alt=""}
             <div id="«uniqueNameForJs»SelectorChoices" class="«app.prefix()»AutoComplete«IF targetEntity.hasImageFields()»WithImage«ENDIF»"></div>
 
             <input type="button" id="«uniqueNameForJs»SelectorDoAdd" name="«uniqueNameForJs»SelectorDoAdd" value="{gt text='Add'}" class="«app.prefix()»InlineButton" />
@@ -126,7 +121,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
         {if isset($user«relationAliasName.toFirstUpper()») && $user«relationAliasName.toFirstUpper()» ne ""}
             {* the user has submitted something *}
             {include file="«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl" items=$user«relationAliasName.toFirstUpper()»}
-        {elseif $mode ne "create"}
+        {elseif $mode ne "create" || isset($«relationAliasName»)}
             {include file="«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl" items=$«relationAliasName»}
         {else}
             {include file="«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl"}

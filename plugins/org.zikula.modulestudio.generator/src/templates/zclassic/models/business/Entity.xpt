@@ -103,6 +103,28 @@
     }
 
     /**
+     * Helper method for assigning default data values.
+     *
+     * @return array
+     */
+    public function getNewArrayWithDefaultData()
+    {
+«IF fields.typeSelect(TimestampField).size > 0-»
+        $thisTimestamp = date('Y-m-d H:i:s');
+«ENDIF-»
+«IF fields.typeSelect(DateField).size > 0-»
+        $todayDate = date('Y-m-d');
+«ENDIF-»
+«IF fields.typeSelect(TimeField).size > 0-»
+        $thisTime = date('H:i:s');
+«ENDIF-»
+
+        $objectData = Array(«EXPAND DefaultFieldAssignment FOREACH getDerivedFields().reject(e|e.primaryKey) SEPARATOR ','»);
+
+        return $objectData;
+    }
+
+    /**
      * get «name.formatForDisplay()»
      *
      * @return «implClassModelRecord()»
@@ -125,6 +147,52 @@
 
 «EXPAND FileHelper::ClassToString(baseClassBusinessEntity(false))-»
 «ENDDEFINE»
+
+
+«DEFINE DefaultFieldAssignment FOR EntityField»
+                '«name.formatForCode()»' => «EXPAND DefaultFieldAssignmentData»«ENDDEFINE»
+«DEFINE DefaultFieldAssignment FOR DerivedField»
+                '«actualFieldName()»' => «EXPAND DefaultFieldAssignmentData»«ENDDEFINE»
+
+«DEFINE DefaultFieldAssignmentData FOR EntityField-»
+«error("Error: undefined entity field type " + metaType.toString() + " (code 925624)") -> ""-»
+«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR DerivedField-»
+«error("Error: undefined derived field type " + metaType.toString() + " (code 925627)") -> ""-»
+«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR CalculatedField-»
+«error("Error: undefined calculated field type " + metaType.toString() + " (code 925628)") -> ""-»
+«ENDDEFINE»
+
+«DEFINE DefaultFieldAssignmentDataText FOR DerivedField-»'«defaultValue»'«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR BooleanField»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR AbstractIntegerField-»
+«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
+«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR IntegerField-»
+«LET getPointingRelations() AS pointingRelations-»
+«IF pointingRelations.size > 0-»
+«FOREACH pointingRelations AS pointingRelation-»(int) FormUtil::getPassedValue('«pointingRelation.source.idField()»', 0, 'GET')«ENDFOREACH-»
+«ELSE-»
+«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
+«ENDIF-»«ENDLET-»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR FloatField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR DecimalField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0.00«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR StringField-»«EXPAND DefaultFieldAssignmentDataText-»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR TextField-»«EXPAND DefaultFieldAssignmentDataText-»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR EmailField-»«EXPAND DefaultFieldAssignmentDataText-»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR UrlField-»«EXPAND DefaultFieldAssignmentDataText-»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR UploadField-»«EXPAND DefaultFieldAssignmentDataText-»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR ArrayField»array()«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR EnumField»array()«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR ObjectField»null«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR BlobField»'«REM»nothing for now«ENDREM»'«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR ClobField»«EXPAND DefaultFieldAssignmentDataText-»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR TimestampField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»$thisTimestamp«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR DateField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»$todayDate«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR TimeField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»$thisTime«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR GzipField-»«EXPAND DefaultFieldAssignmentDataText-»«ENDDEFINE»
+
 
 «REM»Note we use protected and not private to let the dev change things in concrete implementations«ENDREM»
 «DEFINE fieldMemberVar FOR DerivedField»
