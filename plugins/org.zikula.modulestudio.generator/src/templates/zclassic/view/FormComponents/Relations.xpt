@@ -62,7 +62,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE Root(Application app, Controller controller, Boolean incoming, Boolean onlyInclude) FOR ManyToManyRelationship-»
+«DEFINE Root(Application app, Controller controller, Boolean onlyInclude, Boolean incoming) FOR ManyToManyRelationship-»
 «LET getEditStageCode(incoming) AS stageCode-»
 «IF stageCode == 1 || stageCode == 3-»
 «IF onlyInclude-»
@@ -99,7 +99,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(app, targetEntity, many, incoming, relationAliasName) AS uniqueNameForJs-»
     <div class="«app.prefix()»RelationRightSide">
-            <p>TODO SELECT: AutoComplete field for choosing the «targetEntity.name.formatForDisplay()».</p>
+            <p>TODO SELECT: AutoComplete field for choosing the «targetEntity.getEntityNameSingularPlural(many).formatForDisplay()».</p>
 «IF !many-»
             <p>TODO: Preselection if mode is edit or the ID is given by $_GET.</p>
 «ENDIF-»
@@ -190,7 +190,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «REM»Look if we have to do anything by checking stage codes which represent different edit behaviors«ENDREM»«""-»
 «IF (!incoming && stageCode == 2) || (incoming && (stageCode == 1 || stageCode == 3))-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
-«LET getUniqueRelationNameForJs(app, targetEntity, (!(incoming && this.metaType != ManyToManyRelationship)), incoming, relationAliasName) AS uniqueNameForJs-»
+«LET getUniqueRelationNameForJs(app, ((targetEntity == target) ? source : target), (!(incoming && this.metaType != ManyToManyRelationship)), incoming, relationAliasName) AS uniqueNameForJs-»
         «app.prefix()»InitRelationItemsForm('«targetEntity.name.formatForCode()»', '«uniqueNameForJs»', «IF stageCode > 1»true«ELSE»false«ENDIF»);
 «ENDLET-»
 «ENDLET-»

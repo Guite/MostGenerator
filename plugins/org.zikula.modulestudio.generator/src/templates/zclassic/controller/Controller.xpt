@@ -62,9 +62,6 @@ class «baseClassController()» extends Zikula_Controller
     }
 «ENDIF-»
 «EXPAND AdditionalAjaxFunctions(app)-»
-«IF app.models.getJoinRelations().size > 0-»
-«REM»TODO«ENDREM»
-«ENDIF-»
 }
 «ENDDEFINE»
 
@@ -184,8 +181,8 @@ class «implClassApi()» extends «baseClassApi()»
             return true;
         }
 
-        $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»');
-        $objectType = strtolower($objectType) . 'id';
+        $objectType = lcfirst(FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»'));
+        $idField = strtolower($objectType) . 'id';
 «EXPAND ControllerHelper::instantiateBusinessObject(app.appName(), true, 'controllerAction')-»
 
         $fragment = FormUtil::getPassedValue('fragment');
@@ -232,7 +229,25 @@ class «implClassApi()» extends «baseClassApi()»
         $out = '<ul>';
         if (is_array($objectData) && count($objectData) > 0) {
             $titleFieldName = $descriptionFieldName = '';
-«REM»TODO«ENDREM»
+
+            switch ($objectType) {
+«FOREACH app.models.entities AS entity-»
+                case '«entity.name.formatForCode()»':
+                        $titleFieldName = '«entity.getLeadingField().actualFieldName().formatForCode()»';
+«LET entity.fields.typeSelect(TextField) AS textFields-»
+«IF textFields.size > 0-»
+                        $descriptionFieldName = '«textFields.get(0).actualFieldName().formatForCode()»';
+«ELSE-»
+«LET entity.fields.typeSelect(StringField).reject(e|e.leading) AS textFields-»
+«IF textFields.size > 0-»
+                        $descriptionFieldName = '«textFields.get(0).actualFieldName().formatForCode()»';
+«ENDIF-»
+«ENDLET-»
+«ENDIF-»
+«ENDLET-»
+                        break;
+«ENDFOREACH-»
+            }
 
             foreach ($objectData as $item) {
                 // class="informal" --> show in dropdown, but do not copy in the input field after selection
@@ -249,7 +264,7 @@ class «implClassApi()» extends «baseClassApi()»
 «FOREACH app.models.entities AS entity-»
 «IF entity.hasImageFields()-»
                     case '«entity.name.formatForCode()»':
-                            $previewFieldName = '«entity.getImageFields().get(0).actualFieldName()»';
+                            $previewFieldName = '«entity.getImageFields().get(0).actualFieldName().formatForCode()»';
                             break;
 «ENDIF»
 «ENDFOREACH-»
@@ -269,7 +284,6 @@ class «implClassApi()» extends «baseClassApi()»
         echo $out;
         return true;
     }
-}
 «ENDIF-»
 «ENDLET-»
 

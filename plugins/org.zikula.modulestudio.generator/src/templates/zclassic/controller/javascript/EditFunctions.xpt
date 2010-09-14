@@ -60,8 +60,10 @@ function «prefix()»InitUserField(fieldName, getterName)
  */
 function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditing)
 {
-    $(idPrefix + 'AddLink').observe('click', «prefixSmall»ToggleRelatedItemForm);
-    «prefixSmall»ResetRelatedItemForm();
+    if ($(idPrefix + 'AddLink')) {
+        $(idPrefix + 'AddLink').observe('click', function() { «prefixSmall»ToggleRelatedItemForm(idPrefix); });
+    }
+    «prefixSmall»ResetRelatedItemForm(idPrefix);
 
     itemPreview = '';
 
@@ -70,7 +72,14 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
             minChars: 2,
             callback: function(inputField, defaultQueryString) {
                     // Called just before the Request is actually made, allowing to modify the querystring that is sent to the server.
-                    defaultQueryString += '&ot=' + objectType + '&exclude=' + $F(idPrefix + 'ExcludeList');
+                    var fieldPrefix = $(inputField).id.replace('Selector', '');
+                    var fieldPrefixParts = fieldPrefix.split('_');
+                    var fieldOT = fieldPrefixParts[0].replace('«prefixSmall»', '');
+
+                    defaultQueryString += '&ot=' + fieldOT;
+                    if ($(fieldPrefix + 'ExcludeList')) {
+                        defaultQueryString += '&exclude=' + $F(fieldPrefix + 'ExcludeList');
+                    }
                     return defaultQueryString;
             },
             afterUpdateElement: function(inputField, selectedListItem) {
@@ -118,9 +127,9 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
         excludedItemIDs += itemID;
         $(idPrefix + 'ExcludeList').value = excludedItemIDs;
 
-        «prefixSmall»ResetRelatedItemForm();
+        «prefixSmall»ResetRelatedItemForm(idPrefix);
     });
-    $(idPrefix + 'SelectorDoCancel').observe('click', «prefixSmall»ResetRelatedItemForm);
+    $(idPrefix + 'SelectorDoCancel').observe('click', function() { «prefixSmall»ResetRelatedItemForm(idPrefix); });
 
     if (!includeEditing || !$('«prefixSmall»newcollectionform')) {
         return;
@@ -189,14 +198,12 @@ function «prefix()»RemoveRelatedItem(idPrefix, itemID)
 /**
  * Resets an auto completion field.
  */
-function «prefix()»ResetRelatedItemForm()
+function «prefix()»ResetRelatedItemForm(idPrefix)
 {
-    «prefix()»ToggleRelatedItemForm();
-
-    $('«prefix()»newcollectionitem').disabled = false;
-    $('«prefix()»newcollectionitem').value = '';
-
-    $('«prefix()»collectionitemdoadd').disabled = true;
+    «prefix()»ToggleRelatedItemForm(idPrefix);
+    $(idPrefix + 'Selector').disabled = false;
+    $(idPrefix + 'Selector').value = '';
+    $(idPrefix + 'SelectorDoAdd').disabled = true;
 }
 «ENDDEFINE»
 
@@ -204,10 +211,13 @@ function «prefix()»ResetRelatedItemForm()
 /**
  * Toggles the fields of an auto completion field.
  */
-function «prefix()»ToggleRelatedItemForm()
+function «prefix()»ToggleRelatedItemForm(idPrefix)
 {
-    $('«prefix()»addcollectionitem').toggle();
-    $('«prefix()»collectionitemaddfields').toggle();
+    if (!$(idPrefix + 'AddLink')) {
+        return;
+    }
+    $(idPrefix + 'AddLink').toggle();
+    $(idPrefix + 'AddFields').toggle();
 }
 «ENDDEFINE»
 

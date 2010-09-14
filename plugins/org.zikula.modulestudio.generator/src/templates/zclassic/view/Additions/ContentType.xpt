@@ -10,11 +10,21 @@
 <dl>
 {foreach item="item" from=$items}
     <dt>{$item.«entity.getLeadingField().actualFieldName().formatForCode()»}</dt>
-«IF entity.fields.typeSelect(TextField).size > 0-»
-{if $item.«entity.fields.typeSelect(TextField).get(0).actualFieldName().formatForCode()»}
-    <dd>{$item.«entity.fields.typeSelect(TextField).get(0).actualFieldName().formatForCode()»|truncate:200:"..."}</dd>
+«LET entity.fields.typeSelect(TextField) AS textFields-»
+«IF textFields.size > 0-»
+{if $item.«textFields.get(0).actualFieldName().formatForCode()»}
+    <dd>{$item.«textFields.get(0).actualFieldName().formatForCode()»|truncate:200:"..."}</dd>
+{/if}
+«ELSE-»
+«LET entity.fields.typeSelect(StringField).reject(e|e.leading) AS textFields-»
+«IF textFields.size > 0-»
+{if $item.«textFields.get(0).actualFieldName().formatForCode()»}
+    <dd>{$item.«textFields.get(0).actualFieldName().formatForCode()»|truncate:200:"..."}</dd>
 {/if}
 «ENDIF-»
+«ENDLET-»
+«ENDIF-»
+«ENDLET-»
     <dd>«EXPAND DetailLink(appName()) FOR entity-»</dd>
 {foreachelse}
     <dt>{gt text='No entries found.'}</dt>

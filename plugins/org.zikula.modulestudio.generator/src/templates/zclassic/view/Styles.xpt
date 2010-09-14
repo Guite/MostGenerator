@@ -120,7 +120,7 @@ div.«prefix()»AutoCompleteUser ul {
 }
 «ENDIF-»
 div.«prefix()»AutoCompleteWithImage ul li {
-    background-image: url(../../../images/icons/extrasmall/agt_Multimedia.gif);
+    background-image: url("../../../images/icons/extrasmall/agt_Multimedia.gif");
 }
 
 div.«prefix()»AutoComplete ul li.selected«IF hasUserFields-»,
