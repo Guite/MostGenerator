@@ -107,6 +107,12 @@
 «ENDDEFINE»
 
 «DEFINE FormField FOR StringField-»
+«IF country-»
+            {* TODO: support country fields in Zikula (see http://code.zikula.org/core/ticket/2446 for more information) *}
+«ENDIF-»
+«IF htmlcolor-»
+            {* TODO: support colour fields in Zikula (see http://code.zikula.org/core/ticket/2448 for more information) *}
+«ENDIF-»
             {formtextinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=«length»«EXPAND FieldValidationCssClass»}
 «REM»TODO: textMode="password" for password input fields«ENDREM»«""-»
 «ENDDEFINE»
@@ -142,6 +148,7 @@
 «ENDDEFINE»
 
 «DEFINE FormField FOR UserField-»
+            {* to be replaced by a plugin (see http://code.zikula.org/core/ticket/2444 for more information) *} 
 «LET actualFieldName().formatForCode() AS realName»
             <div id="«realName»liveusersearch" class="«entity.container.application.prefix()»LiveSearchUser z-hide">
                 {formtextinput id="«realName»desc" mandatory=«mandatory» readOnly=«readonly» __title='Input a part of the user name to search' maxLength=«length» cssClass="«IF mandatory»required «ENDIF»validate-alphanum"}
@@ -180,9 +187,7 @@
 «ENDDEFINE»
 
 «DEFINE FormField FOR TimeField-»
-            /**
-             * TODO: support time fields in Zikula, see http://code.zikula.org/core/ticket/2445
-             */ 
+            {* TODO: support time fields in Zikula (see http://code.zikula.org/core/ticket/2445 for more information) *}
             {formtextinput id="«actualFieldName().formatForCode()»" mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode="singleline" maxLength=8«EXPAND FieldValidationCssClass»}
 «ENDDEFINE»
 

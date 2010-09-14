@@ -46,11 +46,14 @@ function «prefix()»InitUserField(fieldName, getterName)
 «DEFINE RelationFunctions FOR Application-»
 «IF models.relations.size > 0-»
 «EXPAND InitRelatedItemsForm(prefix())-»
+«EXPAND EditRelatedItem-»
 «EXPAND RemoveRelatedItem-»
 «EXPAND ResetRelatedItemForm-»
 «EXPAND ToggleRelatedItemForm-»
 «EXPAND FakeKeyPress-»
 «EXPAND ResetCreateRelatedItemForm-»
+
+// TODO: support auto-hiding notification windows (see http://code.zikula.org/core/ticket/2526 for more information)
 «ENDIF-»
 «ENDDEFINE»
 
@@ -105,8 +108,16 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
     $(idPrefix + 'SelectorDoAdd').observe('click', function() {
         var newTitle = $F(idPrefix + 'Selector');
         var itemID = $F(idPrefix + 'SelectorId');
+        var includeEditing = ($F(idPrefix + 'Mode') == '1') ? true : false;
+        var editLink;
+        var removeLink;
+
         var li = Builder.node('li', {id: idPrefix + 'Reference_' + itemID}, newTitle);
-        var removeLink = Builder.node('a', {id: idPrefix + 'Remove', href: 'javascript:«prefixSmall»RemoveRelatedItem(\'' + idPrefix + '\', ' + itemID + ');'}, 'remove');
+        if (includeEditing == true) {
+            editLink = Builder.node('a', {id: idPrefix + 'Edit', href: 'javascript:«prefixSmall»EditRelatedItem(\'' + idPrefix + '\', ' + itemID + ');'}, 'edit');
+            li.appendChild(editLink);
+        }
+        removeLink = Builder.node('a', {id: idPrefix + 'Remove', href: 'javascript:«prefixSmall»RemoveRelatedItem(\'' + idPrefix + '\', ' + itemID + ');'}, 'remove');
         li.appendChild(removeLink);
         if (itemPreview != '') {
             var fldPreview = Builder.node('div', {id: idPrefix + 'preview', name: idPrefix + 'preview'}, '');
@@ -117,6 +128,9 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
         $(idPrefix + 'ReferenceList').appendChild(li);
 
         // show image link
+        if (includeEditing == true) {
+            editLink.update(' ' + editImage);
+        }
         removeLink.update(' ' + removeImage);
 
         var excludedItemIDs = $F(idPrefix + 'ExcludeList');
@@ -145,15 +159,19 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
 
     // from here inline editing will be handled
     $('«prefixSmall»newcollectionform').hide();
-    $('«prefixSmall»collectionitemdonew').observe('click', function() {
+    $('«prefixSmall»collectionitemdonew').observe('click', function(e) {
+        Zikula.UI.Alert('TODO: create new item by inline editing with Zikula.UI form dialog.', 'Sorry, not finished yet.');
+        e.stop();
+        return false;
         $('createnewcollection_title').value = $F(idPrefix + 'Selector');
         $('«prefixSmall»newcollectionform').show();
         «prefixSmall»ResetRelatedItemForm(); // hide
     });
 
-    $('«prefixSmall»createcollectionsave').observe('click', function() {
+    $('«prefixSmall»createcollectionsave').observe('click', function(e) {
         if ($F('createnewcollection_title') == '') {
-            alert('Please enter a title for the new item!');
+            Zikula.UI.Alert('Please enter a title for the new item.', 'Error message.');
+            e.stop();
             return false;
         }
 
@@ -177,13 +195,23 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
                     //«prefixSmall»FakeKeyPress(idPrefix + 'Selector');
                     $(idPrefix + 'Selector').activate();
                 }
-                else alert('Error! Could not create the new item.');
+                else Zikula.UI.Alert('Error! Could not create the new item.', 'Error message.');
                 $('«prefixSmall»createcollectionsave').disabled = false;
                 $('«prefixSmall»createcollectioncancel').disabled = false;
             }
         });
     });
     $('«prefixSmall»createcollectioncancel').observe('click', «prefixSmall»ResetCreateRelatedItemForm);
+}
+«ENDDEFINE»
+
+«DEFINE EditRelatedItem FOR Application-»
+/**
+ * Starts inline editing of a related item.
+ */
+function «prefix()»EditRelatedItem(idPrefix, itemID)
+{
+    Zikula.UI.Alert('TODO: edit item ' + itemID + ' by inline editing with Zikula.UI form dialog.', 'Sorry, not finished yet.');
 }
 «ENDDEFINE»
 

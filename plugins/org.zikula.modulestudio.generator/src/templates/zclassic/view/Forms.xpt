@@ -129,6 +129,8 @@
 
 <script type="text/javascript">
 //<![CDATA[
+{{img modname="core" set="icons/extrasmall" src="xedit.gif" assign="editImageArray"}}
+    var editImage = '<img src="{{$editImageArray.src}}" width="16" height="16" alt="" />';
 {{img modname="core" set="icons/extrasmall" src="editdelete.gif" assign="removeImageArray"}}
     var removeImage = '<img src="{{$removeImageArray.src}}" width="16" height="16" alt="" />';
 

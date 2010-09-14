@@ -110,14 +110,14 @@
 «DEFINE DisplayColumnField(String objName) FOR EmailField-»
 {if $«objName».«actualFieldName().formatForCode()» ne ""}
     <a href="mailto:{$«objName».«actualFieldName().formatForCode()»}" title="{gt text="Send an email"}">
-        {$«objName».«actualFieldName().formatForCode()»}
+        {img src="mail_generic.gif" modname="core" set="icons/extrasmall" __alt='Email'}
     </a>
 {else}&nbsp;{/if}«""-»
 «ENDDEFINE»
 «DEFINE DisplayColumnField(String objName) FOR UrlField-»
 {if $«objName».«actualFieldName().formatForCode()» ne ""}
     <a href="{$«objName».«actualFieldName().formatForCode()»}" title="{gt text="Visit this page"}">
-        {$«objName».«actualFieldName().formatForCode()»}
+        {img src="agt_internet.gif" modname="core" set="icons/extrasmall" __alt='Homepage'}
     </a>
 {else}&nbsp;{/if}«""-»
 «ENDDEFINE»

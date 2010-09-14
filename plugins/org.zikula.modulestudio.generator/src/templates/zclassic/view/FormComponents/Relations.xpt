@@ -100,7 +100,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «LET getUniqueRelationNameForJs(app, targetEntity, many, incoming, relationAliasName) AS uniqueNameForJs-»
     <div class="«app.prefix()»RelationRightSide">
 «IF !many-»
-            <p>TODO: Preselection if mode is edit or the ID is given by $_GET.</p>
+            <p>TODO: Preselection if ID is given in $_GET.</p>
 «ENDIF-»
 
         <a id="«uniqueNameForJs»AddLink" href="javascript:void(0);" style="display: none">{gt text='«IF !many-»Set«ELSE»Add«ENDIF» «targetEntity.name.formatForDisplay()»'}</a>
@@ -142,10 +142,15 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «LET getUniqueRelationNameForJs(app, targetEntity, many, incoming, relationAliasName) AS uniqueNameForJs-»
 {* purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplayCapital()» in «controller.name.formatForDB()» area *}
 
+«IF includeEditing-»
+{img modname="core" set="icons/extrasmall" src="xedit.gif" assign="editImageArray"}
+{assign var="editImage" value="<img src=\"`$editImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
+«ENDIF-»
 {img modname="core" set="icons/extrasmall" src="editdelete.gif" assign="removeImageArray"}
 {assign var="removeImage" value="<img src=\"`$removeImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
 
 <input type="hidden" id="«uniqueNameForJs»ExcludeList" name="«uniqueNameForJs»ExcludeList" value="{if isset($items) && is_array($items)}{foreach name="relLoop" item="relatedItem" from=$items}{$relatedItem.«targetEntity.idField()»}{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}{/if}" />
+<input type="hidden" id="«uniqueNameForJs»Mode" name="«uniqueNameForJs»Mode" value="«IF includeEditing»1«ELSE»0«ENDIF»" />
 
 <ul id="«uniqueNameForJs»ReferenceList">
 {if isset($items) && is_array($items)}
@@ -153,6 +158,9 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 {assign var="idPrefix" value="«uniqueNameForJs»Reference_`$relatedItem.«targetEntity.idField()»`"}
     <li id="{$idPrefix}">
     {$relatedItem.«targetEntity.getLeadingField().actualFieldName().formatForCode()»}
+«IF includeEditing-»
+ <a id="{$idPrefix}Edit" href="javascript:«app.prefix()»EditRelatedItem('«uniqueNameForJs»', {$relatedItem.«targetEntity.idField()»});">{$editImage}</a>
+«ENDIF-»
  <a id="{$idPrefix}Remove" href="javascript:«app.prefix()»RemoveRelatedItem('«uniqueNameForJs»', {$relatedItem.«targetEntity.idField()»});">{$removeImage}</a>
 «IF targetEntity.hasImageFields()-»
 <br />
@@ -169,22 +177,18 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «ENDDEFINE»
 
 «DEFINE Component_ParentEditing(Application app, Controller controller, Entity targetEntity, Boolean many) FOR JoinRelationship-»
-«IF !many-»
-            <p>TODO ADD: button to create a new «targetEntity.name.formatForDisplay()» with inline editing (form dialog)</p>
-            <p>TODO EDIT: display of related «targetEntity.name.formatForDisplay()» with inline editing (form dialog)</p>
-«ELSE-»
-            <p>TODO ADD: button to create new «targetEntity.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
-            <p>TODO EDIT: list of related «targetEntity.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
-«ENDIF-»
+«EXPAND Component_Editing(app, controller, targetEntity, many, false)-»
 «ENDDEFINE»
 
 «DEFINE Component_ChildEditing(Application app, Controller controller, Entity targetEntity, Boolean many) FOR JoinRelationship-»
-«IF !many-»
-            <p>TODO ADD: button to create a new «targetEntity.name.formatForDisplay()» with inline editing (form dialog)</p>
-            <p>TODO EDIT: display of related «targetEntity.name.formatForDisplay()» with inline editing (form dialog)</p>
-«ELSE-»
-            <p>TODO ADD: button to create new «targetEntity.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
-            <p>TODO EDIT: list of related «targetEntity.nameMultiple.formatForDisplay()» with inline editing (form dialog)</p>
+«EXPAND Component_Editing(app, controller, targetEntity, many, true)-»
+«ENDDEFINE»
+
+«DEFINE Component_Editing(Application app, Controller controller, Entity targetEntity, Boolean many, Boolean isChildView) FOR JoinRelationship-»
+«REM»just a reminder for the parent view which is not tested yet«ENDREM»
+«IF !isChildView-»
+            <p>TODO ADD: button to create «targetEntity.getEntityNameSingularPlural(many).formatForDisplay()» with inline editing (form dialog)</p>
+            <p>TODO EDIT: display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay()» with inline editing (form dialog)</p>
 «ENDIF-»
 «ENDDEFINE»
 
