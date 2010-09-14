@@ -84,8 +84,8 @@
         {include file="«controller.name()»/include_metadata_edit.tpl"}
     {/if}
 «ENDIF-»
-«EXPAND FormComponents::Relations::Root(controller, true, true) FOREACH incoming.typeSelect(JoinRelationship)-»
-«EXPAND FormComponents::Relations::Root(controller, true, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
+«EXPAND FormComponents::Relations::Root(app, controller, true, true) FOREACH incoming.typeSelect(JoinRelationship)-»
+«EXPAND FormComponents::Relations::Root(app, controller, true, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 
     {if $mode eq "edit"}
         {modcallhooks hookobject="item" hookaction="modify" module="«app.appName()»" hookid="«name.formatForDB()»`$«idField()»`" implode=false}

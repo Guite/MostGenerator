@@ -44,7 +44,7 @@
 <div class="z-«IF controller.metaType == AdminController»admin«ELSE»frontend«ENDIF»box">
     <h1>{gt text='«appName.formatForDisplayCapital()»' comment='This is the title of the header template'}</h1>
     <div class="z-menu">
-        {modulelinks modname="«appName»" type="«controllerName»"}
+        {modulelinks modname="«appName»" type="«controller.name()»"}
     </div>
 </div>
 «IF controller.metaType != AdminController-»
@@ -52,7 +52,7 @@
 «ENDIF-»
 «ENDFILE»
 «FILE "templates/".msconcat(controller.name()).msconcat("/footer.tpl")-»
-{* purpose of this template: footer for «controllerName» area *}
+{* purpose of this template: footer for «controller.name()» area *}
 
 «EXPAND FileHelper::msWeblink-»
 

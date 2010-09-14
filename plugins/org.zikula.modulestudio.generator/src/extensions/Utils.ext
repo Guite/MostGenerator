@@ -81,12 +81,13 @@ cached String configController(Application this) :
     configControllerType().replaceAll('modulestudio::', '').replaceAll('Controller', '');
 
 cached String getUniqueRelationNameForJs(JoinRelationship this, Application app, Entity targetEntity, Boolean many, Boolean incoming, String relationAliasName) :
-    let uniqueFieldName = relationFieldName(targetEntity, ((incoming) ? targetField : sourceField)) :
+//    let uniqueFieldName = relationFieldName(targetEntity, ((incoming) ? targetField : sourceField)) :
     app.prefix()
     .msconcat(targetEntity.getEntityNameSingularPlural(many).formatForCode())
-    .msconcat('_TEST')
+/*    .msconcat('_TEST')
     .msconcat(uniqueFieldName)
-    .msconcat('ENDTEST_')
+    .msconcat('ENDTEST_')*/
+    .msconcat('_')
     .msconcat(relationAliasName);
 
 

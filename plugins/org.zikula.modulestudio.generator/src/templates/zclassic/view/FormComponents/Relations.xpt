@@ -96,7 +96,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «ENDDEFINE»
 
 «DEFINE Component_AutoComplete(Application app, Controller controller, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) FOR JoinRelationship-»
-«LET getRelationAliasName(!incoming).formatForCode() AS relationAliasName-»
+«LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(app, targetEntity, many, incoming, relationAliasName) AS uniqueNameForJs-»
     <div class="«app.prefix()»RelationRightSide">
             <p>TODO SELECT: AutoComplete field for choosing the «targetEntity.name.formatForDisplay()».</p>
@@ -137,7 +137,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «ENDDEFINE»
 
 «DEFINE Component_ItemList(Application app, Controller controller, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) FOR JoinRelationship-»
-«LET getRelationAliasName(!incoming).formatForCode() AS relationAliasName-»
+«LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(app, targetEntity, many, incoming, relationAliasName) AS uniqueNameForJs-»
 {* purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplayCapital()» in «controller.name.formatForDB()» area *}
 
@@ -155,7 +155,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «REM»{if isset($side) && $side eq "collection"}
 <br />
 {«app.prefix()»GetInlineSnippet mediaItem=$mediaItem thumbWidth=200}
-{/if}«ENDREM»
+{/if}«ENDREM»«""-»
     </li>
 {/foreach}
 </ul>
