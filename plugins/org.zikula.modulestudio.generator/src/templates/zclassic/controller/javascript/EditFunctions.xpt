@@ -85,15 +85,14 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
             afterUpdateElement: function(inputField, selectedListItem) {
                     // Called after the input element has been updated (i.e. when the user has selected an entry).
                     // This function is called after the built-in function that adds the list item text to the input field.
+«REM»                    var fieldPrefix = $(inputField).id.replace('Selector', '');«ENDREM»«""-»
                     var componentName = $F(inputField);
                     $(idPrefix + 'SelectorId').value = selectedListItem.id;
                     if ($('itempreview' + selectedListItem.id)) {
                         itemPreview = $('itempreview' + selectedListItem.id).innerHTML;
                     }
-                    if (includeEditing) {
-                        $(idPrefix + 'Selector').disabled = true;
-                        $(idPrefix + 'SelectorDoAdd').disabled = false;
-                    }
+                    $(idPrefix + 'Selector').disabled = true;
+                    $(idPrefix + 'SelectorDoAdd').disabled = false;
             }
     };
     new Ajax.Autocompleter(
@@ -104,7 +103,7 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
     );
 
     $(idPrefix + 'SelectorDoAdd').observe('click', function() {
-        var newTitle = $F(prefix + 'Selector');
+        var newTitle = $F(idPrefix + 'Selector');
         var itemID = $F(idPrefix + 'SelectorId');
         var li = Builder.node('li', {id: idPrefix + 'Reference_' + itemID}, newTitle);
         var removeLink = Builder.node('a', {id: idPrefix + 'Remove', href: 'javascript:«prefixSmall»RemoveRelatedItem(\'' + idPrefix + '\', ' + itemID + ');'}, 'remove');
@@ -189,7 +188,7 @@ function «prefix()»RemoveRelatedItem(idPrefix, itemID)
     var excludedIDs = excludedItemIDs.split(',');
     excludedIDs = excludedIDs.without(itemID);
     excludedItemIDs = excludedIDs.join(',');
-    $(idPrefix + 'ReferenceList').value = excludedItemIDs;
+    $(idPrefix + 'ExcludeList').value = excludedItemIDs;
     $(idPrefix + 'Reference_' + itemID).remove();
 }
 «ENDDEFINE»

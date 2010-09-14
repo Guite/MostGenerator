@@ -99,13 +99,11 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(app, targetEntity, many, incoming, relationAliasName) AS uniqueNameForJs-»
     <div class="«app.prefix()»RelationRightSide">
-            <p>TODO SELECT: AutoComplete field for choosing the «targetEntity.getEntityNameSingularPlural(many).formatForDisplay()».</p>
 «IF !many-»
             <p>TODO: Preselection if mode is edit or the ID is given by $_GET.</p>
 «ENDIF-»
-«IF many-»
-        <a id="«uniqueNameForJs»AddLink" href="javascript:void(0);" style="display: none">{gt text='Add «targetEntity.name.formatForDisplay()»'}</a>
-«ENDIF-»
+
+        <a id="«uniqueNameForJs»AddLink" href="javascript:void(0);" style="display: none">{gt text='«IF !many-»Set«ELSE»Add«ENDIF» «targetEntity.name.formatForDisplay()»'}</a>
         <div id="«uniqueNameForJs»AddFields">
             <label for="«uniqueNameForJs»Selector">{gt text='Find «targetEntity.name.formatForDisplay()»'}</label>
             <br />
@@ -123,12 +121,14 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
         </div>
         <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
     </div>
-    <div class="«app.prefix()»RelationRightSide">
+    <div class="«app.prefix()»RelationLeftSide">
         {if isset($user«relationAliasName.toFirstUpper()») && $user«relationAliasName.toFirstUpper()» ne ""}
             {* the user has submitted something *}
             {include file="«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl" items=$user«relationAliasName.toFirstUpper()»}
-        {elseif $mode ne 'create'}
+        {elseif $mode ne "create"}
             {include file="«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl" items=$«relationAliasName»}
+        {else}
+            {include file="«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl"}
         {/if}
     </div>
     <br style="clear: both" />
@@ -144,9 +144,10 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 {img modname="core" set="icons/extrasmall" src="editdelete.gif" assign="removeImageArray"}
 {assign var="removeImage" value="<img src=\"`$removeImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
 
-<input type="hidden" id="«uniqueNameForJs»ExcludeList" name="«uniqueNameForJs»ExcludeList" value="{foreach name="relLoop" item="relatedItem" from=$items}{$relatedItem.«targetEntity.idField()»}{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}" />
+<input type="hidden" id="«uniqueNameForJs»ExcludeList" name="«uniqueNameForJs»ExcludeList" value="{if isset($items) && is_array($items)}{foreach name="relLoop" item="relatedItem" from=$items}{$relatedItem.«targetEntity.idField()»}{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}{/if}" />
 
 <ul id="«uniqueNameForJs»ReferenceList">
+{if isset($items) && is_array($items)}
 {foreach name="relLoop" item="relatedItem" from=$items}
 {assign var="idPrefix" value="«uniqueNameForJs»Reference_`$relatedItem.«targetEntity.idField()»`"}
     <li id="{$idPrefix}">
@@ -160,6 +161,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «ENDIF-»
     </li>
 {/foreach}
+{/if}
 </ul>
 «ENDLET-»
 «ENDLET-»
@@ -188,7 +190,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «DEFINE InitJs(Application app, Entity targetEntity, Boolean incoming) FOR JoinRelationship-»
 «LET getEditStageCode(incoming) AS stageCode-»
 «REM»Look if we have to do anything by checking stage codes which represent different edit behaviors«ENDREM»«""-»
-«IF (!incoming && stageCode == 2) || (incoming && (stageCode == 1 || stageCode == 3))-»
+«IF (!incoming && stageCode == 2) || ((incoming || this.metaType == ManyToManyRelationship) && (stageCode == 1 || stageCode == 3))-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(app, ((targetEntity == target) ? source : target), (!(incoming && this.metaType != ManyToManyRelationship)), incoming, relationAliasName) AS uniqueNameForJs-»
         «app.prefix()»InitRelationItemsForm('«targetEntity.name.formatForCode()»', '«uniqueNameForJs»', «IF stageCode > 1»true«ELSE»false«ENDIF»);

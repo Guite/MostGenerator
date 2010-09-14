@@ -82,7 +82,7 @@ cached String configController(Application this) :
 
 cached String getUniqueRelationNameForJs(JoinRelationship this, Application app, Entity targetEntity, Boolean many, Boolean incoming, String relationAliasName) :
     app.prefix()
-    .msconcat(targetEntity.getEntityNameSingularPlural(many).formatForCodeCapital())
+    .msconcat(targetEntity.name.formatForCodeCapital())
     .msconcat('_')
     .msconcat(relationAliasName);
 
