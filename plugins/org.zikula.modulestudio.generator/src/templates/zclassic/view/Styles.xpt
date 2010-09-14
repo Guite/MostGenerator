@@ -111,11 +111,11 @@ div.«prefix()»AutoCompleteUser ul li«ENDIF-» {
     background-repeat: no-repeat;
 }
 
-div.«prefix()»AutoComplete ul {
+div.«prefix()»AutoComplete ul li {
     background-image: url("../../../images/icons/extrasmall/tab_right.gif");
 }
 «IF hasUserFields-»
-div.«prefix()»AutoCompleteUser ul {
+div.«prefix()»AutoCompleteUser ul li {
     background-image: url("../../../images/icons/extrasmall/edit_user.gif");
 }
 «ENDIF-»

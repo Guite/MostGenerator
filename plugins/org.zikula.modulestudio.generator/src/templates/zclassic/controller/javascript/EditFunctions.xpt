@@ -121,7 +121,16 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
 
         var excludedItemIDs = $F(idPrefix + 'ExcludeList');
         if (excludedItemIDs != '') {
-            excludedItemIDs += ',';
+            if ($F(idPrefix + 'Scope') == '0') {
+                var excludedIDs = excludedItemIDs.split(',');
+                excludedIDs.each(function(existingID) {
+                    «prefixSmall»RemoveRelatedItem(idPrefix, existingID);
+                });
+                excludedItemIDs = '';
+            }
+            else {
+                excludedItemIDs += ',';
+            }
         }
         excludedItemIDs += itemID;
         $(idPrefix + 'ExcludeList').value = excludedItemIDs;

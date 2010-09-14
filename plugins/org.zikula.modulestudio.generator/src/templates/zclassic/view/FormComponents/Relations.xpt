@@ -48,7 +48,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 {* purpose of this template: inclusion template for managing related «source.getEntityNameSingularPlural(this.metaType != OneToOneRelationship).formatForDisplayCapital()» in «controller.name.formatForDB()» area *}
 
 <fieldset>
-    <legend>{gt text='«source.getEntityNameSingularPlural(this.metaType != OneToOneRelationship).formatForDisplayCapital()»'}</legend>
+    <legend>{gt text='«source.name.formatForDisplayCapital()»'}</legend>
     <div class="z-formrow">
 «EXPAND Component_AutoComplete(app, controller, source, false, true, (stageCode == 3))-»
 «IF stageCode == 3-»«EXPAND Component_ChildEditing(app, controller, source, false)-»«ENDIF-»
@@ -109,6 +109,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
             <br />
             <input type="text" name="«uniqueNameForJs»Selector" id="«uniqueNameForJs»Selector" value="" size="42" />
             <input type="hidden" name="«uniqueNameForJs»SelectorId" id="«uniqueNameForJs»SelectorId" value="" />
+            <input type="hidden" name="«uniqueNameForJs»Scope" id="«uniqueNameForJs»Scope" value="«IF !many»0«ELSE»1«ENDIF»" />
             {img id="ajax_indicator" style="display: none" modname="core" set="icons/extrasmall" src="indicator_circle.gif" alt=""}<br />
 
             <div id="«uniqueNameForJs»SelectorChoices" class="«app.prefix()»AutoComplete«IF targetEntity.hasImageFields()»WithImage«ENDIF»"></div>
