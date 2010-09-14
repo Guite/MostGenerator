@@ -1,0 +1,63 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE DisplayField(String objName, String page, String prepend) FOR EntityField-»
+«prepend»{$«objName».«name.formatForCode()»}«""-»
+«ENDDEFINE»
+
+«DEFINE DisplayField(String objName, String page, String prepend) FOR BooleanField-»
+«prepend»{$«objName».«actualFieldName().formatForCode()»|yesno:true}«""-»
+«ENDDEFINE»
+«DEFINE DisplayField(String objName, String page, String prepend) FOR DecimalField-»
+«prepend»{$«objName».«actualFieldName().formatForCode()»|formatnumber}«""-»
+«ENDDEFINE»
+«DEFINE DisplayField(String objName, String page, String prepend) FOR FloatField-»
+«prepend»{$«objName».«actualFieldName().formatForCode()»|formatnumber}«""-»
+«ENDDEFINE»
+
+«DEFINE DisplayField(String objName, String page, String prepend) FOR UserField-»
+«prepend»{if $«objName».«actualFieldName().formatForCode()» gt 0}
+«prepend»    {$«objName».«actualFieldName().formatForCode()»|userprofilelink}
+«prepend»{else}&nbsp;{/if}«""-»
+«ENDDEFINE»
+
+«DEFINE DisplayField(String objName, String page, String prepend) FOR EmailField-»
+«prepend»{if $«objName».«actualFieldName().formatForCode()» ne ""}
+«prepend»    <a href="mailto:{$«objName».«actualFieldName().formatForCode()»}" title="{gt text="Send an email"}">
+«prepend»        {img src="mail_generic.gif" modname="core" set="icons/extrasmall" __alt='Email'}
+«prepend»    </a>
+«prepend»{else}&nbsp;{/if}«""-»
+«ENDDEFINE»
+
+«DEFINE DisplayField(String objName, String page, String prepend) FOR UrlField-»
+«prepend»{if $«objName».«actualFieldName().formatForCode()» ne ""}
+«prepend»    <a href="{$«objName».«actualFieldName().formatForCode()»}" title="{gt text="Visit this page"}">
+«prepend»        {img src="agt_internet.gif" modname="core" set="icons/extrasmall" __alt='Homepage'}
+«prepend»    </a>
+«prepend»{else}&nbsp;{/if}«""-»
+«ENDDEFINE»
+
+«DEFINE DisplayField(String objName, String page, String prepend) FOR UploadField-»
+«LET entity.container.application.appName().formatForDB() AS appNameSmall-»
+«LET actualFieldName().formatForCode() AS realName-»
+«prepend»<a href="{$«objName».«realName»FullPathURL}" title="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}"{if $«objName».«realName»IsImage} rel="imageviewer[«entity.name.formatForDB()»]"{/if}>
+«prepend»{if $«objName».«realName»IsImage}
+«prepend»    <img src="{$«objName».«realName»|«appNameSmall»ImageThumb:$«objName».«realName»FullPath:250:150}" width="250" height="150" alt="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
+«prepend»{else}
+«prepend»    {gt text='Download'} ({$«objName».«realName»FullPath|«appNameSmall»GetFileSize:false:false})
+«prepend»{/if}
+«prepend»</a>
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE DisplayField(String objName, String page, String prepend) FOR DateField-»
+«prepend»{$«objName».«actualFieldName().formatForCode()»|dateformat:"datebrief"}«""-»
+«ENDDEFINE»
+
+«DEFINE DisplayField(String objName, String page, String prepend) FOR TimestampField-»
+«prepend»{$«objName».«actualFieldName().formatForCode()»|dateformat:"datetimebrief"}«""-»
+«ENDDEFINE»
+

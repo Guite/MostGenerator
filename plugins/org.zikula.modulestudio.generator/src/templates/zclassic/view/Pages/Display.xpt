@@ -26,7 +26,7 @@
 «LET outgoing.typeSelect(OneToManyRelationship) AS refedElems-»
 «IF refedElems.size > 0-»
 <div class="«appName.formatForDB()»RightBox">
-«EXPAND DisplayRelatedItems(appName, controller, this) FOREACH refedElems.target-»
+«EXPAND templates::zclassic::view::PageComponents::Relations::DisplayRelatedItems(appName, controller, this) FOREACH refedElems.target-»
 </div>
 «ENDIF-»
 
@@ -38,7 +38,7 @@
     <dd>«FOREACH joins AS join SEPARATOR ', '-»{$«objName».«join.source.name.formatForDB()»_«join.source.idField()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH-»</dd>
 «ELSE-»
     <dt>{gt text='«field.actualFieldName().formatForDisplayCapital()»'}</dt>
-    <dd>«EXPAND DisplayColumnField(objName) FOR field-»</dd>
+    <dd>«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(objName, 'display', '') FOR field-»</dd>
 «ENDIF-»
 «ENDLET-»
 «ENDFOREACH-»
@@ -89,76 +89,5 @@
 {include file="«controller.name()»/footer.tpl"}
 «ENDFILE»
 «ENDLET-»
-«ENDDEFINE»
-
-«DEFINE DisplayColumnField(String objName) FOR EntityField-»
-{$«objName».«name.formatForCode()»}«""-»
-«ENDDEFINE»
-
-«DEFINE DisplayColumnField(String objName) FOR BooleanField-»
-{$«objName».«actualFieldName().formatForCode()»|yesno:true}«""-»
-«ENDDEFINE»
-«DEFINE DisplayColumnField(String objName) FOR DecimalField-»
-{$«objName».«actualFieldName().formatForCode()»|formatnumber}«""-»
-«ENDDEFINE»
-«DEFINE DisplayColumnField(String objName) FOR FloatField-»
-{$«objName».«actualFieldName().formatForCode()»|formatnumber}«""-»
-«ENDDEFINE»
-«DEFINE DisplayColumnField(String objName) FOR UserField-»
-{if $«objName».«actualFieldName().formatForCode()» gt 0}{$«objName».«actualFieldName().formatForCode()»|userprofilelink}{else}&nbsp;{/if}«""-»
-«ENDDEFINE»
-«DEFINE DisplayColumnField(String objName) FOR EmailField-»
-{if $«objName».«actualFieldName().formatForCode()» ne ""}
-    <a href="mailto:{$«objName».«actualFieldName().formatForCode()»}" title="{gt text="Send an email"}">
-        {img src="mail_generic.gif" modname="core" set="icons/extrasmall" __alt='Email'}
-    </a>
-{else}&nbsp;{/if}«""-»
-«ENDDEFINE»
-«DEFINE DisplayColumnField(String objName) FOR UrlField-»
-{if $«objName».«actualFieldName().formatForCode()» ne ""}
-    <a href="{$«objName».«actualFieldName().formatForCode()»}" title="{gt text="Visit this page"}">
-        {img src="agt_internet.gif" modname="core" set="icons/extrasmall" __alt='Homepage'}
-    </a>
-{else}&nbsp;{/if}«""-»
-«ENDDEFINE»
-«DEFINE DisplayColumnField(String objName) FOR UploadField-»
-«LET entity.container.application.appName().formatForDB() AS appNameSmall-»
-«LET actualFieldName().formatForCode() AS realName-»
-<a href="{$«objName».«realName»FullPathURL}" title="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}"{if $«objName».«realName»IsImage} rel="imageviewer[«entity.name.formatForDB()»]"{/if}>
-{if $«objName».«realName»IsImage}
-    <img src="{$«objName».«realName»|«appNameSmall»ImageThumb:$«objName».«realName»FullPath:250:150}" width="250" height="150" alt="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
-{else}
-    {gt text='Download'} ({$«objName».«realName»FullPath|«appNameSmall»GetFileSize:false:false})
-{/if}
-</a>
-«ENDLET-»
-«ENDLET-»
-«ENDDEFINE»
-«DEFINE DisplayColumnField(String objName) FOR DateField-»
-{$«objName».«actualFieldName().formatForCode()»|dateformat:"datebrief"}«""-»
-«ENDDEFINE»
-«DEFINE DisplayColumnField(String objName) FOR TimestampField-»
-{$«objName».«actualFieldName().formatForCode()»|dateformat:"datetimebrief"}«""-»
-«ENDDEFINE»
-
-«DEFINE DisplayRelatedItems(String appName, Controller controller, Entity relatedEntity) FOR Entity-»
-<h3>«nameMultiple.formatForDisplayCapital()»</h3>
-{checkpermission component="«appName»::" instance=".*" level="ACCESS_ADMIN" assign="authAdmin"}
-{if $authAdmin || $«relatedEntity.name.formatForCode()».cr_uid eq $uid}
-<p class="manageLink">
-    {gt text='Create «name.formatForDisplay()»' assign="createTitle"}
-    <a href="{modurl modname="«appName»" type="«controller.name()»" func="edit" ot="«name.formatForCode()»" «relatedEntity.idField()»=$«relatedEntity.name.formatForCode()».«relatedEntity.idField()»}" title="{$createTitle}">
-        {img src="insert_table_row.gif" modname="core" set="icons/extrasmall" __alt='Create'}
-        {$createTitle}
-    </a>
-</p>
-{/if}
-
-<ul>
-<li>«name.formatForCodeCapital()» 1</li>
-<li>«name.formatForCodeCapital()» 2</li>
-<li>«name.formatForCodeCapital()» 3</li>
-<li>...</li>
-</ul>
 «ENDDEFINE»
 

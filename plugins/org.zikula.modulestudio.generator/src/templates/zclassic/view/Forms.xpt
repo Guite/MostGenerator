@@ -19,8 +19,8 @@
 «FILE editTemplateFile(controller, name, actionName)-»
 «EXPAND FormTemplate(app, controller, actionName)-»
 «ENDFILE»
-«EXPAND FormComponents::Relations::Root(app, controller, false, true) FOREACH incoming.typeSelect(JoinRelationship)-»
-«EXPAND FormComponents::Relations::Root(app, controller, false, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
+«EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, false, true) FOREACH incoming.typeSelect(JoinRelationship)-»
+«EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, false, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 «ENDDEFINE»
 
 «DEFINE FormTemplate(Application app, Controller controller, String actionName) FOR Entity-»
@@ -84,8 +84,8 @@
         {include file="«controller.name()»/include_metadata_edit.tpl"}
     {/if}
 «ENDIF-»
-«EXPAND FormComponents::Relations::Root(app, controller, true, true) FOREACH incoming.typeSelect(JoinRelationship)-»
-«EXPAND FormComponents::Relations::Root(app, controller, true, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
+«EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, true, true) FOREACH incoming.typeSelect(JoinRelationship)-»
+«EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, true, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 
     {if $mode eq "edit"}
         {modcallhooks hookobject="item" hookaction="modify" module="«app.appName()»" hookid="«name.formatForDB()»`$«idField()»`" implode=false}

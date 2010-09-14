@@ -365,6 +365,17 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         }
 
         $this->objectType = '«name.formatForCode()»';
+
+«IF controller.hasActions('view')-»
+        // redirect to the list of «nameMultiple.formatForCode()»
+        $this->returnUrl = ModUtil::url('«appName»', '«controller.name()»', 'view',
+                                                             array('ot' => $this->objectType));
+«ELSEIF controller.hasActions('main')-»
+        // redirect to the main page
+        $this->returnUrl = ModUtil::url('«appName»', '«controller.name()»', 'main');
+«ELSE-»
+        $this->returnUrl = System::getHomepageUrl();
+«ENDIF-»
         $objectType = $this->objectType;
 «EXPAND ControllerHelper::instantiateBusinessObject(appName, false, 'actionHandler')-»
 
@@ -388,11 +399,13 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             }
 
             LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» created.'));
+«IF controller.hasActions('display')-»
 
             // redirect to the detail page of the newly created «name.formatForCode()»
-            $this->returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
+            $this->returnUrl = ModUtil::url('«appName»', '«controller.name()»', 'display',
                                                              array('ot' => $this->objectType,
                                                                    '«idField()»' => $this->«idField()»));
+«ENDIF-»
         } else if ($args['commandName'] == 'update') {
             // event handling if user clicks on update
 
@@ -404,11 +417,13 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             }
 
             LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» updated.'));
+«IF controller.hasActions('display')-»
 
             // redirect to the detail page of the treated «name.formatForCode()»
-            $this->returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
+            $this->returnUrl = ModUtil::url('«appName»', '«controller.name()»', 'display',
                                                              array('ot' => $this->objectType,
                                                                    '«idField()»' => $this->«idField()»));
+«ENDIF-»
         } else if ($args['commandName'] == 'delete') {
             // event handling if user clicks on delete
 
@@ -424,17 +439,15 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                                                                  array('ot' => $this->objectType));
         } else if ($args['commandName'] == 'cancel') {
             // event handling if user clicks on cancel
+«IF controller.hasActions('display')-»
 
             if ($this->mode == 'edit') {
                 // redirect to the detail page of the treated «name.formatForCode()»
                 $this->returnUrl = ModUtil::url('«appName»', '«controllerName»', 'display',
                                                                  array('ot' => $this->objectType,
                                                                        '«idField()»' => $this->«idField()»));
-            } else {
-                // redirect to the list of «nameMultiple.formatForCode()»
-                $this->returnUrl = ModUtil::url('«appName»', '«controllerName»', 'view',
-                                                                     array('ot' => $this->objectType));
             }
+«ENDIF-»
         }
 
 

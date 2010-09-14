@@ -1,0 +1,26 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE DisplayRelatedItems(String appName, Controller controller, Entity relatedEntity) FOR Entity-»
+<h3>«nameMultiple.formatForDisplayCapital()»</h3>
+{checkpermission component="«appName»::" instance=".*" level="ACCESS_ADMIN" assign="authAdmin"}
+{if $authAdmin || $«relatedEntity.name.formatForCode()».cr_uid eq $uid}
+<p class="manageLink">
+    {gt text='Create «name.formatForDisplay()»' assign="createTitle"}
+    <a href="{modurl modname="«appName»" type="«controller.name()»" func="edit" ot="«name.formatForCode()»" «relatedEntity.idField()»=$«relatedEntity.name.formatForCode()».«relatedEntity.idField()»}" title="{$createTitle}">
+        {img src="insert_table_row.gif" modname="core" set="icons/extrasmall" __alt='Create'}
+        {$createTitle}
+    </a>
+</p>
+{/if}
+
+<ul>
+<li>«name.formatForCodeCapital()» 1</li>
+<li>«name.formatForCodeCapital()» 2</li>
+<li>«name.formatForCodeCapital()» 3</li>
+<li>...</li>
+</ul>
+«ENDDEFINE»
+
