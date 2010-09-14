@@ -100,7 +100,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
         // parameter for used sorting field
         $sort = FormUtil::getPassedValue('sort', '', 'GET');
-«EXPAND DefaultSorting-»
+«EXPAND ControllerHelper::DefaultSorting-»
 
         // parameter for used sort order
         $sdir = FormUtil::getPassedValue('sdir', '', 'GET');
@@ -152,12 +152,6 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
         // fetch and return the appropriate template
         return «appName»_Util::processViewTemplate($this->view, '«controller.name()»', $objectType, 'view', $args);
-«ENDDEFINE»
-
-«DEFINE DefaultSorting FOR ViewAction-»
-        if (empty($sort) || !in_array($sort, $objectCollection->get_intAllowedSortingFields())) {
-            $sort = $objectCollection->get_intDefaultSortingField();
-        }
 «ENDDEFINE»
 
 

@@ -146,10 +146,8 @@
 «ENDFOREACH-»
 «ENDIF-»
 «ENDLET-»
-
-«REM»not ready yet
-        «container.application.prefix()»InitCollectionItemsForm();
-«ENDREM»
+«EXPAND FormComponents::Relations::InitJs(app, this, true) FOREACH incoming.typeSelect(JoinRelationship)-»
+«EXPAND FormComponents::Relations::InitJs(app, this, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 
         var valid = new Validation('FormForm', {onSubmit: false, immediate : true});
         {{if $mode ne "create"}}

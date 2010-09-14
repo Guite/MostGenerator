@@ -1,3 +1,4 @@
+«IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 
 «DEFINE instantiateBusinessObject(String appName, Boolean isCollection, String context) FOR Object-»
@@ -35,3 +36,8 @@
     }
 «ENDDEFINE»
 
+«DEFINE DefaultSorting FOR Object-»
+        if (empty($sort) || !in_array($sort, $objectCollection->get_intAllowedSortingFields())) {
+            $sort = $objectCollection->get_intDefaultSortingField();
+        }
+«ENDDEFINE»

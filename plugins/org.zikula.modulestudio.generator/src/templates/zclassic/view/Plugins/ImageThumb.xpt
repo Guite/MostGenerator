@@ -16,7 +16,7 @@
  * The «appName().formatForDB()»ImageThumb modifier displays a thumbnail image
  *
  * @param  string    $filename   The input file name.
- * @param  string    $filename   The input file path (including file name).
+ * @param  string    $filepath   The input file path (including file name).
  * @param  int       $width      Desired width.
  * @param  int       $height     Desired height.
  *
@@ -24,37 +24,6 @@
  */
 function smarty_modifier_«appName().formatForDB()»ImageThumb($filename = '', $filepath = '', $width = 100, $height = 80)
 {
-    $thumbArgs = array();
-    if (empty($filename) || empty($filepath) || !file_exists($filepath)) {
-        return;
-    }
-
-    $mediaModule = 'Thumbnail';
-
-    if (!ModUtil::available($mediaModule)) {
-        return $filepath;
-    }
-
-    $thumbArgs['filename'] = $filepath;
-    $thumbArgs['far'] = 1; // force aspect ratio
-    $thumbArgs['w'] = $width;
-    $thumbArgs['h'] = $height;
-
-    // compute thumbnail file name
-    $thumbFileName = ModUtil::apiFunc($mediaModule, 'user', 'generateThumbnailName', $thumbArgs);
-
-    // move thumbnail into sub folder
-    $thumbFileName = str_replace($filepath, $filepath . 'tmb/', $thumbFileName);
-
-    // return file if already existing
-    if (file_exists($thumbFileName)) {
-        return $thumbFileName;
-    }
-
-    // create the thumbnail
-    $thumbArgs['tmbname'] = $thumbFileName;
-    ModUtil::apiFunc($mediaModule, 'user', 'generateThumbnailDirect', $thumbArgs);
-
-    return $thumbFileName;
+    return «appName()»_Util::getImageThumb($filename, $filepath, $width, $height);
 }
 «ENDDEFINE»

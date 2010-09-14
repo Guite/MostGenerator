@@ -78,11 +78,11 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
                     // This function is called after the built-in function that adds the list item text to the input field.
                     var componentName = $F(inputField);
                     $(idPrefix + 'SelectorId').value = selectedListItem.id;
-                    if (objectType == 'mediaItem') {
+                    if ($('itempreview' + selectedListItem.id)) {
                         itemPreview = $('itempreview' + selectedListItem.id).innerHTML;
                     }
                     if (includeEditing) {
-                        $('«prefixSmall»newcollectionitem').disabled = true;
+                        $(idPrefix + 'Selector').disabled = true;
                         $(idPrefix + 'SelectorDoAdd').disabled = false;
                     }
             }
@@ -98,12 +98,13 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
         var newTitle = $F(prefix + 'Selector');
         var itemID = $F(idPrefix + 'SelectorId');
         var li = Builder.node('li', {id: idPrefix + 'Reference_' + itemID}, newTitle);
-        var removeLink = Builder.node('a', {id: idPrefix + 'remove', href: 'javascript:«prefixSmall»RemoveRelatedItem(\'' + idPrefix + '\', ' + itemID + ');'}, 'remove');
+        var removeLink = Builder.node('a', {id: idPrefix + 'Remove', href: 'javascript:«prefixSmall»RemoveRelatedItem(\'' + idPrefix + '\', ' + itemID + ');'}, 'remove');
         li.appendChild(removeLink);
-        if (objectType == 'mediaItem') {
+        if (itemPreview != '') {
             var fldPreview = Builder.node('div', {id: idPrefix + 'preview', name: idPrefix + 'preview'}, '');
-            fldPreview.update(mediaItemPreview);
+            fldPreview.update(itemPreview);
             li.appendChild(fldPreview);
+            itemPreview = '';
         }
         $(idPrefix + 'ReferenceList').appendChild(li);
 
@@ -128,7 +129,7 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
     // from here inline editing will be handled
     $('«prefixSmall»newcollectionform').hide();
     $('«prefixSmall»collectionitemdonew').observe('click', function() {
-        $('createnewcollection_title').value = $F('«prefixSmall»newcollectionitem');
+        $('createnewcollection_title').value = $F(idPrefix + 'Selector');
         $('«prefixSmall»newcollectionform').show();
         «prefixSmall»ResetRelatedItemForm(); // hide
     });
@@ -152,12 +153,12 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
             onSuccess: function(req) {
                 var json = pndejsonize(req.responseText);
                 if (json.mediacollectionid) {
-                    $('«prefixSmall»newcollectionitem').value = $F('createnewcollection_title');
+                    $(idPrefix + 'Selector').value = $F('createnewcollection_title');
                     «prefixSmall»ToggleRelatedItemForm();
                     «prefixSmall»ResetCreateRelatedItemForm();
                     $('«prefixSmall»newcollectionform').hide();
-                    //«prefixSmall»FakeKeyPress('«prefixSmall»newcollectionitem');
-                    $('«prefixSmall»newcollectionitem').activate();
+                    //«prefixSmall»FakeKeyPress(idPrefix + 'Selector');
+                    $(idPrefix + 'Selector').activate();
                 }
                 else alert('Error! Could not create the new item.');
                 $('«prefixSmall»createcollectionsave').disabled = false;

@@ -32,7 +32,7 @@ listType:
 «IF controller.hasActions('edit')-»
     {checkpermissionblock component="«appName»::" instance=".*" level="ACCESS_ADD"}
         {gt text='Create «name.formatForDisplay()»' assign="createTitle"}
-        <a href="{modurl modname="«appName»" type="«controller.name()»" func="edit" ot="«objName»"}" title="{$createTitle}" class="validationtestIconNew">
+        <a href="{modurl modname="«appName»" type="«controller.name()»" func="edit" ot="«objName»"}" title="{$createTitle}" class="«appName.formatForDB()»IconNew">
             {$createTitle}
         </a>
     {/checkpermissionblock}
