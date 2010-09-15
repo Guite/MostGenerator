@@ -172,8 +172,10 @@
 
 «DEFINE FieldSetColumnAdditionalOptions FOR EmailField-»
 «EXPAND FieldSetColumnAdditionalOptionsCommon-»
+«IF !mandatory»/*«ENDIF»
                 // check if value is a valid email address
                 'email' => true,
+«IF !mandatory»*/«ENDIF»
 «ENDDEFINE»
 «DEFINE FieldSetColumnAdditionalOptions FOR TimestampField-»
 «IF past-»
