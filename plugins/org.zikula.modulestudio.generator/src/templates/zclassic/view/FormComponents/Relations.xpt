@@ -154,7 +154,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
     <li id="{$idPrefix}">
     {$relatedItem.«targetEntity.getLeadingField().actualFieldName().formatForCode()»}
 «IF includeEditing-»
- <a id="{$idPrefix}Edit" href="{modurl modname="«app.appName()»" type="«controller.name()»" func="edit" ot="«targetEntity.name.formatForCode()»" «targetEntity.idField()»=$relatedItem.«targetEntity.idField()» theme="Printer"}">{$editImage}</a>
+ <a id="{$idPrefix}Edit" href="{modurl modname="«app.appName()»" type="«controller.name()»" func="edit" ot="«targetEntity.name.formatForCode()»" «targetEntity.idField()»=$relatedItem.«targetEntity.idField()» theme="Printer" idp=«uniqueNameForJs»}">{$editImage}</a>
 «ENDIF-»
  <a id="{$idPrefix}Remove" href="javascript:«app.prefix()»RemoveRelatedItem('«uniqueNameForJs»', {$relatedItem.«targetEntity.idField()»});">{$removeImage}</a>
 «IF targetEntity.hasImageFields()-»

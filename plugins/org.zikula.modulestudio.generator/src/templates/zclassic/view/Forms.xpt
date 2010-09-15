@@ -213,7 +213,7 @@
         /* <![CDATA[ */
             // close window from parent document
             document.observe('dom:loaded', function() {
-                «app.prefix()»CloseWindowFromInside('{{$idPrefix}}', {{$itemId}});
+                «app.prefix()»CloseWindowFromInside('{{$idPrefix}}', {{if $commandName eq "create"}}{{$itemId}}{{else}}0{{/if}});«REM»value > 0 causes the auto completion being activated«ENDREM»
             });
         /* ]]> */
         </script>

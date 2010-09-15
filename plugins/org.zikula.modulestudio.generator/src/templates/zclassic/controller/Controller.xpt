@@ -52,12 +52,14 @@ class «baseClassController()» extends Zikula_Controller
     {
         $itemId = (int) FormUtil::getPassedValue('id', 0, 'GET');
         $idPrefix = FormUtil::getPassedValue('idp', '', 'GET');
+        $commandName = FormUtil::getPassedValue('com', '', 'GET');
         if (empty($idPrefix)) {
             return false;
         }
 
         $this->view->assign('itemId', $itemId)
                    ->assign('idPrefix', $idPrefix)
+                   ->assign('commandName', $commandName)
                    ->assign('jcssConfig', JCSSUtil::getJSConfig())
                    ->display('«name()»/inlineRedirectHandler.tpl');
         return true;

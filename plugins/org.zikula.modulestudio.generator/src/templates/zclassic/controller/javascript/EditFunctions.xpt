@@ -46,6 +46,8 @@ function «prefix()»InitUserField(fieldName, getterName)
 «DEFINE RelationFunctions FOR Application-»
 «IF models.relations.size > 0-»
 «EXPAND InitRelatedItemsForm(prefix())-»
+«EXPAND InitInlineWindow-»
+«EXPAND CreateWindowInstance-»
 «EXPAND RemoveRelatedItem-»
 «EXPAND ResetRelatedItemForm-»
 «EXPAND ToggleRelatedItemForm-»
@@ -108,26 +110,31 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
         var includeEditing = ($F(idPrefix + 'Mode') == '1') ? true : false;
         var editLink;
         var removeLink;
+        var elemPrefix = idPrefix + 'Reference_' + itemID;
 
-        var li = Builder.node('li', {id: idPrefix + 'Reference_' + itemID}, newTitle);
+        var li = Builder.node('li', {id: elemPrefix}, newTitle);
         if (includeEditing == true) {
             var editHref = $(idPrefix + 'SelectorDoNew').href + '&amp;' + objectType.toLowerCase() + '=' + itemID;
-            editLink = Builder.node('a', {id: idPrefix + 'Edit', href: editHref}, 'edit');
+            editLink = Builder.node('a', {id: elemPrefix + 'Edit', href: editHref}, 'edit');
             li.appendChild(editLink);
         }
-        removeLink = Builder.node('a', {id: idPrefix + 'Remove', href: 'javascript:«prefixSmall»RemoveRelatedItem(\'' + idPrefix + '\', ' + itemID + ');'}, 'remove');
+        removeLink = Builder.node('a', {id: elemPrefix + 'Remove', href: 'javascript:«prefixSmall»RemoveRelatedItem(\'' + idPrefix + '\', ' + itemID + ');'}, 'remove');
         li.appendChild(removeLink);
         if (itemPreview != '') {
-            var fldPreview = Builder.node('div', {id: idPrefix + 'preview', name: idPrefix + 'preview'}, '');
+            var fldPreview = Builder.node('div', {id: elemPrefix + 'preview', name: idPrefix + 'preview'}, '');
             fldPreview.update(itemPreview);
             li.appendChild(fldPreview);
             itemPreview = '';
         }
         $(idPrefix + 'ReferenceList').appendChild(li);
 
-        // show image link
         if (includeEditing == true) {
             editLink.update(' ' + editImage);
+
+            $(elemPrefix + 'Edit').observe('click', function(e) {
+                «prefixSmall»InitInlineWindow(objectType, idPrefix + 'Reference_' + itemID + 'Edit');
+                e.stop();
+            });
         }
         removeLink.update(' ' + removeImage);
 
@@ -157,31 +164,71 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
 
     // from here inline editing will be handled
     $(idPrefix + 'SelectorDoNew').observe('click', function(e) {
-        relationHandler.each(function(relationHandler) {
-            if (relationHandler['prefix'] == idPrefix) {
-                if (relationHandler['windowInstance'] != null) {
-                    relationHandler['windowInstance'].destroy();
-                }
-                var newWindow = new Zikula.UI.Window(
-                    $(idPrefix + 'SelectorDoNew'),
-                    {
-                        minmax: true,
-                        resizable: true,
-                        //title: $(idPrefix + 'SelectorDoNew').title,
-                        width: 600,
-                        initMaxHeight: 500,
-                        modal: false,
-                        iframe: true
-                    }
-                );
-                newWindow.openHandler();
-                relationHandler['windowInstance'] = newWindow;
-            }
-        });
-
+        «prefixSmall»InitInlineWindow(objectType, idPrefix + 'SelectorDoNew')
         e.stop();
-        return false;
     });
+
+    var excludedItemIDs = $F(idPrefix + 'ExcludeList');
+    var excludedIDs = excludedItemIDs.split(',');
+    excludedIDs.each(function(itemID) {
+        $(idPrefix + 'Reference_' + itemID + 'Edit').observe('click', function(e) {
+            «prefixSmall»InitInlineWindow(objectType, idPrefix + 'Reference_' + itemID + 'Edit');
+            e.stop();
+        });
+    });
+}
+
+«ENDDEFINE»
+
+«DEFINE InitInlineWindow FOR Application-»
+/**
+ * Observe a link for opening an inline window
+ */
+function «prefix()»InitInlineWindow(objectType, containerID)
+{
+    var found = false;
+    relationHandler.each(function(relationHandler) {
+        if (relationHandler['prefix'] == containerID) {
+            found = true;
+            if (relationHandler['windowInstance'] != null) {
+                relationHandler['windowInstance'].destroy();
+            }
+            relationHandler['windowInstance'] = «prefix()»CreateWindowInstance($(containerID));
+        }
+    });
+    if (found === false) {
+        var newItem = new Object();
+        newItem['ot'] = objectType;
+        newItem['alias'] = '«REM»TODO«ENDREM»';
+        newItem['prefix'] = containerID;
+        newItem['acInstance'] = null;
+        newItem['windowInstance'] = «prefix()»CreateWindowInstance($(containerID));
+        relationHandler.push(newItem);
+    }
+}
+
+«ENDDEFINE»
+
+«DEFINE CreateWindowInstance FOR Application-»
+/**
+ * Helper function to create new Zikula.UI.Window instances
+ */
+function «prefix()»CreateWindowInstance(containerElem)
+{
+    var newWindow = new Zikula.UI.Window(
+        containerElem,
+        {
+            minmax: true,
+            resizable: true,
+            //title: containerElem.title,
+            width: 600,
+            initMaxHeight: 500,
+            modal: false,
+            iframe: true
+        }
+    );
+    newWindow.openHandler();
+    return newWindow;
 }
 
 «ENDDEFINE»
