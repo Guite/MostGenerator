@@ -63,6 +63,19 @@
 
 {if !isset($smarty.get.theme) || $smarty.get.theme ne "Printer"}
 «EXPAND FileHelper::msWeblink-»
+{else}
+{pageaddvar name="stylesheet" value="styles/core.css"}
+{pageaddvar name="stylesheet" value="modules/«appName»/style/style.css"}
+{pageaddvar name="stylesheet" value="system/Theme/style/form/style.css"}
+{pageaddvar name="stylesheet" value="themes/Andreas08/style/fluid960gs/reset.css"}
+{capture assign="pageStyles"}
+<style type="text/css">
+    body {
+        font-size: 85%;
+    }
+</style>
+{/capture}
+{pageaddvar name="rawtext" value=$pageStyles}
 {/if}
 
 «ENDFILE»

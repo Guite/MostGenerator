@@ -113,7 +113,9 @@
     <div class="z-buttons z-formbuttons">
     {if $mode eq "edit"}
         {formbutton id="btnUpdate" commandName="update" __text='Update «name.formatForDisplay()»' class='z-bt-save'}
+{if !$inlineUsage}
         {formbutton id="btnDelete" commandName="delete" __text='Delete «name.formatForDisplay()»' class='z-bt-delete' confirmMessage=$deleteConfirmMsg}
+{/if}
     {elseif $mode eq "create"}
         {formbutton id="btnCreate" commandName="create" __text='Create «name.formatForDisplay()»' class='z-bt-ok'}
     {else}
@@ -199,6 +201,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        {$jcssConfig}
         <script type="text/javascript" src="{getbaseurl}javascript/ajax/proto_scriptaculous.combined.min.js"></script>
         <script type="text/javascript" src="{getbaseurl}javascript/helpers/Zikula.js"></script>
         <script type="text/javascript" src="{getbaseurl}javascript/livepipe/livepipe.combined.min.js"></script>

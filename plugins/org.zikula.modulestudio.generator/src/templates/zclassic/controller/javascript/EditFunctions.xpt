@@ -162,49 +162,26 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
                 if (relationHandler['windowInstance'] != null) {
                     relationHandler['windowInstance'].destroy();
                 }
-                relationHandler['windowInstance'] = new Zikula.UI.Window(
+                var newWindow = new Zikula.UI.Window(
                     $(idPrefix + 'SelectorDoNew'),
                     {
                         minmax: true,
                         resizable: true,
-                        //title: $F(idPrefix + 'SelectorDoNew'),
+                        //title: $(idPrefix + 'SelectorDoNew').title,
                         width: 600,
                         initMaxHeight: 500,
                         modal: false,
                         iframe: true
                     }
                 );
+                newWindow.openHandler();
+                relationHandler['windowInstance'] = newWindow;
             }
         });
 
         e.stop();
         return false;
     });
-}
-
-«ENDDEFINE»
-
-«DEFINE CloseWindowFromInside FOR Application-»
-/**
- * Closes an iframe from the document displayed in it
- */
-function «prefix()»CloseWindowFromInside(idPrefix, itemID)
-{
-    if (window.parent != "") {
-        window.parent.relationHandler.each(function(relationHandler) {
-            if (relationHandler['prefix'] == '{$idPrefix}') {
-                if ($itemId > 0) {
-                    if (relationHandler['acInstance'] != null) {
-                        relationHandler['acInstance'].activate();
-                        Zikula.UI.Alert('Action has been done', 'Information');
-                    }
-                }
-                if (relationHandler['windowInstance'] != null) {
-                    relationHandler['windowInstance'].closeHandler();
-                }
-            }
-        });
-    }
 }
 
 «ENDDEFINE»
@@ -254,3 +231,27 @@ function «prefix()»ToggleRelatedItemForm(idPrefix)
 
 «ENDDEFINE»
 
+«DEFINE CloseWindowFromInside FOR Application-»
+/**
+ * Closes an iframe from the document displayed in it
+ */
+function «prefix()»CloseWindowFromInside(idPrefix, itemID)
+{
+    if (window.parent != "") {
+        window.parent.relationHandler.each(function(relationHandler) {
+            if (relationHandler['prefix'] == idPrefix) {
+                if (itemID > 0) {
+                    if (relationHandler['acInstance'] != null) {
+                        relationHandler['acInstance'].activate();
+                        Zikula.UI.Alert('Action has been done', 'Information');
+                    }
+                }
+                if (relationHandler['windowInstance'] != null) {
+                    relationHandler['windowInstance'].closeHandler();
+                }
+            }
+        });
+    }
+}
+
+«ENDDEFINE»
