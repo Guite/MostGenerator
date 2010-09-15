@@ -182,8 +182,10 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «DEFINE Component_Editing(Application app, Controller controller, Entity targetEntity, Boolean many, Boolean isChildView) FOR JoinRelationship-»
 «REM»just a reminder for the parent view which is not tested yet«ENDREM»
 «IF !isChildView-»
+«REM»TODO: only for $mode ne create: 
             <p>TODO ADD: button to create «targetEntity.getEntityNameSingularPlural(many).formatForDisplay()» with inline editing (form dialog)</p>
             <p>TODO EDIT: display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay()» with inline editing (form dialog)</p>
+«ENDREM»«""-»
 «ENDIF-»
 «ENDDEFINE»
 
