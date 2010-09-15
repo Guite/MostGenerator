@@ -2,9 +2,9 @@
 <!-- processes specific models for other persons -->
 <workflow>
     <!-- which model ? -->
-    <property name="modelName" value="MyModel" />
+    <property name="modelName" value="FreestyleModels" />
     <!-- where is it ? -->
-    <property name="modelPath" value="/home/axel/projects/GuiteSVN/modules/trunk/models" />
+    <property name="modelPath" value="/home/axel/projects/GuiteSVN/modules/trunk/models/customers" />
 
 	<!-- call file reader workflow and provide required properties -->
 	<cartridge file="workflow/msWorkflowManual.mwe"

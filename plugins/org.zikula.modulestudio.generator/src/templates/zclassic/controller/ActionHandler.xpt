@@ -166,6 +166,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $objectType = $this->objectType;
 «EXPAND ControllerHelper::instantiateBusinessObject(app.appName(), false, 'actionHandler')-»
 
+        $objectData = array();
         $this->mode = 'create';
         // if «idField()» is not 0, we wish to edit an existing «name.formatForDisplay()»
         if ($this->«idField()») {
@@ -190,11 +191,21 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 return $view->registerError(LogUtil::registerPermissionError());
             }
 
-            // retrieve array with default data values
-            $objectData = $object->getNewArrayWithDefaultData();
+            $template«idField().toFirstUpper()» = (int) FormUtil::getPassedValue('astemplate', 0, 'GET');
+            if ($template«idField().toFirstUpper()» > 0) {
+                // reuse existing «name.formatForDisplay()»
+                $idField = '«idField()»';
+«EXPAND ControllerHelper::retrieveEntityFromModel('idField', "template" + idField().toFirstUpper(), true)-»
+                unset($object);
+                unset($objectData['«idField()»']);
+            }
+            else {
+                // retrieve array with default data values
+                $objectData = $object->getNewArrayWithDefaultData();
 
 «EXPAND InitRelatedObjectDefault(true) FOREACH incoming.typeSelect(JoinRelationship)-»
 «EXPAND InitRelatedObjectDefault(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
+            }
         }
 
 «FOREACH fields.typeSelect(DateField) AS dateField-»
@@ -211,7 +222,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «DEFINE InitRelatedObjectDefault(Boolean incoming) FOR JoinRelationship-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
-            $objectData['«relationAliasName»'] = $this->retrieveRelatedObjects('«((incoming) ? source : target).name.formatForCode()»', '«relationAliasName.formatForDB()»', «IF !many»false«ELSE»true«ENDIF»);
+                $objectData['«relationAliasName»'] = $this->retrieveRelatedObjects('«((incoming) ? source : target).name.formatForCode()»', '«relationAliasName.formatForDB()»', «IF !many»false«ELSE»true«ENDIF»);
 «ENDLET-»
 «ENDLET-»
 «ENDDEFINE»
