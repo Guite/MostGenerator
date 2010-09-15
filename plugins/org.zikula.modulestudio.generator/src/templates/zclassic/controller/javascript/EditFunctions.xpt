@@ -94,7 +94,7 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
             }
     };
     relationHandler.each(function(relationHandler) {
-        if (relationHandler['prefix'] == idPrefix && relationHandler['acInstance'] == null) {
+        if (relationHandler['prefix'] == (idPrefix + "SelectorDoNew") && relationHandler['acInstance'] == null) {
             relationHandler['acInstance'] = new Ajax.Autocompleter(
                 idPrefix + 'Selector',
                 idPrefix + 'SelectorChoices',

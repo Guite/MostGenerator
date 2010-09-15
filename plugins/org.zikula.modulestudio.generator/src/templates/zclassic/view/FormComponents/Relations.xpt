@@ -112,7 +112,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
             <input type="button" id="«uniqueNameForJs»SelectorDoAdd" name="«uniqueNameForJs»SelectorDoAdd" value="{gt text='Add'}" class="z-button «app.prefix()»InlineButton" />
             <input type="button" id="«uniqueNameForJs»SelectorDoCancel" name="«uniqueNameForJs»SelectorDoCancel" value="{gt text='Cancel'}" class="z-button «app.prefix()»InlineButton" />
 «IF includeEditing-»
-            <a id="«uniqueNameForJs»SelectorDoNew" href="{modurl modname="«app.appName()»" type="«controller.name()»" func="edit" ot="«targetEntity.name.formatForCode()»" theme="Printer" idp=«uniqueNameForJs»}" title="{gt text='Create new «targetEntity.name.formatForDisplay()»'}" class="z-button «app.prefix()»InlineButton">{gt text='Create'}</a>
+            <a id="«uniqueNameForJs»SelectorDoNew" href="{modurl modname="«app.appName()»" type="«controller.name()»" func="edit" ot="«targetEntity.name.formatForCode()»" theme="Printer" idp="«uniqueNameForJs»SelectorDoNew"}" title="{gt text='Create new «targetEntity.name.formatForDisplay()»'}" class="z-button «app.prefix()»InlineButton">{gt text='Create'}</a>
 «ENDIF-»
         </div>
         <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
@@ -154,7 +154,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
     <li id="{$idPrefix}">
     {$relatedItem.«targetEntity.getLeadingField().actualFieldName().formatForCode()»}
 «IF includeEditing-»
- <a id="{$idPrefix}Edit" href="{modurl modname="«app.appName()»" type="«controller.name()»" func="edit" ot="«targetEntity.name.formatForCode()»" «targetEntity.idField()»=$relatedItem.«targetEntity.idField()» theme="Printer" idp=«uniqueNameForJs»}">{$editImage}</a>
+ <a id="{$idPrefix}Edit" href="{modurl modname="«app.appName()»" type="«controller.name()»" func="edit" ot="«targetEntity.name.formatForCode()»" «targetEntity.idField()»=$relatedItem.«targetEntity.idField()» theme="Printer" idp="`$idPrefix`Edit"}">{$editImage}</a>
 «ENDIF-»
  <a id="{$idPrefix}Remove" href="javascript:«app.prefix()»RemoveRelatedItem('«uniqueNameForJs»', {$relatedItem.«targetEntity.idField()»});">{$removeImage}</a>
 «IF targetEntity.hasImageFields()-»
@@ -199,7 +199,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
     var newItem = new Object();
     newItem['ot'] = '«((targetEntity == target) ? source : target).name.formatForCode()»';
     newItem['alias'] = '«relationAliasName.formatForCodeCapital()»';
-    newItem['prefix'] = '«uniqueNameForJs»';
+    newItem['prefix'] = '«uniqueNameForJs»SelectorDoNew';
     newItem['acInstance'] = null;
     newItem['windowInstance'] = null;
     relationHandler.push(newItem);
