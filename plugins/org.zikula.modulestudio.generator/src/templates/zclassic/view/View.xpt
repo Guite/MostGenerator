@@ -35,9 +35,11 @@
 {pageaddvar name="javascript" value="javascript/ajax/proto_scriptaculous.combined.min.js"}
 {pageaddvar name="javascript" value="javascript/ajax/validation.min.js"}
 {pageaddvar name="javascript" value="javascript/helpers/Zikula.js"}
+{pageaddvar name="javascript" value="javascript/livepipe/livepipe.combined.min.js"}
 {pageaddvar name="javascript" value="javascript/helpers/Zikula.UI.js"}
 {pageaddvar name="javascript" value="javascript/helpers/Zikula.ImageViewer.js"}
 
+{if !isset($smarty.get.theme) || $smarty.get.theme ne "Printer"}
 «IF controller.metaType == AdminController-»
 {admincategorymenu}
 «ENDIF-»
@@ -47,14 +49,21 @@
         {modulelinks modname="«appName»" type="«controller.name()»"}
     </div>
 </div>
-«IF controller.metaType != AdminController-»
+«IF controller.metaType == AdminController-»
+{else}
+{insert name="getstatusmsg"}
+{/if}
+«ELSE-»
+{/if}
 {insert name="getstatusmsg"}
 «ENDIF-»
 «ENDFILE»
 «FILE "templates/".msconcat(controller.name()).msconcat("/footer.tpl")-»
 {* purpose of this template: footer for «controller.name()» area *}
 
+{if !isset($smarty.get.theme) || $smarty.get.theme ne "Printer"}
 «EXPAND FileHelper::msWeblink-»
+{/if}
 
 «ENDFILE»
 «ENDDEFINE»

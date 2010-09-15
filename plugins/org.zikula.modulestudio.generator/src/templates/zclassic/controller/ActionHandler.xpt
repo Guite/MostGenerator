@@ -82,6 +82,9 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
     // url to redirect to
     private $returnUrl = null;
 
+    // whether this form is being used inline
+    private $inlineUsage = false;
+
     /**
      * Initialize form handler.
      *
@@ -157,6 +160,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
 
 «DEFINE initialize(Application app, Controller controller, String actionName) FOR Entity-»
+        $this->inlineUsage = ((UserUtil::getTheme() == 'Printer') ? true : false);
+
         // retrieve the ID of the object we wish to edit
         // default to 0 (which is a numeric id but an invalid value)
         // no provided id means that we want to create a new object
@@ -361,6 +366,10 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDIF-»
         }
 
+        if ($this->inlineUsage == true) {
+            $this->returnUrl = ModUtil::url('«app.appName()»', '«controller.name()»', 'handleInlineRedirect',
+                                                                 array('uic' => 'defwindowajax2'));
+        }
 
         if ($this->returnUrl != null) {
             if ($this->mode == 'edit') {
@@ -382,7 +391,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
         // reassign the «((incoming) ? target : source).getEntityNameSingularPlural(many).formatForDisplay()» eventually chosen by the user
-        $view->assign('user«relationAliasName.toFirstUpper()»', $this->retrieveRelatedObjects('«((incoming) ? target : source).name.formatForCode()»', '«relationAliasName.formatForDB()»', «IF !many»false«ELSE»true«ENDIF», 'POST'));
+        $view->assign('user«relationAliasName.toFirstUpper()»', $this->retrieveRelatedObjects('«((incoming) ? source : target).name.formatForCode()»', '«relationAliasName.formatForDB()»', «IF !many»false«ELSE»true«ENDIF», 'POST'));
 «ENDLET-»
 «ENDLET-»
 «ENDDEFINE»

@@ -46,12 +46,10 @@ function «prefix()»InitUserField(fieldName, getterName)
 «DEFINE RelationFunctions FOR Application-»
 «IF models.relations.size > 0-»
 «EXPAND InitRelatedItemsForm(prefix())-»
-«EXPAND EditRelatedItem-»
 «EXPAND RemoveRelatedItem-»
 «EXPAND ResetRelatedItemForm-»
 «EXPAND ToggleRelatedItemForm-»
-«EXPAND FakeKeyPress-»
-«EXPAND ResetCreateRelatedItemForm-»
+«EXPAND CloseWindowFromInside-»
 
 // TODO: support auto-hiding notification windows (see http://code.zikula.org/core/ticket/2526 for more information)
 «ENDIF-»
@@ -64,7 +62,7 @@ function «prefix()»InitUserField(fieldName, getterName)
 function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditing)
 {
     if ($(idPrefix + 'AddLink')) {
-        $(idPrefix + 'AddLink').observe('click', function() { «prefixSmall»ToggleRelatedItemForm(idPrefix); });
+        $(idPrefix + 'AddLink').observe('click', function(e) { «prefixSmall»ToggleRelatedItemForm(idPrefix); });
     }
     «prefixSmall»ResetRelatedItemForm(idPrefix);
 
@@ -75,20 +73,15 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
             minChars: 2,
             callback: function(inputField, defaultQueryString) {
                     // Called just before the Request is actually made, allowing to modify the querystring that is sent to the server.
-                    var fieldPrefix = $(inputField).id.replace('Selector', '');
-                    var fieldPrefixParts = fieldPrefix.split('_');
-                    var fieldOT = fieldPrefixParts[0].replace('«prefixSmall»', '');
-
-                    defaultQueryString += '&ot=' + fieldOT;
-                    if ($(fieldPrefix + 'ExcludeList')) {
-                        defaultQueryString += '&exclude=' + $F(fieldPrefix + 'ExcludeList');
+                    defaultQueryString += '&ot=' + objectType;
+                    if ($(idPrefix + 'ExcludeList')) {
+                        defaultQueryString += '&exclude=' + $F(idPrefix + 'ExcludeList');
                     }
                     return defaultQueryString;
             },
             afterUpdateElement: function(inputField, selectedListItem) {
                     // Called after the input element has been updated (i.e. when the user has selected an entry).
                     // This function is called after the built-in function that adds the list item text to the input field.
-«REM»                    var fieldPrefix = $(inputField).id.replace('Selector', '');«ENDREM»«""-»
                     var componentName = $F(inputField);
                     $(idPrefix + 'SelectorId').value = selectedListItem.id;
                     if ($('itempreview' + selectedListItem.id)) {
@@ -98,14 +91,18 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
                     $(idPrefix + 'SelectorDoAdd').disabled = false;
             }
     };
-    new Ajax.Autocompleter(
-        idPrefix + 'Selector',
-        idPrefix + 'SelectorChoices',
-        Zikula.Config['baseURL'] + 'ajax.php?module=«appName()»&func=getItemList',
-        acOptions
-    );
+    relationHandler.each(function(relationHandler) {
+        if (relationHandler['prefix'] == idPrefix && relationHandler['acInstance'] == null) {
+            relationHandler['acInstance'] = new Ajax.Autocompleter(
+                idPrefix + 'Selector',
+                idPrefix + 'SelectorChoices',
+                Zikula.Config['baseURL'] + 'ajax.php?module=«appName()»&func=getItemList',
+                acOptions
+            );
+        }
+    });
 
-    $(idPrefix + 'SelectorDoAdd').observe('click', function() {
+    $(idPrefix + 'SelectorDoAdd').observe('click', function(e) {
         var newTitle = $F(idPrefix + 'Selector');
         var itemID = $F(idPrefix + 'SelectorId');
         var includeEditing = ($F(idPrefix + 'Mode') == '1') ? true : false;
@@ -114,7 +111,8 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
 
         var li = Builder.node('li', {id: idPrefix + 'Reference_' + itemID}, newTitle);
         if (includeEditing == true) {
-            editLink = Builder.node('a', {id: idPrefix + 'Edit', href: 'javascript:«prefixSmall»EditRelatedItem(\'' + idPrefix + '\', ' + itemID + ');'}, 'edit');
+            var editHref = $(idPrefix + 'SelectorDoNew').href + '&amp;' + objectType.toLowerCase() + '=' + itemID;
+            editLink = Builder.node('a', {id: idPrefix + 'Edit', href: editHref}, 'edit');
             li.appendChild(editLink);
         }
         removeLink = Builder.node('a', {id: idPrefix + 'Remove', href: 'javascript:«prefixSmall»RemoveRelatedItem(\'' + idPrefix + '\', ' + itemID + ');'}, 'remove');
@@ -151,68 +149,64 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
 
         «prefixSmall»ResetRelatedItemForm(idPrefix);
     });
-    $(idPrefix + 'SelectorDoCancel').observe('click', function() { «prefixSmall»ResetRelatedItemForm(idPrefix); });
+    $(idPrefix + 'SelectorDoCancel').observe('click', function(e) { «prefixSmall»ResetRelatedItemForm(idPrefix); });
 
-    if (!includeEditing || !$('«prefixSmall»newcollectionform')) {
+    if (!includeEditing || !$(idPrefix + 'SelectorDoNew')) {
         return;
     }
 
     // from here inline editing will be handled
-    $('«prefixSmall»newcollectionform').hide();
-    $('«prefixSmall»collectionitemdonew').observe('click', function(e) {
-        Zikula.UI.Alert('TODO: create new item by inline editing with Zikula.UI form dialog.', 'Sorry, not finished yet.');
-        e.stop();
-        return false;
-        $('createnewcollection_title').value = $F(idPrefix + 'Selector');
-        $('«prefixSmall»newcollectionform').show();
-        «prefixSmall»ResetRelatedItemForm(); // hide
-    });
-
-    $('«prefixSmall»createcollectionsave').observe('click', function(e) {
-        if ($F('createnewcollection_title') == '') {
-            Zikula.UI.Alert('Please enter a title for the new item.', 'Error message.');
-            e.stop();
-            return false;
-        }
-
-        $('«prefixSmall»createcollectionsave').disabled = true;
-        $('«prefixSmall»createcollectioncancel').disabled = true;
-
-        var pars = 'module=«appName()»&func=createCollection'
-                    + '&title=' + encodeURIComponent($F('createnewcollection_title'))
-                    + '&description=' + encodeURIComponent($F('createnewcollection_description'));
-
-        var myAjax = new Ajax.Request('ajax.php', {
-            method: 'post',
-            parameters: pars,
-            onSuccess: function(req) {
-                var json = pndejsonize(req.responseText);
-                if (json.mediacollectionid) {
-                    $(idPrefix + 'Selector').value = $F('createnewcollection_title');
-                    «prefixSmall»ToggleRelatedItemForm();
-                    «prefixSmall»ResetCreateRelatedItemForm();
-                    $('«prefixSmall»newcollectionform').hide();
-                    //«prefixSmall»FakeKeyPress(idPrefix + 'Selector');
-                    $(idPrefix + 'Selector').activate();
+    $(idPrefix + 'SelectorDoNew').observe('click', function(e) {
+        relationHandler.each(function(relationHandler) {
+            if (relationHandler['prefix'] == idPrefix) {
+                if (relationHandler['windowInstance'] != null) {
+                    relationHandler['windowInstance'].destroy();
                 }
-                else Zikula.UI.Alert('Error! Could not create the new item.', 'Error message.');
-                $('«prefixSmall»createcollectionsave').disabled = false;
-                $('«prefixSmall»createcollectioncancel').disabled = false;
+                relationHandler['windowInstance'] = new Zikula.UI.Window(
+                    $(idPrefix + 'SelectorDoNew'),
+                    {
+                        minmax: true,
+                        resizable: true,
+                        //title: $F(idPrefix + 'SelectorDoNew'),
+                        width: 600,
+                        initMaxHeight: 500,
+                        modal: false,
+                        iframe: true
+                    }
+                );
             }
         });
+
+        e.stop();
+        return false;
     });
-    $('«prefixSmall»createcollectioncancel').observe('click', «prefixSmall»ResetCreateRelatedItemForm);
 }
+
 «ENDDEFINE»
 
-«DEFINE EditRelatedItem FOR Application-»
+«DEFINE CloseWindowFromInside FOR Application-»
 /**
- * Starts inline editing of a related item.
+ * Closes an iframe from the document displayed in it
  */
-function «prefix()»EditRelatedItem(idPrefix, itemID)
+function «prefix()»CloseWindowFromInside(idPrefix, itemID)
 {
-    Zikula.UI.Alert('TODO: edit item ' + itemID + ' by inline editing with Zikula.UI form dialog.', 'Sorry, not finished yet.');
+    if (window.parent != "") {
+        window.parent.relationHandler.each(function(relationHandler) {
+            if (relationHandler['prefix'] == '{$idPrefix}') {
+                if ($itemId > 0) {
+                    if (relationHandler['acInstance'] != null) {
+                        relationHandler['acInstance'].activate();
+                        Zikula.UI.Alert('Action has been done', 'Information');
+                    }
+                }
+                if (relationHandler['windowInstance'] != null) {
+                    relationHandler['windowInstance'].closeHandler();
+                }
+            }
+        });
+    }
 }
+
 «ENDDEFINE»
 
 «DEFINE RemoveRelatedItem FOR Application-»
@@ -228,6 +222,7 @@ function «prefix()»RemoveRelatedItem(idPrefix, itemID)
     $(idPrefix + 'ExcludeList').value = excludedItemIDs;
     $(idPrefix + 'Reference_' + itemID).remove();
 }
+
 «ENDDEFINE»
 
 «DEFINE ResetRelatedItemForm FOR Application-»
@@ -241,6 +236,7 @@ function «prefix()»ResetRelatedItemForm(idPrefix)
     $(idPrefix + 'Selector').value = '';
     $(idPrefix + 'SelectorDoAdd').disabled = true;
 }
+
 «ENDDEFINE»
 
 «DEFINE ToggleRelatedItemForm FOR Application-»
@@ -255,44 +251,6 @@ function «prefix()»ToggleRelatedItemForm(idPrefix)
     $(idPrefix + 'AddLink').toggle();
     $(idPrefix + 'AddFields').toggle();
 }
+
 «ENDDEFINE»
-
-«DEFINE FakeKeyPress FOR Application-»
-«REM»trying activate() instead - see http://stackoverflow.com/questions/124935/how-do-i-make-an-ajax-autocompleter-perform-a-request-without-typing
-/**
- * Performs a key press to activate auto completion automatically.
- */
-function «prefixSmall»FakeKeyPress(input_id) {
-    var input = $(input_id);
-    if (input.fireEvent) {
-      // ie stuff
-      var evt = document.createEventObject();
-      evt.keyCode = 67;
-      $(input_id).fireEvent("onKeyDown", evt);
-    } else {
-      // firefox stuff
-      var evt = document.createEvent("KeyboardEvent");
-      evt.initKeyEvent('keydown', true, true, null, false, false, false, false, 27, 0);
-      var canceled = !$(input_id).dispatchEvent(evt);
-    }
-}«ENDREM»
-«ENDDEFINE»
-
-«DEFINE ResetCreateRelatedItemForm FOR Application-»
-/**
- * Resets the form for editing a related object or creating a new one.
- */
-function «prefix()»ResetCreateRelatedItemForm(objectType)
-{
-    if (!$('«prefix()»new' + objectType + 'form')) {
-        return;
-    }
-    $('«prefix()»new' + objectType + 'form').hide();
-
-    $('createnew' + objectType + '_title').value = '';
-    $('createnew' + objectType + '_description').update('');
-}
-«ENDDEFINE»
-
-
 

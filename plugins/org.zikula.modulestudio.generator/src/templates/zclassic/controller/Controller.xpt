@@ -43,10 +43,29 @@ class «baseClassController()» extends Zikula_Controller
 «ENDIF-»
 
 «EXPAND Action::Root(app) FOREACH actions-»
+«IF hasActions('edit')-»
+
+    /**
+     * This method cares for a redirect within an inline frame.
+     */
+    public function handleInlineRedirect()
+    {
+        $itemId = (int) FormUtil::getPassedValue('id', 0, 'GET');
+        $idPrefix = FormUtil::getPassedValue('idp', '', 'GET');
+        if (empty($uiComponent) || empty($idPrefix)) {
+            return false;
+        }
+
+        $this->view->assign('itemId', $itemId)
+                   ->assign('idPrefix', $idPrefix)
+                   ->display('«name()»/inlineRedirectHandler.tpl');
+        return true;
+    }
+«ENDIF-»
 «IF app.needsConfig() && app.configControllerType() == metaType.toString()-»
 
-    /*
-     * This function takes care of the application configuration.
+    /**
+     * This method takes care of the application configuration.
      *
      * @return string Output
      */

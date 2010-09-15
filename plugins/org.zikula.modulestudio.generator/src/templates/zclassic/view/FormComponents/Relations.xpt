@@ -109,10 +109,10 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
             {img id="ajax_indicator" style="display: none" modname="core" set="icons/extrasmall" src="indicator_circle.gif" alt=""}
             <div id="«uniqueNameForJs»SelectorChoices" class="«app.prefix()»AutoComplete«IF targetEntity.hasImageFields()»WithImage«ENDIF»"></div>
 
-            <input type="button" id="«uniqueNameForJs»SelectorDoAdd" name="«uniqueNameForJs»SelectorDoAdd" value="{gt text='Add'}" class="«app.prefix()»InlineButton" />
-            <input type="button" id="«uniqueNameForJs»SelectorDoCancel" name="«uniqueNameForJs»SelectorDoCancel" value="{gt text='Cancel'}" class="«app.prefix()»InlineButton" />
+            <input type="button" id="«uniqueNameForJs»SelectorDoAdd" name="«uniqueNameForJs»SelectorDoAdd" value="{gt text='Add'}" class="z-button «app.prefix()»InlineButton" />
+            <input type="button" id="«uniqueNameForJs»SelectorDoCancel" name="«uniqueNameForJs»SelectorDoCancel" value="{gt text='Cancel'}" class="z-button «app.prefix()»InlineButton" />
 «IF includeEditing-»
-            <input type="button" id="«uniqueNameForJs»SelectorDoNew" name="«uniqueNameForJs»SelectorDoNew" value="{gt text='Create new «targetEntity.name.formatForDisplay()»'}" class="«app.prefix()»InlineButton" />
+            <a id="«uniqueNameForJs»SelectorDoNew" href="{modurl modname="«app.appName()»" type="«controller.name()»" func="edit" ot="«targetEntity.name.formatForCode()»" theme="Printer"}" title="{gt text='Create new «targetEntity.name.formatForDisplay()»'}" class="z-button «app.prefix()»InlineButton">{gt text='Create'}</a>
 «ENDIF-»
         </div>
         <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
@@ -154,7 +154,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
     <li id="{$idPrefix}">
     {$relatedItem.«targetEntity.getLeadingField().actualFieldName().formatForCode()»}
 «IF includeEditing-»
- <a id="{$idPrefix}Edit" href="javascript:«app.prefix()»EditRelatedItem('«uniqueNameForJs»', {$relatedItem.«targetEntity.idField()»});">{$editImage}</a>
+ <a id="{$idPrefix}Edit" href="{modurl modname="«app.appName()»" type="«controller.name()»" func="edit" ot="«targetEntity.name.formatForCode()»" «targetEntity.idField()»=$relatedItem.«targetEntity.idField()» theme="Printer"}">{$editImage}</a>
 «ENDIF-»
  <a id="{$idPrefix}Remove" href="javascript:«app.prefix()»RemoveRelatedItem('«uniqueNameForJs»', {$relatedItem.«targetEntity.idField()»});">{$removeImage}</a>
 «IF targetEntity.hasImageFields()-»
@@ -189,13 +189,23 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE InitJs(Application app, Entity targetEntity, Boolean incoming) FOR JoinRelationship-»
+«DEFINE InitJs(Application app, Entity targetEntity, Boolean incoming, Boolean insideLoader) FOR JoinRelationship-»
 «LET getEditStageCode(incoming) AS stageCode-»
 «REM»Look if we have to do anything by checking stage codes which represent different edit behaviors«ENDREM»«""-»
 «IF (!incoming && stageCode == 2) || ((incoming || this.metaType == ManyToManyRelationship) && (stageCode == 1 || stageCode == 3))-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(app, ((targetEntity == target) ? source : target), (!(incoming && this.metaType != ManyToManyRelationship)), incoming, relationAliasName) AS uniqueNameForJs-»
-        «app.prefix()»InitRelationItemsForm('«targetEntity.name.formatForCode()»', '«uniqueNameForJs»', «IF stageCode > 1»true«ELSE»false«ENDIF»);
+«IF !insideLoader-»
+    var newItem = new Object();
+    newItem['ot'] = '«((targetEntity == target) ? source : target).name.formatForCode()»';
+    newItem['alias'] = '«relationAliasName.formatForCodeCapital()»';
+    newItem['prefix'] = '«uniqueNameForJs»';
+    newItem['acInstance'] = null;
+    newItem['windowInstance'] = null;
+    relationHandler.push(newItem);
+«ELSE-»
+        «app.prefix()»InitRelationItemsForm('«((targetEntity == target) ? source : target).name.formatForCode()»', '«uniqueNameForJs»', «IF stageCode > 1»true«ELSE»false«ENDIF»);
+«ENDIF-»
 «ENDLET-»
 «ENDLET-»
 «ENDIF-»

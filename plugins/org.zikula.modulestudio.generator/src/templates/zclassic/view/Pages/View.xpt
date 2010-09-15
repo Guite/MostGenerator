@@ -125,17 +125,17 @@ listType:
 «IF controller.hasActions('edit')-»
     {checkpermissionblock component="«appName»::" instance=".*" level="ACCESS_EDIT"}
             <a href="{modurl modname="«appName»" type="«controller.name()»" func="edit" ot="«objName»" «idField()»=$«objName».«idField()»}" title="{gt text='Edit'}">
-                {img src="xedit.gif" modname="core" set="icons/extrasmall" __alt='Edit' __title='Edit'}
+                {img src="xedit.gif" modname="core" set="icons/extrasmall" __alt='Edit'}
             </a>
             <a href="{modurl modname="«appName»" type="«controller.name()»" func="edit" ot="«objName»" astemplate=$«objName».«idField()»}" title="{gt text='Reuse for new item'}">
-                {img src="filesaveas.gif" modname="core" set="icons/extrasmall" __alt='Reuse' __title='Reuse'}
+                {img src="filesaveas.gif" modname="core" set="icons/extrasmall" __alt='Reuse'}
             </a>
     {/checkpermissionblock}
 «ENDIF-»
 «IF controller.hasActions('delete')-»
     {checkpermissionblock component="«appName»::" instance=".*" level="ACCESS_DELETE"}
-            <a href="{modurl modname="«appName»" type="«controller.name()»" func="delete" ot="«objName»" «idField()»=$«objName».«idField()»}" __title='Delete'>
-                {img src="14_layer_deletelayer.gif" modname="core" set="icons/extrasmall" __alt='Delete' __title='Delete'}
+            <a href="{modurl modname="«appName»" type="«controller.name()»" func="delete" ot="«objName»" «idField()»=$«objName».«idField()»}" title="{gt text='Delete'}">
+                {img src="14_layer_deletelayer.gif" modname="core" set="icons/extrasmall" __alt='Delete'}
             </a>
     {/checkpermissionblock}
 «ENDIF-»

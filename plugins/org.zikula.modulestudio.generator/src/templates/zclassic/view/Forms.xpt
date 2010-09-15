@@ -4,14 +4,18 @@
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Root FOR Application-»
-    «EXPAND Root(this) FOREACH controllers.controllers.actions.typeSelect(EditAction)-»
+«LET controllers.controllers.actions.typeSelect(EditAction) AS editActions-»
+«IF editActions.size > 0-»
+    «EXPAND Root(this) FOREACH editActions-»
+«ENDIF-»
+«ENDLET-»
 «ENDDEFINE»
 
 «REM»Entry point for Form templates«ENDREM»
 «DEFINE Root(Application app) FOR Action-»
     «EXPAND Root(app, controller, 'edit') FOREACH app.models.entities-»
+    «EXPAND InlineRedirectHandler(app) FOR controller-»
 «ENDDEFINE»
-
 
 «REM»Entry point for Form templates«ENDREM»
 «DEFINE Root(Application app, Controller controller, String actionName) FOR Entity-»
@@ -24,7 +28,6 @@
 «ENDDEFINE»
 
 «DEFINE FormTemplate(Application app, Controller controller, String actionName) FOR Entity-»
-«LET name.formatForDB() AS entityName-»
 {* purpose of this template: build the Form to «actionName.formatForDisplay()» an instance of «name.formatForDisplay()» *}
 
 {include file="«controller.name()»/header.tpl"}
@@ -127,12 +130,20 @@
 </div>
 «ENDIF-»
 
+{img modname="core" set="icons/extrasmall" src="xedit.gif" assign="editImageArray"}
+{img modname="core" set="icons/extrasmall" src="editdelete.gif" assign="removeImageArray"}
+
 <script type="text/javascript">
 //<![CDATA[
-{{img modname="core" set="icons/extrasmall" src="xedit.gif" assign="editImageArray"}}
     var editImage = '<img src="{{$editImageArray.src}}" width="16" height="16" alt="" />';
-{{img modname="core" set="icons/extrasmall" src="editdelete.gif" assign="removeImageArray"}}
     var removeImage = '<img src="{{$removeImageArray.src}}" width="16" height="16" alt="" />';
+«LET incoming.typeSelect(JoinRelationship) AS incomingJoins-»
+«LET outgoing.typeSelect(JoinRelationship) AS outgoingJoins-»
+«IF incomingJoins.size > 0 || outgoingJoins.size > 0-»
+    var relationHandler = new Array();
+«EXPAND FormComponents::Relations::InitJs(app, this, true, false) FOREACH incomingJoins-»
+«EXPAND FormComponents::Relations::InitJs(app, this, false, false) FOREACH outgoingJoins-»
+«ENDIF-»
 
     document.observe('dom:loaded', function() {
 «LET getUserFields() AS userFields-»
@@ -148,8 +159,10 @@
 «ENDFOREACH-»
 «ENDIF-»
 «ENDLET-»
-«EXPAND FormComponents::Relations::InitJs(app, this, true) FOREACH incoming.typeSelect(JoinRelationship)-»
-«EXPAND FormComponents::Relations::InitJs(app, this, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
+«EXPAND FormComponents::Relations::InitJs(app, this, true, true) FOREACH incomingJoins-»
+«EXPAND FormComponents::Relations::InitJs(app, this, false, true) FOREACH outgoingJoins-»
+«ENDLET-»
+«ENDLET-»
 
         var valid = new Validation('FormForm', {onSubmit: false, immediate : true});
         {{if $mode ne "create"}}
@@ -176,8 +189,35 @@
 </script>
 
 {include file="«controller.name()»/footer.tpl"}
-«ENDLET-»
 «ENDDEFINE»
 
+«DEFINE InlineRedirectHandler(Application app) FOR Controller-»
+«FILE "templates/".msconcat(name()).msconcat("/inlineRedirectHandler.tpl")-»
+{* purpose of this template: close an iframe from within this iframe *}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <script type="text/javascript" src="{getbaseurl}javascript/ajax/proto_scriptaculous.combined.min.js"></script>
+        <script type="text/javascript" src="{getbaseurl}javascript/helpers/Zikula.js"></script>
+        <script type="text/javascript" src="{getbaseurl}javascript/livepipe/livepipe.combined.min.js"></script>
+        <script type="text/javascript" src="{getbaseurl}javascript/helpers/Zikula.UI.js"></script>
+        <script type="text/javascript" src="{getbaseurl}modules/«app.appName()»/javascript/«app.appName()»_editFunctions.js"></script>
+    </head>
+    <body>
+        <script type="text/javascript">
+        /* <![CDATA[ */
+            // close window from parent document
+            document.observe('dom:loaded', function() {
+                «app.prefix()»CloseWindowFromInside('{{$idPrefix}}', {{$itemId}});
+            });
+        /* ]]> */
+        </script>
+    </body>
+</html>
+
+«ENDFILE»
+«ENDDEFINE»
 
 
