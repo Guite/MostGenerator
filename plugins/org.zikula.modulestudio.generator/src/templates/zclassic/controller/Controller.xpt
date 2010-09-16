@@ -12,6 +12,9 @@
 «IF hasEditActions()-»
     «EXPAND javascript::EditFunctions::Root»
 «ENDIF-»
+«IF models.getJoinRelations().size > 0-»
+    «EXPAND javascript::DisplayFunctions::Root»
+«ENDIF-»
 «ENDDEFINE»
 
 
@@ -275,10 +278,12 @@ class «implClassApi()» extends «baseClassApi()»
                 // class="informal" --> show in dropdown, but do not copy in the input field after selection
                 $itemTitle = $item[$titleFieldName];
                 $itemTitleStripped = str_replace('"', '', $itemTitle);
-                $itemDescription = ((isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName])) ? $item[$descriptionFieldName] : $this->__('No description yet.'));
+                $itemDescription = ((isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName])) ? $item[$descriptionFieldName] : '');//$this->__('No description yet.'));
                 $out .= '<li id="' . $item[$idField] . '" title="' . $itemTitleStripped . '">';
                 $out .= '<div class="itemtitle">' . $itemTitle . '</div>';
-                $out .= '<div class="itemdesc informal">' . $itemDescription . '</div>';
+                if (!empty($itemDescription)) {
+                    $out .= '<div class="itemdesc informal">' . $itemDescription . '</div>';
+                }
 «IF app.models.entities.exists(e|e.hasImageFields())-»
                 // check for preview image
                 $previewFieldName = '';

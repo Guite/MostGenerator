@@ -163,6 +163,7 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
     }
 
     // from here inline editing will be handled
+    $(idPrefix + 'SelectorDoNew').href += '&amp;theme=Printer&amp;idp=' + idPrefix + 'SelectorDoNew';
     $(idPrefix + 'SelectorDoNew').observe('click', function(e) {
         «prefixSmall»InitInlineWindow(objectType, idPrefix + 'SelectorDoNew')
         e.stop();
@@ -171,8 +172,10 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
     var excludedItemIDs = $F(idPrefix + 'ExcludeList');
     var excludedIDs = excludedItemIDs.split(',');
     excludedIDs.each(function(itemID) {
-        $(idPrefix + 'Reference_' + itemID + 'Edit').observe('click', function(e) {
-            «prefixSmall»InitInlineWindow(objectType, idPrefix + 'Reference_' + itemID + 'Edit');
+        var elemPrefix = idPrefix + 'Reference_' + itemID + 'Edit';
+        $(elemPrefix).href += '&amp;theme=Printer&amp;idp=' + elemPrefix;
+        $(elemPrefix).observe('click', function(e) {
+            «prefixSmall»InitInlineWindow(objectType, elemPrefix);
             e.stop();
         });
     });

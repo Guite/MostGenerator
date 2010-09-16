@@ -16,23 +16,23 @@ listType:
 «FILE templateFile(controller, name, 'view')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» view view in «controller.name()» area *}
 
-{include file="«controller.name()»/header.tpl"}
+{include file='«controller.name()»/header.tpl'}
 
 <div class="z-«IF controller.metaType == AdminController-»admin«ELSE»frontend«ENDIF»container">
-{gt text='«name.formatForDisplayCapital()» list' assign="templateTitle"}
+{gt text='«name.formatForDisplayCapital()» list' assign='templateTitle'}
 «IF controller.metaType == AdminController-»
-    <div class="z-adminpageicon">{img modname="core" src="windowlist.gif" set="icons/large" alt=$templateTitle}</div>
+    <div class="z-adminpageicon">{img modname='core' src='windowlist.gif' set='icons/large' alt=$templateTitle}</div>
 «ENDIF-»
-    {pagesetvar name="title" value=$templateTitle}
+    {pagesetvar name='title' value=$templateTitle}
     <h2>{$templateTitle}</h2>
 «IF documentation != null && documentation != ""-»
     <p class="sectiondesc">«documentation»</p>
 «ENDIF-»
 
 «IF controller.hasActions('edit')-»
-    {checkpermissionblock component="«appName»::" instance=".*" level="ACCESS_ADD"}
-        {gt text='Create «name.formatForDisplay()»' assign="createTitle"}
-        <a href="{modurl modname="«appName»" type="«controller.name()»" func="edit" ot="«objName»"}" title="{$createTitle}" class="«appName.formatForDB()»IconNew">
+    {checkpermissionblock component='«appName»::' instance='.*' level="ACCESS_ADD"}
+        {gt text='Create «name.formatForDisplay()»' assign='createTitle'}
+        <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»'}" title="{$createTitle}" class="«appName.formatForDB()»IconNew">
             {$createTitle}
         </a>
     {/checkpermissionblock}
@@ -79,7 +79,7 @@ listType:
 «ELSEIF listType == 2-»
     <dt>
 «ELSEIF listType == 3-»
-    <tr class="{cycle values="z-odd, z-even"}">
+    <tr class="{cycle values='z-odd, z-even'}">
 «ENDIF-»
 «""-»
 «FOREACH getDerivedFields().reject(e|e.primaryKey) AS field-»
@@ -118,24 +118,24 @@ listType:
         <td headers="hoptions" align="right" valign="top" style="white-space: nowrap">
 «ENDIF-»
 «IF controller.hasActions('display')-»
-            <a href="{modurl modname="«appName»" type="«controller.name()»" func="display" ot="«objName»" «idField()»=$«objName».«idField()»}" title="{$«objName».«getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}">
-                {img src="demo.gif" modname="core" set="icons/extrasmall" __alt='Details'}
+            <a href="{modurl modname='«appName»' type='«controller.name()»' func='display' ot='«objName»' «idField()»=$«objName».«idField()»}" title="{$«objName».«getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}">
+                {img src='demo.gif' modname='core' set='icons/extrasmall' __alt='Details'}
             </a>
 «ENDIF-»            
 «IF controller.hasActions('edit')-»
-    {checkpermissionblock component="«appName»::" instance=".*" level="ACCESS_EDIT"}
-            <a href="{modurl modname="«appName»" type="«controller.name()»" func="edit" ot="«objName»" «idField()»=$«objName».«idField()»}" title="{gt text='Edit'}">
-                {img src="xedit.gif" modname="core" set="icons/extrasmall" __alt='Edit'}
+    {checkpermissionblock component='«appName»::' instance='.*' level='ACCESS_EDIT'}
+            <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»' «idField()»=$«objName».«idField()»}" title="{gt text='Edit'}">
+                {img src='xedit.gif' modname='core' set='icons/extrasmall' __alt='Edit'}
             </a>
-            <a href="{modurl modname="«appName»" type="«controller.name()»" func="edit" ot="«objName»" astemplate=$«objName».«idField()»}" title="{gt text='Reuse for new item'}">
-                {img src="filesaveas.gif" modname="core" set="icons/extrasmall" __alt='Reuse'}
+            <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»' astemplate=$«objName».«idField()»}" title="{gt text='Reuse for new item'}">
+                {img src='filesaveas.gif' modname='core' set='icons/extrasmall' __alt='Reuse'}
             </a>
     {/checkpermissionblock}
 «ENDIF-»
 «IF controller.hasActions('delete')-»
-    {checkpermissionblock component="«appName»::" instance=".*" level="ACCESS_DELETE"}
-            <a href="{modurl modname="«appName»" type="«controller.name()»" func="delete" ot="«objName»" «idField()»=$«objName».«idField()»}" title="{gt text='Delete'}">
-                {img src="14_layer_deletelayer.gif" modname="core" set="icons/extrasmall" __alt='Delete'}
+    {checkpermissionblock component='«appName»::' instance='.*' level='ACCESS_DELETE'}
+            <a href="{modurl modname='«appName»' type='«controller.name()»' func='delete' ot='«objName»' «idField()»=$«objName».«idField()»}" title="{gt text='Delete'}">
+                {img src='14_layer_deletelayer.gif' modname='core' set='icons/extrasmall' __alt='Delete'}
             </a>
     {/checkpermissionblock}
 «ENDIF-»
@@ -189,19 +189,19 @@ listType:
     {pager rowcount=$pager.numitems limit=$pager.itemsperpage}
 
 «IF controller.metaType == UserController-»
-    {modurl modname="«appName»" func="view" ot="«objName»" pos=$currentPage assign="returnurl"}
-    {modcallhooks hookobject="category" hookaction="display" module="«appName»«objName»" returnurl=$returnurl}
+    {modurl modname='«appName»' func='view' ot='«objName»' pos=$currentPage assign='returnurl'}
+    {modcallhooks hookobject='category' hookaction='display' module='«appName»«objName»' returnurl=$returnurl}
 «ENDIF-»
 </div>
 
-{include file="«controller.name()»/footer.tpl"}
+{include file='«controller.name()»/footer.tpl'}
 «ENDFILE»
 «ENDLET-»
 «ENDDEFINE»
 
 «DEFINE HeaderSortingLink(String appName, Controller controller, String objName, String fieldName, String label) FOR EntityField-»
-            {assign var="sortDirection" value="asc"}{if $sort eq "«fieldName»"}{assign var="sortDirection" value=$sdirReverse}{/if}
-            <a href="{modurl modname="«appName»" type="«controller.name()»" func="view" ot="«objName»" sort="«fieldName»" sdir=$sortDirection}"{if $sort eq "«fieldName»"} class="currentSortingLink"{/if}>
+            {assign var='sortDirection' value='asc'}{if $sort eq '«fieldName»'}{assign var='sortDirection' value=$sdirReverse}{/if}
+            <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«objName»' sort='«fieldName»' sdir=$sortDirection}"{if $sort eq '«fieldName»'} class="currentSortingLink"{/if}>
                 {gt text='«label.formatForDisplayCapital()»'}
             </a>
 «ENDDEFINE»

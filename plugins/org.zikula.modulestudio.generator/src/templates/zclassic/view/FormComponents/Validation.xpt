@@ -5,28 +5,28 @@
 
 «DEFINE MandatoryValidationMessage FOR DerivedField-»
 «IF mandatory-»
-{«entity.container.application.appName().formatForDB()»ValidationError id="«actualFieldName().formatForCode()»" class="required"}
+{«entity.container.application.appName().formatForDB()»ValidationError id='«actualFieldName().formatForCode()»' class='required'}
 «ENDIF-»
 «ENDDEFINE»
 
 «DEFINE AdditionalValidationMessages FOR DerivedField-»«ENDDEFINE»
 «DEFINE AdditionalValidationMessages FOR AbstractIntegerField-»
-{«entity.container.application.appName().formatForDB()»ValidationError id="«actualFieldName().formatForCode()»" class="validate-digits"}
+{«entity.container.application.appName().formatForDB()»ValidationError id='«actualFieldName().formatForCode()»' class='validate-digits'}
 «ENDDEFINE»
 «DEFINE AdditionalValidationMessages FOR UserField-»
-{«entity.container.application.appName().formatForDB()»ValidationError id="«actualFieldName().formatForCode()»" class="validate-alphanum"}
+{«entity.container.application.appName().formatForDB()»ValidationError id='«actualFieldName().formatForCode()»' class='validate-alphanum'}
 «ENDDEFINE»
 «DEFINE AdditionalValidationMessages FOR DecimalField-»
-{«entity.container.application.appName().formatForDB()»ValidationError id="«actualFieldName().formatForCode()»" class="validate-number"}
+{«entity.container.application.appName().formatForDB()»ValidationError id='«actualFieldName().formatForCode()»' class='validate-number'}
 «ENDDEFINE»
 «DEFINE AdditionalValidationMessages FOR FloatField-»
-{«entity.container.application.appName().formatForDB()»ValidationError id="«actualFieldName().formatForCode()»" class="validate-number"}
+{«entity.container.application.appName().formatForDB()»ValidationError id='«actualFieldName().formatForCode()»' class='validate-number'}
 «ENDDEFINE»
 «DEFINE AdditionalValidationMessages FOR EmailField-»
-{«entity.container.application.appName().formatForDB()»ValidationError id="«actualFieldName().formatForCode()»" class="validate-email"}
+{«entity.container.application.appName().formatForDB()»ValidationError id='«actualFieldName().formatForCode()»' class='validate-email'}
 «ENDDEFINE»
 «DEFINE AdditionalValidationMessages FOR UrlField-»
-{«entity.container.application.appName().formatForDB()»ValidationError id="«actualFieldName().formatForCode()»" class="validate-url"}
+{«entity.container.application.appName().formatForDB()»ValidationError id='«actualFieldName().formatForCode()»' class='validate-url'}
 «ENDDEFINE»
 
 

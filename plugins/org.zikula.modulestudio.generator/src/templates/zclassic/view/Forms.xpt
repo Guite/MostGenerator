@@ -30,45 +30,45 @@
 «DEFINE FormTemplate(Application app, Controller controller, String actionName) FOR Entity-»
 {* purpose of this template: build the Form to «actionName.formatForDisplay()» an instance of «name.formatForDisplay()» *}
 
-{include file="«controller.name()»/header.tpl"}
-{pageaddvar name="javascript" value="modules/«app.appName()»/javascript/«app.appName()»_editFunctions.js"}
+{include file='«controller.name()»/header.tpl'}
+{pageaddvar name='javascript' value='modules/«app.appName()»/javascript/«app.appName()»_editFunctions.js'}
 
-{if $mode eq "edit"}
-    {gt text='Edit «name.formatForDisplay()»' assign="templateTitle"}
+{if $mode eq 'edit'}
+    {gt text='Edit «name.formatForDisplay()»' assign='templateTitle'}
 «IF controller.metaType == AdminController-»
-    {assign var="adminpageicon" value="edit.gif"}
+    {assign var='adminpageicon' value='edit.gif'}
 «ENDIF-»
 {elseif $mode eq "create"}
-    {gt text='Create «name.formatForDisplay()»' assign="templateTitle"}
+    {gt text='Create «name.formatForDisplay()»' assign='templateTitle'}
 «IF controller.metaType == AdminController-»
-    {assign var="adminpageicon" value="filenew.gif"}
+    {assign var='adminpageicon' value='filenew.gif'}
 «ENDIF-»
 {else}
-    {gt text='Edit «name.formatForDisplay()»' assign="templateTitle"}
+    {gt text='Edit «name.formatForDisplay()»' assign='templateTitle'}
 «IF controller.metaType == AdminController-»
-    {assign var="adminpageicon" value="edit.gif"}«REM»TODO«ENDREM»
+    {assign var='adminpageicon' value='edit.gif'}«REM»TODO«ENDREM»
 «ENDIF-»
 {/if}
 
 «IF controller.metaType == AdminController-»
 <div class="z-admincontainer">
-<div class="z-adminpageicon">{img modname="core" src=$adminpageicon set="icons/large" alt=$templateTitle}</div>
+<div class="z-adminpageicon">{img modname='core' src=$adminpageicon set='icons/large' alt=$templateTitle}</div>
 «ELSE-»
 <div class="z-frontendcontainer">
 «ENDIF-»
 
-{pagesetvar name="title" value=$templateTitle}
+{pagesetvar name='title' value=$templateTitle}
 <h2>{$templateTitle}</h2>
 <br />
-{form «IF hasUploadFields()»enctype="multipart/form-data" «ENDIF»cssClass="z-form"}
+{form «IF hasUploadFields()»enctype='multipart/form-data' «ENDIF»cssClass='z-form'}
 
     {* add validation summary and a <div> element for styling the form *}
     {«app.appName().formatForDB()»FormFrame}
     {*formvalidationsummary*}
-    {*formerrormessage id=error*}
+    {*formerrormessage id='error'*}
 
-    {formsetinitialfocus inputId="«getDerivedFields().reject(e|e.primaryKey).get(0).actualFieldName().formatForCode()»"}
-«REM»{formsetinitialfocus inputId=PluginId doSelect=true} <-- for dropdown lists (performs input.select())«ENDREM»«""-»
+    {formsetinitialfocus inputId='«getDerivedFields().reject(e|e.primaryKey).get(0).actualFieldName().formatForCode()»'}
+«REM»{formsetinitialfocus inputId='PluginId' doSelect=true} <-- for dropdown lists (performs input.select())«ENDREM»«""-»
 
     <fieldset>
         <legend>{gt text='Content'}</legend>
@@ -83,24 +83,24 @@
 «ENDFOREACH-»
     </fieldset>
 «IF standardFields-»
-    {if $mode ne "create"}
-        {include file="«controller.name()»/include_metadata_edit.tpl"}
+    {if $mode ne 'create'}
+        {include file='«controller.name()»/include_metadata_edit.tpl'}
     {/if}
 «ENDIF-»
 «EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, true, true) FOREACH incoming.typeSelect(JoinRelationship)-»
 «EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, true, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 
-    {if $mode eq "edit"}
-        {modcallhooks hookobject="item" hookaction="modify" module="«app.appName()»" hookid="«name.formatForDB()»`$«idField()»`" implode=false}
-    {elseif $mode eq "create"}
-        {modcallhooks hookobject="item" hookaction="new" module="«app.appName()»" implode=false}
+    {if $mode eq 'edit'}
+        {modcallhooks hookobject='item' hookaction='modify' module='«app.appName()»' hookid='«name.formatForDB()»`$«idField()»`' implode=false}
+    {elseif $mode eq 'create'}
+        {modcallhooks hookobject='item' hookaction='new' module='«app.appName()»' implode=false}
     {else}
-        {modcallhooks hookobject="item" hookaction="modify" module="«app.appName()»" hookid="«name.formatForDB()»`$«idField()»`" implode=false}
+        {modcallhooks hookobject='item' hookaction='modify' module='«app.appName()»' hookid='«name.formatForDB()»`$«idField()»`' implode=false}
     {/if}
     {if is_array($hooks) && isset($hooks[0])}
         <fieldset>
             <legend>{gt text='Hooks'}</legend>
-            {foreach key="hookName" item="hook" from=$hooks}
+            {foreach key='hookName' item='hook' from=$hooks}
             <div class="z-formrow">
                 {$hook}
             </div>
@@ -111,17 +111,17 @@
     {gt text='Really delete this «name.formatForDisplay()»?' assign="deleteConfirmMsg"}
 
     <div class="z-buttons z-formbuttons">
-    {if $mode eq "edit"}
-        {formbutton id="btnUpdate" commandName="update" __text='Update «name.formatForDisplay()»' class='z-bt-save'}
+    {if $mode eq 'edit'}
+        {formbutton id='btnUpdate' commandName='update' __text='Update «name.formatForDisplay()»' class='z-bt-save'}
 {if !$inlineUsage}
-        {formbutton id="btnDelete" commandName="delete" __text='Delete «name.formatForDisplay()»' class='z-bt-delete' confirmMessage=$deleteConfirmMsg}
+        {formbutton id='btnDelete' commandName='delete' __text='Delete «name.formatForDisplay()»' class='z-bt-delete' confirmMessage=$deleteConfirmMsg}
 {/if}
-    {elseif $mode eq "create"}
-        {formbutton id="btnCreate" commandName="create" __text='Create «name.formatForDisplay()»' class='z-bt-ok'}
+    {elseif $mode eq 'create'}
+        {formbutton id='btnCreate' commandName='create' __text='Create «name.formatForDisplay()»' class='z-bt-ok'}
     {else}
-        {formbutton id="btnUpdate" commandName="update«REM»TODO«ENDREM»" __text='OK' class='z-bt-ok'}
+        {formbutton id='btnUpdate' commandName='update«REM»TODO«ENDREM»' __text='OK' class='z-bt-ok'}
     {/if}
-        {formbutton id="btnCancel" commandName="cancel" __text='Cancel' class='z-bt-cancel'}
+        {formbutton id='btnCancel' commandName='cancel' __text='Cancel' class='z-bt-cancel'}
     </div>
   {/«app.appName().formatForDB()»FormFrame}
 {/form}
@@ -132,11 +132,11 @@
 </div>
 «ENDIF-»
 
-{img modname="core" set="icons/extrasmall" src="xedit.gif" assign="editImageArray"}
-{img modname="core" set="icons/extrasmall" src="editdelete.gif" assign="removeImageArray"}
+{img src='xedit.gif' modname='core' set='icons/extrasmall' assign='editImageArray'}
+{img src='editdelete.gif' modname='core' set='icons/extrasmall' assign='removeImageArray'}
 
 <script type="text/javascript">
-//<![CDATA[
+/* <![CDATA[ */
     var editImage = '<img src="{{$editImageArray.src}}" width="16" height="16" alt="" />';
     var removeImage = '<img src="{{$removeImageArray.src}}" width="16" height="16" alt="" />';
 «LET incoming.typeSelect(JoinRelationship) AS incomingJoins-»
@@ -153,8 +153,8 @@
         // initialise auto completion for user fields
 «FOREACH userFields AS userField-»
 «LET userField.actualFieldName().formatForCode() AS realName»
-        {{if $mode ne "create" && $«realName» gt 0}}
-            $('«realName»desc').value = '{{usergetvar name=uname uid=$«realName»}}';
+        {{if $mode ne 'create' && $«realName» gt 0}}
+            $('«realName»desc').value = '{{usergetvar name='uname' uid=$«realName»}}';
         {{/if}}
         «app.prefix()»InitUserField('«realName»', 'get«name.formatForCodeCapital()»«realName.formatForCodeCapital()»Users');
 «ENDLET-»
@@ -167,11 +167,11 @@
 «ENDLET-»
 
         var valid = new Validation('FormForm', {onSubmit: false, immediate : true});
-        {{if $mode ne "create"}}
+        {{if $mode ne 'create'}}
             var result = valid.validate();
         {{/if}}
 
-        $('{{if $mode eq "create"}}btnCreate{{else}}btnUpdate{{/if}}').observe('click', function(event) {
+        $('{{if $mode eq 'create'}}btnCreate{{else}}btnUpdate{{/if}}').observe('click', function(event) {
             var result = valid.validate();
             if (!result) {
                 Event.stop(event);
@@ -187,10 +187,10 @@
         Zikula.UI.Tooltips($$('.«app.appName().formatForDB()»FormTooltips'));
     });
 
-//]]>
+/* ]]> */
 </script>
 
-{include file="«controller.name()»/footer.tpl"}
+{include file='«controller.name()»/footer.tpl'}
 «ENDDEFINE»
 
 «DEFINE InlineRedirectHandler(Application app) FOR Controller-»
@@ -213,8 +213,8 @@
         /* <![CDATA[ */
             // close window from parent document
             document.observe('dom:loaded', function() {
-                «app.prefix()»CloseWindowFromInside('{{$idPrefix}}', {{if $commandName eq "create"}}{{$itemId}}{{else}}0{{/if}});«REM»value > 0 causes the auto completion being activated«ENDREM»
-            });
+                «app.prefix()»CloseWindowFromInside('{{$idPrefix}}', {{if $commandName eq 'create'}}{{$itemId}}{{else}}0{{/if}});«REM»value > 0 causes the auto completion being activated«ENDREM»
+            });"
         /* ]]> */
         </script>
     </body>

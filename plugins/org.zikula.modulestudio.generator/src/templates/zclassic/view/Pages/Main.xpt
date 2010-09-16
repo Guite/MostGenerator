@@ -7,6 +7,6 @@
 «FILE "templates/".msconcat(controller.name()).msconcat("/main.tpl")-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» main view in «controller.name()» area *}
 
-{modfunc modname="«appName»" type="«controller.name()»" func="view"}
+{modfunc modname='«appName»' type='«controller.name()»' func='view'}
 «ENDFILE»
 «ENDDEFINE»

@@ -8,7 +8,7 @@
 {* Purpose of this template: Display «entity.nameMultiple.formatForDisplay()» in mailings *}
 {*
 <ul>
-{foreach item="item" from=$items}
+{foreach item='item' from=$items}
     <li>
 «EXPAND MailzEntry(appName()) FOR entity-»
     </li>
@@ -18,11 +18,11 @@
 </ul>
 *}
 
-{include file="contenttype/itemlist_«entity.name.formatForCode().toFirstUpper()»_display_description.tpl"}
+{include file='contenttype/itemlist_«entity.name.formatForCode().toFirstUpper()»_display_description.tpl'}
 «ENDFILE»
 «ENDFOREACH-»
 «ENDDEFINE»
 
 «DEFINE MailzEntry(String appName) FOR Entity-»
-        <a href="{modurl modname="«appName»" type="user" func="display" ot=$objectType «idField()»=$item.«idField()»}">{$item.«getLeadingField().name.formatForCode()»}</a>
+        <a href="{modurl modname='«appName»' type='user' func='display' ot=$objectType «idField()»=$item.«idField()»}">{$item.«getLeadingField().name.formatForCode()»}</a>
 «ENDDEFINE»

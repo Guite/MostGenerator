@@ -1,0 +1,48 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«REM»start point for the javascript file with display functionality«ENDREM»
+«DEFINE Root FOR Application-»
+«FILE 'javascript/'.msconcat(appName()).msconcat('.js')-»
+<!--
+
+«IF models.getJoinRelations().size > 0-»
+«EXPAND InitRelationWindow-»
+«ENDIF-»
+
+-->
+«ENDFILE»
+«ENDDEFINE»
+
+«DEFINE InitRelationWindow FOR Application-»
+/**
+ * Helper function to create new Zikula.UI.Window instances.
+ * For edit forms we use "iframe: true" to ensure file uploads work without problems.
+ * For all other windows we use "iframe: false" because we want the escape key working.
+ */
+function «prefix()»InitInlineWindow(containerElem)
+{
+    // show the container (hidden for users without JavaScript)
+    containerElem.show();
+
+    // define the new window instance
+    var newWindow = new Zikula.UI.Window(
+        containerElem,
+        {
+            minmax: true,
+            resizable: true,
+            //title: containerElem.title,
+            width: 600,
+            initMaxHeight: 400,
+            modal: false,
+            iframe: false
+        }
+    );
+
+    // return the instance
+    return newWindow;
+}
+
+«ENDDEFINE»

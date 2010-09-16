@@ -19,23 +19,47 @@
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR UserField-»
 «prepend»{if $«objName».«actualFieldName().formatForCode()» gt 0}
+«IF page == 'display'-»
+«prepend»  {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
+«ENDIF-»
 «prepend»    {$«objName».«actualFieldName().formatForCode()»|userprofilelink}
+«IF page == 'display'-»
+«prepend»  {else}
+«prepend»    {usergetvar name='uname' uid=$«objName».«actualFieldName().formatForCode()»}
+«prepend»  {/if}
+«ENDIF-»
 «prepend»{else}&nbsp;{/if}«""-»
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR EmailField-»
-«prepend»{if $«objName».«actualFieldName().formatForCode()» ne ""}
-«prepend»    <a href="mailto:{$«objName».«actualFieldName().formatForCode()»}" title="{gt text="Send an email"}">
+«prepend»{if $«objName».«actualFieldName().formatForCode()» ne ''}
+«IF page == 'display'-»
+«prepend»  {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
+«ENDIF-»
+«prepend»    <a href="mailto:{$«objName».«actualFieldName().formatForCode()»}" title="{gt text='Send an email'}">
 «prepend»        {img src="mail_generic.gif" modname="core" set="icons/extrasmall" __alt='Email'}
 «prepend»    </a>
+«IF page == 'display'-»
+«prepend»  {else}
+«prepend»    {$«objName».«actualFieldName().formatForCode()»}
+«prepend»  {/if}
+«ENDIF-»
 «prepend»{else}&nbsp;{/if}«""-»
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR UrlField-»
-«prepend»{if $«objName».«actualFieldName().formatForCode()» ne ""}
-«prepend»    <a href="{$«objName».«actualFieldName().formatForCode()»}" title="{gt text="Visit this page"}">
+«prepend»{if $«objName».«actualFieldName().formatForCode()» ne ''}
+«IF page == 'display'-»
+«prepend»  {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
+«ENDIF-»
+«prepend»    <a href="{$«objName».«actualFieldName().formatForCode()»}" title="{gt text='Visit this page'}">
 «prepend»        {img src="agt_internet.gif" modname="core" set="icons/extrasmall" __alt='Homepage'}
 «prepend»    </a>
+«IF page == 'display'-»
+«prepend»  {else}
+«prepend»    {$«objName».«actualFieldName().formatForCode()»}
+«prepend»  {/if}
+«ENDIF-»
 «prepend»{else}&nbsp;{/if}«""-»
 «ENDDEFINE»
 

@@ -3,31 +3,69 @@
 «EXTENSION extensions::ClassUtils»
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
+«DEFINE DisplayItemList(Application app, Controller controller, Boolean many) FOR Entity-»
+«FILE templateFile(controller, name, 'include_displayItemList'.msconcat((many) ? 'Many' : 'One'))-»
+{* purpose of this template: inclusion template for display of related «nameMultiple.formatForDisplayCapital()» in «controller.name()» area *}
+
+«IF !many-»
+<h4>
+«ELSE-»
+{if isset($items) && is_array($items)}
+<ul class="relatedItemList «name.formatForCodeCapital()»">
+{foreach name='relLoop' item='item' from=$items}
+    <li>
+«ENDIF-»
+    <a href="{modurl modname='«app.appName()»' type='«controller.name()»' func='display' ot='«name.formatForCode()»' «idField()»=$item.«idField()»}">
+        {$item.«getLeadingField().actualFieldName().formatForCode()»}
+    </a>
+    <a id="«name.formatForCode()»Item{$item.«idField()»}Display" href="{modurl modname='«app.appName()»' type='«controller.name()»' func='display' ot='«name.formatForCode()»' «idField()»=$item.«idField()» theme='Printer'}" title="{gt text='Open quick view window'} style="display: none">
+        {img src='windows_list.gif' modname='core' set='icons/extrasmall' __alt='Quick view'}
+    </a>
+«IF !many»</h4>«ENDIF-»
+    <script type="text/javascript">
+    /* <![CDATA[ */
+        document.observe('dom:loaded', function() {
+            «app.prefix()»InitInlineWindow($('«name.formatForCode()»Item{{$item.«idField()»}}Display'));
+        });
+    /* ]]> */
+    </script>
+«IF hasImageFields()-»
+    <br />
+«LET getImageFields().get(0) AS imageField-»
+    <img src="{$item.«imageField.actualFieldName().formatForCode()»|«app.appName().formatForDB()»ImageThumb:$item.«imageField.actualFieldName().formatForCode()»FullPath:50:40}" width="50" height="40" alt="{$relatedItem.«getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
+«ENDLET-»
+«ENDIF-»
+«IF many»
+    </li>
+{/foreach}
+</ul>
+{/if}
+«ENDIF-»
+
+«ENDFILE»
+«ENDDEFINE»
+
 «DEFINE DisplayRelatedItems(String appName, Controller controller, Entity relatedEntity) FOR JoinRelationship-»
 «LET ((target == relatedEntity) ? false : true) AS incoming-»
 «LET getRelationAliasName(incoming).formatForCodeCapital() AS relationAliasName-»
 «LET ((target == relatedEntity) ? source : target) AS otherEntity-»
-<h3>«otherEntity.nameMultiple.formatForDisplayCapital()»</h3>
-{checkpermission component="«appName»::" instance=".*" level="ACCESS_ADMIN" assign="authAdmin"}
-{if $authAdmin || $«relatedEntity.name.formatForCode()».cr_uid eq $uid}
+«LET (incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship) AS many-»
+<h3>«otherEntity.getEntityNameSingularPlural(many).formatForDisplayCapital()»</h3>
+
+{if isset($«relatedEntity.name.formatForCode()».«relationAliasName»)}
+    {include file='«controller.name()»/«otherEntity.name.formatForCode()»/include_displayItemList«IF many»Many«ELSE»One«ENDIF».tpl' items=$«relatedEntity.name.formatForCode()».«relationAliasName»}
+{/if}
+
+{checkpermission component='«appName»::' instance='.*' level='ACCESS_ADMIN' assign='authAdmin'}
+{if $authAdmin || (isset($«relatedEntity.name.formatForCode()».cr_uid) && $«relatedEntity.name.formatForCode()».cr_uid eq $uid)}
 <p class="manageLink">
-    {gt text='Create «otherEntity.name.formatForDisplay()»' assign="createTitle"}
-    <a href="{modurl modname="«appName»" type="«controller.name()»" func="edit" ot="«otherEntity.name.formatForCode()»" «relationAliasName.formatForDB()»=$«relatedEntity.name.formatForCode()».«relatedEntity.idField()»}" title="{$createTitle}">
+    {gt text='Create «otherEntity.name.formatForDisplay()»' assign='createTitle'}
+    <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«otherEntity.name.formatForCode()»' «IF !many»item«ELSE»items«ENDIF»=$«relatedEntity.name.formatForCode()».«relatedEntity.idField()»}" title="{$createTitle}">
         {$createTitle}
     </a>
 </p>
 {/if}
-
-{if isset($«relatedEntity.name.formatForCode()».«relationAliasName»)}
-{* include file="" *}
-<ul>
-<li>Count: {$«relatedEntity.name.formatForCode()».«relationAliasName»|@count}</li>
-<li>«otherEntity.name.formatForDisplayCapital()» 1</li>
-<li>«otherEntity.name.formatForDisplayCapital()» 2</li>
-<li>«otherEntity.name.formatForDisplayCapital()» 3</li>
-<li>...</li>
-</ul>
-{/if}
+«ENDLET-»
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»

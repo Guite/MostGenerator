@@ -22,7 +22,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «REM»Parent/active/source view for 1:1 and 1:n«ENDREM»
 «DEFINE ActiveParentImpl(Application app, Controller controller, Boolean onlyInclude) FOR JoinRelationship-»
 «IF onlyInclude-»
-    {include file="«controller.name.formatForDB()»/«target.name.formatForCode()»/include_createChildItem«getTargetMultiplicity()».tpl"}
+    {include file='«controller.name.formatForDB()»/«target.name.formatForCode()»/include_createChildItem«getTargetMultiplicity()».tpl'}
 «ELSE-»
 «info("Generating " + controller.name.formatForDB() + " edit inclusion templates for entity \"" + target.name.formatForDisplay() + "\"") -> ""-»
 «FILE templateFile(controller, target.name, 'include_createChildItem'.msconcat(getTargetMultiplicity()))-»
@@ -41,11 +41,11 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «REM»Child/passive/target view for 1:1 and 1:n«ENDREM»
 «DEFINE PassiveChildImpl(Application app, Controller controller, Boolean onlyInclude, Integer stageCode) FOR JoinRelationship-»
 «IF onlyInclude-»
-    {include file="«controller.name.formatForDB()»/«source.name.formatForCode()»/include_select«((stageCode == 3) ? 'Edit' : '')»One.tpl"}
+    {include file='«controller.name.formatForDB()»/«source.name.formatForCode()»/include_select«((stageCode == 3) ? 'Edit' : '')»One.tpl'}
 «ELSE-»
 «info("Generating " + controller.name.formatForDB() + " edit inclusion templates for entity \"" + source.name.formatForDisplay() + "\"") -> ""-»
 «FILE templateFile(controller, source.name, 'include_select'.msconcat((stageCode == 3) ? 'Edit' : '').msconcat('One'))-»
-{* purpose of this template: inclusion template for managing related «source.getEntityNameSingularPlural(this.metaType != OneToOneRelationship).formatForDisplayCapital()» in «controller.name.formatForDB()» area *}
+{* purpose of this template: inclusion template for managing related «source.getEntityNameSingularPlural(this.metaType != OneToOneRelationship).formatForDisplayCapital()» in «controller.name()» area *}
 
 <fieldset>
     <legend>{gt text='«source.name.formatForDisplayCapital()»'}</legend>
@@ -66,7 +66,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «LET getEditStageCode(incoming) AS stageCode-»
 «IF stageCode == 1 || stageCode == 3-»
 «IF onlyInclude-»
-    {include file="«controller.name.formatForDB()»/«((incoming) ? source : target).name.formatForCode()»/include_select«((stageCode == 3) ? 'Edit' : '')»Many.tpl"}
+    {include file='«controller.name.formatForDB()»/«((incoming) ? source : target).name.formatForCode()»/include_select«((stageCode == 3) ? 'Edit' : '')»Many.tpl'}
 «ELSE-»
 «info("Generating " + controller.name.formatForDB() + " edit inclusion templates for entity \"" + ((incoming) ? source.name.formatForDisplay() : target.name.formatForDisplay()) + "\"") -> ""-»
 «FILE templateFile(controller, ((incoming) ? source.name : target.name), 'include_select'.msconcat((stageCode == 3) ? 'Edit' : '').msconcat('Many'))-»
@@ -108,25 +108,25 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
             <input type="text" name="«uniqueNameForJs»Selector" id="«uniqueNameForJs»Selector" value="" size="42" />
             <input type="hidden" name="«uniqueNameForJs»SelectorId" id="«uniqueNameForJs»SelectorId" value="" />
             <input type="hidden" name="«uniqueNameForJs»Scope" id="«uniqueNameForJs»Scope" value="«IF !many»0«ELSE»1«ENDIF»" />
-            {img id="ajax_indicator" style="display: none" modname="core" set="icons/extrasmall" src="indicator_circle.gif" alt=""}
+            {img src='indicator_circle.gif' modname='core' set='icons/extrasmall' alt='' id='ajax_indicator' style='display: none'}
             <div id="«uniqueNameForJs»SelectorChoices" class="«app.prefix()»AutoComplete«IF targetEntity.hasImageFields()»WithImage«ENDIF»"></div>
 
             <input type="button" id="«uniqueNameForJs»SelectorDoAdd" name="«uniqueNameForJs»SelectorDoAdd" value="{gt text='Add'}" class="z-button «app.prefix()»InlineButton" />
             <input type="button" id="«uniqueNameForJs»SelectorDoCancel" name="«uniqueNameForJs»SelectorDoCancel" value="{gt text='Cancel'}" class="z-button «app.prefix()»InlineButton" />
 «IF includeEditing-»
-            <a id="«uniqueNameForJs»SelectorDoNew" href="{modurl modname="«app.appName()»" type="«controller.name()»" func="edit" ot="«targetEntity.name.formatForCode()»" theme="Printer" idp="«uniqueNameForJs»SelectorDoNew"}" title="{gt text='Create new «targetEntity.name.formatForDisplay()»'}" class="z-button «app.prefix()»InlineButton">{gt text='Create'}</a>
+            <a id="«uniqueNameForJs»SelectorDoNew" href="{modurl modname='«app.appName()»' type='«controller.name()»' func='edit' ot='«targetEntity.name.formatForCode()»'}" title="{gt text='Create new «targetEntity.name.formatForDisplay()»'}" class="z-button «app.prefix()»InlineButton">{gt text='Create'}</a>
 «ENDIF-»
         </div>
         <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
     </div>
     <div class="«app.prefix()»RelationLeftSide">
-        {if isset($user«relationAliasName.toFirstUpper()») && $user«relationAliasName.toFirstUpper()» ne ""}
+        {if isset($user«relationAliasName.toFirstUpper()») && $user«relationAliasName.toFirstUpper()» ne ''}
             {* the user has submitted something *}
-            {include file="«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl" items=$user«relationAliasName.toFirstUpper()»}
+            {include file='«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' items=$user«relationAliasName.toFirstUpper()»}
         {elseif $mode ne "create" || isset($«relationAliasName»)}
-            {include file="«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl" items=$«relationAliasName»}
+            {include file='«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' items=$«relationAliasName»}
         {else}
-            {include file="«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl"}
+            {include file='«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl'}
         {/if}
     </div>
     <br style="clear: both" />
@@ -140,23 +140,23 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 {* purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplayCapital()» in «controller.name.formatForDB()» area *}
 
 «IF includeEditing-»
-{img modname="core" set="icons/extrasmall" src="xedit.gif" assign="editImageArray"}
+{img src="xedit.gif" modname="core" set="icons/extrasmall" assign="editImageArray"}
 {assign var="editImage" value="<img src=\"`$editImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
 «ENDIF-»
-{img modname="core" set="icons/extrasmall" src="editdelete.gif" assign="removeImageArray"}
+{img src="editdelete.gif" modname="core" set="icons/extrasmall" assign="removeImageArray"}
 {assign var="removeImage" value="<img src=\"`$removeImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
 
-<input type="hidden" id="«uniqueNameForJs»ExcludeList" name="«uniqueNameForJs»ExcludeList" value="{if isset($items) && is_array($items)}{foreach name="relLoop" item="relatedItem" from=$items}{$relatedItem.«targetEntity.idField()»}{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}{/if}" />
+<input type="hidden" id="«uniqueNameForJs»ExcludeList" name="«uniqueNameForJs»ExcludeList" value="{if isset($items) && is_array($items)}{foreach name='relLoop' item='relatedItem' from=$items}{$relatedItem.«targetEntity.idField()»}{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}{/if}" />
 <input type="hidden" id="«uniqueNameForJs»Mode" name="«uniqueNameForJs»Mode" value="«IF includeEditing»1«ELSE»0«ENDIF»" />
 
 <ul id="«uniqueNameForJs»ReferenceList">
 {if isset($items) && is_array($items)}
-{foreach name="relLoop" item="relatedItem" from=$items}
-{assign var="idPrefix" value="«uniqueNameForJs»Reference_`$relatedItem.«targetEntity.idField()»`"}
+{foreach name='relLoop' item='relatedItem' from=$items}
+{assign var='idPrefix' value='«uniqueNameForJs»Reference_`$relatedItem.«targetEntity.idField()»`'}
     <li id="{$idPrefix}">
     {$relatedItem.«targetEntity.getLeadingField().actualFieldName().formatForCode()»}
 «IF includeEditing-»
- <a id="{$idPrefix}Edit" href="{modurl modname="«app.appName()»" type="«controller.name()»" func="edit" ot="«targetEntity.name.formatForCode()»" «targetEntity.idField()»=$relatedItem.«targetEntity.idField()» theme="Printer" idp="`$idPrefix`Edit"}">{$editImage}</a>
+ <a id="{$idPrefix}Edit" href="{modurl modname='«app.appName()»' type='«controller.name()»' func='edit' ot='«targetEntity.name.formatForCode()»' «targetEntity.idField()»=$relatedItem.«targetEntity.idField()»}">{$editImage}</a>
 «ENDIF-»
  <a id="{$idPrefix}Remove" href="javascript:«app.prefix()»RemoveRelatedItem('«uniqueNameForJs»', {$relatedItem.«targetEntity.idField()»});">{$removeImage}</a>
 «IF targetEntity.hasImageFields()-»

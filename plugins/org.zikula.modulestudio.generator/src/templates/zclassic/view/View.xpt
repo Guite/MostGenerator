@@ -20,6 +20,13 @@
 «IF controller.hasActions('delete')-»
     «EXPAND Pages::Delete::Impl(appName(), controller) FOREACH models.entities-»
 «ENDIF-»
+«IF controller.hasActions('view') || controller.hasActions('display')-»
+«REM»TODO: use relations to generate only required ones«ENDREM»
+«EXPAND templates::zclassic::view::PageComponents::Relations::DisplayItemList(this, controller, false) FOREACH models.entities-»
+«EXPAND templates::zclassic::view::PageComponents::Relations::DisplayItemList(this, controller, true) FOREACH models.entities-»
+«EXPAND templates::zclassic::view::PageComponents::Relations::DisplayItemList(this, controller, false) FOREACH models.entities-»
+«EXPAND templates::zclassic::view::PageComponents::Relations::DisplayItemList(this, controller, true) FOREACH models.entities-»
+«ENDIF-»
 «ENDIF-»
 «EXPAND MetaDataTemplates(appName(), controller)-»
 «ENDFOREACH-»
@@ -32,30 +39,31 @@
 «FILE "templates/".msconcat(controller.name()).msconcat("/header.tpl")-»
 {* purpose of this template: header for «controller.name()» area *}
 
-{pageaddvar name="javascript" value="javascript/ajax/proto_scriptaculous.combined.min.js"}
-{pageaddvar name="javascript" value="javascript/ajax/validation.min.js"}
-{pageaddvar name="javascript" value="javascript/helpers/Zikula.js"}
-{pageaddvar name="javascript" value="javascript/livepipe/livepipe.combined.min.js"}
-{pageaddvar name="javascript" value="javascript/helpers/Zikula.UI.js"}
-{pageaddvar name="javascript" value="javascript/helpers/Zikula.ImageViewer.js"}
+{pageaddvar name='javascript' value='javascript/ajax/proto_scriptaculous.combined.min.js'}
+{pageaddvar name='javascript' value='javascript/ajax/validation.min.js'}
+{pageaddvar name='javascript' value='javascript/helpers/Zikula.js'}
+{pageaddvar name='javascript' value='javascript/livepipe/livepipe.combined.min.js'}
+{pageaddvar name='javascript' value='javascript/helpers/Zikula.UI.js'}
+{pageaddvar name='javascript' value='javascript/helpers/Zikula.ImageViewer.js'}
+{pageaddvar name='javascript' value='modules/«appName»/javascript/«appName».js'}
 
-{if !isset($smarty.get.theme) || $smarty.get.theme ne "Printer"}
+{if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 «IF controller.metaType == AdminController-»
 {admincategorymenu}
 «ENDIF-»
 <div class="z-«IF controller.metaType == AdminController»admin«ELSE»frontend«ENDIF»box">
     <h1>{gt text='«appName.formatForDisplayCapital()»' comment='This is the title of the header template'}</h1>
     <div class="z-menu">
-        {modulelinks modname="«appName»" type="«controller.name()»"}
+        {modulelinks modname='«appName»' type='«controller.name()»'}
     </div>
 </div>
 «IF controller.metaType == AdminController-»
 {else}
-{insert name="getstatusmsg"}
+{insert name='getstatusmsg'}
 {/if}
 «ELSE-»
 {/if}
-{insert name="getstatusmsg"}
+{insert name='getstatusmsg'}
 «ENDIF-»
 «ENDFILE»
 «FILE "templates/".msconcat(controller.name()).msconcat("/footer.tpl")-»
@@ -63,19 +71,21 @@
 
 {if !isset($smarty.get.theme) || $smarty.get.theme ne "Printer"}
 «EXPAND FileHelper::msWeblink-»
-{else}
-{pageaddvar name="stylesheet" value="styles/core.css"}
-{pageaddvar name="stylesheet" value="modules/«appName»/style/style.css"}
-{pageaddvar name="stylesheet" value="system/Theme/style/form/style.css"}
-{pageaddvar name="stylesheet" value="themes/Andreas08/style/fluid960gs/reset.css"}
-{capture assign="pageStyles"}
+«IF hasEditActions()-»
+{elseif isset($smarty.get.func) && $smarty.get.func eq 'edit'}
+{pageaddvar name='stylesheet' value='styles/core.css'}
+{pageaddvar name='stylesheet' value='modules/«appName»/style/style.css'}
+{pageaddvar name='stylesheet' value='system/Theme/style/form/style.css'}
+{pageaddvar name='stylesheet' value='themes/Andreas08/style/fluid960gs/reset.css'}
+{capture assign='pageStyles'}
 <style type="text/css">
     body {
         font-size: 70%;
     }
 </style>
 {/capture}
-{pageaddvar name="rawtext" value=$pageStyles}
+{pageaddvar name='rawtext' value=$pageStyles}
+«ENDIF-»
 {/if}
 
 «ENDFILE»
@@ -85,23 +95,23 @@
 «IF controller.hasActions('view') || controller.hasActions('display')-»
 «FILE "templates/".msconcat(controller.name()).msconcat("/include_metadata_display.tpl")-»
     <dt>{gt text='Meta data'}</dt>
-{configgetvar name="profilemodule" assign="profileModule"}
+{configgetvar name='profilemodule' assign='profileModule'}
 {if $obj.cr_uid}
-	{usergetvar name="uname" uid=$obj.cr_uid assign="cr_uname"}
+	{usergetvar name='uname' uid=$obj.cr_uid assign='cr_uname'}
 	{if $profileModule ne ""}
-		{modurl modname=$profileModule func="view" uname=$cr_uname assign="profileLink"}
-		{assign var="profileLink" value="<a href='`$profileLink'`>`$cr_uname`</a>"}
+		{modurl modname=$profileModule func='view' uname=$cr_uname assign='profileLink'}
+		{assign var='profileLink' value='<a href="`$profileLink`">`$cr_uname`</a>'}
 	{else}
-	    {assign var="profileLink value=$cr_uname}
+	    {assign var='profileLink' value=$cr_uname}
 	{/if}
     <dd>{gt text='Created by %1$s on %2$s' tag1=$profileLink tag2=$obj.cr_date|dateformat html=true}</dd>
 {/if}
-    {usergetvar name="uname" uid=$obj.lu_uid assign="lu_uname"}
+    {usergetvar name='uname' uid=$obj.lu_uid assign='lu_uname'}
     {if $profileModule ne ""}
-        {modurl modname=$profileModule func="view" uname=$lu_uname assign="profileLink"}
-        {assign var="profileLink" value="<a href='`$profileLink'`>`$lu_uname`</a>"}
+        {modurl modname=$profileModule func='view' uname=$lu_uname assign='profileLink'}
+        {assign var='profileLink' value='<a href="`$profileLink`">`$lu_uname`</a>'}
     {else}
-        {assign var="profileLink value=$lu_uname}
+        {assign var='profileLink' value=$lu_uname}
     {/if}
     <dd>{gt text='Updated by %1$s on %2$s' tag1=$profileLink tag2=$obj.lu_date|dateformat html=true}</dd>
 «ENDFILE»
@@ -113,11 +123,11 @@
     <legend>{gt text='Meta data'}</legend>
     <ul>
 {if $cr_uid}
-        {usergetvar name="uname" uid=$cr_uid assign="username"}
+        {usergetvar name='uname' uid=$cr_uid assign='username'}
         <li>{gt text='Created by %s' tag1=$username}</li>
         <li>{gt text='Created on %s' tag1=$cr_date|dateformat}</li>
 {/if}
-        {usergetvar name="uname" uid=$lu_uid assign="username"}
+        {usergetvar name='uname' uid=$lu_uid assign='username'}
         <li>{gt text='Updated by %s' tag1=$username}</li>
         <li>{gt text='Updated on %s' tag1=$lu_date|dateformat}</li>
     </ul>

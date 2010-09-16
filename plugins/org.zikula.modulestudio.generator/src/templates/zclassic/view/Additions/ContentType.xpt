@@ -8,7 +8,7 @@
 {* Purpose of this template: Display «entity.nameMultiple.formatForDisplay()» within an external context *}
 
 <dl>
-{foreach item="item" from=$items}
+{foreach item='item' from=$items}
     <dt>{$item.«entity.getLeadingField().actualFieldName().formatForCode()»}</dt>
 «LET entity.fields.typeSelect(TextField) AS textFields-»
 «IF textFields.size > 0-»
@@ -34,7 +34,7 @@
 «FILE "templates/contenttype/itemlist_".msconcat(entity.name.formatForCode().toFirstUpper()).msconcat('_display.tpl')-»
 {* Purpose of this template: Display «entity.nameMultiple.formatForDisplay()» within an external context *}
 
-{foreach item="item" from=$items}
+{foreach item='item' from=$items}
     <h3>{$item.«entity.getLeadingField().name.formatForCode()»}</h3>
     <p>«EXPAND DetailLink(appName()) FOR entity-»</p>
 {/foreach}
@@ -73,7 +73,7 @@
 <div class="z-formrow">
     {formlabel for='«appName()»_filter' __text='Filter (export option)'}
     {formtextinput id='«appName()»_filter' dataField='filter' group='data' mandatory=false maxLength=255}
-    <div class="z-formnote">(<!--[gt text='Syntax examples']-->: <kbd>name:like:foobar</kbd> <!--[gt text='or']--> <kbd>status:ne:3</kbd>)</div>
+    <div class="z-formnote">({gt text='Syntax examples'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)</div>
 </div>
 «ENDFILE»
 «ENDDEFINE»
