@@ -26,7 +26,8 @@
     protected $_intId = 0;
 
 «EXPAND fieldMemberVar FOREACH fields.typeSelect(DerivedField)»
-«EXPAND fieldMemberVar FOREACH outgoing.typeSelect(JoinRelationship)»
+«EXPAND fieldMemberVar(false) FOREACH incoming.typeSelect(JoinRelationship)»
+«EXPAND fieldMemberVar(true) FOREACH outgoing.typeSelect(JoinRelationship)»
 
     /**
      * Constructor.
@@ -177,8 +178,7 @@
 «ENDDEFINE»
 «DEFINE DefaultFieldAssignmentData FOR IntegerField-»
 «LET getPointingRelations() AS pointingRelations-»
-«IF pointingRelations.size > 0-»
-«FOREACH pointingRelations AS pointingRelation-»(int) FormUtil::getPassedValue('«pointingRelation.source.idField()»', 0, 'GET')«ENDFOREACH-»
+«IF pointingRelations.size > 0-»(int) FormUtil::getPassedValue('«pointingRelations.get(0).source.idField()»', 0, 'GET')
 «ELSE-»
 «IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
 «ENDIF-»«ENDLET-»«ENDDEFINE»
@@ -207,8 +207,10 @@
 «DEFINE fieldMemberVar FOR ArrayField-»
 «EXPAND FileHelper::MemberVar(actualFieldName().formatForCode(), fieldTypeAsString(), " = array()")»
 «ENDDEFINE»
-«DEFINE fieldMemberVar FOR JoinRelationship»
-«EXPAND FileHelper::MemberVar(target.name.formatForCode(), target.implClassBusinessEntity((metaType != OneToOneRelationship)), "")»
+«DEFINE fieldMemberVar(Boolean useTarget) FOR JoinRelationship»
+«LET getRelationAliasName(useTarget).formatForCode() AS relationAliasName-»
+«EXPAND FileHelper::MemberVar(relationAliasName, ((useTarget) ? target : source).implClassBusinessEntity((metaType != OneToOneRelationship)), "")»
+«ENDLET-»
 «ENDDEFINE»
 
 «DEFINE fieldAccessors FOR DerivedField»
