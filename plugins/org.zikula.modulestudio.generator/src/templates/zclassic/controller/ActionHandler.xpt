@@ -430,7 +430,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             // remove all existing references
             $recordObj->unlink('«relationAliasName»');
         }
-        if (count($relatedIDs)) {
+        if (count($relatedIds)) {
             // create new links
 «IF this.metaType != ManyToManyRelationship-»
             $recordObj->link('«relationAliasName»', $relatedIds);
