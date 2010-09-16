@@ -68,26 +68,26 @@ class «appName()»_Base_Util
     /**
      * The «appName().formatForDB()»ImageThumb modifier displays a thumbnail image
      *
-     * @param  string    $filename   The input file name.
-     * @param  string    $filepath   The input file path (including file name).
+     * @param  string    $fileName   The input file name.
+     * @param  string    $filePath   The input file path (including file name).
      * @param  int       $width      Desired width.
      * @param  int       $height     Desired height.
      *
      * @return string The thumbnail file path.
      */
-    function getImageThumb($filename = '', $filepath = '', $width = 100, $height = 80)
+    function getImageThumb($fileName = '', $filePath = '', $width = 100, $height = 80)
     {
         $thumbArgs = array();
-        if (empty($filename) || empty($filepath) || !file_exists($filepath)) {
+        if (empty($fileName) || empty($filePath) || !file_exists($filePath)) {
             return;
         }
 
         $mediaModule = 'Thumbnail';
         if (!ModUtil::available($mediaModule)) {
-            return $filepath;
+            return $filePath;
         }
 
-        $thumbArgs['filename'] = $filepath;
+        $thumbArgs['filename'] = $filePath;
         $thumbArgs['far'] = 1; // force aspect ratio
         $thumbArgs['w'] = $width;
         $thumbArgs['h'] = $height;
@@ -96,7 +96,7 @@ class «appName()»_Base_Util
         $thumbFileName = ModUtil::apiFunc($mediaModule, 'user', 'generateThumbnailName', $thumbArgs);
 
         // move thumbnail into sub folder
-        $thumbFileName = str_replace($filepath, $filepath . 'tmb/', $thumbFileName);
+        $thumbFileName = str_replace($filePath, $filePath . 'tmb/', $thumbFileName);
 
         // return file if already existing
         if (file_exists($thumbFileName)) {

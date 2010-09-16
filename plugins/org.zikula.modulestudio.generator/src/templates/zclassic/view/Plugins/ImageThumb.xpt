@@ -15,15 +15,15 @@
 /**
  * The «appName().formatForDB()»ImageThumb modifier displays a thumbnail image
  *
- * @param  string    $filename   The input file name.
- * @param  string    $filepath   The input file path (including file name).
+ * @param  string    $fileName   The input file name.
+ * @param  string    $filePath   The input file path (including file name).
  * @param  int       $width      Desired width.
  * @param  int       $height     Desired height.
  *
  * @return string The thumbnail file path.
  */
-function smarty_modifier_«appName().formatForDB()»ImageThumb($filename = '', $filepath = '', $width = 100, $height = 80)
+function smarty_modifier_«appName().formatForDB()»ImageThumb($fileName = '', $filePath = '', $width = 100, $height = 80)
 {
-    return «appName()»_Util::getImageThumb($filename, $filepath, $width, $height);
+    return «appName()»_Util::getImageThumb($fileName, $filePath, $width, $height);
 }
 «ENDDEFINE»
