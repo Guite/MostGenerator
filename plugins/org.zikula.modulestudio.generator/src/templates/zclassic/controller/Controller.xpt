@@ -124,12 +124,15 @@ class «baseClassApi()» extends Zikula_Api
 «FOREACH app.models.entities AS entity-»
         if (SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_«IF metaType == AdminController»ADMIN«ELSE»READ«ENDIF»)) {
             $links[] = array('url' => ModUtil::url('«app.appName()»', '«name()»', 'view', array('ot' => '«entity.name.formatForCode()»')),
-                             'text' => $this->__('«entity.nameMultiple.formatForDisplayCapital()»'));
+                             'text' => $this->__('«entity.nameMultiple.formatForDisplayCapital()»'),
+                             'title' => $this->__('«entity.name.formatForDisplayCapital()» list'));
         }
 «ENDFOREACH-»
 «IF app.needsConfig() && metaType.toString() == app.configControllerType()-»
         if (SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_ADMIN)) {
-            $links[] = array('url' => ModUtil::url('«app.appName()»', '«app.configController().formatForDB()»', 'config'), 'text' => $this->__('Configuration'));
+            $links[] = array('url' => ModUtil::url('«app.appName()»', '«app.configController().formatForDB()»', 'config'),
+                             'text' => $this->__('Configuration'),
+                             'title' => $this->__('Manage settings for this application'));
         }
 «ENDIF-»
         return $links;

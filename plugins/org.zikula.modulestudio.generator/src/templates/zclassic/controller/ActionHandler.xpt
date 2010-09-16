@@ -256,7 +256,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             if (empty($inputValue)) {
                 return array();
             }
-            // TODO: move into Doctrine_Table subclasses and refactor to Doctrine_Query instance.
+
             $where = $idField . ' IN (' . DataUtil::formatForStore($inputValue) . ')';
         }
         else {
@@ -264,7 +264,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             if ($inputValue == 0) {
                 return array();
             }
-            // TODO: move into Doctrine_Table subclasses and refactor to Doctrine_Query instance.
+
             $where = $idField . ' = \'' . DataUtil::formatForStore($inputValue) . '\'';
         }
         return $objectCollection->selectWherePaginated($where, $sortParam, 1, 50);
@@ -408,15 +408,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «DEFINE FetchInputData(String obj) FOR Entity-»
         // fetch posted data input values as an associative array
         $formData = $view->getValues();
-«REM»«FOREACH columns AS field-»
-«LET entity.relations.select(e|e.target.name == name && e.source.idField() == field.name) AS joins-»
-«IF joins.size > 0-»
-«FOREACH joins AS join-»
-        $formData['«join.source.idField()»'] = (int) FormUtil::getPassedValue('«join.source.idField()»', 0, 'POST');
-«ENDFOREACH-»
-«ENDIF-»
-«ENDLET-»
-«ENDFOREACH-»«ENDREM»
+«EXPAND FetchRelationValue(true) FOREACH incoming.typeSelect(JoinRelationship).reject(e|e.metaType == ManyToManyRelationship)-»
 «LET getUniqueDerivedFields().reject(e|e.primaryKey) AS uniqueFields-»
 «LET getUserFields() AS userFields-»
 «LET getUploadFields() AS uploadFields-»
@@ -457,6 +449,19 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $«obj»->merge($formData);
 «ENDDEFINE»
 
+«REM»Assign input value from incoming 1:1 and 1:n relationships (example: get customerid for an order).
+As the autocomplete fields are not done with a Form plugin (yet), we do that manually.«ENDREM»
+«DEFINE FetchRelationValue(Boolean incoming) FOR JoinRelationship-»
+«LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
+«LET getUniqueRelationNameForJs(container.application, ((incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
+        $formData['«source.idField()»'] = (int) FormUtil::getPassedValue('«uniqueNameForJs»ExcludeList', 0, 'POST');
+«LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
+        // reassign the «((incoming) ? target : source).getEntityNameSingularPlural(many).formatForDisplay()» eventually chosen by the user
+        $view->assign('user«relationAliasName.toFirstUpper()»', $this->retrieveRelatedObjects('«((incoming) ? source : target).name.formatForCode()»', '«relationAliasName.formatForDB()»', «IF !many»false«ELSE»true«ENDIF», 'POST'));
+«ENDLET-»
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
 
 
 «DEFINE handleUploads(Application app) FOR Entity-»
