@@ -150,7 +150,8 @@
 «EXPAND FileHelper::GetterAndSetterMethods('_intId', 'integer')»
 
 «EXPAND fieldAccessors FOREACH fields.typeSelect(DerivedField)»
-«EXPAND outgoingRelationAccessors FOREACH outgoing.typeSelect(JoinRelationship)»
+«EXPAND relationAccessors(false) FOREACH incoming.typeSelect(JoinRelationship)»
+«EXPAND relationAccessors(true) FOREACH outgoing.typeSelect(JoinRelationship)»
 
 «EXPAND FileHelper::ClassToString(baseClassBusinessEntity(false))-»
 «ENDDEFINE»
@@ -217,6 +218,8 @@
 «EXPAND FileHelper::GetterAndSetterMethodsDelegate(actualFieldName().formatForCode(), fieldTypeAsString(), entity.name)»
 «ENDDEFINE»
 
-«DEFINE outgoingRelationAccessors FOR JoinRelationship»
-«EXPAND FileHelper::GetterAndSetterMethods(target.name.formatForCode(), target.implClassBusinessEntity((metaType != OneToOneRelationship)))»
+«DEFINE relationAccessors(Boolean useTarget) FOR JoinRelationship»
+«LET getRelationAliasName(useTarget).formatForCode() AS relationAliasName-»
+«EXPAND FileHelper::GetterAndSetterMethods(relationAliasName, ((useTarget) ? target : source).implClassBusinessEntity((metaType != OneToOneRelationship)))»
+«ENDLET-»
 «ENDDEFINE»
