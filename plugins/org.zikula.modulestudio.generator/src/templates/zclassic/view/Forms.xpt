@@ -113,9 +113,9 @@
     <div class="z-buttons z-formbuttons">
     {if $mode eq 'edit'}
         {formbutton id='btnUpdate' commandName='update' __text='Update «name.formatForDisplay()»' class='z-bt-save'}
-{if !$inlineUsage}
+      {if !$inlineUsage}
         {formbutton id='btnDelete' commandName='delete' __text='Delete «name.formatForDisplay()»' class='z-bt-delete' confirmMessage=$deleteConfirmMsg}
-{/if}
+      {/if}
     {elseif $mode eq 'create'}
         {formbutton id='btnCreate' commandName='create' __text='Create «name.formatForDisplay()»' class='z-bt-ok'}
     {else}

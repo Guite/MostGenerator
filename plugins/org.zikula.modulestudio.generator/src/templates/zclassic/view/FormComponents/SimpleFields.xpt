@@ -6,8 +6,8 @@
 «DEFINE FormRow FOR DerivedField-»
             {formlabel for='«actualFieldName().formatForCode()»' __text='«EXPAND FormLabel»'«IF mandatory» mandatorysym='1'«ENDIF»«IF documentation != null && documentation != ""-» class='«entity.container.application.appName().formatForDB()»FormTooltips' title='«documentation.replaceAll('"', '\"')»'«ENDIF-»}«IF metaType == UploadField»<br />{* break required for Google Chrome *}«ENDIF»
 «EXPAND FormField-»
-            «EXPAND Validation::MandatoryValidationMessage-»
-            «EXPAND Validation::AdditionalValidationMessages-»
+«EXPAND Validation::MandatoryValidationMessage-»
+«EXPAND Validation::AdditionalValidationMessages-»
 «ENDDEFINE»
 
 
