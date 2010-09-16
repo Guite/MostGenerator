@@ -66,12 +66,14 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «LET getEditStageCode(incoming) AS stageCode-»
 «IF stageCode == 1 || stageCode == 3-»
 «IF onlyInclude-»
-    {include file="«controller.name.formatForDB()»/«((incoming) ? source.name : target.name).formatForCode()»/include_select«((stageCode == 3) ? 'Edit' : '')»Many.tpl"}
+    {include file="«controller.name.formatForDB()»/«((incoming) ? source : target).name.formatForCode()»/include_select«((stageCode == 3) ? 'Edit' : '')»Many.tpl"}
 «ELSE-»
 «info("Generating " + controller.name.formatForDB() + " edit inclusion templates for entity \"" + ((incoming) ? source.name.formatForDisplay() : target.name.formatForDisplay()) + "\"") -> ""-»
 «FILE templateFile(controller, ((incoming) ? source.name : target.name), 'include_select'.msconcat((stageCode == 3) ? 'Edit' : '').msconcat('Many'))-»
+{* purpose of this template: inclusion template for managing related «((incoming) ? source : target).nameMultiple.formatForDisplayCapital()» in «controller.name.formatForDB()» area *}
+
 <fieldset>
-    <legend>{gt text='«IF incoming»«source.nameMultiple.formatForDisplayCapital()»«ELSE»«target.nameMultiple.formatForDisplayCapital()»«ENDIF»'}</legend>
+    <legend>{gt text='«((incoming) ? source : target).nameMultiple.formatForDisplayCapital()»'}</legend>
     <div class="z-formrow">
 «IF !incoming-»«EXPAND ManyToManyHandling(app, controller, source, target, false, stageCode)-»
 «ELSE-»«EXPAND ManyToManyHandling(app, controller, target, source, true, stageCode)-»
@@ -99,7 +101,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(app, targetEntity, many, incoming, relationAliasName) AS uniqueNameForJs-»
     <div class="«app.prefix()»RelationRightSide">
-        <a id="«uniqueNameForJs»AddLink" href="javascript:void(0);" style="display: none">{gt text='«IF !many-»Set«ELSE»Add«ENDIF» «targetEntity.name.formatForDisplay()»'}</a>
+        <a id="«uniqueNameForJs»AddLink" href="javascript:void(0);" style="display: none">{gt text='«IF !many-»Select«ELSE»Add«ENDIF» «targetEntity.name.formatForDisplay()»'}</a>
         <div id="«uniqueNameForJs»AddFields">
             <label for="«uniqueNameForJs»Selector">{gt text='Find «targetEntity.name.formatForDisplay()»'}</label>
             <br />

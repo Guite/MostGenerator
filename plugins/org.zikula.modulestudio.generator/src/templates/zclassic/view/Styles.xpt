@@ -28,7 +28,8 @@ div.«appName().formatForDB()»RightBox p.manageLink {
     margin-left: 18px;
 }
 
-.«appName().formatForDB()»IconNew {
+.«appName().formatForDB()»IconNew,
+div.«appName().formatForDB()»RightBox p.manageLink a {
     background: url("../../../images/icons/extrasmall/edit_add.gif") no-repeat scroll 0 50% transparent;
     display: block;
     margin: 1em 0;

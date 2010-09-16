@@ -186,23 +186,35 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
  */
 function «prefix()»InitInlineWindow(objectType, containerID)
 {
+    // whether the handler has been found
     var found = false;
+
+    // search for the handler
     relationHandler.each(function(relationHandler) {
+        // is this the right one
         if (relationHandler['prefix'] == containerID) {
+            // yes, it is
             found = true;
+            // look whether there is already a window instance
             if (relationHandler['windowInstance'] != null) {
+                // unset it
                 relationHandler['windowInstance'].destroy();
             }
-            relationHandler['windowInstance'] = «prefix()»CreateWindowInstance($(containerID));
+            // create and assign the new window instance
+            relationHandler['windowInstance'] = «prefix()»CreateWindowInstance($(containerID), true);
         }
     });
+
+    // if no handler was found
     if (found === false) {
+        // create a new one
         var newItem = new Object();
         newItem['ot'] = objectType;
         newItem['alias'] = '«REM»TODO«ENDREM»';
         newItem['prefix'] = containerID;
         newItem['acInstance'] = null;
-        newItem['windowInstance'] = «prefix()»CreateWindowInstance($(containerID));
+        newItem['windowInstance'] = «prefix()»CreateWindowInstance($(containerID), true);
+        // add it to the list of handlers
         relationHandler.push(newItem);
     }
 }
@@ -211,10 +223,13 @@ function «prefix()»InitInlineWindow(objectType, containerID)
 
 «DEFINE CreateWindowInstance FOR Application-»
 /**
- * Helper function to create new Zikula.UI.Window instances
+ * Helper function to create new Zikula.UI.Window instances.
+ * For edit forms we use "iframe: true" to ensure file uploads work without problems.
+ * For all other windows we use "iframe: false" because we want the escape key working.
  */
-function «prefix()»CreateWindowInstance(containerElem)
+function «prefix()»CreateWindowInstance(containerElem, useIframe)
 {
+    // define the new window instance
     var newWindow = new Zikula.UI.Window(
         containerElem,
         {
@@ -224,10 +239,14 @@ function «prefix()»CreateWindowInstance(containerElem)
             width: 600,
             initMaxHeight: 500,
             modal: false,
-            iframe: true
+            iframe: useIframe
         }
     );
+
+    // open it
     newWindow.openHandler();
+
+    // return the instance
     return newWindow;
 }
 
@@ -255,9 +274,16 @@ function «prefix()»RemoveRelatedItem(idPrefix, itemID)
  */
 function «prefix()»ResetRelatedItemForm(idPrefix)
 {
+    // hide the sub form
     «prefix()»ToggleRelatedItemForm(idPrefix);
+
+    // disable the auto completion field
     $(idPrefix + 'Selector').disabled = false;
+
+    // reset its value, too
     $(idPrefix + 'Selector').value = '';
+
+    // disable the add button
     $(idPrefix + 'SelectorDoAdd').disabled = true;
 }
 
@@ -269,10 +295,15 @@ function «prefix()»ResetRelatedItemForm(idPrefix)
  */
 function «prefix()»ToggleRelatedItemForm(idPrefix)
 {
+    // if we don't have a toggle link do nothing
     if (!$(idPrefix + 'AddLink')) {
         return;
     }
+
+    // show/hide the toggle link
     $(idPrefix + 'AddLink').toggle();
+
+    // hide/show the fields
     $(idPrefix + 'AddFields').toggle();
 }
 
@@ -284,21 +315,32 @@ function «prefix()»ToggleRelatedItemForm(idPrefix)
  */
 function «prefix()»CloseWindowFromInside(idPrefix, itemID)
 {
-    if (window.parent != "") {
-        window.parent.relationHandler.each(function(relationHandler) {
-            if (relationHandler['prefix'] == idPrefix) {
-                if (itemID > 0) {
-                    if (relationHandler['acInstance'] != null) {
-                        relationHandler['acInstance'].activate();
-                        Zikula.UI.Alert('Action has been done', 'Information');
-                    }
-                }
-                if (relationHandler['windowInstance'] != null) {
-                    relationHandler['windowInstance'].closeHandler();
+    // if there is no parent window do nothing
+    if (window.parent == "") {
+        return;
+    }
+
+    // search for the handler of the current window
+    window.parent.relationHandler.each(function(relationHandler) {
+        // look if this handler is the right one
+        if (relationHandler['prefix'] == idPrefix) {
+            // do we have an item created
+            if (itemID > 0) {
+                // look whether there is an auto completion instance
+                if (relationHandler['acInstance'] != null) {
+                    // activate it
+                    relationHandler['acInstance'].activate();
+                    // show a message 
+                    Zikula.UI.Alert('Action has been completed.', 'Information');
                 }
             }
-        });
-    }
+            // look whether there is a windows instance
+            if (relationHandler['windowInstance'] != null) {
+                // close it
+                relationHandler['windowInstance'].closeHandler();
+            }
+        }
+    });
 }
 
 «ENDDEFINE»
