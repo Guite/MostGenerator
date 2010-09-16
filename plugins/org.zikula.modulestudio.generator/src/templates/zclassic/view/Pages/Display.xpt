@@ -23,7 +23,7 @@
 <h2>{$«objName».«titleField»|modcallhooks}</h2>
 «ENDLET-»
 
-«LET outgoing.select(e|e.metaType == OneToOneRelationship || e.metaType == OneToManyRelationship).union(incoming.typeSelect(ManyToManyRelationship)) AS refedElems-»
+«LET outgoing.typeSelect(JoinRelationship).select(e|e.metaType == OneToOneRelationship || e.metaType == OneToManyRelationship).union(incoming.typeSelect(ManyToManyRelationship)) AS refedElems-»
 «IF refedElems.size > 0-»
 <div class="«appName.formatForDB()»RightBox">
 «EXPAND templates::zclassic::view::PageComponents::Relations::DisplayRelatedItems(appName, controller, this) FOREACH refedElems-»

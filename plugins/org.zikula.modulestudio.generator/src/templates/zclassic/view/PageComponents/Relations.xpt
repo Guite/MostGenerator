@@ -4,7 +4,7 @@
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE DisplayRelatedItems(String appName, Controller controller, Entity relatedEntity) FOR JoinRelationship-»
-«LET ((target == relatedEntity) ? true : false) AS incoming-»
+«LET ((target == relatedEntity) ? false : true) AS incoming-»
 «LET getRelationAliasName(incoming).formatForCodeCapital() AS relationAliasName-»
 «LET ((target == relatedEntity) ? source : target) AS otherEntity-»
 <h3>«otherEntity.nameMultiple.formatForDisplayCapital()»</h3>

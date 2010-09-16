@@ -27,7 +27,7 @@
 «IF source == target-»«REM»TODO«ENDREM»
 /** self relations are not working yet, see http://code.zikula.org/generator/ticket/75
 «ENDIF-»
-        $this->has«IF metaType == OneToOneRelationship || (incoming && metaType == OneToManyRelationship)-»One«ELSE»Many«ENDIF»('«IF incoming-»«source.implClassModelRecord()»«IF sourceAlias != null && sourceAlias != ""-» as «sourceAlias.formatForCode()»«ENDIF»«ELSE»«target.implClassModelRecord()»«IF targetAlias != null && targetAlias != ""-» as «targetAlias.formatForCode()»«ENDIF»«ENDIF»', array(
+        $this->has«IF metaType == OneToOneRelationship || (incoming && metaType == OneToManyRelationship)-»One«ELSE»Many«ENDIF»('«IF incoming-»«source.implClassModelRecord()»«IF sourceAlias != null && sourceAlias != ""-» as «sourceAlias.formatForCodeCapital()»«ENDIF»«ELSE»«target.implClassModelRecord()»«IF targetAlias != null && targetAlias != ""-» as «targetAlias.formatForCodeCapital()»«ENDIF»«ENDIF»', array(
                 // linked field in the defining class
                 'local' => '«getRelationLocalField(incoming)»',
                 // linked field in the linked class
@@ -50,7 +50,7 @@
 «IF source == target-»«REM»TODO«ENDREM»
 /** self relations are not working yet, see http://code.zikula.org/generator/ticket/75
 «ENDIF-»
-        $this->hasMany('«IF incoming-»«source.implClassModelRecord()»«IF sourceAlias != null && sourceAlias != ""-» as «sourceAlias.formatForCode()»«ENDIF»«ELSE»«target.implClassModelRecord()»«IF targetAlias != null && targetAlias != ""-» as «targetAlias.formatForCode()»«ENDIF»«ENDIF»', array(
+        $this->hasMany('«IF incoming-»«source.implClassModelRecord()»«IF sourceAlias != null && sourceAlias != ""-» as «sourceAlias.formatForCodeCapital()»«ENDIF»«ELSE»«target.implClassModelRecord()»«IF targetAlias != null && targetAlias != ""-» as «targetAlias.formatForCodeCapital()»«ENDIF»«ENDIF»', array(
                 // linked field in the defining class
                 'local' => '«target.relationFieldName(targetField)»',
                 // linked field in the linked class

@@ -118,12 +118,12 @@
         );
 «ENDIF-»
 
+«EXPAND ObjectExtensions-»
+
         /**
          * Event listeners registrations
          */
         $this->addListener(new «implClassModelListener()»());
-
-«EXPAND ObjectExtensions-»
 «ENDDEFINE»
 
 «DEFINE ObjectExtensions FOR Entity»

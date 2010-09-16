@@ -54,27 +54,24 @@
      * business entities, we can exchange the model behind it without any subsequent
      * efforts on the controller layer.
      *
-     * @return Doctrine_Collection collection containing retrieved Doctrine_Record instances
-     */
-    public function select()
-    {
-        $query = $this->_intBaseQuery();
-        $this->set«nameMultiple.formatForCodeCapital()»($this->_intTable()->«REM»execute«ENDREM»fetchArray($query));
-        return $this->get«nameMultiple.formatForCodeCapital()»();
-    }
-
-    /**
-     * Select with a given where clause.
-     *
      * @param string $where             The where clause to use when retrieving the object array (optional) (default='').
      * @param string $orderBy           The order-by clause to use when retrieving the object array (optional) (default='').
      * @return Doctrine_Collection collection containing retrieved Doctrine_Record instances
      */
     public function selectWhere($where = '', $orderBy = '')
     {
+        // store parameters
         $this->set_intWhere($where);
         $this->set_intOrderBy($orderBy);
-        return $this->select();
+
+        // select items from the model
+        $result = $this->_intTable()->selectCollection($where, $orderBy);
+
+        // store the results
+        $this->set«nameMultiple.formatForCodeCapital()»($result);
+
+        // and return them
+        return $this->get«nameMultiple.formatForCodeCapital()»();
     }
 
     /**
@@ -89,19 +86,17 @@
      */
     public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $asArray = true)
     {
+        // store parameters
         $this->set_intWhere($where);
         $this->set_intOrderBy($orderBy);
-«REM»TODO: see http://www.doctrine-project.org/projects/orm/1.2/docs/manual/utilities/en
-        //$pager->setCountQuery($query);
-«ENDREM»«""-»
-		$pager = new Doctrine_Pager(
-		      $this->_intBaseQuery(),
-		      $currentPage,
-		      $resultsPerPage
-		);
 
-        $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
-        $this->set«nameMultiple.formatForCodeCapital()»($pager->execute(array(), $fetchType));
+        // select items from the model
+        $result = $this->_intTable()->selectWherePaginated($where, $orderBy, $currentPage, $resultsPerPage, $asArray);
+
+        // store the results
+        $this->set«nameMultiple.formatForCodeCapital()»($result);
+
+        // and return them
         return $this->get«nameMultiple.formatForCodeCapital()»();
     }
 
@@ -113,55 +108,11 @@
      */
     public function selectCount($where = '')
     {
+        // store parameters
         $this->set_intWhere($where);
-        $query = Doctrine_Query::create()
-            ->select('COUNT(e.«idField()») AS num«nameMultiple.formatForCodeCapital()»')
-            ->from('«implClassModelRecord()» e');
-        if (!empty($this->_intWhere)) {
-            $query->where($this->_intWhere);
-        }
-        return $query->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
-    }
 
-    /**
-     * Build a generic Doctrine query supporting WHERE and ORDER BY
-     *
-     * @return Doctrine_Query query instance to be further processed
-     */
-    private function _intBaseQuery()
-    {
-        $selection = 'e.*';
-        if ($this->_intOrderBy == 'RAND()') {
-            $selection .= ', RANDOM() rand';
-        }
-        $query = Doctrine_Query::create()
-            ->select($selection)
-            ->from('«implClassModelRecord()» e');
-        if (!empty($this->_intWhere)) {
-            $query->where('e.' . $this->_intWhere);
-        }
-        if (!empty($this->_intOrderBy)) {
-            if ($this->_intOrderBy == 'RAND()') {
-                $query->orderBy('rand');
-            }
-            else {
-«IF i18n-»
-                // HACK FOR I18n behavior
-                $sortParts = explode(' ', $this->_intOrderBy);
-                $sortField = $sortParts[0];
-                if (in_array($sortField, array('«i18nFields.replaceAll(", ", "', '")»'))) {
-                    $query->leftJoin('e.Translation t')
-                          ->orderBy('t.' . $this->_intOrderBy);
-                }
-                else {
-                    $query->orderBy('e.' . $this->_intOrderBy);
-                }
-«ELSE-»
-                $query->orderBy('e.' . $this->_intOrderBy);
-«ENDIF-»
-            }
-        }
-        return $query;
+        // get result from the model
+        return $this->_intTable()->selectCount($where);
     }
 
     /**
@@ -181,6 +132,7 @@
      */
     public function get_intAllowedSortingFields()
     {
+        // TODO: to be refactored
         return array(«EXPAND singleSortingField FOREACH fields SEPARATOR ','»«EXPAND standardSortingFields FOR this-»
         );
     }

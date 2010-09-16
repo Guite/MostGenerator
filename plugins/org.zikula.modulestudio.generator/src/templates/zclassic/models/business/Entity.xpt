@@ -52,22 +52,28 @@
      */
     public function selectById($id = 0, $asArray = true)
     {
+        // check id parameter
         if ($id == 0 && $this->_intId == 0) {
             return LogUtil::registerArgsError();
         }
+        // store id parameter
         if ($id > 0) {
             $this->_intId = $id;
         }
+
+        // get reference to table
         $table = Doctrine_Core::getTable('«implClassModelRecord()»');
 
-        $q = $table->createQuery('e')
-                   ->where('e.' . $this->_intIdField . ' = ?', $this->_intId);
+        // get result from the model
+        $item = $table->selectOneItemById($id, $asArray);
 
-        $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
-        $item = $q->fetchOne(array(), $fetchType);
+        // look whether we fetched an object or an array
         if (!$asArray) {
+            // store the result object
             $this->set«name.formatForCodeCapital()»($item);
         }
+
+        // return the results
         return $item;
     }
 

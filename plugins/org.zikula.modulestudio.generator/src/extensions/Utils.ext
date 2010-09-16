@@ -153,6 +153,9 @@ cached String namingSchemeAsInt(UploadField this) :
 cached getJoinRelations(Models this) :
     relations.typeSelect(JoinRelationship);
 
+cached joinCommand(JoinRelationship this, Boolean incoming) :
+    ((joinType != JoinType::INNER) ? 'leftJoin' : 'innerJoin');
+
 cached isInheriting(Entity this) :
     outgoing.typeSelect(InheritanceRelationship).size > 0;
 cached InheritanceRelationship getInheritanceRelation(Entity this) :
