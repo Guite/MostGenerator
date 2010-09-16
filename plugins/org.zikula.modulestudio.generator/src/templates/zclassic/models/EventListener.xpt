@@ -152,6 +152,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     {
         // echo 'updated a record ...';
 
+        // let hooks know about this event
         $this->updateHooks($event, 'update');
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
@@ -182,6 +183,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     {
         // echo 'inserted a record ...';
 
+        // let hooks know about this event
         $this->updateHooks($event, 'create');
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
@@ -227,6 +229,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 «ENDIF-»
 «ENDLET-»
 
+        // let hooks know about this event
         $this->updateHooks($event, 'delete');
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
