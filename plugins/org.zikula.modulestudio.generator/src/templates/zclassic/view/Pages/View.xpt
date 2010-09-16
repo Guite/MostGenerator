@@ -73,7 +73,7 @@ listType:
     <tbody>
 «ENDIF-»
 
-    {foreach item="«objName»" from=$items}
+    {foreach item='«objName»' from=$items}
 «IF listType < 2-»
     <li><ul>
 «ELSEIF listType == 2-»
@@ -96,7 +96,7 @@ listType:
 «ELSEIF joins.size > 0-»
             «FOREACH joins AS join SEPARATOR ', '»{$«objName».«join.source.name.formatForDB()»_«join.source.idField()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH»
 «ELSE-»
-«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(objName, 'view', '            ') FOR field-»
+«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(objName, 'view', '            ') FOR field»
 «ENDIF-»
 «ENDLET-»
 «IF listType < 2-»
