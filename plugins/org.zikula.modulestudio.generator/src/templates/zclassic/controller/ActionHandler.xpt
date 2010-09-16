@@ -130,6 +130,15 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
 
 «EXPAND retrieveRelatedObjects(app)-»
 
+    /**
+     * Helper method for updating links to related records.
+     */
+    private function updateRelationLinks($businessEntity)
+    {
+«EXPAND UpdateRelationLinks(true) FOREACH incoming.typeSelect(ManyToManyRelationship)-»
+«EXPAND UpdateRelationLinks(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
+    }
+
 «IF hasUploadFields()-»
 
     /**
@@ -325,6 +334,9 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             }
 
             LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» created.'));
+
+            $this->updateRelationLinks($«name.formatForCode()»);
+
 «IF controller.hasActions('display')-»
 
             // redirect to the detail page of the newly created «name.formatForCode()»
@@ -341,6 +353,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             if ($updateResult === false) {
                 return LogUtil::registerError($this->__('Error! Update attempt failed.'));
             }
+
+            $this->updateRelationLinks($«name.formatForCode()»);
 
             LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» updated.'));
 «IF controller.hasActions('display')-»
@@ -405,6 +419,41 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDDEFINE»
 
 
+«DEFINE UpdateRelationLinks(Boolean incoming) FOR JoinRelationship-»
+«LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
+«LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
+«LET getUniqueRelationNameForJs(container.application, ((incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
+«IF many-»
+        $relatedIds = FormUtil::getPassedValue('«uniqueNameForJs»ExcludeList', array(), 'POST');
+        $recordObj = $businessEntity->get«((incoming) ? target : source).name.formatForCodeCapital()»();
+        if ($this->mode != 'create') {
+            // remove all existing references
+            $recordObj->unlink('«relationAliasName»');
+        }
+        if (count($relatedIDs)) {
+            // create new links
+«IF this.metaType != ManyToManyRelationship-»
+            $recordObj->link('«relationAliasName»', $relatedIds);
+«ELSE-»
+            foreach ($relatedIds as $relatedId) {
+                $linkObj = new «((ManyToManyRelationship)this).implClassModelRefRecord()»();
+                $linkObj->«source.idField()» = «IF incoming»$relatedId«ELSE»$this->«((incoming) ? target : source).idField()»«ENDIF»;
+                $linkObj->«target.idField()» = «IF !incoming»$relatedId«ELSE»$this->«((incoming) ? target : source).idField()»«ENDIF»;
+                $linkObj->save();
+            }
+«ENDIF-»
+        }
+
+        // not sure yet if this is needed at all
+        // $recordObj->save();
+
+«ENDIF-»
+«ENDLET-»
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+
 «DEFINE FetchInputData(String obj) FOR Entity-»
         // fetch posted data input values as an associative array
         $formData = $view->getValues();
@@ -455,10 +504,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(container.application, ((incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
         $formData['«source.idField()»'] = (int) FormUtil::getPassedValue('«uniqueNameForJs»ExcludeList', 0, 'POST');
-«LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
-        // reassign the «((incoming) ? target : source).getEntityNameSingularPlural(many).formatForDisplay()» eventually chosen by the user
-        $view->assign('user«relationAliasName.toFirstUpper()»', $this->retrieveRelatedObjects('«((incoming) ? source : target).name.formatForCode()»', '«relationAliasName.formatForDB()»', «IF !many»false«ELSE»true«ENDIF», 'POST'));
-«ENDLET-»
+«REM»Alternative: $address->link('Customer', array($customer['id']));«ENDREM»«""-»
 «ENDLET-»
 «ENDLET-»
 «ENDDEFINE»
@@ -467,18 +513,26 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
 «DEFINE handleUploads(Application app) FOR Entity-»
 «LET getUploadFields() AS uploadFields-»
 «IF uploadFields.size > 0-»
+        // initialise the upload handler
         $uploadManager = new «app.appName()»_UploadHandler();
 
+        // list of upload fields to consider
         $uploadFields = array(«FOREACH uploadFields AS uploadField SEPARATOR ", "»'«uploadField.name.formatForCode()»'«ENDFOREACH»);
+        // list of mandatory fields
         $uploadFieldsMandatory = array(«FOREACH uploadFields.select(e|e.mandatory) AS uploadField SEPARATOR ", "»'«uploadField.name.formatForCode()»'«ENDFOREACH»);
+        // process all fields
         foreach ($uploadFields as $uploadField) {
+            // look whether a file has been provided
             if (!$formData[$uploadField] || $formData[$uploadField]['size'] == 0) {
-                // no file uploaded
+                // no file has been uploaded
                 unset($formData[$uploadField]);
+                // skip to next one
                 continue;
             }
 
+            // do the actual upload (includes validation and physical file processing)
             $formData[$uploadField] = $uploadManager->performFileUpload($this->objectType, $formData, $uploadField);
+            // if current field is mandatory check if everything has been done 
             if (in_array($uploadField, $uploadFieldsMandatory) && $formData[$uploadField] === false) {
                 // mandatory upload has not been completed successfully
                 return false;
