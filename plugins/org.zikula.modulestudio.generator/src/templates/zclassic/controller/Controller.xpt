@@ -209,7 +209,7 @@ class «implClassApi()» extends «baseClassApi()»
             return true;
         }
 
-        $objectType = lcfirst(FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»'));
+        $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»');
         $idField = strtolower($objectType) . 'id';
 «EXPAND ControllerHelper::instantiateBusinessObject(app.appName(), true, 'controllerAction')-»
 
