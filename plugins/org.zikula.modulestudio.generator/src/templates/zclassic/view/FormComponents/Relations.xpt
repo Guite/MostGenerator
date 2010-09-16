@@ -51,7 +51,6 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
     <legend>{gt text='«source.name.formatForDisplayCapital()»'}</legend>
     <div class="z-formrow">
 «EXPAND Component_AutoComplete(app, controller, source, false, true, (stageCode == 3))-»
-«IF stageCode == 3-»«EXPAND Component_ChildEditing(app, controller, source, false)-»«ENDIF-»
     </div>
 </fieldset>
 «ENDFILE-»
@@ -92,9 +91,6 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 
 «DEFINE ManyToManyHandling(Application app, Controller controller, Entity source, Entity target, Boolean incoming, Integer stageCode) FOR ManyToManyRelationship-»
 «EXPAND Component_AutoComplete(app, controller, target, true, incoming, (stageCode == 3))-»
-«IF stageCode == 3-»
-«EXPAND Component_ChildEditing(app, controller, target, true)-»
-«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE Component_AutoComplete(Application app, Controller controller, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) FOR JoinRelationship-»
@@ -174,21 +170,13 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «ENDDEFINE»
 
 «DEFINE Component_ParentEditing(Application app, Controller controller, Entity targetEntity, Boolean many) FOR JoinRelationship-»
-«EXPAND Component_Editing(app, controller, targetEntity, many, false)-»
-«ENDDEFINE»
-
-«DEFINE Component_ChildEditing(Application app, Controller controller, Entity targetEntity, Boolean many) FOR JoinRelationship-»
-«EXPAND Component_Editing(app, controller, targetEntity, many, true)-»
-«ENDDEFINE»
-
-«DEFINE Component_Editing(Application app, Controller controller, Entity targetEntity, Boolean many, Boolean isChildView) FOR JoinRelationship-»
-«REM»just a reminder for the parent view which is not tested yet«ENDREM»
-«IF !isChildView-»
-«REM»TODO: only for $mode ne create: 
-            <p>TODO ADD: button to create «targetEntity.getEntityNameSingularPlural(many).formatForDisplay()» with inline editing (form dialog)</p>
-            <p>TODO EDIT: display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay()» with inline editing (form dialog)</p>
+«REM»just a reminder for the parent view which is not tested yet
+Example: create children (e.g. an address) while creating a parent (e.g. a new customer).
+Problem: address must know the customerid.
+TODO: only for $mode ne create: 
+    <p>TODO ADD: button to create «targetEntity.getEntityNameSingularPlural(many).formatForDisplay()» with inline editing (form dialog)</p>
+    <p>TODO EDIT: display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay()» with inline editing (form dialog)</p>
 «ENDREM»«""-»
-«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE InitJs(Application app, Entity targetEntity, Boolean incoming, Boolean insideLoader) FOR JoinRelationship-»
