@@ -21,7 +21,14 @@ div.«appName().formatForDB()»RightBox {
     float: right;
     margin: 0 1em;
     padding: .5em;
-    border: 1px solid #666;
+    /*border: 1px solid #666;*/
+}
+
+div.«appName().formatForDB()»RightBox h3 {
+    color: #333;
+    font-weight: 400;
+    border-bottom: 1px solid #CCC;
+    padding-bottom: 8px;
 }
 
 div.«appName().formatForDB()»RightBox p.manageLink {
