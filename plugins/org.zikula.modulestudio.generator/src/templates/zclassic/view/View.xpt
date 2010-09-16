@@ -20,7 +20,9 @@
 «IF controller.hasActions('delete')-»
     «EXPAND Pages::Delete::Impl(appName(), controller) FOREACH models.entities-»
 «ENDIF-»
-«IF controller.hasActions('view') || controller.hasActions('display')-»
+
+«IF controller.hasActions('display')-»
+«REM»«IF controller.hasActions('view') || controller.hasActions('display')-»
 «REM»TODO: use relations to generate only required ones«ENDREM»
 «EXPAND templates::zclassic::view::PageComponents::Relations::DisplayItemList(this, controller, false) FOREACH models.entities-»
 «EXPAND templates::zclassic::view::PageComponents::Relations::DisplayItemList(this, controller, true) FOREACH models.entities-»
