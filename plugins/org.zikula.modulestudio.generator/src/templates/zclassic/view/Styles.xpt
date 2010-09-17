@@ -9,14 +9,17 @@
 «ENDDEFINE»
 
 «DEFINE StyleDefines FOR Application-»
-a.currentSortingLink {
+
+/* view pages */
+div#z-maincontent.z-module-«name.formatForDB()» table thead tr th a.currentSortingLink {
     font-style: italic;
 }
 
-div.linktabs {
-    margin-bottom: 10px;
+div#z-maincontent.z-module-«name.formatForDB()» table tbody tr td {
+    vertical-align: top;
 }
 
+/* display pages */
 div.«appName().formatForDB()»RightBox {
     float: right;
     margin: 0 1em;
@@ -47,7 +50,8 @@ div.«appName().formatForDB()»RightBox p.manageLink a {
 «ENDDEFINE»
 
 «DEFINE ValidationStyles FOR Application-»
-/** validation **/
+
+/* validation */
 input.required, textarea.required {
     border: 1px solid #00a8e6;
 }
@@ -73,6 +77,8 @@ input.validation-passed, textarea.validation-passed {
 «LET hasUserFields() AS hasUserFields-»
 «LET models.getJoinRelations() AS joinRelations-»
 «IF joinRelations.size > 0 || hasUserFields-»
+
+/* edit pages */
 «IF joinRelations.size > 0-»
 div.«prefix()»RelationLeftSide {
 float: left;

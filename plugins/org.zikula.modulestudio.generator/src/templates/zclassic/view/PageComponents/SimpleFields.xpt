@@ -18,63 +18,87 @@
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR UserField-»
-«prepend»{if $«objName».«actualFieldName().formatForCode()» gt 0}
+«LET objName.msconcat('.').msconcat(actualFieldName().formatForCode()) AS realName-»
+«IF !mandatory-»
+«prepend»{if $«realName» gt 0}
+«ENDIF-»
 «IF page == 'display'-»
 «prepend»  {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 «ENDIF-»
-«prepend»    {$«objName».«actualFieldName().formatForCode()»|userprofilelink}
+«prepend»    {$«realName»|userprofilelink}
 «IF page == 'display'-»
 «prepend»  {else}
-«prepend»    {usergetvar name='uname' uid=$«objName».«actualFieldName().formatForCode()»}
+«prepend»    {usergetvar name='uname' uid=$«realName»}
 «prepend»  {/if}
 «ENDIF-»
+«ENDLET-»
+«IF !mandatory-»
 «prepend»{else}&nbsp;{/if}«""-»
+«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR EmailField-»
-«prepend»{if $«objName».«actualFieldName().formatForCode()» ne ''}
+«LET objName.msconcat('.').msconcat(actualFieldName().formatForCode()) AS realName-»
+«IF !mandatory-»
+«prepend»{if $«realName» ne ''}
+«ENDIF-»
 «IF page == 'display'-»
 «prepend»  {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 «ENDIF-»
-«prepend»    <a href="mailto:{$«objName».«actualFieldName().formatForCode()»}" title="{gt text='Send an email'}">
+«prepend»    <a href="mailto:{$«realName»}" title="{gt text='Send an email'}">
 «prepend»        {img src="mail_generic.gif" modname="core" set="icons/extrasmall" __alt='Email'}
 «prepend»    </a>
 «IF page == 'display'-»
 «prepend»  {else}
-«prepend»    {$«objName».«actualFieldName().formatForCode()»}
+«prepend»    {$«realName»}
 «prepend»  {/if}
 «ENDIF-»
+«ENDLET-»
+«IF !mandatory-»
 «prepend»{else}&nbsp;{/if}«""-»
+«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR UrlField-»
-«prepend»{if $«objName».«actualFieldName().formatForCode()» ne ''}
+«LET objName.msconcat('.').msconcat(actualFieldName().formatForCode()) AS realName-»
+«IF !mandatory-»
+«prepend»{if $«realName» ne ''}
+«ENDIF-»
 «IF page == 'display'-»
 «prepend»  {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 «ENDIF-»
-«prepend»    <a href="{$«objName».«actualFieldName().formatForCode()»}" title="{gt text='Visit this page'}">
+«prepend»    <a href="{$«realName»}" title="{gt text='Visit this page'}">
 «prepend»        {img src="agt_internet.gif" modname="core" set="icons/extrasmall" __alt='Homepage'}
 «prepend»    </a>
 «IF page == 'display'-»
 «prepend»  {else}
-«prepend»    {$«objName».«actualFieldName().formatForCode()»}
+«prepend»    {$«realName»}
 «prepend»  {/if}
 «ENDIF-»
+«ENDLET-»
+«IF !mandatory-»
 «prepend»{else}&nbsp;{/if}«""-»
+«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR UploadField-»
 «LET entity.container.application.appName().formatForDB() AS appNameSmall-»
-«LET actualFieldName().formatForCode() AS realName-»
-«prepend»<a href="{$«objName».«realName»FullPathURL}" title="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}"{if $«objName».«realName»IsImage} rel="imageviewer[«entity.name.formatForDB()»]"{/if}>
-«prepend»{if $«objName».«realName»IsImage}
-«prepend»    <img src="{$«objName».«realName»|«appNameSmall»ImageThumb:$«objName».«realName»FullPath:«IF page == 'display'»250:150«ELSE»80:80«ENDIF»}" width="«IF page == 'display'»250«ELSE»80«ENDIF»" height="«IF page == 'display'»150«ELSE»80«ENDIF»" alt="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
-«prepend»{else}
-«prepend»    {gt text='Download'} ({$«objName».«realName»FullPath|«appNameSmall»GetFileSize:false:false})
-«prepend»{/if}
-«prepend»</a>
+«LET objName.msconcat('.').msconcat(actualFieldName().formatForCode()) AS realName-»
+«IF !mandatory-»
+«prepend»{if $«realName» ne ''}
+«ENDIF-»
+«prepend»  <a href="{$«realName»FullPathURL}" title="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}"{if $«realName»IsImage} rel="imageviewer[«entity.name.formatForDB()»]"{/if}>
+«prepend»  {if $«realName»IsImage}
+«prepend»      <img src="{$«realName»|«appNameSmall»ImageThumb:$«realName»FullPath:«IF page == 'display'»250:150«ELSE»80:80«ENDIF»}" width="«IF page == 'display'»250«ELSE»80«ENDIF»" height="«IF page == 'display'»150«ELSE»80«ENDIF»" alt="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
+«prepend»  {else}
+«prepend»      {gt text='Download'} ({$«realName»FullPath|«appNameSmall»GetFileSize:false:false})
+«prepend»  {/if}
+«prepend»  </a>
 «ENDLET-»
 «ENDLET-»
+«IF !mandatory-»
+«prepend»{else}&nbsp;{/if}«""-»
+«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR DateField-»
