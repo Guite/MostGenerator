@@ -76,8 +76,8 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
             callback: function(inputField, defaultQueryString) {
                     // Called just before the Request is actually made, allowing to modify the querystring that is sent to the server.
                     defaultQueryString += '&ot=' + objectType;
-                    if ($(idPrefix + 'ExcludeList')) {
-                        defaultQueryString += '&exclude=' + $F(idPrefix + 'ExcludeList');
+                    if ($(idPrefix + 'ItemList')) {
+                        defaultQueryString += '&exclude=' + $F(idPrefix + 'ItemList');
                     }
                     return defaultQueryString;
             },
@@ -94,7 +94,7 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
             }
     };
     relationHandler.each(function(relationHandler) {
-        if (relationHandler['prefix'] == (idPrefix + "SelectorDoNew") && relationHandler['acInstance'] == null) {
+        if (relationHandler['prefix'] == (idPrefix + 'SelectorDoNew') && relationHandler['acInstance'] == null) {
             relationHandler['acInstance'] = new Ajax.Autocompleter(
                 idPrefix + 'Selector',
                 idPrefix + 'SelectorChoices',
@@ -106,7 +106,7 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
 
     $(idPrefix + 'SelectorDoAdd').observe('click', function(e) {
         var newTitle = $F(idPrefix + 'Selector');
-        var itemID = $F(idPrefix + 'SelectorId');
+        var newItemID = $F(idPrefix + 'SelectorId');
         var includeEditing = ($F(idPrefix + 'Mode') == '1') ? true : false;
         var editLink;
         var removeLink;
@@ -114,11 +114,11 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
 
         var li = Builder.node('li', {id: elemPrefix}, newTitle);
         if (includeEditing == true) {
-            var editHref = $(idPrefix + 'SelectorDoNew').href + '&amp;' + objectType.toLowerCase() + '=' + itemID;
+            var editHref = $(idPrefix + 'SelectorDoNew').href + '&amp;' + objectType.toLowerCase() + '=' + newItemId;
             editLink = Builder.node('a', {id: elemPrefix + 'Edit', href: editHref}, 'edit');
             li.appendChild(editLink);
         }
-        removeLink = Builder.node('a', {id: elemPrefix + 'Remove', href: 'javascript:«prefixSmall»RemoveRelatedItem(\'' + idPrefix + '\', ' + itemID + ');'}, 'remove');
+        removeLink = Builder.node('a', {id: elemPrefix + 'Remove', href: 'javascript:«prefixSmall»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');'}, 'remove');
         li.appendChild(removeLink);
         if (itemPreview != '') {
             var fldPreview = Builder.node('div', {id: elemPrefix + 'preview', name: idPrefix + 'preview'}, '');
@@ -132,27 +132,29 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
             editLink.update(' ' + editImage);
 
             $(elemPrefix + 'Edit').observe('click', function(e) {
-                «prefixSmall»InitInlineWindow(objectType, idPrefix + 'Reference_' + itemID + 'Edit');
+                «prefixSmall»InitInlineWindow(objectType, idPrefix + 'Reference_' + newItemId + 'Edit');
                 e.stop();
             });
         }
         removeLink.update(' ' + removeImage);
 
-        var excludedItemIDs = $F(idPrefix + 'ExcludeList');
-        if (excludedItemIDs != '') {
+        var itemIds = $F(idPrefix + 'ItemList');
+        if (itemIds != '') {
             if ($F(idPrefix + 'Scope') == '0') {
-                var excludedIDs = excludedItemIDs.split(',');
-                excludedIDs.each(function(existingID) {
-                    «prefixSmall»RemoveRelatedItem(idPrefix, existingID);
+                var itemIdsArr = itemIds.split(',');
+                itemIdsArr.each(function(existingId) {
+                    if (existingId) {
+                        «prefixSmall»RemoveRelatedItem(idPrefix, existingId);
+                    }
                 });
-                excludedItemIDs = '';
+                itemIds = '';
             }
             else {
-                excludedItemIDs += ',';
+                itemIds += ',';
             }
         }
-        excludedItemIDs += itemID;
-        $(idPrefix + 'ExcludeList').value = excludedItemIDs;
+        itemIds += newItemId;
+        $(idPrefix + 'ItemList').value = itemIds;
 
         «prefixSmall»ResetRelatedItemForm(idPrefix);
     });
@@ -169,11 +171,11 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
         e.stop();
     });
 
-    var excludedItemIDs = $F(idPrefix + 'ExcludeList');
-    var excludedIDs = excludedItemIDs.split(',');
-    excludedIDs.each(function(itemID) {
-        if (itemID) {
-            var elemPrefix = idPrefix + 'Reference_' + itemID + 'Edit';
+    var itemIds = $F(idPrefix + 'ItemList');
+    var itemIdsArr = itemIds.split(',');
+    itemIdsArr.each(function(existingId) {
+        if (existingId) {
+            var elemPrefix = idPrefix + 'Reference_' + existingId + 'Edit';
             $(elemPrefix).href += '&amp;theme=Printer&amp;idp=' + elemPrefix;
             $(elemPrefix).observe('click', function(e) {
                 «prefixSmall»InitInlineWindow(objectType, elemPrefix);
@@ -261,14 +263,14 @@ function «prefix()»CreateWindowInstance(containerElem, useIframe)
 /**
  * Removes a related item from the list of selected ones.
  */
-function «prefix()»RemoveRelatedItem(idPrefix, itemID)
+function «prefix()»RemoveRelatedItem(idPrefix, removeId)
 {
-    var excludedItemIDs = $F(idPrefix + 'ExcludeList');
-    var excludedIDs = excludedItemIDs.split(',');
-    excludedIDs = excludedIDs.without(itemID);
-    excludedItemIDs = excludedIDs.join(',');
-    $(idPrefix + 'ExcludeList').value = excludedItemIDs;
-    $(idPrefix + 'Reference_' + itemID).remove();
+    var itemIds = $F(idPrefix + 'ItemList');
+    var itemIdsArr = itemIds.split(',');
+    itemIdsArr = itemIdsArr.without(removeId);
+    itemIds = itemIdsArr.join(',');
+    $(idPrefix + 'ItemList').value = itemIds;
+    $(idPrefix + 'Reference_' + removeId).remove();
 }
 
 «ENDDEFINE»

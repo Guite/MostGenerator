@@ -424,7 +424,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
 «LET getUniqueRelationNameForJs(container.application, ((incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
 «IF many-»
-        $relatedIds = FormUtil::getPassedValue('«uniqueNameForJs»ExcludeList', array(), 'POST');
+        $relatedIds = FormUtil::getPassedValue('«uniqueNameForJs»ItemList', array(), 'POST');
         $recordObj = $businessEntity->get«((incoming) ? target : source).name.formatForCodeCapital()»();
         if ($this->mode != 'create') {
             // remove all existing references
@@ -503,7 +503,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
 «DEFINE FetchRelationValue(Boolean incoming) FOR JoinRelationship-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(container.application, ((incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
-        $formData['«source.idField()»'] = (int) FormUtil::getPassedValue('«uniqueNameForJs»ExcludeList', 0, 'POST');
+        $formData['«source.idField()»'] = (int) FormUtil::getPassedValue('«uniqueNameForJs»ItemList', 0, 'POST');
 «REM»Alternative: $address->link('Customer', array($customer['id']));«ENDREM»«""-»
 «ENDLET-»
 «ENDLET-»

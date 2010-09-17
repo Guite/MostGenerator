@@ -142,7 +142,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 {img src="editdelete.gif" modname="core" set="icons/extrasmall" assign="removeImageArray"}
 {assign var="removeImage" value="<img src=\"`$removeImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
 
-<input type="hidden" id="«uniqueNameForJs»ExcludeList" name="«uniqueNameForJs»ExcludeList" value="{if isset($items) && is_array($items)}{foreach name='relLoop' item='relatedItem' from=$items}{$relatedItem.«targetEntity.idField()»}{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}{/if}" />
+<input type="hidden" id="«uniqueNameForJs»ItemList" name="«uniqueNameForJs»ItemList" value="{if isset($items) && is_array($items)}{foreach name='relLoop' item='relatedItem' from=$items}{$relatedItem.«targetEntity.idField()»}{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}{/if}" />
 <input type="hidden" id="«uniqueNameForJs»Mode" name="«uniqueNameForJs»Mode" value="«IF includeEditing»1«ELSE»0«ENDIF»" />
 
 <ul id="«uniqueNameForJs»ReferenceList">

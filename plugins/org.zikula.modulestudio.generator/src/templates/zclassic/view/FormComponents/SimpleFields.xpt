@@ -129,7 +129,7 @@
 «LET actualFieldName().formatForCode() AS realName»
             <div id="«realName»liveusersearch" class="«entity.container.application.prefix()»LiveSearchUser z-hide">
                 {formtextinput id='«realName»desc' mandatory=«mandatory» readOnly=«readonly» __title='Input a part of the user name to search' maxLength=«length» cssClass='«IF mandatory»required «ENDIF»validate-alphanum'}
-                {img id='ajax_indicator' style="display: none" modname='core' set='icons/extrasmall' src='indicator_circle.gif' alt=''}
+                {img src='indicator_circle.gif' modname='core' set='icons/extrasmall' alt='' id='ajax_indicator' style='display: none'}
                 <div id="«realName»desc_choices" class="«entity.container.application.prefix()»AutoCompleteUser"></div>
             </div>
             <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
