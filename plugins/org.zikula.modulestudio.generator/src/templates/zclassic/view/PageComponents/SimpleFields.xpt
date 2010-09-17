@@ -68,7 +68,7 @@
 «LET actualFieldName().formatForCode() AS realName-»
 «prepend»<a href="{$«objName».«realName»FullPathURL}" title="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}"{if $«objName».«realName»IsImage} rel="imageviewer[«entity.name.formatForDB()»]"{/if}>
 «prepend»{if $«objName».«realName»IsImage}
-«prepend»    <img src="{$«objName».«realName»|«appNameSmall»ImageThumb:$«objName».«realName»FullPath:250:150}" width="250" height="150" alt="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
+«prepend»    <img src="{$«objName».«realName»|«appNameSmall»ImageThumb:$«objName».«realName»FullPath:«IF page == 'display'»250:150«ELSE»80:80«ENDIF»}" width="«IF page == 'display'»250«ELSE»80«ENDIF»" height="«IF page == 'display'»150«ELSE»80«ENDIF»" alt="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
 «prepend»{else}
 «prepend»    {gt text='Download'} ({$«objName».«realName»FullPath|«appNameSmall»GetFileSize:false:false})
 «prepend»{/if}
