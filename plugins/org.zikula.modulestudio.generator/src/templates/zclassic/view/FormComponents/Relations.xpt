@@ -148,7 +148,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 <ul id="«uniqueNameForJs»ReferenceList">
 {if isset($items) && is_array($items)}
 {foreach name='relLoop' item='relatedItem' from=$items}
-{assign var='idPrefix' value='«uniqueNameForJs»Reference_`$relatedItem.«targetEntity.idField()»`'}
+{assign var='idPrefix' value="«uniqueNameForJs»Reference_`$relatedItem.«targetEntity.idField()»`"}
     <li id="{$idPrefix}">
     {$relatedItem.«targetEntity.getLeadingField().actualFieldName().formatForCode()»}
 «IF includeEditing-»
