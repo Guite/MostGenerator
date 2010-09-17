@@ -8,47 +8,47 @@
 
 «REM»Main entry point for the generator«ENDREM»
 «DEFINE Root(Object pm) FOR Application»
-«FILE "reporting.html"»
-«EXPAND Helpers::htmlFileHeader("Statistics for " + this.appName().toString())»
-<h1>Some statistics for «this.appName()-»</h1>
+«FILE 'reporting.html'»
+«EXPAND Helpers::htmlFileHeader('Statistics for ' + appName().toString())»
+<h1>Some statistics for «appName()-»</h1>
 
 <h2>Database</h2>
 
 <h3>Tables</h3>
 <p>
-	«this.appName()-» contains «this.models.entities.size-» «EXPAND Helpers::generateSiPlu("table", "tables", this.models.entities.size)»
+	«appName()-» contains «models.entities.size-» «EXPAND Helpers::generateSiPlu('table', 'tables', models.entities.size)»
 </p>
 
-«IF this.models.entities.size > 0»
+«IF models.entities.size > 0-»
 <ul>
-	«FOREACH this.models.entities AS tbl»
-		<li>«tbl.name.toString()-» («tbl.fields.size-»)</li>
-	«ENDFOREACH»
+	«FOREACH models.entities AS tbl-»
+		<li>«tbl.name.formatForDisplayCapital()-» («tbl.fields.size-»)</li>
+	«ENDFOREACH-»
 </ul>
 
 <h4>Details</h4>
 <p>Some information about the tables</p>
 <table border="1">
 	<thead>
-		<td></td>
-		<td>Prefix</td>
-		<td>Attributable</td>
-		<td>Caegorisable</td>
-		<td>Geographical</td>
-		<td>Internationalisation</td>
-		<td>Leading</td>
-		<td>Loggable</td>
-		<td>Searchable</td>
-		<td>Sluggable</td>
-		<td>Soft delete</td>
-		<td>Standard fields</td>
-		<td>Timestampable</td>
-		<td>Versionable</td>
+		<th scope="col"></th>
+		<th scope="col">Prefix</th>
+		<th scope="col">Attributable</th>
+		<th scope="col">Caegorisable</th>
+		<th scope="col">Geographical</th>
+		<th scope="col">Internationalisation</th>
+		<th scope="col">Leading</th>
+		<th scope="col">Loggable</th>
+		<th scope="col">Searchable</th>
+		<th scope="col">Sluggable</th>
+		<th scope="col">Soft delete</th>
+		<th scope="col">Standard fields</th>
+		<th scope="col">Timestampable</th>
+		<th scope="col">Versionable</th>
 	</thead>
 	<tbody>
-	«FOREACH this.models.entities AS tbl»
+	«FOREACH models.entities AS tbl-»
 		<tr>
-			<td>«tbl.name.toString()»</td>
+			<th scope="row">«tbl.name.formatForDisplayCapital()»</th>
 			<td>«tbl.prefix.toString()»</td>
 			<td>«tbl.attributable.toString()»</td>
 			<td>«tbl.categorisable.toString()»</td>
@@ -63,31 +63,31 @@
 			<td>«tbl.timestampable.toString()»</td>
 			<td>«tbl.versionable.toString()»</td>
 		</tr>
-	«ENDFOREACH»
+	«ENDFOREACH-»
 	</table>
 </table>
 
-«FOREACH this.models.entities AS tbl»
-<h5>Details for the «tbl.name.toString()» table</h5>
-<p>Some information about the «tbl.name.toString()» table</p>
+«FOREACH models.entities AS tbl-»
+<h5>Details for the «tbl.name.formatForDisplay()» table</h5>
+<p>Some information about the «tbl.name.formatForDisplay()» table</p>
 <table border="1">
 	<thead>
-		<td></td>
-		<td>Alias</td>
-		<td>Default value</td>
-		<td>Leading</td>
-		<td>Mandatory</td>
-		<td>Metatype</td>
-		<td>Notnull</td>
-		<td>Primary key</td>
-		<td>Readonly</td>
-		<td>Unique</td>
+		<th scope="col"></th>
+		<th scope="col">Alias</th>
+		<th scope="col">Default value</th>
+		<th scope="col">Leading</th>
+		<th scope="col">Mandatory</th>
+		<th scope="col">Metatype</th>
+		<th scope="col">Notnull</th>
+		<th scope="col">Primary key</th>
+		<th scope="col">Readonly</th>
+		<th scope="col">Unique</th>
 	</thead>
 	<tbody>
-	«FOREACH tbl.fields.typeSelect(DerivedField) AS fld»
+	«FOREACH tbl.fields.typeSelect(DerivedField) AS fld-»
 		<tr>
-			<td>«fld.name.toString()»</td>
-			<td>«fld.alias.toString()»</td>
+			<th scope="row">«fld.name.formatForDisplay()»</th>
+			<td>«IF fld.alias != null»«fld.alias.formatForDisplay()»«ELSE»&nbsp;«ENDIF»</td>
 			<td>«fld.defaultValue.toString()»</td>
 			<td>«fld.leading.toString()»</td>
 			<td>«fld.mandatory.toString()»</td>
@@ -97,44 +97,44 @@
 			<td>«fld.readonly.toString()»</td>
 			<td>«fld.unique.toString()»</td>
 		</tr>
-		«ENDFOREACH»
+		«ENDFOREACH-»
 	</table>
 </table>
-«ENDFOREACH»
-«ENDIF»
+«ENDFOREACH-»
+«ENDIF-»
 
 <h3>Relations</h3>
 <p>
-	«this.appName()-» contains «this.models.relations.size-» «EXPAND Helpers::generateSiPlu("relation", "relations", this.models.relations.size)»
+	«appName()-» contains «models.relations.size-» «EXPAND Helpers::generateSiPlu('relation', 'relations', models.relations.size)»
 </p>
 
-«IF this.models.relations.size > 0»
+«IF models.relations.size > 0-»
 <ul>
-	«FOREACH this.models.relations AS rlt»
-		<li>«rlt.source.name.toString()» - «rlt.target.name.toString()» («rlt.metaType.toString()»)</li>
-	«ENDFOREACH»
+	«FOREACH models.relations AS rlt-»
+		<li>«rlt.source.name.formatForDisplayCapital()» - «rlt.target.name.formatForDisplayCapital()» («rlt.metaType.toString()»)</li>
+	«ENDFOREACH-»
 </ul>
-«ENDIF»
+«ENDIF-»
 
 <h2>Controllers</h2>
 <p>
-	«this.appName()-» contains «this.controllers.size-» «EXPAND Helpers::generateSiPlu("controller", "controllers", this.controllers.size)» and «this.controllers.controllers.actions.size-» «EXPAND Helpers::generateSiPlu("view", "views", this.controllers.controllers.actions.size)»
+	«appName()-» contains «controllers.size-» «EXPAND Helpers::generateSiPlu('controller', 'controllers', controllers.size)» and «this.controllers.controllers.actions.size-» «EXPAND Helpers::generateSiPlu("view", "views", this.controllers.controllers.actions.size)»
 </p>
 
-«IF this.controllers.size > 0»
+«IF controllers.size > 0-»
 <ul>
-	«FOREACH this.controllers.controllers AS ctrl»
+	«FOREACH controllers.controllers AS ctrl-»
 		<li>«ctrl.name.toString()-»</li>
-		«IF ctrl.actions.size > 0»
+		«IF ctrl.actions.size > 0-»
 			<ul>
-			«FOREACH ctrl.actions AS action»
+			«FOREACH ctrl.actions AS action-»
 				<li>«action.name.toString()»</li>
-			«ENDFOREACH»
+			«ENDFOREACH-»
 			</ul>
-		«ENDIF»
-	«ENDFOREACH»
+		«ENDIF-»
+	«ENDFOREACH-»
 </ul>
-«ENDIF»
+«ENDIF-»
 
 «EXPAND Helpers::htmlFileFooter-»
 «ENDFILE»
