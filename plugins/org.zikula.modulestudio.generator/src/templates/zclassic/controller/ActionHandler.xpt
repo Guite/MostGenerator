@@ -412,8 +412,10 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «DEFINE ReassignRelatedObjects(Boolean incoming) FOR JoinRelationship-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
+«LET getUniqueRelationNameForJs(container.application, ((!incoming || this.metaType == ManyToManyRelationship) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
         // reassign the «((incoming) ? target : source).getEntityNameSingularPlural(many).formatForDisplay()» eventually chosen by the user
-        $view->assign('user«relationAliasName.toFirstUpper()»', $this->retrieveRelatedObjects('«((incoming) ? source : target).name.formatForCode()»', '«relationAliasName.formatForDB()»', «IF !many»false«ELSE»true«ENDIF», 'POST'));
+        $view->assign('user«relationAliasName.toFirstUpper()»', $this->retrieveRelatedObjects('«((incoming) ? source : target).name.formatForCode()»', '«uniqueNameForJs»ItemList', «IF !many»false«ELSE»true«ENDIF», 'POST'));
+«ENDLET-»
 «ENDLET-»
 «ENDLET-»
 «ENDDEFINE»
@@ -422,7 +424,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «DEFINE UpdateRelationLinks(Boolean incoming) FOR JoinRelationship-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
-«LET getUniqueRelationNameForJs(container.application, ((incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
+«LET getUniqueRelationNameForJs(container.application, ((!incoming || this.metaType == ManyToManyRelationship) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
 «IF many-»
         $relatedIds = FormUtil::getPassedValue('«uniqueNameForJs»ItemList', array(), 'POST');
         $recordObj = $businessEntity->get«((incoming) ? target : source).name.formatForCodeCapital()»();
@@ -471,16 +473,18 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             }
 «ENDFOREACH-»
 «FOREACH userFields AS userField-»
-            $formData['«userField.actualFieldName().formatForCode()»'] = (int) FormUtil::getPassedValue('«userField.actualFieldName().formatForCode()»', 0, 'POST');
-            if (UserUtil::getVars($formData['«userField.actualFieldName().formatForCode()»']) === false) {
+«LET userField.actualFieldName().formatForCode() AS realName-»
+            $formData['«realName»'] = (int) FormUtil::getPassedValue('«realName»', 0, 'POST');
+            if (!$formData['«realName»'] || UserUtil::getVars($formData['«realName»']) === false) {
 «IF userField.mandatory-»
                 // Oops, we have an invalid user id. As this field is mandatory, we raise an error.
-                return LogUtil::registerError(__('Invalid user.', $this->dom));
+                return LogUtil::registerError(__('Invalid value received for field "«userField.actualFieldName().formatForDisplay()»".', $this->dom));
 «ELSE-»
                 // Oops, we have an invalid user id. As this field is not mandatory, we simply set it to 0.
-                $formData['«userField.actualFieldName().formatForCode()»'] = 0;
+                $formData['«realName»'] = 0;
 «ENDIF-»
             }
+«ENDLET-»
 «ENDFOREACH-»
 «IF uploadFields.size > 0-»
             $formData = $this->handleUploads($formData);
@@ -502,9 +506,13 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 As the autocomplete fields are not done with a Form plugin (yet), we do that manually.«ENDREM»
 «DEFINE FetchRelationValue(Boolean incoming) FOR JoinRelationship-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
-«LET getUniqueRelationNameForJs(container.application, ((incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
+«LET getUniqueRelationNameForJs(container.application, ((!incoming || this.metaType == ManyToManyRelationship) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
         $formData['«source.idField()»'] = (int) FormUtil::getPassedValue('«uniqueNameForJs»ItemList', 0, 'POST');
 «REM»Alternative: $address->link('Customer', array($customer['id']));«ENDREM»«""-»
+        if (!$formData['«source.idField()»']) {
+            // Oops, we have an invalid relation id. As this field is mandatory, we raise an error.
+            return LogUtil::registerError(__('Invalid value received for relation field "«relationAliasName.formatForDisplay()»".', $this->dom));
+        }
 «ENDLET-»
 «ENDLET-»
 «ENDDEFINE»
