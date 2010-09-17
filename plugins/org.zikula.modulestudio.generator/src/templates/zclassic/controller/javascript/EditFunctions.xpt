@@ -46,6 +46,7 @@ function «prefix()»InitUserField(fieldName, getterName)
 «DEFINE RelationFunctions FOR Application-»
 «IF models.relations.size > 0-»
 «EXPAND InitRelatedItemsForm(prefix())-»
+«EXPAND SelectRelatedItem-»
 «EXPAND InitInlineWindow-»
 «EXPAND CreateWindowInstance-»
 «EXPAND RemoveRelatedItem-»
@@ -63,18 +64,22 @@ function «prefix()»InitUserField(fieldName, getterName)
  */
 function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditing)
 {
+    // add handling for the toggle link if existing
     if ($(idPrefix + 'AddLink')) {
         $(idPrefix + 'AddLink').observe('click', function(e) { «prefixSmall»ToggleRelatedItemForm(idPrefix); });
     }
+    // add handling for the cancel button
+    if ($(idPrefix + 'SelectorDoCancel')) {
+        $(idPrefix + 'SelectorDoCancel').observe('click', function(e) { «prefixSmall»ResetRelatedItemForm(idPrefix); });
+    }
+    // clear values and ensure starting state
     «prefixSmall»ResetRelatedItemForm(idPrefix);
-
-    itemPreview = '';
 
     var acOptions = {
             paramName: 'fragment',
             minChars: 2,
             callback: function(inputField, defaultQueryString) {
-                    // Called just before the Request is actually made, allowing to modify the querystring that is sent to the server.
+                    // modify the query string before the request
                     defaultQueryString += '&ot=' + objectType;
                     if ($(idPrefix + 'ItemList')) {
                         defaultQueryString += '&exclude=' + $F(idPrefix + 'ItemList');
@@ -84,13 +89,7 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
             afterUpdateElement: function(inputField, selectedListItem) {
                     // Called after the input element has been updated (i.e. when the user has selected an entry).
                     // This function is called after the built-in function that adds the list item text to the input field.
-                    var componentName = $F(inputField);
-                    $(idPrefix + 'SelectorId').value = selectedListItem.id;
-                    if ($('itempreview' + selectedListItem.id)) {
-                        itemPreview = $('itempreview' + selectedListItem.id).innerHTML;
-                    }
-                    $(idPrefix + 'Selector').disabled = true;
-                    $(idPrefix + 'SelectorDoAdd').disabled = false;
+                    «prefixSmall»SelectRelatedItem(objectType, idPrefix, inputField, selectedListItem);
             }
     };
     relationHandler.each(function(relationHandler) {
@@ -103,62 +102,6 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
             );
         }
     });
-
-    $(idPrefix + 'SelectorDoAdd').observe('click', function(e) {
-        var newTitle = $F(idPrefix + 'Selector');
-        var newItemID = $F(idPrefix + 'SelectorId');
-        var includeEditing = ($F(idPrefix + 'Mode') == '1') ? true : false;
-        var editLink;
-        var removeLink;
-        var elemPrefix = idPrefix + 'Reference_' + itemID;
-
-        var li = Builder.node('li', {id: elemPrefix}, newTitle);
-        if (includeEditing == true) {
-            var editHref = $(idPrefix + 'SelectorDoNew').href + '&amp;' + objectType.toLowerCase() + '=' + newItemId;
-            editLink = Builder.node('a', {id: elemPrefix + 'Edit', href: editHref}, 'edit');
-            li.appendChild(editLink);
-        }
-        removeLink = Builder.node('a', {id: elemPrefix + 'Remove', href: 'javascript:«prefixSmall»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');'}, 'remove');
-        li.appendChild(removeLink);
-        if (itemPreview != '') {
-            var fldPreview = Builder.node('div', {id: elemPrefix + 'preview', name: idPrefix + 'preview'}, '');
-            fldPreview.update(itemPreview);
-            li.appendChild(fldPreview);
-            itemPreview = '';
-        }
-        $(idPrefix + 'ReferenceList').appendChild(li);
-
-        if (includeEditing == true) {
-            editLink.update(' ' + editImage);
-
-            $(elemPrefix + 'Edit').observe('click', function(e) {
-                «prefixSmall»InitInlineWindow(objectType, idPrefix + 'Reference_' + newItemId + 'Edit');
-                e.stop();
-            });
-        }
-        removeLink.update(' ' + removeImage);
-
-        var itemIds = $F(idPrefix + 'ItemList');
-        if (itemIds != '') {
-            if ($F(idPrefix + 'Scope') == '0') {
-                var itemIdsArr = itemIds.split(',');
-                itemIdsArr.each(function(existingId) {
-                    if (existingId) {
-                        «prefixSmall»RemoveRelatedItem(idPrefix, existingId);
-                    }
-                });
-                itemIds = '';
-            }
-            else {
-                itemIds += ',';
-            }
-        }
-        itemIds += newItemId;
-        $(idPrefix + 'ItemList').value = itemIds;
-
-        «prefixSmall»ResetRelatedItemForm(idPrefix);
-    });
-    $(idPrefix + 'SelectorDoCancel').observe('click', function(e) { «prefixSmall»ResetRelatedItemForm(idPrefix); });
 
     if (!includeEditing || !$(idPrefix + 'SelectorDoNew')) {
         return;
@@ -185,6 +128,71 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
     });
 }
 
+«ENDDEFINE»
+
+«DEFINE SelectRelatedItem FOR Application-»
+/**
+ * Add a related item to selection which has been chosen by auto completion
+ */
+function «prefix()»SelectRelatedItem(objectType, idPrefix, inputField, selectedListItem)
+{
+    var newItemId = selectedListItem.id;
+    var newTitle = $F(idPrefix + 'Selector');
+    var includeEditing = ($F(idPrefix + 'Mode') == '1') ? true : false;
+    var editLink;
+    var removeLink;
+    var elemPrefix = idPrefix + 'Reference_' + newItemId;
+    var itemPreview = '';
+    if ($('itempreview' + selectedListItem.id)) {
+        itemPreview = $('itempreview' + selectedListItem.id).innerHTML;
+    }
+
+    var li = Builder.node('li', {id: elemPrefix}, newTitle);
+    if (includeEditing == true) {
+        var editHref = $(idPrefix + 'SelectorDoNew').href + '&amp;' + objectType.toLowerCase() + '=' + newItemId;
+        editLink = Builder.node('a', {id: elemPrefix + 'Edit', href: editHref}, 'edit');
+        li.appendChild(editLink);
+    }
+    removeLink = Builder.node('a', {id: elemPrefix + 'Remove', href: 'javascript:«prefix()»RemoveRelatedItem(\'' + idPrefix + '\', ' + newItemId + ');'}, 'remove');
+    li.appendChild(removeLink);
+    if (itemPreview != '') {
+        var fldPreview = Builder.node('div', {id: elemPrefix + 'preview', name: idPrefix + 'preview'}, '');
+        fldPreview.update(itemPreview);
+        li.appendChild(fldPreview);
+        itemPreview = '';
+    }
+    $(idPrefix + 'ReferenceList').appendChild(li);
+
+    if (includeEditing == true) {
+        editLink.update(' ' + editImage);
+
+        $(elemPrefix + 'Edit').observe('click', function(e) {
+            «prefix()»InitInlineWindow(objectType, idPrefix + 'Reference_' + newItemId + 'Edit');
+            e.stop();
+        });
+    }
+    removeLink.update(' ' + removeImage);
+
+    var itemIds = $F(idPrefix + 'ItemList');
+    if (itemIds != '') {
+        if ($F(idPrefix + 'Scope') == '0') {
+            var itemIdsArr = itemIds.split(',');
+            itemIdsArr.each(function(existingId) {
+                if (existingId) {
+                    «prefix()»RemoveRelatedItem(idPrefix, existingId);
+                }
+            });
+            itemIds = '';
+        }
+        else {
+            itemIds += ',';
+        }
+    }
+    itemIds += newItemId;
+    $(idPrefix + 'ItemList').value = itemIds;
+
+    «prefix()»ResetRelatedItemForm(idPrefix);
+}
 «ENDDEFINE»
 
 «DEFINE InitInlineWindow FOR Application-»
@@ -284,14 +292,8 @@ function «prefix()»ResetRelatedItemForm(idPrefix)
     // hide the sub form
     «prefix()»ToggleRelatedItemForm(idPrefix);
 
-    // disable the auto completion field
-    $(idPrefix + 'Selector').disabled = false;
-
-    // reset its value, too
+    // reset value of the auto completion field
     $(idPrefix + 'Selector').value = '';
-
-    // disable the add button
-    $(idPrefix + 'SelectorDoAdd').disabled = true;
 }
 
 «ENDDEFINE»

@@ -101,13 +101,10 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
         <div id="«uniqueNameForJs»AddFields">
             <label for="«uniqueNameForJs»Selector">{gt text='Find «targetEntity.name.formatForDisplay()»'}</label>
             <br />
-            <input type="text" name="«uniqueNameForJs»Selector" id="«uniqueNameForJs»Selector" value="" size="42" />
-            <input type="hidden" name="«uniqueNameForJs»SelectorId" id="«uniqueNameForJs»SelectorId" value="" />
+            <input type="text" name="«uniqueNameForJs»Selector" id="«uniqueNameForJs»Selector" value="" size="" />
             <input type="hidden" name="«uniqueNameForJs»Scope" id="«uniqueNameForJs»Scope" value="«IF !many»0«ELSE»1«ENDIF»" />
             {img src='indicator_circle.gif' modname='core' set='icons/extrasmall' alt='' id='ajax_indicator' style='display: none'}
             <div id="«uniqueNameForJs»SelectorChoices" class="«app.prefix()»AutoComplete«IF targetEntity.hasImageFields()»WithImage«ENDIF»"></div>
-
-            <input type="button" id="«uniqueNameForJs»SelectorDoAdd" name="«uniqueNameForJs»SelectorDoAdd" value="{gt text='Add'}" class="z-button «app.prefix()»InlineButton" />
             <input type="button" id="«uniqueNameForJs»SelectorDoCancel" name="«uniqueNameForJs»SelectorDoCancel" value="{gt text='Cancel'}" class="z-button «app.prefix()»InlineButton" />
 «IF includeEditing-»
             <a id="«uniqueNameForJs»SelectorDoNew" href="{modurl modname='«app.appName()»' type='«controller.name()»' func='edit' ot='«targetEntity.name.formatForCode()»'}" title="{gt text='Create new «targetEntity.name.formatForDisplay()»'}" class="z-button «app.prefix()»InlineButton">{gt text='Create'}</a>
