@@ -12,7 +12,9 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «LET getEditStageCode(incoming) AS stageCode-»
 «REM»Look if we have to do anything by checking stage codes which represent different edit behaviors«ENDREM»«""-»
 «IF (!incoming && stageCode == 2) || (incoming && (stageCode == 1 || stageCode == 3))-»
-«IF !incoming-»«EXPAND ActiveParentImpl(app, controller, onlyInclude)-»
+«IF !incoming-»
+«REM»Exclude parent view for 1:1 and 1:n for now - see http://code.zikula.org/generator/ticket/89«ENDREM»«""-»
+«REM»«EXPAND ActiveParentImpl(app, controller, onlyInclude)-»«ENDREM»«""-»
 «ELSE-»«EXPAND PassiveChildImpl(app, controller, onlyInclude, stageCode)-»
 «ENDIF-»
 «ENDIF-»
@@ -180,6 +182,8 @@ TODO: only for $mode ne create:
 «LET getEditStageCode(incoming) AS stageCode-»
 «REM»Look if we have to do anything by checking stage codes which represent different edit behaviors«ENDREM»«""-»
 «IF (!incoming && stageCode == 2) || ((incoming || this.metaType == ManyToManyRelationship) && (stageCode == 1 || stageCode == 3))-»
+«REM»Exclude parent view for 1:1 and 1:n for now - see http://code.zikula.org/generator/ticket/89«ENDREM»«""-»
+«IF !(this.metaType != ManyToManyRelationship && !incoming)-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(app, ((targetEntity == target) ? source : target), (!(incoming && this.metaType != ManyToManyRelationship)), incoming, relationAliasName) AS uniqueNameForJs-»
 «IF !insideLoader-»
@@ -195,6 +199,7 @@ TODO: only for $mode ne create:
 «ENDIF-»
 «ENDLET-»
 «ENDLET-»
+«ENDIF-»
 «ENDIF-»
 «ENDLET-»
 «ENDDEFINE»
