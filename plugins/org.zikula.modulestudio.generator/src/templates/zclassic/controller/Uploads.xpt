@@ -176,7 +176,7 @@ class «appName()»_Base_UploadHandler
                 // original file name
                 $fileNameCharCount = strlen($fileName);
                 for ($y = 0; $y < $fileNameCharCount; $y++) {
-                    if (!ereg("([0-9A-Za-z_\.])", $fileName[$y])) {
+                    if (preg_match('/[^0-9A-Za-z_\.]/', $fileName[$y])) {
                         $fileName[$y] = '_';
                     }
                 }
