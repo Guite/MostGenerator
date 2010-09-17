@@ -72,10 +72,9 @@ class «appName()»_Base_Util
      * @param  string    $filePath   The input file path (including file name).
      * @param  int       $width      Desired width.
      * @param  int       $height     Desired height.
-     *
      * @return string The thumbnail file path.
      */
-    function static getImageThumb($fileName = '', $filePath = '', $width = 100, $height = 80)
+    public static function getImageThumb($fileName = '', $filePath = '', $width = 100, $height = 80)
     {
         $thumbArgs = array();
         if (empty($fileName) || empty($filePath) || !file_exists($filePath)) {
