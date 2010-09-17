@@ -153,8 +153,8 @@
         // initialise auto completion for user fields
 «FOREACH userFields AS userField-»
 «LET userField.actualFieldName().formatForCode() AS realName»
-        {{if $mode ne 'create' && $«realName» gt 0}}
-            $('«realName»Desc').value = '{{usergetvar name='uname' uid=$«realName»}}';
+        {{if isset($«realName») && $«realName» gt 0}}
+            $('«realName»Selector').value = '{{usergetvar name='uname' uid=$«realName»}}';
         {{/if}}
         «app.prefix()»InitUserField('«realName»', 'get«name.formatForCodeCapital()»«realName.formatForCodeCapital()»Users');
 «ENDLET-»
