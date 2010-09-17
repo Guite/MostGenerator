@@ -75,7 +75,7 @@ class «appName()»_Base_Util
      *
      * @return string The thumbnail file path.
      */
-    function getImageThumb($fileName = '', $filePath = '', $width = 100, $height = 80)
+    function static getImageThumb($fileName = '', $filePath = '', $width = 100, $height = 80)
     {
         $thumbArgs = array();
         if (empty($fileName) || empty($filePath) || !file_exists($filePath)) {
