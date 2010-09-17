@@ -22,17 +22,18 @@
  */
 function «prefix()»InitUserField(fieldName, getterName)
 {
-    if (!$(fieldName + 'liveusersearch')) {
+    if (!$(fieldName + 'LiveSearch')) {
         return;
     }
-    $(fieldName + 'liveusersearch').removeClassName('z-hide');
+    $(fieldName + 'LiveSearch').removeClassName('z-hide');
     new Ajax.Autocompleter(
-        fieldName + 'desc',
-        fieldName + 'desc_choices',
+        fieldName + 'Selector',
+        fieldName + 'SelectorChoices',
         Zikula.Config['baseURL'] + 'ajax.php?module=«appName()»&func=' + getterName,
         {
             paramName: 'fragment',
             minChars: 3,
+            indicator: fieldName + 'Indicator',
             afterUpdateElement: function(data) {
                 $(fieldName).value = $($(data).value).value;
             }
@@ -78,6 +79,7 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
     var acOptions = {
             paramName: 'fragment',
             minChars: 2,
+            indicator: idPrefix + 'Indicator',
             callback: function(inputField, defaultQueryString) {
                     // modify the query string before the request
                     defaultQueryString += '&ot=' + objectType;

@@ -154,7 +154,7 @@
 «FOREACH userFields AS userField-»
 «LET userField.actualFieldName().formatForCode() AS realName»
         {{if $mode ne 'create' && $«realName» gt 0}}
-            $('«realName»desc').value = '{{usergetvar name='uname' uid=$«realName»}}';
+            $('«realName»Desc').value = '{{usergetvar name='uname' uid=$«realName»}}';
         {{/if}}
         «app.prefix()»InitUserField('«realName»', 'get«name.formatForCodeCapital()»«realName.formatForCodeCapital()»Users');
 «ENDLET-»
