@@ -46,17 +46,20 @@
 «ENDDEFINE»
 
 «DEFINE DisplayRelatedItems(String appName, Controller controller, Entity relatedEntity) FOR JoinRelationship-»
-«LET ((target == relatedEntity) ? false : true) AS incoming-»
-«LET getRelationAliasName(incoming).formatForCodeCapital() AS relationAliasName-»
-«LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasNameParam-»
-«LET ((target == relatedEntity) ? source : target) AS otherEntity-»
-«LET (incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship) AS many-»
+«LET ((target == relatedEntity) ? true : false) AS incoming-»
+«LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
+«LET getRelationAliasName(incoming).formatForCodeCapital() AS relationAliasNameParam-»
+«LET ((incoming) ? source : target) AS otherEntity-»
+«LET (!incoming && this.metaType == OneToManyRelationship || this.metaType == ManyToManyRelationship) AS many-»
 <h3>«otherEntity.getEntityNameSingularPlural(many).formatForDisplayCapital()»</h3>
 
 {if isset($«relatedEntity.name.formatForCode()».«relationAliasName»)}
     {include file='«controller.name()»/«otherEntity.name.formatForCode()»/include_displayItemList«IF many»Many«ELSE»One«ENDIF».tpl' items=$«relatedEntity.name.formatForCode()».«relationAliasName»}
 {/if}
 
+«IF !many-»
+{if !isset($«relatedEntity.name.formatForCode()».«relationAliasName»)}
+«ENDIF-»
 {checkpermission component='«appName»::' instance='.*' level='ACCESS_ADMIN' assign='authAdmin'}
 {if $authAdmin || (isset($«relatedEntity.name.formatForCode()».cr_uid) && $«relatedEntity.name.formatForCode()».cr_uid eq $uid)}
 <p class="manageLink">
@@ -66,6 +69,9 @@
     </a>
 </p>
 {/if}
+«IF !many-»
+{/if}
+«ENDIF-»
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»
