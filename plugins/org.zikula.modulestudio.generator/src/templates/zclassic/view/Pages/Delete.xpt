@@ -27,7 +27,8 @@
             <fieldset>
                 <legend>{gt text='Confirmation prompt'}</legend>
                 <div class="z-buttons z-formbuttons">
-                    {button src='button_ok.gif' set='icons/small' __alt='Delete' __title='Delete'}
+                    {gt text='Delete' assign='deleteTitle'}
+                    {button src='button_ok.gif' set='icons/small' value=$deleteTitle title=$deleteTitle}
                     <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«name.formatForCode()»'}">{img modname='core' src='button_cancel.gif' set='icons/small' __alt='Cancel' __title='Cancel'} {gt text='Cancel'}</a>
                 </div>
             </fieldset>

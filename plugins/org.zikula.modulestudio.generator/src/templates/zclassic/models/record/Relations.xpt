@@ -52,9 +52,9 @@
 «ENDIF-»
         $this->hasMany('«IF incoming-»«source.implClassModelRecord()»«IF sourceAlias != null && sourceAlias != ""-» as «sourceAlias.formatForCodeCapital()»«ENDIF»«ELSE»«target.implClassModelRecord()»«IF targetAlias != null && targetAlias != ""-» as «targetAlias.formatForCodeCapital()»«ENDIF»«ENDIF»', array(
                 // linked field in the defining class
-                'local' => '«target.relationFieldName(targetField)»',
+                'local' => '«IF incoming-»«target.relationFieldName(targetField)»«ELSE»«source.relationFieldName(sourceField)»«ENDIF»',
                 // linked field in the linked class
-                'foreign' => '«source.relationFieldName(sourceField)»',
+                'foreign' => '«IF incoming-»«source.relationFieldName(sourceField)»«ELSE»«target.relationFieldName(targetField)»«ENDIF»',
                 // name of the many-to-many association class
                 'refClass' => '«implClassModelRefRecord()»',
 «REM»                // true indicates the owning side (owning the foreign key)

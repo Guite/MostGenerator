@@ -141,11 +141,11 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 {img src="editdelete.gif" modname="core" set="icons/extrasmall" assign="removeImageArray"}
 {assign var="removeImage" value="<img src=\"`$removeImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
 
-<input type="hidden" id="«uniqueNameForJs»ItemList" name="«uniqueNameForJs»ItemList" value="{if isset($item«IF many»s«ENDIF») && is_array($item«IF many»s«ENDIF»)}«IF many»{foreach name='relLoop' item='item' from=$items}«ENDIF»{$item.«targetEntity.idField()»}«IF many»{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}«ENDIF»{/if}" />
+<input type="hidden" id="«uniqueNameForJs»ItemList" name="«uniqueNameForJs»ItemList" value="{if isset($item«IF many»s«ENDIF») && is_array($item«IF many»s«ENDIF»)«IF !many» && isset($item.«targetEntity.idField()»)«ENDIF»}«IF many»{foreach name='relLoop' item='item' from=$items}«ENDIF»{$item.«targetEntity.idField()»}«IF many»{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}«ENDIF»{/if}" />
 <input type="hidden" id="«uniqueNameForJs»Mode" name="«uniqueNameForJs»Mode" value="«IF includeEditing»1«ELSE»0«ENDIF»" />
 
 <ul id="«uniqueNameForJs»ReferenceList">
-{if isset($item«IF many»s«ENDIF») && is_array($item«IF many»s«ENDIF»)}
+{if isset($item«IF many»s«ENDIF») && is_array($item«IF many»s«ENDIF»)«IF !many» && isset($item.«targetEntity.idField()»)«ENDIF»}
 «IF many-»
 {foreach name='relLoop' item='item' from=$items}
 «ENDIF-»

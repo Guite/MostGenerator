@@ -32,8 +32,11 @@
     </script>
 «IF hasImageFields()-»
     <br />
-«LET getImageFields().get(0) AS imageField-»
-    <img src="{$item.«imageField.actualFieldName().formatForCode()»|«app.appName().formatForDB()»ImageThumb:$item.«imageField.actualFieldName().formatForCode()»FullPath:50:40}" width="50" height="40" alt="{$relatedItem.«getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
+«LET getImageFields().get(0).actualFieldName().formatForCode() AS imageFieldName-»
+{if $item.«imageFieldName» ne ''}
+    {getbaseurl assign="baseURL"}
+    <img src="{$item.«imageFieldName»|«app.appName().formatForDB()»ImageThumb:"`$baseURL``$item.«imageFieldName»`":50:40}" width="50" height="40" alt="{$item.«getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
+{/if}
 «ENDLET-»
 «ENDIF-»
 «IF many»

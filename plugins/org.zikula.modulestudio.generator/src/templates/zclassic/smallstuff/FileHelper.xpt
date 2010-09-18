@@ -49,10 +49,14 @@
 
 
 «DEFINE MemberVar(String name, String type, String init) FOR Object-»
+«EXPAND MemberVar(name, type, init, 'protected')-»
+«ENDDEFINE»
+
+«DEFINE MemberVar(String name, String type, String init, String modifier) FOR Object-»
     /**
      * @var «type» $«name»
      */
-    protected $«name»«init»;
+    «modifier» $«name»«init»;
 «ENDDEFINE»
 
 «DEFINE GetterAndSetterMethods(String name, String type) FOR Object-»
