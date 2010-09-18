@@ -33,22 +33,88 @@
 «ENDIF-»
 
 <dl id="«appName»_body">
-«FOREACH fields.typeSelect(DerivedField).reject(e|e.leading || e.primaryKey) AS field-»
-«LET incoming.select(e|e.source.idField() == field.name.formatForDB()) AS joins-»
-«IF joins.size > 0-»
-    <dt>{gt text='«joins.get(0).source.name.formatForDisplayCapital()»'}</dt>
-    <dd>«FOREACH joins AS join SEPARATOR ', '-»{$«objName».«join.source.name.formatForDB()»_«join.source.idField()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH-»</dd>
-«ELSE-»
-    <dt>{gt text='«field.actualFieldName().formatForDisplayCapital()»'}</dt>
-    <dd>«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(objName, 'display', '') FOR field-»</dd>
-«ENDIF-»
-«ENDLET-»
-«ENDFOREACH-»
+«EXPAND DisplayEntry(controller) FOREACH getDerivedFields().reject(e|e.leading || e.primaryKey)-»
 «IF standardFields-»
     {include file='«controller.name()»/include_metadata_display.tpl' obj=$«objName»}
 «ENDIF-»
 </dl>
 
+«EXPAND ItemActions(appName, controller)-»
+
+{modurl modname='«appName»' type='«controller.name()»' func='display' ot='«objName»' «idField()»=$«objName».«idField()» assign='returnurl'}
+{modcallhooks hookobject='item' hookaction='display' module='«appName»' hookid='«name.formatForDB()»`$«objName».«idField()»`' returnurl=$returnurl}
+
+«IF refedElems.size > 0-»
+<br style="clear: right" />
+«ENDIF-»
+{/if}
+
+«IF controller.metaType == AdminController-»
+</div>
+«ELSE-»
+</div>
+«ENDIF-»
+«ENDLET-»
+
+{include file='«controller.name()»/footer.tpl'}
+«ENDFILE»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntry(Controller controller) FOR EntityField-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntrySimpleField(Controller controller) FOR DerivedField-»
+    <dt>{gt text='«actualFieldName().formatForDisplayCapital()»'}</dt>
+    <dd>«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(entity.name.formatForCode(), 'display', '')-»</dd>
+«ENDDEFINE»
+
+«DEFINE DisplayEntry(Controller controller) FOR DerivedField-»
+«EXPAND DisplayEntrySimpleField(controller)-»
+«ENDDEFINE»
+
+«DEFINE DisplayIncomingRelationField(Controller controller) FOR JoinRelationship-»
+«LET getRelationAliasName(false).formatForCodeCapital() AS relationAliasName-»
+«LET target.name.formatForCode().msconcat('.').msconcat(relationAliasName) AS relObjName-»
+    <dt>{gt text='«relationAliasName.formatForDisplayCapital()»'}</dt>
+    <dd>
+    {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
+        <a href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«source.name.formatForCode()»' «source.idField()»=$«relObjName».«source.idField()»}">
+            {$«relObjName».«source.getLeadingField().actualFieldName().formatForCode()»«REM»|nl2br«ENDREM»|default:""}
+        </a>
+        <a id="«source.name.formatForCode()»Item{$«relObjName».«source.idField()»}Display" href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«source.name.formatForCode()»' «source.idField()»=$«relObjName».«source.idField()» theme='Printer'}" title="{gt text='Open quick view window'}" style="display: none">
+            {img src='windows_list.gif' modname='core' set='icons/extrasmall' __alt='Quick view'}
+        </a>
+        <script type="text/javascript">
+        /* <![CDATA[ */
+            document.observe('dom:loaded', function() {
+                «container.application.prefix()»InitInlineWindow($('«source.name.formatForCode()»Item{{$«relObjName».«source.idField()»}}Display'), '{{$«relObjName».«source.getLeadingField().actualFieldName().formatForCode()»|replace:"'":""}}');
+            });
+        /* ]]> */
+        </script>
+    {else}
+        {$«relObjName».«source.getLeadingField().actualFieldName().formatForCode()»«REM»|nl2br«ENDREM»|default:""}
+    {/if}
+    </dd>
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntry(Controller controller) FOR IntegerField-»
+«LET getPointingRelations() AS joins-»
+«IF joins.size > 0-»
+«EXPAND DisplayIncomingRelationField(controller) FOREACH joins-»
+«ELSE-»
+«EXPAND DisplayEntrySimpleField(controller)-»
+«ENDIF-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntry(Controller controller) FOR CalculatedField-»
+«ENDDEFINE»
+
+«DEFINE ItemActions(String appName, Controller controller) FOR Entity-»
+«LET name.formatForCode() AS objName-»
 {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 <p>
 «IF controller.hasActions('edit')-»
@@ -78,24 +144,6 @@
     </a>
 «ENDIF-»
 </p>
-
-{modurl modname='«appName»' type='«controller.name()»' func='display' ot='«objName»' «idField()»=$«objName».«idField()» assign='returnurl'}
-{modcallhooks hookobject='item' hookaction='display' module='«appName»' hookid='«name.formatForDB()»`$«objName».«idField()»`' returnurl=$returnurl}
-
-«IF refedElems.size > 0-»
-<br style="clear: right" />
-«ENDIF-»
-{/if}
-
-«IF controller.metaType == AdminController-»
-</div>
-«ELSE-»
-</div>
-«ENDIF-»
-«ENDLET-»
-
-{include file='«controller.name()»/footer.tpl'}
-«ENDFILE»
 «ENDLET-»
 «ENDDEFINE»
 

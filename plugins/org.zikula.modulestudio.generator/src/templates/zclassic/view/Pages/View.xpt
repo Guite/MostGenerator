@@ -54,19 +54,7 @@ listType:
     </colgroup>
     <thead>
     <tr>
-«FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field -»
-        <th id="h«field.actualFieldName().formatForDB()»" scope="col" align="«EXPAND Alignment FOR field-»" valign="middle">
-«LET incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == field.name.formatForDB()) AS joins-»
-«IF joins.size > 0-»
-«LET joins.get(0).source.idField() AS fieldName-»
-«EXPAND HeaderSortingLink(appName, controller, objName, joins.get(0).source.name.formatForCode(), joins.get(0).source.name) FOR field-»
-«ENDLET-»
-«ELSE-»
-«EXPAND HeaderSortingLink(appName, controller, objName, field.actualFieldName().formatForCode(), field.actualFieldName()) FOR field-»
-«ENDIF-»
-«ENDLET-»
-        </th>
-«ENDFOREACH-»
+«EXPAND HeaderLine(controller) FOREACH getDerivedFields().reject(e|e.primaryKey)-»
         <th id="hintactions" scope="col" align="left" valign="middle">{gt text='Actions'}</th>
     </tr>
     </thead>
@@ -81,73 +69,8 @@ listType:
 «ELSEIF listType == 3-»
     <tr class="{cycle values='z-odd, z-even'}">
 «ENDIF-»
-«""-»
-«FOREACH getDerivedFields().reject(e|e.primaryKey) AS field-»
-«IF listType < 2-»
-        <li>
-«ELSEIF listType == 2-»
-        <dd>
-«ELSEIF listType == 3-»
-        <td headers="h«field.actualFieldName().formatForDB()»" align="«EXPAND Alignment FOR field-»" valign="top">
-«ENDIF-»
-«LET incoming.select(e|e.source.idField() == field.name.formatForDB()) AS joins-»
-«IF field.leading == true-»
-            {$«objName».«field.actualFieldName().formatForCode()»|modcallhooks}
-«ELSEIF joins.size > 0-»
-            «FOREACH joins AS join SEPARATOR ', '»{$«objName».«join.source.name.formatForDB()»_«join.source.idField()»«REM»|nl2br«ENDREM»|default:""}«ENDFOREACH»
-«ELSE-»
-«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(objName, 'view', '            ') FOR field»
-«ENDIF-»
-«ENDLET-»
-«IF listType < 2-»
-        </li>
-«ELSEIF listType == 2-»
-        </dd>
-«ELSEIF listType == 3-»
-        </td>
-«ENDIF-»
-«ENDFOREACH-»
-«""-»
-«""-»
-«""-»
-«IF listType < 2-»
-        <li>
-«ELSEIF listType == 2-»
-        <dd>
-«ELSEIF listType == 3-»
-        <td headers="hintactions" align="left" valign="top" style="white-space: nowrap">
-«ENDIF-»
-«IF controller.hasActions('display')-»
-            <a href="{modurl modname='«appName»' type='«controller.name()»' func='display' ot='«objName»' «idField()»=$«objName».«idField()»}" title="{$«objName».«getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}">
-                {img src='demo.gif' modname='core' set='icons/extrasmall' __alt='Details'}
-            </a>
-«ENDIF-»            
-«IF controller.hasActions('edit')-»
-    {checkpermissionblock component='«appName»::' instance='.*' level='ACCESS_EDIT'}
-            <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»' «idField()»=$«objName».«idField()»}" title="{gt text='Edit'}">
-                {img src='xedit.gif' modname='core' set='icons/extrasmall' __alt='Edit'}
-            </a>
-            <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»' astemplate=$«objName».«idField()»}" title="{gt text='Reuse for new item'}">
-                {img src='filesaveas.gif' modname='core' set='icons/extrasmall' __alt='Reuse'}
-            </a>
-    {/checkpermissionblock}
-«ENDIF-»
-«IF controller.hasActions('delete')-»
-    {checkpermissionblock component='«appName»::' instance='.*' level='ACCESS_DELETE'}
-            <a href="{modurl modname='«appName»' type='«controller.name()»' func='delete' ot='«objName»' «idField()»=$«objName».«idField()»}" title="{gt text='Delete'}">
-                {img src='14_layer_deletelayer.gif' modname='core' set='icons/extrasmall' __alt='Delete'}
-            </a>
-    {/checkpermissionblock}
-«ENDIF-»
-«IF listType < 2-»
-        </li>
-«ELSEIF listType == 2-»
-        </dd>
-«ELSEIF listType == 3-»
-        </td>
-«ENDIF-»
-«""-»
-«""-»
+«EXPAND DisplayEntry(controller, listType) FOREACH getDerivedFields().reject(e|e.primaryKey)-»
+«EXPAND ItemActions(appName, controller, listType)-»
 «IF listType < 2-»
     </ul></li>
 «ELSEIF listType == 2-»
@@ -162,7 +85,7 @@ listType:
         <dt>
 «ELSEIF listType == 3-»
         <tr class="z-«IF controller.metaType == AdminController-»admin«ELSE»data«ENDIF»tableempty">
-          <td align="left" valign="top" colspan="«fields.size-1+1»">
+          <td align="left" valign="top" colspan="«fields.size»">«REM»fields.size -1 (id) +1 (actions)«ENDREM»«""-»
 «ENDIF-»
             {gt text='No «nameMultiple.formatForDisplay()» found.'}
 «IF listType < 2-»
@@ -199,17 +122,161 @@ listType:
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE HeaderSortingLink(String appName, Controller controller, String objName, String fieldName, String label) FOR EntityField-»
+«DEFINE HeaderLine(Controller controller) FOR EntityField-»
+«ENDDEFINE»
+
+«DEFINE HeaderLine(Controller controller) FOR DerivedField-»
+        <th id="h«actualFieldName().formatForDB()»" scope="col" align="«EXPAND Alignment-»" valign="middle">
+«EXPAND HeaderLineInner(controller)-»
+        </th>
+«ENDDEFINE»
+
+«DEFINE HeaderLineInner(Controller controller) FOR DerivedField-»
+«EXPAND HeaderLineInnerSimpleField(controller)-»
+«ENDDEFINE»
+
+«DEFINE HeaderLineInner(Controller controller) FOR IntegerField-»
+«LET getPointingRelations() AS joins-»
+«IF joins.size > 0-»
+«EXPAND HeaderLineInnerRelationField(controller, this) FOREACH joins-»
+«ELSE-»
+«EXPAND HeaderLineInnerSimpleField(controller)-»
+«ENDIF-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE HeaderLineInnerSimpleField(Controller controller) FOR DerivedField-»
+«EXPAND HeaderSortingLink(controller, actualFieldName().formatForCode(), actualFieldName())-»
+«ENDDEFINE»
+
+«DEFINE HeaderLineInnerRelationField(Controller controller, IntegerField intField) FOR JoinRelationship-»
+«LET getRelationAliasName(false).formatForCodeCapital() AS relationAliasName-»
+«EXPAND HeaderSortingLink(controller, relationAliasName.formatForCode(), relationAliasName) FOR intField-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE HeaderLine(Controller controller) FOR CalculatedField-»
+«ENDDEFINE»
+
+«DEFINE HeaderSortingLink(Controller controller, String fieldName, String label) FOR EntityField-»
             {assign var='sortDirection' value='asc'}{if $sort eq '«fieldName»'}{assign var='sortDirection' value=$sdirReverse}{/if}
-            <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«objName»' sort='«fieldName»' sdir=$sortDirection}"{if $sort eq '«fieldName»'} class="currentSortingLink"{/if}>
+            <a href="{modurl modname='«entity.container.application.appName()»' type='«controller.name()»' func='view' ot='«entity.name.formatForCode()»' sort='«fieldName»' sdir=$sortDirection}"{if $sort eq '«fieldName»'} class="currentSortingLink"{/if}>
                 {gt text='«label.formatForDisplayCapital()»'}
             </a>
 «ENDDEFINE»
 
 «DEFINE Alignment FOR EntityField»left«ENDDEFINE»
-«DEFINE Alignment FOR IntegerField»«IF entity.incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == name.formatForDB()).size > 0-»left«ELSE»right«ENDIF»«ENDDEFINE»
+«DEFINE Alignment FOR IntegerField»«IF getPointingRelations().size > 0-»left«ELSE»right«ENDIF»«ENDDEFINE»
 «DEFINE Alignment FOR DecimalField»right«ENDDEFINE»
 «DEFINE Alignment FOR FloatField»right«ENDDEFINE»
 «DEFINE Alignment FOR BooleanField»center«ENDDEFINE»
 
+
+«DEFINE DisplayEntry(Controller controller, Integer listType) FOR EntityField-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntry(Controller controller, Integer listType) FOR DerivedField-»
+«IF listType < 2-»
+        <li>
+«ELSEIF listType == 2-»
+        <dd>
+«ELSEIF listType == 3-»
+        <td headers="h«actualFieldName().formatForDB()»" align="«EXPAND Alignment-»" valign="top">
+«ENDIF-»
+«EXPAND DisplayEntryInner(controller)-»
+«IF listType < 2-»
+        </li>
+«ELSEIF listType == 2-»
+        </dd>
+«ELSEIF listType == 3-»
+        </td>
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntryInner(Controller controller) FOR DerivedField-»
+«EXPAND DisplayEntryInnerSimpleField(controller)-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntryInner(Controller controller) FOR IntegerField-»
+«LET getPointingRelations() AS joins-»
+«IF joins.size > 0-»
+«EXPAND DisplayEntryInnerIncomingRelationField(controller) FOREACH joins-»
+«ELSE-»
+«EXPAND DisplayEntryInnerSimpleField(controller)-»
+«ENDIF-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntryInnerSimpleField(Controller controller) FOR DerivedField-»
+«IF leading == true-»
+            {$«entity.name.formatForCode()».«actualFieldName().formatForCode()»|modcallhooks}
+«ELSE-»
+«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(entity.name.formatForCode(), 'view', '            ')-»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntryInnerIncomingRelationField(Controller controller) FOR JoinRelationship-»
+«LET getRelationAliasName(false).formatForCodeCapital() AS relationAliasName-»
+«LET target.name.formatForCode().msconcat('.').msconcat(relationAliasName) AS relObjName-»
+            <a href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«source.name.formatForCode()»' «source.idField()»=$«relObjName».«source.idField()»}">
+                {$«relObjName».«source.getLeadingField().actualFieldName().formatForCode()»«REM»|nl2br«ENDREM»|default:""}
+            </a>
+            <a id="«source.name.formatForCode()»Item{$«relObjName».«source.idField()»}Display" href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«source.name.formatForCode()»' «source.idField()»=$«relObjName».«source.idField()» theme='Printer'}" title="{gt text='Open quick view window'}" style="display: none">
+                {img src='windows_list.gif' modname='core' set='icons/extrasmall' __alt='Quick view'}
+            </a>
+            <script type="text/javascript">
+            /* <![CDATA[ */
+                document.observe('dom:loaded', function() {
+                    «container.application.prefix()»InitInlineWindow($('«source.name.formatForCode()»Item{{$«relObjName».«source.idField()»}}Display'), '{{$«relObjName».«source.getLeadingField().actualFieldName().formatForCode()»|replace:"'":""}}');
+                });
+            /* ]]> */
+            </script>
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntry(Controller controller) FOR CalculatedField-»
+«ENDDEFINE»
+
+
+«DEFINE ItemActions(String appName, Controller controller, Integer listType) FOR Entity-»
+«LET name.formatForCode() AS objName-»
+«IF listType < 2-»
+        <li>
+«ELSEIF listType == 2-»
+        <dd>
+«ELSEIF listType == 3-»
+        <td headers="hintactions" align="left" valign="top" style="white-space: nowrap">
+«ENDIF-»
+«IF controller.hasActions('display')-»
+            <a href="{modurl modname='«appName»' type='«controller.name()»' func='display' ot='«objName»' «idField()»=$«objName».«idField()»}" title="{$«objName».«getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}">
+                {img src='demo.gif' modname='core' set='icons/extrasmall' __alt='Details'}
+            </a>
+«ENDIF-»            
+«IF controller.hasActions('edit')-»
+    {checkpermissionblock component='«appName»::' instance='.*' level='ACCESS_EDIT'}
+            <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»' «idField()»=$«objName».«idField()»}" title="{gt text='Edit'}">
+                {img src='xedit.gif' modname='core' set='icons/extrasmall' __alt='Edit'}
+            </a>
+            <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»' astemplate=$«objName».«idField()»}" title="{gt text='Reuse for new item'}">
+                {img src='filesaveas.gif' modname='core' set='icons/extrasmall' __alt='Reuse'}
+            </a>
+    {/checkpermissionblock}
+«ENDIF-»
+«IF controller.hasActions('delete')-»
+    {checkpermissionblock component='«appName»::' instance='.*' level='ACCESS_DELETE'}
+            <a href="{modurl modname='«appName»' type='«controller.name()»' func='delete' ot='«objName»' «idField()»=$«objName».«idField()»}" title="{gt text='Delete'}">
+                {img src='14_layer_deletelayer.gif' modname='core' set='icons/extrasmall' __alt='Delete'}
+            </a>
+    {/checkpermissionblock}
+«ENDIF-»
+«IF listType < 2-»
+        </li>
+«ELSEIF listType == 2-»
+        </dd>
+«ELSEIF listType == 3-»
+        </td>
+«ENDIF-»
+«ENDLET-»
+«ENDDEFINE»
 
