@@ -3,11 +3,15 @@
 
 
 «DEFINE Root FOR Application»
-    «FILE "lib/" + appName() + "/Version.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND AppInfo»«ENDFILE»
+    «FILE "lib/" + appName() + "/Base/Version.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND AppInfoBase»«ENDFILE»
+    «FILE "lib/" + appName() + "/Version.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND AppInfoImpl»«ENDFILE»
 «ENDDEFINE»
 
-«DEFINE AppInfo FOR Application-»
-class «appName()»_Version extends Zikula_Version
+«DEFINE AppInfoBase FOR Application-»
+/**
+ * Version information base class.
+ */
+class «appName()»_Base_Version extends Zikula_Version
 {
     public function getMetaData()
     {
@@ -31,7 +35,7 @@ class «appName()»_Version extends Zikula_Version
                     array('modname'    => 'Thumbnail',
                           'minversion' => '1.2.1',
                           'maxversion' => '',
-                          'status'     => ModUtil::DEPENDENCY_RECOMMENDED),
+                          'status'     => ModUtil::DEPENDENCY_RECOMMENDED)«IF !referredApplications.isEmpty-»,«ENDIF»
 «ENDIF-»
 «EXPAND AppDependency FOREACH referredApplications SEPARATOR ','-»
         );
@@ -43,6 +47,15 @@ class «appName()»_Version extends Zikula_Version
 
 «ENDDEFINE»
 
+«DEFINE AppInfoImpl FOR Application-»
+/**
+ * Version information base class.
+ */
+class «appName()»_Version extends «appName()»_Base_Version
+{
+    // custom enhancements can go here
+}
+«ENDDEFINE»
 
 «DEFINE PermissionSchema FOR Application»
 «REM»will be filled by Advices«ENDREM»
