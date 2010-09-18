@@ -16,7 +16,8 @@ private handleEntity(Entity this):
     //info("Before: " + fields.size + " fields") ->
 	addPrimaryKey(this) ->
     //info("Added primary key, now: " + fields.size + " fields") ->
-    this.incoming.typeSelect(JoinRelationship).addRelationField(this) ->
+    this.incoming.typeSelect(OneToOneRelationship).addRelationField(this) ->
+    this.incoming.typeSelect(OneToManyRelationship).addRelationField(this) ->
     //info("Added relation fields, now: " + fields.size + " fields") ->
 	this;
 
