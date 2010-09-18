@@ -101,7 +101,7 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
 
         $objectType = $vars['objectType'];
 
-«EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(appName(), true, 'block')-»
+«EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(appName(), true, 'block', 'ItemList', 'display')-»
 
 /** TODO
         if (!empty($vars['filter'])) {

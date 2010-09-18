@@ -1,9 +1,9 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 
-«DEFINE instantiateBusinessObject(String appName, Boolean isCollection, String context) FOR Object-»
+«DEFINE instantiateBusinessObject(String appName, Boolean isCollection, String context, String controller, String action) FOR Object-»
         // instantiate a new «IF isCollection»collection«ELSE»entity«ENDIF» corresponding to $objectType
-        $object«IF isCollection»Collection«ENDIF» = «appName»_Factory::getBusiness«IF isCollection»Collection«ELSE»Entity«ENDIF»($objectType, '«context»');
+        $object«IF isCollection»Collection«ENDIF» = «appName»_Factory::getBusiness«IF isCollection»Collection«ELSE»Entity«ENDIF»($objectType, '«context»'«IF !isCollection», false«ENDIF», array('controller' => '«controller»', 'action' => '«action»'));
 «ENDDEFINE»
 
 «DEFINE retrieveEntityFromModel(String idVar, String idValue, Boolean isHandler) FOR Object-»

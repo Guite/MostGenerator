@@ -211,7 +211,7 @@ class «implClassApi()» extends «baseClassApi()»
 
         $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»');
         $idField = strtolower($objectType) . 'id';
-«EXPAND ControllerHelper::instantiateBusinessObject(app.appName(), true, 'controllerAction')-»
+«EXPAND ControllerHelper::instantiateBusinessObject(app.appName(), true, 'controllerAction', name(), 'getItemList')-»
 
         $fragment = FormUtil::getPassedValue('fragment');
         $exclude = FormUtil::getPassedValue('exclude', '');

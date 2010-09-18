@@ -128,7 +128,7 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
 «EXPAND handleCommand(app, controller, actionName)-»
     }
 
-«EXPAND retrieveRelatedObjects(app)-»
+«EXPAND retrieveRelatedObjects(app, controller)-»
 
     /**
      * Helper method for updating links to related records.
@@ -151,7 +151,7 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
 «ENDIF-»
 «LET getUniqueDerivedFields() AS uniqueFields-»
 «IF !uniqueFields.isEmpty-»
-«EXPAND checkForUniqueValues(app) FOREACH uniqueFields-»
+«EXPAND checkForUniqueValues(app, controller) FOREACH uniqueFields-»
 «ENDIF-»
 «ENDLET-»
 }
@@ -182,7 +182,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         $this->objectType = '«name.formatForCode()»';
         $objectType = $this->objectType;
-«EXPAND ControllerHelper::instantiateBusinessObject(app.appName(), false, 'actionHandler')-»
+«EXPAND ControllerHelper::instantiateBusinessObject(app.appName(), false, 'actionHandler', controller.name(), 'initialize')-»
 
         $objectData = array();
         $this->mode = 'create';
@@ -247,7 +247,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE retrieveRelatedObjects(Application app) FOR Entity-»
+«DEFINE retrieveRelatedObjects(Application app, Controller controller) FOR Entity-»
     /**
      * Select a related object in create mode.
      *
@@ -256,8 +256,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
     function retrieveRelatedObjects($objectType, $relationInputFieldName, $many = false, $source = 'GET')
     {
         $idField = strtolower($objectType) . 'id';
-        $factoryContext = 'controllerAction';
-        $objectCollection = «app.appName()»_Factory::getBusinessCollection($objectType, $factoryContext);
+        $objectCollection = «app.appName()»_Factory::getBusinessCollection($objectType, 'controllerAction', array('controller' => '«controller.name()»', 'action' => 'edit'));
         $where = '';
         $sortParam = $objectCollection->get_intDefaultSortingField() . ' asc';
         if ($many) {
@@ -313,7 +312,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «EXPAND ReassignRelatedObjects(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 
         $objectType = $this->objectType;
-«EXPAND ControllerHelper::instantiateBusinessObject(app.appName(), false, 'actionHandler')-»
+«EXPAND ControllerHelper::instantiateBusinessObject(app.appName(), false, 'actionHandler', controller.name(), 'handleCommand')-»
 
         $«name.formatForCode()» = null;
         if ($args['commandName'] != 'create') {
@@ -557,7 +556,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
         return $formData;
 «ENDDEFINE»
 
-«DEFINE checkForUniqueValues(Application app) FOR DerivedField-»
+«DEFINE checkForUniqueValues(Application app, Controller controller) FOR DerivedField-»
 
     /**
      * Validation helper method
@@ -575,7 +574,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
         }
 
         $objectType = $this->objectType;
-«EXPAND ControllerHelper::instantiateBusinessObject(app.appName(), true, 'actionHandler')-»
+«EXPAND ControllerHelper::instantiateBusinessObject(app.appName(), true, 'actionHandler', controller.name(), 'checkIf'.msconcat(actualFieldName().formatForCodeCapital()).msconcat('Exists'))-»
 
         $where = 'tbl.«actualFieldName().formatForCode()» = \'' . DataUtil::formatForStore($value) . '\'';
         if ($excludeid > 0) {
