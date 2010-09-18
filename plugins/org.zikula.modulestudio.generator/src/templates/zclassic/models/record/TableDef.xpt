@@ -14,7 +14,8 @@
         $this->option('type', '«tableType.asConstant()»');
         $this->option('collate', '«IF collate != null && collate != ""-»«collate»«ELSE-»utf8_unicode_ci«ENDIF-»');
         $this->option('charset', '«IF charset != null && charset != ""-»«charset»«ELSE-»utf8«ENDIF-»');
-«IF indexes.size > 0»
+
+«IF !indexes.isEmpty-»
         /**
          * Indexes
          */

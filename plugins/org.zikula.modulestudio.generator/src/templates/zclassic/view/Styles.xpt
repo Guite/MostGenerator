@@ -2,7 +2,7 @@
 «EXTENSION extensions::Utils»
 
 «DEFINE Root FOR Application-»
-«IF controllers.controllers.actions.typeSelect(EditAction).size > 0-»
+«IF !controllers.controllers.actions.typeSelect(EditAction).isEmpty-»
 «FILE "style/style.css"-»«EXPAND StyleDefines-»
 «ENDFILE»
 «ENDIF-»
@@ -77,10 +77,10 @@ input.validation-passed, textarea.validation-passed {
 «LET hasUserFields() AS hasUserFields-»
 «LET hasImageFields() AS hasImageFields-»
 «LET models.getJoinRelations() AS joinRelations-»
-«IF joinRelations.size > 0 || hasUserFields-»
+«IF !joinRelations.isEmpty || hasUserFields-»
 
 /* edit pages */
-«IF joinRelations.size > 0-»
+«IF !joinRelations.isEmpty-»
 div.«prefix()»RelationLeftSide {
 float: left;
 width: 25%;
@@ -149,7 +149,7 @@ div.«prefix()»AutoCompleteWithImage ul li.selected«ENDIF-» {
     background-color: #ffb;
 }
 
-«IF hasImageFields || joinRelations.size > 0-»
+«IF hasImageFields || !joinRelations.isEmpty-»
 div.«prefix()»AutoComplete ul li div.itemtitle«IF hasImageFields-»,
 div.«prefix()»AutoCompleteWithImage ul li div.itemtitle«ENDIF-» {
     font-weight: 700;
@@ -162,7 +162,7 @@ div.«prefix()»AutoCompleteWithImage ul li div.itemdesc«ENDIF-» {
     color: #888;
 }
 
-«IF joinRelations.size > 0-»
+«IF !joinRelations.isEmpty-»
 button.«prefix()»InlineButton {
     margin-top: 1em;
 }

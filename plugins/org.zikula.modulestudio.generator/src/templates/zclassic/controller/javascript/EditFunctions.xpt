@@ -45,7 +45,7 @@ function «prefix()»InitUserField(fieldName, getterName)
 «ENDDEFINE»
 
 «DEFINE RelationFunctions FOR Application-»
-«IF models.relations.size > 0-»
+«IF !models.relations.isEmpty-»
 «EXPAND InitRelatedItemsForm(prefix())-»
 «EXPAND SelectRelatedItem-»
 «EXPAND InitInlineWindow-»

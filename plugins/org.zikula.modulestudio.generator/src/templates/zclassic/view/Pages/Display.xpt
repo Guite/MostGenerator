@@ -24,7 +24,7 @@
 «ENDLET-»
 
 «LET outgoing.typeSelect(JoinRelationship).union(incoming.typeSelect(ManyToManyRelationship)) AS refedElems-»
-«IF refedElems.size > 0-»
+«IF !refedElems.isEmpty-»
 {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 <div class="«appName.formatForDB()»RightBox">
 «EXPAND templates::zclassic::view::PageComponents::Relations::DisplayRelatedItems(appName, controller, this) FOREACH refedElems-»
@@ -45,7 +45,7 @@
 {modurl modname='«appName»' type='«controller.name()»' func='display' ot='«objName»' «idField()»=$«objName».«idField()» assign='returnurl'}
 {modcallhooks hookobject='item' hookaction='display' module='«appName»' hookid='«name.formatForDB()»`$«objName».«idField()»`' returnurl=$returnurl}
 
-«IF refedElems.size > 0-»
+«IF !refedElems.isEmpty-»
 <br style="clear: right" />
 «ENDIF-»
 «ENDLET-»
@@ -99,7 +99,7 @@
 
 «DEFINE DisplayEntry(Controller controller) FOR IntegerField-»
 «LET getPointingRelations() AS joins-»
-«IF joins.size > 0-»
+«IF !joins.isEmpty-»
 «EXPAND DisplayIncomingRelationField(controller) FOREACH joins-»
 «ELSE-»
 «EXPAND DisplayEntrySimpleField(controller)-»

@@ -13,7 +13,7 @@
 «ENDAROUND»
 
 «DEFINE PermissionSchema(String appName) FOR Entity-»
-«IF incoming.size > 0-»
+«IF !incoming.isEmpty-»
 «EXPAND PermissionSchema(appName) FOREACH incoming SEPARATOR ','-»,
 «ENDIF»
             '«appName»:«name.formatForCodeCapital()»:' => '«name.formatForCodeCapital()»ID::'«""-»

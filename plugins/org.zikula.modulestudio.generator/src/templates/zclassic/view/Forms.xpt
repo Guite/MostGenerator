@@ -5,7 +5,7 @@
 
 «DEFINE Root FOR Application-»
 «LET controllers.controllers.actions.typeSelect(EditAction) AS editActions-»
-«IF editActions.size > 0-»
+«IF !editActions.isEmpty-»
     «EXPAND Root(this) FOREACH editActions-»
 «ENDIF-»
 «ENDLET-»
@@ -141,7 +141,7 @@
     var removeImage = '<img src="{{$removeImageArray.src}}" width="16" height="16" alt="" />';
 «LET incoming.typeSelect(JoinRelationship) AS incomingJoins-»
 «LET outgoing.typeSelect(JoinRelationship) AS outgoingJoins-»
-«IF incomingJoins.size > 0 || outgoingJoins.size > 0-»
+«IF !incomingJoins.isEmpty || !outgoingJoins.isEmpty-»
     var relationHandler = new Array();
 «EXPAND FormComponents::Relations::InitJs(app, this, true, false) FOREACH incomingJoins-»
 «EXPAND FormComponents::Relations::InitJs(app, this, false, false) FOREACH outgoingJoins-»
@@ -149,7 +149,7 @@
 
     document.observe('dom:loaded', function() {
 «LET getUserFields() AS userFields-»
-«IF userFields.size > 0-»
+«IF !userFields.isEmpty-»
         // initialise auto completion for user fields
 «FOREACH userFields AS userField-»
 «LET userField.actualFieldName().formatForCode() AS realName»

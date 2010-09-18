@@ -5,7 +5,7 @@
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Root FOR Application-»
-«IF controllers.controllers.actions.typeSelect(EditAction).size > 0-»
+«IF !hasEditActions()-»
 «FILE 'lib/'.msconcat(appName()).msconcat('/Form/Plugin/FormFrame.php')-»«EXPAND FileHelper::phpFileHeader(this)-»
 «EXPAND FormFramePluginImpl-»
 «ENDFILE»

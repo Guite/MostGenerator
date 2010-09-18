@@ -150,7 +150,7 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
     }
 «ENDIF-»
 «LET getUniqueDerivedFields() AS uniqueFields-»
-«IF uniqueFields.size > 0-»
+«IF !uniqueFields.isEmpty-»
 «EXPAND checkForUniqueValues(app) FOREACH uniqueFields-»
 «ENDIF-»
 «ENDLET-»
@@ -467,7 +467,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «LET getUniqueDerivedFields().reject(e|e.primaryKey) AS uniqueFields-»
 «LET getUserFields() AS userFields-»
 «LET getUploadFields() AS uploadFields-»
-«IF uniqueFields.size > 0 || userFields.size > 0 || uploadFields.size > 0-»
+«IF !(uniqueFields.isEmpty && userFields.isEmpty && uploadFields.isEmpty)-»
 
         if ($args['commandName'] == 'create' || $args['commandName'] == 'update') {
 «FOREACH uniqueFields AS uniqueField-»
@@ -490,7 +490,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             }
 «ENDLET-»
 «ENDFOREACH-»
-«IF uploadFields.size > 0-»
+«IF !uploadFields.isEmpty-»
             $formData = $this->handleUploads($formData);
             if ($formData == false) {
                 return false;
@@ -524,7 +524,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
 
 «DEFINE handleUploads(Application app) FOR Entity-»
 «LET getUploadFields() AS uploadFields-»
-«IF uploadFields.size > 0-»
+«IF !uploadFields.isEmpty-»
         // initialise the upload handler
         $uploadManager = new «app.appName()»_UploadHandler();
 

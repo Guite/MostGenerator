@@ -8,7 +8,7 @@
 «FILE 'javascript/'.msconcat(appName()).msconcat('.js')-»
 <!--
 
-«IF models.getJoinRelations().size > 0-»
+«IF !models.getJoinRelations().isEmpty-»
 «EXPAND InitRelationWindow-»
 «ENDIF-»
 

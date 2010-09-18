@@ -50,34 +50,34 @@ cached getLeadingEntity(Application this) :
     models.entities.select(e | e.leading == true).get(0);
 
 cached boolean hasUserFields(Application this) :
-    (getUserFields().size > 0);
+    !getUserFields().isEmpty;
 
 cached boolean hasImageFields(Application this) :
-    (models.entities.exists(e|e.hasImageFields()));
+    models.entities.exists(e|e.hasImageFields());
 
 cached getUserFields(Application this) :
     models.entities.fields.typeSelect(UserField);
 
 cached boolean hasUploads(Application this) :
-    (models.entities.fields.typeSelect(UploadField).size > 0);
+    !models.entities.fields.typeSelect(UploadField).isEmpty;
 
 cached getUploadEntities(Application this) :
-    (models.entities.select(e|e.fields.typeSelect(UploadField).size > 0));
+    models.entities.select(e|e.fields.typeSelect(UploadField).size > 0);
 
 
 
 cached boolean hasEditActions(Application this) :
-    (getEditActions().size > 0);
+    !getEditActions().isEmpty;
 
 cached getEditActions(Application this) :
     controllers.controllers.actions.typeSelect(EditAction);
 
 cached boolean needsConfig(Application this) :
-    (models.variables.vars.size > 0);
+    !models.variables.vars.isEmpty;
 
 cached String configControllerType(Application this) :
-    ((controllers.controllers.typeSelect(AdminController).size > 0) ? 'modulestudio::AdminController'
-        : ((controllers.controllers.typeSelect(UserController).size > 0) ? 'modulestudio::UserController'
+    ((!controllers.controllers.typeSelect(AdminController).isEmpty) ? 'modulestudio::AdminController'
+        : ((!controllers.controllers.typeSelect(UserController).isEmpty) ? 'modulestudio::UserController'
             : controllers.controllers.get(0).metaType.toString()
     ));
 cached String configController(Application this) :
@@ -118,12 +118,12 @@ cached getPrimaryKeyField(Entity this) :
 cached getUserFields(Entity this) :
     fields.typeSelect(UserField);
 cached boolean hasUploadFields(Entity this) :
-    (getUploadFields().size > 0);
+    !getUploadFields().isEmpty;
 cached getUploadFields(Entity this) :
     fields.typeSelect(UploadField);
 
 cached boolean hasImageFields(Entity this) :
-    (getImageFields().size > 0);
+    !getImageFields().isEmpty;
 cached getImageFields(Entity this) :
     getUploadFields().select(e|e.allowedExtensions.split(", ").forAll(ext|ext == 'gif' || ext == 'jpeg' || ext == 'jpg' || ext == 'png'));
 
@@ -161,14 +161,14 @@ cached joinCommand(JoinRelationship this, Boolean incoming) :
     ((joinType != JoinType::INNER) ? 'leftJoin' : 'innerJoin');
 
 cached isInheriting(Entity this) :
-    outgoing.typeSelect(InheritanceRelationship).size > 0;
+    !outgoing.typeSelect(InheritanceRelationship).isEmpty;
 cached InheritanceRelationship getInheritanceRelation(Entity this) :
     outgoing.typeSelect(InheritanceRelationship).get(0);
 cached Entity parentType(Entity this) :
     getInheritanceRelation().target;
 
 cached isInheriter(Entity this) :
-    incoming.typeSelect(InheritanceRelationship).size > 0;
+    !incoming.typeSelect(InheritanceRelationship).isEmpty;
 cached getChildRelations(Entity this) :
     incoming.typeSelect(InheritanceRelationship);
 cached getChildRelationsWithAggregation(Entity this) :
@@ -227,12 +227,12 @@ cached String name(Controller this) :
 
 cached boolean hasActions(Controller controller, String type) :
 	switch (type) {
-	   case 'main'     : controller.actions.typeSelect(MainAction).size > 0 
-	   case 'view'     : controller.actions.typeSelect(ViewAction).size > 0 
-	   case 'display'  : controller.actions.typeSelect(DisplayAction).size > 0 
-	   case 'edit'     : controller.actions.typeSelect(EditAction).size > 0
-	   case 'delete'   : controller.actions.typeSelect(DeleteAction).size > 0
-	   case 'custom'   : controller.actions.typeSelect(CustomAction).size > 0 
+	   case 'main'     : !controller.actions.typeSelect(MainAction).isEmpty 
+	   case 'view'     : !controller.actions.typeSelect(ViewAction).isEmpty 
+	   case 'display'  : !controller.actions.typeSelect(DisplayAction).isEmpty 
+	   case 'edit'     : !controller.actions.typeSelect(EditAction).isEmpty
+	   case 'delete'   : !controller.actions.typeSelect(DeleteAction).isEmpty
+	   case 'custom'   : !controller.actions.typeSelect(CustomAction).isEmpty 
 	   default : false
 	};
 

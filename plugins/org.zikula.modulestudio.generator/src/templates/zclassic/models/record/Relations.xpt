@@ -7,14 +7,14 @@
         /**
          * Relations
          */
-«IF outgoing.typeSelect(JoinRelationship).size > 0-»
+«IF !outgoing.typeSelect(JoinRelationship).isEmpty-»
         // outgoing relations
 «FOREACH outgoing.typeSelect(JoinRelationship) AS relation-»
 «EXPAND RelationDefinition(false) FOR relation-»
 «ENDFOREACH-»
 
 «ENDIF-»
-«IF incoming.typeSelect(JoinRelationship).size > 0-»
+«IF !incoming.typeSelect(JoinRelationship).isEmpty-»
         // incoming relations
 «FOREACH incoming.typeSelect(JoinRelationship) AS relation-»
 «EXPAND RelationDefinition(true) FOR relation-»
@@ -80,7 +80,7 @@
 
 «DEFINE SubClasses FOR Entity-»
 «LET getChildRelationsWithAggregation() AS aggregatedChildren-»
-«IF aggregatedChildren.size > 0»
+«IF !aggregatedChildren.isEmpty-»
         $this->setSubclasses(array(
 «EXPAND SubClass FOREACH aggregatedChildren-»
             )

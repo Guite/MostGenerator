@@ -24,7 +24,7 @@
 
 «DEFINE FormLabel FOR IntegerField-»
 «LET getPointingRelations() AS pointingRelations-»
-«IF pointingRelations.size > 0-»
+«IF !pointingRelations.isEmpty-»
 «LET pointingRelations.get(0) AS pointingRelation-»
 «IF pointingRelation.sourceAlias != null && pointingRelation.sourceAlias != ""-»
 «pointingRelation.sourceAlias.formatForDisplayCapital()-»
@@ -58,7 +58,7 @@
 «DEFINE FormField FOR IntegerField-»
 «REM»commented out because relations are processed independently now; this code here remains temporarily just for safety
 «LET getPointingRelations() AS pointingRelations-»
-«IF pointingRelations.size > 0-»
+«IF !pointingRelations.isEmpty-»
 «LET pointingRelations.get(0) AS pointingRelation-»
 «LET pointingRelation.source AS joiningEntity-»
 «REM»Join-selector; if the where param is an array then [0] is the DQL and [1] the place holder values [example: array('status = ?', 'XY')]. Otherwise use normal syntax like [where="active = true"].«END REM»«""-»

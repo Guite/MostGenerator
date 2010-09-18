@@ -116,13 +116,13 @@
      */
     public function getNewArrayWithDefaultData()
     {
-«IF fields.typeSelect(TimestampField).size > 0-»
+«IF !fields.typeSelect(TimestampField).isEmpty-»
         $thisTimestamp = date('Y-m-d H:i:s');
 «ENDIF-»
-«IF fields.typeSelect(DateField).size > 0-»
+«IF !fields.typeSelect(DateField).isEmpty-»
         $todayDate = date('Y-m-d');
 «ENDIF-»
-«IF fields.typeSelect(TimeField).size > 0-»
+«IF !fields.typeSelect(TimeField).isEmpty-»
         $thisTime = date('H:i:s');
 «ENDIF-»
 
@@ -179,7 +179,7 @@
 «ENDDEFINE»
 «DEFINE DefaultFieldAssignmentData FOR IntegerField-»
 «LET getPointingRelations() AS pointingRelations-»
-«IF pointingRelations.size > 0-»(int) FormUtil::getPassedValue('«pointingRelations.get(0).source.idField()»', 0, 'GET')
+«IF !pointingRelations.isEmpty-»(int) FormUtil::getPassedValue('«pointingRelations.get(0).source.idField()»', 0, 'GET')
 «ELSE-»
 «IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
 «ENDIF-»«ENDLET-»«ENDDEFINE»

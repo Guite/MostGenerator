@@ -12,7 +12,7 @@
 «IF hasEditActions()-»
     «EXPAND javascript::EditFunctions::Root»
 «ENDIF-»
-«IF models.getJoinRelations().size > 0-»
+«IF !models.getJoinRelations().isEmpty-»
     «EXPAND javascript::DisplayFunctions::Root»
 «ENDIF-»
 «ENDDEFINE»
@@ -154,7 +154,7 @@ class «implClassApi()» extends «baseClassApi()»
 «DEFINE AdditionalAjaxFunctions(Application app) FOR Controller-»«ENDDEFINE»
 «DEFINE AdditionalAjaxFunctions(Application app) FOR AjaxController-»
 «LET app.getUserFields() AS userFields-»
-«IF userFields.size > 0-»
+«IF !userFields.isEmpty-»
 «FOREACH userFields AS userField-»
 
     public function get«userField.entity.name.formatForCodeCapital()»«userField.actualFieldName().formatForCodeCapital()»Users()
@@ -193,7 +193,7 @@ class «implClassApi()» extends «baseClassApi()»
 «ENDLET-»
 
 «LET app.models.getJoinRelations() AS joinRelations-»
-«IF joinRelations.size > 0-»
+«IF !joinRelations.isEmpty-»
 
     /**
      * searches for entities for auto completion usage
@@ -263,11 +263,11 @@ class «implClassApi()» extends «baseClassApi()»
                 case '«entity.name.formatForCode()»':
                         $titleFieldName = '«entity.getLeadingField().actualFieldName().formatForCode()»';
 «LET entity.fields.typeSelect(TextField) AS textFields-»
-«IF textFields.size > 0-»
+«IF !textFields.isEmpty-»
                         $descriptionFieldName = '«textFields.get(0).actualFieldName().formatForCode()»';
 «ELSE-»
 «LET entity.fields.typeSelect(StringField).reject(e|e.leading) AS textFields-»
-«IF textFields.size > 0-»
+«IF !textFields.isEmpty-»
                         $descriptionFieldName = '«textFields.get(0).actualFieldName().formatForCode()»';
 «ENDIF-»
 «ENDLET-»

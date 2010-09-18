@@ -103,7 +103,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     }
 «ENDREM»
 
-«IF models.variables.size > 0-»
+«IF !models.variables.isEmpty-»
         // set up all our vars with initial values
 «FOREACH models.variables.vars AS modvar-»
 «IF interactiveInstallation == true-»
@@ -178,7 +178,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         try {
             $dbPrefix = System::getVar('prefix');
 «LET models.getJoinRelations() AS joinRelations-»
-«IF joinRelations.size > 0-»
+«IF !joinRelations.isEmpty-»
             // remove all foreign keys and indexes
 «EXPAND RemoveForeignKey FOREACH joinRelations-»
 «ENDIF-»
@@ -209,7 +209,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     }
 «ENDREM»
 
-«IF models.variables.size > 0-»
+«IF !models.variables.isEmpty-»
         // remove all module vars
         $this->delVars();
 

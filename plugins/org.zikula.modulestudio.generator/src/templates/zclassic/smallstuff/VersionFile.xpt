@@ -28,7 +28,7 @@ class «appName()»_Base_Version extends Zikula_Version
         // permission schema
 «EXPAND PermissionSchema-»
 
-«IF hasUploads() || referredApplications.size > 0-»
+«IF hasUploads() || !referredApplications.isEmpty-»
         // module dependencies
         $meta['dependencies'] = array(
 «IF hasUploads()-»

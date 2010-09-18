@@ -92,7 +92,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 
         $data = $event->data;
 
-«IF fields.typeSelect(EmailField).size > 0-»
+«IF !fields.typeSelect(EmailField).isEmpty-»
         $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST');
 
 «ENDIF-»
@@ -218,7 +218,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     {
         // echo 'deleted a record ...';
 «LET getUploadFields() AS uploadFields-»
-«IF uploadFields.size > 0-»
+«IF !uploadFields.isEmpty-»
 
         $data = $event->data;
         $uploadFields = array(«FOREACH uploadFields AS uploadField SEPARATOR ", "»'«name.formatForCode()»'«ENDFOREACH»);

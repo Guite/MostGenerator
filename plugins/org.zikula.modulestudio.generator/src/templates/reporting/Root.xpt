@@ -19,7 +19,7 @@
 	«appName()-» contains «models.entities.size-» «EXPAND Helpers::generateSiPlu('table', 'tables', models.entities.size)»
 </p>
 
-«IF models.entities.size > 0-»
+«IF !models.entities.isEmpty-»
 <ul>
 	«FOREACH models.entities AS tbl-»
 		<li>«tbl.name.formatForDisplayCapital()-» («tbl.fields.size-»)</li>
@@ -108,7 +108,7 @@
 	«appName()-» contains «models.relations.size-» «EXPAND Helpers::generateSiPlu('relation', 'relations', models.relations.size)»
 </p>
 
-«IF models.relations.size > 0-»
+«IF !models.relations.isEmpty-»
 <ul>
 	«FOREACH models.relations AS rlt-»
 		<li>«rlt.source.name.formatForDisplayCapital()» - «rlt.target.name.formatForDisplayCapital()» («rlt.metaType.toString()»)</li>
@@ -121,11 +121,11 @@
 	«appName()-» contains «controllers.size-» «EXPAND Helpers::generateSiPlu('controller', 'controllers', controllers.size)» and «this.controllers.controllers.actions.size-» «EXPAND Helpers::generateSiPlu("view", "views", this.controllers.controllers.actions.size)»
 </p>
 
-«IF controllers.size > 0-»
+«IF !controllers.isEmpty-»
 <ul>
 	«FOREACH controllers.controllers AS ctrl-»
 		<li>«ctrl.name.toString()-»</li>
-		«IF ctrl.actions.size > 0-»
+		«IF !ctrl.actions.isEmpty-»
 			<ul>
 			«FOREACH ctrl.actions AS action-»
 				<li>«action.name.toString()»</li>

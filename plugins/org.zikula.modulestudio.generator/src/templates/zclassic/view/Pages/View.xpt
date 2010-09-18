@@ -48,7 +48,7 @@ listType:
 <table class="z-«IF controller.metaType == AdminController-»admin«ELSE»data«ENDIF»table">
     <colgroup>
 «FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field -»
-«IF field.metaType == IntegerField && ((IntegerField) field).getPointingRelations().size > 0-»
+«IF field.metaType == IntegerField && (!((IntegerField) field).getPointingRelations().isEmpty)-»
         <col id="c«EXPAND MarkupIdCode(false) FOREACH ((IntegerField) field).getPointingRelations()-»" />
 «ELSE-»
         <col id="c«EXPAND MarkupIdCode(false) FOR field-»" />
@@ -146,7 +146,7 @@ listType:
 
 «DEFINE HeaderLine(Controller controller) FOR IntegerField-»
 «LET getPointingRelations() AS joins-»
-«IF joins.size > 0-»
+«IF !joins.isEmpty-»
 «EXPAND HeaderLineRelation(controller, false) FOREACH joins-»
 «ELSE-»
 «EXPAND HeaderLineSimple(controller)-»
@@ -160,7 +160,7 @@ listType:
 
 «DEFINE HeaderLineInner(Controller controller) FOR IntegerField-»
 «LET getPointingRelations() AS joins-»
-«IF joins.size > 0-»
+«IF !joins.isEmpty-»
 «EXPAND HeaderLineInnerRelationField(controller) FOREACH joins-»
 «ELSE-»
 «EXPAND HeaderLineInnerSimpleField(controller)-»
@@ -195,7 +195,7 @@ listType:
 «ENDDEFINE»
 
 «DEFINE Alignment FOR Object»left«ENDDEFINE»
-«DEFINE Alignment FOR IntegerField»«IF getPointingRelations().size > 0-»left«ELSE»right«ENDIF»«ENDDEFINE»
+«DEFINE Alignment FOR IntegerField»«IF !getPointingRelations().isEmpty-»left«ELSE»right«ENDIF»«ENDDEFINE»
 «DEFINE Alignment FOR DecimalField»right«ENDDEFINE»
 «DEFINE Alignment FOR FloatField»right«ENDDEFINE»
 «DEFINE Alignment FOR BooleanField»center«ENDDEFINE»
