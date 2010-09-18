@@ -110,7 +110,7 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
     }
 
     // from here inline editing will be handled
-    $(idPrefix + 'SelectorDoNew').href += '&amp;theme=Printer&amp;idp=' + idPrefix + 'SelectorDoNew';
+    $(idPrefix + 'SelectorDoNew').href += '&theme=Printer&idp=' + idPrefix + 'SelectorDoNew';
     $(idPrefix + 'SelectorDoNew').observe('click', function(e) {
         «prefixSmall»InitInlineWindow(objectType, idPrefix + 'SelectorDoNew')
         e.stop();
@@ -121,7 +121,7 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
     itemIdsArr.each(function(existingId) {
         if (existingId) {
             var elemPrefix = idPrefix + 'Reference_' + existingId + 'Edit';
-            $(elemPrefix).href += '&amp;theme=Printer&amp;idp=' + elemPrefix;
+            $(elemPrefix).href += '&theme=Printer&idp=' + elemPrefix;
             $(elemPrefix).observe('click', function(e) {
                 «prefixSmall»InitInlineWindow(objectType, elemPrefix);
                 e.stop();
@@ -151,7 +151,7 @@ function «prefix()»SelectRelatedItem(objectType, idPrefix, inputField, selecte
 
     var li = Builder.node('li', {id: elemPrefix}, newTitle);
     if (includeEditing == true) {
-        var editHref = $(idPrefix + 'SelectorDoNew').href + '&amp;' + objectType.toLowerCase() + '=' + newItemId;
+        var editHref = $(idPrefix + 'SelectorDoNew').href + '&' + objectType.toLowerCase() + 'id=' + newItemId;
         editLink = Builder.node('a', {id: elemPrefix + 'Edit', href: editHref}, 'edit');
         li.appendChild(editLink);
     }
