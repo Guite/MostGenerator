@@ -51,28 +51,30 @@ class «baseClassModelTable()» extends Doctrine_Table
     /**
      * Select object from the database.
      *
-     * @param integer $id         The id to use to retrieve the object (optional) (default=null).
-     * @param boolean $asArray    Whether to return the result as array instead as record object (optional) (default=true).
+     * @param integer $id              The id to use to retrieve the object (optional) (default=null).
+     * @param boolean $asArray         Whether to return the result as array instead as record object (optional) (default=true).
+     * @param boolean $useJoins        Whether to include joining related objects (optional) (default=true).
      * @return array|Doctrine_Record retrieved data array or Doctrine_Record instance
      */
-    public function selectOneItemById($id = 0, $asArray = true)
+    public function selectOneItemById($id = 0, $asArray = true, $useJoins = true)
     {
-        $q = $this->_intBaseQuery()
-           ->where('tbl.«idField()» = ?', $id);
+        $q = $this->_intBaseQuery('', '', $useJoins)
+                  ->where('tbl.«idField()» = ?', $id);
 
         $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
         return $q->fetchOne(array(), $fetchType);
     }
 
     /**
-     * Select a collection
+     * Select a collection.
      *
      * @param string $where             The where clause to use when retrieving the object array (optional) (default='').
      * @param string $orderBy           The order-by clause to use when retrieving the object array (optional) (default='').
+     * @param boolean $useJoins         Whether to include joining related objects (optional) (default=true).
      */
-    public function selectCollection($where = '', $orderBy = '')
+    public function selectCollection($where = '', $orderBy = '', $useJoins = true)
     {
-        $q = $this->_intBaseQuery($where, $orderBy);
+        $q = $this->_intBaseQuery($where, $orderBy, $useJoins);
         return $q->execute(array(), Doctrine_Core::HYDRATE_ARRAY);
     }
 
@@ -84,18 +86,18 @@ class «baseClassModelTable()» extends Doctrine_Table
      * @param integer $currentPage      Where to start selection
      * @param integer $resultsPerPage   Amount of items to select
      * @param boolean $asArray          Whether to return the result as array instead as record object (optional) (default=true).
+     * @param boolean $useJoins         Whether to include joining related objects (optional) (default=true).
      * @return array|Doctrine_Collection retrieved data array or collection containing retrieved Doctrine_Record instances
      */
-    public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $asArray = true)
+    public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $asArray = true, $useJoins = true)
     {
         $pager = new Doctrine_Pager(
-              $this->_intBaseQuery($where, $orderBy),
+              $this->_intBaseQuery($where, $orderBy, $useJoins),
               $currentPage,
               $resultsPerPage
         );
-«REM»TODO: see http://www.doctrine-project.org/projects/orm/1.2/docs/manual/utilities/en
+        /* TODO: see http://www.doctrine-project.org/projects/orm/1.2/docs/manual/utilities/en */
         //$pager->setCountQuery($query);
-«ENDREM»«""-»
 
         $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
         return $pager->execute(array(), $fetchType);
@@ -105,14 +107,27 @@ class «baseClassModelTable()» extends Doctrine_Table
      * Select count with a given where clause.
      *
      * @param string $where             The where clause to use when retrieving the object count (optional) (default='').
+     * @param boolean $useJoins         Whether to include joining related objects (optional) (default=true).
      * @return integer amount of affected records
      */
-    public function selectCount($where = '')
+    public function selectCount($where = '', $useJoins = true)
     {
+        // TODO: fix usage of joins; please remove the following line and test.
+        $useJoins = false;
+
+        $selection = 'COUNT(tbl.«idField()») AS num«nameMultiple.formatForCodeCapital()»';
+        if ($useJoins === true) {
+            $selection = $this->addJoinsToSelection($selection);
+        }
+
         $q = Doctrine_Query::create()
-            ->select('COUNT(tbl.«idField()») AS num«nameMultiple.formatForCodeCapital()»')
+            ->select($selection)
             ->from('«implClassModelRecord()» tbl');
-        $this->addJoins($q);
+
+        if ($useJoins === true) {
+            $this->addJoinsToFrom($q);
+        }
+
         if (!empty($where)) {
             $q->where($where);
         }
@@ -124,19 +139,24 @@ class «baseClassModelTable()» extends Doctrine_Table
      *
      * @param string $where             The where clause to use when retrieving the object array (optional) (default='').
      * @param string $orderBy           The order-by clause to use when retrieving the object array (optional) (default='').
+     * @param boolean $useJoins         Whether to include joining related objects (optional) (default=true).
      * @return Doctrine_Query query instance to be further processed
      */
-    private function _intBaseQuery($where = '', $orderBy = '')
+    private function _intBaseQuery($where = '', $orderBy = '', $useJoins = true)
     {
-        $selection = 'tbl.*';
-        if ($orderBy == 'RAND()') {
-            $selection .= ', RANDOM() rand';
+        $selection = 'tbl.*' . (($orderBy == 'RAND()') ? ', RANDOM() rand' : '');
+        if ($useJoins === true) {
+            $selection = $this->addJoinsToSelection($selection);
         }
 
         $q = Doctrine_Query::create()
             ->select($selection)
             ->from('«implClassModelRecord()» tbl');
-        $this->addJoins($q);
+
+        if ($useJoins === true) {
+            $this->addJoinsToFrom($q);
+        }
+
         if (!empty($where)) {
             $q->where('tbl.' . $where);
         }
@@ -165,21 +185,36 @@ class «baseClassModelTable()» extends Doctrine_Table
     }
 
     /**
-     * Helper method to add join clauses
+     * Helper method to add join selections
+     *
+     * @param String $selection           Input select string to be enhanced
+     */
+    private function addJoinsToSelection($selection)
+    {
+        $selection .= '«EXPAND AddJoin(false, 'select') FOREACH incoming.typeSelect(JoinRelationship)-»«EXPAND AddJoin(true, 'select') FOREACH outgoing.typeSelect(JoinRelationship)-»';
+        return $selection;
+    }
+
+    /**
+     * Helper method to add joins to from clause
      *
      * @param Doctrine_Query $q           Reference to query to be enriched
      */
-    private function addJoins(Doctrine_Query $q)
+    private function addJoinsToFrom(Doctrine_Query $q)
     {
-«EXPAND AddJoin(false) FOREACH incoming.typeSelect(JoinRelationship)-»
-«EXPAND AddJoin(true) FOREACH outgoing.typeSelect(JoinRelationship)-»
+«EXPAND AddJoin(false, 'from') FOREACH incoming.typeSelect(JoinRelationship)-»
+«EXPAND AddJoin(true, 'from') FOREACH outgoing.typeSelect(JoinRelationship)-»
     }
 }
 «ENDDEFINE»
 
-«DEFINE AddJoin(Boolean incoming) FOR JoinRelationship-»
+«DEFINE AddJoin(Boolean incoming, String target) FOR JoinRelationship-»
 «LET getRelationAliasName(incoming).formatForCodeCapital() AS relationAliasName-»
-        $q->«joinCommand(incoming)»('tbl.«relationAliasName» tbl«relationAliasName»');
+«IF target == 'select'-»
+, «relationAliasName».*«""-»
+«ELSEIF target == 'from'-»
+        $q->«joinCommand(incoming)»('tbl.«relationAliasName» «relationAliasName»');
+«ENDIF-»
 «ENDLET-»
 «ENDDEFINE»
 

@@ -573,9 +573,9 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
         $objectType = $this->objectType;
 «EXPAND ControllerHelper::instantiateBusinessObject(app.appName(), true, 'actionHandler')-»
 
-        $where = 'e.«actualFieldName().formatForCode()» = \'' . DataUtil::formatForStore($name) . '\'';
+        $where = 'tbl.«actualFieldName().formatForCode()» = \'' . DataUtil::formatForStore($value) . '\'';
         if ($excludeid > 0) {
-            $where .= ' AND e.«entity.idField()» != \'' . (int) DataUtil::formatForStore($excludeid) . '\'';
+            $where .= ' AND tbl.«entity.idField()» != \'' . (int) DataUtil::formatForStore($excludeid) . '\'';
         }
         return $objectCollection->selectCount($where);
     }

@@ -18,14 +18,15 @@
     <a href="{modurl modname='«app.appName()»' type='«controller.name()»' func='display' ot='«name.formatForCode()»' «idField()»=$item.«idField()»}">
         {$item.«getLeadingField().actualFieldName().formatForCode()»}
     </a>
-    <a id="«name.formatForCode()»Item{$item.«idField()»}Display" href="{modurl modname='«app.appName()»' type='«controller.name()»' func='display' ot='«name.formatForCode()»' «idField()»=$item.«idField()» theme='Printer'}" title="{gt text='Open quick view window'} style="display: none">
+    <a id="«name.formatForCode()»Item{$item.«idField()»}Display" href="{modurl modname='«app.appName()»' type='«controller.name()»' func='display' ot='«name.formatForCode()»' «idField()»=$item.«idField()» theme='Printer'}" title="{gt text='Open quick view window'}" style="display: none">
         {img src='windows_list.gif' modname='core' set='icons/extrasmall' __alt='Quick view'}
     </a>
-«IF !many»</h4>«ENDIF-»
+«IF !many»</h4>
+«ENDIF-»
     <script type="text/javascript">
     /* <![CDATA[ */
         document.observe('dom:loaded', function() {
-            «app.prefix()»InitInlineWindow($('«name.formatForCode()»Item{{$item.«idField()»}}Display'));
+            «app.prefix()»InitInlineWindow($('«name.formatForCode()»Item{{$item.«idField()»}}Display'), '{{$item.«getLeadingField().actualFieldName().formatForCode()»|replace:"'":""}}');
         });
     /* ]]> */
     </script>
@@ -54,7 +55,7 @@
 <h3>«otherEntity.getEntityNameSingularPlural(many).formatForDisplayCapital()»</h3>
 
 {if isset($«relatedEntity.name.formatForCode()».«relationAliasName»)}
-    {include file='«controller.name()»/«otherEntity.name.formatForCode()»/include_displayItemList«IF many»Many«ELSE»One«ENDIF».tpl' items=$«relatedEntity.name.formatForCode()».«relationAliasName»}
+    {include file='«controller.name()»/«otherEntity.name.formatForCode()»/include_displayItemList«IF many»Many«ELSE»One«ENDIF».tpl' item«IF many»s«ENDIF»=$«relatedEntity.name.formatForCode()».«relationAliasName»}
 {/if}
 
 «IF !many-»
