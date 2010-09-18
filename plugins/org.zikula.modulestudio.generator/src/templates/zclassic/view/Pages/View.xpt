@@ -256,23 +256,25 @@ listType:
 
 «DEFINE DisplayEntryRelationField(Controller controller, Boolean useTarget) FOR JoinRelationship-»
 «LET getRelationAliasName(useTarget).formatForCodeCapital() AS relationAliasName-»
+«LET ((!useTarget) ? target : source) AS mainEntity-»
 «LET ((useTarget) ? target : source) AS linkEntity-»
-«LET ((!useTarget) ? target : source).name.formatForCode().msconcat('.').msconcat(relationAliasName) AS relObjName-»
+«LET mainEntity.name.formatForCode().msconcat('.').msconcat(relationAliasName) AS relObjName-»
             {if (isset($«relObjName»))}
                 <a href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«linkEntity.name.formatForCode()»' «linkEntity.idField()»=$«relObjName».«linkEntity.idField()»}">
                     {$«relObjName».«linkEntity.getLeadingField().actualFieldName().formatForCode()»«REM»|nl2br«ENDREM»|default:""}
                 </a>
-                <a id="«linkEntity.name.formatForCode()»Item{$«relObjName».«linkEntity.idField()»}Display" href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«linkEntity.name.formatForCode()»' «linkEntity.idField()»=$«relObjName».«linkEntity.idField()» theme='Printer'}" title="{gt text='Open quick view window'}" style="display: none">
+                <a id="«linkEntity.name.formatForCode()»Item{$«mainEntity.name.formatForCode()».«mainEntity.idField()»}_{$«relObjName».«linkEntity.idField()»}Display" href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«linkEntity.name.formatForCode()»' «linkEntity.idField()»=$«relObjName».«linkEntity.idField()» theme='Printer'}" title="{gt text='Open quick view window'}" style="display: none">
                     {img src='windows_list.gif' modname='core' set='icons/extrasmall' __alt='Quick view'}
                 </a>
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     document.observe('dom:loaded', function() {
-                        «container.application.prefix()»InitInlineWindow($('«linkEntity.name.formatForCode()»Item{{$«relObjName».«linkEntity.idField()»}}Display'), '{{$«relObjName».«linkEntity.getLeadingField().actualFieldName().formatForCode()»|replace:"'":""}}');
+                        «container.application.prefix()»InitInlineWindow($('«linkEntity.name.formatForCode()»Item{{$«mainEntity.name.formatForCode()».«mainEntity.idField()»}}_{{$«relObjName».«linkEntity.idField()»}}Display'), '{{$«relObjName».«linkEntity.getLeadingField().actualFieldName().formatForCode()»|replace:"'":""}}');
                     });
                 /* ]]> */
                 </script>
             {/if}
+«ENDLET-»
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»
