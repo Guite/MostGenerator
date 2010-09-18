@@ -29,10 +29,6 @@
  */
 class «baseClassModelRecord()» extends Doctrine_Record
 {
-«IF hasImageFields()-»
-«EXPAND fieldMemberVar FOREACH getImageFields()-»
-«ENDIF-»
-
 «EXPAND RecordInfo-»
 }
 «ENDDEFINE»
@@ -49,13 +45,6 @@ class «implClassModelRecord()» extends «IF isInheriting()»«parentType().imp
 {
     // feel free to add your own methods here
 }
-«ENDDEFINE»
-
-«DEFINE fieldMemberVar FOR UploadField-»
-«EXPAND FileHelper::MemberVar(actualFieldName().formatForCode().msconcat('Extension'), 'string', " = ''", 'public')»
-«EXPAND FileHelper::MemberVar(actualFieldName().formatForCode().msconcat('IsImage'), 'bool', " = false", 'public')»
-«EXPAND FileHelper::MemberVar(actualFieldName().formatForCode().msconcat('FullPath'), 'string', " = ''", 'public')»
-«EXPAND FileHelper::MemberVar(actualFieldName().formatForCode().msconcat('FullPathURL'), 'string', " = ''", 'public')»
 «ENDDEFINE»
 
 «DEFINE RecordInfo FOR Entity-»

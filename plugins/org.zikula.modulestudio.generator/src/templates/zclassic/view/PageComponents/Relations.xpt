@@ -33,9 +33,8 @@
 «IF hasImageFields()-»
     <br />
 «LET getImageFields().get(0).actualFieldName().formatForCode() AS imageFieldName-»
-{if $item.«imageFieldName» ne ''}
-    {getbaseurl assign="baseURL"}
-    <img src="{$item.«imageFieldName»|«app.appName().formatForDB()»ImageThumb:"`$baseURL``$item.«imageFieldName»`":50:40}" width="50" height="40" alt="{$item.«getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
+{if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPathURL)}
+    <img src="{$item.«imageFieldName»|«app.appName().formatForDB()»ImageThumb:$item.«imageFieldName»FullPathURL:50:40}" width="50" height="40" alt="{$item.«getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
 {/if}
 «ENDLET-»
 «ENDIF-»

@@ -92,8 +92,13 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 
         $data = $event->data;
 
-«IF !fields.typeSelect(EmailField).isEmpty-»
+«IF !(fields.typeSelect(EmailField).isEmpty && fields.typeSelect(UploadField).isEmpty)-»
         $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST');
+
+«ENDIF-»
+«IF !fields.typeSelect(UploadField).isEmpty-»
+        $imageTypes = array('gif', 'jpeg', 'jpg', 'png');
+        $useObject = (is_object($data) && $data instanceOf Doctrine_Record);
 
 «ENDIF-»
     «EXPAND sanitizeForOutput FOREACH fields»
@@ -303,12 +308,25 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 «DEFINE sanitizeForOutput FOR UploadField-»
 «LET actualFieldName().formatForCode() AS realName-»
         $extensionarr = explode('.', $data['«realName»']);
-        $data['«realName»Extension'] = $extensionarr[count($extensionarr) - 1];
-        $data['«realName»IsImage'] = (in_array($data['«realName»Extension'], array('gif', 'jpeg', 'jpg', 'png')) ? true : false);
-        if (!empty($data['«realName»']) && FormUtil::getPassedValue('func', 'main', 'GETPOST') != 'edit') {
+        // TODO: introduce a Filter for that
+        if ($useObject) {
+            $data->mapValue('«realName»Extension', $extensionarr[count($extensionarr) - 1]);
+            $data->mapValue('«realName»IsImage', (in_array($data['«realName»Extension'], $imageTypes) ? true : false));
+        }
+        else {
+            $data['«realName»Extension'] = $extensionarr[count($extensionarr) - 1];
+            $data['«realName»IsImage'] = (in_array($data['«realName»Extension'], $imageTypes) ? true : false);
+        }
+        if (!empty($data['«realName»'])) {
             $basePath = «entity.container.application.appName()»_Util::getFileBaseFolder('«entity.name.formatForCode()»', '«realName»');
-            $data['«realName»FullPath'] = $basePath .  $data['«realName»'];
-            $data['«realName»FullPathURL'] = System::getBaseUrl() .  $data['«realName»FullPath'];
+            if ($useObject) {
+                $data->mapValue('«realName»FullPath', $basePath .  $data['«realName»']);
+                $data->mapValue('«realName»FullPathURL', System::getBaseUrl() . $basePath .  $data['«realName»']);
+            }
+            else {
+                $data['«realName»FullPath'] = $basePath .  $data['«realName»'];
+                $data['«realName»FullPathURL'] = System::getBaseUrl() . $basePath .  $data['«realName»'];
+            }
         }
 «ENDLET-»
 «ENDDEFINE»
