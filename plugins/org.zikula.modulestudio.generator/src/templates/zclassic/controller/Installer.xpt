@@ -177,6 +177,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     {
         try {
             $dbPrefix = System::getVar('prefix');
+«EXPAND RemoveBehaviors FOREACH models.entities-»
 «LET models.getJoinRelations() AS joinRelations-»
 «IF !joinRelations.isEmpty-»
             // remove all foreign keys and indexes
@@ -218,6 +219,51 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         // Deletion successful
         return true;
     }
+«ENDDEFINE»
+
+«DEFINE RemoveBehaviors FOR Entity-»
+«REM»TODO: replace these if clauses by an aspect template (somewhen)«ENDREM»«""-»
+«IF i18n-»
+        $res = DBUtil::dropTable('«fullEntityName()»_translation');
+«ENDIF-»
+«IF versionable && versionableHistory-»
+        $res = DBUtil::dropTable('«fullEntityName()»_version');
+«ENDIF-»
+«IF searchable-»
+        $res = DBUtil::dropTable('«fullEntityName()»_index');
+«ENDIF-»
+
+«IF categorisable || attributable || metaData || loggable-»
+        $dbTables = DBUtil::getTables();
+«ENDIF-»
+«IF categorisable-»
+        // remove categorisable behavior data
+        $table  = $dbTables['categories_mapobj'];
+        $column = $dbTables['categories_mapobj_column'];
+        $sql = 'DELETE FROM ' . $table . ' WHERE ' . $column['module'] . ' = \'«container.application.appName()»\' AND ' . $column['table'] . ' = \'«fullEntityName()»\'';
+        $res = DBUtil::executeSQL($sql);
+«ENDIF-»
+«IF attributable-»
+        // remove attributable behavior data
+        $table  = $dbTables['objectdata_attributes'];
+        $column = $dbTables['objectdata_attributes_column'];
+        $sql = 'DELETE FROM ' . $table . ' WHERE ' . $column['object_type'] . ' = \'«fullEntityName()»\'';
+        $res = DBUtil::executeSQL($sql);
+«ENDIF-»
+«IF metaData-»
+        // remove metaData behavior data
+        $table  = $dbTables['objectdata_meta'];
+        $column = $dbTables['objectdata_meta_column'];
+        $sql = 'DELETE FROM ' . $table . ' WHERE ' . $column['module'] . ' = \'«container.application.appName()»\' AND ' . $column['table'] . ' = \'«fullEntityName()»\'';
+        $res = DBUtil::executeSQL($sql);
+«ENDIF-»
+«IF loggable-»
+        // remove loggable behavior data
+        $table  = $dbTables['objectdata_log'];
+        $column = $dbTables['objectdata_log_column'];
+        $sql = 'DELETE FROM ' . $table . ' WHERE ' . $column['object_type'] . ' = \'«fullEntityName()»\'';
+        $res = DBUtil::executeSQL($sql);
+«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE RemoveForeignKey FOR JoinRelationship-»
