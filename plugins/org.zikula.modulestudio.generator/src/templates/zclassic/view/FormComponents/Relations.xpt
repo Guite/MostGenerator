@@ -117,9 +117,9 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
     <div class="«app.prefix()»RelationLeftSide">
         {if isset($user«relationAliasName.toFirstUpper()») && $user«relationAliasName.toFirstUpper()» ne ''}
             {* the user has submitted something *}
-            {include file='«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' items=$user«relationAliasName.toFirstUpper()»}
+            {include file='«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' item«IF many»s«ENDIF»=$user«relationAliasName.toFirstUpper()»}
         {elseif $mode ne "create" || isset($«relationAliasName»)}
-            {include file='«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' items=$«relationAliasName»}
+            {include file='«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' item«IF many»s«ENDIF»=$«relationAliasName»}
         {else}
             {include file='«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl'}
         {/if}
@@ -141,27 +141,34 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 {img src="editdelete.gif" modname="core" set="icons/extrasmall" assign="removeImageArray"}
 {assign var="removeImage" value="<img src=\"`$removeImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
 
-<input type="hidden" id="«uniqueNameForJs»ItemList" name="«uniqueNameForJs»ItemList" value="{if isset($items) && is_array($items)}{foreach name='relLoop' item='relatedItem' from=$items}{$relatedItem.«targetEntity.idField()»}{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}{/if}" />
+<input type="hidden" id="«uniqueNameForJs»ItemList" name="«uniqueNameForJs»ItemList" value="{if isset($item«IF many»s«ENDIF») && is_array($item«IF many»s«ENDIF»)}«IF many»{foreach name='relLoop' item='item' from=$items}«ENDIF»{$item.«targetEntity.idField()»}«IF many»{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}«ENDIF»{/if}" />
 <input type="hidden" id="«uniqueNameForJs»Mode" name="«uniqueNameForJs»Mode" value="«IF includeEditing»1«ELSE»0«ENDIF»" />
 
 <ul id="«uniqueNameForJs»ReferenceList">
-{if isset($items) && is_array($items)}
-{foreach name='relLoop' item='relatedItem' from=$items}
-{assign var='idPrefix' value="«uniqueNameForJs»Reference_`$relatedItem.«targetEntity.idField()»`"}
-    <li id="{$idPrefix}">
-    {$relatedItem.«targetEntity.getLeadingField().actualFieldName().formatForCode()»}
-«IF includeEditing-»
- <a id="{$idPrefix}Edit" href="{modurl modname='«app.appName()»' type='«controller.name()»' func='edit' ot='«targetEntity.name.formatForCode()»' «targetEntity.idField()»=$relatedItem.«targetEntity.idField()»}">{$editImage}</a>
+{if isset($item«IF many»s«ENDIF») && is_array($item«IF many»s«ENDIF»)}
+«IF many-»
+{foreach name='relLoop' item='item' from=$items}
 «ENDIF-»
- <a id="{$idPrefix}Remove" href="javascript:«app.prefix()»RemoveRelatedItem('«uniqueNameForJs»', {$relatedItem.«targetEntity.idField()»});">{$removeImage}</a>
+{assign var='idPrefix' value="«uniqueNameForJs»Reference_`$item.«targetEntity.idField()»`"}
+    <li id="{$idPrefix}">
+    {$item.«targetEntity.getLeadingField().actualFieldName().formatForCode()»}
+«IF includeEditing-»
+ <a id="{$idPrefix}Edit" href="{modurl modname='«app.appName()»' type='«controller.name()»' func='edit' ot='«targetEntity.name.formatForCode()»' «targetEntity.idField()»=$item.«targetEntity.idField()»}">{$editImage}</a>
+«ENDIF-»
+ <a id="{$idPrefix}Remove" href="javascript:«app.prefix()»RemoveRelatedItem('«uniqueNameForJs»', {$item.«targetEntity.idField()»});">{$removeImage}</a>
 «IF targetEntity.hasImageFields()-»
 <br />
-«LET targetEntity.getImageFields().get(0) AS imageField-»
-<img src="{$relatedItem.«imageField.actualFieldName().formatForCode()»|«app.appName().formatForDB()»ImageThumb:$relatedItem.«imageField.actualFieldName().formatForCode()»FullPath:50:40}" width="50" height="40" alt="{$relatedItem.«targetEntity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
+«LET targetEntity.getImageFields().get(0).actualFieldName().formatForCode() AS imageFieldName-»
+{if $item.«imageFieldName» ne ''}
+    {getbaseurl assign="baseURL"}
+    <img src="{$item.«imageFieldName»|«app.appName().formatForDB()»ImageThumb:"`$baseURL``$item.«imageFieldName»`":50:40}" width="50" height="40" alt="{$item.«targetEntity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
+{/if}
 «ENDLET-»
 «ENDIF-»
     </li>
+«IF many-»
 {/foreach}
+«ENDIF-»
 {/if}
 </ul>
 «ENDLET-»

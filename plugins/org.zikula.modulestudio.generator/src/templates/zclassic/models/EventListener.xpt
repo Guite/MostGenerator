@@ -92,6 +92,10 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 
         $data = $event->data;
 
+«IF fields.typeSelect(EmailField).size > 0-»
+        $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST');
+
+«ENDIF-»
     «EXPAND sanitizeForOutput FOREACH fields»
 
         $event->data = $data;
@@ -291,6 +295,11 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 «ENDDEFINE»
 «DEFINE sanitizeForOutput FOR StringField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
 «DEFINE sanitizeForOutput FOR TextField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
+«DEFINE sanitizeForOutput FOR EmailField-»
+    if ($currentFunc != 'edit') {
+«EXPAND sanitizeForOutputHTML-»
+    }
+«ENDDEFINE»
 «DEFINE sanitizeForOutput FOR UploadField-»
 «LET actualFieldName().formatForCode() AS realName-»
         $extensionarr = explode('.', $data['«realName»']);

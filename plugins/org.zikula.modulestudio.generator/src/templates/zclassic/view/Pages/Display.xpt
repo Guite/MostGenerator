@@ -5,7 +5,6 @@
 
 «DEFINE Impl(String appName, Controller controller) FOR Entity»
 «info("Generating " + controller.name() + " display templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
-«LET name.formatForCode() AS objName-»
 «FILE templateFile(controller, name, 'display')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» display view in «controller.name()» area *}
 
@@ -18,12 +17,13 @@
 <div class="z-frontendcontainer">
 «ENDIF-»
 
+«LET name.formatForCode() AS objName-»
 «LET getLeadingField().name.formatForCode() AS titleField-»
 {pagesetvar name='title' value=$«objName».«titleField»}
 <h2>{$«objName».«titleField»|modcallhooks}</h2>
 «ENDLET-»
 
-«LET outgoing.typeSelect(JoinRelationship).select(e|e.metaType == OneToOneRelationship || e.metaType == OneToManyRelationship).union(incoming.typeSelect(ManyToManyRelationship)) AS refedElems-»
+«LET outgoing.typeSelect(JoinRelationship).union(incoming.typeSelect(ManyToManyRelationship)) AS refedElems-»
 «IF refedElems.size > 0-»
 {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 <div class="«appName.formatForDB()»RightBox">
@@ -39,6 +39,7 @@
 «ENDIF-»
 </dl>
 
+{if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 «EXPAND ItemActions(appName, controller)-»
 
 {modurl modname='«appName»' type='«controller.name()»' func='display' ot='«objName»' «idField()»=$«objName».«idField()» assign='returnurl'}
@@ -47,18 +48,14 @@
 «IF refedElems.size > 0-»
 <br style="clear: right" />
 «ENDIF-»
+«ENDLET-»
+«ENDLET-»
 {/if}
 
-«IF controller.metaType == AdminController-»
 </div>
-«ELSE-»
-</div>
-«ENDIF-»
-«ENDLET-»
 
 {include file='«controller.name()»/footer.tpl'}
 «ENDFILE»
-«ENDLET-»
 «ENDDEFINE»
 
 «DEFINE DisplayEntry(Controller controller) FOR EntityField-»
@@ -115,7 +112,6 @@
 
 «DEFINE ItemActions(String appName, Controller controller) FOR Entity-»
 «LET name.formatForCode() AS objName-»
-{if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 <p>
 «IF controller.hasActions('edit')-»
     {checkpermissionblock component='«appName»::' instance='.*' level='ACCESS_EDIT'}

@@ -303,7 +303,7 @@ class «implClassApi()» extends «baseClassApi()»
                     $thumbWidth = 100;
                     $thumbHeight = 80;
                     $thumbImagePath = «app.appName()»_Util::getImageThumb($item[$previewFieldName], $item[$previewFieldName . 'FullPath'], $thumbWidth, $thumbHeight);
-                    $preview = '<img src="" width="' . $thumbWidth . '" height="' . $thumbHeight . '" alt="' . $itemTitleStripped . '" />';
+                    $preview = '<img src="' . $thumbImagePath . '" width="' . $thumbWidth . '" height="' . $thumbHeight . '" alt="' . $itemTitleStripped . '" />';
                     $out .= '<div class="itempreview informal" id="itempreview' . $item[$idField] . '">' . $preview . '</div>';
                 }
 «ENDIF-»

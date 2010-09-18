@@ -75,6 +75,7 @@ input.validation-passed, textarea.validation-passed {
 
 «DEFINE AutoCompletion FOR Application-»
 «LET hasUserFields() AS hasUserFields-»
+«LET hasImageFields() AS hasImageFields-»
 «LET models.getJoinRelations() AS joinRelations-»
 «IF joinRelations.size > 0 || hasUserFields-»
 
@@ -98,23 +99,26 @@ div.«prefix()»LiveSearchUser {
 
 «ENDIF-»
 div.«prefix()»AutoComplete«IF hasUserFields-»,
-div.«prefix()»AutoCompleteUser«ENDIF-» {
+div.«prefix()»AutoCompleteUser«ENDIF-»«IF hasImageFields-»,
+div.«prefix()»AutoCompleteWithImage ul li«ENDIF-» {
     position: absolute;
     width: 25em;
-    background-color: white;
+    background-color: #fff;
     border: 1px solid #888;
     margin: 0;
     padding: 0;
 }
 
 div.«prefix()»AutoComplete ul«IF hasUserFields-»,
-div.«prefix()»AutoCompleteUser ul«ENDIF-» {
+div.«prefix()»AutoCompleteUser ul«ENDIF-»«IF hasImageFields-»,
+div.«prefix()»AutoCompleteWithImage ul li«ENDIF-» {
     margin: 0;
     padding: 0;
 }
 
 div.«prefix()»AutoComplete ul li«IF hasUserFields-»,
-div.«prefix()»AutoCompleteUser ul li«ENDIF-» {
+div.«prefix()»AutoCompleteUser ul li«ENDIF-»«IF hasImageFields-»,
+div.«prefix()»AutoCompleteWithImage ul li«ENDIF-» {
     margin: 0;
     padding: 0.2em 0 0.2em 20px;
     list-style-type: none;
@@ -133,32 +137,40 @@ div.«prefix()»AutoCompleteUser ul li {
     background-image: url("../../../images/icons/extrasmall/edit_user.gif");
 }
 «ENDIF-»
+«IF hasImageFields-»
 div.«prefix()»AutoCompleteWithImage ul li {
     background-image: url("../../../images/icons/extrasmall/agt_Multimedia.gif");
 }
+«ENDIF-»
 
 div.«prefix()»AutoComplete ul li.selected«IF hasUserFields-»,
-div.«prefix()»AutoCompleteUser ul li.selected«ENDIF-» {
+div.«prefix()»AutoCompleteUser ul li.selected«ENDIF-»«IF hasImageFields-»,
+div.«prefix()»AutoCompleteWithImage ul li.selected«ENDIF-» {
     background-color: #ffb;
 }
 
-«IF joinRelations.size > 0-»
-div.«prefix()»AutoComplete ul li div.itemtitle {
+«IF hasImageFields || joinRelations.size > 0-»
+div.«prefix()»AutoComplete ul li div.itemtitle«IF hasImageFields-»,
+div.«prefix()»AutoCompleteWithImage ul li div.itemtitle«ENDIF-» {
     font-weight: 700;
     font-size: 12px;
     line-height: 1.2em;
 }
-div.«prefix()»AutoComplete ul li div.itemdesc {
+div.«prefix()»AutoComplete ul li div.itemdesc«IF hasImageFields-»,
+div.«prefix()»AutoCompleteWithImage ul li div.itemdesc«ENDIF-» {
     font-size: 10px;
     color: #888;
 }
 
+«IF joinRelations.size > 0-»
 button.«prefix()»InlineButton {
     margin-top: 1em;
 }
 «ENDIF-»
+«ENDIF-»
 
 «ENDIF-»
+«ENDLET-»
 «ENDLET-»
 «ENDLET-»
 

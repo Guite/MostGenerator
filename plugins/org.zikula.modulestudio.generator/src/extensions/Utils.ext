@@ -52,6 +52,9 @@ cached getLeadingEntity(Application this) :
 cached boolean hasUserFields(Application this) :
     (getUserFields().size > 0);
 
+cached boolean hasImageFields(Application this) :
+    (models.entities.exists(e|e.hasImageFields()));
+
 cached getUserFields(Application this) :
     models.entities.fields.typeSelect(UserField);
 
