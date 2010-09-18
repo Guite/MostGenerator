@@ -65,12 +65,14 @@
 «IF sluggable»->addChild($slug)«ENDIF»;
 «ENDIF-»
         $this->actAs($i18n);
+        // TODO: fix i18n behavior (see http://code.zikula.org/generator/ticket/78 for more information)
 «ELSE-»
 «IF versionable-»
         $this->actAs($auditLog);
 «ENDIF-»
 «IF searchable-»
-        $this->actAs($search);
+        // $this->actAs($search);
+        // TODO: reenable search behavior (see http://code.zikula.org/generator/ticket/91 for more information)
 «ENDIF-»
 «IF sluggable-»
         $this->actAs($slug);

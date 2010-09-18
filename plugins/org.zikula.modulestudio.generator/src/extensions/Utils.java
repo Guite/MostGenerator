@@ -88,7 +88,7 @@ public class Utils {
             i++;
         }
 
-        return result;
+        return result.trim();
     }
 
     /**

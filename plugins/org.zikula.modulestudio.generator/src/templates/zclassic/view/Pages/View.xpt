@@ -222,6 +222,7 @@ listType:
 «DEFINE MarkupIdCode(Boolean useTarget) FOR Object-»«ENDDEFINE»
 «DEFINE MarkupIdCode(Boolean useTarget) FOR NamedObject-»«name.formatForDB()»«ENDDEFINE»
 «DEFINE MarkupIdCode(Boolean useTarget) FOR DerivedField-»«actualFieldName().formatForDB()»«ENDDEFINE»
+«DEFINE MarkupIdCode(Boolean useTarget) FOR IntegerField-»«IF !getPointingRelations().isEmpty»«getPointingRelations().get(0).getRelationAliasName(false).formatForDB()»«ELSE»«actualFieldName().formatForDB()»«ENDIF»«ENDDEFINE»
 «DEFINE MarkupIdCode(Boolean useTarget) FOR JoinRelationship-»«getRelationAliasName(useTarget).formatForDB()»«ENDDEFINE»
 
 «DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR Object-»
@@ -233,7 +234,7 @@ listType:
 
 «DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR IntegerField-»
 «LET getPointingRelations() AS joins-»
-«IF joins.size > 0-»
+«IF !joins.isEmpty-»
 «EXPAND DisplayEntryRelationField(controller, false) FOREACH joins-»
 «ELSE-»
 «EXPAND DisplayEntryInnerSimpleField(controller)-»
@@ -245,7 +246,7 @@ listType:
 «IF leading == true-»
             {$«entity.name.formatForCode()».«actualFieldName().formatForCode()»|modcallhooks}
 «ELSE-»
-«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(entity.name.formatForCode(), 'view', '            ')-»
+«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(entity.name.formatForCode(), 'view', '            ')»
 «ENDIF-»
 «ENDDEFINE»
 

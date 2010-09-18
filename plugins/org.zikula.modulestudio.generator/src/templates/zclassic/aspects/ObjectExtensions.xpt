@@ -2,15 +2,13 @@
 «EXTENSION extensions::Utils»
 
 «AROUND templates::zclassic::models::record::Behaviour::ObjectExtensions FOR Entity-»
-    // DEBUG: object extension aspect starts
 «IF standardFields-»
         // Zikula standard fields (obj_status, cr_uid, cr_date, lu_uid, lu_date)
         $this->actAs('Zikula_Doctrine_Template_StandardFields');
 «ENDIF-»
 «IF categorisable-»
         // Categorisable support
-        //$this->actAs('Zikula_Doctrine_Template_Categorisable');
-        // TODO: reenable this after http://code.zikula.org/core/ticket/2523 has been fixed
+        $this->actAs('Zikula_Doctrine_Template_Categorisable');
 «ENDIF-»
 «IF attributable-»
         // Attributable support
@@ -24,14 +22,12 @@
         // enable Logging
         $this->actAs('Zikula_Doctrine_Template_Logging');
 «ENDIF-»
-
-    // DEBUG: object extension aspect ends
 «targetDef.proceed()»
 «ENDAROUND»
 
 
 «AROUND templates::zclassic::models::behavior::BusinessObject::standardSortingFields FOR Entity-»
-«IF this.standardFields == true-»,
+«IF standardFields-»,
                      'obj_status',
                      'cr_date',
                      'cr_uid',
