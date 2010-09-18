@@ -97,7 +97,7 @@
 «ENDLET-»
 «ENDLET-»
 «IF !mandatory-»
-«prepend»{else}&nbsp;{/if}«""-»
+«prepend»{else}&nbsp;{/if}
 «ENDIF-»
 «ENDDEFINE»
 

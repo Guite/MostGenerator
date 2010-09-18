@@ -48,13 +48,21 @@ listType:
 <table class="z-«IF controller.metaType == AdminController-»admin«ELSE»data«ENDIF»table">
     <colgroup>
 «FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field -»
-        <col id="c«field.actualFieldName().formatForDB()»" />
+«IF field.metaType == IntegerField && ((IntegerField) field).getPointingRelations().size > 0-»
+        <col id="c«EXPAND MarkupIdCode(false) FOREACH ((IntegerField) field).getPointingRelations()-»" />
+«ELSE-»
+        <col id="c«EXPAND MarkupIdCode(false) FOR field-»" />
+«ENDIF-»
+«ENDFOREACH-»
+«FOREACH outgoing.typeSelect(OneToOneRelationship) AS rel-»
+        <col id="c«EXPAND MarkupIdCode(true) FOR rel-»" />
 «ENDFOREACH-»
         <col id="cintactions" />
     </colgroup>
     <thead>
     <tr>
 «EXPAND HeaderLine(controller) FOREACH getDerivedFields().reject(e|e.primaryKey)-»
+«EXPAND HeaderLineRelation(controller, true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
         <th id="hintactions" scope="col" align="left" valign="middle">{gt text='Actions'}</th>
     </tr>
     </thead>
@@ -69,7 +77,8 @@ listType:
 «ELSEIF listType == 3-»
     <tr class="{cycle values='z-odd, z-even'}">
 «ENDIF-»
-«EXPAND DisplayEntry(controller, listType) FOREACH getDerivedFields().reject(e|e.primaryKey)-»
+«EXPAND DisplayEntry(controller, listType, false) FOREACH getDerivedFields().reject(e|e.primaryKey)-»
+«EXPAND DisplayEntry(controller, listType, true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
 «EXPAND ItemActions(appName, controller, listType)-»
 «IF listType < 2-»
     </ul></li>
@@ -85,7 +94,7 @@ listType:
         <dt>
 «ELSEIF listType == 3-»
         <tr class="z-«IF controller.metaType == AdminController-»admin«ELSE»data«ENDIF»tableempty">
-          <td align="left" valign="top" colspan="«fields.size»">«REM»fields.size -1 (id) +1 (actions)«ENDREM»«""-»
+          <td align="left" valign="top" colspan="«(fields.size + outgoing.typeSelect(OneToOneRelationship).size)»">«REM»fields.size -1 (id) +1 (actions)«ENDREM»
 «ENDIF-»
             {gt text='No «nameMultiple.formatForDisplay()» found.'}
 «IF listType < 2-»
@@ -125,10 +134,24 @@ listType:
 «DEFINE HeaderLine(Controller controller) FOR EntityField-»
 «ENDDEFINE»
 
-«DEFINE HeaderLine(Controller controller) FOR DerivedField-»
-        <th id="h«actualFieldName().formatForDB()»" scope="col" align="«EXPAND Alignment-»" valign="middle">
+«DEFINE HeaderLineSimple(Controller controller) FOR DerivedField-»
+        <th id="h«EXPAND MarkupIdCode(false)-»" scope="col" align="«EXPAND Alignment-»" valign="middle">
 «EXPAND HeaderLineInner(controller)-»
         </th>
+«ENDDEFINE»
+
+«DEFINE HeaderLine(Controller controller) FOR DerivedField-»
+«EXPAND HeaderLineSimple(controller)-»
+«ENDDEFINE»
+
+«DEFINE HeaderLine(Controller controller) FOR IntegerField-»
+«LET getPointingRelations() AS joins-»
+«IF joins.size > 0-»
+«EXPAND HeaderLineRelation(controller, false) FOREACH joins-»
+«ELSE-»
+«EXPAND HeaderLineSimple(controller)-»
+«ENDIF-»
+«ENDLET-»
 «ENDDEFINE»
 
 «DEFINE HeaderLineInner(Controller controller) FOR DerivedField-»
@@ -138,7 +161,7 @@ listType:
 «DEFINE HeaderLineInner(Controller controller) FOR IntegerField-»
 «LET getPointingRelations() AS joins-»
 «IF joins.size > 0-»
-«EXPAND HeaderLineInnerRelationField(controller, this) FOREACH joins-»
+«EXPAND HeaderLineInnerRelationField(controller) FOREACH joins-»
 «ELSE-»
 «EXPAND HeaderLineInnerSimpleField(controller)-»
 «ENDIF-»
@@ -146,44 +169,47 @@ listType:
 «ENDDEFINE»
 
 «DEFINE HeaderLineInnerSimpleField(Controller controller) FOR DerivedField-»
-«EXPAND HeaderSortingLink(controller, actualFieldName().formatForCode(), actualFieldName())-»
+«EXPAND HeaderSortingLink(controller, entity, actualFieldName().formatForCode(), actualFieldName())-»
 «ENDDEFINE»
 
-«DEFINE HeaderLineInnerRelationField(Controller controller, IntegerField intField) FOR JoinRelationship-»
-«LET getRelationAliasName(false).formatForCodeCapital() AS relationAliasName-»
-«EXPAND HeaderSortingLink(controller, relationAliasName.formatForCode(), relationAliasName) FOR intField-»
-«ENDLET-»
+«DEFINE HeaderLineInnerRelationField(Controller controller) FOR JoinRelationship-»
+«EXPAND HeaderSortingLink(controller, target, getRelationAliasName(false).formatForCode(), getRelationAliasName(false).formatForCodeCapital())-»
 «ENDDEFINE»
 
 «DEFINE HeaderLine(Controller controller) FOR CalculatedField-»
 «ENDDEFINE»
 
-«DEFINE HeaderSortingLink(Controller controller, String fieldName, String label) FOR EntityField-»
+«DEFINE HeaderLineRelation(Controller controller, Boolean useTarget) FOR JoinRelationship-»
+        <th id="h«EXPAND MarkupIdCode(useTarget)-»" scope="col" align="left" valign="middle">
+«EXPAND HeaderSortingLink(controller, source, getRelationAliasName(useTarget).formatForCode(), getRelationAliasName(useTarget).formatForCodeCapital())-»
+        </th>
+«ENDDEFINE»
+
+
+
+«DEFINE HeaderSortingLink(Controller controller, Entity entity, String fieldName, String label) FOR Object-»
             {assign var='sortDirection' value='asc'}{if $sort eq '«fieldName»'}{assign var='sortDirection' value=$sdirReverse}{/if}
-            <a href="{modurl modname='«entity.container.application.appName()»' type='«controller.name()»' func='view' ot='«entity.name.formatForCode()»' sort='«fieldName»' sdir=$sortDirection}"{if $sort eq '«fieldName»'} class="currentSortingLink"{/if}>
+            <a href="{modurl modname='«controller.container.application.appName()»' type='«controller.name()»' func='view' ot='«entity.name.formatForCode()»' sort='«fieldName»' sdir=$sortDirection}"{if $sort eq '«fieldName»'} class="currentSortingLink"{/if}>
                 {gt text='«label.formatForDisplayCapital()»'}
             </a>
 «ENDDEFINE»
 
-«DEFINE Alignment FOR EntityField»left«ENDDEFINE»
+«DEFINE Alignment FOR Object»left«ENDDEFINE»
 «DEFINE Alignment FOR IntegerField»«IF getPointingRelations().size > 0-»left«ELSE»right«ENDIF»«ENDDEFINE»
 «DEFINE Alignment FOR DecimalField»right«ENDDEFINE»
 «DEFINE Alignment FOR FloatField»right«ENDDEFINE»
 «DEFINE Alignment FOR BooleanField»center«ENDDEFINE»
 
 
-«DEFINE DisplayEntry(Controller controller, Integer listType) FOR EntityField-»
-«ENDDEFINE»
-
-«DEFINE DisplayEntry(Controller controller, Integer listType) FOR DerivedField-»
+«DEFINE DisplayEntry(Controller controller, Integer listType, Boolean useTarget) FOR Object-»
 «IF listType < 2-»
         <li>
 «ELSEIF listType == 2-»
         <dd>
 «ELSEIF listType == 3-»
-        <td headers="h«actualFieldName().formatForDB()»" align="«EXPAND Alignment-»" valign="top">
+        <td headers="h«EXPAND MarkupIdCode(useTarget)»" align="«EXPAND Alignment-»" valign="top">
 «ENDIF-»
-«EXPAND DisplayEntryInner(controller)-»
+«EXPAND DisplayEntryInner(controller, useTarget)-»
 «IF listType < 2-»
         </li>
 «ELSEIF listType == 2-»
@@ -193,14 +219,22 @@ listType:
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE DisplayEntryInner(Controller controller) FOR DerivedField-»
+«DEFINE MarkupIdCode(Boolean useTarget) FOR Object-»«ENDDEFINE»
+«DEFINE MarkupIdCode(Boolean useTarget) FOR NamedObject-»«name.formatForDB()»«ENDDEFINE»
+«DEFINE MarkupIdCode(Boolean useTarget) FOR DerivedField-»«actualFieldName().formatForDB()»«ENDDEFINE»
+«DEFINE MarkupIdCode(Boolean useTarget) FOR JoinRelationship-»«getRelationAliasName(useTarget).formatForDB()»«ENDDEFINE»
+
+«DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR Object-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR DerivedField-»
 «EXPAND DisplayEntryInnerSimpleField(controller)-»
 «ENDDEFINE»
 
-«DEFINE DisplayEntryInner(Controller controller) FOR IntegerField-»
+«DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR IntegerField-»
 «LET getPointingRelations() AS joins-»
 «IF joins.size > 0-»
-«EXPAND DisplayEntryInnerIncomingRelationField(controller) FOREACH joins-»
+«EXPAND DisplayEntryRelationField(controller, false) FOREACH joins-»
 «ELSE-»
 «EXPAND DisplayEntryInnerSimpleField(controller)-»
 «ENDIF-»
@@ -215,27 +249,35 @@ listType:
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE DisplayEntryInnerIncomingRelationField(Controller controller) FOR JoinRelationship-»
-«LET getRelationAliasName(false).formatForCodeCapital() AS relationAliasName-»
-«LET target.name.formatForCode().msconcat('.').msconcat(relationAliasName) AS relObjName-»
-            <a href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«source.name.formatForCode()»' «source.idField()»=$«relObjName».«source.idField()»}">
-                {$«relObjName».«source.getLeadingField().actualFieldName().formatForCode()»«REM»|nl2br«ENDREM»|default:""}
-            </a>
-            <a id="«source.name.formatForCode()»Item{$«relObjName».«source.idField()»}Display" href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«source.name.formatForCode()»' «source.idField()»=$«relObjName».«source.idField()» theme='Printer'}" title="{gt text='Open quick view window'}" style="display: none">
-                {img src='windows_list.gif' modname='core' set='icons/extrasmall' __alt='Quick view'}
-            </a>
-            <script type="text/javascript">
-            /* <![CDATA[ */
-                document.observe('dom:loaded', function() {
-                    «container.application.prefix()»InitInlineWindow($('«source.name.formatForCode()»Item{{$«relObjName».«source.idField()»}}Display'), '{{$«relObjName».«source.getLeadingField().actualFieldName().formatForCode()»|replace:"'":""}}');
-                });
-            /* ]]> */
-            </script>
+«DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR OneToOneRelationship-»
+«EXPAND DisplayEntryRelationField(controller, useTarget)-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntryRelationField(Controller controller, Boolean useTarget) FOR JoinRelationship-»
+«LET getRelationAliasName(useTarget).formatForCodeCapital() AS relationAliasName-»
+«LET ((useTarget) ? target : source) AS linkEntity-»
+«LET ((!useTarget) ? target : source).name.formatForCode().msconcat('.').msconcat(relationAliasName) AS relObjName-»
+            {if (isset($«relObjName»))}
+                <a href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«linkEntity.name.formatForCode()»' «linkEntity.idField()»=$«relObjName».«linkEntity.idField()»}">
+                    {$«relObjName».«linkEntity.getLeadingField().actualFieldName().formatForCode()»«REM»|nl2br«ENDREM»|default:""}
+                </a>
+                <a id="«linkEntity.name.formatForCode()»Item{$«relObjName».«linkEntity.idField()»}Display" href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«linkEntity.name.formatForCode()»' «linkEntity.idField()»=$«relObjName».«linkEntity.idField()» theme='Printer'}" title="{gt text='Open quick view window'}" style="display: none">
+                    {img src='windows_list.gif' modname='core' set='icons/extrasmall' __alt='Quick view'}
+                </a>
+                <script type="text/javascript">
+                /* <![CDATA[ */
+                    document.observe('dom:loaded', function() {
+                        «container.application.prefix()»InitInlineWindow($('«linkEntity.name.formatForCode()»Item{{$«relObjName».«linkEntity.idField()»}}Display'), '{{$«relObjName».«linkEntity.getLeadingField().actualFieldName().formatForCode()»|replace:"'":""}}');
+                    });
+                /* ]]> */
+                </script>
+            {/if}
+«ENDLET-»
 «ENDLET-»
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE DisplayEntry(Controller controller) FOR CalculatedField-»
+«DEFINE DisplayEntry(Controller controller, Boolean useTarget) FOR CalculatedField-»
 «ENDDEFINE»
 
 
