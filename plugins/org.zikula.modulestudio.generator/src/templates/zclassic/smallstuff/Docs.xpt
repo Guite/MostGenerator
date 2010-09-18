@@ -55,8 +55,11 @@ If you are interested in a new level of Zikula development, visit «msUrl()».
 «DEFINE ReadmeDE FOR Application-»
 INSTALLATIONSANLEITUNG
 ----------------------
-1) Kopieren Sie «appName()» in das Verzeichnis modules
-2) Initialisieren und aktivieren Sie «appName()» in der Modulverwaltung
+1) Kopieren Sie «appName()» in das Verzeichnis modules.
+2) Initialisieren und aktivieren Sie «appName()» in der Modulverwaltung.
+«IF hasUploads()-»
+3) Setzen Sie das Verzeichnis files inklusive aller Unterordner auf beschreibbar.
+«ENDIF-»
 
 Bei Fragen und anderen Anmerkungen besuchen Sie unsere Homepage «url».
 
@@ -66,8 +69,11 @@ Bei Fragen und anderen Anmerkungen besuchen Sie unsere Homepage «url».
 «DEFINE Readme FOR Application-»
 INSTALLATION INSTRUCTIONS
 -------------------------
-1) Copy «appName()» to your modules folder
-2) Initialize and activate «appName()» in the modules administration
+1) Copy «appName()» to your modules folder.
+2) Initialize and activate «appName()» in the modules administration.
+«IF hasUploads()-»
+3) Make the files directory writable including all sub folders.
+«ENDIF-»
 
 For questions and other remarks visit our homepage «url».
 
