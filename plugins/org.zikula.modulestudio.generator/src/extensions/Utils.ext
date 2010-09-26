@@ -5,7 +5,7 @@ extension org::eclipse::xtend::util::stdlib::io;
 
 /* app related functions */
 cached String msVersion() :
-    "0.5.1";
+    "0.5.2";
 cached String msUrl() :
     "http://modulestudio.de";
 
