@@ -103,19 +103,6 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
 
 «EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(appName(), true, 'block', 'ItemList', 'display')-»
 
-/** TODO
-        if (!empty($vars['filter'])) {
-            // use FilterUtil to support generic filtering based on an object-oriented approach
-            $fu = new FilterUtil(array('table' => $objectCollection->_intObjectType, array('join' => &$objectCollection->_objJoin)));
-
-            $fu->setFilter($vars['filter']);
-            // supported operators: eq, ne, like, lt, le, gt, ge, null, notnull
-
-            // process request input filters and get result for DQL
-            $ret = $fu->GetSQL();
-            $where = $ret['where'];
-        }
-*/
         $sortParam = '';
         if ($vars['sorting'] == 'random') $sortParam = 'RAND()';
         elseif ($vars['sorting'] == 'newest') $sortParam = $objectCollection->get_intIdField() . ' DESC';

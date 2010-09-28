@@ -74,17 +74,6 @@ class «appName()»_Api_Mailz extends «appName()»_Api_Base_Mailz
         $objectType = '«leadingEntity.name.formatForCode()»';
 «EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(appName(), true, 'mailz', 'mailz', 'getContent')-»
 
-/** TODO
-        Loader::LoadClass('FilterUtil');
-        $fu =& new FilterUtil('«appName()»', $objectArray->_objType, array('join' => &$objectArray->_objJoin));
-
-        $filter = '';
-/*        if (!empty($this->filter)) {
-        $filter .= ',' . $this->filter;
-        }* /
-        $fu->setFilter($filter);
-        $ret = $fu->GetSQL();
-*/
         $sortParam = '';
         if ($args['pluginid'] == 2) $sortParam = 'RAND()';
         elseif ($args['pluginid'] == 1) $sortParam = $objectCollection->get_intIdField() . ' DESC';
@@ -93,7 +82,7 @@ class «appName()»_Api_Mailz extends «appName()»_Api_Base_Mailz
 
         // get objects from database
         // while the result will be saved in the object, we assign in to a local variable for convenience.
-        $objectData = $objectCollection->selectWherePaginated($var['filter'], $sortParam, -1, $resultsPerPage);
+        $objectData = $objectCollection->selectWherePaginated($this->filter, $sortParam, -1, $resultsPerPage);
 
         // get total number of records for building the pagination by method call
         //$objectCount = $objectCollection->selectCount($where);

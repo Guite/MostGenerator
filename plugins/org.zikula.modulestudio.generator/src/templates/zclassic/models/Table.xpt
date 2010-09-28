@@ -149,17 +149,43 @@ class «baseClassModelTable()» extends Doctrine_Table
             $selection = $this->addJoinsToSelection($selection);
         }
 
+        // create base selection query
         $q = Doctrine_Query::create()
             ->select($selection)
             ->from('«implClassModelRecord()» tbl');
 
+        // add join information
         if ($useJoins === true) {
             $this->addJoinsToFrom($q);
         }
 
-        if (!empty($where)) {
-            $q->where('tbl.' . $where);
+        $fuReturn = array();
+/** TODO: see http://code.zikula.org/generator/ticket/97
+        // use FilterUtil to support generic filtering
+        $fu = new FilterUtil(array('table' => $this));
+
+        // you could set explicit filters at this point, something like
+        // $fu->setFilter('type:eq:' . $args['type'] . ',id:eq:' . $args['id']);
+        // supported operators: eq, ne, like, lt, le, gt, ge, null, notnull
+
+        // process request input filters and get result for DQL
+        $fuReturn = $fu->GetSQL();
+*/
+
+        // add custom filters
+        if (isset($fuReturn['where']) && !empty($fuReturn['where'])) {
+            $q->where($fuReturn['where']);
+            if (!empty($where)) {
+                $q->andWhere('tbl.' . $where);
+            }
         }
+        else {
+            if (!empty($where)) {
+                $q->where('tbl.' . $where);
+            }
+        }
+
+        // add order by clause
         if (!empty($orderBy)) {
             if ($orderBy == 'RAND()') {
                 $q->orderBy('rand');

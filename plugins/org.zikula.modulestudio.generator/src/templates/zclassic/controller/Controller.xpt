@@ -229,12 +229,11 @@ class «implClassApi()» extends «baseClassApi()»
 
         $fragment = DataUtil::formatForStore($fragment);
 
-        // TODO: use FilterUtil
+        // TODO: move into Doctrine_Table subclasses and refactor to Doctrine_Query instance.
         if (!empty($exclude)) {
             $where = $idField . ' NOT IN (' . DataUtil::formatForStore($exclude) . ')';
         }
 
-        // TODO: move into Doctrine_Table subclasses and refactor to Doctrine_Query instance.
         $whereSub = '';
         switch ($objectType) {
 «FOREACH app.models.entities AS entity-»

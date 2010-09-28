@@ -120,18 +120,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         // convenience vars to make code clearer
         $where = '';
         $sortParam = $sort . ' ' . $sdir;
-/** TODO
-        // use FilterUtil to support generic filtering based on an object-oriented approach
-        $fu = new FilterUtil(array('table' => $objectCollection->_intObjectType, array('join' => &$objectCollection->_objJoin)));
 
-        // you could set explicit filters at this point, something like
-        // $fu->setFilter('type:eq:' . $args['type'] . ',id:eq:' . $args['id']);
-        // supported operators: eq, ne, like, lt, le, gt, ge, null, notnull
-
-        // process request input filters and get result for DQL
-        $ret = $fu->GetSQL();
-        $where = $ret['where'];
-*/
         // get objects from database
         // while the result will be saved in the object, we assign in to a local variable for convenience.
         $objectData = $objectCollection->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
