@@ -1,0 +1,101 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE Root(String appName, Controller controller) FOR Entity»
+«info("Generating " + controller.name() + " atom view templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
+«LET name.formatForCode() AS objName-»
+«FILE templateFileWithExtension(controller, name, 'view', 'atom')-»
+{* purpose of this template: «nameMultiple.formatForDisplay()» atom feed in «controller.name()» area *}
+{«appName»TemplateHeaders contentType='application/atom+xml'}<?xml version="1.0" encoding="{charset assign='charset'}{if $charset eq 'ISO-8859-15'}ISO-8859-1{else}{$charset}{/if}" ?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+{gt text='Latest «nameMultiple.formatForDisplay()»' assign='channelTitle'}
+{gt text='A direct feed showing the list of «nameMultiple.formatForDisplay()»' assign='channelDesc'}
+{getbaseurl assign='baseurl'}
+    <title type="text">{$channelTitle}</title>
+    <subtitle type="text">{$channelDesc} - {configgetvar name='slogan'}</subtitle>
+    <author>
+        <name>{configgetvar name='sitename'}</name>
+    </author>
+{assign var='numItems' value=$items|@count}
+{if $numItems}
+{capture assign='uniqueID'}tag:{$baseurl|replace:'http://':''|replace:'/':''},{$items[0].cr_date|default:$smarty.now|date_format:'%Y-%m-%d'}:{modurl modname='«appName»' type='«controller.name()»' func='«IF controller.hasActions('display')»display«ELSEIF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»' «idField()»=$items[0].«idField()»}{/capture}
+    <id>{$uniqueID}</id>
+    <updated>{$items[0].lu_date|default:$smarty.now|date_format:'%Y-%m-%dT%H:%M:%SZ'}</updated>
+{/if}
+    <link rel="alternate" type="text/html" hreflang="{lang}" href="{modurl modname='«appName»' fqurl=1}" />
+    <link rel="self" type="application/atom+xml" href="{php}echo substr(System::getBaseURL(), 0, strlen(System::getBaseURL())-1);{/php}{getcurrenturi}" />
+    <rights>Copyright (c) {php}echo date('Y');{/php}, {$baseurl}</rights>
+
+{foreach item='«objName»' from=$items}
+    <entry>
+        <title type="html">{$«objName».«getLeadingField().name.formatForCode()»|modcallhooks}</title>
+        <link rel="alternate" type="text/html" href="{modurl modname='«appName»' type='«controller.name()»' func='«IF controller.hasActions('display')»display«ELSEIF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»' «idField()»=$«objName».«idField()» fqurl='1'}" />
+
+{capture assign='uniqueID'}tag:{$baseurl|replace:'http://':''|replace:'/':''},{$«objName».cr_date|default:$smarty.now|date_format:'%Y-%m-%d'}:{modurl modname='«appName»' type='«controller.name()»' func='«IF controller.hasActions('display')»display«ELSEIF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»' «idField()»=$«objName».«idField()»}{/capture}
+        <id>{$uniqueID}</id>
+«IF standardFields-»
+    {if isset($«objName».lu_date)}
+        <updated>{$«objName».lu_date|date_format:'%Y-%m-%dT%H:%M:%SZ'}</updated>
+    {/if}
+    {if isset($«objName».cr_date)}
+        <published>{$«objName».cr_date|date_format:'%Y-%m-%dT%H:%M:%SZ'}</published>
+    {/if}
+«ENDIF-»
+«IF !standardFields-»
+«IF metaData-»
+    {if isset($«objName».__META__) && isset($«objName».__META__.author)}
+        <author>{$«objName».__META__.author}</author>
+    {/if}
+«ENDIF-»
+«ELSE-»
+    {if isset($«objName».cr_uid)}
+{usergetvar name='uname' uid=$«objName».cr_uid assign='cr_uname'}
+{usergetvar name='name' uid=$«objName».cr_uid assign='cr_name'}
+        <author>
+           <name>{$cr_name|default:$cr_uname}</name>
+           <uri>{usergetvar name='_UYOURHOMEPAGE' uid=$«objName».cr_uid assign='homepage'}{$homepage|default:'-'}</uri>
+           <email>{usergetvar name='email' uid=$«objName».cr_uid}</email>
+        </author>
+«IF metaData-»
+    {elseif isset($«objName».__META__) && isset($«objName».__META__.author)}
+        <author>{$«objName».__META__.author}</author>
+«ENDIF-»
+    {/if}
+«ENDIF-»
+
+«LET fields.typeSelect(TextField).reject(e|e.leading) AS textFields-»
+«LET fields.typeSelect(StringField).reject(e|e.leading) AS stringFields-»
+        <summary type="html">
+            <![CDATA[
+«IF !textFields.isEmpty-»
+                {$«objName».«textFields.get(0).actualFieldName().formatForCode()»|truncate:150:"&hellip;"|default:'-'}
+«ELSEIF !stringFields.isEmpty-»
+                {$«objName».«stringFields.get(0).actualFieldName().formatForCode()»|truncate:150:"&hellip;"|default:'-'}
+«ELSE-»
+                {$«objName».«getLeadingField().actualFieldName().formatForCode()»|truncate:150:"&hellip;"|default:'-'}
+«ENDIF-»
+            ]]>
+        </summary>
+        <content type="html">
+            <![CDATA[
+«IF textFields.size > 1-»
+                {$«objName».«textFields.get(1).actualFieldName().formatForCode()»|replace:'<br>':'<br />'}
+«ELSEIF !textFields.isEmpty && !stringFields.isEmpty-»
+                {$«objName».«stringFields.get(0).actualFieldName().formatForCode()»|replace:'<br>':'<br />'}
+«ELSEIF stringFields.size > 1-»
+                {$«objName».«stringFields.get(1).actualFieldName().formatForCode()»|replace:'<br>':'<br />'}
+«ELSE-»
+                {$«objName».«getLeadingField().actualFieldName().formatForCode()»|replace:'<br>':'<br />'}
+«ENDIF-»
+            ]]>
+        </content>
+«ENDLET-»
+«ENDLET-»
+    </entry>
+{/foreach}
+</feed>
+«ENDFILE»
+«ENDLET-»
+«ENDDEFINE»

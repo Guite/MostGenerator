@@ -261,7 +261,7 @@ class «implClassApi()» extends «baseClassApi()»
 «FOREACH app.models.entities AS entity-»
                 case '«entity.name.formatForCode()»':
                         $titleFieldName = '«entity.getLeadingField().actualFieldName().formatForCode()»';
-«LET entity.fields.typeSelect(TextField) AS textFields-»
+«LET entity.fields.typeSelect(TextField).reject(e|e.leading) AS textFields-»
 «IF !textFields.isEmpty-»
                         $descriptionFieldName = '«textFields.get(0).actualFieldName().formatForCode()»';
 «ELSE-»

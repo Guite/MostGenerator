@@ -1,0 +1,93 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE Root(String appName, Controller controller) FOR Entity»
+«info("Generating " + controller.name() + " rss view templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
+«LET name.formatForCode() AS objName-»
+«FILE templateFileWithExtension(controller, name, 'view', 'rss')-»
+{* purpose of this template: «nameMultiple.formatForDisplay()» rss feed in «controller.name()» area *}
+{«appName»TemplateHeaders contentType='application/rss+xml'}<?xml version="1.0" encoding="{charset assign='charset'}{if $charset eq 'ISO-8859-15'}ISO-8859-1{else}{$charset}{/if}" ?>
+<rss version="2.0"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+    xmlns:admin="http://webns.net/mvcb/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:content="http://purl.org/rss/1.0/modules/content/"
+    xmlns:atom="http://www.w3.org/2005/Atom">
+{*<rss version="0.92">*}
+{gt text='Latest «nameMultiple.formatForDisplay()»' assign='channelTitle'}
+{gt text='A direct feed showing the list of «nameMultiple.formatForDisplay()»' assign='channelDesc'}
+{getbaseurl assign='baseurl'}
+    <channel>
+        <title>{$channelTitle}</title>
+        <link>{$baseurl|escape:'html'}</link>
+        <atom:link href="{php}echo substr(System::getBaseURL(), 0, strlen(System::getBaseURL())-1);{/php}{getcurrenturi}" rel="self" type="application/rss+xml" />
+        <description>{$channelDesc} - {configgetvar name='slogan'}</description>
+        <language>{lang}{*configgetvar name='backend_language'*}</language>
+        <image>
+            <title>{configgetvar name='sitename'}</title>
+            <url>{$baseurl|escape:'html'}{$imagepath}/logo.jpg</url>
+            <link>{$baseurl|escape:'html'}</link>
+        </image>
+        <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+        <copyright>Copyright (c) {php}echo date('Y');{/php}, {$baseurl}</copyright>
+        <webMaster>{configgetvar name='adminmail'|escape:'html'} ({usergetvar name='uname' uid=2})</webMaster>
+
+{foreach item='«objName»' from=$items}
+    <item>
+        <title><![CDATA[{if isset($«objName».lu_date)}{$«objName».lu_date|date_format} - {/if}{$«objName».«getLeadingField().name.formatForCode()»|modcallhooks}]]></title>
+        <link>{modurl modname='«appName»' type='«controller.name()»' func='«IF controller.hasActions('display')»display«ELSEIF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»' «idField()»=$«objName».«idField()» fqurl='1'}</link>
+        <guid>{modurl modname='«appName»' type='«controller.name()»' func='«IF controller.hasActions('display')»display«ELSEIF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»' «idField()»=$«objName».«idField()» fqurl='1'}</guid>
+«IF !standardFields-»
+«IF metaData-»
+    {if isset($«objName».__META__) && isset($«objName».__META__.author)}
+        <author>{$«objName».__META__.author}</author>
+    {/if}
+«ENDIF-»
+«ELSE-»
+    {if isset($«objName».cr_uid)}
+{usergetvar name='uname' uid=$«objName».cr_uid assign='cr_uname'}
+{usergetvar name='name' uid=$«objName».cr_uid assign='cr_name'}
+        <author>{usergetvar name='email' uid=$«objName».cr_uid} ({$cr_name|default:$cr_uname})</author>
+«IF metaData-»
+    {elseif isset($«objName».__META__) && isset($«objName».__META__.author)}
+        <author>{$«objName».__META__.author}</author>
+    {/if}
+«ENDIF-»
+«ENDIF-»
+«IF categorisable-»
+{* TODO for later
+        <category><![CDATA[{gt text='Categories'}: {$«objName».categories}]]></category>
+*}
+«ENDIF-»
+
+«LET fields.typeSelect(TextField).reject(e|e.leading) AS textFields-»
+«LET fields.typeSelect(StringField).reject(e|e.leading) AS stringFields-»
+        <description>
+            <![CDATA[
+«IF !textFields.isEmpty-»
+                {$«objName».«textFields.get(0).actualFieldName().formatForCode()»|replace:'<br>':'<br />'}
+«ELSEIF !stringFields.isEmpty-»
+                {$«objName».«stringFields.get(0).actualFieldName().formatForCode()»|replace:'<br>':'<br />'}
+«ELSE-»
+                {$«objName».«getLeadingField().actualFieldName().formatForCode()»|replace:'<br>':'<br />'}
+«ENDIF-»
+            ]]>
+        </description>
+«ENDLET-»
+«ENDLET-»
+«IF standardFields-»
+    {if $«objName».cr_date}
+        <pubDate>{$«objName».cr_date|date_format:"%a, %d %b %Y %T +0100"}</pubDate>
+    {/if}
+«ENDIF-»
+    </item>
+{/foreach}
+    </channel>
+</rss>
+
+«ENDFILE»
+«ENDLET-»
+«ENDDEFINE»
