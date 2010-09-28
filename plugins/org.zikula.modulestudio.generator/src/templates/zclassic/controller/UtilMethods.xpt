@@ -44,24 +44,153 @@ class «appName()»_Base_Util
      * @param        args           array         additional arguments
      * @return mixed Output.
      */
-    public static function processViewTemplate($view, $type, $objectType, $func, $args=array())
+    public static function processViewTemplate($view, $type, $objectType, $func, $args = array())
     {
+        // create the base template name
         $template = DataUtil::formatForOS($type . '/' . $objectType . '/' . $func);
+
+        // check for template extension
+        $templateExtension = self::determineTemplateExtension($view, $type, $objectType, $func, $args);
+
+        // check whether a special template is used
         $tpl = FormUtil::getPassedValue('tpl', isset($args['tpl']) ? $args['tpl'] : '');
-        if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.tpl')) {
+        if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.' . $templateExtension)) {
             $template .= '_' . DataUtil::formatForOS($tpl);
         }
-        $template .= '.tpl';
+        $template .= '.' . $templateExtension;
 
+        // look whether we need output with or without the theme
         $raw = FormUtil::getPassedValue('raw', (isset($args['raw']) && is_bool($args['raw'])) ? $args['raw'] : false);
+        if (!$raw && in_array($templateExtension, array('csv', 'rss', 'atom', 'xml', 'pdf', 'vcard', 'ical'))) {
+            $raw = true;
+        }
+
         if ($raw == true) {
             // standalone output
-            $view->display($template);
+            if ($templateExtension == 'pdf') {
+                return self::processPdf();
+            }
+            else {
+                $view->display($template);
+            }
             return true;
         }
 
         // normal output
         return $view->fetch($template);
+    }
+
+    /**
+     * Get extension of currently treated template
+     *
+     * @param        view           Zikula_View   reference to view object
+     * @param        type           string        current type (admin, user, ...)
+     * @param        objectType     string        name of treated entity type
+     * @param        func           string        current function (main, view, ...)
+     * @param        args           array         additional arguments
+     * @return array list of allowed template extensions.
+     */
+    protected static function determineTemplateExtension($view, $type, $objectType, $func, $args = array())
+    {
+        $templateExtension = 'tpl';
+        if (!in_array($func, array('view', 'display'))) {
+            return $templateExtension;
+        }
+
+        $extParams = self::availableTemplateExtensions($view, $type, $objectType, $func, $args);
+        foreach ($extParams as $extension) {
+            $extensionCheck = (int) FormUtil::getPassedValue('use' . $extension . 'ext', 0, 'GET');
+            if ($extensionCheck == 1) {
+                $templateExtension = $extension;
+                break;
+            }
+        }
+        return $templateExtension;
+    }
+
+    /**
+     * Get list of available template extensions
+     *
+     * @param        view           Zikula_View   reference to view object
+     * @param        type           string        current type (admin, user, ...)
+     * @param        objectType     string        name of treated entity type
+     * @param        func           string        current function (main, view, ...)
+     * @param        args           array         additional arguments
+     * @return array list of allowed template extensions.
+     */
+    protected static function availableTemplateExtensions($view, $type, $objectType, $func, $args = array())
+    {
+        $extParams = array();
+        if ($func == 'view') {
+            if (SecurityUtil::checkPermission('«appName()»::', '::', ACCESS_ADMIN)) {
+                $extParams = array('csv', 'rss', 'atom', 'xml'/*, 'pdf'*/);
+            }
+            else {
+                $extParams = array('rss', 'atom'/*, 'pdf'*/);
+            }
+        }
+        elseif ($func == 'display') {
+            $extParams = array('xml'/*, 'pdf'*/);
+        }
+        return $extParams;
+    }
+
+    /**
+     * Processes a template file using dompdf (LGPL).
+     * To use this functionality:
+     *    - download dompdf from the project page at http://www.digitaljunkies.ca/dompdf/
+     *    - copy it to modules/«appName()»/lib/vendor/dompdf/ (see inclusion below)
+     *    - override the corresponding template
+     *
+     * @param        template       string        name of template to use
+     * @return mixed Output.
+     */
+    protected static function processPdf($template)
+    {
+        // include dom pdf classes
+        require_once('modules/«appName()»/lib/vendor/dompdf/dompdf_config.inc.php');
+
+        // first the content, to set page vars
+        $output = $render->fetch($template);
+
+        // see http://codeigniter.com/forums/viewthread/69388/P15/#561214
+        $output = utf8_decode($output);
+
+        // then the surrounding
+        $output = $render->fetch('«appName()»_include_pdfheader.htm') . $output . '</body></html>';
+
+        // create name of the pdf output file
+        $fileTitle = self::formatPermalink(System::getVar('sitename')) . '-' . self::formatPermalink(PageUtil::getVar('title'));
+        $fileTitle .= '-' . date('Ymd') . '.pdf';
+
+//if ($_GET['dbg'] == 1) die($output);
+
+        // instantiate pdf object
+        $pdf = new DOMPDF();
+        // define page properties
+        $pdf->set_paper('A4');
+        // load html input data
+        $pdf->load_html($output);
+        // create the actual pdf file
+        $pdf->render();
+        // stream output to browser
+        $pdf->stream($fileTitle);
+
+        // prevent additional output by shutting down the system
+        System::shutDown();
+        return true;
+    }
+
+    /**
+     * Create nice permalinks
+     */
+    public static function formatPermalink($name)
+    {
+        $name = str_replace(array('ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü', 'ß', '.', '?', '"', '/', 'é', 'è', 'â'),
+                            array('ae', 'oe', 'ue', 'Ae', 'Oe', 'Ue', 'ss', '', '', '', '-', 'e', 'e', 'a'),
+                            $name);
+        $name = DataUtil::formatPermalink($name);
+        return strtolower($name);
     }
 «IF hasUploads()-»
 

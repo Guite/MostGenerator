@@ -113,7 +113,8 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         // the number of items displayed on a page for pagination
         $resultsPerPage = (int) FormUtil::getPassedValue('num', 0, 'GET');
         if ($resultsPerPage == 0) {
-            $resultsPerPage = $this->getVar('pagesize', 10);
+            $csv = (int) FormUtil::getPassedValue('usecsvext', 0, 'GET');
+            $resultsPerPage = ($csv == 1) ? 999 : $this->getVar('pagesize', 10);
         }
 
         // convenience vars to make code clearer
