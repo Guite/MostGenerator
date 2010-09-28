@@ -6,6 +6,7 @@
 «EXPAND Plugins::SelectorObjectTypes::Root-»
 «EXPAND Plugins::SelectorTemplates::Root-»
 «EXPAND Plugins::ValidationError::Root-»
+«EXPAND Plugins::TemplateHeaders::Root-»
 «IF hasUploads()-»
 «EXPAND Plugins::ImageThumb::Root-»
 «EXPAND Plugins::GetFileSize::Root-»

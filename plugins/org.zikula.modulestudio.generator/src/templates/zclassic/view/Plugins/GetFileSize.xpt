@@ -13,7 +13,7 @@
 
 «DEFINE GetFileSize FOR Application-»
 /**
- * The «appName().formatForDB()»GetThumb modifier displays the size of a given file in a readable way
+ * The «appName().formatForDB()»GetFileSize modifier displays the size of a given file in a readable way
  *
  * @param        size           string        file size in bytes
  * @param        filepath       string        The input file path including file name (if file size is not known)
