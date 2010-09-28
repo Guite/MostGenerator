@@ -148,6 +148,9 @@ class «appName()»_Base_Util
     protected static function processPdf($template)
     {
         // include dom pdf classes
+        if (!file_exists('modules/«appName()»/lib/vendor/dompdf/dompdf_config.inc.php')) {
+            return false;
+        }
         require_once('modules/«appName()»/lib/vendor/dompdf/dompdf_config.inc.php');
 
         // first the content, to set page vars
