@@ -4,7 +4,7 @@
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR EntityField-»
-«prepend»{$«objName».«name.formatForCode()»}«""-»
+«prepend»{$«objName».«name.formatForCode()»«IF page == 'viewcsv'»|replace:"\"":""«ENDIF»}«""-»
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR BooleanField-»
@@ -19,6 +19,9 @@
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR UserField-»
 «LET objName.msconcat('.').msconcat(actualFieldName().formatForCode()) AS realName-»
+«IF page == 'viewcsv'-»
+{usergetvar name='uname' uid=$«realName»}«""-»
+«ELSE-»
 «IF !mandatory-»
 «prepend»{if $«realName» gt 0}
 «ENDIF-»
@@ -31,14 +34,18 @@
 «prepend»    {usergetvar name='uname' uid=$«realName»}
 «prepend»  {/if}
 «ENDIF-»
-«ENDLET-»
 «IF !mandatory-»
 «prepend»{else}&nbsp;{/if}«""-»
 «ENDIF-»
+«ENDIF-»
+«ENDLET-»
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR EmailField-»
 «LET objName.msconcat('.').msconcat(actualFieldName().formatForCode()) AS realName-»
+«IF page == 'viewcsv'-»
+{$«realName»}«""-»
+«ELSE-»
 «IF !mandatory-»
 «prepend»{if $«realName» ne ''}
 «ENDIF-»
@@ -53,14 +60,18 @@
 «prepend»    {$«realName»}
 «prepend»  {/if}
 «ENDIF-»
-«ENDLET-»
 «IF !mandatory-»
 «prepend»{else}&nbsp;{/if}«""-»
 «ENDIF-»
+«ENDIF-»
+«ENDLET-»
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR UrlField-»
 «LET objName.msconcat('.').msconcat(actualFieldName().formatForCode()) AS realName-»
+«IF page == 'viewcsv'-»
+{$«realName»}«""-»
+«ELSE-»
 «IF !mandatory-»
 «prepend»{if $«realName» ne ''}
 «ENDIF-»
@@ -75,15 +86,19 @@
 «prepend»    {$«realName»}
 «prepend»  {/if}
 «ENDIF-»
-«ENDLET-»
 «IF !mandatory-»
 «prepend»{else}&nbsp;{/if}«""-»
 «ENDIF-»
+«ENDIF-»
+«ENDLET-»
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR UploadField-»
 «LET entity.container.application.appName().formatForDB() AS appNameSmall-»
 «LET objName.msconcat('.').msconcat(actualFieldName().formatForCode()) AS realName-»
+«IF page == 'viewcsv'-»
+{$«realName»}«""-»
+«ELSE-»
 «IF !mandatory-»
 «prepend»{if $«realName» ne ''}
 «ENDIF-»
@@ -94,11 +109,12 @@
 «prepend»      {gt text='Download'} ({$«realName»FullPath|«appNameSmall»GetFileSize:false:false})
 «prepend»  {/if}
 «prepend»  </a>
-«ENDLET-»
-«ENDLET-»
 «IF !mandatory-»
 «prepend»{else}&nbsp;{/if}
 «ENDIF-»
+«ENDIF-»
+«ENDLET-»
+«ENDLET-»
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR DateField-»

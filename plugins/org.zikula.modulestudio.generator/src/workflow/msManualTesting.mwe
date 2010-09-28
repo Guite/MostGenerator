@@ -4,7 +4,7 @@
     <!-- which model ? -->
     <property name="modelName" value="SimpleTest" />
     <!-- where is it ? -->
-    <property name="modelPath" value="/home/axel" />
+    <property name="modelPath" value="/home/axel/projects/GuiteSVN/modules/trunk/models/examples" />
 
 	<!-- call file reader workflow and provide required properties -->
 	<cartridge file="workflow/msWorkflowManual.mwe"

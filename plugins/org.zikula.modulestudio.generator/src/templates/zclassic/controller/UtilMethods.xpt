@@ -161,7 +161,7 @@ class «appName()»_Base_Util
         $output = utf8_decode($output);
 
         // then the surrounding
-        $output = $render->fetch('«appName()»_include_pdfheader.htm') . $output . '</body></html>';
+        $output = $render->fetch('include_pdfheader.tpl') . $output . '</body></html>';
 
         // create name of the pdf output file
         $fileTitle = self::formatPermalink(System::getVar('sitename')) . '-' . self::formatPermalink(PageUtil::getVar('title'));
