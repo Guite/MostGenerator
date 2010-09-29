@@ -1,0 +1,110 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE Root(String appName, Controller controller) FOR Entity»
+«info("Generating " + controller.name() + " xml view templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
+«LET name.formatForCode() AS objName-»
+«IF controller.hasActions('view')-»
+«FILE templateFileWithExtension(controller, name, 'view', 'xml')-»
+{* purpose of this template: «nameMultiple.formatForDisplay()» view xml view in «controller.name()» area *}
+{«appName»TemplateHeaders contentType='text/xml'}<?xml version="1.0" encoding="{charset}" ?>
+{getbaseurl assign='baseurl'}
+<«nameMultiple.formatForCode()»>
+{foreach item='item' from=$items}
+    {include file='«templateFileWithExtension(controller, name, 'include', 'xml')»'}
+{foreachelse}
+    <no«name.formatForCodeCapital()» />
+{/foreach}
+</«nameMultiple.formatForCode()»>
+«ENDFILE»
+«ENDIF-»
+
+«IF controller.hasActions('display')-»
+«FILE templateFileWithExtension(controller, name, 'display', 'xml')-»
+{* purpose of this template: «nameMultiple.formatForDisplay()» display xml view in «controller.name()» area *}
+{«appName»TemplateHeaders contentType='text/xml'}<?xml version="1.0" encoding="{charset}" ?>
+{getbaseurl assign='baseurl'}
+{include file='«templateFileWithExtension(controller, name, 'include', 'xml')»' item=$«objName»]-->
+«ENDFILE»
+«ENDIF-»
+
+«FILE templateFileWithExtension(controller, name, 'include', 'xml')-»
+{* purpose of this template: «nameMultiple.formatForDisplay()» xml inclusion template in «controller.name()» area *}
+<«name.formatForDB()» id="{$item.«idField()»}"«IF standardFields» createdon="{$item.cr_date}" updatedon="{$item.lu_date}"«ENDIF»>
+«EXPAND DisplayEntry(controller, false) FOREACH getDerivedFields().select(e|e.primaryKey)-»
+«EXPAND DisplayEntry(controller, false) FOREACH getDerivedFields().reject(e|e.primaryKey)-»
+«EXPAND DisplayEntry(controller, true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
+</«name.formatForDB()»>
+«ENDFILE»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntry(Controller controller, Boolean useTarget) FOR Object-»
+«EXPAND DisplayEntryInner(controller, useTarget)-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR Object-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR DerivedField-»
+«EXPAND DisplayEntryInnerSimpleField(controller)-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR IntegerField-»
+«LET getPointingRelations() AS joins-»
+«IF !joins.isEmpty-»
+«EXPAND DisplayEntryRelationField(controller, false) FOREACH joins-»
+«ELSE-»
+«EXPAND DisplayEntryInnerSimpleField(controller)-»
+«ENDIF-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntryInnerSimpleField(Controller controller) FOR DerivedField-»
+«IF leading == true-»
+    <«actualFieldName().formatForCode()»>{$«entity.name.formatForCode()».«actualFieldName().formatForCode()»}</«actualFieldName().formatForCode()»>
+«ELSE-»
+    <«actualFieldName().formatForCode()»>«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(entity.name.formatForCode(), 'viewxml', '')»</«actualFieldName().formatForCode()»>
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntryInnerSimpleField(Controller controller) FOR BooleanField-»
+    <«actualFieldName().formatForCode()»>{if !$«entity.name.formatForCode()».«actualFieldName()»}0{else}1{/if}</«actualFieldName().formatForCode()»>
+«ENDDEFINE»
+
+«DEFINE DisplayEntryInnerSimpleFieldCdata(Controller controller) FOR DerivedField-»
+«IF leading == true-»
+    <«actualFieldName().formatForCode()»><![CDATA[{$«entity.name.formatForCode()».«actualFieldName().formatForCode()»}]]></«actualFieldName().formatForCode()»>
+«ELSE-»
+    <«actualFieldName().formatForCode()»><![CDATA[«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(entity.name.formatForCode(), 'viewxml', '')»]]></«actualFieldName().formatForCode()»>
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntryInnerSimpleField(Controller controller) FOR StringField-»
+«EXPAND DisplayEntryInnerSimpleFieldCdata(controller)-»
+«ENDDEFINE»
+«DEFINE DisplayEntryInnerSimpleField(Controller controller) FOR TextField-»
+«EXPAND DisplayEntryInnerSimpleFieldCdata(controller)-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR OneToOneRelationship-»
+«EXPAND DisplayEntryRelationField(controller, useTarget)-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntryRelationField(Controller controller, Boolean useTarget) FOR JoinRelationship-»
+«LET getRelationAliasName(useTarget).formatForCodeCapital() AS relationAliasName-»
+«LET ((!useTarget) ? target : source) AS mainEntity-»
+«LET ((useTarget) ? target : source) AS linkEntity-»
+«LET mainEntity.name.formatForCode().msconcat('.').msconcat(relationAliasName) AS relObjName-»
+    <«relationAliasName»>{if (isset($«relObjName»))}{$«relObjName».«linkEntity.getLeadingField().actualFieldName().formatForCode()»«REM»|nl2br«ENDREM»|default:""}{/if}</«relationAliasName»>
+«ENDLET-»
+«ENDLET-»
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE DisplayEntry(Controller controller, Boolean useTarget) FOR CalculatedField-»
+«ENDDEFINE»
+

@@ -19,7 +19,7 @@
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR UserField-»
 «LET objName.msconcat('.').msconcat(actualFieldName().formatForCode()) AS realName-»
-«IF page == 'viewcsv'-»
+«IF page == 'viewcsv' || page == 'viewxml'-»
 {usergetvar name='uname' uid=$«realName»}«""-»
 «ELSE-»
 «IF !mandatory-»
@@ -43,7 +43,7 @@
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR EmailField-»
 «LET objName.msconcat('.').msconcat(actualFieldName().formatForCode()) AS realName-»
-«IF page == 'viewcsv'-»
+«IF page == 'viewcsv' || page == 'viewxml'-»
 {$«realName»}«""-»
 «ELSE-»
 «IF !mandatory-»
@@ -69,7 +69,7 @@
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR UrlField-»
 «LET objName.msconcat('.').msconcat(actualFieldName().formatForCode()) AS realName-»
-«IF page == 'viewcsv'-»
+«IF page == 'viewcsv' || page == 'viewxml'-»
 {$«realName»}«""-»
 «ELSE-»
 «IF !mandatory-»
@@ -96,7 +96,7 @@
 «DEFINE DisplayField(String objName, String page, String prepend) FOR UploadField-»
 «LET entity.container.application.appName().formatForDB() AS appNameSmall-»
 «LET objName.msconcat('.').msconcat(actualFieldName().formatForCode()) AS realName-»
-«IF page == 'viewcsv'-»
+«IF page == 'viewcsv' || page == 'viewxml'-»
 {$«realName»}«""-»
 «ELSE-»
 «IF !mandatory-»

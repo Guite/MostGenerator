@@ -4,24 +4,28 @@
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Root FOR Application»
+«LET appName() AS appName-»
 «FOREACH controllers.controllers AS controller-»
 «IF controller.metaType == UserController
     || controller.metaType == AdminController-»
-    «EXPAND HeaderFooter(appName(), controller)-»
+    «EXPAND HeaderFooter(appName, controller)-»
 «IF controller.hasActions('main')-»
-    «EXPAND Pages::Main::Impl(appName(), controller) FOREACH models.entities-»
+    «EXPAND Pages::Main::Impl(appName, controller) FOREACH models.entities-»
 «ENDIF-»
 «IF controller.hasActions('view')-»
-    «EXPAND Pages::View::Impl(appName(), controller, 3) FOREACH models.entities-»
-    «EXPAND Pages::Export::Csv::Root(appName(), controller) FOREACH models.entities-»
-    «EXPAND Pages::Feed::Rss::Root(appName(), controller) FOREACH models.entities-»
-    «EXPAND Pages::Feed::Atom::Root(appName(), controller) FOREACH models.entities-»
+    «EXPAND Pages::View::Impl(appName, controller, 3) FOREACH models.entities-»
+    «EXPAND Pages::Export::Csv::Root(appName, controller) FOREACH models.entities-»
+    «EXPAND Pages::Feed::Rss::Root(appName, controller) FOREACH models.entities-»
+    «EXPAND Pages::Feed::Atom::Root(appName, controller) FOREACH models.entities-»
+«ENDIF-»
+«IF controller.hasActions('view') || controller.hasActions('display')-»
+    «EXPAND Pages::Export::Xml::Root(appName, controller) FOREACH models.entities-»
 «ENDIF-»
 «IF controller.hasActions('display')-»
-    «EXPAND Pages::Display::Impl(appName(), controller) FOREACH models.entities-»
+    «EXPAND Pages::Display::Impl(appName, controller) FOREACH models.entities-»
 «ENDIF-»
 «IF controller.hasActions('delete')-»
-    «EXPAND Pages::Delete::Impl(appName(), controller) FOREACH models.entities-»
+    «EXPAND Pages::Delete::Impl(appName, controller) FOREACH models.entities-»
 «ENDIF-»
 
 «IF controller.hasActions('display')-»
@@ -33,8 +37,9 @@
 «EXPAND templates::zclassic::view::PageComponents::Relations::DisplayItemList(this, controller, true) FOREACH models.entities-»
 «ENDIF-»
 «ENDIF-»
-«EXPAND MetaDataTemplates(appName(), controller)-»
+«EXPAND MetaDataTemplates(appName, controller)-»
 «ENDFOREACH-»
+«ENDLET-»
 «IF needsConfig()-»
 «EXPAND Pages::Config::ConfigImpl-»
 «ENDIF-»
