@@ -472,7 +472,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «FOREACH uniqueFields AS uniqueField-»
             // check if another «name.formatForDisplay()» with the same «uniqueField.actualFieldName().formatForDisplay()» does already exist
             if ($this->checkIf«uniqueField.actualFieldName().formatForCodeCapital()»Exists($formData['«uniqueField.actualFieldName().formatForCode()»'], $this->«idField()»)) {
-                return LogUtil::registerError(__f('The «uniqueField.actualFieldName().formatForDisplay()» %s is already assigned. Please choose another «uniqueField.actualFieldName().formatForDisplay()».', array($formData['«uniqueField.actualFieldName().formatForCode()»']), $this->dom));
+                return LogUtil::registerError($this->__f('The «uniqueField.actualFieldName().formatForDisplay()» %s is already assigned. Please choose another «uniqueField.actualFieldName().formatForDisplay()».', array($formData['«uniqueField.actualFieldName().formatForCode()»'])));
             }
 «ENDFOREACH-»
 «FOREACH userFields AS userField-»
@@ -481,7 +481,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             if (!$formData['«realName»'] || UserUtil::getVars($formData['«realName»']) === false) {
 «IF userField.mandatory-»
                 // Oops, we have an invalid user id. As this field is mandatory, we raise an error.
-                return LogUtil::registerError(__('Invalid value received for field "«userField.actualFieldName().formatForDisplay()»".', $this->dom));
+                return LogUtil::registerError($this->__('Invalid value received for field "«userField.actualFieldName().formatForDisplay()»".'));
 «ELSE-»
                 // Oops, we have an invalid user id. As this field is not mandatory, we simply set it to 0.
                 $formData['«realName»'] = 0;
@@ -514,7 +514,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
 «REM»Alternative: $address->link('Customer', array($customer['id']));«ENDREM»«""-»
         if (!$formData['«source.idField()»']) {
             // Oops, we have an invalid relation id. As this field is mandatory, we raise an error.
-            return LogUtil::registerError(__('Invalid value received for relation field "«relationAliasName.formatForDisplay()»".', $this->dom));
+            return LogUtil::registerError($this->__('Invalid value received for relation field "«relationAliasName.formatForDisplay()»".'));
         }
 «ENDLET-»
 «ENDLET-»
