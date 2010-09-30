@@ -19,7 +19,7 @@
 «FOREACH uploadFields AS uploadField-»
     «FILE "files/" + entity.nameMultiple.formatForDB() + "/" + uploadField.subFolderPathSegment() + "/index.html"»«msUrl()-»«ENDFILE»
 «ENDFOREACH-»
-«ELSE-»
+«ELSEIF uploadFields.size > 0-»
     «FILE "files/" + entity.nameMultiple.formatForDB() + "/" + uploadFields.get(0).subFolderPathSegment() + "/index.html"»«msUrl()-»«ENDFILE»
 «ENDIF-»
 «ENDLET-»
@@ -28,7 +28,7 @@
 «FOREACH uploadFields AS uploadField-»
     «FILE "files/" + entity.nameMultiple.formatForDB() + "/" + uploadField.subFolderPathSegment() + "/tmb/index.html"»«msUrl()-»«ENDFILE»
 «ENDFOREACH-»
-«ELSE-»
+«ELSEIF uploadFields.size > 0-»
     «FILE "files/" + entity.nameMultiple.formatForDB() + "/" + uploadFields.get(0).subFolderPathSegment() + "/tmb/index.html"»«msUrl()-»«ENDFILE»
 «ENDIF-»
 «ENDLET-»
