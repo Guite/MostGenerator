@@ -41,6 +41,10 @@
 «ENDLET-»
 «ENDDEFINE»
 
+«DEFINE DisplayField(String objName, String page, String prepend) FOR StringField-»
+«prepend»«IF country»«ELSEIF ipaddress»«ELSEIF htmlcolor»«ELSEIF usstate»«ELSEIF language»«ENDIF»{$«objName».«name.formatForCode()»«IF language»|getlanguagename|safehtml«ENDIF»«IF page == 'viewcsv'»|replace:"\"":""«ENDIF»}«""-»
+«ENDDEFINE»
+
 «DEFINE DisplayField(String objName, String page, String prepend) FOR EmailField-»
 «LET objName.msconcat('.').msconcat(actualFieldName().formatForCode()) AS realName-»
 «IF page == 'viewcsv' || page == 'viewxml'-»

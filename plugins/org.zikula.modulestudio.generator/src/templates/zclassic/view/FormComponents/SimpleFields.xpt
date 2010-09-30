@@ -86,12 +86,19 @@
 «DEFINE FormField FOR StringField-»
 «IF country-»
             {* TODO: support country fields in Zikula (see http://code.zikula.org/core/ticket/2446 for more information) *}
-«ENDIF-»
-«IF htmlcolor-»
+«ELSEIF ipaddress-»
+            {* TODO: support ip address fields in Zikula *}
+«ELSEIF htmlcolor-»
             {* TODO: support colour fields in Zikula (see http://code.zikula.org/core/ticket/2448 for more information) *}
+«ELSEIF usstate-»
+            {* TODO: support us state fields in Zikula *}
 «ENDIF-»
+«IF language-»
+            {formlanguageselector id='«actualFieldName().formatForCode()»' mandatory=«mandatory» __title='Choose the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»'}
+«ELSE-»
             {formtextinput id='«actualFieldName().formatForCode()»' mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=«length»«EXPAND Validation::FieldValidationCssClass»}
 «REM»TODO: textMode="password" for password input fields«ENDREM»«""-»
+«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR TextField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
