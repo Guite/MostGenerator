@@ -79,8 +79,8 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
     // treated object type
     private $objectType;
 
-    // url to redirect to
-    private $returnUrl = null;
+    // code for redirect after command handling
+    private $returnTo = null;
 
     // whether this form is being used inline
     private $inlineUsage = false;
@@ -88,52 +88,29 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
     // full prefix for related items
     private $idPrefix = '';
 
-    /**
-     * Initialize form handler.
-     *
-     * This method takes care of all necessary initialisation of our data and form states.
-     *
-     * @return boolean False in case of initialization errors, otherwise true.
-     */
-    function initialize($view)
-    {
 «EXPAND initialize(app, controller, actionName)-»
-
-        $this->initializeAdditions($view);
-
-        // everything okay, no initialization errors occured
-        return true;
-    }
 
     /**
      * Method stub for own additions in subclasses.
      */
-    function initializeAdditions($view)
+    protected function initializeAdditions($view)
     {
     }
 
-    /**
-     * Command event handler.
-     *
-     * This event handler is called when a command is issued by the user. Commands are typically something
-     * that originates from a {@link Form_Plugin_Button} plugin. The passed args contains different properties
-     * depending on the command source, but you should at least find a <var>$args['commandName']</var>
-     * value indicating the name of the command. The command name is normally specified by the plugin
-     * that initiated the command.
-     * @see Form_Plugin_Button
-     * @see Form_Plugin_ImageButton
-     */
-    function handleCommand($view, &$args)
-    {
+«EXPAND getRedirectCodes(app, controller, actionName)-»
+
+«EXPAND getDefaultReturnUrl(app, controller, actionName)-»
+
 «EXPAND handleCommand(app, controller, actionName)-»
-    }
+
+«EXPAND getRedirectUrl(app, controller, actionName)-»
 
 «EXPAND retrieveRelatedObjects(app, controller)-»
 
     /**
      * Helper method for updating links to related records.
      */
-    private function updateRelationLinks($businessEntity)
+    protected function updateRelationLinks($businessEntity)
     {
 «EXPAND UpdateRelationLinks(true) FOREACH incoming.typeSelect(ManyToManyRelationship)-»
 «EXPAND UpdateRelationLinks(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
@@ -141,13 +118,7 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
 
 «IF hasUploadFields()-»
 
-    /**
-     * Helper method to process upload fields
-     */
-    private function handleUploads($formData)
-    {
 «EXPAND handleUploads(app)-»
-    }
 «ENDIF-»
 «LET getUniqueDerivedFields() AS uniqueFields-»
 «IF !uniqueFields.isEmpty-»
@@ -170,8 +141,16 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 }
 «ENDDEFINE»
 
-
 «DEFINE initialize(Application app, Controller controller, String actionName) FOR Entity-»
+    /**
+     * Initialize form handler.
+     *
+     * This method takes care of all necessary initialisation of our data and form states.
+     *
+     * @return boolean False in case of initialization errors, otherwise true.
+     */
+    public function initialize($view)
+    {
         $this->inlineUsage = ((UserUtil::getTheme() == 'Printer') ? true : false);
         $this->idPrefix = FormUtil::getPassedValue('idp', '', 'GET');
 
@@ -181,11 +160,16 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $this->«idField()» = (int) FormUtil::getPassedValue('«idField()»', 0, 'GET');
 
         $this->objectType = '«name.formatForCode()»';
+
+        // initialise redirect goal
+        $this->returnTo = FormUtil::getPassedValue('returnTo', null, 'GET');
+
         $objectType = $this->objectType;
 «EXPAND ControllerHelper::instantiateBusinessObject(app.appName(), false, 'actionHandler', controller.name(), 'initialize')-»
 
         $objectData = array();
         $this->mode = 'create';
+
         // if «idField()» is not 0, we wish to edit an existing «name.formatForDisplay()»
         if ($this->«idField()») {
             $this->mode = 'edit';
@@ -201,7 +185,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             // try to guarantee that only one person at a time can be editing this «name.formatForDisplay()»
             $returnUrl = ModUtil::url('«app.appName()»', '«controller.name()»', 'display', array('ot' => $this->objectType, '«idField()»' => $this->«idField()»));
             ModUtil::apiFunc('PageLock', 'user', 'pageLock',
-                                 array('lockName' => "«app.appName()»«name.formatForCodeCapital()»{$this->«idField()»}",
+                                 array('lockName' => '«app.appName()»«name.formatForCodeCapital()»{$this->«idField()»}',
                                        'returnUrl' => $returnUrl));
         }
         else {
@@ -236,6 +220,12 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $view->assign($objectData)
              ->assign('mode', $this->mode)
              ->assign('inlineUsage', $this->inlineUsage);
+
+        $this->initializeAdditions($view);
+
+        // everything okay, no initialization errors occured
+        return true;
+    }
 «ENDDEFINE»
 
 
@@ -253,7 +243,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
      *
      * @return array single result or list of results
      */
-    function retrieveRelatedObjects($objectType, $relationInputFieldName, $many = false, $source = 'GET')
+    protected function retrieveRelatedObjects($objectType, $relationInputFieldName, $many = false, $source = 'GET')
     {
         $idField = strtolower($objectType) . 'id';
         $objectCollection = «app.appName()»_Factory::getBusinessCollection($objectType, 'controllerAction', array('controller' => '«controller.name()»', 'action' => 'edit'));
@@ -280,8 +270,171 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
     }
 «ENDDEFINE»
 
-«DEFINE handleCommand(Application app, Controller controller, String actionName) FOR Entity-»
+«DEFINE getRedirectCodes(Application app, Controller controller, String actionName) FOR Entity-»
+    /**
+     * Get list of allowed redirect codes
+     */
+    protected function getRedirectCodes()
+    {
+        $codes = array();
+«FOREACH app.controllers.controllers AS someController-»
+«LET someController.name() AS controllerName-»
+«IF someController.hasActions('main')-»
+        // main page of «controllerName» area
+        $codes[] = '«controllerName»';
+«ENDIF-»
+«IF someController.hasActions('view')-»
+        // «controllerName» list of «nameMultiple.formatForDisplay()»
+        $codes[] = '«someController.name()»View';
+«ENDIF-»
+«IF someController.hasActions('display')-»
+        // «controllerName» display page of treated «name.formatForDisplay()»
+        $codes[] = '«controllerName»Display';
+«ENDIF-»
+«ENDLET-»
+«ENDFOREACH-»
+«FOREACH incoming.select(e|e.metaType == OneToOneRelationship || e.metaType == OneToManyRelationship) AS incomingRelation-»
+«LET incomingRelation.source AS sourceEntity-»
+«IF sourceEntity.name != this.name-»
+«FOREACH app.controllers.controllers AS someController-»
+«LET someController.name() AS controllerName-»
+«IF someController.hasActions('view')-»
+        // «controllerName» list of «sourceEntity.nameMultiple.formatForDisplay()»
+        $codes[] = '«controllerName»View«sourceEntity.name.formatForCodeCapital()»';
+«ENDIF-»
+«IF someController.hasActions('display')-»
+        // «controllerName» display page of treated «sourceEntity.name.formatForDisplay()»
+        $codes[] = '«controllerName»Display«sourceEntity.name.formatForCodeCapital()»';
+«ENDIF-»
+«ENDLET-»
+«ENDFOREACH-»
+«ENDIF-»
+«ENDLET-»
+«ENDFOREACH-»
+        return $codes;
+    }
+«ENDDEFINE»
 
+«DEFINE getDefaultReturnUrl(Application app, Controller controller, String actionName) FOR Entity-»
+    /**
+     * Get the default redirect url. Required if no returnTo parameter has been supplied.
+     * This method is called in handleCommand so we know which command has been performed.
+     */
+    protected function getDefaultReturnUrl($args, $obj)
+    {
+«IF controller.hasActions('view')-»
+        // redirect to the list of «nameMultiple.formatForCode()»
+        $url = ModUtil::url('«app.appName()»', '«controller.name()»', 'view',
+                                                             array('ot' => $this->objectType));
+«ELSEIF controller.hasActions('main')-»
+        // redirect to the main page
+        $url = ModUtil::url('«app.appName()»', '«controller.name()»', 'main');
+«ELSE-»
+        $url = System::getHomepageUrl();
+«ENDIF-»
+
+«IF controller.hasActions('display')-»
+        if ($args['commandName'] != 'delete') {
+            // redirect to the detail page of treated «name.formatForCode()»
+            $url = ModUtil::url('«app.appName()»', '«controller.name()»', 'display',
+                                                             array('ot' => $this->objectType,
+                                                                   '«idField()»' => $this->«idField()»));
+        }
+«ENDIF-»
+        return $url;
+    }
+«ENDDEFINE»
+
+«DEFINE getRedirectUrl(Application app, Controller controller, String actionName) FOR Entity-»
+«LET app.appName() AS appName-»
+    /**
+     * Get url to redirect to
+     */
+    protected function getRedirectUrl($args, $obj)
+    {
+        if ($this->inlineUsage == true) {
+            // inline usage, return to special function for closing the Zikula.UI.Window instance
+            return ModUtil::url('«appName»', '«controller.name()»', 'handleInlineRedirect',
+                                                                 array('idp' => $this->idPrefix,
+                                                                       'id' => $this->«idField()»,
+                                                                       'com' => $args['commandName']));
+        }
+
+        // normal usage, compute return url from given redirect code
+        if (!in_array($this->returnTo, $this->getRedirectCodes())) {
+            // invalid return code, so return the default url
+            return $this->getDefaultReturnUrl($args, $obj);
+        }
+
+        // parse given redirect code and return corresponding url
+        switch ($this->returnTo) {
+«FOREACH app.controllers.controllers AS someController-»
+«LET someController.name() AS controllerName-»
+«IF someController.hasActions('main')-»
+            case '«controllerName»':
+                                    return ModUtil::url('«appName»', '«controllerName»');
+«ENDIF-»
+«IF someController.hasActions('view')-»
+            case '«controllerName»View':
+                                    return ModUtil::url('«appName»', '«controllerName»', 'view',
+                                                             array('ot' => $this->objectType));
+«ENDIF-»
+«IF someController.hasActions('display')-»
+            case '«controllerName»Display':
+                                    if ($args['commandName'] != 'delete') {
+                                        return ModUtil::url('«appName»', '«controllerName»', 'display',
+                                                             array('ot' => $this->objectType,
+                                                                   '«idField()»' => $this->«idField()»));
+                                    }
+                                    return $this->getDefaultReturnUrl($args, $obj);
+«ENDIF-»
+«ENDLET-»
+«ENDFOREACH-»
+«FOREACH incoming.select(e|e.metaType == OneToOneRelationship || e.metaType == OneToManyRelationship) AS incomingRelation-»
+«LET incomingRelation.source AS sourceEntity-»
+«IF sourceEntity.name != this.name-»
+«FOREACH app.controllers.controllers AS someController-»
+«LET someController.name() AS controllerName-»
+«IF someController.hasActions('view')-»
+            case '«controllerName»View«sourceEntity.name.formatForCodeCapital()»':
+                                    return ModUtil::url('«appName»', '«controllerName»', 'view',
+                                                             array('ot' => '«sourceEntity.name.formatForCode()»'));
+«ENDIF-»
+«IF someController.hasActions('display')-»
+            case '«controllerName»Display«sourceEntity.name.formatForCodeCapital()»':
+                                    if (isset($obj['«sourceEntity.idField()»']) && $obj['«sourceEntity.idField()»']) {
+                                        return ModUtil::url('«appName»', '«controllerName»', 'display',
+                                                             array('ot' => '«sourceEntity.name.formatForCode()»',
+                                                                   '«sourceEntity.idField()»' => $obj['«sourceEntity.idField()»']));
+                                    }
+                                    return $this->getDefaultReturnUrl($args, $obj);
+«ENDIF-»
+«ENDLET-»
+«ENDFOREACH-»
+«ENDIF-»
+«ENDLET-»
+«ENDFOREACH-»
+            default:
+                                    return $this->getDefaultReturnUrl($args, $obj);
+        }
+    }
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE handleCommand(Application app, Controller controller, String actionName) FOR Entity-»
+    /**
+     * Command event handler.
+     *
+     * This event handler is called when a command is issued by the user. Commands are typically something
+     * that originates from a {@link Form_Plugin_Button} plugin. The passed args contains different properties
+     * depending on the command source, but you should at least find a <var>$args['commandName']</var>
+     * value indicating the name of the command. The command name is normally specified by the plugin
+     * that initiated the command.
+     * @see Form_Plugin_Button
+     * @see Form_Plugin_ImageButton
+     */
+    public function handleCommand($view, &$args)
+    {
         if ($args['commandName'] == 'delete') {
             if (!SecurityUtil::checkPermission('«app.appName()»:«name.formatForCodeCapital()»:', '::', ACCESS_DELETE)) {
                 return $view->registerError(LogUtil::registerPermissionError());
@@ -296,17 +449,6 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         }
 
         $this->objectType = '«name.formatForCode()»';
-
-«IF controller.hasActions('view')-»
-        // redirect to the list of «nameMultiple.formatForCode()»
-        $this->returnUrl = ModUtil::url('«app.appName()»', '«controller.name()»', 'view',
-                                                             array('ot' => $this->objectType));
-«ELSEIF controller.hasActions('main')-»
-        // redirect to the main page
-        $this->returnUrl = ModUtil::url('«app.appName()»', '«controller.name()»', 'main');
-«ELSE-»
-        $this->returnUrl = System::getHomepageUrl();
-«ENDIF-»
 
 «EXPAND ReassignRelatedObjects(true) FOREACH incoming.typeSelect(JoinRelationship)-»
 «EXPAND ReassignRelatedObjects(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
@@ -328,28 +470,22 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             // save «name.formatForDisplay()»
             $«name.formatForCode()»->save();
 
+            // store new id
             $this->«idField()» = $«name.formatForCode()»->get_intId();
+            // check if the insert has worked, might become obsolete due to exception usage
             if ($this->«idField()» === false) {
                 return LogUtil::registerError($this->__('Error! Creation attempt failed.'));
             }
 
-            LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» created.'));
-
             $this->updateRelationLinks($«name.formatForCode()»);
 
-«IF controller.hasActions('display')-»
-
-            // redirect to the detail page of the newly created «name.formatForCode()»
-            $this->returnUrl = ModUtil::url('«app.appName()»', '«controller.name()»', 'display',
-                                                             array('ot' => $this->objectType,
-                                                                   '«idField()»' => $this->«idField()»));
-«ENDIF-»
+            LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» created.'));
         } else if ($args['commandName'] == 'update') {
             // event handling if user clicks on update
 
             // save «name.formatForDisplay()»
             $updateResult = $«name.formatForCode()»->save();
-
+            // check if the update has worked, might become obsolete due to exception usage
             if ($updateResult === false) {
                 return LogUtil::registerError($this->__('Error! Update attempt failed.'));
             }
@@ -357,13 +493,6 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             $this->updateRelationLinks($«name.formatForCode()»);
 
             LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» updated.'));
-«IF controller.hasActions('display')-»
-
-            // redirect to the detail page of the treated «name.formatForCode()»
-            $this->returnUrl = ModUtil::url('«app.appName()»', '«controller.name()»', 'display',
-                                                             array('ot' => $this->objectType,
-                                                                   '«idField()»' => $this->«idField()»));
-«ENDIF-»
         } else if ($args['commandName'] == 'delete') {
             // event handling if user clicks on delete
 
@@ -375,37 +504,20 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» deleted.'));
         } else if ($args['commandName'] == 'cancel') {
             // event handling if user clicks on cancel
-«IF controller.hasActions('display')-»
-
-            if ($this->mode == 'edit') {
-                // redirect to the detail page of the treated «name.formatForCode()»
-                $this->returnUrl = ModUtil::url('«app.appName()»', '«controller.name()»', 'display',
-                                                                 array('ot' => $this->objectType,
-                                                                       '«idField()»' => $this->«idField()»));
-            }
-«ENDIF-»
         }
 
-        if ($this->inlineUsage == true) {
-            $this->returnUrl = ModUtil::url('«app.appName()»', '«controller.name()»', 'handleInlineRedirect',
-                                                                 array('idp' => $this->idPrefix,
-                                                                       'id' => $this->«idField()»,
-                                                                       'com' => $args['commandName']));
+        if ($this->mode == 'edit') {
+            ModUtil::apiFunc('PageLock', 'user', 'releaseLock',
+                             array('lockName' => '«app.appName()»«name.formatForCodeCapital()»{$this->«idField()»}'));
         }
 
-        if ($this->returnUrl != null) {
-            if ($this->mode == 'edit') {
-                ModUtil::apiFunc('PageLock', 'user', 'releaseLock',
-                                 array('lockName' => "«app.appName()»«name.formatForCodeCapital()»{$this->«idField()»}"));
-            }
-
-            return $view->redirect($this->returnUrl);
-        }
+        return $view->redirect($this->getRedirectUrl($args, $«name.formatForCode()»));
 
         // We should in principle not end here at all, since the above command handlers should
         // match all possible commands, but we return "ok" (true) for all cases.
         // You could also return $view->setErrorMsg('Unexpected command')
         return true;
+    }
 «ENDDEFINE»
 
 
@@ -522,6 +634,11 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
 
 
 «DEFINE handleUploads(Application app) FOR Entity-»
+    /**
+     * Helper method to process upload fields
+     */
+    protected function handleUploads($formData)
+    {
 «LET getUploadFields() AS uploadFields-»
 «IF !uploadFields.isEmpty-»
         // initialise the upload handler
@@ -554,6 +671,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
 «ENDIF-»
 «ENDLET-»
         return $formData;
+    }
 «ENDDEFINE»
 
 «DEFINE checkForUniqueValues(Application app, Controller controller) FOR DerivedField-»
@@ -567,7 +685,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
      * @param        excludeid      int         id of «entity.nameMultiple.formatForDisplay()» to exclude (optional)
      * @return boolean true if the given «actualFieldName().formatForDisplay()» does already exist
      */
-    function checkIf«actualFieldName().formatForCodeCapital()»Exists($value, $excludeid = 0)
+    protected function checkIf«actualFieldName().formatForCodeCapital()»Exists($value, $excludeid = 0)
     {
         if (empty($value)) {
             return false;
