@@ -658,8 +658,13 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
                 continue;
             }
 
-            // do the actual upload (includes validation and physical file processing)
-            $formData[$uploadField] = $uploadManager->performFileUpload($this->objectType, $formData, $uploadField);
+            // do the actual upload (includes validation, physical file processing and reading meta data)
+            $uploadResult = $uploadManager->performFileUpload($this->objectType, $formData, $uploadField);
+            // assign the upload file name
+            $formData[$uploadField] = $uploadResult['fileName'];
+            // assign the meta data
+            $formData[$uploadField . 'Meta'] = $uploadResult['metaData'];
+
             // if current field is mandatory check if everything has been done 
             if (in_array($uploadField, $uploadFieldsMandatory) && $formData[$uploadField] === false) {
                 // mandatory upload has not been completed successfully

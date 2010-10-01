@@ -28,9 +28,20 @@
 «DEFINE FieldSetColumn FOR EntityField-»
 «error("Error: undefined entity field type " + metaType.toString() + " (code 592354)") -> ""-»
 «ENDDEFINE»
-«DEFINE FieldSetColumn FOR DerivedField-»
+«DEFINE FieldSetColumnDefault FOR DerivedField-»
         $this->hasColumn(«EXPAND FieldSetColumnDetails-», array(
 «EXPAND FieldSetColumnOptions»
+            )
+        );
+«ENDDEFINE»
+«DEFINE FieldSetColumn FOR DerivedField-»
+«EXPAND FieldSetColumnDefault-»
+«ENDDEFINE»
+«DEFINE FieldSetColumn FOR UploadField-»
+«EXPAND FieldSetColumnDefault-»
+«REM»Add a second field with type array for the meta data (#95)«ENDREM»«""-»
+        $this->hasColumn('«name.formatForCode()»Meta«IF alias != null && alias != ""-» as «alias.formatForCode()»Meta«ENDIF-»', 'array', 10000, array(
+                'type' => 'array'
             )
         );
 «ENDDEFINE»

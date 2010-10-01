@@ -307,25 +307,46 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 «ENDDEFINE»
 «DEFINE sanitizeForOutput FOR UploadField-»
 «LET actualFieldName().formatForCode() AS realName-»
-        $extensionarr = explode('.', $data['«realName»']);
-        // TODO: introduce a Filter for that
-        if ($useObject) {
-            $data->mapValue('«realName»Extension', $extensionarr[count($extensionarr) - 1]);
-            $data->mapValue('«realName»IsImage', (in_array($data['«realName»Extension'], $imageTypes) ? true : false));
-        }
-        else {
-            $data['«realName»Extension'] = $extensionarr[count($extensionarr) - 1];
-            $data['«realName»IsImage'] = (in_array($data['«realName»Extension'], $imageTypes) ? true : false);
-        }
         if (!empty($data['«realName»'])) {
             $basePath = «entity.container.application.appName()»_Util::getFileBaseFolder('«entity.name.formatForCode()»', '«realName»');
+            $fullPath = $basePath .  $data['«realName»'];
             if ($useObject) {
-                $data->mapValue('«realName»FullPath', $basePath .  $data['«realName»']);
-                $data->mapValue('«realName»FullPathURL', System::getBaseUrl() . $basePath .  $data['«realName»']);
+                $data->mapValue('«realName»FullPath', $fullPath);
+                $data->mapValue('«realName»FullPathURL', System::getBaseUrl() . $fullPath);
             }
             else {
-                $data['«realName»FullPath'] = $basePath .  $data['«realName»'];
-                $data['«realName»FullPathURL'] = System::getBaseUrl() . $basePath .  $data['«realName»'];
+                $data['«realName»FullPath'] = $fullPath;
+                $data['«realName»FullPathURL'] = System::getBaseUrl() . $fullPath;
+            }
+
+            // just some backwards compatibility stuff«REM»TODO: remove somewhen«ENDREM»
+            if (!isset($data['«realName»Meta']) || !is_array($data['«realName»Meta']) || !count($data['«realName»Meta'])) {
+                $extensionarr = explode('.', $data['«realName»']);
+                $meta = array();
+                $meta['extension'] = $extensionarr[count($extensionarr) - 1];
+                $meta['size'] = filesize($fullPath);
+                $meta['isImage'] = (in_array($meta['extension'], $imageTypes) ? true : false);
+
+                if ($meta['isImage']) {
+                    $imgInfo = getimagesize($fullPath);
+                    if (is_array($imgInfo)) {
+                        $meta['width'] = $imgInfo[0];
+                        $meta['height'] = $imgInfo[1];
+
+                        if ($imgInfo[1] < $imgInfo[0]) {
+                            $meta['format'] = 'landscape';
+                        }
+                        elseif ($imgInfo[1] > $imgInfo[0]) {
+                            $meta['format'] = 'portrait';
+                        }
+                        else {
+                            $meta['format'] = 'square';
+                        }
+                    }
+                }
+
+                // assign new meta data
+                $data['«realName»Meta'] = $meta;
             }
         }
 «ENDLET-»

@@ -106,11 +106,11 @@
 «IF !mandatory-»
 «prepend»{if $«realName» ne ''}
 «ENDIF-»
-«prepend»  <a href="{$«realName»FullPathURL}" title="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}"{if $«realName»IsImage} rel="imageviewer[«entity.name.formatForDB()»]"{/if}>
-«prepend»  {if $«realName»IsImage}
+«prepend»  <a href="{$«realName»FullPathURL}" title="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB()»]"{/if}>
+«prepend»  {if $«realName»Meta.isImage}
 «prepend»      <img src="{$«realName»|«appNameSmall»ImageThumb:$«realName»FullPath:«IF page == 'display'»250:150«ELSE»80:80«ENDIF»}" width="«IF page == 'display'»250«ELSE»80«ENDIF»" height="«IF page == 'display'»150«ELSE»80«ENDIF»" alt="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
 «prepend»  {else}
-«prepend»      {gt text='Download'} ({$«realName»FullPath|«appNameSmall»GetFileSize:false:false})
+«prepend»      {gt text='Download'} ({$«realName»Meta.size|«appNameSmall»GetFileSize:$«realName»FullPath:false:false})
 «prepend»  {/if}
 «prepend»  </a>
 «IF !mandatory-»

@@ -161,6 +161,10 @@
                 '«name.formatForCode()»' => «EXPAND DefaultFieldAssignmentData»«ENDDEFINE»
 «DEFINE DefaultFieldAssignment FOR DerivedField»
                 '«actualFieldName()»' => «EXPAND DefaultFieldAssignmentData»«ENDDEFINE»
+«DEFINE DefaultFieldAssignment FOR UploadField»
+«REM»Add a second field with type array for the meta data (#95)«ENDREM»«""-»
+                '«actualFieldName()»' => «EXPAND DefaultFieldAssignmentData»,
+                '«actualFieldName()»Meta' => array()«ENDDEFINE»
 
 «DEFINE DefaultFieldAssignmentData FOR EntityField-»
 «error("Error: undefined entity field type " + metaType.toString() + " (code 925624)") -> ""-»
@@ -205,8 +209,12 @@
 «DEFINE fieldMemberVar FOR DerivedField»
 «EXPAND FileHelper::MemberVar(actualFieldName().formatForCode(), fieldTypeAsString(), "")»
 «ENDDEFINE»
+«DEFINE fieldMemberVar FOR UploadField»
+«EXPAND FileHelper::MemberVar(actualFieldName().formatForCode(), fieldTypeAsString(), "")»
+«EXPAND FileHelper::MemberVar(actualFieldName().formatForCode() + 'Meta', 'array', ' = array()')»
+«ENDDEFINE»
 «DEFINE fieldMemberVar FOR ArrayField-»
-«EXPAND FileHelper::MemberVar(actualFieldName().formatForCode(), fieldTypeAsString(), " = array()")»
+«EXPAND FileHelper::MemberVar(actualFieldName().formatForCode(), fieldTypeAsString(), ' = array()')»
 «ENDDEFINE»
 «DEFINE fieldMemberVar(Boolean useTarget) FOR JoinRelationship»
 «LET getRelationAliasName(useTarget).formatForCode() AS relationAliasName-»
@@ -214,8 +222,17 @@
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE fieldAccessors FOR DerivedField»
+«DEFINE fieldAccessorsDefault FOR DerivedField»
 «EXPAND FileHelper::GetterAndSetterMethodsDelegate(actualFieldName().formatForCode(), fieldTypeAsString(), entity.name)»
+«ENDDEFINE»
+
+«DEFINE fieldAccessors FOR DerivedField»
+«EXPAND fieldAccessorsDefault»
+«ENDDEFINE»
+
+«DEFINE fieldAccessors FOR UploadField»
+«EXPAND fieldAccessorsDefault»
+«EXPAND FileHelper::GetterAndSetterMethodsDelegate(actualFieldName().formatForCode().msconcat('Meta'), 'array', entity.name)»
 «ENDDEFINE»
 
 «DEFINE relationAccessors(Boolean useTarget) FOR JoinRelationship»

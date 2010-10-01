@@ -286,7 +286,7 @@ class «appName()»_Base_Util
     }
 
     /**
-     * display a given file size in a readable format
+     * Display a given file size in a readable format
      *
      * @param        size           string        file size in bytes
      * @param        nodesc         boolean       if set to true the description will not be appended

@@ -160,6 +160,11 @@
                 {formdateinput id='«actualFieldName().formatForCode()»' mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true defaultValue='now'«EXPAND Validation::FieldValidationCssClass»}
             {/if}
 «REM»TODO: visible=false«ENDREM»«""-»
+«IF past-»
+            <div class="z-formnote">{gt text='Note: this value must be in the past.'}</div>
+«ELSEIF future-»
+            <div class="z-formnote">{gt text='Note: this value must be in the future.'}</div>
+«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR DateField-»

@@ -63,12 +63,15 @@ class «appName()»_Base_UploadHandler
      * @param        objectType     string        currently treated entity type
      * @param        fileData       string        form data array
      * @param        fieldName      string        name of upload field
-     * @return string the resulting file name
+     * @return array with the resulting file name and collected meta data
      */
     public function performFileUpload($objectType, $fileData, $fieldName)
     {
+        $result = array('fileName' => '',
+                        'metaData' => array());
+
         if (!in_array($objectType, $this->allowedObjectTypes)) {
-            return false;
+            return $result;
         }
 
         $file = $fileData[$fieldName];
@@ -76,7 +79,8 @@ class «appName()»_Base_UploadHandler
             if (is_array($file)) {
                 return $this->handleError($file);
             }
-            return LogUtil::registerError('No file found (23846)');
+            LogUtil::registerError('No file found (23846)');
+            return $result;
         }
 
         $fileName = $file['name'];
@@ -109,15 +113,18 @@ class «appName()»_Base_UploadHandler
             $extensionCheck = in_array($extension, $allowedExtensions);
             if ($extensionCheck === false) {
                 // fail silently, this skips this upload field
-                return '';
+                return $result;
             }
         }
 
-        if (in_array($extension, array('gif', 'jpeg', 'jpg', 'png'))) {
+        $imageTypes = array('gif', 'jpeg', 'jpg', 'png');
+        $imgInfo = array();
+        $isImage = in_array($extension, $imageTypes);
+        if ($isImage) {
             $imgInfo = getimagesize($file['tmp_name']);
             if (!is_array($imgInfo) || !$imgInfo[0] || !$imgInfo[1]) {
                 // fail silently, this skips this upload field
-                return '';
+                return $result;
             }
         }
 
@@ -129,7 +136,31 @@ class «appName()»_Base_UploadHandler
             return LogUtil::registerError('Error during moving your file (34352).');
         }
 
-        return $fileName;
+        // collect data to return
+        $result['fileName'] = $fileName;
+        $meta = array();
+        $meta['extension'] = $extension;
+        $meta['size'] = filesize($basePath . $fileName);
+        $meta['isImage'] = (($isImage) ? true : false);
+
+        if ($isImage && count($imgInfo)) {
+            $meta['width'] = $imgInfo[0];
+            $meta['height'] = $imgInfo[1];
+
+            if ($imgInfo[1] < $imgInfo[0]) {
+                $meta['format'] = 'landscape';
+            }
+            elseif ($imgInfo[1] > $imgInfo[0]) {
+                $meta['format'] = 'portrait';
+            }
+            else {
+                $meta['format'] = 'square';
+            }
+        }
+
+        $result['metaData'] = $meta;
+
+        return $result;
     }
 
     /**
