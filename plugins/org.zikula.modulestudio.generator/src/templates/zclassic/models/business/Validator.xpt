@@ -1,0 +1,57 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE BusinessValidatorBaseImpl(Application app) FOR Entity»
+
+    /**
+     * @var «implClassBusinessEntity(false)» The entity class which is treated by this validator
+     */
+    protected $entity = null;
+
+    /**
+     * Constructor.
+     *
+     * @param «implClassBusinessEntity(false)» $entity         The entity to be validated
+     */
+    function __construct(«implClassBusinessEntity(false)» $entity)
+    {
+        $this->entity = $entity;
+    }
+
+«EXPAND checkForUniqueValues(app) FOREACH getUniqueDerivedFields()-»
+
+«EXPAND FileHelper::GetterAndSetterMethods('entity', implClassBusinessEntity(false))»
+«ENDDEFINE»
+
+«DEFINE checkForUniqueValues(Application app) FOR DerivedField-»
+
+    /**
+     * Check for unique values
+     *
+     * This method determines if there already exist «entity.nameMultiple.formatForDisplay()» with the same «actualFieldName().formatForDisplay()».
+     *
+     * @param        value          «fieldTypeAsString()»        the «actualFieldName().formatForDisplay()» to check
+     * @param        excludeid      int         id of «entity.nameMultiple.formatForDisplay()» to exclude (optional)
+     * @return boolean true if the given «actualFieldName().formatForDisplay()» does already exist
+     */
+    protected function checkIf«actualFieldName().formatForCodeCapital()»Exists($value, $excludeid = 0)
+    {
+        if (empty($value)) {
+            return false;
+        }
+
+        $objectType = '«name.formatForCode()»';
+«EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(app.appName(), true, 'validator', entity.name, 'checkIf'.msconcat(actualFieldName().formatForCodeCapital()).msconcat('Exists'))-»
+
+        // TODO: move to «IF entity.isInheriting()»«entity.parentType().baseClassModelTable()»«ELSE»«entity.baseClassModelTable()»«ENDIF»
+        $where = 'tbl.«actualFieldName().formatForCode()» = \'' . DataUtil::formatForStore($value) . '\'';
+        if ($excludeid > 0) {
+            $where .= ' AND tbl.«entity.idField()» != \'' . (int) DataUtil::formatForStore($excludeid) . '\'';
+        }
+        return $objectCollection->selectCount($where);
+    }
+«ENDDEFINE»
+

@@ -120,11 +120,6 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
 
 «EXPAND handleUploads(app)-»
 «ENDIF-»
-«LET getUniqueDerivedFields() AS uniqueFields-»
-«IF !uniqueFields.isEmpty-»
-«EXPAND checkForUniqueValues(app, controller) FOREACH uniqueFields-»
-«ENDIF-»
-«ENDLET-»
 }
 «ENDDEFINE»
 
@@ -583,7 +578,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         if ($args['commandName'] == 'create' || $args['commandName'] == 'update') {
 «FOREACH uniqueFields AS uniqueField-»
             // check if another «name.formatForDisplay()» with the same «uniqueField.actualFieldName().formatForDisplay()» does already exist
-            if ($this->checkIf«uniqueField.actualFieldName().formatForCodeCapital()»Exists($formData['«uniqueField.actualFieldName().formatForCode()»'], $this->«idField()»)) {
+            if ($object->get_intValidator()->checkIf«uniqueField.actualFieldName().formatForCodeCapital()»Exists($formData['«uniqueField.actualFieldName().formatForCode()»'], $this->«idField()»)) {
                 return LogUtil::registerError($this->__f('The «uniqueField.actualFieldName().formatForDisplay()» %s is already assigned. Please choose another «uniqueField.actualFieldName().formatForDisplay()».', array($formData['«uniqueField.actualFieldName().formatForCode()»'])));
             }
 «ENDFOREACH-»
@@ -676,34 +671,6 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
 «ENDIF-»
 «ENDLET-»
         return $formData;
-    }
-«ENDDEFINE»
-
-«DEFINE checkForUniqueValues(Application app, Controller controller) FOR DerivedField-»
-
-    /**
-     * Validation helper method
-     *
-     * This method determines if there already exist «entity.nameMultiple.formatForDisplay()» with the same «actualFieldName().formatForDisplay()».
-     *
-     * @param        value          «fieldTypeAsString()»        the «actualFieldName().formatForDisplay()» to check
-     * @param        excludeid      int         id of «entity.nameMultiple.formatForDisplay()» to exclude (optional)
-     * @return boolean true if the given «actualFieldName().formatForDisplay()» does already exist
-     */
-    protected function checkIf«actualFieldName().formatForCodeCapital()»Exists($value, $excludeid = 0)
-    {
-        if (empty($value)) {
-            return false;
-        }
-
-        $objectType = $this->objectType;
-«EXPAND ControllerHelper::instantiateBusinessObject(app.appName(), true, 'actionHandler', controller.name(), 'checkIf'.msconcat(actualFieldName().formatForCodeCapital()).msconcat('Exists'))-»
-
-        $where = 'tbl.«actualFieldName().formatForCode()» = \'' . DataUtil::formatForStore($value) . '\'';
-        if ($excludeid > 0) {
-            $where .= ' AND tbl.«entity.idField()» != \'' . (int) DataUtil::formatForStore($excludeid) . '\'';
-        }
-        return $objectCollection->selectCount($where);
     }
 «ENDDEFINE»
 

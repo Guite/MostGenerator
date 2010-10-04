@@ -25,6 +25,11 @@
      */
     protected $_intId = 0;
 
+    /**
+     * @var «implClassBusinessValidator()» The validator for this entity
+     */
+    protected $_intValidator = null;
+
 «EXPAND fieldMemberVar FOREACH fields.typeSelect(DerivedField)»
 «EXPAND fieldMemberVar(false) FOREACH incoming.typeSelect(JoinRelationship)»
 «EXPAND fieldMemberVar(true) FOREACH outgoing.typeSelect(JoinRelationship)»
@@ -39,6 +44,7 @@
         $this->_intObjectType = '«fullEntityName()»';
         $this->_intIdField = '«name.formatForDB()»id';
         $this->_intId = $id;
+        $this->_intValidator = new «implClassBusinessValidator()»($this);
     }
 
     /**
@@ -148,6 +154,7 @@
 «EXPAND FileHelper::GetterAndSetterMethods('_intObjectType', 'string')»
 «EXPAND FileHelper::GetterAndSetterMethods('_intIdField', 'string')»
 «EXPAND FileHelper::GetterAndSetterMethods('_intId', 'integer')»
+«EXPAND FileHelper::GetterAndSetterMethods('_intValidator', implClassBusinessValidator())»
 
 «EXPAND fieldAccessors FOREACH fields.typeSelect(DerivedField)»
 «EXPAND relationAccessors(false) FOREACH incoming.typeSelect(JoinRelationship)»

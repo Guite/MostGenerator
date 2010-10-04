@@ -64,6 +64,10 @@ cached String baseClassBusinessEntity(Entity obj, Boolean isCollection)
     : baseClassDefault(obj.container.application, fillingBusinessEntity(), prepClassPart(obj.name)).processCollectionSuffix(isCollection);
 cached String implClassBusinessEntity(Entity obj, Boolean isCollection)
 	: implClassDefault(obj.container.application, fillingBusinessEntity(), prepClassPart(obj.name)).processCollectionSuffix(isCollection);
+cached String baseClassBusinessValidator(Entity obj)
+    : baseClassDefault(obj.container.application, fillingBusinessEntity(), prepClassPart(obj.name.msconcat("Validator")));
+cached String implClassBusinessValidator(Entity obj)
+    : implClassDefault(obj.container.application, fillingBusinessEntity(), prepClassPart(obj.name.msconcat("Validator")));
 
 /** Controller */
 cached String baseClassController(Controller obj)

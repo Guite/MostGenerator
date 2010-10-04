@@ -8,6 +8,7 @@
 «DEFINE Root FOR Application-»
 	«EXPAND BusinessEntityWrapper(this, false) FOREACH models.entities-»
 	«EXPAND BusinessEntityWrapper(this, true) FOREACH models.entities-»
+    «EXPAND BusinessValidatorWrapper(this) FOREACH models.entities-»
 «ENDDEFINE»
 
 «REM»creates a business entity and a collection class file for every Entity instance«ENDREM»
@@ -17,6 +18,15 @@
     «FILE baseClassBusinessEntity(isCollection).asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessEntityBaseImplSwitch(app, isCollection)»«ENDFILE»
 «ENDIF-»
     «FILE implClassBusinessEntity(isCollection).asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessEntityImplSwitch(app, isCollection)»«ENDFILE»
+«ENDDEFINE»
+
+«REM»creates a business validator file for every Entity instance«ENDREM»
+«DEFINE BusinessValidatorWrapper(Application app) FOR Entity-»
+«info("Generating business validator classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
+«IF !isInheriting()-»
+    «FILE baseClassBusinessValidator().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessValidatorBaseImpl(app)»«ENDFILE»
+«ENDIF-»
+    «FILE implClassBusinessValidator().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessValidatorImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
 «REM»base implementation«ENDREM»
@@ -48,6 +58,36 @@ abstract class «baseClassBusinessEntity(isCollection)»«IF isCollection»/* ex
 class «implClassBusinessEntity(isCollection)» extends «IF isInheriting()»«parentType().implClassBusinessEntity(isCollection)»«ELSE»«baseClassBusinessEntity(isCollection)»«ENDIF»
 {
     // feel free to add your own additions here
+}
+«ENDDEFINE»
+
+
+
+«REM»base implementation«ENDREM»
+«DEFINE BusinessValidatorBaseImpl(Application app) FOR Entity-»
+
+/**
+ * Business validator class for encapsulating validation methods.
+ *
+ * This is the base validation class for «name.formatForDisplay()» entities.
+ */
+abstract class «baseClassBusinessValidator()»
+{
+«EXPAND business::Validator::BusinessValidatorBaseImpl(app)-»
+}
+«ENDDEFINE»
+
+«REM»concrete implementation stub«ENDREM»
+«DEFINE BusinessValidatorImpl(Application app) FOR Entity-»
+
+/**
+ * Business validator class for encapsulating validation methods.
+ *
+ * This is the concrete validation class for «name.formatForDisplay()» entities.
+ */
+class «implClassBusinessValidator()» extends «IF isInheriting()»«parentType().implClassBusinessValidator()»«ELSE»«baseClassBusinessValidator()»«ENDIF»
+{
+    // here you can add custom validation methods or override existing checks
 }
 «ENDDEFINE»
 
