@@ -24,16 +24,16 @@
         <title>{$channelTitle}</title>
         <link>{$baseurl|escape:'html'}</link>
         <atom:link href="{php}echo substr(System::getBaseURL(), 0, strlen(System::getBaseURL())-1);{/php}{getcurrenturi}" rel="self" type="application/rss+xml" />
-        <description>{$channelDesc} - {configgetvar name='slogan'}</description>
-        <language>{lang}{*configgetvar name='backend_language'*}</language>
+        <description>{$channelDesc} - {$modvars.ZConfig.slogan}</description>
+        <language>{lang}</language>
         <image>
-            <title>{configgetvar name='sitename'}</title>
+            <title>{$modvars.ZConfig.sitename}</title>
             <url>{$baseurl|escape:'html'}{$imagepath}/logo.jpg</url>
             <link>{$baseurl|escape:'html'}</link>
         </image>
         <docs>http://blogs.law.harvard.edu/tech/rss</docs>
         <copyright>Copyright (c) {php}echo date('Y');{/php}, {$baseurl}</copyright>
-        <webMaster>{configgetvar name='adminmail'|escape:'html'} ({usergetvar name='uname' uid=2})</webMaster>
+        <webMaster>{$modvars.ZConfig.adminmail|escape:'html'} ({usergetvar name='uname' uid=2})</webMaster>
 
 {foreach item='«objName»' from=$items}
     <item>

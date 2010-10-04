@@ -107,11 +107,10 @@
 «FILE "templates/".msconcat(controller.name()).msconcat("/include_metadata_display.tpl")-»
 {if (isset($obj.cr_uid) && $obj.cr_uid) || (isset($obj.lu_uid) && $obj.lu_uid)}
     <dt>{gt text='Meta data'}</dt>
-{configgetvar name='profilemodule' assign='profileModule'}
 {if isset($obj.cr_uid) && $obj.cr_uid}
 	{usergetvar name='uname' uid=$obj.cr_uid assign='cr_uname'}
-	{if $profileModule ne ""}
-		{modurl modname=$profileModule func='view' uname=$cr_uname assign='profileLink'}
+	{if $modvars.ZConfig.profileModule ne ""}
+		{modurl modname=$modvars.ZConfig.profileModule func='view' uname=$cr_uname assign='profileLink'}
 		{assign var='profileLink' value='<a href="`$profileLink`">`$cr_uname`</a>'}
 	{else}
 	    {assign var='profileLink' value=$cr_uname}
@@ -120,8 +119,8 @@
 {/if}
 {if isset($obj.lu_uid) && $obj.lu_uid}
     {usergetvar name='uname' uid=$obj.lu_uid assign='lu_uname'}
-    {if $profileModule ne ""}
-        {modurl modname=$profileModule func='view' uname=$lu_uname assign='profileLink'}
+    {if $modvars.ZConfig.profileModule ne ""}
+        {modurl modname=$modvars.ZConfig.profileModule func='view' uname=$lu_uname assign='profileLink'}
         {assign var='profileLink' value='<a href="`$profileLink`">`$lu_uname`</a>'}
     {else}
         {assign var='profileLink' value=$lu_uname}

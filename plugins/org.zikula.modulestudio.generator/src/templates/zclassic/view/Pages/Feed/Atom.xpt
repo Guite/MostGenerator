@@ -14,9 +14,9 @@
 {gt text='A direct feed showing the list of «nameMultiple.formatForDisplay()»' assign='channelDesc'}
 {getbaseurl assign='baseurl'}
     <title type="text">{$channelTitle}</title>
-    <subtitle type="text">{$channelDesc} - {configgetvar name='slogan'}</subtitle>
+    <subtitle type="text">{$channelDesc} - {$modvars.ZConfig.slogan}</subtitle>
     <author>
-        <name>{configgetvar name='sitename'}</name>
+        <name>{$modvars.ZConfig.sitename}</name>
     </author>
 {assign var='numItems' value=$items|@count}
 {if $numItems}
