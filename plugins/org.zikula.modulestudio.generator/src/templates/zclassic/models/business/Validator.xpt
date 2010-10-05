@@ -43,7 +43,7 @@
             return false;
         }
 
-        $objectType = '«name.formatForCode()»';
+        $objectType = '«entity.name.formatForCode()»';
 «EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(app.appName(), true, 'validator', entity.name, 'checkIf'.msconcat(actualFieldName().formatForCodeCapital()).msconcat('Exists'))-»
 
         // TODO: move to «IF entity.isInheriting()»«entity.parentType().baseClassModelTable()»«ELSE»«entity.baseClassModelTable()»«ENDIF»
