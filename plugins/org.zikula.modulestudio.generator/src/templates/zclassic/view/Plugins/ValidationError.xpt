@@ -36,6 +36,9 @@ function smarty_function_«appName().formatForDB()»ValidationError($params, $vi
         case 'validate-currency-dollar':    $message = __('Please enter a valid $ amount. For example $100.00 .', $dom); break;
         case 'validate-selection':          $message = __('Please make a selection.', $dom); break;
         case 'validate-one-required':       $message = __('Please select one of the above options.', $dom); break;
+«IF models.entities.exists(e|e.getUniqueDerivedFields().reject(e|e.primaryKey).size > 0)-»
+        case 'validate-unique':             $message = __('This value is already assigned, but must be unique. Please change it.', $dom); break;
+«ENDIF-»
     }
 
     $message = '<div id="advice-' . $class . '-' . $id . '" class="validation-advice z-formnote" style="display: none">' . $message . '</div>';

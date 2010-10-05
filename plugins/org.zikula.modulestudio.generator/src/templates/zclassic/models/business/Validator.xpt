@@ -37,7 +37,7 @@
      * @param        excludeid      int         id of «entity.nameMultiple.formatForDisplay()» to exclude (optional)
      * @return boolean true if the given «actualFieldName().formatForDisplay()» does already exist
      */
-    protected function checkIf«actualFieldName().formatForCodeCapital()»Exists($value, $excludeid = 0)
+    public function checkIf«actualFieldName().formatForCodeCapital()»Exists($value, $excludeid = 0)
     {
         if (empty($value)) {
             return false;

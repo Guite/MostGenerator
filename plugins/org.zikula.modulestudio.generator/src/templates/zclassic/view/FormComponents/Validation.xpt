@@ -7,6 +7,9 @@
 «IF mandatory-»
             {«entity.container.application.appName().formatForDB()»ValidationError id='«actualFieldName().formatForCode()»' class='required'}
 «ENDIF-»
+«IF unique-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id='«actualFieldName().formatForCode()»' class='validate-unique'}
+«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE AdditionalValidationMessages FOR DerivedField-»«ENDDEFINE»
@@ -30,12 +33,12 @@
 «ENDDEFINE»
 
 
-«DEFINE FieldValidationCssClass FOR DerivedField-»«IF mandatory» cssClass="required"«ENDIF»«ENDDEFINE»
-«DEFINE FieldValidationCssClass FOR AbstractIntegerField-» cssClass="«IF mandatory»required «ENDIF»validate-digits"«ENDDEFINE»
-«DEFINE FieldValidationCssClass FOR DecimalField-» cssClass="«IF mandatory»required «ENDIF»validate-number"«ENDDEFINE»
-«DEFINE FieldValidationCssClass FOR FloatField-» cssClass="«IF mandatory»required «ENDIF»validate-number"«ENDDEFINE»
-«DEFINE FieldValidationCssClass FOR EmailField-» cssClass="«IF mandatory»required «ENDIF»validate-email"«ENDDEFINE»
-«DEFINE FieldValidationCssClass FOR UrlField-» cssClass="«IF mandatory»required «ENDIF»validate-url"«ENDDEFINE»
+«DEFINE FieldValidationCssClass FOR DerivedField-»«IF mandatory || unique» cssClass='«IF mandatory»required«IF unique» «ENDIF»«ENDIF»«IF unique»validate-unique«ENDIF»'«ENDIF»«ENDDEFINE»
+«DEFINE FieldValidationCssClass FOR AbstractIntegerField-» cssClass='«IF mandatory»required «ENDIF»validate-digits«IF unique» validate-unique«ENDIF»'«ENDDEFINE»
+«DEFINE FieldValidationCssClass FOR DecimalField-» cssClass='«IF mandatory»required «ENDIF»validate-number«IF unique» validate-unique«ENDIF»'«ENDDEFINE»
+«DEFINE FieldValidationCssClass FOR FloatField-» cssClass='«IF mandatory»required «ENDIF»validate-number«IF unique» validate-unique«ENDIF»'«ENDDEFINE»
+«DEFINE FieldValidationCssClass FOR EmailField-» cssClass='«IF mandatory»required «ENDIF»validate-email«IF unique» validate-unique«ENDIF»'«ENDDEFINE»
+«DEFINE FieldValidationCssClass FOR UrlField-» cssClass='«IF mandatory»required «ENDIF»validate-url«IF unique» validate-unique«ENDIF»'«ENDDEFINE»
 
 
 

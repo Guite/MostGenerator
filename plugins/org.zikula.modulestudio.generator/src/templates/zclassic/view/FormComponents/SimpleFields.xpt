@@ -51,7 +51,7 @@
 «ENDDEFINE»
 
 «DEFINE FormField FOR BooleanField-»
-            {formcheckbox id='«actualFieldName().formatForCode()»' readOnly=«readonly» __title='«actualFieldName().formatForDisplay()» ?'«IF mandatory» cssClass='required'«ENDIF»}
+            {formcheckbox id='«actualFieldName().formatForCode()»' readOnly=«readonly» __title='«actualFieldName().formatForDisplay()» ?'«IF mandatory || unique» cssClass='«IF mandatory»required«IF unique» «ENDIF»«ENDIF»«IF unique»validate-unique«ENDIF»'«ENDIF»}
 «REM»TODO: group: group name for sub arrays«ENDREM»«""-»
 «ENDDEFINE»
 
@@ -135,7 +135,7 @@
             {* to be replaced by a plugin (see http://code.zikula.org/core/ticket/2444 for more information) *} 
 «LET actualFieldName().formatForCode() AS realName»
             <div id="«realName»LiveSearch" class="«entity.container.application.prefix()»LiveSearchUser z-hide">
-                {formtextinput id='«realName»Selector' mandatory=«mandatory» readOnly=«readonly» __title='Input a part of the user name to search' maxLength=«length» cssClass='«IF mandatory»required «ENDIF»validate-alphanum'}
+                {formtextinput id='«realName»Selector' mandatory=«mandatory» readOnly=«readonly» __title='Input a part of the user name to search' maxLength=«length» cssClass='«IF mandatory»required «ENDIF»validate-alphanum«IF unique» validate-unique«ENDIF»'}
                 {img src='indicator_circle.gif' modname='core' set='icons/extrasmall' alt='' id='«realName»Indicator' style='display: none'}
                 <div id="«realName»SelectorChoices" class="«entity.container.application.prefix()»AutoCompleteUser"></div>
             </div>
