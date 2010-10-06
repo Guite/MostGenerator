@@ -97,7 +97,7 @@ class «appName()»_Base_Util
             return $templateExtension;
         }
 
-        $extParams = self::availableTemplateExtensions($view, $type, $objectType, $func, $args);
+        $extParams = self::availableTemplateExtensions($type, $objectType, $func, $args);
         foreach ($extParams as $extension) {
             $extensionCheck = (int) FormUtil::getPassedValue('use' . $extension . 'ext', 0, 'GET');
             if ($extensionCheck == 1) {
@@ -111,14 +111,13 @@ class «appName()»_Base_Util
     /**
      * Get list of available template extensions
      *
-     * @param        view           Zikula_View   reference to view object
      * @param        type           string        current type (admin, user, ...)
      * @param        objectType     string        name of treated entity type
      * @param        func           string        current function (main, view, ...)
      * @param        args           array         additional arguments
      * @return array list of allowed template extensions.
      */
-    protected static function availableTemplateExtensions($view, $type, $objectType, $func, $args = array())
+    public static function availableTemplateExtensions($type, $objectType, $func, $args = array())
     {
         $extParams = array();
         if ($func == 'view') {
