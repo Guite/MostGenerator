@@ -4,20 +4,22 @@
 
 «REM»start point for the Factory creation«ENDREM»
 «DEFINE Root FOR Application»
-    «FILE "lib/".msconcat(appName()).msconcat("/Base/UrlRouter.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UrlRouterBase-»«ENDFILE»
-    «FILE "lib/".msconcat(appName()).msconcat("/UrlRouter.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UrlRouterImpl-»«ENDFILE»
-    «FILE "lib/".msconcat(appName()).msconcat("/Base/UrlRoute.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UrlRouteBase-»«ENDFILE»
-    «FILE "lib/".msconcat(appName()).msconcat("/UrlRoute.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UrlRouteImpl-»«ENDFILE»
+    «FILE "lib/".msconcat(appName()).msconcat("/Url/Base/Router.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UrlRouterBase-»«ENDFILE»
+    «FILE "lib/".msconcat(appName()).msconcat("/Url/Router.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UrlRouterImpl-»«ENDFILE»
+    «FILE "lib/".msconcat(appName()).msconcat("/Url/Base/Route.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UrlRouteBase-»«ENDFILE»
+    «FILE "lib/".msconcat(appName()).msconcat("/Url/Route.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UrlRouteImpl-»«ENDFILE»
+    «FILE "lib/".msconcat(appName()).msconcat("/Url/Base/RouterFacade.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UrlRouterFacadeBase-»«ENDFILE»
+    «FILE "lib/".msconcat(appName()).msconcat("/Url/RouterFacade.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UrlRouterFacadeImpl-»«ENDFILE»
 «ENDDEFINE»
 
 «DEFINE UrlRouterBase FOR Application-»
 /**
  * Url router base class
  */
-class «appName()»_Base_UrlRouter
+class «appName()»_Url_Base_Router
 {
     /**
-     * @var array The list of managed routes («appName()»_UrlRoute instances)
+     * @var array The list of managed routes («appName()»_Url_Route instances)
      */
     protected $routes;
 
@@ -123,18 +125,18 @@ class «appName()»_Base_UrlRouter
      * Set (or add) a certain route to this router instance.
      *
      * @param        name           string        storage name for the route
-     * @param        route          «appName()»_UrlRoute  the actual route instance
+     * @param        route          «appName()»_Url_Route  the actual route instance
      * @return mixed string with created url or false on error
      */
-    public function set($name, «appName()»_UrlRoute $route)
+    public function set($name, «appName()»_Url_Route $route)
     {
         // return if we have an empty input
         if (empty($name)) {
-            throw new InvalidArgumentException('«appName()»_Base_UrlRouter->set: $name was empty!');
+            throw new InvalidArgumentException('«appName()»_Url_Base_Router->set: $name was empty!');
         }
 
         if (is_null($route)) {
-            throw new InvalidArgumentException('«appName()»_Base_UrlRouter->set: $route was null!');
+            throw new InvalidArgumentException('«appName()»_Url_Base_Router->set: $route was null!');
         }
 
         // store given route
@@ -147,7 +149,7 @@ class «appName()»_Base_UrlRouter
 /**
  * Url router implementation class
  */
-class «appName()»_UrlRouter extends «appName()»_Base_UrlRouter
+class «appName()»_Url_Router extends «appName()»_Base_Router
 {
     // in this class you may enhance and customise the router for short urls
 }
@@ -157,7 +159,7 @@ class «appName()»_UrlRouter extends «appName()»_Base_UrlRouter
 /**
  * Url route base class
  */
-class «appName()»_Base_UrlRoute
+class «appName()»_Url_Base_Route
 {
     /**
      * @var string The pattern for the url scheme treated by this route
@@ -456,8 +458,184 @@ class «appName()»_Base_UrlRoute
 /**
  * Url route implementation class
  */
-class «appName()»_UrlRoute extends «appName()»_Base_UrlRoute
+class «appName()»_Url_Route extends «appName()»_Base_Route
 {
     // here you can customise the inner structure and/or behavior of url routes 
+}
+«ENDDEFINE»
+
+«DEFINE UrlRouterFacadeBase FOR Application-»
+«LET appName() AS appName-»
+/**
+ * Url router facade base class
+ */
+class «appName»_Url_Base_RouterFacade
+{
+    /**
+     * @var «appName»_Url_Router The router which is used internally
+     */
+    protected $router;
+
+    /**
+     * Constructor.
+     */
+    function __construct()
+    {
+        // initialise and reference router instance
+        $this->router = new «appName»_Url_Router();
+
+        // add generic routes
+        return $this->initUrlRoutes();
+    }
+«EXPAND InitUrlRoutes-»
+«EXPAND GetGroupingFolder-»
+«EXPAND GetUrlEnding-»
+«EXPAND GetFormattedSlug-»
+
+«EXPAND FileHelper::GetterAndSetterMethods('router', appName.msconcat('_Url_Router'))»
+«ENDLET-»
+}
+«ENDDEFINE»
+
+«DEFINE InitUrlRoutes FOR Application-»
+
+«LET appName() AS appName-»
+«LET getUserController() AS userController-»
+    /**
+     * Initialise the url routes for this application.
+     *
+     * @return       «appName»_Url_Router the router instance treating all initialised routes
+     */
+    protected function initUrlRoutes()
+    {
+        $router = $this->router;
+«IF userController.hasActions('view')-»
+«EXPAND InitRoute(appName, 'view') FOREACH models.entities-»
+«ENDIF-»
+«IF userController.hasActions('display')-»
+«EXPAND InitRoute(appName, 'display') FOREACH models.entities-»
+«ENDIF-»
+
+// JUST FOR TEST
+        $router->set('a', new «appName»_Url_Route(
+                                    '«appName»/:viewtype/:day-:month-:year',
+                                    array('module' => '«appName»', 'calendar' => 1),
+                                    array('day'=>'\d+', 'month' => '\d+', 'year'=>'\d+')));
+        $router->set('b', new «appName»_Url_Route(
+                                    '«appName»/:calendar/:viewtype/:day-:month-:year',
+                                    array('module' => '«appName»'),
+                                    array('day' => '\d+', 'month' => '\d+', 'year' => '\d+', 'calendar' => '\d+')));
+        $router->set('c', new «appName»_Url_Route(
+                                    '«appName»/event/:eid/:dhe_id',
+                                    array('module' => '«appName»'),
+                                    array('eid' => '\d+', 'dhe_id' => '\d+')));
+
+        return $router;
+    }
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE InitRoute(String appName, String actionName) FOR Entity-»
+        $groupingFolder = $this->getGroupingFolder('«name.formatForCode()»', '«actionName»');
+        $urlBase = '«appName»/:' . $groupingFolder;
+«IF actionName == 'view'-»
+        $router->set('«actionName»«name.formatForCodeCapital()»', new «appName»_Url_Route(
+                                    $urlBase,
+                                    array('module' => '«appName»', 'func' => 'view'),
+                                    array('ot' => '\w+')));
+«ELSEIF actionName == 'display'-»
+        $router->set('«actionName»«name.formatForCodeCapital()»', new «appName»_Url_Route(
+                                    $urlBase . '/:«idField()»',
+                                    array('module' => '«appName»', 'func' => 'display'),
+                                    array('ot' => '\w+', '«idField()»' => '\d+')));
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE GetGroupingFolder FOR Application-»
+«LET getUserController() AS userController-»
+
+    /**
+     * Get name of grouping folder for given object type and function.
+     *
+     * @param        objectType     string        name of treated entity type
+     * @param        func           string        name of function
+     * @return       string the name of the group folder
+     */
+    protected function getGroupingFolder($objectType, $func)
+    {
+        // object type will be used as a fallback
+        $groupFolder = $objectType;
+
+«IF userController.hasActions('view')-»
+        if ($args['func'] == 'view') {
+            switch ($objectType) {
+«EXPAND GetGroupingFolder(true) FOREACH models.entities-»
+                default: return '';
+            }
+        }
+«ENDIF-»
+«IF userController.hasActions('display')-»
+«IF userController.hasActions('view')-»
+        else if ($args['func'] == 'display') {
+«ELSE-»
+        if ($args['func'] == 'display') {
+«ENDIF-»
+            switch ($objectType) {
+«EXPAND GetGroupingFolder(false) FOREACH models.entities-»
+                default: return '';
+            }
+        }
+«ENDIF-»
+    }
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE GetUrlEnding FOR Application-»
+
+    /**
+     * Get url ending for given arguments.
+     *
+     * @param        objectType     string        name of treated entity type
+     * @param        func           string        name of function
+     * @param        args           array         additional parameters
+     * @return       string the resulting url ending
+     */
+    protected function getUrlEnding($objectType, $func)
+    {
+    }
+«ENDDEFINE»
+
+«DEFINE GetFormattedSlug FOR Application-»
+
+    /**
+     * Get permalink value based on slug properties.
+     *
+     * @param        objectType     string        name of treated entity type
+     * @param        func           string        name of function
+     * @param        item           array         treated item
+     * @return       string the resulting url ending
+     */
+    protected function getFormattedSlug($objectType, $func, $item)
+    {
+«REM»
+    * id (if not sluggable)
+    * slug (if sluggable unique)
+    * slug + id (if sluggable) 
+«ENDREM»
+    }
+«ENDDEFINE»
+
+«DEFINE GetGroupingFolder(Boolean plural) FOR Entity-»
+                case '«name.formatForCode()»':     $groupFolder = '«getEntityNameSingularPlural(plural).formatForDB()»';  break;
+«ENDDEFINE»
+
+«DEFINE UrlRouterFacadeImpl FOR Application-»
+/**
+ * Url router facade implementation class
+ */
+class «appName()»_Url_RouteFacade extends «appName()»_Base_RouteFacade
+{
+    // here you can customise the data which is provided to the url router 
 }
 «ENDDEFINE»

@@ -222,8 +222,16 @@ cached Integer getEditStageCode(ManyToManyRelationship this, Boolean incoming) :
     };
 
 
+/* controller related extensions */
 cached String name(Controller this) :
     name.formatForDB();
+
+cached getUserControllers(Application this) :
+    controllers.controllers.typeSelect(UserController);
+cached boolean hasUserController(Application this) :
+    !getUserControllers().isEmpty;
+cached getUserController(Application this) :
+    getUserControllers().get(0);
 
 cached boolean hasActions(Controller controller, String type) :
 	switch (type) {
