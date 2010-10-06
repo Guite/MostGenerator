@@ -488,7 +488,8 @@ class «appName»_Url_Base_RouterFacade
         return $this->initUrlRoutes();
     }
 «EXPAND InitUrlRoutes-»
-«EXPAND GetGroupingFolder-»
+«EXPAND GetGroupingFolderFromObjectType-»
+«EXPAND GetObjectTypeFromGroupingFolder-»
 «EXPAND GetUrlEnding-»
 «EXPAND GetFormattedSlug-»
 
@@ -537,7 +538,7 @@ class «appName»_Url_Base_RouterFacade
 «ENDDEFINE»
 
 «DEFINE InitRoute(String appName, String actionName) FOR Entity-»
-        $groupingFolder = $this->getGroupingFolder('«name.formatForCode()»', '«actionName»');
+        $groupingFolder = $this->getGroupingFolderFromObjectType('«name.formatForCode()»', '«actionName»');
         $urlBase = '«appName»/:' . $groupingFolder;
 «IF actionName == 'view'-»
         $router->set('«actionName»«name.formatForCodeCapital()»', new «appName»_Url_Route(
@@ -552,7 +553,7 @@ class «appName»_Url_Base_RouterFacade
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE GetGroupingFolder FOR Application-»
+«DEFINE GetGroupingFolderFromObjectType FOR Application-»
 «LET getUserController() AS userController-»
 
     /**
@@ -562,7 +563,7 @@ class «appName»_Url_Base_RouterFacade
      * @param        func           string        name of function
      * @return       string the name of the group folder
      */
-    protected function getGroupingFolder($objectType, $func)
+    protected function getGroupingFolderFromObjectType($objectType, $func)
     {
         // object type will be used as a fallback
         $groupFolder = $objectType;
@@ -570,7 +571,7 @@ class «appName»_Url_Base_RouterFacade
 «IF userController.hasActions('view')-»
         if ($args['func'] == 'view') {
             switch ($objectType) {
-«EXPAND GetGroupingFolder(true) FOREACH models.entities-»
+«EXPAND GetGroupingFolderFromObjectType(true) FOREACH models.entities-»
                 default: return '';
             }
         }
@@ -582,7 +583,45 @@ class «appName»_Url_Base_RouterFacade
         if ($args['func'] == 'display') {
 «ENDIF-»
             switch ($objectType) {
-«EXPAND GetGroupingFolder(false) FOREACH models.entities-»
+«EXPAND GetGroupingFolderFromObjectType(false) FOREACH models.entities-»
+                default: return '';
+            }
+        }
+«ENDIF-»
+    }
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE GetObjectTypeFromGroupingFolder FOR Application-»
+«LET getUserController() AS userController-»
+
+    /**
+     * Get name of object type based on given grouping folder
+     *
+     * @param        groupFolder    string        name of group folder
+     * @return       string the name of the object type
+     */
+    protected function getObjectTypeFromGroupingFolder($groupFolder)
+    {
+        // group folder will be used as a fallback
+        $objectType = $groupFolder;
+
+«IF userController.hasActions('view')-»
+        if ($args['func'] == 'view') {
+            switch ($objectType) {
+«EXPAND GetObjectTypeFromGroupingFolder(true) FOREACH models.entities-»
+                default: return '';
+            }
+        }
+«ENDIF-»
+«IF userController.hasActions('display')-»
+«IF userController.hasActions('view')-»
+        else if ($args['func'] == 'display') {
+«ELSE-»
+        if ($args['func'] == 'display') {
+«ENDIF-»
+            switch ($objectType) {
+«EXPAND GetObjectTypeFromGroupingFolder(false) FOREACH models.entities-»
                 default: return '';
             }
         }
@@ -601,8 +640,21 @@ class «appName»_Url_Base_RouterFacade
      * @param        args           array         additional parameters
      * @return       string the resulting url ending
      */
-    protected function getUrlEnding($objectType, $func)
+    protected function getUrlEnding($objectType, $func, $args)
     {
+        // determine possible template extensions (beside html)
+        $templateExtensions = «appName()»_Util::availableTemplateExtensions('user', $objectType, $func);
+
+        $fileEnding = ($func == 'display') ? '.html' : '/';
+        foreach ($templateExtensions as $extParam) {
+            if (!isset($args[$extParam]) || $args[$extParam] != 1) {
+                continue;
+            }
+            $fileEnding = '.' . $extParam;
+            unset($args[$extParam]);
+            break;
+        }
+        return $fileEnding;
     }
 «ENDDEFINE»
 
@@ -626,15 +678,23 @@ class «appName»_Url_Base_RouterFacade
     }
 «ENDDEFINE»
 
-«DEFINE GetGroupingFolder(Boolean plural) FOR Entity-»
-                case '«name.formatForCode()»':     $groupFolder = '«getEntityNameSingularPlural(plural).formatForDB()»';  break;
+«DEFINE GetGroupingFolderFromObjectType(Boolean plural) FOR Entity-»
+                case '«name.formatForCode()»':
+                            $groupFolder = '«getEntityNameSingularPlural(plural).formatForDB()»';
+                            break;
+«ENDDEFINE»
+
+«DEFINE GetObjectTypeFromGroupingFolder(Boolean plural) FOR Entity-»
+                case '«getEntityNameSingularPlural(plural).formatForDB()»':
+                            $groupFolder = '«name.formatForCode()»';
+                            break;
 «ENDDEFINE»
 
 «DEFINE UrlRouterFacadeImpl FOR Application-»
 /**
  * Url router facade implementation class
  */
-class «appName()»_Url_RouteFacade extends «appName()»_Base_RouteFacade
+class «appName()»_Url_RouterFacade extends «appName()»_Base_RouterFacade
 {
     // here you can customise the data which is provided to the url router 
 }
