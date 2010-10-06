@@ -1,0 +1,463 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+
+«REM»start point for the Factory creation«ENDREM»
+«DEFINE Root FOR Application»
+    «FILE "lib/".msconcat(appName()).msconcat("/Base/UrlRouter.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UrlRouterBase-»«ENDFILE»
+    «FILE "lib/".msconcat(appName()).msconcat("/UrlRouter.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UrlRouterImpl-»«ENDFILE»
+    «FILE "lib/".msconcat(appName()).msconcat("/Base/UrlRoute.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UrlRouteBase-»«ENDFILE»
+    «FILE "lib/".msconcat(appName()).msconcat("/UrlRoute.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UrlRouteImpl-»«ENDFILE»
+«ENDDEFINE»
+
+«DEFINE UrlRouterBase FOR Application-»
+/**
+ * Url router base class
+ */
+class «appName()»_Base_UrlRouter
+{
+    /**
+     * @var array The list of managed routes («appName()»_UrlRoute instances)
+     */
+    protected $routes;
+
+    /**
+     * Constructor.
+     */
+    function __construct()
+    {
+        $this->routes = array();
+    }
+
+    /**
+     * Generate a short url for given arguments
+     *
+     * @param        name           string        optional name of route to be used (if not set the route will be selected based on given params)
+     * @param        params         array         the arguments to be processed by the created url
+     * @return mixed string with created url or false on error
+     */
+    public function generate($name = '', array $params = array())
+    {
+        // reference to the route used for url creation
+        $route = null;
+
+        if ($name) {
+            // a certain route should be used
+            if (!isset($this->routes[$name])) {
+                // this route does not exist, so we abort here
+                return false;
+            }
+            // use this route
+            $route = $this->routes[$name];
+        }
+        else {
+            // determine the route based on given params
+            foreach ($this->routes AS $testRoute) {
+                if (!$testRoute->matchParameters($params)) {
+                    // this route does not fit to our arguments, so we skip it
+                    continue;
+                }
+
+                // use this route
+                $route = $testRoute;
+                // exit loop as the first match wins
+                break;
+            }
+
+            // abort if we did not found a route to use
+            if (is_null($route)) {
+                return false;
+            }
+        }
+
+        // let the route do the actual url creation
+        $url = $route->generate($params);
+
+        // return the result
+        return $url;
+    }
+
+    /**
+     * Parse a given url and return the params read out of it
+     *
+     * @param        url            string        the input url
+     * @return mixed array with determined params or false on error
+     */
+    public function parse($url = '')
+    {
+        // return if we have an empty input
+        if (empty($url)) {
+            throw new InvalidArgumentException('«appName()»_Base_UrlRouter->parse: $url was empty!');
+        }
+
+        // reference to resulting params
+        $params = null;
+
+        // search for the right route for given url
+        foreach ($this->routes AS $testRoute) {
+            // check if this route does the job
+            $testParams = $testRoute->matchesUrl($url);
+            // if not...
+            if ($testParams === false) {
+                // skip it
+                continue;
+            }
+
+            // store parameters
+            $params = $testParams;
+            
+            // exit loop as the first match wins
+            break;
+        }
+
+        // if we found something return it
+        if (!is_null($params)) {
+            return $params;
+        }
+
+        // else return false
+        return false;
+    }
+
+    /**
+     * Set (or add) a certain route to this router instance.
+     *
+     * @param        name           string        storage name for the route
+     * @param        route          «appName()»_UrlRoute  the actual route instance
+     * @return mixed string with created url or false on error
+     */
+    public function set($name, «appName()»_UrlRoute $route)
+    {
+        // return if we have an empty input
+        if (empty($name)) {
+            throw new InvalidArgumentException('«appName()»_Base_UrlRouter->set: $name was empty!');
+        }
+
+        if (is_null($route)) {
+            throw new InvalidArgumentException('«appName()»_Base_UrlRouter->set: $route was null!');
+        }
+
+        // store given route
+        $this->routes[$name] = $route;
+    }
+}
+«ENDDEFINE»
+
+«DEFINE UrlRouterImpl FOR Application-»
+/**
+ * Url router implementation class
+ */
+class «appName()»_UrlRouter extends «appName()»_Base_UrlRouter
+{
+    // in this class you may enhance and customise the router for short urls
+}
+«ENDDEFINE»
+
+«DEFINE UrlRouteBase FOR Application-»
+/**
+ * Url route base class
+ */
+class «appName()»_Base_UrlRoute
+{
+    /**
+     * @var string The pattern for the url scheme treated by this route
+     */
+    protected $urlPattern;
+
+    /**
+     * @var array Array with default values for the parameters
+     */
+    protected $defaults;
+
+    /**
+     * @var array Array with input requirement checks for regex expression
+     */
+    protected $requirements;
+
+    /**
+     * @var boolean Whether the regular expression for this route has been generated or not
+     */
+    protected $compiled;
+
+    /**
+     * @var string The regular expression for catching urls for this route
+     */
+    protected $regex;
+
+    /**
+     * @var array Array with variables determined during regex compilation
+     */
+    protected $variables;
+
+    /**
+     * @var array Array with tokens determined during regex compilation
+     */
+    protected $tokens;
+
+    /**
+     * Constructor.
+     *
+     * @param        urlPattern     string        pattern for url scheme
+     * @param        defaults       array         default values for parameters
+     * @param        requirements   array         input requirement checks for regex
+     */
+    public function __construct($urlPattern, array $defaults, array $requirements)
+    {
+        // check if given url pattern ends with a trailing slash
+        if (substr($urlPattern, -1) != '/') {
+            // add missing trailing slash
+            $urlPattern .= '/';
+        }
+
+        // append a star for automatic addition of all params which were not considered in the pattern 
+        $urlPattern .= '*';
+
+        // store given arguments
+        $this->urlPattern = $urlPattern;
+        $this->defaults = $defaults;
+        $this->requirements = $requirements;
+
+        // set reasonable default values
+        $this->compiled = false;
+        $this->variables = array();
+        $this->tokens = array();
+    }
+
+    /**
+     * Create url for given arguments.
+     *
+     * @param        params       array         argument values for url parameters in this route
+     */
+    public function generate($params)
+    {
+        // compile the regex if not already done
+        if (!$this->compiled) {
+            $this->compile();
+        }
+
+        // create a list of all parameters, merging the default values with given input arguments
+        $allParams = array_merge($this->defaults, $params);
+
+        // check whether there are some variables required, but not specified or given
+        $diff = array_diff_key(array_flip($this->variables), $allParams);
+        if ($diff) {
+            throw new InvalidArgumentException('The "' . $this->urlPattern . '" route has some missing mandatory parameters (' . implode(', ', $diff) . ').');
+        }
+
+        // start creation of the url
+        $url = '';
+        // process the pattern by handling each single token (read out during compilation)
+        foreach ($this->tokens AS $token) {
+            switch ($token[0]) {
+                case 'variable':
+                        $url .= urlencode($allParams[$token[1]]);
+                        break;
+                case 'text':
+                        // exclude star sign for additional parameters
+                        if ($token[1] != '*') {
+                            $url .= $token[1];
+                        }
+                        break;
+                case 'separator':
+                        $url .= $token[1];
+                        break;
+            }
+        }
+
+        // check if url ends with a trailing slash
+        if (substr($url, -1) == '/') {
+            // remove the trailing slash
+            $url = substr($url, 0, strlen($url) - 1);
+        }
+
+        // look for the star sign
+        if (false !== strpos($this->regex, '<_star>')) {
+            // append additional parameters
+            $additionalArgs = array();
+            foreach (array_diff_key($allParams, array_flip($this->variables), $this->defaults) as $key => $value) {
+                $additionalArgs[] = urlencode($key) . '/' . urlencode($value);
+            }
+            $url .= '/' . implode('/', $additionalArgs);
+        }
+
+        // return the result
+        return $url;
+    }
+
+    /**
+     * Parse a given url and return the params read out of it
+     *
+     * @param        url            string        the input url
+     * @return mixed array with determined params or false on error
+     */
+    public function matchesUrl($url)
+    {
+        // compile the regex if not already done
+        if (!$this->compiled) {
+            $this->compile();
+        }
+
+        // check if the regex of this route instance does fit to given url
+        if (!preg_match($this->regex, $url, $matches)) {
+            return false;
+        }
+
+        // initialise list of parameters to be collected
+        $parameters = array();
+
+        // check for * in urlPattern
+        if (isset($matches['_star'])) {
+            // process additional parameters
+            $additionalArgs = explode('/', $matches['_star']);
+            for ($i = 0, $max = count($additionalArgs); $i < $max; $i += 2) {
+                if (!empty($tmp[$i])) {
+                    $parameters[$tmp[$i]] = isset($tmp[$i + 1]) ? $tmp[$i + 1] : true;
+                }
+            }
+            // unset this match to exclude it in further processing
+            unset($matches['_star']);
+        }
+
+        // add default values for all parameters
+        $parameters = array_merge($parameters, $this->defaults);
+
+        // process all matches and add according variables
+        foreach ($matches AS $key => $value) {
+            if (!is_int($key)) {
+                $parameters[$key] = $value;
+            }
+        }
+
+        return $parameters;
+    }
+
+    /**
+     * Checks if this route can treat a given set of parameters.
+     *
+     * @param        params         array         the arguments which should be processed
+     * @return boolean whether this route matches the given set of parameters or not
+     */
+    public function matchParameters($params)
+    {
+        // compile the regex if not already done
+        if (!$this->compiled) {
+            $this->compile();
+        }
+
+        if (!is_array($params)) {
+            return false;
+        }
+
+        // create a list of all parameters, merging the default values with given input arguments
+        $allParams = array_merge($this->defaults, $params);
+
+        // all $variables must be defined in the $allParams array
+        if (array_diff_key(array_flip($this->variables), $allParams)) {
+            return false;
+        }
+
+        // check requirements
+        foreach ($this->variables AS $variable) {
+            // no value no check
+            if (!$allParams[$variable]) {
+                continue;
+            }
+
+            if (!preg_match('#' . $this->requirements[$variable] . '#', $allParams[$variable])) {
+                return false;
+            }
+        }
+
+        // check that $params does not override a default value that is not a variable
+        foreach ($this->defaults as $key => $value) {
+            if (!isset($this->variables[$key]) && $allParams[$key] != $value) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Compiles the url pattern including creation of regex and collecting tokens as well as variables.
+     */
+    protected function compile()
+    {
+        // return if compilation has been done before already
+        if ($this->compiled) {
+            return true;
+        }
+
+        // parse pattern
+        $pattern = $this->urlPattern;
+        while (strlen($pattern)) {
+            if (preg_match('#^:([a-zA-z0-6_]+)#', $pattern, $match)) {
+                // variable
+                $name = $match[1];
+                $this->tokens[] = array('variable', $name);
+                $this->variables[] = $name;
+
+                $pattern = substr($pattern, strlen($match[0]));
+            } else if (preg_match('#^(?:/|\.|\-)#', $pattern, $match)) {
+                // separator
+                $this->tokens[] = array('separator', $match[0]);
+
+                $pattern = substr($pattern, strlen($match[0]));
+            } else if (preg_match('#^(.+?)(?:(?:/|\.|\-)|$)#', $pattern, $match)) {
+                // text
+                $text = $match[1];
+                $this->tokens[] = array('text', $text);
+
+                $pattern = substr($pattern, strlen($match[1]));
+            } else {
+                throw new InvalidArgumentException('Invalid pattern "' . $this->urlPattern . '" near "' . $pattern . '"!');
+            }
+        }
+
+        // create regex
+        $regex = '#';
+        for ($i = 0, $max = count($this->tokens); $i < $max; $i++) {
+            $token = $this->tokens[$i];
+            if ($token[0] == 'variable') {
+                if (!isset($this->requirements[$token[1]])) {
+                    $this->requirements[$token[1]] = '[^/\.\-]+';
+                }
+                $regex .= '(?P<'.$token[1].'>'.$this->requirements[$token[1]].')';
+            } else if ($token[0] == 'text' || $token[0] == 'separator') {
+                if ($token[1] == '*') {
+                    if ($this->tokens[$i - 1] && $this->tokens[$i - 1][0] == 'separator') {
+                        $sep_regex = $this->tokens[$i - 1][1];
+                    } else {
+                        $sep_regex = '/';
+                    }
+                    $regex .= '(?:' . $sep_regex . '(?P<_star>.*))?';
+                } else {
+                    if ($token[0] == 'separator' && $this->tokens[$i + 1] && $this->tokens[$i + 1][1] == '*') {
+
+                    } else {
+                        $regex .= $token[1];
+                    }
+                }
+            }
+        }
+        $regex .= '#';
+
+        // store the result
+        $this->regex = $regex;
+
+        // activate compiled flag
+        $this->compiled = true;
+        return true;
+    }
+}
+«ENDDEFINE»
+
+«DEFINE UrlRouteImpl FOR Application-»
+/**
+ * Url route implementation class
+ */
+class «appName()»_UrlRoute extends «appName()»_Base_UrlRoute
+{
+    // here you can customise the inner structure and/or behavior of url routes 
+}
+«ENDDEFINE»
