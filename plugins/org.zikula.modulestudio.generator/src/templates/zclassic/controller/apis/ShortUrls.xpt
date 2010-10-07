@@ -37,11 +37,6 @@
         // reference to current language
         $lang = ZLanguage::getLanguageCode();
 
-        // ensure that database information is loaded as we might have to query some parts
-        // for example when resolving permalinks corresponding slugs must be selected from the database
-        // TODO: this is probably not required anymore
-        $tables = DBUtil::getTables();
-
         // initialise url routing rules
         $routerFacade = new «app.appName()»_Url_RouterFacade();
         // get router itself for convenience
