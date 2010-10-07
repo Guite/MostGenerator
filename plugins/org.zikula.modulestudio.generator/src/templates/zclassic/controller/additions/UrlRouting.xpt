@@ -527,15 +527,6 @@ class «appName»_Url_Base_RouterFacade
     {
         $fieldRequirements = $this->requirements;
 
-«IF userController.hasActions('display')-»
-        $defaults = array('func' => 'display');
-        // normal display pages including the group folder corresponding to the object type
-        $this->initRouteForEachSlugType('dn', ':ot/', ':displayending', $defaults, $fieldRequirements);
-
-        // additional rules for the leading object type (where ot is omitted)
-        $defaults['ot'] = '«getLeadingEntity().name.formatForCode()»';
-        $this->initRouteForEachSlugType('dl', '', ':displayending', $defaults, $fieldRequirements);
-«ENDIF-»
 «IF userController.hasActions('view')-»
         $defaults = array('func' => 'view');
         $viewFolder = 'view';
@@ -544,6 +535,16 @@ class «appName»_Url_Base_RouterFacade
 
         // filter views (e.g. /orders/customer/mr-smith.csv)
         $this->initRouteForEachSlugType('vn', $viewFolder . '/:ot/:filterot/', ':viewending', $defaults, $fieldRequirements);
+«ENDIF-»
+
+«IF userController.hasActions('display')-»
+        $defaults = array('func' => 'display');
+        // normal display pages including the group folder corresponding to the object type
+        $this->initRouteForEachSlugType('dn', ':ot/', ':displayending', $defaults, $fieldRequirements);
+
+        // additional rules for the leading object type (where ot is omitted)
+        $defaults['ot'] = '«getLeadingEntity().name.formatForCode()»';
+        $this->initRouteForEachSlugType('dl', '', ':displayending', $defaults, $fieldRequirements);
 «ENDIF-»
 
         return $this->router;

@@ -152,21 +152,26 @@
             return LogUtil::registerArgsError();
         }
 
-        // usually the language is in $args['vars'][0], except no mod name is in the url and we are set as start app
-        $lang = ($args['vars'][0] == '«app.appName()»') ? $args['vars'][1] : $args['vars'][0];
-
         // define the available user functions
-        $funcs = array(«FOREACH actions AS action SEPARATOR ", "»'«action.name.formatForCode()»'«ENDFOREACH»);
+        $funcs = array(«FOREACH actions AS action SEPARATOR ", "»'«action.name.formatForCode().toFirstLower()»'«ENDFOREACH»);
+
+        // return if function url scheme is not being customised
+        $customFuncs = array(«IF hasActions('view')»'view'«IF hasActions('display')», «ENDIF»«ENDIF»«IF hasActions('display')»'display'«ENDIF»);
 
         // set the correct function name based on our input
         if (empty($args['vars'][2])) {
             // no func and no vars = main
             System::queryStringSetVar('func', 'main');
             return true;
-        } else if (in_array($args['vars'][2], $funcs)) {
+        } else if (in_array($args['vars'][2], $funcs) && !in_array($args['vars'][2], $customFuncs)) {
             // normal url scheme, no need for special decoding
             return false;
         }
+
+        $func = $args['vars'][2];
+
+        // usually the language is in $args['vars'][0], except no mod name is in the url and we are set as start app
+        $lang = ($args['vars'][0] == '«app.appName()»') ? $args['vars'][1] : $args['vars'][0];
 
         // remove some unrequired parameters
         foreach ($_GET as $k => $v) {
@@ -181,9 +186,10 @@
         // get arguments as string
         $url = implode('/', $urlVars);
 
-        // remove prepending slash
-        if (substr($url, 0, 1) == '/') {
-            $url = substr($url, 1);
+        // check if default view urls end with a trailing slash
+        if ($func == 'view' && strpos($url, '.') === false && substr($url, -1) != '/') {
+            // add missing trailing slash
+            $url .= '/';
         }
 
         // initialise url routing rules

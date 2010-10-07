@@ -154,6 +154,8 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         if (!$id) {
             $id = (int) FormUtil::getPassedValue('id', isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0, 'GET');
         }
+«IF controller.metaType == UserController-»
+«REM»At the moment short urls are only used in the user area, see http://code.zikula.org/core/ticket/2538«ENDREM»«""-»
 
         // check for unique permalinks (without id)
         $hasSlug = false;
@@ -176,6 +178,13 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         else {
             $objectData = $object->selectById($id);
         }
+«ELSE-»
+        $this->throwNotFoundUnless($id, 'Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
+
+        // assign object data fetched from the database
+        $objectData = null;
+        $objectData = $object->selectById($id);
+«ENDIF-»
         if (!is_array($objectData) || !isset($objectData[$idField]) || !is_numeric($objectData[$idField])) {
             $this->throwNotFound($this->__('No such item.'));
         }
