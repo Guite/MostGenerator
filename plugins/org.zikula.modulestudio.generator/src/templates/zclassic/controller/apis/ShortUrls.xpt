@@ -16,12 +16,16 @@
     public function encodeurl($args)
     {
         // check if we have the required input
-        if (!is_array($args) || !isset($args['modname']) || !isset($args['func']) || !isset($args['args'])) {
+        if (!is_array($args) || !isset($args['modname']) || !isset($args['func'])) {
             return LogUtil::registerArgsError();
         }
 
+        // set default values
         if (!isset($args['type'])) {
             $args['type'] = 'user';
+        }
+        if (!isset($args['args'])) {
+            $args['args'] = array();
         }
 
         // return if function url scheme is not being customised
@@ -67,14 +71,8 @@
             unset($args['args']['use' . $ending . 'ext']);
         }
 
-
-        // legacy
-        $resultOld = $groupFolder;
-
-
-/** TODO: replace building the url by converting some arguments
-        // start building the url depending on function, object type and other params
         if ($args['func'] == 'view') {
+/** TODO: replace building the url by converting some arguments
             // common filtered view types (e.g. all offers of a customer)
             $filterEntities = array('supplier', 'region', 'federalstate', 'association');
             foreach ($filterEntities as $filterEntity) {
@@ -90,78 +88,37 @@
                 unset ($args['args'][$filterField]);
                 break;
             }
+            */
         }
         elseif ($args['func'] == 'display') {
-            // for the display function use either the title (if present) or the object's id
+            // determine given id
             $id = 0;
-            if (isset($args['args']['id'])) {
-                $id = $args['args']['id'];
-                unset($args['args']['id']);
+            foreach (array('id', strtolower($objectType) . 'id', 'objectid') as $idFieldName) {
+                if (isset($args['args'][$idFieldName])) {
+                    $id = $args['args'][$idFieldName];
+                    unset($args['args'][$idFieldName]);
+                }
             }
-            if (isset($args['args'][strtolower($objectType) . 'id'])) {
-                $id = $args['args'][strtolower($objectType) . 'id'];
-                unset($args['args'][strtolower($objectType) . 'id']);
-            }
-            if (isset($args['args']['objectid'])) {
-                $id = $args['args']['objectid'];
-                unset($args['args']['objectid']);
-            }
-
-            $tableName = «app.prefix()» . '_' . strtolower($objectType);
-
-            // TODO
-            $permalinkField = ($objectType == 'offer' || $objectType == 'staticPage') ? 'titleurl' : 'nameurl';
-            $permalinkField = ($objectType == 'page' && $lang == 'de') ? 'nameurlde' : 'nameurl';
 
             // strip object type from id (for hooks)
             $id = intval(str_replace($objectType, '', $id));
 
-            if ($id > 0) {
-                $item = DBUtil::selectObjectByID($tableName, $id, strtolower($objectType) . 'id');
+            $slugTitle = $routerFacade->getFormattedSlug($objectType, $args['func'], $args['args'], $id);
+            if ($slugTitle != $id) {
+                // add slug expression
+                $args['args']['title'] = $slugTitle;
             }
-            else if (isset($args['args']['title'])) {
-                $item = DBUtil::selectObjectByID($tableName, $args['args']['title'], $permalinkField);
-                unset($args['args']['title']);
+            else {
+                // readd id
+                $args['args'][strtolower($objectType) . 'id'] = $id;
             }
-
-            // add slug
-            $result .= '/' . $item[$permalinkField];
-
-            // add id of item to display
-            $result .= '.' . $item[strtolower($objectType) . 'id'];
         }
-        */
 
-
+        // add func as first argument
+        $routerArgs = array_merge(array('func' => $args['func']), $args['args']);
 
         // now create url based on params
-        $routerArgs = $args['args'];
-        $routerArgs['func'] = $args['func'];
         $result = $router->generate(null, $routerArgs);
-
-
-        // add file ending
-        // $resultOld .= $routerFacade->getUrlEnding($objectType, $args['func'], $args['args']);
-
-        /*
-        // all other arguments
-        $extraArgs = '';
-        if (count($args['args']) > 0) {
-            $extraArgs = array();
-            foreach ($args['args'] as $k => $v) {
-                $extraArgs[] = $k . '=' . urlencode($v);
-            }
-            $extraArgs = implode('&', $extraArgs);
-            if (substr($result, -1, 1) != '&') {
-                $extraArgs = '&' . $extraArgs;
-            }
-            if (substr($result, -1, 1) != '/') {
-                $extraArgs = '/' . $extraArgs;
-            }
-        }
-        */
-
-        //$result = $args['modname'] . '/' . $resultOld . $extraArgs;
 
         return $result;
     }
@@ -203,7 +160,6 @@
 
         // process all args except language and module
         $urlVars = array_slice($args['vars'], 2); // all except [0] and [1]
-        //$urlVars = $args['vars'];
 
         // get arguments as string
         $url = implode('/', $urlVars);
@@ -220,7 +176,7 @@
 
         // read params out of url
         $parameters = $router->parse($url);
-        var_dump($parameters);
+        //var_dump($parameters);
 
         if (!$parameters || !is_array($parameters)) {
             return false;
@@ -253,30 +209,6 @@
         foreach ($parameters as $k => $v) {
             System::queryStringSetVar($k, $v);
         }
-
-
-        /**
-         * TODO: this is probably obsolete
-        // parse extraargs
-        if (isset($extraArgs) && !empty($extraArgs)) {
-            $vars = explode('&', $extraArgs);
-            if (is_array($vars)) {
-                foreach ($vars as $var) {
-                    list($k, $v) = explode('=', $var, 2);
-                    System::queryStringSetVar($k, $v);
-                }
-            }
-        }
-
-        // set filter
-        if (!empty($filter)) {
-            $urlFilter = FormUtil::getPassedValue('filter', false, 'GETPOST');
-            if (!empty($urlFilter)) {
-                $filter = $urlFilter . ',' . $filter;
-            }
-            System::queryStringSetVar('filter', $filter);
-        }
-        */
 
         return true;
     }

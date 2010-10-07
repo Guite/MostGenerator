@@ -509,7 +509,6 @@ class «appName»_Url_Base_RouterFacade
 «EXPAND InitUrlRoutes-»
 «EXPAND GetGroupingFolderFromObjectType-»
 «EXPAND GetObjectTypeFromGroupingFolder-»
-«EXPAND GetUrlEnding-»
 «EXPAND GetFormattedSlug-»
 
 «EXPAND FileHelper::GetterAndSetterMethods('router', appName.msconcat('_Url_Router'))»
@@ -531,21 +530,21 @@ class «appName»_Url_Base_RouterFacade
         $fieldRequirements = $this->requirements;
 
 «IF userController.hasActions('display')-»
-        $defaultValues = array('func' => 'display');
+        $defaults = array('func' => 'display');
         // normal display pages including the group folder corresponding to the object type
-        $this->initRouteForEachSlugType('dn', ':ot/', ':displayending', $defaultValues, $fieldRequirements);
+        $this->initRouteForEachSlugType('dn', ':ot/', ':displayending', $defaults, $fieldRequirements);
 
         // additional rules for the leading object type (where ot is omitted)
-        $defaultValues['ot'] = '«getLeadingEntity().name.formatForCode()»';
-        $this->initRouteForEachSlugType('dl', '', ':displayending', $defaultValues, $fieldRequirements);
+        $defaults['ot'] = '«getLeadingEntity().name.formatForCode()»';
+        $this->initRouteForEachSlugType('dl', '', ':displayending', $defaults, $fieldRequirements);
 «ENDIF-»
 «IF userController.hasActions('view')-»
-        $defaultValues = array('func' => 'view');
+        $defaults = array('func' => 'view');
         // normal views (e.g. orders/ or customers.xml)
-        $this->router->set('va', new «appName»_Url_Route(':ot.:viewending', $defaultValues, $fieldRequirements));
+        $this->router->set('va', new «appName»_Url_Route(':ot.:viewending', $defaults, $fieldRequirements));
 
         // filter views (e.g. /orders/customer/mr-smith.csv)
-        $this->initRouteForEachSlugType('vn', ':ot/:filterot/', ':viewending', $defaultValues, $fieldRequirements);
+        $this->initRouteForEachSlugType('vn', ':ot/:filterot/', ':viewending', $defaults, $fieldRequirements);
 «ENDIF-»
 
         return $this->router;
@@ -554,14 +553,14 @@ class «appName»_Url_Base_RouterFacade
     /**
      * Helper function to route permalinks for different slug types
      */
-    protected function initRouteForEachSlugType($prefix, $patternStart, $patternEnd, $defaultValues, $fieldRequirements)
+    protected function initRouteForEachSlugType($prefix, $patternStart, $patternEnd, $defaults, $fieldRequirements)
     {
         // entities with unique slug (slug only)
-        $this->router->set($prefix . 'a', new «appName»_Url_Route($patternStart . ':title.' . $patternEnd,        $defaultValues, $fieldRequirements));
+        $this->router->set($prefix . 'a', new «appName»_Url_Route($patternStart . ':title.' . $patternEnd,        $defaults, $fieldRequirements));
         // entities with non-unique slug (slug and id)
-        $this->router->set($prefix . 'b', new «appName»_Url_Route($patternStart . ':title.:id.' . $patternEnd,    $defaultValues, $fieldRequirements));
+        $this->router->set($prefix . 'b', new «appName»_Url_Route($patternStart . ':title.:id.' . $patternEnd,    $defaults, $fieldRequirements));
         // entities without slug (id)
-        $this->router->set($prefix . 'c', new «appName»_Url_Route($patternStart . 'id.:id.' . $patternEnd,           $defaultValues, $fieldRequirements));
+        $this->router->set($prefix . 'c', new «appName»_Url_Route($patternStart . 'id.:id.' . $patternEnd,        $defaults, $fieldRequirements));
     }
 «ENDLET-»
 «ENDLET-»
@@ -645,35 +644,6 @@ class «appName»_Url_Base_RouterFacade
                             break;
 «ENDDEFINE»
 
-«DEFINE GetUrlEnding FOR Application-»
-
-    /**
-     * Get url ending for given arguments.
-     *
-     * @param        objectType     string        name of treated entity type
-     * @param        func           string        name of function
-     * @param        args           array         additional parameters
-     * @return       string the resulting url ending
-     */
-    public function getUrlEnding($objectType, $func, $args)
-    {
-        // determine possible template extensions (beside html)
-        $templateExtensions = «appName()»_Util::availableTemplateExtensions('user', $objectType, $func);
-        $displayDefaultEnding = System::getVar('shorturlsext', 'html');
-
-        $fileEnding = ($func == 'display') ? ('.' . $displayDefaultEnding) : '/';
-        foreach ($templateExtensions as $extParam) {
-            if (!isset($args[$extParam]) || $args[$extParam] != 1) {
-                continue;
-            }
-            $fileEnding = '.' . $extParam;
-            unset($args[$extParam]);
-            break;
-        }
-        return $fileEnding;
-    }
-«ENDDEFINE»
-
 «DEFINE GetFormattedSlug FOR Application-»
 
     /**
@@ -681,10 +651,11 @@ class «appName»_Url_Base_RouterFacade
      *
      * @param        objectType     string        name of treated entity type
      * @param        func           string        name of function
-     * @param        item           array         treated item
+     * @param        args           array         additional parameters
+     * @param        itemid         integer       identifier of treated item
      * @return       string the resulting url ending
      */
-    public function getFormattedSlug($objectType, $func, $item)
+    public function getFormattedSlug($objectType, $func, $args, $itemid)
     {
         $slug = '';
 
@@ -699,6 +670,8 @@ class «appName»_Url_Base_RouterFacade
 «DEFINE GetSlugForItem FOR Entity-»
             case '«name.formatForCode()»':
 «IF sluggable-»
+«EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(container.application.appName(), false, 'api', 'RouteFacade', 'getFormattedSlug')-»
+                        $item = $object->selectById($itemid);
 «LET ((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCode() AS sluggableFieldRealName-»
 «IF sluggableUnique-»
                         $slug = $item['«sluggableFieldRealName»'];
@@ -707,7 +680,7 @@ class «appName»_Url_Base_RouterFacade
 «ENDIF-»
 «ENDLET-»
 «ELSE-»
-                        $slug = $item['«idField()»'];
+                        $slug = $itemid;
 «ENDIF-»
                         break;
 «ENDDEFINE»
