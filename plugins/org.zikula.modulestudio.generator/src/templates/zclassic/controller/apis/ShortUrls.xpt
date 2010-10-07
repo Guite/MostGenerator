@@ -56,7 +56,8 @@
         $args['args']['ot'] = $groupFolder;
 
         // handle special templates
-        foreach (array('html', 'csv', 'rss', 'atom', 'xml', 'pdf') as $ending) {
+        $displayDefaultEnding = System::getVar('shorturlsext', 'html');
+        foreach (array($displayDefaultEnding, 'csv', 'rss', 'atom', 'xml', 'pdf') as $ending) {
             if (!isset($args['args']['use' . $ending . 'ext'])) {
                 continue;
             }
@@ -200,9 +201,6 @@
             }
         }
 
-        // init object type with fallback value pointing to the leading entity
-        $objectType = '«container.application.getLeadingEntity().name.formatForCode()»';
-
         // process all args except language and module
         $urlVars = array_slice($args['vars'], 2); // all except [0] and [1]
         //$urlVars = $args['vars'];
@@ -238,7 +236,8 @@
         $parameters['ot'] = $routerFacade->getObjectTypeFromGroupingFolder($parameters['ot'], $func);
 
         // handle special templates
-        if (isset($parameters[$func . 'ending']) && $parameters[$func . 'ending'] != 'html') {
+        $displayDefaultEnding = System::getVar('shorturlsext', 'html');
+        if (isset($parameters[$func . 'ending']) && $parameters[$func . 'ending'] != $displayDefaultEnding) {
             $parameters['use' . $parameters[$func . 'ending'] . 'ext'] = '1';
             unset($parameters[$func . 'ending']);
         }

@@ -487,14 +487,15 @@ class «appName»_Url_Base_RouterFacade
      */
     function __construct()
     {
+        $displayDefaultEnding = System::getVar('shorturlsext', 'html');
 «REM»Modifier: + (1..n), * (0..n), ? (0..1), {x,y} (x..y)«ENDREM»«""-»
         $this->requirements = array(
             'func'          => '\w+',
             'ot'            => '\w+',
             'title'         => '[^/.]+', // title used for slugs ([^/.]+ = all chars except / and .)
-            'displayending' => '(?:html|xml|pdf)',
+            'displayending' => '(?:' . $displayDefaultEnding . '|xml|pdf)',
             'viewending'    => '(?:csv|rss|atom|xml|pdf)',
-//            'displayending' => '(?:\.html|\.xml|\.pdf)',
+//            'displayending' => '(?:\.' . $displayDefaultEnding . '|\.xml|\.pdf)',
 //            'viewending' => '(?:\.csv|\.rss|\.atom|\.xml|\.pdf)',
             'id'            => '\d+'
         );
@@ -555,12 +556,12 @@ class «appName»_Url_Base_RouterFacade
      */
     protected function initRouteForEachSlugType($prefix, $patternStart, $patternEnd, $defaultValues, $fieldRequirements)
     {
-        // display with unique slug (slug only)
+        // entities with unique slug (slug only)
         $this->router->set($prefix . 'a', new «appName»_Url_Route($patternStart . ':title.' . $patternEnd,        $defaultValues, $fieldRequirements));
-        // display with non-unique slug (slug and id)
+        // entities with non-unique slug (slug and id)
         $this->router->set($prefix . 'b', new «appName»_Url_Route($patternStart . ':title.:id.' . $patternEnd,    $defaultValues, $fieldRequirements));
-        // display with no slug (id)
-        $this->router->set($prefix . 'c', new «appName»_Url_Route($patternStart . ':id.' . $patternEnd,           $defaultValues, $fieldRequirements));
+        // entities without slug (id)
+        $this->router->set($prefix . 'c', new «appName»_Url_Route($patternStart . 'id.:id.' . $patternEnd,           $defaultValues, $fieldRequirements));
     }
 «ENDLET-»
 «ENDLET-»
@@ -593,6 +594,8 @@ class «appName»_Url_Base_RouterFacade
                 default: return '';
             }
         }
+
+        return $groupFolder;
     }
 «ENDLET-»
 «ENDDEFINE»
@@ -624,6 +627,8 @@ class «appName»_Url_Base_RouterFacade
                 default: return '';
             }
         }
+
+        return $objectType;
     }
 «ENDLET-»
 «ENDDEFINE»
@@ -654,8 +659,9 @@ class «appName»_Url_Base_RouterFacade
     {
         // determine possible template extensions (beside html)
         $templateExtensions = «appName()»_Util::availableTemplateExtensions('user', $objectType, $func);
+        $displayDefaultEnding = System::getVar('shorturlsext', 'html');
 
-        $fileEnding = ($func == 'display') ? '.html' : '/';
+        $fileEnding = ($func == 'display') ? ('.' . $displayDefaultEnding) : '/';
         foreach ($templateExtensions as $extParam) {
             if (!isset($args[$extParam]) || $args[$extParam] != 1) {
                 continue;
