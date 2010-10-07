@@ -62,6 +62,7 @@ class «appName()»_Url_Base_Router
 
                 // use this route
                 $route = $testRoute;
+
                 // exit loop as the first match wins
                 break;
             }
@@ -107,7 +108,7 @@ class «appName()»_Url_Base_Router
 
             // store parameters
             $params = $testParams;
-            
+
             // exit loop as the first match wins
             break;
         }
@@ -149,7 +150,7 @@ class «appName()»_Url_Base_Router
 /**
  * Url router implementation class
  */
-class «appName()»_Url_Router extends «appName()»_Base_Router
+class «appName()»_Url_Router extends «appName()»_Url_Base_Router
 {
     // in this class you may enhance and customise the router for short urls
 }
@@ -458,7 +459,7 @@ class «appName()»_Url_Base_Route
 /**
  * Url route implementation class
  */
-class «appName()»_Url_Route extends «appName()»_Base_Route
+class «appName()»_Url_Route extends «appName()»_Url_Base_Route
 {
     // here you can customise the inner structure and/or behavior of url routes 
 }
@@ -477,10 +478,27 @@ class «appName»_Url_Base_RouterFacade
     protected $router;
 
     /**
+     * @var array Common requirement definitions
+     */
+    protected $requirements;
+
+    /**
      * Constructor.
      */
     function __construct()
     {
+«REM»Modifier: + (1..n), * (0..n), ? (0..1), {x,y} (x..y)«ENDREM»«""-»
+        $this->requirements = array(
+            'func'          => '\w+',
+            'ot'            => '\w+',
+            'title'         => '[^/.]+', // title used for slugs ([^/.]+ = all chars except / and .)
+            'displayending' => '(?:html|xml|pdf)',
+            'viewending'    => '(?:csv|rss|atom|xml|pdf)',
+//            'displayending' => '(?:\.html|\.xml|\.pdf)',
+//            'viewending' => '(?:\.csv|\.rss|\.atom|\.xml|\.pdf)',
+            'id'            => '\d+'
+        );
+
         // initialise and reference router instance
         $this->router = new «appName»_Url_Router();
 
@@ -509,48 +527,43 @@ class «appName»_Url_Base_RouterFacade
      */
     protected function initUrlRoutes()
     {
-        $router = $this->router;
-«IF userController.hasActions('view')-»
-«EXPAND InitRoute(appName, 'view') FOREACH models.entities-»
-«ENDIF-»
+        $fieldRequirements = $this->requirements;
+
 «IF userController.hasActions('display')-»
-«EXPAND InitRoute(appName, 'display') FOREACH models.entities-»
+        $defaultValues = array('func' => 'display');
+        // normal display pages including the group folder corresponding to the object type
+        $this->initRouteForEachSlugType('dn', ':ot/', ':displayending', $defaultValues, $fieldRequirements);
+
+        // additional rules for the leading object type (where ot is omitted)
+        $defaultValues['ot'] = '«getLeadingEntity().name.formatForCode()»';
+        $this->initRouteForEachSlugType('dl', '', ':displayending', $defaultValues, $fieldRequirements);
+«ENDIF-»
+«IF userController.hasActions('view')-»
+        $defaultValues = array('func' => 'view');
+        // normal views (e.g. orders/ or customers.xml)
+        $this->router->set('va', new «appName»_Url_Route(':ot.:viewending', $defaultValues, $fieldRequirements));
+
+        // filter views (e.g. /orders/customer/mr-smith.csv)
+        $this->initRouteForEachSlugType('vn', ':ot/:filterot/', ':viewending', $defaultValues, $fieldRequirements);
 «ENDIF-»
 
-// JUST FOR TEST
-        $router->set('a', new «appName»_Url_Route(
-                                    '«appName»/:viewtype/:day-:month-:year',
-                                    array('module' => '«appName»', 'calendar' => 1),
-                                    array('day'=>'\d+', 'month' => '\d+', 'year'=>'\d+')));
-        $router->set('b', new «appName»_Url_Route(
-                                    '«appName»/:calendar/:viewtype/:day-:month-:year',
-                                    array('module' => '«appName»'),
-                                    array('day' => '\d+', 'month' => '\d+', 'year' => '\d+', 'calendar' => '\d+')));
-        $router->set('c', new «appName»_Url_Route(
-                                    '«appName»/event/:eid/:dhe_id',
-                                    array('module' => '«appName»'),
-                                    array('eid' => '\d+', 'dhe_id' => '\d+')));
+        return $this->router;
+    }
 
-        return $router;
+    /**
+     * Helper function to route permalinks for different slug types
+     */
+    protected function initRouteForEachSlugType($prefix, $patternStart, $patternEnd, $defaultValues, $fieldRequirements)
+    {
+        // display with unique slug (slug only)
+        $this->router->set($prefix . 'a', new «appName»_Url_Route($patternStart . ':title.' . $patternEnd,        $defaultValues, $fieldRequirements));
+        // display with non-unique slug (slug and id)
+        $this->router->set($prefix . 'b', new «appName»_Url_Route($patternStart . ':title.:id.' . $patternEnd,    $defaultValues, $fieldRequirements));
+        // display with no slug (id)
+        $this->router->set($prefix . 'c', new «appName»_Url_Route($patternStart . ':id.' . $patternEnd,           $defaultValues, $fieldRequirements));
     }
 «ENDLET-»
 «ENDLET-»
-«ENDDEFINE»
-
-«DEFINE InitRoute(String appName, String actionName) FOR Entity-»
-        $groupingFolder = $this->getGroupingFolderFromObjectType('«name.formatForCode()»', '«actionName»');
-        $urlBase = '«appName»/:' . $groupingFolder;
-«IF actionName == 'view'-»
-        $router->set('«actionName»«name.formatForCodeCapital()»', new «appName»_Url_Route(
-                                    $urlBase,
-                                    array('module' => '«appName»', 'func' => 'view'),
-                                    array('ot' => '\w+')));
-«ELSEIF actionName == 'display'-»
-        $router->set('«actionName»«name.formatForCodeCapital()»', new «appName»_Url_Route(
-                                    $urlBase . '/:«idField()»',
-                                    array('module' => '«appName»', 'func' => 'display'),
-                                    array('ot' => '\w+', '«idField()»' => '\d+')));
-«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE GetGroupingFolderFromObjectType FOR Application-»
@@ -563,31 +576,23 @@ class «appName»_Url_Base_RouterFacade
      * @param        func           string        name of function
      * @return       string the name of the group folder
      */
-    protected function getGroupingFolderFromObjectType($objectType, $func)
+    public function getGroupingFolderFromObjectType($objectType, $func)
     {
         // object type will be used as a fallback
         $groupFolder = $objectType;
 
-«IF userController.hasActions('view')-»
-        if ($args['func'] == 'view') {
+        if ($func == 'view') {
             switch ($objectType) {
 «EXPAND GetGroupingFolderFromObjectType(true) FOREACH models.entities-»
                 default: return '';
             }
         }
-«ENDIF-»
-«IF userController.hasActions('display')-»
-«IF userController.hasActions('view')-»
-        else if ($args['func'] == 'display') {
-«ELSE-»
-        if ($args['func'] == 'display') {
-«ENDIF-»
+        else if ($func == 'display') {
             switch ($objectType) {
 «EXPAND GetGroupingFolderFromObjectType(false) FOREACH models.entities-»
                 default: return '';
             }
         }
-«ENDIF-»
     }
 «ENDLET-»
 «ENDDEFINE»
@@ -599,35 +604,40 @@ class «appName»_Url_Base_RouterFacade
      * Get name of object type based on given grouping folder
      *
      * @param        groupFolder    string        name of group folder
+     * @param        func           string        name of function
      * @return       string the name of the object type
      */
-    protected function getObjectTypeFromGroupingFolder($groupFolder)
+    public function getObjectTypeFromGroupingFolder($groupFolder, $func)
     {
         // group folder will be used as a fallback
         $objectType = $groupFolder;
 
-«IF userController.hasActions('view')-»
-        if ($args['func'] == 'view') {
+        if ($func == 'view') {
             switch ($objectType) {
 «EXPAND GetObjectTypeFromGroupingFolder(true) FOREACH models.entities-»
                 default: return '';
             }
         }
-«ENDIF-»
-«IF userController.hasActions('display')-»
-«IF userController.hasActions('view')-»
-        else if ($args['func'] == 'display') {
-«ELSE-»
-        if ($args['func'] == 'display') {
-«ENDIF-»
+        else if ($func == 'display') {
             switch ($objectType) {
 «EXPAND GetObjectTypeFromGroupingFolder(false) FOREACH models.entities-»
                 default: return '';
             }
         }
-«ENDIF-»
     }
 «ENDLET-»
+«ENDDEFINE»
+
+«DEFINE GetGroupingFolderFromObjectType(Boolean plural) FOR Entity-»
+                case '«name.formatForCode()»':
+                            $groupFolder = '«getEntityNameSingularPlural(plural).formatForDB()»';
+                            break;
+«ENDDEFINE»
+
+«DEFINE GetObjectTypeFromGroupingFolder(Boolean plural) FOR Entity-»
+                case '«getEntityNameSingularPlural(plural).formatForDB()»':
+                            $groupFolder = '«name.formatForCode()»';
+                            break;
 «ENDDEFINE»
 
 «DEFINE GetUrlEnding FOR Application-»
@@ -640,7 +650,7 @@ class «appName»_Url_Base_RouterFacade
      * @param        args           array         additional parameters
      * @return       string the resulting url ending
      */
-    protected function getUrlEnding($objectType, $func, $args)
+    public function getUrlEnding($objectType, $func, $args)
     {
         // determine possible template extensions (beside html)
         $templateExtensions = «appName()»_Util::availableTemplateExtensions('user', $objectType, $func);
@@ -668,33 +678,39 @@ class «appName»_Url_Base_RouterFacade
      * @param        item           array         treated item
      * @return       string the resulting url ending
      */
-    protected function getFormattedSlug($objectType, $func, $item)
+    public function getFormattedSlug($objectType, $func, $item)
     {
-«REM»
-    * id (if not sluggable)
-    * slug (if sluggable unique)
-    * slug + id (if sluggable) 
-«ENDREM»
+        $slug = '';
+
+        switch ($objectType) {
+«EXPAND GetSlugForItem FOREACH models.entities-»
+        }
+
+        return $slug;
     }
 «ENDDEFINE»
 
-«DEFINE GetGroupingFolderFromObjectType(Boolean plural) FOR Entity-»
-                case '«name.formatForCode()»':
-                            $groupFolder = '«getEntityNameSingularPlural(plural).formatForDB()»';
-                            break;
-«ENDDEFINE»
-
-«DEFINE GetObjectTypeFromGroupingFolder(Boolean plural) FOR Entity-»
-                case '«getEntityNameSingularPlural(plural).formatForDB()»':
-                            $groupFolder = '«name.formatForCode()»';
-                            break;
+«DEFINE GetSlugForItem FOR Entity-»
+            case '«name.formatForCode()»':
+«IF sluggable-»
+«LET ((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCode() AS sluggableFieldRealName-»
+«IF sluggableUnique-»
+                        $slug = $item['«sluggableFieldRealName»'];
+«ELSE-»
+                        $slug = $item['«sluggableFieldRealName»'] . $item['«idField()»'];
+«ENDIF-»
+«ENDLET-»
+«ELSE-»
+                        $slug = $item['«idField()»'];
+«ENDIF-»
+                        break;
 «ENDDEFINE»
 
 «DEFINE UrlRouterFacadeImpl FOR Application-»
 /**
  * Url router facade implementation class
  */
-class «appName()»_Url_RouterFacade extends «appName()»_Base_RouterFacade
+class «appName()»_Url_RouterFacade extends «appName()»_Url_Base_RouterFacade
 {
     // here you can customise the data which is provided to the url router 
 }

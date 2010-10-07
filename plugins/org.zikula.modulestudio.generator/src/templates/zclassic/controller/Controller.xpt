@@ -9,7 +9,7 @@
     «EXPAND Root(this) FOREACH controllers.controllers-»
     «EXPAND UtilMethods::Root»
     «EXPAND Factory::Root»
-«IF !controllers.controllers.typeSelect(UserController).isEmpty-»
+«IF hasUserController()-»
 «REM»At the moment short urls are only used in the user area, see http://code.zikula.org/core/ticket/2538«ENDREM»
     «EXPAND additions::UrlRouting::Root»
 «ENDIF-»
@@ -141,6 +141,9 @@ class «baseClassApi()» extends Zikula_Api
 «ENDIF-»
         return $links;
     }
+«IF metaType == UserController-»
+«EXPAND apis::ShortUrls::Root(app)-»
+«ENDIF-»
 }
 «ENDDEFINE»
 
@@ -153,7 +156,4 @@ class «implClassApi()» extends «baseClassApi()»
     // feel free to add own api methods here
 }
 «ENDDEFINE»
-
-
-
 

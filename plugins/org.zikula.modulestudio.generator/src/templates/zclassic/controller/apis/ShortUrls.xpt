@@ -1,0 +1,285 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE Root(Application app) FOR Controller-»
+«ENDDEFINE»
+
+«DEFINE Root(Application app) FOR UserController-»
+
+    /**
+     * Form custom url string
+     *
+     * @return       string custom url string
+     */
+    public function encodeurl($args)
+    {
+        // check if we have the required input
+        if (!is_array($args) || !isset($args['modname']) || !isset($args['func']) || !isset($args['args'])) {
+            return LogUtil::registerArgsError();
+        }
+
+        if (!isset($args['type'])) {
+            $args['type'] = 'user';
+        }
+
+        // return if function url scheme is not being customised
+        $customFuncs = array(«IF hasActions('view')»'view'«IF hasActions('display')», «ENDIF»«ENDIF»«IF hasActions('display')»'display'«ENDIF»);
+        if (!in_array($args['func'], $customFuncs)) {
+            return '';
+        }
+
+        // reference to current language
+        $lang = ZLanguage::getLanguageCode();
+
+        // ensure that database information is loaded as we might have to query some parts
+        // for example when resolving permalinks corresponding slugs must be selected from the database
+        // TODO: this is probably not required anymore
+        $tables = DBUtil::getTables();
+
+        // initialise url routing rules
+        $routerFacade = new «app.appName()»_Url_RouterFacade();
+        // get router itself for convenience
+        $router = $routerFacade->getRouter();
+
+        // initialise object type
+        $allowedObjectTypes = «app.appName()»_Util::getObjectTypes('api', array('controller' => 'user', 'action' => 'encodeurl'));
+        $objectType = ((isset($args['args']['ot']) && in_array($args['args']['ot'], $allowedObjectTypes)) ? $args['args']['ot'] : '«container.application.getLeadingEntity().name.formatForCode()»');
+
+        // initialise group folder
+        $groupFolder = $routerFacade->getGroupingFolderFromObjectType($objectType, $args['func'], $args['args']);
+
+        // start pre process
+
+        // convert object type to group folder
+        $args['args']['ot'] = $groupFolder;
+
+        // handle special templates
+        foreach (array('html', 'csv', 'rss', 'atom', 'xml', 'pdf') as $ending) {
+            if (!isset($args['args']['use' . $ending . 'ext'])) {
+                continue;
+            }
+            if ($args['args']['use' . $ending . 'ext'] == '1') {
+                $args['args'][$args['func'] . 'ending'] = $ending;
+            }
+            unset($args['args']['use' . $ending . 'ext']);
+        }
+
+
+        // legacy
+        $resultOld = $groupFolder;
+
+
+/** TODO: replace building the url by converting some arguments
+        // start building the url depending on function, object type and other params
+        if ($args['func'] == 'view') {
+            // common filtered view types (e.g. all offers of a customer)
+            $filterEntities = array('supplier', 'region', 'federalstate', 'association');
+            foreach ($filterEntities as $filterEntity) {
+                $filterField = $filterEntity . 'id';
+                if (!isset($args['args'][$filterField]) || !$args['args'][$filterField]) {
+                    continue;
+                }
+
+                $item = DBUtil::selectObjectByID('«app.prefix()»_' . $filterName', $args['args'][$filterField], $filterField);
+                $filterGroupFolder = $routerFacade->getGroupingFolderFromObjectType($filterEntity, 'display', $args['args']);
+                $filterSlug = «app.appName()»_Util::formatPermalink($item['nameurl']) . '.' . $item[$filterField];
+                $result .= $filterGroupFolder . '/' . $filterSlug .'/';
+                unset ($args['args'][$filterField]);
+                break;
+            }
+        }
+        elseif ($args['func'] == 'display') {
+            // for the display function use either the title (if present) or the object's id
+            $id = 0;
+            if (isset($args['args']['id'])) {
+                $id = $args['args']['id'];
+                unset($args['args']['id']);
+            }
+            if (isset($args['args'][strtolower($objectType) . 'id'])) {
+                $id = $args['args'][strtolower($objectType) . 'id'];
+                unset($args['args'][strtolower($objectType) . 'id']);
+            }
+            if (isset($args['args']['objectid'])) {
+                $id = $args['args']['objectid'];
+                unset($args['args']['objectid']);
+            }
+
+            $tableName = «app.prefix()» . '_' . strtolower($objectType);
+
+            // TODO
+            $permalinkField = ($objectType == 'offer' || $objectType == 'staticPage') ? 'titleurl' : 'nameurl';
+            $permalinkField = ($objectType == 'page' && $lang == 'de') ? 'nameurlde' : 'nameurl';
+
+            // strip object type from id (for hooks)
+            $id = intval(str_replace($objectType, '', $id));
+
+            if ($id > 0) {
+                $item = DBUtil::selectObjectByID($tableName, $id, strtolower($objectType) . 'id');
+            }
+            else if (isset($args['args']['title'])) {
+                $item = DBUtil::selectObjectByID($tableName, $args['args']['title'], $permalinkField);
+                unset($args['args']['title']);
+            }
+
+            // add slug
+            $result .= '/' . $item[$permalinkField];
+
+            // add id of item to display
+            $result .= '.' . $item[strtolower($objectType) . 'id'];
+        }
+        */
+
+
+
+        // now create url based on params
+        $routerArgs = $args['args'];
+        $routerArgs['func'] = $args['func'];
+        $result = $router->generate(null, $routerArgs);
+
+
+        // add file ending
+        // $resultOld .= $routerFacade->getUrlEnding($objectType, $args['func'], $args['args']);
+
+        /*
+        // all other arguments
+        $extraArgs = '';
+        if (count($args['args']) > 0) {
+            $extraArgs = array();
+            foreach ($args['args'] as $k => $v) {
+                $extraArgs[] = $k . '=' . urlencode($v);
+            }
+            $extraArgs = implode('&', $extraArgs);
+            if (substr($result, -1, 1) != '&') {
+                $extraArgs = '&' . $extraArgs;
+            }
+            if (substr($result, -1, 1) != '/') {
+                $extraArgs = '/' . $extraArgs;
+            }
+        }
+        */
+
+        //$result = $args['modname'] . '/' . $resultOld . $extraArgs;
+
+        return $result;
+    }
+
+    /**
+     * Decode the custom url string
+     *
+     * @return       bool true if successful, false otherwise
+     */
+    public function decodeurl($args)
+    {
+        // check we actually have some vars to work with
+        if (!is_array($args) || !isset($args['vars']) || !is_array($args['vars']) || !count($args['vars'])) {
+            return LogUtil::registerArgsError();
+        }
+
+        // usually the language is in $args['vars'][0], except no mod name is in the url and we are set as start app
+        $lang = ($args['vars'][0] == '«app.appName()»') ? $args['vars'][1] : $args['vars'][0];
+
+        // define the available user functions
+        $funcs = array(«FOREACH actions AS action SEPARATOR ", "»'«action.name.formatForCode()»'«ENDFOREACH»);
+
+        // set the correct function name based on our input
+        if (empty($args['vars'][2])) {
+            // no func and no vars = main
+            System::queryStringSetVar('func', 'main');
+            return true;
+        } else if (in_array($args['vars'][2], $funcs)) {
+            // normal url scheme, no need for special decoding
+            return false;
+        }
+
+        // remove some unrequired parameters
+        foreach ($_GET as $k => $v) {
+            if (in_array($k, array('module', 'type', 'func', 'lang', 'ot')) === false) {
+                unset($_GET[$k]);
+            }
+        }
+
+        // init object type with fallback value pointing to the leading entity
+        $objectType = '«container.application.getLeadingEntity().name.formatForCode()»';
+
+        // process all args except language and module
+        $urlVars = array_slice($args['vars'], 2); // all except [0] and [1]
+        //$urlVars = $args['vars'];
+
+        // get arguments as string
+        $url = implode('/', $urlVars);
+
+        // remove prepending slash
+        if (substr($url, 0, 1) == '/') {
+            $url = substr($url, 1);
+        }
+
+        // initialise url routing rules
+        $routerFacade = new «app.appName()»_Url_RouterFacade();
+        // get router itself for convenience
+        $router = $routerFacade->getRouter();
+
+        // read params out of url
+        $parameters = $router->parse($url);
+        var_dump($parameters);
+
+        if (!$parameters || !is_array($parameters)) {
+            return false;
+        }
+
+        // post processing
+        if (!isset($parameters['func'])) {
+            $parameters['func'] = '«IF hasActions('view')»view«ELSEIF hasActions('display')»display«ELSE»main«ENDIF»';
+        }
+
+        $func = $parameters['func'];
+        // convert group folder to object type
+        $parameters['ot'] = $routerFacade->getObjectTypeFromGroupingFolder($parameters['ot'], $func);
+
+        // handle special templates
+        if (isset($parameters[$func . 'ending']) && $parameters[$func . 'ending'] != 'html') {
+            $parameters['use' . $parameters[$func . 'ending'] . 'ext'] = '1';
+            unset($parameters[$func . 'ending']);
+        }
+
+        // rename id to objid (primary key for display pages, optional filter id for view pages)
+        /* may be obsolete now
+        if (isset($parameters['id'])) {
+            $parameters[strtolower($parameters['ot']) . 'id'] = $parameters['id'];
+            unset($parameters['id']);
+        }*/
+
+        // write vars to GET
+        foreach ($parameters as $k => $v) {
+            System::queryStringSetVar($k, $v);
+        }
+
+
+        /**
+         * TODO: this is probably obsolete
+        // parse extraargs
+        if (isset($extraArgs) && !empty($extraArgs)) {
+            $vars = explode('&', $extraArgs);
+            if (is_array($vars)) {
+                foreach ($vars as $var) {
+                    list($k, $v) = explode('=', $var, 2);
+                    System::queryStringSetVar($k, $v);
+                }
+            }
+        }
+
+        // set filter
+        if (!empty($filter)) {
+            $urlFilter = FormUtil::getPassedValue('filter', false, 'GETPOST');
+            if (!empty($urlFilter)) {
+                $filter = $urlFilter . ',' . $filter;
+            }
+            System::queryStringSetVar('filter', $filter);
+        }
+        */
+
+        return true;
+    }
+«ENDDEFINE»
+

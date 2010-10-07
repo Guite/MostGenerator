@@ -153,6 +153,9 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         // default to 0 (which is a numeric id but an invalid value)
         // no provided id means that we want to create a new object
         $this->«idField()» = (int) FormUtil::getPassedValue('«idField()»', 0, 'GET');
+        if (!$this->«idField()») {
+            $this->«idField()» = (int) FormUtil::getPassedValue('id', 0, 'GET');
+        }
 
         $this->objectType = '«name.formatForCode()»';
 

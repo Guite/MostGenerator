@@ -17,13 +17,13 @@ class «appName()»_Base_Util
     /**
      * Returns an array of all allowed object types in «appName()».
      *
-     * @param        context        string        usage context (allowed values: controllerAction, actionHandler, block, contentType, mailz)
+     * @param        context        string        usage context (allowed values: controllerAction, api, actionHandler, block, contentType, mailz)
      * @param        args           array         additional arguments
      * @return array list of allowed object types
      */
     public static function getObjectTypes($context = '', $args = array())
     {
-        if (!in_array($context, array('controllerAction', 'actionHandler', 'block', 'contentType', 'mailz'))) {
+        if (!in_array($context, array('controllerAction', 'api', 'actionHandler', 'block', 'contentType', 'mailz'))) {
             $context = 'controllerAction';
         }
 

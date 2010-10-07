@@ -151,6 +151,9 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
         // retrieve the ID of the object we wish to view
         $id = (int) FormUtil::getPassedValue($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, 'GET');
+        if (!$id) {
+            $id = (int) FormUtil::getPassedValue('id', isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0, 'GET');
+        }
 
         $this->throwNotFoundUnless($id, 'Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
 
