@@ -49,14 +49,14 @@
         // initialise group folder
         $groupFolder = $routerFacade->getGroupingFolderFromObjectType($objectType, $args['func'], $args['args']);
 
-        // start pre process
+        // start pre processing
 
         // convert object type to group folder
         $args['args']['ot'] = $groupFolder;
 
         // handle special templates
         $displayDefaultEnding = System::getVar('shorturlsext', 'html');
-        foreach (array($displayDefaultEnding, 'csv', 'rss', 'atom', 'xml', 'pdf') as $ending) {
+        foreach (array('csv', 'rss', 'atom', 'xml', 'pdf') as $ending) {
             if (!isset($args['args']['use' . $ending . 'ext'])) {
                 continue;
             }
@@ -64,6 +64,14 @@
                 $args['args'][$args['func'] . 'ending'] = $ending;
             }
             unset($args['args']['use' . $ending . 'ext']);
+        }
+        if (!isset($args['args'][$args['func'] . 'ending'])) {
+            if ($args['func'] == 'view') {
+                $args['args'][$args['func'] . 'ending'] = '';//'/';
+            }
+            else if ($args['func'] == 'display') {
+                $args['args'][$args['func'] . 'ending'] = $displayDefaultEnding;
+            }
         }
 
         if ($args['func'] == 'view') {
@@ -114,6 +122,18 @@
 
         // now create url based on params
         $result = $router->generate(null, $routerArgs);
+
+        // post processing
+        if ($args['func'] == 'view') {
+        }
+        else if ($args['func'] == 'display') {
+            // check if url ends with a trailing slash
+            if (substr($result, -1) == '/') {
+                // remove the trailing slash
+                $result = substr($result, 0, strlen($result) - 1);
+            }
+        }
+
 
         return $result;
     }
