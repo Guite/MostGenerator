@@ -23,7 +23,7 @@
             '«modName»:«source.name.formatForCodeCapital()»:«target.name.formatForCodeCapital()»' => '«source.name.formatForCodeCapital()»ID:«target.name.formatForCodeCapital()»ID:'«ENDDEFINE»
 
 «REM»Permission checks in system use cases«ENDREM»
-«AROUND templates::zclassic::controller::Controller::PermissionCheck FOR Action-»
+«AROUND templates::zclassic::controller::Action::PermissionCheck FOR Action-»
 // DEBUG: permission check aspect starts
 «LET this.controller.container.application.appName() AS appName-»
 «IF this.controller.metaType == AdminController-»
