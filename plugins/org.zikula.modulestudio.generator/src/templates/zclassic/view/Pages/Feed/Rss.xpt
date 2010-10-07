@@ -8,7 +8,7 @@
 «LET name.formatForCode() AS objName-»
 «FILE templateFileWithExtension(controller, name, 'view', 'rss')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» rss feed in «controller.name()» area *}
-{«appName»TemplateHeaders contentType='application/rss+xml'}<?xml version="1.0" encoding="{charset assign='charset'}{if $charset eq 'ISO-8859-15'}ISO-8859-1{else}{$charset}{/if}" ?>
+{«appName.formatForDB()»TemplateHeaders contentType='application/rss+xml'}<?xml version="1.0" encoding="{charset assign='charset'}{if $charset eq 'ISO-8859-15'}ISO-8859-1{else}{$charset}{/if}" ?>
 <rss version="2.0"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"

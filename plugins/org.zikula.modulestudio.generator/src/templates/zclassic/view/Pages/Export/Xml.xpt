@@ -9,11 +9,11 @@
 «IF controller.hasActions('view')-»
 «FILE templateFileWithExtension(controller, name, 'view', 'xml')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» view xml view in «controller.name()» area *}
-{«appName»TemplateHeaders contentType='text/xml'}<?xml version="1.0" encoding="{charset}" ?>
+{«appName.formatForDB()»TemplateHeaders contentType='text/xml'}<?xml version="1.0" encoding="{charset}" ?>
 {getbaseurl assign='baseurl'}
 <«nameMultiple.formatForCode()»>
 {foreach item='item' from=$items}
-    {include file='«templateFileWithExtension(controller, name, 'include', 'xml')»'}
+    {include file='«templateFileWithExtension(controller, name, 'include', 'xml').replaceFirst('templates/', '')»'}
 {foreachelse}
     <no«name.formatForCodeCapital()» />
 {/foreach}
@@ -24,9 +24,9 @@
 «IF controller.hasActions('display')-»
 «FILE templateFileWithExtension(controller, name, 'display', 'xml')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» display xml view in «controller.name()» area *}
-{«appName»TemplateHeaders contentType='text/xml'}<?xml version="1.0" encoding="{charset}" ?>
+{«appName.formatForDB()»TemplateHeaders contentType='text/xml'}<?xml version="1.0" encoding="{charset}" ?>
 {getbaseurl assign='baseurl'}
-{include file='«templateFileWithExtension(controller, name, 'include', 'xml')»' item=$«objName»]-->
+{include file='«templateFileWithExtension(controller, name, 'include', 'xml').replaceFirst('templates/', '')»' item=$«objName»]-->
 «ENDFILE»
 «ENDIF-»
 

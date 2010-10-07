@@ -8,7 +8,7 @@
 «LET name.formatForCode() AS objName-»
 «FILE templateFileWithExtension(controller, name, 'view', 'atom')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» atom feed in «controller.name()» area *}
-{«appName»TemplateHeaders contentType='application/atom+xml'}<?xml version="1.0" encoding="{charset assign='charset'}{if $charset eq 'ISO-8859-15'}ISO-8859-1{else}{$charset}{/if}" ?>
+{«appName.formatForDB()»TemplateHeaders contentType='application/atom+xml'}<?xml version="1.0" encoding="{charset assign='charset'}{if $charset eq 'ISO-8859-15'}ISO-8859-1{else}{$charset}{/if}" ?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 {gt text='Latest «nameMultiple.formatForDisplay()»' assign='channelTitle'}
 {gt text='A direct feed showing the list of «nameMultiple.formatForDisplay()»' assign='channelDesc'}

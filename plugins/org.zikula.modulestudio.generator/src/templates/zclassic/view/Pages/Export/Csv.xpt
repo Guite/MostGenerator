@@ -8,7 +8,7 @@
 «LET name.formatForCode() AS objName-»
 «FILE templateFileWithExtension(controller, name, 'view', 'csv')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» view csv view in «controller.name()» area *}
-{«appName»TemplateHeaders contentType='text/comma-separated-values; charset=iso-8859-15' asAttachment=true filename='«nameMultiple.formatForCodeCapital()».csv'}
+{«appName.formatForDB()»TemplateHeaders contentType='text/comma-separated-values; charset=iso-8859-15' asAttachment=true filename='«nameMultiple.formatForCodeCapital()».csv'}
 «EXPAND HeaderLine(controller) FOREACH getDerivedFields().reject(e|e.primaryKey) SEPARATOR ";"-»
 «EXPAND HeaderLineRelation(controller, true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
 {foreach item='«objName»' from=$items}
