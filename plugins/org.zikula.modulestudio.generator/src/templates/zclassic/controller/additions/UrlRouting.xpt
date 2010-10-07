@@ -616,13 +616,13 @@ class «appName»_Url_Base_RouterFacade
         $objectType = $groupFolder;
 
         if ($func == 'view') {
-            switch ($objectType) {
+            switch ($groupFolder) {
 «EXPAND GetObjectTypeFromGroupingFolder(true) FOREACH models.entities-»
                 default: return '';
             }
         }
         else if ($func == 'display') {
-            switch ($objectType) {
+            switch ($groupFolder) {
 «EXPAND GetObjectTypeFromGroupingFolder(false) FOREACH models.entities-»
                 default: return '';
             }
@@ -641,7 +641,7 @@ class «appName»_Url_Base_RouterFacade
 
 «DEFINE GetObjectTypeFromGroupingFolder(Boolean plural) FOR Entity-»
                 case '«getEntityNameSingularPlural(plural).formatForDB()»':
-                            $groupFolder = '«name.formatForCode()»';
+                            $objectType = '«name.formatForCode()»';
                             break;
 «ENDDEFINE»
 
