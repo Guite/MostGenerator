@@ -77,20 +77,21 @@
         }
 
         if ($args['func'] == 'view') {
-/** TODO: incorporate later
-            // common filtered view types (e.g. all orders of a customer)
+            // filter views (e.g. /orders/customer/mr-smith.csv)
+            // TODO: incorporate later
+            /**
             $filterEntities = array('customer', 'region', 'federalstate', 'country');
             foreach ($filterEntities as $filterEntity) {
                 $filterField = $filterEntity . 'id';
                 if (!isset($args['args'][$filterField]) || !$args['args'][$filterField]) {
                     continue;
                 }
+                $filterId = $args['args'][$filterField];
+                unset($args['args'][$filterField]);
 
-                $item = DBUtil::selectObjectByID('«app.prefix()»_' . $filterName', $args['args'][$filterField], $filterField);
                 $filterGroupFolder = $routerFacade->getGroupingFolderFromObjectType($filterEntity, 'display', $args['args']);
-                $filterSlug = «app.appName()»_Util::formatPermalink($item['nameurl']) . '.' . $item[$filterField];
+                $filterSlug = $routerFacade->getFormattedSlug($filterEntity, 'display', $args['args'], $filterId);
                 $result .= $filterGroupFolder . '/' . $filterSlug .'/';
-                unset ($args['args'][$filterField]);
                 break;
             }
             */
@@ -216,7 +217,11 @@
 
         // handle special templates
         $displayDefaultEnding = System::getVar('shorturlsext', 'html');
-        if (isset($parameters[$func . 'ending']) && $parameters[$func . 'ending'] != $displayDefaultEnding) {
+        $endingPrefix = ($func == 'view') ? '.' : '';
+        if (isset($parameters[$func . 'ending']) && $parameters[$func . 'ending'] != ($endingPrefix . $displayDefaultEnding)) {
+            if ($func == 'view') {
+                $parameters[$func . 'ending'] = str_replace($endingPrefix, '', $parameters[$func . 'ending']);
+            }
             $parameters['use' . $parameters[$func . 'ending'] . 'ext'] = '1';
             unset($parameters[$func . 'ending']);
         }

@@ -534,7 +534,8 @@ class «appName»_Url_Base_RouterFacade
         $this->router->set('va', new «appName»_Url_Route($viewFolder . '/:ot:viewending', $defaults, $fieldRequirements));
 
         // filter views (e.g. /orders/customer/mr-smith.csv)
-        $this->initRouteForEachSlugType('vn', $viewFolder . '/:ot/:filterot/', ':viewending', $defaults, $fieldRequirements);
+        // TODO: incorporate later
+        // $this->initRouteForEachSlugType('vn', $viewFolder . '/:ot/:filterot/', ':viewending', $defaults, $fieldRequirements);
 «ENDIF-»
 
 «IF userController.hasActions('display')-»
