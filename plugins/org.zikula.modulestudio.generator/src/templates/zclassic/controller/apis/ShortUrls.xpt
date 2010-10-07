@@ -56,15 +56,17 @@
 
         // handle special templates
         $displayDefaultEnding = System::getVar('shorturlsext', 'html');
+        $endingPrefix = ($args['func'] == 'view') ? '.' : '';
         foreach (array('csv', 'rss', 'atom', 'xml', 'pdf') as $ending) {
             if (!isset($args['args']['use' . $ending . 'ext'])) {
                 continue;
             }
             if ($args['args']['use' . $ending . 'ext'] == '1') {
-                $args['args'][$args['func'] . 'ending'] = $ending;
+                $args['args'][$args['func'] . 'ending'] = $endingPrefix . $ending;
             }
             unset($args['args']['use' . $ending . 'ext']);
         }
+        // fallback to default templates
         if (!isset($args['args'][$args['func'] . 'ending'])) {
             if ($args['func'] == 'view') {
                 $args['args'][$args['func'] . 'ending'] = '';//'/';
@@ -75,9 +77,9 @@
         }
 
         if ($args['func'] == 'view') {
-/** TODO: replace building the url by converting some arguments
-            // common filtered view types (e.g. all offers of a customer)
-            $filterEntities = array('supplier', 'region', 'federalstate', 'association');
+/** TODO: incorporate later
+            // common filtered view types (e.g. all orders of a customer)
+            $filterEntities = array('customer', 'region', 'federalstate', 'country');
             foreach ($filterEntities as $filterEntity) {
                 $filterField = $filterEntity . 'id';
                 if (!isset($args['args'][$filterField]) || !$args['args'][$filterField]) {

@@ -494,9 +494,7 @@ class «appName»_Url_Base_RouterFacade
             'ot'            => '\w+',
             'title'         => '[^/.]+', // title used for slugs ([^/.]+ = all chars except / and .)
             'displayending' => '(?:' . $displayDefaultEnding . '|xml|pdf)',
-            'viewending'    => '(?:csv|rss|atom|xml|pdf)',
-//            'displayending' => '(?:\.' . $displayDefaultEnding . '|\.xml|\.pdf)',
-//            'viewending' => '(?:\.csv|\.rss|\.atom|\.xml|\.pdf)',
+            'viewending' => '(?:/|\.csv|\.rss|\.atom|\.xml|\.pdf)',
             'id'            => '\d+'
         );
 
@@ -540,11 +538,12 @@ class «appName»_Url_Base_RouterFacade
 «ENDIF-»
 «IF userController.hasActions('view')-»
         $defaults = array('func' => 'view');
+        $viewFolder = 'view';
         // normal views (e.g. orders/ or customers.xml)
-        $this->router->set('va', new «appName»_Url_Route(':ot.:viewending', $defaults, $fieldRequirements));
+        $this->router->set('va', new «appName»_Url_Route($viewFolder . '/:ot:viewending', $defaults, $fieldRequirements));
 
         // filter views (e.g. /orders/customer/mr-smith.csv)
-        $this->initRouteForEachSlugType('vn', ':ot/:filterot/', ':viewending', $defaults, $fieldRequirements);
+        $this->initRouteForEachSlugType('vn', $viewFolder . '/:ot/:filterot/', ':viewending', $defaults, $fieldRequirements);
 «ENDIF-»
 
         return $this->router;
