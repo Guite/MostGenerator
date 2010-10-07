@@ -64,6 +64,25 @@ class «baseClassModelTable()» extends Doctrine_Table
         $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
         return $q->fetchOne(array(), $fetchType);
     }
+«IF sluggable && sluggableUnique-»
+
+    /**
+     * Select object by slug field
+     *
+     * @param string  $slugTitle       The slug value
+     * @param boolean $asArray         Whether to return the result as array instead as record object (optional) (default=true).
+     * @param boolean $useJoins        Whether to include joining related objects (optional) (default=true).
+     * @return array|Doctrine_Record retrieved data array or Doctrine_Record instance
+     */
+    public function selectOneItemBy«((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCodeCapital()»($slugTitle = '', $asArray = true, $useJoins = true)
+    {
+        $q = $this->_intBaseQuery('', '', $useJoins)
+                  ->where('tbl.«((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCode()» = ?', $slugTitle);
+
+        $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
+        return $q->fetchOne(array(), $fetchType);
+    }
+«ENDIF-»
 
     /**
      * Select a collection.

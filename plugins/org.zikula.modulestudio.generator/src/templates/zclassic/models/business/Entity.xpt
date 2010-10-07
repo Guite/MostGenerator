@@ -30,6 +30,11 @@
      */
     protected $_intValidator = null;
 
+    /**
+     * @var boolean Whether this entity supports unique slugs
+     */
+    protected $_intHasUniqueSlug = false;
+
 «EXPAND fieldMemberVar FOREACH fields.typeSelect(DerivedField)»
 «EXPAND fieldMemberVar(false) FOREACH incoming.typeSelect(JoinRelationship)»
 «EXPAND fieldMemberVar(true) FOREACH outgoing.typeSelect(JoinRelationship)»
@@ -45,6 +50,7 @@
         $this->_intIdField = '«name.formatForDB()»id';
         $this->_intId = $id;
         $this->_intValidator = new «implClassBusinessValidator()»($this);
+        $this->_intHasUniqueSlug = «IF sluggable && sluggableUnique»true«ELSE»false«ENDIF»;
     }
 
     /**
@@ -83,6 +89,42 @@
         // return the results
         return $item;
     }
+«IF sluggable && sluggableUnique-»
+
+    /**
+     * Select object by unique slug value.
+     *
+     * @param string  $slugTitle  The slug value
+     * @param boolean $asArray    Whether to return the result as array instead as record object (optional) (default=true).
+     * @return array|Doctrine_Record retrieved data array or Doctrine_Record instance
+     */
+    public function selectBySlug($slugTitle = '', $asArray = true)
+    {
+        // check input parameter
+        if ($slugTitle == '') {
+            return LogUtil::registerArgsError();
+        }
+
+        // get reference to table
+        $table = Doctrine_Core::getTable('«implClassModelRecord()»');
+
+        // get result from the model
+        $item = $table->selectOneItemBy«((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCodeCapital()»($slugTitle, $asArray);
+
+        // look whether we fetched an object or an array
+        if (!$asArray) {
+            // store the result object
+            $this->set«name.formatForCodeCapital()»($item);
+            $this->_intId = $item->«idField()»;
+        }
+        else {
+            $this->_intId = $item['«idField()»'];
+        }
+
+        // return the results
+        return $item;
+    }
+«ENDIF-»
 
     /**
      * Convenience merge method delegating to treated «implClassModelRecord()» instance
@@ -155,6 +197,7 @@
 «EXPAND FileHelper::GetterAndSetterMethods('_intIdField', 'string')»
 «EXPAND FileHelper::GetterAndSetterMethods('_intId', 'integer')»
 «EXPAND FileHelper::GetterAndSetterMethods('_intValidator', implClassBusinessValidator())»
+«EXPAND FileHelper::GetterAndSetterMethods('_intHasUniqueSlug', 'boolean')»
 
 «EXPAND fieldAccessors FOREACH fields.typeSelect(DerivedField)»
 «EXPAND relationAccessors(false) FOREACH incoming.typeSelect(JoinRelationship)»

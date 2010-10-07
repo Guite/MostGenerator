@@ -155,9 +155,30 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
             $id = (int) FormUtil::getPassedValue('id', isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0, 'GET');
         }
 
-        $this->throwNotFoundUnless($id, 'Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
+        // check for unique permalinks (without id)
+        $hasSlug = false;
+        $slugTitle = '';
+        if (!$id) {
+            $hasSlug = $object->get_intHasUniqueSlug();
+            if ($hasSlug) {
+                $slugTitle = FormUtil::getPassedValue('title', isset($args['title']) && !empty($args['title']) ? $args['title'] : '', 'GET');
+                $hasSlug = (!empty($slugTitle));
+            }
+        }
 
-«EXPAND ControllerHelper::retrieveEntityFromModel("idField", "id", false)-»
+        $this->throwNotFoundUnless(($id || $hasSlug), 'Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
+
+        // assign object data fetched from the database
+        $objectData = null;
+        if ($hasSlug) {
+            $objectData = $object->selectBySlug($slugTitle);
+        }
+        else {
+            $objectData = $object->selectById($id);
+        }
+        if (!is_array($objectData) || !isset($objectData[$idField]) || !is_numeric($objectData[$idField])) {
+            $this->throwNotFound($this->__('No such item.'));
+        }
 
         // turn off output caching
         $this->view->setCaching(false);

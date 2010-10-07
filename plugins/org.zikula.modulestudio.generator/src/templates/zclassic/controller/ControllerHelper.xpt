@@ -8,7 +8,6 @@
 
 «DEFINE retrieveEntityFromModel(String idVar, String idValue, Boolean isHandler) FOR Object-»
         // assign object data fetched from the database
-        // while the result will be saved within the object, we assign it to a local variable for convenience
         $objectData = $object->selectById($«idValue»);
         if (!is_array($objectData) || !isset($objectData[$«idVar»]) || !is_numeric($objectData[$«idVar»])) {
 «IF isHandler-»
