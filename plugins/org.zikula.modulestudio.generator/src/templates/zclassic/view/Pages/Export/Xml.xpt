@@ -64,21 +64,21 @@
 
 «DEFINE DisplayEntryInnerSimpleField(Controller controller) FOR DerivedField-»
 «IF leading == true-»
-    <«actualFieldName().formatForCode()»>{$«entity.name.formatForCode()».«actualFieldName().formatForCode()»}</«actualFieldName().formatForCode()»>
+    <«actualFieldName().formatForCode()»>{$item.«actualFieldName().formatForCode()»}</«actualFieldName().formatForCode()»>
 «ELSE-»
     <«actualFieldName().formatForCode()»>«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(entity.name.formatForCode(), 'viewxml', '')»</«actualFieldName().formatForCode()»>
 «ENDIF-»
 «ENDDEFINE»
 
 «DEFINE DisplayEntryInnerSimpleField(Controller controller) FOR BooleanField-»
-    <«actualFieldName().formatForCode()»>{if !$«entity.name.formatForCode()».«actualFieldName()»}0{else}1{/if}</«actualFieldName().formatForCode()»>
+    <«actualFieldName().formatForCode()»>{if !$item.«actualFieldName()»}0{else}1{/if}</«actualFieldName().formatForCode()»>
 «ENDDEFINE»
 
 «DEFINE DisplayEntryInnerSimpleFieldCdata(Controller controller) FOR DerivedField-»
 «IF leading == true-»
-    <«actualFieldName().formatForCode()»><![CDATA[{$«entity.name.formatForCode()».«actualFieldName().formatForCode()»}]]></«actualFieldName().formatForCode()»>
+    <«actualFieldName().formatForCode()»><![CDATA[{$item.«actualFieldName().formatForCode()»}]]></«actualFieldName().formatForCode()»>
 «ELSE-»
-    <«actualFieldName().formatForCode()»><![CDATA[«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(entity.name.formatForCode(), 'viewxml', '')»]]></«actualFieldName().formatForCode()»>
+    <«actualFieldName().formatForCode()»><![CDATA[«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField('item', 'viewxml', '')»]]></«actualFieldName().formatForCode()»>
 «ENDIF-»
 «ENDDEFINE»
 
@@ -97,7 +97,7 @@
 «LET getRelationAliasName(useTarget).formatForCodeCapital() AS relationAliasName-»
 «LET ((!useTarget) ? target : source) AS mainEntity-»
 «LET ((useTarget) ? target : source) AS linkEntity-»
-«LET mainEntity.name.formatForCode().msconcat('.').msconcat(relationAliasName) AS relObjName-»
+«LET 'item'.msconcat('.').msconcat(relationAliasName) AS relObjName-»
     <«relationAliasName»>{if (isset($«relObjName»))}{$«relObjName».«linkEntity.getLeadingField().actualFieldName().formatForCode()»«REM»|nl2br«ENDREM»|default:""}{/if}</«relationAliasName»>
 «ENDLET-»
 «ENDLET-»

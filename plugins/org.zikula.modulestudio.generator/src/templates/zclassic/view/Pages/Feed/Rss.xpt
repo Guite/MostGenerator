@@ -54,8 +54,8 @@
 «IF metaData-»
     {elseif isset($«objName».__META__) && isset($«objName».__META__.author)}
         <author>{$«objName».__META__.author}</author>
-    {/if}
 «ENDIF-»
+    {/if}
 «ENDIF-»
 «IF categorisable-»
 {* TODO for later
