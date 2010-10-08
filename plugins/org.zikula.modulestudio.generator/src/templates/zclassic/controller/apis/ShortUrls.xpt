@@ -38,7 +38,7 @@
         $lang = ZLanguage::getLanguageCode();
 
         // initialise url routing rules
-        $routerFacade = new «app.appName()»_Url_RouterFacade();
+        $routerFacade = new «app.appName()»_RouterFacade();
         // get router itself for convenience
         $router = $routerFacade->getRouter();
 
@@ -194,7 +194,7 @@
         }
 
         // initialise url routing rules
-        $routerFacade = new «app.appName()»_Url_RouterFacade();
+        $routerFacade = new «app.appName()»_RouterFacade();
         // get router itself for convenience
         $router = $routerFacade->getRouter();
 
