@@ -108,6 +108,16 @@
         </fieldset>
     {/if}
 
+    {if $mode eq 'create'}
+        <fieldset>
+            <legend>{gt text='Return control'}</legend>
+            <div class="z-formrow">
+                {formlabel for='repeatcreation' __text='Create another item after save'}
+                {formcheckbox id='repeatcreation' readOnly=false}
+            </div>
+        </fieldset>
+    {/if}
+
     {gt text='Really delete this «name.formatForDisplay()»?' assign="deleteConfirmMsg"}
 
     <div class="z-buttons z-formbuttons">

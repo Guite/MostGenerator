@@ -71,22 +71,25 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
      */
 
     // id of «name.formatForDisplay()»
-    private $«idField()»;
+    protected $«idField()»;
 
     // create or edit
-    private $mode;
+    protected $mode;
 
     // treated object type
-    private $objectType;
+    protected $objectType;
 
     // code for redirect after command handling
-    private $returnTo = null;
+    protected $returnTo = null;
+
+    // url of current form with all parameters for multiple creations
+    protected $repeatReturnUrl = null;
 
     // whether this form is being used inline
-    private $inlineUsage = false;
+    protected $inlineUsage = false;
 
     // full prefix for related items
-    private $idPrefix = '';
+    protected $idPrefix = '';
 
 «EXPAND initialize(app, controller, actionName)-»
 
@@ -161,6 +164,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         // initialise redirect goal
         $this->returnTo = FormUtil::getPassedValue('returnTo', null, 'GET');
+        // store current uri for repeated creations
+        $this->repeatReturnUrl = System::getCurrentURI();
 
         $objectType = $this->objectType;
 «EXPAND ControllerHelper::instantiateBusinessObject(app.appName(), false, 'actionHandler', controller.name(), 'initialize')-»
@@ -348,7 +353,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
     /**
      * Get url to redirect to
      */
-    protected function getRedirectUrl($args, $obj)
+    protected function getRedirectUrl($args, $obj, $repeatCreateAction = false)
     {
         if ($this->inlineUsage == true) {
             // inline usage, return to special function for closing the Zikula.UI.Window instance
@@ -356,6 +361,10 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                                                                  array('idp' => $this->idPrefix,
                                                                        'id' => $this->«idField()»,
                                                                        'com' => $args['commandName']));
+        }
+
+        if ($repeatCreateAction) {
+            return $this->repeatReturnUrl;
         }
 
         // normal usage, compute return url from given redirect code
@@ -509,7 +518,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                              array('lockName' => '«app.appName()»«name.formatForCodeCapital()»{$this->«idField()»}'));
         }
 
-        return $view->redirect($this->getRedirectUrl($args, $«name.formatForCode()»));
+        return $view->redirect($this->getRedirectUrl($args, $«name.formatForCode()», $repeatCreateAction));
 
         // We should in principle not end here at all, since the above command handlers should
         // match all possible commands, but we return "ok" (true) for all cases.
@@ -610,6 +619,12 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»
+
+        $repeatCreateAction = false;
+        if ($args['commandName'] == 'create' && isset($formData['repeatcreation'])) {
+            $repeatCreateAction = $formData['repeatcreation'];
+            unset($formData['repeatcreation']);
+        }
 
         // assign fetched data
         $«obj»->merge($formData);
