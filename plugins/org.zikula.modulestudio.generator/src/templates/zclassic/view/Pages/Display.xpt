@@ -79,7 +79,7 @@
         <a href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«source.name.formatForCode()»' «source.idField()»=$«relObjName».«source.idField()»}">
             {$«relObjName».«source.getLeadingField().actualFieldName().formatForCode()»«REM»|nl2br«ENDREM»|default:""}
         </a>
-        <a id="«source.name.formatForCode()»Item{$«relObjName».«source.idField()»}Display" href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«source.name.formatForCode()»' «source.idField()»=$«relObjName».«source.idField()» theme='Printer'}" title="{gt text='Open quick view window'}" style="display: none">
+        <a id="«source.name.formatForCode()»Item{$«relObjName».«source.idField()»}Display" href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«source.name.formatForCode()»' «source.idField()»=$«relObjName».«source.idField()» theme='Printer'«IF controller.metaType == UserController» forcelongurl=true«REM»Temporary hack due to core bug with theme parameter in short urls«ENDREM»«ENDIF-»}" title="{gt text='Open quick view window'}" style="display: none">
             {img src='windows_list.gif' modname='core' set='icons/extrasmall' __alt='Quick view'}
         </a>
         <script type="text/javascript">
