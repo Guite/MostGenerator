@@ -17,10 +17,10 @@
 «LET entity.getUploadFields() AS uploadFields-»
 «IF uploadFields.size > 1-»
 «FOREACH uploadFields AS uploadField-»
-    «FILE "files/" + entity.nameMultiple.formatForDB() + "/" + uploadField.subFolderPathSegment() + "/index.html"»«msUrl()-»«ENDFILE»
+    «EXPAND UploadFolder("files/" + entity.nameMultiple.formatForDB() + "/" + uploadField.subFolderPathSegment() + "/") FOR uploadField»
 «ENDFOREACH-»
 «ELSEIF uploadFields.size > 0-»
-    «FILE "files/" + entity.nameMultiple.formatForDB() + "/" + uploadFields.get(0).subFolderPathSegment() + "/index.html"»«msUrl()-»«ENDFILE»
+    «EXPAND UploadFolder("files/" + entity.nameMultiple.formatForDB() + "/" + uploadFields.get(0).subFolderPathSegment() + "/") FOR uploadFields.get(0)»
 «ENDIF-»
 «ENDLET-»
 «LET entity.getImageFields() AS uploadFields-»
@@ -35,6 +35,22 @@
 «ENDFOREACH-»
         }
 
+«ENDDEFINE»
+
+
+«DEFINE UploadFolder(String folder) FOR UploadField-»
+«FILE folder + "index.html"»«msUrl()-»«ENDFILE»
+«FILE folder + ".htaccess"»
+# generated at «timestamp()» by ModuleStudio «msVersion()» («msUrl()»)
+# ----------------------------------------------------------------------
+# Purpose of file: give access to upload files treated in this directory
+# ----------------------------------------------------------------------
+deny from all
+<FilesMatch "\.(«allowedExtensions.replaceAll(", ", "|")»)$">
+    order allow,deny
+    allow from all
+</filesmatch>
+«ENDFILE»
 «ENDDEFINE»
 
 
