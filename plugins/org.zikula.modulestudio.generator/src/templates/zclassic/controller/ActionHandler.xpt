@@ -544,7 +544,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
 «LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
-«IF many-»
+«IF many && this.getEditStageCode(incoming) > 1-»
         $relatedIds = FormUtil::getPassedValue('«uniqueNameForJs»ItemList', '', 'POST');
         $recordObj = $businessEntity->get«((incoming) ? target : source).name.formatForCodeCapital()»();
         if ($this->mode != 'create') {
