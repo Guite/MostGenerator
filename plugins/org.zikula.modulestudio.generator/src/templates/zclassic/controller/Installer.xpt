@@ -80,7 +80,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         // create all tables from according model definitions
         try {
             DoctrineUtil::createTablesFromModels('«appName()»');
-        } catch (Exception $e) { 
+        } catch (Exception $e) {
             if (System::isDevelopmentMode()) {
                 LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
             }
