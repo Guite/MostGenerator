@@ -183,7 +183,7 @@ class «baseClassModelTable()» extends Doctrine_Table
         }
 
         // use FilterUtil to support generic filtering
-        $fu = new FilterUtil('«container.application»', $this);
+        $fu = new FilterUtil('«container.application.appName()»', $this);
 
         // you could set explicit filters at this point, something like
         // $fu->setFilter('type:eq:' . $args['type'] . ',id:eq:' . $args['id']);
