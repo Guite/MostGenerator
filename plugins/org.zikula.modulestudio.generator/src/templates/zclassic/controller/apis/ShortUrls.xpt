@@ -193,6 +193,11 @@
             $url .= '/';
         }
 
+        $isDefaultModule = (System::getVar('shorturlsdefaultmodule', '') == '«app.appName()»');
+        if (!$isDefaultModule) {
+            $url = '«app.appName()»/' . $url;
+        }
+
         // initialise url routing rules
         $routerFacade = new «app.appName()»_RouterFacade();
         // get router itself for convenience

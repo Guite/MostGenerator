@@ -69,26 +69,34 @@ class «appName»_Base_RouterFacade
     protected function initUrlRoutes()
     {
         $fieldRequirements = $this->requirements;
+        $isDefaultModule = (System::getVar('shorturlsdefaultmodule', '') == '«appName»');
+
+        $defaults = array();
+        $modulePrefix = '';
+        if (!$isDefaultModule) {
+            $defaults['module'] = '«appName»';
+            $modulePrefix = ':module/';
+        }
 
 «IF userController.hasActions('view')-»
-        $defaults = array('func' => 'view');
+        $defaults['func'] = 'view';
         $viewFolder = 'view';
         // normal views (e.g. orders/ or customers.xml)
-        $this->router->set('va', new Zikula_Routing_UrlRoute($viewFolder . '/:ot:viewending', $defaults, $fieldRequirements));
+        $this->router->set('va', new Zikula_Routing_UrlRoute($modulePrefix . $viewFolder . '/:ot:viewending', $defaults, $fieldRequirements));
 
         // filter views (e.g. /orders/customer/mr-smith.csv)
         // TODO: incorporate later
-        // $this->initRouteForEachSlugType('vn', $viewFolder . '/:ot/:filterot/', ':viewending', $defaults, $fieldRequirements);
+        // $this->initRouteForEachSlugType('vn', $modulePrefix . $viewFolder . '/:ot/:filterot/', ':viewending', $defaults, $fieldRequirements);
 «ENDIF-»
 
 «IF userController.hasActions('display')-»
-        $defaults = array('func' => 'display');
+        $defaults['func'] = 'display';
         // normal display pages including the group folder corresponding to the object type
-        $this->initRouteForEachSlugType('dn', ':ot/', ':displayending', $defaults, $fieldRequirements);
+        $this->initRouteForEachSlugType('dn', $modulePrefix . ':ot/', ':displayending', $defaults, $fieldRequirements);
 
         // additional rules for the leading object type (where ot is omitted)
         $defaults['ot'] = '«getLeadingEntity().name.formatForCode()»';
-        $this->initRouteForEachSlugType('dl', '', ':displayending', $defaults, $fieldRequirements);
+        $this->initRouteForEachSlugType('dl', $modulePrefix . '', ':displayending', $defaults, $fieldRequirements);
 «ENDIF-»
 
         return $this->router;
