@@ -178,12 +178,10 @@ class «baseClassModelTable()» extends Doctrine_Table
             $this->addJoinsToFrom($q);
         }
 
-        /* @TODO: see http://code.zikula.org/generator/ticket/97
-         * WARNING: To use FilterUtil you have to get the Ticket_1614 from
-         * git core fork git@github.com:philippniethammer/core.git.
-         */
-         
-        /* Remove the block comment to use.
+        if (!empty($where)) {
+            $q->where('tbl.' . $where);
+        }
+
         // use FilterUtil to support generic filtering
         $fu = new FilterUtil('«container.application»', $this);
 
@@ -193,12 +191,6 @@ class «baseClassModelTable()» extends Doctrine_Table
 
         // process request input filters and add them to the query.
         $fu->enrichQuery($q);
-
-        */
-
-        if (!empty($where)) {
-            $q->where('tbl.' . $where);
-        }
 
         // add order by clause
         if (!empty($orderBy)) {
