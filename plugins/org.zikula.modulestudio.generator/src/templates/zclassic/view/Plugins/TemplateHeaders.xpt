@@ -35,6 +35,6 @@ function smarty_function_«appName().formatForDB()»TemplateHeaders($params, $vi
         header('Content-Disposition: attachment; filename=' . $params['filename']);
     }
 
-    return true;
+    return;
 }
 «ENDDEFINE»
