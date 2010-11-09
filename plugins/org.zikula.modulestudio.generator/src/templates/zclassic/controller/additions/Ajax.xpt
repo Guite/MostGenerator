@@ -41,8 +41,7 @@
             }
         }
         $out .= '</ul>';
-        echo $out;
-        return true;
+        return new Zikula_Response_Ajax_Plain($out);
     }
 «ENDIF-»
 «ENDLET-»
@@ -169,8 +168,7 @@
             }
         }
         $out .= '</ul>';
-        echo $out;
-        return true;
+        return new Zikula_Response_Ajax_Plain($out);
     }
 «ENDIF-»
 «ENDLET-»
