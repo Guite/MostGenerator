@@ -45,7 +45,7 @@ listType:
 «ELSEIF listType == 2-»
 <dl>
 «ELSEIF listType == 3-»
-<table class="z-«IF controller.metaType == AdminController-»admin«ELSE»data«ENDIF»table">
+<table class="z-datatable">
     <colgroup>
 «FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field -»
 «IF field.metaType == IntegerField && (!((IntegerField) field).getPointingRelations().isEmpty)-»
