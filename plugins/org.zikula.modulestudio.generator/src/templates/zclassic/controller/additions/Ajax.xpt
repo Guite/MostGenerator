@@ -96,7 +96,7 @@
         switch ($objectType) {
 «FOREACH app.models.entities AS entity-»
             case '«entity.name.formatForCode()»':
-«FOREACH entity.getDerivedFields().reject(e|e.primaryKey || e.metaType == ArrayField || e.metaType == ObjectField) AS field-»
+«FOREACH entity.getDerivedFields().reject(e|e.primaryKey || e.metaType == BooleanField || e.metaType == ArrayField || e.metaType == ObjectField) AS field-»
                     $whereSub .= ((!empty($whereSub)) ? ' OR ' : '') . '«field.actualFieldName()» «IF field.metaType == StringField || field.metaType == TextField»LIKE \'%' . $fragment . '%\'«ELSE»= \'' . $fragment . '\'«ENDIF»';
 «ENDFOREACH-»
                     break;
