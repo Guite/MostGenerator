@@ -545,6 +545,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
 «LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
 «IF many && this.getEditStageCode(incoming) > 1-»
+«IF incoming-»«REM»only incoming for now, see http://code.zikula.org/generator/ticket/89«ENDREM»«""-»
         $relatedIds = FormUtil::getPassedValue('«uniqueNameForJs»ItemList', '', 'POST');
         $recordObj = $businessEntity->get«((incoming) ? target : source).name.formatForCodeCapital()»();
         if ($this->mode != 'create') {
@@ -571,6 +572,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         // not sure yet if this is needed at all
         // $recordObj->save();
 
+«ENDIF-»
 «ENDIF-»
 «ENDLET-»
 «ENDLET-»
