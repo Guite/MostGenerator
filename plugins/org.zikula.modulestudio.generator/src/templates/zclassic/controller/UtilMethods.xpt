@@ -230,7 +230,9 @@ class «appName()»_Base_Util
         $thumbFileName = ModUtil::apiFunc($mediaModule, 'user', 'generateThumbnailName', $thumbArgs);
 
         // move thumbnail into sub folder
-        $thumbFileName = str_replace($filePath, $filePath . 'tmb/', $thumbFileName);
+        $basePath = str_replace($fileName, '', $filePath);
+        $thumbFileNameOnly = str_replace($basePath, '', $thumbFileName);
+        $thumbFileName = $basePath . '/tmb/' . $thumbFileNameOnly;
 
         // return file if already existing
         if (file_exists($thumbFileName)) {
