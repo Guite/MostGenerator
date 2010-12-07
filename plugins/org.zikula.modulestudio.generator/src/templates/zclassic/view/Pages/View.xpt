@@ -63,7 +63,7 @@ listType:
     <tr>
 «EXPAND HeaderLine(controller) FOREACH getDerivedFields().reject(e|e.primaryKey)-»
 «EXPAND HeaderLineRelation(controller, true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
-        <th id="hintactions" scope="col" align="left" valign="middle">{gt text='Actions'}</th>
+        <th id="hintactions" scope="col" align="left" valign="middle" class="z-wrap z-order-unsorted">{gt text='Actions'}</th>
     </tr>
     </thead>
     <tbody>
@@ -188,10 +188,7 @@ listType:
 
 
 «DEFINE HeaderSortingLink(Controller controller, Entity entity, String fieldName, String label) FOR Object-»
-            {assign var='sortDirection' value='asc'}{if $sort eq '«fieldName»'}{assign var='sortDirection' value=$sdirReverse}{/if}
-            <a href="{modurl modname='«controller.container.application.appName()»' type='«controller.name()»' func='view' ot='«entity.name.formatForCode()»' sort='«fieldName»' sdir=$sortDirection}"{if $sort eq '«fieldName»'} class="currentSortingLink"{/if}>
-                {gt text='«label.formatForDisplayCapital()»'}
-            </a>
+            {sortlink __linktext='«label.formatForDisplayCapital()»' sort='«fieldName»' currentsort=$sort sortdir=$sdir modname='«controller.container.application.appName()»' type='«controller.name()»' func='view' ot='«entity.name.formatForCode()»'}
 «ENDDEFINE»
 
 «DEFINE Alignment FOR Object»left«ENDDEFINE»

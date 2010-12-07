@@ -113,7 +113,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $resultsPerPage = (int) FormUtil::getPassedValue('num', 0, 'GET');
         if ($resultsPerPage == 0) {
             $csv = (int) FormUtil::getPassedValue('usecsvext', 0, 'GET');
-            $resultsPerPage = ($csv == 1) ? 999 : $this->getVar('pagesize', 10);
+            $resultsPerPage = ($csv == 1) ? 999999 : $this->getVar('pagesize', 10);
         }
 
         // convenience vars to make code clearer
@@ -134,7 +134,6 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $this->view->assign('items', $objectData)
                    ->assign('sort', $sort)
                    ->assign('sdir', $sdir)
-                   ->assign('sdirReverse', ($sdir == 'asc') ? 'desc' : 'asc') // reverted for links
                    ->assign('currentPage', $currentPage)
                    ->assign('pager', array('numitems'     => $objectCount,
                                            'itemsperpage' => $resultsPerPage));

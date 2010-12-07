@@ -11,10 +11,6 @@
 «DEFINE StyleDefines FOR Application-»
 
 /* view pages */
-div#z-maincontent.z-module-«name.formatForDB()» table thead tr th a.currentSortingLink {
-    font-style: italic;
-}
-
 div#z-maincontent.z-module-«name.formatForDB()» table tbody tr td {
     vertical-align: top;
 }
