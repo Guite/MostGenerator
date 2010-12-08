@@ -204,7 +204,7 @@
         $value = FormUtil::getPassedValue('v', '', 'POST');
 
         if (empty($fieldName) || empty($value)) {
-            throw new Zikula_Exception_Fatal($this->__('Error! Wrong input data for duplicate check retrieved.') . ' (42233)');
+            return new Zikula_Response_Ajax_BadData($this->__('Invalid input'));
         }
 
         // check if the given field is existing and unique
@@ -221,7 +221,7 @@
 «ENDFOREACH-»
         }
         if (!count($uniqueFields) || !in_array($fieldName, $uniqueFields)) {
-            throw new Zikula_Exception_Fatal($this->__('Error! Wrong input data for duplicate check retrieved.') . ' (42234)');
+            return new Zikula_Response_Ajax_BadData($this->__('Invalid input'));
         }
 
         $exclude = (int) FormUtil::getPassedValue('ex', 0, 'POST');
