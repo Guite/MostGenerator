@@ -300,55 +300,61 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
      * «action.toFirstUpper()» persistent event handlers.
      * These are listeners for external events of the core and other modules.
      */
-    private function «action.toLowerCase()»PersistentEventHandlers()
+«LET appName() AS appName-»
+«LET action.toLowerCase() AS actionL-»
+«LET actionL.msconcat('_Listeners') AS callableClass-»
+    private function «actionL»PersistentEventHandlers()
     {
         // core
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'api.method_not_found', array('«appName()»_Listeners', 'coreApiMethodNotFound'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'core.preinit', array('«appName()»_Listeners', 'corePreInit'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'core.init', array('«appName()»_Listeners', 'coreInit'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'core.postinit', array('«appName()»_Listeners', 'corePostInit'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'controller.method_not_found', array('«appName()»_Listeners', 'coreControllerMethodNotFound'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'api.method_not_found', array('«callableClass»', 'coreApiMethodNotFound'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'core.preinit', array('«callableClass»', 'corePreInit'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'core.init', array('«callableClass»', 'coreInit'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'core.postinit', array('«callableClass»', 'corePostInit'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'controller.method_not_found', array('«callableClass»', 'coreControllerMethodNotFound'));
 
         // modules
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'installer.module.installed', array('«appName()»_Listeners', 'installerModuleInstalled'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'installer.module.upgraded', array('«appName()»_Listeners', 'installerModuleUpgraded'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'installer.module.uninstalled', array('«appName()»_Listeners', 'installerModuleUninstalled'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'module_dispatch.postloadgeneric', array('«appName()»_Listeners', 'moduleDispatchPostLoadGeneric'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'module_dispatch.preexecute', array('«appName()»_Listeners', 'moduleDispatchPreExecute'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'module_dispatch.postexecute', array('«appName()»_Listeners', 'moduleDispatchPostExecute'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'module_dispatch.custom_classname', array('«appName()»_Listeners', 'moduleDispatchCustomClassname'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'module.mailer.api.sendmessage', array('«appName()»_Listeners', 'moduleMailerApiSendmessage'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'pageutil.addvar_filter', array('«appName()»_Listeners', 'pageutilAddvarFilter'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'installer.module.installed', array('«callableClass»', 'installerModuleInstalled'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'installer.module.upgraded', array('«callableClass»', 'installerModuleUpgraded'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'installer.module.uninstalled', array('«callableClass»', 'installerModuleUninstalled'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'module_dispatch.postloadgeneric', array('«callableClass»', 'moduleDispatchPostLoadGeneric'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'module_dispatch.preexecute', array('«callableClass»', 'moduleDispatchPreExecute'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'module_dispatch.postexecute', array('«callableClass»', 'moduleDispatchPostExecute'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'module_dispatch.custom_classname', array('«callableClass»', 'moduleDispatchCustomClassname'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'module.mailer.api.sendmessage', array('«callableClass»', 'moduleMailerApiSendmessage'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'pageutil.addvar_filter', array('«callableClass»', 'pageutilAddvarFilter'));
 
         // errors
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'setup.errorreporting', array('«appName()»_Listeners', 'setupErrorReporting'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'system.outputfilter', array('«appName()»_Listeners', 'systemOutputfilter'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'systemerror', array('«appName()»_Listeners', 'systemError'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'setup.errorreporting', array('«callableClass»', 'setupErrorReporting'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'system.outputfilter', array('«callableClass»', 'systemOutputfilter'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'systemerror', array('«callableClass»', 'systemError'));
 
         // themes and views
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'theme.init', array('«appName()»_Listeners', 'themeInit'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'theme.load_config', array('«appName()»_Listeners', 'themeLoadConfig'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'theme.prefooter', array('«appName()»_Listeners', 'themePrefooter'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'view.init', array('«appName()»_Listeners', 'viewInit'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'view.fetch', array('«appName()»_Listeners', 'viewFetch'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'theme.init', array('«callableClass»', 'themeInit'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'theme.load_config', array('«callableClass»', 'themeLoadConfig'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'theme.prefooter', array('«callableClass»', 'themePrefooter'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'view.init', array('«callableClass»', 'viewInit'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'view.fetch', array('«callableClass»', 'viewFetch'));
 
         // users and groups
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'user.login', array('«appName()»_Listeners', 'userLogin'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'user.login.failed', array('«appName()»_Listeners', 'userLoginFailed'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'user.logout', array('«appName()»_Listeners', 'userLogout'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'user.logout.failed', array('«appName()»_Listeners', 'userLogoutFailed'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'user.gettheme', array('«appName()»_Listeners', 'userGetTheme'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'user.create', array('«appName()»_Listeners', 'userCreate'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'user.update', array('«appName()»_Listeners', 'userUpdate'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'user.delete', array('«appName()»_Listeners', 'userDelete'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'group.create', array('«appName()»_Listeners', 'groupCreate'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'group.update', array('«appName()»_Listeners', 'groupUpdate'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'group.delete', array('«appName()»_Listeners', 'groupDelete'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'group.adduser', array('«appName()»_Listeners', 'groupAddUser'));
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'group.removeuser', array('«appName()»_Listeners', 'groupRemoveUser'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'user.login', array('«callableClass»', 'userLogin'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'user.login.failed', array('«callableClass»', 'userLoginFailed'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'user.logout', array('«callableClass»', 'userLogout'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'user.logout.failed', array('«callableClass»', 'userLogoutFailed'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'user.gettheme', array('«callableClass»', 'userGetTheme'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'user.create', array('«callableClass»', 'userCreate'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'user.update', array('«callableClass»', 'userUpdate'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'user.delete', array('«callableClass»', 'userDelete'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'group.create', array('«callableClass»', 'groupCreate'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'group.update', array('«callableClass»', 'groupUpdate'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'group.delete', array('«callableClass»', 'groupDelete'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'group.adduser', array('«callableClass»', 'groupAddUser'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'group.removeuser', array('«callableClass»', 'groupRemoveUser'));
 
         // special purposes and 3rd party api support
-        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'get.pending_content', array('«appName()»_Listeners', 'pendingContentListener'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'get.pending_content', array('«callableClass»', 'pendingContentListener'));
+«ENDLET-»
+«ENDLET-»
+«ENDLET-»
     }
 «ENDDEFINE»
 
