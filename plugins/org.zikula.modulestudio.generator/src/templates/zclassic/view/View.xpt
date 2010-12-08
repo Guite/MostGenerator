@@ -50,12 +50,12 @@
 «FILE "templates/".msconcat(controller.name()).msconcat("/header.tpl")-»
 {* purpose of this template: header for «controller.name()» area *}
 
-{pageaddvar name='javascript' value='javascript/ajax/proto_scriptaculous.combined.min.js'}
-{pageaddvar name='javascript' value='javascript/ajax/validation.min.js'}
-{pageaddvar name='javascript' value='javascript/helpers/Zikula.js'}
-{pageaddvar name='javascript' value='javascript/livepipe/livepipe.combined.min.js'}
-{pageaddvar name='javascript' value='javascript/helpers/Zikula.UI.js'}
-{pageaddvar name='javascript' value='javascript/helpers/Zikula.ImageViewer.js'}
+{pageaddvar name='javascript' value='prototype'}
+{pageaddvar name='javascript' value='validation'}
+{pageaddvar name='javascript' value='zikula'}
+{pageaddvar name='javascript' value='livepipe'}
+{pageaddvar name='javascript' value='zikula.ui'}
+{pageaddvar name='javascript' value='zikula.imageviewer'}
 {pageaddvar name='javascript' value='modules/«appName»/javascript/«appName».js'}
 
 {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}

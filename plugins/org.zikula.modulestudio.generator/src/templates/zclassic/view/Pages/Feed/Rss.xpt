@@ -37,7 +37,7 @@
 
 {foreach item='«objName»' from=$items}
     <item>
-        <title><![CDATA[{if isset($«objName».lu_date)}{$«objName».lu_date|date_format} - {/if}{$«objName».«getLeadingField().name.formatForCode()»|modcallhooks}]]></title>
+        <title><![CDATA[{if isset($«objName».lu_date)}{$«objName».lu_date|dateformat} - {/if}{$«objName».«getLeadingField().name.formatForCode()»|modcallhooks}]]></title>
         <link>{modurl modname='«appName»' type='«controller.name()»' func='«IF controller.hasActions('display')»display«ELSEIF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»' «idField()»=$«objName».«idField()» fqurl='1'}</link>
         <guid>{modurl modname='«appName»' type='«controller.name()»' func='«IF controller.hasActions('display')»display«ELSEIF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»' «idField()»=$«objName».«idField()» fqurl='1'}</guid>
 «IF !standardFields-»
@@ -80,7 +80,7 @@
 «ENDLET-»
 «IF standardFields-»
     {if $«objName».cr_date}
-        <pubDate>{$«objName».cr_date|date_format:"%a, %d %b %Y %T +0100"}</pubDate>
+        <pubDate>{$«objName».cr_date|dateformat:"%a, %d %b %Y %T +0100"}</pubDate>
     {/if}
 «ENDIF-»
     </item>

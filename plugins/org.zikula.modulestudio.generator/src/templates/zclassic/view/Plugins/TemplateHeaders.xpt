@@ -22,10 +22,8 @@
  */
 function smarty_function_«appName().formatForDB()»TemplateHeaders($params, $view)
 {
-    $dom = ZLanguage::getModuleDomain('«appName()»');
-
     if (!isset($params['contentType'])) {
-        $render->trigger_error(__f('%1$s: missing parameter \'%2$s\'', array('smarty_function_«appName().formatForDB()»TemplateHeaders', 'contentType'), $dom));
+        $render->trigger_error($view->__f('%1$s: missing parameter \'%2$s\'', array('smarty_function_«appName().formatForDB()»TemplateHeaders', 'contentType')));
     }
 
     header('Content-Type: ' . $params['contentType']);

@@ -19,10 +19,9 @@
 function smarty_function_«appName().formatForDB()»SelectorTemplates($params, $view)
 {
     $result = array();
-    $dom = ZLanguage::getModuleDomain('«appName()»');
 
-    $result[] = array('text' => 'Only item titles', 'value' => 'itemlist_display.tpl');
-    $result[] = array('text' => 'With description', 'value' => 'itemlist_display_description.tpl');
+    $result[] = array('text' => $view->__('Only item titles'), 'value' => 'itemlist_display.tpl');
+    $result[] = array('text' => $view->__('With description'), 'value' => 'itemlist_display_description.tpl');
 
     if (array_key_exists('assign', $params)) {
         $view->assign($params['assign'], $result);

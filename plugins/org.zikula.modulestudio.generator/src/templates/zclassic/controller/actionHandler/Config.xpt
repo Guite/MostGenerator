@@ -28,6 +28,15 @@
 class «tempBaseClassConfigHandler()» extends Form_Handler
 {
     /**
+     * Post construction hook.
+     *
+     * @return mixed
+     */
+    public function setup()
+    {
+    }
+
+    /**
      * Initialize form handler.
      *
      * This method takes care of all necessary initialisation of our data and form states.
@@ -53,6 +62,25 @@ class «tempBaseClassConfigHandler()» extends Form_Handler
      * Method stub for own additions in subclasses.
      */
     function initializeAdditions($view)
+    {
+«REM»Remove in favour of postInitialize()«ENDREM»«""-»
+    }
+
+    /**
+     * Pre-initialise hook.
+     *
+     * @return void
+     */
+    public function preInitialize()
+    {
+    }
+
+    /**
+     * Post-initialise hook.
+     *
+     * @return void
+     */
+    public function postInitialize()
     {
     }
 

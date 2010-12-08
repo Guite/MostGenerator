@@ -19,10 +19,9 @@
 function smarty_function_«appName().formatForDB()»SelectorObjectTypes($params, $view)
 {
     $result = array();
-    $dom = ZLanguage::getModuleDomain('«appName()»');
 
 «FOREACH models.entities AS entity-»
-    $result[] = array('text' => '«entity.nameMultiple.formatForDisplayCapital()»', 'value' => '«entity.name.formatForCode()»');
+    $result[] = array('text' => $view->__('«entity.nameMultiple.formatForDisplayCapital()»'), 'value' => '«entity.name.formatForCode()»');
 «ENDFOREACH-»
 
     if (array_key_exists('assign', $params)) {

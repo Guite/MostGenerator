@@ -45,6 +45,12 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
      */
     public function info()
     {
+        $requirementMessage = '';
+        // check if the module is available at all
+        if (!ModUtil::available('«appName()»')) {
+            $requirementMessage .= $this->__('Notice: This block will not be displayed until you activate the «appName()» module.');
+        }
+
         return array('module'           => '«appName()»',
                      'text_type'        => $this->__('Item list'),
                      'text_type_long'   => $this->__('Show a list of «appName()» items based on different criteria.'),
@@ -53,7 +59,7 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
                      'form_refresh'     => false,
                      'show_preview'     => true,
                      'admin_tableless'  => true,
-                     'requirement'      => '');
+                     'requirement'      => $requirementMessage);
     }
 
     /**

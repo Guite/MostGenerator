@@ -25,6 +25,13 @@ class «appName()»_Base_Version extends Zikula_Version
         // the current module version
         $meta['version']              = '«version»';
 
+        // define special capabilities of this module
+        $meta['capabilities'] = array(/*
+                          'authentication' => array('version' => '1.0'),
+                          'profile'        => array('version' => '1.0', 'anotherkey' => 'anothervalue'),
+                          'message'        => array('version' => '1.0', 'anotherkey' => 'anothervalue')*/
+        );
+
         // permission schema
 «EXPAND PermissionSchema-»
 

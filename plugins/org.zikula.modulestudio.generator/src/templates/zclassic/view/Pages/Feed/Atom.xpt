@@ -20,9 +20,9 @@
     </author>
 {assign var='numItems' value=$items|@count}
 {if $numItems}
-{capture assign='uniqueID'}tag:{$baseurl|replace:'http://':''|replace:'/':''},{$items[0].cr_date|default:$smarty.now|date_format:'%Y-%m-%d'}:{modurl modname='«appName»' type='«controller.name()»' func='«IF controller.hasActions('display')»display«ELSEIF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»' «idField()»=$items[0].«idField()»}{/capture}
+{capture assign='uniqueID'}tag:{$baseurl|replace:'http://':''|replace:'/':''},{$items[0].cr_date|default:$smarty.now|dateformat:'%Y-%m-%d'}:{modurl modname='«appName»' type='«controller.name()»' func='«IF controller.hasActions('display')»display«ELSEIF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»' «idField()»=$items[0].«idField()»}{/capture}
     <id>{$uniqueID}</id>
-    <updated>{$items[0].lu_date|default:$smarty.now|date_format:'%Y-%m-%dT%H:%M:%SZ'}</updated>
+    <updated>{$items[0].lu_date|default:$smarty.now|dateformat:'%Y-%m-%dT%H:%M:%SZ'}</updated>
 {/if}
     <link rel="alternate" type="text/html" hreflang="{lang}" href="{modurl modname='«appName»' fqurl=1}" />
     <link rel="self" type="application/atom+xml" href="{php}echo substr(System::getBaseURL(), 0, strlen(System::getBaseURL())-1);{/php}{getcurrenturi}" />
@@ -33,14 +33,14 @@
         <title type="html">{$«objName».«getLeadingField().name.formatForCode()»|modcallhooks}</title>
         <link rel="alternate" type="text/html" href="{modurl modname='«appName»' type='«controller.name()»' func='«IF controller.hasActions('display')»display«ELSEIF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»' «idField()»=$«objName».«idField()» fqurl='1'}" />
 
-{capture assign='uniqueID'}tag:{$baseurl|replace:'http://':''|replace:'/':''},{$«objName».cr_date|default:$smarty.now|date_format:'%Y-%m-%d'}:{modurl modname='«appName»' type='«controller.name()»' func='«IF controller.hasActions('display')»display«ELSEIF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»' «idField()»=$«objName».«idField()»}{/capture}
+{capture assign='uniqueID'}tag:{$baseurl|replace:'http://':''|replace:'/':''},{$«objName».cr_date|default:$smarty.now|dateformat:'%Y-%m-%d'}:{modurl modname='«appName»' type='«controller.name()»' func='«IF controller.hasActions('display')»display«ELSEIF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»' «idField()»=$«objName».«idField()»}{/capture}
         <id>{$uniqueID}</id>
 «IF standardFields-»
     {if isset($«objName».lu_date)}
-        <updated>{$«objName».lu_date|date_format:'%Y-%m-%dT%H:%M:%SZ'}</updated>
+        <updated>{$«objName».lu_date|dateformat:'%Y-%m-%dT%H:%M:%SZ'}</updated>
     {/if}
     {if isset($«objName».cr_date)}
-        <published>{$«objName».cr_date|date_format:'%Y-%m-%dT%H:%M:%SZ'}</published>
+        <published>{$«objName».cr_date|dateformat:'%Y-%m-%dT%H:%M:%SZ'}</published>
     {/if}
 «ENDIF-»
 «IF !standardFields-»

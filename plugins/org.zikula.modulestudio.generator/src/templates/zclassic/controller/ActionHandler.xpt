@@ -91,12 +91,40 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
     // full prefix for related items
     protected $idPrefix = '';
 
+    /**
+     * Post construction hook.
+     *
+     * @return mixed
+     */
+    public function setup()
+    {
+    }
+
 «EXPAND initialize(app, controller, actionName)-»
 
     /**
      * Method stub for own additions in subclasses.
      */
     protected function initializeAdditions($view)
+    {
+«REM»Remove in favour of postInitialize()«ENDREM»«""-»
+    }
+
+    /**
+     * Pre-initialise hook.
+     *
+     * @return void
+     */
+    public function preInitialize()
+    {
+    }
+
+    /**
+     * Post-initialise hook.
+     *
+     * @return void
+     */
+    public function postInitialize()
     {
     }
 
