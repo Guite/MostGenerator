@@ -34,7 +34,7 @@
                 </div>
 «ENDFOREACH-»
 
-                {modcallhooks hookobject='module' hookaction='modifyconfig' module='«appName()»'}
+                {*modcallhooks hookobject='module' hookaction='modifyconfig' module='«appName()»'*}
 
                 <div class="z-buttons z-formbuttons">
                     {formbutton commandName='save' __text='Update configuration' class='z-bt-save'}

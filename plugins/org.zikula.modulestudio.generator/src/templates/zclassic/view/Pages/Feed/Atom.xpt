@@ -30,7 +30,7 @@
 
 {foreach item='«objName»' from=$items}
     <entry>
-        <title type="html">{$«objName».«getLeadingField().name.formatForCode()»|modcallhooks}</title>
+        <title type="html">{$«objName».«getLeadingField().name.formatForCode()»|notifyfilters:'«appName.formatForDB()».filterhook.«nameMultiple.formatForDB()»'}</title>
         <link rel="alternate" type="text/html" href="{modurl modname='«appName»' type='«controller.name()»' func='«IF controller.hasActions('display')»display«ELSEIF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»' «idField()»=$«objName».«idField()» fqurl='1'}" />
 
 {capture assign='uniqueID'}tag:{$baseurl|replace:'http://':''|replace:'/':''},{$«objName».cr_date|default:$smarty.now|dateformat:'%Y-%m-%d'}:{modurl modname='«appName»' type='«controller.name()»' func='«IF controller.hasActions('display')»display«ELSEIF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»' «idField()»=$«objName».«idField()»}{/capture}

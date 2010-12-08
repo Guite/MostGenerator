@@ -160,9 +160,6 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     function postUpdate(Doctrine_Event $event)
     {
         // echo 'updated a record ...';
-
-        // let hooks know about this event
-        $this->updateHooks($event, 'update');
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -191,9 +188,6 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     function postInsert(Doctrine_Event $event)
     {
         // echo 'inserted a record ...';
-
-        // let hooks know about this event
-        $this->updateHooks($event, 'create');
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -237,9 +231,6 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
         }
 «ENDIF-»
 «ENDLET-»
-
-        // let hooks know about this event
-        $this->updateHooks($event, 'delete');
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -268,19 +259,6 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     function postValidate(Doctrine_Event $event)
     {
         // echo 'validated a record ...';
-    }
-
-    /**
-     * Helper method to call api item hooks after according actions
-     */
-    private function updateHooks(Doctrine_Event $event, $mode = '') {
-        if (!in_array($mode, array('create', 'update', 'delete'))) {
-            return true;
-        }
-        $data = $event->data;
-        $itemID = $data['«idField()»'];
-        ModUtil::callHooks('item', $mode, '«name.formatForCode()»' . $itemID, array('module' => '«container.application.appName()»', 'ot' => '«name.formatForCode()»'));
-        return true;
     }
 «ENDDEFINE»
 

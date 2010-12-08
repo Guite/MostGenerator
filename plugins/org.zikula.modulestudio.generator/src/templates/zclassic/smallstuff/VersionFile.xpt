@@ -48,7 +48,55 @@ class «appName()»_Base_Version extends Zikula_Version
         );
 «ENDIF-»
 
+        $meta['capabilities'] = array(HookUtil::SUBSCRIBER_CAPABLE => array('enabled' => true));
+«REM»TODO: see #115
+        $meta['capabilities'] = array(HookUtil::PROVIDER_CAPABLE => array('enabled' => true));
+«ENDREM»
         return $meta;
+    }
+
+    /**
+     * Define hook subscriber«REM» and provider (TODO see #115)«ENDREM» bundles.
+     */
+    protected function setupHookBundles()
+    {
+«REM»we register one hook subscriber bundle foreach entity type«ENDREM»«""-»
+«LET name.formatForDB() AS appName-»
+«FOREACH models.entities AS entity-»
+«LET entity.nameMultiple.formatForDB() AS areaName»
+        $bundle = new Zikula_Version_HookSubscriberBundle('modulehook_area.«appName».«areaName»', __('«entity.nameMultiple.formatForDisplayCapital()»'));
+«REM»   $bundle->addType('hook type', 'event name triggered by *this* module');«ENDREM»«""-»
+        // Display hook for view/display templates.
+        $bundle->addType('ui.view', '«appName».hook.«areaName».ui.view');
+        // Display hook for create/edit forms.
+        $bundle->addType('ui.edit', '«appName».hook.«areaName».ui.edit');
+        // Display hook for delete dialogues (generally not used).
+        $bundle->addType('ui.delete', '«appName».hook.«areaName».ui.delete');
+        // Validate input from an ui create/edit form.
+        $bundle->addType('validate.edit', '«appName».hook.«areaName».validate.edit');
+        // Validate input from an ui create/edit form (generally not used).
+        $bundle->addType('validate.delete', '«appName».hook.«areaName».validate.delete');
+        // Perform the final update actions for a ui create/edit form.
+        $bundle->addType('process.edit', '«appName».hook.«areaName».process.edit');
+        // Perform the final delete actions for a ui form.
+        $bundle->addType('process.delete', '«appName».hook.«areaName».process.delete');
+        // A filter applied to the given area.
+        $bundle->addType('ui.filter', '«appName».filterhook.«areaName»');
+«ENDLET-»
+        $this->registerHookSubscriberBundle($bundle);
+«ENDFOREACH-»
+«ENDLET-»
+
+«REM»TODO see #115
+Example for name of provider area: modulehook_area.comments.general
+
+        $bundle = new Zikula_Version_HookProviderBundle('modulehook_area.ratings.rating', $this->__('Ratings Hook Poviders'));
+        $bundle->addHook('hookhandler.ratings.ui.view', 'ui.view', 'Ratings_Hooks', 'uiview', 'ratings.service');
+        // add other hooks as needed
+        $this->registerHookProviderBundle($bundle);
+
+        //... repeat as many times as necessary
+«ENDREM»
     }
 }
 

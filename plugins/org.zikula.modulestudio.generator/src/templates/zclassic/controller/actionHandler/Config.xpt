@@ -111,7 +111,6 @@ class «tempBaseClassConfigHandler()» extends Form_Handler
             }
 
             LogUtil::registerStatus($this->__('Done! Module configuration updated.'));
-            ModUtil::callHooks('module', 'updateconfig', '«appName()»', array('module' => '«appName()»'));
         }
         else if ($args['commandName'] == 'cancel') {
         }

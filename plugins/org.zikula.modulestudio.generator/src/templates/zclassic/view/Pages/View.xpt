@@ -122,7 +122,11 @@ listType:
 
 «IF controller.metaType == UserController-»
     {modurl modname='«appName»' func='view' ot='«objName»' pos=$currentPage assign='returnurl'}
-    {modcallhooks hookobject='category' hookaction='display' module='«appName»«objName»' returnurl=$returnurl}
+    {*modcallhooks hookobject='category' hookaction='display' module='«appName»«objName»' returnurl=$returnurl*}
+    {notifydisplayhooks eventname='«appName.formatForDB()».hook.«nameMultiple.formatForDB()».ui.view' area='modulehook_area.«appName.formatForDB()».«nameMultiple.formatForDB()»' subject='category' returnurl=$returnurl assign='hooks'}
+    {foreach from=$hooks key='hookname' item='hook'}
+        {$hook}
+    {/foreach}
 «ENDIF-»
 </div>
 
@@ -241,7 +245,7 @@ listType:
 
 «DEFINE DisplayEntryInnerSimpleField(Controller controller) FOR DerivedField-»
 «IF leading == true-»
-            {$«entity.name.formatForCode()».«actualFieldName().formatForCode()»|modcallhooks}
+            {$«entity.name.formatForCode()».«actualFieldName().formatForCode()»|notifyfilters:'«entity.container.application.appName().formatForDB()».filterhook.«entity.nameMultiple.formatForDB()»'}
 «ELSE-»
 «EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(entity.name.formatForCode(), 'view', '            ')»
 «ENDIF-»

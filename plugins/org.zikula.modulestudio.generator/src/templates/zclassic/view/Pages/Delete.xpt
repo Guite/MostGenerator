@@ -23,6 +23,7 @@
 
     <form class="z-form" action="{modurl modname='«appName»' type='«controller.name()»' func='delete' ot='«name.formatForCode()»' «idField()»=$«name.formatForCode()».«idField()»}" method="post">
         <div>
+            <input type="hidden" name="authid" value="{insert name='generateauthkey' module='«appName»'}" />
             <input type="hidden" id="confirmation" name="confirmation" value="1" />
             <fieldset>
                 <legend>{gt text='Confirmation prompt'}</legend>
@@ -34,6 +35,11 @@
             </fieldset>
         </div>
     </form>
+
+    {notifydisplayhooks eventname='«appName.formatForDB()».hook.«nameMultiple.formatForDB()».ui.delete' area='modulehook_area.«appName.formatForDB()».«nameMultiple.formatForDB()»' subject=$«name.formatForCode()» id=$«name.formatForCode()».«idField()» caller='«appName»' assign='hooks'}
+    {foreach from=$hooks key='hookname' item='hook'}
+        {$hook}
+    {/foreach}
 </div>
 
 {include file='«controller.name()»/footer.tpl'}

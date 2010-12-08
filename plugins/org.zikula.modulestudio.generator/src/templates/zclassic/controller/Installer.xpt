@@ -103,20 +103,12 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDIF-»
 
 «EXPAND ProcessEventHandlers('register')-»
-«REM»
-        // register hook functions
-        if (!ModUtil::registerHook('item', 'display', 'GUI', '«modName()»', 'user', 'viewupload')) {
-            return LogUtil::registerError(_REGISTERFAILED . ', Nr. 1');
-        }
-        if (!ModUtil::registerHook('item', 'create', 'GUI', '«modName()»', 'user', 'createupload')) {
-            return LogUtil::registerError(_REGISTERFAILED . ', Nr. 2');
-        }
-        if (!ModUtil::registerHook('item', 'update', 'GUI', '«modName()»', 'user', 'createupload')) {
-            return LogUtil::registerError(_REGISTERFAILED . ', Nr. 3');
-        }
-        if (!ModUtil::registerHook('item', 'delete', 'API', '«modName()»', 'user', 'deleteupload')) {
-            return LogUtil::registerError(_REGISTERFAILED . ', Nr. 4');
-        }
+
+        // register hook subscriber bundles
+        HookUtil::registerHookSubscriberBundles($this->version);
+«REM»TODO see #115
+        // register hook provider bundles
+        HookUtil::registerHookProviderBundles($this->version);
 «ENDREM»
 
         // create the default data for «appName()»
@@ -200,21 +192,6 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         }
 
 «EXPAND ProcessEventHandlers('unregister')-»
-«REM»
-    // unregister hook functions
-    if (!ModUtil::unregisterHook('item', 'display', 'GUI', '«modName()»', 'user', 'viewupload')) {
-        return LogUtil::registerError(_UNREGISTERFAILED . ', Nr. 1');
-    }
-    if (!ModUtil::unregisterHook('item', 'create', 'GUI', '«modName()»', 'user', 'createupload')) {
-        return LogUtil::registerError(_UNREGISTERFAILED . ', Nr. 2');
-    }
-    if (!ModUtil::unregisterHook('item', 'update', 'GUI', '«modName()»', 'user', 'createupload')) {
-        return LogUtil::registerError(_UNREGISTERFAILED . ', Nr. 3');
-    }
-    if (!ModUtil::unregisterHook('item', 'delete', 'API', '«modName()»', 'user', 'deleteupload')) {
-        return LogUtil::registerError(_UNREGISTERFAILED . ', Nr. 4');
-    }
-«ENDREM»
 
 «IF !models.variables.isEmpty-»
         // remove all module vars
