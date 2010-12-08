@@ -185,9 +185,16 @@
     public function checkForDuplicate()
     {
         if (!SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_EDIT)) {
-            return false;
+            LogUtil::registerPermissionError(null, true);
+            throw new Zikula_Exception_Forbidden();
         }
-
+/*
+        // test authid and throw an exception on failure
+        if (!SecurityUtil::confirmAuthKey()) {
+            LogUtil::registerAuthidError();
+            throw new Zikula_Exception_Fatal();
+        }
+*/
         $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'POST');
         if (!in_array($objectType, «app.appName()»_Util::getObjectTypes('controllerAction', array('controller' => '«name()»', 'action' => 'checkForDuplicate')))) {
             $objectType = '«app.getLeadingEntity().name.formatForCode()»';
@@ -197,7 +204,7 @@
         $value = FormUtil::getPassedValue('v', '', 'POST');
 
         if (empty($fieldName) || empty($value)) {
-            return false;
+            throw new Zikula_Exception_Fatal($this->__('Error! Wrong input data for duplicate check retrieved.') . ' (42233)');
         }
 
         // check if the given field is existing and unique
@@ -214,7 +221,7 @@
 «ENDFOREACH-»
         }
         if (!count($uniqueFields) || !in_array($fieldName, $uniqueFields)) {
-            return false;
+            throw new Zikula_Exception_Fatal($this->__('Error! Wrong input data for duplicate check retrieved.') . ' (42234)');
         }
 
         $exclude = (int) FormUtil::getPassedValue('ex', 0, 'POST');
@@ -240,8 +247,8 @@
 «ENDFOREACH-»
         }
 
-        // output the results
-        AjaxUtil::output(array('isDuplicate' => $result));
+        // return response
+        return new Zikula_Response_Ajax(array('isDuplicate' => $result));
     }
 «ENDIF-»
 
