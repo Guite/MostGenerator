@@ -58,6 +58,8 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «EXPAND FuncUpdate-»
 «EXPAND FuncDelete-»
 «EXPAND FuncDefaultData-»
+«EXPAND ProcessEventHandlersImpl('register')-»
+«EXPAND ProcessEventHandlersImpl('unregister')-»
 «ENDDEFINE»
 
 «DEFINE InteractiveInstall FOR Application-»
@@ -87,22 +89,6 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
             return LogUtil::registerError($this->__f('An error was encountered while creating the tables for the %1$s module.', array($this->getName())));
         }
 
-«REM»
-    // register hook functions
-    if (!ModUtil::registerHook('item', 'display', 'GUI', '«modName()»', 'user', 'viewupload')) {
-        return LogUtil::registerError(_REGISTERFAILED . ', Nr. 1');
-    }
-    if (!ModUtil::registerHook('item', 'create', 'GUI', '«modName()»', 'user', 'createupload')) {
-        return LogUtil::registerError(_REGISTERFAILED . ', Nr. 2');
-    }
-    if (!ModUtil::registerHook('item', 'update', 'GUI', '«modName()»', 'user', 'createupload')) {
-        return LogUtil::registerError(_REGISTERFAILED . ', Nr. 3');
-    }
-    if (!ModUtil::registerHook('item', 'delete', 'API', '«modName()»', 'user', 'deleteupload')) {
-        return LogUtil::registerError(_REGISTERFAILED . ', Nr. 4');
-    }
-«ENDREM»
-
 «IF !models.variables.isEmpty-»
         // set up all our vars with initial values
 «FOREACH models.variables.vars AS modvar-»
@@ -116,9 +102,26 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDFOREACH-»
 «ENDIF-»
 
+«EXPAND ProcessEventHandlers('register')-»
+«REM»
+        // register hook functions
+        if (!ModUtil::registerHook('item', 'display', 'GUI', '«modName()»', 'user', 'viewupload')) {
+            return LogUtil::registerError(_REGISTERFAILED . ', Nr. 1');
+        }
+        if (!ModUtil::registerHook('item', 'create', 'GUI', '«modName()»', 'user', 'createupload')) {
+            return LogUtil::registerError(_REGISTERFAILED . ', Nr. 2');
+        }
+        if (!ModUtil::registerHook('item', 'update', 'GUI', '«modName()»', 'user', 'createupload')) {
+            return LogUtil::registerError(_REGISTERFAILED . ', Nr. 3');
+        }
+        if (!ModUtil::registerHook('item', 'delete', 'API', '«modName()»', 'user', 'deleteupload')) {
+            return LogUtil::registerError(_REGISTERFAILED . ', Nr. 4');
+        }
+«ENDREM»
+
         // create the default data for «appName()»
         //$this->defaultdata();
-        // TODO: deactivated for now because constraints prevent data creation in random order
+        // TODO: deactivated for now because constraints prevent data creation in random order (see #64)
 
         // Initialisation successful
         return true;
@@ -196,6 +199,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
             return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %1$s module.', array($this->getName())));
         }
 
+«EXPAND ProcessEventHandlers('unregister')-»
 «REM»
     // unregister hook functions
     if (!ModUtil::unregisterHook('item', 'display', 'GUI', '«modName()»', 'user', 'viewupload')) {
@@ -284,6 +288,68 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
             DoctrineUtil::dropIndex('«fullEntityName()»', $dbPrefix . '_«fullEntityName()»_sluggable');
 «ENDIF-»
             DoctrineUtil::dropTable('«fullEntityName()»');
+«ENDDEFINE»
+
+«DEFINE ProcessEventHandlers(String action) FOR Application»
+        // «action.toFirstUpper()» persistent event handlers
+        $this->«action.toLowerCase()»PersistentEventHandlers();
+«ENDDEFINE»
+
+«DEFINE ProcessEventHandlersImpl(String action) FOR Application»
+    /**
+     * «action.toFirstUpper()» persistent event handlers.
+     * These are listeners for external events of the core and other modules.
+     */
+    private function «action.toLowerCase()»PersistentEventHandlers()
+    {
+        // core
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'api.method_not_found', array('«appName()»_Listeners', 'coreApiMethodNotFound'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'core.preinit', array('«appName()»_Listeners', 'corePreInit'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'core.init', array('«appName()»_Listeners', 'coreInit'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'core.postinit', array('«appName()»_Listeners', 'corePostInit'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'controller.method_not_found', array('«appName()»_Listeners', 'coreControllerMethodNotFound'));
+
+        // modules
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'installer.module.installed', array('«appName()»_Listeners', 'installerModuleInstalled'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'installer.module.upgraded', array('«appName()»_Listeners', 'installerModuleUpgraded'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'installer.module.uninstalled', array('«appName()»_Listeners', 'installerModuleUninstalled'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'module_dispatch.postloadgeneric', array('«appName()»_Listeners', 'moduleDispatchPostLoadGeneric'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'module_dispatch.preexecute', array('«appName()»_Listeners', 'moduleDispatchPreExecute'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'module_dispatch.postexecute', array('«appName()»_Listeners', 'moduleDispatchPostExecute'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'module_dispatch.custom_classname', array('«appName()»_Listeners', 'moduleDispatchCustomClassname'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'module.mailer.api.sendmessage', array('«appName()»_Listeners', 'moduleMailerApiSendmessage'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'pageutil.addvar_filter', array('«appName()»_Listeners', 'pageutilAddvarFilter'));
+
+        // errors
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'setup.errorreporting', array('«appName()»_Listeners', 'setupErrorReporting'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'system.outputfilter', array('«appName()»_Listeners', 'systemOutputfilter'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'systemerror', array('«appName()»_Listeners', 'systemError'));
+
+        // themes and views
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'theme.init', array('«appName()»_Listeners', 'themeInit'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'theme.load_config', array('«appName()»_Listeners', 'themeLoadConfig'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'theme.prefooter', array('«appName()»_Listeners', 'themePrefooter'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'view.init', array('«appName()»_Listeners', 'viewInit'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'view.fetch', array('«appName()»_Listeners', 'viewFetch'));
+
+        // users and groups
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'user.login', array('«appName()»_Listeners', 'userLogin'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'user.login.failed', array('«appName()»_Listeners', 'userLoginFailed'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'user.logout', array('«appName()»_Listeners', 'userLogout'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'user.logout.failed', array('«appName()»_Listeners', 'userLogoutFailed'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'user.gettheme', array('«appName()»_Listeners', 'userGetTheme'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'user.create', array('«appName()»_Listeners', 'userCreate'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'user.update', array('«appName()»_Listeners', 'userUpdate'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'user.delete', array('«appName()»_Listeners', 'userDelete'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'group.create', array('«appName()»_Listeners', 'groupCreate'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'group.update', array('«appName()»_Listeners', 'groupUpdate'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'group.delete', array('«appName()»_Listeners', 'groupDelete'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'group.adduser', array('«appName()»_Listeners', 'groupAddUser'));
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'group.removeuser', array('«appName()»_Listeners', 'groupRemoveUser'));
+
+        // special purposes and 3rd party api support
+        EventUtil::«action.toLowerCase()»PersistentModuleHandler('«appName()»', 'get.pending_content', array('«appName()»_Listeners', 'pendingContentListener'));
+    }
 «ENDDEFINE»
 
 «DEFINE FuncDefaultData FOR Application»

@@ -42,6 +42,9 @@
 	«pm.subTask("Controller: Action handler classes")»
     «info("Generating action handler classes")»
 	«EXPAND ActionHandler::Root»
+    «pm.subTask("Controller: Persistent event handlers")»
+    «info("Generating persistent event handlers")»
+    «EXPAND controller::Listeners::Root»
     «pm.subTask("Controller: Bootstrapping")»
     «info("Generating bootstrapping")»
     «EXPAND Bootstrap::Root»
