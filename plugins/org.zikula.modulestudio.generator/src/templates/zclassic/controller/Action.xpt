@@ -107,12 +107,12 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
 «REM»TODO«ENDREM»
         // the current offset which is used to calculate the pagination
-        $currentPage = (int) FormUtil::getPassedValue('pos', 1, 'GET');
+        $currentPage = (int) FormUtil::getPassedValue('pos', 1, 'GET', FILTER_VALIDATE_INT);
 
         // the number of items displayed on a page for pagination
-        $resultsPerPage = (int) FormUtil::getPassedValue('num', 0, 'GET');
+        $resultsPerPage = (int) FormUtil::getPassedValue('num', 0, 'GET', FILTER_VALIDATE_INT);
         if ($resultsPerPage == 0) {
-            $csv = (int) FormUtil::getPassedValue('usecsvext', 0, 'GET');
+            $csv = (int) FormUtil::getPassedValue('usecsvext', 0, 'GET', FILTER_VALIDATE_INT);
             $resultsPerPage = ($csv == 1) ? 999999 : $this->getVar('pagesize', 10);
         }
 
@@ -149,9 +149,9 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $idField = $object->get_intIdField();
 
         // retrieve the ID of the object we wish to view
-        $id = (int) FormUtil::getPassedValue($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, 'GET');
+        $id = (int) FormUtil::getPassedValue($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, 'GET', FILTER_VALIDATE_INT);
         if (!$id) {
-            $id = (int) FormUtil::getPassedValue('id', isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0, 'GET');
+            $id = (int) FormUtil::getPassedValue('id', isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0, 'GET', FILTER_VALIDATE_INT);
         }
 «IF controller.metaType == UserController-»
 «REM»At the moment short urls are only used in the user area, see http://code.zikula.org/core/ticket/2538«ENDREM»«""-»
@@ -216,7 +216,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $idField = $object->get_intIdField();
 
         // retrieve the ID of the object we wish to view
-        $id = (int) FormUtil::getPassedValue($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, 'GET');
+        $id = (int) FormUtil::getPassedValue($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, 'GET', FILTER_VALIDATE_INT);
 
         $this->throwNotFoundUnless($id, 'Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
 

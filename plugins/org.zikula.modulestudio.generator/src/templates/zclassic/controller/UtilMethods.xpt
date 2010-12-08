@@ -53,14 +53,14 @@ class «appName()»_Base_Util
         $templateExtension = self::determineTemplateExtension($view, $type, $objectType, $func, $args);
 
         // check whether a special template is used
-        $tpl = FormUtil::getPassedValue('tpl', isset($args['tpl']) ? $args['tpl'] : '');
+        $tpl = FormUtil::getPassedValue('tpl', isset($args['tpl']) ? $args['tpl'] : '', 'GETPOST');
         if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.' . $templateExtension)) {
             $template .= '_' . DataUtil::formatForOS($tpl);
         }
         $template .= '.' . $templateExtension;
 
         // look whether we need output with or without the theme
-        $raw = FormUtil::getPassedValue('raw', (isset($args['raw']) && is_bool($args['raw'])) ? $args['raw'] : false);
+        $raw = (bool) FormUtil::getPassedValue('raw', (isset($args['raw']) && is_bool($args['raw'])) ? $args['raw'] : false, 'GETPOST', FILTER_VALIDATE_BOOLEAN);
         if (!$raw && in_array($templateExtension, array('csv', 'rss', 'atom', 'xml', 'pdf', 'vcard', 'ical'))) {
             $raw = true;
         }
@@ -99,7 +99,7 @@ class «appName()»_Base_Util
 
         $extParams = self::availableTemplateExtensions($type, $objectType, $func, $args);
         foreach ($extParams as $extension) {
-            $extensionCheck = (int) FormUtil::getPassedValue('use' . $extension . 'ext', 0, 'GET');
+            $extensionCheck = (int) FormUtil::getPassedValue('use' . $extension . 'ext', 0, 'GET', FILTER_VALIDATE_INT);
             if ($extensionCheck == 1) {
                 $templateExtension = $extension;
                 break;

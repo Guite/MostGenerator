@@ -24,7 +24,7 @@
             return true;
         }
 
-        $fragment = FormUtil::getpassedValue('fragment');
+        $fragment = FormUtil::getpassedValue('fragment', '', 'GETPOST');
 
         ModUtil::dbInfoLoad('Users');
         $tables = DBUtil::getTables();
@@ -63,7 +63,7 @@
             return true;
         }
 
-        $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»');
+        $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'GETPOST');
         if (!in_array($objectType, «app.appName()»_Util::getObjectTypes('controllerAction', array('controller' => '«name()»', 'action' => 'getItemList')))) {
             $objectType = '«app.getLeadingEntity().name.formatForCode()»';
         }
@@ -71,8 +71,8 @@
         $idField = strtolower($objectType) . 'id';
 «EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(app.appName(), true, 'controllerAction', name(), 'getItemList')-»
 
-        $fragment = FormUtil::getPassedValue('fragment');
-        $exclude = FormUtil::getPassedValue('exclude', '');
+        $fragment = FormUtil::getPassedValue('fragment', '', 'GETPOST');
+        $exclude = FormUtil::getPassedValue('exclude', '', 'GETPOST');
 
         // parameter for used sorting field
         $sort = FormUtil::getPassedValue('sort', '', 'GET');
@@ -224,7 +224,7 @@
             return new Zikula_Response_Ajax_BadData($this->__('Invalid input'));
         }
 
-        $exclude = (int) FormUtil::getPassedValue('ex', 0, 'POST');
+        $exclude = (int) FormUtil::getPassedValue('ex', 0, 'POST', FILTER_VALIDATE_INT);
 
 «EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(app.appName(), false, 'controllerAction', name(), 'checkForDuplicate')-»
 

@@ -210,7 +210,7 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
 
         $vars['objectType'] = FormUtil::getPassedValue('objecttype', '«getLeadingEntity().name.formatForCode()»', 'POST');
         $vars['sorting'] = FormUtil::getPassedValue('sorting', 'default', 'POST');
-        $vars['amount'] = (int) FormUtil::getPassedValue('amount', 5, 'POST');
+        $vars['amount'] = (int) FormUtil::getPassedValue('amount', 5, 'POST', FILTER_VALIDATE_INT);
         $vars['template'] = FormUtil::getPassedValue('template', '', 'POST');
         $vars['filter'] = FormUtil::getPassedValue('filter', '', 'POST');
 

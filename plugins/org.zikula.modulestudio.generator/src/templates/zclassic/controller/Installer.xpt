@@ -408,7 +408,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 
 «ENDFOREACH-»
 
-        $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST');
+        $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST', FILTER_VALIDATE_BOOLEAN);
         $activate = (!empty($activate)) ? true : false;
 
         return System::redirect(ModUtil::url('«appName()»', 'init', 'interactiveinitstep3', array('activate' => $activate)));
@@ -428,8 +428,8 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     public function interactiveinitstep3()
     {
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
-        
-        $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST');
+
+        $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST', FILTER_VALIDATE_BOOLEAN);
 
         // assign auth key and activation flag
         $this->view->assign('authid', SecurityUtil::generateAuthKey('Modules'))

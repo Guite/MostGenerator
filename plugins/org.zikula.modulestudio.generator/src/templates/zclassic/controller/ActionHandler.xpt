@@ -183,9 +183,9 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         // retrieve the ID of the object we wish to edit
         // default to 0 (which is a numeric id but an invalid value)
         // no provided id means that we want to create a new object
-        $this->«idField()» = (int) FormUtil::getPassedValue('«idField()»', 0, 'GET');
+        $this->«idField()» = (int) FormUtil::getPassedValue('«idField()»', 0, 'GET', FILTER_VALIDATE_INT);
         if (!$this->«idField()») {
-            $this->«idField()» = (int) FormUtil::getPassedValue('id', 0, 'GET');
+            $this->«idField()» = (int) FormUtil::getPassedValue('id', 0, 'GET', FILTER_VALIDATE_INT);
         }
 
         $this->objectType = '«name.formatForCode()»';
@@ -224,7 +224,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 return $view->registerError(LogUtil::registerPermissionError());
             }
 
-            $template«idField().toFirstUpper()» = (int) FormUtil::getPassedValue('astemplate', 0, 'GET');
+            $template«idField().toFirstUpper()» = (int) FormUtil::getPassedValue('astemplate', 0, 'GET', FILTER_VALIDATE_INT);
             if ($template«idField().toFirstUpper()» > 0) {
                 // reuse existing «name.formatForDisplay()»
                 $idField = '«idField()»';
@@ -289,7 +289,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             $where = $idField . ' IN (' . DataUtil::formatForStore($inputValue) . ')';
         }
         else {
-            $inputValue = (int) FormUtil::getPassedValue($relationInputFieldName, 0, $source);
+            $inputValue = (int) FormUtil::getPassedValue($relationInputFieldName, 0, $source, FILTER_VALIDATE_INT);
             if ($inputValue == 0) {
                 return array();
             }
@@ -645,7 +645,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDFOREACH-»
 «FOREACH userFields AS userField-»
 «LET userField.actualFieldName().formatForCode() AS realName-»
-            $formData['«realName»'] = (int) FormUtil::getPassedValue('«realName»', 0, 'POST');
+            $formData['«realName»'] = (int) FormUtil::getPassedValue('«realName»', 0, 'POST', FILTER_VALIDATE_INT);
             if (!$formData['«realName»'] || UserUtil::getVars($formData['«realName»']) === false) {
 «IF userField.mandatory-»
                 // Oops, we have an invalid user id. As this field is mandatory, we raise an error.
@@ -684,7 +684,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
 «DEFINE FetchRelationValue(Boolean incoming) FOR JoinRelationship-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
-        $formData['«source.idField()»'] = (int) FormUtil::getPassedValue('«uniqueNameForJs»ItemList', 0, 'POST');
+        $formData['«source.idField()»'] = (int) FormUtil::getPassedValue('«uniqueNameForJs»ItemList', 0, 'POST', FILTER_VALIDATE_INT);
 «REM»Alternative: $address->link('Customer', array($customer['id']));«ENDREM»«""-»
         if (!$formData['«source.idField()»']) {
             // Oops, we have an invalid relation id. As this field is mandatory, we raise an error.
