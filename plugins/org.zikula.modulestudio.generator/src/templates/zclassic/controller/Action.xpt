@@ -126,6 +126,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
         // get total number of records for building the pagination by method call
         $objectCount = $objectCollection->selectCount($where);
+        // TODO: check if Doctrine_Pager::getNumResults() has the same performance
 
         // turn off caching
         $this->view->setCaching(false);

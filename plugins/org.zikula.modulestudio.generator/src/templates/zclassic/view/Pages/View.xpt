@@ -118,7 +118,7 @@ listType:
 </table>
 «ENDIF-»
 
-    {pager rowcount=$pager.numitems limit=$pager.itemsperpage}
+    {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page'}
 
 «IF controller.metaType == UserController-»
     {modurl modname='«appName»' func='view' ot='«objName»' pos=$currentPage assign='returnurl'}
