@@ -64,9 +64,7 @@
 «ENDIF-»
 <div class="z-«IF controller.metaType == AdminController»admin«ELSE»frontend«ENDIF»box">
     <h1>{gt text='«appName.formatForDisplayCapital()»' comment='This is the title of the header template'}</h1>
-    <div class="z-menu">
-        {modulelinks modname='«appName»' type='«controller.name()»'}
-    </div>
+    {modulelinks modname='«appName»' type='«controller.name()»'}
 </div>
 «IF controller.metaType == AdminController-»
 {else}
