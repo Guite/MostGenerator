@@ -31,6 +31,7 @@ import org.eclipse.dltk.internal.core.SourceRange;
  * 
  * @author michael
  */
+@SuppressWarnings("deprecation")
 public class FakeMethod extends SourceMethod {
 
     // private static final String[] NO_STRINGS = new String[0];

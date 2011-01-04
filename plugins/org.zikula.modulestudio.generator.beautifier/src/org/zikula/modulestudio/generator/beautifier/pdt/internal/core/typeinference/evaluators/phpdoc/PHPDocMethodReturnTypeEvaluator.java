@@ -60,6 +60,7 @@ public class PHPDocMethodReturnTypeEvaluator extends
         super(goal);
     }
 
+    @SuppressWarnings("null")
     @Override
     public IGoal[] init() {
         for (final IMethod method : getMethods()) {

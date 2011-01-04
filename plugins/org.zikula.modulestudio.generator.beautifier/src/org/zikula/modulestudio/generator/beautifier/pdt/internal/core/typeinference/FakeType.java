@@ -29,6 +29,7 @@ import org.eclipse.dltk.internal.core.SourceType;
  * 
  * @author michael
  */
+@SuppressWarnings("deprecation")
 public class FakeType extends SourceType {
 
     private int flags = Modifiers.AccPublic;

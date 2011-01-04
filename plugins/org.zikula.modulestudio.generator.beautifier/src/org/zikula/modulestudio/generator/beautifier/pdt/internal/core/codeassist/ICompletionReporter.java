@@ -28,6 +28,7 @@ import org.eclipse.dltk.internal.core.SourceRange;
  * 
  * @author michael
  */
+@SuppressWarnings("deprecation")
 public interface ICompletionReporter {
 
     public final static int RELEVANCE_KEYWORD = 10000000;

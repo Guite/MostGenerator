@@ -31,6 +31,7 @@ import org.zikula.modulestudio.generator.beautifier.pdt.internal.core.documentMo
 import org.zikula.modulestudio.generator.beautifier.pdt.internal.core.documentModel.parser.regions.PHPRegionTypes;
 import org.zikula.modulestudio.generator.beautifier.pdt.internal.core.documentModel.partitioner.PHPPartitionTypes;
 
+@SuppressWarnings("deprecation")
 public class PHPTextSequenceUtilities {
 
     private static final Pattern COMMENT_START_PATTERN = Pattern
