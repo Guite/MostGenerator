@@ -87,8 +87,10 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * Must exit if `$event['method']` does not match whatever the handler expects.
      * Modify `$event->data` and `$event->setNotify()`.
      */
-    public static function controllerMethodNotFound(Zikula_Event $event)
+    public static function coreControllerMethodNotFound(Zikula_Event $event)
     {
+        // You can have multiple of these methods.
+        // See system/Modules/lib/Modules/HookUI.php for an example.
     }
 
 
