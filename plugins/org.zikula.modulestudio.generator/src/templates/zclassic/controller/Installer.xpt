@@ -279,7 +279,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
      */
 «LET appName() AS appName-»
 «LET action.toLowerCase() AS actionL-»
-«LET actionL.msconcat('_Listeners') AS callableClass-»
+«LET appName.msconcat('_Listeners') AS callableClass-»
     private function «actionL»PersistentEventHandlers()
     {
         // core

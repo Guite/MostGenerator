@@ -198,6 +198,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
        if (($key = array_search('system/Users/javascript/somescript.js', $event->data)) !== false) {
            $event->data[$key] = 'config/javascript/myoverride.js';
        }
+*/
     }
 
 
