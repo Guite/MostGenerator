@@ -202,7 +202,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «DEFINE ActionImplBody(String appName) FOR EditAction-»
 «REM»«EXPAND ActionHandler::FormCreate(appName, controller.name, 'edit')-»«ENDREM»
         // create new Form reference
-        $view = FormUtil::newForm('«appName»');
+        $view = FormUtil::newForm('«appName»', $this);
 
         // build form handler class name
         $handlerClass = '«appName.toFirstUpper()»_Form_Handler_«controller.name().toFirstUpper()»_' . ucfirst($objectType) . '_Edit';
