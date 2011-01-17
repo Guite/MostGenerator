@@ -248,7 +248,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDFOREACH-»
 
         // assign data to template
-        $view->assign($objectData)
+        $view->assign($objectData)                         // assign object data first for form fields
+             ->assign('«name.formatForDB()»', $objectData) // assign object data again for notifyhooks
              ->assign('mode', $this->mode)
              ->assign('inlineUsage', $this->inlineUsage);
 
