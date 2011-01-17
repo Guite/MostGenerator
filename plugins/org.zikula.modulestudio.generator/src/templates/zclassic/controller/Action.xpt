@@ -30,19 +30,19 @@
      *
      * @params       TODO
 «IF metaType == ViewAction || metaType == DisplayAction || metaType == EditAction || metaType == DeleteAction-»
-     * @param        ot             string    treated object type
+     * @param string  $ot           Treated object type.
 «IF metaType == DeleteAction-»
-     * @param        id             int       ID of the entry
-     * @param        confirmation   boolean   Confirm the deletion, else a confirmation page is displayed
+     * @param int     $id           ID of the entry.
+     * @param boolean $confirmation Confirm the deletion, else a confirmation page is displayed.
 «ENDIF-»
 «IF metaType == ViewAction-»
-     * @param        sort           string    sorting field
-     * @param        sdir           string    sorting direction
-     * @param        pos            int       current pager position
-     * @param        num            int       amount of entries to display
+     * @param string  $sort         Sorting field.
+     * @param string  $sdir         Sorting direction.
+     * @param int     $pos          Current pager position.
+     * @param int     $num          Amount of entries to display.
 «ENDIF-»
-     * @param        tpl            string    name of alternative template (for alternative display options, feeds and xml output)
-     * @param        raw            boolean   optional way to display a template instead of fetching it (needed for standalone output)
+     * @param string  $tpl          Name of alternative template (for alternative display options, feeds and xml output)
+     * @param boolean $raw          Optional way to display a template instead of fetching it (needed for standalone output)
 «ENDIF-»
      * @return mixed Output.
 «ENDDEFINE»

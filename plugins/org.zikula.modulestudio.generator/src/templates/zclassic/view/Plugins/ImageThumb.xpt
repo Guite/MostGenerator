@@ -20,6 +20,7 @@
  * @param  int       $width      Desired width.
  * @param  int       $height     Desired height.
  * @param  array     $thumbArgs  Additional arguments.
+ *
  * @return string The thumbnail file path.
  */
 function smarty_modifier_«appName().formatForDB()»ImageThumb($fileName = '', $filePath = '', $width = 100, $height = 80, $thumbArgs = array())

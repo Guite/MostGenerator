@@ -42,7 +42,7 @@
     /**
      * Constructor.
      *
-     * @param integer $id         The id to use to retrieve the object (optional) (default=null).
+     * @param integer $id The id to use to retrieve the object (optional) (default=null).
      */
     function __construct($id = 0)
     {
@@ -59,9 +59,10 @@
      * business entities, we can exchange the model behind it without any subsequent
      * efforts on the controller layer.
      *
-     * @param integer $id         The id to use to retrieve the object (optional) (default=null).
-     * @param boolean $asArray    Whether to return the result as array instead as record object (optional) (default=true).
-     * @return array|Doctrine_Record retrieved data array or Doctrine_Record instance
+     * @param integer $id      The id to use to retrieve the object (optional) (default=null).
+     * @param boolean $asArray Whether to return the result as array instead as record object (optional) (default=true).
+     *
+     * @return array|Doctrine_Record Retrieved data array or Doctrine_Record instance.
      */
     public function selectById($id = 0, $asArray = true)
     {
@@ -94,9 +95,10 @@
     /**
      * Select object by unique slug value.
      *
-     * @param string  $slugTitle  The slug value
-     * @param boolean $asArray    Whether to return the result as array instead as record object (optional) (default=true).
-     * @return array|Doctrine_Record retrieved data array or Doctrine_Record instance
+     * @param string  $slugTitle The slug value.
+     * @param boolean $asArray   Whether to return the result as array instead as record object (optional) (default=true).
+     *
+     * @return array|Doctrine_Record retrieved data array or Doctrine_Record instance.
      */
     public function selectBySlug($slugTitle = '', $asArray = true)
     {
@@ -129,7 +131,7 @@
     /**
      * Convenience merge method delegating to treated «implClassModelRecord()» instance
      *
-     * @param array data fields
+     * @param array data fields.
      */
     public function merge(array $data)
     {
@@ -137,7 +139,7 @@
     }
 
     /**
-     * Convenience save method delegating to treated «implClassModelRecord()» instance
+     * Convenience save method delegating to treated «implClassModelRecord()» instance.
      */
     public function save()
     {
@@ -147,7 +149,7 @@
     }
 
     /**
-     * Convenience delete method delegating to treated «implClassModelRecord()» instance
+     * Convenience delete method delegating to treated «implClassModelRecord()» instance.
      */
     public function delete()
     {
@@ -180,7 +182,7 @@
     }
 
     /**
-     * get «name.formatForDisplay()»
+     * Get «name.formatForDisplay()»
      *
      * @return «implClassModelRecord()»
      */

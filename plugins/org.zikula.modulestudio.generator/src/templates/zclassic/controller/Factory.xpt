@@ -17,11 +17,12 @@ class «appName()»_Base_Factory
     /**
      * Returns a business entity or a business collection object according given parameters.
      *
-     * @param        useCollection  boolean       whether to return a business or an entity class instance
-     * @param        objectType     string        name of treated entity type
-     * @param        context        string        usage context (allowed values: controllerAction, block, contentType, mailz)
-     * @param        args           array         additional arguments, for example array('controller' => 'admin', 'action' => 'view');
-     * @return mixed business entity or collection class instance
+     * @param boolean $useCollection Whether to return a business or an entity class instance.
+     * @param string  $objectType    Name of treated entity type.
+     * @param string  $context       Usage context (allowed values: controllerAction, block, contentType, mailz).
+     * @param array   $args          Additional arguments, for example array('controller' => 'admin', 'action' => 'view');.
+     *
+     * @return mixed Business entity or collection class instance.
      */
     public static function getBusinessObjectCommon($useCollection = false, $objectType = '«getLeadingEntity().name.formatForCode()»', $context = '', $args = array())
     {
@@ -39,11 +40,12 @@ class «appName()»_Base_Factory
     /**
      * Returns a business entity object according given parameters.
      *
-     * @param        objectType     string        name of treated entity type
-     * @param        context        string        usage context (allowed values: controllerAction, actionHandler, block, contentType, mailz)
-     * @param        useCollection  boolean       whether to return a business or an entity class instance
-     * @param        args           array         additional arguments, for example array('controller' => 'admin', 'action' => 'view');
-     * @return mixed business entity class instance
+     * @param string  $objectType     Name of treated entity type.
+     * @param string  $context        Usage context (allowed values: controllerAction, actionHandler, block, contentType, mailz).
+     * @param boolean $useCollection  Whether to return a business or an entity class instance.
+     * @param array   $args           Additional arguments, for example array('controller' => 'admin', 'action' => 'view');.
+     *
+     * @return mixed Business entity class instance.
      */
     public static function getBusinessEntity($objectType = '«getLeadingEntity().name.formatForCode()»', $context = '', $useCollection = false, $args = array())
     {
@@ -53,10 +55,12 @@ class «appName()»_Base_Factory
     /**
      * Returns a business collection object according given parameters.
      *
-     * @param        objectType     string        name of treated entity type
-     * @param        context        string        usage context (allowed values: controllerAction, actionHandler, block, contentType, mailz)
-     * @param        args           array         additional arguments, for example array('controller' => 'admin', 'action' => 'view');
-     * @return mixed business collection class instance
+     * @param string  $objectType     Name of treated entity type.
+     * @param string  $context        Usage context (allowed values: controllerAction, actionHandler, block, contentType, mailz).
+     * @param boolean $useCollection  Whether to return a business or an entity class instance.
+     * @param array   $args           Additional arguments, for example array('controller' => 'admin', 'action' => 'view');.
+     *
+     * @return mixed Business entity class instance.
      */
     public static function getBusinessCollection($objectType = '«getLeadingEntity().name.formatForCode()»', $context = '', $args = array())
     {

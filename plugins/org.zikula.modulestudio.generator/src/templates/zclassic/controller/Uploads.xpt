@@ -56,17 +56,17 @@ deny from all
 
 «DEFINE UploadHandlerBase FOR Application-»
 /**
- * Upload handler base class
+ * Upload handler base class.
  */
 class «appName()»_Base_UploadHandler
 {
     /**
-     * @var array list of object types with upload fields
+     * @var array List of object types with upload fields.
      */
     private $allowedObjectTypes;
 
     /**
-     * Constructor initialising the supported object types
+     * Constructor initialising the supported object types.
      */
     public function __construct()
     {
@@ -76,10 +76,11 @@ class «appName()»_Base_UploadHandler
     /**
      * Process a file upload.
      *
-     * @param        objectType     string        currently treated entity type
-     * @param        fileData       string        form data array
-     * @param        fieldName      string        name of upload field
-     * @return array with the resulting file name and collected meta data
+     * @param string $objectType Currently treated entity type.
+     * @param string $fileData   Form data array.
+     * @param string $fieldName  Name of upload field.
+     *
+     * @return array Resulting file name and collected meta data.
      */
     public function performFileUpload($objectType, $fileData, $fieldName)
     {
@@ -181,13 +182,15 @@ class «appName()»_Base_UploadHandler
 
     /**
      * Determines the final filename for a given input filename.
+     *
      * It considers different strategies for computing the result.
      *
-     * @param        objectType     string        currently treated entity type
-     * @param        fieldName      string        name of upload field
-     * @param        basePath       string        base path for file storage
-     * @param        fileName       string        input file name
-     * @param        extension      string        input file extension
+     * @param string $objectType Currently treated entity type.
+     * @param string $fieldName  Name of upload field.
+     * @param string $basePath   Base path for file storage.
+     * @param string $fileName   Input file name.
+     * @param string $extension  Input file extension.
+     *
      * @return string the resulting file name
      */
     private function determineFileName($objectType, $fieldName, $basePath, $fileName, $extension)
@@ -254,7 +257,8 @@ class «appName()»_Base_UploadHandler
     /**
      * Error handling helper method.
      *
-     * @param        file           array         file array from $_FILES
+     * @param array $file File array from $_FILES.
+     *
      * @return boolean false
      */
     private function handleError($file)
@@ -290,7 +294,7 @@ class «appName()»_Base_UploadHandler
 
 «DEFINE UploadHandlerImpl FOR Application-»
 /**
- * Upload handler implementation class
+ * Upload handler implementation class.
  */
 class «appName()»_UploadHandler extends «appName()»_Base_UploadHandler
 {

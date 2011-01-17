@@ -7,14 +7,14 @@
 «DEFINE BusinessValidatorBaseImpl(Application app) FOR Entity»
 
     /**
-     * @var «implClassBusinessEntity(false)» The entity class which is treated by this validator
+     * @var «implClassBusinessEntity(false)» The entity class which is treated by this validator.
      */
     protected $entity = null;
 
     /**
      * Constructor.
      *
-     * @param «implClassBusinessEntity(false)» $entity         The entity to be validated
+     * @param «implClassBusinessEntity(false)» $entity The entity to be validated.
      */
     function __construct(«implClassBusinessEntity(false)» $entity)
     {
@@ -29,12 +29,13 @@
 «DEFINE checkForUniqueValues(Application app) FOR DerivedField-»
 
     /**
-     * Check for unique values
+     * Check for unique values.
      *
      * This method determines if there already exist «entity.nameMultiple.formatForDisplay()» with the same «actualFieldName().formatForDisplay()».
      *
-     * @param        value          «fieldTypeAsString()»        the «actualFieldName().formatForDisplay()» to check
-     * @param        excludeid      int         id of «entity.nameMultiple.formatForDisplay()» to exclude (optional)
+     * @param «fieldTypeAsString()»  $value The «actualFieldName().formatForDisplay()» to check.
+     * @param int $excludeid      int    Id of «entity.nameMultiple.formatForDisplay()» to exclude (optional).
+     *
      * @return boolean true if the given «actualFieldName().formatForDisplay()» does already exist
      */
     public function checkIf«actualFieldName().formatForCodeCapital()»Exists($value, $excludeid = 0)

@@ -18,8 +18,8 @@
 «DEFINE FormFramePluginImpl FOR Application-»
 class «appName()»_Form_Plugin_FormFrame extends Form_Plugin
 {
-    var $useTabs;
-    var $cssClass = 'tabs';
+    public $useTabs;
+    public $cssClass = 'tabs';
 
     // Plugins MUST implement this function as it is stated here.
     // The information is used to re-establish the plugins on postback.

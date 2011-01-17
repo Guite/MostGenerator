@@ -6,27 +6,27 @@
 
 «DEFINE BusinessEntityCollectionBaseImpl(Application app) FOR Entity»
     /**
-     * @var array  Reference to list of «nameMultiple.formatForDisplay()» model («implClassModelRecord()»)
+     * @var array Reference to list of «nameMultiple.formatForDisplay()» model («implClassModelRecord()»).
      */
     protected $«nameMultiple.formatForCode()» = array();
 
     /**
-     * @var string The tablename this object maps to
+     * @var string The tablename this object maps to.
      */
     protected $_intObjectType = '«fullEntityName()»';
 
     /**
-     * @var string The id field for this object
+     * @var string The id field for this object.
      */
     protected $_intIdField = '«idField()»';
 
     /**
-     * @var string Optional where clause for selection
+     * @var string Optional where clause for selection.
      */
     protected $_intWhere = '';
 
     /**
-     * @var string Optional order clause for selection
+     * @var string Optional order clause for selection.
      */
     protected $_intOrderBy = '';
 
@@ -39,8 +39,8 @@
     /**
      * Constructor.
      *
-     * @param string $where             The where clause to use when retrieving the object array (optional) (default='').
-     * @param string $orderBy           The order-by clause to use when retrieving the object array (optional) (default='').
+     * @param string $where   The where clause to use when retrieving the object array (optional) (default='').
+     * @param string $orderBy The order-by clause to use when retrieving the object array (optional) (default='').
      */
     function __construct($where = '', $orderBy = '')
     {
@@ -50,12 +50,14 @@
 
     /**
      * Select object collection from model (e.g. from database).
+     *
      * For now we use Doctrine records, but as the controllers communicate only with
      * business entities, we can exchange the model behind it without any subsequent
      * efforts on the controller layer.
      *
-     * @param string $where             The where clause to use when retrieving the object array (optional) (default='').
-     * @param string $orderBy           The order-by clause to use when retrieving the object array (optional) (default='').
+     * @param string $where   The where clause to use when retrieving the object array (optional) (default='').
+     * @param string $orderBy The order-by clause to use when retrieving the object array (optional) (default='').
+     *
      * @return Doctrine_Collection collection containing retrieved Doctrine_Record instances
      */
     public function selectWhere($where = '', $orderBy = '')
@@ -77,12 +79,13 @@
     /**
      * Select with a given where clause.
      *
-     * @param string $where             The where clause to use when retrieving the object array (optional) (default='').
-     * @param string $orderBy           The order-by clause to use when retrieving the object array (optional) (default='').
-     * @param integer $currentPage      Where to start selection
-     * @param integer $resultsPerPage   Amount of items to select
-     * @param boolean $asArray          Whether to return the result as array instead as record object (optional) (default=true).
-     * @return array|Doctrine_Collection retrieved data array or collection containing retrieved Doctrine_Record instances
+     * @param string $where           The where clause to use when retrieving the object array (optional) (default='').
+     * @param string $orderBy         The order-by clause to use when retrieving the object array (optional) (default='').
+     * @param integer $currentPage    Where to start selection
+     * @param integer $resultsPerPage Amount of items to select
+     * @param boolean $asArray        Whether to return the result as array instead as record object (optional) (default=true).
+     *
+     * @return array|Doctrine_Collection retrieved data array or collection containing retrieved Doctrine_Record instances.
      */
     public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $asArray = true)
     {
@@ -103,8 +106,9 @@
     /**
      * Select count with a given where clause.
      *
-     * @param string $where             The where clause to use when retrieving the object count (optional) (default='').
-     * @return integer amount of affected records
+     * @param string $where The where clause to use when retrieving the object count (optional) (default='').
+     *
+     * @return integer Number of affected records.
      */
     public function selectCount($where = '')
     {
@@ -116,9 +120,9 @@
     }
 
     /**
-     * Convenience method to get table managed by record
+     * Convenience method to get table managed by record.
      *
-     * @return Doctrine_Table table being managed by the record referenced by this collection
+     * @return Doctrine_Table Table being managed by the record referenced by this collection.
      */
     private function _intTable()
     {

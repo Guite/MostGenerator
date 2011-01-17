@@ -17,8 +17,9 @@ class «appName()»_Base_Util
     /**
      * Returns an array of all allowed object types in «appName()».
      *
-     * @param        context        string        usage context (allowed values: controllerAction, api, actionHandler, block, contentType, mailz)
-     * @param        args           array         additional arguments
+     * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType, mailz).
+     * @param array  $args    Additional arguments.
+     *
      * @return array list of allowed object types
      */
     public static function getObjectTypes($context = '', $args = array())
@@ -37,11 +38,12 @@ class «appName()»_Base_Util
     /**
      * Utility method for managing view templates.
      *
-     * @param        view           Zikula_View   reference to view object
-     * @param        type           string        current type (admin, user, ...)
-     * @param        objectType     string        name of treated entity type
-     * @param        func           string        current function (main, view, ...)
-     * @param        args           array         additional arguments
+     * @param Zikula_View $view       Reference to view object.
+     * @param string      $type       Current type (admin, user, ...).
+     * @param string      $objectType Name of treated entity type.
+     * @param string      $func       Current function (main, view, ...).
+     * @param array       $args       Additional arguments.
+     *
      * @return mixed Output.
      */
     public static function processViewTemplate($view, $type, $objectType, $func, $args = array())
@@ -83,12 +85,13 @@ class «appName()»_Base_Util
     /**
      * Get extension of currently treated template
      *
-     * @param        view           Zikula_View   reference to view object
-     * @param        type           string        current type (admin, user, ...)
-     * @param        objectType     string        name of treated entity type
-     * @param        func           string        current function (main, view, ...)
-     * @param        args           array         additional arguments
-     * @return array list of allowed template extensions.
+     * @param Zikula_View $view       Reference to view object.
+     * @param string      $type       Current type (admin, user, ...).
+     * @param string      $objectType Name of treated entity type.
+     * @param string      $func       Current function (main, view, ...).
+     * @param array       $args       Additional arguments.
+     *
+     * @return array List of allowed template extensions.
      */
     protected static function determineTemplateExtension($view, $type, $objectType, $func, $args = array())
     {
@@ -111,11 +114,13 @@ class «appName()»_Base_Util
     /**
      * Get list of available template extensions
      *
-     * @param        type           string        current type (admin, user, ...)
-     * @param        objectType     string        name of treated entity type
-     * @param        func           string        current function (main, view, ...)
-     * @param        args           array         additional arguments
-     * @return array list of allowed template extensions.
+     * @param Zikula_View $view       Reference to view object.
+     * @param string      $type       Current type (admin, user, ...).
+     * @param string      $objectType Name of treated entity type.
+     * @param string      $func       Current function (main, view, ...).
+     * @param array       $args       Additional arguments.
+     *
+     * @return array List of allowed template extensions.
      */
     public static function availableTemplateExtensions($type, $objectType, $func, $args = array())
     {
@@ -141,7 +146,8 @@ class «appName()»_Base_Util
      *    - copy it to modules/«appName()»/lib/vendor/dompdf/ (see inclusion below)
      *    - override the corresponding template
      *
-     * @param        template       string        name of template to use
+     * @param string $template Name of template to use.
+     *
      * @return mixed Output.
      */
     protected static function processPdf($template)
@@ -205,6 +211,7 @@ class «appName()»_Base_Util
      * @param  int       $width      Desired width.
      * @param  int       $height     Desired height.
      * @param  array     $thumbArgs  Additional arguments.
+     *
      * @return string The thumbnail file path.
      */
     public static function getImageThumb($fileName = '', $filePath = '', $width = 100, $height = 80, $thumbArgs = array())
@@ -249,9 +256,10 @@ class «appName()»_Base_Util
     /**
      * Retrieve the base path for given object type and upload field combination.
      *
-     * @param        objectType     string        name of treated entity type
-     * @param        fieldName      string        name of upload field
-     * @param        args           array         additional arguments
+     * @param string $objectType Name of treated entity type.
+     * @param string $fieldName  Name of upload field.
+     * @param array  $args       Additional arguments.
+     *
      * @return mixed Output.
      */
     public static function getFileBaseFolder($objectType, $fieldName)
@@ -289,10 +297,11 @@ class «appName()»_Base_Util
     /**
      * Display a given file size in a readable format
      *
-     * @param        size           string        file size in bytes
-     * @param        nodesc         boolean       if set to true the description will not be appended
-     * @param        onlydesc       boolean       if set to true only the description will be returned
-     * @return string file size in a readable form
+     * @param string  $size     File size in bytes.
+     * @param boolean $nodesc   If set to true the description will not be appended.
+     * @param boolean $onlydesc If set to true only the description will be returned.
+     *
+     * @return string File size in a readable form.
      */
     public static function getReadableFileSize($size, $nodesc = false, $onlydesc = false)
     {
@@ -336,7 +345,7 @@ class «appName()»_Base_Util
 
 «DEFINE CommonFunctionsImpl FOR Application-»
 /**
- * Utility helper implementation class
+ * Utility helper implementation class.
  */
 class «appName()»_Util extends «appName()»_Base_Util
 {

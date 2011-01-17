@@ -20,7 +20,7 @@ class «appName()»_Base_Listeners
 «FILE "lib/" + appName() + "/Listeners.php"-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
- * Event handler implementation class
+ * Event handler implementation class.
  */
 class «appName()»_Listeners extends «appName()»_Base_Listeners
 {
