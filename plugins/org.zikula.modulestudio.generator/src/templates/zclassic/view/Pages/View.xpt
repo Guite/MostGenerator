@@ -261,6 +261,7 @@ listType:
 «LET ((useTarget) ? target : source) AS linkEntity-»
 «LET mainEntity.name.formatForCode().msconcat('.').msconcat(relationAliasName) AS relObjName-»
             {if (isset($«relObjName»))}
+«IF controller.hasActions('display')-»
                 <a href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«linkEntity.name.formatForCode()»' «linkEntity.idField()»=$«relObjName».«linkEntity.idField()»}">
                     {$«relObjName».«linkEntity.getLeadingField().actualFieldName().formatForCode()»«REM»|nl2br«ENDREM»|default:""}
                 </a>
@@ -274,6 +275,9 @@ listType:
                     });
                 /* ]]> */
                 </script>
+«ELSE-»
+                {$«relObjName».«linkEntity.getLeadingField().actualFieldName().formatForCode()»«REM»|nl2br«ENDREM»|default:""}
+«ENDIF-»
             {/if}
 «ENDLET-»
 «ENDLET-»
