@@ -273,7 +273,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
     /**
      * Select a related object in create mode.
      *
-     * @return array single result or list of results
+     * @return array Single result or list of results.
      */
     protected function retrieveRelatedObjects($objectType, $relationInputFieldName, $many = false, $source = 'GET')
     {
@@ -304,7 +304,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
 «DEFINE getRedirectCodes(Application app, Controller controller, String actionName) FOR Entity-»
     /**
-     * Get list of allowed redirect codes
+     * Get list of allowed redirect codes.
      */
     protected function getRedirectCodes()
     {
@@ -380,7 +380,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «DEFINE getRedirectUrl(Application app, Controller controller, String actionName) FOR Entity-»
 «LET app.appName() AS appName-»
     /**
-     * Get url to redirect to
+     * Get url to redirect to.
      */
     protected function getRedirectUrl($args, $obj, $repeatCreateAction = false)
     {

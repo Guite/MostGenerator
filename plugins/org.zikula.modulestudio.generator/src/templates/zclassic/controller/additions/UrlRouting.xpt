@@ -64,7 +64,7 @@ class «appName»_Base_RouterFacade
     /**
      * Initialise the url routes for this application.
      *
-     * @return       Zikula_Routing_UrlRouter the router instance treating all initialised routes
+     * @return Zikula_Routing_UrlRouter The router instance treating all initialised routes
      */
     protected function initUrlRoutes()
     {
@@ -103,7 +103,7 @@ class «appName»_Base_RouterFacade
     }
 
     /**
-     * Helper function to route permalinks for different slug types
+     * Helper function to route permalinks for different slug types.
      */
     protected function initRouteForEachSlugType($prefix, $patternStart, $patternEnd, $defaults, $fieldRequirements)
     {
@@ -124,9 +124,10 @@ class «appName»_Base_RouterFacade
     /**
      * Get name of grouping folder for given object type and function.
      *
-     * @param        objectType     string        name of treated entity type
-     * @param        func           string        name of function
-     * @return       string the name of the group folder
+     * @param string $objectType Name of treated entity type.
+     * @param string $func       Name of function.
+     *
+     * @return $string Name of the group folder
      */
     public function getGroupingFolderFromObjectType($objectType, $func)
     {
@@ -155,11 +156,12 @@ class «appName»_Base_RouterFacade
 «LET getUserController() AS userController-»
 
     /**
-     * Get name of object type based on given grouping folder
+     * Get name of object type based on given grouping folder.
      *
-     * @param        groupFolder    string        name of group folder
-     * @param        func           string        name of function
-     * @return       string the name of the object type
+     * @param string $groupFolder Name of group folder.
+     * @param string $func        Name of function.
+     *
+     * @return string Name of the object type.
      */
     public function getObjectTypeFromGroupingFolder($groupFolder, $func)
     {
@@ -201,11 +203,12 @@ class «appName»_Base_RouterFacade
     /**
      * Get permalink value based on slug properties.
      *
-     * @param        objectType     string        name of treated entity type
-     * @param        func           string        name of function
-     * @param        args           array         additional parameters
-     * @param        itemid         integer       identifier of treated item
-     * @return       string the resulting url ending
+     * @param string  $objectType Name of treated entity type.
+     * @param string  $func       Name of function.
+     * @param array   $args       Additional parameters.
+     * @param integer $itemid     Identifier of treated item.
+     *
+     * @return string The resulting url ending.
      */
     public function getFormattedSlug($objectType, $func, $args, $itemid)
     {
@@ -239,10 +242,10 @@ class «appName»_Base_RouterFacade
 
 «DEFINE RouterFacadeImpl FOR Application-»
 /**
- * Url router facade implementation class
+ * Url router facade implementation class.
  */
 class «appName()»_RouterFacade extends «appName()»_Base_RouterFacade
 {
-    // here you can customise the data which is provided to the url router 
+    // here you can customise the data which is provided to the url router.
 }
 «ENDDEFINE»

@@ -16,7 +16,7 @@
 «ENDFOREACH-»
 
     /**
-     * Retrieve a general purpose list of users
+     * Retrieve a general purpose list of users.
      */ 
     public function getCommonUsersList()
     {
@@ -50,12 +50,13 @@
 «IF !joinRelations.isEmpty-»
 
     /**
-     * Searches for entities for auto completion usage
+     * Searches for entities for auto completion usage.
      *
-     * @param        ot             string    treated object type
-     * @param        fragment       string    the fragment of the entered item name
-     * @param        exclude        string    comma separated list with ids of other items (to be excluded from search)
-     * @return void nothing, direct output using echo
+     * @param string $ot       Treated object type.
+     * @param string $fragment The fragment of the entered item name.
+     * @param string $exclude  Comma separated list with ids of other items (to be excluded from search).
+     *
+     * @return Zikula_Response_Ajax_Base
      */
     public function getItemList()
     {
@@ -175,12 +176,15 @@
 «IF app.models.entities.exists(e|e.getUniqueDerivedFields().reject(e|e.primaryKey).size > 0)-»
 
     /**
-     * Checks whether a field value is a duplicate or not
+     * Checks whether a field value is a duplicate or not.
      *
-     * @param        ot             string    treated object type
-     * @param        fragment       string    the fragment of the entered item name
-     * @param        exclude        string    comma separated list with ids of other items (to be excluded from search)
-     * @return void nothing, direct output using echo
+     * @param string $ot       Treated object type.
+     * @param string $fragment The fragment of the entered item name.
+     * @param string $exclude  Comma separated list with ids of other items (to be excluded from search).
+     *
+     * @throws Zikula_Exception If something fatal occurs.
+     *
+     * @return Zikula_Response_Ajax_Base
      */
     public function checkForDuplicate()
     {

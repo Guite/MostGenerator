@@ -20,7 +20,7 @@ class «appName()»_Base_Util
      * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType, mailz).
      * @param array  $args    Additional arguments.
      *
-     * @return array list of allowed object types
+     * @return array List of allowed object types
      */
     public static function getObjectTypes($context = '', $args = array())
     {
