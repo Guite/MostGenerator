@@ -53,7 +53,7 @@
         // parameter specifying which type of objects we are treating
         $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'GET');
         if (!in_array($objectType, «app.appName()»_Util::getObjectTypes('controllerAction', array('controller' => '«controller.name()»', 'action' => '«name.formatForCode()»')))) {
-            $objectType = '«app.getLeadingEntity().name.formatForCode()»';
+            $objectType = «app.appName()»_Util::getDefaultObjectType('controllerAction', array('controller' => '«controller.name()»', 'action' => '«name.formatForCode()»'));
         }
 «ENDIF-»
 «EXPAND ActionImplBody(app.appName())-»

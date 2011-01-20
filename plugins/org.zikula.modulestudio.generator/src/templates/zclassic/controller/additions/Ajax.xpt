@@ -66,7 +66,7 @@
 
         $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'GETPOST');
         if (!in_array($objectType, «app.appName()»_Util::getObjectTypes('controllerAction', array('controller' => '«name()»', 'action' => 'getItemList')))) {
-            $objectType = '«app.getLeadingEntity().name.formatForCode()»';
+            $objectType = «app.appName()»_Util::getDefaultObjectType('controllerAction', array('controller' => '«name()»', 'action' => 'getItemList'));
         }
 
         $idField = strtolower($objectType) . 'id';
@@ -201,7 +201,7 @@
 */
         $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'POST');
         if (!in_array($objectType, «app.appName()»_Util::getObjectTypes('controllerAction', array('controller' => '«name()»', 'action' => 'checkForDuplicate')))) {
-            $objectType = '«app.getLeadingEntity().name.formatForCode()»';
+            $objectType = «app.appName()»_Util::getDefaultObjectType('controllerAction', array('controller' => '«name()»', 'action' => 'checkForDuplicate'));
         }
 
         $fieldName = FormUtil::getPassedValue('fn', '', 'POST');

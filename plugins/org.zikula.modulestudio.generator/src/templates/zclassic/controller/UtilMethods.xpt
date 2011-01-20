@@ -36,6 +36,24 @@ class «appName()»_Base_Util
     }
 
     /**
+     * Returns the default object type in «appName()».
+     *
+     * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType, mailz).
+     * @param array  $args    Additional arguments.
+     *
+     * @return string The name of the default object type
+     */
+    public static function getDefaultObjectType($context = '', $args = array())
+    {
+        if (!in_array($context, array('controllerAction', 'api', 'actionHandler', 'block', 'contentType', 'mailz'))) {
+            $context = 'controllerAction';
+        }
+
+        $defaultObjectType = '«getLeadingEntity().name.formatForCode()»';
+        return $defaultObjectType;
+    }
+
+    /**
      * Utility method for managing view templates.
      *
      * @param Zikula_View $view       Reference to view object.
@@ -265,7 +283,7 @@ class «appName()»_Base_Util
     public static function getFileBaseFolder($objectType, $fieldName)
     {
         if (!in_array($objectType, self::getObjectTypes())) {
-            $objectType = '«getLeadingEntity().name.formatForCode()»';
+            $objectType = self::getDefaultObjectType();
         }
 
         $basePath = 'modules/«appName()»/files/';
