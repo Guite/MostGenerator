@@ -35,6 +35,11 @@
 <«name.formatForDB()» id="{$item.«idField()»}"«IF standardFields» createdon="{$item.cr_date}" updatedon="{$item.lu_date}"«ENDIF»>
 «EXPAND DisplayEntry(controller, false) FOREACH getDerivedFields().select(e|e.primaryKey)-»
 «EXPAND DisplayEntry(controller, false) FOREACH getDerivedFields().reject(e|e.primaryKey)-»
+«IF geographical-»
+«FOREACH {'latitude', 'longitude'} AS geoFieldName-»
+    <«geoFieldName»>{$item.«geoFieldName»|formatnumber|formatnumber:7}</«geoFieldName»>
+«ENDFOREACH-»
+«ENDIF-»
 «EXPAND DisplayEntry(controller, true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
 </«name.formatForDB()»>
 «ENDFILE»

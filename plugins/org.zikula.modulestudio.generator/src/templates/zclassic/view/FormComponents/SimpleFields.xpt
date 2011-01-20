@@ -75,12 +75,12 @@
 «ENDDEFINE»
 
 «DEFINE FormField FOR FloatField-»
-            {formfloatinput id='«actualFieldName().formatForCode()»' mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»'«EXPAND Validation::FieldValidationCssClass» style="text-align: right; width: 8em"}
+            {formfloatinput id='«actualFieldName().formatForCode()»' mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»'«EXPAND Validation::FieldValidationCssClass»}
 «REM»TODO: minValue=123, maxValue=123«ENDREM»«""-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR DecimalField-»
-            {formfloatinput id='«actualFieldName().formatForCode()»' mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«(length+3+scale)»«EXPAND Validation::FieldValidationCssClass» style="text-align: right; width: 8em"}
+            {formfloatinput id='«actualFieldName().formatForCode()»' mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«(length+3+scale)»«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»
 
 «DEFINE FormField FOR StringField-»

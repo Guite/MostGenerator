@@ -81,6 +81,15 @@
         </div>
 «ENDIF-»
 «ENDFOREACH-»
+«IF geographical-»
+«FOREACH {'latitude', 'longitude'} AS geoFieldName-»
+        <div class="z-formrow">
+            {formlabel for='«geoFieldName»' __text='«geoFieldName.toFirstUpper()»'}
+            {formfloatinput id='«geoFieldName»' mandatory=false __title='Input the «geoFieldName» of the «name.formatForDisplay()»' cssClass='validate-number' precision=7}
+            {«app.appName().formatForDB()»ValidationError id='«geoFieldName»' class='validate-number'}
+        </div>
+«ENDFOREACH-»
+«ENDIF-»
     </fieldset>
 «IF standardFields-»
     {if $mode ne 'create'}
@@ -154,6 +163,17 @@
 «EXPAND FormComponents::Relations::InitJs(app, this, true, false) FOREACH incomingJoins-»
 «EXPAND FormComponents::Relations::InitJs(app, this, false, false) FOREACH outgoingJoins-»
 «ENDIF-»
+«IF geographical-»
+
+    function setDefaultCoordinates(position) {
+        $('latitude').value = position.coords.latitude;
+        $('longitude').value = position.coords.longitude;
+    }
+
+    function handlePositionError(evt) {
+        Zikula.UI.Alert(evt.message, Zikula.__('Error during geolocation', 'module_«app.name.formatForDB()»'));
+    }
+«ENDIF-»
 
     document.observe('dom:loaded', function() {
 «LET getUserFields() AS userFields-»
@@ -169,6 +189,14 @@
 «ENDFOREACH-»
 «ENDIF-»
 «ENDLET-»
+«IF geographical-»
+        {{if $mode eq 'create'}}
+            // derive default coordinates from users position with html5 geolocation feature
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(setDefaultCoordinates, handlePositionError);
+            }
+        {{/if}}
+«ENDIF-»
 «EXPAND FormComponents::Relations::InitJs(app, this, true, true) FOREACH incomingJoins-»
 «EXPAND FormComponents::Relations::InitJs(app, this, false, true) FOREACH outgoingJoins-»
 «ENDLET-»

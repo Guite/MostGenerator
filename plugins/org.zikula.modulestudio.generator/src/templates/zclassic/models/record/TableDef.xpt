@@ -184,7 +184,7 @@
 
 «DEFINE FieldSetColumnAdditionalOptions FOR EmailField-»
 «EXPAND FieldSetColumnAdditionalOptionsCommon-»
-«IF !mandatory»/*«ENDIF»
+«IF !mandatory»/* inactive because field is not mandatory«ENDIF»
                 // check if value is a valid email address
                 'email' => true,
 «IF !mandatory»*/«ENDIF»

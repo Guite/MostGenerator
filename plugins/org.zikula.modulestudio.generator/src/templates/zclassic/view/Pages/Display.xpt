@@ -34,6 +34,12 @@
 
 <dl id="«appName»_body">
 «EXPAND DisplayEntry(controller) FOREACH getDerivedFields().reject(e|e.leading || e.primaryKey)-»
+«IF geographical-»
+«FOREACH {'latitude', 'longitude'} AS geoFieldName-»
+    <dt>{gt text='«geoFieldName.toFirstUpper()»'}</dt>
+    <dd>{$«objName».«geoFieldName»|formatnumber|formatnumber:7}</dd>
+«ENDFOREACH-»
+«ENDIF-»
 «IF standardFields-»
     {include file='«controller.name()»/include_metadata_display.tpl' obj=$«objName»}
 «ENDIF-»

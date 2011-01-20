@@ -403,8 +403,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         // parse given redirect code and return corresponding url
         switch ($this->returnTo) {
-«FOREACH app.controllers.controllers AS someController-»
-«IF someController.metaType != AjaxController-»
+«FOREACH app.controllers.controllers.reject(e|e.metaType == AjaxController) AS someController-»
 «LET someController.name() AS controllerName-»
 «IF someController.hasActions('main')-»
             case '«controllerName»':
@@ -425,13 +424,11 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                                     return $this->getDefaultReturnUrl($args, $obj);
 «ENDIF-»
 «ENDLET-»
-«ENDIF-»
 «ENDFOREACH-»
 «FOREACH incoming.select(e|e.metaType == OneToOneRelationship || e.metaType == OneToManyRelationship) AS incomingRelation-»
 «LET incomingRelation.source AS sourceEntity-»
 «IF sourceEntity.name != this.name-»
-«FOREACH app.controllers.controllers AS someController-»
-«IF someController.metaType != AjaxController-»
+«FOREACH app.controllers.controllers.reject(e|e.metaType == AjaxController) AS someController-»
 «LET someController.name() AS controllerName-»
 «IF someController.hasActions('view')-»
             case '«controllerName»View«sourceEntity.name.formatForCodeCapital()»':
@@ -448,7 +445,6 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                                     return $this->getDefaultReturnUrl($args, $obj);
 «ENDIF-»
 «ENDLET-»
-«ENDIF-»
 «ENDFOREACH-»
 «ENDIF-»
 «ENDLET-»

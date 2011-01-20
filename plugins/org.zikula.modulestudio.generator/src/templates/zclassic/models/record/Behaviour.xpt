@@ -90,7 +90,23 @@
 «IF geographical-»
         // Coordinate fields and distance calculation
         // See http://code.zikula.org/core/ticket/2401 for possible future support in the Zikula core
-        $this->actAs('Geographical');
+        // $this->actAs('Geographical');
+
+        // Workaround for wrong scaling (Doctrine bug)
+        // See http://www.tkstudios.com/2010/04/27/fixing-doctrines-geographical-template-precision/
+        $geographical0 = new Doctrine_Template_Geographical(array(
+           'latitude' => array(
+              'options' => array(
+                 'scale' => 7,
+              ),
+           ),
+           'longitude' => array(
+              'options' => array(
+                 'scale' => 7,
+              ),
+           ),
+        ));
+        $this->actAs($geographical0);
 «ENDIF-»
 «IF softDelete-»
         // Mark items as removed instead of really deleting them
