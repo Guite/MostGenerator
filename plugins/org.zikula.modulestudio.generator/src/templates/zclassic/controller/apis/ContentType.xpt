@@ -108,7 +108,7 @@ function «appName()»_Api_ContentTypes_itemlist($args)
         // get total number of records for building the pagination by method call
         //$objectCount = $objectCollection->selectCount($where);
 
-        $this->view->setCaching(false);
+        $this->view->setCaching(true);
 
         $data = array('objectType' => $this->objectType, 'sorting' => $this->sorting, 'amount' => $this->amount, 'filter' => $this->filter, 'template' => $this->template);
 

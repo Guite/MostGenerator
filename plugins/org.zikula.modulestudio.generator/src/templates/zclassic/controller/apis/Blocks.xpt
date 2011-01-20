@@ -118,7 +118,7 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
         // while the result will be saved in the object, we assign in to a local variable for convenience.
         $objectData = $objectCollection->selectWherePaginated($vars['filter'], $sortParam, -1, $vars['amount']);
 
-        $this->view->setCaching(false);
+        $this->view->setCaching(true);
 
         // assign block vars and fetched data
         $this->view->assign('vars', $vars)

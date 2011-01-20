@@ -96,7 +96,7 @@ class «appName()»_Api_Mailz extends «appName()»_Api_Base_Mailz
                 $output .= $counter . '. ' . $object['«leadingEntity.getLeadingField().name.formatForCode()»'] . "\n";
             }
         } else {
-            $this->view->setCaching(false);
+            $this->view->setCaching(true);
 
             //$data = array('sorting' => $this->sorting, 'amount' => $this->amount, 'filter' => $this->filter, 'template' => $this->template);
             //$this->view->assign('vars', $data);

@@ -107,7 +107,7 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
      */
     protected function initializeAdditions($view)
     {
-«REM»Remove in favour of postInitialize()«ENDREM»«""-»
+        /** TODO: remove this method in favour of postInitialize() */
     }
 
     /**
