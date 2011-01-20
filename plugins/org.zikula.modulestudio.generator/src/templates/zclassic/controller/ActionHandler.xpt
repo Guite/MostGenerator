@@ -404,6 +404,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         // parse given redirect code and return corresponding url
         switch ($this->returnTo) {
 «FOREACH app.controllers.controllers AS someController-»
+«IF someController.metaType != AjaxController-»
 «LET someController.name() AS controllerName-»
 «IF someController.hasActions('main')-»
             case '«controllerName»':
@@ -424,11 +425,13 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                                     return $this->getDefaultReturnUrl($args, $obj);
 «ENDIF-»
 «ENDLET-»
+«ENDIF-»
 «ENDFOREACH-»
 «FOREACH incoming.select(e|e.metaType == OneToOneRelationship || e.metaType == OneToManyRelationship) AS incomingRelation-»
 «LET incomingRelation.source AS sourceEntity-»
 «IF sourceEntity.name != this.name-»
 «FOREACH app.controllers.controllers AS someController-»
+«IF someController.metaType != AjaxController-»
 «LET someController.name() AS controllerName-»
 «IF someController.hasActions('view')-»
             case '«controllerName»View«sourceEntity.name.formatForCodeCapital()»':
@@ -445,6 +448,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                                     return $this->getDefaultReturnUrl($args, $obj);
 «ENDIF-»
 «ENDLET-»
+«ENDIF-»
 «ENDFOREACH-»
 «ENDIF-»
 «ENDLET-»
@@ -662,7 +666,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDLET-»
 «ENDFOREACH-»
 «IF !uploadFields.isEmpty-»
-            $formData = $this->handleUploads($formData);
+            $formData = $this->handleUploads($formData, $«name.formatForCode()»);
             if ($formData == false) {
                 return false;
             }
@@ -703,7 +707,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
     /**
      * Helper method to process upload fields
      */
-    protected function handleUploads($formData)
+    protected function handleUploads($formData, $existingObject)
     {
 «LET getUploadFields() AS uploadFields-»
 «IF !uploadFields.isEmpty-»
@@ -714,8 +718,25 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
         $uploadFields = array(«FOREACH uploadFields AS uploadField SEPARATOR ", "»'«uploadField.name.formatForCode()»'«ENDFOREACH»);
         // list of mandatory fields
         $uploadFieldsMandatory = array(«FOREACH uploadFields.select(e|e.mandatory) AS uploadField SEPARATOR ", "»'«uploadField.name.formatForCode()»'«ENDFOREACH»);
+
+        $existingObjectData = $existingObject->get«name.toFirstUpper()»();
+
         // process all fields
         foreach ($uploadFields as $uploadField) {
+            // check if an existing file must be deleted
+            if ($this->mode != 'create') {
+                if (isset($formData[$uploadField . 'DeleteFile'])) {
+                    if ($formData[$uploadField . 'DeleteFile'] === true) {
+                        // remove upload file (and image thumbnails)
+                        $existingObjectData = $uploadManager->deleteUploadFile($this->objectType, $existingObjectData, $uploadField);
+                        if (empty($existingObjectData[$uploadField])) {
+                            $existingObject->set«name.toFirstUpper()»($existingObjectData);
+                        }
+                    }
+                    unset($formData[$uploadField . 'DeleteFile']);
+                }
+            }
+
             // look whether a file has been provided
             if (!$formData[$uploadField] || $formData[$uploadField]['size'] == 0) {
                 // no file has been uploaded

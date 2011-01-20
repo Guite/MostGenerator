@@ -218,6 +218,8 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
         // echo 'deleted a record ...';
 «LET getUploadFields() AS uploadFields-»
 «IF !uploadFields.isEmpty-»
+        // initialise the upload handler
+        $uploadManager = new «container.application.appName()»_UploadHandler();
 
         $data = $event->data;
         $uploadFields = array(«FOREACH uploadFields AS uploadField SEPARATOR ", "»'«name.formatForCode()»'«ENDFOREACH»);
@@ -225,9 +227,9 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
             if (empty($data[$uploadField])) {
                 continue;
             }
-            $basePath = «container.application.appName()»_Util::getFileBaseFolder('«name.formatForCode()»', $uploadField);
-            unlink($basePath . $data[$uploadField]);
-            /** TODO: remove thumbnails, too - see http://code.zikula.org/generator/ticket/82 for more information */
+
+            // remove upload file (and image thumbnails)
+            $data = $uploadManager->deleteUploadFile('«name.formatForCode()»', $data, $uploadField);
         }
 «ENDIF-»
 «ENDLET-»

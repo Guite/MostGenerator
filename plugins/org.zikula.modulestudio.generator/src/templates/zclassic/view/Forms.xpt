@@ -38,7 +38,7 @@
 «IF controller.metaType == AdminController-»
     {assign var='adminpageicon' value='edit.gif'}
 «ENDIF-»
-{elseif $mode eq "create"}
+{elseif $mode eq 'create'}
     {gt text='Create «name.formatForDisplay()»' assign='templateTitle'}
 «IF controller.metaType == AdminController-»
     {assign var='adminpageicon' value='filenew.gif'}

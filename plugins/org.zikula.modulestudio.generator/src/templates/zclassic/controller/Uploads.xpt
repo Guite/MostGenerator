@@ -289,6 +289,65 @@ class «appName()»_Base_UploadHandler
         }
         return LogUtil::registerError('Error with upload: ' . $errmsg);
     }
+
+    /**
+     * Deletes an existing upload file.
+     * For images the thumbnails are removed, too.
+     *
+     * @param string $objectType Currently treated entity type.
+     * @param string $objectData Object data array.
+     * @param string $fieldName  Name of upload field.
+     *
+     * @return mixed Array with updated object data on success, else false.
+     */
+    public function deleteUploadFile($objectType, $objectData, $fieldName)
+    {
+        if (!in_array($objectType, $this->allowedObjectTypes)) {
+            return false;
+        }
+
+        if (empty($objectData[$fieldName])) {
+            return $objectData;
+        }
+
+        // determine file system information
+        $basePath = «appName()»_Util::getFileBaseFolder($objectType, $fieldName);
+        $fileName = $objectData[$fieldName];
+
+        // remove original file
+        if (!unlink($basePath . $fileName)) {
+            false;
+        }
+        $objectData[$fieldName] = '';
+        $objectData[$fieldName . 'Meta'] = array();
+
+
+        $imageTypes = array('gif', 'jpeg', 'jpg', 'png');
+        $fileExtension = FileUtil::getExtension($fileName, false);
+        if (!in_array($fileExtension, $imageTypes)) {
+            // we are done, so let's return
+            return $objectData;
+        }
+
+        // get extension again, but including the dot
+        $fileExtension = FileUtil::getExtension($fileName, true);
+        $thumbFileNameBase = str_replace($fileExtension, '', $fileName) . '_tmb_';
+        $thumbFileNameBaseLength = strlen($thumbFileNameBase);
+
+        // remove image thumbnails
+        $thumbPath = $basePath . 'tmb/';
+        $thumbFiles = FileUtil::getFiles($thumbPath, false, true, null, 'f'); // non-recursive, relative pathes
+        foreach ($thumbFiles as $thumbFile) {
+            $thumbFileBase = substr($thumbFile, 0, $thumbFileNameBaseLength);
+            if ($thumbFileBase != $thumbFileNameBase) {
+                // let other thumbnails untouched
+                continue;
+            }
+            unlink($thumbPath . $thumbFile);
+        }
+
+        return $objectData;
+    }
 }
 «ENDDEFINE»
 
