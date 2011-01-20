@@ -223,7 +223,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         // remove categorisable behavior data
         $table  = $dbTables['categories_mapobj'];
         $column = $dbTables['categories_mapobj_column'];
-        $sql = 'DELETE FROM ' . $table . ' WHERE ' . $column['module'] . ' = \'«container.application.appName()»\' AND ' . $column['table'] . ' = \'«fullEntityName()»\'';
+        $sql = 'DELETE FROM ' . $table . ' WHERE ' . $column['modname'] . ' = \'«container.application.appName()»\' AND ' . $column['table'] . ' = \'«fullEntityName()»\'';
         $res = DBUtil::executeSQL($sql);
 «ENDIF-»
 «IF attributable-»
