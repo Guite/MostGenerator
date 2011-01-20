@@ -63,7 +63,6 @@ class «tempBaseClassConfigHandler()» extends Form_Handler
      */
     function initializeAdditions($view)
     {
-        /** TODO: remove this method in favour of postInitialize() */
     }
 
     /**

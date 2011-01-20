@@ -229,6 +229,9 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
                 $this->registerError($this->__('Error! Deletion attempt failed.'));
             } else {
                 $this->registerStatus($this->__('Done! Item deleted.'));
+
+                // clear view cache to reflect our changes
+                $this->view->clear_cache();
             }
         } else {
     «EXPAND ControllerHelper::retrieveEntityFromModel("idField", "id", false)-»

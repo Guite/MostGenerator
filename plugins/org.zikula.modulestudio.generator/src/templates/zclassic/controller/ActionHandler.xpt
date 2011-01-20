@@ -107,7 +107,6 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
      */
     protected function initializeAdditions($view)
     {
-        /** TODO: remove this method in favour of postInitialize() */
     }
 
     /**
@@ -522,7 +521,6 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
             // Let any hooks know that we have created an item
             $this->notifyHooks('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».process.edit', $«name.formatForCode()», $this->«idField()»);
-
         } else if ($args['commandName'] == 'update') {
             // event handling if user clicks on update
 
@@ -559,6 +557,11 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             $this->notifyHooks('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».process.delete', $«name.formatForCode()», $this->«idField()»);
         } else if ($args['commandName'] == 'cancel') {
             // event handling if user clicks on cancel
+        }
+
+        if ($args['commandName'] != 'cancel') {
+            // clear view cache to reflect our changes
+            $view->clear_cache();
         }
 
         if ($this->mode == 'edit') {
