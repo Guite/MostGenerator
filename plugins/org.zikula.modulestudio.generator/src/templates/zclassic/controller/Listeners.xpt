@@ -6,7 +6,7 @@
 
 «REM»Entry point for persistent event listeners«ENDREM»
 «DEFINE Root FOR Application»
-«FILE "lib/" + appName() + "/Base/Listeners.php"-»
+«FILE getAppSourceLibPath(appName()).msconcat("Base/Listeners.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Event handler base class
@@ -17,7 +17,7 @@ class «appName()»_Base_Listeners
 }
 «ENDFILE»
 
-«FILE "lib/" + appName() + "/Listeners.php"-»
+«FILE getAppSourceLibPath(appName()).msconcat("Listeners.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Event handler implementation class.

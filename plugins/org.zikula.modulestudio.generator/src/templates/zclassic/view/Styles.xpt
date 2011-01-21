@@ -3,7 +3,7 @@
 
 «DEFINE Root FOR Application-»
 «IF !controllers.controllers.actions.typeSelect(EditAction).isEmpty-»
-«FILE "style/style.css"-»«EXPAND StyleDefines-»
+«FILE getAppSourcePath(appName()).msconcat("style/style.css")-»«EXPAND StyleDefines-»
 «ENDFILE»
 «ENDIF-»
 «ENDDEFINE»

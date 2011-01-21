@@ -7,7 +7,7 @@
 «REM»Entry point for default data (used in the installer)«ENDREM»
 «DEFINE Root FOR Application»
 «IF getDefaultDataSource().numExampleRows > 0-»
-«FILE "docs/exampleData.yml"-»
+«FILE getAppSourcePath(appName()).msconcat("docs/exampleData.yml")-»
 «EXPAND createExampleRows(this) FOREACH models.entities-»
 «ENDFILE»
 «ENDIF»

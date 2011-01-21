@@ -233,7 +233,7 @@
 «ENDDEFINE»
 
 «DEFINE InlineRedirectHandler(Application app) FOR Controller-»
-«FILE "templates/".msconcat(name()).msconcat("/inlineRedirectHandler.tpl")-»
+«FILE getAppSourcePath(app.appName()).msconcat("templates/").msconcat(name()).msconcat("/inlineRedirectHandler.tpl")-»
 {* purpose of this template: close an iframe from within this iframe *}
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">

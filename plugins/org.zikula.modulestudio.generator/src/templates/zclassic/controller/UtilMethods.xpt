@@ -4,8 +4,8 @@
 
 «REM»start point for the Util class creation«ENDREM»
 «DEFINE Root FOR Application»
-    «FILE "lib/".msconcat(appName()).msconcat("/Base/Util.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND CommonFunctionsBase-»«ENDFILE»
-    «FILE "lib/".msconcat(appName()).msconcat("/Util.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND CommonFunctionsImpl-»«ENDFILE»
+    «FILE getAppSourceLibPath(appName()).msconcat("Base/Util.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND CommonFunctionsBase-»«ENDFILE»
+    «FILE getAppSourceLibPath(appName()).msconcat("Util.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND CommonFunctionsImpl-»«ENDFILE»
 «ENDDEFINE»
 
 «DEFINE CommonFunctionsBase FOR Application-»
@@ -286,7 +286,7 @@ class «appName()»_Base_Util
             $objectType = self::getDefaultObjectType();
         }
 
-        $basePath = FileUtil::getDataDirectory() . '/«appName()»/files/';
+        $basePath = FileUtil::getDataDirectory() . '/«appName()»/';
 
         switch ($objectType) {
 «FOREACH getUploadEntities() AS entity-»

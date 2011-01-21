@@ -2,13 +2,13 @@
 «EXTENSION extensions::Utils»
 
 «DEFINE Root FOR Application»
-    «FILE "templates/init/interactive.tpl"»«EXPAND tplInit»«ENDFILE»
+    «FILE getAppSourcePath(appName()).msconcat("templates/init/interactive.tpl")»«EXPAND tplInit»«ENDFILE»
 «IF needsConfig()-»
-    «FILE "templates/init/step2.tpl"»«EXPAND tplInitStep2»«ENDFILE»
+    «FILE getAppSourcePath(appName()).msconcat("templates/init/step2.tpl")»«EXPAND tplInitStep2»«ENDFILE»
 «ENDIF-»
-    «FILE "templates/init/step3.tpl"»«EXPAND tplInitStep3»«ENDFILE»
-    «FILE "templates/init/update.tpl"»«EXPAND tplUpdate»«ENDFILE»
-    «FILE "templates/init/delete.tpl"»«EXPAND tplDelete»«ENDFILE»
+    «FILE getAppSourcePath(appName()).msconcat("templates/init/step3.tpl")»«EXPAND tplInitStep3»«ENDFILE»
+    «FILE getAppSourcePath(appName()).msconcat("templates/init/update.tpl")»«EXPAND tplUpdate»«ENDFILE»
+    «FILE getAppSourcePath(appName()).msconcat("templates/init/delete.tpl")»«EXPAND tplDelete»«ENDFILE»
 «ENDDEFINE»
 
 «DEFINE tplInit FOR Application-»

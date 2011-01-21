@@ -4,8 +4,8 @@
 
 «REM»start point for the Factory creation«ENDREM»
 «DEFINE Root FOR Application»
-    «FILE "lib/".msconcat(appName()).msconcat("/Base/Factory.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND BusinessFactoryBase-»«ENDFILE»
-    «FILE "lib/".msconcat(appName()).msconcat("/Factory.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND BusinessFactoryImpl-»«ENDFILE»
+    «FILE getAppSourceLibPath(appName()).msconcat("Base/Factory.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND BusinessFactoryBase-»«ENDFILE»
+    «FILE getAppSourceLibPath(appName()).msconcat("Factory.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND BusinessFactoryImpl-»«ENDFILE»
 «ENDDEFINE»
 
 «DEFINE BusinessFactoryBase FOR Application-»

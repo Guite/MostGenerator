@@ -14,9 +14,9 @@
 «DEFINE Root(Application app) FOR Entity-»
 «info("Generating table classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «IF !isInheriting()-»
-    «FILE baseClassModelTable().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelTableBaseImpl(app)»«ENDFILE»
+    «FILE getAppSourceLibPath(app.appName()).msconcat(baseClassModelTable().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelTableBaseImpl(app)»«ENDFILE»
 «ENDIF-»
-    «FILE implClassModelTable().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelTableImpl(app)»«ENDFILE»
+    «FILE getAppSourceLibPath(app.appName()).msconcat(implClassModelTable().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelTableImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
 «REM»base implementation«ENDREM»
@@ -269,8 +269,8 @@ class «implClassModelTable()» extends «IF isInheriting()»«parentType().impl
 
 «REM»creates a reference table class file for every many-to-many relationship instance«ENDREM»
 «DEFINE Root(Application app) FOR ManyToManyRelationship-»
-    «FILE baseClassModelRefTable().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefTableBaseImpl(app)»«ENDFILE»
-    «FILE implClassModelRefTable().asFile()»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefTableImpl(app)»«ENDFILE»
+    «FILE getAppSourceLibPath(app.appName()).msconcat(baseClassModelRefTable().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefTableBaseImpl(app)»«ENDFILE»
+    «FILE getAppSourceLibPath(app.appName()).msconcat(implClassModelRefTable().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefTableImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
 

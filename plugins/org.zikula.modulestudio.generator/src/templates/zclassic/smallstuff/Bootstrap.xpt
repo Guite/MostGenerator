@@ -2,7 +2,7 @@
 «EXTENSION extensions::Utils»
 
 «DEFINE Root FOR Application-»
-«FILE "bootstrap.php"»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND Bootstrap»«ENDFILE»
+«FILE getAppSourcePath(appName()).msconcat("bootstrap.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND Bootstrap»«ENDFILE»
 «ENDDEFINE»
 
 «DEFINE Bootstrap FOR Application-»

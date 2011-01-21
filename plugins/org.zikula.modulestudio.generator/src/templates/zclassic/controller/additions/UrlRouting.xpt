@@ -4,8 +4,8 @@
 
 «REM»start point for the Factory creation«ENDREM»
 «DEFINE Root FOR Application»
-    «FILE "lib/".msconcat(appName()).msconcat("/Base/RouterFacade.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND RouterFacadeBase-»«ENDFILE»
-    «FILE "lib/".msconcat(appName()).msconcat("/RouterFacade.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND RouterFacadeImpl-»«ENDFILE»
+    «FILE getAppSourceLibPath(appName()).msconcat("Base/RouterFacade.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND RouterFacadeBase-»«ENDFILE»
+    «FILE getAppSourceLibPath(appName()).msconcat("RouterFacade.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND RouterFacadeImpl-»«ENDFILE»
 «ENDDEFINE»
 
 «DEFINE RouterFacadeBase FOR Application-»

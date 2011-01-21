@@ -7,13 +7,13 @@
 «REM»Entry point for config form handler«ENDREM»
 «DEFINE Root FOR Application-»
 «IF needsConfig()-»
-«FILE tempBaseClassConfigHandler().asFile()»
+«FILE getAppSourceLibPath(appName()).msconcat(tempBaseClassConfigHandler().asFile())»
 «EXPAND FileHelper::phpFileHeader(this)-»
 
 «EXPAND ConfigHandlerBaseClass-»
 «ENDFILE»
 
-«FILE tempImplClassConfigHandler().asFile()»
+«FILE getAppSourceLibPath(appName()).msconcat(tempImplClassConfigHandler().asFile())»
 «EXPAND FileHelper::phpFileHeader(this)-»
 
 «EXPAND ConfigHandlerImplClass-»

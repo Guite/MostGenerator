@@ -47,7 +47,7 @@
 «ENDDEFINE»
 
 «DEFINE HeaderFooter(String appName, Controller controller) FOR Application»
-«FILE "templates/".msconcat(controller.name()).msconcat("/header.tpl")-»
+«FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/header.tpl")-»
 {* purpose of this template: header for «controller.name()» area *}
 
 {pageaddvar name='javascript' value='prototype'}
@@ -75,7 +75,7 @@
 {insert name='getstatusmsg'}
 «ENDIF-»
 «ENDFILE»
-«FILE "templates/".msconcat(controller.name()).msconcat("/footer.tpl")-»
+«FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/footer.tpl")-»
 {* purpose of this template: footer for «controller.name()» area *}
 
 {if !isset($smarty.get.theme) || $smarty.get.theme ne "Printer"}
@@ -102,7 +102,7 @@
 
 «DEFINE MetaDataTemplates(String appName, Controller controller) FOR Application-»
 «IF controller.hasActions('view') || controller.hasActions('display')-»
-«FILE "templates/".msconcat(controller.name()).msconcat("/include_metadata_display.tpl")-»
+«FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/include_metadata_display.tpl")-»
 {if (isset($obj.cr_uid) && $obj.cr_uid) || (isset($obj.lu_uid) && $obj.lu_uid)}
     <dt>{gt text='Meta data'}</dt>
 {if isset($obj.cr_uid) && $obj.cr_uid}
@@ -130,7 +130,7 @@
 «ENDIF»
 
 «IF controller.hasActions('edit')-»
-«FILE "templates/".msconcat(controller.name()).msconcat("/include_metadata_edit.tpl")-»
+«FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/include_metadata_edit.tpl")-»
 {if (isset($cr_uid) && $cr_uid) || (isset($lu_uid) && $lu_uid)}
 <fieldset>
     <legend>{gt text='Meta data'}</legend>
@@ -153,7 +153,7 @@
 «ENDDEFINE»
 
 «DEFINE PdfHeader FOR Application-»
-«FILE "templates/include_pdfheader.tpl"-»
+«FILE getAppSourcePath(appName()).msconcat("templates/include_pdfheader.tpl")-»
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{lang}" lang="{lang}">
 <head>

@@ -4,7 +4,7 @@
 
 «DEFINE ConfigImpl FOR Application»
 «info("Generating config template") -> ""-»
-«FILE "templates/".msconcat(configController().formatForDB()).msconcat('/config.tpl')-»
+«FILE getAppSourcePath(appName()).msconcat("templates/").msconcat(configController().formatForDB()).msconcat('/config.tpl')-»
 {* purpose of this template: module configuration *}
 
 {include file='«configController().formatForDB()»/header.tpl'}

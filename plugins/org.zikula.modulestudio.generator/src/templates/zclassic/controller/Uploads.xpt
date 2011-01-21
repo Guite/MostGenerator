@@ -5,32 +5,34 @@
 «REM»Entry point for upload handler«ENDREM»
 «DEFINE Root FOR Application-»
     «EXPAND CreateUploadFolders-»
-    «FILE "lib/".msconcat(appName()).msconcat("/Base/UploadHandler.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UploadHandlerBase-»«ENDFILE»
-    «FILE "lib/".msconcat(appName()).msconcat("/UploadHandler.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UploadHandlerImpl-»«ENDFILE»
+    «FILE getAppSourceLibPath(appName()).msconcat("Base/UploadHandler.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UploadHandlerBase-»«ENDFILE»
+    «FILE getAppSourceLibPath(appName()).msconcat("UploadHandler.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND UploadHandlerImpl-»«ENDFILE»
 «ENDDEFINE»
 
 «DEFINE CreateUploadFolders FOR Application-»
 «REM»This index.html files will be removed later. At the moment we need them to create according directories.«ENDREM»
-    «FILE "files/index.html"»«msUrl()-»«ENDFILE»
+    «FILE getAppUploadPath(appName()).msconcat("index.html")»«msUrl()-»«ENDFILE»
 «FOREACH getUploadEntities() AS entity-»
-    «FILE "files/" + entity.nameMultiple.formatForDB() + "/index.html"»«msUrl()-»«ENDFILE»
+«LET entity.nameMultiple.formatForDB().msconcat("/") AS subFolderName-»
+    «FILE getAppUploadPath(appName()).msconcat(subFolderName).msconcat("/index.html")»«msUrl()-»«ENDFILE»
 «LET entity.getUploadFields() AS uploadFields-»
 «IF uploadFields.size > 1-»
 «FOREACH uploadFields AS uploadField-»
-    «EXPAND UploadFolder("files/" + entity.nameMultiple.formatForDB() + "/" + uploadField.subFolderPathSegment() + "/") FOR uploadField»
+    «EXPAND UploadFolder(subFolderName.msconcat(uploadField.subFolderPathSegment())) FOR uploadField»
 «ENDFOREACH-»
 «ELSEIF uploadFields.size > 0-»
-    «EXPAND UploadFolder("files/" + entity.nameMultiple.formatForDB() + "/" + uploadFields.get(0).subFolderPathSegment() + "/") FOR uploadFields.get(0)»
+    «EXPAND UploadFolder(subFolderName.msconcat(uploadFields.get(0).subFolderPathSegment())) FOR uploadFields.get(0)»
 «ENDIF-»
 «ENDLET-»
 «LET entity.getImageFields() AS uploadFields-»
 «IF uploadFields.size > 1-»
 «FOREACH uploadFields AS uploadField-»
-    «FILE "files/" + entity.nameMultiple.formatForDB() + "/" + uploadField.subFolderPathSegment() + "/tmb/index.html"»«msUrl()-»«ENDFILE»
+    «FILE getAppUploadPath(appName()).msconcat(subFolderName).msconcat(uploadField.subFolderPathSegment()).msconcat("/tmb/index.html")»«msUrl()-»«ENDFILE»
 «ENDFOREACH-»
 «ELSEIF uploadFields.size > 0-»
-    «FILE "files/" + entity.nameMultiple.formatForDB() + "/" + uploadFields.get(0).subFolderPathSegment() + "/tmb/index.html"»«msUrl()-»«ENDFILE»
+    «FILE getAppUploadPath(appName()).msconcat(subFolderName).msconcat(uploadFields.get(0).subFolderPathSegment()).msconcat("/tmb/index.html")»«msUrl()-»«ENDFILE»
 «ENDIF-»
+«ENDLET-»
 «ENDLET-»
 «ENDFOREACH-»
         }
@@ -39,8 +41,8 @@
 
 
 «DEFINE UploadFolder(String folder) FOR UploadField-»
-«FILE folder + "index.html"»«msUrl()-»«ENDFILE»
-«FILE folder + ".htaccess"»
+«FILE getAppUploadPath(entity.container.application.appName()).msconcat(folder).msconcat("/index.html")»«msUrl()-»«ENDFILE»
+«FILE getAppUploadPath(entity.container.application.appName()).msconcat(folder).msconcat("/.htaccess")»
 # generated at «timestamp()» by ModuleStudio «msVersion()» («msUrl()»)
 # ----------------------------------------------------------------------
 # Purpose of file: give access to upload files treated in this directory

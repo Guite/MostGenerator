@@ -4,7 +4,7 @@
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Root FOR Application-»
-«FILE "lib/".msconcat(appName()).msconcat('/ContentTypes/Base/ItemList.php')-»
+«FILE getAppSourceLibPath(appName()).msconcat('ContentTypes/Base/ItemList.php')-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Generic item list content plugin base class
@@ -15,7 +15,7 @@ class «appName()»_Api_Base_ContentTypes_itemListPlugin extends contentTypeBase
 }
 «ENDFILE»
 
-«FILE "lib/".msconcat(appName()).msconcat('/ContentTypes/ItemList.php')-»
+«FILE getAppSourceLibPath(appName()).msconcat('ContentTypes/ItemList.php')-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Generic item list content plugin implementation class

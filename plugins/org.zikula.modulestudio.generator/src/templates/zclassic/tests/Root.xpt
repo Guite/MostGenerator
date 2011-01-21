@@ -1,0 +1,48 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+
+«REM»Entry point for module unit test classes«ENDREM»
+«DEFINE Root FOR Application-»
+    «FILE getAppTestsPath(appName()).msconcat("index.html")»«msUrl()-»«ENDFILE»
+    «FILE getAppTestsPath(appName()).msconcat("lib/index.html")»«msUrl()-»«ENDFILE»
+    «FILE getAppTestsPath(appName()).msconcat("bootstrap.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND Bootstrap»«ENDFILE»
+    «FILE getAppTestsPath(appName()).msconcat("AllTests.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND TestSuite»«ENDFILE»
+«ENDDEFINE»
+
+«DEFINE Bootstrap FOR Application-»
+error_reporting(E_ALL | E_STRICT);
+
+require_once 'PHPUnit/TextUI/TestRunner.php';
+
+«ENDDEFINE»
+
+«DEFINE TestSuite FOR Application-»
+if (!defined('PHPUnit_MAIN_METHOD')) {
+    define('PHPUnit_MAIN_METHOD', 'AllTests::main');
+}
+
+require_once dirname(__FILE__) . '/bootstrap.php';
+//require_once dirname(__FILE__) . '/lib/i18n/AllTests.php';
+//require_once dirname(__FILE__) . '/lib/FileSystem/AllTests.php';
+
+class AllTests
+{
+    public static function main()
+    {
+        PHPUnit_TextUI_TestRunner::run(self::suite());
+    }
+
+    public static function suite()
+    {
+        $suite = new PHPUnit_Framework_TestSuite('«appName()» - All Tests');
+//        $suite->addTest(I18nAllTests::suite());
+//        $suite->addTest(I18nAllTests::suite());
+        return $suite;
+    }
+}
+
+if (PHPUnit_MAIN_METHOD == 'AllTests::main') {
+    AllTests::main();
+}
+«ENDDEFINE»

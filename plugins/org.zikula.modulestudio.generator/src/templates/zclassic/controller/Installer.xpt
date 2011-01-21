@@ -6,7 +6,7 @@
 
 «REM»Entry point for application installer«ENDREM»
 «DEFINE Root FOR Application»
-«FILE "lib/" + appName() + "/Base/Installer.php"-»
+«FILE getAppSourceLibPath(appName()).msconcat("Base/Installer.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Installer base class
@@ -17,7 +17,7 @@ class «appName()»_Base_Installer extends Zikula_Installer
 }
 «ENDFILE»
 
-«FILE "lib/" + appName() + "/Installer.php"-»
+«FILE getAppSourceLibPath(appName()).msconcat("Installer.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Installer implementation class
@@ -29,7 +29,7 @@ class «appName()»_Installer extends «appName()»_Base_Installer
 «ENDFILE»
 
 «IF interactiveInstallation == true»
-«FILE "lib/" + appName() + "/Controller/Base/InteractiveInstaller.php"-»
+«FILE getAppSourceLibPath(appName()).msconcat("Controller/Base/InteractiveInstaller.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Interactive installer base class
@@ -39,7 +39,7 @@ class «appName()»_Controller_Base_Interactiveinstaller extends Zikula_Interact
 «EXPAND InteractiveInstall»
 }
 «ENDFILE»
-«FILE "lib/" + appName() + "/Controller/InteractiveInstaller.php"-»
+«FILE getAppSourceLibPath(appName()).msconcat("Controller/InteractiveInstaller.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Interactive installer implementation class

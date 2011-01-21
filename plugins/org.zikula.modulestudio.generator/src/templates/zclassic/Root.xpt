@@ -3,6 +3,7 @@
 «IMPORT templates::zclassic::controller»
 «IMPORT templates::zclassic::view»
 «IMPORT templates::zclassic::smallstuff»
+«IMPORT templates::zclassic::tests»
 «EXTENSION extensions::Utils»
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
@@ -88,5 +89,9 @@
     «pm.subTask("Additions: Documentation")»
     «info("Generating documentation")»
     «EXPAND smallstuff::Docs::Root»
+
+    «pm.subTask("Additions: Tests")»
+    «info("Generating unit tests")»
+    «EXPAND tests::Root»
 «ENDDEFINE»
 

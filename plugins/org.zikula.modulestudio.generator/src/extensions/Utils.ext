@@ -300,3 +300,16 @@ cached String subTask(Object monitor, String title) :
 cached String subTaskJava(Object monitor, String title) :
 	JAVA extensions.Utils.subTask(org.eclipse.core.runtime.IProgressMonitor, java.lang.String);
 
+
+cached String getAppSourcePath(String appName) :
+    'src/modules/'.msconcat(appName).msconcat('/');
+
+cached String getAppSourceLibPath(String appName) :
+    getAppSourcePath(appName).msconcat('lib/').msconcat(appName).msconcat('/');
+
+cached String getAppUploadPath(String appName) :
+    'src/data/'.msconcat(appName).msconcat('/');
+
+cached String getAppTestsPath(String appName) :
+    'tests/';
+

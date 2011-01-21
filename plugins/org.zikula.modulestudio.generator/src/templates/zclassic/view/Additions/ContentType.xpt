@@ -4,7 +4,7 @@
 
 «DEFINE Root FOR Application-»
 «FOREACH models.entities AS entity-»
-«FILE "templates/contenttype/itemlist_".msconcat(entity.name.formatForCode().toFirstUpper()).msconcat('_display_description.tpl')-»
+«FILE getAppSourcePath(appName()).msconcat("templates/contenttype/itemlist_").msconcat(entity.name.formatForCode().toFirstUpper()).msconcat('_display_description.tpl')-»
 {* Purpose of this template: Display «entity.nameMultiple.formatForDisplay()» within an external context *}
 
 <dl>
@@ -31,7 +31,7 @@
 {/foreach}
 </dl>
 «ENDFILE»
-«FILE "templates/contenttype/itemlist_".msconcat(entity.name.formatForCode().toFirstUpper()).msconcat('_display.tpl')-»
+«FILE getAppSourcePath(appName()).msconcat("templates/contenttype/itemlist_").msconcat(entity.name.formatForCode().toFirstUpper()).msconcat('_display.tpl')-»
 {* Purpose of this template: Display «entity.nameMultiple.formatForDisplay()» within an external context *}
 
 {foreach item='item' from=$items}
@@ -40,7 +40,7 @@
 {/foreach}
 «ENDFILE»
 «ENDFOREACH-»
-«FILE "templates/contenttype/itemlist_edit.tpl"-»
+«FILE getAppSourcePath(appName()).msconcat("templates/contenttype/itemlist_edit.tpl")-»
 {* Purpose of this template: edit view of generic item list content type *}
 
 <div class="z-adminformrow">

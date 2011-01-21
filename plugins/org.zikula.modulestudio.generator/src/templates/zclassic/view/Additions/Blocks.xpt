@@ -3,12 +3,12 @@
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Root FOR Application-»
-«FILE "templates/block/itemlist.tpl"-»
+«FILE getAppSourcePath(appName()).msconcat("templates/block/itemlist.tpl")-»
 {* Purpose of this template: Display items within a block (fallback template) *}
 
 Default block for generic item list.
 «ENDFILE»
-«FILE "templates/block/itemlist_modify.tpl"-»
+«FILE getAppSourcePath(appName()).msconcat("templates/block/itemlist_modify.tpl")-»
 {* Purpose of this template: Edit block for generic item list *}
 
 <div class="z-formrow">

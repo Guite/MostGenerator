@@ -4,7 +4,7 @@
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Root FOR Application-»
-«FILE "lib/".msconcat(appName()).msconcat('/Api/Base/Mailz.php')-»
+«FILE getAppSourceLibPath(appName()).msconcat('Api/Base/Mailz.php')-»
 «EXPAND FileHelper::phpFileHeader(this)»
 /**
  * Mailz api base class
@@ -15,7 +15,7 @@ class «appName()»_Api_Base_Mailz extends Zikula_Api
 }
 «ENDFILE»
 
-«FILE "lib/".msconcat(appName()).msconcat('/Api/Mailz.php')-»
+«FILE getAppSourceLibPath(appName()).msconcat('Api/Mailz.php')-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Mailz api implementation class

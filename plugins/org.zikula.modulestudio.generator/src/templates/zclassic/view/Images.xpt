@@ -4,8 +4,8 @@
 «REM»Entry point for all module images«ENDREM»
 «DEFINE Root FOR Application-»
 «REM»This index.html file will be removed later. At the moment we need it to create according directories.«ENDREM»
-    «FILE "images/index.html"»«msUrl()-»«ENDFILE»
-	«REM»«FILE "images/admin.gif"»«EXPAND AdminImageCE-»«ENDFILE»«ENDREM»
+    «FILE getAppSourcePath(appName()).msconcat("images/index.html")»«msUrl()-»«ENDFILE»
+	«REM»«FILE getAppSourcePath(appName()).msconcat("images/admin.gif")»«EXPAND AdminImageCE-»«ENDFILE»«ENDREM»
 «ENDDEFINE»
 
 «REM»admin icon 48x48«ENDREM»

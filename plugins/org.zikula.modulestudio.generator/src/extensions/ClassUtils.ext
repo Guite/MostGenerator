@@ -97,7 +97,7 @@ cached String templateSuffix()
     : ".tpl";
 
 cached String templateFileBase(Controller obj, String entityName, String actionName)
-    : "templates/".msconcat(obj.name.formatForDB()).msconcat('/').msconcat(formatForCode(entityName)).msconcat('/').msconcat(actionName);
+    : getAppSourcePath(obj.container.application.appName()).msconcat("templates/").msconcat(obj.name.formatForDB()).msconcat('/').msconcat(formatForCode(entityName)).msconcat('/').msconcat(actionName);
 
 cached String templateFile(Controller obj, String entityName, String actionName)
     : templateFileBase(obj, entityName, actionName).msconcat(templateSuffix());
@@ -110,7 +110,7 @@ cached String editTemplateFile(Controller obj, String entityName, String actionN
     
 
 cached String viewPluginFilePath(Application app, String pluginType, String pluginName)
-    : 'templates/plugins/'.msconcat(pluginType).msconcat('.').msconcat(app.appName().formatForDB()).msconcat(pluginName).msconcat('.php');
+    : getAppSourcePath(app.appName()).msconcat('templates/plugins/').msconcat(pluginType).msconcat('.').msconcat(app.appName().formatForDB()).msconcat(pluginName).msconcat('.php');
 
 
 cached String getRelationAliasName(JoinRelationship this, Boolean useTarget)
