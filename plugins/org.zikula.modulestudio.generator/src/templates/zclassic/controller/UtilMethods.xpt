@@ -286,7 +286,7 @@ class «appName()»_Base_Util
             $objectType = self::getDefaultObjectType();
         }
 
-        $basePath = 'modules/«appName()»/files/';
+        $basePath = FileUtil::getDataDirectory() . '/«appName()»/files/';
 
         switch ($objectType) {
 «FOREACH getUploadEntities() AS entity-»
