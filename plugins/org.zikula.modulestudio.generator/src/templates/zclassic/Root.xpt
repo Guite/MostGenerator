@@ -92,6 +92,6 @@
 
     «pm.subTask("Additions: Tests")»
     «info("Generating unit tests")»
-    «EXPAND tests::Root»
+    «EXPAND tests::Root::Root»
 «ENDDEFINE»
 
