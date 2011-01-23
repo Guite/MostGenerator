@@ -17,7 +17,7 @@
 
 «DEFINE FormCreate(String appName, Controller controller, String actionName) FOR Action-»
     // Create new Form reference
-    $view = FormUtil::newForm('«appName.formatForCode()»');
+    $view = FormUtil::newForm('«appName.formatForCode()»', $this);
 
 «LET formatForCode(appName.msconcat("_Form_Handler_").msconcat(prepClassPart(controller.name)).msconcat(prepClassPart(actionName))) AS controllerPraefix-»
 
@@ -105,7 +105,7 @@ class «baseClassFormHandler(controller, name, actionName)» extends Form_Handle
     /**
      * Method stub for own additions in subclasses.
      */
-    protected function initializeAdditions($view)
+    protected function initializeAdditions()
     {
     }
 
@@ -206,7 +206,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
             if (!SecurityUtil::checkPermission('«app.appName()»:«name.formatForCodeCapital()»:', '::', ACCESS_EDIT)) {
                 // set an error message and return false
-                return $view->registerError(LogUtil::registerPermissionError());
+                return $this->view->registerError(LogUtil::registerPermissionError());
             }
 
             $idField = '«idField()»';
@@ -220,7 +220,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         }
         else {
             if (!SecurityUtil::checkPermission('«app.appName()»:«name.formatForCodeCapital()»:', '::', ACCESS_ADD)) {
-                return $view->registerError(LogUtil::registerPermissionError());
+                return $this->view->registerError(LogUtil::registerPermissionError());
             }
 
             $template«idField().toFirstUpper()» = (int) FormUtil::getPassedValue('astemplate', 0, 'GET', FILTER_VALIDATE_INT);
@@ -247,12 +247,12 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDFOREACH-»
 
         // assign data to template
-        $view->assign($objectData)                         // assign object data first for form fields
-             ->assign('«name.formatForDB()»', $objectData) // assign object data again for notifyhooks
-             ->assign('mode', $this->mode)
-             ->assign('inlineUsage', $this->inlineUsage);
+        $this->view->assign($objectData)                         // assign object data first for form fields
+                   ->assign('«name.formatForDB()»', $objectData) // assign object data again for notifyhooks
+                   ->assign('mode', $this->mode)
+                   ->assign('inlineUsage', $this->inlineUsage);
 
-        $this->initializeAdditions($view);
+        $this->initializeAdditions();
 
         // everything okay, no initialization errors occured
         return true;
@@ -472,13 +472,13 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
     {
         if ($args['commandName'] == 'delete') {
             if (!SecurityUtil::checkPermission('«app.appName()»:«name.formatForCodeCapital()»:', '::', ACCESS_DELETE)) {
-                return $view->registerError(LogUtil::registerPermissionError());
+                return $this->view->registerError(LogUtil::registerPermissionError());
             }
         }
 
         if ($args['commandName'] != 'delete' && $args['commandName'] != 'cancel') {
             // do forms validation including checking all validators on the page to validate their input
-            if (!$view->isValid()) {
+            if (!$this->view->isValid()) {
                 return false;
             }
         }
@@ -561,7 +561,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         if ($args['commandName'] != 'cancel') {
             // clear view cache to reflect our changes
-            $view->clear_cache();
+            $this->view->clear_cache();
         }
 
         if ($this->mode == 'edit') {
@@ -569,11 +569,11 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                              array('lockName' => '«app.appName()»«name.formatForCodeCapital()»{$this->«idField()»}'));
         }
 
-        return $view->redirect($this->getRedirectUrl($args, $«name.formatForCode()», $repeatCreateAction));
+        return $this->view->redirect($this->getRedirectUrl($args, $«name.formatForCode()», $repeatCreateAction));
 
         // We should in principle not end here at all, since the above command handlers should
         // match all possible commands, but we return "ok" (true) for all cases.
-        // You could also return $view->setErrorMsg('Unexpected command')
+        // You could also return $this->view->setErrorMsg('Unexpected command')
         return true;
     }
 «ENDDEFINE»
@@ -584,7 +584,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
 «LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
         // reassign the «((incoming) ? target : source).getEntityNameSingularPlural(many).formatForDisplay()» eventually chosen by the user
-        $view->assign('user«relationAliasName.toFirstUpper()»', $this->retrieveRelatedObjects('«((incoming) ? source : target).name.formatForCode()»', '«uniqueNameForJs»ItemList', «IF !many»false«ELSE»true«ENDIF», 'POST'));
+        $this->view->assign('user«relationAliasName.toFirstUpper()»', $this->retrieveRelatedObjects('«((incoming) ? source : target).name.formatForCode()»', '«uniqueNameForJs»ItemList', «IF !many»false«ELSE»true«ENDIF», 'POST'));
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»
@@ -633,7 +633,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
 «DEFINE FetchInputData(String obj) FOR Entity-»
         // fetch posted data input values as an associative array
-        $formData = $view->getValues();
+        $formData = $this->view->getValues();
 «EXPAND FetchRelationValue(true) FOREACH incoming.typeSelect(JoinRelationship).reject(e|e.metaType == ManyToManyRelationship)-»
 «LET getUniqueDerivedFields().reject(e|e.primaryKey) AS uniqueFields-»
 «LET getUserFields() AS userFields-»

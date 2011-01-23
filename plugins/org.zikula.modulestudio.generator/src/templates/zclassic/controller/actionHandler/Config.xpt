@@ -50,9 +50,9 @@ class «tempBaseClassConfigHandler()» extends Form_Handler
         }
 
         // assign all module vars
-        $view->assign('config', ModUtil::getVar('«appName()»'«REM»$this->getVars() Form_Handler does not inherit from Zikula_Base (yet)«ENDREM»));
+        $this->view->assign('config', ModUtil::getVar('«appName()»'«REM»$this->getVars() Form_Handler does not inherit from Zikula_Base (yet)«ENDREM»));
 
-        $this->initializeAdditions($view);
+        $this->initializeAdditions();
 
         // everything okay, no initialization errors occured
         return true;
@@ -61,7 +61,7 @@ class «tempBaseClassConfigHandler()» extends Form_Handler
     /**
      * Method stub for own additions in subclasses.
      */
-    function initializeAdditions($view)
+    function initializeAdditions()
     {
     }
 
@@ -96,17 +96,16 @@ class «tempBaseClassConfigHandler()» extends Form_Handler
      */
     function handleCommand($view, &$args)
     {
-
         if ($args['commandName'] == 'save') {
-            if (!$view->isValid()) {
+            if (!$this->view->isValid()) {
                 return false;
             }
 
-            $data = $view->getValues();
+            $data = $this->view->getValues();
 
             // update all module vars
             if (!ModUtil::setVars('«appName()»', $data['config'])) {
-                return $view->setErrorMsg($this->__('Error! Failed to set configuration variables.'));
+                return $this->view->setErrorMsg($this->__('Error! Failed to set configuration variables.'));
             }
 
             LogUtil::registerStatus($this->__('Done! Module configuration updated.'));
@@ -115,7 +114,7 @@ class «tempBaseClassConfigHandler()» extends Form_Handler
         }
 
         $url = ModUtil::url('«appName()»', '«configController().formatForDB()»', 'config');
-        return $view->redirect($url);
+        return $this->view->redirect($url);
     }
 }
 «ENDDEFINE»
