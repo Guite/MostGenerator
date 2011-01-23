@@ -85,7 +85,7 @@
 «FOREACH {'latitude', 'longitude'} AS geoFieldName-»
         <div class="z-formrow">
             {formlabel for='«geoFieldName»' __text='«geoFieldName.toFirstUpper()»'}
-            {formfloatinput id='«geoFieldName»' mandatory=false __title='Input the «geoFieldName» of the «name.formatForDisplay()»' cssClass='validate-number' precision=7}
+            {formfloatinput group='«name.formatForDB()»' id='«geoFieldName»' mandatory=false __title='Input the «geoFieldName» of the «name.formatForDisplay()»' cssClass='validate-number' precision=7}
             {«app.appName().formatForDB()»ValidationError id='«geoFieldName»' class='validate-number'}
         </div>
 «ENDFOREACH-»
@@ -120,7 +120,7 @@
             <legend>{gt text='Return control'}</legend>
             <div class="z-formrow">
                 {formlabel for='repeatcreation' __text='Create another item after save'}
-                {formcheckbox id='repeatcreation' readOnly=false}
+                {formcheckbox group='«name.formatForDB()»' id='repeatcreation' readOnly=false}
             </div>
         </fieldset>
     {/if}

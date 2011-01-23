@@ -247,8 +247,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDFOREACH-»
 
         // assign data to template
-        $this->view->assign($objectData)                         // assign object data first for form fields
-                   ->assign('«name.formatForDB()»', $objectData) // assign object data again for notifyhooks
+        $this->view->assign('«name.formatForDB()»', $objectData)
                    ->assign('mode', $this->mode)
                    ->assign('inlineUsage', $this->inlineUsage);
 
@@ -634,6 +633,9 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «DEFINE FetchInputData(String obj) FOR Entity-»
         // fetch posted data input values as an associative array
         $formData = $this->view->getValues();
+        // we want the array with our field values
+        $formData = $formData['«name.formatForDB()»'];
+
 «EXPAND FetchRelationValue(true) FOREACH incoming.typeSelect(JoinRelationship).reject(e|e.metaType == ManyToManyRelationship)-»
 «LET getUniqueDerivedFields().reject(e|e.primaryKey) AS uniqueFields-»
 «LET getUserFields() AS userFields-»
