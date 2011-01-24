@@ -1,0 +1,7 @@
+import modulestudio;
+
+cached String msVersionNeu() :
+    "0.5.2";
+    
+Void GenerateBirtReport() : 
+    JAVA templates.reporting.birt.CallBirtReport.test();
