@@ -30,7 +30,7 @@
      */
     protected function postInitialize()
     {
-        // Set caching to false by default.
+        // Set caching to «caching.displayBool()» by default.
         $this->view->setCaching(«caching.displayBool()»);
     }
 «ENDDEFINE»
