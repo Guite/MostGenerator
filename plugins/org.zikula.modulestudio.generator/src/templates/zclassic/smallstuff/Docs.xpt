@@ -12,7 +12,7 @@
     «FILE getAppSourcePath(appName()).msconcat("docs/modulestudio.txt")»«EXPAND MostText»«ENDFILE»
     «FILE getAppSourcePath(appName()).msconcat("docs/readme_de.txt")»«EXPAND ReadmeDE»«ENDFILE»
     «FILE getAppSourcePath(appName()).msconcat("docs/readme.txt")»«EXPAND Readme»«ENDFILE»
-    «FILE getAppSourcePath(appName()).msconcat("docs/license.txt")»«EXPAND documents::License::License»«ENDFILE»
+    «FILE getAppSourcePath(appName()).msconcat("docs/license.txt")»«EXPAND License»«ENDFILE»
 «REM»TODO: generate additional information describing the model itself«ENDREM»
 «ENDDEFINE»
 
@@ -100,5 +100,21 @@ For questions and other remarks visit our homepage «url».
 For questions and other remarks visit our homepage «url».
 
 «EXPAND ReadmeFooter-»
+«ENDDEFINE»
+
+«DEFINE License FOR Application-»
+«IF license == 'http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License'
+  || license == 'GNU Lesser General Public License'
+  || license == 'Lesser General Public License'
+  || license == 'LGPL'-»
+«EXPAND documents::License_LGPL::License-»
+«ELSEIF license == 'http://www.gnu.org/copyleft/gpl.html GNU General Public License'
+  || license == 'GNU General Public License'
+  || license == 'General Public License'
+  || license == 'GPL'-»
+«EXPAND documents::License_GPL::License-»
+«ELSE-»
+Please enter your license text here.
+«ENDIF-»
 «ENDDEFINE»
 
