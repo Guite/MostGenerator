@@ -30,11 +30,11 @@
 «REM»Entry point for Form handler classes«ENDREM»
 «DEFINE Root(Application app, Controller controller, String actionName) FOR Entity-»
 «info("Generating \"" + controller.name + "\" form handler classes for \"" + name + "_" + actionName + "\"") -> ""-»
-«FILE getAppSourceLibPath(app.appName()).msconcat(baseClassFormHandler(controller, name, actionName).asFile())»
+«FILE getAppSourcePath(app.appName()).msconcat(baseClassFormHandler(controller, name, actionName).asFile())»
 «EXPAND FileHelper::phpFileHeader(app)-»
 «EXPAND FormHandlerBaseImpl(app, controller, actionName)-»
 «ENDFILE»
-«FILE getAppSourceLibPath(app.appName()).msconcat(implClassFormHandler(controller, name, actionName).asFile())»
+«FILE getAppSourcePath(app.appName()).msconcat(implClassFormHandler(controller, name, actionName).asFile())»
 «EXPAND FileHelper::phpFileHeader(app)-»
 «EXPAND FormHandlerImpl(app, controller, actionName)-»
 «ENDFILE»

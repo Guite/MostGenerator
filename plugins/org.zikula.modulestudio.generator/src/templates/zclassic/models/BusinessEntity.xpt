@@ -15,18 +15,18 @@
 «DEFINE BusinessEntityWrapper(Application app, Boolean isCollection) FOR Entity-»
 «info("Generating business " + ((isCollection) ? 'collection' : 'entity') +  " classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «IF !isInheriting()-»
-    «FILE getAppSourceLibPath(app.appName()).msconcat(baseClassBusinessEntity(isCollection).asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessEntityBaseImplSwitch(app, isCollection)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassBusinessEntity(isCollection).asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessEntityBaseImplSwitch(app, isCollection)»«ENDFILE»
 «ENDIF-»
-    «FILE getAppSourceLibPath(app.appName()).msconcat(implClassBusinessEntity(isCollection).asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessEntityImplSwitch(app, isCollection)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassBusinessEntity(isCollection).asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessEntityImplSwitch(app, isCollection)»«ENDFILE»
 «ENDDEFINE»
 
 «REM»creates a business validator file for every Entity instance«ENDREM»
 «DEFINE BusinessValidatorWrapper(Application app) FOR Entity-»
 «info("Generating business validator classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «IF !isInheriting()-»
-    «FILE getAppSourceLibPath(app.appName()).msconcat(baseClassBusinessValidator().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessValidatorBaseImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassBusinessValidator().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessValidatorBaseImpl(app)»«ENDFILE»
 «ENDIF-»
-    «FILE getAppSourceLibPath(app.appName()).msconcat(implClassBusinessValidator().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessValidatorImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassBusinessValidator().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessValidatorImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
 «REM»base implementation«ENDREM»

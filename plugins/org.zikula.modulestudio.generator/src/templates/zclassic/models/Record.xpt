@@ -14,9 +14,9 @@
 «DEFINE Root(Application app) FOR Entity-»
 «info("Generating record classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «IF !isInheriting()-»
-    «FILE getAppSourceLibPath(app.appName()).msconcat(baseClassModelRecord().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRecordBaseImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModelRecord().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRecordBaseImpl(app)»«ENDFILE»
 «ENDIF-»
-    «FILE getAppSourceLibPath(app.appName()).msconcat(implClassModelRecord().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRecordImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassModelRecord().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRecordImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
 «REM»base implementation«ENDREM»
@@ -92,8 +92,8 @@ class «implClassModelRecord()» extends «IF isInheriting()»«parentType().imp
 «REM»creates a reference record class file for every many-to-many relationship instance«ENDREM»
 «REM»TODO: remove all the redundancies below... maybe with the PersistenceTransformer transformation...«ENDREM»
 «DEFINE Root(Application app) FOR ManyToManyRelationship-»
-    «FILE getAppSourceLibPath(app.appName()).msconcat(baseClassModelRefRecord().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefRecordBaseImpl(app)»«ENDFILE»
-    «FILE getAppSourceLibPath(app.appName()).msconcat(implClassModelRefRecord().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefRecordImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModelRefRecord().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefRecordBaseImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassModelRefRecord().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefRecordImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
 

@@ -14,9 +14,9 @@
 «info("Generating listener classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «REM»Later: «EXPAND EventListenerMethod FOREACH listeners-»«ENDREM»«""-»
 «IF !isInheriting()-»
-    «FILE getAppSourceLibPath(app.appName()).msconcat(baseClassModelListener().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelListenerBaseImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModelListener().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelListenerBaseImpl(app)»«ENDFILE»
 «ENDIF-»
-    «FILE getAppSourceLibPath(app.appName()).msconcat(implClassModelListener().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelListenerImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassModelListener().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelListenerImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
 «REM»base implementation«ENDREM»

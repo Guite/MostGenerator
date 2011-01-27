@@ -25,11 +25,11 @@
 «REM»creates controller and api class files for every Controller instance«ENDREM»
 «DEFINE Root(Application app) FOR Controller-»
 «info("Generating \"" + name + "\" controller classes")»
-    «FILE getAppSourceLibPath(app.appName()).msconcat(baseClassController().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ControllerBaseImpl(app)»«ENDFILE»
-    «FILE getAppSourceLibPath(app.appName()).msconcat(implClassController().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ControllerImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassController().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ControllerBaseImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassController().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ControllerImpl(app)»«ENDFILE»
 «info("Generating \"" + name + "\" api classes")»
-    «FILE getAppSourceLibPath(app.appName()).msconcat(baseClassApi().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ControllerApiBaseImpl(app)»«ENDFILE»
-    «FILE getAppSourceLibPath(app.appName()).msconcat(implClassApi().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ControllerApiImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassApi().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ControllerApiBaseImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassApi().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ControllerApiImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
 «REM»base implementation«ENDREM»
