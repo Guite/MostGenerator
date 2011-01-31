@@ -116,6 +116,8 @@ class «baseClassModelRefRecord()» extends Doctrine_Record
      */
     public function setTableDefinition()
     {
+        $this->setTableName('«app.prefix().msconcat("_").msconcat(source.name.formatForDB()).msconcat("_").msconcat(target.name.formatForDB())»');
+
         $this->hasColumn('«source.idField()»', 'integer', null, array(
                 'type' => 'integer',
                 'primary' => true
