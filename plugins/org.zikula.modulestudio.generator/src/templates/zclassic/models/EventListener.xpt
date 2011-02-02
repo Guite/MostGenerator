@@ -278,6 +278,15 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 «DEFINE sanitizeForOutput FOR BooleanField-»
         $data['«actualFieldName().formatForCode()»'] = (bool) $data['«actualFieldName().formatForCode()»'];
 «ENDDEFINE»
+«DEFINE sanitizeForOutput FOR AbstractIntegerField-»
+        $data['«actualFieldName().formatForCode()»'] = (int) ((isset($data['«actualFieldName().formatForCode()»']) && !empty($data['«actualFieldName().formatForCode()»'])) ? DataUtil::formatForDisplay($data['«actualFieldName().formatForCode()»']) : 0);
+«ENDDEFINE»
+«DEFINE sanitizeForOutput FOR FloatField-»
+        $data['«actualFieldName().formatForCode()»'] = (float) ((isset($data['«actualFieldName().formatForCode()»']) && !empty($data['«actualFieldName().formatForCode()»'])) ? DataUtil::formatForDisplay($data['«actualFieldName().formatForCode()»']) : 0.00);
+«ENDDEFINE»
+«DEFINE sanitizeForOutput FOR DecimalField-»
+        $data['«actualFieldName().formatForCode()»'] = (float) ((isset($data['«actualFieldName().formatForCode()»']) && !empty($data['«actualFieldName().formatForCode()»'])) ? DataUtil::formatForDisplay($data['«actualFieldName().formatForCode()»']) : 0.00);
+«ENDDEFINE»
 «DEFINE sanitizeForOutput FOR StringField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
 «DEFINE sanitizeForOutput FOR TextField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
 «DEFINE sanitizeForOutput FOR EmailField-»
