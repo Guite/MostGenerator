@@ -294,6 +294,9 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 «EXPAND sanitizeForOutputHTML-»
     }
 «ENDDEFINE»
+«DEFINE sanitizeForOutput FOR ArrayField-»
+        $data['«actualFieldName().formatForCode()»'] = ((isset($data['«actualFieldName().formatForCode()»']) && is_array($data['«actualFieldName().formatForCode()»'])) ? DataUtil::formatForDisplay($data['«actualFieldName().formatForCode()»']) : array());
+«ENDDEFINE»
 «DEFINE sanitizeForOutput FOR UploadField-»
 «LET actualFieldName().formatForCode() AS realName-»
         if (!empty($data['«realName»'])) {
