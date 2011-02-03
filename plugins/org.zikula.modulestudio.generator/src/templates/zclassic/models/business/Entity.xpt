@@ -44,7 +44,7 @@
      *
      * @param integer $id The id to use to retrieve the object (optional) (default=null).
      */
-    function __construct($id = 0)
+    public function __construct($id = 0)
     {
         $this->_intObjectType = '«fullEntityName()»';
         $this->_intIdField = '«name.formatForDB()»id';
