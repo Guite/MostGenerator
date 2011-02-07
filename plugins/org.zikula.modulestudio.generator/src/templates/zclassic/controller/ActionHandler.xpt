@@ -177,7 +177,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
     public function initialize($view)
     {
         $this->inlineUsage = ((UserUtil::getTheme() == 'Printer') ? true : false);
-        $this->idPrefix = FormUtil::getPassedValue('idp', '', 'GET');
+        $this->idPrefix = FormUtil::getPassedValue('idp', '', 'GET', FILTER_SANITIZE_STRING);
 
         // retrieve the ID of the object we wish to edit
         // default to 0 (which is a numeric id but an invalid value)
@@ -190,7 +190,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $this->objectType = '«name.formatForCode()»';
 
         // initialise redirect goal
-        $this->returnTo = FormUtil::getPassedValue('returnTo', null, 'GET');
+        $this->returnTo = FormUtil::getPassedValue('returnTo', null, 'GET', FILTER_SANITIZE_STRING);
         // store current uri for repeated creations
         $this->repeatReturnUrl = System::getCurrentURI();
 

@@ -73,7 +73,7 @@ class «appName()»_Base_Util
         $templateExtension = self::determineTemplateExtension($view, $type, $objectType, $func, $args);
 
         // check whether a special template is used
-        $tpl = FormUtil::getPassedValue('tpl', isset($args['tpl']) ? $args['tpl'] : '', 'GETPOST');
+        $tpl = FormUtil::getPassedValue('tpl', isset($args['tpl']) ? $args['tpl'] : '', 'GETPOST', FILTER_SANITIZE_STRING);
         if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.' . $templateExtension)) {
             $template .= '_' . DataUtil::formatForOS($tpl);
         }

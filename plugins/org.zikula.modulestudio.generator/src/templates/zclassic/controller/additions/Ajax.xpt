@@ -64,7 +64,7 @@
             return true;
         }
 
-        $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'GETPOST');
+        $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'GETPOST', FILTER_SANITIZE_STRING);
         if (!in_array($objectType, «app.appName()»_Util::getObjectTypes('controllerAction', array('controller' => '«name()»', 'action' => 'getItemList')))) {
             $objectType = «app.appName()»_Util::getDefaultObjectType('controllerAction', array('controller' => '«name()»', 'action' => 'getItemList'));
         }
@@ -199,12 +199,12 @@
             throw new Zikula_Exception_Fatal();
         }
 */
-        $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'POST');
+        $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'POST', FILTER_SANITIZE_STRING);
         if (!in_array($objectType, «app.appName()»_Util::getObjectTypes('controllerAction', array('controller' => '«name()»', 'action' => 'checkForDuplicate')))) {
             $objectType = «app.appName()»_Util::getDefaultObjectType('controllerAction', array('controller' => '«name()»', 'action' => 'checkForDuplicate'));
         }
 
-        $fieldName = FormUtil::getPassedValue('fn', '', 'POST');
+        $fieldName = FormUtil::getPassedValue('fn', '', 'POST', FILTER_SANITIZE_STRING);
         $value = FormUtil::getPassedValue('v', '', 'POST');
 
         if (empty($fieldName) || empty($value)) {

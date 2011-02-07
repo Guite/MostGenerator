@@ -51,7 +51,7 @@
 «EXPAND PermissionCheck-»
 «IF metaType != MainAction-»
         // parameter specifying which type of objects we are treating
-        $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'GET');
+        $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'GET', FILTER_SANITIZE_STRING);
         if (!in_array($objectType, «app.appName()»_Util::getObjectTypes('controllerAction', array('controller' => '«controller.name()»', 'action' => '«name.formatForCode()»')))) {
             $objectType = «app.appName()»_Util::getDefaultObjectType('controllerAction', array('controller' => '«controller.name()»', 'action' => '«name.formatForCode()»'));
         }
@@ -98,11 +98,11 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «EXPAND ControllerHelper::instantiateBusinessObject(appName, true, 'controllerAction', controller.name(), name.formatForCode())-»
 
         // parameter for used sorting field
-        $sort = FormUtil::getPassedValue('sort', '', 'GET');
+        $sort = FormUtil::getPassedValue('sort', '', 'GET', FILTER_SANITIZE_STRING);
 «EXPAND ControllerHelper::DefaultSorting-»
 
         // parameter for used sort order
-        $sdir = FormUtil::getPassedValue('sdir', '', 'GET');
+        $sdir = FormUtil::getPassedValue('sdir', '', 'GET', FILTER_SANITIZE_STRING);
         if ($sdir != 'asc' && $sdir != 'desc') $sdir = 'asc';
 
 «REM»TODO«ENDREM»
@@ -160,7 +160,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         if (!$id) {
             $hasSlug = $object->get_intHasUniqueSlug();
             if ($hasSlug) {
-                $slugTitle = FormUtil::getPassedValue('title', isset($args['title']) && !empty($args['title']) ? $args['title'] : '', 'GET');
+                $slugTitle = FormUtil::getPassedValue('title', isset($args['title']) && !empty($args['title']) ? $args['title'] : '', 'GET', FILTER_SANITIZE_STRING);
                 $hasSlug = (!empty($slugTitle));
             }
         }
