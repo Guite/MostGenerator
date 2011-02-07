@@ -263,10 +263,21 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * Listener for the `theme.prefooter` event.
      *
      * Occurs in `Theme::themefooter()` just after getting the `$maincontent`.
-     * The event subject is `$this` (Theme instance) and has event data which you can modify
-     * with `$event->setData()` in the event handler.
+     * The event subject is `$this` (Theme instance) and has $maincontent as the event data
+     * which you can modify with `$event->setData()` in the event handler.
      */
-    public static function themePrefooter(Zikula_Event $event)
+    public static function themePreFooter(Zikula_Event $event)
+    {
+    }
+
+    /**
+     * Listener for the `theme.postfooter` event.
+     *
+     * Occurs in `Theme::themefooter()` just after rendering the theme.
+     * The event subject is `$this` (Theme instance) and the event data is the rendered
+     * output which you can modify with `$event->setData()` in the event handler.
+     */
+    public static function themePostFooter(Zikula_Event $event)
     {
     }
 

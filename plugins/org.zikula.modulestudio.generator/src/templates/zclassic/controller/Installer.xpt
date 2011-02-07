@@ -308,7 +308,8 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         // themes and views
         EventUtil::«actionL»PersistentModuleHandler('«appName»', 'theme.init', array('«callableClass»', 'themeInit'));
         EventUtil::«actionL»PersistentModuleHandler('«appName»', 'theme.load_config', array('«callableClass»', 'themeLoadConfig'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'theme.prefooter', array('«callableClass»', 'themePrefooter'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'theme.prefooter', array('«callableClass»', 'themePreFooter'));
+        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'theme.postfooter', array('«callableClass»', 'themePostFooter'));
         EventUtil::«actionL»PersistentModuleHandler('«appName»', 'view.init', array('«callableClass»', 'viewInit'));
         EventUtil::«actionL»PersistentModuleHandler('«appName»', 'view.fetch', array('«callableClass»', 'viewFetch'));
 
