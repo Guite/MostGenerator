@@ -58,8 +58,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «EXPAND FuncUpdate-»
 «EXPAND FuncDelete-»
 «EXPAND FuncDefaultData-»
-«EXPAND ProcessEventHandlersImpl('register')-»
-«EXPAND ProcessEventHandlersImpl('unregister')-»
+«EXPAND ProcessEventHandlersImpl-»
 «ENDDEFINE»
 
 «DEFINE InteractiveInstall FOR Application-»
@@ -102,16 +101,17 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDFOREACH-»
 «ENDIF-»
 
-«EXPAND ProcessEventHandlers('register')-»
+        // Register persistent event handlers
+        $this->registerPersistentEventHandlers();
 
-        // register hook subscriber bundles
+        // Register hook subscriber bundles
         HookUtil::registerHookSubscriberBundles($this->version);
 «REM»TODO see #115
-        // register hook provider bundles
+        // Register hook provider bundles
         HookUtil::registerHookProviderBundles($this->version);
 «ENDREM»
 
-        // create the default data for «appName()»
+        // Create the default data for «appName()»
         //$this->defaultdata();
         // TODO: deactivated for now because constraints prevent data creation in random order (see #64)
 
@@ -191,14 +191,14 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
             return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %1$s module.', array($this->getName())));
         }
 
-«EXPAND ProcessEventHandlers('unregister')-»
+        // Unregister event handlers
+        EventUtil::unregisterPersistentHandlers('«appName()»');
 
 «IF !models.variables.isEmpty-»
-        // remove all module vars
+        // Remove all module vars
         $this->delVars();
 
 «ENDIF-»
-
         // Deletion successful
         return true;
     }
@@ -267,70 +267,63 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
             DoctrineUtil::dropTable('«fullEntityName()»');
 «ENDDEFINE»
 
-«DEFINE ProcessEventHandlers(String action) FOR Application»
-        // «action.toFirstUpper()» persistent event handlers
-        $this->«action.toLowerCase()»PersistentEventHandlers();
-«ENDDEFINE»
-
-«DEFINE ProcessEventHandlersImpl(String action) FOR Application»
+«DEFINE ProcessEventHandlersImpl FOR Application»
     /**
-     * «action.toFirstUpper()» persistent event handlers.
+     * Register persistent event handlers.
      * These are listeners for external events of the core and other modules.
      */
 «LET appName() AS appName-»
-«LET action.toLowerCase() AS actionL-»
 «LET appName.msconcat('_Listeners') AS callableClass-»
-    private function «actionL»PersistentEventHandlers()
+    private function registerPersistentEventHandlers()
     {
         // core
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'api.method_not_found', array('«callableClass»', 'coreApiMethodNotFound'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'core.preinit', array('«callableClass»', 'corePreInit'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'core.init', array('«callableClass»', 'coreInit'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'core.postinit', array('«callableClass»', 'corePostInit'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'controller.method_not_found', array('«callableClass»', 'coreControllerMethodNotFound'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'api.method_not_found', array('«callableClass»', 'coreApiMethodNotFound'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'core.preinit', array('«callableClass»', 'corePreInit'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'core.init', array('«callableClass»', 'coreInit'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'core.postinit', array('«callableClass»', 'corePostInit'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'controller.method_not_found', array('«callableClass»', 'coreControllerMethodNotFound'));
 
         // modules
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'installer.module.installed', array('«callableClass»', 'installerModuleInstalled'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'installer.module.upgraded', array('«callableClass»', 'installerModuleUpgraded'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'installer.module.uninstalled', array('«callableClass»', 'installerModuleUninstalled'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'module_dispatch.postloadgeneric', array('«callableClass»', 'moduleDispatchPostLoadGeneric'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'module_dispatch.preexecute', array('«callableClass»', 'moduleDispatchPreExecute'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'module_dispatch.postexecute', array('«callableClass»', 'moduleDispatchPostExecute'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'module_dispatch.custom_classname', array('«callableClass»', 'moduleDispatchCustomClassname'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'module.mailer.api.sendmessage', array('«callableClass»', 'moduleMailerApiSendmessage'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'pageutil.addvar_filter', array('«callableClass»', 'pageutilAddvarFilter'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.installed', array('«callableClass»', 'installerModuleInstalled'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.upgraded', array('«callableClass»', 'installerModuleUpgraded'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.uninstalled', array('«callableClass»', 'installerModuleUninstalled'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'module_dispatch.postloadgeneric', array('«callableClass»', 'moduleDispatchPostLoadGeneric'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'module_dispatch.preexecute', array('«callableClass»', 'moduleDispatchPreExecute'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'module_dispatch.postexecute', array('«callableClass»', 'moduleDispatchPostExecute'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'module_dispatch.custom_classname', array('«callableClass»', 'moduleDispatchCustomClassname'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'module.mailer.api.sendmessage', array('«callableClass»', 'moduleMailerApiSendmessage'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'pageutil.addvar_filter', array('«callableClass»', 'pageutilAddvarFilter'));
 
         // errors
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'setup.errorreporting', array('«callableClass»', 'setupErrorReporting'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'system.outputfilter', array('«callableClass»', 'systemOutputfilter'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'systemerror', array('«callableClass»', 'systemError'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'setup.errorreporting', array('«callableClass»', 'setupErrorReporting'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'system.outputfilter', array('«callableClass»', 'systemOutputfilter'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'systemerror', array('«callableClass»', 'systemError'));
 
         // themes and views
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'theme.init', array('«callableClass»', 'themeInit'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'theme.load_config', array('«callableClass»', 'themeLoadConfig'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'theme.prefooter', array('«callableClass»', 'themePreFooter'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'theme.postfooter', array('«callableClass»', 'themePostFooter'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'view.init', array('«callableClass»', 'viewInit'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'view.fetch', array('«callableClass»', 'viewFetch'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'theme.init', array('«callableClass»', 'themeInit'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'theme.load_config', array('«callableClass»', 'themeLoadConfig'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'theme.prefooter', array('«callableClass»', 'themePreFooter'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'theme.postfooter', array('«callableClass»', 'themePostFooter'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'view.init', array('«callableClass»', 'viewInit'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'view.fetch', array('«callableClass»', 'viewFetch'));
 
         // users and groups
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'user.login', array('«callableClass»', 'userLogin'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'user.login.failed', array('«callableClass»', 'userLoginFailed'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'user.logout', array('«callableClass»', 'userLogout'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'user.logout.failed', array('«callableClass»', 'userLogoutFailed'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'user.gettheme', array('«callableClass»', 'userGetTheme'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'user.create', array('«callableClass»', 'userCreate'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'user.update', array('«callableClass»', 'userUpdate'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'user.delete', array('«callableClass»', 'userDelete'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'group.create', array('«callableClass»', 'groupCreate'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'group.update', array('«callableClass»', 'groupUpdate'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'group.delete', array('«callableClass»', 'groupDelete'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'group.adduser', array('«callableClass»', 'groupAddUser'));
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'group.removeuser', array('«callableClass»', 'groupRemoveUser'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.login', array('«callableClass»', 'userLogin'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.login.failed', array('«callableClass»', 'userLoginFailed'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.logout', array('«callableClass»', 'userLogout'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.logout.failed', array('«callableClass»', 'userLogoutFailed'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.gettheme', array('«callableClass»', 'userGetTheme'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.create', array('«callableClass»', 'userCreate'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.update', array('«callableClass»', 'userUpdate'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.delete', array('«callableClass»', 'userDelete'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'group.create', array('«callableClass»', 'groupCreate'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'group.update', array('«callableClass»', 'groupUpdate'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'group.delete', array('«callableClass»', 'groupDelete'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'group.adduser', array('«callableClass»', 'groupAddUser'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'group.removeuser', array('«callableClass»', 'groupRemoveUser'));
 
         // special purposes and 3rd party api support
-        EventUtil::«actionL»PersistentModuleHandler('«appName»', 'get.pending_content', array('«callableClass»', 'pendingContentListener'));
-«ENDLET-»
+        EventUtil::registerPersistentModuleHandler('«appName»', 'get.pending_content', array('«callableClass»', 'pendingContentListener'));
 «ENDLET-»
 «ENDLET-»
     }
