@@ -43,7 +43,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «REM»Child/passive/target view for 1:1 and 1:n«ENDREM»
 «DEFINE PassiveChildImpl(Application app, Controller controller, Boolean onlyInclude, Integer stageCode) FOR JoinRelationship-»
 «IF onlyInclude-»
-    {include file='«controller.name.formatForDB()»/«source.name.formatForCode()»/include_select«((stageCode == 3) ? 'Edit' : '')»One.tpl'}
+    {include file='«controller.name.formatForDB()»/«source.name.formatForCode()»/include_select«((stageCode == 3) ? 'Edit' : '')»One.tpl' relItem=$«target.name.formatForDB()»}
 «ELSE-»
 «info("Generating " + controller.name.formatForDB() + " edit inclusion templates for entity \"" + source.name.formatForDisplay() + "\"") -> ""-»
 «FILE templateFile(controller, source.name, 'include_select'.msconcat((stageCode == 3) ? 'Edit' : '').msconcat('One'))-»
@@ -67,7 +67,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «LET getEditStageCode(incoming) AS stageCode-»
 «IF stageCode == 1 || stageCode == 3-»
 «IF onlyInclude-»
-    {include file='«controller.name.formatForDB()»/«((incoming) ? source : target).name.formatForCode()»/include_select«((stageCode == 3) ? 'Edit' : '')»Many.tpl'}
+    {include file='«controller.name.formatForDB()»/«((incoming) ? source : target).name.formatForCode()»/include_select«((stageCode == 3) ? 'Edit' : '')»Many.tpl' relItem=$«((incoming) ? target : source).name.formatForDB()»}
 «ELSE-»
 «info("Generating " + controller.name.formatForDB() + " edit inclusion templates for entity \"" + ((incoming) ? source.name.formatForDisplay() : target.name.formatForDisplay()) + "\"") -> ""-»
 «FILE templateFile(controller, ((incoming) ? source.name : target.name), 'include_select'.msconcat((stageCode == 3) ? 'Edit' : '').msconcat('Many'))-»
@@ -118,8 +118,8 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
         {if isset($user«relationAliasName.toFirstUpper()») && $user«relationAliasName.toFirstUpper()» ne ''}
             {* the user has submitted something *}
             {include file='«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' item«IF many»s«ENDIF»=$user«relationAliasName.toFirstUpper()»}
-        {elseif $mode ne "create" || isset($«relationAliasName»)}
-            {include file='«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' item«IF many»s«ENDIF»=$«relationAliasName»}
+        {elseif $mode ne "create" || isset($item.«relationAliasName»)}
+            {include file='«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' item«IF many»s«ENDIF»=$relItem.«relationAliasName»}
         {else}
             {include file='«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl'}
         {/if}
