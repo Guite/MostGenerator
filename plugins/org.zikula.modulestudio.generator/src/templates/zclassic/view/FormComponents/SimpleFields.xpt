@@ -165,7 +165,7 @@
                 <div id="«realName»SelectorChoices" class="«entity.container.application.prefix()»AutoCompleteUser"></div>
             </div>
             <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
-            <input type="hidden" id="«realName»" name="«realName»" value="{«realName»}" />
+            <input type="hidden" id="«realName»" name="«realName»" value="{$«entity.name.formatForDB()».«realName»}" />
             {if $mode ne 'create' && $«realName» && !$inlineUsage}<div class="z-formnote"><a href="{modurl modname='Users' type='admin' func='modify' userid=$«realName»}" title="{gt text='Switch to the user administration'}">{gt text='Manage user'}</a></div>{/if}
 «ENDLET»
 «ENDDEFINE»

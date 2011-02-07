@@ -102,7 +102,7 @@
     {if $mode eq 'create'}
         {notifydisplayhooks eventname='«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».ui.edit' area='modulehook_area.«app.name.formatForDB()».«nameMultiple.formatForDB()»' subject=null id=null caller='«app.appName()»' assign='hooks'}
     {else}
-        {notifydisplayhooks eventname='«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».ui.edit' area='modulehook_area.«app.name.formatForDB()».«nameMultiple.formatForDB()»' subject=$«name.formatForDB()» id=$«name.formatForDB()».$«idField()» caller='«app.appName()»' assign='hooks'}
+        {notifydisplayhooks eventname='«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».ui.edit' area='modulehook_area.«app.name.formatForDB()».«nameMultiple.formatForDB()»' subject=$«name.formatForDB()» id=$«name.formatForDB()».«idField()» caller='«app.appName()»' assign='hooks'}
     {/if}
     {if is_array($hooks) && isset($hooks[0])}
         <fieldset>
