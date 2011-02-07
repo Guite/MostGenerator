@@ -192,7 +192,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         }
 
         // Unregister event handlers
-        EventUtil::unregisterPersistentHandlers('«appName()»');
+        EventUtil::unregisterPersistentModuleHandlers('«appName()»');
 
 «IF !models.variables.isEmpty-»
         // Remove all module vars
