@@ -78,7 +78,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
      */
     public function install()
     {
-        // create all tables from according model definitions
+        // Create all tables from according model definitions
         try {
             DoctrineUtil::createTablesFromModels('«appName()»');
         } catch (Exception $e) {
@@ -89,14 +89,14 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         }
 
 «IF !models.variables.isEmpty-»
-        // set up all our vars with initial values
+        // Set up all our vars with initial values
 «FOREACH models.variables.vars AS modvar-»
 «IF interactiveInstallation == true-»
         $sessionValue = SessionUtil::getVar('«formatForCode(name + '_' + modvar.name)»');
-        ModUtil::setVar(«appName()», «modvar.name.formatForCode()», (($sessionValue <> false) ? «EXPAND ModVarValFromSession FOR modvar» : «EXPAND ModVarValSession2Mod FOR modvar»));
+        $this->setVar('«modvar.name.formatForCode()»', (($sessionValue <> false) ? «EXPAND ModVarValFromSession FOR modvar» : «EXPAND ModVarValSession2Mod FOR modvar»));
         SessionUtil::delVar(«formatForCode(name + '_' + modvar.name)»);
 «ELSE-»
-        $this->setVar('«appName()»', '«modvar.name.formatForCode()»', «EXPAND ModVarValDirect2Mod FOR modvar»);
+        $this->setVar('«modvar.name.formatForCode()»', «EXPAND ModVarValDirect2Mod FOR modvar»);
 «ENDIF-»
 «ENDFOREACH-»
 «ENDIF-»
@@ -177,12 +177,12 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «EXPAND RemoveBehaviors FOREACH models.entities-»
 «LET models.getJoinRelations() AS joinRelations-»
 «IF !joinRelations.isEmpty-»
-            // remove all foreign keys and indexes
+            // Remove all foreign keys and indexes
 «EXPAND RemoveForeignKey FOREACH joinRelations-»
 «ENDIF-»
 
 «ENDLET-»
-            // remove tables
+            // Remove tables
 «EXPAND RemoveTable FOREACH models.entities-»
         } catch (Exception $e) {
             if (System::isDevelopmentMode()) {
