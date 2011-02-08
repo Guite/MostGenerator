@@ -24,7 +24,7 @@ function «prefix()»InitNestedSetView(ot, hasNodes, useMultipleRoots)
 {
     if (!hasNodes || (useMultipleRoots && $('z-nestedset-addroot'))) {
         $('z-nestedset-addroot').observe('click', function(event) {
-            «prefix()»PerformNestedSetOperation(ot, 'addRootNode');
+            «prefix()»PerformNestedSetOperation(ot, 1, 'addRootNode');
             Event.stop(event);
         }).show();
     }

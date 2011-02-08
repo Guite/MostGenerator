@@ -177,7 +177,7 @@
 
         foreach ($treeObject->fetchRoots() as $rootNode) {
             $options = array('root_id' => $rootNode->$rootColumnName);
-            $trees[] = $treeObject->fetchTree($options, $fetchType);
+            $trees[$rootNode->$rootColumnName] = $treeObject->fetchTree($options, $fetchType);
         }
 
         return $trees;

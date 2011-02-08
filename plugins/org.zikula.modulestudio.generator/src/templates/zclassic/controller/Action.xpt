@@ -99,8 +99,14 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
         $tpl = FormUtil::getPassedValue('tpl', '', 'GET', FILTER_SANITIZE_STRING);
         if ($tpl == 'nestedSet') {
-            $objectData = $objectCollection->selectTree();
-            $this->view->assign('items', $objectData);
+            $useMultipleRoots = method_exists($objectCollection, 'selectAllTrees');
+            $this->view->assign('useMultipleRoots', $useMultipleRoots);
+            if ($useMultipleRoots) {
+                $this->view->assign('trees', $objectCollection->selectAllTrees());
+            }
+            else {
+                $this->view->assign('items', $objectCollection->selectTree());
+            }
 
             // fetch and return the appropriate template
             return «appName»_Util::processViewTemplate($this->view, '«controller.name()»', $objectType, 'view', $args);
