@@ -55,6 +55,9 @@ cached boolean hasUserFields(Application this) :
 cached boolean hasImageFields(Application this) :
     models.entities.exists(e|e.hasImageFields());
 
+cached boolean hasNestedSets(Application this) :
+    models.entities.exists(e|e.nestedSet);
+
 cached getUserFields(Application this) :
     models.entities.fields.typeSelect(UserField);
 
@@ -64,6 +67,8 @@ cached boolean hasUploads(Application this) :
 cached getUploadEntities(Application this) :
     models.entities.select(e|e.fields.typeSelect(UploadField).size > 0);
 
+cached getNestedSetEntities(Application this) :
+    models.entities.select(e|e.nestedSet);
 
 
 cached boolean hasEditActions(Application this) :
