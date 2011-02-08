@@ -36,8 +36,14 @@ listType:
             {$createTitle}
         </a>
     {/checkpermissionblock}
-
 «ENDIF»
+«IF nestedSet-»
+        {gt text='Switch to hierarchy view' assign='switchTitle'}
+        <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«objName»' tpl='nestedSet'}" title="{$switchTitle}" class="«appName.formatForDB()»IconViewHierarchy">
+            {$switchTitle}
+        </a>
+«ENDIF-»
+
 «IF listType == 0-»
 <ul>
 «ELSEIF listType == 1-»

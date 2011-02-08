@@ -35,12 +35,21 @@ div.«appName().formatForDB()»RightBox p.manageLink {
 }
 
 .«appName().formatForDB()»IconNew,
+«IF hasNestedSets()-»
+.«appName().formatForDB()»IconViewTable,
+.«appName().formatForDB()»IconViewHierarchy,
+«ENDIF-»
 div.«appName().formatForDB()»RightBox p.manageLink a {
     background: url("../../../images/icons/extrasmall/edit_add.gif") no-repeat scroll 0 50% transparent;
     display: block;
     margin: 1em 0;
     padding: 0 0 0 20px;
 }
+«IF hasNestedSets()-»
+.«appName().formatForDB()»IconViewTable, .«appName().formatForDB()»IconViewHierarchy {
+    background-image: url("../../../images/icons/extrasmall/window_list.gif");
+}
+«ENDIF-»
 «EXPAND ValidationStyles-»
 «EXPAND AutoCompletion-»
 «ENDDEFINE»

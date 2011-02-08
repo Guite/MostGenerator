@@ -118,6 +118,72 @@
         // get result from the model
         return $this->_intTable()->selectCount($where);
     }
+«IF nestedSet-»
+
+    /**
+     * Get tree object for managing the nested set.
+     *
+     * @return Doctrine_Doctrine_Tree_NestedSet tree object reference.
+     */
+    public function getTreeObject()
+    {
+        return $this->_intTable()->getTree();
+    }
+
+    /**
+     * Select tree of «nameMultiple.formatForCode()».
+     *
+«IF nestedSetHasManyRoots-»
+     * @param integer $rootId         Optional id of root node to use as a branch, defaults to 0 which corresponds to the whole tree.
+«ENDIF-»
+     * @param boolean $asArray        Whether to return the result as array instead as record object (optional) (default=true).
+     *
+     * @return array|Doctrine_Doctrine_Tree_NestedSet retrieved data array or tree objects containing retrieved Doctrine_Node_NestedSet instances.
+     */
+    public function selectTree(«IF nestedSetHasManyRoots-»$rootId = 0, «ENDIF»$asArray = false)
+    {
+        // get reference to tree object
+        $treeObject = $this->getTreeObject();
+        $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
+«IF nestedSetHasManyRoots-»
+
+        // return branch if we have given a certain root
+        if ($rootId > 0) {
+            $root = $treeObject->fetchRoot($rootId);
+            return $treeObject->fetchBranch($root->getId(), array(), $fetchType);
+        }
+«ENDIF-»
+
+        // «IF nestedSetHasManyRoots-»otherwise «ENDIF-»return the whole tree
+        return $treeObject->fetchTree(array(), $fetchType);
+/** TODO: introduce selection with relations */
+    }
+«ENDIF-»
+«IF nestedSetHasManyRoots-»
+
+    /**
+     * Select all trees at once.
+     *
+     * @param boolean $asArray        Whether to return the result as array instead as record object (optional) (default=true).
+     *
+     * @return array list of retrieved data arrays or tree objects containing retrieved Doctrine_Node_NestedSet instances.
+     */
+    public function selectAllTrees($asArray = false)
+    {
+        $trees = array();
+        $treeObject = $this->_intTable()->getTree();
+        $rootColumnName = $treeObject->getAttribute('rootColumnName');
+        $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
+
+        foreach ($treeObject->fetchRoots() as $rootNode) {
+            $options = array('root_id' => $rootNode->$rootColumnName);
+            $trees[] = $treeObject->fetchTree($options, $fetchType);
+        }
+
+        return $trees;
+/** TODO: introduce selection with relations */
+    }
+«ENDIF-»
 
     /**
      * Convenience method to get table managed by record.

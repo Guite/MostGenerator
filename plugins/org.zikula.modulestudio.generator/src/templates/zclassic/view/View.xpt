@@ -14,6 +14,7 @@
 «ENDIF-»
 «IF controller.hasActions('view')-»
     «EXPAND Pages::View::Impl(appName, controller, 3) FOREACH models.entities-»
+    «EXPAND Pages::ViewHierarchy::Impl(appName, controller) FOREACH getNestedSetEntities()-»
     «EXPAND Pages::Export::Csv::Root(appName, controller) FOREACH models.entities-»
     «EXPAND Pages::Feed::Rss::Root(appName, controller) FOREACH models.entities-»
     «EXPAND Pages::Feed::Atom::Root(appName, controller) FOREACH models.entities-»

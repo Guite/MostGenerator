@@ -78,7 +78,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
      */
     public function install()
     {
-        // Create all tables from according model definitions
+        // create all tables from according model definitions
         try {
             DoctrineUtil::createTablesFromModels('«appName()»');
         } catch (Exception $e) {
@@ -89,7 +89,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         }
 
 «IF !models.variables.isEmpty-»
-        // Set up all our vars with initial values
+        // set up all our vars with initial values
 «FOREACH models.variables.vars AS modvar-»
 «IF interactiveInstallation == true-»
         $sessionValue = SessionUtil::getVar('«formatForCode(name + '_' + modvar.name)»');
@@ -101,21 +101,21 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDFOREACH-»
 «ENDIF-»
 
-        // Register persistent event handlers
+        // register persistent event handlers
         $this->registerPersistentEventHandlers();
 
-        // Register hook subscriber bundles
+        // register hook subscriber bundles
         HookUtil::registerHookSubscriberBundles($this->version);
 «REM»TODO see #115
         // Register hook provider bundles
         HookUtil::registerHookProviderBundles($this->version);
 «ENDREM»
 
-        // Create the default data for «appName()»
+        // create the default data for «appName()»
         //$this->defaultdata();
         // TODO: deactivated for now because constraints prevent data creation in random order (see #64)
 
-        // Initialisation successful
+        // initialisation successful
         return true;
     }
 «ENDDEFINE»
@@ -159,7 +159,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     */
 «REM»http://www.doctrine-project.org/projects/orm/1.2/docs/manual/migrations/en«ENDREM»
 
-        // Update successful
+        // update successful
         return true;
     }
 «ENDDEFINE»
@@ -177,12 +177,12 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «EXPAND RemoveBehaviors FOREACH models.entities-»
 «LET models.getJoinRelations() AS joinRelations-»
 «IF !joinRelations.isEmpty-»
-            // Remove all foreign keys and indexes
+            // remove all foreign keys and indexes
 «EXPAND RemoveForeignKey FOREACH joinRelations-»
 «ENDIF-»
 
 «ENDLET-»
-            // Remove tables
+            // remove tables
 «EXPAND RemoveTable FOREACH models.entities-»
         } catch (Exception $e) {
             if (System::isDevelopmentMode()) {
@@ -191,11 +191,11 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
             return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %1$s module.', array($this->getName())));
         }
 
-        // Unregister event handlers
+        // unregister persistent event handlers
         EventUtil::unregisterPersistentModuleHandlers('«appName()»');
 
 «IF !models.variables.isEmpty-»
-        // Remove all module vars
+        // remove all module vars
         $this->delVars();
 
 «ENDIF-»
