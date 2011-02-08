@@ -103,7 +103,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
             $this->view->assign('items', $objectData);
 
             // fetch and return the appropriate template
-            return AdShare_Util::processViewTemplate($this->view, '«controller.name()»', $objectType, 'view', $args);
+            return «appName»_Util::processViewTemplate($this->view, '«controller.name()»', $objectType, 'view', $args);
         }
 
         // parameter for used sorting field
