@@ -1,0 +1,117 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«DEFINE Root FOR Application-»
+«FILE viewPluginFilePath(this, 'function', 'TreeJS')-»«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * The «appName().formatForDB()»TreeJS plugin delivers the html output for a JS tree based on a given nested set.
+ *
+ * Available parameters:
+ *   - assign:   If set, the results are assigned to the corresponding variable instead of printed out.
+ *
+ * @param  array     $params  All attributes passed to this function from the template.
+ * @param  Form_View $view    Reference to the view object.
+ *
+ * @return string The output of the plugin.
+ */
+function smarty_function_«appName().formatForDB()»TreeJS($params, $view)
+{
+    if (!isset($params['objectType']) || empty($params['objectType'])) {
+        $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName().formatForDB()»TreeJS', 'objectType')));
+        return false;
+    }
+
+    if (!isset($params['tree']) || empty($params['tree'])) {
+        $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName().formatForDB()»TreeJS', 'tree')));
+        return false;
+    }
+
+    if (!isset($params['controller']) || empty($params['controller'])) {
+        $params['controller'] = 'user';
+    }
+
+    if (!isset($params['root']) || empty($params['root'])) {
+        $params['root'] = 1;
+    }
+
+    $controllerHasEditAction = false;
+    switch ($params['controller']) {
+«FOREACH controllers.controllers AS controller-»
+«IF controller.hasActions('edit')-»
+        case '«controller.name()»': $controllerHasEditAction = true; break;
+«ENDIF-»
+«ENDFOREACH-»
+    }
+
+    $idField = strtolower($params['objectType']) . 'id';
+
+    $titleFieldName = $descriptionFieldName = '';
+
+    switch ($params['objectType']) {
+«FOREACH getNestedSetEntities() AS entity-»
+                case '«entity.name.formatForCode()»':
+                        $titleFieldName = '«entity.getLeadingField().actualFieldName().formatForCode()»';
+«LET entity.fields.typeSelect(TextField).reject(e|e.leading) AS textFields-»
+«IF !textFields.isEmpty-»
+                        $descriptionFieldName = '«textFields.get(0).actualFieldName().formatForCode()»';
+«ELSE-»
+«LET entity.fields.typeSelect(StringField).reject(e|e.leading) AS textFields-»
+«IF !textFields.isEmpty-»
+                        $descriptionFieldName = '«textFields.get(0).actualFieldName().formatForCode()»';
+«ENDIF-»
+«ENDLET-»
+«ENDIF-»
+«ENDLET-»
+                        break;
+«ENDFOREACH-»
+    }
+
+    $result = array();
+
+    foreach ($params['tree'] as $item) {
+        $url = (($controllerHasEditAction) ? ModUtil::url('«appName()»', $params['controller'], 'edit', array('ot' => $params['objectType'], $idField => $item[$idField])) : '');
+
+        $node = $item->getNode();
+
+        $parentId = 0;
+        if (!$node->isRoot()) {
+            $parentItem = $node->getParent();
+            $parentId = $parentItem[$idField];
+        }
+
+        $result[] = array('id' => $item[$idField],
+                          'parent_id' => $parentId,
+                          'name' => $item[$titleFieldName],
+                          'title' => $item[$descriptionFieldName],
+                        //'icon' => '',
+                        //'class' => '',
+                          'active' => true,
+                        //'expanded' => null,
+                          'href' => $url);
+    }
+
+    $tree = new Zikula_Tree();
+    $tree->setOption('id', 'itemtree' . $params['root']);
+    $tree->setOption('treeClass', 'z-nestedsetlist');
+    $tree->setOption('nodePrefix', 'tree' . $params['root'] . 'node_');
+    $tree->setOption('sortable', true);
+
+    // disable drag and drop for root category
+    $tree->setOption('disabled', array(1));
+
+    $tree->loadArrayData($result);
+
+    $result = $tree->getHTML();
+
+    if (array_key_exists('assign', $params)) {
+        $view->assign($params['assign'], $result);
+        return;
+    }
+    return $result;
+}
+«ENDFILE»
+«ENDDEFINE»
+
