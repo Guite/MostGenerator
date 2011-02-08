@@ -80,9 +80,12 @@
 «FOREACH getDerivedFields().reject(e|e.primaryKey || e.metaType == ArrayField || e.metaType == ObjectField) AS field-»
 «REM»No input fields for foreign keys, relations are processed further down«ENDREM»«""-»
 «IF incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == field.name.formatForDB()).isEmpty-»
+«REM»No input fields for root column if using nested sets with multiple roots«ENDREM»
+«IF !nestedSet || !nestedSetHasManyRoots || field.actualFieldName() != nestedSetRootField-»
         <div class="z-formrow">
             «EXPAND FormComponents::SimpleFields::FormRow FOR field»«""-»
         </div>
+«ENDIF-»
 «ENDIF-»
 «ENDFOREACH-»
 «IF geographical-»
