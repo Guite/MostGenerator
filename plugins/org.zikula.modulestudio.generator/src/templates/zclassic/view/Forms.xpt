@@ -32,6 +32,10 @@
 
 {include file='«controller.name()»/header.tpl'}
 {pageaddvar name='javascript' value='modules/«app.appName()»/javascript/«app.appName()»_editFunctions.js'}
+«IF hasColourFields()-»
+{pageaddvar name='javascript' value='javascript/picky_color/picky_color.js'}
+{pageaddvar name='stylesheet' value='javascript/picky_color/picky_color.css'}
+«ENDIF-»
 
 {if $mode eq 'edit'}
     {gt text='Edit «name.formatForDisplay()»' assign='templateTitle'}
