@@ -55,6 +55,9 @@ cached boolean hasUserFields(Application this) :
 cached boolean hasImageFields(Application this) :
     models.entities.exists(e|e.hasImageFields());
 
+cached boolean hasColourFields(Application this) :
+    models.entities.exists(e|e.hasColourFields());
+
 cached boolean hasNestedSets(Application this) :
     models.entities.exists(e|e.nestedSet);
 
@@ -132,6 +135,10 @@ cached boolean hasImageFields(Entity this) :
 cached getImageFields(Entity this) :
     getUploadFields().select(e|e.allowedExtensions.split(", ").forAll(ext|ext == 'gif' || ext == 'jpeg' || ext == 'jpg' || ext == 'png'));
 
+cached boolean hasColourFields(Entity this) :
+    !getColourFields().isEmpty;
+cached getColourFields(Entity this) :
+    getDerivedFields().typeSelect(StringField).select(e|e.htmlcolor);
 
 
 cached String idField(Entity entity) :

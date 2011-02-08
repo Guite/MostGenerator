@@ -23,7 +23,7 @@
     </a>
 «IF !many»</h4>
 «ENDIF-»
-    <script type="text/javascript">
+    <script type="text/javascript" charset="utf-8">
     /* <![CDATA[ */
         document.observe('dom:loaded', function() {
             «app.prefix()»InitInlineWindow($('«name.formatForCode()»Item{{$item.«idField()»}}Display'), '{{$item.«getLeadingField().actualFieldName().formatForCode()»|replace:"'":""}}');

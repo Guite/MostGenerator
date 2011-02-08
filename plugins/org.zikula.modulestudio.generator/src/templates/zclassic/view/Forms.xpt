@@ -152,7 +152,7 @@
 {img src='xedit.gif' modname='core' set='icons/extrasmall' assign='editImageArray'}
 {img src='editdelete.gif' modname='core' set='icons/extrasmall' assign='removeImageArray'}
 
-<script type="text/javascript">
+<script type="text/javascript" charset="utf-8">
 /* <![CDATA[ */
     var editImage = '<img src="{{$editImageArray.src}}" width="16" height="16" alt="" />';
     var removeImage = '<img src="{{$removeImageArray.src}}" width="16" height="16" alt="" />';
@@ -248,7 +248,7 @@
         <script type="text/javascript" src="{getbaseurl}modules/«app.appName()»/javascript/«app.appName()»_editFunctions.js"></script>
     </head>
     <body>
-        <script type="text/javascript">
+        <script type="text/javascript" charset="utf-8">
         /* <![CDATA[ */
             // close window from parent document
             document.observe('dom:loaded', function() {

@@ -50,6 +50,11 @@ div.«appName().formatForDB()»RightBox p.manageLink a {
     background-image: url("../../../images/icons/extrasmall/window_list.gif");
 }
 «ENDIF-»
+«IF hasColourFields()-»
+.«appName().formatForDB()»ColourPicker {
+    cursor: pointer;
+}
+«ENDIF-»
 «EXPAND ValidationStyles-»
 «EXPAND AutoCompletion-»
 «ENDDEFINE»

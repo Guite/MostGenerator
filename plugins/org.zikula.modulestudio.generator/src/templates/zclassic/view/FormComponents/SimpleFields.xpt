@@ -87,8 +87,6 @@
             {* TODO: support country fields in Zikula (see http://code.zikula.org/core/ticket/2446 for more information) *}
 «ELSEIF ipaddress-»
             {* TODO: support ip address fields in Zikula *}
-«ELSEIF htmlcolor-»
-            {* TODO: support colour fields in Zikula (see http://code.zikula.org/core/ticket/2448 for more information) *}
 «ELSEIF usstate-»
             {* TODO: support us state fields in Zikula *}
 «ENDIF-»
@@ -97,6 +95,18 @@
 «ELSE-»
             {formtextinput group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=«length»«EXPAND Validation::FieldValidationCssClass»}
 «REM»TODO: textMode="password" for password input fields«ENDREM»«""-»
+«ENDIF-»
+«IF htmlcolor-»
+            <script type="text/javascript" charset="utf-8">
+                /* <![CDATA[ */
+                var namePicky = new PickyColor({
+                    field: '«actualFieldName().formatForCode()»',
+                    color: '{{$«entity.name.formatForCode()».«actualFieldName().formatForCode()»}}',
+                    colorWell: '«actualFieldName().formatForCode()»',
+                    closeText: '{{gt text='Close'}}'
+                })
+                /* ]]> */
+            </script>
 «ENDIF-»
 «ENDDEFINE»
 

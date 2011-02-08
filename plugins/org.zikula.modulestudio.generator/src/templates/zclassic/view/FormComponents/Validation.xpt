@@ -37,6 +37,7 @@
 «DEFINE FieldValidationCssClass FOR AbstractIntegerField-» cssClass='«IF mandatory»required «ENDIF»validate-digits«IF unique» validate-unique«ENDIF»'«ENDDEFINE»
 «DEFINE FieldValidationCssClass FOR DecimalField-» cssClass='«IF mandatory»required «ENDIF»validate-number«IF unique» validate-unique«ENDIF»'«ENDDEFINE»
 «DEFINE FieldValidationCssClass FOR FloatField-» cssClass='«IF mandatory»required «ENDIF»validate-number«IF unique» validate-unique«ENDIF»'«ENDDEFINE»
+«DEFINE FieldValidationCssClass FOR StringField-» cssClass='«IF mandatory»required«IF unique» «ENDIF»«ENDIF»«IF unique»validate-unique«ENDIF»«IF htmlcolor-» «entity.container.application.appName().formatForDB()»ColourPicker«ENDIF»'«ENDDEFINE»
 «DEFINE FieldValidationCssClass FOR EmailField-» cssClass='«IF mandatory»required «ENDIF»validate-email«IF unique» validate-unique«ENDIF»'«ENDDEFINE»
 «DEFINE FieldValidationCssClass FOR UrlField-» cssClass='«IF mandatory»required «ENDIF»validate-url«IF unique» validate-unique«ENDIF»'«ENDDEFINE»
 
