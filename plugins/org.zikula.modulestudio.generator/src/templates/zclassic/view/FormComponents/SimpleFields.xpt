@@ -98,14 +98,14 @@
 «ENDIF-»
 «IF htmlcolor-»
             <script type="text/javascript" charset="utf-8">
-                /* <![CDATA[ */
+            /* <![CDATA[ */
                 var namePicky = new PickyColor({
                     field: '«actualFieldName().formatForCode()»',
                     color: '{{$«entity.name.formatForCode()».«actualFieldName().formatForCode()»}}',
                     colorWell: '«actualFieldName().formatForCode()»',
                     closeText: '{{gt text='Close'}}'
                 })
-                /* ]]> */
+            /* ]]> */
             </script>
 «ENDIF-»
 «ENDDEFINE»
