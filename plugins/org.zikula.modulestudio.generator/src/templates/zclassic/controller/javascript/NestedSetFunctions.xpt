@@ -40,8 +40,6 @@ function «prefix()»InitTreeNodes(ot, controller, rootId)
 {
     var otLower = ot.toLowerCase();
     $$('#itemtree' + rootId + ' a').each(function(elem) {
-        currentNodeId = elem.up().id.replace('tree' + rootId + 'node_', '');
-
         // get reference to list item
         var liRef = elem.up();
         var isRoot = (liRef.id == 'tree' + rootId + 'node_' + rootId);
@@ -55,12 +53,14 @@ function «prefix()»InitTreeNodes(ot, controller, rootId)
         contextMenu.addItem({
             label: Zikula.__('Edit'),
             callback: function() {
+                currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
                 window.location = Zikula.Config.baseURL + 'index.php?module=«appName()»&type=' + controller + '&func=edit&ot=' + ot + '&' + otLower + 'id=' + currentNodeId;
             }
         });
         contextMenu.addItem({
             label: Zikula.__('Add child node'),
             callback: function() {
+                currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
                 «prefix()»PerformNestedSetOperation(ot, rootId, 'addChildNode');
             }
         });
@@ -69,6 +69,7 @@ function «prefix()»InitTreeNodes(ot, controller, rootId)
             callback: function() {
                 startNodeDeletion = function(res) {
                     if (res) {
+                        currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
                         «prefix()»PerformNestedSetOperation(ot, rootId, 'deleteNode');
                     }
                 }
@@ -84,6 +85,7 @@ function «prefix()»InitTreeNodes(ot, controller, rootId)
                 return !isRoot && !liRef.hasClassName('z-tree-first'); // has previous sibling
             },
             callback: function() {
+                currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
                 «prefix()»PerformNestedSetOperation(ot, rootId, 'moveNodeUp');
             }
         });
@@ -93,6 +95,7 @@ function «prefix()»InitTreeNodes(ot, controller, rootId)
                 return !isRoot && !liRef.hasClassName('z-tree-last'); // has next sibling
             },
             callback: function() {
+                currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
                 «prefix()»PerformNestedSetOperation(ot, rootId, 'moveNodeDown');
             }
         });
@@ -102,6 +105,7 @@ function «prefix()»InitTreeNodes(ot, controller, rootId)
                 return !isRoot;
             },
             callback: function() {
+                currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
                 «prefix()»PerformNestedSetOperation(ot, rootId, 'moveNodeTo');
             }
         });
@@ -146,9 +150,10 @@ function «prefix()»PerformNestedSetOperation(ot, rootId, op)
                     return;
                 }
                 var data = req.getData();
-                if (data.message) {
+                /*if (data.message) {
                     Zikula.UI.Alert(data.message, Zikula.__('Success'));
-                }
+                }*/
+                window.location.reload();
             }
         }
     );
