@@ -42,12 +42,11 @@ class «appName()»_Base_Factory
      *
      * @param string  $objectType     Name of treated entity type.
      * @param string  $context        Usage context (allowed values: controllerAction, actionHandler, block, contentType, mailz).
-     * @param boolean $useCollection  Whether to return a business or an entity class instance.
      * @param array   $args           Additional arguments, for example array('controller' => 'admin', 'action' => 'view');.
      *
      * @return mixed Business entity class instance.
      */
-    public static function getBusinessEntity($objectType = '«getLeadingEntity().name.formatForCode()»', $context = '', $useCollection = false, $args = array())
+    public static function getBusinessEntity($objectType = '«getLeadingEntity().name.formatForCode()»', $context = '', $args = array())
     {
         return self::getBusinessObjectCommon(false, $objectType, $context, $args);
     }
