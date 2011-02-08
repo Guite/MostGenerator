@@ -19,6 +19,9 @@
 «IF !models.getJoinRelations().isEmpty-»
     «EXPAND javascript::DisplayFunctions::Root»
 «ENDIF-»
+«IF hasNestedSets()-»
+    «EXPAND javascript::NestedSetFunctions::Root»
+«ENDIF-»
 «ENDDEFINE»
 
 

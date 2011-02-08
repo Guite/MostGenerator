@@ -97,7 +97,7 @@ function smarty_function_«appName().formatForDB()»TreeJS($params, $view)
     $tree->setOption('id', 'itemtree' . $params['root']);
     $tree->setOption('treeClass', 'z-nestedsetlist');
     $tree->setOption('nodePrefix', 'tree' . $params['root'] . 'node_');
-    $tree->setOption('sortable', true);
+    $tree->setOption('sortable', ((isset($params['sortable']) && $params['sortable']) ? true : false));
 
     // disable drag and drop for root category
     $tree->setOption('disabled', array(1));

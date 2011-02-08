@@ -1,0 +1,157 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«REM»start point for the javascript file with display functionality«ENDREM»
+«DEFINE Root FOR Application-»
+«FILE getAppSourcePath(appName()).msconcat('javascript/').msconcat(appName()).msconcat('_nestedSet.js')-»
+<!--
+
+«EXPAND InitNestedSetView-»
+«EXPAND InitTreeNodes-»
+«EXPAND PerformNestedSetOperation-»
+
+-->
+«ENDFILE»
+«ENDDEFINE»
+
+«DEFINE InitNestedSetView FOR Application-»
+/**
+ * Initialise nested set view.
+ */
+function «prefix()»InitNestedSetView(ot, hasNodes, useMultipleRoots)
+{
+    if (!hasNodes || (useMultipleRoots && $('z-nestedset-addroot'))) {
+        $('z-nestedset-addroot').observe('click', function(event) {
+            «prefix()»PerformNestedSetOperation(ot, 'addRootNode');
+            Event.stop(event);
+        }).show();
+    }
+}
+
+«ENDDEFINE»
+
+«DEFINE InitTreeNodes FOR Application-»
+/**
+ * Initialise event handlers for all nodes of a given tree root.
+ */
+function «prefix()»InitTreeNodes(ot, controller, rootId)
+{
+    var otLower = ot.toLowerCase();
+    $$('#itemtree' + rootId + ' a').each(function(elem) {
+        currentNodeId = elem.up().id.replace('tree' + rootId + 'node_', '');
+
+        // get reference to list item
+        var liRef = elem.up();
+        var isRoot = (liRef.id == 'tree' + rootId + 'node_' + rootId);
+
+        // define a link id
+        elem.id = liRef.id + 'link';
+
+        // and use it to attach a context menu
+        var contextMenu = new Control.ContextMenu(elem.id, { leftClick: true, animation: false });
+
+        contextMenu.addItem({
+            label: Zikula.__('Edit'),
+            callback: function() {
+                window.location = Zikula.Config.baseURL + 'index.php?module=«appName()»&type=' + controller + '&func=edit&ot=' + ot + '&' + otLower + 'id=' + currentNodeId;
+            }
+        });
+        contextMenu.addItem({
+            label: Zikula.__('Add child node'),
+            callback: function() {
+                «prefix()»PerformNestedSetOperation(ot, rootId, 'addChildNode');
+            }
+        });
+        contextMenu.addItem({
+            label: Zikula.__('Delete node'),
+            callback: function() {
+                startNodeDeletion = function(res) {
+                    if (res) {
+                        «prefix()»PerformNestedSetOperation(ot, rootId, 'deleteNode');
+                    }
+                }
+                Zikula.UI.IfConfirmed(
+                    Zikula.__('Do you really want to remove this node including all child nodes?'),
+                    Zikula.__('Confirm action'),
+                    startNodeDeletion);
+            }
+        });
+        contextMenu.addItem({
+            label: Zikula.__('Move up'),
+            condition: function() {
+                return !isRoot && !liRef.hasClassName('z-tree-first'); // has previous sibling
+            },
+            callback: function() {
+                «prefix()»PerformNestedSetOperation(ot, rootId, 'moveNodeUp');
+            }
+        });
+        contextMenu.addItem({
+            label: Zikula.__('Move down'),
+            condition: function() {
+                return !isRoot && !liRef.hasClassName('z-tree-last'); // has next sibling
+            },
+            callback: function() {
+                «prefix()»PerformNestedSetOperation(ot, rootId, 'moveNodeDown');
+            }
+        });
+        contextMenu.addItem({
+            label: Zikula.__('Move'),
+            condition: function() {
+                return !isRoot;
+            },
+            callback: function() {
+                «prefix()»PerformNestedSetOperation(ot, rootId, 'moveNodeTo');
+            }
+        });
+    });
+}
+
+«ENDDEFINE»
+
+«DEFINE PerformNestedSetOperation FOR Application-»
+/**
+ * Helper function to start several different ajax actions
+ * performing nested set related amendments and operations.
+ */
+function «prefix()»PerformNestedSetOperation(ot, rootId, op)
+{
+    var pars = 'ot=' + ot + '&op=' + op;
+
+    if (op != 'addRootNode') {
+        pars += '&root=' + rootId;
+
+        if (!currentNodeId) {
+            Zikula.UI.Alert('Invalid node id', Zikula.__('Error'));
+        }
+        pars += '&' + ((op == 'addChildNode') ? 'pid' : 'id') + '=' + currentNodeId;
+
+        if (op == 'moveNodeUp') {
+            pars += '&direction=up';
+        }
+        else if (op == 'moveNodeDown') {
+            pars += '&direction=down';
+        }
+    }
+
+    new Zikula.Ajax.Request(
+        Zikula.Config.baseURL + 'ajax.php?module=«appName()»&func=handleNestedSetOperation',
+        {
+            method: 'post',
+            parameters: pars,
+            onComplete: function(req) {
+                if (!req.isSuccess()) {
+                    Zikula.UI.Alert(req.getMessage(), Zikula.__('Error'));
+                    return;
+                }
+                var data = req.getData();
+                if (data.message) {
+                    Zikula.UI.Alert(data.message, Zikula.__('Success'));
+                }
+            }
+        }
+    );
+}
+
+«ENDDEFINE»

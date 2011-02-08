@@ -11,5 +11,8 @@
 «EXPAND Plugins::ImageThumb::Root-»
 «EXPAND Plugins::GetFileSize::Root-»
 «ENDIF-»
+«IF hasNestedSets()-»
+«EXPAND Plugins::TreeJS::Root-»
+«ENDIF-»
 «ENDDEFINE»
 
