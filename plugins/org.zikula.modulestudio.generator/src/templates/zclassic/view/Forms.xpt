@@ -100,7 +100,7 @@
     </fieldset>
 «IF standardFields-»
     {if $mode ne 'create'}
-        {include file='«controller.name()»/include_metadata_edit.tpl'}
+        {include file='«controller.name()»/include_metadata_edit.tpl' obj=$«name.formatForDB()»}
     {/if}
 «ENDIF-»
 «EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, true, true) FOREACH incoming.typeSelect(JoinRelationship)-»
