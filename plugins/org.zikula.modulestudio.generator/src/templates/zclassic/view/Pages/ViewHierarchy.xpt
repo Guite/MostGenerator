@@ -44,10 +44,12 @@
 
 {if $useMultipleRoots}
     {foreach key='rootId' item='treeNodes' from=$trees}
-        {include file='admin/category/view_nestedSet_items.tpl' rootId=$rootId items=$treeNodes}
+        {include file='«controller.name()»/«name.formatForDB()»/view_nestedSet_items.tpl' rootId=$rootId items=$treeNodes}
+    {foreachelse}
+        {include file='«controller.name()»/«name.formatForDB()»/view_nestedSet_items.tpl' rootId=1 items=null}
     {/foreach}
 {else}
-    {include file='admin/category/view_nestedSet_items.tpl' rootId=1 items=$items}
+    {include file='«controller.name()»/«name.formatForDB()»/view_nestedSet_items.tpl' rootId=1 items=$items}
 {/if}
 <br style="clear: left" />
 
@@ -65,7 +67,9 @@
 
 <div id="«name.formatForDB()»_nestedset{$rootId}" class="z-nestedsetcontainer">
     <div id="nestedsetitems{$rootId}" class="z-nestedsetitems">
-        {«appPrefix»TreeJS objectType='«name.formatForCode()»' tree=$items controller='«controller.name()»' root=$rootId sortable=true}
+    {if $hasNodes}
+        {«appName.formatForDB()»TreeJS objectType='«name.formatForCode()»' tree=$items controller='«controller.name()»' root=$rootId sortable=true}
+    {/if}
     </div>
 </div>
 
@@ -74,8 +78,10 @@
 /* <![CDATA[ */
     document.observe('dom:loaded', function() {
         «appPrefix»InitNestedSetView('«name.formatForCode()»', {{if $hasNodes}}true{{else}}false{{/if}}, true);
+    {{if $hasNodes}}
         «appPrefix»InitTreeNodes('«name.formatForCode()»', '«controller.name()»', '{{$rootId}}');
         Zikula.TreeSortable.trees.itemtree{{$rootId}}.config.onSave = «appPrefix»NestedSetSave;
+    {{/if}}
     });
 /* ]]> */
 </script>

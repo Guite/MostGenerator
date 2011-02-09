@@ -320,13 +320,34 @@
             $tree = $objectCollection->selectTree($rootId);
         }
 
+        $titleFieldName = $descriptionFieldName = '';
+
+        switch ($objectType) {
+«FOREACH app.getNestedSetEntities() AS entity-»
+                case '«entity.name.formatForCode()»':
+                        $titleFieldName = '«entity.getLeadingField().actualFieldName().formatForCode()»';
+«LET entity.fields.typeSelect(TextField).reject(e|e.leading) AS textFields-»
+«IF !textFields.isEmpty-»
+                        $descriptionFieldName = '«textFields.get(0).actualFieldName().formatForCode()»';
+«ELSE-»
+«LET entity.fields.typeSelect(StringField).reject(e|e.leading) AS textFields-»
+«IF !textFields.isEmpty-»
+                        $descriptionFieldName = '«textFields.get(0).actualFieldName().formatForCode()»';
+«ENDIF-»
+«ENDLET-»
+«ENDIF-»
+«ENDLET-»
+                        break;
+«ENDFOREACH-»
+        }
 
         switch ($op) {
             case 'addRootNode':
                             $objectData = $object->getNewArrayWithDefaultData();
-                            $objectData['name'] = $this->__('New root node');
-                            $objectData['description'] = $this->__('This is a new root node');
-                            $objectData['keywords'] = '';
+                            $objectData[$titleFieldName] = $this->__('New root node');
+                            if (!empty($descriptionFieldName)) {
+                                $objectData[$descriptionFieldName] = $this->__('This is a new root node');
+                            }
                             $object->merge($objectData);
                             // save new object to set the root id
                             $object->save();
@@ -343,9 +364,10 @@
 
                             $childObject = «app.appName()»_Factory::getBusinessEntity($objectType, 'controllerAction', false, $factoryArgs);
                             $objectData = $childObject->getNewArrayWithDefaultData();
-                            $objectData['name'] = $this->__('New child node');
-                            $objectData['description'] = $this->__('This is a new child node');
-                            $objectData['keywords'] = '';
+                            $objectData[$titleFieldName] = $this->__('New child node');
+                            if (!empty($descriptionFieldName)) {
+                                $objectData[$descriptionFieldName] = $this->__('This is a new child node');
+                            }
                             $childObject->merge($objectData);
 
                             $parentRecord = $object->selectById($parentId, false);
