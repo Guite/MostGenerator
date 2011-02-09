@@ -354,8 +354,11 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
     {
 «IF controller.hasActions('view')-»
         // redirect to the list of «nameMultiple.formatForCode()»
-        $url = ModUtil::url('«app.appName()»', '«controller.name()»', 'view',
-                                                             array('ot' => $this->objectType));
+        $viewArgs = array('ot' => $this->objectType);
+«IF nestedSet-»
+        $viewArgs['tpl'] = 'nestedSet';
+«ENDIF-»
+        $url = ModUtil::url('«app.appName()»', '«controller.name()»', 'view', $viewArgs);
 «ELSEIF controller.hasActions('main')-»
         // redirect to the main page
         $url = ModUtil::url('«app.appName()»', '«controller.name()»', 'main');
@@ -364,12 +367,18 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDIF-»
 
 «IF controller.hasActions('display')-»
+«IF nestedSet-»
+    /*
+«ENDIF-»
         if ($args['commandName'] != 'delete') {
             // redirect to the detail page of treated «name.formatForCode()»
             $url = ModUtil::url('«app.appName()»', '«controller.name()»', 'display',
                                                              array('ot' => $this->objectType,
                                                                    '«idField()»' => $this->«idField()»));
         }
+«IF nestedSet-»
+    */
+«ENDIF-»
 «ENDIF-»
         return $url;
     }
