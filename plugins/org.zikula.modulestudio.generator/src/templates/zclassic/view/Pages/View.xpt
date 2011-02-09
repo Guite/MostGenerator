@@ -31,10 +31,16 @@ listType:
 
 «IF controller.hasActions('edit')-»
     {checkpermissionblock component='«appName»::' instance='.*' level="ACCESS_ADD"}
+«IF nestedSet-»
+    {*
+«ENDIF-»
         {gt text='Create «name.formatForDisplay()»' assign='createTitle'}
         <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»'}" title="{$createTitle}" class="«appName.formatForDB()»IconNew">
             {$createTitle}
         </a>
+«IF nestedSet-»
+    *}
+«ENDIF-»
     {/checkpermissionblock}
 «ENDIF»
 «IF nestedSet-»
@@ -314,9 +320,15 @@ listType:
             <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»' «idField()»=$«objName».«idField()»}" title="{gt text='Edit'}">
                 {img src='xedit.gif' modname='core' set='icons/extrasmall' __alt='Edit'}
             </a>
+«IF nestedSet-»
+    {*
+«ENDIF-»
             <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»' astemplate=$«objName».«idField()»}" title="{gt text='Reuse for new item'}">
                 {img src='filesaveas.gif' modname='core' set='icons/extrasmall' __alt='Reuse'}
             </a>
+«IF nestedSet-»
+    *}
+«ENDIF-»
     {/checkpermissionblock}
 «ENDIF-»
 «IF controller.hasActions('delete')-»
