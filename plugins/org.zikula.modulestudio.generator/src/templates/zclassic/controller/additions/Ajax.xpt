@@ -255,6 +255,175 @@
         return new Zikula_Response_Ajax(array('isDuplicate' => $result));
     }
 «ENDIF-»
+«IF app.hasNestedSets()-»
 
+    /**
+     * Performs different operations on nested set trees.
+     *
+     * @param string $ot       Treated object type.
+     * @param string $op       The operation which should be performed.
+     *
+     * @return Zikula_Response_Ajax_Base
+     */
+    public function handleNestedSetOperation()
+    {
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_EDIT));
+
+«LET app.getNestedSetEntities() AS nestedSetEntities-»
+        // parameter specifying which type of objects we are treating
+        $objectType = DataUtil::convertFromUTF8(FormUtil::getPassedValue('ot', '«nestedSetEntities.get(0).name.formatForCode()»', 'POST', FILTER_SANITIZE_STRING));
+        // ensure that we use only object types with nested set behaviour enabled
+        if (!in_array($objectType, array(«FOREACH nestedSetEntities AS nestedSetEntity SEPARATOR ", "»'«nestedSetEntity.name.formatForCode()»'«ENDFOREACH»))) {
+            $objectType = '«nestedSetEntities.get(0).name.formatForCode()»';
+        }
+«ENDLET-»
+
+        $returnValue = array(
+            'data'    => array(),
+            'message' => ''
+        );
+
+        $op = DataUtil::convertFromUTF8(FormUtil::getPassedValue('op', '', 'POST', FILTER_SANITIZE_STRING));
+        if (!in_array($op, array('addRootNode', 'addChildNode', 'deleteNode', 'moveNode', 'moveNodeTo'))) {
+            LogUtil::registerError($this->__('Error: invalid operation.'));
+            throw new Zikula_Exception_Fatal();
+        }
+
+        // Get id of treated node
+        $id = 0;
+        if (!in_array($op, array('addRootNode', 'addChildNode'))) {
+            $id = (int) FormUtil::getPassedValue('id', 0, 'POST', FILTER_VALIDATE_INT);
+            if (!$id) {
+                LogUtil::registerError($this->__('Error: invalid node.'));
+                throw new Zikula_Exception_Fatal();
+            }
+        }
+
+        $factoryArgs = array('controller' => 'ajax', 'action' => 'HandleNestedSetOperation');
+
+        $object = «app.appName()»_Factory::getBusinessEntity($objectType, 'controllerAction', false, $factoryArgs);
+        $objectCollection = «app.appName()»_Factory::getBusinessCollection($objectType, 'controllerAction', $factoryArgs);
+
+        $rootId = 1;
+        $useMultipleRoots = method_exists($objectCollection, 'selectAllTrees');
+        if ($useMultipleRoots && !in_array($op, array('addRootNode'))) {
+            $rootId = (int) FormUtil::getPassedValue('root', 0, 'POST', FILTER_VALIDATE_INT);
+            if (!$rootId) {
+                LogUtil::registerError($this->__('Error: invalid root node.'));
+                throw new Zikula_Exception_Fatal();
+            }
+        }
+
+        // Select tree
+        $tree = null;
+        if (in_array($op, array('addRootNode'))) {
+            $tree = $objectCollection->selectTree($rootId);
+        }
+
+
+        switch ($op) {
+            case 'addRootNode':
+                            $objectData = $object->getNewArrayWithDefaultData();
+                            $objectData['name'] = $this->__('New root node');
+                            $objectData['description'] = $this->__('This is a new root node');
+                            $objectData['keywords'] = '';
+                            $object->merge($objectData);
+                            // save new object to set the root id
+                            $object->save();
+
+                            $getterName = 'get' . ucwords($objectType);
+                            $objectCollection->getTreeObject()->createRoot($object->$getterName());
+                            break;
+            case 'addChildNode':
+                            $parentId = (int) FormUtil::getPassedValue('pid', 0, 'POST', FILTER_VALIDATE_INT);
+                            if (!$parentId) {
+                                LogUtil::registerError($this->__('Error: invalid parent node.'));
+                                throw new Zikula_Exception_Fatal();
+                            }
+
+                            $childObject = «app.appName()»_Factory::getBusinessEntity($objectType, 'controllerAction', false, $factoryArgs);
+                            $objectData = $childObject->getNewArrayWithDefaultData();
+                            $objectData['name'] = $this->__('New child node');
+                            $objectData['description'] = $this->__('This is a new child node');
+                            $objectData['keywords'] = '';
+                            $childObject->merge($objectData);
+
+                            $parentRecord = $object->selectById($parentId, false);
+                            $getterName = 'get' . ucwords($objectType);
+                            $parentRecord->getNode()->addChild($childObject->$getterName());
+
+                            /** alternatives:
+                            $childNode = $childObject->$getterName()->getNode();
+                            $childNode->insertAsLastChildOf($parent);
+                            $childNode->insertAsFirstChildOf($parent);
+                            $childNode->insertAsPrevSiblingOf($sibling);
+                            $childNode->insertAsNextSiblingOf($sibling);
+                            $childNode->insertAsParentOf($anotherNode);
+                            */
+                            break;
+            case 'deleteNode':
+                            $record = $object->selectById($id, false);
+                            $record->getNode()->delete();
+                            break;
+            case 'moveNode':
+                            $moveDirection = FormUtil::getPassedValue('direction', '', 'POST', FILTER_SANITIZE_STRING);
+                            if (!in_array($moveDirection, array('up', 'down'))) {
+                                LogUtil::registerError($this->__('Error: invalid direction.'));
+                                throw new Zikula_Exception_Fatal();
+                            }
+
+                            $record = $object->selectById($id, false);
+                            $node = $record->getNode();
+
+                            if ($moveDirection == 'up') {
+                                $node->moveAsPrevSiblingOf($node->getPrevSibling());
+                            }
+                            else if ($moveDirection == 'down') {
+                                $node->moveAsNextSiblingOf($node->getNextSibling());
+                            }
+
+                            break;
+            case 'moveNodeTo':
+                            $moveDirection = FormUtil::getPassedValue('direction', '', 'POST', FILTER_SANITIZE_STRING);
+                            if (!in_array($moveDirection, array('after', 'before', 'bottom'))) {
+                                LogUtil::registerError($this->__('Error: invalid direction.'));
+                                throw new Zikula_Exception_Fatal();
+                            }
+
+                            $destId = (int) FormUtil::getPassedValue('destid', 0, 'POST', FILTER_VALIDATE_INT);
+                            if (!$destId) {
+                                LogUtil::registerError($this->__('Error: invalid destination node.'));
+                                throw new Zikula_Exception_Fatal();
+                            }
+
+                            $record = $object->selectById($id, false);
+                            $node = $record->getNode();
+
+                            $destObject = «app.appName()»_Factory::getBusinessEntity($objectType, 'controllerAction', false, $factoryArgs);
+                            $destRecord = $destObject->selectById($destId, false);
+
+                            if ($moveDirection == 'after') {
+                                $node->moveAsNextSiblingOf($destRecord);
+                            }
+                            elseif ($moveDirection == 'before') {
+                                $node->moveAsPrevSiblingOf($destRecord);
+                            }
+                            elseif ($moveDirection == 'bottom') {
+                                //$node->moveAsFirstChildOf($destRecord);
+                                $node->moveAsLastChildOf($destRecord);
+                            }
+                            break;
+        }
+
+        $returnValue['message'] = $this->__('The operation was successful.');
+
+        // Renew tree
+        /** postponed, for now we do a page reload
+        $returnValue['data'] = $objectCollection->selectTree($rootId);
+        */
+
+        return new Zikula_Response_Ajax($returnValue);
+    }
+«ENDIF-»
 «ENDDEFINE»
 
