@@ -152,6 +152,85 @@ class «baseClassModelTable()» extends Doctrine_Table
         }
         return $q->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
     }
+«IF nestedSet-»
+
+    /**
+     * Select tree of «nameMultiple.formatForCode()».
+     *
+«IF nestedSetHasManyRoots-»
+     * @param integer $rootId         Optional id of root node to use as a branch, defaults to 0 which corresponds to the whole tree.
+«ENDIF-»
+     * @param boolean $asArray        Whether to return the result as array instead as record object (optional) (default=true).
+     * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true).
+     *
+     * @return array|Doctrine_Doctrine_Tree_NestedSet retrieved data array or tree objects containing retrieved Doctrine_Node_NestedSet instances.
+     */
+    public function selectTree(«IF nestedSetHasManyRoots-»$rootId = 0, «ENDIF»$asArray = false, $useJoins = true)
+    {
+        // get reference to tree object
+        $treeObject = $this->getTree();
+        if ($useJoins === true) {
+            $treeObject->setBaseQuery($this->_intBaseQuery());
+            // note that this query modification can also be used for all node and tree methods (like getAncestors(), getDescendants(), getChildren(), getParent(), and so on)
+        }
+
+        $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
+        $result = null;
+
+«IF nestedSetHasManyRoots-»
+
+        // return branch if we have given a certain root
+        if ($rootId > 0) {
+            $root = $treeObject->fetchRoot($rootId);
+            $result = $treeObject->fetchBranch($root->getId(), array(), $fetchType);
+        }
+«ENDIF-»
+
+        // «IF nestedSetHasManyRoots-»otherwise «ENDIF-»return the whole tree
+        $result = $treeObject->fetchTree(array(), $fetchType);
+
+        if ($useJoins === true) {
+            $treeObject->resetBaseQuery();
+        }
+
+        return $result;
+    }
+
+«IF nestedSetHasManyRoots-»
+
+    /**
+     * Select all trees at once.
+     *
+     * @param boolean $asArray        Whether to return the result as array instead as record object (optional) (default=true).
+     * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true).
+     *
+     * @return array list of retrieved data arrays or tree objects containing retrieved Doctrine_Node_NestedSet instances.
+     */
+    public function selectAllTrees($asArray = false, $useJoins = true)
+    {
+        $trees = array();
+        $treeObject = $this->getTree();
+        if ($useJoins === true) {
+            $treeObject->setBaseQuery($this->_intBaseQuery());
+            // note that this query modification can also be used for all node and tree methods (like getAncestors(), getDescendants(), getChildren(), getParent(), and so on)
+        }
+
+        $rootColumnName = $treeObject->getAttribute('rootColumnName');
+        $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
+
+        foreach ($treeObject->fetchRoots() as $rootNode) {
+            $options = array('root_id' => $rootNode->$rootColumnName);
+            $trees[$rootNode->$rootColumnName] = $treeObject->fetchTree($options, $fetchType);
+        }
+
+        if ($useJoins === true) {
+            $treeObject->resetBaseQuery();
+        }
+
+        return $trees;
+    }
+«ENDIF-»
+«ENDIF-»
 
     /**
      * Build a generic Doctrine query supporting WHERE and ORDER BY

@@ -121,16 +121,6 @@
 «IF nestedSet-»
 
     /**
-     * Get tree object for managing the nested set.
-     *
-     * @return Doctrine_Doctrine_Tree_NestedSet tree object reference.
-     */
-    public function getTreeObject()
-    {
-        return $this->_intTable()->getTree();
-    }
-
-    /**
      * Select tree of «nameMultiple.formatForCode()».
      *
 «IF nestedSetHasManyRoots-»
@@ -142,23 +132,10 @@
      */
     public function selectTree(«IF nestedSetHasManyRoots-»$rootId = 0, «ENDIF»$asArray = false)
     {
-        // get reference to tree object
-        $treeObject = $this->getTreeObject();
-        $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
-«IF nestedSetHasManyRoots-»
-
-        // return branch if we have given a certain root
-        if ($rootId > 0) {
-            $root = $treeObject->fetchRoot($rootId);
-            return $treeObject->fetchBranch($root->getId(), array(), $fetchType);
-        }
-«ENDIF-»
-
-        // «IF nestedSetHasManyRoots-»otherwise «ENDIF-»return the whole tree
-        return $treeObject->fetchTree(array(), $fetchType);
-/** TODO: introduce selection with relations */
+        // get result from the model
+        return $this->_intTable()->selectTree(«IF nestedSetHasManyRoots-»$rootId, «ENDIF»$asArray);
     }
-«ENDIF-»
+
 «IF nestedSetHasManyRoots-»
 
     /**
@@ -170,18 +147,19 @@
      */
     public function selectAllTrees($asArray = false)
     {
-        $trees = array();
-        $treeObject = $this->_intTable()->getTree();
-        $rootColumnName = $treeObject->getAttribute('rootColumnName');
-        $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
+        // get result from the model
+        return $this->_intTable()->selectAllTrees($asArray);
+    }
+«ENDIF-»
 
-        foreach ($treeObject->fetchRoots() as $rootNode) {
-            $options = array('root_id' => $rootNode->$rootColumnName);
-            $trees[$rootNode->$rootColumnName] = $treeObject->fetchTree($options, $fetchType);
-        }
-
-        return $trees;
-/** TODO: introduce selection with relations */
+    /**
+     * Get tree object for managing the nested set.
+     *
+     * @return Doctrine_Doctrine_Tree_NestedSet tree object reference.
+     */
+    public function getTreeObject()
+    {
+        return $this->_intTable()->getTree();
     }
 «ENDIF-»
 
