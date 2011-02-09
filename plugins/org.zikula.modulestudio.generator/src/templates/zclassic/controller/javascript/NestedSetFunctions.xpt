@@ -8,9 +8,12 @@
 «FILE getAppSourcePath(appName()).msconcat('javascript/').msconcat(appName()).msconcat('_nestedSet.js')-»
 <!--
 
+var currentNodeId = 0;
+
 «EXPAND InitNestedSetView-»
 «EXPAND InitTreeNodes-»
 «EXPAND PerformNestedSetOperation-»
+«EXPAND NestedSetSave-»
 
 -->
 «ENDFILE»
@@ -99,16 +102,6 @@ function «prefix()»InitTreeNodes(ot, controller, rootId)
                 «prefix()»PerformNestedSetOperation(ot, rootId, 'moveNodeDown');
             }
         });
-        contextMenu.addItem({
-            label: Zikula.__('Move'),
-            condition: function() {
-                return !isRoot;
-            },
-            callback: function() {
-                currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                «prefix()»PerformNestedSetOperation(ot, rootId, 'moveNodeTo');
-            }
-        });
     });
 }
 
@@ -158,6 +151,55 @@ function «prefix()»PerformNestedSetOperation(ot, rootId, op)
             }
         }
     );
+}
+
+«ENDDEFINE»
+
+«DEFINE NestedSetSave FOR Application-»
+/**
+ * Callback function for config.onSave. This function is called after each tree change.
+ *
+ * @param node - the node which is currently being moved
+ * @param params - array with insertion params, which are [relativenode, dir];
+ *     - "dir" is a string with value "after', "before" or "bottom" and defines
+ *       whether the affected node is inserted after, before or as last child of "relativenode"
+ * @param tree data - serialized to JSON tree data
+ *
+ * @return true on success, otherwise the change will be reverted
+ */
+function «prefix()»NestedSetSave(node, params, data) {
+    // do not allow inserts on root level
+    if (node.up('li') == undefined) {
+        return false;
+    }
+
+    var nodeParts = node.id.split('node_');
+    var rootId = nodeParts[0].replace('tree', '');
+    var nodeId = nodeParts[1];
+    var destId = params[1].id.replace('tree' + rootId + 'node_', '');
+
+    var pars = {
+        'op': 'moveNodeTo',
+        'direction': params[0],
+        'root': rootId,
+        'id': nodeId,
+        'destid': destId
+    }
+
+    var request = new Zikula.Ajax.Request(
+        Zikula.Config.baseURL + 'ajax.php?module=«appName()»&func=handleNestedSetOperation',
+        {
+            method: 'post',
+            parameters: pars,
+            onComplete: function(req) {
+                if (!req.isSuccess()) {
+                    Zikula.UI.Alert(req.getMessage(), Zikula.__('Error'));
+                    return Zikula.TreeSortable.categoriesTree.revertInsertion();
+                }
+                return true;
+            }
+        });
+    return request.success();
 }
 
 «ENDDEFINE»
