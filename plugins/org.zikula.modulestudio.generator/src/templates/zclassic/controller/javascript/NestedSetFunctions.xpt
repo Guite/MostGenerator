@@ -121,7 +121,8 @@ function «prefix()»InitTreeNodes(ot, controller, rootId)
  */
 function «prefix()»PerformNestedSetOperation(ot, rootId, op)
 {
-    var pars = 'ot=' + ot + '&op=' + op;
+    var opParam = ((op == 'moveNodeUp' || op == 'moveNodeDown') ? 'moveNode' : op);
+    var pars = 'ot=' + ot + '&op=' + opParam;
 
     if (op != 'addRootNode') {
         pars += '&root=' + rootId;
