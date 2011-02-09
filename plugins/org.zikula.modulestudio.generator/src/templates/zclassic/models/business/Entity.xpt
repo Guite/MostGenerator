@@ -153,7 +153,10 @@
      */
     public function delete()
     {
-        $result = $this->get«name.formatForCodeCapital()»()->delete();
+«IF nestedSet-»
+        // due to the nested set behaviour we delete the node instead of the record itself to avoid invalid data
+«ENDIF-»
+        $result = $this->get«name.formatForCodeCapital()»()->«IF nestedSet-»getNode()->«ENDIF-»delete();
         $this->set_intId(0);
         $this->«name.formatForCode()» = null;
         return $result;

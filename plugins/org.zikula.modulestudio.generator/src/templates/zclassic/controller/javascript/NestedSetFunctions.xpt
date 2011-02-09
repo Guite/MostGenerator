@@ -70,19 +70,14 @@ function «prefix()»InitTreeNodes(ot, controller, rootId)
         contextMenu.addItem({
             label: Zikula.__('Delete node'),
             callback: function() {
-                startNodeDeletion = function(res) {
-                    if (res) {
-                        currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                        «prefix()»PerformNestedSetOperation(ot, rootId, 'deleteNode');
-                    }
-                }
-
                 var confirmQuestion = Zikula.__('Do you really want to remove this node?');
                 if (!liRef.hasClassName('z-tree-leaf')) {
                     confirmQuestion = Zikula.__('Do you really want to remove this node including all child nodes?');
                 }
-
-                Zikula.UI.IfConfirmed(confirmQuestion, Zikula.__('Confirm action'), startNodeDeletion);
+                if (window.confirm(confirmQuestion) != false) {
+                    currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
+                    «prefix()»PerformNestedSetOperation(ot, rootId, 'deleteNode');
+                }
             }
         });
         contextMenu.addItem({
