@@ -88,6 +88,17 @@
 «ENDIF-»
 «ENDIF-»
 «ENDFOREACH-»
+«IF sluggable && sluggableCanUpdate-»
+«LET sluggableFieldRealName() AS sluggableFieldRealName-»
+        <div class="z-formrow">
+            {formlabel for='«sluggableFieldRealName»' __text='Permalink'}
+            {formtextinput group='«name.formatForDB()»' id='«sluggableFieldRealName»' mandatory=false readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay()» or let this field free to create one automatically' textMode='singleline' maxLength=255«IF sluggableUnique-» cssClass='validate-unique'«ENDIF-»}
+«IF sluggableUnique-»
+            {«app.appName().formatForDB()»ValidationError id='«sluggableFieldRealName»' class='validate-unique'}
+«ENDIF-»
+        </div>
+«ENDLET-»
+«ENDIF-»
 «IF geographical-»
 «FOREACH {'latitude', 'longitude'} AS geoFieldName-»
         <div class="z-formrow">

@@ -22,6 +22,9 @@
     }
 
 «EXPAND checkForUniqueValues(app) FOREACH getUniqueDerivedFields()-»
+«IF sluggable && sluggableCanUpdate && sluggableUnique-»
+«EXPAND checkForUniqueSlugValues(app)-»
+«ENDIF-»
 
 «EXPAND FileHelper::GetterAndSetterMethods('entity', implClassBusinessEntity(false))»
 «ENDDEFINE»
@@ -54,5 +57,37 @@
         }
         return $objectCollection->selectCount($where);
     }
+«ENDDEFINE»
+
+«DEFINE checkForUniqueSlugValues(Application app) FOR Entity-»
+«LET sluggableFieldRealName() AS sluggableFieldRealName-»
+
+    /**
+     * Check for unique slug values.
+     *
+     * This method determines if there already exist «nameMultiple.formatForDisplay()» with the same «sluggableFieldRealName.formatForDisplay()».
+     *
+     * @param string  $value The «sluggableFieldRealName.formatForDisplay()» to check.
+     * @param int $excludeid      int    Id of «nameMultiple.formatForDisplay()» to exclude (optional).
+     *
+     * @return boolean true if the given «sluggableFieldRealName.formatForDisplay()» does already exist
+     */
+    public function checkIf«sluggableFieldRealName.formatForCodeCapital()»Exists($value, $excludeid = 0)
+    {
+        if (empty($value)) {
+            return false;
+        }
+
+        $objectType = '«name.formatForCode()»';
+«EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(app.appName(), true, 'validator', name, 'checkIf'.msconcat(sluggableFieldRealName.formatForCodeCapital()).msconcat('Exists'))-»
+
+        // TODO: move to «IF isInheriting()»«parentType().baseClassModelTable()»«ELSE»«baseClassModelTable()»«ENDIF»
+        $where = 'tbl.«sluggableFieldRealName» = \'' . DataUtil::formatForStore($value) . '\'';
+        if ($excludeid > 0) {
+            $where .= ' AND tbl.«idField()» != \'' . (int) DataUtil::formatForStore($excludeid) . '\'';
+        }
+        return $objectCollection->selectCount($where);
+    }
+«ENDLET-»
 «ENDDEFINE»
 

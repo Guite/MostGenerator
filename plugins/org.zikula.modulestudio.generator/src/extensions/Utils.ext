@@ -150,6 +150,9 @@ cached String actualFieldName(EntityField this) :
 cached String actualFieldName(DerivedField this) :
     ((alias != null && alias != "") ? alias : name);
 
+cached String sluggableFieldRealName(Entity this) :
+    ((sluggable) ? ((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCode() : '');
+
 /** obsolete */
 cached getPointingRelations(IntegerField this) :
     entity.incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == name.formatForDB());

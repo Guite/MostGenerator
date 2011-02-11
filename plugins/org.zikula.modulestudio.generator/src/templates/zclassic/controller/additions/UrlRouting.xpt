@@ -227,7 +227,7 @@ class «appName»_Base_RouterFacade
 «IF sluggable-»
 «EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(container.application.appName(), false, 'api', 'RouteFacade', 'getFormattedSlug')-»
                         $item = $object->selectById($itemid);
-«LET ((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCode() AS sluggableFieldRealName-»
+«LET sluggableFieldRealName() AS sluggableFieldRealName-»
 «IF sluggableUnique-»
                         $slug = $item['«sluggableFieldRealName»'];
 «ELSE-»

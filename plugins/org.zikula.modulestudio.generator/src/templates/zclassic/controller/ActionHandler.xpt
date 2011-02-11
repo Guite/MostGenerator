@@ -672,6 +672,17 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             }
 «ENDLET-»
 «ENDFOREACH-»
+«IF sluggable && sluggableCanUpdate-»
+«LET sluggableFieldRealName() AS sluggableFieldRealName-»
+«IF sluggableUnique-»
+            // check if another «name.formatForDisplay()» with the same «sluggableFieldRealName.formatForDisplay()» does already exist
+            if ($object->get_intValidator()->checkIf«sluggableFieldRealName.formatForCodeCapital()»Exists($formData['«sluggableFieldRealName»'], $this->«idField()»)) {
+                return LogUtil::registerError($this->__f('The «sluggableFieldRealName.formatForDisplay()» %s is already assigned. Please choose another «sluggableFieldRealName.formatForDisplay()».', array($formData['«sluggableFieldRealName»'])));
+            }
+«ENDIF-»
+            $formData['«sluggableFieldRealName»'] = «container.application.appName()»_Util::formatPermalink($formData['«sluggableFieldRealName»']);
+«ENDLET-»
+«ENDIF-»
 «IF !uploadFields.isEmpty-»
             $formData = $this->handleUploads($formData, $«name.formatForCode()»);
             if ($formData == false) {
