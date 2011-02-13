@@ -223,7 +223,7 @@
 «IF !getUniqueDerivedFields().reject(e|e.primaryKey).isEmpty-»
         Validation.add('validate-unique', 'Unique Check', function(val, elem) { «container.application.prefix()»UniqueCheck('«name.formatForCode()»', val, elem, {{if $mode eq 'create'}}0{{else}}{{$«idField()»}}{{/if}}); });//, options);
 «ENDIF-»
-        var valid = new Validation('FormForm', {onSubmit: false, immediate: true, focusOnError: false});
+        var valid = new Validation('{{__formid}}', {onSubmit: false, immediate: true, focusOnError: false});
         {{if $mode ne 'create'}}
             var result = valid.validate();
         {{/if}}
