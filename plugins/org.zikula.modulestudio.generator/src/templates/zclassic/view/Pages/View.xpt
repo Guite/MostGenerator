@@ -21,7 +21,7 @@ listType:
 <div class="z-«IF controller.metaType == AdminController-»admin«ELSE»frontend«ENDIF»container">
 {gt text='«name.formatForDisplayCapital()» list' assign='templateTitle'}
 «IF controller.metaType == AdminController-»
-    <div class="z-adminpageicon">{img modname='core' src='windowlist.gif' set='icons/large' alt=$templateTitle}</div>
+    <div class="z-adminpageicon">{img modname='core' src='windowlist.png' set='icons/large' alt=$templateTitle}</div>
 «ENDIF-»
     {pagesetvar name='title' value=$templateTitle}
     <h2>{$templateTitle}</h2>
@@ -278,7 +278,7 @@ listType:
                     {$«relObjName».«linkEntity.getLeadingField().actualFieldName().formatForCode()»«REM»|nl2br«ENDREM»|default:""}
                 </a>
                 <a id="«linkEntity.name.formatForCode()»Item{$«mainEntity.name.formatForCode()».«mainEntity.idField()»}_{$«relObjName».«linkEntity.idField()»}Display" href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«linkEntity.name.formatForCode()»' «linkEntity.idField()»=$«relObjName».«linkEntity.idField()» theme='Printer'«IF controller.metaType == UserController» forcelongurl=true«REM»Temporary hack due to core bug with theme parameter in short urls«ENDREM»«ENDIF-»}" title="{gt text='Open quick view window'}" style="display: none">
-                    {img src='windows_list.gif' modname='core' set='icons/extrasmall' __alt='Quick view'}
+                    {img src='windows_list.png' modname='core' set='icons/extrasmall' __alt='Quick view'}
                 </a>
                 <script type="text/javascript" charset="utf-8">
                 /* <![CDATA[ */
@@ -312,19 +312,19 @@ listType:
 «ENDIF-»
 «IF controller.hasActions('display')-»
             <a href="{modurl modname='«appName»' type='«controller.name()»' func='display' ot='«objName»' «idField()»=$«objName».«idField()»}" title="{$«objName».«getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}">
-                {img src='demo.gif' modname='core' set='icons/extrasmall' __alt='Details'}
+                {img src='demo.png' modname='core' set='icons/extrasmall' __alt='Details'}
             </a>
 «ENDIF-»            
 «IF controller.hasActions('edit')-»
     {checkpermissionblock component='«appName»::' instance='.*' level='ACCESS_EDIT'}
             <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»' «idField()»=$«objName».«idField()»}" title="{gt text='Edit'}">
-                {img src='xedit.gif' modname='core' set='icons/extrasmall' __alt='Edit'}
+                {img src='xedit.png' modname='core' set='icons/extrasmall' __alt='Edit'}
             </a>
 «IF nestedSet-»
     {*
 «ENDIF-»
             <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»' astemplate=$«objName».«idField()»}" title="{gt text='Reuse for new item'}">
-                {img src='filesaveas.gif' modname='core' set='icons/extrasmall' __alt='Reuse'}
+                {img src='filesaveas.png' modname='core' set='icons/extrasmall' __alt='Reuse'}
             </a>
 «IF nestedSet-»
     *}
@@ -334,7 +334,7 @@ listType:
 «IF controller.hasActions('delete')-»
     {checkpermissionblock component='«appName»::' instance='.*' level='ACCESS_DELETE'}
             <a href="{modurl modname='«appName»' type='«controller.name()»' func='delete' ot='«objName»' «idField()»=$«objName».«idField()»}" title="{gt text='Delete'}">
-                {img src='14_layer_deletelayer.gif' modname='core' set='icons/extrasmall' __alt='Delete'}
+                {img src='14_layer_deletelayer.png' modname='core' set='icons/extrasmall' __alt='Delete'}
             </a>
     {/checkpermissionblock}
 «ENDIF-»

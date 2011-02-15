@@ -105,7 +105,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
             <br />
             <input type="text" name="«uniqueNameForJs»Selector" id="«uniqueNameForJs»Selector" value="" size="" />
             <input type="hidden" name="«uniqueNameForJs»Scope" id="«uniqueNameForJs»Scope" value="«IF !many»0«ELSE»1«ENDIF»" />
-            {img src='indicator_circle.gif' modname='core' set='icons/extrasmall' alt='' id='«uniqueNameForJs»Indicator' style='display: none'}
+            {img src='indicator_circle.png' modname='core' set='icons/extrasmall' alt='' id='«uniqueNameForJs»Indicator' style='display: none'}
             <div id="«uniqueNameForJs»SelectorChoices" class="«app.prefix()»AutoComplete«IF targetEntity.hasImageFields()»WithImage«ENDIF»"></div>
             <input type="button" id="«uniqueNameForJs»SelectorDoCancel" name="«uniqueNameForJs»SelectorDoCancel" value="{gt text='Cancel'}" class="z-button «app.prefix()»InlineButton" />
 «IF includeEditing-»
@@ -135,10 +135,10 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 {* purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplayCapital()» in «controller.name.formatForDB()» area *}
 
 «IF includeEditing-»
-{img src="xedit.gif" modname="core" set="icons/extrasmall" assign="editImageArray"}
+{img src="xedit.png" modname="core" set="icons/extrasmall" assign="editImageArray"}
 {assign var="editImage" value="<img src=\"`$editImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
 «ENDIF-»
-{img src="editdelete.gif" modname="core" set="icons/extrasmall" assign="removeImageArray"}
+{img src="editdelete.png" modname="core" set="icons/extrasmall" assign="removeImageArray"}
 {assign var="removeImage" value="<img src=\"`$removeImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
 
 <input type="hidden" id="«uniqueNameForJs»ItemList" name="«uniqueNameForJs»ItemList" value="{if isset($item«IF many»s«ENDIF») && is_array($item«IF many»s«ENDIF»)«IF !many» && isset($item.«targetEntity.idField()»)«ENDIF»}«IF many»{foreach name='relLoop' item='item' from=$items}«ENDIF»{$item.«targetEntity.idField()»}«IF many»{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}«ENDIF»{/if}" />

@@ -57,7 +57,7 @@
 «prepend»  {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 «ENDIF-»
 «prepend»    <a href="mailto:{$«realName»}" title="{gt text='Send an email'}">
-«prepend»        {img src="mail_generic.gif" modname="core" set="icons/extrasmall" __alt='Email'}
+«prepend»        {img src="mail_generic.png" modname="core" set="icons/extrasmall" __alt='Email'}
 «prepend»    </a>
 «IF page == 'display'-»
 «prepend»  {else}
@@ -83,7 +83,7 @@
 «prepend»  {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 «ENDIF-»
 «prepend»    <a href="{$«realName»}" title="{gt text='Visit this page'}">
-«prepend»        {img src="agt_internet.gif" modname="core" set="icons/extrasmall" __alt='Homepage'}
+«prepend»        {img src="agt_internet.png" modname="core" set="icons/extrasmall" __alt='Homepage'}
 «prepend»    </a>
 «IF page == 'display'-»
 «prepend»  {else}

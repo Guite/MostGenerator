@@ -40,17 +40,17 @@
 {if $mode eq 'edit'}
     {gt text='Edit «name.formatForDisplay()»' assign='templateTitle'}
 «IF controller.metaType == AdminController-»
-    {assign var='adminpageicon' value='edit.gif'}
+    {assign var='adminpageicon' value='edit.png'}
 «ENDIF-»
 {elseif $mode eq 'create'}
     {gt text='Create «name.formatForDisplay()»' assign='templateTitle'}
 «IF controller.metaType == AdminController-»
-    {assign var='adminpageicon' value='filenew.gif'}
+    {assign var='adminpageicon' value='filenew.png'}
 «ENDIF-»
 {else}
     {gt text='Edit «name.formatForDisplay()»' assign='templateTitle'}
 «IF controller.metaType == AdminController-»
-    {assign var='adminpageicon' value='edit.gif'}«REM»TODO«ENDREM»
+    {assign var='adminpageicon' value='edit.png'}«REM»TODO«ENDREM»
 «ENDIF-»
 {/if}
 
@@ -167,8 +167,8 @@
 </div>
 «ENDIF-»
 
-{img src='xedit.gif' modname='core' set='icons/extrasmall' assign='editImageArray'}
-{img src='editdelete.gif' modname='core' set='icons/extrasmall' assign='removeImageArray'}
+{img src='xedit.png' modname='core' set='icons/extrasmall' assign='editImageArray'}
+{img src='editdelete.png' modname='core' set='icons/extrasmall' assign='removeImageArray'}
 
 <script type="text/javascript" charset="utf-8">
 /* <![CDATA[ */
@@ -289,7 +289,7 @@ $attributes = {class:z-bt-ok; confirmMessage:Are you sure?}
 The {linkbutton} now supports an image (through the {img} plugin), using the
 new parameters 'imgset' and 'imgsrc'. imgset is default to 'icons/extrasmall'.
 Examples:
-{linkbutton commandName='edit' __text='Edit' imgsrc='edit.gif'}
+{linkbutton commandName='edit' __text='Edit' imgsrc='edit.png'}
 or through the core CSS:
 {linkbutton commandName='edit' __text='Edit' class='z-icon-es-edit'}
 {button commandName='cancel' __text='Cancel' class='z-bt-cancel'}
