@@ -10,7 +10,7 @@
 {include file='«configController().formatForDB()»/header.tpl'}
 «IF configController().formatForDB() == 'admin'-»
 <div class="z-admincontainer">
-    <div class="z-adminpageicon">{img modname='core' src='configure.png' set='icons/large' __alt='Settings'}</div>
+    <div class="z-adminpageicon">{icon type='config' size='large' __alt='Settings'}</div>
 «ELSE-»
 <div class="z-frontendcontainer">
 «ENDIF-»

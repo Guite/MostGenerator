@@ -13,7 +13,7 @@
 <div class="z-«IF controller.metaType == AdminController-»admin«ELSE-»frontend«ENDIF-»container">
 {gt text='Delete «name.formatForDisplay()»' assign='templateTitle'}
 «IF controller.metaType == AdminController-»
-    <div class="z-adminpageicon">{img modname='core' src='editdelete.png' set='icons/large' __alt='Details'}</div>
+    <div class="z-adminpageicon">{icon type='delete' size='large' __alt='Delete'}</div>
 «ENDIF-»
 
     {pagesetvar name="title" value=$templateTitle}
@@ -30,7 +30,7 @@
                 <div class="z-buttons z-formbuttons">
                     {gt text='Delete' assign='deleteTitle'}
                     {button src='button_ok.png' set='icons/small' value=$deleteTitle title=$deleteTitle}
-                    <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«name.formatForCode()»'}">{img modname='core' src='button_cancel.png' set='icons/small' __alt='Cancel' __title='Cancel'} {gt text='Cancel'}</a>
+                    <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«name.formatForCode()»'}">{icon type='cancel' size='small' __alt='Cancel' __title='Cancel'} {gt text='Cancel'}</a>
                 </div>
             </fieldset>
         </div>

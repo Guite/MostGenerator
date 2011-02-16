@@ -15,7 +15,7 @@
 <div class="z-«IF controller.metaType == AdminController-»admin«ELSE»frontend«ENDIF»container">
 {gt text='«name.formatForDisplayCapital()» hierarchy' assign='templateTitle'}
 «IF controller.metaType == AdminController-»
-    <div class="z-adminpageicon">{img modname='core' src='windowlist.png' set='icons/large' alt=$templateTitle}</div>
+    <div class="z-adminpageicon">{icon type='view' size='large' alt=$templateTitle}</div>
 «ENDIF-»
     {pagesetvar name='title' value=$templateTitle}
     <h2>{$templateTitle}</h2>

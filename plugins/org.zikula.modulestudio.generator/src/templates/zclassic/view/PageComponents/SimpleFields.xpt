@@ -57,7 +57,7 @@
 «prepend»  {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 «ENDIF-»
 «prepend»    <a href="mailto:{$«realName»}" title="{gt text='Send an email'}">
-«prepend»        {img src="mail_generic.png" modname="core" set="icons/extrasmall" __alt='Email'}
+«prepend»        {icon type='mail' size='extrasmall' __alt='Email'}
 «prepend»    </a>
 «IF page == 'display'-»
 «prepend»  {else}

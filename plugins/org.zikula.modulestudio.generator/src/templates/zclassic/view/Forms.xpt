@@ -40,23 +40,23 @@
 {if $mode eq 'edit'}
     {gt text='Edit «name.formatForDisplay()»' assign='templateTitle'}
 «IF controller.metaType == AdminController-»
-    {assign var='adminpageicon' value='edit.png'}
+    {assign var='adminPageIcon' value='edit'}
 «ENDIF-»
 {elseif $mode eq 'create'}
     {gt text='Create «name.formatForDisplay()»' assign='templateTitle'}
 «IF controller.metaType == AdminController-»
-    {assign var='adminpageicon' value='filenew.png'}
+    {assign var='adminPageIcon' value='new'}
 «ENDIF-»
 {else}
     {gt text='Edit «name.formatForDisplay()»' assign='templateTitle'}
 «IF controller.metaType == AdminController-»
-    {assign var='adminpageicon' value='edit.png'}«REM»TODO«ENDREM»
+    {assign var='adminPageIcon' value='edit'}«REM»TODO«ENDREM»
 «ENDIF-»
 {/if}
 
 «IF controller.metaType == AdminController-»
 <div class="z-admincontainer">
-<div class="z-adminpageicon">{img modname='core' src=$adminpageicon set='icons/large' alt=$templateTitle}</div>
+<div class="z-adminpageicon">{icon type=$adminPageIcon size='large' alt=$templateTitle}</div>
 «ELSE-»
 <div class="z-frontendcontainer">
 «ENDIF-»
@@ -167,13 +167,13 @@
 </div>
 «ENDIF-»
 
-{img src='xedit.png' modname='core' set='icons/extrasmall' assign='editImageArray'}
-{img src='editdelete.png' modname='core' set='icons/extrasmall' assign='removeImageArray'}
+{icon type='edit' size='extrasmall' assign='editImageArray'}
+{icon type='delete' size='extrasmall' assign='deleteImageArray'}
 
 <script type="text/javascript" charset="utf-8">
 /* <![CDATA[ */
     var editImage = '<img src="{{$editImageArray.src}}" width="16" height="16" alt="" />';
-    var removeImage = '<img src="{{$removeImageArray.src}}" width="16" height="16" alt="" />';
+    var removeImage = '<img src="{{$deleteImageArray.src}}" width="16" height="16" alt="" />';
 «LET incoming.typeSelect(JoinRelationship) AS incomingJoins-»
 «LET outgoing.typeSelect(JoinRelationship) AS outgoingJoins-»
 «IF !incomingJoins.isEmpty || !outgoingJoins.isEmpty-»
