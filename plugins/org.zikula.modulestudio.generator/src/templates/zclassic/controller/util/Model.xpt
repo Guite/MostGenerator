@@ -16,10 +16,32 @@ class «appName()»_Util_Base_Model
 {
     /**
      * Initialise Doctrine caching functionality.
+     * Prerequisites like selecting and instantiating the cache backend driver
+     * has already been done by the Zikula core. So this method is actually
+     * an empty facade until you want to customise things individually only
+     * for the «appName()» application.
+     *
+     * @see DBConnectionStack::init()
+     * @see DBConnectionStack::getCacheDriver()
      */
     public static function initDoctrineCaching()
     {
+        self::initQueryCache();
+        self::initResultCache();
+    }
 
+    /**
+     * Initialise custom result cache.
+     */
+    protected static function initQueryCache()
+    {
+    }
+
+    /**
+     * Initialise custom result cache.
+     */
+    protected static function initResultCache()
+    {
     }
 }
 «ENDDEFINE»

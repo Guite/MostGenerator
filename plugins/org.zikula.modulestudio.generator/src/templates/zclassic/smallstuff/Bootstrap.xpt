@@ -7,10 +7,16 @@
 
 «DEFINE Bootstrap FOR Application-»
 
-// feel free to add your initialisation stuff here
+/**
+ * Feel free to add your initialisation stuff here.
+ *
+ * For example you can register additional AutoLoaders with ZLoader::addAutoloader($namespace, $path)
+ * whereby $namespace is the first part of the PEAR class name
+ * and $path is the path to the containing folder.
+ */
 
-// for example you can register additional AutoLoaders with ZLoader::addAutoloader($namespace, $path)
-// whereby $namespace is the first part of the PEAR class name and $path is the path to the containing
-// folder.
+// initialise Doctrine caching settings
+«appName()»_Util_Model::initDoctrineCaching();
+
 
 «ENDDEFINE»
