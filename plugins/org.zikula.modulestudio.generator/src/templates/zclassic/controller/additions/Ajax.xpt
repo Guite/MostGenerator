@@ -188,17 +188,9 @@
      */
     public function checkForDuplicate()
     {
-        if (!SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_EDIT)) {
-            LogUtil::registerPermissionError(null, true);
-            throw new Zikula_Exception_Forbidden();
-        }
-/*
-        // test authid and throw an exception on failure
-        if (!SecurityUtil::confirmAuthKey()) {
-            LogUtil::registerAuthidError();
-            throw new Zikula_Exception_Fatal();
-        }
-*/
+        $this->checkAjaxToken();
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_EDIT));
+        
         $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'POST', FILTER_SANITIZE_STRING);
         if (!in_array($objectType, «app.appName()»_Util::getObjectTypes('controllerAction', array('controller' => '«name()»', 'action' => 'checkForDuplicate')))) {
             $objectType = «app.appName()»_Util::getDefaultObjectType('controllerAction', array('controller' => '«name()»', 'action' => 'checkForDuplicate'));
