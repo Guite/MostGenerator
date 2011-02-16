@@ -233,11 +233,8 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $confirmation = (bool) FormUtil::getPassedValue('confirmation', isset($args['confirmation']) ? $args['confirmation'] : false, 'GETPOST');
 
         if ($confirmation) {
-            // Confirm authorisation code
-            if (!SecurityUtil::confirmAuthKey()) {
-                return LogUtil::registerAuthidError(ModUtil::url('«appName»', '«controller.name()»'«REM», 'view'«ENDREM»));
-            }
-
+            $this->checkCsrfToken(ModUtil::url('«appName»', '«controller.name()»'«REM», 'view'«ENDREM»));
+            
             $object->selectById($id, false);
 
             if (!$object->delete()) {

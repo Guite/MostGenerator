@@ -23,7 +23,7 @@
 
     <form class="z-form" action="{modurl modname='«appName»' type='«controller.name()»' func='delete' ot='«name.formatForCode()»' «idField()»=$«name.formatForCode()».«idField()»}" method="post">
         <div>
-            <input type="hidden" name="authid" value="{insert name='generateauthkey' module='«appName»'}" />
+            <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
             <input type="hidden" id="confirmation" name="confirmation" value="1" />
             <fieldset>
                 <legend>{gt text='Confirmation prompt'}</legend>
