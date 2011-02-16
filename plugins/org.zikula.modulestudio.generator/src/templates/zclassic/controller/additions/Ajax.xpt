@@ -252,8 +252,8 @@
     /**
      * Performs different operations on nested set trees.
      *
-     * @param string $ot       Treated object type.
-     * @param string $op       The operation which should be performed.
+     * @param string $ot Treated object type.
+     * @param string $op The operation which should be performed.
      *
      * @return Zikula_Response_Ajax_Base
      */
