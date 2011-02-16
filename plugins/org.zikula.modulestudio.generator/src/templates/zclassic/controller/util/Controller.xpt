@@ -1,0 +1,121 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+
+«REM»start point for the Util class creation«ENDREM»
+«DEFINE Root FOR Application»
+    «FILE getAppSourceLibPath(appName()).msconcat("Util/Base/Controller.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND ControllerFunctionsBase-»«ENDFILE»
+    «FILE getAppSourceLibPath(appName()).msconcat("Util/Controller.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND ControllerFunctionsImpl-»«ENDFILE»
+«ENDDEFINE»
+
+«DEFINE ControllerFunctionsBase FOR Application-»
+/**
+ * Utility base class for controller helper methods.
+ */
+class «appName()»_Util_Base_Controller
+{
+    /**
+     * Returns an array of all allowed object types in «appName()».
+     *
+     * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType, mailz).
+     * @param array  $args    Additional arguments.
+     *
+     * @return array List of allowed object types
+     */
+    public static function getObjectTypes($context = '', $args = array())
+    {
+        if (!in_array($context, array('controllerAction', 'api', 'actionHandler', 'block', 'contentType', 'mailz'))) {
+            $context = 'controllerAction';
+        }
+
+        $allowedObjectTypes = array();
+«FOREACH models.entities AS entity-»
+        $allowedObjectTypes[] = '«entity.name.formatForCode()»';
+«ENDFOREACH-»
+        return $allowedObjectTypes;
+    }
+
+    /**
+     * Returns the default object type in «appName()».
+     *
+     * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType, mailz).
+     * @param array  $args    Additional arguments.
+     *
+     * @return string The name of the default object type
+     */
+    public static function getDefaultObjectType($context = '', $args = array())
+    {
+        if (!in_array($context, array('controllerAction', 'api', 'actionHandler', 'block', 'contentType', 'mailz'))) {
+            $context = 'controllerAction';
+        }
+
+        $defaultObjectType = '«getLeadingEntity().name.formatForCode()»';
+        return $defaultObjectType;
+    }
+
+    /**
+     * Create nice permalinks
+     */
+    public static function formatPermalink($name)
+    {
+        $name = str_replace(array('ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü', 'ß', '.', '?', '"', '/', ':', 'é', 'è', 'â'),
+                            array('ae', 'oe', 'ue', 'Ae', 'Oe', 'Ue', 'ss', '', '', '', '-', '-', 'e', 'e', 'a'),
+                            $name);
+        $name = DataUtil::formatPermalink($name);
+        return strtolower($name);
+    }
+«IF hasUploads()-»
+
+    /**
+     * Retrieve the base path for given object type and upload field combination.
+     *
+     * @param string $objectType Name of treated entity type.
+     * @param string $fieldName  Name of upload field.
+     * @param array  $args       Additional arguments.
+     *
+     * @return mixed Output.
+     */
+    public static function getFileBaseFolder($objectType, $fieldName)
+    {
+        if (!in_array($objectType, self::getObjectTypes())) {
+            $objectType = self::getDefaultObjectType();
+        }
+
+        $basePath = FileUtil::getDataDirectory() . '/«appName()»/';
+
+        switch ($objectType) {
+«FOREACH getUploadEntities() AS entity-»
+«LET entity.getUploadFields() AS uploadFields-»
+            case '«entity.name.formatForCode()»':
+«IF uploadFields.size > 1-»
+                            $basePath .= '«entity.nameMultiple.formatForDB()»/';
+                            switch ($fieldName) {
+«FOREACH uploadFields AS uploadField-»
+                                case '«uploadField.name.formatForCode()»':
+                                    $basePath .= '«uploadField.subFolderPathSegment()»/';
+                                    break;
+«ENDFOREACH-»
+                            }
+«ELSE-»
+                            $basePath .= '«entity.nameMultiple.formatForDB()»/«uploadFields.get(0).subFolderPathSegment()»/';
+«ENDIF-»
+                            break;
+«ENDLET-»
+«ENDFOREACH-»
+        }
+
+        return $basePath;
+    }
+«ENDIF-»
+}
+«ENDDEFINE»
+
+«DEFINE ControllerFunctionsImpl FOR Application-»
+/**
+ * Utility implementation class for controller helper methods.
+ */
+class «appName()»_Util_Controller extends «appName()»_Util_Base_Controller
+{
+    // feel free to add your own convenience methods here
+}
+«ENDDEFINE»

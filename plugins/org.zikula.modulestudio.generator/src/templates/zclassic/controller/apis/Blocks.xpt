@@ -101,8 +101,8 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
             $vars['filter'] = '';
         }
 
-        if (!isset($vars['objectType']) || !in_array($vars['objectType'], «appName()»_Util::getObjectTypes('block'))) {
-            $vars['objectType'] = '«getLeadingEntity().name.formatForCode()»';
+        if (!isset($vars['objectType']) || !in_array($vars['objectType'], «appName()»_Util_Controller::getObjectTypes('block'))) {
+            $vars['objectType'] = «appName()»_Util_Controller::getDefaultObjectType('block');
         }
 
         $objectType = $vars['objectType'];
@@ -214,8 +214,8 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
         $vars['template'] = FormUtil::getPassedValue('template', '', 'POST');
         $vars['filter'] = FormUtil::getPassedValue('filter', '', 'POST');
 
-        if (!in_array($vars['objectType'], «appName()»_Util::getObjectTypesBlock())) {
-            $vars['objectType'] = '«getLeadingEntity().name.formatForCode()»';
+        if (!in_array($vars['objectType'], «appName()»_Util_Controller::getObjectTypes('block'))) {
+            $vars['objectType'] = «appName()»_Util_Controller::getDefaultObjectType('block');
         }
 
         // write back the new contents

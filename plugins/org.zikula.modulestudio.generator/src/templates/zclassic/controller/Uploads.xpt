@@ -148,7 +148,7 @@ class «appName()»_Base_UploadHandler
         }
 
         // retrieve the final file name
-        $basePath = «appName()»_Util::getFileBaseFolder($objectType, $fieldName);
+        $basePath = «appName()»_Util_Controller::getFileBaseFolder($objectType, $fieldName);
         $fileName = $this->determineFileName($objectType, $fieldName, $basePath, $fileName, $extension);
 
         if (!move_uploaded_file($file['tmp_name'], $basePath . $fileName)) {
@@ -313,7 +313,7 @@ class «appName()»_Base_UploadHandler
         }
 
         // determine file system information
-        $basePath = «appName()»_Util::getFileBaseFolder($objectType, $fieldName);
+        $basePath = «appName()»_Util_Controller::getFileBaseFolder($objectType, $fieldName);
         $fileName = $objectData[$fieldName];
 
         // remove original file

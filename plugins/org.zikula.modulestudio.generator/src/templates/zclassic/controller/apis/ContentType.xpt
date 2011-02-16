@@ -65,8 +65,8 @@ function «appName()»_Api_ContentTypes_itemlist($args)
 
     public function loadData(&$data)
     {
-        if (!isset($data['objectType']) || !in_array($vars['objectType'], «appName()»_Util::getObjectTypes('contentType'))) {
-            $data['objectType'] = '«getLeadingEntity().name.formatForCode()»';
+        if (!isset($data['objectType']) || !in_array($vars['objectType'], «appName()»_Util_Controller::getObjectTypes('contentType'))) {
+            $data['objectType'] = «appName()»_Util_Controller::getDefaultObjectType('contentType');
         }
 
         $this->objectType = $data['objectType'];

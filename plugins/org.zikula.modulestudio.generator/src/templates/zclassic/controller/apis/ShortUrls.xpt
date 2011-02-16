@@ -43,8 +43,9 @@
         $router = $routerFacade->getRouter();
 
         // initialise object type
-        $allowedObjectTypes = «app.appName()»_Util::getObjectTypes('api', array('controller' => 'user', 'action' => 'encodeurl'));
-        $objectType = ((isset($args['args']['ot']) && in_array($args['args']['ot'], $allowedObjectTypes)) ? $args['args']['ot'] : '«container.application.getLeadingEntity().name.formatForCode()»');
+        $utilArgs = array('controller' => 'user', 'action' => 'encodeurl');
+        $allowedObjectTypes = «app.appName()»_Util_Controller::getObjectTypes('api', $utilArgs);
+        $objectType = ((isset($args['args']['ot']) && in_array($args['args']['ot'], $allowedObjectTypes)) ? $args['args']['ot'] : «app.appName()»_Util_Controller::getDefaultObjectType('api', $utilArgs));
 
         // initialise group folder
         $groupFolder = $routerFacade->getGroupingFolderFromObjectType($objectType, $args['func'], $args['args']);

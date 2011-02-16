@@ -52,8 +52,9 @@
 «IF metaType != MainAction-»
         // parameter specifying which type of objects we are treating
         $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'GET', FILTER_SANITIZE_STRING);
-        if (!in_array($objectType, «app.appName()»_Util::getObjectTypes('controllerAction', array('controller' => '«controller.name()»', 'action' => '«name.formatForCode()»')))) {
-            $objectType = «app.appName()»_Util::getDefaultObjectType('controllerAction', array('controller' => '«controller.name()»', 'action' => '«name.formatForCode()»'));
+        $utilArgs = array('controller' => '«controller.name()»', 'action' => '«name.formatForCode()»');
+        if (!in_array($objectType, «app.appName()»_Util::getObjectTypes('controllerAction', $utilArgs))) {
+            $objectType = «app.appName()»_Util::getDefaultObjectType('controllerAction', $utilArgs);
         }
 «ENDIF-»
 «EXPAND ActionImplBody(app.appName())-»
@@ -109,7 +110,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
             }
 
             // fetch and return the appropriate template
-            return «appName»_Util::processViewTemplate($this->view, '«controller.name()»', $objectType, 'view', $args);
+            return «appName»_Util_View::processTemplate($this->view, '«controller.name()»', $objectType, 'view', $args);
         }
 
         // parameter for used sorting field
@@ -152,7 +153,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
                                            'itemsperpage' => $resultsPerPage));
 
         // fetch and return the appropriate template
-        return «appName»_Util::processViewTemplate($this->view, '«controller.name()»', $objectType, 'view', $args);
+        return «appName»_Util_View::processTemplate($this->view, '«controller.name()»', $objectType, 'view', $args);
 «ENDDEFINE»
 
 
@@ -205,7 +206,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $this->view->assign($objectType, $objectData);
 
         // fetch and return the appropriate template
-        return «appName»_Util::processViewTemplate($this->view, '«controller.name()»', $objectType, 'display', $args);
+        return «appName»_Util_View::processTemplate($this->view, '«controller.name()»', $objectType, 'display', $args);
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR EditAction-»
@@ -252,7 +253,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
             $this->view->assign($objectType, $objectData);
 
             // fetch and return the appropriate template
-            return «appName»_Util::processViewTemplate($this->view, '«controller.name()»', $objectType, 'delete', $args);
+            return «appName»_Util_View::processTemplate($this->view, '«controller.name()»', $objectType, 'delete', $args);
         }
 
         // redirect to the list of the current object type

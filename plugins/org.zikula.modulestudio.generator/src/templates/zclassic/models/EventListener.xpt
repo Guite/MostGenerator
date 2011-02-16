@@ -300,7 +300,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 «DEFINE sanitizeForOutput FOR UploadField-»
 «LET actualFieldName().formatForCode() AS realName-»
         if (!empty($data['«realName»'])) {
-            $basePath = «entity.container.application.appName()»_Util::getFileBaseFolder('«entity.name.formatForCode()»', '«realName»');
+            $basePath = «entity.container.application.appName()»_Util_Controller::getFileBaseFolder('«entity.name.formatForCode()»', '«realName»');
             $fullPath = $basePath .  $data['«realName»'];
             if ($useObject) {
                 $data->mapValue('«realName»FullPath', $fullPath);

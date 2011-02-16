@@ -29,8 +29,8 @@ class «appName()»_Base_Factory
         if (!in_array($context, array('controllerAction', 'actionHandler', 'block', 'contentType', 'mailz'))) {
             $context = 'controllerAction';
         }
-        if (!in_array($objectType, «appName()»_Util::getObjectTypes($context, $args))) {
-            $objectType = «appName()»_Util::getDefaultObjectType($context, $args);
+        if (!in_array($objectType, «appName()»_Util_Controller::getObjectTypes($context, $args))) {
+            $objectType = «appName()»_Util_Controller::getDefaultObjectType($context, $args);
         }
 
         $class = '«appName()»_BusinessEntity_' . ucfirst($objectType) . (($useCollection === true) ? 'Collection' : '');

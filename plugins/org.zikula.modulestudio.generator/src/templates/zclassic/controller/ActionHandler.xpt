@@ -680,7 +680,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 return LogUtil::registerError($this->__f('The «sluggableFieldRealName.formatForDisplay()» %s is already assigned. Please choose another «sluggableFieldRealName.formatForDisplay()».', array($formData['«sluggableFieldRealName»'])));
             }
 «ENDIF-»
-            $formData['«sluggableFieldRealName»'] = «container.application.appName()»_Util::formatPermalink($formData['«sluggableFieldRealName»']);
+            $formData['«sluggableFieldRealName»'] = «container.application.appName()»_Util_Controller::formatPermalink($formData['«sluggableFieldRealName»']);
 «ENDLET-»
 «ENDIF-»
 «IF !uploadFields.isEmpty-»

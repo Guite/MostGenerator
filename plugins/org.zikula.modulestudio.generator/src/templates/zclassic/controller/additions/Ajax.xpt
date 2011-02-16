@@ -65,8 +65,8 @@
         }
 
         $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'GETPOST', FILTER_SANITIZE_STRING);
-        if (!in_array($objectType, «app.appName()»_Util::getObjectTypes('controllerAction', array('controller' => '«name()»', 'action' => 'getItemList')))) {
-            $objectType = «app.appName()»_Util::getDefaultObjectType('controllerAction', array('controller' => '«name()»', 'action' => 'getItemList'));
+        if (!in_array($objectType, «app.appName()»_Util_Controller::getObjectTypes('controllerAction', array('controller' => '«name()»', 'action' => 'getItemList')))) {
+            $objectType = «app.appName()»_Util_Controller::getDefaultObjectType('controllerAction', array('controller' => '«name()»', 'action' => 'getItemList'));
         }
 
         $idField = strtolower($objectType) . 'id';
@@ -192,8 +192,8 @@
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_EDIT));
         
         $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'POST', FILTER_SANITIZE_STRING);
-        if (!in_array($objectType, «app.appName()»_Util::getObjectTypes('controllerAction', array('controller' => '«name()»', 'action' => 'checkForDuplicate')))) {
-            $objectType = «app.appName()»_Util::getDefaultObjectType('controllerAction', array('controller' => '«name()»', 'action' => 'checkForDuplicate'));
+        if (!in_array($objectType, «app.appName()»_Util_Controller::getObjectTypes('controllerAction', array('controller' => '«name()»', 'action' => 'checkForDuplicate')))) {
+            $objectType = «app.appName()»_Util_Controller::getDefaultObjectType('controllerAction', array('controller' => '«name()»', 'action' => 'checkForDuplicate'));
         }
 
         $fieldName = FormUtil::getPassedValue('fn', '', 'POST', FILTER_SANITIZE_STRING);
