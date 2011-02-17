@@ -67,7 +67,7 @@
 {if $authAdmin || (isset($uid) && isset($«relatedEntity.name.formatForCode()».cr_uid) && $«relatedEntity.name.formatForCode()».cr_uid eq $uid)}
 <p class="manageLink">
     {gt text='Create «otherEntity.name.formatForDisplay()»' assign='createTitle'}
-    <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«otherEntity.name.formatForCode()»' «relationAliasNameParam.formatForDB()»=$«relatedEntity.name.formatForCode()».«relatedEntity.idField()»}" title="{$createTitle}">
+    <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«otherEntity.name.formatForCode()»' «relationAliasNameParam.formatForDB()»=$«relatedEntity.name.formatForCode()».«relatedEntity.idField()»}" title="{$createTitle}" class="z-icon-es-add">
         {$createTitle}
     </a>
 </p>

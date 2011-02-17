@@ -35,7 +35,7 @@ listType:
     {*
 «ENDIF-»
         {gt text='Create «name.formatForDisplay()»' assign='createTitle'}
-        <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»'}" title="{$createTitle}" class="«appName.formatForDB()»IconNew">
+        <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»'}" title="{$createTitle}" class="z-icon-es-add">
             {$createTitle}
         </a>
 «IF nestedSet-»
@@ -45,7 +45,7 @@ listType:
 «ENDIF»
 «IF nestedSet-»
         {gt text='Switch to hierarchy view' assign='switchTitle'}
-        <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«objName»' tpl='nestedSet'}" title="{$switchTitle}" class="«appName.formatForDB()»IconViewHierarchy">
+        <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«objName»' tpl='nestedSet'}" title="{$switchTitle}" class="z-icon-es-view">
             {$switchTitle}
         </a>
 «ENDIF-»

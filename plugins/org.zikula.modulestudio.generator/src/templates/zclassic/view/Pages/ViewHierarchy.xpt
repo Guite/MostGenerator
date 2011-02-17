@@ -27,18 +27,18 @@
     {checkpermissionblock component='«appName»::' instance='.*' level="ACCESS_ADD"}
     {if $useMultipleRoots || !isset($items) || !is_object($items) || $items->count() eq 0}
         {gt text='Add root node' assign='addRootTitle'}
-        <a id="z-nestedset-addroot" href="javascript:void(0)" title="{$addRootTitle}" style="display: none" class="«appPrefix»IconNew">{$addRootTitle}</a>
+        <a id="z-nestedset-addroot" href="javascript:void(0)" title="{$addRootTitle}" style="display: none" class="z-icon-es-add">{$addRootTitle}</a>
     {/if}
     {*
         {gt text='Create «name.formatForDisplay()»' assign='createTitle'}
-        <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»'}" title="{$createTitle}" class="«appName.formatForDB()»IconNew">
+        <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»'}" title="{$createTitle}" class="z-icon-es-add">
             {$createTitle}
         </a>
     *}
     {/checkpermissionblock}
 «ENDIF»
         {gt text='Switch to table view' assign='switchTitle'}
-        <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«objName»'}" title="{$switchTitle}" class="«appName.formatForDB()»IconViewTable">
+        <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«objName»'}" title="{$switchTitle}" class="z-icon-es-view">
             {$switchTitle}
         </a>
 

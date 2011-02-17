@@ -83,7 +83,7 @@
 «prepend»  {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 «ENDIF-»
 «prepend»    <a href="{$«realName»}" title="{gt text='Visit this page'}">
-«prepend»        {img src="agt_internet.png" modname="core" set="icons/extrasmall" __alt='Homepage'}
+«prepend»        {icon type='url' size='extrasmall' __alt='Homepage'}
 «prepend»    </a>
 «IF page == 'display'-»
 «prepend»  {else}

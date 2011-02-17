@@ -150,7 +150,7 @@
 «ENDIF-»
 «IF controller.hasActions('view')-»
     <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«objName»'}" title="{gt text='Back to overview'}">
-        {img src='agt_back.png' modname='core' set='icons/extrasmall' __alt='Back'}
+        {icon type='back' size='extrasmall' __alt='Back'}
         {gt text='Back to overview'}
     </a>
 «ENDIF-»
