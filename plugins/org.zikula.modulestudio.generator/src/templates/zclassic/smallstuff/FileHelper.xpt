@@ -1,6 +1,10 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 
+«DEFINE phpFileNoHeader(Application app) FOR Object-»
+<?php
+«ENDDEFINE»
+
 «DEFINE phpFileHeader(Application app) FOR Object-»
 <?php
 /**
