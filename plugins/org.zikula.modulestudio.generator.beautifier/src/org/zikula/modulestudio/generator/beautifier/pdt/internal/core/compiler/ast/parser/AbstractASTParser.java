@@ -95,6 +95,7 @@ abstract public class AbstractASTParser extends lr_parser {
 
     protected void reportError(IProblemReporter problemReporter,
             String fileName, int start, int end, int lineNumber, String message) {
+        @SuppressWarnings("deprecation")
         final DefaultProblem problem = new DefaultProblem(fileName, message,
                 IProblem.Syntax, new String[0], ProblemSeverities.Error, start,
                 end, lineNumber);
