@@ -39,15 +39,12 @@
 «DEFINE ControllerBaseImpl(Application app) FOR Controller-»
 
 /**
- * This is the «name» controller class providing navigation and interaction functionality.
+ * This is the «name» controller class.
  */
-class «baseClassController()» extends Zikula_Controller
+class «baseClassController()» extends Zikula_Controller«IF metaType == AjaxController-»_Ajax«ENDIF-»
 {
 «IF metaType == AjaxController-»
-    public function _postSetup()
-    {
-        // no need for a view so override it.
-    }
+
 «ELSE-»
 «EXPAND ControllerHelper::ControllerPostInitialize(true)-»
 «ENDIF-»
