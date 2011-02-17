@@ -8,15 +8,15 @@
 «DEFINE Bootstrap FOR Application-»
 
 /**
- * Feel free to add your initialisation stuff here.
+ * Module bootstrap called when module is first initialised at runtime.
+ *
+ * This is only called once, and only if the core has reason to initialise this module, usually
+ * to dispatch a controller request or API.
  *
  * For example you can register additional AutoLoaders with ZLoader::addAutoloader($namespace, $path)
  * whereby $namespace is the first part of the PEAR class name
  * and $path is the path to the containing folder.
  */
-
-// initialise Doctrine caching settings
-«appName()»_Util_Model::initDoctrineCaching();
 
 
 «ENDDEFINE»
