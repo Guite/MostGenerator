@@ -222,7 +222,6 @@ class ClassLoader
 «ENDDEFINE»
 
 «DEFINE ClassLoaderTests FOR Application-»
-<?php
 require_once __DIR__ . '/bootstrap.php';
 
 class ClassLoaderTest extends PHPUnit_Framework_TestCase
