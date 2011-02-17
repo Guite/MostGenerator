@@ -4,7 +4,6 @@
 
 «REM»Entry point for module unit test classes«ENDREM»
 «DEFINE Root FOR Application-»
-    «FILE getAppTestsPath(appName()).msconcat("index.html")»«msUrl()-»«ENDFILE»
     «FILE getAppTestsPath(appName()).msconcat("lib/index.html")»«msUrl()-»«ENDFILE»
     «FILE getAppTestsPath(appName()).msconcat("bootstrap.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND Bootstrap»«ENDFILE»
     «FILE getAppTestsPath(appName()).msconcat("AllTests.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND TestSuite»«ENDFILE»
