@@ -8,8 +8,8 @@
     «FILE getAppTestsPath(appName()).msconcat("lib/index.html")»«msUrl()-»«ENDFILE»
     «FILE getAppTestsPath(appName()).msconcat("bootstrap.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND Bootstrap»«ENDFILE»
     «FILE getAppTestsPath(appName()).msconcat("AllTests.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND TestSuite»«ENDFILE»
-    «FILE getAppTestsPath(appName()).msconcat("ClassLoader.php")»«EXPAND FileHelper::phpNoFileHeader(this)»«EXPAND ClassLoader»«ENDFILE»
-    «FILE getAppTestsPath(appName()).msconcat("ClassLoaderTests.php")»«EXPAND FileHelper::phpNoFileHeader(this)»«EXPAND ClassLoaderTests»«ENDFILE»
+    «FILE getAppTestsPath(appName()).msconcat("ClassLoader.php")»«EXPAND FileHelper::phpFileNoHeader(this)»«EXPAND ClassLoader»«ENDFILE»
+    «FILE getAppTestsPath(appName()).msconcat("ClassLoaderTests.php")»«EXPAND FileHelper::phpFileNoHeader(this)»«EXPAND ClassLoaderTests»«ENDFILE»
 «ENDDEFINE»
 
 «DEFINE Bootstrap FOR Application-»
