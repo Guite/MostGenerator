@@ -4,6 +4,7 @@
     xmlns:bc="http://www.eclipse.org/buckminster/Common-1.0"
     xmlns="http://www.eclipse.org/buckminster/CSpec-1.0" componentType="eclipse.feature" version="1.0.0">
     <dependencies>
+        <dependency name="org.eclipse.rcp" componentType="eclipse.feature"/>
         <dependency name="de.guite.modulestudio.branding" componentType="osgi.bundle"/>
     </dependencies>
 </cspecExtension>
