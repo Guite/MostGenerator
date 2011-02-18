@@ -44,8 +44,8 @@
     <property name="bidiLayoutOrientation">ltr</property>
     <property name="imageDPI">129</property>
     <data-sources>
-        <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.ecore" name="AutoBugs" id="7">
-            <property name="MODEL_URI">platform:/resource/examples/ValidationTest.mostapp</property>
+        <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.ecore" name="MOSTModel" id="7">
+            <property name="MODEL_URI">file:/home/gabriel/workspace/Maturaprojekt/examples/ValidationTest.mostapp</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -138,7 +138,7 @@
                     </structure>
                 </list-property>
             </structure>
-            <property name="dataSource">AutoBugs</property>
+            <property name="dataSource">MOSTModel</property>
             <list-property name="resultSet">
                 <structure>
                     <property name="position">1</property>
@@ -342,7 +342,7 @@
                     </structure>
                 </list-property>
             </structure>
-            <property name="dataSource">AutoBugs</property>
+            <property name="dataSource">MOSTModel</property>
             <list-property name="resultSet">
                 <structure>
                     <property name="position">1</property>
@@ -432,7 +432,7 @@
                     </structure>
                 </list-property>
             </structure>
-            <property name="dataSource">AutoBugs</property>
+            <property name="dataSource">MOSTModel</property>
             <list-property name="resultSet">
                 <structure>
                     <property name="position">1</property>

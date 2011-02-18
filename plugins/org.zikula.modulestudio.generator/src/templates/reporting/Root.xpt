@@ -9,7 +9,7 @@
 
 «REM»Main entry point for the generator«ENDREM»
 «DEFINE Root(Object pm) FOR Application»
-«GenerateBirtReport()»
+«GenerateBirtReport() -> ''»
 «FILE 'reporting.html'»
 «EXPAND Helpers::htmlFileHeader('Statistics for ' + appName().toString())»
 <h1>Some statistics for «appName()-»</h1>

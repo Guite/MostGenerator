@@ -2,8 +2,8 @@
 <!-- manual generation of an example model given in ${modelName},
      calls msWorkflow.mwe with ${outputDir} as output directory -->
 <workflow>
-    <property name="examplePath" value="/home/axel/projects/GuiteSVN/modules/trunk/models/${folder}" />
-    <property name="outputPath" value="/home/axel/batchOutput" />
+    <property name="examplePath" value="/home/gabriel/workspace/Maturaprojekt/examples/${folder}" />
+    <property name="outputPath" value="/home/gabriel/workspace/Maturaprojekt/examples/output" />
 
     <!-- which generator ? -->
     <property name="cartridgeName" value="zclassic" />
