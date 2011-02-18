@@ -6,6 +6,10 @@
     <dependencies>
         <dependency name="org.eclipse.rcp" componentType="eclipse.feature"/>
         <dependency name="de.guite.modulestudio.branding" componentType="osgi.bundle"/>
+        <dependency name="org.w3c.dom" componentType="osgi.bundle"/>
+        <dependency name="org.w3c.dom.events" componentType="osgi.bundle"/>
+        <dependency name="org.aopalliance.aop" componentType="osgi.bundle"/>
+        <dependency name="org.aopalliance.intercept" componentType="osgi.bundle"/>
         <dependency name="org.eclipse.php.core.parser" componentType="osgi.bundle"/>
     </dependencies>
     <actions>
