@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="project" basedir=".">
+    <target name="finish.repository">
+        <move todir="site.p2.artifact">
+            <fileset dir="${outputPath}/site.p2"/>
+        </move>
+    </target>
+</project>
