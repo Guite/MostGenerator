@@ -160,7 +160,7 @@
                 if (!empty($previewFieldName) && isset($item[$previewFieldName . 'FullPath'])) {
                     $thumbWidth = 100;
                     $thumbHeight = 80;
-                    $thumbImagePath = «app.appName()»_Util::getImageThumb($item[$previewFieldName], $item[$previewFieldName . 'FullPath'], $thumbWidth, $thumbHeight);
+                    $thumbImagePath = «app.appName()»_Util_View::getImageThumb($item[$previewFieldName], $item[$previewFieldName . 'FullPath'], $thumbWidth, $thumbHeight);
                     $preview = '<img src="' . $thumbImagePath . '" width="' . $thumbWidth . '" height="' . $thumbHeight . '" alt="' . $itemTitleStripped . '" />';
                     $out .= '<div class="itempreview informal" id="itempreview' . $item[$idField] . '">' . $preview . '</div>';
                 }
