@@ -51,7 +51,7 @@
 «ENDDEFINE»
 
 «DEFINE FormField FOR BooleanField-»
-            {formcheckbox group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' readOnly=«readonly» __title='«actualFieldName().formatForDisplay()» ?'«IF mandatory || unique» cssClass='«IF mandatory»required«IF unique» «ENDIF»«ENDIF»«IF unique»validate-unique«ENDIF»'«ENDIF»}
+            {formcheckbox group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' readOnly=«readonly» __title='«actualFieldName().formatForDisplay()» ?'«REM»deactivated cssClass until supported in core, see http://code.zikula.org/core/ticket/2856«IF mandatory || unique» cssClass='«IF mandatory»required«IF unique» «ENDIF»«ENDIF»«IF unique»validate-unique«ENDIF»'«ENDIF»«ENDREM»}
 «ENDDEFINE»
 
 «DEFINE FormField FOR IntegerField-»
