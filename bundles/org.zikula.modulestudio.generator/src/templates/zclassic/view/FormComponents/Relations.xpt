@@ -103,7 +103,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
         <div id="«uniqueNameForJs»AddFields">
             <label for="«uniqueNameForJs»Selector">{gt text='Find «targetEntity.name.formatForDisplay()»'}</label>
             <br />
-            <input type="text" name="«uniqueNameForJs»Selector" id="«uniqueNameForJs»Selector" value="" size="" />
+            <input type="text" name="«uniqueNameForJs»Selector" id="«uniqueNameForJs»Selector" value="" />
             <input type="hidden" name="«uniqueNameForJs»Scope" id="«uniqueNameForJs»Scope" value="«IF !many»0«ELSE»1«ENDIF»" />
             {img src='indicator_circle.gif' modname='core' set='ajax' alt='' id='«uniqueNameForJs»Indicator' style='display: none'}
             <div id="«uniqueNameForJs»SelectorChoices" class="«app.prefix()»AutoComplete«IF targetEntity.hasImageFields()»WithImage«ENDIF»"></div>
