@@ -105,7 +105,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
             <br />
             <input type="text" name="«uniqueNameForJs»Selector" id="«uniqueNameForJs»Selector" value="" size="" />
             <input type="hidden" name="«uniqueNameForJs»Scope" id="«uniqueNameForJs»Scope" value="«IF !many»0«ELSE»1«ENDIF»" />
-            {img src='indicator_circle.gif' modname='core' set='icons/extrasmall' alt='' id='«uniqueNameForJs»Indicator' style='display: none'}
+            {img src='indicator_circle.gif' modname='core' set='ajax' alt='' id='«uniqueNameForJs»Indicator' style='display: none'}
             <div id="«uniqueNameForJs»SelectorChoices" class="«app.prefix()»AutoComplete«IF targetEntity.hasImageFields()»WithImage«ENDIF»"></div>
             <input type="button" id="«uniqueNameForJs»SelectorDoCancel" name="«uniqueNameForJs»SelectorDoCancel" value="{gt text='Cancel'}" class="z-button «app.prefix()»InlineButton" />
 «IF includeEditing-»
