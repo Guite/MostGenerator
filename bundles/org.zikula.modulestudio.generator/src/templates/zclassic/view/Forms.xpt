@@ -63,7 +63,7 @@
 
 {pagesetvar name='title' value=$templateTitle}
 <h2>{$templateTitle}</h2>
-<br />
+
 {form «IF hasUploadFields()»enctype='multipart/form-data' «ENDIF»cssClass='z-form'}
 
     {* add validation summary and a <div> element for styling the form *}
