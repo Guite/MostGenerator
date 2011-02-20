@@ -25,6 +25,6 @@
  */
 function smarty_modifier_«appName().formatForDB()»ImageThumb($fileName = '', $filePath = '', $width = 100, $height = 80, $thumbArgs = array())
 {
-    return «appName()»_Util::getImageThumb($fileName, $filePath, $width, $height, $thumbArgs);
+    return «appName()»_Util_View::getImageThumb($fileName, $filePath, $width, $height, $thumbArgs);
 }
 «ENDDEFINE»
