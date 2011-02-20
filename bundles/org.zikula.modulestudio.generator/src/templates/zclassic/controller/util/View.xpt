@@ -150,7 +150,7 @@ class «appName()»_Util_Base_View
         // create name of the pdf output file
         $fileTitle = «appName()»_Util_Controller::formatPermalink(System::getVar('sitename'))
                    . '-'
-                   . «appName()»_Util_Controller::formatPermalink(PageUtil::getVar('title'));
+                   . «appName()»_Util_Controller::formatPermalink(PageUtil::getVar('title'))
                    . '-' . date('Ymd') . '.pdf';
 
 //if ($_GET['dbg'] == 1) die($output);
