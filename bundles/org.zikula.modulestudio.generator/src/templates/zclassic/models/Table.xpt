@@ -178,7 +178,6 @@ class «baseClassModelTable()» extends Doctrine_Table
         $result = null;
 
 «IF nestedSetHasManyRoots-»
-
         // return branch if we have given a certain root
         if ($rootId > 0) {
             $root = $treeObject->fetchRoot($rootId);
@@ -188,10 +187,14 @@ class «baseClassModelTable()» extends Doctrine_Table
             }
             $result = $treeObject->fetchBranch($root->«idField()», array(), $fetchType);
         }
-«ENDIF-»
-
-        // «IF nestedSetHasManyRoots-»otherwise «ENDIF-»return the whole tree
+        else {
+            // otherwise return the whole tree
+            $result = $treeObject->fetchTree(array(), $fetchType);
+        }
+«ELSE-»
+        // return the whole tree
         $result = $treeObject->fetchTree(array(), $fetchType);
+«ENDIF-»
 
         if ($useJoins === true) {
             $treeObject->resetBaseQuery();
