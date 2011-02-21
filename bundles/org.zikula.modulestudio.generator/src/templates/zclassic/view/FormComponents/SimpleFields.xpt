@@ -153,11 +153,11 @@
                       {/if}
                       </a>
                   </div>
+«IF !mandatory-»
                   <div class="z-formnote">
                       {formcheckbox group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»DeleteFile' readOnly=false __title='Delete «actualFieldName().formatForDisplay()» ?'}
                       {formlabel for='«actualFieldName().formatForCode()»DeleteFile' __text='Delete existing file'}
                   </div>
-«IF !mandatory-»
                 {/if}
 «ENDIF-»
 «ENDLET-»
