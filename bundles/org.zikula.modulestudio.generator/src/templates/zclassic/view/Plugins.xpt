@@ -13,6 +13,7 @@
 «ENDIF-»
 «IF hasNestedSets()-»
 «EXPAND Plugins::TreeJS::Root-»
+«EXPAND Plugins::TreeSelector::Root-»
 «ENDIF-»
 «ENDDEFINE»
 
