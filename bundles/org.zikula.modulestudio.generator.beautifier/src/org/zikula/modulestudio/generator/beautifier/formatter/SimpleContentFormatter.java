@@ -99,6 +99,9 @@ public class SimpleContentFormatter implements IContentFormatter {
     private boolean prefEquateEleIfToElseif;
     private boolean prefSimpleStatementInOneLine;
     private boolean prefCompactEmptyBlock;
+    private boolean prefSpacerAfterControl = false;
+    private boolean prefSpacerBeforeCurly = false;
+    private boolean prefSpacerAfterCurly = false;
 
     private final boolean debugDump = false;
 
@@ -265,6 +268,12 @@ public class SimpleContentFormatter implements IContentFormatter {
                 .getBoolean(PreferenceConstants.SPACER_FOR_SHORTCUT_CLOSE);
         prefSpacerForCast = pref
                 .getBoolean(PreferenceConstants.SPACER_FOR_CAST);
+        prefSpacerAfterControl = pref
+                .getBoolean(PreferenceConstants.SPACER_AFTER_CONTROL);
+        prefSpacerBeforeCurly = pref
+                .getBoolean(PreferenceConstants.SPACER_BEFORE_CURLY);
+        prefSpacerAfterCurly = pref
+                .getBoolean(PreferenceConstants.SPACER_AFTER_CURLY);
         prefLeaveBlankLines1 = pref
                 .getBoolean(PreferenceConstants.LEAVE_BLANK_LINES1);
         prefShrinkBlankLines1 = pref
@@ -466,6 +475,8 @@ public class SimpleContentFormatter implements IContentFormatter {
         public boolean fgArrayIndent = false; // indent for array
         public boolean fgAligned = false; // already aligned
         public boolean fgBlock = false; // block statement (w/':')
+        public boolean fgCurlyExpr = false; // curly expression
+                                            // $var->{'foo'.'bar'}
         public int alignMax = 0; // max item length
         public int startIndex = -1; // ( starting index
 
@@ -838,6 +849,11 @@ public class SimpleContentFormatter implements IContentFormatter {
                     if (scope.peek().type == PHPToken.PHP_VARIABLE) { // #16076
                         break;
                     }
+                    getPrevToken(index - 2, true, prevToken);
+                    if (prevToken.body.equals("->")) {
+                        scope.peek().fgCurlyExpr = true;
+                        break;
+                    }
                     if (inConstantEncapsedString) {
                         break; // XXX 2010/04/09
                     }
@@ -847,7 +863,7 @@ public class SimpleContentFormatter implements IContentFormatter {
                     if (reqOpenBlock) {
                         reqOpenBlock = false;
                         indentLevel++;
-                        reqPreSpace = true;
+                        reqPreSpace = prefSpacerBeforeCurly;
                         reqPostNewLine = true;
                         if (scope.peek().type == PHPToken.PHP_SWITCH) {
                             if (prefIndentCaseBlock) {
@@ -882,6 +898,10 @@ public class SimpleContentFormatter implements IContentFormatter {
                     break;
 
                 case PHPToken.PHP_CURLY_CLOSE:
+                    if (scope.peek().fgCurlyExpr) {
+                        scope.peek().fgCurlyExpr = false;
+                        break;
+                    }
                     if (scope.peek().type == PHPToken.PHP_VARIABLE) { // #16076
                         scope.pop();
                         break;
@@ -911,7 +931,7 @@ public class SimpleContentFormatter implements IContentFormatter {
                                     reqPostNewLine = true;
                                 }
                                 else {
-                                    reqPostSpace = true;
+                                    reqPostSpace = prefSpacerAfterCurly;
                                 }
                                 scope.pop();
                                 break;
@@ -932,7 +952,7 @@ public class SimpleContentFormatter implements IContentFormatter {
                                                 reqPostNewLine = true;
                                             }
                                             else {
-                                                reqPostSpace = true;
+                                                reqPostSpace = prefSpacerAfterCurly;
                                             }
                                             terminate = false;
                                             // XXX 2010/04/09
@@ -953,7 +973,7 @@ public class SimpleContentFormatter implements IContentFormatter {
                                 break;
                             case PHPToken.PHP_DO:
                                 indentLevel--;
-                                reqPostSpace = true;
+                                reqPostSpace = prefSpacerAfterCurly;
                                 break;
                             case PHPToken.PHP_SWITCH:
                                 if (prefIndentCaseBlock) {
@@ -1481,7 +1501,7 @@ public class SimpleContentFormatter implements IContentFormatter {
                 case PHPToken.PHP_TRY:
                 case PHPToken.PHP_CATCH:
                     scope.push(new ScopeUnit(token.type));
-                    reqPostSpace = true;
+                    reqPostSpace = prefSpacerAfterControl;
                     if (prefNewLineForTryCatch) {
                         reqOpenBlockNL = true;
                     }
@@ -1515,14 +1535,14 @@ public class SimpleContentFormatter implements IContentFormatter {
                     }
                     else {
                         reqOpenBlock = true;
-                        reqPostSpace = true;
+                        reqPostSpace = prefSpacerBeforeCurly;
                     }
                     break;
 
                 case PHPToken.PHP_WHILE:
                     if (scope.peek().type == PHPToken.PHP_DO) {
                         scope.pop();
-                        reqPostSpace = true;
+                        reqPostSpace = prefSpacerAfterControl;
                         break;
                     }
                     //$FALL-THROUGH$
@@ -1537,7 +1557,7 @@ public class SimpleContentFormatter implements IContentFormatter {
                     else {
                         reqOpenBlock = true;
                     }
-                    reqPostSpace = true;
+                    reqPostSpace = prefSpacerAfterControl;
                     break;
 
                 case PHPToken.PHP_ELSEIF:
@@ -1594,7 +1614,7 @@ public class SimpleContentFormatter implements IContentFormatter {
                         }
                         else {
                             reqOpenBlock = true;
-                            reqPostSpace = true;
+                            reqPostSpace = prefSpacerBeforeCurly;
                         }
                         scope.peek().fgSingle = false;
                     }
