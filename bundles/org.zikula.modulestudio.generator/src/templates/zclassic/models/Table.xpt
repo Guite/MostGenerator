@@ -186,7 +186,7 @@ class «baseClassModelTable()» extends Doctrine_Table
                 // abort if no root node has been created yet
                 return false;
             }
-            $result = $treeObject->fetchBranch($root->getId(), array(), $fetchType);
+            $result = $treeObject->fetchBranch($root->«idField()», array(), $fetchType);
         }
 «ENDIF-»
 
