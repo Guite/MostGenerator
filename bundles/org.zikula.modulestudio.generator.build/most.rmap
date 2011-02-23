@@ -12,7 +12,7 @@
     </searchPath>
     <searchPath name="most.metamodel">
         <provider readerType="p2" componentTypes="osgi.bundle,eclipse.feature" mutable="false" source="true">
-            <uri format="file:////var/lib/jenkins/jobs/MOST-1_Prepare-2_MetaModel/lastSuccessful/archive/metamodel/de.guite.modulestudio.metamodel.build/site.p2.artifact" />
+            <uri format="file:////var/lib/jenkins/jobs/MOST-1_Prepare-2_MetaModel/lastSuccessful/archive/scm/bundles/de.guite.modulestudio.metamodel.build/site.p2.artifact" />
         </provider>
     </searchPath>
     <searchPath name="most.product">
