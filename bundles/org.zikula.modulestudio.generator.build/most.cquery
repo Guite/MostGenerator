@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cq:componentQuery xmlns:cq="http://www.eclipse.org/buckminster/CQuery-1.0" resourceMap="most.rmap">
+    <cq:rootRequest name="org.zikula.modulestudio.generator.build" componentType="eclipse.feature"/>
+    <cq:advisorNode namePattern="^org\.zikula\.modulestudio.*\.source$" skipComponent="true"/>
+<!--    <cq:advisorNode namePattern=".*" useMaterialization="false" useTargetPlatform="false"/>-->
+</cq:componentQuery>
