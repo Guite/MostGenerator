@@ -33,7 +33,7 @@
     </searchPath>
 
     <locator searchPathRef="most.generator" pattern="^org\.zikula\.modulestudio\.generator(\..+)?" />
-    <locator searchPathRef="most.metamodel" pattern="^de\.guite\.modulestudio\.metamodel(\..+)?" />
+    <locator searchPathRef="most.metamodel" pattern="^de\.guite\.modulestudio\.metamodel(\..*)?" />
     <locator searchPathRef="most.product" pattern="^de\.guite\.modulestudio(\..+)?" />
     <locator searchPathRef="most.product.helpers" failOnError="false" />
     <redirect href="../../../refProduct/bundles/de.guite.modulestudio.build/build/most_eclipse.rmap" />
