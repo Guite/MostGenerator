@@ -2,7 +2,7 @@
 <rmap xmlns="http://www.eclipse.org/buckminster/RMap-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:bc="http://www.eclipse.org/buckminster/Common-1.0">
 
-    <searchPath name="most.editors">
+    <searchPath name="most.generator">
         <provider readerType="local" componentTypes="osgi.bundle,eclipse.feature" mutable="false">
             <uri format="{0}/scm/bundles/{1}">
                 <bc:propertyRef key="workspace.root"/>
@@ -24,7 +24,7 @@
         </provider>
     </searchPath>
 
-    <locator searchPathRef="most.editors" pattern="^de\.guite\.modulestudio\.gmf(\..+)?" failOnError="false" />
+    <locator searchPathRef="most.generator" pattern="^org\.zikula\.modulestudio\.generator(\..+)?" />
     <locator searchPathRef="most.metamodel" pattern="^de\.guite\.modulestudio\.metamodel(\..+)?" />
     <locator searchPathRef="most.product" pattern="^de\.guite\.modulestudio(\..+)?" />
     <redirect href="../../../refProduct/bundles/de.guite.modulestudio.build/build/most_eclipse.rmap" />
