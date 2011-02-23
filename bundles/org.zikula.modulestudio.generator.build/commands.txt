@@ -1,0 +1,15 @@
+# Commands for building a p2 site for the generator
+
+# materialise stuff by cquery/mspec/rmap
+import --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "scm/bundles/org.zikula.modulestudio.generator.build/most.mspec"
+resolve --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "scm/bundles/org.zikula.modulestudio.generator.build/most.cquery"
+
+# build workspace
+build
+#build --thorough
+
+# build p2 repository
+perform --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "org.zikula.modulestudio.generator.build#site.p2"
+
+# move it to /site.p2/
+perform "org.zikula.modulestudio.generator.build#finish.repository"
