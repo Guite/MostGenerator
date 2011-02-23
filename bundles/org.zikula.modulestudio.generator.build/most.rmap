@@ -22,6 +22,12 @@
                 <bc:propertyRef key="buckminster.component" />
             </uri>
         </provider>
+        <provider readerType="local" componentTypes="osgi.bundle" mutable="false">
+            <uri format="{0}/refProduct/tools/beautifier/{1}">
+                <bc:propertyRef key="workspace.root" />
+                <bc:propertyRef key="buckminster.component" />
+            </uri>
+        </provider>
     </searchPath>
 
     <locator searchPathRef="most.generator" pattern="^org\.zikula\.modulestudio\.generator(\..+)?" />
