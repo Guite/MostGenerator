@@ -765,7 +765,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
                 continue;
             }
 
-            if ($hasBeenDeleted !== true) {
+            if ($hasBeenDeleted !== true && $this->mode != 'create') {
                 // remove old upload file (and image thumbnails)
                 $existingObjectData = $uploadManager->deleteUploadFile($this->objectType, $existingObjectData, $uploadField);
                 if (empty($existingObjectData[$uploadField])) {
