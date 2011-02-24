@@ -79,7 +79,7 @@
 «ENDDEFINE»
 
 «DEFINE FormField FOR DecimalField-»
-            {formfloatinput group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«(length+3+scale)»«EXPAND Validation::FieldValidationCssClass»}
+            {formfloatinput group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«(length+3+scale)»«IF scale != 2» precision=«scale»«ENDIF»«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»
 
 «DEFINE FormField FOR StringField-»
