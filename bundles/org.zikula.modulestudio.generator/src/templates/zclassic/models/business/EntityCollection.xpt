@@ -55,19 +55,20 @@
      * business entities, we can exchange the model behind it without any subsequent
      * efforts on the controller layer.
      *
-     * @param string $where   The where clause to use when retrieving the object array (optional) (default='').
-     * @param string $orderBy The order-by clause to use when retrieving the object array (optional) (default='').
+     * @param string $where    The where clause to use when retrieving the object array (optional) (default='').
+     * @param string $orderBy  The order-by clause to use when retrieving the object array (optional) (default='').
+     * @param boolean $asArray Whether to return the result as array instead as record object (optional) (default=true).
      *
      * @return Doctrine_Collection collection containing retrieved Doctrine_Record instances
      */
-    public function selectWhere($where = '', $orderBy = '')
+    public function selectWhere($where = '', $orderBy = '', $asArray = true)
     {
         // store parameters
         $this->set_intWhere($where);
         $this->set_intOrderBy($orderBy);
 
         // select items from the model
-        $result = $this->_intTable()->selectCollection($where, $orderBy);
+        $result = $this->_intTable()->selectCollection($where, $orderBy, $asArray);
 
         // store the results
         $this->set«nameMultiple.formatForCodeCapital()»($result);
