@@ -292,8 +292,7 @@
         }
 
         $factoryArgs = array('controller' => 'ajax', 'action' => 'HandleNestedSetOperation');
-
-        $object = «app.appName()»_Factory::getBusinessEntity($objectType, 'controllerAction', false, $factoryArgs);
+        $object = «app.appName()»_Factory::getBusinessEntity($objectType, 'controllerAction', $factoryArgs);
         $objectCollection = «app.appName()»_Factory::getBusinessCollection($objectType, 'controllerAction', $factoryArgs);
 
         $rootId = 1;
@@ -354,7 +353,7 @@
                                 throw new Zikula_Exception_Fatal();
                             }
 
-                            $childObject = «app.appName()»_Factory::getBusinessEntity($objectType, 'controllerAction', false, $factoryArgs);
+                            $childObject = «app.appName()»_Factory::getBusinessEntity($objectType, 'controllerAction', $factoryArgs);
                             $objectData = $childObject->getNewArrayWithDefaultData();
                             $objectData[$titleFieldName] = $this->__('New child node');
                             if (!empty($descriptionFieldName)) {
@@ -413,7 +412,7 @@
                             $record = $object->selectById($id, false);
                             $node = $record->getNode();
 
-                            $destObject = «app.appName()»_Factory::getBusinessEntity($objectType, 'controllerAction', false, $factoryArgs);
+                            $destObject = «app.appName()»_Factory::getBusinessEntity($objectType, 'controllerAction', $factoryArgs);
                             $destRecord = $destObject->selectById($destId, false);
 
                             if ($moveDirection == 'after') {
