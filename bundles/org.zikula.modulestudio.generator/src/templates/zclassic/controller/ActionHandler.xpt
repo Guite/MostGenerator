@@ -742,10 +742,11 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
         // process all fields
         foreach ($uploadFields as $uploadField) {
             // check if an existing file must be deleted
-            $hasBeenDeleted = false;
+            $hasOldFile = (!empty($existingObjectData[$uploadField]));
+            $hasBeenDeleted = !$hasOldFile;
             if ($this->mode != 'create') {
                 if (isset($formData[$uploadField . 'DeleteFile'])) {
-                    if ($formData[$uploadField . 'DeleteFile'] === true) {
+                    if ($hasOldFile && $formData[$uploadField . 'DeleteFile'] === true) {
                         // remove upload file (and image thumbnails)
                         $existingObjectData = $uploadManager->deleteUploadFile($this->objectType, $existingObjectData, $uploadField);
                         if (empty($existingObjectData[$uploadField])) {
@@ -765,7 +766,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
                 continue;
             }
 
-            if ($hasBeenDeleted !== true && $this->mode != 'create') {
+            if ($hasOldFile && $hasBeenDeleted !== true && $this->mode != 'create') {
                 // remove old upload file (and image thumbnails)
                 $existingObjectData = $uploadManager->deleteUploadFile($this->objectType, $existingObjectData, $uploadField);
                 if (empty($existingObjectData[$uploadField])) {
