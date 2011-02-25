@@ -195,7 +195,7 @@ class «appName()»_Base_UploadHandler
      *
      * @return string the resulting file name
      */
-    private function determineFileName($objectType, $fieldName, $basePath, $fileName, $extension)
+    protected function determineFileName($objectType, $fieldName, $basePath, $fileName, $extension)
     {
         $backupFileName = $fileName;
 
