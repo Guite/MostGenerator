@@ -23,26 +23,54 @@ class «appName()»_Form_Plugin_FormFrame extends Zikula_Form_Plugin
 
     // Plugins MUST implement this function as it is stated here.
     // The information is used to re-establish the plugins on postback.
-    function getFilename()
+    public function getFilename()
     {
         return __FILE__;
     }
 
-    function create($view, &$params)
+    /**
+     * Create event handler.
+     *
+     * This fires once, immediately <i>after</i> member variables have been populated from Smarty parameters
+     * (in {@link readParameters()}). Default action is to do nothing.
+     *
+     * @see Zikula_Form_View::registerPlugin()
+     *
+     * @param Zikula_Form_View $view    Reference to Zikula_Form_View object.
+     * @param array            &$params Parameters passed from the Smarty plugin function.
+     *
+     * @return void
+     */
+    public function create(Zikula_Form_View $view, &$params)
     {
         $this->useTabs = (array_key_exists('useTabs', $params) ? $params['useTabs'] : false);
     }
 
-
-    // This is called by the framework before the content of the block is rendered
-    function renderBegin($view)
+    /**
+     * RenderBegin event handler.
+     *
+     * Default action is to return an empty string.
+     *
+     * @param Zikula_Form_View $view Reference to Zikula_Form_View object.
+     *
+     * @return string The rendered output.
+     */
+    public function renderBegin(Zikula_Form_View $view)
     {
         $tabClass = $this->useTabs ? ' ' . $this->cssClass : '';
         return "<div class=\"«appName().formatForDB()»Form{$tabClass}\">\n";
     }
 
-    // This is called by the framework after the content of the block is rendered
-    function renderEnd($view)
+    /**
+     * RenderEnd event handler.
+     *
+     * Default action is to return an empty string.
+     *
+     * @param Zikula_Form_View $view Reference to Zikula_Form_View object.
+     *
+     * @return string The rendered output.
+     */
+    public function renderEnd(Zikula_Form_View $view)
     {
         return "</div>\n";
     }
