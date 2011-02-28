@@ -37,7 +37,7 @@ function smarty_modifier_«appName().formatForDB()»GetFileSize($size = 0, $file
         return '';
     }
 
-    $result = «appName()»_Util::getReadableFileSize($size, $nodesc, $onlydesc);
+    $result = «appName()»_Util_View::getReadableFileSize($size, $nodesc, $onlydesc);
 
     return $result;
 }
