@@ -1,3 +1,5 @@
+#!/bin/sh
+WORKSPACE=$1
 echo "Removing old meta data to ensure clean new p2 site"
 rm -Rf $WORKSPACE/.metadata
 rm -Rf $WORKSPACE/features
