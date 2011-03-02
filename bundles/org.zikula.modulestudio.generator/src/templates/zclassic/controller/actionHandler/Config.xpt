@@ -43,7 +43,7 @@ class «tempBaseClassConfigHandler()» extends Zikula_Form_Handler
      *
      * @return boolean False in case of initialization errors, otherwise true.
      */
-    public function initialize($view)
+    public function initialize(Zikula_Form_View $view)
     {
         if (!SecurityUtil::checkPermission('«appName()»::', '::', ACCESS_ADMIN)) {
             return $view->registerError(LogUtil::registerPermissionError());
@@ -94,7 +94,7 @@ class «tempBaseClassConfigHandler()» extends Zikula_Form_Handler
      * @see Zikula_Form_Plugin_Button
      * @see Zikula_Form_Plugin_ImageButton
      */
-    public function handleCommand($view, &$args)
+    public function handleCommand(Zikula_Form_View $view, &$args)
     {
         if ($args['commandName'] == 'save') {
             if (!$this->view->isValid()) {
