@@ -137,12 +137,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $sortParam = $sort . ' ' . $sdir;
 
         // get objects from database
-        // while the result will be saved in the object, we assign in to a local variable for convenience.
-        $objectData = $objectCollection->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
-
-        // get total number of records for building the pagination by method call
-        $objectCount = $objectCollection->selectCount($where);
-        // TODO: check if Doctrine_Pager::getNumResults() has the same performance
+        list($objectData, $objectCount) = $objectCollection->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
 
         // assign the object data, sorting information and details for creating the pager
         $this->view->assign('items', $objectData)
