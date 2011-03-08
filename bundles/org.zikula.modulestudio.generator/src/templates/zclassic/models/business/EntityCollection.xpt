@@ -86,7 +86,7 @@
      * @param integer $resultsPerPage Amount of items to select
      * @param boolean $asArray        Whether to return the result as array instead as record object (optional) (default=true).
      *
-     * @return array|Doctrine_Collection retrieved data array or collection containing retrieved Doctrine_Record instances.
+     * @return array                  Array with retrieved data and amount of total records affected by this query.
      */
     public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $asArray = true)
     {
@@ -95,13 +95,13 @@
         $this->set_intOrderBy($orderBy);
 
         // select items from the model
-        $result = $this->_intTable()->selectWherePaginated($where, $orderBy, $currentPage, $resultsPerPage, $asArray);
+        list($objectData, $objectCount) = $this->_intTable()->selectWherePaginated($where, $orderBy, $currentPage, $resultsPerPage, $asArray);
 
         // store the results
-        $this->set«nameMultiple.formatForCodeCapital()»($result);
+        $this->set«nameMultiple.formatForCodeCapital()»($objectData);
 
         // and return them
-        return $this->get«nameMultiple.formatForCodeCapital()»();
+        return array($this->get«nameMultiple.formatForCodeCapital()»(), $objectCount);
     }
 
     /**
