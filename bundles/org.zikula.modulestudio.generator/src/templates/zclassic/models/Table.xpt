@@ -54,6 +54,7 @@ class «baseClassModelTable()» extends Doctrine_Table
      * @param integer $id              The id to use to retrieve the object (optional) (default=null).
      * @param boolean $asArray         Whether to return the result as array instead as record object (optional) (default=true).
      * @param boolean $useJoins        Whether to include joining related objects (optional) (default=true).
+     *
      * @return array|Doctrine_Record retrieved data array or Doctrine_Record instance
      */
     public function selectOneItemById($id = 0, $asArray = true, $useJoins = true)
@@ -72,6 +73,7 @@ class «baseClassModelTable()» extends Doctrine_Table
      * @param string  $slugTitle       The slug value
      * @param boolean $asArray         Whether to return the result as array instead as record object (optional) (default=true).
      * @param boolean $useJoins        Whether to include joining related objects (optional) (default=true).
+     *
      * @return array|Doctrine_Record retrieved data array or Doctrine_Record instance
      */
     public function selectOneItemBy«((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCodeCapital()»($slugTitle = '', $asArray = true, $useJoins = true)
@@ -91,6 +93,8 @@ class «baseClassModelTable()» extends Doctrine_Table
      * @param string $orderBy           The order-by clause to use when retrieving the object array (optional) (default='').
      * @param boolean $asArray          Whether to return the result as array instead as record object (optional) (default=true).
      * @param boolean $useJoins         Whether to include joining related objects (optional) (default=true).
+     *
+     * @return array|Doctrine_Collection retrieved data array or collection containing retrieved Doctrine_Record instances
      */
     public function selectCollection($where = '', $orderBy = '', $asArray = true, $useJoins = true)
     {
@@ -108,7 +112,8 @@ class «baseClassModelTable()» extends Doctrine_Table
      * @param integer $resultsPerPage   Amount of items to select
      * @param boolean $asArray          Whether to return the result as array instead as record object (optional) (default=true).
      * @param boolean $useJoins         Whether to include joining related objects (optional) (default=true).
-     * @return array|Doctrine_Collection retrieved data array or collection containing retrieved Doctrine_Record instances
+     *
+     * @return array 					Array with retrieved data and amount of total records affected by this query.
      */
     public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $asArray = true, $useJoins = true)
     {
@@ -121,38 +126,9 @@ class «baseClassModelTable()» extends Doctrine_Table
         //$pager->setCountQuery($query);
 
         $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
-        return $pager->execute(array(), $fetchType);
-    }
-
-    /**
-     * Select count with a given where clause.
-     *
-     * @param string $where             The where clause to use when retrieving the object count (optional) (default='').
-     * @param boolean $useJoins         Whether to include joining related objects (optional) (default=true).
-     * @return integer amount of affected records
-     */
-    public function selectCount($where = '', $useJoins = true)
-    {
-        // TODO: fix usage of joins; please remove the following line and test.
-        $useJoins = false;
-
-        $selection = 'COUNT(tbl.«idField()») AS num«nameMultiple.formatForCodeCapital()»';
-        if ($useJoins === true) {
-            $selection = $this->addJoinsToSelection($selection);
-        }
-
-        $q = Doctrine_Query::create()
-            ->select($selection)
-            ->from('«implClassModelRecord()» tbl');
-
-        if ($useJoins === true) {
-            $this->addJoinsToFrom($q);
-        }
-
-        if (!empty($where)) {
-            $q->where($where);
-        }
-        return $q->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+        $results = $pager->execute(array(), $fetchType);
+        $count = $pager->getNumResults();
+        return array($results, $count);
     }
 «IF nestedSet-»
 

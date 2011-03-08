@@ -64,12 +64,15 @@ public class DiagramExporter {
         preferencesHint = prefHint;
         diagCounterM = diagCounterC = diagCounterV = 0;
 
-        // create subfolder for diagrams
+        // create sub folder for diagrams
         outputPath = outPath + "/diagrams/";
-        final boolean success = (new File(outputPath)).mkdir();
-        if (!success) {
-            System.out.println("Error: could not create directory: "
-                    + outputPath + " created");
+        final File diagramDirectory = new File(outputPath);
+        if (!diagramDirectory.exists()) {
+            final boolean success = (diagramDirectory).mkdir();
+            if (!success) {
+                System.out.println("Error: could not create directory: "
+                        + outputPath);
+            }
         }
 
         final Application app = ((Application) inputDiagram.getElement());
