@@ -1,0 +1,700 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 2.6.1.v20100902 Build &lt;2.6.1.v20100915-1750></property>
+    <list-property name="userProperties">
+        <structure>
+            <property name="name">Data Cube.Entity.x</property>
+            <property name="type">integer</property>
+            <property name="isVisible">false</property>
+        </structure>
+        <structure>
+            <property name="name">Data Cube.Entity.y</property>
+            <property name="type">integer</property>
+            <property name="isVisible">false</property>
+        </structure>
+        <structure>
+            <property name="name">Data Cube.Relations.NewTabularHierarchy.x</property>
+            <property name="type">integer</property>
+            <property name="isVisible">false</property>
+        </structure>
+        <structure>
+            <property name="name">Data Cube.Relations.NewTabularHierarchy.y</property>
+            <property name="type">integer</property>
+            <property name="isVisible">false</property>
+        </structure>
+        <structure>
+            <property name="name">Data Cube.Relations.NewTabularHierarchy.width</property>
+            <property name="type">integer</property>
+            <property name="isVisible">false</property>
+        </structure>
+        <structure>
+            <property name="name">Data Cube.Relations.NewTabularHierarchy.height</property>
+            <property name="type">integer</property>
+            <property name="isVisible">false</property>
+        </structure>
+    </list-property>
+    <property name="Data Cube.Entity.x">135</property>
+    <property name="Data Cube.Entity.y">80</property>
+    <property name="Data Cube.Relations.NewTabularHierarchy.x">332</property>
+    <property name="Data Cube.Relations.NewTabularHierarchy.y">88</property>
+    <property name="Data Cube.Relations.NewTabularHierarchy.width">150</property>
+    <property name="Data Cube.Relations.NewTabularHierarchy.height">200</property>
+    <property name="units">in</property>
+    <property name="iconFile">/templates/blank_report.gif</property>
+    <property name="bidiLayoutOrientation">ltr</property>
+    <property name="imageDPI">129</property>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.ecore" name="MOSTModel" id="7">
+            <property name="MODEL_URI">file:/home/gabriel/workspace/Maturaprojekt/examples/ValidationTest.mostapp</property>
+        </oda-data-source>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.ecore.dataSet" name="Application" id="8">
+            <property name="nullsOrdering">nulls lowest</property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">Application::author</property>
+                    <text-property name="displayName">Application::author</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">Application::email</property>
+                    <text-property name="displayName">Application::email</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">Application::url</property>
+                    <text-property name="displayName">Application::url</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">Application::version</property>
+                    <text-property name="displayName">Application::version</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">Application::license</property>
+                    <text-property name="displayName">Application::license</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">Application::prefix</property>
+                    <text-property name="displayName">Application::prefix</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">Application::interactiveInstallation</property>
+                    <text-property name="displayName">Application::interactiveInstallation</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">Application::modelPath</property>
+                    <text-property name="displayName">Application::modelPath</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">Application::applicationType</property>
+                    <text-property name="displayName">Application::applicationType</text-property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">Application::author</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">Application::email</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">Application::url</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">Application::version</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">Application::license</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">Application::prefix</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">Application::interactiveInstallation</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">Application::modelPath</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">Application::applicationType</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">MOSTModel</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">Application::author</property>
+                    <property name="nativeName">Application::author</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">Application::email</property>
+                    <property name="nativeName">Application::email</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">Application::url</property>
+                    <property name="nativeName">Application::url</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">Application::version</property>
+                    <property name="nativeName">Application::version</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">Application::license</property>
+                    <property name="nativeName">Application::license</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">Application::prefix</property>
+                    <property name="nativeName">Application::prefix</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">Application::interactiveInstallation</property>
+                    <property name="nativeName">Application::interactiveInstallation</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">Application::modelPath</property>
+                    <property name="nativeName">Application::modelPath</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">Application::applicationType</property>
+                    <property name="nativeName">Application::applicationType</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[self.oclIsKindOf(Application)]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>Application::author</design:name>
+            <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+            <design:uiHints>
+              <design:displayName>Application::author</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>Application::email</design:name>
+            <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+            <design:uiHints>
+              <design:displayName>Application::email</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>Application::url</design:name>
+            <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+            <design:uiHints>
+              <design:displayName>Application::url</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>Application::version</design:name>
+            <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+            <design:uiHints>
+              <design:displayName>Application::version</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>Application::license</design:name>
+            <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+            <design:uiHints>
+              <design:displayName>Application::license</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>Application::prefix</design:name>
+            <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+            <design:uiHints>
+              <design:displayName>Application::prefix</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>Application::interactiveInstallation</design:name>
+            <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+            <design:uiHints>
+              <design:displayName>Application::interactiveInstallation</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>Application::modelPath</design:name>
+            <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+            <design:uiHints>
+              <design:displayName>Application::modelPath</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>Application::applicationType</design:name>
+            <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+            <design:uiHints>
+              <design:displayName>Application::applicationType</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>COLUMN_DEFINITIONS</name>
+                    <value>Application::author,Application::email,Application::url,Application::version,Application::license,Application::prefix,Application::interactiveInstallation,Application::modelPath,Application::applicationType,</value>
+                </ex-property>
+                <ex-property>
+                    <name>OCL_ECORE_INVARIANT</name>
+                    <value>Application</value>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.ecore.dataSet" name="Entity" id="30">
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">Anzahl</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value">row["Entity::fields"]</expression>
+                        </structure>
+                    </list-property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">Entity::nameMultiple</property>
+                    <text-property name="displayName">Entity::nameMultiple</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">Entity::fields</property>
+                    <text-property name="displayName">Entity::fields</text-property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">Entity::nameMultiple</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">Entity::fields</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">Anzahl</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">MOSTModel</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">Entity::nameMultiple</property>
+                    <property name="nativeName">Entity::nameMultiple</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">Entity::fields</property>
+                    <property name="nativeName">Entity::fields</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[self.oclIsKindOf(Entity)]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>Entity::nameMultiple</design:name>
+            <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+            <design:uiHints>
+              <design:displayName>Entity::nameMultiple</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>Entity::fields</design:name>
+            <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+            <design:uiHints>
+              <design:displayName>Entity::fields</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>COLUMN_DEFINITIONS</name>
+                    <value>Entity::nameMultiple,Entity::fields,</value>
+                </ex-property>
+                <ex-property>
+                    <name>OCL_ECORE_INVARIANT</name>
+                    <value>Entity</value>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.ecore.dataSet" name="Relations" id="31">
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">Anzahl</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value">row["JoinRelationship::joinType"]</expression>
+                        </structure>
+                    </list-property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">JoinRelationship::joinType</property>
+                    <text-property name="displayName">JoinRelationship::joinType</text-property>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">JoinRelationship::joinType</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">Anzahl</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">MOSTModel</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">JoinRelationship::joinType</property>
+                    <property name="nativeName">JoinRelationship::joinType</property>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[self.oclIsKindOf(JoinRelationship)]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>1.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:name>Relationship::target::name</design:name>
+            <design:nativeDataTypeCode>1</design:nativeDataTypeCode>
+            <design:uiHints>
+              <design:displayName>Relationship::target::name</design:displayName>
+            </design:uiHints>
+          </design:attributes>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>COLUMN_DEFINITIONS</name>
+                    <value>JoinRelationship::joinType,</value>
+                </ex-property>
+                <ex-property>
+                    <name>OCL_ECORE_INVARIANT</name>
+                    <value>JoinRelationship</value>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
+    </data-sets>
+    <cubes>
+        <tabular-cube name="Data Cube" id="35">
+            <property name="dimensions">
+                <tabular-dimension name="Relations" id="36">
+                    <property name="defaultHierarchy">NewTabularHierarchy</property>
+                    <property name="hierarchies">
+                        <tabular-hierarchy name="NewTabularHierarchy" id="37">
+                            <property name="levels">
+                                <tabular-level name="Anzahl" id="38">
+                                    <property name="dataType">integer</property>
+                                    <property name="columnName">Anzahl</property>
+                                </tabular-level>
+                            </property>
+                            <property name="dataSet">Relations</property>
+                        </tabular-hierarchy>
+                    </property>
+                </tabular-dimension>
+                <tabular-dimension name="Entity" id="39">
+                    <property name="defaultHierarchy">NewTabularHierarchy1</property>
+                    <property name="hierarchies">
+                        <tabular-hierarchy name="NewTabularHierarchy1" id="40">
+                            <property name="levels">
+                                <tabular-level name="Anzahl" id="41">
+                                    <property name="dataType">integer</property>
+                                    <property name="columnName">Anzahl</property>
+                                </tabular-level>
+                            </property>
+                        </tabular-hierarchy>
+                    </property>
+                </tabular-dimension>
+            </property>
+            <property name="dataSet">Entity</property>
+        </tabular-cube>
+    </cubes>
+    <styles>
+        <style name="report" id="4">
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">10pt</property>
+        </style>
+        <style name="crosstab-cell" id="5">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+        <style name="crosstab" id="6">
+            <property name="borderBottomColor">#CCCCCC</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">1pt</property>
+            <property name="borderLeftColor">#CCCCCC</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">1pt</property>
+            <property name="borderRightColor">#CCCCCC</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">1pt</property>
+            <property name="borderTopColor">#CCCCCC</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">1pt</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <page-footer>
+                <text id="3">
+                    <property name="contentType">html</property>
+                    <text-property name="content"><![CDATA[<value-of>new Date()</value-of>]]></text-property>
+                </text>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <data id="21">
+            <property name="whiteSpace">nowrap</property>
+            <property name="dataSet">Application</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Application::author</property>
+                    <text-property name="displayName">Application::author</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["Application::author"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="resultSetColumn">Application::author</property>
+        </data>
+        <data id="22">
+            <property name="whiteSpace">nowrap</property>
+            <property name="dataSet">Application</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Application::email</property>
+                    <text-property name="displayName">Application::email</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["Application::email"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="resultSetColumn">Application::email</property>
+        </data>
+        <data id="23">
+            <property name="whiteSpace">nowrap</property>
+            <property name="dataSet">Application</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Application::url</property>
+                    <text-property name="displayName">Application::url</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["Application::url"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="resultSetColumn">Application::url</property>
+        </data>
+        <data id="24">
+            <property name="whiteSpace">nowrap</property>
+            <property name="dataSet">Application</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Application::version</property>
+                    <text-property name="displayName">Application::version</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["Application::version"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="resultSetColumn">Application::version</property>
+        </data>
+        <data id="25">
+            <property name="whiteSpace">nowrap</property>
+            <property name="dataSet">Application</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Application::license</property>
+                    <text-property name="displayName">Application::license</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["Application::license"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="resultSetColumn">Application::license</property>
+        </data>
+        <data id="26">
+            <property name="whiteSpace">nowrap</property>
+            <property name="dataSet">Application</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Application::prefix</property>
+                    <text-property name="displayName">Application::prefix</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["Application::prefix"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="resultSetColumn">Application::prefix</property>
+        </data>
+        <data id="27">
+            <property name="whiteSpace">nowrap</property>
+            <property name="dataSet">Application</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Application::interactiveInstallation</property>
+                    <text-property name="displayName">Application::interactiveInstallation</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["Application::interactiveInstallation"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="resultSetColumn">Application::interactiveInstallation</property>
+        </data>
+        <data id="28">
+            <property name="whiteSpace">nowrap</property>
+            <property name="dataSet">Application</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Application::modelPath</property>
+                    <text-property name="displayName">Application::modelPath</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["Application::modelPath"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="resultSetColumn">Application::modelPath</property>
+        </data>
+        <data id="29">
+            <property name="whiteSpace">nowrap</property>
+            <property name="dataSet">Application</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Application::applicationType</property>
+                    <text-property name="displayName">Application::applicationType</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["Application::applicationType"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="resultSetColumn">Application::applicationType</property>
+        </data>
+        <data id="44">
+            <property name="whiteSpace">nowrap</property>
+            <property name="dataSet">Relations</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">JoinRelationship::joinType</property>
+                    <text-property name="displayName">JoinRelationship::joinType</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["JoinRelationship::joinType"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+            </list-property>
+            <property name="resultSetColumn">JoinRelationship::joinType</property>
+        </data>
+        <data id="45">
+            <property name="whiteSpace">nowrap</property>
+            <property name="dataSet">Relations</property>
+            <list-property name="boundDataColumns">
+                <structure>
+                    <property name="name">Anzahl</property>
+                    <text-property name="displayName">Anzahl</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["Anzahl"]</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+            </list-property>
+            <property name="resultSetColumn">Anzahl</property>
+        </data>
+    </body>
+</report>

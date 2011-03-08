@@ -2,7 +2,7 @@
 <!-- inner workflow for manual generation executions -->
 <workflow>
     <property name="doSlotDumps" value='false' />
-    <property name="doValidation" value='true' />
+    <property name="doValidation" value='fase' />
     <property name="doModelCopy" value='true' />
     <property name="doProfiling" value='true' />
 

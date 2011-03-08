@@ -1,6 +1,6 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
-«EXTENSION templates::reporting::birt::CallBirt»
+«REM»«EXTENSION templates::reporting::birt::CallBirt»«ENDREM»
 
 «REM»Entry point for headless calls (e.g. for manual test runs), required also for compiler backend mode«ENDREM»
 «DEFINE Root FOR Application»
@@ -9,7 +9,7 @@
 
 «REM»Main entry point for the generator«ENDREM»
 «DEFINE Root(Object pm) FOR Application»
-«GenerateBirtReport() -> ''»
+«REM»«GenerateBirtReport() -> ''»«ENDREM»
 «FILE 'reporting.html'»
 «EXPAND Helpers::htmlFileHeader('Statistics for ' + appName().toString())»
 <h1>Some statistics for «appName()-»</h1>
