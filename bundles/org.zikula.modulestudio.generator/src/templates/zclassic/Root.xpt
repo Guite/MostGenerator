@@ -49,6 +49,9 @@
     «pm.subTask("Controller: Bootstrapping")»
     «info("Generating bootstrapping")»
     «EXPAND Bootstrap::Root»
+    «pm.subTask("Controller: Workflows")»
+    «info("Generating workflows")»
+    «EXPAND Workflows::Root»
 
 	«pm.subTask("View: Rendering templates")»
     «info("Generating view templates")»

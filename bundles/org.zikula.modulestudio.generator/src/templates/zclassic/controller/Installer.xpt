@@ -172,6 +172,12 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
      */
     public function uninstall()
     {
+        // delete stored object workflows
+        $result = WorkflowUtil::deleteWorkflowsForModule($this->getName());
+        if ($result === false) {
+            return LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %1$s module.', array($this->getName())));
+        }
+
         try {
             $dbPrefix = System::getVar('prefix');
 «EXPAND RemoveBehaviors FOREACH models.entities-»
