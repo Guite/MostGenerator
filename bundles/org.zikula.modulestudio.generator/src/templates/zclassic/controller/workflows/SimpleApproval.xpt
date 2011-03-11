@@ -62,10 +62,11 @@
             <parameter className="z-bt-ok" titleText="Click me">Button</parameter>
 -->
         </action>
+
         <action id="approve">
             <title>Approve</title>
             <description>Approve publication for immediate publishing.</description>
-            <permission>comment</permission>
+            <permission>moderate</permission>
             <state>waiting</state>
             <nextState>approved</nextState>
             <operation ot="item" status="3">updateObjectStatus</operation>
@@ -83,13 +84,15 @@
  * @param int $currentUser
  * @return bool
  */
-function AdShare_workflow_simpleapproval_permissioncheck($obj, $permLevel, $currentUser)
+function «appName()»_workflow_simpleapproval_permissioncheck($obj, $permLevel, $currentUser)
 {
     /** TODO */
+    $component = '«appName()»::';
     // process $obj and calculate an instance
+    /** TODO */
     $instance = '::';
 
-    return SecurityUtil::checkPermission('AdShare::', $instance, $permLevel, $currentUser);
+    return SecurityUtil::checkPermission($component, $instance, $permLevel, $currentUser);
 }
 «ENDDEFINE»
 
@@ -102,7 +105,7 @@ function AdShare_workflow_simpleapproval_permissioncheck($obj, $permLevel, $curr
  *
  * @return bool
  */
-function AdShare_operation_updateObjectStatus(&$obj, $params)
+function «appName()»_operation_updateObjectStatus(&$obj, $params)
 {
     // get attributes read from the workflow
     $objectType = isset($params['ot']) ? $params['ot'] : 'item'; /** TODO required? */
