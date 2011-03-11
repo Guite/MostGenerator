@@ -107,9 +107,6 @@
                 }
             }
 
-            // strip object type from id (for hooks)
-            $id = intval(str_replace($objectType, '', $id));
-
             $slugTitle = $routerFacade->getFormattedSlug($objectType, $args['func'], $args['args'], $id);
             if ($slugTitle != $id) {
                 // add slug expression
@@ -117,7 +114,7 @@
             }
             else {
                 // readd id
-                $args['args'][strtolower($objectType) . 'id'] = $id;
+                $args['args']['id'] = $id;
             }
         }
 
