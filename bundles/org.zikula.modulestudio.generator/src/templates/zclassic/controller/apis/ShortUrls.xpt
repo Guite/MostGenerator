@@ -14,11 +14,7 @@
      * @return       string custom url string
      */
     public function encodeurl($args)
-    {scribite geht nicht mehr
-  - content
-  - adshare
-
-    
+    {    
         // check if we have the required input
         if (!is_array($args) || !isset($args['modname']) || !isset($args['func'])) {
             return LogUtil::registerArgsError();
