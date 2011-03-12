@@ -14,7 +14,11 @@
      * @return       string custom url string
      */
     public function encodeurl($args)
-    {
+    {scribite geht nicht mehr
+  - content
+  - adshare
+
+    
         // check if we have the required input
         if (!is_array($args) || !isset($args['modname']) || !isset($args['func'])) {
             return LogUtil::registerArgsError();
@@ -31,7 +35,7 @@
         // return if function url scheme is not being customised
         $customFuncs = array(«IF hasActions('view')»'view'«IF hasActions('display')», «ENDIF»«ENDIF»«IF hasActions('display')»'display'«ENDIF»);
         if (!in_array($args['func'], $customFuncs)) {
-            return '';
+            return false;
         }
 
         // reference to current language
