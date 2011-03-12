@@ -103,7 +103,7 @@ function «appName()»_Api_ContentTypes_itemlist($args)
 
         // get objects from database
         // while the result will be saved in the object, we assign in to a local variable for convenience.
-        $objectData = $objectCollection->selectWherePaginated($this->filter, $sortParam, -1, $resultsPerPage);
+        list($objectData, $objectCount) = $objectCollection->selectWherePaginated($this->filter, $sortParam, -1, $resultsPerPage);
 
         // get total number of records for building the pagination by method call
         //$objectCount = $objectCollection->selectCount($where);
