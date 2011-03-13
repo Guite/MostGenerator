@@ -43,7 +43,7 @@
 «FILE getAppSourcePath(appName()).msconcat("templates/contenttype/itemlist_edit.tpl")-»
 {* Purpose of this template: edit view of generic item list content type *}
 
-<div class="z-adminformrow">
+<div class="z-formrow">
     {formlabel for='«appName()»_objecttype' __text='Object type'}
     {«appName().formatForDB()»SelectorObjectTypes assign="allObjectTypes"}
     {formdropdownlist id='«appName()»_objecttype' dataField='objectType' group='data' mandatory=true items=$allObjectTypes}
@@ -51,12 +51,14 @@
 
 <div class="z-formrow">
     {formlabel __text='Sorting'}
-    {formradiobutton id='«appName()»_srandom' value='random' dataField='sorting' group='data' mandatory=true}
-    {formlabel for='«appName()»_srandom' __text='Random'}
-    {formradiobutton id='«appName()»_snewest' value='newest' dataField='sorting' group='data' mandatory=true}
-    {formlabel for='«appName()»_snewest' __text='Newest'}
-    {formradiobutton id='«appName()»_sdefault' value='default' dataField='sorting' group='data' mandatory=true}
-    {formlabel for='«appName()»_sdefault' __text='Default'}
+    <div>
+        {formradiobutton id='«appName()»_srandom' value='random' dataField='sorting' group='data' mandatory=true}
+        {formlabel for='«appName()»_srandom' __text='Random'}
+        {formradiobutton id='«appName()»_snewest' value='newest' dataField='sorting' group='data' mandatory=true}
+        {formlabel for='«appName()»_snewest' __text='Newest'}
+        {formradiobutton id='«appName()»_sdefault' value='default' dataField='sorting' group='data' mandatory=true}
+        {formlabel for='«appName()»_sdefault' __text='Default'}
+    </div>
 </div>
 
 <div class="z-formrow">

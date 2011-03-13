@@ -82,31 +82,22 @@ class «appName()»_Api_Mailz extends «appName()»_Api_Base_Mailz
 
         // get objects from database
         // while the result will be saved in the object, we assign in to a local variable for convenience.
-        $objectData = $objectCollection->selectWherePaginated($this->filter, $sortParam, -1, $resultsPerPage);
+        list($objectData, $objectCount) = $objectCollection->selectWherePaginated(''/*$this->filter*/, $sortParam, -1, $resultsPerPage);
 
-        // get total number of records for building the pagination by method call
-        //$objectCount = $objectCollection->selectCount($where);
+        $view = Zikula_View::getInstance('«appName()»', true);
 
-        $output = '';
+        //$data = array('sorting' => $this->sorting, 'amount' => $this->amount, 'filter' => $this->filter, 'template' => $this->template);
+        //$view->assign('vars', $data);
+
+        $view->assign('objectType', '«leadingEntity.name.formatForCode()»')
+             ->assign('items', $objectData);
+
         if ($args['contenttype'] == 't') { /* text */
-            $counter = 0;
-            $output .= "\n";
-            foreach ($objectData as $object) {
-                $counter++;
-                $output .= $counter . '. ' . $object['«leadingEntity.getLeadingField().name.formatForCode()»'] . "\n";
-            }
+            return $view->fetch('mailz/itemlist_«leadingEntity.name.formatForCodeCapital()»_text.tpl');
         } else {
-            $this->view->setCaching(true);
-
-            //$data = array('sorting' => $this->sorting, 'amount' => $this->amount, 'filter' => $this->filter, 'template' => $this->template);
-            //$this->view->assign('vars', $data);
-            $this->view->assign('objectType', '«leadingEntity.name.formatForCode()»')
-                       ->assign('items', $objectData);
-
-            //$output = $this->view->fetch('contenttype/itemlist_display.html');
-            $output = $this->view->fetch('«appName()»_mailz_itemlist.htm');
+            //return $view->fetch('contenttype/itemlist_display.html');
+            return $view->fetch('mailz/itemlist_«leadingEntity.name.formatForCodeCapital()»_html.tpl');
         }
-        return $output;
     }
 «ENDLET-»
 

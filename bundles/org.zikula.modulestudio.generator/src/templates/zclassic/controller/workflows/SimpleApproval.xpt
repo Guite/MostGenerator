@@ -1,0 +1,121 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«REM»Entry point for Simple Approval workflow«ENDREM»
+«DEFINE Root FOR Application-»
+«FILE getAppSourcePath(appName()).msconcat("workflows/simpleapproval.xml")-»
+«EXPAND XmlSchema-»
+«ENDFILE»
+
+«FILE getAppSourcePath(appName()).msconcat("workflows/function.standard_permissioncheck.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+«EXPAND PermissionCheck-»
+«ENDFILE-»
+
+«FILE getAppSourcePath(appName()).msconcat("workflows/operations/function.updateObjectStatus.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+«EXPAND UpdateStatusOperation-»
+«ENDFILE-»
+«ENDDEFINE»
+
+«DEFINE XmlSchema FOR Application-»
+<workflow>
+    <title>Simple approval workflow</title>
+    <description>Simple content workflow for approval by moderators.</description>
+
+    <!-- define available states -->
+    <states>
+        <state id="initial">
+            <title>Initial</title>
+            <description>Initial state. Content has been created, but not yet submitted.</description>
+        </state>
+
+        <state id="waiting">
+            <title>Waiting</title>
+            <description>Content has been submitted and is waiting for acceptance.</description>
+        </state>
+
+        <state id="approved">
+            <title>Approved</title>
+            <description>Content has been approved and is available online.</description>
+        </state>
+    </states>
+
+    <!-- define actions and assign their availability to certain states -->
+    <!-- available permissions: overview, read, comment, edit, add, delete, moderate, admin -->
+    <actions>
+        <!-- begin actions for initial state -->
+        <action id="submit">
+            <title>Submit</title>
+            <description>Submit new content for acceptance by the local moderator.</description>
+            <permission>add</permission>
+            <state>initial</state>
+            <nextState>waiting</nextState>
+            <operation ot="item" status="2">updateObjectStatus</operation>
+<!-- multiple operations can be executed in sequence
+            <operation group='admin'>notify</operation>
+-->
+<!-- actions can also define additional parameters
+            <parameter className="z-bt-ok" titleText="Click me">Button</parameter>
+-->
+        </action>
+
+        <action id="approve">
+            <title>Approve</title>
+            <description>Approve publication for immediate publishing.</description>
+            <permission>moderate</permission>
+            <state>waiting</state>
+            <nextState>approved</nextState>
+            <operation ot="item" status="3">updateObjectStatus</operation>
+        </action>
+    </actions>
+</workflow>
+«ENDDEFINE»
+
+«DEFINE PermissionCheck FOR Application-»
+/**
+ * Check permissions during the workflow.
+ *
+ * @param array $obj
+ * @param int $permLevel
+ * @param int $currentUser
+ * @return bool
+ */
+function «appName()»_workflow_simpleapproval_permissioncheck($obj, $permLevel, $currentUser)
+{
+    /** TODO */
+    $component = '«appName()»::';
+    // process $obj and calculate an instance
+    /** TODO */
+    $instance = '::';
+
+    return SecurityUtil::checkPermission($component, $instance, $permLevel, $currentUser);
+}
+«ENDDEFINE»
+
+«DEFINE UpdateStatusOperation FOR Application-»
+/**
+ * Operation method for amendments of the status field.
+ *
+ * @param array $obj
+ * @param array, $params
+ *
+ * @return bool
+ */
+function «appName()»_operation_updateObjectStatus(&$obj, $params)
+{
+    // get attributes read from the workflow
+    $objectType = isset($params['ot']) ? $params['ot'] : 'item'; /** TODO required? */
+    $status = isset($params['status']) ? $params['status'] : 1;
+
+    // assign value to the data object
+    $obj['status'] = $status;
+
+    /** TODO */
+    //return {UPDATE}
+    return true;
+}
+«ENDDEFINE»

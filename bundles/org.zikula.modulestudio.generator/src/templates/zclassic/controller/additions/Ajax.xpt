@@ -110,7 +110,7 @@
 
         // get objects from database
         // while the result will be saved in the object, we assign in to a local variable for convenience.
-        $objectData = $objectCollection->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
+        list($objectData, $objectCount) = $objectCollection->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
 
         $out = '<ul>';
         if (is_array($objectData) && count($objectData) > 0) {

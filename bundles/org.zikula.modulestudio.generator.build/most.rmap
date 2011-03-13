@@ -23,9 +23,17 @@
             </uri>
         </provider>
     </searchPath>
-    <searchPath name="most.product.helpers">
+    <searchPath name="most.product.helpers.beautifier">
         <provider readerType="local" componentTypes="osgi.bundle" mutable="false">
             <uri format="{0}/refProduct/tools/beautifier/{1}">
+                <bc:propertyRef key="workspace.root" />
+                <bc:propertyRef key="buckminster.component" />
+            </uri>
+        </provider>
+    </searchPath>
+    <searchPath name="most.product.helpers.reporting">
+        <provider readerType="local" componentTypes="osgi.bundle" mutable="false">
+            <uri format="{0}/refProduct/tools/reporting/{1}">
                 <bc:propertyRef key="workspace.root" />
                 <bc:propertyRef key="buckminster.component" />
             </uri>
@@ -35,6 +43,7 @@
     <locator searchPathRef="most.generator" pattern="^org\.zikula\.modulestudio\.generator(\..*)?" />
     <locator searchPathRef="most.metamodel" pattern="^de\.guite\.modulestudio\.metamodel(\..*)?" />
     <locator searchPathRef="most.product" pattern="^de\.guite\.modulestudio(\..+)?" />
-    <locator searchPathRef="most.product.helpers" failOnError="false" />
+    <locator searchPathRef="most.product.helpers.beautifier" failOnError="false" />
+    <locator searchPathRef="most.product.helpers.reporting" failOnError="false" />
     <redirect href="../../../refProduct/bundles/de.guite.modulestudio.build/build/most_eclipse.rmap" />
 </rmap>

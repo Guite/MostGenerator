@@ -4,23 +4,23 @@
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Root FOR Application-»
-«FILE getAppSourceLibPath(appName()).msconcat('ContentTypes/Base/ItemList.php')-»
+«FILE getAppSourceLibPath(appName()).msconcat('ContentType/Base/ItemList.php')-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Generic item list content plugin base class
  */
-class «appName()»_Api_Base_ContentTypes_itemListPlugin extends contentTypeBase
+class «appName()»_ContentType_Base_ItemList extends contentTypeBase
 {
 «EXPAND ContentTypeImpl-»
 }
 «ENDFILE»
 
-«FILE getAppSourceLibPath(appName()).msconcat('ContentTypes/ItemList.php')-»
+«FILE getAppSourceLibPath(appName()).msconcat('ContentType/ItemList.php')-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Generic item list content plugin implementation class
  */
-class «appName()»_Api_ContentTypes_itemListPlugin extends «appName()»_Api_Base_ContentTypes_itemListPlugin
+class «appName()»_ContentType_ItemList extends «appName()»_ContentType_Base_ItemList
 {
     // feel free to extend the content type here
 }
@@ -48,7 +48,7 @@ function «appName()»_Api_ContentTypes_itemlist($args)
 
     public function getName()
     {
-        return 'itemlist';
+        return 'ItemList';
     }
 
     public function getTitle()
@@ -65,7 +65,7 @@ function «appName()»_Api_ContentTypes_itemlist($args)
 
     public function loadData(&$data)
     {
-        if (!isset($data['objectType']) || !in_array($vars['objectType'], «appName()»_Util_Controller::getObjectTypes('contentType'))) {
+        if (!isset($data['objectType']) || !in_array($data['objectType'], «appName()»_Util_Controller::getObjectTypes('contentType'))) {
             $data['objectType'] = «appName()»_Util_Controller::getDefaultObjectType('contentType');
         }
 
@@ -103,7 +103,7 @@ function «appName()»_Api_ContentTypes_itemlist($args)
 
         // get objects from database
         // while the result will be saved in the object, we assign in to a local variable for convenience.
-        $objectData = $objectCollection->selectWherePaginated($this->filter, $sortParam, -1, $resultsPerPage);
+        list($objectData, $objectCount) = $objectCollection->selectWherePaginated($this->filter, $sortParam, -1, $resultsPerPage);
 
         // get total number of records for building the pagination by method call
         //$objectCount = $objectCollection->selectCount($where);
