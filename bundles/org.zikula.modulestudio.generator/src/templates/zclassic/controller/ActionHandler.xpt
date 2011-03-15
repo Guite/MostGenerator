@@ -528,12 +528,12 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» created.'));
 
             // Let any hooks know that we have created an item
-            $this->notifyHooks('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».process.edit', $«name.formatForCode()», $this->«idField()»);
+            $this->notifyHooks('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».process.edit', $«name.formatForCode()»->get«name.formatForCodeCapital()»(), $this->«idField()»);
         } else if ($args['commandName'] == 'update') {
             // event handling if user clicks on update
 
             // Let any hooks perform additional validation actions
-            $this->notifyHooks('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».validate.edit', $«name.formatForCode()», $this->«idField()»);
+            $this->notifyHooks('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».validate.edit', $«name.formatForCode()»->get«name.formatForCodeCapital()»(), $this->«idField()»);
 
             // save «name.formatForDisplay()»
             $updateResult = $«name.formatForCode()»->save();
@@ -547,12 +547,12 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» updated.'));
 
             // Let any hooks know that we have updated an item
-            $this->notifyHooks('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».process.edit', $«name.formatForCode()», $this->«idField()»);
+            $this->notifyHooks('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».process.edit', $«name.formatForCode()»->get«name.formatForCodeCapital()»(), $this->«idField()»);
         } else if ($args['commandName'] == 'delete') {
             // event handling if user clicks on delete
 
             // Let any hooks perform additional validation actions
-            $this->notifyHooks('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».validate.delete', $«name.formatForCode()», $this->«idField()»);
+            $this->notifyHooks('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».validate.delete', $«name.formatForCode()»->get«name.formatForCodeCapital()»(), $this->«idField()»);
 
             // delete «name.formatForDisplay()»
             if ($«name.formatForCode()»->delete() === false) {
@@ -562,7 +562,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» deleted.'));
 
             // Let any hooks know that we have deleted an item
-            $this->notifyHooks('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».process.delete', $«name.formatForCode()», $this->«idField()»);
+            $this->notifyHooks('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».process.delete', $«name.formatForCode()»->get«name.formatForCodeCapital()»(), $this->«idField()»);
         } else if ($args['commandName'] == 'cancel') {
             // event handling if user clicks on cancel
         }
