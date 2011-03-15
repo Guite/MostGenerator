@@ -204,12 +204,12 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
         // echo 'deleting a record ...';
         $data = $event->data;
 
-        // delete workflow for this entity
+/*        // delete workflow for this entity
         $result = WorkflowUtil::deleteWorkflow($data);
         if ($result === false) {
             $dom = ZLanguage::getModuleDomain('«container.application.appName()»');
             return LogUtil::registerError(__('Error! Could not remove stored workflow.', $dom));
-        }
+        }*/
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
