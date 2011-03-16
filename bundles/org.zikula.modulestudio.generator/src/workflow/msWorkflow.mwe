@@ -7,11 +7,11 @@
     <property name="doModelCopy" value='true' />
     <property name="doProfiling" value='true' />
 
-    <bean class="org.eclipse.emf.mwe.utils.StandaloneSetup">
+    <!--<bean class="org.eclipse.emf.mwe.utils.StandaloneSetup">
         <platformUri value=".."/>
-        <!-- initialize EPackage for profiler -->
+        <!- - initialize EPackage for profiler - ->
         <registerGeneratedEPackage value="org.eclipse.xtend.profiler.profilermodel.ModelPackage" />
-    </bean>
+    </bean>-->
 
     <!-- instantiate metamodel -->
     <bean id="mmEMF" class="org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel" />
