@@ -108,7 +108,7 @@
             }
 
             $slugTitle = $routerFacade->getFormattedSlug($objectType, $args['func'], $args['args'], $id);
-            if ($slugTitle != $id) {
+            if (!empty($slugTitle) && $slugTitle != $id) {
                 // add slug expression
                 $args['args']['title'] = $slugTitle;
             }
@@ -221,7 +221,7 @@
         // handle special templates
         $displayDefaultEnding = System::getVar('shorturlsext', 'html');
         $endingPrefix = ($func == 'view') ? '.' : '';
-        if (isset($parameters[$func . 'ending']) && $parameters[$func . 'ending'] != ($endingPrefix . $displayDefaultEnding)) {
+        if (isset($parameters[$func . 'ending']) && !empty($parameters[$func . 'ending']) && $parameters[$func . 'ending'] != ($endingPrefix . $displayDefaultEnding)) {
             if ($func == 'view') {
                 $parameters[$func . 'ending'] = str_replace($endingPrefix, '', $parameters[$func . 'ending']);
             }
