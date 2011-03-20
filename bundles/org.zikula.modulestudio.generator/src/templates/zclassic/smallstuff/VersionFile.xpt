@@ -12,7 +12,7 @@
 /**
  * Version information base class.
  */
-class «appName()»_Base_Version extends Zikula_Version
+class «appName()»_Base_Version extends Zikula_AbstractVersion
 {
     public function getMetaData()
     {

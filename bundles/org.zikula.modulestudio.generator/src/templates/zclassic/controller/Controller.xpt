@@ -39,9 +39,9 @@
 «DEFINE ControllerBaseImpl(Application app) FOR Controller-»
 
 /**
- * This is the «name» controller class.
+ * «name» controller class.
  */
-class «baseClassController()» extends Zikula_Controller«IF metaType == AjaxController-»_Ajax«ENDIF-»
+class «baseClassController()» extends Zikula_AbstractController«IF metaType == AjaxController-»_AbstractAjax«ENDIF-»
 {
 «IF metaType == AjaxController-»
 
@@ -114,12 +114,12 @@ class «implClassController()» extends «baseClassController()»
 /**
  * This is the «name» api helper class.
  */
-class «baseClassApi()» extends Zikula_Api
+class «baseClassApi()» extends Zikula_AbstractApi
 {
     /**
      * get available «name» panel links
      *
-     * @return       array      array of admin links
+     * @return array Array of admin links
      */
     public function getlinks()
     {

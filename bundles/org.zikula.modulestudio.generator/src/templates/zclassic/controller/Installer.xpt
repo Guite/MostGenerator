@@ -11,7 +11,7 @@
 /**
  * Installer base class
  */
-class «appName()»_Base_Installer extends Zikula_Installer
+class «appName()»_Base_Installer extends Zikula_AbstractInstaller
 {
 «EXPAND NormalInstall-»
 }
@@ -34,7 +34,7 @@ class «appName()»_Installer extends «appName()»_Base_Installer
 /**
  * Interactive installer base class
  */
-class «appName()»_Controller_Base_Interactiveinstaller extends Zikula_Controller_InteractiveInstaller
+class «appName()»_Controller_Base_Interactiveinstaller extends Zikula_Controller_AbstractInteractiveInstaller
 {
 «EXPAND InteractiveInstall»
 }

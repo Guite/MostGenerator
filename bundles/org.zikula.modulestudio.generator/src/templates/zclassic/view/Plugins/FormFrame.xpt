@@ -16,7 +16,7 @@
 «ENDDEFINE»
 
 «DEFINE FormFramePluginImpl FOR Application-»
-class «appName()»_Form_Plugin_FormFrame extends Zikula_Form_Plugin
+class «appName()»_Form_Plugin_FormFrame extends Zikula_Form_AbstractPlugin
 {
     public $useTabs;
     public $cssClass = 'tabs';
