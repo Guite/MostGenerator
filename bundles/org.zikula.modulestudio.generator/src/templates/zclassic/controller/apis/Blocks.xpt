@@ -9,7 +9,7 @@
 /**
  * Generic item list block base class
  */
-class «appName()»_Block_Base_ItemList extends Zikula_Controller_Block
+class «appName()»_Block_Base_ItemList extends Zikula_Controller_AbstractBlock
 {
 «EXPAND ListBlockImpl-»
 }

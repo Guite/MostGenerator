@@ -41,7 +41,7 @@
 /**
  * «name» controller class.
  */
-class «baseClassController()» extends Zikula_AbstractController«IF metaType == AjaxController-»_AbstractAjax«ENDIF-»
+class «baseClassController()» extends Zikula_«IF metaType != AjaxController-»AbstractController«ELSE-»Controller_AbstractAjax«ENDIF-»
 {
 «IF metaType == AjaxController-»
 
