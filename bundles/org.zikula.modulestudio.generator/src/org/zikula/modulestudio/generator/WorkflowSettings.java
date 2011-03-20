@@ -87,11 +87,11 @@ public class WorkflowSettings {
         this.workbench = workbench;
     }
 
-    public ArrayList getAviableCartridges() {
+    public ArrayList getAvailableCartridges() {
         return this.availableCartridges;
     }
 
-    public ArrayList getAviableReports() {
+    public ArrayList getAvailableReports() {
         return this.availableReports;
     }
 
