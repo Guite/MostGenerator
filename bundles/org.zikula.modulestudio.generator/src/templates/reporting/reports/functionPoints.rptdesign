@@ -16,13 +16,40 @@
     <property name="Anwenderdaten.Datenbankfelder.x">135</property>
     <property name="Anwenderdaten.Datenbankfelder.y">80</property>
     <list-property name="includeScripts">
-        <property>src/templates/reporting/birt/reportingHelpers.js</property>
+        <property>reportingHelpers.js</property>
     </list-property>
     <property name="units">in</property>
+    <list-property name="propertyBindings">
+        <structure>
+            <property name="name">MODEL_URI</property>
+            <property name="id">7</property>
+            <expression name="value" type="javascript">params["modelPath"].value</expression>
+        </structure>
+        <structure>
+            <property name="name">OdaConnProfileName</property>
+            <property name="id">7</property>
+        </structure>
+        <structure>
+            <property name="name">OdaConnProfileStorePath</property>
+            <property name="id">7</property>
+        </structure>
+    </list-property>
     <property name="iconFile">/templates/blank_report.gif</property>
     <property name="layoutPreference">auto layout</property>
     <property name="bidiLayoutOrientation">ltr</property>
     <property name="imageDPI">129</property>
+    <parameters>
+        <scalar-parameter name="modelPath" id="448">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
+    </parameters>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.ecore" name="MOSTModel" id="7">
             <property name="MODEL_URI">file:/home/gabriel/workspace/Maturaprojekt/examples/ValidationTest.mostapp</property>

@@ -14,6 +14,7 @@ import org.eclipse.birt.report.engine.api.ReportEngine;
 public class ReportingFacade {
 
     String outputPath;
+    String modelPath;
     IReportEngine engine = null;
     EngineConfig config = null;
     IRunAndRenderTask task = null;
@@ -21,6 +22,10 @@ public class ReportingFacade {
 
     public void setOutputPath(String path) {
         this.outputPath = path;
+    }
+
+    public void setModelPath(String path) {
+        this.modelPath = path;
     }
 
     public void setUp() {
@@ -48,7 +53,9 @@ public class ReportingFacade {
 
             task = engine.createRunAndRenderTask(engine
                     .openReportDesign(reportPath));
-
+            System.out.println("Generating Report: " + outputName);
+            task.setParameterValue("modelPath",
+                    "file:" + (this.modelPath.toString()));
             options = new PDFRenderOption();
             options.setOutputFileName(this.outputPath + "/" + outputName);
             options.setOutputFormat("pdf");

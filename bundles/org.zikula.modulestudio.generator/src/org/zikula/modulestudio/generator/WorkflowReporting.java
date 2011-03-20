@@ -26,13 +26,16 @@ public class WorkflowReporting {
             final File dir = new File(FileLocator.toFileURL(resources[0])
                     .toURI());
 
-            final String test = "platform:/plugin/org.zikula.modulestudio.generator/templates/reporting/reports";
-
             final ReportingFacade reportingFacade = new ReportingFacade();
             reportingFacade.setOutputPath(this.settings.outputPath);
+            reportingFacade.setModelPath(this.settings.modelPath);
             reportingFacade.setUp();
-            reportingFacade.startExport(dir.toString()
-                    + "/dokumentation.rptdesign", "dokumentation.pdf");
+            for (final Object report : this.settings.selectedReports) {
+                reportingFacade
+                        .startExport(dir.toString() + "/" + report.toString()
+                                + ".rptdesign", report.toString() + ".pdf");
+            }
+
             reportingFacade.shutDown();
 
         } catch (final Exception e) {
