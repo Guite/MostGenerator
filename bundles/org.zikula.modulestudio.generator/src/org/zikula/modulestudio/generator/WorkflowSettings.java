@@ -18,9 +18,10 @@ import org.zikula.modulestudio.generator.application.Activator;
 
 import de.guite.modulestudio.metamodel.modulestudio.Application;
 
+/** TODO: javadocs needed for class, members and methods */
 public class WorkflowSettings {
 
-    ArrayList aviableCartridges = new ArrayList();
+    ArrayList availableCartridges = new ArrayList();
     Object[] selectedCartridges;
     String outputPath = null;
     File outputDir = null;
@@ -30,21 +31,22 @@ public class WorkflowSettings {
     PreferencesHint diagramPreferencesHint = null;
     IProgressMonitor progressMonitor = null;
     File reportDir = null;
-    ArrayList aviableReports = new ArrayList();
+    ArrayList availableReports = new ArrayList();
     Object[] selectedReports = null;
     IWorkbenchWindow workbenchWindow = null;
     IWorkbench workbench = null;
 
     public WorkflowSettings() {
-        this.aviableCartridges.add("zclassic");
-        this.aviableCartridges.add("zoo");
-        this.aviableCartridges.add("reporting");
+        this.availableCartridges.add("zclassic");
+        this.availableCartridges.add("zoo");
+        this.availableCartridges.add("reporting");
 
         final java.net.URL[] resources = FileLocator.findEntries(Platform
                 .getBundle(Activator.PLUGIN_ID), new Path(
                 "/src/templates/reporting/reports"));
         try {
-            reportDir = new File(FileLocator.toFileURL(resources[0]).toURI());
+            this.reportDir = new File(FileLocator.toFileURL(resources[0])
+                    .toURI());
 
             for (final String file : this.reportDir.list(new FilenameFilter() {
 
@@ -56,7 +58,7 @@ public class WorkflowSettings {
                     return false;
                 }
             })) {
-                this.aviableReports.add(file.replace(".rptdesign", ""));
+                this.availableReports.add(file.replace(".rptdesign", ""));
             }
 
         } catch (final URISyntaxException e) {
@@ -86,11 +88,11 @@ public class WorkflowSettings {
     }
 
     public ArrayList getAviableCartridges() {
-        return this.aviableCartridges;
+        return this.availableCartridges;
     }
 
     public ArrayList getAviableReports() {
-        return this.aviableReports;
+        return this.availableReports;
     }
 
     public void setApp(Application app) {
@@ -125,5 +127,4 @@ public class WorkflowSettings {
     public void setSelectedReports(Object[] reports) {
         this.selectedReports = reports;
     }
-
 }

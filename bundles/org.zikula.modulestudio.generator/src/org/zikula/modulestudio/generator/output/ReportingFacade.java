@@ -11,6 +11,7 @@ import org.eclipse.birt.report.engine.api.IRunAndRenderTask;
 import org.eclipse.birt.report.engine.api.PDFRenderOption;
 import org.eclipse.birt.report.engine.api.ReportEngine;
 
+/** TODO: javadocs needed for class, members and methods */
 public class ReportingFacade {
 
     String outputPath;

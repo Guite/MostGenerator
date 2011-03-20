@@ -7,6 +7,7 @@ import org.eclipse.xpand2.output.FileHandle;
 import org.eclipse.xpand2.output.PostProcessor;
 import org.zikula.modulestudio.generator.beautifier.formatter.FormatterFacade;
 
+/** TODO: javadocs needed for class, members and methods */
 public class PhpBeautifier implements PostProcessor {
 
     /** Formatter instance. */

@@ -4,6 +4,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.zikula.modulestudio.generator.application.ModuleStudioBeautifier;
 import org.zikula.modulestudio.generator.exceptions.ExceptionBase;
 
+/** TODO: javadocs needed for class, members and methods */
 public class WorkflowStart {
 
     public WorkflowSettings settings = new WorkflowSettings();

@@ -10,6 +10,7 @@ import org.eclipse.emf.mwe.utils.FileCopy;
 import org.osgi.framework.Bundle;
 import org.zikula.modulestudio.generator.application.Activator;
 
+/** TODO: javadocs needed for class, members and methods */
 public class WorkflowZClassic {
     WorkflowSettings settings;
 

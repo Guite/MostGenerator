@@ -9,6 +9,7 @@ import org.osgi.framework.Bundle;
 import org.zikula.modulestudio.generator.application.Activator;
 import org.zikula.modulestudio.generator.output.ReportingFacade;
 
+/** TODO: javadocs needed for class, members and methods */
 public class WorkflowReporting {
     WorkflowSettings settings;
 
@@ -18,7 +19,6 @@ public class WorkflowReporting {
 
     public void run() {
         try {
-
             final Bundle bundle = Platform.getBundle(Activator.PLUGIN_ID);
             final java.net.URL[] resources = FileLocator.findEntries(bundle,
                     new Path("/src/templates/reporting/reports"));
@@ -37,11 +37,9 @@ public class WorkflowReporting {
             }
 
             reportingFacade.shutDown();
-
         } catch (final Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
-
 }

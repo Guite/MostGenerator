@@ -26,6 +26,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Views;
 /**
  * Class for exporting diagram files to image file formats.
  */
+/** TODO: javadocs needed for class, members and methods */
 public class DiagramExporter {
 
     /** reference to currently treated diagram */
