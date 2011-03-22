@@ -81,10 +81,10 @@ class «baseClassController()» extends Zikula_«IF metaType != AjaxController-�
      */
     public function config()
     {
-        $this->throwForbiddenUnless(SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_ADMIN));
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN));
 
         // Create new Form reference
-        $view = FormUtil::newForm('«app.appName()»', $this);
+        $view = FormUtil::newForm($this->name, $this);
 
         // Execute form using supplied template and page event handler
         return $view->execute('«app.configController().formatForDB()»/config.tpl', new «app.appName()»_Form_Handler_«app.configController().formatForDB().toFirstUpper()»_Config());
