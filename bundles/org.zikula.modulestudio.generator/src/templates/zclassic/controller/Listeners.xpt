@@ -305,16 +305,42 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
     // users and groups
 
     /**
-     * Listener for the `user.login` event.
+     * Listener for the `user.login.veto` event.
      *
-     * Occurs right after login, `$event['user']` is the UID of the logged in user.
-     *    `$event['authmodule']` with the name of the module that authenticated.
-     *    `$event['loginid']` with the equivalent of the user name that authenticated
-                 (not all authmodules use loginid, and therefore this may not be supplied).
-     *           If authentication was attempted with Zikula's Users module, then
-     *           `$event['loginid']` will contain the uname logged in.
+     * Occurs immediately prior to a login that is expected to succeed.
+     * (All prerequisites for a successful login have been checked and are satisfied.)
+     * This event allows a module to intercept the login process and prevent a successful login from taking place.
+     * This event uses `notifyUntil()`, so handlers are called until either one vetoes the login attempt,
+     * or there are no more handlers for the event.
+     * A handler that needs to veto a login attempt should call `setNotify()`. This will prevent other handlers
+     * from receiving the event, will return to the login process, and will prevent the login from taking place.
+     * A handler that vetoes a login attempt should set an appropriate error message and give any additional
+     * feedback to the user attempting to log in that might be appropriate. If a handler does not
+     * need to veto the login attempt, then it should simply return null (`return;` with no return value).
+     *
+     * Note: the user __will not__ be logged in when the event handler is executing.
+     * Any attempt to check a user's permissions, his logged-in status, or any operation will
+     * return a value equivalent to what an anonymous (guest) user would see.
+     * Care should be taken to ensure that sensitive operations done within a handler for this event
+     * do not introduce breaches of security.
+     *
+     *    The subject of the event will contain the user's account record, equivalent to `UserUtil::getVars($uid)`.
+     *    `$event['authentication_module']` will contain the name of the module that authenticated the user.
+     *    `$event['uid']` will contain the user's uid.
      */
-    public static function userLogin(Zikula_Event $event)
+    public static function userLoginVeto(Zikula_Event $event)
+    {
+    }
+
+    /**
+     * Listener for the `user.login.succeeded` event.
+     *
+     * Occurs right after a successful attempt to log in. All handlers are notified.
+     *    The event subject contains the user's user record (from `UserUtil::getVars($event['uid'])`)
+     *    `$event['uid']` is the UID of the logged in user.
+     *    `$event['authentication_module']` with the name of the module that authenticated.
+     */
+    public static function userLoginSucceeded(Zikula_Event $event)
     {
     }
 
@@ -322,33 +348,39 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * Listener for the `user.login.failed` event.
      *
      * Occurs on login failure.
-     *    `$event['authmodule']` with the name of the module that attempted to authenticate.
-     *    `$event['loginid']` with the equivalent of the user name that was attempted
-     *           (not all authmodules use loginid, and therefore this may not be supplied).
-     *           If authentication was attempted with Zikula's Users module, then
-     *           `$event['loginid']` will contain the uname attempted.
+     * All handlers are notified. (Vetoed attempts to log in will subsequently generate this event.)
+     * the subject of the event may contain the user account record of user that attempted to log in, if it
+     * could be determined (e.g., it will be supplied if the login attempt failed because of a bad password,
+     * but it will not be supplied if the attempt failed because the uname could not be matched with a user
+     * account record).
+     *     `$event['authentication_module']` with the name of the module that attempted to authenticate.
+     *     `$event['uid'] may contain the uid of user that attempted to log in, if it could be determined (e.g.,
+     *      it will be supplied if the login attempt failed because of a bad password, but it will not be supplied
+     *      if the attempt failed because the uname could not be matched with a user account record).
      */
     public static function userLoginFailed(Zikula_Event $event)
     {
     }
 
     /**
-     * Listener for the `user.logout` event.
+     * Listener for the `user.logout.succeeded` event.
      *
-     * Occurs right after logout.
-     *     `$event['user']` is the UID of the user who logged out.
-     *     `$event['authmodule']` with the name of the module that logged out (in addition to Zikula core).
+     * Occurs right after a successful logout.
+     * All handlers are notified.
+     *     The event's subject contains the user's user record
+     *     `$event['uid']` is the UID of the user who logged out.
      */
-    public static function userLogout(Zikula_Event $event)
+    public static function userLogoutSucceeded(Zikula_Event $event)
     {
     }
 
     /**
      * Listener for the `user.logout.failed` event.
      *
-     * Occurs right after logout.
-     *     `$event['user']` is the UID of the user who attempted to log out.
-     *     `$event['authmodule']` with the name of the module that attempted and failed to log out.
+     * Occurs right after a failed logout. All handlers are notified.
+     *     the subject of the event will contain the user account record
+     *      of the user that attempted to log out
+     *     `$event['uid']` is the UID of the user who attempted to log out.
      */
     public static function userLogoutFailed(Zikula_Event $event)
     {
@@ -367,7 +399,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
     /**
      * Listener for the `user.create` event.
      *
-     * Occurs after a user is created.
+     * Occurs after a user is created. All handlers are notified.
      * It does not apply to creation of a pending registration.
      * The full user record created is available as the subject.
      */
@@ -378,7 +410,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
     /**
      * Listener for the `user.update` event.
      *
-     * Occurs after a user is updated.
+     * Occurs after a user is updated. All handlers are notified.
      * The full updated user record is available as the subject.
      */
     public static function userUpdate(Zikula_Event $event)
@@ -389,6 +421,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * Listener for the `user.delete` event.
      *
      * Occurs after a user is deleted from the system.
+     * All handlers are notified.
      * The full user record deleted is available as the subject.
      */
     public static function userDelete(Zikula_Event $event)
@@ -398,7 +431,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
     /**
      * Listener for the `group.create` event.
      *
-     * Occurs after a group is created.
+     * Occurs after a group is created. All handlers are notified.
      * The full group record created is available as the subject.
      */
     public static function groupCreate(Zikula_Event $event)
@@ -408,7 +441,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
     /**
      * Listener for the `group.update` event.
      *
-     * Occurs after a group is updated.
+     * Occurs after a group is updated. All handlers are notified.
      * The full updated group record is available as the subject.
      */
     public static function groupUpdate(Zikula_Event $event)
@@ -419,6 +452,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * Listener for the `group.delete` event.
      *
      * Occurs after a group is deleted from the system.
+     * All handlers are notified.
      * The full group record deleted is available as the subject.
      */
     public static function groupDelete(Zikula_Event $event)
@@ -429,6 +463,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * Listener for the `group.adduser` event.
      *
      * Occurs after a user is added to a group.
+     * All handlers are notified.
      * It does not apply to pending membership requests.
      * The uid and gid are available as the subject.
      */
@@ -440,9 +475,20 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * Listener for the `group.removeuser` event.
      *
      * Occurs after a user is removed from a group.
+     * All handlers are notified.
      * The uid and gid are available as the subject.
      */
     public static function groupRemoveUser(Zikula_Event $event)
+    {
+    }
+
+    /**
+     * Listener for the users.config.updated` event.
+     *
+     * Occurs after the Users module configuration has been
+     * updated via the administration interface.
+     */
+    public static function usersConfigUpdated(Zikula_Event $event)
     {
     }
 

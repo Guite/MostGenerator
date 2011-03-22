@@ -314,9 +314,10 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         EventUtil::registerPersistentModuleHandler('«appName»', 'view.fetch', array('«callableClass»', 'viewFetch'));
 
         // users and groups
-        EventUtil::registerPersistentModuleHandler('«appName»', 'user.login', array('«callableClass»', 'userLogin'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.login.veto', array('«callableClass»', 'userLoginVeto'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.login.succeeded', array('«callableClass»', 'userLoginSucceeded'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'user.login.failed', array('«callableClass»', 'userLoginFailed'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'user.logout', array('«callableClass»', 'userLogout'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.logout.succeeded', array('«callableClass»', 'userLogoutSucceeded'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'user.logout.failed', array('«callableClass»', 'userLogoutFailed'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'user.gettheme', array('«callableClass»', 'userGetTheme'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'user.create', array('«callableClass»', 'userCreate'));
@@ -327,6 +328,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         EventUtil::registerPersistentModuleHandler('«appName»', 'group.delete', array('«callableClass»', 'groupDelete'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'group.adduser', array('«callableClass»', 'groupAddUser'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'group.removeuser', array('«callableClass»', 'groupRemoveUser'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'users.config.updated', array('«callableClass»', 'usersConfigUpdated'));
 
         // special purposes and 3rd party api support
         EventUtil::registerPersistentModuleHandler('«appName»', 'get.pending_content', array('«callableClass»', 'pendingContentListener'));
