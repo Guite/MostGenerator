@@ -313,25 +313,33 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         EventUtil::registerPersistentModuleHandler('«appName»', 'view.init', array('«callableClass»', 'viewInit'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'view.fetch', array('«callableClass»', 'viewFetch'));
 
-        // users and groups
-        EventUtil::registerPersistentModuleHandler('«appName»', 'user.registration.started', array('«callableClass»', 'userRegistrationStarted'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'user.registration.succeeded', array('«callableClass»', 'userRegistrationSucceeded'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'user.registration.failed', array('«callableClass»', 'userRegistrationFailed'));
+        // user
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.login.started', array('«callableClass»', 'userLoginStarted'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'user.login.veto', array('«callableClass»', 'userLoginVeto'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'user.login.succeeded', array('«callableClass»', 'userLoginSucceeded'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'user.login.failed', array('«callableClass»', 'userLoginFailed'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'user.logout.succeeded', array('«callableClass»', 'userLogoutSucceeded'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'user.logout.failed', array('«callableClass»', 'userLogoutFailed'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'user.gettheme', array('«callableClass»', 'userGetTheme'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'user.create', array('«callableClass»', 'userCreate'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'user.update', array('«callableClass»', 'userUpdate'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'user.delete', array('«callableClass»', 'userDelete'));
+
+        // registration
+        EventUtil::registerPersistentModuleHandler('«appName»', 'registration.started', array('«callableClass»', 'registrationStarted'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'registration.succeeded', array('«callableClass»', 'registrationSucceeded'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'registration.failed', array('«callableClass»', 'registrationFailed'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'registration.create', array('«callableClass»', 'registrationCreate'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'registration.update', array('«callableClass»', 'registrationUpdate'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'registration.delete', array('«callableClass»', 'registrationDelete'));
+
+        // users module
+        EventUtil::registerPersistentModuleHandler('«appName»', 'users.config.updated', array('«callableClass»', 'usersConfigUpdated'));
+
+        // group
         EventUtil::registerPersistentModuleHandler('«appName»', 'group.create', array('«callableClass»', 'groupCreate'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'group.update', array('«callableClass»', 'groupUpdate'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'group.delete', array('«callableClass»', 'groupDelete'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'group.adduser', array('«callableClass»', 'groupAddUser'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'group.removeuser', array('«callableClass»', 'groupRemoveUser'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'users.config.updated', array('«callableClass»', 'usersConfigUpdated'));
 
         // special purposes and 3rd party api support
         EventUtil::registerPersistentModuleHandler('«appName»', 'get.pending_content', array('«callableClass»', 'pendingContentListener'));
