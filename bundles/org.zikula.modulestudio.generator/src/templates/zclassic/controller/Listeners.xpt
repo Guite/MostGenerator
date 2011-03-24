@@ -645,6 +645,32 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     }
 
     /**
+     * Listener for the `user.login.failed` event.
+     *
+     * Occurs right after a successful attempt to log in. All handlers are notified.
+     * The event subject contains the user's user record (from `UserUtil::getVars($event['uid'])`) if it has been found, otherwise null.
+     * The arguments of the event are as follows:
+     * `'authentication_module'` an array containing the authenticating module name (`'modname'`) and method (`'method'`) 
+     *   used to log the user in.
+     * `'authentication_info'` an array containing the authentication information entered by the user (contents will vary by method).
+     * `'redirecturl'` will initially contain an empty string. This can be modified to change where the user is redirected following the failed login.
+     *
+     * __The `'redirecturl'` argument__ controls where the user will be directed following a failed log-in attempt.
+     * Initially, it will be an empty string, indicating that the user should continue with the log-in process and be presented
+     * with the log-in form.
+     *
+     * If a `'redirecturl'` is specified by any entity intercepting and processing the `user.login.failed` event, then
+     * the user will be redirected to the URL provided, instead of being presented with the log-in form.
+     *
+     * Finally, this event only fires in the event of a "normal" UI-oriented log-in attempt. A module attempting to log in
+     * programmatically by directly calling `UserUtil::loginUsing()` will not see this event fired. Instead, the
+     * `Users_Controller_User#login()` function can be called with the appropriate parameters, if the event is desired.
+     */
+    public static function failed(Zikula_Event $event)
+    {
+    }
+
+    /**
      * Listener for the `user.login.succeeded` event.
      *
      * Occurs right after a successful attempt to log in. All handlers are notified.
@@ -800,6 +826,15 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      *
      * Occurs after a user attempts to submit a registration request, but the request is not saved successfully.
      * The next step for the user is a page that displays the status, including any possible error messages.
+     * The event subject contains null.
+     * The arguments of the event are as follows:
+     * `'redirecturl'` will initially contain an empty string. This can be modified to change where the user is redirected following the failed login.
+     *
+     * __The `'redirecturl'` argument__ controls where the user will be directed following a failed log-in attempt.
+     * Initially, it will be an empty string, indicating that the user will be redirected to a page that displays status and error information.
+     *
+     * If a `'redirecturl'` is specified by any entity intercepting and processing the `user.login.failed` event, then
+     * the user will be redirected to the URL provided, instead of being redirected to the status/error display page.
      */
     public static function failed(Zikula_Event $event)
     {

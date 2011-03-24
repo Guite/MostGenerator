@@ -340,6 +340,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «LET appName.msconcat('_Listener_UserLogin') AS callableClass-»
         EventUtil::registerPersistentModuleHandler('«appName»', 'user.login.started', array('«callableClass»', 'started'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'user.login.veto', array('«callableClass»', 'veto'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.login.failed', array('«callableClass»', 'failed'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'user.login.succeeded', array('«callableClass»', 'succeeded'));
 «ENDLET-»
 
