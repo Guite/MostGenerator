@@ -305,6 +305,33 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
     // users and groups
 
     /**
+     * Listener for the `user.registration.started` event.
+     *
+     * Occurs right after a starting a new registration session.
+     */
+    public static function userRegistrationStarted(Zikula_Event $event)
+    {
+    }
+
+    /**
+     * Listener for the `user.registration.succeeded` event.
+     *
+     * Occurs right after a successful registration.
+     */
+    public static function userRegistrationSucceeded(Zikula_Event $event)
+    {
+    }
+
+    /**
+     * Listener for the `user.registration.failed` event.
+     *
+     * Occurs right after a failed registration.
+     */
+    public static function userRegistrationFailed(Zikula_Event $event)
+    {
+    }
+
+    /**
      * Listener for the `user.login.veto` event.
      *
      * Occurs immediately prior to a login that is expected to succeed.

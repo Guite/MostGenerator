@@ -314,6 +314,9 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         EventUtil::registerPersistentModuleHandler('«appName»', 'view.fetch', array('«callableClass»', 'viewFetch'));
 
         // users and groups
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.registration.started', array('«callableClass»', 'userRegistrationStarted'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.registration.succeeded', array('«callableClass»', 'userRegistrationSucceeded'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.registration.failed', array('«callableClass»', 'userRegistrationFailed'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'user.login.veto', array('«callableClass»', 'userLoginVeto'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'user.login.succeeded', array('«callableClass»', 'userLoginSucceeded'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'user.login.failed', array('«callableClass»', 'userLoginFailed'));
