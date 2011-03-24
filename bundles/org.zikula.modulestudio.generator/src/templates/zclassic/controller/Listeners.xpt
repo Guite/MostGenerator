@@ -453,7 +453,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
     }
 
     /**
-     * Listener for the `user.registration.succeeded` event.
+     * Listener for the `registration.succeeded` event.
      *
      * Occurs after a user has successfully registered a new account in the system. It will follow either a `registration.create`
      * event, or a `user.create` event, depending on the result of the registration process, the information provided by the user,
