@@ -6,23 +6,316 @@
 
 «REM»Entry point for persistent event listeners«ENDREM»
 «DEFINE Root FOR Application»
-«FILE getAppSourceLibPath(appName()).msconcat("Base/Listeners.php")-»
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/Core.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
- * Event handler base class
+ * Event handler base class for core events.
  */
-class «appName()»_Base_Listeners
+class «appName()»_Listener_Base_Core extends Zikula_AbstractBase
 {
-«EXPAND BaseListeners-»
+«EXPAND BaseListenersCore-»
+}
+«ENDFILE»
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Core.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler implementation class for core events.
+ */
+class «appName()»_Listener_Core extends «appName()»_Listener_Base_Core
+{
+    // here you can extend implementation of persistent event handlers
 }
 «ENDFILE»
 
-«FILE getAppSourceLibPath(appName()).msconcat("Listeners.php")-»
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/Installer.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
- * Event handler implementation class.
+ * Event handler base class for module installer events.
  */
-class «appName()»_Listeners extends «appName()»_Base_Listeners
+class «appName()»_Listener_Base_Installer extends Zikula_AbstractBase
+{
+«EXPAND BaseListenersInstaller-»
+}
+«ENDFILE»
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Installer.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler implementation class for module installer events.
+ */
+class «appName()»_Listener_Installer extends «appName()»_Listener_Base_Installer
+{
+    // here you can extend implementation of persistent event handlers
+}
+«ENDFILE»
+
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/ModuleDispatch.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler base class for dispatching modules.
+ */
+class «appName()»_Listener_Base_ModuleDispatch extends Zikula_AbstractBase
+{
+«EXPAND BaseListenersModuleDispatch-»
+}
+«ENDFILE»
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/ModuleDispatch.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler implementation class for dispatching modules.
+ */
+class «appName()»_Listener_ModuleDispatch extends «appName()»_Listener_Base_ModuleDispatch
+{
+    // here you can extend implementation of persistent event handlers
+}
+«ENDFILE»
+
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/Mailer.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler base class for mailing events.
+ */
+class «appName()»_Listener_Base_Mailer extends Zikula_AbstractBase
+{
+«EXPAND BaseListenersMailer-»
+}
+«ENDFILE»
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Mailer.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler implementation class for mailing events.
+ */
+class «appName()»_Listener_Mailer extends «appName()»_Listener_Base_Mailer
+{
+    // here you can extend implementation of persistent event handlers
+}
+«ENDFILE»
+
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/Page.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler base class for page-related events.
+ */
+class «appName()»_Listener_Base_Page extends Zikula_AbstractBase
+{
+«EXPAND BaseListenersPage-»
+}
+«ENDFILE»
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Page.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler implementation class for page-related events.
+ */
+class «appName()»_Listener_Page extends «appName()»_Listener_Base_Page
+{
+    // here you can extend implementation of persistent event handlers
+}
+«ENDFILE»
+
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/Errors.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler base class for error-related events.
+ */
+class «appName()»_Listener_Base_Errors extends Zikula_AbstractBase
+{
+«EXPAND BaseListenersErrors-»
+}
+«ENDFILE»
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Errors.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler implementation class for error-related events.
+ */
+class «appName()»_Listener_Errors extends «appName()»_Listener_Base_Errors
+{
+    // here you can extend implementation of persistent event handlers
+}
+«ENDFILE»
+
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/Theme.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler base class for theme-related events.
+ */
+class «appName()»_Listener_Base_Theme extends Zikula_AbstractBase
+{
+«EXPAND BaseListenersTheme-»
+}
+«ENDFILE»
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Theme.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler implementation class for theme-related events.
+ */
+class «appName()»_Listener_Theme extends «appName()»_Listener_Base_Theme
+{
+    // here you can extend implementation of persistent event handlers
+}
+«ENDFILE»
+
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/View.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler base class for view-related events.
+ */
+class «appName()»_Listener_Base_View extends Zikula_AbstractBase
+{
+«EXPAND BaseListenersView-»
+}
+«ENDFILE»
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/View.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler implementation class for view-related events.
+ */
+class «appName()»_Listener_View extends «appName()»_Listener_Base_View
+{
+    // here you can extend implementation of persistent event handlers
+}
+«ENDFILE»
+
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/UserLogin.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler base class for user login events.
+ */
+class «appName()»_Listener_Base_UserLogin extends Zikula_AbstractBase
+{
+«EXPAND BaseListenersUserLogin-»
+}
+«ENDFILE»
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/UserLogin.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler implementation class for user login events.
+ */
+class «appName()»_Listener_UserLogin extends «appName()»_Listener_Base_UserLogin
+{
+    // here you can extend implementation of persistent event handlers
+}
+«ENDFILE»
+
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/UserLogout.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler base class for user logout events.
+ */
+class «appName()»_Listener_Base_UserLogout extends Zikula_AbstractBase
+{
+«EXPAND BaseListenersUserLogout-»
+}
+«ENDFILE»
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/UserLogout.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler implementation class for user logout events.
+ */
+class «appName()»_Listener_UserLogout extends «appName()»_Listener_Base_UserLogout
+{
+    // here you can extend implementation of persistent event handlers
+}
+«ENDFILE»
+
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/User.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler base class for user-related events.
+ */
+class «appName()»_Listener_Base_User extends Zikula_AbstractBase
+{
+«EXPAND BaseListenersUser-»
+}
+«ENDFILE»
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/User.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler implementation class for user-related events.
+ */
+class «appName()»_Listener_User extends «appName()»_Listener_Base_User
+{
+    // here you can extend implementation of persistent event handlers
+}
+«ENDFILE»
+
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/Registration.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler base class for user registration events.
+ */
+class «appName()»_Listener_Base_Registration extends Zikula_AbstractBase
+{
+«EXPAND BaseListenersRegistration-»
+}
+«ENDFILE»
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Registration.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler implementation class for user registration events.
+ */
+class «appName()»_Listener_Registration extends «appName()»_Listener_Base_Registration
+{
+    // here you can extend implementation of persistent event handlers
+}
+«ENDFILE»
+
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/Users.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler base class for events of the Users module.
+ */
+class «appName()»_Listener_Base_Users extends Zikula_AbstractBase
+{
+«EXPAND BaseListenersUsers-»
+}
+«ENDFILE»
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Users.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler implementation class for events of the Users module.
+ */
+class «appName()»_Listener_Users extends «appName()»_Listener_Base_Users
+{
+    // here you can extend implementation of persistent event handlers
+}
+«ENDFILE»
+
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/Group.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler base class for group-related events.
+ */
+class «appName()»_Listener_Base_Group extends Zikula_AbstractBase
+{
+«EXPAND BaseListenersGroup-»
+}
+«ENDFILE»
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Group.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler implementation class for group-related events.
+ */
+class «appName()»_Listener_Group extends «appName()»_Listener_Base_Group
+{
+    // here you can extend implementation of persistent event handlers
+}
+«ENDFILE»
+
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/ThirdParty.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler base class for special purposes and 3rd party api support.
+ */
+class «appName()»_Listener_Base_ThirdParty extends Zikula_AbstractBase
+{
+«EXPAND BaseListenersThirdParty-»
+}
+«ENDFILE»
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/ThirdParty.php")-»
+«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Event handler implementation class for special purposes and 3rd party api support.
+ */
+class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_ThirdParty
 {
     // here you can extend implementation of persistent event handlers
 }
@@ -30,9 +323,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
 
 «ENDDEFINE»
 
-«DEFINE BaseListeners FOR Application-»
-    // core
-
+«DEFINE BaseListenersCore FOR Application-»
     /**
      * Listener for the `api.method_not_found` event.
      *
@@ -44,7 +335,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * Must exit if $event['method'] does not match whatever the handler expects.
      * Modify $event->data and $event->setNotify().
      */
-    public static function coreApiMethodNotFound(Zikula_Event $event)
+    public static function apiMethodNotFound(Zikula_Event $event)
     {
     }
 
@@ -53,7 +344,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      *
      * Occurs after the config.php is loaded.
      */
-    public static function corePreInit(Zikula_Event $event)
+    public static function preInit(Zikula_Event $event)
     {
     }
 
@@ -63,7 +354,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * Occurs after each `System::init()` stage, `$event['stage']` contains the stage.
      * To check if the handler should execute, do `if($event['stage'] & System::CORE_STAGES_*)`.
      */
-    public static function coreInit(Zikula_Event $event)
+    public static function init(Zikula_Event $event)
     {
     }
 
@@ -72,7 +363,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      *
      * Occurs just before System::init() exits from normal execution.
      */
-    public static function corePostInit(Zikula_Event $event)
+    public static function postInit(Zikula_Event $event)
     {
     }
 
@@ -87,22 +378,21 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * Must exit if `$event['method']` does not match whatever the handler expects.
      * Modify `$event->data` and `$event->setNotify()`.
      */
-    public static function coreControllerMethodNotFound(Zikula_Event $event)
+    public static function controllerMethodNotFound(Zikula_Event $event)
     {
         // You can have multiple of these methods.
         // See system/Modules/lib/Modules/HookUI.php for an example.
     }
+«ENDDEFINE»
 
-
-    // modules
-
+«DEFINE BaseListenersInstaller FOR Application-»
     /**
      * Listener for the `installer.module.installed` event.
      *
      * Called after a module is successfully installed.
      * Receives `$modinfo` as args.
      */
-    public static function installerModuleInstalled(Zikula_Event $event)
+    public static function moduleInstalled(Zikula_Event $event)
     {
     }
 
@@ -112,7 +402,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * Called after a module is successfully upgraded.
      * Receives `$modinfo` as args.
      */
-    public static function installerModuleUpgraded(Zikula_Event $event)
+    public static function moduleUpgraded(Zikula_Event $event)
     {
     }
 
@@ -122,18 +412,19 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * Called after a module is successfully uninstalled.
      * Receives `$modinfo` as args.
      */
-    public static function installerModuleUninstalled(Zikula_Event $event)
+    public static function moduleUninstalled(Zikula_Event $event)
     {
     }
+«ENDDEFINE»
 
-
+«DEFINE BaseListenersModuleDispatch FOR Application-»
     /**
      * Listener for the `module_dispatch.postloadgeneric` event.
      *
      * Called after a module api or controller has been loaded.
      * Receives the args `array('modinfo' => $modinfo, 'type' => $type, 'force' => $force, 'api' => $api)`.
      */
-    public static function moduleDispatchPostLoadGeneric(Zikula_Event $event)
+    public static function postLoadGeneric(Zikula_Event $event)
     {
     }
 
@@ -143,7 +434,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * Occurs in `ModUtil::exec()` after function call with the following args:
      * `array('modname' => $modname, 'modfunc' => $modfunc, 'args' => $args, 'modinfo' => $modinfo, 'type' => $type, 'api' => $api)`.
      */
-    public static function moduleDispatchPreExecute(Zikula_Event $event)
+    public static function preExecute(Zikula_Event $event)
     {
     }
 
@@ -155,7 +446,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * Receives the modules output with `$event->getData();`.
      * Can modify this output with `$event->setData($data);`.
      */
-    public static function moduleDispatchPostExecute(Zikula_Event $event)
+    public static function postExecute(Zikula_Event $event)
     {
     }
 
@@ -168,10 +459,12 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * Receives no subject, args of `array('modname' => $modname, 'modinfo' => $modinfo, 'type' => $type, 'api' => $api)`
      * and 'event data' of `$className`. This can be altered by setting `$event->setData()` followed by `$event->setNotified()`.
      */
-    public static function moduleDispatchCustomClassname(Zikula_Event $event)
+    public static function customClassname(Zikula_Event $event)
     {
     }
+«ENDDEFINE»
 
+«DEFINE BaseListenersMailer FOR Application-»
     /**
      * Listener for the `module.mailer.api.sendmessage` event.
      *
@@ -180,10 +473,12 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * This is a notifyUntil event so the event must `$event->setNotified()` and set any
      * return data into `$event->data`, or `$event->setData()`.
      */
-    public static function moduleMailerApiSendmessage(Zikula_Event $event)
+    public static function sendMessage(Zikula_Event $event)
     {
     }
+«ENDDEFINE»
 
+«DEFINE BaseListenersPage FOR Application-»
     /**
      * Listener for the `pageutil.addvar_filter` event.
      *
@@ -203,9 +498,17 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
 */
     }
 
+    /**
+     * Listener for the `system.outputfilter` event.
+     *
+     * Filter type event for output filter HTML sanitisation.
+     */
+    public static function systemOutputFilter(Zikula_Event $event)
+    {
+    }
+«ENDDEFINE»
 
-    // errors
-
+«DEFINE BaseListenersErrors FOR Application-»
     /**
      * Listener for the `setup.errorreporting` event.
      *
@@ -218,15 +521,6 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
     }
 
     /**
-     * Listener for the `system.outputfilter` event.
-     *
-     * Filter type event for output filter HTML sanitisation.
-     */
-    public static function systemOutputFilter(Zikula_Event $event)
-    {
-    }
-
-    /**
      * Listener for the `systemerror` event.
      *
      * Invoked on any system error.
@@ -235,17 +529,16 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
     public static function systemError(Zikula_Event $event)
     {
     }
+«ENDDEFINE»
 
-
-    // themes and views
-
+«DEFINE BaseListenersTheme FOR Application-»
     /**
      * Listener for the `theme.init` event.
      *
      * Occurs just before `Theme#__construct()` exits. Subject is `$this`, args are
      * `array('theme' => $theme, 'usefilters' => $usefilters, 'themeinfo' => $themeinfo)`.
      */
-    public static function themeInit(Zikula_Event $event)
+    public static function init(Zikula_Event $event)
     {
     }
 
@@ -255,7 +548,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * Runs just before `Theme#_load_config()` completed.
      * Subject is the Theme instance.
      */
-    public static function themeLoadConfig(Zikula_Event $event)
+    public static function loadConfig(Zikula_Event $event)
     {
     }
 
@@ -266,7 +559,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * The event subject is `$this` (Theme instance) and has $maincontent as the event data
      * which you can modify with `$event->setData()` in the event handler.
      */
-    public static function themePreFooter(Zikula_Event $event)
+    public static function preFooter(Zikula_Event $event)
     {
     }
 
@@ -277,17 +570,19 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * The event subject is `$this` (Theme instance) and the event data is the rendered
      * output which you can modify with `$event->setData()` in the event handler.
      */
-    public static function themePostFooter(Zikula_Event $event)
+    public static function postFooter(Zikula_Event $event)
     {
     }
+«ENDDEFINE»
 
+«DEFINE BaseListenersView FOR Application-»
     /**
      * Listener for the `view.init` event.
      *
      * Occurs just before `Zikula_View#__construct()` exits. Subject is `$this`, args are
      * `array('module' => $module, 'modinfo' => $modinfo, 'themeinfo' => $themeinfo)`.
      */
-    public static function viewInit(Zikula_Event $event)
+    public static function init(Zikula_Event $event)
     {
     }
 
@@ -297,13 +592,12 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * Filter of result of a fetch. Receives `Zikula_View` instance as subject, args are
      * `array('template' => $template)`, $data was the result of the fetch to be filtered.
      */
-    public static function viewFetch(Zikula_Event $event)
+    public static function fetch(Zikula_Event $event)
     {
     }
+«ENDDEFINE»
 
-
-    // user
-
+«DEFINE BaseListenersUserLogin FOR Application-»
     /**
      * Listener for the `user.login.started` event.
      *
@@ -318,7 +612,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * This event will fire, however, if invalid information is provided to the Log-in block, resulting in the user being
      * redirected to the full log-in screen.
      */
-    public static function userLoginStarted(Zikula_Event $event)
+    public static function started(Zikula_Event $event)
     {
     }
 
@@ -346,7 +640,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * `$event['authentication_module']` will contain the name of the module that authenticated the user.
      * `$event['uid']` will contain the user's uid.
      */
-    public static function userLoginVeto(Zikula_Event $event)
+    public static function veto(Zikula_Event $event)
     {
     }
 
@@ -376,10 +670,12 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * programmatically by directly calling `UserUtil::loginUsing()` will not see this event fired. Instead, the
      * `Users_Controller_User#login()` function can be called with the appropriate parameters, if the event is desired.
      */
-    public static function userLoginSucceeded(Zikula_Event $event)
+    public static function succeeded(Zikula_Event $event)
     {
     }
+«ENDDEFINE»
 
+«DEFINE BaseListenersUserLogout FOR Application-»
     /**
      * Listener for the `user.logout.succeeded` event.
      *
@@ -388,17 +684,19 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * The event's subject contains the user's user record.
      * `$event['uid']` is the UID of the user who logged out.
      */
-    public static function userLogoutSucceeded(Zikula_Event $event)
+    public static function succeeded(Zikula_Event $event)
     {
     }
+«ENDDEFINE»
 
+«DEFINE BaseListenersUser FOR Application-»
     /**
      * Listener for the `user.gettheme` event.
      *
      * This is invoked with notifyUntil so you should execute `$event->setNotified()` in the event handler.
      * Receives `$event['name']` the chosen theme name, it can modify the name.
      */
-    public static function userGetTheme(Zikula_Event $event)
+    public static function getTheme(Zikula_Event $event)
     {
     }
 
@@ -411,7 +709,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
      * The subject of the event is set to the user record that was created.
      */
-    public static function userCreate(Zikula_Event $event)
+    public static function create(Zikula_Event $event)
     {
     }
 
@@ -423,7 +721,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
      * The subject of the event is set to the user record, with the updated values.
      */
-    public static function userUpdate(Zikula_Event $event)
+    public static function update(Zikula_Event $event)
     {
     }
 
@@ -436,19 +734,18 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
      * The subject of the event is set to the user record that is being deleted.
      */
-    public static function userDelete(Zikula_Event $event)
+    public static function delete(Zikula_Event $event)
     {
     }
+«ENDDEFINE»
 
-
-    // registration
-
+«DEFINE BaseListenersRegistration FOR Application-»
     /**
      * Listener for the `registration.started` event.
      *
      * Occurs at the beginning of the registration process, before the registration form is displayed to the user.
      */
-    public static function registrationStarted(Zikula_Event $event)
+    public static function started(Zikula_Event $event)
     {
     }
 
@@ -494,7 +791,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * be automatically logged in. Instead, the user __will be directed to the URL specified in the `'redirecturl'` argument__ passed
      * back by the entity that processed the event.
      */
-    public static function registrationSucceeded(Zikula_Event $event)
+    public static function succeeded(Zikula_Event $event)
     {
     }
 
@@ -504,7 +801,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * Occurs after a user attempts to submit a registration request, but the request is not saved successfully.
      * The next step for the user is a page that displays the status, including any possible error messages.
      */
-    public static function registrationFailed(Zikula_Event $event)
+    public static function failed(Zikula_Event $event)
     {
     }
 
@@ -517,7 +814,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
      * The subject of the event is set to the registration record that was created.
      */
-    public static function registrationCreate(Zikula_Event $event)
+    public static function create(Zikula_Event $event)
     {
     }
 
@@ -528,7 +825,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
      * The subject of the event is set to the registration record, with the updated values.
      */
-    public static function registrationUpdate(Zikula_Event $event)
+    public static function update(Zikula_Event $event)
     {
     }
 
@@ -540,33 +837,31 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
      * The subject of the event is set to the registration record begin deleted.
      */
-    public static function registrationDelete(Zikula_Event $event)
+    public static function delete(Zikula_Event $event)
     {
     }
+«ENDDEFINE»
 
-
-    // users module
-
+«DEFINE BaseListenersUsers FOR Application-»
     /**
      * Listener for the users.config.updated` event.
      *
      * Occurs after the Users module configuration has been
      * updated via the administration interface.
      */
-    public static function usersConfigUpdated(Zikula_Event $event)
+    public static function configUpdated(Zikula_Event $event)
     {
     }
+«ENDDEFINE»
 
-
-    // group
-
+«DEFINE BaseListenersGroup FOR Application-»
     /**
      * Listener for the `group.create` event.
      *
      * Occurs after a group is created. All handlers are notified.
      * The full group record created is available as the subject.
      */
-    public static function groupCreate(Zikula_Event $event)
+    public static function create(Zikula_Event $event)
     {
     }
 
@@ -576,7 +871,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * Occurs after a group is updated. All handlers are notified.
      * The full updated group record is available as the subject.
      */
-    public static function groupUpdate(Zikula_Event $event)
+    public static function update(Zikula_Event $event)
     {
     }
 
@@ -587,7 +882,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * All handlers are notified.
      * The full group record deleted is available as the subject.
      */
-    public static function groupDelete(Zikula_Event $event)
+    public static function delete(Zikula_Event $event)
     {
     }
 
@@ -599,7 +894,7 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * It does not apply to pending membership requests.
      * The uid and gid are available as the subject.
      */
-    public static function groupAddUser(Zikula_Event $event)
+    public static function addUser(Zikula_Event $event)
     {
     }
 
@@ -610,19 +905,18 @@ class «appName()»_Listeners extends «appName()»_Base_Listeners
      * All handlers are notified.
      * The uid and gid are available as the subject.
      */
-    public static function groupRemoveUser(Zikula_Event $event)
+    public static function removeUser(Zikula_Event $event)
     {
     }
+«ENDDEFINE»
 
-
-    // special purposes and 3rd party api support
-
+«DEFINE BaseListenersThirdParty FOR Application-»
     /**
      * Listener for pending content items.
      */
     public static function pendingContentListener(Zikula_Event $event)
     {
-        if (!SecurityUtil::checkPermission('«appName()»::', '::', ACCESS_MODERATE)) {
+        if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_MODERATE)) {
             return;
         }
 /** this is an example implementation from the Users module
