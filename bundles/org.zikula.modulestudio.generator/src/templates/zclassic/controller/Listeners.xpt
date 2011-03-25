@@ -11,7 +11,7 @@
 /**
  * Event handler base class for core events.
  */
-class «appName()»_Listener_Base_Core extends Zikula_AbstractBase
+class «appName()»_Listener_Base_Core
 {
 «EXPAND BaseListenersCore-»
 }
@@ -32,7 +32,7 @@ class «appName()»_Listener_Core extends «appName()»_Listener_Base_Core
 /**
  * Event handler base class for module installer events.
  */
-class «appName()»_Listener_Base_Installer extends Zikula_AbstractBase
+class «appName()»_Listener_Base_Installer
 {
 «EXPAND BaseListenersInstaller-»
 }
@@ -53,7 +53,7 @@ class «appName()»_Listener_Installer extends «appName()»_Listener_Base_Insta
 /**
  * Event handler base class for dispatching modules.
  */
-class «appName()»_Listener_Base_ModuleDispatch extends Zikula_AbstractBase
+class «appName()»_Listener_Base_ModuleDispatch
 {
 «EXPAND BaseListenersModuleDispatch-»
 }
@@ -74,7 +74,7 @@ class «appName()»_Listener_ModuleDispatch extends «appName()»_Listener_Base_
 /**
  * Event handler base class for mailing events.
  */
-class «appName()»_Listener_Base_Mailer extends Zikula_AbstractBase
+class «appName()»_Listener_Base_Mailer
 {
 «EXPAND BaseListenersMailer-»
 }
@@ -95,7 +95,7 @@ class «appName()»_Listener_Mailer extends «appName()»_Listener_Base_Mailer
 /**
  * Event handler base class for page-related events.
  */
-class «appName()»_Listener_Base_Page extends Zikula_AbstractBase
+class «appName()»_Listener_Base_Page
 {
 «EXPAND BaseListenersPage-»
 }
@@ -116,7 +116,7 @@ class «appName()»_Listener_Page extends «appName()»_Listener_Base_Page
 /**
  * Event handler base class for error-related events.
  */
-class «appName()»_Listener_Base_Errors extends Zikula_AbstractBase
+class «appName()»_Listener_Base_Errors
 {
 «EXPAND BaseListenersErrors-»
 }
@@ -137,7 +137,7 @@ class «appName()»_Listener_Errors extends «appName()»_Listener_Base_Errors
 /**
  * Event handler base class for theme-related events.
  */
-class «appName()»_Listener_Base_Theme extends Zikula_AbstractBase
+class «appName()»_Listener_Base_Theme
 {
 «EXPAND BaseListenersTheme-»
 }
@@ -158,7 +158,7 @@ class «appName()»_Listener_Theme extends «appName()»_Listener_Base_Theme
 /**
  * Event handler base class for view-related events.
  */
-class «appName()»_Listener_Base_View extends Zikula_AbstractBase
+class «appName()»_Listener_Base_View
 {
 «EXPAND BaseListenersView-»
 }
@@ -179,7 +179,7 @@ class «appName()»_Listener_View extends «appName()»_Listener_Base_View
 /**
  * Event handler base class for user login events.
  */
-class «appName()»_Listener_Base_UserLogin extends Zikula_AbstractBase
+class «appName()»_Listener_Base_UserLogin
 {
 «EXPAND BaseListenersUserLogin-»
 }
@@ -200,7 +200,7 @@ class «appName()»_Listener_UserLogin extends «appName()»_Listener_Base_UserL
 /**
  * Event handler base class for user logout events.
  */
-class «appName()»_Listener_Base_UserLogout extends Zikula_AbstractBase
+class «appName()»_Listener_Base_UserLogout
 {
 «EXPAND BaseListenersUserLogout-»
 }
@@ -221,7 +221,7 @@ class «appName()»_Listener_UserLogout extends «appName()»_Listener_Base_User
 /**
  * Event handler base class for user-related events.
  */
-class «appName()»_Listener_Base_User extends Zikula_AbstractBase
+class «appName()»_Listener_Base_User
 {
 «EXPAND BaseListenersUser-»
 }
@@ -242,7 +242,7 @@ class «appName()»_Listener_User extends «appName()»_Listener_Base_User
 /**
  * Event handler base class for user registration events.
  */
-class «appName()»_Listener_Base_Registration extends Zikula_AbstractBase
+class «appName()»_Listener_Base_Registration
 {
 «EXPAND BaseListenersRegistration-»
 }
@@ -263,7 +263,7 @@ class «appName()»_Listener_Registration extends «appName()»_Listener_Base_Re
 /**
  * Event handler base class for events of the Users module.
  */
-class «appName()»_Listener_Base_Users extends Zikula_AbstractBase
+class «appName()»_Listener_Base_Users
 {
 «EXPAND BaseListenersUsers-»
 }
@@ -284,7 +284,7 @@ class «appName()»_Listener_Users extends «appName()»_Listener_Base_Users
 /**
  * Event handler base class for group-related events.
  */
-class «appName()»_Listener_Base_Group extends Zikula_AbstractBase
+class «appName()»_Listener_Base_Group
 {
 «EXPAND BaseListenersGroup-»
 }
@@ -305,7 +305,7 @@ class «appName()»_Listener_Group extends «appName()»_Listener_Base_Group
 /**
  * Event handler base class for special purposes and 3rd party api support.
  */
-class «appName()»_Listener_Base_ThirdParty extends Zikula_AbstractBase
+class «appName()»_Listener_Base_ThirdParty
 {
 «EXPAND BaseListenersThirdParty-»
 }
@@ -951,7 +951,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      */
     public static function pendingContentListener(Zikula_Event $event)
     {
-        if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_MODERATE)) {
+        if (!SecurityUtil::checkPermission('«appName()»::', '::', ACCESS_MODERATE)) {
             return;
         }
 /** this is an example implementation from the Users module
