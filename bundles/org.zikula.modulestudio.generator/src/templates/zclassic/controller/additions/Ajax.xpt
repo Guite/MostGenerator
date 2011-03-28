@@ -24,7 +24,13 @@
             return true;
         }
 
-        $fragment = FormUtil::getpassedValue('fragment', '', 'GETPOST');
+        $fragment = '';
+        if ($this->request->isPost() && $this->request->getPost()->has('fragment')) {
+            $fragment = $this->request->getPost()->get('fragment', '');
+        }
+        elseif ($this->request->isGet() && $this->request->getGet()->has('fragment')) {
+            $fragment = $this->request->getGet()->get('fragment', '');
+        }
 
         ModUtil::dbInfoLoad('Users');
         $tables = DBUtil::getTables();
@@ -64,7 +70,13 @@
             return true;
         }
 
-        $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'GETPOST', FILTER_SANITIZE_STRING);
+        $objectType = '«app.getLeadingEntity().name.formatForCode()»';
+        if ($this->request->isPost() && $this->request->getPost()->has('ot')) {
+            $objectType = $this->request->getPost()->filter('ot', '«app.getLeadingEntity().name.formatForCode()»', FILTER_SANITIZE_STRING);
+        }
+        elseif ($this->request->isGet() && $this->request->getGet()->has('ot')) {
+            $objectType = $this->request->getGet()->filter('ot', '«app.getLeadingEntity().name.formatForCode()»', FILTER_SANITIZE_STRING);
+        }
         if (!in_array($objectType, «app.appName()»_Util_Controller::getObjectTypes('controllerAction', array('controller' => '«name()»', 'action' => 'getItemList')))) {
             $objectType = «app.appName()»_Util_Controller::getDefaultObjectType('controllerAction', array('controller' => '«name()»', 'action' => 'getItemList'));
         }
@@ -72,11 +84,19 @@
         $idField = strtolower($objectType) . 'id';
 «EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(app.appName(), true, 'controllerAction', name(), 'getItemList')-»
 
-        $fragment = FormUtil::getPassedValue('fragment', '', 'GETPOST');
-        $exclude = FormUtil::getPassedValue('exclude', '', 'GETPOST');
+        $fragment = '';
+        $exclude = '';
+        if ($this->request->isPost() && $this->request->getPost()->has('fragment')) {
+            $fragment = $this->request->getPost()->get('fragment', '');
+            $exclude = $this->request->getPost()->get('exclude', '');
+        }
+        elseif ($this->request->isGet() && $this->request->getGet()->has('fragment')) {
+            $fragment = $this->request->getGet()->get('fragment', '');
+            $exclude = $this->request->getGet()->get('exclude', '');
+        }
 
         // parameter for used sorting field
-        $sort = FormUtil::getPassedValue('sort', '', 'GET');
+        $sort = $this->request->getGet()->get('sort', '');
 «EXPAND templates::zclassic::controller::ControllerHelper::DefaultSorting-»
 
         $currentPage = 1;
@@ -190,14 +210,14 @@
     {
         $this->checkAjaxToken();
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_EDIT));
-        
-        $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'POST', FILTER_SANITIZE_STRING);
+
+        $objectType = $this->request->getPost()->filter('ot', '«app.getLeadingEntity().name.formatForCode()»', FILTER_SANITIZE_STRING);
         if (!in_array($objectType, «app.appName()»_Util_Controller::getObjectTypes('controllerAction', array('controller' => '«name()»', 'action' => 'checkForDuplicate')))) {
             $objectType = «app.appName()»_Util_Controller::getDefaultObjectType('controllerAction', array('controller' => '«name()»', 'action' => 'checkForDuplicate'));
         }
 
-        $fieldName = FormUtil::getPassedValue('fn', '', 'POST', FILTER_SANITIZE_STRING);
-        $value = FormUtil::getPassedValue('v', '', 'POST');
+        $fieldName = $this->request->getPost()->filter('fn', '', FILTER_SANITIZE_STRING);
+        $value = $this->request->getPost()->get('v', '');
 
         if (empty($fieldName) || empty($value)) {
             return new Zikula_Response_Ajax_BadData($this->__('Invalid input'));
@@ -220,7 +240,7 @@
             return new Zikula_Response_Ajax_BadData($this->__('Invalid input'));
         }
 
-        $exclude = (int) FormUtil::getPassedValue('ex', 0, 'POST', FILTER_VALIDATE_INT);
+        $exclude = (int) $this->request->getPost()->filter('ex', 0, FILTER_VALIDATE_INT);
 
 «EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(app.appName(), false, 'controllerAction', name(), 'checkForDuplicate')-»
 
@@ -263,7 +283,7 @@
 
 «LET app.getNestedSetEntities() AS nestedSetEntities-»
         // parameter specifying which type of objects we are treating
-        $objectType = DataUtil::convertFromUTF8(FormUtil::getPassedValue('ot', '«nestedSetEntities.get(0).name.formatForCode()»', 'POST', FILTER_SANITIZE_STRING));
+        $objectType = DataUtil::convertFromUTF8($this->request->getPost()->filter('ot', '«nestedSetEntities.get(0).name.formatForCode()»', FILTER_SANITIZE_STRING));
         // ensure that we use only object types with nested set behaviour enabled
         if (!in_array($objectType, array(«FOREACH nestedSetEntities AS nestedSetEntity SEPARATOR ", "»'«nestedSetEntity.name.formatForCode()»'«ENDFOREACH»))) {
             $objectType = '«nestedSetEntities.get(0).name.formatForCode()»';
@@ -275,7 +295,7 @@
             'message' => ''
         );
 
-        $op = DataUtil::convertFromUTF8(FormUtil::getPassedValue('op', '', 'POST', FILTER_SANITIZE_STRING));
+        $op = DataUtil::convertFromUTF8($this->request->getPost()->filter('op', '', FILTER_SANITIZE_STRING));
         if (!in_array($op, array('addRootNode', 'addChildNode', 'deleteNode', 'moveNode', 'moveNodeTo'))) {
             LogUtil::registerError($this->__('Error: invalid operation.'));
             throw new Zikula_Exception_Fatal();
@@ -284,7 +304,7 @@
         // Get id of treated node
         $id = 0;
         if (!in_array($op, array('addRootNode', 'addChildNode'))) {
-            $id = (int) FormUtil::getPassedValue('id', 0, 'POST', FILTER_VALIDATE_INT);
+            $id = (int) $this->request->getPost()->getPost()->filter('id', 0, FILTER_VALIDATE_INT);
             if (!$id) {
                 LogUtil::registerError($this->__('Error: invalid node.'));
                 throw new Zikula_Exception_Fatal();
@@ -298,7 +318,7 @@
         $rootId = 1;
         $useMultipleRoots = method_exists($objectCollection, 'selectAllTrees');
         if ($useMultipleRoots && !in_array($op, array('addRootNode'))) {
-            $rootId = (int) FormUtil::getPassedValue('root', 0, 'POST', FILTER_VALIDATE_INT);
+            $rootId = (int) $this->request->getPost()->filter('root', 0, FILTER_VALIDATE_INT);
             if (!$rootId) {
                 LogUtil::registerError($this->__('Error: invalid root node.'));
                 throw new Zikula_Exception_Fatal();
@@ -347,7 +367,7 @@
                             $objectCollection->getTreeObject()->createRoot($object->$getterName());
                             break;
             case 'addChildNode':
-                            $parentId = (int) FormUtil::getPassedValue('pid', 0, 'POST', FILTER_VALIDATE_INT);
+                            $parentId = (int) $this->request->getPost()->filter('pid', 0, FILTER_VALIDATE_INT);
                             if (!$parentId) {
                                 LogUtil::registerError($this->__('Error: invalid parent node.'));
                                 throw new Zikula_Exception_Fatal();
@@ -379,7 +399,7 @@
                             $record->getNode()->delete();
                             break;
             case 'moveNode':
-                            $moveDirection = FormUtil::getPassedValue('direction', '', 'POST', FILTER_SANITIZE_STRING);
+                            $moveDirection = $this->request->getPost()->filter('direction', '', FILTER_SANITIZE_STRING);
                             if (!in_array($moveDirection, array('up', 'down'))) {
                                 LogUtil::registerError($this->__('Error: invalid direction.'));
                                 throw new Zikula_Exception_Fatal();
@@ -397,13 +417,13 @@
 
                             break;
             case 'moveNodeTo':
-                            $moveDirection = FormUtil::getPassedValue('direction', '', 'POST', FILTER_SANITIZE_STRING);
+                            $moveDirection = $this->request->getPost()->filter('direction', '', FILTER_SANITIZE_STRING);
                             if (!in_array($moveDirection, array('after', 'before', 'bottom'))) {
                                 LogUtil::registerError($this->__('Error: invalid direction.'));
                                 throw new Zikula_Exception_Fatal();
                             }
 
-                            $destId = (int) FormUtil::getPassedValue('destid', 0, 'POST', FILTER_VALIDATE_INT);
+                            $destId = (int) $this->request->getPost()->filter('destid', 0, FILTER_VALIDATE_INT);
                             if (!$destId) {
                                 LogUtil::registerError($this->__('Error: invalid destination node.'));
                                 throw new Zikula_Exception_Fatal();

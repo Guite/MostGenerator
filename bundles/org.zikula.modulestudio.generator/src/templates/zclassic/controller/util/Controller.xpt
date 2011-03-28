@@ -12,7 +12,7 @@
 /**
  * Utility base class for controller helper methods.
  */
-class «appName()»_Util_Base_Controller
+class «appName()»_Util_Base_Controller extends Zikula_AbstractBase
 {
     /**
      * Returns an array of all allowed object types in «appName()».

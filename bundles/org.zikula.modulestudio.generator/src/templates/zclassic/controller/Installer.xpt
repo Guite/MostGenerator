@@ -443,7 +443,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     {
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
-        $submit = FormUtil::getPassedValue('submit', null, 'POST');
+        $submit = $this->request->getPost()->get('submit', null);
         if (!$submit) {
             // assign auth key
             $this->view->assign('authid', SecurityUtil::generateAuthKey('«appName()»'));
@@ -458,12 +458,12 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         }
 
     «FOREACH models.variables.vars AS modvar-»
-        $formValue = FormUtil::getPassedValue('«modvar.name.formatForCode()»', «EXPAND ModVarValForm2SessionDefault FOR modvar», 'POST');
+        $formValue = $this->request->getPost()->get('«modvar.name.formatForCode()»', «EXPAND ModVarValForm2SessionDefault FOR modvar»);
         SessionUtil::setVar('«formatForCode(name + '_' + modvar.name)»', $formValue);
 
 «ENDFOREACH-»
 
-        $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST', FILTER_VALIDATE_BOOLEAN);
+        $activate = (bool) $this->request->getPost()->filter('activate', false, FILTER_VALIDATE_BOOLEAN);
         $activate = (!empty($activate)) ? true : false;
 
         return System::redirect(ModUtil::url('«appName()»', 'init', 'interactiveinitstep3', array('activate' => $activate)));
@@ -484,7 +484,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     {
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
-        $activate = (bool) FormUtil::getPassedValue('activate', false, 'POST', FILTER_VALIDATE_BOOLEAN);
+        $activate = (bool) $this->request->getPost()->filter('activate', false, FILTER_VALIDATE_BOOLEAN);
 
         // assign auth key and activation flag
         $this->view->assign('authid', SecurityUtil::generateAuthKey('Modules'))

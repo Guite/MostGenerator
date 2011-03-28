@@ -12,7 +12,7 @@
 /**
  * Utility base class for model helper methods.
  */
-class «appName()»_Util_Base_Model
+class «appName()»_Util_Base_Model extends Zikula_AbstractBase
 {
 }
 «ENDDEFINE»

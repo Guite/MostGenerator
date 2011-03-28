@@ -12,7 +12,7 @@
 /**
  * Utility base class for view helper methods.
  */
-class «appName()»_Util_Base_View
+class «appName()»_Util_Base_View extends Zikula_AbstractBase
 {
     /**
      * Utility method for managing view templates.
@@ -34,14 +34,28 @@ class «appName()»_Util_Base_View
         $templateExtension = self::determineExtension($view, $type, $objectType, $func, $args);
 
         // check whether a special template is used
-        $tpl = FormUtil::getPassedValue('tpl', isset($args['tpl']) ? $args['tpl'] : '', 'GETPOST', FILTER_SANITIZE_STRING);
+        $tpl = '';
+        if ($this->request->isPost() && $this->request->getPost()->has('tpl')) {
+            $tpl = $this->request->getPost()->filter('tpl', $tpl, FILTER_SANITIZE_STRING);
+        }
+        elseif ($this->request->isGet() && $this->request->getGet()->has('tpl')) {
+            $tpl = $this->request->getGet()->filter('tpl', $tpl, FILTER_SANITIZE_STRING);
+        }
+        $template = isset($args['tpl']) ? $args['tpl'] : $tpl;
         if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.' . $templateExtension)) {
             $template .= '_' . DataUtil::formatForOS($tpl);
         }
         $template .= '.' . $templateExtension;
 
         // look whether we need output with or without the theme
-        $raw = (bool) FormUtil::getPassedValue('raw', (isset($args['raw']) && is_bool($args['raw'])) ? $args['raw'] : false, 'GETPOST', FILTER_VALIDATE_BOOLEAN);
+        $raw = false;
+        if ($this->request->isPost() && $this->request->getPost()->has('raw')) {
+			$raw = (bool) $this->request->getPost()->filter('raw', false, FILTER_VALIDATE_BOOLEAN);
+	    }
+        elseif ($this->request->isGet() && $this->request->getGet()->has('raw')) {
+			$raw = (bool) $this->request->getGet()->filter('raw', false, FILTER_VALIDATE_BOOLEAN);
+	    }
+	    $raw = (isset($args['raw']) && is_bool($args['raw'])) ? $args['raw'] : $raw;
         if (!$raw && in_array($templateExtension, array('csv', 'rss', 'atom', 'xml', 'pdf', 'vcard', 'ical'))) {
             $raw = true;
         }
@@ -81,7 +95,7 @@ class «appName()»_Util_Base_View
 
         $extParams = self::availableExtensions($type, $objectType, $func, $args);
         foreach ($extParams as $extension) {
-            $extensionCheck = (int) FormUtil::getPassedValue('use' . $extension . 'ext', 0, 'GET', FILTER_VALIDATE_INT);
+            $extensionCheck = (int)$this->request->getGet()->filter('use' . $extension . 'ext', 0, FILTER_VALIDATE_INT);
             if ($extensionCheck == 1) {
                 $templateExtension = $extension;
                 break;

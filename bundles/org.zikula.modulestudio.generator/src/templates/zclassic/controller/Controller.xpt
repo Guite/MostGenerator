@@ -57,9 +57,9 @@ class «baseClassController()» extends Zikula_«IF metaType != AjaxController-�
      */
     public function handleInlineRedirect()
     {
-        $itemId = (int) FormUtil::getPassedValue('id', 0, 'GET', FILTER_VALIDATE_INT);
-        $idPrefix = FormUtil::getPassedValue('idp', '', 'GET', FILTER_SANITIZE_STRING);
-        $commandName = FormUtil::getPassedValue('com', '', 'GET', FILTER_SANITIZE_STRING);
+        $itemId = (int) $this->request->getGet()->filter('id', 0, FILTER_VALIDATE_INT);
+        $idPrefix = $this->request->getGet()->filter('idp', '', FILTER_SANITIZE_STRING);
+        $commandName = $this->request->getGet()->filter('com', '', FILTER_SANITIZE_STRING);
         if (empty($idPrefix)) {
             return false;
         }

@@ -208,11 +208,11 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
         // Get current content
         $vars = BlockUtil::varsFromContent($blockinfo['content']);
 
-        $vars['objectType'] = FormUtil::getPassedValue('objecttype', '«getLeadingEntity().name.formatForCode()»', 'POST', FILTER_SANITIZE_STRING);
-        $vars['sorting'] = FormUtil::getPassedValue('sorting', 'default', 'POST', FILTER_SANITIZE_STRING);
-        $vars['amount'] = (int) FormUtil::getPassedValue('amount', 5, 'POST', FILTER_VALIDATE_INT);
-        $vars['template'] = FormUtil::getPassedValue('template', '', 'POST');
-        $vars['filter'] = FormUtil::getPassedValue('filter', '', 'POST');
+        $vars['objectType'] = $this->request->getPost()->filter('objecttype', '«getLeadingEntity().name.formatForCode()»', FILTER_SANITIZE_STRING);
+        $vars['sorting'] = $this->request->getPost()->filter('sorting', 'default', FILTER_SANITIZE_STRING);
+        $vars['amount'] = (int) $this->request->getPost()->filter('amount', 5, FILTER_VALIDATE_INT);
+        $vars['template'] = $this->request->getPost()->get('template', '');
+        $vars['filter'] = $this->request->getPost()->get('filter', '');
 
         if (!in_array($vars['objectType'], «appName()»_Util_Controller::getObjectTypes('block'))) {
             $vars['objectType'] = «appName()»_Util_Controller::getDefaultObjectType('block');
