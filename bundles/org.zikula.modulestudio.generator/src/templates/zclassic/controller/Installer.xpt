@@ -384,6 +384,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         // special purposes and 3rd party api support
 «LET appName.msconcat('_Listener_ThirdParty') AS callableClass-»
         EventUtil::registerPersistentModuleHandler('«appName»', 'get.pending_content', array('«callableClass»', 'pendingContentListener'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'module.content.gettypes', array('«callableClass»', 'contentGetTypes'));
 «ENDLET-»
 «ENDLET-»
     }

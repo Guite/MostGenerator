@@ -1071,5 +1071,18 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
         }
 */
     }
+
+    /**
+     * Listener for the `module.content.gettypes` event.
+     *
+     * This event occurs when the Content module is 'searching' for Content plugins.
+     * The subject is an instance of Content_Types.
+     */
+    public static function contentGetTypes(Zikula_Event $event)
+    {
+        // intended is using the add() method to add a plugin like below
+        $types = $event->getSubject();
+        $types->add('«appName()»_ContentType_ItemList');
+    }
 «ENDDEFINE»
 
