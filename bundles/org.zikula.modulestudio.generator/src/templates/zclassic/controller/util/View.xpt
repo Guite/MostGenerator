@@ -34,13 +34,13 @@ class «appName()»_Util_Base_View extends Zikula_AbstractBase
         $templateExtension = self::determineExtension($view, $type, $objectType, $func, $args);
 
         // check whether a special template is used
-        $tpl = '';
-        if ($this->request->isPost() && $this->request->getPost()->has('tpl')) {
+        $tpl = FormUtil::getPassedValue('tpl', '', 'GETPOST', FILTER_SANITIZE_STRING);
+        /*if ($this->request->isPost() && $this->request->getPost()->has('tpl')) {
             $tpl = $this->request->getPost()->filter('tpl', $tpl, FILTER_SANITIZE_STRING);
         }
         elseif ($this->request->isGet() && $this->request->getGet()->has('tpl')) {
             $tpl = $this->request->getGet()->filter('tpl', $tpl, FILTER_SANITIZE_STRING);
-        }
+        }*/
         $template = isset($args['tpl']) ? $args['tpl'] : $tpl;
         if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.' . $templateExtension)) {
             $template .= '_' . DataUtil::formatForOS($tpl);
@@ -48,13 +48,13 @@ class «appName()»_Util_Base_View extends Zikula_AbstractBase
         $template .= '.' . $templateExtension;
 
         // look whether we need output with or without the theme
-        $raw = false;
-        if ($this->request->isPost() && $this->request->getPost()->has('raw')) {
+        $raw = FormUtil::getPassedValue('raw', false, 'GETPOST', FILTER_VALIDATE_BOOLEAN);
+        /*if ($this->request->isPost() && $this->request->getPost()->has('raw')) {
 			$raw = (bool) $this->request->getPost()->filter('raw', false, FILTER_VALIDATE_BOOLEAN);
 	    }
         elseif ($this->request->isGet() && $this->request->getGet()->has('raw')) {
 			$raw = (bool) $this->request->getGet()->filter('raw', false, FILTER_VALIDATE_BOOLEAN);
-	    }
+	    }*/
 	    $raw = (isset($args['raw']) && is_bool($args['raw'])) ? $args['raw'] : $raw;
         if (!$raw && in_array($templateExtension, array('csv', 'rss', 'atom', 'xml', 'pdf', 'vcard', 'ical'))) {
             $raw = true;
