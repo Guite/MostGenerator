@@ -237,22 +237,22 @@ class «appName()»_Listener_User extends «appName()»_Listener_Base_User
 }
 «ENDFILE»
 
-«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/Registration.php")-»
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/UserRegistration.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Event handler base class for user registration events.
  */
-class «appName()»_Listener_Base_Registration
+class «appName()»_Listener_Base_UserRegistration
 {
 «EXPAND BaseListenersRegistration-»
 }
 «ENDFILE»
-«FILE getAppSourceLibPath(appName()).msconcat("Listener/Registration.php")-»
+«FILE getAppSourceLibPath(appName()).msconcat("Listener/UserRegistration.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Event handler implementation class for user registration events.
  */
-class «appName()»_Listener_Registration extends «appName()»_Listener_Base_Registration
+class «appName()»_Listener_UserRegistration extends «appName()»_Listener_Base_UserRegistration
 {
     // here you can extend implementation of persistent event handlers
 }

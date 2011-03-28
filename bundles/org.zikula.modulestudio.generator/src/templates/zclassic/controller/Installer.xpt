@@ -358,7 +358,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDLET-»
 
         // registration
-«LET appName.msconcat('_Listener_Registration') AS callableClass-»
+«LET appName.msconcat('_Listener_UserRegistration') AS callableClass-»
         EventUtil::registerPersistentModuleHandler('«appName»', 'module.users.ui.registration.started', array('«callableClass»', 'started'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'module.users.ui.registration.succeeded', array('«callableClass»', 'succeeded'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'module.users.ui.registration.failed', array('«callableClass»', 'failed'));
