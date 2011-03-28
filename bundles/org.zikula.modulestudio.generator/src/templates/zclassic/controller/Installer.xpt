@@ -338,38 +338,38 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 
         // user login
 «LET appName.msconcat('_Listener_UserLogin') AS callableClass-»
-        EventUtil::registerPersistentModuleHandler('«appName»', 'user.login.started', array('«callableClass»', 'started'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'user.login.veto', array('«callableClass»', 'veto'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'user.login.failed', array('«callableClass»', 'failed'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'user.login.succeeded', array('«callableClass»', 'succeeded'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'module.users.ui.login.started', array('«callableClass»', 'started'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'module.users.ui.login.veto', array('«callableClass»', 'veto'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'module.users.ui.login.succeeded', array('«callableClass»', 'succeeded'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'module.users.ui.login.failed', array('«callableClass»', 'failed'));
 «ENDLET-»
 
         // user logout
 «LET appName.msconcat('_Listener_UserLogout') AS callableClass-»
-        EventUtil::registerPersistentModuleHandler('«appName»', 'user.logout.succeeded', array('«callableClass»', 'succeeded'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'module.users.ui.logout.succeeded', array('«callableClass»', 'succeeded'));
 «ENDLET-»
 
         // user
 «LET appName.msconcat('_Listener_User') AS callableClass-»
         EventUtil::registerPersistentModuleHandler('«appName»', 'user.gettheme', array('«callableClass»', 'getTheme'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'user.create', array('«callableClass»', 'create'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'user.update', array('«callableClass»', 'update'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'user.delete', array('«callableClass»', 'delete'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.account.create', array('«callableClass»', 'create'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.account.update', array('«callableClass»', 'update'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.account.delete', array('«callableClass»', 'delete'));
 «ENDLET-»
 
         // registration
 «LET appName.msconcat('_Listener_Registration') AS callableClass-»
-        EventUtil::registerPersistentModuleHandler('«appName»', 'registration.started', array('«callableClass»', 'started'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'registration.succeeded', array('«callableClass»', 'succeeded'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'registration.failed', array('«callableClass»', 'failed'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'registration.create', array('«callableClass»', 'create'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'registration.update', array('«callableClass»', 'update'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'registration.delete', array('«callableClass»', 'delete'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'module.users.ui.registration.started', array('«callableClass»', 'started'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'module.users.ui.registration.succeeded', array('«callableClass»', 'succeeded'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'module.users.ui.registration.failed', array('«callableClass»', 'failed'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.registration.create', array('«callableClass»', 'create'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.registration.update', array('«callableClass»', 'update'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'user.registration.delete', array('«callableClass»', 'delete'));
 «ENDLET-»
 
         // users module
 «LET appName.msconcat('_Listener_Users') AS callableClass-»
-        EventUtil::registerPersistentModuleHandler('«appName»', 'users.config.updated', array('«callableClass»', 'configUpdated'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'module.users.config.updated', array('«callableClass»', 'configUpdated'));
 «ENDLET-»
 
         // group
