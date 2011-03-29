@@ -34,41 +34,37 @@ function countComplexityNiedrig() {
     return summe;
 }
 
-function calculateComplexityAnwenderdaten(cols, relations, result)
+function calculateComplexityAnwenderdaten(cols, relations)
 {
     if (relations < 2 && cols > 15 || relations < 3 && cols > 4 && cols < 16 || relations >= 3 && cols < 5){
-        result[1]++;
+        return 1;
     }else if (relations < 3 && cols > 15 || relations >= 3 && cols > 4) {
-        result[2]++;
+        return 2;
     }else{
-        result[0]++;
+        return 0;
     }    
-    return result;
 }
 
-function calculateComplexityEingaben(fields, relations, result)
+function calculateComplexityEingaben(fields, relations)
 {
     if (relations < 2 && fields > 15 || relations < 3 && fields > 4 && fields < 16 || relations >= 3 && fields < 5){
-        result[1]++;
+        return 1;
     }else if (relations < 3 && fields > 15 || relations >= 3 && fields > 4) {
-        result[2]++;
+        return 2;
     }else{
-        result[0]++;
+        return 0;
     }    
-    return result;
 }
 
-function calculateComplexityAusgabe(fields, relations, result)
+function calculateComplexityAusgabe(fields, relations)
 {    
     if (relations < 2 && fields > 50 || relations < 6 && fields > 19 && fields < 51 || relations > 5 && fields < 20){
-        result[1]++;
+        return 1;
     }else if (relations < 6 && fields > 50 || relations > 5 && fields > 19){
-        result[2]++;
+        return 2;
     }else{
-        result[0]++;
+        return 0;
     }
-    
-    return result;
 }
 
 function sumUp(source)
