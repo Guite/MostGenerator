@@ -34,14 +34,14 @@ class «appName()»_Util_Base_View extends Zikula_AbstractBase
         $templateExtension = self::determineExtension($view, $type, $objectType, $func, $args);
 
         // check whether a special template is used
-        $tpl = FormUtil::getPassedValue('tpl', '', 'GETPOST', FILTER_SANITIZE_STRING);
+        $tpl = FormUtil::getPassedValue('tpl', isset($args['tpl']) ? $args['tpl'] : '', 'GETPOST', FILTER_SANITIZE_STRING);
         /*if ($this->request->isPost() && $this->request->getPost()->has('tpl')) {
             $tpl = $this->request->getPost()->filter('tpl', $tpl, FILTER_SANITIZE_STRING);
         }
         elseif ($this->request->isGet() && $this->request->getGet()->has('tpl')) {
             $tpl = $this->request->getGet()->filter('tpl', $tpl, FILTER_SANITIZE_STRING);
         }*/
-        $template = isset($args['tpl']) ? $args['tpl'] : $tpl;
+        $tpl = isset($args['tpl']) ? $args['tpl'] : $tpl;
         if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.' . $templateExtension)) {
             $template .= '_' . DataUtil::formatForOS($tpl);
         }
