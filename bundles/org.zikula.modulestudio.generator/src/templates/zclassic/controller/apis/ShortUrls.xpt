@@ -135,6 +135,8 @@
             }
         }
 
+        // enforce url name of the module, but do only 1 replacement to avoid changing other params
+        $result = preg_replace('/«app.appName()»/', '«app.appName().formatForDB()»', $result, 1);
 
         return $result;
     }
