@@ -25,7 +25,7 @@
 /**
  * Configuration handler base class
  */
-class «tempBaseClassConfigHandler()» extends Zikula_Form_Handler
+class «tempBaseClassConfigHandler()» extends Zikula_Form_AbstractHandler
 {
     /**
      * Post construction hook.

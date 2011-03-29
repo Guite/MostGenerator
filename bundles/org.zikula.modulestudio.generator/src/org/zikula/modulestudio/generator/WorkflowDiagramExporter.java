@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator;
 
 import org.zikula.modulestudio.generator.output.DiagramExporter;
 
+/** TODO: javadocs needed for class, members and methods */
 public class WorkflowDiagramExporter {
     WorkflowSettings settings;
 

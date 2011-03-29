@@ -64,7 +64,7 @@
  * - <b>handleCommand</b>: this event is fired by various plugins on the page. Typically it is done by the
  *   Zikula_Form_Plugin_Button plugin to signal that the user activated a button.
  */
-class «baseClassFormHandler(controller, name, actionName)» extends Zikula_Form_Handler
+class «baseClassFormHandler(controller, name, actionName)» extends Zikula_Form_AbstractHandler
 {
     /**
      * Persistent member vars
@@ -177,20 +177,20 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
     public function initialize(Zikula_Form_View $view)
     {
         $this->inlineUsage = ((UserUtil::getTheme() == 'Printer') ? true : false);
-        $this->idPrefix = FormUtil::getPassedValue('idp', '', 'GET', FILTER_SANITIZE_STRING);
+        $this->idPrefix = $this->request->getGet()->filter('idp', '', FILTER_SANITIZE_STRING);
 
         // retrieve the ID of the object we wish to edit
         // default to 0 (which is a numeric id but an invalid value)
         // no provided id means that we want to create a new object
-        $this->«idField()» = (int) FormUtil::getPassedValue('«idField()»', 0, 'GET', FILTER_VALIDATE_INT);
+        $this->«idField()» = (int) $this->request->getGet()->filter('«idField()»', 0, FILTER_VALIDATE_INT);
         if (!$this->«idField()») {
-            $this->«idField()» = (int) FormUtil::getPassedValue('id', 0, 'GET', FILTER_VALIDATE_INT);
+            $this->«idField()» = (int) $this->request->getGet()->filter('id', 0, FILTER_VALIDATE_INT);
         }
 
         $this->objectType = '«name.formatForCode()»';
 
         // initialise redirect goal
-        $this->returnTo = FormUtil::getPassedValue('returnTo', null, 'GET', FILTER_SANITIZE_STRING);
+        $this->returnTo = $this->request->getGet()->filter('returnTo', null, FILTER_SANITIZE_STRING);
         // store current uri for repeated creations
         $this->repeatReturnUrl = System::getCurrentURI();
 
@@ -223,7 +223,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 return $this->view->registerError(LogUtil::registerPermissionError());
             }
 
-            $template«idField().toFirstUpper()» = (int) FormUtil::getPassedValue('astemplate', 0, 'GET', FILTER_VALIDATE_INT);
+            $template«idField().toFirstUpper()» = (int) $this->request->getGet()->filter('astemplate', 0, FILTER_VALIDATE_INT);
             if ($template«idField().toFirstUpper()» > 0) {
                 // reuse existing «name.formatForDisplay()»
                 $idField = '«idField()»';
@@ -280,7 +280,13 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $where = '';
         $sortParam = $objectCollection->get_intDefaultSortingField() . ' asc';
         if ($many) {
-            $inputValue = FormUtil::getPassedValue($relationInputFieldName, '', $source);
+            $inputValue = '';
+            if ($source == 'POST') {
+                $inputValue = $this->request->getPost()->get($relationInputFieldName, '');
+            }
+            else {
+                $inputValue = $this->request->getGet()->get($relationInputFieldName, '');
+            }
             if (empty($inputValue)) {
                 return array();
             }
@@ -288,14 +294,20 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             $where = $idField . ' IN (' . DataUtil::formatForStore($inputValue) . ')';
         }
         else {
-            $inputValue = (int) FormUtil::getPassedValue($relationInputFieldName, 0, $source, FILTER_VALIDATE_INT);
+            $inputValue = 0;
+            if ($source == 'POST') {
+                $inputValue = $this->request->getPost()->filter($relationInputFieldName, 0, FILTER_VALIDATE_INT);
+            }
+            else {
+                $inputValue = $this->request->getGet()->filter($relationInputFieldName, 0, FILTER_VALIDATE_INT);
+            }
             if ($inputValue == 0) {
-                return array();
+                return 0;
             }
 
             $where = $idField . ' = \'' . DataUtil::formatForStore($inputValue) . '\'';
         }
-        $result = $objectCollection->selectWherePaginated($where, $sortParam, 1, 50);
+        list($result, $resultCount) = $objectCollection->selectWherePaginated($where, $sortParam, 1, 50);
         return (($many) ? $result : $result[0]);
     }
 «ENDDEFINE»
@@ -605,7 +617,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
 «IF many && this.getEditStageCode(incoming) > 1-»
 «IF incoming-»«REM»only incoming for now, see http://code.zikula.org/generator/ticket/89«ENDREM»«""-»
-        $relatedIds = FormUtil::getPassedValue('«uniqueNameForJs»ItemList', '', 'POST');
+        $relatedIds = $this->request->getPost()->get('«uniqueNameForJs»ItemList', '');
         $recordObj = $businessEntity->get«((incoming) ? target : source).name.formatForCodeCapital()»();
         if ($this->mode != 'create') {
             // remove all existing references
@@ -660,7 +672,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDFOREACH-»
 «FOREACH userFields AS userField-»
 «LET userField.actualFieldName().formatForCode() AS realName-»
-            $formData['«realName»'] = (int) FormUtil::getPassedValue('«realName»', 0, 'POST', FILTER_VALIDATE_INT);
+            $formData['«realName»'] = (int) $this->request->getPost()->filter('«realName»', 0, FILTER_VALIDATE_INT);
             if (!$formData['«realName»'] || UserUtil::getVars($formData['«realName»']) === false) {
 «IF userField.mandatory-»
                 // Oops, we have an invalid user id. As this field is mandatory, we raise an error.
@@ -710,7 +722,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
 «DEFINE FetchRelationValue(Boolean incoming) FOR JoinRelationship-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
-        $formData['«source.idField()»'] = (int) FormUtil::getPassedValue('«uniqueNameForJs»ItemList', 0, 'POST', FILTER_VALIDATE_INT);
+        $formData['«source.idField()»'] = (int) $this->request->getPost()->filter('«uniqueNameForJs»ItemList', 0, FILTER_VALIDATE_INT);
 «REM»Alternative: $address->link('Customer', array($customer['id']));«ENDREM»«""-»
         if (!$formData['«source.idField()»']) {
             // Oops, we have an invalid relation id. As this field is mandatory, we raise an error.

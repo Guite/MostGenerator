@@ -8,6 +8,7 @@ import org.zikula.modulestudio.generator.exceptions.M2TFailedCartridgeIncomplete
 import org.zikula.modulestudio.generator.exceptions.M2TFailedGeneratorResourceNotFound;
 import org.zikula.modulestudio.generator.exceptions.M2TUnknownException;
 
+/** TODO: javadocs needed for class, members and methods */
 public class WorkflowM2T {
     WorkflowSettings settings;
 

@@ -39,9 +39,9 @@
 «DEFINE ControllerBaseImpl(Application app) FOR Controller-»
 
 /**
- * This is the «name» controller class.
+ * «name» controller class.
  */
-class «baseClassController()» extends Zikula_Controller«IF metaType == AjaxController-»_Ajax«ENDIF-»
+class «baseClassController()» extends Zikula_«IF metaType != AjaxController-»AbstractController«ELSE-»Controller_AbstractAjax«ENDIF-»
 {
 «IF metaType == AjaxController-»
 
@@ -57,9 +57,9 @@ class «baseClassController()» extends Zikula_Controller«IF metaType == AjaxCo
      */
     public function handleInlineRedirect()
     {
-        $itemId = (int) FormUtil::getPassedValue('id', 0, 'GET', FILTER_VALIDATE_INT);
-        $idPrefix = FormUtil::getPassedValue('idp', '', 'GET', FILTER_SANITIZE_STRING);
-        $commandName = FormUtil::getPassedValue('com', '', 'GET', FILTER_SANITIZE_STRING);
+        $itemId = (int) $this->request->getGet()->filter('id', 0, FILTER_VALIDATE_INT);
+        $idPrefix = $this->request->getGet()->filter('idp', '', FILTER_SANITIZE_STRING);
+        $commandName = $this->request->getGet()->filter('com', '', FILTER_SANITIZE_STRING);
         if (empty($idPrefix)) {
             return false;
         }
@@ -81,10 +81,10 @@ class «baseClassController()» extends Zikula_Controller«IF metaType == AjaxCo
      */
     public function config()
     {
-        $this->throwForbiddenUnless(SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_ADMIN));
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN));
 
         // Create new Form reference
-        $view = FormUtil::newForm('«app.appName()»', $this);
+        $view = FormUtil::newForm($this->name, $this);
 
         // Execute form using supplied template and page event handler
         return $view->execute('«app.configController().formatForDB()»/config.tpl', new «app.appName()»_Form_Handler_«app.configController().formatForDB().toFirstUpper()»_Config());
@@ -114,12 +114,12 @@ class «implClassController()» extends «baseClassController()»
 /**
  * This is the «name» api helper class.
  */
-class «baseClassApi()» extends Zikula_Api
+class «baseClassApi()» extends Zikula_AbstractApi
 {
     /**
      * get available «name» panel links
      *
-     * @return       array      array of admin links
+     * @return array Array of admin links
      */
     public function getlinks()
     {

@@ -51,7 +51,7 @@
 «EXPAND PermissionCheck-»
 «IF metaType != MainAction-»
         // parameter specifying which type of objects we are treating
-        $objectType = FormUtil::getPassedValue('ot', '«app.getLeadingEntity().name.formatForCode()»', 'GET', FILTER_SANITIZE_STRING);
+        $objectType = $this->request->getGet()->filter('ot', '«app.getLeadingEntity().name.formatForCode()»', FILTER_SANITIZE_STRING);
         $utilArgs = array('controller' => '«controller.name()»', 'action' => '«name.formatForCode()»');
         if (!in_array($objectType, «app.appName()»_Util_Controller::getObjectTypes('controllerAction', $utilArgs))) {
             $objectType = «app.appName()»_Util_Controller::getDefaultObjectType('controllerAction', $utilArgs);
@@ -98,7 +98,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «DEFINE ActionImplBody(String appName) FOR ViewAction-»
 «EXPAND ControllerHelper::instantiateBusinessObject(appName, true, 'controllerAction', controller.name(), name.formatForCode())-»
 
-        $tpl = FormUtil::getPassedValue('tpl', '', 'GET', FILTER_SANITIZE_STRING);
+        $tpl = $this->request->getGet()->filter('tpl', '', FILTER_SANITIZE_STRING);
         if ($tpl == 'nestedSet') {
             $useMultipleRoots = method_exists($objectCollection, 'selectAllTrees');
             $this->view->assign('useMultipleRoots', $useMultipleRoots);
@@ -114,21 +114,21 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         }
 
         // parameter for used sorting field
-        $sort = FormUtil::getPassedValue('sort', '', 'GET', FILTER_SANITIZE_STRING);
+        $sort = $this->request->getGet()->filter('sort', '', FILTER_SANITIZE_STRING);
 «EXPAND ControllerHelper::DefaultSorting-»
 
         // parameter for used sort order
-        $sdir = FormUtil::getPassedValue('sdir', '', 'GET', FILTER_SANITIZE_STRING);
+        $sdir = $this->request->getGet()->filter('sdir', '', FILTER_SANITIZE_STRING);
         if ($sdir != 'asc' && $sdir != 'desc') $sdir = 'asc';
 
 «REM»TODO«ENDREM»
         // the current offset which is used to calculate the pagination
-        $currentPage = (int) FormUtil::getPassedValue('pos', 1, 'GET', FILTER_VALIDATE_INT);
+        $currentPage = (int) $this->request->getGet()->filter('pos', 1, FILTER_VALIDATE_INT);
 
         // the number of items displayed on a page for pagination
-        $resultsPerPage = (int) FormUtil::getPassedValue('num', 0, 'GET', FILTER_VALIDATE_INT);
+        $resultsPerPage = (int) $this->request->getGet()->filter('num', 0, FILTER_VALIDATE_INT);
         if ($resultsPerPage == 0) {
-            $csv = (int) FormUtil::getPassedValue('usecsvext', 0, 'GET', FILTER_VALIDATE_INT);
+            $csv = (int) $this->request->getGet()->filter('usecsvext', 0, FILTER_VALIDATE_INT);
             $resultsPerPage = ($csv == 1) ? 999999 : $this->getVar('pagesize', 10);
         }
 
@@ -158,9 +158,9 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $idField = $object->get_intIdField();
 
         // retrieve the ID of the object we wish to view
-        $id = (int) FormUtil::getPassedValue($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, 'GET', FILTER_VALIDATE_INT);
+        $id = (int) $this->request->getGet()->filter($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, FILTER_VALIDATE_INT);
         if (!$id) {
-            $id = (int) FormUtil::getPassedValue('id', isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0, 'GET', FILTER_VALIDATE_INT);
+            $id = (int) $this->request->getGet()->filter('id', isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0, FILTER_VALIDATE_INT);
         }
 «IF controller.metaType == UserController-»
 «REM»At the moment short urls are only used in the user area, see http://code.zikula.org/core/ticket/2538«ENDREM»«""-»
@@ -171,7 +171,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         if (!$id) {
             $hasSlug = $object->get_intHasUniqueSlug();
             if ($hasSlug) {
-                $slugTitle = FormUtil::getPassedValue('title', isset($args['title']) && !empty($args['title']) ? $args['title'] : '', 'GET', FILTER_SANITIZE_STRING);
+                $slugTitle = $this->request->getGet()->filter('title', isset($args['title']) && !empty($args['title']) ? $args['title'] : '', FILTER_SANITIZE_STRING);
                 $hasSlug = (!empty($slugTitle));
             }
         }
@@ -207,7 +207,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «DEFINE ActionImplBody(String appName) FOR EditAction-»
 «REM»«EXPAND ActionHandler::FormCreate(appName, controller.name, 'edit')-»«ENDREM»
         // create new Form reference
-        $view = FormUtil::newForm('«appName»', $this);
+        $view = FormUtil::newForm($this->name, $this);
 
         // build form handler class name
         $handlerClass = '«appName.toFirstUpper()»_Form_Handler_«controller.name().toFirstUpper()»_' . ucfirst($objectType) . '_Edit';
@@ -222,11 +222,11 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $idField = $object->get_intIdField();
 
         // retrieve the ID of the object we wish to view
-        $id = (int) FormUtil::getPassedValue($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, 'GET', FILTER_VALIDATE_INT);
+        $id = (int) $this->request->getGet()->filter($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, FILTER_VALIDATE_INT);
 
         $this->throwNotFoundUnless($id, 'Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
 
-        $confirmation = (bool) FormUtil::getPassedValue('confirmation', isset($args['confirmation']) ? $args['confirmation'] : false, 'GETPOST');
+        $confirmation = (bool) $this->request->getPost()->filter('confirmation', isset($args['confirmation']) ? $args['confirmation'] : false, FILTER_VALIDATE_BOOLEAN);
 
         if ($confirmation) {
             $this->checkCsrfToken();

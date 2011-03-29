@@ -51,9 +51,9 @@ class «baseClassModelTable()» extends Doctrine_Table
     /**
      * Select object from the database.
      *
-     * @param integer $id              The id to use to retrieve the object (optional) (default=null).
-     * @param boolean $asArray         Whether to return the result as array instead as record object (optional) (default=true).
-     * @param boolean $useJoins        Whether to include joining related objects (optional) (default=true).
+     * @param integer $id       The id to use to retrieve the object (optional) (default=null).
+     * @param boolean $asArray  Whether to return the result as array instead as record object (optional) (default=true).
+     * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
      *
      * @return array|Doctrine_Record retrieved data array or Doctrine_Record instance
      */
@@ -70,9 +70,9 @@ class «baseClassModelTable()» extends Doctrine_Table
     /**
      * Select object by slug field
      *
-     * @param string  $slugTitle       The slug value
-     * @param boolean $asArray         Whether to return the result as array instead as record object (optional) (default=true).
-     * @param boolean $useJoins        Whether to include joining related objects (optional) (default=true).
+     * @param string  $slugTitle The slug value
+     * @param boolean $asArray   Whether to return the result as array instead as record object (optional) (default=true).
+     * @param boolean $useJoins  Whether to include joining related objects (optional) (default=true).
      *
      * @return array|Doctrine_Record retrieved data array or Doctrine_Record instance
      */
@@ -89,10 +89,10 @@ class «baseClassModelTable()» extends Doctrine_Table
     /**
      * Select a collection.
      *
-     * @param string $where             The where clause to use when retrieving the object array (optional) (default='').
-     * @param string $orderBy           The order-by clause to use when retrieving the object array (optional) (default='').
-     * @param boolean $asArray          Whether to return the result as array instead as record object (optional) (default=true).
-     * @param boolean $useJoins         Whether to include joining related objects (optional) (default=true).
+     * @param string $where     The where clause to use when retrieving the object array (optional) (default='').
+     * @param string $orderBy   The order-by clause to use when retrieving the object array (optional) (default='').
+     * @param boolean $asArray  Whether to return the result as array instead as record object (optional) (default=true).
+     * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
      *
      * @return array|Doctrine_Collection retrieved data array or collection containing retrieved Doctrine_Record instances
      */
@@ -106,14 +106,14 @@ class «baseClassModelTable()» extends Doctrine_Table
     /**
      * Select with a given where clause.
      *
-     * @param string $where             The where clause to use when retrieving the object array (optional) (default='').
-     * @param string $orderBy           The order-by clause to use when retrieving the object array (optional) (default='').
-     * @param integer $currentPage      Where to start selection
-     * @param integer $resultsPerPage   Amount of items to select
-     * @param boolean $asArray          Whether to return the result as array instead as record object (optional) (default=true).
-     * @param boolean $useJoins         Whether to include joining related objects (optional) (default=true).
+     * @param string $where           The where clause to use when retrieving the object array (optional) (default='').
+     * @param string $orderBy         The order-by clause to use when retrieving the object array (optional) (default='').
+     * @param integer $currentPage    Where to start selection
+     * @param integer $resultsPerPage Amount of items to select
+     * @param boolean $asArray        Whether to return the result as array instead as record object (optional) (default=true).
+     * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true).
      *
-     * @return array 					Array with retrieved data and amount of total records affected by this query.
+     * @return array Array with retrieved data and amount of total records affected by this query.
      */
     public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $asArray = true, $useJoins = true)
     {
@@ -136,10 +136,10 @@ class «baseClassModelTable()» extends Doctrine_Table
      * Select tree of «nameMultiple.formatForCode()».
      *
 «IF nestedSetHasManyRoots-»
-     * @param integer $rootId         Optional id of root node to use as a branch, defaults to 0 which corresponds to the whole tree.
+     * @param integer $rootId   Optional id of root node to use as a branch, defaults to 0 which corresponds to the whole tree.
 «ENDIF-»
-     * @param boolean $asArray        Whether to return the result as array instead as record object (optional) (default=true).
-     * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true).
+     * @param boolean $asArray  Whether to return the result as array instead as record object (optional) (default=true).
+     * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
      *
      * @return array|Doctrine_Doctrine_Tree_NestedSet retrieved data array or tree objects containing retrieved Doctrine_Node_NestedSet instances.
      */
@@ -186,8 +186,8 @@ class «baseClassModelTable()» extends Doctrine_Table
     /**
      * Select all trees at once.
      *
-     * @param boolean $asArray        Whether to return the result as array instead as record object (optional) (default=true).
-     * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true).
+     * @param boolean $asArray  Whether to return the result as array instead as record object (optional) (default=true).
+     * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
      *
      * @return array list of retrieved data arrays or tree objects containing retrieved Doctrine_Node_NestedSet instances.
      */
@@ -220,9 +220,10 @@ class «baseClassModelTable()» extends Doctrine_Table
     /**
      * Build a generic Doctrine query supporting WHERE and ORDER BY
      *
-     * @param string $where             The where clause to use when retrieving the object array (optional) (default='').
-     * @param string $orderBy           The order-by clause to use when retrieving the object array (optional) (default='').
-     * @param boolean $useJoins         Whether to include joining related objects (optional) (default=true).
+     * @param string  $where    The where clause to use when retrieving the object array (optional) (default='').
+     * @param string  $orderBy  The order-by clause to use when retrieving the object array (optional) (default='').
+     * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
+     *
      * @return Doctrine_Query query instance to be further processed
      */
     protected function _intBaseQuery($where = '', $orderBy = '', $useJoins = true)
@@ -282,9 +283,9 @@ class «baseClassModelTable()» extends Doctrine_Table
     }
 
     /**
-     * Helper method to add join selections
+     * Helper method to add join selections.
      *
-     * @param String $selection           Input select string to be enhanced
+     * @param String $selection Input select string to be enhanced.
      */
     protected function addJoinsToSelection($selection)
     {
@@ -295,7 +296,7 @@ class «baseClassModelTable()» extends Doctrine_Table
     /**
      * Helper method to add joins to from clause
      *
-     * @param Doctrine_Query $q           Reference to query to be enriched
+     * @param Doctrine_Query $q Reference to query to be enriched.
      */
     protected function addJoinsToFrom(Doctrine_Query $q)
     {
@@ -320,6 +321,7 @@ class «baseClassModelTable()» extends Doctrine_Table
 
 /**
  * Doctrine_Table class used to implement own special entity methods.
+ *
  * For example it can provide convenience methods for performing certain DQL queries.
  *
  * This is the concrete table class for «name.formatForDisplay()» entities.
@@ -343,6 +345,7 @@ class «implClassModelTable()» extends «IF isInheriting()»«parentType().impl
 
 /**
  * Doctrine_Table class used to implement own special entity methods.
+ *
  * For example it can provide convenience methods for performing certain DQL queries.
  *
  * This is the base table class for the many to many relationship
@@ -364,6 +367,7 @@ class «baseClassModelRefTable()» extends Doctrine_Table
 
 /**
  * Doctrine_Table class used to implement own special entity methods.
+ *
  * For example it can provide convenience methods for performing certain DQL queries.
  *
  * This is the concrete table class for the many to many relationship

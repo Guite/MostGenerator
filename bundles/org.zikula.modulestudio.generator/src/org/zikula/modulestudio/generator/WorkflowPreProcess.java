@@ -6,6 +6,7 @@ import org.zikula.modulestudio.generator.exceptions.DirectoryNotEmptyException;
 import org.zikula.modulestudio.generator.exceptions.ExceptionBase;
 import org.zikula.modulestudio.generator.exceptions.NoCartridgesSelected;
 
+/** TODO: javadocs needed for class, members and methods */
 public class WorkflowPreProcess {
     WorkflowSettings settings;
 
@@ -29,9 +30,7 @@ public class WorkflowPreProcess {
     }
 
     public void emptyDestinationDirectory() {
-
         this._emptyDir(this.settings.outputDir);
-
     }
 
     private void _emptyDir(File dir) {
