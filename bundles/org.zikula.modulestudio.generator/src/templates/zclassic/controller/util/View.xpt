@@ -95,7 +95,8 @@ class «appName()»_Util_Base_View extends Zikula_AbstractBase
 
         $extParams = self::availableExtensions($type, $objectType, $func, $args);
         foreach ($extParams as $extension) {
-            $extensionCheck = (int)$this->request->getGet()->filter('use' . $extension . 'ext', 0, FILTER_VALIDATE_INT);
+        	$extensionCheck = (int)FormUtil::getPassedValue('use' . $extension . 'ext', 0, 'GET', FILTER_VALIDATE_INT);
+            //$extensionCheck = (int)$this->request->getGet()->filter('use' . $extension . 'ext', 0, FILTER_VALIDATE_INT);
             if ($extensionCheck == 1) {
                 $templateExtension = $extension;
                 break;
