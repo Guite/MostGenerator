@@ -14,20 +14,19 @@ public class WorkflowStart {
         final WorkflowM2T M2T = new WorkflowM2T(this.settings);
         M2T.run();
 
-        for (final java.lang.Object object : this.settings.selectedCartridges) {
-            if (object.toString() == "zclassic") {
-                final WorkflowZClassic zClassic = new WorkflowZClassic(
-                        this.settings);
-                zClassic.run();
-            }
-            else if (object.toString() == "reporting") {
-                final WorkflowDiagramExporter diagramExporter = new WorkflowDiagramExporter(
-                        this.settings);
-                diagramExporter.run();
-                final WorkflowReporting reporting = new WorkflowReporting(
-                        this.settings);
-                reporting.run();
-            }
+        if (this.settings.selectedCartridges.contains("zclassic")) {
+            final WorkflowZClassic zClassic = new WorkflowZClassic(
+                    this.settings);
+            zClassic.run();
+        }
+
+        if (this.settings.selectedCartridges.contains("reporting")) {
+            final WorkflowDiagramExporter diagramExporter = new WorkflowDiagramExporter(
+                    this.settings);
+            diagramExporter.run();
+            final WorkflowReporting reporting = new WorkflowReporting(
+                    this.settings);
+            reporting.run();
         }
 
     }

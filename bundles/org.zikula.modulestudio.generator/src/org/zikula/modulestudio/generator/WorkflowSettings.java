@@ -22,7 +22,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application;
 public class WorkflowSettings {
 
     ArrayList availableCartridges = new ArrayList();
-    Object[] selectedCartridges;
+    ArrayList selectedCartridges = new ArrayList();
     String outputPath = null;
     File outputDir = null;
     String modelPath = null;
@@ -91,6 +91,10 @@ public class WorkflowSettings {
         return this.availableCartridges;
     }
 
+    public ArrayList getSelectedCartridges() {
+        return this.selectedCartridges;
+    }
+
     public ArrayList getAvailableReports() {
         return this.availableReports;
     }
@@ -121,7 +125,9 @@ public class WorkflowSettings {
     }
 
     public void setSelectedCartridges(Object[] cartridges) {
-        this.selectedCartridges = cartridges;
+        for (final Object object : cartridges) {
+            this.selectedCartridges.add(object);
+        }
     }
 
     public void setSelectedReports(Object[] reports) {

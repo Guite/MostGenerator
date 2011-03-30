@@ -17,7 +17,7 @@ public class WorkflowPreProcess {
     }
 
     private void _cartridgeTasks() throws NoCartridgesSelected {
-        if (this.settings.selectedCartridges.length == 0) {
+        if (this.settings.selectedCartridges.size() == 0) {
             throw new NoCartridgesSelected();
         }
     }
