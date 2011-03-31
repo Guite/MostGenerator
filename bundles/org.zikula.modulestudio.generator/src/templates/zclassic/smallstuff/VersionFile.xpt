@@ -107,7 +107,7 @@ Example for name of provider area: modulehook_area.comments.general
 
 «DEFINE AppInfoImpl FOR Application-»
 /**
- * Version information base class.
+ * Version information implementation class.
  */
 class «appName()»_Version extends «appName()»_Base_Version
 {
