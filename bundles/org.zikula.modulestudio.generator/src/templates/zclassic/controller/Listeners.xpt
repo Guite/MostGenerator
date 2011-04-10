@@ -553,7 +553,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     }
 
     /**
-     * Listener for the `theme.prefooter` event.
+     * Listener for the `theme.prefetch` event.
      *
      * Occurs in `Theme::themefooter()` just after getting the `$maincontent`.
      * The event subject is `$this` (Theme instance) and has $maincontent as the event data
@@ -564,7 +564,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     }
 
     /**
-     * Listener for the `theme.postfooter` event.
+     * Listener for the `theme.postfetch` event.
      *
      * Occurs in `Theme::themefooter()` just after rendering the theme.
      * The event subject is `$this` (Theme instance) and the event data is the rendered
@@ -587,7 +587,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     }
 
     /**
-     * Listener for the `view.fetch` event.
+     * Listener for the `view.postfetch` event.
      *
      * Filter of result of a fetch. Receives `Zikula_View` instance as subject, args are
      * `array('template' => $template)`, $data was the result of the fetch to be filtered.

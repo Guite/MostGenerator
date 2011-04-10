@@ -326,14 +326,14 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «LET appName.msconcat('_Listener_Theme') AS callableClass-»
         EventUtil::registerPersistentModuleHandler('«appName»', 'theme.init', array('«callableClass»', 'init'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'theme.load_config', array('«callableClass»', 'loadConfig'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'theme.prefooter', array('«callableClass»', 'preFooter'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'theme.postfooter', array('«callableClass»', 'postFooter'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'theme.prefetch', array('«callableClass»', 'preFooter'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'theme.postfetch', array('«callableClass»', 'postFooter'));
 «ENDLET-»
 
         // view
 «LET appName.msconcat('_Listener_View') AS callableClass-»
         EventUtil::registerPersistentModuleHandler('«appName»', 'view.init', array('«callableClass»', 'init'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'view.fetch', array('«callableClass»', 'fetch'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'view.postfetch', array('«callableClass»', 'fetch'));
 «ENDLET-»
 
         // user login
