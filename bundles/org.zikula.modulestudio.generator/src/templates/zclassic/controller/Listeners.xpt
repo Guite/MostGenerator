@@ -772,7 +772,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     /**
      * Listener for the `module.users.ui.login.failed` event.
      *
-     * Occurs right after a successful attempt to log in. All handlers are notified.
+     * Occurs right after an unsuccessful attempt to log in. All handlers are notified.
      *
      * The event subject contains the user's user record (from `UserUtil::getVars($event['uid'])`) if it has been found, otherwise null.
      * The arguments of the event are as follows:
@@ -887,7 +887,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      *
      * The event's subject is set to the registration record (which might be a full user record).
      * The event's arguments are as follows:
-     *     `'returnurl'` => A URL to which the user is redirected at the very end of the registration process.
+     *     `'returnurl'` A URL to which the user is redirected at the very end of the registration process.
      *
      * __The `'redirecturl'` argument__ controls where the user will be directed at the end of the registration process.
      * Initially, it will be blank, indicating that the default action should be taken. The default action depends on two
