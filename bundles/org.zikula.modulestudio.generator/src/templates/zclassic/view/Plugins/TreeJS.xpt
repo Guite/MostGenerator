@@ -95,7 +95,7 @@ function smarty_function_«appName().formatForDB()»TreeJS($params, $view)
 
     $tree = new Zikula_Tree();
     $tree->setOption('id', 'itemtree' . $params['root']);
-    $tree->setOption('objid', $idField);
+    //$tree->setOption('objid', $idField);
     $tree->setOption('treeClass', 'z-nestedsetlist');
     $tree->setOption('nodePrefix', 'tree' . $params['root'] . 'node_');
     $tree->setOption('sortable', ((isset($params['sortable']) && $params['sortable']) ? true : false));
