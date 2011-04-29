@@ -545,7 +545,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     /**
      * Listener for the `theme.load_config` event.
      *
-     * Runs just before `Theme#_load_config()` completed.
+     * Runs just before `Theme#load_config()` completed.
      * Subject is the Theme instance.
      */
     public static function loadConfig(Zikula_Event $event)
