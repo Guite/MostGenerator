@@ -105,10 +105,10 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         $this->registerPersistentEventHandlers();
 
         // register hook subscriber bundles
-        HookUtil::registerHookSubscriberBundles($this->version);
+        HookUtil::registerSubscriberBundles($this->version->getHookSubscriberBundles());
 «REM»TODO see #115
         // Register hook provider bundles
-        HookUtil::registerHookProviderBundles($this->version);
+        HookUtil::registerProviderBundles($this->version->getHookProviderBundles());
 «ENDREM»
 
         // create the default data for «appName()»

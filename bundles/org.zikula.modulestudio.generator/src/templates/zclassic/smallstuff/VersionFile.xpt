@@ -67,7 +67,7 @@ class «appName()»_Base_Version extends Zikula_AbstractVersion
 «LET name.formatForDB() AS appName-»
 «FOREACH models.entities AS entity-»
 «LET entity.nameMultiple.formatForDB() AS areaName»
-        $bundle = new Zikula_Version_HookSubscriberBundle('modulehook_area.«appName».«areaName»', __('«entity.nameMultiple.formatForDisplayCapital()»'));
+        $bundle = new Zikula_HookManager_SubscriberBundle($this->name, 'modulehook_area.«appName».«areaName»', __('«entity.nameMultiple.formatForDisplayCapital()»'));
 «REM»   $bundle->addType('hook type', 'event name triggered by *this* module');«ENDREM»«""-»
         // Display hook for view/display templates.
         $bundle->addType('ui.view', '«appName».hook.«areaName».ui.view');
