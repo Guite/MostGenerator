@@ -533,6 +533,17 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
 
 «DEFINE BaseListenersTheme FOR Application-»
     /**
+     * Listener for the `theme.preinit` event.
+     *
+     * Occurs on the startup of the `Zikula_View_Theme#__construct()`.
+     * The subject is the Zikula_View_Theme instance.
+     * Is useful to setup a customized theme configuration or cache_id.
+     */
+    public static function preInit(Zikula_Event $event)
+    {
+    }
+
+    /**
      * Listener for the `theme.init` event.
      *
      * Occurs just before `Zikula_View_Theme#__construct()` finishes.

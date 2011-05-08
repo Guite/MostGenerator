@@ -326,6 +326,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 
         // theme
 «LET appName.msconcat('_Listener_Theme') AS callableClass-»
+        EventUtil::registerPersistentModuleHandler('«appName»', 'theme.preinit', array('«callableClass»', 'preInit'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'theme.init', array('«callableClass»', 'init'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'theme.load_config', array('«callableClass»', 'loadConfig'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'theme.prefetch', array('«callableClass»', 'preFetch'));
