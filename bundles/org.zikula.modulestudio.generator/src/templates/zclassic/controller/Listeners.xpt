@@ -333,7 +333,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      *     $event['args'] is the arguments that were passed.
      * The event subject is the class where the method was not found.
      * Must exit if $event['method'] does not match whatever the handler expects.
-     * Modify $event->data and $event->setNotify().
+     * Modify $event->data and $event->stop().
      */
     public static function apiMethodNotFound(Zikula_Event $event)
     {
@@ -376,7 +376,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      *    `$event['args']` is the arguments that were passed.
      * The event subject is the class where the method was not found.
      * Must exit if `$event['method']` does not match whatever the handler expects.
-     * Modify `$event->data` and `$event->setNotify()`.
+     * Modify `$event->data` and `$event->stop()`.
      */
     public static function controllerMethodNotFound(Zikula_Event $event)
     {
@@ -413,6 +413,16 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      * Receives `$modinfo` as args.
      */
     public static function moduleUninstalled(Zikula_Event $event)
+    {
+    }
+
+    /**
+     * Listener for the `installer.subscriberarea.uninstalled` event.
+     *
+     * Called after a hook subscriber area is unregistered.
+     * Receives args['areaid'] as the areaId.  Use this to remove orphan data associated with this area.
+     */
+    public static function subscriberAreaUninstalled(Zikula_Event $event)
     {
     }
 «ENDDEFINE»
@@ -639,7 +649,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      *
      * This event uses `notify()`, so handlers are called until either one vetoes the login attempt,
      * or there are no more handlers for the event.
-     * A handler that needs to veto a login attempt should call `setNotify()`. This will prevent other handlers
+     * A handler that needs to veto a login attempt should call `stop()`. This will prevent other handlers
      * from receiving the event, will return to the login process, and will prevent the login from taking place.
      * A handler that vetoes a login attempt should set an appropriate error message and give any additional
      * feedback to the user attempting to log in that might be appropriate. If a handler does not
