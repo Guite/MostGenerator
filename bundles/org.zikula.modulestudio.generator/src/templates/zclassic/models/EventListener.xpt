@@ -92,16 +92,31 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 
         $data = $event->data;
 
+        $useObject = (is_object($data) && $data instanceOf Doctrine_Record);
+        $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
 «IF !(fields.typeSelect(EmailField).isEmpty && fields.typeSelect(UploadField).isEmpty)-»
         $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST', FILTER_SANITIZE_STRING);
 
 «ENDIF-»
+«REM»«IF controller.hasActions('view')-»«ENDREM»
+        $objectUrl = new Zikula_ModUrl('«app.appName()»', $currentType, 'display', ZLanguage::getLanguageCode(), array('ot' => '«name.formatForCode()»', '«name.formatForDB()»id' => $data[''«name.formatForDB()»id'']));
+«REM»«ELSE-»
+        $objectUrl = new Zikula_ModUrl('«app.appName()»', $currentType, 'view', ZLanguage::getLanguageCode(), array('ot' => '«name.formatForCode()»', '«name.formatForDB()»id' => $data[''«name.formatForDB()»id'']));
+«ENDIF-»«ENDREM»
+        if ($useObject) {
+            $data->mapValue('objectUrl', $objectUrl);
+        }
+        else {
+            $data['objectUrl'] = $objectUrl;
+        }
+
 «IF !fields.typeSelect(UploadField).isEmpty-»
         $imageTypes = array('gif', 'jpeg', 'jpg', 'png');
-        $useObject = (is_object($data) && $data instanceOf Doctrine_Record);
 
 «ENDIF-»
     «EXPAND sanitizeForOutput FOREACH fields»
+
+
 
         $event->data = $data;
     }

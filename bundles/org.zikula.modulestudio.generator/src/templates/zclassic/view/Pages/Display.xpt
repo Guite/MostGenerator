@@ -48,7 +48,7 @@
 {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 «EXPAND ItemActions(appName, controller)-»
 
-{notifydisplayhooks eventname='«appName.formatForDB()».hook.«nameMultiple.formatForDB()».ui.view' id=$«objName».«idField()» assign='hooks'}
+{notifydisplayhooks eventname='«appName.formatForDB()».hook.«nameMultiple.formatForDB()».ui.view' id=$«objName».«idField()» objectUrl=$«objName».objectUrl assign='hooks'}
 {foreach from=$hooks key='hookname' item='hook'}
     {$hook}
 {/foreach}
