@@ -196,7 +196,11 @@ listType:
 
 «DEFINE HeaderLineRelation(Controller controller, Boolean useTarget) FOR JoinRelationship-»
         <th id="h«EXPAND MarkupIdCode(useTarget)-»" scope="col" align="left" valign="middle">
+«IF !useTarget»
+«EXPAND HeaderSortingLink(controller, target, getRelationAliasName(useTarget).formatForCode(), getRelationAliasName(useTarget).formatForCodeCapital())-»
+«ELSE»
 «EXPAND HeaderSortingLink(controller, source, getRelationAliasName(useTarget).formatForCode(), getRelationAliasName(useTarget).formatForCodeCapital())-»
+«ENDIF»
         </th>
 «ENDDEFINE»
 
