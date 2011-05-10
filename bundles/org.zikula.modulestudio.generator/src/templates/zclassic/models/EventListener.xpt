@@ -99,15 +99,15 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 
 «ENDIF-»
 «REM»«IF controller.hasActions('view')-»«ENDREM»
-        $objectUrl = new Zikula_ModUrl('«app.appName()»', $currentType, 'display', ZLanguage::getLanguageCode(), array('ot' => '«name.formatForCode()»', '«name.formatForDB()»id' => $data['«name.formatForDB()»id']));
+        $urlObject = new Zikula_ModUrl('«app.appName()»', $currentType, 'display', ZLanguage::getLanguageCode(), array('ot' => '«name.formatForCode()»', '«name.formatForDB()»id' => $data['«name.formatForDB()»id']));
 «REM»«ELSE-»
-        $objectUrl = new Zikula_ModUrl('«app.appName()»', $currentType, 'view', ZLanguage::getLanguageCode(), array('ot' => '«name.formatForCode()»', '«name.formatForDB()»id' => $data['«name.formatForDB()»id']));
+        $urlObject = new Zikula_ModUrl('«app.appName()»', $currentType, 'view', ZLanguage::getLanguageCode(), array('ot' => '«name.formatForCode()»', '«name.formatForDB()»id' => $data['«name.formatForDB()»id']));
 «ENDIF-»«ENDREM»
         if ($useObject) {
-            $data->mapValue('objectUrl', $objectUrl);
+            $data->mapValue('urlObject', $urlObject);
         }
         else {
-            $data['objectUrl'] = $objectUrl;
+            $data['urlObject'] = $urlObject;
         }
 
 «IF !fields.typeSelect(UploadField).isEmpty-»
