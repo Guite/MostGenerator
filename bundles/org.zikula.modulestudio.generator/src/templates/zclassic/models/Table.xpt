@@ -294,7 +294,7 @@ class «baseClassModelTable()» extends Doctrine_Table
     }
 
     /**
-     * Helper method to add joins to from clause
+     * Helper method to add joins to from clause.
      *
      * @param Doctrine_Query $q Reference to query to be enriched.
      */
