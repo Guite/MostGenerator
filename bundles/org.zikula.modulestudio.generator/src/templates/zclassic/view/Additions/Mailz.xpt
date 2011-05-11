@@ -38,5 +38,5 @@
 «ENDDEFINE»
 
 «DEFINE MailzEntryHtml(String appName) FOR Entity-»
-        <a href="{modurl modname='«appName»' type='user' func='display' ot=$objectType «idField()»=$item.«idField()»}" fqurl=true>{$item.«getLeadingField().name.formatForCode()»}</a>
+        <a href="{modurl modname='«appName»' type='user' func='display' ot=$objectType «idField()»=$item.«idField()» fqurl=true}">{$item.«getLeadingField().name.formatForCode()»}</a>
 «ENDDEFINE»
