@@ -480,7 +480,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      *
      * Invoked from `Mailer_Api_User#sendmessage`.
      * Subject is `Mailer_Api_User` with `$args`.
-     * This is a notify event so the event must `$event->stop()` and set any
+     * This is a notifyUntil event so the event must `$event->stop()` and set any
      * return data into `$event->data`, or `$event->setData()`.
      */
     public static function sendMessage(Zikula_Event $event)
