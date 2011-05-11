@@ -835,8 +835,10 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     /**
      * Listener for the `user.gettheme` event.
      *
-     * This is invoked with notify so you should execute `$event->stop()` in the event handler.
-     * Receives `$event['name']` the chosen theme name, it can modify the name.
+     * Called during UserUtil::getTheme() and is used to filter the results.
+     * Receives arg['type'] with the type of result to be filtered
+     * and the $themeName in the $event->data which can be modified.
+     * Must $event->stop() if handler performs filter.
      */
     public static function getTheme(Zikula_Event $event)
     {
