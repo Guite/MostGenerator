@@ -268,7 +268,7 @@ class «baseClassModelTable()» extends Doctrine_Table
                 $sortParts = explode(' ', $orderBy);
                 $sortField = $sortParts[0];
                 if (in_array($sortField, array('«i18nFields.replaceAll(", ", "', '")»'))) {
-                    $q->orderBy('tblt.' . $orderBy);
+                    $q->orderBy('Translation.' . $orderBy);
                 }
                 else {
                     $q->orderBy('tbl.' . $orderBy);
