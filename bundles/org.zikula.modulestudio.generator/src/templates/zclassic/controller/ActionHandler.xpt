@@ -496,7 +496,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             }
         }
 
-        if ($args['commandName'] != 'delete' && $args['commandName'] != 'cancel') {
+        if (!in_array($args['commandName'], array('delete', 'cancel'))) {
             // do forms validation including checking all validators on the page to validate their input
             if (!$this->view->isValid()) {
                 return false;
@@ -519,35 +519,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
 «EXPAND FetchInputData(name.formatForCode())-»
 
-        if ($args['commandName'] == 'create') {
-            // event handling if user clicks on create
-
-            // Let any hooks perform additional validation actions
-            $hook = new Zikula_ValidationHook('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».validate.edit', new Zikula_Hook_ValidationProviders());
-            $validators = $this->notifyHooks($hook)->getValidators();
-            // TODO: validation incomplete
-
-            // save «name.formatForDisplay()»
-            $«name.formatForCode()»->save();
-
-            // store new id
-            $this->«idField()» = $«name.formatForCode()»->get_intId();
-            // check if the insert has worked, might become obsolete due to exception usage
-            if ($this->«idField()» === false) {
-                return LogUtil::registerError($this->__('Error! Creation attempt failed.'));
-            }
-
-            $this->updateRelationLinks($«name.formatForCode()»);
-
-            LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» created.'));
-
-            // Let any hooks know that we have created an item
-            $url = new Zikula_ModUrl('«app.appName()»', '«controller.name()»', 'display', ZLanguage::getLanguageCode(), array('ot' => $this->objectType, '«idField()»' => $this->«idField()»));
-            $hook = new Zikula_ProcessHook('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».process.edit', $this->«idField()», $url);
-            $this->notifyHooks($hook);
-
-        } else if ($args['commandName'] == 'update') {
-            // event handling if user clicks on update
+        if (in_array($args['commandName'], array('create', 'update'))) {
+            // event handling if user clicks on create or update
 
             // Let any hooks perform additional validation actions
             $hook = new Zikula_ValidationHook('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».validate.edit', new Zikula_Hook_ValidationProviders());
@@ -555,17 +528,31 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             // TODO validation incomplete
 
             // save «name.formatForDisplay()»
-            $updateResult = $«name.formatForCode()»->save();
-            // check if the update has worked, might become obsolete due to exception usage
-            if ($updateResult === false) {
-                return LogUtil::registerError($this->__('Error! Update attempt failed.'));
+            $successMessage = '';
+            if ($args['commandName'] == 'create') {
+                $«name.formatForCode()»->save();
+
+                // store new id
+                $this->«idField()» = $«name.formatForCode()»->get_intId();
+                // check if the insert has worked, might become obsolete due to exception usage
+                if ($this->«idField()» === false) {
+                    return LogUtil::registerError($this->__('Error! Creation attempt failed.'));
+                }
+                $successMessage = $this->__('Done! «name.formatForDisplayCapital()» created.');
+            } else if ($args['commandName'] == 'update') {
+                $updateResult = $«name.formatForCode()»->save();
+                // check if the update has worked, might become obsolete due to exception usage
+                if ($updateResult === false) {
+                    return LogUtil::registerError($this->__('Error! Update attempt failed.'));
+                }
+                $successMessage = $this->__('Done! «name.formatForDisplayCapital()» updated.');
             }
 
             $this->updateRelationLinks($«name.formatForCode()»);
 
-            LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» updated.'));
+            LogUtil::registerStatus($successMessage);
 
-            // Let any hooks know that we have updated an item
+            // Let any hooks know that we have created or updated an item
             $url = new Zikula_ModUrl('«app.appName()»', '«controller.name()»', 'display', ZLanguage::getLanguageCode(), array('ot' => $this->objectType, '«idField()»' => $this->«idField()»));
             $hook = new Zikula_ProcessHook('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».process.edit', $this->«idField()», $url);
             $this->notifyHooks($hook);
