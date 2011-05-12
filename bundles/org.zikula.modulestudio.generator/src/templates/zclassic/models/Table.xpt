@@ -268,8 +268,7 @@ class «baseClassModelTable()» extends Doctrine_Table
                 $sortParts = explode(' ', $orderBy);
                 $sortField = $sortParts[0];
                 if (in_array($sortField, array('«i18nFields.replaceAll(", ", "', '")»'))) {
-                    $q->leftJoin('tbl.Translation tblt')
-                          ->orderBy('tblt.' . $orderBy);
+                    $q->orderBy('tblt.' . $orderBy);
                 }
                 else {
                     $q->orderBy('tbl.' . $orderBy);
@@ -289,6 +288,9 @@ class «baseClassModelTable()» extends Doctrine_Table
      */
     protected function addJoinsToSelection($selection)
     {
+«IF i18n-»
+        $selection .= ', Translation.*';
+«ENDIF-»
         $selection .= '«EXPAND AddJoin(false, 'select') FOREACH incoming.typeSelect(JoinRelationship)-»«EXPAND AddJoin(true, 'select') FOREACH outgoing.typeSelect(JoinRelationship)-»';
         return $selection;
     }
@@ -300,6 +302,9 @@ class «baseClassModelTable()» extends Doctrine_Table
      */
     protected function addJoinsToFrom(Doctrine_Query $q)
     {
+«IF i18n-»
+        $q->leftJoin('tbl.Translation Translation');
+«ENDIF-»
 «EXPAND AddJoin(false, 'from') FOREACH incoming.typeSelect(JoinRelationship)-»
 «EXPAND AddJoin(true, 'from') FOREACH outgoing.typeSelect(JoinRelationship)-»
     }
