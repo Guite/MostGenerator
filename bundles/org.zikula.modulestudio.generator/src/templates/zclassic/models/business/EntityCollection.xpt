@@ -113,19 +113,6 @@
         // and return them
         return array($this->get«nameMultiple.formatForCodeCapital()»(), $objectCount);
     }
-«IF i18n-»
-
-    /**
-     * Process custom additions.
-     */
-    protected function processAdditions($collection)
-    {
-        foreach ($collection as $k => $v) {
-            $collection[$k] = «app.appName()»_Util_I18n::prepareEntityForOutput('«name.formatForCode()»', $v);
-        }
-        return $collection;
-    }
-«ENDIF-»
 
     /**
      * Select count with a given where clause.
@@ -157,7 +144,14 @@
     public function selectTree(«IF nestedSetHasManyRoots-»$rootId = 0, «ENDIF»$asArray = false)
     {
         // get result from the model
-        return $this->_intTable()->selectTree(«IF nestedSetHasManyRoots-»$rootId, «ENDIF»$asArray);
+        $tree = $this->_intTable()->selectTree(«IF nestedSetHasManyRoots-»$rootId, «ENDIF»$asArray);
+«IF i18n-»
+
+        // process additions
+        $tree = $this->processAdditions($tree);
+«ENDIF-»
+
+        return $tree;
     }
 
 «IF nestedSetHasManyRoots-»
@@ -172,7 +166,16 @@
     public function selectAllTrees($asArray = false)
     {
         // get result from the model
-        return $this->_intTable()->selectAllTrees($asArray);
+        $trees = $this->_intTable()->selectAllTrees($asArray);
+«IF i18n-»
+
+        // process additions
+        foreach ($trees as $rootId => $treeNodes) {
+            $trees[$rootId] = $this->processAdditions($treeNodes);
+        }
+«ENDIF-»
+
+        return $trees;
     }
 «ENDIF-»
 
@@ -184,6 +187,19 @@
     public function getTreeObject()
     {
         return $this->_intTable()->getTree();
+    }
+«ENDIF-»
+«IF i18n-»
+
+    /**
+     * Process custom additions.
+     */
+    protected function processAdditions($collection)
+    {
+        foreach ($collection as $k => $v) {
+            $collection[$k] = «app.appName()»_Util_I18n::prepareEntityForOutput('«name.formatForCode()»', $v);
+        }
+        return $collection;
     }
 «ENDIF-»
 
