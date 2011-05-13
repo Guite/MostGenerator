@@ -257,6 +257,18 @@ class «baseClassModelTable()» extends Doctrine_Table
         // process request input filters and add them to the query.
         $fu->enrichQuery($q);
 
+«IF i18n-»
+
+        $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST', FILTER_SANITIZE_STRING);
+        if ($useJoins == true && $currentFunc != 'edit') {
+            if (!empty($where)) {
+                $q->andWhere('Translation.lang = ?', array(ZLanguage::getLanguageCode()));
+            }
+            else {
+                $q->where('Translation.lang = ?', array(ZLanguage::getLanguageCode()));
+            }
+        }
+«ENDIF-»
         // add order by clause
         if (!empty($orderBy)) {
             if ($orderBy == 'RAND()') {
