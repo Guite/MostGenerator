@@ -239,12 +239,17 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «EXPAND InitRelatedObjectDefault(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
             }
         }
-
 «FOREACH fields.typeSelect(DateField) AS dateField-»
+
         if ($objectData['«dateField.name.formatForCode()»'] == '1900-01-01 00:00:00') {
             $objectData['«dateField.name.formatForCode()»'] = null;
         }
 «ENDFOREACH-»
+«IF i18n-»
+
+        // process translated fields
+        $objectData = AdShare_Util_I18n::prepareEntityForEdit($this->objectType, $objectData);
+«ENDIF-»
 
         // assign data to template
         $this->view->assign('«name.formatForDB()»', $objectData)
@@ -711,6 +716,11 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             $repeatCreateAction = $formData['repeatcreation'];
             unset($formData['repeatcreation']);
         }
+«IF i18n-»
+
+        // process translated fields
+        $formData = AdShare_Util_I18n::processEntityAfterEdit($this->objectType, $«obj»->get«obj.toFirstUpper()»(), $formData);
+«ENDIF-»
 
         // assign fetched data
         $«obj»->merge($formData);

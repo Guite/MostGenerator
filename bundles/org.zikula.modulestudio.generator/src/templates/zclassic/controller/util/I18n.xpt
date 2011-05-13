@@ -33,9 +33,9 @@ class «appName()»_Util_Base_I18n extends Zikula_AbstractBase
      * Post-processing method copying best fitting translation to main fields.
      * Cares for compatibility to processing entities without i18n behaviour.
      */
-    public static function prepareEntityForOutput($objectData, $data)
+    public static function prepareEntityForOutput($objectType, $data)
     {
-        $fields = self::getI18nFields($objectData);
+        $fields = self::getI18nFields($objectType);
         if (!count($fields)) {
             return $data;
         }
@@ -52,9 +52,9 @@ class «appName()»_Util_Base_I18n extends Zikula_AbstractBase
         }
 
         // determine supported locales
+        $supportedLocales = ZLanguage::getInstalledLanguages();
         $currentLanguage = ZLanguage::getLanguageCode();
         $defaultLanguage = System::getVar('language_i18n', 'en');
-        $supportedLocales = ModUtil::getVar('«appName()»', 'supportedLocales', '');
 
         // read according translation, fall back to default language
         if (isset($data['Translation']) && (isset($data['Translation'][$currentLanguage]) || isset($data['Translation'][$defaultLanguage]))) {
@@ -68,6 +68,76 @@ class «appName()»_Util_Base_I18n extends Zikula_AbstractBase
             }
         }
         return $data;
+    }
+
+    /**
+     * Post-processing method copying all translations to main fields.
+     * This ensures easy compatibility to the Forms plugins where it
+     * it is not possible yet to define sub arrays in the group attribute.
+     */
+    public static function prepareEntityForEdit($objectType, $data)
+    {
+        $fields = self::getI18nFields($objectType);
+        if (!count($fields)) {
+            return $data;
+        }
+
+        foreach ($fields as $field) {
+            if (isset($data[$field['name']])) {
+                unset($data[$field['name']]);
+            }
+        }
+
+        $useOnlyCurrentLocale = true;
+        if (System::getVar('multilingual') == 1) {
+            $useOnlyCurrentLocale = false;
+            $lang = ZLanguage::getLanguageCode();
+            foreach ($supportedLocales as $locale) {
+                foreach ($fields as $field) {
+                    $data[$field['name'] . $locale] = isset($data['Translation'][$locale]) ? $data['Translation'][$locale][$field['name']] : '';
+                }
+            }
+        }
+        if ($useOnlyCurrentLocale === true) {
+            $locale = ZLanguage::getLanguageCode();
+            foreach ($fields as $field) {
+                $data[$field['name'] . $locale] = isset($data['Translation'][$locale]) ? $data['Translation'][$locale][$field['name']] : '';
+            }
+        }
+        return $data;
+    }
+
+    /**
+     * Post-editing method copying all translated fields back to their subarrays.
+     * This ensures easy compatibility to the Forms plugins where it
+     * it is not possible yet to define sub arrays in the group attribute.
+     */
+    public static function processEntityAfterEdit($objectType, $record, $formData)
+    {
+        $fields = self::getI18nFields($objectType);
+        if (!count($fields)) {
+            return $formData;
+        }
+
+        $useOnlyCurrentLocale = true;
+        if (System::getVar('multilingual') == 1) {
+            $useOnlyCurrentLocale = false;
+            $lang = ZLanguage::getLanguageCode();
+            foreach ($supportedLocales as $locale) {
+                foreach ($fields as $field) {
+                    $record->Translation[$locale]->$field['name'] = isset($formData[$field['name'] . $locale]) ? $formData[$field['name'] . $locale] : '';
+                    unset($formData[$field['name'] . $locale]);
+                }
+            }
+        }
+        if ($useOnlyCurrentLocale === true) {
+            $locale = ZLanguage::getLanguageCode();
+            foreach ($fields as $field) {
+                $record->Translation[$locale]->$field['name'] = isset($formData[$field['name'] . $locale]) ? $formData[$field['name'] . $locale] : '';
+                unset($formData[$field['name'] . $locale]);
+            }
+        }
+        return $formData;
     }
 }
 «ENDDEFINE»
