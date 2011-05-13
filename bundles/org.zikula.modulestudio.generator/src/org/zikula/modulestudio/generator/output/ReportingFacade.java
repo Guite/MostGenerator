@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.output;
 
 import java.util.HashMap;
+import java.util.logging.Level;
 
 import org.eclipse.birt.core.framework.Platform;
 import org.eclipse.birt.report.engine.api.EngineConfig;
@@ -38,6 +39,7 @@ public class ReportingFacade {
             hm.put(EngineConstants.APPCONTEXT_CLASSLOADER_KEY,
                     ReportEngine.class.getClassLoader());
             config.setAppContext(hm);
+            config.setLogConfig(this.outputPath, Level.ALL);
 
             Platform.startup(config);
             final IReportEngineFactory factory = (IReportEngineFactory) Platform
@@ -51,7 +53,6 @@ public class ReportingFacade {
 
     public void startExport(String reportPath, String outputName) {
         try {
-
             task = engine.createRunAndRenderTask(engine
                     .openReportDesign(reportPath));
             System.out.println("Generating Report: " + outputName);

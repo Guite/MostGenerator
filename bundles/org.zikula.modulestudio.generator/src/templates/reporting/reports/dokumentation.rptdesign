@@ -41,7 +41,7 @@
         </oda-data-source>
     </data-sources>
     <data-sets>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.ecore.dataSet" name="Tabellen" id="8">
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.ecore.dataSet" name="Tables" id="8">
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">Entity::nameMultiple</property>
@@ -1439,7 +1439,7 @@
                     <property name="borderTopStyle">solid</property>
                     <property name="borderTopWidth">thin</property>
                     <label id="61">
-                        <text-property name="text">Autor</text-property>
+                        <text-property name="text">Author</text-property>
                     </label>
                 </cell>
                 <cell id="28">
@@ -1624,7 +1624,7 @@
                     <property name="borderTopStyle">solid</property>
                     <property name="borderTopWidth">thin</property>
                     <label id="65">
-                        <text-property name="text">Lizenz</text-property>
+                        <text-property name="text">License</text-property>
                     </label>
                 </cell>
                 <cell id="40">
@@ -1664,12 +1664,12 @@
             <property name="borderBottomWidth">3px</property>
             <property name="paddingTop">10pt</property>
             <property name="paddingBottom">3pt</property>
-            <text-property name="text">Tabellen</text-property>
+            <text-property name="text">Tables</text-property>
         </label>
         <table id="68">
             <property name="marginLeft">10pt</property>
             <property name="width">7.627906976744186in</property>
-            <property name="dataSet">Tabellen</property>
+            <property name="dataSet">Tables</property>
             <list-property name="boundDataColumns">
                 <structure>
                     <property name="name">Entity::nameMultiple</property>
@@ -2498,7 +2498,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">Felder</text-property>
+                            <text-property name="text">Fields</text-property>
                         </label>
                     </cell>
                 </row>
@@ -2589,7 +2589,7 @@
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
                                         <label id="311">
-                                            <text-property name="text">Beschreibung</text-property>
+                                            <text-property name="text">Description</text-property>
                                         </label>
                                     </cell>
                                 </row>
@@ -2649,7 +2649,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">Relationen</text-property>
+                            <text-property name="text">Relations</text-property>
                         </label>
                     </cell>
                 </row>
@@ -2666,7 +2666,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">1:1-Relationen</text-property>
+                            <text-property name="text">1:1-Relations</text-property>
                         </label>
                         <table id="231">
                             <property name="borderBottomColor">#000000</property>
@@ -2808,7 +2808,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">1:m-Relationen</text-property>
+                            <text-property name="text">1:m-Relations</text-property>
                         </label>
                         <table id="261">
                             <property name="borderBottomColor">#000000</property>
@@ -2954,7 +2954,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">m:n-Relationen</text-property>
+                            <text-property name="text">m:n-Relations</text-property>
                         </label>
                         <table id="279">
                             <property name="borderBottomColor">#000000</property>
@@ -3395,7 +3395,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">Aktionen</text-property>
+                            <text-property name="text">Actions</text-property>
                         </label>
                     </cell>
                 </row>

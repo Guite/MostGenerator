@@ -1351,7 +1351,6 @@ anwenderdaten["fps"] = new Array();
 anwenderdaten["fps"][0] = 0;
 anwenderdaten["fps"][1] = 0;
 anwenderdaten["fps"][2] = 0;
-anwenderdaten["fpinp"] = new Array();
 anwenderdaten["gewicht"] = new Array();
 anwenderdaten["gewicht"][0] = 7;
 anwenderdaten["gewicht"][1] = 10;
@@ -1367,7 +1366,6 @@ schnittstellen["fps"] = new Array();
 schnittstellen["fps"][0] = 0;
 schnittstellen["fps"][1] = 0;
 schnittstellen["fps"][2] = 0;
-schnittstellen["fpinp"] = new Array();
 schnittstellen["gewicht"] = new Array();
 schnittstellen["gewicht"][0] = 5;
 schnittstellen["gewicht"][1] = 7;
@@ -1383,7 +1381,6 @@ eingaben["fps"] = new Array();
 eingaben["fps"][0] = 0;
 eingaben["fps"][1] = 0;
 eingaben["fps"][2] = 0;
-eingaben["fpinp"] = new Array();
 eingaben["gewicht"] = new Array();
 eingaben["gewicht"][0] = 3;
 eingaben["gewicht"][1] = 4;
@@ -1399,7 +1396,6 @@ ausgaben["fps"] = new Array();
 ausgaben["fps"][0] = 0;
 ausgaben["fps"][1] = 0;
 ausgaben["fps"][2] = 0;
-ausgaben["fpinp"] = new Array();
 ausgaben["gewicht"] = new Array();
 ausgaben["gewicht"][0] = 4;
 ausgaben["gewicht"][1] = 5;
@@ -1415,7 +1411,6 @@ abfragen["fps"] = new Array();
 abfragen["fps"][0] = 0;
 abfragen["fps"][1] = 0;
 abfragen["fps"][2] = 0;
-abfragen["fpinp"] = new Array();
 abfragen["gewicht"] = new Array();
 abfragen["gewicht"][0] = 3;
 abfragen["gewicht"][1] = 4;
@@ -1445,10 +1440,6 @@ viewCount = 0;
             <column id="111">
                 <property name="width">0.9224806201550387in</property>
                 <property name="fontSize">8pt</property>
-                <property name="textAlign">right</property>
-            </column>
-            <column id="119">
-                <property name="width">0.9612403100775194in</property>
                 <property name="textAlign">right</property>
             </column>
             <row id="14">
@@ -1539,23 +1530,6 @@ viewCount = 0;
                         <text-property name="text">FPs</text-property>
                     </label>
                 </cell>
-                <cell id="112">
-                    <property name="borderBottomColor">#000000</property>
-                    <property name="borderBottomStyle">solid</property>
-                    <property name="borderBottomWidth">thin</property>
-                    <property name="borderLeftColor">#000000</property>
-                    <property name="borderLeftStyle">solid</property>
-                    <property name="borderLeftWidth">thin</property>
-                    <property name="borderRightColor">#000000</property>
-                    <property name="borderRightStyle">solid</property>
-                    <property name="borderRightWidth">thin</property>
-                    <property name="borderTopColor">#000000</property>
-                    <property name="borderTopStyle">solid</property>
-                    <property name="borderTopWidth">thin</property>
-                    <label id="386">
-                        <text-property name="text">FP in %</text-property>
-                    </label>
-                </cell>
             </row>
             <row id="18">
                 <property name="borderTopColor">#000000</property>
@@ -1579,7 +1553,7 @@ viewCount = 0;
                         <property name="fontWeight">bold</property>
                         <property name="marginBottom">5pt</property>
                         <property name="contentType">auto</property>
-                        <text-property name="content"><![CDATA[Anwenderdaten (z.B. Tabellen)]]></text-property>
+                        <text-property name="content"><![CDATA[Interne Datenbestände]]></text-property>
                     </text>
                     <table name="Anwenderdaten" id="716">
                         <property name="fontSize">8pt</property>
@@ -1960,33 +1934,6 @@ this.text = anwenderdaten["fps"][2];]]></method>
                         </row>
                     </grid>
                 </cell>
-                <cell id="113">
-                    <property name="borderBottomColor">#000000</property>
-                    <property name="borderBottomStyle">solid</property>
-                    <property name="borderBottomWidth">thin</property>
-                    <property name="borderLeftColor">#000000</property>
-                    <property name="borderLeftStyle">solid</property>
-                    <property name="borderLeftWidth">thin</property>
-                    <property name="borderRightColor">#000000</property>
-                    <property name="borderRightStyle">solid</property>
-                    <property name="borderRightWidth">thin</property>
-                    <property name="borderTopColor">#000000</property>
-                    <property name="borderTopStyle">solid</property>
-                    <property name="borderTopWidth">thin</property>
-                    <property name="verticalAlign">middle</property>
-                    <grid id="148">
-                        <column id="149"/>
-                        <row id="150">
-                            <cell id="151"/>
-                        </row>
-                        <row id="152">
-                            <cell id="153"/>
-                        </row>
-                        <row id="154">
-                            <cell id="155"/>
-                        </row>
-                    </grid>
-                </cell>
             </row>
             <row id="22">
                 <property name="borderTopColor">#000000</property>
@@ -2010,7 +1957,7 @@ this.text = anwenderdaten["fps"][2];]]></method>
                         <property name="fontWeight">bold</property>
                         <property name="marginBottom">5pt</property>
                         <property name="contentType">auto</property>
-                        <text-property name="content"><![CDATA[Schnittstellen (z.B. externe Tabellen)]]></text-property>
+                        <text-property name="content"><![CDATA[Schnittstellendaten (z.B. externe Tabellen)]]></text-property>
                     </text>
                 </cell>
                 <cell id="24">
@@ -2152,33 +2099,6 @@ this.text = anwenderdaten["fps"][2];]]></method>
                         </row>
                         <row id="186">
                             <cell id="187"/>
-                        </row>
-                    </grid>
-                </cell>
-                <cell id="114">
-                    <property name="borderBottomColor">#000000</property>
-                    <property name="borderBottomStyle">solid</property>
-                    <property name="borderBottomWidth">thin</property>
-                    <property name="borderLeftColor">#000000</property>
-                    <property name="borderLeftStyle">solid</property>
-                    <property name="borderLeftWidth">thin</property>
-                    <property name="borderRightColor">#000000</property>
-                    <property name="borderRightStyle">solid</property>
-                    <property name="borderRightWidth">thin</property>
-                    <property name="borderTopColor">#000000</property>
-                    <property name="borderTopStyle">solid</property>
-                    <property name="borderTopWidth">thin</property>
-                    <property name="verticalAlign">middle</property>
-                    <grid id="188">
-                        <column id="189"/>
-                        <row id="190">
-                            <cell id="191"/>
-                        </row>
-                        <row id="192">
-                            <cell id="193"/>
-                        </row>
-                        <row id="194">
-                            <cell id="195"/>
                         </row>
                     </grid>
                 </cell>
@@ -2600,33 +2520,6 @@ this.text = eingaben["fps"][1];]]></method>
 this.text = eingaben["fps"][2];]]></method>
                                 </label>
                             </cell>
-                        </row>
-                    </grid>
-                </cell>
-                <cell id="115">
-                    <property name="borderBottomColor">#000000</property>
-                    <property name="borderBottomStyle">solid</property>
-                    <property name="borderBottomWidth">thin</property>
-                    <property name="borderLeftColor">#000000</property>
-                    <property name="borderLeftStyle">solid</property>
-                    <property name="borderLeftWidth">thin</property>
-                    <property name="borderRightColor">#000000</property>
-                    <property name="borderRightStyle">solid</property>
-                    <property name="borderRightWidth">thin</property>
-                    <property name="borderTopColor">#000000</property>
-                    <property name="borderTopStyle">solid</property>
-                    <property name="borderTopWidth">thin</property>
-                    <property name="verticalAlign">middle</property>
-                    <grid id="196">
-                        <column id="197"/>
-                        <row id="198">
-                            <cell id="199"/>
-                        </row>
-                        <row id="200">
-                            <cell id="201"/>
-                        </row>
-                        <row id="202">
-                            <cell id="203"/>
                         </row>
                     </grid>
                 </cell>
@@ -3146,33 +3039,6 @@ this.text = ausgaben["fps"][2];]]></method>
                         </row>
                     </grid>
                 </cell>
-                <cell id="116">
-                    <property name="borderBottomColor">#000000</property>
-                    <property name="borderBottomStyle">solid</property>
-                    <property name="borderBottomWidth">thin</property>
-                    <property name="borderLeftColor">#000000</property>
-                    <property name="borderLeftStyle">solid</property>
-                    <property name="borderLeftWidth">thin</property>
-                    <property name="borderRightColor">#000000</property>
-                    <property name="borderRightStyle">solid</property>
-                    <property name="borderRightWidth">thin</property>
-                    <property name="borderTopColor">#000000</property>
-                    <property name="borderTopStyle">solid</property>
-                    <property name="borderTopWidth">thin</property>
-                    <property name="verticalAlign">middle</property>
-                    <grid id="300">
-                        <column id="301"/>
-                        <row id="302">
-                            <cell id="303"/>
-                        </row>
-                        <row id="304">
-                            <cell id="305"/>
-                        </row>
-                        <row id="306">
-                            <cell id="307"/>
-                        </row>
-                    </grid>
-                </cell>
             </row>
             <row id="34">
                 <property name="borderTopColor">#000000</property>
@@ -3337,32 +3203,6 @@ this.text = ausgaben["fps"][2];]]></method>
                         </row>
                     </grid>
                 </cell>
-                <cell id="117">
-                    <property name="borderBottomColor">#000000</property>
-                    <property name="borderBottomStyle">solid</property>
-                    <property name="borderBottomWidth">thin</property>
-                    <property name="borderLeftColor">#000000</property>
-                    <property name="borderLeftStyle">solid</property>
-                    <property name="borderLeftWidth">thin</property>
-                    <property name="borderRightColor">#000000</property>
-                    <property name="borderRightStyle">solid</property>
-                    <property name="borderRightWidth">thin</property>
-                    <property name="borderTopColor">#000000</property>
-                    <property name="borderTopStyle">solid</property>
-                    <property name="borderTopWidth">thin</property>
-                    <grid id="308">
-                        <column id="309"/>
-                        <row id="310">
-                            <cell id="311"/>
-                        </row>
-                        <row id="312">
-                            <cell id="313"/>
-                        </row>
-                        <row id="314">
-                            <cell id="315"/>
-                        </row>
-                    </grid>
-                </cell>
             </row>
             <row id="51">
                 <property name="borderTopColor">#000000</property>
@@ -3452,20 +3292,6 @@ sum += sumUp(ausgaben["fps"]);
 sum += sumUp(abfragen["fps"]);
 this.text = sum;]]></method>
                     </label>
-                </cell>
-                <cell id="118">
-                    <property name="borderBottomColor">#000000</property>
-                    <property name="borderBottomStyle">solid</property>
-                    <property name="borderBottomWidth">thin</property>
-                    <property name="borderLeftColor">#000000</property>
-                    <property name="borderLeftStyle">solid</property>
-                    <property name="borderLeftWidth">thin</property>
-                    <property name="borderRightColor">#000000</property>
-                    <property name="borderRightStyle">solid</property>
-                    <property name="borderRightWidth">thin</property>
-                    <property name="borderTopColor">#000000</property>
-                    <property name="borderTopStyle">solid</property>
-                    <property name="borderTopWidth">thin</property>
                 </cell>
             </row>
         </grid>
