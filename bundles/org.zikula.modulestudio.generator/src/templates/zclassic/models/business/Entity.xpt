@@ -81,6 +81,11 @@
         // get result from the model
         $item = $table->selectOneItemById($id, $asArray);
 
+«IF i18n-»
+        // process translations
+        $item = «app.appName()»_Util_I18n::prepareEntityForOutput('«name.formatForCode()»', $item);
+
+«ENDIF-»
         // look whether we fetched an object or an array
         if (!$asArray) {
             // store the result object
@@ -113,6 +118,11 @@
         // get result from the model
         $item = $table->selectOneItemBy«((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCodeCapital()»($slugTitle, $asArray);
 
+«IF i18n-»
+        // process translations
+        $item = «app.appName()»_Util_I18n::prepareEntityForOutput('«name.formatForCode()»', $item);
+
+«ENDIF-»
         // look whether we fetched an object or an array
         if (!$asArray) {
             // store the result object

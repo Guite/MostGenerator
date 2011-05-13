@@ -49,20 +49,16 @@ cached String displayBool(Boolean b) :
 cached getLeadingEntity(Application this) :
     models.entities.select(e | e.leading == true).get(0);
 
-cached boolean hasUserFields(Application this) :
-    !getUserFields().isEmpty;
-
 cached boolean hasImageFields(Application this) :
     models.entities.exists(e|e.hasImageFields());
 
 cached boolean hasColourFields(Application this) :
     models.entities.exists(e|e.hasColourFields());
 
-cached boolean hasNestedSets(Application this) :
-    models.entities.exists(e|e.nestedSet);
-
 cached getUserFields(Application this) :
     models.entities.fields.typeSelect(UserField);
+cached boolean hasUserFields(Application this) :
+    !getUserFields().isEmpty;
 
 cached boolean hasUploads(Application this) :
     !models.entities.fields.typeSelect(UploadField).isEmpty;
@@ -70,8 +66,16 @@ cached boolean hasUploads(Application this) :
 cached getUploadEntities(Application this) :
     models.entities.select(e|e.fields.typeSelect(UploadField).size > 0);
 
+
 cached getNestedSetEntities(Application this) :
     models.entities.select(e|e.nestedSet);
+cached boolean hasNestedSets(Application this) :
+    !getNestedSetEntities().isEmpty;
+
+cached getI18nEntities(Application this) :
+    models.entities.select(e|e.i18n);
+cached boolean hasI18nEntities(Application this) :
+    !getI18nEntities().isEmpty;
 
 
 cached boolean hasEditActions(Application this) :

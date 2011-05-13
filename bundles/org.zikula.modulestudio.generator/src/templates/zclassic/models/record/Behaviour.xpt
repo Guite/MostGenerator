@@ -68,7 +68,6 @@
         // TODO: seems like i18n and Searchable can't work together in Doctrine 1.x
 «ENDIF-»
         $this->actAs($i18n);
-        // TODO: fix i18n behavior (see http://code.zikula.org/generator/ticket/78 for more information)
 «ELSE-»
 «IF versionable-»
         $this->actAs($auditLog);

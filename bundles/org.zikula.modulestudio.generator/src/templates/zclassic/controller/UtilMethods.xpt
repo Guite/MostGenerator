@@ -7,4 +7,7 @@
 «EXPAND Model::Root»
 «EXPAND Controller::Root»
 «EXPAND View::Root»
+«IF hasI18nEntities()-»
+«EXPAND I18n::Root»
+«ENDIF-»
 «ENDDEFINE»

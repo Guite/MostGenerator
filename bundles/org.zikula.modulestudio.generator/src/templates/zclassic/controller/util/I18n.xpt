@@ -1,0 +1,113 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«REM»start point for the Util class creation«ENDREM»
+«DEFINE Root FOR Application»
+    «FILE getAppSourceLibPath(appName()).msconcat("Util/Base/I18n.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND I18nFunctionsBase-»«ENDFILE»
+    «FILE getAppSourceLibPath(appName()).msconcat("Util/I18n.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND I18nFunctionsImpl-»«ENDFILE»
+«ENDDEFINE»
+
+«DEFINE I18nFunctionsBase FOR Application-»
+/**
+ * Utility base class for i18n helper methods.
+ */
+class «appName()»_Util_Base_I18n extends Zikula_AbstractBase
+{
+    /**
+     * Return list of i18n fields per entity.
+     * These are required to be determined to recognize
+     * that they have to be selected from according translation tables.
+     */
+    public static function getI18nFields($objectType)
+    {
+        $fields = array();
+        switch ($objectType) {
+«EXPAND I18nFieldList FOREACH getI18nEntities()-»
+        }
+        return $fields;
+    }
+
+    /**
+     * Post-processing method copying best fitting translation to main fields.
+     * Cares for compatibility to processing entities without i18n behaviour.
+     */
+    public static function prepareEntityForOutput($objectData, $data)
+    {
+        $fields = self::getI18nFields($objectData);
+        if (!count($fields)) {
+            return $data;
+        }
+
+        $useObject = (is_object($data) && $data instanceOf Doctrine_Record);
+
+        // set default values
+        foreach ($fields as $field) {
+            if ($useObject) {
+                $data->mapValue($field['name'], $field['default']);
+            } else {
+                $data[$field['name']] = $field['default'];
+            }
+        }
+
+        // determine supported locales
+        $currentLanguage = ZLanguage::getLanguageCode();
+        $defaultLanguage = System::getVar('language_i18n', 'en');
+        $supportedLocales = ModUtil::getVar('«appName()»', 'supportedLocales', '');
+
+        // read according translation, fall back to default language
+        if (isset($data['Translation']) && (isset($data['Translation'][$currentLanguage]) || isset($data['Translation'][$defaultLanguage]))) {
+            $lang = (in_array($currentLanguage, $supportedLocales) && isset($data['Translation'][$currentLanguage])) ? $currentLanguage : $defaultLanguage;
+            foreach ($fields as $field) {
+                if ($useObject) {
+                    $data->mapValue($field['name'], $data['Translation'][$lang][$field['name']]);
+                } else {
+                    $data[$field['name']] = $data['Translation'][$lang][$field['name']];
+                }
+            }
+        }
+        return $data;
+    }
+}
+«ENDDEFINE»
+
+«DEFINE I18nFieldList FOR Entity-»
+            case '«name.formatForCode()»':
+                $fields = array(
+«EXPAND I18nFieldDefinition(i18nFields.split(", "))-»
+                );
+                break;
+«ENDDEFINE»
+
+«DEFINE I18nFieldDefinition(List fieldNames) FOR Entity-»
+«EXPAND I18nFieldDefinition(fieldNames) FOREACH fields SEPARATOR ','»
+«ENDDEFINE»
+
+«DEFINE I18nFieldDefinition(List fieldNames) FOR EntityField-»
+«error("Error: undefined entity field type " + metaType.toString() + " (code 542324)") -> ""-»
+«ENDDEFINE»
+
+«DEFINE I18nFieldDefinition(List fieldNames) FOR DerivedField-»
+«IF !fieldNames.select(a|a == actualFieldName()).isEmpty-»
+                    array('name'    => '«actualFieldName()»',
+                          'default' => '«IF defaultValue != ''-»«defaultValue»«ELSE-»«actualFieldName().formatForDisplayCapital()»«ENDIF-»'),
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE I18nFieldDefinition(List fieldNames) FOR CalculatedField-»
+«IF !fieldNames.select(a|a == actualFieldName()).isEmpty-»
+                    array('name'    => '«actualFieldName()»',
+                          'default' => '«actualFieldName().formatForDisplayCapital()»'),
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE I18nFunctionsImpl FOR Application-»
+/**
+ * Utility implementation class for i18n helper methods.
+ */
+class «appName()»_Util_I18n extends «appName()»_Util_Base_I18n
+{
+    // feel free to add your own convenience methods here
+}
+«ENDDEFINE»

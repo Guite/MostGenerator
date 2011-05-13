@@ -70,6 +70,11 @@
         // select items from the model
         $result = $this->_intTable()->selectCollection($where, $orderBy, $asArray);
 
+«IF i18n-»
+        // process additions
+        $result = $this->processAdditions($result);
+
+«ENDIF-»
         // store the results
         $this->set«nameMultiple.formatForCodeCapital()»($result);
 
@@ -97,12 +102,30 @@
         // select items from the model
         list($objectData, $objectCount) = $this->_intTable()->selectWherePaginated($where, $orderBy, $currentPage, $resultsPerPage, $asArray);
 
+«IF i18n-»
+        // process additions
+        $objectData = $this->processAdditions($objectData);
+
+«ENDIF-»
         // store the results
         $this->set«nameMultiple.formatForCodeCapital()»($objectData);
 
         // and return them
         return array($this->get«nameMultiple.formatForCodeCapital()»(), $objectCount);
     }
+«IF i18n-»
+
+    /**
+     * Process custom additions.
+     */
+    protected function processAdditions($collection)
+    {
+        foreach ($collection as $k => $v) {
+            $collection[$k] = «app.appName()»_Util_I18n::prepareEntityForOutput('«name.formatForCode()»', $v);
+        }
+        return $collection;
+    }
+«ENDIF-»
 
     /**
      * Select count with a given where clause.
