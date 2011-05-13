@@ -92,16 +92,31 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 
         $data = $event->data;
 
+        $useObject = (is_object($data) && $data instanceOf Doctrine_Record);
+        $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
 «IF !(fields.typeSelect(EmailField).isEmpty && fields.typeSelect(UploadField).isEmpty)-»
         $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST', FILTER_SANITIZE_STRING);
 
 «ENDIF-»
+«REM»«IF controller.hasActions('view')-»«ENDREM»
+        $urlObject = new Zikula_ModUrl('«container.application.appName()»', $currentType, 'display', ZLanguage::getLanguageCode(), array('ot' => '«name.formatForCode()»', '«name.formatForDB()»id' => $data['«name.formatForDB()»id']));
+«REM»«ELSE-»
+        $urlObject = new Zikula_ModUrl('«container.application.appName()»', $currentType, 'view', ZLanguage::getLanguageCode(), array('ot' => '«name.formatForCode()»', '«name.formatForDB()»id' => $data['«name.formatForDB()»id']));
+«ENDIF-»«ENDREM»
+        if ($useObject) {
+            $data->mapValue('urlObject', $urlObject);
+        }
+        else {
+            $data['urlObject'] = $urlObject;
+        }
+
 «IF !fields.typeSelect(UploadField).isEmpty-»
         $imageTypes = array('gif', 'jpeg', 'jpg', 'png');
-        $useObject = (is_object($data) && $data instanceOf Doctrine_Record);
 
 «ENDIF-»
     «EXPAND sanitizeForOutput FOREACH fields»
+
+
 
         $event->data = $data;
     }
@@ -229,15 +244,15 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
         // initialise the upload handler
         $uploadManager = new «container.application.appName()»_UploadHandler();
 
-        $data = $event->data;
-        $uploadFields = array(«FOREACH uploadFields AS uploadField SEPARATOR ", "»'«name.formatForCode()»'«ENDFOREACH»);
+        $invoker = $event->getInvoker();
+        $uploadFields = array(«FOREACH uploadFields AS uploadField SEPARATOR ", "»'«uploadField.name.formatForCode()»'«ENDFOREACH»);
         foreach ($uploadFields as $uploadField) {
-            if (empty($data[$uploadField])) {
+            if (empty($invoker->$uploadField)) {
                 continue;
             }
 
             // remove upload file (and image thumbnails)
-            $data = $uploadManager->deleteUploadFile('«name.formatForCode()»', $data, $uploadField);
+            $invoker = $uploadManager->deleteUploadFile('«name.formatForCode()»', $invoker, $uploadField);
         }
 «ENDIF-»
 «ENDLET-»

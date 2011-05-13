@@ -239,12 +239,17 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «EXPAND InitRelatedObjectDefault(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
             }
         }
-
 «FOREACH fields.typeSelect(DateField) AS dateField-»
+
         if ($objectData['«dateField.name.formatForCode()»'] == '1900-01-01 00:00:00') {
             $objectData['«dateField.name.formatForCode()»'] = null;
         }
 «ENDFOREACH-»
+«IF i18n-»
+
+        // process translated fields
+        $objectData = AdShare_Util_I18n::prepareEntityForEdit($this->objectType, $objectData);
+«ENDIF-»
 
         // assign data to template
         $this->view->assign('«name.formatForDB()»', $objectData)
@@ -496,7 +501,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             }
         }
 
-        if ($args['commandName'] != 'delete' && $args['commandName'] != 'cancel') {
+        if (!in_array($args['commandName'], array('delete', 'cancel'))) {
             // do forms validation including checking all validators on the page to validate their input
             if (!$this->view->isValid()) {
                 return false;
@@ -519,52 +524,50 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
 «EXPAND FetchInputData(name.formatForCode())-»
 
-        if ($args['commandName'] == 'create') {
-            // event handling if user clicks on create
+        if (in_array($args['commandName'], array('create', 'update'))) {
+            // event handling if user clicks on create or update
 
             // Let any hooks perform additional validation actions
-            $this->notifyHooks('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».validate.edit', null, null);
+            $hook = new Zikula_ValidationHook('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».validate.edit', new Zikula_Hook_ValidationProviders());
+            $validators = $this->notifyHooks($hook)->getValidators();
+            // TODO validation incomplete
 
             // save «name.formatForDisplay()»
-            $«name.formatForCode()»->save();
+            $successMessage = '';
+            if ($args['commandName'] == 'create') {
+                $«name.formatForCode()»->save();
 
-            // store new id
-            $this->«idField()» = $«name.formatForCode()»->get_intId();
-            // check if the insert has worked, might become obsolete due to exception usage
-            if ($this->«idField()» === false) {
-                return LogUtil::registerError($this->__('Error! Creation attempt failed.'));
+                // store new id
+                $this->«idField()» = $«name.formatForCode()»->get_intId();
+                // check if the insert has worked, might become obsolete due to exception usage
+                if ($this->«idField()» === false) {
+                    return LogUtil::registerError($this->__('Error! Creation attempt failed.'));
+                }
+                $successMessage = $this->__('Done! «name.formatForDisplayCapital()» created.');
+            } else if ($args['commandName'] == 'update') {
+                $updateResult = $«name.formatForCode()»->save();
+                // check if the update has worked, might become obsolete due to exception usage
+                if ($updateResult === false) {
+                    return LogUtil::registerError($this->__('Error! Update attempt failed.'));
+                }
+                $successMessage = $this->__('Done! «name.formatForDisplayCapital()» updated.');
             }
 
             $this->updateRelationLinks($«name.formatForCode()»);
 
-            LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» created.'));
+            LogUtil::registerStatus($successMessage);
 
-            // Let any hooks know that we have created an item
-            $this->notifyHooks('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».process.edit', $«name.formatForCode()»->get«name.formatForCodeCapital()»(), $this->«idField()»);
-        } else if ($args['commandName'] == 'update') {
-            // event handling if user clicks on update
-
-            // Let any hooks perform additional validation actions
-            $this->notifyHooks('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».validate.edit', $«name.formatForCode()»->get«name.formatForCodeCapital()»(), $this->«idField()»);
-
-            // save «name.formatForDisplay()»
-            $updateResult = $«name.formatForCode()»->save();
-            // check if the update has worked, might become obsolete due to exception usage
-            if ($updateResult === false) {
-                return LogUtil::registerError($this->__('Error! Update attempt failed.'));
-            }
-
-            $this->updateRelationLinks($«name.formatForCode()»);
-
-            LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» updated.'));
-
-            // Let any hooks know that we have updated an item
-            $this->notifyHooks('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».process.edit', $«name.formatForCode()»->get«name.formatForCodeCapital()»(), $this->«idField()»);
+            // Let any hooks know that we have created or updated an item
+            $url = new Zikula_ModUrl('«app.appName()»', '«controller.name()»', 'display', ZLanguage::getLanguageCode(), array('ot' => $this->objectType, '«idField()»' => $this->«idField()»));
+            $hook = new Zikula_ProcessHook('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».process.edit', $this->«idField()», $url);
+            $this->notifyHooks($hook);
         } else if ($args['commandName'] == 'delete') {
             // event handling if user clicks on delete
 
             // Let any hooks perform additional validation actions
-            $this->notifyHooks('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».validate.delete', $«name.formatForCode()»->get«name.formatForCodeCapital()»(), $this->«idField()»);
+            $hook = new Zikula_ValidationHook('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».validate.delete', new Zikula_Hook_ValidationProviders());
+            $validators = $this->notifyHooks($hook)->getValidators();
+            // TODO validation incomplete
 
             // delete «name.formatForDisplay()»
             if ($«name.formatForCode()»->delete() === false) {
@@ -574,7 +577,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» deleted.'));
 
             // Let any hooks know that we have deleted an item
-            $this->notifyHooks('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».process.delete', $«name.formatForCode()»->get«name.formatForCodeCapital()»(), $this->«idField()»);
+            $hook = new Zikula_ProcessHook('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».process.delete', $this->«idField()»);
+            $this->notifyHooks($hook);
         } else if ($args['commandName'] == 'cancel') {
             // event handling if user clicks on cancel
         }
@@ -663,7 +667,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «LET getUploadFields() AS uploadFields-»
 «IF !(uniqueFields.isEmpty && userFields.isEmpty && uploadFields.isEmpty)-»
 
-        if ($args['commandName'] == 'create' || $args['commandName'] == 'update') {
+        if (in_array($args['commandName'], array('create', 'update'))) {
 «FOREACH uniqueFields AS uniqueField-»
             // check if another «name.formatForDisplay()» with the same «uniqueField.actualFieldName().formatForDisplay()» does already exist
             if ($object->get_intValidator()->checkIf«uniqueField.actualFieldName().formatForCodeCapital()»Exists($formData['«uniqueField.actualFieldName().formatForCode()»'], $this->«idField()»)) {
@@ -712,6 +716,11 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             $repeatCreateAction = $formData['repeatcreation'];
             unset($formData['repeatcreation']);
         }
+«IF i18n-»
+
+        // process translated fields
+        $formData = AdShare_Util_I18n::processEntityAfterEdit($this->objectType, $«obj»->get«obj.toFirstUpper()»(), $formData);
+«ENDIF-»
 
         // assign fetched data
         $«obj»->merge($formData);

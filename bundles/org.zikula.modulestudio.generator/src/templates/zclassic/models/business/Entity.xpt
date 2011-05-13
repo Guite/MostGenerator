@@ -81,6 +81,11 @@
         // get result from the model
         $item = $table->selectOneItemById($id, $asArray);
 
+«IF i18n-»
+        // process translations
+        $item = «app.appName()»_Util_I18n::prepareEntityForOutput('«name.formatForCode()»', $item);
+
+«ENDIF-»
         // look whether we fetched an object or an array
         if (!$asArray) {
             // store the result object
@@ -113,6 +118,11 @@
         // get result from the model
         $item = $table->selectOneItemBy«((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCodeCapital()»($slugTitle, $asArray);
 
+«IF i18n-»
+        // process translations
+        $item = «app.appName()»_Util_I18n::prepareEntityForOutput('«name.formatForCode()»', $item);
+
+«ENDIF-»
         // look whether we fetched an object or an array
         if (!$asArray) {
             // store the result object
@@ -143,8 +153,19 @@
      */
     public function save()
     {
+«IF i18n-»
+        // deactivate validation for translation table to bypass unique bug in i18n behaviour
+        $table = Doctrine::getTable('«implClassModelTable()»Translation');
+        $table->setAttribute(Doctrine_Core::ATTR_VALIDATE, Doctrine_Core::VALIDATE_NONE);
+
+«ENDIF-»
         $result = $this->get«name.formatForCodeCapital()»()->save();
         $this->set_intId($this->«name.formatForCode()»[$this->_intIdField]);
+«IF i18n-»
+
+        // reenable validation
+        $table->setAttribute(Doctrine_Core::ATTR_VALIDATE, Doctrine_Core::VALIDATE_ALL);
+«ENDIF-»
         return $result;
     }
 
@@ -153,12 +174,19 @@
      */
     public function delete()
     {
+        // deactivate validation to allow deletion for records with incomplete data (#135)
+        $table = Doctrine::getTable('«implClassModelTable()»');
+        $table->setAttribute(Doctrine_Core::ATTR_VALIDATE, Doctrine_Core::VALIDATE_NONE);
+
 «IF nestedSet-»
         // due to the nested set behaviour we delete the node instead of the record itself to avoid invalid data
 «ENDIF-»
         $result = $this->get«name.formatForCodeCapital()»()->«IF nestedSet-»getNode()->«ENDIF-»delete();
         $this->set_intId(0);
         $this->«name.formatForCode()» = null;
+
+        // reenable validation
+        $table->setAttribute(Doctrine_Core::ATTR_VALIDATE, Doctrine_Core::VALIDATE_ALL);
         return $result;
     }
 

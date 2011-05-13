@@ -131,14 +131,6 @@ listType:
 «ENDIF-»
 
     {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page'}
-
-«IF controller.metaType == UserController-»
-    {modurl modname='«appName»' func='view' ot='«objName»' pos=$currentPage assign='returnurl'}
-    {notifydisplayhooks eventname='«appName.formatForDB()».hook.«nameMultiple.formatForDB()».ui.view' area='modulehook_area.«appName.formatForDB()».«nameMultiple.formatForDB()»' subject='category' returnurl=$returnurl assign='hooks'}
-    {foreach from=$hooks key='hookname' item='hook'}
-        {$hook}
-    {/foreach}
-«ENDIF-»
 </div>
 
 {include file='«controller.name()»/footer.tpl'}
@@ -196,7 +188,11 @@ listType:
 
 «DEFINE HeaderLineRelation(Controller controller, Boolean useTarget) FOR JoinRelationship-»
         <th id="h«EXPAND MarkupIdCode(useTarget)-»" scope="col" align="left" valign="middle">
+«IF !useTarget»
+«EXPAND HeaderSortingLink(controller, target, getRelationAliasName(useTarget).formatForCode(), getRelationAliasName(useTarget).formatForCodeCapital())-»
+«ELSE»
 «EXPAND HeaderSortingLink(controller, source, getRelationAliasName(useTarget).formatForCode(), getRelationAliasName(useTarget).formatForCodeCapital())-»
+«ENDIF»
         </th>
 «ENDDEFINE»
 

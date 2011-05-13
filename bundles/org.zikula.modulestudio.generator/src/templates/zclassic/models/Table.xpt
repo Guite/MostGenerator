@@ -257,6 +257,18 @@ class «baseClassModelTable()» extends Doctrine_Table
         // process request input filters and add them to the query.
         $fu->enrichQuery($q);
 
+«IF i18n-»
+
+        $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST', FILTER_SANITIZE_STRING);
+        if ($useJoins == true && $currentFunc != 'edit') {
+            if (!empty($where)) {
+                $q->andWhere('Translation.lang = ?', array(ZLanguage::getLanguageCode()));
+            }
+            else {
+                $q->where('Translation.lang = ?', array(ZLanguage::getLanguageCode()));
+            }
+        }
+«ENDIF-»
         // add order by clause
         if (!empty($orderBy)) {
             if ($orderBy == 'RAND()') {
@@ -268,8 +280,7 @@ class «baseClassModelTable()» extends Doctrine_Table
                 $sortParts = explode(' ', $orderBy);
                 $sortField = $sortParts[0];
                 if (in_array($sortField, array('«i18nFields.replaceAll(", ", "', '")»'))) {
-                    $q->leftJoin('tbl.Translation tblt')
-                          ->orderBy('tblt.' . $orderBy);
+                    $q->orderBy('Translation.' . $orderBy);
                 }
                 else {
                     $q->orderBy('tbl.' . $orderBy);
@@ -289,17 +300,23 @@ class «baseClassModelTable()» extends Doctrine_Table
      */
     protected function addJoinsToSelection($selection)
     {
+«IF i18n-»
+        $selection .= ', Translation.*';
+«ENDIF-»
         $selection .= '«EXPAND AddJoin(false, 'select') FOREACH incoming.typeSelect(JoinRelationship)-»«EXPAND AddJoin(true, 'select') FOREACH outgoing.typeSelect(JoinRelationship)-»';
         return $selection;
     }
 
     /**
-     * Helper method to add joins to from clause
+     * Helper method to add joins to from clause.
      *
      * @param Doctrine_Query $q Reference to query to be enriched.
      */
     protected function addJoinsToFrom(Doctrine_Query $q)
     {
+«IF i18n-»
+        $q->leftJoin('tbl.Translation Translation');
+«ENDIF-»
 «EXPAND AddJoin(false, 'from') FOREACH incoming.typeSelect(JoinRelationship)-»
 «EXPAND AddJoin(true, 'from') FOREACH outgoing.typeSelect(JoinRelationship)-»
     }

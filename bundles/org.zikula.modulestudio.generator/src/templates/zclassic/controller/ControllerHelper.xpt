@@ -31,7 +31,7 @@
     protected function postInitialize()
     {
         // Set caching to «caching.displayBool()» by default.
-        $this->view->setCaching(«caching.displayBool()»);
+        $this->view->setCaching(Zikula_View::CACHE_«IF caching»ENABLED«ELSE»DISABLED«ENDIF»);
     }
 «ENDDEFINE»
 

@@ -48,14 +48,14 @@ class «appName()»_Util_Base_View extends Zikula_AbstractBase
         $template .= '.' . $templateExtension;
 
         // look whether we need output with or without the theme
-        $raw = FormUtil::getPassedValue('raw', false, 'GETPOST', FILTER_VALIDATE_BOOLEAN);
+        $raw = (bool) FormUtil::getPassedValue('raw', false, 'GETPOST', FILTER_VALIDATE_BOOLEAN);
         /*if ($this->request->isPost() && $this->request->getPost()->has('raw')) {
-			$raw = (bool) $this->request->getPost()->filter('raw', false, FILTER_VALIDATE_BOOLEAN);
-	    }
+            $raw = (bool) $this->request->getPost()->filter('raw', false, FILTER_VALIDATE_BOOLEAN);
+        }
         elseif ($this->request->isGet() && $this->request->getGet()->has('raw')) {
-			$raw = (bool) $this->request->getGet()->filter('raw', false, FILTER_VALIDATE_BOOLEAN);
-	    }*/
-	    $raw = (isset($args['raw']) && is_bool($args['raw'])) ? $args['raw'] : $raw;
+            $raw = (bool) $this->request->getGet()->filter('raw', false, FILTER_VALIDATE_BOOLEAN);
+        }*/
+        $raw = (isset($args['raw']) && is_bool($args['raw'])) ? $args['raw'] : $raw;
         if (!$raw && in_array($templateExtension, array('csv', 'rss', 'atom', 'xml', 'pdf', 'vcard', 'ical'))) {
             $raw = true;
         }
@@ -95,7 +95,8 @@ class «appName()»_Util_Base_View extends Zikula_AbstractBase
 
         $extParams = self::availableExtensions($type, $objectType, $func, $args);
         foreach ($extParams as $extension) {
-            $extensionCheck = (int)$this->request->getGet()->filter('use' . $extension . 'ext', 0, FILTER_VALIDATE_INT);
+            $extensionCheck = (int)FormUtil::getPassedValue('use' . $extension . 'ext', 0, 'GET', FILTER_VALIDATE_INT);
+            //$extensionCheck = (int)$this->request->getGet()->filter('use' . $extension . 'ext', 0, FILTER_VALIDATE_INT);
             if ($extensionCheck == 1) {
                 $templateExtension = $extension;
                 break;

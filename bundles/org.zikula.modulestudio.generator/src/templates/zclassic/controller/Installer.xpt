@@ -105,10 +105,10 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         $this->registerPersistentEventHandlers();
 
         // register hook subscriber bundles
-        HookUtil::registerHookSubscriberBundles($this->version);
+        HookUtil::registerSubscriberBundles($this->version->getHookSubscriberBundles());
 «REM»TODO see #115
-        // Register hook provider bundles
-        HookUtil::registerHookProviderBundles($this->version);
+        // register hook provider bundles
+        HookUtil::registerProviderBundles($this->version->getHookProviderBundles());
 «ENDREM»
 
         // create the default data for «appName()»
@@ -199,6 +199,13 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 
         // unregister persistent event handlers
         EventUtil::unregisterPersistentModuleHandlers('«appName()»');
+
+        // unregister hook subscriber bundles
+        HookUtil::unregisterSubscriberBundles($this->version->getHookSubscriberBundles());
+«REM»TODO see #115
+        // unregister hook provider bundles
+        HookUtil::unregisterProviderBundles($this->version->getHookProviderBundles());
+«ENDREM»
 
 «IF !models.variables.isEmpty-»
         // remove all module vars
@@ -295,6 +302,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.installed', array('«callableClass»', 'moduleInstalled'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.upgraded', array('«callableClass»', 'moduleUpgraded'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.uninstalled', array('«callableClass»', 'moduleUninstalled'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'installer.subscriberarea.uninstalled', array('«callableClass»', 'subscriberAreaUninstalled'));
 «ENDLET-»
 
         // modules
@@ -324,16 +332,17 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 
         // theme
 «LET appName.msconcat('_Listener_Theme') AS callableClass-»
+        EventUtil::registerPersistentModuleHandler('«appName»', 'theme.preinit', array('«callableClass»', 'preInit'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'theme.init', array('«callableClass»', 'init'));
         EventUtil::registerPersistentModuleHandler('«appName»', 'theme.load_config', array('«callableClass»', 'loadConfig'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'theme.prefooter', array('«callableClass»', 'preFooter'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'theme.postfooter', array('«callableClass»', 'postFooter'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'theme.prefetch', array('«callableClass»', 'preFetch'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'theme.postfetch', array('«callableClass»', 'postFetch'));
 «ENDLET-»
 
         // view
 «LET appName.msconcat('_Listener_View') AS callableClass-»
         EventUtil::registerPersistentModuleHandler('«appName»', 'view.init', array('«callableClass»', 'init'));
-        EventUtil::registerPersistentModuleHandler('«appName»', 'view.fetch', array('«callableClass»', 'fetch'));
+        EventUtil::registerPersistentModuleHandler('«appName»', 'view.postfetch', array('«callableClass»', 'postFetch'));
 «ENDLET-»
 
         // user login

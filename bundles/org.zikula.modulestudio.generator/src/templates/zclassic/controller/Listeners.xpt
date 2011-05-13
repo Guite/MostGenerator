@@ -333,7 +333,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      *     $event['args'] is the arguments that were passed.
      * The event subject is the class where the method was not found.
      * Must exit if $event['method'] does not match whatever the handler expects.
-     * Modify $event->data and $event->setNotify().
+     * Modify $event->data and $event->stop().
      */
     public static function apiMethodNotFound(Zikula_Event $event)
     {
@@ -376,7 +376,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      *    `$event['args']` is the arguments that were passed.
      * The event subject is the class where the method was not found.
      * Must exit if `$event['method']` does not match whatever the handler expects.
-     * Modify `$event->data` and `$event->setNotify()`.
+     * Modify `$event->data` and `$event->stop()`.
      */
     public static function controllerMethodNotFound(Zikula_Event $event)
     {
@@ -413,6 +413,16 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      * Receives `$modinfo` as args.
      */
     public static function moduleUninstalled(Zikula_Event $event)
+    {
+    }
+
+    /**
+     * Listener for the `installer.subscriberarea.uninstalled` event.
+     *
+     * Called after a hook subscriber area is unregistered.
+     * Receives args['areaid'] as the areaId.  Use this to remove orphan data associated with this area.
+     */
+    public static function subscriberAreaUninstalled(Zikula_Event $event)
     {
     }
 «ENDDEFINE»
@@ -457,7 +467,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      * In order to override a pre-existing controller/api method, use this event type to override the class name that is loaded.
      * This allows to override the methods using inheritance.
      * Receives no subject, args of `array('modname' => $modname, 'modinfo' => $modinfo, 'type' => $type, 'api' => $api)`
-     * and 'event data' of `$className`. This can be altered by setting `$event->setData()` followed by `$event->setNotified()`.
+     * and 'event data' of `$className`. This can be altered by setting `$event->setData()` followed by `$event->stop()`.
      */
     public static function customClassname(Zikula_Event $event)
     {
@@ -470,7 +480,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      *
      * Invoked from `Mailer_Api_User#sendmessage`.
      * Subject is `Mailer_Api_User` with `$args`.
-     * This is a notifyUntil event so the event must `$event->setNotified()` and set any
+     * This is a notifyUntil event so the event must `$event->stop()` and set any
      * return data into `$event->data`, or `$event->setData()`.
      */
     public static function sendMessage(Zikula_Event $event)
@@ -514,7 +524,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      *
      * Invoked during `System::init()`.
      * Used to activate `set_error_handler()`.
-     * Event must `setNotified()`.
+     * Event must `stop()`.
      */
     public static function setupErrorReporting(Zikula_Event $event)
     {
@@ -533,10 +543,21 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
 
 «DEFINE BaseListenersTheme FOR Application-»
     /**
+     * Listener for the `theme.preinit` event.
+     *
+     * Occurs on the startup of the `Zikula_View_Theme#__construct()`.
+     * The subject is the Zikula_View_Theme instance.
+     * Is useful to setup a customized theme configuration or cache_id.
+     */
+    public static function preInit(Zikula_Event $event)
+    {
+    }
+
+    /**
      * Listener for the `theme.init` event.
      *
-     * Occurs just before `Theme#__construct()` exits. Subject is `$this`, args are
-     * `array('theme' => $theme, 'usefilters' => $usefilters, 'themeinfo' => $themeinfo)`.
+     * Occurs just before `Zikula_View_Theme#__construct()` finishes.
+     * The subject is the Zikula_View_Theme instance.
      */
     public static function init(Zikula_Event $event)
     {
@@ -545,7 +566,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     /**
      * Listener for the `theme.load_config` event.
      *
-     * Runs just before `Theme#_load_config()` completed.
+     * Runs just before `Theme#load_config()` completed.
      * Subject is the Theme instance.
      */
     public static function loadConfig(Zikula_Event $event)
@@ -553,24 +574,24 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     }
 
     /**
-     * Listener for the `theme.prefooter` event.
+     * Listener for the `theme.prefetch` event.
      *
      * Occurs in `Theme::themefooter()` just after getting the `$maincontent`.
      * The event subject is `$this` (Theme instance) and has $maincontent as the event data
      * which you can modify with `$event->setData()` in the event handler.
      */
-    public static function preFooter(Zikula_Event $event)
+    public static function preFetch(Zikula_Event $event)
     {
     }
 
     /**
-     * Listener for the `theme.postfooter` event.
+     * Listener for the `theme.postfetch` event.
      *
      * Occurs in `Theme::themefooter()` just after rendering the theme.
      * The event subject is `$this` (Theme instance) and the event data is the rendered
      * output which you can modify with `$event->setData()` in the event handler.
      */
-    public static function postFooter(Zikula_Event $event)
+    public static function postFetch(Zikula_Event $event)
     {
     }
 «ENDDEFINE»
@@ -579,20 +600,20 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     /**
      * Listener for the `view.init` event.
      *
-     * Occurs just before `Zikula_View#__construct()` exits. Subject is `$this`, args are
-     * `array('module' => $module, 'modinfo' => $modinfo, 'themeinfo' => $themeinfo)`.
+     * Occurs just before `Zikula_View#__construct()` finishes.
+     * The subject is the Zikula_View instance.
      */
     public static function init(Zikula_Event $event)
     {
     }
 
     /**
-     * Listener for the `view.fetch` event.
+     * Listener for the `view.postfetch` event.
      *
      * Filter of result of a fetch. Receives `Zikula_View` instance as subject, args are
      * `array('template' => $template)`, $data was the result of the fetch to be filtered.
      */
-    public static function fetch(Zikula_Event $event)
+    public static function postFetch(Zikula_Event $event)
     {
     }
 «ENDDEFINE»
@@ -626,9 +647,9 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      * (All prerequisites for a successful login have been checked and are satisfied.)
      * This event allows a module to intercept the login process and prevent a successful login from taking place.
      *
-     * This event uses `notifyUntil()`, so handlers are called until either one vetoes the login attempt,
+     * This event uses `notify()`, so handlers are called until either one vetoes the login attempt,
      * or there are no more handlers for the event.
-     * A handler that needs to veto a login attempt should call `setNotify()`. This will prevent other handlers
+     * A handler that needs to veto a login attempt should call `stop()`. This will prevent other handlers
      * from receiving the event, will return to the login process, and will prevent the login from taking place.
      * A handler that vetoes a login attempt should set an appropriate error message and give any additional
      * feedback to the user attempting to log in that might be appropriate. If a handler does not
@@ -645,7 +666,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      *     `'authentication_method'` will contain the name of the module and the name of the method that was used to authenticated the user.
      *     `'uid'` will contain the user's uid.
      *
-     * An event handler can prevent (veto) the log-in attempt by calling `setNotified()` on the event. This is 
+     * An event handler can prevent (veto) the log-in attempt by calling `stop()` on the event. This is 
      * enough to ensure that the log-in attempt is stopped, however this will result in a `Zikula_Exception_Forbidden`
      * exception being thrown. 
      *
@@ -667,7 +688,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      * similar) that allows him to correct whatever situation is causing his log-in attempt to be vetoed. The
      * expectation is that the notifying event handler will direct the user to a form to correct the situation,
      * and then __redirect the user back into the log-in process to re-attempt logging in__. To accomplish this,
-     * instead of setting the `'retry'` event data, the notifying handler should set the `'redirectFunc'` 
+     * instead of setting the `'retry'` event data, the notifying handler should set the `'redirect_func'` 
      * event data structure. This is an array which defines the information necessary to direct the 
      * user to a controller function somewhere in the Zikula system (likely, within the same module as that
      * which is vetoing the attempt). This array contains the following:
@@ -681,7 +702,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      *              alternative to passing function arguments.
      *
      * In addition, if information from the log-in attempt is needed within the function, it can be made available in 
-     * session variables. To do this, add an array called `'session'` to the `'redirectFunc'` array structure. The contents
+     * session variables. To do this, add an array called `'session'` to the `'redirect_func'` array structure. The contents
      * of the `'session'` array must be:
      *     `'namespace'` The session name space in which to store the variable.
      *     `'var'` The name of the session variable.
@@ -703,9 +724,9 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      * The Users module uses this method to handle users who have been forced by the administrator to change their password 
      * prior to logging in. The code used for the notification might look like the following example:
      *
-     *     $event->setNotified();
+     *     $event->stop();
      *     $event->setData(array(
-     *         'redirectFunc'  => array(
+     *         'redirect_func'  => array(
      *             'modname'   => 'Users',
      *             'type'      => 'user',
      *             'func'      => 'changePassword',
@@ -759,7 +780,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      * string, then the user is redirected to the site's home page. An event handler should carefully consider whether 
      * changing the `'redirecturl'` argument is appropriate. First, the user may be expecting to return to the page where
      * he was when he initiated the log-in process. Being redirected to a different page might be disorienting to the user.
-     * Second, all event handlers are being notified of this event. This is not a `notifyUntil()` event. An event handler
+     * Second, all event handlers are being notified of this event. This is not a `notify()` event. An event handler
      * that was notified prior to the current handler may already have changed the `'redirecturl'`.
      *
      * Finally, this event only fires in the event of a "normal" UI-oriented log-in attempt. A module attempting to log in
@@ -772,7 +793,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     /**
      * Listener for the `module.users.ui.login.failed` event.
      *
-     * Occurs right after a successful attempt to log in. All handlers are notified.
+     * Occurs right after an unsuccessful attempt to log in. All handlers are notified.
      *
      * The event subject contains the user's user record (from `UserUtil::getVars($event['uid'])`) if it has been found, otherwise null.
      * The arguments of the event are as follows:
@@ -814,8 +835,10 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     /**
      * Listener for the `user.gettheme` event.
      *
-     * This is invoked with notifyUntil so you should execute `$event->setNotified()` in the event handler.
-     * Receives `$event['name']` the chosen theme name, it can modify the name.
+     * Called during UserUtil::getTheme() and is used to filter the results.
+     * Receives arg['type'] with the type of result to be filtered
+     * and the $themeName in the $event->data which can be modified.
+     * Must $event->stop() if handler performs filter.
      */
     public static function getTheme(Zikula_Event $event)
     {
@@ -887,7 +910,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      *
      * The event's subject is set to the registration record (which might be a full user record).
      * The event's arguments are as follows:
-     *     `'returnurl'` => A URL to which the user is redirected at the very end of the registration process.
+     *     `'returnurl'` A URL to which the user is redirected at the very end of the registration process.
      *
      * __The `'redirecturl'` argument__ controls where the user will be directed at the end of the registration process.
      * Initially, it will be blank, indicating that the default action should be taken. The default action depends on two
@@ -907,13 +930,34 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      * fire.
      *
      * If a `'redirecturl'` is specified by any entity intercepting and processing the `module.users.ui.registration.succeeded` event, then
-     * __all of the above default actions are overridden__. The user will _not_ be directed to a status display screen if the result
-     * of the registration process is a registration request. The user will _not_ be directed to the log-in screen, _nor_ will he
-     * be automatically logged in. Instead, the user __will be directed to the URL specified in the `'redirecturl'` argument__ passed
-     * back by the entity that processed the event. An event handler should carefully consider whether changing the `'redirecturl'` 
-     * argument is appropriate. First, the user may be expecting to return to the log-in screen . Being redirected to a different 
-     * page might be disorienting to the user. Second, all event handlers are being notified of this event. This is not a 
-     * `notifyUntil()` event. An event handler that was notified prior to the current handler may already have changed the `'redirecturl'`.
+     * how that redirect URL is handled depends on whether the registration process produced a registration request or a full user
+     * account record, and if a full user account record was produced then it depends on whether automatic log-in is enabled or 
+     * not.
+     *
+     * If the result of the registration process is a registration request record, then by specifying a redirect URL on the event
+     * the default action will be overridden, and the user will be redirected to the specified URL at the end of the process.
+     *
+     * If the result of the registration process is a full user account record and automatic log-in is disabled, then by specifying
+     * a redirect URL on the event the default action will be overridden, and the user will be redirected to the specified URL at
+     * the end of the process.
+     *
+     * If the result of the registration process is a full user account record and automatic log-in is enabled, then the user is
+     * directed automatically into the log-in process. A redirect URL specified on the event will be passed to the log-in process
+     * as the default redirect URL to be used at the end of the log-in process. Note that the user has NOT been automatically 
+     * redirected to the URL specified on the event. Also note that the log-in process issues its own events, and any one of them
+     * could direct the user away from the log-in process and ultimately from the URL specified in this event. Note especially that
+     * the log-in process issues its own `module.users.ui.login.succeeded` event that includes the opportunity to set a redirect URL.
+     * The URL specified on this event, as mentioned previously, is passed to the log-in process as the default redirect URL, and
+     * therefore is offered on the `module.users.ui.login.succeeded` event as the default. Any handler of that event, however, has
+     * the opportunity to change the redirect URL offered. A `module.users.ui.registration.succeeded` handler can reliably predict 
+     * whether the user will be directed into the log-in process automatically by inspecting the Users module variable 
+     * `Users_Constant::MODVAR_REGISTRATION_AUTO_LOGIN` (which evaluates to `'reg_autologin'`), and by inspecting the `'activated'`
+     * status of the registration or user object received.
+     *
+     * An event handler should carefully consider whether changing the `'redirecturl'` argument is appropriate. First, the user may 
+     * be expecting to return to the log-in screen . Being redirected to a different page might be disorienting to the user. Second, 
+     * all event handlers are being notified of this event. This is not a `notify()` event. An event handler that was notified 
+     * prior to the current handler may already have changed the `'redirecturl'`.
      */
     public static function succeeded(Zikula_Event $event)
     {
@@ -936,7 +980,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      * An event handler should carefully consider whether changing the `'redirecturl'` argument is appropriate. First, the 
      * user may be expecting to be directed to a page containing information on why the registration failed. Being redirected to a different 
      * page might be disorienting to the user. Second, all event handlers are being notified of this event. This is not a 
-     * `notifyUntil()` event. An event handler that was notified prior to the current handler may already have changed the `'redirecturl'`.
+     * `notify()` event. An event handler that was notified prior to the current handler may already have changed the `'redirecturl'`.
      */
     public static function failed(Zikula_Event $event)
     {
