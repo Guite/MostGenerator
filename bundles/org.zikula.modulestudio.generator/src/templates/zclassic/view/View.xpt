@@ -95,7 +95,7 @@
     }
 </style>
 {/capture}
-{pageaddvar name='rawtext' value=$pageStyles}
+{pageaddvar name='header' value=$pageStyles}
 «ENDIF-»
 {/if}
 
