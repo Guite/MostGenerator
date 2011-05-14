@@ -60,10 +60,11 @@ class «appName()»_Util_Base_I18n extends Zikula_AbstractBase
         if (isset($data['Translation']) && (isset($data['Translation'][$currentLanguage]) || isset($data['Translation'][$defaultLanguage]))) {
             $lang = (in_array($currentLanguage, $supportedLocales) && isset($data['Translation'][$currentLanguage])) ? $currentLanguage : $defaultLanguage;
             foreach ($fields as $field) {
+                $value = isset($data['Translation'][$lang][$field['name']]) ? $data['Translation'][$lang][$field['name']] : '';
                 if ($useObject) {
-                    $data->mapValue($field['name'], $data['Translation'][$lang][$field['name']]);
+                    $data->mapValue($field['name'], $value);
                 } else {
-                    $data[$field['name']] = $data['Translation'][$lang][$field['name']];
+                    $data[$field['name']] = $value;
                 }
             }
         }
