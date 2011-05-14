@@ -35,6 +35,10 @@ class «appName()»_Util_Base_I18n extends Zikula_AbstractBase
      */
     public static function prepareEntityForOutput($objectType, $data)
     {
+        if (!$data) {
+            return $data;
+        }
+
         $fields = self::getI18nFields($objectType);
         if (!count($fields)) {
             return $data;
@@ -78,6 +82,10 @@ class «appName()»_Util_Base_I18n extends Zikula_AbstractBase
      */
     public static function prepareEntityForEdit($objectType, $data)
     {
+        if (!$data) {
+            return $data;
+        }
+
         $fields = self::getI18nFields($objectType);
         if (!count($fields)) {
             return $data;
@@ -115,6 +123,10 @@ class «appName()»_Util_Base_I18n extends Zikula_AbstractBase
      */
     public static function processEntityAfterEdit($objectType, $record, $formData)
     {
+        if (!$formData) {
+            return $data;
+        }
+
         $fields = self::getI18nFields($objectType);
         if (!count($fields)) {
             return $formData;

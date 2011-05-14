@@ -196,6 +196,9 @@
      */
     protected function processAdditions($collection)
     {
+        if (!$collection) {
+            return $collection;
+        }
         foreach ($collection as $k => $v) {
             $collection[$k] = «app.appName()»_Util_I18n::prepareEntityForOutput('«name.formatForCode()»', $v);
         }
