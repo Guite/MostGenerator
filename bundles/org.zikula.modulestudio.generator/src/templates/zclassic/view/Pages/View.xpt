@@ -5,10 +5,10 @@
 
 «REM»
 listType:
-	0 = div and ul
-	1 = div and ol
-	2 = div and dl
-	3 = div and table
+    0 = div and ul
+    1 = div and ol
+    2 = div and dl
+    3 = div and table
 «ENDREM»
 «DEFINE Impl(String appName, Controller controller, Integer listType) FOR Entity»
 «info("Generating " + controller.name() + " view templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
@@ -131,6 +131,13 @@ listType:
 «ENDIF-»
 
     {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page'}
+«IF controller.metaType == UserController-»
+
+    {notifydisplayhooks eventname='«appName.formatForDB()».hook.«nameMultiple.formatForDB()».ui.view' urlobject=$currentUrlObject assign='hooks'}
+    {foreach from=$hooks key='hookname' item='hook'}
+        {$hook}
+    {/foreach}
+«ENDIF-»
 </div>
 
 {include file='«controller.name()»/footer.tpl'}

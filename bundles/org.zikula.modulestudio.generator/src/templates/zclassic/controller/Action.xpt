@@ -139,13 +139,17 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         // get objects from database
         list($objectData, $objectCount) = $objectCollection->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
 
+        // build ModUrl instance for display hooks
+        $currentUrlObject = new Zikula_ModUrl('appName', «controller.name()», 'view', ZLanguage::getLanguageCode(), array('ot' => $objectType));
+
         // assign the object data, sorting information and details for creating the pager
         $this->view->assign('items', $objectData)
                    ->assign('sort', $sort)
                    ->assign('sdir', $sdir)
                    ->assign('currentPage', $currentPage)
                    ->assign('pager', array('numitems'     => $objectCount,
-                                           'itemsperpage' => $resultsPerPage));
+                                           'itemsperpage' => $resultsPerPage))
+                   ->assign('currentUrlObject', $currentUrlObject);
 
         // fetch and return the appropriate template
         return «appName»_Util_View::processTemplate($this->view, '«controller.name()»', $objectType, 'view', $args);

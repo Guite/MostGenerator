@@ -67,7 +67,7 @@ class «appName()»_Base_Version extends Zikula_AbstractVersion
 «LET name.formatForDB() AS appName-»
 «FOREACH models.entities AS entity-»
 «LET entity.nameMultiple.formatForDB() AS areaName»
-        $bundle = new Zikula_HookManager_SubscriberBundle($this->name, 'modulehook_area.«appName».«areaName»', 'ui', __('«entity.nameMultiple.formatForDisplayCapital()»'));
+        $bundle = new Zikula_HookManager_SubscriberBundle($this->name, 'subscriber_area.ui.«appName».«areaName»', 'ui', __('«entity.nameMultiple.formatForDisplayCapital()»'));
 «REM»   $bundle->addType('hook type', 'event name triggered by *this* module');«ENDREM»«""-»
         // Display hook for view/display templates.
         $bundle->addType('ui.view', '«appName».hook.«areaName».ui.view');
@@ -91,9 +91,9 @@ class «appName()»_Base_Version extends Zikula_AbstractVersion
 «ENDLET-»
 
 «REM»TODO see #115
-Example for name of provider area: modulehook_area.comments.general
+Example for name of provider area: provider_area.comments.general
 
-        $bundle = new Zikula_Version_HookProviderBundle($this->name, 'modulehook_area.ratings.rating', 'ui', $this->__('Ratings Hook Poviders'));
+        $bundle = new Zikula_Version_HookProviderBundle($this->name, 'provider_area.ratings.rating', 'ui', $this->__('Ratings Hook Poviders'));
         $bundle->addHook('hookhandler.ratings.ui.view', 'ui.view', 'Ratings_Hooks', 'uiview', 'ratings.service');
         // add other hooks as needed
         $this->registerHookProviderBundle($bundle);
