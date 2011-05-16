@@ -33,13 +33,14 @@
                     <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«name.formatForCode()»'}">{icon type='cancel' size='small' __alt='Cancel' __title='Cancel'} {gt text='Cancel'}</a>
                 </div>
             </fieldset>
+            {notifydisplayhooks eventname='«appName.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».form_delete' id=$«name.formatForCode()».«idField()» assign='hooks'}
+            {foreach from=$hooks key='hookname' item='hook'}
+                {$hook}
+            {/foreach}
         </div>
     </form>
 
-    {notifydisplayhooks eventname='«appName.formatForDB()».hook.«nameMultiple.formatForDB()».ui.delete' id=$«name.formatForCode()».«idField()» assign='hooks'}
-    {foreach from=$hooks key='hookname' item='hook'}
-        {$hook}
-    {/foreach}
+    
 </div>
 
 {include file='«controller.name()»/footer.tpl'}

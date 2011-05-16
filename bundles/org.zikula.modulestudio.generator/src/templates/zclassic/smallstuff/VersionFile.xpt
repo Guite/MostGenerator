@@ -67,24 +67,22 @@ class «appName()»_Base_Version extends Zikula_AbstractVersion
 «LET name.formatForDB() AS appName-»
 «FOREACH models.entities AS entity-»
 «LET entity.nameMultiple.formatForDB() AS areaName»
-        $bundle = new Zikula_HookManager_SubscriberBundle($this->name, 'subscriber_area.ui.«appName».«areaName»', 'ui', __('«entity.nameMultiple.formatForDisplayCapital()»'));
-«REM»   $bundle->addType('hook type', 'event name triggered by *this* module');«ENDREM»«""-»
+        $bundle = new Zikula_HookManager_SubscriberBundle($this->name, 'subscriber.«appName».ui_hooks.«areaName»', 'ui_hooks', __('«entity.nameMultiple.formatForDisplayCapital()»'));
+«REM»   $bundle->addEvent('hook type', 'event name triggered by *this* module');«ENDREM»«""-»
         // Display hook for view/display templates.
-        $bundle->addType('ui.view', '«appName».hook.«areaName».ui.view');
+        $bundle->addEvent('display_view', '«appName».ui_hooks.«areaName».display_view');
         // Display hook for create/edit forms.
-        $bundle->addType('ui.edit', '«appName».hook.«areaName».ui.edit');
-        // Display hook for delete dialogues (generally not used).
-        $bundle->addType('ui.delete', '«appName».hook.«areaName».ui.delete');
+        $bundle->addEvent('form_edit', '«appName».ui_hooks.«areaName».form_edit');
+        // Display hook for delete dialogues.
+        $bundle->addEvent('form_delete', '«appName».ui_hooks.«areaName».form_delete');
         // Validate input from an ui create/edit form.
-        $bundle->addType('validate.edit', '«appName».hook.«areaName».validate.edit');
+        $bundle->addEvent('validate_edit', '«appName».ui_hooks.«areaName».validate_edit');
         // Validate input from an ui create/edit form (generally not used).
-        $bundle->addType('validate.delete', '«appName».hook.«areaName».validate.delete');
+        $bundle->addEvent('validate_delete', '«appName».ui_hooks.«areaName».validate_delete');
         // Perform the final update actions for a ui create/edit form.
-        $bundle->addType('process.edit', '«appName».hook.«areaName».process.edit');
+        $bundle->addEvent('process_edit', '«appName».ui_hooks.«areaName».process_edit');
         // Perform the final delete actions for a ui form.
-        $bundle->addType('process.delete', '«appName».hook.«areaName».process.delete');
-        // A filter applied to the given area.
-        $bundle->addType('ui.filter', '«appName».filterhook.«areaName»');
+        $bundle->addEvent('process_delete', '«appName».ui_hooks.«areaName».process_delete');
 «ENDLET-»
         $this->registerHookSubscriberBundle($bundle);
 «ENDFOREACH-»
@@ -93,8 +91,8 @@ class «appName()»_Base_Version extends Zikula_AbstractVersion
 «REM»TODO see #115
 Example for name of provider area: provider_area.comments.general
 
-        $bundle = new Zikula_Version_HookProviderBundle($this->name, 'provider_area.ratings.rating', 'ui', $this->__('Ratings Hook Poviders'));
-        $bundle->addHook('hookhandler.ratings.ui.view', 'ui.view', 'Ratings_Hooks', 'uiview', 'ratings.service');
+        $bundle = new Zikula_Version_HookProviderBundle($this->name, 'provider.ratings.ui_hooks.rating', 'ui_hooks', $this->__('Ratings Hook Poviders'));
+        $bundle->addServiceHandler('display_view', 'Ratings_Hooks', 'uiView', 'ratings.service');
         // add other hooks as needed
         $this->registerHookProviderBundle($bundle);
 

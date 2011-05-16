@@ -528,7 +528,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             // event handling if user clicks on create or update
 
             // Let any hooks perform additional validation actions
-            $hook = new Zikula_ValidationHook('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».validate.edit', new Zikula_Hook_ValidationProviders());
+            $hook = new Zikula_ValidationHook('«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».validate_edit', new Zikula_Hook_ValidationProviders());
             $validators = $this->notifyHooks($hook)->getValidators();
             // TODO validation incomplete
 
@@ -559,13 +559,13 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
             // Let any hooks know that we have created or updated an item
             $url = new Zikula_ModUrl('«app.appName()»', '«controller.name()»', 'display', ZLanguage::getLanguageCode(), array('ot' => $this->objectType, '«idField()»' => $this->«idField()»));
-            $hook = new Zikula_ProcessHook('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».process.edit', $this->«idField()», $url);
+            $hook = new Zikula_ProcessHook('«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».process_edit', $this->«idField()», $url);
             $this->notifyHooks($hook);
         } else if ($args['commandName'] == 'delete') {
             // event handling if user clicks on delete
 
             // Let any hooks perform additional validation actions
-            $hook = new Zikula_ValidationHook('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».validate.delete', new Zikula_Hook_ValidationProviders());
+            $hook = new Zikula_ValidationHook('«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».validate_delete', new Zikula_Hook_ValidationProviders());
             $validators = $this->notifyHooks($hook)->getValidators();
             // TODO validation incomplete
 
@@ -577,7 +577,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» deleted.'));
 
             // Let any hooks know that we have deleted an item
-            $hook = new Zikula_ProcessHook('«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».process.delete', $this->«idField()»);
+            $hook = new Zikula_ProcessHook('«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».process_delete', $this->«idField()»);
             $this->notifyHooks($hook);
         } else if ($args['commandName'] == 'cancel') {
             // event handling if user clicks on cancel

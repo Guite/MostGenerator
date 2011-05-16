@@ -118,9 +118,9 @@
 «EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, true, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 
     {if $mode eq 'create'}
-        {notifydisplayhooks eventname='«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».ui.edit' id=null assign='hooks'}
+        {notifydisplayhooks eventname='«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».form_edit' id=null assign='hooks'}
     {else}
-        {notifydisplayhooks eventname='«app.name.formatForDB()».hook.«nameMultiple.formatForDB()».ui.edit' id=$«name.formatForDB()».«idField()» assign='hooks'}
+        {notifydisplayhooks eventname='«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».form_edit' id=$«name.formatForDB()».«idField()» assign='hooks'}
     {/if}
     {if is_array($hooks) && isset($hooks[0])}
         <fieldset>

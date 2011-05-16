@@ -133,7 +133,7 @@ listType:
     {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page'}
 «IF controller.metaType == UserController-»
 
-    {notifydisplayhooks eventname='«appName.formatForDB()».hook.«nameMultiple.formatForDB()».ui.view' urlobject=$currentUrlObject assign='hooks'}
+    {notifydisplayhooks eventname='«appName.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».display_view' urlobject=$currentUrlObject assign='hooks'}
     {foreach from=$hooks key='hookname' item='hook'}
         {$hook}
     {/foreach}
