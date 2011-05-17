@@ -83,12 +83,13 @@ class «appName()»_Base_Version extends Zikula_AbstractVersion
         $bundle->addEvent('process_edit', '«appName».ui_hooks.«areaName».process_edit');
         // Perform the final delete actions for a ui form.
         $bundle->addEvent('process_delete', '«appName».ui_hooks.«areaName».process_delete');
+        $this->registerHookSubscriberBundle($bundle);
 
         $bundle = new Zikula_HookManager_SubscriberBundle($this->name, 'subscriber.«appName».filter_hooks.«areaName»', 'filter_hooks', __('«appName» «entity.nameMultiple.formatForDisplayCapital()» Filter Hooks'));
         // A filter applied to the given area.
         $bundle->addEvent('filter', '«appName».filter_hooks.«areaName».filter');
-«ENDLET-»
         $this->registerHookSubscriberBundle($bundle);
+«ENDLET-»
 «ENDFOREACH-»
 «ENDLET-»
 
