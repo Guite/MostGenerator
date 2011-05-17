@@ -20,7 +20,7 @@
 «LET name.formatForCode() AS objName-»
 «LET getLeadingField().name.formatForCode() AS titleField-»
 {pagesetvar name='title' value=$«objName».«titleField»}
-<h2>{$«objName».«titleField»|notifyfilters:'«appName.formatForDB()».filter_hooks.«nameMultiple.formatForDB()»'}</h2>
+<h2>{$«objName».«titleField»|notifyfilters:'«appName.formatForDB()».filter_hooks.«nameMultiple.formatForDB()».filter'}</h2>
 «ENDLET-»
 
 «LET outgoing.typeSelect(JoinRelationship).union(incoming.typeSelect(ManyToManyRelationship)) AS refedElems-»
