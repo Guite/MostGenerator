@@ -107,7 +107,11 @@
                 }
             }
 
-            $slugTitle = $routerFacade->getFormattedSlug($objectType, $args['func'], $args['args'], $id);
+            $slugTitle = '';
+            if ($id > 0) {
+                $routerFacade->getFormattedSlug($objectType, $args['func'], $args['args'], $id);
+            }
+
             if (!empty($slugTitle) && $slugTitle != $id) {
                 // add slug expression
                 $args['args']['title'] = $slugTitle;
