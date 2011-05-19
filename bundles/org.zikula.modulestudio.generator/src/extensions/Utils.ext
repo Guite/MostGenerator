@@ -327,7 +327,7 @@ cached String getAppSourceLibPath(String appName) :
     getAppSourcePath(appName).msconcat('lib/').msconcat(appName).msconcat('/');
 
 cached String getAppUploadPath(String appName) :
-    'src/data/'.msconcat(appName).msconcat('/');
+    'src/userdata/'.msconcat(appName).msconcat('/');
 
 cached String getAppTestsPath(String appName) :
     'tests/';
