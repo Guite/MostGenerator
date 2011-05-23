@@ -120,6 +120,7 @@
       <import plugin="org.eclipse.emf.ecore.xmi" version="2.3.0" match="compatible"/>
       <import plugin="org.eclipse.datatools.connectivity.oda.design" version="3.0.5" match="compatible"/>
       <import plugin="org.eclipse.core.resources" version="3.3.0" match="compatible"/>
+      <import plugin="org.eclipse.birt.chart.engine" version="2.6.2" match="greaterOrEqual"/>
    </requires>
 
    <plugin

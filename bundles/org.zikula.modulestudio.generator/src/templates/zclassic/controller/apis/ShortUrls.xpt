@@ -109,7 +109,7 @@
 
             $slugTitle = '';
             if ($id > 0) {
-                $routerFacade->getFormattedSlug($objectType, $args['func'], $args['args'], $id);
+                $slugTitle = $routerFacade->getFormattedSlug($objectType, $args['func'], $args['args'], $id);
             }
 
             if (!empty($slugTitle) && $slugTitle != $id) {
