@@ -81,6 +81,6 @@
 «ENDDEFINE»
 
 «DEFINE DetailLink(String appName) FOR Entity-»
-<a href="{modurl modname="«appName»" type="user" func="display" ot=$objectType «idField()»=$item.«idField()»}">{gt text='Read more'}</a>«""-»
+<a href="{modurl modname='«appName»' type='user' func='display' ot=$objectType «idField()»=$item.«idField()»}">{gt text='Read more'}</a>«""-»
 «ENDDEFINE»
 
