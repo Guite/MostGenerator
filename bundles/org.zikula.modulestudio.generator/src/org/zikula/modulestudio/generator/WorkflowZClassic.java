@@ -31,7 +31,7 @@ public class WorkflowZClassic {
                 final java.net.URL fileUrl = FileLocator.toFileURL(url);
                 final File file = new File(fileUrl.getPath());
                 fileCopy.setSourceFile(file.getAbsolutePath());
-                fileCopy.setTargetFile(this.settings + "/zclassic/"
+                fileCopy.setTargetFile(this.settings.outputPath + "/zclassic/"
                         + this.settings.app.getName() + "/src/modules/"
                         + this.settings.app.getName() + "/images/admin.png");
                 fileCopy.invoke(null);

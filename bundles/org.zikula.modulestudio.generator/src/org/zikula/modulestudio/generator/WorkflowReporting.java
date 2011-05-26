@@ -21,7 +21,7 @@ public class WorkflowReporting {
         try {
             final Bundle bundle = Platform.getBundle(Activator.PLUGIN_ID);
             final java.net.URL[] resources = FileLocator.findEntries(bundle,
-                    new Path("/src/templates/reporting/reports"));
+                    new Path(this.settings.reportPath));
 
             final File dir = new File(FileLocator.toFileURL(resources[0])
                     .toURI());

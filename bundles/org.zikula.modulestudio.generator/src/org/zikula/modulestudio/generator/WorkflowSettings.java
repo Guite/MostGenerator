@@ -35,6 +35,7 @@ public class WorkflowSettings {
     Object[] selectedReports = null;
     IWorkbenchWindow workbenchWindow = null;
     IWorkbench workbench = null;
+    String reportPath = "/templates/reporting/reports";
 
     public WorkflowSettings() {
         this.availableCartridges.add("zclassic");
@@ -42,8 +43,7 @@ public class WorkflowSettings {
         this.availableCartridges.add("reporting");
 
         final java.net.URL[] resources = FileLocator.findEntries(Platform
-                .getBundle(Activator.PLUGIN_ID), new Path(
-                "/src/templates/reporting/reports"));
+                .getBundle(Activator.PLUGIN_ID), new Path(this.reportPath));
         try {
             this.reportDir = new File(FileLocator.toFileURL(resources[0])
                     .toURI());

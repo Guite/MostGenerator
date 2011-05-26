@@ -1327,7 +1327,7 @@ countRows(row["Entity::fields::name"],attribute)</expression>
             <property name="fontWeight">bold</property>
             <property name="paddingTop">5pt</property>
             <property name="paddingBottom">5pt</property>
-            <text-property name="text">Tabellen</text-property>
+            <text-property name="text">Funktionspunktanalyse</text-property>
         </label>
         <grid id="10">
             <property name="fontSize">8pt</property>
@@ -3224,7 +3224,7 @@ this.text = ausgaben["fps"][2];]]></method>
                     <text id="55">
                         <property name="fontWeight">bold</property>
                         <property name="contentType">auto</property>
-                        <text-property name="content"><![CDATA[Summe]]></text-property>
+                        <text-property name="content"><![CDATA[Summe unjustierter Funktionspunkte]]></text-property>
                     </text>
                 </cell>
                 <cell id="53">

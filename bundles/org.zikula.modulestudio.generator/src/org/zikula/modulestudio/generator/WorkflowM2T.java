@@ -24,14 +24,17 @@ public class WorkflowM2T {
                     this.settings.app, this.settings.progressMonitor);
 
             for (final Object singleCartridge : this.settings.selectedCartridges) {
-                // run workflow
-                final boolean generateResult = msGen.runWorkflow(
-                        this.settings.outputPath, singleCartridge.toString());
-
-                if (!generateResult) {
-                    throw new M2TFailedCartridgeIncomplete(
+                if (singleCartridge.toString() != "reporting") {
+                    // run workflow
+                    final boolean generateResult = msGen.runWorkflow(
+                            this.settings.outputPath,
                             singleCartridge.toString());
 
+                    if (!generateResult) {
+                        throw new M2TFailedCartridgeIncomplete(
+                                singleCartridge.toString());
+
+                    }
                 }
             }
         } catch (final IOException e) {

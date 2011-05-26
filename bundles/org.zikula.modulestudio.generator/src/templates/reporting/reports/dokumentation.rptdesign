@@ -1664,7 +1664,7 @@
             <property name="borderBottomWidth">3px</property>
             <property name="paddingTop">10pt</property>
             <property name="paddingBottom">3pt</property>
-            <text-property name="text">Tables</text-property>
+            <text-property name="text">Tabellen</text-property>
         </label>
         <table id="68">
             <property name="marginLeft">10pt</property>
@@ -2498,7 +2498,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">Fields</text-property>
+                            <text-property name="text">Felder</text-property>
                         </label>
                     </cell>
                 </row>
@@ -2589,7 +2589,7 @@
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
                                         <label id="311">
-                                            <text-property name="text">Description</text-property>
+                                            <text-property name="text">Beschreibung</text-property>
                                         </label>
                                     </cell>
                                 </row>
@@ -2649,7 +2649,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">Relations</text-property>
+                            <text-property name="text">Relationen</text-property>
                         </label>
                     </cell>
                 </row>
@@ -2666,7 +2666,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">1:1-Relations</text-property>
+                            <text-property name="text">1:1-Relationen</text-property>
                         </label>
                         <table id="231">
                             <property name="borderBottomColor">#000000</property>
@@ -2808,7 +2808,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">1:m-Relations</text-property>
+                            <text-property name="text">1:m-Relationen</text-property>
                         </label>
                         <table id="261">
                             <property name="borderBottomColor">#000000</property>
@@ -2954,7 +2954,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">m:n-Relations</text-property>
+                            <text-property name="text">m:n-Relationen</text-property>
                         </label>
                         <table id="279">
                             <property name="borderBottomColor">#000000</property>
@@ -3395,7 +3395,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">Actions</text-property>
+                            <text-property name="text">Aktionen</text-property>
                         </label>
                     </cell>
                 </row>

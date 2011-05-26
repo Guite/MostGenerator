@@ -1418,7 +1418,7 @@
       <Type>Linear</Type>
       <Title>
         <Caption>
-          <Value>Spaltenanzahl</Value>
+          <Value></Value>
           <Font>
             <Size>14.0</Size>
             <Bold>true</Bold>
@@ -1451,7 +1451,7 @@
           <Bottom>0.0</Bottom>
           <Right>3.0</Right>
         </Insets>
-        <Visible>true</Visible>
+        <Visible>false</Visible>
       </Title>
       <TitlePosition>Left</TitlePosition>
       <SeriesDefinitions>
@@ -2753,7 +2753,7 @@
       <Type>Linear</Type>
       <Title>
         <Caption>
-          <Value>Y-Axis Title</Value>
+          <Value></Value>
           <Font>
             <Size>14.0</Size>
             <Bold>true</Bold>
