@@ -17,7 +17,6 @@
     <property name="Data Cube.Eigenschaften.y">80</property>
     <simple-property-list name="includeResource">
         <value>i18n/generic/generic</value>
-        <value>i18n/modelInfos/modelInfos</value>
     </simple-property-list>
     <list-property name="includeScripts">
         <property>reportingHelpers.js</property>

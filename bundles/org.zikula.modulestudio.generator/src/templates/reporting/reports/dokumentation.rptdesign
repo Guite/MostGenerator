@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
     <property name="createdBy">Eclipse BIRT Designer Version 2.6.1.v20100902 Build &lt;2.6.1.v20100915-1750></property>
+    <simple-property-list name="includeResource">
+        <value>i18n/generic/generic</value>
+    </simple-property-list>
     <property name="units">in</property>
     <list-property name="propertyBindings">
         <structure>
@@ -1439,7 +1442,7 @@
                     <property name="borderTopStyle">solid</property>
                     <property name="borderTopWidth">thin</property>
                     <label id="61">
-                        <text-property name="text">Author</text-property>
+                        <text-property name="text" key="author"></text-property>
                     </label>
                 </cell>
                 <cell id="28">
@@ -1485,7 +1488,7 @@
                     <property name="borderTopStyle">solid</property>
                     <property name="borderTopWidth">thin</property>
                     <label id="62">
-                        <text-property name="text">E-Mail</text-property>
+                        <text-property name="text" key="e-mail"></text-property>
                     </label>
                 </cell>
                 <cell id="31">
@@ -1531,7 +1534,7 @@
                     <property name="borderTopStyle">solid</property>
                     <property name="borderTopWidth">thin</property>
                     <label id="63">
-                        <text-property name="text">Url</text-property>
+                        <text-property name="text" key="url"></text-property>
                     </label>
                 </cell>
                 <cell id="34">
@@ -1577,7 +1580,7 @@
                     <property name="borderTopStyle">solid</property>
                     <property name="borderTopWidth">thin</property>
                     <label id="64">
-                        <text-property name="text">Version</text-property>
+                        <text-property name="text" key="version"></text-property>
                     </label>
                 </cell>
                 <cell id="37">
@@ -1624,7 +1627,7 @@
                     <property name="borderTopStyle">solid</property>
                     <property name="borderTopWidth">thin</property>
                     <label id="65">
-                        <text-property name="text">License</text-property>
+                        <text-property name="text" key="license"></text-property>
                     </label>
                 </cell>
                 <cell id="40">
@@ -1664,7 +1667,7 @@
             <property name="borderBottomWidth">3px</property>
             <property name="paddingTop">10pt</property>
             <property name="paddingBottom">3pt</property>
-            <text-property name="text">Tabellen</text-property>
+            <text-property name="text" key="tables"></text-property>
         </label>
         <table id="68">
             <property name="marginLeft">10pt</property>
@@ -1855,7 +1858,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">Behaviours</text-property>
+                            <text-property name="text" key="behaviours"></text-property>
                         </label>
                     </cell>
                 </row>
@@ -1905,7 +1908,7 @@
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
                                     <label id="705">
-                                        <text-property name="text">Bezeichnung</text-property>
+                                        <text-property name="text" key="name"></text-property>
                                     </label>
                                 </cell>
                                 <cell id="677">
@@ -1922,7 +1925,7 @@
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
                                     <label id="706">
-                                        <text-property name="text">Aktiv</text-property>
+                                        <text-property name="text" key="active"></text-property>
                                     </label>
                                 </cell>
                                 <cell id="678">
@@ -1939,7 +1942,7 @@
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
                                     <label id="707">
-                                        <text-property name="text">Bezeichnung</text-property>
+                                        <text-property name="text" key="name"></text-property>
                                     </label>
                                 </cell>
                                 <cell id="679">
@@ -1956,7 +1959,7 @@
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
                                     <label id="708">
-                                        <text-property name="text">Aktiv</text-property>
+                                        <text-property name="text" key="active"></text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -2498,7 +2501,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">Felder</text-property>
+                            <text-property name="text" key="columns"></text-property>
                         </label>
                     </cell>
                 </row>
@@ -2572,7 +2575,7 @@
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
                                         <label id="309">
-                                            <text-property name="text">Name</text-property>
+                                            <text-property name="text" key="name"></text-property>
                                         </label>
                                     </cell>
                                     <cell id="310">
@@ -2589,7 +2592,7 @@
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
                                         <label id="311">
-                                            <text-property name="text">Beschreibung</text-property>
+                                            <text-property name="text" key="description"></text-property>
                                         </label>
                                     </cell>
                                 </row>
@@ -2649,7 +2652,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">Relationen</text-property>
+                            <text-property name="text" key="relations"></text-property>
                         </label>
                     </cell>
                 </row>
@@ -2666,7 +2669,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">1:1-Relationen</text-property>
+                            <text-property name="text" key="relations_1_1"></text-property>
                         </label>
                         <table id="231">
                             <property name="borderBottomColor">#000000</property>
@@ -2731,7 +2734,7 @@
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
                                         <label id="234">
-                                            <text-property name="text">Zieltabelle</text-property>
+                                            <text-property name="text" key="target"></text-property>
                                         </label>
                                     </cell>
                                     <cell id="237">
@@ -2748,7 +2751,7 @@
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
                                         <label id="238">
-                                            <text-property name="text">Join-Typ</text-property>
+                                            <text-property name="text" key="join_type"></text-property>
                                         </label>
                                     </cell>
                                 </row>
@@ -2808,7 +2811,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">1:m-Relationen</text-property>
+                            <text-property name="text" key="relations_1_n"></text-property>
                         </label>
                         <table id="261">
                             <property name="borderBottomColor">#000000</property>
@@ -2874,7 +2877,7 @@
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
                                         <label id="264">
-                                            <text-property name="text">Zieltabelle</text-property>
+                                            <text-property name="text" key="target"></text-property>
                                         </label>
                                     </cell>
                                     <cell id="265">
@@ -2892,7 +2895,7 @@
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
                                         <label id="266">
-                                            <text-property name="text">Join-Typ</text-property>
+                                            <text-property name="text" key="join_type"></text-property>
                                         </label>
                                     </cell>
                                 </row>
@@ -2954,7 +2957,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">m:n-Relationen</text-property>
+                            <text-property name="text" key="relations_n_m"></text-property>
                         </label>
                         <table id="279">
                             <property name="borderBottomColor">#000000</property>
@@ -3021,7 +3024,7 @@
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
                                         <label id="282">
-                                            <text-property name="text">Zieltabelle</text-property>
+                                            <text-property name="text" key="target"></text-property>
                                         </label>
                                     </cell>
                                     <cell id="283">
@@ -3039,7 +3042,7 @@
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
                                         <label id="284">
-                                            <text-property name="text">Join-Typ</text-property>
+                                            <text-property name="text" key="join_type"></text-property>
                                         </label>
                                     </cell>
                                 </row>
@@ -3101,7 +3104,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">Indizes</text-property>
+                            <text-property name="text" key="indices"></text-property>
                         </label>
                     </cell>
                 </row>
@@ -3182,7 +3185,7 @@
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
                                         <label id="341">
-                                            <text-property name="text">Name</text-property>
+                                            <text-property name="text" key="name"></text-property>
                                         </label>
                                     </cell>
                                     <cell id="338">
@@ -3200,7 +3203,7 @@
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
                                         <label id="337">
-                                            <text-property name="text">Typ</text-property>
+                                            <text-property name="text" key="type"></text-property>
                                         </label>
                                     </cell>
                                     <cell id="342">
@@ -3218,7 +3221,7 @@
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
                                         <label id="343">
-                                            <text-property name="text">Beschreibung</text-property>
+                                            <text-property name="text" key="description"></text-property>
                                         </label>
                                     </cell>
                                 </row>
@@ -3307,7 +3310,7 @@
             <property name="borderBottomWidth">3px</property>
             <property name="paddingTop">10pt</property>
             <property name="paddingBottom">3pt</property>
-            <text-property name="text">Controller</text-property>
+            <text-property name="text" key="controller"></text-property>
         </label>
         <table id="393">
             <property name="marginLeft">10pt</property>
@@ -3395,7 +3398,7 @@
                             <property name="paddingTop">5pt</property>
                             <property name="paddingBottom">5pt</property>
                             <property name="pageBreakAfter">avoid</property>
-                            <text-property name="text">Aktionen</text-property>
+                            <text-property name="text" key="actions"></text-property>
                         </label>
                     </cell>
                 </row>
@@ -3465,7 +3468,7 @@
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
                                         <label id="425">
-                                            <text-property name="text">Name</text-property>
+                                            <text-property name="text" key="name"></text-property>
                                         </label>
                                     </cell>
                                     <cell id="426">
@@ -3483,7 +3486,7 @@
                                         <property name="borderTopStyle">solid</property>
                                         <property name="borderTopWidth">thin</property>
                                         <label id="427">
-                                            <text-property name="text">Beschreibung</text-property>
+                                            <text-property name="text" key="description"></text-property>
                                         </label>
                                     </cell>
                                 </row>
