@@ -15,6 +15,10 @@
     </list-property>
     <property name="Data Cube.Eigenschaften.x">135</property>
     <property name="Data Cube.Eigenschaften.y">80</property>
+    <simple-property-list name="includeResource">
+        <value>i18n/generic/generic</value>
+        <value>i18n/modelInfos/modelInfos</value>
+    </simple-property-list>
     <list-property name="includeScripts">
         <property>reportingHelpers.js</property>
     </list-property>
@@ -704,7 +708,7 @@
                     <property name="borderTopStyle">solid</property>
                     <property name="borderTopWidth">thin</property>
                     <label id="61">
-                        <text-property name="text">Autor</text-property>
+                        <text-property name="text" key="author"></text-property>
                     </label>
                 </cell>
                 <cell id="28">
@@ -750,7 +754,7 @@
                     <property name="borderTopStyle">solid</property>
                     <property name="borderTopWidth">thin</property>
                     <label id="62">
-                        <text-property name="text">E-Mail</text-property>
+                        <text-property name="text" key="e-mail"></text-property>
                     </label>
                 </cell>
                 <cell id="31">
@@ -796,7 +800,7 @@
                     <property name="borderTopStyle">solid</property>
                     <property name="borderTopWidth">thin</property>
                     <label id="63">
-                        <text-property name="text">Url</text-property>
+                        <text-property name="text" key="url"></text-property>
                     </label>
                 </cell>
                 <cell id="34">
@@ -842,7 +846,7 @@
                     <property name="borderTopStyle">solid</property>
                     <property name="borderTopWidth">thin</property>
                     <label id="64">
-                        <text-property name="text">Version</text-property>
+                        <text-property name="text" key="version"></text-property>
                     </label>
                 </cell>
                 <cell id="37">
@@ -888,7 +892,7 @@
                     <property name="borderTopStyle">solid</property>
                     <property name="borderTopWidth">thin</property>
                     <label id="65">
-                        <text-property name="text">Lizenz</text-property>
+                        <text-property name="text" key="license"></text-property>
                     </label>
                 </cell>
                 <cell id="40">
@@ -925,7 +929,7 @@
             <property name="fontWeight">bold</property>
             <property name="paddingTop">5pt</property>
             <property name="paddingBottom">5pt</property>
-            <text-property name="text">Tabellen</text-property>
+            <text-property name="text" key="tables"></text-property>
         </label>
         <grid id="86">
             <property name="width">7.751937984496124in</property>
@@ -1003,7 +1007,7 @@
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
                                     <label id="80">
-                                        <text-property name="text">Tabellenname</text-property>
+                                        <text-property name="text" key="tableName"></text-property>
                                     </label>
                                 </cell>
                                 <cell id="71">
@@ -1020,7 +1024,7 @@
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
                                     <label id="82">
-                                        <text-property name="text">Spaltenanzahl</text-property>
+                                        <text-property name="text" key="rowCount"></text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -2200,7 +2204,7 @@
             <property name="fontWeight">bold</property>
             <property name="paddingTop">5pt</property>
             <property name="paddingBottom">5pt</property>
-            <text-property name="text">Relationen</text-property>
+            <text-property name="text" key="relations"></text-property>
         </label>
         <grid id="92">
             <property name="width">7.767441860465116in</property>
@@ -2293,7 +2297,7 @@
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
                                     <label id="133">
-                                        <text-property name="text">Tabellenname</text-property>
+                                        <text-property name="text" key="tableName"></text-property>
                                     </label>
                                 </cell>
                                 <cell id="120">
@@ -2310,7 +2314,7 @@
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
                                     <label id="135">
-                                        <text-property name="text">Ausgehend</text-property>
+                                        <text-property name="text" key="outgoing"></text-property>
                                     </label>
                                 </cell>
                                 <cell id="121">
@@ -2327,7 +2331,7 @@
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
                                     <label id="137">
-                                        <text-property name="text">Eingehend</text-property>
+                                        <text-property name="text" key="incoming"></text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -3028,7 +3032,7 @@
               <AggregateExpression>Sum</AggregateExpression>
             </Grouping>
           </DataDefinition>
-          <SeriesIdentifier>Eingehend</SeriesIdentifier>
+          <SeriesIdentifier>incoming=</SeriesIdentifier>
           <DataPoint>
             <Components>
               <Type>Orthogonal_Value</Type>
@@ -3284,7 +3288,7 @@
               <AggregateExpression>Sum</AggregateExpression>
             </Grouping>
           </DataDefinition>
-          <SeriesIdentifier>Ausgehend</SeriesIdentifier>
+          <SeriesIdentifier>outgoing=</SeriesIdentifier>
           <DataPoint>
             <Components>
               <Type>Orthogonal_Value</Type>
