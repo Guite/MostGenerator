@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
+    <list-property name="configVars">
+        <structure>
+            <property name="name">__isdisplay__modelPath_448_0</property>
+            <property name="value">file://home/gabriel/workspace/Maturaprojekt/examples/ValidationTest.mostapp</property>
+        </structure>
+        <structure>
+            <property name="name">modelPath_448_1</property>
+            <property name="value">file://home/gabriel/workspace/Maturaprojekt/examples/ValidationTest.mostapp</property>
+        </structure>
+        <structure>
+            <property name="name">modelPath_448_type_</property>
+            <property name="value">string</property>
+        </structure>
+    </list-property>
+</report>
