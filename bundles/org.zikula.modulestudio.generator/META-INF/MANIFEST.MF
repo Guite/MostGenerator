@@ -28,7 +28,14 @@ Require-Bundle: de.guite.modulestudio.metamodel;bundle-version="1.0.1",
  org.eclipse.datatools.enablement.oda.ecore;bundle-version="1.0.1",
  org.eclipse.birt.report.engine.emitter.pdf;bundle-version="2.6.1",
  org.eclipse.birt.report.engine.script.javascript;bundle-version="2.6.1",
- org.eclipse.birt.chart.engine;bundle-version="2.6.2"
+ org.eclipse.birt.chart.engine;bundle-version="2.6.2",
+ org.eclipse.birt.chart.device.extension;bundle-version="2.6.2",
+ org.eclipse.birt.chart.device.pdf;bundle-version="2.6.2",
+ org.eclipse.birt.chart.device.svg;bundle-version="2.6.2",
+ org.eclipse.birt.chart.device.swt;bundle-version="2.6.2",
+ org.eclipse.birt.chart.engine.extension;bundle-version="2.6.2",
+ org.eclipse.birt.chart.reportitem;bundle-version="2.6.2",
+ org.eclipse.birt.report.item.crosstab.core;bundle-version="2.6.2"
 Bundle-Vendor: %providerName
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.zikula.modulestudio.generator.application.Activator
