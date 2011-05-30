@@ -215,7 +215,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             // try to guarantee that only one person at a time can be editing this «name.formatForDisplay()»
             $returnUrl = ModUtil::url('«app.appName()»', '«controller.name()»', 'display', array('ot' => $this->objectType, '«idField()»' => $this->«idField()»));
             ModUtil::apiFunc('PageLock', 'user', 'pageLock',
-                                 array('lockName' => '«app.appName()»«name.formatForCodeCapital()»{$this->«idField()»}',
+                                 array('lockName' => '«app.appName()»«name.formatForCodeCapital()»' . $this->«idField()»,
                                        'returnUrl' => $returnUrl));
         }
         else {
@@ -590,7 +590,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         if ($this->mode == 'edit') {
             ModUtil::apiFunc('PageLock', 'user', 'releaseLock',
-                             array('lockName' => '«app.appName()»«name.formatForCodeCapital()»{$this->«idField()»}'));
+                             array('lockName' => '«app.appName()»«name.formatForCodeCapital()»' . $this->«idField()»));
         }
 
         return $this->view->redirect($this->getRedirectUrl($args, $«name.formatForCode()», $repeatCreateAction));
