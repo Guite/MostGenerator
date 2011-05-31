@@ -16,7 +16,7 @@ import org.eclipse.gmf.runtime.diagram.ui.image.ImageFileFormat;
 import org.eclipse.gmf.runtime.diagram.ui.render.util.CopyToImageUtil;
 import org.eclipse.gmf.runtime.emf.core.resources.GMFResource;
 import org.eclipse.gmf.runtime.notation.Diagram;
-import org.zikula.modulestudio.generator.application.ManualProgressMonitor;
+import org.eclipse.swt.widgets.Display;
 
 import de.guite.modulestudio.metamodel.modulestudio.Application;
 import de.guite.modulestudio.metamodel.modulestudio.Controllers;
@@ -48,14 +48,10 @@ public class DiagramExporter {
     /** counter for iterating view sub diagrams */
     private Integer diagCounterV;
 
-    /** reference to helper class */
-    private final CopyToImageUtil copyUtil;
-
     private PreferencesHint preferencesHint;
 
     public DiagramExporter() {
-        // instantiate utility class to render a diagram to an image file
-        copyUtil = new CopyToImageUtil();
+
     }
 
     public void processDiagram(Diagram appDiagram, String outPath,
@@ -125,17 +121,23 @@ public class DiagramExporter {
         }
 
         boolean result = false;
-        result = saveCurrentDiagramAs(ImageFileFormat.BMP);
-        result = saveCurrentDiagramAs(ImageFileFormat.GIF);
-        result = saveCurrentDiagramAs(ImageFileFormat.JPG);
-        result = saveCurrentDiagramAs(ImageFileFormat.PDF);
-        result = saveCurrentDiagramAs(ImageFileFormat.PNG);
-        result = saveCurrentDiagramAs(ImageFileFormat.SVG);
+        try {
+            result = saveCurrentDiagramAs(ImageFileFormat.BMP);
+            result = saveCurrentDiagramAs(ImageFileFormat.GIF);
+            result = saveCurrentDiagramAs(ImageFileFormat.JPG);
+            result = saveCurrentDiagramAs(ImageFileFormat.PDF);
+            result = saveCurrentDiagramAs(ImageFileFormat.PNG);
+            result = saveCurrentDiagramAs(ImageFileFormat.SVG);
+        } catch (final CoreException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return result;
     }
 
-    private boolean saveCurrentDiagramAs(final ImageFileFormat format) {
-        final ManualProgressMonitor monitor = new ManualProgressMonitor();
+    private boolean saveCurrentDiagramAs(final ImageFileFormat format)
+            throws CoreException {
+        // final ManualProgressMonitor monitor = new ManualProgressMonitor();
 
         String outputSuffix = "";
         if (inputDiagramType == 0) {
@@ -155,15 +157,22 @@ public class DiagramExporter {
                 + format.toString().toLowerCase();
         final IPath destination = new Path(filePath);
 
-        try {
-            new CopyToImageUtil().copyToImage(inputDiagram, destination,
-                    format, new NullProgressMonitor(), preferencesHint);
-            return true;
-        } catch (final CoreException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return false;
+        final Display display = Display.getDefault();
+
+        display.asyncExec(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    new CopyToImageUtil().copyToImage(inputDiagram,
+                            destination, format, new NullProgressMonitor(),
+                            preferencesHint);
+                } catch (final CoreException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        });
+        return true;
     }
 
     /**

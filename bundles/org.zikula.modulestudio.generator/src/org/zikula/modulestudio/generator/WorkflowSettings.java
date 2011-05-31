@@ -35,7 +35,7 @@ public class WorkflowSettings {
     Object[] selectedReports = null;
     IWorkbenchWindow workbenchWindow = null;
     IWorkbench workbench = null;
-    String reportPath = "/templates/reporting/reports";
+    String reportPath = "/src/templates/reporting/reports";
 
     public WorkflowSettings() {
         this.availableCartridges.add("zclassic");

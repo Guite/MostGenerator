@@ -21,9 +21,9 @@ public class WorkflowStart {
         }
 
         if (this.settings.selectedCartridges.contains("reporting")) {
-            // final WorkflowDiagramExporter diagramExporter = new
-            // WorkflowDiagramExporter(this.settings);
-            // diagramExporter.run();
+            final WorkflowDiagramExporter diagramExporter = new WorkflowDiagramExporter(
+                    this.settings);
+            diagramExporter.run();
             final WorkflowReporting reporting = new WorkflowReporting(
                     this.settings);
             reporting.run();
