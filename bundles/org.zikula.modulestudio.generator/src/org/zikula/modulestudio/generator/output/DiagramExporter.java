@@ -137,7 +137,6 @@ public class DiagramExporter {
 
     private boolean saveCurrentDiagramAs(final ImageFileFormat format)
             throws CoreException {
-        // final ManualProgressMonitor monitor = new ManualProgressMonitor();
 
         String outputSuffix = "";
         if (inputDiagramType == 0) {
