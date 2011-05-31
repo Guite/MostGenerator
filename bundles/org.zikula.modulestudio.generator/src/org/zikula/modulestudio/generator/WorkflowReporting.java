@@ -32,9 +32,12 @@ public class WorkflowReporting {
             reportingFacade.setModelPath(this.settings.modelPath);
             reportingFacade.setUp();
             for (final Object report : this.settings.selectedReports) {
+                settings.progressMonitor.subTask("Reporting: "
+                        + report.toString());
                 reportingFacade
                         .startExport(dir.toString() + "/" + report.toString()
                                 + ".rptdesign", report.toString() + ".pdf");
+                settings.progressMonitor.subTask("");
             }
 
             reportingFacade.shutDown();
