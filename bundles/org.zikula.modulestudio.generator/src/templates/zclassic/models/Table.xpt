@@ -130,6 +130,40 @@ class «baseClassModelTable()» extends Doctrine_Table
         $count = $pager->getNumResults();
         return array($results, $count);
     }
+«IF !getUniqueDerivedFields().isEmpty-»
+
+    /**
+     * Select count with a given where clause.
+     *
+     * @param string  $where    The where clause to use when retrieving the object count (optional) (default='').
+     * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
+     *
+     * @return integer amount of affected records
+     */
+    public function selectCount($where = '', $useJoins = true)
+    {
+        // TODO: fix usage of joins; please remove the following line and test.
+        $useJoins = false;
+
+        $selection = 'COUNT(tbl.«idField()») AS num«nameMultiple.formatForCodeCapital()»';
+        if ($useJoins === true) {
+            $selection = $this->addJoinsToSelection($selection);
+        }
+
+        $q = Doctrine_Query::create()
+            ->select($selection)
+            ->from('«implClassModelRecord()» tbl');
+
+        if ($useJoins === true) {
+            $this->addJoinsToFrom($q);
+        }
+
+        if (!empty($where)) {
+            $q->where($where);
+        }
+        return $q->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+    }
+«ENDIF-»
 «IF nestedSet-»
 
     /**
