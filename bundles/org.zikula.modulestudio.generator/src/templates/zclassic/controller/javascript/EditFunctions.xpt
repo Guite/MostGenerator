@@ -61,7 +61,7 @@ function «prefix()»UniqueCheck(ucOt, val, elem, ucEx)
     new Zikula.Ajax.Request(Zikula.Config['baseURL'] + 'ajax.php?module=«appName()»&func=checkForDuplicate', {
         method: 'post',
         parameters: params,
-        authid 'FormAuthid',«REM»from the Forms framework«ENDREM»
+        authid: 'FormAuthid',«REM»from the Forms framework«ENDREM»
         onComplete: function(req) {
             // check if request was successful
             if (!req.isSuccess()) {
