@@ -29,9 +29,6 @@ import de.guite.modulestudio.metamodel.modulestudio.Views;
 /** TODO: javadocs needed for class, members and methods */
 public class DiagramExporter {
 
-    /** reference to currently treated diagram */
-    private Diagram inputDiagram;
-
     /** diagram type (0 = main, 1 = model, 2 = controller, 3 = view) */
     private Integer inputDiagramType;
 
@@ -56,7 +53,6 @@ public class DiagramExporter {
 
     public void processDiagram(Diagram appDiagram, String outPath,
             PreferencesHint prefHint) {
-        inputDiagram = appDiagram;
         inputDiagramType = 0;
         preferencesHint = prefHint;
         diagCounterM = diagCounterC = diagCounterV = 0;
@@ -72,7 +68,7 @@ public class DiagramExporter {
             }
         }
 
-        final Application app = ((Application) inputDiagram.getElement());
+        final Application app = ((Application) appDiagram.getElement());
         outputPrefix = app.getName();
 
         // get resource set with all resources loaded in the editing domain
@@ -95,8 +91,7 @@ public class DiagramExporter {
                 if (!(resourceElement instanceof Diagram)) {
                     continue;
                 }
-                inputDiagram = (Diagram) resourceElement;
-                if (!saveCurrentDiagramInAllFormats()) {
+                if (!saveCurrentDiagramInAllFormats((Diagram) resourceElement)) {
                     System.out
                             .println("An error occured during exporting the diagram.");
                 }
@@ -104,7 +99,7 @@ public class DiagramExporter {
         }
     }
 
-    private boolean saveCurrentDiagramInAllFormats() {
+    private boolean saveCurrentDiagramInAllFormats(Diagram inputDiagram) {
         final EObject diagramElement = inputDiagram.getElement();
         inputDiagramType = 0;
         if (diagramElement instanceof Models) {
@@ -122,12 +117,12 @@ public class DiagramExporter {
 
         boolean result = false;
         try {
-            result = saveCurrentDiagramAs(ImageFileFormat.BMP);
-            result = saveCurrentDiagramAs(ImageFileFormat.GIF);
-            result = saveCurrentDiagramAs(ImageFileFormat.JPG);
-            result = saveCurrentDiagramAs(ImageFileFormat.PDF);
-            result = saveCurrentDiagramAs(ImageFileFormat.PNG);
-            result = saveCurrentDiagramAs(ImageFileFormat.SVG);
+            result = saveCurrentDiagramAs(ImageFileFormat.BMP, inputDiagram);
+            result = saveCurrentDiagramAs(ImageFileFormat.GIF, inputDiagram);
+            result = saveCurrentDiagramAs(ImageFileFormat.JPG, inputDiagram);
+            result = saveCurrentDiagramAs(ImageFileFormat.PDF, inputDiagram);
+            result = saveCurrentDiagramAs(ImageFileFormat.PNG, inputDiagram);
+            result = saveCurrentDiagramAs(ImageFileFormat.SVG, inputDiagram);
         } catch (final CoreException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -135,8 +130,8 @@ public class DiagramExporter {
         return result;
     }
 
-    private boolean saveCurrentDiagramAs(final ImageFileFormat format)
-            throws CoreException {
+    private boolean saveCurrentDiagramAs(final ImageFileFormat format,
+            final Diagram inputDiagram) throws CoreException {
 
         String outputSuffix = "";
         if (inputDiagramType == 0) {
