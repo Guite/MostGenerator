@@ -188,7 +188,7 @@ class «appName()»_Util_Base_View extends Zikula_AbstractBase
 «IF hasUploads()-»
 
     /**
-     * This methods is used by the «appName().formatForDB()»ImageThumb modifier
+     * This method is used by the «appName().formatForDB()»ImageThumb modifier
      * for creating and displaying a thumbnail image.
      *
      * @param  string    $fileName   The input file name.
