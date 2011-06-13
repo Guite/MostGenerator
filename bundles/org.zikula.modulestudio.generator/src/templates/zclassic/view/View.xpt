@@ -64,8 +64,10 @@
 {admincategorymenu}
 «ENDIF-»
 <div class="z-«IF controller.metaType == AdminController»admin«ELSE»frontend«ENDIF»box">
+«IF controller.metaType == AdminController-»
     {img modname='«appName»' src='admin.png'}
-    <h1>{gt text='«appName.formatForDisplayCapital()»' comment='This is the title of the header template'}</h1>
+«ENDIF-»
+    <h2>{gt text='«appName.formatForDisplayCapital()»' comment='This is the title of the header template'}</h2>
     {modulelinks modname='«appName»' type='«controller.name()»'}
 </div>
 «IF controller.metaType == AdminController-»
