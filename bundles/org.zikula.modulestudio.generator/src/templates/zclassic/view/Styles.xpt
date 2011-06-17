@@ -136,7 +136,7 @@ div.«prefix()»AutoComplete ul li {
 }
 «IF hasUserFields-»
 div.«prefix()»AutoCompleteUser ul li {
-    background-image: url("../../../images/icons/extrasmall/edit_user.png");
+    background-image: url("../../../images/icons/extrasmall/user.png");
 }
 «ENDIF-»
 «IF hasImageFields-»
