@@ -119,7 +119,9 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
         // parameter for used sort order
         $sdir = $this->request->getGet()->filter('sdir', '', FILTER_SANITIZE_STRING);
-        if ($sdir != 'asc' && $sdir != 'desc') $sdir = 'asc';
+        if ($sdir != 'asc' && $sdir != 'desc') {
+            $sdir = 'asc';
+        }
 
 «REM»TODO«ENDREM»
         // the current offset which is used to calculate the pagination
