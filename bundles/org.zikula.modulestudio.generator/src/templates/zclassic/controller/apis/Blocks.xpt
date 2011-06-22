@@ -66,12 +66,12 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
      * Display the block
      *
      * @param        array       $blockinfo a blockinfo structure
-     * @return       output      the rendered bock
+     * @return       output      the rendered block
      */
     public function display($blockinfo)
     {
         // only show block content if the user has the required permissions
-        if (!SecurityUtil::checkPermission('«appName()»:FactListBlock:', "$blockinfo[title]::", ACCESS_OVERVIEW)) {
+        if (!SecurityUtil::checkPermission('«appName()»:ItemListBlock:', "$blockinfo[title]::", ACCESS_OVERVIEW)) {
             return false;
         }
 
