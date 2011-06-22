@@ -110,13 +110,17 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
 «EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(appName(), true, 'block', 'ItemList', 'display')-»
 
         $sortParam = '';
-        if ($vars['sorting'] == 'random') $sortParam = 'RAND()';
-        elseif ($vars['sorting'] == 'newest') $sortParam = $objectCollection->get_intIdField() . ' DESC';
-        elseif ($vars['sorting'] == 'default') $sortParam = $objectCollection->get_intDefaultSortingField() . ' ASC';
+        if ($vars['sorting'] == 'random') {
+            $sortParam = 'RAND()';
+        } elseif ($vars['sorting'] == 'newest') {
+            $sortParam = $objectCollection->get_intIdField() . ' DESC';
+        } elseif ($vars['sorting'] == 'default') {
+            $sortParam = $objectCollection->get_intDefaultSortingField() . ' ASC';
+        }
 
         // get objects from database
         // while the result will be saved in the object, we assign in to a local variable for convenience.
-        $objectData = $objectCollection->selectWherePaginated($vars['filter'], $sortParam, -1, $vars['amount']);
+        list($objectData, $objectCount) = $objectCollection->selectWherePaginated($vars['filter'], $sortParam, -1, $vars['amount']);
 
         $this->view->setCaching(true);
 
