@@ -19,7 +19,6 @@
 {*<rss version="0.92">*}
 {gt text='Latest «nameMultiple.formatForDisplay()»' assign='channelTitle'}
 {gt text='A direct feed showing the list of «nameMultiple.formatForDisplay()»' assign='channelDesc'}
-{getbaseurl assign='baseurl'}
     <channel>
         <title>{$channelTitle}</title>
         <link>{$baseurl|escape:'html'}</link>

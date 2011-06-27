@@ -10,7 +10,6 @@
 «FILE templateFileWithExtension(controller, name, 'view', 'xml')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» view xml view in «controller.name()» area *}
 {«appName.formatForDB()»TemplateHeaders contentType='text/xml'}<?xml version="1.0" encoding="{charset}" ?>
-{getbaseurl assign='baseurl'}
 <«nameMultiple.formatForCode()»>
 {foreach item='item' from=$items}
     {include file='«templateFileWithExtension(controller, name, 'include', 'xml').replaceFirst('templates/', '')»'}

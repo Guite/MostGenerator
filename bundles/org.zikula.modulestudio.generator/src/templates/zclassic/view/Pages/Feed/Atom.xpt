@@ -12,7 +12,6 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 {gt text='Latest «nameMultiple.formatForDisplay()»' assign='channelTitle'}
 {gt text='A direct feed showing the list of «nameMultiple.formatForDisplay()»' assign='channelDesc'}
-{getbaseurl assign='baseurl'}
     <title type="text">{$channelTitle}</title>
     <subtitle type="text">{$channelDesc} - {$modvars.ZConfig.slogan}</subtitle>
     <author>
