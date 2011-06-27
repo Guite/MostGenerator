@@ -8,16 +8,18 @@
 {* purpose of this template: module configuration *}
 
 {include file='«configController().formatForDB()»/header.tpl'}
+
+{gt text='Settings' assign='templateTitle'}
+{pagesetvar name='title' value=$templateTitle}
 «IF configController().formatForDB() == 'admin'-»
-<div class="z-admincontainer">
-    <div class="z-adminpageicon">{icon type='config' size='large' __alt='Settings'}</div>
+<div class="z-admin-content-pagetitle">
+    {icon type='config' size='small' __alt='Settings'}
+    <h3>{$templateTitle}</h3>
+</div>
 «ELSE-»
 <div class="z-frontendcontainer">
-«ENDIF-»
-
-    {gt text='Settings' assign='templateTitle'}
-    {pagesetvar name='title' value=$templateTitle}
     <h2>{$templateTitle}</h2>
+«ENDIF-»
 
     {form cssClass='z-form'}
 «REM»    {formsetinitialfocus inputId=googlemapApiKey}«ENDREM»
@@ -41,7 +43,10 @@
             </fieldset>
         {/«appName().formatForDB()»FormFrame}
     {/form}
+«IF configController().formatForDB() == 'admin'-»
+«ELSE-»
 </div>
+«ENDIF-»
 
 {include file='«configController().formatForDB()»/footer.tpl'}
 «ENDFILE-»

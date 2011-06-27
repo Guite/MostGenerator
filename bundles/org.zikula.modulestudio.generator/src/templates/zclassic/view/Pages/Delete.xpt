@@ -10,14 +10,17 @@
 
 {include file='«controller.name()»/header.tpl'}
 
-<div class="z-«IF controller.metaType == AdminController-»admin«ELSE-»frontend«ENDIF-»container">
-{gt text='Delete «name.formatForDisplay()»' assign='templateTitle'}
 «IF controller.metaType == AdminController-»
-    <div class="z-adminpageicon">{icon type='delete' size='large' __alt='Delete'}</div>
-«ENDIF-»
-
-    {pagesetvar name="title" value=$templateTitle}
+{gt text='Delete «name.formatForDisplay()»' assign='templateTitle'}
+{pagesetvar name='title' value=$templateTitle}
+<div class="z-admin-content-pagetitle">
+    {icon type='delete' size='small' __alt='Delete'}
+    <h3>{$templateTitle}</h3>
+</div>
+«ELSE-»
+<div class="z-frontendcontainer">
     <h2>{$templateTitle}</h2>
+«ENDIF-»
 
     <p class="z-warningmsg">{gt text='Do you really want to delete this «name.formatForDisplay()» ?'}</p>
 
@@ -39,9 +42,10 @@
             {/foreach}
         </div>
     </form>
-
-    
+«IF controller.metaType == AdminController-»
+«ELSE-»
 </div>
+«ENDIF-»
 
 {include file='«controller.name()»/footer.tpl'}
 «ENDFILE»

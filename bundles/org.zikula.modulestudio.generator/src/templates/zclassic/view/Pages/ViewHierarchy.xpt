@@ -12,13 +12,18 @@
 
 {include file='«controller.name()»/header.tpl'}
 
-<div class="z-«IF controller.metaType == AdminController-»admin«ELSE»frontend«ENDIF»container">
 {gt text='«name.formatForDisplayCapital()» hierarchy' assign='templateTitle'}
+{pagesetvar name='title' value=$templateTitle}
 «IF controller.metaType == AdminController-»
-    <div class="z-adminpageicon">{icon type='view' size='large' alt=$templateTitle}</div>
-«ENDIF-»
-    {pagesetvar name='title' value=$templateTitle}
+<div class="z-admin-content-pagetitle">
+    {icon type='view' size='small' alt=$templateTitle}
+    <h3>{$templateTitle}</h3>
+</div>
+«ELSE-»
+<div class="z-frontendcontainer">
     <h2>{$templateTitle}</h2>
+«ENDIF-»
+
 «IF documentation != null && documentation != ""-»
     <p class="sectiondesc">«documentation»</p>
 «ENDIF-»
@@ -53,7 +58,10 @@
 {/if}
 <br style="clear: left" />
 
+«IF controller.metaType == AdminController-»
+«ELSE-»
 </div>
+«ENDIF-»
 
 {include file='«controller.name()»/footer.tpl'}
 «ENDFILE»

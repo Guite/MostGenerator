@@ -54,15 +54,16 @@
 «ENDIF-»
 {/if}
 
+{pagesetvar name='title' value=$templateTitle}
 «IF controller.metaType == AdminController-»
-<div class="z-admincontainer">
-<div class="z-adminpageicon">{icon type=$adminPageIcon size='large' alt=$templateTitle}</div>
+<div class="z-admin-content-pagetitle">
+    {icon type=$adminPageIcon size='small' alt=$templateTitle}
+    <h3>{$templateTitle}</h3>
+</div>
 «ELSE-»
 <div class="z-frontendcontainer">
+    <h2>{$templateTitle}</h2>
 «ENDIF-»
-
-{pagesetvar name='title' value=$templateTitle}
-<h2>{$templateTitle}</h2>
 
 {form «IF hasUploadFields()»enctype='multipart/form-data' «ENDIF»cssClass='z-form'}
 
@@ -162,7 +163,6 @@
 {/form}
 
 «IF controller.metaType == AdminController-»
-</div>
 «ELSE-»
 </div>
 «ENDIF-»

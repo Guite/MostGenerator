@@ -10,17 +10,18 @@
 
 {include file='«controller.name()»/header.tpl'}
 
-«IF controller.metaType == AdminController-»
-<div class="z-admincontainer">
-<div class="z-adminpageicon">{icon type='display' size='large' __alt='Details'}</div>
-«ELSE-»
-<div class="z-frontendcontainer">
-«ENDIF-»
-
 «LET name.formatForCode() AS objName-»
 «LET getLeadingField().name.formatForCode() AS titleField-»
 {pagesetvar name='title' value=$«objName».«titleField»}
-<h2>{$«objName».«titleField»|notifyfilters:'«appName.formatForDB()».filter_hooks.«nameMultiple.formatForDB()».filter'}</h2>
+«IF controller.metaType == AdminController-»
+<div class="z-admin-content-pagetitle">
+    {icon type='display' size='small' __alt='Details'}
+    <h3>{$«objName».«titleField»|notifyfilters:'«appName.formatForDB()».filter_hooks.«nameMultiple.formatForDB()».filter'}</h3>
+</div>
+«ELSE-»
+<div class="z-frontendcontainer">
+    <h2>{$«objName».«titleField»|notifyfilters:'«appName.formatForDB()».filter_hooks.«nameMultiple.formatForDB()».filter'}</h2>
+«ENDIF-»
 «ENDLET-»
 
 «LET outgoing.typeSelect(JoinRelationship).union(incoming.typeSelect(ManyToManyRelationship)) AS refedElems-»
@@ -60,7 +61,10 @@
 «ENDLET-»
 {/if}
 
+«IF controller.metaType == AdminController-»
+«ELSE-»
 </div>
+«ENDIF-»
 
 {include file='«controller.name()»/footer.tpl'}
 «ENDFILE»
