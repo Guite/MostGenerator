@@ -5,7 +5,7 @@
 «IMPORT templates::zclassic::smallstuff»
 «IMPORT templates::zclassic::tests»
 «EXTENSION extensions::Utils»
-«EXTENSION org::eclipse::xtend::util::stdlib::io»
+«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «REM»Entry point for headless calls (e.g. for manual test runs), required also for compiler backend mode«ENDREM»
 «DEFINE Root FOR Application»

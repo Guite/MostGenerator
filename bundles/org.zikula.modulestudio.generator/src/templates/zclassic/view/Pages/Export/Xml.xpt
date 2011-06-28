@@ -1,7 +1,7 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«EXTENSION org::eclipse::xtend::util::stdlib::io»
+«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «DEFINE Root(String appName, Controller controller) FOR Entity»
 «info("Generating " + controller.name() + " xml view templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»

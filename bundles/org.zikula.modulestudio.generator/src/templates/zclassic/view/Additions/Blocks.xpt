@@ -1,6 +1,6 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
-«EXTENSION org::eclipse::xtend::util::stdlib::io»
+«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «DEFINE Root FOR Application-»
 «FILE getAppSourcePath(appName()).msconcat("templates/block/itemlist.tpl")-»

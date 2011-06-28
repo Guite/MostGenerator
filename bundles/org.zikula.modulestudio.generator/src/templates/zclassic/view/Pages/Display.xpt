@@ -1,7 +1,7 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«EXTENSION org::eclipse::xtend::util::stdlib::io»
+«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «DEFINE Impl(String appName, Controller controller) FOR Entity»
 «info("Generating " + controller.name() + " display templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»

@@ -1,7 +1,7 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«EXTENSION org::eclipse::xtend::util::stdlib::io»
+«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR EntityField-»
 «prepend»{$«objName».«name.formatForCode()»«IF page == 'viewcsv'»|replace:"\"":""«ENDIF»}«""-»
