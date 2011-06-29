@@ -2,7 +2,7 @@
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«EXTENSION org::eclipse::xtend::util::stdlib::io»
+«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «DEFINE Root FOR Application-»
 «FILE viewPluginFilePath(this, 'function', 'TreeJS')-»«EXPAND FileHelper::phpFileHeader(this)-»
@@ -56,11 +56,11 @@ function smarty_function_«appName().formatForDB()»TreeJS($params, $view)
                         $titleFieldName = '«entity.getLeadingField().actualFieldName().formatForCode()»';
 «LET entity.fields.typeSelect(TextField).reject(e|e.leading) AS textFields-»
 «IF !textFields.isEmpty-»
-                        $descriptionFieldName = '«textFields.get(0).actualFieldName().formatForCode()»';
+                        $descriptionFieldName = strip_tags('«textFields.get(0).actualFieldName().formatForCode()»');
 «ELSE-»
 «LET entity.fields.typeSelect(StringField).reject(e|e.leading) AS textFields-»
 «IF !textFields.isEmpty-»
-                        $descriptionFieldName = '«textFields.get(0).actualFieldName().formatForCode()»';
+                        $descriptionFieldName = strip_tags('«textFields.get(0).actualFieldName().formatForCode()»');
 «ENDIF-»
 «ENDLET-»
 «ENDIF-»

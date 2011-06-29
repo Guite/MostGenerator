@@ -1,7 +1,7 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«EXTENSION org::eclipse::xtend::util::stdlib::io»
+«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «DEFINE Root(Application app) FOR Controller-»
 «ENDDEFINE»

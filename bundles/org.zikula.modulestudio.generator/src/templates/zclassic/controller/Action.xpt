@@ -1,7 +1,7 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«EXTENSION org::eclipse::xtend::util::stdlib::io»
+«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «DEFINE Root(Application app) FOR Action-»
 
@@ -37,7 +37,7 @@
 «ENDIF-»
 «IF metaType == ViewAction-»
      * @param string  $sort         Sorting field.
-     * @param string  $sdir         Sorting direction.
+     * @param string  $sortdir      Sorting direction.
      * @param int     $pos          Current pager position.
      * @param int     $num          Amount of entries to display.
 «ENDIF-»
@@ -118,7 +118,8 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «EXPAND ControllerHelper::DefaultSorting-»
 
         // parameter for used sort order
-        $sdir = $this->request->getGet()->filter('sdir', '', FILTER_SANITIZE_STRING);
+        $sdir = $this->request->getGet()->filter('sortdir', '', FILTER_SANITIZE_STRING);
+        $sdir = strtolower($sdir);
         if ($sdir != 'asc' && $sdir != 'desc') {
             $sdir = 'asc';
         }

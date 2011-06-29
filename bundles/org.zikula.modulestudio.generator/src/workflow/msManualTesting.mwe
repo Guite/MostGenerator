@@ -2,16 +2,16 @@
 <!-- processes specific models for other persons -->
 <workflow>
     <!-- which model ? -->
-    <property name="modelName" value="ValidationTest" />
+    <property name="modelName" value="JuFeBo" />
     <!-- where is it ? -->
-    <property name="modelPath" value="/home/gabriel/workspace/Maturaprojekt/examples" />
+    <property name="modelPath" value="/home/axel" />
 
 	<!-- call file reader workflow and provide required properties -->
 	<cartridge file="workflow/msWorkflowManual.mwe"
 	           modelName="${modelName}"
-	           cartridgeName="reporting"
+	           cartridgeName="zclassic"
 			   modelFile="${modelPath}/${modelName}.mostapp"
 			   enrichedModelFile="${modelPath}/${modelName}_Enriched.mostapp"
-			   srcGenPath="/home/gabriel/workspace/Maturaprojekt/examples/output">
+			   srcGenPath="/home/axel/MostOutput">
 	</cartridge>
 </workflow>
