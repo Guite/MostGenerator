@@ -12,7 +12,8 @@ public class WorkflowDiagramExporter {
 
     public void run() {
         try {
-            final DiagramExporter diagramExporter = new DiagramExporter();
+            final DiagramExporter diagramExporter = new DiagramExporter(
+                    this.settings);
             diagramExporter.processDiagram(this.settings.diagram,
                     this.settings.outputPath,
                     this.settings.diagramPreferencesHint);

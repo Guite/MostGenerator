@@ -39,7 +39,7 @@ public class ReportingFacade {
             hm.put(EngineConstants.APPCONTEXT_CLASSLOADER_KEY,
                     ReportEngine.class.getClassLoader());
             config.setAppContext(hm);
-            config.setLogConfig(this.outputPath, Level.WARNING);
+            config.setLogConfig(this.outputPath + "/reporting/", Level.WARNING);
 
             Platform.startup(config);
             final IReportEngineFactory factory = (IReportEngineFactory) Platform
@@ -53,12 +53,16 @@ public class ReportingFacade {
 
     public void startExport(String reportPath, String outputName) {
         try {
+            // diagramExporterLock.getObjet().wait();
             task = engine.createRunAndRenderTask(engine
                     .openReportDesign(reportPath));
             task.setParameterValue("modelPath",
                     "file:" + (this.modelPath.toString()));
+            task.setParameterValue("diagramPath", "file:"
+                    + (this.outputPath + "/diagrams/"));
             options = new PDFRenderOption();
-            options.setOutputFileName(this.outputPath + "/" + outputName);
+            options.setOutputFileName(this.outputPath + "/reporting/"
+                    + outputName);
             options.setOutputFormat("pdf");
 
             task.setRenderOption(options);
