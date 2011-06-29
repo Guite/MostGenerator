@@ -27,8 +27,7 @@ public class WorkflowReporting {
                     .toURI());
 
             final ReportingFacade reportingFacade = new ReportingFacade();
-            reportingFacade.setOutputPath(this.settings.outputPath
-                    + "/reporting/");
+            reportingFacade.setOutputPath(this.settings.outputPath);
             reportingFacade.setModelPath(this.settings.modelPath);
             reportingFacade.setUp();
             for (final Object report : this.settings.selectedReports) {

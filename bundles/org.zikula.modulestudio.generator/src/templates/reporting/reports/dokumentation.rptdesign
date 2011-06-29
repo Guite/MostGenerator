@@ -37,6 +37,16 @@
                 <property name="category">Unformatted</property>
             </structure>
         </scalar-parameter>
+        <scalar-parameter name="diagramPath" id="780">
+            <property name="valueType">static</property>
+            <property name="dataType">string</property>
+            <property name="distinct">true</property>
+            <property name="paramType">simple</property>
+            <property name="controlType">text-box</property>
+            <structure name="format">
+                <property name="category">Unformatted</property>
+            </structure>
+        </scalar-parameter>
     </parameters>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.ecore" name="MOST model" id="7">
@@ -1385,6 +1395,7 @@
                     <property name="dataType">string</property>
                 </structure>
             </list-property>
+            <method name="onCreate"><![CDATA[modelName = this.getValue();]]></method>
             <property name="resultSetColumn">NamedObject::name</property>
         </data>
         <data id="10">
@@ -1669,6 +1680,10 @@
             <property name="paddingBottom">3pt</property>
             <text-property name="text" key="tables"></text-property>
         </label>
+        <image id="781">
+            <property name="source">file</property>
+            <expression name="uri" type="javascript">params["diagramPath"].value + modelName + "_model_1.jpg"</expression>
+        </image>
         <table id="68">
             <property name="marginLeft">10pt</property>
             <property name="width">7.627906976744186in</property>
@@ -3312,6 +3327,10 @@
             <property name="paddingBottom">3pt</property>
             <text-property name="text" key="controller"></text-property>
         </label>
+        <image id="784">
+            <property name="source">file</property>
+            <expression name="uri" type="javascript">params["diagramPath"].value + modelName + "_controller_1.jpg"</expression>
+        </image>
         <table id="393">
             <property name="marginLeft">10pt</property>
             <property name="width">7.635658914728682in</property>

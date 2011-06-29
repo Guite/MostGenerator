@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -16,7 +15,7 @@ import org.eclipse.gmf.runtime.diagram.ui.image.ImageFileFormat;
 import org.eclipse.gmf.runtime.diagram.ui.render.util.CopyToImageUtil;
 import org.eclipse.gmf.runtime.emf.core.resources.GMFResource;
 import org.eclipse.gmf.runtime.notation.Diagram;
-import org.eclipse.swt.widgets.Display;
+import org.zikula.modulestudio.generator.WorkflowSettings;
 
 import de.guite.modulestudio.metamodel.modulestudio.Application;
 import de.guite.modulestudio.metamodel.modulestudio.Controllers;
@@ -45,14 +44,17 @@ public class DiagramExporter {
     /** counter for iterating view sub diagrams */
     private Integer diagCounterV;
 
+    private final WorkflowSettings settings;
+
     private PreferencesHint preferencesHint;
 
-    public DiagramExporter() {
-
+    public DiagramExporter(WorkflowSettings settings) {
+        this.settings = settings;
     }
 
     public void processDiagram(Diagram appDiagram, String outPath,
             PreferencesHint prefHint) {
+        // diagramExporterLock.getObjet().notifyAll();
         inputDiagramType = 0;
         preferencesHint = prefHint;
         diagCounterM = diagCounterC = diagCounterV = 0;
@@ -151,21 +153,8 @@ public class DiagramExporter {
                 + format.toString().toLowerCase();
         final IPath destination = new Path(filePath);
 
-        final Display display = Display.getDefault();
-
-        display.asyncExec(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    new CopyToImageUtil().copyToImage(inputDiagram,
-                            destination, format, new NullProgressMonitor(),
-                            preferencesHint);
-                } catch (final CoreException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        });
+        new CopyToImageUtil().copyToImage(inputDiagram, destination, format,
+                settings.getProgressMonitor(), preferencesHint);
         return true;
     }
 

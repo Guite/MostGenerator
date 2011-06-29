@@ -83,6 +83,10 @@ public class WorkflowSettings {
         return this.workbench;
     }
 
+    public IProgressMonitor getProgressMonitor() {
+        return this.progressMonitor;
+    }
+
     public void setWorkbench(IWorkbench workbench) {
         this.workbench = workbench;
     }
