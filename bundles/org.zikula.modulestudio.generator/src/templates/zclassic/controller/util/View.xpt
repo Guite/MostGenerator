@@ -63,7 +63,7 @@ class «appName()»_Util_Base_View extends Zikula_AbstractBase
         if ($raw == true) {
             // standalone output
             if ($templateExtension == 'pdf') {
-                return self::processPdf();
+                return self::processPdf($view, $template);
             }
             else {
                 $view->display($template);
@@ -140,11 +140,12 @@ class «appName()»_Util_Base_View extends Zikula_AbstractBase
      *    - copy it to modules/«appName()»/lib/vendor/dompdf/ (see inclusion below)
      *    - override the corresponding template
      *
-     * @param string $template Name of template to use.
+     * @param Zikula_View $view     Reference to view object.
+     * @param string      $template Name of template to use.
      *
      * @return mixed Output.
      */
-    protected static function processPdf($template)
+    protected static function processPdf(Zikula_View $view, $template)
     {
         // include dom pdf classes
         $pdfConfigFile = 'modules/«appName()»/lib/vendor/dompdf/dompdf_config.inc.php';
