@@ -56,11 +56,11 @@ function smarty_function_«appName().formatForDB()»TreeJS($params, $view)
                         $titleFieldName = '«entity.getLeadingField().actualFieldName().formatForCode()»';
 «LET entity.fields.typeSelect(TextField).reject(e|e.leading) AS textFields-»
 «IF !textFields.isEmpty-»
-                        $descriptionFieldName = '«textFields.get(0).actualFieldName().formatForCode()»';
+                        $descriptionFieldName = strip_tags('«textFields.get(0).actualFieldName().formatForCode()»');
 «ELSE-»
 «LET entity.fields.typeSelect(StringField).reject(e|e.leading) AS textFields-»
 «IF !textFields.isEmpty-»
-                        $descriptionFieldName = '«textFields.get(0).actualFieldName().formatForCode()»';
+                        $descriptionFieldName = strip_tags('«textFields.get(0).actualFieldName().formatForCode()»');
 «ENDIF-»
 «ENDLET-»
 «ENDIF-»
