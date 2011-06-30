@@ -24,7 +24,7 @@ public class WorkflowZClassic {
         final Bundle bundle = Platform.getBundle(Activator.PLUGIN_ID);
         final java.net.URL[] resources = FileLocator.findEntries(bundle,
                 new Path(
-                /* "src" + */"/resources/images/MOST_CE_48.png"));
+                /* "src" + */"/resources/images/MOST_48.png"));
         if (resources.length > 0) {
             try {
                 final java.net.URL url = resources[0];

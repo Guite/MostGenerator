@@ -140,7 +140,7 @@ public class ModuleStudioGenerator {
 
         try {
             final ModuleStudioResourceLoader resourceLoader = new ModuleStudioResourceLoader();
-            // set oaw's classloader to the current class-loader
+            // set oaw's class loader to the current class-loader
             ResourceLoaderFactory
                     .setCurrentThreadResourceLoader(resourceLoader);
 
