@@ -146,6 +146,7 @@ public class SimpleContentFormatter implements IContentFormatter {
                 return;
             }
 
+            @SuppressWarnings("deprecation")
             final IPreferenceStore pref = new ScopedPreferenceStore(
                     new InstanceScope(), GeneratorBeautifierPlugin.PLUGIN_ID);
 

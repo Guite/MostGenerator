@@ -31,6 +31,7 @@ public class CorePreferenceConstants {
      *            the preference store to be initialized
      */
     public static void initializeDefaultValues() {
+        @SuppressWarnings("deprecation")
         final IEclipsePreferences node = new DefaultScope()
                 .getNode(PHPCorePlugin.ID);
 

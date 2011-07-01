@@ -20,6 +20,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
     @Override
     public void initializeDefaultPreferences() {
+        @SuppressWarnings("deprecation")
         final IPreferenceStore store = new ScopedPreferenceStore(
                 new InstanceScope(), GeneratorBeautifierPlugin.PLUGIN_ID);
 

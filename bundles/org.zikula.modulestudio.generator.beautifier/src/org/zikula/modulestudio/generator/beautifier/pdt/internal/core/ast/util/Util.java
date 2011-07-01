@@ -945,6 +945,7 @@ public class Util {
      * null, returns the line separator for the workspace. If still null, return
      * the system line separator.
      */
+    @SuppressWarnings("deprecation")
     public static String getLineSeparator(String text, IScriptProject project) {
         String lineSeparator = null;
 
