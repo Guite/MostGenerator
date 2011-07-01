@@ -16,15 +16,15 @@
     a.k.a middleends. As soon as a middleend for OCL is available, OCL will be usable from Xpand/Xtend. 
      
     Register the language contributors at the generator backend! 
-    -->
+    - ->
     <component class="org.eclipse.xtend.middleend.LanguageSetup">
-        <!-- Xtend -->
+        <!-- Xtend - ->
         <languageContributor value="org.eclipse.xtend.middleend.xtend.plugin.OldXtendRegistryFactory"/>
-        <!-- Check -->
+        <!-- Check - ->
         <languageContributor value="org.eclipse.xtend.middleend.xtend.plugin.OldCheckRegistryFactory"/>
-        <!-- Xpand -->
+        <!-- Xpand - ->
         <languageContributor value="org.eclipse.xtend.middleend.xpand.plugin.OldXpandRegistryFactory"/>
-    </component>
+    </component>-->
 
     <!-- read in the given file -->
 	<component class="org.eclipse.emf.mwe.utils.Reader">
@@ -46,8 +46,9 @@
 
 	    <if cond="${doValidation}">
 	        <!-- check components for constraints -->
-	        <!-- component class="org.eclipse.xtend.check.CheckComponent"> -->
-            <component class="org.eclipse.xtend.middleend.xtend.CheckComponent">
+	        <component class="org.eclipse.xtend.check.CheckComponent">
+		    <!-- middleend needs still uml, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312557
+            <component class="org.eclipse.xtend.middleend.xtend.CheckComponent">-->
                 <vetoableCallback idRef="profiler"/>
 	            <!-- define all used meta models -->
 	            <metaModel idRef="mmEMF" />
@@ -67,8 +68,9 @@
 	    </if>
 
 		<!-- add additional fields for ids and relations -->
-        <!--<component class="org.eclipse.xtend.XtendComponent" skipOnErrors="true">-->
-        <component class="org.eclipse.xtend.middleend.xtend.XtendComponent" skipOnErrors="true">
+        <component class="org.eclipse.xtend.XtendComponent" skipOnErrors="true">
+	    <!-- middleend needs still uml, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312557
+        <component class="org.eclipse.xtend.middleend.xtend.XtendComponent" skipOnErrors="true">-->
             <vetoableCallback idRef="profiler"/>
 			<!-- reference all used meta models -->
 			<metaModel idRef="mmEMF" />
@@ -104,8 +106,9 @@
 
     <if cond="${doProfiling}">
 	    <!-- generate profiling result -->
-	    <!--<component class="org.eclipse.xpand2.Generator" fileEncoding="ISO-8859-1">-->
-	    <component class="org.eclipse.xtend.middleend.xpand.XpandComponent" fileEncoding="ISO-8859-1">
+	    <component class="org.eclipse.xpand2.Generator" fileEncoding="ISO-8859-1">
+	    <!-- middleend needs still uml, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312557
+	    <component class="org.eclipse.xtend.middleend.xpand.XpandComponent" fileEncoding="ISO-8859-1">-->
 	        <metaModel idRef="mmEMF"/> 
 	        <metaModel id="mmEMF"           class="org.eclipse.xtend.typesystem.emf.EmfMetaModel">
 	            <metaModelPackage value="org.eclipse.xtend.profiler.profilermodel.ModelPackage"/>

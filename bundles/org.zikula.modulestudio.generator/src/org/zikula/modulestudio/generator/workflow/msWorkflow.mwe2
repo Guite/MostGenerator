@@ -21,8 +21,8 @@ import org.eclipse.xtend.XtendComponent
 import org.eclipse.emf.mwe.utils.DirectoryCleaner
 import org.eclipse.emf.mwe.utils.FileCopy
 import org.eclipse.emf.mwe.utils.Writer
-//import org.eclipse.xpand2.Generator
-import org.eclipse.xtend.middleend.xpand.XpandComponent
+import org.eclipse.xpand2.Generator
+//import org.eclipse.xtend.middleend.xpand.XpandComponent
 import org.zikula.modulestudio.generator.output.PhpBeautifier
 
 // The model to be processed (file name without extension)
@@ -219,7 +219,7 @@ Workflow {
     }
 
     // start generator component
-    component = XpandComponent/*Generator*/ {
+    component = /*XpandComponent*/Generator {
         vetoableCallback = profiler
 
         // skip this component if there are errors
@@ -267,7 +267,7 @@ Workflow {
         if = {
             cond = doProfiling
             // generate profiling result
-            component = XpandComponent/*Generator*/ {
+            component = /*XpandComponent*/Generator {
                 fileEncoding = "ISO-8859-1"
 
                 metaModel = mmEMF
