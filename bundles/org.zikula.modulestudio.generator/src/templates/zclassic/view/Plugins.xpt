@@ -2,6 +2,7 @@
 «EXTENSION extensions::Utils»
 
 «DEFINE Root FOR Application-»
+«EXPAND Plugin::ImageThumb::Root-»
 «EXPAND Plugin::FormFrame::Root-»
 «EXPAND Plugin::SelectorObjectTypes::Root-»
 «EXPAND Plugin::SelectorTemplates::Root-»

@@ -2,5 +2,5 @@
 
 «REM»Entry point for all workflows«ENDREM»
 «DEFINE Root FOR Application-»
-«EXPAND templates::zclassic::controller::workflows::SimpleApproval::Root-»
+«EXPAND workflows::SimpleApproval::Root-»
 «ENDDEFINE»

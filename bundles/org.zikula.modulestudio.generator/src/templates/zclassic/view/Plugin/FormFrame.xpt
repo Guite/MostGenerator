@@ -1,8 +1,8 @@
 «IMPORT modulestudio»
-«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
+«IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+«REM»EXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «DEFINE Root FOR Application-»
 «IF hasEditActions()-»

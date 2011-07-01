@@ -1,7 +1,7 @@
 «IMPORT modulestudio»
-«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
+«IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+«REM»EXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «REM»start point for the Util class creation«ENDREM»
 «DEFINE Root FOR Application»
@@ -164,14 +164,14 @@ class «appName()»_Util_Base_I18n extends Zikula_AbstractBase
 «ENDDEFINE»
 
 «DEFINE TranslatableFieldDefinition(List fieldNames) FOR Entity-»
-«EXPAND I18nFieldDefinition(fieldNames) FOREACH fields SEPARATOR ','»
+«EXPAND TranslatableFieldDefinition(fieldNames) FOREACH fields SEPARATOR ','»
 «ENDDEFINE»
 
-«DEFINE I18nFieldDefinition(List fieldNames) FOR EntityField-»
-«error("Error: undefined entity field type " + metaType.toString() + " (code 542324)") -> ""-»
+«DEFINE TranslatableFieldDefinition(List fieldNames) FOR EntityField-»
+«REM»error("Error: undefined entity field type " + metaType.toString() + " (code 542324)") -> ""-»«ENDREM»
 «ENDDEFINE»
 
-«DEFINE I18nFieldDefinition(List fieldNames) FOR DerivedField-»
+«DEFINE TranslatableFieldDefinition(List fieldNames) FOR DerivedField-»
 «IF !fieldNames.select(a|a == actualFieldName()).isEmpty-»
                     array('name'    => '«actualFieldName()»',
                           'default' => '«IF defaultValue != ''-»«defaultValue»«ELSE-»«actualFieldName().formatForDisplayCapital()»«ENDIF-»'),
