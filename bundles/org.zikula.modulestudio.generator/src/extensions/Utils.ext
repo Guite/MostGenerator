@@ -191,7 +191,7 @@ cached isInheriter(Entity this) :
 cached getChildRelations(Entity this) :
     incoming.typeSelect(InheritanceRelationship);
 cached getChildRelationsWithAggregation(Entity this) :
-    getChildRelations().select(e|e.strategy == InheritancyStrategyType::COLUMNAGGREGATION);
+    getChildRelations().select(e|e.strategy == InheritanceStrategyType::COLUMNAGGREGATION);
 
 /* if we have id or fooid return fooid; otherwise return the actual field name of the referenced field */
 cached relationFieldName(Entity refEntity, String refField) :
