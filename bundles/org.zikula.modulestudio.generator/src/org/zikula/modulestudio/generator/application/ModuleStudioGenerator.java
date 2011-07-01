@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.emf.mwe.core.WorkflowRunner;
+import org.eclipse.emf.mwe.core.WorkflowEngine;
 import org.eclipse.emf.mwe.core.monitor.NullProgressMonitor;
 import org.eclipse.emf.mwe.core.resources.ResourceLoaderFactory;
 
@@ -144,12 +144,12 @@ public class ModuleStudioGenerator {
             ResourceLoaderFactory
                     .setCurrentThreadResourceLoader(resourceLoader);
 
-            // instantiate MWE workflow runner
-            final WorkflowRunner runner = new WorkflowRunner();
+            // instantiate MWE workflow engine
+            final WorkflowEngine wfEngine = new WorkflowEngine();
 
             // start it
-            success = runner.run(getWorkflowFile(), new NullProgressMonitor(),
-                    getProperties(), slotContents);
+            success = wfEngine.run(getWorkflowFile(),
+                    new NullProgressMonitor(), getProperties(), slotContents);
         } finally {
             ResourceLoaderFactory.setCurrentThreadResourceLoader(null);
 
