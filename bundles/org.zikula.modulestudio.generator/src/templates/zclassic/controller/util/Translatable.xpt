@@ -1,15 +1,15 @@
 «IMPORT modulestudio»
-«IMPORT templates::zclassic::smallstuff»
+«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
 «EXTENSION extensions::Utils»
 «REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «REM»start point for the Util class creation«ENDREM»
 «DEFINE Root FOR Application»
-    «FILE getAppSourceLibPath(appName()).msconcat("Util/Base/I18n.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND I18nFunctionsBase-»«ENDFILE»
-    «FILE getAppSourceLibPath(appName()).msconcat("Util/I18n.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND I18nFunctionsImpl-»«ENDFILE»
+    «FILE getAppSourceLibPath(appName()).msconcat("Util/Base/I18n.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND TranslatableFunctionsBase-»«ENDFILE»
+    «FILE getAppSourceLibPath(appName()).msconcat("Util/I18n.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND TranslatableFunctionsImpl-»«ENDFILE»
 «ENDDEFINE»
 
-«DEFINE I18nFunctionsBase FOR Application-»
+«DEFINE TranslatableFunctionsBase FOR Application-»
 /**
  * Utility base class for i18n helper methods.
  */
@@ -24,7 +24,7 @@ class «appName()»_Util_Base_I18n extends Zikula_AbstractBase
     {
         $fields = array();
         switch ($objectType) {
-«EXPAND I18nFieldList FOREACH getI18nEntities()-»
+«EXPAND TranslatableFieldList FOREACH getI18nEntities()-»
         }
         return $fields;
     }
@@ -155,15 +155,15 @@ class «appName()»_Util_Base_I18n extends Zikula_AbstractBase
 }
 «ENDDEFINE»
 
-«DEFINE I18nFieldList FOR Entity-»
+«DEFINE TranslatableFieldList FOR Entity-»
             case '«name.formatForCode()»':
                 $fields = array(
-«EXPAND I18nFieldDefinition(i18nFields.split(", "))-»
+«EXPAND TranslatableFieldDefinition(i18nFields.split(", "))-»
                 );
                 break;
 «ENDDEFINE»
 
-«DEFINE I18nFieldDefinition(List fieldNames) FOR Entity-»
+«DEFINE TranslatableFieldDefinition(List fieldNames) FOR Entity-»
 «EXPAND I18nFieldDefinition(fieldNames) FOREACH fields SEPARATOR ','»
 «ENDDEFINE»
 
@@ -178,14 +178,14 @@ class «appName()»_Util_Base_I18n extends Zikula_AbstractBase
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE I18nFieldDefinition(List fieldNames) FOR CalculatedField-»
+«DEFINE TranslatableFieldDefinition(List fieldNames) FOR CalculatedField-»
 «IF !fieldNames.select(a|a == actualFieldName()).isEmpty-»
                     array('name'    => '«actualFieldName()»',
                           'default' => '«actualFieldName().formatForDisplayCapital()»'),
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE I18nFunctionsImpl FOR Application-»
+«DEFINE TranslatableFunctionsImpl FOR Application-»
 /**
  * Utility implementation class for i18n helper methods.
  */

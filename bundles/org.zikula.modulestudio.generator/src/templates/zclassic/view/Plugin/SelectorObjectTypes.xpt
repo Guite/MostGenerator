@@ -1,13 +1,13 @@
 «IMPORT modulestudio»
-«IMPORT templates::zclassic::smallstuff»
+«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
 «REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «DEFINE Root FOR Application-»
-«FILE viewPluginFilePath(this, 'function', 'SelectorTemplates')-»«EXPAND FileHelper::phpFileHeader(this)-»
+«FILE viewPluginFilePath(this, 'function', 'SelectorObjectTypes')-»«EXPAND FileHelper::phpFileHeader(this)-»
 /**
- * The «appName().formatForDB()»SelectorTemplates plugin provides items for a dropdown selector.
+ * The «appName().formatForDB()»SelectorObjectTypes plugin provides items for a dropdown selector.
  *
  * Available parameters:
  *   - assign:   If set, the results are assigned to the corresponding variable instead of printed out.
@@ -17,12 +17,13 @@
  *
  * @return string The output of the plugin.
  */
-function smarty_function_«appName().formatForDB()»SelectorTemplates($params, $view)
+function smarty_function_«appName().formatForDB()»SelectorObjectTypes($params, $view)
 {
     $result = array();
 
-    $result[] = array('text' => $view->__('Only item titles'), 'value' => 'itemlist_display.tpl');
-    $result[] = array('text' => $view->__('With description'), 'value' => 'itemlist_display_description.tpl');
+«FOREACH models.entities AS entity-»
+    $result[] = array('text' => $view->__('«entity.nameMultiple.formatForDisplayCapital()»'), 'value' => '«entity.name.formatForCode()»');
+«ENDFOREACH-»
 
     if (array_key_exists('assign', $params)) {
         $view->assign($params['assign'], $result);

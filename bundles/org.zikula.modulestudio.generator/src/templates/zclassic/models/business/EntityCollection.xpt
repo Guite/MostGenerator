@@ -1,5 +1,5 @@
 «IMPORT modulestudio»
-«IMPORT templates::zclassic::smallstuff»
+«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
 «REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»

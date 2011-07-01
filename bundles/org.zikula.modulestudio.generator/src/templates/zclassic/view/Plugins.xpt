@@ -2,18 +2,18 @@
 «EXTENSION extensions::Utils»
 
 «DEFINE Root FOR Application-»
-«EXPAND Plugins::FormFrame::Root-»
-«EXPAND Plugins::SelectorObjectTypes::Root-»
-«EXPAND Plugins::SelectorTemplates::Root-»
-«EXPAND Plugins::ValidationError::Root-»
-«EXPAND Plugins::TemplateHeaders::Root-»
+«EXPAND Plugin::FormFrame::Root-»
+«EXPAND Plugin::SelectorObjectTypes::Root-»
+«EXPAND Plugin::SelectorTemplates::Root-»
+«EXPAND Plugin::ValidationError::Root-»
+«EXPAND Plugin::TemplateHeaders::Root-»
 «IF hasUploads()-»
-«EXPAND Plugins::ImageThumb::Root-»
-«EXPAND Plugins::GetFileSize::Root-»
+«EXPAND Plugin::ImageThumb::Root-»
+«EXPAND Plugin::GetFileSize::Root-»
 «ENDIF-»
 «IF hasNestedSets()-»
-«EXPAND Plugins::TreeJS::Root-»
-«EXPAND Plugins::TreeSelector::Root-»
+«EXPAND Plugin::TreeJS::Root-»
+«EXPAND Plugin::TreeSelector::Root-»
 «ENDIF-»
 «ENDDEFINE»
 

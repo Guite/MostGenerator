@@ -1,8 +1,8 @@
 «IMPORT modulestudio»
-«IMPORT templates::zclassic::models»
-«IMPORT templates::zclassic::controller»
-«IMPORT templates::zclassic::view»
-«IMPORT templates::zclassic::smallstuff»
+«REM«IMPORT templates::zclassic::models»«ENDREM»
+«REM«IMPORT templates::zclassic::controller»«ENDREM»
+«REM«IMPORT templates::zclassic::view»«ENDREM»
+«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
 «IMPORT templates::zclassic::tests»
 «EXTENSION extensions::Utils»
 «REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
@@ -51,7 +51,7 @@
     «EXPAND Bootstrap::Root»
     «pm.subTask("Controller: Workflows")»
     «info("Generating workflows")»
-    «EXPAND Workflows::Root»
+    «EXPAND Workflow::Root»
 
 	«pm.subTask("View: Rendering templates")»
     «info("Generating view templates")»

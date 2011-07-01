@@ -8,6 +8,6 @@
 «EXPAND Controller::Root»
 «EXPAND View::Root»
 «IF hasI18nEntities()-»
-«EXPAND I18n::Root»
+«EXPAND Translatable::Root»
 «ENDIF-»
 «ENDDEFINE»
