@@ -1,6 +1,6 @@
 import modulestudio;
 
-// TODO: update this file, it is obsolete (but not used yet anywhere)
+// TODO: update this file, it is OBSOLETE (but not used yet anywhere)
 
 create Application this duplicate(Application app):
   	models.entities.addAll(app.models.entities.duplicate()) ->
@@ -31,7 +31,7 @@ create ListVar this duplicate(ListVar old):
 	setMultiple(old.multiple);
 
 create ListVarItem this duplicate(ListVarItem old):
-	setName(old.name) -> setIsDefault(old.isDefault);
+	setName(old.name) -> setDefault(old.^default);
 
 
 create Entity this duplicate(Entity old):
@@ -56,23 +56,17 @@ create TextField this duplicate(TextField old):
     setPrimaryKey(old.primaryKey) ->
     setLength(old.length);
 
-create BlobField this duplicate(BlobField old):
+create DatetimeField this duplicate(DatetimeField old):
 	setName(old.name) ->
-	setMandatory(old.mandatory) ->
-	setDefaultValue(old.defaultValue) ->
-	setPrimaryKey(old.primaryKey);
+    setMandatory(old.mandatory) ->
+    setDefaultValue(old.defaultValue) ->
+    setPrimaryKey(old.primaryKey);
 
 create DateField this duplicate(DateField old):
 	setName(old.name) ->
 	setMandatory(old.mandatory) ->
 	setDefaultValue(old.defaultValue) ->
 	setPrimaryKey(old.primaryKey);
-
-create TimestampField this duplicate(TimestampField old):
-	setName(old.name) ->
-    setMandatory(old.mandatory) ->
-    setDefaultValue(old.defaultValue) ->
-    setPrimaryKey(old.primaryKey);
 
 create BooleanField this duplicate(BooleanField old):
 	setName(old.name) ->

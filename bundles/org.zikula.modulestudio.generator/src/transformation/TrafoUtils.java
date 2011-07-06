@@ -61,7 +61,6 @@ public class TrafoUtils {
         idField.setLength(11);
         idField.setPrimaryKey(isPrimary);
         idField.setUnique(isPrimary);
-        idField.setUnsigned(true);
         return idField;
     }
 }

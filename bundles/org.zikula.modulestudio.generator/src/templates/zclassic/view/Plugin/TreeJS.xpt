@@ -51,16 +51,16 @@ function smarty_function_«appName().formatForDB()»TreeJS($params, $view)
     $titleFieldName = $descriptionFieldName = '';
 
     switch ($params['objectType']) {
-«FOREACH getNestedSetEntities() AS entity-»
+«FOREACH getTreeEntities() AS entity-»
                 case '«entity.name.formatForCode()»':
-                        $titleFieldName = '«entity.getLeadingField().actualFieldName().formatForCode()»';
+                        $titleFieldName = '«entity.getLeadingField().name.formatForCode()»';
 «LET entity.fields.typeSelect(TextField).reject(e|e.leading) AS textFields-»
 «IF !textFields.isEmpty-»
-                        $descriptionFieldName = strip_tags('«textFields.get(0).actualFieldName().formatForCode()»');
+                        $descriptionFieldName = strip_tags('«textFields.get(0).name.formatForCode()»');
 «ELSE-»
 «LET entity.fields.typeSelect(StringField).reject(e|e.leading) AS textFields-»
 «IF !textFields.isEmpty-»
-                        $descriptionFieldName = strip_tags('«textFields.get(0).actualFieldName().formatForCode()»');
+                        $descriptionFieldName = strip_tags('«textFields.get(0).name.formatForCode()»');
 «ENDIF-»
 «ENDLET-»
 «ENDIF-»

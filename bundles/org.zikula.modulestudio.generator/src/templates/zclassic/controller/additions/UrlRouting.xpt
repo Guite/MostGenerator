@@ -224,16 +224,14 @@ class «appName»_Base_RouterFacade
 
 «DEFINE GetSlugForItem FOR Entity-»
             case '«name.formatForCode()»':
-«IF sluggable-»
+«IF hasSluggableFields()-»
 «EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(container.application.appName(), false, 'api', 'RouterFacade', 'getFormattedSlug')-»
                         $item = $object->selectById($itemid);
-«LET sluggableFieldRealName() AS sluggableFieldRealName-»
-«IF sluggableUnique-»
-                        $slug = $item['«sluggableFieldRealName»'];
+«IF slugUnique-»
+                        $slug = $item['slug'];
 «ELSE-»
-                        $slug = $item['«sluggableFieldRealName»'] . $item['«idField()»'];
+                        $slug = $item['slug'] . $item['«idField()»'];
 «ENDIF-»
-«ENDLET-»
 «ELSE-»
                         $slug = $itemid;
 «ENDIF-»

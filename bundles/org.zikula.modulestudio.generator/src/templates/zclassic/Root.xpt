@@ -18,21 +18,17 @@
     «info("Generating basic information")»
 	«EXPAND VersionFile::Root»
 
-	«pm.subTask("Model: Record classes")»
-    «info("Generating record classes")»
-	«EXPAND Record::Root»
+	«pm.subTask("Model: Entity classes")»
+    «info("Generating entity classes")»
+	«EXPAND Entity::Root»
 
-    «pm.subTask("Model: Table classes")»
-    «info("Generating table classes")»
-    «EXPAND Table::Root»
+    «pm.subTask("Model: Repository classes")»
+    «info("Generating repository classes")»
+    «EXPAND Repository::Root»
 
     «pm.subTask("Model: Listener classes")»
     «info("Generating event listener classes")»
     «EXPAND EventListener::Root-»
-
-    «pm.subTask("Model: Business entity classes")»
-    «info("Generating business entity classes")»
-    «EXPAND BusinessEntity::Root»
 
 	«pm.subTask("Controller: Application installer")»
     «info("Generating application installer")»

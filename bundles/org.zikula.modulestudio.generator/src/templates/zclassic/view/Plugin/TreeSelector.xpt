@@ -5,7 +5,7 @@
 «REM»EXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «DEFINE Root FOR Application-»
-«IF hasNestedSets()-»
+«IF hasTrees()-»
 «FILE getAppSourcePath(appName()).msconcat('lib/').msconcat(appName()).msconcat('/Form/Plugin/TreeSelector.php')-»«EXPAND FileHelper::phpFileHeader(this)-»
 «EXPAND TreeSelectorPluginImpl-»
 «ENDFILE»

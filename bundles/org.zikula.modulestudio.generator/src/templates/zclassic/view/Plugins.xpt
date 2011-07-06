@@ -12,7 +12,7 @@
 «EXPAND Plugin::ImageThumb::Root-»
 «EXPAND Plugin::GetFileSize::Root-»
 «ENDIF-»
-«IF hasNestedSets()-»
+«IF hasTrees()-»
 «EXPAND Plugin::TreeJS::Root-»
 «EXPAND Plugin::TreeSelector::Root-»
 «ENDIF-»

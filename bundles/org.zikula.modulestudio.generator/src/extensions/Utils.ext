@@ -47,7 +47,7 @@ cached String displayBool(Boolean b) :
 
 // return all entities with leading = true
 cached getLeadingEntity(Application this) :
-    models.entities.select(e | e.leading == true).get(0);
+    models.entities.select(e|e.leading == true).get(0);
 
 cached boolean hasImageFields(Application this) :
     models.entities.exists(e|e.hasImageFields());
@@ -67,15 +67,15 @@ cached getUploadEntities(Application this) :
     models.entities.select(e|e.fields.typeSelect(UploadField).size > 0);
 
 
-cached getNestedSetEntities(Application this) :
-    models.entities.select(e|e.nestedSet);
-cached boolean hasNestedSets(Application this) :
-    !getNestedSetEntities().isEmpty;
+cached getTreeEntities(Application this) :
+    models.entities.select(e|e.tree > 0);
+cached boolean hasTrees(Application this) :
+    !getTreeEntities().isEmpty;
 
-cached getI18nEntities(Application this) :
-    models.entities.select(e|e.i18n);
-cached boolean hasI18nEntities(Application this) :
-    !getI18nEntities().isEmpty;
+cached getTranslatableEntities(Application this) :
+    models.entities.select(e|e.fields.typeSelect(DerivedField).select(f|f.translatable).size > 0);
+cached boolean hasTranslatableEntities(Application this) :
+    !getTranslatableEntities().isEmpty;
 
 
 cached boolean hasEditActions(Application this) :
@@ -112,21 +112,22 @@ cached String getEntityNameSingularPlural(Entity this, Boolean usePlural) :
 
 // return model container which are default data sources
 cached getDefaultDataSource(Application this) :
-    models.select(e | e.isDefaultDataSource == true).get(0);
+    models.select(e|e.defaultDataSource == true).get(0);
 
 // return all derived fields (excluding calculated fields)
 cached getDerivedFields(Entity this) :
     fields.typeSelect(DerivedField);
 cached getUniqueDerivedFields(Entity this) :
     getDerivedFields().select(e|e.unique);
-cached getDerivedFieldsWithAlias(Entity this) :
-    getDerivedFields().select(e | e.alias != null && e.alias != "");
 // return all fields with leading = true
 cached getLeadingField(Entity this) :
-    getDerivedFields().select(e | e.leading == true).get(0);
+    getDerivedFields().select(e|e.leading == true).get(0);
+
 // return all fields with primaryKey = true
+/* TODO: support composite keys */
 cached getPrimaryKeyField(Entity this) :
-    getDerivedFields(this).select(e | e.primaryKey == true).get(0);
+    getDerivedFields(this).select(e|e.primaryKey == true).get(0);
+
 cached getUserFields(Entity this) :
     fields.typeSelect(UserField);
 cached boolean hasUploadFields(Entity this) :
@@ -142,20 +143,15 @@ cached getImageFields(Entity this) :
 cached boolean hasColourFields(Entity this) :
     !getColourFields().isEmpty;
 cached getColourFields(Entity this) :
-    getDerivedFields().typeSelect(StringField).select(e|e.htmlcolor);
+    getDerivedFields().typeSelect(StringField).select(e|e.htmlcolour != null && e.htmlcolour != "");
 
+cached boolean hasSluggableFields(Entity this) :
+    !getSluggableFields().isEmpty;
+cached getSluggableFields(Entity this) :
+    fields.typeSelect(DerivedField).select(e|e.sluggablePosition > 0);
 
 cached String idField(Entity entity) :
     entity.getPrimaryKeyField().name.formatForDB();
-
-cached String actualFieldName(EntityField this) :
-    name;
-
-cached String actualFieldName(DerivedField this) :
-    ((alias != null && alias != "") ? alias : name);
-
-cached String sluggableFieldRealName(Entity this) :
-    ((sluggable) ? ((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCode() : '');
 
 /** obsolete */
 cached getPointingRelations(IntegerField this) :
@@ -176,9 +172,6 @@ cached String namingSchemeAsInt(UploadField this) :
 cached getJoinRelations(Models this) :
     relations.typeSelect(JoinRelationship);
 
-cached joinCommand(JoinRelationship this, Boolean incoming) :
-    ((joinType != JoinType::INNER) ? 'leftJoin' : 'innerJoin');
-
 cached isInheriting(Entity this) :
     !outgoing.typeSelect(InheritanceRelationship).isEmpty;
 cached InheritanceRelationship getInheritanceRelation(Entity this) :
@@ -190,12 +183,10 @@ cached isInheriter(Entity this) :
     !incoming.typeSelect(InheritanceRelationship).isEmpty;
 cached getChildRelations(Entity this) :
     incoming.typeSelect(InheritanceRelationship);
-cached getChildRelationsWithAggregation(Entity this) :
-    getChildRelations().select(e|e.strategy == InheritanceStrategyType::COLUMNAGGREGATION);
 
 /* if we have id or fooid return fooid; otherwise return the actual field name of the referenced field */
 cached relationFieldName(Entity refEntity, String refField) :
-    (refField.toLowerCase() == 'id' || refField.toLowerCase() == refEntity.idField()) ? refEntity.idField() : refEntity.fields.select(e|e.name == refField).get(0).actualFieldName().formatForCode();
+    (refField.toLowerCase() == 'id' || refField.toLowerCase() == refEntity.idField()) ? refEntity.idField() : refEntity.fields.select(e|e.name == refField).get(0).name.formatForCode();
 
 /* get local field for 1:1 and 1:n */ 
 cached getRelationLocalField(JoinRelationship this, Boolean incoming) :
@@ -262,37 +253,6 @@ cached boolean hasActions(Controller controller, String type) :
 	   case 'custom'   : !controller.actions.typeSelect(CustomAction).isEmpty 
 	   default : false
 	};
-
-
-/*
- * constants and labels for Doctrine
- */
-cached String asConstant(DbTableType obj) :
-    switch (obj) {
-       case DbTableType::MYISAM : 'MYISAM'
-       case DbTableType::INNODB : 'INNODB'
-       default : ''
-    };
-cached String asConstant(EntityIndexType obj) :
-    switch (obj) {
-       case EntityIndexType::NORMAL     : ''/*dummy*/
-       case EntityIndexType::UNIQUE     : 'unique'
-       case EntityIndexType::FULLTEXT   : 'fulltext'
-       case EntityIndexType::GIST       : 'gist'
-       case EntityIndexType::GIN        : 'gin'
-       default : ''
-    };
-cached String asConstant(CascadeType obj) :
-    switch (obj) {
-       case CascadeType::NONE           : ''/*dummy*/
-       case CascadeType::CASCADE        : 'CASCADE'
-       case CascadeType::SETNULL        : 'SET NULL'
-       case CascadeType::NOACTION       : 'NO ACTION'
-       case CascadeType::RESTRICT       : 'RESTRICT'
-       case CascadeType::SETDEFAULT     : 'SET DEFAULT'
-       default : ''
-    };
-
 
 
 /*

@@ -24,7 +24,7 @@ class «appName()»_Util_Base_I18n extends Zikula_AbstractBase
     {
         $fields = array();
         switch ($objectType) {
-«EXPAND TranslatableFieldList FOREACH getI18nEntities()-»
+«EXPAND TranslatableFieldList FOREACH getTranslatableEntities()-»
         }
         return $fields;
     }
@@ -158,7 +158,7 @@ class «appName()»_Util_Base_I18n extends Zikula_AbstractBase
 «DEFINE TranslatableFieldList FOR Entity-»
             case '«name.formatForCode()»':
                 $fields = array(
-«EXPAND TranslatableFieldDefinition(i18nFields.split(", "))-»
+«EXPAND TranslatableFieldDefinition(fields.typeSelect(DerivedField).select(e|e.translatable))-»
                 );
                 break;
 «ENDDEFINE»
@@ -172,16 +172,16 @@ class «appName()»_Util_Base_I18n extends Zikula_AbstractBase
 «ENDDEFINE»
 
 «DEFINE TranslatableFieldDefinition(List fieldNames) FOR DerivedField-»
-«IF !fieldNames.select(a|a == actualFieldName()).isEmpty-»
-                    array('name'    => '«actualFieldName()»',
-                          'default' => '«IF defaultValue != ''-»«defaultValue»«ELSE-»«actualFieldName().formatForDisplayCapital()»«ENDIF-»'),
+«IF !fieldNames.select(a|a == name).isEmpty-»
+                    array('name'    => '«name»',
+                          'default' => '«IF defaultValue != ''-»«defaultValue»«ELSE-»«name.formatForDisplayCapital()»«ENDIF-»'),
 «ENDIF-»
 «ENDDEFINE»
 
 «DEFINE TranslatableFieldDefinition(List fieldNames) FOR CalculatedField-»
-«IF !fieldNames.select(a|a == actualFieldName()).isEmpty-»
-                    array('name'    => '«actualFieldName()»',
-                          'default' => '«actualFieldName().formatForDisplayCapital()»'),
+«IF !fieldNames.select(a|a == name).isEmpty-»
+                    array('name'    => '«name»',
+                          'default' => '«name.formatForDisplayCapital()»'),
 «ENDIF-»
 «ENDDEFINE»
 
