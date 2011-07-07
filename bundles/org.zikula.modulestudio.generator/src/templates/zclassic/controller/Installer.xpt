@@ -57,6 +57,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «EXPAND FuncInit-»
 «EXPAND FuncUpdate-»
 «EXPAND FuncDelete-»
+«EXPAND FuncListEntityClasses-»
 «EXPAND FuncDefaultData-»
 «EXPAND ProcessEventHandlersImpl-»
 «ENDDEFINE»
@@ -78,9 +79,9 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
      */
     public function install()
     {
-        // create all tables from according model definitions
+        // create all tables from according entity definitions
         try {
-            DoctrineUtil::createTablesFromModels('«appName()»');
+            DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses);
         } catch (Exception $e) {
             if (System::isDevelopmentMode()) {
                 LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
@@ -112,7 +113,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDREM»
 
         // create the default data for «appName()»
-        //$this->defaultdata();
+        //$this->defaultData();
         // TODO: deactivated for now because constraints prevent data creation in random order (see #64)
 
         // initialisation successful
@@ -150,14 +151,20 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     /*
         // Upgrade dependent on old version number
         switch ($oldversion) {
-            case 1.0:
+            case 1.0.0:
                 // do something
-                // DoctrineUtil::*() for adding/dropping columns/index and so on
-                // last do DoctrineUtil::createTablesFromModels('«appName()»');
-                // to create any new tables
+                // ...
+                // update the database schema
+                try {
+                    DoctrineHelper::updateSchema($this->entityManager, $this->listEntityClasses);
+                } catch (Exception $e) {
+                    if (System::isDevelopmentMode()) {
+                        LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
+                    }
+                    return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %1$s module.', array($this->getName())));
+                }
         }
     */
-«REM»http://www.doctrine-project.org/projects/orm/1.2/docs/manual/migrations/en«ENDREM»
 
         // update successful
         return true;
@@ -179,7 +186,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         }
 
         try {
-            $dbPrefix = System::getVar('prefix');
+/** obsolete
 «EXPAND RemoveBehaviors FOREACH models.entities-»
 «LET models.getJoinRelations() AS joinRelations-»
 «IF !joinRelations.isEmpty-»
@@ -190,6 +197,8 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDLET-»
             // remove tables
 «EXPAND RemoveTable FOREACH models.entities-»
+*/
+            DoctrineHelper::dropSchema($this->entityManager, $this->listEntityClasses);
         } catch (Exception $e) {
             if (System::isDevelopmentMode()) {
                 LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
@@ -212,7 +221,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         $this->delVars();
 
 «ENDIF-»
-        // Deletion successful
+        // deletion successful
         return true;
     }
 «ENDDEFINE»
@@ -280,13 +289,55 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
             DoctrineUtil::dropTable('«fullEntityName()»');
 «ENDDEFINE»
 
+«DEFINE FuncListEntityClasses FOR Application»
+    /**
+     * Build array with all entity classes for «appName()».
+     *
+     * @return array list of class names.
+     */
+    protected function listEntityClasses()
+    {
+        $classNames = array();
+«FOREACH models.entities AS entity-»
+        $classNames[] = '«entity.implClassModelEntity()»';
+«ENDFOREACH-»
+
+        return $classNames;
+    }
+«ENDDEFINE»
+
+«DEFINE FuncDefaultData FOR Application»
+    /**
+     * Create the default data for «appName()».
+     *
+     * @return void
+     */
+    protected function defaultData()
+    {
+        // ensure that tables are cleared
+«FOREACH models.entities AS entity-»
+        Doctrine_Core::getTable('«entity.implClassModelRecord()»')
+            ->truncateTable();
+«ENDFOREACH-»
+        unset($doctrine);
+
+«IF getDefaultDataSource().numExampleRows > 0-»
+        // TODO: test this, see http://code.zikula.org/generator/ticket/64
+        //Doctrine_Parser::load('modules/«appName()»/docs/exampleData.yml', 'yml');
+«ENDIF-»
+
+        // Insertion successful
+        return true;
+    }
+«ENDDEFINE»
+
 «DEFINE ProcessEventHandlersImpl FOR Application»
     /**
      * Register persistent event handlers.
      * These are listeners for external events of the core and other modules.
      */
 «LET appName() AS appName-»
-    private function registerPersistentEventHandlers()
+    protected function registerPersistentEventHandlers()
     {
         // core
 «LET appName.msconcat('_Listener_Core') AS callableClass-»
@@ -396,31 +447,6 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         EventUtil::registerPersistentModuleHandler('«appName»', 'module.content.gettypes', array('«callableClass»', 'contentGetTypes'));
 «ENDLET-»
 «ENDLET-»
-    }
-«ENDDEFINE»
-
-«DEFINE FuncDefaultData FOR Application»
-    /**
-     * Create the default data for «appName()».
-     *
-     * @return void
-     */
-    public function defaultdata()
-    {
-        // ensure that tables are cleared
-«FOREACH models.entities AS entity-»
-        Doctrine_Core::getTable('«entity.implClassModelRecord()»')
-            ->truncateTable();
-«ENDFOREACH-»
-        unset($doctrine);
-
-«IF getDefaultDataSource().numExampleRows > 0-»
-        // TODO: test this, see http://code.zikula.org/generator/ticket/64
-        //Doctrine_Parser::load('modules/«appName()»/docs/exampleData.yml', 'yml');
-«ENDIF-»
-
-        // Insertion successful
-        return true;
     }
 «ENDDEFINE»
 

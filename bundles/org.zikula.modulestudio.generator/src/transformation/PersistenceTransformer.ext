@@ -16,13 +16,15 @@ private handleEntity(Entity this):
     //info("Before: " + fields.size + " fields") ->
 	addPrimaryKey(this) ->
     //info("Added primary key, now: " + fields.size + " fields") ->
-    this.incoming.typeSelect(OneToOneRelationship).addRelationField(this) ->
-    this.incoming.typeSelect(OneToManyRelationship).addRelationField(this) ->
+// obsolete
+//    this.incoming.typeSelect(OneToOneRelationship).addRelationField(this) ->
+//    this.incoming.typeSelect(OneToManyRelationship).addRelationField(this) ->
     //info("Added relation fields, now: " + fields.size + " fields") ->
 	this;
 
 private boolean addPrimaryKey(Entity entity)
 	: JAVA transformation.TrafoUtils.addPrimaryKey(de.guite.modulestudio.metamodel.modulestudio.Entity);
-
+/*
 private boolean addRelationField(JoinRelationship relation, Entity entity)
 	: JAVA transformation.TrafoUtils.addRelationField(de.guite.modulestudio.metamodel.modulestudio.JoinRelationship, de.guite.modulestudio.metamodel.modulestudio.Entity);
+*/

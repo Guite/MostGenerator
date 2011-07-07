@@ -4,6 +4,43 @@
 «EXTENSION extensions::ClassUtils»
 «REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
+«REM»creates a business validator file for every Entity instance«ENDREM»
+«DEFINE BusinessValidatorWrapper(Application app) FOR Entity-»
+«info("Generating business validator classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
+«IF !isInheriting()-»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassBusinessValidator().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessValidatorBaseImpl(app)»«ENDFILE»
+«ENDIF-»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassBusinessValidator().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessValidatorImpl(app)»«ENDFILE»
+«ENDDEFINE»
+
+«REM»base implementation«ENDREM»
+«DEFINE BusinessValidatorBaseImpl(Application app) FOR Entity-»
+
+/**
+ * Business validator class for encapsulating validation methods.
+ *
+ * This is the base validation class for «name.formatForDisplay()» entities.
+ */
+abstract class «baseClassBusinessValidator()»
+{
+«EXPAND BusinessValidatorBaseImpl(app)-»
+}
+«ENDDEFINE»
+
+«REM»concrete implementation stub«ENDREM»
+«DEFINE BusinessValidatorImpl(Application app) FOR Entity-»
+
+/**
+ * Business validator class for encapsulating validation methods.
+ *
+ * This is the concrete validation class for «name.formatForDisplay()» entities.
+ */
+class «implClassBusinessValidator()» extends «IF isInheriting()»«parentType().implClassBusinessValidator()»«ELSE»«baseClassBusinessValidator()»«ENDIF»
+{
+    // here you can add custom validation methods or override existing checks
+}
+«ENDDEFINE»
+
 «DEFINE BusinessValidatorBaseImpl(Application app) FOR Entity»
 
     /**
@@ -60,7 +97,6 @@
 «ENDDEFINE»
 
 «DEFINE checkForUniqueSlugValues(Application app) FOR Entity-»
-«LET sluggableFieldRealName() AS sluggableFieldRealName-»
 
     /**
      * Check for unique slug values.
@@ -70,9 +106,9 @@
      * @param string  $value The «sluggableFieldRealName.formatForDisplay()» to check.
      * @param int $excludeid      int    Id of «nameMultiple.formatForDisplay()» to exclude (optional).
      *
-     * @return boolean true if the given «sluggableFieldRealName.formatForDisplay()» does already exist
+     * @return boolean true if the given slug does already exist
      */
-    public function checkIf«sluggableFieldRealName.formatForCodeCapital()»Exists($value, $excludeid = 0)
+    public function checkIfSlugExists($value, $excludeid = 0)
     {
         if (empty($value)) {
             return false;
@@ -82,12 +118,11 @@
 «EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(app.appName(), true, 'validator', name, 'checkIf'.msconcat(sluggableFieldRealName.formatForCodeCapital()).msconcat('Exists'))-»
 
         // TODO: move to «IF isInheriting()»«parentType().baseClassModelTable()»«ELSE»«baseClassModelTable()»«ENDIF»
-        $where = 'tbl.«sluggableFieldRealName» = \'' . DataUtil::formatForStore($value) . '\'';
+        $where = 'tbl.slug» = \'' . DataUtil::formatForStore($value) . '\'';
         if ($excludeid > 0) {
             $where .= ' AND tbl.«idField()» != \'' . (int) DataUtil::formatForStore($excludeid) . '\'';
         }
         return $objectCollection->selectCount($where);
     }
-«ENDLET-»
 «ENDDEFINE»
 

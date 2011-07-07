@@ -28,38 +28,6 @@
 «ENDDEFINE»
 
 
-
-«DEFINE ClassToString(String className) FOR Entity-»
-    /**
-     * Interceptor being called if an object is used within a string context.
-     *
-     * @return string
-     */
-    public function __toString() {
-        $string  = 'Instance of the class "«className.formatForCode()»' . "\n";
-        $string .= 'Managed table: «name.formatForCode()»' . "\n";
-        $string .= 'Entity fields:' . "\n";
-«FOREACH fields AS col-»
-        $string .= '        «col.name.formatForCode()»' . "\n";
-«ENDFOREACH-»
-        $string .= "\n";
-
-        return $string;
-    }
-«ENDDEFINE»
-
-
-«DEFINE MemberVar(String name, String type, String init) FOR Object-»
-«EXPAND MemberVar(name, type, init, 'protected')-»
-«ENDDEFINE»
-
-«DEFINE MemberVar(String name, String type, String init, String modifier) FOR Object-»
-    /**
-     * @var «type» $«name».
-     */
-    «modifier» $«name»«init»;
-«ENDDEFINE»
-
 «DEFINE GetterAndSetterMethods(String name, String type) FOR Object-»
 «EXPAND GetterMethod(name, type)»
 «EXPAND SetterMethod(name, type)»
@@ -91,40 +59,23 @@
     }
 «ENDDEFINE»
 
-«DEFINE GetterAndSetterMethodsDelegate(String name, String type, String delegate) FOR Object-»
-«EXPAND GetterMethodDelegate(name, type, delegate)»
-«EXPAND SetterMethodDelegate(name, type, delegate)»
-«ENDDEFINE»
 
-«DEFINE GetterMethodDelegate(String name, String type, String delegate) FOR Object-»
+«DEFINE ClassToString(String className) FOR Entity-»
     /**
-     * Get «name.formatForDisplay()».
+     * Interceptor being called if an object is used within a string context.
      *
-     * @return «type»
+     * @return string
      */
-    public function get«name.toFirstUpper()»()
-    {
-        if (!is_null($this->«delegate») && ($this->«name» == null || !$this->«name»)) {
-            $this->«name» = $this->«delegate»['«name»'];
-        }
-        return $this->«name»;
-    }
-«ENDDEFINE»
+    public function __toString() {
+        $string  = 'Instance of the class "«className.formatForCode()»' . "\n";
+        $string .= 'Managed table: «name.formatForCode()»' . "\n";
+        $string .= 'Entity fields:' . "\n";
+«FOREACH fields AS col-»
+        $string .= '        «col.name.formatForCode()»' . "\n";
+«ENDFOREACH-»
+        $string .= "\n";
 
-«DEFINE SetterMethodDelegate(String name, String type, String delegate) FOR Object-»
-    /**
-     * Set «name.formatForDisplay()».
-     *
-     * @param «type» $«name».
-     * 
-     * @return void
-     */
-    public function set«name.toFirstUpper()»($p«name.toFirstUpper()»)
-    {
-        $this->«name» = $p«name.toFirstUpper()»;
-        if (!is_null($this->«delegate»)) {
-            $this->«delegate»['«name»'] = $this->«name»;
-        }
+        return $string;
     }
 «ENDDEFINE»
 

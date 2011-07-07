@@ -16,12 +16,14 @@ public class TrafoUtils {
     /**
      * add a primary key to a table
      * 
-     * @params Entity given Entity instance
-     * @return flag if insertion was sucessful
+     * @param Entity
+     *            given Entity instance
+     * @return flag if insertion was successful
      */
     public static boolean addPrimaryKey(Entity entity) {
         try {
-            entity.getFields().add(0, createIDColumn(entity.getName(), true));
+            entity.getFields().add(0,
+                    createIDColumn(/* entity.getName() */"", true));
         } catch (final Exception e) {
             return false;
         } finally {
@@ -35,14 +37,17 @@ public class TrafoUtils {
      * 
      * @param JoinRelationship
      *            the relationship to be referenced
-     * @params Entity given Entity instance
-     * @return flag if process was sucessful
+     * @param Entity
+     *            given Entity instance
+     * @return flag if process was successful
      */
     public static boolean addRelationField(JoinRelationship rel, Entity entity) {
         try {
-            final String idFieldName = rel.getSource().getName() + "id";
+            final String fieldName = Utils.formatForCode(rel.getSource()
+                    .getName());
             if (rel.getTargetField() == "id"
-                    || rel.getTargetField() == idFieldName) {
+                    || rel.getTargetField() == fieldName + "id"
+                    || rel.getTargetField() == fieldName + "_id") {
                 entity.getFields().add(
                         createIDColumn(rel.getSource().getName(), false));
             }
@@ -57,8 +62,13 @@ public class TrafoUtils {
     private static IntegerField createIDColumn(String colName, Boolean isPrimary) {
         final ModulestudioFactory factory = new ModulestudioFactoryImpl();
         final IntegerField idField = factory.createIntegerField();
-        idField.setName(Utils.formatForDB(colName) + "id");
-        idField.setLength(11);
+        if (isPrimary) {
+            idField.setName("id");
+        }
+        else {
+            idField.setName(Utils.formatForCode(colName) + "_id");
+        }
+        idField.setLength(9);
         idField.setPrimaryKey(isPrimary);
         idField.setUnique(isPrimary);
         return idField;

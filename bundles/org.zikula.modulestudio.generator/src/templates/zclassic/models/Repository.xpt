@@ -10,26 +10,35 @@
     «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»
 «ENDDEFINE»
 
-«REM»creates a table class file for every Entity instance«ENDREM»
+«REM»creates a repository class file for every Entity instance«ENDREM»
 «DEFINE Root(Application app) FOR Entity-»
-«info("Generating table classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
+«info("Generating repository classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «IF !isInheriting()-»
-    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModelTable().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelTableBaseImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModelRepository().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRepositoryBaseImpl(app)»«ENDFILE»
 «ENDIF-»
-    «FILE getAppSourcePath(app.appName()).msconcat(implClassModelTable().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelTableImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassModelRepository().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRepositoryImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
 «REM»base implementation«ENDREM»
-«DEFINE ModelTableBaseImpl(Application app) FOR Entity-»
+«DEFINE ModelRepositoryBaseImpl(Application app) FOR Entity-»
 
 /**
- * Doctrine_Table class used to implement own special entity methods.
+ * Repository class used to implement own special entity methods.
  * For example it can provide convenience methods for performing certain DQL queries.
  *
- * This is the base table class for «name.formatForDisplay()» entities.
+ * This is the base repository class for «name.formatForDisplay()» entities.
  */
-class «baseClassModelTable()» extends Doctrine_Table
+class «baseClassModelRepository()» extends EntityRepository
 {
+«REM»
+    public function getAllAdminUsers()
+    {
+        return $this->getEntityManager()
+                    ->createQuery('SELECT u FROM MyDomain\Model\User u WHERE u.status = "admin"')
+                    ->getResult();
+    }
+«ENDREM»
+
     /**
      * Hook into the constructor process.
      */
@@ -44,7 +53,7 @@ class «baseClassModelTable()» extends Doctrine_Table
     public function truncateTable()
     {
         $q = Doctrine_Query::create()
-            ->delete('«implClassModelRecord()»');
+            ->delete('«implClassModelEntity()»');
         $q->execute();
     }
 
@@ -368,16 +377,16 @@ class «baseClassModelTable()» extends Doctrine_Table
 «ENDDEFINE»
 
 «REM»concrete implementation stub«ENDREM»
-«DEFINE ModelTableImpl(Application app) FOR Entity-»
+«DEFINE RepositoryTableImpl(Application app) FOR Entity-»
 
 /**
- * Doctrine_Table class used to implement own special entity methods.
+ * Repository class used to implement own special entity methods.
  *
  * For example it can provide convenience methods for performing certain DQL queries.
  *
- * This is the concrete table class for «name.formatForDisplay()» entities.
+ * This is the concrete repository class for «name.formatForDisplay()» entities.
  */
-class «implClassModelTable()» extends «IF isInheriting()»«parentType().implClassModelTable()»«ELSE»«baseClassModelTable()»«ENDIF»
+class «implClassModelRepository()» extends «IF isInheriting()»«parentType().implClassModelRepository()»«ELSE»«baseClassModelRepository()»«ENDIF»
 {
     // feel free to add your own methods here, like for example reusable DQL queries
 }
@@ -386,23 +395,23 @@ class «implClassModelTable()» extends «IF isInheriting()»«parentType().impl
 
 «REM»creates a reference table class file for every many-to-many relationship instance«ENDREM»
 «DEFINE Root(Application app) FOR ManyToManyRelationship-»
-    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModelRefTable().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefTableBaseImpl(app)»«ENDFILE»
-    «FILE getAppSourcePath(app.appName()).msconcat(implClassModelRefTable().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefTableImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModelRefRepository().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefRepositoryBaseImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassModelRefRepository().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefRepositoryImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
 
 «REM»base implementation«ENDREM»
-«DEFINE ModelRefTableBaseImpl(Application app) FOR ManyToManyRelationship-»
+«DEFINE ModelRefRepositoryBaseImpl(Application app) FOR ManyToManyRelationship-»
 
 /**
- * Doctrine_Table class used to implement own special entity methods.
+ * Repository class used to implement own special entity methods.
  *
  * For example it can provide convenience methods for performing certain DQL queries.
  *
- * This is the base table class for the many to many relationship
+ * This is the base repository class for the many to many relationship
  * between «source.name.formatForDisplay()» and «target.name.formatForDisplay()» entities.
  */
-class «baseClassModelRefTable()» extends Doctrine_Table
+class «baseClassModelRefRepository()» extends EntityRepository
 {
     public function truncateTable()
     {
@@ -414,17 +423,17 @@ class «baseClassModelRefTable()» extends Doctrine_Table
 «ENDDEFINE»
 
 «REM»concrete implementation stub«ENDREM»
-«DEFINE ModelRefTableImpl(Application app) FOR ManyToManyRelationship-»
+«DEFINE ModelRefRepositoryImpl(Application app) FOR ManyToManyRelationship-»
 
 /**
- * Doctrine_Table class used to implement own special entity methods.
+ * Repository class used to implement own special entity methods.
  *
  * For example it can provide convenience methods for performing certain DQL queries.
  *
- * This is the concrete table class for the many to many relationship
+ * This is the concrete repository class for the many to many relationship
  * between «source.name.formatForDisplay()» and «target.name.formatForDisplay()» entities.
  */
-class «implClassModelRefTable()» extends «baseClassModelRefTable()»
+class «implClassModelRefRepository()» extends «baseClassModelRefRepository()»
 {
     // feel free to add your own methods here, like for example reusable DQL queries
 }

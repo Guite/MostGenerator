@@ -66,16 +66,22 @@ cached boolean hasUploads(Application this) :
 cached getUploadEntities(Application this) :
     models.entities.select(e|e.fields.typeSelect(UploadField).size > 0);
 
-
-cached getTreeEntities(Application this) :
-    models.entities.select(e|e.tree > 0);
-cached boolean hasTrees(Application this) :
-    !getTreeEntities().isEmpty;
-
+cached boolean hasLoggable(Application this) :
+    models.entities.select(e|e.loggable);
+cached boolean hasSluggable(Application this) :
+    models.entities.exists(e|e.hasSluggableFields());
+cached boolean hasSortable(Application this) :
+    models.entities.exists(e|e.hasSortableFields());
+cached boolean hasTimestampable(Application this) :
+    models.entities.exists(e|e.hasTimestampableFields());
+cached boolean hasTranslatable(Application this) :
+    !getTranslatableEntities().isEmpty;
 cached getTranslatableEntities(Application this) :
     models.entities.select(e|e.fields.typeSelect(DerivedField).select(f|f.translatable).size > 0);
-cached boolean hasTranslatableEntities(Application this) :
-    !getTranslatableEntities().isEmpty;
+cached boolean hasTrees(Application this) :
+    !getTreeEntities().isEmpty;
+cached getTreeEntities(Application this) :
+    models.entities.select(e|e.tree > 0);
 
 
 cached boolean hasEditActions(Application this) :
@@ -101,6 +107,9 @@ cached String getUniqueRelationNameForJs(JoinRelationship this, Application app,
     .msconcat('_')
     .msconcat(relationAliasName);
 
+// return model container which are default data sources
+cached getDefaultDataSource(Application this) :
+    models.select(e|e.defaultDataSource == true).get(0);
 
 
 cached String fullEntityName(Entity this) :
@@ -109,10 +118,18 @@ cached String fullEntityName(Entity this) :
 cached String getEntityNameSingularPlural(Entity this, Boolean usePlural) :
     ((usePlural) ? nameMultiple : name);
 
+cached String idField(Entity this) :
+    getPrimaryKeyField().name.formatForDB();
 
-// return model container which are default data sources
-cached getDefaultDataSource(Application this) :
-    models.select(e|e.defaultDataSource == true).get(0);
+cached boolean hasNormalIndexes(Entity this) :
+    !getNormalIndexes().isEmpty;
+cached getNormalIndexes(Entity this) :
+    indexes.select(e|e.type == EntityIndexType::NORMAL);
+
+cached boolean hasUniqueIndexes(Entity this) :
+    !getUniqueIndexes().isEmpty;
+cached getUniqueIndexes(Entity this) :
+    indexes.select(e|e.type == EntityIndexType::UNIQUE);
 
 // return all derived fields (excluding calculated fields)
 cached getDerivedFields(Entity this) :
@@ -150,8 +167,19 @@ cached boolean hasSluggableFields(Entity this) :
 cached getSluggableFields(Entity this) :
     fields.typeSelect(DerivedField).select(e|e.sluggablePosition > 0);
 
-cached String idField(Entity entity) :
-    entity.getPrimaryKeyField().name.formatForDB();
+cached boolean hasSortableFields(Entity this) :
+    !getSortableFields().isEmpty;
+cached getSortableFields(Entity this) :
+    fields.typeSelect(IntegerField).select(e|e.sortablePosition > 0);
+
+cached boolean hasTimestampableFields(Entity this) :
+    !getTimestampableFields().isEmpty;
+cached getTimestampableFields(Entity this) :
+    fields.typeSelect(IntegerField).select(e|e.timestampable > 0);
+
+
+
+
 
 /** obsolete */
 cached getPointingRelations(IntegerField this) :
@@ -172,6 +200,20 @@ cached String namingSchemeAsInt(UploadField this) :
 cached getJoinRelations(Models this) :
     relations.typeSelect(JoinRelationship);
 
+cached getOutgoingCollections(Entity this) :
+    outgoing.typeSelect(OneToManyRelationship).union(outgoing.typeSelect(ManyToManyRelationship));
+cached getIncomingCollections(Entity this) :
+    outgoing.typeSelect(ManyToOneRelationship).select(e|e.bidirectional).union(outgoing.typeSelect(ManyToManyRelationship).select(e|e.bidirectional));
+cached getCollections(Entity this) :
+    getOutgoingCollections().union(getIncomingCollections());
+
+cached hasOutgoingCollections(Entity this) :
+	!getOutgoingCollections().isEmpty;
+cached hasIncomingCollections(Entity this) :
+	!getIncomingCollections().isEmpty;
+cached hasCollections(Entity this) :
+	!getCollections().isEmpty;
+
 cached isInheriting(Entity this) :
     !outgoing.typeSelect(InheritanceRelationship).isEmpty;
 cached InheritanceRelationship getInheritanceRelation(Entity this) :
@@ -188,17 +230,22 @@ cached getChildRelations(Entity this) :
 cached relationFieldName(Entity refEntity, String refField) :
     (refField.toLowerCase() == 'id' || refField.toLowerCase() == refEntity.idField()) ? refEntity.idField() : refEntity.fields.select(e|e.name == refField).get(0).name.formatForCode();
 
-/* get local field for 1:1 and 1:n */ 
+cached isDefaultIdField(String fieldName, Entity entity) :
+    fieldName == "id" || fieldName == (entity.name + "id") || fieldName == (entity.name + "_id");
+/* get local field for 1:1 and 1:n * /
 cached getRelationLocalField(JoinRelationship this, Boolean incoming) :
-    (!incoming) ? source.relationFieldName(sourceField) : ((targetField != "id" && targetField != (target.name + "id")) ? target.relationFieldName(targetField) : source.relationFieldName(sourceField));
-/* get foreign field for 1:1 and 1:n */ 
+    (!incoming) ? source.relationFieldName(sourceField) : (!isDefaultIdField(targetField, target) ? target.relationFieldName(targetField) : source.relationFieldName(sourceField));
+/* get foreign field for 1:1 and 1:n * / 
 cached getRelationForeignField(JoinRelationship this, Boolean incoming) :
-    (incoming) ? source.relationFieldName(sourceField) : ((targetField != "id" && targetField != (target.name + "id")) ? target.relationFieldName(targetField) : source.relationFieldName(sourceField));
+    (incoming) ? source.relationFieldName(sourceField) : (!isDefaultIdField(targetField, target) ? target.relationFieldName(targetField) : source.relationFieldName(sourceField));
 
 cached String getTargetMultiplicity(JoinRelationship this) :
     'Many';
 cached String getTargetMultiplicity(OneToOneRelationship this) :
     'One';
+cached String getTargetMultiplicity(ManyToOneRelationship this) :
+    'One';
+*/
 
 /* retrieve integer value defining which relation edit type will be implemented
  * this mapping is done to have a more appropriate logic inside the generator
@@ -261,9 +308,17 @@ cached boolean hasActions(Controller controller, String type) :
 
 cached String fieldTypeAsString(DerivedField f) :
     f.metaType.toString().replaceAll("modulestudio::", "").replaceAll("Field", "").toLowerCase();
-// required for own sub types like user, email, url, upload 
+// required for own sub types like user, email, url, upload
 cached String fieldTypeAsString(AbstractIntegerField f) :
-    'integer';
+    // choose mapping type depending on length
+    // a SMALLINT ranges up to 32767 and is therefore not appropriate for 5 digits
+    // an INT ranges up to 2147483647 and is therefore good for up to 9 digits
+    // maximal length of 18 is enforced in model validation
+    (
+    	(f.length < 5) ? 'smallint' : (
+    		(f.length < 10) ? 'integer' : 'bigint'
+    	)
+    );
 cached String fieldTypeAsString(AbstractStringField f) :
     'string';
 

@@ -4,90 +4,1018 @@
 «EXTENSION extensions::ClassUtils»
 «REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
-«REM»Entry point for Business entity classes«ENDREM»
+«REM»Entry point for Doctrine entity classes«ENDREM»
 «DEFINE Root FOR Application-»
-	«EXPAND BusinessEntityWrapper(this, false) FOREACH models.entities-»
-	«EXPAND BusinessEntityWrapper(this, true) FOREACH models.entities-»
-    «EXPAND BusinessValidatorWrapper(this) FOREACH models.entities-»
+    «EXPAND Root(this) FOREACH models.entities-»
+    «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»
+    «EXPAND business::Validator::BusinessValidatorWrapper(this) FOREACH models.entities-»
 «ENDDEFINE»
 
-«REM»creates a business entity and a collection class file for every Entity instance«ENDREM»
-«DEFINE BusinessEntityWrapper(Application app, Boolean isCollection) FOR Entity-»
-«info("Generating business " + ((isCollection) ? 'collection' : 'entity') +  " classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
+«REM»creates a entity class file for every Entity instance«ENDREM»
+«DEFINE Root(Application app) FOR Entity-»
+«info("Generating entity classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «IF !isInheriting()-»
-    «FILE getAppSourcePath(app.appName()).msconcat(baseClassBusinessEntity(isCollection).asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessEntityBaseImplSwitch(app, isCollection)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModelEntity().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelEntityBaseImpl(app)»«ENDFILE»
 «ENDIF-»
-    «FILE getAppSourcePath(app.appName()).msconcat(implClassBusinessEntity(isCollection).asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessEntityImplSwitch(app, isCollection)»«ENDFILE»
-«ENDDEFINE»
-
-«REM»creates a business validator file for every Entity instance«ENDREM»
-«DEFINE BusinessValidatorWrapper(Application app) FOR Entity-»
-«info("Generating business validator classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
-«IF !isInheriting()-»
-    «FILE getAppSourcePath(app.appName()).msconcat(baseClassBusinessValidator().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessValidatorBaseImpl(app)»«ENDFILE»
-«ENDIF-»
-    «FILE getAppSourcePath(app.appName()).msconcat(implClassBusinessValidator().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessValidatorImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassModelEntity().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelEntityImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
 «REM»base implementation«ENDREM»
-«DEFINE BusinessEntityBaseImplSwitch(Application app, Boolean isCollection) FOR Entity-»
+«DEFINE ModelEntityBaseImpl(Application app) FOR Entity-»
+
+use Doctrine\ORM\Mapping as ORM;
+«IF hasCollections()-»
+use Doctrine\Common\Collections\ArrayCollection;
+«ENDIF-»
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * Business entity «IF isCollection»collection «ENDIF»class for communication with controllers and encapsulating model details.
+ * Entity class that defines the entity structure and behaviours.
  *
- * This is the base business class for «name.formatForDisplay()» entities.
- */
-abstract class «baseClassBusinessEntity(isCollection)»«IF isCollection»/* extends Zikula_Collection_Container*/«ENDIF»
-{
-«IF isCollection == false-»
-«EXPAND business::Entity::BusinessEntityBaseImpl(app)-»
+ * This is the base entity class for «name.formatForDisplay()» entities.
+ *
+ * @ORM\Entity(repositoryClass="«implClassModelRepository()»"«IF readOnly-», readOnly=true«ENDIF-»)
+«IF indexes.isEmpty-»
+ * @ORM\Table(name="«fullEntityName()»")
 «ELSE-»
-«EXPAND business::EntityCollection::BusinessEntityCollectionBaseImpl(app)-»
+ * @ORM\Table(name="«fullEntityName()»",
+«IF hasNormalIndexes()-»
+ *      indexes={«EXPAND Index('Index') FOREACH getNormalIndexes() SEPARATOR ','-»}«IF hasUniqueIndexes()-»,«ENDIF-»
 «ENDIF-»
+«IF hasUniqueIndexes()-»
+ *      uniqueConstraints={«EXPAND Index('UniqueConstraint') FOREACH getUniqueIndexes() SEPARATOR ','-»}
+«ENDIF-»
+ * )
+«ENDIF-»
+ */
+class «baseClassModelEntity()» extends Zikula_EntityAccess
+{
+«EXPAND EntityInfo-»
 }
 «ENDDEFINE»
+
+«DEFINE Index(String indexType) FOR EntityIndex-»
+@ORM\«indexType.toFirstUpper()»(name="«name.formatForDB()»", columns={«EXPAND IndexField FOREACH items SEPARATOR ','»})
+«ENDDEFINE»
+«DEFINE IndexField FOR EntityIndexItem-»"«name.formatForDB()»"«ENDDEFINE»
 
 «REM»concrete implementation stub«ENDREM»
-«DEFINE BusinessEntityImplSwitch(Application app, Boolean isCollection) FOR Entity-»
+«DEFINE ModelEntityImpl(Application app) FOR Entity-»
 
 /**
- * Business entity «IF isCollection»collection «ENDIF»class for communication with controllers and encapsulating model details.
+ * Entity class that defines the entity structure and behaviours.
  *
- * This is the concrete business class for «name.formatForDisplay()» entities.
+ * This is the concrete entity class for «name.formatForDisplay()» entities.
  */
-class «implClassBusinessEntity(isCollection)» extends «IF isInheriting()»«parentType().implClassBusinessEntity(isCollection)»«ELSE»«baseClassBusinessEntity(isCollection)»«ENDIF»
+class «implClassModelEntity()» extends «IF isInheriting()»«parentType().implClassModelEntity()»«ELSE»«baseClassModelEntity()»«ENDIF»
 {
-    // feel free to add your own additions here
+    // feel free to add your own methods here
 }
 «ENDDEFINE»
 
+
+«DEFINE EntityInfo FOR Entity-»
+«REM»
+... internal properties ...
+    /**
+     * @var string The tablename this object maps to
+     */
+    protected $_intObjectType = '«fullEntityName()»';
+
+    /**
+     * @var string The id field for this object
+     */
+    protected $_intIdField = '«idField()»';
+
+    /**
+     * @var integer The id for this object
+     */
+    protected $_intId = 0;
+
+    /**
+     * @var «implClassBusinessValidator()» The validator for this entity
+     */
+    protected $_intValidator = null;
+
+    /**
+     * @var boolean Whether this entity supports unique slugs
+     */
+    protected $_intHasUniqueSlug = false;
+«ENDREM»
+«EXPAND PersistentProperty FOREACH fields.typeSelect(DerivedField)»
+«EXPAND PersistentAssociation(false) FOREACH incoming.typeSelect(JoinRelationship)»
+«EXPAND PersistentAssociation(true) FOREACH outgoing.typeSelect(JoinRelationship)»
+
+    /**
+     * Constructor.
+«REM»     *
+     * @param integer $id The id to use to retrieve the object (optional) (default=null).«ENDREM»
+     */
+    public function __construct()
+    {
+«EXPAND InitCollection(true) FOREACH getOutgoingCollections()-»
+«EXPAND InitCollection(false) FOREACH getIncomingCollections()-»
+    }
+
+«REM»
+«EXPAND OtherStuffTEMP»
+
+... internal methods ...
+«EXPAND FileHelper::GetterAndSetterMethods('_intObjectType', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('_intIdField', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('_intId', 'integer')»
+«EXPAND FileHelper::GetterAndSetterMethods('_intValidator', implClassBusinessValidator())»
+«EXPAND FileHelper::GetterAndSetterMethods('_intHasUniqueSlug', 'boolean')»
+«ENDREM»
+
+«EXPAND FieldAccessor FOREACH fields.typeSelect(DerivedField)»
+«EXPAND RelationAccessor(false) FOREACH incoming.typeSelect(JoinRelationship)»
+«EXPAND RelationAccessor(true) FOREACH outgoing.typeSelect(JoinRelationship)»
+
+«ENDDEFINE»
+
+
+«DEFINE PersistentProperty FOR DerivedField»
+«EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), '')»
+«ENDDEFINE»
+
+«DEFINE PersistentProperty FOR UploadField»
+«EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), '')»
+
+    /**
+     * @var array $«name.formatForCode()»Meta.
+     * @ORM\Column(type="array")
+     */
+    protected $«name.formatForCode()»Meta = array();
+«ENDDEFINE»
+
+«DEFINE PersistentProperty FOR ArrayField»
+«EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), ' = array()')»
+«ENDDEFINE»
+
+«REM»Note we use protected and not private to let the dev change things in concrete implementations«ENDREM»
+«DEFINE PersistentProperty(String name, String type, String init) FOR DerivedField-»
+«EXPAND PersistentProperty(name, type, init, 'protected')-»
+«ENDDEFINE»
+
+«DEFINE PersistentProperty(String name, String type, String init, String modifier) FOR DerivedField»
+    /**
+     * @var «type» $«name».
+«IF primaryKey-»
+     * @ORM\Id
+«ENDIF-»
+     * @ORM\Column(«EXPAND PersistentPropertyImpl(type)»«IF unique-», unique=true«ENDIF-»«IF nullable-» nullable=true«ENDIF-»)
+«IF primaryKey-»
+«REM»TODO«ENDREM»
+     * @ORM\GeneratedValue(strategy="AUTO")
+«ENDIF-»
+«REM»
+     * @Gedmo\Sluggable
+«ENDREM»
+     */
+    «modifier» $«name»«init»;
+«ENDDEFINE»
+
+«DEFINE PersistentPropertyImpl(String type) FOR DerivedField-»
+type="«type»"
+«ENDDEFINE»
+
+«DEFINE PersistentPropertyImpl(String type) FOR DecimalField»
+type="«type»", precision=«length», scale=«scale»
+«ENDDEFINE»
+«DEFINE PersistentPropertyImpl(String type) FOR StringField-»
+«REM»type="«type»", «ENDREM»length=«length»
+«ENDDEFINE»
+
+
+
+«DEFINE FieldAccessorDefault FOR DerivedField»
+«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode(), implClassBusinessEntity())»
+«ENDDEFINE»
+
+«DEFINE FieldAccessor FOR DerivedField»
+«EXPAND FieldAccessorDefault»
+«ENDDEFINE»
+
+«DEFINE FieldAccessor FOR UploadField»
+«EXPAND FieldAccessorDefault»
+«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode().msconcat('Meta'), 'array')»
+«ENDDEFINE»
+
+
+
+«REM»If we have an outgoing association useTarget is true; for an incoming one it is false.«ENDREM»
+«DEFINE PersistentAssociation(Boolean useTarget) FOR JoinRelationship»
+«error("Error: undefined association type " + metaType.toString() + " (code 452361)") -> ""-»
+«ENDDEFINE»
+
+«REM»If we have an outgoing association useTarget is true; for an incoming one it is false.«ENDREM»
+«DEFINE PersistentAssociation(Boolean useTarget) FOR OneToOneRelationship»
+«LET getRelationAliasName(useTarget) AS relationAliasName-»
+«LET ((useTarget) ? target : source).implClassBusinessEntity() AS type-»
+«LET ((useTarget) ? source : target).implClassBusinessEntity() AS ownType-»
+«IF !bidirectional-»
+«IF !useTarget-»
+«ELSE-»
+«REM»1 Product has 1 Shipping --> Product table contains shipping_id column.«ENDREM»
+    /**
+     * @var «type» $«relationAliasName».
+     * @ORM\OneToOne(targetEntity="«type»")
+«REM»     * @JoinColumn(name="shipping_id", referencedColumnName="id")«ENDREM»
+     */
+    protected $«relationAliasName»;
+«ENDIF-»
+«ELSE-»
+«REM»1 Customer has 1 Cart; the Cart knows the Customer«ENDREM»
+«IF !useTarget-»
+    /**
+     * @var «type» $«relationAliasName».
+     * @ORM\OneToOne(targetEntity="«type»", inversedBy="«ownType»")
+«REM»     * @JoinColumn(name="customer_id", referencedColumnName="id")«ENDREM»
+«REM»self-referencing
+     * @OneToOne(targetEntity="Student")
+     * @JoinColumn(name="mentor_id", referencedColumnName="id")«ENDREM»
+     */
+    protected $«relationAliasName»;
+«ELSE-»
+    /**
+     * @var «type» $«relationAliasName».
+     * @ORM\OneToOne(targetEntity="«type»", mappedBy="«ownType»")
+     */
+    protected $«relationAliasName»;
+«ENDIF-»
+«ENDIF-»
+«ENDLET-»
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+«REM»If we have an outgoing association useTarget is true; for an incoming one it is false.«ENDREM»
+«DEFINE PersistentAssociation(Boolean useTarget) FOR OneToManyRelationship»
+«LET getRelationAliasName(useTarget) AS relationAliasName-»
+«LET ((useTarget) ? target : source).implClassBusinessEntity() AS type-»
+«LET ((useTarget) ? source : target).implClassBusinessEntity() AS ownType-»
+«IF !bidirectional-»
+«IF !useTarget-»
+«ELSE-»
+«REM»1 User has n Phonenumber --> join table users_phonenumbers both id columns, whereby user_id is made unique.«ENDREM»
+    /**
+     * @var «type» $«relationAliasName».
+     * @ORM\ManyToMany(targetEntity="«type»")
+     * @JoinTable(name="users_phonenumbers",
+     *      joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@JoinColumn(name="phonenumber_id", referencedColumnName="id", unique=true)}
+     *      )
+«IF orderBy-»
+     * @ORM\OrderBy({«orderBy»})
+«ENDIF-»
+     */
+    protected $«relationAliasName»;
+«REM»    private $phonenumbers;«ENDREM»
+«ENDIF-»
+«ELSE-»
+«REM»1 Product has n Features --> Feature table contains product_id.«ENDREM»
+«IF !useTarget-»
+    /**
+     * @var «type» $«relationAliasName».
+     * @ORM\ManyToOne(targetEntity="«type»", inversedBy="features")
+«REM»     * @JoinColumn(name="product_id", referencedColumnName="id")«ENDREM»
+«REM»self-referencing
+Category hierarchy with (adjacency list approach) --> Category table contains parent_id.
+     * @ManyToOne(targetEntity="Category", inversedBy="children")
+     * @JoinColumn(name="parent_id", referencedColumnName="id")«ENDREM»
+     */
+    protected $«relationAliasName»;
+«REM»self-referencing
+    private $parent;«ENDREM»
+«ELSE-»
+    /**
+     * @var «type» $«relationAliasName».
+     * @ORM\OneToMany(targetEntity="«type»", mappedBy="product")
+«REM»self-referencing
+     * @OneToMany(targetEntity="Category", mappedBy="parent")«ENDREM»
+«IF orderBy-»
+     * @ORM\OrderBy({«orderBy»})
+«ENDIF-»
+     */
+    protected $«relationAliasName»;
+«REM»    private $features;«ENDREM»
+«REM»self-referencing
+    private $children;«ENDREM»
+«ENDIF-»
+«ENDIF-»
+«ENDLET-»
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+«REM»If we have an outgoing association useTarget is true; for an incoming one it is false.«ENDREM»
+«DEFINE PersistentAssociation(Boolean useTarget) FOR ManyToOneRelationship»
+«LET getRelationAliasName(useTarget) AS relationAliasName-»
+«LET ((useTarget) ? target : source).implClassBusinessEntity() AS type-»
+«LET ((useTarget) ? source : target).implClassBusinessEntity() AS ownType-»
+«IF !bidirectional && useTarget-»
+«REM»n Users have 1 Address --> User table contains address_id column.«ENDREM»
+    /**
+     * @var «type» $«relationAliasName».
+     * @ORM\OneToOne(targetEntity="«type»")
+«REM»     * @JoinColumn(name="address_id", referencedColumnName="id")«ENDREM»
+     */
+    protected $«relationAliasName»;
+«ENDIF-»
+«ENDLET-»
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+«REM»If we have an outgoing association useTarget is true; for an incoming one it is false.«ENDREM»
+«DEFINE PersistentAssociation(Boolean useTarget) FOR ManyToManyRelationship»
+«LET getRelationAliasName(useTarget) AS relationAliasName-»
+«LET ((useTarget) ? target : source).implClassBusinessEntity() AS type-»
+«LET ((useTarget) ? source : target).implClassBusinessEntity() AS ownType-»
+«IF !bidirectional-»
+«IF !useTarget-»
+«ELSE-»
+«REM»m Users have n Groups, but a Group does not know its Users«ENDREM»
+    /**
+     * @var «type» $«relationAliasName».
+     * @ORM\ManyToMany(targetEntity="«type»")
+     * @JoinTable(name="«refClass.formatForCode()»",
+     *      joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@JoinColumn(name="group_id", referencedColumnName="id")}
+     *      )
+«IF orderBy-»
+     * @ORM\OrderBy({«orderBy»})
+«ENDIF-»
+     */
+    protected $«relationAliasName»;
+«REM»    private $groups;«ENDREM»
+«ENDIF-»
+«ELSE-»
+«REM»m Users have n Groups, but this time bidirectional«ENDREM»
+«IF !useTarget-»
+    /**
+     * @var «type» $«relationAliasName».
+     * @ORM\ManyToMany(targetEntity="«type»", mappedBy="groups")
+«REM»self-referencing
+     * @ManyToMany(targetEntity="User", mappedBy="myFriends")«ENDREM»
+     */
+    protected $«relationAliasName»;
+«REM»self-referencing
+    private $friendsWithMe;«ENDREM»
+«ELSE-»
+    /**
+     * @var «type» $«relationAliasName».
+     * @ORM\ManyToMany(targetEntity="«type»", inversedBy="users")
+     * @JoinTable(name="users_groups",
+     *      joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@JoinColumn(name="group_id", referencedColumnName="id")}
+     *      )
+«REM»self-referencing
+     * @ManyToMany(targetEntity="User", inversedBy="friendsWithMe")
+     * @JoinTable(name="friends",
+     *      joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@JoinColumn(name="friend_user_id", referencedColumnName="id")}
+     *      )«ENDREM»
+«IF orderBy-»
+     * @ORM\OrderBy({«orderBy»})
+«ENDIF-»
+     */
+    protected $«relationAliasName»;
+«REM»self-referencing
+    private $myFriends;«ENDREM»
+«ENDIF-»
+«ENDIF-»
+«ENDLET-»
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+
+«REM»
+«IF source == target-»«REM»TODO«END REM»
+/** self relations are not working yet, see http://code.zikula.org/generator/ticket/75
+«ENDIF-»
+...
+«IF source == target-»«REM»TODO«END REM»
+*/
+«ENDIF-»
+«ENDREM»
+
+
+«DEFINE InitCollection(useTarget) FOR JoinRelationship-»
+        $this->«getRelationAliasName(useTarget)» = new ArrayCollection();
+«ENDDEFINE»
+
+
+
+«REM»
+Many-To-Many: choosing owning and inverse sides
+
+Rule: owning is the entity being responsible for managing the connection.
+
+Example: Article and Tag --> Article is leading --> "source" in our dsl
+
+
+class Article
+{
+    private $tags;
+
+    public function addTag(Tag $tag)
+    {
+        $tag->addArticle($this); // synchronously updating inverse side
+        $this->tags[] = $tag;
+    }
+}
+
+class Tag
+{
+    private $articles;
+
+    public function addArticle(Article $article)
+    {
+        $this->articles[] = $article;
+    }
+}
+}}}
+This allows grouping the tag addition on the Article side of the association:
+{{{
+#!php
+$article = new Article();
+$article->addTag($tagA);
+$article->addTag($tagB);
+}}}
+«ENDREM»
+
+
+
+
+
+«DEFINE RelationAccessor(Boolean useTarget) FOR JoinRelationship»
+«LET getRelationAliasName(useTarget) AS relationAliasName-»
+«LET ((useTarget) ? target : source).implClassBusinessEntity() AS type-»
+«EXPAND FileHelper::GetterAndSetterMethods(relationAliasName, type)»
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+
+
+
+«DEFINE OtherStuffTEMP FOR Entity-»
+    /**
+     * Set table definition.
+     * Define columns, indexes and other information about the table schema.
+     *
+     * @return void
+     */
+    public function setTableDefinition()
+    {
+«IF isInheriting() && getInheritanceRelation().strategy == InheritanceStrategyType::CONCRETE-»
+        // the following method call is needed in
+        // concrete inheritance
+        parent::setTableDefinition();
+«ENDIF-»
+«EXPAND record::TableDef::SetTableDefinition-»
+«IF isInheriter()-»
+«EXPAND SubClasses-»
+«ENDIF-»
+    }
+
+«EXPAND record::Behaviour::SetUpBehaviour»
+«ENDDEFINE»
+
+
+«DEFINE BusinessEntityBaseImpl(Application app) FOR Entity»
+    /**
+     * Constructor.
+     *
+     * @param integer $id The id to use to retrieve the object (optional) (default=null).
+     */
+    public function __construct($id = 0)
+    {
+        $this->_intObjectType = '«fullEntityName()»';
+        $this->_intIdField = '«name.formatForDB()»id';
+        $this->_intId = $id;
+        $this->_intValidator = new «implClassBusinessValidator()»($this);
+        $this->_intHasUniqueSlug = «IF sluggable && sluggableUnique»true«ELSE»false«ENDIF»;
+    }
+
+    /**
+     * Select object from model (e.g. from database).
+     * For now we use Doctrine records, but as the controllers communicate only with
+     * business entities, we can exchange the model behind it without any subsequent
+     * efforts on the controller layer.
+     *
+     * @param integer $id      The id to use to retrieve the object (optional) (default=null).
+     * @param boolean $asArray Whether to return the result as array instead as record object (optional) (default=true).
+     *
+     * @return array|Doctrine_Record Retrieved data array or Doctrine_Record instance.
+     */
+    public function selectById($id = 0, $asArray = true)
+    {
+        // check id parameter
+        if ($id == 0 && $this->_intId == 0) {
+            return LogUtil::registerArgsError();
+        }
+        // store id parameter
+        if ($id > 0) {
+            $this->_intId = $id;
+        }
+
+        // get reference to table
+        $table = Doctrine_Core::getTable('«implClassModelRecord()»');
+
+        // get result from the model
+        $item = $table->selectOneItemById($id, $asArray);
+
+«IF i18n-»
+        // process translations
+        $item = «app.appName()»_Util_I18n::prepareEntityForOutput('«name.formatForCode()»', $item);
+
+«ENDIF-»
+        // look whether we fetched an object or an array
+        if (!$asArray) {
+            // store the result object
+            $this->set«name.formatForCodeCapital()»($item);
+        }
+
+        // return the results
+        return $item;
+    }
+«IF sluggable && sluggableUnique-»
+
+    /**
+     * Select object by unique slug value.
+     *
+     * @param string  $slugTitle The slug value.
+     * @param boolean $asArray   Whether to return the result as array instead as record object (optional) (default=true).
+     *
+     * @return array|Doctrine_Record retrieved data array or Doctrine_Record instance.
+     */
+    public function selectBySlug($slugTitle = '', $asArray = true)
+    {
+        // check input parameter
+        if ($slugTitle == '') {
+            return LogUtil::registerArgsError();
+        }
+
+        // get reference to table
+        $table = Doctrine_Core::getTable('«implClassModelRecord()»');
+
+        // get result from the model
+        $item = $table->selectOneItemBy«((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCodeCapital()»($slugTitle, $asArray);
+
+«IF i18n-»
+        // process translations
+        $item = «app.appName()»_Util_I18n::prepareEntityForOutput('«name.formatForCode()»', $item);
+
+«ENDIF-»
+        // look whether we fetched an object or an array
+        if (!$asArray) {
+            // store the result object
+            $this->set«name.formatForCodeCapital()»($item);
+            $this->_intId = $item->«idField()»;
+        }
+        else {
+            $this->_intId = $item['«idField()»'];
+        }
+
+        // return the results
+        return $item;
+    }
+«ENDIF-»
+
+    /**
+     * Helper method for assigning default data values.
+     *
+     * @return array
+     */
+    public function getNewArrayWithDefaultData()
+    {
+«IF !fields.typeSelect(DatetimeField).isEmpty-»
+        $thisTimestamp = date('Y-m-d H:i:s');
+«ENDIF-»
+«IF !fields.typeSelect(DateField).isEmpty-»
+        $todayDate = date('Y-m-d');
+«ENDIF-»
+«IF !fields.typeSelect(TimeField).isEmpty-»
+        $thisTime = date('H:i:s');
+«ENDIF-»
+
+        $objectData = Array(«EXPAND DefaultFieldAssignment FOREACH getDerivedFields().reject(e|e.primaryKey) SEPARATOR ','»);
+
+        return $objectData;
+    }
+
+
+«EXPAND FileHelper::ClassToString(baseClassBusinessEntity(false))-»
+«ENDDEFINE»
+
+
+«DEFINE SubClasses FOR Entity-»
+«LET getChildRelationsWithAggregation() AS aggregatedChildren-»
+«IF !aggregatedChildren.isEmpty-»
+        $this->setSubclasses(array(
+«EXPAND SubClass FOREACH aggregatedChildren-»
+            )
+        );
+«ENDIF-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE SubClass FOR InheritanceRelationship-»
+                '«source.name.formatForCode()»' => array('«columnAggregationField.formatForCode()»' => '«source.name.formatForCode()»')
+«ENDDEFINE»
+
+
+
+
+
+
+«DEFINE BusinessEntityCollectionBaseImpl(Application app) FOR Entity»
+    /**
+     * @var array Reference to list of «nameMultiple.formatForDisplay()» model («implClassModelRecord()»).
+     */
+    protected $«nameMultiple.formatForCode()» = array();
+
+    /**
+     * @var string The tablename this object maps to.
+     */
+    protected $_intObjectType = '«fullEntityName()»';
+
+    /**
+     * @var string The id field for this object.
+     */
+    protected $_intIdField = '«idField()»';
+
+    /**
+     * @var string Optional where clause for selection.
+     */
+    protected $_intWhere = '';
+
+    /**
+     * @var string Optional order clause for selection.
+     */
+    protected $_intOrderBy = '';
+
+    /**
+     * @var string The default sorting field/expression.
+     */
+    protected $_intDefaultSortingField = '«getLeadingField().actualFieldName().formatForCode()»';
+
+
+    /**
+     * Constructor.
+     *
+     * @param string $where   The where clause to use when retrieving the object array (optional) (default='').
+     * @param string $orderBy The order-by clause to use when retrieving the object array (optional) (default='').
+     */
+    function __construct($where = '', $orderBy = '')
+    {
+        $this->set_intWhere($where);
+        $this->set_intOrderBy($orderBy);
+    }
+
+    /**
+     * Select object collection from model (e.g. from database).
+     *
+     * For now we use Doctrine records, but as the controllers communicate only with
+     * business entities, we can exchange the model behind it without any subsequent
+     * efforts on the controller layer.
+     *
+     * @param string $where    The where clause to use when retrieving the object array (optional) (default='').
+     * @param string $orderBy  The order-by clause to use when retrieving the object array (optional) (default='').
+     * @param boolean $asArray Whether to return the result as array instead as record object (optional) (default=true).
+     *
+     * @return Doctrine_Collection collection containing retrieved Doctrine_Record instances
+     */
+    public function selectWhere($where = '', $orderBy = '', $asArray = true)
+    {
+        // store parameters
+        $this->set_intWhere($where);
+        $this->set_intOrderBy($orderBy);
+
+        // select items from the model
+        $result = $this->_intTable()->selectCollection($where, $orderBy, $asArray);
+
+«IF i18n-»
+        // process additions
+        $result = $this->processAdditions($result);
+
+«ENDIF-»
+        // store the results
+        $this->set«nameMultiple.formatForCodeCapital()»($result);
+
+        // and return them
+        return $this->get«nameMultiple.formatForCodeCapital()»();
+    }
+
+    /**
+     * Select with a given where clause.
+     *
+     * @param string $where           The where clause to use when retrieving the object array (optional) (default='').
+     * @param string $orderBy         The order-by clause to use when retrieving the object array (optional) (default='').
+     * @param integer $currentPage    Where to start selection
+     * @param integer $resultsPerPage Amount of items to select
+     * @param boolean $asArray        Whether to return the result as array instead as record object (optional) (default=true).
+     *
+     * @return array                  Array with retrieved data and amount of total records affected by this query.
+     */
+    public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $asArray = true)
+    {
+        // store parameters
+        $this->set_intWhere($where);
+        $this->set_intOrderBy($orderBy);
+
+        // select items from the model
+        list($objectData, $objectCount) = $this->_intTable()->selectWherePaginated($where, $orderBy, $currentPage, $resultsPerPage, $asArray);
+
+«IF i18n-»
+        // process additions
+        $objectData = $this->processAdditions($objectData);
+
+«ENDIF-»
+        // store the results
+        $this->set«nameMultiple.formatForCodeCapital()»($objectData);
+
+        // and return them
+        return array($this->get«nameMultiple.formatForCodeCapital()»(), $objectCount);
+    }
+
+    /**
+     * Select count with a given where clause.
+     *
+     * @param string $where The where clause to use when retrieving the object count (optional) (default='').
+     *
+     * @return integer Number of affected records.
+     */
+    public function selectCount($where = '')
+    {
+        // store parameters
+        $this->set_intWhere($where);
+
+        // get result from the model
+        return $this->_intTable()->selectCount($where);
+    }
+«IF nestedSet-»
+
+    /**
+     * Select tree of «nameMultiple.formatForCode()».
+     *
+«IF nestedSetHasManyRoots-»
+     * @param integer $rootId         Optional id of root node to use as a branch, defaults to 0 which corresponds to the whole tree.
+«ENDIF-»
+     * @param boolean $asArray        Whether to return the result as array instead as record object (optional) (default=true).
+     *
+     * @return array|Doctrine_Doctrine_Tree_NestedSet retrieved data array or tree objects containing retrieved Doctrine_Node_NestedSet instances.
+     */
+    public function selectTree(«IF nestedSetHasManyRoots-»$rootId = 0, «ENDIF»$asArray = false)
+    {
+        // get result from the model
+        $tree = $this->_intTable()->selectTree(«IF nestedSetHasManyRoots-»$rootId, «ENDIF»$asArray);
+«IF i18n-»
+
+        // process additions
+        $tree = $this->processAdditions($tree);
+«ENDIF-»
+
+        return $tree;
+    }
+
+«IF nestedSetHasManyRoots-»
+
+    /**
+     * Select all trees at once.
+     *
+     * @param boolean $asArray        Whether to return the result as array instead as record object (optional) (default=true).
+     *
+     * @return array list of retrieved data arrays or tree objects containing retrieved Doctrine_Node_NestedSet instances.
+     */
+    public function selectAllTrees($asArray = false)
+    {
+        // get result from the model
+        $trees = $this->_intTable()->selectAllTrees($asArray);
+«IF i18n-»
+
+        // process additions
+        foreach ($trees as $rootId => $treeNodes) {
+            $trees[$rootId] = $this->processAdditions($treeNodes);
+        }
+«ENDIF-»
+
+        return $trees;
+    }
+«ENDIF-»
+
+    /**
+     * Get tree object for managing the nested set.
+     *
+     * @return Doctrine_Doctrine_Tree_NestedSet tree object reference.
+     */
+    public function getTreeObject()
+    {
+        return $this->_intTable()->getTree();
+    }
+«ENDIF-»
+«IF i18n-»
+
+    /**
+     * Process custom additions.
+     */
+    protected function processAdditions($collection)
+    {
+        if (!$collection) {
+            return $collection;
+        }
+        foreach ($collection as $k => $v) {
+            $collection[$k] = «app.appName()»_Util_I18n::prepareEntityForOutput('«name.formatForCode()»', $v);
+        }
+        return $collection;
+    }
+«ENDIF-»
+
+    /**
+     * Convenience method to get table managed by record.
+     *
+     * @return Doctrine_Table Table being managed by the record referenced by this collection.
+     */
+    private function _intTable()
+    {
+        return Doctrine_Core::getTable('«implClassModelRecord()»');
+    }
+
+    /**
+     * Retrieves an array with all fields which can be used for sorting instances.
+     *
+     * @return array
+     */
+    public function get_intAllowedSortingFields()
+    {
+        // TODO: to be refactored
+        return array(«EXPAND singleSortingField FOREACH fields SEPARATOR ','»«EXPAND standardSortingFields FOR this-»
+        );
+    }
+
+«EXPAND FileHelper::GetterAndSetterMethods(nameMultiple.formatForCode(), 'array')»
+«EXPAND FileHelper::GetterAndSetterMethods('_intObjectType', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('_intIdField', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('_intWhere', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('_intOrderBy', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('_intDefaultSortingField', 'string')»
+
+«EXPAND FileHelper::ClassToString(baseClassBusinessEntity(true))-»
+«ENDDEFINE»
+
+«DEFINE singleSortingField FOR EntityField»«REM»DUMMY«ENDREM»«ENDDEFINE»
+«DEFINE singleSortingField FOR DerivedField»
+«LET entity.incoming.select(e|formatForDB(e.source.idField()) == name.formatForDB()) AS joins-»
+«IF !joins.isEmpty-»
+                     '«joins.get(0).source.name.formatForCode()»'«""-»
+«ELSE-»
+                     '«actualFieldName().formatForCode()»'«""-»
+«ENDIF-»
+«ENDLET-»«ENDDEFINE»
+«DEFINE singleSortingField FOR CalculatedField»
+                     '«actualFieldName().formatForCode()»'«""-»
+«ENDDEFINE»
+
+«DEFINE standardSortingFields FOR Entity»
+«REM»will be filled by Advices (Aspect Orientation)«ENDREM»
+«ENDDEFINE»
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+«REM»creates a reference entity class file for every many-to-many relationship instance«ENDREM»
+«REM»TODO: remove all the redundancies below... maybe with the PersistenceTransformer transformation...«ENDREM»
+«DEFINE Root(Application app) FOR ManyToManyRelationship-»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModelRefEntity().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefEntityBaseImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassModelRefEntity().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefEntityImpl(app)»«ENDFILE»
+«ENDDEFINE»
 
 
 «REM»base implementation«ENDREM»
-«DEFINE BusinessValidatorBaseImpl(Application app) FOR Entity-»
+«DEFINE ModelRefEntityBaseImpl(Application app) FOR ManyToManyRelationship-»
 
 /**
- * Business validator class for encapsulating validation methods.
+ * Entity class that defines the entity structure and behaviours.
  *
- * This is the base validation class for «name.formatForDisplay()» entities.
+ * This is the reference entity class for the many to many relationship
+ * between «source.name.formatForDisplay()» and «target.name.formatForDisplay()» entities.
  */
-abstract class «baseClassBusinessValidator()»
+class «baseClassModelRefEntity()» extends Doctrine_Entity
 {
-«EXPAND business::Validator::BusinessValidatorBaseImpl(app)-»
+    /**
+     * Set table definition.
+     * Define columns, indexes and other information about the table schema.
+     *
+     * @return void
+     */
+    public function setTableDefinition()
+    {
+        $this->setTableName('«app.prefix().msconcat("_").msconcat(source.name.formatForDB()).msconcat("_").msconcat(target.name.formatForDB())»');
+
+        $this->hasColumn('«source.idField()»', 'integer', null, array(
+                'type' => 'integer',
+                'primary' => true
+            )
+        );
+
+        $this->hasColumn('«target.idField()»', 'integer', null, array(
+                'type' => 'integer',
+                'primary' => true
+            )
+        );
+    }
 }
 «ENDDEFINE»
 
 «REM»concrete implementation stub«ENDREM»
-«DEFINE BusinessValidatorImpl(Application app) FOR Entity-»
+«DEFINE ModelRefEntityImpl(Application app) FOR ManyToManyRelationship-»
 
 /**
- * Business validator class for encapsulating validation methods.
+ * Entity class that defines the entity structure and behaviours.
  *
- * This is the concrete validation class for «name.formatForDisplay()» entities.
+ * This is the reference entity class for the many to many relationship
+ * between «source.name.formatForDisplay()» and «target.name.formatForDisplay()» entities.
  */
-class «implClassBusinessValidator()» extends «IF isInheriting()»«parentType().implClassBusinessValidator()»«ELSE»«baseClassBusinessValidator()»«ENDIF»
+class «implClassModelRefEntity()» extends «baseClassModelRefEntity()»
 {
-    // here you can add custom validation methods or override existing checks
+    // feel free to add your own methods here
 }
 «ENDDEFINE»
+
+
+
+
+
+
+
+
+«DEFINE DefaultFieldAssignment FOR EntityField»
+                '«name.formatForCode()»' => «EXPAND DefaultFieldAssignmentData»«ENDDEFINE»
+«DEFINE DefaultFieldAssignment FOR DerivedField»
+                '«actualFieldName()»' => «EXPAND DefaultFieldAssignmentData»«ENDDEFINE»
+«DEFINE DefaultFieldAssignment FOR UploadField»
+«REM»Add a second field with type array for the meta data (#95)«ENDREM»«""-»
+                '«actualFieldName()»' => «EXPAND DefaultFieldAssignmentData»,
+                '«actualFieldName()»Meta' => array()«ENDDEFINE»
+
+«DEFINE DefaultFieldAssignmentData FOR EntityField-»
+«error("Error: undefined entity field type " + metaType.toString() + " (code 925624)") -> ""-»
+«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR DerivedField-»
+«error("Error: undefined derived field type " + metaType.toString() + " (code 925627)") -> ""-»
+«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR CalculatedField-»
+«error("Error: undefined calculated field type " + metaType.toString() + " (code 925628)") -> ""-»
+«ENDDEFINE»
+
+«DEFINE DefaultFieldAssignmentDataText FOR DerivedField-»'«defaultValue»'«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR BooleanField»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR AbstractIntegerField-»
+«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
+«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR IntegerField-»
+«LET getPointingRelations() AS pointingRelations-»
+«IF !pointingRelations.isEmpty-»(int) FormUtil::getPassedValue('«pointingRelations.get(0).source.idField()»', 0, 'GET', FILTER_VALIDATE_INT)
+«ELSE-»
+«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
+«ENDIF-»«ENDLET-»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR DecimalField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0.00«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR StringField-»«EXPAND DefaultFieldAssignmentDataText-»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR TextField-»«EXPAND DefaultFieldAssignmentDataText-»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR EmailField-»«EXPAND DefaultFieldAssignmentDataText-»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR UrlField-»«EXPAND DefaultFieldAssignmentDataText-»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR UploadField-»«EXPAND DefaultFieldAssignmentDataText-»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR ArrayField»array()«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR ObjectField»null«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR DatetimeField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»$thisTimestamp«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR DateField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»$todayDate«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR TimeField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»$thisTime«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldAssignmentData FOR FloatField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF»«ENDDEFINE»
 

@@ -25,49 +25,40 @@ cached String baseClassDefault(Application app, String filling, String suffix)
 
 // TODO: cleanup and refactorings
 
-cached String fillingModel() : "Model_";
-cached String fillingBusinessEntity() : "BusinessEntity_";
+cached String fillingEntity() : "Entity_";
 cached String fillingController() : "Controller_";
 cached String fillingApi() : "Api_";
 cached String fillingFormHandler() : "Form_Handler_";
 
 cached String prepClassPart(String str)
     : formatForCode(str).toFirstUpper();
-cached String processCollectionSuffix(String str, Boolean isCollection)
-    : str.msconcat(((isCollection == true) ? "Collection" : ""));
 
 /** Model classes */
-cached String baseClassModelRecord(Entity obj)
-    : baseClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name));
-cached String implClassModelRecord(Entity obj)
-    : implClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name));
-cached String baseClassModelTable(Entity obj)
-    : baseClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name.msconcat("Table")));
-cached String implClassModelTable(Entity obj)
-    : implClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name.msconcat("Table")));
+cached String baseClassModelEntity(Entity obj)
+    : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name));
+cached String implClassModelEntity(Entity obj)
+	: implClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name));
+cached String baseClassModelRepository(Entity obj)
+    : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Repository")));
+cached String implClassModelRepository(Entity obj)
+    : implClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Repository")));
 cached String baseClassModelListener(Entity obj)
-    : baseClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name.msconcat("Listener")));
+    : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Listener")));
 cached String implClassModelListener(Entity obj)
-    : implClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.name.msconcat("Listener")));
+    : implClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Listener")));
 
-cached String baseClassModelRefRecord(ManyToManyRelationship obj)
-    : baseClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.refClass));
-cached String implClassModelRefRecord(ManyToManyRelationship obj)
-    : implClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.refClass));
-cached String baseClassModelRefTable(ManyToManyRelationship obj)
-    : baseClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.refClass.msconcat("Table")));
-cached String implClassModelRefTable(ManyToManyRelationship obj)
-    : implClassDefault(obj.container.application, fillingModel(), prepClassPart(obj.refClass.msconcat("Table")));
-
-/** Business classes */
-cached String baseClassBusinessEntity(Entity obj, Boolean isCollection)
-    : baseClassDefault(obj.container.application, fillingBusinessEntity(), prepClassPart(obj.name)).processCollectionSuffix(isCollection);
-cached String implClassBusinessEntity(Entity obj, Boolean isCollection)
-	: implClassDefault(obj.container.application, fillingBusinessEntity(), prepClassPart(obj.name)).processCollectionSuffix(isCollection);
-cached String baseClassBusinessValidator(Entity obj)
-    : baseClassDefault(obj.container.application, fillingBusinessEntity(), prepClassPart(obj.name.msconcat("Validator")));
-cached String implClassBusinessValidator(Entity obj)
-    : implClassDefault(obj.container.application, fillingBusinessEntity(), prepClassPart(obj.name.msconcat("Validator")));
+cached String baseClassModelRefEntity(ManyToManyRelationship obj)
+    : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.refClass));
+cached String implClassModelRefEntity(ManyToManyRelationship obj)
+    : implClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.refClass));
+cached String baseClassModelRefRepository(ManyToManyRelationship obj)
+    : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.refClass.msconcat("Repository")));
+cached String implClassModelRefRepository(ManyToManyRelationship obj)
+    : implClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.refClass.msconcat("Repository")));
+cached String baseClassModelValidator(Entity obj)
+    : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Validator")));
+cached String implClassModelValidator(Entity obj)
+    : implClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Validator")));
 
 /** Controller */
 cached String baseClassController(Controller obj)
@@ -115,9 +106,8 @@ cached String viewPluginFilePath(Application app, String pluginType, String plug
 
 cached String getRelationAliasName(JoinRelationship this, Boolean useTarget)
     : ((useTarget)
-        ? ((targetAlias != null && targetAlias != "") ? targetAlias : target.implClassModelRecord())
-        : ((sourceAlias != null && sourceAlias != "") ? sourceAlias : source.implClassModelRecord())
-    );
-
+        ? ((targetAlias != null && targetAlias != "") ? targetAlias : target.implClassModelEntity())
+        : ((sourceAlias != null && sourceAlias != "") ? sourceAlias : source.implClassModelEntity())
+    ).formatForCode();
 
 

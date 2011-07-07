@@ -4,23 +4,10 @@
 «REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «DEFINE SetTableDefinition FOR Entity-»
-        $this->setTableName('«fullEntityName()»');
-
         /**
          * Columns
          */
 «EXPAND FieldSetColumn FOREACH fields-»
-
-        $this->option('type', '«tableType.asConstant()»');
-        $this->option('collate', '«IF collate != null && collate != ""-»«collate»«ELSE-»utf8_unicode_ci«ENDIF-»');
-        $this->option('charset', '«IF charset != null && charset != ""-»«charset»«ELSE-»utf8«ENDIF-»');
-
-«IF !indexes.isEmpty-»
-        /**
-         * Indexes
-         */
-«EXPAND Index FOREACH indexes-»
-«ENDIF-»
 «ENDDEFINE»
 
 
@@ -70,7 +57,6 @@
 «DEFINE FieldLength FOR EmailField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
 «DEFINE FieldLength FOR UrlField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
 «DEFINE FieldLength FOR UploadField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
-«DEFINE FieldLength FOR EnumField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
 «DEFINE FieldLength FOR ArrayField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
 
 «DEFINE FieldSetColumnOptions FOR DerivedField-»
@@ -78,9 +64,6 @@
 «IF primaryKey == true-»
                 'primary' => true,
                 'autoincrement' => true,
-«ENDIF-»
-«IF metaType != BlobField && metaType != ClobField && defaultValue != null && defaultValue != ""-»
-                'default' => «EXPAND FieldDefaultValue-»,
 «ENDIF-»
 «EXPAND FieldSetColumnAdditionalOptions-»
                 // ensure «IF notnull»the«ELSE-»no«ENDIF-» 'not null' constraint«IF notnull» in both application and database level«ENDIF»
@@ -103,7 +86,6 @@
 «DEFINE FieldDefaultValueText FOR DerivedField-»'«defaultValue»'«ENDDEFINE»
 «DEFINE FieldDefaultValue FOR BooleanField-»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF-»«ENDDEFINE»
 «DEFINE FieldDefaultValue FOR IntegerField-»«EXPAND FieldDefaultValueNumber-»«ENDDEFINE»
-«DEFINE FieldDefaultValue FOR FloatField-»«EXPAND FieldDefaultValueNumber-»«ENDDEFINE»
 «DEFINE FieldDefaultValue FOR DecimalField-»«EXPAND FieldDefaultValueNumber-»«ENDDEFINE»
 «DEFINE FieldDefaultValue FOR StringField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
 «DEFINE FieldDefaultValue FOR TextField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
@@ -112,14 +94,11 @@
 «DEFINE FieldDefaultValue FOR UploadField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
 «DEFINE FieldDefaultValue FOR UserField-»«EXPAND FieldDefaultValueNumber-»«ENDDEFINE»
 «DEFINE FieldDefaultValue FOR ArrayField-»«EXPAND FieldDefaultValueNumber-»«ENDDEFINE»
-«DEFINE FieldDefaultValue FOR EnumField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
 «DEFINE FieldDefaultValue FOR ObjectField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
-«DEFINE FieldDefaultValue FOR BlobField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
-«DEFINE FieldDefaultValue FOR ClobField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
-«DEFINE FieldDefaultValue FOR TimestampField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR DatetimeField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
 «DEFINE FieldDefaultValue FOR DateField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
 «DEFINE FieldDefaultValue FOR TimeField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
-«DEFINE FieldDefaultValue FOR GzipField-»«EXPAND FieldDefaultValueText-»«ENDDEFINE»
+«DEFINE FieldDefaultValue FOR FloatField-»«EXPAND FieldDefaultValueNumber-»«ENDDEFINE»
 
 
 «DEFINE FieldSetColumnAdditionalOptions FOR DerivedField-»«ENDDEFINE»
@@ -132,10 +111,6 @@
 «IF minValue != 0 || maxValue != 0-»
                 // Check if value is in range specified by arguments
                 'range' => array(«minValue», «maxValue»),
-«ENDIF-»
-«IF creditCard-»
-                // check if value is a well formated credit card number
-                'creditcard' => true,
 «ENDIF-»
 «ENDDEFINE»
 «DEFINE FieldSetColumnAdditionalOptions FOR DecimalField-»
@@ -176,10 +151,6 @@
                 // check if value is a valid html colour
                 'htmlcolor' => true,
 «ENDIF-»
-«IF usstate-»
-                // check if value is a valid US state code
-                'usstate' => true,
-«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE FieldSetColumnAdditionalOptions FOR EmailField-»
@@ -189,7 +160,7 @@
                 'email' => true,
 «IF !mandatory»*/«ENDIF»
 «ENDDEFINE»
-«DEFINE FieldSetColumnAdditionalOptions FOR TimestampField-»
+«DEFINE FieldSetColumnAdditionalOptions FOR AbstractDateField-»
 «IF past-»
                 // check if value is a date in the past
                 'past' => true,
@@ -197,27 +168,4 @@
                 // check if value is a date in the future
                 'future' => true,
 «ENDIF-»
-«ENDDEFINE»
-
-«DEFINE Index FOR EntityIndex-»
-        $this->index('«name.formatForDB()»', array(
-                'fields' => array(
-«EXPAND IndexField FOREACH items SEPARATOR ','»
-                ),
-«IF type != EntityIndexType::NORMAL-» 
-                'type' => '«type.asConstant()»'«IF primary == true-»,«ENDIF-»
-«ENDIF-»
-«IF primary == true-»
-                'primary' => true
-«ENDIF-»
-            )
-        );
-«ENDDEFINE»
-«DEFINE IndexField FOR EntityIndexItem-»
-                    '«name.formatForDB()»' => array(
-«IF length != null && length != "" && length > 0-»
-                        'length' => «length»,
-«ENDIF-»
-                        'sorting' => '«IF sorting == EntityIndexSortingType::DESC-»DESC«ELSE-»ASC«ENDIF-»'
-                    )
 «ENDDEFINE»

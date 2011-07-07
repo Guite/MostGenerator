@@ -18,5 +18,24 @@
  * and $path is the path to the containing folder.
  */
 
+$helper = ServiceUtil::getService('doctrine_extensions');
+«IF hasLoggable()-»
+$helper->getListener('loggable');
+«ENDIF-» 
+«IF hasSluggable()-»
+$helper->getListener('sluggable');
+«ENDIF-»
+«IF hasSortable()-»
+$helper->getListener('sortable');
+«ENDIF-»
+«IF hasTimestampable()-»
+$helper->getListener('timestampable');
+«ENDIF-»
+«IF hasTranslatable()-»
+$helper->getListener('translatable');
+«ENDIF-»
+«IF hasTrees()-»
+$helper->getListener('tree');
+«ENDIF-»
 
 «ENDDEFINE»
