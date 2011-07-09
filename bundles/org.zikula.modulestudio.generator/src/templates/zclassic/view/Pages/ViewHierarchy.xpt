@@ -28,6 +28,7 @@
     <p class="sectiondesc">«documentation»</p>
 «ENDIF-»
 
+<p>
 «IF controller.hasActions('edit')-»
     {checkpermissionblock component='«appName»::' instance='.*' level="ACCESS_ADD"}
     {if $useMultipleRoots || !isset($items) || !is_object($items) || $items->count() eq 0}
@@ -46,6 +47,7 @@
         <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«objName»'}" title="{$switchTitle}" class="z-icon-es-view">
             {$switchTitle}
         </a>
+</p>
 
 {if $useMultipleRoots}
     {foreach key='rootId' item='treeNodes' from=$trees}
