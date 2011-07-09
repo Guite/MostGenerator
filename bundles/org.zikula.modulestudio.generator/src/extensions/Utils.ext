@@ -77,7 +77,7 @@ cached boolean hasTimestampable(Application this) :
 cached boolean hasTranslatable(Application this) :
     !getTranslatableEntities().isEmpty;
 cached getTranslatableEntities(Application this) :
-    models.entities.select(e|e.fields.typeSelect(DerivedField).select(f|f.translatable).size > 0);
+    models.entities.select(e|e.hasTranslatableFields());
 cached boolean hasTrees(Application this) :
     !getTreeEntities().isEmpty;
 cached getTreeEntities(Application this) :
@@ -177,6 +177,10 @@ cached boolean hasTimestampableFields(Entity this) :
 cached getTimestampableFields(Entity this) :
     fields.typeSelect(IntegerField).select(e|e.timestampable > 0);
 
+cached boolean hasTranslatableFields(Entity this) :
+    !getTranslatableFields().isEmpty;
+cached getTranslatableFields(Entity this) :
+    fields.typeSelect(DerivedField).select(e|e.translatable);
 
 
 

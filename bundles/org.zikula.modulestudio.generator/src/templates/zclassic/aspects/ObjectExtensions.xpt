@@ -1,7 +1,7 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 
-«AROUND templates::zclassic::models::record::Behaviour::ObjectExtensions FOR Entity-»
+«AROUND templates::zclassic::models::Entity::ObjectExtensions FOR Entity-»
 «IF standardFields-»
         // Zikula standard fields (obj_status, cr_uid, cr_date, lu_uid, lu_date)
         $this->actAs('Zikula_Doctrine_Template_StandardFields');
@@ -26,7 +26,7 @@
 «ENDAROUND»
 
 
-«AROUND templates::zclassic::models::behavior::BusinessObject::standardSortingFields FOR Entity-»
+«AROUND templates::zclassic::models::Entity::StandardSortingFields FOR Entity-»
 «IF standardFields-»,
                      'obj_status',
                      'cr_date',

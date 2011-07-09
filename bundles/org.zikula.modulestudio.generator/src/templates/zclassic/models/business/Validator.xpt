@@ -126,3 +126,86 @@ class «implClassBusinessValidator()» extends «IF isInheriting()»«parentType
     }
 «ENDDEFINE»
 
+
+«REM TODO
+
+some validators to be reimplemented:
+
+«DEFINE FieldLength FOR DerivedField-»null«ENDDEFINE»
+«DEFINE FieldLength FOR AbstractIntegerField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR FloatField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR DecimalField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR StringField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR EmailField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR UrlField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR UploadField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR ArrayField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+
+
+«DEFINE FieldSetColumnAdditionalOptions FOR DerivedField-»«ENDDEFINE»
+
+«DEFINE FieldSetColumnAdditionalOptions FOR IntegerField-»
+«IF minValue != 0 || maxValue != 0-»
+                // Check if value is in range specified by arguments
+                'range' => array(«minValue», «maxValue»),
+«ENDIF-»
+«ENDDEFINE»
+«DEFINE FieldSetColumnAdditionalOptions FOR DecimalField-»
+                'scale' => «scale.toInteger()»,
+«ENDDEFINE»
+«DEFINE FieldSetColumnAdditionalOptionsCommon FOR AbstractStringField-»
+«IF fixed-»
+                'fixed' => true,
+«ENDIF-»
+«IF nospace-»
+                // check if value has no space chars
+                'nospace' => true,
+«ENDIF-»
+«IF minLength != null && minLength > 0-»
+                // check if value satisfies the minimum length
+                'minlength' => «minLength»,
+«ENDIF-»
+«IF regexp != null && regexp != ""-»
+                // check if value matches a regular expression
+                'regexp' => '«regexp»',
+«ENDIF-»
+
+«ENDDEFINE»
+«DEFINE FieldSetColumnAdditionalOptions FOR AbstractStringField-»
+«EXPAND FieldSetColumnAdditionalOptionsCommon-»
+«ENDDEFINE»
+«DEFINE FieldSetColumnAdditionalOptions FOR StringField-»
+«EXPAND FieldSetColumnAdditionalOptionsCommon-»
+«IF country-»
+                // check if value is a valid country code
+                'country' => true,
+«ENDIF-»
+«IF ipaddress-»
+                // check if value is a valid ip address
+                'ip' => true,
+«ENDIF-»
+«IF htmlcolor-»
+                // check if value is a valid html colour
+                'htmlcolor' => true,
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE FieldSetColumnAdditionalOptions FOR EmailField-»
+«EXPAND FieldSetColumnAdditionalOptionsCommon-»
+«IF !mandatory»/* inactive because field is not mandatory«ENDIF»
+                // check if value is a valid email address
+                'email' => true,
+«IF !mandatory»*/«ENDIF»
+«ENDDEFINE»
+«DEFINE FieldSetColumnAdditionalOptions FOR AbstractDateField-»
+«IF past-»
+                // check if value is a date in the past
+                'past' => true,
+«ELSEIF future-»
+                // check if value is a date in the future
+                'future' => true,
+«ENDIF-»
+«ENDDEFINE»
+
+
+«ENDREM»

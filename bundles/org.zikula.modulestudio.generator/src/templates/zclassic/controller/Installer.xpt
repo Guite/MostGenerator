@@ -228,14 +228,11 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 
 «DEFINE RemoveBehaviors FOR Entity-»
 «REM»TODO: replace these if clauses by an aspect template (somewhen)«ENDREM»«""-»
-«IF i18n-»
+«IF hasTranslatableFields()-»
         $res = DBUtil::dropTable('«fullEntityName()»_translation');
 «ENDIF-»
-«IF versionable && versionableHistory-»
+«IF loggable-»
         $res = DBUtil::dropTable('«fullEntityName()»_version');
-«ENDIF-»
-«IF searchable-»
-        $res = DBUtil::dropTable('«fullEntityName()»_index');
 «ENDIF-»
 
 «IF categorisable || attributable || metaData || loggable-»
@@ -323,13 +320,15 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 
 «IF getDefaultDataSource().numExampleRows > 0-»
         // TODO: test this, see http://code.zikula.org/generator/ticket/64
-        //Doctrine_Parser::load('modules/«appName()»/docs/exampleData.yml', 'yml');
+«EXPAND createExampleRows(this) FOREACH getDefaultDataSource().entities-»
+        $this->entityManager->flush();
 «ENDIF-»
 
         // Insertion successful
         return true;
     }
 «ENDDEFINE»
+
 
 «DEFINE ProcessEventHandlersImpl FOR Application»
     /**
@@ -492,7 +491,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 	             ->redirect(ModUtil::url('Modules', 'admin', 'view'));
         }
 
-    «FOREACH models.variables.vars AS modvar-»
+«FOREACH models.variables.vars AS modvar-»
         $formValue = $this->request->getPost()->get('«modvar.name.formatForCode()»', «EXPAND ModVarValForm2SessionDefault FOR modvar»);
         SessionUtil::setVar('«formatForCode(name + '_' + modvar.name)»', $formValue);
 
@@ -563,3 +562,42 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         return $this->view->fetch('«appName()»_init_delete.tpl');
     }
 «ENDDEFINE»
+
+«DEFINE createExampleRows(Application app) FOR Entity»
+«LET name.formatForCode() AS entityName-»
+«FOREACH 1.upTo(container.numExampleRows) AS number-»
+        $«entityName»«number» = new «implClassModelEntity()»();
+«FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS fld-»
+        $«entityName»«number»->set«fld.name.formatForCodeCapital()»(«EXPAND ExampleRowValue(number) FOR fld-»);
+«ENDFOREACH-»
+        $this->entityManager->persist($«entityName»«number»);
+«ENDFOREACH-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE ExampleRowValue(Integer number) FOR DerivedField-»
+«error("Error: undefined example value definition for derived field type " + metaType.toString() + " (code 4837264)") -> ""-»
+«ENDDEFINE»
+«DEFINE ExampleRowValueNumber(Integer number) FOR DerivedField-»«number»«ENDDEFINE»
+«DEFINE ExampleRowValueText(Integer number) FOR DerivedField-»
+«entity.name.formatForDisplayCapital()» «actualFieldName().formatForDisplay()» «number»«""-»
+«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR BooleanField-»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR IntegerField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR FloatField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR DecimalField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR StringField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR TextField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR EmailField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR UrlField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR UploadField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR UserField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR ArrayField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR EnumField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR ObjectField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR BlobField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR ClobField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR TimestampField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR DateField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR TimeField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR GzipField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»

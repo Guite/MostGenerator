@@ -83,16 +83,6 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
     protected $_intObjectType = '«fullEntityName()»';
 
     /**
-     * @var string The id field for this object
-     */
-    protected $_intIdField = '«idField()»';
-
-    /**
-     * @var integer The id for this object
-     */
-    protected $_intId = 0;
-
-    /**
      * @var «implClassBusinessValidator()» The validator for this entity
      */
     protected $_intValidator = null;
@@ -122,8 +112,6 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 
 ... internal methods ...
 «EXPAND FileHelper::GetterAndSetterMethods('_intObjectType', 'string')»
-«EXPAND FileHelper::GetterAndSetterMethods('_intIdField', 'string')»
-«EXPAND FileHelper::GetterAndSetterMethods('_intId', 'integer')»
 «EXPAND FileHelper::GetterAndSetterMethods('_intValidator', implClassBusinessValidator())»
 «EXPAND FileHelper::GetterAndSetterMethods('_intHasUniqueSlug', 'boolean')»
 «ENDREM»
@@ -143,8 +131,8 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), '')»
 
     /**
-     * @var array $«name.formatForCode()»Meta.
      * @ORM\Column(type="array")
+     * @var array $«name.formatForCode()»Meta.
      */
     protected $«name.formatForCode()»Meta = array();
 «ENDDEFINE»
@@ -160,18 +148,18 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 
 «DEFINE PersistentProperty(String name, String type, String init, String modifier) FOR DerivedField»
     /**
-     * @var «type» $«name».
 «IF primaryKey-»
      * @ORM\Id
 «ENDIF-»
      * @ORM\Column(«EXPAND PersistentPropertyImpl(type)»«IF unique-», unique=true«ENDIF-»«IF nullable-» nullable=true«ENDIF-»)
 «IF primaryKey-»
 «REM»TODO«ENDREM»
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue«REM»(strategy="AUTO")«ENDREM»
 «ENDIF-»
 «REM»
      * @Gedmo\Sluggable
 «ENDREM»
+     * @var «type» $«name».
      */
     «modifier» $«name»«init»;
 «ENDDEFINE»
@@ -219,28 +207,28 @@ type="«type»", precision=«length», scale=«scale»
 «ELSE-»
 «REM»1 Product has 1 Shipping --> Product table contains shipping_id column.«ENDREM»
     /**
-     * @var «type» $«relationAliasName».
      * @ORM\OneToOne(targetEntity="«type»")
-«REM»     * @JoinColumn(name="shipping_id", referencedColumnName="id")«ENDREM»
+«REM»     * @ORM\JoinColumn(name="shipping_id", referencedColumnName="id")«ENDREM»
+     * @var «type» $«relationAliasName».
      */
-    protected $«relationAliasName»;
+    protected $«relationAliasName» = null;
 «ENDIF-»
 «ELSE-»
 «REM»1 Customer has 1 Cart; the Cart knows the Customer«ENDREM»
 «IF !useTarget-»
     /**
-     * @var «type» $«relationAliasName».
-     * @ORM\OneToOne(targetEntity="«type»", inversedBy="«ownType»")
-«REM»     * @JoinColumn(name="customer_id", referencedColumnName="id")«ENDREM»
+     * @ORM\OneToOne(targetEntity="«type»", inversedBy="«REM»cart«ENDREM»«ownType»")
+«REM»     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id")«ENDREM»
 «REM»self-referencing
-     * @OneToOne(targetEntity="Student")
-     * @JoinColumn(name="mentor_id", referencedColumnName="id")«ENDREM»
+     * @ORM\OneToOne(targetEntity="Student")
+     * @ORM\JoinColumn(name="mentor_id", referencedColumnName="id")«ENDREM»
+     * @var «type» $«relationAliasName».
      */
     protected $«relationAliasName»;
 «ELSE-»
     /**
-     * @var «type» $«relationAliasName».
      * @ORM\OneToOne(targetEntity="«type»", mappedBy="«ownType»")
+     * @var «type» $«relationAliasName».
      */
     protected $«relationAliasName»;
 «ENDIF-»
@@ -260,15 +248,15 @@ type="«type»", precision=«length», scale=«scale»
 «ELSE-»
 «REM»1 User has n Phonenumber --> join table users_phonenumbers both id columns, whereby user_id is made unique.«ENDREM»
     /**
-     * @var «type» $«relationAliasName».
      * @ORM\ManyToMany(targetEntity="«type»")
-     * @JoinTable(name="users_phonenumbers",
-     *      joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@JoinColumn(name="phonenumber_id", referencedColumnName="id", unique=true)}
+     * @ORM\JoinTable(name="users_phonenumbers",
+     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="phonenumber_id", referencedColumnName="id", unique=true)}
      *      )
 «IF orderBy-»
      * @ORM\OrderBy({«orderBy»})
 «ENDIF-»
+     * @var «type» $«relationAliasName».
      */
     protected $«relationAliasName»;
 «REM»    private $phonenumbers;«ENDREM»
@@ -277,26 +265,26 @@ type="«type»", precision=«length», scale=«scale»
 «REM»1 Product has n Features --> Feature table contains product_id.«ENDREM»
 «IF !useTarget-»
     /**
-     * @var «type» $«relationAliasName».
      * @ORM\ManyToOne(targetEntity="«type»", inversedBy="features")
-«REM»     * @JoinColumn(name="product_id", referencedColumnName="id")«ENDREM»
+«REM»     * @ORM\JoinColumn(name="product_id", referencedColumnName="id")«ENDREM»
 «REM»self-referencing
 Category hierarchy with (adjacency list approach) --> Category table contains parent_id.
-     * @ManyToOne(targetEntity="Category", inversedBy="children")
-     * @JoinColumn(name="parent_id", referencedColumnName="id")«ENDREM»
+     * @ORM\ManyToOne(targetEntity="Category", inversedBy="children")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")«ENDREM»
+     * @var «type» $«relationAliasName».
      */
     protected $«relationAliasName»;
 «REM»self-referencing
     private $parent;«ENDREM»
 «ELSE-»
     /**
-     * @var «type» $«relationAliasName».
      * @ORM\OneToMany(targetEntity="«type»", mappedBy="product")
 «REM»self-referencing
-     * @OneToMany(targetEntity="Category", mappedBy="parent")«ENDREM»
+     * @ORM\OneToMany(targetEntity="Category", mappedBy="parent")«ENDREM»
 «IF orderBy-»
      * @ORM\OrderBy({«orderBy»})
 «ENDIF-»
+     * @var «type» $«relationAliasName».
      */
     protected $«relationAliasName»;
 «REM»    private $features;«ENDREM»
@@ -317,9 +305,9 @@ Category hierarchy with (adjacency list approach) --> Category table contains pa
 «IF !bidirectional && useTarget-»
 «REM»n Users have 1 Address --> User table contains address_id column.«ENDREM»
     /**
-     * @var «type» $«relationAliasName».
      * @ORM\OneToOne(targetEntity="«type»")
-«REM»     * @JoinColumn(name="address_id", referencedColumnName="id")«ENDREM»
+«REM»     * @ORM\JoinColumn(name="address_id", referencedColumnName="id")«ENDREM»
+     * @var «type» $«relationAliasName».
      */
     protected $«relationAliasName»;
 «ENDIF-»
@@ -338,15 +326,15 @@ Category hierarchy with (adjacency list approach) --> Category table contains pa
 «ELSE-»
 «REM»m Users have n Groups, but a Group does not know its Users«ENDREM»
     /**
-     * @var «type» $«relationAliasName».
      * @ORM\ManyToMany(targetEntity="«type»")
-     * @JoinTable(name="«refClass.formatForCode()»",
-     *      joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@JoinColumn(name="group_id", referencedColumnName="id")}
+     * @ORM\JoinTable(name="«refClass.formatForCode()»",
+     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="group_id", referencedColumnName="id")}
      *      )
 «IF orderBy-»
      * @ORM\OrderBy({«orderBy»})
 «ENDIF-»
+     * @var «type» $«relationAliasName».
      */
     protected $«relationAliasName»;
 «REM»    private $groups;«ENDREM»
@@ -355,31 +343,31 @@ Category hierarchy with (adjacency list approach) --> Category table contains pa
 «REM»m Users have n Groups, but this time bidirectional«ENDREM»
 «IF !useTarget-»
     /**
-     * @var «type» $«relationAliasName».
      * @ORM\ManyToMany(targetEntity="«type»", mappedBy="groups")
 «REM»self-referencing
      * @ManyToMany(targetEntity="User", mappedBy="myFriends")«ENDREM»
+     * @var «type» $«relationAliasName».
      */
     protected $«relationAliasName»;
 «REM»self-referencing
     private $friendsWithMe;«ENDREM»
 «ELSE-»
     /**
-     * @var «type» $«relationAliasName».
      * @ORM\ManyToMany(targetEntity="«type»", inversedBy="users")
      * @JoinTable(name="users_groups",
-     *      joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@JoinColumn(name="group_id", referencedColumnName="id")}
+     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="group_id", referencedColumnName="id")}
      *      )
 «REM»self-referencing
-     * @ManyToMany(targetEntity="User", inversedBy="friendsWithMe")
-     * @JoinTable(name="friends",
-     *      joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@JoinColumn(name="friend_user_id", referencedColumnName="id")}
+     * @ORM\ManyToMany(targetEntity="User", inversedBy="friendsWithMe")
+     * @ORM\JoinTable(name="friends",
+     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="friend_user_id", referencedColumnName="id")}
      *      )«ENDREM»
 «IF orderBy-»
      * @ORM\OrderBy({«orderBy»})
 «ENDIF-»
+     * @var «type» $«relationAliasName».
      */
     protected $«relationAliasName»;
 «REM»self-referencing
@@ -476,14 +464,20 @@ $article->addTag($tagB);
         // concrete inheritance
         parent::setTableDefinition();
 «ENDIF-»
-«EXPAND record::TableDef::SetTableDefinition-»
+
 «IF isInheriter()-»
 «EXPAND SubClasses-»
 «ENDIF-»
     }
 
-«EXPAND record::Behaviour::SetUpBehaviour»
+/** obsolete
+«EXPAND SetUpBehaviour»
+*/
 «ENDDEFINE»
+
+
+
+
 
 
 «DEFINE BusinessEntityBaseImpl(Application app) FOR Entity»
@@ -495,8 +489,6 @@ $article->addTag($tagB);
     public function __construct($id = 0)
     {
         $this->_intObjectType = '«fullEntityName()»';
-        $this->_intIdField = '«name.formatForDB()»id';
-        $this->_intId = $id;
         $this->_intValidator = new «implClassBusinessValidator()»($this);
         $this->_intHasUniqueSlug = «IF sluggable && sluggableUnique»true«ELSE»false«ENDIF»;
     }
@@ -566,20 +558,11 @@ $article->addTag($tagB);
         // get result from the model
         $item = $table->selectOneItemBy«((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCodeCapital()»($slugTitle, $asArray);
 
-«IF i18n-»
+«IF hasTranslatableFields()-»
         // process translations
         $item = «app.appName()»_Util_I18n::prepareEntityForOutput('«name.formatForCode()»', $item);
 
 «ENDIF-»
-        // look whether we fetched an object or an array
-        if (!$asArray) {
-            // store the result object
-            $this->set«name.formatForCodeCapital()»($item);
-            $this->_intId = $item->«idField()»;
-        }
-        else {
-            $this->_intId = $item['«idField()»'];
-        }
 
         // return the results
         return $item;
@@ -645,11 +628,6 @@ $article->addTag($tagB);
     protected $_intObjectType = '«fullEntityName()»';
 
     /**
-     * @var string The id field for this object.
-     */
-    protected $_intIdField = '«idField()»';
-
-    /**
      * @var string Optional where clause for selection.
      */
     protected $_intWhere = '';
@@ -662,7 +640,7 @@ $article->addTag($tagB);
     /**
      * @var string The default sorting field/expression.
      */
-    protected $_intDefaultSortingField = '«getLeadingField().actualFieldName().formatForCode()»';
+    protected $_intDefaultSortingField = '«getLeadingField().name.formatForCode()»';
 
 
     /**
@@ -699,7 +677,7 @@ $article->addTag($tagB);
         // select items from the model
         $result = $this->_intTable()->selectCollection($where, $orderBy, $asArray);
 
-«IF i18n-»
+«IF hasTranslatableFields()-»
         // process additions
         $result = $this->processAdditions($result);
 
@@ -731,7 +709,7 @@ $article->addTag($tagB);
         // select items from the model
         list($objectData, $objectCount) = $this->_intTable()->selectWherePaginated($where, $orderBy, $currentPage, $resultsPerPage, $asArray);
 
-«IF i18n-»
+«IF hasTranslatableFields()-»
         // process additions
         $objectData = $this->processAdditions($objectData);
 
@@ -758,23 +736,23 @@ $article->addTag($tagB);
         // get result from the model
         return $this->_intTable()->selectCount($where);
     }
-«IF nestedSet-»
+«IF tree > 0-»
 
     /**
      * Select tree of «nameMultiple.formatForCode()».
      *
-«IF nestedSetHasManyRoots-»
+«REM»«IF nestedSetHasManyRoots-»«ENDREM»
      * @param integer $rootId         Optional id of root node to use as a branch, defaults to 0 which corresponds to the whole tree.
-«ENDIF-»
+«REM»«ENDIF-»«ENDREM»
      * @param boolean $asArray        Whether to return the result as array instead as record object (optional) (default=true).
      *
      * @return array|Doctrine_Doctrine_Tree_NestedSet retrieved data array or tree objects containing retrieved Doctrine_Node_NestedSet instances.
      */
-    public function selectTree(«IF nestedSetHasManyRoots-»$rootId = 0, «ENDIF»$asArray = false)
+    public function selectTree(«REM»«IF nestedSetHasManyRoots-»«ENDREM»$rootId = 0, «REM»«ENDIF»«ENDREM»$asArray = false)
     {
         // get result from the model
-        $tree = $this->_intTable()->selectTree(«IF nestedSetHasManyRoots-»$rootId, «ENDIF»$asArray);
-«IF i18n-»
+        $tree = $this->_intTable()->selectTree(«REM»«IF nestedSetHasManyRoots-»«ENDREM»$rootId, «REM»«ENDIF»«ENDREM»$asArray);
+«IF hasTranslatableFields()-»
 
         // process additions
         $tree = $this->processAdditions($tree);
@@ -783,7 +761,7 @@ $article->addTag($tagB);
         return $tree;
     }
 
-«IF nestedSetHasManyRoots-»
+«REM»«IF nestedSetHasManyRoots-»«ENDREM»
 
     /**
      * Select all trees at once.
@@ -796,7 +774,7 @@ $article->addTag($tagB);
     {
         // get result from the model
         $trees = $this->_intTable()->selectAllTrees($asArray);
-«IF i18n-»
+«IF hasTranslatableFields()-»
 
         // process additions
         foreach ($trees as $rootId => $treeNodes) {
@@ -806,7 +784,7 @@ $article->addTag($tagB);
 
         return $trees;
     }
-«ENDIF-»
+«REM»«ENDIF-»«ENDREM»
 
     /**
      * Get tree object for managing the nested set.
@@ -818,7 +796,7 @@ $article->addTag($tagB);
         return $this->_intTable()->getTree();
     }
 «ENDIF-»
-«IF i18n-»
+«IF hasTranslatableFields()-»
 
     /**
      * Process custom additions.
@@ -859,7 +837,6 @@ $article->addTag($tagB);
 
 «EXPAND FileHelper::GetterAndSetterMethods(nameMultiple.formatForCode(), 'array')»
 «EXPAND FileHelper::GetterAndSetterMethods('_intObjectType', 'string')»
-«EXPAND FileHelper::GetterAndSetterMethods('_intIdField', 'string')»
 «EXPAND FileHelper::GetterAndSetterMethods('_intWhere', 'string')»
 «EXPAND FileHelper::GetterAndSetterMethods('_intOrderBy', 'string')»
 «EXPAND FileHelper::GetterAndSetterMethods('_intDefaultSortingField', 'string')»
@@ -873,11 +850,11 @@ $article->addTag($tagB);
 «IF !joins.isEmpty-»
                      '«joins.get(0).source.name.formatForCode()»'«""-»
 «ELSE-»
-                     '«actualFieldName().formatForCode()»'«""-»
+                     '«name.formatForCode()»'«""-»
 «ENDIF-»
 «ENDLET-»«ENDDEFINE»
 «DEFINE singleSortingField FOR CalculatedField»
-                     '«actualFieldName().formatForCode()»'«""-»
+                     '«name.formatForCode()»'«""-»
 «ENDDEFINE»
 
 «DEFINE standardSortingFields FOR Entity»
@@ -976,14 +953,216 @@ class «implClassModelRefEntity()» extends «baseClassModelRefEntity()»
 
 
 
+
+
+«DEFINE SetUpBehaviour FOR Entity-»
+        /**
+         * Behaviours
+         */
+«IF loggable-»
+        // Ability to track versions and switch between them
+        // See http://code.zikula.org/core/ticket/2401 for possible future support in the Zikula core
+        $auditLog = new Doctrine_Template_Versionable(array(
+                'versionColumn' => '«versionableField.formatForDB()»',
+                'className' => '%CLASS%Version',
+                // turn «IF versionableHistory»on«ELSE»off«ENDIF» the audit log history
+                'auditLog' => «versionableHistory.displayBool()»
+            )
+        );
+«ENDIF-»
+«IF sluggable-»
+        // Automatic permalink generation
+        // See http://code.zikula.org/core/ticket/2401 for possible future support in the Zikula core
+        $slug = new Doctrine_Template_Sluggable(array(
+«IF sluggableFieldName != null && sluggableFieldName != ""-»
+                'name'      => '«sluggableFieldName.formatForDB()»',
+«ENDIF-»
+«IF sluggableFieldAlias != null && sluggableFieldAlias != ""-»
+                'alias'     => '«sluggableFieldAlias.formatForDB()»',
+«ENDIF-»
+                'type'      => 'string',
+                'unique'    => «sluggableUnique.displayBool()»,
+                'fields'    => array('«sluggableFields.replaceAll(", ", "', '")»'),
+                'canUpdate' => «sluggableCanUpdate.displayBool()»
+            )
+        );
+«ENDIF-»
+«IF hasTranslatableFields()-»
+        // Internationalisation (content in multiple language)
+        // See http://code.zikula.org/core/ticket/2401 for possible future support in the Zikula core
+        $i18n = new Doctrine_Template_I18n(array(
+                'className' => '%CLASS%Translation',
+                'fields'    => array('«i18nFields.replaceAll(", ", "', '")»'),
+                'type'      => 'string',
+                'length'    => 2
+            )
+        );
+«ENDIF-»
+
+«IF hasTranslatableFields()-»
+«IF loggable || sluggable || searchable-»
+        $i18n
+«IF loggable»->addChild($auditLog)«ENDIF»
+«IF searchable»->addChild($search)«ENDIF»
+«IF sluggable»->addChild($slug)«ENDIF»;
+«ENDIF-»
+«IF searchable-»
+        // TODO: seems like i18n and Searchable can't work together in Doctrine 1.x
+«ENDIF-»
+        $this->actAs($i18n);
+«ELSE-»
+«IF loggable-»
+        $this->actAs($auditLog);
+«ENDIF-»
+«IF searchable-»
+        // $this->actAs($search);
+        // TODO: reenable search behavior (see http://code.zikula.org/generator/ticket/91 for more information)
+«ENDIF-»
+«IF sluggable-»
+        $this->actAs($slug);
+«ENDIF-»
+«ENDIF-»
+
+«IF tree > 0-»
+        // Nested set for hierarchical data structures
+        $this->actAs('NestedSet', array(
+                'hasManyRoots' => «nestedSetHasManyRoots.displayBool()»,
+                'rootColumnName' => '«nestedSetRootField.formatForDB()»'
+            )
+        );
+«ENDIF-»
+«IF geographical-»
+        // Coordinate fields and distance calculation
+        // See http://code.zikula.org/core/ticket/2401 for possible future support in the Zikula core
+        // $this->actAs('Geographical');
+
+        // Workaround for wrong scaling (Doctrine bug)
+        // See http://www.tkstudios.com/2010/04/27/fixing-doctrines-geographical-template-precision/
+        $geographical0 = new Doctrine_Template_Geographical(array(
+           'latitude' => array(
+              'options' => array(
+                 'scale' => 7,
+              ),
+           ),
+           'longitude' => array(
+              'options' => array(
+                 'scale' => 7,
+              ),
+           ),
+        ));
+        $this->actAs($geographical0);
+«ENDIF-»
+«IF timestampable-»
+        // Automatic timestamp creations
+        $this->actAs('Timestampable', array(
+                'created' => array(
+«IF timestampableEnableCreated-»
+                    'name' => '«timestampableFieldCreated.formatForDB()»',
+                    'type' => 'timestamp'
+«ELSE-»
+                    'disabled' => true
+«ENDIF-»
+                ),
+                'updated' => array(
+«IF timestampableEnableUpdated-»
+                    'name' => '«timestampableFieldUpdated.formatForDB()»',
+                    'type' => 'timestamp',
+                    'onInsert' => true
+«ELSE-»
+                    'disabled' => true
+«ENDIF-»
+                )
+            )
+        );
+«ENDIF-»
+
+«EXPAND ObjectExtensions-»
+
+        /**
+         * Event listeners registrations
+         */
+        $this->addListener(new «implClassModelListener()»());
+«ENDDEFINE»
+
+«DEFINE ObjectExtensions FOR Entity»
+«REM»will be filled by Advices (Aspect Orientation)«ENDREM»
+«ENDDEFINE»
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 «DEFINE DefaultFieldAssignment FOR EntityField»
                 '«name.formatForCode()»' => «EXPAND DefaultFieldAssignmentData»«ENDDEFINE»
 «DEFINE DefaultFieldAssignment FOR DerivedField»
-                '«actualFieldName()»' => «EXPAND DefaultFieldAssignmentData»«ENDDEFINE»
+                '«name.formatForCode()»' => «EXPAND DefaultFieldAssignmentData»«ENDDEFINE»
 «DEFINE DefaultFieldAssignment FOR UploadField»
 «REM»Add a second field with type array for the meta data (#95)«ENDREM»«""-»
-                '«actualFieldName()»' => «EXPAND DefaultFieldAssignmentData»,
-                '«actualFieldName()»Meta' => array()«ENDDEFINE»
+                '«name.formatForCode()»' => «EXPAND DefaultFieldAssignmentData»,
+                '«name.formatForCode()»Meta' => array()«ENDDEFINE»
 
 «DEFINE DefaultFieldAssignmentData FOR EntityField-»
 «error("Error: undefined entity field type " + metaType.toString() + " (code 925624)") -> ""-»
