@@ -1,0 +1,72 @@
+«IMPORT modulestudio»
+«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+
+«DEFINE PersistentProperty FOR DerivedField»
+«EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), '')»
+«ENDDEFINE»
+
+«DEFINE PersistentProperty FOR UploadField»
+«EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), '')»
+
+    /**
+     * @ORM\Column(type="array")
+     * @var array $«name.formatForCode()»Meta.
+     */
+    protected $«name.formatForCode()»Meta = array();
+«ENDDEFINE»
+
+«DEFINE PersistentProperty FOR ArrayField»
+«EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), ' = array()')»
+«ENDDEFINE»
+
+«REM»Note we use protected and not private to let the dev change things in concrete implementations«ENDREM»
+«DEFINE PersistentProperty(String name, String type, String init) FOR DerivedField-»
+«EXPAND PersistentProperty(name, type, init, 'protected')-»
+«ENDDEFINE»
+
+«DEFINE PersistentProperty(String name, String type, String init, String modifier) FOR DerivedField»
+    /**
+«IF primaryKey-»
+     * @ORM\Id
+«ENDIF-»
+     * @ORM\Column(«EXPAND PersistentPropertyImpl(type)»«IF unique-», unique=true«ENDIF-»«IF nullable-» nullable=true«ENDIF-»)
+«IF primaryKey-»
+«REM»TODO«ENDREM»
+     * @ORM\GeneratedValue«REM»(strategy="AUTO")«ENDREM»
+«ENDIF-»
+«REM»
+     * @Gedmo\Sluggable
+«ENDREM»
+     * @var «type» $«name».
+     */
+    «modifier» $«name»«init»;
+«ENDDEFINE»
+
+«DEFINE PersistentPropertyImpl(String type) FOR DerivedField-»
+type="«type»"
+«ENDDEFINE»
+
+«DEFINE PersistentPropertyImpl(String type) FOR DecimalField»
+type="«type»", precision=«length», scale=«scale»
+«ENDDEFINE»
+«DEFINE PersistentPropertyImpl(String type) FOR StringField-»
+«REM»type="«type»", «ENDREM»length=«length»
+«ENDDEFINE»
+
+
+
+«DEFINE FieldAccessorDefault FOR DerivedField»
+«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode(), implClassBusinessEntity())»
+«ENDDEFINE»
+
+«DEFINE FieldAccessor FOR DerivedField»
+«EXPAND FieldAccessorDefault»
+«ENDDEFINE»
+
+«DEFINE FieldAccessor FOR UploadField»
+«EXPAND FieldAccessorDefault»
+«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode().msconcat('Meta'), 'array')»
+«ENDDEFINE»

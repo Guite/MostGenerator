@@ -194,11 +194,21 @@ cached String subFolderPathSegment(UploadField this) :
 
 cached String namingSchemeAsInt(UploadField this) :
     switch (namingScheme) {
-       case UploadNamingScheme::ORIGINALWITHCOUNTER    : '0'
-       case UploadNamingScheme::RANDOMCHECKSUM         : '1'
-       case UploadNamingScheme::FIELDNAMEWITHCOUNTER   : '2'
-       default: '0'
+        case UploadNamingScheme::ORIGINALWITHCOUNTER    : '0'
+        case UploadNamingScheme::RANDOMCHECKSUM         : '1'
+        case UploadNamingScheme::FIELDNAMEWITHCOUNTER   : '2'
+        default: '0'
     };
+
+cached String asConstant(EntityChangeTrackingPolicy policy) :
+    switch (policy) {
+        case EntityChangeTrackingPolicy::DEFERRED_IMPLICIT      : 'DEFERRED_IMPLICIT'
+        case EntityChangeTrackingPolicy::DEFERRED_EXPLICIT      : 'DEFERRED_EXPLICIT'
+        case EntityChangeTrackingPolicy::NOTIFY                 : 'NOTIFY'
+        default: 'DEFERRED_IMPLICIT'
+    };
+cached hasNotifyPolicy(Entity this) :
+    (changeTrackingPolicy == EntityChangeTrackingPolicy::NOTIFY);
 
 // return all join relations (excluding inheritance)
 cached getJoinRelations(Models this) :
@@ -234,8 +244,8 @@ cached getChildRelations(Entity this) :
 cached relationFieldName(Entity refEntity, String refField) :
     (refField.toLowerCase() == 'id' || refField.toLowerCase() == refEntity.idField()) ? refEntity.idField() : refEntity.fields.select(e|e.name == refField).get(0).name.formatForCode();
 
-cached isDefaultIdField(String fieldName, Entity entity) :
-    fieldName == "id" || fieldName == (entity.name + "id") || fieldName == (entity.name + "_id");
+cached String isDefaultIdField(DerivedField this) :
+    {'id', this.entity.name.formatForDB() + 'id', this.entity.name.formatForDB() + '_id'}.contains(this.name.formatForDB());
 /* get local field for 1:1 and 1:n * /
 cached getRelationLocalField(JoinRelationship this, Boolean incoming) :
     (!incoming) ? source.relationFieldName(sourceField) : (!isDefaultIdField(targetField, target) ? target.relationFieldName(targetField) : source.relationFieldName(sourceField));

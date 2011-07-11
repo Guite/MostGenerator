@@ -7,7 +7,7 @@
 «REM»Entry point for Doctrine entity classes«ENDREM»
 «DEFINE Root FOR Application-»
     «EXPAND Root(this) FOREACH models.entities-»
-    «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»
+«REM»    «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»«ENDREM»
     «EXPAND business::Validator::BusinessValidatorWrapper(this) FOREACH models.entities-»
 «ENDDEFINE»
 
@@ -28,6 +28,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 «ENDIF-»
 use Gedmo\Mapping\Annotation as Gedmo;
+«IF hasNotifyPolicy()-»
+use Doctrine\Common\NotifyPropertyChanged,
+    Doctrine\Common\PropertyChangedListener;
+«ENDIF-»
 
 /**
  * Entity class that defines the entity structure and behaviours.
@@ -47,8 +51,13 @@ use Gedmo\Mapping\Annotation as Gedmo;
 «ENDIF-»
  * )
 «ENDIF-»
+«REM»TODO: change tracking policy is not per-class, but per-class-hierarchy«ENDREM»
+«IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT-»
+ * @ChangeTrackingPolicy("«changeTrackingPolicy.asConstant()»")
+«ENDIF-»
+
  */
-class «baseClassModelEntity()» extends Zikula_EntityAccess
+class «baseClassModelEntity()» extends Zikula_EntityAccess«IF hasNotifyPolicy()-» implements NotifyPropertyChanged«ENDIF-»
 {
 «EXPAND EntityInfo-»
 }
@@ -75,26 +84,31 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 
 
 «DEFINE EntityInfo FOR Entity-»
-«REM»
-... internal properties ...
     /**
      * @var string The tablename this object maps to
      */
-    protected $_intObjectType = '«fullEntityName()»';
+    protected $_objectType = '«name.formatForCode()-»';
 
     /**
      * @var «implClassBusinessValidator()» The validator for this entity
      */
-    protected $_intValidator = null;
+    protected $_validator = null;
 
     /**
      * @var boolean Whether this entity supports unique slugs
      */
-    protected $_intHasUniqueSlug = false;
-«ENDREM»
-«EXPAND PersistentProperty FOREACH fields.typeSelect(DerivedField)»
-«EXPAND PersistentAssociation(false) FOREACH incoming.typeSelect(JoinRelationship)»
-«EXPAND PersistentAssociation(true) FOREACH outgoing.typeSelect(JoinRelationship)»
+    protected $_hasUniqueSlug = false;
+«IF hasNotifyPolicy()-»
+
+    /**
+     * @var array List of change notification listeners
+     */
+    protected $_propertyChangedListeners = array();
+«ENDIF-»
+
+«EXPAND entity::Property::PersistentProperty FOREACH fields.typeSelect(DerivedField)»
+«EXPAND entity::Association::Root(false) FOREACH incoming.typeSelect(JoinRelationship)»
+«EXPAND entity::Association::Root(true) FOREACH outgoing.typeSelect(JoinRelationship)»
 
     /**
      * Constructor.
@@ -103,301 +117,58 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
      */
     public function __construct()
     {
-«EXPAND InitCollection(true) FOREACH getOutgoingCollections()-»
-«EXPAND InitCollection(false) FOREACH getIncomingCollections()-»
+«EXPAND entity::Association::InitCollections-»
     }
 
-«REM»
-«EXPAND OtherStuffTEMP»
-
-... internal methods ...
-«EXPAND FileHelper::GetterAndSetterMethods('_intObjectType', 'string')»
-«EXPAND FileHelper::GetterAndSetterMethods('_intValidator', implClassBusinessValidator())»
-«EXPAND FileHelper::GetterAndSetterMethods('_intHasUniqueSlug', 'boolean')»
-«ENDREM»
-
-«EXPAND FieldAccessor FOREACH fields.typeSelect(DerivedField)»
-«EXPAND RelationAccessor(false) FOREACH incoming.typeSelect(JoinRelationship)»
-«EXPAND RelationAccessor(true) FOREACH outgoing.typeSelect(JoinRelationship)»
-
-«ENDDEFINE»
-
-
-«DEFINE PersistentProperty FOR DerivedField»
-«EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), '')»
-«ENDDEFINE»
-
-«DEFINE PersistentProperty FOR UploadField»
-«EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), '')»
+«EXPAND FileHelper::GetterAndSetterMethods('_objectType', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('_validator', implClassBusinessValidator())»
+«EXPAND FileHelper::GetterAndSetterMethods('_hasUniqueSlug', 'boolean')»
+«IF hasNotifyPolicy()-»
 
     /**
-     * @ORM\Column(type="array")
-     * @var array $«name.formatForCode()»Meta.
+     * Adds a property change listener.
+     *
+     * @param PropertyChangedListener $listener The listener to be added
      */
-    protected $«name.formatForCode()»Meta = array();
-«ENDDEFINE»
+    public function addPropertyChangedListener(PropertyChangedListener $listener)
+    {
+        $this->_propertyChangedListeners[] = $listener;
+    }
 
-«DEFINE PersistentProperty FOR ArrayField»
-«EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), ' = array()')»
-«ENDDEFINE»
-
-«REM»Note we use protected and not private to let the dev change things in concrete implementations«ENDREM»
-«DEFINE PersistentProperty(String name, String type, String init) FOR DerivedField-»
-«EXPAND PersistentProperty(name, type, init, 'protected')-»
-«ENDDEFINE»
-
-«DEFINE PersistentProperty(String name, String type, String init, String modifier) FOR DerivedField»
     /**
-«IF primaryKey-»
-     * @ORM\Id
-«ENDIF-»
-     * @ORM\Column(«EXPAND PersistentPropertyImpl(type)»«IF unique-», unique=true«ENDIF-»«IF nullable-» nullable=true«ENDIF-»)
-«IF primaryKey-»
-«REM»TODO«ENDREM»
-     * @ORM\GeneratedValue«REM»(strategy="AUTO")«ENDREM»
-«ENDIF-»
-«REM»
-     * @Gedmo\Sluggable
-«ENDREM»
-     * @var «type» $«name».
+     * Notify all registered listeners about a changed property.
+     *
+     * @param String $propName Name of property which has been changed
+     * @param mixed  $oldValue The old property value
+     * @param mixed  $newValue The new property value
      */
-    «modifier» $«name»«init»;
-«ENDDEFINE»
-
-«DEFINE PersistentPropertyImpl(String type) FOR DerivedField-»
-type="«type»"
-«ENDDEFINE»
-
-«DEFINE PersistentPropertyImpl(String type) FOR DecimalField»
-type="«type»", precision=«length», scale=«scale»
-«ENDDEFINE»
-«DEFINE PersistentPropertyImpl(String type) FOR StringField-»
-«REM»type="«type»", «ENDREM»length=«length»
-«ENDDEFINE»
-
-
-
-«DEFINE FieldAccessorDefault FOR DerivedField»
-«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode(), implClassBusinessEntity())»
-«ENDDEFINE»
-
-«DEFINE FieldAccessor FOR DerivedField»
-«EXPAND FieldAccessorDefault»
-«ENDDEFINE»
-
-«DEFINE FieldAccessor FOR UploadField»
-«EXPAND FieldAccessorDefault»
-«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode().msconcat('Meta'), 'array')»
-«ENDDEFINE»
-
-
-
-«REM»If we have an outgoing association useTarget is true; for an incoming one it is false.«ENDREM»
-«DEFINE PersistentAssociation(Boolean useTarget) FOR JoinRelationship»
-«error("Error: undefined association type " + metaType.toString() + " (code 452361)") -> ""-»
-«ENDDEFINE»
-
-«REM»If we have an outgoing association useTarget is true; for an incoming one it is false.«ENDREM»
-«DEFINE PersistentAssociation(Boolean useTarget) FOR OneToOneRelationship»
-«LET getRelationAliasName(useTarget) AS relationAliasName-»
-«LET ((useTarget) ? target : source).implClassBusinessEntity() AS type-»
-«LET ((useTarget) ? source : target).implClassBusinessEntity() AS ownType-»
-«IF !bidirectional-»
-«IF !useTarget-»
-«ELSE-»
-«REM»1 Product has 1 Shipping --> Product table contains shipping_id column.«ENDREM»
-    /**
-     * @ORM\OneToOne(targetEntity="«type»")
-«REM»     * @ORM\JoinColumn(name="shipping_id", referencedColumnName="id")«ENDREM»
-     * @var «type» $«relationAliasName».
-     */
-    protected $«relationAliasName» = null;
-«ENDIF-»
-«ELSE-»
-«REM»1 Customer has 1 Cart; the Cart knows the Customer«ENDREM»
-«IF !useTarget-»
-    /**
-     * @ORM\OneToOne(targetEntity="«type»", inversedBy="«REM»cart«ENDREM»«ownType»")
-«REM»     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id")«ENDREM»
-«REM»self-referencing
-     * @ORM\OneToOne(targetEntity="Student")
-     * @ORM\JoinColumn(name="mentor_id", referencedColumnName="id")«ENDREM»
-     * @var «type» $«relationAliasName».
-     */
-    protected $«relationAliasName»;
-«ELSE-»
-    /**
-     * @ORM\OneToOne(targetEntity="«type»", mappedBy="«ownType»")
-     * @var «type» $«relationAliasName».
-     */
-    protected $«relationAliasName»;
-«ENDIF-»
-«ENDIF-»
-«ENDLET-»
-«ENDLET-»
-«ENDLET-»
-«ENDDEFINE»
-
-«REM»If we have an outgoing association useTarget is true; for an incoming one it is false.«ENDREM»
-«DEFINE PersistentAssociation(Boolean useTarget) FOR OneToManyRelationship»
-«LET getRelationAliasName(useTarget) AS relationAliasName-»
-«LET ((useTarget) ? target : source).implClassBusinessEntity() AS type-»
-«LET ((useTarget) ? source : target).implClassBusinessEntity() AS ownType-»
-«IF !bidirectional-»
-«IF !useTarget-»
-«ELSE-»
-«REM»1 User has n Phonenumber --> join table users_phonenumbers both id columns, whereby user_id is made unique.«ENDREM»
-    /**
-     * @ORM\ManyToMany(targetEntity="«type»")
-     * @ORM\JoinTable(name="users_phonenumbers",
-     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="phonenumber_id", referencedColumnName="id", unique=true)}
-     *      )
-«IF orderBy-»
-     * @ORM\OrderBy({«orderBy»})
-«ENDIF-»
-     * @var «type» $«relationAliasName».
-     */
-    protected $«relationAliasName»;
-«REM»    private $phonenumbers;«ENDREM»
-«ENDIF-»
-«ELSE-»
-«REM»1 Product has n Features --> Feature table contains product_id.«ENDREM»
-«IF !useTarget-»
-    /**
-     * @ORM\ManyToOne(targetEntity="«type»", inversedBy="features")
-«REM»     * @ORM\JoinColumn(name="product_id", referencedColumnName="id")«ENDREM»
-«REM»self-referencing
-Category hierarchy with (adjacency list approach) --> Category table contains parent_id.
-     * @ORM\ManyToOne(targetEntity="Category", inversedBy="children")
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="id")«ENDREM»
-     * @var «type» $«relationAliasName».
-     */
-    protected $«relationAliasName»;
-«REM»self-referencing
-    private $parent;«ENDREM»
-«ELSE-»
-    /**
-     * @ORM\OneToMany(targetEntity="«type»", mappedBy="product")
-«REM»self-referencing
-     * @ORM\OneToMany(targetEntity="Category", mappedBy="parent")«ENDREM»
-«IF orderBy-»
-     * @ORM\OrderBy({«orderBy»})
-«ENDIF-»
-     * @var «type» $«relationAliasName».
-     */
-    protected $«relationAliasName»;
-«REM»    private $features;«ENDREM»
-«REM»self-referencing
-    private $children;«ENDREM»
-«ENDIF-»
-«ENDIF-»
-«ENDLET-»
-«ENDLET-»
-«ENDLET-»
-«ENDDEFINE»
-
-«REM»If we have an outgoing association useTarget is true; for an incoming one it is false.«ENDREM»
-«DEFINE PersistentAssociation(Boolean useTarget) FOR ManyToOneRelationship»
-«LET getRelationAliasName(useTarget) AS relationAliasName-»
-«LET ((useTarget) ? target : source).implClassBusinessEntity() AS type-»
-«LET ((useTarget) ? source : target).implClassBusinessEntity() AS ownType-»
-«IF !bidirectional && useTarget-»
-«REM»n Users have 1 Address --> User table contains address_id column.«ENDREM»
-    /**
-     * @ORM\OneToOne(targetEntity="«type»")
-«REM»     * @ORM\JoinColumn(name="address_id", referencedColumnName="id")«ENDREM»
-     * @var «type» $«relationAliasName».
-     */
-    protected $«relationAliasName»;
-«ENDIF-»
-«ENDLET-»
-«ENDLET-»
-«ENDLET-»
-«ENDDEFINE»
-
-«REM»If we have an outgoing association useTarget is true; for an incoming one it is false.«ENDREM»
-«DEFINE PersistentAssociation(Boolean useTarget) FOR ManyToManyRelationship»
-«LET getRelationAliasName(useTarget) AS relationAliasName-»
-«LET ((useTarget) ? target : source).implClassBusinessEntity() AS type-»
-«LET ((useTarget) ? source : target).implClassBusinessEntity() AS ownType-»
-«IF !bidirectional-»
-«IF !useTarget-»
-«ELSE-»
-«REM»m Users have n Groups, but a Group does not know its Users«ENDREM»
-    /**
-     * @ORM\ManyToMany(targetEntity="«type»")
-     * @ORM\JoinTable(name="«refClass.formatForCode()»",
-     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="group_id", referencedColumnName="id")}
-     *      )
-«IF orderBy-»
-     * @ORM\OrderBy({«orderBy»})
-«ENDIF-»
-     * @var «type» $«relationAliasName».
-     */
-    protected $«relationAliasName»;
-«REM»    private $groups;«ENDREM»
-«ENDIF-»
-«ELSE-»
-«REM»m Users have n Groups, but this time bidirectional«ENDREM»
-«IF !useTarget-»
-    /**
-     * @ORM\ManyToMany(targetEntity="«type»", mappedBy="groups")
-«REM»self-referencing
-     * @ManyToMany(targetEntity="User", mappedBy="myFriends")«ENDREM»
-     * @var «type» $«relationAliasName».
-     */
-    protected $«relationAliasName»;
-«REM»self-referencing
-    private $friendsWithMe;«ENDREM»
-«ELSE-»
-    /**
-     * @ORM\ManyToMany(targetEntity="«type»", inversedBy="users")
-     * @JoinTable(name="users_groups",
-     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="group_id", referencedColumnName="id")}
-     *      )
-«REM»self-referencing
-     * @ORM\ManyToMany(targetEntity="User", inversedBy="friendsWithMe")
-     * @ORM\JoinTable(name="friends",
-     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="friend_user_id", referencedColumnName="id")}
-     *      )«ENDREM»
-«IF orderBy-»
-     * @ORM\OrderBy({«orderBy»})
-«ENDIF-»
-     * @var «type» $«relationAliasName».
-     */
-    protected $«relationAliasName»;
-«REM»self-referencing
-    private $myFriends;«ENDREM»
-«ENDIF-»
-«ENDIF-»
-«ENDLET-»
-«ENDLET-»
-«ENDLET-»
-«ENDDEFINE»
-
-
-«REM»
-«IF source == target-»«REM»TODO«END REM»
-/** self relations are not working yet, see http://code.zikula.org/generator/ticket/75
-«ENDIF-»
-...
-«IF source == target-»«REM»TODO«END REM»
-*/
+    protected function _onPropertyChanged($propName, $oldValue, $newValue)
+    {
+        if ($this->_propertyChangedListeners) {
+            foreach ($this->_propertyChangedListeners as $listener) {
+                $listener->propertyChanged($this, $propName, $oldValue, $newValue);
+            }
+        }
+    }
 «ENDIF-»
 «ENDREM»
 
+«EXPAND entity::Property::FieldAccessor FOREACH fields.typeSelect(DerivedField)»
+«EXPAND entity::Association::RelationAccessor(false) FOREACH incoming.typeSelect(JoinRelationship)»
+«EXPAND entity::Association::RelationAccessor(true) FOREACH outgoing.typeSelect(JoinRelationship)»
 
-«DEFINE InitCollection(useTarget) FOR JoinRelationship-»
-        $this->«getRelationAliasName(useTarget)» = new ArrayCollection();
 «ENDDEFINE»
 
 
 
+
 «REM»
+«IF isInheriter()-»
+«EXPAND SubClasses-»
+«ENDIF-»
+«EXPAND SetUpBehaviour»
+
+
 Many-To-Many: choosing owning and inverse sides
 
 Rule: owning is the entity being responsible for managing the connection.
@@ -434,48 +205,6 @@ $article->addTag($tagA);
 $article->addTag($tagB);
 }}}
 «ENDREM»
-
-
-
-
-
-«DEFINE RelationAccessor(Boolean useTarget) FOR JoinRelationship»
-«LET getRelationAliasName(useTarget) AS relationAliasName-»
-«LET ((useTarget) ? target : source).implClassBusinessEntity() AS type-»
-«EXPAND FileHelper::GetterAndSetterMethods(relationAliasName, type)»
-«ENDLET-»
-«ENDLET-»
-«ENDDEFINE»
-
-
-
-
-«DEFINE OtherStuffTEMP FOR Entity-»
-    /**
-     * Set table definition.
-     * Define columns, indexes and other information about the table schema.
-     *
-     * @return void
-     */
-    public function setTableDefinition()
-    {
-«IF isInheriting() && getInheritanceRelation().strategy == InheritanceStrategyType::CONCRETE-»
-        // the following method call is needed in
-        // concrete inheritance
-        parent::setTableDefinition();
-«ENDIF-»
-
-«IF isInheriter()-»
-«EXPAND SubClasses-»
-«ENDIF-»
-    }
-
-/** obsolete
-«EXPAND SetUpBehaviour»
-*/
-«ENDDEFINE»
-
-
 
 
 
@@ -521,7 +250,7 @@ $article->addTag($tagB);
         // get result from the model
         $item = $table->selectOneItemById($id, $asArray);
 
-«IF i18n-»
+«IF hasTranslatableFields()-»
         // process translations
         $item = «app.appName()»_Util_I18n::prepareEntityForOutput('«name.formatForCode()»', $item);
 
@@ -591,8 +320,6 @@ $article->addTag($tagB);
         return $objectData;
     }
 
-
-«EXPAND FileHelper::ClassToString(baseClassBusinessEntity(false))-»
 «ENDDEFINE»
 
 
@@ -841,7 +568,6 @@ $article->addTag($tagB);
 «EXPAND FileHelper::GetterAndSetterMethods('_intOrderBy', 'string')»
 «EXPAND FileHelper::GetterAndSetterMethods('_intDefaultSortingField', 'string')»
 
-«EXPAND FileHelper::ClassToString(baseClassBusinessEntity(true))-»
 «ENDDEFINE»
 
 «DEFINE singleSortingField FOR EntityField»«REM»DUMMY«ENDREM»«ENDDEFINE»

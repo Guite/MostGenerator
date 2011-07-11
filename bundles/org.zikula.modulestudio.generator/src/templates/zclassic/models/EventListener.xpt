@@ -295,7 +295,9 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 «ENDDEFINE»
 
 «DEFINE sanitizeForOutputHTML FOR EntityField-»
+    if ($currentFunc != 'edit') {
         $data['«actualFieldName().formatForCode()»'] = ((isset($data['«actualFieldName().formatForCode()»']) && !empty($data['«actualFieldName().formatForCode()»'])) ? DataUtil::formatForDisplayHTML($data['«actualFieldName().formatForCode()»']) : '');
+    }
 «ENDDEFINE»
 
 «DEFINE sanitizeForOutput FOR BooleanField-»
@@ -303,9 +305,6 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 «ENDDEFINE»
 «DEFINE sanitizeForOutput FOR AbstractIntegerField-»
         $data['«actualFieldName().formatForCode()»'] = (int) ((isset($data['«actualFieldName().formatForCode()»']) && !empty($data['«actualFieldName().formatForCode()»'])) ? DataUtil::formatForDisplay($data['«actualFieldName().formatForCode()»']) : 0);
-«ENDDEFINE»
-«DEFINE sanitizeForOutput FOR FloatField-»
-        $data['«actualFieldName().formatForCode()»'] = (float) ((isset($data['«actualFieldName().formatForCode()»']) && !empty($data['«actualFieldName().formatForCode()»'])) ? DataUtil::formatForDisplay($data['«actualFieldName().formatForCode()»']) : 0.00);
 «ENDDEFINE»
 «DEFINE sanitizeForOutput FOR DecimalField-»
         $data['«actualFieldName().formatForCode()»'] = (float) ((isset($data['«actualFieldName().formatForCode()»']) && !empty($data['«actualFieldName().formatForCode()»'])) ? DataUtil::formatForDisplay($data['«actualFieldName().formatForCode()»']) : 0.00);
@@ -366,8 +365,9 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
         }
 «ENDLET-»
 «ENDDEFINE»
-«DEFINE sanitizeForOutput FOR ClobField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
-«DEFINE sanitizeForOutput FOR BlobField-»«ENDDEFINE»
+«DEFINE sanitizeForOutput FOR FloatField-»
+        $data['«actualFieldName().formatForCode()»'] = (float) ((isset($data['«actualFieldName().formatForCode()»']) && !empty($data['«actualFieldName().formatForCode()»'])) ? DataUtil::formatForDisplay($data['«actualFieldName().formatForCode()»']) : 0.00);
+«ENDDEFINE»
 
 
 

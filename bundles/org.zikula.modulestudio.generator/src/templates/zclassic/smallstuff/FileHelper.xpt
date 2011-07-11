@@ -55,27 +55,21 @@
      */
     public function set«name.toFirstUpper()»($p«name.toFirstUpper()»)
     {
-        $this->«name» = $p«name.toFirstUpper()»;
+«EXPAND SetterMethodImpl(name, type)-»
     }
 «ENDDEFINE»
 
+«DEFINE SetterMethodImpl(String name, String type) FOR Object-»
+        $this->«name» = $p«name.toFirstUpper()»;
+«ENDDEFINE»
 
-«DEFINE ClassToString(String className) FOR Entity-»
-    /**
-     * Interceptor being called if an object is used within a string context.
-     *
-     * @return string
-     */
-    public function __toString() {
-        $string  = 'Instance of the class "«className.formatForCode()»' . "\n";
-        $string .= 'Managed table: «name.formatForCode()»' . "\n";
-        $string .= 'Entity fields:' . "\n";
-«FOREACH fields AS col-»
-        $string .= '        «col.name.formatForCode()»' . "\n";
-«ENDFOREACH-»
-        $string .= "\n";
 
-        return $string;
-    }
+«DEFINE SetterMethodImpl(String name, String type) FOR DerivedField-»
+        if ($p«name.toFirstUpper()» != $this->«name.formatForCode()») {
+«IF entity.hasNotifyPolicy()-»
+            $this->_onPropertyChanged('«name.formatForCode()»', $this->«name.formatForCode()», $p«name.toFirstUpper()»);
+«ENDIF-»
+            $this->«name» = $p«name.toFirstUpper()»;
+        }
 «ENDDEFINE»
 

@@ -1,0 +1,163 @@
+«IMPORT modulestudio»
+«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+
+«REM»If we have an outgoing association useTarget is true; for an incoming one it is false.«ENDREM»
+«DEFINE Root(Boolean useTarget) FOR JoinRelationship»
+«IF source == target-»«REM»TODO«ENDREM»
+/**
+  * Self relations are not working yet, must be retested with Doctrine 2.
+  * See http://code.zikula.org/generator/ticket/75 for more information
+  */
+«ENDIF-»
+«LET getRelationAliasName(false) AS sourceName-»
+«LET getRelationAliasName(true) AS targetName-»
+«LET ((useTarget) ? target : source).implClassBusinessEntity() AS entityClass-»
+«EXPAND DirectionSwitch(useTarget, sourceName, targetName, entityClass)-»
+«ENDLET-»
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE DirectionSwitch(Boolean useTarget, String sourceName, String targetName, String entityClass) FOR JoinRelationship»
+«IF !bidirectional-»
+«EXPAND Unidirectional(useTarget, sourceName, targetName, entityClass)-»
+«ELSE-»
+«EXPAND Bidirectional(useTarget, sourceName, targetName, entityClass)-»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE Unidirectional(Boolean useTarget, String sourceName, String targetName, String entityClass) FOR JoinRelationship»
+«IF useTarget-»
+«EXPAND Outgoing(sourceName, targetName, entityClass)-»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE Bidirectional(Boolean useTarget, String sourceName, String targetName, String entityClass) FOR JoinRelationship»
+«IF !useTarget-»
+«EXPAND Incoming(sourceName, targetName, entityClass)-»
+«ELSE-»
+«EXPAND Outgoing(sourceName, targetName, entityClass)-»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE Incoming(String sourceName, String targetName, String entityClass) FOR JoinRelationship»
+    /**
+     * @ORM\«EXPAND IncomingMappingType-»(targetEntity="«entityClass»", inversedBy="«targetName-»")
+«EXPAND JoinDetails(false)-»
+     * @var «entityClass» $«sourceName».
+     */
+    protected $«sourceName»;
+«ENDDEFINE»
+«DEFINE IncomingMappingType FOR OneToOneRelationship-»OneToOne«ENDDEFINE»
+«DEFINE IncomingMappingType FOR OneToManyRelationship-»ManyToOne«ENDDEFINE»
+
+«DEFINE Incoming(String sourceName, String targetName, String entityClass) FOR ManyToOneRelationship»
+    /**
+     * @ORM\OneToOne(targetEntity="«entityClass»")
+«EXPAND JoinDetails(false)-»
+     * @var «entityClass» $«sourceName».
+     */
+    protected $«sourceName»;
+«ENDDEFINE»
+
+«DEFINE Incoming(String sourceName, String targetName, String entityClass) FOR ManyToManyRelationship»
+«IF bidirectional-»
+    /**
+     * @ORM\ManyToMany(targetEntity="«entityClass»", mappedBy="«targetName»")
+     * @var «entityClass»[] $«sourceName».
+     */
+    protected $«sourceName» = null;
+«ENDIF-»
+«ENDDEFINE»
+
+«REM»this empty default rule is adapted by ManyToOne on purpose«ENDREM»
+«DEFINE Outgoing(String sourceName, String targetName, String entityClass) FOR JoinRelationship»
+«ENDDEFINE»
+
+«DEFINE Outgoing(String sourceName, String targetName, String entityClass) FOR OneToOneRelationship»
+    /**
+     * @ORM\OneToOne(targetEntity="«entityClass»"«IF bidirectional-», mappedBy="«sourceName-»"«ENDIF-»)
+«EXPAND JoinDetails(true)-»
+     * @var «entityClass» $«targetName».
+     */
+    protected $«targetName»;
+«ENDDEFINE»
+
+«DEFINE Outgoing(String sourceName, String targetName, String entityClass) FOR OneToManyRelationship»
+    /**
+«IF !bidirectional-»
+     * @ORM\ManyToMany(targetEntity="«entityClass»")
+«ELSE-»
+     * @ORM\OneToMany(targetEntity="«entityClass»", mappedBy="«sourceName-»")
+«ENDIF-»
+«EXPAND JoinDetails(true)-»
+«IF orderBy-»
+     * @ORM\OrderBy({«orderBy»})
+«ENDIF-»
+     * @var «entityClass»[] $«targetName».
+     */
+    protected $«targetName» = null;
+«ENDDEFINE»
+
+«DEFINE Outgoing(String sourceName, String targetName, String entityClass) FOR ManyToManyRelationship»
+    /**
+     * @ORM\ManyToMany(targetEntity="«entityClass»"«IF bidirectional-», inversedBy="«sourceName-»"«ENDIF-»)
+«EXPAND JoinDetails(true)-»
+«IF orderBy-»
+     * @ORM\OrderBy({«orderBy»})
+«ENDIF-»
+     * @var «entityClass»[] $«targetName».
+     */
+    protected $«targetName» = null;
+«ENDDEFINE»
+
+
+«DEFINE JoinDetails(Boolean useTarget) FOR JoinRelationship»
+«LET ((useTarget) ? sourceField : targetField) AS joinColumnLocal-»
+«LET ((useTarget) ? targetField : sourceField) AS joinColumnForeign-»
+«IF !(joinColumnForeign.isDefaultIdField() && joinColumnLocal.isDefaultIdField())-»
+     * @ORM\JoinColumn(name="«joinColumnForeign»", referencedColumnName="«joinColumnLocal»")
+«ENDIF-»
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE JoinDetails(Boolean useTarget) FOR ManyToManyRelationship»
+«LET ((useTarget) ? source : target) AS joinedEntityLocal-»
+«LET ((useTarget) ? target : source) AS joinedEntityForeign-»
+«LET ((useTarget) ? sourceField : targetField) AS joinColumnLocal-»
+«LET ((useTarget) ? targetField : sourceField) AS joinColumnForeign-»
+«IF !(joinColumnForeign.isDefaultIdField() && joinColumnLocal.isDefaultIdField())-»
+     * @ORM\JoinTable(name="«refClass.formatForCode()»",
+     *      joinColumns={@ORM\JoinColumn(name="«joinColumnLocal»", referencedColumnName="«joinedEntityLocal.idField()»")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="«joinColumnForeign»", referencedColumnName="«joinedEntityForeign.idField()»")}
+     *      )
+«ENDIF-»
+«ENDLET-»
+«ENDLET-»
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+
+«DEFINE InitCollections FOR Entity-»
+«EXPAND InitCollection(true) FOREACH getOutgoingCollections()-»
+«EXPAND InitCollection(false) FOREACH getIncomingCollections()-»
+«ENDDEFINE»
+
+«DEFINE InitCollection(useTarget) FOR JoinRelationship-»
+        $this->«getRelationAliasName(useTarget)» = new ArrayCollection();
+«ENDDEFINE»
+
+
+«DEFINE RelationAccessor(Boolean useTarget) FOR JoinRelationship»
+«LET getRelationAliasName(useTarget) AS relationAliasName-»
+«LET ((useTarget) ? target : source).implClassBusinessEntity() AS type-»
+«EXPAND FileHelper::GetterAndSetterMethods(relationAliasName, type)»
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
