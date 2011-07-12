@@ -107,20 +107,25 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
 
         $objectType = $vars['objectType'];
 
-«EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(appName(), true, 'block', 'ItemList', 'display')-»
+        $entityClass = '«appName()»_Entity_' . ucfirst($objectType);
+        $repository = $this->entityManager->getRepository($entityClass);
+
+«REM»TODO: retrieve id field name otherwise, and support composite keys«ENDREM»
+        $objectTemp = new $entityClass(); 
+        $idField = $objectTemp->get_idField();
 
         $sortParam = '';
         if ($vars['sorting'] == 'random') {
             $sortParam = 'RAND()';
         } elseif ($vars['sorting'] == 'newest') {
-            $sortParam = $objectCollection->get_intIdField() . ' DESC';
+            $sortParam = $idField . ' DESC';
         } elseif ($vars['sorting'] == 'default') {
-            $sortParam = $objectCollection->get_intDefaultSortingField() . ' ASC';
+            $sortParam = $objectTemp->get_defaultSortingField() . ' ASC';
         }
 
         // get objects from database
         // while the result will be saved in the object, we assign in to a local variable for convenience.
-        list($objectData, $objectCount) = $objectCollection->selectWherePaginated($vars['filter'], $sortParam, -1, $vars['amount']);
+        list($objectData, $objectCount) = $repository->selectWherePaginated($vars['filter'], $sortParam, -1, $vars['amount']);
 
         $this->view->setCaching(true);
 

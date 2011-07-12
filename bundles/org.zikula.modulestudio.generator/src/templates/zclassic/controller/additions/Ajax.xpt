@@ -9,7 +9,7 @@
 «IF !userFields.isEmpty-»
 «FOREACH userFields AS userField-»
 
-    public function get«userField.entity.name.formatForCodeCapital()»«userField.actualFieldName().formatForCodeCapital()»Users()
+    public function get«userField.entity.name.formatForCodeCapital()»«userField.name.formatForCodeCapital()»Users()
     {
         return $this->getCommonUsersList();
     }
@@ -81,8 +81,12 @@
             $objectType = «app.appName()»_Util_Controller::getDefaultObjectType('controllerAction', array('controller' => '«name()»', 'action' => 'getItemList'));
         }
 
-        $idField = strtolower($objectType) . 'id';
-«EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(app.appName(), true, 'controllerAction', name(), 'getItemList')-»
+        $entityClass = '«appName()»_Entity_' . ucfirst($objectType);
+        $repository = $this->entityManager->getRepository($entityClass);
+
+«REM»TODO: retrieve id field name otherwise, and support composite keys«ENDREM»
+        $objectTemp = new $entityClass(); 
+        $idField = $objectTemp->get_idField();
 
         $fragment = '';
         $exclude = '';
@@ -108,7 +112,8 @@
 
         $fragment = DataUtil::formatForStore($fragment);
 
-        // TODO: move into Doctrine_Table subclasses and refactor to Doctrine_Query instance.
+«REM»TODO«ENDREM»
+        // TODO: move into Repository subclasses
         if (!empty($exclude)) {
             $where = $idField . ' NOT IN (' . DataUtil::formatForStore($exclude) . ')';
         }
@@ -118,7 +123,7 @@
 «FOREACH app.models.entities AS entity-»
             case '«entity.name.formatForCode()»':
 «FOREACH entity.getDerivedFields().reject(e|e.primaryKey || e.metaType == BooleanField || e.metaType == ArrayField || e.metaType == ObjectField) AS field-»
-                    $whereSub .= ((!empty($whereSub)) ? ' OR ' : '') . '«IF entity.i18n && entity.i18nFields.split(', ').exists(e|e == field.actualFieldName())-»Translation.«ENDIF-»«field.actualFieldName()» «IF field.metaType == StringField || field.metaType == TextField»LIKE \'%' . $fragment . '%\'«ELSE»= \'' . $fragment . '\'«ENDIF»';
+                    $whereSub .= ((!empty($whereSub)) ? ' OR ' : '') . '«IF entity.hasTranslatableFields() && entity.i18nFields.split(', ').exists(e|e == field.name)-»Translation.«ENDIF-»«field.name» «IF field.metaType == StringField || field.metaType == TextField»LIKE \'%' . $fragment . '%\'«ELSE»= \'' . $fragment . '\'«ENDIF»';
 «ENDFOREACH-»
                     break;
 «ENDFOREACH-»
@@ -130,7 +135,7 @@
 
         // get objects from database
         // while the result will be saved in the object, we assign in to a local variable for convenience.
-        list($objectData, $objectCount) = $objectCollection->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
+        list($objectData, $objectCount) = $repository->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
 
         $out = '<ul>';
         if (is_array($objectData) && count($objectData) > 0) {
@@ -139,14 +144,14 @@
             switch ($objectType) {
 «FOREACH app.models.entities AS entity-»
                 case '«entity.name.formatForCode()»':
-                        $titleFieldName = '«entity.getLeadingField().actualFieldName().formatForCode()»';
+                        $titleFieldName = '«entity.getLeadingField().name.formatForCode()»';
 «LET entity.fields.typeSelect(TextField).reject(e|e.leading) AS textFields-»
 «IF !textFields.isEmpty-»
-                        $descriptionFieldName = '«textFields.get(0).actualFieldName().formatForCode()»';
+                        $descriptionFieldName = '«textFields.get(0).name.formatForCode()»';
 «ELSE-»
 «LET entity.fields.typeSelect(StringField).reject(e|e.leading) AS textFields-»
 «IF !textFields.isEmpty-»
-                        $descriptionFieldName = '«textFields.get(0).actualFieldName().formatForCode()»';
+                        $descriptionFieldName = '«textFields.get(0).name.formatForCode()»';
 «ENDIF-»
 «ENDLET-»
 «ENDIF-»
@@ -172,7 +177,7 @@
 «FOREACH app.models.entities AS entity-»
 «IF entity.hasImageFields()-»
                     case '«entity.name.formatForCode()»':
-                            $previewFieldName = '«entity.getImageFields().get(0).actualFieldName().formatForCode()»';
+                            $previewFieldName = '«entity.getImageFields().get(0).name.formatForCode()»';
                             break;
 «ENDIF»
 «ENDFOREACH-»
@@ -230,7 +235,7 @@
 «LET entity.getUniqueDerivedFields().reject(e|e.primaryKey) AS uniqueFields-»
 «IF !uniqueFields.isEmpty-»
             case '«entity.name.formatForCode()»':
-                    $uniqueFields = array(«FOREACH uniqueFields AS uniqueField SEPARATOR ', '»'«uniqueField.actualFieldName().formatForCode()»'«ENDFOREACH»);
+                    $uniqueFields = array(«FOREACH uniqueFields AS uniqueField SEPARATOR ', '»'«uniqueField.name.formatForCode()»'«ENDFOREACH»);
                     break;
 «ENDIF-»
 «ENDLET-»
@@ -242,7 +247,8 @@
 
         $exclude = (int) $this->request->getPost()->filter('ex', 0, FILTER_VALIDATE_INT);
 
-«EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(app.appName(), false, 'controllerAction', name(), 'checkForDuplicate')-»
+        $entityClass = '«appName()»_Entity_' . ucfirst($objectType);
+        $object = new $entityClass(); 
 
         $result = false;
         switch ($objectType) {
@@ -252,8 +258,8 @@
             case '«entity.name.formatForCode()»':
                     switch ($fieldName) {
 «FOREACH uniqueFields AS uniqueField-»
-                        case '«uniqueField.actualFieldName().formatForCode()»':
-                                $result = $object->get_intValidator()->checkIf«uniqueField.actualFieldName().formatForCodeCapital()»Exists($value, $exclude);
+                        case '«uniqueField.name.formatForCode()»':
+                                $result = $object->get_validator()->checkIf«uniqueField.name.formatForCodeCapital()»Exists($value, $exclude);
                                 break;
 «ENDFOREACH-»
                     }
@@ -281,12 +287,12 @@
     {
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_EDIT));
 
-«LET app.getNestedSetEntities() AS nestedSetEntities-»
+«LET app.getTreeEntities() AS treeEntities-»
         // parameter specifying which type of objects we are treating
-        $objectType = DataUtil::convertFromUTF8($this->request->getPost()->filter('ot', '«nestedSetEntities.get(0).name.formatForCode()»', FILTER_SANITIZE_STRING));
+        $objectType = DataUtil::convertFromUTF8($this->request->getPost()->filter('ot', '«treeEntities.get(0).name.formatForCode()»', FILTER_SANITIZE_STRING));
         // ensure that we use only object types with nested set behaviour enabled
-        if (!in_array($objectType, array(«FOREACH nestedSetEntities AS nestedSetEntity SEPARATOR ", "»'«nestedSetEntity.name.formatForCode()»'«ENDFOREACH»))) {
-            $objectType = '«nestedSetEntities.get(0).name.formatForCode()»';
+        if (!in_array($objectType, array(«FOREACH treeEntities AS treeEntity SEPARATOR ", "»'«treeEntity.name.formatForCode()»'«ENDFOREACH»))) {
+            $objectType = '«treeEntities.get(0).name.formatForCode()»';
         }
 «ENDLET-»
 
@@ -311,12 +317,11 @@
             }
         }
 
-        $factoryArgs = array('controller' => 'ajax', 'action' => 'HandleNestedSetOperation');
-        $object = «app.appName()»_Factory::getBusinessEntity($objectType, 'controllerAction', $factoryArgs);
-        $objectCollection = «app.appName()»_Factory::getBusinessCollection($objectType, 'controllerAction', $factoryArgs);
+        $entityClass = '«appName()»_Entity_' . ucfirst($objectType);
+        $repository = $this->entityManager->getRepository($entityClass);
 
         $rootId = 1;
-        $useMultipleRoots = method_exists($objectCollection, 'selectAllTrees');
+        $useMultipleRoots = method_exists($repository, 'selectAllTrees');
         if ($useMultipleRoots && !in_array($op, array('addRootNode'))) {
             $rootId = (int) $this->request->getPost()->filter('root', 0, FILTER_VALIDATE_INT);
             if (!$rootId) {
@@ -328,7 +333,7 @@
         // Select tree
         $tree = null;
         if (in_array($op, array('addRootNode'))) {
-            $tree = $objectCollection->selectTree($rootId);
+            $tree = $repository->selectTree($rootId);
         }
 
         $titleFieldName = $descriptionFieldName = '';
@@ -336,14 +341,14 @@
         switch ($objectType) {
 «FOREACH app.getNestedSetEntities() AS entity-»
                 case '«entity.name.formatForCode()»':
-                        $titleFieldName = '«entity.getLeadingField().actualFieldName().formatForCode()»';
+                        $titleFieldName = '«entity.getLeadingField().name.formatForCode()»';
 «LET entity.fields.typeSelect(TextField).reject(e|e.leading) AS textFields-»
 «IF !textFields.isEmpty-»
-                        $descriptionFieldName = '«textFields.get(0).actualFieldName().formatForCode()»';
+                        $descriptionFieldName = '«textFields.get(0).name.formatForCode()»';
 «ELSE-»
 «LET entity.fields.typeSelect(StringField).reject(e|e.leading) AS textFields-»
 «IF !textFields.isEmpty-»
-                        $descriptionFieldName = '«textFields.get(0).actualFieldName().formatForCode()»';
+                        $descriptionFieldName = '«textFields.get(0).name.formatForCode()»';
 «ENDIF-»
 «ENDLET-»
 «ENDIF-»
@@ -354,15 +359,17 @@
 
         switch ($op) {
             case 'addRootNode':
-                            $objectData = $object->getNewArrayWithDefaultData();
+                            $object = new $entityClass();
+                            $objectData = array();
                             $objectData[$titleFieldName] = $this->__('New root node');
                             if (!empty($descriptionFieldName)) {
                                 $objectData[$descriptionFieldName] = $this->__('This is a new root node');
                             }
                             $object->merge($objectData);
                             // save new object to set the root id
-                            $object->save();
-
+                            $this->entityManager->persist($object);
+                            $this->entityManager->flush();
+«REM»TODO«ENDREM»
                             $getterName = 'get' . ucwords($objectType);
                             $objectCollection->getTreeObject()->createRoot($object->$getterName());
                             break;
@@ -373,14 +380,14 @@
                                 throw new Zikula_Exception_Fatal();
                             }
 
-                            $childObject = «app.appName()»_Factory::getBusinessEntity($objectType, 'controllerAction', $factoryArgs);
-                            $objectData = $childObject->getNewArrayWithDefaultData();
+                            $childObject = new $entityClass();
+                            $objectData = array();
                             $objectData[$titleFieldName] = $this->__('New child node');
                             if (!empty($descriptionFieldName)) {
                                 $objectData[$descriptionFieldName] = $this->__('This is a new child node');
                             }
                             $childObject->merge($objectData);
-
+«REM»TODO«ENDREM»
                             $parentRecord = $object->selectById($parentId, false);
                             $getterName = 'get' . ucwords($objectType);
                             $parentRecord->getNode()->addChild($childObject->$getterName());
@@ -395,7 +402,8 @@
                             */
                             break;
             case 'deleteNode':
-                            $record = $object->selectById($id, false);
+                            $record = $repository->selectById($id, false);
+«REM»TODO«ENDREM»
                             $record->getNode()->delete();
                             break;
             case 'moveNode':
@@ -405,7 +413,8 @@
                                 throw new Zikula_Exception_Fatal();
                             }
 
-                            $record = $object->selectById($id, false);
+                            $record = $repository->selectById($id, false);
+«REM»TODO«ENDREM»
                             $node = $record->getNode();
 
                             if ($moveDirection == 'up') {
@@ -429,11 +438,11 @@
                                 throw new Zikula_Exception_Fatal();
                             }
 
-                            $record = $object->selectById($id, false);
+                            $record = $repository->selectById($id, false);
+«REM»TODO«ENDREM»
                             $node = $record->getNode();
 
-                            $destObject = «app.appName()»_Factory::getBusinessEntity($objectType, 'controllerAction', $factoryArgs);
-                            $destRecord = $destObject->selectById($destId, false);
+                            $destRecord = $repository->selectById($destId, false);
 
                             if ($moveDirection == 'after') {
                                 $node->moveAsNextSiblingOf($destRecord);

@@ -74,7 +74,7 @@
 «ENDDEFINE»
 
 «DEFINE DisplayEntrySimpleField(Controller controller) FOR DerivedField-»
-    <dt>{gt text='«actualFieldName().formatForDisplayCapital()»'}</dt>
+    <dt>{gt text='«name.formatForDisplayCapital()»'}</dt>
     <dd>«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(entity.name.formatForCode(), 'display', '')-»</dd>
 «ENDDEFINE»
 
@@ -89,7 +89,7 @@
     <dd>
     {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
         <a href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«source.name.formatForCode()»' «source.idField()»=$«relObjName».«source.idField()»}">
-            {$«relObjName».«source.getLeadingField().actualFieldName().formatForCode()»«REM»|nl2br«ENDREM»|default:""}
+            {$«relObjName».«source.getLeadingField().name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}
         </a>
         <a id="«source.name.formatForCode()»Item{$«relObjName».«source.idField()»}Display" href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«source.name.formatForCode()»' «source.idField()»=$«relObjName».«source.idField()» theme='Printer'«IF controller.metaType == UserController» forcelongurl=true«REM»Temporary hack due to core bug with theme parameter in short urls«ENDREM»«ENDIF-»}" title="{gt text='Open quick view window'}" style="display: none">
             {icon type='view' size='extrasmall' __alt='Quick view'}
@@ -97,12 +97,12 @@
         <script type="text/javascript" charset="utf-8">
         /* <![CDATA[ */
             document.observe('dom:loaded', function() {
-                «container.application.prefix()»InitInlineWindow($('«source.name.formatForCode()»Item{{$«relObjName».«source.idField()»}}Display'), '{{$«relObjName».«source.getLeadingField().actualFieldName().formatForCode()»|replace:"'":""}}');
+                «container.application.prefix()»InitInlineWindow($('«source.name.formatForCode()»Item{{$«relObjName».«source.idField()»}}Display'), '{{$«relObjName».«source.getLeadingField().name.formatForCode()»|replace:"'":""}}');
             });
         /* ]]> */
         </script>
     {else}
-        {$«relObjName».«source.getLeadingField().actualFieldName().formatForCode()»«REM»|nl2br«ENDREM»|default:""}
+        {$«relObjName».«source.getLeadingField().name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}
     {/if}
     </dd>
 «ENDLET-»
@@ -127,16 +127,18 @@
 <p>
 «IF controller.hasActions('edit')-»
     {checkpermissionblock component='«appName»::' instance='.*' level='ACCESS_EDIT'}
+«IF !readOnly-»«REM»create is allowed, but editing not«ENDREM»
         <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»' «idField()»=$«objName».«idField()»}" title="{gt text='Edit'}" class="z-icon-es-edit">
             {gt text='Edit'}
         </a>
-«IF nestedSet-»
+«ENDIF-»
+«IF tree > 0-»
     {*
 «ENDIF-»
         <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»' astemplate=$«objName».«idField()»}" title="{gt text='Reuse for new item'}" class="z-icon-es-saveas">
             {gt text='Reuse'}
         </a>
-«IF nestedSet-»
+«IF tree > 0-»
     *}
 «ENDIF-»
     {/checkpermissionblock}

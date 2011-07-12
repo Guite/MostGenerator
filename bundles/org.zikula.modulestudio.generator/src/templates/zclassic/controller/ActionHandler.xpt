@@ -140,7 +140,7 @@ class «baseClassFormHandler(controller, name, actionName)» extends Zikula_Form
     /**
      * Helper method for updating links to related records.
      */
-    protected function updateRelationLinks($businessEntity)
+    protected function updateRelationLinks($entity)
     {
 «EXPAND UpdateRelationLinks(true) FOREACH incoming.typeSelect(ManyToManyRelationship)-»
 «EXPAND UpdateRelationLinks(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
@@ -194,8 +194,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         // store current uri for repeated creations
         $this->repeatReturnUrl = System::getCurrentURI();
 
-        $objectType = $this->objectType;
-«EXPAND ControllerHelper::instantiateBusinessObject(app.appName(), false, 'actionHandler', controller.name(), 'initialize')-»
+        $entityClass = '«appName()»_Entity_' . ucfirst($this->objectType);
+        $repository = $this->entityManager->getRepository($entityClass);
 
         $objectData = array();
         $this->mode = 'create';
@@ -232,8 +232,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 unset($objectData['«idField()»']);
             }
             else {
-                // retrieve array with default data values
-                $objectData = $object->getNewArrayWithDefaultData();
+                $objectData = new $entityClass();
 
 «EXPAND InitRelatedObjectDefault(true) FOREACH incoming.typeSelect(JoinRelationship)-»
 «EXPAND InitRelatedObjectDefault(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
@@ -280,10 +279,15 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
      */
     protected function retrieveRelatedObjects($objectType, $relationInputFieldName, $many = false, $source = 'GET')
     {
-        $idField = strtolower($objectType) . 'id';
-        $objectCollection = «app.appName()»_Factory::getBusinessCollection($objectType, 'controllerAction', array('controller' => '«controller.name()»', 'action' => 'edit'));
+        $entityClass = '«appName()»_Entity_' . ucfirst($this->objectType);
+        $repository = $this->entityManager->getRepository($entityClass);
+
+«REM»TODO: retrieve id field name otherwise, and support composite keys«ENDREM»
+        $objectTemp = new $entityClass(); 
+        $idField = $objectTemp->get_idField();
+
         $where = '';
-        $sortParam = $objectCollection->get_intDefaultSortingField() . ' asc';
+        $sortParam = $objectTemp->get_defaultSortingField() . ' asc';
         if ($many) {
             $inputValue = '';
             if ($source == 'POST') {
@@ -312,7 +316,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
             $where = $idField . ' = \'' . DataUtil::formatForStore($inputValue) . '\'';
         }
-        list($result, $resultCount) = $objectCollection->selectWherePaginated($where, $sortParam, 1, 50);
+        list($result, $resultCount) = $repository->selectWherePaginated($where, $sortParam, 1, 50);
         return (($many) ? $result : $result[0]);
     }
 «ENDDEFINE»
@@ -513,14 +517,13 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «EXPAND ReassignRelatedObjects(true) FOREACH incoming.typeSelect(JoinRelationship)-»
 «EXPAND ReassignRelatedObjects(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 
-        $objectType = $this->objectType;
-«EXPAND ControllerHelper::instantiateBusinessObject(app.appName(), false, 'actionHandler', controller.name(), 'handleCommand')-»
+        $entityClass = '«appName()»_Entity_' . ucfirst($this->objectType);
+        $repository = $this->entityManager->getRepository($entityClass);
 
-        $«name.formatForCode()» = null;
+        $«name.formatForCode()» = new $entityClass();
         if ($args['commandName'] != 'create') {
-            $object->selectById($this->«idField()», false);
+            $«name.formatForCode()» = $repository->selectById($this->«idField()», false);
         }
-        $«name.formatForCode()» = $object;
 
 «EXPAND FetchInputData(name.formatForCode())-»
 
@@ -535,25 +538,28 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             // save «name.formatForDisplay()»
             $successMessage = '';
             if ($args['commandName'] == 'create') {
-                $«name.formatForCode()»->save();
+                $this->entityManager->persist($«name.formatForCode()»);
+                $this->entityManager->flush();
 
                 // store new id
-                $this->«idField()» = $«name.formatForCode()»->get_intId();
+                $this->«idField()» = $«name.formatForCode()»->get«idField().toFirstUpper()»();
                 // check if the insert has worked, might become obsolete due to exception usage
                 if ($this->«idField()» === false) {
                     return LogUtil::registerError($this->__('Error! Creation attempt failed.'));
                 }
                 $successMessage = $this->__('Done! «name.formatForDisplayCapital()» created.');
             } else if ($args['commandName'] == 'update') {
-                $updateResult = $«name.formatForCode()»->save();
+                $this->entityManager->persist($«name.formatForCode()»);
+«REM»                $updateResult = true/false;
                 // check if the update has worked, might become obsolete due to exception usage
                 if ($updateResult === false) {
                     return LogUtil::registerError($this->__('Error! Update attempt failed.'));
-                }
+                }«ENDREM»
                 $successMessage = $this->__('Done! «name.formatForDisplayCapital()» updated.');
             }
 
             $this->updateRelationLinks($«name.formatForCode()»);
+            $this->entityManager->flush();
 
             LogUtil::registerStatus($successMessage);
 
@@ -570,9 +576,11 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             // TODO validation incomplete
 
             // delete «name.formatForDisplay()»
-            if ($«name.formatForCode()»->delete() === false) {
+            $this->entityManager->remove($«name.formatForCode()»);
+            $this->entityManager->flush();
+«REM»            if ($«name.formatForCode()»->delete() === false) {
                 return LogUtil::registerError($this->__('Error! Deletion attempt failed.'));
-            }
+            }«ENDREM»
 
             LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» deleted.'));
 
@@ -622,31 +630,28 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «IF many && this.getEditStageCode(incoming) > 1-»
 «IF incoming-»«REM»only incoming for now, see http://code.zikula.org/generator/ticket/89«ENDREM»«""-»
         $relatedIds = $this->request->getPost()->get('«uniqueNameForJs»ItemList', '');
-        $recordObj = $businessEntity->get«((incoming) ? target : source).name.formatForCodeCapital()»();
         if ($this->mode != 'create') {
             // remove all existing references
-            $recordObj->unlinkInDb('«relationAliasName»');
+«REM»TODO«ENDREM»
+            $entity->unlinkInDb('«relationAliasName»');
         }
         if (!empty($relatedIds)) {
             $relatedIds = explode(',', $relatedIds);
         }
         if (is_array($relatedIds) && count($relatedIds)) {
             // create new links
+«REM»TODO«ENDREM»
 «IF this.metaType != ManyToManyRelationship-»
-            $recordObj->link('«relationAliasName»', $relatedIds);
+            $entity->link('«relationAliasName»', $relatedIds);
 «ELSE-»
             foreach ($relatedIds as $relatedId) {
                 $linkObj = new «((ManyToManyRelationship)this).implClassModelRefRecord()»();
                 $linkObj->«source.idField()» = «IF incoming»$relatedId«ELSE»$this->«((incoming) ? target : source).idField()»«ENDIF»;
                 $linkObj->«target.idField()» = «IF !incoming»$relatedId«ELSE»$this->«((incoming) ? target : source).idField()»«ENDIF»;
-                $linkObj->save();
+                $this->entityManager->persist($linkObj);
             }
 «ENDIF-»
         }
-
-        // not sure yet if this is needed at all
-        // $recordObj->save();
-
 «ENDIF-»
 «ENDIF-»
 «ENDLET-»
@@ -669,18 +674,18 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         if (in_array($args['commandName'], array('create', 'update'))) {
 «FOREACH uniqueFields AS uniqueField-»
-            // check if another «name.formatForDisplay()» with the same «uniqueField.actualFieldName().formatForDisplay()» does already exist
-            if ($object->get_intValidator()->checkIf«uniqueField.actualFieldName().formatForCodeCapital()»Exists($formData['«uniqueField.actualFieldName().formatForCode()»'], $this->«idField()»)) {
-                return LogUtil::registerError($this->__f('The «uniqueField.actualFieldName().formatForDisplay()» %s is already assigned. Please choose another «uniqueField.actualFieldName().formatForDisplay()».', array($formData['«uniqueField.actualFieldName().formatForCode()»'])));
+            // check if another «name.formatForDisplay()» with the same «uniqueField.name.formatForDisplay()» does already exist
+            if ($object->get_validator()->checkIf«uniqueField.name.formatForCodeCapital()»Exists($formData['«uniqueField.name.formatForCode()»'], $this->«idField()»)) {
+                return LogUtil::registerError($this->__f('The «uniqueField.name.formatForDisplay()» %s is already assigned. Please choose another «uniqueField.name.formatForDisplay()».', array($formData['«uniqueField.name.formatForCode()»'])));
             }
 «ENDFOREACH-»
 «FOREACH userFields AS userField-»
-«LET userField.actualFieldName().formatForCode() AS realName-»
+«LET userField.name.formatForCode() AS realName-»
             $formData['«realName»'] = (int) $this->request->getPost()->filter('«realName»', 0, FILTER_VALIDATE_INT);
             if (!$formData['«realName»'] || UserUtil::getVars($formData['«realName»']) === false) {
 «IF userField.mandatory-»
                 // Oops, we have an invalid user id. As this field is mandatory, we raise an error.
-                return LogUtil::registerError($this->__('Invalid value received for field "«userField.actualFieldName().formatForDisplay()»".'));
+                return LogUtil::registerError($this->__('Invalid value received for field "«userField.name.formatForDisplay()»".'));
 «ELSE-»
                 // Oops, we have an invalid user id. As this field is not mandatory, we simply set it to 0.
                 $formData['«realName»'] = 0;
@@ -692,7 +697,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «LET sluggableFieldRealName() AS sluggableFieldRealName-»
 «IF sluggableUnique-»
             // check if another «name.formatForDisplay()» with the same «sluggableFieldRealName.formatForDisplay()» does already exist
-            if ($object->get_intValidator()->checkIf«sluggableFieldRealName.formatForCodeCapital()»Exists($formData['«sluggableFieldRealName»'], $this->«idField()»)) {
+            if ($object->get_validator()->checkIf«sluggableFieldRealName.formatForCodeCapital()»Exists($formData['«sluggableFieldRealName»'], $this->«idField()»)) {
                 return LogUtil::registerError($this->__f('The «sluggableFieldRealName.formatForDisplay()» %s is already assigned. Please choose another «sluggableFieldRealName.formatForDisplay()».', array($formData['«sluggableFieldRealName»'])));
             }
 «ENDIF-»

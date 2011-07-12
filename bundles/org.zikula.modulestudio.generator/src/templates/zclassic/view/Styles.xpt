@@ -35,7 +35,7 @@ div.«appName().formatForDB()»RightBox p.manageLink {
 }
 
 «IF hasTrees()-»
-.z-nestedsetcontainer {
+.z-treecontainer {
     border: 1px solid #ccc;
     width: 400px;
     float: left;

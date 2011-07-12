@@ -32,7 +32,6 @@
 «IF primaryKey-»
      * @ORM\Id
 «ENDIF-»
-     * @ORM\Column(«EXPAND PersistentPropertyImpl(type)»«IF unique-», unique=true«ENDIF-»«IF nullable-» nullable=true«ENDIF-»)
 «IF primaryKey-»
 «REM»TODO«ENDREM»
      * @ORM\GeneratedValue«REM»(strategy="AUTO")«ENDREM»
@@ -40,9 +39,10 @@
 «REM»
      * @Gedmo\Sluggable
 «ENDREM»
+     * @ORM\Column(«EXPAND PersistentPropertyImpl(type)»«IF unique-», unique=true«ENDIF-»«IF nullable-» nullable=true«ENDIF-»)
      * @var «type» $«name».
      */
-    «modifier» $«name»«init»;
+    «modifier» $«name»««IF init ne ''»«init»«ELSE-» = «EXPAND DefaultFieldData-»«ENDIF-»;
 «ENDDEFINE»
 
 «DEFINE PersistentPropertyImpl(String type) FOR DerivedField-»
@@ -58,8 +58,41 @@ type="«type»", precision=«length», scale=«scale»
 
 
 
+«DEFINE DefaultFieldData FOR EntityField-»
+«error("Error: undefined entity field type " + metaType.toString() + " (code 925624)") -> ""-»
+«ENDDEFINE»
+«DEFINE DefaultFieldData FOR DerivedField-»
+«error("Error: undefined derived field type " + metaType.toString() + " (code 925627)") -> ""-»
+«ENDDEFINE»
+«DEFINE DefaultFieldData FOR CalculatedField-»
+«error("Error: undefined calculated field type " + metaType.toString() + " (code 925628)") -> ""-»
+«ENDDEFINE»
+
+«DEFINE DefaultFieldDataText FOR DerivedField-»'«defaultValue»'«ENDDEFINE»
+«DEFINE DefaultFieldData FOR BooleanField»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldData FOR AbstractIntegerField-»
+«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
+«ENDDEFINE»
+«DEFINE DefaultFieldData FOR IntegerField-»
+«LET getPointingRelations() AS pointingRelations-»
+«IF !pointingRelations.isEmpty-»(int) FormUtil::getPassedValue('«pointingRelations.get(0).source.idField()»', 0, 'GET', FILTER_VALIDATE_INT)
+«ELSE-»
+«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
+«ENDIF-»«ENDLET-»«ENDDEFINE»
+«DEFINE DefaultFieldData FOR DecimalField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0.00«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldData FOR AbstractStringField-»«EXPAND DefaultFieldDataText-»«ENDDEFINE»
+«DEFINE DefaultFieldData FOR ArrayField»array()«ENDDEFINE»
+«DEFINE DefaultFieldData FOR ObjectField»null«ENDDEFINE»
+«DEFINE DefaultFieldData FOR DatetimeField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»date('Y-m-d H:i:s')«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldData FOR DateField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»date('Y-m-d')«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldData FOR TimeField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»date('H:i:s')«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldData FOR FloatField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF»«ENDDEFINE»
+
+
+
+
 «DEFINE FieldAccessorDefault FOR DerivedField»
-«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode(), implClassBusinessEntity())»
+«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode(), fieldTypeAsString())»
 «ENDDEFINE»
 
 «DEFINE FieldAccessor FOR DerivedField»

@@ -8,7 +8,6 @@
 «DEFINE Root FOR Application»
     «EXPAND Root(this) FOREACH controllers.controllers-»
     «EXPAND UtilMethods::Root»
-    «EXPAND Factory::Root»
 «IF hasUserController()-»
 «REM»At the moment short urls are only used in the user area, see http://code.zikula.org/core/ticket/2538«ENDREM»
     «EXPAND additions::UrlRouting::Root»
@@ -19,8 +18,8 @@
 «IF !models.getJoinRelations().isEmpty-»
     «EXPAND javascript::DisplayFunctions::Root»
 «ENDIF-»
-«IF hasNestedSets()-»
-    «EXPAND javascript::NestedSetFunctions::Root»
+«IF hasTrees()-»
+    «EXPAND javascript::TreeFunctions::Root»
 «ENDIF-»
 «ENDDEFINE»
 

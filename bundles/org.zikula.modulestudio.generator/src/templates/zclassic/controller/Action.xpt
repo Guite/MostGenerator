@@ -96,17 +96,22 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR ViewAction-»
-«EXPAND ControllerHelper::instantiateBusinessObject(appName, true, 'controllerAction', controller.name(), name.formatForCode())-»
+        $entityClass = '«appName»_Entity_' . ucfirst($objectType);
+        $repository = $this->entityManager->getRepository($entityClass);
+
+«REM»TODO: retrieve id field name otherwise, and support composite keys«ENDREM»
+        $objectTemp = new $entityClass(); 
+        $idField = $objectTemp->get_idField();
 
         $tpl = $this->request->getGet()->filter('tpl', '', FILTER_SANITIZE_STRING);
         if ($tpl == 'nestedSet') {
-            $useMultipleRoots = method_exists($objectCollection, 'selectAllTrees');
+            $useMultipleRoots = method_exists($repository, 'selectAllTrees');
             $this->view->assign('useMultipleRoots', $useMultipleRoots);
             if ($useMultipleRoots) {
-                $this->view->assign('trees', $objectCollection->selectAllTrees());
+                $this->view->assign('trees', $repository->selectAllTrees());
             }
             else {
-                $this->view->assign('items', $objectCollection->selectTree());
+                $this->view->assign('items', $repository->selectTree());
             }
 
             // fetch and return the appropriate template
@@ -140,7 +145,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $sortParam = $sort . ' ' . $sdir;
 
         // get objects from database
-        list($objectData, $objectCount) = $objectCollection->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
+        list($objectData, $objectCount) = $repository->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
 
         // build ModUrl instance for display hooks
         $currentUrlObject = new Zikula_ModUrl('«appName»', '«controller.name()»', 'view', ZLanguage::getLanguageCode(), array('ot' => $objectType));
@@ -160,23 +165,25 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
 
 «DEFINE ActionImplBody(String appName) FOR DisplayAction-»
-«EXPAND ControllerHelper::instantiateBusinessObject(appName, false, 'controllerAction', controller.name(), name.formatForCode())-»
+        $entityClass = '«appName()»_Entity_' . ucfirst($this->objectType);
+        $repository = $this->entityManager->getRepository($entityClass);
 
-        $idField = $object->get_intIdField();
+«REM»TODO: retrieve id field name otherwise, and support composite keys«ENDREM»
+        $objectTemp = new $entityClass(); 
+        $idField = $objectTemp->get_idField();
 
         // retrieve the ID of the object we wish to view
         $id = (int) $this->request->getGet()->filter($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, FILTER_VALIDATE_INT);
-        if (!$id) {
+        if (!$id && $idField != 'id') {
             $id = (int) $this->request->getGet()->filter('id', isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0, FILTER_VALIDATE_INT);
         }
 «IF controller.metaType == UserController-»
-«REM»At the moment short urls are only used in the user area, see http://code.zikula.org/core/ticket/2538«ENDREM»«""-»
 
         // check for unique permalinks (without id)
         $hasSlug = false;
         $slugTitle = '';
         if (!$id) {
-            $hasSlug = $object->get_intHasUniqueSlug();
+            $hasSlug = $objectTemp->get_hasUniqueSlug();
             if ($hasSlug) {
                 $slugTitle = $this->request->getGet()->filter('title', isset($args['title']) && !empty($args['title']) ? $args['title'] : '', FILTER_SANITIZE_STRING);
                 $hasSlug = (!empty($slugTitle));
@@ -188,17 +195,17 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         // assign object data fetched from the database
         $objectData = null;
         if ($hasSlug) {
-            $objectData = $object->selectBySlug($slugTitle);
+            $objectData = $repository->selectBySlug($slugTitle);
         }
         else {
-            $objectData = $object->selectById($id);
+            $objectData = $repository->selectById($id);
         }
 «ELSE-»
         $this->throwNotFoundUnless($id, 'Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
 
         // assign object data fetched from the database
         $objectData = null;
-        $objectData = $object->selectById($id);
+        $objectData = $repository->selectById($id);
 «ENDIF-»
         if (!is_array($objectData) || !isset($objectData[$idField]) || !is_numeric($objectData[$idField])) {
             $this->throwNotFound($this->__('No such item.'));
@@ -224,12 +231,18 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR DeleteAction-»
-«EXPAND ControllerHelper::instantiateBusinessObject(appName, false, 'controllerAction', controller.name(), name.formatForCode())-»
+        $entityClass = '«appName»_Entity_' . ucfirst($objectType);
+        $repository = $this->entityManager->getRepository($entityClass);
 
-        $idField = $object->get_intIdField();
+«REM»TODO: retrieve id field name otherwise, and support composite keys«ENDREM»
+        $objectTemp = new $entityClass(); 
+        $idField = $objectTemp->get_idField();
 
-        // retrieve the ID of the object we wish to view
+        // retrieve the ID of the object we wish to delete
         $id = (int) $this->request->getGet()->filter($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, FILTER_VALIDATE_INT);
+        if (!$id && $idField != 'id') {
+            $id = (int) $this->request->getGet()->filter('id', isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0, FILTER_VALIDATE_INT);
+        }
 
         $this->throwNotFoundUnless($id, 'Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
 
@@ -238,7 +251,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         if ($confirmation) {
             $this->checkCsrfToken();
 
-            $object->selectById($id, false);
+            $object = $repository->selectById($id, false);
 
             if (!$object->delete()) {
                 $this->registerError($this->__('Error! Deletion attempt failed.'));

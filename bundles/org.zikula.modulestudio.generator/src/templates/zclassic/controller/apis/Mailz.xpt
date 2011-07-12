@@ -72,17 +72,26 @@ class «appName()»_Api_Mailz extends «appName()»_Api_Base_Mailz
 // Array ( [uid] => 5 [contenttype] => h [pluginid] => 1 [nid] => 1 [last] => 0000-00-00 00:00:00 [params] => Array ( [] => ) ) 1
 «LET getLeadingEntity() AS leadingEntity-»
         $objectType = '«leadingEntity.name.formatForCode()»';
-«EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(appName(), true, 'mailz', 'mailz', 'getContent')-»
+
+        $entityClass = '«appName()»_Entity_' . ucfirst($objectType);
+        $repository = $this->entityManager->getRepository($entityClass);
+
+«REM»TODO: retrieve id field name otherwise, and support composite keys«ENDREM»
+        $objectTemp = new $entityClass(); 
+        $idField = $objectTemp->get_idField();
 
         $sortParam = '';
-        if ($args['pluginid'] == 2) $sortParam = 'RAND()';
-        elseif ($args['pluginid'] == 1) $sortParam = $objectCollection->get_intIdField() . ' DESC';
+        if ($args['pluginid'] == 2) {
+            $sortParam = 'RAND()';
+        } elseif ($args['pluginid'] == 1) {
+            $sortParam = $objectTemp->get_idField() . ' DESC';
+        }
 
         $resultsPerPage = 3;
 
         // get objects from database
         // while the result will be saved in the object, we assign in to a local variable for convenience.
-        list($objectData, $objectCount) = $objectCollection->selectWherePaginated(''/*$this->filter*/, $sortParam, -1, $resultsPerPage);
+        list($objectData, $objectCount) = $objectTemp->selectWherePaginated(''/*$this->filter*/, $sortParam, -1, $resultsPerPage);
 
         $view = Zikula_View::getInstance('«appName()»', true);
 

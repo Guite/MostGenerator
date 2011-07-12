@@ -16,7 +16,7 @@
     <li>
 «ENDIF-»
     <a href="{modurl modname='«app.appName()»' type='«controller.name()»' func='display' ot='«name.formatForCode()»' «idField()»=$item.«idField()»}">
-        {$item.«getLeadingField().actualFieldName().formatForCode()»}
+        {$item.«getLeadingField().name.formatForCode()»}
     </a>
     <a id="«name.formatForCode()»Item{$item.«idField()»}Display" href="{modurl modname='«app.appName()»' type='«controller.name()»' func='display' ot='«name.formatForCode()»' «idField()»=$item.«idField()» theme='Printer'«IF controller.metaType == UserController» forcelongurl=true«REM»Temporary hack due to core bug with theme parameter in short urls«ENDREM»«ENDIF-»}" title="{gt text='Open quick view window'}" style="display: none">
         {icon type='view' size='extrasmall' __alt='Quick view'}
@@ -26,15 +26,15 @@
     <script type="text/javascript" charset="utf-8">
     /* <![CDATA[ */
         document.observe('dom:loaded', function() {
-            «app.prefix()»InitInlineWindow($('«name.formatForCode()»Item{{$item.«idField()»}}Display'), '{{$item.«getLeadingField().actualFieldName().formatForCode()»|replace:"'":""}}');
+            «app.prefix()»InitInlineWindow($('«name.formatForCode()»Item{{$item.«idField()»}}Display'), '{{$item.«getLeadingField().name.formatForCode()»|replace:"'":""}}');
         });
     /* ]]> */
     </script>
 «IF hasImageFields()-»
     <br />
-«LET getImageFields().get(0).actualFieldName().formatForCode() AS imageFieldName-»
+«LET getImageFields().get(0).name.formatForCode() AS imageFieldName-»
 {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPathURL)}
-    <img src="{$item.«imageFieldName»|«app.appName().formatForDB()»ImageThumb:$item.«imageFieldName»FullPathURL:50:40}" width="50" height="40" alt="{$item.«getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
+    <img src="{$item.«imageFieldName»|«app.appName().formatForDB()»ImageThumb:$item.«imageFieldName»FullPathURL:50:40}" width="50" height="40" alt="{$item.«getLeadingField().name.formatForCode()»|replace:"\"":""}" />
 {/if}
 «ENDLET-»
 «ENDIF-»

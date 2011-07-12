@@ -57,7 +57,7 @@
 «ENDDEFINE»
 
 «DEFINE HeaderLineInnerSimpleField(Controller controller) FOR DerivedField-»
-«EXPAND HeaderSortingLink(controller, entity, actualFieldName().formatForCode(), actualFieldName())-»
+«EXPAND HeaderSortingLink(controller, entity, name.formatForCode(), name)-»
 «ENDDEFINE»
 
 «DEFINE HeaderLineInnerRelationField(Controller controller) FOR JoinRelationship-»
@@ -102,7 +102,7 @@
 
 «DEFINE DisplayEntryInnerSimpleField(Controller controller) FOR DerivedField-»
 «IF leading == true-»
-"{$«entity.name.formatForCode()».«actualFieldName().formatForCode()»}"«""-»
+"{$«entity.name.formatForCode()».«name.formatForCode()»}"«""-»
 «ELSE-»
 "«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(entity.name.formatForCode(), 'viewcsv', '')»"«""-»
 «ENDIF-»
@@ -117,7 +117,7 @@
 «LET ((!useTarget) ? target : source) AS mainEntity-»
 «LET ((useTarget) ? target : source) AS linkEntity-»
 «LET mainEntity.name.formatForCode().msconcat('.').msconcat(relationAliasName) AS relObjName-»
-{if (isset($«relObjName»))}{$«relObjName».«linkEntity.getLeadingField().actualFieldName().formatForCode()»«REM»|nl2br«ENDREM»|default:""}{/if}«""-»
+{if (isset($«relObjName»))}{$«relObjName».«linkEntity.getLeadingField().name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}{/if}«""-»
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»

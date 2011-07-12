@@ -36,21 +36,21 @@ listType:
 
 «IF controller.hasActions('edit')-»
     {checkpermissionblock component='«appName»::' instance='.*' level="ACCESS_ADD"}
-«IF nestedSet-»
+«IF tree > 0-»
     {*
 «ENDIF-»
         {gt text='Create «name.formatForDisplay()»' assign='createTitle'}
         <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»'}" title="{$createTitle}" class="z-icon-es-add">
             {$createTitle}
         </a>
-«IF nestedSet-»
+«IF tree > 0-»
     *}
 «ENDIF-»
     {/checkpermissionblock}
 «ENDIF»
-«IF nestedSet-»
+«IF tree > 0-»
         {gt text='Switch to hierarchy view' assign='switchTitle'}
-        <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«objName»' tpl='nestedSet'}" title="{$switchTitle}" class="z-icon-es-view">
+        <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«objName»' tpl='tree'}" title="{$switchTitle}" class="z-icon-es-view">
             {$switchTitle}
         </a>
 «ENDIF-»
@@ -191,7 +191,7 @@ listType:
 «ENDDEFINE»
 
 «DEFINE HeaderLineInnerSimpleField(Controller controller) FOR DerivedField-»
-«EXPAND HeaderSortingLink(controller, entity, actualFieldName().formatForCode(), actualFieldName())-»
+«EXPAND HeaderSortingLink(controller, entity, name.formatForCode(), name)-»
 «ENDDEFINE»
 
 «DEFINE HeaderLineInnerRelationField(Controller controller) FOR JoinRelationship-»
@@ -244,8 +244,8 @@ listType:
 
 «DEFINE MarkupIdCode(Boolean useTarget) FOR Object-»«ENDDEFINE»
 «DEFINE MarkupIdCode(Boolean useTarget) FOR NamedObject-»«name.formatForDB()»«ENDDEFINE»
-«DEFINE MarkupIdCode(Boolean useTarget) FOR DerivedField-»«actualFieldName().formatForDB()»«ENDDEFINE»
-«DEFINE MarkupIdCode(Boolean useTarget) FOR IntegerField-»«IF !getPointingRelations().isEmpty»«getPointingRelations().get(0).getRelationAliasName(false).formatForDB()»«ELSE»«actualFieldName().formatForDB()»«ENDIF»«ENDDEFINE»
+«DEFINE MarkupIdCode(Boolean useTarget) FOR DerivedField-»«name.formatForDB()»«ENDDEFINE»
+«DEFINE MarkupIdCode(Boolean useTarget) FOR IntegerField-»«IF !getPointingRelations().isEmpty»«getPointingRelations().get(0).getRelationAliasName(false).formatForDB()»«ELSE»«name.formatForDB()»«ENDIF»«ENDDEFINE»
 «DEFINE MarkupIdCode(Boolean useTarget) FOR JoinRelationship-»«getRelationAliasName(useTarget).formatForDB()»«ENDDEFINE»
 
 «DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR Object-»
@@ -267,7 +267,7 @@ listType:
 
 «DEFINE DisplayEntryInnerSimpleField(Controller controller) FOR DerivedField-»
 «IF leading == true-»
-            {$«entity.name.formatForCode()».«actualFieldName().formatForCode()»|notifyfilters:'«entity.container.application.appName().formatForDB()».filterhook.«entity.nameMultiple.formatForDB()»'}
+            {$«entity.name.formatForCode()».«name.formatForCode()»|notifyfilters:'«entity.container.application.appName().formatForDB()».filterhook.«entity.nameMultiple.formatForDB()»'}
 «ELSE-»
 «EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(entity.name.formatForCode(), 'view', '            ')»
 «ENDIF-»
@@ -285,7 +285,7 @@ listType:
             {if (isset($«relObjName»))}
 «IF controller.hasActions('display')-»
                 <a href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«linkEntity.name.formatForCode()»' «linkEntity.idField()»=$«relObjName».«linkEntity.idField()»}">
-                    {$«relObjName».«linkEntity.getLeadingField().actualFieldName().formatForCode()»«REM»|nl2br«ENDREM»|default:""}
+                    {$«relObjName».«linkEntity.getLeadingField().name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}
                 </a>
                 <a id="«linkEntity.name.formatForCode()»Item{$«mainEntity.name.formatForCode()».«mainEntity.idField()»}_{$«relObjName».«linkEntity.idField()»}Display" href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«linkEntity.name.formatForCode()»' «linkEntity.idField()»=$«relObjName».«linkEntity.idField()» theme='Printer'«IF controller.metaType == UserController» forcelongurl=true«REM»Temporary hack due to core bug with theme parameter in short urls«ENDREM»«ENDIF-»}" title="{gt text='Open quick view window'}" style="display: none">
                     {icon type='view' size='extrasmall' __alt='Quick view'}
@@ -293,12 +293,12 @@ listType:
                 <script type="text/javascript" charset="utf-8">
                 /* <![CDATA[ */
                     document.observe('dom:loaded', function() {
-                        «container.application.prefix()»InitInlineWindow($('«linkEntity.name.formatForCode()»Item{{$«mainEntity.name.formatForCode()».«mainEntity.idField()»}}_{{$«relObjName».«linkEntity.idField()»}}Display'), '{{$«relObjName».«linkEntity.getLeadingField().actualFieldName().formatForCode()»|replace:"'":""}}');
+                        «container.application.prefix()»InitInlineWindow($('«linkEntity.name.formatForCode()»Item{{$«mainEntity.name.formatForCode()».«mainEntity.idField()»}}_{{$«relObjName».«linkEntity.idField()»}}Display'), '{{$«relObjName».«linkEntity.getLeadingField().name.formatForCode()»|replace:"'":""}}');
                     });
                 /* ]]> */
                 </script>
 «ELSE-»
-                {$«relObjName».«linkEntity.getLeadingField().actualFieldName().formatForCode()»«REM»|nl2br«ENDREM»|default:""}
+                {$«relObjName».«linkEntity.getLeadingField().name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}
 «ENDIF-»
             {/if}
 «ENDLET-»
@@ -321,22 +321,24 @@ listType:
         <td headers="hintactions" align="left" valign="top" style="white-space: nowrap">
 «ENDIF-»
 «IF controller.hasActions('display')-»
-            <a href="{modurl modname='«appName»' type='«controller.name()»' func='display' ot='«objName»' «idField()»=$«objName».«idField()»}" title="{$«objName».«getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}">
+            <a href="{modurl modname='«appName»' type='«controller.name()»' func='display' ot='«objName»' «idField()»=$«objName».«idField()»}" title="{$«objName».«getLeadingField().name.formatForCode()»|replace:"\"":""}">
                 {icon type='display' size='extrasmall' __alt='Details'}
             </a>
 «ENDIF-»            
 «IF controller.hasActions('edit')-»
     {checkpermissionblock component='«appName»::' instance='.*' level='ACCESS_EDIT'}
+«IF !readOnly-»«REM»create is allowed, but editing not«ENDREM»
             <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»' «idField()»=$«objName».«idField()»}" title="{gt text='Edit'}">
                 {icon type='edit' size='extrasmall' __alt='Edit'}
             </a>
-«IF nestedSet-»
+«ENDIF-»
+«IF tree > 0-»
     {*
 «ENDIF-»
             <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»' astemplate=$«objName».«idField()»}" title="{gt text='Reuse for new item'}">
                 {icon type='saveas' size='extrasmall' __alt='Reuse'}
             </a>
-«IF nestedSet-»
+«IF tree > 0-»
     *}
 «ENDIF-»
     {/checkpermissionblock}

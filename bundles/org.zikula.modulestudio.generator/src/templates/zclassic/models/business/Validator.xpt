@@ -44,16 +44,16 @@ class «implClassBusinessValidator()» extends «IF isInheriting()»«parentType
 «DEFINE BusinessValidatorBaseImpl(Application app) FOR Entity»
 
     /**
-     * @var «implClassBusinessEntity(false)» The entity class which is treated by this validator.
+     * @var «implClassModelEntity()» The entity class which is treated by this validator.
      */
     protected $entity = null;
 
     /**
      * Constructor.
      *
-     * @param «implClassBusinessEntity(false)» $entity The entity to be validated.
+     * @param «implClassModelEntity()» $entity The entity to be validated.
      */
-    function __construct(«implClassBusinessEntity(false)» $entity)
+    function __construct(«implClassModelEntity()» $entity)
     {
         $this->entity = $entity;
     }
@@ -63,7 +63,7 @@ class «implClassBusinessValidator()» extends «IF isInheriting()»«parentType
 «EXPAND checkForUniqueSlugValues(app)-»
 «ENDIF-»
 
-«EXPAND FileHelper::GetterAndSetterMethods('entity', implClassBusinessEntity(false))»
+«EXPAND FileHelper::GetterAndSetterMethods('entity', implClassModelEntity())»
 «ENDDEFINE»
 
 «DEFINE checkForUniqueValues(Application app) FOR DerivedField-»
@@ -71,28 +71,29 @@ class «implClassBusinessValidator()» extends «IF isInheriting()»«parentType
     /**
      * Check for unique values.
      *
-     * This method determines if there already exist «entity.nameMultiple.formatForDisplay()» with the same «actualFieldName().formatForDisplay()».
+     * This method determines if there already exist «entity.nameMultiple.formatForDisplay()» with the same «name.formatForDisplay()».
      *
-     * @param «fieldTypeAsString()»  $value The «actualFieldName().formatForDisplay()» to check.
+     * @param «fieldTypeAsString()»  $value The «name.formatForDisplay()» to check.
      * @param int $excludeid      int    Id of «entity.nameMultiple.formatForDisplay()» to exclude (optional).
      *
-     * @return boolean true if the given «actualFieldName().formatForDisplay()» does already exist
+     * @return boolean true if the given «name.formatForDisplay()» does already exist
      */
-    public function checkIf«actualFieldName().formatForCodeCapital()»Exists($value, $excludeid = 0)
+    public function checkIf«name.formatForCodeCapital()»Exists($value, $excludeid = 0)
     {
         if (empty($value)) {
             return false;
         }
 
         $objectType = '«entity.name.formatForCode()»';
-«EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(app.appName(), true, 'validator', entity.name, 'checkIf'.msconcat(actualFieldName().formatForCodeCapital()).msconcat('Exists'))-»
+        $entityClass = '«appName()»_Entity_' . ucfirst($objectType);
+        $repository = $this->entityManager->getRepository($entityClass);
 
-        // TODO: move to «IF entity.isInheriting()»«entity.parentType().baseClassModelTable()»«ELSE»«entity.baseClassModelTable()»«ENDIF»
-        $where = 'tbl.«actualFieldName().formatForCode()» = \'' . DataUtil::formatForStore($value) . '\'';
+        // TODO: move to «IF entity.isInheriting()»«entity.parentType().baseClassModelRepository()»«ELSE»«entity.baseClassModelRepository()»«ENDIF»
+        $where = 'tbl.«name.formatForCode()» = \'' . DataUtil::formatForStore($value) . '\'';
         if ($excludeid > 0) {
             $where .= ' AND tbl.«entity.idField()» != \'' . (int) DataUtil::formatForStore($excludeid) . '\'';
         }
-        return $objectCollection->selectCount($where);
+        return $repository->selectCount($where);
     }
 «ENDDEFINE»
 
@@ -115,14 +116,15 @@ class «implClassBusinessValidator()» extends «IF isInheriting()»«parentType
         }
 
         $objectType = '«name.formatForCode()»';
-«EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(app.appName(), true, 'validator', name, 'checkIf'.msconcat(sluggableFieldRealName.formatForCodeCapital()).msconcat('Exists'))-»
+        $entityClass = '«appName()»_Entity_' . ucfirst($objectType);
+        $repository = $this->entityManager->getRepository($entityClass);
 
-        // TODO: move to «IF isInheriting()»«parentType().baseClassModelTable()»«ELSE»«baseClassModelTable()»«ENDIF»
+        // TODO: move to «IF isInheriting()»«parentType().baseClassModelRepository()»«ELSE»«baseClassModelRepository()»«ENDIF»
         $where = 'tbl.slug» = \'' . DataUtil::formatForStore($value) . '\'';
         if ($excludeid > 0) {
             $where .= ' AND tbl.«idField()» != \'' . (int) DataUtil::formatForStore($excludeid) . '\'';
         }
-        return $objectCollection->selectCount($where);
+        return $repository->selectCount($where);
     }
 «ENDDEFINE»
 
@@ -133,13 +135,13 @@ some validators to be reimplemented:
 
 «DEFINE FieldLength FOR DerivedField-»null«ENDDEFINE»
 «DEFINE FieldLength FOR AbstractIntegerField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
-«DEFINE FieldLength FOR FloatField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
 «DEFINE FieldLength FOR DecimalField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
 «DEFINE FieldLength FOR StringField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
 «DEFINE FieldLength FOR EmailField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
 «DEFINE FieldLength FOR UrlField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
 «DEFINE FieldLength FOR UploadField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
 «DEFINE FieldLength FOR ArrayField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
+«DEFINE FieldLength FOR FloatField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
 
 
 «DEFINE FieldSetColumnAdditionalOptions FOR DerivedField-»«ENDDEFINE»

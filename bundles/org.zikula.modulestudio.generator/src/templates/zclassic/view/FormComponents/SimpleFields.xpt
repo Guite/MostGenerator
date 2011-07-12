@@ -4,7 +4,7 @@
 «REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «DEFINE FormRow FOR DerivedField-»
-            {formlabel for='«actualFieldName().formatForCode()»' __text='«EXPAND FormLabel»'«IF mandatory» mandatorysym='1'«ENDIF»«IF documentation != null && documentation != ""-» class='«entity.container.application.appName().formatForDB()»FormTooltips' title='«documentation.replaceAll('"', '\"')»'«ENDIF-»}«IF metaType == UploadField»<br />{* break required for Google Chrome *}«ENDIF»
+            {formlabel for='«name.formatForCode()»' __text='«EXPAND FormLabel»'«IF mandatory» mandatorysym='1'«ENDIF»«IF documentation != null && documentation != ""-» class='«entity.container.application.appName().formatForDB()»FormTooltips' title='«documentation.replaceAll('"', '\"')»'«ENDIF-»}«IF metaType == UploadField»<br />{* break required for Google Chrome *}«ENDIF»
 «EXPAND FormField-»
 «EXPAND Validation::MandatoryValidationMessage-»
 «EXPAND Validation::AdditionalValidationMessages-»
@@ -15,7 +15,7 @@
 «error("Error: undefined entity field type " + metaType.toString() + " (code 902346)") -> ""-»
 «ENDDEFINE»
 «DEFINE FormLabel FOR DerivedField-»
-«actualFieldName().formatForDisplayCapital()-»
+«name.formatForDisplayCapital()-»
 «ENDDEFINE»
 «DEFINE FormLabel FOR CalculatedField-»
 «error("Error: undefined calculated field type " + metaType.toString() + " (code 902348)") -> ""-»
@@ -33,7 +33,7 @@
 «ENDIF-»
 «ENDLET-»
 «ELSE-»
-«actualFieldName().formatForDisplayCapital()-»
+«name.formatForDisplayCapital()-»
 «ENDIF-»
 «ENDLET-»
 «ENDDEFINE»
@@ -51,7 +51,7 @@
 «ENDDEFINE»
 
 «DEFINE FormField FOR BooleanField-»
-            {formcheckbox group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' readOnly=«readonly» __title='«actualFieldName().formatForDisplay()» ?'«EXPAND Validation::FieldValidationCssClass»}
+            {formcheckbox group='«entity.name.formatForDB()»' id='«name.formatForCode()»' readOnly=«readonly» __title='«name.formatForDisplay()» ?'«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»
 
 «DEFINE FormField FOR IntegerField-»
@@ -61,12 +61,12 @@
 «LET pointingRelations.get(0) AS pointingRelation-»
 «LET pointingRelation.source AS joiningEntity-»
 «REM»Join-selector; if the where param is an array then [0] is the DQL and [1] the place holder values [example: array('status = ?', 'XY')]. Otherwise use normal syntax like [where="active = true"].«END REM»«""-»
-            {formdropdownrelationlist group='«entity.name.formatForDB()»' id='«joiningEntity.idField()»' mandatory=«mandatory.displayBool()» recordClass='«joiningEntity.implClassModelRecord()»' displayField='«joiningEntity.getLeadingField().actualFieldName().formatForCode()»' orderby='«joiningEntity.idField()»'«IF pointingRelation.metaType == OneToManyRelationship-»«REM» selectionMode='multiple'«END-REM»«ENDIF-»}
+            {formdropdownrelationlist group='«entity.name.formatForDB()»' id='«joiningEntity.idField()»' mandatory=«mandatory.displayBool()» recordClass='«joiningEntity.implClassModelRecord()»' displayField='«joiningEntity.getLeadingField().name.formatForCode()»' orderby='«joiningEntity.idField()»'«IF pointingRelation.metaType == OneToManyRelationship-»«REM» selectionMode='multiple'«END-REM»«ENDIF-»}
 «ENDLET-»
 «ENDLET-»
 «ELSE-»
 «ENDREM»«""-»
-            {formintinput group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«length»«IF minValue != 0 || maxValue != 0-» minValue=«minValue» maxValue=«maxValue»«ENDIF»«EXPAND Validation::FieldValidationCssClass»}
+            {formintinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«length»«IF minValue != 0 || maxValue != 0-» minValue=«minValue» maxValue=«maxValue»«ENDIF»«EXPAND Validation::FieldValidationCssClass»}
 «REM»
 «ENDIF-»
 «ENDLET-»
@@ -74,12 +74,12 @@
 «ENDDEFINE»
 
 «DEFINE FormField FOR FloatField-»
-            {formfloatinput group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»'«EXPAND Validation::FieldValidationCssClass»}
+            {formfloatinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'«EXPAND Validation::FieldValidationCssClass»}
 «REM»TODO: minValue=123, maxValue=123«ENDREM»«""-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR DecimalField-»
-            {formfloatinput group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«(length+3+scale)»«IF scale != 2» precision=«scale»«ENDIF»«EXPAND Validation::FieldValidationCssClass»}
+            {formfloatinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«(length+3+scale)»«IF scale != 2» precision=«scale»«ENDIF»«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»
 
 «DEFINE FormField FOR StringField-»
@@ -91,18 +91,18 @@
             {* TODO: support us state fields in Zikula *}
 «ENDIF-»
 «IF language-»
-            {formlanguageselector group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' mandatory=«mandatory» __title='Choose the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»'}
+            {formlanguageselector group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Choose the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'}
 «ELSE-»
-            {formtextinput group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=«length»«EXPAND Validation::FieldValidationCssClass»}
+            {formtextinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=«length»«EXPAND Validation::FieldValidationCssClass»}
 «REM»TODO: textMode="password" for password input fields«ENDREM»«""-»
 «ENDIF-»
 «IF htmlcolor-»
             <script type="text/javascript" charset="utf-8">
             /* <![CDATA[ */
                 var namePicky = new PickyColor({
-                    field: '«actualFieldName().formatForCode()»',
-                    color: '{{$«entity.name.formatForCode()».«actualFieldName().formatForCode()»}}',
-                    colorWell: '«actualFieldName().formatForCode()»',
+                    field: '«name.formatForCode()»',
+                    color: '{{$«entity.name.formatForCode()».«name.formatForCode()»}}',
+                    colorWell: '«name.formatForCode()»',
                     closeText: '{{gt text='Close'}}'
                 })
             /* ]]> */
@@ -113,41 +113,41 @@
 «DEFINE FormField FOR TextField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
 
 «DEFINE FormFieldTextarea FOR DerivedField-»
-            {formtextinput group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='multiline' rows='6«REM»8«ENDREM»' cols='50'«EXPAND Validation::FieldValidationCssClass»}
+            {formtextinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='multiline' rows='6«REM»8«ENDREM»' cols='50'«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»
 
 «DEFINE FormField FOR EmailField-»
-            {formemailinput group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=«length»«EXPAND Validation::FieldValidationCssClass»}
+            {formemailinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=«length»«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»
 
 «DEFINE FormField FOR UrlField-»
-            {formurlinput group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=«length»«EXPAND Validation::FieldValidationCssClass»}
+            {formurlinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=«length»«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»
 
 «DEFINE FormField FOR UploadField-»
 «IF mandatory-»
 {if $mode eq 'create'}
-            {formuploadinput group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' mandatory=«mandatory» readOnly=«readonly»«EXPAND Validation::FieldValidationCssClass»}
+            {formuploadinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» readOnly=«readonly»«EXPAND Validation::FieldValidationCssClass»}
 {else}
-            {formuploadinput group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' mandatory=false readOnly=«readonly»«EXPAND Validation::FieldValidationCssClass»}
+            {formuploadinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=false readOnly=«readonly»«EXPAND Validation::FieldValidationCssClass»}
 {/if}
 «ELSE-»
-            {formuploadinput group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' mandatory=«mandatory» readOnly=«readonly»«EXPAND Validation::FieldValidationCssClass»}
+            {formuploadinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» readOnly=«readonly»«EXPAND Validation::FieldValidationCssClass»}
 «ENDIF-»
 
             <div class="z-formnote">{gt text='Allowed file extensions:'} «allowedExtensions»</div>
             {if $mode ne 'create'}
 «LET entity.container.application.name.formatForDB() AS appNameSmall-»
 «LET entity.name.formatForCode() AS objName-»
-«LET objName.msconcat('.').msconcat(actualFieldName().formatForCode()) AS realName-»
+«LET objName.msconcat('.').msconcat(name.formatForCode()) AS realName-»
 «IF !mandatory-»
                 {if $«realName» ne ''}
 «ENDIF-»
                   <div class="z-formnote">
                       {gt text='Current file'}:
-                      <a href="{$«realName»FullPathURL}" title="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB()»]"{/if}>
+                      <a href="{$«realName»FullPathURL}" title="{$«objName».«entity.getLeadingField().name.formatForCode()»|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB()»]"{/if}>
                       {if $«realName»Meta.isImage}
-                          <img src="{$«realName»|«appNameSmall»ImageThumb:$«realName»FullPath:80:80}" width="80" height="80" alt="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
+                          <img src="{$«realName»|«appNameSmall»ImageThumb:$«realName»FullPath:80:80}" width="80" height="80" alt="{$«objName».«entity.getLeadingField().name.formatForCode()»|replace:"\"":""}" />
                       {else}
                           {gt text='Download'} ({$«realName»Meta.size|«appNameSmall»GetFileSize:$«realName»FullPath:false:false})
                       {/if}
@@ -155,8 +155,8 @@
                   </div>
 «IF !mandatory-»
                   <div class="z-formnote">
-                      {formcheckbox group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»DeleteFile' readOnly=false __title='Delete «actualFieldName().formatForDisplay()» ?'}
-                      {formlabel for='«actualFieldName().formatForCode()»DeleteFile' __text='Delete existing file'}
+                      {formcheckbox group='«entity.name.formatForDB()»' id='«name.formatForCode()»DeleteFile' readOnly=false __title='Delete «name.formatForDisplay()» ?'}
+                      {formlabel for='«name.formatForCode()»DeleteFile' __text='Delete existing file'}
                   </div>
                 {/if}
 «ENDIF-»
@@ -168,7 +168,7 @@
 
 «DEFINE FormField FOR UserField-»
             {* to be replaced by a plugin (see http://code.zikula.org/core/ticket/2444 for more information) *} 
-«LET actualFieldName().formatForCode() AS realName»
+«LET name.formatForCode() AS realName»
             <div id="«realName»LiveSearch" class="«entity.container.application.prefix()»LiveSearchUser z-hide">
                 {formtextinput group='«entity.name.formatForDB()»' id='«realName»Selector' mandatory=«mandatory» readOnly=«readonly» __title='Input a part of the user name to search' maxLength=«length» cssClass='«IF mandatory»required «ENDIF»validate-alphanum«IF unique» validate-unique«ENDIF»'}
                 {img src='indicator_circle.gif' modname='core' set='ajax' alt='' id='«realName»Indicator' style='display: none'}
@@ -190,9 +190,9 @@
 
 «DEFINE FormField FOR TimestampField-»
             {if $mode ne 'create'}
-                {formdateinput group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true«EXPAND Validation::FieldValidationCssClass»}
+                {formdateinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true«EXPAND Validation::FieldValidationCssClass»}
             {else}
-                {formdateinput group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true defaultValue='now'«EXPAND Validation::FieldValidationCssClass»}
+                {formdateinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true defaultValue='now'«EXPAND Validation::FieldValidationCssClass»}
             {/if}
 «REM»TODO: visible=false«ENDREM»«""-»
 «IF past-»
@@ -204,15 +204,15 @@
 
 «DEFINE FormField FOR DateField-»
             {if $mode ne 'create'}
-                {formdateinput group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true«EXPAND Validation::FieldValidationCssClass»}
+                {formdateinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true«EXPAND Validation::FieldValidationCssClass»}
             {else}
-                {formdateinput group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' mandatory=«mandatory» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true defaultValue='today'«EXPAND Validation::FieldValidationCssClass»}
+                {formdateinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true defaultValue='today'«EXPAND Validation::FieldValidationCssClass»}
             {/if}
 «ENDDEFINE»
 
 «DEFINE FormField FOR TimeField-»
             {* TODO: support time fields in Zikula (see http://code.zikula.org/core/ticket/2445 for more information) *}
-            {formtextinput group='«entity.name.formatForDB()»' id='«actualFieldName().formatForCode()»' mandatory=«mandatory» readOnly=«readonly» __title='Input the «actualFieldName().formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=8«EXPAND Validation::FieldValidationCssClass»}
+            {formtextinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=8«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»
 
 «DEFINE FormField FOR GzipField-»«EXPAND FormFieldTextarea»«ENDDEFINE»

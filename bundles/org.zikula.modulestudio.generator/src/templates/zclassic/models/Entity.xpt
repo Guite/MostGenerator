@@ -90,6 +90,12 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
     protected $_objectType = '«name.formatForCode()-»';
 
     /**
+     * @var string The primary key field name
+     */
+«REM»TODO support composite keys«ENDREM»
+    protected $_idField = '«name.formatForCode()-»';
+
+    /**
      * @var «implClassBusinessValidator()» The validator for this entity
      */
     protected $_validator = null;
@@ -112,8 +118,9 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 
     /**
      * Constructor.
-«REM»     *
-     * @param integer $id The id to use to retrieve the object (optional) (default=null).«ENDREM»
+     * Will not be called by Doctrine and can therefore be used
+     * for own implementation purposes. It is also possible to add
+     * arbitrary arguments as with every other class method.
      */
     public function __construct()
     {
@@ -121,6 +128,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
     }
 
 «EXPAND FileHelper::GetterAndSetterMethods('_objectType', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('_idField', 'string')»
 «EXPAND FileHelper::GetterAndSetterMethods('_validator', implClassBusinessValidator())»
 «EXPAND FileHelper::GetterAndSetterMethods('_hasUniqueSlug', 'boolean')»
 «IF hasNotifyPolicy()-»
@@ -167,49 +175,11 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «EXPAND SubClasses-»
 «ENDIF-»
 «EXPAND SetUpBehaviour»
-
-
-Many-To-Many: choosing owning and inverse sides
-
-Rule: owning is the entity being responsible for managing the connection.
-
-Example: Article and Tag --> Article is leading --> "source" in our dsl
-
-
-class Article
-{
-    private $tags;
-
-    public function addTag(Tag $tag)
-    {
-        $tag->addArticle($this); // synchronously updating inverse side
-        $this->tags[] = $tag;
-    }
-}
-
-class Tag
-{
-    private $articles;
-
-    public function addArticle(Article $article)
-    {
-        $this->articles[] = $article;
-    }
-}
-}}}
-This allows grouping the tag addition on the Article side of the association:
-{{{
-#!php
-$article = new Article();
-$article->addTag($tagA);
-$article->addTag($tagB);
-}}}
 «ENDREM»
 
 
 
-
-«DEFINE BusinessEntityBaseImpl(Application app) FOR Entity»
+«DEFINE OLDBaseImpl(Application app) FOR Entity»
     /**
      * Constructor.
      *
@@ -217,9 +187,9 @@ $article->addTag($tagB);
      */
     public function __construct($id = 0)
     {
-        $this->_intObjectType = '«fullEntityName()»';
-        $this->_intValidator = new «implClassBusinessValidator()»($this);
-        $this->_intHasUniqueSlug = «IF sluggable && sluggableUnique»true«ELSE»false«ENDIF»;
+        $this->_objectType = '«fullEntityName()»';
+        $this->_validator = new «implClassBusinessValidator()»($this);
+        $this->_hasUniqueSlug = «IF sluggable && sluggableUnique»true«ELSE»false«ENDIF»;
     }
 
     /**
@@ -236,30 +206,25 @@ $article->addTag($tagB);
     public function selectById($id = 0, $asArray = true)
     {
         // check id parameter
-        if ($id == 0 && $this->_intId == 0) {
+        if ($id == 0 && $this->_id == 0) {
             return LogUtil::registerArgsError();
         }
         // store id parameter
         if ($id > 0) {
-            $this->_intId = $id;
+            $this->_id = $id;
         }
 
-        // get reference to table
-        $table = Doctrine_Core::getTable('«implClassModelRecord()»');
+        $entityClass = '«implClassModelEntity()»';
+        $repository = $this->entityManager->getRepository($entityClass);
 
         // get result from the model
-        $item = $table->selectOneItemById($id, $asArray);
+        $item = $repository->selectOneItemById($id, $asArray);
 
 «IF hasTranslatableFields()-»
         // process translations
         $item = «app.appName()»_Util_I18n::prepareEntityForOutput('«name.formatForCode()»', $item);
 
 «ENDIF-»
-        // look whether we fetched an object or an array
-        if (!$asArray) {
-            // store the result object
-            $this->set«name.formatForCodeCapital()»($item);
-        }
 
         // return the results
         return $item;
@@ -281,44 +246,21 @@ $article->addTag($tagB);
             return LogUtil::registerArgsError();
         }
 
-        // get reference to table
-        $table = Doctrine_Core::getTable('«implClassModelRecord()»');
+        $entityClass = '«implClassModelEntity()»';
+        $repository = $this->entityManager->getRepository($entityClass);
 
         // get result from the model
-        $item = $table->selectOneItemBy«((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCodeCapital()»($slugTitle, $asArray);
+        $item = $repository->selectOneItemBy«((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCodeCapital()»($slugTitle, $asArray);
 
 «IF hasTranslatableFields()-»
         // process translations
         $item = «app.appName()»_Util_I18n::prepareEntityForOutput('«name.formatForCode()»', $item);
 
 «ENDIF-»
-
         // return the results
         return $item;
     }
 «ENDIF-»
-
-    /**
-     * Helper method for assigning default data values.
-     *
-     * @return array
-     */
-    public function getNewArrayWithDefaultData()
-    {
-«IF !fields.typeSelect(DatetimeField).isEmpty-»
-        $thisTimestamp = date('Y-m-d H:i:s');
-«ENDIF-»
-«IF !fields.typeSelect(DateField).isEmpty-»
-        $todayDate = date('Y-m-d');
-«ENDIF-»
-«IF !fields.typeSelect(TimeField).isEmpty-»
-        $thisTime = date('H:i:s');
-«ENDIF-»
-
-        $objectData = Array(«EXPAND DefaultFieldAssignment FOREACH getDerivedFields().reject(e|e.primaryKey) SEPARATOR ','»);
-
-        return $objectData;
-    }
 
 «ENDDEFINE»
 
@@ -343,31 +285,22 @@ $article->addTag($tagB);
 
 
 
-«DEFINE BusinessEntityCollectionBaseImpl(Application app) FOR Entity»
-    /**
-     * @var array Reference to list of «nameMultiple.formatForDisplay()» model («implClassModelRecord()»).
-     */
-    protected $«nameMultiple.formatForCode()» = array();
-
-    /**
-     * @var string The tablename this object maps to.
-     */
-    protected $_intObjectType = '«fullEntityName()»';
+«DEFINE OLDCollectionBaseImpl(Application app) FOR Entity»
 
     /**
      * @var string Optional where clause for selection.
      */
-    protected $_intWhere = '';
+    protected $_where = '';
 
     /**
      * @var string Optional order clause for selection.
      */
-    protected $_intOrderBy = '';
+    protected $_orderBy = '';
 
     /**
      * @var string The default sorting field/expression.
      */
-    protected $_intDefaultSortingField = '«getLeadingField().name.formatForCode()»';
+    protected $_defaultSortingField = '«getLeadingField().name.formatForCode()»';
 
 
     /**
@@ -555,18 +488,16 @@ $article->addTag($tagB);
      *
      * @return array
      */
-    public function get_intAllowedSortingFields()
+    public function get_allowedSortingFields()
     {
         // TODO: to be refactored
         return array(«EXPAND singleSortingField FOREACH fields SEPARATOR ','»«EXPAND standardSortingFields FOR this-»
         );
     }
 
-«EXPAND FileHelper::GetterAndSetterMethods(nameMultiple.formatForCode(), 'array')»
-«EXPAND FileHelper::GetterAndSetterMethods('_intObjectType', 'string')»
-«EXPAND FileHelper::GetterAndSetterMethods('_intWhere', 'string')»
-«EXPAND FileHelper::GetterAndSetterMethods('_intOrderBy', 'string')»
-«EXPAND FileHelper::GetterAndSetterMethods('_intDefaultSortingField', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('_where', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('_orderBy', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('_defaultSortingField', 'string')»
 
 «ENDDEFINE»
 
@@ -818,109 +749,4 @@ class «implClassModelRefEntity()» extends «baseClassModelRefEntity()»
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-«DEFINE DefaultFieldAssignment FOR EntityField»
-                '«name.formatForCode()»' => «EXPAND DefaultFieldAssignmentData»«ENDDEFINE»
-«DEFINE DefaultFieldAssignment FOR DerivedField»
-                '«name.formatForCode()»' => «EXPAND DefaultFieldAssignmentData»«ENDDEFINE»
-«DEFINE DefaultFieldAssignment FOR UploadField»
-«REM»Add a second field with type array for the meta data (#95)«ENDREM»«""-»
-                '«name.formatForCode()»' => «EXPAND DefaultFieldAssignmentData»,
-                '«name.formatForCode()»Meta' => array()«ENDDEFINE»
-
-«DEFINE DefaultFieldAssignmentData FOR EntityField-»
-«error("Error: undefined entity field type " + metaType.toString() + " (code 925624)") -> ""-»
-«ENDDEFINE»
-«DEFINE DefaultFieldAssignmentData FOR DerivedField-»
-«error("Error: undefined derived field type " + metaType.toString() + " (code 925627)") -> ""-»
-«ENDDEFINE»
-«DEFINE DefaultFieldAssignmentData FOR CalculatedField-»
-«error("Error: undefined calculated field type " + metaType.toString() + " (code 925628)") -> ""-»
-«ENDDEFINE»
-
-«DEFINE DefaultFieldAssignmentDataText FOR DerivedField-»'«defaultValue»'«ENDDEFINE»
-«DEFINE DefaultFieldAssignmentData FOR BooleanField»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF»«ENDDEFINE»
-«DEFINE DefaultFieldAssignmentData FOR AbstractIntegerField-»
-«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
-«ENDDEFINE»
-«DEFINE DefaultFieldAssignmentData FOR IntegerField-»
-«LET getPointingRelations() AS pointingRelations-»
-«IF !pointingRelations.isEmpty-»(int) FormUtil::getPassedValue('«pointingRelations.get(0).source.idField()»', 0, 'GET', FILTER_VALIDATE_INT)
-«ELSE-»
-«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
-«ENDIF-»«ENDLET-»«ENDDEFINE»
-«DEFINE DefaultFieldAssignmentData FOR DecimalField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0.00«ENDIF»«ENDDEFINE»
-«DEFINE DefaultFieldAssignmentData FOR StringField-»«EXPAND DefaultFieldAssignmentDataText-»«ENDDEFINE»
-«DEFINE DefaultFieldAssignmentData FOR TextField-»«EXPAND DefaultFieldAssignmentDataText-»«ENDDEFINE»
-«DEFINE DefaultFieldAssignmentData FOR EmailField-»«EXPAND DefaultFieldAssignmentDataText-»«ENDDEFINE»
-«DEFINE DefaultFieldAssignmentData FOR UrlField-»«EXPAND DefaultFieldAssignmentDataText-»«ENDDEFINE»
-«DEFINE DefaultFieldAssignmentData FOR UploadField-»«EXPAND DefaultFieldAssignmentDataText-»«ENDDEFINE»
-«DEFINE DefaultFieldAssignmentData FOR ArrayField»array()«ENDDEFINE»
-«DEFINE DefaultFieldAssignmentData FOR ObjectField»null«ENDDEFINE»
-«DEFINE DefaultFieldAssignmentData FOR DatetimeField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»$thisTimestamp«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
-«DEFINE DefaultFieldAssignmentData FOR DateField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»$todayDate«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
-«DEFINE DefaultFieldAssignmentData FOR TimeField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»$thisTime«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
-«DEFINE DefaultFieldAssignmentData FOR FloatField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF»«ENDDEFINE»
 

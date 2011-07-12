@@ -5,29 +5,29 @@
 
 «REM»start point for the javascript file with display functionality«ENDREM»
 «DEFINE Root FOR Application-»
-«FILE getAppSourcePath(appName()).msconcat('javascript/').msconcat(appName()).msconcat('_nestedSet.js')-»
+«FILE getAppSourcePath(appName()).msconcat('javascript/').msconcat(appName()).msconcat('_tree.js')-»
 <!--
 
 var currentNodeId = 0;
 
-«EXPAND InitNestedSetView-»
+«EXPAND InitTreeView-»
 «EXPAND InitTreeNodes-»
-«EXPAND PerformNestedSetOperation-»
-«EXPAND NestedSetSave-»
+«EXPAND PerformTreeOperation-»
+«EXPAND TreeSave-»
 
 -->
 «ENDFILE»
 «ENDDEFINE»
 
-«DEFINE InitNestedSetView FOR Application-»
+«DEFINE InitTreeView FOR Application-»
 /**
- * Initialise nested set view.
+ * Initialise tree view.
  */
-function «prefix()»InitNestedSetView(ot, hasNodes, useMultipleRoots)
+function «prefix()»InitTreeView(ot, hasNodes, useMultipleRoots)
 {
-    if (!hasNodes || (useMultipleRoots && $('z-nestedset-addroot'))) {
-        $('z-nestedset-addroot').observe('click', function(event) {
-            «prefix()»PerformNestedSetOperation(ot, 1, 'addRootNode');
+    if (!hasNodes || (useMultipleRoots && $('z-tree-addroot'))) {
+        $('z-tree-addroot').observe('click', function(event) {
+            «prefix()»PerformTreeOperation(ot, 1, 'addRootNode');
             Event.stop(event);
         }).show();
     }
@@ -39,7 +39,7 @@ function «prefix()»InitNestedSetView(ot, hasNodes, useMultipleRoots)
 /**
  * Initialise event handlers for all nodes of a given tree root.
  */
-function «prefix()»InitTreeNodes(ot, controller, rootId)
+function «prefix()»InitTreeNodes(ot, controller, rootId, readOnly)
 {
     var otLower = ot.toLowerCase();
     $$('#itemtree' + rootId + ' a').each(function(elem) {
@@ -52,19 +52,20 @@ function «prefix()»InitTreeNodes(ot, controller, rootId)
 
         // and use it to attach a context menu
         var contextMenu = new Control.ContextMenu(elem.id, { leftClick: true, animation: false });
-
-        contextMenu.addItem({
-            label: Zikula.__('Edit', 'module_«appName()»'),
-            callback: function() {
-                currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                window.location = Zikula.Config.baseURL + 'index.php?module=«appName()»&type=' + controller + '&func=edit&ot=' + ot + '&' + otLower + 'id=' + currentNodeId;
-            }
-        });
+        if (readOnly != true) {
+            contextMenu.addItem({
+                label: Zikula.__('Edit', 'module_«appName()»'),
+                callback: function() {
+                    currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
+                    window.location = Zikula.Config.baseURL + 'index.php?module=«appName()»&type=' + controller + '&func=edit&ot=' + ot + '&' + otLower + 'id=' + currentNodeId;
+                }
+            });
+        }
         contextMenu.addItem({
             label: Zikula.__('Add child node', 'module_«appName()»'),
             callback: function() {
                 currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                «prefix()»PerformNestedSetOperation(ot, rootId, 'addChildNode');
+                «prefix()»PerformTreeOperation(ot, rootId, 'addChildNode');
             }
         });
         contextMenu.addItem({
@@ -76,7 +77,7 @@ function «prefix()»InitTreeNodes(ot, controller, rootId)
                 }
                 if (window.confirm(confirmQuestion) != false) {
                     currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                    «prefix()»PerformNestedSetOperation(ot, rootId, 'deleteNode');
+                    «prefix()»PerformTreeOperation(ot, rootId, 'deleteNode');
                 }
             }
         });
@@ -87,7 +88,7 @@ function «prefix()»InitTreeNodes(ot, controller, rootId)
             },
             callback: function() {
                 currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                «prefix()»PerformNestedSetOperation(ot, rootId, 'moveNodeUp');
+                «prefix()»PerformTreeOperation(ot, rootId, 'moveNodeUp');
             }
         });
         contextMenu.addItem({
@@ -97,7 +98,7 @@ function «prefix()»InitTreeNodes(ot, controller, rootId)
             },
             callback: function() {
                 currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                «prefix()»PerformNestedSetOperation(ot, rootId, 'moveNodeDown');
+                «prefix()»PerformTreeOperation(ot, rootId, 'moveNodeDown');
             }
         });
     });
@@ -105,12 +106,12 @@ function «prefix()»InitTreeNodes(ot, controller, rootId)
 
 «ENDDEFINE»
 
-«DEFINE PerformNestedSetOperation FOR Application-»
+«DEFINE PerformTreeOperation FOR Application-»
 /**
  * Helper function to start several different ajax actions
- * performing nested set related amendments and operations.
+ * performing tree related amendments and operations.
  */
-function «prefix()»PerformNestedSetOperation(ot, rootId, op)
+function «prefix()»PerformTreeOperation(ot, rootId, op)
 {
     var opParam = ((op == 'moveNodeUp' || op == 'moveNodeDown') ? 'moveNode' : op);
     var pars = 'ot=' + ot + '&op=' + opParam;
@@ -132,7 +133,7 @@ function «prefix()»PerformNestedSetOperation(ot, rootId, op)
     }
 
     new Zikula.Ajax.Request(
-        Zikula.Config.baseURL + 'ajax.php?module=«appName()»&func=handleNestedSetOperation',
+        Zikula.Config.baseURL + 'ajax.php?module=«appName()»&func=handleTreeOperation',
         {
             method: 'post',
             parameters: pars,
@@ -153,7 +154,7 @@ function «prefix()»PerformNestedSetOperation(ot, rootId, op)
 
 «ENDDEFINE»
 
-«DEFINE NestedSetSave FOR Application-»
+«DEFINE TreeSave FOR Application-»
 /**
  * Callback function for config.onSave. This function is called after each tree change.
  *
@@ -165,7 +166,7 @@ function «prefix()»PerformNestedSetOperation(ot, rootId, op)
  *
  * @return true on success, otherwise the change will be reverted
  */
-function «prefix()»NestedSetSave(node, params, data) {
+function «prefix()»TreeSave(node, params, data) {
     // do not allow inserts on root level
     if (node.up('li') == undefined) {
         return false;
@@ -185,7 +186,7 @@ function «prefix()»NestedSetSave(node, params, data) {
     }
 
     var request = new Zikula.Ajax.Request(
-        Zikula.Config.baseURL + 'ajax.php?module=«appName()»&func=handleNestedSetOperation',
+        Zikula.Config.baseURL + 'ajax.php?module=«appName()»&func=handleTreeOperation',
         {
             method: 'post',
             parameters: pars,

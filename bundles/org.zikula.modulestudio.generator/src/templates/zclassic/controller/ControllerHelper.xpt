@@ -1,14 +1,9 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 
-«DEFINE instantiateBusinessObject(String appName, Boolean isCollection, String context, String controller, String action) FOR Object-»
-        // instantiate a new «IF isCollection»collection«ELSE»entity«ENDIF» corresponding to $objectType
-        $object«IF isCollection»Collection«ENDIF» = «appName»_Factory::getBusiness«IF isCollection»Collection«ELSE»Entity«ENDIF»($objectType, '«context»', array('controller' => '«controller»', 'action' => '«action»'));
-«ENDDEFINE»
-
 «DEFINE retrieveEntityFromModel(String idVar, String idValue, Boolean isHandler) FOR Object-»
         // assign object data fetched from the database
-        $objectData = $object->selectById($«idValue»);
+        $objectData = $repository->selectById($«idValue»);
         if (!is_array($objectData) || !isset($objectData[$«idVar»]) || !is_numeric($objectData[$«idVar»])) {
 «IF isHandler-»
             return $view->registerError($this->__('No such item.'));
@@ -36,7 +31,7 @@
 «ENDDEFINE»
 
 «DEFINE DefaultSorting FOR Object-»
-        if (empty($sort) || !in_array($sort, $objectCollection->get_intAllowedSortingFields())) {
-            $sort = $objectCollection->get_intDefaultSortingField();
+        if (empty($sort) || !in_array($sort, $objectTemp->get_allowedSortingFields())) {
+            $sort = $objectTemp->get_defaultSortingField();
         }
 «ENDDEFINE»

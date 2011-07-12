@@ -69,24 +69,24 @@
         <summary type="html">
             <![CDATA[
 «IF !textFields.isEmpty-»
-                {$«objName».«textFields.get(0).actualFieldName().formatForCode()»|truncate:150:"&hellip;"|default:'-'}
+                {$«objName».«textFields.get(0).name.formatForCode()»|truncate:150:"&hellip;"|default:'-'}
 «ELSEIF !stringFields.isEmpty-»
-                {$«objName».«stringFields.get(0).actualFieldName().formatForCode()»|truncate:150:"&hellip;"|default:'-'}
+                {$«objName».«stringFields.get(0).name.formatForCode()»|truncate:150:"&hellip;"|default:'-'}
 «ELSE-»
-                {$«objName».«getLeadingField().actualFieldName().formatForCode()»|truncate:150:"&hellip;"|default:'-'}
+                {$«objName».«getLeadingField().name.formatForCode()»|truncate:150:"&hellip;"|default:'-'}
 «ENDIF-»
             ]]>
         </summary>
         <content type="html">
             <![CDATA[
 «IF textFields.size > 1-»
-                {$«objName».«textFields.get(1).actualFieldName().formatForCode()»|replace:'<br>':'<br />'}
+                {$«objName».«textFields.get(1).name.formatForCode()»|replace:'<br>':'<br />'}
 «ELSEIF !textFields.isEmpty && !stringFields.isEmpty-»
-                {$«objName».«stringFields.get(0).actualFieldName().formatForCode()»|replace:'<br>':'<br />'}
+                {$«objName».«stringFields.get(0).name.formatForCode()»|replace:'<br>':'<br />'}
 «ELSEIF stringFields.size > 1-»
-                {$«objName».«stringFields.get(1).actualFieldName().formatForCode()»|replace:'<br>':'<br />'}
+                {$«objName».«stringFields.get(1).name.formatForCode()»|replace:'<br>':'<br />'}
 «ELSE-»
-                {$«objName».«getLeadingField().actualFieldName().formatForCode()»|replace:'<br>':'<br />'}
+                {$«objName».«getLeadingField().name.formatForCode()»|replace:'<br>':'<br />'}
 «ENDIF-»
             ]]>
         </content>

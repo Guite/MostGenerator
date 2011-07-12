@@ -68,21 +68,21 @@
 
 «DEFINE DisplayEntryInnerSimpleField(Controller controller) FOR DerivedField-»
 «IF leading == true-»
-    <«actualFieldName().formatForCode()»>{$item.«actualFieldName().formatForCode()»}</«actualFieldName().formatForCode()»>
+    <«name.formatForCode()»>{$item.«name.formatForCode()»}</«name.formatForCode()»>
 «ELSE-»
-    <«actualFieldName().formatForCode()»>«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField('item', 'viewxml', '')»</«actualFieldName().formatForCode()»>
+    <«name.formatForCode()»>«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField('item', 'viewxml', '')»</«name.formatForCode()»>
 «ENDIF-»
 «ENDDEFINE»
 
 «DEFINE DisplayEntryInnerSimpleField(Controller controller) FOR BooleanField-»
-    <«actualFieldName().formatForCode()»>{if !$item.«actualFieldName()»}0{else}1{/if}</«actualFieldName().formatForCode()»>
+    <«name.formatForCode()»>{if !$item.«name»}0{else}1{/if}</«name.formatForCode()»>
 «ENDDEFINE»
 
 «DEFINE DisplayEntryInnerSimpleFieldCdata(Controller controller) FOR DerivedField-»
 «IF leading == true-»
-    <«actualFieldName().formatForCode()»><![CDATA[{$item.«actualFieldName().formatForCode()»}]]></«actualFieldName().formatForCode()»>
+    <«name.formatForCode()»><![CDATA[{$item.«name.formatForCode()»}]]></«name.formatForCode()»>
 «ELSE-»
-    <«actualFieldName().formatForCode()»><![CDATA[«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField('item', 'viewxml', '')»]]></«actualFieldName().formatForCode()»>
+    <«name.formatForCode()»><![CDATA[«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField('item', 'viewxml', '')»]]></«name.formatForCode()»>
 «ENDIF-»
 «ENDDEFINE»
 
@@ -102,7 +102,7 @@
 «LET ((!useTarget) ? target : source) AS mainEntity-»
 «LET ((useTarget) ? target : source) AS linkEntity-»
 «LET 'item'.msconcat('.').msconcat(relationAliasName) AS relObjName-»
-    <«relationAliasName»>{if (isset($«relObjName»))}{$«relObjName».«linkEntity.getLeadingField().actualFieldName().formatForCode()»«REM»|nl2br«ENDREM»|default:""}{/if}</«relationAliasName»>
+    <«relationAliasName»>{if (isset($«relObjName»))}{$«relObjName».«linkEntity.getLeadingField().name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}{/if}</«relationAliasName»>
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»

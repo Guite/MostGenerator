@@ -67,11 +67,11 @@
         <description>
             <![CDATA[
 «IF !textFields.isEmpty-»
-                {$«objName».«textFields.get(0).actualFieldName().formatForCode()»|replace:'<br>':'<br />'}
+                {$«objName».«textFields.get(0).name.formatForCode()»|replace:'<br>':'<br />'}
 «ELSEIF !stringFields.isEmpty-»
-                {$«objName».«stringFields.get(0).actualFieldName().formatForCode()»|replace:'<br>':'<br />'}
+                {$«objName».«stringFields.get(0).name.formatForCode()»|replace:'<br>':'<br />'}
 «ELSE-»
-                {$«objName».«getLeadingField().actualFieldName().formatForCode()»|replace:'<br>':'<br />'}
+                {$«objName».«getLeadingField().name.formatForCode()»|replace:'<br>':'<br />'}
 «ENDIF-»
             ]]>
         </description>

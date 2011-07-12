@@ -207,6 +207,14 @@ cached String asConstant(EntityChangeTrackingPolicy policy) :
         case EntityChangeTrackingPolicy::NOTIFY                 : 'NOTIFY'
         default: 'DEFERRED_IMPLICIT'
     };
+cached String asConstant(RelationFetchType fetchType) :
+    switch (fetchType) {
+        case RelationFetchType::LAZY                    : 'LAZY'
+        case RelationFetchType::EAGER                   : 'EAGER'
+        case RelationFetchType::EXTRA_LAZY              : 'EXTRA_LAZY'
+        default: 'LAZY'
+    };
+
 cached hasNotifyPolicy(Entity this) :
     (changeTrackingPolicy == EntityChangeTrackingPolicy::NOTIFY);
 

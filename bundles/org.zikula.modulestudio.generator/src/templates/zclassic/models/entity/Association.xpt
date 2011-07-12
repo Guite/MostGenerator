@@ -14,7 +14,7 @@
 «ENDIF-»
 «LET getRelationAliasName(false) AS sourceName-»
 «LET getRelationAliasName(true) AS targetName-»
-«LET ((useTarget) ? target : source).implClassBusinessEntity() AS entityClass-»
+«LET ((useTarget) ? target : source).implClassModelEntity() AS entityClass-»
 «EXPAND DirectionSwitch(useTarget, sourceName, targetName, entityClass)-»
 «ENDLET-»
 «ENDLET-»
@@ -45,7 +45,7 @@
 
 «DEFINE Incoming(String sourceName, String targetName, String entityClass) FOR JoinRelationship»
     /**
-     * @ORM\«EXPAND IncomingMappingType-»(targetEntity="«entityClass»", inversedBy="«targetName-»")
+     * @ORM\«EXPAND IncomingMappingType-»(targetEntity="«entityClass»", inversedBy="«targetName-»"«EXPAND AdditionalOptions-»)
 «EXPAND JoinDetails(false)-»
      * @var «entityClass» $«sourceName».
      */
@@ -66,7 +66,7 @@
 «DEFINE Incoming(String sourceName, String targetName, String entityClass) FOR ManyToManyRelationship»
 «IF bidirectional-»
     /**
-     * @ORM\ManyToMany(targetEntity="«entityClass»", mappedBy="«targetName»")
+     * @ORM\ManyToMany(targetEntity="«entityClass»", mappedBy="«targetName»"«EXPAND AdditionalOptions-»)
      * @var «entityClass»[] $«sourceName».
      */
     protected $«sourceName» = null;
@@ -79,7 +79,7 @@
 
 «DEFINE Outgoing(String sourceName, String targetName, String entityClass) FOR OneToOneRelationship»
     /**
-     * @ORM\OneToOne(targetEntity="«entityClass»"«IF bidirectional-», mappedBy="«sourceName-»"«ENDIF-»)
+     * @ORM\OneToOne(targetEntity="«entityClass»"«IF bidirectional-», mappedBy="«sourceName-»"«ENDIF-»«EXPAND FetchTypeTag-»«IF orphanRemoval-», orphanRemoval=true«ENDIF-»)
 «EXPAND JoinDetails(true)-»
      * @var «entityClass» $«targetName».
      */
@@ -89,9 +89,9 @@
 «DEFINE Outgoing(String sourceName, String targetName, String entityClass) FOR OneToManyRelationship»
     /**
 «IF !bidirectional-»
-     * @ORM\ManyToMany(targetEntity="«entityClass»")
+     * @ORM\ManyToMany(targetEntity="«entityClass»"«EXPAND AdditionalOptions-»)
 «ELSE-»
-     * @ORM\OneToMany(targetEntity="«entityClass»", mappedBy="«sourceName-»")
+     * @ORM\OneToMany(targetEntity="«entityClass»", mappedBy="«sourceName-»"«EXPAND AdditionalOptions-»«IF orphanRemoval-», orphanRemoval=true«ENDIF-»)
 «ENDIF-»
 «EXPAND JoinDetails(true)-»
 «IF orderBy-»
@@ -104,7 +104,7 @@
 
 «DEFINE Outgoing(String sourceName, String targetName, String entityClass) FOR ManyToManyRelationship»
     /**
-     * @ORM\ManyToMany(targetEntity="«entityClass»"«IF bidirectional-», inversedBy="«sourceName-»"«ENDIF-»)
+     * @ORM\ManyToMany(targetEntity="«entityClass»"«IF bidirectional-», inversedBy="«sourceName-»"«ENDIF-»«EXPAND AdditionalOptions-»)
 «EXPAND JoinDetails(true)-»
 «IF orderBy-»
      * @ORM\OrderBy({«orderBy»})
@@ -118,8 +118,11 @@
 «DEFINE JoinDetails(Boolean useTarget) FOR JoinRelationship»
 «LET ((useTarget) ? sourceField : targetField) AS joinColumnLocal-»
 «LET ((useTarget) ? targetField : sourceField) AS joinColumnForeign-»
-«IF !(joinColumnForeign.isDefaultIdField() && joinColumnLocal.isDefaultIdField())-»
-     * @ORM\JoinColumn(name="«joinColumnForeign»", referencedColumnName="«joinColumnLocal»")
+«IF !(joinColumnForeign.isDefaultIdField() && joinColumnLocal.isDefaultIdField() && !unique && nullable && onDelete == '' && onUpdate == '')-»
+     * «EXPAND JoinColumn(joinColumnForeign, joinedColumnLocal)»
+«REM»TODO:
+    use @ORM\JoinColumns (array with JoinColumn annotations)
+    if entity has multiple identifiers (for ManyToOne and OneToOne)«ENDREM» 
 «ENDIF-»
 «ENDLET-»
 «ENDLET-»
@@ -130,16 +133,49 @@
 «LET ((useTarget) ? target : source) AS joinedEntityForeign-»
 «LET ((useTarget) ? sourceField : targetField) AS joinColumnLocal-»
 «LET ((useTarget) ? targetField : sourceField) AS joinColumnForeign-»
-«IF !(joinColumnForeign.isDefaultIdField() && joinColumnLocal.isDefaultIdField())-»
-     * @ORM\JoinTable(name="«refClass.formatForCode()»",
-     *      joinColumns={@ORM\JoinColumn(name="«joinColumnLocal»", referencedColumnName="«joinedEntityLocal.idField()»")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="«joinColumnForeign»", referencedColumnName="«joinedEntityForeign.idField()»")}
+     * @ORM\JoinTable(name="«refClass.formatForCode()»"
+«IF !(joinColumnForeign.isDefaultIdField() && joinColumnLocal.isDefaultIdField() && !unique && nullable && onDelete == '' && onUpdate == '')-»,
+     *      joinColumns={«EXPAND JoinColumn(joinColumnLocal, joinedEntityLocal.idField())»},
+     *      inverseJoinColumns={«EXPAND JoinColumn(joinColumnForeign, joinedEntityForeign.idField())»}
      *      )
 «ENDIF-»
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»
+«ENDDEFINE»
+
+«DEFINE JoinColumn(String columnName, String referencedColumnName) FOR JoinRelationship-»
+@ORM\JoinColumn(name="«columnName»", referencedColumnName="«referencedColumnName»" «IF unique-», unique=true«ENDIF-»«IF !nullable-», nullable=false«ENDIF-»«IF onDelete != ''-», onDelete="«onDelete»"«ENDIF-»«IF onUpdate != ''-», onUpdate="«onUpdate»"«ENDIF-»)
+«ENDDEFINE»
+
+«DEFINE AdditionalOptions FOR JoinRelationship»
+«EXPAND CascadeOptions-»«EXPAND FetchTypeTag-»
+«ENDDEFINE»
+«DEFINE CascadeOptions FOR JoinRelationship»
+«IF cascade == CascadeType::NONE-»
+«ELSE-», cascade={«EXPAND CascadeOptionsImpl-»}«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE FetchTypeTag FOR JoinRelationship»
+«IF fetchType != RelationFetchType::LAZY-», fetch="«fetchType.asConstant()»"«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE CascadeOptionsImpl FOR JoinRelationship»
+«IF cascade == CascadeType::PERSIST-»"persist"
+«ELSEIF cascade == CascadeType::REMOVE-»"remove"
+«ELSEIF cascade == CascadeType::MERGE-»"merge"
+«ELSEIF cascade == CascadeType::DETACH-»"detach"
+«ELSEIF cascade == CascadeType::PERSIST_REMOVE-»"persist", "remove"
+«ELSEIF cascade == CascadeType::PERSIST_MERGE-»"persist", "merge"
+«ELSEIF cascade == CascadeType::PERSIST_DETACH-»"persist", "detach"
+«ELSEIF cascade == CascadeType::REMOVE_MERGE-»"remove", "merge"
+«ELSEIF cascade == CascadeType::REMOVE_DETACH-»"remove", "detach"
+«ELSEIF cascade == CascadeType::MERGE_DETACH-»"merge", "detach"
+«ELSEIF cascade == CascadeType::PERSIST_REMOVE_MERGE-»"persist", "remove", "merge"
+«ELSEIF cascade == CascadeType::PERSIST_MERGE_DETACH-»"persist", "merge", "detach"
+«ELSEIF cascade == CascadeType::REMOVE_MERGE_DETACH-»"remove", "merge", "detach"
+«ELSEIF cascade == CascadeType::ALL-»"all"
 «ENDDEFINE»
 
 
@@ -155,8 +191,8 @@
 
 «DEFINE RelationAccessor(Boolean useTarget) FOR JoinRelationship»
 «LET getRelationAliasName(useTarget) AS relationAliasName-»
-«LET ((useTarget) ? target : source).implClassBusinessEntity() AS type-»
-«EXPAND FileHelper::GetterAndSetterMethods(relationAliasName, type)»
+«LET ((useTarget) ? target : source).implClassModelEntity() AS entityClass-»
+«EXPAND FileHelper::GetterAndSetterMethods(relationAliasName, entityClass)»
 «ENDLET-»
 «ENDLET-»
 «ENDDEFINE»

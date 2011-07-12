@@ -291,23 +291,23 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 
 
 «DEFINE sanitizeForOutput FOR EntityField-»
-        $data['«actualFieldName().formatForCode()»'] = ((isset($data['«actualFieldName().formatForCode()»']) && !empty($data['«actualFieldName().formatForCode()»'])) ? DataUtil::formatForDisplay($data['«actualFieldName().formatForCode()»']) : '');
+        $data['«name.formatForCode()»'] = ((isset($data['«name.formatForCode()»']) && !empty($data['«name.formatForCode()»'])) ? DataUtil::formatForDisplay($data['«name.formatForCode()»']) : '');
 «ENDDEFINE»
 
 «DEFINE sanitizeForOutputHTML FOR EntityField-»
     if ($currentFunc != 'edit') {
-        $data['«actualFieldName().formatForCode()»'] = ((isset($data['«actualFieldName().formatForCode()»']) && !empty($data['«actualFieldName().formatForCode()»'])) ? DataUtil::formatForDisplayHTML($data['«actualFieldName().formatForCode()»']) : '');
+        $data['«name.formatForCode()»'] = ((isset($data['«name.formatForCode()»']) && !empty($data['«name.formatForCode()»'])) ? DataUtil::formatForDisplayHTML($data['«name.formatForCode()»']) : '');
     }
 «ENDDEFINE»
 
 «DEFINE sanitizeForOutput FOR BooleanField-»
-        $data['«actualFieldName().formatForCode()»'] = (bool) $data['«actualFieldName().formatForCode()»'];
+        $data['«name.formatForCode()»'] = (bool) $data['«name.formatForCode()»'];
 «ENDDEFINE»
 «DEFINE sanitizeForOutput FOR AbstractIntegerField-»
-        $data['«actualFieldName().formatForCode()»'] = (int) ((isset($data['«actualFieldName().formatForCode()»']) && !empty($data['«actualFieldName().formatForCode()»'])) ? DataUtil::formatForDisplay($data['«actualFieldName().formatForCode()»']) : 0);
+        $data['«name.formatForCode()»'] = (int) ((isset($data['«name.formatForCode()»']) && !empty($data['«name.formatForCode()»'])) ? DataUtil::formatForDisplay($data['«name.formatForCode()»']) : 0);
 «ENDDEFINE»
 «DEFINE sanitizeForOutput FOR DecimalField-»
-        $data['«actualFieldName().formatForCode()»'] = (float) ((isset($data['«actualFieldName().formatForCode()»']) && !empty($data['«actualFieldName().formatForCode()»'])) ? DataUtil::formatForDisplay($data['«actualFieldName().formatForCode()»']) : 0.00);
+        $data['«name.formatForCode()»'] = (float) ((isset($data['«name.formatForCode()»']) && !empty($data['«name.formatForCode()»'])) ? DataUtil::formatForDisplay($data['«name.formatForCode()»']) : 0.00);
 «ENDDEFINE»
 «DEFINE sanitizeForOutput FOR StringField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
 «DEFINE sanitizeForOutput FOR TextField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
@@ -317,10 +317,10 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
     }
 «ENDDEFINE»
 «DEFINE sanitizeForOutput FOR ArrayField-»
-        $data['«actualFieldName().formatForCode()»'] = ((isset($data['«actualFieldName().formatForCode()»']) && is_array($data['«actualFieldName().formatForCode()»'])) ? DataUtil::formatForDisplay($data['«actualFieldName().formatForCode()»']) : array());
+        $data['«name.formatForCode()»'] = ((isset($data['«name.formatForCode()»']) && is_array($data['«name.formatForCode()»'])) ? DataUtil::formatForDisplay($data['«name.formatForCode()»']) : array());
 «ENDDEFINE»
 «DEFINE sanitizeForOutput FOR UploadField-»
-«LET actualFieldName().formatForCode() AS realName-»
+«LET name.formatForCode() AS realName-»
         if (!empty($data['«realName»'])) {
             $basePath = «entity.container.application.appName()»_Util_Controller::getFileBaseFolder('«entity.name.formatForCode()»', '«realName»');
             $fullPath = $basePath .  $data['«realName»'];
@@ -366,7 +366,7 @@ class «implClassModelListener()» extends «IF isInheriting()»«parentType().i
 «ENDLET-»
 «ENDDEFINE»
 «DEFINE sanitizeForOutput FOR FloatField-»
-        $data['«actualFieldName().formatForCode()»'] = (float) ((isset($data['«actualFieldName().formatForCode()»']) && !empty($data['«actualFieldName().formatForCode()»'])) ? DataUtil::formatForDisplay($data['«actualFieldName().formatForCode()»']) : 0.00);
+        $data['«name.formatForCode()»'] = (float) ((isset($data['«name.formatForCode()»']) && !empty($data['«name.formatForCode()»'])) ? DataUtil::formatForDisplay($data['«name.formatForCode()»']) : 0.00);
 «ENDDEFINE»
 
 

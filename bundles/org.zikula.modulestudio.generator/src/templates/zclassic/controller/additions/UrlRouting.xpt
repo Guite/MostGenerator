@@ -2,7 +2,7 @@
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 
-«REM»start point for the Factory creation«ENDREM»
+«REM»start point for the router creation«ENDREM»
 «DEFINE Root FOR Application»
     «FILE getAppSourceLibPath(appName()).msconcat("Base/RouterFacade.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND RouterFacadeBase-»«ENDFILE»
     «FILE getAppSourceLibPath(appName()).msconcat("RouterFacade.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND RouterFacadeImpl-»«ENDFILE»
@@ -225,7 +225,9 @@ class «appName»_Base_RouterFacade
 «DEFINE GetSlugForItem FOR Entity-»
             case '«name.formatForCode()»':
 «IF hasSluggableFields()-»
-«EXPAND templates::zclassic::controller::ControllerHelper::instantiateBusinessObject(container.application.appName(), false, 'api', 'RouterFacade', 'getFormattedSlug')-»
+                        $entityClass = '«container.application.appName()»_Entity_' . ucfirst($objectType);
+                        $object = new $entityClass(); 
+
                         $item = $object->selectById($itemid);
 «IF slugUnique-»
                         $slug = $item['slug'];

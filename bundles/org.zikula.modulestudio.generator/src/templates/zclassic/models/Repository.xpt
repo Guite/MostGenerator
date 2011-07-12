@@ -22,23 +22,15 @@
 «REM»base implementation«ENDREM»
 «DEFINE ModelRepositoryBaseImpl(Application app) FOR Entity-»
 
+use Doctrine\ORM\EntityRepository;
+
 /**
- * Repository class used to implement own special entity methods.
- * For example it can provide convenience methods for performing certain DQL queries.
+ * Repository class used to implement own convenience methods for performing certain DQL queries.
  *
  * This is the base repository class for «name.formatForDisplay()» entities.
  */
 class «baseClassModelRepository()» extends EntityRepository
 {
-«REM»
-    public function getAllAdminUsers()
-    {
-        return $this->getEntityManager()
-                    ->createQuery('SELECT u FROM MyDomain\Model\User u WHERE u.status = "admin"')
-                    ->getResult();
-    }
-«ENDREM»
-
     /**
      * Hook into the constructor process.
      */
@@ -52,8 +44,8 @@ class «baseClassModelRepository()» extends EntityRepository
      */
     public function truncateTable()
     {
-        $q = Doctrine_Query::create()
-            ->delete('«implClassModelEntity()»');
+        $q = $this->getEntityManager()
+            ->createQuery('DELETE «implClassModelEntity()»');
         $q->execute();
     }
 
@@ -64,7 +56,7 @@ class «baseClassModelRepository()» extends EntityRepository
      * @param boolean $asArray  Whether to return the result as array instead as record object (optional) (default=true).
      * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
      *
-     * @return array|Doctrine_Record retrieved data array or Doctrine_Record instance
+     * @return array|«implClassModelEntity()» retrieved data array or «implClassModelEntity()» instance
      */
     public function selectOneItemById($id = 0, $asArray = true, $useJoins = true)
     {
@@ -74,6 +66,7 @@ class «baseClassModelRepository()» extends EntityRepository
         $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
         return $q->fetchOne(array(), $fetchType);
     }
+
 «IF sluggable && sluggableUnique-»
 
     /**
@@ -83,7 +76,7 @@ class «baseClassModelRepository()» extends EntityRepository
      * @param boolean $asArray   Whether to return the result as array instead as record object (optional) (default=true).
      * @param boolean $useJoins  Whether to include joining related objects (optional) (default=true).
      *
-     * @return array|Doctrine_Record retrieved data array or Doctrine_Record instance
+     * @return array|«implClassModelEntity()» retrieved data array or «implClassModelEntity()» instance
      */
     public function selectOneItemBy«((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCodeCapital()»($slugTitle = '', $asArray = true, $useJoins = true)
     {
@@ -103,7 +96,7 @@ class «baseClassModelRepository()» extends EntityRepository
      * @param boolean $asArray  Whether to return the result as array instead as record object (optional) (default=true).
      * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
      *
-     * @return array|Doctrine_Collection retrieved data array or collection containing retrieved Doctrine_Record instances
+     * @return array|Doctrine_Collection retrieved data array or collection containing retrieved «implClassModelEntity()» instances
      */
     public function selectCollection($where = '', $orderBy = '', $asArray = true, $useJoins = true)
     {
@@ -126,13 +119,13 @@ class «baseClassModelRepository()» extends EntityRepository
      */
     public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $asArray = true, $useJoins = true)
     {
+        /*$q = $this->_intBaseQuery($where, $orderBy, $useJoins)
+             ->setMaxResults($resultsPerPage);*/
         $pager = new Doctrine_Pager(
               $this->_intBaseQuery($where, $orderBy, $useJoins),
               $currentPage,
               $resultsPerPage
         );
-        /* TODO: see http://www.doctrine-project.org/projects/orm/1.2/docs/manual/utilities/en */
-        //$pager->setCountQuery($query);
 
         $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
         $results = $pager->execute(array(), $fetchType);
@@ -173,6 +166,178 @@ class «baseClassModelRepository()» extends EntityRepository
         return $q->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
     }
 «ENDIF-»
+
+«REM»
+    public function getAllAdminUsers()
+    {
+        return $this->getEntityManager()
+                    ->createQuery('SELECT u FROM MyDomain\Model\User u WHERE u.status = "admin"')
+                    ->getResult();
+
+        // All users with an age between 20 and 30 (inclusive).
+        $q = $em->createQuery("select u from MyDomain\Model\User u where u.age >= 20 and u.age <= 30");
+        $users = $q->getResult();
+    }
+
+    public function getRecentBugs($number = 30)
+    {
+        $dql = "SELECT b, e, r FROM Bug b JOIN b.engineer e JOIN b.reporter r ORDER BY b.created DESC";
+
+        $query = $this->getEntityManager()->createQuery($dql);
+        $query->setMaxResults($number);
+        return $query->getResult();
+    }
+
+    public function getRecentBugsArray($number = 30)
+    {
+        $dql = "SELECT b, e, r, p FROM Bug b JOIN b.engineer e ".
+               "JOIN b.reporter r JOIN b.products p ORDER BY b.created DESC";
+        $query = $this->getEntityManager()->createQuery($dql);
+        $query->setMaxResults($number);
+        return $query->getArrayResult();
+    }
+
+    public function getUsersBugs($userId, $number = 15)
+    {
+        $dql = "SELECT b, e, r FROM Bug b JOIN b.engineer e JOIN b.reporter r ".
+               "WHERE b.status = 'OPEN' AND e.id = ?1 OR r.id = ?1 ORDER BY b.created DESC";
+
+        return $this->getEntityManager()->createQuery($dql)
+                             ->setParameter(1, $userId)
+                             ->setMaxResults($number)
+                             ->getResult();
+    }
+
+
+For extending find(), findOneBy() or findBy() one must follow the
+interface Doctrine\Common\Persistence\ObjectRepository.
+
+    /**
+     * Finds an object by its primary key / identifier.
+     *
+     * @param $id The identifier.
+     * @return object The object.
+     */
+    public function find($id);
+
+    /**
+     * Finds all objects in the repository.
+     *
+     * @return mixed The objects.
+     */
+    public function findAll();
+
+    /**
+     * Finds objects by a set of criteria.
+     *
+     * Optionally sorting and limiting details can be passed. An implementation may throw
+     * an UnexpectedValueException if certain values of the sorting or limiting details are
+     * not supported.
+     *
+     * @throws UnexpectedValueException
+     * @param array $criteria
+     * @param array|null $orderBy
+     * @param int|null $limit
+     * @param int|null $offset
+     * @return mixed The objects.
+     */
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null);
+
+    /**
+     * Finds a single object by a set of criteria.
+     *
+     * @param array $criteria
+     * @return object The object.
+     */
+    public function findOneBy(array $criteria);
+
+«ENDREM»
+
+
+«EXPAND TreeMethods(app)-»
+
+    /**
+     * Build a generic Doctrine query supporting WHERE and ORDER BY
+     *
+     * @param string  $where    The where clause to use when retrieving the object array (optional) (default='').
+     * @param string  $orderBy  The order-by clause to use when retrieving the object array (optional) (default='').
+     * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
+     *
+     * @return Doctrine_Query query instance to be further processed
+     */
+    protected function _intBaseQuery($where = '', $orderBy = '', $useJoins = true)
+    {
+        $selection = 'tbl.*' . (($orderBy == 'RAND()') ? ', RANDOM() rand' : '');
+        if ($useJoins === true) {
+            $selection = $this->addJoinsToSelection($selection);
+        }
+
+        // create base selection query
+        $q = $this->getEntityManager()->createQuery()
+            ->select($selection)
+            ->from('«implClassModelRecord()» tbl');
+
+        // add join information
+        if ($useJoins === true) {
+            $this->addJoinsToFrom($q);
+        }
+
+        if (!empty($where)) {
+            $q->where('tbl.' . $where);
+        }
+
+        // use FilterUtil to support generic filtering
+        $fu = new FilterUtil('«container.application.appName()»', $this);
+
+        // you could set explicit filters at this point, something like
+        // $fu->setFilter('type:eq:' . $args['type'] . ',id:eq:' . $args['id']);
+        // supported operators: eq, ne, like, lt, le, gt, ge, null, notnull
+
+        // process request input filters and add them to the query.
+        $fu->enrichQuery($q);
+
+«IF hasTranslatableFields()-»
+
+        $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST', FILTER_SANITIZE_STRING);
+        if ($useJoins == true && $currentFunc != 'edit') {
+            if (!empty($where)) {
+                $q->andWhere('Translation.lang = ?', array(ZLanguage::getLanguageCode()));
+            }
+            else {
+                $q->where('Translation.lang = ?', array(ZLanguage::getLanguageCode()));
+            }
+        }
+«ENDIF-»
+        // add order by clause
+        if (!empty($orderBy)) {
+            if ($orderBy == 'RAND()') {
+                $q->orderBy('rand');
+            }
+            else {
+«IF hasTranslatableFields()-»
+                // HACK FOR Translatable behavior
+                $sortParts = explode(' ', $orderBy);
+                $sortField = $sortParts[0];
+                if (in_array($sortField, array(«EXPAND TranslationArrayPart FOREACH getTranslatableFields() SEPARATOR ', '-»))) {
+                    $q->orderBy('Translation.' . $orderBy);
+                }
+                else {
+                    $q->orderBy('tbl.' . $orderBy);
+                }
+«ELSE-»
+                $q->orderBy('tbl.' . $orderBy);
+«ENDIF-»
+            }
+        }
+        return $q;
+    }
+«EXPAND JoinMethods(app)-»
+}
+«ENDDEFINE»
+
+«DEFINE TranslationArrayPart FOR DerivedField-»'«name.formatForCode()-»'«ENDDEFINE»
+
+«DEFINE TreeMethods(Application app) FOR Entity-»
 «IF nestedSet-»
 
     /**
@@ -259,82 +424,9 @@ class «baseClassModelRepository()» extends EntityRepository
     }
 «ENDIF-»
 «ENDIF-»
+«ENDDEFINE»
 
-    /**
-     * Build a generic Doctrine query supporting WHERE and ORDER BY
-     *
-     * @param string  $where    The where clause to use when retrieving the object array (optional) (default='').
-     * @param string  $orderBy  The order-by clause to use when retrieving the object array (optional) (default='').
-     * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
-     *
-     * @return Doctrine_Query query instance to be further processed
-     */
-    protected function _intBaseQuery($where = '', $orderBy = '', $useJoins = true)
-    {
-        $selection = 'tbl.*' . (($orderBy == 'RAND()') ? ', RANDOM() rand' : '');
-        if ($useJoins === true) {
-            $selection = $this->addJoinsToSelection($selection);
-        }
-
-        // create base selection query
-        $q = Doctrine_Query::create()
-            ->select($selection)
-            ->from('«implClassModelRecord()» tbl');
-
-        // add join information
-        if ($useJoins === true) {
-            $this->addJoinsToFrom($q);
-        }
-
-        if (!empty($where)) {
-            $q->where('tbl.' . $where);
-        }
-
-        // use FilterUtil to support generic filtering
-        $fu = new FilterUtil('«container.application.appName()»', $this);
-
-        // you could set explicit filters at this point, something like
-        // $fu->setFilter('type:eq:' . $args['type'] . ',id:eq:' . $args['id']);
-        // supported operators: eq, ne, like, lt, le, gt, ge, null, notnull
-
-        // process request input filters and add them to the query.
-        $fu->enrichQuery($q);
-
-«IF i18n-»
-
-        $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST', FILTER_SANITIZE_STRING);
-        if ($useJoins == true && $currentFunc != 'edit') {
-            if (!empty($where)) {
-                $q->andWhere('Translation.lang = ?', array(ZLanguage::getLanguageCode()));
-            }
-            else {
-                $q->where('Translation.lang = ?', array(ZLanguage::getLanguageCode()));
-            }
-        }
-«ENDIF-»
-        // add order by clause
-        if (!empty($orderBy)) {
-            if ($orderBy == 'RAND()') {
-                $q->orderBy('rand');
-            }
-            else {
-«IF i18n-»
-                // HACK FOR I18n behavior
-                $sortParts = explode(' ', $orderBy);
-                $sortField = $sortParts[0];
-                if (in_array($sortField, array('«i18nFields.replaceAll(", ", "', '")»'))) {
-                    $q->orderBy('Translation.' . $orderBy);
-                }
-                else {
-                    $q->orderBy('tbl.' . $orderBy);
-                }
-«ELSE-»
-                $q->orderBy('tbl.' . $orderBy);
-«ENDIF-»
-            }
-        }
-        return $q;
-    }
+«DEFINE JoinMethods(Application app) FOR Entity-»
 
     /**
      * Helper method to add join selections.
@@ -343,7 +435,7 @@ class «baseClassModelRepository()» extends EntityRepository
      */
     protected function addJoinsToSelection($selection)
     {
-«IF i18n-»
+«IF hasTranslatableFields()-»
         $selection .= ', Translation.*';
 «ENDIF-»
         $selection .= '«EXPAND AddJoin(false, 'select') FOREACH incoming.typeSelect(JoinRelationship)-»«EXPAND AddJoin(true, 'select') FOREACH outgoing.typeSelect(JoinRelationship)-»';
@@ -357,13 +449,12 @@ class «baseClassModelRepository()» extends EntityRepository
      */
     protected function addJoinsToFrom(Doctrine_Query $q)
     {
-«IF i18n-»
+«IF hasTranslatableFields()-»
         $q->leftJoin('tbl.Translation Translation');
 «ENDIF-»
 «EXPAND AddJoin(false, 'from') FOREACH incoming.typeSelect(JoinRelationship)-»
 «EXPAND AddJoin(true, 'from') FOREACH outgoing.typeSelect(JoinRelationship)-»
     }
-}
 «ENDDEFINE»
 
 «DEFINE AddJoin(Boolean incoming, String target) FOR JoinRelationship-»
@@ -380,9 +471,7 @@ class «baseClassModelRepository()» extends EntityRepository
 «DEFINE RepositoryTableImpl(Application app) FOR Entity-»
 
 /**
- * Repository class used to implement own special entity methods.
- *
- * For example it can provide convenience methods for performing certain DQL queries.
+ * Repository class used to implement own convenience methods for performing certain DQL queries.
  *
  * This is the concrete repository class for «name.formatForDisplay()» entities.
  */
@@ -404,9 +493,7 @@ class «implClassModelRepository()» extends «IF isInheriting()»«parentType()
 «DEFINE ModelRefRepositoryBaseImpl(Application app) FOR ManyToManyRelationship-»
 
 /**
- * Repository class used to implement own special entity methods.
- *
- * For example it can provide convenience methods for performing certain DQL queries.
+ * Repository class used to implement own convenience methods for performing certain DQL queries.
  *
  * This is the base repository class for the many to many relationship
  * between «source.name.formatForDisplay()» and «target.name.formatForDisplay()» entities.
@@ -426,9 +513,7 @@ class «baseClassModelRefRepository()» extends EntityRepository
 «DEFINE ModelRefRepositoryImpl(Application app) FOR ManyToManyRelationship-»
 
 /**
- * Repository class used to implement own special entity methods.
- *
- * For example it can provide convenience methods for performing certain DQL queries.
+ * Repository class used to implement own convenience methods for performing certain DQL queries.
  *
  * This is the concrete repository class for the many to many relationship
  * between «source.name.formatForDisplay()» and «target.name.formatForDisplay()» entities.

@@ -9,17 +9,17 @@
 
 <dl>
 {foreach item='item' from=$items}
-    <dt>{$item.«entity.getLeadingField().actualFieldName().formatForCode()»}</dt>
+    <dt>{$item.«entity.getLeadingField().name.formatForCode()»}</dt>
 «LET entity.fields.typeSelect(TextField) AS textFields-»
 «IF !textFields.isEmpty-»
-{if $item.«textFields.get(0).actualFieldName().formatForCode()»}
-    <dd>{$item.«textFields.get(0).actualFieldName().formatForCode()»|truncate:200:"..."}</dd>
+{if $item.«textFields.get(0).name.formatForCode()»}
+    <dd>{$item.«textFields.get(0).name.formatForCode()»|truncate:200:"..."}</dd>
 {/if}
 «ELSE-»
 «LET entity.fields.typeSelect(StringField).reject(e|e.leading) AS textFields-»
 «IF !textFields.isEmpty-»
-{if $item.«textFields.get(0).actualFieldName().formatForCode()»}
-    <dd>{$item.«textFields.get(0).actualFieldName().formatForCode()»|truncate:200:"..."}</dd>
+{if $item.«textFields.get(0).name.formatForCode()»}
+    <dd>{$item.«textFields.get(0).name.formatForCode()»|truncate:200:"..."}</dd>
 {/if}
 «ENDIF-»
 «ENDLET-»

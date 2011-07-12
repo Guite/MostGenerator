@@ -8,17 +8,17 @@
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR BooleanField-»
-«prepend»{$«objName».«actualFieldName().formatForCode()»|yesno:true}«""-»
+«prepend»{$«objName».«name.formatForCode()»|yesno:true}«""-»
 «ENDDEFINE»
 «DEFINE DisplayField(String objName, String page, String prepend) FOR DecimalField-»
-«prepend»{$«objName».«actualFieldName().formatForCode()»|formatnumber}«""-»
+«prepend»{$«objName».«name.formatForCode()»|formatnumber}«""-»
 «ENDDEFINE»
 «DEFINE DisplayField(String objName, String page, String prepend) FOR FloatField-»
-«prepend»{$«objName».«actualFieldName().formatForCode()»|formatnumber}«""-»
+«prepend»{$«objName».«name.formatForCode()»|formatnumber}«""-»
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR UserField-»
-«LET objName.msconcat('.').msconcat(actualFieldName().formatForCode()) AS realName-»
+«LET objName.msconcat('.').msconcat(name.formatForCode()) AS realName-»
 «IF page == 'viewcsv' || page == 'viewxml'-»
 {usergetvar name='uname' uid=$«realName»}«""-»
 «ELSE-»
@@ -46,7 +46,7 @@
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR EmailField-»
-«LET objName.msconcat('.').msconcat(actualFieldName().formatForCode()) AS realName-»
+«LET objName.msconcat('.').msconcat(name.formatForCode()) AS realName-»
 «IF page == 'viewcsv' || page == 'viewxml'-»
 {$«realName»}«""-»
 «ELSE-»
@@ -72,7 +72,7 @@
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR UrlField-»
-«LET objName.msconcat('.').msconcat(actualFieldName().formatForCode()) AS realName-»
+«LET objName.msconcat('.').msconcat(name.formatForCode()) AS realName-»
 «IF page == 'viewcsv' || page == 'viewxml'-»
 {$«realName»}«""-»
 «ELSE-»
@@ -99,16 +99,16 @@
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR UploadField-»
 «LET entity.container.application.appName().formatForDB() AS appNameSmall-»
-«LET objName.msconcat('.').msconcat(actualFieldName().formatForCode()) AS realName-»
+«LET objName.msconcat('.').msconcat(name.formatForCode()) AS realName-»
 «IF page == 'viewcsv' || page == 'viewxml'-»
 {$«realName»}«""-»
 «ELSE-»
 «IF !mandatory-»
 «prepend»{if $«realName» ne ''}
 «ENDIF-»
-«prepend»  <a href="{$«realName»FullPathURL}" title="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB()»]"{/if}>
+«prepend»  <a href="{$«realName»FullPathURL}" title="{$«objName».«entity.getLeadingField().name.formatForCode()»|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB()»]"{/if}>
 «prepend»  {if $«realName»Meta.isImage}
-«prepend»      <img src="{$«realName»|«appNameSmall»ImageThumb:$«realName»FullPath:«IF page == 'display'»250:150«ELSE»80:80«ENDIF»}" width="«IF page == 'display'»250«ELSE»80«ENDIF»" height="«IF page == 'display'»150«ELSE»80«ENDIF»" alt="{$«objName».«entity.getLeadingField().actualFieldName().formatForCode()»|replace:"\"":""}" />
+«prepend»      <img src="{$«realName»|«appNameSmall»ImageThumb:$«realName»FullPath:«IF page == 'display'»250:150«ELSE»80:80«ENDIF»}" width="«IF page == 'display'»250«ELSE»80«ENDIF»" height="«IF page == 'display'»150«ELSE»80«ENDIF»" alt="{$«objName».«entity.getLeadingField().name.formatForCode()»|replace:"\"":""}" />
 «prepend»  {else}
 «prepend»      {gt text='Download'} ({$«realName»Meta.size|«appNameSmall»GetFileSize:$«realName»FullPath:false:false})
 «prepend»  {/if}
@@ -122,10 +122,10 @@
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR DateField-»
-«prepend»{$«objName».«actualFieldName().formatForCode()»|dateformat:"datebrief"}«""-»
+«prepend»{$«objName».«name.formatForCode()»|dateformat:"datebrief"}«""-»
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR TimestampField-»
-«prepend»{$«objName».«actualFieldName().formatForCode()»|dateformat:"datetimebrief"}«""-»
+«prepend»{$«objName».«name.formatForCode()»|dateformat:"datetimebrief"}«""-»
 «ENDDEFINE»
 

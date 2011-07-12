@@ -72,7 +72,7 @@
     {*formvalidationsummary*}
     {*formerrormessage id='error'*}
 
-    {formsetinitialfocus inputId='«getDerivedFields().reject(e|e.primaryKey).get(0).actualFieldName().formatForCode()»'}
+    {formsetinitialfocus inputId='«getDerivedFields().reject(e|e.primaryKey).get(0).name.formatForCode()»'}
 «REM»{formsetinitialfocus inputId='PluginId' doSelect=true} <-- for dropdown lists (performs input.select())«ENDREM»«""-»
 
     <fieldset>
@@ -82,7 +82,7 @@
 «REM»No input fields for foreign keys, relations are processed further down«ENDREM»«""-»
 «IF incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == field.name.formatForDB()).isEmpty-»
 «REM»No input fields for root column if using nested sets with multiple roots«ENDREM»
-«IF !nestedSet || !nestedSetHasManyRoots || field.actualFieldName() != nestedSetRootField-»
+«IF !nestedSet || !nestedSetHasManyRoots || field.name != nestedSetRootField-»
         <div class="z-formrow">
             «EXPAND FormComponents::SimpleFields::FormRow FOR field»«""-»
         </div>
@@ -198,7 +198,7 @@
 «IF !userFields.isEmpty-»
         // initialise auto completion for user fields
 «FOREACH userFields AS userField-»
-«LET userField.actualFieldName().formatForCode() AS realName»
+«LET userField.name.formatForCode() AS realName»
         {{if isset($«realName») && $«realName» gt 0}}
             $('«realName»Selector').value = '{{usergetvar name='uname' uid=$«realName»}}';
         {{/if}}

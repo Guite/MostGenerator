@@ -580,7 +580,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDDEFINE»
 «DEFINE ExampleRowValueNumber(Integer number) FOR DerivedField-»«number»«ENDDEFINE»
 «DEFINE ExampleRowValueText(Integer number) FOR DerivedField-»
-«entity.name.formatForDisplayCapital()» «actualFieldName().formatForDisplay()» «number»«""-»
+«entity.name.formatForDisplayCapital()» «name.formatForDisplay()» «number»«""-»
 «ENDDEFINE»
 «DEFINE ExampleRowValue(Integer number) FOR BooleanField-»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Integer number) FOR IntegerField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
