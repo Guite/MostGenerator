@@ -22,22 +22,14 @@
 
 «REM»base implementation«ENDREM»
 «DEFINE ModelEntityBaseImpl(Application app) FOR Entity-»
-
-use Doctrine\ORM\Mapping as ORM;
-«IF hasCollections()-»
-use Doctrine\Common\Collections\ArrayCollection;
-«ENDIF-»
-use Gedmo\Mapping\Annotation as Gedmo;
-«IF hasNotifyPolicy()-»
-use Doctrine\Common\NotifyPropertyChanged,
-    Doctrine\Common\PropertyChangedListener;
-«ENDIF-»
+«EXPAND Imports-»
 
 /**
  * Entity class that defines the entity structure and behaviours.
  *
  * This is the base entity class for «name.formatForDisplay()» entities.
  *
+«EXPAND entity::Extensions::ClassExtensions-»
  * @ORM\Entity(repositoryClass="«implClassModelRepository()»"«IF readOnly-», readOnly=true«ENDIF-»)
 «IF indexes.isEmpty-»
  * @ORM\Table(name="«fullEntityName()»")
@@ -53,7 +45,7 @@ use Doctrine\Common\NotifyPropertyChanged,
 «ENDIF-»
 «REM»TODO: change tracking policy is not per-class, but per-class-hierarchy«ENDREM»
 «IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT-»
- * @ChangeTrackingPolicy("«changeTrackingPolicy.asConstant()»")
+ * @ORM\ChangeTrackingPolicy("«changeTrackingPolicy.asConstant()»")
 «ENDIF-»
 
  */
@@ -61,6 +53,18 @@ class «baseClassModelEntity()» extends Zikula_EntityAccess«IF hasNotifyPolicy
 {
 «EXPAND EntityInfo-»
 }
+«ENDDEFINE»
+
+«DEFINE Imports FOR Entity-»
+use Doctrine\ORM\Mapping as ORM;
+«IF hasCollections()-»
+use Doctrine\Common\Collections\ArrayCollection;
+«ENDIF-»
+«EXPAND entity::Extensions::Imports-»
+«IF hasNotifyPolicy()-»
+use Doctrine\Common\NotifyPropertyChanged,
+    Doctrine\Common\PropertyChangedListener;
+«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE Index(String indexType) FOR EntityIndex-»
@@ -113,6 +117,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «ENDIF-»
 
 «EXPAND entity::Property::PersistentProperty FOREACH fields.typeSelect(DerivedField)»
+«EXPAND entity::Extensions::AdditionalProperties-»
 «EXPAND entity::Association::Root(false) FOREACH incoming.typeSelect(JoinRelationship)»
 «EXPAND entity::Association::Root(true) FOREACH outgoing.typeSelect(JoinRelationship)»
 
@@ -189,7 +194,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
     {
         $this->_objectType = '«fullEntityName()»';
         $this->_validator = new «implClassBusinessValidator()»($this);
-        $this->_hasUniqueSlug = «IF sluggable && sluggableUnique»true«ELSE»false«ENDIF»;
+        $this->_hasUniqueSlug = «IF hasSluggableFields() && slugUnique»true«ELSE»false«ENDIF»;
     }
 
     /**
@@ -250,7 +255,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
         $repository = $this->entityManager->getRepository($entityClass);
 
         // get result from the model
-        $item = $repository->selectOneItemBy«((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCodeCapital()»($slugTitle, $asArray);
+        $item = $repository->selectOneItemBySlug($slugTitle, $asArray);
 
 «IF hasTranslatableFields()-»
         // process translations
@@ -396,7 +401,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
         // get result from the model
         return $this->_intTable()->selectCount($where);
     }
-«IF tree > 0-»
+«IF tree != EntityTreeType::NONE-»
 
     /**
      * Select tree of «nameMultiple.formatForCode()».
@@ -613,37 +618,6 @@ class «implClassModelRefEntity()» extends «baseClassModelRefEntity()»
 
 
 «DEFINE SetUpBehaviour FOR Entity-»
-        /**
-         * Behaviours
-         */
-«IF loggable-»
-        // Ability to track versions and switch between them
-        // See http://code.zikula.org/core/ticket/2401 for possible future support in the Zikula core
-        $auditLog = new Doctrine_Template_Versionable(array(
-                'versionColumn' => '«versionableField.formatForDB()»',
-                'className' => '%CLASS%Version',
-                // turn «IF versionableHistory»on«ELSE»off«ENDIF» the audit log history
-                'auditLog' => «versionableHistory.displayBool()»
-            )
-        );
-«ENDIF-»
-«IF sluggable-»
-        // Automatic permalink generation
-        // See http://code.zikula.org/core/ticket/2401 for possible future support in the Zikula core
-        $slug = new Doctrine_Template_Sluggable(array(
-«IF sluggableFieldName != null && sluggableFieldName != ""-»
-                'name'      => '«sluggableFieldName.formatForDB()»',
-«ENDIF-»
-«IF sluggableFieldAlias != null && sluggableFieldAlias != ""-»
-                'alias'     => '«sluggableFieldAlias.formatForDB()»',
-«ENDIF-»
-                'type'      => 'string',
-                'unique'    => «sluggableUnique.displayBool()»,
-                'fields'    => array('«sluggableFields.replaceAll(", ", "', '")»'),
-                'canUpdate' => «sluggableCanUpdate.displayBool()»
-            )
-        );
-«ENDIF-»
 «IF hasTranslatableFields()-»
         // Internationalisation (content in multiple language)
         // See http://code.zikula.org/core/ticket/2401 for possible future support in the Zikula core
@@ -654,34 +628,12 @@ class «implClassModelRefEntity()» extends «baseClassModelRefEntity()»
                 'length'    => 2
             )
         );
-«ENDIF-»
 
-«IF hasTranslatableFields()-»
-«IF loggable || sluggable || searchable-»
-        $i18n
-«IF loggable»->addChild($auditLog)«ENDIF»
-«IF searchable»->addChild($search)«ENDIF»
-«IF sluggable»->addChild($slug)«ENDIF»;
-«ENDIF-»
-«IF searchable-»
-        // TODO: seems like i18n and Searchable can't work together in Doctrine 1.x
-«ENDIF-»
         $this->actAs($i18n);
-«ELSE-»
-«IF loggable-»
-        $this->actAs($auditLog);
-«ENDIF-»
-«IF searchable-»
-        // $this->actAs($search);
-        // TODO: reenable search behavior (see http://code.zikula.org/generator/ticket/91 for more information)
-«ENDIF-»
-«IF sluggable-»
-        $this->actAs($slug);
-«ENDIF-»
 «ENDIF-»
 
-«IF tree > 0-»
-        // Nested set for hierarchical data structures
+«IF tree != EntityTreeType::NONE-»
+        // Tree for hierarchical data structures
         $this->actAs('NestedSet', array(
                 'hasManyRoots' => «nestedSetHasManyRoots.displayBool()»,
                 'rootColumnName' => '«nestedSetRootField.formatForDB()»'
@@ -708,29 +660,6 @@ class «implClassModelRefEntity()» extends «baseClassModelRefEntity()»
            ),
         ));
         $this->actAs($geographical0);
-«ENDIF-»
-«IF timestampable-»
-        // Automatic timestamp creations
-        $this->actAs('Timestampable', array(
-                'created' => array(
-«IF timestampableEnableCreated-»
-                    'name' => '«timestampableFieldCreated.formatForDB()»',
-                    'type' => 'timestamp'
-«ELSE-»
-                    'disabled' => true
-«ENDIF-»
-                ),
-                'updated' => array(
-«IF timestampableEnableUpdated-»
-                    'name' => '«timestampableFieldUpdated.formatForDB()»',
-                    'type' => 'timestamp',
-                    'onInsert' => true
-«ELSE-»
-                    'disabled' => true
-«ENDIF-»
-                )
-            )
-        );
 «ENDIF-»
 
 «EXPAND ObjectExtensions-»

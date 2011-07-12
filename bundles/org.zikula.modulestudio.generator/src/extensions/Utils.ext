@@ -81,7 +81,7 @@ cached getTranslatableEntities(Application this) :
 cached boolean hasTrees(Application this) :
     !getTreeEntities().isEmpty;
 cached getTreeEntities(Application this) :
-    models.entities.select(e|e.tree > 0);
+    models.entities.select(e|e.tree != EntityTreeType::NONE);
 
 
 cached boolean hasEditActions(Application this) :
@@ -175,7 +175,7 @@ cached getSortableFields(Entity this) :
 cached boolean hasTimestampableFields(Entity this) :
     !getTimestampableFields().isEmpty;
 cached getTimestampableFields(Entity this) :
-    fields.typeSelect(IntegerField).select(e|e.timestampable > 0);
+    fields.typeSelect(AbstractDateField).select(e|e.timestampable != EntityTimestampableType::NONE);
 
 cached boolean hasTranslatableFields(Entity this) :
     !getTranslatableFields().isEmpty;
@@ -206,6 +206,19 @@ cached String asConstant(EntityChangeTrackingPolicy policy) :
         case EntityChangeTrackingPolicy::DEFERRED_EXPLICIT      : 'DEFERRED_EXPLICIT'
         case EntityChangeTrackingPolicy::NOTIFY                 : 'NOTIFY'
         default: 'DEFERRED_IMPLICIT'
+    };
+cached String asConstant(EntitySlugStyle slugStyle) :
+    switch (slugStyle) {
+        case EntitySlugStyle::LOWERCASE                : 'default'
+        case EntitySlugStyle::CAMEL                    : 'camel'
+        default: 'default'
+    };
+cached String asConstant(EntityTimestampableType tsType) :
+    switch (tsType) {
+        case EntityTimestampableType::UPDATE            : 'update'
+        case EntityTimestampableType::CREATE            : 'create'
+        case EntityTimestampableType::CHANGE            : 'change'
+        default: 'update'
     };
 cached String asConstant(RelationFetchType fetchType) :
     switch (fetchType) {

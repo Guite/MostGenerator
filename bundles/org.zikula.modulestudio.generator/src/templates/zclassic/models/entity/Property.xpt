@@ -36,9 +36,7 @@
 «REM»TODO«ENDREM»
      * @ORM\GeneratedValue«REM»(strategy="AUTO")«ENDREM»
 «ENDIF-»
-«REM»
-     * @Gedmo\Sluggable
-«ENDREM»
+«EXPAND Extensions::ColumnExtensions-»
      * @ORM\Column(«EXPAND PersistentPropertyImpl(type)»«IF unique-», unique=true«ENDIF-»«IF nullable-» nullable=true«ENDIF-»)
      * @var «type» $«name».
      */
@@ -52,7 +50,7 @@ type="«type»"
 «DEFINE PersistentPropertyImpl(String type) FOR DecimalField»
 type="«type»", precision=«length», scale=«scale»
 «ENDDEFINE»
-«DEFINE PersistentPropertyImpl(String type) FOR StringField-»
+«DEFINE PersistentPropertyImpl(String type) FOR AbstractStringField-»
 «REM»type="«type»", «ENDREM»length=«length»
 «ENDDEFINE»
 

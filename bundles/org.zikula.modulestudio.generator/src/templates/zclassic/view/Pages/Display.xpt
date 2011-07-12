@@ -132,13 +132,13 @@
             {gt text='Edit'}
         </a>
 «ENDIF-»
-«IF tree > 0-»
+«IF tree != EntityTreeType::NONE-»
     {*
 «ENDIF-»
         <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»' astemplate=$«objName».«idField()»}" title="{gt text='Reuse for new item'}" class="z-icon-es-saveas">
             {gt text='Reuse'}
         </a>
-«IF tree > 0-»
+«IF tree != EntityTreeType::NONE-»
     *}
 «ENDIF-»
     {/checkpermissionblock}

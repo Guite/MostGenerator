@@ -1,0 +1,77 @@
+«IMPORT modulestudio»
+«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+
+«DEFINE Imports FOR Entity-»
+use Gedmo\Mapping\Annotation as Gedmo;
+«ENDDEFINE»
+
+«REM»Class annotations«ENDREM»
+«DEFINE ClassExtensions FOR Entity»
+«IF loggable-»
+     * @Gedmo:Loggable«IF loggableLogEntryClass != null && loggableLogEntryClass != ""»(logEntryClass="«loggableLogEntryClass.formatForCodeCapital()»")«ENDIF-»
+«ENDIF-»
+«ENDDEFINE»
+
+«REM»Column annotations«ENDREM»
+«DEFINE ColumnExtensionsDefault FOR DerivedField»
+«IF versioned-»
+     * @Gedmo:Versioned
+«ENDIF-»
+«IF sluggablePosition > 0-»
+     * @Gedmo:Sluggable(position=«sluggablePosition»)
+«ENDIF-»
+«IF sortableGroup-»
+     * @Gedmo\SortableGroup
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE ColumnExtensions FOR DerivedField»
+«EXPAND ColumnExtensionsDefault-»
+«ENDDEFINE»
+«DEFINE ColumnExtensions FOR AbstractIntegerField»
+«EXPAND ColumnExtensionsDefault-»
+«IF sortablePosition > 0-»
+     * @Gedmo\SortablePosition
+«ENDIF-»
+«ENDDEFINE»
+«DEFINE ColumnExtensions FOR AbstractDateField»
+«EXPAND ColumnExtensionsDefault-»
+«IF timestampable != EntityTimestampableType::NONE-»
+     * @Gedmo:Timestampable(on="«timestampable.asConstant()»"«EXPAND TimestampableDetails-»)
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE TimestampableDetails FOR AbstractDateField»
+«IF timestampable == EntityTimestampableType::CHANGE-»
+field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableChangeTriggerValue-», value="«timestampableChangeTriggerValue.formatForCode()»"«ENDIF-»
+«ENDIF-»
+«ENDDEFINE»
+
+«REM»Additional column definitions«ENDREM»
+«DEFINE AdditionalProperties FOR Entity-»
+«IF hasSluggableFields()-»
+
+    /**
+     * @gedmo:Slug(style="«slugStyle.asConstant()»"«ENDIF-»separator="«slugSeparator»"«IF !slugUnique-», unique=false«ENDIF-»«IF !slugUpdatable-», updatable=false«ENDIF-»)
+     * @Column(name="slug", type="string", length=«slugLength»«IF !slugUnique-», unique=false«ENDIF-»)
+     */
+    private $slug;
+«ENDIF-»
+«ENDDEFINE»
+
+«REM»Association annotations«ENDREM»
+«DEFINE RelationExtensions(Boolean useTarget) FOR JoinRelationship»
+«ENDDEFINE»
+«DEFINE RelationExtensions(Boolean useTarget) FOR OneToOneRelationship»
+«IF versioned-»
+     * @Gedmo:Versioned
+«ENDIF-»
+«ENDDEFINE»
+«DEFINE RelationExtensions(Boolean useTarget) FOR ManyToOneRelationship»
+«IF useTarget && versioned-»
+     * @Gedmo:Versioned
+«ENDIF-»
+«ENDDEFINE»

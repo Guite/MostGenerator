@@ -36,19 +36,19 @@ listType:
 
 «IF controller.hasActions('edit')-»
     {checkpermissionblock component='«appName»::' instance='.*' level="ACCESS_ADD"}
-«IF tree > 0-»
+«IF tree != EntityTreeType::NONE-»
     {*
 «ENDIF-»
         {gt text='Create «name.formatForDisplay()»' assign='createTitle'}
         <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»'}" title="{$createTitle}" class="z-icon-es-add">
             {$createTitle}
         </a>
-«IF tree > 0-»
+«IF tree != EntityTreeType::NONE-»
     *}
 «ENDIF-»
     {/checkpermissionblock}
 «ENDIF»
-«IF tree > 0-»
+«IF tree != EntityTreeType::NONE-»
         {gt text='Switch to hierarchy view' assign='switchTitle'}
         <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«objName»' tpl='tree'}" title="{$switchTitle}" class="z-icon-es-view">
             {$switchTitle}
@@ -332,13 +332,13 @@ listType:
                 {icon type='edit' size='extrasmall' __alt='Edit'}
             </a>
 «ENDIF-»
-«IF tree > 0-»
+«IF tree != EntityTreeType::NONE-»
     {*
 «ENDIF-»
             <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»' astemplate=$«objName».«idField()»}" title="{gt text='Reuse for new item'}">
                 {icon type='saveas' size='extrasmall' __alt='Reuse'}
             </a>
-«IF tree > 0-»
+«IF tree != EntityTreeType::NONE-»
     *}
 «ENDIF-»
     {/checkpermissionblock}
