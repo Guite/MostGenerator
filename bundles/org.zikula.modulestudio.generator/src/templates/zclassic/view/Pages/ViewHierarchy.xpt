@@ -31,10 +31,8 @@
 <p>
 «IF controller.hasActions('edit')-»
     {checkpermissionblock component='«appName»::' instance='.*' level="ACCESS_ADD"}
-    {if $useMultipleRoots || !isset($items) || !is_object($items) || $items->count() eq 0}
         {gt text='Add root node' assign='addRootTitle'}
         <a id="z-tree-addroot" href="javascript:void(0)" title="{$addRootTitle}" style="display: none" class="z-icon-es-add">{$addRootTitle}</a>
-    {/if}
     {*
         {gt text='Create «name.formatForDisplay()»' assign='createTitle'}
         <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»'}" title="{$createTitle}" class="z-icon-es-add">
@@ -49,15 +47,12 @@
         </a>
 </p>
 
-{if $useMultipleRoots}
     {foreach key='rootId' item='treeNodes' from=$trees}
         {include file='«controller.name()»/«name.formatForDB()»/view_tree_items.tpl' rootId=$rootId items=$treeNodes}
     {foreachelse}
         {include file='«controller.name()»/«name.formatForDB()»/view_tree_items.tpl' rootId=1 items=null}
     {/foreach}
-{else}
-    {include file='«controller.name()»/«name.formatForDB()»/view_tree_items.tpl' rootId=1 items=$items}
-{/if}
+
 <br style="clear: left" />
 
 «IF controller.metaType == AdminController-»

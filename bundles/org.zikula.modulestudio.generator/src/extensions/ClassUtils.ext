@@ -46,6 +46,14 @@ cached String baseClassModelListener(Entity obj)
     : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Listener")));
 cached String implClassModelListener(Entity obj)
     : implClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Listener")));
+cached String baseClassModelValidator(Entity obj)
+    : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Validator")));
+cached String implClassModelValidator(Entity obj)
+    : implClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Validator")));
+cached String baseClassModelClosure(Entity obj)
+    : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Closure")));
+cached String implClassModelClosure(Entity obj)
+    : implClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Closure")));
 
 cached String baseClassModelRefEntity(ManyToManyRelationship obj)
     : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.refClass));
@@ -55,10 +63,6 @@ cached String baseClassModelRefRepository(ManyToManyRelationship obj)
     : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.refClass.msconcat("Repository")));
 cached String implClassModelRefRepository(ManyToManyRelationship obj)
     : implClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.refClass.msconcat("Repository")));
-cached String baseClassModelValidator(Entity obj)
-    : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Validator")));
-cached String implClassModelValidator(Entity obj)
-    : implClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Validator")));
 
 /** Controller */
 cached String baseClassController(Controller obj)

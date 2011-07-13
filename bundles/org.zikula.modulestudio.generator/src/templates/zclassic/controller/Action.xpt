@@ -105,15 +105,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
         $tpl = $this->request->getGet()->filter('tpl', '', FILTER_SANITIZE_STRING);
         if ($tpl == 'nestedSet') {
-            $useMultipleRoots = method_exists($repository, 'selectAllTrees');
-            $this->view->assign('useMultipleRoots', $useMultipleRoots);
-            if ($useMultipleRoots) {
-                $this->view->assign('trees', $repository->selectAllTrees());
-            }
-            else {
-                $this->view->assign('items', $repository->selectTree());
-            }
-
+            $this->view->assign('trees', $repository->selectAllTrees());
             // fetch and return the appropriate template
             return «appName»_Util_View::processTemplate($this->view, '«controller.name()»', $objectType, 'view', $args);
         }

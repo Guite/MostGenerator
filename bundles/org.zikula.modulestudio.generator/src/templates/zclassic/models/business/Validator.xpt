@@ -63,7 +63,7 @@ class «implClassBusinessValidator()» extends «IF isInheriting()»«parentType
 «EXPAND checkForUniqueSlugValues(app)-»
 «ENDIF-»
 
-«EXPAND FileHelper::GetterAndSetterMethods('entity', implClassModelEntity())»
+«EXPAND FileHelper::GetterAndSetterMethods('entity', implClassModelEntity(), true, 'null')»
 «ENDDEFINE»
 
 «DEFINE checkForUniqueValues(Application app) FOR DerivedField-»

@@ -273,7 +273,7 @@
         return new Zikula_Response_Ajax(array('isDuplicate' => $result));
     }
 «ENDIF-»
-«IF app.hasNestedSets()-»
+«IF app.hasTrees()-»
 
     /**
      * Performs different operations on nested set trees.
@@ -321,8 +321,7 @@
         $repository = $this->entityManager->getRepository($entityClass);
 
         $rootId = 1;
-        $useMultipleRoots = method_exists($repository, 'selectAllTrees');
-        if ($useMultipleRoots && !in_array($op, array('addRootNode'))) {
+        if (!in_array($op, array('addRootNode'))) {
             $rootId = (int) $this->request->getPost()->filter('root', 0, FILTER_VALIDATE_INT);
             if (!$rootId) {
                 LogUtil::registerError($this->__('Error: invalid root node.'));
@@ -336,10 +335,20 @@
             $tree = $repository->selectTree($rootId);
         }
 
+        // verification and recovery of tree
+        $verificationResult = $repository->verify();
+        if (is_array($verificationResult)) {
+            foreach ($verificationResult as $errorMsg) {
+                LogUtil::registerError($errorMsg);
+            }
+        }
+        $repository->recover();
+        $this->entityManager->clear(); // clear cached nodes
+
         $titleFieldName = $descriptionFieldName = '';
 
         switch ($objectType) {
-«FOREACH app.getNestedSetEntities() AS entity-»
+«FOREACH app.getTreeEntities() AS entity-»
                 case '«entity.name.formatForCode()»':
                         $titleFieldName = '«entity.getLeadingField().name.formatForCode()»';
 «LET entity.fields.typeSelect(TextField).reject(e|e.leading) AS textFields-»
@@ -369,9 +378,6 @@
                             // save new object to set the root id
                             $this->entityManager->persist($object);
                             $this->entityManager->flush();
-«REM»TODO«ENDREM»
-                            $getterName = 'get' . ucwords($objectType);
-                            $objectCollection->getTreeObject()->createRoot($object->$getterName());
                             break;
             case 'addChildNode':
                             $parentId = (int) $this->request->getPost()->filter('pid', 0, FILTER_VALIDATE_INT);
@@ -387,24 +393,16 @@
                                 $objectData[$descriptionFieldName] = $this->__('This is a new child node');
                             }
                             $childObject->merge($objectData);
-«REM»TODO«ENDREM»
-                            $parentRecord = $object->selectById($parentId, false);
-                            $getterName = 'get' . ucwords($objectType);
-                            $parentRecord->getNode()->addChild($childObject->$getterName());
 
-                            /** alternatives:
-                            $childNode = $childObject->$getterName()->getNode();
-                            $childNode->insertAsLastChildOf($parent);
-                            $childNode->insertAsFirstChildOf($parent);
-                            $childNode->insertAsPrevSiblingOf($sibling);
-                            $childNode->insertAsNextSiblingOf($sibling);
-                            $childNode->insertAsParentOf($anotherNode);
-                            */
+                            //$childObject->setParent($parentRecord);
+                            $parentObject = $object->selectById($parentId, false);
+                            $repository->persistAsLastChildOf($childObject, $parentObject)
                             break;
             case 'deleteNode':
+                            // remove node from tree and reparent all children
                             $record = $repository->selectById($id, false);
-«REM»TODO«ENDREM»
-                            $record->getNode()->delete();
+                            $repository->removeFromTree($record);
+                            $this->entityManager->clear(); // clear cached nodes
                             break;
             case 'moveNode':
                             $moveDirection = $this->request->getPost()->filter('direction', '', FILTER_SANITIZE_STRING);
@@ -414,14 +412,12 @@
                             }
 
                             $record = $repository->selectById($id, false);
-«REM»TODO«ENDREM»
-                            $node = $record->getNode();
 
                             if ($moveDirection == 'up') {
-                                $node->moveAsPrevSiblingOf($node->getPrevSibling());
+                                $repository->moveUp($record, 1);
                             }
                             else if ($moveDirection == 'down') {
-                                $node->moveAsNextSiblingOf($node->getNextSibling());
+                                $repository->moveDown($record, 1);
                             }
 
                             break;
@@ -439,20 +435,16 @@
                             }
 
                             $record = $repository->selectById($id, false);
-«REM»TODO«ENDREM»
-                            $node = $record->getNode();
-
                             $destRecord = $repository->selectById($destId, false);
 
                             if ($moveDirection == 'after') {
-                                $node->moveAsNextSiblingOf($destRecord);
+                                $repository->persistAsNextSiblingOf($record, $destRecord);
                             }
                             elseif ($moveDirection == 'before') {
-                                $node->moveAsPrevSiblingOf($destRecord);
+                                $repository->persistAsPrevSiblingOf($record, $destRecord);
                             }
                             elseif ($moveDirection == 'bottom') {
-                                //$node->moveAsFirstChildOf($destRecord);
-                                $node->moveAsLastChildOf($destRecord);
+                                $repository->persistAsLastChildOf($record, $destRecord);
                             }
                             break;
         }
@@ -461,7 +453,7 @@
 
         // Renew tree
         /** postponed, for now we do a page reload
-        $returnValue['data'] = $objectCollection->selectTree($rootId);
+        $returnValue['data'] = $repository->selectTree($rootId);
         */
 
         return new Zikula_Response_Ajax($returnValue);

@@ -22,14 +22,18 @@
 «REM»base implementation«ENDREM»
 «DEFINE ModelRepositoryBaseImpl(Application app) FOR Entity-»
 
+«IF tree != EntityTreeType::NONE-»
+use Gedmo\Tree\Entity\Repository\«tree.asConstant().toFirstUpper()»TreeRepository;
+«ELSE-»
 use Doctrine\ORM\EntityRepository;
+«ENDIF-»
 
 /**
  * Repository class used to implement own convenience methods for performing certain DQL queries.
  *
  * This is the base repository class for «name.formatForDisplay()» entities.
  */
-class «baseClassModelRepository()» extends EntityRepository
+class «baseClassModelRepository()» extends «IF tree != EntityTreeType::NONE-»«tree.asConstant().toFirstUpper()»TreeRepository«ELSE-»EntityRepository«ENDIF-»
 {
     /**
      * Hook into the constructor process.
@@ -338,20 +342,18 @@ interface Doctrine\Common\Persistence\ObjectRepository.
 «DEFINE TranslationArrayPart FOR DerivedField-»'«name.formatForCode()-»'«ENDDEFINE»
 
 «DEFINE TreeMethods(Application app) FOR Entity-»
-«IF nestedSet-»
+«IF tree != EntityTreeType::NONE-»
 
     /**
      * Select tree of «nameMultiple.formatForCode()».
      *
-«IF nestedSetHasManyRoots-»
      * @param integer $rootId   Optional id of root node to use as a branch, defaults to 0 which corresponds to the whole tree.
-«ENDIF-»
      * @param boolean $asArray  Whether to return the result as array instead as record object (optional) (default=true).
      * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
      *
      * @return array|Doctrine_Doctrine_Tree_NestedSet retrieved data array or tree objects containing retrieved Doctrine_Node_NestedSet instances.
      */
-    public function selectTree(«IF nestedSetHasManyRoots-»$rootId = 0, «ENDIF»$asArray = false, $useJoins = true)
+    public function selectTree($rootId = 0, $asArray = false, $useJoins = true)
     {
         // get reference to tree object
         $treeObject = $this->getTree();
@@ -363,7 +365,6 @@ interface Doctrine\Common\Persistence\ObjectRepository.
         $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
         $result = null;
 
-«IF nestedSetHasManyRoots-»
         // return branch if we have given a certain root
         if ($rootId > 0) {
             $root = $treeObject->fetchRoot($rootId);
@@ -377,10 +378,6 @@ interface Doctrine\Common\Persistence\ObjectRepository.
             // otherwise return the whole tree
             $result = $treeObject->fetchTree(array(), $fetchType);
         }
-«ELSE-»
-        // return the whole tree
-        $result = $treeObject->fetchTree(array(), $fetchType);
-«ENDIF-»
 
         if ($useJoins === true) {
             $treeObject->resetBaseQuery();
@@ -388,8 +385,6 @@ interface Doctrine\Common\Persistence\ObjectRepository.
 
         return $result;
     }
-
-«IF nestedSetHasManyRoots-»
 
     /**
      * Select all trees at once.
@@ -422,7 +417,6 @@ interface Doctrine\Common\Persistence\ObjectRepository.
 
         return $trees;
     }
-«ENDIF-»
 «ENDIF-»
 «ENDDEFINE»
 
@@ -502,8 +496,8 @@ class «baseClassModelRefRepository()» extends EntityRepository
 {
     public function truncateTable()
     {
-        $q = Doctrine_Query::create()
-            ->delete('«implClassModelRefRecord()»');
+        $q = $this->getEntityManager()
+            ->createQuery('DELETE «implClassModelRefEntity()»');
         $q->execute();
     }
 }

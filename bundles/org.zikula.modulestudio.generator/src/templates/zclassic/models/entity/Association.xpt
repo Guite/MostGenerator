@@ -198,7 +198,7 @@
 «DEFINE RelationAccessor(Boolean useTarget) FOR JoinRelationship»
 «LET getRelationAliasName(useTarget) AS relationAliasName-»
 «LET ((useTarget) ? target : source).implClassModelEntity() AS entityClass-»
-«EXPAND FileHelper::GetterAndSetterMethods(relationAliasName, entityClass)»
+«EXPAND FileHelper::GetterAndSetterMethods(relationAliasName, entityClass, true, 'null')»
 «ENDLET-»
 «ENDLET-»
 «ENDDEFINE»

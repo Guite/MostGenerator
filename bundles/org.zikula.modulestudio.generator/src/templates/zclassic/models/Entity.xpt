@@ -9,6 +9,10 @@
     «EXPAND Root(this) FOREACH models.entities-»
 «REM»    «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»«ENDREM»
     «EXPAND business::Validator::BusinessValidatorWrapper(this) FOREACH models.entities-»
+«IF hasTrees()-»
+«FOREACH getTreeEntities() AS treeEntity-»
+«EXPAND entity::Extensions::ClosureClass FOR treeEntity-»
+«ENDFOREACH-»
 «ENDDEFINE»
 
 «REM»creates a entity class file for every Entity instance«ENDREM»
@@ -132,10 +136,10 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «EXPAND entity::Association::InitCollections-»
     }
 
-«EXPAND FileHelper::GetterAndSetterMethods('_objectType', 'string')»
-«EXPAND FileHelper::GetterAndSetterMethods('_idField', 'string')»
-«EXPAND FileHelper::GetterAndSetterMethods('_validator', implClassBusinessValidator())»
-«EXPAND FileHelper::GetterAndSetterMethods('_hasUniqueSlug', 'boolean')»
+«EXPAND FileHelper::GetterAndSetterMethods('_objectType', 'string', false, '')»
+«EXPAND FileHelper::GetterAndSetterMethods('_idField', 'string', false, '')»
+«EXPAND FileHelper::GetterAndSetterMethods('_validator', implClassBusinessValidator(), true, 'null')»
+«EXPAND FileHelper::GetterAndSetterMethods('_hasUniqueSlug', 'boolean', false, '')»
 «IF hasNotifyPolicy()-»
 
     /**
@@ -167,6 +171,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «ENDREM»
 
 «EXPAND entity::Property::FieldAccessor FOREACH fields.typeSelect(DerivedField)»
+«EXPAND entity::Extensions::AdditionalAccessors-»
 «EXPAND entity::Association::RelationAccessor(false) FOREACH incoming.typeSelect(JoinRelationship)»
 «EXPAND entity::Association::RelationAccessor(true) FOREACH outgoing.typeSelect(JoinRelationship)»
 
@@ -406,17 +411,15 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
     /**
      * Select tree of «nameMultiple.formatForCode()».
      *
-«REM»«IF nestedSetHasManyRoots-»«ENDREM»
      * @param integer $rootId         Optional id of root node to use as a branch, defaults to 0 which corresponds to the whole tree.
-«REM»«ENDIF-»«ENDREM»
      * @param boolean $asArray        Whether to return the result as array instead as record object (optional) (default=true).
      *
      * @return array|Doctrine_Doctrine_Tree_NestedSet retrieved data array or tree objects containing retrieved Doctrine_Node_NestedSet instances.
      */
-    public function selectTree(«REM»«IF nestedSetHasManyRoots-»«ENDREM»$rootId = 0, «REM»«ENDIF»«ENDREM»$asArray = false)
+    public function selectTree($rootId = 0, $asArray = false)
     {
         // get result from the model
-        $tree = $this->_intTable()->selectTree(«REM»«IF nestedSetHasManyRoots-»«ENDREM»$rootId, «REM»«ENDIF»«ENDREM»$asArray);
+        $tree = $this->_intTable()->selectTree($rootId, $asArray);
 «IF hasTranslatableFields()-»
 
         // process additions
@@ -425,8 +428,6 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 
         return $tree;
     }
-
-«REM»«IF nestedSetHasManyRoots-»«ENDREM»
 
     /**
      * Select all trees at once.
@@ -448,17 +449,6 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «ENDIF-»
 
         return $trees;
-    }
-«REM»«ENDIF-»«ENDREM»
-
-    /**
-     * Get tree object for managing the nested set.
-     *
-     * @return Doctrine_Doctrine_Tree_NestedSet tree object reference.
-     */
-    public function getTreeObject()
-    {
-        return $this->_intTable()->getTree();
     }
 «ENDIF-»
 «IF hasTranslatableFields()-»
@@ -500,9 +490,9 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
         );
     }
 
-«EXPAND FileHelper::GetterAndSetterMethods('_where', 'string')»
-«EXPAND FileHelper::GetterAndSetterMethods('_orderBy', 'string')»
-«EXPAND FileHelper::GetterAndSetterMethods('_defaultSortingField', 'string')»
+«EXPAND FileHelper::GetterAndSetterMethods('_where', 'string', false, '')»
+«EXPAND FileHelper::GetterAndSetterMethods('_orderBy', 'string', false, '')»
+«EXPAND FileHelper::GetterAndSetterMethods('_defaultSortingField', 'string', false, '')»
 
 «ENDDEFINE»
 
@@ -632,14 +622,6 @@ class «implClassModelRefEntity()» extends «baseClassModelRefEntity()»
         $this->actAs($i18n);
 «ENDIF-»
 
-«IF tree != EntityTreeType::NONE-»
-        // Tree for hierarchical data structures
-        $this->actAs('NestedSet', array(
-                'hasManyRoots' => «nestedSetHasManyRoots.displayBool()»,
-                'rootColumnName' => '«nestedSetRootField.formatForDB()»'
-            )
-        );
-«ENDIF-»
 «IF geographical-»
         // Coordinate fields and distance calculation
         // See http://code.zikula.org/core/ticket/2401 for possible future support in the Zikula core

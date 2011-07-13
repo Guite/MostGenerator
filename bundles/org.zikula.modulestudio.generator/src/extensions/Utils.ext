@@ -220,6 +220,13 @@ cached String asConstant(EntityTimestampableType tsType) :
         case EntityTimestampableType::CHANGE            : 'change'
         default: 'update'
     };
+cached String asConstant(EntityTreeType treeType) :
+    switch (treeType) {
+        case EntityTreeType::NONE                       : ''
+        case EntityTreeType::NESTED                     : 'nested'
+        case EntityTreeType::CLOSURE                    : 'closure'
+        default: ''
+    };
 cached String asConstant(RelationFetchType fetchType) :
     switch (fetchType) {
         case RelationFetchType::LAZY                    : 'LAZY'

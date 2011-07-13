@@ -28,9 +28,9 @@
 «ENDDEFINE»
 
 
-«DEFINE GetterAndSetterMethods(String name, String type) FOR Object-»
+«DEFINE GetterAndSetterMethods(String name, String type, Boolean useHint, String init) FOR Object-»
 «EXPAND GetterMethod(name, type)»
-«EXPAND SetterMethod(name, type)»
+«EXPAND SetterMethod(name, type, useHint, init)»
 «ENDDEFINE»
 
 «DEFINE GetterMethod(String name, String type) FOR Object-»
@@ -45,7 +45,7 @@
     }
 «ENDDEFINE»
 
-«DEFINE SetterMethod(String name, String type) FOR Object-»
+«DEFINE SetterMethod(String name, String type, Boolean useHint, String init) FOR Object-»
     /**
      * Set «name.formatForDisplay()».
      *
@@ -53,7 +53,7 @@
      *
      * @return void
      */
-    public function set«name.toFirstUpper()»($p«name.toFirstUpper()»)
+    public function set«name.toFirstUpper()»(«IF useHint-»«type» «ENDIF-»$p«name.toFirstUpper()»«IF init != ''-» = «init»«ENDIF-»)
     {
 «EXPAND SetterMethodImpl(name, type)-»
     }

@@ -81,24 +81,19 @@
 «FOREACH getDerivedFields().reject(e|e.primaryKey || e.metaType == ArrayField || e.metaType == ObjectField) AS field-»
 «REM»No input fields for foreign keys, relations are processed further down«ENDREM»«""-»
 «IF incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == field.name.formatForDB()).isEmpty-»
-«REM»No input fields for root column if using nested sets with multiple roots«ENDREM»
-«IF !nestedSet || !nestedSetHasManyRoots || field.name != nestedSetRootField-»
         <div class="z-formrow">
             «EXPAND FormComponents::SimpleFields::FormRow FOR field»«""-»
         </div>
 «ENDIF-»
-«ENDIF-»
 «ENDFOREACH-»
-«IF sluggable && sluggableCanUpdate-»
-«LET sluggableFieldRealName() AS sluggableFieldRealName-»
+«IF hasSluggableFields() && slugUpdatable-»
         <div class="z-formrow">
-            {formlabel for='«sluggableFieldRealName»' __text='Permalink'}
-            {formtextinput group='«name.formatForDB()»' id='«sluggableFieldRealName»' mandatory=false readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay()» or let this field free to create one automatically' textMode='singleline' maxLength=255«IF sluggableUnique-» cssClass='validate-unique'«ENDIF-»}
-«IF sluggableUnique-»
-            {«app.appName().formatForDB()»ValidationError id='«sluggableFieldRealName»' class='validate-unique'}
+            {formlabel for='slug' __text='Permalink'}
+            {formtextinput group='«name.formatForDB()»' id='slug' mandatory=false readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay()» or let this field free to create one automatically' textMode='singleline' maxLength=255«IF slugUnique-» cssClass='validate-unique'«ENDIF-»}
+«IF slugUnique-»
+            {«app.appName().formatForDB()»ValidationError id='slug' class='validate-unique'}
 «ENDIF-»
         </div>
-«ENDLET-»
 «ENDIF-»
 «IF geographical-»
 «FOREACH {'latitude', 'longitude'} AS geoFieldName-»

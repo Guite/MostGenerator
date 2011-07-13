@@ -23,9 +23,9 @@ var currentNodeId = 0;
 /**
  * Initialise tree view.
  */
-function «prefix()»InitTreeView(ot, hasNodes, useMultipleRoots)
+function «prefix()»InitTreeView(ot, hasNodes)
 {
-    if (!hasNodes || (useMultipleRoots && $('z-tree-addroot'))) {
+    if (!hasNodes || $('z-tree-addroot')) {
         $('z-tree-addroot').observe('click', function(event) {
             «prefix()»PerformTreeOperation(ot, 1, 'addRootNode');
             Event.stop(event);

@@ -13,15 +13,25 @@ use Gedmo\Mapping\Annotation as Gedmo;
 «IF loggable-»
      * @Gedmo:Loggable«IF loggableLogEntryClass != null && loggableLogEntryClass != ""»(logEntryClass="«loggableLogEntryClass.formatForCodeCapital()»")«ENDIF-»
 «ENDIF-»
+«IF tree != EntityTreeType::NONE-»
+     * @Gedmo\Tree(type="«tree.asConstant()»")
+«IF tree == EntityTreeType::CLOSURE-»
+«REM»
+This annotation forces to specify the closure domain object, which must extend AbstractClosure
+in order to have personal closures.
+     * @Gedmo\TreeClosure(class="Entity\CategoryClosure")
+«ENDREM»
+«ENDIF-»
+«ENDIF-»
 «ENDDEFINE»
 
 «REM»Column annotations«ENDREM»
 «DEFINE ColumnExtensionsDefault FOR DerivedField»
 «IF versioned-»
-     * @Gedmo:Versioned
+     * @Gedmo\Versioned
 «ENDIF-»
 «IF sluggablePosition > 0-»
-     * @Gedmo:Sluggable(position=«sluggablePosition»)
+     * @Gedmo\Sluggable(position=«sluggablePosition»)
 «ENDIF-»
 «IF sortableGroup-»
      * @Gedmo\SortableGroup
@@ -40,7 +50,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 «DEFINE ColumnExtensions FOR AbstractDateField»
 «EXPAND ColumnExtensionsDefault-»
 «IF timestampable != EntityTimestampableType::NONE-»
-     * @Gedmo:Timestampable(on="«timestampable.asConstant()»"«EXPAND TimestampableDetails-»)
+     * @Gedmo\Timestampable(on="«timestampable.asConstant()»"«EXPAND TimestampableDetails-»)
 «ENDIF-»
 «ENDDEFINE»
 
@@ -55,10 +65,62 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
 «IF hasSluggableFields()-»
 
     /**
-     * @gedmo:Slug(style="«slugStyle.asConstant()»"«ENDIF-»separator="«slugSeparator»"«IF !slugUnique-», unique=false«ENDIF-»«IF !slugUpdatable-», updatable=false«ENDIF-»)
-     * @Column(name="slug", type="string", length=«slugLength»«IF !slugUnique-», unique=false«ENDIF-»)
+     * @Gedmo\Slug(style="«slugStyle.asConstant()»"«ENDIF-»separator="«slugSeparator»"«IF !slugUnique-», unique=false«ENDIF-»«IF !slugUpdatable-», updatable=false«ENDIF-»)
+     * @ORM\Column(type="string", length=«slugLength»«IF !slugUnique-», unique=false«ENDIF-»)
+     * @var string $slug.
      */
-    private $slug;
+    protected $slug;
+«ENDIF-»
+«IF tree != EntityTreeType::NONE-»
+
+    /**
+     * @Gedmo\TreeLeft
+     * @ORM\Column(type="integer")
+     * @var integer $lft.
+     */
+    protected $lft;
+
+    /**
+     * @Gedmo\TreeLevel
+     * @ORM\Column(type="integer")
+     * @var integer $lvl.
+     */
+    protected $lvl;
+
+    /**
+     * @Gedmo\TreeRight
+     * @ORM\Column(type="integer")
+     * @var integer $rgt.
+     */
+    protected $rgt;
+
+    /**
+     * @Gedmo\TreeRoot
+     * @ORM\Column(type="integer", nullable=true)
+     * @var integer $root.
+     */
+    protected $root;
+
+    /**
+     * @Gedmo\TreeParent
+     * @ORM\ManyToOne(targetEntity="«implClassModelEntity()»", inversedBy="children")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="«idField()»", onDelete="SET NULL")
+     * @var «implClassModelEntity()» $parent.
+     */
+    protected $parent;
+
+    /**
+     * @ORM\OneToMany(targetEntity="«implClassModelEntity()»", mappedBy="parent")
+     * @ORM\OrderBy({"lft" = "ASC"})
+     * @var «implClassModelEntity()» $children.
+     */
+    protected $children;
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE AdditionalAccessors FOR Entity-»
+«IF tree != EntityTreeType::NONE-»
+«EXPAND FileHelper::GetterAndSetterMethods('parent', implClassModelEntity(), true, 'null') FOR Object-»
 «ENDIF-»
 «ENDDEFINE»
 
@@ -67,11 +129,48 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
 «ENDDEFINE»
 «DEFINE RelationExtensions(Boolean useTarget) FOR OneToOneRelationship»
 «IF versioned-»
-     * @Gedmo:Versioned
+     * @Gedmo\Versioned
 «ENDIF-»
 «ENDDEFINE»
 «DEFINE RelationExtensions(Boolean useTarget) FOR ManyToOneRelationship»
 «IF useTarget && versioned-»
-     * @Gedmo:Versioned
+     * @Gedmo\Versioned
 «ENDIF-»
+«ENDDEFINE»
+
+«REM»closure domain object«ENDREM»
+«DEFINE ClosureClass(Application app) FOR Entity-»
+«IF !isInheriting()-»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModelClosure().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ClosureObjectBaseImpl(app)»«ENDFILE»
+«ENDIF-»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassModelClosure().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ClosureObjectImpl(app)»«ENDFILE»
+«ENDDEFINE»
+
+«REM»base implementation«ENDREM»
+«DEFINE ClosureObjectBaseImpl(Application app) FOR Entity-»
+
+use Gedmo\Tree\Entity\AbstractClosure;
+
+/**
+ * Closure domain object class allowing personal closures.
+ *
+ * This is the base closure class for «name.formatForDisplay()» entities.
+ */
+class «baseClassModelClosure()» extends AbstractClosure
+{
+}
+«ENDDEFINE»
+
+«REM»concrete implementation stub«ENDREM»
+«DEFINE ClosureObjectImpl(Application app) FOR Entity-»
+
+/**
+ * Closure domain object class allowing personal closures.
+ *
+ * This is the concrete closure class for «name.formatForDisplay()» entities.
+ */
+class «implClassModelClosure()» extends «IF isInheriting()»«parentType().implClassModelClosure()»«ELSE»«baseClassModelClosure()»«ENDIF»
+{
+    // feel free to add your own methods here
+}
 «ENDDEFINE»

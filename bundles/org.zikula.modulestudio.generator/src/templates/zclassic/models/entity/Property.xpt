@@ -90,7 +90,7 @@ type="«type»", precision=«length», scale=«scale»
 
 
 «DEFINE FieldAccessorDefault FOR DerivedField»
-«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode(), fieldTypeAsString())»
+«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode(), fieldTypeAsString(), false, '')»
 «ENDDEFINE»
 
 «DEFINE FieldAccessor FOR DerivedField»
@@ -99,5 +99,5 @@ type="«type»", precision=«length», scale=«scale»
 
 «DEFINE FieldAccessor FOR UploadField»
 «EXPAND FieldAccessorDefault»
-«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode().msconcat('Meta'), 'array')»
+«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode().msconcat('Meta'), 'array', false, 'Array')»
 «ENDDEFINE»
