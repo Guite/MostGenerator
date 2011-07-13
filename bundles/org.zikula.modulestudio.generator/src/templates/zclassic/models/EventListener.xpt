@@ -14,9 +14,9 @@
 «info("Generating listener classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «REM»Later: «EXPAND EventListenerMethod FOREACH listeners-»«ENDREM»«""-»
 «IF !isInheriting()-»
-    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModelListener().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelListenerBaseImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModel('listener', '').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelListenerBaseImpl(app)»«ENDFILE»
 «ENDIF-»
-    «FILE getAppSourcePath(app.appName()).msconcat(implClassModelListener().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelListenerImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassModel('listener', '').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelListenerImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
 «REM»base implementation«ENDREM»
@@ -27,7 +27,7 @@
  *
  * This is the base listener class for «name.formatForDisplay()» entities.
  */
-class «baseClassModelListener()» extends Doctrine_Record_Listener
+class «baseClassModel('listener', '')» extends Doctrine_Record_Listener
 {
 «EXPAND stubMethodsForNow-»
 }
@@ -41,7 +41,7 @@ class «baseClassModelListener()» extends Doctrine_Record_Listener
  *
  * This is the concrete listener class for «name.formatForDisplay()» entities.
  */
-class «implClassModelListener()» extends «IF isInheriting()»«parentType().implClassModelListener()»«ELSE»«baseClassModelListener()»«ENDIF»
+class «implClassModel('listener', '')» extends «IF isInheriting()»«parentType().implClassModel('listener', '')»«ELSE»«baseClassModel('listener', '')»«ENDIF»
 {
     // feel free to add your own methods here
 }

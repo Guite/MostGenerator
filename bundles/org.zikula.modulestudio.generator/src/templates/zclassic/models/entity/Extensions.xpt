@@ -11,30 +11,32 @@ use Gedmo\Mapping\Annotation as Gedmo;
 «REM»Class annotations«ENDREM»
 «DEFINE ClassExtensions FOR Entity»
 «IF loggable-»
-     * @Gedmo:Loggable«IF loggableLogEntryClass != null && loggableLogEntryClass != ""»(logEntryClass="«loggableLogEntryClass.formatForCodeCapital()»")«ENDIF-»
+     * @Gedmo\Loggable(logEntryClass="«implClassModel('', 'logEntry')»")«ENDREM»
+«ENDIF-»
+«IF hasTranslatableFields()-»
+     * @Gedmo\TranslationEntity(class="«implClassModel('', 'translation')»")«ENDREM»
 «ENDIF-»
 «IF tree != EntityTreeType::NONE-»
      * @Gedmo\Tree(type="«tree.asConstant()»")
 «IF tree == EntityTreeType::CLOSURE-»
-«REM»
-This annotation forces to specify the closure domain object, which must extend AbstractClosure
-in order to have personal closures.
-     * @Gedmo\TreeClosure(class="Entity\CategoryClosure")
-«ENDREM»
+     * @Gedmo\TreeClosure(class="«implClassModel('', 'closure')»")
 «ENDIF-»
 «ENDIF-»
 «ENDDEFINE»
 
 «REM»Column annotations«ENDREM»
 «DEFINE ColumnExtensionsDefault FOR DerivedField»
-«IF versioned-»
-     * @Gedmo\Versioned
-«ENDIF-»
 «IF sluggablePosition > 0-»
      * @Gedmo\Sluggable(position=«sluggablePosition»)
 «ENDIF-»
 «IF sortableGroup-»
      * @Gedmo\SortableGroup
+«ENDIF-»
+«IF translatable-»
+     * @Gedmo\Translatable
+«ENDIF-»
+«IF versioned-»
+     * @Gedmo\Versioned
 «ENDIF-»
 «ENDDEFINE»
 
@@ -70,6 +72,14 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
      * @var string $slug.
      */
     protected $slug;
+«ENDIF-»
+«IF hasTranslatableFields()-»
+
+    /**
+     * @Gedmo\Locale«REM»the same as @Gedmo\Language«ENDREM»
+     * @var string $locale.
+     */
+    private $locale;
 «ENDIF-»
 «IF tree != EntityTreeType::NONE-»
 
@@ -120,7 +130,10 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
 
 «DEFINE AdditionalAccessors FOR Entity-»
 «IF tree != EntityTreeType::NONE-»
-«EXPAND FileHelper::GetterAndSetterMethods('parent', implClassModelEntity(), true, 'null') FOR Object-»
+«EXPAND FileHelper::GetterAndSetterMethods('parent', implClassModelEntity(), true, 'null')-»
+«ENDIF-»
+«IF hasTranslatableFields()-»
+«EXPAND FileHelper::GetterAndSetterMethods('locale', 'string', false, '')-»
 «ENDIF-»
 «ENDDEFINE»
 
@@ -138,16 +151,16 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
 «ENDIF-»
 «ENDDEFINE»
 
-«REM»closure domain object«ENDREM»
-«DEFINE ClosureClass(Application app) FOR Entity-»
+«REM»tree closure domain object«ENDREM»
+«DEFINE TreeClosureClass(Application app) FOR Entity-»
 «IF !isInheriting()-»
-    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModelClosure().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ClosureObjectBaseImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModel('', 'closure').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND TreeClosureObjectBaseImpl(app)»«ENDFILE»
 «ENDIF-»
-    «FILE getAppSourcePath(app.appName()).msconcat(implClassModelClosure().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ClosureObjectImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassModel('', 'closure').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND TreeClosureObjectImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
 «REM»base implementation«ENDREM»
-«DEFINE ClosureObjectBaseImpl(Application app) FOR Entity-»
+«DEFINE TreeClosureObjectBaseImpl(Application app) FOR Entity-»
 
 use Gedmo\Tree\Entity\AbstractClosure;
 
@@ -156,20 +169,179 @@ use Gedmo\Tree\Entity\AbstractClosure;
  *
  * This is the base closure class for «name.formatForDisplay()» entities.
  */
-class «baseClassModelClosure()» extends AbstractClosure
+class «baseClassModel('', 'closure')» extends AbstractClosure
 {
 }
 «ENDDEFINE»
 
 «REM»concrete implementation stub«ENDREM»
-«DEFINE ClosureObjectImpl(Application app) FOR Entity-»
+«DEFINE TreeClosureObjectImpl(Application app) FOR Entity-»
 
 /**
  * Closure domain object class allowing personal closures.
  *
  * This is the concrete closure class for «name.formatForDisplay()» entities.
  */
-class «implClassModelClosure()» extends «IF isInheriting()»«parentType().implClassModelClosure()»«ELSE»«baseClassModelClosure()»«ENDIF»
+class «implClassModel('', 'closure')» extends «IF isInheriting()»«parentType().implClassModel('', 'closure')»«ELSE»«baseClassModel('', 'closure')»«ENDIF»
+{
+    // feel free to add your own methods here
+}
+«ENDDEFINE»
+
+«REM»translatable translation entity«ENDREM»
+«DEFINE TranslationClass(Application app) FOR Entity-»
+«IF !isInheriting()-»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModel('', 'translation').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND TranslationBaseImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModel('repository', 'translation').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND TranslationRepositoryBaseImpl(app)»«ENDFILE»
+«ENDIF-»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassModel('', 'translation').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND TranslationImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassModel('repository', 'translation').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND TranslationRepositoryImpl(app)»«ENDFILE»
+«ENDDEFINE»
+
+«REM»base implementation«ENDREM»
+«DEFINE TranslationBaseImpl(Application app) FOR Entity-»
+
+use Gedmo\Translatable\Entity\AbstractTranslation;
+
+/**
+ * Translation domain object class allowing personal translations.
+ *
+ * This is the base translation class for «name.formatForDisplay()» entities.
+ *
+ * @ORM\Entity(repositoryClass="«baseClassModel('repository', 'translation')»")
+ * @ORM\Table(name="«fullEntityName()»_translations",
+ *     indexes={
+ *         @ORM\Index(name="translations_lookup_idx", columns={
+ *             "locale", "object_class", "foreign_key"
+ *         })
+ *     },
+ *     uniqueConstraints={
+ *         @ORM\UniqueConstraint(name="lookup_unique_idx", columns={
+ *             "locale", "object_class", "foreign_key", "field"
+ *         })
+ *     }
+ * )
+ */
+class «baseClassModel('', 'translation')» extends AbstractTranslation
+{
+}
+«ENDDEFINE»
+
+«REM»concrete implementation stub«ENDREM»
+«DEFINE TranslationImpl(Application app) FOR Entity-»
+
+/**
+ * Translation domain object class allowing personal translations.
+ *
+ * This is the concrete translation class for «name.formatForDisplay()» entities.
+ */
+class «implClassModel('', 'translation')» extends «IF isInheriting()»«parentType().implClassModel('', 'translation')»«ELSE»«baseClassModel('', 'translation')»«ENDIF»
+{
+    // feel free to add your own methods here
+}
+«ENDDEFINE»
+
+«REM»base implementation«ENDREM»
+«DEFINE TranslationRepositoryBaseImpl(Application app) FOR Entity-»
+
+use Gedmo\Translatable\Entity\Repository\TranslationRepository;
+
+/**
+ * Repository class used to implement own convenience methods for performing certain DQL queries.
+ *
+ * This is the base repository class for «name.formatForDisplay()» translation entities.
+ */
+class «baseClassModel('repository', 'translation')» extends TranslationRepository
+{
+}
+«ENDDEFINE»
+
+«REM»concrete implementation stub«ENDREM»
+«DEFINE TranslationRepositoryImpl(Application app) FOR Entity-»
+
+use Gedmo\Translatable\Entity\Repository\TranslationRepository;
+
+/**
+ * Repository class used to implement own convenience methods for performing certain DQL queries.
+ *
+ * This is the concrete repository class for «name.formatForDisplay()» translation entities.
+ */
+class «implClassModel('repository', 'translation')» extends «IF isInheriting()»«parentType().implClassModel('repository', 'translation')»«ELSE»«baseClassModel('repository', 'translation')»«ENDIF»
+{
+    // feel free to add your own methods here
+}
+«ENDDEFINE»
+
+«REM»loggable log entry class«ENDREM»
+«DEFINE LogEntryClass(Application app) FOR Entity-»
+«IF !isInheriting()-»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModel('', 'closure').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND LogEntryBaseImpl(app)»«ENDFILE»
+«ENDIF-»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassModel('', 'closure').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND LogEntryImpl(app)»«ENDFILE»
+«ENDDEFINE»
+
+«REM»base implementation«ENDREM»
+«DEFINE LogEntryBaseImpl(Application app) FOR Entity-»
+
+use Gedmo\Loggable\Entity\AbstractLogEntry;
+
+/**
+ * Log entry object class allowing personal log entries.
+ *
+ * This is the base log entry class for «name.formatForDisplay()» entities.
+ *
+ * @ORM\Entity(repositoryClass="«baseClassModel('repository', 'logEntry')»")
+ * @ORM\Table(name="«fullEntityName()»_log_entries",
+ *     indexes={
+ *         @ORM\Index(name="log_class_lookup_idx", columns={"object_class"}),
+ *         @ORM\Index(name="log_date_lookup_idx", columns={"logged_at"}),
+ *         @ORM\Index(name="log_user_lookup_idx", columns={"username"})
+ *     }
+ * )
+ */
+class «baseClassModel('', 'logEntry')» extends AbstractLogEntry
+{
+}
+«ENDDEFINE»
+
+«REM»concrete implementation stub«ENDREM»
+«DEFINE LogEntryImpl(Application app) FOR Entity-»
+
+/**
+ * Log entry object class allowing personal log entries.
+ *
+ * This is the concrete log entry class for «name.formatForDisplay()» entities.
+ */
+class «implClassModel('', 'logEntry')» extends «IF isInheriting()»«parentType().implClassModel('', 'logEntry')»«ELSE»«baseClassModel('', 'logEntry')»«ENDIF»
+{
+    // feel free to add your own methods here
+}
+«ENDDEFINE»
+
+«REM»base implementation«ENDREM»
+«DEFINE LogEntryRepositoryBaseImpl(Application app) FOR Entity-»
+
+use Gedmo\Loggable\Entity\Repository\LogEntryRepository;
+
+/**
+ * Repository class used to implement own convenience methods for performing certain DQL queries.
+ *
+ * This is the base repository class for «name.formatForDisplay()» log entry entities.
+ */
+class «baseClassModel('repository', 'logEntry')» extends LogEntryRepository
+{
+}
+«ENDDEFINE»
+
+«REM»concrete implementation stub«ENDREM»
+«DEFINE LogEntryRepositoryImpl(Application app) FOR Entity-»
+
+/**
+ * Repository class used to implement own convenience methods for performing certain DQL queries.
+ *
+ * This is the concrete repository class for «name.formatForDisplay()» log entry entities.
+ */
+class «implClassModel('repository', 'logEntry')» extends «IF isInheriting()»«parentType().implClassModel('repository', 'logEntry')»«ELSE»«baseClassModel('repository', 'logEntry')»«ENDIF»
 {
     // feel free to add your own methods here
 }

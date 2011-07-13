@@ -570,6 +570,9 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS fld-»
         $«entityName»«number»->set«fld.name.formatForCodeCapital()»(«EXPAND ExampleRowValue(number) FOR fld-»);
 «ENDFOREACH-»
+«REM»«IF hasTranslatableFields()-»
+        $«entityName»«number»->setLocale(ZLanguage::getLanguageCode());
+«ENDIF-»«ENDREM»
         $this->entityManager->persist($«entityName»«number»);
 «ENDFOREACH-»
 «ENDLET-»

@@ -375,6 +375,9 @@
                                 $objectData[$descriptionFieldName] = $this->__('This is a new root node');
                             }
                             $object->merge($objectData);
+«REM»«IF hasTranslatableFields()-»
+                            $object->setLocale(ZLanguage::getLanguageCode());
+«ENDIF-»«ENDREM»
                             // save new object to set the root id
                             $this->entityManager->persist($object);
                             $this->entityManager->flush();

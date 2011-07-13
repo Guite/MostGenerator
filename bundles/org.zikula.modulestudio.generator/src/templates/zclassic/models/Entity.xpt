@@ -7,8 +7,8 @@
 «REM»Entry point for Doctrine entity classes«ENDREM»
 «DEFINE Root FOR Application-»
     «EXPAND Root(this) FOREACH models.entities-»
-«REM»    «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»«ENDREM»
-    «EXPAND business::Validator::BusinessValidatorWrapper(this) FOREACH models.entities-»
+    «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»
+    «EXPAND business::Validator::ValidatorWrapper(this) FOREACH models.entities-»
 «IF hasTrees()-»
 «FOREACH getTreeEntities() AS treeEntity-»
 «EXPAND entity::Extensions::ClosureClass FOR treeEntity-»
@@ -34,16 +34,20 @@
  * This is the base entity class for «name.formatForDisplay()» entities.
  *
 «EXPAND entity::Extensions::ClassExtensions-»
- * @ORM\Entity(repositoryClass="«implClassModelRepository()»"«IF readOnly-», readOnly=true«ENDIF-»)
+ * @ORM\Entity(repositoryClass="«implClassModel('repository', '')»"«IF readOnly-», readOnly=true«ENDIF-»)
 «IF indexes.isEmpty-»
  * @ORM\Table(name="«fullEntityName()»")
 «ELSE-»
  * @ORM\Table(name="«fullEntityName()»",
 «IF hasNormalIndexes()-»
- *      indexes={«EXPAND Index('Index') FOREACH getNormalIndexes() SEPARATOR ','-»}«IF hasUniqueIndexes()-»,«ENDIF-»
+ *     indexes={
+«EXPAND Index('Index') FOREACH getNormalIndexes() SEPARATOR ','-»
+ *     }«IF hasUniqueIndexes()-»,«ENDIF-»
 «ENDIF-»
 «IF hasUniqueIndexes()-»
- *      uniqueConstraints={«EXPAND Index('UniqueConstraint') FOREACH getUniqueIndexes() SEPARATOR ','-»}
+ *     uniqueConstraints={
+«EXPAND Index('UniqueConstraint') FOREACH getUniqueIndexes() SEPARATOR ','-»
+ *     }
 «ENDIF-»
  * )
 «ENDIF-»
@@ -104,7 +108,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
     protected $_idField = '«name.formatForCode()-»';
 
     /**
-     * @var «implClassBusinessValidator()» The validator for this entity
+     * @var «implClassModel('validator', '')» The validator for this entity
      */
     protected $_validator = null;
 
@@ -133,12 +137,15 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
      */
     public function __construct()
     {
+        $this->_objectType = '«fullEntityName()»';
+        $this->_validator = new «implClassModel('validator', '')»($this);
+        $this->_hasUniqueSlug = «IF hasSluggableFields() && slugUnique»true«ELSE»false«ENDIF»;
 «EXPAND entity::Association::InitCollections-»
     }
 
 «EXPAND FileHelper::GetterAndSetterMethods('_objectType', 'string', false, '')»
 «EXPAND FileHelper::GetterAndSetterMethods('_idField', 'string', false, '')»
-«EXPAND FileHelper::GetterAndSetterMethods('_validator', implClassBusinessValidator(), true, 'null')»
+«EXPAND FileHelper::GetterAndSetterMethods('_validator', implClassModel('validator', ''), true, 'null')»
 «EXPAND FileHelper::GetterAndSetterMethods('_hasUniqueSlug', 'boolean', false, '')»
 «IF hasNotifyPolicy()-»
 
@@ -189,92 +196,6 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 
 
 
-«DEFINE OLDBaseImpl(Application app) FOR Entity»
-    /**
-     * Constructor.
-     *
-     * @param integer $id The id to use to retrieve the object (optional) (default=null).
-     */
-    public function __construct($id = 0)
-    {
-        $this->_objectType = '«fullEntityName()»';
-        $this->_validator = new «implClassBusinessValidator()»($this);
-        $this->_hasUniqueSlug = «IF hasSluggableFields() && slugUnique»true«ELSE»false«ENDIF»;
-    }
-
-    /**
-     * Select object from model (e.g. from database).
-     * For now we use Doctrine records, but as the controllers communicate only with
-     * business entities, we can exchange the model behind it without any subsequent
-     * efforts on the controller layer.
-     *
-     * @param integer $id      The id to use to retrieve the object (optional) (default=null).
-     * @param boolean $asArray Whether to return the result as array instead as record object (optional) (default=true).
-     *
-     * @return array|Doctrine_Record Retrieved data array or Doctrine_Record instance.
-     */
-    public function selectById($id = 0, $asArray = true)
-    {
-        // check id parameter
-        if ($id == 0 && $this->_id == 0) {
-            return LogUtil::registerArgsError();
-        }
-        // store id parameter
-        if ($id > 0) {
-            $this->_id = $id;
-        }
-
-        $entityClass = '«implClassModelEntity()»';
-        $repository = $this->entityManager->getRepository($entityClass);
-
-        // get result from the model
-        $item = $repository->selectOneItemById($id, $asArray);
-
-«IF hasTranslatableFields()-»
-        // process translations
-        $item = «app.appName()»_Util_I18n::prepareEntityForOutput('«name.formatForCode()»', $item);
-
-«ENDIF-»
-
-        // return the results
-        return $item;
-    }
-«IF sluggable && sluggableUnique-»
-
-    /**
-     * Select object by unique slug value.
-     *
-     * @param string  $slugTitle The slug value.
-     * @param boolean $asArray   Whether to return the result as array instead as record object (optional) (default=true).
-     *
-     * @return array|Doctrine_Record retrieved data array or Doctrine_Record instance.
-     */
-    public function selectBySlug($slugTitle = '', $asArray = true)
-    {
-        // check input parameter
-        if ($slugTitle == '') {
-            return LogUtil::registerArgsError();
-        }
-
-        $entityClass = '«implClassModelEntity()»';
-        $repository = $this->entityManager->getRepository($entityClass);
-
-        // get result from the model
-        $item = $repository->selectOneItemBySlug($slugTitle, $asArray);
-
-«IF hasTranslatableFields()-»
-        // process translations
-        $item = «app.appName()»_Util_I18n::prepareEntityForOutput('«name.formatForCode()»', $item);
-
-«ENDIF-»
-        // return the results
-        return $item;
-    }
-«ENDIF-»
-
-«ENDDEFINE»
-
-
 «DEFINE SubClasses FOR Entity-»
 «LET getChildRelationsWithAggregation() AS aggregatedChildren-»
 «IF !aggregatedChildren.isEmpty-»
@@ -312,171 +233,6 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
      */
     protected $_defaultSortingField = '«getLeadingField().name.formatForCode()»';
 
-
-    /**
-     * Constructor.
-     *
-     * @param string $where   The where clause to use when retrieving the object array (optional) (default='').
-     * @param string $orderBy The order-by clause to use when retrieving the object array (optional) (default='').
-     */
-    function __construct($where = '', $orderBy = '')
-    {
-        $this->set_intWhere($where);
-        $this->set_intOrderBy($orderBy);
-    }
-
-    /**
-     * Select object collection from model (e.g. from database).
-     *
-     * For now we use Doctrine records, but as the controllers communicate only with
-     * business entities, we can exchange the model behind it without any subsequent
-     * efforts on the controller layer.
-     *
-     * @param string $where    The where clause to use when retrieving the object array (optional) (default='').
-     * @param string $orderBy  The order-by clause to use when retrieving the object array (optional) (default='').
-     * @param boolean $asArray Whether to return the result as array instead as record object (optional) (default=true).
-     *
-     * @return Doctrine_Collection collection containing retrieved Doctrine_Record instances
-     */
-    public function selectWhere($where = '', $orderBy = '', $asArray = true)
-    {
-        // store parameters
-        $this->set_intWhere($where);
-        $this->set_intOrderBy($orderBy);
-
-        // select items from the model
-        $result = $this->_intTable()->selectCollection($where, $orderBy, $asArray);
-
-«IF hasTranslatableFields()-»
-        // process additions
-        $result = $this->processAdditions($result);
-
-«ENDIF-»
-        // store the results
-        $this->set«nameMultiple.formatForCodeCapital()»($result);
-
-        // and return them
-        return $this->get«nameMultiple.formatForCodeCapital()»();
-    }
-
-    /**
-     * Select with a given where clause.
-     *
-     * @param string $where           The where clause to use when retrieving the object array (optional) (default='').
-     * @param string $orderBy         The order-by clause to use when retrieving the object array (optional) (default='').
-     * @param integer $currentPage    Where to start selection
-     * @param integer $resultsPerPage Amount of items to select
-     * @param boolean $asArray        Whether to return the result as array instead as record object (optional) (default=true).
-     *
-     * @return array                  Array with retrieved data and amount of total records affected by this query.
-     */
-    public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $asArray = true)
-    {
-        // store parameters
-        $this->set_intWhere($where);
-        $this->set_intOrderBy($orderBy);
-
-        // select items from the model
-        list($objectData, $objectCount) = $this->_intTable()->selectWherePaginated($where, $orderBy, $currentPage, $resultsPerPage, $asArray);
-
-«IF hasTranslatableFields()-»
-        // process additions
-        $objectData = $this->processAdditions($objectData);
-
-«ENDIF-»
-        // store the results
-        $this->set«nameMultiple.formatForCodeCapital()»($objectData);
-
-        // and return them
-        return array($this->get«nameMultiple.formatForCodeCapital()»(), $objectCount);
-    }
-
-    /**
-     * Select count with a given where clause.
-     *
-     * @param string $where The where clause to use when retrieving the object count (optional) (default='').
-     *
-     * @return integer Number of affected records.
-     */
-    public function selectCount($where = '')
-    {
-        // store parameters
-        $this->set_intWhere($where);
-
-        // get result from the model
-        return $this->_intTable()->selectCount($where);
-    }
-«IF tree != EntityTreeType::NONE-»
-
-    /**
-     * Select tree of «nameMultiple.formatForCode()».
-     *
-     * @param integer $rootId         Optional id of root node to use as a branch, defaults to 0 which corresponds to the whole tree.
-     * @param boolean $asArray        Whether to return the result as array instead as record object (optional) (default=true).
-     *
-     * @return array|Doctrine_Doctrine_Tree_NestedSet retrieved data array or tree objects containing retrieved Doctrine_Node_NestedSet instances.
-     */
-    public function selectTree($rootId = 0, $asArray = false)
-    {
-        // get result from the model
-        $tree = $this->_intTable()->selectTree($rootId, $asArray);
-«IF hasTranslatableFields()-»
-
-        // process additions
-        $tree = $this->processAdditions($tree);
-«ENDIF-»
-
-        return $tree;
-    }
-
-    /**
-     * Select all trees at once.
-     *
-     * @param boolean $asArray        Whether to return the result as array instead as record object (optional) (default=true).
-     *
-     * @return array list of retrieved data arrays or tree objects containing retrieved Doctrine_Node_NestedSet instances.
-     */
-    public function selectAllTrees($asArray = false)
-    {
-        // get result from the model
-        $trees = $this->_intTable()->selectAllTrees($asArray);
-«IF hasTranslatableFields()-»
-
-        // process additions
-        foreach ($trees as $rootId => $treeNodes) {
-            $trees[$rootId] = $this->processAdditions($treeNodes);
-        }
-«ENDIF-»
-
-        return $trees;
-    }
-«ENDIF-»
-«IF hasTranslatableFields()-»
-
-    /**
-     * Process custom additions.
-     */
-    protected function processAdditions($collection)
-    {
-        if (!$collection) {
-            return $collection;
-        }
-        foreach ($collection as $k => $v) {
-            $collection[$k] = «app.appName()»_Util_I18n::prepareEntityForOutput('«name.formatForCode()»', $v);
-        }
-        return $collection;
-    }
-«ENDIF-»
-
-    /**
-     * Convenience method to get table managed by record.
-     *
-     * @return Doctrine_Table Table being managed by the record referenced by this collection.
-     */
-    private function _intTable()
-    {
-        return Doctrine_Core::getTable('«implClassModelRecord()»');
-    }
 
     /**
      * Retrieves an array with all fields which can be used for sorting instances.
@@ -649,7 +405,7 @@ class «implClassModelRefEntity()» extends «baseClassModelRefEntity()»
         /**
          * Event listeners registrations
          */
-        $this->addListener(new «implClassModelListener()»());
+        $this->addListener(new «implClassModel('listener', '')»());
 «ENDDEFINE»
 
 «DEFINE ObjectExtensions FOR Entity»

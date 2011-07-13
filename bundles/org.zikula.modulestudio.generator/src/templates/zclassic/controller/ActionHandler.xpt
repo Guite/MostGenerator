@@ -197,7 +197,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $entityClass = '«appName()»_Entity_' . ucfirst($this->objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
-        $objectData = array();
+        $entity = null;
         $this->mode = 'create';
 
         // if «idField()» is not 0, we wish to edit an existing «name.formatForDisplay()»
@@ -228,11 +228,10 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 // reuse existing «name.formatForDisplay()»
                 $idField = '«idField()»';
 «EXPAND ControllerHelper::retrieveEntityFromModel('idField', "template" + idField().toFirstUpper(), true)-»
-                unset($object);
-                unset($objectData['«idField()»']);
+                //$entity['«idField()»'] = null;
             }
             else {
-                $objectData = new $entityClass();
+                $entity = new $entityClass();
 
 «EXPAND InitRelatedObjectDefault(true) FOREACH incoming.typeSelect(JoinRelationship)-»
 «EXPAND InitRelatedObjectDefault(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
@@ -240,18 +239,18 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         }
 «FOREACH fields.typeSelect(DateField) AS dateField-»
 
-        if ($objectData['«dateField.name.formatForCode()»'] == '1900-01-01 00:00:00') {
-            $objectData['«dateField.name.formatForCode()»'] = null;
+        if ($entity['«dateField.name.formatForCode()»'] == '1900-01-01 00:00:00') {
+            $entity['«dateField.name.formatForCode()»'] = null;
         }
 «ENDFOREACH-»
-«IF i18n-»
+«IF hasTranslatableFields()-»
 
         // process translated fields
-        $objectData = AdShare_Util_I18n::prepareEntityForEdit($this->objectType, $objectData);
+        AdShare_Util_Translatable::prepareEntityForEdit($this->objectType, $entity);
 «ENDIF-»
 
         // assign data to template
-        $this->view->assign('«name.formatForDB()»', $objectData)
+        $this->view->assign('«name.formatForDB()»', $entity)
                    ->assign('mode', $this->mode)
                    ->assign('inlineUsage', $this->inlineUsage);
 
@@ -266,7 +265,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «DEFINE InitRelatedObjectDefault(Boolean incoming) FOR JoinRelationship-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
-                $objectData['«relationAliasName»'] = $this->retrieveRelatedObjects('«((incoming) ? source : target).name.formatForCode()»', '«relationAliasName.formatForDB()»', «IF !many»false«ELSE»true«ENDIF»);
+                $entity['«relationAliasName»'] = $this->retrieveRelatedObjects('«((incoming) ? source : target).name.formatForCode()»', '«relationAliasName.formatForDB()»', «IF !many»false«ELSE»true«ENDIF»);
 «ENDLET-»
 «ENDLET-»
 «ENDDEFINE»
@@ -376,8 +375,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «IF controller.hasActions('view')-»
         // redirect to the list of «nameMultiple.formatForCode()»
         $viewArgs = array('ot' => $this->objectType);
-«IF nestedSet-»
-        $viewArgs['tpl'] = 'nestedSet';
+«IF tree != EntityTreeType::NONE-»
+        $viewArgs['tpl'] = 'tree';
 «ENDIF-»
         $url = ModUtil::url('«app.appName()»', '«controller.name()»', 'view', $viewArgs);
 «ELSEIF controller.hasActions('main')-»
@@ -535,6 +534,17 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             $validators = $this->notifyHooks($hook)->getValidators();
             // TODO validation incomplete
 
+«IF hasTranslatableFields()-»
+            // add translated values
+            //$«name.formatForCode()»->setLocale(ZLanguage::getLanguageCode());
+            foreach ($translations as $translation) {
+                $translationLocale = $translation['locale'];
+                foreach ($translation['fields'] as $fieldName => $value) {
+                    $repository->translate($«name.formatForCode()», $fieldName, $locale, $value);
+                }
+            }
+
+«ENDIF-»
             // save «name.formatForDisplay()»
             $successMessage = '';
             if ($args['commandName'] == 'create') {
@@ -693,16 +703,14 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             }
 «ENDLET-»
 «ENDFOREACH-»
-«IF sluggable && sluggableCanUpdate-»
-«LET sluggableFieldRealName() AS sluggableFieldRealName-»
-«IF sluggableUnique-»
-            // check if another «name.formatForDisplay()» with the same «sluggableFieldRealName.formatForDisplay()» does already exist
-            if ($object->get_validator()->checkIf«sluggableFieldRealName.formatForCodeCapital()»Exists($formData['«sluggableFieldRealName»'], $this->«idField()»)) {
-                return LogUtil::registerError($this->__f('The «sluggableFieldRealName.formatForDisplay()» %s is already assigned. Please choose another «sluggableFieldRealName.formatForDisplay()».', array($formData['«sluggableFieldRealName»'])));
+«IF sluggable && slugUpdatable-»
+«IF slugUnique-»
+            // check if another «name.formatForDisplay()» with the same slug does already exist
+            if ($object->get_validator()->checkIfSlugExists($formData['slug'], $this->«idField()»)) {
+                return LogUtil::registerError($this->__f('The slug %s is already assigned. Please choose another slug.', array($formData['slug'])));
             }
 «ENDIF-»
-            $formData['«sluggableFieldRealName»'] = «container.application.appName()»_Util_Controller::formatPermalink($formData['«sluggableFieldRealName»']);
-«ENDLET-»
+            $formData['slug'] = «container.application.appName()»_Util_Controller::formatPermalink($formData['slug']);
 «ENDIF-»
 «IF !uploadFields.isEmpty-»
             $formData = $this->handleUploads($formData, $«name.formatForCode()»);
@@ -721,10 +729,10 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             $repeatCreateAction = $formData['repeatcreation'];
             unset($formData['repeatcreation']);
         }
-«IF i18n-»
+«IF hasTranslatableFields()-»
 
         // process translated fields
-        $formData = AdShare_Util_I18n::processEntityAfterEdit($this->objectType, $«obj»->get«obj.toFirstUpper()»(), $formData);
+        list($formData, $translations) = AdShare_Util_Translatable::processEntityAfterEdit($this->objectType, $«obj», $formData);
 «ENDIF-»
 
         // assign fetched data

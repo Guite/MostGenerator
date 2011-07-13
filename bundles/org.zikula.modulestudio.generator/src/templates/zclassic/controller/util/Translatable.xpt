@@ -5,22 +5,22 @@
 
 «REM»start point for the Util class creation«ENDREM»
 «DEFINE Root FOR Application»
-    «FILE getAppSourceLibPath(appName()).msconcat("Util/Base/I18n.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND TranslatableFunctionsBase-»«ENDFILE»
-    «FILE getAppSourceLibPath(appName()).msconcat("Util/I18n.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND TranslatableFunctionsImpl-»«ENDFILE»
+    «FILE getAppSourceLibPath(appName()).msconcat("Util/Base/Translatable.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND TranslatableFunctionsBase-»«ENDFILE»
+    «FILE getAppSourceLibPath(appName()).msconcat("Util/Translatable.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND TranslatableFunctionsImpl-»«ENDFILE»
 «ENDDEFINE»
 
 «DEFINE TranslatableFunctionsBase FOR Application-»
 /**
- * Utility base class for i18n helper methods.
+ * Utility base class for translatable helper methods.
  */
-class «appName()»_Util_Base_I18n extends Zikula_AbstractBase
+class «appName()»_Util_Base_Translatable extends Zikula_AbstractBase
 {
     /**
-     * Return list of i18n fields per entity.
+     * Return list of translatable fields per entity.
      * These are required to be determined to recognize
      * that they have to be selected from according translation tables.
      */
-    public static function getI18nFields($objectType)
+    public static function getTranslatableFields($objectType)
     {
         $fields = array();
         switch ($objectType) {
@@ -30,89 +30,49 @@ class «appName()»_Util_Base_I18n extends Zikula_AbstractBase
     }
 
     /**
-     * Post-processing method copying best fitting translation to main fields.
-     * Cares for compatibility to processing entities without i18n behaviour.
-     */
-    public static function prepareEntityForOutput($objectType, $data)
-    {
-        if (!$data) {
-            return $data;
-        }
-
-        $fields = self::getI18nFields($objectType);
-        if (!count($fields)) {
-            return $data;
-        }
-
-        $useObject = (is_object($data) && $data instanceOf Doctrine_Record);
-
-        // set default values
-        foreach ($fields as $field) {
-            if ($useObject) {
-                $data->mapValue($field['name'], $field['default']);
-            } else {
-                $data[$field['name']] = $field['default'];
-            }
-        }
-
-        // determine supported locales
-        $supportedLocales = ZLanguage::getInstalledLanguages();
-        $currentLanguage = ZLanguage::getLanguageCode();
-        $defaultLanguage = System::getVar('language_i18n', 'en');
-
-        // read according translation, fall back to default language
-        if (isset($data['Translation']) && (isset($data['Translation'][$currentLanguage]) || isset($data['Translation'][$defaultLanguage]))) {
-            $lang = (in_array($currentLanguage, $supportedLocales) && isset($data['Translation'][$currentLanguage])) ? $currentLanguage : $defaultLanguage;
-            foreach ($fields as $field) {
-                $value = isset($data['Translation'][$lang][$field['name']]) ? $data['Translation'][$lang][$field['name']] : '';
-                if ($useObject) {
-                    $data->mapValue($field['name'], $value);
-                } else {
-                    $data[$field['name']] = $value;
-                }
-            }
-        }
-        return $data;
-    }
-
-    /**
      * Post-processing method copying all translations to main fields.
      * This ensures easy compatibility to the Forms plugins where it
      * it is not possible yet to define sub arrays in the group attribute.
      */
-    public static function prepareEntityForEdit($objectType, $data)
+    public static function prepareEntityForEdit($objectType, $entity)
     {
-        if (!$data) {
-            return $data;
+        if (!$entity) {
+            return $entity;
         }
 
-        $fields = self::getI18nFields($objectType);
+        $fields = self::getTranslatableFields($objectType);
         if (!count($fields)) {
-            return $data;
+            return $entity;
         }
 
+        if (System::getVar('multilingual') != 1) {
+            // Translatable extension did already fetch current translation
+            return $entity;
+        }
+
+        // at this point we prepare form data to edit multiple translations at once
+
+        // reset values
         foreach ($fields as $field) {
             if (isset($data[$field['name']])) {
                 unset($data[$field['name']]);
             }
         }
 
-        $useOnlyCurrentLocale = true;
-        if (System::getVar('multilingual') == 1) {
-            $useOnlyCurrentLocale = false;
-            $lang = ZLanguage::getLanguageCode();
-            foreach ($supportedLocales as $locale) {
-                foreach ($fields as $field) {
-                    $data[$field['name'] . $locale] = isset($data['Translation'][$locale]) ? $data['Translation'][$locale][$field['name']] : '';
-                }
-            }
-        }
-        if ($useOnlyCurrentLocale === true) {
-            $locale = ZLanguage::getLanguageCode();
+        // get translations
+        $entityClass = '«appName()»_Entity_' . ucwords($objectType) . 'Translation';
+        $entityManager = $serviceManager->getService('doctrine.entitymanager');
+        $repository = $entityManager->getRepository($entityClass);
+        $translations = $repository->findTranslations($entity);
+
+        $supportedLocales = ZLanguage::getInstalledLanguages();
+        $lang = ZLanguage::getLanguageCode();
+        foreach ($supportedLocales as $locale) {
             foreach ($fields as $field) {
-                $data[$field['name'] . $locale] = isset($data['Translation'][$locale]) ? $data['Translation'][$locale][$field['name']] : '';
+                $entity[$field['name'] . $locale] = isset($translations[$locale]) ? $translations[$locale][$field['name']] : '';
             }
         }
+
         return $data;
     }
 
@@ -121,36 +81,40 @@ class «appName()»_Util_Base_I18n extends Zikula_AbstractBase
      * This ensures easy compatibility to the Forms plugins where it
      * it is not possible yet to define sub arrays in the group attribute.
      */
-    public static function processEntityAfterEdit($objectType, $record, $formData)
+    public static function processEntityAfterEdit($objectType, $entity, $formData)
     {
+        $translations = array();
         if (!$formData) {
-            return $data;
+            return array($formData, $translations);
         }
 
-        $fields = self::getI18nFields($objectType);
+        $fields = self::getTranslatableFields($objectType);
         if (!count($fields)) {
-            return $formData;
+            return array($formData, $translations);
         }
 
+        $supportedLocales = ZLanguage::getInstalledLanguages();
         $useOnlyCurrentLocale = true;
         if (System::getVar('multilingual') == 1) {
             $useOnlyCurrentLocale = false;
             $lang = ZLanguage::getLanguageCode();
             foreach ($supportedLocales as $locale) {
+                $translations[$locale] = array('locale' => $locale, 'fields' => array());
                 foreach ($fields as $field) {
-                    $record->Translation[$locale]->$field['name'] = isset($formData[$field['name'] . $locale]) ? $formData[$field['name'] . $locale] : '';
+                    $translations[$locale]['fields'][$field['name']] = isset($formData[$field['name'] . $locale]) ? $formData[$field['name'] . $locale] : '';
                     unset($formData[$field['name'] . $locale]);
                 }
             }
         }
         if ($useOnlyCurrentLocale === true) {
             $locale = ZLanguage::getLanguageCode();
+            $translations[$locale] = array('locale' => $locale, 'fields' => array());
             foreach ($fields as $field) {
-                $record->Translation[$locale]->$field['name'] = isset($formData[$field['name'] . $locale]) ? $formData[$field['name'] . $locale] : '';
+                $translations[$locale]['fields'][$field['name']] = isset($formData[$field['name'] . $locale]) ? $formData[$field['name'] . $locale] : '';
                 unset($formData[$field['name'] . $locale]);
             }
         }
-        return $formData;
+        return array($formData, $translations);
     }
 }
 «ENDDEFINE»
@@ -187,9 +151,9 @@ class «appName()»_Util_Base_I18n extends Zikula_AbstractBase
 
 «DEFINE TranslatableFunctionsImpl FOR Application-»
 /**
- * Utility implementation class for i18n helper methods.
+ * Utility implementation class for translatable helper methods.
  */
-class «appName()»_Util_I18n extends «appName()»_Util_Base_I18n
+class «appName()»_Util_Translatable extends «appName()»_Util_Base_Translatable
 {
     // feel free to add your own convenience methods here
 }

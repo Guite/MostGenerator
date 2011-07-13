@@ -2,16 +2,17 @@
 «EXTENSION extensions::Utils»
 
 «DEFINE retrieveEntityFromModel(String idVar, String idValue, Boolean isHandler) FOR Object-»
-        // assign object data fetched from the database
+«IF !isHandler-»
         $objectData = $repository->selectById($«idValue»);
         if (!is_array($objectData) || !isset($objectData[$«idVar»]) || !is_numeric($objectData[$«idVar»])) {
-«IF isHandler-»
             return $view->registerError($this->__('No such item.'));
-«REM»            $this->throwNotFound($this->__('No such item.'));        Zikula_Form_Handler does not inherit from Zikula_Base (yet)«ENDREM»«""-»
-«ELSE-»
-            $this->throwNotFound($this->__('No such item.'));
-«ENDIF-»
         }
+«ELSE-»
+        $entity = $repository->selectById($«idValue», false);
+        if (!is_object($entity) || !isset($entity[$«idVar»]) || !is_numeric($entity[$«idVar»])) {
+            $this->throwNotFound($this->__('No such item.'));
+        }
+«ENDIF-»
 «ENDDEFINE»
 
 

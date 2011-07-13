@@ -11,7 +11,7 @@ cached String classPraefix(Application app)
 	: app.appName().msconcat('_');
 
 cached String classSuffix()
-	: ".php";//".class.php";
+	: '.php';
 
 cached String asFile(String className)
     : 'lib/'.msconcat(className.replaceAll('_', '/')).msconcat(classSuffix());
@@ -25,44 +25,33 @@ cached String baseClassDefault(Application app, String filling, String suffix)
 
 // TODO: cleanup and refactorings
 
-cached String fillingEntity() : "Entity_";
-cached String fillingController() : "Controller_";
-cached String fillingApi() : "Api_";
-cached String fillingFormHandler() : "Form_Handler_";
+cached String fillingEntity() : 'Entity_';
+cached String fillingController() : 'Controller_';
+cached String fillingApi() : 'Api_';
+cached String fillingFormHandler() : 'Form_Handler_';
 
 cached String prepClassPart(String str)
     : formatForCode(str).toFirstUpper();
 
 /** Model classes */
+cached String baseClassModel(Entity obj, String subfolder, String suffix)
+    : baseClassDefault(obj.container.application, fillingEntity().msconcat(subfolder.toFirstUpper()), prepClassPart(obj.name.msconcat(suffix.toFirstUpper())));
+cached String implClassModel(Entity obj, String subfolder, String suffix)
+	: implClassDefault(obj.container.application, fillingEntity().msconcat(subfolder.toFirstUpper()), prepClassPart(obj.name.msconcat(suffix.toFirstUpper())));
+
 cached String baseClassModelEntity(Entity obj)
-    : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name));
+    : baseClassModel(obj, '', '');
 cached String implClassModelEntity(Entity obj)
-	: implClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name));
-cached String baseClassModelRepository(Entity obj)
-    : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Repository")));
-cached String implClassModelRepository(Entity obj)
-    : implClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Repository")));
-cached String baseClassModelListener(Entity obj)
-    : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Listener")));
-cached String implClassModelListener(Entity obj)
-    : implClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Listener")));
-cached String baseClassModelValidator(Entity obj)
-    : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Validator")));
-cached String implClassModelValidator(Entity obj)
-    : implClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Validator")));
-cached String baseClassModelClosure(Entity obj)
-    : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Closure")));
-cached String implClassModelClosure(Entity obj)
-    : implClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat("Closure")));
+	: implClassModel(obj, '', '');
 
 cached String baseClassModelRefEntity(ManyToManyRelationship obj)
     : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.refClass));
 cached String implClassModelRefEntity(ManyToManyRelationship obj)
     : implClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.refClass));
 cached String baseClassModelRefRepository(ManyToManyRelationship obj)
-    : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.refClass.msconcat("Repository")));
+    : baseClassDefault(obj.container.application, fillingEntity().msconcat('Repository_'), prepClassPart(obj.refClass));
 cached String implClassModelRefRepository(ManyToManyRelationship obj)
-    : implClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.refClass.msconcat("Repository")));
+    : implClassDefault(obj.container.application, fillingEntity().msconcat('Repository_'), prepClassPart(obj.refClass));
 
 /** Controller */
 cached String baseClassController(Controller obj)
@@ -89,10 +78,10 @@ cached String prepTemplatePart(String origin, String addition)
     : origin.msconcat(addition.toLowerCase());
 
 cached String templateSuffix()
-    : ".tpl";
+    : '.tpl';
 
 cached String templateFileBase(Controller obj, String entityName, String actionName)
-    : getAppSourcePath(obj.container.application.appName()).msconcat("templates/").msconcat(obj.name.formatForDB()).msconcat('/').msconcat(formatForCode(entityName)).msconcat('/').msconcat(actionName);
+    : getAppSourcePath(obj.container.application.appName()).msconcat('templates/').msconcat(obj.name.formatForDB()).msconcat('/').msconcat(formatForCode(entityName)).msconcat('/').msconcat(actionName);
 
 cached String templateFile(Controller obj, String entityName, String actionName)
     : templateFileBase(obj, entityName, actionName).msconcat(templateSuffix());
@@ -110,8 +99,8 @@ cached String viewPluginFilePath(Application app, String pluginType, String plug
 
 cached String getRelationAliasName(JoinRelationship this, Boolean useTarget)
     : ((useTarget)
-        ? ((targetAlias != null && targetAlias != "") ? targetAlias : target.implClassModelEntity())
-        : ((sourceAlias != null && sourceAlias != "") ? sourceAlias : source.implClassModelEntity())
+        ? ((targetAlias != null && targetAlias != '') ? targetAlias : target.implClassModelEntity())
+        : ((sourceAlias != null && sourceAlias != '') ? sourceAlias : source.implClassModelEntity())
     ).formatForCode();
 
 

@@ -4,44 +4,44 @@
 «EXTENSION extensions::ClassUtils»
 «REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
-«REM»creates a business validator file for every Entity instance«ENDREM»
-«DEFINE BusinessValidatorWrapper(Application app) FOR Entity-»
-«info("Generating business validator classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
+«REM»creates a validator class for every Entity instance«ENDREM»
+«DEFINE ValidatorWrapper(Application app) FOR Entity-»
+«info("Generating validator classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «IF !isInheriting()-»
-    «FILE getAppSourcePath(app.appName()).msconcat(baseClassBusinessValidator().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessValidatorBaseImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModel('validator', '').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ValidatorBaseImpl(app)»«ENDFILE»
 «ENDIF-»
-    «FILE getAppSourcePath(app.appName()).msconcat(implClassBusinessValidator().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BusinessValidatorImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassModel('validator', '').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ValidatorImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
 «REM»base implementation«ENDREM»
-«DEFINE BusinessValidatorBaseImpl(Application app) FOR Entity-»
+«DEFINE ValidatorBaseImpl(Application app) FOR Entity-»
 
 /**
- * Business validator class for encapsulating validation methods.
+ * Validator class for encapsulating entity validation methods.
  *
  * This is the base validation class for «name.formatForDisplay()» entities.
  */
-abstract class «baseClassBusinessValidator()»
+abstract class «baseClassModel('validator', '')»
 {
-«EXPAND BusinessValidatorBaseImpl(app)-»
+«EXPAND ValidatorBaseImpl(app)-»
 }
 «ENDDEFINE»
 
 «REM»concrete implementation stub«ENDREM»
-«DEFINE BusinessValidatorImpl(Application app) FOR Entity-»
+«DEFINE ValidatorImpl(Application app) FOR Entity-»
 
 /**
- * Business validator class for encapsulating validation methods.
+ * Validator class for encapsulating entity validation methods.
  *
  * This is the concrete validation class for «name.formatForDisplay()» entities.
  */
-class «implClassBusinessValidator()» extends «IF isInheriting()»«parentType().implClassBusinessValidator()»«ELSE»«baseClassBusinessValidator()»«ENDIF»
+class «implClassModel('validator', '')» extends «IF isInheriting()»«parentType().implClassModel('validator', '')»«ELSE»«baseClassModel('validator', '')»«ENDIF»
 {
     // here you can add custom validation methods or override existing checks
 }
 «ENDDEFINE»
 
-«DEFINE BusinessValidatorBaseImpl(Application app) FOR Entity»
+«DEFINE ValidatorBaseImpl(Application app) FOR Entity»
 
     /**
      * @var «implClassModelEntity()» The entity class which is treated by this validator.
@@ -88,7 +88,7 @@ class «implClassBusinessValidator()» extends «IF isInheriting()»«parentType
         $entityClass = '«appName()»_Entity_' . ucfirst($objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
-        // TODO: move to «IF entity.isInheriting()»«entity.parentType().baseClassModelRepository()»«ELSE»«entity.baseClassModelRepository()»«ENDIF»
+        // TODO: move to «IF entity.isInheriting()»«entity.parentType().baseClassModel('repository', '')»«ELSE»«entity.baseClassModel('repository', '')»«ENDIF»
         $where = 'tbl.«name.formatForCode()» = \'' . DataUtil::formatForStore($value) . '\'';
         if ($excludeid > 0) {
             $where .= ' AND tbl.«entity.idField()» != \'' . (int) DataUtil::formatForStore($excludeid) . '\'';
@@ -119,7 +119,7 @@ class «implClassBusinessValidator()» extends «IF isInheriting()»«parentType
         $entityClass = '«appName()»_Entity_' . ucfirst($objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
-        // TODO: move to «IF isInheriting()»«parentType().baseClassModelRepository()»«ELSE»«baseClassModelRepository()»«ENDIF»
+        // TODO: move to «IF isInheriting()»«parentType().baseClassModel('repository', '')»«ELSE»«baseClassModel('repository', '')»«ENDIF»
         $where = 'tbl.slug» = \'' . DataUtil::formatForStore($value) . '\'';
         if ($excludeid > 0) {
             $where .= ' AND tbl.«idField()» != \'' . (int) DataUtil::formatForStore($excludeid) . '\'';

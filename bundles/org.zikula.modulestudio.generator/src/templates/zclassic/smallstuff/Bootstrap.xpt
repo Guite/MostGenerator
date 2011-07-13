@@ -17,11 +17,15 @@
  * whereby $namespace is the first part of the PEAR class name
  * and $path is the path to the containing folder.
  */
-«IF hasLoggable() || hasSluggable() || hasSortable() || hasTimestampable() || hasTranslatable()-»
+«IF hasTrees() || hasLoggable() || hasSluggable() || hasSortable() || hasTimestampable() || hasTranslatable()-»
 // initialise doctrine extension listeners
 $helper = ServiceUtil::getService('doctrine_extensions');
+«IF hasTrees()-»
+$helper->getListener('tree');
+«ENDIF-»
 «IF hasLoggable()-»
 $loggableListener = $helper->getListener('loggable');
+// set current user name to loggable listener
 $loggableListener->setUsername(UserUtil::getVar('uname'));
 «ENDIF-» 
 «IF hasSluggable()-»
@@ -34,10 +38,15 @@ $helper->getListener('sortable');
 $helper->getListener('timestampable');
 «ENDIF-»
 «IF hasTranslatable()-»
-$helper->getListener('translatable');
-«ENDIF-»
-«IF hasTrees()-»
-$helper->getListener('tree');
+$translatableListener = $helper->getListener('translatable');
+$translatableListener->setTranslatableLocale(ZLanguage::getLanguageCode());
+/**
+ * Sometimes it is desired to set a default translation as a fallback if record does not have a translation
+ * on used locale. In that case Translation Listener takes the current value of Entity.
+ * But there is a way to specify a default locale which would force Entity to not update it`s field
+ * if current locale is not a default.
+ */
+//$translatableListener->setDefaultLocale(System::getVar('language_i18n', 'en'));
 «ENDIF-»
 «ENDIF-»
 

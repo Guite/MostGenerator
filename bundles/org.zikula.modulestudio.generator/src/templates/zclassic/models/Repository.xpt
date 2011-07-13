@@ -14,9 +14,9 @@
 «DEFINE Root(Application app) FOR Entity-»
 «info("Generating repository classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «IF !isInheriting()-»
-    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModelRepository().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRepositoryBaseImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModel('repository', '').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRepositoryBaseImpl(app)»«ENDFILE»
 «ENDIF-»
-    «FILE getAppSourcePath(app.appName()).msconcat(implClassModelRepository().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRepositoryImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassModel('repository', '').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRepositoryImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
 «REM»base implementation«ENDREM»
@@ -33,15 +33,8 @@ use Doctrine\ORM\EntityRepository;
  *
  * This is the base repository class for «name.formatForDisplay()» entities.
  */
-class «baseClassModelRepository()» extends «IF tree != EntityTreeType::NONE-»«tree.asConstant().toFirstUpper()»TreeRepository«ELSE-»EntityRepository«ENDIF-»
+class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::NONE-»«tree.asConstant().toFirstUpper()»TreeRepository«ELSE-»EntityRepository«ENDIF-»
 {
-    /**
-     * Hook into the constructor process.
-     */
-    public function construct()
-    {
-    }
-
     /**
      * Helper method for truncating the table.
      * Used during installation when inserting default data.
@@ -62,13 +55,18 @@ class «baseClassModelRepository()» extends «IF tree != EntityTreeType::NONE-�
      *
      * @return array|«implClassModelEntity()» retrieved data array or «implClassModelEntity()» instance
      */
-    public function selectOneItemById($id = 0, $asArray = true, $useJoins = true)
+    public function selectById($id = 0, $asArray = true, $useJoins = true)
     {
-        $q = $this->_intBaseQuery('', '', $useJoins)
+        // check id parameter
+        if ($id == 0) {
+            return LogUtil::registerArgsError();
+        }
+
+        $query = $this->_intBaseQuery('', '', $useJoins)
                   ->where('tbl.«idField()» = ?', $id);
 
         $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
-        return $q->fetchOne(array(), $fetchType);
+        return $query->fetchOne(array(), $fetchType);
     }
 
 «IF sluggable && sluggableUnique-»
@@ -82,13 +80,18 @@ class «baseClassModelRepository()» extends «IF tree != EntityTreeType::NONE-�
      *
      * @return array|«implClassModelEntity()» retrieved data array or «implClassModelEntity()» instance
      */
-    public function selectOneItemBy«((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCodeCapital()»($slugTitle = '', $asArray = true, $useJoins = true)
+    public function selectBySlug($slugTitle = '', $asArray = true, $useJoins = true)
     {
-        $q = $this->_intBaseQuery('', '', $useJoins)
+        // check input parameter
+        if ($slugTitle == '') {
+            return LogUtil::registerArgsError();
+        }
+
+        $query = $this->_intBaseQuery('', '', $useJoins)
                   ->where('tbl.«((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCode()» = ?', $slugTitle);
 
         $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
-        return $q->fetchOne(array(), $fetchType);
+        return $query->fetchOne(array(), $fetchType);
     }
 «ENDIF-»
 
@@ -104,9 +107,10 @@ class «baseClassModelRepository()» extends «IF tree != EntityTreeType::NONE-�
      */
     public function selectCollection($where = '', $orderBy = '', $asArray = true, $useJoins = true)
     {
-        $q = $this->_intBaseQuery($where, $orderBy, $useJoins);
+        $query = $this->_intBaseQuery($where, $orderBy, $useJoins);
+
         $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
-        return $q->execute(array(), $fetchType);
+        return $query->execute(array(), $fetchType);
     }
 
     /**
@@ -277,17 +281,17 @@ interface Doctrine\Common\Persistence\ObjectRepository.
         }
 
         // create base selection query
-        $q = $this->getEntityManager()->createQuery()
+        $query = $this->getEntityManager()->createQuery()
             ->select($selection)
             ->from('«implClassModelRecord()» tbl');
 
         // add join information
         if ($useJoins === true) {
-            $this->addJoinsToFrom($q);
+            $this->addJoinsToFrom($query);
         }
 
         if (!empty($where)) {
-            $q->where('tbl.' . $where);
+            $query->where('tbl.' . $where);
         }
 
         // use FilterUtil to support generic filtering
@@ -298,48 +302,31 @@ interface Doctrine\Common\Persistence\ObjectRepository.
         // supported operators: eq, ne, like, lt, le, gt, ge, null, notnull
 
         // process request input filters and add them to the query.
-        $fu->enrichQuery($q);
+        $fu->enrichQuery($query);
 
-«IF hasTranslatableFields()-»
-
-        $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST', FILTER_SANITIZE_STRING);
-        if ($useJoins == true && $currentFunc != 'edit') {
-            if (!empty($where)) {
-                $q->andWhere('Translation.lang = ?', array(ZLanguage::getLanguageCode()));
-            }
-            else {
-                $q->where('Translation.lang = ?', array(ZLanguage::getLanguageCode()));
-            }
-        }
-«ENDIF-»
         // add order by clause
         if (!empty($orderBy)) {
             if ($orderBy == 'RAND()') {
-                $q->orderBy('rand');
+                $query->orderBy('rand');
             }
             else {
-«IF hasTranslatableFields()-»
-                // HACK FOR Translatable behavior
-                $sortParts = explode(' ', $orderBy);
-                $sortField = $sortParts[0];
-                if (in_array($sortField, array(«EXPAND TranslationArrayPart FOREACH getTranslatableFields() SEPARATOR ', '-»))) {
-                    $q->orderBy('Translation.' . $orderBy);
-                }
-                else {
-                    $q->orderBy('tbl.' . $orderBy);
-                }
-«ELSE-»
-                $q->orderBy('tbl.' . $orderBy);
-«ENDIF-»
+                $query->orderBy('tbl.' . $orderBy);
             }
         }
-        return $q;
+
+«IF hasTranslatableFields()-»
+        // set the translation query hint
+        $query->setHint(
+            \Doctrine\ORM\Query::HINT_CUSTOM_OUTPUT_WALKER,
+            'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
+        );
+
+«ENDIF-»
+        return $query;
     }
 «EXPAND JoinMethods(app)-»
 }
 «ENDDEFINE»
-
-«DEFINE TranslationArrayPart FOR DerivedField-»'«name.formatForCode()-»'«ENDDEFINE»
 
 «DEFINE TreeMethods(Application app) FOR Entity-»
 «IF tree != EntityTreeType::NONE-»
@@ -469,7 +456,7 @@ interface Doctrine\Common\Persistence\ObjectRepository.
  *
  * This is the concrete repository class for «name.formatForDisplay()» entities.
  */
-class «implClassModelRepository()» extends «IF isInheriting()»«parentType().implClassModelRepository()»«ELSE»«baseClassModelRepository()»«ENDIF»
+class «implClassModel('repository', '')» extends «IF isInheriting()»«parentType().implClassModel('repository', '')»«ELSE»«baseClassModel('repository', '')»«ENDIF»
 {
     // feel free to add your own methods here, like for example reusable DQL queries
 }
