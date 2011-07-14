@@ -26,14 +26,14 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 «REM»Column annotations«ENDREM»
 «DEFINE ColumnExtensionsDefault FOR DerivedField»
+«IF translatable-»
+     * @Gedmo\Translatable
+«ENDIF-»
 «IF sluggablePosition > 0-»
      * @Gedmo\Sluggable(position=«sluggablePosition»)
 «ENDIF-»
 «IF sortableGroup-»
      * @Gedmo\SortableGroup
-«ENDIF-»
-«IF translatable-»
-     * @Gedmo\Translatable
 «ENDIF-»
 «IF versioned-»
      * @Gedmo\Versioned
@@ -67,6 +67,9 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
 «IF hasSluggableFields()-»
 
     /**
+«IF !getSluggableFields().select(e|e.translatable).isEmpty-»
+     * @Gedmo\Translatable
+«ENDIF-»
      * @Gedmo\Slug(style="«slugStyle.asConstant()»"«ENDIF-»separator="«slugSeparator»"«IF !slugUnique-», unique=false«ENDIF-»«IF !slugUpdatable-», updatable=false«ENDIF-»)
      * @ORM\Column(type="string", length=«slugLength»«IF !slugUnique-», unique=false«ENDIF-»)
      * @var string $slug.
@@ -129,6 +132,9 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
 «ENDDEFINE»
 
 «DEFINE AdditionalAccessors FOR Entity-»
+«IF hasSluggableFields()-»
+«EXPAND FileHelper::GetterMethod('slug', 'string')-»
+«ENDIF-»
 «IF tree != EntityTreeType::NONE-»
 «EXPAND FileHelper::GetterAndSetterMethods('parent', implClassModelEntity(), true, 'null')-»
 «ENDIF-»
