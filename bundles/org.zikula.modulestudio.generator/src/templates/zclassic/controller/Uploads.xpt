@@ -68,11 +68,17 @@ class «appName()»_Base_UploadHandler
     private $allowedObjectTypes;
 
     /**
+     * @var array List of dangerous file types to be rejected.
+     */
+    private $forbiddenFileTypes;
+
+    /**
      * Constructor initialising the supported object types.
      */
     public function __construct()
     {
         $this->allowedObjectTypes = array(«FOREACH getUploadEntities() AS entity SEPARATOR ", "»'«entity.name.formatForCode()»'«ENDFOREACH»);
+        $this->forbiddenFileTypes = array('cgi', 'pl', 'asp', 'phtml', 'php', 'php3', 'php4', 'php5', 'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml');
     }
 
     /**
@@ -86,6 +92,8 @@ class «appName()»_Base_UploadHandler
      */
     public function performFileUpload($objectType, $fileData, $fieldName)
     {
+        $dom = ZLanguage::getModuleDomain('«appName()»');
+
         $result = array('fileName' => '',
                         'metaData' => array());
 
@@ -98,7 +106,7 @@ class «appName()»_Base_UploadHandler
             if (is_array($file)) {
                 return $this->handleError($file);
             }
-            LogUtil::registerError('No file found (23846)');
+            LogUtil::registerError(__('Error! No file found.', $dom));
             return $result;
         }
 
@@ -132,8 +140,16 @@ class «appName()»_Base_UploadHandler
             $extensionCheck = in_array($extension, $allowedExtensions);
             if ($extensionCheck === false) {
                 // fail silently, this skips this upload field
+                //LogUtil::registerError(__('Error! This file type is not allowed. Please choose another file format.', $dom));
                 return $result;
             }
+        }
+
+        $extensionCheck = (!in_array($extension, $this->forbiddenExtensions));
+        if ($extensionCheck === false) {
+            // fail silently, this skips this upload field
+            //LogUtil::registerError(__('Error! This file type is not allowed. Please choose another file format.', $dom));
+            return $result;
         }
 
         $imageTypes = array('gif', 'jpeg', 'jpg', 'png');
@@ -152,7 +168,7 @@ class «appName()»_Base_UploadHandler
         $fileName = $this->determineFileName($objectType, $fieldName, $basePath, $fileName, $extension);
 
         if (!move_uploaded_file($file['tmp_name'], $basePath . $fileName)) {
-            return LogUtil::registerError('Error during moving your file (34352).');
+            return LogUtil::registerError(__('Error! Could not move your file to the destination folder.', $dom));
         }
 
         // collect data to return
