@@ -30,7 +30,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
      * @Gedmo\Translatable
 «ENDIF-»
 «IF sluggablePosition > 0-»
-     * @Gedmo\Sluggable(position=«sluggablePosition»)
+     * @Gedmo\Sluggable(slugField="slug", position=«sluggablePosition»)
 «ENDIF-»
 «IF sortableGroup-»
      * @Gedmo\SortableGroup
@@ -64,6 +64,20 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
 
 «REM»Additional column definitions«ENDREM»
 «DEFINE AdditionalProperties FOR Entity-»
+«IF geographical-»
+
+    /**
+     * @ORM\Column(type="decimal", precision=15, scale=10)
+     * @var decimal $latitude.
+     */
+    protected $latitude = 0.00;
+
+    /**
+     * @ORM\Column(type="decimal", precision=15, scale=10)
+     * @var decimal $longitude.
+     */
+    protected $longitude = 0.00;
+«ENDIF-»
 «IF hasSluggableFields()-»
 
     /**
@@ -136,6 +150,10 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
 «ENDDEFINE»
 
 «DEFINE AdditionalAccessors FOR Entity-»
+«IF geographical-»
+«EXPAND FileHelper::GetterAndSetterMethods('latitude', 'decimal', false, false, '')-»
+«EXPAND FileHelper::GetterAndSetterMethods('longitude', 'decimal', false, false, '')-»
+«ENDIF-»
 «IF hasSluggableFields()-»
 «EXPAND FileHelper::GetterMethod('slug', 'string', false)-»
 «ENDIF-»

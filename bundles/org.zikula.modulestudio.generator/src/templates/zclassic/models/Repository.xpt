@@ -36,6 +36,25 @@ use Doctrine\ORM\EntityRepository;
 class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::NONE-»«tree.asConstant().toFirstUpper()»TreeRepository«ELSE-»EntityRepository«ENDIF-»
 {
     /**
+     * @var string The default sorting field/expression.
+     */
+    protected $defaultSortingField = '«getLeadingField().name.formatForCode()»';
+
+    /**
+     * Retrieves an array with all fields which can be used for sorting instances.
+     *
+     * @TODO to be refactored
+     * @return array
+     */
+    public function getAllowedSortingFields()
+    {
+        return array(«EXPAND singleSortingField FOREACH fields SEPARATOR ','»«EXPAND standardSortingFields-»
+        );
+    }
+
+«EXPAND FileHelper::GetterAndSetterMethods('defaultSortingField', 'string', false, false, '')»
+
+    /**
      * Helper method for truncating the table.
      * Used during installation when inserting default data.
      */
@@ -175,36 +194,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     }
 «ENDIF-»
 
-«REM»
-    public function getAllAdminUsers()
-    {
-        return $this->getEntityManager()
-                    ->createQuery('SELECT u FROM MyDomain\Model\User u WHERE u.status = "admin"')
-                    ->getResult();
-
-        // All users with an age between 20 and 30 (inclusive).
-        $q = $em->createQuery("select u from MyDomain\Model\User u where u.age >= 20 and u.age <= 30");
-        $users = $q->getResult();
-    }
-
-    public function getRecentBugs($number = 30)
-    {
-        $dql = "SELECT b, e, r FROM Bug b JOIN b.engineer e JOIN b.reporter r ORDER BY b.created DESC";
-
-        $query = $this->getEntityManager()->createQuery($dql);
-        $query->setMaxResults($number);
-        return $query->getResult();
-    }
-
-    public function getRecentBugsArray($number = 30)
-    {
-        $dql = "SELECT b, e, r, p FROM Bug b JOIN b.engineer e ".
-               "JOIN b.reporter r JOIN b.products p ORDER BY b.created DESC";
-        $query = $this->getEntityManager()->createQuery($dql);
-        $query->setMaxResults($number);
-        return $query->getArrayResult();
-    }
-
+«REM»Example:
     public function getUsersBugs($userId, $number = 15)
     {
         $dql = "SELECT b, e, r FROM Bug b JOIN b.engineer e JOIN b.reporter r ".
@@ -215,52 +205,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
                              ->setMaxResults($number)
                              ->getResult();
     }
-
-
-For extending find(), findOneBy() or findBy() one must follow the
-interface Doctrine\Common\Persistence\ObjectRepository.
-
-    /**
-     * Finds an object by its primary key / identifier.
-     *
-     * @param $id The identifier.
-     * @return object The object.
-     */
-    public function find($id);
-
-    /**
-     * Finds all objects in the repository.
-     *
-     * @return mixed The objects.
-     */
-    public function findAll();
-
-    /**
-     * Finds objects by a set of criteria.
-     *
-     * Optionally sorting and limiting details can be passed. An implementation may throw
-     * an UnexpectedValueException if certain values of the sorting or limiting details are
-     * not supported.
-     *
-     * @throws UnexpectedValueException
-     * @param array $criteria
-     * @param array|null $orderBy
-     * @param int|null $limit
-     * @param int|null $offset
-     * @return mixed The objects.
-     */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null);
-
-    /**
-     * Finds a single object by a set of criteria.
-     *
-     * @param array $criteria
-     * @return object The object.
-     */
-    public function findOneBy(array $criteria);
-
 «ENDREM»
-
 
 «EXPAND TreeMethods(app)-»
 
@@ -275,7 +220,7 @@ interface Doctrine\Common\Persistence\ObjectRepository.
      */
     protected function _intBaseQuery($where = '', $orderBy = '', $useJoins = true)
     {
-        $selection = 'tbl.*' . (($orderBy == 'RAND()') ? ', RANDOM() rand' : '');
+        $selection = 'tbl.*' . (($orderBy == 'RAND()') ? ', rand() AS rand' : '');
         if ($useJoins === true) {
             $selection = $this->addJoinsToSelection($selection);
         }
@@ -326,6 +271,23 @@ interface Doctrine\Common\Persistence\ObjectRepository.
     }
 «EXPAND JoinMethods(app)-»
 }
+«ENDDEFINE»
+
+«DEFINE singleSortingField FOR EntityField»«REM»DUMMY«ENDREM»«ENDDEFINE»
+«DEFINE singleSortingField FOR DerivedField»
+«LET entity.incoming.select(e|formatForDB(e.source.idField()) == name.formatForDB()) AS joins-»
+«IF !joins.isEmpty-»
+                     '«joins.get(0).source.name.formatForCode()»'«""-»
+«ELSE-»
+                     '«name.formatForCode()»'«""-»
+«ENDIF-»
+«ENDLET-»«ENDDEFINE»
+«DEFINE singleSortingField FOR CalculatedField»
+                     '«name.formatForCode()»'«""-»
+«ENDDEFINE»
+
+«DEFINE standardSortingFields FOR Entity»
+«REM»will be filled by Advices (Aspect Orientation)«ENDREM»
 «ENDDEFINE»
 
 «DEFINE TreeMethods(Application app) FOR Entity-»

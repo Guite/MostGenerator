@@ -8,6 +8,7 @@
 «DEFINE Root FOR Application-»
     «EXPAND Root(this) FOREACH models.entities-»
     «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»
+    «EXPAND business::Validator::BaseValidator-»
     «EXPAND business::Validator::ValidatorWrapper(this) FOREACH models.entities-»
 «IF hasTrees()-»
 «FOREACH getTreeEntities() AS treeEntity-»
@@ -34,6 +35,7 @@
  * This is the base entity class for «name.formatForDisplay()» entities.
  *
 «EXPAND entity::Extensions::ClassExtensions-»
+«REM»«EXPAND ObjectExtensions-»«ENDREM»
  * @ORM\Entity(repositoryClass="«implClassModel('repository', '')»"«IF readOnly-», readOnly=true«ENDIF-»)
 «IF indexes.isEmpty-»
  * @ORM\Table(name="«fullEntityName()»")
@@ -55,7 +57,7 @@
 «IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT-»
  * @ORM\ChangeTrackingPolicy("«changeTrackingPolicy.asConstant()»")
 «ENDIF-»
-
+ * @ORM\HasLifecycleCallbacks
  */
 class «baseClassModelEntity()» extends Zikula_EntityAccess«IF hasNotifyPolicy()-» implements NotifyPropertyChanged«ENDIF-»
 {
@@ -141,6 +143,21 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «EXPAND entity::Association::RelationAccessor(false) FOREACH incoming.typeSelect(JoinRelationship)»
 «EXPAND entity::Association::RelationAccessor(true) FOREACH outgoing.typeSelect(JoinRelationship)»
 
+«EXPAND EventListener::Root-»
+
+    /**
+     * Start validation and raise exception if invalid data is found.
+     *
+     * @return void.
+     */
+    public function validate()
+    {
+        $result = $this->_validator->validateAll();
+        if (is_array($result)) {
+            throw new Zikula_Exception($result['message'], $result['code'], $result['debugArray']);
+        }
+    }
+
 «ENDDEFINE»
 
 «DEFINE Constructor FOR Entity-»
@@ -212,16 +229,12 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «IF isInheriter()-»
 «EXPAND SubClasses-»
 «ENDIF-»
-«EXPAND SetUpBehaviour»
-«ENDREM»
-
-
 
 «DEFINE SubClasses FOR Entity-»
-«LET getChildRelationsWithAggregation() AS aggregatedChildren-»
-«IF !aggregatedChildren.isEmpty-»
+«LET getChildRelations() AS children-»
+«IF !children.isEmpty-»
         $this->setSubclasses(array(
-«EXPAND SubClass FOREACH aggregatedChildren-»
+«EXPAND SubClass FOREACH children-»
             )
         );
 «ENDIF-»
@@ -232,88 +245,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
                 '«source.name.formatForCode()»' => array('«columnAggregationField.formatForCode()»' => '«source.name.formatForCode()»')
 «ENDDEFINE»
 
-
-
-
-
-
-«DEFINE OLDCollectionBaseImpl(Application app) FOR Entity»
-
-    /**
-     * @var string Optional where clause for selection.
-     */
-    protected $_where = '';
-
-    /**
-     * @var string Optional order clause for selection.
-     */
-    protected $_orderBy = '';
-
-    /**
-     * @var string The default sorting field/expression.
-     */
-    protected $_defaultSortingField = '«getLeadingField().name.formatForCode()»';
-
-
-    /**
-     * Retrieves an array with all fields which can be used for sorting instances.
-     *
-     * @return array
-     */
-    public function get_allowedSortingFields()
-    {
-        // TODO: to be refactored
-        return array(«EXPAND singleSortingField FOREACH fields SEPARATOR ','»«EXPAND standardSortingFields FOR this-»
-        );
-    }
-
-«EXPAND FileHelper::GetterAndSetterMethods('_where', 'string', false, false, '')»
-«EXPAND FileHelper::GetterAndSetterMethods('_orderBy', 'string', false, false, '')»
-«EXPAND FileHelper::GetterAndSetterMethods('_defaultSortingField', 'string', false, false, '')»
-
-«ENDDEFINE»
-
-«DEFINE singleSortingField FOR EntityField»«REM»DUMMY«ENDREM»«ENDDEFINE»
-«DEFINE singleSortingField FOR DerivedField»
-«LET entity.incoming.select(e|formatForDB(e.source.idField()) == name.formatForDB()) AS joins-»
-«IF !joins.isEmpty-»
-                     '«joins.get(0).source.name.formatForCode()»'«""-»
-«ELSE-»
-                     '«name.formatForCode()»'«""-»
-«ENDIF-»
-«ENDLET-»«ENDDEFINE»
-«DEFINE singleSortingField FOR CalculatedField»
-                     '«name.formatForCode()»'«""-»
-«ENDDEFINE»
-
-«DEFINE standardSortingFields FOR Entity»
-«REM»will be filled by Advices (Aspect Orientation)«ENDREM»
-«ENDDEFINE»
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+«ENDREM»
 
 
 «REM»creates a reference entity class file for every many-to-many relationship instance«ENDREM»
@@ -322,7 +254,6 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
     «FILE getAppSourcePath(app.appName()).msconcat(baseClassModelRefEntity().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefEntityBaseImpl(app)»«ENDFILE»
     «FILE getAppSourcePath(app.appName()).msconcat(implClassModelRefEntity().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefEntityImpl(app)»«ENDFILE»
 «ENDDEFINE»
-
 
 «REM»base implementation«ENDREM»
 «DEFINE ModelRefEntityBaseImpl(Application app) FOR ManyToManyRelationship-»
@@ -375,66 +306,7 @@ class «implClassModelRefEntity()» extends «baseClassModelRefEntity()»
 }
 «ENDDEFINE»
 
-
-
-
-
-
-
-
-
-
-«DEFINE SetUpBehaviour FOR Entity-»
-«IF hasTranslatableFields()-»
-        // Internationalisation (content in multiple language)
-        // See http://code.zikula.org/core/ticket/2401 for possible future support in the Zikula core
-        $i18n = new Doctrine_Template_I18n(array(
-                'className' => '%CLASS%Translation',
-                'fields'    => array('«i18nFields.replaceAll(", ", "', '")»'),
-                'type'      => 'string',
-                'length'    => 2
-            )
-        );
-
-        $this->actAs($i18n);
-«ENDIF-»
-
-«IF geographical-»
-        // Coordinate fields and distance calculation
-        // See http://code.zikula.org/core/ticket/2401 for possible future support in the Zikula core
-        // $this->actAs('Geographical');
-
-        // Workaround for wrong scaling (Doctrine bug)
-        // See http://www.tkstudios.com/2010/04/27/fixing-doctrines-geographical-template-precision/
-        $geographical0 = new Doctrine_Template_Geographical(array(
-           'latitude' => array(
-              'options' => array(
-                 'scale' => 7,
-              ),
-           ),
-           'longitude' => array(
-              'options' => array(
-                 'scale' => 7,
-              ),
-           ),
-        ));
-        $this->actAs($geographical0);
-«ENDIF-»
-
-«EXPAND ObjectExtensions-»
-
-        /**
-         * Event listeners registrations
-         */
-        $this->addListener(new «implClassModel('listener', '')»());
-«ENDDEFINE»
-
 «DEFINE ObjectExtensions FOR Entity»
 «REM»will be filled by Advices (Aspect Orientation)«ENDREM»
 «ENDDEFINE»
-
-
-
-
-
 

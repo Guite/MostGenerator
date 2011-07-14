@@ -120,7 +120,7 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
         } elseif ($vars['sorting'] == 'newest') {
             $sortParam = $idField . ' DESC';
         } elseif ($vars['sorting'] == 'default') {
-            $sortParam = $objectTemp->get_defaultSortingField() . ' ASC';
+            $sortParam = $repository->getDefaultSortingField() . ' ASC';
         }
 
         // get objects from database

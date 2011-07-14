@@ -26,10 +26,6 @@
     «info("Generating repository classes")»
     «EXPAND Repository::Root»
 
-    «pm.subTask("Model: Listener classes")»
-    «info("Generating event listener classes")»
-    «EXPAND EventListener::Root-»
-
 	«pm.subTask("Controller: Application installer")»
     «info("Generating application installer")»
 	«EXPAND controller::Installer::Root»

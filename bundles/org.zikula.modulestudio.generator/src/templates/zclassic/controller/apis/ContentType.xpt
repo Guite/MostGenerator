@@ -101,9 +101,9 @@ function «appName()»_Api_ContentTypes_itemlist($args)
         if ($this->sorting == 'random') {
             $sortParam = 'RAND()';
         } elseif ($this->sorting == 'newest') {
-            $sortParam = $objectTemp->get_idField() . ' DESC';
+            $sortParam = $idField . ' DESC';
         } elseif ($this->sorting == 'default') {
-            $sortParam = $objectTemp->get_defaultSortingField() . ' ASC';
+            $sortParam = $repository->getDefaultSortingField() . ' ASC';
         }
 
         $resultsPerPage = (($this->amount) ? $this->amount : 1);

@@ -4,6 +4,61 @@
 «EXTENSION extensions::ClassUtils»
 «REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
+«REM»creates a base validator class encapsulating common checks«ENDREM»
+«DEFINE BaseValidator FOR Application-»
+«info("Generating base validator class") -> ""-»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassDefault(app, '', 'Validator').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BaseValidatorBaseImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassDefault(app, '', 'Validator').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BaseValidatorImpl(app)»«ENDFILE»
+«ENDDEFINE»
+
+«REM»base implementation«ENDREM»
+«DEFINE BaseValidatorBaseImpl(Application app) FOR Entity-»
+/**
+ * Validator class for encapsulating common entity validation methods.
+ *
+ * This is the base validation class with general checks.
+ */
+abstract class «baseClassDefault('', 'Validator')» extends AbstractBase
+{
+    /**
+     * Checks if field value is a valid DateTime instance.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @return boolean result of this check
+     */
+    public function checkIfDateIsValid($fieldName)
+    {
+        return ($this[$fieldName] instanceof DateTime);
+    }
+
+    /**
+     * Checks if field value is a date in the future
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @return boolean result of this check
+     */
+    public function checkIfDateIsFuture($fieldName)
+    {
+        return ($this->myDate->format('U') > time());
+    }
+}
+«ENDDEFINE»
+
+«REM»concrete implementation stub«ENDREM»
+«DEFINE BaseValidatorImpl(Application app) FOR Entity-»
+
+/**
+ * Validator class for encapsulating common entity validation methods.
+ *
+ * This is the concrete validation class with general checks.
+ */
+class «implClassDefault('', 'Validator')» extends «baseClassModel('', 'Validator')»
+{
+    // here you can add custom validation methods or override existing checks
+}
+«ENDDEFINE»
+
+
 «REM»creates a validator class for every Entity instance«ENDREM»
 «DEFINE ValidatorWrapper(Application app) FOR Entity-»
 «info("Generating validator classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
@@ -21,7 +76,7 @@
  *
  * This is the base validation class for «name.formatForDisplay()» entities.
  */
-abstract class «baseClassModel('validator', '')»
+class «baseClassModel('validator', '')» «IF isInheriting()»«parentType().implClassModel('validator', '')»«ELSE»«implClassDefault('', 'Validator')»«ENDIF»
 {
 «EXPAND ValidatorBaseImpl(app)-»
 }
@@ -53,9 +108,30 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
      *
      * @param «implClassModelEntity()» $entity The entity to be validated.
      */
-    function __construct(«implClassModelEntity()» $entity)
+    public function __construct(«implClassModelEntity()» $entity)
     {
         $this->entity = $entity;
+    }
+
+    /**
+     * Performs all validation rules.
+     *
+     * @return mixed either array with error information or true on success
+     */
+    public function validateAll()
+    {
+        $errorInfo = array('message' => '', 'code' => 0, 'debugArray' => array()); 
+«REM»TODO
+        $this->checkIfDateIsValid('fieldName');
+        $this->checkIfDateIsFuture('fieldName');
+
+        if (!$this->checkIfDateIsFuture('fieldName')) {
+            $errorInfo['message'] = __('Error! Date must be in future (%s).', array('fieldName'));
+            return $errorInfo;
+        }
+
+«ENDREM»
+        return true;
     }
 
 «EXPAND checkForUniqueValues(app) FOREACH getUniqueDerivedFields()-»
@@ -74,7 +150,7 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
      * This method determines if there already exist «entity.nameMultiple.formatForDisplay()» with the same «name.formatForDisplay()».
      *
      * @param «fieldTypeAsString()»  $value The «name.formatForDisplay()» to check.
-     * @param int $excludeid      int    Id of «entity.nameMultiple.formatForDisplay()» to exclude (optional).
+     * @param int $excludeid      Id of «entity.nameMultiple.formatForDisplay()» to exclude (optional).
      *
      * @return boolean true if the given «name.formatForDisplay()» does already exist
      */
@@ -105,7 +181,7 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
      * This method determines if there already exist «nameMultiple.formatForDisplay()» with the same «sluggableFieldRealName.formatForDisplay()».
      *
      * @param string  $value The «sluggableFieldRealName.formatForDisplay()» to check.
-     * @param int $excludeid      int    Id of «nameMultiple.formatForDisplay()» to exclude (optional).
+     * @param int $excludeid      Id of «nameMultiple.formatForDisplay()» to exclude (optional).
      *
      * @return boolean true if the given slug does already exist
      */
@@ -129,7 +205,7 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
 «ENDDEFINE»
 
 
-«REM TODO
+«REM» TODO
 
 some validators to be reimplemented:
 

@@ -4,51 +4,12 @@
 «EXTENSION extensions::ClassUtils»
 «REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
-«REM»Entry point for Doctrine listener classes«ENDREM»
-«DEFINE Root FOR Application-»
-    «EXPAND Root(this) FOREACH models.entities-»
-«ENDDEFINE»
-
-«REM»creates a listener class file for every Entity instance«ENDREM»
-«DEFINE Root(Application app) FOR Entity-»
-«info("Generating listener classes for entity \"" + name.formatForDisplay() + "\"") -> ""-»
-«REM»Later: «EXPAND EventListenerMethod FOREACH listeners-»«ENDREM»«""-»
-«IF !isInheriting()-»
-    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModel('listener', '').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelListenerBaseImpl(app)»«ENDFILE»
-«ENDIF-»
-    «FILE getAppSourcePath(app.appName()).msconcat(implClassModel('listener', '').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelListenerImpl(app)»«ENDFILE»
-«ENDDEFINE»
-
-«REM»base implementation«ENDREM»
-«DEFINE ModelListenerBaseImpl(Application app) FOR Entity-»
-
-/**
- * Doctrine_Record_Listener class used to listen for and hook into events.
- *
- * This is the base listener class for «name.formatForDisplay()» entities.
- */
-class «baseClassModel('listener', '')» extends Doctrine_Record_Listener
-{
+«REM»Entry point for entity lifecycle callback methods«ENDREM»
+«DEFINE Root FOR Entity-»
+«REM»Temporary hack«ENDREM»
 «EXPAND stubMethodsForNow-»
-}
+«REM»«EXPAND EventListenerMethod FOREACH listeners-»«ENDREM»
 «ENDDEFINE»
-
-«REM»concrete implementation stub«ENDREM»
-«DEFINE ModelListenerImpl(Application app) FOR Entity-»
-
-/**
- * Doctrine_Record_Listener class used to listen for and hook into events.
- *
- * This is the concrete listener class for «name.formatForDisplay()» entities.
- */
-class «implClassModel('listener', '')» extends «IF isInheriting()»«parentType().implClassModel('listener', '')»«ELSE»«baseClassModel('listener', '')»«ENDIF»
-{
-    // feel free to add your own methods here
-}
-«ENDDEFINE»
-
-
-
 
 «DEFINE EventListenerMethod FOR EntityEventListener-»
 «error("Error: undefined event listener type " + metaType.toString() + " (code 925724)") -> ""-»
@@ -60,167 +21,84 @@ class «implClassModel('listener', '')» extends «IF isInheriting()»«parentTy
 «error("Error: undefined post process type " + metaType.toString() + " (code 925726)") -> ""-»
 «ENDDEFINE»
 
-
-«REM»Temporary hack«ENDREM»
 «DEFINE stubMethodsForNow FOR Entity-»
+«REM»«DEFINE EventListenerMethod FOR PostLoad-»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PreSave-»«ENDREM»«""-»
     /**
-     * Pre-Process the data prior to a hydrate operation.
+     * Post-Process the data after the entity has been constructed by the entity manager.
+     * The event happens after the entity has been loaded from database or after a refresh call.
      *
-     * @param Doctrine_Event $event Event object
+     * Restrictions:
+     *     - no access to entity manager or unit of work apis
+     *     - no access to associations (not initialised yet)
      *
+     * @ORM\PostLoad
      * @return void.
      */
-    public function preHydrate(Doctrine_Event $event)
+    public function postLoadCallback()
     {
-        // echo 'selecting a record ...';
+        // echo 'loaded a record ...';
+«EXPAND PostLoadImpl-»
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PostSave-»«ENDREM»«""-»
-    /**
-     * Post-Process the data after a hydrate operation.
-     *
-     * @param Doctrine_Event $event Event object
-     *
-     * @return void.
-     */
-    public function postHydrate(Doctrine_Event $event)
-    {
-        // echo 'selected a record ...';
-
-        $data = $event->data;
-
-        $useObject = (is_object($data) && $data instanceOf Doctrine_Record);
-        $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
-«IF !(fields.typeSelect(EmailField).isEmpty && fields.typeSelect(UploadField).isEmpty)-»
-        $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST', FILTER_SANITIZE_STRING);
-
-«ENDIF-»
-«REM»«IF controller.hasActions('view')-»«ENDREM»
-        $urlObject = new Zikula_ModUrl('«container.application.appName()»', $currentType, 'display', ZLanguage::getLanguageCode(), array('ot' => '«name.formatForCode()»', '«name.formatForDB()»id' => $data['«name.formatForDB()»id']));
-«REM»«ELSE-»
-        $urlObject = new Zikula_ModUrl('«container.application.appName()»', $currentType, 'view', ZLanguage::getLanguageCode(), array('ot' => '«name.formatForCode()»', '«name.formatForDB()»id' => $data['«name.formatForDB()»id']));
-«ENDIF-»«ENDREM»
-        if ($useObject) {
-            $data->mapValue('urlObject', $urlObject);
-        }
-        else {
-            $data['urlObject'] = $urlObject;
-        }
-
-«IF !fields.typeSelect(UploadField).isEmpty-»
-        $imageTypes = array('gif', 'jpeg', 'jpg', 'png');
-
-«ENDIF-»
-    «EXPAND sanitizeForOutput FOREACH fields»
-
-
-
-        $event->data = $data;
-    }
-«REM»«ENDDEFINE»«ENDREM»«""-»
-
-«REM»«DEFINE EventListenerMethod FOR PreSave-»«ENDREM»«""-»
-    /**
-     * Pre-Process the data prior to a save operation.
-     *
-     * @param Doctrine_Event $event Event object
-     *
-     * @return void.
-     */
-    public function preSave(Doctrine_Event $event)
-    {
-        // echo 'saving a record ...';
-    }
-«REM»«ENDDEFINE»«ENDREM»«""-»
-
-«REM»«DEFINE EventListenerMethod FOR PostSave-»«ENDREM»«""-»
-    /**
-     * Post-Process the data after a save operation.
-     *
-     * @param Doctrine_Event $event Event object
-     *
-     * @return void.
-     */
-    public function postSave(Doctrine_Event $event)
-    {
-        // echo 'saved a record ...';
-    }
-«REM»«ENDDEFINE»«ENDREM»«""-»
-
-«REM»«DEFINE EventListenerMethod FOR PreUpdate-»«ENDREM»«""-»
-    /**
-     * Pre-Process the data prior to an update operation.
-     *
-     * @param Doctrine_Event $event Event object
-     *
-     * @return void.
-     */
-    public function preUpdate(Doctrine_Event $event)
-    {
-        // echo 'updating a record ...';
-    }
-«REM»«ENDDEFINE»«ENDREM»«""-»
-
-«REM»«DEFINE EventListenerMethod FOR PostUpdate-»«ENDREM»«""-»
-    /**
-     * Post-Process the data after an update operation.
-     *
-     * @param Doctrine_Event $event Event object
-     *
-     * @return void.
-     */
-    public function postUpdate(Doctrine_Event $event)
-    {
-        // echo 'updated a record ...';
-    }
-«REM»«ENDDEFINE»«ENDREM»«""-»
-
-«REM»«DEFINE EventListenerMethod FOR PreInsert-»«ENDREM»«""-»
+«REM»«DEFINE EventListenerMethod FOR PrePersist-»«ENDREM»«""-»
     /**
      * Pre-Process the data prior to an insert operation.
+     * The event happens before the entity managers persist operation is executed for this entity.
      *
-     * @param Doctrine_Event $event Event object
+     * Restrictions:
+     *     - no access to entity manager or unit of work apis
+     *     - no identifiers available if using an identity generator like sequences
+     *     - Doctrine won't recognize changes on relations which are done here
+     *       if this method is called by cascade persist
+     *     - no creation of other entities allowed
      *
+     * @ORM\PrePersist
      * @return void.
      */
-    public function preInsert(Doctrine_Event $event)
+    public function prePersistCallback()
     {
         // echo 'inserting a record ...';
+        $this->validate();
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PostInsert-»«ENDREM»«""-»
+«REM»«DEFINE EventListenerMethod FOR PostPersist-»«ENDREM»«""-»
     /**
      * Post-Process the data after an insert operation.
+     * The event happens after the entity has been made persistant.
+     * Will be called after the database insert operations.
+     * The generated primary key values are available.
      *
-     * @param Doctrine_Event $event Event object
+     * Restrictions:
+     *     - no access to entity manager or unit of work apis
      *
+     * @ORM\PostPersist
      * @return void.
      */
-    public function postInsert(Doctrine_Event $event)
+    public function postPersistCallback()
     {
         // echo 'inserted a record ...';
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PreDelete-»«ENDREM»«""-»
+«REM»«DEFINE EventListenerMethod FOR PreRemove-»«ENDREM»«""-»
     /**
      * Pre-Process the data prior a delete operation.
+     * The event happens before the entity managers remove operation is executed for this entity.
      *
-     * @param Doctrine_Event $event Event object
+     * Restrictions:
+     *     - no access to entity manager or unit of work apis
+     *     - will not be called for a DQL DELETE statement
      *
+     * @ORM\PreRemove
      * @return void.
      */
-    public function preDelete(Doctrine_Event $event)
+    public function preRemoveCallback()
     {
-        // echo 'deleting a record ...';
-        $data = $event->data;
-
 /*        // delete workflow for this entity
-        $result = WorkflowUtil::deleteWorkflow($data);
+        $result = WorkflowUtil::deleteWorkflow($this);
         if ($result === false) {
             $dom = ZLanguage::getModuleDomain('«container.application.appName()»');
             return LogUtil::registerError(__('Error! Could not remove stored workflow.', $dom));
@@ -228,15 +106,20 @@ class «implClassModel('listener', '')» extends «IF isInheriting()»«parentTy
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PostDelete-»«ENDREM»«""-»
+«REM»«DEFINE EventListenerMethod FOR PostRemove-»«ENDREM»«""-»
     /**
      * Post-Process the data after a delete.
+     * The event happens after the entity has been deleted.
+     * Will be called after the database delete operations.
      *
-     * @param Doctrine_Event $event Event object
+     * Restrictions:
+     *     - no access to entity manager or unit of work apis
+     *     - will not be called for a DQL DELETE statement
      *
+     * @ORM\PostRemove
      * @return void
      */
-    public function postDelete(Doctrine_Event $event)
+    public function postRemoveCallback()
     {
         // echo 'deleted a record ...';
 «LET getUploadFields() AS uploadFields-»
@@ -244,70 +127,131 @@ class «implClassModel('listener', '')» extends «IF isInheriting()»«parentTy
         // initialise the upload handler
         $uploadManager = new «container.application.appName()»_UploadHandler();
 
-        $invoker = $event->getInvoker();
         $uploadFields = array(«FOREACH uploadFields AS uploadField SEPARATOR ", "»'«uploadField.name.formatForCode()»'«ENDFOREACH»);
         foreach ($uploadFields as $uploadField) {
-            if (empty($invoker->$uploadField)) {
+            if (empty($this->$uploadField)) {
                 continue;
             }
 
             // remove upload file (and image thumbnails)
-            $invoker = $uploadManager->deleteUploadFile('«name.formatForCode()»', $invoker, $uploadField);
+            $this = $uploadManager->deleteUploadFile('«name.formatForCode()»', $this, $uploadField);
         }
 «ENDIF-»
 «ENDLET-»
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PreValidate-»«ENDREM»«""-»
+«REM»«DEFINE EventListenerMethod FOR PreUpdate-»«ENDREM»«""-»
     /**
-     * Pre-Process the validation process with class specific logic.
+     * Pre-Process the data prior to an update operation.
+     * The event happens before the database update operations for the entity data.
      *
-     * @param Doctrine_Event $event Event object
+     * Restrictions:
+     *     - no access to entity manager or unit of work apis
+     *     - will not be called for a DQL UPDATE statement
+     *     - changes on associations are not allowed and won't be recognized by flush
+     *     - changes on properties won't be recognized by flush as well
+     *     - no creation of other entities allowed
      *
+     * @ORM\PreUpdate
      * @return void.
      */
-    public function preValidate(Doctrine_Event $event)
+    public function preUpdate()
     {
-        // echo 'validating a record ...';
+        // echo 'updating a record ...';
+        $this->validate();
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PostValidate-»«ENDREM»«""-»
+«REM»«DEFINE EventListenerMethod FOR PostUpdate-»«ENDREM»«""-»
     /**
-     * Post-Process the validation process with class specific logic.
+     * Post-Process the data after an update operation.
+     * The event happens after the database update operations for the entity data.
      *
-     * @param Doctrine_Event $event Event object
+     * Restrictions:
+     *     - no access to entity manager or unit of work apis
+     *     - will not be called for a DQL UPDATE statement
      *
+     * @ORM\PostUpdate
      * @return void.
      */
-    public function postValidate(Doctrine_Event $event)
+    public function postUpdate()
     {
-        // echo 'validated a record ...';
+        // echo 'updated a record ...';
     }
+«REM»«ENDDEFINE»«ENDREM»«""-»
+
+    /**
+     * Pre-Process the data prior to a save operation.
+     * This combines the PrePersist and PreUpdate events.
+     * For more information see corresponding callback handlers.
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     * @return void.
+     */
+    public function preSaveCallback()
+    {
+        // echo 'saving a record ...';
+        $this->validate();
+    }
+
+    /**
+     * Post-Process the data after a save operation.
+     * This combines the PostPersist and PostUpdate events.
+     * For more information see corresponding callback handlers.
+     *
+     * @ORM\PostPersist
+     * @ORM\PostUpdate
+     * @return void.
+     */
+    public function postSaveCallback()
+    {
+        // echo 'saved a record ...';
+    }
+«REM»«ENDDEFINE»«ENDREM»«""-»
 «ENDDEFINE»
 
 
+«DEFINE PostLoadImpl FOR Entity-»«REM»FOR PostLoad«ENDREM»
+        $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
+«IF !(fields.typeSelect(EmailField).isEmpty && fields.typeSelect(UploadField).isEmpty)-»
+        $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST', FILTER_SANITIZE_STRING);
+«ENDIF-»
+
+«REM»«IF controller.hasActions('view')-»«ENDREM»
+        $urlObject = new Zikula_ModUrl('«container.application.appName()»', $currentType, 'display', ZLanguage::getLanguageCode(), array('ot' => '«name.formatForCode()»', '«name.formatForDB()»id' => $this['«name.formatForDB()»id']));
+«REM»«ELSE-»
+        $urlObject = new Zikula_ModUrl('«container.application.appName()»', $currentType, 'view', ZLanguage::getLanguageCode(), array('ot' => '«name.formatForCode()»', '«name.formatForDB()»id' => $this['«name.formatForDB()»id']));
+«ENDIF-»«ENDREM»
+        $this->urlObject = $urlObject;
+
+«IF !fields.typeSelect(UploadField).isEmpty-»
+        $imageTypes = array('gif', 'jpeg', 'jpg', 'png');
+
+«ENDIF-»
+    «EXPAND sanitizeForOutput FOREACH fields»
+«ENDDEFINE»
 
 
 «DEFINE sanitizeForOutput FOR EntityField-»
-        $data['«name.formatForCode()»'] = ((isset($data['«name.formatForCode()»']) && !empty($data['«name.formatForCode()»'])) ? DataUtil::formatForDisplay($data['«name.formatForCode()»']) : '');
+        $this['«name.formatForCode()»'] = ((isset($this['«name.formatForCode()»']) && !empty($this['«name.formatForCode()»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode()»']) : '');
 «ENDDEFINE»
 
 «DEFINE sanitizeForOutputHTML FOR EntityField-»
     if ($currentFunc != 'edit') {
-        $data['«name.formatForCode()»'] = ((isset($data['«name.formatForCode()»']) && !empty($data['«name.formatForCode()»'])) ? DataUtil::formatForDisplayHTML($data['«name.formatForCode()»']) : '');
+        $this['«name.formatForCode()»'] = ((isset($this['«name.formatForCode()»']) && !empty($this['«name.formatForCode()»'])) ? DataUtil::formatForDisplayHTML($this['«name.formatForCode()»']) : '');
     }
 «ENDDEFINE»
 
 «DEFINE sanitizeForOutput FOR BooleanField-»
-        $data['«name.formatForCode()»'] = (bool) $data['«name.formatForCode()»'];
+        $this['«name.formatForCode()»'] = (bool) $this['«name.formatForCode()»'];
 «ENDDEFINE»
 «DEFINE sanitizeForOutput FOR AbstractIntegerField-»
-        $data['«name.formatForCode()»'] = (int) ((isset($data['«name.formatForCode()»']) && !empty($data['«name.formatForCode()»'])) ? DataUtil::formatForDisplay($data['«name.formatForCode()»']) : 0);
+        $this['«name.formatForCode()»'] = (int) ((isset($this['«name.formatForCode()»']) && !empty($this['«name.formatForCode()»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode()»']) : 0);
 «ENDDEFINE»
 «DEFINE sanitizeForOutput FOR DecimalField-»
-        $data['«name.formatForCode()»'] = (float) ((isset($data['«name.formatForCode()»']) && !empty($data['«name.formatForCode()»'])) ? DataUtil::formatForDisplay($data['«name.formatForCode()»']) : 0.00);
+        $this['«name.formatForCode()»'] = (float) ((isset($this['«name.formatForCode()»']) && !empty($this['«name.formatForCode()»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode()»']) : 0.00);
 «ENDDEFINE»
 «DEFINE sanitizeForOutput FOR StringField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
 «DEFINE sanitizeForOutput FOR TextField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
@@ -317,25 +261,19 @@ class «implClassModel('listener', '')» extends «IF isInheriting()»«parentTy
     }
 «ENDDEFINE»
 «DEFINE sanitizeForOutput FOR ArrayField-»
-        $data['«name.formatForCode()»'] = ((isset($data['«name.formatForCode()»']) && is_array($data['«name.formatForCode()»'])) ? DataUtil::formatForDisplay($data['«name.formatForCode()»']) : array());
+        $this['«name.formatForCode()»'] = ((isset($this['«name.formatForCode()»']) && is_array($this['«name.formatForCode()»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode()»']) : array());
 «ENDDEFINE»
 «DEFINE sanitizeForOutput FOR UploadField-»
 «LET name.formatForCode() AS realName-»
-        if (!empty($data['«realName»'])) {
+        if (!empty($this['«realName»'])) {
             $basePath = «entity.container.application.appName()»_Util_Controller::getFileBaseFolder('«entity.name.formatForCode()»', '«realName»');
-            $fullPath = $basePath .  $data['«realName»'];
-            if ($useObject) {
-                $data->mapValue('«realName»FullPath', $fullPath);
-                $data->mapValue('«realName»FullPathURL', System::getBaseUrl() . $fullPath);
-            }
-            else {
-                $data['«realName»FullPath'] = $fullPath;
-                $data['«realName»FullPathURL'] = System::getBaseUrl() . $fullPath;
-            }
+            $fullPath = $basePath .  $this['«realName»'];
+            $this['«realName»FullPath'] = $fullPath;
+            $this['«realName»FullPathURL'] = System::getBaseUrl() . $fullPath;
 
             // just some backwards compatibility stuff«REM»TODO: remove somewhen«ENDREM»
-            if (!isset($data['«realName»Meta']) || !is_array($data['«realName»Meta']) || !count($data['«realName»Meta'])) {
-                $extensionarr = explode('.', $data['«realName»']);
+            if (!isset($this['«realName»Meta']) || !is_array($this['«realName»Meta']) || !count($this['«realName»Meta'])) {
+                $extensionarr = explode('.', $this['«realName»']);
                 $meta = array();
                 $meta['extension'] = $extensionarr[count($extensionarr) - 1];
                 $meta['size'] = filesize($fullPath);
@@ -360,13 +298,13 @@ class «implClassModel('listener', '')» extends «IF isInheriting()»«parentTy
                 }
 
                 // assign new meta data
-                $data['«realName»Meta'] = $meta;
+                $this['«realName»Meta'] = $meta;
             }
         }
 «ENDLET-»
 «ENDDEFINE»
 «DEFINE sanitizeForOutput FOR FloatField-»
-        $data['«name.formatForCode()»'] = (float) ((isset($data['«name.formatForCode()»']) && !empty($data['«name.formatForCode()»'])) ? DataUtil::formatForDisplay($data['«name.formatForCode()»']) : 0.00);
+        $this['«name.formatForCode()»'] = (float) ((isset($this['«name.formatForCode()»']) && !empty($this['«name.formatForCode()»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode()»']) : 0.00);
 «ENDDEFINE»
 
 

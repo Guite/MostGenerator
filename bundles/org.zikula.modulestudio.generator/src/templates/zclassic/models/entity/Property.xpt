@@ -31,8 +31,6 @@
     /**
 «IF primaryKey-»
      * @ORM\Id
-«ENDIF-»
-«IF primaryKey-»
 «REM»TODO«ENDREM»
      * @ORM\GeneratedValue«REM»(strategy="AUTO")«ENDREM»
 «ENDIF-»

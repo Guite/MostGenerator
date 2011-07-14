@@ -286,7 +286,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $idField = $objectTemp->get_idField();
 
         $where = '';
-        $sortParam = $objectTemp->get_defaultSortingField() . ' asc';
+        $sortParam = $repository->getDefaultSortingField() . ' asc';
         if ($many) {
             $inputValue = '';
             if ($source == 'POST') {

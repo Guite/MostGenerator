@@ -4,23 +4,23 @@
 «AROUND templates::zclassic::models::Entity::ObjectExtensions FOR Entity-»
 «IF standardFields-»
         // Zikula standard fields (obj_status, cr_uid, cr_date, lu_uid, lu_date)
-        $this->actAs('Zikula_Doctrine_Template_StandardFields');
+        //$this->actAs('Zikula_Doctrine_Template_StandardFields');
 «ENDIF-»
 «IF categorisable-»
         // Categorisable support
-        $this->actAs('Zikula_Doctrine_Template_Categorisable');
+        //$this->actAs('Zikula_Doctrine_Template_Categorisable');
 «ENDIF-»
 «IF attributable-»
         // Attributable support
-        $this->actAs('Zikula_Doctrine_Template_Attributable');
+        //$this->actAs('Zikula_Doctrine_Template_Attributable');
 «ENDIF-»
 «IF metaData-»
         // Enhanced meta data support
-        $this->actAs('Zikula_Doctrine_Template_MetaData');
+        //$this->actAs('Zikula_Doctrine_Template_MetaData');
 «ENDIF-»
 «IF loggable-»
         // enable Logging
-        $this->actAs('Zikula_Doctrine_Template_Logging');
+        //$this->actAs('Zikula_Doctrine_Template_Logging');
 «ENDIF-»
 «targetDef.proceed()»
 «ENDAROUND»
