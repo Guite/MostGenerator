@@ -29,16 +29,16 @@
 «ENDDEFINE»
 
 
-«DEFINE GetterAndSetterMethods(String name, String type, Boolean useHint, String init) FOR Object-»
-«EXPAND GetterMethod(name, type)»
-«EXPAND SetterMethod(name, type, useHint, init)»
+«DEFINE GetterAndSetterMethods(String name, String type, Boolean isMany, Boolean useHint, String init) FOR Object-»
+«EXPAND GetterMethod(name, type, isMany)»
+«EXPAND SetterMethod(name, type, isMany, useHint, init)»
 «ENDDEFINE»
 
-«DEFINE GetterMethod(String name, String type) FOR Object-»
+«DEFINE GetterMethod(String name, String type, Boolean isMany) FOR Object-»
     /**
      * Get «name.formatForDisplay()».
      *
-     * @return «type»
+     * @return «type»«IF type.toLowerCase() != 'array' && isMany-»[]«ENDIF-»
      */
     public function get«name.toFirstUpper()»()
     {
@@ -46,11 +46,11 @@
     }
 «ENDDEFINE»
 
-«DEFINE SetterMethod(String name, String type, Boolean useHint, String init) FOR Object-»
+«DEFINE SetterMethod(String name, String type, Boolean isMany, Boolean useHint, String init) FOR Object-»
     /**
      * Set «name.formatForDisplay()».
      *
-     * @param «type» $«name».
+     * @param «type»«IF type.toLowerCase() != 'array' && isMany-»[]«ENDIF-» $«name».
      *
      * @return void
      */
@@ -73,73 +73,3 @@
             $this->«name» = $p«name.toFirstUpper()»;
         }
 «ENDDEFINE»
-
-«DEFINE AddMethod(Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) FOR JoinRelationship-»
-    /**
-     * Remove an instance of «type» from the list of «name.formatForDisplay()».
-     *
-     * @param «type» $«name».
-     *
-     * @return void
-     */
-    public function add«name.toFirstUpper()»(«type» $«nameSingle»)
-    {
-        $this->«name»[] = $«nameSingle»;
-«IF bidirectional && !useTarget-»
-«LET getRelationAliasName(!useTarget).toFirstUpper() AS ownAliasName-»
-«IF selfIsMany-»
-        $nameSingle->add«ownAliasName»($this);
-«ELSE-»
-        $nameSingle->set«ownAliasName»($this);
-«ENDIF-»
-«ENDLET-»
-«ENDIF-»
-    }
-«ENDDEFINE»
-
-«DEFINE RemoveMethod(Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) FOR JoinRelationship-»
-    /**
-     * Remove an instance of «type» from the list of «name.formatForDisplay()».
-     *
-     * @param «type» $«name».
-     *
-     * @return void
-     */
-    public function remove«name.toFirstUpper()»(«type» $«nameSingle»)
-    {
-        $this->«name»->removeElement($«nameSingle»);
-«IF bidirectional && !useTarget-»
-«LET getRelationAliasName(!useTarget).toFirstUpper() AS ownAliasName-»
-«IF selfIsMany-»
-        $nameSingle->remove«ownAliasName»($this);
-«ELSE-»
-        $nameSingle->set«ownAliasName»(null);
-«ENDIF-»
-«ENDLET-»
-«ENDIF-»
-    }
-«ENDDEFINE»
-
-«DEFINE RemoveByIdMethod(Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) FOR JoinRelationship-»
-    /**
-     * Remove an instance of «type» from the list of «name.formatForDisplay()» by it's identifier.
-     *
-     * @param integer $«name».
-     *
-     * @return void
-     */
-    public function remove«name.toFirstUpper()»ById($id)
-    {
-        $this->«name»->remove($id);
-«IF bidirectional && !useTarget-»
-«LET getRelationAliasName(!useTarget).toFirstUpper() AS ownAliasName-»
-«IF selfIsMany-»
-        $nameSingle->remove«ownAliasName»($this);
-«ELSE-»
-        $nameSingle->set«ownAliasName»(null);
-«ENDIF-»
-«ENDLET-»
-«ENDIF-»
-    }
-«ENDDEFINE»
-

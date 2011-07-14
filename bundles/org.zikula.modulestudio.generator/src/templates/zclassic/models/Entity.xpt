@@ -128,6 +128,22 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «EXPAND entity::Extensions::AdditionalProperties-»
 «EXPAND entity::Association::Root(false) FOREACH incoming.typeSelect(JoinRelationship)»
 «EXPAND entity::Association::Root(true) FOREACH outgoing.typeSelect(JoinRelationship)»
+«EXPAND Constructor-»
+
+«EXPAND FileHelper::GetterAndSetterMethods('_objectType', 'string', false, false, '')»
+«EXPAND FileHelper::GetterAndSetterMethods('_idField', 'string', false, false, '')»
+«EXPAND FileHelper::GetterAndSetterMethods('_validator', implClassModel('validator', ''), false, true, 'null')»
+«EXPAND FileHelper::GetterAndSetterMethods('_hasUniqueSlug', 'boolean', false, false, '')»
+«EXPAND PropertyChangedListener-»
+
+«EXPAND entity::Property::FieldAccessor FOREACH fields.typeSelect(DerivedField)»
+«EXPAND entity::Extensions::AdditionalAccessors-»
+«EXPAND entity::Association::RelationAccessor(false) FOREACH incoming.typeSelect(JoinRelationship)»
+«EXPAND entity::Association::RelationAccessor(true) FOREACH outgoing.typeSelect(JoinRelationship)»
+
+«ENDDEFINE»
+
+«DEFINE Constructor FOR Entity-»
 
     /**
      * Constructor.
@@ -135,18 +151,32 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
      * for own implementation purposes. It is also possible to add
      * arbitrary arguments as with every other class method.
      */
+«IF isIndexByTarget()-»
+«LET incoming.select(e|e.isIndexed()) AS indexRelation-»
+«LET getRelationAliasName(indexRelation, false) AS sourceAlias-»
+«LET getRelationAliasName(indexRelation, true) AS targetAlias-»
+«LET source.getIndexByField() AS indexBy-»
+    public function __construct($«indexBy.formatForCode()», «indexRelation.source.implClassModelEntity()» $«sourceAlias.formatForCode»)
+    {
+        $this->«indexBy.formatForCode()» = $«indexBy.formatForCode()»;
+        $this->«sourceAlias.formatForCode()» = $«sourceAlias.formatForCode()»;
+        $«sourceAlias.formatForCode()»->add«targetAlias.formatForCodeCapital()»($this);
+«ENDLET-»
+«ENDLET-»
+«ENDLET-»
+«ENDLET-»
+«ELSE-»
     public function __construct()
     {
+«ENDIF-»
         $this->_objectType = '«fullEntityName()»';
         $this->_validator = new «implClassModel('validator', '')»($this);
         $this->_hasUniqueSlug = «IF hasSluggableFields() && slugUnique»true«ELSE»false«ENDIF»;
 «EXPAND entity::Association::InitCollections-»
     }
+«ENDDEFINE»
 
-«EXPAND FileHelper::GetterAndSetterMethods('_objectType', 'string', false, '')»
-«EXPAND FileHelper::GetterAndSetterMethods('_idField', 'string', false, '')»
-«EXPAND FileHelper::GetterAndSetterMethods('_validator', implClassModel('validator', ''), true, 'null')»
-«EXPAND FileHelper::GetterAndSetterMethods('_hasUniqueSlug', 'boolean', false, '')»
+«DEFINE PropertyChangedListener FOR Entity-»
 «IF hasNotifyPolicy()-»
 
     /**
@@ -175,16 +205,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
         }
     }
 «ENDIF-»
-«ENDREM»
-
-«EXPAND entity::Property::FieldAccessor FOREACH fields.typeSelect(DerivedField)»
-«EXPAND entity::Extensions::AdditionalAccessors-»
-«EXPAND entity::Association::RelationAccessor(false) FOREACH incoming.typeSelect(JoinRelationship)»
-«EXPAND entity::Association::RelationAccessor(true) FOREACH outgoing.typeSelect(JoinRelationship)»
-
 «ENDDEFINE»
-
-
 
 
 «REM»
@@ -246,9 +267,9 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
         );
     }
 
-«EXPAND FileHelper::GetterAndSetterMethods('_where', 'string', false, '')»
-«EXPAND FileHelper::GetterAndSetterMethods('_orderBy', 'string', false, '')»
-«EXPAND FileHelper::GetterAndSetterMethods('_defaultSortingField', 'string', false, '')»
+«EXPAND FileHelper::GetterAndSetterMethods('_where', 'string', false, false, '')»
+«EXPAND FileHelper::GetterAndSetterMethods('_orderBy', 'string', false, false, '')»
+«EXPAND FileHelper::GetterAndSetterMethods('_defaultSortingField', 'string', false, false, '')»
 
 «ENDDEFINE»
 

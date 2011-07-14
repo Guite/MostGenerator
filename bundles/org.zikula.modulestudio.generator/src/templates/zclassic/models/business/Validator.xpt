@@ -63,7 +63,7 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
 «EXPAND checkForUniqueSlugValues(app)-»
 «ENDIF-»
 
-«EXPAND FileHelper::GetterAndSetterMethods('entity', implClassModelEntity(), true, 'null')»
+«EXPAND FileHelper::GetterAndSetterMethods('entity', implClassModelEntity(), false, true, 'null')»
 «ENDDEFINE»
 
 «DEFINE checkForUniqueValues(Application app) FOR DerivedField-»

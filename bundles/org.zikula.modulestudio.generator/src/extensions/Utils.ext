@@ -14,7 +14,7 @@ cached String msUrl() :
 /* not used yet, just for testing */
 cached String constantName(Action this) :
 	"ACTION_" + name.toUpperCase();
- 
+
 cached String constantName(ActionEvent this) :
 	"EVENT_" + name.toUpperCase();
 
@@ -101,12 +101,6 @@ cached String configControllerType(Application this) :
 cached String configController(Application this) :
     configControllerType().replaceAll('modulestudio::', '').replaceAll('Controller', '');
 
-cached String getUniqueRelationNameForJs(JoinRelationship this, Application app, Entity targetEntity, Boolean many, Boolean incoming, String relationAliasName) :
-    app.prefix()
-    .msconcat(targetEntity.name.formatForCodeCapital())
-    .msconcat('_')
-    .msconcat(relationAliasName);
-
 // return model container which are default data sources
 cached getDefaultDataSource(Application this) :
     models.select(e|e.defaultDataSource == true).get(0);
@@ -191,6 +185,19 @@ cached getPointingRelations(IntegerField this) :
 
 cached String subFolderPathSegment(UploadField this) :
     (subFolderName != null && subFolderName != "") ? subFolderName.formatForDB() : name.formatForDB();
+
+
+cached boolean isManySide(JoinRelationship this, boolean useTarget) :
+    ((metaType == ManyToManyRelationship
+|| (metaType == OneToManyRelationship && useTarget)
+|| (metaType == ManyToOneRelationship && !useTarget)
+) ? true : false);
+
+cached String getUniqueRelationNameForJs(JoinRelationship this, Application app, Entity targetEntity, Boolean many, Boolean incoming, String relationAliasName) :
+    app.prefix()
+    .msconcat(targetEntity.name.formatForCodeCapital())
+    .msconcat('_')
+    .msconcat(relationAliasName);
 
 cached String namingSchemeAsInt(UploadField this) :
     switch (namingScheme) {
@@ -343,6 +350,26 @@ cached boolean hasActions(Controller controller, String type) :
 	   default : false
 	};
 
+
+cached boolean isIndexByTarget(Entity this) :
+    !incoming.select(e|e.getIndexByField() != null && e.getIndexByField() != '').isEmpty;
+
+cached boolean isIndexByField(DerivedField this) :
+    !entity.incoming.select(e|e.getIndexByField() == name).isEmpty;
+
+cached boolean isIndexed(Relationship this) :
+    false;
+cached boolean isIndexed(OneToManyRelationship this) :
+    indexBy != null && indexBy != '';
+cached boolean isIndexed(ManyToManyRelationship this) :
+    indexBy != null && indexBy != '';
+
+cached boolean getIndexByField(Relationship this) :
+    null;
+cached boolean getIndexByField(OneToManyRelationship this) :
+    indexBy;
+cached boolean hasIndexField(ManyToManyRelationship this) :
+    indexBy;
 
 /*
  * extensions that are independent of a specific model element,

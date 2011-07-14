@@ -5,7 +5,7 @@
 «REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «REM»If we have an outgoing association useTarget is true; for an incoming one it is false.«ENDREM»
-«DEFINE Root(Boolean useTarget) FOR JoinRelationship»
+«DEFINE Root(Boolean useTarget) FOR JoinRelationship-»
 «IF source == target-»«REM»TODO«ENDREM»
 /**
   * Self relations were not working yet, must be retested with Doctrine 2.
@@ -21,7 +21,7 @@
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE DirectionSwitch(Boolean useTarget, String sourceName, String targetName, String entityClass) FOR JoinRelationship»
+«DEFINE DirectionSwitch(Boolean useTarget, String sourceName, String targetName, String entityClass) FOR JoinRelationship-»
 «IF !bidirectional-»
 «EXPAND Unidirectional(useTarget, sourceName, targetName, entityClass)-»
 «ELSE-»
@@ -29,13 +29,13 @@
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE Unidirectional(Boolean useTarget, String sourceName, String targetName, String entityClass) FOR JoinRelationship»
+«DEFINE Unidirectional(Boolean useTarget, String sourceName, String targetName, String entityClass) FOR JoinRelationship-»
 «IF useTarget-»
 «EXPAND Outgoing(sourceName, targetName, entityClass)-»
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE Bidirectional(Boolean useTarget, String sourceName, String targetName, String entityClass) FOR JoinRelationship»
+«DEFINE Bidirectional(Boolean useTarget, String sourceName, String targetName, String entityClass) FOR JoinRelationship-»
 «IF !useTarget-»
 «EXPAND Incoming(sourceName, targetName, entityClass)-»
 «ELSE-»
@@ -43,7 +43,7 @@
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE Incoming(String sourceName, String targetName, String entityClass) FOR JoinRelationship»
+«DEFINE Incoming(String sourceName, String targetName, String entityClass) FOR JoinRelationship-»
     /**
      * Bidirectional - «EXPAND IncomingMappingDescription(sourceName, targetName)-».
      *
@@ -59,7 +59,7 @@
 «DEFINE IncomingMappingDescription(String sourceName, String targetName) FOR OneToOneRelationship-»One «targetName» [«target.name.formatForDisplay()»] is linked by one «sourceName» [«source.name.formatForDisplay()»] (INVERSE SIDE)«ENDDEFINE»
 «DEFINE IncomingMappingDescription(String sourceName, String targetName) FOR OneToManyRelationship-»Many «targetName» [«target.nameMultiple.formatForDisplay()»] are linked by one «sourceName» [«source.name.formatForDisplay()»] (OWNING SIDE)«ENDDEFINE»
 
-«DEFINE Incoming(String sourceName, String targetName, String entityClass) FOR ManyToOneRelationship»
+«DEFINE Incoming(String sourceName, String targetName, String entityClass) FOR ManyToOneRelationship-»
     /**
      * Bidirectional - «EXPAND IncomingMappingDescription(sourceName, targetName)-».
      *
@@ -72,7 +72,7 @@
 «ENDDEFINE»
 «DEFINE IncomingMappingDescription(String sourceName, String targetName) FOR ManyToOneRelationship-»One «targetName» [«target.name.formatForDisplay()»] is linked by many «sourceName» [«source.nameMultiple.formatForDisplay()»] (INVERSE SIDE)«ENDDEFINE»
 
-«DEFINE Incoming(String sourceName, String targetName, String entityClass) FOR ManyToManyRelationship»
+«DEFINE Incoming(String sourceName, String targetName, String entityClass) FOR ManyToManyRelationship-»
 «IF bidirectional-»
     /**
      * Bidirectional - «EXPAND IncomingMappingDescription(sourceName, targetName)-».
@@ -87,10 +87,10 @@
 «DEFINE IncomingMappingDescription(String sourceName, String targetName) FOR ManyToManyRelationship-»Many «targetName» [«target.nameMultiple.formatForDisplay()»] are linked by many «sourceName» [«source.nameMultiple.formatForDisplay()»] (INVERSE SIDE)«ENDDEFINE»
 
 «REM»this empty default rule is adapted by ManyToOne on purpose«ENDREM»
-«DEFINE Outgoing(String sourceName, String targetName, String entityClass) FOR JoinRelationship»
+«DEFINE Outgoing(String sourceName, String targetName, String entityClass) FOR JoinRelationship-»
 «ENDDEFINE»
 
-«DEFINE Outgoing(String sourceName, String targetName, String entityClass) FOR OneToOneRelationship»
+«DEFINE Outgoing(String sourceName, String targetName, String entityClass) FOR OneToOneRelationship-»
     /**
      * «IF bidirectional-»Bi«ELSE-»Uni«ENDIF-»directional - «EXPAND OutgoingMappingDescription(sourceName, targetName)-».
      *
@@ -111,7 +111,7 @@
 «IF !bidirectional-»
      * @ORM\ManyToMany(targetEntity="«entityClass»"«EXPAND AdditionalOptions-»)
 «ELSE-»
-     * @ORM\OneToMany(targetEntity="«entityClass»", mappedBy="«sourceName-»"«EXPAND AdditionalOptions-»«IF orphanRemoval-», orphanRemoval=true«ENDIF-»)
+     * @ORM\OneToMany(targetEntity="«entityClass»", mappedBy="«sourceName-»"«EXPAND AdditionalOptions-»«IF orphanRemoval-», orphanRemoval=true«ENDIF-»«IF indexBy-», indexBy="«indexBy»"«ENDIF-»)
 «ENDIF-»
 «EXPAND JoinDetails(true)-»
 «IF orderBy-»
@@ -128,7 +128,7 @@
      * «IF bidirectional-»Bi«ELSE-»Uni«ENDIF-»directional - «EXPAND OutgoingMappingDescription(sourceName, targetName)-».
      *
 «EXPAND Extensions::RelationExtensions(true)-»
-     * @ORM\ManyToMany(targetEntity="«entityClass»"«IF bidirectional-», inversedBy="«sourceName-»"«ENDIF-»«EXPAND AdditionalOptions-»)
+     * @ORM\ManyToMany(targetEntity="«entityClass»"«IF bidirectional-», inversedBy="«sourceName-»"«ENDIF-»«EXPAND AdditionalOptions-»«IF indexBy-», indexBy="«indexBy»"«ENDIF-»)
 «EXPAND JoinDetails(true)-»
 «IF orderBy-»
      * @ORM\OrderBy({«orderBy»})
@@ -140,7 +140,7 @@
 «DEFINE OutgoingMappingDescription(String sourceName, String targetName) FOR ManyToManyRelationship-»Many «sourceName» [«source.nameMultiple.formatForDisplay()»] have many «targetName» [«target.nameMultiple.formatForDisplay()»] (OWNING SIDE)«ENDDEFINE»
 
 
-«DEFINE JoinDetails(Boolean useTarget) FOR JoinRelationship»
+«DEFINE JoinDetails(Boolean useTarget) FOR JoinRelationship-»
 «LET ((useTarget) ? sourceField : targetField) AS joinColumnLocal-»
 «LET ((useTarget) ? targetField : sourceField) AS joinColumnForeign-»
 «IF !(joinColumnForeign.isDefaultIdField() && joinColumnLocal.isDefaultIdField() && !unique && nullable && onDelete == '' && onUpdate == '')-»
@@ -153,7 +153,7 @@
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE JoinDetails(Boolean useTarget) FOR ManyToManyRelationship»
+«DEFINE JoinDetails(Boolean useTarget) FOR ManyToManyRelationship-»
 «LET ((useTarget) ? source : target) AS joinedEntityLocal-»
 «LET ((useTarget) ? target : source) AS joinedEntityForeign-»
 «LET ((useTarget) ? sourceField : targetField) AS joinColumnLocal-»
@@ -174,19 +174,19 @@
 @ORM\JoinColumn(name="«columnName»", referencedColumnName="«referencedColumnName»" «IF unique-», unique=true«ENDIF-»«IF !nullable-», nullable=false«ENDIF-»«IF onDelete != ''-», onDelete="«onDelete»"«ENDIF-»«IF onUpdate != ''-», onUpdate="«onUpdate»"«ENDIF-»)
 «ENDDEFINE»
 
-«DEFINE AdditionalOptions FOR JoinRelationship»
+«DEFINE AdditionalOptions FOR JoinRelationship-»
 «EXPAND CascadeOptions-»«EXPAND FetchTypeTag-»
 «ENDDEFINE»
-«DEFINE CascadeOptions FOR JoinRelationship»
+«DEFINE CascadeOptions FOR JoinRelationship-»
 «IF cascade == CascadeType::NONE-»
 «ELSE-», cascade={«EXPAND CascadeOptionsImpl-»}«ENDIF-»
 «ENDDEFINE»
 
-«DEFINE FetchTypeTag FOR JoinRelationship»
+«DEFINE FetchTypeTag FOR JoinRelationship-»
 «IF fetchType != RelationFetchType::LAZY-», fetch="«fetchType.asConstant()»"«ENDIF-»
 «ENDDEFINE»
 
-«DEFINE CascadeOptionsImpl FOR JoinRelationship»
+«DEFINE CascadeOptionsImpl FOR JoinRelationship-»
 «IF cascade == CascadeType::PERSIST-»"persist"
 «ELSEIF cascade == CascadeType::REMOVE-»"remove"
 «ELSEIF cascade == CascadeType::MERGE-»"merge"
@@ -210,33 +210,142 @@
 «ENDDEFINE»
 
 «DEFINE InitCollection(useTarget) FOR JoinRelationship-»
+«IF isManySide(useTarget)-»
         $this->«getRelationAliasName(useTarget)» = new ArrayCollection();
+«ENDIF-»
 «ENDDEFINE»
 
 
-«DEFINE RelationAccessor(Boolean useTarget) FOR JoinRelationship»
+«DEFINE RelationAccessor(Boolean useTarget) FOR JoinRelationship-»
 «LET getRelationAliasName(useTarget) AS relationAliasName-»
 «EXPAND RelationAccessorImpl(relationAliasName)»
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE RelationAccessorImpl(Boolean useTarget, aliasName) FOR JoinRelationship»
+«DEFINE RelationAccessorImpl(Boolean useTarget, String aliasName) FOR JoinRelationship-»
 «LET ((useTarget) ? target : source).implClassModelEntity() AS entityClass-»
-«LET ((metaType == ManyToManyRelationship
-|| (metaType == OneToManyRelationship && useTarget)
-|| (metaType == ManyToOneRelationship && !useTarget)
-) ? true : false) AS isMany-»
-«IF isMany-»
-«EXPAND FileHelper::GetterAndSetterMethods(aliasName, 'array', false, '')»
+«LET ((useTarget) ? target : source).name AS singleName-»
+«IF isManySide(useTarget)-»
+«EXPAND FileHelper::GetterAndSetterMethods(aliasName, entityClass, true, false, '')»
+«EXPAND RelationAccessorAdditions(useTarget, aliasName, singleName)-»
 «ELSE-»
-«EXPAND FileHelper::GetterAndSetterMethods(aliasName, entityClass, true, 'null')»
+«EXPAND FileHelper::GetterAndSetterMethods(aliasName, entityClass, false, true, 'null')»
 «ENDIF-»
-«LET ((useTarget) ? target : source).name) AS singleName-»
-«EXPAND FileHelper::AddMethod(useTarget, isMany, aliasName, singleName, entityClass)-»
-«EXPAND FileHelper::RemoveMethod(useTarget, isMany, aliasName, singleName, entityClass)-»
-«EXPAND FileHelper::RemoveByIdMethod(useTarget, isMany, aliasName, singleName, entityClass)-»
+«EXPAND AddMethod(useTarget, isMany, aliasName, singleName, entityClass)-»
+«EXPAND RemoveMethod(useTarget, isMany, aliasName, singleName, entityClass)-»
+«EXPAND RemoveByIdMethod(useTarget, isMany, aliasName, singleName, entityClass)-»
 «ENDLET-»
 «ENDLET-»
+«ENDDEFINE»
+
+«DEFINE RelationAccessorAdditions(Boolean useTarget, String aliasName, String singleName) FOR JoinRelationship-»
+«ENDDEFINE»
+
+«DEFINE RelationAccessorAdditions(Boolean useTarget, String aliasName, String singleName) FOR OneToManyRelationship-»
+«IF !useTarget && indexBy != null && indexBy != ''-»
+    /**
+     * Returns an instance of «source.implClassModelEntity()» from the list of «getRelationAliasName(useTarget)» by its given «indexBy.formatForDisplay()» index.
+     *
+     * @param «source.implClassModelEntity()» $«indexBy.formatForCode()».
+     */
+    public function get«singleName.formatForCodeCapital()»($«indexBy.formatForCode()»)
+    {
+        if (!isset($this->«aliasName.formatForCode()»[$«indexBy.formatForCode()»])) {
+            throw new \InvalidArgumentException("«indexBy.formatForDisplayCapital()» is not available on this list of «aliasName.formatForDisplay()».");
+        }
+
+        return $this->«aliasName.formatForCode()»[$«indexBy.formatForCode()»];
+    }
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE AddMethod(Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) FOR JoinRelationship-»
+    /**
+     * Adds an instance of «type» to the list of «name.formatForDisplay()».
+     *
+     * @param «type» $«name».
+     *
+     * @return void
+     */
+    public function add«name.toFirstUpper()»(«type» $«nameSingle»)
+    {
+«EXPAND AddAssignment(useTarget, name, nameSingle)-»
+«IF bidirectional && !useTarget-»
+«LET getRelationAliasName(!useTarget).toFirstUpper() AS ownAliasName-»
+«IF selfIsMany-»
+        $nameSingle->add«ownAliasName»($this);
+«ELSE-»
+        $nameSingle->set«ownAliasName»($this);
+«ENDIF-»
 «ENDLET-»
+«ENDIF-»
+    }
+«ENDDEFINE»
+
+«DEFINE AddAssignmentDefault(Boolean useTarget, String name, String nameSingle) FOR JoinRelationship-»
+        $this->«name»[] = $«nameSingle»;
+«ENDDEFINE»
+«DEFINE AddAssignment(Boolean useTarget, String name, String nameSingle) FOR JoinRelationship-»
+«EXPAND AddAssignmentDefault(useTarget, name, nameSingle)-»
+«ENDDEFINE»
+«DEFINE AddAssignment(Boolean useTarget, String name, String nameSingle) FOR OneToManyRelationship-»
+«IF !useTarget && indexBy != null && indexBy != ''-»
+        $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital()»()] = $«nameSingle»;
+«ELSE-»
+«EXPAND AddAssignmentDefault(useTarget, name, nameSingle)-»
+«ENDIF-»
+«ENDDEFINE»
+«DEFINE AddAssignment(Boolean useTarget, String name, String nameSingle) FOR ManyToManyRelationship-»
+«IF !useTarget && indexBy != null && indexBy != ''-»
+        $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital()»()] = $«nameSingle»;
+«ELSE-»
+«EXPAND AddAssignmentDefault(useTarget, name, nameSingle)-»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE RemoveMethod(Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) FOR JoinRelationship-»
+    /**
+     * Removes an instance of «type» from the list of «name.formatForDisplay()».
+     *
+     * @param «type» $«name».
+     *
+     * @return void
+     */
+    public function remove«name.toFirstUpper()»(«type» $«nameSingle»)
+    {
+        $this->«name»->removeElement($«nameSingle»);
+«IF bidirectional && !useTarget-»
+«LET getRelationAliasName(!useTarget).toFirstUpper() AS ownAliasName-»
+«IF selfIsMany-»
+        $nameSingle->remove«ownAliasName»($this);
+«ELSE-»
+        $nameSingle->set«ownAliasName»(null);
+«ENDIF-»
+«ENDLET-»
+«ENDIF-»
+    }
+«ENDDEFINE»
+
+«DEFINE RemoveByIdMethod(Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) FOR JoinRelationship-»
+    /**
+     * Removes an instance of «type» from the list of «name.formatForDisplay()» by it's identifier.
+     *
+     * @param integer $«name».
+     *
+     * @return void
+     */
+    public function remove«name.toFirstUpper()»ById($id)
+    {
+        $this->«name»->remove($id);
+«IF bidirectional && !useTarget-»
+«LET getRelationAliasName(!useTarget).toFirstUpper() AS ownAliasName-»
+«IF selfIsMany-»
+        $nameSingle->remove«ownAliasName»($this);
+«ELSE-»
+        $nameSingle->set«ownAliasName»(null);
+«ENDIF-»
+«ENDLET-»
+«ENDIF-»
+    }
 «ENDDEFINE»
 

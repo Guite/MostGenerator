@@ -137,13 +137,13 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
 
 «DEFINE AdditionalAccessors FOR Entity-»
 «IF hasSluggableFields()-»
-«EXPAND FileHelper::GetterMethod('slug', 'string')-»
+«EXPAND FileHelper::GetterMethod('slug', 'string', false)-»
 «ENDIF-»
 «IF tree != EntityTreeType::NONE-»
-«EXPAND FileHelper::GetterAndSetterMethods('parent', implClassModelEntity(), true, 'null')-»
+«EXPAND FileHelper::GetterAndSetterMethods('parent', implClassModelEntity(), false, true, 'null')-»
 «ENDIF-»
 «IF hasTranslatableFields()-»
-«EXPAND FileHelper::GetterAndSetterMethods('locale', 'string', false, '')-»
+«EXPAND FileHelper::GetterAndSetterMethods('locale', 'string', false, false, '')-»
 «ENDIF-»
 «ENDDEFINE»
 

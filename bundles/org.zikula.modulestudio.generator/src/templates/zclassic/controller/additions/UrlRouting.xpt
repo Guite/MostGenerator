@@ -52,7 +52,7 @@ class «appName»_Base_RouterFacade
 «EXPAND GetObjectTypeFromGroupingFolder-»
 «EXPAND GetFormattedSlug-»
 
-«EXPAND FileHelper::GetterAndSetterMethods('router', 'Zikula_Routing_UrlRouter', true, 'null')»
+«EXPAND FileHelper::GetterAndSetterMethods('router', 'Zikula_Routing_UrlRouter', false, true, 'null')»
 «ENDLET-»
 }
 «ENDDEFINE»
