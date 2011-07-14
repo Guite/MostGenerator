@@ -26,7 +26,7 @@ abstract class «baseClassDefault('', 'Validator')» extends AbstractBase
      * @param string $fieldName The name of the property to be checked
      * @return boolean result of this check
      */
-    public function checkIfDateIsValid($fieldName)
+    public function isValidDate($fieldName)
     {
         return ($this[$fieldName] instanceof DateTime);
     }
@@ -37,9 +37,9 @@ abstract class «baseClassDefault('', 'Validator')» extends AbstractBase
      * @param string $fieldName The name of the property to be checked
      * @return boolean result of this check
      */
-    public function checkIfDateIsFuture($fieldName)
+    public function isDateInFuture($fieldName)
     {
-        return ($this->myDate->format('U') > time());
+        return ($this->isValidDate($fieldName) && $this[$fieldName]->format('U') > time());
     }
 }
 «ENDDEFINE»
@@ -122,10 +122,12 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
     {
         $errorInfo = array('message' => '', 'code' => 0, 'debugArray' => array()); 
 «REM»TODO
-        $this->checkIfDateIsValid('fieldName');
-        $this->checkIfDateIsFuture('fieldName');
+        if (!$this->isValidDate('fieldName')) {
+            $errorInfo['message'] = __('Error! Field must be a valid date (%s).', array('fieldName'));
+            return $errorInfo;
+        }
 
-        if (!$this->checkIfDateIsFuture('fieldName')) {
+        if (!$this->isDateInFuture('fieldName')) {
             $errorInfo['message'] = __('Error! Date must be in future (%s).', array('fieldName'));
             return $errorInfo;
         }
