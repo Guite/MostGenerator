@@ -1,5 +1,6 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
 
 «DEFINE phpFileNoHeader(Application app) FOR Object-»
 <?php
@@ -71,5 +72,74 @@
 «ENDIF-»
             $this->«name» = $p«name.toFirstUpper()»;
         }
+«ENDDEFINE»
+
+«DEFINE AddMethod(Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) FOR JoinRelationship-»
+    /**
+     * Remove an instance of «type» from the list of «name.formatForDisplay()».
+     *
+     * @param «type» $«name».
+     *
+     * @return void
+     */
+    public function add«name.toFirstUpper()»(«type» $«nameSingle»)
+    {
+        $this->«name»[] = $«nameSingle»;
+«IF bidirectional && !useTarget-»
+«LET getRelationAliasName(!useTarget).toFirstUpper() AS ownAliasName-»
+«IF selfIsMany-»
+        $nameSingle->add«ownAliasName»($this);
+«ELSE-»
+        $nameSingle->set«ownAliasName»($this);
+«ENDIF-»
+«ENDLET-»
+«ENDIF-»
+    }
+«ENDDEFINE»
+
+«DEFINE RemoveMethod(Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) FOR JoinRelationship-»
+    /**
+     * Remove an instance of «type» from the list of «name.formatForDisplay()».
+     *
+     * @param «type» $«name».
+     *
+     * @return void
+     */
+    public function remove«name.toFirstUpper()»(«type» $«nameSingle»)
+    {
+        $this->«name»->removeElement($«nameSingle»);
+«IF bidirectional && !useTarget-»
+«LET getRelationAliasName(!useTarget).toFirstUpper() AS ownAliasName-»
+«IF selfIsMany-»
+        $nameSingle->remove«ownAliasName»($this);
+«ELSE-»
+        $nameSingle->set«ownAliasName»(null);
+«ENDIF-»
+«ENDLET-»
+«ENDIF-»
+    }
+«ENDDEFINE»
+
+«DEFINE RemoveByIdMethod(Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) FOR JoinRelationship-»
+    /**
+     * Remove an instance of «type» from the list of «name.formatForDisplay()» by it's identifier.
+     *
+     * @param integer $«name».
+     *
+     * @return void
+     */
+    public function remove«name.toFirstUpper()»ById($id)
+    {
+        $this->«name»->remove($id);
+«IF bidirectional && !useTarget-»
+«LET getRelationAliasName(!useTarget).toFirstUpper() AS ownAliasName-»
+«IF selfIsMany-»
+        $nameSingle->remove«ownAliasName»($this);
+«ELSE-»
+        $nameSingle->set«ownAliasName»(null);
+«ENDIF-»
+«ENDLET-»
+«ENDIF-»
+    }
 «ENDDEFINE»
 

@@ -638,31 +638,41 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
 «LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
 «IF many && this.getEditStageCode(incoming) > 1-»
+«LET ((incoming) ? source : target).name.formatForCode() AS objectType-»
 «IF incoming-»«REM»only incoming for now, see http://code.zikula.org/generator/ticket/89«ENDREM»«""-»
         $relatedIds = $this->request->getPost()->get('«uniqueNameForJs»ItemList', '');
         if ($this->mode != 'create') {
             // remove all existing references
-«REM»TODO«ENDREM»
-            $entity->unlinkInDb('«relationAliasName»');
+            $entity->get«relationAliasName.toFirstUpper()»()->clear();
         }
         if (!empty($relatedIds)) {
             $relatedIds = explode(',', $relatedIds);
         }
         if (is_array($relatedIds) && count($relatedIds)) {
+            $entityClass = '«appName()»_Entity_' . ucfirst($this->objectType);
+            $repository = $this->entityManager->getRepository($entityClass);
             // create new links
-«REM»TODO«ENDREM»
-«IF this.metaType != ManyToManyRelationship-»
-            $entity->link('«relationAliasName»', $relatedIds);
-«ELSE-»
             foreach ($relatedIds as $relatedId) {
+«IF this.metaType != ManyToManyRelationship-»
+«REM»TODO select before loop with one WHERE IN«ENDREM»
+                $linkObj = $repository->selectById($relatedId);
+                if ($entity->get«relationAliasName.toFirstUpper()»()->contains($linkObj)) {
+                    continue;
+                }
+                $entity->get«relationAliasName.toFirstUpper()»()->add($linkObj);
+«IF bidirectional-»
+«REM»TODO inverse handling missing, will be done with special entity methods«ENDREM»
+«ENDIF-»
+«ELSE-»
                 $linkObj = new «((ManyToManyRelationship)this).implClassModelRefRecord()»();
                 $linkObj->«source.idField()» = «IF incoming»$relatedId«ELSE»$this->«((incoming) ? target : source).idField()»«ENDIF»;
                 $linkObj->«target.idField()» = «IF !incoming»$relatedId«ELSE»$this->«((incoming) ? target : source).idField()»«ENDIF»;
                 $this->entityManager->persist($linkObj);
-            }
 «ENDIF-»
+            }
         }
 «ENDIF-»
+«ENDLET-»
 «ENDIF-»
 «ENDLET-»
 «ENDLET-»

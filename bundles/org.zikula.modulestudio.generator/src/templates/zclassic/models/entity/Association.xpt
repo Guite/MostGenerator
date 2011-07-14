@@ -8,7 +8,7 @@
 «DEFINE Root(Boolean useTarget) FOR JoinRelationship»
 «IF source == target-»«REM»TODO«ENDREM»
 /**
-  * Self relations are not working yet, must be retested with Doctrine 2.
+  * Self relations were not working yet, must be retested with Doctrine 2.
   * See http://code.zikula.org/generator/ticket/75 for more information
   */
 «ENDIF-»
@@ -45,6 +45,8 @@
 
 «DEFINE Incoming(String sourceName, String targetName, String entityClass) FOR JoinRelationship»
     /**
+     * Bidirectional - «EXPAND IncomingMappingDescription(sourceName, targetName)-».
+     *
 «EXPAND Extensions::RelationExtensions(false)-»
      * @ORM\«EXPAND IncomingMappingType-»(targetEntity="«entityClass»", inversedBy="«targetName-»"«EXPAND AdditionalOptions-»)
 «EXPAND JoinDetails(false)-»
@@ -54,9 +56,13 @@
 «ENDDEFINE»
 «DEFINE IncomingMappingType FOR OneToOneRelationship-»OneToOne«ENDDEFINE»
 «DEFINE IncomingMappingType FOR OneToManyRelationship-»ManyToOne«ENDDEFINE»
+«DEFINE IncomingMappingDescription(String sourceName, String targetName) FOR OneToOneRelationship-»One «targetName» [«target.name.formatForDisplay()»] is linked by one «sourceName» [«source.name.formatForDisplay()»] (INVERSE SIDE)«ENDDEFINE»
+«DEFINE IncomingMappingDescription(String sourceName, String targetName) FOR OneToManyRelationship-»Many «targetName» [«target.nameMultiple.formatForDisplay()»] are linked by one «sourceName» [«source.name.formatForDisplay()»] (OWNING SIDE)«ENDDEFINE»
 
 «DEFINE Incoming(String sourceName, String targetName, String entityClass) FOR ManyToOneRelationship»
     /**
+     * Bidirectional - «EXPAND IncomingMappingDescription(sourceName, targetName)-».
+     *
 «EXPAND Extensions::RelationExtensions(false)-»
      * @ORM\OneToOne(targetEntity="«entityClass»")
 «EXPAND JoinDetails(false)-»
@@ -64,10 +70,13 @@
      */
     protected $«sourceName»;
 «ENDDEFINE»
+«DEFINE IncomingMappingDescription(String sourceName, String targetName) FOR ManyToOneRelationship-»One «targetName» [«target.name.formatForDisplay()»] is linked by many «sourceName» [«source.nameMultiple.formatForDisplay()»] (INVERSE SIDE)«ENDDEFINE»
 
 «DEFINE Incoming(String sourceName, String targetName, String entityClass) FOR ManyToManyRelationship»
 «IF bidirectional-»
     /**
+     * Bidirectional - «EXPAND IncomingMappingDescription(sourceName, targetName)-».
+     *
 «EXPAND Extensions::RelationExtensions(false)-»
      * @ORM\ManyToMany(targetEntity="«entityClass»", mappedBy="«targetName»"«EXPAND AdditionalOptions-»)
      * @var «entityClass»[] $«sourceName».
@@ -75,6 +84,7 @@
     protected $«sourceName» = null;
 «ENDIF-»
 «ENDDEFINE»
+«DEFINE IncomingMappingDescription(String sourceName, String targetName) FOR ManyToManyRelationship-»Many «targetName» [«target.nameMultiple.formatForDisplay()»] are linked by many «sourceName» [«source.nameMultiple.formatForDisplay()»] (INVERSE SIDE)«ENDDEFINE»
 
 «REM»this empty default rule is adapted by ManyToOne on purpose«ENDREM»
 «DEFINE Outgoing(String sourceName, String targetName, String entityClass) FOR JoinRelationship»
@@ -82,6 +92,8 @@
 
 «DEFINE Outgoing(String sourceName, String targetName, String entityClass) FOR OneToOneRelationship»
     /**
+     * «IF bidirectional-»Bi«ELSE-»Uni«ENDIF-»directional - «EXPAND OutgoingMappingDescription(sourceName, targetName)-».
+     *
 «EXPAND Extensions::RelationExtensions(true)-»
      * @ORM\OneToOne(targetEntity="«entityClass»"«IF bidirectional-», mappedBy="«sourceName-»"«ENDIF-»«EXPAND FetchTypeTag-»«IF orphanRemoval-», orphanRemoval=true«ENDIF-»)
 «EXPAND JoinDetails(true)-»
@@ -89,9 +101,12 @@
      */
     protected $«targetName»;
 «ENDDEFINE»
+«DEFINE OutgoingMappingDescription(String sourceName, String targetName) FOR OneToOneRelationship-»One «sourceName» [«source.name.formatForDisplay()»] has one «targetName» [«target.name.formatForDisplay()»] (INVERSE SIDE)«ENDDEFINE»
 
 «DEFINE Outgoing(String sourceName, String targetName, String entityClass) FOR OneToManyRelationship»
     /**
+     * «IF bidirectional-»Bi«ELSE-»Uni«ENDIF-»directional - «EXPAND OutgoingMappingDescription(sourceName, targetName)-».
+     *
 «EXPAND Extensions::RelationExtensions(true)-»
 «IF !bidirectional-»
      * @ORM\ManyToMany(targetEntity="«entityClass»"«EXPAND AdditionalOptions-»)
@@ -106,9 +121,12 @@
      */
     protected $«targetName» = null;
 «ENDDEFINE»
+«DEFINE OutgoingMappingDescription(String sourceName, String targetName) FOR OneToManyRelationship-»One «sourceName» [«source.name.formatForDisplay()»] has many «targetName» [«target.nameMultiple.formatForDisplay()»] (INVERSE SIDE)«ENDDEFINE»
 
 «DEFINE Outgoing(String sourceName, String targetName, String entityClass) FOR ManyToManyRelationship»
     /**
+     * «IF bidirectional-»Bi«ELSE-»Uni«ENDIF-»directional - «EXPAND OutgoingMappingDescription(sourceName, targetName)-».
+     *
 «EXPAND Extensions::RelationExtensions(true)-»
      * @ORM\ManyToMany(targetEntity="«entityClass»"«IF bidirectional-», inversedBy="«sourceName-»"«ENDIF-»«EXPAND AdditionalOptions-»)
 «EXPAND JoinDetails(true)-»
@@ -119,6 +137,7 @@
      */
     protected $«targetName» = null;
 «ENDDEFINE»
+«DEFINE OutgoingMappingDescription(String sourceName, String targetName) FOR ManyToManyRelationship-»Many «sourceName» [«source.nameMultiple.formatForDisplay()»] have many «targetName» [«target.nameMultiple.formatForDisplay()»] (OWNING SIDE)«ENDDEFINE»
 
 
 «DEFINE JoinDetails(Boolean useTarget) FOR JoinRelationship»
@@ -197,8 +216,26 @@
 
 «DEFINE RelationAccessor(Boolean useTarget) FOR JoinRelationship»
 «LET getRelationAliasName(useTarget) AS relationAliasName-»
+«EXPAND RelationAccessorImpl(relationAliasName)»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE RelationAccessorImpl(Boolean useTarget, aliasName) FOR JoinRelationship»
 «LET ((useTarget) ? target : source).implClassModelEntity() AS entityClass-»
-«EXPAND FileHelper::GetterAndSetterMethods(relationAliasName, entityClass, true, 'null')»
+«LET ((metaType == ManyToManyRelationship
+|| (metaType == OneToManyRelationship && useTarget)
+|| (metaType == ManyToOneRelationship && !useTarget)
+) ? true : false) AS isMany-»
+«IF isMany-»
+«EXPAND FileHelper::GetterAndSetterMethods(aliasName, 'array', false, '')»
+«ELSE-»
+«EXPAND FileHelper::GetterAndSetterMethods(aliasName, entityClass, true, 'null')»
+«ENDIF-»
+«LET ((useTarget) ? target : source).name) AS singleName-»
+«EXPAND FileHelper::AddMethod(useTarget, isMany, aliasName, singleName, entityClass)-»
+«EXPAND FileHelper::RemoveMethod(useTarget, isMany, aliasName, singleName, entityClass)-»
+«EXPAND FileHelper::RemoveByIdMethod(useTarget, isMany, aliasName, singleName, entityClass)-»
+«ENDLET-»
 «ENDLET-»
 «ENDLET-»
 «ENDDEFINE»

@@ -115,6 +115,8 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
     protected $root;
 
     /**
+     * Bidirectional - Many children [«name.formatForDisplay()»] are linked by one parent [«name.formatForDisplay()»] (OWNING SIDE).
+     *
      * @Gedmo\TreeParent
      * @ORM\ManyToOne(targetEntity="«implClassModelEntity()»", inversedBy="children")
      * @ORM\JoinColumn(name="parent_id", referencedColumnName="«idField()»", onDelete="SET NULL")
@@ -123,6 +125,8 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
     protected $parent;
 
     /**
+     * Bidirectional - One parent [«name.formatForDisplay()»] has many children [«name.formatForDisplay()»] (INVERSE SIDE).
+     *
      * @ORM\OneToMany(targetEntity="«implClassModelEntity()»", mappedBy="parent")
      * @ORM\OrderBy({"lft" = "ASC"})
      * @var «implClassModelEntity()» $children.

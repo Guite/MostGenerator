@@ -65,12 +65,12 @@ class «appName()»_Base_UploadHandler
     /**
      * @var array List of object types with upload fields.
      */
-    private $allowedObjectTypes;
+    protected $allowedObjectTypes;
 
     /**
      * @var array List of dangerous file types to be rejected.
      */
-    private $forbiddenFileTypes;
+    protected $forbiddenFileTypes;
 
     /**
      * Constructor initialising the supported object types.
