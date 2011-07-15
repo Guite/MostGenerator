@@ -107,14 +107,14 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 
         // register hook subscriber bundles
         HookUtil::registerSubscriberBundles($this->version->getHookSubscriberBundles());
-«REM»TODO see #115
+«REM»TODO see #15
         // register hook provider bundles
         HookUtil::registerProviderBundles($this->version->getHookProviderBundles());
 «ENDREM»
 
         // create the default data for «appName()»
         //$this->defaultData();
-        // TODO: deactivated for now because constraints prevent data creation in random order (see #64)
+        // TODO: deactivated for now because constraints prevent data creation in random order (see #33)
 
         // initialisation successful
         return true;
@@ -211,7 +211,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 
         // unregister hook subscriber bundles
         HookUtil::unregisterSubscriberBundles($this->version->getHookSubscriberBundles());
-«REM»TODO see #115
+«REM»TODO see #15
         // unregister hook provider bundles
         HookUtil::unregisterProviderBundles($this->version->getHookProviderBundles());
 «ENDREM»

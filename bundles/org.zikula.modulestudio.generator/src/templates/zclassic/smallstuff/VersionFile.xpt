@@ -32,7 +32,7 @@ class «appName()»_Base_Version extends Zikula_AbstractVersion
         $meta['capabilities'] = array(
                           HookUtil::SUBSCRIBER_CAPABLE => array('enabled' => true)
 /*,
-                          HookUtil::PROVIDER_CAPABLE => array('enabled' => true), // TODO: see #115
+                          HookUtil::PROVIDER_CAPABLE => array('enabled' => true), // TODO: see #15
                           'authentication' => array('version' => '1.0'),
                           'profile'        => array('version' => '1.0', 'anotherkey' => 'anothervalue'),
                           'message'        => array('version' => '1.0', 'anotherkey' => 'anothervalue')
@@ -59,7 +59,7 @@ class «appName()»_Base_Version extends Zikula_AbstractVersion
     }
 
     /**
-     * Define hook subscriber«REM» and provider (TODO see #115)«ENDREM» bundles.
+     * Define hook subscriber«REM» and provider (TODO see #15)«ENDREM» bundles.
      */
     protected function setupHookBundles()
     {
@@ -93,7 +93,7 @@ class «appName()»_Base_Version extends Zikula_AbstractVersion
 «ENDFOREACH-»
 «ENDLET-»
 
-«REM»TODO see #115
+«REM»TODO see #15
 Example for name of provider area: provider_area.comments.general
 
         $bundle = new Zikula_Version_HookProviderBundle($this->name, 'provider.ratings.ui_hooks.rating', 'ui_hooks', $this->__('Ratings Hook Poviders'));
