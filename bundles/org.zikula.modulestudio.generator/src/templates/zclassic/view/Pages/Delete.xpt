@@ -9,7 +9,7 @@
 {* purpose of this template: «nameMultiple.formatForDisplay()» delete confirmation view in «controller.name()» area *}
 
 {include file='«controller.name()»/header.tpl'}
-
+<div class="«appName.toLowerCase()»-«name.formatForDB()» «appName.toLowerCase()»-delete">
 «IF controller.metaType == AdminController-»
 {gt text='Delete «name.formatForDisplay()»' assign='templateTitle'}
 {pagesetvar name='title' value=$templateTitle}
@@ -46,7 +46,7 @@
 «ELSE-»
 </div>
 «ENDIF-»
-
+</div>
 {include file='«controller.name()»/footer.tpl'}
 «ENDFILE»
 «ENDDEFINE»

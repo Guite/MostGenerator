@@ -54,7 +54,7 @@
     {assign var='adminPageIcon' value='edit'}«REM»TODO«ENDREM»
 «ENDIF-»
 {/if}
-
+<div class="«appName.toLowerCase()»-«name.formatForDB()» «appName.toLowerCase()»-edit">
 {pagesetvar name='title' value=$templateTitle}
 «IF controller.metaType == AdminController-»
 <div class="z-admin-content-pagetitle">
@@ -166,6 +166,8 @@
 «ELSE-»
 </div>
 «ENDIF-»
+</div>
+{include file='«controller.name()»/footer.tpl'}
 
 {icon type='edit' size='extrasmall' assign='editImageArray'}
 {icon type='delete' size='extrasmall' assign='deleteImageArray'}
@@ -248,8 +250,6 @@
 
 /* ]]> */
 </script>
-
-{include file='«controller.name()»/footer.tpl'}
 «ENDDEFINE»
 
 «DEFINE InlineRedirectHandler(Application app) FOR Controller-»

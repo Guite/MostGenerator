@@ -9,7 +9,7 @@
 {* purpose of this template: «nameMultiple.formatForDisplay()» display view in «controller.name()» area *}
 
 {include file='«controller.name()»/header.tpl'}
-
+<div class="«appName.toLowerCase()»-«name.formatForDB()» «appName.toLowerCase()»-display">
 «LET name.formatForCode() AS objName-»
 «LET getLeadingField().name.formatForCode() AS titleField-»
 {pagesetvar name='title' value=$«objName».«titleField»}
@@ -65,7 +65,7 @@
 «ELSE-»
 </div>
 «ENDIF-»
-
+</div>
 {include file='«controller.name()»/footer.tpl'}
 «ENDFILE»
 «ENDDEFINE»

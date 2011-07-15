@@ -11,7 +11,7 @@
 {* purpose of this template: «nameMultiple.formatForDisplay()» tree view in «controller.name()» area *}
 
 {include file='«controller.name()»/header.tpl'}
-
+<div class="«appName.toLowerCase()»-«name.formatForDB()» «appName.toLowerCase()»-viewhierarchy">
 {gt text='«name.formatForDisplayCapital()» hierarchy' assign='templateTitle'}
 {pagesetvar name='title' value=$templateTitle}
 «IF controller.metaType == AdminController-»
@@ -59,7 +59,7 @@
 «ELSE-»
 </div>
 «ENDIF-»
-
+</div>
 {include file='«controller.name()»/footer.tpl'}
 «ENDFILE»
 «FILE templateFile(controller, name, 'view_tree_items')-»
