@@ -155,6 +155,10 @@
     {/if}
         {formbutton id='btnCancel' commandName='cancel' __text='Cancel' class='z-bt-cancel'}
     </div>
+«REM»
+{linkbutton commandName='edit' __text='Edit' class='z-icon-es-edit'}
+{button commandName='cancel' __text='Cancel' class='z-bt-cancel'}
+«ENDREM»
   {/«app.appName().formatForDB()»FormFrame}
 {/form}
 
@@ -283,12 +287,4 @@ A 'zparameters' parameter was added as a direct way to assign the values of
 the form plugins attributes. For instance:
 $attributes = {class:z-bt-ok; confirmMessage:Are you sure?}
 {formbutton commandName='delete' __text='Delete' zparameters=$attributes}
-
-The {linkbutton} now supports an image (through the {img} plugin), using the
-new parameters 'imgset' and 'imgsrc'. imgset is default to 'icons/extrasmall'.
-Examples:
-{linkbutton commandName='edit' __text='Edit' imgsrc='edit.png'}
-or through the core CSS:
-{linkbutton commandName='edit' __text='Edit' class='z-icon-es-edit'}
-{button commandName='cancel' __text='Cancel' class='z-bt-cancel'}
 «ENDREM»
