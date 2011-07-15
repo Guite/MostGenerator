@@ -587,7 +587,6 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDDEFINE»
 «DEFINE ExampleRowValue(Integer number) FOR BooleanField-»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Integer number) FOR IntegerField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR FloatField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Integer number) FOR DecimalField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Integer number) FOR StringField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Integer number) FOR TextField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
@@ -598,9 +597,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «DEFINE ExampleRowValue(Integer number) FOR ArrayField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Integer number) FOR EnumField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Integer number) FOR ObjectField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR BlobField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR ClobField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR TimestampField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR DatetimeField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Integer number) FOR DateField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Integer number) FOR TimeField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR GzipField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Integer number) FOR FloatField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»

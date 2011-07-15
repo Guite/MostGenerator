@@ -180,15 +180,7 @@
 «ENDLET»
 «ENDDEFINE»
 
-«REM»TODO: support formdropdownlist or formradiobutton«ENDREM»
-«DEFINE FormField FOR EnumField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
-
-«REM»TODO: find a better way for editing«ENDREM»
-«DEFINE FormField FOR BlobField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
-
-«DEFINE FormField FOR ClobField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
-
-«DEFINE FormField FOR TimestampField-»
+«DEFINE FormField FOR DatetimeField-»
             {if $mode ne 'create'}
                 {formdateinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true«EXPAND Validation::FieldValidationCssClass»}
             {else}
@@ -214,6 +206,3 @@
             {* TODO: support time fields in Zikula (see http://code.zikula.org/core/ticket/2445 for more information) *}
             {formtextinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=8«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»
-
-«DEFINE FormField FOR GzipField-»«EXPAND FormFieldTextarea»«ENDDEFINE»
-
