@@ -25,21 +25,42 @@
 «DEFINE AdditionalValidationMessages FOR FloatField-»
             {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-number'}
 «ENDDEFINE»
+«DEFINE AdditionalValidationMessages FOR AbstractStringField-»
+«IF nospace-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-nospace'}
+«ENDIF-»
+«ENDDEFINE»
+«DEFINE AdditionalValidationMessages FOR StringField-»
+«IF nospace-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-nospace'}
+«ENDIF-»
+«IF htmlcolour-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-htmlcolour'}
+«ENDIF-»
+«ENDDEFINE»
 «DEFINE AdditionalValidationMessages FOR EmailField-»
             {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-email'}
 «ENDDEFINE»
 «DEFINE AdditionalValidationMessages FOR UrlField-»
             {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-url'}
 «ENDDEFINE»
+«DEFINE AdditionalValidationMessages FOR AbstractDatetimeField-»
+«IF past-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-«fieldTypeAsString()»-past'}
+«ELSEIF future-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-«fieldTypeAsString()»-past'}
+«ENDIF-»
+«ENDDEFINE»
 
 
-«DEFINE FieldValidationCssClass FOR DerivedField-»«IF mandatory || unique» cssClass='«IF mandatory»required«IF unique» «ENDIF»«ENDIF»«IF unique»validate-unique«ENDIF»'«ENDIF»«ENDDEFINE»
-«DEFINE FieldValidationCssClass FOR AbstractIntegerField-» cssClass='«IF mandatory»required «ENDIF»validate-digits«IF unique» validate-unique«ENDIF»'«ENDDEFINE»
-«DEFINE FieldValidationCssClass FOR DecimalField-» cssClass='«IF mandatory»required «ENDIF»validate-number«IF unique» validate-unique«ENDIF»'«ENDDEFINE»
-«DEFINE FieldValidationCssClass FOR FloatField-» cssClass='«IF mandatory»required «ENDIF»validate-number«IF unique» validate-unique«ENDIF»'«ENDDEFINE»
-«DEFINE FieldValidationCssClass FOR StringField-» cssClass='«IF mandatory»required«IF unique» «ENDIF»«ENDIF»«IF unique»validate-unique«ENDIF»«IF htmlcolor-» «entity.container.application.appName().formatForDB()»ColourPicker«ENDIF»'«ENDDEFINE»
-«DEFINE FieldValidationCssClass FOR EmailField-» cssClass='«IF mandatory»required «ENDIF»validate-email«IF unique» validate-unique«ENDIF»'«ENDDEFINE»
-«DEFINE FieldValidationCssClass FOR UrlField-» cssClass='«IF mandatory»required «ENDIF»validate-url«IF unique» validate-unique«ENDIF»'«ENDDEFINE»
-
-
+«DEFINE FieldValidationCssClass FOR DerivedField-» cssClass='«IF mandatory»required«IF unique» «ENDIF»«ENDIF»«IF unique»validate-unique«ENDIF»«EXPAND FieldValidationCssClassAdditions»'«ENDDEFINE»
+«DEFINE FieldValidationCssClassAdditions FOR DerivedField-»«ENDDEFINE»
+«DEFINE FieldValidationCssClassAdditions FOR AbstractIntegerField-» validate-digits«ENDDEFINE»
+«DEFINE FieldValidationCssClassAdditions FOR DecimalField-» validate-number«ENDDEFINE»
+«DEFINE FieldValidationCssClassAdditions FOR FloatField-» validate-number«ENDDEFINE»
+«DEFINE FieldValidationCssClassAdditions FOR AbstractStringField-»«IF nospace» validate-nospace«ENDIF»«ENDDEFINE»
+«DEFINE FieldValidationCssClassAdditions FOR StringField-»«IF nospace» validate-nospace«ENDIF»«IF htmlcolor» validate-htmlcolour «entity.container.application.appName().formatForDB()»ColourPicker«ENDIF»«ENDDEFINE»
+«DEFINE FieldValidationCssClassAdditions FOR EmailField-» validate-email«ENDDEFINE»
+«DEFINE FieldValidationCssClassAdditions FOR UrlField-» validate-url«ENDDEFINE»
+«DEFINE FieldValidationCssClassAdditions FOR AbstractDatetimeField-»«IF past» validate-«fieldTypeAsString()»-past«ELSEIF future» validate-«fieldTypeAsString()»-future«ENDIF»«ENDDEFINE»
 

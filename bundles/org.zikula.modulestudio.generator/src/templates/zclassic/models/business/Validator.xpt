@@ -21,25 +21,369 @@
 abstract class «baseClassDefault('', 'Validator')» extends AbstractBase
 {
     /**
+     * @var Zikula_EntityAccess The entity instance which is treated by this validator.
+     */
+    protected $entity = null;
+
+    /**
+     * Constructor.
+     *
+     * @param Zikula_EntityAccess $entity The entity to be validated.
+     */
+    public function __construct(Zikula_EntityAccess $entity)
+    {
+        $this->entity = $entity;
+    }
+
+    /**
+     * Checks if field value is a valid boolean.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @return boolean result of this check
+     */
+    public function isValidBoolean($fieldName)
+    {
+        return (is_bool($this->entity[$fieldName]));
+    }
+
+    /**
+     * Checks if field value is a valid number.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @return boolean result of this check
+     */
+    public function isValidNumber($fieldName)
+    {
+        return (is_numeric($this->entity[$fieldName]));
+    }
+
+    /**
+     * Checks if field value is a valid integer.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @return boolean result of this check
+     */
+    public function isValidInteger($fieldName)
+    {
+        return (is_int($this->entity[$fieldName]));
+    }
+
+    /**
+     * Checks if integer field value is not lower than a given value.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @param int    $value     The maximum allowed value
+     * @return boolean result of this check
+     */
+    public function isIntegerNotLowerThan($fieldName, $value)
+    {
+        return ($this->isValidInteger($fieldName) && $this->entity[$fieldName] >= $value);
+    }
+
+    /**
+     * Checks if integer field value is not higher than a given value.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @param int    $value     The maximum allowed value
+     * @return boolean result of this check
+     */
+    public function isIntegerNotHigherThan($fieldName, $value)
+    {
+        return ($this->isValidInteger($fieldName) && $this->entity[$fieldName] <= $value);
+    }
+
+    /**
+     * Checks if field value is a valid user id.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @return boolean result of this check
+     */
+    public function isValidUser($fieldName)
+    {
+        if (!$this->isValidInteger($fieldName)) {
+            return false;
+        }
+        $uname = UserUtil::getVar('uname', $this->entity[$fieldName]);
+        return (!is_null($uname) && !empty($uname));
+    }
+
+    /**
+     * Checks if numeric field value has a value other than 0.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @return boolean result of this check
+     */
+    public function isNumberNotEmpty($fieldName)
+    {
+        return $this->entity[$fieldName] != 0;
+    }
+
+    /**
+     * Checks if string field value has a value other than ''.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @return boolean result of this check
+     */
+    public function isStringNotEmpty($fieldName)
+    {
+        return $this->entity[$fieldName] != '';
+    }
+
+    /**
+     * Checks if numeric field value has a given minimum field length
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @param int    $length    The minimum length
+     * @return boolean result of this check
+     */
+    public function isNumberNotShorterThan($fieldName, $length)
+    {
+        $minValue = pow(10, $length-1);
+        return ($this->isValidNumber($fieldName) && $this->entity[$fieldName] > $minValue);
+    }
+
+    /**
+     * Checks if numeric field value does fit into given field length.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @param int    $length    The maximum allowed length
+     * @return boolean result of this check
+     */
+    public function isNumberNotLongerThan($fieldName, $length)
+    {
+        $maxValue = pow(10, $length);
+        return ($this->isValidNumber($fieldName) && $this->entity[$fieldName] < $maxValue);
+    }
+
+    /**
+     * Checks if string field value has a given minimum field length.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @param int    $length    The minimum length
+     * @return boolean result of this check
+     */
+    public function isStringNotShorterThan($fieldName, $length)
+    {
+        return (strlen($this->entity[$fieldName]) >= $length);
+    }
+
+    /**
+     * Checks if string field value does fit into given field length.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @param int    $length    The maximum allowed length
+     * @return boolean result of this check
+     */
+    public function isStringNotLongerThan($fieldName, $length)
+    {
+        return (strlen($this->entity[$fieldName]) <= $length);
+    }
+
+    /**
+     * Checks if string field value does conform to given fixed field length.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @param int    $length    The fixed length
+     * @return boolean result of this check
+     */
+    public function isStringWithFixedLength($fieldName, $length)
+    {
+        return (strlen($this->entity[$fieldName]) == $length);
+    }
+
+    /**
+     * Checks if string field value does not contain a given string.
+     *
+     * @param string  $fieldName     The name of the property to be checked
+     * @param string  $keyword       The char or string to search for
+     * @param boolean $caseSensitive Whether the search should be case sensitive or not (default false)
+     * @return boolean result of this check
+     */
+    public function isStringNotContaining($fieldName, $keyword, $caseSensitive = false)
+    {
+        if ($caseSensitive === true) {
+            return (strstr($this->entity[$fieldName], $keyword) !== false);
+        }
+        return (stristr($this->entity[$fieldName], $keyword) !== false);
+    }
+
+    /**
+     * Checks if string field value conforms to a given regular expression.
+     *
+     * @param string  $fieldName     The name of the property to be checked
+     * @param string  $expression    Regular expression string
+     * @return boolean result of this check
+     */
+    public function isValidRegExp($fieldName, $expression)
+    {
+        return preg_match($expression, $this->entity[$fieldName]);
+    }
+
+    /**
+     * Checks if string field value is a valid language code.
+     *
+     * @param string  $fieldName     The name of the property to be checked
+     * @param boolean $onlyInstalled Whether to accept only installed languages (default false)
+     * @return boolean result of this check
+     */
+    public function isValidLanguage($fieldName, $onlyInstalled = false)
+    {
+        $languageMap = ZLanguage::languageMap();
+        $result = in_array($this->entity[$fieldName], array_keys($languageMap));        
+        if (!$result || !$onlyInstalled) {
+            return $result;
+        } 
+        $available = ZLanguage::getInstalledLanguages();
+        return in_array($this->entity[$fieldName], $available);
+    }
+
+    /**
+     * Checks if string field value is a valid country code.
+     *
+     * @param string  $fieldName     The name of the property to be checked
+     * @return boolean result of this check
+     */
+    public function isValidCountry($fieldName)
+    {
+        $countryMap = ZLanguage::countryMap();
+        return in_array($this->entity[$fieldName], array_keys($countryMap));
+    }
+
+    /**
+     * Checks if string field value is a valid html colour.
+     *
+     * @param string  $fieldName     The name of the property to be checked
+     * @return boolean result of this check
+     */
+    public function isValidHtmlColour($fieldName)
+    {
+        $regex = '/^#?(([a-fA-F0-9]{3}){1,2})$/';
+        return preg_match($regex, $this->entity[$fieldName]);
+    }
+
+    /**
+     * Checks if field value is a valid email address.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @return boolean result of this check
+     */
+    public function isValidEmail($fieldName)
+    {
+        $regex = '/^[^0-9][a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*\.[a-zA-Z]{2,5}$/';
+        return preg_match($regex, $this->entity[$fieldName]);
+    }
+
+    /**
+     * Checks if field value is a valid url.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @return boolean result of this check
+     */
+    public function isValidUrl($fieldName)
+    {
+        $regex = '(http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?';
+        return preg_match($regex, $this->entity[$fieldName]);
+    }
+
+    /**
      * Checks if field value is a valid DateTime instance.
      *
      * @param string $fieldName The name of the property to be checked
      * @return boolean result of this check
      */
-    public function isValidDate($fieldName)
+    public function isValidDateTime($fieldName)
     {
-        return ($this[$fieldName] instanceof DateTime);
+        return ($this->entity[$fieldName] instanceof DateTime);
     }
 
     /**
-     * Checks if field value is a date in the future
+     * Checks if field value has a value in the past.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @param string $format    The date format used for comparison
+     * @return boolean result of this check
+     */
+    protected function isDateTimeValueInPast($fieldName, $format)
+    {
+        return ($this->isValidDateTime($fieldName) && $this->entity[$fieldName]->format($format) < date($format));
+    }
+
+    /**
+     * Checks if field value has a value in the future.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @param string $format    The date format used for comparison
+     * @return boolean result of this check
+     */
+    protected function isDateTimeValueInFuture($fieldName, $format)
+    {
+        return ($this->isValidDateTime($fieldName) && $this->entity[$fieldName]->format($format) > date($format));
+    }
+
+    /**
+     * Checks if field value is a datetime in the past.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @return boolean result of this check
+     */
+    public function isDateTimeInPast($fieldName)
+    {
+        return $this->isDateTimeValueInPast($fieldName, 'U');
+    }
+
+    /**
+     * Checks if field value is a datetime in the future.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @return boolean result of this check
+     */
+    public function isDateTimeInFuture($fieldName)
+    {
+        return $this->isDateTimeValueInFuture($fieldName, 'U');
+    }
+
+    /**
+     * Checks if field value is a date in the past.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @return boolean result of this check
+     */
+    public function isDateInPast($fieldName)
+    {
+        return $this->isDateTimeValueInPast($fieldName, 'Ymd');
+    }
+
+    /**
+     * Checks if field value is a date in the future.
      *
      * @param string $fieldName The name of the property to be checked
      * @return boolean result of this check
      */
     public function isDateInFuture($fieldName)
     {
-        return ($this->isValidDate($fieldName) && $this[$fieldName]->format('U') > time());
+        return $this->isDateTimeValueInFuture($fieldName, 'Ymd');
+    }
+
+    /**
+     * Checks if field value is a time in the past.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @return boolean result of this check
+     */
+    public function isTimeInPast($fieldName)
+    {
+        return $this->isDateTimeValueInPast($fieldName, 'His');
+    }
+
+    /**
+     * Checks if field value is a time in the future.
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @return boolean result of this check
+     */
+    public function isTimeInFuture($fieldName)
+    {
+        return $this->isDateTimeValueInFuture($fieldName, 'His');
     }
 }
 «ENDDEFINE»
@@ -78,7 +422,7 @@ class «implClassDefault('', 'Validator')» extends «baseClassModel('', 'Valida
  */
 class «baseClassModel('validator', '')» «IF isInheriting()»«parentType().implClassModel('validator', '')»«ELSE»«implClassDefault('', 'Validator')»«ENDIF»
 {
-«EXPAND ValidatorBaseImpl(app)-»
+«EXPAND ValidatorBaseImplBody(app)-»
 }
 «ENDDEFINE»
 
@@ -96,22 +440,7 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
 }
 «ENDDEFINE»
 
-«DEFINE ValidatorBaseImpl(Application app) FOR Entity»
-
-    /**
-     * @var «implClassModelEntity()» The entity class which is treated by this validator.
-     */
-    protected $entity = null;
-
-    /**
-     * Constructor.
-     *
-     * @param «implClassModelEntity()» $entity The entity to be validated.
-     */
-    public function __construct(«implClassModelEntity()» $entity)
-    {
-        $this->entity = $entity;
-    }
+«DEFINE ValidatorBaseImplBody(Application app) FOR Entity»
 
     /**
      * Performs all validation rules.
@@ -121,28 +450,247 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
     public function validateAll()
     {
         $errorInfo = array('message' => '', 'code' => 0, 'debugArray' => array()); 
-«REM»TODO
-        if (!$this->isValidDate('fieldName')) {
-            $errorInfo['message'] = __('Error! Field must be a valid date (%s).', array('fieldName'));
-            return $errorInfo;
-        }
-
-        if (!$this->isDateInFuture('fieldName')) {
-            $errorInfo['message'] = __('Error! Date must be in future (%s).', array('fieldName'));
-            return $errorInfo;
-        }
-
-«ENDREM»
+«EXPAND ValidationCalls FOREACH getDerivedFields()-»
         return true;
     }
 
 «EXPAND checkForUniqueValues(app) FOREACH getUniqueDerivedFields()-»
-«IF sluggable && sluggableCanUpdate && sluggableUnique-»
+«IF sluggable && slugUpdatable && slugUnique-»
 «EXPAND checkForUniqueSlugValues(app)-»
 «ENDIF-»
 
-«EXPAND FileHelper::GetterAndSetterMethods('entity', implClassModelEntity(), false, true, 'null')»
+«EXPAND FileHelper::GetterAndSetterMethods('entity', 'Zikula_EntityAccess', false, true, 'null')»
 «ENDDEFINE»
+
+«DEFINE ValidationCalls FOR DerivedField-»
+«ENDDEFINE»
+«DEFINE ValidationCalls FOR BooleanField-»
+        if (!$this->isValidBoolean('«name.formatForCode()»')) {
+            $errorInfo['message'] = __('Error! Field value must be a valid boolean (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«ENDDEFINE»
+
+«DEFINE ValidationCallsNumeric FOR DerivedField-»
+        if (!$this->isValidNumber('«name.formatForCode()»')) {
+            $errorInfo['message'] = __('Error! Field value must be numeric (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«IF mandatory-»
+        if (!$this->isNumberNotEmpty('«name.formatForCode()»')) {
+            $errorInfo['message'] = __('Error! Field value must not be 0 (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE ValidationCallsInteger FOR AbstractIntegerField-»
+        if (!$this->isValidInteger('«name.formatForCode()»')) {
+            $errorInfo['message'] = __('Error! Field value may only contain digits (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«IF mandatory-»
+        if (!$this->isNumberNotEmpty('«name.formatForCode()»')) {
+            $errorInfo['message'] = __('Error! Field value must not be 0 (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«ENDIF-»
+«ENDDEFINE»
+«DEFINE ValidationCalls FOR AbstractIntegerField-»
+«EXPAND ValidationCallsInteger-»
+«ENDDEFINE»
+«DEFINE ValidationCalls FOR IntegerField-»
+«EXPAND ValidationCallsInteger-»
+«IF minValue != 0-»
+        if (!$this->isIntegerNotLowerThan('«name.formatForCode()»', «minValue»)) {
+            $errorInfo['message'] = __('Error! Field value must not be lower than %2$s (%1$s).', array('«name.formatForCode()»', «minValue»));
+            return $errorInfo;
+        }
+«ENDIF-»
+«IF maxValue != 0-»
+        if (!$this->isIntegerNotHigherThan('«name.formatForCode()»', «maxValue»)) {
+            $errorInfo['message'] = __('Error! Field value must not be higher than %2$s (%1$s).', array('«name.formatForCode()»', «maxValue»));
+            return $errorInfo;
+        }
+«ENDIF-»
+        if (!$this->isNumberNotLongerThan('«name.formatForCode()»', «length»)) {
+            $errorInfo['message'] = __('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForCode()»', «length»));
+            return $errorInfo;
+        }
+«ENDDEFINE»
+«DEFINE ValidationCalls FOR DecimalField-»
+«EXPAND ValidationCallsNumeric-»
+        if (!$this->isNumberNotLongerThan('«name.formatForCode()»', «(length+scale)»)) {
+            $errorInfo['message'] = __('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForCode()»', «(length+scale)»));
+            return $errorInfo;
+        }
+«ENDDEFINE»
+«DEFINE ValidationCalls FOR UserField-»
+«EXPAND ValidationCallsInteger-»
+        if («IF !mandatory-»$this->entity['«name.formatForCode()»'] > 0 && «ENDIF-»!$this->isValidUser('«name.formatForCode()»')) {
+            $errorInfo['message'] = __('Error! Field value be a valid user id (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«ENDDEFINE»
+
+«DEFINE ValidationCallsString FOR AbstractStringField-»
+«IF mandatory-»
+        if (!$this->isStringNotEmpty('«name.formatForCode()»')) {
+            $errorInfo['message'] = __('Error! Field value must not be empty (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«ENDIF-»
+«IF fixed-»
+        if (!$this->isStringWithFixedLength('«name.formatForCode()»', «length»)) {
+            $errorInfo['message'] = __('Error! Length of field value be %2$s (%1$s).', array('«name.formatForCode()»', «length»));
+            return $errorInfo;
+        }
+«ENDIF-»
+«IF nospace-»
+        if (!$this->isStringNotContaining('«name.formatForCode()»', ' ')) {
+            $errorInfo['message'] = __('Error! Field value must not contain space chars (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«ENDIF-»
+«IF minLength-»
+        if (!$this->isStringNotShorterThan('«name.formatForCode()»', «minLength»)) {
+            $errorInfo['message'] = __('Error! Length of field value must not be smaller than %2$s (%1$s).', array('«name.formatForCode()»', «minLength»));
+            return $errorInfo;
+        }
+«ENDIF-»
+«IF regexp-»
+        if (!$this->isValidRegExp('«name.formatForCode()»', «regexp»)) {
+            $errorInfo['message'] = __('Error! Field value must conform to regular expression [%2$s] (%1$s).', array('«name.formatForCode()»', '«regexp»'));
+            return $errorInfo;
+        }
+«ENDIF-»
+«ENDDEFINE»
+«DEFINE ValidationCalls FOR AbstractStringField-»
+«ENDDEFINE»
+«DEFINE ValidationCalls FOR StringField-»
+        if (!$this->isStringNotLongerThan('«name.formatForCode()»', «length»)) {
+            $errorInfo['message'] = __('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForCode()»', «length»));
+            return $errorInfo;
+        }
+«IF language-»
+        if («IF !mandatory-»$this->entity['«name.formatForCode()»'] != '' && «ENDIF-»!$this->isValidLanguage('«name.formatForCode()»', false)) {
+            $errorInfo['message'] = __('Error! Field value must be a valid language code (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«ENDIF-»
+«IF country-»
+        if («IF !mandatory-»$this->entity['«name.formatForCode()»'] != '' && «ENDIF-»!$this->isValidCountry('«name.formatForCode()»')) {
+            $errorInfo['message'] = __('Error! Field value must be a valid country code (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«ENDIF-»
+«IF htmlcolour-»
+        if («IF !mandatory-»$this->entity['«name.formatForCode()»'] != '' && «ENDIF-»!$this->isValidHtmlColour('«name.formatForCode()»')) {
+            $errorInfo['message'] = __('Error! Field value must be a valid html colour code [#123 or #123456] (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«ENDIF-»
+«ENDDEFINE»
+«DEFINE ValidationCalls FOR TextField-»
+        if (!$this->isStringNotLongerThan('«name.formatForCode()»', «length»)) {
+            $errorInfo['message'] = __('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForCode()»', «length»));
+            return $errorInfo;
+        }
+«ENDDEFINE»
+«DEFINE ValidationCalls FOR EmailField-»
+        if (!$this->isStringNotLongerThan('«name.formatForCode()»', «length»)) {
+            $errorInfo['message'] = __('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForCode()»', «length»));
+            return $errorInfo;
+        }
+        if («IF !mandatory-»$this->entity['«name.formatForCode()»'] != '' && «ENDIF-»!$this->isValidEmail('«name.formatForCode()»')) {
+            $errorInfo['message'] = __('Error! Field value must be a valid email address (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«ENDDEFINE»
+«DEFINE ValidationCalls FOR UrlField-»
+        if (!$this->isStringNotLongerThan('«name.formatForCode()»', «length»)) {
+            $errorInfo['message'] = __('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForCode()»', «length»));
+            return $errorInfo;
+        }
+        if («IF !mandatory-»$this->entity['«name.formatForCode()»'] != '' && «ENDIF-»!$this->isValidUrl('«name.formatForCode()»')) {
+            $errorInfo['message'] = __('Error! Field value must be a valid url (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«ENDDEFINE»
+«DEFINE ValidationCalls FOR UploadField-»
+        if (!$this->isStringNotLongerThan('«name.formatForCode()»', «length»)) {
+            $errorInfo['message'] = __('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForCode()»', «length»));
+            return $errorInfo;
+        }
+«ENDDEFINE»
+«DEFINE ValidationCalls FOR ArrayField-»
+«ENDDEFINE»
+«DEFINE ValidationCalls FOR ObjectField-»
+«ENDDEFINE»
+«DEFINE ValidationCallsDateTime FOR AbstractDatetimeField-»
+        if (!$this->isValidDateTime('«name.formatForCode()»')) {
+            $errorInfo['message'] = __('Error! Field value must be a valid datetime (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«ENDDEFINE»
+«DEFINE ValidationCalls FOR AbstractDatetimeField-»
+«EXPAND ValidationCallsDateTime-»
+«ENDDEFINE»
+«DEFINE ValidationCalls FOR DatetimeField-»
+«EXPAND ValidationCallsDateTime-»
+«IF past-»
+        if (!$this->isDateTimeInPast('«name.formatForCode()»')) {
+            $errorInfo['message'] = __('Error! Field value must be a date in the past (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«ELSEIF future-»
+        if (!$this->isDateTimeInFuture('«name.formatForCode()»')) {
+            $errorInfo['message'] = __('Error! Field value must be a date in the future (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«ENDIF-»
+«ENDDEFINE»
+«DEFINE ValidationCalls FOR DateField-»
+«EXPAND ValidationCallsDateTime-»
+«IF past-»
+        if (!$this->isDateInPast('«name.formatForCode()»')) {
+            $errorInfo['message'] = __('Error! Field value must be a date in the past (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«ELSEIF future-»
+        if (!$this->isDateInFuture('«name.formatForCode()»')) {
+            $errorInfo['message'] = __('Error! Field value must be a date in the future (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«ENDIF-»
+«ENDDEFINE»
+«DEFINE ValidationCalls FOR TimeField-»
+«EXPAND ValidationCallsDateTime-»
+«IF past-»
+        if (!$this->isTimeInPast('«name.formatForCode()»')) {
+            $errorInfo['message'] = __('Error! Field value must be a time in the past (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«ELSEIF future-»
+        if (!$this->isTimeInFuture('«name.formatForCode()»')) {
+            $errorInfo['message'] = __('Error! Field value must be a time in the future (%s).', array('«name.formatForCode()»'));
+            return $errorInfo;
+        }
+«ENDIF-»
+«ENDDEFINE»
+«DEFINE ValidationCalls FOR FloatField-»
+«EXPAND ValidationCallsNumeric-»
+        if (!$this->isNumberNotLongerThan('«name.formatForCode()»', «length»)) {
+            $errorInfo['message'] = __('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForCode()»', «length»));
+            return $errorInfo;
+        }
+«ENDDEFINE»
+
+
+
+
+
+
 
 «DEFINE checkForUniqueValues(Application app) FOR DerivedField-»
 
@@ -205,87 +753,3 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
         return $repository->selectCount($where);
     }
 «ENDDEFINE»
-
-
-«REM» TODO
-
-some validators to be reimplemented:
-
-«DEFINE FieldLength FOR DerivedField-»null«ENDDEFINE»
-«DEFINE FieldLength FOR AbstractIntegerField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
-«DEFINE FieldLength FOR DecimalField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
-«DEFINE FieldLength FOR StringField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
-«DEFINE FieldLength FOR EmailField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
-«DEFINE FieldLength FOR UrlField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
-«DEFINE FieldLength FOR UploadField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
-«DEFINE FieldLength FOR ArrayField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
-«DEFINE FieldLength FOR FloatField-»«IF length != null && length != ""-»«length»«ELSE-»null«ENDIF-»«ENDDEFINE»
-
-
-«DEFINE FieldSetColumnAdditionalOptions FOR DerivedField-»«ENDDEFINE»
-
-«DEFINE FieldSetColumnAdditionalOptions FOR IntegerField-»
-«IF minValue != 0 || maxValue != 0-»
-                // Check if value is in range specified by arguments
-                'range' => array(«minValue», «maxValue»),
-«ENDIF-»
-«ENDDEFINE»
-«DEFINE FieldSetColumnAdditionalOptions FOR DecimalField-»
-                'scale' => «scale.toInteger()»,
-«ENDDEFINE»
-«DEFINE FieldSetColumnAdditionalOptionsCommon FOR AbstractStringField-»
-«IF fixed-»
-                'fixed' => true,
-«ENDIF-»
-«IF nospace-»
-                // check if value has no space chars
-                'nospace' => true,
-«ENDIF-»
-«IF minLength != null && minLength > 0-»
-                // check if value satisfies the minimum length
-                'minlength' => «minLength»,
-«ENDIF-»
-«IF regexp != null && regexp != ""-»
-                // check if value matches a regular expression
-                'regexp' => '«regexp»',
-«ENDIF-»
-
-«ENDDEFINE»
-«DEFINE FieldSetColumnAdditionalOptions FOR AbstractStringField-»
-«EXPAND FieldSetColumnAdditionalOptionsCommon-»
-«ENDDEFINE»
-«DEFINE FieldSetColumnAdditionalOptions FOR StringField-»
-«EXPAND FieldSetColumnAdditionalOptionsCommon-»
-«IF country-»
-                // check if value is a valid country code
-                'country' => true,
-«ENDIF-»
-«IF ipaddress-»
-                // check if value is a valid ip address
-                'ip' => true,
-«ENDIF-»
-«IF htmlcolor-»
-                // check if value is a valid html colour
-                'htmlcolor' => true,
-«ENDIF-»
-«ENDDEFINE»
-
-«DEFINE FieldSetColumnAdditionalOptions FOR EmailField-»
-«EXPAND FieldSetColumnAdditionalOptionsCommon-»
-«IF !mandatory»/* inactive because field is not mandatory«ENDIF»
-                // check if value is a valid email address
-                'email' => true,
-«IF !mandatory»*/«ENDIF»
-«ENDDEFINE»
-«DEFINE FieldSetColumnAdditionalOptions FOR AbstractDateField-»
-«IF past-»
-                // check if value is a date in the past
-                'past' => true,
-«ELSEIF future-»
-                // check if value is a date in the future
-                'future' => true,
-«ENDIF-»
-«ENDDEFINE»
-
-
-«ENDREM»

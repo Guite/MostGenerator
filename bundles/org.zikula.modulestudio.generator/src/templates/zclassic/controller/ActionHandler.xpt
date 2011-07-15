@@ -694,6 +694,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         if (in_array($args['commandName'], array('create', 'update'))) {
 «FOREACH uniqueFields AS uniqueField-»
+«REM»TODO: move this into model validator#validateAll()«ENDREM»
             // check if another «name.formatForDisplay()» with the same «uniqueField.name.formatForDisplay()» does already exist
             if ($object->get_validator()->checkIf«uniqueField.name.formatForCodeCapital()»Exists($formData['«uniqueField.name.formatForCode()»'], $this->«idField()»)) {
                 return LogUtil::registerError($this->__f('The «uniqueField.name.formatForDisplay()» %s is already assigned. Please choose another «uniqueField.name.formatForDisplay()».', array($formData['«uniqueField.name.formatForCode()»'])));

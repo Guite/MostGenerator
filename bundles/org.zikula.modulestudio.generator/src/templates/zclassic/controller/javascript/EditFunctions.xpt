@@ -9,7 +9,6 @@
 <!--
 
 «EXPAND InitUserField-»
-«EXPAND ValidationFunctions-»
 «EXPAND RelationFunctions-»
 
 -->
@@ -42,50 +41,6 @@ function «prefix()»InitUserField(fieldName, getterName)
     );
 }
 
-«ENDIF-»
-«ENDDEFINE»
-
-«DEFINE ValidationFunctions FOR Application-»
-«IF models.entities.exists(e|e.getUniqueDerivedFields().reject(e|e.primaryKey).size > 0)-»
-/**
- * Performs a duplicate check for unique fields
- */
-function «prefix()»UniqueCheck(ucOt, val, elem, ucEx)
-{
-    $('advice-validate-unique-' + elem.id).hide();
-    elem.removeClassName('validation-failed').removeClassName('validation-passed');
-
-    // build parameters object
-    var params = {ot: ucOt, fn: encodeURIComponent(elem.id), v: encodeURIComponent(val), ex: ucEx};
-
-    new Zikula.Ajax.Request(Zikula.Config['baseURL'] + 'ajax.php?module=«appName()»&func=checkForDuplicate', {
-        method: 'post',
-        parameters: params,
-        authid: 'FormAuthid',«REM»from the Forms framework«ENDREM»
-        onComplete: function(req) {
-            // check if request was successful
-            if (!req.isSuccess()) {
-                Zikula.showajaxerror(req.getMessage());
-                return;
-            }
-
-            // get data returned by module
-            var data = req.getData();
-            if (data.isDuplicate != '1') {
-                $('advice-validate-unique-' + elem.id).hide();
-                elem.removeClassName('validation-failed').addClassName('validation-passed');
-                return true;
-            }
-            else {
-                $('advice-validate-unique-' + elem.id).show();
-                elem.removeClassName('validation-passed').addClassName('validation-failed');
-                return false;
-            }
-        }
-    });
-
-    return true;
-}
 «ENDIF-»
 «ENDDEFINE»
 

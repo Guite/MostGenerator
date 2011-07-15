@@ -4,12 +4,12 @@
 «EXTENSION extensions::ClassUtils»
 «REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
-«DEFINE PersistentProperty FOR DerivedField»
-«EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), '')»
+«DEFINE PersistentProperty FOR DerivedField-»
+«EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), '')-»
 «ENDDEFINE»
 
-«DEFINE PersistentProperty FOR UploadField»
-«EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), '')»
+«DEFINE PersistentProperty FOR UploadField-»
+«EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), '')-»
 
     /**
      * @ORM\Column(type="array")
@@ -18,8 +18,8 @@
     protected $«name.formatForCode()»Meta = array();
 «ENDDEFINE»
 
-«DEFINE PersistentProperty FOR ArrayField»
-«EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), ' = array()')»
+«DEFINE PersistentProperty FOR ArrayField-»
+«EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), ' = array()')-»
 «ENDDEFINE»
 
 «REM»Note we use protected and not private to let the dev change things in concrete implementations«ENDREM»
@@ -27,7 +27,7 @@
 «EXPAND PersistentProperty(name, type, init, 'protected')-»
 «ENDDEFINE»
 
-«DEFINE PersistentProperty(String name, String type, String init, String modifier) FOR DerivedField»
+«DEFINE PersistentProperty(String name, String type, String init, String modifier) FOR DerivedField-»
     /**
 «IF primaryKey-»
      * @ORM\Id
@@ -45,7 +45,7 @@
 type="«type»"
 «ENDDEFINE»
 
-«DEFINE PersistentPropertyImpl(String type) FOR DecimalField»
+«DEFINE PersistentPropertyImpl(String type) FOR DecimalField-»
 type="«type»", precision=«length», scale=«scale»
 «ENDDEFINE»
 «DEFINE PersistentPropertyImpl(String type) FOR AbstractStringField-»
@@ -64,7 +64,7 @@ type="«type»", precision=«length», scale=«scale»
 «error("Error: undefined calculated field type " + metaType.toString() + " (code 925628)") -> ""-»
 «ENDDEFINE»
 
-«DEFINE DefaultFieldDataText FOR DerivedField-»'«defaultValue»'«ENDDEFINE»
+«DEFINE DefaultFieldDataText FOR DerivedField»'«defaultValue»'«ENDDEFINE»
 «DEFINE DefaultFieldData FOR BooleanField»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF»«ENDDEFINE»
 «DEFINE DefaultFieldData FOR AbstractIntegerField-»
 «IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
@@ -76,7 +76,7 @@ type="«type»", precision=«length», scale=«scale»
 «IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
 «ENDIF-»«ENDLET-»«ENDDEFINE»
 «DEFINE DefaultFieldData FOR DecimalField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0.00«ENDIF»«ENDDEFINE»
-«DEFINE DefaultFieldData FOR AbstractStringField-»«EXPAND DefaultFieldDataText-»«ENDDEFINE»
+«DEFINE DefaultFieldData FOR AbstractStringField»«EXPAND DefaultFieldDataText-»«ENDDEFINE»
 «DEFINE DefaultFieldData FOR ArrayField»array()«ENDDEFINE»
 «DEFINE DefaultFieldData FOR ObjectField»null«ENDDEFINE»
 «DEFINE DefaultFieldData FOR DatetimeField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»date('Y-m-d H:i:s')«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»

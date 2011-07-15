@@ -32,6 +32,7 @@
 
 {include file='«controller.name()»/header.tpl'}
 {pageaddvar name='javascript' value='modules/«app.appName()»/javascript/«app.appName()»_editFunctions.js'}
+{pageaddvar name='javascript' value='modules/«app.appName()»/javascript/«app.appName()»_validation.js'}
 «IF hasColourFields()-»
 {pageaddvar name='javascript' value='javascript/picky_color/picky_color.js'}
 {pageaddvar name='stylesheet' value='javascript/picky_color/picky_color.css'}
@@ -215,9 +216,8 @@
 «ENDLET-»
 «ENDLET-»
 
-«IF !getUniqueDerivedFields().reject(e|e.primaryKey).isEmpty-»
-        Validation.add('validate-unique', 'Unique Check', function(val, elem) { «container.application.prefix()»UniqueCheck('«name.formatForCode()»', val, elem, {{if $mode eq 'create'}}0{{else}}{{$«idField()»}}{{/if}}); });//, options);
-«ENDIF-»
+        «container.application.prefix()»AddCommonValidationRules('«name.formatForCode()»', {{if $mode eq 'create'}}0{{else}}{{$«idField()»}}{{/if}});
+
         // observe button events instead of form submit
         var valid = new Validation('{{$__formid}}', {onSubmit: false, immediate: true, focusOnError: false});
         {{if $mode ne 'create'}}

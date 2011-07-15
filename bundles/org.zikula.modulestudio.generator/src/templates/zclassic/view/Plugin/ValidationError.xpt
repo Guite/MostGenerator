@@ -7,7 +7,8 @@
 «DEFINE Root FOR Application-»
 «FILE viewPluginFilePath(this, 'function', 'ValidationError')-»«EXPAND FileHelper::phpFileHeader(this)-»
 /**
- * The «appName().formatForDB()»ValidationError plugin returns appropriate (and multilingual) error messages for different validation error types.
+ * The «appName().formatForDB()»ValidationError plugin returns appropriate (and multilingual)
+ * error messages for different client-side validation error types.
  *
  * Available parameters:
  *   - assign:   If set, the results are assigned to the corresponding variable instead of printed out.
@@ -24,6 +25,7 @@ function smarty_function_«appName().formatForDB()»ValidationError($params, $vi
 
     $message = '';
     switch ($class) {
+        // default rules
         case 'required':                    $message = $view->__('This is a required field.'); break;
         case 'validate-number':             $message = $view->__('Please enter a valid number in this field.'); break;
         case 'validate-digits':             $message = $view->__('Please use numbers only in this field. please avoid spaces or other characters such as dots or commas.'); break;
@@ -36,9 +38,17 @@ function smarty_function_«appName().formatForDB()»ValidationError($params, $vi
         case 'validate-currency-dollar':    $message = $view->__('Please enter a valid $ amount. For example $100.00 .'); break;
         case 'validate-selection':          $message = $view->__('Please make a selection.'); break;
         case 'validate-one-required':       $message = $view->__('Please select one of the above options.'); break;
-«IF models.entities.exists(e|e.getUniqueDerivedFields().reject(e|e.primaryKey).size > 0)-»
+
+        // additional rules
+        case 'validate-nospace':            $message = $view->__('This value must not contain spaces.'); break;
+        case 'validate-htmlcolour':         $message = $view->__('Please select a valid html colour code.'); break;
+        case 'validate-datetime-past':      $message = $view->__('Please select a value in the past.'); break;
+        case 'validate-datetime-future':    $message = $view->__('Please select a value in the future.'); break;
+        case 'validate-date-past':          $message = $view->__('Please select a value in the past.'); break;
+        case 'validate-date-future':        $message = $view->__('Please select a value in the future.'); break;
+        case 'validate-time-past':          $message = $view->__('Please select a value in the past.'); break;
+        case 'validate-time-future':        $message = $view->__('Please select a value in the future.'); break;
         case 'validate-unique':             $message = $view->__('This value is already assigned, but must be unique. Please change it.'); break;
-«ENDIF-»
     }
 
     $message = '<div id="advice-' . $class . '-' . $id . '" class="validation-advice z-formnote" style="display: none">' . $message . '</div>';

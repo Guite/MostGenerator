@@ -21,6 +21,7 @@
 «IF hasTrees()-»
     «EXPAND javascript::TreeFunctions::Root»
 «ENDIF-»
+«EXPAND javascript::Validation::Root»
 «ENDDEFINE»
 
 

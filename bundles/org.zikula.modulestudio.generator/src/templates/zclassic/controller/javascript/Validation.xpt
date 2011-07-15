@@ -1,0 +1,149 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+
+«REM»start point for the javascript file with validation functionality«ENDREM»
+«DEFINE Root FOR Application-»
+«FILE getAppSourcePath(appName()).msconcat('javascript/').msconcat(appName()).msconcat('_validation.js')-»
+<!--
+
+/**
+ * Add special validation rules.
+ */
+function «prefix()»AddCommonValidationRules(objectType, id)
+{
+    Validation.addAllThese([
+        ['validate-nospace', Zikula.__('No spaces', 'module_«appName()»'), function(val, elem) {
+            val = new String(val);
+            return (val.indexOf(' ') == -1);
+        }],
+        ['validate-htmlcolour', Zikula.__('Colour', 'module_«appName()»'), function(val, elem) {
+            val = new String(val);
+            var regex = '/^#?(([a-fA-F0-9]{3}){1,2})$/';
+            return val.match(regex);
+        }],
+        ['validate-datetime-past', Zikula.__('Past', 'module_«appName()»'), function(val, elem) {
+            val = new String(val);
+            var cmpVal = «prefix()»ReadDate(val, true);
+            return (cmpVal < «prefix()»Today('datetime'));
+        }],
+        ['validate-datetime-future', Zikula.__('Future', 'module_«appName()»'), function(val, elem) {
+            val = new String(val);
+            var cmpVal = «prefix()»ReadDate(val, true);
+            return (cmpVal >= «prefix()»Today('datetime'));
+        }],
+        ['validate-date-past', Zikula.__('Past', 'module_«appName()»'), function(val, elem) {
+            val = new String(val);
+            var cmpVal = «prefix()»ReadDate(val, false);
+            return (cmpVal < «prefix()»Today('date'));
+        }],
+        ['validate-date-future', Zikula.__('Future', 'module_«appName()»'), function(val, elem) {
+            val = new String(val);
+            var cmpVal = «prefix()»ReadDate(val, false);
+            return (cmpVal >= «prefix()»Today('date'));
+        }],
+        ['validate-time-past', Zikula.__('Past', 'module_«appName()»'), function(val, elem) {
+            var cmpVal = new String(val);
+            return (cmpVal < «prefix()»Today('time'));
+        }],
+        ['validate-time-future', Zikula.__('Future', 'module_«appName()»'), function(val, elem) {
+            var cmpVal = new String(val);
+            return (cmpVal >= «prefix()»Today('time'));
+        }]«IF models.entities.exists(e|e.getUniqueDerivedFields().reject(e|e.primaryKey).size > 0)-»,
+        ['validate-unique', Zikula.__('Unique Check', 'module_«appName()»'), function(val, elem) {
+            return «prefix()»UniqueCheck('«name.formatForCode()»', val, elem, id);
+        }]«ENDIF-»
+    ]);
+}
+
+function «prefix()»Today(format)
+{
+    var timestamp = new Date();
+    var todayDate = '';
+    if (format != 'time') {
+        var month = new String((parseInt(timestamp.getMonth())+1));
+        if (month.length == 1) month = '0' + month;
+        var day = new String(timestamp.getDate());
+        if (day.length == 1) day = '0' + day;
+        todayDate += timestamp.getFullYear() + '-' + month + '-' + day;
+    }
+    if (format == 'datetime') {
+        todayDate += ' ';
+    }
+    if (format != 'date') {
+        var hours = new String(timestamp.getHours());
+        if (hours.length == 1) hours = '0' + hours;
+        var minutes = new String(timestamp.getMinutes());
+        if (minutes.length == 1) day = '0' + day;
+        var seconds = new String(timestamp.getSeconds());
+        if (seconds.length == 1) day = '0' + day;
+        todayDate += hours + ':' + minutes;// + ':' + seconds;
+    }
+    return todayDate;
+}
+
+// returns YYYY-MM-DD even if date is in DD.MM.YYYY
+function «prefix()»ReadDate(field, includeTime)
+{
+    var val = $F(field.id);
+    // look if we have YYYY-MM-DD
+    if (val.substr(4, 1) == '-' && val.substr(7, 1) == '-') {
+        return val;
+    }
+
+    // look if we have DD.MM.YYYY
+    if (val.substr(2, 1) == '.' && val.substr(4, 1) == '.') {
+        var newVal = val.substr(6, 4) + '-' + val.substr(3, 2) + '-' + val.substr(0, 2)
+        if (includeTime == true) {
+            newVal += ' ' + val.substr(11, 5);
+        }
+        return newVal;
+    }
+}
+
+«IF models.entities.exists(e|e.getUniqueDerivedFields().reject(e|e.primaryKey).size > 0)-»
+/**
+ * Performs a duplicate check for unique fields
+ */
+function «prefix()»UniqueCheck(ucOt, val, elem, ucEx)
+{
+    $('advice-validate-unique-' + elem.id).hide();
+    elem.removeClassName('validation-failed').removeClassName('validation-passed');
+
+    // build parameters object
+    var params = {ot: ucOt, fn: encodeURIComponent(elem.id), v: encodeURIComponent(val), ex: ucEx};
+
+    new Zikula.Ajax.Request(Zikula.Config['baseURL'] + 'ajax.php?module=«appName()»&func=checkForDuplicate', {
+        method: 'post',
+        parameters: params,
+        authid: 'FormAuthid',«REM»from the Forms framework«ENDREM»
+        onComplete: function(req) {
+            // check if request was successful
+            if (!req.isSuccess()) {
+                Zikula.showajaxerror(req.getMessage());
+                return;
+            }
+
+            // get data returned by module
+            var data = req.getData();
+            if (data.isDuplicate != '1') {
+                $('advice-validate-unique-' + elem.id).hide();
+                elem.removeClassName('validation-failed').addClassName('validation-passed');
+                return true;
+            }
+            else {
+                $('advice-validate-unique-' + elem.id).show();
+                elem.removeClassName('validation-passed').addClassName('validation-failed');
+                return false;
+            }
+        }
+    });
+
+    return true;
+}
+«ENDIF-»
+
+-->
+«ENDFILE»
+«ENDDEFINE»
