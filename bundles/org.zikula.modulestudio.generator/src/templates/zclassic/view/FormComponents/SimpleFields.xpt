@@ -85,10 +85,6 @@
 «DEFINE FormField FOR StringField-»
 «IF country-»
             {* TODO: support country fields in Zikula (see http://code.zikula.org/core/ticket/2446 for more information) *}
-«ELSEIF ipaddress-»
-            {* TODO: support ip address fields in Zikula *}
-«ELSEIF usstate-»
-            {* TODO: support us state fields in Zikula *}
 «ENDIF-»
 «IF language-»
             {formlanguageselector group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Choose the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'}

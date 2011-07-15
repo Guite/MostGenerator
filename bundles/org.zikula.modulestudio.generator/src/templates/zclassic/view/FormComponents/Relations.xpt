@@ -175,7 +175,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «ENDDEFINE»
 
 «DEFINE Component_ParentEditing(Application app, Controller controller, Entity targetEntity, Boolean many) FOR JoinRelationship-»
-«REM»just a reminder for the parent view which is not tested yet
+«REM»just a reminder for the parent view which is not tested yet (see #10)
 Example: create children (e.g. an address) while creating a parent (e.g. a new customer).
 Problem: address must know the customerid.
 TODO: only for $mode ne create: 

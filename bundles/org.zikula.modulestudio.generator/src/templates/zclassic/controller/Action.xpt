@@ -121,7 +121,6 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
             $sdir = 'asc';
         }
 
-«REM»TODO«ENDREM»
         // the current offset which is used to calculate the pagination
         $currentPage = (int) $this->request->getGet()->filter('pos', 1, FILTER_VALIDATE_INT);
 

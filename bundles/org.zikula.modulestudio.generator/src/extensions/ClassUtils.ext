@@ -23,8 +23,6 @@ cached String baseClassDefault(Application app, String filling, String suffix)
     : implClassDefault(app, filling.msconcat('Base_'), suffix);
 
 
-// TODO: cleanup and refactorings
-
 cached String fillingEntity() : 'Entity_';
 cached String fillingController() : 'Controller_';
 cached String fillingApi() : 'Api_';

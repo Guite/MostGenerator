@@ -13,7 +13,6 @@
     «FILE getAppSourcePath(appName()).msconcat("docs/readme_de.txt")»«EXPAND ReadmeDE»«ENDFILE»
     «FILE getAppSourcePath(appName()).msconcat("docs/readme.txt")»«EXPAND Readme»«ENDFILE»
     «FILE getAppSourcePath(appName()).msconcat("docs/license.txt")»«EXPAND License»«ENDFILE»
-«REM»TODO: generate additional information describing the model itself«ENDREM»
 «ENDDEFINE»
 
 «DEFINE Credits FOR Application-»

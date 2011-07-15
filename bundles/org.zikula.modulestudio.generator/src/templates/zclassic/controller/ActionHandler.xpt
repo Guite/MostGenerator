@@ -654,15 +654,12 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             // create new links
             foreach ($relatedIds as $relatedId) {
 «IF this.metaType != ManyToManyRelationship-»
-«REM»TODO select before loop with one WHERE IN«ENDREM»
+                /** TODO select before loop with one WHERE IN */
                 $linkObj = $repository->selectById($relatedId);
                 if ($entity->get«relationAliasName.toFirstUpper()»()->contains($linkObj)) {
                     continue;
                 }
                 $entity->get«relationAliasName.toFirstUpper()»()->add($linkObj);
-«IF bidirectional-»
-«REM»TODO inverse handling missing, will be done with special entity methods«ENDREM»
-«ENDIF-»
 «ELSE-»
                 $linkObj = new «((ManyToManyRelationship)this).implClassModelRefRecord()»();
                 $linkObj->«source.idField()» = «IF incoming»$relatedId«ELSE»$this->«((incoming) ? target : source).idField()»«ENDIF»;

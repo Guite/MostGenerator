@@ -6,10 +6,10 @@
 
 «REM»If we have an outgoing association useTarget is true; for an incoming one it is false.«ENDREM»
 «DEFINE Root(Boolean useTarget) FOR JoinRelationship-»
-«IF source == target-»«REM»TODO«ENDREM»
+«IF source == target-»
 /**
   * Self relations were not working yet, must be retested with Doctrine 2.
-  * See http://code.zikula.org/generator/ticket/75 for more information
+  * See #9 for more information
   */
 «ENDIF-»
 «LET getRelationAliasName(false) AS sourceName-»
