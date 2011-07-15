@@ -241,6 +241,12 @@ cached String asConstant(RelationFetchType fetchType) :
         case RelationFetchType::EXTRA_LAZY              : 'EXTRA_LAZY'
         default: 'LAZY'
     };
+cached String asConstant(InheritanceStrategyType inheritanceType) :
+    switch (inheritanceType) {
+        case InheritanceStrategyType::SINGLE_TABLE      : 'SINGLE_TABLE'
+        case InheritanceStrategyType::JOINED            : 'JOINED'
+        default: ''
+    };
 
 cached hasNotifyPolicy(Entity this) :
     (changeTrackingPolicy == EntityChangeTrackingPolicy::NOTIFY);
@@ -263,15 +269,17 @@ cached hasIncomingCollections(Entity this) :
 cached hasCollections(Entity this) :
 	!getCollections().isEmpty;
 
+cached isTopSuperClass(Entity this) :
+    isInheriter() && !isInheriting();
 cached isInheriting(Entity this) :
     !outgoing.typeSelect(InheritanceRelationship).isEmpty;
-cached InheritanceRelationship getInheritanceRelation(Entity this) :
+cached InheritanceRelationship getRelationToParentType(Entity this) :
     outgoing.typeSelect(InheritanceRelationship).get(0);
 cached Entity parentType(Entity this) :
-    getInheritanceRelation().target;
+    getRelationToParentType().target;
 
 cached isInheriter(Entity this) :
-    !incoming.typeSelect(InheritanceRelationship).isEmpty;
+    !getChildRelations().isEmpty;
 cached getChildRelations(Entity this) :
     incoming.typeSelect(InheritanceRelationship);
 
@@ -281,12 +289,7 @@ cached relationFieldName(Entity refEntity, String refField) :
 
 cached String isDefaultIdField(DerivedField this) :
     {'id', this.entity.name.formatForDB() + 'id', this.entity.name.formatForDB() + '_id'}.contains(this.name.formatForDB());
-/* get local field for 1:1 and 1:n * /
-cached getRelationLocalField(JoinRelationship this, Boolean incoming) :
-    (!incoming) ? source.relationFieldName(sourceField) : (!isDefaultIdField(targetField, target) ? target.relationFieldName(targetField) : source.relationFieldName(sourceField));
-/* get foreign field for 1:1 and 1:n * / 
-cached getRelationForeignField(JoinRelationship this, Boolean incoming) :
-    (incoming) ? source.relationFieldName(sourceField) : (!isDefaultIdField(targetField, target) ? target.relationFieldName(targetField) : source.relationFieldName(sourceField));
+
 
 cached String getTargetMultiplicity(JoinRelationship this) :
     'Many';
@@ -294,7 +297,6 @@ cached String getTargetMultiplicity(OneToOneRelationship this) :
     'One';
 cached String getTargetMultiplicity(ManyToOneRelationship this) :
     'One';
-*/
 
 /* retrieve integer value defining which relation edit type will be implemented
  * this mapping is done to have a more appropriate logic inside the generator

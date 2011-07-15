@@ -7,7 +7,7 @@
 «REM»Entry point for Doctrine entity classes«ENDREM»
 «DEFINE Root FOR Application-»
     «EXPAND Root(this) FOREACH models.entities-»
-    «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»
+«REM»    «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»«ENDREM»
     «EXPAND business::Validator::BaseValidator-»
     «EXPAND business::Validator::ValidatorWrapper(this) FOREACH models.entities-»
 «IF hasTrees()-»
@@ -36,7 +36,11 @@
  *
 «EXPAND entity::Extensions::ClassExtensions-»
 «REM»«EXPAND ObjectExtensions-»«ENDREM»
+«IF mappedSuperClass-»
+ * @ORM\MappedSuperclass
+«ELSE-»
  * @ORM\Entity(repositoryClass="«implClassModel('repository', '')»"«IF readOnly-», readOnly=true«ENDIF-»)
+«ENDIF-»
 «IF indexes.isEmpty-»
  * @ORM\Table(name="«fullEntityName()»")
 «ELSE-»
@@ -53,7 +57,11 @@
 «ENDIF-»
  * )
 «ENDIF-»
-«REM»TODO: change tracking policy is not per-class, but per-class-hierarchy«ENDREM»
+«IF isTopSuperClass()-»
+ * @ORM\InheritanceType("«getChildRelations().get(0).strategy.asConstant()»")
+ * @ORM\DiscriminatorColumn(name="«getChildRelations().get(0).discriminatorColumn.formatForCode()»"«REM», type="string"«ENDREM»)
+ * @ORM\DiscriminatorMap({«EXPAND DiscriminatorInfo FOREACH getChildRelations() SEPARATOR ", "-»})
+«ENDIF-»
 «IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT-»
  * @ORM\ChangeTrackingPolicy("«changeTrackingPolicy.asConstant()»")
 «ENDIF-»
@@ -81,6 +89,12 @@ use Doctrine\Common\NotifyPropertyChanged,
 @ORM\«indexType.toFirstUpper()»(name="«name.formatForDB()»", columns={«EXPAND IndexField FOREACH items SEPARATOR ','»})
 «ENDDEFINE»
 «DEFINE IndexField FOR EntityIndexItem-»"«name.formatForDB()»"«ENDDEFINE»
+
+«DEFINE DiscriminatorInfo FOR InheritanceRelationship-»
+«LET getRelationAliasName(false) AS sourceAliasName-»
+"«sourceAliasName»" = "«sourceAliasName.toFirstUpper()»"
+«ENDLET-»
+«ENDDEFINE»
 
 «REM»concrete implementation stub«ENDREM»
 «DEFINE ModelEntityImpl(Application app) FOR Entity-»
@@ -224,30 +238,6 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «ENDIF-»
 «ENDDEFINE»
 
-
-«REM»
-«IF isInheriter()-»
-«EXPAND SubClasses-»
-«ENDIF-»
-
-«DEFINE SubClasses FOR Entity-»
-«LET getChildRelations() AS children-»
-«IF !children.isEmpty-»
-        $this->setSubclasses(array(
-«EXPAND SubClass FOREACH children-»
-            )
-        );
-«ENDIF-»
-«ENDLET-»
-«ENDDEFINE»
-
-«DEFINE SubClass FOR InheritanceRelationship-»
-                '«source.name.formatForCode()»' => array('«columnAggregationField.formatForCode()»' => '«source.name.formatForCode()»')
-«ENDDEFINE»
-
-«ENDREM»
-
-
 «REM»creates a reference entity class file for every many-to-many relationship instance«ENDREM»
 «REM»TODO: remove all the redundancies below... maybe with the PersistenceTransformer transformation...«ENDREM»
 «DEFINE Root(Application app) FOR ManyToManyRelationship-»
@@ -264,7 +254,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
  * This is the reference entity class for the many to many relationship
  * between «source.name.formatForDisplay()» and «target.name.formatForDisplay()» entities.
  */
-class «baseClassModelRefEntity()» extends Doctrine_Entity
+class «baseClassModelRefEntity()» extends Zikula_EntityAccess
 {
     /**
      * Set table definition.
