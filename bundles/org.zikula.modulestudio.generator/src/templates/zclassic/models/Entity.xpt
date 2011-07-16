@@ -118,10 +118,9 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
     protected $_objectType = '«name.formatForCode()-»';
 
     /**
-     * @var string The primary key field name
+     * @var array List of primary key field names
      */
-«REM»TODO support composite keys (#21)«ENDREM»
-    protected $_idField = '«name.formatForCode()-»';
+    protected $_idFields = array();
 
     /**
      * @var «implClassModel('validator', '')» The validator for this entity
@@ -147,7 +146,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «EXPAND Constructor-»
 
 «EXPAND FileHelper::GetterAndSetterMethods('_objectType', 'string', false, false, '')»
-«EXPAND FileHelper::GetterAndSetterMethods('_idField', 'string', false, false, '')»
+«EXPAND FileHelper::GetterAndSetterMethods('_idFields', 'array', false, true, 'array')»
 «EXPAND FileHelper::GetterAndSetterMethods('_validator', implClassModel('validator', ''), false, true, 'null')»
 «EXPAND FileHelper::GetterAndSetterMethods('_hasUniqueSlug', 'boolean', false, false, '')»
 «EXPAND PropertyChangedListener-»
@@ -180,19 +179,53 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
      * Will not be called by Doctrine and can therefore be used
      * for own implementation purposes. It is also possible to add
      * arbitrary arguments as with every other class method.
+«REM»TODO param docs«ENDREM»
      */
-
+    public function __construct(«EXPAND ConstructorArguments)«EXPAND entity::Extensions::ConstructorImplements-»
+    {
 «EXPAND ConstructorImpl-»
+    }
 «ENDDEFINE»
 
+«DEFINE ConstructorArgumentsDefault FOR Entity-»
+«IF hasCompositeKeys()-»
+«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ', '-»$«pkField.name.formatForCode()»«ENDFOREACH-»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE ConstructorArguments FOR Entity-»
+«IF isIndexByTarget()-»
+«LET incoming.select(e|e.isIndexed()) AS indexRelation-»
+«LET getRelationAliasName(indexRelation, false) AS sourceAlias-»
+«LET source.getIndexByField() AS indexBy-»
+$«indexBy.formatForCode()», «indexRelation.source.implClassModelEntity()» $«sourceAlias.formatForCode», «EXPAND ConstructorArgumentsDefault-»
+«ENDLET-»
+«ENDLET-»
+«ENDLET-»
+«ELSEIF isAggregated()-»
+«EXPAND ConstructorArgumentsAggregate FOREACH getAggregators() SEPARATOR ', '», «EXPAND ConstructorArgumentsDefault-»
+«ELSE-»
+«EXPAND ConstructorArgumentsDefault-»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE ConstructorArgumentsAggregate FOR OneToManyRelationship-»
+«LET source.getAggregateFields().get(0).getAggregateTargetField() AS targetField-»
+$«getRelationAliasName(false)», $«targetField.name.formatForCode()»
+«ENDLET-»
+«ENDDEFINE-»
+
 «DEFINE ConstructorImpl FOR Entity-»
+«IF hasCompositeKeys()-»
+«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR-»
+        $this->«pkField.name.formatForCode()» = $«pkField.name.formatForCode()»;
+«ENDFOREACH-»
+«ENDIF-»
 «IF isIndexByTarget()-»
 «LET incoming.select(e|e.isIndexed()) AS indexRelation-»
 «LET getRelationAliasName(indexRelation, false) AS sourceAlias-»
 «LET getRelationAliasName(indexRelation, true) AS targetAlias-»
 «LET source.getIndexByField() AS indexBy-»
-    public function __construct($«indexBy.formatForCode()», «indexRelation.source.implClassModelEntity()» $«sourceAlias.formatForCode»)«EXPAND entity::Extensions::ConstructorImplements-»
-    {
         $this->«indexBy.formatForCode()» = $«indexBy.formatForCode()»;
         $this->«sourceAlias.formatForCode()» = $«sourceAlias.formatForCode()»;
         $«sourceAlias.formatForCode()»->add«targetAlias.formatForCodeCapital()»($this);
@@ -201,26 +234,16 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «ENDLET-»
 «ENDLET-»
 «ELSEIF isAggregated()-»
-    public function __construct(«EXPAND ConstructorParametersAggregate FOREACH getAggregators() SEPARATOR ', '»)«EXPAND entity::Extensions::ConstructorImplements-»
-    {
 «EXPAND ConstructorAssignmentAggregate FOREACH getAggregators()-»
-    }
 «ELSE-»
-    public function __construct()«EXPAND entity::Extensions::ConstructorImplements-»
-    {
 «ENDIF-»
         $this->_objectType = '«fullEntityName()»';
+        $this->_idFields = array(«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ', '-»'«pkField.name.formatForCode()»'«ENDFOREACH-»);
         $this->_validator = new «implClassModel('validator', '')»($this);
         $this->_hasUniqueSlug = «IF hasSluggableFields() && slugUnique»true«ELSE»false«ENDIF»;
 «EXPAND entity::Association::InitCollections-»
-    }
 «ENDDEFINE»
 
-«DEFINE ConstructorParametersAggregate FOR OneToManyRelationship-»
-«LET source.getAggregateFields().get(0).getAggregateTargetField() AS targetField-»
-$«getRelationAliasName(false)», $«targetField.name.formatForCode()»
-«ENDLET-»
-«ENDDEFINE-»
 «DEFINE ConstructorAssignmentAggregate FOR OneToManyRelationship-»
 «LET source.getAggregateFields().get(0).getAggregateTargetField() AS targetField-»
         $this->«getRelationAliasName(false)» = $«getRelationAliasName(false)»;
@@ -277,7 +300,7 @@ $«getRelationAliasName(false)», $«targetField.name.formatForCode()»
  */
 class «baseClassModelRefEntity()» extends Zikula_EntityAccess
 {
-    /**
+«REM»    /**
      * Set table definition.
      * Define columns, indexes and other information about the table schema.
      *
@@ -287,18 +310,18 @@ class «baseClassModelRefEntity()» extends Zikula_EntityAccess
     {
         $this->setTableName('«app.prefix().msconcat("_").msconcat(source.name.formatForDB()).msconcat("_").msconcat(target.name.formatForDB())»');
 
-        $this->hasColumn('«source.idField()»', 'integer', null, array(
+        $this->hasColumn('«sourceField.formatForCode()»', 'integer', null, array(
                 'type' => 'integer',
                 'primary' => true
             )
         );
 
-        $this->hasColumn('«target.idField()»', 'integer', null, array(
+        $this->hasColumn('«targetField.formatForCode()»', 'integer', null, array(
                 'type' => 'integer',
                 'primary' => true
             )
         );
-    }
+    }«ENDREM»
 }
 «ENDDEFINE»
 

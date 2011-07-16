@@ -141,21 +141,21 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 {icon type='delete' size='extrasmall' assign='removeImageArray'}
 {assign var="removeImage" value="<img src=\"`$removeImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
 
-<input type="hidden" id="«uniqueNameForJs»ItemList" name="«uniqueNameForJs»ItemList" value="{if isset($item«IF many»s«ENDIF») && is_array($item«IF many»s«ENDIF»)«IF !many» && isset($item.«targetEntity.idField()»)«ENDIF»}«IF many»{foreach name='relLoop' item='item' from=$items}«ENDIF»{$item.«targetEntity.idField()»}«IF many»{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}«ENDIF»{/if}" />
-<input type="hidden" id="«uniqueNameForJs»Mode" name="«uniqueNameForJs»Mode" value="«IF includeEditing»1«ELSE»0«ENDIF»" />
+<input type="hidden" id="«uniqueNameForJs»ItemList" name="«uniqueNameForJs»ItemList" value="{if isset($item«IF many-»s«ENDIF») && is_array($item«IF many-»s«ENDIF»)«IF !many-»«FOREACH targetEntity.getPrimaryKeyFields() AS pkField-» && isset($item.«pkField.name.formatForCode()»)«ENDFOREACH-»«ENDIF-»}«IF many-»{foreach name='relLoop' item='item' from=$items}«ENDIF-»«FOREACH targetEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{$item.«pkField()»}«ENDFOREACH-»«IF many-»{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}«ENDIF-»{/if}" />
+<input type="hidden" id="«uniqueNameForJs»Mode" name="«uniqueNameForJs»Mode" value="«IF includeEditing-»1«ELSE»0«ENDIF»" />
 
 <ul id="«uniqueNameForJs»ReferenceList">
-{if isset($item«IF many»s«ENDIF») && is_array($item«IF many»s«ENDIF»)«IF !many» && isset($item.«targetEntity.idField()»)«ENDIF»}
+{if isset($item«IF many-»s«ENDIF-») && is_array($item«IF many-»s«ENDIF-»)«IF !many-»«FOREACH targetEntity.getPrimaryKeyFields() AS pkField-» && isset($item.«pkField.name.formatForCode()»)«ENDFOREACH-»«ENDIF-»}
 «IF many-»
 {foreach name='relLoop' item='item' from=$items}
 «ENDIF-»
-{assign var='idPrefix' value="«uniqueNameForJs»Reference_`$item.«targetEntity.idField()»`"}
+{assign var='idPrefix' value="«uniqueNameForJs»Reference_rel_«FOREACH targetEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»`$item.«pkField.name.formatForCode()»`«ENDFOREACH-»"}
     <li id="{$idPrefix}">
     {$item.«targetEntity.getLeadingField().name.formatForCode()»}
 «IF includeEditing-»
- <a id="{$idPrefix}Edit" href="{modurl modname='«app.appName()»' type='«controller.name()»' func='edit' ot='«targetEntity.name.formatForCode()»' «targetEntity.idField()»=$item.«targetEntity.idField()»}">{$editImage}</a>
+ <a id="{$idPrefix}Edit" href="{modurl modname='«app.appName()»' type='«controller.name()»' «targetEntity.modUrlEdit('item', true)»}">{$editImage}</a>
 «ENDIF-»
- <a id="{$idPrefix}Remove" href="javascript:«app.prefix()»RemoveRelatedItem('«uniqueNameForJs»', {$item.«targetEntity.idField()»});">{$removeImage}</a>
+ <a id="{$idPrefix}Remove" href="javascript:«app.prefix()»RemoveRelatedItem('«uniqueNameForJs»', '«FOREACH targetEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{$item.«pkField.name.formatForCode()»}«ENDFOREACH-»');">{$removeImage}</a>
 «IF targetEntity.hasImageFields()-»
 <br />
 «LET targetEntity.getImageFields().get(0).name.formatForCode() AS imageFieldName-»

@@ -76,15 +76,24 @@ class «appName()»_Api_Mailz extends «appName()»_Api_Base_Mailz
         $entityClass = '«appName()»_Entity_' . ucfirst($objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
-«REM»TODO: retrieve id field name otherwise, and support composite keys (#21)«ENDREM»
         $objectTemp = new $entityClass(); 
-        $idField = $objectTemp->get_idField();
+        $idFields = $objectTemp->get_idFields();
 
         $sortParam = '';
         if ($args['pluginid'] == 2) {
             $sortParam = 'RAND()';
         } elseif ($args['pluginid'] == 1) {
-            $sortParam = $objectTemp->get_idField() . ' DESC';
+            if (count($idFields) == 1) {
+                $sortParam = $idFields[0] . ' DESC';
+            }
+            else {
+                foreach ($idFields as $idField) {
+                    if (!empty($sortParam)) {
+                        $sortParam .= ', ';
+                    }
+                    $sortParam .= $idField . ' ASC';
+                }
+            }
         }
 
         $resultsPerPage = 3;

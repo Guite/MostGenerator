@@ -49,7 +49,7 @@
 {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 «EXPAND ItemActions(appName, controller)-»
 
-{notifydisplayhooks eventname='«appName.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».display_view' id=$«objName».«idField()» urlobject=$«objName».urlObject assign='hooks'}
+{notifydisplayhooks eventname='«appName.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».display_view' id="«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR '_'-»`$«objName».«pkField.name.formatForCode()»`«ENDFOREACH-»" urlobject=$«objName».urlObject assign='hooks'}
 {foreach from=$hooks key='hookname' item='hook'}
     {$hook}
 {/foreach}
@@ -88,16 +88,16 @@
     <dt>{gt text='«relationAliasName.formatForDisplayCapital()»'}</dt>
     <dd>
     {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-        <a href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«source.name.formatForCode()»' «source.idField()»=$«relObjName».«source.idField()»}">
+        <a href="{modurl modname='«container.application.appName()»' type='«controller.name()»' «source.modUrlDisplay(relObjName, true)»}">
             {$«relObjName».«source.getLeadingField().name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}
         </a>
-        <a id="«source.name.formatForCode()»Item{$«relObjName».«source.idField()»}Display" href="{modurl modname='«container.application.appName()»' type='«controller.name()»' func='display' ot='«source.name.formatForCode()»' «source.idField()»=$«relObjName».«source.idField()» theme='Printer'«IF controller.metaType == UserController» forcelongurl=true«REM»Temporary hack due to core bug with theme parameter in short urls«ENDREM»«ENDIF-»}" title="{gt text='Open quick view window'}" style="display: none">
+        <a id="«source.name.formatForCode()»Item«FOREACH source.getPrimaryKeyFields() AS pkField-»{$«relObjName».«pkField.name.formatForCode()»}«ENDFOREACH-»Display" href="{modurl modname='«container.application.appName()»' type='«controller.name()»' «source.modUrlDisplay(relObjName, true) theme='Printer'«IF controller.metaType == UserController» forcelongurl=true«REM»Temporary hack due to core bug with theme parameter in short urls«ENDREM»«ENDIF-»}" title="{gt text='Open quick view window'}" style="display: none">
             {icon type='view' size='extrasmall' __alt='Quick view'}
         </a>
         <script type="text/javascript" charset="utf-8">
         /* <![CDATA[ */
             document.observe('dom:loaded', function() {
-                «container.application.prefix()»InitInlineWindow($('«source.name.formatForCode()»Item{{$«relObjName».«source.idField()»}}Display'), '{{$«relObjName».«source.getLeadingField().name.formatForCode()»|replace:"'":""}}');
+                «container.application.prefix()»InitInlineWindow($('«source.name.formatForCode()»Item«FOREACH source.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{{$«relObjName».«pkField.name.formatForCode()»}}«ENDFOREACH-»Display'), '{{$«relObjName».«source.getLeadingField().name.formatForCode()»|replace:"'":""}}');
             });
         /* ]]> */
         </script>
@@ -128,14 +128,14 @@
 «IF controller.hasActions('edit')-»
     {checkpermissionblock component='«appName»::' instance='.*' level='ACCESS_EDIT'}
 «IF !readOnly-»«REM»create is allowed, but editing not«ENDREM»
-        <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»' «idField()»=$«objName».«idField()»}" title="{gt text='Edit'}" class="z-icon-es-edit">
+        <a href="{modurl modname='«appName»' type='«controller.name()»' «modUrlEdit(objName, true)»}" title="{gt text='Edit'}" class="z-icon-es-edit">
             {gt text='Edit'}
         </a>
 «ENDIF-»
 «IF tree != EntityTreeType::NONE-»
     {*
 «ENDIF-»
-        <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»' astemplate=$«objName».«idField()»}" title="{gt text='Reuse for new item'}" class="z-icon-es-saveas">
+        <a href="{modurl modname='«appName»' type='«controller.name()»' «modUrlEdit(objName, true, 'astemplate')»}" title="{gt text='Reuse for new item'}" class="z-icon-es-saveas">
             {gt text='Reuse'}
         </a>
 «IF tree != EntityTreeType::NONE-»
@@ -145,7 +145,7 @@
 «ENDIF-»
 «IF controller.hasActions('delete')-»
     {checkpermissionblock component='«appName»::' instance='.*' level='ACCESS_DELETE'}
-        <a href="{modurl modname='«appName»' type='«controller.name()»' func='delete' ot='«objName»' «idField()»=$«objName».«idField()»}" title="{gt text='Delete'}" class="z-icon-es-delete">
+        <a href="{modurl modname='«appName»' type='«controller.name()»' «modUrlDelete(objName, true)»}" title="{gt text='Delete'}" class="z-icon-es-delete">
             {gt text='Delete'}
         </a>
     {/checkpermissionblock}

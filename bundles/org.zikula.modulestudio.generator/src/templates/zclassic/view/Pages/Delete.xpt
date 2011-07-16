@@ -24,7 +24,7 @@
 
     <p class="z-warningmsg">{gt text='Do you really want to delete this «name.formatForDisplay()» ?'}</p>
 
-    <form class="z-form" action="{modurl modname='«appName»' type='«controller.name()»' func='delete' ot='«name.formatForCode()»' «idField()»=$«name.formatForCode()».«idField()»}" method="post">
+    <form class="z-form" action="{modurl modname='«appName»' type='«controller.name()»' «modUrlDelete(name, true)»}" method="post">
         <div>
             <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
             <input type="hidden" id="confirmation" name="confirmation" value="1" />
@@ -36,7 +36,7 @@
                     <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«name.formatForCode()»'}">{icon type='cancel' size='small' __alt='Cancel' __title='Cancel'} {gt text='Cancel'}</a>
                 </div>
             </fieldset>
-            {notifydisplayhooks eventname='«appName.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».form_delete' id=$«name.formatForCode()».«idField()» assign='hooks'}
+            {notifydisplayhooks eventname='«appName.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».form_delete' id="«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR '_'-»`$«name.formatForCode()».«pkField.name.formatForCode()»`«ENDFOREACH-»" assign='hooks'}
             {foreach from=$hooks key='hookname' item='hook'}
                 {$hook}
             {/foreach}

@@ -4,12 +4,12 @@
 «DEFINE retrieveEntityFromModel(String idVar, String idValue, Boolean isHandler) FOR Object-»
 «IF !isHandler-»
         $objectData = $repository->selectById($«idValue»);
-        if (!is_array($objectData) || !isset($objectData[$«idVar»]) || !is_numeric($objectData[$«idVar»])) {
+        if (!is_array($objectData) || !isset($objectData[$«idVar»][0])) {
             return $view->registerError($this->__('No such item.'));
         }
 «ELSE-»
         $entity = $repository->selectById($«idValue», false);
-        if (!is_object($entity) || !isset($entity[$«idVar»]) || !is_numeric($entity[$«idVar»])) {
+        if (!is_object($entity) || !isset($entity[$«idVar»[0]])) {
             $this->throwNotFound($this->__('No such item.'));
         }
 «ENDIF-»

@@ -31,7 +31,7 @@
 
 «FILE templateFileWithExtension(controller, name, 'include', 'xml')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» xml inclusion template in «controller.name()» area *}
-<«name.formatForDB()» id="{$item.«idField()»}"«IF standardFields» createdon="{$item.cr_date}" updatedon="{$item.lu_date}"«ENDIF»>
+<«name.formatForDB()»«FOREACH getPrimaryKeyFields()-» «pkField.name.formatForCode()»="{$item.«pkField.name.formatForCode()»}"«ENDFOREACH-»«IF standardFields» createdon="{$item.cr_date}" updatedon="{$item.lu_date}"«ENDIF»>
 «EXPAND DisplayEntry(controller, false) FOREACH getDerivedFields().select(e|e.primaryKey)-»
 «EXPAND DisplayEntry(controller, false) FOREACH getDerivedFields().reject(e|e.primaryKey)-»
 «IF geographical-»

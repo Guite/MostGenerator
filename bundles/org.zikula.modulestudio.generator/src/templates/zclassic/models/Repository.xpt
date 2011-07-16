@@ -77,7 +77,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     /**
      * Select object from the database.
      *
-     * @param integer $id       The id to use to retrieve the object (optional) (default=null).
+     * @param mixed   $id       The id (or array of ids) to use to retrieve the object (optional) (default=null).
      * @param boolean $asArray  Whether to return the result as array instead as record object (optional) (default=true).
      * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
      *
@@ -91,7 +91,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
         }
 
         $query = $this->_intBaseQuery('', '', $useJoins)
-                  ->where('tbl.«idField()» = ?', $id);
+                  ->where('tbl.id = ?', $id);
 
         $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_RECORD);
         return $query->fetchOne(array(), $fetchType);
@@ -186,7 +186,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     {
         $useJoins = false;
 
-        $selection = 'COUNT(tbl.«idField()») AS num«nameMultiple.formatForCodeCapital()»';
+        $selection = 'COUNT(tbl.id) AS num«nameMultiple.formatForCodeCapital()»';
         if ($useJoins === true) {
             $selection = $this->addJoinsToSelection($selection);
         }
@@ -294,7 +294,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 
 «DEFINE singleSortingField FOR EntityField»«REM»DUMMY«ENDREM»«ENDDEFINE»
 «DEFINE singleSortingField FOR DerivedField»
-«LET entity.incoming.select(e|formatForDB(e.source.idField()) == name.formatForDB()) AS joins-»
+«LET entity.incoming.select(e|formatForDB(e.sourceField) == name.formatForDB()) AS joins-»
 «IF !joins.isEmpty-»
                      '«joins.get(0).source.name.formatForCode()»'«""-»
 «ELSE-»
@@ -340,7 +340,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
                 // abort if no root node has been created yet
                 return false;
             }
-            $result = $treeObject->fetchBranch($root->«idField()», array(), $fetchType);
+            $result = $treeObject->fetchBranch($root->«getPrimaryKeys().get(0).name.formatForCode()», array(), $fetchType);
         }
         else {
             // otherwise return the whole tree

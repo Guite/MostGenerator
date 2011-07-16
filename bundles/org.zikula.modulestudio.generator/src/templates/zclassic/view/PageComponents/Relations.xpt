@@ -15,10 +15,10 @@
 {foreach name='relLoop' item='item' from=$items}
     <li>
 «ENDIF-»
-    <a href="{modurl modname='«app.appName()»' type='«controller.name()»' func='display' ot='«name.formatForCode()»' «idField()»=$item.«idField()»}">
+    <a href="{modurl modname='«app.appName()»' type='«controller.name()»' «modUrlDisplay('item', true)»}">
         {$item.«getLeadingField().name.formatForCode()»}
     </a>
-    <a id="«name.formatForCode()»Item{$item.«idField()»}Display" href="{modurl modname='«app.appName()»' type='«controller.name()»' func='display' ot='«name.formatForCode()»' «idField()»=$item.«idField()» theme='Printer'«IF controller.metaType == UserController» forcelongurl=true«REM»Temporary hack due to core bug with theme parameter in short urls«ENDREM»«ENDIF-»}" title="{gt text='Open quick view window'}" style="display: none">
+    <a id="«name.formatForCode()»Item«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{$item.«pkField.name.formatForCode()»}«ENDFOREACH-»Display" href="{modurl modname='«app.appName()»' type='«controller.name()»' «modUrlDisplay('item', true)» theme='Printer'«IF controller.metaType == UserController» forcelongurl=true«REM»Temporary hack due to core bug with theme parameter in short urls«ENDREM»«ENDIF-»}" title="{gt text='Open quick view window'}" style="display: none">
         {icon type='view' size='extrasmall' __alt='Quick view'}
     </a>
 «IF !many»</h4>
@@ -26,7 +26,7 @@
     <script type="text/javascript" charset="utf-8">
     /* <![CDATA[ */
         document.observe('dom:loaded', function() {
-            «app.prefix()»InitInlineWindow($('«name.formatForCode()»Item{{$item.«idField()»}}Display'), '{{$item.«getLeadingField().name.formatForCode()»|replace:"'":""}}');
+            «app.prefix()»InitInlineWindow($('«name.formatForCode()»Item«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{{$item.«pkField.name.formatForCode()»}}«ENDFOREACH-»Display'), '{{$item.«getLeadingField().name.formatForCode()»|replace:"'":""}}');
         });
     /* ]]> */
     </script>
@@ -67,7 +67,7 @@
 {if $authAdmin || (isset($uid) && isset($«relatedEntity.name.formatForCode()».cr_uid) && $«relatedEntity.name.formatForCode()».cr_uid eq $uid)}
 <p class="manageLink">
     {gt text='Create «otherEntity.name.formatForDisplay()»' assign='createTitle'}
-    <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«otherEntity.name.formatForCode()»' «relationAliasNameParam.formatForDB()»=$«relatedEntity.name.formatForCode()».«relatedEntity.idField()»}" title="{$createTitle}" class="z-icon-es-add">
+    <a href="{modurl modname='«appName»' type='«controller.name()»' ot='«otherEntity.name.formatForCode()»' «relationAliasNameParam.formatForDB()»="«FOREACH relatedEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»`$«relatedEntity.name.formatForCode()».«pkField.name.formatForCode()»}`«ENDFOREACH-»" title="{$createTitle}" class="z-icon-es-add">
         {$createTitle}
     </a>
 </p>

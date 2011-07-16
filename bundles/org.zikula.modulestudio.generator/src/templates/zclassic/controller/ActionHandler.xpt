@@ -83,9 +83,9 @@ class «baseClassFormHandler(controller, name, actionName)» extends Zikula_Form
     protected $objectType;
 
     /**
-     * @var integer Identifier of «name.formatForDisplay()».
+     * @var array List of identifiers of treated «name.formatForDisplay()».
      */
-    protected $«idField()»;
+    protected $idValues = array();
 
     /**
      * @var string One of "create" or "edit".
@@ -200,44 +200,55 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $this->inlineUsage = ((UserUtil::getTheme() == 'Printer') ? true : false);
         $this->idPrefix = $this->request->getGet()->filter('idp', '', FILTER_SANITIZE_STRING);
 
-        // retrieve the ID of the object we wish to edit
-        // default to 0 (which is a numeric id but an invalid value)
-        // no provided id means that we want to create a new object
-        $this->«idField()» = (int) $this->request->getGet()->filter('«idField()»', 0, FILTER_VALIDATE_INT);
-        if (!$this->«idField()») {
-            $this->«idField()» = (int) $this->request->getGet()->filter('id', 0, FILTER_VALIDATE_INT);
-        }
-
-        $this->objectType = '«name.formatForCode()»';
-
         // initialise redirect goal
         $this->returnTo = $this->request->getGet()->filter('returnTo', null, FILTER_SANITIZE_STRING);
         // store current uri for repeated creations
         $this->repeatReturnUrl = System::getCurrentURI();
 
+        $this->objectType = '«name.formatForCode()»';
+
         $entityClass = '«appName()»_Entity_' . ucfirst($this->objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
+        $objectTemp = new $entityClass();
+        $idFields = $objectTemp->get_idFields();
+
+        // retrieve the ID of the object we wish to edit
+        $hasID = true;
+        foreach ($idFields as $idField) {
+            $id = (int) $this->request->getGet()->filter($idField, 0, FILTER_VALIDATE_INT);
+            if (!$id && $idField != 'id' && count($idFields) == 1) {
+                $id = (int) $this->request->getGet()->filter('id', 0, FILTER_VALIDATE_INT);
+            }
+            $this->idValues[$idField] = $id;
+            if (!$id) {
+                $hasID = false;
+            }
+        }
+
         $entity = null;
-        $this->mode = 'create';
+        $this->mode = ($hasID) ? 'edit' : 'create';
 
-        // if «idField()» is not 0, we wish to edit an existing «name.formatForDisplay()»
-        if ($this->«idField()») {
-            $this->mode = 'edit';
-
+        if ($this->mode == 'edit') {
             if (!SecurityUtil::checkPermission('«app.appName()»:«name.formatForCodeCapital()»:', '::', ACCESS_EDIT)) {
                 // set an error message and return false
                 return $this->view->registerError(LogUtil::registerPermissionError());
             }
 
-            $idField = '«idField()»';
-«EXPAND ControllerHelper::retrieveEntityFromModel('idField', "this->" + idField(), true)-»
+«EXPAND ControllerHelper::retrieveEntityFromModel('idFields', 'this->idValues' + ((hasCompositeKeys() ? '' : '[0]'), true)-»
 «IF hasPageLockSupport()-»
 
             // try to guarantee that only one person at a time can be editing this «name.formatForDisplay()»
-            $returnUrl = ModUtil::url('«app.appName()»', '«controller.name()»', 'display', array('ot' => $this->objectType, '«idField()»' => $this->«idField()»));
+            $itemID = '';
+            foreach ($idFields as $idField) {
+                if (!empty($itemID)) {
+                    $itemID .= '_';
+                }
+                $itemID .= $this->idValues[$idField];
+            }
+            $returnUrl = ModUtil::url('«app.appName()»', '«controller.name()»', «modUrlDisplay('this->idValues', false)»);
             ModUtil::apiFunc('PageLock', 'user', 'pageLock',
-                                 array('lockName' => '«app.appName()»«name.formatForCodeCapital()»' . $this->«idField()»,
+                                 array('lockName' => '«app.appName()»«name.formatForCodeCapital()»' . $itemID,
                                        'returnUrl' => $returnUrl));
 «ENDIF-»
 «IF hasOptimisticLock()-»
@@ -250,12 +261,18 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 return $this->view->registerError(LogUtil::registerPermissionError());
             }
 
-            $template«idField().toFirstUpper()» = (int) $this->request->getGet()->filter('astemplate', 0, FILTER_VALIDATE_INT);
-            if ($template«idField().toFirstUpper()» > 0) {
+            $hasTemplateId = false;
+            $templateId = $this->request->getGet()->get('astemplate', '');
+            if (!empty($templateId)) {
+                $templateIdValues = explode('_', $templateId);
+                $hasTemplateID = (count($templateIdValues) == count($idFields));
+            }
+            if ($hasTemplateId === true) {
                 // reuse existing «name.formatForDisplay()»
-                $idField = '«idField()»';
-«EXPAND ControllerHelper::retrieveEntityFromModel('idField', "template" + idField().toFirstUpper(), true)-»
-                //$entity['«idField()»'] = null;
+«EXPAND ControllerHelper::retrieveEntityFromModel('idFields', 'templateIdValues', true)-»
+                //foreach ($idFields as $idField) {
+                //     $entity[$idField] = null;
+                //}
             }
             else {
                 $entity = new $entityClass();
@@ -308,39 +325,36 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $entityClass = '«appName()»_Entity_' . ucfirst($this->objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
-«REM»TODO: retrieve id field name otherwise, and support composite keys (#21)«ENDREM»
         $objectTemp = new $entityClass(); 
-        $idField = $objectTemp->get_idField();
+        $idFields = $objectTemp->get_idFields();
 
         $where = '';
         $sortParam = $repository->getDefaultSortingField() . ' asc';
-        if ($many) {
-            $inputValue = '';
-            if ($source == 'POST') {
-                $inputValue = $this->request->getPost()->get($relationInputFieldName, '');
-            }
-            else {
-                $inputValue = $this->request->getGet()->get($relationInputFieldName, '');
-            }
-            if (empty($inputValue)) {
-                return array();
-            }
 
-            $where = $idField . ' IN (' . DataUtil::formatForStore($inputValue) . ')';
+        $inputValue = '';
+        if ($source == 'POST') {
+            $inputValue = $this->request->getPost()->get($relationInputFieldName, '');
         }
         else {
-            $inputValue = 0;
-            if ($source == 'POST') {
-                $inputValue = $this->request->getPost()->filter($relationInputFieldName, 0, FILTER_VALIDATE_INT);
-            }
-            else {
-                $inputValue = $this->request->getGet()->filter($relationInputFieldName, 0, FILTER_VALIDATE_INT);
-            }
-            if ($inputValue == 0) {
-                return 0;
+            $inputValue = $this->request->getGet()->get($relationInputFieldName, '');
+        }
+        if (empty($inputValue)) {
+            return array();
+        }
+
+        $inputValueParts = explode('_', $inputValue);
+        $i = 0;
+        foreach ($idFields as $idField) {
+            if (!empty($where)) {
+                $where .= ' AND ';
             }
 
-            $where = $idField . ' = \'' . DataUtil::formatForStore($inputValue) . '\'';
+            if ($many) {
+                $where .= $idField . ' IN (' . DataUtil::formatForStore($inputValueParts[$i]) . ')';
+            } else {
+                $where .= $idField . ' = \'' . DataUtil::formatForStore($inputValueParts[$i]) . '\'';
+            }
+            $i++;
         }
         list($result, $resultCount) = $repository->selectWherePaginated($where, $sortParam, 1, 50);
         return (($many) ? $result : $result[0]);
@@ -419,9 +433,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDIF-»
         if ($args['commandName'] != 'delete') {
             // redirect to the detail page of treated «name.formatForCode()»
-            $url = ModUtil::url('«app.appName()»', '«controller.name()»', 'display',
-                                                             array('ot' => $this->objectType,
-                                                                   '«idField()»' => $this->«idField()»));
+            $url = ModUtil::url('«app.appName()»', '«controller.name()»', «modUrlDisplay('this->idValues', false)»);
         }
 «IF nestedSet-»
     */
@@ -442,7 +454,9 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             // inline usage, return to special function for closing the Zikula.UI.Window instance
             return ModUtil::url('«appName»', '«controller.name()»', 'handleInlineRedirect',
                                                                  array('idp' => $this->idPrefix,
-                                                                       'id' => $this->«idField()»,
+«FOREACH getPrimaryKeyFields() AS pkField-»
+                                                                       '«pkField.name.formatForCode()»' => $this->idValues['«pkField.name.formatForCode()»'],
+«ENDFOREACH-»
                                                                        'com' => $args['commandName']));
         }
 
@@ -472,9 +486,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «IF someController.hasActions('display')-»
             case '«controllerName»Display':
                                     if ($args['commandName'] != 'delete') {
-                                        return ModUtil::url('«appName»', '«controllerName»', 'display',
-                                                             array('ot' => $this->objectType,
-                                                                   '«idField()»' => $this->«idField()»));
+                                        return ModUtil::url('«appName»', '«controllerName»', «modUrlDisplay('this->idValues', false)»);
                                     }
                                     return $this->getDefaultReturnUrl($args, $obj);
 «ENDIF-»
@@ -492,10 +504,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDIF-»
 «IF someController.hasActions('display')-»
             case '«controllerName»Display«sourceEntity.name.formatForCodeCapital()»':
-                                    if (isset($obj['«sourceEntity.idField()»']) && $obj['«sourceEntity.idField()»']) {
-                                        return ModUtil::url('«appName»', '«controllerName»', 'display',
-                                                             array('ot' => '«sourceEntity.name.formatForCode()»',
-                                                                   '«sourceEntity.idField()»' => $obj['«sourceEntity.idField()»']));
+                                    if («FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ' && '-»isset($obj['«pkField.name.formatForCode()»']) && $obj['«pkField.name.formatForCode()»']«ENDFOREACH-») {
+                                        return ModUtil::url('«appName»', '«controllerName»', «sourceEntity.modUrlDisplay('obj', false)»);
                                     }
                                     return $this->getDefaultReturnUrl($args, $obj);
 «ENDIF-»
@@ -547,8 +557,11 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $repository = $this->entityManager->getRepository($entityClass);
 
         $«name.formatForCode()» = new $entityClass();
+        $idFields = $«name.formatForCode()»->get_idFields();
+
         if ($args['commandName'] != 'create') {
-            $«name.formatForCode()» = $repository->selectById($this->«idField()», false);
+            $idFilter = (count($idFields) == 1) ? $idValues[0] : $idValues;
+            $«name.formatForCode()» = $repository->selectById($idFilter, false);
         }
 
 «EXPAND FetchInputData(name.formatForCode())-»
@@ -601,11 +614,13 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
             if ($args['commandName'] == 'create') {
                 // store new id
-                $this->«idField()» = $«name.formatForCode()»->get«idField().toFirstUpper()»();
+«FOREACH getPrimaryKeyFields() AS pkField-»
+                $this->idValues['«pkField.name.formatForCode()»'] = $«name.formatForCode()»->get«pkField.name.formatForCodeCapital()»();
 «REM»                // check if the insert has worked, might become obsolete due to exception usage
-                if ($this->«idField()» === false) {
+                if ($this->idValues['«pkField.name.formatForCode()»'] === false) {
                     return LogUtil::registerError($this->__('Error! Creation attempt failed.'));
                 }«ENDREM»
+«ENDFOREACH-»
             } else if ($args['commandName'] == 'update') {
 «REM»                $updateResult = true/false;
                 // check if the update has worked, might become obsolete due to exception usage
@@ -617,8 +632,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             LogUtil::registerStatus($successMessage);
 
             // Let any hooks know that we have created or updated an item
-            $url = new Zikula_ModUrl('«app.appName()»', '«controller.name()»', 'display', ZLanguage::getLanguageCode(), array('ot' => $this->objectType, '«idField()»' => $this->«idField()»));
-            $hook = new Zikula_ProcessHook('«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».process_edit', $this->«idField()», $url);
+            $url = new Zikula_ModUrl('«app.appName()»', '«controller.name()»', 'display', ZLanguage::getLanguageCode(), array('ot' => $this->objectType,«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ', '-» '«pkField.name.formatForCode()»' => $this->idValues['«pkField.name.formatForCode()»']«ENDFOREACH-»));
+            $hook = new Zikula_ProcessHook('«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».process_edit', «FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ' . "_" . '-»$this->«pkField.name.formatForCode()»«ENDFOREACH-», $url);
             $this->notifyHooks($hook);
         } else if ($args['commandName'] == 'delete') {
             // event handling if user clicks on delete
@@ -638,7 +653,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» deleted.'));
 
             // Let any hooks know that we have deleted an item
-            $hook = new Zikula_ProcessHook('«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».process_delete', $this->«idField()»);
+            $hook = new Zikula_ProcessHook('«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».process_delete', «FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ' . "_" . '-»$this->«pkField.name.formatForCode()»«ENDFOREACH-»);
             $this->notifyHooks($hook);
         } else if ($args['commandName'] == 'cancel') {
             // event handling if user clicks on cancel
@@ -652,7 +667,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         if ($this->mode == 'edit') {
             ModUtil::apiFunc('PageLock', 'user', 'releaseLock',
-                             array('lockName' => '«app.appName()»«name.formatForCodeCapital()»' . $this->«idField()»));
+                             array('lockName' => '«app.appName()»«name.formatForCodeCapital()»'«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR " . '_'"-» . $this->«pkField.name.formatForCode()»«ENDFOREACH-»));
         }
 «ENDIF-»
         return $this->view->redirect($this->getRedirectUrl($args, $«name.formatForCode()», $repeatCreateAction));
@@ -704,8 +719,30 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         }
 
         $entityClass = '«appName()»_Entity_' . ucfirst('«objectType»');
+        $objectTemp = new $entityClass();
+        $idFields = $entityClass->get_idFields();
+
+        $relatedIdValues = array();
+        foreach ($idFields as $idField) {
+            $relatedIdValues[$idField] = array();
+        }
+        foreach ($relatedIds as $relatedId) {
+            $relatedIdParts = explode('_', $relatedId);
+            $i = 0;
+            foreach ($idFields as $idField) {
+                $relatedIdValues[$idField][] = $relatedIdParts[$i];
+                $i++;
+            }
+        }
+
         $repository = $entityManager->getRepository($entityClass);
-        $where = '«((incoming) ? source : target).idField()» IN (' . implode(', ', $relatedIds) . ')';
+        $where = '';
+        foreach ($idFields as $idField) {
+            if (!empty($where)) {
+                $where .= ' AND ';
+            }
+            $where .= $idField . ' IN (' . implode(', ', $relatedIdValues[$idField]) . ')';
+        }
         $linkObjects = $repository->selectWhere($where);
         // create new links
         foreach ($linkObjects as $relatedObject) {
@@ -743,7 +780,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «FOREACH uniqueFields AS uniqueField-»
 «REM»TODO: move this into model validator#validateAll() (#37)«ENDREM»
             // check if another «name.formatForDisplay()» with the same «uniqueField.name.formatForDisplay()» does already exist
-            if ($object->get_validator()->checkIf«uniqueField.name.formatForCodeCapital()»Exists($formData['«uniqueField.name.formatForCode()»'], $this->«idField()»)) {
+            if ($object->get_validator()->checkIf«uniqueField.name.formatForCodeCapital()»Exists($formData['«uniqueField.name.formatForCode()»'], $this->idValues«IF !hasCompositeKeys()-»[0]«ENDIF-»)) {
                 return LogUtil::registerError($this->__f('The «uniqueField.name.formatForDisplay()» %s is already assigned. Please choose another «uniqueField.name.formatForDisplay()».', array($formData['«uniqueField.name.formatForCode()»'])));
             }
 «ENDFOREACH-»
@@ -764,7 +801,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «IF sluggable && slugUpdatable-»
 «IF slugUnique-»
             // check if another «name.formatForDisplay()» with the same slug does already exist
-            if ($object->get_validator()->checkIfSlugExists($formData['slug'], $this->«idField()»)) {
+            if ($object->get_validator()->checkIfSlugExists($formData['slug'], $this->idValues«IF !hasCompositeKeys()-»[0]«ENDIF-»)) {
                 return LogUtil::registerError($this->__f('The slug %s is already assigned. Please choose another slug.', array($formData['slug'])));
             }
 «ENDIF-»
@@ -802,12 +839,13 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
 «DEFINE FetchRelationValue(Boolean incoming) FOR JoinRelationship-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
-        $formData['«source.idField()»'] = (int) $this->request->getPost()->filter('«uniqueNameForJs»ItemList', 0, FILTER_VALIDATE_INT);
-«REM»Alternative: $address->link('Customer', array($customer['id']));«ENDREM»«""-»
-        if (!$formData['«source.idField()»']) {
-            // Oops, we have an invalid relation id. As this field is mandatory, we raise an error.
+«LET relationFieldName((!incoming) ? target : source), (!incoming) ? targetField : sourceField)).formatForDB() AS fieldName-»
+        $formData['«fieldName»'] = (int) $this->request->getPost()->filter('«uniqueNameForJs»ItemList', 0, FILTER_VALIDATE_INT);
+        if (!$formData['«fieldName»']) {
+«REM»            // Oops, we have an invalid relation id. As this field is mandatory, we raise an error.«ENDREM»
             return LogUtil::registerError($this->__('Invalid value received for relation field "«relationAliasName.formatForDisplay()»".'));
         }
+«ENDLET-»
 «ENDLET-»
 «ENDLET-»
 «ENDDEFINE»

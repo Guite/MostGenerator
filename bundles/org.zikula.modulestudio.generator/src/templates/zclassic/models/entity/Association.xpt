@@ -48,6 +48,7 @@
      * Bidirectional - «EXPAND IncomingMappingDescription(sourceName, targetName)-».
      *
 «EXPAND Extensions::RelationExtensions(false)-»
+«EXPAND IncomingMappingDetails-»
      * @ORM\«EXPAND IncomingMappingType-»(targetEntity="«entityClass»", inversedBy="«targetName-»"«EXPAND AdditionalOptions-»)
 «EXPAND JoinDetails(false)-»
      * @var «entityClass» $«sourceName».
@@ -58,12 +59,22 @@
 «DEFINE IncomingMappingType FOR OneToManyRelationship-»ManyToOne«ENDDEFINE»
 «DEFINE IncomingMappingDescription(String sourceName, String targetName) FOR OneToOneRelationship-»One «targetName» [«target.name.formatForDisplay()»] is linked by one «sourceName» [«source.name.formatForDisplay()»] (INVERSE SIDE)«ENDDEFINE»
 «DEFINE IncomingMappingDescription(String sourceName, String targetName) FOR OneToManyRelationship-»Many «targetName» [«target.nameMultiple.formatForDisplay()»] are linked by one «sourceName» [«source.name.formatForDisplay()»] (OWNING SIDE)«ENDDEFINE»
+«DEFINE IncomingMappingDetails FOR OneToOneRelationship-»
+«IF primaryKey-»
+     * @ORM\Id
+«ENDIF-»
+«ENDDEFINE»
+«DEFINE IncomingMappingDetails FOR OneToManyRelationship-»
+«ENDDEFINE»
 
 «DEFINE Incoming(String sourceName, String targetName, String entityClass) FOR ManyToOneRelationship-»
     /**
      * Bidirectional - «EXPAND IncomingMappingDescription(sourceName, targetName)-».
      *
 «EXPAND Extensions::RelationExtensions(false)-»
+«IF primaryKey-»
+     * @ORM\Id
+«ENDIF-»
      * @ORM\OneToOne(targetEntity="«entityClass»")
 «EXPAND JoinDetails(false)-»
      * @var «entityClass» $«sourceName».

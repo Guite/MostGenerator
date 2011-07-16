@@ -112,9 +112,6 @@ cached String fullEntityName(Entity this) :
 cached String getEntityNameSingularPlural(Entity this, Boolean usePlural) :
     ((usePlural) ? nameMultiple : name);
 
-cached String idField(Entity this) :
-    getPrimaryKeyField().name.formatForDB();
-
 cached boolean hasNormalIndexes(Entity this) :
     !getNormalIndexes().isEmpty;
 cached getNormalIndexes(Entity this) :
@@ -134,10 +131,71 @@ cached getUniqueDerivedFields(Entity this) :
 cached getLeadingField(Entity this) :
     getDerivedFields().selectFirst(e|e.leading == true);
 
-// return all fields with primaryKey = true
-/* TODO: support composite keys (#21) */
+cached getPrimaryKeyFields(Entity this) :
+    getDerivedFields(this).select(e|e.primaryKey == true);
 cached getPrimaryKeyField(Entity this) :
     getDerivedFields(this).selectFirst(e|e.primaryKey == true);
+cached boolean hasCompositeKeys(Entity this) :
+    getPrimaryKeyFields().size > 1;
+
+
+cached String modUrlGeneric(Entity this, String func, String ot, String objName, Boolean template) :
+    ((template)
+        ? "func='" + func + "' ot='" + ot.formatForCode() + "'" + modUrlPrimaryKeyParams(objName, template)
+        : "'" + func + "', array('ot' => '" + ot.formatForCode() + "'" + modUrlPrimaryKeyParams(objName, template) + ")"
+    );
+cached String modUrlGeneric(Entity this, String func, String ot, String objName, Boolean template, String customVarName) :
+    ((template)
+        ? "func='" + func + "' ot='" + ot.formatForCode() + "'" + modUrlPrimaryKeyParams(objName, template, customVarName)
+        : "'" + func + "', array('ot' => '" + ot.formatForCode() + "'" + modUrlPrimaryKeyParams(objName, template, customVarName) + ")"
+    );
+cached String modUrlDisplayWithFreeOt(Entity this, String objName, Boolean template, String otVar) :
+    ((template)
+        ? "func='display' ot=" + otVar + modUrlPrimaryKeyParams(objName, template)
+        : "'display', array('ot' => " + otVar + modUrlPrimaryKeyParams(objName, template) + ")"
+    );
+cached String modUrlDisplay(Entity this, String objName, Boolean template) :
+    modUrlGeneric('display', name, objName, template);
+cached String modUrlEdit(Entity this, String objName, Boolean template) :
+    modUrlGeneric('edit', name, objName, template);
+cached String modUrlEdit(Entity this, String objName, Boolean template, String customVarName) :
+    modUrlGeneric('edit', name, objName, template, customVarName);
+cached String modUrlDelete(Entity this, String objName, Boolean template) :
+    modUrlGeneric('delete', name, objName, template);
+
+
+cached String modUrlPrimaryKeyParams(Entity this, String objName, Boolean template) :
+    ((template)
+        ? getSingleParamForTemplate(getDerivedFields(), objName)
+        : getSingleParamForCode(getDerivedFields(), objName)
+    );
+cached String modUrlPrimaryKeyParams(Entity this, String objName, Boolean template, String customVarName) :
+    ((template)
+        ? getSingleParamForTemplate(getDerivedFields(), objName, customVarName)
+        : getSingleParamForCode(getDerivedFields(), objName, customVarName)
+    );
+
+cached String getSingleParamForCode(List[DerivedField] fields, String objName) :
+	if fields.size == 0 then 0
+	else ", '" + fields.first().name.formatForDB() + "' => $" + objName + "['" + fields.first().name.formatForDB() + "']"
+	 + getSingleParamForCode(fields.withoutFirst(), objName);
+
+cached String getSingleParamForTemplate(List[DerivedField] fields, String objName) :
+	if fields.size == 0 then 0
+	else ' ' + fields.first().name.formatForDB() + '=$' + objName + '.' + fields.first().name.formatForDB()
+	 + fields.withoutFirst().getSingleParamForTemplate(objName);
+
+cached String getSingleParamForCode(List[DerivedField] fields, String objName, String customVarName) :
+	if fields.size == 0 then 0
+	else ", '" + customVarName + "' => $" + objName + "['" + fields.first().name.formatForDB() + "']"
+	 + getSingleParamForCode(fields.withoutFirst(), objName);
+
+cached String getSingleParamForTemplate(List[DerivedField] fields, String objName, String customVarName) :
+	if fields.size == 0 then 0
+	else ' ' + customVarName + '=$' + objName + '.' + fields.first().name.formatForDB()
+	 + fields.withoutFirst().getSingleParamForTemplate(objName);
+
+
 
 cached getUserFields(Entity this) :
     fields.typeSelect(UserField);
@@ -202,7 +260,7 @@ cached boolean isAggregated(Entity this)
 
 /** obsolete */
 cached getPointingRelations(IntegerField this) :
-    entity.incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == name.formatForDB());
+    entity.incoming.typeSelect(JoinRelationship).select(e|e.source.relationFieldName(e.sourceField) == name.formatForDB());
 
 cached String subFolderPathSegment(UploadField this) :
     (subFolderName != null && subFolderName != "") ? subFolderName.formatForDB() : name.formatForDB();
@@ -228,6 +286,15 @@ cached String namingSchemeAsInt(UploadField this) :
         default: '0'
     };
 
+cached String asConstant(EntityIdentifierStrategy strategy) :
+    switch (strategy) {
+        case EntityIdentifierStrategy::NONE                     : ''
+        case EntityIdentifierStrategy::AUTO                     : 'AUTO'
+        case EntityIdentifierStrategy::SEQUENCE                 : 'SEQUENCE'
+        case EntityIdentifierStrategy::TABLE                    : 'TABLE'
+        case EntityIdentifierStrategy::IDENTITY                 : 'IDENTITY'
+        default: ''
+    };
 cached String asConstant(EntityChangeTrackingPolicy policy) :
     switch (policy) {
         case EntityChangeTrackingPolicy::DEFERRED_IMPLICIT      : 'DEFERRED_IMPLICIT'
@@ -342,12 +409,17 @@ cached isInheriter(Entity this) :
 cached getChildRelations(Entity this) :
     incoming.typeSelect(InheritanceRelationship);
 
-/* if we have id or fooid return fooid; otherwise return the actual field name of the referenced field */
+/* if we have id or fooid return id; otherwise return the actual field name of the referenced field */
 cached relationFieldName(Entity refEntity, String refField) :
-    (refField.toLowerCase() == 'id' || refField.toLowerCase() == refEntity.idField()) ? refEntity.idField() : refEntity.fields.selectFirst(e|e.name == refField).name.formatForCode();
+    (isDefaultIdFieldName(refEntity, refField))
+     ? 'id'
+     : refEntity.fields.selectFirst(e|e.name == refField).name.formatForCode();
 
-cached String isDefaultIdField(DerivedField this) :
-    {'id', this.entity.name.formatForDB() + 'id', this.entity.name.formatForDB() + '_id'}.contains(this.name.formatForDB());
+cached boolean isDefaultIdField(DerivedField this) :
+    isDefaultIdFieldName(entity, name.formatForDB());
+
+cached boolean isDefaultIdFieldName(Entity entity, String this) :
+    {'id', entity.name.formatForDB() + 'id', entity.name.formatForDB() + '_id'}.contains(this);
 
 
 cached String getTargetMultiplicity(JoinRelationship this) :

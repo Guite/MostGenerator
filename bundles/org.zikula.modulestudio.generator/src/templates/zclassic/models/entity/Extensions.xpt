@@ -140,7 +140,7 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
      *
      * @Gedmo\TreeParent
      * @ORM\ManyToOne(targetEntity="«implClassModelEntity()»", inversedBy="children")
-     * @ORM\JoinColumn(name="parent_id", referencedColumnName="«idField()»", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="parent_id", referencedColumnName="«getPrimaryKeyFields().get(0).name.formatForDisplay()»", onDelete="SET NULL")
      * @var «implClassModelEntity()» $parent.
      */
     protected $parent;

@@ -34,9 +34,9 @@
 
 «DEFINE MailzEntryText(String appName) FOR Entity-»
         {$item.«getLeadingField().name.formatForCode()»}
-        {modurl modname='«appName»' type='user' func='display' ot=$objectType «idField()»=$item.«idField()» fqurl=true}
+        {modurl modname='«appName»' type='user' «modUrlDisplayWithFreeOt('item', true, '$objectType')» fqurl=true}
 «ENDDEFINE»
 
 «DEFINE MailzEntryHtml(String appName) FOR Entity-»
-        <a href="{modurl modname='«appName»' type='user' func='display' ot=$objectType «idField()»=$item.«idField()» fqurl=true}">{$item.«getLeadingField().name.formatForCode()»}</a>
+        <a href="{modurl modname='«appName»' type='user' «modUrlDisplayWithFreeOt('item', true, '$objectType')» fqurl=true}">{$item.«getLeadingField().name.formatForCode()»}</a>
 «ENDDEFINE»

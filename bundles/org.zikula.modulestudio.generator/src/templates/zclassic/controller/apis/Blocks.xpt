@@ -110,15 +110,24 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
         $entityClass = '«appName()»_Entity_' . ucfirst($objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
-«REM»TODO: retrieve id field name otherwise, and support composite keys (#21)«ENDREM»
         $objectTemp = new $entityClass(); 
-        $idField = $objectTemp->get_idField();
+        $idFields = $objectTemp->get_idFields();
 
         $sortParam = '';
         if ($vars['sorting'] == 'random') {
             $sortParam = 'RAND()';
         } elseif ($vars['sorting'] == 'newest') {
-            $sortParam = $idField . ' DESC';
+            if (count($idFields) == 1) {
+                $sortParam = $idFields[0] . ' DESC';
+            }
+            else {
+                foreach ($idFields as $idField) {
+                    if (!empty($sortParam)) {
+                        $sortParam .= ', ';
+                    }
+                    $sortParam .= $idField . ' ASC';
+                }
+            }
         } elseif ($vars['sorting'] == 'default') {
             $sortParam = $repository->getDefaultSortingField() . ' ASC';
         }

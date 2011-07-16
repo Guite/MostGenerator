@@ -73,20 +73,22 @@
     {*formvalidationsummary*}
     {*formerrormessage id='error'*}
 
+«IF hasCompositeKeys()-»
+    {formsetinitialfocus inputId='«getDerivedFields().get(0).name.formatForCode()»'}
+«ELSE-»
     {formsetinitialfocus inputId='«getDerivedFields().reject(e|e.primaryKey).get(0).name.formatForCode()»'}
+«ENDIF-»
 «REM»{formsetinitialfocus inputId='PluginId' doSelect=true} <-- for dropdown lists (performs input.select())«ENDREM»«""-»
 
     <fieldset>
         <legend>{gt text='Content'}</legend>
-«REM»No input fields for primary key, array fields and object fields«ENDREM»«""-»
-«FOREACH getDerivedFields().reject(e|e.primaryKey || e.metaType == ArrayField || e.metaType == ObjectField) AS field-»
-«REM»No input fields for foreign keys, relations are processed further down«ENDREM»«""-»
-«IF incoming.typeSelect(JoinRelationship).select(e|e.source.idField() == field.name.formatForDB()).isEmpty-»
-        <div class="z-formrow">
-            «EXPAND FormComponents::SimpleFields::FormRow FOR field»«""-»
-        </div>
+«REM»No input fields for array fields and object fields«ENDREM»«""-»
+«LET getDerivedFields().reject(e|e.metaType == ArrayField || e.metaType == ObjectField) AS inputFields-»
+«IF hasCompositeKeys()-»
+«EXPAND FieldWrapper FOREACH inputFields-»
+«ELSE-»
+«EXPAND FieldWrapper FOREACH inputFields.reject(e|e.primaryKey)-»
 «ENDIF-»
-«ENDFOREACH-»
 «IF hasSluggableFields() && slugUpdatable-»
         <div class="z-formrow">
             {formlabel for='slug' __text='Permalink'}
@@ -117,7 +119,7 @@
     {if $mode eq 'create'}
         {notifydisplayhooks eventname='«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».form_edit' id=null assign='hooks'}
     {else}
-        {notifydisplayhooks eventname='«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».form_edit' id=$«name.formatForDB()».«idField()» assign='hooks'}
+        {notifydisplayhooks eventname='«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».form_edit' id="«FOREACH getPrimaryKeys() AS pkField SEPARATOR '_'-»`$«name.formatForDB()».«pkField.name.formatForCode()»`«ENDFOREACH-»" assign='hooks'}
     {/if}
     {if is_array($hooks) && isset($hooks[0])}
         <fieldset>
@@ -222,7 +224,7 @@
 «ENDLET-»
 «ENDLET-»
 
-        «container.application.prefix()»AddCommonValidationRules('«name.formatForCode()»', {{if $mode eq 'create'}}0{{else}}{{$«idField()»}}{{/if}});
+        «container.application.prefix()»AddCommonValidationRules('«name.formatForCode()»', '{{if $mode eq 'create'}}{{else}}«FOREACH getPrimaryKeyFields() AS pkField-»{{$«pkField.name.formatForCode()»}}«ENDFOREACH-»{{/if}}');
 
         // observe button events instead of form submit
         var valid = new Validation('{{$__formid}}', {onSubmit: false, immediate: true, focusOnError: false});
@@ -251,6 +253,15 @@
 /* ]]> */
 </script>
 «ENDDEFINE»
+
+«DEFINE FieldWrapper FOR DerivedField-»
+«REM»No input fields for foreign keys, relations are processed further down«ENDREM»«""-»
+«IF entity.incoming.typeSelect(JoinRelationship).select(e|e.sourceField == name.formatForDB()).isEmpty-»
+        <div class="z-formrow">
+            «EXPAND FormComponents::SimpleFields::FormRow-»
+        </div>
+«ENDIF-»
+«ENDDEFINE-»
 
 «DEFINE InlineRedirectHandler(Application app) FOR Controller-»
 «FILE getAppSourcePath(app.appName()).msconcat("templates/").msconcat(name()).msconcat("/inlineRedirectHandler.tpl")-»

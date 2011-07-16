@@ -226,13 +226,20 @@ class «appName»_Base_RouterFacade
             case '«name.formatForCode()»':
 «IF hasSluggableFields()-»
                         $entityClass = '«container.application.appName()»_Entity_' . ucfirst($objectType);
+                        $entityManager = $serviceManager->getService('doctrine.entitymanager');
                         $object = new $entityClass(); 
+                        $repository = $this->entityManager->getRepository($entityClass);
 
-                        $item = $object->selectById($itemid);
+                        $item = $repository->selectById($itemid);
 «IF slugUnique-»
                         $slug = $item['slug'];
 «ELSE-»
-                        $slug = $item['slug'] . $item['«idField()»'];
+                        $idFields = $object->get_idFields();
+                        $itemId = '';
+                        foreach ($idFields as $idField) {
+                            $itemId .= ((!empty($itemId)) ? '_' : '') . $item[$idField];
+                        }
+                        $slug = $item['slug'] . $itemId;
 «ENDIF-»
 «ELSE-»
                         $slug = $itemid;

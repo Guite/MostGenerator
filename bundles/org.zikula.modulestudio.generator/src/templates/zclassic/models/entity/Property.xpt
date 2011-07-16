@@ -31,8 +31,9 @@
     /**
 «IF primaryKey-»
      * @ORM\Id
-«REM»TODO (#21)«ENDREM»
-     * @ORM\GeneratedValue«REM»(strategy="AUTO")«ENDREM»
+«IF !hasCompositeKeys() || entity.identifierStrategy == EntityIdentifierStrategy::ASSIGNED-»
+     * @ORM\GeneratedValue«IF entity.identifierStrategy != EntityIdentifierStrategy::NONE-»(strategy="«entity.identifierStrategy.asConstant()»")«ENDIF-»
+«ENDIF-»
 «ENDIF-»
 «EXPAND Extensions::ColumnExtensions-»
      * @ORM\Column(«EXPAND PersistentPropertyImpl(type)»«IF unique-», unique=true«ENDIF-»«IF nullable-» nullable=true«ENDIF-»)
@@ -84,7 +85,7 @@ type="«type»", precision=«length», scale=«scale»
 «ENDDEFINE»
 «DEFINE DefaultFieldData FOR IntegerField-»
 «LET getPointingRelations() AS pointingRelations-»
-«IF !pointingRelations.isEmpty-»(int) FormUtil::getPassedValue('«pointingRelations.get(0).source.idField()»', 0, 'GET', FILTER_VALIDATE_INT)
+«IF !pointingRelations.isEmpty-»(int) FormUtil::getPassedValue('«pointingRelations.get(0).sourceField»', 0, 'GET', FILTER_VALIDATE_INT)
 «ELSE-»
 «IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
 «ENDIF-»«ENDLET-»«ENDDEFINE»

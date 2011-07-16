@@ -98,10 +98,6 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $entityClass = '«appName»_Entity_' . ucfirst($objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
-«REM»TODO: retrieve id field name otherwise, and support composite keys (#21)«ENDREM»
-        $objectTemp = new $entityClass(); 
-        $idField = $objectTemp->get_idField();
-
         $tpl = $this->request->getGet()->filter('tpl', '', FILTER_SANITIZE_STRING);
         if ($tpl == 'nestedSet') {
             $this->view->assign('trees', $repository->selectAllTrees());
@@ -158,21 +154,28 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $entityClass = '«appName()»_Entity_' . ucfirst($this->objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
-«REM»TODO: retrieve id field name otherwise, and support composite keys (#21)«ENDREM»
         $objectTemp = new $entityClass(); 
-        $idField = $objectTemp->get_idField();
+        $idFields = $objectTemp->get_idFields();
+        $idValues = array();
 
         // retrieve the ID of the object we wish to view
-        $id = (int) $this->request->getGet()->filter($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, FILTER_VALIDATE_INT);
-        if (!$id && $idField != 'id') {
-            $id = (int) $this->request->getGet()->filter('id', isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0, FILTER_VALIDATE_INT);
+        $hasID = true;
+        foreach ($idFields as $idField) {
+            $id = (int) $this->request->getGet()->filter($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, FILTER_VALIDATE_INT);
+            if (!$id && $idField != 'id' && count($idFields) == 1) {
+                $id = (int) $this->request->getGet()->filter('id', isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0, FILTER_VALIDATE_INT);
+            }
+            $idValues[$idField] = $id;
+            if (!$id) {
+                $hasID = false;
+            }
         }
 «IF controller.metaType == UserController-»
 
         // check for unique permalinks (without id)
         $hasSlug = false;
         $slugTitle = '';
-        if (!$id) {
+        if ($hasID === false) {
             $hasSlug = $objectTemp->get_hasUniqueSlug();
             if ($hasSlug) {
                 $slugTitle = $this->request->getGet()->filter('title', isset($args['title']) && !empty($args['title']) ? $args['title'] : '', FILTER_SANITIZE_STRING);
@@ -180,7 +183,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
             }
         }
 
-        $this->throwNotFoundUnless(($id || $hasSlug), 'Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
+        $this->throwNotFoundUnless(($hasID || $hasSlug), $this->__('Error! Invalid identifier received.'));
 
         // assign object data fetched from the database
         $objectData = null;
@@ -188,16 +191,18 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
             $objectData = $repository->selectBySlug($slugTitle);
         }
         else {
-            $objectData = $repository->selectById($id);
+            $idFilter = (count($idFields) == 1) ? $idValues[0] : $idValues;
+            $objectData = $repository->selectById($idFilter);
         }
 «ELSE-»
-        $this->throwNotFoundUnless($id, 'Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
+        $this->throwNotFoundUnless($hasID, $this->__('Error! Invalid identifier received.'));
 
         // assign object data fetched from the database
         $objectData = null;
-        $objectData = $repository->selectById($id);
+        $idFilter = (count($idFields) == 1) ? $idValues[0] : $idValues;
+        $objectData = $repository->selectById($idFilter);
 «ENDIF-»
-        if (!is_array($objectData) || !isset($objectData[$idField]) || !is_numeric($objectData[$idField])) {
+        if (!is_array($objectData) || !isset($objectData[$idFields[0]])) {
             $this->throwNotFound($this->__('No such item.'));
         }
 
@@ -224,24 +229,32 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $entityClass = '«appName»_Entity_' . ucfirst($objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
-«REM»TODO: retrieve id field name otherwise, and support composite keys (#21)«ENDREM»
         $objectTemp = new $entityClass(); 
-        $idField = $objectTemp->get_idField();
+        $idFields = $objectTemp->get_idFields();
+        $idValues = array();
 
         // retrieve the ID of the object we wish to delete
-        $id = (int) $this->request->getGet()->filter($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, FILTER_VALIDATE_INT);
-        if (!$id && $idField != 'id') {
-            $id = (int) $this->request->getGet()->filter('id', isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0, FILTER_VALIDATE_INT);
+        $hasID = true;
+        foreach ($idFields as $idField) {
+            $id = (int) $this->request->getGet()->filter($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, FILTER_VALIDATE_INT);
+            if (!$id && $idField != 'id' && count($idFields) == 1) {
+                $id = (int) $this->request->getGet()->filter('id', isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0, FILTER_VALIDATE_INT);
+            }
+            $idValues[$idField] = $id;
+            if (!$id) {
+                $hasID = false;
+            }
         }
 
-        $this->throwNotFoundUnless($id, 'Invalid ' . $idField . ' [' . DataUtil::formatForDisplay($id) . '] received ...');
+        $this->throwNotFoundUnless($hasID, $this->__('Invalid identifier received.'));
 
         $confirmation = (bool) $this->request->getPost()->filter('confirmation', isset($args['confirmation']) ? $args['confirmation'] : false, FILTER_VALIDATE_BOOLEAN);
 
         if ($confirmation) {
             $this->checkCsrfToken();
 
-            $object = $repository->selectById($id, false);
+            $idFilter = (count($idFields) == 1) ? $idValues[0] : $idValues;
+            $object = $repository->selectById($idFilter, false);
 
             if (!$object->delete()) {
                 $this->registerError($this->__('Error! Deletion attempt failed.'));
@@ -252,7 +265,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
                 $this->view->clear_cache();
             }
         } else {
-    «EXPAND ControllerHelper::retrieveEntityFromModel("idField", "id", false)-»
+    «EXPAND ControllerHelper::retrieveEntityFromModel("idFields", "idValues", false)-»
 
             // assign the object we loaded above
             $this->view->assign($objectType, $objectData);

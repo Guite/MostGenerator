@@ -84,9 +84,8 @@
         $entityClass = '«appName()»_Entity_' . ucfirst($objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
-«REM»TODO: retrieve id field name otherwise, and support composite keys (#21)«ENDREM»
         $objectTemp = new $entityClass(); 
-        $idField = $objectTemp->get_idField();
+        $idFields = $objectTemp->get_idFields();
 
         $fragment = '';
         $exclude = '';
@@ -114,7 +113,12 @@
 
         // TODO: move into Repository subclasses (#37)
         if (!empty($exclude)) {
-            $where = $idField . ' NOT IN (' . DataUtil::formatForStore($exclude) . ')';
+            foreach ($idFields as $idField) {
+                if (!empty($where)) {
+                    $where .= ' AND ';
+                }
+                $where .= $idField . ' NOT IN (' . DataUtil::formatForStore($exclude) . ')';
+            }
         }
 
         $whereSub = '';
@@ -164,7 +168,11 @@
                 $itemTitle = $item[$titleFieldName];
                 $itemTitleStripped = str_replace('"', '', $itemTitle);
                 $itemDescription = ((isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName])) ? $item[$descriptionFieldName] : '');//$this->__('No description yet.'));
-                $out .= '<li id="' . $item[$idField] . '" title="' . $itemTitleStripped . '">';
+                $itemId = '';
+                foreach ($idFields as $idField) {
+                    $itemId .= ((!empty($itemId)) ? '_' : '') . $item[$idField];
+                }
+                $out .= '<li id="' . $itemId . '" title="' . $itemTitleStripped . '">';
                 $out .= '<div class="itemtitle">' . $itemTitle . '</div>';
                 if (!empty($itemDescription)) {
                     $out .= '<div class="itemdesc informal">' . $itemDescription . '</div>';
@@ -186,7 +194,7 @@
                     $thumbHeight = 80;
                     $thumbImagePath = «app.appName()»_Util_View::getImageThumb($item[$previewFieldName], $item[$previewFieldName . 'FullPath'], $thumbWidth, $thumbHeight);
                     $preview = '<img src="' . $thumbImagePath . '" width="' . $thumbWidth . '" height="' . $thumbHeight . '" alt="' . $itemTitleStripped . '" />';
-                    $out .= '<div class="itempreview informal" id="itempreview' . $item[$idField] . '">' . $preview . '</div>';
+                    $out .= '<div class="itempreview informal" id="itempreview' . $itemId . '">' . $preview . '</div>';
                 }
 «ENDIF-»
                 $out .= '</li>';

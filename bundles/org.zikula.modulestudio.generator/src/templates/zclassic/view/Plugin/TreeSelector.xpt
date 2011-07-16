@@ -145,9 +145,8 @@ class «appName()»_Form_Plugin_TreeSelector extends Zikula_Form_Plugin_Dropdown
         $entityClass = '«appName()»_Entity_' . ucfirst($this->objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
-«REM»TODO: retrieve id field name otherwise, and support composite keys (#21)«ENDREM»
         $objectTemp = new $entityClass(); 
-        $idField = $objectTemp->get_idField();
+        $idFields = $objectTemp->get_idFields();
 
         $treeNodes = $repository->selectTree($this->root, false);
         if (!$treeNodes) {
@@ -166,7 +165,11 @@ class «appName()»_Form_Plugin_TreeSelector extends Zikula_Form_Plugin_Dropdown
             if (!empty($this->displayFieldTwo)) {
                 $itemLabel .= ' (' . $node[$this->displayFieldTwo] . ')';
             }
-            $this->addItem($itemLabel, $node[$idField]);
+            $itemId = '';
+            foreach ($idFields as $idField) {
+                $itemId .= ((!empty($itemId)) ? '_' : '') . $node[$idField];
+            }
+            $this->addItem($itemLabel, $itemId);
         }
 
         parent::load($view, $params);

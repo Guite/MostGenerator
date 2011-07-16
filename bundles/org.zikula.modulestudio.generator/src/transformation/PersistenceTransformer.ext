@@ -14,7 +14,7 @@ private handleEntity(Entity this):
 	// create id field as primary key
 	//info("Transforming entity " + name) ->
     //info("Before: " + fields.size + " fields") ->
-	addPrimaryKey(this) ->
+    ((getDerivedFields().select(e|e.primaryKey).isEmpty) ? addPrimaryKey(this) : '') ->
     //info("Added primary key, now: " + fields.size + " fields") ->
 // obsolete
 //    this.incoming.typeSelect(OneToOneRelationship).addRelationField(this) ->
