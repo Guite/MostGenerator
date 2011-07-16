@@ -16,7 +16,7 @@
     <dd>{$item.«textFields.get(0).name.formatForCode()»|truncate:200:"..."}</dd>
 {/if}
 «ELSE-»
-«LET entity.fields.typeSelect(StringField).reject(e|e.leading) AS textFields-»
+«LET entity.fields.typeSelect(StringField).reject(e|e.leading || e.password) AS textFields-»
 «IF !textFields.isEmpty-»
 {if $item.«textFields.get(0).name.formatForCode()»}
     <dd>{$item.«textFields.get(0).name.formatForCode()»|truncate:200:"..."}</dd>

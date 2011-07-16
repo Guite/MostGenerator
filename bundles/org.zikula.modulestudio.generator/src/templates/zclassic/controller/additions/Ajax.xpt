@@ -148,7 +148,7 @@
 «IF !textFields.isEmpty-»
                         $descriptionFieldName = '«textFields.get(0).name.formatForCode()»';
 «ELSE-»
-«LET entity.fields.typeSelect(StringField).reject(e|e.leading) AS textFields-»
+«LET entity.fields.typeSelect(StringField).reject(e|e.leading || e.password) AS textFields-»
 «IF !textFields.isEmpty-»
                         $descriptionFieldName = '«textFields.get(0).name.formatForCode()»';
 «ENDIF-»
