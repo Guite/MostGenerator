@@ -367,19 +367,20 @@
 
         switch ($op) {
             case 'addRootNode':
-                            $object = new $entityClass();
-                            $objectData = array();
-                            $objectData[$titleFieldName] = $this->__('New root node');
-                            if (!empty($descriptionFieldName)) {
-                                $objectData[$descriptionFieldName] = $this->__('This is a new root node');
-                            }
-                            $object->merge($objectData);
+                            $this->entityManager->transactional(function($entityManager) {
+                                $object = new $entityClass();
+                                $objectData = array();
+                                $objectData[$titleFieldName] = $this->__('New root node');
+                                if (!empty($descriptionFieldName)) {
+                                    $objectData[$descriptionFieldName] = $this->__('This is a new root node');
+                                }
+                                $object->merge($objectData);
 «REM»«IF hasTranslatableFields()-»
-                            $object->setLocale(ZLanguage::getLanguageCode());
+                                $object->setLocale(ZLanguage::getLanguageCode());
 «ENDIF-»«ENDREM»
-                            // save new object to set the root id
-                            $this->entityManager->persist($object);
-                            $this->entityManager->flush();
+                                // save new object to set the root id
+                                $entityManager->persist($object);
+                            });
                             break;
             case 'addChildNode':
                             $parentId = (int) $this->request->getPost()->filter('pid', 0, FILTER_VALIDATE_INT);

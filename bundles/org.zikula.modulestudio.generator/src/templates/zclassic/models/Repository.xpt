@@ -27,6 +27,7 @@ use Gedmo\Tree\Entity\Repository\«tree.asConstant().toFirstUpper()»TreeReposit
 «ELSE-»
 use Doctrine\ORM\EntityRepository;
 «ENDIF-»
+use Doctrine\ORM\Query;
 
 /**
  * Repository class used to implement own convenience methods for performing certain DQL queries.
@@ -84,7 +85,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
         $query = $this->_intBaseQuery('', '', $useJoins)
                   ->where('tbl.«idField()» = ?', $id);
 
-        $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
+        $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_RECORD);
         return $query->fetchOne(array(), $fetchType);
     }
 
@@ -109,31 +110,31 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
         $query = $this->_intBaseQuery('', '', $useJoins)
                   ->where('tbl.«((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCode()» = ?', $slugTitle);
 
-        $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
+        $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_RECORD);
         return $query->fetchOne(array(), $fetchType);
     }
 «ENDIF-»
 
     /**
-     * Select a collection.
+     * Select with a given where clause.
      *
      * @param string $where     The where clause to use when retrieving the object array (optional) (default='').
      * @param string $orderBy   The order-by clause to use when retrieving the object array (optional) (default='').
      * @param boolean $asArray  Whether to return the result as array instead as record object (optional) (default=true).
      * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
      *
-     * @return array|Doctrine_Collection retrieved data array or collection containing retrieved «implClassModelEntity()» instances
+     * @return array|ArrayCollection retrieved data array or collection containing retrieved «implClassModelEntity()» instances
      */
-    public function selectCollection($where = '', $orderBy = '', $asArray = true, $useJoins = true)
+    public function selectWhere($where = '', $orderBy = '', $asArray = true, $useJoins = true)
     {
         $query = $this->_intBaseQuery($where, $orderBy, $useJoins);
 
-        $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
+        $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_RECORD);
         return $query->execute(array(), $fetchType);
     }
 
     /**
-     * Select with a given where clause.
+     * Select with a given where clause and pagination parameters.
      *
      * @param string $where           The where clause to use when retrieving the object array (optional) (default='').
      * @param string $orderBy         The order-by clause to use when retrieving the object array (optional) (default='').
@@ -154,7 +155,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
               $resultsPerPage
         );
 
-        $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
+        $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_RECORD);
         $results = $pager->execute(array(), $fetchType);
         $count = $pager->getNumResults();
         return array($results, $count);
@@ -179,18 +180,18 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
             $selection = $this->addJoinsToSelection($selection);
         }
 
-        $q = Doctrine_Query::create()
+        $query = $this->getEntityManager()->createQuery()
             ->select($selection)
             ->from('«implClassModelRecord()» tbl');
 
         if ($useJoins === true) {
-            $this->addJoinsToFrom($q);
+            $this->addJoinsToFrom($query);
         }
 
         if (!empty($where)) {
-            $q->where($where);
+            $query->where($where);
         }
-        return $q->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
+        return $query->fetchOne(array(), Query::HYDRATE_SINGLE_SCALAR);
     }
 «ENDIF-»
 
@@ -216,7 +217,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
      * @param string  $orderBy  The order-by clause to use when retrieving the object array (optional) (default='').
      * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
      *
-     * @return Doctrine_Query query instance to be further processed
+     * @return Query query instance to be further processed
      */
     protected function _intBaseQuery($where = '', $orderBy = '', $useJoins = true)
     {
@@ -300,7 +301,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
      * @param boolean $asArray  Whether to return the result as array instead as record object (optional) (default=true).
      * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
      *
-     * @return array|Doctrine_Doctrine_Tree_NestedSet retrieved data array or tree objects containing retrieved Doctrine_Node_NestedSet instances.
+     * @return array|ArrayCollection retrieved data array or tree node objects.
      */
     public function selectTree($rootId = 0, $asArray = false, $useJoins = true)
     {
@@ -311,7 +312,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
             // note that this query modification can also be used for all node and tree methods (like getAncestors(), getDescendants(), getChildren(), getParent(), and so on)
         }
 
-        $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
+        $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_RECORD);
         $result = null;
 
         // return branch if we have given a certain root
@@ -341,7 +342,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
      * @param boolean $asArray  Whether to return the result as array instead as record object (optional) (default=true).
      * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
      *
-     * @return array list of retrieved data arrays or tree objects containing retrieved Doctrine_Node_NestedSet instances.
+     * @return array|ArrayCollection retrieved data array or tree node objects.
      */
     public function selectAllTrees($asArray = false, $useJoins = true)
     {
@@ -352,12 +353,11 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
             // note that this query modification can also be used for all node and tree methods (like getAncestors(), getDescendants(), getChildren(), getParent(), and so on)
         }
 
-        $rootColumnName = $treeObject->getAttribute('rootColumnName');
-        $fetchType = (($asArray) ? Doctrine_Core::HYDRATE_ARRAY : Doctrine_Core::HYDRATE_RECORD);
+        $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_RECORD);
 
         foreach ($treeObject->fetchRoots() as $rootNode) {
-            $options = array('root_id' => $rootNode->$rootColumnName);
-            $trees[$rootNode->$rootColumnName] = $treeObject->fetchTree($options, $fetchType);
+            $options = array('root_id' => $rootNode->root);
+            $trees[$rootNode->root] = $treeObject->fetchTree($options, $fetchType);
         }
 
         if ($useJoins === true) {
@@ -388,9 +388,9 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     /**
      * Helper method to add joins to from clause.
      *
-     * @param Doctrine_Query $q Reference to query to be enriched.
+     * @param Query $q Reference to query to be enriched.
      */
-    protected function addJoinsToFrom(Doctrine_Query $q)
+    protected function addJoinsToFrom(Query $q)
     {
 «IF hasTranslatableFields()-»
         $q->leftJoin('tbl.Translation Translation');

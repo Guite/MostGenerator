@@ -140,7 +140,7 @@ class «baseClassFormHandler(controller, name, actionName)» extends Zikula_Form
     /**
      * Helper method for updating links to related records.
      */
-    protected function updateRelationLinks($entity)
+    protected function updateRelationLinks($entity, $entityManager)
     {
 «EXPAND UpdateRelationLinks(true) FOREACH incoming.typeSelect(ManyToManyRelationship)-»
 «EXPAND UpdateRelationLinks(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
@@ -547,29 +547,31 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDIF-»
             // save «name.formatForDisplay()»
             $successMessage = '';
-            if ($args['commandName'] == 'create') {
-                $this->entityManager->persist($«name.formatForCode()»);
-                $this->entityManager->flush();
+            $this->entityManager->transactional(function($entityManager) {
+                $this->updateRelationLinks($«name.formatForCode()», $entityManager);
+                if ($args['commandName'] == 'create') {
+                    $entityManager->persist($«name.formatForCode()»);
+                    $successMessage = $this->__('Done! «name.formatForDisplayCapital()» created.');
+                } else if ($args['commandName'] == 'update') {
+«REM»                    $entityManager->persist($«name.formatForCode()»);«ENDREM»
+                    $successMessage = $this->__('Done! «name.formatForDisplayCapital()» updated.');
+                }
+            });
 
+            if ($args['commandName'] == 'create') {
                 // store new id
                 $this->«idField()» = $«name.formatForCode()»->get«idField().toFirstUpper()»();
-                // check if the insert has worked, might become obsolete due to exception usage
+«REM»                // check if the insert has worked, might become obsolete due to exception usage
                 if ($this->«idField()» === false) {
                     return LogUtil::registerError($this->__('Error! Creation attempt failed.'));
-                }
-                $successMessage = $this->__('Done! «name.formatForDisplayCapital()» created.');
+                }«ENDREM»
             } else if ($args['commandName'] == 'update') {
-                $this->entityManager->persist($«name.formatForCode()»);
 «REM»                $updateResult = true/false;
                 // check if the update has worked, might become obsolete due to exception usage
                 if ($updateResult === false) {
                     return LogUtil::registerError($this->__('Error! Update attempt failed.'));
                 }«ENDREM»
-                $successMessage = $this->__('Done! «name.formatForDisplayCapital()» updated.');
             }
-
-            $this->updateRelationLinks($«name.formatForCode()»);
-            $this->entityManager->flush();
 
             LogUtil::registerStatus($successMessage);
 
@@ -635,7 +637,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
 «DEFINE UpdateRelationLinks(Boolean incoming) FOR JoinRelationship-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
-«LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
+«LET isManySide(!incoming) AS many-»
 «LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
 «IF many && this.getEditStageCode(incoming) > 1-»
 «LET ((incoming) ? source : target).name.formatForCode() AS objectType-»
@@ -643,30 +645,36 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $relatedIds = $this->request->getPost()->get('«uniqueNameForJs»ItemList', '');
         if ($this->mode != 'create') {
             // remove all existing references
+«IF many-»
             $entity->get«relationAliasName.toFirstUpper()»()->clear();
-        }
-        if (!empty($relatedIds)) {
-            $relatedIds = explode(',', $relatedIds);
-        }
-        if (is_array($relatedIds) && count($relatedIds)) {
-            $entityClass = '«appName()»_Entity_' . ucfirst($this->objectType);
-            $repository = $this->entityManager->getRepository($entityClass);
-            // create new links
-            foreach ($relatedIds as $relatedId) {
-«IF this.metaType != ManyToManyRelationship-»
-                /** TODO select before loop with one WHERE IN */
-                $linkObj = $repository->selectById($relatedId);
-                if ($entity->get«relationAliasName.toFirstUpper()»()->contains($linkObj)) {
-                    continue;
-                }
-                $entity->get«relationAliasName.toFirstUpper()»()->add($linkObj);
 «ELSE-»
-                $linkObj = new «((ManyToManyRelationship)this).implClassModelRefRecord()»();
-                $linkObj->«source.idField()» = «IF incoming»$relatedId«ELSE»$this->«((incoming) ? target : source).idField()»«ENDIF»;
-                $linkObj->«target.idField()» = «IF !incoming»$relatedId«ELSE»$this->«((incoming) ? target : source).idField()»«ENDIF»;
-                $this->entityManager->persist($linkObj);
+«IF nullable-»
+            $entity->set«relationAliasName.toFirstUpper()»(null);
 «ENDIF-»
+«ENDIF-»
+        }
+        if (empty($relatedIds)) {
+            return;
+        }
+        $relatedIds = explode(',', $relatedIds);
+        if (!is_array($relatedIds) || !count($relatedIds)) {
+            return;
+        }
+
+        $entityClass = '«appName()»_Entity_' . ucfirst('«objectType»');
+        $repository = $entityManager->getRepository($entityClass);
+        $where = '«((incoming) ? source : target).idField()» IN (' . implode(', ', $relatedIds) . ')';
+        $linkObjects = $repository->selectWhere($where);
+        // create new links
+        foreach ($linkObjects as $relatedObject) {
+«IF many-»
+            if ($entity->get«relationAliasName.toFirstUpper()»()->contains($relatedObject)) {
+                continue;
             }
+            $entity->get«relationAliasName.toFirstUpper()»()->add($relatedObject);
+«ELSE-»
+            $entity->set«relationAliasName.toFirstUpper()»($relatedObject);
+«ENDIF-»
         }
 «ENDIF-»
 «ENDLET-»
