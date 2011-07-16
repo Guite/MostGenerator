@@ -36,6 +36,7 @@
 «ENDIF-»
 «EXPAND Extensions::ColumnExtensions-»
      * @ORM\Column(«EXPAND PersistentPropertyImpl(type)»«IF unique-», unique=true«ENDIF-»«IF nullable-» nullable=true«ENDIF-»)
+«EXPAND PersistentPropertyAdditions-»
      * @var «type» $«name».
      */
     «modifier» $«name»««IF init ne ''»«init»«ELSE-» = «EXPAND DefaultFieldData-»«ENDIF-»;
@@ -52,6 +53,18 @@ type="«type»", precision=«length», scale=«scale»
 «REM»type="«type»", «ENDREM»length=«length»
 «ENDDEFINE»
 
+«DEFINE PersistentPropertyAdditions FOR DerivedField-»
+«ENDDEFINE»
+«DEFINE PersistentPropertyAdditions FOR IntegerField-»
+«IF version && entity.hasOptimisticLock()-»
+     * @ORM\Version
+«ENDIF-»
+«ENDDEFINE»
+«DEFINE PersistentPropertyAdditions FOR DatetimeField-»
+«IF version && entity.hasOptimisticLock()-»
+     * @ORM\Version
+«ENDIF-»
+«ENDDEFINE»
 
 
 «DEFINE DefaultFieldData FOR EntityField-»

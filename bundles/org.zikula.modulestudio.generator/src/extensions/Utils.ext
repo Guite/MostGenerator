@@ -214,42 +214,75 @@ cached String asConstant(EntityChangeTrackingPolicy policy) :
         case EntityChangeTrackingPolicy::NOTIFY                 : 'NOTIFY'
         default: 'DEFERRED_IMPLICIT'
     };
+cached String asConstant(EntityLockType lockType) :
+    switch (lockType) {
+        case EntityLockType::NONE                       : ''
+        case EntityLockType::OPTIMISTIC                 : 'OPTIMISTIC'
+        case EntityLockType::PESSIMISTIC_READ           : 'PESSIMISTIC_READ'
+        case EntityLockType::PESSIMISTIC_WRITE          : 'PESSIMISTIC_WRITE'
+        case EntityLockType::PAGELOCK                   : ''
+        case EntityLockType::PAGELOCK_OPTIMISTIC        : 'OPTIMISTIC'
+        case EntityLockType::PAGELOCK_PESSIMISTIC_READ  : 'PESSIMISTIC_READ'
+        case EntityLockType::PAGELOCK_PESSIMISTIC_WRITE : 'PESSIMISTIC_WRITE'
+        default: ''
+    };
 cached String asConstant(EntitySlugStyle slugStyle) :
     switch (slugStyle) {
-        case EntitySlugStyle::LOWERCASE                : 'default'
-        case EntitySlugStyle::CAMEL                    : 'camel'
+        case EntitySlugStyle::LOWERCASE                  : 'default'
+        case EntitySlugStyle::CAMEL                      : 'camel'
         default: 'default'
     };
 cached String asConstant(EntityTimestampableType tsType) :
     switch (tsType) {
-        case EntityTimestampableType::UPDATE            : 'update'
-        case EntityTimestampableType::CREATE            : 'create'
-        case EntityTimestampableType::CHANGE            : 'change'
+        case EntityTimestampableType::UPDATE             : 'update'
+        case EntityTimestampableType::CREATE             : 'create'
+        case EntityTimestampableType::CHANGE             : 'change'
         default: 'update'
     };
 cached String asConstant(EntityTreeType treeType) :
     switch (treeType) {
-        case EntityTreeType::NONE                       : ''
-        case EntityTreeType::NESTED                     : 'nested'
-        case EntityTreeType::CLOSURE                    : 'closure'
+        case EntityTreeType::NONE                        : ''
+        case EntityTreeType::NESTED                      : 'nested'
+        case EntityTreeType::CLOSURE                     : 'closure'
         default: ''
     };
 cached String asConstant(RelationFetchType fetchType) :
     switch (fetchType) {
-        case RelationFetchType::LAZY                    : 'LAZY'
-        case RelationFetchType::EAGER                   : 'EAGER'
-        case RelationFetchType::EXTRA_LAZY              : 'EXTRA_LAZY'
+        case RelationFetchType::LAZY                     : 'LAZY'
+        case RelationFetchType::EAGER                    : 'EAGER'
+        case RelationFetchType::EXTRA_LAZY               : 'EXTRA_LAZY'
         default: 'LAZY'
     };
 cached String asConstant(InheritanceStrategyType inheritanceType) :
     switch (inheritanceType) {
-        case InheritanceStrategyType::SINGLE_TABLE      : 'SINGLE_TABLE'
-        case InheritanceStrategyType::JOINED            : 'JOINED'
+        case InheritanceStrategyType::SINGLE_TABLE       : 'SINGLE_TABLE'
+        case InheritanceStrategyType::JOINED             : 'JOINED'
         default: ''
     };
 
 cached hasNotifyPolicy(Entity this) :
     (changeTrackingPolicy == EntityChangeTrackingPolicy::NOTIFY);
+
+cached hasOptimisticLock(Entity this) :
+    (lockType == EntityLockType::OPTIMISTIC || lockType == EntityLockType::PAGELOCK_OPTIMISTIC);
+cached hasPessimisticReadLock(Entity this) :
+    (lockType == EntityLockType::PESSIMISTIC_READ || lockType == EntityLockType::PAGELOCK_PESSIMISTIC_READ);
+cached hasPessimisticWriteLock(Entity this) :
+    (lockType == EntityLockType::PESSIMISTIC_WRITE || lockType == EntityLockType::PAGELOCK_PESSIMISTIC_WRITE);
+cached hasPageLockSupport(Entity this) :
+    (lockType == EntityLockType::PAGELOCK || lockType == EntityLockType::PAGELOCK_OPTIMISTIC
+     || lockType == EntityLockType::PAGELOCK_PESSIMISTIC_READ || lockType == EntityLockType::PAGELOCK_PESSIMISTIC_WRITE);
+
+cached getVersionField(Entity this)
+    : let versions = fields.typeSelect(IntegerField).select(e|e.version)
+    : (
+        (!versions.isEmpty)
+        ? versions.get(0)
+        : (let versions = fields.typeSelect(DatetimeField).select(e|e.version)
+        : (
+            (!versions.isEmpty) ? versions.get(0) : false
+        ))
+    );
 
 // return all join relations (excluding inheritance)
 cached getJoinRelations(Models this) :

@@ -28,6 +28,9 @@ use Gedmo\Tree\Entity\Repository\«tree.asConstant().toFirstUpper()»TreeReposit
 use Doctrine\ORM\EntityRepository;
 «ENDIF-»
 use Doctrine\ORM\Query;
+«IF hasOptimisticLock() || hasPessimisticReadLock() || hasPessimisticWriteLock()-»
+use Doctrine\DBAL\LockMode;
+«ENDIF-»
 
 /**
  * Repository class used to implement own convenience methods for performing certain DQL queries.
@@ -61,9 +64,12 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
      */
     public function truncateTable()
     {
-        $q = $this->getEntityManager()
-            ->createQuery('DELETE «implClassModelEntity()»');
-        $q->execute();
+        $query = $this->getEntityManager()
+                 ->createQuery('DELETE «implClassModelEntity()»');
+«IF hasPessimisticReadLock() || hasPessimisticWriteLock()-»
+        $query->setLockMode(LockMode::«lockType.asConstant()»);
+«ENDIF-»
+        $query->execute();
     }
 
     /**
@@ -191,6 +197,9 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
         if (!empty($where)) {
             $query->where($where);
         }
+«IF hasPessimisticReadLock() || hasPessimisticWriteLock()-»
+        $query->setLockMode(LockMode::«lockType.asConstant()»);
+«ENDIF-»
         return $query->fetchOne(array(), Query::HYDRATE_SINGLE_SCALAR);
     }
 «ENDIF-»
@@ -268,6 +277,10 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
         );
 
 «ENDIF-»
+«IF hasPessimisticReadLock() || hasPessimisticWriteLock()-»
+        $query->setLockMode(LockMode::«lockType.asConstant()»);
+«ENDIF-»
+
         return $query;
     }
 «EXPAND JoinMethods(app)-»
@@ -388,12 +401,12 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     /**
      * Helper method to add joins to from clause.
      *
-     * @param Query $q Reference to query to be enriched.
+     * @param Query $query Reference to query to be enriched.
      */
-    protected function addJoinsToFrom(Query $q)
+    protected function addJoinsToFrom(Query $query)
     {
 «IF hasTranslatableFields()-»
-        $q->leftJoin('tbl.Translation Translation');
+        $query->leftJoin('tbl.Translation Translation');
 «ENDIF-»
 «EXPAND AddJoin(false, 'from') FOREACH incoming.typeSelect(JoinRelationship)-»
 «EXPAND AddJoin(true, 'from') FOREACH outgoing.typeSelect(JoinRelationship)-»
@@ -405,7 +418,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 «IF target == 'select'-»
 , «relationAliasName».*«""-»
 «ELSEIF target == 'from'-»
-        $q->«joinCommand(incoming)»('tbl.«relationAliasName» «relationAliasName»');
+        $query->«joinCommand(incoming)»('tbl.«relationAliasName» «relationAliasName»');
 «ENDIF-»
 «ENDLET-»
 «ENDDEFINE»
@@ -445,9 +458,12 @@ class «baseClassModelRefRepository()» extends EntityRepository
 {
     public function truncateTable()
     {
-        $q = $this->getEntityManager()
+        $query = $this->getEntityManager()
             ->createQuery('DELETE «implClassModelRefEntity()»');
-        $q->execute();
+«IF hasPessimisticReadLock() || hasPessimisticWriteLock()-»
+        $query->setLockMode(LockMode::«lockType.asConstant()»);
+«ENDIF-»
+        $query->execute();
     }
 }
 «ENDDEFINE»

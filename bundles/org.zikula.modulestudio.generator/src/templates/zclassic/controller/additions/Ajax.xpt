@@ -389,17 +389,19 @@
                                 throw new Zikula_Exception_Fatal();
                             }
 
-                            $childObject = new $entityClass();
-                            $objectData = array();
-                            $objectData[$titleFieldName] = $this->__('New child node');
-                            if (!empty($descriptionFieldName)) {
-                                $objectData[$descriptionFieldName] = $this->__('This is a new child node');
-                            }
-                            $childObject->merge($objectData);
+                            $this->entityManager->transactional(function($entityManager) {
+                                $childObject = new $entityClass();
+                                $objectData = array();
+                                $objectData[$titleFieldName] = $this->__('New child node');
+                                if (!empty($descriptionFieldName)) {
+                                    $objectData[$descriptionFieldName] = $this->__('This is a new child node');
+                                }
+                                $childObject->merge($objectData);
 
-                            //$childObject->setParent($parentRecord);
-                            $parentObject = $object->selectById($parentId, false);
-                            $repository->persistAsLastChildOf($childObject, $parentObject)
+                                //$childObject->setParent($parentRecord);
+                                $parentObject = $object->selectById($parentId, false);
+                                $repository->persistAsLastChildOf($childObject, $parentObject)
+                            });
                             break;
             case 'deleteNode':
                             // remove node from tree and reparent all children
@@ -437,18 +439,20 @@
                                 throw new Zikula_Exception_Fatal();
                             }
 
-                            $record = $repository->selectById($id, false);
-                            $destRecord = $repository->selectById($destId, false);
+                            $this->entityManager->transactional(function($entityManager) {
+                                $record = $repository->selectById($id, false);
+                                $destRecord = $repository->selectById($destId, false);
 
-                            if ($moveDirection == 'after') {
-                                $repository->persistAsNextSiblingOf($record, $destRecord);
-                            }
-                            elseif ($moveDirection == 'before') {
-                                $repository->persistAsPrevSiblingOf($record, $destRecord);
-                            }
-                            elseif ($moveDirection == 'bottom') {
-                                $repository->persistAsLastChildOf($record, $destRecord);
-                            }
+                                if ($moveDirection == 'after') {
+                                    $repository->persistAsNextSiblingOf($record, $destRecord);
+                                }
+                                elseif ($moveDirection == 'before') {
+                                    $repository->persistAsPrevSiblingOf($record, $destRecord);
+                                }
+                                elseif ($moveDirection == 'bottom') {
+                                    $repository->persistAsLastChildOf($record, $destRecord);
+                                }
+                            });
                             break;
         }
 

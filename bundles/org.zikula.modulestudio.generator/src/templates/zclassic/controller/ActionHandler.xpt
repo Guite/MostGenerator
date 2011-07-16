@@ -43,6 +43,13 @@
 
 «REM»base implementation«ENDREM»
 «DEFINE FormHandlerBaseImpl(Application app, Controller controller, String actionName) FOR Entity-»
+«IF hasOptimisticLock() || hasPessimisticReadLock() || hasPessimisticWriteLock()-»
+use Doctrine\DBAL\LockMode;
+«IF hasOptimisticLock()-»
+use Doctrine\ORM\OptimisticLockException;
+«ENDIF-»
+
+«ENDIF-»
 /**
  * This handler class handles the page events of the Form called by the «formatForCode(app.appName().msconcat("_").msconcat(controller.name()).msconcat("_").msconcat(actionName))»() function.
  * It aims on the «name.formatForDisplay()» object type.
@@ -70,25 +77,39 @@ class «baseClassFormHandler(controller, name, actionName)» extends Zikula_Form
      * Persistent member vars
      */
 
-    // id of «name.formatForDisplay()»
-    protected $«idField()»;
-
-    // create or edit
-    protected $mode;
-
-    // treated object type
+    /**
+     * @var string Name of treated object type.
+     */
     protected $objectType;
 
-    // code for redirect after command handling
+    /**
+     * @var integer Identifier of «name.formatForDisplay()».
+     */
+    protected $«idField()»;
+
+    /**
+     * @var string One of "create" or "edit".
+     */
+    protected $mode;
+
+    /**
+     * @var string Code defining the redirect goal after command handling.
+     */
     protected $returnTo = null;
 
-    // url of current form with all parameters for multiple creations
+    /**
+     * @var string Url of current form with all parameters for multiple creations.
+     */
     protected $repeatReturnUrl = null;
 
-    // whether this form is being used inline
+    /**
+     * @var string Whether this form is being used inline within a window.
+     */
     protected $inlineUsage = false;
 
-    // full prefix for related items
+    /**
+     * @var string Full prefix for related items.
+     */
     protected $idPrefix = '';
 
     /**
@@ -211,12 +232,18 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
             $idField = '«idField()»';
 «EXPAND ControllerHelper::retrieveEntityFromModel('idField', "this->" + idField(), true)-»
+«IF hasPageLockSupport()-»
 
             // try to guarantee that only one person at a time can be editing this «name.formatForDisplay()»
             $returnUrl = ModUtil::url('«app.appName()»', '«controller.name()»', 'display', array('ot' => $this->objectType, '«idField()»' => $this->«idField()»));
             ModUtil::apiFunc('PageLock', 'user', 'pageLock',
                                  array('lockName' => '«app.appName()»«name.formatForCodeCapital()»' . $this->«idField()»,
                                        'returnUrl' => $returnUrl));
+«ENDIF-»
+«IF hasOptimisticLock()-»
+
+            SessionUtil::setVar('«app.appName()»EntityVersion', $entity->get«getVersionField().name.formatForCodeCapital()»());
+«ENDIF-»
         }
         else {
             if (!SecurityUtil::checkPermission('«app.appName()»:«name.formatForCodeCapital()»:', '::', ACCESS_ADD)) {
@@ -547,7 +574,16 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDIF-»
             // save «name.formatForDisplay()»
             $successMessage = '';
+«IF hasOptimisticLock()-»
+            $expectedVersion = SessionUtil::getVar('«app.appName()»EntityVersion', 1);
+        try {
+            // assert version
+            $entityManager->lock($«name.formatForCode()», LockMode::OPTIMISTIC, $expectedVersion);
+«ENDIF-»
             $this->entityManager->transactional(function($entityManager) {
+«IF hasPessimisticReadLock() || hasPessimisticWriteLock()-»
+                $entityManager->lock($«name.formatForCode()», LockMode::«lockType.asConstant()»);
+«ENDIF-»
                 $this->updateRelationLinks($«name.formatForCode()», $entityManager);
                 if ($args['commandName'] == 'create') {
                     $entityManager->persist($«name.formatForCode()»);
@@ -557,6 +593,11 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                     $successMessage = $this->__('Done! «name.formatForDisplayCapital()» updated.');
                 }
             });
+«IF hasOptimisticLock()-»
+        } catch(OptimisticLockException $e) {
+            echo $this->__('Sorry, but someone else has already changed this «name.formatForCode()». Please apply the changes again!');
+        }
+«ENDIF-»
 
             if ($args['commandName'] == 'create') {
                 // store new id
@@ -607,12 +648,13 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             // clear view cache to reflect our changes
             $this->view->clear_cache();
         }
+«IF hasPageLockSupport()-»
 
         if ($this->mode == 'edit') {
             ModUtil::apiFunc('PageLock', 'user', 'releaseLock',
                              array('lockName' => '«app.appName()»«name.formatForCodeCapital()»' . $this->«idField()»));
         }
-
+«ENDIF-»
         return $this->view->redirect($this->getRedirectUrl($args, $«name.formatForCode()», $repeatCreateAction));
 
         // We should in principle not end here at all, since the above command handlers should

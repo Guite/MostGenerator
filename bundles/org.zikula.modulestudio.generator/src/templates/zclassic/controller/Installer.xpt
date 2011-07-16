@@ -8,6 +8,13 @@
 «DEFINE Root FOR Application»
 «FILE getAppSourceLibPath(appName()).msconcat("Base/Installer.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
+«IF hasOptimisticLock() || hasPessimisticReadLock() || hasPessimisticWriteLock()-»
+use Doctrine\DBAL\LockMode;
+«IF hasOptimisticLock()-»
+use Doctrine\ORM\OptimisticLockException;
+«ENDIF-»
+
+«ENDIF-»
 /**
  * Installer base class
  */
@@ -113,8 +120,8 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDREM»
 
         // create the default data for «appName()»
-        //$this->defaultData();
-        // TODO: deactivated for now because constraints prevent data creation in random order (see #33)
+        // TODO: must be retested (see #33)
+        $this->defaultData();
 
         // initialisation successful
         return true;
@@ -314,18 +321,19 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     protected function defaultData()
     {
         // ensure that tables are cleared
-«FOREACH models.entities AS entity-»
-        Doctrine_Core::getTable('«entity.implClassModelRecord()»')
-            ->truncateTable();
-«ENDFOREACH-»
-        unset($doctrine);
-
-«IF getDefaultDataSource().numExampleRows > 0-»
-        /** TODO test this, see #33 */
         $this->entityManager->transactional(function($entityManager) {
-«EXPAND createExampleRows(this) FOREACH getDefaultDataSource().entities-»
-        });
+«IF hasPessimisticReadLock() || hasPessimisticWriteLock()-»
+            $entityManager->lock($«name.formatForCode()», LockMode::«lockType.asConstant()»);
 «ENDIF-»
+«FOREACH models.entities AS entity-»
+            $this->entityManager->getRepository('«entity.implClassModelEntity()»')->truncateTable();
+«ENDFOREACH-»
+«IF getDefaultDataSource().numExampleRows > 0-»
+
+            /** TODO test this, see #33 */
+«EXPAND createExampleRows(this) FOREACH getDefaultDataSource().entities-»
+«ENDIF-»
+        });
 
         // Insertion successful
         return true;
@@ -569,14 +577,14 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «DEFINE createExampleRows(Application app) FOR Entity»
 «LET name.formatForCode() AS entityName-»
 «FOREACH 1.upTo(container.numExampleRows) AS number-»
-            $«entityName»«number» = new «implClassModelEntity()»();
+                $«entityName»«number» = new «implClassModelEntity()»();
 «FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS fld-»
-            $«entityName»«number»->set«fld.name.formatForCodeCapital()»(«EXPAND ExampleRowValue(number) FOR fld-»);
+                $«entityName»«number»->set«fld.name.formatForCodeCapital()»(«EXPAND ExampleRowValue(number) FOR fld-»);
 «ENDFOREACH-»
 «REM»«IF hasTranslatableFields()-»
-            $«entityName»«number»->setLocale(ZLanguage::getLanguageCode());
+                $«entityName»«number»->setLocale(ZLanguage::getLanguageCode());
 «ENDIF-»«ENDREM»
-            $entityManager->persist($«entityName»«number»);
+                $entityManager->persist($«entityName»«number»);
 «ENDFOREACH-»
 «ENDLET-»
 «ENDDEFINE»
