@@ -175,20 +175,23 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «ENDDEFINE»
 
 «DEFINE Constructor FOR Entity-»
-
     /**
      * Constructor.
      * Will not be called by Doctrine and can therefore be used
      * for own implementation purposes. It is also possible to add
      * arbitrary arguments as with every other class method.
      */
-«REM»TODO inheritance constructor«ENDREM»
+
+«EXPAND ConstructorImpl-»
+«ENDDEFINE»
+
+«DEFINE ConstructorImpl FOR Entity-»
 «IF isIndexByTarget()-»
 «LET incoming.select(e|e.isIndexed()) AS indexRelation-»
 «LET getRelationAliasName(indexRelation, false) AS sourceAlias-»
 «LET getRelationAliasName(indexRelation, true) AS targetAlias-»
 «LET source.getIndexByField() AS indexBy-»
-    public function __construct($«indexBy.formatForCode()», «indexRelation.source.implClassModelEntity()» $«sourceAlias.formatForCode»)
+    public function __construct($«indexBy.formatForCode()», «indexRelation.source.implClassModelEntity()» $«sourceAlias.formatForCode»)«EXPAND entity::Extensions::ConstructorImplements-»
     {
         $this->«indexBy.formatForCode()» = $«indexBy.formatForCode()»;
         $this->«sourceAlias.formatForCode()» = $«sourceAlias.formatForCode()»;
@@ -198,12 +201,12 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «ENDLET-»
 «ENDLET-»
 «ELSEIF isAggregated()-»
-    public function __construct(«EXPAND ConstructorParametersAggregate FOREACH getAggregators() SEPARATOR ', '»)
+    public function __construct(«EXPAND ConstructorParametersAggregate FOREACH getAggregators() SEPARATOR ', '»)«EXPAND entity::Extensions::ConstructorImplements-»
     {
 «EXPAND ConstructorAssignmentAggregate FOREACH getAggregators()-»
     }
 «ELSE-»
-    public function __construct()
+    public function __construct()«EXPAND entity::Extensions::ConstructorImplements-»
     {
 «ENDIF-»
         $this->_objectType = '«fullEntityName()»';

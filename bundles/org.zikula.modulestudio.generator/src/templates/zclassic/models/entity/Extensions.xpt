@@ -6,6 +6,9 @@
 
 «DEFINE Imports FOR Entity-»
 use Gedmo\Mapping\Annotation as Gedmo;
+«IF canUseExtendedVersionable()-»
+use DoctrineExtensions\Versionable\Versionable;
+«ENDIF-»
 «ENDDEFINE»
 
 «REM»Class annotations«ENDREM»
@@ -22,6 +25,10 @@ use Gedmo\Mapping\Annotation as Gedmo;
      * @Gedmo\TreeClosure(class="«implClassModel('', 'closure')»")
 «ENDIF-»
 «ENDIF-»
+«ENDDEFINE»
+
+«DEFINE ConstructorImplements FOR Entity»
+«IF canUseExtendedVersionable()-» implements Versionable«ENDIF-»
 «ENDDEFINE»
 
 «REM»Column annotations«ENDREM»

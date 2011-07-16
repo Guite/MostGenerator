@@ -304,6 +304,11 @@ cached getVersionField(Entity this)
             (!versions.isEmpty) ? versions.get(0) : false
         ))
     );
+cached canUseExtendedVersionable(Entity this)
+    : hasOptimisticLock() && (getVersionField().metaType == IntegerField || getVersionField().metaType == StringField);
+
+cached hasVersionableExtension(Application this)
+    : !models.entities.select(e|e.canUseExtendedVersionable()).isEmpty;
 
 // return all join relations (excluding inheritance)
 cached getJoinRelations(Models this) :
