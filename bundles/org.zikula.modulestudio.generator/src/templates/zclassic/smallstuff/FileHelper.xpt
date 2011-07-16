@@ -40,7 +40,7 @@
      *
      * @return «type»«IF type.toLowerCase() != 'array' && isMany-»[]«ENDIF-»
      */
-    public function get«name.toFirstUpper()»()
+    public function get«name.formatForCodeCapital()»()
     {
         return $this->«name»;
     }
@@ -54,22 +54,48 @@
      *
      * @return void
      */
-    public function set«name.toFirstUpper()»(«IF useHint-»«type» «ENDIF-»$p«name.toFirstUpper()»«IF init != ''-» = «init»«ENDIF-»)
+    public function set«name.formatForCodeCapital()»(«IF useHint-»«type» «ENDIF-»$«name»«IF init != ''-» = «init»«ENDIF-»)
     {
 «EXPAND SetterMethodImpl(name, type)-»
     }
 «ENDDEFINE»
 
 «DEFINE SetterMethodImpl(String name, String type) FOR Object-»
-        $this->«name» = $p«name.toFirstUpper()»;
+        $this->«name» = $«name»;
 «ENDDEFINE»
 
 
 «DEFINE SetterMethodImpl(String name, String type) FOR DerivedField-»
-        if ($p«name.toFirstUpper()» != $this->«name.formatForCode()») {
+        if ($«name» != $this->«name.formatForCode()») {
 «IF entity.hasNotifyPolicy()-»
-            $this->_onPropertyChanged('«name.formatForCode()»', $this->«name.formatForCode()», $p«name.toFirstUpper()»);
+            $this->_onPropertyChanged('«name.formatForCode()»', $this->«name.formatForCode()», $«name»);
 «ENDIF-»
-            $this->«name» = $p«name.toFirstUpper()»;
+«EXPAND SetterAssignment(name, type)-»
         }
+«ENDDEFINE»
+
+«DEFINE SetterAssignment(String name, String type) FOR DerivedField-»
+            $this->«name» = $«name»;
+«ENDDEFINE»
+
+«DEFINE SetterAssignmentNumeric(String name, String type) FOR DerivedField-»
+            $diff = abs($this->«name» - $«name»);
+            $this->«name» = $«name»;
+«LET getAggregatingRelationships() AS aggregators-»
+«IF !aggregators.isEmpty-»
+«FOREACH aggregators AS aggregator-»
+            $this->«aggregator.sourceAlias.formatForCode()»->add«name.formatForCodeCapital()»Without«entity.name.formatForCodeCapital()»($diff);
+«ENDFOREACH-» 
+«ENDIF-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE SetterAssignment(String name, String type) FOR IntegerField-»
+«EXPAND SetterAssignmentNumeric(name, type)-»
+«ENDDEFINE»
+«DEFINE SetterAssignment(String name, String type) FOR DecimalField-»
+«EXPAND SetterAssignmentNumeric(name, type)-»
+«ENDDEFINE»
+«DEFINE SetterAssignment(String name, String type) FOR FloatField-»
+«EXPAND SetterAssignmentNumeric(name, type)-»
 «ENDDEFINE»

@@ -182,6 +182,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
      * for own implementation purposes. It is also possible to add
      * arbitrary arguments as with every other class method.
      */
+«REM»TODO inheritance constructor«ENDREM»
 «IF isIndexByTarget()-»
 «LET incoming.select(e|e.isIndexed()) AS indexRelation-»
 «LET getRelationAliasName(indexRelation, false) AS sourceAlias-»
@@ -196,6 +197,11 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»
+«ELSEIF isAggregated()-»
+    public function __construct(«EXPAND ConstructorParametersAggregate FOREACH getAggregators() SEPARATOR ', '»)
+    {
+«EXPAND ConstructorAssignmentAggregate FOREACH getAggregators()-»
+    }
 «ELSE-»
     public function __construct()
     {
@@ -206,6 +212,18 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «EXPAND entity::Association::InitCollections-»
     }
 «ENDDEFINE»
+
+«DEFINE ConstructorParametersAggregate FOR OneToManyRelationship-»
+«LET source.getAggregateFields().get(0).getAggregateTargetField() AS targetField-»
+$«getRelationAliasName(false)», $«targetField.name.formatForCode()»
+«ENDLET-»
+«ENDDEFINE-»
+«DEFINE ConstructorAssignmentAggregate FOR OneToManyRelationship-»
+«LET source.getAggregateFields().get(0).getAggregateTargetField() AS targetField-»
+        $this->«getRelationAliasName(false)» = $«getRelationAliasName(false)»;
+        $this->«targetField.name.formatForCode()» = $«targetField.name.formatForCode()»;
+«ENDLET-»
+«ENDDEFINE-»
 
 «DEFINE PropertyChangedListener FOR Entity-»
 «IF hasNotifyPolicy()-»

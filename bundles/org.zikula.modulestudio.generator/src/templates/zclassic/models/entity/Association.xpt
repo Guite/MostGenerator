@@ -263,11 +263,11 @@
     /**
      * Adds an instance of «type» to the list of «name.formatForDisplay()».
      *
-     * @param «type» $«name».
+     * @param «EXPAND AddParameters(useTarget, type, nameSingle, true)-».
      *
      * @return void
      */
-    public function add«name.toFirstUpper()»(«type» $«nameSingle»)
+    public function add«name.toFirstUpper()»(«EXPAND AddParameters(useTarget, type, nameSingle, false)-»)
     {
 «EXPAND AddAssignment(useTarget, name, nameSingle)-»
 «IF bidirectional && !useTarget-»
@@ -282,6 +282,19 @@
     }
 «ENDDEFINE»
 
+«DEFINE AddParameters(Boolean useTarget, String name, String type, Boolean withDescription) FOR JoinRelationship-»
+«type» $«name»«IF withDescription-»«REM»TODO description«ENDREM»«ENDIF-»
+«ENDDEFINE»
+«DEFINE AddParameters(Boolean useTarget, String name, String nameSingle, Boolean withDescription) FOR OneToManyRelationship-»
+«IF !useTarget && !source.getAggregateFields().isEmpty-»
+«LET source.getAggregateFields().get(0).getAggregateTargetField() AS targetField-»
+«IF withDescription-»«targetField.fieldTypeAsString()» «ENDIF-»$«targetField.name.formatForCode()»«IF withDescription-»«REM»TODO description«ENDREM»«ENDIF-»
+«ENDLET-»
+«ELSE-»
+«type» $«name»«IF withDescription-»«REM»TODO description«ENDREM»«ENDIF-»
+«ENDIF-»
+«ENDDEFINE»
+
 «DEFINE AddAssignmentDefault(Boolean useTarget, String name, String nameSingle) FOR JoinRelationship-»
         $this->«name»[] = $«nameSingle»;
 «ENDDEFINE»
@@ -291,6 +304,26 @@
 «DEFINE AddAssignment(Boolean useTarget, String name, String nameSingle) FOR OneToManyRelationship-»
 «IF !useTarget && indexBy != null && indexBy != ''-»
         $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital()»()] = $«nameSingle»;
+«ELSEIF !useTarget && !source.getAggregateFields().isEmpty-»
+«LET source.getAggregateFields().get(0) AS sourceField-»
+«LET sourceField.getAggregateTargetField() AS targetField-»
+        $«getRelationAliasName(true)» = new «target.implClassModelEntity()»($this, $«targetField.name.formatForCode()»);
+        $this->«name»[] = $«nameSingle»;
+        $this->«sourceField.name.formatForCode()» += $«targetField.name.formatForCode()»;
+        return $«getRelationAliasName(true)»;
+    }
+
+    /**
+     * Additional add function for internal use.
+     *
+     * @param «targetField.fieldTypeAsString()» $«targetField.name.formatForCode()»«REM»TODO description«ENDREM»
+     */
+    protected function add«targetField.name.formatForCodeCapital()»Without«getRelationAliasName(true).formatForCodeCapital()»($«targetField.name.formatForCode()»)
+    {
+        $this->«sourceField.name.formatForCode()» += $«targetField.name.formatForCode()»;
+    }
+«ENDLET-»
+«ENDLET-»
 «ELSE-»
 «EXPAND AddAssignmentDefault(useTarget, name, nameSingle)-»
 «ENDIF-»
