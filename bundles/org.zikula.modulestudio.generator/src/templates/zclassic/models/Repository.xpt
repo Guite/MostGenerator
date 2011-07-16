@@ -32,6 +32,8 @@ use Doctrine\ORM\Query;
 use Doctrine\DBAL\LockMode;
 «ENDIF-»
 
+use DoctrineExtensions\Paginate\Paginate;
+
 /**
  * Repository class used to implement own convenience methods for performing certain DQL queries.
  *
@@ -153,18 +155,21 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
      */
     public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $asArray = true, $useJoins = true)
     {
-        /*$q = $this->_intBaseQuery($where, $orderBy, $useJoins)
-             ->setMaxResults($resultsPerPage);*/
-        $pager = new Doctrine_Pager(
-              $this->_intBaseQuery($where, $orderBy, $useJoins),
-              $currentPage,
-              $resultsPerPage
-        );
+        $query = $this->_intBaseQuery($where, $orderBy, $useJoins);
+        $count = Paginate::getTotalQueryResults($query);
 
+«IF !(outgoing.typeSelect(OneToManyRelationship).isEmpty
+   && outgoing.typeSelect(ManyToManyRelationship).isEmpty
+   && incoming.typeSelect(ManyToOneRelationship).isEmpty)-»
+        $query = Paginate::getPaginateQuery($query, $currentPage, $resultsPerPage);
+«ELSE-»
+        $query->setFirstResult($currentPage)
+              ->setMaxResults($resultsPerPage);
+«ENDIF-»
         $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_RECORD);
-        $results = $pager->execute(array(), $fetchType);
-        $count = $pager->getNumResults();
-        return array($results, $count);
+        $result = $pager->execute(array(), $fetchType);
+
+        return array($result, $count);
     }
 «IF !getUniqueDerivedFields().isEmpty-»
 
