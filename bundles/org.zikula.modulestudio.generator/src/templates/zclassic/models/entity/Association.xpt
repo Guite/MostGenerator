@@ -145,7 +145,7 @@
 «LET ((useTarget) ? targetField : sourceField) AS joinColumnForeign-»
 «IF !(joinColumnForeign.isDefaultIdField() && joinColumnLocal.isDefaultIdField() && !unique && nullable && onDelete == '' && onUpdate == '')-»
      * «EXPAND JoinColumn(joinColumnForeign, joinedColumnLocal)»
-«REM»TODO:
+«REM»TODO (#21)
     use @ORM\JoinColumns (array with JoinColumn annotations)
     if entity has multiple identifiers (for ManyToOne and OneToOne)«ENDREM» 
 «ENDIF-»

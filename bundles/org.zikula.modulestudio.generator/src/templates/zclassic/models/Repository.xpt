@@ -168,10 +168,10 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
      * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
      *
      * @return integer amount of affected records
+     * @TODO fix usage of joins; please remove the first line and test.
      */
     public function selectCount($where = '', $useJoins = true)
     {
-        // TODO: fix usage of joins; please remove the following line and test.
         $useJoins = false;
 
         $selection = 'COUNT(tbl.«idField()») AS num«nameMultiple.formatForCodeCapital()»';

@@ -228,6 +228,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 
 «DEFINE RemoveBehaviors FOR Entity-»
 «REM»TODO: replace these if clauses by an aspect template (somewhen)«ENDREM»«""-»
+«REM»
 «IF hasTranslatableFields()-»
         $res = DBUtil::dropTable('«fullEntityName()»_translation');
 «ENDIF-»
@@ -266,6 +267,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         $sql = 'DELETE FROM ' . $table . ' WHERE ' . $column['object_type'] . ' = \'«fullEntityName()»\'';
         $res = DBUtil::executeSQL($sql);
 «ENDIF-»
+«ENDREM»
 «ENDDEFINE»
 
 «DEFINE RemoveForeignKey FOR JoinRelationship-»
@@ -319,7 +321,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         unset($doctrine);
 
 «IF getDefaultDataSource().numExampleRows > 0-»
-        // TODO: test this, see http://code.zikula.org/generator/ticket/64
+        /** TODO test this, see #33 */
 «EXPAND createExampleRows(this) FOREACH getDefaultDataSource().entities-»
         $this->entityManager->flush();
 «ENDIF-»

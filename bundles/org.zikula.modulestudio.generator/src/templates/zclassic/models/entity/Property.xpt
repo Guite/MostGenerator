@@ -31,7 +31,7 @@
     /**
 «IF primaryKey-»
      * @ORM\Id
-«REM»TODO«ENDREM»
+«REM»TODO (#21)«ENDREM»
      * @ORM\GeneratedValue«REM»(strategy="AUTO")«ENDREM»
 «ENDIF-»
 «EXPAND Extensions::ColumnExtensions-»

@@ -28,7 +28,6 @@
      * This is a custom method. Documentation for this will be improved in later versions.
 «ENDIF-»
      *
-     * @params       TODO
 «IF metaType == ViewAction || metaType == DisplayAction || metaType == EditAction || metaType == DeleteAction-»
      * @param string  $ot           Treated object type.
 «IF metaType == DeleteAction-»
@@ -99,7 +98,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $entityClass = '«appName»_Entity_' . ucfirst($objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
-«REM»TODO: retrieve id field name otherwise, and support composite keys«ENDREM»
+«REM»TODO: retrieve id field name otherwise, and support composite keys (#21)«ENDREM»
         $objectTemp = new $entityClass(); 
         $idField = $objectTemp->get_idField();
 
@@ -159,7 +158,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $entityClass = '«appName()»_Entity_' . ucfirst($this->objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
-«REM»TODO: retrieve id field name otherwise, and support composite keys«ENDREM»
+«REM»TODO: retrieve id field name otherwise, and support composite keys (#21)«ENDREM»
         $objectTemp = new $entityClass(); 
         $idField = $objectTemp->get_idField();
 
@@ -225,7 +224,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $entityClass = '«appName»_Entity_' . ucfirst($objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
-«REM»TODO: retrieve id field name otherwise, and support composite keys«ENDREM»
+«REM»TODO: retrieve id field name otherwise, and support composite keys (#21)«ENDREM»
         $objectTemp = new $entityClass(); 
         $idField = $objectTemp->get_idField();
 

@@ -135,7 +135,7 @@ cached getLeadingField(Entity this) :
     getDerivedFields().select(e|e.leading == true).get(0);
 
 // return all fields with primaryKey = true
-/* TODO: support composite keys */
+/* TODO: support composite keys (#21) */
 cached getPrimaryKeyField(Entity this) :
     getDerivedFields(this).select(e|e.primaryKey == true).get(0);
 

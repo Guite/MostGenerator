@@ -84,7 +84,7 @@
         $entityClass = '«appName()»_Entity_' . ucfirst($objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
-«REM»TODO: retrieve id field name otherwise, and support composite keys«ENDREM»
+«REM»TODO: retrieve id field name otherwise, and support composite keys (#21)«ENDREM»
         $objectTemp = new $entityClass(); 
         $idField = $objectTemp->get_idField();
 
@@ -112,8 +112,7 @@
 
         $fragment = DataUtil::formatForStore($fragment);
 
-«REM»TODO«ENDREM»
-        // TODO: move into Repository subclasses
+        // TODO: move into Repository subclasses (#37)
         if (!empty($exclude)) {
             $where = $idField . ' NOT IN (' . DataUtil::formatForStore($exclude) . ')';
         }

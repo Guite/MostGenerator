@@ -76,7 +76,7 @@ class «appName()»_Api_Mailz extends «appName()»_Api_Base_Mailz
         $entityClass = '«appName()»_Entity_' . ucfirst($objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
-«REM»TODO: retrieve id field name otherwise, and support composite keys«ENDREM»
+«REM»TODO: retrieve id field name otherwise, and support composite keys (#21)«ENDREM»
         $objectTemp = new $entityClass(); 
         $idField = $objectTemp->get_idField();
 

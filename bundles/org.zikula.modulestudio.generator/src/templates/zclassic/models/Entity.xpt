@@ -120,7 +120,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
     /**
      * @var string The primary key field name
      */
-«REM»TODO support composite keys«ENDREM»
+«REM»TODO support composite keys (#21)«ENDREM»
     protected $_idField = '«name.formatForCode()-»';
 
     /**
