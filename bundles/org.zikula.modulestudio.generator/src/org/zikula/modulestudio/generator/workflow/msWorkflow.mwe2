@@ -260,8 +260,6 @@ Workflow {
 */
     }
 
-    // TODO: phpXRef and other API docs
-
     component = IfComponent {
         cond = doProfiling
         if = {

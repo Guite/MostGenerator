@@ -99,9 +99,6 @@
 		   <mmModuleStudio 	idRef="mmModuleStudio"/>
            <profiler idRef="profiler"/>
 		</cartridge>
-
-	<!-- TODO: phpXRef and other API docs -->
-
     </component>
 
     <if cond="${doProfiling}">
