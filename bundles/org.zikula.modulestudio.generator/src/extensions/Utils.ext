@@ -47,7 +47,7 @@ cached String displayBool(Boolean b) :
 
 // return all entities with leading = true
 cached getLeadingEntity(Application this) :
-    models.entities.select(e|e.leading == true).get(0);
+    models.entities.selectFirst(e|e.leading == true);
 
 cached boolean hasImageFields(Application this) :
     models.entities.exists(e|e.hasImageFields());
@@ -103,7 +103,7 @@ cached String configController(Application this) :
 
 // return model container which are default data sources
 cached getDefaultDataSource(Application this) :
-    models.select(e|e.defaultDataSource == true).get(0);
+    models.selectFirst(e|e.defaultDataSource == true);
 
 
 cached String fullEntityName(Entity this) :
@@ -132,12 +132,12 @@ cached getUniqueDerivedFields(Entity this) :
     getDerivedFields().select(e|e.unique);
 // return all fields with leading = true
 cached getLeadingField(Entity this) :
-    getDerivedFields().select(e|e.leading == true).get(0);
+    getDerivedFields().selectFirst(e|e.leading == true);
 
 // return all fields with primaryKey = true
 /* TODO: support composite keys (#21) */
 cached getPrimaryKeyField(Entity this) :
-    getDerivedFields(this).select(e|e.primaryKey == true).get(0);
+    getDerivedFields(this).selectFirst(e|e.primaryKey == true);
 
 cached getUserFields(Entity this) :
     fields.typeSelect(UserField);
@@ -318,7 +318,7 @@ cached getChildRelations(Entity this) :
 
 /* if we have id or fooid return fooid; otherwise return the actual field name of the referenced field */
 cached relationFieldName(Entity refEntity, String refField) :
-    (refField.toLowerCase() == 'id' || refField.toLowerCase() == refEntity.idField()) ? refEntity.idField() : refEntity.fields.select(e|e.name == refField).get(0).name.formatForCode();
+    (refField.toLowerCase() == 'id' || refField.toLowerCase() == refEntity.idField()) ? refEntity.idField() : refEntity.fields.selectFirst(e|e.name == refField).name.formatForCode();
 
 cached String isDefaultIdField(DerivedField this) :
     {'id', this.entity.name.formatForDB() + 'id', this.entity.name.formatForDB() + '_id'}.contains(this.name.formatForDB());
