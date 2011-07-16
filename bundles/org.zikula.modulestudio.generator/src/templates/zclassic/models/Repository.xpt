@@ -66,7 +66,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     {
         $query = $this->getEntityManager()
                  ->createQuery('DELETE «implClassModelEntity()»');
-«IF hasPessimisticReadLock() || hasPessimisticWriteLock()-»
+«IF hasPessimisticWriteLock()-»
         $query->setLockMode(LockMode::«lockType.asConstant()»);
 «ENDIF-»
         $query->execute();
@@ -197,7 +197,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
         if (!empty($where)) {
             $query->where($where);
         }
-«IF hasPessimisticReadLock() || hasPessimisticWriteLock()-»
+«IF hasPessimisticReadLock()-»
         $query->setLockMode(LockMode::«lockType.asConstant()»);
 «ENDIF-»
         return $query->fetchOne(array(), Query::HYDRATE_SINGLE_SCALAR);
@@ -277,7 +277,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
         );
 
 «ENDIF-»
-«IF hasPessimisticReadLock() || hasPessimisticWriteLock()-»
+«IF hasPessimisticReadLock()-»
         $query->setLockMode(LockMode::«lockType.asConstant()»);
 «ENDIF-»
 
@@ -460,7 +460,7 @@ class «baseClassModelRefRepository()» extends EntityRepository
     {
         $query = $this->getEntityManager()
             ->createQuery('DELETE «implClassModelRefEntity()»');
-«IF hasPessimisticReadLock() || hasPessimisticWriteLock()-»
+«IF hasPessimisticWriteLock()-»
         $query->setLockMode(LockMode::«lockType.asConstant()»);
 «ENDIF-»
         $query->execute();

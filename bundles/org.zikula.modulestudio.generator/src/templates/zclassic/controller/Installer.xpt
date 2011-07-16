@@ -322,7 +322,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     {
         // ensure that tables are cleared
         $this->entityManager->transactional(function($entityManager) {
-«IF hasPessimisticReadLock() || hasPessimisticWriteLock()-»
+«IF hasPessimisticWriteLock()-»
             $entityManager->lock($«name.formatForCode()», LockMode::«lockType.asConstant()»);
 «ENDIF-»
 «FOREACH models.entities AS entity-»

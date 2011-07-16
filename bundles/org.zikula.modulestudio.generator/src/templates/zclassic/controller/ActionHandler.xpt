@@ -581,7 +581,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             $entityManager->lock($«name.formatForCode()», LockMode::OPTIMISTIC, $expectedVersion);
 «ENDIF-»
             $this->entityManager->transactional(function($entityManager) {
-«IF hasPessimisticReadLock() || hasPessimisticWriteLock()-»
+«IF hasPessimisticWriteLock()-»
                 $entityManager->lock($«name.formatForCode()», LockMode::«lockType.asConstant()»);
 «ENDIF-»
                 $this->updateRelationLinks($«name.formatForCode()», $entityManager);
