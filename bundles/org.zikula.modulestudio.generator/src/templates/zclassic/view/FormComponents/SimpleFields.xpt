@@ -66,20 +66,19 @@
 «ENDLET-»
 «ELSE-»
 «ENDREM»«""-»
-            {formintinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«length»«IF minValue != 0 || maxValue != 0-» minValue=«minValue» maxValue=«maxValue»«ENDIF»«EXPAND Validation::FieldValidationCssClass»}
+            {formintinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«length»«IF minValue != 0-» minValue=«minValue»«ENDIF-»«IF maxValue != 0-» maxValue=«maxValue-»«ENDIF»«EXPAND Validation::FieldValidationCssClass»}
 «REM»
 «ENDIF-»
 «ENDLET-»
 «ENDREM»«""-»
 «ENDDEFINE»
 
-«DEFINE FormField FOR FloatField-»
-            {formfloatinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'«EXPAND Validation::FieldValidationCssClass»}
-«REM»TODO: minValue=123, maxValue=123«ENDREM»«""-»
+«DEFINE FormField FOR DecimalField-»
+            {formfloatinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'«IF minValue != 0-» minValue=«minValue»«ENDIF-»«IF maxValue != 0-» maxValue=«maxValue-»«ENDIF» maxLength=«(length+3+scale)»«IF scale != 2» precision=«scale»«ENDIF»«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»
 
-«DEFINE FormField FOR DecimalField-»
-            {formfloatinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«(length+3+scale)»«IF scale != 2» precision=«scale»«ENDIF»«EXPAND Validation::FieldValidationCssClass»}
+«DEFINE FormField FOR FloatField-»
+            {formfloatinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'«IF minValue != 0-» minValue=«minValue»«ENDIF-»«IF maxValue != 0-» maxValue=«maxValue-»«ENDIF»«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»
 
 «DEFINE FormField FOR StringField-»
@@ -89,10 +88,9 @@
 «IF language-»
             {formlanguageselector group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Choose the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'}
 «ELSE-»
-            {formtextinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=«length»«EXPAND Validation::FieldValidationCssClass»}
-«REM»TODO: textMode="password" for password input fields«ENDREM»«""-»
+            {formtextinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='«IF password-»password«ELSE-»singleline«ENDIF-»' maxLength=«length»«EXPAND Validation::FieldValidationCssClass»}
 «ENDIF-»
-«IF htmlcolor-»
+«IF htmlcolour-»
             <script type="text/javascript" charset="utf-8">
             /* <![CDATA[ */
                 var namePicky = new PickyColor({

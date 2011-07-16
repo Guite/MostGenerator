@@ -42,7 +42,9 @@
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR StringField-»
-«prepend»«IF country»«ELSEIF ipaddress»«ELSEIF htmlcolor»«ELSEIF usstate»«ELSEIF language»«ENDIF»{$«objName».«name.formatForCode()»«IF language»|getlanguagename|safehtml«ENDIF»«IF page == 'viewcsv'»|replace:"\"":""«ENDIF»}«""-»
+«IF !password-»
+«prepend»«IF country»«ELSEIF htmlcolor»«ELSEIF language»«ENDIF»{$«objName».«name.formatForCode()»«IF language»|getlanguagename|safehtml«ENDIF»«IF page == 'viewcsv'»|replace:"\"":""«ENDIF»}«""-»
+«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR EmailField-»
