@@ -48,10 +48,6 @@ $translatableListener->setTranslatableLocale(ZLanguage::getLanguageCode());
  */
 //$translatableListener->setDefaultLocale(System::getVar('language_i18n', 'en'));
 «ENDIF-»
-«IF hasVersionableExtension()-»
-// TODO not done yet because of http://code.zikula.org/core/ticket/3135
-// $helper->getListener('version');
-«ENDIF-»
 «ENDIF-»
 
 «ENDDEFINE»

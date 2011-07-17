@@ -181,7 +181,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
      * arbitrary arguments as with every other class method.
 «REM»TODO param docs«ENDREM»
      */
-    public function __construct(«EXPAND ConstructorArguments)«EXPAND entity::Extensions::ConstructorImplements-»
+    public function __construct(«EXPAND ConstructorArguments-»)
     {
 «EXPAND ConstructorImpl-»
     }
