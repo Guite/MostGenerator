@@ -294,7 +294,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 
 «DEFINE singleSortingField FOR EntityField»«REM»DUMMY«ENDREM»«ENDDEFINE»
 «DEFINE singleSortingField FOR DerivedField»
-«LET entity.incoming.select(e|formatForDB(e.sourceField) == name.formatForDB()) AS joins-»
+«LET entity.incoming.select(e|formatForDB(e.sourceFields().get(0)) == name.formatForDB()) AS joins-»
 «IF !joins.isEmpty-»
                      '«joins.get(0).source.name.formatForCode()»'«""-»
 «ELSE-»

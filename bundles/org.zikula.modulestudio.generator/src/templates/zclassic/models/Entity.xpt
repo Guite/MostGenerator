@@ -309,18 +309,20 @@ class «baseClassModelRefEntity()» extends Zikula_EntityAccess
     public function setTableDefinition()
     {
         $this->setTableName('«app.prefix().msconcat("_").msconcat(source.name.formatForDB()).msconcat("_").msconcat(target.name.formatForDB())»');
-
-        $this->hasColumn('«sourceField.formatForCode()»', 'integer', null, array(
+«FOREACH sourceFields() as singleSourceField-»
+        $this->hasColumn('«singleSourceField.formatForCode()»', 'integer', null, array(
                 'type' => 'integer',
                 'primary' => true
             )
         );
-
-        $this->hasColumn('«targetField.formatForCode()»', 'integer', null, array(
+«ENDFOREACH-»
+«FOREACH targetFields() as singleTargetField-»
+        $this->hasColumn('«singleTargetField.formatForCode()»', 'integer', null, array(
                 'type' => 'integer',
                 'primary' => true
             )
         );
+«ENDFOREACH-»
     }«ENDREM»
 }
 «ENDDEFINE»

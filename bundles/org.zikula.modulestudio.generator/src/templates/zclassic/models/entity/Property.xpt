@@ -85,7 +85,7 @@ type="«type»", precision=«length», scale=«scale»
 «ENDDEFINE»
 «DEFINE DefaultFieldData FOR IntegerField-»
 «LET getPointingRelations() AS pointingRelations-»
-«IF !pointingRelations.isEmpty-»(int) FormUtil::getPassedValue('«pointingRelations.get(0).sourceField»', 0, 'GET', FILTER_VALIDATE_INT)
+«IF !pointingRelations.isEmpty-»(int) FormUtil::getPassedValue('«pointingRelations.get(0).sourceFields().get(0)»', 0, 'GET', FILTER_VALIDATE_INT)
 «ELSE-»
 «IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
 «ENDIF-»«ENDLET-»«ENDDEFINE»

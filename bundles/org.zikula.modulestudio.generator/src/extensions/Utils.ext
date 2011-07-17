@@ -133,7 +133,7 @@ cached getLeadingField(Entity this) :
 
 cached getPrimaryKeyFields(Entity this) :
     getDerivedFields(this).select(e|e.primaryKey == true);
-cached getPrimaryKeyField(Entity this) :
+cached getFirstPrimaryKey(Entity this) :
     getDerivedFields(this).selectFirst(e|e.primaryKey == true);
 cached boolean hasCompositeKeys(Entity this) :
     getPrimaryKeyFields().size > 1;
@@ -258,25 +258,8 @@ cached getAggregators(Entity this)
 cached boolean isAggregated(Entity this)
     : !getAggregators().isEmpty;
 
-/** obsolete */
-cached getPointingRelations(IntegerField this) :
-    entity.incoming.typeSelect(JoinRelationship).select(e|e.source.relationFieldName(e.sourceField) == name.formatForDB());
-
 cached String subFolderPathSegment(UploadField this) :
     (subFolderName != null && subFolderName != "") ? subFolderName.formatForDB() : name.formatForDB();
-
-
-cached boolean isManySide(JoinRelationship this, boolean useTarget) :
-    ((metaType == ManyToManyRelationship
-|| (metaType == OneToManyRelationship && useTarget)
-|| (metaType == ManyToOneRelationship && !useTarget)
-) ? true : false);
-
-cached String getUniqueRelationNameForJs(JoinRelationship this, Application app, Entity targetEntity, Boolean many, Boolean incoming, String relationAliasName) :
-    app.prefix()
-    .msconcat(targetEntity.name.formatForCodeCapital())
-    .msconcat('_')
-    .msconcat(relationAliasName);
 
 cached String namingSchemeAsInt(UploadField this) :
     switch (namingScheme) {
@@ -416,6 +399,29 @@ cached boolean isDefaultIdField(DerivedField this) :
 cached boolean isDefaultIdFieldName(Entity entity, String this) :
     {'id', entity.name.formatForDB() + 'id', entity.name.formatForDB() + '_id'}.contains(this);
 
+/** obsolete */
+cached getPointingRelations(IntegerField this) :
+    entity.incoming.typeSelect(JoinRelationship).select(e|e.source.relationFieldName(e.getSourceFields().get(0)) == name.formatForDB());
+
+cached getSourceFields(JoinRelationship this) :
+    sourceField.split(', ');
+cached getTargetFields(JoinRelationship this) :
+    targetField.split(', ');
+
+cached boolean containsDefaultIdField(List[String] this, Entity entity) :
+    isDefaultIdFieldName(entity, this.get(0)) || containsDefaultIdField(this.withoutFirst(), entity);
+
+cached boolean isManySide(JoinRelationship this, boolean useTarget) :
+    ((metaType == ManyToManyRelationship
+|| (metaType == OneToManyRelationship && useTarget)
+|| (metaType == ManyToOneRelationship && !useTarget)
+) ? true : false);
+
+cached String getUniqueRelationNameForJs(JoinRelationship this, Application app, Entity targetEntity, Boolean many, Boolean incoming, String relationAliasName) :
+    app.prefix()
+    .msconcat(targetEntity.name.formatForCodeCapital())
+    .msconcat('_')
+    .msconcat(relationAliasName);
 
 cached String getTargetMultiplicity(JoinRelationship this) :
     'Many';

@@ -256,7 +256,7 @@
 
 «DEFINE FieldWrapper FOR DerivedField-»
 «REM»No input fields for foreign keys, relations are processed further down«ENDREM»«""-»
-«IF entity.incoming.typeSelect(JoinRelationship).select(e|e.sourceField == name.formatForDB()).isEmpty-»
+«IF entity.incoming.typeSelect(JoinRelationship).select(e|e.sourceFields().get(0) == name.formatForDB()).isEmpty-»
         <div class="z-formrow">
             «EXPAND FormComponents::SimpleFields::FormRow-»
         </div>

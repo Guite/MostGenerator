@@ -839,7 +839,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
 «DEFINE FetchRelationValue(Boolean incoming) FOR JoinRelationship-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
-«LET relationFieldName((!incoming) ? target : source), (!incoming) ? targetField : sourceField)).formatForDB() AS fieldName-»
+«LET relationFieldName((!incoming) ? target : source), (!incoming) ? targetFields().get(0) : sourceFields().get(0))).formatForDB() AS fieldName-»
         $formData['«fieldName»'] = (int) $this->request->getPost()->filter('«uniqueNameForJs»ItemList', 0, FILTER_VALIDATE_INT);
         if (!$formData['«fieldName»']) {
 «REM»            // Oops, we have an invalid relation id. As this field is mandatory, we raise an error.«ENDREM»

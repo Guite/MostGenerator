@@ -284,7 +284,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
             $foreignKeyName = $dbPrefix . '_«target.fullEntityName()»_«getRelationLocalField(true)»_' . $dbPrefix . '_«source.fullEntityName()»_«getRelationLocalField(false)»';
 «ENDIF-»
             DoctrineUtil::dropForeignKey('«target.fullEntityName()»', array('name' => $foreignKeyName));
-            DoctrineUtil::dropIndex('«target.fullEntityName()»', '«IF isDefaultIdFieldName(targetField)»«source.relationFieldName(sourceField)»«ELSE»«target.relationFieldName(targetField)»«ENDIF»');
+            DoctrineUtil::dropIndex('«target.fullEntityName()»', '«IF isDefaultIdFieldName(targetFields().get(0))»«source.relationFieldName(sourceFields().get(0))»«ELSE»«target.relationFieldName(targetFields().get(0))»«ENDIF»');
 «ENDDEFINE»
 «DEFINE RemoveForeignKey FOR ManyToManyRelationship-»
 «ENDDEFINE»

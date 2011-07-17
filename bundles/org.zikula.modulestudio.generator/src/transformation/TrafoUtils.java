@@ -45,11 +45,13 @@ public class TrafoUtils {
         try {
             final String fieldName = Utils.formatForCode(rel.getSource()
                     .getName());
-            if (rel.getTargetField() == "id"
-                    || rel.getTargetField() == fieldName + "id"
-                    || rel.getTargetField() == fieldName + "_id") {
-                entity.getFields().add(
-                        createIDColumn(rel.getSource().getName(), false));
+            final String[] targetFieldParts = rel.getTargetField().split(", ");
+            for (final String singleField : targetFieldParts) {
+                if (singleField == "id" || singleField == fieldName + "id"
+                        || singleField == fieldName + "_id") {
+                    entity.getFields().add(
+                            createIDColumn(rel.getSource().getName(), false));
+                }
             }
         } catch (final Exception e) {
             return false;
