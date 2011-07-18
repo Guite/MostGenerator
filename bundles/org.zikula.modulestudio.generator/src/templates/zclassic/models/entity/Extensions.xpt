@@ -44,7 +44,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 «ENDDEFINE»
 «DEFINE ColumnExtensions FOR AbstractIntegerField»
 «EXPAND ColumnExtensionsDefault-»
-«IF sortablePosition > 0-»
+«IF sortablePosition-»
      * @Gedmo\SortablePosition
 «ENDIF-»
 «ENDDEFINE»
