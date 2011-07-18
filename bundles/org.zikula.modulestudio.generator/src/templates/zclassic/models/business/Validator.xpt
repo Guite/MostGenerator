@@ -420,7 +420,7 @@ class «implClassDefault(this, '', 'Validator')» extends «baseClassDefault(thi
  *
  * This is the base validation class for «name.formatForDisplay()» entities.
  */
-class «baseClassModel('validator', '')» «IF isInheriting()»«parentType().implClassModel('validator', '')»«ELSE»«implClassDefault(app, '', 'Validator')»«ENDIF»
+class «baseClassModel('validator', '')» extends «IF isInheriting()»«parentType().implClassModel('validator', '')»«ELSE»«implClassDefault(app, '', 'Validator')»«ENDIF»
 {
 «EXPAND ValidatorBaseImplBody(app)-»
 }

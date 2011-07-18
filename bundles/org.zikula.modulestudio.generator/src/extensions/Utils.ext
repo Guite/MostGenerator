@@ -128,8 +128,16 @@ cached getDerivedFields(Entity this) :
 cached getUniqueDerivedFields(Entity this) :
     getDerivedFields().select(e|e.unique);
 // return all fields with leading = true
-cached getLeadingField(Entity this) :
-    getDerivedFields().selectFirst(e|e.leading == true);
+cached DerivedField getLeadingField(Entity this) :
+    (
+        (!getDerivedFields().isEmpty)
+        ? getDerivedFields().selectFirst(e|e.leading == true)
+        : (
+            (isInheriting())
+            ? parentType().getLeadingField()
+            : null
+        )
+    );
 
 cached getPrimaryKeyFields(Entity this) :
     getDerivedFields(this).select(e|e.primaryKey == true);
@@ -409,7 +417,7 @@ cached getTargetFields(JoinRelationship this) :
     targetField.split(', ');
 
 cached boolean containsDefaultIdField(List[String] this, Entity entity) :
-    isDefaultIdFieldName(entity, this.get(0)) || containsDefaultIdField(this.withoutFirst(), entity);
+    isDefaultIdFieldName(entity, this.get(0)) || (this.size > 1 && containsDefaultIdField(this.withoutFirst(), entity));
 
 cached boolean isManySide(JoinRelationship this, boolean useTarget) :
     ((metaType == ManyToManyRelationship
