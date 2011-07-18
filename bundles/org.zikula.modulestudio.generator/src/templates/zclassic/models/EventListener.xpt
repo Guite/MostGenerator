@@ -1,8 +1,7 @@
 «IMPORT modulestudio»
-«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «REM»Entry point for entity lifecycle callback methods«ENDREM»
 «DEFINE Root FOR Entity-»

@@ -1,7 +1,7 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «REM»
 listType:
@@ -335,7 +335,7 @@ listType:
 «IF tree != EntityTreeType::NONE-»
     {*
 «ENDIF-»
-            <a href="{modurl modname='«appName»' type='«controller.name()»' «modUrlEdit(objName, true, astemplate)»}" title="{gt text='Reuse for new item'}">
+            <a href="{modurl modname='«appName»' type='«controller.name()»' «modUrlEdit(objName, true, 'astemplate')»}" title="{gt text='Reuse for new item'}">
                 {icon type='saveas' size='extrasmall' __alt='Reuse'}
             </a>
 «IF tree != EntityTreeType::NONE-»

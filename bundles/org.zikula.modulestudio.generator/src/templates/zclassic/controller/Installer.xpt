@@ -1,20 +1,13 @@
 «IMPORT modulestudio»
-«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
+«IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «REM»Entry point for application installer«ENDREM»
 «DEFINE Root FOR Application»
 «FILE getAppSourceLibPath(appName()).msconcat("Base/Installer.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
-«IF hasOptimisticLock() || hasPessimisticReadLock() || hasPessimisticWriteLock()-»
-use Doctrine\DBAL\LockMode;
-«IF hasOptimisticLock()-»
-use Doctrine\ORM\OptimisticLockException;
-«ENDIF-»
-
-«ENDIF-»
 /**
  * Installer base class
  */
@@ -134,12 +127,12 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 
 «DEFINE ModVarValSession2Mod FOR Variable»'«value»'«ENDDEFINE»
 «DEFINE ModVarValSession2Mod FOR BoolVar»«IF value == 'true'»true«ELSE»false«ENDIF»«ENDDEFINE»
-«DEFINE ModVarValSession2Mod FOR ListVar»serialize(array(«EXPAND ModVarValSession2Mod FOREACH items.select(item|item.isDefault == true) SEPARATOR ', '»))«ENDDEFINE»
-«DEFINE ModVarValSession2Mod FOR ListVarItem»«IF isDefault == true»'«name.formatForCode()»'«ENDIF»«ENDDEFINE»
+«DEFINE ModVarValSession2Mod FOR ListVar»serialize(array(«EXPAND ModVarValSession2Mod FOREACH items.select(item|item.^default == true) SEPARATOR ', '»))«ENDDEFINE»
+«DEFINE ModVarValSession2Mod FOR ListVarItem»«IF ^default == true»'«name.formatForCode()»'«ENDIF»«ENDDEFINE»
 
 «DEFINE ModVarValDirect2Mod FOR Variable»'«value»'«ENDDEFINE»
 «DEFINE ModVarValDirect2Mod FOR BoolVar»«IF value == 'true'»true«ELSE»false«ENDIF»«ENDDEFINE»
-«DEFINE ModVarValDirect2Mod FOR ListVar»serialize(array(«EXPAND ModVarValDirect2Mod FOREACH items.select(item|item.isDefault == true) SEPARATOR ', '»))«ENDDEFINE»
+«DEFINE ModVarValDirect2Mod FOR ListVar»serialize(array(«EXPAND ModVarValDirect2Mod FOREACH items.select(item|item.^default == true) SEPARATOR ', '»))«ENDDEFINE»
 «DEFINE ModVarValDirect2Mod FOR ListVarItem»'«name.formatForCode()»'«ENDDEFINE»
 
 
@@ -278,18 +271,14 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDDEFINE»
 
 «DEFINE RemoveForeignKey FOR JoinRelationship-»
-«IF foreignKeyName != null && foreignKeyName != ""-»
-            $foreignKeyName = '«foreignKeyName.formatForCode()»';
-«ELSE-»
-            $foreignKeyName = $dbPrefix . '_«target.fullEntityName()»_«getRelationLocalField(true)»_' . $dbPrefix . '_«source.fullEntityName()»_«getRelationLocalField(false)»';
-«ENDIF-»
+            $foreignKeyName = $dbPrefix . '_«target.fullEntityName()»_«getRelationAliasName(true).formatForDB()»_' . $dbPrefix . '_«source.fullEntityName()»_«getRelationAliasName(false).formatForDB()»';
             DoctrineUtil::dropForeignKey('«target.fullEntityName()»', array('name' => $foreignKeyName));
-            DoctrineUtil::dropIndex('«target.fullEntityName()»', '«IF isDefaultIdFieldName(targetFields().get(0))»«source.relationFieldName(sourceFields().get(0))»«ELSE»«target.relationFieldName(targetFields().get(0))»«ENDIF»');
+            DoctrineUtil::dropIndex('«target.fullEntityName()»', '«IF isDefaultIdFieldName(target, getTargetFields().get(0))»«source.relationFieldName(getSourceFields().get(0))»«ELSE»«target.relationFieldName(getTargetFields().get(0))»«ENDIF»');
 «ENDDEFINE»
 «DEFINE RemoveForeignKey FOR ManyToManyRelationship-»
 «ENDDEFINE»
 «DEFINE RemoveTable FOR Entity-»
-«IF sluggable-»
+«IF hasSluggableFields()-»
             DoctrineUtil::dropIndex('«fullEntityName()»', $dbPrefix . '_«fullEntityName()»_sluggable');
 «ENDIF-»
             DoctrineUtil::dropTable('«fullEntityName()»');
@@ -322,9 +311,6 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     {
         // ensure that tables are cleared
         $this->entityManager->transactional(function($entityManager) {
-«IF hasPessimisticWriteLock()-»
-            $entityManager->lock($«name.formatForCode()», LockMode::«lockType.asConstant()»);
-«ENDIF-»
 «FOREACH models.entities AS entity-»
             $this->entityManager->getRepository('«entity.implClassModelEntity()»')->truncateTable();
 «ENDFOREACH-»
@@ -516,7 +502,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDDEFINE»
 
 «DEFINE ModVarValForm2SessionDefault FOR Variable»'«value.formatForCode()»'«ENDDEFINE»
-«DEFINE ModVarValForm2SessionDefault FOR ListVar»serialize(array(«EXPAND ModVarValForm2SessionDefault FOREACH items.select(item|item.isDefault == true) SEPARATOR ', '»))«ENDDEFINE»
+«DEFINE ModVarValForm2SessionDefault FOR ListVar»serialize(array(«EXPAND ModVarValForm2SessionDefault FOREACH items.select(item|item.^default == true) SEPARATOR ', '»))«ENDDEFINE»
 «DEFINE ModVarValForm2SessionDefault FOR ListVarItem»'«name.formatForCode()»'«ENDDEFINE»
 
 «DEFINE FuncInteractiveInitStep3 FOR Application»
@@ -606,7 +592,6 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «DEFINE ExampleRowValue(Integer number) FOR UploadField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Integer number) FOR UserField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Integer number) FOR ArrayField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR EnumField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Integer number) FOR ObjectField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Integer number) FOR DatetimeField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Integer number) FOR DateField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»

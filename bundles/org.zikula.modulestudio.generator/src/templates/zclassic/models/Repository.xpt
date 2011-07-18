@@ -1,8 +1,8 @@
 «IMPORT modulestudio»
-«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
+«IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «REM»Entry point for Doctrine table classes«ENDREM»
 «DEFINE Root FOR Application-»
@@ -97,7 +97,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
         return $query->fetchOne(array(), $fetchType);
     }
 
-«IF sluggable && sluggableUnique-»
+«IF hasSluggableFields() && slugUnique-»
 
     /**
      * Select object by slug field
@@ -116,7 +116,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
         }
 
         $query = $this->_intBaseQuery('', '', $useJoins)
-                  ->where('tbl.«((sluggableFieldAlias != null && sluggableFieldAlias != "") ? sluggableFieldAlias : sluggableFieldName).formatForCode()» = ?', $slugTitle);
+                  ->where('tbl.slug = ?', $slugTitle);
 
         $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_RECORD);
         return $query->fetchOne(array(), $fetchType);
@@ -193,7 +193,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 
         $query = $this->getEntityManager()->createQuery()
             ->select($selection)
-            ->from('«implClassModelRecord()» tbl');
+            ->from('«implClassModelEntity()» tbl');
 
         if ($useJoins === true) {
             $this->addJoinsToFrom($query);
@@ -243,7 +243,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
         // create base selection query
         $query = $this->getEntityManager()->createQuery()
             ->select($selection)
-            ->from('«implClassModelRecord()» tbl');
+            ->from('«implClassModelEntity()» tbl');
 
         // add join information
         if ($useJoins === true) {
@@ -294,7 +294,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 
 «DEFINE singleSortingField FOR EntityField»«REM»DUMMY«ENDREM»«ENDDEFINE»
 «DEFINE singleSortingField FOR DerivedField»
-«LET entity.incoming.select(e|formatForDB(e.sourceFields().get(0)) == name.formatForDB()) AS joins-»
+«LET entity.incoming.typeSelect(JoinRelationship).select(e|formatForDB(e.getSourceFields().get(0)) == name.formatForDB()) AS joins-»
 «IF !joins.isEmpty-»
                      '«joins.get(0).source.name.formatForCode()»'«""-»
 «ELSE-»
@@ -340,7 +340,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
                 // abort if no root node has been created yet
                 return false;
             }
-            $result = $treeObject->fetchBranch($root->«getPrimaryKeys().get(0).name.formatForCode()», array(), $fetchType);
+            $result = $treeObject->fetchBranch($root->«getPrimaryKeyFields().get(0).name.formatForCode()», array(), $fetchType);
         }
         else {
             // otherwise return the whole tree
@@ -423,13 +423,13 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 «IF target == 'select'-»
 , «relationAliasName».*«""-»
 «ELSEIF target == 'from'-»
-        $query->«joinCommand(incoming)»('tbl.«relationAliasName» «relationAliasName»');
+        $query->leftJoin('tbl.«relationAliasName» «relationAliasName»');
 «ENDIF-»
 «ENDLET-»
 «ENDDEFINE»
 
 «REM»concrete implementation stub«ENDREM»
-«DEFINE RepositoryTableImpl(Application app) FOR Entity-»
+«DEFINE ModelRepositoryImpl(Application app) FOR Entity-»
 
 /**
  * Repository class used to implement own convenience methods for performing certain DQL queries.
@@ -465,9 +465,9 @@ class «baseClassModelRefRepository()» extends EntityRepository
     {
         $query = $this->getEntityManager()
             ->createQuery('DELETE «implClassModelRefEntity()»');
-«IF hasPessimisticWriteLock()-»
+«REM»«IF hasPessimisticWriteLock()-»
         $query->setLockMode(LockMode::«lockType.asConstant()»);
-«ENDIF-»
+«ENDIF-»«ENDREM»
         $query->execute();
     }
 }

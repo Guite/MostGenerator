@@ -1,6 +1,6 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE ConfigImpl FOR Application»
 «info("Generating config template") -> ""-»
@@ -8,7 +8,7 @@
 {* purpose of this template: module configuration *}
 
 {include file='«configController().formatForDB()»/header.tpl'}
-<div class="«appName.toLowerCase()»-config">
+<div class="«appName().toLowerCase()»-config">
 {gt text='Settings' assign='templateTitle'}
 {pagesetvar name='title' value=$templateTitle}
 «IF configController().formatForDB() == 'admin'-»
@@ -22,7 +22,7 @@
 «ENDIF-»
 
     {form cssClass='z-form'}
-«REM»    {formsetinitialfocus inputId=googlemapApiKey}«ENDREM»
+«REM»    {formsetinitialfocus inputId='myelemid'}«ENDREM»
 
         {* add validation summary and a <div> element for styling the form *}
         {«appName().formatForDB()»FormFrame}

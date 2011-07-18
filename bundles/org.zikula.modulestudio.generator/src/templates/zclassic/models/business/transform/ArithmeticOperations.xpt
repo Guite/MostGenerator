@@ -1,6 +1,6 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Function(String src, String dest) FOR ArithmeticOperation-»
 «error("Error: undefined arithmetic operation type " + metaType.toString() + " (code 925626)") -> ""-»

@@ -1,11 +1,11 @@
 «IMPORT modulestudio»
-«REM«IMPORT templates::zclassic::models»«ENDREM»
-«REM«IMPORT templates::zclassic::controller»«ENDREM»
-«REM«IMPORT templates::zclassic::view»«ENDREM»
-«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
+«IMPORT templates::zclassic::models»
+«IMPORT templates::zclassic::controller»
+«IMPORT templates::zclassic::view»
+«IMPORT templates::zclassic::smallstuff»
 «IMPORT templates::zclassic::tests»
 «EXTENSION extensions::Utils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «REM»Entry point for headless calls (e.g. for manual test runs), required also for compiler backend mode«ENDREM»
 «DEFINE Root FOR Application»

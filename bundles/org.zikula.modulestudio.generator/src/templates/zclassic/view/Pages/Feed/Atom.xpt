@@ -1,7 +1,7 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Root(String appName, Controller controller) FOR Entity»
 «info("Generating " + controller.name() + " atom view templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
@@ -30,7 +30,7 @@
 {foreach item='«objName»' from=$items}
     <entry>
         <title type="html">{$«objName».«getLeadingField().name.formatForCode()»|notifyfilters:'«appName.formatForDB()».filterhook.«nameMultiple.formatForDB()»'}</title>
-        <link rel="alternate" type="text/html" href="{modurl modname='«appName»' type='«controller.name()»' «IF controller.hasActions('display')-»«modUrlDisplay(objName, true)«ELSE-»func='«IF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»'«ENDIF-» fqurl='1'}" />
+        <link rel="alternate" type="text/html" href="{modurl modname='«appName»' type='«controller.name()»' «IF controller.hasActions('display')-»«modUrlDisplay(objName, true)»«ELSE-»func='«IF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»'«ENDIF-» fqurl='1'}" />
 
 {capture assign='uniqueID'}tag:{$baseurl|replace:'http://':''|replace:'/':''},{$«objName».cr_date|default:$smarty.now|dateformat:'%Y-%m-%d'}:{modurl modname='«appName»' type='«controller.name()»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE-»func='«IF controller.hasActions('view')-»view«ELSE-»main«ENDIF-»' ot='«name.formatForCode()»'«ENDIF-»}{/capture}
         <id>{$uniqueID}</id>

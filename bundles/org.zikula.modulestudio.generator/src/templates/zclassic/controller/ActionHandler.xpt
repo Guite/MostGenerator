@@ -1,8 +1,8 @@
 «IMPORT modulestudio»
-«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
+«IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «REM»Entry point for Form handler classes«ENDREM»
 «DEFINE Root FOR Application-»
@@ -207,7 +207,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         $this->objectType = '«name.formatForCode()»';
 
-        $entityClass = '«appName()»_Entity_' . ucfirst($this->objectType);
+        $entityClass = '«app.appName()»_Entity_' . ucfirst($this->objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
         $objectTemp = new $entityClass();
@@ -235,7 +235,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 return $this->view->registerError(LogUtil::registerPermissionError());
             }
 
-«EXPAND ControllerHelper::retrieveEntityFromModel('idFields', 'this->idValues' + ((hasCompositeKeys() ? '' : '[0]'), true)-»
+«EXPAND ControllerHelper::retrieveEntityFromModel('idFields', 'this->idValues' + ((hasCompositeKeys()) ? '' : '[0]'), true)-»
 «IF hasPageLockSupport()-»
 
             // try to guarantee that only one person at a time can be editing this «name.formatForDisplay()»
@@ -322,7 +322,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
      */
     protected function retrieveRelatedObjects($objectType, $relationInputFieldName, $many = false, $source = 'GET')
     {
-        $entityClass = '«appName()»_Entity_' . ucfirst($this->objectType);
+        $entityClass = '«app.appName()»_Entity_' . ucfirst($this->objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
         $objectTemp = new $entityClass(); 
@@ -428,14 +428,14 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDIF-»
 
 «IF controller.hasActions('display')-»
-«IF nestedSet-»
+«IF tree != EntityTreeType::NONE-»
     /*
 «ENDIF-»
         if ($args['commandName'] != 'delete') {
             // redirect to the detail page of treated «name.formatForCode()»
             $url = ModUtil::url('«app.appName()»', '«controller.name()»', «modUrlDisplay('this->idValues', false)»);
         }
-«IF nestedSet-»
+«IF tree != EntityTreeType::NONE-»
     */
 «ENDIF-»
 «ENDIF-»
@@ -553,7 +553,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «EXPAND ReassignRelatedObjects(true) FOREACH incoming.typeSelect(JoinRelationship)-»
 «EXPAND ReassignRelatedObjects(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 
-        $entityClass = '«appName()»_Entity_' . ucfirst($this->objectType);
+        $entityClass = '«app.appName()»_Entity_' . ucfirst($this->objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
         $«name.formatForCode()» = new $entityClass();
@@ -718,7 +718,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             return;
         }
 
-        $entityClass = '«appName()»_Entity_' . ucfirst('«objectType»');
+        $entityClass = '«container.application.appName()»_Entity_' . ucfirst('«objectType»');
         $objectTemp = new $entityClass();
         $idFields = $entityClass->get_idFields();
 
@@ -798,7 +798,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             }
 «ENDLET-»
 «ENDFOREACH-»
-«IF sluggable && slugUpdatable-»
+«IF hasSluggableFields() && slugUpdatable-»
 «IF slugUnique-»
             // check if another «name.formatForDisplay()» with the same slug does already exist
             if ($object->get_validator()->checkIfSlugExists($formData['slug'], $this->idValues«IF !hasCompositeKeys()-»[0]«ENDIF-»)) {
@@ -839,7 +839,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
 «DEFINE FetchRelationValue(Boolean incoming) FOR JoinRelationship-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
-«LET relationFieldName((!incoming) ? target : source), (!incoming) ? targetFields().get(0) : sourceFields().get(0))).formatForDB() AS fieldName-»
+«LET relationFieldName(((!incoming) ? target : source), ((!incoming) ? getTargetFields().get(0) : getSourceFields().get(0))).formatForDB() AS fieldName-»
         $formData['«fieldName»'] = (int) $this->request->getPost()->filter('«uniqueNameForJs»ItemList', 0, FILTER_VALIDATE_INT);
         if (!$formData['«fieldName»']) {
 «REM»            // Oops, we have an invalid relation id. As this field is mandatory, we raise an error.«ENDREM»

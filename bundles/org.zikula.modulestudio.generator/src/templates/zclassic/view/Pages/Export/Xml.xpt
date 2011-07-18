@@ -1,7 +1,7 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Root(String appName, Controller controller) FOR Entity»
 «info("Generating " + controller.name() + " xml view templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
@@ -31,7 +31,7 @@
 
 «FILE templateFileWithExtension(controller, name, 'include', 'xml')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» xml inclusion template in «controller.name()» area *}
-<«name.formatForDB()»«FOREACH getPrimaryKeyFields()-» «pkField.name.formatForCode()»="{$item.«pkField.name.formatForCode()»}"«ENDFOREACH-»«IF standardFields» createdon="{$item.cr_date}" updatedon="{$item.lu_date}"«ENDIF»>
+<«name.formatForDB()»«FOREACH getPrimaryKeyFields() AS pkField-» «pkField.name.formatForCode()»="{$item.«pkField.name.formatForCode()»}"«ENDFOREACH-»«IF standardFields» createdon="{$item.cr_date}" updatedon="{$item.lu_date}"«ENDIF»>
 «EXPAND DisplayEntry(controller, false) FOREACH getDerivedFields().select(e|e.primaryKey)-»
 «EXPAND DisplayEntry(controller, false) FOREACH getDerivedFields().reject(e|e.primaryKey)-»
 «IF geographical-»

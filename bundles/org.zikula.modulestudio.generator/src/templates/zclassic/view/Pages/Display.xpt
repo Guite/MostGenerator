@@ -1,7 +1,7 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Impl(String appName, Controller controller) FOR Entity»
 «info("Generating " + controller.name() + " display templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
@@ -91,7 +91,7 @@
         <a href="{modurl modname='«container.application.appName()»' type='«controller.name()»' «source.modUrlDisplay(relObjName, true)»}">
             {$«relObjName».«source.getLeadingField().name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}
         </a>
-        <a id="«source.name.formatForCode()»Item«FOREACH source.getPrimaryKeyFields() AS pkField-»{$«relObjName».«pkField.name.formatForCode()»}«ENDFOREACH-»Display" href="{modurl modname='«container.application.appName()»' type='«controller.name()»' «source.modUrlDisplay(relObjName, true) theme='Printer'«IF controller.metaType == UserController» forcelongurl=true«REM»Temporary hack due to core bug with theme parameter in short urls«ENDREM»«ENDIF-»}" title="{gt text='Open quick view window'}" style="display: none">
+        <a id="«source.name.formatForCode()»Item«FOREACH source.getPrimaryKeyFields() AS pkField-»{$«relObjName».«pkField.name.formatForCode()»}«ENDFOREACH-»Display" href="{modurl modname='«container.application.appName()»' type='«controller.name()»' «source.modUrlDisplay(relObjName, true)» theme='Printer'«IF controller.metaType == UserController» forcelongurl=true«REM»Temporary hack due to core bug with theme parameter in short urls«ENDREM»«ENDIF-»}" title="{gt text='Open quick view window'}" style="display: none">
             {icon type='view' size='extrasmall' __alt='Quick view'}
         </a>
         <script type="text/javascript" charset="utf-8">

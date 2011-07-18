@@ -1,7 +1,6 @@
 «IMPORT modulestudio»
-«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
+«IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «DEFINE Root FOR Application»
 «LET appName() AS appName-»
@@ -14,7 +13,7 @@
 «ENDIF-»
 «IF controller.hasActions('view')-»
     «EXPAND Pages::View::Impl(appName, controller, 3) FOREACH models.entities-»
-    «EXPAND Pages::ViewHierarchy::Impl(appName, controller) FOREACH getNestedSetEntities()-»
+    «EXPAND Pages::ViewHierarchy::Impl(appName, controller) FOREACH getTreeEntities()-»
     «EXPAND Pages::Export::Csv::Root(appName, controller) FOREACH models.entities-»
     «EXPAND Pages::Feed::Rss::Root(appName, controller) FOREACH models.entities-»
     «EXPAND Pages::Feed::Atom::Root(appName, controller) FOREACH models.entities-»
@@ -67,10 +66,10 @@
     <h2>{gt text='«appName.formatForDisplayCapital()»' comment='This is the title of the header template'}</h2>
     {modulelinks modname='«appName»' type='«controller.name()»'}
 </div>
+«ENDIF-»
+{/if}
 «IF controller.metaType == AdminController-»
-{/if}
 «ELSE-»
-{/if}
 {insert name='getstatusmsg'}
 «ENDIF-»
 «ENDFILE»

@@ -498,11 +498,11 @@ cached boolean isIndexed(OneToManyRelationship this) :
 cached boolean isIndexed(ManyToManyRelationship this) :
     indexBy != null && indexBy != '';
 
-cached boolean getIndexByField(Relationship this) :
-    null;
-cached boolean getIndexByField(OneToManyRelationship this) :
+cached String getIndexByField(Relationship this) :
+    '';
+cached String getIndexByField(OneToManyRelationship this) :
     indexBy;
-cached boolean hasIndexField(ManyToManyRelationship this) :
+cached String getIndexField(ManyToManyRelationship this) :
     indexBy;
 
 /*

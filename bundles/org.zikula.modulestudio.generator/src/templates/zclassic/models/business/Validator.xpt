@@ -1,24 +1,24 @@
 «IMPORT modulestudio»
-«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
+«IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «REM»creates a base validator class encapsulating common checks«ENDREM»
 «DEFINE BaseValidator FOR Application-»
 «info("Generating base validator class") -> ""-»
-    «FILE getAppSourcePath(app.appName()).msconcat(baseClassDefault(app, '', 'Validator').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BaseValidatorBaseImpl(app)»«ENDFILE»
-    «FILE getAppSourcePath(app.appName()).msconcat(implClassDefault(app, '', 'Validator').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND BaseValidatorImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(appName()).msconcat(baseClassDefault(this, '', 'Validator').asFile())»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND BaseValidatorBaseImpl-»«ENDFILE»
+    «FILE getAppSourcePath(appName()).msconcat(implClassDefault(this, '', 'Validator').asFile())»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND BaseValidatorImpl-»«ENDFILE»
 «ENDDEFINE»
 
 «REM»base implementation«ENDREM»
-«DEFINE BaseValidatorBaseImpl(Application app) FOR Entity-»
+«DEFINE BaseValidatorBaseImpl FOR Application-»
 /**
  * Validator class for encapsulating common entity validation methods.
  *
  * This is the base validation class with general checks.
  */
-abstract class «baseClassDefault('', 'Validator')» extends AbstractBase
+abstract class «baseClassDefault(this, '', 'Validator')» extends AbstractBase
 {
     /**
      * @var Zikula_EntityAccess The entity instance which is treated by this validator.
@@ -389,14 +389,14 @@ abstract class «baseClassDefault('', 'Validator')» extends AbstractBase
 «ENDDEFINE»
 
 «REM»concrete implementation stub«ENDREM»
-«DEFINE BaseValidatorImpl(Application app) FOR Entity-»
+«DEFINE BaseValidatorImpl FOR Application-»
 
 /**
  * Validator class for encapsulating common entity validation methods.
  *
  * This is the concrete validation class with general checks.
  */
-class «implClassDefault('', 'Validator')» extends «baseClassModel('', 'Validator')»
+class «implClassDefault(this, '', 'Validator')» extends «baseClassDefault(this, '', 'Validator')»
 {
     // here you can add custom validation methods or override existing checks
 }
@@ -420,7 +420,7 @@ class «implClassDefault('', 'Validator')» extends «baseClassModel('', 'Valida
  *
  * This is the base validation class for «name.formatForDisplay()» entities.
  */
-class «baseClassModel('validator', '')» «IF isInheriting()»«parentType().implClassModel('validator', '')»«ELSE»«implClassDefault('', 'Validator')»«ENDIF»
+class «baseClassModel('validator', '')» «IF isInheriting()»«parentType().implClassModel('validator', '')»«ELSE»«implClassDefault(app, '', 'Validator')»«ENDIF»
 {
 «EXPAND ValidatorBaseImplBody(app)-»
 }
@@ -455,7 +455,7 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
     }
 
 «EXPAND checkForUniqueValues(app) FOREACH getUniqueDerivedFields()-»
-«IF sluggable && slugUpdatable && slugUnique-»
+«IF hasSluggableFields() && slugUpdatable && slugUnique-»
 «EXPAND checkForUniqueSlugValues(app)-»
 «ENDIF-»
 
@@ -540,25 +540,19 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
             return $errorInfo;
         }
 «ENDIF-»
-«IF fixed-»
-        if (!$this->isStringWithFixedLength('«name.formatForCode()»', «length»)) {
-            $errorInfo['message'] = __('Error! Length of field value be %2$s (%1$s).', array('«name.formatForCode()»', «length»));
-            return $errorInfo;
-        }
-«ENDIF-»
 «IF nospace-»
         if (!$this->isStringNotContaining('«name.formatForCode()»', ' ')) {
             $errorInfo['message'] = __('Error! Field value must not contain space chars (%s).', array('«name.formatForCode()»'));
             return $errorInfo;
         }
 «ENDIF-»
-«IF minLength-»
+«IF minLength > 0-»
         if (!$this->isStringNotShorterThan('«name.formatForCode()»', «minLength»)) {
             $errorInfo['message'] = __('Error! Length of field value must not be smaller than %2$s (%1$s).', array('«name.formatForCode()»', «minLength»));
             return $errorInfo;
         }
 «ENDIF-»
-«IF regexp-»
+«IF regexp != null && regexp != ''-»
         if (!$this->isValidRegExp('«name.formatForCode()»', «regexp»)) {
             $errorInfo['message'] = __('Error! Field value must conform to regular expression [%2$s] (%1$s).', array('«name.formatForCode()»', '«regexp»'));
             return $errorInfo;
@@ -572,6 +566,12 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
             $errorInfo['message'] = __('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForCode()»', «length»));
             return $errorInfo;
         }
+«IF fixed-»
+        if (!$this->isStringWithFixedLength('«name.formatForCode()»', «length»)) {
+            $errorInfo['message'] = __('Error! Length of field value be %2$s (%1$s).', array('«name.formatForCode()»', «length»));
+            return $errorInfo;
+        }
+«ENDIF-»
 «IF language-»
         if («IF !mandatory-»$this->entity['«name.formatForCode()»'] != '' && «ENDIF-»!$this->isValidLanguage('«name.formatForCode()»', false)) {
             $errorInfo['message'] = __('Error! Field value must be a valid language code (%s).', array('«name.formatForCode()»'));
@@ -627,13 +627,13 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
 «ENDDEFINE»
 «DEFINE ValidationCalls FOR ObjectField-»
 «ENDDEFINE»
-«DEFINE ValidationCallsDateTime FOR AbstractDatetimeField-»
+«DEFINE ValidationCallsDateTime FOR AbstractDateField-»
         if (!$this->isValidDateTime('«name.formatForCode()»')) {
             $errorInfo['message'] = __('Error! Field value must be a valid datetime (%s).', array('«name.formatForCode()»'));
             return $errorInfo;
         }
 «ENDDEFINE»
-«DEFINE ValidationCalls FOR AbstractDatetimeField-»
+«DEFINE ValidationCalls FOR AbstractDateField-»
 «EXPAND ValidationCallsDateTime-»
 «ENDDEFINE»
 «DEFINE ValidationCalls FOR DatetimeField-»
@@ -711,7 +711,7 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
         }
 
         $objectType = '«entity.name.formatForCode()»';
-        $entityClass = '«appName()»_Entity_' . ucfirst($objectType);
+        $entityClass = '«app.appName()»_Entity_' . ucfirst($objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
         // TODO: move to «IF entity.isInheriting()»«entity.parentType().baseClassModel('repository', '')»«ELSE»«entity.baseClassModel('repository', '')»«ENDIF» (#37)
@@ -728,9 +728,9 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
     /**
      * Check for unique slug values.
      *
-     * This method determines if there already exist «nameMultiple.formatForDisplay()» with the same «sluggableFieldRealName.formatForDisplay()».
+     * This method determines if there already exist «nameMultiple.formatForDisplay()» with the same slug.
      *
-     * @param string  $value The «sluggableFieldRealName.formatForDisplay()» to check.
+     * @param string  $value The slug to check.
      * @param int $excludeid      Id of «nameMultiple.formatForDisplay()» to exclude (optional).
      *
      * @return boolean true if the given slug does already exist
@@ -742,7 +742,7 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
         }
 
         $objectType = '«name.formatForCode()»';
-        $entityClass = '«appName()»_Entity_' . ucfirst($objectType);
+        $entityClass = '«app.appName()»_Entity_' . ucfirst($objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
         // TODO: move to «IF isInheriting()»«parentType().baseClassModel('repository', '')»«ELSE»«baseClassModel('repository', '')»«ENDIF» (#37)

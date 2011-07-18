@@ -1,8 +1,7 @@
 «IMPORT modulestudio»
-«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
+«IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «DEFINE Imports FOR Entity-»
 use Gedmo\Mapping\Annotation as Gedmo;
@@ -11,10 +10,10 @@ use Gedmo\Mapping\Annotation as Gedmo;
 «REM»Class annotations«ENDREM»
 «DEFINE ClassExtensions FOR Entity»
 «IF loggable-»
-     * @Gedmo\Loggable(logEntryClass="«implClassModel('', 'logEntry')»")«ENDREM»
+     * @Gedmo\Loggable(logEntryClass="«implClassModel('', 'logEntry')»")
 «ENDIF-»
 «IF hasTranslatableFields()-»
-     * @Gedmo\TranslationEntity(class="«implClassModel('', 'translation')»")«ENDREM»
+     * @Gedmo\TranslationEntity(class="«implClassModel('', 'translation')»")
 «ENDIF-»
 «IF tree != EntityTreeType::NONE-»
      * @Gedmo\Tree(type="«tree.asConstant()»")
@@ -58,7 +57,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 
 «DEFINE TimestampableDetails FOR AbstractDateField»
 «IF timestampable == EntityTimestampableType::CHANGE-»
-field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableChangeTriggerValue-», value="«timestampableChangeTriggerValue.formatForCode()»"«ENDIF-»
+field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableChangeTriggerValue != null && timestampableChangeTriggerValue != ''-», value="«timestampableChangeTriggerValue.formatForCode()»"«ENDIF-»
 «ENDIF-»
 «ENDDEFINE»
 
@@ -84,7 +83,7 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
 «IF !getSluggableFields().select(e|e.translatable).isEmpty-»
      * @Gedmo\Translatable
 «ENDIF-»
-     * @Gedmo\Slug(style="«slugStyle.asConstant()»"«ENDIF-»separator="«slugSeparator»"«IF !slugUnique-», unique=false«ENDIF-»«IF !slugUpdatable-», updatable=false«ENDIF-»)
+     * @Gedmo\Slug(style="«slugStyle.asConstant()»", separator="«slugSeparator»"«IF !slugUnique-», unique=false«ENDIF-»«IF !slugUpdatable-», updatable=false«ENDIF-»)
      * @ORM\Column(type="string", length=«slugLength»«IF !slugUnique-», unique=false«ENDIF-»)
      * @var string $slug.
      */

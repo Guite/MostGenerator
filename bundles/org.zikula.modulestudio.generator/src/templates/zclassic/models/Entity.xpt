@@ -1,8 +1,8 @@
 «IMPORT modulestudio»
-«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
+«IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «REM»Entry point for Doctrine entity classes«ENDREM»
 «DEFINE Root FOR Application-»
@@ -12,8 +12,9 @@
     «EXPAND business::Validator::ValidatorWrapper(this) FOREACH models.entities-»
 «IF hasTrees()-»
 «FOREACH getTreeEntities() AS treeEntity-»
-«EXPAND entity::Extensions::ClosureClass FOR treeEntity-»
+«EXPAND entity::Extensions::TreeClosureClass(this) FOR treeEntity-»
 «ENDFOREACH-»
+«ENDIF-»
 «ENDDEFINE»
 
 «REM»creates a entity class file for every Entity instance«ENDREM»
@@ -91,9 +92,7 @@ use Doctrine\Common\NotifyPropertyChanged,
 «DEFINE IndexField FOR EntityIndexItem-»"«name.formatForDB()»"«ENDDEFINE»
 
 «DEFINE DiscriminatorInfo FOR InheritanceRelationship-»
-«LET getRelationAliasName(false) AS sourceAliasName-»
-"«sourceAliasName»" = "«sourceAliasName.toFirstUpper()»"
-«ENDLET-»
+"«source.name.formatForCode()»" = "«source.name.formatForCodeCapital()»"
 «ENDDEFINE»
 
 «REM»concrete implementation stub«ENDREM»
@@ -195,15 +194,15 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 
 «DEFINE ConstructorArguments FOR Entity-»
 «IF isIndexByTarget()-»
-«LET incoming.select(e|e.isIndexed()) AS indexRelation-»
+«LET incoming.typeSelect(JoinRelationship).select(e|e.isIndexed()).get(0) AS indexRelation-»
 «LET getRelationAliasName(indexRelation, false) AS sourceAlias-»
-«LET source.getIndexByField() AS indexBy-»
-$«indexBy.formatForCode()», «indexRelation.source.implClassModelEntity()» $«sourceAlias.formatForCode», «EXPAND ConstructorArgumentsDefault-»
+«LET indexRelation.getIndexByField() AS indexBy-»
+$«indexBy.formatForCode()», «indexRelation.source.implClassModelEntity()» $«sourceAlias.formatForCode()», «EXPAND ConstructorArgumentsDefault-»
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»
 «ELSEIF isAggregated()-»
-«EXPAND ConstructorArgumentsAggregate FOREACH getAggregators() SEPARATOR ', '», «EXPAND ConstructorArgumentsDefault-»
+«EXPAND ConstructorArgumentsAggregate FOREACH getAggregators().getAggregatingRelationships() SEPARATOR ', '», «EXPAND ConstructorArgumentsDefault-»
 «ELSE-»
 «EXPAND ConstructorArgumentsDefault-»
 «ENDIF-»
@@ -213,19 +212,19 @@ $«indexBy.formatForCode()», «indexRelation.source.implClassModelEntity()» $�
 «LET source.getAggregateFields().get(0).getAggregateTargetField() AS targetField-»
 $«getRelationAliasName(false)», $«targetField.name.formatForCode()»
 «ENDLET-»
-«ENDDEFINE-»
+«ENDDEFINE»
 
 «DEFINE ConstructorImpl FOR Entity-»
 «IF hasCompositeKeys()-»
-«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR-»
+«FOREACH getPrimaryKeyFields() AS pkField-»
         $this->«pkField.name.formatForCode()» = $«pkField.name.formatForCode()»;
 «ENDFOREACH-»
 «ENDIF-»
 «IF isIndexByTarget()-»
-«LET incoming.select(e|e.isIndexed()) AS indexRelation-»
+«LET incoming.typeSelect(JoinRelationship).select(e|e.isIndexed()).get(0) AS indexRelation-»
 «LET getRelationAliasName(indexRelation, false) AS sourceAlias-»
 «LET getRelationAliasName(indexRelation, true) AS targetAlias-»
-«LET source.getIndexByField() AS indexBy-»
+«LET indexRelation.getIndexByField() AS indexBy-»
         $this->«indexBy.formatForCode()» = $«indexBy.formatForCode()»;
         $this->«sourceAlias.formatForCode()» = $«sourceAlias.formatForCode()»;
         $«sourceAlias.formatForCode()»->add«targetAlias.formatForCodeCapital()»($this);
@@ -234,7 +233,7 @@ $«getRelationAliasName(false)», $«targetField.name.formatForCode()»
 «ENDLET-»
 «ENDLET-»
 «ELSEIF isAggregated()-»
-«EXPAND ConstructorAssignmentAggregate FOREACH getAggregators()-»
+«EXPAND ConstructorAssignmentAggregate FOREACH getAggregators().getAggregatingRelationships()-»
 «ELSE-»
 «ENDIF-»
         $this->_objectType = '«fullEntityName()»';
@@ -249,7 +248,7 @@ $«getRelationAliasName(false)», $«targetField.name.formatForCode()»
         $this->«getRelationAliasName(false)» = $«getRelationAliasName(false)»;
         $this->«targetField.name.formatForCode()» = $«targetField.name.formatForCode()»;
 «ENDLET-»
-«ENDDEFINE-»
+«ENDDEFINE»
 
 «DEFINE PropertyChangedListener FOR Entity-»
 «IF hasNotifyPolicy()-»

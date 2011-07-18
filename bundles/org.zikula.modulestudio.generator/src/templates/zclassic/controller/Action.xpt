@@ -1,7 +1,7 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Root(Application app) FOR Action-»
 
@@ -151,7 +151,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
 
 «DEFINE ActionImplBody(String appName) FOR DisplayAction-»
-        $entityClass = '«appName()»_Entity_' . ucfirst($this->objectType);
+        $entityClass = '«appName»_Entity_' . ucfirst($this->objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
         $objectTemp = new $entityClass(); 

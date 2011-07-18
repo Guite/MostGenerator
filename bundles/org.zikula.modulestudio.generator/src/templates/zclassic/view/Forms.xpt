@@ -1,7 +1,7 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Root FOR Application-»
 «LET controllers.controllers.actions.typeSelect(EditAction) AS editActions-»
@@ -54,7 +54,7 @@
     {assign var='adminPageIcon' value='edit'}«REM»TODO«ENDREM»
 «ENDIF-»
 {/if}
-<div class="«appName.toLowerCase()»-«name.formatForDB()» «appName.toLowerCase()»-edit">
+<div class="«app.appName().toLowerCase()»-«name.formatForDB()» «app.appName().toLowerCase()»-edit">
 {pagesetvar name='title' value=$templateTitle}
 «IF controller.metaType == AdminController-»
 <div class="z-admin-content-pagetitle">
@@ -89,6 +89,7 @@
 «ELSE-»
 «EXPAND FieldWrapper FOREACH inputFields.reject(e|e.primaryKey)-»
 «ENDIF-»
+«ENDLET-»
 «IF hasSluggableFields() && slugUpdatable-»
         <div class="z-formrow">
             {formlabel for='slug' __text='Permalink'}
@@ -119,7 +120,7 @@
     {if $mode eq 'create'}
         {notifydisplayhooks eventname='«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».form_edit' id=null assign='hooks'}
     {else}
-        {notifydisplayhooks eventname='«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».form_edit' id="«FOREACH getPrimaryKeys() AS pkField SEPARATOR '_'-»`$«name.formatForDB()».«pkField.name.formatForCode()»`«ENDFOREACH-»" assign='hooks'}
+        {notifydisplayhooks eventname='«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».form_edit' id="«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR '_'-»`$«name.formatForDB()».«pkField.name.formatForCode()»`«ENDFOREACH-»" assign='hooks'}
     {/if}
     {if is_array($hooks) && isset($hooks[0])}
         <fieldset>
@@ -256,12 +257,12 @@
 
 «DEFINE FieldWrapper FOR DerivedField-»
 «REM»No input fields for foreign keys, relations are processed further down«ENDREM»«""-»
-«IF entity.incoming.typeSelect(JoinRelationship).select(e|e.sourceFields().get(0) == name.formatForDB()).isEmpty-»
+«IF entity.incoming.typeSelect(JoinRelationship).select(e|e.getSourceFields().get(0) == name.formatForDB()).isEmpty-»
         <div class="z-formrow">
             «EXPAND FormComponents::SimpleFields::FormRow-»
         </div>
 «ENDIF-»
-«ENDDEFINE-»
+«ENDDEFINE»
 
 «DEFINE InlineRedirectHandler(Application app) FOR Controller-»
 «FILE getAppSourcePath(app.appName()).msconcat("templates/").msconcat(name()).msconcat("/inlineRedirectHandler.tpl")-»

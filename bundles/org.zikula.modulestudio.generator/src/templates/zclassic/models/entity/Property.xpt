@@ -1,8 +1,8 @@
 «IMPORT modulestudio»
-«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
+«IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE PersistentProperty FOR DerivedField-»
 «EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), '')-»
@@ -31,7 +31,7 @@
     /**
 «IF primaryKey-»
      * @ORM\Id
-«IF !hasCompositeKeys() || entity.identifierStrategy == EntityIdentifierStrategy::ASSIGNED-»
+«IF !entity.hasCompositeKeys()-»«REM» || entity.identifierStrategy == EntityIdentifierStrategy::ASSIGNED-»«ENDREM»
      * @ORM\GeneratedValue«IF entity.identifierStrategy != EntityIdentifierStrategy::NONE-»(strategy="«entity.identifierStrategy.asConstant()»")«ENDIF-»
 «ENDIF-»
 «ENDIF-»
@@ -40,7 +40,7 @@
 «EXPAND PersistentPropertyAdditions-»
      * @var «type» $«name».
      */
-    «modifier» $«name»««IF init ne ''»«init»«ELSE-» = «EXPAND DefaultFieldData-»«ENDIF-»;
+    «modifier» $«name»«IF init != ''»«init»«ELSE-» = «EXPAND DefaultFieldData-»«ENDIF-»;
 «ENDDEFINE»
 
 «DEFINE PersistentPropertyImpl(String type) FOR DerivedField-»
@@ -50,7 +50,19 @@ type="«type»"
 «DEFINE PersistentPropertyImpl(String type) FOR DecimalField-»
 type="«type»", precision=«length», scale=«scale»
 «ENDDEFINE»
-«DEFINE PersistentPropertyImpl(String type) FOR AbstractStringField-»
+«DEFINE PersistentPropertyImpl(String type) FOR StringField-»
+«REM»type="«type»", «ENDREM»length=«length»
+«ENDDEFINE»
+«DEFINE PersistentPropertyImpl(String type) FOR TextField-»
+«REM»type="«type»", «ENDREM»length=«length»
+«ENDDEFINE»
+«DEFINE PersistentPropertyImpl(String type) FOR EmailField-»
+«REM»type="«type»", «ENDREM»length=«length»
+«ENDDEFINE»
+«DEFINE PersistentPropertyImpl(String type) FOR UrlField-»
+«REM»type="«type»", «ENDREM»length=«length»
+«ENDDEFINE»
+«DEFINE PersistentPropertyImpl(String type) FOR UploadField-»
 «REM»type="«type»", «ENDREM»length=«length»
 «ENDDEFINE»
 
@@ -85,7 +97,7 @@ type="«type»", precision=«length», scale=«scale»
 «ENDDEFINE»
 «DEFINE DefaultFieldData FOR IntegerField-»
 «LET getPointingRelations() AS pointingRelations-»
-«IF !pointingRelations.isEmpty-»(int) FormUtil::getPassedValue('«pointingRelations.get(0).sourceFields().get(0)»', 0, 'GET', FILTER_VALIDATE_INT)
+«IF !pointingRelations.isEmpty-»(int) FormUtil::getPassedValue('«pointingRelations.get(0).getSourceFields().get(0)»', 0, 'GET', FILTER_VALIDATE_INT)
 «ELSE-»
 «IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
 «ENDIF-»«ENDLET-»«ENDDEFINE»
@@ -103,7 +115,7 @@ type="«type»", precision=«length», scale=«scale»
 
 «DEFINE FieldAccessorDefault FOR DerivedField-»
 «IF isIndexByField()-»
-«EXPAND GetterMethod(name.formatForCode(), fieldTypeAsString(), false)-»
+«EXPAND FileHelper::GetterMethod(name.formatForCode(), fieldTypeAsString(), false)-»
 «ELSE-»
 «EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode(), fieldTypeAsString(), false, false, '')-»
 «ENDIF-»
@@ -115,7 +127,7 @@ type="«type»", precision=«length», scale=«scale»
 
 «DEFINE FieldAccessor FOR IntegerField-»
 «IF isIndexByField() || (aggregateFor != null && aggregateFor != '')-»
-«EXPAND GetterMethod(name.formatForCode(), fieldTypeAsString(), false)-»
+«EXPAND FileHelper::GetterMethod(name.formatForCode(), fieldTypeAsString(), false)-»
 «ELSE-»
 «EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode(), fieldTypeAsString(), false, false, '')-»
 «ENDIF-»

@@ -1,7 +1,6 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «REM»start point for the javascript file with display functionality«ENDREM»
 «DEFINE Root FOR Application-»

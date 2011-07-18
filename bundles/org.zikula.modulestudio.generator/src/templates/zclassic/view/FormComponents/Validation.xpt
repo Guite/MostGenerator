@@ -1,7 +1,6 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «DEFINE MandatoryValidationMessage FOR DerivedField-»
 «IF mandatory-»
@@ -44,7 +43,7 @@
 «DEFINE AdditionalValidationMessages FOR UrlField-»
             {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-url'}
 «ENDDEFINE»
-«DEFINE AdditionalValidationMessages FOR AbstractDatetimeField-»
+«DEFINE AdditionalValidationMessages FOR AbstractDateField-»
 «IF past-»
             {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-«fieldTypeAsString()»-past'}
 «ELSEIF future-»
@@ -59,8 +58,8 @@
 «DEFINE FieldValidationCssClassAdditions FOR DecimalField-» validate-number«ENDDEFINE»
 «DEFINE FieldValidationCssClassAdditions FOR FloatField-» validate-number«ENDDEFINE»
 «DEFINE FieldValidationCssClassAdditions FOR AbstractStringField-»«IF nospace» validate-nospace«ENDIF»«ENDDEFINE»
-«DEFINE FieldValidationCssClassAdditions FOR StringField-»«IF nospace» validate-nospace«ENDIF»«IF htmlcolor» validate-htmlcolour «entity.container.application.appName().formatForDB()»ColourPicker«ENDIF»«ENDDEFINE»
+«DEFINE FieldValidationCssClassAdditions FOR StringField-»«IF nospace» validate-nospace«ENDIF»«IF htmlcolour» validate-htmlcolour «entity.container.application.appName().formatForDB()»ColourPicker«ENDIF»«ENDDEFINE»
 «DEFINE FieldValidationCssClassAdditions FOR EmailField-» validate-email«ENDDEFINE»
 «DEFINE FieldValidationCssClassAdditions FOR UrlField-» validate-url«ENDDEFINE»
-«DEFINE FieldValidationCssClassAdditions FOR AbstractDatetimeField-»«IF past» validate-«fieldTypeAsString()»-past«ELSEIF future» validate-«fieldTypeAsString()»-future«ENDIF»«ENDDEFINE»
+«DEFINE FieldValidationCssClassAdditions FOR AbstractDateField-»«IF past» validate-«fieldTypeAsString()»-past«ELSEIF future» validate-«fieldTypeAsString()»-future«ENDIF»«ENDDEFINE»
 

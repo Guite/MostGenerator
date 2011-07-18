@@ -1,8 +1,7 @@
 «IMPORT modulestudio»
-«REM«IMPORT templates::zclassic::smallstuff»«ENDREM»
+«IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
-«REMEXTENSION org::eclipse::xtend::util::stdlib::io»«ENDREM»
 
 «REM»If we have an outgoing association useTarget is true; for an incoming one it is false.«ENDREM»
 «DEFINE Root(Boolean useTarget) FOR JoinRelationship-»
@@ -41,6 +40,14 @@
 «ELSE-»
 «EXPAND Outgoing(sourceName, targetName, entityClass)-»
 «ENDIF-»
+«ENDDEFINE»
+
+
+«DEFINE IncomingMappingDescription(String sourceName, String targetName) FOR JoinRelationship-»
+«ENDDEFINE»
+«DEFINE IncomingMappingDetails FOR JoinRelationship-»
+«ENDDEFINE»
+«DEFINE IncomingMappingType FOR JoinRelationship-»
 «ENDDEFINE»
 
 «DEFINE Incoming(String sourceName, String targetName, String entityClass) FOR JoinRelationship-»
@@ -122,10 +129,10 @@
 «IF !bidirectional-»
      * @ORM\ManyToMany(targetEntity="«entityClass»"«EXPAND AdditionalOptions-»)
 «ELSE-»
-     * @ORM\OneToMany(targetEntity="«entityClass»", mappedBy="«sourceName-»"«EXPAND AdditionalOptions-»«IF orphanRemoval-», orphanRemoval=true«ENDIF-»«IF indexBy-», indexBy="«indexBy»"«ENDIF-»)
+     * @ORM\OneToMany(targetEntity="«entityClass»", mappedBy="«sourceName-»"«EXPAND AdditionalOptions-»«IF orphanRemoval-», orphanRemoval=true«ENDIF-»«IF indexBy != null && indexBy != ''-», indexBy="«indexBy»"«ENDIF-»)
 «ENDIF-»
 «EXPAND JoinDetails(true)-»
-«IF orderBy-»
+«IF orderBy != null && orderBy != ''-»
      * @ORM\OrderBy({«orderBy»})
 «ENDIF-»
      * @var «entityClass»[] $«targetName».
@@ -139,9 +146,9 @@
      * «IF bidirectional-»Bi«ELSE-»Uni«ENDIF-»directional - «EXPAND OutgoingMappingDescription(sourceName, targetName)-».
      *
 «EXPAND Extensions::RelationExtensions(true)-»
-     * @ORM\ManyToMany(targetEntity="«entityClass»"«IF bidirectional-», inversedBy="«sourceName-»"«ENDIF-»«EXPAND AdditionalOptions-»«IF indexBy-», indexBy="«indexBy»"«ENDIF-»)
+     * @ORM\ManyToMany(targetEntity="«entityClass»"«IF bidirectional-», inversedBy="«sourceName-»"«ENDIF-»«EXPAND AdditionalOptions-»«IF indexBy != null && indexBy != ''-», indexBy="«indexBy»"«ENDIF-»)
 «EXPAND JoinDetails(true)-»
-«IF orderBy-»
+«IF orderBy != null && orderBy != ''-»
      * @ORM\OrderBy({«orderBy»})
 «ENDIF-»
      * @var «entityClass»[] $«targetName».
@@ -154,14 +161,14 @@
 «DEFINE JoinDetails(Boolean useTarget) FOR JoinRelationship-»
 «LET ((useTarget) ? source : target) AS joinedEntityLocal-»
 «LET ((useTarget) ? target : source) AS joinedEntityForeign-»
-«LET ((useTarget) ? sourceFields() : targetFields()) AS joinColumnsLocal-»
-«LET ((useTarget) ? targetFields() : sourceFields()) AS joinColumnsForeign-»
-«IF !(joinColumnForeign.containsDefaultIdField(joinedEntityForeign) && joinColumnLocal.containsDefaultIdField(joinedEntityLocal) && !unique && nullable && onDelete == '' && onUpdate == '')-»
+«LET ((useTarget) ? getSourceFields() : getTargetFields()) AS joinColumnsLocal-»
+«LET ((useTarget) ? getTargetFields() : getSourceFields()) AS joinColumnsForeign-»
+«IF !(joinColumnsForeign.containsDefaultIdField(joinedEntityForeign) && joinColumnsLocal.containsDefaultIdField(joinedEntityLocal) && !unique && nullable && onDelete == '' && onUpdate == '')-»
 «IF joinColumnsLocal.size > 1 || joinColumnsForeign.size > 1-»
-«REM»     * «EXPAND JoinColumns(joinColumnsForeign, joinedColumnsLocal)»«ENDREM»
-     * «EXPAND JoinColumn(joinColumnsForeign.get(0), joinedColumnsLocal.get(0))»
+«REM»     * «EXPAND JoinColumns(joinColumnsForeign, joinColumnsLocal)»«ENDREM»
+     * «EXPAND JoinColumn(joinColumnsForeign.get(0), joinColumnsLocal.get(0))»
 «ELSE-»
-     * «EXPAND JoinColumn(joinColumnsForeign.get(0), joinedColumnsLocal.get(0))»
+     * «EXPAND JoinColumn(joinColumnsForeign.get(0), joinColumnsLocal.get(0))»
 «ENDIF-»
 «ENDIF-»
 «ENDLET-»
@@ -173,10 +180,10 @@
 «DEFINE JoinDetails(Boolean useTarget) FOR ManyToManyRelationship-»
 «LET ((useTarget) ? source : target) AS joinedEntityLocal-»
 «LET ((useTarget) ? target : source) AS joinedEntityForeign-»
-«LET ((useTarget) ? sourceFields() : targetFields()) AS joinColumnsLocal-»
-«LET ((useTarget) ? targetFields() : sourceFields()) AS joinColumnsForeign-»
+«LET ((useTarget) ? getSourceFields() : getTargetFields()) AS joinColumnsLocal-»
+«LET ((useTarget) ? getTargetFields() : getSourceFields()) AS joinColumnsForeign-»
      * @ORM\JoinTable(name="«refClass.formatForCode()»"
-«IF !(joinColumnForeign.containsDefaultIdField(joinedEntityForeign) && joinColumnLocal.containsDefaultIdField(joinedEntityLocal) && !unique && nullable && onDelete == '' && onUpdate == '')-»,
+«IF !(joinColumnsForeign.containsDefaultIdField(joinedEntityForeign) && joinColumnsLocal.containsDefaultIdField(joinedEntityLocal) && !unique && nullable && onDelete == '' && onUpdate == '')-»,
 «IF joinColumnsForeign.size > 1-»
      *      joinColumns={«FOREACH joinColumnsLocal AS joinColumnLocal SEPARATOR ', '-»«EXPAND JoinColumn(joinColumnLocal, joinedEntityLocal.getFirstPrimaryKey().name.formatForDB())»«ENDFOREACH-»},
 «ELSE-»
@@ -223,9 +230,11 @@
 «ELSEIF cascade == CascadeType::REMOVE_DETACH-»"remove", "detach"
 «ELSEIF cascade == CascadeType::MERGE_DETACH-»"merge", "detach"
 «ELSEIF cascade == CascadeType::PERSIST_REMOVE_MERGE-»"persist", "remove", "merge"
+«ELSEIF cascade == CascadeType::PERSIST_REMOVE_DETACH-»"persist", "remove", "detach"
 «ELSEIF cascade == CascadeType::PERSIST_MERGE_DETACH-»"persist", "merge", "detach"
 «ELSEIF cascade == CascadeType::REMOVE_MERGE_DETACH-»"remove", "merge", "detach"
 «ELSEIF cascade == CascadeType::ALL-»"all"
+«ENDIF-»
 «ENDDEFINE»
 
 
@@ -234,7 +243,7 @@
 «EXPAND InitCollection(false) FOREACH getIncomingCollections()-»
 «ENDDEFINE»
 
-«DEFINE InitCollection(useTarget) FOR JoinRelationship-»
+«DEFINE InitCollection(Boolean useTarget) FOR JoinRelationship-»
 «IF isManySide(useTarget)-»
         $this->«getRelationAliasName(useTarget)» = new ArrayCollection();
 «ENDIF-»
@@ -243,14 +252,15 @@
 
 «DEFINE RelationAccessor(Boolean useTarget) FOR JoinRelationship-»
 «LET getRelationAliasName(useTarget) AS relationAliasName-»
-«EXPAND RelationAccessorImpl(relationAliasName)»
+«EXPAND RelationAccessorImpl(useTarget, relationAliasName)-»
 «ENDLET-»
 «ENDDEFINE»
 
 «DEFINE RelationAccessorImpl(Boolean useTarget, String aliasName) FOR JoinRelationship-»
 «LET ((useTarget) ? target : source).implClassModelEntity() AS entityClass-»
 «LET ((useTarget) ? target : source).name AS singleName-»
-«IF isManySide(useTarget)-»
+«LET isManySide(useTarget) AS isMany-»
+«IF isMany-»
 «EXPAND FileHelper::GetterAndSetterMethods(aliasName, entityClass, true, false, '')»
 «EXPAND RelationAccessorAdditions(useTarget, aliasName, singleName)-»
 «ELSE-»
@@ -259,6 +269,7 @@
 «EXPAND AddMethod(useTarget, isMany, aliasName, singleName, entityClass)-»
 «EXPAND RemoveMethod(useTarget, isMany, aliasName, singleName, entityClass)-»
 «EXPAND RemoveByIdMethod(useTarget, isMany, aliasName, singleName, entityClass)-»
+«ENDLET-»
 «ENDLET-»
 «ENDLET-»
 «ENDDEFINE»
@@ -310,7 +321,7 @@
 «DEFINE AddParameters(Boolean useTarget, String name, String type, Boolean withDescription) FOR JoinRelationship-»
 «type» $«name»«IF withDescription-»«REM»TODO description«ENDREM»«ENDIF-»
 «ENDDEFINE»
-«DEFINE AddParameters(Boolean useTarget, String name, String nameSingle, Boolean withDescription) FOR OneToManyRelationship-»
+«DEFINE AddParameters(Boolean useTarget, String name, String type, Boolean withDescription) FOR OneToManyRelationship-»
 «IF !useTarget && !source.getAggregateFields().isEmpty-»
 «LET source.getAggregateFields().get(0).getAggregateTargetField() AS targetField-»
 «IF withDescription-»«targetField.fieldTypeAsString()» «ENDIF-»$«targetField.name.formatForCode()»«IF withDescription-»«REM»TODO description«ENDREM»«ENDIF-»
