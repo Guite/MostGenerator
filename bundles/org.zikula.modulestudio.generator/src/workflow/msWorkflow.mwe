@@ -18,11 +18,11 @@
     Register the language contributors at the generator backend! 
     - ->
     <component class="org.eclipse.xtend.middleend.LanguageSetup">
-        <!-- Xtend - ->
+        <!- - Xtend - ->
         <languageContributor value="org.eclipse.xtend.middleend.xtend.plugin.OldXtendRegistryFactory"/>
-        <!-- Check - ->
+        <!- - Check - ->
         <languageContributor value="org.eclipse.xtend.middleend.xtend.plugin.OldCheckRegistryFactory"/>
-        <!-- Xpand - ->
+        <!- - Xpand - ->
         <languageContributor value="org.eclipse.xtend.middleend.xpand.plugin.OldXpandRegistryFactory"/>
     </component>-->
 
@@ -107,7 +107,7 @@
 	    <!-- middleend needs still uml, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=312557
 	    <component class="org.eclipse.xtend.middleend.xpand.XpandComponent" fileEncoding="ISO-8859-1">-->
 	        <metaModel idRef="mmEMF"/> 
-	        <metaModel id="mmEMF"           class="org.eclipse.xtend.typesystem.emf.EmfMetaModel">
+	        <metaModel id="mmEMF" class="org.eclipse.xtend.typesystem.emf.EmfMetaModel">
 	            <metaModelPackage value="org.eclipse.xtend.profiler.profilermodel.ModelPackage"/>
 	        </metaModel>
 	        <expand value="org::eclipse::xtend::profiler::templates::Html::Main FOR profilingResult"/> 

@@ -17,11 +17,11 @@
     Register the language contributors at the generator backend! 
     - ->
     <component class="org.eclipse.xtend.middleend.LanguageSetup">
-        <!-- Xtend - ->
+        <!- - Xtend - ->
         <languageContributor value="org.eclipse.xtend.middleend.xtend.plugin.OldXtendRegistryFactory"/>
-        <!-- Check - ->
+        <!- - Check - ->
         <languageContributor value="org.eclipse.xtend.middleend.xtend.plugin.OldCheckRegistryFactory"/>
-        <!-- Xpand - ->
+        <!- - Xpand - ->
         <languageContributor value="org.eclipse.xtend.middleend.xpand.plugin.OldXpandRegistryFactory"/>
     </component>-->
 
