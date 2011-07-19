@@ -284,21 +284,39 @@ listType:
 «LET mainEntity.name.formatForCode().msconcat('.').msconcat(relationAliasName) AS relObjName-»
             {if (isset($«relObjName»))}
 «IF controller.hasActions('display')-»
+«LET linkEntity.getLeadingField() AS leadingField-»
                 <a href="{modurl modname='«container.application.appName()»' type='«controller.name()»' «linkEntity.modUrlDisplay(relObjName, true)»}">
-                    {$«relObjName».«linkEntity.getLeadingField().name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}
+«IF leadingField != null-»
+                    {$«relObjName».«leadingField.name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}
+«ELSE-»
+                    {gt text='«linkEntity.name.formatForDisplayCapital()»'}
+«ENDIF-»
                 </a>
+«ENDLET-»
                 <a id="«linkEntity.name.formatForCode()»Item«FOREACH mainEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{$«mainEntity.name.formatForCode()».«pkField.name.formatForCode()»}«ENDFOREACH-»_rel_«FOREACH linkEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{$«relObjName».«pkField.name.formatForCode()»}«ENDFOREACH-»Display" href="{modurl modname='«container.application.appName()»' type='«controller.name()»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«IF controller.metaType == UserController» forcelongurl=true«REM»Temporary hack due to core bug with theme parameter in short urls«ENDREM»«ENDIF-»}" title="{gt text='Open quick view window'}" style="display: none">
                     {icon type='view' size='extrasmall' __alt='Quick view'}
                 </a>
                 <script type="text/javascript" charset="utf-8">
                 /* <![CDATA[ */
                     document.observe('dom:loaded', function() {
-                        «container.application.prefix()»InitInlineWindow($('«linkEntity.name.formatForCode()»Item«FOREACH mainEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{{$«mainEntity.name.formatForCode()».«pkField.name.formatForCode()»}}«ENDFOREACH-»_rel_«FOREACH linkEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{{$«relObjName».«pkField.name.formatForCode()»}}«ENDFOREACH-»Display'), '{{$«relObjName».«linkEntity.getLeadingField().name.formatForCode()»|replace:"'":""}}');
+«LET linkEntity.getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+                        «container.application.prefix()»InitInlineWindow($('«linkEntity.name.formatForCode()»Item«FOREACH mainEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{{$«mainEntity.name.formatForCode()».«pkField.name.formatForCode()»}}«ENDFOREACH-»_rel_«FOREACH linkEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{{$«relObjName».«pkField.name.formatForCode()»}}«ENDFOREACH-»Display'), '{{$«relObjName».«leadingField.name.formatForCode()»|replace:"'":""}}');
+«ELSE-»
+                        «container.application.prefix()»InitInlineWindow($('«linkEntity.name.formatForCode()»Item«FOREACH mainEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{{$«mainEntity.name.formatForCode()».«pkField.name.formatForCode()»}}«ENDFOREACH-»_rel_«FOREACH linkEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{{$«relObjName».«pkField.name.formatForCode()»}}«ENDFOREACH-»Display'), '{{gt text='«linkEntity.name.formatForDisplayCapital()»'|replace:"'":""}}');
+«ENDIF-»
+«ENDLET-»
                     });
                 /* ]]> */
                 </script>
 «ELSE-»
-                {$«relObjName».«linkEntity.getLeadingField().name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}
+«LET linkEntity.getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+                {$«relObjName».«leadingField.name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}
+«ELSE-»
+                {gt text='«linkEntity.name.formatForDisplayCapital()»'}
+«ENDIF-»
+«ENDLET-»
 «ENDIF-»
             {/if}
 «ENDLET-»
@@ -321,9 +339,11 @@ listType:
         <td headers="hintactions" align="left" valign="top" style="white-space: nowrap">
 «ENDIF-»
 «IF controller.hasActions('display')-»
-            <a href="{modurl modname='«appName»' type='«controller.name()»' «modUrlDisplay(objName, true)»}" title="{$«objName».«getLeadingField().name.formatForCode()»|replace:"\"":""}">
+«LET getLeadingField() AS leadingField-»
+            <a href="{modurl modname='«appName»' type='«controller.name()»' «modUrlDisplay(objName, true)»}" title="{$«objName».«IF leadingField == null-»«error("Error: Leading field is null for entity " + name.formatForDisplay() + "!")»«ELSE-»«leadingField.name.formatForCode()»«ENDIF-»|replace:"\"":""}">
                 {icon type='display' size='extrasmall' __alt='Details'}
             </a>
+«ENDLET-»
 «ENDIF-»            
 «IF controller.hasActions('edit')-»
     {checkpermissionblock component='«appName»::' instance='.*' level='ACCESS_EDIT'}

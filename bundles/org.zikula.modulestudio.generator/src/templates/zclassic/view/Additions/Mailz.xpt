@@ -32,10 +32,20 @@
 «ENDDEFINE»
 
 «DEFINE MailzEntryText(String appName) FOR Entity-»
-        {$item.«getLeadingField().name.formatForCode()»}
+«LET getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+        {$item.«leadingField.name.formatForCode()»}
+«ENDIF-»
+«ENDLET-»
         {modurl modname='«appName»' type='user' «modUrlDisplayWithFreeOt('item', true, '$objectType')» fqurl=true}
 «ENDDEFINE»
 
 «DEFINE MailzEntryHtml(String appName) FOR Entity-»
-        <a href="{modurl modname='«appName»' type='user' «modUrlDisplayWithFreeOt('item', true, '$objectType')» fqurl=true}">{$item.«getLeadingField().name.formatForCode()»}</a>
+«LET getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+        <a href="{modurl modname='«appName»' type='user' «modUrlDisplayWithFreeOt('item', true, '$objectType')» fqurl=true}">{$item.«leadingField.name.formatForCode()»}</a>
+«ELSE-»
+        <a href="{modurl modname='«appName»' type='user' «modUrlDisplayWithFreeOt('item', true, '$objectType')» fqurl=true}">{gt text='«name.formatForDisplayCapital()»'}</a>
+«ENDIF-»
+«ENDLET-»
 «ENDDEFINE»

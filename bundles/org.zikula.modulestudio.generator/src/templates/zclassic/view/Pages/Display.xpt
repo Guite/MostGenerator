@@ -11,7 +11,9 @@
 {include file='«controller.name()»/header.tpl'}
 <div class="«appName.toLowerCase()»-«name.formatForDB()» «appName.toLowerCase()»-display">
 «LET name.formatForCode() AS objName-»
-«LET getLeadingField().name.formatForCode() AS titleField-»
+«LET getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+«LET leadingField.name.formatForCode() AS titleField-»
 {pagesetvar name='title' value=$«objName».«titleField»}
 «IF controller.metaType == AdminController-»
 <div class="z-admin-content-pagetitle">
@@ -21,6 +23,20 @@
 «ELSE-»
 <div class="z-frontendcontainer">
     <h2>{$«objName».«titleField»|notifyfilters:'«appName.formatForDB()».filter_hooks.«nameMultiple.formatForDB()».filter'}</h2>
+«ENDIF-»
+«ENDLET-»
+«ELSE-»
+{gt text='«name.formatForDisplayCapital()»' assign='templateTitle'}
+{pagesetvar name='title' value=$templateTitle}
+«IF controller.metaType == AdminController-»
+<div class="z-admin-content-pagetitle">
+    {icon type='display' size='small' __alt='Details'}
+    <h3>{$templateTitle|notifyfilters:'«appName.formatForDB()».filter_hooks.«nameMultiple.formatForDB()».filter'}</h3>
+</div>
+«ELSE-»
+<div class="z-frontendcontainer">
+    <h2>{$templateTitle|notifyfilters:'«appName.formatForDB()».filter_hooks.«nameMultiple.formatForDB()».filter'}</h2>
+«ENDIF-»
 «ENDIF-»
 «ENDLET-»
 
@@ -89,7 +105,13 @@
     <dd>
     {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
         <a href="{modurl modname='«container.application.appName()»' type='«controller.name()»' «source.modUrlDisplay(relObjName, true)»}">
-            {$«relObjName».«source.getLeadingField().name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}
+«LET source.getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+            {$«relObjName».«leadingField.name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}
+«ELSE-»
+            {gt text='«source.name.formatForDisplayCapital()»'}
+«ENDIF-»
+«ENDLET-»
         </a>
         <a id="«source.name.formatForCode()»Item«FOREACH source.getPrimaryKeyFields() AS pkField-»{$«relObjName».«pkField.name.formatForCode()»}«ENDFOREACH-»Display" href="{modurl modname='«container.application.appName()»' type='«controller.name()»' «source.modUrlDisplay(relObjName, true)» theme='Printer'«IF controller.metaType == UserController» forcelongurl=true«REM»Temporary hack due to core bug with theme parameter in short urls«ENDREM»«ENDIF-»}" title="{gt text='Open quick view window'}" style="display: none">
             {icon type='view' size='extrasmall' __alt='Quick view'}
@@ -97,12 +119,24 @@
         <script type="text/javascript" charset="utf-8">
         /* <![CDATA[ */
             document.observe('dom:loaded', function() {
-                «container.application.prefix()»InitInlineWindow($('«source.name.formatForCode()»Item«FOREACH source.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{{$«relObjName».«pkField.name.formatForCode()»}}«ENDFOREACH-»Display'), '{{$«relObjName».«source.getLeadingField().name.formatForCode()»|replace:"'":""}}');
+«LET source.getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+                «container.application.prefix()»InitInlineWindow($('«source.name.formatForCode()»Item«FOREACH source.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{{$«relObjName».«pkField.name.formatForCode()»}}«ENDFOREACH-»Display'), '{{$«relObjName».«leadingField.name.formatForCode()»|replace:"'":""}}');
+«ELSE-»
+                «container.application.prefix()»InitInlineWindow($('«source.name.formatForCode()»Item«FOREACH source.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{{$«relObjName».«pkField.name.formatForCode()»}}«ENDFOREACH-»Display'), '{{gt text='«source.name.formatForDisplayCapital()»'|replace:"'":""}}');
+«ENDIF-»
+«ENDLET-»
             });
         /* ]]> */
         </script>
     {else}
-        {$«relObjName».«source.getLeadingField().name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}
+«LET source.getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+        {$«relObjName».«leadingField.name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}
+«ELSE-»
+        {gt text='«source.name.formatForDisplayCapital()»'}
+«ENDIF-»
+«ENDLET-»
     {/if}
     </dd>
 «ENDLET-»

@@ -36,7 +36,13 @@
 
 {foreach item='«objName»' from=$items}
     <item>
-        <title><![CDATA[{if isset($«objName».lu_date)}{$«objName».lu_date|dateformat} - {/if}{$«objName».«getLeadingField().name.formatForCode()»|notifyfilters:'«appName.formatForDB()».filterhook.«nameMultiple.formatForDB()»'}]]></title>
+«LET getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+        <title><![CDATA[{if isset($«objName».lu_date)}{$«objName».lu_date|dateformat} - {/if}{$«objName».«leadingField.name.formatForCode()»|notifyfilters:'«appName.formatForDB()».filterhook.«nameMultiple.formatForDB()»'}]]></title>
+«ELSE-»
+        <title><![CDATA[{if isset($«objName».lu_date)}{$«objName».lu_date|dateformat} - {/if}{gt text='«name.formatForDisplayCapital()-»'}]]></title>
+«ENDIF-»
+«ENDLET-»
         <link>{modurl modname='«appName»' type='«controller.name()»' «IF controller.hasActions('display')»«modUrlDelete(objName, true)»«ELSE-»func='«IF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»'«ENDIF-» fqurl='1'}</link>
         <guid>{modurl modname='«appName»' type='«controller.name()»' «IF controller.hasActions('display')»«modUrlDelete(objName, true)»«ELSE-»func='«IF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»'«ENDIF-» fqurl='1'}</guid>
 «IF !standardFields-»
@@ -71,7 +77,11 @@
 «ELSEIF !stringFields.isEmpty-»
                 {$«objName».«stringFields.get(0).name.formatForCode()»|replace:'<br>':'<br />'}
 «ELSE-»
-                {$«objName».«getLeadingField().name.formatForCode()»|replace:'<br>':'<br />'}
+«LET getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+                {$«objName».«leadingField.name.formatForCode()»|replace:'<br>':'<br />'}
+«ENDIF-»
+«ENDLET-»
 «ENDIF-»
             ]]>
         </description>

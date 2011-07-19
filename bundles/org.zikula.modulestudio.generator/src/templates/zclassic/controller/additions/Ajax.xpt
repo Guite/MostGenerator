@@ -1,6 +1,7 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE AdditionalAjaxFunctions(Application app) FOR Controller-»«ENDDEFINE»
 «DEFINE AdditionalAjaxFunctions(Application app) FOR AjaxController-»
@@ -146,7 +147,13 @@
             switch ($objectType) {
 «FOREACH app.models.entities AS entity-»
                 case '«entity.name.formatForCode()»':
-                        $titleFieldName = '«entity.getLeadingField().name.formatForCode()»';
+«LET entity.getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+                        $titleFieldName = '«leadingField.name.formatForCode()»';
+«ELSE-»
+                        $titleFieldName = '';
+«ENDIF-»
+«ENDLET-»
 «LET entity.fields.typeSelect(TextField).reject(e|e.leading) AS textFields-»
 «IF !textFields.isEmpty-»
                         $descriptionFieldName = '«textFields.get(0).name.formatForCode()»';
@@ -164,7 +171,7 @@
 
             foreach ($objectData as $item) {
                 // class="informal" --> show in dropdown, but do not copy in the input field after selection
-                $itemTitle = $item[$titleFieldName];
+                $itemTitle = ((!empty($titleFieldName)) ? $item[$titleFieldName] : $this->__('Item'));
                 $itemTitleStripped = str_replace('"', '', $itemTitle);
                 $itemDescription = ((isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName])) ? $item[$descriptionFieldName] : '');//$this->__('No description yet.'));
                 $itemId = '';

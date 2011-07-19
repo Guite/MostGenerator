@@ -67,7 +67,7 @@ cached getUploadEntities(Application this) :
     models.entities.select(e|e.fields.typeSelect(UploadField).size > 0);
 
 cached boolean hasLoggable(Application this) :
-    models.entities.select(e|e.loggable);
+    models.entities.exists(e|e.loggable);
 cached boolean hasSluggable(Application this) :
     models.entities.exists(e|e.hasSluggableFields());
 cached boolean hasSortable(Application this) :
@@ -230,7 +230,7 @@ cached getSluggableFields(Entity this) :
 cached boolean hasSortableFields(Entity this) :
     !getSortableFields().isEmpty;
 cached getSortableFields(Entity this) :
-    fields.typeSelect(IntegerField).select(e|e.sortablePosition > 0);
+    fields.typeSelect(IntegerField).select(e|e.sortablePosition == true);
 
 cached boolean hasTimestampableFields(Entity this) :
     !getTimestampableFields().isEmpty;

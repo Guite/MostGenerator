@@ -102,7 +102,13 @@
 «LET ((!useTarget) ? target : source) AS mainEntity-»
 «LET ((useTarget) ? target : source) AS linkEntity-»
 «LET 'item'.msconcat('.').msconcat(relationAliasName) AS relObjName-»
-    <«relationAliasName»>{if (isset($«relObjName»))}{$«relObjName».«linkEntity.getLeadingField().name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}{/if}</«relationAliasName»>
+«LET linkEntity.getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+    <«relationAliasName»>{if (isset($«relObjName»))}{$«relObjName».«leadingField.name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}{/if}</«relationAliasName»>
+«ELSE-»
+«REM»TODO«ENDREM»
+«ENDIF-»
+«ENDLET-»
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»

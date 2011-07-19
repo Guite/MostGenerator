@@ -1,6 +1,7 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE DisplayItemList(Application app, Controller controller, Boolean many) FOR Entity-»
 «FILE templateFile(controller, name, 'include_displayItemList'.msconcat((many) ? 'Many' : 'One'))-»
@@ -15,7 +16,13 @@
     <li>
 «ENDIF-»
     <a href="{modurl modname='«app.appName()»' type='«controller.name()»' «modUrlDisplay('item', true)»}">
-        {$item.«getLeadingField().name.formatForCode()»}
+«LET getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+        {$item.«leadingField.name.formatForCode()»}
+«ELSE-»
+        {gt text='«name.formatForDisplayCapital()-»'}
+«ENDIF-»
+«ENDLET-»
     </a>
     <a id="«name.formatForCode()»Item«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{$item.«pkField.name.formatForCode()»}«ENDFOREACH-»Display" href="{modurl modname='«app.appName()»' type='«controller.name()»' «modUrlDisplay('item', true)» theme='Printer'«IF controller.metaType == UserController» forcelongurl=true«REM»Temporary hack due to core bug with theme parameter in short urls«ENDREM»«ENDIF-»}" title="{gt text='Open quick view window'}" style="display: none">
         {icon type='view' size='extrasmall' __alt='Quick view'}
@@ -25,7 +32,13 @@
     <script type="text/javascript" charset="utf-8">
     /* <![CDATA[ */
         document.observe('dom:loaded', function() {
-            «app.prefix()»InitInlineWindow($('«name.formatForCode()»Item«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{{$item.«pkField.name.formatForCode()»}}«ENDFOREACH-»Display'), '{{$item.«getLeadingField().name.formatForCode()»|replace:"'":""}}');
+«LET getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+            «app.prefix()»InitInlineWindow($('«name.formatForCode()»Item«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{{$item.«pkField.name.formatForCode()»}}«ENDFOREACH-»Display'), '{{$item.«leadingField.name.formatForCode()»|replace:"'":""}}');
+«ELSE-»
+            «app.prefix()»InitInlineWindow($('«name.formatForCode()»Item«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{{$item.«pkField.name.formatForCode()»}}«ENDFOREACH-»Display'), '{{gt text='«name.formatForDisplayCapital()»'|replace:"'":""}}');
+«ENDIF-»
+«ENDLET-»
         });
     /* ]]> */
     </script>
@@ -33,7 +46,13 @@
     <br />
 «LET getImageFields().get(0).name.formatForCode() AS imageFieldName-»
 {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPathURL)}
-    <img src="{$item.«imageFieldName»|«app.appName().formatForDB()»ImageThumb:$item.«imageFieldName»FullPathURL:50:40}" width="50" height="40" alt="{$item.«getLeadingField().name.formatForCode()»|replace:"\"":""}" />
+«LET getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+    <img src="{$item.«imageFieldName»|«app.appName().formatForDB()»ImageThumb:$item.«imageFieldName»FullPathURL:50:40}" width="50" height="40" alt="{$item.«leadingField.name.formatForCode()»|replace:"\"":""}" />
+«ELSE-»
+    <img src="{$item.«imageFieldName»|«app.appName().formatForDB()»ImageThumb:$item.«imageFieldName»FullPathURL:50:40}" width="50" height="40" alt="{gt text='«name.formatForDisplayCapital()»'|replace:"\"":""}" />
+«ENDIF-»
+«ENDLET-»
 {/if}
 «ENDLET-»
 «ENDIF-»

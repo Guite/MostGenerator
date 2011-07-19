@@ -8,7 +8,13 @@
 
 <dl>
 {foreach item='item' from=$items}
-    <dt>{$item.«entity.getLeadingField().name.formatForCode()»}</dt>
+«LET entity.getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+    <dt>{$item.«leadingField.name.formatForCode()»}</dt>
+«ELSE-»
+    <dt>{gt text='«name.formatForDisplayCapital()»'}</dt>
+«ENDIF-»
+«ENDLET-»
 «LET entity.fields.typeSelect(TextField) AS textFields-»
 «IF !textFields.isEmpty-»
 {if $item.«textFields.get(0).name.formatForCode()»}
@@ -34,7 +40,13 @@
 {* Purpose of this template: Display «entity.nameMultiple.formatForDisplay()» within an external context *}
 
 {foreach item='item' from=$items}
-    <h3>{$item.«entity.getLeadingField().name.formatForCode()»}</h3>
+«LET entity.getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+    <h3>{$item.«leadingField.name.formatForCode()»}</h3>
+«ELSE-»
+    <h3>{gt text='«name.formatForDisplayCapital()»'}</h3>
+«ENDIF-»
+«ENDLET-»
     <p>«EXPAND DetailLink(appName()) FOR entity-»</p>
 {/foreach}
 «ENDFILE»

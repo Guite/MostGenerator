@@ -75,7 +75,7 @@
 
 «IF hasCompositeKeys()-»
     {formsetinitialfocus inputId='«getDerivedFields().get(0).name.formatForCode()»'}
-«ELSE-»
+«REM»«ELSE-»«ENDREM»«ELSEIF !getDerivedFields().reject(e|e.primaryKey).isEmpty-»
     {formsetinitialfocus inputId='«getDerivedFields().reject(e|e.primaryKey).get(0).name.formatForCode()»'}
 «ENDIF-»
 «REM»{formsetinitialfocus inputId='PluginId' doSelect=true} <-- for dropdown lists (performs input.select())«ENDREM»«""-»

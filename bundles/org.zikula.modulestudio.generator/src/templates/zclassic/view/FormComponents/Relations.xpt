@@ -151,7 +151,13 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «ENDIF-»
 {assign var='idPrefix' value="«uniqueNameForJs»Reference_rel_«FOREACH targetEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»`$item.«pkField.name.formatForCode()»`«ENDFOREACH-»"}
     <li id="{$idPrefix}">
-    {$item.«targetEntity.getLeadingField().name.formatForCode()»}
+«LET targetEntity.getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+    {$item.«leadingField.name.formatForCode()»}
+«ELSE-»
+    {gt text='«targetEntity.name.formatForDisplayCapital()»'}
+«ENDIF-»
+«ENDLET-»
 «IF includeEditing-»
  <a id="{$idPrefix}Edit" href="{modurl modname='«app.appName()»' type='«controller.name()»' «targetEntity.modUrlEdit('item', true)»}">{$editImage}</a>
 «ENDIF-»
@@ -160,7 +166,13 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 <br />
 «LET targetEntity.getImageFields().get(0).name.formatForCode() AS imageFieldName-»
 {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPathURL)}
-    <img src="{$item.«imageFieldName»|«app.appName().formatForDB()»ImageThumb:$item.«imageFieldName»FullPathURL:50:40}" width="50" height="40" alt="{$item.«targetEntity.getLeadingField().name.formatForCode()»|replace:"\"":""}" />
+«LET targetEntity.getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+    <img src="{$item.«imageFieldName»|«app.appName().formatForDB()»ImageThumb:$item.«imageFieldName»FullPathURL:50:40}" width="50" height="40" alt="{$item.«leadingField.name.formatForCode()»|replace:"\"":""}" />
+«ELSE-»
+    <img src="{$item.«imageFieldName»|«app.appName().formatForDB()»ImageThumb:$item.«imageFieldName»FullPathURL:50:40}" width="50" height="40" alt="{gt text='«targetEntity.name.formatForDisplayCapital()»|replace:"\"":""}" />
+«ENDIF-»
+«ENDLET-»
 {/if}
 «ENDLET-»
 «ENDIF-»
