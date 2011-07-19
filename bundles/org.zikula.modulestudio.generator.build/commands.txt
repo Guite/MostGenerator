@@ -1,3 +1,6 @@
+# Define an API baseline
+addbaseline -A "Eclipse OCL API Base Line"
+
 # Commands for building a p2 site for the generator
 
 # materialise stuff by cquery/mspec/rmap
