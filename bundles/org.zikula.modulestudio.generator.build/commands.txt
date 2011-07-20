@@ -1,6 +1,6 @@
 # Define an API baseline
 # we only need this once
-addbaseline -A "Buckminster Default TP"
+# addbaseline -A "Buckminster Default TP"
 
 # Commands for building a p2 site for the generator
 
