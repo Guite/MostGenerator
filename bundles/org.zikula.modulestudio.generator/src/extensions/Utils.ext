@@ -174,32 +174,32 @@ cached String modUrlDelete(Entity this, String objName, Boolean template) :
 
 cached String modUrlPrimaryKeyParams(Entity this, String objName, Boolean template) :
     ((template)
-        ? getSingleParamForTemplate(getDerivedFields(), objName)
-        : getSingleParamForCode(getDerivedFields(), objName)
+        ? getSingleParamForTemplate(getPrimaryKeyFields(), objName)
+        : getSingleParamForCode(getPrimaryKeyFields(), objName)
     );
 cached String modUrlPrimaryKeyParams(Entity this, String objName, Boolean template, String customVarName) :
     ((template)
-        ? getSingleParamForTemplate(getDerivedFields(), objName, customVarName)
-        : getSingleParamForCode(getDerivedFields(), objName, customVarName)
+        ? getSingleParamForTemplate(getPrimaryKeyFields(), objName, customVarName)
+        : getSingleParamForCode(getPrimaryKeyFields(), objName, customVarName)
     );
 
 cached String getSingleParamForCode(List[DerivedField] fields, String objName) :
-	if fields.size == 0 then 0
+	if fields.size == 0 then ''
 	else ", '" + fields.first().name.formatForDB() + "' => $" + objName + "['" + fields.first().name.formatForDB() + "']"
 	 + getSingleParamForCode(fields.withoutFirst(), objName);
 
 cached String getSingleParamForTemplate(List[DerivedField] fields, String objName) :
-	if fields.size == 0 then 0
+	if fields.size == 0 then ''
 	else ' ' + fields.first().name.formatForDB() + '=$' + objName + '.' + fields.first().name.formatForDB()
 	 + fields.withoutFirst().getSingleParamForTemplate(objName);
 
 cached String getSingleParamForCode(List[DerivedField] fields, String objName, String customVarName) :
-	if fields.size == 0 then 0
+	if fields.size == 0 then ''
 	else ", '" + customVarName + "' => $" + objName + "['" + fields.first().name.formatForDB() + "']"
 	 + getSingleParamForCode(fields.withoutFirst(), objName);
 
 cached String getSingleParamForTemplate(List[DerivedField] fields, String objName, String customVarName) :
-	if fields.size == 0 then 0
+	if fields.size == 0 then ''
 	else ' ' + customVarName + '=$' + objName + '.' + fields.first().name.formatForDB()
 	 + fields.withoutFirst().getSingleParamForTemplate(objName);
 
@@ -220,7 +220,7 @@ cached getImageFields(Entity this) :
 cached boolean hasColourFields(Entity this) :
     !getColourFields().isEmpty;
 cached getColourFields(Entity this) :
-    getDerivedFields().typeSelect(StringField).select(e|e.htmlcolour != null && e.htmlcolour != "");
+    getDerivedFields().typeSelect(StringField).select(e|e.htmlcolour != null && e.htmlcolour != '');
 
 cached boolean hasSluggableFields(Entity this) :
     !getSluggableFields().isEmpty;
@@ -259,7 +259,7 @@ cached getAggregateTargetField(IntegerField this)
 cached getAggregatingRelationships(DerivedField this)
     : entity.incoming.typeSelect(OneToManyRelationship)
                      .select(e | !e.source.getAggregateFields().isEmpty)
-                     .select(e | !e.source.getAggregateFields().select(e|e.getAggregateTargetField() == this).isEmpty);
+                     .select(e | !e.source.getAggregateFields().select(f|f.getAggregateTargetField() == this).isEmpty);
 
 cached getAggregators(Entity this)
     : getDerivedFields().select(e|e.getAggregatingRelationships().isEmpty);
@@ -267,7 +267,7 @@ cached boolean isAggregated(Entity this)
     : !getAggregators().isEmpty;
 
 cached String subFolderPathSegment(UploadField this) :
-    (subFolderName != null && subFolderName != "") ? subFolderName.formatForDB() : name.formatForDB();
+    (subFolderName != null && subFolderName != '') ? subFolderName.formatForDB() : name.formatForDB();
 
 cached String namingSchemeAsInt(UploadField this) :
     switch (namingScheme) {
@@ -518,7 +518,7 @@ cached String getIndexField(ManyToManyRelationship this) :
  */
 
 cached String fieldTypeAsString(DerivedField f) :
-    f.metaType.toString().replaceAll("modulestudio::", "").replaceAll("Field", "").toLowerCase();
+    f.metaType.toString().replaceAll("modulestudio::", '').replaceAll('Field', '').toLowerCase();
 // required for own sub types like user, email, url, upload
 cached String fieldTypeAsString(AbstractIntegerField f) :
     // choose mapping type depending on length
@@ -540,7 +540,7 @@ cached Boolean isProgressMonitor(Object monitor) :
     JAVA extensions.Utils.isProgressMonitor(java.lang.Object);
 
 cached String subTask(Object monitor, String title) :
-    monitor.isProgressMonitor() ? subTaskJava(monitor, title) : "";
+    monitor.isProgressMonitor() ? subTaskJava(monitor, title) : '';
 
 cached String subTaskJava(Object monitor, String title) :
 	JAVA extensions.Utils.subTask(org.eclipse.core.runtime.IProgressMonitor, java.lang.String);

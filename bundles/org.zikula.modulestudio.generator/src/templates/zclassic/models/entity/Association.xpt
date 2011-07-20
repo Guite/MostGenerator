@@ -5,12 +5,6 @@
 
 «REM»If we have an outgoing association useTarget is true; for an incoming one it is false.«ENDREM»
 «DEFINE Root(Boolean useTarget) FOR JoinRelationship-»
-«IF source == target-»
-/**
-  * Self relations were not working yet, must be retested with Doctrine 2.
-  * See #9 for more information
-  */
-«ENDIF-»
 «LET getRelationAliasName(false) AS sourceName-»
 «LET getRelationAliasName(true) AS targetName-»
 «LET ((useTarget) ? target : source).implClassModelEntity() AS entityClass-»
@@ -30,11 +24,25 @@
 
 «DEFINE Unidirectional(Boolean useTarget, String sourceName, String targetName, String entityClass) FOR JoinRelationship-»
 «IF useTarget-»
+
+«IF source == target-»
+    /**
+     * Self relations were not working yet, must be retested with Doctrine 2.
+     * See #9 for more information
+     */
+«ENDIF-»
 «EXPAND Outgoing(sourceName, targetName, entityClass)-»
 «ENDIF-»
 «ENDDEFINE»
 
 «DEFINE Bidirectional(Boolean useTarget, String sourceName, String targetName, String entityClass) FOR JoinRelationship-»
+
+«IF source == target-»
+    /**
+     * Self relations were not working yet, must be retested with Doctrine 2.
+     * See #9 for more information
+     */
+«ENDIF-»
 «IF !useTarget-»
 «EXPAND Incoming(sourceName, targetName, entityClass)-»
 «ELSE-»
@@ -165,7 +173,7 @@
 «LET ((useTarget) ? getTargetFields() : getSourceFields()) AS joinColumnsForeign-»
 «IF !(joinColumnsForeign.containsDefaultIdField(joinedEntityForeign) && joinColumnsLocal.containsDefaultIdField(joinedEntityLocal) && !unique && nullable && onDelete == '' && onUpdate == '')-»
 «IF joinColumnsLocal.size > 1 || joinColumnsForeign.size > 1-»
-«REM»     * «EXPAND JoinColumns(joinColumnsForeign, joinColumnsLocal)»«ENDREM»
+«REM»     * «EXPAND JoinColumns(joinColumnsForeign, joinColumnsLocal)»«ENDREM»«''-»
      * «EXPAND JoinColumn(joinColumnsForeign.get(0), joinColumnsLocal.get(0))»
 «ELSE-»
      * «EXPAND JoinColumn(joinColumnsForeign.get(0), joinColumnsLocal.get(0))»
@@ -182,15 +190,17 @@
 «LET ((useTarget) ? target : source) AS joinedEntityForeign-»
 «LET ((useTarget) ? getSourceFields() : getTargetFields()) AS joinColumnsLocal-»
 «LET ((useTarget) ? getTargetFields() : getSourceFields()) AS joinColumnsForeign-»
+«IF (joinColumnsForeign.containsDefaultIdField(joinedEntityForeign) && joinColumnsLocal.containsDefaultIdField(joinedEntityLocal) && !unique && nullable && onDelete == '' && onUpdate == '')-»
      * @ORM\JoinTable(name="«refClass.formatForCode()»"
-«IF !(joinColumnsForeign.containsDefaultIdField(joinedEntityForeign) && joinColumnsLocal.containsDefaultIdField(joinedEntityLocal) && !unique && nullable && onDelete == '' && onUpdate == '')-»,
+«ELSE-»
+     * @ORM\JoinTable(name="«refClass.formatForCode()»",
 «IF joinColumnsForeign.size > 1-»
-     *      joinColumns={«FOREACH joinColumnsLocal AS joinColumnLocal SEPARATOR ', '-»«EXPAND JoinColumn(joinColumnLocal, joinedEntityLocal.getFirstPrimaryKey().name.formatForDB())»«ENDFOREACH-»},
+     *      joinColumns={«FOREACH joinColumnsLocal AS joinColumnLocal SEPARATOR ', '-»«EXPAND JoinColumn(joinColumnLocal, joinedEntityLocal.getFirstPrimaryKey().name.formatForDB())-»«ENDFOREACH-»},
 «ELSE-»
      *      joinColumns={«EXPAND JoinColumn(joinColumnsLocal.get(0), joinedEntityLocal.getFirstPrimaryKey().name.formatForDB())»},
 «ENDIF-»
 «IF joinColumnsForeign.size > 1-»
-     *      inverseJoinColumns={«FOREACH joinColumnsForeign AS joinColumnForeign SEPARATOR ', '-»«EXPAND JoinColumn(joinColumnForeign, joinedEntityForeign.getFirstPrimaryKey().name.formatForDB())»«ENDFOREACH-»}
+     *      inverseJoinColumns={«FOREACH joinColumnsForeign AS joinColumnForeign SEPARATOR ', '-»«EXPAND JoinColumn(joinColumnForeign, joinedEntityForeign.getFirstPrimaryKey().name.formatForDB())-»«ENDFOREACH-»}
 «ELSE-»
      *      inverseJoinColumns={«EXPAND JoinColumn(joinColumnsForeign.get(0), joinedEntityForeign.getFirstPrimaryKey().name.formatForDB())»}
 «ENDIF-»
@@ -203,7 +213,7 @@
 «ENDDEFINE»
 
 «DEFINE JoinColumn(String columnName, String referencedColumnName) FOR JoinRelationship-»
-@ORM\JoinColumn(name="«columnName»", referencedColumnName="«referencedColumnName»" «IF unique-», unique=true«ENDIF-»«IF !nullable-», nullable=false«ENDIF-»«IF onDelete != ''-», onDelete="«onDelete»"«ENDIF-»«IF onUpdate != ''-», onUpdate="«onUpdate»"«ENDIF-»)
+@ORM\JoinColumn(name="«columnName»", referencedColumnName="«referencedColumnName»" «IF unique-», unique=true«ENDIF-»«IF !nullable-», nullable=false«ENDIF-»«IF onDelete != ''-», onDelete="«onDelete»"«ENDIF-»«IF onUpdate != ''-», onUpdate="«onUpdate»"«ENDIF-»)«''-»
 «ENDDEFINE»
 
 «DEFINE AdditionalOptions FOR JoinRelationship-»
@@ -219,21 +229,21 @@
 «ENDDEFINE»
 
 «DEFINE CascadeOptionsImpl FOR JoinRelationship-»
-«IF cascade == CascadeType::PERSIST-»"persist"
-«ELSEIF cascade == CascadeType::REMOVE-»"remove"
-«ELSEIF cascade == CascadeType::MERGE-»"merge"
-«ELSEIF cascade == CascadeType::DETACH-»"detach"
-«ELSEIF cascade == CascadeType::PERSIST_REMOVE-»"persist", "remove"
-«ELSEIF cascade == CascadeType::PERSIST_MERGE-»"persist", "merge"
-«ELSEIF cascade == CascadeType::PERSIST_DETACH-»"persist", "detach"
-«ELSEIF cascade == CascadeType::REMOVE_MERGE-»"remove", "merge"
-«ELSEIF cascade == CascadeType::REMOVE_DETACH-»"remove", "detach"
-«ELSEIF cascade == CascadeType::MERGE_DETACH-»"merge", "detach"
-«ELSEIF cascade == CascadeType::PERSIST_REMOVE_MERGE-»"persist", "remove", "merge"
-«ELSEIF cascade == CascadeType::PERSIST_REMOVE_DETACH-»"persist", "remove", "detach"
-«ELSEIF cascade == CascadeType::PERSIST_MERGE_DETACH-»"persist", "merge", "detach"
-«ELSEIF cascade == CascadeType::REMOVE_MERGE_DETACH-»"remove", "merge", "detach"
-«ELSEIF cascade == CascadeType::ALL-»"all"
+«IF cascade == CascadeType::PERSIST-»"persist"«''-»
+«ELSEIF cascade == CascadeType::REMOVE-»"remove"«''-»
+«ELSEIF cascade == CascadeType::MERGE-»"merge"«''-»
+«ELSEIF cascade == CascadeType::DETACH-»"detach"«''-»
+«ELSEIF cascade == CascadeType::PERSIST_REMOVE-»"persist", "remove"«''-»
+«ELSEIF cascade == CascadeType::PERSIST_MERGE-»"persist", "merge"«''-»
+«ELSEIF cascade == CascadeType::PERSIST_DETACH-»"persist", "detach"«''-»
+«ELSEIF cascade == CascadeType::REMOVE_MERGE-»"remove", "merge"«''-»
+«ELSEIF cascade == CascadeType::REMOVE_DETACH-»"remove", "detach"«''-»
+«ELSEIF cascade == CascadeType::MERGE_DETACH-»"merge", "detach"«''-»
+«ELSEIF cascade == CascadeType::PERSIST_REMOVE_MERGE-»"persist", "remove", "merge"«''-»
+«ELSEIF cascade == CascadeType::PERSIST_REMOVE_DETACH-»"persist", "remove", "detach"«''-»
+«ELSEIF cascade == CascadeType::PERSIST_MERGE_DETACH-»"persist", "merge", "detach"«''-»
+«ELSEIF cascade == CascadeType::REMOVE_MERGE_DETACH-»"remove", "merge", "detach"«''-»
+«ELSEIF cascade == CascadeType::ALL-»"all"«''-»
 «ENDIF-»
 «ENDDEFINE»
 
@@ -357,8 +367,7 @@
     protected function add«targetField.name.formatForCodeCapital()»Without«getRelationAliasName(true).formatForCodeCapital()»($«targetField.name.formatForCode()»)
     {
         $this->«sourceField.name.formatForCode()» += $«targetField.name.formatForCode()»;
-    }
-«ENDLET-»
+	«ENDLET-»
 «ENDLET-»
 «ELSE-»
 «EXPAND AddAssignmentDefault(useTarget, name, nameSingle)-»
