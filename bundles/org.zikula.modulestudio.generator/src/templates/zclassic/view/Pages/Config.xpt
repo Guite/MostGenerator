@@ -69,16 +69,18 @@
 «ENDIF-»
 «ENDIF-»
 
-«FOREACH vars AS modvar-»
-                <div class="z-formrow">
-                    {formlabel for='«modvar.name.formatForCode()»' __text='«modvar.name.formatForDisplayCapital()»'}
-                    «EXPAND InputField FOR modvar-»
-                </div>
-«ENDFOREACH-»
+«EXPAND FormRow FOREACH vars-»
             </fieldset>
 «IF hasMultipleConfigSections-»
             {/formtabbedpanel}
 «ENDIF-»
+«ENDDEFINE»
+
+«DEFINE FormRow FOR Variable-»
+                <div class="z-formrow">
+                    {formlabel for='«name.formatForCode()»' __text='«name.formatForDisplayCapital()»'}
+                    «EXPAND InputField-»
+                </div>
 «ENDDEFINE»
 
 «DEFINE InputField FOR Variable-»
