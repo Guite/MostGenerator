@@ -57,13 +57,13 @@
             <fieldset>
 «IF hasMultipleConfigSections-»
 «IF documentation != null && documentation != ''-»
-                <legend>{gt text='«documentation.formatForDisplayCapital()»'}</legend>
+                <legend>{gt text='«documentation.replaceAll("'", "")»'}</legend>
 «ELSE-»
                 <legend>{gt text='«name.formatForDisplayCapital()»'}</legend>
 «ENDIF-»
 «ELSE-»
 «IF documentation != null && documentation != ''-»
-                <legend>{gt text='«documentation.formatForDisplayCapital()»'}</legend>
+                <legend>{gt text='«documentation.replaceAll("'", "")»'}</legend>
 «ELSE-»
                 <legend>{gt text='Here you can manage all basic settings for this application.'}</legend>
 «ENDIF-»
