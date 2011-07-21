@@ -108,7 +108,7 @@
 {if $mode eq 'create'}
             {formuploadinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» readOnly=«readonly»«EXPAND Validation::FieldValidationCssClass»}
 {else}
-            {formuploadinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=false readOnly=«readonly»«EXPAND Validation::FieldValidationCssClass»}
+            {formuploadinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=false readOnly=«readonly»«EXPAND Validation::FieldValidationCssClassEdit»}
 {/if}
 «ELSE-»
             {formuploadinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» readOnly=«readonly»«EXPAND Validation::FieldValidationCssClass»}

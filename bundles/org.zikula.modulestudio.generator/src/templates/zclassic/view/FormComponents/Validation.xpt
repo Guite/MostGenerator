@@ -53,6 +53,7 @@
 
 
 «DEFINE FieldValidationCssClass FOR DerivedField-» cssClass='«IF mandatory»required«IF unique» «ENDIF»«ENDIF»«IF unique»validate-unique«ENDIF»«EXPAND FieldValidationCssClassAdditions»'«ENDDEFINE»
+«DEFINE FieldValidationCssClassEdit FOR UploadField-» cssClass='«IF unique»validate-unique«ENDIF»«EXPAND FieldValidationCssClassAdditions»'«ENDDEFINE»
 «DEFINE FieldValidationCssClassAdditions FOR DerivedField-»«ENDDEFINE»
 «DEFINE FieldValidationCssClassAdditions FOR AbstractIntegerField-» validate-digits«ENDDEFINE»
 «DEFINE FieldValidationCssClassAdditions FOR DecimalField-» validate-number«ENDDEFINE»
