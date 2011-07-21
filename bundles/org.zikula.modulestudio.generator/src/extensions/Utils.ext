@@ -93,6 +93,12 @@ cached getEditActions(Application this) :
 cached boolean needsConfig(Application this) :
     !models.variables.vars.isEmpty;
 
+cached boolean hasMultipleConfigSections(Application this) :
+    (models.variables.size > 1);
+
+cached getSortedVariableContainers(Application this) :
+    models.variables.sortBy(e|e.sortOrder);
+
 cached String configControllerType(Application this) :
     ((!controllers.controllers.typeSelect(AdminController).isEmpty) ? 'modulestudio::AdminController'
         : ((!controllers.controllers.typeSelect(UserController).isEmpty) ? 'modulestudio::UserController'
