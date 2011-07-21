@@ -166,6 +166,9 @@
                 {formdateinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true defaultValue='now'«EXPAND Validation::FieldValidationCssClass»}
             {/if}
 «REM»TODO: visible=false«ENDREM»«""-»
+«IF !mandatory-»
+            <a id="reset«name.formatForCodeCapital()»Val" href="javascript:void(0);" style="display: none">{gt text='Reset to empty value'}</a>
+«ENDIF-»
 «IF past-»
             <div class="z-formnote">{gt text='Note: this value must be in the past.'}</div>
 «ELSEIF future-»
@@ -179,6 +182,9 @@
             {else}
                 {formdateinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true defaultValue='today'«EXPAND Validation::FieldValidationCssClass»}
             {/if}
+«IF !mandatory-»
+            <a id="reset«name.formatForCodeCapital()»Val" href="javascript:void(0);" style="display: none">{gt text='Reset to empty value'}</a>
+«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE FormField FOR TimeField-»
