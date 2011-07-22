@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project name="ModuleStudio Application Builds">
+<project name="project">
     <target name="start.mwe.workflow">
         <taskdef name="workflow" classname="org.eclipse.emf.mwe.core.ant.WorkflowAntTask"/>
             <workflow file="${workflowFile}">

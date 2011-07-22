@@ -10,8 +10,8 @@
                 <property key="targets" value="start.mwe.workflow" />
             </actorProperties>
             <properties>
-                <property key="modelName" value="${modelName}" />
-                <property key="modelFile" value="${modelFile}" />
+                <property key="modelName" value="${pModelName}" />
+                <property key="modelFile" value="${pModelFile}" />
                 <property key="cartridgeName" value="${cartrigeName}" />
                 <property key="workflowFile" value="{$workflowFile}" />
 
