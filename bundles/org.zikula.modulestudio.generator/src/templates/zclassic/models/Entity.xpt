@@ -36,7 +36,7 @@
  * This is the base entity class for «name.formatForDisplay()» entities.
  *
 «EXPAND entity::Extensions::ClassExtensions-»
-«REM»«EXPAND ObjectExtensions-»«ENDREM»
+«REM»«EXPAND ObjectExtensions-»«ENDREM»«''-»
 «IF mappedSuperClass-»
  * @ORM\MappedSuperclass
 «ELSE-»
@@ -49,7 +49,7 @@
 «IF hasNormalIndexes()-»
  *     indexes={
 «EXPAND Index('Index') FOREACH getNormalIndexes() SEPARATOR ','-»
- *     }«IF hasUniqueIndexes()-»,«ENDIF-»
+ *     }«IF hasUniqueIndexes()-»,«ENDIF»
 «ENDIF-»
 «IF hasUniqueIndexes()-»
  *     uniqueConstraints={
@@ -68,7 +68,7 @@
 «ENDIF-»
  * @ORM\HasLifecycleCallbacks
  */
-class «baseClassModelEntity()» extends Zikula_EntityAccess«IF hasNotifyPolicy()-» implements NotifyPropertyChanged«ENDIF-»
+class «baseClassModelEntity()» extends Zikula_EntityAccess«IF hasNotifyPolicy()-» implements NotifyPropertyChanged«ENDIF»
 {
 «EXPAND EntityInfo-»
 }
@@ -87,12 +87,12 @@ use Doctrine\Common\NotifyPropertyChanged,
 «ENDDEFINE»
 
 «DEFINE Index(String indexType) FOR EntityIndex-»
-@ORM\«indexType.toFirstUpper()»(name="«name.formatForDB()»", columns={«EXPAND IndexField FOREACH items SEPARATOR ','»})
+ *         @ORM\«indexType.toFirstUpper()»(name="«name.formatForDB()»", columns={«EXPAND IndexField FOREACH items SEPARATOR ','»})
 «ENDDEFINE»
 «DEFINE IndexField FOR EntityIndexItem-»"«name.formatForDB()»"«ENDDEFINE»
 
 «DEFINE DiscriminatorInfo FOR InheritanceRelationship-»
-"«source.name.formatForCode()»" = "«source.name.formatForCodeCapital()»"
+"«source.name.formatForCode()»" = "«source.name.formatForCodeCapital()»"«''-»
 «ENDDEFINE»
 
 «REM»concrete implementation stub«ENDREM»
@@ -110,7 +110,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «ENDDEFINE»
 
 
-«DEFINE EntityInfo FOR Entity-»
+«DEFINE EntityInfo FOR Entity»
     /**
      * @var string The tablename this object maps to
      */
@@ -139,7 +139,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «ENDIF-»
 
 «EXPAND entity::Property::PersistentProperty FOREACH fields.typeSelect(DerivedField)»
-«EXPAND entity::Extensions::AdditionalProperties-»
+«EXPAND entity::Extensions::AdditionalProperties»
 «EXPAND entity::Association::Root(false) FOREACH incoming.typeSelect(JoinRelationship)»
 «EXPAND entity::Association::Root(true) FOREACH outgoing.typeSelect(JoinRelationship)»
 «EXPAND Constructor-»
@@ -178,7 +178,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
      * Will not be called by Doctrine and can therefore be used
      * for own implementation purposes. It is also possible to add
      * arbitrary arguments as with every other class method.
-«REM»TODO param docs«ENDREM»
+«REM»TODO param docs«ENDREM»«''-»
      */
     public function __construct(«EXPAND ConstructorArguments-»)
     {
@@ -186,9 +186,9 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
     }
 «ENDDEFINE»
 
-«DEFINE ConstructorArgumentsDefault FOR Entity-»
+«DEFINE ConstructorArgumentsDefault(Boolean hasPreviousArgs) FOR Entity-»
 «IF hasCompositeKeys()-»
-«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ', '-»$«pkField.name.formatForCode()»«ENDFOREACH-»
+«IF hasPreviousArgs-», «ENDIF-»«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ', '-»$«pkField.name.formatForCode()»«ENDFOREACH-»
 «ENDIF-»
 «ENDDEFINE»
 
@@ -197,14 +197,14 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «LET incoming.typeSelect(JoinRelationship).select(e|e.isIndexed()).get(0) AS indexRelation-»
 «LET getRelationAliasName(indexRelation, false) AS sourceAlias-»
 «LET indexRelation.getIndexByField() AS indexBy-»
-$«indexBy.formatForCode()», «indexRelation.source.implClassModelEntity()» $«sourceAlias.formatForCode()», «EXPAND ConstructorArgumentsDefault-»
+$«indexBy.formatForCode()», «indexRelation.source.implClassModelEntity()» $«sourceAlias.formatForCode()»«EXPAND ConstructorArgumentsDefault(true)-»
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»
 «ELSEIF isAggregated()-»
-«EXPAND ConstructorArgumentsAggregate FOREACH getAggregators().getAggregatingRelationships() SEPARATOR ', '», «EXPAND ConstructorArgumentsDefault-»
+«EXPAND ConstructorArgumentsAggregate FOREACH getAggregators().getAggregatingRelationships() SEPARATOR ', '»«EXPAND ConstructorArgumentsDefault(true)-»
 «ELSE-»
-«EXPAND ConstructorArgumentsDefault-»
+«EXPAND ConstructorArgumentsDefault(false)-»
 «ENDIF-»
 «ENDDEFINE»
 

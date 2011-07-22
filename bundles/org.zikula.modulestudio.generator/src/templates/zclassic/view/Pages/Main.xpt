@@ -7,6 +7,10 @@
 «FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/main.tpl")-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» main view in «controller.name()» area *}
 
+«IF controller.hasActions('view')-»
 {modfunc modname='«appName»' type='«controller.name()»' func='view'}
+«ELSE-»
+<p>{gt text='Welcome to the «controller.name()» section of the «appName.formatForDisplayCapital()» module.'}</p>
+«ENDIF-»
 «ENDFILE»
 «ENDDEFINE»

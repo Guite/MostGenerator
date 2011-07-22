@@ -249,6 +249,7 @@
         });
 
         Zikula.UI.Tooltips($$('.«app.appName().formatForDB()»FormTooltips'));
+«EXPAND AdditionalInitScript FOREACH getDerivedFields()-»
     });
 
 /* ]]> */
@@ -262,6 +263,18 @@
             «EXPAND FormComponents::SimpleFields::FormRow-»
         </div>
 «ENDIF-»
+«ENDDEFINE»
+
+«DEFINE AdditionalInitScript FOR DerivedField-»
+«ENDDEFINE»
+«DEFINE AdditionalInitScriptCalendar FOR DerivedField-»
+        $('reset«name.formatForCodeCapital()»Val').observe('click', function() { $('«name.formatForCode()»').value = ''; }).show();
+«ENDDEFINE»
+«DEFINE AdditionalInitScript FOR DatetimeField-»
+«EXPAND AdditionalInitScriptCalendar-»
+«ENDDEFINE»
+«DEFINE AdditionalInitScript FOR DateField-»
+«EXPAND AdditionalInitScriptCalendar-»
 «ENDDEFINE»
 
 «DEFINE InlineRedirectHandler(Application app) FOR Controller-»

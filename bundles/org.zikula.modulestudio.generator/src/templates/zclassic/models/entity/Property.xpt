@@ -23,20 +23,20 @@
 «ENDDEFINE»
 
 «REM»Note we use protected and not private to let the dev change things in concrete implementations«ENDREM»
-«DEFINE PersistentProperty(String name, String type, String init) FOR DerivedField-»
+«DEFINE PersistentProperty(String name, String type, String init) FOR DerivedField»
 «EXPAND PersistentProperty(name, type, init, 'protected')-»
 «ENDDEFINE»
 
-«DEFINE PersistentProperty(String name, String type, String init, String modifier) FOR DerivedField-»
+«DEFINE PersistentProperty(String name, String type, String init, String modifier) FOR DerivedField»
     /**
 «IF primaryKey-»
      * @ORM\Id
-«IF !entity.hasCompositeKeys()-»«REM» || entity.identifierStrategy == EntityIdentifierStrategy::ASSIGNED-»«ENDREM»
+«IF !entity.hasCompositeKeys()-»«REM» || entity.identifierStrategy == EntityIdentifierStrategy::ASSIGNED-»«ENDREM»«''-»
      * @ORM\GeneratedValue«IF entity.identifierStrategy != EntityIdentifierStrategy::NONE-»(strategy="«entity.identifierStrategy.asConstant()»")«ENDIF-»
 «ENDIF-»
 «ENDIF-»
 «EXPAND Extensions::ColumnExtensions-»
-     * @ORM\Column(«EXPAND PersistentPropertyImpl(type)»«IF unique-», unique=true«ENDIF-»«IF nullable-» nullable=true«ENDIF-»)
+     * @ORM\Column(«EXPAND PersistentPropertyImpl(type)-»«IF unique-», unique=true«ENDIF-»«IF nullable-» nullable=true«ENDIF-»)
 «EXPAND PersistentPropertyAdditions-»
      * @var «type» $«name».
      */
@@ -44,26 +44,26 @@
 «ENDDEFINE»
 
 «DEFINE PersistentPropertyImpl(String type) FOR DerivedField-»
-type="«type»"
+type="«type»"«''-»
 «ENDDEFINE»
 
 «DEFINE PersistentPropertyImpl(String type) FOR DecimalField-»
-type="«type»", precision=«length», scale=«scale»
+type="«type»", precision=«length», scale=«scale»«''-»
 «ENDDEFINE»
 «DEFINE PersistentPropertyImpl(String type) FOR StringField-»
-«REM»type="«type»", «ENDREM»length=«length»
+«REM»type="«type»", «ENDREM»length=«length»«''-»
 «ENDDEFINE»
 «DEFINE PersistentPropertyImpl(String type) FOR TextField-»
-«REM»type="«type»", «ENDREM»length=«length»
+«REM»type="«type»", «ENDREM»length=«length»«''-»
 «ENDDEFINE»
 «DEFINE PersistentPropertyImpl(String type) FOR EmailField-»
-«REM»type="«type»", «ENDREM»length=«length»
+«REM»type="«type»", «ENDREM»length=«length»«''-»
 «ENDDEFINE»
 «DEFINE PersistentPropertyImpl(String type) FOR UrlField-»
-«REM»type="«type»", «ENDREM»length=«length»
+«REM»type="«type»", «ENDREM»length=«length»«''-»
 «ENDDEFINE»
 «DEFINE PersistentPropertyImpl(String type) FOR UploadField-»
-«REM»type="«type»", «ENDREM»length=«length»
+«REM»type="«type»", «ENDREM»length=«length»«''-»
 «ENDDEFINE»
 
 «DEFINE PersistentPropertyAdditions FOR DerivedField-»
@@ -97,7 +97,7 @@ type="«type»", precision=«length», scale=«scale»
 «ENDDEFINE»
 «DEFINE DefaultFieldData FOR IntegerField-»
 «LET getPointingRelations() AS pointingRelations-»
-«IF !pointingRelations.isEmpty-»(int) FormUtil::getPassedValue('«pointingRelations.get(0).getSourceFields().get(0)»', 0, 'GET', FILTER_VALIDATE_INT)
+«IF !pointingRelations.isEmpty-»(int) FormUtil::getPassedValue('«pointingRelations.get(0).getSourceFields().get(0)»', 0, 'GET', FILTER_VALIDATE_INT)«''-»
 «ELSE-»
 «IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
 «ENDIF-»«ENDLET-»«ENDDEFINE»

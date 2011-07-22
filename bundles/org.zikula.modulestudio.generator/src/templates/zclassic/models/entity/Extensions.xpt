@@ -8,23 +8,23 @@ use Gedmo\Mapping\Annotation as Gedmo;
 «ENDDEFINE»
 
 «REM»Class annotations«ENDREM»
-«DEFINE ClassExtensions FOR Entity»
+«DEFINE ClassExtensions FOR Entity-»
 «IF loggable-»
-     * @Gedmo\Loggable(logEntryClass="«implClassModel('', 'logEntry')»")
+ * @Gedmo\Loggable(logEntryClass="«implClassModel('', 'logEntry')»")
 «ENDIF-»
 «IF hasTranslatableFields()-»
-     * @Gedmo\TranslationEntity(class="«implClassModel('', 'translation')»")
+ * @Gedmo\TranslationEntity(class="«implClassModel('', 'translation')»")
 «ENDIF-»
 «IF tree != EntityTreeType::NONE-»
-     * @Gedmo\Tree(type="«tree.asConstant()»")
+ * @Gedmo\Tree(type="«tree.asConstant()»")
 «IF tree == EntityTreeType::CLOSURE-»
-     * @Gedmo\TreeClosure(class="«implClassModel('', 'closure')»")
+ * @Gedmo\TreeClosure(class="«implClassModel('', 'closure')»")
 «ENDIF-»
 «ENDIF-»
 «ENDDEFINE»
 
 «REM»Column annotations«ENDREM»
-«DEFINE ColumnExtensionsDefault FOR DerivedField»
+«DEFINE ColumnExtensionsDefault FOR DerivedField-»
 «IF translatable-»
      * @Gedmo\Translatable
 «ENDIF-»
@@ -39,25 +39,25 @@ use Gedmo\Mapping\Annotation as Gedmo;
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE ColumnExtensions FOR DerivedField»
-«EXPAND ColumnExtensionsDefault-»
+«DEFINE ColumnExtensions FOR DerivedField-»
+«EXPAND ColumnExtensionsDefault»
 «ENDDEFINE»
-«DEFINE ColumnExtensions FOR AbstractIntegerField»
-«EXPAND ColumnExtensionsDefault-»
+«DEFINE ColumnExtensions FOR AbstractIntegerField-»
+«EXPAND ColumnExtensionsDefault»
 «IF sortablePosition-»
      * @Gedmo\SortablePosition
 «ENDIF-»
 «ENDDEFINE»
-«DEFINE ColumnExtensions FOR AbstractDateField»
-«EXPAND ColumnExtensionsDefault-»
+«DEFINE ColumnExtensions FOR AbstractDateField-»
+«EXPAND ColumnExtensionsDefault»
 «IF timestampable != EntityTimestampableType::NONE-»
      * @Gedmo\Timestampable(on="«timestampable.asConstant()»"«EXPAND TimestampableDetails-»)
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE TimestampableDetails FOR AbstractDateField»
+«DEFINE TimestampableDetails FOR AbstractDateField-»
 «IF timestampable == EntityTimestampableType::CHANGE-»
-field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableChangeTriggerValue != null && timestampableChangeTriggerValue != ''-», value="«timestampableChangeTriggerValue.formatForCode()»"«ENDIF-»
+field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableChangeTriggerValue != null && timestampableChangeTriggerValue != ''-», value="«timestampableChangeTriggerValue.formatForCode()»"«ENDIF-»«''-»
 «ENDIF-»
 «ENDDEFINE»
 
@@ -165,14 +165,14 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
 «ENDDEFINE»
 
 «REM»Association annotations«ENDREM»
-«DEFINE RelationExtensions(Boolean useTarget) FOR JoinRelationship»
+«DEFINE RelationExtensions(Boolean useTarget) FOR JoinRelationship-»
 «ENDDEFINE»
-«DEFINE RelationExtensions(Boolean useTarget) FOR OneToOneRelationship»
+«DEFINE RelationExtensions(Boolean useTarget) FOR OneToOneRelationship-»
 «IF versioned-»
      * @Gedmo\Versioned
 «ENDIF-»
 «ENDDEFINE»
-«DEFINE RelationExtensions(Boolean useTarget) FOR ManyToOneRelationship»
+«DEFINE RelationExtensions(Boolean useTarget) FOR ManyToOneRelationship-»
 «IF useTarget && versioned-»
      * @Gedmo\Versioned
 «ENDIF-»

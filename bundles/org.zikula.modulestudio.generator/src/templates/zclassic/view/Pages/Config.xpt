@@ -26,21 +26,18 @@
 
         {* add validation summary and a <div> element for styling the form *}
         {«appName().formatForDB()»FormFrame}
-            <fieldset>
-                <legend>{gt text='Here you can manage all basic settings for this application.'}</legend>
+«IF hasMultipleConfigSections()-»
+        {formtabbedpanelset}
+«ENDIF-»
+«EXPAND ConfigSection(hasMultipleConfigSections()) FOREACH getSortedVariableContainers()-»
+«IF hasMultipleConfigSections()-»
+        {/formtabbedpanelset}
+«ENDIF-»
 
-«FOREACH models.variables.vars AS modvar-»
-                <div class="z-formrow">
-                    {formlabel for='«modvar.name.formatForCode()»' __text='«modvar.name.formatForDisplayCapital()»'}
-                    «EXPAND InputField FOR modvar-»
-                </div>
-«ENDFOREACH-»
-
-                <div class="z-buttons z-formbuttons">
-                    {formbutton commandName='save' __text='Update configuration' class='z-bt-save'}
-                    {formbutton commandName='cancel' __text='Cancel' class='z-bt-cancel'}
-                </div>
-            </fieldset>
+            <div class="z-buttons z-formbuttons">
+                {formbutton commandName='save' __text='Update configuration' class='z-bt-save'}
+                {formbutton commandName='cancel' __text='Cancel' class='z-bt-cancel'}
+            </div>
         {/«appName().formatForDB()»FormFrame}
     {/form}
 «IF configController().formatForDB() == 'admin'-»
@@ -52,14 +49,48 @@
 «ENDFILE-»
 «ENDDEFINE»
 
-«DEFINE InputField FOR Variable»«""-»
+«DEFINE ConfigSection(Boolean hasMultipleConfigSections) FOR Variables-»
+«IF hasMultipleConfigSections-»
+            {gt text='«name.formatForDisplayCapital()»' assign='tabTitle'}
+            {formtabbedpanel title=$tabTitle}
+«ENDIF-»
+            <fieldset>
+«IF hasMultipleConfigSections-»
+«IF documentation != null && documentation != ''-»
+                <legend>{gt text='«documentation.replaceAll("'", "")»'}</legend>
+«ELSE-»
+                <legend>{gt text='«name.formatForDisplayCapital()»'}</legend>
+«ENDIF-»
+«ELSE-»
+«IF documentation != null && documentation != ''-»
+                <legend>{gt text='«documentation.replaceAll("'", "")»'}</legend>
+«ELSE-»
+                <legend>{gt text='Here you can manage all basic settings for this application.'}</legend>
+«ENDIF-»
+«ENDIF-»
+
+«EXPAND FormRow FOREACH vars-»
+            </fieldset>
+«IF hasMultipleConfigSections-»
+            {/formtabbedpanel}
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE FormRow FOR Variable-»
+                <div class="z-formrow">
+                    {formlabel for='«name.formatForCode()»' __text='«name.formatForDisplayCapital()»'}
+                    «EXPAND InputField-»
+                </div>
+«ENDDEFINE»
+
+«DEFINE InputField FOR Variable-»
 {formtextinput id='«name.formatForCode()»' group='config' maxLength=255 width=20em __title='Input this setting.'}
 «ENDDEFINE»
 
-«DEFINE InputField FOR IntVar»«""-»
+«DEFINE InputField FOR IntVar-»
 {formintinput id='«name.formatForCode()»' group='config' maxLength=255 width=20em __title='Input this setting. Only digits are allowed.'}
 «ENDDEFINE»
 
-«DEFINE InputField FOR BoolVar»«""-»
+«DEFINE InputField FOR BoolVar-»
 {formcheckbox id='«name.formatForCode()»' group='config'}
 «ENDDEFINE»
