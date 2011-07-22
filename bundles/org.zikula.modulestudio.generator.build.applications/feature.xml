@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.zikula.modulestudio.generator.build.application"
+      id="org.zikula.modulestudio.generator.build.applications"
       label="Generator for applications build feature"
       version="1.0.0.qualifier">
 
