@@ -36,12 +36,13 @@
             </uri>
         </provider>
     </searchPath>
-        <searchPath name="most.generator.build.applications">
+    <searchPath name="most.generator.build.applications">
         <provider readerType="local" componentTypes="osgi.bundle,eclipse.feature" mutable="false">
             <uri format="{0}/scm/bundles/{1}">
                 <bc:propertyRef key="workspace.root"/>
                 <bc:propertyRef key="buckminster.component"/>
             </uri>
+        </provider>
     </searchPath>
 
     <locator searchPathRef="most.generator.build.applications" pattern="^org\.zikula\.modulestudio\.generator\.build\.applications(\..*)?" />

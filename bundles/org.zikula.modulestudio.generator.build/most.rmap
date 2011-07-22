@@ -8,6 +8,7 @@
                 <bc:propertyRef key="workspace.root"/>
                 <bc:propertyRef key="buckminster.component"/>
             </uri>
+        </provider>
     </searchPath>
     <searchPath name="most.metamodel">
         <provider readerType="p2" componentTypes="osgi.bundle,eclipse.feature" mutable="false" source="false">
