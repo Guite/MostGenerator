@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rmap xmlns="http://www.eclipse.org/buckminster/RMap-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:bc="http://www.eclipse.org/buckminster/Common-1.0">
+
+    <searchPath name="most.generator">
+        <provider readerType="local" componentTypes="osgi.bundle,eclipse.feature" mutable="false">
+            <uri format="{0}/scm/bundles/{1}">
+                <bc:propertyRef key="workspace.root"/>
+                <bc:propertyRef key="buckminster.component"/>
+            </uri>
+        </provider>
+    </searchPath>
+    <searchPath name="most.metamodel">
+        <provider readerType="p2" componentTypes="osgi.bundle,eclipse.feature" mutable="false" source="false">
+            <uri format="file:////var/lib/jenkins/jobs/MOST-1_Prepare-2_MetaModel/lastSuccessful/archive/scm/bundles/de.guite.modulestudio.metamodel.build/site.p2.artifact" />
+        </provider>
+    </searchPath>
+    <searchPath name="most.product">
+        <provider readerType="local" componentTypes="osgi.bundle,eclipse.feature" mutable="false">
+            <uri format="{0}/refProduct/bundles/{1}">
+                <bc:propertyRef key="workspace.root" />
+                <bc:propertyRef key="buckminster.component" />
+            </uri>
+        </provider>
+    </searchPath>
+    <searchPath name="most.product.helpers.beautifier">
+        <provider readerType="local" componentTypes="osgi.bundle" mutable="false">
+            <uri format="{0}/refProduct/tools/beautifier/{1}">
+                <bc:propertyRef key="workspace.root" />
+                <bc:propertyRef key="buckminster.component" />
+            </uri>
+        </provider>
+    </searchPath>
+    <searchPath name="most.product.helpers.reporting">
+        <provider readerType="local" componentTypes="osgi.bundle" mutable="false">
+            <uri format="{0}/refProduct/tools/reporting/{1}">
+                <bc:propertyRef key="workspace.root" />
+                <bc:propertyRef key="buckminster.component" />
+            </uri>
+        </provider>
+    </searchPath>
+
+    <locator searchPathRef="most.generator" pattern="^org\.zikula\.modulestudio\.generator(\..*)?" />
+    <locator searchPathRef="most.metamodel" pattern="^de\.guite\.modulestudio\.metamodel(\..*)?" />
+    <locator searchPathRef="most.product" pattern="^de\.guite\.modulestudio(\..+)?" />
+    <locator searchPathRef="most.product.helpers.beautifier" failOnError="false" />
+    <locator searchPathRef="most.product.helpers.reporting" failOnError="false" />
+    <redirect href="../../../refProduct/bundles/de.guite.modulestudio.build/build/most_eclipse.rmap" />
+</rmap>

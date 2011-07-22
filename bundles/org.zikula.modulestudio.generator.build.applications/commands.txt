@@ -1,0 +1,15 @@
+# Commands for generating a module or another artifact with the generator
+
+# materialise stuff by cquery/mspec/rmap
+import --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "refProduct/bundles/de.guite.modulestudio.build/build/most.mspec"
+resolve --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "refProduct/bundles/de.guite.modulestudio.build/build/most_applications.cquery"
+
+# build workspace
+build
+#build --thorough
+
+# start the mwe workflow
+
+perform --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "de.guite.modulestudio.build#start.generator.cartridge" -DmodelName=AdShare -DmodelFile=$WORKSPACE/refApplications/models/customers/AdShare.mostapp -DcartrigeName=zclassic -DworkflowFile=src/org.zikula.generator/src/workflow/msWorkflowManual.mwe -DoutputPath=$WORKSPACE/output
+
+perform --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "de.guite.modulestudio.build#start.generator.cartridge" -DmodelName=AdShare -DmodelFile=$WORKSPACE/refApplications/models/customers/AdShare.mostapp -DcartrigeName=reporting -DworkflowFile=src/org.zikula.generator/src/workflow/msWorkflowManual.mwe -DoutputPath=$WORKSPACE/output
