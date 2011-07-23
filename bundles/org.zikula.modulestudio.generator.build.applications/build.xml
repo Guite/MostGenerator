@@ -18,6 +18,7 @@
         </java>
     </target>
     <target name="start.mwe.workflow">
+    	<property file="make/bm.properties"/>
         <taskdef name="workflow" classname="org.eclipse.emf.mwe.core.ant.WorkflowAntTask"/>
     	
             <workflow file="${workflowFile}">
