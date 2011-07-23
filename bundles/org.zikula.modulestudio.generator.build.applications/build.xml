@@ -5,7 +5,9 @@
     <path id="classpath">
         <path refid="project.classpath"/>
     </path>
-    <target name="start.mwe.workflow">
+	
+	
+    <target name="start.mwe.workflowOld">
     	<echo>${workflowFile}</echo>
     	<property file="bm.properties"/>
         <!-- fork as we want to be sure that the correct directory will be used -->
@@ -18,11 +20,14 @@
             <arg value="-psrcGenPath=output/${cartrigeName}"/>
         </java>
     </target>
-    <target name="start.mwe.workflowOld">
+    <target name="start.mwe.workflow">
     	<property file="make/bm.properties"/>
         <taskdef name="workflow" classpathref="classpath" classname="org.eclipse.emf.mwe.core.ant.WorkflowAntTask"/>
     	
             <workflow file="${workflowFile}">
+                <classpath>
+                   <path refid="classpath" />
+                </classpath>
 <!--                <param name="baseDir" value="/base/"/>-->
                 <param name="modelName" value="${modelName}"/>
                 <param name="modelFile" value="${modelFile}"/>
@@ -33,3 +38,4 @@
             </workflow>
       </target>
 </project>
+
