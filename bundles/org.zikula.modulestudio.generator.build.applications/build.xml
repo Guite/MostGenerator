@@ -4,7 +4,7 @@
     <buckminster.valuepath id="project.classpath" value="${fs:project.classpath}" />
     <path id="classpath">
         <path refid="project.classpath"/>
-        <fileset dir="${WORKSPACE}/org.zikula.generator/src/workflow/">
+        <fileset dir="${WORKSPACE}/org.zikula.modulestudio.generator/src/workflow/">
           <include name="*.mwe"/>
         </fileset>
     </path>
