@@ -6,10 +6,11 @@
         <path refid="project.classpath"/>
     </path>
     <target name="start.mwe.workflow">
+    	<echo>${workflowFile}</echo>
     	<property file="bm.properties"/>
         <!-- fork as we want to be sure that the correct directory will be used -->
         <java classname="org.eclipse.emf.mwe.core.WorkflowRunner" dir="." classpathref="classpath" output="build.log">
-        	<arg path="${workflowFile}" />
+        	<arg value="${workflowFile}" />
         	<arg value="-pmodelName=${modelName}"/>
             <arg value="-pmodelFile=${modelFile}"/>
             <arg value="-pcartridgeName=${cartridgeName}"/>
