@@ -5,19 +5,19 @@
     <path id="classpath">
         <path refid="project.classpath"/>
     </path>
-    <target name="start.mwe.workflowOld">
+    <target name="start.mwe.workflow">
     	<property file="bm.properties"/>
         <!-- fork as we want to be sure that the correct directory will be used -->
         <java classname="org.eclipse.emf.mwe.core.WorkflowRunner" dir="." classpathref="classpath" output="build.log">
-            <arg value="-pmodelName=${modelName}"/>
+        	<arg path="${workflowFile}" />
+        	<arg value="-pmodelName=${modelName}"/>
             <arg value="-pmodelFile=${modelFile}"/>
             <arg value="-pcartridgeName=${cartridgeName}"/>
             <arg value="-penrichedModelFile=${modelName}_Enriched.mostapp"/>
             <arg value="-psrcGenPath=output/${cartrigeName}"/>
-        	<arg path="${workflowFile}" />
         </java>
     </target>
-    <target name="start.mwe.workflow">
+    <target name="start.mwe.workflowOld">
     	<property file="make/bm.properties"/>
         <taskdef name="workflow" classpathref="classpath" classname="org.eclipse.emf.mwe.core.ant.WorkflowAntTask"/>
     	
