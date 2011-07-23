@@ -12,7 +12,7 @@
             <properties>
                 <property key="modelName" value="${pModelName}" />
                 <property key="modelFile" value="${pModelFile}" />
-                <property key="cartridgeName" value="${pCartrigeName}" />
+                <property key="cartrigeName" value="${pCartrigeName}" />
                 <property key="workflowFile" value="${pWorkflowFile}" />
 
                 <!-- path to root build directory from view of this build plugin -->
