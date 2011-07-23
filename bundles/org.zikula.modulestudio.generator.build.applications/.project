@@ -5,7 +5,22 @@
 	<projects>
 	</projects>
 	<buildSpec>
+<buildCommand>
+<name>org.eclipse.buckminster.jdt.classpathEmitter</name>
+<arguments>
+<dictionary>
+<key>full.printstream</key>
+<value>false</value>
+</dictionary>
+<dictionary>
+<key>file</key>
+<value>make/bm.properties</value>
+</dictionary>
+</arguments>
+</buildCommand>
+
 	</buildSpec>
 	<natures>
-	</natures>
+        <nature>org.eclipse.jdt.core.javanature</nature>
+    </natures>
 </projectDescription>
