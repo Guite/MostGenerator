@@ -5,7 +5,6 @@ ln -sfT /var/lib/jenkins/jobs/MOST-0_Fetch-1_Product/workspace/scm "$WORKSPACE/r
 
 echo "Linking applications git repository"
 ln -sfT /var/lib/jenkins/jobs/MOST-0_Fetch-9_Applications/workspace/scm "$WORKSPACE/refApplications"
-
 echo "Creating working directory."
 mkdir -p tempWorkingDir
 
