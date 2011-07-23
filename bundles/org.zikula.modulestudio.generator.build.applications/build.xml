@@ -14,7 +14,7 @@
             <arg value="-pcartridgeName=${cartridgeName}"/>
             <arg value="-penrichedModelFile=${modelName}_Enriched.mostapp"/>
             <arg value="-psrcGenPath=output/${cartrigeName}"/>
-        	<arg value="${workflowFile}" />
+        	<arg value="-pworkflowFile=${workflowFile}" />
         </java>
     </target>
     <target name="start.mwe.workflowOld">
@@ -28,6 +28,7 @@
                 <param name="cartridgeName" value="${cartridgeName}"/>
                 <param name="enrichedModelFile" value="${modelName}_Enriched.mostapp"/>
                 <param name="srcGenPath" value="output/${cartrigeName}"/>
+            	
             </workflow>
       </target>
 </project>
