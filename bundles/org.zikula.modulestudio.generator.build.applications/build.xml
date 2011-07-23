@@ -14,7 +14,7 @@
             <arg value="-pcartridgeName=${cartridgeName}"/>
             <arg value="-penrichedModelFile=${modelName}_Enriched.mostapp"/>
             <arg value="-psrcGenPath=output/${cartrigeName}"/>
-        	<arg value="-pworkflowFile=${workflowFile}" />
+        	<arg path="${workflowFile}" />
         </java>
     </target>
     <target name="start.mwe.workflowOld">
