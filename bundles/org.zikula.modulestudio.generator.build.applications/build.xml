@@ -5,7 +5,7 @@
     <path id="classpath">
         <path refid="project.classpath"/>
     </path>
-    <target name="start.mwe.workflowOld">
+    <target name="start.mwe.workflow">
     	<property file="bm.properties"/>
         <!-- fork as we want to be sure that the correct directory will be used -->
         <java classname="org.eclipse.emf.mwe.core.WorkflowRunner" dir="." classpathref="classpath" output="build.log">
@@ -17,7 +17,7 @@
         	<arg value="${workflowFile}" />
         </java>
     </target>
-    <target name="start.mwe.workflow">
+    <target name="start.mwe.workflowOld">
     	<property file="make/bm.properties"/>
         <taskdef name="workflow" classname="org.eclipse.emf.mwe.core.ant.WorkflowAntTask"/>
     	
