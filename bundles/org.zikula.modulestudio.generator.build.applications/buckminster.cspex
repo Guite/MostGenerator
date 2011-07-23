@@ -13,7 +13,7 @@
                 <property key="modelName" value="${pModelName}" />
                 <property key="modelFile" value="${pModelFile}" />
                 <property key="cartridgeName" value="${cartrigeName}" />
-                <property key="workflowFile" value="{$workflowFile}" />
+                <property key="workflowFile" value="${pWorkflowFile}" />
 
                 <!-- path to root build directory from view of this build plugin -->
                 <property key="WORKSPACE" value="../" />
