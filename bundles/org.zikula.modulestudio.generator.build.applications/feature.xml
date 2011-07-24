@@ -16,5 +16,18 @@
       [Geben Sie hier die Beschreibung für die Lizenz ein.]
    </license>
 
+   <requires>
+      <import plugin="org.apache.commons.logging" version="1.0.4" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.mwe.core" version="1.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.mwe.utils" version="1.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.ecore.xmi" version="2.7.0" match="greaterOrEqual"/>
+      <import plugin="de.guite.modulestudio.metamodel" version="1.0.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xpand" version="1.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtend" version="1.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtend.profiler" version="1.0.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtend.typesystem.emf" version="1.0.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtend.util.stdlib" version="1.0.1" match="greaterOrEqual"/>
+      <import plugin="org.zikula.modulestudio.generator" version="1.0.0" match="greaterOrEqual"/>
+   </requires>
 
 </feature>
