@@ -6,7 +6,7 @@ resolve --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster
 
 
 # build workspace
-build
+# build
 #build --thorough
 
 # start the mwe workflow
