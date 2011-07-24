@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.build.applications.application;
+package org.zikula.modulestudio.generator.build.applications;
 
 import org.eclipse.emf.mwe.core.WorkflowComponent;
 import org.eclipse.emf.mwe.core.WorkflowContext;
