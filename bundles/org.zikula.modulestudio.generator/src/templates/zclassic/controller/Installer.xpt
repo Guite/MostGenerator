@@ -58,7 +58,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «EXPAND FuncUpdate-»
 «EXPAND FuncDelete-»
 «EXPAND FuncListEntityClasses-»
-«EXPAND FuncDefaultData-»
+«EXPAND FuncCreateDefaultData-»
 «EXPAND ProcessEventHandlersImpl-»
 «ENDDEFINE»
 
@@ -81,7 +81,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     {
         // create all tables from according entity definitions
         try {
-            DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses);
+            DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses());
         } catch (Exception $e) {
             if (System::isDevelopmentMode()) {
                 LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
@@ -114,7 +114,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 
         // create the default data for «appName()»
         // TODO: must be retested (see #33)
-        $this->defaultData();
+        $this->createDefaultData();
 
         // initialisation successful
         return true;
@@ -127,12 +127,14 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 
 «DEFINE ModVarValSession2Mod FOR Variable»'«value»'«ENDDEFINE»
 «DEFINE ModVarValSession2Mod FOR BoolVar»«IF value == 'true'»true«ELSE»false«ENDIF»«ENDDEFINE»
-«DEFINE ModVarValSession2Mod FOR ListVar»serialize(array(«EXPAND ModVarValSession2Mod FOREACH items.select(item|item.^default == true) SEPARATOR ', '»))«ENDDEFINE»
+«DEFINE ModVarValSession2Mod FOR IntVar»«value»«ENDDEFINE»
+«DEFINE ModVarValSession2Mod FOR ListVar»array(«EXPAND ModVarValSession2Mod FOREACH items.select(item|item.^default == true) SEPARATOR ', '»)«ENDDEFINE»
 «DEFINE ModVarValSession2Mod FOR ListVarItem»«IF ^default == true»'«name.formatForCode()»'«ENDIF»«ENDDEFINE»
 
 «DEFINE ModVarValDirect2Mod FOR Variable»'«value»'«ENDDEFINE»
 «DEFINE ModVarValDirect2Mod FOR BoolVar»«IF value == 'true'»true«ELSE»false«ENDIF»«ENDDEFINE»
-«DEFINE ModVarValDirect2Mod FOR ListVar»serialize(array(«EXPAND ModVarValDirect2Mod FOREACH items.select(item|item.^default == true) SEPARATOR ', '»))«ENDDEFINE»
+«DEFINE ModVarValDirect2Mod FOR IntVar»«value»«ENDDEFINE»
+«DEFINE ModVarValDirect2Mod FOR ListVar»array(«EXPAND ModVarValDirect2Mod FOREACH items.select(item|item.^default == true) SEPARATOR ', '»)«ENDDEFINE»
 «DEFINE ModVarValDirect2Mod FOR ListVarItem»'«name.formatForCode()»'«ENDDEFINE»
 
 
@@ -156,7 +158,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
                 // ...
                 // update the database schema
                 try {
-                    DoctrineHelper::updateSchema($this->entityManager, $this->listEntityClasses);
+                    DoctrineHelper::updateSchema($this->entityManager, $this->listEntityClasses());
                 } catch (Exception $e) {
                     if (System::isDevelopmentMode()) {
                         LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
@@ -198,7 +200,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
             // remove tables
 «EXPAND RemoveTable FOREACH models.entities-»
 */
-            DoctrineHelper::dropSchema($this->entityManager, $this->listEntityClasses);
+            DoctrineHelper::dropSchema($this->entityManager, $this->listEntityClasses());
         } catch (Exception $e) {
             if (System::isDevelopmentMode()) {
                 LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
@@ -271,7 +273,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDDEFINE»
 
 «DEFINE RemoveForeignKey FOR JoinRelationship-»
-            $foreignKeyName = $dbPrefix . '_«target.fullEntityName()»_«getRelationAliasName(true).formatForDB()»_' . $dbPrefix . '_«source.fullEntityName()»_«getRelationAliasName(false).formatForDB()»';
+            $foreignKeyName = '«target.fullEntityName()»_«getRelationAliasName(true).formatForDB()»_«source.fullEntityName()»_«getRelationAliasName(false).formatForDB()»';
             DoctrineUtil::dropForeignKey('«target.fullEntityName()»', array('name' => $foreignKeyName));
             DoctrineUtil::dropIndex('«target.fullEntityName()»', '«IF isDefaultIdFieldName(target, getTargetFields().get(0))»«source.relationFieldName(getSourceFields().get(0))»«ELSE»«target.relationFieldName(getTargetFields().get(0))»«ENDIF»');
 «ENDDEFINE»
@@ -279,7 +281,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDDEFINE»
 «DEFINE RemoveTable FOR Entity-»
 «IF hasSluggableFields()-»
-            DoctrineUtil::dropIndex('«fullEntityName()»', $dbPrefix . '_«fullEntityName()»_sluggable');
+            DoctrineUtil::dropIndex('«fullEntityName()»', '«fullEntityName()»_sluggable');
 «ENDIF-»
             DoctrineUtil::dropTable('«fullEntityName()»');
 «ENDDEFINE»
@@ -301,13 +303,13 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     }
 «ENDDEFINE»
 
-«DEFINE FuncDefaultData FOR Application»
+«DEFINE FuncCreateDefaultData FOR Application»
     /**
      * Create the default data for «appName()».
      *
      * @return void
      */
-    protected function defaultData()
+    protected function createDefaultData()
     {
         // ensure that tables are cleared
         $this->entityManager->transactional(function($entityManager) {
@@ -580,7 +582,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDDEFINE»
 «DEFINE ExampleRowValueNumber(Integer number) FOR DerivedField-»«number»«ENDDEFINE»
 «DEFINE ExampleRowValueText(Integer number) FOR DerivedField-»
-«entity.name.formatForDisplayCapital()» «name.formatForDisplay()» «number»«""-»
+'«entity.name.formatForDisplayCapital()» «name.formatForDisplay()» «number»'«""-»
 «ENDDEFINE»
 «DEFINE ExampleRowValue(Integer number) FOR BooleanField-»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Integer number) FOR IntegerField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»

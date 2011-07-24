@@ -67,7 +67,9 @@ cached getUploadEntities(Application this) :
     models.entities.select(e|e.fields.typeSelect(UploadField).size > 0);
 
 cached boolean hasLoggable(Application this) :
-    models.entities.exists(e|e.loggable);
+    !getLoggableEntities().isEmpty;
+cached getLoggableEntities(Application this) :
+    models.entities.select(e|e.loggable);
 cached boolean hasSluggable(Application this) :
     models.entities.exists(e|e.hasSluggableFields());
 cached boolean hasSortable(Application this) :

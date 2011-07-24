@@ -302,9 +302,9 @@ class «implClassModel('repository', 'translation')» extends «IF isInheriting(
 «REM»loggable log entry class«ENDREM»
 «DEFINE LogEntryClass(Application app) FOR Entity-»
 «IF !isInheriting()-»
-    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModel('', 'closure').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND LogEntryBaseImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModel('', 'logEntry').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND LogEntryBaseImpl(app)»«ENDFILE»
 «ENDIF-»
-    «FILE getAppSourcePath(app.appName()).msconcat(implClassModel('', 'closure').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND LogEntryImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassModel('', 'logEntry').asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND LogEntryImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
 «REM»base implementation«ENDREM»

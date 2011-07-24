@@ -133,7 +133,7 @@
             }
 
             // remove upload file (and image thumbnails)
-            $this = $uploadManager->deleteUploadFile('«name.formatForCode()»', $this, $uploadField);
+            $uploadManager->deleteUploadFile('«name.formatForCode()»', $this, $uploadField);
         }
 «ENDIF-»
 «ENDLET-»

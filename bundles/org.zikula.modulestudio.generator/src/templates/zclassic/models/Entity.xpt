@@ -10,6 +10,16 @@
 «REM»    «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»«ENDREM»
     «EXPAND business::Validator::BaseValidator-»
     «EXPAND business::Validator::ValidatorWrapper(this) FOREACH models.entities-»
+«IF hasLoggable()-»
+«FOREACH getLoggableEntities() AS logEntity-»
+«EXPAND entity::Extensions::LogEntryClass(this) FOR logEntity-»
+«ENDFOREACH-»
+«ENDIF-»
+«IF hasTranslatable()-»
+«FOREACH getTranslatableEntities() AS translatableEntity-»
+«EXPAND entity::Extensions::TranslationClass(this) FOR translatableEntity-»
+«ENDFOREACH-»
+«ENDIF-»
 «IF hasTrees()-»
 «FOREACH getTreeEntities() AS treeEntity-»
 «EXPAND entity::Extensions::TreeClosureClass(this) FOR treeEntity-»
@@ -92,7 +102,7 @@ use Doctrine\Common\NotifyPropertyChanged,
 «DEFINE IndexField FOR EntityIndexItem-»"«name.formatForDB()»"«ENDDEFINE»
 
 «DEFINE DiscriminatorInfo FOR InheritanceRelationship-»
-"«source.name.formatForCode()»" = "«source.name.formatForCodeCapital()»"«''-»
+"«source.name.formatForCode()»" = "«source.implClassModelEntity()»"«''-»
 «ENDDEFINE»
 
 «REM»concrete implementation stub«ENDREM»
@@ -145,7 +155,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «EXPAND Constructor-»
 
 «EXPAND FileHelper::GetterAndSetterMethods('_objectType', 'string', false, false, '')»
-«EXPAND FileHelper::GetterAndSetterMethods('_idFields', 'array', false, true, 'array')»
+«EXPAND FileHelper::GetterAndSetterMethods('_idFields', 'array', false, true, 'Array()')»
 «EXPAND FileHelper::GetterAndSetterMethods('_validator', implClassModel('validator', ''), false, true, 'null')»
 «EXPAND FileHelper::GetterAndSetterMethods('_hasUniqueSlug', 'boolean', false, false, '')»
 «EXPAND PropertyChangedListener-»
@@ -168,6 +178,16 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
         if (is_array($result)) {
             throw new Zikula_Exception($result['message'], $result['code'], $result['debugArray']);
         }
+    }
+
+    /**
+     * Return entity data in JSON format.
+     *
+     * @return string JSON-encoded data.
+     */
+    public function toJson()
+    {
+        return json_encode($this);
     }
 
 «ENDDEFINE»
