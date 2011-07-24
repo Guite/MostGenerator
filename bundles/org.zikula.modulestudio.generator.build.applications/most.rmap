@@ -4,12 +4,12 @@
 
     <searchPath name="most.generator">
         <provider readerType="p2" componentTypes="osgi.bundle,eclipse.feature" mutable="false" source="false">
-            <uri format="file:////var/lib/jenkins/jobs/MOST-1_Prepare-5_Generator/lastSuccessfulBuild/artifact/scm/bundles/org.zikula.modulestudio.generator.build/site.p2.artifact/" />
+            <uri format="file:////var/lib/jenkins/jobs/MOST-1_Prepare-5_Generator/lastSuccessful/archive/site.p2.artifact/" />
         </provider>
     </searchPath>
     <searchPath name="most.metamodel">
         <provider readerType="p2" componentTypes="osgi.bundle,eclipse.feature" mutable="false" source="false">
-            <uri format="file:////var/lib/jenkins/jobs/MOST-1_Prepare-2_MetaModel/lastSuccessful/archive/scm/bundles/de.guite.modulestudio.metamodel.build/site.p2.artifact" />
+            <uri format="file:////var/lib/jenkins/jobs/MOST-1_Prepare-2_MetaModel/lastSuccessful/archive/site.p2.artifact" />
         </provider>
     </searchPath>
     <searchPath name="most.product">
