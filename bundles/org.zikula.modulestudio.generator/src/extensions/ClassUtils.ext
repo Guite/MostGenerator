@@ -33,9 +33,17 @@ cached String prepClassPart(String str)
 
 /** Model classes */
 cached String baseClassModel(Entity obj, String subfolder, String suffix)
-    : baseClassDefault(obj.container.application, fillingEntity().msconcat(subfolder.toFirstUpper()).msconcat('_'), prepClassPart(obj.name.msconcat(suffix.toFirstUpper())));
+    : (
+        (subfolder != '')
+        ? baseClassDefault(obj.container.application, fillingEntity().msconcat(subfolder.toFirstUpper()).msconcat('_'), prepClassPart(obj.name.msconcat(suffix.toFirstUpper())))
+        : baseClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat(suffix.toFirstUpper())))
+    );
 cached String implClassModel(Entity obj, String subfolder, String suffix)
-	: implClassDefault(obj.container.application, fillingEntity().msconcat(subfolder.toFirstUpper()).msconcat('_'), prepClassPart(obj.name.msconcat(suffix.toFirstUpper())));
+    : (
+        (subfolder != '')
+	    ? implClassDefault(obj.container.application, fillingEntity().msconcat(subfolder.toFirstUpper()).msconcat('_'), prepClassPart(obj.name.msconcat(suffix.toFirstUpper())))
+	    : implClassDefault(obj.container.application, fillingEntity(), prepClassPart(obj.name.msconcat(suffix.toFirstUpper())))
+	);
 
 cached String baseClassModelEntity(Entity obj)
     : baseClassModel(obj, '', '');
