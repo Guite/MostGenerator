@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- processes whole collection of example models, calls msManual.mwe for each entry -->
 <workflow>
-	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoBugs"></cartridge>
-	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoCocktails"></cartridge>
-	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoCustomer"></cartridge>
-	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoExchange"></cartridge>
-	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoMixtapes"></cartridge>
-	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoMusic"></cartridge>
-	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoProject"></cartridge>
-	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoRecipes"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoBugs"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoCustomer"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoExchange"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoMixtapes"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoMusic"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoProject"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoRecipes"></cartridge>
     <cartridge file="workflow/msManual.mwe" folder="examples" modelName="AutoSocial"></cartridge>
-	<cartridge file="workflow/msManual.mwe" folder="examples" modelName="FamilyRecipes"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="examples" modelName="RecipeManager"></cartridge>
 
     <cartridge file="workflow/msManual.mwe" folder="own/most" modelName="MostAdmin"></cartridge>
     <cartridge file="workflow/msManual.mwe" folder="own/wh"   modelName="WhFacts"></cartridge>

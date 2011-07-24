@@ -6,12 +6,12 @@
     <!-- where is it ? -->
     <property name="modelPath" value="/home/axel" />
 
-	<!-- call file reader workflow and provide required properties -->
-	<cartridge file="workflow/msWorkflowManual.mwe"
-	           modelName="${modelName}"
-	           cartridgeName="zclassic"
-			   modelFile="${modelPath}/${modelName}.mostapp"
-			   enrichedModelFile="${modelPath}/${modelName}_Enriched.mostapp"
-			   srcGenPath="/home/axel/MostOutput">
-	</cartridge>
+    <!-- call file reader workflow and provide required properties -->
+    <cartridge file="workflow/msWorkflowManual.mwe"
+               modelName="${modelName}"
+               cartridgeName="zclassic"
+               modelFile="${modelPath}/${modelName}.mostapp"
+               enrichedModelFile="${modelPath}/${modelName}_Enriched.mostapp"
+               srcGenPath="/home/axel/MostOutput">
+    </cartridge>
 </workflow>

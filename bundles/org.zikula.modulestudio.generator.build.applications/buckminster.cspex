@@ -4,7 +4,7 @@
     xmlns="http://www.eclipse.org/buckminster/CSpec-1.0">
     <actions>
         <!-- execute generator cartridge for given application -->
-        <public name="start.generator.cartrige" actor="jdt.ant">
+        <public name="start.generator.cartridge" actor="jdt.ant">
             <actorProperties>
                 <property key="buildFile" value="build.xml" />
                 <property key="targets" value="start.mwe.workflow" />
@@ -12,7 +12,7 @@
             <properties>
                 <property key="modelName" value="${pModelName}" />
                 <property key="modelFile" value="${pModelFile}" />
-                <property key="cartrigeName" value="${pCartrigeName}" />
+                <property key="cartridgeName" value="${pCartridgeName}" />
                 <property key="workflowFile" value="${pWorkflowFile}" />
 
                 <!-- path to root build directory from view of this build plugin -->

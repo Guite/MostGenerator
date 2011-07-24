@@ -8,12 +8,12 @@
     <!-- which generator ? -->
     <property name="cartridgeName" value="zclassic" />
 
-	<!-- call file reader workflow and provide required properties -->
-	<cartridge file="workflow/msWorkflowManual.mwe"
+    <!-- call file reader workflow and provide required properties -->
+    <cartridge file="workflow/msWorkflowManual.mwe"
                modelName="${modelName}"
                cartridgeName="${cartridgeName}"
-			   modelFile="${examplePath}/${modelName}.mostapp"
-			   enrichedModelFile="${outputPath}/models/${modelName}_Enriched.mostapp"
-			   srcGenPath="${outputPath}/${modelName}">
-	</cartridge>
+               modelFile="${examplePath}/${modelName}.mostapp"
+               enrichedModelFile="${outputPath}/models/${modelName}_Enriched.mostapp"
+               srcGenPath="${outputPath}/${modelName}">
+    </cartridge>
 </workflow>

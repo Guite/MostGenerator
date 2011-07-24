@@ -6,6 +6,7 @@
     <cartridge file="workflow/msManual.mwe" folder="customers/later" modelName="GuiCallCenter"></cartridge>
     <cartridge file="workflow/msManual.mwe" folder="customers/later" modelName="GuiStockKeeping"></cartridge>
     <cartridge file="workflow/msManual.mwe" folder="customers/later" modelName="GuiSubscription"></cartridge>
+    <cartridge file="workflow/msManual.mwe" folder="customers" modelName="AdShare"></cartridge>
     <cartridge file="workflow/msManual.mwe" folder="customers" modelName="FreestyleModels"></cartridge>
     <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiCustomer"></cartridge>
     <cartridge file="workflow/msManual.mwe" folder="customers" modelName="GuiErpSync"></cartridge>

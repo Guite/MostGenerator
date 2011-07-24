@@ -6,33 +6,33 @@
         <path refid="project.classpath"/>
         <pathelement path="${WORKSPACE}/org.zikula.modulestudio.generator/src/workflow/" />
     </path>
-	
-	<target name="compile">
-	</target>
-	
-	
+    
+    <target name="compile">
+    </target>
+    
+    
     <target name="start.mwe.workflow">
-    	<echo>${workflowFile}</echo>
-    	<echo>-pmodelName=${modelName}</echo>
+        <echo>${workflowFile}</echo>
+        <echo>-pmodelName=${modelName}</echo>
         <echo>-pmodelFile=${modelFile}</echo>
-    	<echo>-pcartridgeName=${cartrigeName}</echo>
-    	<echo>-penrichedModelFile=${modelName}_Enriched.mostapp</echo>
-    	<echo>-psrcGenPath=output/${cartrigeName}</echo>	
-    	<property file="bm.properties"/>
+        <echo>-pcartridgeName=${cartrigeName}</echo>
+        <echo>-penrichedModelFile=${modelName}_Enriched.mostapp</echo>
+        <echo>-psrcGenPath=output/${cartridgeName}</echo>    
+        <property file="bm.properties"/>
         <!-- fork as we want to be sure that the correct directory will be used -->
         <java classname="org.eclipse.emf.mwe.core.WorkflowRunner" dir="." classpathref="classpath" output="build.log">
-        	<arg value="${workflowFile}" />
-        	<arg value="-pmodelName=${modelName}"/>
+            <arg value="${workflowFile}" />
+            <arg value="-pmodelName=${modelName}"/>
             <arg value="-pmodelFile=${modelFile}"/>
-            <arg value="-pcartridgeName=${cartrigeName}"/>
+            <arg value="-pcartridgeName=${cartridgeName}"/>
             <arg value="-penrichedModelFile=${modelName}_Enriched.mostapp"/>
-            <arg value="-psrcGenPath=output/${cartrigeName}"/>
+            <arg value="-psrcGenPath=output/${cartridgeName}"/>
         </java>
     </target>
     <target name="start.mwe.workflowOld">
-    	<property file="make/bm.properties"/>
+        <property file="make/bm.properties"/>
         <taskdef name="workflow" classpathref="classpath" classname="org.eclipse.emf.mwe.core.ant.WorkflowAntTask"/>
-    	
+        
             <workflow file="${workflowFile}">
                 <classpath>
                    <path refid="classpath" />
@@ -42,8 +42,8 @@
                 <param name="modelFile" value="${modelFile}"/>
                 <param name="cartridgeName" value="${cartridgeName}"/>
                 <param name="enrichedModelFile" value="${modelName}_Enriched.mostapp"/>
-                <param name="srcGenPath" value="output/${cartrigeName}"/>
-            	
+                <param name="srcGenPath" value="output/${cartridgeName}"/>
+                
             </workflow>
       </target>
 </project>
