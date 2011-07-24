@@ -15,7 +15,7 @@
         <echo>${workflowFile}</echo>
         <echo>-pmodelName=${modelName}</echo>
         <echo>-pmodelFile=${modelFile}</echo>
-        <echo>-pcartridgeName=${cartrigeName}</echo>
+        <echo>-pcartridgeName=${cartridgeName}</echo>
         <echo>-penrichedModelFile=${modelName}_Enriched.mostapp</echo>
         <echo>-psrcGenPath=output/${cartridgeName}</echo>    
         <property file="bm.properties"/>

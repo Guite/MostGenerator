@@ -47,7 +47,7 @@
     </searchPath>
     -->
 
-    <locator searchPathRef="most.generator.build.applications" pattern="^org\.zikula\.modulestudio\.generator\.build\.applications(\..*)?" failOnError="false" />
+    <locator searchPathRef="most.generator.build.applications" pattern="^org\.zikula\.modulestudio\.generator\.build\.applications?" failOnError="false" />
     <locator searchPathRef="most.generator" pattern="^org\.zikula\.modulestudio\.generator(\..*)?"/>
     <locator searchPathRef="most.metamodel" pattern="^de\.guite\.modulestudio\.metamodel(\..*)?" />
     <locator searchPathRef="most.product" pattern="^de\.guite\.modulestudio(\..+)?" />

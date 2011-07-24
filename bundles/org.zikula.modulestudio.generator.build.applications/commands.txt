@@ -5,7 +5,7 @@ setpref baseline="Running Platform"
 
 # materialise stuff by cquery/mspec/rmap
 import --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "scm/bundles/org.zikula.modulestudio.generator.build.applications/most.mspec"
-#resolve --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "scm/bundles/org.zikula.modulestudio.generator.build.applications/most.cquery"
+resolve --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "scm/bundles/org.zikula.modulestudio.generator.build.applications/most.cquery"
 
 
 # build workspace
