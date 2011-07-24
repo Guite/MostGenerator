@@ -36,6 +36,7 @@
             </uri>
         </provider>
     </searchPath>
+    <!--
     <searchPath name="most.generator.build.applications">
         <provider readerType="local" componentTypes="osgi.bundle,eclipse.feature" mutable="false">
             <uri format="{0}/scm/bundles/{1}">
@@ -44,6 +45,7 @@
             </uri>
         </provider>
     </searchPath>
+    -->
 
     <locator searchPathRef="most.generator" pattern="^org\.zikula\.modulestudio\.generator(\..*)?" failOnError="false" />
    <-- <locator searchPathRef="most.generator.build.applications" pattern="^org\.zikula\.modulestudio\.generator\.build\.applications(\..*)?" /> -->
