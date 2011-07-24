@@ -10,6 +10,16 @@
 «REM»    «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»«ENDREM»
     «EXPAND business::Validator::BaseValidator-»
     «EXPAND business::Validator::ValidatorWrapper(this) FOREACH models.entities-»
+«IF hasLoggable()-»
+«FOREACH getLoggableEntities() AS logEntity-»
+«EXPAND entity::Extensions::LogEntryClass(this) FOR logEntity-»
+«ENDFOREACH-»
+«ENDIF-»
+«IF hasTranslatable()-»
+«FOREACH getTranslatableEntities() AS translatableEntity-»
+«EXPAND entity::Extensions::TranslationClass(this) FOR translatableEntity-»
+«ENDFOREACH-»
+«ENDIF-»
 «IF hasTrees()-»
 «FOREACH getTreeEntities() AS treeEntity-»
 «EXPAND entity::Extensions::TreeClosureClass(this) FOR treeEntity-»
