@@ -12,7 +12,7 @@
     	<echo>${workflowFile}</echo>
     	<echo>-pmodelName=${modelName}</echo>
         <echo>-pmodelFile=${modelFile}</echo>
-    	<echo>-pcartridgeName=${cartridgeName}</echo>
+    	<echo>-pcartridgeName=${cartrigeName}</echo>
     	<echo>-penrichedModelFile=${modelName}_Enriched.mostapp</echo>
     	<echo>-psrcGenPath=output/${cartrigeName}</echo>	
     	<property file="bm.properties"/>
@@ -21,7 +21,7 @@
         	<arg value="${workflowFile}" />
         	<arg value="-pmodelName=${modelName}"/>
             <arg value="-pmodelFile=${modelFile}"/>
-            <arg value="-pcartridgeName=${cartridgeName}"/>
+            <arg value="-pcartridgeName=${cartrigeName}"/>
             <arg value="-penrichedModelFile=${modelName}_Enriched.mostapp"/>
             <arg value="-psrcGenPath=output/${cartrigeName}"/>
         </java>
