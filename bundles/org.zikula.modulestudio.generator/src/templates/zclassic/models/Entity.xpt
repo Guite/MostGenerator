@@ -180,6 +180,16 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
         }
     }
 
+    /**
+     * Return entity data in JSON format.
+     *
+     * @return string JSON-encoded data.
+     */
+    public function toJson()
+    {
+        return json_encode($this);
+    }
+
 «ENDDEFINE»
 
 «DEFINE Constructor FOR Entity-»
