@@ -1,26 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.zikula.modulestudio.generator.build.applications</name>
+	<name>org.zikula.modulestudio.generator.feature</name>
 	<comment></comment>
 	<projects>
 	</projects>
 	<buildSpec>
-<buildCommand>
-<name>org.eclipse.buckminster.jdt.classpathEmitter</name>
-<arguments>
-<dictionary>
-<key>full.printstream</key>
-<value>false</value>
-</dictionary>
-<dictionary>
-<key>file</key>
-<value>make/bm.properties</value>
-</dictionary>
-</arguments>
-</buildCommand>
-
+		<buildCommand>
+			<name>org.eclipse.pde.FeatureBuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
 	</buildSpec>
 	<natures>
-        <nature>org.eclipse.jdt.core.javanature</nature>
-    </natures>
+		<nature>org.eclipse.pde.FeatureNature</nature>
+	</natures>
 </projectDescription>
