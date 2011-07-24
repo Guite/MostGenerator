@@ -15,9 +15,9 @@
    <license url="http://www.example.com/license">
       [Geben Sie hier die Beschreibung für die Lizenz ein.]
    </license>
-
+<!--
    <includes
          id="org.zikula.modulestudio.generator.feature"
          version="0.0.0"/>
-
+-->
 </feature>
