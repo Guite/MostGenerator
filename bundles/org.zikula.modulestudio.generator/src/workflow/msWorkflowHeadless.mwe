@@ -91,7 +91,7 @@
 
     <!-- create dummy progress monitor if required (for manual builds) -->
     <component id="dummyProgressMonitorCreator"
-               class="org.zikula.modulestudio.generator.application.ManualProgressMonitor">
+               class="org.zikula.modulestudio.generator.build.applications.ManualProgressMonitor">
         <outputSlot value="progressMonitor"/>
     </component>
 
