@@ -10,6 +10,11 @@
 	
     <target name="start.mwe.workflow">
     	<echo>${workflowFile}</echo>
+    	<echo>-pmodelName=${modelName}</echo>
+        <echo>-pmodelFile=${modelFile}</echo>
+    	<echo>-pcartridgeName=${cartridgeName}</echo>
+    	<echo>-penrichedModelFile=${modelName}_Enriched.mostapp</echo>
+    	<echo>-psrcGenPath=output/${cartrigeName}</echo>	
     	<property file="bm.properties"/>
         <!-- fork as we want to be sure that the correct directory will be used -->
         <java classname="org.eclipse.emf.mwe.core.WorkflowRunner" dir="." classpathref="classpath" output="build.log">
