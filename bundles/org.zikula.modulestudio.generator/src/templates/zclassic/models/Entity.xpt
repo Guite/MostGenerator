@@ -92,7 +92,7 @@ use Doctrine\Common\NotifyPropertyChanged,
 «DEFINE IndexField FOR EntityIndexItem-»"«name.formatForDB()»"«ENDDEFINE»
 
 «DEFINE DiscriminatorInfo FOR InheritanceRelationship-»
-"«source.name.formatForCode()»" = "«source.name.formatForCodeCapital()»"«''-»
+"«source.name.formatForCode()»" = "«source.implClassModelEntity()»"«''-»
 «ENDDEFINE»
 
 «REM»concrete implementation stub«ENDREM»
@@ -145,7 +145,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «EXPAND Constructor-»
 
 «EXPAND FileHelper::GetterAndSetterMethods('_objectType', 'string', false, false, '')»
-«EXPAND FileHelper::GetterAndSetterMethods('_idFields', 'array', false, true, 'array')»
+«EXPAND FileHelper::GetterAndSetterMethods('_idFields', 'array', false, true, 'Array()')»
 «EXPAND FileHelper::GetterAndSetterMethods('_validator', implClassModel('validator', ''), false, true, 'null')»
 «EXPAND FileHelper::GetterAndSetterMethods('_hasUniqueSlug', 'boolean', false, false, '')»
 «EXPAND PropertyChangedListener-»

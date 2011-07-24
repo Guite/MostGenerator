@@ -81,7 +81,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     {
         // create all tables from according entity definitions
         try {
-            DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses);
+            DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses());
         } catch (Exception $e) {
             if (System::isDevelopmentMode()) {
                 LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
@@ -158,7 +158,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
                 // ...
                 // update the database schema
                 try {
-                    DoctrineHelper::updateSchema($this->entityManager, $this->listEntityClasses);
+                    DoctrineHelper::updateSchema($this->entityManager, $this->listEntityClasses());
                 } catch (Exception $e) {
                     if (System::isDevelopmentMode()) {
                         LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
@@ -200,7 +200,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
             // remove tables
 «EXPAND RemoveTable FOREACH models.entities-»
 */
-            DoctrineHelper::dropSchema($this->entityManager, $this->listEntityClasses);
+            DoctrineHelper::dropSchema($this->entityManager, $this->listEntityClasses());
         } catch (Exception $e) {
             if (System::isDevelopmentMode()) {
                 LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
@@ -273,7 +273,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDDEFINE»
 
 «DEFINE RemoveForeignKey FOR JoinRelationship-»
-            $foreignKeyName = $dbPrefix . '_«target.fullEntityName()»_«getRelationAliasName(true).formatForDB()»_' . $dbPrefix . '_«source.fullEntityName()»_«getRelationAliasName(false).formatForDB()»';
+            $foreignKeyName = '«target.fullEntityName()»_«getRelationAliasName(true).formatForDB()»_«source.fullEntityName()»_«getRelationAliasName(false).formatForDB()»';
             DoctrineUtil::dropForeignKey('«target.fullEntityName()»', array('name' => $foreignKeyName));
             DoctrineUtil::dropIndex('«target.fullEntityName()»', '«IF isDefaultIdFieldName(target, getTargetFields().get(0))»«source.relationFieldName(getSourceFields().get(0))»«ELSE»«target.relationFieldName(getTargetFields().get(0))»«ENDIF»');
 «ENDDEFINE»
@@ -281,7 +281,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDDEFINE»
 «DEFINE RemoveTable FOR Entity-»
 «IF hasSluggableFields()-»
-            DoctrineUtil::dropIndex('«fullEntityName()»', $dbPrefix . '_«fullEntityName()»_sluggable');
+            DoctrineUtil::dropIndex('«fullEntityName()»', '«fullEntityName()»_sluggable');
 «ENDIF-»
             DoctrineUtil::dropTable('«fullEntityName()»');
 «ENDDEFINE»

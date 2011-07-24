@@ -141,7 +141,7 @@
 «ENDIF-»
 «EXPAND JoinDetails(true)-»
 «IF orderBy != null && orderBy != ''-»
-     * @ORM\OrderBy({«orderBy»})
+     * @ORM\OrderBy({"«orderBy»"})
 «ENDIF-»
      * @var «entityClass»[] $«targetName».
      */
@@ -157,7 +157,7 @@
      * @ORM\ManyToMany(targetEntity="«entityClass»"«IF bidirectional-», inversedBy="«sourceName-»"«ENDIF-»«EXPAND AdditionalOptions-»«IF indexBy != null && indexBy != ''-», indexBy="«indexBy»"«ENDIF-»)
 «EXPAND JoinDetails(true)-»
 «IF orderBy != null && orderBy != ''-»
-     * @ORM\OrderBy({«orderBy»})
+     * @ORM\OrderBy({"«orderBy»"})
 «ENDIF-»
      * @var «entityClass»[] $«targetName».
      */
@@ -191,7 +191,7 @@
 «LET ((useTarget) ? getSourceFields() : getTargetFields()) AS joinColumnsLocal-»
 «LET ((useTarget) ? getTargetFields() : getSourceFields()) AS joinColumnsForeign-»
 «IF (joinColumnsForeign.containsDefaultIdField(joinedEntityForeign) && joinColumnsLocal.containsDefaultIdField(joinedEntityLocal) && !unique && nullable && onDelete == '' && onUpdate == '')-»
-     * @ORM\JoinTable(name="«refClass.formatForCode()»"
+     * @ORM\JoinTable(name="«refClass.formatForCode()»")
 «ELSE-»
      * @ORM\JoinTable(name="«refClass.formatForCode()»",
 «IF joinColumnsForeign.size > 1-»

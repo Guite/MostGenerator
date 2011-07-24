@@ -8,6 +8,19 @@
 «EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), '')-»
 «ENDDEFINE»
 
+«REM»Do only use integer (no smallint or bigint) for version fields.
+This is just a hack for a minor bug in Doctrine 2.
+See http://www.doctrine-project.org/jira/browse/DDC-1290 for more information.
+After this has been fixed the following define for IntegerField can be removed
+completely as the define for DerivedField can be used then instead.«ENDREM»
+«DEFINE PersistentProperty FOR IntegerField-»
+«IF version && entity.hasOptimisticLock()-»
+«EXPAND PersistentProperty(name.formatForCode(), 'integer', '')-»
+«ELSE-»
+«EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), '')-»
+«ENDIF-»
+«ENDDEFINE»
+
 «DEFINE PersistentProperty FOR UploadField-»
 «EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), '')-»
 
@@ -96,11 +109,11 @@ type="«type»", precision=«length», scale=«scale»«''-»
 «IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
 «ENDDEFINE»
 «DEFINE DefaultFieldData FOR IntegerField-»
-«LET getPointingRelations() AS pointingRelations-»
-«IF !pointingRelations.isEmpty-»(int) FormUtil::getPassedValue('«pointingRelations.get(0).getSourceFields().get(0)»', 0, 'GET', FILTER_VALIDATE_INT)«''-»
-«ELSE-»
+«REM»«LET getPointingRelations() AS pointingRelations-»
+«IF !pointingRelations.isEmpty-»FormUtil::getPassedValue('«pointingRelations.get(0).getSourceFields().get(0)»', 0, 'GET', FILTER_VALIDATE_INT)«''-»
+«ELSE-»«ENDREM»«''-»
 «IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
-«ENDIF-»«ENDLET-»«ENDDEFINE»
+«REM»«ENDIF-»«ENDLET-»«ENDREM»«''-»«ENDDEFINE»
 «DEFINE DefaultFieldData FOR DecimalField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0.00«ENDIF»«ENDDEFINE»
 «DEFINE DefaultFieldData FOR AbstractStringField»«EXPAND DefaultFieldDataText-»«ENDDEFINE»
 «DEFINE DefaultFieldData FOR ArrayField»array()«ENDDEFINE»
@@ -135,5 +148,5 @@ type="«type»", precision=«length», scale=«scale»«''-»
 
 «DEFINE FieldAccessor FOR UploadField-»
 «EXPAND FieldAccessorDefault-»
-«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode().msconcat('Meta'), 'array', true, false, 'Array')-»
+«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode().msconcat('Meta'), 'array', true, false, 'Array()')-»
 «ENDDEFINE»
