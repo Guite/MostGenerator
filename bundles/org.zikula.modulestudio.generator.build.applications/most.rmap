@@ -37,7 +37,7 @@
         </provider>
     </searchPath>
     <searchPath name="most.generator.build.applications">
-        <provider readerType="local" componentTypes="osgi.bundle,eclipse.feature" mutable="false">
+        <provider readerType="local" componentTypes="eclipse.feature" mutable="false">
             <uri format="{0}/scm/bundles/{1}">
                 <bc:propertyRef key="workspace.root"/>
                 <bc:propertyRef key="buckminster.component"/>
@@ -46,7 +46,7 @@
     </searchPath>
 
 
-    <locator searchPathRef="most.generator.build.applications" pattern="^org\.zikula\.modulestudio\.generator\.build\.applications" failOnError="false" />
+    <locator searchPathRef="most.generator.build.applications" pattern="^org\.zikula\.modulestudio\.generator\.build(\..*)?" />
     <locator searchPathRef="most.generator" pattern="^org\.zikula\.modulestudio\.generator(\..*)?"/>
     <locator searchPathRef="most.metamodel" pattern="^de\.guite\.modulestudio\.metamodel(\..*)?" />
     <locator searchPathRef="most.product" pattern="^de\.guite\.modulestudio(\..+)?" />
