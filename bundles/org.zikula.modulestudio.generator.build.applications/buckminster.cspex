@@ -14,6 +14,7 @@
         <dependency name="org.eclipse.xtend.util.stdlib" componentType="osgi.bundle" versionDesignator="1.0.1" versionType="OSGi"/>
         <dependency name="org.zikula.modulestudio.generator" componentType="osgi.bundle" versionDesignator="1.0.0" versionType="OSGi"/>
         <dependency name="org.eclipse.xpand" componentType="osgi.bundle" versionDesignator="1.1.0" versionType="OSGi"/>        
+        <dependency name="org.apache.commons.cli" componentType="osgi.bundle" versionDesignator="1.2.0" versionType="OSGi"/>
     </dependencies>
     <actions>
         <!-- execute generator cartridge for given application -->
