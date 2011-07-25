@@ -3,29 +3,17 @@
     xmlns:bc="http://www.eclipse.org/buckminster/Common-1.0"
     xmlns="http://www.eclipse.org/buckminster/CSpec-1.0">
     <dependencies>
-<!--
-    -Require-Bundle: org.eclipse.emf.mwe.core;bundle-version="1.1.0",
-
-- org.apache.commons.logging;bundle-version="1.0.4",
-
-- org.eclipse.xtend.typesystem.emf;bundle-version="1.0.1",
-
-- org.eclipse.emf.mwe.utils;bundle-version="1.1.0",
-
-- org.eclipse.xtend.profiler;bundle-version="1.0.1",
-
-- org.eclipse.xtend;bundle-version="1.1.0",
-
-- org.eclipse.emf.ecore.xmi;bundle-version="2.7.0",
-
-- org.eclipse.xtend.util.stdlib;bundle-version="1.0.1",
-
-- org.zikula.modulestudio.generator;bundle-version="1.0.0",
-
-- org.eclipse.xpand;bundle-version="1.1.0"
--->
         <!-- Place your Dependencies here -->
         <dependency name="org.eclipse.emf.mwe.core" componentType="osgi.bundle" versionDesignator="1.1.0" versionType="OSGi"/>
+        <dependency name="org.apache.commons.logging" componentType="osgi.bundle" versionDesignator="1.0.4" versionType="OSGi"/>
+        <dependency name="org.eclipse.xtend.typesystem.emf" componentType="osgi.bundle" versionDesignator="1.0.1" versionType="OSGi"/>
+        <dependency name="org.eclipse.emf.mwe.utils" componentType="osgi.bundle" versionDesignator="1.1.0" versionType="OSGi"/>
+        <dependency name="org.eclipse.xtend.profiler" componentType="osgi.bundle" versionDesignator="1.0.1" versionType="OSGi"/>
+        <dependency name="org.eclipse.xtend" componentType="osgi.bundle" versionDesignator="1.1.0" versionType="OSGi"/>
+        <dependency name="org.eclipse.emf.ecore.xmi" componentType="osgi.bundle" versionDesignator="2.7.0" versionType="OSGi"/>
+        <dependency name="org.eclipse.xtend.util.stdlib" componentType="osgi.bundle" versionDesignator="1.0.1" versionType="OSGi"/>
+        <dependency name="org.zikula.modulestudio.generator" componentType="osgi.bundle" versionDesignator="1.0.0" versionType="OSGi"/>
+        <dependency name="org.eclipse.xpand" componentType="osgi.bundle" versionDesignator="1.1.0" versionType="OSGi"/>        
     </dependencies>
     <actions>
         <!-- execute generator cartridge for given application -->
