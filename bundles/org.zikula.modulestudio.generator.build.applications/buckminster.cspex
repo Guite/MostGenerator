@@ -2,6 +2,31 @@
 <cspecExtension
     xmlns:bc="http://www.eclipse.org/buckminster/Common-1.0"
     xmlns="http://www.eclipse.org/buckminster/CSpec-1.0">
+    <dependencies>
+<!--
+    -Require-Bundle: org.eclipse.emf.mwe.core;bundle-version="1.1.0",
+
+- org.apache.commons.logging;bundle-version="1.0.4",
+
+- org.eclipse.xtend.typesystem.emf;bundle-version="1.0.1",
+
+- org.eclipse.emf.mwe.utils;bundle-version="1.1.0",
+
+- org.eclipse.xtend.profiler;bundle-version="1.0.1",
+
+- org.eclipse.xtend;bundle-version="1.1.0",
+
+- org.eclipse.emf.ecore.xmi;bundle-version="2.7.0",
+
+- org.eclipse.xtend.util.stdlib;bundle-version="1.0.1",
+
+- org.zikula.modulestudio.generator;bundle-version="1.0.0",
+
+- org.eclipse.xpand;bundle-version="1.1.0"
+-->
+        <!-- Place your Dependencies here -->
+        <dependency name="org.eclipse.emf.mwe.core" componentType="osgi.bundle" versionDesignator="1.1.0" versionType="OSGi"/>
+    </dependencies>
     <actions>
         <!-- execute generator cartridge for given application -->
         <public name="start.generator.cartridge" actor="jdt.ant">
