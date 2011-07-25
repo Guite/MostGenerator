@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workflow>
     <!-- create dummy progress monitor if required (for manual builds) -->
-  	<component id="dummyProgressMonitorCreator"
-  			   class="org.zikula.modulestudio.generator.application.ManualProgressMonitor">
-    	<outputSlot value="progressMonitor"/>
-  	</component>
+    <component id="dummyProgressMonitorCreator"
+        class="org.zikula.modulestudio.generator.application.ManualProgressMonitor">
+        <outputSlot value="progressMonitor"/>
+    </component>
 
     <!-- store the enriched model version - ->
     <component class="org.eclipse.emf.mwe.utils.Writer">

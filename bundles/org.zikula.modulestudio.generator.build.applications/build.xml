@@ -6,10 +6,9 @@
         <path refid="project.classpath"/>
         <pathelement path="${WORKSPACE}/org.zikula.modulestudio.generator/src/workflow/" />
     </path>
-    
+
     <target name="compile">
     </target>
-    
     
     <target name="start.mwe.workflow">
         <echo>${workflowFile}</echo>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- inner workflow for manual generation executions -->
 <workflow>
-    <property name="doSlotDumps" value='false' />
-    <property name="doValidation" value='false' />
-    <property name="doModelCopy" value='true' />
-    <property name="doProfiling" value='true' />
+    <property name="doSlotDumps" value="false" />
+    <property name="doValidation" value="false" />
+    <property name="doModelCopy" value="true" />
+    <property name="doProfiling" value="true" />
 
     <!-- instantiate metamodel -->
     <bean id="mmEMF" class="org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel" />
