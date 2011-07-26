@@ -5,6 +5,7 @@
     <dependencies>
         <!-- Place your Dependencies here -->
         <dependency name="org.eclipse.emf.mwe.core" componentType="osgi.bundle" versionDesignator="1.1.0" versionType="OSGi"/>
+        <dependency name="org.apache.commons.cli" componentType="osgi.bundle" versionDesignator="1.2.0" versionType="OSGi"/>
         <dependency name="org.apache.commons.logging" componentType="osgi.bundle" versionDesignator="1.0.4" versionType="OSGi"/>
         <dependency name="org.eclipse.xtend.typesystem.emf" componentType="osgi.bundle" versionDesignator="1.0.1" versionType="OSGi"/>
         <dependency name="org.eclipse.emf.mwe.utils" componentType="osgi.bundle" versionDesignator="1.1.0" versionType="OSGi"/>
