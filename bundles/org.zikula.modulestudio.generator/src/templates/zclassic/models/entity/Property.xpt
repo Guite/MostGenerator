@@ -45,7 +45,7 @@ completely as the define for DerivedField can be used then instead.«ENDREM»
 «IF primaryKey-»
      * @ORM\Id
 «IF !entity.hasCompositeKeys()-»«REM» || entity.identifierStrategy == EntityIdentifierStrategy::ASSIGNED-»«ENDREM»«''-»
-     * @ORM\GeneratedValue«IF entity.identifierStrategy != EntityIdentifierStrategy::NONE-»(strategy="«entity.identifierStrategy.asConstant()»")«ENDIF-»
+     * @ORM\GeneratedValue«IF entity.identifierStrategy != EntityIdentifierStrategy::NONE-»(strategy="«entity.identifierStrategy.asConstant()»")«ENDIF»
 «ENDIF-»
 «ENDIF-»
 «EXPAND Extensions::ColumnExtensions-»

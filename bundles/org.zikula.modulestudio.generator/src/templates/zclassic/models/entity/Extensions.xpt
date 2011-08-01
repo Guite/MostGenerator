@@ -40,16 +40,16 @@ use Gedmo\Mapping\Annotation as Gedmo;
 «ENDDEFINE»
 
 «DEFINE ColumnExtensions FOR DerivedField-»
-«EXPAND ColumnExtensionsDefault»
+«EXPAND ColumnExtensionsDefault-»
 «ENDDEFINE»
 «DEFINE ColumnExtensions FOR AbstractIntegerField-»
-«EXPAND ColumnExtensionsDefault»
+«EXPAND ColumnExtensionsDefault-»
 «IF sortablePosition-»
      * @Gedmo\SortablePosition
 «ENDIF-»
 «ENDDEFINE»
 «DEFINE ColumnExtensions FOR AbstractDateField-»
-«EXPAND ColumnExtensionsDefault»
+«EXPAND ColumnExtensionsDefault-»
 «IF timestampable != EntityTimestampableType::NONE-»
      * @Gedmo\Timestampable(on="«timestampable.asConstant()»"«EXPAND TimestampableDetails-»)
 «ENDIF-»

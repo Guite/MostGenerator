@@ -276,9 +276,9 @@
 «ELSE-»
 «EXPAND FileHelper::GetterAndSetterMethods(aliasName, entityClass, false, true, 'null')»
 «ENDIF-»
-«EXPAND AddMethod(useTarget, isMany, aliasName, singleName, entityClass)-»
-«EXPAND RemoveMethod(useTarget, isMany, aliasName, singleName, entityClass)-»
-«EXPAND RemoveByIdMethod(useTarget, isMany, aliasName, singleName, entityClass)-»
+«EXPAND AddMethod(useTarget, isMany, aliasName, singleName, entityClass)»
+«EXPAND RemoveMethod(useTarget, isMany, aliasName, singleName, entityClass)»
+«EXPAND RemoveByIdMethod(useTarget, isMany, aliasName, singleName, entityClass)»
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»

@@ -45,40 +45,9 @@
  *
  * This is the base entity class for «name.formatForDisplay()» entities.
  *
-«EXPAND entity::Extensions::ClassExtensions-»
-«REM»«EXPAND ObjectExtensions-»«ENDREM»«''-»
-«IF mappedSuperClass-»
- * @ORM\MappedSuperclass
-«ELSE-»
- * @ORM\Entity(repositoryClass="«implClassModel('repository', '')»"«IF readOnly-», readOnly=true«ENDIF-»)
-«ENDIF-»
-«IF indexes.isEmpty-»
- * @ORM\Table(name="«fullEntityName()»")
-«ELSE-»
- * @ORM\Table(name="«fullEntityName()»",
-«IF hasNormalIndexes()-»
- *     indexes={
-«EXPAND Index('Index') FOREACH getNormalIndexes() SEPARATOR ','-»
- *     }«IF hasUniqueIndexes()-»,«ENDIF»
-«ENDIF-»
-«IF hasUniqueIndexes()-»
- *     uniqueConstraints={
-«EXPAND Index('UniqueConstraint') FOREACH getUniqueIndexes() SEPARATOR ','-»
- *     }
-«ENDIF-»
- * )
-«ENDIF-»
-«IF isTopSuperClass()-»
- * @ORM\InheritanceType("«getChildRelations().get(0).strategy.asConstant()»")
- * @ORM\DiscriminatorColumn(name="«getChildRelations().get(0).discriminatorColumn.formatForCode()»"«REM», type="string"«ENDREM»)
- * @ORM\DiscriminatorMap({«EXPAND DiscriminatorInfo FOREACH getChildRelations() SEPARATOR ", "-»})
-«ENDIF-»
-«IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT-»
- * @ORM\ChangeTrackingPolicy("«changeTrackingPolicy.asConstant()»")
-«ENDIF-»
- * @ORM\HasLifecycleCallbacks
+ * @abstract
  */
-class «baseClassModelEntity()» extends Zikula_EntityAccess«IF hasNotifyPolicy()-» implements NotifyPropertyChanged«ENDIF»
+abstract class «baseClassModelEntity()» extends Zikula_EntityAccess«IF hasNotifyPolicy()-» implements NotifyPropertyChanged«ENDIF»
 {
 «EXPAND EntityInfo-»
 }
@@ -112,6 +81,38 @@ use Doctrine\Common\NotifyPropertyChanged,
  * Entity class that defines the entity structure and behaviours.
  *
  * This is the concrete entity class for «name.formatForDisplay()» entities.
+«EXPAND entity::Extensions::ClassExtensions-»
+«REM»«EXPAND ObjectExtensions-»«ENDREM»«''-»
+«IF mappedSuperClass-»
+ * @ORM\MappedSuperclass
+«ELSE-»
+ * @ORM\Entity(repositoryClass="«implClassModel('repository', '')»"«IF readOnly-», readOnly=true«ENDIF-»)
+«ENDIF-»
+«IF indexes.isEmpty-»
+ * @ORM\Table(name="«fullEntityName()»")
+«ELSE-»
+ * @ORM\Table(name="«fullEntityName()»",
+«IF hasNormalIndexes()-»
+ *     indexes={
+«EXPAND Index('Index') FOREACH getNormalIndexes() SEPARATOR ','-»
+ *     }«IF hasUniqueIndexes()-»,«ENDIF»
+«ENDIF-»
+«IF hasUniqueIndexes()-»
+ *     uniqueConstraints={
+«EXPAND Index('UniqueConstraint') FOREACH getUniqueIndexes() SEPARATOR ','-»
+ *     }
+«ENDIF-»
+ * )
+«ENDIF-»
+«IF isTopSuperClass()-»
+ * @ORM\InheritanceType("«getChildRelations().get(0).strategy.asConstant()»")
+ * @ORM\DiscriminatorColumn(name="«getChildRelations().get(0).discriminatorColumn.formatForCode()»"«REM», type="string"«ENDREM»)
+ * @ORM\DiscriminatorMap({«EXPAND DiscriminatorInfo FOREACH getChildRelations() SEPARATOR ", "-»})
+«ENDIF-»
+«IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT-»
+ * @ORM\ChangeTrackingPolicy("«changeTrackingPolicy.asConstant()»")
+«ENDIF-»
+ * @ORM\HasLifecycleCallbacks
  */
 class «implClassModelEntity()» extends «IF isInheriting()»«parentType().implClassModelEntity()»«ELSE»«baseClassModelEntity()»«ENDIF»
 {
