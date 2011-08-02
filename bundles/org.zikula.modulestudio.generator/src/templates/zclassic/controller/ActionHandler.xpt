@@ -298,6 +298,29 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                    ->assign('mode', $this->mode)
                    ->assign('inlineUsage', $this->inlineUsage);
 
+«IF categorisable-»
+        // load and assign registered categories
+        $categories = CategoryRegistryUtil::getRegisteredModuleCategories('«app.appName()»', '«name.formatForCodeCapital()»', '«getPrimaryKeyFields().get(0).name.formatForCode()»');
+        $view->assign('registries', $categories);
+
+«ENDIF-»
+«IF attributable-»
+        $objectData = array();«REM»$entity->toArray(); not required probably«ENDREM»«''-»
+
+        // overwrite attributes array entry with a form compatible format
+        $attributes = array();
+        foreach (array('field1', 'field2', 'field3') as $fieldName) {
+            $attributes[$fieldName] = $entity->getAttributes()->get($fieldName)? $entity->getAttributes()->get($fieldName)->getValue() : '';
+        }
+        $objectData['attributes'] = $attributes;
+
+        $this->view->assign($objectData);
+
+«ENDIF-»
+«IF metaData-»
+        $this->assign('meta', $entity->getMetadata() != null? $entity->getMetadata()->toArray() : array());
+
+«ENDIF-»
         $this->initializeAdditions();
 
         // everything okay, no initialization errors occured
@@ -828,6 +851,33 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         // process translated fields
         list($formData, $translations) = AdShare_Util_Translatable::processEntityAfterEdit($this->objectType, $«obj», $formData);
+«ENDIF-»
+«IF attributable-»
+
+        // merge attributes
+        foreach($formData['attributes'] as $name => $value) {
+            $«obj»->setAttribute($name, $value);
+        }
+«REM»
+        $«obj»->setAttribute('url', 'http://www.example.com');
+        $«obj»->setAttribute('url', null); // remove
+«ENDREM»«''-»
+        unset($formData['attributes']);
+«ENDIF-»
+«IF metaData-»
+        
+        // merge metadata
+        $metadata = $«obj»->getMetadata();
+
+        if (is_null($metadata)) {
+            $metaData = new «implClassModel('', 'metaData')»($«obj»);
+            $«obj»->setMetadata($metaData);
+        }
+        $metaData->merge($formData['meta']);
+«REM»
+        $metaData->setKeywords('a,b,c');
+«ENDREM»«''-»
+        unset($formData['meta']);
 «ENDIF-»
 
         // assign fetched data

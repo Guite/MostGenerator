@@ -84,6 +84,22 @@ cached boolean hasTrees(Application this) :
     !getTreeEntities().isEmpty;
 cached getTreeEntities(Application this) :
     models.entities.select(e|e.tree != EntityTreeType::NONE);
+cached boolean hasCategorisableEntities(Application this) :
+    !getCategorisableEntities().isEmpty;
+cached getCategorisableEntities(Application this) :
+    models.entities.select(e|e.categorisable);
+cached boolean hasMetaDataEntities(Application this) :
+    !getMetaDataEntities().isEmpty;
+cached getMetaDataEntities(Application this) :
+    models.entities.select(e|e.metaData);
+cached boolean hasAttributableEntities(Application this) :
+    !getAttributableEntities().isEmpty;
+cached getAttributableEntities(Application this) :
+    models.entities.select(e|e.attributable);
+cached boolean hasStandardFieldEntities(Application this) :
+    !getStandardFieldEntities().isEmpty;
+cached getStandardFieldEntities(Application this) :
+    models.entities.select(e|e.standardFields);
 
 
 cached boolean hasEditActions(Application this) :

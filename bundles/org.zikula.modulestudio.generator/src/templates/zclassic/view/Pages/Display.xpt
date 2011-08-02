@@ -57,10 +57,19 @@
     <dd>{$«objName».«geoFieldName»|formatnumber|formatnumber:7}</dd>
 «ENDFOREACH-»
 «ENDIF-»
+</dl>
+«IF attributable-»
+    {include file='«controller.name()»/include_attributes_display.tpl' obj=$«objName»}
+«ENDIF-»
+«IF categorisable-»
+    {include file='«controller.name()»/include_categories_display.tpl' obj=$«objName»}
+«ENDIF-»
 «IF standardFields-»
+    {include file='«controller.name()»/include_standardfields_display.tpl' obj=$«objName»}
+«ENDIF-»
+«IF metaData-»
     {include file='«controller.name()»/include_metadata_display.tpl' obj=$«objName»}
 «ENDIF-»
-</dl>
 
 {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 «EXPAND ItemActions(appName, controller)-»

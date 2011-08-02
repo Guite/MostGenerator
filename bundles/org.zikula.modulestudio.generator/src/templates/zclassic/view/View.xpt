@@ -37,7 +37,16 @@
 «EXPAND templates::zclassic::view::PageComponents::Relations::DisplayItemList(this, controller, true) FOREACH models.entities-»
 «ENDIF-»
 «ENDIF-»
+«IF hasAttributableEntities()-»
+«EXPAND AttributeTemplates(appName, controller)-»
+«ENDIF-»
+«IF hasCategorisableEntities()-»
+«EXPAND CategoryTemplates(appName, controller)-»
+«ENDIF-»
+«EXPAND StandardFieldTemplates(appName, controller)-»
+«IF hasMetaDataEntities()-»
 «EXPAND MetaDataTemplates(appName, controller)-»
+«ENDIF-»
 «ENDFOREACH-»
 «ENDLET-»
 «IF needsConfig()-»
@@ -99,13 +108,79 @@
 «ENDFILE»
 «ENDDEFINE»
 
-«DEFINE MetaDataTemplates(String appName, Controller controller) FOR Application-»
+«DEFINE AttributeTemplates(String appName, Controller controller) FOR Application-»
 «IF controller.hasActions('view') || controller.hasActions('display')-»
-«FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/include_metadata_display.tpl")-»
-{if (isset($obj.cr_uid) && $obj.cr_uid) || (isset($obj.lu_uid) && $obj.lu_uid)}
-    <dt>{gt text='Meta data'}</dt>
-{if isset($obj.cr_uid) && $obj.cr_uid}
-    {usergetvar name='uname' uid=$obj.cr_uid assign='cr_uname'}
+«FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/include_attributes_display.tpl")-»
+{if isset($obj.attributes)}
+<h3 class="attributes">{gt text='Attributes'}</h3>
+<dl class="propertylist">
+{foreach key='fieldName' item='fieldInfo' from=$obj.attributes}
+    <dt>{$fieldName|safetext}</dt>
+    <dd>{$fieldInfo.value|default:''|safetext}</dd>
+{/foreach}
+</dl>
+{/if}
+«ENDFILE»
+«ENDIF»
+
+«IF controller.hasActions('edit')-»
+«FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/include_attributes_edit.tpl")-»
+<fieldset>
+    <legend>{gt text='Attributes'}</legend>
+    {formvolatile}
+    {foreach key='fieldName' item='fieldValue' from=$attributes}
+    <div class="z-formrow">
+        {formlabel for="attributes`$fieldName`"' __text=$fieldName}
+        {formtextinput id='attributes`$fieldName`' group='attributes' dataField=$fieldName maxLength=255}
+    </div>
+    {/foreach}
+    {/formvolatile}
+</fieldset>
+«ENDFILE»
+«ENDIF»
+«ENDDEFINE»
+
+«DEFINE CategoryTemplates(String appName, Controller controller) FOR Application-»
+«IF controller.hasActions('view') || controller.hasActions('display')-»
+«FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/include_categories_display.tpl")-»
+{if isset($obj.categories)}
+<h3 class="categories">{gt text='Categories'}</h3>
+<dl class="propertylist">
+{foreach key='propName' item='catMapping' from=$obj.categories}
+    <dt>{$propName}</dt>
+    <dd>{$catMapping.category.name|safetext}</dd>
+{/foreach}
+</dl>
+{/if}
+«ENDFILE»
+«ENDIF»
+
+«IF controller.hasActions('edit')-»
+«FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/include_categories_edit.tpl")-»
+<fieldset>
+    <legend>{gt text='Categories'}</legend>
+
+    {foreach key='registryId' item='registryCid' from=$registries}
+        <div class="z-formrow">
+            {formlabel for="category_`$registryId`" __text='Category'}
+            {formcategoryselector id="category_`$registryId`" category=$registryCid
+                                  dataField='categories' group=$groupName registryId=$registryId doctrine2=true}
+        </div>
+    {/foreach}
+</fieldset>
+«ENDFILE»
+«ENDIF»
+«ENDDEFINE»
+
+«DEFINE StandardFieldTemplates(String appName, Controller controller) FOR Application-»
+«IF controller.hasActions('view') || controller.hasActions('display')-»
+«FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/include_standardfields_display.tpl")-»
+{if (isset($obj.createdUserId) && $obj.createdUserId) || (isset($obj.updatedUserId) && $obj.updatedUserId)}
+<h3 class="categories">{gt text='Creation and update'}</h3>
+<dl class="propertylist">
+{if isset($obj.createdUserId) && $obj.createdUserId}
+    <dt>{gt text='Creation'}</dt>
+    {usergetvar name='uname' uid=$obj.createdUserId assign='cr_uname'}
     {if $modvars.ZConfig.profilemodule ne ''}
         {modurl modname=$modvars.ZConfig.profilemodule func='view' uname=$cr_uname assign='profileLink'}
         {assign var='profileLink' value=$profileLink|safetext}
@@ -113,10 +188,11 @@
     {else}
         {assign var='profileLink' value=$cr_uname}
     {/if}
-    <dd>{gt text='Created by %1$s on %2$s' tag1=$profileLink tag2=$obj.cr_date|dateformat html=true}</dd>
+    <dd>{gt text='Created by %1$s on %2$s' tag1=$profileLink tag2=$obj.createdDate|dateformat html=true}</dd>
 {/if}
-{if isset($obj.lu_uid) && $obj.lu_uid}
-    {usergetvar name='uname' uid=$obj.lu_uid assign='lu_uname'}
+{if isset($obj.updatedUserId) && $obj.updatedUserId}
+    <dt>{gt text='Last update'}</dt>
+    {usergetvar name='uname' uid=$obj.updatedUserId assign='lu_uname'}
     {if $modvars.ZConfig.profilemodule ne ''}
         {modurl modname=$modvars.ZConfig.profilemodule func='view' uname=$lu_uname assign='profileLink'}
         {assign var='profileLink' value=$profileLink|safetext}
@@ -124,31 +200,222 @@
     {else}
         {assign var='profileLink' value=$lu_uname}
     {/if}
-    <dd>{gt text='Updated by %1$s on %2$s' tag1=$profileLink tag2=$obj.lu_date|dateformat html=true}</dd>
+    <dd>{gt text='Updated by %1$s on %2$s' tag1=$profileLink tag2=$obj.updatedDate|dateformat html=true}</dd>
 {/if}
+</dl>
+{/if}
+«ENDFILE»
+«ENDIF»
+
+«IF controller.hasActions('edit')-»
+«FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/include_standardfields_edit.tpl")-»
+{if (isset($obj.createdUserId) && $obj.createdUserId) || (isset($obj.updatedUserId) && $obj.updatedUserId)}
+<fieldset>
+    <legend>{gt text='Creation and update'}</legend>
+    <ul>
+{if isset($obj.createdUserId) && $obj.createdUserId}
+        {usergetvar name='uname' uid=$obj.createdUserId assign='username'}
+        <li>{gt text='Created by %s' tag1=$username}</li>
+        <li>{gt text='Created on %s' tag1=$obj.createdDate|dateformat}</li>
+{/if}
+{if isset($obj.updatedUserId) && $obj.updatedUserId}
+        {usergetvar name='uname' uid=$obj.updatedUserId assign='username'}
+        <li>{gt text='Updated by %s' tag1=$username}</li>
+        <li>{gt text='Updated on %s' tag1=$obj.updatedDate|dateformat}</li>
+{/if}
+    </ul>
+</fieldset>
+{/if}
+«ENDFILE»
+«ENDIF»
+«ENDDEFINE»
+
+«DEFINE MetaDataTemplates(String appName, Controller controller) FOR Application-»
+«IF controller.hasActions('view') || controller.hasActions('display')-»
+«FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/include_metadata_display.tpl")-»
+{if isset($obj.metadata)}
+<h3 class="metadata">{gt text='Metadata'}</h3>
+<dl class="propertylist">
+{if $obj.metadata.title ne ''}
+    <dt>{gt text='Title'}</dt>
+    <dd>{$obj.metadata.title|default:'-'|safetext}</dd>
+{/if}
+{if $obj.metadata.author ne ''}
+    <dt>{gt text='Author'}</dt>
+    <dd>{$obj.metadata.author|default:'-'|safetext}</dd>
+{/if}
+{if $obj.metadata.subject ne ''}
+    <dt>{gt text='Subject'}</dt>
+    <dd>{$obj.metadata.subject|default:'-'|safetext}</dd>
+{/if}
+{if $obj.metadata.keywords ne ''}
+    <dt>{gt text='Keywords'}</dt>
+    <dd>{$obj.metadata.keywords|default:'-'|safetext}</dd>
+{/if}
+{if $obj.metadata.description ne ''}
+    <dt>{gt text='Description'}</dt>
+    <dd>{$obj.metadata.description|default:'-'|safetext}</dd>
+{/if}
+{if $obj.metadata.publisher ne ''}
+    <dt>{gt text='Publisher'}</dt>
+    <dd>{$obj.metadata.publisher|default:'-'|safetext}</dd>
+{/if}
+{if $obj.metadata.contributor ne ''}
+    <dt>{gt text='Contributor'}</dt>
+    <dd>{$obj.metadata.contributor|default:'-'|safetext}</dd>
+{/if}
+{if $obj.metadata.startdate ne ''}
+    <dt>{gt text='Start date'}</dt>
+    <dd>{$obj.metadata.startdate|dateformat}</dd>
+{/if}
+{if $obj.metadata.enddate ne ''}
+    <dt>{gt text='End date'}</dt>
+    <dd>{$obj.metadata.enddate|dateformat}</dd>
+{/if}
+{if $obj.metadata.type ne ''}
+    <dt>{gt text='Type'}</dt>
+    <dd>{$obj.metadata.type|default:'-'|safetext}</dd>
+{/if}
+{if $obj.metadata.format ne ''}
+    <dt>{gt text='Format'}</dt>
+    <dd>{$obj.metadata.format|default:'-'|safetext}</dd>
+{/if}
+{if $obj.metadata.uri ne ''}
+    <dt>{gt text='Uri'}</dt>
+    <dd>{$obj.metadata.uri|default:'-'|safetext}</dd>
+{/if}
+{if $obj.metadata.source ne ''}
+    <dt>{gt text='Source'}</dt>
+    <dd>{$obj.metadata.source|default:'-'|safetext}</dd>
+{/if}
+{if $obj.metadata.language ne ''}
+    <dt>{gt text='Language'}</dt>
+    <dd>{$obj.metadata.language|getlanguagename|safehtml}</dd>
+{/if}
+{if $obj.metadata.relation ne ''}
+    <dt>{gt text='Relation'}</dt>
+    <dd>{$obj.metadata.relation|default:'-'|safetext}</dd>
+{/if}
+{if $obj.metadata.coverage ne ''}
+    <dt>{gt text='Coverage'}</dt>
+    <dd>{$obj.metadata.coverage|default:'-'|safetext}</dd>
+{/if}
+{if $obj.metadata.comment ne ''}
+    <dt>{gt text='Comment'}</dt>
+    <dd>{$obj.metadata.comment|default:'-'|safetext}</dd>
+{/if}
+{if $obj.metadata.extra ne ''}
+    <dt>{gt text='Extra'}</dt>
+    <dd>{$obj.metadata.extra|default:'-'|safetext}</dd>
+{/if}
+</dl>
 {/if}
 «ENDFILE»
 «ENDIF»
 
 «IF controller.hasActions('edit')-»
 «FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/include_metadata_edit.tpl")-»
-{if (isset($obj.cr_uid) && $obj.cr_uid) || (isset($obj.lu_uid) && $obj.lu_uid)}
 <fieldset>
-    <legend>{gt text='Meta data'}</legend>
-    <ul>
-{if isset($obj.cr_uid) && $obj.cr_uid}
-        {usergetvar name='uname' uid=$obj.cr_uid assign='username'}
-        <li>{gt text='Created by %s' tag1=$username}</li>
-        <li>{gt text='Created on %s' tag1=$obj.cr_date|dateformat}</li>
-{/if}
-{if isset($obj.lu_uid) && $obj.lu_uid}
-        {usergetvar name='uname' uid=$obj.lu_uid assign='username'}
-        <li>{gt text='Updated by %s' tag1=$username}</li>
-        <li>{gt text='Updated on %s' tag1=$obj.lu_date|dateformat}</li>
-{/if}
-    </ul>
+    <legend>{gt text='Metadata'}</legend>
+
+    <div class="z-formrow">
+        {formlabel for='metadataTitle' __text='Title'}
+        {formtextinput group='meta' id='metadataTitle' dataField='title' maxLength=80}
+    </div>
+
+    <div class="z-formrow">
+        {formlabel for='metadataAuthor' __text='Author'}
+        {formtextinput group='meta' id='metadataAuthor' dataField='author' maxLength=80}
+    </div>
+
+    <div class="z-formrow">
+        {formlabel for='metadataSubject' __text='Subject'}
+        {formtextinput group='meta' id='metadataSubject' dataField='subject' maxLength=255}
+    </div>
+    
+    <div class="z-formrow">
+        {formlabel for='metadataKeywords' __text='Keywords'}
+        {formtextinput group='meta' id='metadataKeywords' dataField='keywords' maxLength=128}
+    </div>
+
+    <div class="z-formrow">
+        {formlabel for='metadataDescription' __text='Description'}
+        {formtextinput group='meta' id='metadataDescription' dataField='description' maxLength=255}
+    </div>
+
+    <div class="z-formrow">
+        {formlabel for='metadataPublisher' __text='Publisher'}
+        {formtextinput group='meta' id='metadataPublisher' dataField='publisher' maxLength=128}
+    </div>
+
+    <div class="z-formrow">
+        {formlabel for='metadataContributor' __text='Contributor'}
+        {formtextinput group='meta' id='metadataContributor' dataField='contributor' maxLength=80}
+    </div>
+
+    <div class="z-formrow">
+        {formlabel for='metadataStartdate' __text='Start date'}
+    {if $mode ne 'create'}
+        {formdateinput group='meta' id='metadataStartdate' dataField='startdate' mandatory=false includeTime=true}
+    {else}
+        {formdateinput group='meta' id='metadataStartdate' dataField='startdate' mandatory=false includeTime=true defaultValue='now'}
+    {/if}
+    </div>
+
+    <div class="z-formrow">
+        {formlabel for='metadataEnddate' __text='End date'}
+    {if $mode ne 'create'}
+        {formdateinput group='meta' id='metadataEnddate' dataField='enddate' mandatory=false includeTime=true}
+    {else}
+        {formdateinput group='meta' id='metadataEnddate' dataField='enddate' mandatory=false includeTime=true defaultValue='now'}
+    {/if}
+    </div>
+
+    <div class="z-formrow">
+        {formlabel for='metadataType' __text='Type'}
+        {formtextinput group='meta' id='metadataType' dataField='type' maxLength=128}
+    </div>
+
+    <div class="z-formrow">
+        {formlabel for='metadataFormat' __text='Format'}
+        {formtextinput group='meta' id='metadataFormat' dataField='format' maxLength=128}
+    </div>
+
+    <div class="z-formrow">
+        {formlabel for='metadataUri' __text='Uri'}
+        {formtextinput group='meta' id='metadataUri' dataField='uri' maxLength=255}
+    </div>
+
+    <div class="z-formrow">
+        {formlabel for='metadataSource' __text='Source'}
+        {formtextinput group='meta' id='metadataSource' dataField='source' maxLength=128}
+    </div>
+
+    <div class="z-formrow">
+        {formlabel for='metadataLanguage' __text='Language'}
+        {formlanguageselector group='meta' id='metadataLanguage' mandatory=false __title='Choose a language' dataField='language'}
+    </div>
+
+    <div class="z-formrow">
+        {formlabel for='metadataRelation' __text='Relation'}
+        {formtextinput group='meta' id='metadataRelation' dataField='relation' maxLength=255}
+    </div>
+
+    <div class="z-formrow">
+        {formlabel for='metadataCoverage' __text='Coverage'}
+        {formtextinput group='meta' id='metadataCoverage' dataField='coverage' maxLength=64}
+    </div>
+
+    <div class="z-formrow">
+        {formlabel for='metadataComment' __text='Comment'}
+        {formtextinput group='meta' id='metadataComment' dataField='comment' maxLength=255}
+    </div>
+
+    <div class="z-formrow">
+        {formlabel for='metadataExtra' __text='Extra'}
+        {formtextinput group='meta' id='metadataExtra' dataField='extra' maxLength=255}
+    </div>
 </fieldset>
-{/if}
 «ENDFILE»
 «ENDIF»
 «ENDDEFINE»

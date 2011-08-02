@@ -10,21 +10,7 @@
 «REM»    «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»«ENDREM»
     «EXPAND business::Validator::BaseValidator-»
     «EXPAND business::Validator::ValidatorWrapper(this) FOREACH models.entities-»
-«IF hasLoggable()-»
-«FOREACH getLoggableEntities() AS logEntity-»
-«EXPAND entity::Extensions::LogEntryClass(this) FOR logEntity-»
-«ENDFOREACH-»
-«ENDIF-»
-«IF hasTranslatable()-»
-«FOREACH getTranslatableEntities() AS translatableEntity-»
-«EXPAND entity::Extensions::TranslationClass(this) FOR translatableEntity-»
-«ENDFOREACH-»
-«ENDIF-»
-«IF hasTrees()-»
-«FOREACH getTreeEntities() AS treeEntity-»
-«EXPAND entity::Extensions::TreeClosureClass(this) FOR treeEntity-»
-«ENDFOREACH-»
-«ENDIF-»
+«EXPAND entity::Extensions::ExtensionClasses-»
 «ENDDEFINE»
 
 «REM»creates a entity class file for every Entity instance«ENDREM»
@@ -55,13 +41,16 @@ abstract class «baseClassModelEntity()» extends Zikula_EntityAccess«IF hasNot
 
 «DEFINE Imports FOR Entity-»
 use Doctrine\ORM\Mapping as ORM;
-«IF hasCollections()-»
+«IF hasCollections() || attributable || categorisable-»
 use Doctrine\Common\Collections\ArrayCollection;
 «ENDIF-»
 «EXPAND entity::Extensions::Imports-»
 «IF hasNotifyPolicy()-»
 use Doctrine\Common\NotifyPropertyChanged,
     Doctrine\Common\PropertyChangedListener;
+«ENDIF-»
+«IF standardFields-»
+    use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
 «ENDIF-»
 «ENDDEFINE»
 
@@ -82,7 +71,6 @@ use Doctrine\Common\NotifyPropertyChanged,
  *
  * This is the concrete entity class for «name.formatForDisplay()» entities.
 «EXPAND entity::Extensions::ClassExtensions-»
-«REM»«EXPAND ObjectExtensions-»«ENDREM»«''-»
 «IF mappedSuperClass-»
  * @ORM\MappedSuperclass
 «ELSE-»
@@ -360,9 +348,5 @@ class «implClassModelRefEntity()» extends «baseClassModelRefEntity()»
 {
     // feel free to add your own methods here
 }
-«ENDDEFINE»
-
-«DEFINE ObjectExtensions FOR Entity»
-«REM»will be filled by Advices (Aspect Orientation)«ENDREM»
 «ENDDEFINE»
 

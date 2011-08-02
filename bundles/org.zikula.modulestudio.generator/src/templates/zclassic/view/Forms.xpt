@@ -109,9 +109,20 @@
 «ENDFOREACH-»
 «ENDIF-»
     </fieldset>
-«IF standardFields-»
+«IF attributable || categorisable || standardFields || metaData-»
     {if $mode ne 'create'}
+«IF attributable-»
+        {include file='«controller.name()»/include_attributes_edit.tpl' obj=$«name.formatForDB()»}
+«ENDIF-»
+«IF categorisable-»
+        {include file='«controller.name()»/include_categories_edit.tpl' obj=$«name.formatForDB()» groupName='«name.formatForDB()»'}
+«ENDIF-»
+«IF standardFields-»
+        {include file='«controller.name()»/include_standardfields_edit.tpl' obj=$«name.formatForDB()»}
+«ENDIF-»
+«IF metaData-»
         {include file='«controller.name()»/include_metadata_edit.tpl' obj=$«name.formatForDB()»}
+«ENDIF-»
     {/if}
 «ENDIF-»
 «EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, true, true) FOREACH incoming.typeSelect(JoinRelationship)-»

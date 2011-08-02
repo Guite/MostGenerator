@@ -251,6 +251,12 @@
 «DEFINE InitCollections FOR Entity-»
 «EXPAND InitCollection(true) FOREACH getOutgoingCollections()-»
 «EXPAND InitCollection(false) FOREACH getIncomingCollections()-»
+«IF attributable-»
+        $this->attributes = new Doctrine\Common\Collections\ArrayCollection();
+«ENDIF-»
+«IF categorisable-»
+        $this->categories = new Doctrine\Common\Collections\ArrayCollection();
+«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE InitCollection(Boolean useTarget) FOR JoinRelationship-»

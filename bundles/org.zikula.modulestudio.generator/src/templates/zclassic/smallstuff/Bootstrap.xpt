@@ -17,7 +17,7 @@
  * whereby $namespace is the first part of the PEAR class name
  * and $path is the path to the containing folder.
  */
-«IF hasTrees() || hasLoggable() || hasSluggable() || hasSortable() || hasTimestampable() || hasTranslatable()-»
+«IF hasTrees() || hasLoggable() || hasSluggable() || hasSortable() || hasTimestampable() || hasTranslatable() || hasStandardFieldEntities()-»
 // initialise doctrine extension listeners
 $helper = ServiceUtil::getService('doctrine_extensions');
 «IF hasTrees()-»
@@ -34,8 +34,11 @@ $helper->getListener('sluggable');
 «IF hasSortable()-»
 $helper->getListener('sortable');
 «ENDIF-»
-«IF hasTimestampable()-»
+«IF hasTimestampable() || hasStandardFieldEntities()-»
 $helper->getListener('timestampable');
+«ENDIF-»
+«IF hasStandardFieldEntities()-»
+$helper->getListener('standardfields');
 «ENDIF-»
 «IF hasTranslatable()-»
 $translatableListener = $helper->getListener('translatable');

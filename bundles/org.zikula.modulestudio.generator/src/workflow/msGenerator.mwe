@@ -51,7 +51,8 @@
 
         <!-- advice aop templates to the generator -->
         <property name="aspectPath" value="templates::${cartridgeName}::aspects::" />
-        <advice value="${aspectPath}Permissions, ${aspectPath}ObjectExtensions" />
+        <!-- advice value="${aspectPath}Permissions, ${aspectPath}ObjectExtensions" / -->
+        <advice value="${aspectPath}Permissions" />
 
         <!-- specify where to put the generated code -->
         <!-- default outlet has no name assigned -->

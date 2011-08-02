@@ -57,7 +57,8 @@ var enrichedSlot = "newModel"
 var fileEncoding = "UTF-8"
 var templatesExpand = "templates::${cartridgeName}::Root::Root(null) FOR ${enrichedSlot}"
 //var templatesExpand = "templates::${cartridgeName}::Root::Root(progressMonitor) FOR ${enrichedSlot}"
-var templatesAdvice = "templates::${cartridgeName}::aspects::Permissions, templates::${cartridgeName}::aspects::ObjectExtensions"
+//var templatesAdvice = "templates::${cartridgeName}::aspects::Permissions, templates::${cartridgeName}::aspects::ObjectExtensions"
+var templatesAdvice = "templates::${cartridgeName}::aspects::Permissions"
 
 Workflow {
     bean = EmfMetaModel : mmEMF { metaModelPackage = "org.eclipse.emf.ecore.EcorePackage" }
