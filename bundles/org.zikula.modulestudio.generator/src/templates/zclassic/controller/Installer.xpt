@@ -196,17 +196,6 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         }
 
         try {
-/** obsolete
-«LET models.getJoinRelations() AS joinRelations-»
-«IF !joinRelations.isEmpty-»
-            // remove all foreign keys and indexes
-«EXPAND RemoveForeignKey FOREACH joinRelations-»
-«ENDIF-»
-
-«ENDLET-»
-            // remove tables
-«EXPAND RemoveTable FOREACH models.entities-»
-*/
             DoctrineHelper::dropSchema($this->entityManager, $this->listEntityClasses());
         } catch (Exception $e) {
             if (System::isDevelopmentMode()) {
@@ -233,20 +222,6 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         // deletion successful
         return true;
     }
-«ENDDEFINE»
-
-«DEFINE RemoveForeignKey FOR JoinRelationship-»
-            $foreignKeyName = '«target.fullEntityTableName()»_«getRelationAliasName(true).formatForDB()»_«source.fullEntityTableName()»_«getRelationAliasName(false).formatForDB()»';
-            DoctrineUtil::dropForeignKey('«target.fullEntityTableName()»', array('name' => $foreignKeyName));
-            DoctrineUtil::dropIndex('«target.fullEntityTableName()»', '«IF isDefaultIdFieldName(target, getTargetFields().get(0))»«source.relationFieldName(getSourceFields().get(0))»«ELSE»«target.relationFieldName(getTargetFields().get(0))»«ENDIF»');
-«ENDDEFINE»
-«DEFINE RemoveForeignKey FOR ManyToManyRelationship-»
-«ENDDEFINE»
-«DEFINE RemoveTable FOR Entity-»
-«IF hasSluggableFields()-»
-            DoctrineUtil::dropIndex('«fullEntityTableName()»', '«fullEntityTableName()»_sluggable');
-«ENDIF-»
-            DoctrineUtil::dropTable('«fullEntityTableName()»');
 «ENDDEFINE»
 
 «DEFINE FuncListEntityClasses FOR Application»
