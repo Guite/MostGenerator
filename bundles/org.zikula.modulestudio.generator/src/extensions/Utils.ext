@@ -286,7 +286,7 @@ cached getAggregatingRelationships(DerivedField this)
                      .select(e | !e.source.getAggregateFields().select(f|f.getAggregateTargetField() == this).isEmpty);
 
 cached getAggregators(Entity this)
-    : getDerivedFields().select(e|e.getAggregatingRelationships().isEmpty);
+    : getDerivedFields().select(e|!e.getAggregatingRelationships().isEmpty);
 cached boolean isAggregated(Entity this)
     : !getAggregators().isEmpty;
 

@@ -49,7 +49,7 @@ completely as the define for DerivedField can be used then instead.«ENDREM»
 «ENDIF-»
 «ENDIF-»
 «EXPAND Extensions::ColumnExtensions-»
-     * @ORM\Column(«EXPAND PersistentPropertyImpl(type)-»«IF unique-», unique=true«ENDIF-»«IF nullable-» nullable=true«ENDIF-»)
+     * @ORM\Column(«EXPAND PersistentPropertyImpl(type)-»«IF unique-», unique=true«ENDIF-»«IF nullable-», nullable=true«ENDIF-»)
 «EXPAND PersistentPropertyAdditions-»
      * @var «type» $«name».
      */
@@ -118,9 +118,9 @@ type="«type»", precision=«length», scale=«scale»«''-»
 «DEFINE DefaultFieldData FOR AbstractStringField»«EXPAND DefaultFieldDataText-»«ENDDEFINE»
 «DEFINE DefaultFieldData FOR ArrayField»array()«ENDDEFINE»
 «DEFINE DefaultFieldData FOR ObjectField»null«ENDDEFINE»
-«DEFINE DefaultFieldData FOR DatetimeField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»date('Y-m-d H:i:s')«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
-«DEFINE DefaultFieldData FOR DateField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»date('Y-m-d')«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
-«DEFINE DefaultFieldData FOR TimeField»«IF mandatory»«IF defaultValue.length > 0»«defaultValue»«ELSE»date('H:i:s')«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldData FOR DatetimeField»«IF mandatory»«IF defaultValue.length > 0»'«defaultValue»'«ELSE»null«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldData FOR DateField»«IF mandatory»«IF defaultValue.length > 0»'«defaultValue»'«ELSE»null«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldData FOR TimeField»«IF mandatory»«IF defaultValue.length > 0»'«defaultValue»'«ELSE»null«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
 «DEFINE DefaultFieldData FOR FloatField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF»«ENDDEFINE»
 
 

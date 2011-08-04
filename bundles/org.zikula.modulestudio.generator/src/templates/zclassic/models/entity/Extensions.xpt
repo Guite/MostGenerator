@@ -95,7 +95,7 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
      * @Gedmo\Locale«REM»the same as @Gedmo\Language«ENDREM»
      * @var string $locale.
      */
-    private $locale;
+    protected $locale;
 «ENDIF-»
 «IF tree != EntityTreeType::NONE-»
 
@@ -181,26 +181,30 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
     /**
      * @ORM\Column(type="integer")
      * @ZK\StandardFields(type="userid", on="create")
+     * @var integer $createdUserId.
      */
-    private $createdUserId;
+    protected $createdUserId;
 
     /**
      * @ORM\Column(type="integer")
      * @ZK\StandardFields(type="userid", on="update")
+     * @var integer $updatedUserId.
      */
-    private $updatedUserId;
+    protected $updatedUserId;
 
     /**
      * @ORM\Column(type="datetime")
      * @Gedmo\Timestampable(on="create")
+     * @var datetime $createdDate.
      */
-    private $createdDate;
+    protected $createdDate;
 
     /**
      * @ORM\Column(type="datetime")
      * @Gedmo\Timestampable(on="update")
+     * @var datetime $updatedDate.
      */
-    private $updatedDate;
+    protected $updatedDate;
 «ENDIF-»
 «ENDDEFINE»
 
@@ -356,7 +360,7 @@ class «baseClassModel('', classType)» extends Zikula_Doctrine2_Entity_EntityCa
      * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKeyFields().get(0).name.formatForCode()»"«IF classType == 'metaData'-», unique=true«ENDIF-»)
      * @var «implClassModelEntity()»
      */
-    private $entity;
+    protected $entity;
 
     public function getEntity()
     {
@@ -373,6 +377,7 @@ class «baseClassModel('', classType)» extends Zikula_Doctrine2_Entity_EntityCa
 
 «REM»concrete implementation stub«ENDREM»
 «DEFINE ExtensionClassImpl(Application app, String classType) FOR Entity-»
+use Doctrine\ORM\Mapping as ORM;
 
 /**
 «EXPAND ExtensionClassDesc(classType)-»

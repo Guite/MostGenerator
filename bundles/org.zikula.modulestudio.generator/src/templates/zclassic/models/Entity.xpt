@@ -50,7 +50,7 @@ use Doctrine\Common\NotifyPropertyChanged,
     Doctrine\Common\PropertyChangedListener;
 «ENDIF-»
 «IF standardFields-»
-    use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
+use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
 «ENDIF-»
 «ENDDEFINE»
 
@@ -65,6 +65,7 @@ use Doctrine\Common\NotifyPropertyChanged,
 
 «REM»concrete implementation stub«ENDREM»
 «DEFINE ModelEntityImpl(Application app) FOR Entity-»
+«EXPAND Imports-»
 
 /**
  * Entity class that defines the entity structure and behaviours.
@@ -229,6 +230,11 @@ $«getRelationAliasName(false)», $«targetField.name.formatForCode()»
         $this->«pkField.name.formatForCode()» = $«pkField.name.formatForCode()»;
 «ENDFOREACH-»
 «ENDIF-»
+«FOREACH getDerivedFields().typeSelect(AbstractDateField) AS dateField-»
+«IF dateField.mandatory && dateField.defaultValue.length == 0-»
+        $this->«dateField.name.formatForCode()» = «EXPAND DefaultAssignment FOR dateField-»;
+«ENDIF-»
+«ENDFOREACH-»
 «IF isIndexByTarget()-»
 «LET incoming.typeSelect(JoinRelationship).select(e|e.isIndexed()).get(0) AS indexRelation-»
 «LET getRelationAliasName(indexRelation, false) AS sourceAlias-»
@@ -258,6 +264,11 @@ $«getRelationAliasName(false)», $«targetField.name.formatForCode()»
         $this->«targetField.name.formatForCode()» = $«targetField.name.formatForCode()»;
 «ENDLET-»
 «ENDDEFINE»
+
+«DEFINE DefaultAssignment FOR AbstractDateField-»«ENDDEFINE»
+«DEFINE DefaultAssignment FOR DatetimeField-»date('Y-m-d H:i:s')«ENDDEFINE»
+«DEFINE DefaultAssignment FOR DateField-»date('Y-m-d')«ENDDEFINE»
+«DEFINE DefaultAssignment FOR TimeField-»date('H:i:s')«ENDDEFINE»
 
 «DEFINE PropertyChangedListener FOR Entity-»
 «IF hasNotifyPolicy()-»
