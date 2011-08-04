@@ -164,7 +164,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
               ->setMaxResults($resultsPerPage);
 «REM»«ENDIF-»«ENDREM»
         $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_RECORD);
-        $result = $pager->execute(array(), $fetchType);
+        $result = $query->execute(array(), $fetchType);
 
         $count = $this->selectCount($where, $useJoins);
 
@@ -410,7 +410,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     {
         $from = '';
 «IF hasTranslatableFields()-»
-        $from .= ', tbl.Translation Translation';
+        $from .= ' JOIN tbl.Translation Translation';
 «ENDIF-»
 «EXPAND AddJoin(false, 'from') FOREACH incoming.typeSelect(JoinRelationship)-»
 «EXPAND AddJoin(true, 'from') FOREACH outgoing.typeSelect(JoinRelationship)-»
@@ -422,7 +422,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 «IF target == 'select'-»
 , «relationAliasName».*«""-»
 «ELSEIF target == 'from'-»
-        $from .= ', tbl.«relationAliasName» «relationAliasName»';
+        $from .= ' JOIN tbl.«relationAliasName» «relationAliasName»';
 «ENDIF-»
 «ENDLET-»
 «ENDDEFINE»
