@@ -118,9 +118,7 @@ type="«type»", precision=«length», scale=«scale»«''-»
 «DEFINE DefaultFieldData FOR AbstractStringField»«EXPAND DefaultFieldDataText-»«ENDDEFINE»
 «DEFINE DefaultFieldData FOR ArrayField»array()«ENDDEFINE»
 «DEFINE DefaultFieldData FOR ObjectField»null«ENDDEFINE»
-«DEFINE DefaultFieldData FOR DatetimeField»«IF mandatory»«IF defaultValue.length > 0»'«defaultValue»'«ELSE»null«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
-«DEFINE DefaultFieldData FOR DateField»«IF mandatory»«IF defaultValue.length > 0»'«defaultValue»'«ELSE»null«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
-«DEFINE DefaultFieldData FOR TimeField»«IF mandatory»«IF defaultValue.length > 0»'«defaultValue»'«ELSE»null«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
+«DEFINE DefaultFieldData FOR AbstractDateField»«IF mandatory»«IF defaultValue.length > 0»'«defaultValue»'«ELSE»null«ENDIF»«ELSE»null«ENDIF»«ENDDEFINE»
 «DEFINE DefaultFieldData FOR FloatField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF»«ENDDEFINE»
 
 
