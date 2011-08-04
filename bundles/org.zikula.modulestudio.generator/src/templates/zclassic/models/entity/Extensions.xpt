@@ -387,7 +387,7 @@ use Doctrine\ORM\Mapping as ORM;
 «ELSEIF classType == 'translation'-»
  *
  * @ORM\Entity(repositoryClass="«baseClassModel('repository', classType)»")
- * @ORM\Table(name="«fullEntityName()»_translation",
+ * @ORM\Table(name="«fullEntityTableName()»_translation",
  *     indexes={
  *         @ORM\Index(name="translations_lookup_idx", columns={
  *             "locale", "object_class", "foreign_key"
@@ -402,7 +402,7 @@ use Doctrine\ORM\Mapping as ORM;
 «ELSEIF classType == 'logEntry'-»
  *
  * @ORM\Entity(repositoryClass="«baseClassModel('repository', classType)»")
- * @ORM\Table(name="«fullEntityName()»_log_entry",
+ * @ORM\Table(name="«fullEntityTableName()»_log_entry",
  *     indexes={
  *         @ORM\Index(name="log_class_lookup_idx", columns={"object_class"}),
  *         @ORM\Index(name="log_date_lookup_idx", columns={"logged_at"}),
@@ -412,15 +412,15 @@ use Doctrine\ORM\Mapping as ORM;
 «ELSEIF classType == 'metaData' || classType == 'attribute' || classType == 'category'-»
  * @ORM\Entity(repositoryClass="«baseClassModel('repository', classType)»")
 «IF classType == 'metaData'-»
- * @ORM\Table(name="«fullEntityName()»_metadata")
+ * @ORM\Table(name="«fullEntityTableName()»_metadata")
 «ELSEIF classType == 'attribute'-»
- * @ORM\Table(name="«fullEntityName()»_attribute",
+ * @ORM\Table(name="«fullEntityTableName()»_attribute",
  *     uniqueConstraints={
  *         @ORM\UniqueConstraint(name="cat_unq", columns={"name", "entityId"})
  *     }
  * )
 «ELSEIF classType == 'category'-»
- * @ORM\Table(name="«fullEntityName()»_category",
+ * @ORM\Table(name="«fullEntityTableName()»_category",
  *     uniqueConstraints={
  *         @ORM\UniqueConstraint(name="cat_unq",columns={"registryId", "categoryId", "entityId"})
  *     }

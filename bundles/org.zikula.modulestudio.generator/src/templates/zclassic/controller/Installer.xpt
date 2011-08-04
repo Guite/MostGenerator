@@ -236,17 +236,17 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDDEFINE»
 
 «DEFINE RemoveForeignKey FOR JoinRelationship-»
-            $foreignKeyName = '«target.fullEntityName()»_«getRelationAliasName(true).formatForDB()»_«source.fullEntityName()»_«getRelationAliasName(false).formatForDB()»';
-            DoctrineUtil::dropForeignKey('«target.fullEntityName()»', array('name' => $foreignKeyName));
-            DoctrineUtil::dropIndex('«target.fullEntityName()»', '«IF isDefaultIdFieldName(target, getTargetFields().get(0))»«source.relationFieldName(getSourceFields().get(0))»«ELSE»«target.relationFieldName(getTargetFields().get(0))»«ENDIF»');
+            $foreignKeyName = '«target.fullEntityTableName()»_«getRelationAliasName(true).formatForDB()»_«source.fullEntityTableName()»_«getRelationAliasName(false).formatForDB()»';
+            DoctrineUtil::dropForeignKey('«target.fullEntityTableName()»', array('name' => $foreignKeyName));
+            DoctrineUtil::dropIndex('«target.fullEntityTableName()»', '«IF isDefaultIdFieldName(target, getTargetFields().get(0))»«source.relationFieldName(getSourceFields().get(0))»«ELSE»«target.relationFieldName(getTargetFields().get(0))»«ENDIF»');
 «ENDDEFINE»
 «DEFINE RemoveForeignKey FOR ManyToManyRelationship-»
 «ENDDEFINE»
 «DEFINE RemoveTable FOR Entity-»
 «IF hasSluggableFields()-»
-            DoctrineUtil::dropIndex('«fullEntityName()»', '«fullEntityName()»_sluggable');
+            DoctrineUtil::dropIndex('«fullEntityTableName()»', '«fullEntityTableName()»_sluggable');
 «ENDIF-»
-            DoctrineUtil::dropTable('«fullEntityName()»');
+            DoctrineUtil::dropTable('«fullEntityTableName()»');
 «ENDDEFINE»
 
 «DEFINE FuncListEntityClasses FOR Application»

@@ -130,8 +130,22 @@ cached getDefaultDataSource(Application this) :
     models.selectFirst(e|e.defaultDataSource == true);
 
 
-cached String fullEntityName(Entity this) :
-    container.application.prefix().msconcat("_").msconcat(name.formatForDB());
+cached String tableNameWithPrefix(Application this, String inputString) :
+    prefix().msconcat('_').msconcat(inputString);
+
+cached String fullEntityTableName(Entity this) :
+    tableNameWithPrefix(container.application, name.formatForDB());
+
+cached String fullJoinTableName(JoinRelationship this, Boolean useTarget, Entity joinedEntityForeign) :
+    tableNameWithPrefix(container.application,
+    ((useTarget && this.metaType == OneToManyRelationship)
+        ? sourceAlias.formatForDB().msconcat(targetAlias.formatForDB())
+        : (
+            (this.metaType == ManyToManyRelationship)
+                ? ((ManyToManyRelationship)this).refClass.formatForDB()
+                : joinedEntityForeign.name.formatForDB()
+        )
+    ));
 
 cached String getEntityNameSingularPlural(Entity this, Boolean usePlural) :
     ((usePlural) ? nameMultiple : name);
@@ -278,7 +292,7 @@ cached getAggregateTargetEntity(IntegerField this) :
 
 cached getAggregateTargetField(IntegerField this)
     : let aggregateDetails = aggregateFor.split('#')
-     : getAggregateTargetEntity().fields.typeSelect(DerivedField).selectFirst(e|e.name == aggregateDetails.get(1));
+    : getAggregateTargetEntity().fields.typeSelect(DerivedField).selectFirst(e|e.name == aggregateDetails.get(1));
 
 cached getAggregatingRelationships(DerivedField this)
     : entity.incoming.typeSelect(OneToManyRelationship)

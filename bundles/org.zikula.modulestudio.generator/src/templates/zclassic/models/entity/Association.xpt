@@ -171,29 +171,26 @@
 «LET ((useTarget) ? target : source) AS joinedEntityForeign-»
 «LET ((useTarget) ? getSourceFields() : getTargetFields()) AS joinColumnsLocal-»
 «LET ((useTarget) ? getTargetFields() : getSourceFields()) AS joinColumnsForeign-»
-«IF !(joinColumnsForeign.containsDefaultIdField(joinedEntityForeign) && joinColumnsLocal.containsDefaultIdField(joinedEntityLocal) && !unique && nullable && onDelete == '' && onUpdate == '')-»
-«IF joinColumnsLocal.size > 1 || joinColumnsForeign.size > 1-»
-«REM»     * «EXPAND JoinColumns(joinColumnsForeign, joinColumnsLocal)»«ENDREM»«''-»
-     * «EXPAND JoinColumn(joinColumnsForeign.get(0), joinColumnsLocal.get(0))»
+«LET fullJoinTableName(useTarget, joinedEntityForeign) AS foreignTableName-»
+«IF (joinColumnsForeign.containsDefaultIdField(joinedEntityForeign) && joinColumnsLocal.containsDefaultIdField(joinedEntityLocal) && !unique && nullable && onDelete == '' && onUpdate == '')-»
+     * @ORM\JoinTable(name="«foreignTableName»")
 «ELSE-»
-     * «EXPAND JoinColumn(joinColumnsForeign.get(0), joinColumnsLocal.get(0))»
+     * @ORM\JoinTable(name="«foreignTableName»",
+«EXPAND JoinTableDetails(useTarget)-»
+     * )
 «ENDIF-»
-«ENDIF-»
+«ENDLET-»
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE JoinDetails(Boolean useTarget) FOR ManyToManyRelationship-»
+«DEFINE JoinTableDetails(Boolean useTarget) FOR JoinRelationship-»
 «LET ((useTarget) ? source : target) AS joinedEntityLocal-»
 «LET ((useTarget) ? target : source) AS joinedEntityForeign-»
 «LET ((useTarget) ? getSourceFields() : getTargetFields()) AS joinColumnsLocal-»
 «LET ((useTarget) ? getTargetFields() : getSourceFields()) AS joinColumnsForeign-»
-«IF (joinColumnsForeign.containsDefaultIdField(joinedEntityForeign) && joinColumnsLocal.containsDefaultIdField(joinedEntityLocal) && !unique && nullable && onDelete == '' && onUpdate == '')-»
-     * @ORM\JoinTable(name="«refClass.formatForCode()»")
-«ELSE-»
-     * @ORM\JoinTable(name="«refClass.formatForCode()»",
 «IF joinColumnsForeign.size > 1-»
      *      joinColumns={«FOREACH joinColumnsLocal AS joinColumnLocal SEPARATOR ', '-»«EXPAND JoinColumn(joinColumnLocal, joinedEntityLocal.getFirstPrimaryKey().name.formatForDB())-»«ENDFOREACH-»},
 «ELSE-»
@@ -203,8 +200,6 @@
      *      inverseJoinColumns={«FOREACH joinColumnsForeign AS joinColumnForeign SEPARATOR ', '-»«EXPAND JoinColumn(joinColumnForeign, joinedEntityForeign.getFirstPrimaryKey().name.formatForDB())-»«ENDFOREACH-»}
 «ELSE-»
      *      inverseJoinColumns={«EXPAND JoinColumn(joinColumnsForeign.get(0), joinedEntityForeign.getFirstPrimaryKey().name.formatForDB())»}
-«ENDIF-»
-     *      )
 «ENDIF-»
 «ENDLET-»
 «ENDLET-»

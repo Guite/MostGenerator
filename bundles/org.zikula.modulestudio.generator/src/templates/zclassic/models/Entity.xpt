@@ -57,7 +57,7 @@ use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
 «DEFINE Index(String indexType) FOR EntityIndex-»
  *         @ORM\«indexType.toFirstUpper()»(name="«name.formatForDB()»", columns={«EXPAND IndexField FOREACH items SEPARATOR ','»})
 «ENDDEFINE»
-«DEFINE IndexField FOR EntityIndexItem-»"«name.formatForDB()»"«ENDDEFINE»
+«DEFINE IndexField FOR EntityIndexItem-»"«name.formatForCode()»"«ENDDEFINE»
 
 «DEFINE DiscriminatorInfo FOR InheritanceRelationship-»
 "«source.name.formatForCode()»" = "«source.implClassModelEntity()»"«''-»
@@ -78,9 +78,9 @@ use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
  * @ORM\Entity(repositoryClass="«implClassModel('repository', '')»"«IF readOnly-», readOnly=true«ENDIF-»)
 «ENDIF-»
 «IF indexes.isEmpty-»
- * @ORM\Table(name="«fullEntityName()»")
+ * @ORM\Table(name="«fullEntityTableName()»")
 «ELSE-»
- * @ORM\Table(name="«fullEntityName()»",
+ * @ORM\Table(name="«fullEntityTableName()»",
 «IF hasNormalIndexes()-»
  *     indexes={
 «EXPAND Index('Index') FOREACH getNormalIndexes() SEPARATOR ','-»
@@ -251,7 +251,7 @@ $«getRelationAliasName(false)», $«targetField.name.formatForCode()»
 «EXPAND ConstructorAssignmentAggregate FOREACH getAggregators().getAggregatingRelationships()-»
 «ELSE-»
 «ENDIF-»
-        $this->_objectType = '«fullEntityName()»';
+        $this->_objectType = '«REM»fullEntityTableName()«ENDREM»«''-»«name.formatForCode()»';
         $this->_idFields = array(«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ', '-»'«pkField.name.formatForCode()»'«ENDFOREACH-»);
         $this->_validator = new «implClassModel('validator', '')»($this);
         $this->_hasUniqueSlug = «IF hasSluggableFields() && slugUnique»true«ELSE»false«ENDIF»;
