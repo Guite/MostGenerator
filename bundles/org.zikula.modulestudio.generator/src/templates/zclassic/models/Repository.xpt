@@ -37,7 +37,7 @@ use Doctrine\DBAL\LockMode;
  *
  * This is the base repository class for «name.formatForDisplay()» entities.
  */
-class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::NONE-»«tree.asConstant().toFirstUpper()»TreeRepository«ELSE-»EntityRepository«ENDIF-»
+class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::NONE-»«tree.asConstant().toFirstUpper()»TreeRepository«ELSE»EntityRepository«ENDIF»
 {
     /**
      * @var string The default sorting field/expression.
@@ -414,6 +414,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 «ENDIF-»
 «EXPAND AddJoin(false, 'from') FOREACH incoming.typeSelect(JoinRelationship)-»
 «EXPAND AddJoin(true, 'from') FOREACH outgoing.typeSelect(JoinRelationship)-»
+        return $from;
     }
 «ENDDEFINE»
 
