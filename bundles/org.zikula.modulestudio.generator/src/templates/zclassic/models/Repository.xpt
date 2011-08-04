@@ -32,8 +32,6 @@ use Doctrine\ORM\Query;
 use Doctrine\DBAL\LockMode;
 «ENDIF-»
 
-use DoctrineExtensions\Paginate\Paginate;
-
 /**
  * Repository class used to implement own convenience methods for performing certain DQL queries.
  *
@@ -156,18 +154,19 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $asArray = true, $useJoins = true)
     {
         $query = $this->_intBaseQuery($where, $orderBy, $useJoins);
-        $count = Paginate::getTotalQueryResults($query);
 
-«IF !(outgoing.typeSelect(OneToManyRelationship).isEmpty
+«REM»IF !(outgoing.typeSelect(OneToManyRelationship).isEmpty
    && outgoing.typeSelect(ManyToManyRelationship).isEmpty
    && incoming.typeSelect(ManyToOneRelationship).isEmpty)-»
         $query = Paginate::getPaginateQuery($query, $currentPage, $resultsPerPage);
-«ELSE-»
+«ELSE-»«ENDREM»«''-»
         $query->setFirstResult($currentPage)
               ->setMaxResults($resultsPerPage);
-«ENDIF-»
+«REM»«ENDIF-»«ENDREM»
         $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_RECORD);
         $result = $pager->execute(array(), $fetchType);
+
+        $count = $this->selectCount($where, $useJoins);
 
         return array($result, $count);
     }
@@ -188,20 +187,20 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 
         $selection = 'COUNT(tbl.id) AS num«nameMultiple.formatForCodeCapital()»';
         if ($useJoins === true) {
-            $selection = $this->addJoinsToSelection($selection);
+            $selection .= $this->addJoinsToSelection();
         }
 
-        $query = $this->getEntityManager()->createQuery()
-            ->select($selection)
-            ->from('«implClassModelEntity()» tbl');
-
+        $dql = 'SELECT ' . $selection . ' FROM «implClassModelEntity()» tbl';
         if ($useJoins === true) {
-            $this->addJoinsToFrom($query);
+            $dql .= $this->addJoinsToFrom();
         }
 
         if (!empty($where)) {
-            $query->where($where);
+            $dql .= ' WHERE ' . $where;
         }
+
+        $query = $this->getEntityManager()->createQuery($dql);
+
 «IF hasPessimisticReadLock()-»
         $query->setLockMode(LockMode::«lockType.asConstant()»);
 «ENDIF-»
@@ -237,42 +236,40 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     {
         $selection = 'tbl.*' . (($orderBy == 'RAND()') ? ', rand() AS rand' : '');
         if ($useJoins === true) {
-            $selection = $this->addJoinsToSelection($selection);
+            $selection .= $this->addJoinsToSelection();
         }
 
-        // create base selection query
-        $query = $this->getEntityManager()->createQuery()
-            ->select($selection)
-            ->from('«implClassModelEntity()» tbl');
-
-        // add join information
+        $dql = 'SELECT ' . $selection . ' FROM «implClassModelEntity()» tbl';
         if ($useJoins === true) {
-            $this->addJoinsToFrom($query);
+            $dql .= $this->addJoinsToFrom();
         }
 
         if (!empty($where)) {
-            $query->where('tbl.' . $where);
+            $dql .= ' WHERE ' . $where;
         }
 
+        // add order by clause
+        if (!empty($orderBy)) {
+            if ($orderBy == 'RAND()') {
+                $dql .= ' ORDER BY rand';
+            }
+            else {
+                $dql .= ' ORDER BY tbl.' . $orderBy;
+            }
+        }
+
+        $query = $this->getEntityManager()->createQuery($dql);
+
+// TODO - see http://code.zikula.org/core/ticket/3138
         // use FilterUtil to support generic filtering
-        $fu = new FilterUtil('«container.application.appName()»', $this);
+        //$fu = new FilterUtil('«container.application.appName()»', $this);
 
         // you could set explicit filters at this point, something like
         // $fu->setFilter('type:eq:' . $args['type'] . ',id:eq:' . $args['id']);
         // supported operators: eq, ne, like, lt, le, gt, ge, null, notnull
 
         // process request input filters and add them to the query.
-        $fu->enrichQuery($query);
-
-        // add order by clause
-        if (!empty($orderBy)) {
-            if ($orderBy == 'RAND()') {
-                $query->orderBy('rand');
-            }
-            else {
-                $query->orderBy('tbl.' . $orderBy);
-            }
-        }
+        //$fu->enrichQuery($query);
 
 «IF hasTranslatableFields()-»
         // set the translation query hint
@@ -392,10 +389,11 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     /**
      * Helper method to add join selections.
      *
-     * @param String $selection Input select string to be enhanced.
+     * @return String Enhancement for select clause.
      */
-    protected function addJoinsToSelection($selection)
+    protected function addJoinsToSelection()
     {
+        $selection = '';
 «IF hasTranslatableFields()-»
         $selection .= ', Translation.*';
 «ENDIF-»
@@ -406,12 +404,13 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     /**
      * Helper method to add joins to from clause.
      *
-     * @param Query $query Reference to query to be enriched.
+     * @return String Enhancement for from clause.
      */
-    protected function addJoinsToFrom(Query $query)
+    protected function addJoinsToFrom()
     {
+        $from = '';
 «IF hasTranslatableFields()-»
-        $query->leftJoin('tbl.Translation Translation');
+        $from .= ', tbl.Translation Translation';
 «ENDIF-»
 «EXPAND AddJoin(false, 'from') FOREACH incoming.typeSelect(JoinRelationship)-»
 «EXPAND AddJoin(true, 'from') FOREACH outgoing.typeSelect(JoinRelationship)-»
@@ -423,7 +422,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 «IF target == 'select'-»
 , «relationAliasName».*«""-»
 «ELSEIF target == 'from'-»
-        $query->leftJoin('tbl.«relationAliasName» «relationAliasName»');
+        $from .= ', tbl.«relationAliasName» «relationAliasName»';
 «ENDIF-»
 «ENDLET-»
 «ENDDEFINE»
