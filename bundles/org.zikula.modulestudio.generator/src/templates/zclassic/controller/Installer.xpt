@@ -103,7 +103,6 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDIF-»
 
         // create the default data for «appName()»
-        // TODO: must be retested (see #33)
         $this->createDefaultData();
 «IF hasCategorisableEntities()-»
 
@@ -274,7 +273,6 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «ENDFOREACH-»
 «IF getDefaultDataSource().numExampleRows > 0-»
 
-            /** TODO test this, see #33 */
 «EXPAND CreateExampleRows(this) FOREACH getDefaultDataSource().entities-»
 «ENDIF-»
         });
@@ -526,9 +524,9 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 
 «FOREACH 1.upTo(container.numExampleRows) AS number-»
 «IF isInheriting()-»
-«EXPAND ExampleRowAssignment(entityName, number) FOREACH parentType().fields.typeSelect(DerivedField).reject(e|e.primaryKey)-»
+«EXPAND ExampleRowAssignment(this, entityName, number) FOREACH parentType().fields.typeSelect(DerivedField).reject(e|e.primaryKey)-»
 «ENDIF-»
-«EXPAND ExampleRowAssignment(entityName, number) FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey)-»
+«EXPAND ExampleRowAssignment(this, entityName, number) FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey)-»
 «REM»«IF hasTranslatableFields()-»
             $«entityName»«number»->setLocale(ZLanguage::getLanguageCode());
 «ENDIF-»«ENDREM»
@@ -570,57 +568,57 @@ $«getRelationAliasName(false)»«number», «IF targetField.defaultValue != '' 
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE ExampleRowAssignment(String entityName, Integer number) FOR DerivedField-»
-            $«entityName»«number»->set«name.formatForCodeCapital()»(«EXPAND ExampleRowValue(number)-»);
+«DEFINE ExampleRowAssignment(Entity dataEntity, String entityName, Integer number) FOR DerivedField-»
+            $«entityName»«number»->set«name.formatForCodeCapital()»(«EXPAND ExampleRowValue(dataEntity, number)-»);
 «ENDDEFINE»
-«DEFINE ExampleRowAssignment(String entityName, Integer number) FOR IntegerField-»
+«DEFINE ExampleRowAssignment(Entity dataEntity, String entityName, Integer number) FOR IntegerField-»
 «IF aggregateFor.length == 0-»
-            $«entityName»«number»->set«name.formatForCodeCapital()»(«EXPAND ExampleRowValue(number)-»);
+            $«entityName»«number»->set«name.formatForCodeCapital()»(«EXPAND ExampleRowValue(dataEntity, number)-»);
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE ExampleRowValue(Integer number) FOR DerivedField-»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DerivedField-»
 «error("Error: undefined example value definition for derived field type " + metaType.toString() + " (code 4837264)") -> ""-»
 «ENDDEFINE»
-«DEFINE ExampleRowValueNumber(Integer number) FOR DerivedField-»«number»«ENDDEFINE»
-«DEFINE ExampleRowValueText(Integer number) FOR DerivedField-»
+«DEFINE ExampleRowValueNumber(Entity dataEntity, Integer number) FOR DerivedField-»«number»«ENDDEFINE»
+«DEFINE ExampleRowValueText(Entity dataEntity, Integer number) FOR DerivedField-»
 '«entity.name.formatForDisplayCapital()» «name.formatForDisplay()» «number»'«""-»
 «ENDDEFINE»
-«DEFINE ExampleRowValueTextLength(Integer number, Integer maxLength) FOR DerivedField-»
+«DEFINE ExampleRowValueTextLength(Entity dataEntity, Integer number, Integer maxLength) FOR DerivedField-»
 «IF maxLength >= (entity.name.formatForDisplayCapital().length + 4 + name.formatForDisplay().length)-»
-'«entity.name.formatForDisplayCapital()» «name.formatForDisplay()» «number»'«""-»
-«ELSEIF maxLength >= (4 + name.formatForDisplay().length)-»
+'«dataEntity.name.formatForDisplayCapital()» «name.formatForDisplay()» «number»'«""-»
+«ELSEIF !unique && maxLength >= (4 + name.formatForDisplay().length)-»
 '«name.formatForDisplay()» «number»'«""-»
 «ELSEIF maxLength < 4-»
-'«number»'«""-»
+'«(number+dataEntity.name.length+dataEntity.fields.size)»'«""-»
 «ELSE-»
-substr('«entity.name.formatForDisplayCapital()» «name.formatForDisplay()»', 0, «(maxLength-2)») . ' «number»'«''-»
+substr('«dataEntity.name.formatForDisplayCapital()» «name.formatForDisplay()»', 0, «(maxLength-2)») . ' «number»'«''-»
 «ENDIF-»
 «ENDDEFINE»
-«DEFINE ExampleRowValueText(Integer number) FOR StringField-»
-«EXPAND ExampleRowValueTextLength(number, length)-»
+«DEFINE ExampleRowValueText(Entity dataEntity, Integer number) FOR StringField-»
+«EXPAND ExampleRowValueTextLength(dataEntity, number, length)-»
 «ENDDEFINE»
-«DEFINE ExampleRowValueText(Integer number) FOR TextField-»
-«EXPAND ExampleRowValueTextLength(number, length)-»
+«DEFINE ExampleRowValueText(Entity dataEntity, Integer number) FOR TextField-»
+«EXPAND ExampleRowValueTextLength(dataEntity, number, length)-»
 «ENDDEFINE»
-«DEFINE ExampleRowValueText(Integer number) FOR EmailField-»
-«EXPAND ExampleRowValueTextLength(number, length)-»
+«DEFINE ExampleRowValueText(Entity dataEntity, Integer number) FOR EmailField-»
+«EXPAND ExampleRowValueTextLength(dataEntity, number, length)-»
 «ENDDEFINE»
-«DEFINE ExampleRowValueText(Integer number) FOR UrlField-»
-«EXPAND ExampleRowValueTextLength(number, length)-»
+«DEFINE ExampleRowValueText(Entity dataEntity, Integer number) FOR UrlField-»
+«EXPAND ExampleRowValueTextLength(dataEntity, number, length)-»
 «ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR BooleanField-»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR IntegerField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR DecimalField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR StringField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR TextField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR EmailField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR UrlField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR UploadField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR UserField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR ArrayField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR ObjectField-»«EXPAND ExampleRowValueText(number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR DatetimeField-»new DateTime('Y-m-d H:i:s')«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR DateField-»new DateTime('Y-m-d')«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR TimeField-»new DateTime('H:i:s')«ENDDEFINE»
-«DEFINE ExampleRowValue(Integer number) FOR FloatField-»«EXPAND ExampleRowValueNumber(number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR BooleanField-»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR IntegerField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DecimalField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR StringField-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR TextField-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR EmailField-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR UrlField-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR UploadField-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR UserField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR ArrayField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR ObjectField-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DatetimeField-»DateTime::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'))«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DateField-»DateTime::createFromFormat('Y-m-d', date('Y-m-d'))«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR TimeField-»DateTime::createFromFormat('H:i:s', date('H:i:s'))«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR FloatField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»

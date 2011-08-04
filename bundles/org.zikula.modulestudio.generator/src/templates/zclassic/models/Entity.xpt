@@ -60,7 +60,7 @@ use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
 «DEFINE IndexField FOR EntityIndexItem-»"«name.formatForCode()»"«ENDDEFINE»
 
 «DEFINE DiscriminatorInfo FOR InheritanceRelationship-»
-"«source.name.formatForCode()»" = "«source.implClassModelEntity()»"«''-»
+, "«source.name.formatForCode()»" = "«source.implClassModelEntity()»"«''-»
 «ENDDEFINE»
 
 «REM»concrete implementation stub«ENDREM»
@@ -96,7 +96,7 @@ use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
 «IF isTopSuperClass()-»
  * @ORM\InheritanceType("«getChildRelations().get(0).strategy.asConstant()»")
  * @ORM\DiscriminatorColumn(name="«getChildRelations().get(0).discriminatorColumn.formatForCode()»"«REM», type="string"«ENDREM»)
- * @ORM\DiscriminatorMap({«EXPAND DiscriminatorInfo FOREACH getChildRelations() SEPARATOR ", "-»})
+ * @ORM\DiscriminatorMap({"«name.formatForCode()»" = "«implClassModelEntity()»"«EXPAND DiscriminatorInfo FOREACH getChildRelations()-»})
 «ENDIF-»
 «IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT-»
  * @ORM\ChangeTrackingPolicy("«changeTrackingPolicy.asConstant()»")
@@ -281,10 +281,11 @@ $«getRelationAliasName(false)», $«targetField.name.formatForCode()»
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE DefaultAssignment FOR AbstractDateField-»«ENDDEFINE»
-«DEFINE DefaultAssignment FOR DatetimeField-»new DateTime('Y-m-d H:i:s')«ENDDEFINE»
-«DEFINE DefaultAssignment FOR DateField-»new DateTime('Y-m-d')«ENDDEFINE»
-«DEFINE DefaultAssignment FOR TimeField-»new DateTime('H:i:s')«ENDDEFINE»
+«DEFINE DefaultAssignment FOR AbstractDateField-»DateTime::createFromFormat('«EXPAND DefaultFormat-»', date('«EXPAND DefaultFormat-»'))«ENDDEFINE»
+«DEFINE DefaultFormat FOR AbstractDateField-»«ENDDEFINE»
+«DEFINE DefaultFormat FOR DatetimeField-»Y-m-d H:i:s«ENDDEFINE»
+«DEFINE DefaultFormat FOR DateField-»Y-m-d«ENDDEFINE»
+«DEFINE DefaultFormat FOR TimeField-»H:i:s«ENDDEFINE»
 
 «DEFINE PropertyChangedListener FOR Entity-»
 «IF hasNotifyPolicy()-»
