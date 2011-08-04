@@ -234,7 +234,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
      */
     protected function _intBaseQuery($where = '', $orderBy = '', $useJoins = true)
     {
-        $selection = 'tbl.*' . (($orderBy == 'RAND()') ? ', rand() AS rand' : '');
+        $selection = 'tbl' . (($orderBy == 'RAND()') ? ', rand() AS rand' : '');
         if ($useJoins === true) {
             $selection .= $this->addJoinsToSelection();
         }
@@ -395,7 +395,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     {
         $selection = '';
 «IF hasTranslatableFields()-»
-        $selection .= ', Translation.*';
+        $selection .= ', Translation';
 «ENDIF-»
         $selection .= '«EXPAND AddJoin(false, 'select') FOREACH incoming.typeSelect(JoinRelationship)-»«EXPAND AddJoin(true, 'select') FOREACH outgoing.typeSelect(JoinRelationship)-»';
         return $selection;
@@ -420,7 +420,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 «DEFINE AddJoin(Boolean incoming, String target) FOR JoinRelationship-»
 «LET getRelationAliasName(incoming).formatForCodeCapital() AS relationAliasName-»
 «IF target == 'select'-»
-, «relationAliasName».*«""-»
+, «relationAliasName»«""-»
 «ELSEIF target == 'from'-»
         $from .= ' JOIN tbl.«relationAliasName» «relationAliasName»';
 «ENDIF-»
