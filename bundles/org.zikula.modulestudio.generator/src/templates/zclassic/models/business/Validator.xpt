@@ -18,7 +18,7 @@
  *
  * This is the base validation class with general checks.
  */
-abstract class «baseClassDefault(this, '', 'Validator')» extends AbstractBase
+abstract class «baseClassDefault(this, '', 'Validator')» extends Zikula_AbstractBase
 {
     /**
      * @var Zikula_EntityAccess The entity instance which is treated by this validator.
@@ -420,9 +420,9 @@ class «implClassDefault(this, '', 'Validator')» extends «baseClassDefault(thi
  *
  * This is the base validation class for «name.formatForDisplay()» entities.
  */
-class «baseClassModel('validator', '')» extends «IF isInheriting()»«parentType().implClassModel('validator', '')»«ELSE»«implClassDefault(app, '', 'Validator')»«ENDIF»
+class «baseClassModel('validator', '')» extends «implClassDefault(app, '', 'Validator')»
 {
-«EXPAND ValidatorBaseImplBody(app)-»
+«EXPAND ValidatorBaseImplBody(app, false)-»
 }
 «ENDDEFINE»
 
@@ -437,10 +437,13 @@ class «baseClassModel('validator', '')» extends «IF isInheriting()»«parentT
 class «implClassModel('validator', '')» extends «IF isInheriting()»«parentType().implClassModel('validator', '')»«ELSE»«baseClassModel('validator', '')»«ENDIF»
 {
     // here you can add custom validation methods or override existing checks
+«IF isInheriting()-»
+«EXPAND ValidatorBaseImplBody(app, true)-»
+«ENDIF-»
 }
 «ENDDEFINE»
 
-«DEFINE ValidatorBaseImplBody(Application app) FOR Entity»
+«DEFINE ValidatorBaseImplBody(Application app, Boolean isInheriting) FOR Entity»
 
     /**
      * Performs all validation rules.
@@ -449,7 +452,10 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
      */
     public function validateAll()
     {
-        $errorInfo = array('message' => '', 'code' => 0, 'debugArray' => array()); 
+        $errorInfo = array('message' => '', 'code' => 0, 'debugArray' => array());
+«IF isInheriting-»
+        parent::validateAll();
+«ENDIF-» 
 «EXPAND ValidationCalls FOREACH getDerivedFields()-»
         return true;
     }

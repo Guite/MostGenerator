@@ -106,6 +106,19 @@ use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
 class «implClassModelEntity()» extends «IF isInheriting()»«parentType().implClassModelEntity()»«ELSE»«baseClassModelEntity()»«ENDIF»
 {
     // feel free to add your own methods here
+«IF isInheriting()-»
+
+«EXPAND entity::Property::PersistentProperty FOREACH fields.typeSelect(DerivedField)»
+«EXPAND entity::Extensions::AdditionalProperties»
+«EXPAND entity::Association::Root(false) FOREACH incoming.typeSelect(JoinRelationship)»
+«EXPAND entity::Association::Root(true) FOREACH outgoing.typeSelect(JoinRelationship)»
+«EXPAND Constructor(true)-»
+
+«EXPAND entity::Property::FieldAccessor FOREACH fields.typeSelect(DerivedField)»
+«EXPAND entity::Extensions::AdditionalAccessors-»
+«EXPAND entity::Association::RelationAccessor(false) FOREACH incoming.typeSelect(JoinRelationship)»
+«EXPAND entity::Association::RelationAccessor(true) FOREACH outgoing.typeSelect(JoinRelationship)»
+«ENDIF-»
 }
 «ENDDEFINE»
 
@@ -142,7 +155,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «EXPAND entity::Extensions::AdditionalProperties»
 «EXPAND entity::Association::Root(false) FOREACH incoming.typeSelect(JoinRelationship)»
 «EXPAND entity::Association::Root(true) FOREACH outgoing.typeSelect(JoinRelationship)»
-«EXPAND Constructor-»
+«EXPAND Constructor(false)-»
 
 «EXPAND FileHelper::GetterAndSetterMethods('_objectType', 'string', false, false, '')»
 «EXPAND FileHelper::GetterAndSetterMethods('_idFields', 'array', false, true, 'Array()')»
@@ -182,7 +195,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 
 «ENDDEFINE»
 
-«DEFINE Constructor FOR Entity-»
+«DEFINE Constructor(Boolean isInheriting) FOR Entity-»
     /**
      * Constructor.
      * Will not be called by Doctrine and can therefore be used
@@ -190,9 +203,9 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
      * arbitrary arguments as with every other class method.
 «REM»TODO param docs«ENDREM»«''-»
      */
-    public function __construct(«EXPAND ConstructorArguments-»)
+    public function __construct(«EXPAND ConstructorArguments(true)-»)
     {
-«EXPAND ConstructorImpl-»
+«EXPAND ConstructorImpl(isInheriting)-»
     }
 «ENDDEFINE»
 
@@ -202,12 +215,12 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE ConstructorArguments FOR Entity-»
+«DEFINE ConstructorArguments(Boolean withTypeHints) FOR Entity-»
 «IF isIndexByTarget()-»
 «LET incoming.typeSelect(JoinRelationship).select(e|e.isIndexed()).get(0) AS indexRelation-»
 «LET getRelationAliasName(indexRelation, false) AS sourceAlias-»
 «LET indexRelation.getIndexByField() AS indexBy-»
-$«indexBy.formatForCode()», «indexRelation.source.implClassModelEntity()» $«sourceAlias.formatForCode()»«EXPAND ConstructorArgumentsDefault(true)-»
+$«indexBy.formatForCode()»,«IF withTypeHints-» «indexRelation.source.implClassModelEntity()»«ENDIF-» $«sourceAlias.formatForCode()»«EXPAND ConstructorArgumentsDefault(true)-»
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»
@@ -224,7 +237,10 @@ $«getRelationAliasName(false)», $«targetField.name.formatForCode()»
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE ConstructorImpl FOR Entity-»
+«DEFINE ConstructorImpl(Boolean isInheriting) FOR Entity-»
+«IF isInheriting-»
+        parent::__construct(«EXPAND ConstructorArguments(false)-»);
+«ENDIF-»
 «IF hasCompositeKeys()-»
 «FOREACH getPrimaryKeyFields() AS pkField-»
         $this->«pkField.name.formatForCode()» = $«pkField.name.formatForCode()»;
@@ -266,9 +282,9 @@ $«getRelationAliasName(false)», $«targetField.name.formatForCode()»
 «ENDDEFINE»
 
 «DEFINE DefaultAssignment FOR AbstractDateField-»«ENDDEFINE»
-«DEFINE DefaultAssignment FOR DatetimeField-»date('Y-m-d H:i:s')«ENDDEFINE»
-«DEFINE DefaultAssignment FOR DateField-»date('Y-m-d')«ENDDEFINE»
-«DEFINE DefaultAssignment FOR TimeField-»date('H:i:s')«ENDDEFINE»
+«DEFINE DefaultAssignment FOR DatetimeField-»new DateTime('Y-m-d H:i:s')«ENDDEFINE»
+«DEFINE DefaultAssignment FOR DateField-»new DateTime('Y-m-d')«ENDDEFINE»
+«DEFINE DefaultAssignment FOR TimeField-»new DateTime('H:i:s')«ENDDEFINE»
 
 «DEFINE PropertyChangedListener FOR Entity-»
 «IF hasNotifyPolicy()-»
