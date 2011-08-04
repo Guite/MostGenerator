@@ -140,11 +140,11 @@ cached String fullJoinTableName(JoinRelationship this, Boolean useTarget, Entity
     tableNameWithPrefix(container.application,
     ((useTarget && this.metaType == OneToManyRelationship)
         ? sourceAlias.formatForDB().msconcat(targetAlias.formatForDB())
-        : (
+          : (
             (this.metaType == ManyToManyRelationship)
-                ? ((ManyToManyRelationship)this).refClass.formatForDB()
+            ? source.name.formatForDB().msconcat('_').msconcat(target.name.formatForDB())
                 : joinedEntityForeign.name.formatForDB()
-        )
+          )
     ));
 
 cached String getEntityNameSingularPlural(Entity this, Boolean usePlural) :

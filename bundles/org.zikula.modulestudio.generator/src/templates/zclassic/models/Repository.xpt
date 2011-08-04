@@ -7,7 +7,7 @@
 «REM»Entry point for Doctrine table classes«ENDREM»
 «DEFINE Root FOR Application-»
     «EXPAND Root(this) FOREACH models.entities.reject(e|e.mappedSuperClass)-»
-«REM»    «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»«ENDREM»
+    «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»
 «ENDDEFINE»
 
 «REM»creates a repository class file for every Entity instance«ENDREM»

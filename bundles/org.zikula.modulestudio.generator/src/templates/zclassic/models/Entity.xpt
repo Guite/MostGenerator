@@ -7,7 +7,7 @@
 «REM»Entry point for Doctrine entity classes«ENDREM»
 «DEFINE Root FOR Application-»
     «EXPAND Root(this) FOREACH models.entities-»
-«REM»    «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»«ENDREM»
+    «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»
     «EXPAND business::Validator::BaseValidator-»
     «EXPAND business::Validator::ValidatorWrapper(this) FOREACH models.entities-»
 «EXPAND entity::Extensions::ExtensionClasses-»
@@ -319,30 +319,26 @@ $«getRelationAliasName(false)», $«targetField.name.formatForCode()»
  */
 class «baseClassModelRefEntity()» extends Zikula_EntityAccess
 {
-«REM»    /**
-     * Set table definition.
-     * Define columns, indexes and other information about the table schema.
-     *
-     * @return void
-     */
-    public function setTableDefinition()
-    {
-        $this->setTableName('«app.prefix().msconcat("_").msconcat(source.name.formatForDB()).msconcat("_").msconcat(target.name.formatForDB())»');
+«REM»
 «FOREACH sourceFields() as singleSourceField-»
-        $this->hasColumn('«singleSourceField.formatForCode()»', 'integer', null, array(
-                'type' => 'integer',
-                'primary' => true
-            )
-        );
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="bigint"«IF unique-», unique=true«ENDIF-»«IF nullable-», nullable=true«ENDIF-»)
+     * @var «type» $«name».
+     */
+    protected $«singleSourceField.name.formatForCode()»;
+
 «ENDFOREACH-»
 «FOREACH targetFields() as singleTargetField-»
-        $this->hasColumn('«singleTargetField.formatForCode()»', 'integer', null, array(
-                'type' => 'integer',
-                'primary' => true
-            )
-        );
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="bigint"«IF unique-», unique=true«ENDIF-»«IF nullable-», nullable=true«ENDIF-»)
+     * @var «type» $«name».
+     */
+    protected $«singleTargetField.name.formatForCode()»;
+
 «ENDFOREACH-»
-    }«ENDREM»
+    }«ENDREM»«''-»
 }
 «ENDDEFINE»
 
@@ -354,6 +350,9 @@ class «baseClassModelRefEntity()» extends Zikula_EntityAccess
  *
  * This is the reference entity class for the many to many relationship
  * between «source.name.formatForDisplay()» and «target.name.formatForDisplay()» entities.
+ *
+ * @ORM\Entity(repositoryClass="«implClassModelRefRepository()»")
+ * @ORM\Table(name="«fullJoinTableName(true, target)»")
  */
 class «implClassModelRefEntity()» extends «baseClassModelRefEntity()»
 {
