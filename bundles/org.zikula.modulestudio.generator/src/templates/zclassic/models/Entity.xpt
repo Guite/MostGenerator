@@ -110,13 +110,13 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 
 «EXPAND entity::Property::PersistentProperty FOREACH fields.typeSelect(DerivedField)»
 «EXPAND entity::Extensions::AdditionalProperties»
-«EXPAND entity::Association::Root(false) FOREACH incoming.typeSelect(JoinRelationship)»
+«EXPAND entity::Association::Root(false) FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)»
 «EXPAND entity::Association::Root(true) FOREACH outgoing.typeSelect(JoinRelationship)»
 «EXPAND Constructor(true)-»
 
 «EXPAND entity::Property::FieldAccessor FOREACH fields.typeSelect(DerivedField)»
 «EXPAND entity::Extensions::AdditionalAccessors-»
-«EXPAND entity::Association::RelationAccessor(false) FOREACH incoming.typeSelect(JoinRelationship)»
+«EXPAND entity::Association::RelationAccessor(false) FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)»
 «EXPAND entity::Association::RelationAccessor(true) FOREACH outgoing.typeSelect(JoinRelationship)»
 «ENDIF-»
 }
@@ -153,7 +153,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 
 «EXPAND entity::Property::PersistentProperty FOREACH fields.typeSelect(DerivedField)»
 «EXPAND entity::Extensions::AdditionalProperties»
-«EXPAND entity::Association::Root(false) FOREACH incoming.typeSelect(JoinRelationship)»
+«EXPAND entity::Association::Root(false) FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)»
 «EXPAND entity::Association::Root(true) FOREACH outgoing.typeSelect(JoinRelationship)»
 «EXPAND Constructor(false)-»
 
@@ -165,7 +165,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 
 «EXPAND entity::Property::FieldAccessor FOREACH fields.typeSelect(DerivedField)»
 «EXPAND entity::Extensions::AdditionalAccessors-»
-«EXPAND entity::Association::RelationAccessor(false) FOREACH incoming.typeSelect(JoinRelationship)»
+«EXPAND entity::Association::RelationAccessor(false) FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)»
 «EXPAND entity::Association::RelationAccessor(true) FOREACH outgoing.typeSelect(JoinRelationship)»
 
 «EXPAND EventListener::Root-»

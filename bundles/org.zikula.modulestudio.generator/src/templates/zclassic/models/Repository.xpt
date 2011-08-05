@@ -397,7 +397,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 «IF hasTranslatableFields()-»
         $selection .= ', Translation';
 «ENDIF-»
-        $selection .= '«EXPAND AddJoin(false, 'select') FOREACH incoming.typeSelect(JoinRelationship)-»«EXPAND AddJoin(true, 'select') FOREACH outgoing.typeSelect(JoinRelationship)-»';
+        $selection .= '«EXPAND AddJoin(false, 'select') FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»«EXPAND AddJoin(true, 'select') FOREACH outgoing.typeSelect(JoinRelationship)-»';
         return $selection;
     }
 
@@ -412,7 +412,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 «IF hasTranslatableFields()-»
         $from .= ' JOIN tbl.Translation Translation';
 «ENDIF-»
-«EXPAND AddJoin(false, 'from') FOREACH incoming.typeSelect(JoinRelationship)-»
+«EXPAND AddJoin(false, 'from') FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»
 «EXPAND AddJoin(true, 'from') FOREACH outgoing.typeSelect(JoinRelationship)-»
         return $from;
     }
