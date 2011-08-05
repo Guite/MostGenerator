@@ -88,8 +88,8 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
             return LogUtil::registerArgsError();
         }
 
-        $query = $this->_intBaseQuery('', '', $useJoins)
-                  . ' AND tbl.id = ' . DataUtil::formatForStore($id);
+        $where = 'tbl.id = ' . DataUtil::formatForStore($id);
+        $query = $this->_intBaseQuery($where, '', $useJoins);
 
         $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_RECORD);
         $results = $query->execute(array(), $fetchType);
@@ -114,8 +114,8 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
             return LogUtil::registerArgsError();
         }
 
-        $query = $this->_intBaseQuery('', '', $useJoins)
-                  . ' AND tbl.slug = ' . DataUtil::formatForStore($slugTitle);
+        $where = 'tbl.slug = ' . DataUtil::formatForStore($slugTitle);
+        $query = $this->_intBaseQuery($where, '', $useJoins);
 
         $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_RECORD);
         $results = $query->execute(array(), $fetchType);
@@ -209,19 +209,6 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
         return $query->getSingleScalarResult();
     }
 «ENDIF-»
-
-«REM»Example:
-    public function getUsersBugs($userId, $number = 15)
-    {
-        $dql = "SELECT b, e, r FROM Bug b JOIN b.engineer e JOIN b.reporter r ".
-               "WHERE b.status = 'OPEN' AND e.id = ?1 OR r.id = ?1 ORDER BY b.created DESC";
-
-        return $this->getEntityManager()->createQuery($dql)
-                             ->setParameter(1, $userId)
-                             ->setMaxResults($number)
-                             ->getResult();
-    }
-«ENDREM»
 
 «EXPAND TreeMethods(app)-»
 
@@ -397,11 +384,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
      */
     protected function addJoinsToSelection()
     {
-        $selection = '';
-«IF hasTranslatableFields()-»
-        $selection .= ', Translation';
-«ENDIF-»
-        $selection .= '«EXPAND AddJoin(false, 'select') FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»«EXPAND AddJoin(true, 'select') FOREACH outgoing.typeSelect(JoinRelationship)-»';
+        $selection = '«EXPAND AddJoin(false, 'select') FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»«EXPAND AddJoin(true, 'select') FOREACH outgoing.typeSelect(JoinRelationship)-»';
         return $selection;
     }
 
@@ -413,9 +396,6 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     protected function addJoinsToFrom()
     {
         $from = '';
-«IF hasTranslatableFields()-»
-        $from .= ' JOIN tbl.translation translation';
-«ENDIF-»
 «EXPAND AddJoin(false, 'from') FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»
 «EXPAND AddJoin(true, 'from') FOREACH outgoing.typeSelect(JoinRelationship)-»
         return $from;
