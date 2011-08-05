@@ -199,7 +199,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
         // assign object data fetched from the database
         $objectData = null;
-        $idFilter = (count($idFields) == 1) ? $idValues[0] : $idValues;
+        $idFilter = (count($idFields) == 1) ? $idValues[$idFields[0]] : $idValues;
         $objectData = $repository->selectById($idFilter);
 «ENDIF-»
         if (!is_array($objectData) || !isset($objectData[$idFields[0]])) {
