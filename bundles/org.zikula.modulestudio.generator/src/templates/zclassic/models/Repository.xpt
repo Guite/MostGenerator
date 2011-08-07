@@ -42,7 +42,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     /**
      * @var string The default sorting field/expression.
      */
-    protected $defaultSortingField = '«getLeadingField().name.formatForCode()»';
+    protected $defaultSortingField = '«IF hasSortableFields()-»«getSortableFields().get(0).name.formatForCode()»«ELSE-»«getLeadingField().name.formatForCode()»«ENDIF-»';
 
     /**
      * Retrieves an array with all fields which can be used for sorting instances.
