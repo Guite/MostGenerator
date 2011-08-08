@@ -2,19 +2,20 @@
 <feature
       id="org.zikula.modulestudio.generator.build"
       label="Generators build feature"
-      version="1.0.0.qualifier">
+      version="1.0.0.qualifier"
+      provider-name="Zikula"
+      plugin="de.guite.modulestudio.branding"
+      image="most_update_120.jpg"
+      license-feature="de.guite.modulestudio.license"
+      license-feature-version="1.0.0.qualifier">
 
-   <description url="http://www.example.com/description">
-      [Geben Sie hier die Beschreibung für das Feature ein.]
+   <description url="%descriptionUrl">
+      Generator build feature.
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Geben Sie hier die Beschreibung für das Copyright ein.]
+   <copyright url="%copyrightUrl">
+      %copyright
    </copyright>
-
-   <license url="http://www.example.com/license">
-      [Geben Sie hier die Beschreibung für die Lizenz ein.]
-   </license>
 
    <includes
          id="org.zikula.modulestudio.generator.feature"

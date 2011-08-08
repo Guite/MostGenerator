@@ -5,7 +5,9 @@
       version="1.0.0.qualifier"
       provider-name="%providerName"
       plugin="de.guite.modulestudio.branding"
-      image="most_update_120.jpg">
+      image="most_update_120.jpg"
+      license-feature="de.guite.modulestudio.license"
+      license-feature-version="1.0.0.qualifier">
 
    <description url="%descriptionUrl">
       %description
@@ -14,10 +16,6 @@
    <copyright url="%copyrightUrl">
       %copyright
    </copyright>
-
-   <license url="%licenseUrl">
-      %license
-   </license>
 
    <requires>
       <import plugin="de.guite.modulestudio.metamodel" version="1.0.1" match="greaterOrEqual"/>
