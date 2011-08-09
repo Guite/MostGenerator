@@ -22,9 +22,14 @@ public class WorkflowZClassic {
         // copy admin image
         final FileCopy fileCopy = new FileCopy();
         final Bundle bundle = Platform.getBundle(Activator.PLUGIN_ID);
-        final java.net.URL[] resources = FileLocator.findEntries(bundle,
-                new Path(
+        java.net.URL[] resources = FileLocator.findEntries(bundle, new Path(
+                "/src/resources/images/MOST_48.png"));
+        final java.net.URL[] resourcesExported = FileLocator.findEntries(
+                bundle, new Path(
                 /* "src" + */"/resources/images/MOST_48.png"));
+        if (resources.length == 0) {
+            resources = resourcesExported;
+        }
         if (resources.length > 0) {
             try {
                 final java.net.URL url = resources[0];
