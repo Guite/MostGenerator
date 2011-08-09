@@ -34,9 +34,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
 «IF sortableGroup-»
      * @Gedmo\SortableGroup
 «ENDIF-»
-«IF versioned-»
-     * @Gedmo\Versioned
-«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE ColumnExtensions FOR DerivedField-»
@@ -257,20 +254,6 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
 «EXPAND FileHelper::GetterAndSetterMethods('updatedUserId', 'integer', true, false, '')-»
 «EXPAND FileHelper::GetterAndSetterMethods('createdDate', 'datetime', true, false, '')-»
 «EXPAND FileHelper::GetterAndSetterMethods('updatedDate', 'datetime', true, false, '')-»
-«ENDIF-»
-«ENDDEFINE»
-
-«REM»Association annotations«ENDREM»
-«DEFINE RelationExtensions(Boolean useTarget) FOR JoinRelationship-»
-«ENDDEFINE»
-«DEFINE RelationExtensions(Boolean useTarget) FOR OneToOneRelationship-»
-«IF versioned-»
-     * @Gedmo\Versioned
-«ENDIF-»
-«ENDDEFINE»
-«DEFINE RelationExtensions(Boolean useTarget) FOR ManyToOneRelationship-»
-«IF useTarget && versioned-»
-     * @Gedmo\Versioned
 «ENDIF-»
 «ENDDEFINE»
 

@@ -62,7 +62,6 @@
     /**
      * Bidirectional - «EXPAND IncomingMappingDescription(sourceName, targetName)-».
      *
-«EXPAND Extensions::RelationExtensions(false)-»
 «EXPAND IncomingMappingDetails-»
      * @ORM\«EXPAND IncomingMappingType-»(targetEntity="«entityClass»", inversedBy="«targetName-»"«EXPAND AdditionalOptions-»)
 «EXPAND JoinDetails(false)-»
@@ -86,7 +85,6 @@
     /**
      * Bidirectional - «EXPAND IncomingMappingDescription(sourceName, targetName)-».
      *
-«EXPAND Extensions::RelationExtensions(false)-»
 «IF primaryKey-»
      * @ORM\Id
 «ENDIF-»
@@ -103,7 +101,6 @@
     /**
      * Bidirectional - «EXPAND IncomingMappingDescription(sourceName, targetName)-».
      *
-«EXPAND Extensions::RelationExtensions(false)-»
      * @ORM\ManyToMany(targetEntity="«entityClass»", mappedBy="«targetName»"«EXPAND AdditionalOptions-»)
      * @var «entityClass»[] $«sourceName».
      */
@@ -120,7 +117,6 @@
     /**
      * «IF bidirectional-»Bi«ELSE-»Uni«ENDIF-»directional - «EXPAND OutgoingMappingDescription(sourceName, targetName)-».
      *
-«EXPAND Extensions::RelationExtensions(true)-»
      * @ORM\OneToOne(targetEntity="«entityClass»"«IF bidirectional-», mappedBy="«sourceName-»"«ENDIF-»«EXPAND FetchTypeTag-»«IF orphanRemoval-», orphanRemoval=true«ENDIF-»)
 «EXPAND JoinDetails(true)-»
      * @var «entityClass» $«targetName».
@@ -133,7 +129,6 @@
     /**
      * «IF bidirectional-»Bi«ELSE-»Uni«ENDIF-»directional - «EXPAND OutgoingMappingDescription(sourceName, targetName)-».
      *
-«EXPAND Extensions::RelationExtensions(true)-»
 «IF !bidirectional-»
      * @ORM\ManyToMany(targetEntity="«entityClass»"«EXPAND AdditionalOptions-»)
 «ELSE-»
@@ -153,7 +148,6 @@
     /**
      * «IF bidirectional-»Bi«ELSE-»Uni«ENDIF-»directional - «EXPAND OutgoingMappingDescription(sourceName, targetName)-».
      *
-«EXPAND Extensions::RelationExtensions(true)-»
      * @ORM\ManyToMany(targetEntity="«entityClass»"«IF bidirectional-», inversedBy="«sourceName-»"«ENDIF-»«EXPAND AdditionalOptions-»«IF indexBy != null && indexBy != ''-», indexBy="«indexBy»"«ENDIF-»)
 «EXPAND JoinDetails(true)-»
 «IF orderBy != null && orderBy != ''-»
