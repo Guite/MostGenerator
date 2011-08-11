@@ -301,7 +301,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «IF categorisable-»
         // load and assign registered categories
         $categories = CategoryRegistryUtil::getRegisteredModuleCategories('«app.appName()»', '«name.formatForCodeCapital()»', '«getPrimaryKeyFields().get(0).name.formatForCode()»');
-        $view->assign('registries', $categories);
+        $this->view->assign('registries', $categories);
 
 «ENDIF-»
 «IF attributable-»
@@ -318,7 +318,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
 «ENDIF-»
 «IF metaData-»
-        $this->assign('meta', $entity->getMetadata() != null? $entity->getMetadata()->toArray() : array());
+        $this->view->assign('meta', $entity->getMetadata() != null? $entity->getMetadata()->toArray() : array());
 
 «ENDIF-»
         $this->initializeAdditions();
