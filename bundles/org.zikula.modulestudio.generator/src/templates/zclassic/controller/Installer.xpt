@@ -524,9 +524,9 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 
 «FOREACH 1.upTo(container.numExampleRows) AS number-»
 «IF isInheriting()-»
-«EXPAND ExampleRowAssignment(this, entityName, number) FOREACH parentType().fields.typeSelect(DerivedField).reject(e|e.primaryKey)-»
+«EXPAND ExampleRowAssignment(this, entityName, number) FOREACH parentType().fields.typeSelect(DerivedField).reject(e|e.primaryKey).reject(e|e.metaType == UploadField)-»
 «ENDIF-»
-«EXPAND ExampleRowAssignment(this, entityName, number) FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey)-»
+«EXPAND ExampleRowAssignment(this, entityName, number) FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey).reject(e|e.metaType == UploadField)-»
 «REM»«IF hasTranslatableFields()-»
             $«entityName»«number»->setLocale(ZLanguage::getLanguageCode());
 «ENDIF-»«ENDREM»
