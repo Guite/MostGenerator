@@ -235,7 +235,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 return $this->view->registerError(LogUtil::registerPermissionError());
             }
 
-«EXPAND ControllerHelper::retrieveEntityFromModel('idFields', 'this->idValues' + ((hasCompositeKeys()) ? '' : '[0]'), true)-»
+«EXPAND ControllerHelper::retrieveEntityFromModel('idFields', 'this->idValues', true)-»
 «IF hasPageLockSupport()-»
 
             // try to guarantee that only one person at a time can be editing this «name.formatForDisplay()»
