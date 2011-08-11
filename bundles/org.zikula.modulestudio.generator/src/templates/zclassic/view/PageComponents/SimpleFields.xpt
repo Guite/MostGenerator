@@ -123,10 +123,10 @@
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR DateField-»
-«prepend»{$«objName».«name.formatForCode()»|dateformat:"datebrief"}«""-»
+«prepend»{$«objName».«name.formatForCode()»|dateformat:'datebrief'}«""-»
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR DatetimeField-»
-«prepend»{$«objName».«name.formatForCode()»|dateformat:"datetimebrief"}«""-»
+«prepend»{$«objName».«name.formatForCode()»|dateformat:'datetimebrief'}«""-»
 «ENDDEFINE»
 
