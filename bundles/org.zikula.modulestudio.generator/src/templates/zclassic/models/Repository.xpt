@@ -407,7 +407,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 «IF target == 'select'-»
 , «relationAliasName»«""-»
 «ELSEIF target == 'from'-»
-        $from .= ' JOIN tbl.«relationAliasName» «relationAliasName»';
+        $from .= ' LEFT JOIN tbl.«relationAliasName» «relationAliasName»';
 «ENDIF-»
 «ENDLET-»
 «ENDDEFINE»
