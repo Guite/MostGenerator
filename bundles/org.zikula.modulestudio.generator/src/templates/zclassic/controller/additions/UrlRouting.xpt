@@ -139,8 +139,7 @@ class «appName»_Base_RouterFacade
 «EXPAND GetGroupingFolderFromObjectType(true) FOREACH models.entities-»
                 default: return '';
             }
-        }
-        else if ($func == 'display') {
+        } else if ($func == 'display') {
             switch ($objectType) {
 «EXPAND GetGroupingFolderFromObjectType(false) FOREACH models.entities-»
                 default: return '';
@@ -173,8 +172,7 @@ class «appName»_Base_RouterFacade
 «EXPAND GetObjectTypeFromGroupingFolder(true) FOREACH models.entities-»
                 default: return '';
             }
-        }
-        else if ($func == 'display') {
+        } else if ($func == 'display') {
             switch ($groupFolder) {
 «EXPAND GetObjectTypeFromGroupingFolder(false) FOREACH models.entities-»
                 default: return '';

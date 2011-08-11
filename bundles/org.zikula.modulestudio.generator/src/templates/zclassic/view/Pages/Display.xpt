@@ -74,7 +74,7 @@
 {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 «EXPAND ItemActions(appName, controller)-»
 
-{notifydisplayhooks eventname='«appName.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».display_view' id="«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR '_'-»`$«objName».«pkField.name.formatForCode()»`«ENDFOREACH-»" urlobject=$«objName».urlObject assign='hooks'}
+{notifydisplayhooks eventname='«appName.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».display_view' id="«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR '_'-»`$«objName».«pkField.name.formatForCode()»`«ENDFOREACH-»" urlobject=$currentUrlObject assign='hooks'}
 {foreach from=$hooks key='hookname' item='hook'}
     {$hook}
 {/foreach}

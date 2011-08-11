@@ -189,25 +189,30 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $objectData = null;
         if ($hasSlug) {
             $objectData = $repository->selectBySlug($slugTitle);
-        }
-        else {
-            $idFilter = (count($idFields) == 1) ? $idValues[0] : $idValues;
-            $objectData = $repository->selectById($idFilter);
+        } else {
+            $objectData = $repository->selectById($idValues);
         }
 «ELSE-»
         $this->throwNotFoundUnless($hasID, $this->__('Error! Invalid identifier received.'));
 
         // assign object data fetched from the database
         $objectData = null;
-        $idFilter = (count($idFields) == 1) ? $idValues[$idFields[0]] : $idValues;
-        $objectData = $repository->selectById($idFilter);
+        $objectData = $repository->selectById($idValues);
 «ENDIF-»
         if (!is_array($objectData) || !isset($objectData[$idFields[0]])) {
             $this->throwNotFound($this->__('No such item.'));
         }
 
-        // assign the object we loaded above.
-        $this->view->assign($objectType, $objectData);
+        // build ModUrl instance for display hooks
+        $displayUrlArgs = array('ot' => $objectType);
+        foreach ($idFields as $idField) {
+            $displayUrlArgs[$idField] = $idValues[$idField];
+        }
+        $currentUrlObject = new Zikula_ModUrl('«appName»', '«controller.name()»', 'display', ZLanguage::getLanguageCode(), $displayUrlArgs);
+
+        // assign output data to view object.
+        $this->view->assign($objectType, $objectData)
+                   ->assign('currentUrlObject', $currentUrlObject);
 
         // fetch and return the appropriate template
         return «appName»_Util_View::processTemplate($this->view, '«controller.name()»', $objectType, 'display', $args);
@@ -253,8 +258,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         if ($confirmation) {
             $this->checkCsrfToken();
 
-            $idFilter = (count($idFields) == 1) ? $idValues[0] : $idValues;
-            $object = $repository->selectById($idFilter, false);
+            $object = $repository->selectById($idValues, false);
 
             if (!$object->delete()) {
                 $this->registerError($this->__('Error! Deletion attempt failed.'));
@@ -274,7 +278,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
             return «appName»_Util_View::processTemplate($this->view, '«controller.name()»', $objectType, 'delete', $args);
         }
 
-        // redirect to the list of the current object type
+        // redirect to the «IF controller.hasActions('view')-»list of the current object type«ELSE-»main page«ENDIF»
         $this->redirect(ModUtil::url('«appName»', '«controller.name()»', «IF controller.hasActions('view')-»'view',
                                                                                     array('ot' => $objectType)«ELSE-»'main'«ENDIF-»));
 

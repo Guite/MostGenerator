@@ -88,10 +88,21 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
             return LogUtil::registerArgsError();
         }
 
-        $where = 'tbl.id = ' . DataUtil::formatForStore($id);
+        $where = '';
+        if (is_array($id)) {
+            foreach ($id as $fieldName => $fieldValue) {
+                if (!empty($where)) {
+                    $where .= ' AND ';
+                }
+                $where .= 'tbl.' . DataUtil::formatForStore($fieldName) . ' = ' . DataUtil::formatForStore($fieldValue);
+            }
+        } else {
+            $where .= 'tbl.id = ' . DataUtil::formatForStore($id);
+        }
+
         $query = $this->_intBaseQuery($where, '', $useJoins);
 
-        $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_RECORD);
+        $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_OBJECT);
         $results = $query->execute(array(), $fetchType);
         return $results[0];
     }
@@ -117,7 +128,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
         $where = 'tbl.slug = ' . DataUtil::formatForStore($slugTitle);
         $query = $this->_intBaseQuery($where, '', $useJoins);
 
-        $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_RECORD);
+        $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_OBJECT);
         $results = $query->execute(array(), $fetchType);
         return $results[0];
     }
@@ -137,7 +148,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     {
         $query = $this->_intBaseQuery($where, $orderBy, $useJoins);
 
-        $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_RECORD);
+        $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_OBJECT);
         return $query->execute(array(), $fetchType);
     }
 
@@ -165,7 +176,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
         $query->setFirstResult($currentPage)
               ->setMaxResults($resultsPerPage);
 «REM»«ENDIF-»«ENDREM»
-        $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_RECORD);
+        $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_OBJECT);
         $result = $query->execute(array(), $fetchType);
 
         $count = $this->selectCount($where, $useJoins);
@@ -318,7 +329,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
             // note that this query modification can also be used for all node and tree methods (like getAncestors(), getDescendants(), getChildren(), getParent(), and so on)
         }
 
-        $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_RECORD);
+        $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_OBJECT);
         $result = null;
 
         // return branch if we have given a certain root
@@ -359,7 +370,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
             // note that this query modification can also be used for all node and tree methods (like getAncestors(), getDescendants(), getChildren(), getParent(), and so on)
         }
 
-        $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_RECORD);
+        $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_OBJECT);
 
         foreach ($treeObject->fetchRoots() as $rootNode) {
             $options = array('root_id' => $rootNode->root);

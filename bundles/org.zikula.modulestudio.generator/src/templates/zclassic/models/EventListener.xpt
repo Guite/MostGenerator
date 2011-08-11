@@ -218,13 +218,6 @@
         $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST', FILTER_SANITIZE_STRING);
 «ENDIF-»
 
-«REM»«IF controller.hasActions('view')-»«ENDREM»
-        $urlObject = new Zikula_ModUrl('«container.application.appName()»', $currentType, 'display', ZLanguage::getLanguageCode(), array('ot' => '«name.formatForCode()»', '«name.formatForDB()»id' => $this['«name.formatForDB()»id']));
-«REM»«ELSE-»
-        $urlObject = new Zikula_ModUrl('«container.application.appName()»', $currentType, 'view', ZLanguage::getLanguageCode(), array('ot' => '«name.formatForCode()»', '«name.formatForDB()»id' => $this['«name.formatForDB()»id']));
-«ENDIF-»«ENDREM»
-        $this->urlObject = $urlObject;
-
 «IF !fields.typeSelect(UploadField).isEmpty-»
         $imageTypes = array('gif', 'jpeg', 'jpg', 'png');
 

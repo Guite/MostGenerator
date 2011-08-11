@@ -270,7 +270,7 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
 «ENDIF-»
 «IF hasTrees()-»
 «REM»tree closure domain object«ENDREM»
-«EXPAND ExtensionClasses(this, 'closure') FOREACH getTreeEntities()-»
+«EXPAND ExtensionClasses(this, 'closure') FOREACH getTreeEntities().select(e|e.tree == EntityTreeType::CLOSURE)-»
 «ENDIF-»
 «IF hasMetaDataEntities()-»
 «EXPAND ExtensionClasses(this, 'metaData') FOREACH getMetaDataEntities()-»
