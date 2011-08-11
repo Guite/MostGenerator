@@ -112,7 +112,7 @@ class «appName()»_Base_UploadHandler
 
         $fileName = $file['name'];
         $extensionarr = explode('.', $fileName);
-        $extension = $extensionarr[count($extensionarr) - 1];
+        $extension = strtolower($extensionarr[count($extensionarr) - 1]);
 
         // start extension checks
         $allowedExtensions = array();
