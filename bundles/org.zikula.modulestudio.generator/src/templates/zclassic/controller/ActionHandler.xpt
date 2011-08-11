@@ -161,7 +161,7 @@ class «baseClassFormHandler(controller, name, actionName)» extends Zikula_Form
     /**
      * Helper method for updating links to related records.
      */
-    protected function updateRelationLinks($entity, $entityManager)
+    protected function updateRelationLinks($entity)
     {
 «EXPAND UpdateRelationLinks(true) FOREACH incoming.typeSelect(ManyToManyRelationship)-»
 «EXPAND UpdateRelationLinks(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
@@ -616,17 +616,18 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             // assert version
             $entityManager->lock($«name.formatForCode()», LockMode::OPTIMISTIC, $expectedVersion);
 «ENDIF-»
+            $this->updateRelationLinks($«name.formatForCode()»);
             $this->entityManager->transactional(function($entityManager) {
+                $dom = ZLanguage::getModuleDomain('«app.appName()»');
 «IF hasPessimisticWriteLock()-»
                 $entityManager->lock($«name.formatForCode()», LockMode::«lockType.asConstant()»);
 «ENDIF-»
-                $this->updateRelationLinks($«name.formatForCode()», $entityManager);
                 if ($args['commandName'] == 'create') {
                     $entityManager->persist($«name.formatForCode()»);
-                    $successMessage = $this->__('Done! «name.formatForDisplayCapital()» created.');
+                    $successMessage = __('Done! «name.formatForDisplayCapital()» created.', $dom);
                 } else if ($args['commandName'] == 'update') {
-«REM»                    $entityManager->persist($«name.formatForCode()»);«ENDREM»
-                    $successMessage = $this->__('Done! «name.formatForDisplayCapital()» updated.');
+«REM»                    $entityManager->persist($«name.formatForCode()»);«ENDREM»«''-»
+                    $successMessage = __('Done! «name.formatForDisplayCapital()» updated.', $dom);
                 }
             });
 «IF hasOptimisticLock()-»
@@ -758,7 +759,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             }
         }
 
-        $repository = $entityManager->getRepository($entityClass);
+        $repository = $this->entityManager->getRepository($entityClass);
         $where = '';
         foreach ($idFields as $idField) {
             if (!empty($where)) {
