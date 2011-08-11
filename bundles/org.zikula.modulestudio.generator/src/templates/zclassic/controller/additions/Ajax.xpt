@@ -414,7 +414,7 @@
 
                                 //$childObject->setParent($parentRecord);
                                 $parentObject = $object->selectById($parentId, false);
-                                $repository->persistAsLastChildOf($childObject, $parentObject)
+                                $repository->persistAsLastChildOf($childObject, $parentObject);
                             });
                             break;
             case 'deleteNode':
