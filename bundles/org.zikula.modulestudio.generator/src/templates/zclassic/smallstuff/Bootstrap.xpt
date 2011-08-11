@@ -26,7 +26,8 @@ $helper->getListener('tree');
 «IF hasLoggable()-»
 $loggableListener = $helper->getListener('loggable');
 // set current user name to loggable listener
-$loggableListener->setUsername(UserUtil::getVar('uname'));
+$userName = UserUtil::isLoggedIn() ? UserUtil::getVar('uname') : __('Guest');
+$loggableListener->setUsername($userName);
 «ENDIF-» 
 «IF hasSluggable()-»
 $helper->getListener('sluggable');
