@@ -340,7 +340,7 @@ listType:
 «ENDIF-»
 «IF controller.hasActions('display')-»
 «LET getLeadingField() AS leadingField-»
-            <a href="{modurl modname='«appName»' type='«controller.name()»' «modUrlDisplay(objName, true)»}" title="{$«objName».«IF leadingField == null-»«error("Error: Leading field is null for entity " + name.formatForDisplay() + "!")»«ELSE-»«leadingField.name.formatForCode()»«ENDIF-»|replace:"\"":""}">
+            <a href="{modurl modname='«appName»' type='«controller.name()»' «modUrlDisplay(objName, true)»}"«IF leadingField != null-» title="{$«objName».«leadingField.name.formatForCode()»|replace:"\"":""}"«ENDIF-»>
                 {icon type='display' size='extrasmall' __alt='Details'}
             </a>
 «ENDLET-»
