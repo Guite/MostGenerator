@@ -79,18 +79,26 @@
 «DEFINE FormRow FOR Variable-»
                 <div class="z-formrow">
                     {formlabel for='«name.formatForCode()»' __text='«name.formatForDisplayCapital()»'}
-                    «EXPAND InputField-»
+«EXPAND InputField-»
                 </div>
 «ENDDEFINE»
 
 «DEFINE InputField FOR Variable-»
-{formtextinput id='«name.formatForCode()»' group='config' maxLength=255 width=20em __title='Input this setting.'}
+                    {formtextinput id='«name.formatForCode()»' group='config' maxLength=255 width=20em __title='Input this setting.'}
 «ENDDEFINE»
 
 «DEFINE InputField FOR IntVar-»
-{formintinput id='«name.formatForCode()»' group='config' maxLength=255 width=20em __title='Input this setting. Only digits are allowed.'}
+                    {formintinput id='«name.formatForCode()»' group='config' maxLength=255 width=20em __title='Input this setting. Only digits are allowed.'}
 «ENDDEFINE»
 
 «DEFINE InputField FOR BoolVar-»
-{formcheckbox id='«name.formatForCode()»' group='config'}
+                    {formcheckbox id='«name.formatForCode()»' group='config'}
+«ENDDEFINE»
+
+«DEFINE InputField FOR ListVar-»
+«IF multiple-»
+                    {formcheckboxlist id='«name.formatForCode()»' group='config' repeatColumns=2}
+«ELSE-»
+                    {formdropdownlist id='«name.formatForCode()»' group='config'«IF multiple-» selectionMode='multiple'«ENDIF-»}
+«ENDIF-»
 «ENDDEFINE»

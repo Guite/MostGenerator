@@ -888,17 +888,17 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «REM»Assign input value from incoming 1:1 and 1:n relationships (example: get customerid for an order).
 As the autocomplete fields are not done with a Form plugin (yet), we do that manually.«ENDREM»
 «DEFINE FetchRelationValue(Boolean incoming) FOR JoinRelationship-»
+«IF !incoming || bidirectional || metaType == ManyToManyRelationship-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
-«LET relationFieldName(((!incoming) ? target : source), ((!incoming) ? getTargetFields().get(0) : getSourceFields().get(0))).formatForDB() AS fieldName-»
-        $formData['«fieldName»'] = (int) $this->request->getPost()->filter('«uniqueNameForJs»ItemList', 0, FILTER_VALIDATE_INT);
-        if (!$formData['«fieldName»']) {
+        $formData['«relationAliasName»'] = (int) $this->request->getPost()->filter('«uniqueNameForJs»ItemList', 0, FILTER_VALIDATE_INT);
+        if (!$formData['«relationAliasName»']) {
 «REM»            // Oops, we have an invalid relation id. As this field is mandatory, we raise an error.«ENDREM»
             return LogUtil::registerError($this->__('Invalid value received for relation field "«relationAliasName.formatForDisplay()»".'));
         }
 «ENDLET-»
 «ENDLET-»
-«ENDLET-»
+«ENDIF-»
 «ENDDEFINE»
 
 

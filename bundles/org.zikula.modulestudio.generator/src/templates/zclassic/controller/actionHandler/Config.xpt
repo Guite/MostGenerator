@@ -48,8 +48,11 @@ class «tempBaseClassConfigHandler()» extends Zikula_Form_AbstractHandler
             return $view->registerError(LogUtil::registerPermissionError());
         }
 
+        $modVars = ModUtil::getVar('«appName()»'«REM»$this->getVars() Zikula_Form_Handler does not inherit from Zikula_Base (yet)«ENDREM»);
+«EXPAND Init FOREACH models.variables.vars»
+
         // assign all module vars
-        $this->view->assign('config', ModUtil::getVar('«appName()»'«REM»$this->getVars() Zikula_Form_Handler does not inherit from Zikula_Base (yet)«ENDREM»));
+        $this->view->assign('config', $modVars);
 
         $this->initializeAdditions();
 
@@ -116,6 +119,21 @@ class «tempBaseClassConfigHandler()» extends Zikula_Form_AbstractHandler
         return $this->view->redirect($url);
     }
 }
+«ENDDEFINE»
+
+«DEFINE Init FOR Variable-»«ENDDEFINE»
+
+«DEFINE Init FOR ListVar-»
+«REM»        $listEntries = $modVars['«name.formatForCode()»'];«ENDREM»«''-»
+        $modVars['«name.formatForCode()»Items'] = array(«EXPAND Init FOREACH items SEPARATOR ','»
+        );
+«IF multiple-»
+«ELSE-»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE Init FOR ListVarItem»
+            array('value' => '«name.formatForCode()»', 'text' => '«name.formatForDisplayCapital()»')«''-»
 «ENDDEFINE»
 
 «DEFINE ConfigHandlerImplClass FOR Application-»
