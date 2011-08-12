@@ -97,7 +97,7 @@
     public function preRemoveCallback()
     {
 /*        // delete workflow for this entity
-        $result = WorkflowUtil::deleteWorkflow($this);
+        $result = Zikula_Workflow_Util::deleteWorkflow($this);
         if ($result === false) {
             $dom = ZLanguage::getModuleDomain('«container.application.appName()»');
             return LogUtil::registerError(__('Error! Could not remove stored workflow.', $dom));
