@@ -121,31 +121,27 @@ class «appName()»_Util_Base_Translatable extends Zikula_AbstractBase
 «DEFINE TranslatableFieldList FOR Entity-»
             case '«name.formatForCode()»':
                 $fields = array(
-«EXPAND TranslatableFieldDefinition(fields.typeSelect(DerivedField).select(e|e.translatable))-»
+«EXPAND TranslatableFieldDefinition-»
                 );
                 break;
 «ENDDEFINE»
 
-«DEFINE TranslatableFieldDefinition(List fieldNames) FOR Entity-»
-«EXPAND TranslatableFieldDefinition(fieldNames) FOREACH fields SEPARATOR ','»
+«DEFINE TranslatableFieldDefinition FOR Entity-»
+«EXPAND TranslatableFieldDefinition FOREACH getTranslatableFields() SEPARATOR ','»
 «ENDDEFINE»
 
-«DEFINE TranslatableFieldDefinition(List fieldNames) FOR EntityField-»
+«DEFINE TranslatableFieldDefinition FOR EntityField-»
 «REM»error("Error: undefined entity field type " + metaType.toString() + " (code 542324)") -> ""-»«ENDREM»
 «ENDDEFINE»
 
-«DEFINE TranslatableFieldDefinition(List fieldNames) FOR DerivedField-»
-«IF !fieldNames.select(a|a == name).isEmpty-»
+«DEFINE TranslatableFieldDefinition FOR DerivedField-»
                     array('name'    => '«name»',
                           'default' => '«IF defaultValue != ''-»«defaultValue»«ELSE-»«name.formatForDisplayCapital()»«ENDIF-»'),
-«ENDIF-»
 «ENDDEFINE»
 
-«DEFINE TranslatableFieldDefinition(List fieldNames) FOR CalculatedField-»
-«IF !fieldNames.select(a|a == name).isEmpty-»
+«DEFINE TranslatableFieldDefinition FOR CalculatedField-»
                     array('name'    => '«name»',
-                          'default' => '«name.formatForDisplayCapital()»'),
-«ENDIF-»
+                          'default' => '«name.formatForDisplayCapital()»')«''-»
 «ENDDEFINE»
 
 «DEFINE TranslatableFunctionsImpl FOR Application-»
