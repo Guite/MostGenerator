@@ -33,7 +33,7 @@
 «ENDDEFINE»
 
 «DEFINE DefaultSorting FOR Object-»
-        if (empty($sort) || !in_array($sort, $objectTemp->get_allowedSortingFields())) {
+        if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
             $sort = $repository->getDefaultSortingField();
         }
 «ENDDEFINE»
