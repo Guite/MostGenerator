@@ -58,6 +58,8 @@ class «appName()»_Util_Base_Translatable extends Zikula_AbstractBase
             }
         }
 
+        $serviceManager = ServiceUtil::getManager();
+
         // get translations
         $entityClass = '«appName()»_Entity_' . ucwords($objectType) . 'Translation';
         $entityManager = $serviceManager->getService('doctrine.entitymanager');

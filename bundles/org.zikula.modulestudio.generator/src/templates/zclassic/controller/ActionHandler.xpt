@@ -278,14 +278,16 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             $entity['«dateField.name.formatForCode()»'] = null;
         }
 «ENDFOREACH-»
+
+        $entityData = $entity->toArray();
 «IF hasTranslatableFields()-»
 
         // process translated fields
-        «app.appName()»_Util_Translatable::prepareEntityForEdit($this->objectType, $entity);
+        «app.appName()»_Util_Translatable::prepareEntityForEdit($this->objectType, $entityData);
 «ENDIF-»
 
         // assign data to template
-        $this->view->assign('«name.formatForDB()»', $entity->toArray())
+        $this->view->assign('«name.formatForDB()»', $entityData)
                    ->assign('mode', $this->mode)
                    ->assign('inlineUsage', $this->inlineUsage);
 
