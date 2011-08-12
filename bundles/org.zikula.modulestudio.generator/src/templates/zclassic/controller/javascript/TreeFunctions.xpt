@@ -40,7 +40,6 @@ function «prefix()»InitTreeView(ot, hasNodes)
  */
 function «prefix()»InitTreeNodes(ot, controller, rootId, readOnly)
 {
-    var otLower = ot.toLowerCase();
     $$('#itemtree' + rootId + ' a').each(function(elem) {
         // get reference to list item
         var liRef = elem.up();
@@ -56,7 +55,7 @@ function «prefix()»InitTreeNodes(ot, controller, rootId, readOnly)
                 label: Zikula.__('Edit', 'module_«appName()»'),
                 callback: function() {
                     currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                    window.location = Zikula.Config.baseURL + 'index.php?module=«appName()»&type=' + controller + '&func=edit&ot=' + ot + '&' + otLower + 'id=' + currentNodeId;
+                    window.location = Zikula.Config.baseURL + 'index.php?module=«appName()»&type=' + controller + '&func=edit&ot=' + ot + '&id=' + currentNodeId;
                 }
             });
         }
