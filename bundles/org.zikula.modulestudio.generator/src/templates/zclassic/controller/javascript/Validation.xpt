@@ -111,6 +111,9 @@ function «prefix()»UniqueCheck(ucOt, val, elem, ucEx)
     // build parameters object
     var params = {ot: ucOt, fn: encodeURIComponent(elem.id), v: encodeURIComponent(val), ex: ucEx};
 
+/** TODO fix the following call to work within validation context */
+return true;
+
     new Zikula.Ajax.Request(Zikula.Config['baseURL'] + 'ajax.php?module=«appName()»&func=checkForDuplicate', {
         method: 'post',
         parameters: params,
