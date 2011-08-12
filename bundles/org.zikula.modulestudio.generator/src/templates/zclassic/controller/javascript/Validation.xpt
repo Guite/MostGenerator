@@ -17,42 +17,41 @@ function «prefix()»AddCommonValidationRules(objectType, id)
             val = new String(val);
             return (val.indexOf(' ') == -1);
         }],
-        ['validate-htmlcolour', Zikula.__('Colour', 'module_«appName()»'), function(val, elem) {
+        ['validate-htmlcolour', Zikula.__('Please select a valid html colour code.', 'module_«appName()»'), function(val, elem) {
             val = new String(val);
-            var regex = '/^#?(([a-fA-F0-9]{3}){1,2})$/';
-            return val.match(regex);
+            return (/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(val));
         }],
-        ['validate-datetime-past', Zikula.__('Past', 'module_«appName()»'), function(val, elem) {
+        ['validate-datetime-past', Zikula.__('Please select a value in the past.', 'module_«appName()»'), function(val, elem) {
             val = new String(val);
             var cmpVal = «prefix()»ReadDate(val, true);
             return (cmpVal < «prefix()»Today('datetime'));
         }],
-        ['validate-datetime-future', Zikula.__('Future', 'module_«appName()»'), function(val, elem) {
+        ['validate-datetime-future', Zikula.__('Please select a value in the future.', 'module_«appName()»'), function(val, elem) {
             val = new String(val);
             var cmpVal = «prefix()»ReadDate(val, true);
             return (cmpVal >= «prefix()»Today('datetime'));
         }],
-        ['validate-date-past', Zikula.__('Past', 'module_«appName()»'), function(val, elem) {
+        ['validate-date-past', Zikula.__('Please select a value in the past.', 'module_«appName()»'), function(val, elem) {
             val = new String(val);
             var cmpVal = «prefix()»ReadDate(val, false);
             return (cmpVal < «prefix()»Today('date'));
         }],
-        ['validate-date-future', Zikula.__('Future', 'module_«appName()»'), function(val, elem) {
+        ['validate-date-future', Zikula.__('Please select a value in the future.', 'module_«appName()»'), function(val, elem) {
             val = new String(val);
             var cmpVal = «prefix()»ReadDate(val, false);
             return (cmpVal >= «prefix()»Today('date'));
         }],
-        ['validate-time-past', Zikula.__('Past', 'module_«appName()»'), function(val, elem) {
+        ['validate-time-past', Zikula.__('Please select a value in the past.', 'module_«appName()»'), function(val, elem) {
             var cmpVal = new String(val);
             return (cmpVal < «prefix()»Today('time'));
         }],
-        ['validate-time-future', Zikula.__('Future', 'module_«appName()»'), function(val, elem) {
+        ['validate-time-future', Zikula.__('Please select a value in the future.', 'module_«appName()»'), function(val, elem) {
             var cmpVal = new String(val);
             return (cmpVal >= «prefix()»Today('time'));
         }]«IF models.entities.exists(e|e.getUniqueDerivedFields().reject(e|e.primaryKey).size > 0)-»,
-        ['validate-unique', Zikula.__('Unique Check', 'module_«appName()»'), function(val, elem) {
+        ['validate-unique', Zikula.__('This value is already assigned, but must be unique. Please change it.', 'module_«appName()»'), function(val, elem) {
             return «prefix()»UniqueCheck('«name.formatForCode()»', val, elem, id);
-        }]«ENDIF-»
+        }]«ENDIF»
     ]);
 }
 
@@ -83,9 +82,8 @@ function «prefix()»Today(format)
 }
 
 // returns YYYY-MM-DD even if date is in DD.MM.YYYY
-function «prefix()»ReadDate(field, includeTime)
+function «prefix()»ReadDate(val, includeTime)
 {
-    var val = $F(field.id);
     // look if we have YYYY-MM-DD
     if (val.substr(4, 1) == '-' && val.substr(7, 1) == '-') {
         return val;
@@ -100,8 +98,8 @@ function «prefix()»ReadDate(field, includeTime)
         return newVal;
     }
 }
-
 «IF models.entities.exists(e|e.getUniqueDerivedFields().reject(e|e.primaryKey).size > 0)-»
+
 /**
  * Performs a duplicate check for unique fields
  */
