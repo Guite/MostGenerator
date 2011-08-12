@@ -109,21 +109,19 @@
 «ENDFOREACH-»
 «ENDIF-»
     </fieldset>
-«IF attributable || categorisable || standardFields || metaData-»
-    {if $mode ne 'create'}
 «IF attributable-»
-        {include file='«controller.name()»/include_attributes_edit.tpl' obj=$«name.formatForDB()»}
+    {include file='«controller.name()»/include_attributes_edit.tpl' obj=$«name.formatForDB()»}
 «ENDIF-»
 «IF categorisable-»
-        {include file='«controller.name()»/include_categories_edit.tpl' obj=$«name.formatForDB()» groupName='«name.formatForDB()»'}
+    {include file='«controller.name()»/include_categories_edit.tpl' obj=$«name.formatForDB()» groupName='«name.formatForDB()»'}
 «ENDIF-»
 «IF standardFields-»
+    {if $mode ne 'create'}
         {include file='«controller.name()»/include_standardfields_edit.tpl' obj=$«name.formatForDB()»}
+    {/if}
 «ENDIF-»
 «IF metaData-»
-        {include file='«controller.name()»/include_metadata_edit.tpl' obj=$«name.formatForDB()»}
-«ENDIF-»
-    {/if}
+    {include file='«controller.name()»/include_metadata_edit.tpl' obj=$«name.formatForDB()»}
 «ENDIF-»
 «EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, true, true) FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»
 «EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, true, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
