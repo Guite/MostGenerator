@@ -361,7 +361,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             $inputValue = $this->request->getGet()->get($relationInputFieldName, '');
         }
         if (empty($inputValue)) {
-            return array();
+            return $many ? array() : null;
         }
 
         $inputValueParts = explode('_', $inputValue);
