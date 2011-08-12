@@ -63,12 +63,16 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
 «IF geographical-»
 
     /**
+     * The coordinate's latitude part.
+     *
      * @ORM\Column(type="decimal", precision=15, scale=10)
      * @var decimal $latitude.
      */
     protected $latitude = 0.00;
 
     /**
+     * The coordinate's longitude part.
+     *
      * @ORM\Column(type="decimal", precision=15, scale=10)
      * @var decimal $longitude.
      */
@@ -89,6 +93,9 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
 «IF hasTranslatableFields()-»
 
     /**
+     * Field for storing the locale of this entity.
+     * Overrides the locale set in translationListener (as pointed out in https://github.com/l3pp4rd/DoctrineExtensions/issues/130#issuecomment-1790206 ).
+     *
      * @Gedmo\Locale«REM»the same as @Gedmo\Language«ENDREM»
      * @var string $locale.
      */
@@ -360,7 +367,7 @@ class «baseClassModel('', classType)» extends Zikula_Doctrine2_Entity_EntityCa
      *
      * @param «implClassModelEntity()» $entity
      */
-    public function setEntity(«implClassModelEntity()» $entity)
+    public function setEntity(/*«implClassModelEntity()» */$entity)
     {
         $this->entity = $entity;
     }
