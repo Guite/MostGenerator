@@ -285,7 +285,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDIF-»
 
         // assign data to template
-        $this->view->assign('«name.formatForDB()»', $entity)
+        $this->view->assign('«name.formatForDB()»', $entity->toArray())
                    ->assign('mode', $this->mode)
                    ->assign('inlineUsage', $this->inlineUsage);
 
