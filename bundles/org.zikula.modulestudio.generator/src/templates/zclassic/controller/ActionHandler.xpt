@@ -279,11 +279,11 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         }
 «ENDFOREACH-»
 
-        $entityData = $entity->toArray();
 «IF hasTranslatableFields()-»
-
         // process translated fields
-        «app.appName()»_Util_Translatable::prepareEntityForEdit($this->objectType, $entityData);
+        $entityData = «app.appName()»_Util_Translatable::prepareEntityForEdit($this->objectType, $entity);
+«ELSE-»
+        $entityData = $entity->toArray();
 «ENDIF-»
 
         // assign data to template
