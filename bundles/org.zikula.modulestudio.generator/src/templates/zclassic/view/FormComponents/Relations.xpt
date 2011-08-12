@@ -48,7 +48,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «IF onlyInclude-»
 «LET getRelationAliasName(true).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(app, source, (this.metaType == ManyToOneRelationship || this.metaType == ManyToManyRelationship), false, relationAliasName) AS uniqueNameForJs-»
-    {include file='«controller.name.formatForDB()»/«source.name.formatForCode()»/include_select«((stageCode == 3) ? 'Edit' : '')»One.tpl' relItem=$«target.name.formatForDB()» aliasName='«relationAliasName»' idPrefix='«uniqueNameForJs-»'}
+    {include file='«controller.name.formatForDB()»/«source.name.formatForCode()»/include_select«((stageCode == 3) ? 'Edit' : '')»One.tpl' relItem=$«target.name.formatForDB()» aliasName='«relationAliasName.toFirstLower()»' idPrefix='«uniqueNameForJs-»'}
 «ENDLET-»
 «ENDLET-»
 «ELSE-»
@@ -78,7 +78,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
  || (incoming && this.metaType == ManyToOneRelationship)
  || (!incoming && this.metaType == OneToManyRelationship)) AS many-»
 «LET getUniqueRelationNameForJs(app, source, many, incoming, relationAliasName) AS uniqueNameForJs-»
-    {include file='«controller.name.formatForDB()»/«((incoming) ? source : target).name.formatForCode()»/include_select«((stageCode == 3) ? 'Edit' : '')»Many.tpl' relItem=$«((incoming) ? target : source).name.formatForDB()» aliasName='«relationAliasName»' idPrefix='«uniqueNameForJs-»'}
+    {include file='«controller.name.formatForDB()»/«((incoming) ? source : target).name.formatForCode()»/include_select«((stageCode == 3) ? 'Edit' : '')»Many.tpl' relItem=$«((incoming) ? target : source).name.formatForDB()» aliasName='«relationAliasName.toFirstLower()»' idPrefix='«uniqueNameForJs-»'}
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»

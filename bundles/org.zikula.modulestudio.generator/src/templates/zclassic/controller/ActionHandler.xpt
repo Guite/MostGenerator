@@ -297,6 +297,11 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                    ->assign('mode', $this->mode)
                    ->assign('inlineUsage', $this->inlineUsage);
 
+«IF hasTranslatableFields()-»
+        // assign list of installed languages for translatable extension
+        $this->view->assign('supportedLocales', ZLanguage::getInstalledLanguages());
+
+«ENDIF-»
 «IF categorisable-»
         // load and assign registered categories
         $categories = CategoryRegistryUtil::getRegisteredModuleCategories('«app.appName()»', '«name.formatForCodeCapital()»', '«getPrimaryKeyFields().get(0).name.formatForCode()»');
@@ -329,7 +334,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
 
 «DEFINE InitRelatedObjectDefault(Boolean incoming) FOR JoinRelationship-»
-«LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
+«LET getRelationAliasName(!incoming).toFirstLower() AS relationAliasName-»
 «LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
                 $entity['«relationAliasName»'] = $this->retrieveRelatedObjects('«((incoming) ? source : target).name.formatForCode()»', '«relationAliasName.formatForDB()»', «IF !many»false«ELSE»true«ENDIF»);
 «ENDLET-»

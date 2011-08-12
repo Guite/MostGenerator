@@ -21,15 +21,15 @@
 «DEFINE Root(Application app, Controller controller, String actionName) FOR Entity-»
 «info("Generating edit form templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «FILE editTemplateFile(controller, name, actionName)-»
-«EXPAND FormTemplate(app, controller, actionName)-»
+«EXPAND FormTemplateHeader(app, controller, actionName)-»
+«EXPAND FormTemplateBody(app, controller, actionName)-»
 «ENDFILE»
 «EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, false, true) FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»
 «EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, false, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 «ENDDEFINE»
 
-«DEFINE FormTemplate(Application app, Controller controller, String actionName) FOR Entity-»
+«DEFINE FormTemplateHeader(Application app, Controller controller, String actionName) FOR Entity-»
 {* purpose of this template: build the Form to «actionName.formatForDisplay()» an instance of «name.formatForDisplay()» *}
-
 {include file='«controller.name()»/header.tpl'}
 {pageaddvar name='javascript' value='modules/«app.appName()»/javascript/«app.appName()»_editFunctions.js'}
 {pageaddvar name='javascript' value='modules/«app.appName()»/javascript/«app.appName()»_validation.js'}
@@ -65,39 +65,70 @@
 <div class="z-frontendcontainer">
     <h2>{$templateTitle}</h2>
 «ENDIF-»
+«ENDDEFINE»
 
+«DEFINE FormTemplateBody(Application app, Controller controller, String actionName) FOR Entity-»
 {form «IF hasUploadFields()»enctype='multipart/form-data' «ENDIF»cssClass='z-form'}
-
     {* add validation summary and a <div> element for styling the form *}
     {«app.appName().formatForDB()»FormFrame}
-    {*formvalidationsummary*}
-    {*formerrormessage id='error'*}
-
-«IF hasCompositeKeys()-»
-    {formsetinitialfocus inputId='«getDerivedFields().get(0).name.formatForCode()»'}
-«REM»«ELSE-»«ENDREM»«ELSEIF !getDerivedFields().reject(e|e.primaryKey).isEmpty-»
-    {formsetinitialfocus inputId='«getDerivedFields().reject(e|e.primaryKey).get(0).name.formatForCode()»'}
-«ENDIF-»
+«REM»    {*formvalidationsummary*}
+    {*formerrormessage id='error'*}«ENDREM»«''-»
+«IF !getEditableFields().isEmpty-»
+    {formsetinitialfocus inputId='«getEditableFields().get(0).name.formatForCode()»'}
 «REM»{formsetinitialfocus inputId='PluginId' doSelect=true} <-- for dropdown lists (performs input.select())«ENDREM»«""-»
+«ENDIF-»
 
+«IF hasTranslatableFields()-»
+    {formvolatile}
+        {assign var='useOnlyCurrentLocale' value=true}
+        {if $modvars.ZConfig.multilingual}
+            {if $supportedLocales ne '' && is_array($supportedLocales) && count($supportedLocales) > 1}
+                {assign var='useOnlyCurrentLocale' value=false}
+                {nocache}
+                {lang assign='lang'}
+                {foreach item='locale' from=$supportedLocales}
+                {if $locale eq $lang}
+                    <fieldset>
+                        <legend>{$locale|getlanguagename|safehtml}</legend>
+«EXPAND FieldWrapper('`$locale`') FOREACH getEditableFields().select(e|e.translatable)-»
+                    </fieldset>
+                    {/if}
+                    {/foreach}
+                    {foreach item='locale' from=$supportedLocales}
+                    {if $locale ne $lang}
+                    <fieldset>
+                        <legend>{$locale|getlanguagename|safehtml}</legend>
+«EXPAND FieldWrapper('`$locale`') FOREACH getEditableFields().select(e|e.translatable)-»
+                    </fieldset>
+                {/if}
+                {/foreach}
+                {/nocache}
+            {/if}
+        {/if}
+        {if $useOnlyCurrentLocale eq true}
+        <fieldset>
+            {lang assign='locale'}
+            <legend>{$locale|getlanguagename|safehtml}</legend>
+«EXPAND FieldWrapper('`$locale`') FOREACH getEditableFields().select(e|e.translatable)-»
+«IF hasTranslatableSlug()-»
+«ENDIF-»
+        </fieldset>
+        {/if}
+    {/formvolatile}
+«IF !getEditableFields().reject(e|e.translatable).isEmpty || !hasTranslatableSlug()-»
+    <fieldset>
+        <legend>{gt text='Further properties'}</legend>
+«EXPAND FieldWrapper('') FOREACH getEditableFields().reject(e|e.translatable)-»
+
+«EXPAND SlugField('')-»
+«ENDIF-»
+«ELSE-»
     <fieldset>
         <legend>{gt text='Content'}</legend>
-«REM»No input fields for array fields and object fields«ENDREM»«""-»
-«LET getDerivedFields().reject(e|e.metaType == ArrayField || e.metaType == ObjectField) AS inputFields-»
-«IF hasCompositeKeys()-»
-«EXPAND FieldWrapper FOREACH inputFields-»
-«ELSE-»
-«EXPAND FieldWrapper FOREACH inputFields.reject(e|e.primaryKey)-»
-«ENDIF-»
-«ENDLET-»
-«IF hasSluggableFields() && slugUpdatable-»
-        <div class="z-formrow">
-            {formlabel for='slug' __text='Permalink'}
-            {formtextinput group='«name.formatForDB()»' id='slug' mandatory=false readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay()» or let this field free to create one automatically' textMode='singleline' maxLength=255«IF slugUnique-» cssClass='validate-unique'«ENDIF-»}
-«IF slugUnique-»
-            {«app.appName().formatForDB()»ValidationError id='slug' class='validate-unique'}
-«ENDIF-»
-        </div>
+«EXPAND FieldWrapper('') FOREACH getEditableFields()-»
+
+«EXPAND SlugField('')-»
+
 «ENDIF-»
 «IF geographical-»
 «FOREACH {'latitude', 'longitude'} AS geoFieldName-»
@@ -109,70 +140,8 @@
 «ENDFOREACH-»
 «ENDIF-»
     </fieldset>
-«IF attributable-»
-    {include file='«controller.name()»/include_attributes_edit.tpl' obj=$«name.formatForDB()»}
-«ENDIF-»
-«IF categorisable-»
-    {include file='«controller.name()»/include_categories_edit.tpl' obj=$«name.formatForDB()» groupName='«name.formatForDB()»'}
-«ENDIF-»
-«IF standardFields-»
-    {if $mode ne 'create'}
-        {include file='«controller.name()»/include_standardfields_edit.tpl' obj=$«name.formatForDB()»}
-    {/if}
-«ENDIF-»
-«IF metaData-»
-    {include file='«controller.name()»/include_metadata_edit.tpl' obj=$«name.formatForDB()»}
-«ENDIF-»
-«EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, true, true) FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»
-«EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, true, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 
-    {* include display hooks *}
-    {if $mode eq 'create'}
-        {notifydisplayhooks eventname='«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».form_edit' id=null assign='hooks'}
-    {else}
-        {notifydisplayhooks eventname='«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».form_edit' id=«IF !hasCompositeKeys()-»$«name.formatForDB()».«getFirstPrimaryKey().name.formatForCode()»«ELSE-»"«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR '_'-»`$«name.formatForDB()».«pkField.name.formatForCode()»`«ENDFOREACH-»"«ENDIF-» assign='hooks'}
-    {/if}
-    {if is_array($hooks) && isset($hooks[0])}
-        <fieldset>
-            <legend>{gt text='Hooks'}</legend>
-            {foreach key='hookName' item='hook' from=$hooks}
-            <div class="z-formrow">
-                {$hook}
-            </div>
-            {/foreach}
-        </fieldset>
-    {/if}
-
-    {* include return control *}
-    {if $mode eq 'create'}
-        <fieldset>
-            <legend>{gt text='Return control'}</legend>
-            <div class="z-formrow">
-                {formlabel for='repeatcreation' __text='Create another item after save'}
-                {formcheckbox group='«name.formatForDB()»' id='repeatcreation' readOnly=false}
-            </div>
-        </fieldset>
-    {/if}
-
-    {* include possible submit actions *}
-    <div class="z-buttons z-formbuttons">
-    {if $mode eq 'edit'}
-        {formbutton id='btnUpdate' commandName='update' __text='Update «name.formatForDisplay()»' class='z-bt-save'}
-      {if !$inlineUsage}
-        {gt text='Really delete this «name.formatForDisplay()»?' assign="deleteConfirmMsg"}
-        {formbutton id='btnDelete' commandName='delete' __text='Delete «name.formatForDisplay()»' class='z-bt-delete' confirmMessage=$deleteConfirmMsg}
-      {/if}
-    {elseif $mode eq 'create'}
-        {formbutton id='btnCreate' commandName='create' __text='Create «name.formatForDisplay()»' class='z-bt-ok'}
-    {else}
-        {formbutton id='btnUpdate' commandName='update«REM»TODO«ENDREM»' __text='OK' class='z-bt-ok'}
-    {/if}
-        {formbutton id='btnCancel' commandName='cancel' __text='Cancel' class='z-bt-cancel'}
-    </div>
-«REM»
-{linkbutton commandName='edit' __text='Edit' class='z-icon-es-edit'}
-{button commandName='cancel' __text='Cancel' class='z-bt-cancel'}
-«ENDREM»«''-»
+«EXPAND templates::zclassic::view::FormComponents::Section::Root(app, controller)-»
   {/«app.appName().formatForDB()»FormFrame}
 {/form}
 
@@ -183,6 +152,22 @@
 </div>
 {include file='«controller.name()»/footer.tpl'}
 
+«EXPAND FormTemplateJS(app, controller, actionName)-»
+«ENDDEFINE»
+
+«DEFINE SlugField(String prefix) FOR Entity-»
+«IF hasSluggableFields() && slugUpdatable-»
+        <div class="z-formrow">
+            {formlabel for='slug' __text='Permalink'}
+            {formtextinput group='«name.formatForDB()»' id='slug' mandatory=false readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay()» or let this field free to create one automatically' textMode='singleline' maxLength=255«IF slugUnique-» cssClass='validate-unique'«ENDIF-»}
+«IF slugUnique-»
+            {«container.application.appName().formatForDB()»ValidationError id='slug' class='validate-unique'}
+«ENDIF-»
+        </div>
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE FormTemplateJS(Application app, Controller controller, String actionName) FOR Entity-»
 {icon type='edit' size='extrasmall' assign='editImageArray'}
 {icon type='delete' size='extrasmall' assign='deleteImageArray'}
 
@@ -267,11 +252,15 @@
 </script>
 «ENDDEFINE»
 
-«DEFINE FieldWrapper FOR DerivedField-»
+«DEFINE FieldWrapper(String idSuffix) FOR DerivedField-»
 «REM»No input fields for foreign keys, relations are processed further down«ENDREM»«""-»
 «IF entity.incoming.typeSelect(JoinRelationship).select(e|e.getSourceFields().get(0) == name.formatForDB()).isEmpty-»
         <div class="z-formrow">
-            «EXPAND FormComponents::SimpleFields::FormRow-»
+«IF idSuffix != null && idSuffix != ''-»
+            «EXPAND FormComponents::SimpleFields::FormRow(idSuffix, '"')-»
+«ELSE-»
+            «EXPAND FormComponents::SimpleFields::FormRow(idSuffix, "'")-»
+«ENDIF-»
         </div>
 «ENDIF-»
 «ENDDEFINE»

@@ -25,6 +25,7 @@
 
         {* add validation summary and a <div> element for styling the form *}
         {«appName().formatForDB()»FormFrame}
+        {formsetinitialfocus inputId='«getSortedVariableContainers().get(0).vars.get(0).name.formatForCode()»'}
 «IF hasMultipleConfigSections()-»
         {formtabbedpanelset}
 «ENDIF-»

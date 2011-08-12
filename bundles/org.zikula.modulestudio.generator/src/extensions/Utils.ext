@@ -184,6 +184,8 @@ cached getFirstPrimaryKey(Entity this) :
 cached boolean hasCompositeKeys(Entity this) :
     getPrimaryKeyFields().size > 1;
 
+cached getEditableFields(Entity this) :
+    getDerivedFields().reject(e|e.primaryKey).reject(e|e.metaType == ArrayField || e.metaType == ObjectField);
 
 cached String modUrlGeneric(Entity this, String func, String ot, String objName, Boolean template) :
     ((template)
@@ -279,6 +281,8 @@ cached boolean hasTranslatableFields(Entity this) :
     !getTranslatableFields().isEmpty;
 cached getTranslatableFields(Entity this) :
     fields.typeSelect(DerivedField).select(e|e.translatable);
+cached boolean hasTranslatableSlug(Entity this) :
+    !getSluggableFields().select(e|e.translatable).isEmpty;
 
 cached getAggregateFields(Entity this)
     : fields.typeSelect(IntegerField).select(e|e.aggregateFor != null && e.aggregateFor != '');
