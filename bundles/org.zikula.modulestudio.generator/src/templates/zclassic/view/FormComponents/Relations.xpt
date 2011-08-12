@@ -118,8 +118,8 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
         {if isset($user«relationAliasName.toFirstUpper()») && $user«relationAliasName.toFirstUpper()» ne ''}
             {* the user has submitted something *}
             {include file='«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' item«IF many»s«ENDIF»=$user«relationAliasName.toFirstUpper()»}
-        {elseif $mode ne "create" || isset($item.«relationAliasName»)}
-            {include file='«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' item«IF many»s«ENDIF»=$relItem.«relationAliasName»}
+        {elseif $mode ne 'create' || isset($item.«relationAliasName.toFirstLower()»)}
+            {include file='«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' item«IF many»s«ENDIF»=$relItem.«relationAliasName.toFirstLower()»}
         {else}
             {include file='«controller.name.formatForDB()»/«targetEntity.name.formatForCode()»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl'}
         {/if}
