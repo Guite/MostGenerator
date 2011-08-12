@@ -27,8 +27,10 @@ function smarty_function_«appName().formatForDB()»TemplateHeaders($params, $vi
         $render->trigger_error($view->__f('%1$s: missing parameter \'%2$s\'', array('smarty_function_«appName().formatForDB()»TemplateHeaders', 'contentType')));
     }
 
+    // apply header
     header('Content-Type: ' . $params['contentType']);
 
+    // if desired let the browser offer the given file as a download
     if (isset($params['asAttachment']) && $params['asAttachment']
      && isset($params['filename']) && !empty($params['filename'])) {
         header('Content-Disposition: attachment; filename=' . $params['filename']);

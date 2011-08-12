@@ -6,7 +6,6 @@
 «info("Generating config template") -> ""-»
 «FILE getAppSourcePath(appName()).msconcat("templates/").msconcat(configController().formatForDB()).msconcat('/config.tpl')-»
 {* purpose of this template: module configuration *}
-
 {include file='«configController().formatForDB()»/header.tpl'}
 <div class="«appName().toLowerCase()»-config">
 {gt text='Settings' assign='templateTitle'}

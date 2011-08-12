@@ -36,6 +36,7 @@ function smarty_function_«appName().formatForDB()»TreeJS($params, $view)
         $params['root'] = 1;
     }
 
+    // check whether an edit action is available
     $controllerHasEditAction = false;
     switch ($params['controller']) {
 «FOREACH controllers.controllers AS controller-»
@@ -44,7 +45,7 @@ function smarty_function_«appName().formatForDB()»TreeJS($params, $view)
 «ENDIF-»
 «ENDFOREACH-»
     }
-
+«REM»TODO improve identifier handling in treejs plugin«ENDREM»
     $idField = strtolower($params['objectType']) . 'id';
 
     $titleFieldName = $descriptionFieldName = '';
@@ -92,6 +93,7 @@ function smarty_function_«appName().formatForDB()»TreeJS($params, $view)
                           'href' => $url);
     }
 
+    // instantiate and initialise the output tree object
     $tree = new Zikula_Tree();
     $tree->setOption('id', 'itemtree' . $params['root']);
     //$tree->setOption('objid', $idField);
@@ -103,8 +105,10 @@ function smarty_function_«appName().formatForDB()»TreeJS($params, $view)
     // disable drag and drop for root category
     $tree->setOption('disabled', array(1));
 
+    // put data into output tree
     $tree->loadArrayData($result);
 
+    // get output result
     $result = $tree->getHTML();
 
     if (array_key_exists('assign', $params)) {

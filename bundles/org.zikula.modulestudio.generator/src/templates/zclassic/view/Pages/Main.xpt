@@ -6,7 +6,6 @@
 «info("Generating " + controller.name() + " main templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/main.tpl")-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» main view in «controller.name()» area *}
-
 «IF controller.hasActions('view')-»
 {modfunc modname='«appName»' type='«controller.name()»' func='view'}
 «ELSE-»

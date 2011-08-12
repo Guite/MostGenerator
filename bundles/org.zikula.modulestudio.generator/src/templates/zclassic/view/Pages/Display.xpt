@@ -7,7 +7,6 @@
 «info("Generating " + controller.name() + " display templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «FILE templateFile(controller, name, 'display')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» display view in «controller.name()» area *}
-
 {include file='«controller.name()»/header.tpl'}
 <div class="«appName.toLowerCase()»-«name.formatForDB()» «appName.toLowerCase()»-display">
 «LET name.formatForCode() AS objName-»
@@ -74,6 +73,7 @@
 {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 «EXPAND ItemActions(appName, controller)-»
 
+{* include display hooks *}
 {notifydisplayhooks eventname='«appName.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».display_view' id=«IF !hasCompositeKeys()-»$«objName».«getFirstPrimaryKey().name.formatForCode()»«ELSE-»"«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR '_'-»`$«objName».«pkField.name.formatForCode()»`«ENDFOREACH-»"«ENDIF-» urlobject=$currentUrlObject assign='hooks'}
 {foreach from=$hooks key='hookname' item='hook'}
     {$hook}

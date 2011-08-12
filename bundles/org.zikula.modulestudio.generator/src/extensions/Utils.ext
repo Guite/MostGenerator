@@ -47,7 +47,7 @@ cached String displayBool(Boolean b) :
 
 // return all entities with leading = true
 cached getLeadingEntity(Application this) :
-    models.entities.selectFirst(e|e.leading == true);
+    getDefaultDataSource().entities.selectFirst(e|e.leading == true);
 
 cached boolean hasImageFields(Application this) :
     models.entities.exists(e|e.hasImageFields());

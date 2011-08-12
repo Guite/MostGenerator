@@ -128,6 +128,7 @@
 «EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, true, true) FOREACH incoming.typeSelect(JoinRelationship)-»
 «EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, true, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 
+    {* include display hooks *}
     {if $mode eq 'create'}
         {notifydisplayhooks eventname='«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».form_edit' id=null assign='hooks'}
     {else}
@@ -144,6 +145,7 @@
         </fieldset>
     {/if}
 
+    {* include return control *}
     {if $mode eq 'create'}
         <fieldset>
             <legend>{gt text='Return control'}</legend>
@@ -154,12 +156,12 @@
         </fieldset>
     {/if}
 
-    {gt text='Really delete this «name.formatForDisplay()»?' assign="deleteConfirmMsg"}
-
+    {* include possible submit actions *}
     <div class="z-buttons z-formbuttons">
     {if $mode eq 'edit'}
         {formbutton id='btnUpdate' commandName='update' __text='Update «name.formatForDisplay()»' class='z-bt-save'}
       {if !$inlineUsage}
+        {gt text='Really delete this «name.formatForDisplay()»?' assign="deleteConfirmMsg"}
         {formbutton id='btnDelete' commandName='delete' __text='Delete «name.formatForDisplay()»' class='z-bt-delete' confirmMessage=$deleteConfirmMsg}
       {/if}
     {elseif $mode eq 'create'}
@@ -172,7 +174,7 @@
 «REM»
 {linkbutton commandName='edit' __text='Edit' class='z-icon-es-edit'}
 {button commandName='cancel' __text='Cancel' class='z-bt-cancel'}
-«ENDREM»
+«ENDREM»«''-»
   {/«app.appName().formatForDB()»FormFrame}
 {/form}
 

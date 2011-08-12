@@ -7,7 +7,6 @@
 «info("Generating " + controller.name() + " delete templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «FILE templateFile(controller, name, 'delete')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» delete confirmation view in «controller.name()» area *}
-
 {include file='«controller.name()»/header.tpl'}
 <div class="«appName.toLowerCase()»-«name.formatForDB()» «appName.toLowerCase()»-delete">
 «IF controller.metaType == AdminController-»

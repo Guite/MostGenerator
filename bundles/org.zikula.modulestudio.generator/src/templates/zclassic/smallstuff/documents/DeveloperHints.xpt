@@ -4,7 +4,7 @@
 «DEFINE DeveloperHints FOR Application-»
 CUSTOMISATION
 -------------
-He­re are a few short hints which be­co­me hel­pful for cust­o­mi­sing your ge­ne­ra­ted mo­du­le:
+He­re are a few short hints which be­co­me hel­pful for cust­o­mi­sing your ge­ne­ra­ted application:
 
     * Your mo­del is the re­al soft­ware so do all im­portant chan­ges (li­ke ad­ding or mo­ving ta­ble co­lumns) on mo­del le­vel.
       Do not let your mo­del be­co­me ob­so­le­te, which me­ans lo­sing lots of ad­van­ta­ges.

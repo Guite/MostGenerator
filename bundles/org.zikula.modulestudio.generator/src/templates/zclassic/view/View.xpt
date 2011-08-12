@@ -113,6 +113,7 @@
 «DEFINE AttributeTemplates(String appName, Controller controller) FOR Application-»
 «IF controller.hasActions('view') || controller.hasActions('display')-»
 «FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/include_attributes_display.tpl")-»
+{* purpose of this template: reusable display of entity attributes *}
 {if isset($obj.attributes)}
 <h3 class="attributes">{gt text='Attributes'}</h3>
 <dl class="propertylist">
@@ -127,6 +128,7 @@
 
 «IF controller.hasActions('edit')-»
 «FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/include_attributes_edit.tpl")-»
+{* purpose of this template: reusable editing of entity attributes *}
 <fieldset>
     <legend>{gt text='Attributes'}</legend>
     {formvolatile}
@@ -145,6 +147,7 @@
 «DEFINE CategoryTemplates(String appName, Controller controller) FOR Application-»
 «IF controller.hasActions('view') || controller.hasActions('display')-»
 «FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/include_categories_display.tpl")-»
+{* purpose of this template: reusable display of entity categories *}
 {if isset($obj.categories)}
 <h3 class="categories">{gt text='Categories'}</h3>
 <dl class="propertylist">
@@ -159,6 +162,7 @@
 
 «IF controller.hasActions('edit')-»
 «FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/include_categories_edit.tpl")-»
+{* purpose of this template: reusable editing of entity attributes *}
 <fieldset>
     <legend>{gt text='Categories'}</legend>
 
@@ -177,6 +181,7 @@
 «DEFINE StandardFieldTemplates(String appName, Controller controller) FOR Application-»
 «IF controller.hasActions('view') || controller.hasActions('display')-»
 «FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/include_standardfields_display.tpl")-»
+{* purpose of this template: reusable display of standard fields *}
 {if (isset($obj.createdUserId) && $obj.createdUserId) || (isset($obj.updatedUserId) && $obj.updatedUserId)}
 <h3 class="categories">{gt text='Creation and update'}</h3>
 <dl class="propertylist">
@@ -184,10 +189,12 @@
     <dt>{gt text='Creation'}</dt>
     {usergetvar name='uname' uid=$obj.createdUserId assign='cr_uname'}
     {if $modvars.ZConfig.profilemodule ne ''}
+        {* if we have a profile module link to the user profile *}
         {modurl modname=$modvars.ZConfig.profilemodule func='view' uname=$cr_uname assign='profileLink'}
         {assign var='profileLink' value=$profileLink|safetext}
         {assign var='profileLink' value="<a href=\"`$profileLink`\">`$cr_uname`</a>"}
     {else}
+        {* else just show the user name *}
         {assign var='profileLink' value=$cr_uname}
     {/if}
     <dd>{gt text='Created by %1$s on %2$s' tag1=$profileLink tag2=$obj.createdDate|dateformat html=true}</dd>
@@ -196,10 +203,12 @@
     <dt>{gt text='Last update'}</dt>
     {usergetvar name='uname' uid=$obj.updatedUserId assign='lu_uname'}
     {if $modvars.ZConfig.profilemodule ne ''}
+        {* if we have a profile module link to the user profile *}
         {modurl modname=$modvars.ZConfig.profilemodule func='view' uname=$lu_uname assign='profileLink'}
         {assign var='profileLink' value=$profileLink|safetext}
         {assign var='profileLink' value="<a href=\"`$profileLink`\">`$lu_uname`</a>"}
     {else}
+        {* else just show the user name *}
         {assign var='profileLink' value=$lu_uname}
     {/if}
     <dd>{gt text='Updated by %1$s on %2$s' tag1=$profileLink tag2=$obj.updatedDate|dateformat html=true}</dd>
@@ -211,6 +220,7 @@
 
 «IF controller.hasActions('edit')-»
 «FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/include_standardfields_edit.tpl")-»
+{* purpose of this template: reusable editing of standard fields *}
 {if (isset($obj.createdUserId) && $obj.createdUserId) || (isset($obj.updatedUserId) && $obj.updatedUserId)}
 <fieldset>
     <legend>{gt text='Creation and update'}</legend>
@@ -235,6 +245,7 @@
 «DEFINE MetaDataTemplates(String appName, Controller controller) FOR Application-»
 «IF controller.hasActions('view') || controller.hasActions('display')-»
 «FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/include_metadata_display.tpl")-»
+{* purpose of this template: reusable display of meta data fields *}
 {if isset($obj.metadata)}
 <h3 class="metadata">{gt text='Metadata'}</h3>
 <dl class="propertylist">
@@ -317,6 +328,7 @@
 
 «IF controller.hasActions('edit')-»
 «FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/include_metadata_edit.tpl")-»
+{* purpose of this template: reusable editing of meta data fields *}
 <fieldset>
     <legend>{gt text='Metadata'}</legend>
 

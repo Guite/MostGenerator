@@ -49,6 +49,15 @@ div.«appName().formatForDB()»RightBox p.manageLink {
 «ENDIF-»
 «EXPAND ValidationStyles-»
 «EXPAND AutoCompletion-»
+«IF interactiveInstallation-»
+
+dl#«name.formatForDB()»featurelist {
+margin-left: 50px;
+}
+dl#«name.formatForDB()»featurelist dt {
+font-weight: 700;
+}
+«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE ValidationStyles FOR Application-»

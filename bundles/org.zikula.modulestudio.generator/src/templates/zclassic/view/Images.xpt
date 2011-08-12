@@ -8,6 +8,7 @@
 	«REM»«FILE getAppSourcePath(appName()).msconcat("images/admin.png")»«EXPAND AdminImageCE-»«ENDFILE»«ENDREM»
 «ENDDEFINE»
 
+«REM»TODO refactor Image template«ENDREM»
 «REM»admin icon 48x48«ENDREM»
 «DEFINE AdminImageCE FOR Application-»«ENDDEFINE»
 «DEFINE AdminImageSE FOR Application-»«ENDDEFINE»

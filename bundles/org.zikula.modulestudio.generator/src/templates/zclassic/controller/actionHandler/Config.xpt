@@ -44,16 +44,19 @@ class «tempBaseClassConfigHandler()» extends Zikula_Form_AbstractHandler
      */
     public function initialize(Zikula_Form_View $view)
     {
+        // permission check
         if (!SecurityUtil::checkPermission('«appName()»::', '::', ACCESS_ADMIN)) {
             return $view->registerError(LogUtil::registerPermissionError());
         }
 
+        // retrieve module vars
         $modVars = ModUtil::getVar('«appName()»'«REM»$this->getVars() Zikula_Form_Handler does not inherit from Zikula_Base (yet)«ENDREM»);
 «EXPAND Init FOREACH models.variables.vars»
 
         // assign all module vars
         $this->view->assign('config', $modVars);
 
+        // custom initialisation aspects
         $this->initializeAdditions();
 
         // everything okay, no initialization errors occured
@@ -99,10 +102,12 @@ class «tempBaseClassConfigHandler()» extends Zikula_Form_AbstractHandler
     public function handleCommand(Zikula_Form_View $view, &$args)
     {
         if ($args['commandName'] == 'save') {
+            // check if all fields are valid
             if (!$this->view->isValid()) {
                 return false;
             }
 
+            // retrieve form data
             $data = $this->view->getValues();
 
             // update all module vars
@@ -111,10 +116,11 @@ class «tempBaseClassConfigHandler()» extends Zikula_Form_AbstractHandler
             }
 
             LogUtil::registerStatus($this->__('Done! Module configuration updated.'));
-        }
-        else if ($args['commandName'] == 'cancel') {
+        } else if ($args['commandName'] == 'cancel') {
+            // nothing to do there
         }
 
+        // redirect back to the config page
         $url = ModUtil::url('«appName()»', '«configController().formatForDB()»', 'config');
         return $this->view->redirect($url);
     }
@@ -124,6 +130,7 @@ class «tempBaseClassConfigHandler()» extends Zikula_Form_AbstractHandler
 «DEFINE Init FOR Variable-»«ENDDEFINE»
 
 «DEFINE Init FOR ListVar-»
+        // initialise list entries for the '«name.formatForDisplay()»' setting
 «REM»        $listEntries = $modVars['«name.formatForCode()»'];«ENDREM»«''-»
         $modVars['«name.formatForCode()»Items'] = array(«EXPAND Init FOREACH items SEPARATOR ','»
         );
@@ -145,4 +152,3 @@ class «tempImplClassConfigHandler()» extends «tempBaseClassConfigHandler()»
     // feel free to extend the base handler class here
 }
 «ENDDEFINE»
-

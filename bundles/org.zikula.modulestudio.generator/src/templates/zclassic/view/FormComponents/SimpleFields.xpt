@@ -76,6 +76,7 @@
             {formtextinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='«IF password-»password«ELSE-»singleline«ENDIF-»' maxLength=«length»«EXPAND Validation::FieldValidationCssClass»}
 «ENDIF-»
 «IF htmlcolour-»
+            {* to be replaced by a special plugin *} 
             <script type="text/javascript" charset="utf-8">
             /* <![CDATA[ */
                 var namePicky = new PickyColor({
@@ -159,7 +160,17 @@
 «ENDLET»
 «ENDDEFINE»
 
-«DEFINE FormField FOR DatetimeField-»
+«DEFINE FormField FOR AbstractDateField-»
+«EXPAND FormFieldDetails-»
+«IF past-»
+            <div class="z-formnote">{gt text='Note: this value must be in the past.'}</div>
+«ELSEIF future-»
+            <div class="z-formnote">{gt text='Note: this value must be in the future.'}</div>
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE FormFieldDetails FOR AbstractDateField-»«ENDDEFINE»
+«DEFINE FormFieldDetails FOR DatetimeField-»
             {if $mode ne 'create'}
                 {formdateinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true«EXPAND Validation::FieldValidationCssClass»}
             {else}
@@ -169,14 +180,9 @@
 «IF !mandatory-»
             <a id="reset«name.formatForCodeCapital()»Val" href="javascript:void(0);" style="display: none">{gt text='Reset to empty value'}</a>
 «ENDIF-»
-«IF past-»
-            <div class="z-formnote">{gt text='Note: this value must be in the past.'}</div>
-«ELSEIF future-»
-            <div class="z-formnote">{gt text='Note: this value must be in the future.'}</div>
-«ENDIF-»
 «ENDDEFINE»
 
-«DEFINE FormField FOR DateField-»
+«DEFINE FormFieldDetails FOR DateField-»
             {if $mode ne 'create'}
                 {formdateinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true«EXPAND Validation::FieldValidationCssClass»}
             {else}
@@ -187,7 +193,7 @@
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE FormField FOR TimeField-»
+«DEFINE FormFieldDetails FOR TimeField-»
             {* TODO: support time fields in Zikula (see http://code.zikula.org/core/ticket/2445 for more information) *}
             {formtextinput group='«entity.name.formatForDB()»' id='«name.formatForCode()»' mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=8«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»

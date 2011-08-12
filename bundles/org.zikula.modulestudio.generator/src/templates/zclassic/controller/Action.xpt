@@ -158,24 +158,15 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $idFields = $objectTemp->get_idFields();
         $idValues = array();
 
-        // retrieve the ID of the object we wish to view
-        $hasID = true;
-        foreach ($idFields as $idField) {
-            $id = (int) $this->request->getGet()->filter($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, FILTER_VALIDATE_INT);
-            if (!$id && $idField != 'id' && count($idFields) == 1) {
-                $id = (int) $this->request->getGet()->filter('id', isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0, FILTER_VALIDATE_INT);
-            }
-            $idValues[$idField] = $id;
-            if (!$id) {
-                $hasID = false;
-            }
-        }
+        // retrieve identifier of the object we wish to view
+        $idValues = «appName»_Util_Controller::retrieveIdentifier($this->request, $args, $objectType, $idFields);
+        $hasIdentifier = «appName»_Util_Controller::isValidIdentifier($idValues);
 «IF controller.metaType == UserController-»
 
         // check for unique permalinks (without id)
         $hasSlug = false;
         $slugTitle = '';
-        if ($hasID === false) {
+        if ($hasIdentifier === false) {
             $hasSlug = $objectTemp->get_hasUniqueSlug();
             if ($hasSlug) {
                 $slugTitle = $this->request->getGet()->filter('title', isset($args['title']) && !empty($args['title']) ? $args['title'] : '', FILTER_SANITIZE_STRING);
@@ -183,7 +174,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
             }
         }
 
-        $this->throwNotFoundUnless(($hasID || $hasSlug), $this->__('Error! Invalid identifier received.'));
+        $this->throwNotFoundUnless(($hasIdentifier || $hasSlug), $this->__('Error! Invalid identifier received.'));
 
         // assign object data fetched from the database
         $objectData = null;
@@ -193,7 +184,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
             $objectData = $repository->selectById($idValues);
         }
 «ELSE-»
-        $this->throwNotFoundUnless($hasID, $this->__('Error! Invalid identifier received.'));
+        $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
 
         // assign object data fetched from the database
         $objectData = null;
@@ -238,20 +229,11 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $idFields = $objectTemp->get_idFields();
         $idValues = array();
 
-        // retrieve the ID of the object we wish to delete
-        $hasID = true;
-        foreach ($idFields as $idField) {
-            $id = (int) $this->request->getGet()->filter($idField, isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0, FILTER_VALIDATE_INT);
-            if (!$id && $idField != 'id' && count($idFields) == 1) {
-                $id = (int) $this->request->getGet()->filter('id', isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0, FILTER_VALIDATE_INT);
-            }
-            $idValues[$idField] = $id;
-            if (!$id) {
-                $hasID = false;
-            }
-        }
+        // retrieve identifier of the object we wish to delete
+        $idValues = «appName»_Util_Controller::retrieveIdentifier($this->request, $args, $objectType, $idFields);
+        $hasIdentifier = «appName»_Util_Controller::isValidIdentifier($idValues);
 
-        $this->throwNotFoundUnless($hasID, $this->__('Invalid identifier received.'));
+        $this->throwNotFoundUnless($hasIdentifier, $this->__('Invalid identifier received.'));
 
         $confirmation = (bool) $this->request->getPost()->filter('confirmation', isset($args['confirmation']) ? $args['confirmation'] : false, FILTER_VALIDATE_BOOLEAN);
 

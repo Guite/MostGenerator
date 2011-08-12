@@ -213,21 +213,12 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $objectTemp = new $entityClass();
         $idFields = $objectTemp->get_idFields();
 
-        // retrieve the ID of the object we wish to edit
-        $hasID = true;
-        foreach ($idFields as $idField) {
-            $id = (int) $this->request->getGet()->filter($idField, 0, FILTER_VALIDATE_INT);
-            if (!$id && $idField != 'id' && count($idFields) == 1) {
-                $id = (int) $this->request->getGet()->filter('id', 0, FILTER_VALIDATE_INT);
-            }
-            $this->idValues[$idField] = $id;
-            if (!$id) {
-                $hasID = false;
-            }
-        }
+        // retrieve identifier of the object we wish to view
+        $this->idValues = «app.appName()»_Util_Controller::retrieveIdentifier($this->request, array(), $this->objectType, $idFields);
+        $hasIdentifier = «app.appName()»_Util_Controller::isValidIdentifier($this->idValues);
 
         $entity = null;
-        $this->mode = ($hasID) ? 'edit' : 'create';
+        $this->mode = ($hasIdentifier) ? 'edit' : 'create';
 
         if ($this->mode == 'edit') {
             if (!SecurityUtil::checkPermission('«app.appName()»:«name.formatForCodeCapital()»:', '::', ACCESS_EDIT)) {

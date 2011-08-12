@@ -84,8 +84,7 @@ class «appName»_Base_RouterFacade
         // normal views (e.g. orders/ or customers.xml)
         $this->router->set('va', new Zikula_Routing_UrlRoute($modulePrefix . $viewFolder . '/:ot:viewending', $defaults, $fieldRequirements));
 
-        // filter views (e.g. /orders/customer/mr-smith.csv)
-        // TODO: incorporate later
+        // TODO filter views (e.g. /orders/customer/mr-smith.csv)
         // $this->initRouteForEachSlugType('vn', $modulePrefix . $viewFolder . '/:ot/:filterot/', ':viewending', $defaults, $fieldRequirements);
 «ENDIF-»
 

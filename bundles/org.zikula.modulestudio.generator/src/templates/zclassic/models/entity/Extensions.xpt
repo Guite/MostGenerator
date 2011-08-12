@@ -345,12 +345,22 @@ class «baseClassModel('', classType)» extends Zikula_Doctrine2_Entity_EntityCa
      */
     protected $entity;
 
+    /**
+     * Get reference to owning entity.
+     *
+     * @return «implClassModelEntity()»
+     */
     public function getEntity()
     {
         return $this->entity;
     }
 
-    public function setEntity($entity)
+    /**
+     * Set reference to owning entity.
+     *
+     * @param «implClassModelEntity()» $entity
+     */
+    public function setEntity(«implClassModelEntity()» $entity)
     {
         $this->entity = $entity;
     }
@@ -467,5 +477,3 @@ class «implClassModel('repository', classType)» extends «IF isInheriting()»�
     // feel free to add your own methods here
 }
 «ENDDEFINE»
-
-

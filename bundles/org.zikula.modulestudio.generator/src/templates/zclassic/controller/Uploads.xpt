@@ -97,10 +97,12 @@ class «appName()»_Base_UploadHandler
         $result = array('fileName' => '',
                         'metaData' => array());
 
+        // check whether uploads are allowed for the given object type
         if (!in_array($objectType, $this->allowedObjectTypes)) {
             return $result;
         }
 
+        // check if a file has been uploaded properly without errors
         $file = $fileData[$fieldName];
         if ((!is_array($file)) || (is_array($file) && ($file['error'] != '0'))) {
             if (is_array($file)) {
@@ -110,48 +112,20 @@ class «appName()»_Base_UploadHandler
             return $result;
         }
 
+        // extract file extension
         $fileName = $file['name'];
         $extensionarr = explode('.', $fileName);
         $extension = strtolower($extensionarr[count($extensionarr) - 1]);
 
-        // start extension checks
-        $allowedExtensions = array();
-        switch ($objectType) {
-«FOREACH getUploadEntities() AS entity-»
-«LET entity.getUploadFields() AS uploadFields-»
-            case '«entity.name.formatForCode()»':
-«IF uploadFields.size > 1-»
-                            switch ($fieldName) {
-«FOREACH uploadFields AS uploadField-»
-                                case '«uploadField.name.formatForCode()»':
-                                    $allowedExtensions = array('«uploadField.allowedExtensions.replaceAll(", ", "', '")»');
-                                    break;
-«ENDFOREACH-»
-                            }
-«ELSE-»
-                            $allowedExtensions = array('«uploadFields.get(0).allowedExtensions.replaceAll(", ", "', '")»');
-«ENDIF-»
-                            break;
-«ENDLET-»
-«ENDFOREACH-»
-        }
-
-        if (!empty($allowedExtensions)) {
-            $extensionCheck = in_array($extension, $allowedExtensions);
-            if ($extensionCheck === false) {
-                // fail silently, this skips this upload field
-                //LogUtil::registerError(__('Error! This file type is not allowed. Please choose another file format.', $dom));
-                return $result;
-            }
-        }
-
-        $extensionCheck = (!in_array($extension, $this->forbiddenExtensions));
-        if ($extensionCheck === false) {
+        // validate extension
+        $isValidExtension = $this->isAllowedFileExtension($objectType, $fieldName, $extension);
+        if ($isValidExtension === false) {
             // fail silently, this skips this upload field
             //LogUtil::registerError(__('Error! This file type is not allowed. Please choose another file format.', $dom));
             return $result;
         }
 
+        // validate image file
         $imageTypes = array('gif', 'jpeg', 'jpg', 'png');
         $imgInfo = array();
         $isImage = in_array($extension, $imageTypes);
@@ -192,10 +166,57 @@ class «appName()»_Base_UploadHandler
                 $meta['format'] = 'square';
             }
         }
-
         $result['metaData'] = $meta;
 
         return $result;
+    }
+
+    /**
+     * Determines the allowed file extensions for a given object type.
+     *
+     * @param string $objectType Currently treated entity type.
+     * @param string $fieldName  Name of upload field.
+     * @param string $extension  Input file extension.
+     *
+     * @return array the list of allowed file extensions
+     */
+    protected function isAllowedFileExtension($objectType, $fieldName, $extension)
+    {
+        // determine the allowed extensions
+        $allowedExtensions = array();
+        switch ($objectType) {
+«FOREACH getUploadEntities() AS entity-»
+«LET entity.getUploadFields() AS uploadFields-»
+            case '«entity.name.formatForCode()»':
+«IF uploadFields.size > 1-»
+                            switch ($fieldName) {
+«FOREACH uploadFields AS uploadField-»
+                                case '«uploadField.name.formatForCode()»':
+                                    $allowedExtensions = array('«uploadField.allowedExtensions.replaceAll(", ", "', '")»');
+                                    break;
+«ENDFOREACH-»
+                            }
+«ELSE-»
+                            $allowedExtensions = array('«uploadFields.get(0).allowedExtensions.replaceAll(", ", "', '")»');
+«ENDIF-»
+                            break;
+«ENDLET-»
+«ENDFOREACH-»
+        }
+
+        if (!empty($allowedExtensions)) {
+            $extensionCheck = in_array($extension, $allowedExtensions);
+            if ($extensionCheck === false) {
+                return false;
+            }
+        }
+
+        $extensionCheck = (!in_array($extension, $this->forbiddenExtensions));
+        if ($extensionCheck === false) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

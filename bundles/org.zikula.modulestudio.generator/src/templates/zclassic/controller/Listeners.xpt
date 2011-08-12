@@ -880,6 +880,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
      */
     public static function delete(Zikula_Event $event)
     {
+«REM»TODO add default implementation for user delete listener«ENDREM»«''-»
     }
 «ENDDEFINE»
 

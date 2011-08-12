@@ -56,12 +56,12 @@
 «ENDIF-»
 «ELSE-»
     {if isset($«objName».cr_uid)}
-{usergetvar name='uname' uid=$«objName».cr_uid assign='cr_uname'}
-{usergetvar name='name' uid=$«objName».cr_uid assign='cr_name'}
+{usergetvar name='uname' uid=$«objName».createdUserId assign='cr_uname'}
+{usergetvar name='name' uid=$«objName».createdUserId assign='cr_name'}
         <author>
            <name>{$cr_name|default:$cr_uname}</name>
-           <uri>{usergetvar name='_UYOURHOMEPAGE' uid=$«objName».cr_uid assign='homepage'}{$homepage|default:'-'}</uri>
-           <email>{usergetvar name='email' uid=$«objName».cr_uid}</email>
+           <uri>{usergetvar name='_UYOURHOMEPAGE' uid=$«objName».createdUserId assign='homepage'}{$homepage|default:'-'}</uri>
+           <email>{usergetvar name='email' uid=$«objName».createdUserId}</email>
         </author>
 «IF metaData-»
     {elseif isset($«objName».__META__) && isset($«objName».__META__.author)}
