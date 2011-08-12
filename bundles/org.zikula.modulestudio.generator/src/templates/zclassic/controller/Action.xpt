@@ -233,7 +233,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $idValues = «appName»_Util_Controller::retrieveIdentifier($this->request, $args, $objectType, $idFields);
         $hasIdentifier = «appName»_Util_Controller::isValidIdentifier($idValues);
 
-        $this->throwNotFoundUnless($hasIdentifier, $this->__('Invalid identifier received.'));
+        $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
 
         $confirmation = (bool) $this->request->getPost()->filter('confirmation', isset($args['confirmation']) ? $args['confirmation'] : false, FILTER_VALIDATE_BOOLEAN);
 
