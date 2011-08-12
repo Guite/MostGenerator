@@ -203,16 +203,19 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
             $selection .= $this->addJoinsToSelection();
         }
 
-        $dql = 'SELECT ' . $selection . ' FROM «implClassModelEntity()» tbl';
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select($selection)
+           ->from('«implClassModelEntity()»', 'tbl');
+
         if ($useJoins === true) {
-            $dql .= $this->addJoinsToFrom();
+            $this->addJoinsToFrom($qb);
         }
 
         if (!empty($where)) {
-            $dql .= ' WHERE ' . $where;
+            $qb->where($where);
         }
 
-        $query = $this->getEntityManager()->createQuery($dql);
+        $query = $qb->getQuery();
 
 «IF hasPessimisticReadLock()-»
         $query->setLockMode(LockMode::«lockType.asConstant()»);
@@ -239,28 +242,29 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
             $selection .= $this->addJoinsToSelection();
         }
 
-        $dql = 'SELECT ' . $selection . ' FROM «implClassModelEntity()» tbl';
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->select($selection)
+           ->from('«implClassModelEntity()»', 'tbl');
+
         if ($useJoins === true) {
-            $dql .= $this->addJoinsToFrom();
+            $this->addJoinsToFrom($qb);
         }
 
         if (!empty($where)) {
-            $dql .= ' WHERE ' . $where;
-        } else {
-            $dql .= ' WHERE 1=1';
+            $qb->where($where);
         }
 
         // add order by clause
         if (!empty($orderBy)) {
             if ($orderBy == 'RAND()') {
-                $dql .= ' ORDER BY rand';
+                $qb->orderBy('rand', 'ASC');
             }
             else {
-                $dql .= ' ORDER BY tbl.' . $orderBy;
+                $qb->add('orderBy', 'tbl.' . $orderBy);
             }
         }
 
-        $query = $this->getEntityManager()->createQuery($dql);
+        $query = $qb->getQuery();
 
 // TODO - see http://code.zikula.org/core/ticket/3138
         // use FilterUtil to support generic filtering
@@ -384,14 +388,15 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     /**
      * Helper method to add joins to from clause.
      *
+     * @param Doctrine_QueryBuilder $qb query builder instance used to create the query.
+     *
      * @return String Enhancement for from clause.
      */
-    protected function addJoinsToFrom()
+    protected function addJoinsToFrom(Doctrine_QueryBuilder $qb)
     {
-        $from = '';
 «EXPAND AddJoin(false, 'from') FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»
 «EXPAND AddJoin(true, 'from') FOREACH outgoing.typeSelect(JoinRelationship)-»
-        return $from;
+        return $qb;
     }
 «ENDDEFINE»
 
@@ -400,7 +405,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 «IF target == 'select'-»
 , «relationAliasName»«""-»
 «ELSEIF target == 'from'-»
-        $from .= ' LEFT JOIN tbl.«relationAliasName» «relationAliasName»';
+        $qb->leftJoin('tbl.«relationAliasName»', '«relationAliasName»');
 «ENDIF-»
 «ENDLET-»
 «ENDDEFINE»
