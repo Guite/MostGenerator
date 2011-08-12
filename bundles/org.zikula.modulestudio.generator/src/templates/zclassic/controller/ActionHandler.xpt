@@ -572,8 +572,10 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         $this->objectType = '«name.formatForCode()»';
 
+        $userSelection = array();
 «EXPAND ReassignRelatedObjects(true) FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»
 «EXPAND ReassignRelatedObjects(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
+        $this->view->assign('userSelection', $userSelection);
 
         $entityClass = '«app.appName()»_Entity_' . ucfirst($this->objectType);
         $repository = $this->entityManager->getRepository($entityClass);
@@ -708,7 +710,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
 «LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
         // reassign the «((incoming) ? target : source).getEntityNameSingularPlural(many).formatForDisplay()» eventually chosen by the user
-        $this->view->assign('user«relationAliasName.toFirstUpper()»', $this->retrieveRelatedObjects('«((incoming) ? source : target).name.formatForCode()»', '«uniqueNameForJs»ItemList', «IF !many»false«ELSE»true«ENDIF», 'POST'));
+        $userSelection['«relationAliasName.toFirstLower()»'] = $this->retrieveRelatedObjects('«((incoming) ? source : target).name.formatForCode()»', '«uniqueNameForJs»ItemList', «IF !many»false«ELSE»true«ENDIF», 'POST');
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»
