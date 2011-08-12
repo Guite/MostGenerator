@@ -281,7 +281,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «IF hasTranslatableFields()-»
 
         // process translated fields
-        AdShare_Util_Translatable::prepareEntityForEdit($this->objectType, $entity);
+        «app.appName()»_Util_Translatable::prepareEntityForEdit($this->objectType, $entity);
 «ENDIF-»
 
         // assign data to template
@@ -842,7 +842,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «IF hasTranslatableFields()-»
 
         // process translated fields
-        list($formData, $translations) = AdShare_Util_Translatable::processEntityAfterEdit($this->objectType, $«obj», $formData);
+        list($formData, $translations) = «container.application.appName()»_Util_Translatable::processEntityAfterEdit($this->objectType, $«obj», $formData);
 «ENDIF-»
 «IF attributable-»
 
