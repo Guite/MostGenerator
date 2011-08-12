@@ -72,7 +72,7 @@
         {formbutton id='btnUpdate' commandName='update' __text='Update «name.formatForDisplay()»' class='z-bt-save'}
       {if !$inlineUsage}
         {gt text='Really delete this «name.formatForDisplay()»?' assign="deleteConfirmMsg"}
-        {formbutton id='btnDelete' commandName='delete' __text='Delete «name.formatForDisplay()»' class='z-bt-delete' confirmMessage=$deleteConfirmMsg}
+        {formbutton id='btnDelete' commandName='delete' __text='Delete «name.formatForDisplay()»' class='z-bt-delete z-btred' confirmMessage=$deleteConfirmMsg}
       {/if}
     {elseif $mode eq 'create'}
         {formbutton id='btnCreate' commandName='create' __text='Create «name.formatForDisplay()»' class='z-bt-ok'}

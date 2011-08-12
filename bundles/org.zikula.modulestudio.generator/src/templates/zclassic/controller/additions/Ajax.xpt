@@ -249,7 +249,7 @@
 «LET entity.getUniqueDerivedFields().reject(e|e.primaryKey) AS uniqueFields-»
 «IF !uniqueFields.isEmpty || (entity.hasSluggableFields() && entity.slugUnique)-»
             case '«entity.name.formatForCode()»':
-                    $uniqueFields = array(«FOREACH uniqueFields AS uniqueField SEPARATOR ', '»'«uniqueField.name.formatForCode()»'«ENDFOREACH»«IF entity.hasSluggableFields() && entity.slugUnique-»«IF !uniqueFields.isEmpty-», «ENDIF-»slug«ENDIF-»);
+                    $uniqueFields = array(«FOREACH uniqueFields AS uniqueField SEPARATOR ', '»'«uniqueField.name.formatForCode()»'«ENDFOREACH»«IF entity.hasSluggableFields() && entity.slugUnique-»«IF !uniqueFields.isEmpty-», «ENDIF-»'slug'«ENDIF-»);
                     break;
 «ENDIF-»
 «ENDLET-»
