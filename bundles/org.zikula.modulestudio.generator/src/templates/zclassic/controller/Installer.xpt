@@ -610,7 +610,7 @@ substr('«dataEntity.name.formatForDisplayCapital()» «name.formatForDisplay()�
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR BooleanField-»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR IntegerField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DecimalField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR StringField-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR StringField-»«IF country || language-»ZLanguage::getLanguageCode()«ELSE-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDIF-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR TextField-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR EmailField-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR UrlField-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDDEFINE»
