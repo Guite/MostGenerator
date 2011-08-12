@@ -575,6 +575,11 @@ cached String fieldTypeAsString(AbstractIntegerField f) :
 cached String fieldTypeAsString(AbstractStringField f) :
     'string';
 
+cached String templateIdWithSuffix(String name, String suffix)
+  : (suffix != null && suffix != '')
+  ? '"' + name + '`' + suffix + '`"'
+  : "'" + name + "'";
+
 cached String timestamp() :
 	JAVA extensions.Utils.timestamp();
 

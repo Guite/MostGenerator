@@ -90,7 +90,7 @@
                 {if $locale eq $lang}
                     <fieldset>
                         <legend>{$locale|getlanguagename|safehtml}</legend>
-«EXPAND FieldWrapper('`$locale`') FOREACH getEditableFields().select(e|e.translatable)-»
+«EXPAND FieldWrapper('$locale') FOREACH getEditableFields().select(e|e.translatable)-»
                     </fieldset>
                     {/if}
                     {/foreach}
@@ -98,7 +98,7 @@
                     {if $locale ne $lang}
                     <fieldset>
                         <legend>{$locale|getlanguagename|safehtml}</legend>
-«EXPAND FieldWrapper('`$locale`') FOREACH getEditableFields().select(e|e.translatable)-»
+«EXPAND FieldWrapper('$locale') FOREACH getEditableFields().select(e|e.translatable)-»
                     </fieldset>
                 {/if}
                 {/foreach}
@@ -109,7 +109,7 @@
         <fieldset>
             {lang assign='locale'}
             <legend>{$locale|getlanguagename|safehtml}</legend>
-«EXPAND FieldWrapper('`$locale`') FOREACH getEditableFields().select(e|e.translatable)-»
+«EXPAND FieldWrapper('$locale') FOREACH getEditableFields().select(e|e.translatable)-»
 «IF hasTranslatableSlug()-»
 «ENDIF-»
         </fieldset>
@@ -155,13 +155,14 @@
 «EXPAND FormTemplateJS(app, controller, actionName)-»
 «ENDDEFINE»
 
-«DEFINE SlugField(String prefix) FOR Entity-»
+«DEFINE SlugField(String idSuffix) FOR Entity-»
 «IF hasSluggableFields() && slugUpdatable-»
         <div class="z-formrow">
-            {formlabel for='slug' __text='Permalink'}
-            {formtextinput group='«name.formatForDB()»' id='slug' mandatory=false readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay()» or let this field free to create one automatically' textMode='singleline' maxLength=255«IF slugUnique-» cssClass='validate-unique'«ENDIF-»}
+            {formlabel for=«templateIdWithSuffix('slug', idSuffix)» __text='Permalink' mandatorysym='1'}
+            {formtextinput group='«name.formatForDB()»' id=«templateIdWithSuffix('slug', idSuffix)» mandatory=true readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay()» or let this field free to create one automatically' textMode='singleline' maxLength=255«IF slugUnique-» cssClass='required validate-unique'«ENDIF-»}
+            {«container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='required'}
 «IF slugUnique-»
-            {«container.application.appName().formatForDB()»ValidationError id='slug' class='validate-unique'}
+            {«container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='validate-unique'}
 «ENDIF-»
         </div>
 «ENDIF-»
@@ -256,11 +257,7 @@
 «REM»No input fields for foreign keys, relations are processed further down«ENDREM»«""-»
 «IF entity.incoming.typeSelect(JoinRelationship).select(e|e.getSourceFields().get(0) == name.formatForDB()).isEmpty-»
         <div class="z-formrow">
-«IF idSuffix != null && idSuffix != ''-»
-            «EXPAND FormComponents::SimpleFields::FormRow(idSuffix, '"')-»
-«ELSE-»
-            «EXPAND FormComponents::SimpleFields::FormRow(idSuffix, "'")-»
-«ENDIF-»
+            «EXPAND FormComponents::SimpleFields::FormRow(idSuffix)-»
         </div>
 «ENDIF-»
 «ENDDEFINE»
