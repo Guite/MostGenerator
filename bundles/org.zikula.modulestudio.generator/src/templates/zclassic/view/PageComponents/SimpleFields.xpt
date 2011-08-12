@@ -27,7 +27,7 @@
 «IF page == 'display'-»
 «prepend»  {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 «ENDIF-»
-«prepend»    {$«realName»|userprofilelinkbyuid}
+«prepend»    {$«realName»|profilelinkbyuid}
 «IF page == 'display'-»
 «prepend»  {else}
 «prepend»    {usergetvar name='uname' uid=$«realName»}
