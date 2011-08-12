@@ -211,7 +211,8 @@
     }
 «ENDIF-»
 «ENDLET-»
-«IF app.models.entities.exists(e|e.getUniqueDerivedFields().reject(e|e.primaryKey).size > 0)-»
+«IF app.models.entities.exists(e|e.getUniqueDerivedFields().reject(e|e.primaryKey).size > 0)
+|| (app.hasSluggable() && !app.models.entities.select(e|e.hasSluggableFields() && e.slugUnique).isEmpty)-»
 
     /**
      * Checks whether a field value is a duplicate or not.
@@ -246,9 +247,9 @@
         switch ($objectType) {
 «FOREACH app.models.entities AS entity-»
 «LET entity.getUniqueDerivedFields().reject(e|e.primaryKey) AS uniqueFields-»
-«IF !uniqueFields.isEmpty-»
+«IF !uniqueFields.isEmpty || (entity.hasSluggableFields() && entity.slugUnique)-»
             case '«entity.name.formatForCode()»':
-                    $uniqueFields = array(«FOREACH uniqueFields AS uniqueField SEPARATOR ', '»'«uniqueField.name.formatForCode()»'«ENDFOREACH»);
+                    $uniqueFields = array(«FOREACH uniqueFields AS uniqueField SEPARATOR ', '»'«uniqueField.name.formatForCode()»'«ENDFOREACH»«IF entity.hasSluggableFields() && entity.slugUnique-»«IF !uniqueFields.isEmpty-», «ENDIF-»slug«ENDIF-»);
                     break;
 «ENDIF-»
 «ENDLET-»
@@ -267,7 +268,7 @@
         switch ($objectType) {
 «FOREACH app.models.entities AS entity-»
 «LET entity.getUniqueDerivedFields().reject(e|e.primaryKey) AS uniqueFields-»
-«IF !uniqueFields.isEmpty-»
+«IF !uniqueFields.isEmpty || (entity.hasSluggableFields() && entity.slugUnique)-»
             case '«entity.name.formatForCode()»':
                     switch ($fieldName) {
 «FOREACH uniqueFields AS uniqueField-»
@@ -275,6 +276,13 @@
                                 $result = $object->get_validator()->checkIf«uniqueField.name.formatForCodeCapital()»Exists($value, $exclude);
                                 break;
 «ENDFOREACH-»
+«IF entity.hasSluggableFields() && entity.slugUnique-»
+                        case 'slug':
+                                $repository = $this->entityManager->getRepository($entityClass);
+                                $objectData = $repository->selectBySlug($slugTitle, true, false, $exclude);
+                                $result = (is_array($objectData) && isset($objectData['slug']);
+                                break;
+«ENDIF-»
                     }
                     break;
 «ENDIF-»

@@ -115,10 +115,11 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
      * @param string  $slugTitle The slug value
      * @param boolean $asArray   Whether to return the result as array instead as record object (optional) (default=true).
      * @param boolean $useJoins  Whether to include joining related objects (optional) (default=true).
+     * @param integer $excludeId Optional id to be excluded (used for unique validation).
      *
      * @return array|«implClassModelEntity()» retrieved data array or «implClassModelEntity()» instance
      */
-    public function selectBySlug($slugTitle = '', $asArray = true, $useJoins = true)
+    public function selectBySlug($slugTitle = '', $asArray = true, $useJoins = true, $excludeId = 0)
     {
         // check input parameter
         if ($slugTitle == '') {
@@ -126,6 +127,9 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
         }
 
         $where = 'tbl.slug = ' . DataUtil::formatForStore($slugTitle);
+        if ($excludeId > 0) {
+            $where .= ' AND tbl.id != ' . DataUtil::formatForStore($excludeId);
+        }
         $query = $this->_intBaseQuery($where, '', $useJoins);
 
         $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_OBJECT);
