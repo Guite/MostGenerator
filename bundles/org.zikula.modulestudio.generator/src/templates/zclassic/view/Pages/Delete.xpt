@@ -31,13 +31,17 @@
                 <legend>{gt text='Confirmation prompt'}</legend>
                 <div class="z-buttons z-formbuttons">
                     {gt text='Delete' assign='deleteTitle'}
-                    {button src='button_ok.png' set='icons/small' value=$deleteTitle title=$deleteTitle}
+                    {button src='14_layer_deletelayer.png' set='icons/small' text=$deleteTitle title=$deleteTitle class='z-btred'}
                     <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«name.formatForCode()»'}">{icon type='cancel' size='small' __alt='Cancel' __title='Cancel'} {gt text='Cancel'}</a>
                 </div>
             </fieldset>
+
             {notifydisplayhooks eventname='«appName.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».form_delete' id="«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR '_'-»`$«name.formatForCode()».«pkField.name.formatForCode()»`«ENDFOREACH-»" assign='hooks'}
-            {foreach from=$hooks key='hookname' item='hook'}
+            {foreach from=$hooks key='hookName' item='hook'}
+            <fieldset>
+                <legend>{$hookName}</legend>
                 {$hook}
+            </fieldset>
             {/foreach}
         </div>
     </form>

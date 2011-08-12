@@ -255,10 +255,16 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             $hasTemplateId = false;
             $templateId = $this->request->getGet()->get('astemplate', '');
             if (!empty($templateId)) {
-                $templateIdValues = explode('_', $templateId);
-                $hasTemplateID = (count($templateIdValues) == count($idFields));
+                $templateIdValueParts = explode('_', $templateId);
+                $hasTemplateId = (count($templateIdValueParts) == count($idFields));
             }
             if ($hasTemplateId === true) {
+                $templateIdValues = array();
+                $i = 0;
+                foreach ($idFields as $idField) {
+                    $templateIdValues[$idField] = $templateIdValueParts[$i];
+                    $i++;
+                }
                 // reuse existing «name.formatForDisplay()»
 «EXPAND ControllerHelper::retrieveEntityFromModel('idFields', 'templateIdValues', true)-»
                 //foreach ($idFields as $idField) {

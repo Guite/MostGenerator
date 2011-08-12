@@ -242,13 +242,17 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
             $object = $repository->selectById($idValues, false);
 
-            if (!$object->delete()) {
-                $this->registerError($this->__('Error! Deletion attempt failed.'));
-            } else {
-                $this->registerStatus($this->__('Done! Item deleted.'));
+            // TODO call pre delete validation hooks
 
-                // clear view cache to reflect our changes
-                $this->view->clear_cache();
+            $this->entityManager->remove($object);
+            $this->entityManager->flush();
+
+            $this->registerStatus($this->__('Done! Item deleted.'));
+
+            // TODO call post delete process hooks
+
+            // clear view cache to reflect our changes
+            $this->view->clear_cache();
             }
         } else {
     «EXPAND ControllerHelper::retrieveEntityFromModel("idFields", "idValues", false)-»
