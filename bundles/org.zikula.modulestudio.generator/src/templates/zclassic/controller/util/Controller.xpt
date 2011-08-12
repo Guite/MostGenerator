@@ -56,14 +56,14 @@ class «appName()»_Util_Base_Controller extends Zikula_AbstractBase
     /**
      * Retrieve identifier parameters for a given object type.
      *
-     * @param string $request    Instance of Zikula_Request.
-     * @param array  $args       List of arguments used as fallback if request does not contain a field.
-     * @param string $objectType Name of treated entity type.
-     * @param array  $idFields   List of identifier field names.
+     * @param Zikula_Request_Http $request    Instance of Zikula_Request_Http.
+     * @param array               $args       List of arguments used as fallback if request does not contain a field.
+     * @param string              $objectType Name of treated entity type.
+     * @param array               $idFields   List of identifier field names.
      *
      * @return array List of fetched identifiers.
      */
-    public static function retrieveIdentifier(Zikula_Request $request, array $args, $objectType = '', array $idFields)
+    public static function retrieveIdentifier(Zikula_Request_Http $request, array $args, $objectType = '', array $idFields)
     {
         foreach ($idFields as $idField) {
             $defaultValue = isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0;
