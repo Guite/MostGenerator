@@ -136,7 +136,7 @@
 «ENDIF-»
 «EXPAND JoinDetails(true)-»
 «IF orderBy != null && orderBy != ''-»
-     * @ORM\OrderBy({"«orderBy»"})
+     * @ORM\OrderBy({"«orderBy»" = "ASC"})
 «ENDIF-»
      * @var «entityClass»[] $«targetName».
      */
@@ -151,7 +151,7 @@
      * @ORM\ManyToMany(targetEntity="«entityClass»"«IF bidirectional-», inversedBy="«sourceName-»"«ENDIF-»«EXPAND AdditionalOptions-»«IF indexBy != null && indexBy != ''-», indexBy="«indexBy»"«ENDIF-»)
 «EXPAND JoinDetails(true)-»
 «IF orderBy != null && orderBy != ''-»
-     * @ORM\OrderBy({"«orderBy»"})
+     * @ORM\OrderBy({"«orderBy»" = "ASC"})
 «ENDIF-»
      * @var «entityClass»[] $«targetName».
      */
