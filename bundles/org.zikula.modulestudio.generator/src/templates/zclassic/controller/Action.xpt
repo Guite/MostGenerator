@@ -99,7 +99,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $repository = $this->entityManager->getRepository($entityClass);
 
         $tpl = $this->request->getGet()->filter('tpl', '', FILTER_SANITIZE_STRING);
-        if ($tpl == 'nestedSet') {
+        if ($tpl == 'tree') {
             $this->view->assign('trees', $repository->selectAllTrees());
             // fetch and return the appropriate template
             return «appName»_Util_View::processTemplate($this->view, '«controller.name()»', $objectType, 'view', $args);

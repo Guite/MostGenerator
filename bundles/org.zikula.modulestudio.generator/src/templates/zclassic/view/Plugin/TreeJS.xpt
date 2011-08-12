@@ -45,8 +45,6 @@ function smarty_function_«appName().formatForDB()»TreeJS($params, $view)
 «ENDIF-»
 «ENDFOREACH-»
     }
-«REM»TODO improve identifier handling in treejs plugin«ENDREM»
-    $idField = strtolower($params['objectType']) . 'id';
 
     $titleFieldName = $descriptionFieldName = '';
 
@@ -69,21 +67,17 @@ function smarty_function_«appName().formatForDB()»TreeJS($params, $view)
 «ENDFOREACH-»
     }
 
+«REM»TODO improve identifier handling in treejs plugin«ENDREM»
+    $idField = 'id';
     $result = array();
 
     foreach ($params['tree'] as $item) {
         $url = (($controllerHasEditAction) ? ModUtil::url('«appName()»', $params['controller'], 'edit', array('ot' => $params['objectType'], $idField => $item[$idField])) : '');
 
-        $node = $item->getNode();
-
-        $parentId = 0;
-        if (!$node->isRoot()) {
-            $parentItem = $node->getParent();
-            $parentId = $parentItem[$idField];
-        }
+        $parentItem = $item->getParent();
 
         $result[] = array('id' => $item[$idField],
-                          'parent_id' => $parentId,
+                          'parent_id' => $parentItem[$idField],
                           'name' => $item[$titleFieldName],
                           'title' => $item[$descriptionFieldName],
                         //'icon' => '',

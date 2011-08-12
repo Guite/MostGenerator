@@ -322,35 +322,23 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
      */
     public function selectTree($rootId = 0, $asArray = false, $useJoins = true)
     {
-        // get reference to tree object
-        $treeObject = $this->getTree();
-        if ($useJoins === true) {
-            $treeObject->setBaseQuery($this->_intBaseQuery());
-            // note that this query modification can also be used for all node and tree methods (like getAncestors(), getDescendants(), getChildren(), getParent(), and so on)
+        if (rootId == 0) {
+            // return all trees if no specific one has been asked for
+            return $this->selectAllTrees($asArray, $useJoins);
         }
 
         $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_OBJECT);
         $result = null;
 
-        // return branch if we have given a certain root
-        if ($rootId > 0) {
-            $root = $treeObject->fetchRoot($rootId);
-            if (!$root) {
-                // abort if no root node has been created yet
-                return false;
-            }
-            $result = $treeObject->fetchBranch($root->«getPrimaryKeyFields().get(0).name.formatForCode()», array(), $fetchType);
-        }
-        else {
-            // otherwise return the whole tree
-            $result = $treeObject->fetchTree(array(), $fetchType);
-        }
+        // fetch root node
+        $rootNode = $this->selectById($rootId, $asArray, $useJoins);
 
-        if ($useJoins === true) {
-            $treeObject->resetBaseQuery();
-        }
+        // fetch children
+        $result = $this->children($rootNode);
 
-        return $result;
+        // alternatively we could probably select all nodes with root = $rootId
+
+        return array_merge(array($rootNode), $children);
     }
 
     /**
@@ -364,21 +352,15 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     public function selectAllTrees($asArray = false, $useJoins = true)
     {
         $trees = array();
-        $treeObject = $this->getTree();
-        if ($useJoins === true) {
-            $treeObject->setBaseQuery($this->_intBaseQuery());
-            // note that this query modification can also be used for all node and tree methods (like getAncestors(), getDescendants(), getChildren(), getParent(), and so on)
-        }
 
+        // get all root nodes
         $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_OBJECT);
+        $rootNodes = $this->_intBaseQuery('tbl.lvl = 1')->execute(array(), $fetchType, $useJoins);
 
-        foreach ($treeObject->fetchRoots() as $rootNode) {
-            $options = array('root_id' => $rootNode->root);
-            $trees[$rootNode->root] = $treeObject->fetchTree($options, $fetchType);
-        }
-
-        if ($useJoins === true) {
-            $treeObject->resetBaseQuery();
+        foreach ($rootNodes as $rootNode) {
+            // fetch children
+            $children = $this->children($rootNode);
+            $trees[$rootNode->getId()] = array_merge(array($rootNode), $children);
         }
 
         return $trees;

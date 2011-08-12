@@ -268,11 +268,14 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     {
         // ensure that tables are cleared
         $this->entityManager->transactional(function($entityManager) {
-«FOREACH models.entities AS entity-»
+«FOREACH getDefaultDataSource().entities AS entity-»
             $entityManager->getRepository('«entity.implClassModelEntity()»')->truncateTable();
 «ENDFOREACH-»
 «IF getDefaultDataSource().numExampleRows > 0-»
 
+«IF !getDefaultDataSource().entities.select(e|e.tree != EntityTreeType::NONE).isEmpty-»
+            $treeCounterRoot = 1;
+«ENDIF-»
 «EXPAND CreateExampleRows(this) FOREACH getDefaultDataSource().entities-»
 «ENDIF-»
         });
@@ -529,13 +532,23 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «EXPAND ExampleRowAssignment(this, entityName, number) FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey).reject(e|e.metaType == UploadField)-»
 «REM»«IF hasTranslatableFields()-»
             $«entityName»«number»->setLocale(ZLanguage::getLanguageCode());
-«ENDIF-»«ENDREM»
+«ENDIF-»«ENDREM»«''-»
+«IF tree != EntityTreeType::NONE-»
+            $«entityName»«number»->setParent(«IF number == 1-»null«ELSE-»$«entityName»1«ENDIF-»);
+            $«entityName»«number»->setLvl(«IF number == 1-»1«ELSE-»2«ENDIF-»);
+            $«entityName»«number»->setLft(«IF number == 1-»1«ELSE-»«((number-1)*2)»«ENDIF-»);
+            $«entityName»«number»->setRgt(«IF number == 1-»«container.numExampleRows*2»«ELSE-»«((number-1)*2)+1»«ENDIF-»);
+            $«entityName»«number»->setRoot($treeCounterRoot);
+«ENDIF-»
 «ENDFOREACH-»
 «''-»
 «FOREACH 1.upTo(container.numExampleRows) AS number-»
             $entityManager->persist($«entityName»«number»);
 «ENDFOREACH-»
 «ENDLET-»
+«IF tree != EntityTreeType::NONE-»
+            $treeCounterRoot++;
+«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE ExampleRowsConstructorArgumentsDefault(Boolean hasPreviousArgs, Integer number) FOR Entity-»

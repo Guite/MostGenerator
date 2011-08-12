@@ -289,21 +289,21 @@
 «IF app.hasTrees()-»
 
     /**
-     * Performs different operations on nested set trees.
+     * Performs different operations on tree hierarchies.
      *
      * @param string $ot Treated object type.
      * @param string $op The operation which should be performed.
      *
      * @return Zikula_Response_Ajax_Base
      */
-    public function handleNestedSetOperation()
+    public function handleTreeOperation()
     {
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_EDIT));
 
 «LET app.getTreeEntities() AS treeEntities-»
         // parameter specifying which type of objects we are treating
         $objectType = DataUtil::convertFromUTF8($this->request->getPost()->filter('ot', '«treeEntities.get(0).name.formatForCode()»', FILTER_SANITIZE_STRING));
-        // ensure that we use only object types with nested set behaviour enabled
+        // ensure that we use only object types with tree extension enabled
         if (!in_array($objectType, array(«FOREACH treeEntities AS treeEntity SEPARATOR ", "»'«treeEntity.name.formatForCode()»'«ENDFOREACH»))) {
             $objectType = '«treeEntities.get(0).name.formatForCode()»';
         }

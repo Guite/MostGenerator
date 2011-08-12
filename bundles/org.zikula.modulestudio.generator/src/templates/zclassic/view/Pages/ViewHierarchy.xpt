@@ -61,11 +61,11 @@
 </div>
 {include file='«controller.name()»/footer.tpl'}
 «ENDFILE»
+
 «FILE templateFile(controller, name, 'view_tree_items')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» tree items in «controller.name()» area *}
-
 {assign var='hasNodes' value=false}
-{if isset($items) && is_object($items) && $items->count() gt 0}
+{if isset($items) && (is_object($items) && $items->count() gt 0) || (is_array($items) && count($items) gt 0)}
     {assign var='hasNodes' value=true}
 {/if}
 
