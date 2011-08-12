@@ -2,52 +2,52 @@
 «EXTENSION extensions::Utils»
 «EXTENSION extensions::ClassUtils»
 
-«DEFINE MandatoryValidationMessage FOR DerivedField-»
+«DEFINE MandatoryValidationMessage(String idSuffix) FOR DerivedField-»
 «IF mandatory-»
-            {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='required'}
+            {«entity.container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix(name.formatForCode(), idSuffix)» class='required'}
 «ENDIF-»
 «IF unique-»
-            {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-unique'}
+            {«entity.container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix(name.formatForCode(), idSuffix)» class='validate-unique'}
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE AdditionalValidationMessages FOR DerivedField-»«ENDDEFINE»
-«DEFINE AdditionalValidationMessages FOR AbstractIntegerField-»
-            {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-digits'}
+«DEFINE AdditionalValidationMessages(String idSuffix) FOR DerivedField-»«ENDDEFINE»
+«DEFINE AdditionalValidationMessages(String idSuffix) FOR AbstractIntegerField-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix(name.formatForCode(), idSuffix)» class='validate-digits'}
 «ENDDEFINE»
-«DEFINE AdditionalValidationMessages FOR UserField-»
-            {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-alphanum'}
+«DEFINE AdditionalValidationMessages(String idSuffix) FOR UserField-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix(name.formatForCode(), idSuffix)» class='validate-alphanum'}
 «ENDDEFINE»
-«DEFINE AdditionalValidationMessages FOR DecimalField-»
-            {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-number'}
+«DEFINE AdditionalValidationMessages(String idSuffix) FOR DecimalField-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix(name.formatForCode(), idSuffix)» class='validate-number'}
 «ENDDEFINE»
-«DEFINE AdditionalValidationMessages FOR FloatField-»
-            {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-number'}
+«DEFINE AdditionalValidationMessages(String idSuffix) FOR FloatField-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix(name.formatForCode(), idSuffix)» class='validate-number'}
 «ENDDEFINE»
-«DEFINE AdditionalValidationMessages FOR AbstractStringField-»
+«DEFINE AdditionalValidationMessages(String idSuffix) FOR AbstractStringField-»
 «IF nospace-»
-            {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-nospace'}
+            {«entity.container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix(name.formatForCode(), idSuffix)» class='validate-nospace'}
 «ENDIF-»
 «ENDDEFINE»
-«DEFINE AdditionalValidationMessages FOR StringField-»
+«DEFINE AdditionalValidationMessages(String idSuffix) FOR StringField-»
 «IF nospace-»
-            {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-nospace'}
+            {«entity.container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix(name.formatForCode(), idSuffix)» class='validate-nospace'}
 «ENDIF-»
 «IF htmlcolour-»
-            {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-htmlcolour'}
+            {«entity.container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix(name.formatForCode(), idSuffix)» class='validate-htmlcolour'}
 «ENDIF-»
 «ENDDEFINE»
-«DEFINE AdditionalValidationMessages FOR EmailField-»
-            {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-email'}
+«DEFINE AdditionalValidationMessages(String idSuffix) FOR EmailField-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix(name.formatForCode(), idSuffix)» class='validate-email'}
 «ENDDEFINE»
-«DEFINE AdditionalValidationMessages FOR UrlField-»
-            {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-url'}
+«DEFINE AdditionalValidationMessages(String idSuffix) FOR UrlField-»
+            {«entity.container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix(name.formatForCode(), idSuffix)» class='validate-url'}
 «ENDDEFINE»
-«DEFINE AdditionalValidationMessages FOR AbstractDateField-»
+«DEFINE AdditionalValidationMessages(String idSuffix) FOR AbstractDateField-»
 «IF past-»
-            {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-«fieldTypeAsString()»-past'}
+            {«entity.container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix(name.formatForCode(), idSuffix)» class='validate-«fieldTypeAsString()»-past'}
 «ELSEIF future-»
-            {«entity.container.application.appName().formatForDB()»ValidationError id='«name.formatForCode()»' class='validate-«fieldTypeAsString()»-past'}
+            {«entity.container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix(name.formatForCode(), idSuffix)» class='validate-«fieldTypeAsString()»-past'}
 «ENDIF-»
 «ENDDEFINE»
 
