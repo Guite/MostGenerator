@@ -9,7 +9,7 @@
         $entity = $repository->selectById($«idValue», false);
         if (!is_object($entity) || !isset($entity[$«idVar»[0]])) {
 «ENDIF-»
-            return $this->view->registerError($this->__('No such item.'));
+            return $this->registerError($this->__('No such item.'));
         }
 «ENDDEFINE»
 
