@@ -136,7 +136,7 @@ class «appName()»_Util_Base_Translatable extends Zikula_AbstractBase
 
 «DEFINE TranslatableFieldDefinition FOR DerivedField-»
                     array('name'    => '«name»',
-                          'default' => '«IF defaultValue != ''-»«defaultValue»«ELSE-»«name.formatForDisplayCapital()»«ENDIF-»'),
+                          'default' => '«IF defaultValue != ''-»«defaultValue»«ELSE-»«name.formatForDisplayCapital()»«ENDIF-»')
 «ENDDEFINE»
 
 «DEFINE TranslatableFieldDefinition FOR CalculatedField-»
