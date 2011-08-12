@@ -23,7 +23,7 @@
 «FILE editTemplateFile(controller, name, actionName)-»
 «EXPAND FormTemplate(app, controller, actionName)-»
 «ENDFILE»
-«EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, false, true) FOREACH incoming.typeSelect(JoinRelationship)-»
+«EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, false, true) FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»
 «EXPAND templates::zclassic::view::FormComponents::Relations::Root(app, controller, false, false) FOREACH outgoing.typeSelect(JoinRelationship)-»
 «ENDDEFINE»
 
@@ -192,7 +192,7 @@
 /* <![CDATA[ */
     var editImage = '<img src="{{$editImageArray.src}}" width="16" height="16" alt="" />';
     var removeImage = '<img src="{{$deleteImageArray.src}}" width="16" height="16" alt="" />';
-«LET incoming.typeSelect(JoinRelationship) AS incomingJoins-»
+«LET incoming.typeSelect(JoinRelationship).select(e|e.bidirectional) AS incomingJoins-»
 «LET outgoing.typeSelect(JoinRelationship) AS outgoingJoins-»
 «IF !incomingJoins.isEmpty || !outgoingJoins.isEmpty-»
     var relationHandler = new Array();
