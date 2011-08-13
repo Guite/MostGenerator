@@ -622,24 +622,24 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             $entityManager->lock($«name.formatForCode()», LockMode::OPTIMISTIC, $expectedVersion);
 «ENDIF-»
             $this->updateRelationLinks($«name.formatForCode()»);
-            $this->entityManager->transactional(function($entityManager) {
-                $dom = ZLanguage::getModuleDomain('«app.appName()»');
+            //$this->entityManager->transactional(function($entityManager) {
 «IF hasPessimisticWriteLock()-»
-                $entityManager->lock($«name.formatForCode()», LockMode::«lockType.asConstant()»);
+                $this->entityManager->lock($«name.formatForCode()», LockMode::«lockType.asConstant()»);
 «ENDIF-»
-                if ($args['commandName'] == 'create') {
-                    $entityManager->persist($«name.formatForCode()»);
-                    $successMessage = __('Done! «name.formatForDisplayCapital()» created.', $dom);
-                } else if ($args['commandName'] == 'update') {
-«REM»                    $entityManager->persist($«name.formatForCode()»);«ENDREM»«''-»
-                    $successMessage = __('Done! «name.formatForDisplayCapital()» updated.', $dom);
-                }
-            });
+                $this->entityManager->persist($«name.formatForCode()»);
+                $this->entityManager->flush();
+            //});
 «IF hasOptimisticLock()-»
         } catch(OptimisticLockException $e) {
             echo $this->__('Sorry, but someone else has already changed this «name.formatForCode()». Please apply the changes again!');
         }
 «ENDIF-»
+
+            if ($args['commandName'] == 'create') {
+                $successMessage = $this->__('Done! «name.formatForDisplayCapital()» created.');
+            } else if ($args['commandName'] == 'update') {
+                $successMessage = $this->__('Done! «name.formatForDisplayCapital()» updated.');
+            }
 
             if ($args['commandName'] == 'create') {
                 // store new identifier
