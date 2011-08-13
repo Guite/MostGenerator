@@ -24,7 +24,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «REM»Parent/active/source view for 1:1 and 1:n«ENDREM»
 «DEFINE ActiveParentImpl(Application app, Controller controller, Boolean onlyInclude) FOR JoinRelationship-»
 «IF onlyInclude-»
-«LET getRelationAliasName(false).formatForCodeCapital() AS relationAliasName-»
+«LET getRelationAliasName(true).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(app, target, (this.metaType == OneToManyRelationship || this.metaType == ManyToManyRelationship), true, relationAliasName) AS uniqueNameForJs-»
     {include file='«controller.name.formatForDB()»/«target.name.formatForCode()»/include_createChildItem«getTargetMultiplicity()».tpl' aliasName='«relationAliasName.toFirstLower()»' idPrefix='«uniqueNameForJs-»'}
 «ENDLET-»
@@ -46,7 +46,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «REM»Child/passive/target view for 1:1 and 1:n«ENDREM»
 «DEFINE PassiveChildImpl(Application app, Controller controller, Boolean onlyInclude, Integer stageCode) FOR JoinRelationship-»
 «IF onlyInclude-»
-«LET getRelationAliasName(true).formatForCodeCapital() AS relationAliasName-»
+«LET getRelationAliasName(false).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(app, source, (this.metaType == ManyToOneRelationship || this.metaType == ManyToManyRelationship), false, relationAliasName) AS uniqueNameForJs-»
     {include file='«controller.name.formatForDB()»/«source.name.formatForCode()»/include_select«((stageCode == 3) ? 'Edit' : '')»One.tpl' relItem=$«target.name.formatForDB()» aliasName='«relationAliasName.toFirstLower()»' idPrefix='«uniqueNameForJs-»'}
 «ENDLET-»
