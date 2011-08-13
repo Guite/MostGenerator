@@ -119,6 +119,8 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «EXPAND entity::Association::RelationAccessor(false) FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)»
 «EXPAND entity::Association::RelationAccessor(true) FOREACH outgoing.typeSelect(JoinRelationship)»
 «ENDIF-»
+
+«EXPAND EventListener::Root-»
 }
 «ENDDEFINE»
 
@@ -167,8 +169,6 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «EXPAND entity::Extensions::AdditionalAccessors-»
 «EXPAND entity::Association::RelationAccessor(false) FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)»
 «EXPAND entity::Association::RelationAccessor(true) FOREACH outgoing.typeSelect(JoinRelationship)»
-
-«EXPAND EventListener::Root-»
 
     /**
      * Start validation and raise exception if invalid data is found.

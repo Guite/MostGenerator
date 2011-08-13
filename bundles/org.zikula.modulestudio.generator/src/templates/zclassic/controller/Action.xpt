@@ -179,16 +179,16 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         // assign object data fetched from the database
         $objectData = null;
         if ($hasSlug) {
-            $objectData = $repository->selectBySlug($slugTitle);
+            $objectData = $repository->selectBySlug($slugTitle, false);
         } else {
-            $objectData = $repository->selectById($idValues);
+            $objectData = $repository->selectById($idValues, false);
         }
 «ELSE-»
         $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
 
         // assign object data fetched from the database
         $objectData = null;
-        $objectData = $repository->selectById($idValues);
+        $objectData = $repository->selectById($idValues, false);
 «ENDIF-»
         if (!is_array($objectData) || !isset($objectData[$idFields[0]])) {
             $this->throwNotFound($this->__('No such item.'));
