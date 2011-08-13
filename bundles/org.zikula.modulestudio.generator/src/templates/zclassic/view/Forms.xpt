@@ -235,8 +235,7 @@
             if (!result) {
                 // validation error, abort form submit
                 Event.stop(event);
-            }
-            else {
+            } else {
                 // hide form buttons to prevent double submits by accident
                 $$('div.z-formbuttons input').each(function(btn) {
                     btn.hide();
