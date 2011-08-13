@@ -109,7 +109,7 @@
 «ENDDEFINE»
 «DEFINE IncomingMappingDescription(String sourceName, String targetName) FOR ManyToManyRelationship-»Many «targetName» [«target.nameMultiple.formatForDisplay()»] are linked by many «sourceName» [«source.nameMultiple.formatForDisplay()»] (INVERSE SIDE)«ENDDEFINE»
 
-«REM»this defaut rule is used for OneToOne and ManyToOne«ENDREM»
+«REM»this default rule is used for OneToOne and ManyToOne«ENDREM»
 «DEFINE Outgoing(String sourceName, String targetName, String entityClass) FOR JoinRelationship-»
     /**
      * «IF bidirectional-»Bi«ELSE-»Uni«ENDIF-»directional - «EXPAND OutgoingMappingDescription(sourceName, targetName)-».
