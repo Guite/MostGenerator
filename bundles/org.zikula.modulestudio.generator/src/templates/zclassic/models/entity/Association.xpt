@@ -109,21 +109,25 @@
 «ENDDEFINE»
 «DEFINE IncomingMappingDescription(String sourceName, String targetName) FOR ManyToManyRelationship-»Many «targetName» [«target.nameMultiple.formatForDisplay()»] are linked by many «sourceName» [«source.nameMultiple.formatForDisplay()»] (INVERSE SIDE)«ENDDEFINE»
 
-«REM»this empty default rule is adapted by ManyToOne on purpose«ENDREM»
+«REM»this defaut rule is used for OneToOne and ManyToOne«ENDREM»
 «DEFINE Outgoing(String sourceName, String targetName, String entityClass) FOR JoinRelationship-»
-«ENDDEFINE»
-
-«DEFINE Outgoing(String sourceName, String targetName, String entityClass) FOR OneToOneRelationship-»
     /**
      * «IF bidirectional-»Bi«ELSE-»Uni«ENDIF-»directional - «EXPAND OutgoingMappingDescription(sourceName, targetName)-».
      *
-     * @ORM\OneToOne(targetEntity="«entityClass»"«IF bidirectional-», mappedBy="«sourceName-»"«ENDIF-»«EXPAND FetchTypeTag-»«IF orphanRemoval-», orphanRemoval=true«ENDIF-»)
+     * @ORM\«EXPAND OutgoingMappingType-»(targetEntity="«entityClass»"«IF bidirectional-», mappedBy="«sourceName-»"«ENDIF-»«EXPAND FetchTypeTag-»«EXPAND OutgoingMappingAdditions-»)
 «EXPAND JoinDetails(true)-»
      * @var «entityClass» $«targetName».
      */
     protected $«targetName»;
 «ENDDEFINE»
+«DEFINE OutgoingMappingType FOR JoinRelationship-»«ENDDEFINE»
+«DEFINE OutgoingMappingType FOR OneToOneRelationship-»OneToOne«ENDDEFINE»
+«DEFINE OutgoingMappingType FOR ManyToOneRelationship-»ManyToOne«ENDDEFINE»
+«DEFINE OutgoingMappingDescription(String sourceName, String targetName) FOR JoinRelationship-»«ENDDEFINE»
 «DEFINE OutgoingMappingDescription(String sourceName, String targetName) FOR OneToOneRelationship-»One «sourceName» [«source.name.formatForDisplay()»] has one «targetName» [«target.name.formatForDisplay()»] (INVERSE SIDE)«ENDDEFINE»
+«DEFINE OutgoingMappingDescription(String sourceName, String targetName) FOR ManyToOneRelationship-»One «sourceName» [«source.nameMultiple.formatForDisplay()»] have one «targetName» [«target.name.formatForDisplay()»] (OWNING SIDE)«ENDDEFINE»
+«DEFINE OutgoingMappingAdditions FOR JoinRelationship-»«ENDDEFINE»
+«DEFINE OutgoingMappingAdditions FOR OneToOneRelationship-»«IF orphanRemoval-», orphanRemoval=true«ENDIF-»«ENDDEFINE»
 
 «DEFINE Outgoing(String sourceName, String targetName, String entityClass) FOR OneToManyRelationship»
     /**
@@ -304,11 +308,11 @@
     /**
      * Adds an instance of «type» to the list of «name.formatForDisplay()».
      *
-     * @param «EXPAND AddParameters(useTarget, type, nameSingle, true)-».
+     * @param «EXPAND AddParameters(useTarget, nameSingle, type, true)-».
      *
      * @return void
      */
-    public function add«name.toFirstUpper()»(«EXPAND AddParameters(useTarget, type, nameSingle, false)-»)
+    public function add«name.toFirstUpper()»(«EXPAND AddParameters(useTarget, nameSingle, type, false)-»)
     {
 «EXPAND AddAssignment(useTarget, name, nameSingle)-»
 «IF bidirectional && !useTarget-»
