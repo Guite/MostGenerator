@@ -179,16 +179,16 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         // assign object data fetched from the database
         $objectData = null;
         if ($hasSlug) {
-            $objectData = $repository->selectBySlug($slugTitle, false);
+            $objectData = $repository->selectBySlug($slugTitle);
         } else {
-            $objectData = $repository->selectById($idValues, false);
+            $objectData = $repository->selectById($idValues);
         }
 «ELSE-»
         $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
 
         // assign object data fetched from the database
         $objectData = null;
-        $objectData = $repository->selectById($idValues, false);
+        $objectData = $repository->selectById($idValues);
 «ENDIF-»
         if ((!is_array($objectData) && !is_object($objectData)) || !isset($objectData[$idFields[0]])) {
             $this->throwNotFound($this->__('No such item.'));
@@ -240,7 +240,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         if ($confirmation) {
             $this->checkCsrfToken();
 
-            $object = $repository->selectById($idValues, false);
+            $object = $repository->selectById($idValues);
 
             // TODO call pre delete validation hooks
 

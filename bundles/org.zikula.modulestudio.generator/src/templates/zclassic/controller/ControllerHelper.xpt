@@ -6,7 +6,7 @@
         $objectData = $repository->selectById($«idValue»);
         if (!is_array($objectData) || !isset($objectData[$«idVar»[0]])) {
 «ELSE-»
-        $entity = $repository->selectById($«idValue», false);
+        $entity = $repository->selectById($«idValue»);
         if (!is_object($entity) || !isset($entity[$«idVar»[0]])) {
 «ENDIF-»
             return $this->registerError($this->__('No such item.'));
