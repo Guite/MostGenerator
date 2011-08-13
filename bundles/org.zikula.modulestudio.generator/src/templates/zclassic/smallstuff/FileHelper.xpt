@@ -99,3 +99,7 @@
 «DEFINE SetterAssignment(String name, String type) FOR FloatField-»
 «EXPAND SetterAssignmentNumeric(name, type)-»
 «ENDDEFINE»
+
+«DEFINE SetterAssignment(String name, String type) FOR AbstractDateField-»
+            $this->«name» = new \DateTime($«name»);
+«ENDDEFINE»
