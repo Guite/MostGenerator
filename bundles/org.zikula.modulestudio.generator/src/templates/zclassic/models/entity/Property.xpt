@@ -25,6 +25,22 @@ completely as the define for DerivedField can be used then instead.«ENDREM»
 «EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), '')-»
 
     /**
+     * The full path to the «name.formatForDisplay()».
+     *
+     * @var string $«name.formatForCode()»FullPath.
+     */
+    protected $«name.formatForCode()»FullPath = '';
+
+    /**
+     * Full «name.formatForDisplay()» path as url.
+     *
+     * @var string $«name.formatForCode()»FullPathUrl.
+     */
+    protected $«name.formatForCode()»FullPathUrl = '';
+
+    /**
+     * «name.formatForDisplayCapital()» meta data array.
+     *
      * @ORM\Column(type="array")
      * @var array $«name.formatForCode()»Meta.
      */
@@ -146,5 +162,7 @@ type="«type»", precision=«length», scale=«scale»«''-»
 
 «DEFINE FieldAccessor FOR UploadField-»
 «EXPAND FieldAccessorDefault-»
+«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode().msconcat('FullPath'), 'string', false, false, '')-»
+«EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode().msconcat('FullPathUrl'), 'string', false, false, '')-»
 «EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode().msconcat('Meta'), 'array', true, false, 'Array()')-»
 «ENDDEFINE»

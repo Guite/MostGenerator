@@ -52,11 +52,11 @@ class «appName()»_Util_Base_Image extends Zikula_AbstractBase
 
         // use Imagine library for creating the thumbnail image
         // documentation can be found at https://github.com/avalanche123/Imagine/tree/master/docs/en
-		try {
-		    // create instance of Imagine
-		    $imagine = new Imagine\Gd\Imagine();
-		    // alternative
-		    // $imagine = new Imagine\Imagick\Imagine();
+        try {
+            // create instance of Imagine
+            $imagine = new Imagine\Gd\Imagine();
+            // alternative
+            // $imagine = new Imagine\Imagick\Imagine();
 
             // scale down thumbnails per default
             $thumbMode = Imagine\ImageInterface::THUMBNAIL_INSET;
@@ -128,13 +128,13 @@ class «appName()»_Util_Base_Image extends Zikula_AbstractBase
             // return path to created thumbnail image
             return $thumbFilePath;
 
-		} catch (Imagine\Exception\Exception $e) {
+        } catch (Imagine\Exception\Exception $e) {
             $dom = ZLanguage::getModuleDomain('«appName()»');
             // log this exception
             LogUtil::registerError(__f('An error occured during thumbnail creation: %s', array($e->getMessage()), $dom));
             // return the original image as fallback
             return $filePath;
-		}
+        }
     }
 }
 «ENDDEFINE»
