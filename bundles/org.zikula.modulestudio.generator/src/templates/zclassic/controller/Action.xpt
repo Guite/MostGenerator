@@ -190,7 +190,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $objectData = null;
         $objectData = $repository->selectById($idValues, false);
 «ENDIF-»
-        if (!is_array($objectData) || !isset($objectData[$idFields[0]])) {
+        if ((!is_array($objectData) && !is_object($objectData)) || !isset($objectData[$idFields[0]])) {
             $this->throwNotFound($this->__('No such item.'));
         }
 
