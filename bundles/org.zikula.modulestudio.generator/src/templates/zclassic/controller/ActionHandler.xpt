@@ -642,13 +642,13 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDIF-»
 
             if ($args['commandName'] == 'create') {
-                // store new id
+                // store new identifier
 «FOREACH getPrimaryKeyFields() AS pkField-»
                 $this->idValues['«pkField.name.formatForCode()»'] = $«name.formatForCode()»->get«pkField.name.formatForCodeCapital()»();
-«REM»                // check if the insert has worked, might become obsolete due to exception usage
-                if ($this->idValues['«pkField.name.formatForCode()»'] === false) {
+                // check if the insert has worked, might become obsolete due to exception usage
+                if (!$this->idValues['«pkField.name.formatForCode()»']) {
                     return LogUtil::registerError($this->__('Error! Creation attempt failed.'));
-                }«ENDREM»
+                }
 «ENDFOREACH-»
             } else if ($args['commandName'] == 'update') {
 «REM»                $updateResult = true/false;
