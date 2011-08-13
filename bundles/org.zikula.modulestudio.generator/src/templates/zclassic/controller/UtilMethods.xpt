@@ -7,6 +7,9 @@
 «EXPAND Model::Root»
 «EXPAND Controller::Root»
 «EXPAND View::Root»
+«IF hasUploads()-»
+«EXPAND Image::Root»
+«ENDIF-»
 «IF hasTranslatable()-»
 «EXPAND Translatable::Root»
 «ENDIF-»

@@ -29,6 +29,6 @@ function smarty_modifier_«appName().formatForDB()»ImageThumb($fileName = '', $
      * By overriding this plugin or the util method called below you may add further thumbnail arguments
      * based on custom conditions.
      */
-    return «appName()»_Util_View::getImageThumb($fileName, $filePath, $width, $height, $thumbArgs);
+    return «appName()»_Util_Image::getThumb($fileName, $filePath, $width, $height, $thumbArgs);
 }
 «ENDDEFINE»
