@@ -19,35 +19,35 @@ function «prefix()»AddCommonValidationRules(objectType, id)
         }],
         ['validate-htmlcolour', Zikula.__('Please select a valid html colour code.', 'module_«appName()»'), function(val, elem) {
             val = new String(val);
-            return (/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(val));
+            return Validation.get('IsEmpty').test(val) || (/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(val));
         }],
         ['validate-datetime-past', Zikula.__('Please select a value in the past.', 'module_«appName()»'), function(val, elem) {
             val = new String(val);
             var cmpVal = «prefix()»ReadDate(val, true);
-            return (cmpVal < «prefix()»Today('datetime'));
+            return Validation.get('IsEmpty').test(val) || (cmpVal < «prefix()»Today('datetime'));
         }],
         ['validate-datetime-future', Zikula.__('Please select a value in the future.', 'module_«appName()»'), function(val, elem) {
             val = new String(val);
             var cmpVal = «prefix()»ReadDate(val, true);
-            return (cmpVal >= «prefix()»Today('datetime'));
+            return Validation.get('IsEmpty').test(val) || (cmpVal >= «prefix()»Today('datetime'));
         }],
         ['validate-date-past', Zikula.__('Please select a value in the past.', 'module_«appName()»'), function(val, elem) {
             val = new String(val);
             var cmpVal = «prefix()»ReadDate(val, false);
-            return (cmpVal < «prefix()»Today('date'));
+            return Validation.get('IsEmpty').test(val) || (cmpVal < «prefix()»Today('date'));
         }],
         ['validate-date-future', Zikula.__('Please select a value in the future.', 'module_«appName()»'), function(val, elem) {
             val = new String(val);
             var cmpVal = «prefix()»ReadDate(val, false);
-            return (cmpVal >= «prefix()»Today('date'));
+            return Validation.get('IsEmpty').test(val) || (cmpVal >= «prefix()»Today('date'));
         }],
         ['validate-time-past', Zikula.__('Please select a value in the past.', 'module_«appName()»'), function(val, elem) {
             var cmpVal = new String(val);
-            return (cmpVal < «prefix()»Today('time'));
+            return Validation.get('IsEmpty').test(val) || (cmpVal < «prefix()»Today('time'));
         }],
         ['validate-time-future', Zikula.__('Please select a value in the future.', 'module_«appName()»'), function(val, elem) {
             var cmpVal = new String(val);
-            return (cmpVal >= «prefix()»Today('time'));
+            return Validation.get('IsEmpty').test(val) || (cmpVal >= «prefix()»Today('time'));
         }]«IF models.entities.exists(e|e.getUniqueDerivedFields().reject(e|e.primaryKey).size > 0)-»,
         ['validate-unique', Zikula.__('This value is already assigned, but must be unique. Please change it.', 'module_«appName()»'), function(val, elem) {
             return «prefix()»UniqueCheck('«name.formatForCode()»', val, elem, id);
