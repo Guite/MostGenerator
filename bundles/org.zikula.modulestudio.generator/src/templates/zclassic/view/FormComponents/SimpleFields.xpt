@@ -125,7 +125,7 @@
 «ENDIF-»
                   <div class="z-formnote">
                       {gt text='Current file'}:
-                      <a href="{$«realName»FullPathURL}" title="{$«objName».«entity.getLeadingField().name.formatForCode()»|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB()»]"{/if}>
+                      <a href="{$«realName»FullPathUrl}" title="{$«objName».«entity.getLeadingField().name.formatForCode()»|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB()»]"{/if}>
                       {if $«realName»Meta.isImage}
                           <img src="{$«realName»|«appNameSmall»ImageThumb:$«realName»FullPath:80:80}" width="80" height="80" alt="{$«objName».«entity.getLeadingField().name.formatForCode()»|replace:"\"":""}" />
                       {else}

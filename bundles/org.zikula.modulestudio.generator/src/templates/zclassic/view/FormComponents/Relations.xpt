@@ -174,9 +174,9 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPathURL)}
 «LET targetEntity.getLeadingField() AS leadingField-»
 «IF leadingField != null-»
-    <img src="{$item.«imageFieldName»|«app.appName().formatForDB()»ImageThumb:$item.«imageFieldName»FullPathURL:50:40}" width="50" height="40" alt="{$item.«leadingField.name.formatForCode()»|replace:"\"":""}" />
+    <img src="{$item.«imageFieldName»FullPathUrl|«app.appName().formatForDB()»ImageThumb:$item.«imageFieldName»FullPathUrl:50:40}" width="50" height="40" alt="{$item.«leadingField.name.formatForCode()»|replace:"\"":""}" />
 «ELSE-»
-    <img src="{$item.«imageFieldName»|«app.appName().formatForDB()»ImageThumb:$item.«imageFieldName»FullPathURL:50:40}" width="50" height="40" alt="{gt text='«targetEntity.name.formatForDisplayCapital()»|replace:"\"":""}" />
+    <img src="{$item.«imageFieldName»FullPathUrl|«app.appName().formatForDB()»ImageThumb:$item.«imageFieldName»FullPathUrl:50:40}" width="50" height="40" alt="{gt text='«targetEntity.name.formatForDisplayCapital()»|replace:"\"":""}" />
 «ENDIF-»
 «ENDLET-»
 {/if}

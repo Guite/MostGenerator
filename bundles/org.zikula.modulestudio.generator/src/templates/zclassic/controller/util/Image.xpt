@@ -20,9 +20,10 @@ class «appName()»_Util_Base_Image extends Zikula_AbstractBase
 {
     /**
      * This method is used by the «appName().formatForDB()»ImageThumb modifier
-     * for creating and displaying a thumbnail image.
+     * as well as the Ajax controller of this application.
      *
-     * @param  string    $fileName   The input file name.
+     * It serves for creating and displaying a thumbnail image.
+     *
      * @param  string    $filePath   The input file path (including file name).
      * @param  int       $width      Desired width.
      * @param  int       $height     Desired height.
@@ -30,9 +31,9 @@ class «appName()»_Util_Base_Image extends Zikula_AbstractBase
      *
      * @return string The thumbnail file path.
      */
-    public static function getThumb($fileName = '', $filePath = '', $width = 100, $height = 80, $thumbArgs = array())
+    public static function getThumb($filePath = '', $width = 100, $height = 80, $thumbArgs = array())
     {
-        if (empty($fileName) || empty($filePath) || !file_exists($filePath)) {
+        if (empty($filePath) || !file_exists($filePath)) {
             return;
         }
         if (!is_array($thumbArgs)) {
@@ -40,10 +41,8 @@ class «appName()»_Util_Base_Image extends Zikula_AbstractBase
         }
 
         // compute thumbnail file path using a sub folder
-        $fileExtension = FileUtil::getExtension($fileName«REM»Path«ENDREM»«''-»);
-        $thumbPath = dirname($filePath) . '/tmb/';
-        $thumbFileBase = substr($filePath, 0, strrpos($filePath, '.'));
-        $thumbFilePath = $thumbPath . $thumbFileBase . '_' . $width . 'x' . $height . '.' . $fileExtension;
+        $pathInfo = pathinfo($filePath);
+        $thumbFilePath = $pathInfo['dirname'] . '/tmb/' . $pathInfo['filename'] . '_' . $width . 'x' . $height . '.' . $pathInfo['extension'];
 
         // return thumbnail file path if it is already existing
         if (file_exists($thumbFilePath)) {
@@ -120,7 +119,7 @@ class «appName()»_Util_Base_Image extends Zikula_AbstractBase
 
             // save thumb file
             $saveOptions = array();
-            if (in_array($extension, array('jpg', 'jpeg', 'png'))) {
+            if (in_array($fileExtension, array('jpg', 'jpeg', 'png'))) {
                 $saveOptions['quality'] = 85;
             }
             $thumb->save($thumbFilePath);
