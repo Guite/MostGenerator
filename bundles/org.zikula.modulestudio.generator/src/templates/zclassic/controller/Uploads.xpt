@@ -211,7 +211,7 @@ class «appName()»_Base_UploadHandler
             }
         }
 
-        $extensionCheck = (!in_array($extension, $this->forbiddenExtensions));
+        $extensionCheck = (!in_array($extension, $this->forbiddenFileTypes));
         if ($extensionCheck === false) {
             return false;
         }
