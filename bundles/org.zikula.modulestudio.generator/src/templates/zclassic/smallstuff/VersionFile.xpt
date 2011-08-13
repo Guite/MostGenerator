@@ -41,16 +41,10 @@ class «appName()»_Base_Version extends Zikula_AbstractVersion
 
         // permission schema
 «EXPAND PermissionSchema-»
+«IF !referredApplications.isEmpty-»
 
-«IF hasUploads() || !referredApplications.isEmpty-»
         // module dependencies
         $meta['dependencies'] = array(
-«IF hasUploads()-»
-                    array('modname'    => 'Thumbnail',
-                          'minversion' => '1.2.1',
-                          'maxversion' => '',
-                          'status'     => ModUtil::DEPENDENCY_RECOMMENDED)«IF !referredApplications.isEmpty-»,«ENDIF»
-«ENDIF-»
 «EXPAND AppDependency FOREACH referredApplications SEPARATOR ','-»
         );
 «ENDIF-»
