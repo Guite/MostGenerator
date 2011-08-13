@@ -10,7 +10,8 @@
 «ENDFILE»
 «FILE viewPluginFilePath(this, 'function', 'TreeSelector')-»«EXPAND FileHelper::phpFileHeader(this)-»
 /**
- * The «appName().formatForDB()»TreeSelector plugin cares for handling a dropdown list for a tree based on a given nested set.
+ * The «appName().formatForDB()»TreeSelector plugin cares for handling a dropdown list
+ * for an entity with tree structure.
  *
  * @param array            $params Parameters passed to this function from the template.
  * @param Zikula_Form_View $view   Reference to Form render object.

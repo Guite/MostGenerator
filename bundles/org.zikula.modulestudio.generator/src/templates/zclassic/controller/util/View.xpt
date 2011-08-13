@@ -209,28 +209,63 @@ class «appName()»_Util_Base_View extends Zikula_AbstractBase
             $thumbArgs = array();
         }
 
-        $mediaModule = 'Thumbnail';
-        if (!ModUtil::available($mediaModule)) {
-            return $filePath;
-        }
-
-        $thumbArgs['filename'] = $filePath;
+        // collect arguments
+«REM»TODO«ENDREM»
         $thumbArgs['far'] = 1; // force aspect ratio
-        $thumbArgs['w'] = $width;
-        $thumbArgs['h'] = $height;
 
-        // compute thumbnail file name
-        $thumbFileName = ModUtil::apiFunc($mediaModule, 'user', 'generateThumbnailName', $thumbArgs);
 
-        // move thumbnail into sub folder
-        $basePath = str_replace($fileName, '', $filePath);
-        $thumbFileNameOnly = str_replace($basePath, '', $thumbFileName);
-        $thumbFileName = $basePath . 'tmb/' . $thumbFileNameOnly;
+        // compute thumbnail file path using a sub folder
+        $fileExtension = FileUtil::getExtension($fileName«REM»Path«ENDREM»«''-»);
+        $thumbPath = dirname($filePath) . '/tmb/';
+        $thumbFileBase = substr($filePath, 0, strrpos($filePath, '.'));
+        $thumbFileName = $thumbPath . $thumbFileBase . '_' . $width . 'x' . $height . '.' . $fileExtension;
 
         // return file if already existing
         if (file_exists($thumbFileName)) {
             return $thumbFileName;
         }
+
+        // use Imagine library for creating the thumbnail image
+		try {
+		    // create instance of Imagine
+		    $imagine = new Imagine\Gd\Imagine();
+		    // alternative
+		    // $imagine = new Imagine\Imagick\Imagine();
+
+            // cut out thumbnail
+            $thumbMode = Imagine\ImageInterface::THUMBNAIL_OUTBOUND;
+            // or
+            // scale down thumbnail
+            $thumbMode = Imagine\ImageInterface::THUMBNAIL_INSET;
+
+            $imagine->open($filePath)
+                ->resize(new Imagine\Box($width, $height), $thumbMode)
+                ->save($thumbFileName);
+            /**
+             * alternative
+             * $image = $imagine->open($filePath);
+             * $thumbnail = $image->thumbnail(new Imagine\Image\Box($width, $height));
+             * $thumbnail->save($thumbFileName);
+             */
+
+            /**
+             * You can do many other Imagine operations here as well.
+             * Manipulations:
+             *    resize, rotate, crop, save, copy, paste, apply mask
+             * Operations:
+             *    ellipse, polygon, line, dot, arc, pie slice, text
+             */
+
+
+		} catch (Imagine\Exception\Exception $e) {
+            $dom = ZLanguage::getModuleDomain('«appName()»');
+            // log this exception
+            LogUtil::registerError(__f('An error occured during thumbnail creation: %s', array($e->getMessage()), $dom));
+            // return the original image as fallback
+            return $filePath;
+		}
+
+
 
         // create the thumbnail
         $thumbArgs['tmbname'] = $thumbFileName;

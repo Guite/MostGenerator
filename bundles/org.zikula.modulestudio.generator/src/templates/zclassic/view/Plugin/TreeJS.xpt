@@ -6,7 +6,8 @@
 «DEFINE Root FOR Application-»
 «FILE viewPluginFilePath(this, 'function', 'TreeJS')-»«EXPAND FileHelper::phpFileHeader(this)-»
 /**
- * The «appName().formatForDB()»TreeJS plugin delivers the html output for a JS tree based on a given nested set.
+ * The «appName().formatForDB()»TreeJS plugin delivers the html output for a JS tree
+ * based on given tree entities.
  *
  * Available parameters:
  *   - assign:   If set, the results are assigned to the corresponding variable instead of printed out.
