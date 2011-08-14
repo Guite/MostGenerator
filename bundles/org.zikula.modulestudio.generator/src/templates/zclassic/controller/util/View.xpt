@@ -131,9 +131,6 @@ class «appName()»_Util_Base_View extends Zikula_AbstractBase
             if (SecurityUtil::checkPermission('«appName()»::', '::', ACCESS_ADMIN)) {
                 $extParams = array('xml', 'json'/*, 'pdf'*/);
             }
-            else {
-                $extParams = array('xml'/*, 'pdf'*/);
-            }
         }
         return $extParams;
     }
