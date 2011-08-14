@@ -171,13 +171,27 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «EXPAND entity::Association::RelationAccessor(true) FOREACH outgoing.typeSelect(JoinRelationship)»
 
     /**
+     * Initialise validator and return it's instance.
+     *
+     * @return «implClassModel('validator', '')» The validator for this entity.
+     */
+    public function initValidator()
+    {
+        if (!is_null($this->_validator)) {
+            return $this->_validator;
+        }
+        $this->_validator = new «implClassModel('validator', '')»($this);
+        return $this->_validator;
+    }
+
+    /**
      * Start validation and raise exception if invalid data is found.
      *
      * @return void.
      */
     public function validate()
     {
-        $result = $this->_validator->validateAll();
+        $result = $this->initValidator()->validateAll();
         if (is_array($result)) {
             throw new Zikula_Exception($result['message'], $result['code'], $result['debugArray']);
         }
@@ -267,9 +281,8 @@ $«getRelationAliasName(false)», $«targetField.name.formatForCode()»
 «EXPAND ConstructorAssignmentAggregate FOREACH getAggregators().getAggregatingRelationships()-»
 «ELSE-»
 «ENDIF-»
-        $this->_objectType = '«REM»fullEntityTableName()«ENDREM»«''-»«name.formatForCode()»';
         $this->_idFields = array(«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ', '-»'«pkField.name.formatForCode()»'«ENDFOREACH-»);
-        $this->_validator = new «implClassModel('validator', '')»($this);
+        $this->initValidator();
         $this->_hasUniqueSlug = «IF hasSluggableFields() && slugUnique»true«ELSE»false«ENDIF»;
 «EXPAND entity::Association::InitCollections-»
 «ENDDEFINE»
