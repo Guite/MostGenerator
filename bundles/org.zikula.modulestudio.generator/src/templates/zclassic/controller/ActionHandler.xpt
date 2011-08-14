@@ -927,7 +927,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
         // list of mandatory fields
         $uploadFieldsMandatory = array(«FOREACH uploadFields.select(e|e.mandatory) AS uploadField SEPARATOR ", "»'«uploadField.name.formatForCode()»'«ENDFOREACH»);
 
-        $existingObjectData = $existingObject->get«name.toFirstUpper()»();
+        $existingObjectData = $existingObject->toArray();
 
         // process all fields
         foreach ($uploadFields as $uploadField) {
