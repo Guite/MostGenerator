@@ -214,14 +214,11 @@
 
 «DEFINE PostLoadImpl FOR Entity-»«REM»FOR PostLoad«ENDREM»
         $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
-«IF !(fields.typeSelect(EmailField).isEmpty && fields.typeSelect(UploadField).isEmpty)-»
         $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST', FILTER_SANITIZE_STRING);
-«ENDIF-»
-
 «IF !fields.typeSelect(UploadField).isEmpty-»
         $imageTypes = array('gif', 'jpeg', 'jpg', 'png');
-
 «ENDIF-»
+
     «EXPAND sanitizeForOutput FOREACH fields»
 «ENDDEFINE»
 
