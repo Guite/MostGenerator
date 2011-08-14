@@ -496,7 +496,7 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
             $errorInfo['message'] = __f('Error! Field value may only contain digits (%s).', array('«name.formatForCode()»'), $dom);
             return $errorInfo;
         }
-«IF mandatory && primaryKey && !entity.hasCompositeKeys()-»
+«IF mandatory && (!primaryKey || entity.hasCompositeKeys())-»
         if (!$this->isNumberNotEmpty('«name.formatForCode()»')) {
             $errorInfo['message'] = __f('Error! Field value must not be 0 (%s).', array('«name.formatForCode()»'), $dom);
             return $errorInfo;
