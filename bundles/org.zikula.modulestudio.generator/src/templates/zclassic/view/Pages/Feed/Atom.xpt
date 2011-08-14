@@ -23,7 +23,7 @@
     <id>{$uniqueID}</id>
     <updated>{$items[0].updatedDate|default:$smarty.now|dateformat:'%Y-%m-%dT%H:%M:%SZ'}</updated>
 {/if}
-    <link rel="alternate" type="text/html" hreflang="{lang}" href="{modurl modname='«appName»' fqurl=1}" />
+    <link rel="alternate" type="text/html" hreflang="{lang}" href="{modurl modname='«appName»' type='«controller.name()»' func='«IF controller.hasActions('main')-»main«ELSE-»«controller.actions.get(0).name.formatForCode()»«ENDIF-»' fqurl=1}" />
     <link rel="self" type="application/atom+xml" href="{php}echo substr(System::getBaseURL(), 0, strlen(System::getBaseURL())-1);{/php}{getcurrenturi}" />
     <rights>Copyright (c) {php}echo date('Y');{/php}, {$baseurl}</rights>
 

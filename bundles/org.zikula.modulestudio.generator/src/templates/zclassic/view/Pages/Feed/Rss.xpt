@@ -25,11 +25,13 @@
         <atom:link href="{php}echo substr(System::getBaseURL(), 0, strlen(System::getBaseURL())-1);{/php}{getcurrenturi}" rel="self" type="application/rss+xml" />
         <description>{$channelDesc} - {$modvars.ZConfig.slogan}</description>
         <language>{lang}</language>
+{* commented out as $imagepath is not defined and we can't know whether this logo exists or not
         <image>
             <title>{$modvars.ZConfig.sitename}</title>
             <url>{$baseurl|escape:'html'}{$imagepath}/logo.jpg</url>
             <link>{$baseurl|escape:'html'}</link>
         </image>
+*}
         <docs>http://blogs.law.harvard.edu/tech/rss</docs>
         <copyright>Copyright (c) {php}echo date('Y');{/php}, {$baseurl}</copyright>
         <webMaster>{$modvars.ZConfig.adminmail|escape:'html'} ({usergetvar name='uname' uid=2})</webMaster>
