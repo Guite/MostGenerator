@@ -204,7 +204,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
      */
     public function toJson()
     {
-        return json_encode($this);
+        return json_encode($this->toArray());
     }
 
 «ENDDEFINE»
