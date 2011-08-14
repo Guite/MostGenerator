@@ -153,7 +153,7 @@ type="«type»", precision=«length», scale=«scale»«''-»
 «ENDDEFINE»
 
 «DEFINE FieldAccessor FOR IntegerField-»
-«IF isIndexByField() || (aggregateFor != null && aggregateFor != '')-»
+«IF isIndexByField()-»«REM» || (aggregateFor != null && aggregateFor != '')-»«ENDREM»«''-»
 «EXPAND FileHelper::GetterMethod(name.formatForCode(), fieldTypeAsString(), false)-»
 «ELSE-»
 «EXPAND FileHelper::GetterAndSetterMethods(name.formatForCode(), fieldTypeAsString(), false, false, '')-»
