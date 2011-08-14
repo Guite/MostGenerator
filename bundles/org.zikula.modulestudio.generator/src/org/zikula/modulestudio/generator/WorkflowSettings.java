@@ -35,15 +35,23 @@ public class WorkflowSettings {
     Object[] selectedReports = null;
     IWorkbenchWindow workbenchWindow = null;
     IWorkbench workbench = null;
-    String reportPath = "/src/templates/reporting/reports";
+    String reportPath = "/templates/reporting/reports";
 
     public WorkflowSettings() {
         this.availableCartridges.add("zclassic");
         this.availableCartridges.add("zoo");
         this.availableCartridges.add("reporting");
 
-        final java.net.URL[] resources = FileLocator.findEntries(Platform
-                .getBundle(Activator.PLUGIN_ID), new Path(this.reportPath));
+        java.net.URL[] resources = FileLocator.findEntries(
+                Platform.getBundle(Activator.PLUGIN_ID), new Path("/src"
+                        + this.reportPath));
+        final java.net.URL[] resourcesExported = FileLocator.findEntries(
+                Platform.getBundle(Activator.PLUGIN_ID), new Path(
+                        this.reportPath));
+        if (resources.length == 0) {
+            resources = resourcesExported;
+        }
+
         try {
             this.reportDir = new File(FileLocator.toFileURL(resources[0])
                     .toURI());
