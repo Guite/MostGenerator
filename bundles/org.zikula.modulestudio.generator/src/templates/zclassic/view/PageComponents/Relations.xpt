@@ -75,7 +75,7 @@
 <h3>{gt text='«otherEntity.getEntityNameSingularPlural(many).formatForDisplayCapital()»'}</h3>
 
 {if isset($«relatedEntity.name.formatForCode()».«relationAliasName»)}
-    {include file='«controller.name()»/«otherEntity.name.formatForCode()»/include_displayItemList«IF many»Many«ELSE»One«ENDIF».tpl' item«IF many»s«ENDIF»=$«relatedEntity.name.formatForCode()».«relationAliasName»}
+    {include file='«controller.name()»/«otherEntity.name.formatForCode()»/include_displayItemList«IF many»Many«ELSE»One«ENDIF».tpl' item«IF many»s«ENDIF»=$«relatedEntity.name.formatForCode()».«relationAliasName.toFirstLower()»}
 {/if}
 
 «IF !many-»
@@ -85,7 +85,7 @@
 {if $authAdmin || (isset($uid) && isset($«relatedEntity.name.formatForCode()».cr_uid) && $«relatedEntity.name.formatForCode()».cr_uid eq $uid)}
 <p class="manageLink">
     {gt text='Create «otherEntity.name.formatForDisplay()»' assign='createTitle'}
-    <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«otherEntity.name.formatForCode()»' «relationAliasNameParam.formatForDB()»="«FOREACH relatedEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»`$«relatedEntity.name.formatForCode()».«pkField.name.formatForCode()»`«ENDFOREACH-»}" title="{$createTitle}" class="z-icon-es-add">
+    <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«otherEntity.name.formatForCode()»' «relationAliasNameParam.formatForDB()»="«FOREACH relatedEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»`$«relatedEntity.name.formatForCode()».«pkField.name.formatForCode()»`«ENDFOREACH-»"}" title="{$createTitle}" class="z-icon-es-add">
         {$createTitle}
     </a>
 </p>
