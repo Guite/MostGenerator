@@ -52,7 +52,7 @@
     {/if}
 «ENDIF-»
 «ELSE-»
-    {if isset($«objName».cr_uid)}
+    {if isset($«objName».createdUserId)}
 {usergetvar name='uname' uid=$«objName».createdUserId assign='cr_uname'}
 {usergetvar name='name' uid=$«objName».createdUserId assign='cr_name'}
         <author>{usergetvar name='email' uid=$«objName».createdUserId} ({$cr_name|default:$cr_uname})</author>
