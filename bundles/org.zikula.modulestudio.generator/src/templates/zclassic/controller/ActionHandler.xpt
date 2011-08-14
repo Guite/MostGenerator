@@ -278,12 +278,12 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «EXPAND InitRelatedObjectDefault(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
             }
         }
-«FOREACH fields.typeSelect(DateField) AS dateField-»
+«REM»obsolete«FOREACH fields.typeSelect(AbstractDateField) AS dateField-»
 
         if ($entity['«dateField.name.formatForCode()»'] == '1900-01-01 00:00:00') {
             $entity['«dateField.name.formatForCode()»'] = null;
         }
-«ENDFOREACH-»
+«ENDFOREACH-»«ENDREM»«''-»
 
 «IF hasTranslatableFields()-»
         // process translated fields
@@ -292,8 +292,12 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $entityData = $entity->toArray();
 «ENDIF-»
 
-        // assign data to template
+        // assign data to template as array for easy translatable support
         $this->view->assign('«name.formatForDB()»', $entityData)
+«IF categorisable-»
+                   // assign also the actual object for categories listener
+                   ->assign('«name.formatForDB()»Obj', $entity)
+«ENDIF-»
                    ->assign('mode', $this->mode)
                    ->assign('inlineUsage', $this->inlineUsage);
 

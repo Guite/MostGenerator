@@ -19,7 +19,7 @@
     {include file='«controller.name()»/include_attributes_edit.tpl' obj=$«name.formatForDB()»}
 «ENDIF-»
 «IF categorisable-»
-    {include file='«controller.name()»/include_categories_edit.tpl' obj=$«name.formatForDB()» groupName='«name.formatForDB()»'}
+    {include file='«controller.name()»/include_categories_edit.tpl' obj=$«name.formatForDB()» groupName='«name.formatForDB()»Obj'}
 «ENDIF-»
 «IF standardFields-»
     {if $mode ne 'create'}
