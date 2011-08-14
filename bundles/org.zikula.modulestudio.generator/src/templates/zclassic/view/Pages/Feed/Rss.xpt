@@ -38,13 +38,13 @@
     <item>
 «LET getLeadingField() AS leadingField-»
 «IF leadingField != null-»
-        <title><![CDATA[{if isset($«objName».lu_date)}{$«objName».lu_date|dateformat} - {/if}{$«objName».«leadingField.name.formatForCode()»|notifyfilters:'«appName.formatForDB()».filterhook.«nameMultiple.formatForDB()»'}]]></title>
+        <title><![CDATA[{if isset($«objName».updatedDate) && $«objName».updatedDate ne null}{$«objName».updatedDate|dateformat} - {/if}{$«objName».«leadingField.name.formatForCode()»|notifyfilters:'«appName.formatForDB()».filterhook.«nameMultiple.formatForDB()»'}]]></title>
 «ELSE-»
-        <title><![CDATA[{if isset($«objName».lu_date)}{$«objName».lu_date|dateformat} - {/if}{gt text='«name.formatForDisplayCapital()-»'}]]></title>
+        <title><![CDATA[{if isset($«objName».updatedDate) && $«objName».updatedDate ne null}{$«objName».updatedDate|dateformat} - {/if}{gt text='«name.formatForDisplayCapital()-»'}]]></title>
 «ENDIF-»
 «ENDLET-»
-        <link>{modurl modname='«appName»' type='«controller.name()»' «IF controller.hasActions('display')»«modUrlDelete(objName, true)»«ELSE-»func='«IF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»'«ENDIF-» fqurl='1'}</link>
-        <guid>{modurl modname='«appName»' type='«controller.name()»' «IF controller.hasActions('display')»«modUrlDelete(objName, true)»«ELSE-»func='«IF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode()»'«ENDIF-» fqurl='1'}</guid>
+        <link>{modurl modname='«appName»' type='«controller.name()»' «IF controller.hasActions('display')»«modUrlDelete(objName, true)»«ELSE-»func='«IF controller.hasActions('view')-»view«ELSE-»main«ENDIF-»' ot='«name.formatForCode()»'«ENDIF-» fqurl='1'}</link>
+        <guid>{modurl modname='«appName»' type='«controller.name()»' «IF controller.hasActions('display')»«modUrlDelete(objName, true)»«ELSE-»func='«IF controller.hasActions('view')-»view«ELSE-»main«ENDIF-»' ot='«name.formatForCode()»'«ENDIF-» fqurl='1'}</guid>
 «IF !standardFields-»
 «IF metaData-»
     {if isset($«objName».__META__) && isset($«objName».__META__.author)}
@@ -88,8 +88,8 @@
 «ENDLET-»
 «ENDLET-»
 «IF standardFields-»
-    {if $«objName».cr_date}
-        <pubDate>{$«objName».cr_date|dateformat:"%a, %d %b %Y %T +0100"}</pubDate>
+    {if isset($«objName».createdDate) && $«objName».createdDate ne null}
+        <pubDate>{$«objName».createdDate|dateformat:"%a, %d %b %Y %T +0100"}</pubDate>
     {/if}
 «ENDIF-»
     </item>

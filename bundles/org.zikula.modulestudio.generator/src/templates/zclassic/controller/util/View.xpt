@@ -68,7 +68,7 @@ class «appName()»_Util_Base_View extends Zikula_AbstractBase
             else {
                 $view->display($template);
             }
-            return true;
+            System::shutDown();
         }
 
         // normal output
