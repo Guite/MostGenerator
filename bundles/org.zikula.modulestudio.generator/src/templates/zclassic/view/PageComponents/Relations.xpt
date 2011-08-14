@@ -68,18 +68,18 @@
 
 «DEFINE DisplayRelatedItems(String appName, Controller controller, Entity relatedEntity) FOR JoinRelationship-»
 «LET ((target == relatedEntity) ? true : false) AS incoming-»
-«LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
+«LET getRelationAliasName(!incoming).formatForCode().toFirstLower() AS relationAliasName-»
 «LET getRelationAliasName(incoming).formatForCodeCapital() AS relationAliasNameParam-»
 «LET ((incoming) ? source : target) AS otherEntity-»
 «LET (!incoming && this.metaType == OneToManyRelationship || this.metaType == ManyToManyRelationship) AS many-»
 <h3>{gt text='«otherEntity.getEntityNameSingularPlural(many).formatForDisplayCapital()»'}</h3>
 
-{if isset($«relatedEntity.name.formatForCode()».«relationAliasName»)}
-    {include file='«controller.name()»/«otherEntity.name.formatForCode()»/include_displayItemList«IF many»Many«ELSE»One«ENDIF».tpl' item«IF many»s«ENDIF»=$«relatedEntity.name.formatForCode()».«relationAliasName.toFirstLower()»}
+{if isset($«relatedEntity.name.formatForCode()».«relationAliasName») && $«relatedEntity.name.formatForCode()».«relationAliasName» ne null}
+    {include file='«controller.name()»/«otherEntity.name.formatForCode()»/include_displayItemList«IF many»Many«ELSE»One«ENDIF».tpl' item«IF many»s«ENDIF»=$«relatedEntity.name.formatForCode()».«relationAliasName»}
 {/if}
 
 «IF !many-»
-{if !isset($«relatedEntity.name.formatForCode()».«relationAliasName»)}
+{if !isset($«relatedEntity.name.formatForCode()».«relationAliasName») || $«relatedEntity.name.formatForCode()».«relationAliasName» eq null}
 «ENDIF-»
 {checkpermission component='«appName»::' instance='.*' level='ACCESS_ADMIN' assign='authAdmin'}
 {if $authAdmin || (isset($uid) && isset($«relatedEntity.name.formatForCode()».createdUserId) && $«relatedEntity.name.formatForCode()».createdUserId eq $uid)}
