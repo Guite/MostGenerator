@@ -9,18 +9,13 @@
 «IF controller.hasActions('view')-»
 «FILE templateFileWithExtension(controller, name, 'view', 'json')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» view json view in «controller.name()» area *}
-
 {«appName.formatForDB()»TemplateHeaders contentType='application/json'}
-{literal}
 [
-{/literal}
 {foreach item='item' from=$items name='«nameMultiple.formatForCode()»'}
     {if not $smarty.foreach.«nameMultiple.formatForCode()».first},{/if}
     {$item->toJson()}
 {/foreach}
-{literal}
 ]
-{/literal}
 «ENDFILE»
 «ENDIF-»
 
@@ -28,9 +23,9 @@
 «FILE templateFileWithExtension(controller, name, 'display', 'json')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» display json view in «controller.name()» area *}
 {«appName.formatForDB()»TemplateHeaders contentType='application/json'}
-
 {$«objName»->toJson()}
 «ENDFILE»
 «ENDIF-»
 «ENDLET-»
 «ENDDEFINE»
+
