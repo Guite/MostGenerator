@@ -53,7 +53,7 @@
 «IF geographical-»
 «FOREACH {'latitude', 'longitude'} AS geoFieldName-»
     <dt>{gt text='«geoFieldName.toFirstUpper()»'}</dt>
-    <dd>{$«objName».«geoFieldName»|formatnumber:15}</dd>
+    <dd>{$«objName».«geoFieldName»|formatnumber:10}</dd>
 «ENDFOREACH-»
 «ENDIF-»
 </dl>
