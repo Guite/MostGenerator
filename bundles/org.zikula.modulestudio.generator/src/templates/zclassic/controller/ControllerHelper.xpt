@@ -5,11 +5,12 @@
 «IF !isHandler-»
         $objectData = $repository->selectById($«idValue»);
         if (!is_array($objectData) || !isset($objectData[$«idVar»[0]])) {
+            return $this->registerError($this->__('No such item.'));
 «ELSE-»
         $entity = $repository->selectById($«idValue»);
         if (!is_object($entity) || !isset($entity[$«idVar»[0]])) {
+            return $this->view->setErrorMsg($this->__('No such item.'));
 «ENDIF-»
-            return $this->registerError($this->__('No such item.'));
         }
 «ENDDEFINE»
 

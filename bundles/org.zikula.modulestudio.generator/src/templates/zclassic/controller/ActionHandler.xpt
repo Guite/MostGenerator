@@ -223,7 +223,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         if ($this->mode == 'edit') {
             if (!SecurityUtil::checkPermission('«app.appName()»:«name.formatForCodeCapital()»:', '::', ACCESS_EDIT)) {
                 // set an error message and return false
-                return $this->view->registerError(LogUtil::registerPermissionError());
+                return $this->view->setErrorMsg(LogUtil::registerPermissionError());
             }
 
 «EXPAND ControllerHelper::retrieveEntityFromModel('idFields', 'this->idValues', true)-»
@@ -249,7 +249,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         }
         else {
             if (!SecurityUtil::checkPermission('«app.appName()»:«name.formatForCodeCapital()»:', '::', ACCESS_ADD)) {
-                return $this->view->registerError(LogUtil::registerPermissionError());
+                return $this->view->setErrorMsg(LogUtil::registerPermissionError());
             }
 
             $hasTemplateId = false;
@@ -568,7 +568,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
     {
         if ($args['commandName'] == 'delete') {
             if (!SecurityUtil::checkPermission('«app.appName()»:«name.formatForCodeCapital()»:', '::', ACCESS_DELETE)) {
-                return $this->view->registerError(LogUtil::registerPermissionError());
+                return $this->view->setErrorMsg(LogUtil::registerPermissionError());
             }
         }
 
@@ -651,14 +651,14 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 $this->idValues['«pkField.name.formatForCode()»'] = $«name.formatForCode()»->get«pkField.name.formatForCodeCapital()»();
                 // check if the insert has worked, might become obsolete due to exception usage
                 if (!$this->idValues['«pkField.name.formatForCode()»']) {
-                    return LogUtil::registerError($this->__('Error! Creation attempt failed.'));
+                    return $this->view->setErrorMsg($this->__('Error! Creation attempt failed.'));
                 }
 «ENDFOREACH-»
             } else if ($args['commandName'] == 'update') {
 «REM»                $updateResult = true/false;
                 // check if the update has worked, might become obsolete due to exception usage
                 if ($updateResult === false) {
-                    return LogUtil::registerError($this->__('Error! Update attempt failed.'));
+                    return $this->view->setErrorMsg($this->__('Error! Update attempt failed.'));
                 }«ENDREM»
             }
 
@@ -680,7 +680,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             $this->entityManager->remove($«name.formatForCode()»);
             $this->entityManager->flush();
 «REM»            if ($«name.formatForCode()»->delete() === false) {
-                return LogUtil::registerError($this->__('Error! Deletion attempt failed.'));
+                return $this->view->setErrorMsg($this->__('Error! Deletion attempt failed.'));
             }«ENDREM»
 
             LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» deleted.'));
@@ -814,7 +814,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «REM»TODO: move this into model validator#validateAll() (#37)«ENDREM»
             // check if another «name.formatForDisplay()» with the same «uniqueField.name.formatForDisplay()» does already exist
             if ($object->initValidator()->checkIf«uniqueField.name.formatForCodeCapital()»Exists($formData['«uniqueField.name.formatForCode()»'], $this->idValues«IF !hasCompositeKeys()-»[0]«ENDIF-»)) {
-                return LogUtil::registerError($this->__f('The «uniqueField.name.formatForDisplay()» %s is already assigned. Please choose another «uniqueField.name.formatForDisplay()».', array($formData['«uniqueField.name.formatForCode()»'])));
+                return $this->view->setErrorMsg($this->__f('The «uniqueField.name.formatForDisplay()» %s is already assigned. Please choose another «uniqueField.name.formatForDisplay()».', array($formData['«uniqueField.name.formatForCode()»'])));
             }
 «ENDFOREACH-»
 «FOREACH userFields AS userField-»
@@ -823,7 +823,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             if (!$formData['«realName»'] || UserUtil::getVars($formData['«realName»']) === false) {
 «IF userField.mandatory-»
                 // Oops, we have an invalid user id. As this field is mandatory, we raise an error.
-                return LogUtil::registerError($this->__('Invalid value received for field "«userField.name.formatForDisplay()»".'));
+                return $this->view->setErrorMsg($this->__('Invalid value received for field "«userField.name.formatForDisplay()»".'));
 «ELSE-»
                 // Oops, we have an invalid user id. As this field is not mandatory, we simply set it to 0.
                 $formData['«realName»'] = 0;
@@ -835,7 +835,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «IF slugUnique-»
             // check if another «name.formatForDisplay()» with the same slug does already exist
             if ($object->initValidator()->checkIfSlugExists($formData['slug'], $this->idValues«IF !hasCompositeKeys()-»[0]«ENDIF-»)) {
-                return LogUtil::registerError($this->__f('The slug %s is already assigned. Please choose another slug.', array($formData['slug'])));
+                return $this->view->setErrorMsg($this->__f('The slug %s is already assigned. Please choose another slug.', array($formData['slug'])));
             }
 «ENDIF-»
             $formData['slug'] = «container.application.appName()»_Util_Controller::formatPermalink($formData['slug']);
@@ -903,7 +903,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
         $formData['«relationAliasName»'] = (int) $this->request->getPost()->filter('«uniqueNameForJs»ItemList', 0, FILTER_VALIDATE_INT);
         if (!$formData['«relationAliasName»']) {
 «REM»            // Oops, we have an invalid relation id. As this field is mandatory, we raise an error.«ENDREM»
-            return LogUtil::registerError($this->__('Invalid value received for relation field "«relationAliasName.formatForDisplay()»".'));
+            return $this->view->setErrorMsg($this->__('Invalid value received for relation field "«relationAliasName.formatForDisplay()»".'));
         }
 «ENDLET-»
 «ENDLET-»
