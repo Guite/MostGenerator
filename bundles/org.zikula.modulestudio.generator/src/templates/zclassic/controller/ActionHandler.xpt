@@ -593,7 +593,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $idFields = $«name.formatForCode()»->get_idFields();
 
         if ($args['commandName'] != 'create') {
-            $«name.formatForCode()» = $repository->selectById($this->idValues);
+            $«name.formatForCode()» = $repository->selectById($this->idValues, false);
         }
 
 «EXPAND FetchInputData(name.formatForCode())-»

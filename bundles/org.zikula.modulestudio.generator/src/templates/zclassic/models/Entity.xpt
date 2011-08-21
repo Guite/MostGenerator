@@ -198,6 +198,18 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
     }
 
     /**
+     * Override toArray method to call the post load handler.
+     *
+     * @return array Object data converted to an array.
+     */
+    public function toArray()
+    {
+        $this->postLoadCallback();
+
+        return parent::toArray();
+    }
+
+    /**
      * Return entity data in JSON format.
      *
      * @return string JSON-encoded data.
