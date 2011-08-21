@@ -595,15 +595,17 @@ $«getRelationAliasName(false)»«number», «IF targetField.defaultValue != '' 
 «ENDDEFINE»
 «DEFINE ExampleRowValueNumber(Entity dataEntity, Integer number) FOR DerivedField-»«number»«ENDDEFINE»
 «DEFINE ExampleRowValueText(Entity dataEntity, Integer number) FOR DerivedField-»
-'«entity.name.formatForDisplayCapital()» «name.formatForDisplay()» «number»'«""-»
+'«entity.name.formatForDisplayCapital()» «name.formatForDisplay()» «number»'«''-»
 «ENDDEFINE»
 «DEFINE ExampleRowValueTextLength(Entity dataEntity, Integer number, Integer maxLength) FOR DerivedField-»
 «IF maxLength >= (entity.name.formatForDisplayCapital().length + 4 + name.formatForDisplay().length)-»
-'«dataEntity.name.formatForDisplayCapital()» «name.formatForDisplay()» «number»'«""-»
+'«dataEntity.name.formatForDisplayCapital()» «name.formatForDisplay()» «number»'«''-»
 «ELSEIF !unique && maxLength >= (4 + name.formatForDisplay().length)-»
-'«name.formatForDisplay()» «number»'«""-»
-«ELSEIF maxLength < 4-»
-'«(number+dataEntity.name.length+dataEntity.fields.size)»'«""-»
+'«name.formatForDisplay()» «number»'«''-»
+«ELSEIF maxLength < 4 && maxLength > 1-»
+'«(number+dataEntity.name.length+dataEntity.fields.size)»'«''-»
+«ELSEIF maxLength == 1-»
+'«((number > 9) ? 1 : number)»'«''-»
 «ELSE-»
 substr('«dataEntity.name.formatForDisplayCapital()» «name.formatForDisplay()»', 0, «(maxLength-2)») . ' «number»'«''-»
 «ENDIF-»
