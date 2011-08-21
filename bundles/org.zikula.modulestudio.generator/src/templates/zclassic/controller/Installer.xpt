@@ -631,7 +631,7 @@ substr('«dataEntity.name.formatForDisplayCapital()» «name.formatForDisplay()�
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR UserField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR ArrayField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR ObjectField-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DatetimeField-»DateTime::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'))«ENDDEFINE»
-«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DateField-»DateTime::createFromFormat('Y-m-d', date('Y-m-d'))«ENDDEFINE»
-«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR TimeField-»DateTime::createFromFormat('H:i:s', date('H:i:s'))«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DatetimeField-»date('Y-m-d H:i:s')«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DateField-»date('Y-m-d')«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR TimeField-»date('H:i:s')«ENDDEFINE»
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR FloatField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»

@@ -101,5 +101,9 @@
 «ENDDEFINE»
 
 «DEFINE SetterAssignment(String name, String type) FOR AbstractDateField-»
-            $this->«name» = new \DateTime($«name»);
+            if (is_object($«name») && $«name» instanceOf \DateTime) {
+                $this->«name» = $«name»;
+            } else {
+                $this->«name» = new \DateTime($«name»);
+            }
 «ENDDEFINE»
