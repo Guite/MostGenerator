@@ -355,7 +355,7 @@ class «appName()»_Base_UploadHandler
 
         // remove original file
         if (!unlink($basePath . $fileName)) {
-            false;
+            return false;
         }
         $objectData[$fieldName] = '';
         $objectData[$fieldName . 'Meta'] = array();
