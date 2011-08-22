@@ -19,7 +19,7 @@
 «IF hasColourFields()-»
 «EXPAND Plugin::FormColourInput::Root-»
 «ENDIF-»
-«IF «IF geographical-»
+«IF !models.entities.select(e|e.geographical).isEmpty-»
 «EXPAND Plugin::FormGeoInput::Root-»
 «ENDIF-»
 «ENDDEFINE»
