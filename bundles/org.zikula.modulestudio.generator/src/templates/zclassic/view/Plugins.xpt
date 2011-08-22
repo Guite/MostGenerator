@@ -19,5 +19,8 @@
 «IF hasColourFields()-»
 «EXPAND Plugin::FormColourInput::Root-»
 «ENDIF-»
+«IF «IF geographical-»
+«EXPAND Plugin::FormGeoInput::Root-»
+«ENDIF-»
 «ENDDEFINE»
 
