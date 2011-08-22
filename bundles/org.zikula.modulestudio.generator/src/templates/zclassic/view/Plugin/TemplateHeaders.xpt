@@ -16,10 +16,15 @@
  * The «appName().formatForDB()»TemplateHeaders plugin performs header() operations
  * to change the content type provided to the user agent.
  *
+ * Available parameters:
+ *   - contentType:  Content type for corresponding http header.
+ *   - asAttachment: If set to true the file will be offered for downloading.
+ *   - filename:     Name of download file.
+ *
  * @param  array       $params All attributes passed to this function from the template.
  * @param  Zikula_View $view   Reference to the view object.
  *
- * @return string The output of the plugin.
+ * @return boolean false.
  */
 function smarty_function_«appName().formatForDB()»TemplateHeaders($params, $view)
 {

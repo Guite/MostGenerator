@@ -15,6 +15,9 @@
 «ENDDEFINE»
 
 «DEFINE FormFramePluginImpl FOR Application-»
+/**
+ * Wrapper class for styling <div> elements and a validation summary.
+ */
 class «appName()»_Form_Plugin_FormFrame extends Zikula_Form_AbstractPlugin
 {
     public $useTabs;

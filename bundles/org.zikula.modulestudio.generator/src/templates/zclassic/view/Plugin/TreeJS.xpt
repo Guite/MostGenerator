@@ -10,7 +10,11 @@
  * based on given tree entities.
  *
  * Available parameters:
- *   - assign:   If set, the results are assigned to the corresponding variable instead of printed out.
+ *   - objectType: Name of treated object type.
+ *   - tree:       Object collection with tree items.
+ *   - controller: Optional name of controller, defaults to 'user'.
+ *   - root:       Optional id of root node, defaults to 1.
+ *   - assign:     If set, the results are assigned to the corresponding variable instead of printed out.
  *
  * @param  array       $params  All attributes passed to this function from the template.
  * @param  Zikula_View $view    Reference to the view object.

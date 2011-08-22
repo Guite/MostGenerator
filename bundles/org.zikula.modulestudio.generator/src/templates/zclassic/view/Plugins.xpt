@@ -16,5 +16,8 @@
 «EXPAND Plugin::TreeJS::Root-»
 «EXPAND Plugin::TreeSelector::Root-»
 «ENDIF-»
+«IF hasColourFields()-»
+«EXPAND Plugin::FormColourInput::Root-»
+«ENDIF-»
 «ENDDEFINE»
 

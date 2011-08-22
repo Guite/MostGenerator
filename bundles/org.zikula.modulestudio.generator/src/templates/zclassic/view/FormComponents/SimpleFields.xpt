@@ -74,21 +74,10 @@
 «ENDIF-»
 «IF language-»
             {formlanguageselector «EXPAND GroupAndId(idSuffix)-» mandatory=«mandatory» __title='Choose the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'}
+«ELSEIF htmlcolour-»
+            {«entity.container.application.appName().formatForDB()»ColourInput «EXPAND GroupAndId(idSuffix)-» mandatory=«mandatory» __title='Choose the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'}
 «ELSE-»
             {formtextinput «EXPAND GroupAndId(idSuffix)-» mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='«IF password-»password«ELSE-»singleline«ENDIF-»' maxLength=«length»«EXPAND Validation::FieldValidationCssClass»}
-«ENDIF-»
-«IF htmlcolour-»
-            {* to be replaced by a special plugin *} 
-            <script type="text/javascript" charset="utf-8">
-            /* <![CDATA[ */
-                var namePicky = new PickyColor({
-                    field: '«name.formatForCode()»«IF idSuffix != null && idSuffix != ''-»{{«idSuffix»}}«ENDIF-»',
-                    color: '{{$«entity.name.formatForCode()».«name.formatForCode()»}}',
-                    colorWell: '«name.formatForCode()»«IF idSuffix != null && idSuffix != ''-»{{«idSuffix»}}«ENDIF-»',
-                    closeText: '{{gt text='Close'}}'
-                })
-            /* ]]> */
-            </script>
 «ENDIF-»
 «ENDDEFINE»
 
