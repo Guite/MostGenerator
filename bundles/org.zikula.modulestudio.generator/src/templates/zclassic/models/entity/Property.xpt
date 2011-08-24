@@ -22,6 +22,17 @@ completely as the define for DerivedField can be used then instead.«ENDREM»
 «ENDDEFINE»
 
 «DEFINE PersistentProperty FOR UploadField-»
+    /**
+     * «name.formatForDisplayCapital()» meta data array.
+     *
+     * @ORM\Column(type="array")
+«IF translatable-»
+     * @Gedmo\Translatable
+«ENDIF-»
+     * @var array $«name.formatForCode()»Meta.
+     */
+    protected $«name.formatForCode()»Meta = array();
+
 «EXPAND PersistentProperty(name.formatForCode(), fieldTypeAsString(), '')-»
 
     /**
@@ -37,14 +48,6 @@ completely as the define for DerivedField can be used then instead.«ENDREM»
      * @var string $«name.formatForCode()»FullPathUrl.
      */
     protected $«name.formatForCode()»FullPathUrl = '';
-
-    /**
-     * «name.formatForDisplayCapital()» meta data array.
-     *
-     * @ORM\Column(type="array")
-     * @var array $«name.formatForCode()»Meta.
-     */
-    protected $«name.formatForCode()»Meta = array();
 «ENDDEFINE»
 
 «DEFINE PersistentProperty FOR ArrayField-»
