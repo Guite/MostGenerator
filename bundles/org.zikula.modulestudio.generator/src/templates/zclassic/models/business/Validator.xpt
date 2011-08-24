@@ -717,9 +717,12 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
             return false;
         }
 
+        $serviceManager = ServiceUtil::getManager();
+        $entityManager = $serviceManager->getService('doctrine.entitymanager');
+
         $objectType = '«entity.name.formatForCode()»';
         $entityClass = '«app.appName()»_Entity_' . ucfirst($objectType);
-        $repository = $this->entityManager->getRepository($entityClass);
+        $repository = $entityManager->getRepository($entityClass);
 
         // TODO: move to «IF entity.isInheriting()»«entity.parentType().baseClassModel('repository', '')»«ELSE»«entity.baseClassModel('repository', '')»«ENDIF» (#37)
         $where = 'tbl.«name.formatForCode()» = \'' . DataUtil::formatForStore($value) . '\'';
@@ -748,9 +751,12 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
             return false;
         }
 
+        $serviceManager = ServiceUtil::getManager();
+        $entityManager = $serviceManager->getService('doctrine.entitymanager');
+
         $objectType = '«name.formatForCode()»';
         $entityClass = '«app.appName()»_Entity_' . ucfirst($objectType);
-        $repository = $this->entityManager->getRepository($entityClass);
+        $repository = $entityManager->getRepository($entityClass);
 
         // TODO: move to «IF isInheriting()»«parentType().baseClassModel('repository', '')»«ELSE»«baseClassModel('repository', '')»«ENDIF» (#37)
         $where = 'tbl.slug = \'' . DataUtil::formatForStore($value) . '\'';
