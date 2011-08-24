@@ -129,6 +129,10 @@ class «appName()»_Util_Base_Translatable extends Zikula_AbstractBase
 
 «DEFINE TranslatableFieldDefinition FOR Entity-»
 «EXPAND TranslatableFieldDefinition FOREACH getTranslatableFields() SEPARATOR ','»
+«IF hasTranslatableSlug()-»,
+                    array('name' => 'slug',
+                          'default' => '')
+«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE TranslatableFieldDefinition FOR EntityField-»
@@ -136,7 +140,7 @@ class «appName()»_Util_Base_Translatable extends Zikula_AbstractBase
 «ENDDEFINE»
 
 «DEFINE TranslatableFieldDefinition FOR DerivedField-»
-                    array('name'    => '«name»',
+                    array('name' => '«name»',
                           'default' => '«IF defaultValue != ''-»«defaultValue»«ELSE-»«name.formatForDisplayCapital()»«ENDIF-»')
 «ENDDEFINE»
 
