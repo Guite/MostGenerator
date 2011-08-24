@@ -81,7 +81,7 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
 «IF hasSluggableFields()-»
 
     /**
-«IF !getSluggableFields().select(e|e.translatable).isEmpty-»
+«IF hasTranslatableSlug()-»
      * @Gedmo\Translatable
 «ENDIF-»
      * @Gedmo\Slug(style="«slugStyle.asConstant()»", separator="«slugSeparator»"«IF !slugUnique-», unique=false«ENDIF-»«IF !slugUpdatable-», updatable=false«ENDIF-»)
@@ -218,7 +218,7 @@ field="«timestampableChangeTriggerField.formatForCode()»"«IF timestampableCha
 «EXPAND FileHelper::GetterAndSetterMethods('longitude', 'decimal', false, false, '')-»
 «ENDIF-»
 «IF hasSluggableFields()-»
-«EXPAND FileHelper::GetterMethod('slug', 'string', false)-»
+«EXPAND FileHelper::GetterAndSetterMethods('slug', 'string', false, false, '')-»
 «ENDIF-»
 «IF tree != EntityTreeType::NONE-»
 «EXPAND FileHelper::GetterAndSetterMethods('lft', 'integer', false, false, '')-»
