@@ -154,10 +154,10 @@
 «DEFINE SlugField(String idSuffix) FOR Entity-»
 «IF hasSluggableFields() && slugUpdatable-»
         <div class="z-formrow">
-            {formlabel for=«templateIdWithSuffix('slug', idSuffix)» __text='Permalink' mandatorysym='1'}
-            {formtextinput group='«name.formatForDB()»' id=«templateIdWithSuffix('slug', idSuffix)» mandatory=true readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay()» or let this field free to create one automatically' textMode='singleline' maxLength=255«IF slugUnique-» cssClass='required validate-unique'«ENDIF-»}
-            {«container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='required'}
+            {formlabel for=«templateIdWithSuffix('slug', idSuffix)» __text='Permalink'«IF slugUnique-» mandatorysym='1'«ENDIF-»}
+            {formtextinput group='«name.formatForDB()»' id=«templateIdWithSuffix('slug', idSuffix)» mandatory=«IF slugUnique-»true«ELSE-»false«ENDIF-» readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay()»«IF !slugUnique-» or let this field free to create one automatically«ENDIF-»' textMode='singleline' maxLength=255«IF slugUnique-» cssClass='required validate-unique'«ENDIF-»}
 «IF slugUnique-»
+            {«container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='required'}
             {«container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='validate-unique'}
 «ENDIF-»
         </div>
