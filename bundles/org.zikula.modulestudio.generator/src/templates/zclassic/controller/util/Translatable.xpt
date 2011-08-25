@@ -129,10 +129,11 @@ class «appName()»_Util_Base_Translatable extends Zikula_AbstractBase
 
 «DEFINE TranslatableFieldDefinition FOR Entity-»
 «EXPAND TranslatableFieldDefinition FOREACH getTranslatableFields() SEPARATOR ','»
+«REM»no slug input element yet, see https://github.com/l3pp4rd/DoctrineExtensions/issues/140
 «IF hasTranslatableSlug()-»,
                     array('name' => 'slug',
                           'default' => '')
-«ENDIF-»
+«ENDIF-»«ENDREM»«''-»
 «ENDDEFINE»
 
 «DEFINE TranslatableFieldDefinition FOR EntityField-»

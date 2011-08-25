@@ -160,6 +160,7 @@
 «ENDDEFINE»
 
 «DEFINE SlugField(String idSuffix) FOR Entity-»
+«REM»no slug input element yet, see https://github.com/l3pp4rd/DoctrineExtensions/issues/140
 «IF hasSluggableFields() && slugUpdatable-»
         <div class="z-formrow">
             {formlabel for=«templateIdWithSuffix('slug', idSuffix)» __text='Permalink'«IF slugUnique-» mandatorysym='1'«ENDIF-»}
@@ -170,6 +171,7 @@
 «ENDIF-»
         </div>
 «ENDIF-»
+«ENDREM»«''-»
 «ENDDEFINE»
 
 «DEFINE FormTemplateJS(Application app, Controller controller, String actionName) FOR Entity-»
