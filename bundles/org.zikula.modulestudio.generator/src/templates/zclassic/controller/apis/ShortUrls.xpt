@@ -174,7 +174,7 @@
         $func = $args['vars'][2];
 
         // usually the language is in $args['vars'][0], except no mod name is in the url and we are set as start app
-        $lang = ($args['vars'][0] == '«app.appName()»') ? $args['vars'][1] : $args['vars'][0];
+        $lang = (strtolower($args['vars'][0]) == '«app.name.formatForDB()»') ? $args['vars'][1] : $args['vars'][0];
 
         // remove some unrequired parameters
         foreach ($_GET as $k => $v) {
@@ -197,7 +197,7 @@
 
         $isDefaultModule = (System::getVar('shorturlsdefaultmodule', '') == '«app.appName()»');
         if (!$isDefaultModule) {
-            $url = '«app.appName()»/' . $url;
+            $url = '«app.name.formatForDB()»/' . $url;
         }
 
         // initialise url routing rules
