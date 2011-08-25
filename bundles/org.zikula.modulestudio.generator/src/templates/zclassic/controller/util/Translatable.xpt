@@ -161,13 +161,13 @@ class «appName()»_Util_Base_Translatable extends Zikula_AbstractBase
                           'default' => __('«name.formatForDisplayCapital()»', $dom))«''-»
 «ENDDEFINE»
 
-«DEFINE TranslatableFieldDefinition FOR AbstractIntegerField»
+«DEFINE TranslatableFieldDefinition FOR AbstractIntegerField-»
 «EXPAND TranslatableFieldDefinitionNumeric-»
 «ENDDEFINE»
-«DEFINE TranslatableFieldDefinition FOR DecimalField»
+«DEFINE TranslatableFieldDefinition FOR DecimalField-»
 «EXPAND TranslatableFieldDefinitionNumeric-»
 «ENDDEFINE»
-«DEFINE TranslatableFieldDefinition FOR FloatField»
+«DEFINE TranslatableFieldDefinition FOR FloatField-»
 «EXPAND TranslatableFieldDefinitionNumeric-»
 «ENDDEFINE»
 
@@ -176,19 +176,19 @@ class «appName()»_Util_Base_Translatable extends Zikula_AbstractBase
                           'default' => '')«''-»
 «ENDDEFINE»
 
-«DEFINE TranslatableFieldDefinition FOR UploadField»
+«DEFINE TranslatableFieldDefinition FOR UploadField-»
 «EXPAND TranslatableFieldDefinitionNoDefault-»
 «ENDDEFINE»
 
-«DEFINE TranslatableFieldDefinition FOR ArrayField»
+«DEFINE TranslatableFieldDefinition FOR ArrayField-»
 «EXPAND TranslatableFieldDefinitionNoDefault-»
 «ENDDEFINE»
 
-«DEFINE TranslatableFieldDefinition FOR ObjectField»
+«DEFINE TranslatableFieldDefinition FOR ObjectField-»
 «EXPAND TranslatableFieldDefinitionNoDefault-»
 «ENDDEFINE»
 
-«DEFINE TranslatableFieldDefinition FOR AbstractDateField»
+«DEFINE TranslatableFieldDefinition FOR AbstractDateField-»
 «EXPAND TranslatableFieldDefinitionNoDefault-»
 «ENDDEFINE»
 
