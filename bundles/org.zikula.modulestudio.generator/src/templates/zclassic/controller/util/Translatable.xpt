@@ -21,6 +21,7 @@ class «appName()»_Util_Base_Translatable extends Zikula_AbstractBase
      */
     public static function getTranslatableFields($objectType)
     {
+        $dom = ZLanguage::getModuleDomain('«appName()»');
         $fields = array();
         switch ($objectType) {
 «EXPAND TranslatableFieldList FOREACH getTranslatableEntities()-»
@@ -132,7 +133,7 @@ class «appName()»_Util_Base_Translatable extends Zikula_AbstractBase
 «REM»no slug input element yet, see https://github.com/l3pp4rd/DoctrineExtensions/issues/140
 «IF hasTranslatableSlug()-»,
                     array('name' => 'slug',
-                          'default' => '')
+                          'default' => '')«''-»
 «ENDIF-»«ENDREM»«''-»
 «ENDDEFINE»
 
@@ -140,14 +141,14 @@ class «appName()»_Util_Base_Translatable extends Zikula_AbstractBase
 «REM»error("Error: undefined entity field type " + metaType.toString() + " (code 542324)") -> ""-»«ENDREM»
 «ENDDEFINE»
 
-«DEFINE TranslatableFieldDefinition FOR DerivedField-»
+«DEFINE TranslatableFieldDefinition FOR DerivedField»
                     array('name' => '«name»',
-                          'default' => '«IF defaultValue != ''-»«defaultValue»«ELSE-»«name.formatForDisplayCapital()»«ENDIF-»')
+                          'default' => __('«IF defaultValue != ''-»«defaultValue»«ELSE-»«name.formatForDisplayCapital()»«ENDIF-»', $dom))«''-»
 «ENDDEFINE»
 
-«DEFINE TranslatableFieldDefinition FOR CalculatedField-»
+«DEFINE TranslatableFieldDefinition FOR CalculatedField»
                     array('name'    => '«name»',
-                          'default' => '«name.formatForDisplayCapital()»')«''-»
+                          'default' => __('«name.formatForDisplayCapital()»', $dom))«''-»
 «ENDDEFINE»
 
 «DEFINE TranslatableFunctionsImpl FOR Application-»
