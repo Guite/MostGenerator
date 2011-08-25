@@ -81,25 +81,25 @@
             {if $supportedLocales ne '' && is_array($supportedLocales) && count($supportedLocales) > 1}
                 {assign var='useOnlyCurrentLocale' value=false}
                 {nocache}
-                {lang assign='lang'}
+                {lang assign='currentLanguage'}
                 {foreach item='locale' from=$supportedLocales}
-                {if $locale eq $lang}
+                {if $locale eq $currentLanguage}
                     <fieldset>
                         <legend>{$locale|getlanguagename|safehtml}</legend>
-«EXPAND FieldWrapper('$locale') FOREACH getEditableFields().select(e|e.translatable)-»
+«EXPAND FieldWrapper('', '') FOREACH getEditableFields().select(e|e.translatable)-»
 «IF hasTranslatableSlug()-»
-«EXPAND SlugField('$locale')-»
+«EXPAND SlugField('', '')-»
 «ENDIF-»
                     </fieldset>
                     {/if}
                     {/foreach}
                     {foreach item='locale' from=$supportedLocales}
-                    {if $locale ne $lang}
+                    {if $locale ne $currentLanguage}
                     <fieldset>
                         <legend>{$locale|getlanguagename|safehtml}</legend>
-«EXPAND FieldWrapper('$locale') FOREACH getEditableFields().select(e|e.translatable)-»
+«EXPAND FieldWrapper('$locale', '$locale') FOREACH getEditableFields().select(e|e.translatable)-»
 «IF hasTranslatableSlug()-»
-«EXPAND SlugField('$locale')-»
+«EXPAND SlugField('$locale', '$locale')-»
 «ENDIF-»
                     </fieldset>
                 {/if}
@@ -111,28 +111,26 @@
         <fieldset>
             {lang assign='locale'}
             <legend>{$locale|getlanguagename|safehtml}</legend>
-«EXPAND FieldWrapper('$locale') FOREACH getEditableFields().select(e|e.translatable)-»
+«EXPAND FieldWrapper('', '') FOREACH getEditableFields().select(e|e.translatable)-»
 «IF hasTranslatableSlug()-»
-«EXPAND SlugField('$locale')-»
+«EXPAND SlugField('', '')-»
 «ENDIF-»
         </fieldset>
         {/if}
     {/formvolatile}
-«IF !getEditableFields().reject(e|e.translatable).isEmpty || !hasTranslatableSlug()-»
+«ENDIF-»
+«IF !hasTranslatableFields()
+  || (hasTranslatableFields() && !getEditableFields().reject(e|e.translatable).isEmpty || !hasTranslatableSlug())-»
     <fieldset>
-        <legend>{gt text='Further properties'}</legend>
-«EXPAND FieldWrapper('') FOREACH getEditableFields().reject(e|e.translatable)-»
-«IF !hasTranslatableSlug()-»
-«EXPAND SlugField('')-»
-«ENDIF-»
-«ENDIF-»
+        <legend>{gt text='«IF hasTranslatableFields()-»Further properties«ELSE-»Content«ENDIF-»'}</legend>
+«IF hasTranslatableFields()-»
+«EXPAND FieldWrapper('', '') FOREACH getEditableFields().reject(e|e.translatable)-»
 «ELSE-»
-    <fieldset>
-        <legend>{gt text='Content'}</legend>
-«EXPAND FieldWrapper('') FOREACH getEditableFields()-»
-
-«EXPAND SlugField('')-»
-
+«EXPAND FieldWrapper('', '') FOREACH getEditableFields()-»
+«ENDIF-»
+«IF !hasTranslatableFields() || !hasTranslatableSlug()-»
+«EXPAND SlugField('', '')-»
+«ENDIF-»
 «ENDIF-»
 «IF geographical-»
 «FOREACH {'latitude', 'longitude'} AS geoFieldName-»
@@ -159,12 +157,12 @@
 «EXPAND FormTemplateJS(app, controller, actionName)-»
 «ENDDEFINE»
 
-«DEFINE SlugField(String idSuffix) FOR Entity-»
+«DEFINE SlugField(String groupSuffix, String idSuffix) FOR Entity-»
 «REM»no slug input element yet, see https://github.com/l3pp4rd/DoctrineExtensions/issues/140
 «IF hasSluggableFields() && slugUpdatable-»
         <div class="z-formrow">
             {formlabel for=«templateIdWithSuffix('slug', idSuffix)» __text='Permalink'«IF slugUnique-» mandatorysym='1'«ENDIF-»}
-            {formtextinput group='«name.formatForDB()»' id=«templateIdWithSuffix('slug', idSuffix)» mandatory=«IF slugUnique-»true«ELSE-»false«ENDIF-» readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay()»«IF !slugUnique-» or let this field free to create one automatically«ENDIF-»' textMode='singleline' maxLength=255«IF slugUnique-» cssClass='required validate-unique'«ENDIF-»}
+            {formtextinput group=«templateIdWithSuffix(name.formatForDB(), groupSuffix)» id=«templateIdWithSuffix('slug', idSuffix)» mandatory=«IF slugUnique-»true«ELSE-»false«ENDIF-» readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay()»«IF !slugUnique-» or let this field free to create one automatically«ENDIF-»' textMode='singleline' maxLength=255«IF slugUnique-» cssClass='required validate-unique'«ENDIF-»}
 «IF slugUnique-»
             {«container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='required'}
             {«container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='validate-unique'}
@@ -258,11 +256,11 @@
 </script>
 «ENDDEFINE»
 
-«DEFINE FieldWrapper(String idSuffix) FOR DerivedField-»
+«DEFINE FieldWrapper(String groupSuffix, String idSuffix) FOR DerivedField-»
 «REM»No input fields for foreign keys, relations are processed further down«ENDREM»«""-»
 «IF entity.incoming.typeSelect(JoinRelationship).select(e|e.getSourceFields().get(0) == name.formatForDB()).isEmpty-»
         <div class="z-formrow">
-            «EXPAND FormComponents::SimpleFields::FormRow(idSuffix)-»
+            «EXPAND FormComponents::SimpleFields::FormRow(groupSuffix, idSuffix)-»
         </div>
 «ENDIF-»
 «ENDDEFINE»

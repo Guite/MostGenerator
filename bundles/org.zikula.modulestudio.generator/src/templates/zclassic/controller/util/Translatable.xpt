@@ -30,76 +30,95 @@ class «appName()»_Util_Base_Translatable extends Zikula_AbstractBase
     }
 
     /**
-     * Post-processing method copying all translations to main fields.
+     * Post-processing method copying all translations to corresponding arrays.
      * This ensures easy compatibility to the Forms plugins where it
      * it is not possible yet to define sub arrays in the group attribute.
+     *
+     * @param string              $objectType Treated object type.
+     * @param Zikula_EntityAccess $entity     The entity being edited.
+     * @return array collected translations having the locales as keys
      */
     public static function prepareEntityForEdit($objectType, $entity)
     {
-        if (!$entity) {
-            return $entity;
+        $translations = array();
+
+        // check arguments
+        if (!$objectType || !$entity) {
+            return $translations;
         }
 
+        // check if we have translated fields registered for the given object type
         $fields = self::getTranslatableFields($objectType);
         if (!count($fields)) {
-            return $entity;
+            return $translations;
         }
 
         if (System::getVar('multilingual') != 1) {
             // Translatable extension did already fetch current translation
-            return $entity;
+            return $translations;
         }
 
-        // at this point we prepare form data to edit multiple translations at once
-        $entityData = $entity->toArray();
-
-        // reset values
-        foreach ($fields as $field) {
-            $entityData[$field['name']] = '';
-        }
-
+        // prepare form data to edit multiple translations at once
         $serviceManager = ServiceUtil::getManager();
+        $entityManager = $serviceManager->getService('doctrine.entitymanager');
 
         // get translations
         $entityClass = '«appName()»_Entity_' . ucwords($objectType) . 'Translation';
-        $entityManager = $serviceManager->getService('doctrine.entitymanager');
         $repository = $entityManager->getRepository($entityClass);
-        $translations = $repository->findTranslations($entity);
+        $entityTranslations = $repository->findTranslations($entity);
 
         $supportedLocales = ZLanguage::getInstalledLanguages();
-        $lang = ZLanguage::getLanguageCode();
+        $currentLanguage = ZLanguage::getLanguageCode();
         foreach ($supportedLocales as $locale) {
-            foreach ($fields as $field) {
-                $entityData[$field['name'] . $locale] = isset($translations[$locale]) ? $translations[$locale][$field['name']] : '';
+            if ($locale == $currentLanguage) {
+                // Translatable extension did already fetch current translation
+                continue;
             }
+            $translationData = array();
+            foreach ($fields as $field) {
+                $translationData[$field['name'] . $locale] = isset($entityTranslations[$locale]) ? $entityTranslations[$locale][$field['name']] : '';
+            }
+            // add data to collected translations
+            $translations[$locale] = $translationData;
         }
 
-        return $entityData;
+        return $translations;
     }
 
     /**
      * Post-editing method copying all translated fields back to their subarrays.
      * This ensures easy compatibility to the Forms plugins where it
      * it is not possible yet to define sub arrays in the group attribute.
+     *
+     * @param string              $objectType     Treated object type.
+     * @param Zikula_EntityAccess $entity         The entity being edited.
+     * @param array               $formDataEntity Entity form data, can be used for default values.
+     * @param array               $formDataOther  Other form data containing translations for example.
+     * @return array collected translations having the locales as keys
      */
-    public static function processEntityAfterEdit($objectType, $entity, $formData)
+    public static function processEntityAfterEdit($objectType, $entity, $formDataEntity, $formDataOther)
     {
         $translations = array();
-        if (!$formData) {
-            return array($formData, $translations);
+        // check arguments
+        if (!$objectType || !$entity || !is_array($formDataEntity) || !is_array($formDataOther)) {
+            return $translations;
         }
 
         $fields = self::getTranslatableFields($objectType);
         if (!count($fields)) {
-            return array($formData, $translations);
+            return $translations;
         }
 
         $supportedLocales = ZLanguage::getInstalledLanguages();
         $useOnlyCurrentLocale = true;
         if (System::getVar('multilingual') == 1) {
             $useOnlyCurrentLocale = false;
-            $lang = ZLanguage::getLanguageCode();
+            $currentLanguage = ZLanguage::getLanguageCode();
             foreach ($supportedLocales as $locale) {
+                if ($locale == $currentLanguage) {
+                    // skip current language as this is not treated as translation on controller level
+                    continue;
+                }
                 $translations[$locale] = array('locale' => $locale, 'fields' => array());
                 foreach ($fields as $field) {
                     $translations[$locale]['fields'][$field['name']] = isset($formData[$field['name'] . $locale]) ? $formData[$field['name'] . $locale] : '';
@@ -115,7 +134,7 @@ class «appName()»_Util_Base_Translatable extends Zikula_AbstractBase
                 unset($formData[$field['name'] . $locale]);
             }
         }
-        return array($formData, $translations);
+        return $translations;
     }
 }
 «ENDDEFINE»
