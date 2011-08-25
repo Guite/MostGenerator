@@ -186,8 +186,7 @@ cached boolean hasCompositeKeys(Entity this) :
 
 cached getEditableFields(Entity this) :
     getDerivedFields().reject(e|e.primaryKey)
-                      .reject(e|e.metaType == ArrayField || e.metaType == ObjectField)
-                      .reject(e|((e.metaType == IntegerField || e.metaType == UserField) && ((AbstractIntegerField)e).sortablePosition));
+                      .reject(e|e.metaType == ArrayField || e.metaType == ObjectField);
 
 cached String modUrlGeneric(Entity this, String func, String ot, String objName, Boolean template) :
     ((template)
