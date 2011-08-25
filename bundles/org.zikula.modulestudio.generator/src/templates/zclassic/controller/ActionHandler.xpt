@@ -554,8 +554,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDIF-»
 «IF someController.hasActions('display')-»
             case '«controllerName»Display«sourceEntity.name.formatForCodeCapital()»':
-                                    if (!empty($this->«incomingRelation.getRelationAliasName(false)»'])) {
-                                        return ModUtil::url('«appName»', '«controllerName»', 'display', array('ot' => '«sourceEntity.name.formatForCode()»', 'id' => $this->«incomingRelation.getRelationAliasName(false)»']);
+                                    if (!empty($this->«incomingRelation.getRelationAliasName(false)»)) {
+                                        return ModUtil::url('«appName»', '«controllerName»', 'display', array('ot' => '«sourceEntity.name.formatForCode()»', 'id' => $this->«incomingRelation.getRelationAliasName(false)»));
                                     }
                                     return $this->getDefaultReturnUrl($args, $obj);
 «ENDIF-»
