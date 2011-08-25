@@ -172,14 +172,10 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     {
         $query = $this->_intBaseQuery($where, $orderBy, $useJoins);
 
-«REM»IF !(outgoing.typeSelect(OneToManyRelationship).isEmpty
-   && outgoing.typeSelect(ManyToManyRelationship).isEmpty
-   && incoming.typeSelect(ManyToOneRelationship).isEmpty)-»
-        $query = Paginate::getPaginateQuery($query, $currentPage, $resultsPerPage);
-«ELSE-»«ENDREM»«''-»
-        $query->setFirstResult($currentPage)
+        $offset = ($currentPage-1) * $resultsPerPage;
+        $query->setFirstResult($offset)
               ->setMaxResults($resultsPerPage);
-«REM»«ENDIF-»«ENDREM»
+
         $fetchType = (($asArray) ? Query::HYDRATE_ARRAY : Query::HYDRATE_OBJECT);
         $result = $query->execute(array(), $fetchType);
 
