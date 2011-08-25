@@ -113,7 +113,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
      * @param boolean $useJoins  Whether to include joining related objects (optional) (default=true).
      * @param integer $excludeId Optional id to be excluded (used for unique validation).
      *
-     * @return array|«implClassModelEntity()» retrieved data array or «implClassModelEntity()» instance
+     * @return «implClassModelEntity()» retrieved instance of «implClassModelEntity()»
      */
     public function selectBySlug($slugTitle = '', $useJoins = true, $excludeId = 0)
     {
@@ -135,11 +135,11 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     /**
      * Select with a given where clause.
      *
-     * @param string  $where    The where clause to use when retrieving the object array (optional) (default='').
-     * @param string  $orderBy  The order-by clause to use when retrieving the object array (optional) (default='').
+     * @param string  $where    The where clause to use when retrieving the collection (optional) (default='').
+     * @param string  $orderBy  The order-by clause to use when retrieving the collection (optional) (default='').
      * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
      *
-     * @return array|ArrayCollection retrieved data array or collection containing retrieved «implClassModelEntity()» instances
+     * @return ArrayCollection collection containing retrieved «implClassModelEntity()» instances
      */
     public function selectWhere($where = '', $orderBy = '', $useJoins = true)
     {
@@ -151,13 +151,13 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     /**
      * Select with a given where clause and pagination parameters.
      *
-     * @param string $where           The where clause to use when retrieving the object array (optional) (default='').
-     * @param string $orderBy         The order-by clause to use when retrieving the object array (optional) (default='').
+     * @param string $where           The where clause to use when retrieving the collection (optional) (default='').
+     * @param string $orderBy         The order-by clause to use when retrieving the collection (optional) (default='').
      * @param integer $currentPage    Where to start selection
      * @param integer $resultsPerPage Amount of items to select
      * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true).
      *
-     * @return array Array with retrieved data and amount of total records affected by this query.
+     * @return Array with retrieved collection and amount of total records affected by this query.
      */
     public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
     {
@@ -219,8 +219,8 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     /**
      * Build a generic Doctrine query supporting WHERE and ORDER BY
      *
-     * @param string  $where    The where clause to use when retrieving the object array (optional) (default='').
-     * @param string  $orderBy  The order-by clause to use when retrieving the object array (optional) (default='').
+     * @param string  $where    The where clause to use when retrieving the collection (optional) (default='').
+     * @param string  $orderBy  The order-by clause to use when retrieving the collection (optional) (default='').
      * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
      *
      * @return Query query instance to be further processed
