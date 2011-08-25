@@ -210,6 +210,8 @@ class «appName»_Base_RouterFacade
     public function getFormattedSlug($objectType, $func, $args, $itemid)
     {
         $slug = '';
+        $serviceManager = ServiceUtil::getManager();
+        $entityManager = $serviceManager->getService('doctrine.entitymanager');
 
         switch ($objectType) {
 «EXPAND GetSlugForItem FOREACH models.entities-»
@@ -223,9 +225,8 @@ class «appName»_Base_RouterFacade
             case '«name.formatForCode()»':
 «IF hasSluggableFields()-»
                         $entityClass = '«container.application.appName()»_Entity_' . ucfirst($objectType);
-                        $entityManager = $serviceManager->getService('doctrine.entitymanager');
                         $object = new $entityClass(); 
-                        $repository = $this->entityManager->getRepository($entityClass);
+                        $repository = $entityManager->getRepository($entityClass);
 
                         $item = $repository->selectById($itemid);
 «IF slugUnique-»
