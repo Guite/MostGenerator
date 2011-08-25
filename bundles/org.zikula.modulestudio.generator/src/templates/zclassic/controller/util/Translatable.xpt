@@ -122,7 +122,7 @@ class «appName()»_Util_Base_Translatable extends Zikula_AbstractBase
 
 «DEFINE TranslatableFieldList FOR Entity-»
             case '«name.formatForCode()»':
-                $fields = array(
+                $fields = array(«''-»
 «EXPAND TranslatableFieldDefinition-»
                 );
                 break;
