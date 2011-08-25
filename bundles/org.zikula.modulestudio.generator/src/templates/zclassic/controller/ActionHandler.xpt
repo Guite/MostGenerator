@@ -434,7 +434,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDIF-»
 «ENDLET-»
 «ENDFOREACH-»
-«FOREACH incoming.select(e|e.bidirectional).select(e|e.metaType == OneToOneRelationship || e.metaType == OneToManyRelationship) AS incomingRelation-»
+«FOREACH incoming.select(e|e.metaType == OneToOneRelationship || e.metaType == OneToManyRelationship) AS incomingRelation-»
 «LET incomingRelation.source AS sourceEntity-»
 «IF sourceEntity.name != this.name-»
 «FOREACH app.controllers.controllers AS someController-»
@@ -542,7 +542,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDIF-»
 «ENDLET-»
 «ENDFOREACH-»
-«FOREACH incoming.select(e|e.bidirectional).select(e|e.metaType == OneToOneRelationship || e.metaType == OneToManyRelationship) AS incomingRelation-»
+«FOREACH incoming.typeSelect(JoinRelationship).select(e|e.metaType == OneToOneRelationship || e.metaType == OneToManyRelationship) AS incomingRelation-»
 «LET incomingRelation.source AS sourceEntity-»
 «IF sourceEntity.name != this.name-»
 «FOREACH app.controllers.controllers.reject(e|e.metaType == AjaxController) AS someController-»
@@ -554,8 +554,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDIF-»
 «IF someController.hasActions('display')-»
             case '«controllerName»Display«sourceEntity.name.formatForCodeCapital()»':
-                                    if («FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ' && '-»isset($obj['«pkField.name.formatForCode()»']) && $obj['«pkField.name.formatForCode()»']«ENDFOREACH-») {
-                                        return ModUtil::url('«appName»', '«controllerName»', «sourceEntity.modUrlDisplay('obj', false)»);
+                                    if (!empty($this->«incomingRelation.getRelationAliasName(false)»'])) {
+                                        return ModUtil::url('«appName»', '«controllerName»', 'display', array('ot' => '«sourceEntity.name.formatForCode()»', 'id' => $this->«incomingRelation.getRelationAliasName(false)»']);
                                     }
                                     return $this->getDefaultReturnUrl($args, $obj);
 «ENDIF-»
