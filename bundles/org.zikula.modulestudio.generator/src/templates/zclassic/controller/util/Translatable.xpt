@@ -120,8 +120,9 @@ class «appName()»_Util_Base_Translatable extends Zikula_AbstractBase
                     continue;
                 }
                 $translations[$locale] = array('locale' => $locale, 'fields' => array());
+                $translationData = $formDataOther[strtolower($objectType) . $locale];
                 foreach ($fields as $field) {
-                    $translations[$locale]['fields'][$field['name']] = isset($formData[$field['name'] . $locale]) ? $formData[$field['name'] . $locale] : '';
+                    $translations[$locale]['fields'][$field['name']] = isset($translationData[$field['name'] . $locale]) ? $translationData[$field['name'] . $locale] : '';
                     unset($formData[$field['name'] . $locale]);
                 }
             }
@@ -129,8 +130,9 @@ class «appName()»_Util_Base_Translatable extends Zikula_AbstractBase
         if ($useOnlyCurrentLocale === true) {
             $locale = ZLanguage::getLanguageCode();
             $translations[$locale] = array('locale' => $locale, 'fields' => array());
+            $translationData = $formDataOther[strtolower($objectType) . $locale];
             foreach ($fields as $field) {
-                $translations[$locale]['fields'][$field['name']] = isset($formData[$field['name'] . $locale]) ? $formData[$field['name'] . $locale] : '';
+                $translations[$locale]['fields'][$field['name']] = isset($translationData[$field['name'] . $locale]) ? $translationData[$field['name'] . $locale] : '';
                 unset($formData[$field['name'] . $locale]);
             }
         }
