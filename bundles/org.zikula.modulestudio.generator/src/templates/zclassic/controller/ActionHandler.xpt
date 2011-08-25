@@ -834,6 +834,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             }
 «ENDLET-»
 «ENDFOREACH-»
+«REM»no slug input element yet, see https://github.com/l3pp4rd/DoctrineExtensions/issues/140
 «IF hasSluggableFields() && slugUpdatable-»
 «IF slugUnique-»
             // check if another «name.formatForDisplay()» with the same slug does already exist
@@ -843,6 +844,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDIF-»
             $formData['slug'] = «container.application.appName()»_Util_Controller::formatPermalink($formData['slug']);
 «ENDIF-»
+«ENDREM»«''-»
 «IF !uploadFields.isEmpty-»
             $formData = $this->handleUploads($formData, $«name.formatForCode()»);
             if ($formData == false) {
