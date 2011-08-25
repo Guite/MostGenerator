@@ -279,7 +279,7 @@
 «IF entity.hasSluggableFields() && entity.slugUnique-»
                         case 'slug':
                                 $repository = $this->entityManager->getRepository($entityClass);
-                                $objectData = $repository->selectBySlug($slugTitle, true, false, $exclude);
+                                $objectData = $repository->selectBySlug($slugTitle, false, $exclude);
                                 $result = (is_array($objectData) && isset($objectData['slug']);
                                 break;
 «ENDIF-»

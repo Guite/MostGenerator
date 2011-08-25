@@ -148,7 +148,7 @@ class «appName()»_Form_Plugin_TreeSelector extends Zikula_Form_Plugin_Dropdown
         $objectTemp = new $entityClass(); 
         $idFields = $objectTemp->get_idFields();
 
-        $treeNodes = $repository->selectTree($this->root, false);
+        $treeNodes = $repository->selectTree($this->root);
         if (!$treeNodes) {
             $treeNodes = array();
         }

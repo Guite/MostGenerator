@@ -13,7 +13,7 @@
 [
 {foreach item='item' from=$items name='«nameMultiple.formatForCode()»'}
     {if not $smarty.foreach.«nameMultiple.formatForCode()».first},{/if}
-    {$item|@json_encode}
+    {$item->toJson()}
 {/foreach}
 ]
 «ENDFILE»
