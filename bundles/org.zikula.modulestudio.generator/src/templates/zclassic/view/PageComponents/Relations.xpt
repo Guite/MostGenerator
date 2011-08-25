@@ -10,7 +10,7 @@
 «IF !many-»
 <h4>
 «ELSE-»
-{if isset($items) && is_array($items)}
+{if isset($items) && $items ne null}
 <ul class="relatedItemList «name.formatForCodeCapital()»">
 {foreach name='relLoop' item='item' from=$items}
     <li>
