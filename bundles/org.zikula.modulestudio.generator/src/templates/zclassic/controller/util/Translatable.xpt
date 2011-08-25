@@ -143,12 +143,53 @@ class «appName()»_Util_Base_Translatable extends Zikula_AbstractBase
 
 «DEFINE TranslatableFieldDefinition FOR DerivedField»
                     array('name' => '«name»',
-                          'default' => __('«IF defaultValue != ''-»«defaultValue»«ELSE-»«name.formatForDisplayCapital()»«ENDIF-»', $dom))«''-»
+                          'default' => __('«IF defaultValue != null && defaultValue != ''-»«defaultValue»«ELSE-»«name.formatForDisplayCapital()»«ENDIF-»', $dom))«''-»
+«ENDDEFINE»
+
+«DEFINE TranslatableFieldDefinition FOR BooleanField»
+                    array('name' => '«name»',
+                          'default' => «IF defaultValue != null && defaultValue != ''-»«(defaultValue == 'true').displayBool()»«ELSE-»false«ENDIF-»)«''-»
+«ENDDEFINE»
+
+«DEFINE TranslatableFieldDefinitionNumeric FOR DerivedField»
+                    array('name' => '«name»',
+                          'default' => 0)«''-»
 «ENDDEFINE»
 
 «DEFINE TranslatableFieldDefinition FOR CalculatedField»
                     array('name'    => '«name»',
                           'default' => __('«name.formatForDisplayCapital()»', $dom))«''-»
+«ENDDEFINE»
+
+«DEFINE TranslatableFieldDefinition FOR AbstractIntegerField»
+«EXPAND TranslatableFieldDefinitionNumeric-»
+«ENDDEFINE»
+«DEFINE TranslatableFieldDefinition FOR DecimalField»
+«EXPAND TranslatableFieldDefinitionNumeric-»
+«ENDDEFINE»
+«DEFINE TranslatableFieldDefinition FOR FloatField»
+«EXPAND TranslatableFieldDefinitionNumeric-»
+«ENDDEFINE»
+
+«DEFINE TranslatableFieldDefinitionNoDefault FOR DerivedField»
+                    array('name' => '«name»',
+                          'default' => '')«''-»
+«ENDDEFINE»
+
+«DEFINE TranslatableFieldDefinition FOR UploadField»
+«EXPAND TranslatableFieldDefinitionNoDefault-»
+«ENDDEFINE»
+
+«DEFINE TranslatableFieldDefinition FOR ArrayField»
+«EXPAND TranslatableFieldDefinitionNoDefault-»
+«ENDDEFINE»
+
+«DEFINE TranslatableFieldDefinition FOR ObjectField»
+«EXPAND TranslatableFieldDefinitionNoDefault-»
+«ENDDEFINE»
+
+«DEFINE TranslatableFieldDefinition FOR AbstractDateField»
+«EXPAND TranslatableFieldDefinitionNoDefault-»
 «ENDDEFINE»
 
 «DEFINE TranslatableFunctionsImpl FOR Application-»
