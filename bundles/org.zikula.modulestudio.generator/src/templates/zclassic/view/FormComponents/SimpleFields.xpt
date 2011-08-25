@@ -4,25 +4,38 @@
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE FormRow(String groupSuffix, String idSuffix) FOR DerivedField-»
-            {formlabel for=«templateIdWithSuffix(name.formatForCode(), idSuffix)» __text='«EXPAND FormLabel»'«IF mandatory» mandatorysym='1'«ENDIF»«IF documentation != null && documentation != ""-» class='«entity.container.application.appName().formatForDB()»FormTooltips' title='«documentation.replaceAll('"', '\"')»'«ENDIF-»}«IF metaType == UploadField»<br />{* break required for Google Chrome *}«ENDIF»
+«EXPAND FormLabel(groupSuffix, idSuffix)-»
 «EXPAND FormField(groupSuffix, idSuffix)-»
 «EXPAND Validation::MandatoryValidationMessage(idSuffix)-»
 «EXPAND Validation::AdditionalValidationMessages(idSuffix)-»
 «ENDDEFINE»
 
+«DEFINE FormLabel(String groupSuffix, String idSuffix) FOR DerivedField-»
+            {formlabel for=«templateIdWithSuffix(name.formatForCode(), idSuffix)» __text='«EXPAND FormLabelText-»'«IF mandatory-» mandatorysym='1'«ENDIF-»«EXPAND FormLabelAdditions-»}«IF metaType == UploadField»<br />{* break required for Google Chrome *}«ENDIF»
+«ENDDEFINE»
 
-«DEFINE FormLabel FOR EntityField-»
+«DEFINE FormLabel(String groupSuffix, String idSuffix) FOR UploadField-»
+            {if $mode eq 'create'}
+                {formlabel for=«templateIdWithSuffix(name.formatForCode(), idSuffix)» __text='«EXPAND FormLabelText-»'«IF mandatory-» mandatorysym='1'«ENDIF-»«EXPAND FormLabelAdditions-»}«IF metaType == UploadField»<br />{* break required for Google Chrome *}«ENDIF»
+            {else}
+                {formlabel for=«templateIdWithSuffix(name.formatForCode(), idSuffix)» __text='«EXPAND FormLabelText-»'«EXPAND FormLabelAdditions-»}«IF metaType == UploadField»<br />{* break required for Google Chrome *}«ENDIF»
+            {/if}
+«ENDDEFINE»
+
+«DEFINE FormLabelAdditions FOR DerivedField-»«IF documentation != null && documentation != ""-» class='«entity.container.application.appName().formatForDB()»FormTooltips' title='«documentation.replaceAll('"', '\"')»'«ENDIF-»«ENDDEFINE»
+
+«DEFINE FormLabelText FOR EntityField-»
 «error("Error: undefined entity field type " + metaType.toString() + " (code 902346)") -> ""-»
 «ENDDEFINE»
-«DEFINE FormLabel FOR DerivedField-»
+«DEFINE FormLabelText FOR DerivedField-»
 «name.formatForDisplayCapital()-»
 «ENDDEFINE»
-«DEFINE FormLabel FOR CalculatedField-»
+«DEFINE FormLabelText FOR CalculatedField-»
 «error("Error: undefined calculated field type " + metaType.toString() + " (code 902348)") -> ""-»
 «ENDDEFINE»
 
 
-«DEFINE FormLabel FOR IntegerField-»
+«DEFINE FormLabelText FOR IntegerField-»
 «LET getPointingRelations() AS pointingRelations-»
 «IF !pointingRelations.isEmpty-»
 «LET pointingRelations.get(0) AS pointingRelation-»
