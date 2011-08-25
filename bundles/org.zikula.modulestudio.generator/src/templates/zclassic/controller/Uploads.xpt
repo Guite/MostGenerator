@@ -19,17 +19,10 @@
 «IF uploadFields.size > 1-»
 «FOREACH uploadFields AS uploadField-»
     «EXPAND UploadFolder(subFolderName.msconcat(uploadField.subFolderPathSegment())) FOR uploadField»
-«ENDFOREACH-»
-«ELSEIF uploadFields.size > 0-»
-    «EXPAND UploadFolder(subFolderName.msconcat(uploadFields.get(0).subFolderPathSegment())) FOR uploadFields.get(0)»
-«ENDIF-»
-«ENDLET-»
-«LET entity.getImageFields() AS uploadFields-»
-«IF uploadFields.size > 1-»
-«FOREACH uploadFields AS uploadField-»
     «FILE getAppUploadPath(appName()).msconcat(subFolderName).msconcat(uploadField.subFolderPathSegment()).msconcat("/tmb/index.html")»«msUrl()-»«ENDFILE»
 «ENDFOREACH-»
 «ELSEIF uploadFields.size > 0-»
+    «EXPAND UploadFolder(subFolderName.msconcat(uploadFields.get(0).subFolderPathSegment())) FOR uploadFields.get(0)»
     «FILE getAppUploadPath(appName()).msconcat(subFolderName).msconcat(uploadFields.get(0).subFolderPathSegment()).msconcat("/tmb/index.html")»«msUrl()-»«ENDFILE»
 «ENDIF-»
 «ENDLET-»
