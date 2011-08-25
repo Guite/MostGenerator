@@ -86,6 +86,13 @@ class «baseClassFormHandler(controller, name, actionName)» extends Zikula_Form
      * @var array List of identifiers of treated «name.formatForDisplay()».
      */
     protected $idValues = array();
+«FOREACH incoming.typeSelect(JoinRelationship).select(e|!e.bidirectional) AS uniOwningAssociation-»
+
+    /**
+     * @var mixed Identifier for incoming relationship.
+     */
+    protected $«uniOwningAssociation.getRelationAliasName(false)» = '';
+«ENDFOREACH-»
 
     /**
      * @var string One of "create" or "edit".
@@ -290,6 +297,15 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         // retrieve translated fields
         $translations = «app.appName()»_Util_Translatable::prepareEntityForEdit($this->objectType, $entity);
 «ENDIF-»
+«LET incoming.typeSelect(JoinRelationship).select(e|!e.bidirectional) AS uniOwningAssociations-»
+«IF !uniOwningAssociations.isEmpty-»
+
+        // save parent identifiers of unidirectional incoming relationships
+«FOREACH uniOwningAssociations AS uniOwningAssociation-»
+        $this->«uniOwningAssociation.getRelationAliasName(false)» = FormUtil::getPassedValue('«uniOwningAssociation.getRelationAliasName(false)»', '', 'GET');
+«ENDFOREACH-»
+«ENDIF-»
+«ENDLET-»
 
         // assign data to template as array for easy translatable support
         $this->view->assign('«name.formatForDB()»', $entityData)
@@ -643,6 +659,22 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             echo $this->__('Sorry, but someone else has already changed this «name.formatForCode()». Please apply the changes again!');
         }
 «ENDIF-»
+«LET incoming.typeSelect(JoinRelationship).select(e|!e.bidirectional) AS uniOwningAssociations-»
+«IF !uniOwningAssociations.isEmpty-»
+
+            // save incoming relationship from parent entity
+            if ($args['commandName'] == 'create') {
+«FOREACH uniOwningAssociations AS uniOwningAssociation-»
+                if (!empty($this->«uniOwningAssociation.getRelationAliasName(false)»)) {
+                    $relObjRepository = $this->entityManager->getRepository('«uniOwningAssociation.source.implClassModelEntity()»');
+                    $relObj = $relObjRepository->selectById($this->«uniOwningAssociation.getRelationAliasName(false)», false);
+                    $relObj->add«uniOwningAssociation.getRelationAliasName(true).toFirstUpper()»($«name.formatForCode()»);
+                }
+«ENDFOREACH-»
+                $this->entityManager->flush();
+            }
+«ENDIF-»
+«ENDLET-»
 
             if ($args['commandName'] == 'create') {
                 $successMessage = $this->__('Done! «name.formatForDisplayCapital()» created.');
