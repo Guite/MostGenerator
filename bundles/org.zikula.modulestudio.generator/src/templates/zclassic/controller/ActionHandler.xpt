@@ -588,6 +588,9 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         $entityClass = '«app.appName()»_Entity_' . ucfirst($this->objectType);
         $repository = $this->entityManager->getRepository($entityClass);
+«IF hasTranslatableFields()-»
+        $transRepository = $this->entityManager->getRepository($entityClass . 'Translation');
+«ENDIF-»
 
         $«name.formatForCode()» = new $entityClass();
         $idFields = $«name.formatForCode()»->get_idFields();
@@ -612,7 +615,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             foreach ($translations as $translation) {
                 $translationLocale = $translation['locale'];
                 foreach ($translation['fields'] as $fieldName => $value) {
-                    $repository->translate($«name.formatForCode()», $fieldName, $locale, $value);
+                    $transRepository->translate($«name.formatForCode()», $fieldName, $locale, $value);
                 }
             }
 
