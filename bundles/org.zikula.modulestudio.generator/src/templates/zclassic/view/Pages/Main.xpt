@@ -9,7 +9,9 @@
 «IF controller.hasActions('view')-»
 {modfunc modname='«appName»' type='«controller.name()»' func='view'}
 «ELSE-»
+{include file='«controller.name()»/header.tpl'}
 <p>{gt text='Welcome to the «controller.name()» section of the «appName.formatForDisplayCapital()» module.'}</p>
+{include file='«controller.name()»/footer.tpl'}
 «ENDIF-»
 «ENDFILE»
 «ENDDEFINE»
