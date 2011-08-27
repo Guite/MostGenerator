@@ -75,7 +75,7 @@
 
 {* include display hooks *}
 {notifydisplayhooks eventname='«appName.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».display_view' id=«IF !hasCompositeKeys()-»$«objName».«getFirstPrimaryKey().name.formatForCode()»«ELSE-»"«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR '_'-»`$«objName».«pkField.name.formatForCode()»`«ENDFOREACH-»"«ENDIF-» urlobject=$currentUrlObject assign='hooks'}
-{foreach from=$hooks key='hookname' item='hook'}
+{foreach key='hookname' item='hook' from=$hooks}
     {$hook}
 {/foreach}
 

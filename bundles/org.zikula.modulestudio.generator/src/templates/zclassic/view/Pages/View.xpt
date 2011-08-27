@@ -138,7 +138,7 @@ listType:
 «IF controller.metaType == UserController-»
 
     {notifydisplayhooks eventname='«appName.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».display_view' urlobject=$currentUrlObject assign='hooks'}
-    {foreach from=$hooks key='hookname' item='hook'}
+    {foreach key='hookname' item='hook' from=$hooks}
         {$hook}
     {/foreach}
 «ENDIF-»
