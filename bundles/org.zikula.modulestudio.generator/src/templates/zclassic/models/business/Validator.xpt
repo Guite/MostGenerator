@@ -258,8 +258,7 @@ abstract class «baseClassDefault(this, '', 'Validator')» extends Zikula_Abstra
      */
     public function isValidHtmlColour($fieldName)
     {
-        $regex = '/^#?(([a-fA-F0-9]{3}){1,2})$/';
-        return preg_match($regex, $this->entity[$fieldName]);
+        return filter_var($this->entity[$fieldName], FILTER_VALIDATE_URL);
     }
 
     /**
@@ -270,8 +269,7 @@ abstract class «baseClassDefault(this, '', 'Validator')» extends Zikula_Abstra
      */
     public function isValidEmail($fieldName)
     {
-        $regex = '/^[^0-9][a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+(\.[a-zA-Z0-9_]+)*\.[a-zA-Z]{2,5}$/';
-        return preg_match($regex, $this->entity[$fieldName]);
+        return filter_var($this->entity[$fieldName], FILTER_VALIDATE_EMAIL);
     }
 
     /**
