@@ -155,7 +155,7 @@
      * @ORM\PreUpdate
      * @return void.
      */
-    public function preUpdate()
+    public function preUpdateCallback()
     {
         // echo 'updating a record ...';
         $this->validate();
@@ -174,7 +174,7 @@
      * @ORM\PostUpdate
      * @return void.
      */
-    public function postUpdate()
+    public function postUpdateCallback()
     {
         // echo 'updated a record ...';
     }
