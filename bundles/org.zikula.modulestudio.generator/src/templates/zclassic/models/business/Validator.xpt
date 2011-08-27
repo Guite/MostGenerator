@@ -282,7 +282,7 @@ abstract class «baseClassDefault(this, '', 'Validator')» extends Zikula_Abstra
      */
     public function isValidUrl($fieldName)
     {
-        $regex = '(http|ftp|https):\\/\\/[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?';
+        $regex = "/^(http|https|ftp):\/\/([A-Z0-9][A-Z0-9_-]*(?:\.[A-Z0-9][A-Z0-9_-]*)+):?(\d+)?\/?/i";
         return preg_match($regex, $this->entity[$fieldName]);
     }
 
