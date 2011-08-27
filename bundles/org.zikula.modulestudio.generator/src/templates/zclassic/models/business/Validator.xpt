@@ -65,7 +65,8 @@ abstract class «baseClassDefault(this, '', 'Validator')» extends Zikula_Abstra
      */
     public function isValidInteger($fieldName)
     {
-        return (is_int($this->entity[$fieldName]));
+        $val = $this->entity[$fieldName];
+        return ($val == intval($val));
     }
 
     /**
