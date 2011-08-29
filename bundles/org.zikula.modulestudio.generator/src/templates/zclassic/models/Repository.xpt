@@ -315,7 +315,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
      */
     public function selectTree($rootId = 0, $useJoins = true)
     {
-        if (rootId == 0) {
+        if ($rootId == 0) {
             // return all trees if no specific one has been asked for
             return $this->selectAllTrees($useJoins);
         }
