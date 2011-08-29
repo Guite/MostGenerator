@@ -389,7 +389,7 @@
 
         switch ($op) {
             case 'addRootNode':
-                            $this->entityManager->transactional(function($entityManager) {
+                            //$this->entityManager->transactional(function($entityManager) {
                                 $object = new $entityClass();
                                 $objectData = array();
                                 $objectData[$titleFieldName] = $this->__('New root node');
@@ -401,8 +401,9 @@
                                 $object->setLocale(ZLanguage::getLanguageCode());
 «ENDIF-»«ENDREM»
                                 // save new object to set the root id
-                                $entityManager->persist($object);
-                            });
+                                $this->entityManager->persist($object);
+                                $this->entityManager->flush();
+                            //});
                             break;
             case 'addChildNode':
                             $parentId = (int) $this->request->getPost()->filter('pid', 0, FILTER_VALIDATE_INT);
@@ -411,7 +412,7 @@
                                 throw new Zikula_Exception_Fatal();
                             }
 
-                            $this->entityManager->transactional(function($entityManager) {
+                            //$this->entityManager->transactional(function($entityManager) {
                                 $childObject = new $entityClass();
                                 $objectData = array();
                                 $objectData[$titleFieldName] = $this->__('New child node');
@@ -423,7 +424,7 @@
                                 //$childObject->setParent($parentRecord);
                                 $parentObject = $object->selectById($parentId, false);
                                 $repository->persistAsLastChildOf($childObject, $parentObject);
-                            });
+                            //});
                             break;
             case 'deleteNode':
                             // remove node from tree and reparent all children
@@ -446,6 +447,7 @@
                             else if ($moveDirection == 'down') {
                                 $repository->moveDown($record, 1);
                             }
+                            $this->entityManager->flush();
 
                             break;
             case 'moveNodeTo':
@@ -461,7 +463,7 @@
                                 throw new Zikula_Exception_Fatal();
                             }
 
-                            $this->entityManager->transactional(function($entityManager) {
+                            //$this->entityManager->transactional(function($entityManager) {
                                 $record = $repository->selectById($id, false);
                                 $destRecord = $repository->selectById($destId, false);
 
@@ -474,7 +476,8 @@
                                 elseif ($moveDirection == 'bottom') {
                                     $repository->persistAsLastChildOf($record, $destRecord);
                                 }
-                            });
+                                $this->entityManager->flush();
+                            //});
                             break;
         }
 
