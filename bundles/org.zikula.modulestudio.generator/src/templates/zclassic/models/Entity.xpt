@@ -260,11 +260,20 @@ $«getRelationAliasName(false)», $«targetField.name.formatForCode()»
         $this->«pkField.name.formatForCode()» = $«pkField.name.formatForCode()»;
 «ENDFOREACH-»
 «ENDIF-»
-«FOREACH getDerivedFields().typeSelect(AbstractDateField) AS dateField-»
-«IF dateField.mandatory && dateField.defaultValue.length == 0-»
-        $this->«dateField.name.formatForCode()» = «EXPAND DefaultAssignment FOR dateField-»;
-«ENDIF-»
+«LET getDerivedFields().select(e|e.mandatory && e.defaultValue.length == 0) AS mandatoryFieldsWithoutDefaultValue-»
+«FOREACH mandatoryFieldsWithoutDefaultValue.typeSelect(AbstractIntegerField) AS mandatoryField-»
+        $this->«mandatoryField.name.formatForCode()» = 1;
 «ENDFOREACH-»
+«FOREACH mandatoryFieldsWithoutDefaultValue.typeSelect(DecimalField) AS mandatoryField-»
+        $this->«mandatoryField.name.formatForCode()» = 1;
+«ENDFOREACH-»
+«FOREACH mandatoryFieldsWithoutDefaultValue.typeSelect(AbstractDateField) AS mandatoryField-»
+        $this->«mandatoryField.name.formatForCode()» = «EXPAND DefaultAssignment FOR mandatoryField-»;
+«ENDFOREACH-»
+«FOREACH mandatoryFieldsWithoutDefaultValue.typeSelect(FloatField) AS mandatoryField-»
+        $this->«mandatoryField.name.formatForCode()» = 1;
+«ENDFOREACH-»
+«ENDLET-»
 «IF isIndexByTarget()-»
 «LET incoming.typeSelect(JoinRelationship).select(e|e.isIndexed()).get(0) AS indexRelation-»
 «LET getRelationAliasName(indexRelation, false) AS sourceAlias-»
