@@ -136,7 +136,7 @@
 «FOREACH {'latitude', 'longitude'} AS geoFieldName-»
         <div class="z-formrow">
             {formlabel for='«geoFieldName»' __text='«geoFieldName.toFirstUpper()»'}
-            {formgeoinput group='«name.formatForDB()»' id='«geoFieldName»' mandatory=false __title='Input the «geoFieldName» of the «name.formatForDisplay()»' cssClass='validate-number'}
+            {«app.appName().formatForDB()»GeoInput group='«name.formatForDB()»' id='«geoFieldName»' mandatory=false __title='Input the «geoFieldName» of the «name.formatForDisplay()»' cssClass='validate-number'}
             {«app.appName().formatForDB()»ValidationError id='«geoFieldName»' class='validate-number'}
         </div>
 «ENDFOREACH-»
