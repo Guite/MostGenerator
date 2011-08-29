@@ -162,6 +162,10 @@
 «ENDLET-»
 «ENDDEFINE»
 
+«DEFINE DisplayEntry(Controller controller) FOR UserField-»
+«EXPAND DisplayEntrySimpleField(controller)-»
+«ENDDEFINE»
+
 «DEFINE DisplayEntry(Controller controller) FOR CalculatedField-»
 «ENDDEFINE»
 

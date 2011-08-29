@@ -264,6 +264,10 @@ listType:
 «ENDLET-»
 «ENDDEFINE»
 
+«DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR UserField-»
+«EXPAND DisplayEntryInnerSimpleField(controller)-»
+«ENDDEFINE»
+
 «DEFINE DisplayEntryInnerSimpleField(Controller controller) FOR DerivedField-»
 «IF leading == true-»
             {$«entity.name.formatForCode()».«name.formatForCode()»|notifyfilters:'«entity.container.application.appName().formatForDB()».filterhook.«entity.nameMultiple.formatForDB()»'}
