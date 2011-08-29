@@ -345,7 +345,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
         $trees = array();
 
         // get all root nodes
-        $rootNodes = $this->_intBaseQuery('tbl.lvl = 1', '', $useJoins)->getResult();
+        $rootNodes = $this->_intBaseQuery('tbl.lvl = 0', '', $useJoins)->getResult();
 
         foreach ($rootNodes as $rootNode) {
             // fetch children
