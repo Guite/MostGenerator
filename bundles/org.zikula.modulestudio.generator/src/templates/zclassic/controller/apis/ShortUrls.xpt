@@ -127,9 +127,9 @@
         $result = $router->generate(null, $routerArgs);
 
         // post processing
-        if ($args['func'] == 'view') {
-        }
-        else if ($args['func'] == 'display') {
+        if (
+            ($args['func'] == 'view' && !empty($args['args']['viewending']))
+            || $args['func'] == 'display') {
             // check if url ends with a trailing slash
             if (substr($result, -1) == '/') {
                 // remove the trailing slash
