@@ -276,7 +276,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 «IF !getDefaultDataSource().entities.select(e|e.tree != EntityTreeType::NONE).isEmpty-»
             $treeCounterRoot = 1;
 «ENDIF-»
-«EXPAND CreateExampleRows(this) FOREACH getDefaultDataSource().entities-»
+«EXPAND CreateExampleRows-»
 «ENDIF-»
         });
 
@@ -284,7 +284,6 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         return true;
     }
 «ENDDEFINE»
-
 
 «DEFINE ProcessEventHandlersImpl FOR Application»
     /**
@@ -519,6 +518,49 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     }
 «ENDDEFINE»
 
+«DEFINE CreateExampleRows FOR Application-»
+«LET getDefaultDataSource().entities AS entities-»
+«LET entities.fields.typeSelect(AbstractDateField) AS fields-»
+«IF !fields.select(e|e.past).isEmpty-»
+            $lastMonth = mktime(date('s'), date('H'), date('i'), date('m')-1, date('d'), date('Y'));
+            $lastHour = mktime(date('s'), date('H')-1, date('i'), date('m'), date('d'), date('Y'));
+«ENDIF-»
+«IF !fields.select(e|e.future).isEmpty-»
+            $nextMonth = mktime(date('s'), date('H'), date('i'), date('m')+1, date('d'), date('Y'));
+            $nextHour = mktime(date('s'), date('H')+1, date('i'), date('m'), date('d'), date('Y'));
+«ENDIF-»
+«IF !fields.typeSelect(DatetimeField).isEmpty-»
+            $dtNow = date('Y-m-d H:i:s');
+«IF !fields.typeSelect(DatetimeField).select(e|e.past).isEmpty-»
+            $dtPast = date('Y-m-d H:i:s', $lastMonth);
+«ENDIF-»
+«IF !fields.typeSelect(DatetimeField).select(e|e.future).isEmpty-»
+            $dtFuture = date('Y-m-d H:i:s', $nextMonth);
+«ENDIF-»
+«ENDIF-»
+«IF !fields.typeSelect(DateField).isEmpty-»
+            $dNow = date('Y-m-d');
+«IF !fields.typeSelect(DateField).select(e|e.past).isEmpty-»
+            $dPast = date('Y-m-d', $lastMonth);
+«ENDIF-»
+«IF !fields.typeSelect(DateField).select(e|e.future).isEmpty-»
+            $dFuture = date('Y-m-d', $nextMonth);
+«ENDIF-»
+«ENDIF-»
+«IF !fields.typeSelect(TimeField).isEmpty-»
+            $tNow = date('H:i:s');
+«IF !fields.typeSelect(TimeField).select(e|e.past).isEmpty-»
+            $tPast = date('H:i:s', $lastHour);
+«ENDIF-»
+«IF !fields.typeSelect(TimeField).select(e|e.future).isEmpty-»
+            $tFuture = date('H:i:s', $nextHour);
+«ENDIF-»
+«ENDIF-»
+«ENDLET-»
+«EXPAND CreateExampleRows(this) FOREACH entities-»
+«ENDLET-»
+«ENDDEFINE»
+
 «DEFINE CreateExampleRows(Application app) FOR Entity»
 «LET name.formatForCode() AS entityName-»
 «FOREACH 1.upTo(container.numExampleRows) AS number-»
@@ -625,15 +667,15 @@ substr('«dataEntity.name.formatForDisplayCapital()» «name.formatForDisplay()�
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR BooleanField-»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR IntegerField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DecimalField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR StringField-»«IF country || language-»ZLanguage::getLanguageCode()«ELSE-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDIF-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR StringField-»«IF country || language-»ZLanguage::getLanguageCode()«ELSEIF htmlcolour-»'#ff6600'«ELSE-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDIF-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR TextField-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR EmailField-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR UrlField-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR EmailField-»'«entity.container.application.email»'«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR UrlField-»'«entity.container.application.url»'«ENDDEFINE»
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR UploadField-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR UserField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR UserField-»2«ENDDEFINE»
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR ArrayField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR ObjectField-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDDEFINE»
-«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DatetimeField-»date('Y-m-d H:i:s')«ENDDEFINE»
-«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DateField-»date('Y-m-d')«ENDDEFINE»
-«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR TimeField-»date('H:i:s')«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DatetimeField-»«IF past-»$dtPast«ELSEIF future-»$dtFuture«ELSE-»$dtNow«ENDIF-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DateField-»«IF past-»$dPast«ELSEIF future-»$dFuture«ELSE-»$dNow«ENDIF-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR TimeField-»«IF past-»$tPast«ELSEIF future-»$tFuture«ELSE-»$tNow«ENDIF-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR FloatField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»
