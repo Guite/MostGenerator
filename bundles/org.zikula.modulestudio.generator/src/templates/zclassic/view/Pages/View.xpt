@@ -281,7 +281,7 @@ listType:
 «LET ((!useTarget) ? target : source) AS mainEntity-»
 «LET ((useTarget) ? target : source) AS linkEntity-»
 «LET mainEntity.name.formatForCode().msconcat('.').msconcat(relationAliasName) AS relObjName-»
-            {if (isset($«relObjName»))}
+            {if isset($«relObjName») && $«relObjName» ne null}
 «IF controller.hasActions('display')-»
 «LET linkEntity.getLeadingField() AS leadingField-»
                 <a href="{modurl modname='«container.application.appName()»' type='«controller.name()»' «linkEntity.modUrlDisplay(relObjName, true)»}">
@@ -346,7 +346,7 @@ listType:
 «ENDIF-»            
 «IF controller.hasActions('edit')-»
     {checkpermissionblock component='«appName»::' instance='.*' level='ACCESS_EDIT'}
-«IF !readOnly-»«REM»create is allowed, but editing not«ENDREM»
+«IF !readOnly-»«REM»create is allowed, but editing not«ENDREM»«''-»
             <a href="{modurl modname='«appName»' type='«controller.name()»' «modUrlEdit(objName, true)»}" title="{gt text='Edit'}">
                 {icon type='edit' size='extrasmall' __alt='Edit'}
             </a>
