@@ -5,13 +5,11 @@
 «REM»start point for the javascript file with display functionality«ENDREM»
 «DEFINE Root FOR Application-»
 «FILE getAppSourcePath(appName()).msconcat('javascript/').msconcat(appName()).msconcat('.js')-»
-<!--
 
 «IF !models.getJoinRelations().isEmpty-»
 «EXPAND InitRelationWindow-»
 «ENDIF-»
 
--->
 «ENDFILE»
 «ENDDEFINE»
 

@@ -5,12 +5,10 @@
 «REM»start point for the javascript file with edit functionality«ENDREM»
 «DEFINE Root FOR Application-»
 «FILE getAppSourcePath(appName()).msconcat('javascript/').msconcat(appName()).msconcat('_editFunctions.js')-»
-<!--
 
 «EXPAND InitUserField-»
 «EXPAND RelationFunctions-»
 
--->
 «ENDFILE»
 «ENDDEFINE»
 

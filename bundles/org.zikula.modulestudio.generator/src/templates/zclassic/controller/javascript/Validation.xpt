@@ -5,7 +5,6 @@
 «REM»start point for the javascript file with validation functionality«ENDREM»
 «DEFINE Root FOR Application-»
 «FILE getAppSourcePath(appName()).msconcat('javascript/').msconcat(appName()).msconcat('_validation.js')-»
-<!--
 
 /**
  * Add special validation rules.
@@ -144,6 +143,5 @@ return true;
 }
 «ENDIF-»
 
--->
 «ENDFILE»
 «ENDDEFINE»
