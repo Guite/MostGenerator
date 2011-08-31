@@ -434,17 +434,11 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 
         $submit = $this->request->getPost()->get('submit', null);
         if (!$submit) {
-            // assign auth key
-            $this->view->assign('authid', SecurityUtil::generateAuthKey('«appName()»'));
-
             // fetch and return the appropriate template
             return $this->view->fetch('«appName()»_init_step2.tpl');
         }
 
-        if(!SecurityUtil::confirmAuthKey()) {
-	        $this->registerError(LogUtil::getErrorMsgAuthid())
-	             ->redirect(ModUtil::url('Modules', 'admin', 'view'));
-        }
+        $this->checkCsrfToken();
 
 «FOREACH models.variables.vars AS modvar-»
         $formValue = $this->request->getPost()->get('«modvar.name.formatForCode()»', «EXPAND ModVarValForm2SessionDefault FOR modvar»);
@@ -475,9 +469,8 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 
         $activate = (bool) $this->request->getPost()->filter('activate', false, FILTER_VALIDATE_BOOLEAN);
 
-        // assign auth key and activation flag
-        $this->view->assign('authid', SecurityUtil::generateAuthKey('Modules'))
-                   ->assign('activate', $activate);
+        // assign activation flag
+        $this->view->assign('activate', $activate);
 
         // fetch and return the appropriate template
         return $this->view->fetch('«appName()»_init_step3.tpl');
@@ -509,9 +502,6 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     public function uninstall()
     {
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
-
-        // assign auth key
-        $this->view->assign('authid', SecurityUtil::generateAuthKey('Modules'));
 
         // fetch and return the appropriate template
         return $this->view->fetch('«appName()»_init_delete.tpl');

@@ -76,7 +76,7 @@
 <form action="{modurl modname='«appName()»' type='init' func='interactiveinitstep2'}" method="post" enctype="application/x-www-form-urlencoded">
     <fieldset>
         <legend>{gt text='Settings'}</legend>
-        <input type="hidden" name="authid" value="{$authid}" />
+        <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
 
 «FOREACH models.variables.vars AS modvar-»
         <label for="«formatForCode(name + '_' + modvar.name)»" style="float: left; width: 20em">{gt text='«modvar.name»'}</label>
@@ -104,7 +104,8 @@
 <p>{gt text='Last installation step'}</p>
 <p>{gt text='Thank you for installing «appName()».<br />Click on the bottom link to finish the installation.' html="1"}</p>
 <p>
-    <a href="{modurl modname='Modules' type='admin' func='initialise' authid=$authid activate=$activate}" title="{gt text='Continue'}">
+    {insert name='csrftoken' assign='csrftoken'}
+    <a href="{modurl modname='Modules' type='admin' func='initialise' csrftoken=$csrftoken activate=$activate}" title="{gt text='Continue'}">
         {gt text='Continue'}
     </a>
 </p>
@@ -120,7 +121,8 @@
 <h2>{gt text='Uninstall of «appName()»'}</h2>
 <p>{gt text='Thank you for using «appName()».<br />This application is going to be removed now!' html="1"}</p>
 <p>
-    <a href="{modurl modname='Modules' type='admin' func='remove' authid=$authid}" title="{gt text='Uninstall «appName()»'}">
+    {insert name='csrftoken' assign='csrftoken'}
+    <a href="{modurl modname='Modules' type='admin' func='remove' csrftoken=$csrftoken}" title="{gt text='Uninstall «appName()»'}">
         {gt text='Uninstall «appName()»'}
     </a>
 </p>
