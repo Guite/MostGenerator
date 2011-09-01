@@ -12,7 +12,7 @@
      */
     protected function createDefaultData()
     {
-        // ensure that tables are cleared
+        // Ensure that tables are cleared
         $this->entityManager->transactional(function($entityManager) {
 «EXPAND ExampleRowImpl FOR getDefaultDataSource()-»
         });
@@ -38,6 +38,12 @@
 «ENDDEFINE»
 
 «DEFINE CreateExampleRows FOR Models-»
+«EXPAND InitDateValues-»
+«EXPAND InitExampleObjects(application) FOREACH entities-»
+«EXPAND CreateExampleRows(application) FOREACH entities-»
+«ENDDEFINE»
+
+«DEFINE InitDateValues FOR Models-»
 «LET entities.fields.typeSelect(AbstractDateField) AS fields-»
 «IF !fields.select(e|e.past).isEmpty-»
             $lastMonth = mktime(date('s'), date('H'), date('i'), date('m')-1, date('d'), date('Y'));
@@ -75,8 +81,6 @@
 «ENDIF-»
 «ENDIF-»
 «ENDLET-»
-«EXPAND InitExampleObjects(application) FOREACH entities-»
-«EXPAND CreateExampleRows(application) FOREACH entities-»
 «ENDDEFINE»
 
 «DEFINE InitExampleObjects(Application app) FOR Entity»
@@ -89,9 +93,9 @@
 «LET name.formatForCode() AS entityName-»
 «FOREACH 1.upTo(container.numExampleRows) AS number-»
 «IF isInheriting()-»
-«EXPAND ExampleRowAssignment(this, entityName, number) FOREACH parentType().fields.typeSelect(DerivedField).reject(e|e.primaryKey).reject(e|e.metaType == UploadField)-»
+«EXPAND ExampleRowAssignment(this, entityName, number) FOREACH parentType().getFieldsForExampleData()-»
 «ENDIF-»
-«EXPAND ExampleRowAssignment(this, entityName, number) FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey).reject(e|e.metaType == UploadField)-»
+«EXPAND ExampleRowAssignment(this, entityName, number) FOREACH getFieldsForExampleData()-»
 «REM»«IF hasTranslatableFields()-»
             $«entityName»«number»->setLocale(ZLanguage::getLanguageCode());
 «ENDIF-»«ENDREM»«''-»
@@ -102,15 +106,22 @@
             $«entityName»«number»->setRgt(«IF number == 1-»«container.numExampleRows*2»«ELSE-»«((number-1)*2)+1»«ENDIF-»);
             $«entityName»«number»->setRoot($treeCounterRoot);
 «ENDIF-»
-«ENDFOREACH-»
-«''-»
-«FOREACH 1.upTo(container.numExampleRows) AS number-»
-            $entityManager->persist($«entityName»«number»);
+«EXPAND ExampleRowAssignmentOutgoing(entityName, number) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
+«EXPAND ExampleRowAssignmentOutgoing(entityName, number) FOREACH outgoing.typeSelect(ManyToOneRelationship)-»
+«EXPAND ExampleRowAssignmentIncoming(entityName, number) FOREACH incoming.typeSelect(OneToManyRelationship)-»
 «ENDFOREACH-»
 «ENDLET-»
+«''-»
+«EXPAND PersistExampleObjects(app)-»
 «IF tree != EntityTreeType::NONE-»
             $treeCounterRoot++;
 «ENDIF-»
+«ENDDEFINE»
+
+«DEFINE PersistExampleObjects(Application app) FOR Entity»
+«FOREACH 1.upTo(container.numExampleRows) AS number-»
+            $entityManager->persist($«name.formatForCode()»«number»);
+«ENDFOREACH-»
 «ENDDEFINE»
 
 «DEFINE ExampleRowsConstructorArgumentsDefault(Boolean hasPreviousArgs, Integer number) FOR Entity-»
@@ -150,6 +161,13 @@ $«getRelationAliasName(false)»«number», «IF targetField.defaultValue != '' 
 «IF aggregateFor.length == 0-»
             $«entityName»«number»->set«name.formatForCodeCapital()»(«EXPAND ExampleRowValue(dataEntity, number)-»);
 «ENDIF-»
+«ENDDEFINE»
+
+«DEFINE ExampleRowAssignmentOutgoing(String entityName, Integer number) FOR JoinRelationship-»
+            $«entityName»«number»->set«target.name.formatForCodeCapital()»($«target.name.formatForCode()»«number»);
+«ENDDEFINE»
+«DEFINE ExampleRowAssignmentIncoming(String entityName, Integer number) FOR JoinRelationship-»
+            $«entityName»«number»->set«source.name.formatForCodeCapital()»($«source.name.formatForCode()»«number»);
 «ENDDEFINE»
 
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DerivedField-»

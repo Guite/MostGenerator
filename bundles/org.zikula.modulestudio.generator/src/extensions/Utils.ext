@@ -188,6 +188,10 @@ cached getEditableFields(Entity this) :
     getDerivedFields().reject(e|e.primaryKey)
                       .reject(e|e.metaType == ArrayField || e.metaType == ObjectField);
 
+cached getFieldsForExampleData(Entity this) :
+    getDerivedFields().reject(e|e.primaryKey)
+                      .reject(e|e.metaType == UploadField);
+
 cached String modUrlGeneric(Entity this, String func, String ot, String objName, Boolean template) :
     ((template)
         ? "func='" + func + "' ot='" + ot.formatForCode() + "'" + modUrlPrimaryKeyParams(objName, template)
