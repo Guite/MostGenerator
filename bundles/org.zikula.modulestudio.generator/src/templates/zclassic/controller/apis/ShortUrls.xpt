@@ -138,7 +138,8 @@
         }
 
         // enforce url name of the module, but do only 1 replacement to avoid changing other params
-        $result = preg_replace('/«app.appName()»/', '«app.appName().formatForDB()»', $result, 1);
+        $modInfo = ModUtil::getInfoFromName('«app.appName()»');
+        $result = preg_replace('/' . $modInfo['name'] . '/', $modInfo['url'], $result, 1);
 
         return $result;
     }
@@ -174,7 +175,8 @@
         $func = $args['vars'][2];
 
         // usually the language is in $args['vars'][0], except no mod name is in the url and we are set as start app
-        $lang = (strtolower($args['vars'][0]) == '«app.name.formatForDB()»') ? $args['vars'][1] : $args['vars'][0];
+        $modInfo = ModUtil::getInfoFromName('«app.appName()»');
+        $lang = (strtolower($args['vars'][0]) == $modInfo['url']) ? $args['vars'][1] : $args['vars'][0];
 
         // remove some unrequired parameters
         foreach ($_GET as $k => $v) {
@@ -195,9 +197,9 @@
             $url .= '/';
         }
 
-        $isDefaultModule = (System::getVar('shorturlsdefaultmodule', '') == '«app.appName()»');
+        $isDefaultModule = (System::getVar('shorturlsdefaultmodule', '') == $modInfo['name']);
         if (!$isDefaultModule) {
-            $url = '«app.name.formatForDB()»/' . $url;
+            $url = $modInfo['url'] . '/' . $url;
         }
 
         // initialise url routing rules
