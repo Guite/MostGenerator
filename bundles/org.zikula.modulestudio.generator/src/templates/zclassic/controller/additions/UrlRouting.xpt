@@ -237,7 +237,7 @@ class «appName»_Base_RouterFacade
                         foreach ($idFields as $idField) {
                             $itemId .= ((!empty($itemId)) ? '_' : '') . $item[$idField];
                         }
-                        $slug = $item['slug'] . $itemId;
+                        $slug = $item['slug'] . '.' . $itemId;
 «ENDIF-»
 «ELSE-»
                         $slug = $itemid;
