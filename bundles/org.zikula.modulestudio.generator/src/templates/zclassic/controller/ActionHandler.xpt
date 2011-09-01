@@ -372,7 +372,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
      */
     protected function retrieveRelatedObjects($objectType, $relationInputFieldName, $many = false, $source = 'GET')
     {
-        $entityClass = '«app.appName()»_Entity_' . ucfirst($this->objectType);
+        $entityClass = '«app.appName()»_Entity_' . ucfirst($objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
         $objectTemp = new $entityClass(); 
@@ -400,9 +400,9 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             }
 
             if ($many) {
-                $where .= $idField . ' IN (' . DataUtil::formatForStore($inputValueParts[$i]) . ')';
+                $where .= 'tbl.' . $idField . ' IN (' . DataUtil::formatForStore($inputValueParts[$i]) . ')';
             } else {
-                $where .= $idField . ' = \'' . DataUtil::formatForStore($inputValueParts[$i]) . '\'';
+                $where .= 'tbl.' . $idField . ' = \'' . DataUtil::formatForStore($inputValueParts[$i]) . '\'';
             }
             $i++;
         }
