@@ -1,0 +1,26 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«REM»Installer utility templates«ENDREM»
+
+«DEFINE ValFromSession FOR Variable»$sessionValue«ENDDEFINE»
+«DEFINE ValFromSession FOR ListVar»serialize($sessionValue)«ENDDEFINE»
+
+«DEFINE ValSession2Mod FOR Variable»'«value»'«ENDDEFINE»
+«DEFINE ValSession2Mod FOR BoolVar»«IF value == 'true'»true«ELSE»false«ENDIF»«ENDDEFINE»
+«DEFINE ValSession2Mod FOR IntVar»«value»«ENDDEFINE»
+«DEFINE ValSession2Mod FOR ListVar»array(«EXPAND ValSession2Mod FOREACH items.select(item|item.^default == true) SEPARATOR ', '»)«ENDDEFINE»
+«DEFINE ValSession2Mod FOR ListVarItem»«IF ^default == true»'«name.formatForCode()»'«ENDIF»«ENDDEFINE»
+
+«DEFINE ValDirect2Mod FOR Variable»'«value»'«ENDDEFINE»
+«DEFINE ValDirect2Mod FOR BoolVar»«IF value == 'true'»true«ELSE»false«ENDIF»«ENDDEFINE»
+«DEFINE ValDirect2Mod FOR IntVar»«value»«ENDDEFINE»
+«DEFINE ValDirect2Mod FOR ListVar»array(«EXPAND ValDirect2Mod FOREACH items.select(item|item.^default == true) SEPARATOR ', '»)«ENDDEFINE»
+«DEFINE ValDirect2Mod FOR ListVarItem»'«name.formatForCode()»'«ENDDEFINE»
+
+«REM»For interactive installer«ENDREM»
+«DEFINE ValForm2SessionDefault FOR Variable»'«value.formatForCode()»'«ENDDEFINE»
+«DEFINE ValForm2SessionDefault FOR ListVar»serialize(array(«EXPAND ValForm2SessionDefault FOREACH items.select(item|item.^default == true) SEPARATOR ', '»))«ENDDEFINE»
+«DEFINE ValForm2SessionDefault FOR ListVarItem»'«name.formatForCode()»'«ENDDEFINE»

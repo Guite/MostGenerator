@@ -1,0 +1,201 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«REM»Entry point for example data used by the installer«ENDREM»
+«DEFINE Root FOR Application-»
+    /**
+     * Create the default data for «appName()».
+     *
+     * @return void
+     */
+    protected function createDefaultData()
+    {
+        // ensure that tables are cleared
+        $this->entityManager->transactional(function($entityManager) {
+«EXPAND ExampleRowImpl FOR getDefaultDataSource()-»
+        });
+
+        // Insertion successful
+        return true;
+    }
+«ENDDEFINE»
+
+«DEFINE ExampleRowImpl FOR Models-»
+«EXPAND TruncateTable FOREACH entities-»
+«IF numExampleRows > 0-»
+
+«IF !entities.select(e|e.tree != EntityTreeType::NONE).isEmpty-»
+            $treeCounterRoot = 1;
+«ENDIF-»
+«EXPAND CreateExampleRows-»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE TruncateTable FOR Entity-»
+            $entityManager->getRepository('«implClassModelEntity()»')->truncateTable();
+«ENDDEFINE»
+
+«DEFINE CreateExampleRows FOR Models-»
+«LET entities.fields.typeSelect(AbstractDateField) AS fields-»
+«IF !fields.select(e|e.past).isEmpty-»
+            $lastMonth = mktime(date('s'), date('H'), date('i'), date('m')-1, date('d'), date('Y'));
+            $lastHour = mktime(date('s'), date('H')-1, date('i'), date('m'), date('d'), date('Y'));
+«ENDIF-»
+«IF !fields.select(e|e.future).isEmpty-»
+            $nextMonth = mktime(date('s'), date('H'), date('i'), date('m')+1, date('d'), date('Y'));
+            $nextHour = mktime(date('s'), date('H')+1, date('i'), date('m'), date('d'), date('Y'));
+«ENDIF-»
+«IF !fields.typeSelect(DatetimeField).isEmpty-»
+            $dtNow = date('Y-m-d H:i:s');
+«IF !fields.typeSelect(DatetimeField).select(e|e.past).isEmpty-»
+            $dtPast = date('Y-m-d H:i:s', $lastMonth);
+«ENDIF-»
+«IF !fields.typeSelect(DatetimeField).select(e|e.future).isEmpty-»
+            $dtFuture = date('Y-m-d H:i:s', $nextMonth);
+«ENDIF-»
+«ENDIF-»
+«IF !fields.typeSelect(DateField).isEmpty-»
+            $dNow = date('Y-m-d');
+«IF !fields.typeSelect(DateField).select(e|e.past).isEmpty-»
+            $dPast = date('Y-m-d', $lastMonth);
+«ENDIF-»
+«IF !fields.typeSelect(DateField).select(e|e.future).isEmpty-»
+            $dFuture = date('Y-m-d', $nextMonth);
+«ENDIF-»
+«ENDIF-»
+«IF !fields.typeSelect(TimeField).isEmpty-»
+            $tNow = date('H:i:s');
+«IF !fields.typeSelect(TimeField).select(e|e.past).isEmpty-»
+            $tPast = date('H:i:s', $lastHour);
+«ENDIF-»
+«IF !fields.typeSelect(TimeField).select(e|e.future).isEmpty-»
+            $tFuture = date('H:i:s', $nextHour);
+«ENDIF-»
+«ENDIF-»
+«ENDLET-»
+«EXPAND InitExampleObjects(application) FOREACH entities-»
+«EXPAND CreateExampleRows(application) FOREACH entities-»
+«ENDDEFINE»
+
+«DEFINE InitExampleObjects(Application app) FOR Entity»
+«FOREACH 1.upTo(container.numExampleRows) AS number-»
+            $«name.formatForCode()»«number» = new «implClassModelEntity()»(«EXPAND ExampleRowsConstructorArguments(number)-»);
+«ENDFOREACH-»
+«ENDDEFINE»
+
+«DEFINE CreateExampleRows(Application app) FOR Entity»
+«LET name.formatForCode() AS entityName-»
+«FOREACH 1.upTo(container.numExampleRows) AS number-»
+«IF isInheriting()-»
+«EXPAND ExampleRowAssignment(this, entityName, number) FOREACH parentType().fields.typeSelect(DerivedField).reject(e|e.primaryKey).reject(e|e.metaType == UploadField)-»
+«ENDIF-»
+«EXPAND ExampleRowAssignment(this, entityName, number) FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey).reject(e|e.metaType == UploadField)-»
+«REM»«IF hasTranslatableFields()-»
+            $«entityName»«number»->setLocale(ZLanguage::getLanguageCode());
+«ENDIF-»«ENDREM»«''-»
+«IF tree != EntityTreeType::NONE-»
+            $«entityName»«number»->setParent(«IF number == 1-»null«ELSE-»$«entityName»1«ENDIF-»);
+            $«entityName»«number»->setLvl(«IF number == 1-»1«ELSE-»2«ENDIF-»);
+            $«entityName»«number»->setLft(«IF number == 1-»1«ELSE-»«((number-1)*2)»«ENDIF-»);
+            $«entityName»«number»->setRgt(«IF number == 1-»«container.numExampleRows*2»«ELSE-»«((number-1)*2)+1»«ENDIF-»);
+            $«entityName»«number»->setRoot($treeCounterRoot);
+«ENDIF-»
+«ENDFOREACH-»
+«''-»
+«FOREACH 1.upTo(container.numExampleRows) AS number-»
+            $entityManager->persist($«entityName»«number»);
+«ENDFOREACH-»
+«ENDLET-»
+«IF tree != EntityTreeType::NONE-»
+            $treeCounterRoot++;
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE ExampleRowsConstructorArgumentsDefault(Boolean hasPreviousArgs, Integer number) FOR Entity-»
+«IF hasCompositeKeys()-»
+«IF hasPreviousArgs-», «ENDIF-»«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ', '-»$«pkField.name.formatForCode()»«ENDFOREACH-»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE ExampleRowsConstructorArguments(Integer number) FOR Entity-»
+«IF isIndexByTarget()-»
+«LET incoming.typeSelect(JoinRelationship).select(e|e.isIndexed()).get(0) AS indexRelation-»
+«LET getRelationAliasName(indexRelation, false) AS sourceAlias-»
+«LET indexRelation.getIndexByField() AS indexBy-»
+«LET getDerivedFields().selectFirst(e|e.name == indexBy) AS indexByField-»
+«IF indexByField.metaType == IntegerField-»«IF indexByField.defaultValue.length > 0-»«indexByField.defaultValue»«ELSE-»«number»«ENDIF-»«ELSE-»«IF indexByField.defaultValue.length > 0-»'«indexByField.defaultValue»'«ELSE-»'«indexByField.name.formatForDisplayCapital()» «number»'«ENDIF-»«ENDIF-», $«sourceAlias.formatForCode()»«number»«EXPAND ExampleRowsConstructorArgumentsDefault(true, number)-»
+«ENDLET-»
+«ENDLET-»
+«ENDLET-»
+«ENDLET-»
+«ELSEIF isAggregated()-»
+«EXPAND ExampleRowsConstructorArgumentsAggregate(number) FOREACH getAggregators().getAggregatingRelationships() SEPARATOR ', '»«EXPAND ExampleRowsConstructorArgumentsDefault(true, number)-»
+«ELSE-»
+«EXPAND ExampleRowsConstructorArgumentsDefault(false, number)-»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE ExampleRowsConstructorArgumentsAggregate(Integer number) FOR OneToManyRelationship-»
+«LET source.getAggregateFields().get(0).getAggregateTargetField() AS targetField-»
+$«getRelationAliasName(false)»«number», «IF targetField.defaultValue != '' && targetField.defaultValue != '0'-»«targetField.defaultValue»«ELSE-»«number»«ENDIF-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE ExampleRowAssignment(Entity dataEntity, String entityName, Integer number) FOR DerivedField-»
+            $«entityName»«number»->set«name.formatForCodeCapital()»(«EXPAND ExampleRowValue(dataEntity, number)-»);
+«ENDDEFINE»
+«DEFINE ExampleRowAssignment(Entity dataEntity, String entityName, Integer number) FOR IntegerField-»
+«IF aggregateFor.length == 0-»
+            $«entityName»«number»->set«name.formatForCodeCapital()»(«EXPAND ExampleRowValue(dataEntity, number)-»);
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DerivedField-»
+«error("Error: undefined example value definition for derived field type " + metaType.toString() + " (code 4837264)") -> ""-»
+«ENDDEFINE»
+«DEFINE ExampleRowValueNumber(Entity dataEntity, Integer number) FOR DerivedField-»«number»«ENDDEFINE»
+«DEFINE ExampleRowValueText(Entity dataEntity, Integer number) FOR DerivedField-»
+'«entity.name.formatForDisplayCapital()» «name.formatForDisplay()» «number»'«''-»
+«ENDDEFINE»
+«DEFINE ExampleRowValueTextLength(Entity dataEntity, Integer number, Integer maxLength) FOR DerivedField-»
+«IF maxLength >= (entity.name.formatForDisplayCapital().length + 4 + name.formatForDisplay().length)-»
+'«dataEntity.name.formatForDisplayCapital()» «name.formatForDisplay()» «number»'«''-»
+«ELSEIF !unique && maxLength >= (4 + name.formatForDisplay().length)-»
+'«name.formatForDisplay()» «number»'«''-»
+«ELSEIF maxLength < 4 && maxLength > 1-»
+'«(number+dataEntity.name.length+dataEntity.fields.size)»'«''-»
+«ELSEIF maxLength == 1-»
+'«((number > 9) ? 1 : number)»'«''-»
+«ELSE-»
+substr('«dataEntity.name.formatForDisplayCapital()» «name.formatForDisplay()»', 0, «(maxLength-2)») . ' «number»'«''-»
+«ENDIF-»
+«ENDDEFINE»
+«DEFINE ExampleRowValueText(Entity dataEntity, Integer number) FOR StringField-»
+«EXPAND ExampleRowValueTextLength(dataEntity, number, length)-»
+«ENDDEFINE»
+«DEFINE ExampleRowValueText(Entity dataEntity, Integer number) FOR TextField-»
+«EXPAND ExampleRowValueTextLength(dataEntity, number, length)-»
+«ENDDEFINE»
+«DEFINE ExampleRowValueText(Entity dataEntity, Integer number) FOR EmailField-»
+«EXPAND ExampleRowValueTextLength(dataEntity, number, length)-»
+«ENDDEFINE»
+«DEFINE ExampleRowValueText(Entity dataEntity, Integer number) FOR UrlField-»
+«EXPAND ExampleRowValueTextLength(dataEntity, number, length)-»
+«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR BooleanField-»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR IntegerField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DecimalField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR StringField-»«IF country || language-»ZLanguage::getLanguageCode()«ELSEIF htmlcolour-»'#ff6600'«ELSE-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDIF-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR TextField-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR EmailField-»'«entity.container.application.email»'«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR UrlField-»'«entity.container.application.url»'«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR UploadField-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR UserField-»2«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR ArrayField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR ObjectField-»«EXPAND ExampleRowValueText(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DatetimeField-»«IF past-»$dtPast«ELSEIF future-»$dtFuture«ELSE-»$dtNow«ENDIF-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DateField-»«IF past-»$dPast«ELSEIF future-»$dFuture«ELSE-»$dNow«ENDIF-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR TimeField-»«IF past-»$tPast«ELSEIF future-»$tFuture«ELSE-»$tNow«ENDIF-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR FloatField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»
