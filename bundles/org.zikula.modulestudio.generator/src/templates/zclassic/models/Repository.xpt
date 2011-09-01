@@ -190,13 +190,15 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     public function selectSearch($fragment = '', $exclude = array(), $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
     {
         $where = '';
-        if (count($exclude)) {
-            foreach ($idFields as $idField) {
+        if (count($exclude) > 0) {
+            $exclude = DataUtil::formatForStore($exclude);
+«REM»            foreach ($idFields as $idField) {
                 if (!empty($where)) {
                     $where .= ' AND ';
                 }
-                $where .= $idField . ' NOT IN (' . DataUtil::formatForStore($exclude) . ')';
-            }
+                $where .= 'tbl.' . $idField . ' NOT IN (' . implode(', ', $exclude) . ')';
+            }«ENDREM»«''-»
+            $where .= 'tbl.id NOT IN (' . implode(', ', $exclude) . ')';
         }
 
         $fragment = DataUtil::formatForStore($fragment);

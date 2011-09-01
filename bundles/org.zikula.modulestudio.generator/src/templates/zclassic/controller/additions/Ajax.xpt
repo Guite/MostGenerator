@@ -97,6 +97,7 @@
             $fragment = $this->request->getGet()->get('fragment', '');
             $exclude = $this->request->getGet()->get('exclude', '');
         }
+        $exclude = ((!empty($exclude)) ? array($exclude) : array());
 
         // parameter for used sorting field
         $sort = $this->request->getGet()->get('sort', '');
