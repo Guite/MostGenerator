@@ -10,11 +10,11 @@
 {* purpose of this template: «nameMultiple.formatForDisplay()» view csv view in «controller.name()» area *}
 {«appName.formatForDB()»TemplateHeaders contentType='text/comma-separated-values; charset=iso-8859-15' asAttachment=true filename='«nameMultiple.formatForCodeCapital()».csv'}
 «EXPAND HeaderLine FOREACH getDerivedFields().reject(e|e.primaryKey) SEPARATOR ";"-»«IF geographical-»«FOREACH {'latitude', 'longitude'} AS geoFieldName-»;"«geoFieldName.toFirstUpper()»"«ENDFOREACH-»«ENDIF-»
-«EXPAND HeaderLineRelation(false) FOREACH incoming.typeSelect(OneToManyRelationship)-»
+«EXPAND HeaderLineRelation(false) FOREACH incoming.typeSelect(OneToManyRelationship).select(e|e.bidirectional)-»
 «EXPAND HeaderLineRelation(true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
 {foreach item='«objName»' from=$items}
 «EXPAND DisplayEntry(controller) FOREACH getDerivedFields().reject(e|e.primaryKey) SEPARATOR ";"-»«IF geographical-»«FOREACH {'latitude', 'longitude'} AS geoFieldName-»;"{$«name.formatForCode()».«geoFieldName»|formatnumber:10}"«ENDFOREACH-»«ENDIF-»
-«EXPAND DisplayEntry(controller, false) FOREACH incoming.typeSelect(OneToManyRelationship)-»
+«EXPAND DisplayEntry(controller, false) FOREACH incoming.typeSelect(OneToManyRelationship).select(e|e.bidirectional)-»
 «EXPAND DisplayEntry(controller, true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
 {/foreach}
 

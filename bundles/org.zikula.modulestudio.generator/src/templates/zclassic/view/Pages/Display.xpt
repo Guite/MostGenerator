@@ -44,7 +44,7 @@
     <dd>{$«objName».«geoFieldName»|formatnumber:10}</dd>
 «ENDFOREACH-»
 «ENDIF-»
-«EXPAND DisplayEntry(controller, false) FOREACH incoming.typeSelect(OneToManyRelationship)-»
+«EXPAND DisplayEntry(controller, false) FOREACH incoming.typeSelect(OneToManyRelationship).select(e|e.bidirectional)-»
 «REM»«EXPAND DisplayEntry(controller, true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»«ENDREM»«''-»
 </dl>
 «EXPAND DisplayExtensions(controller, objName)-»

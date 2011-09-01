@@ -39,7 +39,7 @@
     <«geoFieldName»>{$item.«geoFieldName»|formatnumber:10}</«geoFieldName»>
 «ENDFOREACH-»
 «ENDIF-»
-«EXPAND DisplayEntry(controller, false) FOREACH incoming.typeSelect(OneToManyRelationship)-»
+«EXPAND DisplayEntry(controller, false) FOREACH incoming.typeSelect(OneToManyRelationship).select(e|e.bidirectional)-»
 «EXPAND DisplayEntry(controller, true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
 </«name.formatForDB()»>
 «ENDFILE»

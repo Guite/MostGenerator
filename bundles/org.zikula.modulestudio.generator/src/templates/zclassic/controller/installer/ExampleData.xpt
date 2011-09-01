@@ -108,7 +108,7 @@
 «ENDIF-»
 «EXPAND ExampleRowAssignmentOutgoing(entityName, number) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
 «EXPAND ExampleRowAssignmentOutgoing(entityName, number) FOREACH outgoing.typeSelect(ManyToOneRelationship)-»
-«EXPAND ExampleRowAssignmentIncoming(entityName, number) FOREACH incoming.typeSelect(OneToManyRelationship)-»
+«EXPAND ExampleRowAssignmentIncoming(entityName, number) FOREACH incoming.typeSelect(OneToManyRelationship).select(e|e.bidirectional)-»
 «ENDFOREACH-»
 «ENDLET-»
 «''-»

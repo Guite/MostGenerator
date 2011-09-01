@@ -64,14 +64,14 @@ listType:
 <table class="z-datatable">
     <colgroup>
 «EXPAND ColumnDef FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey)-»
-«EXPAND ColumnDef(false) FOREACH incoming.typeSelect(OneToManyRelationship)-»
+«EXPAND ColumnDef(false) FOREACH incoming.typeSelect(OneToManyRelationship).select(e|e.bidirectional)-»
 «EXPAND ColumnDef(true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
         <col id="cintactions" />
     </colgroup>
     <thead>
     <tr>
 «EXPAND HeaderLine(controller) FOREACH getDerivedFields().reject(e|e.primaryKey)-»
-«EXPAND HeaderLine(controller, false) FOREACH incoming.typeSelect(OneToManyRelationship)-»
+«EXPAND HeaderLine(controller, false) FOREACH incoming.typeSelect(OneToManyRelationship).select(e|e.bidirectional)-»
 «EXPAND HeaderLine(controller, true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
         <th id="hintactions" scope="col" align="left" valign="middle" class="z-wrap z-order-unsorted">{gt text='Actions'}</th>
     </tr>
@@ -88,7 +88,7 @@ listType:
     <tr class="{cycle values='z-odd, z-even'}">
 «ENDIF-»
 «EXPAND DisplayEntry(controller, listType, false) FOREACH getDerivedFields().reject(e|e.primaryKey)-»
-«EXPAND DisplayEntry(controller, listType, false) FOREACH incoming.typeSelect(OneToManyRelationship)-»
+«EXPAND DisplayEntry(controller, listType, false) FOREACH incoming.typeSelect(OneToManyRelationship).select(e|e.bidirectional)-»
 «EXPAND DisplayEntry(controller, listType, true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
 «EXPAND ItemActions(appName, controller, listType)-»
 «IF listType < 2-»
