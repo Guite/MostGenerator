@@ -94,7 +94,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
                 if (!empty($where)) {
                     $where .= ' AND ';
                 }
-                $where .= 'tbl.' . DataUtil::formatForStore($fieldName) . ' = ' . DataUtil::formatForStore($fieldValue);
+                $where .= 'tbl.' . DataUtil::formatForStore($fieldName) . ' = \'' . DataUtil::formatForStore($fieldValue) . '\'';
             }
         } else {
             $where .= 'tbl.id = ' . DataUtil::formatForStore($id);
@@ -123,7 +123,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
             return LogUtil::registerArgsError();
         }
 
-        $where = 'tbl.slug = ' . DataUtil::formatForStore($slugTitle);
+        $where = 'tbl.slug = \'' . DataUtil::formatForStore($slugTitle) . '\'';
         if ($excludeId > 0) {
             $where .= ' AND tbl.id != ' . DataUtil::formatForStore($excludeId);
         }
