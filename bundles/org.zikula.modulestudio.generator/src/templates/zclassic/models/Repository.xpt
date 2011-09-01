@@ -253,6 +253,26 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     }
 «ENDIF-»
 
+    /**
+     * Check for unique values.
+     *
+     * @param string $fieldName  The name of the property to be checked
+     * @param string $fieldValue The value of the property to be checked
+     * @param int    $excludeid  Id of «nameMultiple.formatForDisplay()» to exclude (optional).
+     * @return boolean result of this check, true if the given «name.formatForDisplay()» does not already exist
+     */
+    public function detectUniqueState($fieldName, $fieldValue, $excludeid = 0)
+    {
+        $where = 'tbl.' . $fieldName . ' = \'' . DataUtil::formatForStore($fieldValue]) . '\'';
+
+        if ($excludeid > 0) {
+            $where .= ' AND tbl.id != \'' . (int) DataUtil::formatForStore($excludeid) . '\'';
+        }
+
+        $count = $this->selectCount($where);
+        return ($count == 0);
+    }
+
 «EXPAND repository::Tree::TreeMethods(app)-»
 
     /**

@@ -457,10 +457,16 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
         parent::validateAll();
 «ENDIF-» 
 «EXPAND ValidationCalls FOREACH getDerivedFields()-»
+«EXPAND ValidationCallUnique FOREACH getUniqueDerivedFields().reject(e|e.primaryKey)-»
+«REM»no slug input element yet, see https://github.com/l3pp4rd/DoctrineExtensions/issues/140
+«IF hasSluggableFields() && slugUpdatable && slugUnique-»
+«EXPAND ValidationCallUniqueSlug-»
+«ENDIF-»
+«ENDREM»«''-»
         return true;
     }
 
-«EXPAND checkForUniqueValues(app) FOREACH getUniqueDerivedFields()-»
+«EXPAND checkForUniqueValues(app)-»
 «IF hasSluggableFields() && slugUpdatable && slugUnique-»
 «EXPAND checkForUniqueSlugValues(app)-»
 «ENDIF-»
@@ -468,8 +474,78 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
 «EXPAND FileHelper::GetterAndSetterMethods('entity', 'Zikula_EntityAccess', false, true, 'null')»
 «ENDDEFINE»
 
+
+
+
+«DEFINE checkForUniqueValues(Application app) FOR Entity-»
+
+    /**
+     * Check for unique values.
+     *
+     * This method determines if there already exist «nameMultiple.formatForDisplay()» with the same «name.formatForDisplay()».
+     *
+     * @param string $fieldName The name of the property to be checked
+     * @return boolean result of this check, true if the given «name.formatForDisplay()» does not already exist
+     */
+    public function isUniqueValue($fieldName)
+    {
+        if (empty($value)) {
+            return false;
+        }
+
+        $serviceManager = ServiceUtil::getManager();
+        $entityManager = $serviceManager->getService('doctrine.entitymanager');
+        $repository = $entityManager->getRepository('«app.appName()»_Entity_«name.formatForCodeCapital()»');
+
+        $excludeid = $this->entity['«getFirstPrimaryKey().name.formatForCode()»'];
+        return $repository->detectUniqueState($fieldName, $this->entity[$fieldName], $excludeid);
+    }
+«ENDDEFINE»
+
+«DEFINE checkForUniqueSlugValues(Application app) FOR Entity-»
+
+    /**
+     * Check for unique slug values.
+     *
+     * This method determines if there already exist «nameMultiple.formatForDisplay()» with the same slug.
+     *
+     * @return boolean result of this check, true if the given slug does not already exist
+     */
+    public function isUniqueSlug()
+    {
+        $value = $this->entity['slug'];
+        if (empty($value)) {
+            return false;
+        }
+
+        $serviceManager = ServiceUtil::getManager();
+        $entityManager = $serviceManager->getService('doctrine.entitymanager');
+        $repository = $entityManager->getRepository('«app.appName()»_Entity_«name.formatForCodeCapital()»');
+
+        $excludeid = $this->entity['«getFirstPrimaryKey().name.formatForCode()»'];
+        return $repository->detectUniqueState('slug', $value, $excludeid);
+    }
+«ENDDEFINE»
+
+
+
 «DEFINE ValidationCalls FOR DerivedField-»
 «ENDDEFINE»
+
+«DEFINE ValidationCallUnique FOR DerivedField-»
+        if (!$this->isUniqueValue('«name.formatForCode()»')) {
+            $errorInfo['message'] = __f('The «name.formatForDisplay()» %s is already assigned. Please choose another «name.formatForDisplay()».', array($this->entity['«name.formatForCode()»']), $dom);
+            return $errorInfo;
+        }
+«ENDDEFINE»
+
+«DEFINE ValidationCallUniqueSlug FOR Entity-»
+        if (!$this->isUniqueSlug()) {
+            $errorInfo['message'] = __f('The slug %s is already assigned. Please choose another slug.', array($this->entity['slug']), $dom);
+            return $errorInfo;
+        }
+«ENDDEFINE»
+
 «DEFINE ValidationCalls FOR BooleanField-»
         if (!$this->isValidBoolean('«name.formatForCode()»')) {
             $errorInfo['message'] = __f('Error! Field value must be a valid boolean (%s).', array('«name.formatForCode()»'), $dom);
@@ -692,76 +768,3 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
         }
 «ENDDEFINE»
 
-
-
-
-
-
-
-«DEFINE checkForUniqueValues(Application app) FOR DerivedField-»
-
-    /**
-     * Check for unique values.
-     *
-     * This method determines if there already exist «entity.nameMultiple.formatForDisplay()» with the same «name.formatForDisplay()».
-     *
-     * @param «fieldTypeAsString()»  $value The «name.formatForDisplay()» to check.
-     * @param int $excludeid      Id of «entity.nameMultiple.formatForDisplay()» to exclude (optional).
-     *
-     * @return boolean true if the given «name.formatForDisplay()» does already exist
-     */
-    public function checkIf«name.formatForCodeCapital()»Exists($value, $excludeid = 0)
-    {
-        if (empty($value)) {
-            return false;
-        }
-
-        $serviceManager = ServiceUtil::getManager();
-        $entityManager = $serviceManager->getService('doctrine.entitymanager');
-
-        $objectType = '«entity.name.formatForCode()»';
-        $entityClass = '«app.appName()»_Entity_' . ucfirst($objectType);
-        $repository = $entityManager->getRepository($entityClass);
-
-        // TODO: move to «IF entity.isInheriting()»«entity.parentType().baseClassModel('repository', '')»«ELSE»«entity.baseClassModel('repository', '')»«ENDIF» (#37)
-        $where = 'tbl.«name.formatForCode()» = \'' . DataUtil::formatForStore($value) . '\'';
-        if ($excludeid > 0) {
-            $where .= ' AND tbl.id != \'' . (int) DataUtil::formatForStore($excludeid) . '\'';
-        }
-        return $repository->selectCount($where);
-    }
-«ENDDEFINE»
-
-«DEFINE checkForUniqueSlugValues(Application app) FOR Entity-»
-
-    /**
-     * Check for unique slug values.
-     *
-     * This method determines if there already exist «nameMultiple.formatForDisplay()» with the same slug.
-     *
-     * @param string  $value The slug to check.
-     * @param int $excludeid      Id of «nameMultiple.formatForDisplay()» to exclude (optional).
-     *
-     * @return boolean true if the given slug does already exist
-     */
-    public function checkIfSlugExists($value, $excludeid = 0)
-    {
-        if (empty($value)) {
-            return false;
-        }
-
-        $serviceManager = ServiceUtil::getManager();
-        $entityManager = $serviceManager->getService('doctrine.entitymanager');
-
-        $objectType = '«name.formatForCode()»';
-        $entityClass = '«app.appName()»_Entity_' . ucfirst($objectType);
-        $repository = $entityManager->getRepository($entityClass);
-
-        // TODO: move to «IF isInheriting()»«parentType().baseClassModel('repository', '')»«ELSE»«baseClassModel('repository', '')»«ENDIF» (#37)
-        $where = 'tbl.slug = \'' . DataUtil::formatForStore($value) . '\'';
-        if ($excludeid > 0) {
-            $where .= ' AND tbl.id != \'' . (int) DataUtil::formatForStore($excludeid) . '\'';
-        }
-        return $repository->selectCount($where);
-    }
-«ENDDEFINE»
