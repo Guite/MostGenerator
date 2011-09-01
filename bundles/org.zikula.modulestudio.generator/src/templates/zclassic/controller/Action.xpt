@@ -8,7 +8,7 @@
     /**
 «EXPAND ActionDoc(app)-»
      */
-    public function «name.formatForCode()»($args)
+    public function «name.formatForCode().toFirstLower()»($args)
     {
 «EXPAND ActionImpl(app)-»
     }
