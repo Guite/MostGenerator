@@ -51,7 +51,7 @@
 «IF metaType != MainAction-»
         // parameter specifying which type of objects we are treating
         $objectType = $this->request->getGet()->filter('ot', '«app.getLeadingEntity().name.formatForCode()»', FILTER_SANITIZE_STRING);
-        $utilArgs = array('controller' => '«controller.name()»', 'action' => '«name.formatForCode()»');
+        $utilArgs = array('controller' => '«controller.name()»', 'action' => '«name.formatForCode().toFirstLower()»');
         if (!in_array($objectType, «app.appName()»_Util_Controller::getObjectTypes('controllerAction', $utilArgs))) {
             $objectType = «app.appName()»_Util_Controller::getDefaultObjectType('controllerAction', $utilArgs);
         }
