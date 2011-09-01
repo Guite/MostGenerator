@@ -32,11 +32,11 @@
 «ENDDEFINE»
 
 «DEFINE AddJoin(Boolean incoming, String target) FOR JoinRelationship-»
-«LET getRelationAliasName(incoming).formatForCodeCapital().toFirstLower() AS relationAliasName-»
+«LET getRelationAliasName(incoming).formatForCodeCapital().toFirstUpper() AS relationAliasName-»
 «IF target == 'select'-»
-, «relationAliasName»«""-»
+, tbl«relationAliasName»«""-»
 «ELSEIF target == 'from'-»
-        $qb->leftJoin('tbl.«relationAliasName»', '«relationAliasName»');
+        $qb->leftJoin('tbl.«relationAliasName.toFirstLower()»', 'tbl«relationAliasName»');
 «ENDIF-»
 «ENDLET-»
 «ENDDEFINE»

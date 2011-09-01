@@ -263,7 +263,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
      */
     public function detectUniqueState($fieldName, $fieldValue, $excludeid = 0)
     {
-        $where = 'tbl.' . $fieldName . ' = \'' . DataUtil::formatForStore($fieldValue]) . '\'';
+        $where = 'tbl.' . $fieldName . ' = \'' . DataUtil::formatForStore($fieldValue) . '\'';
 
         if ($excludeid > 0) {
             $where .= ' AND tbl.id != \'' . (int) DataUtil::formatForStore($excludeid) . '\'';
