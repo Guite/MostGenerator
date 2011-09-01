@@ -24,6 +24,8 @@
      * This method provides a generic item detail view.
 «ELSEIF metaType == EditAction-»
      * This method provides a generic handling of all edit requests.
+«ELSEIF metaType == DeleteAction-»
+     * This method provides a generic handling of simple delete requests.
 «ELSEIF metaType == CustomAction-»
      * This is a custom method. Documentation for this will be improved in later versions.
 «ENDIF-»
