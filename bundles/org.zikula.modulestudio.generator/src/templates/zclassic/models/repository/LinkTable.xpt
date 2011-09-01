@@ -1,0 +1,42 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
+
+«REM»base implementation«ENDREM»
+«DEFINE ModelRefRepositoryBaseImpl(Application app) FOR ManyToManyRelationship-»
+
+/**
+ * Repository class used to implement own convenience methods for performing certain DQL queries.
+ *
+ * This is the base repository class for the many to many relationship
+ * between «source.name.formatForDisplay()» and «target.name.formatForDisplay()» entities.
+ */
+class «baseClassModelRefRepository()» extends EntityRepository
+{
+    public function truncateTable()
+    {
+        $query = $this->getEntityManager()
+            ->createQuery('DELETE «implClassModelRefEntity()»');
+«REM»«IF hasPessimisticWriteLock()-»
+        $query->setLockMode(LockMode::«lockType.asConstant()»);
+«ENDIF-»«ENDREM»
+        $query->execute();
+    }
+}
+«ENDDEFINE»
+
+«REM»concrete implementation stub«ENDREM»
+«DEFINE ModelRefRepositoryImpl(Application app) FOR ManyToManyRelationship-»
+
+/**
+ * Repository class used to implement own convenience methods for performing certain DQL queries.
+ *
+ * This is the concrete repository class for the many to many relationship
+ * between «source.name.formatForDisplay()» and «target.name.formatForDisplay()» entities.
+ */
+class «implClassModelRefRepository()» extends «baseClassModelRefRepository()»
+{
+    // feel free to add your own methods here, like for example reusable DQL queries
+}
+«ENDDEFINE»

@@ -4,7 +4,7 @@
 «EXTENSION extensions::ClassUtils»
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
-«REM»Entry point for Doctrine table classes«ENDREM»
+«REM»Entry point for Doctrine repository classes«ENDREM»
 «DEFINE Root FOR Application-»
     «EXPAND Root(this) FOREACH models.entities.reject(e|e.mappedSuperClass)-»
     «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»
@@ -215,7 +215,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     }
 «ENDIF-»
 
-«EXPAND TreeMethods(app)-»
+«EXPAND repository::Tree::TreeMethods(app)-»
 
     /**
      * Build a generic Doctrine query supporting WHERE and ORDER BY
@@ -282,7 +282,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 
         return $query;
     }
-«EXPAND JoinMethods(app)-»
+«EXPAND repository::Joins::JoinMethods(app)-»
 }
 «ENDDEFINE»
 
@@ -303,99 +303,6 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 «REM»will be filled by Advices (Aspect Orientation)«ENDREM»
 «ENDDEFINE»
 
-«DEFINE TreeMethods(Application app) FOR Entity-»
-«IF tree != EntityTreeType::NONE-»
-
-    /**
-     * Select tree of «nameMultiple.formatForCode()».
-     *
-     * @param integer $rootId   Optional id of root node to use as a branch, defaults to 0 which corresponds to the whole tree.
-     * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
-     *
-     * @return array|ArrayCollection retrieved data array or tree node objects.
-     */
-    public function selectTree($rootId = 0, $useJoins = true)
-    {
-        if ($rootId == 0) {
-            // return all trees if no specific one has been asked for
-            return $this->selectAllTrees($useJoins);
-        }
-
-        $result = null;
-
-        // fetch root node
-        $rootNode = $this->selectById($rootId, $useJoins);
-
-        // fetch children
-        $result = $this->children($rootNode);
-
-        // alternatively we could probably select all nodes with root = $rootId
-
-        return array_merge(array($rootNode), $children);
-    }
-
-    /**
-     * Select all trees at once.
-     *
-     * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
-     *
-     * @return array|ArrayCollection retrieved data array or tree node objects.
-     */
-    public function selectAllTrees($useJoins = true)
-    {
-        $trees = array();
-
-        // get all root nodes
-        $rootNodes = $this->_intBaseQuery('tbl.lvl = 0', '', $useJoins)->getResult();
-
-        foreach ($rootNodes as $rootNode) {
-            // fetch children
-            $children = $this->children($rootNode);
-            $trees[$rootNode->getId()] = array_merge(array($rootNode), $children);
-        }
-
-        return $trees;
-    }
-«ENDIF-»
-«ENDDEFINE»
-
-«DEFINE JoinMethods(Application app) FOR Entity-»
-
-    /**
-     * Helper method to add join selections.
-     *
-     * @return String Enhancement for select clause.
-     */
-    protected function addJoinsToSelection()
-    {
-        $selection = '«EXPAND AddJoin(false, 'select') FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»«EXPAND AddJoin(true, 'select') FOREACH outgoing.typeSelect(JoinRelationship)-»';
-        return $selection;
-    }
-
-    /**
-     * Helper method to add joins to from clause.
-     *
-     * @param Doctrine\ORM\QueryBuilder $qb query builder instance used to create the query.
-     *
-     * @return String Enhancement for from clause.
-     */
-    protected function addJoinsToFrom(QueryBuilder $qb)
-    {
-«EXPAND AddJoin(false, 'from') FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»
-«EXPAND AddJoin(true, 'from') FOREACH outgoing.typeSelect(JoinRelationship)-»
-        return $qb;
-    }
-«ENDDEFINE»
-
-«DEFINE AddJoin(Boolean incoming, String target) FOR JoinRelationship-»
-«LET getRelationAliasName(incoming).formatForCodeCapital().toFirstLower() AS relationAliasName-»
-«IF target == 'select'-»
-, «relationAliasName»«""-»
-«ELSEIF target == 'from'-»
-        $qb->leftJoin('tbl.«relationAliasName»', '«relationAliasName»');
-«ENDIF-»
-«ENDLET-»
-«ENDDEFINE»
 
 «REM»concrete implementation stub«ENDREM»
 «DEFINE ModelRepositoryImpl(Application app) FOR Entity-»
@@ -414,45 +321,7 @@ class «implClassModel('repository', '')» extends «IF isInheriting()»«parent
 
 «REM»creates a reference table class file for every many-to-many relationship instance«ENDREM»
 «DEFINE Root(Application app) FOR ManyToManyRelationship-»
-    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModelRefRepository().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefRepositoryBaseImpl(app)»«ENDFILE»
-    «FILE getAppSourcePath(app.appName()).msconcat(implClassModelRefRepository().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefRepositoryImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModelRefRepository().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND repository::LinkTable::ModelRefRepositoryBaseImpl(app)»«ENDFILE»
+    «FILE getAppSourcePath(app.appName()).msconcat(implClassModelRefRepository().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND repository::LinkTable::ModelRefRepositoryImpl(app)»«ENDFILE»
 «ENDDEFINE»
 
-
-«REM»base implementation«ENDREM»
-«DEFINE ModelRefRepositoryBaseImpl(Application app) FOR ManyToManyRelationship-»
-
-/**
- * Repository class used to implement own convenience methods for performing certain DQL queries.
- *
- * This is the base repository class for the many to many relationship
- * between «source.name.formatForDisplay()» and «target.name.formatForDisplay()» entities.
- */
-class «baseClassModelRefRepository()» extends EntityRepository
-{
-    public function truncateTable()
-    {
-        $query = $this->getEntityManager()
-            ->createQuery('DELETE «implClassModelRefEntity()»');
-«REM»«IF hasPessimisticWriteLock()-»
-        $query->setLockMode(LockMode::«lockType.asConstant()»);
-«ENDIF-»«ENDREM»
-        $query->execute();
-    }
-}
-«ENDDEFINE»
-
-«REM»concrete implementation stub«ENDREM»
-«DEFINE ModelRefRepositoryImpl(Application app) FOR ManyToManyRelationship-»
-
-/**
- * Repository class used to implement own convenience methods for performing certain DQL queries.
- *
- * This is the concrete repository class for the many to many relationship
- * between «source.name.formatForDisplay()» and «target.name.formatForDisplay()» entities.
- */
-class «implClassModelRefRepository()» extends «baseClassModelRefRepository()»
-{
-    // feel free to add your own methods here, like for example reusable DQL queries
-}
-«ENDDEFINE»
