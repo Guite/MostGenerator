@@ -4,7 +4,7 @@
 «DEFINE retrieveEntityFromModel(String idVar, String idValue, Boolean isHandler) FOR Object-»
 «IF !isHandler-»
         $objectData = $repository->selectById($«idValue»);
-        if (!is_array($objectData) || !isset($objectData[$«idVar»[0]])) {
+        if ((!is_array($objectData) && !is_object($objectData)) || !isset($objectData[$«idVar»[0]])) {
             return $this->registerError($this->__('No such item.'));
 «ELSE-»
         $entity = $repository->selectById($«idValue»);

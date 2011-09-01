@@ -9,9 +9,9 @@
 {* purpose of this template: «nameMultiple.formatForDisplay()» delete confirmation view in «controller.name()» area *}
 {include file='«controller.name()»/header.tpl'}
 <div class="«appName.toLowerCase()»-«name.formatForDB()» «appName.toLowerCase()»-delete">
-«IF controller.metaType == AdminController-»
 {gt text='Delete «name.formatForDisplay()»' assign='templateTitle'}
 {pagesetvar name='title' value=$templateTitle}
+«IF controller.metaType == AdminController-»
 <div class="z-admin-content-pagetitle">
     {icon type='delete' size='small' __alt='Delete'}
     <h3>{$templateTitle}</h3>
