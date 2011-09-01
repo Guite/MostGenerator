@@ -276,11 +276,9 @@
 
                         if ($imgInfo[1] < $imgInfo[0]) {
                             $meta['format'] = 'landscape';
-                        }
-                        elseif ($imgInfo[1] > $imgInfo[0]) {
+                        } elseif ($imgInfo[1] > $imgInfo[0]) {
                             $meta['format'] = 'portrait';
-                        }
-                        else {
+                        } else {
                             $meta['format'] = 'square';
                         }
                     }
