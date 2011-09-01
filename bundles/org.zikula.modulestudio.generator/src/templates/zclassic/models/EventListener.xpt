@@ -292,6 +292,10 @@
         }
 «ENDLET-»
 «ENDDEFINE»
+
+«DEFINE sanitizeForOutput FOR AbstractDateField-»
+«ENDDEFINE»
+
 «DEFINE sanitizeForOutput FOR FloatField-»
         $this['«name.formatForCode()»'] = (float) ((isset($this['«name.formatForCode()»']) && !empty($this['«name.formatForCode()»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode()»']) : 0.00);
 «ENDDEFINE»
