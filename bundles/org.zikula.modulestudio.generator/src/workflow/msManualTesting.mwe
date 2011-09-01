@@ -12,6 +12,6 @@
                cartridgeName="zclassic"
                modelFile="${modelPath}/${modelName}.mostapp"
                enrichedModelFile="${modelPath}/${modelName}_Enriched.mostapp"
-               srcGenPath="/home/axel/MostOutput">
+               srcGenPath="/home/axel/MostOutput-${modelName}">
     </cartridge>
 </workflow>
