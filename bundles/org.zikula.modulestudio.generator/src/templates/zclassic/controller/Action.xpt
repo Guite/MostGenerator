@@ -278,5 +278,5 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «ENDIF-»
 
         // return template
-        return $this->view->fetch('«controller.name()»/«name.formatForCode()».tpl');
+        return $this->view->fetch('«controller.name()»/«name.formatForCode().toFirstLower()».tpl');
 «ENDDEFINE»
