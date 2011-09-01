@@ -11,21 +11,11 @@
 <div class="«appName.toLowerCase()»-«name.formatForDB()» «appName.toLowerCase()»-display">
 «LET name.formatForCode() AS objName-»
 «LET getLeadingField() AS leadingField-»
+{gt text='«name.formatForDisplayCapital()»' assign='templateTitle'}
 «IF leadingField != null-»
-«LET leadingField.name.formatForCode() AS titleField-»
-{pagesetvar name='title' value=$«objName».«titleField»}
-«IF controller.metaType == AdminController-»
-<div class="z-admin-content-pagetitle">
-    {icon type='display' size='small' __alt='Details'}
-    <h3>{$«objName».«titleField»|notifyfilters:'«appName.formatForDB()».filter_hooks.«nameMultiple.formatForDB()».filter'}</h3>
-</div>
-«ELSE-»
-<div class="z-frontendcontainer">
-    <h2>{$«objName».«titleField»|notifyfilters:'«appName.formatForDB()».filter_hooks.«nameMultiple.formatForDB()».filter'}</h2>
+{assign var='templateTitle' value=$«objName».«leadingField.name.formatForCode()»|default:$templateTitle}
 «ENDIF-»
 «ENDLET-»
-«ELSE-»
-{gt text='«name.formatForDisplayCapital()»' assign='templateTitle'}
 {pagesetvar name='title' value=$templateTitle}
 «IF controller.metaType == AdminController-»
 <div class="z-admin-content-pagetitle">
@@ -36,8 +26,6 @@
 <div class="z-frontendcontainer">
     <h2>{$templateTitle|notifyfilters:'«appName.formatForDB()».filter_hooks.«nameMultiple.formatForDB()».filter'}</h2>
 «ENDIF-»
-«ENDIF-»
-«ENDLET-»
 
 «LET outgoing.typeSelect(JoinRelationship).union(incoming.typeSelect(ManyToManyRelationship)) AS refedElems-»
 «IF !refedElems.isEmpty-»
@@ -56,19 +44,10 @@
     <dd>{$«objName».«geoFieldName»|formatnumber:10}</dd>
 «ENDFOREACH-»
 «ENDIF-»
+«EXPAND DisplayEntry(controller, false) FOREACH incoming.typeSelect(OneToManyRelationship)-»
+«REM»«EXPAND DisplayEntry(controller, true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»«ENDREM»«''-»
 </dl>
-«IF attributable-»
-    {include file='«controller.name()»/include_attributes_display.tpl' obj=$«objName»}
-«ENDIF-»
-«IF categorisable-»
-    {include file='«controller.name()»/include_categories_display.tpl' obj=$«objName»}
-«ENDIF-»
-«IF standardFields-»
-    {include file='«controller.name()»/include_standardfields_display.tpl' obj=$«objName»}
-«ENDIF-»
-«IF metaData-»
-    {include file='«controller.name()»/include_metadata_display.tpl' obj=$«objName»}
-«ENDIF-»
+«EXPAND DisplayExtensions(controller, objName)-»
 
 {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 «EXPAND ItemActions(appName, controller)-»
@@ -96,78 +75,73 @@
 «ENDDEFINE»
 
 «DEFINE DisplayEntry(Controller controller) FOR EntityField-»
+«error("Error: undefined entity field type " + metaType.toString() + " (code 9242667)") -> ""-»
 «ENDDEFINE»
 
-«DEFINE DisplayEntrySimpleField(Controller controller) FOR DerivedField-»
+«DEFINE DisplayEntry(Controller controller) FOR DerivedField-»
     <dt>{gt text='«name.formatForDisplayCapital()»'}</dt>
     <dd>«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(entity.name.formatForCode(), 'display', '')-»</dd>
 «ENDDEFINE»
 
-«DEFINE DisplayEntry(Controller controller) FOR DerivedField-»
-«EXPAND DisplayEntrySimpleField(controller)-»
+«DEFINE DisplayEntry(Controller controller) FOR CalculatedField-»
+«error("Error: undefined calculated field type " + metaType.toString() + " (code 9242668)") -> ""-»
 «ENDDEFINE»
 
-«DEFINE DisplayIncomingRelationField(Controller controller) FOR JoinRelationship-»
-«LET getRelationAliasName(false).formatForCodeCapital() AS relationAliasName-»
-«LET target.name.formatForCode().msconcat('.').msconcat(relationAliasName) AS relObjName-»
+
+«DEFINE DisplayEntry(Controller controller, Boolean useTarget) FOR JoinRelationship-»
+«LET getRelationAliasName(useTarget).formatForCodeCapital() AS relationAliasName-»
+«LET ((useTarget) ? source : target) AS mainEntity-»
+«LET ((useTarget) ? target : source) AS linkEntity-»
+«LET mainEntity.name.formatForCode().msconcat('.').msconcat(relationAliasName) AS relObjName-»
     <dt>{gt text='«relationAliasName.formatForDisplayCapital()»'}</dt>
     <dd>
-    {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-        <a href="{modurl modname='«container.application.appName()»' type='«controller.name()»' «source.modUrlDisplay(relObjName, true)»}">
-«LET source.getLeadingField() AS leadingField-»
+    {if isset($«relObjName») && $«relObjName» ne null}
+      {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
+        <a href="{modurl modname='«container.application.appName()»' type='«controller.name()»' «linkEntity.modUrlDisplay(relObjName, true)»}">
+«LET linkEntity.getLeadingField() AS leadingField-»
 «IF leadingField != null-»
             {$«relObjName».«leadingField.name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}
 «ELSE-»
-            {gt text='«source.name.formatForDisplayCapital()»'}
+            {gt text='«linkEntity.name.formatForDisplayCapital()»'}
 «ENDIF-»
 «ENDLET-»
         </a>
-        <a id="«source.name.formatForCode()»Item«FOREACH source.getPrimaryKeyFields() AS pkField-»{$«relObjName».«pkField.name.formatForCode()»}«ENDFOREACH-»Display" href="{modurl modname='«container.application.appName()»' type='«controller.name()»' «source.modUrlDisplay(relObjName, true)» theme='Printer'«IF controller.metaType == UserController» forcelongurl=true«REM»Temporary hack due to core bug with theme parameter in short urls«ENDREM»«ENDIF-»}" title="{gt text='Open quick view window'}" style="display: none">
+        <a id="«linkEntity.name.formatForCode()»Item«FOREACH linkEntity.getPrimaryKeyFields() AS pkField-»{$«relObjName».«pkField.name.formatForCode()»}«ENDFOREACH-»Display" href="{modurl modname='«container.application.appName()»' type='«controller.name()»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«IF controller.metaType == UserController» forcelongurl=true«REM»Temporary hack due to core bug with theme parameter in short urls«ENDREM»«ENDIF-»}" title="{gt text='Open quick view window'}" style="display: none">
             {icon type='view' size='extrasmall' __alt='Quick view'}
         </a>
         <script type="text/javascript" charset="utf-8">
         /* <![CDATA[ */
             document.observe('dom:loaded', function() {
-«LET source.getLeadingField() AS leadingField-»
+«LET linkEntity.getLeadingField() AS leadingField-»
 «IF leadingField != null-»
-                «container.application.prefix()»InitInlineWindow($('«source.name.formatForCode()»Item«FOREACH source.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{{$«relObjName».«pkField.name.formatForCode()»}}«ENDFOREACH-»Display'), '{{$«relObjName».«leadingField.name.formatForCode()»|replace:"'":""}}');
+                «container.application.prefix()»InitInlineWindow($('«linkEntity.name.formatForCode()»Item«FOREACH linkEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{{$«relObjName».«pkField.name.formatForCode()»}}«ENDFOREACH-»Display'), '{{$«relObjName».«leadingField.name.formatForCode()»|replace:"'":""}}');
 «ELSE-»
-                «container.application.prefix()»InitInlineWindow($('«source.name.formatForCode()»Item«FOREACH source.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{{$«relObjName».«pkField.name.formatForCode()»}}«ENDFOREACH-»Display'), '{{gt text='«source.name.formatForDisplayCapital()»'|replace:"'":""}}');
+                «container.application.prefix()»InitInlineWindow($('«linkEntity.name.formatForCode()»Item«FOREACH linkEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{{$«relObjName».«pkField.name.formatForCode()»}}«ENDFOREACH-»Display'), '{{gt text='«linkEntity.name.formatForDisplayCapital()»'|replace:"'":""}}');
 «ENDIF-»
 «ENDLET-»
             });
         /* ]]> */
         </script>
-    {else}
-«LET source.getLeadingField() AS leadingField-»
+      {else}
+«LET linkEntity.getLeadingField() AS leadingField-»
 «IF leadingField != null-»
         {$«relObjName».«leadingField.name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}
 «ELSE-»
-        {gt text='«source.name.formatForDisplayCapital()»'}
+        {gt text='«linkEntity.name.formatForDisplayCapital()»'}
 «ENDIF-»
 «ENDLET-»
+      {/if}
+    {else}
+        {gt text='No set.'}
     {/if}
     </dd>
 «ENDLET-»
 «ENDLET-»
-«ENDDEFINE»
-
-«DEFINE DisplayEntry(Controller controller) FOR IntegerField-»
-«LET getPointingRelations() AS joins-»
-«IF !joins.isEmpty-»
-«EXPAND DisplayIncomingRelationField(controller) FOREACH joins-»
-«ELSE-»
-«EXPAND DisplayEntrySimpleField(controller)-»
-«ENDIF-»
+«ENDLET-»
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE DisplayEntry(Controller controller) FOR UserField-»
-«EXPAND DisplayEntrySimpleField(controller)-»
-«ENDDEFINE»
 
-«DEFINE DisplayEntry(Controller controller) FOR CalculatedField-»
-«ENDDEFINE»
 
 «DEFINE ItemActions(String appName, Controller controller) FOR Entity-»
 «LET name.formatForCode() AS objName-»
@@ -206,3 +180,17 @@
 «ENDLET-»
 «ENDDEFINE»
 
+«DEFINE DisplayExtensions(Controller controller, String objName) FOR Entity-»
+«IF attributable-»
+    {include file='«controller.name()»/include_attributes_display.tpl' obj=$«objName»}
+«ENDIF-»
+«IF categorisable-»
+    {include file='«controller.name()»/include_categories_display.tpl' obj=$«objName»}
+«ENDIF-»
+«IF standardFields-»
+    {include file='«controller.name()»/include_standardfields_display.tpl' obj=$«objName»}
+«ENDIF-»
+«IF metaData-»
+    {include file='«controller.name()»/include_metadata_display.tpl' obj=$«objName»}
+«ENDIF-»
+«ENDDEFINE»

@@ -35,24 +35,6 @@
 «ENDDEFINE»
 
 
-«DEFINE FormLabelText FOR IntegerField-»
-«LET getPointingRelations() AS pointingRelations-»
-«IF !pointingRelations.isEmpty-»
-«LET pointingRelations.get(0) AS pointingRelation-»
-«IF pointingRelation.sourceAlias != null && pointingRelation.sourceAlias != ""-»
-«pointingRelation.sourceAlias.formatForDisplayCapital()-»
-«ELSE-»
-«pointingRelation.source.getEntityNameSingularPlural(pointingRelation.metaType != OneToOneRelationship)-»
-«ENDIF-»
-«ENDLET-»
-«ELSE-»
-«name.formatForDisplayCapital()-»
-«ENDIF-»
-«ENDLET-»
-«ENDDEFINE»
-
-
-
 «DEFINE FormField(String groupSuffix, String idSuffix) FOR EntityField-»
 «error("Error: undefined entity field type " + metaType.toString() + " (code 902386)") -> ""-»
 «ENDDEFINE»

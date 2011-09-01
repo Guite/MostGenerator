@@ -63,22 +63,16 @@ listType:
 «ELSEIF listType == 3-»
 <table class="z-datatable">
     <colgroup>
-«FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey) AS field -»
-«IF field.metaType == IntegerField && (!((IntegerField) field).getPointingRelations().isEmpty)-»
-        <col id="c«EXPAND MarkupIdCode(false) FOREACH ((IntegerField) field).getPointingRelations()-»" />
-«ELSE-»
-        <col id="c«EXPAND MarkupIdCode(false) FOR field-»" />
-«ENDIF-»
-«ENDFOREACH-»
-«FOREACH outgoing.typeSelect(OneToOneRelationship) AS rel-»
-        <col id="c«EXPAND MarkupIdCode(true) FOR rel-»" />
-«ENDFOREACH-»
+«EXPAND ColumnDef FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey)-»
+«EXPAND ColumnDef(false) FOREACH incoming.typeSelect(OneToManyRelationship)-»
+«EXPAND ColumnDef(true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
         <col id="cintactions" />
     </colgroup>
     <thead>
     <tr>
 «EXPAND HeaderLine(controller) FOREACH getDerivedFields().reject(e|e.primaryKey)-»
-«EXPAND HeaderLineRelation(controller, true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
+«EXPAND HeaderLine(controller, false) FOREACH incoming.typeSelect(OneToManyRelationship)-»
+«EXPAND HeaderLine(controller, true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
         <th id="hintactions" scope="col" align="left" valign="middle" class="z-wrap z-order-unsorted">{gt text='Actions'}</th>
     </tr>
     </thead>
@@ -94,6 +88,7 @@ listType:
     <tr class="{cycle values='z-odd, z-even'}">
 «ENDIF-»
 «EXPAND DisplayEntry(controller, listType, false) FOREACH getDerivedFields().reject(e|e.primaryKey)-»
+«EXPAND DisplayEntry(controller, listType, false) FOREACH incoming.typeSelect(OneToManyRelationship)-»
 «EXPAND DisplayEntry(controller, listType, true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
 «EXPAND ItemActions(appName, controller, listType)-»
 «IF listType < 2-»
@@ -152,75 +147,43 @@ listType:
 «ENDLET-»
 «ENDDEFINE»
 
+«DEFINE ColumnDef FOR EntityField-»
+«ENDDEFINE»
+«DEFINE ColumnDef FOR DerivedField-»
+        <col id="c«EXPAND MarkupIdCode(false)-»" />
+«ENDDEFINE»
+«DEFINE ColumnDef FOR CalculatedField-»
+«error("Error: undefined calculated field type " + metaType.toString() + " (code 9245643)") -> ""-»
+«ENDDEFINE»
+
+«DEFINE ColumnDef(Boolean useTarget) FOR JoinRelationship-»
+        <col id="c«EXPAND MarkupIdCode(useTarget)-»" />
+«ENDDEFINE»
+
 «DEFINE HeaderLine(Controller controller) FOR EntityField-»
+«error("Error: undefined entity field type " + metaType.toString() + " (code 9245652)") -> ""-»
 «ENDDEFINE»
-
-«DEFINE HeaderLineSimple(Controller controller) FOR DerivedField-»
-        <th id="h«EXPAND MarkupIdCode(false)-»" scope="col" align="«EXPAND Alignment-»" valign="middle">
-«EXPAND HeaderLineInner(controller)-»
-        </th>
-«ENDDEFINE»
-
 «DEFINE HeaderLine(Controller controller) FOR DerivedField-»
-«EXPAND HeaderLineSimple(controller)-»
-«ENDDEFINE»
-
-«DEFINE HeaderLine(Controller controller) FOR IntegerField-»
-«LET getPointingRelations() AS joins-»
-«IF !joins.isEmpty-»
-«EXPAND HeaderLineRelation(controller, false) FOREACH joins-»
-«ELSE-»
-«EXPAND HeaderLineSimple(controller)-»
-«ENDIF-»
-«ENDLET-»
-«ENDDEFINE»
-
-«DEFINE HeaderLineInner(Controller controller) FOR DerivedField-»
-«EXPAND HeaderLineInnerSimpleField(controller)-»
-«ENDDEFINE»
-
-«DEFINE HeaderLineInner(Controller controller) FOR IntegerField-»
-«LET getPointingRelations() AS joins-»
-«IF !joins.isEmpty-»
-«EXPAND HeaderLineInnerRelationField(controller) FOREACH joins-»
-«ELSE-»
-«EXPAND HeaderLineInnerSimpleField(controller)-»
-«ENDIF-»
-«ENDLET-»
-«ENDDEFINE»
-
-«DEFINE HeaderLineInnerSimpleField(Controller controller) FOR DerivedField-»
+        <th id="h«EXPAND MarkupIdCode(false)-»" scope="col" align="«EXPAND Alignment-»" valign="middle">
 «EXPAND HeaderSortingLink(controller, entity, name.formatForCode(), name)-»
-«ENDDEFINE»
-
-«DEFINE HeaderLineInnerRelationField(Controller controller) FOR JoinRelationship-»
-«EXPAND HeaderSortingLink(controller, target, getRelationAliasName(false).formatForCode(), getRelationAliasName(false).formatForCodeCapital())-»
-«ENDDEFINE»
-
-«DEFINE HeaderLine(Controller controller) FOR CalculatedField-»
-«ENDDEFINE»
-
-«DEFINE HeaderLineRelation(Controller controller, Boolean useTarget) FOR JoinRelationship-»
-        <th id="h«EXPAND MarkupIdCode(useTarget)-»" scope="col" align="left" valign="middle">
-«IF !useTarget»
-«EXPAND HeaderSortingLink(controller, target, getRelationAliasName(useTarget).formatForCode(), getRelationAliasName(useTarget).formatForCodeCapital())-»
-«ELSE»
-«EXPAND HeaderSortingLink(controller, source, getRelationAliasName(useTarget).formatForCode(), getRelationAliasName(useTarget).formatForCodeCapital())-»
-«ENDIF»
         </th>
 «ENDDEFINE»
+«DEFINE HeaderLine(Controller controller) FOR CalculatedField-»
+«error("Error: undefined calculated field type " + metaType.toString() + " (code 9245653)") -> ""-»
+«ENDDEFINE»
 
-
+«DEFINE HeaderLine(Controller controller, Boolean useTarget) FOR JoinRelationship-»
+        <th id="h«EXPAND MarkupIdCode(useTarget)-»" scope="col" align="left" valign="middle">
+«LET ((useTarget) ? source : target) AS mainEntity-»
+«EXPAND HeaderSortingLink(controller, mainEntity, getRelationAliasName(useTarget).formatForCode(), getRelationAliasName(useTarget).formatForCodeCapital())-»
+«ENDLET-»
+        </th>
+«ENDDEFINE»
 
 «DEFINE HeaderSortingLink(Controller controller, Entity entity, String fieldName, String label) FOR Object-»
             {sortlink __linktext='«label.formatForDisplayCapital()»' sort='«fieldName»' currentsort=$sort sortdir=$sdir modname='«controller.container.application.appName()»' type='«controller.name()»' func='view' ot='«entity.name.formatForCode()»'}
 «ENDDEFINE»
 
-«DEFINE Alignment FOR Object»left«ENDDEFINE»
-«DEFINE Alignment FOR IntegerField»«IF !getPointingRelations().isEmpty-»left«ELSE»right«ENDIF»«ENDDEFINE»
-«DEFINE Alignment FOR DecimalField»right«ENDDEFINE»
-«DEFINE Alignment FOR FloatField»right«ENDDEFINE»
-«DEFINE Alignment FOR BooleanField»center«ENDDEFINE»
 
 
 «DEFINE DisplayEntry(Controller controller, Integer listType, Boolean useTarget) FOR Object-»
@@ -241,34 +204,14 @@ listType:
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE MarkupIdCode(Boolean useTarget) FOR Object-»«ENDDEFINE»
-«DEFINE MarkupIdCode(Boolean useTarget) FOR NamedObject-»«name.formatForDB()»«ENDDEFINE»
-«DEFINE MarkupIdCode(Boolean useTarget) FOR DerivedField-»«name.formatForDB()»«ENDDEFINE»
-«DEFINE MarkupIdCode(Boolean useTarget) FOR IntegerField-»«IF !getPointingRelations().isEmpty»«getPointingRelations().get(0).getRelationAliasName(false).formatForDB()»«ELSE»«name.formatForDB()»«ENDIF»«ENDDEFINE»
-«DEFINE MarkupIdCode(Boolean useTarget) FOR JoinRelationship-»«getRelationAliasName(useTarget).formatForDB()»«ENDDEFINE»
+«DEFINE DisplayEntry(Controller controller, Integer listType, Boolean useTarget) FOR CalculatedField-»
+«error("Error: undefined calculated field type " + metaType.toString() + " (code 9245661)") -> ""-»
+«ENDDEFINE»
 
 «DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR Object-»
 «ENDDEFINE»
 
 «DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR DerivedField-»
-«EXPAND DisplayEntryInnerSimpleField(controller)-»
-«ENDDEFINE»
-
-«DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR IntegerField-»
-«LET getPointingRelations() AS joins-»
-«IF !joins.isEmpty-»
-«EXPAND DisplayEntryRelationField(controller, false) FOREACH joins-»
-«ELSE-»
-«EXPAND DisplayEntryInnerSimpleField(controller)-»
-«ENDIF-»
-«ENDLET-»
-«ENDDEFINE»
-
-«DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR UserField-»
-«EXPAND DisplayEntryInnerSimpleField(controller)-»
-«ENDDEFINE»
-
-«DEFINE DisplayEntryInnerSimpleField(Controller controller) FOR DerivedField-»
 «IF leading == true-»
             {$«entity.name.formatForCode()».«name.formatForCode()»|notifyfilters:'«entity.container.application.appName().formatForDB()».filterhook.«entity.nameMultiple.formatForDB()»'}
 «ELSE-»
@@ -276,11 +219,7 @@ listType:
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR OneToOneRelationship-»
-«EXPAND DisplayEntryRelationField(controller, useTarget)-»
-«ENDDEFINE»
-
-«DEFINE DisplayEntryRelationField(Controller controller, Boolean useTarget) FOR JoinRelationship-»
+«DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR JoinRelationship-»
 «LET getRelationAliasName(useTarget).formatForCodeCapital() AS relationAliasName-»
 «LET ((!useTarget) ? target : source) AS mainEntity-»
 «LET ((useTarget) ? target : source) AS linkEntity-»
@@ -321,6 +260,8 @@ listType:
 «ENDIF-»
 «ENDLET-»
 «ENDIF-»
+            {else}
+                {gt text='Not set.'}
             {/if}
 «ENDLET-»
 «ENDLET-»
@@ -328,9 +269,17 @@ listType:
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE DisplayEntry(Controller controller, Boolean useTarget) FOR CalculatedField-»
-«ENDDEFINE»
 
+«DEFINE MarkupIdCode(Boolean useTarget) FOR Object-»«ENDDEFINE»
+«DEFINE MarkupIdCode(Boolean useTarget) FOR NamedObject-»«name.formatForDB()»«ENDDEFINE»
+«DEFINE MarkupIdCode(Boolean useTarget) FOR DerivedField-»«name.formatForDB()»«ENDDEFINE»
+«DEFINE MarkupIdCode(Boolean useTarget) FOR JoinRelationship-»«getRelationAliasName(useTarget).formatForDB()»«ENDDEFINE»
+
+«DEFINE Alignment FOR Object»left«ENDDEFINE»
+«DEFINE Alignment FOR IntegerField»right«ENDDEFINE»
+«DEFINE Alignment FOR DecimalField»right«ENDDEFINE»
+«DEFINE Alignment FOR FloatField»right«ENDDEFINE»
+«DEFINE Alignment FOR BooleanField»center«ENDDEFINE»
 
 «DEFINE ItemActions(String appName, Controller controller, Integer listType) FOR Entity-»
 «LET name.formatForCode() AS objName-»

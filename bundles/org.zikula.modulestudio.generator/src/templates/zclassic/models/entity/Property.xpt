@@ -124,15 +124,7 @@ type="«type»", precision=«length», scale=«scale»«''-»
 
 «DEFINE DefaultFieldDataText FOR DerivedField»'«defaultValue»'«ENDDEFINE»
 «DEFINE DefaultFieldData FOR BooleanField»«IF defaultValue == true || defaultValue == "true"»true«ELSE»false«ENDIF»«ENDDEFINE»
-«DEFINE DefaultFieldData FOR AbstractIntegerField-»
-«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
-«ENDDEFINE»
-«DEFINE DefaultFieldData FOR IntegerField-»
-«REM»«LET getPointingRelations() AS pointingRelations-»
-«IF !pointingRelations.isEmpty-»FormUtil::getPassedValue('«pointingRelations.get(0).getSourceFields().get(0)»', 0, 'GET', FILTER_VALIDATE_INT)«''-»
-«ELSE-»«ENDREM»«''-»
-«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»
-«REM»«ENDIF-»«ENDLET-»«ENDREM»«''-»«ENDDEFINE»
+«DEFINE DefaultFieldData FOR AbstractIntegerField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0«ENDIF-»«ENDDEFINE»
 «DEFINE DefaultFieldData FOR DecimalField»«IF defaultValue.length > 0»«defaultValue»«ELSE»0.00«ENDIF»«ENDDEFINE»
 «DEFINE DefaultFieldData FOR AbstractStringField»«EXPAND DefaultFieldDataText-»«ENDDEFINE»
 «DEFINE DefaultFieldData FOR ArrayField»array()«ENDDEFINE»

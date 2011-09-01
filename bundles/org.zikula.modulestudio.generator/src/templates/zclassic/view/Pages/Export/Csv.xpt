@@ -9,121 +9,56 @@
 «FILE templateFileWithExtension(controller, name, 'view', 'csv')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» view csv view in «controller.name()» area *}
 {«appName.formatForDB()»TemplateHeaders contentType='text/comma-separated-values; charset=iso-8859-15' asAttachment=true filename='«nameMultiple.formatForCodeCapital()».csv'}
-«EXPAND HeaderLine(controller) FOREACH getDerivedFields().reject(e|e.primaryKey) SEPARATOR ";"-»«IF geographical-»«FOREACH {'latitude', 'longitude'} AS geoFieldName-»;"«geoFieldName.toFirstUpper()»"«ENDFOREACH-»«ENDIF-»
-«EXPAND HeaderLineRelation(controller, true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
+«EXPAND HeaderLine FOREACH getDerivedFields().reject(e|e.primaryKey) SEPARATOR ";"-»«IF geographical-»«FOREACH {'latitude', 'longitude'} AS geoFieldName-»;"«geoFieldName.toFirstUpper()»"«ENDFOREACH-»«ENDIF-»
+«EXPAND HeaderLineRelation(false) FOREACH incoming.typeSelect(OneToManyRelationship)-»
+«EXPAND HeaderLineRelation(true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
 {foreach item='«objName»' from=$items}
-«EXPAND DisplayEntry(controller, false) FOREACH getDerivedFields().reject(e|e.primaryKey) SEPARATOR ";"-»«IF geographical-»«FOREACH {'latitude', 'longitude'} AS geoFieldName-»;"{$«name.formatForCode()».«geoFieldName»|formatnumber|formatnumber:15}"«ENDFOREACH-»«ENDIF-»
+«EXPAND DisplayEntry(controller) FOREACH getDerivedFields().reject(e|e.primaryKey) SEPARATOR ";"-»«IF geographical-»«FOREACH {'latitude', 'longitude'} AS geoFieldName-»;"{$«name.formatForCode()».«geoFieldName»|formatnumber:10}"«ENDFOREACH-»«ENDIF-»
+«EXPAND DisplayEntry(controller, false) FOREACH incoming.typeSelect(OneToManyRelationship)-»
 «EXPAND DisplayEntry(controller, true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
-
 {/foreach}
 
 «ENDFILE»
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE HeaderLine(Controller controller) FOR EntityField-»
+«DEFINE HeaderLine FOR EntityField-»
+«error("Error: undefined entity field type " + metaType.toString() + " (code 9242647)") -> ""-»
 «ENDDEFINE»
 
-«DEFINE HeaderLineSimple(Controller controller) FOR DerivedField-»
-"«EXPAND HeaderLineInner(controller)-»"«""-»
+«DEFINE HeaderLine FOR DerivedField-»
+"{gt text='«name.formatForDisplayCapital()»'}"«""-»
 «ENDDEFINE»
 
-«DEFINE HeaderLine(Controller controller) FOR DerivedField-»
-«EXPAND HeaderLineSimple(controller)-»
+«DEFINE HeaderLine FOR CalculatedField-»
+«error("Error: undefined calculated field type " + metaType.toString() + " (code 9242648)") -> ""-»
 «ENDDEFINE»
 
-«DEFINE HeaderLine(Controller controller) FOR IntegerField-»
-«LET getPointingRelations() AS joins-»
-«IF !joins.isEmpty-»
-«EXPAND HeaderLineRelation(controller, false) FOREACH joins-»
-«ELSE-»
-«EXPAND HeaderLineSimple(controller)-»
-«ENDIF-»
-«ENDLET-»
+«DEFINE HeaderLineRelation(Boolean useTarget) FOR JoinRelationship-»
+"{gt text='«getRelationAliasName(useTarget).formatForDisplayCapital()»'}"
 «ENDDEFINE»
 
-«DEFINE HeaderLineInner(Controller controller) FOR DerivedField-»
-«EXPAND HeaderLineInnerSimpleField(controller)-»
+«DEFINE DisplayEntry(Controller controller) FOR EntityField-»
+«error("Error: undefined entity field type " + metaType.toString() + " (code 9242657)") -> ""-»
 «ENDDEFINE»
 
-«DEFINE HeaderLineInner(Controller controller) FOR IntegerField-»
-«LET getPointingRelations() AS joins-»
-«IF !joins.isEmpty-»
-«EXPAND HeaderLineInnerRelationField(controller) FOREACH joins-»
-«ELSE-»
-«EXPAND HeaderLineInnerSimpleField(controller)-»
-«ENDIF-»
-«ENDLET-»
-«ENDDEFINE»
-
-«DEFINE HeaderLineInnerSimpleField(Controller controller) FOR DerivedField-»
-«EXPAND HeaderSortingLink(controller, entity, name.formatForCode(), name)-»
-«ENDDEFINE»
-
-«DEFINE HeaderLineInnerRelationField(Controller controller) FOR JoinRelationship-»
-«EXPAND HeaderSortingLink(controller, target, getRelationAliasName(false).formatForCode(), getRelationAliasName(false).formatForCodeCapital())-»
-«ENDDEFINE»
-
-«DEFINE HeaderLine(Controller controller) FOR CalculatedField-»
-«ENDDEFINE»
-
-«DEFINE HeaderLineRelation(Controller controller, Boolean useTarget) FOR JoinRelationship-»
-«IF useTarget»;«ENDIF»"«EXPAND HeaderSortingLink(controller, source, getRelationAliasName(useTarget).formatForCode(), getRelationAliasName(useTarget).formatForCodeCapital())-»"
-«ENDDEFINE»
-
-
-
-«DEFINE HeaderSortingLink(Controller controller, Entity entity, String fieldName, String label) FOR Object-»
-{gt text='«label.formatForDisplayCapital()»'}«""-»
-«ENDDEFINE»
-
-
-
-«DEFINE DisplayEntry(Controller controller, Boolean useTarget) FOR Object-»
-«EXPAND DisplayEntryInner(controller, useTarget)-»
-«ENDDEFINE»
-
-«DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR Object-»
-«ENDDEFINE»
-
-«DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR DerivedField-»
-«EXPAND DisplayEntryInnerSimpleField(controller)-»
-«ENDDEFINE»
-
-«DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR IntegerField-»
-«LET getPointingRelations() AS joins-»
-«IF !joins.isEmpty-»
-"«EXPAND DisplayEntryRelationField(controller, false) FOREACH joins-»"
-«ELSE-»
-«EXPAND DisplayEntryInnerSimpleField(controller)-»
-«ENDIF-»
-«ENDLET-»
-«ENDDEFINE»
-
-«DEFINE DisplayEntryInnerSimpleField(Controller controller) FOR DerivedField-»
-«IF leading == true-»
-"{$«entity.name.formatForCode()».«name.formatForCode()»}"«""-»
-«ELSE-»
+«DEFINE DisplayEntry(Controller controller) FOR DerivedField-»
 "«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(entity.name.formatForCode(), 'viewcsv', '')»"«""-»
-«ENDIF-»
 «ENDDEFINE»
 
-«DEFINE DisplayEntryInner(Controller controller, Boolean useTarget) FOR OneToOneRelationship-»
-«EXPAND DisplayEntryRelationField(controller, useTarget)-»
+«DEFINE DisplayEntry(Controller controller) FOR CalculatedField-»
+«error("Error: undefined calculated field type " + metaType.toString() + " (code 9242658)") -> ""-»
 «ENDDEFINE»
 
-«DEFINE DisplayEntryRelationField(Controller controller, Boolean useTarget) FOR JoinRelationship-»
+«DEFINE DisplayEntry(Controller controller, Boolean useTarget) FOR JoinRelationship-»
 «LET getRelationAliasName(useTarget).formatForCodeCapital() AS relationAliasName-»
 «LET ((!useTarget) ? target : source) AS mainEntity-»
 «LET ((useTarget) ? target : source) AS linkEntity-»
 «LET mainEntity.name.formatForCode().msconcat('.').msconcat(relationAliasName) AS relObjName-»
-{if (isset($«relObjName»))}{$«relObjName».«linkEntity.getLeadingField().name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}{/if}«""-»
+{if isset($«relObjName») && $«relObjName» ne null}{$«relObjName».«linkEntity.getLeadingField().name.formatForCode()»«REM»|nl2br«ENDREM»|default:""}{/if}«""-»
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»
-«ENDDEFINE»
-
-«DEFINE DisplayEntry(Controller controller, Boolean useTarget) FOR CalculatedField-»
 «ENDDEFINE»
 

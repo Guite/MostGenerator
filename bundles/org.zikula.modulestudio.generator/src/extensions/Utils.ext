@@ -442,10 +442,10 @@ cached isInheriter(Entity this) :
 cached getChildRelations(Entity this) :
     incoming.typeSelect(InheritanceRelationship);
 
-/* if we have id or fooid return id; otherwise return the actual field name of the referenced field */
+/* if we have id or fooid return foo_id; otherwise return the actual field name of the referenced field */
 cached relationFieldName(Entity refEntity, String refField) :
     (isDefaultIdFieldName(refEntity, refField))
-     ? 'id'
+     ? refEntity.name.formatForDB() + '_id'
      : refEntity.fields.selectFirst(e|e.name == refField).name.formatForCode();
 
 cached boolean isDefaultIdField(DerivedField this) :
@@ -453,10 +453,6 @@ cached boolean isDefaultIdField(DerivedField this) :
 
 cached boolean isDefaultIdFieldName(Entity entity, String this) :
     {'id', entity.name.formatForDB() + 'id', entity.name.formatForDB() + '_id'}.contains(this);
-
-/** obsolete */
-cached getPointingRelations(IntegerField this) :
-    entity.incoming.typeSelect(JoinRelationship).select(e|e.source.relationFieldName(e.getSourceFields().get(0)) == name.formatForDB());
 
 cached getSourceFields(JoinRelationship this) :
     sourceField.split(', ');
