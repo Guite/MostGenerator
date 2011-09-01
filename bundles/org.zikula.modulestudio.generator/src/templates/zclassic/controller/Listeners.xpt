@@ -231,7 +231,7 @@ class «appName()»_Listener_ThirdParty
     public static function controllerMethodNotFound(Zikula_Event $event)
     {
         // You can have multiple of these methods.
-        // See system/Modules/lib/Modules/HookUI.php for an example.
+        // See system/Extensions/lib/Extensions/HookUI.php for an example.
     }
 «ENDDEFINE»
 
