@@ -28,6 +28,7 @@ use Gedmo\Tree\Entity\Repository\«tree.asConstant().toFirstUpper()»TreeReposit
 use Doctrine\ORM\EntityRepository;
 «ENDIF-»
 use Doctrine\ORM\Query;
+use Doctrine\ORM\QueryBuilder;
 «IF hasOptimisticLock() || hasPessimisticReadLock() || hasPessimisticWriteLock()-»
 use Doctrine\DBAL\LockMode;
 «ENDIF-»
@@ -223,7 +224,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
      * @param string  $orderBy  The order-by clause to use when retrieving the collection (optional) (default='').
      * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
      *
-     * @return Query query instance to be further processed
+     * @return Doctrine\ORM\Query query instance to be further processed
      */
     protected function _intBaseQuery($where = '', $orderBy = '', $useJoins = true)
     {
@@ -374,11 +375,11 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     /**
      * Helper method to add joins to from clause.
      *
-     * @param Doctrine_QueryBuilder $qb query builder instance used to create the query.
+     * @param Doctrine\ORM\QueryBuilder $qb query builder instance used to create the query.
      *
      * @return String Enhancement for from clause.
      */
-    protected function addJoinsToFrom(Doctrine_QueryBuilder $qb)
+    protected function addJoinsToFrom(QueryBuilder $qb)
     {
 «EXPAND AddJoin(false, 'from') FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»
 «EXPAND AddJoin(true, 'from') FOREACH outgoing.typeSelect(JoinRelationship)-»
