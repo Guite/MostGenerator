@@ -152,8 +152,8 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     /**
      * Select with a given where clause and pagination parameters.
      *
-     * @param string $where           The where clause to use when retrieving the collection (optional) (default='').
-     * @param string $orderBy         The order-by clause to use when retrieving the collection (optional) (default='').
+     * @param string  $where          The where clause to use when retrieving the collection (optional) (default='').
+     * @param string  $orderBy        The order-by clause to use when retrieving the collection (optional) (default='').
      * @param integer $currentPage    Where to start selection
      * @param integer $resultsPerPage Amount of items to select
      * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true).
@@ -173,6 +173,44 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
         $count = $this->selectCount($where, $useJoins);
 
         return array($result, $count);
+    }
+
+    /**
+     * Select entities by a given search fragment.
+     *
+     * @param string  $fragment       The fragment to search for.
+     * @param string  $exclude        Comma separated list with ids to be excluded from search.
+     * @param string  $orderBy        The order-by clause to use when retrieving the collection (optional) (default='').
+     * @param integer $currentPage    Where to start selection
+     * @param integer $resultsPerPage Amount of items to select
+     * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true).
+     *
+     * @return Array with retrieved collection and amount of total records affected by this query.
+     */
+    public function selectSearch($fragment = '', $exclude = array(), $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
+    {
+        $where = '';
+        if (count($exclude)) {
+            foreach ($idFields as $idField) {
+                if (!empty($where)) {
+                    $where .= ' AND ';
+                }
+                $where .= $idField . ' NOT IN (' . DataUtil::formatForStore($exclude) . ')';
+            }
+        }
+
+        $fragment = DataUtil::formatForStore($fragment);
+
+        $whereSub = '';
+«FOREACH getDerivedFields().reject(e|e.primaryKey || e.metaType == BooleanField || e.metaType == ArrayField || e.metaType == ObjectField) AS field-»
+        $whereSub .= ((!empty($whereSub)) ? ' OR ' : '') . 'tbl.«field.name.formatForCode()» «IF field.metaType == StringField || field.metaType == TextField»LIKE \'%' . $fragment . '%\'«ELSE»= \'' . $fragment . '\'«ENDIF»';
+«ENDFOREACH-»
+
+        if (!empty($whereSub)) {
+            $where .= ((!empty($where)) ? ' AND (' . $whereSub . ')' : $whereSub);
+        }
+
+        return $this->selectWherePaginated($where, $orderBy, $currentPage, $resultsPerPage, $useJoins);
     }
 «IF !getUniqueDerivedFields().isEmpty-»
 

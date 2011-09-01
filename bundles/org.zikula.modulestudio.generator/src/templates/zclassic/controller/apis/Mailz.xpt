@@ -98,7 +98,6 @@ class «appName()»_Api_Mailz extends «appName()»_Api_Base_Mailz
         $resultsPerPage = 3;
 
         // get objects from database
-        // while the result will be saved in the object, we assign in to a local variable for convenience.
         list($objectData, $objectCount) = $objectTemp->selectWherePaginated(''/*$this->filter*/, $sortParam, -1, $resultsPerPage);
 
         $view = Zikula_View::getInstance('«appName()»', true);

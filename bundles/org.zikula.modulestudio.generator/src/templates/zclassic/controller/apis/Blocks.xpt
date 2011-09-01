@@ -132,7 +132,6 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
         }
 
         // get objects from database
-        // while the result will be saved in the object, we assign in to a local variable for convenience.
         list($objectData, $objectCount) = $repository->selectWherePaginated($vars['filter'], $sortParam, -1, $vars['amount']);
 
         $this->view->setCaching(true);

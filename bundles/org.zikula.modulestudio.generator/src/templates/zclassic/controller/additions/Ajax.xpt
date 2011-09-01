@@ -101,47 +101,16 @@
         // parameter for used sorting field
         $sort = $this->request->getGet()->get('sort', '');
 «EXPAND templates::zclassic::controller::ControllerHelper::DefaultSorting-»
+        $sortParam = $sort . ' asc';
 
         $currentPage = 1;
         $resultsPerPage = 20;
 
-        // convenience vars to make code clearer
-        $where = '';
-        $sortParam = $sort . ' asc';
-
-        $fragment = DataUtil::formatForStore($fragment);
-
-        // TODO: move into Repository subclasses (#37)
-        if (!empty($exclude)) {
-            foreach ($idFields as $idField) {
-                if (!empty($where)) {
-                    $where .= ' AND ';
-                }
-                $where .= $idField . ' NOT IN (' . DataUtil::formatForStore($exclude) . ')';
-            }
-        }
-
-        $whereSub = '';
-        switch ($objectType) {
-«FOREACH app.models.entities AS entity-»
-            case '«entity.name.formatForCode()»':
-«FOREACH entity.getDerivedFields().reject(e|e.primaryKey || e.metaType == BooleanField || e.metaType == ArrayField || e.metaType == ObjectField) AS field-»
-                    $whereSub .= ((!empty($whereSub)) ? ' OR ' : '') . 'tbl.«field.name.formatForCode()» «IF field.metaType == StringField || field.metaType == TextField»LIKE \'%' . $fragment . '%\'«ELSE»= \'' . $fragment . '\'«ENDIF»';
-«ENDFOREACH-»
-                    break;
-«ENDFOREACH-»
-        }
-        if (!empty($whereSub)) {
-            $where .= ((!empty($where)) ? ' AND (' . $whereSub . ')' : $whereSub);
-        }
-
-
         // get objects from database
-        // while the result will be saved in the object, we assign in to a local variable for convenience.
-        list($objectData, $objectCount) = $repository->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
+        list($objectData, $objectCount) = $repository->selectSearch($fragment, $exclude, $sortParam, $currentPage, $resultsPerPage);
 
         $out = '<ul>';
-        if (is_array($objectData) && count($objectData) > 0) {
+        if ((is_array($objectData) || is_object($objectData)) && count($objectData) > 0) {
             $titleFieldName = $descriptionFieldName = '';
 
             switch ($objectType) {
