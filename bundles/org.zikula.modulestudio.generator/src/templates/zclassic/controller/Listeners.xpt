@@ -6,324 +6,174 @@
 
 «REM»Entry point for persistent event listeners«ENDREM»
 «DEFINE Root FOR Application»
-«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/Core.php")-»
-«EXPAND FileHelper::phpFileHeader(this)-»
-/**
- * Event handler base class for core events.
- */
-class «appName()»_Listener_Base_Core
-{
-«EXPAND BaseListenersCore-»
-}
-«ENDFILE»
 «FILE getAppSourceLibPath(appName()).msconcat("Listener/Core.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Event handler implementation class for core events.
  */
-class «appName()»_Listener_Core extends «appName()»_Listener_Base_Core
+class «appName()»_Listener_Core
 {
-    // here you can extend implementation of persistent event handlers
+«EXPAND ListenersCore-»
 }
 «ENDFILE»
 
-«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/Installer.php")-»
-«EXPAND FileHelper::phpFileHeader(this)-»
-/**
- * Event handler base class for module installer events.
- */
-class «appName()»_Listener_Base_Installer
-{
-«EXPAND BaseListenersInstaller-»
-}
-«ENDFILE»
 «FILE getAppSourceLibPath(appName()).msconcat("Listener/Installer.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Event handler implementation class for module installer events.
  */
-class «appName()»_Listener_Installer extends «appName()»_Listener_Base_Installer
+class «appName()»_Listener_Installer
 {
-    // here you can extend implementation of persistent event handlers
+«EXPAND ListenersInstaller-»
 }
 «ENDFILE»
 
-«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/ModuleDispatch.php")-»
-«EXPAND FileHelper::phpFileHeader(this)-»
-/**
- * Event handler base class for dispatching modules.
- */
-class «appName()»_Listener_Base_ModuleDispatch
-{
-«EXPAND BaseListenersModuleDispatch-»
-}
-«ENDFILE»
 «FILE getAppSourceLibPath(appName()).msconcat("Listener/ModuleDispatch.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Event handler implementation class for dispatching modules.
  */
-class «appName()»_Listener_ModuleDispatch extends «appName()»_Listener_Base_ModuleDispatch
+class «appName()»_Listener_ModuleDispatch
 {
-    // here you can extend implementation of persistent event handlers
+«EXPAND ListenersModuleDispatch-»
 }
 «ENDFILE»
 
-«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/Mailer.php")-»
-«EXPAND FileHelper::phpFileHeader(this)-»
-/**
- * Event handler base class for mailing events.
- */
-class «appName()»_Listener_Base_Mailer
-{
-«EXPAND BaseListenersMailer-»
-}
-«ENDFILE»
 «FILE getAppSourceLibPath(appName()).msconcat("Listener/Mailer.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Event handler implementation class for mailing events.
  */
-class «appName()»_Listener_Mailer extends «appName()»_Listener_Base_Mailer
+class «appName()»_Listener_Mailer
 {
-    // here you can extend implementation of persistent event handlers
+«EXPAND ListenersMailer-»
 }
 «ENDFILE»
 
-«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/Page.php")-»
-«EXPAND FileHelper::phpFileHeader(this)-»
-/**
- * Event handler base class for page-related events.
- */
-class «appName()»_Listener_Base_Page
-{
-«EXPAND BaseListenersPage-»
-}
-«ENDFILE»
 «FILE getAppSourceLibPath(appName()).msconcat("Listener/Page.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Event handler implementation class for page-related events.
  */
-class «appName()»_Listener_Page extends «appName()»_Listener_Base_Page
+class «appName()»_Listener_Page
 {
-    // here you can extend implementation of persistent event handlers
+«EXPAND ListenersPage-»
 }
 «ENDFILE»
 
-«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/Errors.php")-»
-«EXPAND FileHelper::phpFileHeader(this)-»
-/**
- * Event handler base class for error-related events.
- */
-class «appName()»_Listener_Base_Errors
-{
-«EXPAND BaseListenersErrors-»
-}
-«ENDFILE»
 «FILE getAppSourceLibPath(appName()).msconcat("Listener/Errors.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Event handler implementation class for error-related events.
  */
-class «appName()»_Listener_Errors extends «appName()»_Listener_Base_Errors
+class «appName()»_Listener_Errors
 {
-    // here you can extend implementation of persistent event handlers
+«EXPAND ListenersErrors-»
 }
 «ENDFILE»
 
-«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/Theme.php")-»
-«EXPAND FileHelper::phpFileHeader(this)-»
-/**
- * Event handler base class for theme-related events.
- */
-class «appName()»_Listener_Base_Theme
-{
-«EXPAND BaseListenersTheme-»
-}
-«ENDFILE»
 «FILE getAppSourceLibPath(appName()).msconcat("Listener/Theme.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Event handler implementation class for theme-related events.
  */
-class «appName()»_Listener_Theme extends «appName()»_Listener_Base_Theme
+class «appName()»_Listener_Theme
 {
-    // here you can extend implementation of persistent event handlers
+«EXPAND ListenersTheme-»
 }
 «ENDFILE»
 
-«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/View.php")-»
-«EXPAND FileHelper::phpFileHeader(this)-»
-/**
- * Event handler base class for view-related events.
- */
-class «appName()»_Listener_Base_View
-{
-«EXPAND BaseListenersView-»
-}
-«ENDFILE»
 «FILE getAppSourceLibPath(appName()).msconcat("Listener/View.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Event handler implementation class for view-related events.
  */
-class «appName()»_Listener_View extends «appName()»_Listener_Base_View
+class «appName()»_Listener_View
 {
-    // here you can extend implementation of persistent event handlers
+«EXPAND ListenersView-»
 }
 «ENDFILE»
 
-«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/UserLogin.php")-»
-«EXPAND FileHelper::phpFileHeader(this)-»
-/**
- * Event handler base class for user login events.
- */
-class «appName()»_Listener_Base_UserLogin
-{
-«EXPAND BaseListenersUserLogin-»
-}
-«ENDFILE»
 «FILE getAppSourceLibPath(appName()).msconcat("Listener/UserLogin.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Event handler implementation class for user login events.
  */
-class «appName()»_Listener_UserLogin extends «appName()»_Listener_Base_UserLogin
+class «appName()»_Listener_UserLogin
 {
-    // here you can extend implementation of persistent event handlers
+«EXPAND ListenersUserLogin-»
 }
 «ENDFILE»
 
-«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/UserLogout.php")-»
-«EXPAND FileHelper::phpFileHeader(this)-»
-/**
- * Event handler base class for user logout events.
- */
-class «appName()»_Listener_Base_UserLogout
-{
-«EXPAND BaseListenersUserLogout-»
-}
-«ENDFILE»
 «FILE getAppSourceLibPath(appName()).msconcat("Listener/UserLogout.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Event handler implementation class for user logout events.
  */
-class «appName()»_Listener_UserLogout extends «appName()»_Listener_Base_UserLogout
+class «appName()»_Listener_UserLogout
 {
-    // here you can extend implementation of persistent event handlers
+«EXPAND ListenersUserLogout-»
 }
 «ENDFILE»
 
-«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/User.php")-»
-«EXPAND FileHelper::phpFileHeader(this)-»
-/**
- * Event handler base class for user-related events.
- */
-class «appName()»_Listener_Base_User
-{
-«EXPAND BaseListenersUser-»
-}
-«ENDFILE»
 «FILE getAppSourceLibPath(appName()).msconcat("Listener/User.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Event handler implementation class for user-related events.
  */
-class «appName()»_Listener_User extends «appName()»_Listener_Base_User
+class «appName()»_Listener_User
 {
-    // here you can extend implementation of persistent event handlers
+«EXPAND ListenersUser-»
 }
 «ENDFILE»
 
-«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/UserRegistration.php")-»
-«EXPAND FileHelper::phpFileHeader(this)-»
-/**
- * Event handler base class for user registration events.
- */
-class «appName()»_Listener_Base_UserRegistration
-{
-«EXPAND BaseListenersRegistration-»
-}
-«ENDFILE»
 «FILE getAppSourceLibPath(appName()).msconcat("Listener/UserRegistration.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Event handler implementation class for user registration events.
  */
-class «appName()»_Listener_UserRegistration extends «appName()»_Listener_Base_UserRegistration
+class «appName()»_Listener_UserRegistration
 {
-    // here you can extend implementation of persistent event handlers
+«EXPAND ListenersRegistration-»
 }
 «ENDFILE»
 
-«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/Users.php")-»
-«EXPAND FileHelper::phpFileHeader(this)-»
-/**
- * Event handler base class for events of the Users module.
- */
-class «appName()»_Listener_Base_Users
-{
-«EXPAND BaseListenersUsers-»
-}
-«ENDFILE»
 «FILE getAppSourceLibPath(appName()).msconcat("Listener/Users.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Event handler implementation class for events of the Users module.
  */
-class «appName()»_Listener_Users extends «appName()»_Listener_Base_Users
+class «appName()»_Listener_Users
 {
-    // here you can extend implementation of persistent event handlers
+«EXPAND ListenersUsers-»
 }
 «ENDFILE»
 
-«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/Group.php")-»
-«EXPAND FileHelper::phpFileHeader(this)-»
-/**
- * Event handler base class for group-related events.
- */
-class «appName()»_Listener_Base_Group
-{
-«EXPAND BaseListenersGroup-»
-}
-«ENDFILE»
 «FILE getAppSourceLibPath(appName()).msconcat("Listener/Group.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Event handler implementation class for group-related events.
  */
-class «appName()»_Listener_Group extends «appName()»_Listener_Base_Group
+class «appName()»_Listener_Group
 {
-    // here you can extend implementation of persistent event handlers
+«EXPAND ListenersGroup-»
 }
 «ENDFILE»
 
-«FILE getAppSourceLibPath(appName()).msconcat("Listener/Base/ThirdParty.php")-»
-«EXPAND FileHelper::phpFileHeader(this)-»
-/**
- * Event handler base class for special purposes and 3rd party api support.
- */
-class «appName()»_Listener_Base_ThirdParty
-{
-«EXPAND BaseListenersThirdParty-»
-}
-«ENDFILE»
 «FILE getAppSourceLibPath(appName()).msconcat("Listener/ThirdParty.php")-»
 «EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Event handler implementation class for special purposes and 3rd party api support.
  */
-class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_ThirdParty
+class «appName()»_Listener_ThirdParty
 {
-    // here you can extend implementation of persistent event handlers
+«EXPAND ListenersThirdParty-»
 }
 «ENDFILE»
 
 «ENDDEFINE»
 
-«DEFINE BaseListenersCore FOR Application-»
+«DEFINE ListenersCore FOR Application-»
     /**
      * Listener for the `api.method_not_found` event.
      *
@@ -385,7 +235,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     }
 «ENDDEFINE»
 
-«DEFINE BaseListenersInstaller FOR Application-»
+«DEFINE ListenersInstaller FOR Application-»
     /**
      * Listener for the `installer.module.installed` event.
      *
@@ -427,7 +277,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     }
 «ENDDEFINE»
 
-«DEFINE BaseListenersModuleDispatch FOR Application-»
+«DEFINE ListenersModuleDispatch FOR Application-»
     /**
      * Listener for the `module_dispatch.postloadgeneric` event.
      *
@@ -474,7 +324,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     }
 «ENDDEFINE»
 
-«DEFINE BaseListenersMailer FOR Application-»
+«DEFINE ListenersMailer FOR Application-»
     /**
      * Listener for the `module.mailer.api.sendmessage` event.
      *
@@ -488,7 +338,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     }
 «ENDDEFINE»
 
-«DEFINE BaseListenersPage FOR Application-»
+«DEFINE ListenersPage FOR Application-»
     /**
      * Listener for the `pageutil.addvar_filter` event.
      *
@@ -518,7 +368,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     }
 «ENDDEFINE»
 
-«DEFINE BaseListenersErrors FOR Application-»
+«DEFINE ListenersErrors FOR Application-»
     /**
      * Listener for the `setup.errorreporting` event.
      *
@@ -541,7 +391,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     }
 «ENDDEFINE»
 
-«DEFINE BaseListenersTheme FOR Application-»
+«DEFINE ListenersTheme FOR Application-»
     /**
      * Listener for the `theme.preinit` event.
      *
@@ -596,7 +446,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     }
 «ENDDEFINE»
 
-«DEFINE BaseListenersView FOR Application-»
+«DEFINE ListenersView FOR Application-»
     /**
      * Listener for the `view.init` event.
      *
@@ -618,7 +468,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     }
 «ENDDEFINE»
 
-«DEFINE BaseListenersUserLogin FOR Application-»
+«DEFINE ListenersUserLogin FOR Application-»
     /**
      * Listener for the `module.users.ui.login.started` event.
      *
@@ -818,7 +668,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     }
 «ENDDEFINE»
 
-«DEFINE BaseListenersUserLogout FOR Application-»
+«DEFINE ListenersUserLogout FOR Application-»
     /**
      * Listener for the `module.users.ui.logout.succeeded` event.
      *
@@ -831,7 +681,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     }
 «ENDDEFINE»
 
-«DEFINE BaseListenersUser FOR Application-»
+«DEFINE ListenersUser FOR Application-»
     /**
      * Listener for the `user.gettheme` event.
      *
@@ -884,7 +734,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     }
 «ENDDEFINE»
 
-«DEFINE BaseListenersRegistration FOR Application-»
+«DEFINE ListenersRegistration FOR Application-»
     /**
      * Listener for the `module.users.ui.registration.started` event.
      *
@@ -1024,7 +874,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     }
 «ENDDEFINE»
 
-«DEFINE BaseListenersUsers FOR Application-»
+«DEFINE ListenersUsers FOR Application-»
     /**
      * Listener for the `module.users.config.updated` event.
      *
@@ -1036,7 +886,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     }
 «ENDDEFINE»
 
-«DEFINE BaseListenersGroup FOR Application-»
+«DEFINE ListenersGroup FOR Application-»
     /**
      * Listener for the `group.create` event.
      *
@@ -1092,7 +942,7 @@ class «appName()»_Listener_ThirdParty extends «appName()»_Listener_Base_Thir
     }
 «ENDDEFINE»
 
-«DEFINE BaseListenersThirdParty FOR Application-»
+«DEFINE ListenersThirdParty FOR Application-»
     /**
      * Listener for pending content items.
      */
