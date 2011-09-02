@@ -1,0 +1,86 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+
+«REM»Upload processing functions for edit form handlers«ENDREM»
+«DEFINE Root FOR Entity-»
+«IF hasUploadFields()-»
+
+«EXPAND HandleUploads(container.application)-»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE HandleUploads(Application app) FOR Entity-»
+    /**
+     * Helper method to process upload fields
+     */
+    protected function handleUploads($formData, $existingObject)
+    {
+«LET getUploadFields() AS uploadFields-»
+«IF !uploadFields.isEmpty-»
+        // initialise the upload handler
+        $uploadManager = new «app.appName()»_UploadHandler();
+
+        // list of upload fields to consider
+        $uploadFields = array(«FOREACH uploadFields AS uploadField SEPARATOR ", "»'«uploadField.name.formatForCode()»'«ENDFOREACH»);
+        // list of mandatory fields
+        $uploadFieldsMandatory = array(«FOREACH uploadFields.select(e|e.mandatory) AS uploadField SEPARATOR ", "»'«uploadField.name.formatForCode()»'«ENDFOREACH»);
+
+        $existingObjectData = $existingObject->toArray();
+
+        // process all fields
+        foreach ($uploadFields as $uploadField) {
+            // check if an existing file must be deleted
+            $hasOldFile = (!empty($existingObjectData[$uploadField]));
+            $hasBeenDeleted = !$hasOldFile;
+            if ($this->mode != 'create') {
+                if (isset($formData[$uploadField . 'DeleteFile'])) {
+                    if ($hasOldFile && $formData[$uploadField . 'DeleteFile'] === true) {
+                        // remove upload file (and image thumbnails)
+                        $existingObjectData = $uploadManager->deleteUploadFile($this->objectType, $existingObjectData, $uploadField);
+                        if (empty($existingObjectData[$uploadField])) {
+                            $existingObject[$uploadField] = '';
+                        }
+                    }
+                    unset($formData[$uploadField . 'DeleteFile']);
+                    $hasBeenDeleted = true;
+                }
+            }
+
+            // look whether a file has been provided
+            if (!$formData[$uploadField] || $formData[$uploadField]['size'] == 0) {
+                // no file has been uploaded
+                unset($formData[$uploadField]);
+                // skip to next one
+                continue;
+            }
+
+            if ($hasOldFile && $hasBeenDeleted !== true && $this->mode != 'create') {
+                // remove old upload file (and image thumbnails)
+                $existingObjectData = $uploadManager->deleteUploadFile($this->objectType, $existingObjectData, $uploadField);
+                if (empty($existingObjectData[$uploadField])) {
+                    $existingObject[$uploadField] = '';
+                }
+            }
+
+            // do the actual upload (includes validation, physical file processing and reading meta data)
+            $uploadResult = $uploadManager->performFileUpload($this->objectType, $formData, $uploadField);
+            // assign the upload file name
+            $formData[$uploadField] = $uploadResult['fileName'];
+            // assign the meta data
+            $formData[$uploadField . 'Meta'] = $uploadResult['metaData'];
+
+            // if current field is mandatory check if everything has been done 
+            if (in_array($uploadField, $uploadFieldsMandatory) && $formData[$uploadField] === false) {
+                // mandatory upload has not been completed successfully
+                return false;
+            }
+
+            // upload succeeded
+        }
+«ENDIF-»
+«ENDLET-»
+        return $formData;
+    }
+«ENDDEFINE»
+

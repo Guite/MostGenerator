@@ -86,13 +86,7 @@ class «baseClassFormHandler(controller, name, actionName)» extends Zikula_Form
      * @var array List of identifiers of treated «name.formatForDisplay()».
      */
     protected $idValues = array();
-«FOREACH incoming.typeSelect(JoinRelationship).select(e|!e.bidirectional) AS uniOwningAssociation-»
-
-    /**
-     * @var mixed Identifier for incoming relationship.
-     */
-    protected $«uniOwningAssociation.getRelationAliasName(false)» = '';
-«ENDFOREACH-»
+«EXPAND actionHandler::Relations::IncomingMemberVar FOREACH incoming.typeSelect(JoinRelationship).select(e|!e.bidirectional)-»
 
     /**
      * @var string One of "create" or "edit".
@@ -155,29 +149,18 @@ class «baseClassFormHandler(controller, name, actionName)» extends Zikula_Form
     {
     }
 
-«EXPAND getRedirectCodes(app, controller, actionName)-»
+«EXPAND actionHandler::Redirect::GetRedirectCodes(app, controller, actionName)-»
 
-«EXPAND getDefaultReturnUrl(app, controller, actionName)-»
+«EXPAND actionHandler::Redirect::GetDefaultReturnUrl(app, controller, actionName)-»
 
 «EXPAND handleCommand(app, controller, actionName)-»
 
-«EXPAND getRedirectUrl(app, controller, actionName)-»
+«EXPAND actionHandler::Redirect::GetRedirectUrl(app, controller, actionName)-»
 
-«EXPAND retrieveRelatedObjects(app, controller)-»
+«EXPAND actionHandler::Relations::RetrieveRelatedObjects(app, controller)-»
 
-    /**
-     * Helper method for updating links to related records.
-     */
-    protected function updateRelationLinks($entity)
-    {
-«EXPAND UpdateRelationLinks(true) FOREACH incoming.typeSelect(ManyToManyRelationship)-»
-«EXPAND UpdateRelationLinks(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
-    }
-
-«IF hasUploadFields()-»
-
-«EXPAND handleUploads(app)-»
-«ENDIF-»
+«EXPAND actionHandler::Relations::UpdateRelationLinks-»
+«EXPAND actionHandler::Uploads::Root-»
 }
 «ENDDEFINE»
 
@@ -281,8 +264,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             else {
                 $entity = new $entityClass();
 
-«EXPAND InitRelatedObjectDefault(true) FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»
-«EXPAND InitRelatedObjectDefault(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
+«EXPAND actionHandler::Relations::InitRelatedObjectDefault(true) FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»
+«EXPAND actionHandler::Relations::InitRelatedObjectDefault(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
             }
         }
 «REM»obsolete«FOREACH fields.typeSelect(AbstractDateField) AS dateField-»
@@ -297,15 +280,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         // retrieve translated fields
         $translations = «app.appName()»_Util_Translatable::prepareEntityForEdit($this->objectType, $entity);
 «ENDIF-»
-«LET incoming.typeSelect(JoinRelationship).select(e|!e.bidirectional) AS uniOwningAssociations-»
-«IF !uniOwningAssociations.isEmpty-»
-
-        // save parent identifiers of unidirectional incoming relationships
-«FOREACH uniOwningAssociations AS uniOwningAssociation-»
-        $this->«uniOwningAssociation.getRelationAliasName(false)» = FormUtil::getPassedValue('«uniOwningAssociation.getRelationAliasName(false)»', '', 'GET');
-«ENDFOREACH-»
-«ENDIF-»
-«ENDLET-»
+«EXPAND actionHandler::Relations::IncomingInitialisation-»
 
         // assign data to template as array for easy translatable support
         $this->view->assign('«name.formatForDB()»', $entityData)
@@ -356,221 +331,6 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDDEFINE»
 
 
-«DEFINE InitRelatedObjectDefault(Boolean incoming) FOR JoinRelationship-»
-«LET getRelationAliasName(!incoming).toFirstLower() AS relationAliasName-»
-«LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
-                $entity['«relationAliasName»'] = $this->retrieveRelatedObjects('«((incoming) ? source : target).name.formatForCode()»', '«relationAliasName.formatForDB()»', «IF !many»false«ELSE»true«ENDIF»);
-«ENDLET-»
-«ENDLET-»
-«ENDDEFINE»
-
-«DEFINE retrieveRelatedObjects(Application app, Controller controller) FOR Entity-»
-    /**
-     * Select a related object in create mode.
-     *
-     * @return array Single result or list of results.
-     */
-    protected function retrieveRelatedObjects($objectType, $relationInputFieldName, $many = false, $source = 'GET')
-    {
-        $entityClass = '«app.appName()»_Entity_' . ucfirst($objectType);
-        $repository = $this->entityManager->getRepository($entityClass);
-
-        $objectTemp = new $entityClass(); 
-        $idFields = $objectTemp->get_idFields();
-
-        $where = '';
-        $sortParam = $repository->getDefaultSortingField() . ' asc';
-
-        $inputValue = '';
-        if ($source == 'POST') {
-            $inputValue = $this->request->getPost()->get($relationInputFieldName, '');
-        }
-        else {
-            $inputValue = $this->request->getGet()->get($relationInputFieldName, '');
-        }
-        if (empty($inputValue)) {
-            return $many ? array() : null;
-        }
-
-        $inputValueParts = explode('_', $inputValue);
-        $i = 0;
-        foreach ($idFields as $idField) {
-            if (!empty($where)) {
-                $where .= ' AND ';
-            }
-
-            if ($many) {
-                $where .= 'tbl.' . $idField . ' IN (' . DataUtil::formatForStore($inputValueParts[$i]) . ')';
-            } else {
-                $where .= 'tbl.' . $idField . ' = \'' . DataUtil::formatForStore($inputValueParts[$i]) . '\'';
-            }
-            $i++;
-        }
-        list($result, $resultCount) = $repository->selectWherePaginated($where, $sortParam, 1, 50);
-        return (($many) ? $result : $result[0]);
-    }
-«ENDDEFINE»
-
-«DEFINE getRedirectCodes(Application app, Controller controller, String actionName) FOR Entity-»
-    /**
-     * Get list of allowed redirect codes.
-     */
-    protected function getRedirectCodes()
-    {
-        $codes = array();
-«FOREACH app.controllers.controllers AS someController-»
-«LET someController.name() AS controllerName-»
-«IF someController.hasActions('main')-»
-        // main page of «controllerName» area
-        $codes[] = '«controllerName»';
-«ENDIF-»
-«IF someController.hasActions('view')-»
-        // «controllerName» list of «nameMultiple.formatForDisplay()»
-        $codes[] = '«someController.name()»View';
-«ENDIF-»
-«IF someController.hasActions('display')-»
-        // «controllerName» display page of treated «name.formatForDisplay()»
-        $codes[] = '«controllerName»Display';
-«ENDIF-»
-«ENDLET-»
-«ENDFOREACH-»
-«FOREACH incoming.select(e|e.metaType == OneToOneRelationship || e.metaType == OneToManyRelationship) AS incomingRelation-»
-«LET incomingRelation.source AS sourceEntity-»
-«IF sourceEntity.name != this.name-»
-«FOREACH app.controllers.controllers AS someController-»
-«LET someController.name() AS controllerName-»
-«IF someController.hasActions('view')-»
-        // «controllerName» list of «sourceEntity.nameMultiple.formatForDisplay()»
-        $codes[] = '«controllerName»View«sourceEntity.name.formatForCodeCapital()»';
-«ENDIF-»
-«IF someController.hasActions('display')-»
-        // «controllerName» display page of treated «sourceEntity.name.formatForDisplay()»
-        $codes[] = '«controllerName»Display«sourceEntity.name.formatForCodeCapital()»';
-«ENDIF-»
-«ENDLET-»
-«ENDFOREACH-»
-«ENDIF-»
-«ENDLET-»
-«ENDFOREACH-»
-        return $codes;
-    }
-«ENDDEFINE»
-
-«DEFINE getDefaultReturnUrl(Application app, Controller controller, String actionName) FOR Entity-»
-    /**
-     * Get the default redirect url. Required if no returnTo parameter has been supplied.
-     * This method is called in handleCommand so we know which command has been performed.
-     */
-    protected function getDefaultReturnUrl($args, $obj)
-    {
-«IF controller.hasActions('view')-»
-        // redirect to the list of «nameMultiple.formatForCode()»
-        $viewArgs = array('ot' => $this->objectType);
-«IF tree != EntityTreeType::NONE-»
-        $viewArgs['tpl'] = 'tree';
-«ENDIF-»
-        $url = ModUtil::url('«app.appName()»', '«controller.name()»', 'view', $viewArgs);
-«ELSEIF controller.hasActions('main')-»
-        // redirect to the main page
-        $url = ModUtil::url('«app.appName()»', '«controller.name()»', 'main');
-«ELSE-»
-        $url = System::getHomepageUrl();
-«ENDIF-»
-
-«IF controller.hasActions('display')-»
-«IF tree != EntityTreeType::NONE-»
-    /*
-«ENDIF-»
-        if ($args['commandName'] != 'delete') {
-            // redirect to the detail page of treated «name.formatForCode()»
-            $url = ModUtil::url('«app.appName()»', '«controller.name()»', «modUrlDisplay('this->idValues', false)»);
-        }
-«IF tree != EntityTreeType::NONE-»
-    */
-«ENDIF-»
-«ENDIF-»
-        return $url;
-    }
-«ENDDEFINE»
-
-«DEFINE getRedirectUrl(Application app, Controller controller, String actionName) FOR Entity-»
-«LET app.appName() AS appName-»
-    /**
-     * Get url to redirect to.
-     */
-    protected function getRedirectUrl($args, $obj, $repeatCreateAction = false)
-    {
-        if ($this->inlineUsage == true) {
-            // inline usage, return to special function for closing the Zikula.UI.Window instance
-            return ModUtil::url('«appName»', '«controller.name()»', 'handleInlineRedirect',
-                                                                 array('idp' => $this->idPrefix,
-«FOREACH getPrimaryKeyFields() AS pkField-»
-                                                                       '«pkField.name.formatForCode()»' => $this->idValues['«pkField.name.formatForCode()»'],
-«ENDFOREACH-»
-                                                                       'com' => $args['commandName']));
-        }
-
-        if ($repeatCreateAction) {
-            return $this->repeatReturnUrl;
-        }
-
-        // normal usage, compute return url from given redirect code
-        if (!in_array($this->returnTo, $this->getRedirectCodes())) {
-            // invalid return code, so return the default url
-            return $this->getDefaultReturnUrl($args, $obj);
-        }
-
-        // parse given redirect code and return corresponding url
-        switch ($this->returnTo) {
-«FOREACH app.controllers.controllers.reject(e|e.metaType == AjaxController) AS someController-»
-«LET someController.name() AS controllerName-»
-«IF someController.hasActions('main')-»
-            case '«controllerName»':
-                                    return ModUtil::url('«appName»', '«controllerName»');
-«ENDIF-»
-«IF someController.hasActions('view')-»
-            case '«controllerName»View':
-                                    return ModUtil::url('«appName»', '«controllerName»', 'view',
-                                                             array('ot' => $this->objectType));
-«ENDIF-»
-«IF someController.hasActions('display')-»
-            case '«controllerName»Display':
-                                    if ($args['commandName'] != 'delete') {
-                                        return ModUtil::url('«appName»', '«controllerName»', «modUrlDisplay('this->idValues', false)»);
-                                    }
-                                    return $this->getDefaultReturnUrl($args, $obj);
-«ENDIF-»
-«ENDLET-»
-«ENDFOREACH-»
-«FOREACH incoming.typeSelect(JoinRelationship).select(e|e.metaType == OneToOneRelationship || e.metaType == OneToManyRelationship) AS incomingRelation-»
-«LET incomingRelation.source AS sourceEntity-»
-«IF sourceEntity.name != this.name-»
-«FOREACH app.controllers.controllers.reject(e|e.metaType == AjaxController) AS someController-»
-«LET someController.name() AS controllerName-»
-«IF someController.hasActions('view')-»
-            case '«controllerName»View«sourceEntity.name.formatForCodeCapital()»':
-                                    return ModUtil::url('«appName»', '«controllerName»', 'view',
-                                                             array('ot' => '«sourceEntity.name.formatForCode()»'));
-«ENDIF-»
-«IF someController.hasActions('display')-»
-            case '«controllerName»Display«sourceEntity.name.formatForCodeCapital()»':
-                                    if (!empty($this->«incomingRelation.getRelationAliasName(false)»)) {
-                                        return ModUtil::url('«appName»', '«controllerName»', 'display', array('ot' => '«sourceEntity.name.formatForCode()»', 'id' => $this->«incomingRelation.getRelationAliasName(false)»));
-                                    }
-                                    return $this->getDefaultReturnUrl($args, $obj);
-«ENDIF-»
-«ENDLET-»
-«ENDFOREACH-»
-«ENDIF-»
-«ENDLET-»
-«ENDFOREACH-»
-            default:
-                                    return $this->getDefaultReturnUrl($args, $obj);
-        }
-    }
-«ENDLET-»
-«ENDDEFINE»
-
 «DEFINE handleCommand(Application app, Controller controller, String actionName) FOR Entity-»
     /**
      * Command event handler.
@@ -591,6 +351,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             }
         }
 
+«EXPAND actionHandler::Relations::ReassignRelatedObjects-»
+
         if (!in_array($args['commandName'], array('delete', 'cancel'))) {
             // do forms validation including checking all validators on the page to validate their input
             if (!$this->view->isValid()) {
@@ -599,11 +361,6 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         }
 
         $this->objectType = '«name.formatForCode()»';
-
-        $userSelection = array();
-«EXPAND ReassignRelatedObjects(true) FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»
-«EXPAND ReassignRelatedObjects(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
-        $this->view->assign('userSelection', $userSelection);
 
         $entityClass = '«app.appName()»_Entity_' . ucfirst($this->objectType);
         $repository = $this->entityManager->getRepository($entityClass);
@@ -696,7 +453,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 // check if the update has worked, might become obsolete due to exception usage
                 if ($updateResult === false) {
                     return $this->view->setErrorMsg($this->__('Error! Update attempt failed.'));
-                }«ENDREM»
+                }«ENDREM»«''-»
             }
 
             LogUtil::registerStatus($successMessage);
@@ -750,89 +507,6 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDDEFINE»
 
 
-«DEFINE ReassignRelatedObjects(Boolean incoming) FOR JoinRelationship-»
-«LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
-«LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
-«LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
-        // reassign the «((incoming) ? target : source).getEntityNameSingularPlural(many).formatForDisplay()» eventually chosen by the user
-        $userSelection['«relationAliasName.toFirstLower()»'] = $this->retrieveRelatedObjects('«((incoming) ? source : target).name.formatForCode()»', '«uniqueNameForJs»ItemList', «IF !many»false«ELSE»true«ENDIF», 'POST');
-«ENDLET-»
-«ENDLET-»
-«ENDLET-»
-«ENDDEFINE»
-
-
-«DEFINE UpdateRelationLinks(Boolean incoming) FOR JoinRelationship-»
-«LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
-«LET isManySide(!incoming) AS many-»
-«LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
-«IF many && this.getEditStageCode(incoming) > 1-»
-«LET ((incoming) ? source : target).name.formatForCode() AS objectType-»
-«IF incoming-»«REM»only incoming for now, see http://code.zikula.org/generator/ticket/89«ENDREM»«""-»
-        $relatedIds = $this->request->getPost()->get('«uniqueNameForJs»ItemList', '');
-        if ($this->mode != 'create') {
-            // remove all existing references
-«IF many-»
-            $entity->get«relationAliasName.toFirstUpper()»()->clear();
-«ELSE-»
-«IF nullable-»
-            $entity->set«relationAliasName.toFirstUpper()»(null);
-«ENDIF-»
-«ENDIF-»
-        }
-        if (empty($relatedIds)) {
-            return;
-        }
-        $relatedIds = explode(',', $relatedIds);
-        if (!is_array($relatedIds) || !count($relatedIds)) {
-            return;
-        }
-
-        $entityClass = '«container.application.appName()»_Entity_' . ucfirst('«objectType»');
-        $objectTemp = new $entityClass();
-        $idFields = $entityClass->get_idFields();
-
-        $relatedIdValues = array();
-        foreach ($idFields as $idField) {
-            $relatedIdValues[$idField] = array();
-        }
-        foreach ($relatedIds as $relatedId) {
-            $relatedIdParts = explode('_', $relatedId);
-            $i = 0;
-            foreach ($idFields as $idField) {
-                $relatedIdValues[$idField][] = $relatedIdParts[$i];
-                $i++;
-            }
-        }
-
-        $repository = $this->entityManager->getRepository($entityClass);
-        $where = '';
-        foreach ($idFields as $idField) {
-            if (!empty($where)) {
-                $where .= ' AND ';
-            }
-            $where .= $idField . ' IN (' . implode(', ', $relatedIdValues[$idField]) . ')';
-        }
-        $linkObjects = $repository->selectWhere($where);
-        // create new links
-        foreach ($linkObjects as $relatedObject) {
-«IF many-»
-            if ($entity->get«relationAliasName.toFirstUpper()»()->contains($relatedObject)) {
-                continue;
-            }
-            $entity->get«relationAliasName.toFirstUpper()»()->add($relatedObject);
-«ELSE-»
-            $entity->set«relationAliasName.toFirstUpper()»($relatedObject);
-«ENDIF-»
-        }
-«ENDIF-»
-«ENDLET-»
-«ENDIF-»
-«ENDLET-»
-«ENDLET-»
-«ENDLET-»
-«ENDDEFINE»
-
 
 «DEFINE FetchInputData(String obj) FOR Entity-»
         // fetch posted data input values as an associative array
@@ -841,7 +515,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $«obj»Data = $formData['«name.formatForDB()»'];
         unset($formData['«name.formatForDB()»']);
 
-«EXPAND FetchRelationValue(obj, true) FOREACH incoming.typeSelect(JoinRelationship).reject(e|e.metaType == ManyToManyRelationship)-»
+«EXPAND actionHandler::Relations::FetchRelationValue(obj, true) FOREACH incoming.typeSelect(JoinRelationship).reject(e|e.metaType == ManyToManyRelationship)-»
 «LET getUserFields() AS userFields-»
 «LET getUploadFields() AS uploadFields-»
 «IF !(userFields.isEmpty && uploadFields.isEmpty) || (hasSluggableFields() && slugUpdatable)-»
@@ -908,94 +582,5 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $«obj»->merge($«obj»Data);
 «ENDDEFINE»
 
-«REM»Assign input value from incoming 1:1 and 1:n relationships (example: get customerid for an order).
-As the autocomplete fields are not done with a Form plugin (yet), we do that manually.«ENDREM»
-«DEFINE FetchRelationValue(String obj, Boolean incoming) FOR JoinRelationship-»
-«IF !incoming || bidirectional || metaType == ManyToManyRelationship-»
-«LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
-«LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
-        $«obj»Data['«relationAliasName»'] = (int) $this->request->getPost()->filter('«uniqueNameForJs»ItemList', 0, FILTER_VALIDATE_INT);
-        if (!$«obj»Data['«relationAliasName»']) {
-«REM»            // Oops, we have an invalid relation id. As this field is mandatory, we raise an error.«ENDREM»
-            return $this->view->setErrorMsg($this->__('Invalid value received for relation field "«relationAliasName.formatForDisplay()»".'));
-        }
-«ENDLET-»
-«ENDLET-»
-«ENDIF-»
-«ENDDEFINE»
 
-
-«DEFINE handleUploads(Application app) FOR Entity-»
-    /**
-     * Helper method to process upload fields
-     */
-    protected function handleUploads($formData, $existingObject)
-    {
-«LET getUploadFields() AS uploadFields-»
-«IF !uploadFields.isEmpty-»
-        // initialise the upload handler
-        $uploadManager = new «app.appName()»_UploadHandler();
-
-        // list of upload fields to consider
-        $uploadFields = array(«FOREACH uploadFields AS uploadField SEPARATOR ", "»'«uploadField.name.formatForCode()»'«ENDFOREACH»);
-        // list of mandatory fields
-        $uploadFieldsMandatory = array(«FOREACH uploadFields.select(e|e.mandatory) AS uploadField SEPARATOR ", "»'«uploadField.name.formatForCode()»'«ENDFOREACH»);
-
-        $existingObjectData = $existingObject->toArray();
-
-        // process all fields
-        foreach ($uploadFields as $uploadField) {
-            // check if an existing file must be deleted
-            $hasOldFile = (!empty($existingObjectData[$uploadField]));
-            $hasBeenDeleted = !$hasOldFile;
-            if ($this->mode != 'create') {
-                if (isset($formData[$uploadField . 'DeleteFile'])) {
-                    if ($hasOldFile && $formData[$uploadField . 'DeleteFile'] === true) {
-                        // remove upload file (and image thumbnails)
-                        $existingObjectData = $uploadManager->deleteUploadFile($this->objectType, $existingObjectData, $uploadField);
-                        if (empty($existingObjectData[$uploadField])) {
-                            $existingObject[$uploadField] = '';
-                        }
-                    }
-                    unset($formData[$uploadField . 'DeleteFile']);
-                    $hasBeenDeleted = true;
-                }
-            }
-
-            // look whether a file has been provided
-            if (!$formData[$uploadField] || $formData[$uploadField]['size'] == 0) {
-                // no file has been uploaded
-                unset($formData[$uploadField]);
-                // skip to next one
-                continue;
-            }
-
-            if ($hasOldFile && $hasBeenDeleted !== true && $this->mode != 'create') {
-                // remove old upload file (and image thumbnails)
-                $existingObjectData = $uploadManager->deleteUploadFile($this->objectType, $existingObjectData, $uploadField);
-                if (empty($existingObjectData[$uploadField])) {
-                    $existingObject[$uploadField] = '';
-                }
-            }
-
-            // do the actual upload (includes validation, physical file processing and reading meta data)
-            $uploadResult = $uploadManager->performFileUpload($this->objectType, $formData, $uploadField);
-            // assign the upload file name
-            $formData[$uploadField] = $uploadResult['fileName'];
-            // assign the meta data
-            $formData[$uploadField . 'Meta'] = $uploadResult['metaData'];
-
-            // if current field is mandatory check if everything has been done 
-            if (in_array($uploadField, $uploadFieldsMandatory) && $formData[$uploadField] === false) {
-                // mandatory upload has not been completed successfully
-                return false;
-            }
-
-            // upload succeeded
-        }
-«ENDIF-»
-«ENDLET-»
-        return $formData;
-    }
-«ENDDEFINE»
 

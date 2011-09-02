@@ -1,0 +1,165 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+
+«REM»Redirect processing functions for edit form handlers«ENDREM»
+
+«DEFINE GetRedirectCodes(Application app, Controller controller, String actionName) FOR Entity-»
+    /**
+     * Get list of allowed redirect codes.
+     */
+    protected function getRedirectCodes()
+    {
+        $codes = array();
+«FOREACH app.controllers.controllers AS someController-»
+«LET someController.name() AS controllerName-»
+«IF someController.hasActions('main')-»
+        // main page of «controllerName» area
+        $codes[] = '«controllerName»';
+«ENDIF-»
+«IF someController.hasActions('view')-»
+        // «controllerName» list of «nameMultiple.formatForDisplay()»
+        $codes[] = '«someController.name()»View';
+«ENDIF-»
+«IF someController.hasActions('display')-»
+        // «controllerName» display page of treated «name.formatForDisplay()»
+        $codes[] = '«controllerName»Display';
+«ENDIF-»
+«ENDLET-»
+«ENDFOREACH-»
+«FOREACH incoming.select(e|e.metaType == OneToOneRelationship || e.metaType == OneToManyRelationship) AS incomingRelation-»
+«LET incomingRelation.source AS sourceEntity-»
+«IF sourceEntity.name != this.name-»
+«FOREACH app.controllers.controllers AS someController-»
+«LET someController.name() AS controllerName-»
+«IF someController.hasActions('view')-»
+        // «controllerName» list of «sourceEntity.nameMultiple.formatForDisplay()»
+        $codes[] = '«controllerName»View«sourceEntity.name.formatForCodeCapital()»';
+«ENDIF-»
+«IF someController.hasActions('display')-»
+        // «controllerName» display page of treated «sourceEntity.name.formatForDisplay()»
+        $codes[] = '«controllerName»Display«sourceEntity.name.formatForCodeCapital()»';
+«ENDIF-»
+«ENDLET-»
+«ENDFOREACH-»
+«ENDIF-»
+«ENDLET-»
+«ENDFOREACH-»
+        return $codes;
+    }
+«ENDDEFINE»
+
+«DEFINE GetDefaultReturnUrl(Application app, Controller controller, String actionName) FOR Entity-»
+    /**
+     * Get the default redirect url. Required if no returnTo parameter has been supplied.
+     * This method is called in handleCommand so we know which command has been performed.
+     */
+    protected function getDefaultReturnUrl($args, $obj)
+    {
+«IF controller.hasActions('view')-»
+        // redirect to the list of «nameMultiple.formatForCode()»
+        $viewArgs = array('ot' => $this->objectType);
+«IF tree != EntityTreeType::NONE-»
+        $viewArgs['tpl'] = 'tree';
+«ENDIF-»
+        $url = ModUtil::url('«app.appName()»', '«controller.name()»', 'view', $viewArgs);
+«ELSEIF controller.hasActions('main')-»
+        // redirect to the main page
+        $url = ModUtil::url('«app.appName()»', '«controller.name()»', 'main');
+«ELSE-»
+        $url = System::getHomepageUrl();
+«ENDIF-»
+
+«IF controller.hasActions('display')-»
+«IF tree != EntityTreeType::NONE-»
+    /*
+«ENDIF-»
+        if ($args['commandName'] != 'delete') {
+            // redirect to the detail page of treated «name.formatForCode()»
+            $url = ModUtil::url('«app.appName()»', '«controller.name()»', «modUrlDisplay('this->idValues', false)»);
+        }
+«IF tree != EntityTreeType::NONE-»
+    */
+«ENDIF-»
+«ENDIF-»
+        return $url;
+    }
+«ENDDEFINE»
+
+«DEFINE GetRedirectUrl(Application app, Controller controller, String actionName) FOR Entity-»
+«LET app.appName() AS appName-»
+    /**
+     * Get url to redirect to.
+     */
+    protected function getRedirectUrl($args, $obj, $repeatCreateAction = false)
+    {
+        if ($this->inlineUsage == true) {
+            // inline usage, return to special function for closing the Zikula.UI.Window instance
+            return ModUtil::url('«appName»', '«controller.name()»', 'handleInlineRedirect',
+                                                                 array('idp' => $this->idPrefix,
+«FOREACH getPrimaryKeyFields() AS pkField-»
+                                                                       '«pkField.name.formatForCode()»' => $this->idValues['«pkField.name.formatForCode()»'],
+«ENDFOREACH-»
+                                                                       'com' => $args['commandName']));
+        }
+
+        if ($repeatCreateAction) {
+            return $this->repeatReturnUrl;
+        }
+
+        // normal usage, compute return url from given redirect code
+        if (!in_array($this->returnTo, $this->getRedirectCodes())) {
+            // invalid return code, so return the default url
+            return $this->getDefaultReturnUrl($args, $obj);
+        }
+
+        // parse given redirect code and return corresponding url
+        switch ($this->returnTo) {
+«FOREACH app.controllers.controllers.reject(e|e.metaType == AjaxController) AS someController-»
+«LET someController.name() AS controllerName-»
+«IF someController.hasActions('main')-»
+            case '«controllerName»':
+                                    return ModUtil::url('«appName»', '«controllerName»');
+«ENDIF-»
+«IF someController.hasActions('view')-»
+            case '«controllerName»View':
+                                    return ModUtil::url('«appName»', '«controllerName»', 'view',
+                                                             array('ot' => $this->objectType));
+«ENDIF-»
+«IF someController.hasActions('display')-»
+            case '«controllerName»Display':
+                                    if ($args['commandName'] != 'delete') {
+                                        return ModUtil::url('«appName»', '«controllerName»', «modUrlDisplay('this->idValues', false)»);
+                                    }
+                                    return $this->getDefaultReturnUrl($args, $obj);
+«ENDIF-»
+«ENDLET-»
+«ENDFOREACH-»
+«FOREACH incoming.typeSelect(JoinRelationship).select(e|e.metaType == OneToOneRelationship || e.metaType == OneToManyRelationship) AS incomingRelation-»
+«LET incomingRelation.source AS sourceEntity-»
+«IF sourceEntity.name != this.name-»
+«FOREACH app.controllers.controllers.reject(e|e.metaType == AjaxController) AS someController-»
+«LET someController.name() AS controllerName-»
+«IF someController.hasActions('view')-»
+            case '«controllerName»View«sourceEntity.name.formatForCodeCapital()»':
+                                    return ModUtil::url('«appName»', '«controllerName»', 'view',
+                                                             array('ot' => '«sourceEntity.name.formatForCode()»'));
+«ENDIF-»
+«IF someController.hasActions('display')-»
+            case '«controllerName»Display«sourceEntity.name.formatForCodeCapital()»':
+                                    if (!empty($this->«incomingRelation.getRelationAliasName(false)»)) {
+                                        return ModUtil::url('«appName»', '«controllerName»', 'display', array('ot' => '«sourceEntity.name.formatForCode()»', 'id' => $this->«incomingRelation.getRelationAliasName(false)»));
+                                    }
+                                    return $this->getDefaultReturnUrl($args, $obj);
+«ENDIF-»
+«ENDLET-»
+«ENDFOREACH-»
+«ENDIF-»
+«ENDLET-»
+«ENDFOREACH-»
+            default:
+                                    return $this->getDefaultReturnUrl($args, $obj);
+        }
+    }
+«ENDLET-»
+«ENDDEFINE»

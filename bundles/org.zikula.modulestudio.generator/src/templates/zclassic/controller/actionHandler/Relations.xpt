@@ -1,0 +1,204 @@
+«IMPORT modulestudio»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+
+«REM»Relation processing functions for edit form handlers«ENDREM»
+
+«DEFINE IncomingMemberVar FOR JoinRelationship-»
+
+    /**
+     * @var mixed Identifier for incoming relationship.
+     */
+    protected $«getRelationAliasName(false)» = '';
+«ENDDEFINE»
+
+«DEFINE IncomingInitialisation FOR Entity-»
+«LET incoming.typeSelect(JoinRelationship).select(e|!e.bidirectional) AS uniOwningAssociations-»
+«IF !uniOwningAssociations.isEmpty-»
+
+        // save parent identifiers of unidirectional incoming relationships
+«FOREACH uniOwningAssociations AS uniOwningAssociation-»
+        $this->«uniOwningAssociation.getRelationAliasName(false)» = FormUtil::getPassedValue('«uniOwningAssociation.getRelationAliasName(false)»', '', 'GET');
+«ENDFOREACH-»
+«ENDIF-»
+«ENDLET-»
+«ENDDEFINE»
+
+«DEFINE InitRelatedObjectDefault(Boolean incoming) FOR JoinRelationship-»
+«LET getRelationAliasName(!incoming).toFirstLower() AS relationAliasName-»
+«LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
+                $entity['«relationAliasName»'] = $this->retrieveRelatedObjects('«((incoming) ? source : target).name.formatForCode()»', '«relationAliasName.formatForDB()»', «IF !many»false«ELSE»true«ENDIF»);
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+
+«DEFINE ReassignRelatedObjects FOR Entity-»
+        $selectedRelations = array();
+«EXPAND ReassignRelatedObjects(true) FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»
+«EXPAND ReassignRelatedObjects(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
+        $this->view->assign('selectedRelations', $selectedRelations);
+«ENDDEFINE»
+
+«DEFINE ReassignRelatedObjects(Boolean incoming) FOR JoinRelationship-»
+«LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
+«LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
+«LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
+        // reassign the «((incoming) ? target : source).getEntityNameSingularPlural(many).formatForDisplay()» eventually chosen by the user
+        $selectedRelations['«relationAliasName.toFirstLower()»'] = «EXPAND RetrieveRelatedObjectsCall(((incoming) ? source : target).name, uniqueNameForJs, many)-»;
+«ENDLET-»
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
+
+
+«REM»Assign input value from incoming 1:1 and 1:n relationships (example: get customerid for an order).
+As the autocomplete fields are not done with a Form plugin (yet), we do that manually.«ENDREM»
+«DEFINE FetchRelationValue(String obj, Boolean incoming) FOR JoinRelationship-»
+«IF !incoming || bidirectional || metaType == ManyToManyRelationship-»
+«LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
+«LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
+        $«obj»Data['«relationAliasName»'] = ((isset($selectedRelations['«relationAliasName.toFirstLower()»'])) ? $selectedRelations['«relationAliasName.toFirstLower()»'] : «EXPAND RetrieveRelatedObjectsCall(((incoming) ? source : target).name, uniqueNameForJs, false)-»;
+        if (!$«obj»Data['«relationAliasName»']) {
+«REM»            // Oops, we have an invalid relation id. As this field is mandatory, we raise an error.«ENDREM»
+            return $this->view->setErrorMsg($this->__('Invalid value received for relation field "«relationAliasName.formatForDisplay()»".'));
+        }
+«ENDLET-»
+«ENDLET-»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE RetrieveRelatedObjectsCall(String objectType, String uniqueNameForJs, Boolean many) FOR Object-»
+$this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameForJs»ItemList', «IF !many»false«ELSE»true«ENDIF», 'POST')«''-»
+«ENDDEFINE»
+
+«DEFINE RetrieveRelatedObjects(Application app, Controller controller) FOR Entity-»
+    /**
+     * Select a related object in create mode.
+     *
+     * @return array Single result or list of results.
+     */
+    protected function retrieveRelatedObjects($objectType, $relationInputFieldName, $many = false, $source = 'GET')
+    {
+        $entityClass = '«app.appName()»_Entity_' . ucfirst($objectType);
+        $repository = $this->entityManager->getRepository($entityClass);
+
+        $objectTemp = new $entityClass(); 
+        $idFields = $objectTemp->get_idFields();
+
+        $where = '';
+        $sortParam = $repository->getDefaultSortingField() . ' asc';
+
+        $inputValue = '';
+        if ($source == 'POST') {
+            $inputValue = $this->request->getPost()->get($relationInputFieldName, '');
+        }
+        else {
+            $inputValue = $this->request->getGet()->get($relationInputFieldName, '');
+        }
+        if (empty($inputValue)) {
+            return $many ? array() : null;
+        }
+
+        $inputValueParts = explode('_', $inputValue);
+        $i = 0;
+        foreach ($idFields as $idField) {
+            if (!empty($where)) {
+                $where .= ' AND ';
+            }
+
+            if ($many) {
+                $where .= 'tbl.' . $idField . ' IN (' . DataUtil::formatForStore($inputValueParts[$i]) . ')';
+            } else {
+                $where .= 'tbl.' . $idField . ' = \'' . DataUtil::formatForStore($inputValueParts[$i]) . '\'';
+            }
+            $i++;
+        }
+        list($result, $resultCount) = $repository->selectWherePaginated($where, $sortParam, 1, 50);
+        return (($many) ? $result : $result[0]);
+    }
+«ENDDEFINE»
+
+
+
+«DEFINE UpdateRelationLinks FOR Entity-»
+    /**
+     * Helper method for updating links to related records.
+     */
+    protected function updateRelationLinks($entity)
+    {
+«EXPAND UpdateRelationLinks(true) FOREACH incoming.typeSelect(ManyToManyRelationship)-»
+«EXPAND UpdateRelationLinks(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
+    }
+«ENDDEFINE»
+
+«DEFINE UpdateRelationLinks(Boolean incoming) FOR JoinRelationship-»
+«LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
+«LET isManySide(!incoming) AS many-»
+«LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
+«IF many && this.getEditStageCode(incoming) > 1-»
+«LET ((incoming) ? source : target).name.formatForCode() AS objectType-»
+«IF incoming-»«REM»only incoming for now, see http://code.zikula.org/generator/ticket/89«ENDREM»«""-»
+        $relatedIds = $this->request->getPost()->get('«uniqueNameForJs»ItemList', '');
+        if ($this->mode != 'create') {
+            // remove all existing references
+«IF many-»
+            $entity->get«relationAliasName.toFirstUpper()»()->clear();
+«ELSE-»
+«IF nullable-»
+            $entity->set«relationAliasName.toFirstUpper()»(null);
+«ENDIF-»
+«ENDIF-»
+        }
+        if (empty($relatedIds)) {
+            return;
+        }
+        $relatedIds = explode(',', $relatedIds);
+        if (!is_array($relatedIds) || !count($relatedIds)) {
+            return;
+        }
+
+        $entityClass = '«container.application.appName()»_Entity_' . ucfirst('«objectType»');
+        $objectTemp = new $entityClass();
+        $idFields = $entityClass->get_idFields();
+
+        $relatedIdValues = array();
+        foreach ($idFields as $idField) {
+            $relatedIdValues[$idField] = array();
+        }
+        foreach ($relatedIds as $relatedId) {
+            $relatedIdParts = explode('_', $relatedId);
+            $i = 0;
+            foreach ($idFields as $idField) {
+                $relatedIdValues[$idField][] = $relatedIdParts[$i];
+                $i++;
+            }
+        }
+
+        $repository = $this->entityManager->getRepository($entityClass);
+        $where = '';
+        foreach ($idFields as $idField) {
+            if (!empty($where)) {
+                $where .= ' AND ';
+            }
+            $where .= $idField . ' IN (' . implode(', ', $relatedIdValues[$idField]) . ')';
+        }
+        $linkObjects = $repository->selectWhere($where);
+        // create new links
+        foreach ($linkObjects as $relatedObject) {
+«IF many-»
+            if ($entity->get«relationAliasName.toFirstUpper()»()->contains($relatedObject)) {
+                continue;
+            }
+            $entity->get«relationAliasName.toFirstUpper()»()->add($relatedObject);
+«ELSE-»
+            $entity->set«relationAliasName.toFirstUpper()»($relatedObject);
+«ENDIF-»
+        }
+«ENDIF-»
+«ENDLET-»
+«ENDIF-»
+«ENDLET-»
+«ENDLET-»
+«ENDLET-»
+«ENDDEFINE»
