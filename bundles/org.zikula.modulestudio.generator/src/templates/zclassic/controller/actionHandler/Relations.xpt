@@ -58,7 +58,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
 «IF !incoming || bidirectional || metaType == ManyToManyRelationship-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
-        $«obj»Data['«relationAliasName»'] = ((isset($selectedRelations['«relationAliasName.toFirstLower()»'])) ? $selectedRelations['«relationAliasName.toFirstLower()»'] : «EXPAND RetrieveRelatedObjectsCall(((incoming) ? source : target).name, uniqueNameForJs, false)-»;
+        $«obj»Data['«relationAliasName»'] = ((isset($selectedRelations['«relationAliasName.toFirstLower()»'])) ? $selectedRelations['«relationAliasName.toFirstLower()»'] : «EXPAND RetrieveRelatedObjectsCall(((incoming) ? source : target).name, uniqueNameForJs, false)-»);
         if (!$«obj»Data['«relationAliasName»']) {
 «REM»            // Oops, we have an invalid relation id. As this field is mandatory, we raise an error.«ENDREM»
             return $this->view->setErrorMsg($this->__('Invalid value received for relation field "«relationAliasName.formatForDisplay()»".'));
