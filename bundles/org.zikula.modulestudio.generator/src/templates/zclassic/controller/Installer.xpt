@@ -189,11 +189,16 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         // unregister hook provider bundles
         HookUtil::unregisterProviderBundles($this->version->getHookProviderBundles());
 «ENDREM»
-
 «IF !models.variables.isEmpty-»
+
         // remove all module vars
         $this->delVars();
+«ENDIF-»
+«IF hasCategorisableEntities()-»
 
+        // remove category registry entries
+        ModUtil::dbInfoLoad('Categories');
+        DBUtil::deleteWhere('categories_registry', "crg_modname = '«appName()»'");
 «ENDIF-»
         // deletion successful
         return true;
