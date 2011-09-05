@@ -200,6 +200,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         ModUtil::dbInfoLoad('Categories');
         DBUtil::deleteWhere('categories_registry', "crg_modname = '«appName()»'");
 «ENDIF-»
+
         // deletion successful
         return true;
     }
