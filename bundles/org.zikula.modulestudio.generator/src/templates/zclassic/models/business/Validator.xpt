@@ -579,9 +579,14 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
 «ENDIF-»
 «ENDDEFINE»
 «DEFINE ValidationCalls FOR AbstractIntegerField-»
+«IF entity.incoming.typeSelect(JoinRelationship).select(e|e.targetField == name).isEmpty
+ && entity.outgoing.typeSelect(JoinRelationship).select(e|e.sourceField == name).isEmpty-»
 «EXPAND ValidationCallsInteger-»
+«ENDIF-»
 «ENDDEFINE»
 «DEFINE ValidationCalls FOR IntegerField-»
+«IF entity.incoming.typeSelect(JoinRelationship).select(e|e.targetField == name).isEmpty
+ && entity.outgoing.typeSelect(JoinRelationship).select(e|e.sourceField == name).isEmpty-»
 «EXPAND ValidationCallsInteger-»
 «IF minValue != 0-»
         if (!$this->isIntegerNotLowerThan('«name.formatForCode()»', «minValue»)) {
@@ -599,6 +604,7 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
             $errorInfo['message'] = __f('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForCode()»', «length»), $dom);
             return $errorInfo;
         }
+«ENDIF-»
 «ENDDEFINE»
 «DEFINE ValidationCalls FOR DecimalField-»
 «EXPAND ValidationCallsNumeric-»
