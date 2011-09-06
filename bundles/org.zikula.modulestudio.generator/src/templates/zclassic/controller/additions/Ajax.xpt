@@ -139,6 +139,10 @@
 «ENDFOREACH-»
             }
 
+«IF app.models.entities.exists(e|e.hasImageFields())-»
+            $thumbWidth = 100;
+            $thumbHeight = 80;
+«ENDIF-»
             foreach ($objectData as $item) {
                 // class="informal" --> show in dropdown, but do not copy in the input field after selection
                 $itemTitle = ((!empty($titleFieldName)) ? $item[$titleFieldName] : $this->__('Item'));
@@ -165,10 +169,8 @@
 «ENDIF»
 «ENDFOREACH-»
                 }
-                if (!empty($previewFieldName) && isset($item[$previewFieldName . 'FullPath'])) {
-                    $thumbWidth = 100;
-                    $thumbHeight = 80;
-                    $thumbImagePath = «app.appName()»_Util_View::getThumb($item[$previewFieldName], $item[$previewFieldName . 'FullPath'], $thumbWidth, $thumbHeight);
+                if (!empty($previewFieldName) && !empty($item[$previewFieldName]) && isset($item[$previewFieldName . 'FullPath'])) {
+                    $thumbImagePath = «app.appName()»_Util_Image::getThumb($item[$previewFieldName], $item[$previewFieldName . 'FullPath'], $thumbWidth, $thumbHeight);
                     $preview = '<img src="' . $thumbImagePath . '" width="' . $thumbWidth . '" height="' . $thumbHeight . '" alt="' . $itemTitleStripped . '" />';
                     $out .= '<div class="itempreview informal" id="itempreview' . $itemId . '">' . $preview . '</div>';
                 }
