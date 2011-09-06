@@ -563,7 +563,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         unset($«obj»Data['attributes']);
 «ENDIF-»
 «IF metaData-»
-        
+
         // merge metadata
         $metadata = $«obj»->getMetadata();
 

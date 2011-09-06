@@ -105,7 +105,7 @@ class «appName()»_Form_Plugin_GeoInput extends Zikula_Form_Plugin_TextInput
      */
     function formatValue(Zikula_Form_View $view, $value)
     {
-        return number_format($value, $this->precision, ".", "");
+        return number_format($value, 10, ".", "");
     }
 }
 
