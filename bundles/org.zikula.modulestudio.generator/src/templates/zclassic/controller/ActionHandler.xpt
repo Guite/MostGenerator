@@ -83,6 +83,11 @@ class «baseClassFormHandler(controller, name, actionName)» extends Zikula_Form
     protected $objectType;
 
     /**
+     * @var «implClassModelEntity()» Reference to treated «name.formatForDisplay()» instance.
+     */
+    protected $«name.formatForCode()»Ref = false;
+
+    /**
      * @var array List of identifiers of treated «name.formatForDisplay()».
      */
     protected $idValues = array();
@@ -291,6 +296,9 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                    ->assign('mode', $this->mode)
                    ->assign('inlineUsage', $this->inlineUsage);
 
+        // save entity reference for reuse in handleCommand method
+        $this->«name.formatForCode()»Ref = $entity;
+
 «IF hasTranslatableFields()-»
         // assign translations
         foreach ($translations as $locale => $translationData) {
@@ -368,12 +376,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $transRepository = $this->entityManager->getRepository($entityClass . 'Translation');
 «ENDIF-»
 
-        $«name.formatForCode()» = new $entityClass();
-        $idFields = $«name.formatForCode()»->get_idFields();
-
-        if ($args['commandName'] != 'create') {
-            $«name.formatForCode()» = $repository->selectById($this->idValues);
-        }
+        // get treated entity reference from persisted member var
+        $«name.formatForCode()» = $this->«name.formatForCode()»Ref;
 
 «EXPAND FetchInputData(name.formatForCode())-»
 
