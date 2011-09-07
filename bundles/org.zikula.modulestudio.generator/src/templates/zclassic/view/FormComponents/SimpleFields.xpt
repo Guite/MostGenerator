@@ -162,7 +162,7 @@
             {/if}
 «REM»TODO: visible=false«ENDREM»«""-»
 «IF !mandatory-»
-            <a id="reset«name.formatForCodeCapital()»Val" href="javascript:void(0);" style="display: none">{gt text='Reset to empty value'}</a>
+            <p class="z-formnote"><a id="reset«name.formatForCodeCapital()»Val" href="javascript:void(0);" style="display: none">{gt text='Reset to empty value'}</a></p>
 «ENDIF-»
 «ENDDEFINE»
 

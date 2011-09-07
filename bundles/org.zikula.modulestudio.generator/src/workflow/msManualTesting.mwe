@@ -2,7 +2,7 @@
 <!-- processes specific models for other persons -->
 <workflow>
     <!-- which model ? -->
-    <property name="modelName" value="ConstructionProjects" />
+    <property name="modelName" value="Members" />
     <!-- where is it ? -->
     <property name="modelPath" value="/home/axel" />
 

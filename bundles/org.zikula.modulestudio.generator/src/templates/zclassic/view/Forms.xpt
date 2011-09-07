@@ -267,8 +267,10 @@
 
 «DEFINE AdditionalInitScript FOR DerivedField-»
 «ENDDEFINE»
-«DEFINE AdditionalInitScriptCalendar FOR DerivedField-»
-        $('reset«name.formatForCodeCapital()»Val').observe('click', function() { $('«name.formatForCode()»').value = ''; }).show();
+«DEFINE AdditionalInitScriptCalendar FOR AbstractDateField-»
+«IF !mandatory-»
+        $('reset«name.formatForCodeCapital()»Val').observe('click', function() { $('«name.formatForCode()»').value = ''; $('«name.formatForCode()»cal').update(Zikula.__('No date set.', 'module_«entity.container.application.appName()»')); }).show();
+«ENDIF-»
 «ENDDEFINE»
 «DEFINE AdditionalInitScript FOR DatetimeField-»
 «EXPAND AdditionalInitScriptCalendar-»
