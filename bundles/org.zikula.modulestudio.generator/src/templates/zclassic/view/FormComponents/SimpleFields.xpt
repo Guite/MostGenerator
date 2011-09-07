@@ -173,7 +173,7 @@
                 {formdateinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true defaultValue='today'«EXPAND Validation::FieldValidationCssClass»}
             {/if}
 «IF !mandatory-»
-            <a id="reset«name.formatForCodeCapital()»Val" href="javascript:void(0);" style="display: none">{gt text='Reset to empty value'}</a>
+            <p class="z-formnote"><a id="reset«name.formatForCodeCapital()»Val" href="javascript:void(0);" style="display: none">{gt text='Reset to empty value'}</a></p>
 «ENDIF-»
 «ENDDEFINE»
 
