@@ -36,12 +36,24 @@ class «appName()»_Form_Plugin_ColourInput extends Zikula_Form_Plugin_TextInput
      */
     function create(Zikula_Form_View $view, &$params)
     {
-        $this->maxLength = 7;
+        $params['maxLength'] = 7;
         $params['width'] = '8em';
 
+        // let parent plugin do the work in detail
         parent::create($view, $params);
+    }
 
-        $this->cssClass .= ' z-form-colour';
+    /**
+     * Helper method to determine css class.
+     *
+     * @see    Zikula_Form_Plugin_TextInput
+     *
+     * @return string the list of css classes to apply
+     */
+    protected function getStyleClass()
+    {
+        $class = parent::getStyleClass();
+        return str_replace('z-form-text', 'z-form-colour', $class);
     }
 
     /**

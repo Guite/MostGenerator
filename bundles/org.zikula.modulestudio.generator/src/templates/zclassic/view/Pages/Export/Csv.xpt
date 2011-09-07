@@ -13,7 +13,7 @@
 «EXPAND HeaderLineRelation(false) FOREACH incoming.typeSelect(OneToManyRelationship).select(e|e.bidirectional)-»
 «EXPAND HeaderLineRelation(true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
 {foreach item='«objName»' from=$items}
-«EXPAND DisplayEntry(controller) FOREACH getDerivedFields().reject(e|e.primaryKey) SEPARATOR ";"-»«IF geographical-»«FOREACH {'latitude', 'longitude'} AS geoFieldName-»;"{$«name.formatForCode()».«geoFieldName»|formatnumber:10}"«ENDFOREACH-»«ENDIF-»
+«EXPAND DisplayEntry(controller) FOREACH getDerivedFields().reject(e|e.primaryKey) SEPARATOR ";"-»«IF geographical-»«FOREACH {'latitude', 'longitude'} AS geoFieldName-»;"{$«name.formatForCode()».«geoFieldName»|formatnumber:7}"«ENDFOREACH-»«ENDIF-»
 «EXPAND DisplayEntry(controller, false) FOREACH incoming.typeSelect(OneToManyRelationship).select(e|e.bidirectional)-»
 «EXPAND DisplayEntry(controller, true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
 {/foreach}

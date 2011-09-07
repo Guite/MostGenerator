@@ -36,7 +36,7 @@
 «EXPAND DisplayEntry(controller) FOREACH getDerivedFields().reject(e|e.primaryKey)-»
 «IF geographical-»
 «FOREACH {'latitude', 'longitude'} AS geoFieldName-»
-    <«geoFieldName»>{$item.«geoFieldName»|formatnumber:10}</«geoFieldName»>
+    <«geoFieldName»>{$item.«geoFieldName»|formatnumber:7}</«geoFieldName»>
 «ENDFOREACH-»
 «ENDIF-»
 «EXPAND DisplayEntry(controller, false) FOREACH incoming.typeSelect(OneToManyRelationship).select(e|e.bidirectional)-»

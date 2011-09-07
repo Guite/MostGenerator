@@ -32,10 +32,10 @@ class «appName()»_Form_Plugin_GeoInput extends Zikula_Form_Plugin_TextInput
      */
     function create(Zikula_Form_View $view, &$params)
     {
-
-       $this->maxLength = 13;
+        $params['maxLength'] = 11;
         $params['width'] = '6em';
 
+        // let parent plugin do the work in detail
         parent::create($view, $params);
     }
 
@@ -68,7 +68,7 @@ class «appName()»_Form_Plugin_GeoInput extends Zikula_Form_Plugin_TextInput
         }
 
         if ($this->text !== '') {
-            $this->text = number_format( $this->text, 10, ".", "");
+            $this->text = number_format($this->text, 7, '.', '');
             if (!is_numeric($this->text)) {
                 $this->setError(__('Error! Invalid number.'));
             }
@@ -105,7 +105,7 @@ class «appName()»_Form_Plugin_GeoInput extends Zikula_Form_Plugin_TextInput
      */
     function formatValue(Zikula_Form_View $view, $value)
     {
-        return number_format($value, 10, ".", "");
+        return number_format($value, 7, '.', '');
     }
 }
 

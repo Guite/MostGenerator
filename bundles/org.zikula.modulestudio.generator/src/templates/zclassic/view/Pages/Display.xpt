@@ -41,7 +41,7 @@
 «IF geographical-»
 «FOREACH {'latitude', 'longitude'} AS geoFieldName-»
     <dt>{gt text='«geoFieldName.toFirstUpper()»'}</dt>
-    <dd>{$«objName».«geoFieldName»|formatnumber:10}</dd>
+    <dd>{$«objName».«geoFieldName»|formatnumber:7}</dd>
 «ENDFOREACH-»
 «ENDIF-»
 «EXPAND DisplayEntry(controller, false) FOREACH incoming.typeSelect(OneToManyRelationship).select(e|e.bidirectional)-»
