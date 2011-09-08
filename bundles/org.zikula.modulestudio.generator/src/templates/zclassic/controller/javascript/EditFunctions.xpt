@@ -19,7 +19,7 @@
  */
 function «prefix()»InitUserField(fieldName, getterName)
 {
-    if (!$(fieldName + 'LiveSearch')) {
+    if ($(fieldName + 'LiveSearch') == undefined) {
         return;
     }
     $(fieldName + 'LiveSearch').removeClassName('z-hide');
@@ -63,11 +63,11 @@ function «prefix()»InitUserField(fieldName, getterName)
 function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditing)
 {
     // add handling for the toggle link if existing
-    if ($(idPrefix + 'AddLink')) {
+    if ($(idPrefix + 'AddLink') != undefined) {
         $(idPrefix + 'AddLink').observe('click', function(e) { «prefixSmall»ToggleRelatedItemForm(idPrefix); });
     }
     // add handling for the cancel button
-    if ($(idPrefix + 'SelectorDoCancel')) {
+    if ($(idPrefix + 'SelectorDoCancel') != undefined) {
         $(idPrefix + 'SelectorDoCancel').observe('click', function(e) { «prefixSmall»ResetRelatedItemForm(idPrefix); });
     }
     // clear values and ensure starting state
@@ -80,7 +80,7 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
             callback: function(inputField, defaultQueryString) {
                     // modify the query string before the request
                     defaultQueryString += '&ot=' + objectType;
-                    if ($(idPrefix + 'ItemList')) {
+                    if ($(idPrefix + 'ItemList') != undefined) {
                         defaultQueryString += '&exclude=' + $F(idPrefix + 'ItemList');
                     }
                     return defaultQueryString;
@@ -102,7 +102,7 @@ function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditi
         }
     });
 
-    if (!includeEditing || !$(idPrefix + 'SelectorDoNew')) {
+    if (!includeEditing || $(idPrefix + 'SelectorDoNew') == undefined) {
         return;
     }
 
@@ -142,7 +142,7 @@ function «prefix()»SelectRelatedItem(objectType, idPrefix, inputField, selecte
     var removeLink;
     var elemPrefix = idPrefix + 'Reference_' + newItemId;
     var itemPreview = '';
-    if ($('itempreview' + selectedListItem.id)) {
+    if ($('itempreview' + selectedListItem.id) != undefined) {
         itemPreview = $('itempreview' + selectedListItem.id).innerHTML;
     }
 
@@ -304,7 +304,7 @@ function «prefix()»ResetRelatedItemForm(idPrefix)
 function «prefix()»ToggleRelatedItemForm(idPrefix)
 {
     // if we don't have a toggle link do nothing
-    if (!$(idPrefix + 'AddLink')) {
+    if ($(idPrefix + 'AddLink') == undefined) {
         return;
     }
 
@@ -324,7 +324,7 @@ function «prefix()»ToggleRelatedItemForm(idPrefix)
 function «prefix()»CloseWindowFromInside(idPrefix, itemID)
 {
     // if there is no parent window do nothing
-    if (window.parent == "") {
+    if (window.parent == '') {
         return;
     }
 

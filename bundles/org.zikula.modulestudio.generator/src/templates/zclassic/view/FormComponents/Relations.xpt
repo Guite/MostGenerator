@@ -155,8 +155,8 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «IF many-»
 {foreach name='relLoop' item='item' from=$items}
 «ENDIF-»
-{assign var='idPrefix' value="`$idPrefix`Reference_rel_«FOREACH targetEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»`$item.«pkField.name.formatForCode()»`«ENDFOREACH-»"}
-    <li id="{$idPrefix}">
+{assign var='idPrefixItem' value="`$idPrefix`Reference_«FOREACH targetEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»`$item.«pkField.name.formatForCode()»`«ENDFOREACH-»"}
+    <li id="{$idPrefixItem}">
 «LET targetEntity.getLeadingField() AS leadingField-»
 «IF leadingField != null-»
     {$item.«leadingField.name.formatForCode()»}
@@ -165,9 +165,9 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «ENDIF-»
 «ENDLET-»
 «IF includeEditing-»
- <a id="{$idPrefix}Edit" href="{modurl modname='«app.appName()»' type='«controller.name()»' «targetEntity.modUrlEdit('item', true)»}">{$editImage}</a>
+ <a id="{$idPrefixItem}Edit" href="{modurl modname='«app.appName()»' type='«controller.name()»' «targetEntity.modUrlEdit('item', true)»}">{$editImage}</a>
 «ENDIF-»
- <a id="{$idPrefix}Remove" href="javascript:«app.prefix()»RemoveRelatedItem('{$idPrefix}', '«FOREACH targetEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{$item.«pkField.name.formatForCode()»}«ENDFOREACH-»');">{$removeImage}</a>
+ <a id="{$idPrefixItem}Remove" href="javascript:«app.prefix()»RemoveRelatedItem('{$idPrefix}', '«FOREACH targetEntity.getPrimaryKeyFields() AS pkField SEPARATOR '_'-»{$item.«pkField.name.formatForCode()»}«ENDFOREACH-»');">{$removeImage}</a>
 «IF targetEntity.hasImageFields()-»
 <br />
 «LET targetEntity.getImageFields().get(0).name.formatForCode() AS imageFieldName-»
