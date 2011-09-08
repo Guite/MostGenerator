@@ -198,7 +198,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
 
         // remove category registry entries
         ModUtil::dbInfoLoad('Categories');
-        DBUtil::deleteWhere('categories_registry', "crg_modname = '«appName()»'");
+        DBUtil::deleteWhere('categories_registry', "modname = '«appName()»'");
 «ENDIF-»
 
         // deletion successful
