@@ -78,7 +78,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
             if (System::isDevelopmentMode()) {
                 LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
             }
-            return LogUtil::registerError($this->__f('An error was encountered while creating the tables for the %1$s module.', array($this->getName())));
+            return LogUtil::registerError($this->__f('An error was encountered while creating the tables for the %s module.', array($this->getName())));
         }
 «IF !models.variables.isEmpty-»
 
@@ -147,7 +147,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
                     if (System::isDevelopmentMode()) {
                         LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                     }
-                    return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %1$s module.', array($this->getName())));
+                    return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %s module.', array($this->getName())));
                 }
         }
     */
@@ -168,7 +168,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
         // delete stored object workflows
         $result = Zikula_Workflow_Util::deleteWorkflowsForModule($this->getName());
         if ($result === false) {
-            return LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %1$s module.', array($this->getName())));
+            return LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %s module.', array($this->getName())));
         }
 
         try {
@@ -177,7 +177,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
             if (System::isDevelopmentMode()) {
                 LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
             }
-            return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %1$s module.', array($this->getName())));
+            return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %s module.', array($this->getName())));
         }
 
         // unregister persistent event handlers
