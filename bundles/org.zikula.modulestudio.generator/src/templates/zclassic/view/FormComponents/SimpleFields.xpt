@@ -22,7 +22,7 @@
             {/if}
 «ENDDEFINE»
 
-«DEFINE FormLabelAdditions FOR DerivedField-»«IF documentation != null && documentation != ""-» class='«entity.container.application.appName().formatForDB()»FormTooltips' title='«documentation.replaceAll("'", "\'")»'«ENDIF-»«ENDDEFINE»
+«DEFINE FormLabelAdditions FOR DerivedField-»«IF documentation != null && documentation != ""-» class='«entity.container.application.appName().formatForDB()»FormTooltips' title='«documentation.replaceAll("'", '"')»'«ENDIF-»«ENDDEFINE»
 
 «DEFINE FormLabelText FOR EntityField-»
 «error("Error: undefined entity field type " + metaType.toString() + " (code 902346)") -> ""-»
