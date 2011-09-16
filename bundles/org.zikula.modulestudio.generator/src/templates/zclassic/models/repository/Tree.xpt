@@ -27,7 +27,7 @@
         $rootNode = $this->selectById($rootId, $useJoins);
 
         // fetch children
-        $result = $this->children($rootNode);
+        $children = $this->children($rootNode);
 
         // alternatively we could probably select all nodes with root = $rootId
 
