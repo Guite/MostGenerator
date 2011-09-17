@@ -160,7 +160,7 @@ class «appName()»_Util_Base_View extends Zikula_AbstractBase
         $output = $view->fetch($template);
 
         // see http://codeigniter.com/forums/viewthread/69388/P15/#561214
-        $output = utf8_decode($output);
+        //$output = utf8_decode($output);
 
         // then the surrounding
         $output = $view->fetch('include_pdfheader.tpl') . $output . '</body></html>';
