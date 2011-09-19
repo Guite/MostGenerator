@@ -397,6 +397,7 @@
                                 $parentObject = $object->selectById($parentId, false);
                                 $repository->persistAsLastChildOf($childObject, $parentObject);
                             //});
+                            $this->entityManager->flush();
                             break;
             case 'deleteNode':
                             // remove node from tree and reparent all children
