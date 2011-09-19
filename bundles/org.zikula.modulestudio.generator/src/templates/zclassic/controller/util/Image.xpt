@@ -58,10 +58,10 @@ class «appName()»_Util_Base_Image extends Zikula_AbstractBase
             // $imagine = new Imagine\Imagick\Imagine();
 
             // scale down thumbnails per default
-            $thumbMode = Imagine\Image\ImageInterface::THUMBNAIL_INSET;
-            if (isset($thumbArgs['thumbMode']) && $thumbArgs['thumbMode'] == Imagine\Image\ImageInterface::THUMBNAIL_OUTBOUND) {
+            $thumbMode = Imagine\ImageInterface::THUMBNAIL_INSET;
+            if (isset($thumbArgs['thumbMode']) && $thumbArgs['thumbMode'] == Imagine\ImageInterface::THUMBNAIL_OUTBOUND) {
                 // cut out thumbnail
-                $thumbMode = Imagine\Image\ImageInterface::THUMBNAIL_OUTBOUND;
+                $thumbMode = Imagine\ImageInterface::THUMBNAIL_OUTBOUND;
             }
 
             // define target dimension
