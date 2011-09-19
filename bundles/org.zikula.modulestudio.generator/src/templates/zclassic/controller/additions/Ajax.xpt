@@ -303,7 +303,7 @@
         // Get id of treated node
         $id = 0;
         if (!in_array($op, array('addRootNode', 'addChildNode'))) {
-            $id = (int) $this->request->getPost()->getPost()->filter('id', 0, FILTER_VALIDATE_INT);
+            $id = (int) $this->request->getPost()->filter('id', 0, FILTER_VALIDATE_INT);
             if (!$id) {
                 LogUtil::registerError($this->__('Error: invalid node.'));
                 throw new Zikula_Exception_Fatal();
