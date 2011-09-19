@@ -394,7 +394,7 @@
                                 $childObject->merge($objectData);
 
                                 //$childObject->setParent($parentRecord);
-                                $parentObject = $object->selectById($parentId, false);
+                                $parentObject = $repository->selectById($parentId, false);
                                 $repository->persistAsLastChildOf($childObject, $parentObject);
                             //});
                             $this->entityManager->flush();
