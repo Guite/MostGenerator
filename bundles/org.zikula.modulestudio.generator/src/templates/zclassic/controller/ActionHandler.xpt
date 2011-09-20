@@ -545,8 +545,10 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDLET-»
 
         $repeatCreateAction = false;
-        if ($args['commandName'] == 'create' && isset($«obj»Data['repeatcreation'])) {
-            $repeatCreateAction = $«obj»Data['repeatcreation'];
+        if (isset($«obj»Data['repeatcreation'])) {
+            if ($args['commandName'] == 'create') {
+                $repeatCreateAction = $«obj»Data['repeatcreation'];
+            }
             unset($«obj»Data['repeatcreation']);
         }
 «IF hasTranslatableFields()-»
