@@ -142,8 +142,10 @@ class «appName()»_Form_Plugin_TreeSelector extends Zikula_Form_Plugin_Dropdown
 
         $treeNodes = array();
 
+        $serviceManager = ServiceUtil::getManager();
+        $entityManager = $serviceManager->getService('doctrine.entitymanager');
         $entityClass = '«appName()»_Entity_' . ucfirst($this->objectType);
-        $repository = $this->entityManager->getRepository($entityClass);
+        $repository = $entityManager->getRepository($entityClass);
 
         $objectTemp = new $entityClass(); 
         $idFields = $objectTemp->get_idFields();
@@ -154,14 +156,15 @@ class «appName()»_Form_Plugin_TreeSelector extends Zikula_Form_Plugin_Dropdown
         }
 
         foreach ($treeNodes as $node) {
-            if ($node->getNode()->isRoot() && !$includeRoot) {
+            $nodeLevel = $node->getLvl();
+            if (!$includeRoot && $nodeLevel == 0) {
                 continue;
-            }
-            elseif ($node->getNode()->isLeaf() && !$includeLeaf) {
+            } elseif (!$includeLeaf && $repository->childCount($node) == 0) {
                 continue;
             }
 
-            $itemLabel = str_repeat('- - ', $node['level']) . $node[$this->displayField];
+            $shownLevel = (($includeRoot) ? $nodeLevel : $nodeLevel - 1);
+            $itemLabel = str_repeat('- - ', $shownLevel) . $node[$this->displayField];
             if (!empty($this->displayFieldTwo)) {
                 $itemLabel .= ' (' . $node[$this->displayFieldTwo] . ')';
             }
