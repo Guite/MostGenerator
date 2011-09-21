@@ -489,7 +489,7 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
      */
     public function isUniqueValue($fieldName)
     {
-        if (empty($value)) {
+        if (empty($this->entity[$fieldName])) {
             return false;
         }
 
