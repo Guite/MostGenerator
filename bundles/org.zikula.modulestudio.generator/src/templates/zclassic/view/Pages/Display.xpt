@@ -16,7 +16,7 @@
 {assign var='templateTitle' value=$«objName».«leadingField.name.formatForCode()»|default:$templateTitle}
 «ENDIF-»
 «ENDLET-»
-{pagesetvar name='title' value=$templateTitle}
+{pagesetvar name='title' value=$templateTitle|@html_entity_decode}
 «IF controller.metaType == AdminController-»
 <div class="z-admin-content-pagetitle">
     {icon type='display' size='small' __alt='Details'}
