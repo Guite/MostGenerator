@@ -44,7 +44,7 @@
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET (!(incoming && this.metaType != ManyToManyRelationship || this.metaType == OneToOneRelationship)) AS many-»
 «LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
-        // reassign the «((incoming) ? target : source).getEntityNameSingularPlural(many).formatForDisplay()» eventually chosen by the user
+        // reassign the «((incoming) ? source : target).getEntityNameSingularPlural(many).formatForDisplay()» eventually chosen by the user
         $selectedRelations['«relationAliasName.toFirstLower()»'] = «EXPAND RetrieveRelatedObjectsCall(((incoming) ? source : target).name, uniqueNameForJs, many)-»;
 «ENDLET-»
 «ENDLET-»
