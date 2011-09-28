@@ -180,8 +180,7 @@ class «implClassApi()» extends «baseClassApi()»
 
 «DEFINE MainUrlDetails FOR Controller-»
 «IF hasActions('main')-»'main'«''-»
-«ELSEIF hasActions('view')-»
-'view', array('ot' => '«container.application.getLeadingEntity().name.formatForCode()»')
+«ELSEIF hasActions('view')-»'view', array('ot' => '«container.application.getLeadingEntity().name.formatForCode()»')«''-»
 «ELSEIF container.application.needsConfig() && metaType.toString() == container.application.configControllerType()-»'config'«''-»
 «ELSE-»'hooks'«''-»
 «ENDIF-»
