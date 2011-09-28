@@ -118,33 +118,45 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
             $sdir = 'asc';
         }
 
-        // the current offset which is used to calculate the pagination
-        $currentPage = (int) $this->request->getGet()->filter('pos', 1, FILTER_VALIDATE_INT);
-
-        // the number of items displayed on a page for pagination
-        $resultsPerPage = (int) $this->request->getGet()->filter('num', 0, FILTER_VALIDATE_INT);
-        if ($resultsPerPage == 0) {
-            $csv = (int) $this->request->getGet()->filter('usecsvext', 0, FILTER_VALIDATE_INT);
-            $resultsPerPage = ($csv == 1) ? 999999 : $this->getVar('pagesize', 10);
-        }
-
         // convenience vars to make code clearer
         $where = '';
         $sortParam = $sort . ' ' . $sdir;
+        $currentUrlArgs = array('ot' => $objectType);
 
-        // get objects from database
-        list($objectData, $objectCount) = $repository->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
+        $showAllEntries = (int) $this->request->getGet()->filter('all', 0, FILTER_VALIDATE_INT);
+        $this->view->assign('showAllEntries', $showAllEntries);
+        if ($showAllEntries == 1) {
+            // item list without pagination
+            $objectData = $repository->selectWhere($where, $sortParam);
+            $objectCount = count($objectData);
+            $currentUrlArgs['all'] = 1;
+        } else {
+            // item list with pagination
+
+            // the current offset which is used to calculate the pagination
+            $currentPage = (int) $this->request->getGet()->filter('pos', 1, FILTER_VALIDATE_INT);
+
+            // the number of items displayed on a page for pagination
+            $resultsPerPage = (int) $this->request->getGet()->filter('num', 0, FILTER_VALIDATE_INT);
+            if ($resultsPerPage == 0) {
+                $csv = (int) $this->request->getGet()->filter('usecsvext', 0, FILTER_VALIDATE_INT);
+                $resultsPerPage = ($csv == 1) ? 999999 : $this->getVar('pagesize', 10);
+            }
+
+            list($objectData, $objectCount) = $repository->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
+
+            $this->view->assign('currentPage', $currentPage)
+                       ->assign('pager', array('numitems'     => $objectCount,
+                                               'itemsperpage' => $resultsPerPage));
+        }
 
         // build ModUrl instance for display hooks
-        $currentUrlObject = new Zikula_ModUrl('«appName»', '«controller.name()»', 'view', ZLanguage::getLanguageCode(), array('ot' => $objectType));
+        $currentUrlObject = new Zikula_ModUrl('«appName»', '«controller.name()»', 'view', ZLanguage::getLanguageCode(), $currentUrlArgs);
 
         // assign the object data, sorting information and details for creating the pager
         $this->view->assign('items', $objectData)
                    ->assign('sort', $sort)
                    ->assign('sdir', $sdir)
-                   ->assign('currentPage', $currentPage)
-                   ->assign('pager', array('numitems'     => $objectCount,
-                                           'itemsperpage' => $resultsPerPage))
                    ->assign('currentUrlObject', $currentUrlObject);
 
         // fetch and return the appropriate template
@@ -197,11 +209,11 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         }
 
         // build ModUrl instance for display hooks
-        $displayUrlArgs = array('ot' => $objectType);
+        $currentUrlArgs = array('ot' => $objectType);
         foreach ($idFields as $idField) {
-            $displayUrlArgs[$idField] = $idValues[$idField];
+            $currentUrlArgs[$idField] = $idValues[$idField];
         }
-        $currentUrlObject = new Zikula_ModUrl('«appName»', '«controller.name()»', 'display', ZLanguage::getLanguageCode(), $displayUrlArgs);
+        $currentUrlObject = new Zikula_ModUrl('«appName»', '«controller.name()»', 'display', ZLanguage::getLanguageCode(), $currentUrlArgs);
 
         // assign output data to view object.
         $this->view->assign($objectType, $objectData)

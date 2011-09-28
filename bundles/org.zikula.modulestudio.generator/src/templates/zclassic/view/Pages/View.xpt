@@ -47,10 +47,21 @@ listType:
 «ENDIF-»
     {/checkpermissionblock}
 «ENDIF»
+    {if isset($showAllEntries) && $showAllEntries eq 1}
+        {gt text='Back to paginated view' assign='linkTitle'}
+        <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«objName»'}" title="{$linkTitle}" class="z-icon-es-view">
+            {$linkTitle}
+        </a>
+    {else}
+        {gt text='Show all entries' assign='linkTitle'}
+        <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«objName»' all=1}" title="{$linkTitle}" class="z-icon-es-view">
+            {$linkTitle}
+        </a>
+    {/if}
 «IF tree != EntityTreeType::NONE-»
-        {gt text='Switch to hierarchy view' assign='switchTitle'}
-        <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«objName»' tpl='tree'}" title="{$switchTitle}" class="z-icon-es-view">
-            {$switchTitle}
+        {gt text='Switch to hierarchy view' assign='linkTitle'}
+        <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«objName»' tpl='tree'}" title="{$linkTitle}" class="z-icon-es-view">
+            {$linkTitle}
         </a>
 «ENDIF-»
 
@@ -129,7 +140,9 @@ listType:
 </table>
 «ENDIF-»
 
-    {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page'}
+    {if !isset($showAllEntries) || $showAllEntries ne 1}
+        {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page'}
+    {/if}
 «IF controller.metaType == UserController-»
 
     {notifydisplayhooks eventname='«appName.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».display_view' urlobject=$currentUrlObject assign='hooks'}
