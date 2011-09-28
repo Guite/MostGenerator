@@ -100,7 +100,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $entityClass = '«appName»_Entity_' . ucfirst($objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
-        $tpl = $this->request->getGet()->filter('tpl', '', FILTER_SANITIZE_STRING);
+        $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : $this->request->getGet()->filter('tpl', '', FILTER_SANITIZE_STRING);
         if ($tpl == 'tree') {
             $this->view->assign('trees', $repository->selectAllTrees());
             // fetch and return the appropriate template
@@ -108,11 +108,11 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         }
 
         // parameter for used sorting field
-        $sort = $this->request->getGet()->filter('sort', '', FILTER_SANITIZE_STRING);
+        $sort = (isset($args['sort']) && !empty($args['sort'])) ? $args['sort'] : $this->request->getGet()->filter('sort', '', FILTER_SANITIZE_STRING);
 «EXPAND ControllerHelper::DefaultSorting-»
 
         // parameter for used sort order
-        $sdir = $this->request->getGet()->filter('sortdir', '', FILTER_SANITIZE_STRING);
+        $sdir = (isset($args['sortdir']) && !empty($args['sortdir'])) ? $args['sortdir'] : $this->request->getGet()->filter('sortdir', '', FILTER_SANITIZE_STRING);
         $sdir = strtolower($sdir);
         if ($sdir != 'asc' && $sdir != 'desc') {
             $sdir = 'asc';
@@ -123,7 +123,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $sortParam = $sort . ' ' . $sdir;
         $currentUrlArgs = array('ot' => $objectType);
 
-        $showAllEntries = (int) $this->request->getGet()->filter('all', 0, FILTER_VALIDATE_INT);
+        $showAllEntries = (int) (isset($args['all']) && !empty($args['all'])) ? $args['all'] : $this->request->getGet()->filter('all', 0, FILTER_VALIDATE_INT);
         $this->view->assign('showAllEntries', $showAllEntries);
         if ($showAllEntries == 1) {
             // item list without pagination
@@ -134,12 +134,12 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
             // item list with pagination
 
             // the current offset which is used to calculate the pagination
-            $currentPage = (int) $this->request->getGet()->filter('pos', 1, FILTER_VALIDATE_INT);
+            $currentPage = (int) (isset($args['pos']) && !empty($args['pos'])) ? $args['pos'] : $this->request->getGet()->filter('pos', 1, FILTER_VALIDATE_INT);
 
             // the number of items displayed on a page for pagination
-            $resultsPerPage = (int) $this->request->getGet()->filter('num', 0, FILTER_VALIDATE_INT);
+            $resultsPerPage = (int) (isset($args['num']) && !empty($args['num'])) ? $args['num'] : $this->request->getGet()->filter('num', 0, FILTER_VALIDATE_INT);
             if ($resultsPerPage == 0) {
-                $csv = (int) $this->request->getGet()->filter('usecsvext', 0, FILTER_VALIDATE_INT);
+                $csv = (int) (isset($args['usecsv']) && !empty($args['usecsv'])) ? $args['usecsv'] : $this->request->getGet()->filter('usecsvext', 0, FILTER_VALIDATE_INT);
                 $resultsPerPage = ($csv == 1) ? 999999 : $this->getVar('pagesize', 10);
             }
 
@@ -183,7 +183,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         if ($hasIdentifier === false) {
             $hasSlug = $objectTemp->get_hasUniqueSlug();
             if ($hasSlug) {
-                $slugTitle = $this->request->getGet()->filter('title', isset($args['title']) && !empty($args['title']) ? $args['title'] : '', FILTER_SANITIZE_STRING);
+                $slugTitle = (isset($args['title']) && !empty($args['title'])) ? $args['title'] : $this->request->getGet()->filter('title', '', FILTER_SANITIZE_STRING);
                 $hasSlug = (!empty($slugTitle));
             }
         }
@@ -249,7 +249,7 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
         $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
 
-        $confirmation = (bool) $this->request->getPost()->filter('confirmation', isset($args['confirmation']) ? $args['confirmation'] : false, FILTER_VALIDATE_BOOLEAN);
+        $confirmation = (bool) (isset($args['confirmation']) && !empty($args['confirmation'])) ? $args['confirmation'] : $this->request->getPost()->filter('confirmation', false, FILTER_VALIDATE_BOOLEAN);
 
         if ($confirmation) {
             $this->checkCsrfToken();
