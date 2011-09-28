@@ -125,18 +125,37 @@ class «baseClassApi()» extends Zikula_AbstractApi
     {
         $links = array();
 
+«IF metaType == AdminController && !container.controllers.typeSelect(UserController).isEmpty-»
+«LET container.controllers.typeSelect(UserController).get(0) AS userController-»
+        if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
+            $links[] = array('url' => ModUtil::url($this->name, '«userController.name()»', «EXPAND MainUrlDetails FOR userController-»),
+                             'text' => $this->__('Frontend'),
+                             'title' => $this->__('Switch to user area.'),
+                             'class' => 'z-icon-es-home');
+        }
+«ENDLET-»
+«ELSEIF metaType == UserController && !container.controllers.typeSelect(AdminController).isEmpty-»
+«LET container.controllers.typeSelect(AdminController).get(0) AS adminController-»
+        if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+            $links[] = array('url' => ModUtil::url($this->name, '«adminController.name()»', «EXPAND MainUrlDetails FOR adminController-»),
+                             'text' => $this->__('Backend'),
+                             'title' => $this->__('Switch to administration area.'),
+                             'class' => 'z-icon-es-options');
+        }
+«ENDLET-»
+«ENDIF-»
 «IF hasActions('view')-»
 «FOREACH app.models.entities AS entity-»
-        if (SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_«IF metaType == AdminController»ADMIN«ELSE»READ«ENDIF»)) {
-            $links[] = array('url' => ModUtil::url('«app.appName()»', '«name()»', 'view', array('ot' => '«entity.name.formatForCode()»')),
+        if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_«IF metaType == AdminController»ADMIN«ELSE»READ«ENDIF»)) {
+            $links[] = array('url' => ModUtil::url($this->name, '«name()»', 'view', array('ot' => '«entity.name.formatForCode()»')),
                              'text' => $this->__('«entity.nameMultiple.formatForDisplayCapital()»'),
                              'title' => $this->__('«entity.name.formatForDisplayCapital()» list'));
         }
 «ENDFOREACH-»
 «ENDIF-»
 «IF app.needsConfig() && metaType.toString() == app.configControllerType()-»
-        if (SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_ADMIN)) {
-            $links[] = array('url' => ModUtil::url('«app.appName()»', '«app.configController().formatForDB()»', 'config'),
+        if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+            $links[] = array('url' => ModUtil::url($this->name, '«app.configController().formatForDB()»', 'config'),
                              'text' => $this->__('Configuration'),
                              'title' => $this->__('Manage settings for this application'));
         }
@@ -159,3 +178,11 @@ class «implClassApi()» extends «baseClassApi()»
 }
 «ENDDEFINE»
 
+«DEFINE MainUrlDetails FOR Controller-»
+«IF hasActions('main')-»'main'«''-»
+«ELSEIF hasActions('view')-»
+'view', array('ot' => '«container.application.getLeadingEntity().name.formatForCode()»')
+«ELSEIF container.application.needsConfig() && metaType.toString() == container.application.configControllerType()-»'config'«''-»
+«ELSE-»'hooks'«''-»
+«ENDIF-»
+«ENDDEFINE»
