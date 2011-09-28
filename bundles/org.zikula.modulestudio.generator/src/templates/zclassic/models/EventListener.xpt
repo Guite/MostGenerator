@@ -4,24 +4,43 @@
 «EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «REM»Entry point for entity lifecycle callback methods«ENDREM»
-«DEFINE Root FOR Entity-»
+
+«REM»Base layer«ENDREM»
+«DEFINE RootBaseImpl FOR Entity-»
 «REM»Temporary hack«ENDREM»
-«EXPAND stubMethodsForNow-»
-«REM»«EXPAND EventListenerMethod FOREACH listeners-»«ENDREM»
+«EXPAND stubMethodsForNowBaseImpl-»
+«REM»«EXPAND EventListenerBaseImpl FOREACH listeners-»«ENDREM»
 «ENDDEFINE»
 
-«DEFINE EventListenerMethod FOR EntityEventListener-»
+«REM»Concrete layer«ENDREM»
+«DEFINE RootImpl FOR Entity-»
+«REM»Temporary hack«ENDREM»
+«EXPAND stubMethodsForNowImpl-»
+«REM»«EXPAND EventListenerImpl FOREACH listeners-»«ENDREM»
+«ENDDEFINE»
+
+«DEFINE EventListenerBaseImpl FOR EntityEventListener-»
 «error("Error: undefined event listener type " + metaType.toString() + " (code 925724)") -> ""-»
 «ENDDEFINE»
-«DEFINE EventListenerMethod FOR PreProcess-»
+«DEFINE EventListenerBaseImpl FOR PreProcess-»
 «error("Error: undefined pre process type " + metaType.toString() + " (code 925725)") -> ""-»
 «ENDDEFINE»
-«DEFINE EventListenerMethod FOR PostProcess-»
+«DEFINE EventListenerBaseImpl FOR PostProcess-»
 «error("Error: undefined post process type " + metaType.toString() + " (code 925726)") -> ""-»
 «ENDDEFINE»
 
-«DEFINE stubMethodsForNow FOR Entity-»
-«REM»«DEFINE EventListenerMethod FOR PostLoad-»«ENDREM»«""-»
+«DEFINE EventListenerImpl FOR EntityEventListener-»
+«error("Error: undefined event listener type " + metaType.toString() + " (code 935724)") -> ""-»
+«ENDDEFINE»
+«DEFINE EventListenerImpl FOR PreProcess-»
+«error("Error: undefined pre process type " + metaType.toString() + " (code 935725)") -> ""-»
+«ENDDEFINE»
+«DEFINE EventListenerImpl FOR PostProcess-»
+«error("Error: undefined post process type " + metaType.toString() + " (code 935726)") -> ""-»
+«ENDDEFINE»
+
+«DEFINE stubMethodsForNowBaseImpl FOR Entity-»
+«REM»«DEFINE EventListenerBaseImpl FOR PostLoad-»«ENDREM»«""-»
 
     /**
      * Post-Process the data after the entity has been constructed by the entity manager.
@@ -31,17 +50,17 @@
      *     - no access to entity manager or unit of work apis
      *     - no access to associations (not initialised yet)
      *
-     * @ORM\PostLoad
+     * @see «implClassModelEntity()»::postLoadCallback()
      * @return void.
      */
-    public function postLoadCallback()
+    protected function performPostLoadCallback()
     {
         // echo 'loaded a record ...';
 «EXPAND PostLoadImpl-»
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PrePersist-»«ENDREM»«""-»
+«REM»«DEFINE EventListenerBaseImpl FOR PrePersist-»«ENDREM»«""-»
     /**
      * Pre-Process the data prior to an insert operation.
      * The event happens before the entity managers persist operation is executed for this entity.
@@ -53,17 +72,17 @@
      *       if this method is called by cascade persist
      *     - no creation of other entities allowed
      *
-     * @ORM\PrePersist
+     * @see «implClassModelEntity()»::prePersistCallback()
      * @return void.
      */
-    public function prePersistCallback()
+    protected function performPrePersistCallback()
     {
         // echo 'inserting a record ...';
         $this->validate();
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PostPersist-»«ENDREM»«""-»
+«REM»«DEFINE EventListenerBaseImpl FOR PostPersist-»«ENDREM»«""-»
     /**
      * Post-Process the data after an insert operation.
      * The event happens after the entity has been made persistant.
@@ -73,16 +92,16 @@
      * Restrictions:
      *     - no access to entity manager or unit of work apis
      *
-     * @ORM\PostPersist
+     * @see «implClassModelEntity()»::postPersistCallback()
      * @return void.
      */
-    public function postPersistCallback()
+    protected function performPostPersistCallback()
     {
         // echo 'inserted a record ...';
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PreRemove-»«ENDREM»«""-»
+«REM»«DEFINE EventListenerBaseImpl FOR PreRemove-»«ENDREM»«""-»
     /**
      * Pre-Process the data prior a delete operation.
      * The event happens before the entity managers remove operation is executed for this entity.
@@ -91,10 +110,10 @@
      *     - no access to entity manager or unit of work apis
      *     - will not be called for a DQL DELETE statement
      *
-     * @ORM\PreRemove
+     * @see «implClassModelEntity()»::preRemoveCallback()
      * @return void.
      */
-    public function preRemoveCallback()
+    protected function performPreRemoveCallback()
     {
 /*        // delete workflow for this entity
         $result = Zikula_Workflow_Util::deleteWorkflow($this);
@@ -105,7 +124,7 @@
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PostRemove-»«ENDREM»«""-»
+«REM»«DEFINE EventListenerBaseImpl FOR PostRemove-»«ENDREM»«""-»
     /**
      * Post-Process the data after a delete.
      * The event happens after the entity has been deleted.
@@ -115,10 +134,10 @@
      *     - no access to entity manager or unit of work apis
      *     - will not be called for a DQL DELETE statement
      *
-     * @ORM\PostRemove
+     * @see «implClassModelEntity()»::postRemoveCallback()
      * @return void
      */
-    public function postRemoveCallback()
+    protected function performPostRemoveCallback()
     {
         // echo 'deleted a record ...';
 «LET getUploadFields() AS uploadFields-»
@@ -140,7 +159,7 @@
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PreUpdate-»«ENDREM»«""-»
+«REM»«DEFINE EventListenerBaseImpl FOR PreUpdate-»«ENDREM»«""-»
     /**
      * Pre-Process the data prior to an update operation.
      * The event happens before the database update operations for the entity data.
@@ -152,17 +171,17 @@
      *     - changes on properties won't be recognized by flush as well
      *     - no creation of other entities allowed
      *
-     * @ORM\PreUpdate
+     * @see «implClassModelEntity()»::preUpdateCallback()
      * @return void.
      */
-    public function preUpdateCallback()
+    protected function performPreUpdateCallback()
     {
         // echo 'updating a record ...';
         $this->validate();
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
-«REM»«DEFINE EventListenerMethod FOR PostUpdate-»«ENDREM»«""-»
+«REM»«DEFINE EventListenerBaseImpl FOR PostUpdate-»«ENDREM»«""-»
     /**
      * Post-Process the data after an update operation.
      * The event happens after the database update operations for the entity data.
@@ -171,10 +190,10 @@
      *     - no access to entity manager or unit of work apis
      *     - will not be called for a DQL UPDATE statement
      *
-     * @ORM\PostUpdate
+     * @see «implClassModelEntity()»::postUpdateCallback()
      * @return void.
      */
-    public function postUpdateCallback()
+    protected function performPostUpdateCallback()
     {
         // echo 'updated a record ...';
     }
@@ -185,11 +204,10 @@
      * This combines the PrePersist and PreUpdate events.
      * For more information see corresponding callback handlers.
      *
-     * @ORM\PrePersist
-     * @ORM\PreUpdate
+     * @see «implClassModelEntity()»::preSaveCallback()
      * @return void.
      */
-    public function preSaveCallback()
+    protected function performPreSaveCallback()
     {
         // echo 'saving a record ...';
         $this->validate();
@@ -200,13 +218,141 @@
      * This combines the PostPersist and PostUpdate events.
      * For more information see corresponding callback handlers.
      *
+     * @see «implClassModelEntity()»::postSaveCallback()
+     * @return void.
+     */
+    protected function performPostSaveCallback()
+    {
+        // echo 'saved a record ...';
+    }
+«REM»«ENDDEFINE»«ENDREM»«""-»
+«ENDDEFINE»
+
+
+«DEFINE stubMethodsForNowImpl FOR Entity-»
+«REM»«DEFINE EventListenerImpl FOR PostLoad-»«ENDREM»«""-»
+
+    /**
+     * Post-Process the data after the entity has been constructed by the entity manager.
+     *
+     * @ORM\PostLoad
+     * @see «baseClassModelEntity()»::performPostLoadCallback()
+     * @return void.
+     */
+    public function postLoadCallback()
+    {
+        return $this->performPostLoadCallback();
+    }
+«REM»«ENDDEFINE»«ENDREM»«""-»
+
+«REM»«DEFINE EventListenerImpl FOR PrePersist-»«ENDREM»«""-»
+    /**
+     * Pre-Process the data prior to an insert operation.
+     *
+     * @ORM\PrePersist
+     * @see «baseClassModelEntity()»::performPrePersistCallback()
+     * @return void.
+     */
+    public function prePersistCallback()
+    {
+        return $this->performPrePersistCallback();
+    }
+«REM»«ENDDEFINE»«ENDREM»«""-»
+
+«REM»«DEFINE EventListenerImpl FOR PostPersist-»«ENDREM»«""-»
+    /**
+     * Post-Process the data after an insert operation.
+     *
+     * @ORM\PostPersist
+     * @see «baseClassModelEntity()»::performPostPersistCallback()
+     * @return void.
+     */
+    public function postPersistCallback()
+    {
+        return $this->performPostPersistCallback();
+    }
+«REM»«ENDDEFINE»«ENDREM»«""-»
+
+«REM»«DEFINE EventListenerImpl FOR PreRemove-»«ENDREM»«""-»
+    /**
+     * Pre-Process the data prior a delete operation.
+     *
+     * @ORM\PreRemove
+     * @see «baseClassModelEntity()»::performPreRemoveCallback()
+     * @return void.
+     */
+    public function preRemoveCallback()
+    {
+        return $this->performPreRemoveCallback();
+    }
+«REM»«ENDDEFINE»«ENDREM»«""-»
+
+«REM»«DEFINE EventListenerImpl FOR PostRemove-»«ENDREM»«""-»
+    /**
+     * Post-Process the data after a delete.
+     *
+     * @ORM\PostRemove
+     * @see «baseClassModelEntity()»::performPostRemoveCallback()
+     * @return void
+     */
+    public function postRemoveCallback()
+    {
+        return $this->performPostRemoveCallback();
+    }
+«REM»«ENDDEFINE»«ENDREM»«""-»
+
+«REM»«DEFINE EventListenerImpl FOR PreUpdate-»«ENDREM»«""-»
+    /**
+     * Pre-Process the data prior to an update operation.
+     *
+     * @ORM\PreUpdate
+     * @see «baseClassModelEntity()»::performPreUpdateCallback()
+     * @return void.
+     */
+    public function preUpdateCallback()
+    {
+        return $this->performPreUpdateCallback();
+    }
+«REM»«ENDDEFINE»«ENDREM»«""-»
+
+«REM»«DEFINE EventListenerImpl FOR PostUpdate-»«ENDREM»«""-»
+    /**
+     * Post-Process the data after an update operation.
+     *
+     * @ORM\PostUpdate
+     * @see «baseClassModelEntity()»::performPostUpdateCallback()
+     * @return void.
+     */
+    public function postUpdateCallback()
+    {
+        return $this->performPostUpdateCallback();
+    }
+«REM»«ENDDEFINE»«ENDREM»«""-»
+
+    /**
+     * Pre-Process the data prior to a save operation.
+     *
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     * @see «baseClassModelEntity()»::performPreSaveCallback()
+     * @return void.
+     */
+    public function preSaveCallback()
+    {
+        return $this->performPreSaveCallback();
+    }
+
+    /**
+     * Post-Process the data after a save operation.
+     *
      * @ORM\PostPersist
      * @ORM\PostUpdate
+     * @see «baseClassModelEntity()»::performPostSaveCallback()
      * @return void.
      */
     public function postSaveCallback()
     {
-        // echo 'saved a record ...';
+        return $this->performPostSaveCallback();
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 «ENDDEFINE»
