@@ -11,18 +11,28 @@
 «ENDDEFINE»
 
 «DEFINE FormLabel(String groupSuffix, String idSuffix) FOR DerivedField-»
-            {formlabel for=«templateIdWithSuffix(name.formatForCode(), idSuffix)» __text='«EXPAND FormLabelText-»'«IF mandatory-» mandatorysym='1'«ENDIF-»«EXPAND FormLabelAdditions-»}«IF metaType == UploadField»<br />{* break required for Google Chrome *}«ENDIF»
+«EXPAND InitDocumentationToolTip-»
+            {formlabel for=«templateIdWithSuffix(name.formatForCode(), idSuffix)» __text='«EXPAND FormLabelText-»'«IF mandatory-» mandatorysym='1'«ENDIF-»«EXPAND FormLabelAdditions-»}
 «ENDDEFINE»
 
 «DEFINE FormLabel(String groupSuffix, String idSuffix) FOR UploadField-»
-            {if $mode eq 'create'}
-                {formlabel for=«templateIdWithSuffix(name.formatForCode(), idSuffix)» __text='«EXPAND FormLabelText-»'«IF mandatory-» mandatorysym='1'«ENDIF-»«EXPAND FormLabelAdditions-»}«IF metaType == UploadField»<br />{* break required for Google Chrome *}«ENDIF»
-            {else}
-                {formlabel for=«templateIdWithSuffix(name.formatForCode(), idSuffix)» __text='«EXPAND FormLabelText-»'«EXPAND FormLabelAdditions-»}«IF metaType == UploadField»<br />{* break required for Google Chrome *}«ENDIF»
+«EXPAND InitDocumentationToolTip-»
+«IF mandatory-»
+			{assign var='mandatorySym' value='1'}
+            {if $mode ne 'create'}
+			{assign var='mandatorySym' value='0'}
             {/if}
+«ENDIF-»
+            {formlabel for=«templateIdWithSuffix(name.formatForCode(), idSuffix)» __text='«EXPAND FormLabelText-»'«IF mandatory-» mandatorysym=$mandatorySym«ENDIF-»«EXPAND FormLabelAdditions-»}<br />{* break required for Google Chrome *}
 «ENDDEFINE»
 
-«DEFINE FormLabelAdditions FOR DerivedField-»«IF documentation != null && documentation != ""-» class='«entity.container.application.appName().formatForDB()»FormTooltips' title='«documentation.replaceAll("'", '"')»'«ENDIF-»«ENDDEFINE»
+«DEFINE InitDocumentationToolTip FOR DerivedField-»
+«IF documentation != null && documentation != ""-»
+            {gt text='«documentation.replaceAll("'", '"')»' assign='toolTip'}
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE FormLabelAdditions FOR DerivedField-»«IF documentation != null && documentation != ""-» class='«entity.container.application.appName().formatForDB()»FormTooltips' title=$toolTip«ENDIF-»«ENDDEFINE»
 
 «DEFINE FormLabelText FOR EntityField-»
 «error("Error: undefined entity field type " + metaType.toString() + " (code 902346)") -> ""-»
