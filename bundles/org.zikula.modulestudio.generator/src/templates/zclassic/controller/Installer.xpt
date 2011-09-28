@@ -71,6 +71,7 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
      */
     public function install()
     {
+«EXPAND CheckIfUploadFoldersAreWritable-»
         // create all tables from according entity definitions
         try {
             DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses());
@@ -120,7 +121,22 @@ class «appName()»_Controller_Interactiveinstaller extends «appName()»_Contro
     }
 «ENDDEFINE»
 
+«DEFINE CheckIfUploadFoldersAreWritable FOR Application-»
+«LET getUploadEntities() AS uploadEntities-»
+«IF !uploadEntities.isEmpty-»
+«FOREACH uploadEntities.getUploadFields() AS uploadField-»
+        $basePath = «appName()»_Util_Controller::getFileBaseFolder('«uploadField.entity.name.formatForCode()»', '«uploadField.name.formatForCode()»');
+        if (!is_dir($basePath)) {
+            return LogUtil::registerError($this->__f('The upload folder "%s" does not exist. Please create it before installing this application.', array($basePath)));
+        }
+        if (!is_writable($basePath)) {
+            return LogUtil::registerError($this->__f('The upload folder "%s" is not writable. Please change permissions accordingly before installing this application.', array($basePath)));
+        }
+«ENDFOREACH-»
 
+«ENDIF-»
+«ENDLET-»
+«ENDDEFINE»
 
 «DEFINE FuncUpdate FOR Application»
     /**
