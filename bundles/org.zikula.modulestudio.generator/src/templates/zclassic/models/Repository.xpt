@@ -33,6 +33,8 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\DBAL\LockMode;
 «ENDIF-»
 
+use DoctrineExtensions\Paginate\Paginate;
+
 /**
  * Repository class used to implement own convenience methods for performing certain DQL queries.
  *
@@ -163,14 +165,22 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
     public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
     {
         $query = $this->_intBaseQuery($where, $orderBy, $useJoins);
-
         $offset = ($currentPage-1) * $resultsPerPage;
+
+        // count the total number of affected items
+        $count = Paginate::getTotalQueryResults($query);
+
+«IF !(outgoing.typeSelect(OneToManyRelationship).isEmpty
+   && outgoing.typeSelect(ManyToManyRelationship).isEmpty
+   && incoming.typeSelect(ManyToOneRelationship).isEmpty)-»
+        // prefetch unique relationship ids for given pagination frame
+        $query = Paginate::getPaginateQuery($query, $offset, $resultsPerPage);
+«ELSE-»
         $query->setFirstResult($offset)
               ->setMaxResults($resultsPerPage);
+«ENDIF-»
 
         $result = $query->getResult();
-
-        $count = $this->selectCount($where, $useJoins);
 
         return array($result, $count);
     }
