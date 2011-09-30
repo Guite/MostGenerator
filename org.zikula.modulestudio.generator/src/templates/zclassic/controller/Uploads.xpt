@@ -151,11 +151,9 @@ class «appName()»_Base_UploadHandler
 
             if ($imgInfo[1] < $imgInfo[0]) {
                 $meta['format'] = 'landscape';
-            }
-            elseif ($imgInfo[1] > $imgInfo[0]) {
+            } elseif ($imgInfo[1] > $imgInfo[0]) {
                 $meta['format'] = 'portrait';
-            }
-            else {
+            } else {
                 $meta['format'] = 'square';
             }
         }
@@ -270,8 +268,9 @@ class «appName()»_Base_UploadHandler
                     $fileName .= (string) ++$iterIndex;
                     // readd extension
                     $fileName .= '.' . $extension;
+                } else {
+                    $iterIndex++;
                 }
-                else $iterIndex++;
             } else if ($namingScheme == 1) {
                 // md5 name
                 $fileName = md5(uniqid(mt_rand(), TRUE)) . '.' . $extension;

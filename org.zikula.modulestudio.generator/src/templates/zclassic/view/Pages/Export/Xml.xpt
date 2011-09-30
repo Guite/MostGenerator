@@ -73,6 +73,9 @@
 «EXPAND DisplayEntryCdata(controller)-»
 «ENDDEFINE»
 
+«DEFINE DisplayEntry(Controller controller) FOR UploadField-»
+    <«name.formatForCode()»«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField('item', 'viewxml', '')»</«name.formatForCode()»>
+«ENDDEFINE»
 
 «DEFINE DisplayEntry(Controller controller, Boolean useTarget) FOR JoinRelationship-»
 «LET getRelationAliasName(useTarget).formatForCodeCapital() AS relationAliasName-»

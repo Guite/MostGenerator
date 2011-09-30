@@ -101,8 +101,20 @@
 «DEFINE DisplayField(String objName, String page, String prepend) FOR UploadField-»
 «LET entity.container.application.appName().formatForDB() AS appNameSmall-»
 «LET objName.msconcat('.').msconcat(name.formatForCode()) AS realName-»
-«IF page == 'viewcsv' || page == 'viewxml'-»
+«IF page == 'viewcsv'-»
 {$«realName»}«""-»
+«ELSEIF page == 'viewxml'-»
+{if $«realName» ne ''}«''-»
+ extension="{$«realName»Meta.extension}"«''-»
+ size="{$«realName»Meta.size}"«''-»
+ isImage="{if $«realName»Meta.isImage}true{else}false{/if}"«''-»
+{if $«realName»Meta.isImage}«''-»
+ width="{$«realName»Meta.width}"«''-»
+ height="{$«realName»Meta.height}"«''-»
+ format="{$«realName»Meta.format}"«''-»
+{/if}«''-»
+{/if}«''-»
+>{$«realName»}«""-»
 «ELSE-»
 «IF !mandatory-»
 «prepend»{if $«realName» ne ''}
