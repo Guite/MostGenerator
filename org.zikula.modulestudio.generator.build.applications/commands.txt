@@ -4,8 +4,8 @@ setpref baseline="Running Platform"
 # Commands for generating a module or another artifact with the generator
 
 # materialise stuff by cquery/mspec/rmap
-#import --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "scm/bundles/org.zikula.modulestudio.generator.build.applications/most.mspec"
-resolve --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "scm/bundles/org.zikula.modulestudio.generator.build.applications/most.cquery"
+#import --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "scm/org.zikula.modulestudio.generator.build.applications/most.mspec"
+resolve --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "scm/org.zikula.modulestudio.generator.build.applications/most.cquery"
 
 
 # build workspace
