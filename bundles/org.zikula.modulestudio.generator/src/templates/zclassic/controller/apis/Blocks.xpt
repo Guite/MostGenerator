@@ -132,7 +132,7 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
         }
 
         // get objects from database
-        list($objectData, $objectCount) = $repository->selectWherePaginated($vars['filter'], $sortParam, -1, $vars['amount']);
+        list($objectData, $objectCount) = $repository->selectWherePaginated($vars['filter'], $sortParam, 1, $vars['amount']);
 
         $this->view->setCaching(true);
 

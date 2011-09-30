@@ -117,7 +117,7 @@ function «appName()»_Api_ContentTypes_itemlist($args)
         $resultsPerPage = (($this->amount) ? $this->amount : 1);
 
         // get objects from database
-        list($objectData, $objectCount) = $repository->selectWherePaginated($this->filter, $sortParam, -1, $resultsPerPage);
+        list($objectData, $objectCount) = $repository->selectWherePaginated($this->filter, $sortParam, 1, $resultsPerPage);
 
         $this->view->setCaching(true);
 
