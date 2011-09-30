@@ -327,7 +327,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 
         $query = $qb->getQuery();
 
-// TODO - see http://code.zikula.org/core/ticket/3138
+// TODO - see https://github.com/zikula/core/issues/118
         // use FilterUtil to support generic filtering
         //$fu = new FilterUtil('«container.application.appName()»', $this);
 

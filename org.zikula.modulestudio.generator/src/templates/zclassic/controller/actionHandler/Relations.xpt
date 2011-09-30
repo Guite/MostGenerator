@@ -139,7 +139,7 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
 «LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
 «IF many && this.getEditStageCode(incoming) > 1-»
 «LET ((incoming) ? source : target).name.formatForCode() AS objectType-»
-«IF incoming-»«REM»only incoming for now, see http://code.zikula.org/generator/ticket/89«ENDREM»«""-»
+«IF incoming-»«REM»only incoming for now, see https://github.com/Guite/MostGenerator/issues/10«ENDREM»«""-»
         $relatedIds = $this->request->getPost()->get('«uniqueNameForJs»ItemList', '');
         if ($this->mode != 'create') {
             // remove all existing references

@@ -75,7 +75,7 @@
 
 «DEFINE FormField(String groupSuffix, String idSuffix) FOR StringField-»
 «IF country-»
-            {* TODO: support country fields in Zikula (see http://code.zikula.org/core/ticket/2446 for more information) *}
+            {* TODO: support country fields in Zikula (see https://github.com/Guite/MostGenerator/issues/85 for more information) *}
 «ENDIF-»
 «IF language-»
             {formlanguageselector «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Choose the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'}
@@ -141,7 +141,7 @@
 «ENDDEFINE»
 
 «DEFINE FormField(String groupSuffix, String idSuffix) FOR UserField-»
-            {* to be replaced by a plugin (see http://code.zikula.org/core/ticket/2444 for more information) *} 
+            {* to be replaced by a plugin (see https://github.com/Guite/MostGenerator/issues/86 for more information) *} 
 «LET name.formatForCode() AS realName»
             <div id="«realName»LiveSearch" class="«entity.container.application.prefix()»LiveSearchUser z-hide">
                 {formtextinput group='«entity.name.formatForDB()»' id='«realName»Selector' mandatory=«mandatory» readOnly=«readonly» __title='Input a part of the user name to search' maxLength=«length» cssClass='«IF mandatory»required «ENDIF»validate-alphanum«IF unique» validate-unique«ENDIF»'}
@@ -188,6 +188,6 @@
 «ENDDEFINE»
 
 «DEFINE FormFieldDetails(String groupSuffix, String idSuffix) FOR TimeField-»
-            {* TODO: support time fields in Zikula (see http://code.zikula.org/core/ticket/2445 for more information) *}
+            {* TODO: support time fields in Zikula (see https://github.com/Guite/MostGenerator/issues/87 for more information) *}
             {formtextinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=8«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»
