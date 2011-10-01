@@ -123,10 +123,6 @@ class «appName()»_Util_Base_View extends Zikula_AbstractBase
 
     /**
      * Processes a template file using dompdf (LGPL).
-     * To use this functionality:
-     *    - download dompdf from the project page at http://www.digitaljunkies.ca/dompdf/
-     *    - copy it to modules/«appName()»/lib/vendor/dompdf/ (see inclusion below)
-     *    - override the corresponding template
      *
      * @param Zikula_View $view     Reference to view object.
      * @param string      $template Name of template to use.
@@ -135,13 +131,6 @@ class «appName()»_Util_Base_View extends Zikula_AbstractBase
      */
     protected static function processPdf(Zikula_View $view, $template)
     {
-        // include dom pdf classes
-        $pdfConfigFile = 'modules/«appName()»/lib/vendor/dompdf/dompdf_config.inc.php';
-        if (!file_exists($pdfConfigFile)) {
-            return false;
-        }
-        require_once($pdfConfigFile);
-
         // first the content, to set page vars
         $output = $view->fetch($template);
 
