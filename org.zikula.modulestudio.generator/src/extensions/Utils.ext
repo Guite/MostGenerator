@@ -55,6 +55,9 @@ cached boolean hasImageFields(Application this) :
 cached boolean hasColourFields(Application this) :
     models.entities.exists(e|e.hasColourFields());
 
+cached boolean hasCountryFields(Application this) :
+    models.entities.exists(e|e.hasCountryFields());
+
 cached getUserFields(Application this) :
     models.entities.fields.typeSelect(UserField);
 cached boolean hasUserFields(Application this) :
@@ -266,6 +269,11 @@ cached boolean hasColourFields(Entity this) :
     !getColourFields().isEmpty;
 cached getColourFields(Entity this) :
     getDerivedFields().typeSelect(StringField).select(e|e.htmlcolour != null && e.htmlcolour != '');
+
+cached boolean hasCountryFields(Entity this) :
+    !getCountryFields().isEmpty;
+cached getCountryFields(Entity this) :
+    getDerivedFields().typeSelect(StringField).select(e|e.country == true);
 
 cached boolean hasSluggableFields(Entity this) :
     !getSluggableFields().isEmpty;

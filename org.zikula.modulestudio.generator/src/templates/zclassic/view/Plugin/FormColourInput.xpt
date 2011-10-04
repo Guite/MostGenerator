@@ -10,8 +10,8 @@
  *
  * The allowed formats are '#RRGGBB' and '#RGB'.
  *
- * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since the date input
- * inherits from it.
+ * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
+ * the colour input inherits from it.
  */
 class «appName()»_Form_Plugin_ColourInput extends Zikula_Form_Plugin_TextInput
 {

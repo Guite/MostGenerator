@@ -1,0 +1,30 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+
+«DEFINE Root FOR Application-»
+«IF hasUploads()-»
+«FILE viewPluginFilePath(this, 'modifier', 'GetCountryName')-»«EXPAND FileHelper::phpFileHeader(this)-»
+«EXPAND GetCountryName-»
+«ENDFILE»
+«ENDIF-»
+«ENDDEFINE»
+
+«DEFINE GetCountryName FOR Application-»
+/**
+ * The «appName().formatForDB()»GetCountryName modifier displays the country name for a given country code.
+ *
+ * @param string  $countryCode The country code to process.
+ *
+ * @return string Country name.
+ */
+function smarty_modifier_«appName().formatForDB()»GetCountryName($countryCode)
+{
+    $result = ZLanguage::getCountryName($countryCode);
+    if ($result === false) {
+        $result = $countryCode;
+    }
+    return $result;
+}
+«ENDDEFINE»

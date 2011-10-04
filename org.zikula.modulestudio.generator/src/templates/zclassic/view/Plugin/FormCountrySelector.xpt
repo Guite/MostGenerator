@@ -1,0 +1,81 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+
+«DEFINE Root FOR Application-»
+«FILE getAppSourcePath(appName()).msconcat('lib/').msconcat(appName()).msconcat('/Form/Plugin/CountrySelector.php')-»«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * This plugin creates a country dropdown list.
+ * It understands an optional argument to limit the select options to a given set of allowed countries.
+ */
+class «appName()»_Form_Plugin_CountrySelector extends Zikula_Form_Plugin_DropdownList
+{
+    /**
+     * Optional filter for displaying only selected countries in the list.
+     */
+    protected $validCountryList;
+
+    /**
+     * Get filename of this file.
+     *
+     * @return string
+     */
+    function getFilename()
+    {
+        return __FILE__;
+    }
+
+    /**
+     * Load event handler.
+     *
+     * @param Zikula_Form_View $view    Reference to Zikula_Form_View object.
+     * @param array            &$params Parameters passed from the Smarty plugin function.
+     *
+     * @return void
+     */
+    function load(Zikula_Form_View $view, &$params)
+    {
+        $this->validCountryList = array();
+        $isFiltered = false;
+        if (array_key_exists('validCountryList', $params)) {
+            if (is_array($params['validCountryList']) && count($params['validCountryList']) > 0) {
+                $this->validCountryList = $params['validCountryList'];
+                $isFiltered = true;
+            }
+            unset($params['validCountryList']);
+        }
+
+        if ($this->mandatory) {
+            $this->addItem('---', null);
+        }
+
+        $allCountries = ZLanguage::countryMap();
+        foreach ($allCountries as $countryCode => $countryName) {
+            if (!$isFiltered || in_array($countryCode, $this->validCountryList)) {
+                $this->addItem($countryName, $countryCode);
+            }
+        }
+
+        parent::load($view, $params);
+    }
+}
+«ENDFILE»
+
+«FILE viewPluginFilePath(this, 'function', 'CountrySelector')-»«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * The «appName().formatForDB()»CountrySelector plugin creates a country dropdown list.
+ * It understands an optional argument to limit the select options to a given set of allowed countries.
+ *
+ * @param  array            $params  All attributes passed to this function from the template.
+ * @param  Zikula_Form_View $view    Reference to the view object.
+ *
+ * @return string The output of the plugin.
+ */
+function smarty_function_«appName().formatForDB()»CountrySelector($params, $view)
+{
+    return $view->registerPlugin('«appName()»_Form_Plugin_CountrySelector', $params);
+}
+«ENDFILE»
+«ENDDEFINE»
+
