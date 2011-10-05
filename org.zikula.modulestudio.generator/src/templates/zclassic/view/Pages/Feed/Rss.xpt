@@ -45,8 +45,8 @@
         <title><![CDATA[{if isset($«objName».updatedDate) && $«objName».updatedDate ne null}{$«objName».updatedDate|dateformat} - {/if}{gt text='«name.formatForDisplayCapital()-»'}]]></title>
 «ENDIF-»
 «ENDLET-»
-        <link>{modurl modname='«appName»' type='«controller.name()»' «IF controller.hasActions('display')»«modUrlDelete(objName, true)»«ELSE-»func='«IF controller.hasActions('view')-»view«ELSE-»main«ENDIF-»' ot='«name.formatForCode()»'«ENDIF-» fqurl='1'}</link>
-        <guid>{modurl modname='«appName»' type='«controller.name()»' «IF controller.hasActions('display')»«modUrlDelete(objName, true)»«ELSE-»func='«IF controller.hasActions('view')-»view«ELSE-»main«ENDIF-»' ot='«name.formatForCode()»'«ENDIF-» fqurl='1'}</guid>
+        <link>{modurl modname='«appName»' type='«controller.name()»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE-»func='«IF controller.hasActions('view')-»view«ELSE-»main«ENDIF-»' ot='«name.formatForCode()»'«ENDIF-» fqurl='1'}</link>
+        <guid>{modurl modname='«appName»' type='«controller.name()»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE-»func='«IF controller.hasActions('view')-»view«ELSE-»main«ENDIF-»' ot='«name.formatForCode()»'«ENDIF-» fqurl='1'}</guid>
 «IF !standardFields-»
 «IF metaData-»
     {if isset($«objName».__META__) && isset($«objName».__META__.author)}
