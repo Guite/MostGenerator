@@ -102,7 +102,8 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
         $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : $this->request->getGet()->filter('tpl', '', FILTER_SANITIZE_STRING);
         if ($tpl == 'tree') {
-            $this->view->assign('trees', $repository->selectAllTrees());
+            $this->view->assign('trees', $repository->selectAllTrees())
+                       ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
             // fetch and return the appropriate template
             return «appName»_Util_View::processTemplate($this->view, '«controller.name()»', $objectType, 'view', $args);
         }
@@ -157,7 +158,8 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $this->view->assign('items', $objectData)
                    ->assign('sort', $sort)
                    ->assign('sdir', $sdir)
-                   ->assign('currentUrlObject', $currentUrlObject);
+                   ->assign('currentUrlObject', $currentUrlObject)
+                   ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
         // fetch and return the appropriate template
         return «appName»_Util_View::processTemplate($this->view, '«controller.name()»', $objectType, 'view', $args);
@@ -217,7 +219,8 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
         // assign output data to view object.
         $this->view->assign($objectType, $objectData)
-                   ->assign('currentUrlObject', $currentUrlObject);
+                   ->assign('currentUrlObject', $currentUrlObject)
+                   ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
         // fetch and return the appropriate template
         return «appName»_Util_View::processTemplate($this->view, '«controller.name()»', $objectType, 'display', $args);
@@ -271,7 +274,8 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
     «EXPAND ControllerHelper::retrieveEntityFromModel("idFields", "idValues", false)-»
 
             // assign the object we loaded above
-            $this->view->assign($objectType, $objectData);
+            $this->view->assign($objectType, $objectData)
+                       ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
             // fetch and return the appropriate template
             return «appName»_Util_View::processTemplate($this->view, '«controller.name()»', $objectType, 'delete', $args);

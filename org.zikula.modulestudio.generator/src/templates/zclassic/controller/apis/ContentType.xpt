@@ -70,14 +70,18 @@ function «appName()»_Api_ContentTypes_itemlist($args)
 
         $this->objectType = $data['objectType'];
 
-        if (!isset($data['sorting']))
+        if (!isset($data['sorting'])) {
             $data['sorting'] = 'default';
-        if (!isset($data['amount']))
+        }
+        if (!isset($data['amount'])) {
             $data['amount'] = 1;
-        if (!isset($data['template']))
+        }
+        if (!isset($data['template'])) {
             $data['template'] = 'itemlist_' . ucwords($this->objectType) . '_display.tpl';
-        if (!isset($data['filter']))
+        }
+        if (!isset($data['filter'])) {
             $data['filter'] = '';
+        }
 
         $this->sorting = $data['sorting'];
         $this->amount = $data['amount'];
@@ -101,8 +105,7 @@ function «appName()»_Api_ContentTypes_itemlist($args)
         } elseif ($this->sorting == 'newest') {
             if (count($idFields) == 1) {
                 $sortParam = $idFields[0] . ' DESC';
-            }
-            else {
+            } else {
                 foreach ($idFields as $idField) {
                     if (!empty($sortParam)) {
                         $sortParam .= ', ';
@@ -126,7 +129,8 @@ function «appName()»_Api_ContentTypes_itemlist($args)
         // assign block vars and fetched data
         $this->view->assign('vars', $data)
                    ->assign('objectType', $this->objectType)
-                   ->assign('items', $objectData);
+                   ->assign('items', $objectData)
+                   ->assign($repository->getAdditionalTemplateParameters('contentType'));
 
         $output = '';
         if (!empty($this->template) && $this->view->template_exists('contenttype/' . $this->template)) {
@@ -135,11 +139,9 @@ function «appName()»_Api_ContentTypes_itemlist($args)
         $templateForObjectType = str_replace('itemlist_', 'itemlist_' . ucwords($this->objectType) . '_', $this->template);
         if ($this->view->template_exists('contenttype/' . $templateForObjectType)) {
             $output = $this->view->fetch('contenttype/' . $templateForObjectType);
-        }
-        elseif ($this->view->template_exists('contenttype/' . $this->template)) {
+        } elseif ($this->view->template_exists('contenttype/' . $this->template)) {
             $output = $this->view->fetch('contenttype/' . $this->template);
-        }
-        else {
+        } else {
             $output = $this->view->fetch('contenttype/itemlist_display.tpl');
         }
 
@@ -156,7 +158,7 @@ function «appName()»_Api_ContentTypes_itemlist($args)
         return array('objectType' => '«getLeadingEntity().name.formatForCode()»',
                      'sorting' => 'default',
                      'amount' => 1,
-                     'template' => 'itemlist_display.html',
+                     'template' => 'itemlist_display.tpl',
                      'filter' => '');
     }
 

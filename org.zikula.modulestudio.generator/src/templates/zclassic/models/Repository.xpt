@@ -62,6 +62,31 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 «EXPAND FileHelper::GetterAndSetterMethods('defaultSortingField', 'string', false, false, '')»
 
     /**
+     * Returns an array of additional template variables which are specific to the object type treated by this repository.
+     *
+     * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType).
+     * @param array  $args    Additional arguments.
+     *
+     * @return array List of template variables to be assigned.
+     */
+    public function getAdditionalTemplateParameters($context = '', $args = array())
+    {
+        if (!in_array($context, array('controllerAction', 'api', 'actionHandler', 'block', 'contentType'))) {
+            $context = 'controllerAction';
+        }
+
+        $templateParameters = array();
+
+        // nothing per default, this is for manual enhancements
+        // in the concrete child class you could do something like
+        // $parameters = parent::getAdditionalTemplateParameters($context, $args);
+        // $parameters['myvar'] = 'myvalue';
+        // return $parameters;
+
+        return $templateParameters;
+    }
+
+    /**
      * Helper method for truncating the table.
      * Used during installation when inserting default data.
      */

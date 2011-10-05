@@ -139,7 +139,8 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
         // assign block vars and fetched data
         $this->view->assign('vars', $vars)
                    ->assign('objectType', $objectType)
-                   ->assign('items', $objectData);
+                   ->assign('items', $objectData)
+                   ->assign($repository->getAdditionalTemplateParameters('block'));
 
         // set a block title
         if (empty($blockinfo['title'])) {

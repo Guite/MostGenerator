@@ -84,8 +84,7 @@ class «appName()»_Api_Mailz extends «appName()»_Api_Base_Mailz
         } elseif ($args['pluginid'] == 1) {
             if (count($idFields) == 1) {
                 $sortParam = $idFields[0] . ' DESC';
-            }
-            else {
+            } else {
                 foreach ($idFields as $idField) {
                     if (!empty($sortParam)) {
                         $sortParam .= ', ';
@@ -106,7 +105,8 @@ class «appName()»_Api_Mailz extends «appName()»_Api_Base_Mailz
         //$view->assign('vars', $data);
 
         $view->assign('objectType', '«leadingEntity.name.formatForCode()»')
-             ->assign('items', $objectData);
+             ->assign('items', $objectData)
+             ->assign($repository->getAdditionalTemplateParameters('api', array('name' => 'mailz')));
 
         if ($args['contenttype'] == 't') { /* text */
             return $view->fetch('mailz/itemlist_«leadingEntity.name.formatForCodeCapital()»_text.tpl');
