@@ -64,13 +64,23 @@
         $this->«name» = $«name»;
 «ENDDEFINE»
 
-
-«DEFINE SetterMethodImpl(String name, String type) FOR DerivedField-»
-        if ($«name» != $this->«name.formatForCode()») {
+«DEFINE TriggerPropertyChangeListeners(String name) FOR DerivedField-»
 «IF entity.hasNotifyPolicy()-»
             $this->_onPropertyChanged('«name.formatForCode()»', $this->«name.formatForCode()», $«name»);
 «ENDIF-»
+«ENDDEFINE»
+
+«DEFINE SetterMethodImpl(String name, String type) FOR DerivedField-»
+        if ($«name» != $this->«name.formatForCode()») {
+«EXPAND TriggerPropertyChangeListeners(name)-»
 «EXPAND SetterAssignment(name, type)-»
+        }
+«ENDDEFINE»
+
+«DEFINE SetterMethodImpl(String name, String type) FOR BooleanField-»
+        if ($«name» !== $this->«name.formatForCode()») {
+«EXPAND TriggerPropertyChangeListeners(name)-»
+            $this->«name» = (bool)$«name»;
         }
 «ENDDEFINE»
 
@@ -79,9 +89,11 @@
 «ENDDEFINE»
 
 «DEFINE SetterAssignmentNumeric(String name, String type) FOR DerivedField-»
-            $diff = abs($this->«name» - $«name»);
-            $this->«name» = $«name»;
 «LET getAggregatingRelationships() AS aggregators-»
+«IF !aggregators.isEmpty-»
+            $diff = abs($this->«name» - $«name»);
+«ENDIF-»
+            $this->«name» = $«name»;
 «IF !aggregators.isEmpty-»
 «FOREACH aggregators AS aggregator-»
             $this->«aggregator.sourceAlias.formatForCode()»->add«name.formatForCodeCapital()»Without«entity.name.formatForCodeCapital()»($diff);
