@@ -104,6 +104,10 @@ cached boolean hasStandardFieldEntities(Application this) :
 cached getStandardFieldEntities(Application this) :
     models.entities.select(e|e.standardFields);
 
+cached boolean hasBooleansWithAjaxToggle(Application this) :
+    !getEntitiesHavingBooleansWithAjaxToggle().isEmpty;
+cached getEntitiesHavingBooleansWithAjaxToggle(Application this) :
+    models.entities.select(e|e.hasBooleansWithAjaxToggle());
 
 cached boolean hasEditActions(Application this) :
     !getEditActions().isEmpty;
@@ -296,6 +300,11 @@ cached getTranslatableFields(Entity this) :
     fields.typeSelect(DerivedField).select(e|e.translatable);
 cached boolean hasTranslatableSlug(Entity this) :
     !getSluggableFields().select(e|e.translatable).isEmpty;
+
+cached boolean hasBooleansWithAjaxToggle(Entity this) :
+    !getBooleansWithAjaxToggle().isEmpty;
+cached getBooleansWithAjaxToggle(Entity this) :
+    fields.typeSelect(BooleanField).select(e|e.ajaxTogglability);
 
 cached getAggregateFields(Entity this)
     : fields.typeSelect(IntegerField).select(e|e.aggregateFor != null && e.aggregateFor != '');

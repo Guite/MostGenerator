@@ -156,6 +156,21 @@ listType:
 «ENDIF-»
 </div>
 {include file='«controller.name()»/footer.tpl'}
+
+«IF hasBooleansWithAjaxToggle()-»
+<script type="text/javascript" charset="utf-8">
+/* <![CDATA[ */
+    document.observe('dom:loaded', function() {
+    {{foreach item='«objName»' from=$items}}
+        {{assign var='itemid' value=$«objName».«getFirstPrimaryKey().name.formatForCode()»}}
+«FOREACH getBooleansWithAjaxToggle() AS field-»
+        «container.application.prefix()»InitToggle('«objName»', '«field.name.formatForCode()»', '{{$itemid}}');
+«ENDFOREACH-»
+    {{/foreach}}
+    });
+/* ]]> */
+</script>
+«ENDIF-»
 «ENDFILE»
 «ENDLET-»
 «ENDDEFINE»

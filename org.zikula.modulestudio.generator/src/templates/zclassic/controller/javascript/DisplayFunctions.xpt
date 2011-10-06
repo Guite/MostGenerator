@@ -5,11 +5,13 @@
 «REM»start point for the javascript file with display functionality«ENDREM»
 «DEFINE Root FOR Application-»
 «FILE getAppSourcePath(appName()).msconcat('javascript/').msconcat(appName()).msconcat('.js')-»
-
 «IF !models.getJoinRelations().isEmpty-»
 «EXPAND InitRelationWindow-»
 «ENDIF-»
-
+«IF hasBooleansWithAjaxToggle()-»
+«EXPAND InitToggle-»
+«EXPAND ToggleFlag-»
+«ENDIF-»
 «ENDFILE»
 «ENDDEFINE»
 
@@ -40,6 +42,63 @@ function «prefix()»InitInlineWindow(containerElem, title)
 
     // return the instance
     return newWindow;
+}
+
+«ENDDEFINE»
+
+«DEFINE InitToggle FOR Application-»
+/**
+ * Initialise ajax-based toggle for boolean fields.
+ */
+function «prefix()»InitToggle(objectType, fieldName, itemId)
+{
+    var idSuffix = fieldName.toLowerCase() + itemId;
+    if ($('toggle' + idSuffix)) == undefined) {
+        return;
+    }
+    $('toggle' + idSuffix).observe('click', function() {
+        «prefix()»ToggleFlag(objName, fieldName, itemId);
+    }).show();
+    $('noscript' + idSuffix).hide();
+}
+
+«ENDDEFINE»
+
+«DEFINE ToggleFlag FOR Application-»
+/**
+ * Toggle a certain flag for a given item.
+ */
+function «prefix()»ToggleFlag(objectType, fieldName, itemId)
+{
+    var pars = 'ot=' + objectType + '&field=' + field + '&id=' + id;
+
+    new Zikula.Ajax.Request(
+        Zikula.Config.baseURL + 'ajax.php?module=«appName()»&func=toggleFlag',
+        {
+            method: 'post',
+            parameters: pars,
+            onComplete: function(req) {
+                if (!req.isSuccess()) {
+                    Zikula.UI.Alert(req.getMessage(), Zikula.__('Error', 'module_«appName()»'));
+                    return;
+                }
+                var data = req.getData();
+                /*if (data.message) {
+                    Zikula.UI.Alert(data.message, Zikula.__('Success', 'module_«appName()»'));
+                }*/
+
+                var idSuffix = fieldName.toLowerCase() + '_' + itemId;
+                var state = data.state;
+                if (state) {
+                    $('no' + idSuffix).hide();
+                    $('yes' + idSuffix).show();
+                } else {
+                    $('yes' + idSuffix).hide();
+                    $('no' + idSuffix).show();
+                }
+            }
+        }
+    );
 }
 
 «ENDDEFINE»

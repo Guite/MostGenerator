@@ -20,11 +20,11 @@ var currentNodeId = 0;
 /**
  * Initialise tree view.
  */
-function «prefix()»InitTreeView(ot, hasNodes)
+function «prefix()»InitTreeView(objectType, hasNodes)
 {
     if (!hasNodes || $('z-tree-addroot')) {
         $('z-tree-addroot').observe('click', function(event) {
-            «prefix()»PerformTreeOperation(ot, 1, 'addRootNode');
+            «prefix()»PerformTreeOperation(objectType, 1, 'addRootNode');
             Event.stop(event);
         }).show();
     }
@@ -36,7 +36,7 @@ function «prefix()»InitTreeView(ot, hasNodes)
 /**
  * Initialise event handlers for all nodes of a given tree root.
  */
-function «prefix()»InitTreeNodes(ot, controller, rootId, readOnly)
+function «prefix()»InitTreeNodes(objectType, controller, rootId, readOnly)
 {
     $$('#itemtree' + rootId + ' a').each(function(elem) {
         // get reference to list item
@@ -53,7 +53,7 @@ function «prefix()»InitTreeNodes(ot, controller, rootId, readOnly)
                 label: Zikula.__('Edit', 'module_«appName()»'),
                 callback: function() {
                     currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                    window.location = Zikula.Config.baseURL + 'index.php?module=«appName()»&type=' + controller + '&func=edit&ot=' + ot + '&id=' + currentNodeId;
+                    window.location = Zikula.Config.baseURL + 'index.php?module=«appName()»&type=' + controller + '&func=edit&ot=' + objectType + '&id=' + currentNodeId;
                 }
             });
         }
@@ -61,7 +61,7 @@ function «prefix()»InitTreeNodes(ot, controller, rootId, readOnly)
             label: Zikula.__('Add child node', 'module_«appName()»'),
             callback: function() {
                 currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                «prefix()»PerformTreeOperation(ot, rootId, 'addChildNode');
+                «prefix()»PerformTreeOperation(objectType, rootId, 'addChildNode');
             }
         });
         contextMenu.addItem({
@@ -73,7 +73,7 @@ function «prefix()»InitTreeNodes(ot, controller, rootId, readOnly)
                 }
                 if (window.confirm(confirmQuestion) != false) {
                     currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                    «prefix()»PerformTreeOperation(ot, rootId, 'deleteNode');
+                    «prefix()»PerformTreeOperation(objectType, rootId, 'deleteNode');
                 }
             }
         });
@@ -84,7 +84,7 @@ function «prefix()»InitTreeNodes(ot, controller, rootId, readOnly)
             },
             callback: function() {
                 currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                «prefix()»PerformTreeOperation(ot, rootId, 'moveNodeUp');
+                «prefix()»PerformTreeOperation(objectType, rootId, 'moveNodeUp');
             }
         });
         contextMenu.addItem({
@@ -94,7 +94,7 @@ function «prefix()»InitTreeNodes(ot, controller, rootId, readOnly)
             },
             callback: function() {
                 currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                «prefix()»PerformTreeOperation(ot, rootId, 'moveNodeDown');
+                «prefix()»PerformTreeOperation(objectType, rootId, 'moveNodeDown');
             }
         });
     });
@@ -107,10 +107,10 @@ function «prefix()»InitTreeNodes(ot, controller, rootId, readOnly)
  * Helper function to start several different ajax actions
  * performing tree related amendments and operations.
  */
-function «prefix()»PerformTreeOperation(ot, rootId, op)
+function «prefix()»PerformTreeOperation(objectType, rootId, op)
 {
     var opParam = ((op == 'moveNodeUp' || op == 'moveNodeDown') ? 'moveNode' : op);
-    var pars = 'ot=' + ot + '&op=' + opParam;
+    var pars = 'ot=' + objectType + '&op=' + opParam;
 
     if (op != 'addRootNode') {
         pars += '&root=' + rootId;

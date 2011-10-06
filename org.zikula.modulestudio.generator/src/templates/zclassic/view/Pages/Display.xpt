@@ -71,6 +71,19 @@
 «ENDIF-»
 </div>
 {include file='«controller.name()»/footer.tpl'}
+
+«IF hasBooleansWithAjaxToggle()-»
+<script type="text/javascript" charset="utf-8">
+/* <![CDATA[ */
+    document.observe('dom:loaded', function() {
+        {{assign var='itemid' value=$«name.formatForCode()».«getFirstPrimaryKey().name.formatForCode()»}}
+«FOREACH getBooleansWithAjaxToggle() AS field-»
+        «container.application.prefix()»InitToggle('«name.formatForCode()»', '«field.name.formatForCode()»', '{{$itemid}}');
+«ENDFOREACH-»
+    });
+/* ]]> */
+</script>
+«ENDIF-»
 «ENDFILE»
 «ENDDEFINE»
 

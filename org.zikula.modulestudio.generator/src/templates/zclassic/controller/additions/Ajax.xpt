@@ -211,7 +211,7 @@
         $value = $this->request->getPost()->get('v', '');
 
         if (empty($fieldName) || empty($value)) {
-            return new Zikula_Response_Ajax_BadData($this->__('Invalid input'));
+            return new Zikula_Response_Ajax_BadData($this->__('Error: invalid input.'));
         }
 
         // check if the given field is existing and unique
@@ -228,7 +228,7 @@
 «ENDFOREACH-»
         }
         if (!count($uniqueFields) || !in_array($fieldName, $uniqueFields)) {
-            return new Zikula_Response_Ajax_BadData($this->__('Invalid input'));
+            return new Zikula_Response_Ajax_BadData($this->__('Error: invalid input.'));
         }
 
         $exclude = (int) $this->request->getPost()->filter('ex', 0, FILTER_VALIDATE_INT);
@@ -266,6 +266,56 @@
         return new Zikula_Response_Ajax(array('isDuplicate' => $result));
     }
 «ENDIF-»
+«IF app.hasBooleansWithAjaxToggle()-»
+
+    /**
+     * Changes a given flag (boolean field) by switching between true and false.
+     *
+     * @param string $ot    Treated object type.
+     * @param string $field The field to be toggled.
+     * @param int    $id    Identifier of treated entity.
+     *
+     * @return Zikula_Response_Ajax_Base
+     */
+    public function toggleFlag()
+    {
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission('«app.appName()»::', '::', ACCESS_EDIT));
+
+        $objectType = $this->request->getPost()->filter('ot', '', FILTER_SANITIZE_STRING);
+        $field = $this->request->getPost()->filter('field', '', FILTER_SANITIZE_STRING);
+        $id = (int) $this->request->getPost()->filter('id', 0, FILTER_VALIDATE_INT);
+
+        if ($id == 0
+«LET app.getEntitiesHavingBooleansWithAjaxToggle() AS entities-»
+            || («FOREACH entities AS entity SEPARATOR ' && '-»$ot != '«entity.name.formatForCode()»'«ENDFOREACH-»)
+«FOREACH entities AS entity-»
+            || ($ot == '«entity.name.formatForCode()»' && !in_array($field, array(«FOREACH entity.getBooleansWithAjaxToggle() AS field SEPARATOR ', '-»'«field.name.formatForCode()»'«ENDFOREACH-»)))
+«ENDFOREACH-»
+«ENDLET-»
+        ) {
+            return new Zikula_Response_Ajax_BadData($this->__('Error: invalid input.'));
+        }
+
+        $entityClass = '«app.appName()»_Entity_' . ucfirst($objectType);
+        $repository = $this->entityManager->getRepository($entityClass);
+
+        // assign object data fetched from the database
+        $entity = $repository->selectById($id);
+
+        if ((!is_array($entity) && !is_object($entity)) || !isset($entity['id'])) {
+            return new Zikula_Response_Ajax_NotFound($this->__('No such item.'));
+        }
+
+        // toggle the flag
+        $entity[$field] = !$entity[$field];
+
+        // save entity back to database
+        $this->entityManager->flush();
+
+        AjaxUtil::output(array('id' => $id,
+                               'state' => $entity[$field]));
+    }
+«ENDIF-»
 «IF app.hasTrees()-»
 
     /**
@@ -297,7 +347,7 @@
         $op = DataUtil::convertFromUTF8($this->request->getPost()->filter('op', '', FILTER_SANITIZE_STRING));
         if (!in_array($op, array('addRootNode', 'addChildNode', 'deleteNode', 'moveNode', 'moveNodeTo'))) {
             LogUtil::registerError($this->__('Error: invalid operation.'));
-            throw new Zikula_Exception_Fatal();
+            throw new Zikula_Exception_Ajax_Fatal();
         }
 
         // Get id of treated node
@@ -306,7 +356,7 @@
             $id = (int) $this->request->getPost()->filter('id', 0, FILTER_VALIDATE_INT);
             if (!$id) {
                 LogUtil::registerError($this->__('Error: invalid node.'));
-                throw new Zikula_Exception_Fatal();
+                throw new Zikula_Exception_Ajax_Fatal();
             }
         }
 
@@ -318,7 +368,7 @@
             $rootId = (int) $this->request->getPost()->filter('root', 0, FILTER_VALIDATE_INT);
             if (!$rootId) {
                 LogUtil::registerError($this->__('Error: invalid root node.'));
-                throw new Zikula_Exception_Fatal();
+                throw new Zikula_Exception_Ajax_Fatal();
             }
         }
 
@@ -381,7 +431,7 @@
                             $parentId = (int) $this->request->getPost()->filter('pid', 0, FILTER_VALIDATE_INT);
                             if (!$parentId) {
                                 LogUtil::registerError($this->__('Error: invalid parent node.'));
-                                throw new Zikula_Exception_Fatal();
+                                throw new Zikula_Exception_Ajax_Fatal();
                             }
 
                             //$this->entityManager->transactional(function($entityManager) {
@@ -409,7 +459,7 @@
                             $moveDirection = $this->request->getPost()->filter('direction', '', FILTER_SANITIZE_STRING);
                             if (!in_array($moveDirection, array('up', 'down'))) {
                                 LogUtil::registerError($this->__('Error: invalid direction.'));
-                                throw new Zikula_Exception_Fatal();
+                                throw new Zikula_Exception_Ajax_Fatal();
                             }
 
                             $record = $repository->selectById($id, false);
@@ -427,13 +477,13 @@
                             $moveDirection = $this->request->getPost()->filter('direction', '', FILTER_SANITIZE_STRING);
                             if (!in_array($moveDirection, array('after', 'before', 'bottom'))) {
                                 LogUtil::registerError($this->__('Error: invalid direction.'));
-                                throw new Zikula_Exception_Fatal();
+                                throw new Zikula_Exception_Ajax_Fatal();
                             }
 
                             $destId = (int) $this->request->getPost()->filter('destid', 0, FILTER_VALIDATE_INT);
                             if (!$destId) {
                                 LogUtil::registerError($this->__('Error: invalid destination node.'));
-                                throw new Zikula_Exception_Fatal();
+                                throw new Zikula_Exception_Ajax_Fatal();
                             }
 
                             //$this->entityManager->transactional(function($entityManager) {
