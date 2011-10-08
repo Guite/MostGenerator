@@ -76,8 +76,7 @@
 «DEFINE FormField(String groupSuffix, String idSuffix) FOR StringField-»
 «IF country-»
             {«entity.container.application.appName().formatForDB()»CountrySelector «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Choose the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'}
-«ENDIF-»
-«IF language-»
+«ELSEIF language-»
             {formlanguageselector «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Choose the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'}
 «ELSEIF htmlcolour-»
             {«entity.container.application.appName().formatForDB()»ColourInput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Choose the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'}
