@@ -53,13 +53,12 @@ function «prefix()»InitInlineWindow(containerElem, title)
 function «prefix()»InitToggle(objectType, fieldName, itemId)
 {
     var idSuffix = fieldName.toLowerCase() + itemId;
-    if ($('toggle' + idSuffix)) == undefined) {
+    if ($('toggle' + idSuffix) == undefined) {
         return;
     }
     $('toggle' + idSuffix).observe('click', function() {
-        «prefix()»ToggleFlag(objName, fieldName, itemId);
+        «prefix()»ToggleFlag(objectType, fieldName, itemId);
     }).show();
-    $('noscript' + idSuffix).hide();
 }
 
 «ENDDEFINE»
@@ -70,7 +69,7 @@ function «prefix()»InitToggle(objectType, fieldName, itemId)
  */
 function «prefix()»ToggleFlag(objectType, fieldName, itemId)
 {
-    var pars = 'ot=' + objectType + '&field=' + field + '&id=' + id;
+    var pars = 'ot=' + objectType + '&field=' + fieldName + '&id=' + itemId;
 
     new Zikula.Ajax.Request(
         Zikula.Config.baseURL + 'ajax.php?module=«appName()»&func=toggleFlag',

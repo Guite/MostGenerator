@@ -287,9 +287,9 @@
 
         if ($id == 0
 «LET app.getEntitiesHavingBooleansWithAjaxToggle() AS entities-»
-            || («FOREACH entities AS entity SEPARATOR ' && '-»$ot != '«entity.name.formatForCode()»'«ENDFOREACH-»)
+            || («FOREACH entities AS entity SEPARATOR ' && '-»$objectType != '«entity.name.formatForCode()»'«ENDFOREACH-»)
 «FOREACH entities AS entity-»
-            || ($ot == '«entity.name.formatForCode()»' && !in_array($field, array(«FOREACH entity.getBooleansWithAjaxToggle() AS field SEPARATOR ', '-»'«field.name.formatForCode()»'«ENDFOREACH-»)))
+            || ($objectType == '«entity.name.formatForCode()»' && !in_array($field, array(«FOREACH entity.getBooleansWithAjaxToggle() AS field SEPARATOR ', '-»'«field.name.formatForCode()»'«ENDFOREACH-»)))
 «ENDFOREACH-»
 «ENDLET-»
         ) {
@@ -312,8 +312,9 @@
         // save entity back to database
         $this->entityManager->flush();
 
-        AjaxUtil::output(array('id' => $id,
-                               'state' => $entity[$field]));
+        // return response
+        return new Zikula_Response_Ajax(array('id' => $id,
+                                              'state' => $entity[$field]));
     }
 «ENDIF-»
 «IF app.hasTrees()-»
