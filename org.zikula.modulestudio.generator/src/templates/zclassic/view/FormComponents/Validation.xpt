@@ -30,7 +30,7 @@
 «ENDIF-»
 «ENDDEFINE»
 «DEFINE AdditionalValidationMessages(String idSuffix) FOR StringField-»
-«IF nospace-»
+«IF nospace && !country && !language-»
             {«entity.container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix(name.formatForCode(), idSuffix)» class='validate-nospace'}
 «ENDIF-»
 «IF htmlcolour-»
