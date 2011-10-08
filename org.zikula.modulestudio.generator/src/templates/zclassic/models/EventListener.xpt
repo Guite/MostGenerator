@@ -51,12 +51,13 @@
      *     - no access to associations (not initialised yet)
      *
      * @see «implClassModelEntity()»::postLoadCallback()
-     * @return void.
+     * @return boolean true if completed successfully else false.
      */
     protected function performPostLoadCallback()
     {
         // echo 'loaded a record ...';
 «EXPAND PostLoadImpl-»
+        return true;
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -73,12 +74,13 @@
      *     - no creation of other entities allowed
      *
      * @see «implClassModelEntity()»::prePersistCallback()
-     * @return void.
+     * @return boolean true if completed successfully else false.
      */
     protected function performPrePersistCallback()
     {
         // echo 'inserting a record ...';
         $this->validate();
+        return true;
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -93,11 +95,12 @@
      *     - no access to entity manager or unit of work apis
      *
      * @see «implClassModelEntity()»::postPersistCallback()
-     * @return void.
+     * @return boolean true if completed successfully else false.
      */
     protected function performPostPersistCallback()
     {
         // echo 'inserted a record ...';
+        return true;
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -111,7 +114,7 @@
      *     - will not be called for a DQL DELETE statement
      *
      * @see «implClassModelEntity()»::preRemoveCallback()
-     * @return void.
+     * @return boolean true if completed successfully else false.
      */
     protected function performPreRemoveCallback()
     {
@@ -121,6 +124,7 @@
             $dom = ZLanguage::getModuleDomain('«container.application.appName()»');
             return LogUtil::registerError(__('Error! Could not remove stored workflow.', $dom));
         }*/
+        return true;
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -135,7 +139,7 @@
      *     - will not be called for a DQL DELETE statement
      *
      * @see «implClassModelEntity()»::postRemoveCallback()
-     * @return void
+     * @return boolean true if completed successfully else false.
      */
     protected function performPostRemoveCallback()
     {
@@ -156,6 +160,7 @@
         }
 «ENDIF-»
 «ENDLET-»
+        return true;
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -172,12 +177,13 @@
      *     - no creation of other entities allowed
      *
      * @see «implClassModelEntity()»::preUpdateCallback()
-     * @return void.
+     * @return boolean true if completed successfully else false.
      */
     protected function performPreUpdateCallback()
     {
         // echo 'updating a record ...';
         $this->validate();
+        return true;
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -191,11 +197,12 @@
      *     - will not be called for a DQL UPDATE statement
      *
      * @see «implClassModelEntity()»::postUpdateCallback()
-     * @return void.
+     * @return boolean true if completed successfully else false.
      */
     protected function performPostUpdateCallback()
     {
         // echo 'updated a record ...';
+        return true;
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -205,12 +212,13 @@
      * For more information see corresponding callback handlers.
      *
      * @see «implClassModelEntity()»::preSaveCallback()
-     * @return void.
+     * @return boolean true if completed successfully else false.
      */
     protected function performPreSaveCallback()
     {
         // echo 'saving a record ...';
         $this->validate();
+        return true;
     }
 
     /**
@@ -219,11 +227,12 @@
      * For more information see corresponding callback handlers.
      *
      * @see «implClassModelEntity()»::postSaveCallback()
-     * @return void.
+     * @return boolean true if completed successfully else false.
      */
     protected function performPostSaveCallback()
     {
         // echo 'saved a record ...';
+        return true;
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 «ENDDEFINE»
@@ -241,7 +250,7 @@
      */
     public function postLoadCallback()
     {
-        return $this->performPostLoadCallback();
+        $this->performPostLoadCallback();
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -255,7 +264,7 @@
      */
     public function prePersistCallback()
     {
-        return $this->performPrePersistCallback();
+        $this->performPrePersistCallback();
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -269,7 +278,7 @@
      */
     public function postPersistCallback()
     {
-        return $this->performPostPersistCallback();
+        $this->performPostPersistCallback();
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -283,7 +292,7 @@
      */
     public function preRemoveCallback()
     {
-        return $this->performPreRemoveCallback();
+        $this->performPreRemoveCallback();
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -297,7 +306,7 @@
      */
     public function postRemoveCallback()
     {
-        return $this->performPostRemoveCallback();
+        $this->performPostRemoveCallback();
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -311,7 +320,7 @@
      */
     public function preUpdateCallback()
     {
-        return $this->performPreUpdateCallback();
+        $this->performPreUpdateCallback();
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -325,7 +334,7 @@
      */
     public function postUpdateCallback()
     {
-        return $this->performPostUpdateCallback();
+        $this->performPostUpdateCallback();
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 
@@ -339,7 +348,7 @@
      */
     public function preSaveCallback()
     {
-        return $this->performPreSaveCallback();
+        $this->performPreSaveCallback();
     }
 
     /**
@@ -352,7 +361,7 @@
      */
     public function postSaveCallback()
     {
-        return $this->performPostSaveCallback();
+        $this->performPostSaveCallback();
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
 «ENDDEFINE»
