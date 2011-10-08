@@ -331,7 +331,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         $this->view->assign('meta', $entity->getMetadata() != null? $entity->getMetadata()->toArray() : array());
 
 «ENDIF-»
-        $utilArgs = array('controller' => '«controller.name()»', 'action' => '«actionName.formatForCode().toFirstLower()»');
+        $utilArgs = array('controller' => '«controller.name()»', 'action' => '«actionName.formatForCode().toFirstLower()»', 'mode' => $this->mode);
         $this->view->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
         $this->initializeAdditions();
 
