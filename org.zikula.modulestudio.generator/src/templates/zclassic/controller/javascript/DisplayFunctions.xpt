@@ -88,7 +88,7 @@ function «prefix()»ToggleFlag(objectType, fieldName, itemId)
 
                 var idSuffix = fieldName.toLowerCase() + '_' + itemId;
                 var state = data.state;
-                if (state) {
+                if (state === true) {
                     $('no' + idSuffix).hide();
                     $('yes' + idSuffix).show();
                 } else {
