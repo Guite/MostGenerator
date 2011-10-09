@@ -144,12 +144,11 @@
     protected function performPostRemoveCallback()
     {
         // echo 'deleted a record ...';
-«LET getUploadFields() AS uploadFields-»
-«IF !uploadFields.isEmpty-»
+«IF hasUploadFields()-»
         // initialise the upload handler
         $uploadManager = new «container.application.appName()»_UploadHandler();
 
-        $uploadFields = array(«FOREACH uploadFields AS uploadField SEPARATOR ", "»'«uploadField.name.formatForCode()»'«ENDFOREACH»);
+        $uploadFields = array(«FOREACH getUploadFields() AS uploadField SEPARATOR ", "»'«uploadField.name.formatForCode()»'«ENDFOREACH»);
         foreach ($uploadFields as $uploadField) {
             if (empty($this->$uploadField)) {
                 continue;
@@ -159,7 +158,6 @@
             $uploadManager->deleteUploadFile('«name.formatForCode()»', $this, $uploadField);
         }
 «ENDIF-»
-«ENDLET-»
         return true;
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»
@@ -370,11 +368,12 @@
 «DEFINE PostLoadImpl FOR Entity-»«REM»FOR PostLoad«ENDREM»
         $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
         $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST', FILTER_SANITIZE_STRING);
-«IF !fields.typeSelect(UploadField).isEmpty-»
-        $imageTypes = array('gif', 'jpeg', 'jpg', 'png');
+«IF hasUploadFields()-»
+        // initialise the upload handler
+        $uploadManager = new «container.application.appName()»_UploadHandler();
 «ENDIF-»
 
-    «EXPAND sanitizeForOutput FOREACH fields»
+«EXPAND sanitizeForOutput FOREACH fields-»
 «ENDDEFINE»
 
 
@@ -399,11 +398,7 @@
 «ENDDEFINE»
 «DEFINE sanitizeForOutput FOR StringField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
 «DEFINE sanitizeForOutput FOR TextField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
-«DEFINE sanitizeForOutput FOR EmailField-»
-    if ($currentFunc != 'edit') {
-«EXPAND sanitizeForOutputHTML-»
-    }
-«ENDDEFINE»
+«DEFINE sanitizeForOutput FOR EmailField-»«EXPAND sanitizeForOutputHTML-»«ENDDEFINE»
 «DEFINE sanitizeForOutput FOR ArrayField-»
         $this['«name.formatForCode()»'] = ((isset($this['«name.formatForCode()»']) && is_array($this['«name.formatForCode()»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode()»']) : array());
 «ENDDEFINE»
@@ -417,30 +412,8 @@
 
             // just some backwards compatibility stuff«REM»TODO: remove somewhen«ENDREM»
             if (!isset($this['«realName»Meta']) || !is_array($this['«realName»Meta']) || !count($this['«realName»Meta'])) {
-                $extensionarr = explode('.', $this['«realName»']);
-                $meta = array();
-                $meta['extension'] = $extensionarr[count($extensionarr) - 1];
-                $meta['size'] = filesize($fullPath);
-                $meta['isImage'] = (in_array($meta['extension'], $imageTypes) ? true : false);
-
-                if ($meta['isImage']) {
-                    $imgInfo = getimagesize($fullPath);
-                    if (is_array($imgInfo)) {
-                        $meta['width'] = $imgInfo[0];
-                        $meta['height'] = $imgInfo[1];
-
-                        if ($imgInfo[1] < $imgInfo[0]) {
-                            $meta['format'] = 'landscape';
-                        } elseif ($imgInfo[1] > $imgInfo[0]) {
-                            $meta['format'] = 'portrait';
-                        } else {
-                            $meta['format'] = 'square';
-                        }
-                    }
-                }
-
                 // assign new meta data
-                $this['«realName»Meta'] = $meta;
+                $this['«realName»Meta'] = $uploadManager->readMetaDataForFile($this['«realName»'], $fullPath);
             }
         }
 «ENDLET-»
@@ -452,6 +425,3 @@
 «DEFINE sanitizeForOutput FOR FloatField-»
         $this['«name.formatForCode()»'] = (float) ((isset($this['«name.formatForCode()»']) && !empty($this['«name.formatForCode()»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode()»']) : 0.00);
 «ENDDEFINE»
-
-
-

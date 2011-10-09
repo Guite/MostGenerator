@@ -61,6 +61,11 @@ class «appName()»_Base_UploadHandler
     protected $allowedObjectTypes;
 
     /**
+     * @var array List of file types to be considered as images.
+     */
+    protected $imageFileTypes;
+
+    /**
      * @var array List of dangerous file types to be rejected.
      */
     protected $forbiddenFileTypes;
@@ -71,6 +76,7 @@ class «appName()»_Base_UploadHandler
     public function __construct()
     {
         $this->allowedObjectTypes = array(«FOREACH getUploadEntities() AS entity SEPARATOR ", "»'«entity.name.formatForCode()»'«ENDFOREACH»);
+        $this->imageFileTypes = array('gif', 'jpeg', 'jpg', 'png');
         $this->forbiddenFileTypes = array('cgi', 'pl', 'asp', 'phtml', 'php', 'php3', 'php4', 'php5', 'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml');
     }
 
@@ -95,39 +101,10 @@ class «appName()»_Base_UploadHandler
             return $result;
         }
 
-        // check if a file has been uploaded properly without errors
-        $file = $fileData[$fieldName];
-        if ((!is_array($file)) || (is_array($file) && ($file['error'] != '0'))) {
-            if (is_array($file)) {
-                return $this->handleError($file);
-            }
-            LogUtil::registerError(__('Error! No file found.', $dom));
+        // perform validation
+        if ($this->validateFileUpload($fileData[$fieldName])) {
+            // skip this upload field
             return $result;
-        }
-
-        // extract file extension
-        $fileName = $file['name'];
-        $extensionarr = explode('.', $fileName);
-        $extension = strtolower($extensionarr[count($extensionarr) - 1]);
-
-        // validate extension
-        $isValidExtension = $this->isAllowedFileExtension($objectType, $fieldName, $extension);
-        if ($isValidExtension === false) {
-            // fail silently, this skips this upload field
-            //LogUtil::registerError(__('Error! This file type is not allowed. Please choose another file format.', $dom));
-            return $result;
-        }
-
-        // validate image file
-        $imageTypes = array('gif', 'jpeg', 'jpg', 'png');
-        $imgInfo = array();
-        $isImage = in_array($extension, $imageTypes);
-        if ($isImage) {
-            $imgInfo = getimagesize($file['tmp_name']);
-            if (!is_array($imgInfo) || !$imgInfo[0] || !$imgInfo[1]) {
-                // fail silently, this skips this upload field
-                return $result;
-            }
         }
 
         // retrieve the final file name
@@ -140,26 +117,97 @@ class «appName()»_Base_UploadHandler
 
         // collect data to return
         $result['fileName'] = $fileName;
-        $meta = array();
-        $meta['extension'] = $extension;
-        $meta['size'] = filesize($basePath . $fileName);
-        $meta['isImage'] = (($isImage) ? true : false);
-
-        if ($isImage && count($imgInfo)) {
-            $meta['width'] = $imgInfo[0];
-            $meta['height'] = $imgInfo[1];
-
-            if ($imgInfo[1] < $imgInfo[0]) {
-                $meta['format'] = 'landscape';
-            } elseif ($imgInfo[1] > $imgInfo[0]) {
-                $meta['format'] = 'portrait';
-            } else {
-                $meta['format'] = 'square';
-            }
-        }
-        $result['metaData'] = $meta;
+        $result['metaData'] = $this->readMetaDataForFile($fileName, $basePath . $fileName);
 
         return $result;
+    }
+
+    /**
+     * Check if an upload file meets all validation criteria.
+     *
+     * @param array $file Reference to data of uploaded file.
+     *
+     * @return boolean true if file is valid else false
+     */
+    protected function validateFileUpload($file)
+    {
+        $dom = ZLanguage::getModuleDomain('«appName()»');
+
+        // check if a file has been uploaded properly without errors
+        $file = $fileData[$fieldName];
+        if ((!is_array($file)) || (is_array($file) && ($file['error'] != '0'))) {
+            if (is_array($file)) {
+                return $this->handleError($file);
+            }
+            return LogUtil::registerError(__('Error! No file found.', $dom));
+        }
+
+        // extract file extension
+        $fileName = $file['name'];
+        $extensionarr = explode('.', $fileName);
+        $extension = strtolower($extensionarr[count($extensionarr) - 1]);
+
+        // validate extension
+        $isValidExtension = $this->isAllowedFileExtension($objectType, $fieldName, $extension);
+        if ($isValidExtension === false) {
+            return LogUtil::registerError(__('Error! This file type is not allowed. Please choose another file format.', $dom));
+        }
+
+        // validate image file
+        $imgInfo = array();
+        $isImage = in_array($extension, $this->imageFileTypes);
+        if ($isImage) {
+            $imgInfo = getimagesize($file['tmp_name']);
+            if (!is_array($imgInfo) || !$imgInfo[0] || !$imgInfo[1]) {
+                return LogUtil::registerError(__('Error! This file type seems not to be a valid image.', $dom));
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Read meta data from a certain file.
+     *
+     * @param string $fileName  Name of file to be processed.
+     * @param string $filePath  Path to file to be processed.
+     *
+     * @return array collected meta data
+     */
+    public function readMetaDataForFile($fileName, $filePath)
+    {
+        $meta = array();
+        if (empty($fileName)) {
+            return $meta;
+        }
+
+        $extensionarr = explode('.', $fileName);
+        $meta = array();
+        $meta['extension'] = $extensionarr[count($extensionarr) - 1];
+        $meta['size'] = filesize($filePath);
+        $meta['isImage'] = (in_array($meta['extension'], $this->imageFileTypes) ? true : false);
+
+        if (!$meta['isImage']) {
+            return $meta;
+        }
+
+        $imgInfo = getimagesize($filePath);
+        if (!is_array($imgInfo)) {
+            return $meta;
+        }
+
+        $meta['width'] = $imgInfo[0];
+        $meta['height'] = $imgInfo[1];
+
+        if ($imgInfo[1] < $imgInfo[0]) {
+            $meta['format'] = 'landscape';
+        } elseif ($imgInfo[1] > $imgInfo[0]) {
+            $meta['format'] = 'portrait';
+        } else {
+            $meta['format'] = 'square';
+        }
+
+        return $meta;
     }
 
     /**
@@ -353,9 +401,8 @@ class «appName()»_Base_UploadHandler
         $objectData[$fieldName . 'Meta'] = array();
 
 
-        $imageTypes = array('gif', 'jpeg', 'jpg', 'png');
         $fileExtension = FileUtil::getExtension($fileName, false);
-        if (!in_array($fileExtension, $imageTypes)) {
+        if (!in_array($fileExtension, $this->imageFileTypes)) {
             // we are done, so let's return
             return $objectData;
         }
