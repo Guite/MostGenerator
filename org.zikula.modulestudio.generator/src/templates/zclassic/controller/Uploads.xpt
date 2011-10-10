@@ -108,10 +108,15 @@ class «appName()»_Base_UploadHandler
         }
 
         // retrieve the final file name
+        $fileName = $fileData[$fieldName]['name'];
+        $extensionarr = explode('.', $fileName);
+        $extension = strtolower($extensionarr[count($extensionarr) - 1]);
+
+        // retrieve the final file name
         $basePath = «appName()»_Util_Controller::getFileBaseFolder($objectType, $fieldName);
         $fileName = $this->determineFileName($objectType, $fieldName, $basePath, $fileName, $extension);
 
-        if (!move_uploaded_file($file['tmp_name'], $basePath . $fileName)) {
+        if (!move_uploaded_file($fileData[$fieldName]['tmp_name'], $basePath . $fileName)) {
             return LogUtil::registerError(__('Error! Could not move your file to the destination folder.', $dom));
         }
 
