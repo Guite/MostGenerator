@@ -561,21 +561,23 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «IF attributable-»
 
         // merge attributes
-        foreach($«obj»Data['attributes'] as $name => $value) {
-            $«obj»->setAttribute($name, $value);
-        }
+        if (isset($«obj»Data['attributes'])) {
+            foreach($«obj»Data['attributes'] as $name => $value) {
+                $«obj»->setAttribute($name, $value);
+            }
 «REM»
-        $«obj»->setAttribute('url', 'http://www.example.com');
-        $«obj»->setAttribute('url', null); // remove
+            $«obj»->setAttribute('url', 'http://www.example.com');
+            $«obj»->setAttribute('url', null); // remove
 «ENDREM»«''-»
-        unset($«obj»Data['attributes']);
+            unset($«obj»Data['attributes']);
+        }
 «ENDIF-»
 «IF metaData-»
 
         // merge metadata
-        $metadata = $«obj»->getMetadata();
+        $metaData = $«obj»->getMetadata();
 
-        if (is_null($metadata)) {
+        if (is_null($metaData)) {
             $metaData = new «implClassModel('', 'metaData')»($«obj»);
             $«obj»->setMetadata($metaData);
         }

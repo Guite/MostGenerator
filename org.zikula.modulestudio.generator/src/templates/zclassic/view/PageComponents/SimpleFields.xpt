@@ -11,11 +11,11 @@
 «prepend»{assign var='itemid' value=$«objName».«entity.getFirstPrimaryKey().name.formatForCode()»}
 «prepend»<a id="toggle«name.formatForDB()»{$itemid}" href="javascript:void(0);" style="display: none">
 «prepend»{if $«objName».«name.formatForCode()»}
-«prepend»    {icon type='ok' size='extrasmall' __alt='Yes' id="yes«name.formatForDB()»_`$itemid`"}
-«prepend»    {icon type='cancel' size='extrasmall' __alt='No' id="no«name.formatForDB()»_`$itemid`" style="display: none;"}
+«prepend»    {icon type='ok' size='extrasmall' __alt='Yes' id="yes«name.formatForDB()»_`$itemid`" __title="This setting is enabled. Click here to disable it."}
+«prepend»    {icon type='cancel' size='extrasmall' __alt='No' id="no«name.formatForDB()»_`$itemid`" __title="This setting is disabled. Click here to enable it." style="display: none;"}
 «prepend»{else}
-«prepend»    {icon type='ok' size='extrasmall' __alt='Yes' id="yes«name.formatForDB()»_`$itemid`" style="display: none;"}
-«prepend»    {icon type='cancel' size='extrasmall' __alt='No' id="no«name.formatForDB()»_`$itemid`"}
+«prepend»    {icon type='ok' size='extrasmall' __alt='Yes' id="yes«name.formatForDB()»_`$itemid`" __title="This setting is enabled. Click here to disable it." style="display: none;"}
+«prepend»    {icon type='cancel' size='extrasmall' __alt='No' id="no«name.formatForDB()»_`$itemid`" __title="This setting is disabled. Click here to enable it."}
 «prepend»{/if}
 «prepend»</a>
 «prepend»<noscript><div id="noscript«name.formatForDB()»{$itemid}">

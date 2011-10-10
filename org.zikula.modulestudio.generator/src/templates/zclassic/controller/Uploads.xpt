@@ -102,7 +102,7 @@ class «appName()»_Base_UploadHandler
         }
 
         // perform validation
-        if ($this->validateFileUpload($fileData[$fieldName])) {
+        if (!$this->validateFileUpload($fileData[$fieldName])) {
             // skip this upload field
             return $result;
         }
@@ -134,7 +134,6 @@ class «appName()»_Base_UploadHandler
         $dom = ZLanguage::getModuleDomain('«appName()»');
 
         // check if a file has been uploaded properly without errors
-        $file = $fileData[$fieldName];
         if ((!is_array($file)) || (is_array($file) && ($file['error'] != '0'))) {
             if (is_array($file)) {
                 return $this->handleError($file);
