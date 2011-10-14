@@ -42,6 +42,7 @@ Export-Package: org.zikula.modulestudio.generator,
  org.zikula.modulestudio.generator.application,
  org.zikula.modulestudio.generator.checks,
  org.zikula.modulestudio.generator.exceptions,
+ org.zikula.modulestudio.generator.importer,
  org.zikula.modulestudio.generator.output
 Eclipse-BuddyPolicy: dependent
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

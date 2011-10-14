@@ -1,0 +1,18 @@
+<!ELEMENT tables (table+)>
+<!ELEMENT table (column+,index*)>
+<!ATTLIST table name CDATA #REQUIRED
+                primaryKey CDATA #IMPLIED
+                enableCategorization CDATA #IMPLIED
+                enableAttribution CDATA #IMPLIED>
+<!ELEMENT column EMPTY>
+<!ATTLIST column name CDATA #REQUIRED 
+                 dbname CDATA #REQUIRED 
+                 type (VARCHAR|TEXT|LONGTEXT|DATE|DATETIME|TINYINT|INT|SMALLINT|MEDIUMINT|BIGINT|FLOAT|NUMERIC) #REQUIRED
+                 length CDATA #REQUIRED
+                 nullable CDATA #REQUIRED
+                 default CDATA #REQUIRED
+                 autoincrement CDATA #REQUIRED
+                 primary CDATA #REQUIRED>
+<!ELEMENT index EMPTY>
+<!ATTLIST index name CDATA #REQUIRED 
+                fields CDATA #REQUIRED>
