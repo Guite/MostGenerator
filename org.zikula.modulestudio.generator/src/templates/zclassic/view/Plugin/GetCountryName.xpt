@@ -4,11 +4,9 @@
 «EXTENSION extensions::ClassUtils»
 
 «DEFINE Root FOR Application-»
-«IF hasUploads()-»
 «FILE viewPluginFilePath(this, 'modifier', 'GetCountryName')-»«EXPAND FileHelper::phpFileHeader(this)-»
 «EXPAND GetCountryName-»
 «ENDFILE»
-«ENDIF-»
 «ENDDEFINE»
 
 «DEFINE GetCountryName FOR Application-»
