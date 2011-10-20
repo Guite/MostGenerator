@@ -100,14 +100,19 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
             $vars['filter'] = '';
         }
 
+        ModUtil::initOOModule('«appName()»');
+
         if (!isset($vars['objectType']) || !in_array($vars['objectType'], «appName()»_Util_Controller::getObjectTypes('block'))) {
             $vars['objectType'] = «appName()»_Util_Controller::getDefaultObjectType('block');
         }
 
         $objectType = $vars['objectType'];
 
+        $serviceManager = ServiceUtil::getManager();
+        $entityManager = $serviceManager->getService('doctrine.entitymanager');
+
         $entityClass = '«appName()»_Entity_' . ucfirst($objectType);
-        $repository = $this->entityManager->getRepository($entityClass);
+        $repository = $entityManager->getRepository($entityClass);
 
         $objectTemp = new $entityClass(); 
         $idFields = $objectTemp->get_idFields();

@@ -47,7 +47,9 @@
     <h3>{gt text='«name.formatForDisplayCapital()»'}</h3>
 «ENDIF-»
 «ENDLET-»
+«IF hasUserController() && getUserController().hasActions("display")-»
     <p>«EXPAND DetailLink(appName()) FOR entity-»</p>
+«ENDIF-»
 {/foreach}
 «ENDFILE»
 «ENDFOREACH-»
