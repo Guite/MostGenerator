@@ -207,7 +207,7 @@ TODO: only for $mode ne create:
 «REM»Exclude parent view for 1:1 and 1:n for now - see https://github.com/Guite/MostGenerator/issues/10«ENDREM»«""-»
 «IF !(this.metaType != ManyToManyRelationship && !incoming)-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
-«LET getUniqueRelationNameForJs(app, ((targetEntity == target) ? source : target), (!(incoming && this.metaType != ManyToManyRelationship)), incoming, relationAliasName) AS uniqueNameForJs-»
+«LET getUniqueRelationNameForJs(app, ((targetEntity == target || this.metaType == ManyToManyRelationship) ? source : target), (!(incoming && this.metaType != ManyToManyRelationship)), incoming, relationAliasName) AS uniqueNameForJs-»
 «IF !insideLoader-»
     var newItem = new Object();
     newItem['ot'] = '«((targetEntity == target) ? source : target).name.formatForCode()»';
