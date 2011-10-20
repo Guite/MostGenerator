@@ -18,9 +18,9 @@
 «DEFINE FormLabel(String groupSuffix, String idSuffix) FOR UploadField-»
 «EXPAND InitDocumentationToolTip-»
 «IF mandatory-»
-			{assign var='mandatorySym' value='1'}
+            {assign var='mandatorySym' value='1'}
             {if $mode ne 'create'}
-			{assign var='mandatorySym' value='0'}
+                {assign var='mandatorySym' value='0'}
             {/if}
 «ENDIF-»
             {formlabel for=«templateIdWithSuffix(name.formatForCode(), idSuffix)» __text='«EXPAND FormLabelText-»'«IF mandatory-» mandatorysym=$mandatorySym«ENDIF-»«EXPAND FormLabelAdditions-»}<br />{* break required for Google Chrome *}
