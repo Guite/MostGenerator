@@ -43,7 +43,9 @@ $helper->getListener('standardfields');
 «ENDIF-»
 «IF hasTranslatable()-»
 $translatableListener = $helper->getListener('translatable');
-$translatableListener->setTranslatableLocale(ZLanguage::getLanguageCode());
+//$translatableListener->setTranslatableLocale(ZLanguage::getLanguageCode());
+$currentLanguage = preg_replace('#[^a-z-].#', '', FormUtil::getPassedValue('lang', System::getVar('language_i18n', 'en'), 'GET'));
+$translatableListener->setTranslatableLocale($currentLanguage);
 /**
  * Sometimes it is desired to set a default translation as a fallback if record does not have a translation
  * on used locale. In that case Translation Listener takes the current value of Entity.
