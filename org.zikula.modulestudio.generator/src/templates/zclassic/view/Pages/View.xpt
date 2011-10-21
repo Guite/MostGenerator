@@ -318,6 +318,11 @@ listType:
 «ELSEIF listType == 3-»
         <td headers="hintactions" align="left" valign="top" style="white-space: nowrap">
 «ENDIF-»
+«IF controller.metaType == AdminController && container.application.hasUserController() && container.application.getUserController().hasActions('display')-»
+            <a href="{modurl modname='«appName»' type='user' «modUrlDisplay(objName, true)»}" title="{gt text='Open preview page'}" target="_blank">
+                {icon type='preview' size='extrasmall' __alt='Preview'}
+            </a>
+«ENDIF-»
 «IF controller.hasActions('display')-»
 «LET getLeadingField() AS leadingField-»
             <a href="{modurl modname='«appName»' type='«controller.name()»' «modUrlDisplay(objName, true)»}"«IF leadingField != null-» title="{$«objName».«leadingField.name.formatForCode()»|replace:"\"":""}"«ENDIF-»>
