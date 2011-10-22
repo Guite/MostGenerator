@@ -47,11 +47,13 @@ listType:
 «ENDIF-»
     {/checkpermissionblock}
 «ENDIF»
+    {assign var='all' value=0}
     {if isset($showAllEntries) && $showAllEntries eq 1}
         {gt text='Back to paginated view' assign='linkTitle'}
         <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«objName»'}" title="{$linkTitle}" class="z-icon-es-view">
             {$linkTitle}
         </a>
+        {assign var='all' value=1}
     {else}
         {gt text='Show all entries' assign='linkTitle'}
         <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«objName»' all=1}" title="{$linkTitle}" class="z-icon-es-view">
@@ -209,7 +211,7 @@ listType:
 «ENDDEFINE»
 
 «DEFINE HeaderSortingLink(Controller controller, Entity entity, String fieldName, String label) FOR Object-»
-            {sortlink __linktext='«label.formatForDisplayCapital()»' sort='«fieldName»' currentsort=$sort sortdir=$sdir modname='«controller.container.application.appName()»' type='«controller.name()»' func='view' ot='«entity.name.formatForCode()»'}
+            {sortlink __linktext='«label.formatForDisplayCapital()»' sort='«fieldName»' currentsort=$sort sortdir=$sdir all=$all modname='«controller.container.application.appName()»' type='«controller.name()»' func='view' ot='«entity.name.formatForCode()»'}
 «ENDDEFINE»
 
 
