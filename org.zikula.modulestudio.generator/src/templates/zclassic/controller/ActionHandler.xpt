@@ -466,7 +466,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
             // Let any hooks know that we have created or updated an item
             $url = new Zikula_ModUrl('«app.appName()»', '«controller.name()»', 'display', ZLanguage::getLanguageCode(), array('ot' => $this->objectType,«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ', '-» '«pkField.name.formatForCode()»' => $this->idValues['«pkField.name.formatForCode()»']«ENDFOREACH-»));
-            $hook = new Zikula_ProcessHook('«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».process_edit', «FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ' . "_" . '-»$this->«pkField.name.formatForCode()»«ENDFOREACH-», $url);
+            $hook = new Zikula_ProcessHook('«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».process_edit', «FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ' . "_" . '-»$this->idValues['«pkField.name.formatForCode()»']«ENDFOREACH-», $url);
             $this->notifyHooks($hook);
         } else if ($args['commandName'] == 'delete') {
             // event handling if user clicks on delete
@@ -486,7 +486,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» deleted.'));
 
             // Let any hooks know that we have deleted an item
-            $hook = new Zikula_ProcessHook('«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».process_delete', «FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ' . "_" . '-»$this->«pkField.name.formatForCode()»«ENDFOREACH-»);
+            $hook = new Zikula_ProcessHook('«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».process_delete', «FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ' . "_" . '-»$this->idValues['«pkField.name.formatForCode()»']«ENDFOREACH-»);
             $this->notifyHooks($hook);
         } else if ($args['commandName'] == 'cancel') {
             // event handling if user clicks on cancel
@@ -500,7 +500,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         if ($this->mode == 'edit') {
             ModUtil::apiFunc('PageLock', 'user', 'releaseLock',
-                             array('lockName' => '«app.appName()»«name.formatForCodeCapital()»'«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR " . '_'"-» . $this->«pkField.name.formatForCode()»«ENDFOREACH-»));
+                             array('lockName' => '«app.appName()»«name.formatForCodeCapital()»'«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR " . '_'"-» . $this->idValues['«pkField.name.formatForCode()»']«ENDFOREACH-»));
         }
 «ENDIF-»
         return $this->view->redirect($this->getRedirectUrl($args, $«name.formatForCode()», $repeatCreateAction));
