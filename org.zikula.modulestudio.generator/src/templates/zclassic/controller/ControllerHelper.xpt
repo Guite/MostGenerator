@@ -9,7 +9,7 @@
 «ELSE-»
         $entity = $repository->selectById($«idValue»);
         if (!is_object($entity) || !isset($entity[$«idVar»[0]])) {
-            return $this->view->setErrorMsg($this->__('No such item.'));
+            return LogUtil::registerError($this->__('No such item.'));
 «ENDIF-»
         }
 «ENDDEFINE»

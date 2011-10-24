@@ -112,7 +112,7 @@ class «tempBaseClassConfigHandler()» extends Zikula_Form_AbstractHandler
 
             // update all module vars
             if (!ModUtil::setVars('«appName()»', $data['config'])) {
-                return $this->view->setErrorMsg($this->__('Error! Failed to set configuration variables.'));
+                return LogUtil::registerError($this->__('Error! Failed to set configuration variables.'));
             }
 
             LogUtil::registerStatus($this->__('Done! Module configuration updated.'));

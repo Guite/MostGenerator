@@ -218,7 +218,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         if ($this->mode == 'edit') {
             if (!SecurityUtil::checkPermission('«app.appName()»:«name.formatForCodeCapital()»:', '::', ACCESS_EDIT)) {
                 // set an error message and return false
-                return $this->view->setErrorMsg(LogUtil::registerPermissionError());
+                return LogUtil::registerPermissionError();
             }
 
 «EXPAND ControllerHelper::retrieveEntityFromModel('idFields', 'this->idValues', true)-»
@@ -244,7 +244,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         }
         else {
             if (!SecurityUtil::checkPermission('«app.appName()»:«name.formatForCodeCapital()»:', '::', ACCESS_ADD)) {
-                return $this->view->setErrorMsg(LogUtil::registerPermissionError());
+                return LogUtil::registerPermissionError();
             }
 
             $hasTemplateId = false;
@@ -357,7 +357,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
     {
         if ($args['commandName'] == 'delete') {
             if (!SecurityUtil::checkPermission('«app.appName()»:«name.formatForCodeCapital()»:', '::', ACCESS_DELETE)) {
-                return $this->view->setErrorMsg(LogUtil::registerPermissionError());
+                return LogUtil::registerPermissionError();
             }
         }
 
@@ -451,14 +451,14 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 $this->idValues['«pkField.name.formatForCode()»'] = $«name.formatForCode()»->get«pkField.name.formatForCodeCapital()»();
                 // check if the insert has worked, might become obsolete due to exception usage
                 if (!$this->idValues['«pkField.name.formatForCode()»']) {
-                    return $this->view->setErrorMsg($this->__('Error! Creation attempt failed.'));
+                    return LogUtil::registerError($this->__('Error! Creation attempt failed.'));
                 }
 «ENDFOREACH-»
             } else if ($args['commandName'] == 'update') {
 «REM»                $updateResult = true/false;
                 // check if the update has worked, might become obsolete due to exception usage
                 if ($updateResult === false) {
-                    return $this->view->setErrorMsg($this->__('Error! Update attempt failed.'));
+                    return LogUtil::registerError($this->__('Error! Update attempt failed.'));
                 }«ENDREM»«''-»
             }
 
@@ -480,7 +480,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             $this->entityManager->remove($«name.formatForCode()»);
             $this->entityManager->flush();
 «REM»            if ($«name.formatForCode()»->delete() === false) {
-                return $this->view->setErrorMsg($this->__('Error! Deletion attempt failed.'));
+                return LogUtil::registerError($this->__('Error! Deletion attempt failed.'));
             }«ENDREM»
 
             LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» deleted.'));
@@ -507,7 +507,6 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         // We should in principle not end here at all, since the above command handlers should
         // match all possible commands, but we return "ok" (true) for all cases.
-        // You could also return $this->view->setErrorMsg('Unexpected command')
         return true;
     }
 «ENDDEFINE»

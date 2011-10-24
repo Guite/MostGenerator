@@ -61,7 +61,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
         $«obj»Data['«relationAliasName»'] = ((isset($selectedRelations['«relationAliasName.toFirstLower()»'])) ? $selectedRelations['«relationAliasName.toFirstLower()»'] : «EXPAND RetrieveRelatedObjectsCall(((incoming) ? source : target).name, uniqueNameForJs, false)-»);
 «IF !nullable-»
         if (!$«obj»Data['«relationAliasName»']) {
-            return $this->view->setErrorMsg($this->__('Invalid value received for relation field "«relationAliasName.formatForDisplay()»".'));
+            return LogUtil::registerError($this->__('Invalid value received for relation field "«relationAliasName.formatForDisplay()»".'));
         }
 «ENDIF-»
 «ENDLET-»
