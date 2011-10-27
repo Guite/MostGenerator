@@ -57,24 +57,29 @@ class «appName()»_Util_Base_Image extends Zikula_AbstractBase
             // alternative
             // $imagine = new Imagine\Imagick\Imagine();
 
-            // scale down thumbnails per default
-            $thumbMode = Imagine\Image\ImageInterface::THUMBNAIL_INSET;
-            if (isset($thumbArgs['thumbMode']) && $thumbArgs['thumbMode'] == Imagine\Image\ImageInterface::THUMBNAIL_OUTBOUND) {
-                // cut out thumbnail
-                $thumbMode = Imagine\Image\ImageInterface::THUMBNAIL_OUTBOUND;
-            }
-
-            // define target dimension
-            $thumbSize = new Box($width, $height);
-            // $thumbSize->increase(25); // add 25 pixels to x and y values
-            // $thumbSize->scale(2); // double x and y values
-
             // open image to be processed
             $image = $imagine->open($filePath);
             // remember the image size
             $originalSize = $image->getSize();
 
-            $thumb = $image->thumbnail($thumbSize, $thumbMode);
+            if (isset($thumbArgs['crop']) && $thumbArgs['crop'] == true && isset($thumbArgs['x']) && isset($thumbArgs['y'])) {
+                // crop the image
+                $thumb = $image->crop(new Point($thumbArgs['x'], $thumbArgs['y']), new Box($width, $height));
+            } else {
+                // scale down thumbnails per default
+                $thumbMode = Imagine\Image\ImageInterface::THUMBNAIL_INSET;
+                if (isset($thumbArgs['thumbMode']) && $thumbArgs['thumbMode'] == Imagine\Image\ImageInterface::THUMBNAIL_OUTBOUND) {
+                    // cut out thumbnail
+                    $thumbMode = Imagine\Image\ImageInterface::THUMBNAIL_OUTBOUND;
+                }
+
+                // define target dimension
+                $thumbSize = new Box($width, $height);
+                // $thumbSize->increase(25); // add 25 pixels to x and y values
+                // $thumbSize->scale(2); // double x and y values
+
+                $thumb = $image->thumbnail($thumbSize, $thumbMode);
+            }
 
             /**
              * You can do many other image manipulations here as well:
