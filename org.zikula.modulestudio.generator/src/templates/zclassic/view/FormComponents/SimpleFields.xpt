@@ -62,15 +62,15 @@
 «ENDDEFINE»
 
 «DEFINE FormField(String groupSuffix, String idSuffix) FOR IntegerField-»
-            {formintinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«length»«IF minValue != 0-» minValue=«minValue»«ENDIF-»«IF maxValue != 0-» maxValue=«maxValue-»«ENDIF»«EXPAND Validation::FieldValidationCssClass»}
+            {formintinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Enter the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' maxLength=«length»«IF minValue != 0-» minValue=«minValue»«ENDIF-»«IF maxValue != 0-» maxValue=«maxValue-»«ENDIF»«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»
 
 «DEFINE FormField(String groupSuffix, String idSuffix) FOR DecimalField-»
-            {formfloatinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'«IF minValue != 0-» minValue=«minValue»«ENDIF-»«IF maxValue != 0-» maxValue=«maxValue-»«ENDIF» maxLength=«(length+3+scale)»«IF scale != 2» precision=«scale»«ENDIF»«EXPAND Validation::FieldValidationCssClass»}
+            {formfloatinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Enter the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'«IF minValue != 0-» minValue=«minValue»«ENDIF-»«IF maxValue != 0-» maxValue=«maxValue-»«ENDIF» maxLength=«(length+3+scale)»«IF scale != 2» precision=«scale»«ENDIF»«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»
 
 «DEFINE FormField(String groupSuffix, String idSuffix) FOR FloatField-»
-            {formfloatinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'«IF minValue != 0-» minValue=«minValue»«ENDIF-»«IF maxValue != 0-» maxValue=«maxValue-»«ENDIF»«EXPAND Validation::FieldValidationCssClass»}
+            {formfloatinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Enter the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'«IF minValue != 0-» minValue=«minValue»«ENDIF-»«IF maxValue != 0-» maxValue=«maxValue-»«ENDIF»«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»
 
 «DEFINE FormField(String groupSuffix, String idSuffix) FOR StringField-»
@@ -81,20 +81,20 @@
 «ELSEIF htmlcolour-»
             {«entity.container.application.appName().formatForDB()»ColourInput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Choose the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»'}
 «ELSE-»
-            {formtextinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='«IF password-»password«ELSE-»singleline«ENDIF-»' maxLength=«length»«EXPAND Validation::FieldValidationCssClass»}
+            {formtextinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» readOnly=«readonly» __title='Enter the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='«IF password-»password«ELSE-»singleline«ENDIF-»' maxLength=«length»«EXPAND Validation::FieldValidationCssClass»}
 «ENDIF-»
 «ENDDEFINE»
 
 «DEFINE FormField(String groupSuffix, String idSuffix) FOR TextField-»
-            {formtextinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='multiline' rows='6«REM»8«ENDREM»' cols='50'«EXPAND Validation::FieldValidationCssClass»}
+            {formtextinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Enter the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='multiline' rows='6«REM»8«ENDREM»' cols='50'«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»
 
 «DEFINE FormField(String groupSuffix, String idSuffix) FOR EmailField-»
-            {formemailinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=«length»«EXPAND Validation::FieldValidationCssClass»}
+            {formemailinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» readOnly=«readonly» __title='Enter the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=«length»«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»
 
 «DEFINE FormField(String groupSuffix, String idSuffix) FOR UrlField-»
-            {formurlinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=«length»«EXPAND Validation::FieldValidationCssClass»}
+            {formurlinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» readOnly=«readonly» __title='Enter the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=«length»«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»
 
 «DEFINE FormField(String groupSuffix, String idSuffix) FOR UploadField-»
@@ -165,9 +165,9 @@
 «DEFINE FormFieldDetails(String groupSuffix, String idSuffix) FOR AbstractDateField-»«ENDDEFINE»
 «DEFINE FormFieldDetails(String groupSuffix, String idSuffix) FOR DatetimeField-»
             {if $mode ne 'create'}
-                {formdateinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true«EXPAND Validation::FieldValidationCssClass»}
+                {formdateinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Enter the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true«EXPAND Validation::FieldValidationCssClass»}
             {else}
-                {formdateinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true defaultValue='now'«EXPAND Validation::FieldValidationCssClass»}
+                {formdateinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Enter the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true defaultValue='now'«EXPAND Validation::FieldValidationCssClass»}
             {/if}
 «REM»TODO: visible=false«ENDREM»«""-»
 «IF !mandatory-»
@@ -177,9 +177,9 @@
 
 «DEFINE FormFieldDetails(String groupSuffix, String idSuffix) FOR DateField-»
             {if $mode ne 'create'}
-                {formdateinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true«EXPAND Validation::FieldValidationCssClass»}
+                {formdateinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Enter the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true«EXPAND Validation::FieldValidationCssClass»}
             {else}
-                {formdateinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true defaultValue='today'«EXPAND Validation::FieldValidationCssClass»}
+                {formdateinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Enter the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true defaultValue='today'«EXPAND Validation::FieldValidationCssClass»}
             {/if}
 «IF !mandatory-»
             <p class="z-formnote"><a id="reset«name.formatForCodeCapital()»Val" href="javascript:void(0);" style="display: none">{gt text='Reset to empty value'}</a></p>
@@ -188,5 +188,5 @@
 
 «DEFINE FormFieldDetails(String groupSuffix, String idSuffix) FOR TimeField-»
             {* TODO: support time fields in Zikula (see https://github.com/Guite/MostGenerator/issues/87 for more information) *}
-            {formtextinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» readOnly=«readonly» __title='Input the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=8«EXPAND Validation::FieldValidationCssClass»}
+            {formtextinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» readOnly=«readonly» __title='Enter the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' textMode='singleline' maxLength=8«EXPAND Validation::FieldValidationCssClass»}
 «ENDDEFINE»
