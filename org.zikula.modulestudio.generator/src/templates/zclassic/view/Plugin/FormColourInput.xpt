@@ -112,19 +112,6 @@ class «appName()»_Form_Plugin_ColourInput extends Zikula_Form_Plugin_TextInput
     }
 
     /**
-     * Helper method to determine css class.
-     *
-     * @see    Zikula_Form_Plugin_TextInput
-     *
-     * @return string the list of css classes to apply
-     */
-    protected function getStyleClass()
-    {
-        $class = parent::getStyleClass();
-        return str_replace('z-form-text', 'z-form-colour', $class);
-    }
-
-    /**
      * Validates the input string.
      *
      * @param Zikula_Form_View $view Reference to Zikula_Form_View object.
