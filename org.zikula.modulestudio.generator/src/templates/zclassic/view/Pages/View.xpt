@@ -79,14 +79,14 @@ listType:
 «EXPAND ColumnDef FOREACH fields.typeSelect(DerivedField).reject(e|e.primaryKey)-»
 «EXPAND ColumnDef(false) FOREACH incoming.typeSelect(OneToManyRelationship).select(e|e.bidirectional)-»
 «EXPAND ColumnDef(true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
-        <col id="cintactions" />
+        <col id="citemactions" />
     </colgroup>
     <thead>
     <tr>
 «EXPAND HeaderLine(controller) FOREACH getDerivedFields().reject(e|e.primaryKey)-»
 «EXPAND HeaderLine(controller, false) FOREACH incoming.typeSelect(OneToManyRelationship).select(e|e.bidirectional)-»
 «EXPAND HeaderLine(controller, true) FOREACH outgoing.typeSelect(OneToOneRelationship)-»
-        <th id="hintactions" scope="col" align="left" valign="middle" class="z-wrap z-order-unsorted">{gt text='Actions'}</th>
+        <th id="hitemactions" scope="col" class="z-right z-order-unsorted">{gt text='Actions'}</th>
     </tr>
     </thead>
     <tbody>
@@ -194,7 +194,7 @@ listType:
 «error("Error: undefined entity field type " + metaType.toString() + " (code 9245652)") -> ""-»
 «ENDDEFINE»
 «DEFINE HeaderLine(Controller controller) FOR DerivedField-»
-        <th id="h«EXPAND MarkupIdCode(false)-»" scope="col" align="«EXPAND Alignment-»" valign="middle">
+        <th id="h«EXPAND MarkupIdCode(false)-»" scope="col" class="z-«EXPAND Alignment-»">
 «EXPAND HeaderSortingLink(controller, entity, name.formatForCode(), name)-»
         </th>
 «ENDDEFINE»
@@ -203,7 +203,7 @@ listType:
 «ENDDEFINE»
 
 «DEFINE HeaderLine(Controller controller, Boolean useTarget) FOR JoinRelationship-»
-        <th id="h«EXPAND MarkupIdCode(useTarget)-»" scope="col" align="left" valign="middle">
+        <th id="h«EXPAND MarkupIdCode(useTarget)-»" scope="col" class="z-left">
 «LET ((useTarget) ? source : target) AS mainEntity-»
 «EXPAND HeaderSortingLink(controller, mainEntity, getRelationAliasName(useTarget).formatForCode(), getRelationAliasName(useTarget).formatForCodeCapital())-»
 «ENDLET-»
@@ -222,7 +222,7 @@ listType:
 «ELSEIF listType == 2-»
         <dd>
 «ELSEIF listType == 3-»
-        <td headers="h«EXPAND MarkupIdCode(useTarget)»" align="«EXPAND Alignment-»" valign="top">
+        <td headers="h«EXPAND MarkupIdCode(useTarget)»" class="z-«EXPAND Alignment-»">
 «ENDIF-»
 «EXPAND DisplayEntryInner(controller, useTarget)-»
 «IF listType < 2-»
@@ -318,7 +318,7 @@ listType:
 «ELSEIF listType == 2-»
         <dd>
 «ELSEIF listType == 3-»
-        <td headers="hintactions" align="left" valign="top" style="white-space: nowrap">
+        <td headers="hitemactions" class="z-right z-nowrap z-w02">
 «ENDIF-»
 «IF controller.metaType == AdminController && container.application.hasUserController() && container.application.getUserController().hasActions('display')-»
             <a href="{modurl modname='«appName»' type='user' «modUrlDisplay(objName, true)»}" title="{gt text='Open preview page'}" target="_blank">
