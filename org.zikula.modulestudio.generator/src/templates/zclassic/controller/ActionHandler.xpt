@@ -389,7 +389,9 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             // Let any hooks perform additional validation actions
             $hook = new Zikula_ValidationHook('«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».validate_edit', new Zikula_Hook_ValidationProviders());
             $validators = $this->notifyHooks($hook)->getValidators();
-            // TODO validation incomplete (#36)
+            if ($validators->hasErrors()) {
+                return false;
+            }
 
 «IF hasTranslatableFields()-»
             // add translated values
@@ -474,7 +476,9 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             // Let any hooks perform additional validation actions
             $hook = new Zikula_ValidationHook('«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».validate_delete', new Zikula_Hook_ValidationProviders());
             $validators = $this->notifyHooks($hook)->getValidators();
-            // TODO validation incomplete (#36)
+            if ($validators->hasErrors()) {
+                return false;
+            }
 
             // delete «name.formatForDisplay()»
             $this->entityManager->remove($«name.formatForCode()»);
