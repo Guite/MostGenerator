@@ -45,6 +45,15 @@
 </div>
 «ENDIF-»
 </div>
+«IF !models.variables.select(e|e.documentation != null && e.documentation != "").isEmpty-»
+<script type="text/javascript" charset="utf-8">
+/* <![CDATA[ */
+    document.observe('dom:loaded', function() {
+        Zikula.UI.Tooltips($$('.«appName().formatForDB()»FormTooltips'));
+    });
+/* ]]> */
+</script>
+«ENDIF-»
 {include file='«configController().formatForDB()»/footer.tpl'}
 «ENDFILE-»
 «ENDDEFINE»
@@ -78,17 +87,17 @@
 
 «DEFINE FormRow FOR Variable-»
                 <div class="z-formrow">
-                    {formlabel for='«name.formatForCode()»' __text='«name.formatForDisplayCapital()»'}
+                    {formlabel for='«name.formatForCode()»' __text='«name.formatForDisplayCapital()»'«IF documentation != null && documentation != ""-» class='«container.container.application.appName().formatForDB()»FormTooltips' title=$toolTip«ENDIF-»}
 «EXPAND InputField-»
                 </div>
 «ENDDEFINE»
 
 «DEFINE InputField FOR Variable-»
-                    {formtextinput id='«name.formatForCode()»' group='config' maxLength=255 width=20em __title='Input this setting.'}
+                    {formtextinput id='«name.formatForCode()»' group='config' maxLength=255 width=20em __title='Enter this setting.'}
 «ENDDEFINE»
 
 «DEFINE InputField FOR IntVar-»
-                    {formintinput id='«name.formatForCode()»' group='config' maxLength=255 width=20em __title='Input this setting. Only digits are allowed.'}
+                    {formintinput id='«name.formatForCode()»' group='config' maxLength=255 width=20em __title='Enter this setting. Only digits are allowed.'}
 «ENDDEFINE»
 
 «DEFINE InputField FOR BoolVar-»
