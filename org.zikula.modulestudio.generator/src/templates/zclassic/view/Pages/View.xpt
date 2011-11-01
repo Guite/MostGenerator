@@ -320,43 +320,15 @@ listType:
 «ELSEIF listType == 3-»
         <td headers="hitemactions" class="z-right z-nowrap z-w02">
 «ENDIF-»
-«IF controller.metaType == AdminController && container.application.hasUserController() && container.application.getUserController().hasActions('display')-»
-            <a href="{modurl modname='«appName»' type='user' «modUrlDisplay(objName, true)»}" title="{gt text='Open preview page'}" target="_blank">
-                {icon type='preview' size='extrasmall' __alt='Preview'}
-            </a>
-«ENDIF-»
-«IF controller.hasActions('display')-»
-«LET getLeadingField() AS leadingField-»
-            <a href="{modurl modname='«appName»' type='«controller.name()»' «modUrlDisplay(objName, true)»}"«IF leadingField != null-» title="{$«objName».«leadingField.name.formatForCode()»|replace:"\"":""}"«ENDIF-»>
-                {icon type='display' size='extrasmall' __alt='Details'}
-            </a>
-«ENDLET-»
-«ENDIF-»            
-«IF controller.hasActions('edit')-»
-    {checkpermissionblock component='«appName»::' instance='.*' level='ACCESS_EDIT'}
-«IF !readOnly-»«REM»create is allowed, but editing not«ENDREM»«''-»
-            <a href="{modurl modname='«appName»' type='«controller.name()»' «modUrlEdit(objName, true)»}" title="{gt text='Edit'}">
-                {icon type='edit' size='extrasmall' __alt='Edit'}
-            </a>
-«ENDIF-»
-«IF tree != EntityTreeType::NONE-»
-    {*
-«ENDIF-»
-            <a href="{modurl modname='«appName»' type='«controller.name()»' «modUrlEdit(objName, true, 'astemplate')»}" title="{gt text='Reuse for new item'}">
-                {icon type='saveas' size='extrasmall' __alt='Reuse'}
-            </a>
-«IF tree != EntityTreeType::NONE-»
-    *}
-«ENDIF-»
-    {/checkpermissionblock}
-«ENDIF-»
-«IF controller.hasActions('delete')-»
-    {checkpermissionblock component='«appName»::' instance='.*' level='ACCESS_DELETE'}
-            <a href="{modurl modname='«appName»' type='«controller.name()»' «modUrlDelete(objName, true)»}" title="{gt text='Delete'}">
-                {icon type='delete' size='extrasmall' __alt='Delete'}
-            </a>
-    {/checkpermissionblock}
-«ENDIF-»
+            {if count($«objName»._actions) gt 0}
+            {strip}
+                {foreach item='option' from=$«objName»._actions}
+                    <a href="{$option.url|safetext}" title="{$option.linkTitle|safetext}"{if $option.icon eq 'preview'} target="_blank"{/if}>
+                        {icon type=$option.icon size='extrasmall' alt=$option.linkText|safetext}
+                    </a>
+                {/foreach}
+            {/strip}
+            {/if}
 «IF listType < 2-»
         </li>
 «ELSEIF listType == 2-»

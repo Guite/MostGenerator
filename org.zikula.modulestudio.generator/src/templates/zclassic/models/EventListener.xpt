@@ -57,6 +57,7 @@
     {
         // echo 'loaded a record ...';
 «EXPAND PostLoadImpl-»
+        $this->prepareItemActions();
         return true;
     }
 «REM»«ENDDEFINE»«ENDREM»«""-»

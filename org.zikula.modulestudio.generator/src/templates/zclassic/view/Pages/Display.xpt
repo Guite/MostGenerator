@@ -158,38 +158,15 @@
 
 «DEFINE ItemActions(String appName, Controller controller) FOR Entity-»
 «LET name.formatForCode() AS objName-»
-<p>
-«IF controller.hasActions('edit')-»
-    {checkpermissionblock component='«appName»::' instance='.*' level='ACCESS_EDIT'}
-«IF !readOnly-»«REM»create is allowed, but editing not«ENDREM»
-        <a href="{modurl modname='«appName»' type='«controller.name()»' «modUrlEdit(objName, true)»}" title="{gt text='Edit'}" class="z-icon-es-edit">
-            {gt text='Edit'}
+{if count($«objName»._actions) gt 0}
+    <p>{strip}
+    {foreach item='option' from=$«objName»._actions}
+        <a href="{$option.url|safetext}" title="{$option.linkTitle|safetext}" class="z-icon-es-{$option.icon}">
+            {$option.linkText|safetext}
         </a>
-«ENDIF-»
-«IF tree != EntityTreeType::NONE-»
-    {*
-«ENDIF-»
-        <a href="{modurl modname='«appName»' type='«controller.name()»' «modUrlEdit(objName, true, 'astemplate')»}" title="{gt text='Reuse for new item'}" class="z-icon-es-saveas">
-            {gt text='Reuse'}
-        </a>
-«IF tree != EntityTreeType::NONE-»
-    *}
-«ENDIF-»
-    {/checkpermissionblock}
-«ENDIF-»
-«IF controller.hasActions('delete')-»
-    {checkpermissionblock component='«appName»::' instance='.*' level='ACCESS_DELETE'}
-        <a href="{modurl modname='«appName»' type='«controller.name()»' «modUrlDelete(objName, true)»}" title="{gt text='Delete'}" class="z-icon-es-delete">
-            {gt text='Delete'}
-        </a>
-    {/checkpermissionblock}
-«ENDIF-»
-«IF controller.hasActions('view')-»
-    <a href="{modurl modname='«appName»' type='«controller.name()»' func='view' ot='«objName»'}" title="{gt text='Back to overview'}" class="z-icon-es-back">
-        {gt text='Back to overview'}
-    </a>
-«ENDIF-»
-</p>
+    {/foreach}
+    {/strip}</p>
+{/if}
 «ENDLET-»
 «ENDDEFINE»
 
