@@ -55,7 +55,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
      */
     public function getAllowedSortingFields()
     {
-        return array(«EXPAND singleSortingField FOREACH fields SEPARATOR ','»«EXPAND standardSortingFields-»
+        return array(«EXPAND singleSortingField FOREACH fields SEPARATOR ','»«EXPAND extensionSortingFields-»
         );
     }
 
@@ -394,8 +394,17 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
                      '«name.formatForCode()»'«""-»
 «ENDDEFINE»
 
-«DEFINE standardSortingFields FOR Entity»
-«REM»will be filled by Advices (Aspect Orientation)«ENDREM»
+«DEFINE extensionSortingFields FOR Entity-»
+«IF geographical-»,
+                     'latitude',
+                     'longitude',
+«ENDIF-»
+«IF standardFields-»,
+                     'createdUserId',
+                     'updatedUserId',
+                     'createdDate',
+                     'updatedDate'
+«ENDIF-»
 «ENDDEFINE»
 
 
