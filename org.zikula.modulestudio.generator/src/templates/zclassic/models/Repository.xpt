@@ -129,7 +129,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 
         $query = $this->_intBaseQuery($where, '', $useJoins);
 
-        return $query->getSingleResult();
+        return $query->getOneOrNullResult();
     }
 
 «IF hasSluggableFields() && slugUnique-»
@@ -156,7 +156,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
         }
         $query = $this->_intBaseQuery($where, '', $useJoins);
 
-        return $query->getSingleResult();
+        return $query->getOneOrNullResult();
     }
 «ENDIF-»
 

@@ -252,7 +252,7 @@
                         case 'slug':
                                 $repository = $this->entityManager->getRepository($entityClass);
                                 $objectData = $repository->selectBySlug($slugTitle, false, $exclude);
-                                $result = (is_array($objectData) && isset($objectData['slug']));
+                                $result = ($objectData != null && isset($objectData['slug']));
                                 break;
 «ENDIF-»
                     }
@@ -301,8 +301,7 @@
 
         // assign object data fetched from the database
         $entity = $repository->selectById($id);
-
-        if ((!is_array($entity) && !is_object($entity)) || !isset($entity['id'])) {
+        if ($entity == null || !isset($entity['id'])) {
             return new Zikula_Response_Ajax_NotFound($this->__('No such item.'));
         }
 
