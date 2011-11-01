@@ -1,6 +1,8 @@
 «IMPORT modulestudio»
 «IMPORT templates::zclassic::smallstuff»
 «EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+«EXTENSION org::eclipse::xtend::util::stdlib::io»
 
 «DEFINE Root FOR Application»
 «LET appName() AS appName-»
@@ -28,6 +30,7 @@
 «IF controller.hasActions('delete')-»
     «EXPAND Pages::Delete::Impl(appName, controller) FOREACH models.entities-»
 «ENDIF-»
+«EXPAND CustomPage(this, appName, controller) FOREACH controller.actions.typeSelect(CustomAction)-»
 
 «IF controller.hasActions('display')-»
 «REM»«IF controller.hasActions('view') || controller.hasActions('display')-»
@@ -110,6 +113,38 @@
 «ENDIF-»
 {/if}
 
+«ENDFILE»
+«ENDDEFINE»
+
+«DEFINE CustomPage(Application app, String appName, Controller controller) FOR Action-»
+«ENDDEFINE»
+
+«DEFINE CustomPage(Application app, String appName, Controller controller) FOR CustomAction-»
+«info("Generating " + controller.name() + " templates for custom action \"" + name.formatForDisplay() + "\"") -> ""-»
+«FILE getAppSourcePath(appName).msconcat("templates/").msconcat(controller.name()).msconcat("/").msconcat(name.formatForCode().toFirstLower()).msconcat(".tpl")-»
+{* purpose of this template: show output of «name.formatForDisplay()» action in «controller.name()» area *}
+{include file='«controller.name()»/header.tpl'}
+<div class="«appName.toLowerCase()»-«name.formatForDB()» «appName.toLowerCase()»-«name.formatForDB()»">
+{gt text='«name.formatForDisplayCapital()»' assign='templateTitle'}
+{pagesetvar name='title' value=$templateTitle}
+«IF controller.metaType == AdminController-»
+<div class="z-admin-content-pagetitle">
+    {icon type='options' size='small' __alt='«name.formatForDisplayCapital()»'}
+    <h3>{$templateTitle}</h3>
+</div>
+«ELSE-»
+<div class="z-frontendcontainer">
+    <h2>{$templateTitle}</h2>
+«ENDIF-»
+
+    <p>Please override this template by moving it from <em>/modules/«appName»/templates/«controller.name()»/«name.formatForCode().toFirstLower()».tpl</em> to either your <em>/themes/YourTheme/templates/modules/«appName»/«controller.name()»/«name.formatForCode().toFirstLower()».tpl</em> or <em>/config/templates/«appName»/«controller.name()»/«name.formatForCode().toFirstLower()».tpl</em>.</p>
+
+«IF controller.metaType == AdminController-»
+«ELSE-»
+</div>
+«ENDIF-»
+</div>
+{include file='«controller.name()»/footer.tpl'}
 «ENDFILE»
 «ENDDEFINE»
 
