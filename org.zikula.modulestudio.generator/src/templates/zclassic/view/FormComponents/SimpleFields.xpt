@@ -167,7 +167,7 @@
             {if $mode ne 'create'}
                 {formdateinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Enter the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true«EXPAND Validation::FieldValidationCssClass»}
             {else}
-                {formdateinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Enter the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true defaultValue='now'«EXPAND Validation::FieldValidationCssClass»}
+                {formdateinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Enter the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' includeTime=true defaultValue='«IF defaultValue != null && defaultValue != '' && defaultValue != 'now'-»«defaultValue-»«ELSE-»now«ENDIF-»'«EXPAND Validation::FieldValidationCssClass»}
             {/if}
 «REM»TODO: visible=false«ENDREM»«""-»
 «IF !mandatory-»
@@ -179,7 +179,7 @@
             {if $mode ne 'create'}
                 {formdateinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Enter the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true«EXPAND Validation::FieldValidationCssClass»}
             {else}
-                {formdateinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Enter the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true defaultValue='today'«EXPAND Validation::FieldValidationCssClass»}
+                {formdateinput «EXPAND GroupAndId(groupSuffix, idSuffix)-» mandatory=«mandatory» __title='Enter the «name.formatForDisplay()» of the «entity.name.formatForDisplay()»' useSelectionMode=true defaultValue='«IF defaultValue != null && defaultValue != '' && defaultValue != 'now'-»«defaultValue-»«ELSE-»today«ENDIF-»'«EXPAND Validation::FieldValidationCssClass»}
             {/if}
 «IF !mandatory-»
             <p class="z-formnote"><a id="reset«name.formatForCodeCapital()»Val" href="javascript:void(0);" style="display: none">{gt text='Reset to empty value'}</a></p>

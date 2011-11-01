@@ -210,7 +210,8 @@ class «appName()»_Util_Base_Translatable extends Zikula_AbstractBase
 «ENDDEFINE»
 
 «DEFINE TranslatableFieldDefinition FOR AbstractDateField-»
-«EXPAND TranslatableFieldDefinitionNoDefault-»
+                    array('name' => '«name»',
+                          'default' => '«IF defaultValue != null && defaultValue != ''-»«defaultValue»«ENDIF-»')«''-»
 «ENDDEFINE»
 
 «DEFINE TranslatableFunctionsImpl FOR Application-»
