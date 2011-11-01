@@ -397,7 +397,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 «DEFINE extensionSortingFields FOR Entity-»
 «IF geographical-»,
                      'latitude',
-                     'longitude',
+                     'longitude'
 «ENDIF-»
 «IF standardFields-»,
                      'createdUserId',
