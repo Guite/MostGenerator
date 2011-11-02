@@ -434,7 +434,7 @@ cached getJoinRelations(Models this) :
 cached getOutgoingCollections(Entity this) :
     outgoing.typeSelect(OneToManyRelationship).union(outgoing.typeSelect(ManyToManyRelationship));
 cached getIncomingCollections(Entity this) :
-    outgoing.typeSelect(ManyToOneRelationship).select(e|e.bidirectional).union(outgoing.typeSelect(ManyToManyRelationship).select(e|e.bidirectional));
+    outgoing.typeSelect(ManyToOneRelationship).union(incoming.typeSelect(ManyToManyRelationship)).select(e|e.bidirectional == true);
 cached getCollections(Entity this) :
     getOutgoingCollections().union(getIncomingCollections());
 

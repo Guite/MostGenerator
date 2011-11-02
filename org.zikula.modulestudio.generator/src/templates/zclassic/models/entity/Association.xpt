@@ -252,9 +252,9 @@
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE InitCollection(Boolean useTarget) FOR JoinRelationship-»
-«IF isManySide(useTarget)-»
-        $this->«getRelationAliasName(useTarget)» = new ArrayCollection();
+«DEFINE InitCollection(Boolean outgoing) FOR JoinRelationship-»
+«IF isManySide(outgoing)-»
+        $this->«getRelationAliasName(outgoing)» = new ArrayCollection();
 «ENDIF-»
 «ENDDEFINE»
 
