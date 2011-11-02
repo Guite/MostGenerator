@@ -69,7 +69,7 @@ class «appName()»_Api_Selection extends «appName()»_Api_Base_Selection
 «ENDIF-»
         $useJoins = isset($args['useJoins']) ? ((bool) $args['useJoins']) : true;
 
-        $idFields = $this->getIdFields('ot' => $objectType);
+        $idFields = $this->getIdFields(array('ot' => $objectType));
 
 «IF hasSluggable()-»
         $entity = null;
