@@ -362,19 +362,19 @@ $«getRelationAliasName(false)», $«targetField.name.formatForCode()»
 «ENDFOREACH-»
 «ENDIF-»
 «LET getDerivedFields().select(e|e.mandatory) AS mandatoryFields-»
-«FOREACH mandatoryFields.typeSelect(IntegerField).select(e|e.defaultValue == '0') AS mandatoryField-»
+«FOREACH mandatoryFields.typeSelect(IntegerField).select(e|e.defaultValue == null || e.defaultValue == '' || e.defaultValue == '0') AS mandatoryField-»
         $this->«mandatoryField.name.formatForCode()» = 1;
 «ENDFOREACH-»
-«FOREACH mandatoryFields.typeSelect(UserField).select(e|e.defaultValue == '0') AS mandatoryField-»
+«FOREACH mandatoryFields.typeSelect(UserField).select(e|e.defaultValue == null || e.defaultValue == '' || e.defaultValue == '0') AS mandatoryField-»
         $this->«mandatoryField.name.formatForCode()» = UserUtil::getVar('uid');
 «ENDFOREACH-»
-«FOREACH mandatoryFields.typeSelect(DecimalField).select(e|e.defaultValue == '0') AS mandatoryField-»
+«FOREACH mandatoryFields.typeSelect(DecimalField).select(e|e.defaultValue == null || e.defaultValue == '' || e.defaultValue == '0') AS mandatoryField-»
         $this->«mandatoryField.name.formatForCode()» = 1;
 «ENDFOREACH-»
 «FOREACH mandatoryFields.typeSelect(AbstractDateField).select(e|e.defaultValue.length == 0) AS mandatoryField-»
         $this->«mandatoryField.name.formatForCode()» = «EXPAND DefaultAssignment FOR mandatoryField-»;
 «ENDFOREACH-»
-«FOREACH mandatoryFields.typeSelect(FloatField).select(e|e.defaultValue == '0') AS mandatoryField-»
+«FOREACH mandatoryFields.typeSelect(FloatField).select(e|e.defaultValue == null || e.defaultValue == '' || e.defaultValue == '0') AS mandatoryField-»
         $this->«mandatoryField.name.formatForCode()» = 1;
 «ENDFOREACH-»
 «ENDLET-»
