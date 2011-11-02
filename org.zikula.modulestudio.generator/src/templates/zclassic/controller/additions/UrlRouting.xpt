@@ -224,15 +224,14 @@ class «appName»_Base_RouterFacade
 «DEFINE GetSlugForItem FOR Entity-»
             case '«name.formatForCode()»':
 «IF hasSluggableFields()-»
-                        $entityClass = '«container.application.appName()»_Entity_' . ucfirst($objectType);
-                        $object = new $entityClass(); 
-                        $repository = $entityManager->getRepository($entityClass);
-
-                        $item = $repository->selectById($itemid);
+                        $item = ModUtil::apiFunc('«container.application.appName()»', 'selection', 'getEntity', array('ot' => $objectType, 'id' => $itemid));
 «IF slugUnique-»
                         $slug = $item['slug'];
 «ELSE-»
-                        $idFields = $object->get_idFields();
+                        // make non-unique slug unique by adding the identifier
+                        $idFields = ModUtil::apiFunc('«container.application.appName()»', 'selection', 'getIdFields', array('ot' => $objectType));
+
+                        // concatenate identifiers (for composite keys)
                         $itemId = '';
                         foreach ($idFields as $idField) {
                             $itemId .= ((!empty($itemId)) ? '_' : '') . $item[$idField];

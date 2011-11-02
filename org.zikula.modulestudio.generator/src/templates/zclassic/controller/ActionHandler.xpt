@@ -221,7 +221,11 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 return LogUtil::registerPermissionError();
             }
 
-«EXPAND ControllerHelper::retrieveEntityFromModel('idFields', 'this->idValues', true)-»
+            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $this->idValues));
+            if ($entity == null) {
+                return LogUtil::registerError($this->__('No such item.'));
+            }
+
 «IF hasPageLockSupport()-»
 
             // try to guarantee that only one person at a time can be editing this «name.formatForDisplay()»
@@ -261,7 +265,10 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                     $i++;
                 }
                 // reuse existing «name.formatForDisplay()»
-«EXPAND ControllerHelper::retrieveEntityFromModel('idFields', 'templateIdValues', true)-»
+                $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $templateIdValues));
+                if ($entity == null) {
+                    return LogUtil::registerError($this->__('No such item.'));
+                }
                 foreach ($idFields as $idField) {
                      $entity[$idField] = null;
                 }
@@ -431,9 +438,10 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             if ($args['commandName'] == 'create') {
 «FOREACH uniOwningAssociations AS uniOwningAssociation-»
                 if (!empty($this->«uniOwningAssociation.getRelationAliasName(false)»)) {
-                    $relObjRepository = $this->entityManager->getRepository('«uniOwningAssociation.source.implClassModelEntity()»');
-                    $relObj = $relObjRepository->selectById($this->«uniOwningAssociation.getRelationAliasName(false)»);
-                    $relObj->add«uniOwningAssociation.getRelationAliasName(true).toFirstUpper()»($«name.formatForCode()»);
+                    $relObj = ModUtil::apiFunc('«app.appName()»', 'selection', 'getEntity', array('ot' => '«uniOwningAssociation.source.name.formatForCode()»', 'id' => $this->«uniOwningAssociation.getRelationAliasName(false)»));
+                    if ($relObj != null) {
+                        $relObj->add«uniOwningAssociation.getRelationAliasName(true).toFirstUpper()»($«name.formatForCode()»);
+                    }
                 }
 «ENDFOREACH-»
                 $this->entityManager->flush();

@@ -1,20 +1,6 @@
 «IMPORT modulestudio»
 «EXTENSION extensions::Utils»
 
-«DEFINE retrieveEntityFromModel(String idVar, String idValue, Boolean isHandler) FOR Object-»
-«IF !isHandler-»
-        $objectData = $repository->selectById($«idValue»);
-        if ($objectData == null || !isset($objectData[$«idVar»[0]])) {
-            return $this->registerError($this->__('No such item.'));
-«ELSE-»
-        $entity = $repository->selectById($«idValue»);
-        if ($entity == null || !isset($entity[$«idVar»[0]])) {
-            return LogUtil::registerError($this->__('No such item.'));
-«ENDIF-»
-        }
-«ENDDEFINE»
-
-
 «DEFINE ControllerPostInitialize(Boolean caching) FOR Object-»
     /**
      * Post initialise.

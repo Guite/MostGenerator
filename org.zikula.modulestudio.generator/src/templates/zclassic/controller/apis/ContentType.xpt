@@ -96,12 +96,9 @@ function «appName()»_Api_ContentTypes_itemlist($args)
 
         $serviceManager = ServiceUtil::getManager();
         $entityManager = $serviceManager->getService('doctrine.entitymanager');
+        $repository = $entityManager->getRepository('«appName()»_Entity_' . ucfirst($this->objectType));
 
-        $entityClass = '«appName()»_Entity_' . ucfirst($this->objectType);
-        $repository = $entityManager->getRepository($entityClass);
-
-        $objectTemp = new $entityClass(); 
-        $idFields = $objectTemp->get_idFields();
+        $idFields = ModUtil::apiFunc('«appName()»', 'selection', 'getIdFields', array('ot' => $objectType));
 
         $sortParam = '';
         if ($this->sorting == 'random') {
@@ -124,7 +121,14 @@ function «appName()»_Api_ContentTypes_itemlist($args)
         $resultsPerPage = (($this->amount) ? $this->amount : 1);
 
         // get objects from database
-        list($objectData, $objectCount) = $repository->selectWherePaginated($this->filter, $sortParam, 1, $resultsPerPage);
+        $selectionArgs = array(
+            'ot' => $objectType,
+            'where' => $this->filter,
+            'orderBy' => $sortParam,
+            'currentPage' => 1,
+            'resultsPerPage' => $resultsPerPage
+        );
+        list($entities, $objectCount) = ModUtil::apiFunc('«appName()»', 'selection', 'getEntitiesPaginated', $selectionArgs);
 
         $this->view->setCaching(true);
 
@@ -133,7 +137,7 @@ function «appName()»_Api_ContentTypes_itemlist($args)
         // assign block vars and fetched data
         $this->view->assign('vars', $data)
                    ->assign('objectType', $this->objectType)
-                   ->assign('items', $objectData)
+                   ->assign('items', $entities)
                    ->assign($repository->getAdditionalTemplateParameters('contentType'));
 
         $output = '';

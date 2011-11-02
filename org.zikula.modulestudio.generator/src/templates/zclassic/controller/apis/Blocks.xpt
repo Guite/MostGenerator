@@ -110,12 +110,9 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
 
         $serviceManager = ServiceUtil::getManager();
         $entityManager = $serviceManager->getService('doctrine.entitymanager');
+        $repository = $entityManager->getRepository('«appName()»_Entity_' . ucfirst($objectType));
 
-        $entityClass = '«appName()»_Entity_' . ucfirst($objectType);
-        $repository = $entityManager->getRepository($entityClass);
-
-        $objectTemp = new $entityClass(); 
-        $idFields = $objectTemp->get_idFields();
+        $idFields = ModUtil::apiFunc('«appName()»', 'selection', 'getIdFields', array('ot' => $objectType));
 
         $sortParam = '';
         if ($vars['sorting'] == 'random') {
@@ -137,14 +134,21 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
         }
 
         // get objects from database
-        list($objectData, $objectCount) = $repository->selectWherePaginated($vars['filter'], $sortParam, 1, $vars['amount']);
+        $selectionArgs = array(
+            'ot' => $objectType,
+            'where' => $vars['filter'],
+            'orderBy' => $sortParam,
+            'currentPage' => 1,
+            'resultsPerPage' => $vars['amount']
+        );
+        list($entities, $objectCount) = ModUtil::apiFunc('«appName()»', 'selection', 'getEntitiesPaginated', $selectionArgs);
 
         $this->view->setCaching(true);
 
         // assign block vars and fetched data
         $this->view->assign('vars', $vars)
                    ->assign('objectType', $objectType)
-                   ->assign('items', $objectData)
+                   ->assign('items', $entities)
                    ->assign($repository->getAdditionalTemplateParameters('block'));
 
         // set a block title
@@ -156,17 +160,13 @@ class «appName()»_Block_ItemList extends «appName()»_Block_Base_ItemList
         $templateForObjectType = str_replace('itemlist_', 'itemlist_' . ucwords($objectType) . '_', $vars['template']);
         if ($this->view->template_exists('contenttype/' . $templateForObjectType)) {
             $output = $this->view->fetch('contenttype/' . $templateForObjectType);
-        }
-        elseif ($this->view->template_exists('contenttype/' . $vars['template'])) {
+        } elseif ($this->view->template_exists('contenttype/' . $vars['template'])) {
             $output = $this->view->fetch('contenttype/' . $vars['template']);
-        }
-        elseif ($this->view->template_exists('block/' . $templateForObjectType)) {
+        } elseif ($this->view->template_exists('block/' . $templateForObjectType)) {
             $output = $this->view->fetch('block/' . $templateForObjectType);
-        }
-        elseif ($this->view->template_exists('block/' . $vars['template'])) {
+        } elseif ($this->view->template_exists('block/' . $vars['template'])) {
             $output = $this->view->fetch('block/' . $vars['template']);
-        }
-        else {
+        } else {
             $output = $this->view->fetch('block/itemlist.tpl');
         }
 

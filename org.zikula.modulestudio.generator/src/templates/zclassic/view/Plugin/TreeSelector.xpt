@@ -144,13 +144,13 @@ class «appName()»_Form_Plugin_TreeSelector extends Zikula_Form_Plugin_Dropdown
 
         $serviceManager = ServiceUtil::getManager();
         $entityManager = $serviceManager->getService('doctrine.entitymanager');
-        $entityClass = '«appName()»_Entity_' . ucfirst($this->objectType);
-        $repository = $entityManager->getRepository($entityClass);
+        $repository = $entityManager->getRepository('«appName()»_Entity_' . ucfirst($this->objectType));
 
-        $objectTemp = new $entityClass(); 
-        $idFields = $objectTemp->get_idFields();
+        $apiArgs = array('ot' => $this->objectType);
+        $idFields = ModUtil::apiFunc('«appName()»', 'selection', 'getIdFields', $apiArgs);
 
-        $treeNodes = $repository->selectTree($this->root);
+        $apiArgs['rootId'] = $this->root;
+        $treeNodes = ModUtil::apiFunc('«appName()»', 'selection', 'getTree', $apiArgs);
         if (!$treeNodes) {
             $treeNodes = array();
         }
@@ -158,20 +158,30 @@ class «appName()»_Form_Plugin_TreeSelector extends Zikula_Form_Plugin_Dropdown
         foreach ($treeNodes as $node) {
             $nodeLevel = $node->getLvl();
             if (!$includeRoot && $nodeLevel == 0) {
+                // if we do not include the root node skip it
                 continue;
-            } elseif (!$includeLeaf && $repository->childCount($node) == 0) {
+            }
+            if (!$includeLeaf && $repository->childCount($node) == 0) {
+                // if we do not include leaf nodes skip them
                 continue;
             }
 
+            // determine current list hierarchy level depending on root node inclusion
             $shownLevel = (($includeRoot) ? $nodeLevel : $nodeLevel - 1);
+
+            // create the visible text for this entry
             $itemLabel = str_repeat('- - ', $shownLevel) . $node[$this->displayField];
             if (!empty($this->displayFieldTwo)) {
                 $itemLabel .= ' (' . $node[$this->displayFieldTwo] . ')';
             }
+
+            // create concatenated list of identifiers (for composite keys)
             $itemId = '';
             foreach ($idFields as $idField) {
                 $itemId .= ((!empty($itemId)) ? '_' : '') . $node[$idField];
             }
+
+            // add entity to selector list entries
             $this->addItem($itemLabel, $itemId);
         }
 

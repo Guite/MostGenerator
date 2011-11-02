@@ -81,14 +81,11 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
      */
     protected function retrieveRelatedObjects($objectType, $relationInputFieldName, $many = false, $source = 'GET')
     {
-        $entityClass = '«app.appName()»_Entity_' . ucfirst($objectType);
-        $repository = $this->entityManager->getRepository($entityClass);
+        $repository = $this->entityManager->getRepository('«app.appName()»_Entity_' . ucfirst($objectType));
 
-        $objectTemp = new $entityClass(); 
-        $idFields = $objectTemp->get_idFields();
+        $idFields = ModUtil::apiFunc('«app.appName()»', 'selection', 'getIdFields', array('ot' => $objectType));
 
         $where = '';
-        $sortParam = $repository->getDefaultSortingField() . ' asc';
 
         $inputValue = '';
         if ($source == 'POST') {
@@ -115,8 +112,15 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
             }
             $i++;
         }
-        list($result, $resultCount) = $repository->selectWherePaginated($where, $sortParam, 1, 50);
-        return (($many) ? $result : $result[0]);
+        $selectionArgs = array(
+            'ot' => $objectType,
+            'where' => $where,
+            'orderBy' => $repository->getDefaultSortingField() . ' asc',
+            'currentPage' => 1,
+            'resultsPerPage' => 50
+        );
+        list($entities, $objectCount) = ModUtil::apiFunc('«app.appName()»', 'selection', 'getEntitiesPaginated', $selectionArgs);
+        return (($many) ? $entities : $entities[0]);
     }
 «ENDDEFINE»
 
@@ -159,9 +163,7 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
             return;
         }
 
-        $entityClass = '«container.application.appName()»_Entity_' . ucfirst('«objectType»');
-        $objectTemp = new $entityClass();
-        $idFields = $entityClass->get_idFields();
+        $idFields = ModUtil::apiFunc('«container.application.appName()»', 'selection', 'getIdFields', array('ot' => '«objectType»'));
 
         $relatedIdValues = array();
         foreach ($idFields as $idField) {
@@ -176,7 +178,6 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
             }
         }
 
-        $repository = $this->entityManager->getRepository($entityClass);
         $where = '';
         foreach ($idFields as $idField) {
             if (!empty($where)) {
@@ -184,7 +185,7 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
             }
             $where .= $idField . ' IN (' . implode(', ', $relatedIdValues[$idField]) . ')';
         }
-        $linkObjects = $repository->selectWhere($where);
+        $linkObjects = ModUtil::apiFunc('«container.application.appName()»', 'selection', 'getEntities', array('ot' => '«objectType»', 'where' => $where));
         // create new links
         foreach ($linkObjects as $relatedObject) {
 «IF many-»

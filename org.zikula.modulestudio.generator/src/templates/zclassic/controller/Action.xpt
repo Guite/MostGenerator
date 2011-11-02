@@ -16,8 +16,8 @@
 
 «DEFINE ActionDoc(Application app) FOR Action-»
 «IF metaType == MainAction-»
-     * This method is the default function, and is called whenever the
-     * module's «controller.name.formatForCode()» area is called without defining arguments.
+     * This method is the default function, and is called whenever the application's
+     * «controller.name.formatForCode()» area is called without defining arguments.
 «ELSEIF metaType == ViewAction-»
      * This method provides a generic item list overview.
 «ELSEIF metaType == DisplayAction-»
@@ -33,7 +33,7 @@
 «IF metaType == ViewAction || metaType == DisplayAction || metaType == EditAction || metaType == DeleteAction-»
      * @param string  $ot           Treated object type.
 «IF metaType == DeleteAction-»
-     * @param int     $id           ID of the entry.
+     * @param int     $id           Identifier of entity to be deleted.
      * @param boolean $confirmation Confirm the deletion, else a confirmation page is displayed.
 «ENDIF-»
 «IF metaType == ViewAction-»
@@ -97,12 +97,12 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR ViewAction-»
-        $entityClass = '«appName»_Entity_' . ucfirst($objectType);
-        $repository = $this->entityManager->getRepository($entityClass);
+        $repository = $this->entityManager->getRepository('«appName»_Entity_' . ucfirst($objectType));
 
         $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : $this->request->getGet()->filter('tpl', '', FILTER_SANITIZE_STRING);
         if ($tpl == 'tree') {
-            $this->view->assign('trees', $repository->selectAllTrees())
+            $trees = ModUtil::apiFunc($this->name, 'selection', 'getAllTrees', array('ot' => $objectType));
+            $this->view->assign('trees', $trees)
                        ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
             // fetch and return the appropriate template
             return «appName»_Util_View::processTemplate($this->view, '«controller.name()»', $objectType, 'view', $args);
@@ -120,16 +120,20 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         }
 
         // convenience vars to make code clearer
-        $where = '';
-        $sortParam = $sort . ' ' . $sdir;
         $currentUrlArgs = array('ot' => $objectType);
+
+        $selectionArgs = array(
+            'ot' => $objectType,
+            'where' => '',
+            'orderBy' => $sort . ' ' . $sdir
+        );
 
         $showAllEntries = (int) (isset($args['all']) && !empty($args['all'])) ? $args['all'] : $this->request->getGet()->filter('all', 0, FILTER_VALIDATE_INT);
         $this->view->assign('showAllEntries', $showAllEntries);
         if ($showAllEntries == 1) {
             // item list without pagination
-            $objectData = $repository->selectWhere($where, $sortParam);
-            $objectCount = count($objectData);
+            $entities = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
+            $objectCount = count($entities);
             $currentUrlArgs['all'] = 1;
         } else {
             // item list with pagination
@@ -144,7 +148,9 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
                 $resultsPerPage = ($csv == 1) ? 999999 : $this->getVar('pagesize', 10);
             }
 
-            list($objectData, $objectCount) = $repository->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
+            $selectionArgs['currentPage'] = $currentPage;
+            $selectionArgs['resultsPerPage'] = $resultsPerPage;
+            list($entities, $objectCount) = ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
 
             $this->view->assign('currentPage', $currentPage)
                        ->assign('pager', array('numitems'     => $objectCount,
@@ -152,10 +158,10 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         }
 
         // build ModUrl instance for display hooks
-        $currentUrlObject = new Zikula_ModUrl('«appName»', '«controller.name()»', 'view', ZLanguage::getLanguageCode(), $currentUrlArgs);
+        $currentUrlObject = new Zikula_ModUrl($this->name, '«controller.name()»', 'view', ZLanguage::getLanguageCode(), $currentUrlArgs);
 
         // assign the object data, sorting information and details for creating the pager
-        $this->view->assign('items', $objectData)
+        $this->view->assign('items', $entities)
                    ->assign('sort', $sort)
                    ->assign('sdir', $sdir)
                    ->assign('currentUrlObject', $currentUrlObject)
@@ -167,12 +173,9 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 
 
 «DEFINE ActionImplBody(String appName) FOR DisplayAction-»
-        $entityClass = '«appName»_Entity_' . ucfirst($objectType);
-        $repository = $this->entityManager->getRepository($entityClass);
+        $repository = $this->entityManager->getRepository('«appName»_Entity_' . ucfirst($objectType));
 
-        $objectTemp = new $entityClass(); 
-        $idFields = $objectTemp->get_idFields();
-        $idValues = array();
+        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
         // retrieve identifier of the object we wish to view
         $idValues = «appName»_Util_Controller::retrieveIdentifier($this->request, $args, $objectType, $idFields);
@@ -183,41 +186,30 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
         $hasSlug = false;
         $slugTitle = '';
         if ($hasIdentifier === false) {
+            $entityClass = '«appName»_Entity_' . ucfirst($objectType);
+            $objectTemp = new $entityClass();
             $hasSlug = $objectTemp->get_hasUniqueSlug();
             if ($hasSlug) {
                 $slugTitle = (isset($args['title']) && !empty($args['title'])) ? $args['title'] : $this->request->getGet()->filter('title', '', FILTER_SANITIZE_STRING);
                 $hasSlug = (!empty($slugTitle));
             }
         }
-
-        $this->throwNotFoundUnless(($hasIdentifier || $hasSlug), $this->__('Error! Invalid identifier received.'));
-
-        // fetch object data from data source
-        $objectData = null;
-        if ($hasSlug) {
-            $objectData = $repository->selectBySlug($slugTitle);
-        } else {
-            $objectData = $repository->selectById($idValues);
-        }
-«ELSE-»
+        $hasIdentifier |= $hasSlug;
+«ENDIF-»
         $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
 
-        // fetch object data from data source
-        $objectData = $repository->selectById($idValues);
-«ENDIF-»
-        if ($objectData == null || !isset($objectData[$idFields[0]])) {
-            $this->throwNotFound($this->__('No such item.'));
-        }
+        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues«IF controller.metaType == UserController-», 'slug' => $slugTitle«ENDIF-»));
+        $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
 
         // build ModUrl instance for display hooks
         $currentUrlArgs = array('ot' => $objectType);
         foreach ($idFields as $idField) {
             $currentUrlArgs[$idField] = $idValues[$idField];
         }
-        $currentUrlObject = new Zikula_ModUrl('«appName»', '«controller.name()»', 'display', ZLanguage::getLanguageCode(), $currentUrlArgs);
+        $currentUrlObject = new Zikula_ModUrl($this->name, '«controller.name()»', 'display', ZLanguage::getLanguageCode(), $currentUrlArgs);
 
         // assign output data to view object.
-        $this->view->assign($objectType, $objectData)
+        $this->view->assign($objectType, $entity)
                    ->assign('currentUrlObject', $currentUrlObject)
                    ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
@@ -238,52 +230,42 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR DeleteAction-»
-        $entityClass = '«appName»_Entity_' . ucfirst($objectType);
-        $repository = $this->entityManager->getRepository($entityClass);
-
-        $objectTemp = new $entityClass(); 
-        $idFields = $objectTemp->get_idFields();
-        $idValues = array();
-
         // retrieve identifier of the object we wish to delete
         $idValues = «appName»_Util_Controller::retrieveIdentifier($this->request, $args, $objectType, $idFields);
         $hasIdentifier = «appName»_Util_Controller::isValidIdentifier($idValues);
 
         $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
 
+        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
+        $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
+
         $confirmation = (bool) (isset($args['confirmation']) && !empty($args['confirmation'])) ? $args['confirmation'] : $this->request->getPost()->filter('confirmation', false, FILTER_VALIDATE_BOOLEAN);
 
         if ($confirmation) {
             $this->checkCsrfToken();
 
-            $object = $repository->selectById($idValues);
-
             // TODO call pre delete validation hooks
-
-            $this->entityManager->remove($object);
+            $this->entityManager->remove($entity);
             $this->entityManager->flush();
-
             $this->registerStatus($this->__('Done! Item deleted.'));
-
             // TODO call post delete process hooks
 
             // clear view cache to reflect our changes
             $this->view->clear_cache();
-        } else {
-    «EXPAND ControllerHelper::retrieveEntityFromModel("idFields", "idValues", false)-»
 
-            // assign the object we loaded above
-            $this->view->assign($objectType, $objectData)
-                       ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
-
-            // fetch and return the appropriate template
-            return «appName»_Util_View::processTemplate($this->view, '«controller.name()»', $objectType, 'delete', $args);
+            // redirect to the «IF controller.hasActions('view')-»list of the current object type«ELSE-»main page«ENDIF»
+            $this->redirect(ModUtil::url($this->name, '«controller.name()»', «IF controller.hasActions('view')-»'view',
+                                                                                        array('ot' => $objectType)«ELSE-»'main'«ENDIF-»));
         }
 
-        // redirect to the «IF controller.hasActions('view')-»list of the current object type«ELSE-»main page«ENDIF»
-        $this->redirect(ModUtil::url('«appName»', '«controller.name()»', «IF controller.hasActions('view')-»'view',
-                                                                                    array('ot' => $objectType)«ELSE-»'main'«ENDIF-»));
+        $repository = $this->entityManager->getRepository('«appName»_Entity_' . ucfirst($objectType));
 
+        // assign the object we loaded above
+        $this->view->assign($objectType, $entity)
+                   ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
+
+        // fetch and return the appropriate template
+        return «appName»_Util_View::processTemplate($this->view, '«controller.name()»', $objectType, 'delete', $args);
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR CustomAction-»

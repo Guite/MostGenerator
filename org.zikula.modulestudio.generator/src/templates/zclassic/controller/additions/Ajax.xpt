@@ -81,11 +81,8 @@
             $objectType = «app.appName()»_Util_Controller::getDefaultObjectType('controllerAction', array('controller' => '«name()»', 'action' => 'getItemList'));
         }
 
-        $entityClass = '«app.appName()»_Entity_' . ucfirst($objectType);
-        $repository = $this->entityManager->getRepository($entityClass);
-
-        $objectTemp = new $entityClass(); 
-        $idFields = $objectTemp->get_idFields();
+        $repository = $this->entityManager->getRepository('«app.appName()»_Entity_' . ucfirst($objectType));
+        $idFields = ModUtil::apiFunc('«app.appName()»', 'selection', 'getIdFields', array('ot' => $objectType));
 
         $fragment = '';
         $exclude = '';
@@ -108,10 +105,10 @@
         $resultsPerPage = 20;
 
         // get objects from database
-        list($objectData, $objectCount) = $repository->selectSearch($fragment, $exclude, $sortParam, $currentPage, $resultsPerPage);
+        list($entities, $objectCount) = $repository->selectSearch($fragment, $exclude, $sortParam, $currentPage, $resultsPerPage);
 
         $out = '<ul>';
-        if ((is_array($objectData) || is_object($objectData)) && count($objectData) > 0) {
+        if ((is_array($entities) || is_object($entities)) && count($entities) > 0) {
             $titleFieldName = $descriptionFieldName = '';
 
             switch ($objectType) {
@@ -143,7 +140,7 @@
             $thumbWidth = 100;
             $thumbHeight = 80;
 «ENDIF-»
-            foreach ($objectData as $item) {
+            foreach ($entities as $item) {
                 // class="informal" --> show in dropdown, but do not copy in the input field after selection
                 $itemTitle = ((!empty($titleFieldName)) ? $item[$titleFieldName] : $this->__('Item'));
                 $itemTitleStripped = str_replace('"', '', $itemTitle);
@@ -251,8 +248,8 @@
 «IF entity.hasSluggableFields() && entity.slugUnique-»
                         case 'slug':
                                 $repository = $this->entityManager->getRepository($entityClass);
-                                $objectData = $repository->selectBySlug($slugTitle, false, $exclude);
-                                $result = ($objectData != null && isset($objectData['slug']));
+                                $entity = $repository->selectBySlug($slugTitle, false, $exclude);
+                                $result = ($entity != null && isset($entity['slug']));
                                 break;
 «ENDIF-»
                     }
@@ -296,12 +293,9 @@
             return new Zikula_Response_Ajax_BadData($this->__('Error: invalid input.'));
         }
 
-        $entityClass = '«app.appName()»_Entity_' . ucfirst($objectType);
-        $repository = $this->entityManager->getRepository($entityClass);
-
-        // assign object data fetched from the database
-        $entity = $repository->selectById($id);
-        if ($entity == null || !isset($entity['id'])) {
+        // select data from data source
+        $entity = ModUtil::apiFunc('«app.appName()», 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id));
+        if ($entity == null) {
             return new Zikula_Response_Ajax_NotFound($this->__('No such item.'));
         }
 
@@ -375,7 +369,7 @@
         // Select tree
         $tree = null;
         if (!in_array($op, array('addRootNode'))) {
-            $tree = $repository->selectTree($rootId);
+            $tree = ModUtil::apiFunc('«app.appName()»', 'selection', 'getTree', array('ot' => $objectType, 'rootId' => $rootId));
         }
 
         // verification and recovery of tree
@@ -435,24 +429,30 @@
                             }
 
                             //$this->entityManager->transactional(function($entityManager) {
-                                $childObject = new $entityClass();
+                                $childEntity = new $entityClass();
                                 $objectData = array();
                                 $objectData[$titleFieldName] = $this->__('New child node');
                                 if (!empty($descriptionFieldName)) {
                                     $objectData[$descriptionFieldName] = $this->__('This is a new child node');
                                 }
-                                $childObject->merge($objectData);
+                                $childEntity->merge($objectData);
 
-                                //$childObject->setParent($parentRecord);
-                                $parentObject = $repository->selectById($parentId, false);
-                                $repository->persistAsLastChildOf($childObject, $parentObject);
+                                //$childEntity->setParent($parentEntity);
+                                $parentEntity = ModUtil::apiFunc('«app.appName()», 'selection', 'getEntity', array('ot' => $objectType, 'id' => $parentId, 'useJoins' => false));
+                                if ($parentEntity == null) {
+                                    return new Zikula_Response_Ajax_NotFound($this->__('No such item.'));
+                                }
+                                $repository->persistAsLastChildOf($childEntity, $parentEntity);
                             //});
                             $this->entityManager->flush();
                             break;
             case 'deleteNode':
                             // remove node from tree and reparent all children
-                            $record = $repository->selectById($id, false);
-                            $repository->removeFromTree($record);
+                            $entity = ModUtil::apiFunc('«app.appName()», 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
+                            if ($entity == null) {
+                                return new Zikula_Response_Ajax_NotFound($this->__('No such item.'));
+                            }
+                            $repository->removeFromTree($entity);
                             $this->entityManager->clear(); // clear cached nodes
                             break;
             case 'moveNode':
@@ -462,13 +462,15 @@
                                 throw new Zikula_Exception_Ajax_Fatal();
                             }
 
-                            $record = $repository->selectById($id, false);
+                            $entity = ModUtil::apiFunc('«app.appName()», 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
+                            if ($entity == null) {
+                                return new Zikula_Response_Ajax_NotFound($this->__('No such item.'));
+                            }
 
                             if ($moveDirection == 'up') {
-                                $repository->moveUp($record, 1);
-                            }
-                            else if ($moveDirection == 'down') {
-                                $repository->moveDown($record, 1);
+                                $repository->moveUp($entity, 1);
+                            } else if ($moveDirection == 'down') {
+                                $repository->moveDown($entity, 1);
                             }
                             $this->entityManager->flush();
 
@@ -487,17 +489,18 @@
                             }
 
                             //$this->entityManager->transactional(function($entityManager) {
-                                $record = $repository->selectById($id, false);
-                                $destRecord = $repository->selectById($destId, false);
+                                $entity = ModUtil::apiFunc('«app.appName()», 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
+                                $destEntity = ModUtil::apiFunc('«app.appName()», 'selection', 'getEntity', array('ot' => $objectType, 'id' => $destId, 'useJoins' => false));
+                                if ($entity == null || $destEntity == null) {
+                                    return new Zikula_Response_Ajax_NotFound($this->__('No such item.'));
+                                }
 
                                 if ($moveDirection == 'after') {
-                                    $repository->persistAsNextSiblingOf($record, $destRecord);
-                                }
-                                elseif ($moveDirection == 'before') {
-                                    $repository->persistAsPrevSiblingOf($record, $destRecord);
-                                }
-                                elseif ($moveDirection == 'bottom') {
-                                    $repository->persistAsLastChildOf($record, $destRecord);
+                                    $repository->persistAsNextSiblingOf($entity, $destEntity);
+                                } elseif ($moveDirection == 'before') {
+                                    $repository->persistAsPrevSiblingOf($entity, $destEntity);
+                                } elseif ($moveDirection == 'bottom') {
+                                    $repository->persistAsLastChildOf($entity, $destEntity);
                                 }
                                 $this->entityManager->flush();
                             //});
@@ -508,7 +511,7 @@
 
         // Renew tree
         /** postponed, for now we do a page reload
-        $returnValue['data'] = $repository->selectTree($rootId);
+        $returnValue['data'] = ModUtil::apiFunc('«app.appName()»', 'selection', 'getTree', array('ot' => $objectType, 'rootId' => $rootId));
         */
 
         return new Zikula_Response_Ajax($returnValue);
