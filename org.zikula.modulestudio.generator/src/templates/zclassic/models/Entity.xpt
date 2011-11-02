@@ -365,6 +365,9 @@ $«getRelationAliasName(false)», $«targetField.name.formatForCode()»
 «FOREACH mandatoryFields.typeSelect(IntegerField).select(e|e.defaultValue == '0') AS mandatoryField-»
         $this->«mandatoryField.name.formatForCode()» = 1;
 «ENDFOREACH-»
+«FOREACH mandatoryFields.typeSelect(UserField).select(e|e.defaultValue == '0') AS mandatoryField-»
+        $this->«mandatoryField.name.formatForCode()» = UserUtil::getVar('uid');
+«ENDFOREACH-»
 «FOREACH mandatoryFields.typeSelect(DecimalField).select(e|e.defaultValue == '0') AS mandatoryField-»
         $this->«mandatoryField.name.formatForCode()» = 1;
 «ENDFOREACH-»
