@@ -540,6 +540,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         if (in_array($args['commandName'], array('create', 'update'))) {
 «FOREACH userFields AS userField-»
             $«obj»Data['«userField.name.formatForCode()»'] = (int) $this->request->getPost()->filter('«userField.name.formatForCode()»', 0, FILTER_VALIDATE_INT);
+            unset($«obj»Data['«userField.name.formatForCode()»Selector']);
 «ENDFOREACH-»
 «IF !uploadFields.isEmpty-»
             $«obj»Data = $this->handleUploads($«obj»Data, $«name.formatForCode()»);
