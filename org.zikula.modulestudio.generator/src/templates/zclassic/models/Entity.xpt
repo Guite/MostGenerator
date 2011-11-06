@@ -232,7 +232,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
             if ($currentFunc == 'view') {
 «IF controller.metaType == AdminController && container.application.hasUserController() && container.application.getUserController().hasActions('display')-»
                     $this->_actions[] = array(
-                        'url' => ModUtil::url('«appName»', 'user', «modUrlDisplay(objName, false)»),
+                        'url' => ModUtil::url('«appName»', 'user', «modUrlDisplay('this', false)»),
                         'icon' => 'preview',
                         'linkTitle' => __('Open preview page', $dom),
                         'linkText' => __('Preview', $dom)
@@ -241,7 +241,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «IF controller.hasActions('display')-»
 «LET getLeadingField() AS leadingField-»
                     $this->_actions[] = array(
-                        'url' => ModUtil::url('«appName»', '«controller.name()»', «modUrlDisplay(objName, false)»),
+                        'url' => ModUtil::url('«appName»', '«controller.name()»', «modUrlDisplay('this', false)»),
                         'icon' => 'display',
                         'linkTitle' => «IF leadingField != null-»str_replace('"', '', $this['«leadingField.name.formatForCode()»'])«ELSE-»__('Open detail page', $dom)«ENDIF-»,
                         'linkText' => __('Details', $dom)
@@ -257,7 +257,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
                 if (SecurityUtil::checkPermission('«appName»::', '.*', ACCESS_EDIT)) {
 «IF !readOnly-»«REM»create is allowed, but editing not«ENDREM»
                     $this->_actions[] = array(
-                        'url' => ModUtil::url('«appName»', '«controller.name()»', «modUrlEdit(objName, false)»),
+                        'url' => ModUtil::url('«appName»', '«controller.name()»', «modUrlEdit('this', false)»),
                         'icon' => 'edit',
                         'linkTitle' => __('Edit', $dom),
                         'linkText' => __('Edit', $dom)
@@ -267,7 +267,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
                     /*
 «ENDIF-»
                     $this->_actions[] = array(
-                        'url' => ModUtil::url('«appName»', '«controller.name()»', «modUrlEdit(objName, false, 'astemplate')»),
+                        'url' => ModUtil::url('«appName»', '«controller.name()»', «modUrlEdit('this', false, 'astemplate')»),
                         'icon' => 'saveas',
                         'linkTitle' => __('Reuse for new item', $dom),
                         'linkText' => __('Reuse', $dom)
@@ -280,7 +280,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «IF controller.hasActions('delete')-»
                 if (SecurityUtil::checkPermission('«appName»::', '.*', ACCESS_DELETE)) {
                     $this->_actions[] = array(
-                        'url' => ModUtil::url('«appName»', '«controller.name()»', «modUrlDelete(objName, false)»),
+                        'url' => ModUtil::url('«appName»', '«controller.name()»', «modUrlDelete('this', false)»),
                         'icon' => 'delete',
                         'linkTitle' => __('Delete', $dom),
                         'linkText' => __('Delete', $dom)
