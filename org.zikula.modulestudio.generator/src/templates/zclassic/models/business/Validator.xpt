@@ -298,91 +298,105 @@ abstract class «baseClassDefault(this, '', 'Validator')» extends Zikula_Abstra
     /**
      * Checks if field value has a value in the past.
      *
-     * @param string $fieldName The name of the property to be checked
-     * @param string $format    The date format used for comparison
+     * @param string  $fieldName The name of the property to be checked
+     * @param string  $format    The date format used for comparison
+     * @param boolean $mandatory Whether the property is mandatory or not.
      * @return boolean result of this check
      */
-    protected function isDateTimeValueInPast($fieldName, $format)
+    protected function isDateTimeValueInPast($fieldName, $format, $mandatory = true)
     {
+        if ($mandatory === false) {
+        	return true;
+    	}
         return ($this->isValidDateTime($fieldName) && $this->entity[$fieldName]->format($format) < date($format));
     }
 
     /**
      * Checks if field value has a value in the future.
      *
-     * @param string $fieldName The name of the property to be checked
-     * @param string $format    The date format used for comparison
+     * @param string  $fieldName The name of the property to be checked
+     * @param string  $format    The date format used for comparison
+     * @param boolean $mandatory Whether the property is mandatory or not.
      * @return boolean result of this check
      */
-    protected function isDateTimeValueInFuture($fieldName, $format)
+    protected function isDateTimeValueInFuture($fieldName, $format, $mandatory = true)
     {
+        if ($mandatory === false) {
+        	return true;
+    	}
         return ($this->isValidDateTime($fieldName) && $this->entity[$fieldName]->format($format) > date($format));
     }
 
     /**
      * Checks if field value is a datetime in the past.
      *
-     * @param string $fieldName The name of the property to be checked
+     * @param string  $fieldName The name of the property to be checked
+     * @param boolean $mandatory Whether the property is mandatory or not.
      * @return boolean result of this check
      */
-    public function isDateTimeInPast($fieldName)
+    public function isDateTimeInPast($fieldName, $mandatory = true)
     {
-        return $this->isDateTimeValueInPast($fieldName, 'U');
+        return $this->isDateTimeValueInPast($fieldName, 'U', $mandatory);
     }
 
     /**
      * Checks if field value is a datetime in the future.
      *
-     * @param string $fieldName The name of the property to be checked
+     * @param string  $fieldName The name of the property to be checked
+     * @param boolean $mandatory Whether the property is mandatory or not.
      * @return boolean result of this check
      */
-    public function isDateTimeInFuture($fieldName)
+    public function isDateTimeInFuture($fieldName, $mandatory = true)
     {
-        return $this->isDateTimeValueInFuture($fieldName, 'U');
+        return $this->isDateTimeValueInFuture($fieldName, 'U', $mandatory);
     }
 
     /**
      * Checks if field value is a date in the past.
      *
-     * @param string $fieldName The name of the property to be checked
+     * @param string  $fieldName The name of the property to be checked
+     * @param boolean $mandatory Whether the property is mandatory or not.
      * @return boolean result of this check
      */
-    public function isDateInPast($fieldName)
+    public function isDateInPast($fieldName, $mandatory = true)
     {
-        return $this->isDateTimeValueInPast($fieldName, 'Ymd');
+        return $this->isDateTimeValueInPast($fieldName, 'Ymd', $mandatory);
     }
 
     /**
      * Checks if field value is a date in the future.
      *
-     * @param string $fieldName The name of the property to be checked
+     * @param string  $fieldName The name of the property to be checked
+     * @param boolean $mandatory Whether the property is mandatory or not.
      * @return boolean result of this check
      */
-    public function isDateInFuture($fieldName)
+    public function isDateInFuture($fieldName, $mandatory = true)
     {
-        return $this->isDateTimeValueInFuture($fieldName, 'Ymd');
+        return $this->isDateTimeValueInFuture($fieldName, 'Ymd', $mandatory);
     }
 
     /**
      * Checks if field value is a time in the past.
      *
-     * @param string $fieldName The name of the property to be checked
+     * @param string  $fieldName The name of the property to be checked
+     * @param boolean $mandatory Whether the property is mandatory or not.
      * @return boolean result of this check
      */
-    public function isTimeInPast($fieldName)
+    public function isTimeInPast($fieldName, $mandatory = true)
     {
-        return $this->isDateTimeValueInPast($fieldName, 'His');
+        return $this->isDateTimeValueInPast($fieldName, 'His', $mandatory);
     }
 
     /**
      * Checks if field value is a time in the future.
      *
-     * @param string $fieldName The name of the property to be checked
+     * @param string  $fieldName The name of the property to be checked
+     * @param boolean $mandatory Whether the property is mandatory or not.
      * @return boolean result of this check
      */
-    public function isTimeInFuture($fieldName)
+    public function isTimeInFuture($fieldName, $mandatory = true)
     {
-        return $this->isDateTimeValueInFuture($fieldName, 'His');
+        return $this->isDateTimeValueInFuture($fieldName, 'His', $mandatory);
     }
 }
 «ENDDEFINE»
@@ -721,10 +735,12 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
 «DEFINE ValidationCalls FOR ObjectField-»
 «ENDDEFINE»
 «DEFINE ValidationCallsDateTime FOR AbstractDateField-»
+«IF mandatory-»
         if (!$this->isValidDateTime('«name.formatForCode()»')) {
             $errorInfo['message'] = __f('Error! Field value must be a valid datetime (%s).', array('«name.formatForCode()»'), $dom);
             return $errorInfo;
         }
+«ENDIF-»
 «ENDDEFINE»
 «DEFINE ValidationCalls FOR AbstractDateField-»
 «EXPAND ValidationCallsDateTime-»
@@ -732,12 +748,12 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
 «DEFINE ValidationCalls FOR DatetimeField-»
 «EXPAND ValidationCallsDateTime-»
 «IF past-»
-        if (!$this->isDateTimeInPast('«name.formatForCode()»')) {
+        if (!$this->isDateTimeInPast('«name.formatForCode()»', «mandatory.displayBool()»)) {
             $errorInfo['message'] = __f('Error! Field value must be a date in the past (%s).', array('«name.formatForCode()»'), $dom);
             return $errorInfo;
         }
 «ELSEIF future-»
-        if (!$this->isDateTimeInFuture('«name.formatForCode()»')) {
+        if (!$this->isDateTimeInFuture('«name.formatForCode()»', «mandatory.displayBool()»)) {
             $errorInfo['message'] = __f('Error! Field value must be a date in the future (%s).', array('«name.formatForCode()»'), $dom);
             return $errorInfo;
         }
@@ -746,12 +762,12 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
 «DEFINE ValidationCalls FOR DateField-»
 «EXPAND ValidationCallsDateTime-»
 «IF past-»
-        if (!$this->isDateInPast('«name.formatForCode()»')) {
+        if (!$this->isDateInPast('«name.formatForCode()»', «mandatory.displayBool()»)) {
             $errorInfo['message'] = __f('Error! Field value must be a date in the past (%s).', array('«name.formatForCode()»'), $dom);
             return $errorInfo;
         }
 «ELSEIF future-»
-        if (!$this->isDateInFuture('«name.formatForCode()»')) {
+        if (!$this->isDateInFuture('«name.formatForCode()»', «mandatory.displayBool()»)) {
             $errorInfo['message'] = __f('Error! Field value must be a date in the future (%s).', array('«name.formatForCode()»'), $dom);
             return $errorInfo;
         }
@@ -760,12 +776,12 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
 «DEFINE ValidationCalls FOR TimeField-»
 «EXPAND ValidationCallsDateTime-»
 «IF past-»
-        if (!$this->isTimeInPast('«name.formatForCode()»')) {
+        if (!$this->isTimeInPast('«name.formatForCode()»', «mandatory.displayBool()»)) {
             $errorInfo['message'] = __f('Error! Field value must be a time in the past (%s).', array('«name.formatForCode()»'), $dom);
             return $errorInfo;
         }
 «ELSEIF future-»
-        if (!$this->isTimeInFuture('«name.formatForCode()»')) {
+        if (!$this->isTimeInFuture('«name.formatForCode()»', «mandatory.displayBool()»)) {
             $errorInfo['message'] = __f('Error! Field value must be a time in the future (%s).', array('«name.formatForCode()»'), $dom);
             return $errorInfo;
         }
