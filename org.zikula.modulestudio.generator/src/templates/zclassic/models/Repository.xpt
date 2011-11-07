@@ -62,6 +62,60 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 «EXPAND FileHelper::GetterAndSetterMethods('defaultSortingField', 'string', false, false, '')»
 
     /**
+     * Return name of the field used as title / name for entities of this repository.
+     *
+     * @return string name of field to be used as title. 
+     */
+    public function getTitleFieldName()
+    {
+«LET getLeadingField() AS leadingField-»
+«IF leadingField != null-»
+        $fieldName = '«leadingField.name.formatForCode()»';
+«ELSE-»
+        $fieldName = '';
+«ENDIF-»
+«ENDLET-»
+        return $fieldName;
+    }
+
+    /**
+     * Return name of the field used for describing entities of this repository.
+     *
+     * @return string name of field to be used as description. 
+     */
+    public function getDescriptionFieldName()
+    {
+        $fieldName = '';
+«LET fields.typeSelect(TextField).reject(e|e.leading) AS textFields-»
+«IF !textFields.isEmpty-»
+        $fieldName = '«textFields.get(0).name.formatForCode()»';
+«ELSE-»
+«LET fields.typeSelect(StringField).reject(e|e.leading || e.password) AS textFields-»
+«IF !textFields.isEmpty-»
+        $fieldName = '«textFields.get(0).name.formatForCode()»';
+«ENDIF-»
+«ENDLET-»
+«ENDIF-»
+«ENDLET-»
+        return $fieldName;
+    }
+
+    /**
+     * Return name of the first upload field which is capable for handling images.
+     *
+     * @return string name of field to be used for preview images 
+     */
+    public function getPreviewFieldName()
+    {
+«IF hasImageFields()-»
+        $fieldName = '«getImageFields().get(0).name.formatForCode()»';
+«ELSE-»
+        $fieldName = '';
+«ENDIF-»
+        return $fieldName;
+    }
+
+    /**
      * Returns an array of additional template variables which are specific to the object type treated by this repository.
      *
      * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType).

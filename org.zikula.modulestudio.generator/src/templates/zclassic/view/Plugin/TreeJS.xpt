@@ -51,26 +51,9 @@ function smarty_function_«appName().formatForDB()»TreeJS($params, $view)
 «ENDFOREACH-»
     }
 
-    $titleFieldName = $descriptionFieldName = '';
-
-    switch ($params['objectType']) {
-«FOREACH getTreeEntities() AS entity-»
-                case '«entity.name.formatForCode()»':
-                        $titleFieldName = '«entity.getLeadingField().name.formatForCode()»';
-«LET entity.fields.typeSelect(TextField).reject(e|e.leading) AS textFields-»
-«IF !textFields.isEmpty-»
-                        $descriptionFieldName = strip_tags('«textFields.get(0).name.formatForCode()»');
-«ELSE-»
-«LET entity.fields.typeSelect(StringField).reject(e|e.leading) AS textFields-»
-«IF !textFields.isEmpty-»
-                        $descriptionFieldName = strip_tags('«textFields.get(0).name.formatForCode()»');
-«ENDIF-»
-«ENDLET-»
-«ENDIF-»
-«ENDLET-»
-                        break;
-«ENDFOREACH-»
-    }
+    $repository = $this->entityManager->getRepository('«appName()»_Entity_' . ucfirst($params['objectType']));
+    $titleFieldName = $repository->getTitleFieldName();
+    $descriptionFieldName = $repository->getDescriptionFieldName();
 
 «REM»TODO improve identifier handling in treejs plugin«ENDREM»
     $idField = 'id';
@@ -84,7 +67,7 @@ function smarty_function_«appName().formatForDB()»TreeJS($params, $view)
         $result[] = array('id' => $item[$idField],
                           'parent_id' => $parentItem[$idField],
                           'name' => $item[$titleFieldName],
-                          'title' => $item[$descriptionFieldName],
+                          'title' => strip_tags($item[$descriptionFieldName]),
                         //'icon' => '',
                         //'class' => '',
                           'active' => true,

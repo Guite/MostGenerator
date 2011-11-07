@@ -73,8 +73,7 @@
         $objectType = '«app.getLeadingEntity().name.formatForCode()»';
         if ($this->request->isPost() && $this->request->getPost()->has('ot')) {
             $objectType = $this->request->getPost()->filter('ot', '«app.getLeadingEntity().name.formatForCode()»', FILTER_SANITIZE_STRING);
-        }
-        elseif ($this->request->isGet() && $this->request->getGet()->has('ot')) {
+        } elseif ($this->request->isGet() && $this->request->getGet()->has('ot')) {
             $objectType = $this->request->getGet()->filter('ot', '«app.getLeadingEntity().name.formatForCode()»', FILTER_SANITIZE_STRING);
         }
         if (!in_array($objectType, «app.appName()»_Util_Controller::getObjectTypes('controllerAction', array('controller' => '«name()»', 'action' => 'getItemList')))) {
@@ -89,8 +88,7 @@
         if ($this->request->isPost() && $this->request->getPost()->has('fragment')) {
             $fragment = $this->request->getPost()->get('fragment', '');
             $exclude = $this->request->getPost()->get('exclude', '');
-        }
-        elseif ($this->request->isGet() && $this->request->getGet()->has('fragment')) {
+        } elseif ($this->request->isGet() && $this->request->getGet()->has('fragment')) {
             $fragment = $this->request->getGet()->get('fragment', '');
             $exclude = $this->request->getGet()->get('exclude', '');
         }
@@ -109,32 +107,9 @@
 
         $out = '<ul>';
         if ((is_array($entities) || is_object($entities)) && count($entities) > 0) {
-            $titleFieldName = $descriptionFieldName = '';
-
-            switch ($objectType) {
-«FOREACH app.models.entities AS entity-»
-                case '«entity.name.formatForCode()»':
-«LET entity.getLeadingField() AS leadingField-»
-«IF leadingField != null-»
-                        $titleFieldName = '«leadingField.name.formatForCode()»';
-«ELSE-»
-                        $titleFieldName = '';
-«ENDIF-»
-«ENDLET-»
-«LET entity.fields.typeSelect(TextField).reject(e|e.leading) AS textFields-»
-«IF !textFields.isEmpty-»
-                        $descriptionFieldName = '«textFields.get(0).name.formatForCode()»';
-«ELSE-»
-«LET entity.fields.typeSelect(StringField).reject(e|e.leading || e.password) AS textFields-»
-«IF !textFields.isEmpty-»
-                        $descriptionFieldName = '«textFields.get(0).name.formatForCode()»';
-«ENDIF-»
-«ENDLET-»
-«ENDIF-»
-«ENDLET-»
-                        break;
-«ENDFOREACH-»
-            }
+            $titleFieldName = $repository->getTitleFieldName();
+            $descriptionFieldName = $repository->getDescriptionFieldName();
+            $previewFieldName = $repository->getPreviewFieldName();
 
 «IF app.models.entities.exists(e|e.hasImageFields())-»
             $thumbWidth = 100;
@@ -156,16 +131,6 @@
                 }
 «IF app.models.entities.exists(e|e.hasImageFields())-»
                 // check for preview image
-                $previewFieldName = '';
-                switch ($objectType) {
-«FOREACH app.models.entities AS entity-»
-«IF entity.hasImageFields()-»
-                    case '«entity.name.formatForCode()»':
-                            $previewFieldName = '«entity.getImageFields().get(0).name.formatForCode()»';
-                            break;
-«ENDIF»
-«ENDFOREACH-»
-                }
                 if (!empty($previewFieldName) && !empty($item[$previewFieldName]) && isset($item[$previewFieldName . 'FullPath'])) {
                     $thumbImagePath = «app.appName()»_Util_Image::getThumb($item[$previewFieldName], $item[$previewFieldName . 'FullPath'], $thumbWidth, $thumbHeight);
                     $preview = '<img src="' . $thumbImagePath . '" width="' . $thumbWidth . '" height="' . $thumbHeight . '" alt="' . $itemTitleStripped . '" />';
