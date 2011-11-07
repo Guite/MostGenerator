@@ -114,6 +114,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
         <div id="{$idPrefix}AddFields">
             <label for="{$idPrefix}Selector">{gt text='Find «targetEntity.name.formatForDisplay()»'}</label>
             <br />
+            {icon type='search' size='extrasmall' __alt='Search «targetEntity.name.formatForDisplay()»'}
             <input type="text" name="{$idPrefix}Selector" id="{$idPrefix}Selector" value="" />
             <input type="hidden" name="{$idPrefix}Scope" id="{$idPrefix}Scope" value="«IF !many»0«ELSE»1«ENDIF»" />
             {img src='indicator_circle.gif' modname='core' set='ajax' alt='' id="`$idPrefix`Indicator" style='display: none'}

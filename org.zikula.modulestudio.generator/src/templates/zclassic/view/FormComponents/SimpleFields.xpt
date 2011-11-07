@@ -143,7 +143,8 @@
             {* to be replaced by a plugin (see https://github.com/Guite/MostGenerator/issues/86 for more information) *} 
 «LET name.formatForCode() AS realName»
             <div id="«realName»LiveSearch" class="«entity.container.application.prefix()»LiveSearchUser z-hide">
-                {formtextinput group='«entity.name.formatForDB()»' id='«realName»Selector' mandatory=«mandatory» readOnly=«readonly» __title='Input a part of the user name to search' maxLength=«length» cssClass='«IF mandatory»required «ENDIF»validate-alphanum«IF unique» validate-unique«ENDIF»'}
+                {icon type='search' size='extrasmall' __alt='Search user'}
+                {formtextinput group='«entity.name.formatForDB()»' id='«realName»Selector' mandatory=«mandatory» readOnly=«readonly» __title='Enter a part of the user name to search' maxLength=«length» cssClass='«IF mandatory»required «ENDIF»validate-alphanum«IF unique» validate-unique«ENDIF»'}
                 {img src='indicator_circle.gif' modname='core' set='ajax' alt='' id='«realName»Indicator' style='display: none'}
                 <div id="«realName»SelectorChoices" class="«entity.container.application.prefix()»AutoCompleteUser"></div>
             </div>
