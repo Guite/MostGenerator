@@ -229,7 +229,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «IF controller.metaType == UserController || controller.metaType == AdminController-»
         if ($currentType == '«controller.name()»') {
 «IF controller.hasActions('view')-»
-            if ($currentFunc == 'view') {
+            if (in_array($currentFunc, array('main', 'view'))) {
 «IF controller.metaType == AdminController && container.application.hasUserController() && container.application.getUserController().hasActions('display')-»
                     $this->_actions[] = array(
                         'url' => ModUtil::url('«appName»', 'user', «modUrlDisplay('this', false)»),
@@ -252,7 +252,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
 «ENDIF-»            
 
 «IF controller.hasActions('view') || controller.hasActions('display')-»
-            if (in_array($currentFunc, array('view', 'display'))) {
+            if (in_array($currentFunc, array('main', 'view', 'display'))) {
 «IF controller.hasActions('edit')-»
                 if (SecurityUtil::checkPermission('«appName»::', '.*', ACCESS_EDIT)) {
 «IF !readOnly-»«REM»create is allowed, but editing not«ENDREM»
