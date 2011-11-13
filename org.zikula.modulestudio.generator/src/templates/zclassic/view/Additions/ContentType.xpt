@@ -58,7 +58,7 @@
 
 <div class="z-formrow">
     {formlabel for='«appName()»_objecttype' __text='Object type'}
-    {«appName().formatForDB()»SelectorObjectTypes assign="allObjectTypes"}
+    {«appName().formatForDB()»SelectorObjectTypes assign='allObjectTypes'}
     {formdropdownlist id='«appName()»_objecttype' dataField='objectType' group='data' mandatory=true items=$allObjectTypes}
 </div>
 
@@ -81,7 +81,7 @@
 
 <div class="z-formrow">
     {formlabel for='«appName()»_template' __text='Template File'}
-    {«appName().formatForDB()»SelectorTemplates assign="allTemplates"}
+    {«appName().formatForDB()»SelectorTemplates assign='allTemplates'}
     {formdropdownlist id='«appName()»_template' dataField='template' group='data' mandatory=true items=$allTemplates}
 </div>
 
