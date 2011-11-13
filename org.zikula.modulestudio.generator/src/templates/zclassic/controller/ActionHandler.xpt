@@ -288,6 +288,17 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDFOREACH-»«ENDREM»«''-»
 
         $entityData = $entity->toArray();
+«IF hasListFields()-»
+        $helper = new «app.appName()»_Util_ListEntries();
+        $listFields = array(«FOREACH getListFields() AS listField SEPARATOR ', '-»'«listField.name.formatForCode()»'«ENDFOREACH-»);
+        foreach ($listFields as $listField) {
+            $entityData[$listField . 'Items'] = $helper->getEntries($this->objectType, $listField);
+        }
+«FOREACH getListFields().select(e|e.multiple) AS listFieldMulti-»
+        $listValues = $helper->extractMultiList($entityData['«listFieldMulti.name.formatForCode()»']);
+        $entityData['«listFieldMulti.name.formatForCode()»'] = $listValues;
+«ENDFOREACH-»
+«ENDIF-»
 «IF hasTranslatableFields()-»
         // retrieve translated fields
         $translations = «app.appName()»_Util_Translatable::prepareEntityForEdit($this->objectType, $entity);
@@ -535,7 +546,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «EXPAND actionHandler::Relations::FetchRelationValue(obj, true) FOREACH incoming.typeSelect(JoinRelationship).reject(e|e.metaType == ManyToManyRelationship)-»
 «LET getUserFields() AS userFields-»
 «LET getUploadFields() AS uploadFields-»
-«IF !(userFields.isEmpty && uploadFields.isEmpty) || (hasSluggableFields() && slugUpdatable)-»
+«LET getListFields().select(e|e.multiple) AS listFieldsMulti-»
+«IF !(userFields.isEmpty && uploadFields.isEmpty && listFieldsMulti.isEmpty) || (hasSluggableFields() && slugUpdatable)-»
 
         if (in_array($args['commandName'], array('create', 'update'))) {
 «FOREACH userFields AS userField-»
@@ -548,6 +560,21 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
                 return false;
             }
 «ENDIF-»
+«IF !listFieldsMulti.isEmpty-»
+«FOREACH listFieldsMulti AS listFieldMulti-»
+            if (is_array($«obj»Data['«listFieldMulti.name.formatForCode()»'])) { 
+                $values = $«obj»Data['«listFieldMulti.name.formatForCode()»'];
+                $«obj»Data['«listFieldMulti.name.formatForCode()»'] = '';
+                if (count($values) > 0) {
+                    if (count($values) > 1) {
+                        $«obj»Data['«listFieldMulti.name.formatForCode()»'] = '###' . implode('###', $values) . '###';
+                    } else {
+                        $«obj»Data['«listFieldMulti.name.formatForCode()»'] = '###' . $values . '###';
+                    }
+                }
+            }
+«ENDFOREACH-»
+«ENDIF-»
 «REM»no slug input element yet, see https://github.com/l3pp4rd/DoctrineExtensions/issues/140
 «IF hasSluggableFields() && slugUpdatable-»
             $«obj»Data['slug'] = «container.application.appName()»_Util_Controller::formatPermalink($«obj»Data['slug']);
@@ -555,6 +582,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «ENDREM»«''-»
         }
 «ENDIF-»
+«ENDLET-»
 «ENDLET-»
 «ENDLET-»
 

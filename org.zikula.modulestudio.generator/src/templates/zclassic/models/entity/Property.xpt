@@ -97,6 +97,9 @@ type="«type»", precision=«length», scale=«scale»«''-»
 «DEFINE PersistentPropertyImpl(String type) FOR UploadField-»
 «REM»type="«type»", «ENDREM»length=«length»«''-»
 «ENDDEFINE»
+«DEFINE PersistentPropertyImpl(String type) FOR ListField-»
+«REM»type="«type»", «ENDREM»length=«length»«''-»
+«ENDDEFINE»
 
 «DEFINE PersistentPropertyAdditions FOR DerivedField-»
 «ENDDEFINE»

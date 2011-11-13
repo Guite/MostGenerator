@@ -730,6 +730,14 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
         }
 «EXPAND ValidationCallsString-»
 «ENDDEFINE»
+«DEFINE ValidationCalls FOR ListField-»
+«IF mandatory-»
+        if (!$this->isStringNotEmpty('«name.formatForCode()»')) {
+            $errorInfo['message'] = __f('Error! Field value must not be empty (%s).', array('«name.formatForCode()»'), $dom);
+            return $errorInfo;
+        }
+«ENDIF-»
+«ENDDEFINE»
 «DEFINE ValidationCalls FOR ArrayField-»
 «ENDDEFINE»
 «DEFINE ValidationCalls FOR ObjectField-»

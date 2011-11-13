@@ -150,6 +150,10 @@
 «ENDLET-»
 «ENDDEFINE»
 
+«DEFINE DisplayField(String objName, String page, String prepend) FOR ListField-»
+«prepend»{$«objName».«name.formatForCode()»|«entity.container.application.appName().formatForDB()»GetListEntry:'«entity.name.formatForCode()»':'«name.formatForCode()»'|safetext«IF page == 'viewcsv'»|replace:"\"":""«ENDIF»}«""-»
+«ENDDEFINE»
+
 «DEFINE DisplayField(String objName, String page, String prepend) FOR DateField-»
 «prepend»{$«objName».«name.formatForCode()»|dateformat:'datebrief'}«""-»
 «ENDDEFINE»

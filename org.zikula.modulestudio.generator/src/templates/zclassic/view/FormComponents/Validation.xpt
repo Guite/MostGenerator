@@ -43,6 +43,7 @@
 «DEFINE AdditionalValidationMessages(String idSuffix) FOR UrlField-»
             {«entity.container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix(name.formatForCode(), idSuffix)» class='validate-url'}
 «ENDDEFINE»
+«DEFINE AdditionalValidationMessages(String idSuffix) FOR ListField-»«ENDDEFINE»
 «DEFINE AdditionalValidationMessages(String idSuffix) FOR AbstractDateField-»
 «IF past-»
             {«entity.container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix(name.formatForCode(), idSuffix)» class='validate-«fieldTypeAsString()»-past'}
@@ -62,5 +63,6 @@
 «DEFINE FieldValidationCssClassAdditions FOR StringField-»«IF nospace» validate-nospace«ENDIF»«IF htmlcolour» validate-htmlcolour «entity.container.application.appName().formatForDB()»ColourPicker«ENDIF»«ENDDEFINE»
 «DEFINE FieldValidationCssClassAdditions FOR EmailField-» validate-email«ENDDEFINE»
 «DEFINE FieldValidationCssClassAdditions FOR UrlField-» validate-url«ENDDEFINE»
+«DEFINE FieldValidationCssClassAdditions FOR ListField-»«ENDDEFINE»
 «DEFINE FieldValidationCssClassAdditions FOR AbstractDateField-»«IF past» validate-«fieldTypeAsString()»-past«ELSEIF future» validate-«fieldTypeAsString()»-future«ENDIF»«ENDDEFINE»
 

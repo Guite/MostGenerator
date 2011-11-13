@@ -10,6 +10,9 @@
 «IF hasUploads()-»
 «EXPAND Image::Root»
 «ENDIF-»
+«IF hasListFields()-»
+«EXPAND ListEntries::Root»
+«ENDIF-»
 «IF hasTranslatable()-»
 «EXPAND Translatable::Root»
 «ENDIF-»

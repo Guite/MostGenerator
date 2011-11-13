@@ -105,7 +105,7 @@
 <p>{gt text='Thank you for installing «appName()».<br />Click on the bottom link to finish the installation.' html="1"}</p>
 <p>
     {insert name='csrftoken' assign='csrftoken'}
-    <a href="{modurl modname='Modules' type='admin' func='initialise' csrftoken=$csrftoken activate=$activate}" title="{gt text='Continue'}">
+    <a href="{modurl modname='Extensions' type='admin' func='initialise' csrftoken=$csrftoken activate=$activate}" title="{gt text='Continue'}">
         {gt text='Continue'}
     </a>
 </p>
@@ -122,12 +122,12 @@
 <p>{gt text='Thank you for using «appName()».<br />This application is going to be removed now!' html="1"}</p>
 <p>
     {insert name='csrftoken' assign='csrftoken'}
-    <a href="{modurl modname='Modules' type='admin' func='remove' csrftoken=$csrftoken}" title="{gt text='Uninstall «appName()»'}">
+    <a href="{modurl modname='Extensions' type='admin' func='remove' csrftoken=$csrftoken}" title="{gt text='Uninstall «appName()»'}">
         {gt text='Uninstall «appName()»'}
     </a>
 </p>
 <p>
-    <a href="{modurl modname='Modules' type='admin' func='view'}" title="{gt text='Cancel uninstallation'}">
+    <a href="{modurl modname='Extensions' type='admin' func='view'}" title="{gt text='Cancel uninstallation'}">
         {gt text='Cancel'}
     </a>
 </p>

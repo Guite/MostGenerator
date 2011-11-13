@@ -23,6 +23,9 @@
 «EXPAND Plugin::FormCountrySelector::Root-»
 «EXPAND Plugin::GetCountryName::Root-»
 «ENDIF-»
+«IF hasListFields()-»
+«EXPAND Plugin::GetListEntry::Root-»
+«ENDIF-»
 «IF !models.entities.select(e|e.geographical).isEmpty-»
 «EXPAND Plugin::FormGeoInput::Root-»
 «ENDIF-»

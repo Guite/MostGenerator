@@ -58,16 +58,22 @@ cached boolean hasColourFields(Application this) :
 cached boolean hasCountryFields(Application this) :
     models.entities.exists(e|e.hasCountryFields());
 
+cached boolean hasUploads(Application this) :
+    !models.entities.fields.typeSelect(UploadField).isEmpty;
+cached getUploadEntities(Application this) :
+    models.entities.select(e|e.fields.typeSelect(UploadField).size > 0);
+
 cached getUserFields(Application this) :
     models.entities.fields.typeSelect(UserField);
 cached boolean hasUserFields(Application this) :
     !getUserFields().isEmpty;
 
-cached boolean hasUploads(Application this) :
-    !models.entities.fields.typeSelect(UploadField).isEmpty;
-
-cached getUploadEntities(Application this) :
-    models.entities.select(e|e.fields.typeSelect(UploadField).size > 0);
+cached getListFields(Application this) :
+    models.entities.fields.typeSelect(ListField);
+cached boolean hasListFields(Application this) :
+    !getListFields().isEmpty;
+cached getListEntities(Application this) :
+    models.entities.select(e|e.fields.typeSelect(ListField).size > 0);
 
 cached boolean hasLoggable(Application this) :
     !getLoggableEntities().isEmpty;
@@ -263,6 +269,13 @@ cached boolean hasUploadFields(Entity this) :
     !getUploadFields().isEmpty;
 cached getUploadFields(Entity this) :
     fields.typeSelect(UploadField);
+cached boolean hasListFields(Entity this) :
+    !getListFields().isEmpty;
+cached getListFields(Entity this) :
+    fields.typeSelect(ListField);
+
+cached getDefaultItems(ListField this) :
+    items.select(e|e.^default);
 
 cached boolean hasImageFields(Entity this) :
     !getImageFields().isEmpty;

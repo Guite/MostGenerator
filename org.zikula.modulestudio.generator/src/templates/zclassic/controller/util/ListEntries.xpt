@@ -1,0 +1,172 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+
+«REM»start point for the Util class creation«ENDREM»
+«DEFINE Root FOR Application»
+    «FILE getAppSourceLibPath(appName()).msconcat("Util/Base/ListEntries.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND ListFieldFunctionsBase-»«ENDFILE»
+    «FILE getAppSourceLibPath(appName()).msconcat("Util/ListEntries.php")»«EXPAND FileHelper::phpFileHeader(this)»«EXPAND ListFieldFunctionsImpl-»«ENDFILE»
+«ENDDEFINE»
+
+«DEFINE ListFieldFunctionsBase FOR Application-»
+
+/**
+ * Utility base class for list field entries related methods.
+ */
+class «appName()»_Util_Base_ListEntries extends Zikula_AbstractBase
+{
+    /**
+     * Return the name or names for a given list item.
+     *
+     * @param string  $value      The dropdown value to process.
+     * @param string  $objectType The treated object type.
+     * @param string  $fieldName  The list field's name.
+     * @param string  $delimiter  String used as separator for multiple selections.
+     *
+     * @return string List item name.
+     */
+    public function resolve($value, $objectType = '', $fieldName = '', $delimiter = ', ')
+    {
+        if (!is_numeric($value) || empty($objectType) || empty($fieldName)) {
+            return $value;
+        }
+
+        $isMulti = $this->hasMultipleSelection($objectType, $fieldName);
+        if ($isMulti === true) {
+            $value = $this->extractMultiList($value);
+        }
+
+        $options = $this->getEntries($objectType, $fieldName);
+        $result = '';
+
+        if ($isMulti === true) {
+            foreach ($options as $option) {
+                if (!in_array($option['value'], $value)) {
+                    continue;
+                }
+                if (!empty($result)) {
+                    $result .= $delimiter;
+                }
+                $result .= $option['text'];
+                break;
+            }
+        } else {
+            foreach ($options as $option) {
+                if ($option['value'] != $value) {
+                    continue;
+                }
+                $result = $option['text'];
+                break;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Extract concatenated multi selection.
+     *
+     * @param string  $value The dropdown value to process.
+     *
+     * @return array List of single values.
+     */
+    public function extractMultiList($value)
+    {
+        $listValues = explode('###', $value);
+        $numValues = count($listValues);
+        if ($numValues > 1 && $listValues[$numValues-1] == '') {
+            unset($listValues[$numValues-1]);
+        }
+        if ($listValues[0] == '') {
+            unset($listValues[0]);
+        }
+        return $listValues;
+    }
+
+    /**
+     * Determine whether a certain dropdown field has a multi selection or not.
+     *
+     * @param string  $objectType The treated object type.
+     * @param string  $fieldName  The list field's name.
+     *
+     * @return boolean True if this is a multi list false otherwise.
+     */
+    public function hasMultipleSelection($objectType, $fieldName)
+    {
+        if (empty($objectType) || empty($fieldName)) {
+            return false;
+        }
+
+        switch ($objectType) {
+«FOREACH models.entities.select(e|e.hasListFields()) AS entity-»
+            case '«entity.name.formatForCode()»':
+                switch ($fieldName) {
+«FOREACH entity.getListFields() AS listField-»
+                    case '«listField.name.formatForCode()»': return «listField.multiple.displayBool()»;
+«ENDFOREACH-»
+                }
+«ENDFOREACH-»
+        }
+    }
+
+    /**
+     * Get entries for a certain dropdown field.
+     *
+     * @param string  $objectType The treated object type.
+     * @param string  $fieldName  The list field's name.
+     *
+     * @return array Array with desired list entries.
+     */
+    public function getEntries($objectType, $fieldName)
+    {
+        if (empty($objectType) || empty($fieldName)) {
+            return array();
+        }
+
+        switch ($objectType) {
+«FOREACH models.entities.select(e|e.hasListFields()) AS entity-»
+            case '«entity.name.formatForCode()»':
+                switch ($fieldName) {
+«FOREACH entity.getListFields() AS listField-»
+                    case '«listField.name.formatForCode()»': return $this->get«listField.name.formatForCodeCapital()»EntriesFor«entity.name.formatForCodeCapital()»();
+«ENDFOREACH-»
+                }
+«ENDFOREACH-»
+        }
+    }
+«EXPAND GetItems FOREACH getListFields()-»
+}
+«ENDDEFINE»
+
+«DEFINE GetItems FOR ListField-»
+
+    /**
+     * Get '«name.formatForDisplay()»' list entries.
+     *
+     * @return array Array with desired list entries.
+     */
+    public function get«name.formatForCodeCapital()»EntriesFor«entity.name.formatForCodeCapital()»()
+    {
+        $states = array();
+        $dom = ZLanguage::getModuleDomain('«entity.container.application.appName()»');
+«EXPAND EntryInfo FOREACH items-»
+        return $states;
+    }
+«ENDDEFINE»
+
+«DEFINE EntryInfo FOR ListFieldItem-»
+        $states[] = array('value' => '«value.replaceAll("'", "")»',
+                          'text'  => __('«name.formatForDisplayCapital().replaceAll("'", "")»', $dom),
+                          'title' => «IF documentation != null && documentation != ''-»__('«documentation.replaceAll("'", "")»', $dom)«ELSE-»''«ENDIF-»,
+                          'image' => '«IF image != null && image != ''-»«image».png«ENDIF-»');
+«ENDDEFINE»
+
+«DEFINE ListFieldFunctionsImpl FOR Application-»
+/**
+ * Utility implementation class for list field entries related methods.
+ */
+class «appName()»_Util_ListEntries extends «appName()»_Util_Base_ListEntries
+{
+    // feel free to add your own convenience methods here
+}
+«ENDDEFINE»

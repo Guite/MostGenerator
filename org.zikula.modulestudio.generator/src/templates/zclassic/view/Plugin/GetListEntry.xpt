@@ -1,0 +1,33 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+
+«DEFINE Root FOR Application-»
+«FILE viewPluginFilePath(this, 'modifier', 'GetListEntry')-»«EXPAND FileHelper::phpFileHeader(this)-»
+«EXPAND GetListEntry-»
+«ENDFILE»
+«ENDDEFINE»
+
+«DEFINE GetListEntry FOR Application-»
+/**
+ * The «appName().formatForDB()»GetListEntry modifier displays the name
+ * or names for a given list item.
+ *
+ * @param string  $value      The dropdown value to process.
+ * @param string  $objectType The treated object type.
+ * @param string  $fieldName  The list field's name.
+ * @param string  $delimiter  String used as separator for multiple selections.
+ *
+ * @return string List item name.
+ */
+function smarty_modifier_«appName().formatForDB()»GetListEntry($value, $objectType = '', $fieldName = '', $delimiter = ', ')
+{
+    if (!is_numeric($value) || empty($objectType) || empty($fieldName)) {
+        return $value;
+    }
+
+    $helper = new «appName()»_Util_ListEntries();
+    return $helper->resolveValue($value, $objectType, $fieldName, $delimiter);
+}
+«ENDDEFINE»

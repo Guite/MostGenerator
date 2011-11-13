@@ -217,3 +217,6 @@ substr('«dataEntity.name.formatForDisplayCapital()» «name.formatForDisplay()�
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR DateField-»«IF past-»$dPast«ELSEIF future-»$dFuture«ELSE-»$dNow«ENDIF-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR TimeField-»«IF past-»$tPast«ELSEIF future-»$tFuture«ELSE-»$tNow«ENDIF-»«ENDDEFINE»
 «DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR FloatField-»«EXPAND ExampleRowValueNumber(dataEntity, number)-»«ENDDEFINE»
+«DEFINE ExampleRowValue(Entity dataEntity, Integer number) FOR ListField-»'«IF multiple-»###«EXPAND ExampleRowValue FOREACH getDefaultItems() SEPARATOR '###'-»###«ELSE-»«EXPAND ExampleRowValue FOREACH getDefaultItems()-»«ENDIF-»'«ENDDEFINE»
+
+«DEFINE ExampleRowValue FOR ListFieldItem-»«IF ^default-»«value»«ENDIF-»«ENDDEFINE»
