@@ -10,6 +10,7 @@
             {«entity.container.application.appName().formatForDB()»ValidationError id=«templateIdWithSuffix(name.formatForCode(), idSuffix)» class='validate-unique'}
 «ENDIF-»
 «ENDDEFINE»
+«DEFINE MandatoryValidationMessage(String idSuffix) FOR ListField-»«ENDDEFINE»
 
 «DEFINE AdditionalValidationMessages(String idSuffix) FOR DerivedField-»«ENDDEFINE»
 «DEFINE AdditionalValidationMessages(String idSuffix) FOR AbstractIntegerField-»
