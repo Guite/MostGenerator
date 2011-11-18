@@ -153,12 +153,12 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
      * @var array List of change notification listeners
      */
     protected $_propertyChangedListeners = array();
+«ENDIF-»
 
     /**
      * @var array List of available item actions
      */
     protected $_actions = array();
-«ENDIF-»
 
 «EXPAND entity::Property::PersistentProperty FOREACH fields.typeSelect(DerivedField)»
 «EXPAND entity::Extensions::AdditionalProperties»
