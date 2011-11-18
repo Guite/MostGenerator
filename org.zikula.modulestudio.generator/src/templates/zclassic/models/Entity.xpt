@@ -220,6 +220,10 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
      */
     protected function prepareItemActions()
     {
+        if (!empty($this->_actions)) {
+            return $this->_actions;
+        }
+
         $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
         $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST', FILTER_SANITIZE_STRING);
 «LET app.appName() AS appName-»
