@@ -51,7 +51,9 @@ function smarty_function_«appName().formatForDB()»TreeJS($params, $view)
 «ENDFOREACH-»
     }
 
-    $repository = $this->entityManager->getRepository('«appName()»_Entity_' . ucfirst($params['objectType']));
+    $serviceManager = ServiceUtil::getManager();
+    $entityManager = $serviceManager->getService('doctrine.entitymanager');
+    $repository = $entityManager->getRepository('«appName()»_Entity_' . ucfirst($params['objectType']));
     $titleFieldName = $repository->getTitleFieldName();
     $descriptionFieldName = $repository->getDescriptionFieldName();
 
