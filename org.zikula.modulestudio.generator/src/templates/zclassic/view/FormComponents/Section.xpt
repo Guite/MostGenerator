@@ -71,7 +71,7 @@
     {if $mode eq 'edit'}
         {formbutton id='btnUpdate' commandName='update' __text='Update «name.formatForDisplay()»' class='z-bt-save'}
       {if !$inlineUsage}
-        {gt text='Really delete this «name.formatForDisplay()»?' assign="deleteConfirmMsg"}
+        {gt text='Really delete this «name.formatForDisplay()»?' assign='deleteConfirmMsg'}
         {formbutton id='btnDelete' commandName='delete' __text='Delete «name.formatForDisplay()»' class='z-bt-delete z-btred' confirmMessage=$deleteConfirmMsg}
       {/if}
     {elseif $mode eq 'create'}
