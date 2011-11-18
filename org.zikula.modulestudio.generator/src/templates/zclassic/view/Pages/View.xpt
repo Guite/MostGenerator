@@ -118,7 +118,7 @@ listType:
         <dt>
 «ELSEIF listType == 3-»
         <tr class="z-«IF controller.metaType == AdminController-»admin«ELSE»data«ENDIF»tableempty">
-          <td align="left" valign="top" colspan="«(fields.size + outgoing.typeSelect(OneToOneRelationship).size)»">«REM»fields.size -1 (id) +1 (actions)«ENDREM»
+          <td class="z-left" colspan="«(fields.size + outgoing.typeSelect(OneToOneRelationship).size)»">«REM»fields.size -1 (id) +1 (actions)«ENDREM»
 «ENDIF-»
             {gt text='No «nameMultiple.formatForDisplay()» found.'}
 «IF listType < 2-»
