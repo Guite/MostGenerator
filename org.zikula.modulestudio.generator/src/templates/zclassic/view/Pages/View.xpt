@@ -323,7 +323,7 @@ listType:
             {if count($«objName»._actions) gt 0}
             {strip}
                 {foreach item='option' from=$«objName»._actions}
-                    <a href="{$option.url|safetext}" title="{$option.linkTitle|safetext}"{if $option.icon eq 'preview'} target="_blank"{/if}>
+                    <a href="{$option.url.type|«appName.formatForDB()»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}"{if $option.icon eq 'preview'} target="_blank"{/if}>
                         {icon type=$option.icon size='extrasmall' alt=$option.linkText|safetext}
                     </a>
                 {/foreach}
