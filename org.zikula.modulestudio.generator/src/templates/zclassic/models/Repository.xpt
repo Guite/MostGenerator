@@ -377,7 +377,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
      */
     protected function _intBaseQuery($where = '', $orderBy = '', $useJoins = true)
     {
-        $selection = 'tbl' . (($orderBy == 'RAND()') ? ', rand() AS rand' : '');
+        $selection = 'tbl';
         if ($useJoins === true) {
             $selection .= $this->addJoinsToSelection();
         }
@@ -396,12 +396,7 @@ class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::
 
         // add order by clause
         if (!empty($orderBy)) {
-            if ($orderBy == 'RAND()') {
-                $qb->orderBy('rand', 'ASC');
-            }
-            else {
-                $qb->add('orderBy', 'tbl.' . $orderBy);
-            }
+            $qb->add('orderBy', 'tbl.' . $orderBy);
         }
 
         $query = $qb->getQuery();
