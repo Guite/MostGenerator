@@ -912,12 +912,13 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
 
 «DEFINE PerformUpdate(Application app, String actionName) FOR Controller-»
     /**
-     * Executing insert and update statements - method stub for child classes.
+     * Executing insert and update statements
      *
      * @param Array   $args    arguments from handleCommand method.
      */
     public function performUpdate($args)
     {
+        // stub for subclasses
     }
 «ENDDEFINE»
 
@@ -1149,7 +1150,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
 «DEFINE PerformUpdate(Application app, Controller controller, String actionName) FOR Entity-»
     /**
-     * Executing insert and update statements - method stub for child classes.
+     * Executing insert and update statements
      *
      * @param Array   $args    arguments from handleCommand method.
      */
