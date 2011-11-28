@@ -251,6 +251,8 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
      */
     public function postInitialize()
     {
+        $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
+        $repository = $this->entityManager->getRepository($entityClass);
         $utilArgs = array('controller' => '«name()»', 'action' => '«actionName.formatForCode().toFirstLower()»', 'mode' => $this->mode);
         $this->view->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
     }
@@ -287,9 +289,7 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
 
         $this->permissionComponent = $this->name . ':' . $this->objectTypeCapital . ':';
 
-        $entityClass = '«app.appName()»_Entity_' . ucfirst($this->objectType);
-        $repository = $this->entityManager->getRepository($entityClass);
-
+        $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
         $objectTemp = new $entityClass();
         $this->idFields = $objectTemp->get_idFields();
 
@@ -453,7 +453,7 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
      *
      * @return Zikula_EntityAccess desired entity instance or null 
      */
-    protected function initEntityForCreate($entityClass)
+    protected function initEntityForCreation($entityClass)
     {
         $this->hasTemplateId = false;
         $templateId = $this->request->getGet()->get('astemplate', '');
@@ -585,7 +585,7 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
             }
         }
 
-        $entityClass = '«app.appName()»_Entity_' . ucfirst($this->objectType);
+        $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
         $repository = $this->entityManager->getRepository($entityClass);
         if ($this->hasTranslatableFields === true) {
             $transRepository = $this->entityManager->getRepository($entityClass . 'Translation');
@@ -617,7 +617,7 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
             }
 «ENDIF-»
 
-            $this->performUpdate();
+            $this->performUpdate($args);
 
             $success = true;
             if ($args['commandName'] == 'create') {
@@ -802,7 +802,7 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
      */
     protected function addDefaultMessage($args, $success = false)
     {
-        $message = $this->getDefaultMessage($args, $success)
+        $message = $this->getDefaultMessage($args, $success);
         if (!empty($message)) {
             if ($success === true) {
                 LogUtil::registerStatus($message);
@@ -883,6 +883,9 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
             }
             unset($entityData['repeatcreation']);
         }
+
+        // get treated entity reference from persisted member var
+        $entity = $this->entityRef;
 «IF app.hasAttributableEntities()-»
 
         if ($this->hasAttributes) {
@@ -904,6 +907,7 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
 
         // return remaining form data
         return $formData;
+    }
 «ENDDEFINE»
 
 «DEFINE PerformUpdate(Application app, String actionName) FOR Controller-»
@@ -1013,6 +1017,7 @@ class «baseClassFormHandler(controller, name, actionName)» extends «implClass
 
 «EXPAND HandleCommand(app, controller, actionName)-»
 «EXPAND FetchInputData(app, controller, actionName)-»
+«EXPAND PerformUpdate(app, controller, actionName)-»
 
 «EXPAND actionHandler::Redirect::GetRedirectUrl(app, controller, actionName)-»
 
@@ -1121,6 +1126,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
      */
     public function fetchInputData(Zikula_Form_View $view, &$args)
     {
+        parent::fetchInputData($view, $args);
+
         // get treated entity reference from persisted member var
         $entity = $this->entityRef;
 
@@ -1136,6 +1143,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         // save updated entity
         $this->entityRef = $entity;
+    }
 «ENDDEFINE»
 
 
@@ -1147,6 +1155,9 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
      */
     public function performUpdate($args)
     {
+        // get treated entity reference from persisted member var
+        $entity = $this->entityRef;
+
 «IF hasOptimisticLock()-»
             $expectedVersion = SessionUtil::getVar($this->name . 'EntityVersion', 1);
         try {
