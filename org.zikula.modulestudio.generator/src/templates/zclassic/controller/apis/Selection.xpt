@@ -131,7 +131,7 @@ class «appName()»_Api_Selection extends «appName()»_Api_Base_Selection
         $useJoins = isset($args['useJoins']) ? ((bool) $args['useJoins']) : true;
 
         if ($orderBy == 'RAND()') {
-            // random ordering is disabled for now, see https://github.com/Guite/MostGenerator/issues/112
+            // random ordering is disabled for now, see https://github.com/Guite/MostGenerator/issues/143
             $orderBy = $repository->getDefaultSortingField();
         }
 
