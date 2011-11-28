@@ -297,7 +297,7 @@ class «implClassModelEntity()» extends «IF isInheriting()»«parentType().imp
             if ($currentFunc == 'display') {
 «IF controller.hasActions('view')-»
                     $this->_actions[] = array(
-                        'url' => array('type' => '«controller.name()»', 'view', array('ot' => '«objName»')),
+                        'url' => array('type' => '«controller.name()»', 'func' => 'view', 'arguments' => array('ot' => '«objName»')),
                         'icon' => 'back',
                         'linkTitle' => __('Back to overview', $dom),
                         'linkText' => __('Back to overview', $dom)
