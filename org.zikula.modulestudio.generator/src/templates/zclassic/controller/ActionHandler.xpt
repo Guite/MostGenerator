@@ -826,6 +826,9 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
         $entityData = $formData[$this->objectTypeLower];
         unset($formData[$this->objectTypeLower]);
 
+        // get treated entity reference from persisted member var
+        $entity = $this->entityRef;
+
 «IF app.hasUserFields() || app.hasUploads() || app.hasListFields() || (app.hasSluggable() && !app.models.entities.select(e|e.slugUpdatable).isEmpty)-»
 
         if (in_array($args['commandName'], array('create', 'update'))) {
@@ -883,9 +886,6 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
             }
             unset($entityData['repeatcreation']);
         }
-
-        // get treated entity reference from persisted member var
-        $entity = $this->entityRef;
 «IF app.hasAttributableEntities()-»
 
         if ($this->hasAttributes) {
