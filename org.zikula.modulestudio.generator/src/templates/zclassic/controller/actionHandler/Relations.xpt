@@ -4,21 +4,13 @@
 
 «REM»Relation processing functions for edit form handlers«ENDREM»
 
-«DEFINE IncomingMemberVar FOR JoinRelationship-»
-
-    /**
-     * @var mixed Identifier for incoming relationship.
-     */
-    protected $«getRelationAliasName(false)» = '';
-«ENDDEFINE»
-
 «DEFINE IncomingInitialisation FOR Entity-»
 «LET incoming.typeSelect(JoinRelationship).select(e|!e.bidirectional) AS uniOwningAssociations-»
 «IF !uniOwningAssociations.isEmpty-»
 
         // save parent identifiers of unidirectional incoming relationships
 «FOREACH uniOwningAssociations AS uniOwningAssociation-»
-        $this->«uniOwningAssociation.getRelationAliasName(false)» = FormUtil::getPassedValue('«uniOwningAssociation.getRelationAliasName(false)»', '', 'GET');
+        $this->incomingIds['«uniOwningAssociation.getRelationAliasName(false)»'] = FormUtil::getPassedValue('«uniOwningAssociation.getRelationAliasName(false)»', '', 'GET');
 «ENDFOREACH-»
 «ENDIF-»
 «ENDLET-»
@@ -32,12 +24,29 @@
 «ENDLET-»
 «ENDDEFINE»
 
+«DEFINE ReassignRelatedObjects FOR Controller-»
+    /**
+     * Reassign options chosen by the user to avoid unwanted form state resets.
+     * Necessary until issue #23 is solved.
+     */
+    public function reassignRelatedObjects()
+    {
+        // stub for subclasses
+    }
+«ENDDEFINE»
 
 «DEFINE ReassignRelatedObjects FOR Entity-»
+    /**
+     * Reassign options chosen by the user to avoid unwanted form state resets.
+     * Necessary until issue #23 is solved.
+     */
+    public function reassignRelatedObjects()
+    {
         $selectedRelations = array();
 «EXPAND ReassignRelatedObjects(true) FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»
 «EXPAND ReassignRelatedObjects(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
         $this->view->assign('selectedRelations', $selectedRelations);
+    }
 «ENDDEFINE»
 
 «DEFINE ReassignRelatedObjects(Boolean incoming) FOR JoinRelationship-»
@@ -54,13 +63,13 @@
 
 «REM»Assign input value from incoming 1:1 and 1:n relationships (example: get customerid for an order).
 As the autocomplete fields are not done with a Form plugin (yet), we do that manually.«ENDREM»
-«DEFINE FetchRelationValue(String obj, Boolean incoming) FOR JoinRelationship-»
+«DEFINE FetchRelationValue(Boolean incoming) FOR JoinRelationship-»
 «IF !incoming || bidirectional || metaType == ManyToManyRelationship-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
-        $«obj»Data['«relationAliasName»'] = ((isset($selectedRelations['«relationAliasName.toFirstLower()»'])) ? $selectedRelations['«relationAliasName.toFirstLower()»'] : «EXPAND RetrieveRelatedObjectsCall(((incoming) ? source : target).name, uniqueNameForJs, false)-»);
+        $entityData['«relationAliasName»'] = ((isset($selectedRelations['«relationAliasName.toFirstLower()»'])) ? $selectedRelations['«relationAliasName.toFirstLower()»'] : «EXPAND RetrieveRelatedObjectsCall(((incoming) ? source : target).name, uniqueNameForJs, false)-»);
 «IF !nullable-»
-        if (!$«obj»Data['«relationAliasName»']) {
+        if (!$entityData['«relationAliasName»']) {
             return LogUtil::registerError($this->__('Invalid value received for relation field "«relationAliasName.formatForDisplay()»".'));
         }
 «ENDIF-»
@@ -73,7 +82,7 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
 $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameForJs»ItemList', «IF !many»false«ELSE»true«ENDIF», 'POST')«''-»
 «ENDDEFINE»
 
-«DEFINE RetrieveRelatedObjects(Application app, Controller controller) FOR Entity-»
+«DEFINE RetrieveRelatedObjects(Application app) FOR Controller-»
     /**
      * Select a related object in create mode.
      *
@@ -81,9 +90,9 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
      */
     protected function retrieveRelatedObjects($objectType, $relationInputFieldName, $many = false, $source = 'GET')
     {
-        $repository = $this->entityManager->getRepository('«app.appName()»_Entity_' . ucfirst($objectType));
+        $repository = $this->entityManager->getRepository($this->name . '_Entity_' . ucfirst($objectType));
 
-        $idFields = ModUtil::apiFunc('«app.appName()»', 'selection', 'getIdFields', array('ot' => $objectType));
+        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
         $where = '';
 
@@ -119,7 +128,7 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
             'currentPage' => 1,
             'resultsPerPage' => 50
         );
-        list($entities, $objectCount) = ModUtil::apiFunc('«app.appName()»', 'selection', 'getEntitiesPaginated', $selectionArgs);
+        list($entities, $objectCount) = ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
         return (($many) ? $entities : $entities[0]);
     }
 «ENDDEFINE»
@@ -164,19 +173,7 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
         }
 
         $idFields = ModUtil::apiFunc('«container.application.appName()»', 'selection', 'getIdFields', array('ot' => '«objectType»'));
-
-        $relatedIdValues = array();
-        foreach ($idFields as $idField) {
-            $relatedIdValues[$idField] = array();
-        }
-        foreach ($relatedIds as $relatedId) {
-            $relatedIdParts = explode('_', $relatedId);
-            $i = 0;
-            foreach ($idFields as $idField) {
-                $relatedIdValues[$idField][] = $relatedIdParts[$i];
-                $i++;
-            }
-        }
+        $relatedIdValues = $this->decodeCompositeIdentifiers($relatedIds, $idFields);
 
         $where = '';
         foreach ($idFields as $idField) {
@@ -185,7 +182,7 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
             }
             $where .= $idField . ' IN (' . implode(', ', $relatedIdValues[$idField]) . ')';
         }
-        $linkObjects = ModUtil::apiFunc('«container.application.appName()»', 'selection', 'getEntities', array('ot' => '«objectType»', 'where' => $where));
+        $linkObjects = ModUtil::apiFunc($this->name, 'selection', 'getEntities', array('ot' => '«objectType»', 'where' => $where));
         // create new links
         foreach ($linkObjects as $relatedObject) {
 «IF many-»

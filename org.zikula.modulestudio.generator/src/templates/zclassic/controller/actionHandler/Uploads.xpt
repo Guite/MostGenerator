@@ -3,33 +3,29 @@
 «EXTENSION extensions::ClassUtils»
 
 «REM»Upload processing functions for edit form handlers«ENDREM»
-«DEFINE Root FOR Entity-»
-«IF hasUploadFields()-»
+«DEFINE Root FOR Controller-»
+«IF container.application.hasUploads()-»
 
 «EXPAND HandleUploads(container.application)-»
 «ENDIF-»
 «ENDDEFINE»
 
-«DEFINE HandleUploads(Application app) FOR Entity-»
+«DEFINE HandleUploads(Application app) FOR Controller-»
     /**
      * Helper method to process upload fields
      */
     protected function handleUploads($formData, $existingObject)
     {
-«LET getUploadFields() AS uploadFields-»
-«IF !uploadFields.isEmpty-»
+        if (!count($this->uploadFields)) {
+            return $formData;
+        }
+
         // initialise the upload handler
         $uploadManager = new «app.appName()»_UploadHandler();
-
-        // list of upload fields to consider
-        $uploadFields = array(«FOREACH uploadFields AS uploadField SEPARATOR ", "»'«uploadField.name.formatForCode()»'«ENDFOREACH»);
-        // list of mandatory fields
-        $uploadFieldsMandatory = array(«FOREACH uploadFields.select(e|e.mandatory) AS uploadField SEPARATOR ", "»'«uploadField.name.formatForCode()»'«ENDFOREACH»);
-
         $existingObjectData = $existingObject->toArray();
 
         // process all fields
-        foreach ($uploadFields as $uploadField) {
+        foreach ($this->uploadFields as $uploadField => $isMandatory) {
             // check if an existing file must be deleted
             $hasOldFile = (!empty($existingObjectData[$uploadField]));
             $hasBeenDeleted = !$hasOldFile;
@@ -70,16 +66,15 @@
             // assign the meta data
             $formData[$uploadField . 'Meta'] = $uploadResult['metaData'];
 
-            // if current field is mandatory check if everything has been done 
-            if (in_array($uploadField, $uploadFieldsMandatory) && $formData[$uploadField] === false) {
+            // if current field is mandatory check if everything has been done
+            if ($isMandatory && $formData[$uploadField] === false) {
                 // mandatory upload has not been completed successfully
                 return false;
             }
 
             // upload succeeded
         }
-«ENDIF-»
-«ENDLET-»
+
         return $formData;
     }
 «ENDDEFINE»

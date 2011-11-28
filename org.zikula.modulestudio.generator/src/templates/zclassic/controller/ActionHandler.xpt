@@ -11,6 +11,7 @@
 «ENDDEFINE»
 
 «DEFINE Root(Application app) FOR Action-»
+    «EXPAND Root(app, 'edit') FOR controller-»
     «EXPAND Root(app, controller, 'edit') FOREACH app.models.entities-»
 «ENDDEFINE»
 
@@ -26,6 +27,14 @@
 «ENDLET-»
 «ENDDEFINE»
 
+«REM»Entry point for generic Form handler base classes«ENDREM»
+«DEFINE Root(Application app, String actionName) FOR Controller-»
+«info("Generating \"" + name + "\" form handler base class") -> ""-»
+«FILE getAppSourcePath(app.appName()).msconcat(baseClassFormHandler(this, actionName).asFile())-»
+«EXPAND FileHelper::phpFileHeader(app)-»
+«EXPAND FormHandlerBaseClass(app, actionName)-»
+«ENDFILE»
+«ENDDEFINE»
 
 «REM»Entry point for Form handler classes«ENDREM»
 «DEFINE Root(Application app, Controller controller, String actionName) FOR Entity-»
@@ -41,18 +50,12 @@
 «ENDDEFINE»
 
 
-«REM»base implementation«ENDREM»
-«DEFINE FormHandlerBaseImpl(Application app, Controller controller, String actionName) FOR Entity-»
-«IF hasOptimisticLock() || hasPessimisticReadLock() || hasPessimisticWriteLock()-»
-use Doctrine\DBAL\LockMode;
-«IF hasOptimisticLock()-»
-use Doctrine\ORM\OptimisticLockException;
-«ENDIF-»
 
-«ENDIF-»
+«REM»base class«ENDREM»
+«DEFINE FormHandlerBaseClass(Application app, String actionName) FOR Controller-»
 /**
- * This handler class handles the page events of the Form called by the «formatForCode(app.appName().msconcat("_").msconcat(controller.name()).msconcat("_").msconcat(actionName))»() function.
- * It aims on the «name.formatForDisplay()» object type.
+ * This handler class handles the page events of the Form called by the «formatForCode(app.appName().msconcat("_").msconcat(name()).msconcat("_").msconcat(actionName))»() function.
+ * It collects common functionality required by different object types.
  *
  * Member variables in a form handler object are persisted accross different page requests. This means
  * a member variable $this->X can be set on one request and on the next request it will still contain
@@ -71,7 +74,7 @@ use Doctrine\ORM\OptimisticLockException;
  * - <b>handleCommand</b>: this event is fired by various plugins on the page. Typically it is done by the
  *   Zikula_Form_Plugin_Button plugin to signal that the user activated a button.
  */
-class «baseClassFormHandler(controller, name, actionName)» extends Zikula_Form_AbstractHandler
+class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHandler
 {
     /**
      * Persistent member vars
@@ -83,15 +86,44 @@ class «baseClassFormHandler(controller, name, actionName)» extends Zikula_Form
     protected $objectType;
 
     /**
-     * @var «implClassModelEntity()» Reference to treated «name.formatForDisplay()» instance.
+     * @var string Name of treated object type starting with upper case.
      */
-    protected $«name.formatForCode()»Ref = false;
+    protected $objectTypeCapital;
 
     /**
-     * @var array List of identifiers of treated «name.formatForDisplay()».
+     * @var string Lower case version.
+     */
+    protected $objectTypeLower;
+
+    /**
+     * @var string Lower case name of multiple items (needed for hook areas).
+     */
+    protected $objectTypeLowerMultiple;
+
+    /**
+     * @var string Permission component based on object type.
+     */
+    protected $permissionComponent;
+
+    /**
+     * @var Zikula_EntityAccess Reference to treated entity instance.
+     */
+    protected $entityRef = false;
+
+    /**
+     * @var array List of identifier names.
+     */
+    protected $idFields = array();
+
+    /**
+     * @var array List of identifiers of treated entity.
      */
     protected $idValues = array();
-«EXPAND actionHandler::Relations::IncomingMemberVar FOREACH incoming.typeSelect(JoinRelationship).select(e|!e.bidirectional)-»
+
+    /**
+     * @var mixed List of identifiers for incoming relationships.
+     */
+    protected $incomingIds = array();
 
     /**
      * @var string One of "create" or "edit".
@@ -119,20 +151,72 @@ class «baseClassFormHandler(controller, name, actionName)» extends Zikula_Form
     protected $idPrefix = '';
 
     /**
+     * @var boolean Whether an existing item is used as template for a new one
+     */
+    protected $hasTemplateId = false;
+
+    /**
+     * @var boolean Whether the PageLock extension is used for this entity type or not.
+     */
+    protected $hasPageLockSupport = false;
+«IF app.hasAttributableEntities()-»
+
+    /**
+     * @var boolean Whether the entity has attributes or not.
+     */
+    protected $hasAttributes = false;
+«ENDIF-»
+«IF app.hasCategorisableEntities()-»
+
+    /**
+     * @var boolean Whether the entity is categorisable or not.
+     */
+    protected $hasCategories = false;
+«ENDIF-»
+«IF app.hasMetaDataEntities()-»
+
+    /**
+     * @var boolean Whether the entity has meta data or not.
+     */
+    protected $hasMetaData = false;
+«ENDIF-»
+«IF app.hasTranslatable()-»
+
+    /**
+     * @var boolean Whether the entity has translatable fields or not.
+     */
+    protected $hasTranslatableFields = false;
+«ENDIF-»
+«IF app.hasUploads()-»
+
+    /**
+     * @var array Array with upload fields names and mandatory flags.
+     */
+    protected $uploadFields = array();
+«ENDIF-»
+«IF app.hasUserFields()-»
+
+    /**
+     * @var array Array with user fields names and mandatory flags.
+     */
+    protected $userFields = array();
+«ENDIF-»
+«IF app.hasListFields()-»
+
+    /**
+     * @var array Array with list fields names and multiple flags.
+     */
+    protected $listFields = array();
+«ENDIF-»
+
+
+
+    /**
      * Post construction hook.
      *
      * @return mixed
      */
     public function setup()
-    {
-    }
-
-«EXPAND initialize(app, controller, actionName)-»
-
-    /**
-     * Method stub for own additions in subclasses.
-     */
-    protected function initializeAdditions()
     {
     }
 
@@ -145,6 +229,17 @@ class «baseClassFormHandler(controller, name, actionName)» extends Zikula_Form
     {
     }
 
+«EXPAND initialize(app, actionName)-»
+
+    /**
+     * Method stub for own additions in subclasses.
+     *
+     * @depreciated to be removed in favour of postInitialize().
+     */
+    protected function initializeAdditions()
+    {
+    }
+
     /**
      * Post-initialise hook.
      *
@@ -152,37 +247,23 @@ class «baseClassFormHandler(controller, name, actionName)» extends Zikula_Form
      */
     public function postInitialize()
     {
+        $utilArgs = array('controller' => '«name()»', 'action' => '«actionName.formatForCode().toFirstLower()»', 'mode' => $this->mode);
+        $this->view->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
     }
 
-«EXPAND actionHandler::Redirect::GetRedirectCodes(app, controller, actionName)-»
+«EXPAND actionHandler::Relations::RetrieveRelatedObjects(app)-»
+«EXPAND actionHandler::Redirect::GetRedirectCodes(app, actionName)-»
 
-«EXPAND actionHandler::Redirect::GetDefaultReturnUrl(app, controller, actionName)-»
+«EXPAND HandleCommand(app, actionName)-»
+«EXPAND FetchInputData(app, actionName)-»
+«EXPAND PerformUpdate(app, actionName)-»
 
-«EXPAND handleCommand(app, controller, actionName)-»
-
-«EXPAND actionHandler::Redirect::GetRedirectUrl(app, controller, actionName)-»
-
-«EXPAND actionHandler::Relations::RetrieveRelatedObjects(app, controller)-»
-
-«EXPAND actionHandler::Relations::UpdateRelationLinks-»
+«EXPAND actionHandler::Relations::ReassignRelatedObjects-»
 «EXPAND actionHandler::Uploads::Root-»
 }
 «ENDDEFINE»
 
-
-«REM»concrete implementation stub«ENDREM»
-«DEFINE FormHandlerImpl(Application app, Controller controller, String actionName) FOR Entity-»
-/**
- * This handler class handles the page events of the Form called by the «formatForCode(app.appName().msconcat("_").msconcat(controller.name()).msconcat("_").msconcat(actionName))»() function.
- * It aims on the «name.formatForDisplay()» object type.
- */
-class «implClassFormHandler(controller, name, actionName)» extends «baseClassFormHandler(controller, name, actionName)»
-{
-    // feel free to extend the base handler class here
-}
-«ENDDEFINE»
-
-«DEFINE initialize(Application app, Controller controller, String actionName) FOR Entity-»
+«DEFINE initialize(Application app, String actionName) FOR Controller-»
     /**
      * Initialize form handler.
      *
@@ -200,166 +281,280 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         // store current uri for repeated creations
         $this->repeatReturnUrl = System::getCurrentURI();
 
-        $this->objectType = '«name.formatForCode()»';
+        $this->permissionComponent = $this->name . ':' . $this->objectTypeCapital . ':';
 
         $entityClass = '«app.appName()»_Entity_' . ucfirst($this->objectType);
         $repository = $this->entityManager->getRepository($entityClass);
 
         $objectTemp = new $entityClass();
-        $idFields = $objectTemp->get_idFields();
+        $this->idFields = $objectTemp->get_idFields();
 
         // retrieve identifier of the object we wish to view
-        $this->idValues = «app.appName()»_Util_Controller::retrieveIdentifier($this->request, array(), $this->objectType, $idFields);
+        $this->idValues = «app.appName()»_Util_Controller::retrieveIdentifier($this->request, array(), $this->objectType, $this->idFields);
         $hasIdentifier = «app.appName()»_Util_Controller::isValidIdentifier($this->idValues);
 
         $entity = null;
         $this->mode = ($hasIdentifier) ? 'edit' : 'create';
 
         if ($this->mode == 'edit') {
-            if (!SecurityUtil::checkPermission('«app.appName()»:«name.formatForCodeCapital()»:', '::', ACCESS_EDIT)) {
+            if (!SecurityUtil::checkPermission($this->permissionComponent, '::', ACCESS_EDIT)) {
                 // set an error message and return false
                 return LogUtil::registerPermissionError();
             }
 
-            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $this->idValues));
-            if ($entity == null) {
-                return LogUtil::registerError($this->__('No such item.'));
+            $entity = $this->initEntityForEdit();
+
+            if ($this->hasPageLockSupport === true && ModUtil::available('PageLock')) {
+                // try to guarantee that only one person at a time can be editing this entity
+                ModUtil::apiFunc('PageLock', 'user', 'pageLock',
+                                         array('lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier(),
+                                               'returnUrl' => $this->getRedirectUrl(null, $entity)));
             }
-
-«IF hasPageLockSupport()-»
-
-            // try to guarantee that only one person at a time can be editing this «name.formatForDisplay()»
-            $itemID = '';
-            foreach ($idFields as $idField) {
-                if (!empty($itemID)) {
-                    $itemID .= '_';
-                }
-                $itemID .= $this->idValues[$idField];
-            }
-            $returnUrl = ModUtil::url('«app.appName()»', '«controller.name()»', «modUrlDisplay('this->idValues', false)»);
-            ModUtil::apiFunc('PageLock', 'user', 'pageLock',
-                                 array('lockName' => '«app.appName()»«name.formatForCodeCapital()»' . $itemID,
-                                       'returnUrl' => $returnUrl));
-«ENDIF-»
-«IF hasOptimisticLock()-»
-
-            SessionUtil::setVar('«app.appName()»EntityVersion', $entity->get«getVersionField().name.formatForCodeCapital()»());
-«ENDIF-»
         }
         else {
-            if (!SecurityUtil::checkPermission('«app.appName()»:«name.formatForCodeCapital()»:', '::', ACCESS_ADD)) {
+            if (!SecurityUtil::checkPermission($this->permissionComponent, '::', ACCESS_ADD)) {
                 return LogUtil::registerPermissionError();
             }
 
-            $hasTemplateId = false;
-            $templateId = $this->request->getGet()->get('astemplate', '');
-            if (!empty($templateId)) {
-                $templateIdValueParts = explode('_', $templateId);
-                $hasTemplateId = (count($templateIdValueParts) == count($idFields));
-            }
-            if ($hasTemplateId === true) {
-                $templateIdValues = array();
-                $i = 0;
-                foreach ($idFields as $idField) {
-                    $templateIdValues[$idField] = $templateIdValueParts[$i];
-                    $i++;
-                }
-                // reuse existing «name.formatForDisplay()»
-                $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $templateIdValues));
-                if ($entity == null) {
-                    return LogUtil::registerError($this->__('No such item.'));
-                }
-                foreach ($idFields as $idField) {
-                     $entity[$idField] = null;
-                }
-            }
-            else {
-                $entity = new $entityClass();
-
-«EXPAND actionHandler::Relations::InitRelatedObjectDefault(true) FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»
-«EXPAND actionHandler::Relations::InitRelatedObjectDefault(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
-            }
+            $entity = $this->initEntityForCreation($entityClass);
         }
-«REM»obsolete«FOREACH fields.typeSelect(AbstractDateField) AS dateField-»
 
-        if ($entity['«dateField.name.formatForCode()»'] == '1900-01-01 00:00:00') {
-            $entity['«dateField.name.formatForCode()»'] = null;
+        $this->view->assign('mode', $this->mode)
+                   ->assign('inlineUsage', $this->inlineUsage);
+«IF app.hasAttributableEntities()-»
+
+        if ($this->hasAttributes === true) {
+            $this->initAttributesForEdit($entity);
         }
-«ENDFOREACH-»«ENDREM»«''-»
+«ENDIF-»
+«IF app.hasCategorisableEntities()-»
+
+        if ($this->hasCategories === true) {
+            $this->initCategoriesForEdit($entity);
+        }
+«ENDIF-»
+«IF app.hasMetaDataEntities()-»
+
+        if ($this->hasMetaData === true) {
+            $this->initMetaDataForEdit($entity);
+        }
+«ENDIF-»
+«IF app.hasTranslatable()-»
+
+        if ($this->hasTranslatableFields === true) {
+            $this->initTranslationsForEdit($entity);
+        }
+«ENDIF-»
 
         $entityData = $entity->toArray();
-«IF hasListFields()-»
-        $helper = new «app.appName()»_Util_ListEntries();
-        $listFields = array(«FOREACH getListFields() AS listField SEPARATOR ', '-»'«listField.name.formatForCode()»'«ENDFOREACH-»);
-        foreach ($listFields as $listField) {
-            $entityData[$listField . 'Items'] = $helper->getEntries($this->objectType, $listField);
+«IF app.hasListFields()-»
+
+        if (count($this->listFields) > 0) {
+            $helper = new «app.appName()»_Util_ListEntries();
+            foreach ($this->listFields as $listField => $isMultiple) {
+                $entityData[$listField . 'Items'] = $helper->getEntries($this->objectType, $listField);
+                if ($isMultiple) {
+                    $entityData[$listField] = $helper->extractMultiList($entityData[$listField]);
+                }
+            }
         }
-«FOREACH getListFields().select(e|e.multiple) AS listFieldMulti-»
-        $listValues = $helper->extractMultiList($entityData['«listFieldMulti.name.formatForCode()»']);
-        $entityData['«listFieldMulti.name.formatForCode()»'] = $listValues;
-«ENDFOREACH-»
 «ENDIF-»
-«IF hasTranslatableFields()-»
-        // retrieve translated fields
-        $translations = «app.appName()»_Util_Translatable::prepareEntityForEdit($this->objectType, $entity);
-«ENDIF-»
-«EXPAND actionHandler::Relations::IncomingInitialisation-»
 
-        // assign data to template as array for easy translatable support
-        $this->view->assign('«name.formatForDB()»', $entityData)
-«IF categorisable-»
-                   // assign also the actual object for categories listener
-                   ->assign('«name.formatForDB()»Obj', $entity)
-«ENDIF-»
-                   ->assign('mode', $this->mode)
-                   ->assign('inlineUsage', $this->inlineUsage);
+        // assign data to template as array (makes translatable support easier)
+        $this->view->assign($this->objectTypeLower, $entityData);
 
-        // save entity reference for reuse in handleCommand method
-        $this->«name.formatForCode()»Ref = $entity;
+        // save entity reference for later reuse
+        $this->entityRef = $entity;
 
-«IF hasTranslatableFields()-»
-        // assign translations
-        foreach ($translations as $locale => $translationData) {
-            $this->view->assign('«name.formatForDB()»' . $locale, $translationData);
-        }
-        // assign list of installed languages for translatable extension
-        $this->view->assign('supportedLocales', ZLanguage::getInstalledLanguages());
-
-«ENDIF-»
-«IF categorisable-»
-        // load and assign registered categories
-        $categories = CategoryRegistryUtil::getRegisteredModuleCategories('«app.appName()»', '«name.formatForCodeCapital()»', '«getPrimaryKeyFields().get(0).name.formatForCode()»');
-        $this->view->assign('registries', $categories);
-
-«ENDIF-»
-«IF attributable-»
-        $objectData = array();«REM»$entity->toArray(); not required probably«ENDREM»«''-»
-
-        // overwrite attributes array entry with a form compatible format
-        $attributes = array();
-        foreach (array('field1', 'field2', 'field3') as $fieldName) {
-            $attributes[$fieldName] = $entity->getAttributes()->get($fieldName)? $entity->getAttributes()->get($fieldName)->getValue() : '';
-        }
-        $objectData['attributes'] = $attributes;
-
-        $this->view->assign($objectData);
-
-«ENDIF-»
-«IF metaData-»
-        $this->view->assign('meta', $entity->getMetadata() != null? $entity->getMetadata()->toArray() : array());
-
-«ENDIF-»
-        $utilArgs = array('controller' => '«controller.name()»', 'action' => '«actionName.formatForCode().toFirstLower()»', 'mode' => $this->mode);
-        $this->view->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
         $this->initializeAdditions();
 
         // everything okay, no initialization errors occured
         return true;
     }
+
+    /**
+     * Create concatenated identifier string (for composite keys).
+     *
+     * @return String concatenated identifiers. 
+     */
+    protected function createCompositeIdentifier()
+    {
+        $itemId = '';
+        foreach ($this->idFields as $idField) {
+            if (!empty($itemId)) {
+                $itemId .= '_';
+            }
+            $itemId .= $this->idValues[$idField];
+        }
+
+        return $itemId;
+    }
+
+    /**
+     * Decode a list of concatenated identifier strings (for composite keys).
+     * This method is used for reading selected relationships.
+     *
+     * @param Array $itemIds List of concatenated identifiers.
+     * @param Array $idFields List of identifier names.
+     * @return Array with list of single identifiers. 
+     */
+    protected function decodeCompositeIdentifier($itemIds, $idFields)
+    {
+        $idValues = array();
+        foreach ($idFields as $idField) {
+            $idValues[$idField] = array();
+        }
+        foreach ($itemIds as $itemId) {
+            $itemIdParts = explode('_', $itemId);
+            $i = 0;
+            foreach ($idFields as $idField) {
+                $idValues[$idField][] = $itemIdParts[$i];
+                $i++;
+            }
+        }
+        return $idValues;
+    }
+
+    /**
+     * Enrich a given args array for easy creation of display urls with composite keys.
+     *
+     * @param Array $args List of arguments to be extended.
+     * @return Array enriched arguments list. 
+     */
+    protected function addIdentifiersToUrlArgs($args = array())
+    {
+        foreach ($this->idFields as $idField) {
+            $args[$idField] = $this->idValues[$idField];
+        }
+
+        return $args;
+    }
+
+    /**
+     * Initialise existing entity for editing.
+     *
+     * @return Zikula_EntityAccess desired entity instance or null 
+     */
+    protected function initEntityForEdit()
+    {
+        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $this->idValues));
+        if ($entity == null) {
+            return LogUtil::registerError($this->__('No such item.'));
+        }
+        return $entity;
+    }
+
+    /**
+     * Initialise new entity for creation.
+     *
+     * @return Zikula_EntityAccess desired entity instance or null 
+     */
+    protected function initEntityForCreate($entityClass)
+    {
+        $this->hasTemplateId = false;
+        $templateId = $this->request->getGet()->get('astemplate', '');
+        if (!empty($templateId)) {
+            $templateIdValueParts = explode('_', $templateId);
+            $this->hasTemplateId = (count($templateIdValueParts) == count($this->idFields));
+        }
+
+        if ($this->hasTemplateId === true) {
+            $templateIdValues = array();
+            $i = 0;
+            foreach ($this->idFields as $idField) {
+                $templateIdValues[$idField] = $templateIdValueParts[$i];
+                $i++;
+            }
+            // reuse existing entity
+            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $templateIdValues));
+            if ($entity == null) {
+                return LogUtil::registerError($this->__('No such item.'));
+            }
+            foreach ($this->idFields as $idField) {
+                $entity[$idField] = null;
+            }
+        }
+        else {
+            $entity = new $entityClass();
+        }
+
+        return $entity;
+    }
+«IF app.hasTranslatable()-»
+
+    /**
+     * Initialise translations.
+     *
+     * @param Zikula_EntityAccess $entity treated entity instance.
+     */
+    protected function initTranslationsForEdit($entity)
+    {
+        // retrieve translated fields
+        $translations = «app.appName()»_Util_Translatable::prepareEntityForEdit($this->objectType, $entity);
+
+        // assign translations
+        foreach ($translations as $locale => $translationData) {
+            $this->view->assign($this->objectTypeLower . $locale, $translationData);
+        }
+
+        // assign list of installed languages for translatable extension
+        $this->view->assign('supportedLocales', ZLanguage::getInstalledLanguages());
+    }
+«ENDIF-»
+«IF app.hasAttributableEntities()-»
+
+    /**
+     * Initialise attributes.
+     *
+     * @param Zikula_EntityAccess $entity treated entity instance.
+     */
+    protected function initAttributesForEdit($entity)
+    {
+        $objectData = array();«REM»$entity->toArray(); not required probably«ENDREM»«''-»
+
+        // overwrite attributes array entry with a form compatible format
+        $attributes = array();
+        foreach (array('field1', 'field2', 'field3') as $fieldName) {
+            $attributes[$fieldName] = $entity->getAttributes()->get($fieldName) ? $entity->getAttributes()->get($fieldName)->getValue() : '';
+        }
+        $objectData['attributes'] = $attributes;
+
+        $this->view->assign($objectData);
+    }
+«ENDIF-»
+«IF app.hasCategorisableEntities()-»
+
+    /**
+     * Initialise categories.
+     *
+     * @param Zikula_EntityAccess $entity treated entity instance.
+     */
+    protected function initCategoriesForEdit($entity)
+    {
+        // assign the actual object for categories listener
+        $this->view->assign($this->objectTypeLower . 'Obj', $entity);
+
+        // load and assign registered categories
+        $categories = CategoryRegistryUtil::getRegisteredModuleCategories($this->name, $this->objectTypeCapital, $this->idFields[0]);
+        $this->view->assign('registries', $categories);
+    }
+«ENDIF-»
+«IF app.hasMetaDataEntities()-»
+
+    /**
+     * Initialise meta data.
+     *
+     * @param Zikula_EntityAccess $entity treated entity instance.
+     */
+    protected function initMetaDataForEdit($entity)
+    {
+        $metaData = $entity->getMetadata() != null? $entity->getMetadata()->toArray() : array();
+        $this->view->assign('meta', $metaData);
+    }
+«ENDIF-»
 «ENDDEFINE»
 
-
-«DEFINE handleCommand(Application app, Controller controller, String actionName) FOR Entity-»
+«DEFINE HandleCommand(Application app, String actionName) FOR Controller-»
     /**
      * Command event handler.
      *
@@ -371,15 +566,13 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
      * @see Zikula_Form_Plugin_Button
      * @see Zikula_Form_Plugin_ImageButton
      */
-    public function handleCommand(Zikula_Form_View $view, &$args)
+    public function HandleCommand(Zikula_Form_View $view, &$args)
     {
         if ($args['commandName'] == 'delete') {
-            if (!SecurityUtil::checkPermission('«app.appName()»:«name.formatForCodeCapital()»:', '::', ACCESS_DELETE)) {
+            if (!SecurityUtil::checkPermission($this->permissionComponent, '::', ACCESS_DELETE)) {
                 return LogUtil::registerPermissionError();
             }
         }
-
-«EXPAND actionHandler::Relations::ReassignRelatedObjects-»
 
         if (!in_array($args['commandName'], array('delete', 'cancel'))) {
             // do forms validation including checking all validators on the page to validate their input
@@ -388,128 +581,79 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             }
         }
 
-        $this->objectType = '«name.formatForCode()»';
-
         $entityClass = '«app.appName()»_Entity_' . ucfirst($this->objectType);
         $repository = $this->entityManager->getRepository($entityClass);
-«IF hasTranslatableFields()-»
-        $transRepository = $this->entityManager->getRepository($entityClass . 'Translation');
-«ENDIF-»
+        if ($this->hasTranslatableFields === true) {
+            $transRepository = $this->entityManager->getRepository($entityClass . 'Translation');
+        }
+
+        $result = $this->fetchInputData($view, $args);
+        if ($result === false) {
+             return $result;
+        }
+
+        $hookAreaPrefix = '«app.name.formatForDB()».ui_hooks.' . $this->objectTypeLowerMultiple;
 
         // get treated entity reference from persisted member var
-        $«name.formatForCode()» = $this->«name.formatForCode()»Ref;
-
-«EXPAND FetchInputData(name.formatForCode())-»
+        $entity = $this->entityRef;
 
         if (in_array($args['commandName'], array('create', 'update'))) {
             // event handling if user clicks on create or update
 
             // Let any hooks perform additional validation actions
-            $hook = new Zikula_ValidationHook('«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».validate_edit', new Zikula_Hook_ValidationProviders());
+            $hook = new Zikula_ValidationHook($hookAreaPrefix . '.validate_edit', new Zikula_Hook_ValidationProviders());
             $validators = $this->notifyHooks($hook)->getValidators();
             if ($validators->hasErrors()) {
                 return false;
             }
+«IF app.hasTranslatable()-»
 
-«IF hasTranslatableFields()-»
-            // add translated values
-            //$«name.formatForCode()»->setLocale(ZLanguage::getLanguageCode());
-            foreach ($translations as $translation) {
-                foreach ($translation['fields'] as $fieldName => $value) {
-                    $transRepository->translate($«name.formatForCode()», $fieldName, $translation['locale'], $value);
-                }
-            }
-
-«ENDIF-»
-            // save «name.formatForDisplay()»
-            $successMessage = '';
-«IF hasOptimisticLock()-»
-            $expectedVersion = SessionUtil::getVar('«app.appName()»EntityVersion', 1);
-        try {
-            // assert version
-            $entityManager->lock($«name.formatForCode()», LockMode::OPTIMISTIC, $expectedVersion);
-«ENDIF-»
-            $this->updateRelationLinks($«name.formatForCode()»);
-            //$this->entityManager->transactional(function($entityManager) {
-«IF hasPessimisticWriteLock()-»
-                $this->entityManager->lock($«name.formatForCode()», LockMode::«lockType.asConstant()»);
-«ENDIF-»
-                $this->entityManager->persist($«name.formatForCode()»);
-                $this->entityManager->flush();
-            //});
-«IF hasOptimisticLock()-»
-        } catch(OptimisticLockException $e) {
-            echo $this->__('Sorry, but someone else has already changed this «name.formatForCode()». Please apply the changes again!');
-        }
-«ENDIF-»
-«LET incoming.typeSelect(JoinRelationship).select(e|!e.bidirectional) AS uniOwningAssociations-»
-«IF !uniOwningAssociations.isEmpty-»
-
-            // save incoming relationship from parent entity
-            if ($args['commandName'] == 'create') {
-«FOREACH uniOwningAssociations AS uniOwningAssociation-»
-                if (!empty($this->«uniOwningAssociation.getRelationAliasName(false)»)) {
-                    $relObj = ModUtil::apiFunc('«app.appName()»', 'selection', 'getEntity', array('ot' => '«uniOwningAssociation.source.name.formatForCode()»', 'id' => $this->«uniOwningAssociation.getRelationAliasName(false)»));
-                    if ($relObj != null) {
-                        $relObj->add«uniOwningAssociation.getRelationAliasName(true).toFirstUpper()»($«name.formatForCode()»);
-                    }
-                }
-«ENDFOREACH-»
-                $this->entityManager->flush();
+            if ($this->hasTranslatableFields === true) {
+                $this->processTranslationsForUpdate($entity, $entityData, $formData);
             }
 «ENDIF-»
-«ENDLET-»
 
-            if ($args['commandName'] == 'create') {
-                $successMessage = $this->__('Done! «name.formatForDisplayCapital()» created.');
-            } else if ($args['commandName'] == 'update') {
-                $successMessage = $this->__('Done! «name.formatForDisplayCapital()» updated.');
-            }
+            $this->performUpdate();
 
+            $success = true;
             if ($args['commandName'] == 'create') {
                 // store new identifier
-«FOREACH getPrimaryKeyFields() AS pkField-»
-                $this->idValues['«pkField.name.formatForCode()»'] = $«name.formatForCode()»->get«pkField.name.formatForCodeCapital()»();
-                // check if the insert has worked, might become obsolete due to exception usage
-                if (!$this->idValues['«pkField.name.formatForCode()»']) {
-                    return LogUtil::registerError($this->__('Error! Creation attempt failed.'));
+                foreach ($this->idFields as $idField) {
+                    $this->idValues[$idField] = $entity[$idField];
+                    // check if the insert has worked, might become obsolete due to exception usage
+                    if (!$this->idValues[$idField]) {
+                        $success = false;
+                        break;
+                    }
                 }
-«ENDFOREACH-»
             } else if ($args['commandName'] == 'update') {
-«REM»                $updateResult = true/false;
-                // check if the update has worked, might become obsolete due to exception usage
-                if ($updateResult === false) {
-                    return LogUtil::registerError($this->__('Error! Update attempt failed.'));
-                }«ENDREM»«''-»
             }
-
-            LogUtil::registerStatus($successMessage);
+            $this->addDefaultMessage($args, $success);
 
             // Let any hooks know that we have created or updated an item
-            $url = new Zikula_ModUrl('«app.appName()»', '«controller.name()»', 'display', ZLanguage::getLanguageCode(), array('ot' => $this->objectType,«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ', '-» '«pkField.name.formatForCode()»' => $this->idValues['«pkField.name.formatForCode()»']«ENDFOREACH-»));
-            $hook = new Zikula_ProcessHook('«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».process_edit', «FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ' . "_" . '-»$this->idValues['«pkField.name.formatForCode()»']«ENDFOREACH-», $url);
+            $urlArgs = array('ot' => $this->objectType);
+            $urlArgs = $this->addIdentifiersToUrlArgs($urlArgs);
+            $url = new Zikula_ModUrl($this->name, '«name()»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
+            $hook = new Zikula_ProcessHook($hookAreaPrefix . '.process_edit', $this->createCompositeIdentifier(), $url);
             $this->notifyHooks($hook);
         } else if ($args['commandName'] == 'delete') {
             // event handling if user clicks on delete
 
             // Let any hooks perform additional validation actions
-            $hook = new Zikula_ValidationHook('«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».validate_delete', new Zikula_Hook_ValidationProviders());
+            $hook = new Zikula_ValidationHook($hookAreaPrefix . '.validate_delete', new Zikula_Hook_ValidationProviders());
             $validators = $this->notifyHooks($hook)->getValidators();
             if ($validators->hasErrors()) {
                 return false;
             }
 
-            // delete «name.formatForDisplay()»
-            $this->entityManager->remove($«name.formatForCode()»);
+            // delete entity
+            $this->entityManager->remove($entity);
             $this->entityManager->flush();
-«REM»            if ($«name.formatForCode()»->delete() === false) {
-                return LogUtil::registerError($this->__('Error! Deletion attempt failed.'));
-            }«ENDREM»
 
-            LogUtil::registerStatus($this->__('Done! «name.formatForDisplayCapital()» deleted.'));
+            $this->addDefaultMessage($args, true);
 
             // Let any hooks know that we have deleted an item
-            $hook = new Zikula_ProcessHook('«app.name.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».process_delete', «FOREACH getPrimaryKeyFields() AS pkField SEPARATOR ' . "_" . '-»$this->idValues['«pkField.name.formatForCode()»']«ENDFOREACH-»);
+            $hook = new Zikula_ProcessHook($hookAreaPrefix . '.process_delete', $this->createCompositeIdentifier());
             $this->notifyHooks($hook);
         } else if ($args['commandName'] == 'cancel') {
             // event handling if user clicks on cancel
@@ -519,118 +663,507 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             // clear view cache to reflect our changes
             $this->view->clear_cache();
         }
-«IF hasPageLockSupport()-»
 
-        if ($this->mode == 'edit') {
+        if ($this->hasPageLockSupport === true && $this->mode == 'edit') {
             ModUtil::apiFunc('PageLock', 'user', 'releaseLock',
-                             array('lockName' => '«app.appName()»«name.formatForCodeCapital()»'«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR " . '_'"-» . $this->idValues['«pkField.name.formatForCode()»']«ENDFOREACH-»));
+                             array('lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier()));
+        }
+
+        return $this->view->redirect($this->getRedirectUrl($args, $entity, $repeatCreateAction));
+    }
+«IF app.hasAttributableEntities()-»
+
+    /**
+     * Prepare update of attributes.
+     *
+     * @param Zikula_EntityAccess $entity     currently treated entity instance.
+     * @param Array               $entityData form data to be merged.
+     */
+    protected function processAttributesForUpdate($entity, $entityData)
+    {
+        if (!isset($entityData['attributes'])) {
+            return;
+        }
+
+        foreach($entityData['attributes'] as $name => $value) {
+            $entity->setAttribute($name, $value);
+        }
+«REM»
+        $entity->setAttribute('url', 'http://www.example.com');
+        $entity->setAttribute('url', null); // remove
+«ENDREM»«''-»
+        unset($entityData['attributes']);
+    }
+«ENDIF-»
+«IF app.hasCategorisableEntities()-»
+
+    /**
+     * Prepare update of categories.
+     *
+     * @param Zikula_EntityAccess $entity     currently treated entity instance.
+     * @param Array               $entityData form data to be merged.
+     */
+    protected function processCategoriesForUpdate($entity, $entityData)
+    {
+    }
+«ENDIF-»
+«IF app.hasMetaDataEntities()-»
+
+    /**
+     * Prepare update of meta data.
+     *
+     * @param Zikula_EntityAccess $entity     currently treated entity instance.
+     * @param Array               $entityData form data to be merged.
+     */
+    protected function processMetaDataForUpdate($entity, $entityData)
+    {
+        $metaData = $entity->getMetadata();
+        if (is_null($metaData)) {
+            $metaDataEntityClass = '«app.appName()»_Entity_' . ucfirst($this->objectType) . 'MetaData';
+            $metaData = new $metaDataEntityClass($entity);
+        }
+
+        $metaData->merge($entityData['meta']);
+«REM»
+        $metaData->setKeywords('a,b,c');
+«ENDREM»«''-»
+        $entity->setMetadata($metaData);
+        unset($entityData['meta']);
+    }
+«ENDIF-»
+«IF app.hasTranslatable()-»
+
+    /**
+     * Prepare update of translations.
+     *
+     * @param Zikula_EntityAccess $entity     currently treated entity instance.
+     * @param Array               $entityData form data to be merged.
+     * @param Array               $formData   additional form data outside the entity scope.
+     * @return Array list of collected translations.
+     */
+    protected function processTranslationsForUpdate($entity, $entityData, $formData)
+    {
+        $translations = «container.application.appName()»_Util_Translatable::processEntityAfterEdit($this->objectType, $entity, $entityData, $formData);
+        // add translated values
+        //$entity->setLocale(ZLanguage::getLanguageCode());
+        foreach ($translations as $translation) {
+            foreach ($translation['fields'] as $fieldName => $value) {
+                $transRepository->translate($entity, $fieldName, $translation['locale'], $value);
+            }
+        }
+    }
+«ENDIF-»
+
+    /**
+     * Get success or error message for default operations.
+     *
+     * @param Array   $args    arguments from handleCommand method.
+     * @param Boolean $success true if this is a success, false for default error.
+     * @return String desired status or error message.
+     */
+    protected function getDefaultMessage($args, $success = false)
+    {
+        $message = '';
+        switch ($args['commandName']) {
+            case 'create':
+                    if ($success === true) {
+                        $message = $this->__('Done! Item created.');
+                    } else {
+                        $message = $this->__('Error! Creation attempt failed.');
+                    }
+                    break;
+            case 'update':
+                    if ($success === true) {
+                        $message = $this->__('Done! Item updated.');
+                    } else {
+                        $message = $this->__('Error! Update attempt failed.');
+                    }
+                    break;
+            case 'update':
+                    if ($success === true) {
+                        $message = $this->__('Done! Item deleted.');
+                    } else {
+                        $message = $this->__('Error! Deletion attempt failed.');
+                    }
+                    break;
+        }
+        return $message;
+    }
+
+    /**
+     * Add success or error message to session.
+     *
+     * @param Array   $args    arguments from handleCommand method.
+     * @param Boolean $success true if this is a success, false for default error.
+     */
+    protected function addDefaultMessage($args, $success = false)
+    {
+        $message = $this->getDefaultMessage($args, $success)
+        if (!empty($message)) {
+            if ($success === true) {
+                LogUtil::registerStatus($message);
+            } else {
+                LogUtil::registerError($message);
+            }
+        }
+    }
+
+«ENDDEFINE»
+
+«DEFINE FetchInputData(Application app, String actionName) FOR Controller-»
+    /**
+     * Input data processing called by handleCommand method.
+     */
+    public function fetchInputData(Zikula_Form_View $view, &$args)
+    {
+        // fetch posted data input values as an associative array
+        $formData = $this->view->getValues();
+        // we want the array with our field values
+        $entityData = $formData[$this->objectTypeLower];
+        unset($formData[$this->objectTypeLower]);
+
+«IF app.hasUserFields() || app.hasUploads() || app.hasListFields() || (app.hasSluggable() && !app.models.entities.select(e|e.slugUpdatable).isEmpty)-»
+
+        if (in_array($args['commandName'], array('create', 'update'))) {
+«IF app.hasUserFields()-»
+            if (count($this->userFields) > 0) {
+                foreach ($this->userFields as $userField) {
+                    $entityData[$userField] = (int) $this->request->getPost()->filter($userField, 0, FILTER_VALIDATE_INT);
+                    unset($entityData[$userField . 'Selector']);
+                }
+            }
+
+«ENDIF-»
+«IF app.hasUploads()-»
+            if (count($this->uploadFields) > 0) {
+                $entityData = $this->handleUploads($entityData, $entity);
+                if ($entityData == false) {
+                    return false;
+                }
+            }
+
+«ENDIF-»
+«IF app.hasListFields()-»
+            if (count($this->listFields) > 0) {
+                foreach ($this->listFields as $listField => $multiple) {
+                    if (!$multiple) {
+                        continue;
+                    }
+                    if (is_array($entityData[$listField])) { 
+                        $values = $entityData[$listField];
+                        $entityData[$listField] = '';
+                        if (count($values) > 0) {
+                            if (count($values) > 1) {
+                                $entityData[$listField] = '###' . implode('###', $values) . '###';
+                            } else {
+                                $entityData[$listField] = '###' . $values . '###';
+                            }
+                        }
+                    }
+                }
+            }
+«ENDIF-»
+
+«REM»no slug input element yet, see https://github.com/l3pp4rd/DoctrineExtensions/issues/140
+«IF hasSluggableFields() && slugUpdatable-»
+            $entityData['slug'] = «container.application.appName()»_Util_Controller::formatPermalink($entityData['slug']);
+«ENDIF-»
+«ENDREM»«''-»
         }
 «ENDIF-»
-        return $this->view->redirect($this->getRedirectUrl($args, $«name.formatForCode()», $repeatCreateAction));
 
-        // We should in principle not end here at all, since the above command handlers should
-        // match all possible commands, but we return "ok" (true) for all cases.
-        return true;
+        $repeatCreateAction = false;
+        if (isset($entityData['repeatcreation'])) {
+            if ($args['commandName'] == 'create') {
+                $repeatCreateAction = $entityData['repeatcreation'];
+            }
+            unset($entityData['repeatcreation']);
+        }
+«IF app.hasAttributableEntities()-»
+
+        if ($this->hasAttributes) {
+            $this->processAttributesForUpdate($entity, $entityData);
+        }
+«ENDIF-»
+«IF app.hasMetaDataEntities()-»
+
+        if ($this->hasMetaData === true) {
+            $this->processMetaDataForUpdate($entity, $entityData);
+        }
+«ENDIF-»
+
+        // assign fetched data
+        $entity->merge($entityData);
+
+        // save updated entity
+        $this->entityRef = $entity;
+
+        // return remaining form data
+        return $formData;
+«ENDDEFINE»
+
+«DEFINE PerformUpdate(Application app, String actionName) FOR Controller-»
+    /**
+     * Executing insert and update statements - method stub for child classes.
+     *
+     * @param Array   $args    arguments from handleCommand method.
+     */
+    public function performUpdate($args)
+    {
     }
 «ENDDEFINE»
 
 
-
-«DEFINE FetchInputData(String obj) FOR Entity-»
-        // fetch posted data input values as an associative array
-        $formData = $this->view->getValues();
-        // we want the array with our field values
-        $«obj»Data = $formData['«name.formatForDB()»'];
-        unset($formData['«name.formatForDB()»']);
-
-«EXPAND actionHandler::Relations::FetchRelationValue(obj, true) FOREACH incoming.typeSelect(JoinRelationship).reject(e|e.metaType == ManyToManyRelationship)-»
-«LET getUserFields() AS userFields-»
-«LET getUploadFields() AS uploadFields-»
-«LET getListFields().select(e|e.multiple) AS listFieldsMulti-»
-«IF !(userFields.isEmpty && uploadFields.isEmpty && listFieldsMulti.isEmpty) || (hasSluggableFields() && slugUpdatable)-»
-
-        if (in_array($args['commandName'], array('create', 'update'))) {
-«FOREACH userFields AS userField-»
-            $«obj»Data['«userField.name.formatForCode()»'] = (int) $this->request->getPost()->filter('«userField.name.formatForCode()»', 0, FILTER_VALIDATE_INT);
-            unset($«obj»Data['«userField.name.formatForCode()»Selector']);
-«ENDFOREACH-»
-«IF !uploadFields.isEmpty-»
-            $«obj»Data = $this->handleUploads($«obj»Data, $«name.formatForCode()»);
-            if ($«obj»Data == false) {
-                return false;
-            }
-«ENDIF-»
-«IF !listFieldsMulti.isEmpty-»
-«FOREACH listFieldsMulti AS listFieldMulti-»
-            if (is_array($«obj»Data['«listFieldMulti.name.formatForCode()»'])) { 
-                $values = $«obj»Data['«listFieldMulti.name.formatForCode()»'];
-                $«obj»Data['«listFieldMulti.name.formatForCode()»'] = '';
-                if (count($values) > 0) {
-                    if (count($values) > 1) {
-                        $«obj»Data['«listFieldMulti.name.formatForCode()»'] = '###' . implode('###', $values) . '###';
-                    } else {
-                        $«obj»Data['«listFieldMulti.name.formatForCode()»'] = '###' . $values . '###';
-                    }
-                }
-            }
-«ENDFOREACH-»
-«ENDIF-»
-«REM»no slug input element yet, see https://github.com/l3pp4rd/DoctrineExtensions/issues/140
-«IF hasSluggableFields() && slugUpdatable-»
-            $«obj»Data['slug'] = «container.application.appName()»_Util_Controller::formatPermalink($«obj»Data['slug']);
-«ENDIF-»
-«ENDREM»«''-»
-        }
-«ENDIF-»
-«ENDLET-»
-«ENDLET-»
-«ENDLET-»
-
-        $repeatCreateAction = false;
-        if (isset($«obj»Data['repeatcreation'])) {
-            if ($args['commandName'] == 'create') {
-                $repeatCreateAction = $«obj»Data['repeatcreation'];
-            }
-            unset($«obj»Data['repeatcreation']);
-        }
-«IF hasTranslatableFields()-»
-
-        // process translated fields
-        $translations = «container.application.appName()»_Util_Translatable::processEntityAfterEdit($this->objectType, $«obj», $«obj»Data, $formData);
-«ENDIF-»
-«IF attributable-»
-
-        // merge attributes
-        if (isset($«obj»Data['attributes'])) {
-            foreach($«obj»Data['attributes'] as $name => $value) {
-                $«obj»->setAttribute($name, $value);
-            }
-«REM»
-            $«obj»->setAttribute('url', 'http://www.example.com');
-            $«obj»->setAttribute('url', null); // remove
-«ENDREM»«''-»
-            unset($«obj»Data['attributes']);
-        }
-«ENDIF-»
-«IF metaData-»
-
-        // merge metadata
-        $metaData = $«obj»->getMetadata();
-
-        if (is_null($metaData)) {
-            $metaData = new «implClassModel('', 'metaData')»($«obj»);
-            $«obj»->setMetadata($metaData);
-        }
-        $metaData->merge($«obj»Data['meta']);
-«REM»
-        $metaData->setKeywords('a,b,c');
-«ENDREM»«''-»
-        unset($«obj»Data['meta']);
+«REM»base implementation«ENDREM»
+«DEFINE FormHandlerBaseImpl(Application app, Controller controller, String actionName) FOR Entity-»
+«IF hasOptimisticLock() || hasPessimisticReadLock() || hasPessimisticWriteLock()-»
+use Doctrine\DBAL\LockMode;
+«IF hasOptimisticLock()-»
+use Doctrine\ORM\OptimisticLockException;
 «ENDIF-»
 
-        // assign fetched data
-        $«obj»->merge($«obj»Data);
+«ENDIF-»
+/**
+ * This handler class handles the page events of the Form called by the «formatForCode(app.appName().msconcat("_").msconcat(controller.name()).msconcat("_").msconcat(actionName))»() function.
+ * It aims on the «name.formatForDisplay()» object type.
+ *
+ * More documentation is provided in the parent class.
+ */
+class «baseClassFormHandler(controller, name, actionName)» extends «baseClassFormHandler(controller, actionName)»
+{
+    /**
+     * Persistent member vars
+     */
+
+    /**
+     * Pre-initialise hook.
+     *
+     * @return void
+     */
+    public function preInitialize()
+    {
+        parent::preInitialize();
+
+        $this->objectType = '«name.formatForCode()»';
+        $this->objectTypeCapital = '«name.formatForCodeCapital()»';
+        $this->objectTypeLower = '«name.formatForDB()»';
+        $this->objectTypeLowerMultiple = '«nameMultiple.formatForCode()»';
+
+        $this->hasPageLockSupport = «hasPageLockSupport().displayBool()»;
+«IF app.hasAttributableEntities()-»
+        $this->hasAttributes = «attributable.displayBool()»;
+«ENDIF-»
+«IF app.hasCategorisableEntities()-»
+        $this->hasCategories = «categorisable.displayBool()»;
+«ENDIF-»
+«IF app.hasMetaDataEntities()-»
+        $this->hasMetaData = «metaData.displayBool()»;
+«ENDIF-»
+«IF app.hasTranslatable()-»
+        $this->hasTranslatableFields = «hasTranslatableFields().displayBool()»;
+«ENDIF-»
+«IF hasUploadFields()-»
+        // array with upload fields and mandatory flags
+        $this->uploadFields = array(«FOREACH getUploadFields() AS uploadField SEPARATOR ', '-»'«uploadField.name.formatForCode()»' => «uploadField.mandatory.displayBool()»«ENDFOREACH-»);
+«ENDIF-»
+«IF hasUserFields()-»
+        // array with user fields and mandatory flags
+        $this->userFields = array(«FOREACH getUserFields() AS userField SEPARATOR ', '-»'«userField.name.formatForCode()»' => «userField.mandatory.displayBool()»«ENDFOREACH-»);
+«ENDIF-»
+«IF hasListFields()-»
+        // array with list fields and multiple flags
+        $this->listFields = array(«FOREACH getListFields() AS listField SEPARATOR ', '-»'«listField.name.formatForCode()»' => «listField.multiple.displayBool()»«ENDFOREACH-»);
+«ENDIF-»
+    }
+
+«EXPAND initialize(app, controller, actionName)-»
+
+    /**
+     * Post-initialise hook.
+     *
+     * @return void
+     */
+    public function postInitialize()
+    {
+        parent::postInitialize();
+    }
+
+«EXPAND actionHandler::Redirect::GetRedirectCodes(app, controller, actionName)-»
+
+«EXPAND actionHandler::Redirect::GetDefaultReturnUrl(app, controller, actionName)-»
+
+«EXPAND HandleCommand(app, controller, actionName)-»
+«EXPAND FetchInputData(app, controller, actionName)-»
+
+«EXPAND actionHandler::Redirect::GetRedirectUrl(app, controller, actionName)-»
+
+«EXPAND actionHandler::Relations::ReassignRelatedObjects-»
+«EXPAND actionHandler::Relations::UpdateRelationLinks-»
+}
 «ENDDEFINE»
 
 
+«REM»concrete implementation stub«ENDREM»
+«DEFINE FormHandlerImpl(Application app, Controller controller, String actionName) FOR Entity-»
+/**
+ * This handler class handles the page events of the Form called by the «formatForCode(app.appName().msconcat("_").msconcat(controller.name()).msconcat("_").msconcat(actionName))»() function.
+ * It aims on the «name.formatForDisplay()» object type.
+ */
+class «implClassFormHandler(controller, name, actionName)» extends «baseClassFormHandler(controller, name, actionName)»
+{
+    // feel free to extend the base handler class here
+}
+«ENDDEFINE»
+
+
+«DEFINE initialize(Application app, Controller controller, String actionName) FOR Entity-»
+    /**
+     * Initialize form handler.
+     *
+     * This method takes care of all necessary initialisation of our data and form states.
+     *
+     * @return boolean False in case of initialization errors, otherwise true.
+     */
+    public function initialize(Zikula_Form_View $view)
+    {
+        parent::initialize($view);
+
+        $entity = $this->entityRef;
+
+        if ($this->mode == 'edit') {
+«IF hasOptimisticLock()-»
+            SessionUtil::setVar($this->name . 'EntityVersion', $entity->get«getVersionField().name.formatForCodeCapital()»());
+«ENDIF-»
+        } else {
+            if ($this->hasTemplateId !== true) {
+«EXPAND actionHandler::Relations::InitRelatedObjectDefault(true) FOREACH incoming.typeSelect(JoinRelationship).select(e|e.bidirectional)-»
+«EXPAND actionHandler::Relations::InitRelatedObjectDefault(false) FOREACH outgoing.typeSelect(JoinRelationship)-»
+            }
+        }
+
+«EXPAND actionHandler::Relations::IncomingInitialisation-»
+
+        // save entity reference for later reuse
+        $this->entityRef = $entity;
+
+        // everything okay, no initialization errors occured
+        return true;
+    }
+«ENDDEFINE»
+
+«DEFINE HandleCommand(Application app, Controller controller, String actionName) FOR Entity-»
+    /**
+     * Command event handler.
+     *
+     * This event handler is called when a command is issued by the user.
+     */
+    public function handleCommand(Zikula_Form_View $view, &$args)
+    {
+        $result = parent::handleCommand($view, $args);
+        if ($result === false) {
+            return $result;
+        }
+
+        return $this->view->redirect($this->getRedirectUrl($args, $entity, $repeatCreateAction));
+    }
+
+    /**
+     * Get success or error message for default operations.
+     *
+     * @param Array   $args    arguments from handleCommand method.
+     * @param Boolean $success true if this is a success, false for default error.
+     * @return String desired status or error message.
+     */
+    protected function getDefaultMessage($args, $success = false)
+    {
+        if ($success !== true) {
+            return parent::getDefaultMessage($args, $success);
+        }
+
+        $message = '';
+        switch ($args['commandName']) {
+            case 'create':
+                        $message = $this->__('Done! «name.formatForDisplayCapital()» created.');
+                    break;
+            case 'update':
+                        $message = $this->__('Done! «name.formatForDisplayCapital()» updated.');
+                    break;
+            case 'update':
+                        $message = $this->__('Done! «name.formatForDisplayCapital()» deleted.');
+                    break;
+        }
+        return $message;
+    }
+«ENDDEFINE»
+
+«DEFINE FetchInputData(Application app, Controller controller, String actionName) FOR Entity-»
+    /**
+     * Input data processing called by handleCommand method.
+     */
+    public function fetchInputData(Zikula_Form_View $view, &$args)
+    {
+        // get treated entity reference from persisted member var
+        $entity = $this->entityRef;
+
+        $entityData = array();
+
+        $this->reassignRelatedObjects();
+«EXPAND actionHandler::Relations::FetchRelationValue(true) FOREACH incoming.typeSelect(JoinRelationship).reject(e|e.metaType == ManyToManyRelationship)-»
+
+        // assign fetched data
+        if (count($entityData) > 0) {
+            $entity->merge($entityData);
+        }
+
+        // save updated entity
+        $this->entityRef = $entity;
+«ENDDEFINE»
+
+
+«DEFINE PerformUpdate(Application app, Controller controller, String actionName) FOR Entity-»
+    /**
+     * Executing insert and update statements - method stub for child classes.
+     *
+     * @param Array   $args    arguments from handleCommand method.
+     */
+    public function performUpdate($args)
+    {
+«IF hasOptimisticLock()-»
+            $expectedVersion = SessionUtil::getVar($this->name . 'EntityVersion', 1);
+        try {
+            // assert version
+            $entityManager->lock($entity, LockMode::OPTIMISTIC, $expectedVersion);
+«ENDIF-»
+            $this->updateRelationLinks($entity);
+            //$this->entityManager->transactional(function($entityManager) {
+«IF hasPessimisticWriteLock()-»
+                $this->entityManager->lock($entity, LockMode::«lockType.asConstant()»);
+«ENDIF-»
+                $this->entityManager->persist($entity);
+                $this->entityManager->flush();
+            //});
+«IF hasOptimisticLock()-»
+        } catch(OptimisticLockException $e) {
+            echo $this->__('Sorry, but someone else has already changed this record. Please apply the changes again!');
+        }
+«ENDIF-»
+«LET incoming.typeSelect(JoinRelationship).select(e|!e.bidirectional) AS uniOwningAssociations-»
+«IF !uniOwningAssociations.isEmpty-»
+
+            // save incoming relationship from parent entity
+            if ($args['commandName'] == 'create') {
+«FOREACH uniOwningAssociations AS uniOwningAssociation-»
+                if (!empty($this->incomingIds['«uniOwningAssociation.getRelationAliasName(false)»'])) {
+                    $relObj = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => '«uniOwningAssociation.source.name.formatForCode()»', 'id' => $this->incomingIds['«uniOwningAssociation.getRelationAliasName(false)»']));
+                    if ($relObj != null) {
+                        $relObj->add«uniOwningAssociation.getRelationAliasName(true).toFirstUpper()»($entity);
+                    }
+                }
+«ENDFOREACH-»
+                $this->entityManager->flush();
+            }
+«ENDIF-»
+«ENDLET-»
+    }
+«ENDDEFINE»
 

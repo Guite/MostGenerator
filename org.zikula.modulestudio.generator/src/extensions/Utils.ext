@@ -263,6 +263,8 @@ cached String getSingleParamForTemplate(List[DerivedField] fields, String objNam
 
 
 
+cached boolean hasUserFields(Entity this) :
+    !getUserFields().isEmpty;
 cached getUserFields(Entity this) :
     fields.typeSelect(UserField);
 cached boolean hasUploadFields(Entity this) :
