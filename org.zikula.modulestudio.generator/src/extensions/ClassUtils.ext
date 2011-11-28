@@ -70,6 +70,8 @@ cached String implClassApi(Controller obj)
     : implClassDefault(obj.container.application, fillingApi(), prepClassPart(obj.name));
 cached String baseClassFormHandler(Controller obj, String actionName)
     : baseClassDefault(obj.container.application, fillingFormHandler().msconcat(prepClassPart(obj.name)).msconcat('_'), prepClassPart(actionName));
+cached String implClassFormHandler(Controller obj, String actionName)
+    : implClassDefault(obj.container.application, fillingFormHandler().msconcat(prepClassPart(obj.name)).msconcat('_'), prepClassPart(actionName));
 cached String baseClassFormHandler(Controller obj, String entityName, String actionName)
     : baseClassDefault(obj.container.application, fillingFormHandler().msconcat(prepClassPart(obj.name)).msconcat('_').msconcat(prepClassPart(entityName)).msconcat('_'), prepClassPart(actionName));
 cached String implClassFormHandler(Controller obj, String entityName, String actionName)

@@ -34,6 +34,10 @@
 «EXPAND FileHelper::phpFileHeader(app)-»
 «EXPAND FormHandlerBaseClass(app, actionName)-»
 «ENDFILE»
+«FILE getAppSourcePath(app.appName()).msconcat(implClassFormHandler(this, actionName).asFile())-»
+«EXPAND FileHelper::phpFileHeader(app)-»
+«EXPAND FormHandlerImpl(app, actionName)-»
+«ENDFILE»
 «ENDDEFINE»
 
 «REM»Entry point for Form handler classes«ENDREM»
@@ -914,6 +918,21 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
 «ENDDEFINE»
 
 
+«REM»concrete implementation stub«ENDREM»
+«DEFINE FormHandlerImpl(Application app, String actionName) FOR Controller-»
+/**
+ * This handler class handles the page events of the Form called by the «formatForCode(app.appName().msconcat("_").msconcat(name()).msconcat("_").msconcat(actionName))»() function.
+ * It collects common functionality required by different object types.
+ */
+class «implClassFormHandler(this, actionName)» extends «baseClassFormHandler(this, actionName)»
+{
+    // feel free to extend the base handler class here
+}
+«ENDDEFINE»
+
+
+
+
 «REM»base implementation«ENDREM»
 «DEFINE FormHandlerBaseImpl(Application app, Controller controller, String actionName) FOR Entity-»
 «IF hasOptimisticLock() || hasPessimisticReadLock() || hasPessimisticWriteLock()-»
@@ -929,7 +948,7 @@ use Doctrine\ORM\OptimisticLockException;
  *
  * More documentation is provided in the parent class.
  */
-class «baseClassFormHandler(controller, name, actionName)» extends «baseClassFormHandler(controller, actionName)»
+class «baseClassFormHandler(controller, name, actionName)» extends «implClassFormHandler(controller, actionName)»
 {
     /**
      * Persistent member vars
