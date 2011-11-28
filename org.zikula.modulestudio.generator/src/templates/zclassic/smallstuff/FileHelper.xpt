@@ -23,7 +23,7 @@
 «ENDDEFINE»
 
 «DEFINE msWeblink FOR Application-»
-<p style="text-align: center">
+<p class="z-center">
     Powered by <a href="«msUrl()-»" title="Get the MOST out of Zikula!">ModuleStudio «msVersion()-»</a>
 </p>
 «ENDDEFINE»
