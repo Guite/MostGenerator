@@ -655,7 +655,7 @@ class «implClassModel('validator', '')» extends «IF isInheriting()»«parentT
         }
 «ENDIF-»
 «IF regexp != null && regexp != ''-»
-        if (!$this->isValidRegExp('«name.formatForCode()»', «regexp»)) {
+        if (!$this->isValidRegExp('«name.formatForCode()»', '«regexp»')) {
             $errorInfo['message'] = __f('Error! Field value must conform to regular expression [%2$s] (%1$s).', array('«name.formatForCode()»', '«regexp»'), $dom);
             return $errorInfo;
         }
