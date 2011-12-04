@@ -61,11 +61,11 @@
  * This handler class handles the page events of the Form called by the «formatForCode(app.appName().msconcat("_").msconcat(name()).msconcat("_").msconcat(actionName))»() function.
  * It collects common functionality required by different object types.
  *
- * Member variables in a form handler object are persisted accross different page requests. This means
+ * Member variables in a form handler object are persisted across different page requests. This means
  * a member variable $this->X can be set on one request and on the next request it will still contain
  * the same value.
  *
- * A form handler will be notified of various events that happens during it's life-cycle.
+ * A form handler will be notified of various events happening during it's life-cycle.
  * When a specific event occurs then the corresponding event handler (class method) will be executed. Handlers
  * are named exactly like their events - this is how the framework knows which methods to call.
  *
