@@ -117,7 +117,7 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
             if ($many) {
                 $where .= 'tbl.' . $idField . ' IN (' . DataUtil::formatForStore($inputValueParts[$i]) . ')';
             } else {
-                $where .= 'tbl.' . $idField . ' = \'' . DataUtil::formatForStore($inputValueParts[$i]) . '\'';
+                $where .= 'tbl.' . $idField . ' = ' . DataUtil::formatForStore($inputValueParts[$i]);
             }
             $i++;
         }
