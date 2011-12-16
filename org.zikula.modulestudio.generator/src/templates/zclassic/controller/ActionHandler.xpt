@@ -354,7 +354,7 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
 «IF app.hasListFields()-»
 
         if (count($this->listFields) > 0) {
-            $helper = new «app.appName()»_Util_ListEntries();
+            $helper = new «app.appName()»_Util_ListEntries($this->view->getServiceManager());
             foreach ($this->listFields as $listField => $isMultiple) {
                 $entityData[$listField . 'Items'] = $helper->getEntries($this->objectType, $listField);
                 if ($isMultiple) {
