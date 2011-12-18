@@ -69,6 +69,9 @@
     {assign var='hasNodes' value=true}
 {/if}
 
+{* initialise additional gettext domain for translations within javascript *}
+{pageaddvar name='jsgettext' value='module_«appName.formatForDB()»_js:News'}
+
 <div id="«name.formatForDB()»_tree{$rootId}" class="z-treecontainer">
     <div id="treeitems{$rootId}" class="z-treeitems">
     {if $hasNodes}
