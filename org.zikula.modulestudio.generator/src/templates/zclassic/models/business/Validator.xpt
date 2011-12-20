@@ -203,9 +203,9 @@ abstract class «baseClassDefault(this, '', 'Validator')» extends Zikula_Abstra
     public function isStringNotContaining($fieldName, $keyword, $caseSensitive = false)
     {
         if ($caseSensitive === true) {
-            return (strstr($this->entity[$fieldName], $keyword) !== false);
+            return (strstr($this->entity[$fieldName], $keyword) === false);
         }
-        return (stristr($this->entity[$fieldName], $keyword) !== false);
+        return (stristr($this->entity[$fieldName], $keyword) === false);
     }
 
     /**
