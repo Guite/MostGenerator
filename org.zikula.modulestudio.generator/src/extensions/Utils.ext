@@ -79,6 +79,10 @@ cached boolean hasLoggable(Application this) :
     !getLoggableEntities().isEmpty;
 cached getLoggableEntities(Application this) :
     models.entities.select(e|e.loggable);
+cached boolean hasGeographical(Application this) :
+    !getGeographicalEntities().isEmpty;
+cached getGeographicalEntities(Application this) :
+    models.entities.select(e|e.geographical);  
 cached boolean hasSluggable(Application this) :
     models.entities.exists(e|e.hasSluggableFields());
 cached boolean hasSortable(Application this) :

@@ -34,6 +34,13 @@ div.«appName().formatForDB()»RightBox p.manageLink {
     margin-left: 18px;
 }
 
+«IF hasGeographical()-»
+	div.«appName().formatForDB()»MapContainer {
+	    height: 400px;
+	}
+«ENDIF-»
+
+
 «IF hasTrees()-»
 .z-treecontainer {
     border: 1px solid #ccc;
