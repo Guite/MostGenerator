@@ -200,7 +200,7 @@
     /* ]]> */
     </script>
 {/pageaddvarblock}
-<div id="mapContainer" class="«appName.formatForDB()»MapContainer">
+<div id="mapContainer" class="«controller.container.application.appName().formatForDB()»MapContainer">
 </div>
 «ENDIF-»
 «IF attributable-»
