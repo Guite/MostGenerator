@@ -27,7 +27,8 @@ function smarty_modifier_«appName().formatForDB()»GetListEntry($value, $object
         return $value;
     }
 
-    $helper = new «appName()»_Util_ListEntries();
+    $serviceManager = ServiceUtil::getManager();
+    $helper = new «appName()»_Util_ListEntries($serviceManager);
     return $helper->resolveValue($value, $objectType, $fieldName, $delimiter);
 }
 «ENDDEFINE»
