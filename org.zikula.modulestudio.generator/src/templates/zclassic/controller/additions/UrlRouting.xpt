@@ -36,8 +36,8 @@ class «appName»_Base_RouterFacade
             'func'          => '\w+',
             'ot'            => '\w+',
             'title'         => '[^/.]+', // title used for slugs ([^/.]+ = all chars except / and .)
-            'displayending' => '(?:' . $displayDefaultEnding . '|xml|pdf|json)',
-            'viewending'    => '(?:\.csv|\.rss|\.atom|\.xml|\.pdf|\.json)?',
+            'displayending' => '(?:' . $displayDefaultEnding . '|xml|pdf|json|kml)',
+            'viewending'    => '(?:\.csv|\.rss|\.atom|\.xml|\.pdf|\.json|\.kml)?',
             'id'            => '\d+'
         );
 

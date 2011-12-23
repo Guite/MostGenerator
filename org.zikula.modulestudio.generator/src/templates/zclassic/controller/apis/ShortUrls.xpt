@@ -57,7 +57,7 @@
         // handle special templates
         $displayDefaultEnding = System::getVar('shorturlsext', 'html');
         $endingPrefix = ($args['func'] == 'view') ? '.' : '';
-        foreach (array('csv', 'rss', 'atom', 'xml', 'pdf', 'json') as $ending) {
+        foreach (array('csv', 'rss', 'atom', 'xml', 'pdf', 'json', 'kml') as $ending) {
             if (!isset($args['args']['use' . $ending . 'ext'])) {
                 continue;
             }

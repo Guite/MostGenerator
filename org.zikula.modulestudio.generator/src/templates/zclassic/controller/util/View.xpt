@@ -42,7 +42,7 @@ class «appName()»_Util_Base_View extends Zikula_AbstractBase
 
         // look whether we need output with or without the theme
         $raw = (bool) (isset($args['raw']) && !empty($args['raw'])) ? $args['raw'] : FormUtil::getPassedValue('raw', false, 'GETPOST', FILTER_VALIDATE_BOOLEAN);
-        if (!$raw && in_array($templateExtension, array('csv', 'rss', 'atom', 'xml', 'pdf', 'vcard', 'ical', 'json'))) {
+        if (!$raw && in_array($templateExtension, array('csv', 'rss', 'atom', 'xml', 'pdf', 'vcard', 'ical', 'json', 'kml'))) {
             $raw = true;
         }
 
@@ -107,7 +107,7 @@ class «appName()»_Util_Base_View extends Zikula_AbstractBase
         $extParams = array();
         if ($func == 'view') {
             if (SecurityUtil::checkPermission('«appName()»::', '::', ACCESS_ADMIN)) {
-                $extParams = array('csv', 'rss', 'atom', 'xml', 'json'/*, 'pdf'*/);
+                $extParams = array('csv', 'rss', 'atom', 'xml', 'json', 'kml'/*, 'pdf'*/);
             }
             else {
                 $extParams = array('rss', 'atom'/*, 'pdf'*/);
@@ -115,7 +115,7 @@ class «appName()»_Util_Base_View extends Zikula_AbstractBase
         }
         elseif ($func == 'display') {
             if (SecurityUtil::checkPermission('«appName()»::', '::', ACCESS_ADMIN)) {
-                $extParams = array('xml', 'json'/*, 'pdf'*/);
+                $extParams = array('xml', 'json', 'kml'/*, 'pdf'*/);
             }
         }
         return $extParams;

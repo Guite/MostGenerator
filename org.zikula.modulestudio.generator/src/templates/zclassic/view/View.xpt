@@ -23,6 +23,9 @@
 «IF controller.hasActions('view') || controller.hasActions('display')-»
     «EXPAND Pages::Export::Xml::Root(appName, controller) FOREACH models.entities-»
     «EXPAND Pages::Export::Json::Root(appName, controller) FOREACH models.entities-»
+    «IF hasGeographical()-»
+        «EXPAND Pages::Export::Kml::Root(appName, controller) FOREACH models.entities-»
+    «ENDIF-»
 «ENDIF-»
 «IF controller.hasActions('display')-»
     «EXPAND Pages::Display::Impl(appName, controller) FOREACH models.entities-»
