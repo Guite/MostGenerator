@@ -101,7 +101,7 @@
     /**
      * Get url to redirect to.
      */
-    protected function getRedirectUrl($args, $obj, $repeatCreateAction = false)
+    protected function getRedirectUrl($args, $obj)
     {
         if ($this->inlineUsage == true) {
             $urlArgs = array('idp' => $this->idPrefix,
@@ -111,7 +111,7 @@
             return ModUtil::url($this->name, '«controller.name()»', 'handleInlineRedirect', $urlArgs);
         }
 
-        if ($repeatCreateAction) {
+        if ($this->repeatCreateAction) {
             return $this->repeatReturnUrl;
         }
 

@@ -140,6 +140,11 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
     protected $returnTo = null;
 
     /**
+     * @var boolean Whether a create action is going to be repeated or not.
+     */
+    protected $repeatCreateAction = false;
+
+    /**
      * @var string Url of current form with all parameters for multiple creations.
      */
     protected $repeatReturnUrl = null;
@@ -673,7 +678,7 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
                              array('lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier()));
         }
 
-        return $this->view->redirect($this->getRedirectUrl($args, $entity, $repeatCreateAction));
+        return $this->view->redirect($this->getRedirectUrl($args, $entity));
     }
 «IF app.hasAttributableEntities()-»
 
@@ -879,10 +884,9 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
         }
 «ENDIF-»
 
-        $repeatCreateAction = false;
         if (isset($entityData['repeatcreation'])) {
             if ($args['commandName'] == 'create') {
-                $repeatCreateAction = $entityData['repeatcreation'];
+                $this->repeatCreateAction = $entityData['repeatcreation'];
             }
             unset($entityData['repeatcreation']);
         }
@@ -1089,7 +1093,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             return $result;
         }
 
-        return $this->view->redirect($this->getRedirectUrl($args, $entity, $repeatCreateAction));
+        return $this->view->redirect($this->getRedirectUrl($args, $entity));
     }
 
     /**
