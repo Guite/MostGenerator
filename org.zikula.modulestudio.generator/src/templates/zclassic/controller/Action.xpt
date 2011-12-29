@@ -230,6 +230,8 @@ http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
 «ENDDEFINE»
 
 «DEFINE ActionImplBody(String appName) FOR DeleteAction-»
+        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+
         // retrieve identifier of the object we wish to delete
         $idValues = «appName»_Util_Controller::retrieveIdentifier($this->request, $args, $objectType, $idFields);
         $hasIdentifier = «appName»_Util_Controller::isValidIdentifier($idValues);
