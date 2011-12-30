@@ -149,10 +149,10 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
 «DEFINE UpdateRelationLinks(Boolean incoming) FOR JoinRelationship-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET isManySide(!incoming) AS many-»
-«LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
+«LET getUniqueRelationNameForJs(container.application, ((incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
 «IF many && this.getEditStageCode(incoming) > 1-»
 «LET ((incoming) ? source : target).name.formatForCode() AS objectType-»
-«IF incoming-»«REM»only incoming for now, see https://github.com/Guite/MostGenerator/issues/10«ENDREM»«""-»
+«IF incoming || many-»«REM»only incoming for now, see https://github.com/Guite/MostGenerator/issues/10«ENDREM»«""-»
         $relatedIds = $this->request->getPost()->get('«uniqueNameForJs»ItemList', '');
         if ($this->mode != 'create') {
             // remove all existing references
@@ -173,14 +173,14 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
         }
 
         $idFields = ModUtil::apiFunc('«container.application.appName()»', 'selection', 'getIdFields', array('ot' => '«objectType»'));
-        $relatedIdValues = $this->decodeCompositeIdentifiers($relatedIds, $idFields);
+        $relatedIdValues = $this->decodeCompositeIdentifier($relatedIds, $idFields);
 
         $where = '';
         foreach ($idFields as $idField) {
             if (!empty($where)) {
                 $where .= ' AND ';
             }
-            $where .= $idField . ' IN (' . implode(', ', $relatedIdValues[$idField]) . ')';
+            $where .= 'tbl.' . $idField . ' IN (' . implode(', ', $relatedIdValues[$idField]) . ')';
         }
         $linkObjects = ModUtil::apiFunc($this->name, 'selection', 'getEntities', array('ot' => '«objectType»', 'where' => $where));
         // create new links

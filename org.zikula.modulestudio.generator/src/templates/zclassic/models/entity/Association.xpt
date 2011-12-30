@@ -190,14 +190,14 @@
 «LET ((useTarget) ? getSourceFields() : getTargetFields()) AS joinColumnsLocal-»
 «LET ((useTarget) ? getTargetFields() : getSourceFields()) AS joinColumnsForeign-»
 «IF joinColumnsForeign.size > 1-»
-     *      joinColumns={«FOREACH joinColumnsLocal AS joinColumnLocal SEPARATOR ', '-»«EXPAND JoinColumn(joinColumnLocal, joinedEntityLocal.getFirstPrimaryKey().name.formatForDB())-»«ENDFOREACH-»},
+     *      joinColumns={«FOREACH joinColumnsLocal AS joinColumnLocal SEPARATOR ', '-»«EXPAND JoinColumn(joinColumnLocal, joinedEntityLocal.getFirstPrimaryKey().name.formatForDB(), !useTarget)-»«ENDFOREACH-»},
 «ELSE-»
-     *      joinColumns={«EXPAND JoinColumn(joinColumnsLocal.get(0), joinedEntityLocal.getFirstPrimaryKey().name.formatForDB())»},
+     *      joinColumns={«EXPAND JoinColumn(joinColumnsLocal.get(0), joinedEntityLocal.getFirstPrimaryKey().name.formatForDB(), !useTarget)»},
 «ENDIF-»
 «IF joinColumnsForeign.size > 1-»
-     *      inverseJoinColumns={«FOREACH joinColumnsForeign AS joinColumnForeign SEPARATOR ', '-»«EXPAND JoinColumn(joinColumnForeign, joinedEntityForeign.getFirstPrimaryKey().name.formatForDB())-»«ENDFOREACH-»}
+     *      inverseJoinColumns={«FOREACH joinColumnsForeign AS joinColumnForeign SEPARATOR ', '-»«EXPAND JoinColumn(joinColumnForeign, joinedEntityForeign.getFirstPrimaryKey().name.formatForDB(), useTarget)-»«ENDFOREACH-»}
 «ELSE-»
-     *      inverseJoinColumns={«EXPAND JoinColumn(joinColumnsForeign.get(0), joinedEntityForeign.getFirstPrimaryKey().name.formatForDB())»}
+     *      inverseJoinColumns={«EXPAND JoinColumn(joinColumnsForeign.get(0), joinedEntityForeign.getFirstPrimaryKey().name.formatForDB(), useTarget)»}
 «ENDIF-»
 «ENDLET-»
 «ENDLET-»
@@ -205,8 +205,8 @@
 «ENDLET-»
 «ENDDEFINE»
 
-«DEFINE JoinColumn(String columnName, String referencedColumnName) FOR JoinRelationship-»
-@ORM\JoinColumn(name="«columnName»", referencedColumnName="«referencedColumnName»" «IF unique-», unique=true«ENDIF-»«IF !nullable-», nullable=false«ENDIF-»«IF onDelete != ''-», onDelete="«onDelete»"«ENDIF-»«IF onUpdate != ''-», onUpdate="«onUpdate»"«ENDIF-»)«''-»
+«DEFINE JoinColumn(String columnName, String referencedColumnName, Boolean useTarget) FOR JoinRelationship-»
+@ORM\JoinColumn(name="«IF metaType == ManyToManyRelationship && columnName == 'id'»«((useTarget) ? target : source).name.formatForDB()»_id«ELSE-»«columnName»«ENDIF-»", referencedColumnName="«referencedColumnName»" «IF unique-», unique=true«ENDIF-»«IF !nullable-», nullable=false«ENDIF-»«IF onDelete != ''-», onDelete="«onDelete»"«ENDIF-»«IF onUpdate != ''-», onUpdate="«onUpdate»"«ENDIF-»)«''-»
 «ENDDEFINE»
 
 «DEFINE AdditionalOptions FOR JoinRelationship-»
