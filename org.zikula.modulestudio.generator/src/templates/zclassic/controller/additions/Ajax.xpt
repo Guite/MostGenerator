@@ -352,17 +352,19 @@
         switch ($objectType) {
 «FOREACH app.getTreeEntities() AS entity-»
                 case '«entity.name.formatForCode()»':
-                        $titleFieldName = '«entity.getLeadingField().name.formatForCode()»';
-«LET entity.fields.typeSelect(TextField).reject(e|e.leading) AS textFields-»
+«LET entity.fields.typeSelect(StringField).reject(e|e.length < 20 || e.nospace || e.country || e.htmlcolour || e.language) AS textFields-»
+                        $titleFieldName = '«IF !textFields.isEmpty-»«textFields.get(0).name.formatForCode()»«ENDIF-»';
+«LET entity.fields.typeSelect(TextField).reject(e|e.leading || e.length < 50) AS textFields-»
 «IF !textFields.isEmpty-»
                         $descriptionFieldName = '«textFields.get(0).name.formatForCode()»';
 «ELSE-»
-«LET entity.fields.typeSelect(StringField).reject(e|e.leading || e.nospace || e.country || e.htmlcolour || e.language) AS textFields-»
+«LET entity.fields.typeSelect(StringField).reject(e|e.leading || e.length < 50 || e.nospace || e.country || e.htmlcolour || e.language) AS textFields-»
 «IF !textFields.isEmpty-»
                         $descriptionFieldName = '«textFields.get(0).name.formatForCode()»';
 «ENDIF-»
 «ENDLET-»
 «ENDIF-»
+«ENDLET-»
 «ENDLET-»
                         break;
 «ENDFOREACH-»
@@ -373,7 +375,9 @@
                             //$this->entityManager->transactional(function($entityManager) {
                                 $object = new $entityClass();
                                 $objectData = array();
-                                $objectData[$titleFieldName] = $this->__('New root node');
+                                if (!empty($titleFieldName)) {
+                                    $objectData[$titleFieldName] = $this->__('New root node');
+                                }
                                 if (!empty($descriptionFieldName)) {
                                     $objectData[$descriptionFieldName] = $this->__('This is a new root node');
                                 }
