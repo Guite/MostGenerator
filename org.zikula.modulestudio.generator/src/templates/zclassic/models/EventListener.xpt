@@ -388,6 +388,12 @@
     }
 «ENDDEFINE»
 
+«DEFINE sanitizeForOutputHTMLWithZero FOR EntityField-»
+    if ($currentFunc != 'edit') {
+        $this['«name.formatForCode()»'] = (((isset($this['«name.formatForCode()»']) && !empty($this['«name.formatForCode()»'])) || $this['«name.formatForCode()»'] == 0) ? DataUtil::formatForDisplayHTML($this['«name.formatForCode()»']) : '');
+    }
+«ENDDEFINE»
+
 «DEFINE sanitizeForOutput FOR BooleanField-»
         $this['«name.formatForCode()»'] = (bool) $this['«name.formatForCode()»'];
 «ENDDEFINE»
@@ -400,7 +406,7 @@
 «DEFINE sanitizeForOutput FOR StringField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
 «DEFINE sanitizeForOutput FOR TextField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
 «DEFINE sanitizeForOutput FOR EmailField-»«EXPAND sanitizeForOutputHTML-»«ENDDEFINE»
-«DEFINE sanitizeForOutput FOR ListField-»«EXPAND sanitizeForOutputHTML»«ENDDEFINE»
+«DEFINE sanitizeForOutput FOR ListField-»«EXPAND sanitizeForOutputHTMLWithZero»«ENDDEFINE»
 «DEFINE sanitizeForOutput FOR ArrayField-»
         $this['«name.formatForCode()»'] = ((isset($this['«name.formatForCode()»']) && is_array($this['«name.formatForCode()»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode()»']) : array());
 «ENDDEFINE»
