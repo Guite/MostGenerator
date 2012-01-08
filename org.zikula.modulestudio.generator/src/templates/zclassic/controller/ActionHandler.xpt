@@ -523,12 +523,22 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
 
         // overwrite attributes array entry with a form compatible format
         $attributes = array();
-        foreach (array('field1', 'field2', 'field3') as $fieldName) {
+        foreach ($this->getAttributeFieldNames() as $fieldName) {
             $attributes[$fieldName] = $entity->getAttributes()->get($fieldName) ? $entity->getAttributes()->get($fieldName)->getValue() : '';
         }
         $objectData['attributes'] = $attributes;
 
         $this->view->assign($objectData);
+    }
+
+    /**
+     * Return list of attribute field names.
+     *
+     * @return array list of attribute names.
+     */
+    protected function getAttributeFieldNames()
+    {
+        return array('field1', 'field2', 'field3');
     }
 «ENDIF-»
 «IF app.hasCategorisableEntities()-»
@@ -685,23 +695,23 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
     /**
      * Prepare update of attributes.
      *
-     * @param Zikula_EntityAccess $entity     currently treated entity instance.
-     * @param Array               $entityData form data to be merged.
+     * @param Zikula_EntityAccess $entity   currently treated entity instance.
+     * @param Array               $formData form data to be merged.
      */
-    protected function processAttributesForUpdate($entity, $entityData)
+    protected function processAttributesForUpdate($entity, $formData)
     {
-        if (!isset($entityData['attributes'])) {
+        if (!isset($formData['attributes'])) {
             return;
         }
 
-        foreach($entityData['attributes'] as $name => $value) {
+        foreach($formData['attributes'] as $name => $value) {
             $entity->setAttribute($name, $value);
         }
 «REM»
         $entity->setAttribute('url', 'http://www.example.com');
         $entity->setAttribute('url', null); // remove
 «ENDREM»«''-»
-        unset($entityData['attributes']);
+        unset($formData['attributes']);
     }
 «ENDIF-»
 «IF app.hasCategorisableEntities()-»
@@ -892,8 +902,8 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
         }
 «IF app.hasAttributableEntities()-»
 
-        if ($this->hasAttributes) {
-            $this->processAttributesForUpdate($entity, $entityData);
+        if ($this->hasAttributes === true) {
+            $this->processAttributesForUpdate($entity, $formData);
         }
 «ENDIF-»
 «IF app.hasMetaDataEntities()-»
