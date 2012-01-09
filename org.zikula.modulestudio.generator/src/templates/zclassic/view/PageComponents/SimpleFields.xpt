@@ -26,10 +26,10 @@
 «ENDIF-»
 «ENDDEFINE»
 «DEFINE DisplayField(String objName, String page, String prepend) FOR DecimalField-»
-«prepend»{$«objName».«name.formatForCode()»|formatnumber}«""-»
+«prepend»{$«objName».«name.formatForCode()»|format«IF currency-»currency«ELSE-»number«ENDIF-»}«""-»
 «ENDDEFINE»
 «DEFINE DisplayField(String objName, String page, String prepend) FOR FloatField-»
-«prepend»{$«objName».«name.formatForCode()»|formatnumber}«""-»
+«prepend»{$«objName».«name.formatForCode()»|format«IF currency-»currency«ELSE-»number«ENDIF-»}«""-»
 «ENDDEFINE»
 
 «DEFINE DisplayField(String objName, String page, String prepend) FOR UserField-»
