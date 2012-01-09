@@ -65,7 +65,7 @@ class «appName()»_Util_Base_Controller extends Zikula_AbstractBase
      */
     public static function retrieveIdentifier(Zikula_Request_Http $request, array $args, $objectType = '', array $idFields)
     {
-	$idValues = array();
+        $idValues = array();
         foreach ($idFields as $idField) {
             $defaultValue = isset($args[$idField]) && is_numeric($args[$idField]) ? $args[$idField] : 0;
 «REM»TODO: distinguish between composite keys and other ones (which are always integers)
