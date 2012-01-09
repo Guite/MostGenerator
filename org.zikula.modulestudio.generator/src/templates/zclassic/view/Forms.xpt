@@ -161,33 +161,33 @@
                     map_type: true
                 });
 
-                    var latlon = new mxn.LatLonPoint({{$«name.formatForDB()».latitude|formatnumber:7}}, {{$«name.formatForDB()».longitude|formatnumber:7}});
+                var latlon = new mxn.LatLonPoint({{$«name.formatForDB()».latitude|formatnumber:7}}, {{$«name.formatForDB()».longitude|formatnumber:7}});
 
-                    mapstraction.setMapType(mxn.Mapstraction.SATELLITE);
-                    mapstraction.setCenterAndZoom(latlon, 16);
-                    mapstraction.mousePosition('position');
+                mapstraction.setMapType(mxn.Mapstraction.SATELLITE);
+                mapstraction.setCenterAndZoom(latlon, 16);
+                mapstraction.mousePosition('position');
 
-                    // add a marker
-                    marker = new mxn.Marker(latlon);
+                // add a marker
+                marker = new mxn.Marker(latlon);
+                mapstraction.addMarker(marker,true);
+
+                $('latitude').observe('change', function() {
+                    var newLatLon = new mxn.LatLonPoint($F('latitude'), $F('longitude'));
+                    marker.hide();
+                    mapstraction.removeMarker(marker);
+                    marker = new mxn.Marker(newLatLon);
                     mapstraction.addMarker(marker,true);
+                    mapstraction.setCenter(newLatLon);
+                });
 
-                    $('latitude').observe('change', function() {
-                        var newLatLon = new mxn.LatLonPoint($F('latitude'), $F('longitude'));
-                        marker.hide();
-                        mapstraction.removeMarker(marker);
-                        marker = new mxn.Marker(newLatLon);
-                        mapstraction.addMarker(marker,true);
-                        mapstraction.setCenter(newLatLon);
-                    });
-
-                    $('longitude').observe('change', function() {
-                        var newLatLon = new mxn.LatLonPoint($F('latitude'), $F('longitude'));
-                        marker.hide();
-                        mapstraction.removeMarker(marker);
-                        marker = new mxn.Marker(newLatLon);
-                        mapstraction.addMarker(marker,true);
-                        mapstraction.setCenter(newLatLon);
-                    });
+                $('longitude').observe('change', function() {
+                    var newLatLon = new mxn.LatLonPoint($F('latitude'), $F('longitude'));
+                    marker.hide();
+                    mapstraction.removeMarker(marker);
+                    marker = new mxn.Marker(newLatLon);
+                    mapstraction.addMarker(marker,true);
+                    mapstraction.setCenter(newLatLon);
+                });
             });
         /* ]]> */
         </script>
