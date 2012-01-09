@@ -13,7 +13,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
 <Document>
-    {foreach item='item' from=$items name='cordinates'}
+{foreach item='item' from=$items name='cordinates'}
     <Placemark>
    «LET fields.select(e|e.metaType == StringField || e.metaType == TextField) AS stringFields-»
         <name>«IF !stringFields.isEmpty-»{$item->get«stringFields.get(0).name.formatForCodeCapital()»()}«ELSE-»{gt text='«name.formatForDisplayCapital()»'}«ENDIF-»</name>
@@ -22,7 +22,7 @@
             <coordinates>{$item->getLongitude()}, {$item->getLatitude()}, 0</coordinates>
         </Point>
     </Placemark>
-    {/foreach}
+{/foreach}
 </Document>
 </kml>
 «ENDFILE»
