@@ -12,7 +12,7 @@
 «LET name.formatForCode() AS objName-»
 «LET getLeadingField() AS leadingField-»
 {gt text='«name.formatForDisplayCapital()»' assign='templateTitle'}
-«IF leadingField != null-»
+«IF leadingField != null && (leadingField.metaType == IntegerField || leadingField.metaType == StringField || leadingField.metaType == TextField)-»
 {assign var='templateTitle' value=$«objName».«leadingField.name.formatForCode()»|default:$templateTitle}
 «ENDIF-»
 «ENDLET-»
@@ -37,7 +37,13 @@
 «ENDIF-»
 
 <dl id="«appName»_body">
+«LET getLeadingField() AS leadingField-»
+«IF leadingField != null && (leadingField.metaType == IntegerField || leadingField.metaType == StringField || leadingField.metaType == TextField)-»
 «EXPAND DisplayEntry(controller) FOREACH getDerivedFields().reject(e|e.leading || e.primaryKey)-»
+«ELSE-»
+«EXPAND DisplayEntry(controller) FOREACH getDerivedFields().reject(e|e.primaryKey)-»
+«ENDIF-»
+«ENDLET-»
 «IF geographical-»
 «FOREACH {'latitude', 'longitude'} AS geoFieldName-»
     <dt>{gt text='«geoFieldName.toFirstUpper()»'}</dt>
@@ -93,12 +99,14 @@
 
 «DEFINE DisplayEntry(Controller controller) FOR DerivedField-»
     <dt>{gt text='«name.formatForDisplayCapital()»'}</dt>
-    <dd>«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(entity.name.formatForCode(), 'display', '')-»</dd>
+    <dd>«EXPAND DisplayEntryImpl-»</dd>
 «ENDDEFINE»
 
 «DEFINE DisplayEntry(Controller controller) FOR CalculatedField-»
 «error("Error: undefined calculated field type " + metaType.toString() + " (code 9242668)") -> ""-»
 «ENDDEFINE»
+
+«DEFINE DisplayEntryImpl FOR DerivedField-»«EXPAND templates::zclassic::view::PageComponents::SimpleFields::DisplayField(entity.name.formatForCode(), 'display', '')-»«ENDDEFINE»
 
 
 «DEFINE DisplayEntry(Controller controller, Boolean useTarget) FOR JoinRelationship-»

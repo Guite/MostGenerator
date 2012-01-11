@@ -849,7 +849,7 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
         if (in_array($args['commandName'], array('create', 'update'))) {
 «IF app.hasUserFields()-»
             if (count($this->userFields) > 0) {
-                foreach ($this->userFields as $userField) {
+                foreach ($this->userFields as $userField => $isMandatory) {
                     $entityData[$userField] = (int) $this->request->getPost()->filter($userField, 0, FILTER_VALIDATE_INT);
                     unset($entityData[$userField . 'Selector']);
                 }
