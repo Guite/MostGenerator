@@ -15,8 +15,8 @@ listType:
 «LET name.formatForCode() AS objName-»
 «FILE templateFile(controller, name, 'view')-»
 {* purpose of this template: «nameMultiple.formatForDisplay()» view view in «controller.name()» area *}
-<div class="«appName.toLowerCase()»-«name.formatForDB()» «appName.toLowerCase()»-view">
 {include file='«controller.name()»/header.tpl'}
+<div class="«appName.toLowerCase()»-«name.formatForDB()» «appName.toLowerCase()»-view">
 {gt text='«name.formatForDisplayCapital()» list' assign='templateTitle'}
 {pagesetvar name='title' value=$templateTitle}
 «IF controller.metaType == AdminController-»
