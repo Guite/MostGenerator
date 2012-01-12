@@ -68,8 +68,8 @@ function smarty_function_«appName().formatForDB()»TreeJS($params, $view)
 
         $result[] = array('id' => $item[$idField],
                           'parent_id' => $parentItem[$idField],
-                          'name' => $item[$titleFieldName],
-                          'title' => strip_tags($item[$descriptionFieldName]),
+                          'name' => (($titleFieldName != '') ? $item[$titleFieldName] : ''),
+                          'title' => (($descriptionFieldName != '') ? strip_tags($item[$descriptionFieldName]) : ''),
                         //'icon' => '',
                         //'class' => '',
                           'active' => true,
