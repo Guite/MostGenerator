@@ -63,7 +63,7 @@
      * Bidirectional - «EXPAND IncomingMappingDescription(sourceName, targetName)-».
      *
 «EXPAND IncomingMappingDetails-»
-     * @ORM\«EXPAND IncomingMappingType-»(targetEntity="«entityClass»", inversedBy="«targetName-»"«EXPAND AdditionalOptions-»)
+     * @ORM\«EXPAND IncomingMappingType-»(targetEntity="«entityClass»", inversedBy="«targetName-»"«EXPAND AdditionalOptions(true)-»)
 «EXPAND JoinDetails(false)-»
      * @var «entityClass» $«sourceName».
      */
@@ -101,7 +101,7 @@
     /**
      * Bidirectional - «EXPAND IncomingMappingDescription(sourceName, targetName)-».
      *
-     * @ORM\ManyToMany(targetEntity="«entityClass»", mappedBy="«targetName»"«EXPAND AdditionalOptions-»)
+     * @ORM\ManyToMany(targetEntity="«entityClass»", mappedBy="«targetName»"«EXPAND AdditionalOptions(true)-»)
      * @var «entityClass»[] $«sourceName».
      */
     protected $«sourceName» = null;
@@ -134,9 +134,9 @@
      * «IF bidirectional-»Bi«ELSE-»Uni«ENDIF-»directional - «EXPAND OutgoingMappingDescription(sourceName, targetName)-».
      *
 «IF !bidirectional-»
-     * @ORM\ManyToMany(targetEntity="«entityClass»"«EXPAND AdditionalOptions-»)
+     * @ORM\ManyToMany(targetEntity="«entityClass»"«EXPAND AdditionalOptions(false)-»)
 «ELSE-»
-     * @ORM\OneToMany(targetEntity="«entityClass»", mappedBy="«sourceName-»"«EXPAND AdditionalOptions-»«IF orphanRemoval-», orphanRemoval=true«ENDIF-»«IF indexBy != null && indexBy != ''-», indexBy="«indexBy»"«ENDIF-»)
+     * @ORM\OneToMany(targetEntity="«entityClass»", mappedBy="«sourceName-»"«EXPAND AdditionalOptions(false)-»«IF orphanRemoval-», orphanRemoval=true«ENDIF-»«IF indexBy != null && indexBy != ''-», indexBy="«indexBy»"«ENDIF-»)
 «ENDIF-»
 «EXPAND JoinDetails(true)-»
 «IF orderBy != null && orderBy != ''-»
@@ -152,7 +152,7 @@
     /**
      * «IF bidirectional-»Bi«ELSE-»Uni«ENDIF-»directional - «EXPAND OutgoingMappingDescription(sourceName, targetName)-».
      *
-     * @ORM\ManyToMany(targetEntity="«entityClass»"«IF bidirectional-», inversedBy="«sourceName-»"«ENDIF-»«EXPAND AdditionalOptions-»«IF indexBy != null && indexBy != ''-», indexBy="«indexBy»"«ENDIF-»)
+     * @ORM\ManyToMany(targetEntity="«entityClass»"«IF bidirectional-», inversedBy="«sourceName-»"«ENDIF-»«EXPAND AdditionalOptions(false)-»«IF indexBy != null && indexBy != ''-», indexBy="«indexBy»"«ENDIF-»)
 «EXPAND JoinDetails(true)-»
 «IF orderBy != null && orderBy != ''-»
      * @ORM\OrderBy({"«orderBy»" = "ASC"})
@@ -209,35 +209,39 @@
 @ORM\JoinColumn(name="«IF metaType == ManyToManyRelationship && columnName == 'id'»«((useTarget) ? target : source).name.formatForDB()»_id«ELSE-»«columnName»«ENDIF-»", referencedColumnName="«referencedColumnName»" «IF unique-», unique=true«ENDIF-»«IF !nullable-», nullable=false«ENDIF-»«IF onDelete != ''-», onDelete="«onDelete»"«ENDIF-»«IF onUpdate != ''-», onUpdate="«onUpdate»"«ENDIF-»)«''-»
 «ENDDEFINE»
 
-«DEFINE AdditionalOptions FOR JoinRelationship-»
-«EXPAND CascadeOptions-»«EXPAND FetchTypeTag-»
+«DEFINE AdditionalOptions(Boolean useReverse) FOR JoinRelationship-»
+«EXPAND CascadeOptions(useReverse)-»«EXPAND FetchTypeTag-»
 «ENDDEFINE»
-«DEFINE CascadeOptions FOR JoinRelationship-»
-«IF cascade == CascadeType::NONE-»
-«ELSE-», cascade={«EXPAND CascadeOptionsImpl-»}«ENDIF-»
+«DEFINE CascadeOptions(Boolean useReverse) FOR JoinRelationship-»
+«LET ((useReverse) ? cascadeReverse : cascade) AS cascadeProperty-»
+«IF cascadeProperty == CascadeType::NONE-»
+«ELSE-», cascade={«EXPAND CascadeOptionsImpl(useReverse)-»}«ENDIF-»
+«ENDLET-»
 «ENDDEFINE»
 
 «DEFINE FetchTypeTag FOR JoinRelationship-»
 «IF fetchType != RelationFetchType::LAZY-», fetch="«fetchType.asConstant()»"«ENDIF-»
 «ENDDEFINE»
 
-«DEFINE CascadeOptionsImpl FOR JoinRelationship-»
-«IF cascade == CascadeType::PERSIST-»"persist"«''-»
-«ELSEIF cascade == CascadeType::REMOVE-»"remove"«''-»
-«ELSEIF cascade == CascadeType::MERGE-»"merge"«''-»
-«ELSEIF cascade == CascadeType::DETACH-»"detach"«''-»
-«ELSEIF cascade == CascadeType::PERSIST_REMOVE-»"persist", "remove"«''-»
-«ELSEIF cascade == CascadeType::PERSIST_MERGE-»"persist", "merge"«''-»
-«ELSEIF cascade == CascadeType::PERSIST_DETACH-»"persist", "detach"«''-»
-«ELSEIF cascade == CascadeType::REMOVE_MERGE-»"remove", "merge"«''-»
-«ELSEIF cascade == CascadeType::REMOVE_DETACH-»"remove", "detach"«''-»
-«ELSEIF cascade == CascadeType::MERGE_DETACH-»"merge", "detach"«''-»
-«ELSEIF cascade == CascadeType::PERSIST_REMOVE_MERGE-»"persist", "remove", "merge"«''-»
-«ELSEIF cascade == CascadeType::PERSIST_REMOVE_DETACH-»"persist", "remove", "detach"«''-»
-«ELSEIF cascade == CascadeType::PERSIST_MERGE_DETACH-»"persist", "merge", "detach"«''-»
-«ELSEIF cascade == CascadeType::REMOVE_MERGE_DETACH-»"remove", "merge", "detach"«''-»
-«ELSEIF cascade == CascadeType::ALL-»"all"«''-»
+«DEFINE CascadeOptionsImpl(Boolean useReverse) FOR JoinRelationship-»
+«LET ((useReverse) ? cascadeReverse : cascade) AS cascadeProperty-»
+«IF cascadeProperty == CascadeType::PERSIST-»"persist"«''-»
+«ELSEIF cascadeProperty == CascadeType::REMOVE-»"remove"«''-»
+«ELSEIF cascadeProperty == CascadeType::MERGE-»"merge"«''-»
+«ELSEIF cascadeProperty == CascadeType::DETACH-»"detach"«''-»
+«ELSEIF cascadeProperty == CascadeType::PERSIST_REMOVE-»"persist", "remove"«''-»
+«ELSEIF cascadeProperty == CascadeType::PERSIST_MERGE-»"persist", "merge"«''-»
+«ELSEIF cascadeProperty == CascadeType::PERSIST_DETACH-»"persist", "detach"«''-»
+«ELSEIF cascadeProperty == CascadeType::REMOVE_MERGE-»"remove", "merge"«''-»
+«ELSEIF cascadeProperty == CascadeType::REMOVE_DETACH-»"remove", "detach"«''-»
+«ELSEIF cascadeProperty == CascadeType::MERGE_DETACH-»"merge", "detach"«''-»
+«ELSEIF cascadeProperty == CascadeType::PERSIST_REMOVE_MERGE-»"persist", "remove", "merge"«''-»
+«ELSEIF cascadeProperty == CascadeType::PERSIST_REMOVE_DETACH-»"persist", "remove", "detach"«''-»
+«ELSEIF cascadeProperty == CascadeType::PERSIST_MERGE_DETACH-»"persist", "merge", "detach"«''-»
+«ELSEIF cascadeProperty == CascadeType::REMOVE_MERGE_DETACH-»"remove", "merge", "detach"«''-»
+«ELSEIF cascadeProperty == CascadeType::ALL-»"all"«''-»
 «ENDIF-»
+«ENDLET-»
 «ENDDEFINE»
 
 
