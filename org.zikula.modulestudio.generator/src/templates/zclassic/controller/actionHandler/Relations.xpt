@@ -178,6 +178,9 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
                     $where .= 'tbl.' . $idField . ' IN (' . implode(', ', $relatedIdValues[$idField]) . ')';
                 }
                 $linkObjects = ModUtil::apiFunc($this->name, 'selection', 'getEntities', array('ot' => '«objectType»', 'where' => $where));
+                if (!is_object($entity->get«relationAliasName.toFirstUpper()»())) {
+                    $entity->set«relationAliasName.toFirstUpper()»(new Doctrine\Common\Collections\ArrayCollection());
+                }
                 // create new links
                 foreach ($linkObjects as $relatedObject) {
 «IF many-»
