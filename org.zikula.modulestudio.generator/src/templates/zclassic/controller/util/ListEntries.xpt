@@ -27,7 +27,7 @@ class «appName()»_Util_Base_ListEntries extends Zikula_AbstractBase
      */
     public function resolve($value, $objectType = '', $fieldName = '', $delimiter = ', ')
     {
-        if (!is_numeric($value) || empty($objectType) || empty($fieldName)) {
+        if (empty($value) || empty($objectType) || empty($fieldName)) {
             return $value;
         }
 
@@ -48,7 +48,6 @@ class «appName()»_Util_Base_ListEntries extends Zikula_AbstractBase
                     $result .= $delimiter;
                 }
                 $result .= $option['text'];
-                break;
             }
         } else {
             foreach ($options as $option) {

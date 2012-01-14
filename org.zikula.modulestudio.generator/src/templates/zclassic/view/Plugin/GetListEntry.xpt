@@ -23,7 +23,7 @@
  */
 function smarty_modifier_«appName().formatForDB()»GetListEntry($value, $objectType = '', $fieldName = '', $delimiter = ', ')
 {
-    if (!is_numeric($value) || empty($objectType) || empty($fieldName)) {
+    if (empty($value) || empty($objectType) || empty($fieldName)) {
         return $value;
     }
 
