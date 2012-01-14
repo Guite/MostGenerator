@@ -67,9 +67,9 @@ As the autocomplete fields are not done with a Form plugin (yet), we do that man
 «IF !incoming || bidirectional || metaType == ManyToManyRelationship-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET getUniqueRelationNameForJs(container.application, ((!incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
-        $entityData['«relationAliasName»'] = ((isset($selectedRelations['«relationAliasName.toFirstLower()»'])) ? $selectedRelations['«relationAliasName.toFirstLower()»'] : «EXPAND RetrieveRelatedObjectsCall(((incoming) ? source : target).name, uniqueNameForJs, false)-»);
+        $entityData['«relationAliasName.toFirstLower()»'] = ((isset($selectedRelations['«relationAliasName.toFirstLower()»'])) ? $selectedRelations['«relationAliasName.toFirstLower()»'] : «EXPAND RetrieveRelatedObjectsCall(((incoming) ? source : target).name, uniqueNameForJs, false)-»);
 «IF !nullable-»
-        if (!$entityData['«relationAliasName»']) {
+        if (!$entityData['«relationAliasName.toFirstLower()»']) {
             return LogUtil::registerError($this->__('Invalid value received for relation field "«relationAliasName.formatForDisplay()»".'));
         }
 «ENDIF-»
@@ -99,8 +99,7 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
         $inputValue = '';
         if ($source == 'POST') {
             $inputValue = $this->request->getPost()->get($relationInputFieldName, '');
-        }
-        else {
+        } else {
             $inputValue = $this->request->getGet()->get($relationInputFieldName, '');
         }
         if (empty($inputValue)) {

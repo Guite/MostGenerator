@@ -1085,6 +1085,10 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         // save entity reference for later reuse
         $this->entityRef = $entity;
 
+        // assign data to template as array
+        $entityData = $entity->toArray();
+        $this->view->assign($this->objectTypeLower, $entityData);
+
         // everything okay, no initialization errors occured
         return true;
     }
