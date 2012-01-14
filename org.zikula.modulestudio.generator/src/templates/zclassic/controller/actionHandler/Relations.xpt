@@ -149,7 +149,7 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
 «LET isManySide(!incoming) AS many-»
 «LET getUniqueRelationNameForJs(container.application, ((incoming) ? target : source), false, incoming, relationAliasName) AS uniqueNameForJs-»
-«IF many && this.getEditStageCode(incoming) > 1-»
+«IF many && this.getEditStageCode(incoming) > 0-»
 «LET ((incoming) ? source : target).name.formatForCode() AS objectType-»
 «IF incoming || many-»«REM»only incoming for now, see https://github.com/Guite/MostGenerator/issues/10«ENDREM»
         $relatedIds = $this->request->getPost()->get('«uniqueNameForJs»ItemList', '');
@@ -186,7 +186,7 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
                     if ($entity->get«relationAliasName.toFirstUpper()»()->contains($relatedObject)) {
                         continue;
                     }
-                    $entity->get«relationAliasName.toFirstUpper()»()->add($relatedObject);
+                    $entity->add«relationAliasName.toFirstUpper()»($relatedObject);
 «ELSE-»
                     $entity->set«relationAliasName.toFirstUpper()»($relatedObject);
 «ENDIF-»

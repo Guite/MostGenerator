@@ -77,7 +77,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «LET (this.metaType == ManyToManyRelationship
  || (incoming && this.metaType == ManyToOneRelationship)
  || (!incoming && this.metaType == OneToManyRelationship)) AS many-»
-«LET getUniqueRelationNameForJs(app, source, many, incoming, relationAliasName) AS uniqueNameForJs-»
+«LET getUniqueRelationNameForJs(app, ((incoming) ? target : source), many, incoming, relationAliasName) AS uniqueNameForJs-»
     {include file='«controller.name.formatForDB()»/«((incoming) ? source : target).name.formatForCode()»/include_select«((stageCode == 3) ? 'Edit' : '')»Many.tpl' relItem=$«((incoming) ? target : source).name.formatForDB()» aliasName='«relationAliasName.toFirstLower()»' idPrefix='«uniqueNameForJs-»'}
 «ENDLET-»
 «ENDLET-»
@@ -208,7 +208,7 @@ TODO: only for $mode ne create:
 «REM»Exclude parent view for 1:1 and 1:n for now - see https://github.com/Guite/MostGenerator/issues/10«ENDREM»«""-»
 «IF !(this.metaType != ManyToManyRelationship && !incoming)-»
 «LET getRelationAliasName(!incoming).formatForCodeCapital() AS relationAliasName-»
-«LET getUniqueRelationNameForJs(app, ((targetEntity == target || this.metaType == ManyToManyRelationship) ? source : target), (!(incoming && this.metaType != ManyToManyRelationship)), incoming, relationAliasName) AS uniqueNameForJs-»
+«LET getUniqueRelationNameForJs(app, targetEntity, (!(incoming && this.metaType != ManyToManyRelationship)), incoming, relationAliasName) AS uniqueNameForJs-»
 «IF !insideLoader-»
     var newItem = new Object();
     newItem['ot'] = '«((targetEntity == target) ? source : target).name.formatForCode()»';

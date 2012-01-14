@@ -322,9 +322,9 @@
 «IF bidirectional && !useTarget-»
 «LET getRelationAliasName(!useTarget).toFirstUpper() AS ownAliasName-»
 «IF selfIsMany-»
-        $nameSingle->add«ownAliasName»($this);
+        $«nameSingle»->add«ownAliasName»($this);
 «ELSE-»
-        $nameSingle->set«ownAliasName»($this);
+        $«nameSingle»->set«ownAliasName»($this);
 «ENDIF-»
 «ENDLET-»
 «ENDIF-»
