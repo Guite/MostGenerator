@@ -342,11 +342,11 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         {$jcssConfig}
-        <script type="text/javascript" src="{getbaseurl}javascript/ajax/proto_scriptaculous.combined.min.js"></script>
-        <script type="text/javascript" src="{getbaseurl}javascript/helpers/Zikula.js"></script>
-        <script type="text/javascript" src="{getbaseurl}javascript/livepipe/livepipe.combined.min.js"></script>
-        <script type="text/javascript" src="{getbaseurl}javascript/helpers/Zikula.UI.js"></script>
-        <script type="text/javascript" src="{getbaseurl}modules/«app.appName()»/javascript/«app.appName()»_editFunctions.js"></script>
+        <script type="text/javascript" src="{$baseurl}javascript/ajax/proto_scriptaculous.combined.min.js"></script>
+        <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.js"></script>
+        <script type="text/javascript" src="{$baseurl}javascript/livepipe/livepipe.combined.min.js"></script>
+        <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.UI.js"></script>
+        <script type="text/javascript" src="{$baseurl}modules/«app.appName()»/javascript/«app.appName()»_editFunctions.js"></script>
     </head>
     <body>
         <script type="text/javascript" charset="utf-8">
