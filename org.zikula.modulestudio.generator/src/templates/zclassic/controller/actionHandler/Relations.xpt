@@ -155,11 +155,17 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
         $relatedIds = $this->request->getPost()->get('«uniqueNameForJs»ItemList', '');
         if ($this->mode != 'create') {
             // remove all existing references
+«IF incoming-»
+            foreach ($entity->get«relationAliasName.toFirstUpper()»() as $relatedItem) {
+                $entity->remove«relationAliasName.toFirstUpper()»($relatedItem);
+            }
+«ELSE-»
 «IF many-»
             $entity->get«relationAliasName.toFirstUpper()»()->clear();
 «ELSE-»
 «IF nullable-»
             $entity->set«relationAliasName.toFirstUpper()»(null);
+«ENDIF-»
 «ENDIF-»
 «ENDIF-»
         }
