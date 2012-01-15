@@ -281,7 +281,6 @@
 «ENDIF-»
 «EXPAND AddMethod(useTarget, isMany, aliasName, singleName, entityClass)»
 «EXPAND RemoveMethod(useTarget, isMany, aliasName, singleName, entityClass)»
-«EXPAND RemoveByIdMethod(useTarget, isMany, aliasName, singleName, entityClass)»
 «ENDLET-»
 «ENDLET-»
 «ENDLET-»
@@ -398,32 +397,9 @@
 «IF bidirectional && !useTarget-»
 «LET getRelationAliasName(!useTarget).toFirstUpper() AS ownAliasName-»
 «IF selfIsMany-»
-        $nameSingle->remove«ownAliasName»($this);
+        $«nameSingle»->remove«ownAliasName»($this);
 «ELSE-»
-        $nameSingle->set«ownAliasName»(null);
-«ENDIF-»
-«ENDLET-»
-«ENDIF-»
-    }
-«ENDDEFINE»
-
-«DEFINE RemoveByIdMethod(Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) FOR JoinRelationship-»
-    /**
-     * Removes an instance of «type» from the list of «name.formatForDisplay()» by it's identifier.
-     *
-     * @param integer $«name».
-     *
-     * @return void
-     */
-    public function remove«name.toFirstUpper()»ById($id)
-    {
-        $this->«name»->remove($id);
-«IF bidirectional && !useTarget-»
-«LET getRelationAliasName(!useTarget).toFirstUpper() AS ownAliasName-»
-«IF selfIsMany-»
-        $nameSingle->remove«ownAliasName»($this);
-«ELSE-»
-        $nameSingle->set«ownAliasName»(null);
+        $«nameSingle»->set«ownAliasName»(null);
 «ENDIF-»
 «ENDLET-»
 «ENDIF-»
