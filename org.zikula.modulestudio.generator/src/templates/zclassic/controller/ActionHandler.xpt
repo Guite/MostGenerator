@@ -355,23 +355,6 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
         }
 «ENDIF-»
 
-        $entityData = $entity->toArray();
-«IF app.hasListFields()-»
-
-        if (count($this->listFields) > 0) {
-            $helper = new «app.appName()»_Util_ListEntries($this->view->getServiceManager());
-            foreach ($this->listFields as $listField => $isMultiple) {
-                $entityData[$listField . 'Items'] = $helper->getEntries($this->objectType, $listField);
-                if ($isMultiple) {
-                    $entityData[$listField] = $helper->extractMultiList($entityData[$listField]);
-                }
-            }
-        }
-«ENDIF-»
-
-        // assign data to template as array (makes translatable support easier)
-        $this->view->assign($this->objectTypeLower, $entityData);
-
         // save entity reference for later reuse
         $this->entityRef = $entity;
 
@@ -1085,8 +1068,21 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         // save entity reference for later reuse
         $this->entityRef = $entity;
 
-        // assign data to template as array
         $entityData = $entity->toArray();
+«IF app.hasListFields()-»
+
+        if (count($this->listFields) > 0) {
+            $helper = new «app.appName()»_Util_ListEntries($this->view->getServiceManager());
+            foreach ($this->listFields as $listField => $isMultiple) {
+                $entityData[$listField . 'Items'] = $helper->getEntries($this->objectType, $listField);
+                if ($isMultiple) {
+                    $entityData[$listField] = $helper->extractMultiList($entityData[$listField]);
+                }
+            }
+        }
+«ENDIF-»
+
+        // assign data to template as array (makes translatable support easier)
         $this->view->assign($this->objectTypeLower, $entityData);
 
         // everything okay, no initialization errors occured
