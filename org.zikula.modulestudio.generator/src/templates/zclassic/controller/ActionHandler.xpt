@@ -467,6 +467,7 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
             }
         }
         else {
+            $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
             $entity = new $entityClass();
         }
 
