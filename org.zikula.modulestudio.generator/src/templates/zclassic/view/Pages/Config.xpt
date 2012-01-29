@@ -93,11 +93,11 @@
 «ENDDEFINE»
 
 «DEFINE InputField FOR Variable-»
-                    {formtextinput id='«name.formatForCode()»' group='config' maxLength=255 width=20em __title='Enter this setting.'}
+                    {formtextinput id='«name.formatForCode()»' group='config' maxLength=255 __title='Enter this setting.'}
 «ENDDEFINE»
 
 «DEFINE InputField FOR IntVar-»
-                    {formintinput id='«name.formatForCode()»' group='config' maxLength=255 width=20em __title='Enter this setting. Only digits are allowed.'}
+                    {formintinput id='«name.formatForCode()»' group='config' maxLength=255 __title='Enter this setting. Only digits are allowed.'}
 «ENDDEFINE»
 
 «DEFINE InputField FOR BoolVar-»
