@@ -73,9 +73,7 @@
 «IF page == 'display'-»
 «prepend»  {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 «ENDIF-»
-«prepend»    <a href="mailto:{$«realName»}" title="{gt text='Send an email'}">
-«prepend»        {icon type='mail' size='extrasmall' __alt='Email'}
-«prepend»    </a>
+«prepend»    <a href="mailto:{$«realName»}" title="{gt text='Send an email'}">{icon type='mail' size='extrasmall' __alt='Email'}</a>
 «IF page == 'display'-»
 «prepend»  {else}
 «prepend»    {$«realName»}
@@ -99,9 +97,7 @@
 «IF page == 'display'-»
 «prepend»  {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
 «ENDIF-»
-«prepend»    <a href="{$«realName»}" title="{gt text='Visit this page'}">
-«prepend»        {icon type='url' size='extrasmall' __alt='Homepage'}
-«prepend»    </a>
+«prepend»    <a href="{$«realName»}" title="{gt text='Visit this page'}">{icon type='url' size='extrasmall' __alt='Homepage'}</a>
 «IF page == 'display'-»
 «prepend»  {else}
 «prepend»    {$«realName»}

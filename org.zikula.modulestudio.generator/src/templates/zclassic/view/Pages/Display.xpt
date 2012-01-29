@@ -167,13 +167,11 @@
 «DEFINE ItemActions(String appName, Controller controller) FOR Entity-»
 «LET name.formatForCode() AS objName-»
 {if count($«objName»._actions) gt 0}
-    <p>{strip}
+    <p>
     {foreach item='option' from=$«objName»._actions}
-        <a href="{$option.url.type|«appName.formatForDB()»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}" class="z-icon-es-{$option.icon}">
-            {$option.linkText|safetext}
-        </a>
+        <a href="{$option.url.type|«appName.formatForDB()»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}" class="z-icon-es-{$option.icon}">{$option.linkText|safetext}</a>
     {/foreach}
-    {/strip}</p>
+    </p>
 {/if}
 «ENDLET-»
 «ENDDEFINE»
