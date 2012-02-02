@@ -69,23 +69,23 @@ font-weight: 700;
 «DEFINE ValidationStyles FOR Application-»
 
 /* validation */
-input.required, textarea.required {
+div.z-formrow input.required, div.z-formrow textarea.required {
     border: 1px solid #00a8e6;
 }
-input.validation-failed, textarea.validation-failed {
+div.z-formrow input.validation-failed, div.z-formrow textarea.validation-failed {
     border: 1px solid #f30;
-    color : #f30;
+    color: #f30;
 }
-input.validation-passed, textarea.validation-passed {
+div.z-formrow input.validation-passed, div.z-formrow textarea.validation-passed {
     border: 1px solid #0c0;
-    color : #000;
+    color: #000;
 }
 
 .validation-advice {
     margin: 5px 0;
     padding: 5px;
     background-color: #f90;
-    color : #fff;
+    color: #fff;
     font-weight: 700;
 }
 «ENDDEFINE»
