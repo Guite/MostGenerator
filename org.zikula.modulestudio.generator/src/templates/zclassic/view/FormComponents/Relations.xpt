@@ -47,7 +47,7 @@ If onlyInclude is true then only the Smarty include is created, otherwise the in
 «DEFINE PassiveChildImpl(Application app, Controller controller, Boolean onlyInclude, Integer stageCode) FOR JoinRelationship-»
 «IF onlyInclude-»
 «LET getRelationAliasName(false).formatForCodeCapital() AS relationAliasName-»
-«LET getUniqueRelationNameForJs(app, source, (this.metaType == ManyToOneRelationship || this.metaType == ManyToManyRelationship), false, relationAliasName) AS uniqueNameForJs-»
+«LET getUniqueRelationNameForJs(app, target, (this.metaType == ManyToOneRelationship || this.metaType == ManyToManyRelationship), false, relationAliasName) AS uniqueNameForJs-»
     {include file='«controller.name.formatForDB()»/«source.name.formatForCode()»/include_select«((stageCode == 3) ? 'Edit' : '')»One.tpl' relItem=$«target.name.formatForDB()» aliasName='«relationAliasName.toFirstLower()»' idPrefix='«uniqueNameForJs-»'}
 «ENDLET-»
 «ENDLET-»
