@@ -7,7 +7,6 @@
 «REM»Entry point for Doctrine entity classes«ENDREM»
 «DEFINE Root FOR Application-»
     «EXPAND Root(this) FOREACH models.entities-»
-    «EXPAND Root(this) FOREACH models.relations.typeSelect(ManyToManyRelationship)-»
     «EXPAND business::Validator::BaseValidator-»
     «EXPAND business::Validator::ValidatorWrapper(this) FOREACH models.entities-»
 «EXPAND entity::Extensions::ExtensionClasses-»
@@ -447,63 +446,3 @@ $«getRelationAliasName(false)», $«targetField.name.formatForCode()»
     }
 «ENDIF-»
 «ENDDEFINE»
-
-«REM»creates a reference entity class file for every many-to-many relationship instance«ENDREM»
-«REM»TODO: remove all the redundancies below... maybe with the PersistenceTransformer transformation...«ENDREM»
-«DEFINE Root(Application app) FOR ManyToManyRelationship-»
-    «FILE getAppSourcePath(app.appName()).msconcat(baseClassModelRefEntity().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefEntityBaseImpl(app)»«ENDFILE»
-    «FILE getAppSourcePath(app.appName()).msconcat(implClassModelRefEntity().asFile())»«EXPAND FileHelper::phpFileHeader(app)»«EXPAND ModelRefEntityImpl(app)»«ENDFILE»
-«ENDDEFINE»
-
-«REM»base implementation«ENDREM»
-«DEFINE ModelRefEntityBaseImpl(Application app) FOR ManyToManyRelationship-»
-
-/**
- * Entity class that defines the entity structure and behaviours.
- *
- * This is the reference entity class for the many to many relationship
- * between «source.name.formatForDisplay()» and «target.name.formatForDisplay()» entities.
- */
-class «baseClassModelRefEntity()» extends Zikula_EntityAccess
-{
-«REM»
-«FOREACH sourceFields() as singleSourceField-»
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="bigint"«IF unique-», unique=true«ENDIF-»«IF nullable-», nullable=true«ENDIF-»)
-     * @var «type» $«name».
-     */
-    protected $«singleSourceField.name.formatForCode()»;
-
-«ENDFOREACH-»
-«FOREACH targetFields() as singleTargetField-»
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="bigint"«IF unique-», unique=true«ENDIF-»«IF nullable-», nullable=true«ENDIF-»)
-     * @var «type» $«name».
-     */
-    protected $«singleTargetField.name.formatForCode()»;
-
-«ENDFOREACH-»
-    }«ENDREM»«''-»
-}
-«ENDDEFINE»
-
-«REM»concrete implementation stub«ENDREM»
-«DEFINE ModelRefEntityImpl(Application app) FOR ManyToManyRelationship-»
-
-/**
- * Entity class that defines the entity structure and behaviours.
- *
- * This is the reference entity class for the many to many relationship
- * between «source.name.formatForDisplay()» and «target.name.formatForDisplay()» entities.
- *
- * @ORM\Entity(repositoryClass="«implClassModelRefRepository()»")
- * @ORM\Table(name="«fullJoinTableName(true, target)»")
- */
-class «implClassModelRefEntity()» extends «baseClassModelRefEntity()»
-{
-    // feel free to add your own methods here
-}
-«ENDDEFINE»
-
