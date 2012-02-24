@@ -780,7 +780,7 @@ class «baseClassFormHandler(this, actionName)» extends Zikula_Form_AbstractHan
                         $message = $this->__('Error! Update attempt failed.');
                     }
                     break;
-            case 'update':
+            case 'delete':
                     if ($success === true) {
                         $message = $this->__('Done! Item deleted.');
                     } else {
