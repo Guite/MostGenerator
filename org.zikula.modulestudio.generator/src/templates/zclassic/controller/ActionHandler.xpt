@@ -1178,7 +1178,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
             $expectedVersion = SessionUtil::getVar($this->name . 'EntityVersion', 1);
         try {
             // assert version
-            $entityManager->lock($entity, LockMode::OPTIMISTIC, $expectedVersion);
+            $this->entityManager->lock($entity, LockMode::OPTIMISTIC, $expectedVersion);
 «ENDIF-»
             $this->updateRelationLinks($entity);
             //$this->entityManager->transactional(function($entityManager) {
