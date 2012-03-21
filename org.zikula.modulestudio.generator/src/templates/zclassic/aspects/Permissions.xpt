@@ -24,15 +24,13 @@
 
 «REM»Permission checks in system use cases«ENDREM»
 «AROUND templates::zclassic::controller::Action::PermissionCheck FOR Action-»
-// DEBUG: permission check aspect starts
 «LET this.controller.container.application.appName() AS appName-»
 «IF this.controller.metaType == AdminController-»
-        $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»::', '::', ACCESS_ADMIN));
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN));
 «ELSE-»
-        $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»::', '::', «EXPAND getPermissionAccessLevel-»));
+        $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::', '::', «EXPAND getPermissionAccessLevel-»));
 «ENDIF-»
 «ENDLET-»
-// DEBUG: permission check aspect ends
 «targetDef.proceed()-»
 «ENDAROUND»
 
