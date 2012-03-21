@@ -1177,8 +1177,10 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 «IF hasOptimisticLock()-»
         $expectedVersion = SessionUtil::getVar($this->name . 'EntityVersion', 1);
         try {
-            // assert version
-            $this->entityManager->lock($entity, LockMode::OPTIMISTIC, $expectedVersion);
+            if ($this->mode != 'create') {
+                // assert version
+                $this->entityManager->lock($entity, LockMode::OPTIMISTIC, $expectedVersion);
+            }
 «ENDIF-»
             $this->updateRelationLinks($entity);
             //$this->entityManager->transactional(function($entityManager) {
