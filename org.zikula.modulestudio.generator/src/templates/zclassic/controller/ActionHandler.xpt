@@ -1156,6 +1156,13 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
         if (count($entityData) > 0) {
             $entity->merge($entityData);
         }
+«IF hasOptimisticLock()-»
+
+        // initial creation of version with value 1
+        if ($entity['«getVersionField().name.formatForCode()»'] == 0) {
+            $entity['«getVersionField().name.formatForCode()»'] = 1;
+        }
+«ENDIF-»
 
         // save updated entity
         $this->entityRef = $entity;
