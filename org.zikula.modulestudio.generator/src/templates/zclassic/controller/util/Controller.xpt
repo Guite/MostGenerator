@@ -71,11 +71,11 @@ class «appName()»_Util_Base_Controller extends Zikula_AbstractBase
 «REM»TODO: distinguish between composite keys and other ones (which are always integers)
 this is why the $objectType parameter is available
 «ENDREM»«''-»
-«REM»            $id = (int) $request->getGet()->filter($idField, $defaultValue, FILTER_VALIDATE_INT);«ENDREM»«''-»
-            $id = $request->getGet()->filter($idField, $defaultValue);
+«REM»            $id = (int) $request->query->filter($idField, $defaultValue, FILTER_VALIDATE_INT);«ENDREM»«''-»
+            $id = $request->query->filter($idField, $defaultValue);
             if (!$id && $idField != 'id' && count($idFields) == 1) {
                 $defaultValue = isset($args['id']) && is_numeric($args['id']) ? $args['id'] : 0;
-                $id = (int) $request->getGet()->filter('id', $defaultValue, FILTER_VALIDATE_INT);
+                $id = (int) $request->query->filter('id', $defaultValue, FILTER_VALIDATE_INT);
             }
             $idValues[$idField] = $id;
         }

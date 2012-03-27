@@ -25,11 +25,11 @@
         }
 
         $fragment = '';
-        if ($this->request->isPost() && $this->request->getPost()->has('fragment')) {
-            $fragment = $this->request->getPost()->get('fragment', '');
+        if ($this->request->isPost() && $this->request->request->has('fragment')) {
+            $fragment = $this->request->request->get('fragment', '');
         }
-        elseif ($this->request->isGet() && $this->request->getGet()->has('fragment')) {
-            $fragment = $this->request->getGet()->get('fragment', '');
+        elseif ($this->request->isGet() && $this->request->query->has('fragment')) {
+            $fragment = $this->request->query->get('fragment', '');
         }
 
         ModUtil::dbInfoLoad('Users');
@@ -71,10 +71,10 @@
         }
 
         $objectType = '«app.getLeadingEntity().name.formatForCode()»';
-        if ($this->request->isPost() && $this->request->getPost()->has('ot')) {
-            $objectType = $this->request->getPost()->filter('ot', '«app.getLeadingEntity().name.formatForCode()»', FILTER_SANITIZE_STRING);
-        } elseif ($this->request->isGet() && $this->request->getGet()->has('ot')) {
-            $objectType = $this->request->getGet()->filter('ot', '«app.getLeadingEntity().name.formatForCode()»', FILTER_SANITIZE_STRING);
+        if ($this->request->isPost() && $this->request->request->has('ot')) {
+            $objectType = $this->request->request->filter('ot', '«app.getLeadingEntity().name.formatForCode()»', FILTER_SANITIZE_STRING);
+        } elseif ($this->request->isGet() && $this->request->query->has('ot')) {
+            $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity().name.formatForCode()»', FILTER_SANITIZE_STRING);
         }
         if (!in_array($objectType, «app.appName()»_Util_Controller::getObjectTypes('controllerAction', array('controller' => '«name()»', 'action' => 'getItemList')))) {
             $objectType = «app.appName()»_Util_Controller::getDefaultObjectType('controllerAction', array('controller' => '«name()»', 'action' => 'getItemList'));
@@ -85,17 +85,17 @@
 
         $fragment = '';
         $exclude = '';
-        if ($this->request->isPost() && $this->request->getPost()->has('fragment')) {
-            $fragment = $this->request->getPost()->get('fragment', '');
-            $exclude = $this->request->getPost()->get('exclude', '');
-        } elseif ($this->request->isGet() && $this->request->getGet()->has('fragment')) {
-            $fragment = $this->request->getGet()->get('fragment', '');
-            $exclude = $this->request->getGet()->get('exclude', '');
+        if ($this->request->isPost() && $this->request->request->has('fragment')) {
+            $fragment = $this->request->request->get('fragment', '');
+            $exclude = $this->request->request->get('exclude', '');
+        } elseif ($this->request->isGet() && $this->request->query->has('fragment')) {
+            $fragment = $this->request->query->get('fragment', '');
+            $exclude = $this->request->query->get('exclude', '');
         }
         $exclude = ((!empty($exclude)) ? array($exclude) : array());
 
         // parameter for used sorting field
-        $sort = $this->request->getGet()->get('sort', '');
+        $sort = $this->request->query->get('sort', '');
 «EXPAND templates::zclassic::controller::ControllerHelper::DefaultSorting-»
         $sortParam = $sort . ' asc';
 
@@ -164,13 +164,13 @@
         $this->checkAjaxToken();
         $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_EDIT));
 
-        $objectType = $this->request->getPost()->filter('ot', '«app.getLeadingEntity().name.formatForCode()»', FILTER_SANITIZE_STRING);
+        $objectType = $this->request->request->filter('ot', '«app.getLeadingEntity().name.formatForCode()»', FILTER_SANITIZE_STRING);
         if (!in_array($objectType, «app.appName()»_Util_Controller::getObjectTypes('controllerAction', array('controller' => '«name()»', 'action' => 'checkForDuplicate')))) {
             $objectType = «app.appName()»_Util_Controller::getDefaultObjectType('controllerAction', array('controller' => '«name()»', 'action' => 'checkForDuplicate'));
         }
 
-        $fieldName = $this->request->getPost()->filter('fn', '', FILTER_SANITIZE_STRING);
-        $value = $this->request->getPost()->get('v', '');
+        $fieldName = $this->request->request->filter('fn', '', FILTER_SANITIZE_STRING);
+        $value = $this->request->request->get('v', '');
 
         if (empty($fieldName) || empty($value)) {
             return new Zikula_Response_Ajax_BadData($this->__('Error: invalid input.'));
@@ -193,7 +193,7 @@
             return new Zikula_Response_Ajax_BadData($this->__('Error: invalid input.'));
         }
 
-        $exclude = (int) $this->request->getPost()->filter('ex', 0, FILTER_VALIDATE_INT);
+        $exclude = (int) $this->request->request->filter('ex', 0, FILTER_VALIDATE_INT);
 
         $entityClass = '«app.appName()»_Entity_' . ucfirst($objectType);
         $object = new $entityClass(); 
@@ -243,9 +243,9 @@
     {
         $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name. '::', '::', ACCESS_EDIT));
 
-        $objectType = $this->request->getPost()->filter('ot', '', FILTER_SANITIZE_STRING);
-        $field = $this->request->getPost()->filter('field', '', FILTER_SANITIZE_STRING);
-        $id = (int) $this->request->getPost()->filter('id', 0, FILTER_VALIDATE_INT);
+        $objectType = $this->request->request->filter('ot', '', FILTER_SANITIZE_STRING);
+        $field = $this->request->request->filter('field', '', FILTER_SANITIZE_STRING);
+        $id = (int) $this->request->request->filter('id', 0, FILTER_VALIDATE_INT);
 
         if ($id == 0
 «LET app.getEntitiesHavingBooleansWithAjaxToggle() AS entities-»
@@ -291,7 +291,7 @@
 
 «LET app.getTreeEntities() AS treeEntities-»
         // parameter specifying which type of objects we are treating
-        $objectType = DataUtil::convertFromUTF8($this->request->getPost()->filter('ot', '«treeEntities.get(0).name.formatForCode()»', FILTER_SANITIZE_STRING));
+        $objectType = DataUtil::convertFromUTF8($this->request->request->filter('ot', '«treeEntities.get(0).name.formatForCode()»', FILTER_SANITIZE_STRING));
         // ensure that we use only object types with tree extension enabled
         if (!in_array($objectType, array(«FOREACH treeEntities AS treeEntity SEPARATOR ", "»'«treeEntity.name.formatForCode()»'«ENDFOREACH»))) {
             $objectType = '«treeEntities.get(0).name.formatForCode()»';
@@ -303,7 +303,7 @@
             'message' => ''
         );
 
-        $op = DataUtil::convertFromUTF8($this->request->getPost()->filter('op', '', FILTER_SANITIZE_STRING));
+        $op = DataUtil::convertFromUTF8($this->request->request->filter('op', '', FILTER_SANITIZE_STRING));
         if (!in_array($op, array('addRootNode', 'addChildNode', 'deleteNode', 'moveNode', 'moveNodeTo'))) {
             LogUtil::registerError($this->__('Error: invalid operation.'));
             throw new Zikula_Exception_Ajax_Fatal();
@@ -312,7 +312,7 @@
         // Get id of treated node
         $id = 0;
         if (!in_array($op, array('addRootNode', 'addChildNode'))) {
-            $id = (int) $this->request->getPost()->filter('id', 0, FILTER_VALIDATE_INT);
+            $id = (int) $this->request->request->filter('id', 0, FILTER_VALIDATE_INT);
             if (!$id) {
                 LogUtil::registerError($this->__('Error: invalid node.'));
                 throw new Zikula_Exception_Ajax_Fatal();
@@ -324,7 +324,7 @@
 
         $rootId = 1;
         if (!in_array($op, array('addRootNode'))) {
-            $rootId = (int) $this->request->getPost()->filter('root', 0, FILTER_VALIDATE_INT);
+            $rootId = (int) $this->request->request->filter('root', 0, FILTER_VALIDATE_INT);
             if (!$rootId) {
                 LogUtil::registerError($this->__('Error: invalid root node.'));
                 throw new Zikula_Exception_Ajax_Fatal();
@@ -391,7 +391,7 @@
                             //});
                             break;
             case 'addChildNode':
-                            $parentId = (int) $this->request->getPost()->filter('pid', 0, FILTER_VALIDATE_INT);
+                            $parentId = (int) $this->request->request->filter('pid', 0, FILTER_VALIDATE_INT);
                             if (!$parentId) {
                                 LogUtil::registerError($this->__('Error: invalid parent node.'));
                                 throw new Zikula_Exception_Ajax_Fatal();
@@ -425,7 +425,7 @@
                             $this->entityManager->clear(); // clear cached nodes
                             break;
             case 'moveNode':
-                            $moveDirection = $this->request->getPost()->filter('direction', '', FILTER_SANITIZE_STRING);
+                            $moveDirection = $this->request->request->filter('direction', '', FILTER_SANITIZE_STRING);
                             if (!in_array($moveDirection, array('up', 'down'))) {
                                 LogUtil::registerError($this->__('Error: invalid direction.'));
                                 throw new Zikula_Exception_Ajax_Fatal();
@@ -445,13 +445,13 @@
 
                             break;
             case 'moveNodeTo':
-                            $moveDirection = $this->request->getPost()->filter('direction', '', FILTER_SANITIZE_STRING);
+                            $moveDirection = $this->request->request->filter('direction', '', FILTER_SANITIZE_STRING);
                             if (!in_array($moveDirection, array('after', 'before', 'bottom'))) {
                                 LogUtil::registerError($this->__('Error: invalid direction.'));
                                 throw new Zikula_Exception_Ajax_Fatal();
                             }
 
-                            $destId = (int) $this->request->getPost()->filter('destid', 0, FILTER_VALIDATE_INT);
+                            $destId = (int) $this->request->request->filter('destid', 0, FILTER_VALIDATE_INT);
                             if (!$destId) {
                                 LogUtil::registerError($this->__('Error: invalid destination node.'));
                                 throw new Zikula_Exception_Ajax_Fatal();

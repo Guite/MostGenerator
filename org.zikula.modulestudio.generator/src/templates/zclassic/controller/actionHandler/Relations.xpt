@@ -98,9 +98,9 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
 
         $inputValue = '';
         if ($source == 'POST') {
-            $inputValue = $this->request->getPost()->get($relationInputFieldName, '');
+            $inputValue = $this->request->request->get($relationInputFieldName, '');
         } else {
-            $inputValue = $this->request->getGet()->get($relationInputFieldName, '');
+            $inputValue = $this->request->query->get($relationInputFieldName, '');
         }
         if (empty($inputValue)) {
             return $many ? array() : null;
@@ -152,7 +152,7 @@ $this->retrieveRelatedObjects('«objectType.formatForCode()»', '«uniqueNameFor
 «IF many && this.getEditStageCode(incoming) > 0-»
 «LET ((incoming) ? source : target).name.formatForCode() AS objectType-»
 «IF incoming || many-»«REM»only incoming for now, see https://github.com/Guite/MostGenerator/issues/10«ENDREM»
-        $relatedIds = $this->request->getPost()->get('«uniqueNameForJs»ItemList', '');
+        $relatedIds = $this->request->request->get('«uniqueNameForJs»ItemList', '');
         if ($this->mode != 'create') {
             // remove all existing references
 «IF many-»

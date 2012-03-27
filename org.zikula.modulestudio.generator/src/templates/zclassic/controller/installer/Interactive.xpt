@@ -38,7 +38,7 @@
     {
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
-        $submit = $this->request->getPost()->get('submit', null);
+        $submit = $this->request->request->get('submit', null);
         if (!$submit) {
             // fetch and return the appropriate template
             return $this->view->fetch('«appName()»_init_step2.tpl');
@@ -47,12 +47,12 @@
         $this->checkCsrfToken();
 
 «FOREACH models.variables.vars AS modvar-»
-        $formValue = $this->request->getPost()->get('«modvar.name.formatForCode()»', «EXPAND ModVars::ValForm2SessionDefault FOR modvar»);
+        $formValue = $this->request->request->get('«modvar.name.formatForCode()»', «EXPAND ModVars::ValForm2SessionDefault FOR modvar»);
         SessionUtil::setVar('«formatForCode(name + '_' + modvar.name)»', $formValue);
 
 «ENDFOREACH-»
 
-        $activate = (bool) $this->request->getPost()->filter('activate', false, FILTER_VALIDATE_BOOLEAN);
+        $activate = (bool) $this->request->request->filter('activate', false, FILTER_VALIDATE_BOOLEAN);
         $activate = (!empty($activate)) ? true : false;
 
         return System::redirect(ModUtil::url('«appName()»', 'init', 'interactiveinitstep3', array('activate' => $activate)));
@@ -69,7 +69,7 @@
     {
         $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
-        $activate = (bool) $this->request->getPost()->filter('activate', false, FILTER_VALIDATE_BOOLEAN);
+        $activate = (bool) $this->request->request->filter('activate', false, FILTER_VALIDATE_BOOLEAN);
 
         // assign activation flag
         $this->view->assign('activate', $activate);
