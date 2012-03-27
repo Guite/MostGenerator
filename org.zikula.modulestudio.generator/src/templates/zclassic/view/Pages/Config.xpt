@@ -87,6 +87,9 @@
 
 «DEFINE FormRow FOR Variable-»
                 <div class="z-formrow">
+«IF documentation != null && documentation != ""-»
+                    {gt text='«documentation.replaceAll("'", '"')»' assign='toolTip'}
+«ENDIF-»
                     {formlabel for='«name.formatForCode()»' __text='«name.formatForDisplayCapital()»'«IF documentation != null && documentation != ""-» class='«container.container.application.appName().formatForDB()»FormTooltips' title=$toolTip«ENDIF-»}
 «EXPAND InputField-»
                 </div>
