@@ -4,12 +4,14 @@
 «EXTENSION extensions::ClassUtils»
 
 «DEFINE Root FOR Application-»
-«FILE getAppSourcePath(appName()).msconcat('lib/').msconcat(appName()).msconcat('/Form/Plugin/GeoInput.php')-»«EXPAND FileHelper::phpFileHeader(this)-»
+«FILE getAppSourcePath(appName()).msconcat('lib/').msconcat(appName()).msconcat('/Form/Plugin/Base/GeoInput.php')-»«EXPAND FileHelper::phpFileHeader(this)-»
 /**
- * Geo value input
+ * Geo value input.
  *
+ * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
+ * the geo input inherits from it.
  */
-class «appName()»_Form_Plugin_GeoInput extends Zikula_Form_Plugin_TextInput
+class «appName()»_Form_Plugin_Base_GeoInput extends Zikula_Form_Plugin_TextInput
 {
     /**
      * Get filename of this file.
@@ -108,7 +110,18 @@ class «appName()»_Form_Plugin_GeoInput extends Zikula_Form_Plugin_TextInput
         return number_format($value, 7, '.', '');
     }
 }
-
+«ENDFILE»
+«FILE getAppSourcePath(appName()).msconcat('lib/').msconcat(appName()).msconcat('/Form/Plugin/GeoInput.php')-»«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Geo value input.
+ *
+ * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
+ * the geo input inherits from it.
+ */
+class «appName()»_Form_Plugin_GeoInput extends «appName()»_Form_Plugin_Base_GeoInput
+{
+    // feel free to add your customisation here
+}
 «ENDFILE»
 
 «FILE viewPluginFilePath(this, 'function', 'GeoInput')-»«EXPAND FileHelper::phpFileHeader(this)-»

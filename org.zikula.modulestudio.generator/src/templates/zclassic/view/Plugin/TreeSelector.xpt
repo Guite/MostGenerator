@@ -5,8 +5,20 @@
 
 «DEFINE Root FOR Application-»
 «IF hasTrees()-»
-«FILE getAppSourcePath(appName()).msconcat('lib/').msconcat(appName()).msconcat('/Form/Plugin/TreeSelector.php')-»«EXPAND FileHelper::phpFileHeader(this)-»
+«FILE getAppSourcePath(appName()).msconcat('lib/').msconcat(appName()).msconcat('/Form/Plugin/Base/TreeSelector.php')-»«EXPAND FileHelper::phpFileHeader(this)-»
 «EXPAND TreeSelectorPluginImpl-»
+«ENDFILE»
+«FILE getAppSourcePath(appName()).msconcat('lib/').msconcat(appName()).msconcat('/Form/Plugin/TreeSelector.php')-»«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Tree selector.
+ *
+ * This plugin creates a nested tree selector using a dropdown list.
+ * The selected value of the base dropdown list will be set to ID of the selected tree node.
+ */
+class «appName()»_Form_Plugin_TreeSelector extends «appName()»_Form_Plugin_Base_TreeSelector
+{
+    // feel free to add your customisation here
+}
 «ENDFILE»
 «FILE viewPluginFilePath(this, 'function', 'TreeSelector')-»«EXPAND FileHelper::phpFileHeader(this)-»
 /**
@@ -28,12 +40,12 @@ function smarty_function_«appName().formatForDB()»TreeSelector($params, $view)
 
 «DEFINE TreeSelectorPluginImpl FOR Application-»
 /**
- * Tree selector
+ * Tree selector.
  *
  * This plugin creates a nested tree selector using a dropdown list.
  * The selected value of the base dropdown list will be set to ID of the selected tree node.
  */
-class «appName()»_Form_Plugin_TreeSelector extends Zikula_Form_Plugin_DropdownList
+class «appName()»_Form_Plugin_Base_TreeSelector extends Zikula_Form_Plugin_DropdownList
 {
     /**
      * The treated object type.
@@ -188,5 +200,4 @@ class «appName()»_Form_Plugin_TreeSelector extends Zikula_Form_Plugin_Dropdown
         parent::load($view, $params);
     }
 }
-
 «ENDDEFINE»

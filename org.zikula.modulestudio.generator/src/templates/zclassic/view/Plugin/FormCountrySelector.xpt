@@ -4,12 +4,12 @@
 «EXTENSION extensions::ClassUtils»
 
 «DEFINE Root FOR Application-»
-«FILE getAppSourcePath(appName()).msconcat('lib/').msconcat(appName()).msconcat('/Form/Plugin/CountrySelector.php')-»«EXPAND FileHelper::phpFileHeader(this)-»
+«FILE getAppSourcePath(appName()).msconcat('lib/').msconcat(appName()).msconcat('/Form/Plugin/Base/CountrySelector.php')-»«EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * This plugin creates a country dropdown list.
  * It understands an optional argument to limit the select options to a given set of allowed countries.
  */
-class «appName()»_Form_Plugin_CountrySelector extends Zikula_Form_Plugin_DropdownList
+class «appName()»_Form_Plugin_Base_CountrySelector extends Zikula_Form_Plugin_DropdownList
 {
     /**
      * Optional filter for displaying only selected countries in the list.
@@ -59,6 +59,16 @@ class «appName()»_Form_Plugin_CountrySelector extends Zikula_Form_Plugin_Dropd
 
         parent::load($view, $params);
     }
+}
+«ENDFILE»
+«FILE getAppSourcePath(appName()).msconcat('lib/').msconcat(appName()).msconcat('/Form/Plugin/CountrySelector.php')-»«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * This plugin creates a country dropdown list.
+ * It understands an optional argument to limit the select options to a given set of allowed countries.
+ */
+class «appName()»_Form_Plugin_CountrySelector extends «appName()»_Form_Plugin_Base_CountrySelector
+{
+    // feel free to add your customisation here
 }
 «ENDFILE»
 

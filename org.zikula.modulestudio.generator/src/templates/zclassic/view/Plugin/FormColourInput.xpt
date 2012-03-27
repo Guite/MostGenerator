@@ -4,7 +4,7 @@
 «EXTENSION extensions::ClassUtils»
 
 «DEFINE Root FOR Application-»
-«FILE getAppSourcePath(appName()).msconcat('lib/').msconcat(appName()).msconcat('/Form/Plugin/ColourInput.php')-»«EXPAND FileHelper::phpFileHeader(this)-»
+«FILE getAppSourcePath(appName()).msconcat('lib/').msconcat(appName()).msconcat('/Form/Plugin/Base/ColourInput.php')-»«EXPAND FileHelper::phpFileHeader(this)-»
 /**
  * Colour field plugin including colour picker.
  *
@@ -13,7 +13,7 @@
  * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
  * the colour input inherits from it.
  */
-class «appName()»_Form_Plugin_ColourInput extends Zikula_Form_Plugin_TextInput
+class «appName()»_Form_Plugin_Base_ColourInput extends Zikula_Form_Plugin_TextInput
 {
     /**
      * Get filename of this file.
@@ -135,6 +135,20 @@ class «appName()»_Form_Plugin_ColourInput extends Zikula_Form_Plugin_TextInput
             }
         }
     }
+}
+«ENDFILE»
+«FILE getAppSourcePath(appName()).msconcat('lib/').msconcat(appName()).msconcat('/Form/Plugin/ColourInput.php')-»«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * Colour field plugin including colour picker.
+ *
+ * The allowed formats are '#RRGGBB' and '#RGB'.
+ *
+ * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
+ * the colour input inherits from it.
+ */
+class «appName()»_Form_Plugin_ColourInput extends «appName()»_Form_Plugin_Base_ColourInput
+{
+    // feel free to add your customisation here
 }
 «ENDFILE»
 
