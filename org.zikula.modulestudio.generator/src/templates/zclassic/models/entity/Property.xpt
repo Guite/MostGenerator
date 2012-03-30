@@ -86,7 +86,7 @@ type="«type»", precision=«length», scale=«scale»«''-»
 «REM»type="«type»", «ENDREM»length=«length»«''-»
 «ENDDEFINE»
 «DEFINE PersistentPropertyImpl(String type) FOR TextField-»
-«REM»type="«type»", «ENDREM»length=«length»«''-»
+type="«type»", length=«length»«''-»
 «ENDDEFINE»
 «DEFINE PersistentPropertyImpl(String type) FOR EmailField-»
 «REM»type="«type»", «ENDREM»length=«length»«''-»
