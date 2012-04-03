@@ -29,6 +29,7 @@
 «ENDIF-»
 «IF !models.entities.select(e|e.geographical).isEmpty-»
 «EXPAND Plugin::FormGeoInput::Root-»
+«EXPAND Plugin::FormatGeoData::Root-»
 «ENDIF-»
 «ENDDEFINE»
 

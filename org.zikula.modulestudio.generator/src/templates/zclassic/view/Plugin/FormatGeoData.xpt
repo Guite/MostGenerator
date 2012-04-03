@@ -1,0 +1,23 @@
+«IMPORT modulestudio»
+«IMPORT templates::zclassic::smallstuff»
+«EXTENSION extensions::Utils»
+«EXTENSION extensions::ClassUtils»
+
+«DEFINE Root FOR Application-»
+«FILE viewPluginFilePath(this, 'modifier', 'FormatGeoData')-»«EXPAND FileHelper::phpFileHeader(this)-»
+/**
+ * The «appName().formatForDB()»FormatGeoData modifier formats geo data.
+ *
+ *
+ * @param string $string         The data to format.
+ *
+ * @return string The formatted output.
+ */
+function smarty_modifier_«appName().formatForDB()»FormatGeoData($string)
+{
+    return number_format($string, 7, '.', '');
+}
+
+«ENDFILE»
+«ENDDEFINE»
+

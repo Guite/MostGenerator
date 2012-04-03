@@ -47,7 +47,7 @@
 «IF geographical-»
 «FOREACH {'latitude', 'longitude'} AS geoFieldName-»
     <dt>{gt text='«geoFieldName.toFirstUpper()»'}</dt>
-    <dd>{$«objName».«geoFieldName»|formatnumber:7}</dd>
+    <dd>{$«objName».«geoFieldName»|«appName.formatForDB()»FormatGeoData}</dd>
 «ENDFOREACH-»
 «ENDIF-»
 «EXPAND DisplayEntry(controller, false) FOREACH incoming.typeSelect(OneToManyRelationship).select(e|e.bidirectional)-»
@@ -193,10 +193,10 @@
                 map_type: true
             });
     
-            var latlon = new mxn.LatLonPoint({{$«objName».latitude|formatnumber:7}}, {{$«objName».longitude|formatnumber:7}});
+            var latlon = new mxn.LatLonPoint({{$«objName».latitude|«container.application.name.formatForCode().formatForDB()»FormatGeoData}}, {{$«objName».longitude|«container.application.name.formatForCode().formatForDB()»FormatGeoData}});
     
             mapstraction.setMapType(mxn.Mapstraction.SATELLITE);
-            mapstraction.setCenterAndZoom(latlon, 16);
+            mapstraction.setCenterAndZoom(latlon, 18);
             mapstraction.mousePosition('position');
     
             // add a marker
