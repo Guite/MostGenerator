@@ -37,7 +37,7 @@
             </fieldset>
 
             {notifydisplayhooks eventname='«appName.formatForDB()».ui_hooks.«nameMultiple.formatForDB()».form_delete' id="«FOREACH getPrimaryKeyFields() AS pkField SEPARATOR '_'-»`$«name.formatForCode()».«pkField.name.formatForCode()»`«ENDFOREACH-»" assign='hooks'}
-            {foreach from=$hooks key='hookName' item='hook'}
+            {foreach key='providerArea' item='hook' from=$hooks}
             <fieldset>
                 <legend>{$hookName}</legend>
                 {$hook}
