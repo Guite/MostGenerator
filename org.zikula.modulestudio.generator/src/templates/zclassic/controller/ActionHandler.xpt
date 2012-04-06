@@ -1142,7 +1142,7 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
      */
     public function fetchInputData(Zikula_Form_View $view, &$args)
     {
-        parent::fetchInputData($view, $args);
+        $otherFormData = parent::fetchInputData($view, $args);
 
         // get treated entity reference from persisted member var
         $entity = $this->entityRef;
@@ -1159,6 +1159,8 @@ class «implClassFormHandler(controller, name, actionName)» extends «baseClass
 
         // save updated entity
         $this->entityRef = $entity;
+
+        return $otherFormData;
     }
 «ENDDEFINE»
 
