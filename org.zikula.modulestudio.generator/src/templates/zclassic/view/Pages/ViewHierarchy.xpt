@@ -47,9 +47,9 @@
 </p>
 
     {foreach key='rootId' item='treeNodes' from=$trees}
-        {include file='«controller.name()»/«name.formatForDB()»/view_tree_items.tpl' rootId=$rootId items=$treeNodes}
+        {include file='«controller.name()»/«name.formatForCode()»/view_tree_items.tpl' rootId=$rootId items=$treeNodes}
     {foreachelse}
-        {include file='«controller.name()»/«name.formatForDB()»/view_tree_items.tpl' rootId=1 items=null}
+        {include file='«controller.name()»/«name.formatForCode()»/view_tree_items.tpl' rootId=1 items=null}
     {/foreach}
 
 <br style="clear: left" />
