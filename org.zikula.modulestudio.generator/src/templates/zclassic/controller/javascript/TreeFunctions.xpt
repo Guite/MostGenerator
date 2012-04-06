@@ -8,28 +8,11 @@
 
 var currentNodeId = 0;
 
-«EXPAND InitTreeView-»
 «EXPAND InitTreeNodes-»
 «EXPAND PerformTreeOperation-»
 «EXPAND TreeSave-»
 
 «ENDFILE»
-«ENDDEFINE»
-
-«DEFINE InitTreeView FOR Application-»
-/**
- * Initialise tree view.
- */
-function «prefix()»InitTreeView(objectType, hasNodes)
-{
-    if (!hasNodes || $('z-tree-addroot')) {
-        $('z-tree-addroot').observe('click', function(event) {
-            «prefix()»PerformTreeOperation(objectType, 1, 'addRootNode');
-            Event.stop(event);
-        }).show();
-    }
-}
-
 «ENDDEFINE»
 
 «DEFINE InitTreeNodes FOR Application-»

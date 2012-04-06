@@ -32,6 +32,19 @@
     {checkpermissionblock component='«appName»::' instance='.*' level="ACCESS_ADD"}
         {gt text='Add root node' assign='addRootTitle'}
         <a id="z-tree-addroot" href="javascript:void(0)" title="{$addRootTitle}" style="display: none" class="z-icon-es-add">{$addRootTitle}</a>
+        
+        <script type="text/javascript" charset="utf-8">
+		/* <![CDATA[ */
+		    document.observe('dom:loaded', function() {
+	           $('z-tree-addroot').observe('click', function(event) {
+	               «appPrefix»PerformTreeOperation('«name.formatForCode()»', 1, 'addRootNode');
+	               Event.stop(event);
+	           }).show();
+		    });
+		/* ]]> */
+		</script>
+		<noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
+
     {*
         {gt text='Create «name.formatForDisplay()»' assign='createTitle'}
         <a href="{modurl modname='«appName»' type='«controller.name()»' func='edit' ot='«objName»'}" title="{$createTitle}" class="z-icon-es-add">
@@ -84,7 +97,6 @@
 <script type="text/javascript" charset="utf-8">
 /* <![CDATA[ */
     document.observe('dom:loaded', function() {
-        «appPrefix»InitTreeView('«name.formatForCode()»', {{if $hasNodes}}true{{else}}false{{/if}}, true);
     {{if $hasNodes}}
         «appPrefix»InitTreeNodes('«name.formatForCode()»', '«controller.name()»', '{{$rootId}}', «readOnly.displayBool()»);
         Zikula.TreeSortable.trees.itemtree{{$rootId}}.config.onSave = «appPrefix»TreeSave;
