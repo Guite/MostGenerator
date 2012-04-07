@@ -19,7 +19,7 @@
 
 «REM»Entry point for Form templates«ENDREM»
 «DEFINE Root(Application app, Controller controller, String actionName) FOR Entity-»
-«info("Generating edit form templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
+«info("Generating " + controller.name() + " edit form templates for entity \"" + name.formatForDisplay() + "\"") -> ""-»
 «FILE editTemplateFile(controller, name, actionName)-»
 «EXPAND FormTemplateHeader(app, controller, actionName)-»
 «EXPAND FormTemplateBody(app, controller, actionName)-»
