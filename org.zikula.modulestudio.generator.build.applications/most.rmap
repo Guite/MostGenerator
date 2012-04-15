@@ -4,7 +4,7 @@
 
     <searchPath name="most.generator.build.applications">
         <provider readerType="local" componentTypes="eclipse.feature" mutable="false">
-            <uri format="{0}/scm/bundles/{1}">
+            <uri format="{0}/scm/{1}">
                 <bc:propertyRef key="workspace.root"/>
                 <bc:propertyRef key="buckminster.component"/>
             </uri>
