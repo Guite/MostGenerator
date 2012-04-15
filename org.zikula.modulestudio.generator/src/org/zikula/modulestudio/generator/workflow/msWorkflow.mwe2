@@ -23,7 +23,6 @@ import org.eclipse.emf.mwe.utils.FileCopy
 import org.eclipse.emf.mwe.utils.Writer
 import org.eclipse.xpand2.Generator
 //import org.eclipse.xtend.middleend.xpand.XpandComponent
-import org.zikula.modulestudio.generator.output.PhpBeautifier
 
 // The model to be processed (file name without extension)
 var modelName
@@ -249,8 +248,6 @@ Workflow {
             overwrite = true
             /*postprocessor = XmlBeautifier {
                fileExtensions = ".xml, .xsd, .wsdd, .wsdl"
-            }*/
-/*            postprocessor = PhpBeautifier {
             }*/
         }
 /*
