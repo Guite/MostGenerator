@@ -38,7 +38,6 @@
       <import plugin="org.eclipse.birt.report.engine" version="3.7.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.gmf.runtime.diagram.ui.render" version="1.4.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.datatools.enablement.oda.ecore" version="1.0.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.birt.report.engine.emitter.pdf" version="3.7.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.birt.report.engine.script.javascript" version="3.7.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.birt.chart.engine" version="3.7.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.birt.chart.device.extension" version="3.7.2" match="greaterOrEqual"/>
