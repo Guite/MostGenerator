@@ -63,7 +63,7 @@ class Relations {
             val usePlural = (!tempIsOneToOne)
             val templateFileName = templateFile(controller, target.name, 'include_createChildItem' + getTargetMultiplicity)
             fsa.generateFile(templateFileName, '''
-                {* purpose of this template: inclusion template for managing related «target.getEntityNameSingularPlural(usePlural).formatForDisplayCapital» in «controller.name.formatForDB» area *}
+                {* purpose of this template: inclusion template for managing related «target.getEntityNameSingularPlural(usePlural).formatForDisplayCapital» in «controller.formattedName» area *}
                 <fieldset>
                     <legend>{gt text='«target.getEntityNameSingularPlural(usePlural).formatForDisplayCapital»'}</legend>
                     <div class="z-formrow">
@@ -162,7 +162,7 @@ class Relations {
                 <div id="{$idPrefix}SelectorChoices" class="«app.prefix»AutoComplete«IF targetEntity.hasImageFieldsEntity»WithImage«ENDIF»"></div>
                 <input type="button" id="{$idPrefix}SelectorDoCancel" name="{$idPrefix}SelectorDoCancel" value="{gt text='Cancel'}" class="z-button «app.prefix»InlineButton" />
                 «IF includeEditing»
-                    <a id="{$idPrefix}SelectorDoNew" href="{modurl modname='«app.appName»' type='«controller.name»' func='edit' ot='«targetEntity.name.formatForCode»'}" title="{gt text='Create new «targetEntity.name.formatForDisplay»'}" class="z-button «app.prefix»InlineButton">{gt text='Create'}</a>
+                    <a id="{$idPrefix}SelectorDoNew" href="{modurl modname='«app.appName»' type='«controller.formattedName»' func='edit' ot='«targetEntity.name.formatForCode»'}" title="{gt text='Create new «targetEntity.name.formatForDisplay»'}" class="z-button «app.prefix»InlineButton">{gt text='Create'}</a>
                 «ENDIF»
             </div>
             <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>

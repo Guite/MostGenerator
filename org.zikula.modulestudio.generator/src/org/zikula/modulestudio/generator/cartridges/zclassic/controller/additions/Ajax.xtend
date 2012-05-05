@@ -22,10 +22,10 @@ class Ajax {
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
     @Inject extension Utils = new Utils()
 
-    def additionalAjaxFunctions(Controller it, Application app) {
+    def dispatch additionalAjaxFunctions(Controller it, Application app) {
     }
 
-    def additionalAjaxFunctions(AjaxController it, Application app) '''
+    def dispatch additionalAjaxFunctions(AjaxController it, Application app) '''
         «val userFields = app.getAllUserFields»
         «IF !userFields.isEmpty»
             «FOR userField : userFields»
@@ -368,15 +368,15 @@ class Ajax {
                         case '«entity.name.formatForCode»':
                             «val stringFields = entity.fields.filter(typeof(StringField)).filter(e|e.length >= 20 && !e.nospace && !e.country && !e.htmlcolour && !e.language)»
                                 $titleFieldName = '«IF !stringFields.isEmpty»«stringFields.head.name.formatForCode»«ENDIF»';
-                            «val textFields = entity.fields.filter(typeof(TextField)).filter(e|!e.leading && e.length >= 50)»
-                            «IF !textFields.isEmpty»
+                                «val textFields = entity.fields.filter(typeof(TextField)).filter(e|!e.leading && e.length >= 50)»
+                                «IF !textFields.isEmpty»
                                 $descriptionFieldName = '«textFields.head.name.formatForCode»';
-                            «ELSE»
-                                «val textStringFields = entity.fields.filter(typeof(StringField)).filter(e|!e.leading && e.length >= 50 && !e.nospace && !e.country && !e.htmlcolour && !e.language)»
-                                «IF !textStringFields.isEmpty»
+                                «ELSE»
+                                    «val textStringFields = entity.fields.filter(typeof(StringField)).filter(e|!e.leading && e.length >= 50 && !e.nospace && !e.country && !e.htmlcolour && !e.language)»
+                                    «IF !textStringFields.isEmpty»
                                     $descriptionFieldName = '«textStringFields.head.name.formatForCode»';
+                                    «ENDIF»
                                 «ENDIF»
-                            «ENDIF»
                                 break;
                     «ENDFOR»
                 }

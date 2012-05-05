@@ -63,9 +63,9 @@ class Selection {
          *
          * @param string  $args['ot']       The object type to retrieve (optional)
          * @param mixed   $args['id']       The id (or array of ids) to use to retrieve the object (default=null).
-        «IF hasSluggable»
-         * @param string  $args['slug']     Slug to use as selection criteria instead of id (optional) (default=null).
-        «ENDIF»
+         «IF hasSluggable»
+          * @param string  $args['slug']     Slug to use as selection criteria instead of id (optional) (default=null).
+         «ENDIF»
          * @param boolean $args['useJoins'] Whether to include joining related objects (optional) (default=true).
          *
          * @return mixed Desired entity object or null.

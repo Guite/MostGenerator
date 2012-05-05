@@ -241,10 +241,7 @@ class Association {
         }
     }
 
-    def private additionalOptions(JoinRelationship it, Boolean useReverse) {
-        cascadeOptions(useReverse)
-        fetchTypeTag
-    }
+    def private additionalOptions(JoinRelationship it, Boolean useReverse) '''«cascadeOptions(useReverse)»«fetchTypeTag»'''
     def private cascadeOptions(JoinRelationship it, Boolean useReverse) {
         val cascadeProperty = { if (useReverse) cascadeReverse else cascade }
         if (cascadeProperty == CascadeType::NONE) ''
@@ -291,27 +288,27 @@ class Association {
     '''
 
 
-    def relationAccessor(JoinRelationship it, Boolean useTarget) {
-        val relationAliasName = getRelationAliasName(useTarget)
-        relationAccessorImpl(useTarget, relationAliasName)
-    }
+    def relationAccessor(JoinRelationship it, Boolean useTarget) '''
+        «val relationAliasName = getRelationAliasName(useTarget)»
+        «relationAccessorImpl(useTarget, relationAliasName)»
+    '''
 
-    def private relationAccessorImpl(JoinRelationship it, Boolean useTarget, String aliasName) {
-        val entityClass = { (if (useTarget) target else source).implClassModelEntity }
-        val singleName = { (if (useTarget) target else source).name }
-        val isMany = isManySide(useTarget)
-        if (isMany) {
-            fh.getterAndSetterMethods(it, aliasName, entityClass, true, false, '')
-            relationAccessorAdditions(useTarget, aliasName, singleName)
-        } else {
-            fh.getterAndSetterMethods(it, aliasName, entityClass, false, true, 'null')
-        }
-        addMethod(useTarget, isMany, aliasName, singleName, entityClass)
-        removeMethod(useTarget, isMany, aliasName, singleName, entityClass)
-    }
+    def private relationAccessorImpl(JoinRelationship it, Boolean useTarget, String aliasName) '''
+        «val entityClass = { (if (useTarget) target else source).implClassModelEntity }»
+        «val singleName = { (if (useTarget) target else source).name }»
+        «val isMany = isManySide(useTarget)»
+        «IF isMany»
+            «fh.getterAndSetterMethods(it, aliasName, entityClass, true, false, '')»
+            «relationAccessorAdditions(useTarget, aliasName, singleName)»
+        «ELSE»
+            fh.getterAndSetterMethods(it, aliasName, entityClass, false, true, 'null')»
+        «ENDIF»
+        «addMethod(useTarget, isMany, aliasName, singleName, entityClass)»
+        «removeMethod(useTarget, isMany, aliasName, singleName, entityClass)»
+    '''
 
-    def private dispatch relationAccessorAdditions(JoinRelationship it, Boolean useTarget, String aliasName, String singleName) {
-    }
+    def private dispatch relationAccessorAdditions(JoinRelationship it, Boolean useTarget, String aliasName, String singleName) '''
+    '''
 
     def private dispatch relationAccessorAdditions(OneToManyRelationship it, Boolean useTarget, String aliasName, String singleName) '''
         «IF !useTarget && indexBy != null && indexBy != ''»
@@ -364,15 +361,14 @@ class Association {
             «IF withDescription»«targetField.fieldTypeAsString» «ENDIF»$«targetField.name.formatForCode»«IF withDescription»«/*TODO description*/»«ENDIF»
         «ELSE»
             «type» $«name»«IF withDescription»«/*TODO description*/»«ENDIF»
-        «ENDIF»
-    '''
+        «ENDIF»'''
 
     def private addAssignmentDefault(JoinRelationship it, Boolean useTarget, String name, String nameSingle) '''
         $this->«name»[] = $«nameSingle»;
     '''
-    def private dispatch addAssignment(JoinRelationship it, Boolean useTarget, String name, String nameSingle) {
-        addAssignmentDefault(useTarget, name, nameSingle)
-    }
+    def private dispatch addAssignment(JoinRelationship it, Boolean useTarget, String name, String nameSingle) '''
+        «addAssignmentDefault(useTarget, name, nameSingle)»
+    '''
     def private dispatch addAssignment(OneToManyRelationship it, Boolean useTarget, String name, String nameSingle) '''
         «IF !useTarget && indexBy != null && indexBy != ''»
             $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital»()] = $«nameSingle»;

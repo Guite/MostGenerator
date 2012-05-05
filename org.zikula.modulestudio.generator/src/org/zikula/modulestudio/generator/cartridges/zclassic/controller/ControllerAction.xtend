@@ -49,7 +49,7 @@ class ControllerAction {
 
     def private actionDocMethodDescription(Action it) {
         switch it {
-            MainAction: 'This method is the default function handling the «controller.name.formatForCode» area called without defining arguments.'
+            MainAction: 'This method is the default function handling the ' + controller.formattedName + ' area called without defining arguments.'
             ViewAction: 'This method provides a generic item list overview.'
             DisplayAction: 'This method provides a generic item detail view.'
             EditAction: 'This method provides a generic handling of all edit requests.'
@@ -108,7 +108,7 @@ class ControllerAction {
         «IF !tempIsMainAction»
             // parameter specifying which type of objects we are treating
             $objectType = (isset($args['ot']) && !empty($args['ot'])) ? $args['ot'] : $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
-            $utilArgs = array('controller' => '«controller.name»', 'action' => '«name.formatForCode.toFirstLower»');
+            $utilArgs = array('controller' => '«controller.formattedName»', 'action' => '«name.formatForCode.toFirstLower»');
             if (!in_array($objectType, «app.appName»_Util_Controller::getObjectTypes('controllerAction', $utilArgs))) {
                 $objectType = «app.appName»_Util_Controller::getDefaultObjectType('controllerAction', $utilArgs);
             }
@@ -314,7 +314,7 @@ class ControllerAction {
     }
 
     def private dispatch actionImplBody(EditAction it, String appName) '''
-        «/* new ActionHandler().formCreate(appName, controller.name, 'edit')*/»
+        «/* new ActionHandler().formCreate(appName, controller.formattedName, 'edit')*/»
         // create new Form reference
         $view = FormUtil::newForm($this->name, $this);
 

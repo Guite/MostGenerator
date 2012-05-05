@@ -32,7 +32,7 @@ class Property {
 
     FileHelper fh = new FileHelper()
 
-    def persistentProperty(DerivedField it) {
+    def dispatch persistentProperty(DerivedField it) {
         persistentProperty(name.formatForCode, fieldTypeAsString, '')
     }
 
@@ -43,14 +43,14 @@ class Property {
      * After this has been fixed the following define for IntegerField can be removed
      * completely as the define for DerivedField can be used then instead.
      */
-    def persistentProperty(IntegerField it) {
+    def dispatch persistentProperty(IntegerField it) {
         if (version && entity.hasOptimisticLock)
             persistentProperty(name.formatForCode, 'integer', '')
         else
             persistentProperty(name.formatForCode, fieldTypeAsString, '')
     }
 
-    def persistentProperty(UploadField it) '''
+    def dispatch persistentProperty(UploadField it) '''
         /**
          * «name.formatForDisplayCapital» meta data array.
          *
@@ -79,7 +79,7 @@ class Property {
         protected $«name.formatForCode»FullPathUrl = '';
     '''
 
-    def persistentProperty(ArrayField it) {
+    def dispatch persistentProperty(ArrayField it) {
         persistentProperty(name.formatForCode, fieldTypeAsString, ' = array()')
     }
 
@@ -144,44 +144,46 @@ class Property {
     def private defaultFieldData(EntityField it) {
     	switch (it) {
     		BooleanField:
-    		    if (it.defaultValue == true || it.defaultValue == 'true')'''true''' else '''false'''
+    		    if (it.defaultValue == true || it.defaultValue == 'true') 'true' else 'false'
     	    AbstractIntegerField:
-    	        if (it.defaultValue != null && it.defaultValue.length > 0) it.defaultValue else 0
+    	        if (it.defaultValue != null && it.defaultValue.length > 0) it.defaultValue else '0'
     	    DecimalField:
     	        if (it.defaultValue != null && it.defaultValue.length > 0) it.defaultValue else '0.00'
-    	    ArrayField: '''array()'''
-    	    ObjectField: '''null'''
-    	    AbstractStringField: if (it.defaultValue != null && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else ''
+    	    ArrayField: 'array()'
+    	    ObjectField: 'null'
+    	    AbstractStringField: if (it.defaultValue != null && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'\''
     	    AbstractDateField:
-                if (it.mandatory && it.defaultValue != null && it.defaultValue.length > 0 && it.defaultValue != 'now') '\'' + it.defaultValue + '\'' else ''
+                if (it.mandatory && it.defaultValue != null && it.defaultValue.length > 0 && it.defaultValue != 'now') '\'' + it.defaultValue + '\'' else 'null'
     	    FloatField:
-    	        if (it.defaultValue != null && it.defaultValue.length > 0) it.defaultValue else 0
-    	    default: ''
+    	        if (it.defaultValue != null && it.defaultValue.length > 0) it.defaultValue else '0'
+    	    default: '\'\''
     	}
     }
 
-    def private fieldAccessorDefault(DerivedField it) {
-        if (isIndexByField)
-            fh.getterMethod(it, name.formatForCode, fieldTypeAsString, false)
-        else
-            fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString, false, false, '')
-    }
+    def private fieldAccessorDefault(DerivedField it) '''
+        «IF isIndexByField»
+            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString, false)»
+        «ELSE»
+            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString, false, false, '')»
+        «ENDIF»
+    '''
 
-    def dispatch fieldAccessor(DerivedField it) {
-        fieldAccessorDefault
-    }
+    def dispatch fieldAccessor(DerivedField it) '''
+        «fieldAccessorDefault»
+    '''
 
-    def dispatch fieldAccessor(IntegerField it) {
-        if (isIndexByField/* || (aggregateFor != null && aggregateFor != ''*/)
-            fh.getterMethod(it, name.formatForCode, fieldTypeAsString, false)
-        else
-            fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString, false, false, '')
-    }
+    def dispatch fieldAccessor(IntegerField it) '''
+        «IF isIndexByField/* || (aggregateFor != null && aggregateFor != ''*/»
+            «fh.getterMethod(it, name.formatForCode, fieldTypeAsString, false)»
+        «ELSE»
+            «fh.getterAndSetterMethods(it, name.formatForCode, fieldTypeAsString, false, false, '')»
+        «ENDIF»
+    '''
 
-    def dispatch fieldAccessor(UploadField it) {
-        fieldAccessorDefault
-        fh.getterAndSetterMethods(it, name.formatForCode + 'FullPath', 'string', false, false, '')
-        fh.getterAndSetterMethods(it, name.formatForCode + 'FullPathUrl', 'string', false, false, '')
-        fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, false, 'Array()')
-    }
+    def dispatch fieldAccessor(UploadField it) '''
+        «fieldAccessorDefault»
+        «fh.getterAndSetterMethods(it, name.formatForCode + 'FullPath', 'string', false, false, '')»
+        «fh.getterAndSetterMethods(it, name.formatForCode + 'FullPathUrl', 'string', false, false, '')»
+        «fh.getterAndSetterMethods(it, name.formatForCode + 'Meta', 'array', true, false, 'Array()')»
+    '''
 }

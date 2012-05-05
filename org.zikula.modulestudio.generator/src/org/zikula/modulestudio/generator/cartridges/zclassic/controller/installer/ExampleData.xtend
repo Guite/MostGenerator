@@ -64,27 +64,25 @@ class ExampleData {
         }
     '''
 
-    def private exampleRowImpl(Models it) {
-        for (entity : entities) entity.truncateTable
-        if (numExampleRows > 0) {
-        '''
+    def private exampleRowImpl(Models it) '''
+        «FOR entity : entities»«entity.truncateTable»«ENDFOR»
+        «IF numExampleRows > 0»
             «IF !entities.filter(e|e.tree != EntityTreeType::NONE).isEmpty»
                 $treeCounterRoot = 1;
             «ENDIF»
-        '''
-            createExampleRows
-        }
-    }
+            «createExampleRows»
+        «ENDIF»
+    '''
 
     def private truncateTable(Entity it) '''
         $entityManager->getRepository('«implClassModelEntity»')->truncateTable();
     '''
 
-    def private createExampleRows(Models it) {
-        initDateValues
-        for (entity : entities) entity.initExampleObjects(application)
-        for (entity : entities) entity.createExampleRows(application)
-    }
+    def private createExampleRows(Models it) '''
+        «initDateValues»
+        «FOR entity : entities»«entity.initExampleObjects(application)»«ENDFOR»
+        «FOR entity : entities»«entity.createExampleRows(application)»«ENDFOR»
+    '''
 
     def private initDateValues(Models it) '''
         «val fields = getModelEntityFields.filter(typeof(AbstractDateField))»

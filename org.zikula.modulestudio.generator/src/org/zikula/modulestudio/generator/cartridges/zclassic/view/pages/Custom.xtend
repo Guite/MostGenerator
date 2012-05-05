@@ -28,7 +28,7 @@ class Custom {
     }
 
     def private customView(CustomAction it, Application app, Controller controller) '''
-        {* purpose of this template: show output of «name.formatForDisplay» action in «controller.name» area *}
+        {* purpose of this template: show output of «name.formatForDisplay» action in «controller.formattedName» area *}
         {include file='«controller.formattedName»/header.tpl'}
         <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
         {gt text='«name.formatForDisplayCapital»' assign='templateTitle'}

@@ -87,10 +87,10 @@ class Redirect {
                 «IF tree != EntityTreeType::NONE»
                     $viewArgs['tpl'] = 'tree';
                 «ENDIF»
-                $url = ModUtil::url($this->name, '«controller.name»', 'view', $viewArgs);
+                $url = ModUtil::url($this->name, '«controller.formattedName»', 'view', $viewArgs);
             «ELSEIF controller.hasActions('main')»
                 // redirect to the main page
-                $url = ModUtil::url($this->name, '«controller.name»', 'main');
+                $url = ModUtil::url($this->name, '«controller.formattedName»', 'main');
             «ELSE»
                 $url = System::getHomepageUrl();
             «ENDIF»
@@ -176,7 +176,7 @@ class Redirect {
                         «ENDFOR»
                     «ENDIF»
                 «ENDFOR»
-                                default:
+                        default:
                                     return $this->getDefaultReturnUrl($args, $obj);
             }
         }

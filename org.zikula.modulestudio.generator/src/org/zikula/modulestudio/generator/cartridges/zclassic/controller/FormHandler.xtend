@@ -78,7 +78,7 @@ class FormHandler {
      * Entry point for Form handler classes per entity.
      */
     def private generate(Entity it, Application app, Controller controller, String actionName, IFileSystemAccess fsa) {
-    	println('Generating "' + controller.name + '" form handler classes for "' + name + '_' + actionName + '"')
+    	println('Generating "' + controller.formattedName + '" form handler classes for "' + name + '_' + actionName + '"')
         fsa.generateFile(app.appName.appSourcePath + baseClassFormHandler(controller, name, actionName).asFile, formHandlerBaseFile(app, controller, actionName))
         fsa.generateFile(app.appName.appSourcePath + implClassFormHandler(controller, name, actionName).asFile, formHandlerFile(app, controller, actionName))
     }

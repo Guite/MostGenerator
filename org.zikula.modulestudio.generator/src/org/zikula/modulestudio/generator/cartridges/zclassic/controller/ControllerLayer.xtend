@@ -165,7 +165,7 @@ class ControllerLayer {
          */
         class «baseClassApi» extends Zikula_AbstractApi
         {
-        «IF !isAjaxController»
+            «IF !isAjaxController»
             /**
              * Returns available «name» panel links.
              *
@@ -194,7 +194,7 @@ class ControllerLayer {
                 «ENDIF»
                 return $links;
             }
-        «ENDIF»
+            «ENDIF»
             «additionalApiMethods»
         }
     '''
@@ -204,7 +204,7 @@ class ControllerLayer {
             AdminController case !container.getUserControllers.isEmpty: '''
                     «val userController = container.getUserControllers.head»
                     if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
-                        $links[] = array('url' => ModUtil::url($this->name, '«userController.name»', «userController.mainUrlDetails»),
+                        $links[] = array('url' => ModUtil::url($this->name, '«userController.formattedName»', «userController.mainUrlDetails»),
                                          'text' => $this->__('Frontend'),
                                          'title' => $this->__('Switch to user area.'),
                                          'class' => 'z-icon-es-home');
@@ -213,7 +213,7 @@ class ControllerLayer {
             UserController case !container.getAdminControllers.isEmpty: '''
                     «val adminController = container.getAdminControllers.head»
                     if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
-                        $links[] = array('url' => ModUtil::url($this->name, '«adminController.name»', «adminController.mainUrlDetails»),
+                        $links[] = array('url' => ModUtil::url($this->name, '«adminController.formattedName»', «adminController.mainUrlDetails»),
                                          'text' => $this->__('Backend'),
                                          'title' => $this->__('Switch to administration area.'),
                                          'class' => 'z-icon-es-options');

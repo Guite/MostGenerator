@@ -42,10 +42,10 @@ class FileHelper {
     '''
 
 
-    def getterAndSetterMethods(Object it, String name, String type, Boolean isMany, Boolean useHint, String init) {
-        getterMethod(name, type, isMany)
-        setterMethod(name, type, isMany, useHint, init)
-    }
+    def getterAndSetterMethods(Object it, String name, String type, Boolean isMany, Boolean useHint, String init) '''
+        «getterMethod(name, type, isMany)»
+        «setterMethod(name, type, isMany, useHint, init)»
+    '''
 
     def getterMethod(Object it, String name, String type, Boolean isMany) '''
         /**

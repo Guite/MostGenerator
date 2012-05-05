@@ -54,7 +54,7 @@ class Atom {
                 «ELSE»
                     <title type="html">{gt text='«name.formatForCodeCapital»'}</title>
                 «ENDIF»
-                <link rel="alternate" type="text/html" href="{modurl modname='«appName»' type='«controller.name»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode»'«ENDIF» fqurl='1'}" />
+                <link rel="alternate" type="text/html" href="{modurl modname='«appName»' type='«controller.formattedName»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode»'«ENDIF» fqurl='1'}" />
 
                 {capture assign='uniqueID'}tag:{$baseurl|replace:'http://':''|replace:'/':''},{$«objName».createdDate|dateformat|default:$smarty.now|dateformat:'%Y-%m-%d'}:{modurl modname='«appName»' type='«controller.formattedName»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode»'«ENDIF»}{/capture}
                 <id>{$uniqueID}</id>
