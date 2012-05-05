@@ -29,12 +29,12 @@ class SimpleFields {
 
     Validation validationHelper = new Validation()
 
-    def formRow(DerivedField it, String groupSuffix, String idSuffix) {
-        formLabel(groupSuffix, idSuffix)
-        formField(groupSuffix, idSuffix)
-        validationHelper.mandatoryValidationMessage(it, idSuffix)
-        validationHelper.additionalValidationMessages(it, idSuffix)
-    }
+    def formRow(DerivedField it, String groupSuffix, String idSuffix) '''
+        «formLabel(groupSuffix, idSuffix)»
+        «formField(groupSuffix, idSuffix)»
+        «validationHelper.mandatoryValidationMessage(it, idSuffix)»
+        «validationHelper.additionalValidationMessages(it, idSuffix)»
+    '''
 
     def private dispatch formLabel(DerivedField it, String groupSuffix, String idSuffix) '''
         «initDocumentationToolTip»

@@ -36,9 +36,9 @@ class Forms {
     Relations relationHelper = new Relations()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val editActions = getAllControllers.map(e|e.actions).filter(typeof(EditAction))
-        if (!editActions.isEmpty)
-            for (action : editActions) action.generate(it, fsa)
+        for (controller : getAllControllers) {
+            for (action : controller.actions.filter(typeof(EditAction))) action.generate(it, fsa)
+        }
     }
 
     /**
@@ -54,10 +54,10 @@ class Forms {
      */
     def private generate(Entity it, Application app, Controller controller, String actionName, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' edit form templates for entity "' + name.formatForDisplay + '"')
-        fsa.generateFile(editTemplateFile(controller, name, actionName), {
-            formTemplateHeader(app, controller, actionName)
-            formTemplateBody(app, controller, actionName, fsa)
-        })
+        fsa.generateFile(editTemplateFile(controller, name, actionName), '''
+            «formTemplateHeader(app, controller, actionName)»
+            «formTemplateBody(app, controller, actionName, fsa)»
+        ''')
         for (relation : getBidirectionalIncomingJoinRelations) relationHelper.generate(relation, app, controller, false, true, fsa)
         for (relation : getOutgoingJoinRelations) relationHelper.generate(relation, app, controller, false, false, fsa)
     }

@@ -18,14 +18,12 @@ class Section {
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
 
     Relations relationHelper = new Relations()
-    IFileSystemAccess fsa
 
     /**
      * Entry point for edit sections beside the actual fields.
      */
     def generate(Entity it, Application app, Controller controller, IFileSystemAccess fsa) '''
-        «this.fsa = fsa»
-        «extensionsAndRelations(app, controller)»
+        «extensionsAndRelations(app, controller, fsa)»
 
         «displayHooks(app)»
 
@@ -34,7 +32,7 @@ class Section {
         «submitActions»
     '''
 
-    def private extensionsAndRelations(Entity it, Application app, Controller controller) '''
+    def private extensionsAndRelations(Entity it, Application app, Controller controller, IFileSystemAccess fsa) '''
         «IF attributable»
             {include file='«controller.formattedName»/include_attributes_edit.tpl' obj=$«name.formatForDB»}
         «ENDIF»
