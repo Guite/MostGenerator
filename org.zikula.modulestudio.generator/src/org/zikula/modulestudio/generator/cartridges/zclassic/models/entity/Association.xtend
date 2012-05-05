@@ -301,7 +301,7 @@ class Association {
             «fh.getterAndSetterMethods(it, aliasName, entityClass, true, false, '')»
             «relationAccessorAdditions(useTarget, aliasName, singleName)»
         «ELSE»
-            fh.getterAndSetterMethods(it, aliasName, entityClass, false, true, 'null')»
+            «fh.getterAndSetterMethods(it, aliasName, entityClass, false, true, 'null')»
         «ENDIF»
         «addMethod(useTarget, isMany, aliasName, singleName, entityClass)»
         «removeMethod(useTarget, isMany, aliasName, singleName, entityClass)»
