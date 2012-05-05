@@ -3,10 +3,6 @@ package org.zikula.modulestudio.generator.application;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-/**
- * @author axel
- * 
- */
 public class Activator extends AbstractUIPlugin {
     // The plug-in ID
     public static final String PLUGIN_ID = "org.zikula.modulestudio.generator";

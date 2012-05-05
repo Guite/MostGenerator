@@ -1,0 +1,218 @@
+package org.zikula.modulestudio.generator.cartridges.zclassic.view
+
+import com.google.inject.Inject
+import de.guite.modulestudio.metamodel.modulestudio.Application
+import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
+import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
+
+class Styles {
+    @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension ModelExtensions = new ModelExtensions()
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
+    @Inject extension NamingExtensions = new NamingExtensions()
+    @Inject extension Utils = new Utils()
+
+    /**
+     * Entry point for application styles.
+     */
+    def generate(Application it, IFileSystemAccess fsa) {
+        fsa.generateFile(appName.getAppSourcePath + 'style/style.css', styleDefines)
+    }
+
+    def private styleDefines(Application it) '''
+        /* view pages */
+        div#z-maincontent.z-module-«name.formatForDB» table tbody tr td {
+            vertical-align: top;
+        }
+
+        /* display pages */
+        div.«appName.formatForDB»RightBox {
+            float: right;
+            margin: 0 1em;
+            padding: .5em;
+            /*border: 1px solid #666;*/
+        }
+
+        div.«appName.formatForDB»RightBox h3 {
+            color: #333;
+            font-weight: 400;
+            border-bottom: 1px solid #CCC;
+            padding-bottom: 8px;
+        }
+
+        div.«appName.formatForDB»RightBox p.manageLink {
+            margin-left: 18px;
+        }
+        «IF hasGeographical»
+
+            div.«appName.formatForDB»MapContainer {
+                height: 400px;
+            }
+        «ENDIF»
+        «IF hasTrees»
+
+            .z-treecontainer {
+                border: 1px solid #ccc;
+                width: 400px;
+                float: left;
+                margin-right: 16px;
+            }
+        «ENDIF»
+        «IF hasColourFields»
+            .«appName.formatForDB»ColourPicker {
+                cursor: pointer;
+            }
+        «ENDIF»
+        «validationStyles»
+        «autoCompletion»
+        «IF interactiveInstallation»
+
+            dl#«name.formatForDB»featurelist {
+                margin-left: 50px;
+            }
+            dl#«name.formatForDB»featurelist dt {
+                font-weight: 700;
+            }
+        «ENDIF»
+    '''
+
+    def private validationStyles(Application it) '''
+        /* validation */
+        div.z-formrow input.required, div.z-formrow textarea.required {
+            border: 1px solid #00a8e6;
+        }
+        div.z-formrow input.validation-failed, div.z-formrow textarea.validation-failed {
+            border: 1px solid #f30;
+            color: #f30;
+        }
+        div.z-formrow input.validation-passed, div.z-formrow textarea.validation-passed {
+            border: 1px solid #0c0;
+            color: #000;
+        }
+
+        .validation-advice {
+            margin: 5px 0;
+            padding: 5px;
+            background-color: #f90;
+            color: #fff;
+            font-weight: 700;
+        }
+    '''
+
+    def private autoCompletion(Application it) '''
+        «val hasUserFields = hasUserFields»
+        «val hasImageFields = hasImageFields»
+        «val joinRelations = getJoinRelations»
+        «IF !joinRelations.isEmpty || hasUserFields»
+
+            /* edit pages */
+            «IF !joinRelations.isEmpty»
+                div.«prefix»RelationLeftSide {
+                    float: left;
+                    width: 25%;
+                }
+
+                div.«prefix»RelationRightSide {
+                    float: right;
+                    width: 65%;
+                }
+
+            «ENDIF»
+            «IF hasUserFields»
+                div.«prefix»LiveSearchUser {
+                    margin: 0;
+                }
+
+            «ENDIF»
+            «/*required for IE*/»
+            div.«prefix»AutoCompleteWrap {
+                position: absolute;
+                height: 40px;
+                margin: 0;
+                padding: 0;
+                left: 260px;
+                top: 10px;
+            }
+
+            div.«prefix»AutoComplete«IF hasUserFields»,
+            div.«prefix»AutoCompleteUser«ENDIF»«IF hasImageFields»,
+            div.«prefix»AutoCompleteWithImage«ENDIF» {
+                position: relative !important;
+                top: 2px !important;
+                left: 0 !important;
+                width: 100px;
+                background-color: #fff;
+                border: 1px solid #888;
+                margin: 0;
+                padding: 0;
+            }
+
+            div.«prefix»AutoComplete ul«IF hasUserFields»,
+            div.«prefix»AutoCompleteUser ul«ENDIF»«IF hasImageFields»,
+            div.«prefix»AutoCompleteWithImage ul«ENDIF» {
+                margin: 0;
+                padding: 0;
+            }
+
+            div.«prefix»AutoComplete ul li«IF hasUserFields»,
+            div.«prefix»AutoCompleteUser ul li«ENDIF»«IF hasImageFields»,
+            div.«prefix»AutoCompleteWithImage ul li«ENDIF» {
+                margin: 0;
+                padding: 0.2em 0 0.2em 20px;
+                list-style-type: none;
+                line-height: 1.4em;
+                cursor: pointer;
+                display: block;
+                background-position: 2px 2px;
+                background-repeat: no-repeat;
+            }
+
+            div.«prefix»AutoComplete ul li {
+                background-image: url("../../../images/icons/extrasmall/tab_right.png");
+            }
+            «IF hasUserFields»
+                div.«prefix»AutoCompleteUser ul li {
+                    background-image: url("../../../images/icons/extrasmall/user.png");
+                }
+            «ENDIF»
+            «IF hasImageFields»
+                div.«prefix»AutoCompleteWithImage ul li {
+                    background-image: url("../../../images/icons/extrasmall/agt_Multimedia.png");
+                }
+            «ENDIF»
+
+            div.«prefix»AutoComplete ul li.selected«IF hasUserFields»,
+            div.«prefix»AutoCompleteUser ul li.selected«ENDIF»«IF hasImageFields»,
+            div.«prefix»AutoCompleteWithImage ul li.selected«ENDIF» {
+                background-color: #ffb;
+            }
+
+            «IF hasImageFields || !joinRelations.isEmpty»
+                div.«prefix»AutoComplete ul li div.itemtitle«IF hasImageFields»,
+                div.«prefix»AutoCompleteWithImage ul li div.itemtitle«ENDIF» {
+                    font-weight: 700;
+                    font-size: 12px;
+                    line-height: 1.2em;
+                }
+                div.«prefix»AutoComplete ul li div.itemdesc«IF hasImageFields»,
+                div.«prefix»AutoCompleteWithImage ul li div.itemdesc«ENDIF» {
+                    font-size: 10px;
+                    color: #888;
+                }
+
+                «IF !joinRelations.isEmpty»
+                    button.«prefix»InlineButton {
+                        margin-top: 1em;
+                    }
+                «ENDIF»
+            «ENDIF»
+
+        «ENDIF»
+    '''
+}

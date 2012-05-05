@@ -6,17 +6,17 @@ module org.zikula.modulestudio.generator.workflow.msManualTesting
  */
 
 // The model to be processed (file name without extension)
-var modelName = "ValidationTest"
+var modelName = 'RecipeManager'
 
 // The path where to find the model, without trailing slash
-//var modelPath = "/home/axel/projects/GuiteSVN/trunk/models/zikula"
-var modelPath = "/home/axel"
+//var modelPath = '/home/axel/projects/GitClones/Applications/models/zikula'
+var modelPath = '/home/axel/model'
 
-// The generator cartridge to execute (zclassic, zoo, documentation, reporting)
-var cartridge = "zclassic"
+// The generator cartridge to execute (zclassic, zoo, reporting)
+var cartridge = 'zclassic'
 
 // Destination folder
-var targetDir = "${modelPath}/output/${modelName}/"
+var targetDir = '${modelPath}/output/${modelName}/'
 
 Workflow {
     // Call the file reader workflow and provide required properties
@@ -25,13 +25,7 @@ Workflow {
         modelPath = modelPath
         cartridgeName = cartridge
         targetDir = targetDir
-        // whether to output slot dumps (for debug purpose)
-        doSlotDumps = "true"
-        // whether to validate the model before processing
-        doValidation = "true"
-        // whether to copy the models into the target folder
-        doModelCopy = "true"
-        // whether to create profiler output
-        doProfiling = "true"
+        doValidation = 'true'      // whether to validate the model before processing
+        doModelCopy = 'true'       // whether to copy the models into the target folder
 	}
 }

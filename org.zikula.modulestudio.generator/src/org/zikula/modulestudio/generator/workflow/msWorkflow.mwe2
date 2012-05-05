@@ -1,28 +1,24 @@
 module org.zikula.modulestudio.generator.workflow.msWorkflow
 
 /**
- * The inner processing workflow
+ * The inner processing workflow.
  */
 
-import org.eclipse.emf.mwe.utils.StandaloneSetup
-import org.eclipse.emf.mwe.utils.Reader
-//import org.eclipse.xtext.MweReader <-- this one uses XtextResourceSet and is configured with Guice
-import org.eclipse.emf.mwe.core.container.IfComponent
-import org.eclipse.xtend.middleend.LanguageSetup
-import org.eclipse.xtend.util.stdlib.SlotPrinter
-import org.eclipse.xtend.check.CheckComponent
-//import org.eclipse.xtend.middleend.xtend.CheckComponent
-import org.eclipse.xtend.profiler.ProfilerComponent
-import org.eclipse.xtend.typesystem.emf.EmfMetaModel
-//import org.eclipse.xtend.typesystem.emf.EmfRegistryMetaModel
-import org.eclipse.xtend.typesystem.xsd.XMLBeautifier
-import org.eclipse.xtend.XtendComponent
-//import org.eclipse.xtend.middleend.xtend.XtendComponent
 import org.eclipse.emf.mwe.utils.DirectoryCleaner
 import org.eclipse.emf.mwe.utils.FileCopy
+//import org.eclipse.emf.mwe.utils.Reader
+import org.eclipse.emf.mwe.utils.StandaloneSetup
 import org.eclipse.emf.mwe.utils.Writer
-import org.eclipse.xpand2.Generator
-//import org.eclipse.xtend.middleend.xpand.XpandComponent
+import org.eclipse.emf.mwe.core.container.IfComponent
+import org.eclipse.xtend.check.CheckComponent
+//import org.eclipse.xtext.generator.GeneratorComponent
+import org.eclipse.xtext.mwe.Reader
+import org.zikula.modulestudio.generator.cartridges.MostGeneratorSetup
+import org.zikula.modulestudio.generator.cartridges.MostGeneratorSupport
+import org.zikula.modulestudio.generator.workflow.components.DirectoryCreator
+import org.zikula.modulestudio.generator.workflow.components.Logger
+import org.zikula.modulestudio.generator.workflow.components.MostGeneratorComponent
+import org.zikula.modulestudio.generator.workflow.components.StopWatch
 
 // The model to be processed (file name without extension)
 var modelName
@@ -31,171 +27,91 @@ var modelPath
 // The generator cartridge to execute (zclassic, zoo, documentation, reporting)
 var cartridgeName
 
-// whether to output slot dumps
-var doSlotDumps
 // whether to validate the model before processing
 var doValidation
 // whether to copy the models into the target folder
 var doModelCopy
-// whether to use the profiler
-var doProfiling
 
 // Destination folder
 var targetDir
 
-// calculated from input vars
-var modelFile = "${modelPath}/${modelName}.mostapp"
-var enrichedModelFile = "${modelPath}/${modelName}_Enriched.mostapp"
-var diagramFile = "${modelPath}/${modelName}.mostdiagram"
-var modelFileCopy = "${targetDir}/${modelName}.mostapp"
-var enrichedModelFileCopy = "${targetDir}/${modelName}_Enriched.mostapp"
-var diagramFileCopy = "${targetDir}/${modelName}.mostdiagram"
+// Cartridge-specific destination folder
+var targetDirCartridge = '${targetDir}${cartridgeName}'
 
-var inputSlot = "inputModel"
-var enrichedSlot = "newModel"
-var fileEncoding = "UTF-8"
-var templatesExpand = "templates::${cartridgeName}::Root::Root(null) FOR ${enrichedSlot}"
-//var templatesExpand = "templates::${cartridgeName}::Root::Root(progressMonitor) FOR ${enrichedSlot}"
-//var templatesAdvice = "templates::${cartridgeName}::aspects::Permissions, templates::${cartridgeName}::aspects::ObjectExtensions"
-var templatesAdvice = "templates::${cartridgeName}::aspects::Permissions"
+// calculated from input vars
+var modelFile = '${modelPath}/${modelName}.mostapp'
+var diagramFile = '${modelPath}/${modelName}.mostdiagram'
+var modelFileCopy = '${targetDir}/${modelName}.mostapp'
+var diagramFileCopy = '${targetDir}/${modelName}.mostdiagram'
+
+var mostSlot = 'mostModel'
 
 Workflow {
-    bean = EmfMetaModel : mmEMF { metaModelPackage = "org.eclipse.emf.ecore.EcorePackage" }
-    bean = EmfMetaModel : mmModuleStudio { metaModelPackage = "de.guite.modulestudio.metamodel.modulestudio.ModulestudioPackage" }
-    bean = EmfMetaModel : mmProfiler { metaModelPackage = "org.eclipse.xtend.profiler.profilermodel.ModelPackage" }
-
     // set up EMF for standalone execution
     bean = StandaloneSetup {
-        // URI's starting with "platform:/resource/" are normalized to the (canonical) path to the platform URI
-        platformUri = "."
-        registerGeneratedEPackage = "org.eclipse.emf.ecore.EcorePackage"
-        registerGeneratedEPackage = "de.guite.modulestudio.metamodel.modulestudio.ModulestudioPackage"
-        // initialize EPackage for profiler
-        registerGeneratedEPackage = "org.eclipse.xtend.profiler.profilermodel.ModelPackage"
+        // URI's starting with 'platform:/resource/' are normalized to the (canonical) path to the platform URI
+        //platformUri = '.'
+        //registerGeneratedEPackage = 'org.eclipse.emf.ecore.EcorePackage'
+        registerGeneratedEPackage = 'de.guite.modulestudio.metamodel.modulestudio.ModulestudioPackage'
     }
 
-    /*
-    Multiple languages for code generation, model validation and transformation can be used. 
-    The languages are translated into Xtend Backend code by so called language contributors 
-    a.k.a middleends. As soon as a middleend for OCL is available, OCL will be usable from Xpand/Xtend. 
-     
-    Register the language contributors at the generator backend! 
-    * /
-    component = LanguageSetup {
-        // Xtend
-        languageContributor = "org.eclipse.xtend.middleend.xtend.plugin.OldXtendRegistryFactory"
-        // Check
-        languageContributor = "org.eclipse.xtend.middleend.xtend.plugin.OldCheckRegistryFactory"
-        // Xpand
-        languageContributor = "org.eclipse.xtend.middleend.xpand.plugin.OldXpandRegistryFactory"
-    }*/
+    // init time measurement
+    component = StopWatch : stopWatch {}
 
-    // read in the given file
+    // create Guice module for generator
+    component = MostGeneratorSupport {}
+
+    component = Logger { message = 'Reading input file:' }
+    component = Logger { message = modelFile }
     component = Reader {
-        uri = modelFile
-        modelSlot = inputSlot
-    }
-
-    // surround components to be measured with profiler component
-    component = ProfilerComponent : profiler {
-        id = "profiler"
-        resultSlot = "profilingResult"
-    }
-
-    component = IfComponent {
-        cond = doSlotDumps
-        if = {
-            cond = doSlotDumps
-            component = SlotPrinter {
-               // the name of a slot whose content should be dumped
-               slotName = inputSlot
-               // optional message as prefix for the log output
-               message = "Dump of input model"
-               // log level (one of TRACE, DEBUG, INFO, WARN)
-               level = "INFO"
-            }
+        path = modelPath //modelFile
+        // create Injector for generator module
+        register = MostGeneratorSetup {}
+        loadResource = {
+            slot = mostSlot
         }
     }
 
+    component = Logger { message = 'Applying validation.' }
     component = IfComponent {
         cond = doValidation
         if = {
             cond = doValidation
+/*
             // check components for constraints
             component = CheckComponent {
-                vetoableCallback = profiler
-
                 // define all used meta models
                 metaModel = mmEMF
                 metaModel = mmModuleStudio
 
-	            // provide check files
-	            checkFile = "checks::main"
-	            checkFile = "checks::model"
-	            checkFile = "checks::controller"
-	            checkFile = "checks::view"
+                // provide check files
+                checkFile = 'checks::main'
+                checkFile = 'checks::model'
+                checkFile = 'checks::controller'
+                checkFile = 'checks::view'
 
-	            // on which part of the model the checks should work (our module with all children)
-	            emfAllChildrenSlot = inputSlot
+                // on which part of the model the checks should work (our application with all children)
+                emfAllChildrenSlot = mostSlot
 /*
-                expression = "model"
-                // expression = "model.eAllContents.union({model})"
-*/
+                expression = 'model'
+                // expression = 'model.eAllContents.union({model})'
+* /
             }
+*/
         }
     }
 
-    // add additional fields for ids and relations
-    component = XtendComponent {
-        vetoableCallback = profiler
-
-        skipOnErrors = true
-        // reference all used meta models
-        metaModel = mmEMF
-        metaModel = mmModuleStudio
-
-        // call actual transformation
-        invoke = "transformation::PersistenceTransformer::modify(${inputSlot})"
-        // define the output slot
-        outputSlot = enrichedSlot
+    component = Logger { message = 'Creating output directory ${targetDirCartridge}.' }
+    component = DirectoryCreator {
+       directory = targetDirCartridge
     }
 
-    component = IfComponent {
-        cond = doSlotDumps
-        if = {
-            cond = doSlotDumps
-            component = SlotPrinter {
-               // the name of a slot whose content should be dumped
-               slotName = enrichedSlot
-               // optional message as prefix for the log output
-               message = "Dump of enriched model"
-               // log level (one of TRACE, DEBUG, INFO, WARN)
-               level = "INFO"
-            }
-        }
-    }
-
-
-    // create dummy progress monitor if required (for manual builds)
-/*
-    component = org.zikula.modulestudio.generator.application.ManualProgressMonitor {
-       id = "dummyProgressMonitorCreator"
-       outputSlot = "progressMonitor"
-    }
-*/
-
-    // store the enriched model version
-    /*component = Writer {
-        modelSlot = enrichedSlot
-        uri = enrichedModelFile
-        cloneSlotContents = true
-    }*/
-
-    // clear output directory
+    component = Logger { message = 'Clearing output directory ${targetDirCartridge}.' }
     component = DirectoryCleaner {
-       directory = "${targetDir}${cartridgeName}"
+       directory = targetDirCartridge
     }
 
+    component = Logger { message = 'Copying model artifacts.' }
     component = IfComponent {
         cond = doModelCopy
         if = {
@@ -204,11 +120,6 @@ Workflow {
             component = FileCopy {
                 sourceFile = modelFile
                 targetFile = modelFileCopy
-            }
-            // copy enriched domain model into target folder
-            component = FileCopy {
-                sourceFile = enrichedModelFile
-                targetFile = enrichedModelFileCopy
             }
             // copy diagram model into target folder
             component = FileCopy {
@@ -219,63 +130,19 @@ Workflow {
     }
 
     // start generator component
-    component = /*XpandComponent*/Generator {
-        vetoableCallback = profiler
-
-        // skip this component if there are errors
-        skipOnErrors = true
-        // if automatic hyphenation is enabled, redundant blank lines are avoided automatically
-        automaticHyphens = false
-        // set file encoding of template files
-        fileEncoding = fileEncoding
-
-        // reference all used meta models
-        metaModel = mmEMF
-        metaModel = mmModuleStudio
-
-        // expand templates on model slot
-        expand = templatesExpand
-
-        // advice aop templates to the generator
-        advice = templatesAdvice
-
+    component = Logger { message = 'Starting generator cartridge:' }
+    component = Logger { message = cartridgeName }
+    component = MostGeneratorComponent {
+        // create Injector for generator module
+        register = MostGeneratorSetup {}
+        slot = mostSlot
+        cartridge = cartridgeName
         // specify where to put the generated code
-        // default outlet has no name assigned
         outlet = {
-            path = "${targetDir}${cartridgeName}/${modelName}/"
-            fileEncoding = fileEncoding
-            append = false
-            overwrite = true
-            /*postprocessor = XmlBeautifier {
-               fileExtensions = ".xml, .xsd, .wsdd, .wsdl"
-            }*/
+            path = '${targetDirCartridge}/${modelName}/'
         }
-/*
-        outlet = {
-            name = "otherClasses"
-            ...
-        }
-*/
     }
 
-    component = IfComponent {
-        cond = doProfiling
-        if = {
-            cond = doProfiling
-            // generate profiling result
-            component = /*XpandComponent*/Generator {
-                fileEncoding = "ISO-8859-1"
-
-                metaModel = mmEMF
-                metaModel = mmProfiler
-
-		        expand = "org::eclipse::xtend::profiler::templates::Html::Main FOR profilingResult"
-		        outlet = {
-		            overwrite = true
-		            path = "${targetDir}profiling/${cartridgeName}"
-		        } 
-	       }
-        }
-    }
+    // output required generation time
+    component = stopWatch
 }
-

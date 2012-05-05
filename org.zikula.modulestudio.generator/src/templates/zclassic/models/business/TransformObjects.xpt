@@ -1,7 +1,0 @@
-«IMPORT modulestudio»
-«EXTENSION extensions::Utils»
-«EXTENSION org::eclipse::xtend::util::stdlib::io»
-
-«DEFINE Root FOR TransformObject-»
-«error("Error: undefined transform object type " + metaType.toString() + " (code 925625)") -> ""-»
-«ENDDEFINE»

@@ -1,6 +1,0 @@
-«IMPORT modulestudio»
-
-«REM»Entry point for all workflows«ENDREM»
-«DEFINE Root FOR Application-»
-«EXPAND workflows::SimpleApproval::Root-»
-«ENDDEFINE»

@@ -1,7 +1,0 @@
-«IMPORT modulestudio»
-«EXTENSION extensions::Utils»
-«EXTENSION org::eclipse::xtend::util::stdlib::io»
-
-«DEFINE Function(String src, String dest) FOR LogicOperation-»
-«error("Error: undefined logic operation type " + metaType.toString() + " (code 925627)") -> ""-»
-«ENDDEFINE»
