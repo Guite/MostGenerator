@@ -370,7 +370,7 @@ class EventListener {
                              $this['«name.formatForCode»'] = (bool) $this['«name.formatForCode»'];
                          '''
             AbstractIntegerField: '''
-                             $this['«name.formatForCode»'] = (int) ((isset($this['«name.formatForCode»']) && !empty($this['name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode»']) : 0);
+                             $this['«name.formatForCode»'] = (int) ((isset($this['«name.formatForCode»']) && !empty($this['«name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode»']) : 0);
                          '''
             DecimalField: '''
                              $this['«name.formatForCode»'] = (float) ((isset($this['«name.formatForCode»']) && !empty($this['«name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode»']) : 0.00);
@@ -395,7 +395,7 @@ class EventListener {
 
     def private sanitizeForOutputHTML(EntityField it) '''
         if ($currentFunc != 'edit') {
-            $this['«it.name.formatForCode»'] = ((isset($this['«it.name.formatForCode»']) && !empty($this['«it.name.formatForCode»'])) ? DataUtil::formatForDisplayHTML($this['it.«name.formatForCode»']) : '');
+            $this['«it.name.formatForCode»'] = ((isset($this['«it.name.formatForCode»']) && !empty($this['«it.name.formatForCode»'])) ? DataUtil::formatForDisplayHTML($this['«it.name.formatForCode»']) : '');
         }
     '''
 
