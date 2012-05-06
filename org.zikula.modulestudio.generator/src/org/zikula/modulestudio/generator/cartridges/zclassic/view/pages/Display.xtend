@@ -256,7 +256,7 @@ class Display {
         «IF geographical»
             «IF useGroupingPanels('display')»
                 <h3 class="map z-panel-header z-panel-indicator z-pointer">{gt text='Map'}</h3>
-                <div class="z-panel-content" style="display: none">
+                <div class="map z-panel-content" style="display: none">
             «ELSE»
                 <h3 class="map">{gt text='Map'}</h3>
             «ENDIF»

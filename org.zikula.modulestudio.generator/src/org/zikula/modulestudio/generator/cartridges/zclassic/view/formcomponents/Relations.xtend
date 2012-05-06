@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
+import de.guite.modulestudio.metamodel.modulestudio.OneToOneRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -14,7 +15,7 @@ import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import de.guite.modulestudio.metamodel.modulestudio.OneToOneRelationship
+import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class Relations {
     @Inject extension ControllerExtensions = new ControllerExtensions()
@@ -23,6 +24,7 @@ class Relations {
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension UrlExtensions = new UrlExtensions()
+    @Inject extension ViewExtensions = new ViewExtensions()
     @Inject extension Utils = new Utils()
 
     IFileSystemAccess fsa
@@ -56,7 +58,7 @@ class Relations {
             val many = isManySide(true)
             val uniqueNameForJs = getUniqueRelationNameForJs(app, target, many, true, relationAliasName)
             '''
-                {include file='«controller.formattedName»/«target.name.formatForCode»/include_createChildItem«getTargetMultiplicity».tpl' aliasName='«relationAliasName.toFirstLower»' idPrefix='«uniqueNameForJs»'}
+                {include file='«controller.formattedName»/«target.name.formatForCode»/include_createChildItem«getTargetMultiplicity».tpl' aliasName='«relationAliasName.toFirstLower»' idPrefix='«uniqueNameForJs»'«IF source.useGroupingPanels('edit')» panel=true«ENDIF»}
             '''
         } else {
             println('Generating ' + controller.formattedName + ' edit inclusion templates for entity "' + target.name.formatForDisplay + '"')
@@ -90,7 +92,7 @@ class Relations {
             val many = isManySide(false)
             val uniqueNameForJs = getUniqueRelationNameForJs(app, target, many, false, relationAliasName)
             '''
-                {include file='«controller.formattedName»/«source.name.formatForCode»/include_select«editSnippet»One.tpl' relItem=$«target.name.formatForDB» aliasName='«relationAliasName.toFirstLower»' idPrefix='«uniqueNameForJs»'}
+                {include file='«controller.formattedName»/«source.name.formatForCode»/include_select«editSnippet»One.tpl' relItem=$«target.name.formatForDB» aliasName='«relationAliasName.toFirstLower»' idPrefix='«uniqueNameForJs»'«IF target.useGroupingPanels('edit')» panel=true«ENDIF»}
             '''
         } else {
             println('Generating ' + controller.formattedName + ' edit inclusion templates for entity "' + source.name.formatForDisplay + '"')
@@ -135,7 +137,7 @@ class Relations {
                 val many = isManySide(!incoming)
                 val uniqueNameForJs = getUniqueRelationNameForJs(app, otherEntity, many, incoming, relationAliasName)
                 '''
-                {include file='«controller.formattedName»/«ownEntity.name.formatForCode»/include_select«editSnippet»Many.tpl' relItem=$«otherEntity.name.formatForDB» aliasName='«relationAliasName.toFirstLower»' idPrefix='«uniqueNameForJs»'}
+                {include file='«controller.formattedName»/«ownEntity.name.formatForCode»/include_select«editSnippet»Many.tpl' relItem=$«otherEntity.name.formatForDB» aliasName='«relationAliasName.toFirstLower»' idPrefix='«uniqueNameForJs»'«IF otherEntity.useGroupingPanels('edit')» panel=true«ENDIF»}
                 '''
             } else {
                 println('Generating ' + controller.formattedName + ' edit inclusion templates for entity "' + ownEntity.name.formatForDisplay + '"')
