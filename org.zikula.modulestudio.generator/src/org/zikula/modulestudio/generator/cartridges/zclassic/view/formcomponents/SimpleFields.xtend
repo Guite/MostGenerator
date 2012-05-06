@@ -117,7 +117,7 @@ class SimpleFields {
             {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClass(it)»}
         «ENDIF»
 
-            <div class="z-formnote">{gt text='Allowed file extensions:'} <span id="fileextensions«name.formatForDB»">«allowedExtensions»</span></div>
+            <div class="z-formnote">{gt text='Allowed file extensions:'} <span id="fileextensions«name.formatForCode»">«allowedExtensions»</span></div>
             {if $mode ne 'create'}
             «val appNameSmall = entity.container.application.name.formatForDB»
             «val objName = entity.name.formatForCode»
