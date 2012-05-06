@@ -68,16 +68,13 @@ class User {
         	$uid = $userRecord['uid'];
         	$serviceManager = ServiceUtil::getManager();
         	$entityManager = $serviceManager->getService('doctrine.entitymanager');
-                «FOR entity : getAllEntities»
-                    «IF entity.standardFields || entity.hasUserFieldsEntity»
-                        «entity.userDelete»
-                    «ENDIF»
-                «ENDFOR»
+        	«FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
             «ENDIF»
         }
     '''
 
     def private userDelete(Entity it) '''
+        «IF standardFields || hasUserFieldsEntity»
 
         $repo = $entityManager->getRepository('«implClassModelEntity»');
         «IF standardFields»
@@ -94,6 +91,7 @@ class User {
                 // set «userField.name.formatForDisplay» to guest (1) for all affected «nameMultiple.formatForDisplay»
                 $repo->updateUserField('«userField.name.formatForCode»', $uid, 1);
             «ENDFOR»
+        «ENDIF»
         «ENDIF»
     '''
 }
