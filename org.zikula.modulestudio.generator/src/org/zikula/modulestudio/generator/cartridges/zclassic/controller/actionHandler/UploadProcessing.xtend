@@ -75,7 +75,7 @@ class UploadProcessing {
                 $formData[$uploadField . 'Meta'] = $uploadResult['metaData'];
 
                 // if current field is mandatory check if everything has been done
-                if ($isMandatory && $formData[$uploadField] === false) {
+                if ($isMandatory && empty($formData[$uploadField])) {
                     // mandatory upload has not been completed successfully
                     return false;
                 }

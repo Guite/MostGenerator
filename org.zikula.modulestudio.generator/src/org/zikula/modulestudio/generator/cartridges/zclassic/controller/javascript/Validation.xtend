@@ -33,10 +33,19 @@ class Validation {
                     val = new String(val);
                     return (val.indexOf(' ') == -1);
                 }],
+                «IF hasColourFields»
                 ['validate-htmlcolour', Zikula.__('Please select a valid html colour code.', 'module_«appName»'), function(val, elem) {
                     val = new String(val);
                     return Validation.get('IsEmpty').test(val) || (/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(val));
                 }],
+                «ENDIF»
+                «IF hasUploads»
+                ['validate-upload', Zikula.__('Please select a valid file extension.', 'module_«appName»'), function(val, elem) {
+                    var allowedExtensions = $('fileextensions' + elem.id);
+                    allowedExtensions = '/(.' + allowedExtensions.replace(', ', '|.') + ')$/i';
+                    return allowedExtensions.test(val);
+                }],
+                «ENDIF»
                 ['validate-datetime-past', Zikula.__('Please select a value in the past.', 'module_«appName»'), function(val, elem) {
                     val = new String(val);
                     var cmpVal = «prefix»ReadDate(val, true);

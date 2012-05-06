@@ -5,11 +5,13 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ValidationError {
     @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
 
@@ -60,14 +62,21 @@ class ValidationError {
 
                 // additional rules
                 case 'validate-nospace':            $message = $view->__('This value must not contain spaces.'); break;
+                «IF hasColourFields»
                 case 'validate-htmlcolour':         $message = $view->__('Please select a valid html colour code.'); break;
+                «ENDIF»
+                «IF hasUploads»
+                case 'validate-upload':             $message = $view->__('Please select an allowed file type.'); break;
+                «ENDIF»
                 case 'validate-datetime-past':      $message = $view->__('Please select a value in the past.'); break;
                 case 'validate-datetime-future':    $message = $view->__('Please select a value in the future.'); break;
                 case 'validate-date-past':          $message = $view->__('Please select a value in the past.'); break;
                 case 'validate-date-future':        $message = $view->__('Please select a value in the future.'); break;
                 case 'validate-time-past':          $message = $view->__('Please select a value in the past.'); break;
                 case 'validate-time-future':        $message = $view->__('Please select a value in the future.'); break;
+                «IF getAllEntities.exists(e|e.getUniqueDerivedFields.filter(f|!f.primaryKey).size > 0)»
                 case 'validate-unique':             $message = $view->__('This value is already assigned, but must be unique. Please change it.'); break;
+                «ENDIF»
             }
 
             $message = '<div id="advice-' . $class . '-' . $id . '" class="validation-advice z-formnote" style="display: none">' . $message . '</div>';

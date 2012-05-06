@@ -197,8 +197,9 @@ class Uploads {
 
             // extract file extension
             $fileName = $file['name'];
-            $extensionarr = explode('.', $fileName);
-            $extension = strtolower($extensionarr[count($extensionarr) - 1]);
+            $fileNameParts = explode('.', $fileName);
+            $extension = $fileNameParts[count($fileNameParts) - 1];
+            $extension = str_replace('jpeg', 'jpg', strtolower($extension));
 
             // validate extension
             $isValidExtension = $this->isAllowedFileExtension($objectType, $fieldName, $extension);
@@ -284,15 +285,13 @@ class Uploads {
                 «FOR entity : getUploadEntities»«entity.isAllowedFileExtensionEntityCase»«ENDFOR»
             }
 
-            if (!empty($allowedExtensions)) {
-                $extensionCheck = in_array($extension, $allowedExtensions);
-                if ($extensionCheck === false) {
+            if (count($allowedExtensions) > 0) {
+                if (!in_array($extension, $allowedExtensions)) {
                     return false;
                 }
             }
 
-            $extensionCheck = (!in_array($extension, $this->forbiddenFileTypes));
-            if ($extensionCheck === false) {
+            if (in_array($extension, $this->forbiddenFileTypes)) {
                 return false;
             }
 

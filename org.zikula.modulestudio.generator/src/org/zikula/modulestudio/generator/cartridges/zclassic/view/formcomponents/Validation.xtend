@@ -66,6 +66,9 @@ class Validation {
     def dispatch additionalValidationMessages(UrlField it, String idSuffix) '''
         {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-url'}
     '''
+    def dispatch additionalValidationMessages(UploadField it, String idSuffix) '''
+        {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-upload'}
+    '''
     def dispatch additionalValidationMessages(ListField it, String idSuffix) {
     }
     def dispatch additionalValidationMessages(AbstractDateField it, String idSuffix) '''
@@ -88,6 +91,7 @@ class Validation {
             StringField case it.htmlcolour: ' validate-htmlcolour ' + entity.container.application.appName.formatForDB + 'ColourPicker'
             EmailField: ' validate-email'
             UrlField: ' validate-url'
+            UploadField: ' validate-upload'
             ListField: ''
             AbstractDateField: '''«IF it.past» validate-«fieldTypeAsString»-past«ELSEIF it.future» validate-«fieldTypeAsString»-future«ENDIF»'''
         }
