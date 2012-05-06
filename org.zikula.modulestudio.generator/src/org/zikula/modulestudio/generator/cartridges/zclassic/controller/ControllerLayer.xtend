@@ -1,11 +1,15 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import com.google.inject.Inject
+import de.guite.modulestudio.metamodel.modulestudio.AdminController
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.modulestudio.Controller
+import de.guite.modulestudio.metamodel.modulestudio.UserController
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Ajax
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.UrlRouting
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Selection
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ShortUrls
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.DisplayFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.EditFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.TreeFunctions
@@ -15,20 +19,14 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import de.guite.modulestudio.metamodel.modulestudio.Controller
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ShortUrls
-import de.guite.modulestudio.metamodel.modulestudio.UserController
-import de.guite.modulestudio.metamodel.modulestudio.AdminController
 
 class ControllerLayer {
     @Inject extension ControllerExtensions = new ControllerExtensions()
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
 
@@ -49,8 +47,7 @@ class ControllerLayer {
         // JavaScript
         if (hasEditActions)
             new EditFunctions().generate(it, fsa)
-        if (!getJoinRelations.isEmpty)
-            new DisplayFunctions().generate(it, fsa)
+        new DisplayFunctions().generate(it, fsa)
         if (hasTrees)
             new TreeFunctions().generate(it, fsa)
         new Validation().generate(it, fsa)

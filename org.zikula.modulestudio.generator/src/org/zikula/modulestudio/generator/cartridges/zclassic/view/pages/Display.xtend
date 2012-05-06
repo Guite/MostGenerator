@@ -229,20 +229,28 @@ class Display {
             «IF useGroupingPanels('display')»
                 <h3 class="z-panel-header z-panel-indicator z-pointer">{gt text='Actions'}</h3>
                 <div class="z-panel-content" style="display: none">
-                    «itemActionsImpl(appName)»
+                    «itemActionsImpl(appName, controller)»
                 </div>
             «ELSE»
-                «itemActionsImpl(appName)»
+                «itemActionsImpl(appName, controller)»
             «ENDIF»
         {/if}
     '''
 
-    def private itemActionsImpl(Entity it, String appName) '''
-        <p>
+    def private itemActionsImpl(Entity it, String appName, Controller controller) '''
+        <p id="itemactions">
         {foreach item='option' from=$«name.formatForCode»._actions}
             <a href="{$option.url.type|«appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}" class="z-icon-es-{$option.icon}">{$option.linkText|safetext}</a>
         {/foreach}
+            {icon id='itemactionstrigger' type='options' size='extrasmall' __alt='Actions' style='display: none'}
         </p>
+        <script type="text/javascript" charset="utf-8">
+        /* <![CDATA[ */
+            document.observe('dom:loaded', function() {
+                «container.application.prefix»InitItemActions('«name.formatForCode»', 'display', 'itemactions');
+            });
+        /* ]]> */
+        </script>
     '''
 
     def private displayExtensions(Entity it, Controller controller, String objName) '''

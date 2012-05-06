@@ -127,7 +127,7 @@ class ViewHierarchy {
         /* <![CDATA[ */
             document.observe('dom:loaded', function() {
             {{if $hasNodes}}
-                «appPrefix»InitTreeNodes('«name.formatForCode»', '«controller.formattedName»', '{{$rootId}}', «readOnly.displayBool»);
+                «appPrefix»InitTreeNodes('«name.formatForCode»', '«controller.formattedName»', '{{$rootId}}', «controller.hasActions('display').displayBool», «(controller.hasActions('edit') && !readOnly).displayBool»);
                 Zikula.TreeSortable.trees.itemtree{{$rootId}}.config.onSave = «appPrefix»TreeSave;
             {{/if}}
             });

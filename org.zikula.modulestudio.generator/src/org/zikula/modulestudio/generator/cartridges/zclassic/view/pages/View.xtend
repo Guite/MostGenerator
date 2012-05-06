@@ -349,15 +349,35 @@ class View {
         «IF listType != 3»
             <«listType.asItemTag»>
         «ELSE»
-            <td headers="hitemactions" class="z-right z-nowrap z-w02">
+            <td id="«itemActionContainerId»" headers="hitemactions" class="z-right z-nowrap z-w02">
         «ENDIF»
             {if count($«objName»._actions) gt 0}
                 {foreach item='option' from=$«objName»._actions}
                     <a href="{$option.url.type|«appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}"{if $option.icon eq 'preview'} target="_blank"{/if}>{icon type=$option.icon size='extrasmall' alt=$option.linkText|safetext}</a>
                 {/foreach}
+                {icon id="«itemActionContainerIdForSmarty»trigger" type='options' size='extrasmall' __alt='Actions' style='display: none'}
             {/if}
+            <script type="text/javascript" charset="utf-8">
+            /* <![CDATA[ */
+                document.observe('dom:loaded', function() {
+                    «container.application.prefix»InitItemActions('«name.formatForCode»', 'view', '«itemActionContainerIdForJs»');
+                });
+            /* ]]> */
+            </script>
         </«listType.asItemTag»>
     '''
+
+    def private itemActionContainerId(Entity it) '''
+        «val objName = name.formatForCode»
+        itemactions«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{$«objName».«pkField.name.formatForCode»}«ENDFOR»'''
+
+    def private itemActionContainerIdForJs(Entity it) '''
+        «val objName = name.formatForCode»
+        itemactions«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«objName».«pkField.name.formatForCode»}}«ENDFOR»'''
+
+    def private itemActionContainerIdForSmarty(Entity it) '''
+        «val objName = name.formatForCode»
+        itemactions«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«objName».«pkField.name.formatForCode»`«ENDFOR»'''
 
     def private asListTag (Integer listType) {
         switch listType {

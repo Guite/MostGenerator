@@ -23,6 +23,8 @@ class DisplayFunctions {
 
     def private generate(Application it) '''
 
+        «initItemActions»
+
         «IF !getJoinRelations.isEmpty»
             «initRelationWindow»
         «ENDIF»
@@ -31,6 +33,69 @@ class DisplayFunctions {
 
             «toggleFlag»
         «ENDIF»
+    '''
+
+    def private initItemActions(Application it) '''
+        /**
+         * Initialises the context menu for item actions.
+         */
+        function «prefix»InitItemActions(objectType, func, containerId)
+        {
+            var triggerId = containerId + 'trigger';
+            // attach context menu
+            var contextMenu = new Control.ContextMenu(triggerId, { leftClick: true, animation: false });
+
+            // process normal links
+            $$('#' + containerId + ' a').each(function(elem) {
+                // hide it
+                elem.hide();
+                // determine the link text
+                var linkText = '';
+                if (func == 'display') {
+                    linkText = elem.innerHTML;
+                } else if (func == 'view') {
+                    elem.select('img').each(function(imgElem) {
+                        linkText = imgElem.readAttribute('alt');
+                    });
+                }
+
+                // determine the icon
+                var iconFile = '';
+                if (func == 'display') {
+                    if (elem.hasClassName('z-icon-es-preview')) {
+                        iconFile = 'xeyes.png';
+                    } else if (elem.hasClassName('z-icon-es-display')) {
+                        iconFile = 'kview.png';
+                    } else if (elem.hasClassName('z-icon-es-edit')) {
+                        iconFile = 'edit';
+                    } else if (elem.hasClassName('z-icon-es-saveas')) {
+                        iconFile = 'filesaveas';
+                    } else if (elem.hasClassName('z-icon-es-delete')) {
+                        iconFile = '14_layer_deletelayer';
+                    } else if (elem.hasClassName('z-icon-es-back')) {
+                        iconFile = 'agt_back';
+                    }
+                    if (iconFile != '') {
+                        iconFile = '/images/icons/extrasmall/' + iconFile + '.png';
+                    }
+                } else if (func == 'view') {
+                    elem.select('img').each(function(imgElem) {
+                        iconFile = imgElem.readAttribute('src');
+                    });
+                }
+                if (iconFile != '') {
+                    iconFile = '<img src="' + iconFile + '" width="16" height="16" alt="' + linkText + '" /> ';
+                }
+
+                contextMenu.addItem({
+                    label: iconFile + linkText,
+                    callback: function() {
+                        window.location = elem.readAttribute('href');
+                    }
+                });
+            });
+            $(triggerId).show();
+        }
     '''
 
     def private initRelationWindow(Application it) '''
