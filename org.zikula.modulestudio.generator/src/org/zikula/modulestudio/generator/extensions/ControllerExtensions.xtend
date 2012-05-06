@@ -16,6 +16,7 @@ import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.RelationEditType
 import de.guite.modulestudio.metamodel.modulestudio.UserController
 import de.guite.modulestudio.metamodel.modulestudio.ViewAction
+import java.util.ArrayList
 
 /**
  * This class contains controller related extension methods.
@@ -201,5 +202,19 @@ class ControllerExtensions {
             default:
                 if (incoming) 3 else 3
         }
+    }
+
+    /**
+     * Returns a list of numbers based on a given count variable.
+     * This is a helper method allowing a while loop inside the template syntax.
+     */
+    def getListForCounter(Integer amount) {
+        val theList = new ArrayList<Integer>()
+        var i = 1
+        while (i <= amount) {
+            theList.add(i)
+            i = i + 1
+        }
+        theList
     }
 }

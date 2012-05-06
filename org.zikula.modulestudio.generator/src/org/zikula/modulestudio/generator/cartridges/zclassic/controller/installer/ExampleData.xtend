@@ -28,6 +28,7 @@ import de.guite.modulestudio.metamodel.modulestudio.TimeField
 import de.guite.modulestudio.metamodel.modulestudio.UploadField
 import de.guite.modulestudio.metamodel.modulestudio.UrlField
 import de.guite.modulestudio.metamodel.modulestudio.UserField
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
@@ -36,6 +37,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ExampleData {
+    @Inject extension ControllerExtensions = new ControllerExtensions()
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
@@ -123,21 +125,18 @@ class ExampleData {
         «ENDIF»
     '''
 
-    def private initExampleObjects(Entity it, Application app) {
-        var number = 1
-        while (number < container.numExampleRows) {
-            '''
-                $«name.formatForCode»«number» = new «implClassModelEntity»(«exampleRowsConstructorArguments(number)»);
-            '''
-            number = number + 1
-        }
-    }
+    def private initExampleObjects(Entity it, Application app) '''
+        «var exampleNumbers = getListForCounter(container.numExampleRows)»
+        «FOR number : exampleNumbers»
+            $«name.formatForCode»«number» = new «implClassModelEntity»(«exampleRowsConstructorArguments(number)»);
+        «ENDFOR»
+        «/* this last line is on purpose */»
+    '''
 
-    def private createExampleRows(Entity it, Application app) {
-        val entityName = name.formatForCode
-        var number = 1
-        while (number < container.numExampleRows) {
-            '''
+    def private createExampleRows(Entity it, Application app) '''
+        «val entityName = name.formatForCode»
+        «var exampleNumbers = getListForCounter(container.numExampleRows)»
+        «FOR number : exampleNumbers»
             «IF isInheriting»
                 «FOR field : parentType.getFieldsForExampleData»«exampleRowAssignment(field, it, entityName, number)»«ENDFOR»
             «ENDIF»
@@ -155,26 +154,20 @@ class ExampleData {
             «FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR» 
             «FOR relation : outgoing.filter(typeof(ManyToOneRelationship))»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR»
             «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.exampleRowAssignmentIncoming(entityName, number)»«ENDFOR»
-            '''
-            number = number + 1
-        }
-        '''
+        «ENDFOR»
         «persistExampleObjects(app)»
         «IF tree != EntityTreeType::NONE»
             $treeCounterRoot++;
         «ENDIF»
-        '''
-    }
+        «/* this last line is on purpose */»
+    '''
 
-    def private persistExampleObjects(Entity it, Application app) {
-        var number = 1
-        while (number < container.numExampleRows) {
-            '''
-                $entityManager->persist($«name.formatForCode»«number»);
-            '''
-            number = number + 1
-        }
-    }
+    def private persistExampleObjects(Entity it, Application app) '''
+        «var exampleNumbers = getListForCounter(container.numExampleRows)»
+        «FOR number : exampleNumbers»
+            $entityManager->persist($«name.formatForCode»«number»);
+        «ENDFOR»
+    '''
 
     def private exampleRowsConstructorArgumentsDefault(Entity it, Boolean hasPreviousArgs, Integer number) '''
         «IF hasCompositeKeys»
@@ -225,27 +218,22 @@ class ExampleData {
     }
 
     def private exampleRowAssignmentOutgoing(JoinRelationship it, String entityName, Integer number) '''
-            $«entityName»«number»->set«target.name.formatForCodeCapital»($«target.name.formatForCode»«number»);
+            $«entityName»«number»->set«getRelationAliasName(true).formatForCodeCapital»($«target.name.formatForCode»«number»);
     '''
     def private exampleRowAssignmentIncoming(JoinRelationship it, String entityName, Integer number) '''
-            $«entityName»«number»->set«source.name.formatForCodeCapital»($«source.name.formatForCode»«number»);
+            $«entityName»«number»->set«getRelationAliasName(false).formatForCodeCapital»($«source.name.formatForCode»«number»);
     '''
 
-    def private exampleRowValueNumber(DerivedField it, Entity dataEntity, Integer number) '''number'''
+    def private exampleRowValueNumber(DerivedField it, Entity dataEntity, Integer number) '''«number»'''
 
     def private exampleRowValueTextLength(DerivedField it, Entity dataEntity, Integer number, Integer maxLength) '''
         «IF maxLength >= (entity.name.formatForDisplayCapital.length + 4 + name.formatForDisplay.length)»
-            '«dataEntity.name.formatForDisplayCapital» «name.formatForDisplay» «number»'
-        «ELSEIF !unique && maxLength >= (4 + name.formatForDisplay.length)»
-            '«name.formatForDisplay» «number»'
-        «ELSEIF maxLength < 4 && maxLength > 1»
-            '«(number+dataEntity.name.length+dataEntity.fields.size)»'
-        «ELSEIF maxLength == 1»
-            '«if (number > 9) 1 else number»'
-        «ELSE»
+            '«dataEntity.name.formatForDisplayCapital» «name.formatForDisplay» «number»'«ELSEIF !unique && maxLength >= (4 + name.formatForDisplay.length)»
+            '«name.formatForDisplay» «number»'«ELSEIF maxLength < 4 && maxLength > 1»
+            '«(number+dataEntity.name.length+dataEntity.fields.size)»'«ELSEIF maxLength == 1»
+            '«if (number > 9) 1 else number»'«ELSE»
             substr('«dataEntity.name.formatForDisplayCapital» «name.formatForDisplay»', 0, «(maxLength-2)») . ' «number»'
-        «ENDIF»
-    '''
+        «ENDIF»'''
 
     def private exampleRowValueText(DerivedField it, Entity dataEntity, Integer number) {
         switch it {
@@ -253,7 +241,7 @@ class ExampleData {
         	TextField: exampleRowValueTextLength(dataEntity, number, it.length)
         	EmailField: exampleRowValueTextLength(dataEntity, number, it.length)
         	UrlField: exampleRowValueTextLength(dataEntity, number, it.length)
-            default: ''''«entity.name.formatForDisplayCapital» «name.formatForDisplay» «number»' '''
+            default: '\'' + entity.name.formatForDisplayCapital + ' ' + name.formatForDisplay + ' ' + number + '\''
         }
     }
     def private exampleRowValue(DerivedField it, Entity dataEntity, Integer number) {
@@ -273,7 +261,7 @@ class ExampleData {
         	DateField: '''«IF it.past»$dPast«ELSEIF it.future»$dFuture«ELSE»$dNow«ENDIF»'''
         	TimeField: '''«IF it.past»$tPast«ELSEIF it.future»$tFuture«ELSE»$tNow«ENDIF»'''
         	FloatField: exampleRowValueNumber(dataEntity, number)
-        	ListField: ''''«IF it.multiple»###«FOR item : getDefaultItems SEPARATOR '###'»«item.exampleRowValue»«ENDFOR»###«ELSE»«FOR item : getDefaultItems»«item.exampleRowValue»«ENDFOR»«ENDIF»' '''
+        	ListField: ''''«IF it.multiple»###«FOR item : getDefaultItems SEPARATOR '###'»«item.exampleRowValue»«ENDFOR»###«ELSE»«FOR item : getDefaultItems»«item.exampleRowValue»«ENDFOR»«ENDIF»'«/**/»'''
             default: ''
         }
     }
