@@ -151,12 +151,12 @@ class Display {
             AdminController: '''
                 <div class="z-admin-content-pagetitle">
                     {icon type='display' size='small' __alt='Details'}
-                    <h3>{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«entity.nameMultiple.formatForDB».filter'}</h3>
+                    <h3>{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«entity.nameMultiple.formatForDB».filter'}{icon id='itemactionstrigger' type='options' size='extrasmall' __alt='Actions' style='display: none' class='z-pointer'}</h3>
                 </div>
             '''
             default: '''
                 <div class="z-frontendcontainer">
-                    <h2>{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«entity.nameMultiple.formatForDB».filter'}</h2>
+                    <h2>{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«entity.nameMultiple.formatForDB».filter'}{icon id='itemactionstrigger' type='options' size='extrasmall' __alt='Actions' style='display: none' class='z-pointer'}</h2>
             '''
         }
     }
@@ -242,7 +242,6 @@ class Display {
         {foreach item='option' from=$«name.formatForCode»._actions}
             <a href="{$option.url.type|«appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}" class="z-icon-es-{$option.icon}">{$option.linkText|safetext}</a>
         {/foreach}
-            {icon id='itemactionstrigger' type='options' size='extrasmall' __alt='Actions' style='display: none'}
         </p>
         <script type="text/javascript" charset="utf-8">
         /* <![CDATA[ */
