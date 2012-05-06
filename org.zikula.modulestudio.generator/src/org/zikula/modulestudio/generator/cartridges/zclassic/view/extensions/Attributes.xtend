@@ -24,19 +24,32 @@ class Attributes {
     def private attributesViewImpl(Application it, Controller controller) '''
         {* purpose of this template: reusable display of entity attributes *}
         {if isset($obj.attributes)}
-            <h3 class="attributes">{gt text='Attributes'}</h3>
+            {if isset($panel) && $panel eq true}
+                <h3 class="attributes z-panel-header z-panel-indicator z-pointer">{gt text='Attributes'}</h3>
+                <div class="attributes z-panel-content" style="display: none">
+            {else}
+                <h3 class="attributes">{gt text='Attributes'}</h3>
+            {/if}
             <dl class="propertylist">
             {foreach key='fieldName' item='fieldInfo' from=$obj.attributes}
                 <dt>{$fieldName|safetext}</dt>
                 <dd>{$fieldInfo.value|default:''|safetext}</dd>
             {/foreach}
             </dl>
+            {if isset($panel) && $panel eq true}
+                </div>
+            {/if}
         {/if}
     '''
 
     def private attributesEditImpl(Application it, Controller controller) '''
         {* purpose of this template: reusable editing of entity attributes *}
-        <fieldset>
+            {if isset($panel) && $panel eq true}
+                <h3 class="attributes z-panel-header z-panel-indicator z-pointer">{gt text='Attributes'}</h3>
+                <fieldset class="attributes z-panel-content" style="display: none">
+            {else}
+                <fieldset class="attributes">
+            {/if}
             <legend>{gt text='Attributes'}</legend>
             {formvolatile}
             {foreach key='fieldName' item='fieldValue' from=$attributes}

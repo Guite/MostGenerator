@@ -63,8 +63,13 @@ class Relations {
             val usePlural = (!tempIsOneToOne)
             val templateFileName = templateFile(controller, target.name, 'include_createChildItem' + getTargetMultiplicity)
             fsa.generateFile(templateFileName, '''
-                {* purpose of this template: inclusion template for managing related «target.getEntityNameSingularPlural(usePlural).formatForDisplayCapital» in «controller.formattedName» area *}
-                <fieldset>
+                {* purpose of this template: inclusion template for managing related «target.getEntityNameSingularPlural(usePlural).formatForDisplay» in «controller.formattedName» area *}
+                {if isset($panel) && $panel eq true}
+                    <h3 class="«ownEntity.nameMultiple.formatForDB» z-panel-header z-panel-indicator z-pointer">{gt text='«target.getEntityNameSingularPlural(usePlural).formatForDisplayCapital»'}</h3>
+                    <fieldset class="«target.getEntityNameSingularPlural(usePlural).formatForDB» z-panel-content" style="display: none">
+                {else}
+                    <fieldset class="«target.getEntityNameSingularPlural(usePlural).formatForDB»">
+                {/if}
                     <legend>{gt text='«target.getEntityNameSingularPlural(usePlural).formatForDisplayCapital»'}</legend>
                     <div class="z-formrow">
                         «component_ParentEditing(app, controller, target, usePlural)»
@@ -92,8 +97,13 @@ class Relations {
             val templateFileName = templateFile(controller, source.name, 'include_select' + editSnippet + 'One')
             val usePlural = (!tempIsOneToOne)
             fsa.generateFile(templateFileName, '''
-                {* purpose of this template: inclusion template for managing related «source.getEntityNameSingularPlural(usePlural).formatForDisplayCapital» in «controller.formattedName» area *}
-                <fieldset>
+                {* purpose of this template: inclusion template for managing related «source.getEntityNameSingularPlural(usePlural).formatForDisplay» in «controller.formattedName» area *}
+                    {if isset($panel) && $panel eq true}
+                        <h3 class="«source.name.formatForDB» z-panel-header z-panel-indicator z-pointer">{gt text='«source.name.formatForDisplayCapital»'}</h3>
+                        <fieldset class="«source.name.formatForDB» z-panel-content" style="display: none">
+                    {else}
+                        <fieldset class="«source.name.formatForDB»">
+                    {/if}
                     <legend>{gt text='«source.name.formatForDisplayCapital»'}</legend>
                     <div class="z-formrow">
                         «component_AutoComplete(app, controller, source, false, true, (hasEdit))»
@@ -131,7 +141,12 @@ class Relations {
                 println('Generating ' + controller.formattedName + ' edit inclusion templates for entity "' + ownEntity.name.formatForDisplay + '"')
                 fsa.generateFile(templateFile(controller, ownEntity.name, 'include_select' + editSnippet + 'Many'), '''
                     {* purpose of this template: inclusion template for managing related «ownEntity.nameMultiple.formatForDisplayCapital» in «controller.formattedName» area *}
-                    <fieldset>
+                    {if isset($panel) && $panel eq true}
+                        <h3 class="«ownEntity.nameMultiple.formatForDB» z-panel-header z-panel-indicator z-pointer">{gt text='«ownEntity.nameMultiple.formatForDisplayCapital»'}</h3>
+                        <fieldset class="«ownEntity.nameMultiple.formatForDB» z-panel-content" style="display: none">
+                    {else}
+                        <fieldset class="«ownEntity.nameMultiple.formatForDB»">
+                    {/if}
                         <legend>{gt text='«ownEntity.nameMultiple.formatForDisplayCapital»'}</legend>
                         <div class="z-formrow">
                             «manyToManyHandling(app, controller, otherEntity, ownEntity, incoming, stageCode)»
@@ -182,8 +197,7 @@ class Relations {
     '''
 
     def private component_AutoCompleteIncludeStatement(JoinRelationship it, Controller controller, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
-        include file='«controller.formattedName»/«targetEntity.name.formatForCode»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl'
-    '''
+        include file='«controller.formattedName»/«targetEntity.name.formatForCode»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' '''
 
     def private component_ItemList(JoinRelationship it, Application app, Controller controller, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
         {* purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplayCapital» in «controller.formattedName» area *}
@@ -211,7 +225,7 @@ class Relations {
                 {gt text='«targetEntity.name.formatForDisplayCapital»'}
             «ENDIF»
             «IF includeEditing»
-             <a id="{$idPrefixItem}Edit" href="{modurl modname='«app.appName»' type='«controller.formattedName»' «targetEntity.modUrlEdit('item', true)»}">{$editImage}</a>
+             <a id="{$idPrefixItem}Edit" href="{modurl modname='«app.appName»' type='«controller.formattedName»' «targetEntity.modUrlEdit('item', true)»«IF controller.formattedName == 'user'» forcelongurl=true«ENDIF»}">{$editImage}</a>
             «ENDIF»
              <a id="{$idPrefixItem}Remove" href="javascript:«app.prefix»RemoveRelatedItem('{$idPrefix}', '«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»');">{$removeImage}</a>
             «IF targetEntity.hasImageFieldsEntity»

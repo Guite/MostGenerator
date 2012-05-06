@@ -24,7 +24,12 @@ class Categories {
     def private categoriesViewImpl(Application it, Controller controller) '''
         {* purpose of this template: reusable display of entity categories *}
         {if isset($obj.categories)}
-            <h3 class="categories">{gt text='Categories'}</h3>
+            {if isset($panel) && $panel eq true}
+                <h3 class="categories z-panel-header z-panel-indicator z-pointer">{gt text='Categories'}</h3>
+                <div class="categories z-panel-content" style="display: none">
+            {else}
+                <h3 class="categories">{gt text='Categories'}</h3>
+            {/if}
             {*
             <dl class="propertylist">
             {foreach key='propName' item='catMapping' from=$obj.categories}
@@ -34,12 +39,20 @@ class Categories {
             </dl>
             *}
             {assignedcategorieslist categories=$obj.categories doctrine2=true}
+            {if isset($panel) && $panel eq true}
+                </div>
+            {/if}
         {/if}
     '''
 
     def private categoriesEditImpl(Application it, Controller controller) '''
         {* purpose of this template: reusable editing of entity attributes *}
-        <fieldset>
+        {if isset($panel) && $panel eq true}
+            <h3 class="categories z-panel-header z-panel-indicator z-pointer">{gt text='Categories'}</h3>
+            <fieldset class="categories z-panel-content" style="display: none">
+        {else}
+            <fieldset class="categories">
+        {/if}
             <legend>{gt text='Categories'}</legend>
             {formvolatile}
             {foreach key='registryId' item='registryCid' from=$registries}

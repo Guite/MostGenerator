@@ -24,7 +24,12 @@ class MetaData {
     def private metaDataViewImpl(Application it, Controller controller) '''
         {* purpose of this template: reusable display of meta data fields *}
         {if isset($obj.metadata)}
-            <h3 class="metadata">{gt text='Metadata'}</h3>
+            {if isset($panel) && $panel eq true}
+                <h3 class="metadata z-panel-header z-panel-indicator z-pointer">{gt text='Metadata'}</h3>
+                <div class="metadata z-panel-content" style="display: none">
+            {else}
+                <h3 class="metadata">{gt text='Metadata'}</h3>
+            {/if}
             <dl class="propertylist">
             {if $obj.metadata.title ne ''}
                 <dt>{gt text='Title'}</dt>
@@ -99,12 +104,20 @@ class MetaData {
                 <dd>{$obj.metadata.extra|default:'-'|safetext}</dd>
             {/if}
             </dl>
+            {if isset($panel) && $panel eq true}
+                </div>
+            {/if}
         {/if}
     '''
 
     def private metaDataEditImpl(Application it, Controller controller) '''
         {* purpose of this template: reusable editing of meta data fields *}
-        <fieldset>
+        {if isset($panel) && $panel eq true}
+            <h3 class="metadata z-panel-header z-panel-indicator z-pointer">{gt text='Metadata'}</h3>
+            <fieldset class="metadata z-panel-content" style="display: none">
+        {else}
+            <fieldset class="metadata">
+        {/if}
             <legend>{gt text='Metadata'}</legend>
 
             <div class="z-formrow">

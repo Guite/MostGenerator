@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.Action
+import de.guite.modulestudio.metamodel.modulestudio.AdminController
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.DateField
@@ -21,7 +22,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import de.guite.modulestudio.metamodel.modulestudio.AdminController
+import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class Forms {
     @Inject extension ControllerExtensions = new ControllerExtensions()
@@ -31,6 +32,7 @@ class Forms {
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
+    @Inject extension ViewExtensions = new ViewExtensions()
 
     SimpleFields fieldHelper = new SimpleFields()
     Relations relationHelper = new Relations()
@@ -127,75 +129,80 @@ class Forms {
 «/*            {formsetinitialfocus inputId='PluginId' doSelect=true} <-- for dropdown lists (performs input.select())*/»
             «ENDIF»
 
-            «IF hasTranslatableFields»
-                {formvolatile}
-                    {assign var='useOnlyCurrentLocale' value=true}
-                    {if $modvars.ZConfig.multilingual}
-                        {if $supportedLocales ne '' && is_array($supportedLocales) && count($supportedLocales) > 1}
-                            {assign var='useOnlyCurrentLocale' value=false}
-                            {nocache}
-                            {lang assign='currentLanguage'}
-                            {foreach item='locale' from=$supportedLocales}
-                                {if $locale eq $currentLanguage}
-                                    «translatableFieldSet('', '')»
-                                {/if}
-                            {/foreach}
-                            {foreach item='locale' from=$supportedLocales}
-                                {if $locale ne $currentLanguage}
-                                    «translatableFieldSet('$locale', '$locale')»
-                                {/if}
-                            {/foreach}
-                            {/nocache}
-                        {/if}
-                    {/if}
-                    {if $useOnlyCurrentLocale eq true}
-                        {lang assign='locale'}
-                        «translatableFieldSet('', '')»
-                    {/if}
-                {/formvolatile}
-            «ENDIF»
-            «IF !hasTranslatableFields
-              || (hasTranslatableFields && (!getEditableNonTranslatableFields.isEmpty || (hasSluggableFields && !hasTranslatableSlug)))
-              || geographical»
-                <fieldset>
-                    <legend>{gt text='«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»'}</legend>
-                    «IF hasTranslatableFields»
-                        «FOR field : getEditableNonTranslatableFields»«field.fieldWrapper('', '')»«ENDFOR»
-                    «ELSE»
-                        «FOR field : getEditableFields»«field.fieldWrapper('', '')»«ENDFOR»
-                    «ENDIF»
-                    «IF !hasTranslatableFields || (hasSluggableFields && !hasTranslatableSlug)»
-                        «slugField('', '')»
-                    «ENDIF»
-                    «IF geographical»
-                        «FOR geoFieldName : newArrayList('latitude', 'longitude')»
-                            <div class="z-formrow">
-                                {formlabel for='«geoFieldName»' __text='«geoFieldName.toFirstUpper»'}
-                                {«app.appName.formatForDB»GeoInput group='«name.formatForDB»' id='«geoFieldName»' mandatory=false __title='Enter the «geoFieldName» of the «name.formatForDisplay»' cssClass='validate-number'}
-                                {«app.appName.formatForDB»ValidationError id='«geoFieldName»' class='validate-number'}
-                            </div>
-                        «ENDFOR»
-                    «ENDIF»
-                </fieldset>
-            «ENDIF»
-    
-                «IF geographical»
-                    <fieldset>
-                        <legend>{gt text='Map'}</legend>
-                        <div id="mapContainer" class="«app.appName.formatForDB»MapContainer">
-                        </div>
-                    </fieldset>
-                «ENDIF»
-
+            «IF useGroupingPanels('edit')»
+                <div class="z-panels" id="«app.appName»_panel">
+                    <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator z-pointer">{gt text='Fields'}</h3>
+                    <div class="z-panel-content z-panel-active" style="overflow: visible">
+                        «fieldDetails(app, controller)»
+                    </div>
+                    «new Section().generate(it, app, controller, fsa)»
+                </div>
+            «ELSE»
+                «fieldDetails(app, controller)»
                 «new Section().generate(it, app, controller, fsa)»
-                {/«app.appName.formatForDB»FormFrame}
-            {/form}
+            «ENDIF»
+            {/«app.appName.formatForDB»FormFrame}
+        {/form}
 
             «controller.templateFooter»
         </div>
         {include file='«controller.formattedName»/footer.tpl'}
 
         «formTemplateJS(app, controller, actionName)»
+    '''
+
+    def private fieldDetails(Entity it, Application app, Controller controller) '''
+        «IF hasTranslatableFields»
+            {formvolatile}
+                {assign var='useOnlyCurrentLocale' value=true}
+                {if $modvars.ZConfig.multilingual}
+                    {if $supportedLocales ne '' && is_array($supportedLocales) && count($supportedLocales) > 1}
+                        {assign var='useOnlyCurrentLocale' value=false}
+                        {nocache}
+                        {lang assign='currentLanguage'}
+                        {foreach item='locale' from=$supportedLocales}
+                            {if $locale eq $currentLanguage}
+                                «translatableFieldSet('', '')»
+                            {/if}
+                        {/foreach}
+                        {foreach item='locale' from=$supportedLocales}
+                            {if $locale ne $currentLanguage}
+                                «translatableFieldSet('$locale', '$locale')»
+                            {/if}
+                        {/foreach}
+                        {/nocache}
+                    {/if}
+                {/if}
+                {if $useOnlyCurrentLocale eq true}
+                    {lang assign='locale'}
+                    «translatableFieldSet('', '')»
+                {/if}
+            {/formvolatile}
+        «ENDIF»
+        «IF !hasTranslatableFields
+          || (hasTranslatableFields && (!getEditableNonTranslatableFields.isEmpty || (hasSluggableFields && !hasTranslatableSlug)))
+          || geographical»
+            <fieldset>
+                <legend>{gt text='«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»'}</legend>
+                «IF hasTranslatableFields»
+                    «FOR field : getEditableNonTranslatableFields»«field.fieldWrapper('', '')»«ENDFOR»
+                «ELSE»
+                    «FOR field : getEditableFields»«field.fieldWrapper('', '')»«ENDFOR»
+                «ENDIF»
+                «IF !hasTranslatableFields || (hasSluggableFields && !hasTranslatableSlug)»
+                    «slugField('', '')»
+                «ENDIF»
+                «IF geographical»
+                    «FOR geoFieldName : newArrayList('latitude', 'longitude')»
+                        <div class="z-formrow">
+                            {formlabel for='«geoFieldName»' __text='«geoFieldName.toFirstUpper»'}
+                            {«app.appName.formatForDB»GeoInput group='«name.formatForDB»' id='«geoFieldName»' mandatory=false __title='Enter the «geoFieldName» of the «name.formatForDisplay»' cssClass='validate-number'}
+                            {«app.appName.formatForDB»ValidationError id='«geoFieldName»' class='validate-number'}
+                        </div>
+                    «ENDFOR»
+                «ENDIF»
+            </fieldset>
+        «ENDIF»
     '''
 
     def private translatableFieldSet(Entity it, String groupSuffix, String idSuffix) '''
@@ -348,6 +355,15 @@ class Forms {
                     }
                     return result;
                 });
+                «IF useGroupingPanels('edit')»
+
+                    var panel = new Zikula.UI.Panels('«app.appName»_panel', {
+                        headerSelector: 'h3',
+                        headerClassName: 'z-panel-header z-panel-indicator',
+                        contentClassName: 'z-panel-content',
+                        active: 'z-panel-header-fields'
+                    });
+                «ENDIF»
 
                 Zikula.UI.Tooltips($$('.«app.appName.formatForDB»FormTooltips'));
                 «FOR field : getDerivedFields»«field.additionalInitScript»«ENDFOR»

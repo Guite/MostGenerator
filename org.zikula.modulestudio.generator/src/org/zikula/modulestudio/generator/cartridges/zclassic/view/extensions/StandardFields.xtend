@@ -24,7 +24,12 @@ class StandardFields {
     def private standardFieldsViewImpl(Application it, Controller controller) '''
         {* purpose of this template: reusable display of standard fields *}
         {if (isset($obj.createdUserId) && $obj.createdUserId) || (isset($obj.updatedUserId) && $obj.updatedUserId)}
-            <h3 class="standardfields">{gt text='Creation and update'}</h3>
+            {if isset($panel) && $panel eq true}
+                <h3 class="standardfields z-panel-header z-panel-indicator z-pointer">{gt text='Creation and update'}</h3>
+                <div class="standardfields z-panel-content" style="display: none">
+            {else}
+                <h3 class="standardfields">{gt text='Creation and update'}</h3>
+            {/if}
             <dl class="propertylist">
             {if isset($obj.createdUserId) && $obj.createdUserId}
                 <dt>{gt text='Creation'}</dt>
@@ -55,13 +60,21 @@ class StandardFields {
                 <dd>{gt text='Updated by %1$s on %2$s' tag1=$profileLink tag2=$obj.updatedDate|dateformat html=true}</dd>
             {/if}
             </dl>
+            {if isset($panel) && $panel eq true}
+                </div>
+            {/if}
         {/if}
     '''
 
     def private standardFieldsEditImpl(Application it, Controller controller) '''
         {* purpose of this template: reusable editing of standard fields *}
         {if (isset($obj.createdUserId) && $obj.createdUserId) || (isset($obj.updatedUserId) && $obj.updatedUserId)}
-            <fieldset>
+            {if isset($panel) && $panel eq true}
+                <h3 class="standardfields z-panel-header z-panel-indicator z-pointer">{gt text='Creation and update'}</h3>
+                <fieldset class="standardfields z-panel-content" style="display: none">
+            {else}
+                <fieldset class="standardfields">
+            {/if}
                 <legend>{gt text='Creation and update'}</legend>
                 <ul>
             {if isset($obj.createdUserId) && $obj.createdUserId}

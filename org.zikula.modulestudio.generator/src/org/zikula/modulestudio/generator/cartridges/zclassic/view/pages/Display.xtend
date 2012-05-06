@@ -61,28 +61,29 @@ class Display {
             {/if}
         «ENDIF»
 
-        <dl id="«appName»_body">
-            «IF leadingField != null && leadingField.showLeadingFieldInTitle»
-                «FOR field : getDerivedFields.filter(e|!e.leading && !e.primaryKey)»«field.displayEntry(controller)»«ENDFOR»
-            «ELSE»
-                «FOR field : getDerivedFields.filter(e|!e.primaryKey)»«field.displayEntry(controller)»«ENDFOR»
-            «ENDIF»
-            «IF geographical»
-                «FOR geoFieldName : newArrayList('latitude', 'longitude')»
-                    <dt>{gt text='«geoFieldName.toFirstUpper»'}</dt>
-                    <dd>{$«objName».«geoFieldName»|«appName.formatForDB»FormatGeoData}</dd>
-                «ENDFOR»
-            «ENDIF»
-            «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.displayEntry(controller, false)»«ENDFOR»
-            «/*«FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.displayEntry(controller, true)»«ENDFOR»*/»
-        </dl>
+        «IF useGroupingPanels('display')»
+        {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
+        <div class="z-panels" id="«appName»_panel">
+            <h3 id="z-panel-header-fields" class="z-panel-header z-panel-indicator z-pointer z-panel-active">{gt text='Fields'}</h3>
+            <div class="z-panel-content z-panel-active" style="overflow: visible">
+        {/if}
+        «ENDIF»
+        «fieldDetails(appName, controller)»
+        «IF useGroupingPanels('display')»
+        {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
+            </div>
+        </div>
+        {/if}
+        «ENDIF»
         «displayExtensions(controller, objName)»
 
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             «itemActions(appName, controller)»
 
             «callDisplayHooks(appName, controller)»
-
+            «IF useGroupingPanels('display')»
+                </div>
+            «ENDIF»
             «IF !refedElems.isEmpty»
                 <br style="clear: right" />
             «ENDIF»
@@ -92,18 +93,48 @@ class Display {
         </div>
         {include file='«controller.formattedName»/footer.tpl'}
 
-        «IF hasBooleansWithAjaxToggleEntity»
+        «IF hasBooleansWithAjaxToggleEntity || useGroupingPanels('display')»
+        {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             <script type="text/javascript" charset="utf-8">
             /* <![CDATA[ */
                 document.observe('dom:loaded', function() {
+                    «IF hasBooleansWithAjaxToggleEntity»
                     {{assign var='itemid' value=$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}}
                 «FOR field : getBooleansWithAjaxToggleEntity»
                     «container.application.prefix»InitToggle('«name.formatForCode»', '«field.name.formatForCode»', '{{$itemid}}');
                 «ENDFOR»
+                    «ENDIF»
+                    «IF useGroupingPanels('display')»
+                    var panel = new Zikula.UI.Panels('«appName»_panel', {
+                        headerSelector: 'h3',
+                        headerClassName: 'z-panel-header z-panel-indicator',
+                        contentClassName: 'z-panel-content',
+                        active: 'z-panel-header-fields'
+                    });
+                    «ENDIF»
                 });
             /* ]]> */
             </script>
+        {/if}
         «ENDIF»
+    '''
+
+    def private fieldDetails(Entity it, String appName, Controller controller) '''
+        <dl id="«appName»_body">
+            «IF leadingField != null && leadingField.showLeadingFieldInTitle»
+                «FOR field : getDerivedFields.filter(e|!e.leading && !e.primaryKey)»«field.displayEntry(controller)»«ENDFOR»
+            «ELSE»
+                «FOR field : getDerivedFields.filter(e|!e.primaryKey)»«field.displayEntry(controller)»«ENDFOR»
+            «ENDIF»
+            «IF geographical»
+                «FOR geoFieldName : newArrayList('latitude', 'longitude')»
+                    <dt>{gt text='«geoFieldName.toFirstUpper»'}</dt>
+                    <dd>{$«name.formatForCode».«geoFieldName»|«appName.formatForDB»FormatGeoData}</dd>
+                «ENDFOR»
+            «ENDIF»
+            «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.displayEntry(controller, false)»«ENDFOR»
+            «/*«FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.displayEntry(controller, true)»«ENDFOR»*/»
+        </dl>
     '''
 
     def private showLeadingFieldInTitle(DerivedField it) {
@@ -194,19 +225,34 @@ class Display {
     '''
 
     def private itemActions(Entity it, String appName, Controller controller) '''
-        «val objName = name.formatForCode»
-        {if count($«objName»._actions) gt 0}
-            <p>
-            {foreach item='option' from=$«objName»._actions}
-                <a href="{$option.url.type|«appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}" class="z-icon-es-{$option.icon}">{$option.linkText|safetext}</a>
-            {/foreach}
-            </p>
+        {if count($«name.formatForCode»._actions) gt 0}
+            «IF useGroupingPanels('display')»
+                <h3 class="z-panel-header z-panel-indicator z-pointer">{gt text='Actions'}</h3>
+                <div class="z-panel-content" style="display: none">
+                    «itemActionsImpl(appName)»
+                </div>
+            «ELSE»
+                «itemActionsImpl(appName)»
+            «ENDIF»
         {/if}
+    '''
+
+    def private itemActionsImpl(Entity it, String appName) '''
+        <p>
+        {foreach item='option' from=$«name.formatForCode»._actions}
+            <a href="{$option.url.type|«appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}" class="z-icon-es-{$option.icon}">{$option.linkText|safetext}</a>
+        {/foreach}
+        </p>
     '''
 
     def private displayExtensions(Entity it, Controller controller, String objName) '''
         «IF geographical»
-            <h3 class="map">{gt text='Map'}</h3>
+            «IF useGroupingPanels('display')»
+                <h3 class="map z-panel-header z-panel-indicator z-pointer">{gt text='Map'}</h3>
+                <div class="z-panel-content" style="display: none">
+            «ELSE»
+                <h3 class="map">{gt text='Map'}</h3>
+            «ENDIF»
             {pageaddvarblock name='header'}
                 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
                 <script type="text/javascript" src="{$baseurl}plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)"></script>
@@ -229,34 +275,43 @@ class Display {
 
                         // add a marker
                         var marker = new mxn.Marker(latlon);
-                        mapstraction.addMarker(marker,true);
+                        mapstraction.addMarker(marker, true);
                     });
                 /* ]]> */
                 </script>
             {/pageaddvarblock}
             <div id="mapContainer" class="«controller.container.application.appName.formatForDB»MapContainer">
             </div>
+            «IF useGroupingPanels('display')»
+                </div>
+            «ENDIF»
         «ENDIF»
         «IF attributable»
-            {include file='«controller.formattedName»/include_attributes_display.tpl' obj=$«objName»}
+            {include file='«controller.formattedName»/include_attributes_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
         «IF categorisable»
-            {include file='«controller.formattedName»/include_categories_display.tpl' obj=$«objName»}
+            {include file='«controller.formattedName»/include_categories_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
         «IF standardFields»
-            {include file='«controller.formattedName»/include_standardfields_display.tpl' obj=$«objName»}
+            {include file='«controller.formattedName»/include_standardfields_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
         «IF metaData»
-            {include file='«controller.formattedName»/include_metadata_display.tpl' obj=$«objName»}
+            {include file='«controller.formattedName»/include_metadata_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
     '''
 
     def private callDisplayHooks(Entity it, String appName, Controller controller) '''
-        «val objName = name.formatForCode»
         {* include display hooks *}
-        {notifydisplayhooks eventname='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view' id=«IF !hasCompositeKeys»$«objName».«getFirstPrimaryKey.name.formatForCode»«ELSE»"«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«objName».«pkField.name.formatForCode»`«ENDFOR»"«ENDIF» urlobject=$currentUrlObject assign='hooks'}
+        {notifydisplayhooks eventname='«appName.formatForDB».ui_hooks.«nameMultiple.formatForDB».display_view' id=«displayHookId» urlobject=$currentUrlObject assign='hooks'}
         {foreach key='providerArea' item='hook' from=$hooks}
-            {$hook}
+            «IF useGroupingPanels('display')»
+                <h3 class="z-panel-header z-panel-indicator z-pointer">{$providerArea}</h3>
+                <div class="z-panel-content" style="display: none">{$hook}</div>
+            «ELSE»
+                {$hook}
+            «ENDIF»
         {/foreach}
     '''
+
+    def private displayHookId(Entity it) '''«IF !hasCompositeKeys»$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»«ELSE»"«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«name.formatForCode».«pkField.name.formatForCode»`«ENDFOR»"«ENDIF»'''
 }

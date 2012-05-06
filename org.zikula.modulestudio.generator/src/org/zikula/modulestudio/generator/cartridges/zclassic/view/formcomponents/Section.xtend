@@ -9,13 +9,16 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.Relations
+import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class Section {
     @Inject extension ControllerExtensions = new ControllerExtensions()
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
+    @Inject extension ViewExtensions = new ViewExtensions()
+    @Inject extension Utils = new Utils()
 
     Relations relationHelper = new Relations()
 
@@ -23,6 +26,7 @@ class Section {
      * Entry point for edit sections beside the actual fields.
      */
     def generate(Entity it, Application app, Controller controller, IFileSystemAccess fsa) '''
+
         «extensionsAndRelations(app, controller, fsa)»
 
         «displayHooks(app)»
@@ -33,19 +37,27 @@ class Section {
     '''
 
     def private extensionsAndRelations(Entity it, Application app, Controller controller, IFileSystemAccess fsa) '''
+        «IF geographical»
+            <fieldset>
+                <legend>{gt text='Map'}</legend>
+                <div id="mapContainer" class="«app.appName.formatForDB»MapContainer">
+                </div>
+            </fieldset>
+        «ENDIF»
+
         «IF attributable»
-            {include file='«controller.formattedName»/include_attributes_edit.tpl' obj=$«name.formatForDB»}
+            {include file='«controller.formattedName»/include_attributes_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
         «ENDIF»
         «IF categorisable»
-            {include file='«controller.formattedName»/include_categories_edit.tpl' obj=$«name.formatForDB» groupName='«name.formatForDB»Obj'}
+            {include file='«controller.formattedName»/include_categories_edit.tpl' obj=$«name.formatForDB» groupName='«name.formatForDB»Obj'«IF useGroupingPanels('edit')» panel=true«ENDIF»}
         «ENDIF»
         «IF standardFields»
             {if $mode ne 'create'}
-                {include file='«controller.formattedName»/include_standardfields_edit.tpl' obj=$«name.formatForDB»}
+                {include file='«controller.formattedName»/include_standardfields_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
             {/if}
         «ENDIF»
         «IF metaData»
-            {include file='«controller.formattedName»/include_metadata_edit.tpl' obj=$«name.formatForDB»}
+            {include file='«controller.formattedName»/include_metadata_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
         «ENDIF»
         «FOR relation : getBidirectionalIncomingJoinRelations»«relationHelper.generate(relation, app, controller, true, true, fsa)»«ENDFOR»
         «FOR relation : getOutgoingJoinRelations»«relationHelper.generate(relation, app, controller, true, false, fsa)»«ENDFOR»
@@ -59,14 +71,16 @@ class Section {
             {notifydisplayhooks eventname='«app.name.formatForDB».ui_hooks.«nameMultiple.formatForDB».form_edit' id=«IF !hasCompositeKeys»$«name.formatForDB».«getFirstPrimaryKey.name.formatForCode»«ELSE»"«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«name.formatForDB».«pkField.name.formatForCode»`«ENDFOR»"«ENDIF» assign='hooks'}
         {/if}
         {if is_array($hooks) && count($hooks)}
-            <fieldset>
-                <legend>{gt text='Hooks'}</legend>
-                {foreach key='providerArea' item='hook' from=$hooks}
-                    <div class="z-formrow">
-                        {$hook}
-                    </div>
-                {/foreach}
-            </fieldset>
+            {foreach key='providerArea' item='hook' from=$hooks}
+                «IF useGroupingPanels('edit')»
+                    <h3 class="hook z-panel-header z-panel-indicator z-pointer">{$providerArea}</h3>
+                    <fieldset class="hook z-panel-content" style="display: none">{$hook}</div>
+                «ELSE»
+                    <fieldset>
+                «ENDIF»
+                    {$hook}
+                </fieldset>
+            {/foreach}
         {/if}
     '''
 
