@@ -4,7 +4,7 @@
     <buckminster.valuepath id="project.classpath" value="${fs:project.classpath}" />
     <path id="classpath">
         <path refid="project.classpath"/>
-        <pathelement path="${WORKSPACE}/org.zikula.modulestudio.generator/src/workflow/" />
+        <pathelement path="${WORKSPACE}/org.zikula.modulestudio.generator/src/org/zikula/modulestudio/generator/workflow/" />
     </path>
 
     <target name="compile">
@@ -13,37 +13,17 @@
     <target name="start.mwe.workflow">
         <echo>${workflowFile}</echo>
         <echo>-pmodelName=${modelName}</echo>
-        <echo>-pmodelFile=${modelFile}</echo>
+        <echo>-pmodelPath=${modelPath}</echo>
         <echo>-pcartridgeName=${cartridgeName}</echo>
-        <echo>-penrichedModelFile=${modelName}_Enriched.mostapp</echo>
-        <echo>-psrcGenPath=output/${cartridgeName}</echo>    
-        <property file="bm.properties"/>
-        <!-- fork as we want to be sure that the correct directory will be used -->
-        <java classname="org.eclipse.emf.mwe.core.WorkflowRunner" dir="." classpathref="classpath" output="build.log">
+        <echo>-pdoValidation=true</echo>
+        <echo>-pdoModelCopy=true</echo>    
+        <java classname="org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher" dir="." classpathref="classpath" output="build.log" fork="true">
             <arg value="${workflowFile}" />
             <arg value="-pmodelName=${modelName}"/>
-            <arg value="-pmodelFile=${modelFile}"/>
+            <arg value="-pmodelPath=${modelPath}"/>
             <arg value="-pcartridgeName=${cartridgeName}"/>
-            <arg value="-penrichedModelFile=${modelName}_Enriched.mostapp"/>
-            <arg value="-psrcGenPath=output/${cartridgeName}"/>
+            <arg value="-pdoValidation=true"/>
+            <arg value="-pdoModelCopy=true"/>
         </java>
     </target>
-    <target name="start.mwe.workflowOld">
-        <property file="make/bm.properties"/>
-        <taskdef name="workflow" classpathref="classpath" classname="org.eclipse.emf.mwe.core.ant.WorkflowAntTask"/>
-        
-            <workflow file="${workflowFile}">
-                <classpath>
-                   <path refid="classpath" />
-                </classpath>
-<!--                <param name="baseDir" value="/base/"/>-->
-                <param name="modelName" value="${modelName}"/>
-                <param name="modelFile" value="${modelFile}"/>
-                <param name="cartridgeName" value="${cartridgeName}"/>
-                <param name="enrichedModelFile" value="${modelName}_Enriched.mostapp"/>
-                <param name="srcGenPath" value="output/${cartridgeName}"/>
-                
-            </workflow>
-      </target>
 </project>
-
