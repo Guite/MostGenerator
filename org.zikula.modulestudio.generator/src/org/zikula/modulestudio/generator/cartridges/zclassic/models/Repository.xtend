@@ -160,6 +160,10 @@ class Repository {
             «getAdditionalTemplateParameters»
 
             «truncateTable»
+            «IF standardFields || hasUserFieldsEntity»
+
+                «userDeleteFunctions»
+            «ENDIF»
 
             «selectById»
             «IF hasSluggableFields && slugUnique»
@@ -221,13 +225,146 @@ class Repository {
          */
         public function truncateTable()
         {
-            $query = $this->getEntityManager()
-                     ->createQuery('DELETE «implClassModelEntity»');
+            $qb = $this->getEntityManager()->createQueryBuilder();
+            $qb->delete('«implClassModelEntity»', 'tbl');
+            $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
             «ENDIF»
             $query->execute();
         }
+    '''
+
+    def private userDeleteFunctions(Entity it) '''
+        «IF standardFields»
+        /**
+         * Delete all objects created by a certain user.
+         *
+         * @param integer $userId The userid of the creator to be removed.
+         */
+        public function deleteCreator($userId)
+        {
+            // check id parameter
+            if ($userId == 0 || !is_numeric($userId)) {
+                return LogUtil::registerArgsError();
+            }
+
+            $qb = $this->getEntityManager()->createQueryBuilder();
+            $qb->delete('«implClassModelEntity»', 'tbl')
+               ->where('tbl.createdUserId = ?', $userId);
+            $query = $qb->getQuery();
+            «IF hasPessimisticWriteLock»
+                $query->setLockMode(LockMode::«lockType.asConstant»);
+            «ENDIF»
+            $query->execute();
+        }
+
+        /**
+         * Delete all objects updated by a certain user.
+         *
+         * @param integer $userId The userid of the last editor to be removed.
+         */
+        public function deleteLastEditor($userId)
+        {
+            // check id parameter
+            if ($userId == 0 || !is_numeric($userId)) {
+                return LogUtil::registerArgsError();
+            }
+
+            $qb = $this->getEntityManager()->createQueryBuilder();
+            $qb->delete('«implClassModelEntity»', 'tbl')
+               ->where('tbl.updatedUserId = ?', $userId);
+            $query = $qb->getQuery();
+            «IF hasPessimisticWriteLock»
+                $query->setLockMode(LockMode::«lockType.asConstant»);
+            «ENDIF»
+            $query->execute();
+        }
+
+        /**
+         * Updates the creator of all objects created by a certain user.
+         *
+         * @param integer $userId    The userid of the creator to be replaced.
+         * @param integer $newUserId The new userid of the creator as replacement.
+         */
+        public function updateCreator($userId, $newUserId)
+        {
+            // check id parameter
+            if ($userId == 0 || !is_numeric($userId)
+             || $newUserId == 0 || !is_numeric($newUserId)) {
+                return LogUtil::registerArgsError();
+            }
+
+            $qb = $this->getEntityManager()->createQueryBuilder();
+            $qb->update('«implClassModelEntity»', 'tbl')
+               ->set('tbl.createdUserId', $newUserId)
+               ->where('tbl.createdUserId = ?', $userId);
+            $query = $qb->getQuery();
+            «IF hasPessimisticWriteLock»
+                $query->setLockMode(LockMode::«lockType.asConstant»);
+            «ENDIF»
+            $query->execute();
+        }
+
+        /**
+         * Updates the last editor of all objects updated by a certain user.
+         *
+         * @param integer $userId    The userid of the last editor to be replaced.
+         * @param integer $newUserId The new userid of the last editor as replacement.
+         */
+        public function updateLastEditor($userId, $newUserId)
+        {
+            // check id parameter
+            if ($userId == 0 || !is_numeric($userId)
+             || $newUserId == 0 || !is_numeric($newUserId)) {
+                return LogUtil::registerArgsError();
+            }
+
+            $qb = $this->getEntityManager()->createQueryBuilder();
+            $qb->update('«implClassModelEntity»', 'tbl')
+               ->set('tbl.updatedUserId', $newUserId)
+               ->where('tbl.updatedUserId = ?', $userId);
+            $query = $qb->getQuery();
+            «IF hasPessimisticWriteLock»
+                $query->setLockMode(LockMode::«lockType.asConstant»);
+            «ENDIF»
+            $query->execute();
+        }
+        «ENDIF»
+        «IF hasUserFieldsEntity»
+        «IF standardFields»
+
+        «ENDIF»
+        /**
+         * Updates a user field value of all objects affected by a certain user.
+         *
+         * @param string  $fieldName The name of the user field.
+         * @param integer $userId    The userid to be replaced.
+         * @param integer $newUserId The new userid as replacement.
+         */
+        public function updateUserField($userFieldName, $userId, $newUserId)
+        {
+            // check field parameter
+            if (empty($userFieldName) || !in_array($userFieldName, array(«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»))) {
+                return LogUtil::registerArgsError();
+            }
+            // check id parameter
+            if ($userId == 0 || !is_numeric($userId)
+             || $newUserId == 0 || !is_numeric($newUserId)) {
+                return LogUtil::registerArgsError();
+            }
+
+            $qb = $this->getEntityManager()->createQueryBuilder();
+            $qb->update('«implClassModelEntity»', 'tbl')
+               ->set('tbl.' . $userFieldName, $newUserId)
+               ->where('tbl.' . $userFieldName + ' = ?', $userId);
+            $query = $qb->getQuery();
+            «IF hasPessimisticWriteLock»
+                $query->setLockMode(LockMode::«lockType.asConstant»);
+            «ENDIF»
+            $query->execute();
+        }
+        «ENDIF»
     '''
 
     def private selectById(Entity it) '''
