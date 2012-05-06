@@ -64,7 +64,8 @@ class Translatable {
                 $dom = ZLanguage::getModuleDomain('«appName»');
                 $fields = array();
                 switch ($objectType) {
-                «FOR entity : getTranslatableEntities»«entity.translatableFieldList»«ENDFOR»
+                «FOR entity : getTranslatableEntities»«entity.translatableFieldList»
+                «ENDFOR»
                 }
                 return $fields;
             }
@@ -129,51 +130,49 @@ class Translatable {
              * This ensures easy compatibility to the Forms plugins where it
              * it is not possible yet to define sub arrays in the group attribute.
              *
-             * @param string              $objectType     Treated object type.
-             * @param Zikula_EntityAccess $entity         The entity being edited.
-             * @param array               $formDataEntity Entity form data, can be used for default values.
-             * @param array               $formDataOther  Other form data containing translations for example.
+             * @param string $objectType Treated object type.
+             * @param array  $formData   Form data containing translations.
              * @return array collected translations having the locales as keys
              */
-            public static function processEntityAfterEdit($objectType, $entity, $formDataEntity, $formDataOther)
+            public static function processEntityAfterEdit($objectType, $formData)
             {
                 $translations = array();
                 // check arguments
-                if (!$objectType || !$entity || !is_array($formDataEntity) || !is_array($formDataOther)) {
+                if (!$objectType || !is_array($formData)) {
                     return $translations;
                 }
 
-        $fields = self::getTranslatableFields($objectType);
-        if (!count($fields)) {
-            return $translations;
-        }
+                $fields = self::getTranslatableFields($objectType);
+                if (!count($fields)) {
+                    return $translations;
+                }
 
-        $supportedLocales = ZLanguage::getInstalledLanguages();
-        $useOnlyCurrentLocale = true;
-        if (System::getVar('multilingual') == 1) {
-            $useOnlyCurrentLocale = false;
-            $currentLanguage = ZLanguage::getLanguageCode();
-            foreach ($supportedLocales as $locale) {
-                if ($locale == $currentLanguage) {
-                    // skip current language as this is not treated as translation on controller level
-                    continue;
+                $supportedLocales = ZLanguage::getInstalledLanguages();
+                $useOnlyCurrentLocale = true;
+                if (System::getVar('multilingual') == 1) {
+                    $useOnlyCurrentLocale = false;
+                    $currentLanguage = ZLanguage::getLanguageCode();
+                    foreach ($supportedLocales as $locale) {
+                        if ($locale == $currentLanguage) {
+                            // skip current language as this is not treated as translation on controller level
+                            continue;
+                        }
+                        $translations[$locale] = array('locale' => $locale, 'fields' => array());
+                        $translationData = $formData[strtolower($objectType) . $locale];
+                        foreach ($fields as $field) {
+                            $translations[$locale]['fields'][$field['name']] = isset($translationData[$field['name'] . $locale]) ? $translationData[$field['name'] . $locale] : '';
+                            unset($formData[$field['name'] . $locale]);
+                        }
+                    }
                 }
-                $translations[$locale] = array('locale' => $locale, 'fields' => array());
-                $translationData = $formDataOther[strtolower($objectType) . $locale];
-                foreach ($fields as $field) {
-                    $translations[$locale]['fields'][$field['name']] = isset($translationData[$field['name'] . $locale]) ? $translationData[$field['name'] . $locale] : '';
-                    unset($formData[$field['name'] . $locale]);
-                }
-            }
-        }
-        if ($useOnlyCurrentLocale === true) {
-            $locale = ZLanguage::getLanguageCode();
-            $translations[$locale] = array('locale' => $locale, 'fields' => array());
-            $translationData = $formDataOther[strtolower($objectType) . $locale];
-            foreach ($fields as $field) {
-                $translations[$locale]['fields'][$field['name']] = isset($translationData[$field['name'] . $locale]) ? $translationData[$field['name'] . $locale] : '';
-                unset($formData[$field['name'] . $locale]);
-            }
+                if ($useOnlyCurrentLocale === true) {
+                    $locale = ZLanguage::getLanguageCode();
+                    $translations[$locale] = array('locale' => $locale, 'fields' => array());
+                    $translationData = $formData[strtolower($objectType) . $locale];
+                    foreach ($fields as $field) {
+                        $translations[$locale]['fields'][$field['name']] = isset($translationData[$field['name'] . $locale]) ? $translationData[$field['name'] . $locale] : '';
+                        unset($formData[$field['name'] . $locale]);
+                    }
                 }
                 return $translations;
             }

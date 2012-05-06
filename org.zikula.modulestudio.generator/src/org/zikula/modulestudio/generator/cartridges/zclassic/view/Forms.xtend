@@ -155,7 +155,7 @@ class Forms {
                 {/formvolatile}
             «ENDIF»
             «IF !hasTranslatableFields
-              || (hasTranslatableFields && !getEditableNonTranslatableFields.isEmpty || !hasTranslatableSlug)
+              || (hasTranslatableFields && (!getEditableNonTranslatableFields.isEmpty || (hasSluggableFields && !hasTranslatableSlug)))
               || geographical»
                 <fieldset>
                     <legend>{gt text='«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»'}</legend>
@@ -164,7 +164,7 @@ class Forms {
                     «ELSE»
                         «FOR field : getEditableFields»«field.fieldWrapper('', '')»«ENDFOR»
                     «ENDIF»
-                    «IF !hasTranslatableFields || !hasTranslatableSlug»
+                    «IF !hasTranslatableFields || (hasSluggableFields && !hasTranslatableSlug)»
                         «slugField('', '')»
                     «ENDIF»
                     «IF geographical»

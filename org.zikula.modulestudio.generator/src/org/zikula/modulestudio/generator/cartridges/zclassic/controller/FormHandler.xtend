@@ -626,13 +626,10 @@ class FormHandler {
 
             $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
             $repository = $this->entityManager->getRepository($entityClass);
-            if ($this->hasTranslatableFields === true) {
-                $transRepository = $this->entityManager->getRepository($entityClass . 'Translation');
-            }
 
-            $result = $this->fetchInputData($view, $args);
-            if ($result === false) {
-                 return $result;
+            $otherFormData = $this->fetchInputData($view, $args);
+            if ($otherFormData === false) {
+                 return false;
             }
 
             $hookAreaPrefix = '«app.name.formatForDB».ui_hooks.' . $this->objectTypeLowerMultiple;
@@ -652,7 +649,7 @@ class FormHandler {
                 «IF app.hasTranslatable»
 
                     if ($this->hasTranslatableFields === true) {
-                        $this->processTranslationsForUpdate($entity, $entityData, $formData);
+                        $this->processTranslationsForUpdate($entity, $otherFormData);
                     }
                 «ENDIF»
 
@@ -780,15 +777,14 @@ class FormHandler {
              * Prepare update of translations.
              *
              * @param Zikula_EntityAccess $entity     currently treated entity instance.
-             * @param Array               $entityData form data to be merged.
              * @param Array               $formData   additional form data outside the entity scope.
              * @return Array list of collected translations.
              */
-            protected function processTranslationsForUpdate($entity, $entityData, $formData)
+            protected function processTranslationsForUpdate($entity, $formData)
             {
-                $translations = «container.application.appName»_Util_Translatable::processEntityAfterEdit($this->objectType, $entity, $entityData, $formData);
-                // add translated values
-                //$entity->setLocale(ZLanguage::getLanguageCode());
+                $entityTransClass = $this->name . '_Entity_' . ucfirst($this->objectType) . 'Translation';
+                $transRepository = $this->entityManager->getRepository($entityTransClass);
+                $translations = «container.application.appName»_Util_Translatable::processEntityAfterEdit($this->objectType, $formData);
                 foreach ($translations as $translation) {
                     foreach ($translation['fields'] as $fieldName => $value) {
                         $transRepository->translate($entity, $fieldName, $translation['locale'], $value);

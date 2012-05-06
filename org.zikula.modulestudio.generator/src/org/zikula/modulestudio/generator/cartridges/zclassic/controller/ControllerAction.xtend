@@ -228,7 +228,7 @@ class ControllerAction {
             $resultsPerPage = (int) (isset($args['num']) && !empty($args['num'])) ? $args['num'] : $this->request->query->filter('num', 0, FILTER_VALIDATE_INT);
             if ($resultsPerPage == 0) {
                 $csv = (int) (isset($args['usecsv']) && !empty($args['usecsv'])) ? $args['usecsv'] : $this->request->query->filter('usecsvext', 0, FILTER_VALIDATE_INT);
-                $resultsPerPage = ($csv == 1) ? 999999 : $this->getVar('pagesize', 10);
+                $resultsPerPage = ($csv == 1) ? 999999 : $this->getVar('pageSize', 10);
             }
 
             $selectionArgs['currentPage'] = $currentPage;
