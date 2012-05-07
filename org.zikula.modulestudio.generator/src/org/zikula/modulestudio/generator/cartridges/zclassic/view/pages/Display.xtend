@@ -77,12 +77,11 @@ class Display {
         «displayExtensions(controller, objName)»
 
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-            «itemActions(appName, controller)»
-
             «callDisplayHooks(appName, controller)»
             «IF useGroupingPanels('display')»
                 </div>
             «ENDIF»
+            «itemActions(appName, controller)»
             «IF !refedElems.isEmpty»
                 <br style="clear: right" />
             «ENDIF»
@@ -225,14 +224,7 @@ class Display {
 
     def private itemActions(Entity it, String appName, Controller controller) '''
         {if count($«name.formatForCode»._actions) gt 0}
-            «IF useGroupingPanels('display')»
-                <h3 class="z-panel-header z-panel-indicator z-pointer">{gt text='Actions'}</h3>
-                <div class="z-panel-content" style="display: none">
-                    «itemActionsImpl(appName, controller)»
-                </div>
-            «ELSE»
-                «itemActionsImpl(appName, controller)»
-            «ENDIF»
+            «itemActionsImpl(appName, controller)»
         {/if}
     '''
 
