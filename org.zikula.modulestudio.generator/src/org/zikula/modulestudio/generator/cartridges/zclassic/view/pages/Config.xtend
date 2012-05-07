@@ -66,7 +66,7 @@ class Config {
             «ENDIF»
         </div>
         «IF !getAllVariables.filter(e|e.documentation != null && e.documentation != '').isEmpty»
-            <script type="text/javascript" charset="utf-8">
+            <script type="text/javascript">
             /* <![CDATA[ */
                 document.observe('dom:loaded', function() {
                     Zikula.UI.Tooltips($$('.«appName.formatForDB»FormTooltips'));

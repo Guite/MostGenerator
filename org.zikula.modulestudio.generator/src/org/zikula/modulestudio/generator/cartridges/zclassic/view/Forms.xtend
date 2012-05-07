@@ -238,7 +238,7 @@ class Forms {
             {pageaddvarblock name='header'}
                 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
                 <script type="text/javascript" src="{$baseurl}plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)"></script>
-                <script type="text/javascript" charset="utf-8">
+                <script type="text/javascript">
                 /* <![CDATA[ */
 
                     var mapstraction;
@@ -307,7 +307,7 @@ class Forms {
             {/pageaddvarblock}
         «ENDIF»
 
-        <script type="text/javascript" charset="utf-8">
+        <script type="text/javascript">
         /* <![CDATA[ */
             var editImage = '<img src="{{$editImageArray.src}}" width="16" height="16" alt="" />';
             var removeImage = '<img src="{{$deleteImageArray.src}}" width="16" height="16" alt="" />';
@@ -414,7 +414,7 @@ class Forms {
                 <script type="text/javascript" src="{$baseurl}modules/«app.appName»/javascript/«app.appName»_editFunctions.js"></script>
             </head>
             <body>
-                <script type="text/javascript" charset="utf-8">
+                <script type="text/javascript">
                 /* <![CDATA[ */
                     // close window from parent document
                     document.observe('dom:loaded', function() {

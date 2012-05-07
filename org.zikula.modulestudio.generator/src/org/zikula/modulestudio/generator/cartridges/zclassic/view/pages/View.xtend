@@ -109,7 +109,7 @@ class View {
         {include file='«controller.formattedName»/footer.tpl'}
 
         «IF hasBooleansWithAjaxToggleEntity»
-            <script type="text/javascript" charset="utf-8">
+            <script type="text/javascript">
             /* <![CDATA[ */
                 document.observe('dom:loaded', function() {
                 {{foreach item='«objName»' from=$items}}
@@ -302,7 +302,7 @@ class View {
                 <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«container.application.appName»' type='«controller.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" style="display: none">
                     {icon type='view' size='extrasmall' __alt='Quick view'}
                 </a>
-                <script type="text/javascript" charset="utf-8">
+                <script type="text/javascript">
                 /* <![CDATA[ */
                     document.observe('dom:loaded', function() {
                         «container.application.prefix»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{«IF leadingField != null»$«relObjName».«leadingField.name.formatForCode»«ELSE»gt text='«linkEntity.name.formatForDisplayCapital»'«ENDIF»|replace:"'":""}}');
@@ -357,7 +357,7 @@ class View {
                 {/foreach}
                 {icon id="«itemActionContainerIdForSmarty»trigger" type='options' size='extrasmall' __alt='Actions' style='display: none' class='z-pointer'}
             {/if}
-            <script type="text/javascript" charset="utf-8">
+            <script type="text/javascript">
             /* <![CDATA[ */
                 document.observe('dom:loaded', function() {
                     «container.application.prefix»InitItemActions('«name.formatForCode»', 'view', '«itemActionContainerIdForJs»');

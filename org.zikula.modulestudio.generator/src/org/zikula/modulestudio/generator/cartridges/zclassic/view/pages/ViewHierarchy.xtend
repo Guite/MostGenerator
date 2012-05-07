@@ -40,7 +40,7 @@ class ViewHierarchy {
                     {gt text='Add root node' assign='addRootTitle'}
                     <a id="z-tree-addroot" href="javascript:void(0)" title="{$addRootTitle}" style="display: none" class="z-icon-es-add">{$addRootTitle}</a>
 
-                    <script type="text/javascript" charset="utf-8">
+                    <script type="text/javascript">
                 /* <![CDATA[ */
                 document.observe('dom:loaded', function() {
                        $('z-tree-addroot').observe('click', function(event) {
@@ -123,7 +123,7 @@ class ViewHierarchy {
         </div>
 
         {pageaddvar name='javascript' value='modules/«appName»/javascript/«appName»_tree.js'}
-        <script type="text/javascript" charset="utf-8">
+        <script type="text/javascript">
         /* <![CDATA[ */
             document.observe('dom:loaded', function() {
             {{if $hasNodes}}

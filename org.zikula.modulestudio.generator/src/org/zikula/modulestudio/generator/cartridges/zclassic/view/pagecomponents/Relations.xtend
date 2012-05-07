@@ -50,7 +50,7 @@ class Relations {
             </a>
             «IF !many»</h4>
             «ENDIF»
-            <script type="text/javascript" charset="utf-8">
+            <script type="text/javascript">
             /* <![CDATA[ */
                 document.observe('dom:loaded', function() {
                     «IF leadingField != null»

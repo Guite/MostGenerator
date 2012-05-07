@@ -95,7 +95,7 @@ class Display {
 
         «IF hasBooleansWithAjaxToggleEntity || useGroupingPanels('display')»
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-            <script type="text/javascript" charset="utf-8">
+            <script type="text/javascript">
             /* <![CDATA[ */
                 document.observe('dom:loaded', function() {
                     «IF hasBooleansWithAjaxToggleEntity»
@@ -199,7 +199,7 @@ class Display {
         <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«container.application.appName»' type='«controller.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" style="display: none">
             {icon type='view' size='extrasmall' __alt='Quick view'}
         </a>
-        <script type="text/javascript" charset="utf-8">
+        <script type="text/javascript">
         /* <![CDATA[ */
             document.observe('dom:loaded', function() {
                 «val leadingLinkField = linkEntity.getLeadingField»
@@ -243,7 +243,7 @@ class Display {
             <a href="{$option.url.type|«appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}" class="z-icon-es-{$option.icon}">{$option.linkText|safetext}</a>
         {/foreach}
         </p>
-        <script type="text/javascript" charset="utf-8">
+        <script type="text/javascript">
         /* <![CDATA[ */
             document.observe('dom:loaded', function() {
                 «container.application.prefix»InitItemActions('«name.formatForCode»', 'display', 'itemactions');
@@ -263,7 +263,7 @@ class Display {
             {pageaddvarblock name='header'}
                 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
                 <script type="text/javascript" src="{$baseurl}plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)"></script>
-                <script type="text/javascript" charset="utf-8">
+                <script type="text/javascript">
                 /* <![CDATA[ */
                     var mapstraction;
                     Event.observe(window, 'load', function() {
