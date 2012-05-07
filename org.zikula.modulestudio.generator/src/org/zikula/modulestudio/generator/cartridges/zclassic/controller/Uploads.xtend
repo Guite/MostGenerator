@@ -98,6 +98,11 @@ class Uploads {
             protected $forbiddenFileTypes;
 
             /**
+             * @var array List of allowed file sizes per field.
+             */
+            protected $allowedFileSizes;
+
+            /**
              * Constructor initialising the supported object types.
              */
             public function __construct()
@@ -105,6 +110,7 @@ class Uploads {
                 $this->allowedObjectTypes = array(«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
                 $this->imageFileTypes = array('gif', 'jpeg', 'jpg', 'png');
                 $this->forbiddenFileTypes = array('cgi', 'pl', 'asp', 'phtml', 'php', 'php3', 'php4', 'php5', 'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml');
+                $this->allowedFileSizes = array(«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»' => array(«FOR field : entity.getUploadFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»' => «field.allowedFileSize»«ENDFOR»)«ENDFOR»);
             }
 
             «performFileUpload»
@@ -146,7 +152,7 @@ class Uploads {
             }
 
             // perform validation
-            if (!$this->validateFileUpload($fileData[$fieldName])) {
+            if (!$this->validateFileUpload($objectType, $fileData[$fieldName], $fieldName)) {
                 // skip this upload field
                 return $result;
             }
@@ -179,11 +185,13 @@ class Uploads {
         /**
          * Check if an upload file meets all validation criteria.
          *
+         * @param string $objectType Currently treated entity type.
          * @param array $file Reference to data of uploaded file.
+         * @param string $fieldName  Name of upload field.
          *
          * @return boolean true if file is valid else false
          */
-        protected function validateFileUpload($file)
+        protected function validateFileUpload($objectType, $file, $fieldName)
         {
             $dom = ZLanguage::getModuleDomain('«appName»');
 
@@ -205,6 +213,15 @@ class Uploads {
             $isValidExtension = $this->isAllowedFileExtension($objectType, $fieldName, $extension);
             if ($isValidExtension === false) {
                 return LogUtil::registerError(__('Error! This file type is not allowed. Please choose another file format.', $dom));
+            }
+
+            $maxSize = $this->allowedFileSizes[$objectType][$fieldName];
+            if ($maxSize > 0) {
+                $fileSize = filesize($file['tmp_name']);
+                if ($fileSize > $maxSize) {
+                    $maxSizeMB = $maxSize / (1024 * 1024);
+                    return LogUtil::registerError(__('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
+                }
             }
 
             // validate image file

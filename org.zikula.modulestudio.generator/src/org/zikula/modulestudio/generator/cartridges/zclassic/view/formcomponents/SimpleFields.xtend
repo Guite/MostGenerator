@@ -118,6 +118,9 @@ class SimpleFields {
         «ENDIF»
 
             <div class="z-formnote">{gt text='Allowed file extensions:'} <span id="fileextensions«name.formatForCode»">«allowedExtensions»</span></div>
+        «IF allowedFileSize > 0»
+            <div class="z-formnote">{gt text='Allowed file size:'} {'«allowedFileSize»'|«entity.container.application.appName.formatForDB»GetFileSize:'':false:false}</div>
+        «ENDIF»
             {if $mode ne 'create'}
             «val appNameSmall = entity.container.application.name.formatForDB»
             «val objName = entity.name.formatForCode»
