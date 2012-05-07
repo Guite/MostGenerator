@@ -72,7 +72,6 @@ class Display {
         «IF useGroupingPanels('display')»
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             </div>
-        </div>
         {/if}
         «ENDIF»
         «displayExtensions(controller, objName)»
