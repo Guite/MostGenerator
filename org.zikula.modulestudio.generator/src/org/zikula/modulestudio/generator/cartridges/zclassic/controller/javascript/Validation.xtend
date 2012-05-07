@@ -41,6 +41,9 @@ class Validation {
                 «ENDIF»
                 «IF hasUploads»
                 ['validate-upload', Zikula.__('Please select a valid file extension.', 'module_«appName»'), function(val, elem) {
+                    if (val == '') {
+                        return true;
+                    }
                     var allowedExtensions = $('fileextensions' + elem.id).innerHTML;
                     allowedExtensions = '(.' + allowedExtensions.replace(/, /g, '|.') + ')$';
                     allowedExtensions = new RegExp(allowedExtensions, 'i');
