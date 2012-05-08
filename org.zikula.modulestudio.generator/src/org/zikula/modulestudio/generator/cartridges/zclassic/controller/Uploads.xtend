@@ -264,6 +264,10 @@ class Uploads {
                 return $meta;
             }
 
+            if ($meta['extension'] == 'swf') {
+                $meta['isImage'] = false;
+            }
+
             $imgInfo = getimagesize($filePath);
             if (!is_array($imgInfo)) {
                 return $meta;
