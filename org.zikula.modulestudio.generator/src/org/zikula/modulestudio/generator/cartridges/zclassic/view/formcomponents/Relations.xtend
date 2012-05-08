@@ -179,7 +179,7 @@ class Relations {
                 <div id="{$idPrefix}SelectorChoices" class="«app.prefix»AutoComplete«IF targetEntity.hasImageFieldsEntity»WithImage«ENDIF»"></div>
                 <input type="button" id="{$idPrefix}SelectorDoCancel" name="{$idPrefix}SelectorDoCancel" value="{gt text='Cancel'}" class="z-button «app.prefix»InlineButton" />
                 «IF includeEditing»
-                    <a id="{$idPrefix}SelectorDoNew" href="{modurl modname='«app.appName»' type='«controller.formattedName»' func='edit' ot='«targetEntity.name.formatForCode»'}" title="{gt text='Create new «targetEntity.name.formatForDisplay»'}" class="z-button «app.prefix»InlineButton">{gt text='Create'}</a>
+                    <a id="{$idPrefix}SelectorDoNew" href="{modurl modname='«app.appName»' type='«controller.formattedName»' func='edit' ot='«targetEntity.name.formatForCode»'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Create new «targetEntity.name.formatForDisplay»'}" class="z-button «app.prefix»InlineButton">{gt text='Create'}</a>
                 «ENDIF»
             </div>
             <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
