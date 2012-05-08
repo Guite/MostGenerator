@@ -487,7 +487,7 @@ class Uploads {
 
 
             $fileExtension = FileUtil::getExtension($fileName, false);
-            if (!in_array($fileExtension, $this->imageFileTypes) && $fileExtension != 'swf') {
+            if (!in_array($fileExtension, $this->imageFileTypes) || $fileExtension == 'swf') {
                 // we are done, so let's return
                 return $objectData;
             }
