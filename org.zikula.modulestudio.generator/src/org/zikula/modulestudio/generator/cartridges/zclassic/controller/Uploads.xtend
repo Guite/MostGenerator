@@ -108,7 +108,7 @@ class Uploads {
             public function __construct()
             {
                 $this->allowedObjectTypes = array(«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
-                $this->imageFileTypes = array('gif', 'jpeg', 'jpg', 'png');
+                $this->imageFileTypes = array('gif', 'jpeg', 'jpg', 'png', 'swf');
                 $this->forbiddenFileTypes = array('cgi', 'pl', 'asp', 'phtml', 'php', 'php3', 'php4', 'php5', 'exe', 'com', 'bat', 'jsp', 'cfm', 'shtml');
                 $this->allowedFileSizes = array(«FOR entity : getUploadEntities SEPARATOR ', '»'«entity.name.formatForCode»' => array(«FOR field : entity.getUploadFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»' => «field.allowedFileSize»«ENDFOR»)«ENDFOR»);
             }
@@ -487,7 +487,7 @@ class Uploads {
 
 
             $fileExtension = FileUtil::getExtension($fileName, false);
-            if (!in_array($fileExtension, $this->imageFileTypes)) {
+            if (!in_array($fileExtension, $this->imageFileTypes) && $fileExtension != 'swf') {
                 // we are done, so let's return
                 return $objectData;
             }
