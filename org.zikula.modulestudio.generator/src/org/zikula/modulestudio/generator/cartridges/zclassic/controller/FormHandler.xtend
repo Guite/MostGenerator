@@ -776,9 +776,8 @@ class FormHandler {
             /**
              * Prepare update of translations.
              *
-             * @param Zikula_EntityAccess $entity     currently treated entity instance.
-             * @param Array               $formData   additional form data outside the entity scope.
-             * @return Array list of collected translations.
+             * @param Zikula_EntityAccess $entity   currently treated entity instance.
+             * @param Array               $formData additional form data outside the entity scope.
              */
             protected function processTranslationsForUpdate($entity, $formData)
             {
