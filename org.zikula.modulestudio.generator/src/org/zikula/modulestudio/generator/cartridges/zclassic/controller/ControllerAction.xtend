@@ -35,6 +35,7 @@ class ControllerAction {
         {
             «actionImpl(app)»
         }
+        «/* this line is on purpose */»
     '''
 
     def private actionDoc(Action it) '''
@@ -104,14 +105,16 @@ class ControllerAction {
     }
 
     def private actionImpl(Action it, Application app) '''
-        «permissionCheck»
-        «IF !tempIsMainAction»
+        «IF tempIsMainAction»
+            «permissionCheck('', '')»
+        «ELSE»
             // parameter specifying which type of objects we are treating
             $objectType = (isset($args['ot']) && !empty($args['ot'])) ? $args['ot'] : $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             $utilArgs = array('controller' => '«controller.formattedName»', 'action' => '«name.formatForCode.toFirstLower»');
             if (!in_array($objectType, «app.appName»_Util_Controller::getObjectTypes('controllerAction', $utilArgs))) {
                 $objectType = «app.appName»_Util_Controller::getDefaultObjectType('controllerAction', $utilArgs);
             }
+            «permissionCheck("' . ucwords($objectType) . '", '')»
         «ENDIF»
         «actionImplBody(app.appName)»
     '''
@@ -119,13 +122,13 @@ class ControllerAction {
     /**
      * Permission checks in system use cases.
      */
-    def private permissionCheck(Action it) {
+    def private permissionCheck(Action it, String objectTypeVar, String instanceId) {
         switch controller {
             AdminController: '''
-                        $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN));
+                        $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', ACCESS_ADMIN));
                     '''
             default: '''
-                        $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::', '::', «getPermissionAccessLevel»));
+                        $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', «getPermissionAccessLevel»));
                     '''
         }
     }
@@ -268,12 +271,19 @@ class ControllerAction {
         $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues«controller.addSlugToSelection»));
         $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
 
-        // build ModUrl instance for display hooks
+        // build ModUrl instance for display hooks; also create identifier for permission check
         $currentUrlArgs = array('ot' => $objectType);
+        $instanceId = '';
         foreach ($idFields as $idField) {
             $currentUrlArgs[$idField] = $idValues[$idField];
+            if (!empty($instanceId)) {
+                $instanceId .= '_';
+            }
+            $instanceId .= $idValues[$idField];
         }
         $currentUrlObject = new Zikula_ModUrl($this->name, '«controller.formattedName»', 'display', ZLanguage::getLanguageCode(), $currentUrlArgs);
+
+        «permissionCheck("' . ucwords($objectType) . '", "$instanceId . ")»
 
         // assign output data to view object.
         $this->view->assign($objectType, $entity)

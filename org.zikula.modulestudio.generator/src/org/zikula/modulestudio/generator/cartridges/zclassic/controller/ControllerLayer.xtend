@@ -175,7 +175,7 @@ class ControllerLayer {
                 «menuLinksBetweenControllers»
                 «IF hasActions('view')»
                     «FOR entity : app.getAllEntities»
-                        if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_«menuLinksPermissionLevel»)) {
+                        if (SecurityUtil::checkPermission($this->name . ':«entity.name.formatForCodeCapital»:', '::', ACCESS_«menuLinksPermissionLevel»)) {
                             $links[] = array('url' => ModUtil::url($this->name, '«formattedName»', 'view', array('ot' => '«entity.name.formatForCode»')),
                                              'text' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'),
                                              'title' => $this->__('«entity.name.formatForDisplayCapital» list'));

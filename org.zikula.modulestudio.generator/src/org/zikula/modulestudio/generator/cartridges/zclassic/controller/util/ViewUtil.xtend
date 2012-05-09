@@ -131,13 +131,13 @@ class ViewUtil {
             {
                 $extParams = array();
                 if ($func == 'view') {
-                    if (SecurityUtil::checkPermission('«appName»::', '::', ACCESS_ADMIN)) {
+                    if (SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_ADMIN)) {
                         $extParams = array('csv', 'rss', 'atom', 'xml', 'json', 'kml'/*, 'pdf'*/);
                     } else {
                         $extParams = array('rss', 'atom'/*, 'pdf'*/);
                     }
                 } elseif ($func == 'display') {
-                    if (SecurityUtil::checkPermission('«appName»::', '::', ACCESS_ADMIN)) {
+                    if (SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_ADMIN)) {
                         $extParams = array('xml', 'json', 'kml'/*, 'pdf'*/);
                     }
                 }

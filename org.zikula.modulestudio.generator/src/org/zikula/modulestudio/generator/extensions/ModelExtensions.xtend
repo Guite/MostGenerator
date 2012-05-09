@@ -264,6 +264,18 @@ class ModelExtensions {
     }
 
     /**
+     * Concatenates all id strings using underscore as delimiter.
+     * Used for generating some controller classes. 
+     */
+    def idFieldsAsParameterCode(Entity it, String objVar) '''«IF hasCompositeKeys»«FOR pkField : getPrimaryKeyFields SEPARATOR ' . \'_\' . '»$this->«pkField.name.formatForCode»«ENDFOR»«ELSE»$this->«getFirstPrimaryKey.name.formatForCode»«ENDIF»'''
+
+    /**
+     * Concatenates all id strings using underscore as delimiter.
+     * Used for generating some view templates. 
+     */
+    def idFieldsAsParameterTemplate(Entity it) '''«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«name.formatForCode».«pkField.name.formatForCode»`«ENDFOR»'''
+
+    /**
      * Returns a list of all editable fields of the given entity.
      * At the moment instances of ArrayField and ObjectField are excluded.
      */

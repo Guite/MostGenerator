@@ -97,11 +97,11 @@ class Relations {
         «IF !many»
             {if !isset($«relatedEntity.name.formatForCode».«relationAliasName») || $«relatedEntity.name.formatForCode».«relationAliasName» eq null}
         «ENDIF»
-        {checkpermission component='«appName»::' instance='.*' level='ACCESS_ADMIN' assign='authAdmin'}
+        {checkpermission component='«appName»:«relatedEntity.name.formatForCodeCapital»:' instance="«relatedEntity.idFieldsAsParameterTemplate»::" level='ACCESS_ADMIN' assign='authAdmin'}
         {if $authAdmin || (isset($uid) && isset($«relatedEntity.name.formatForCode».createdUserId) && $«relatedEntity.name.formatForCode».createdUserId eq $uid)}
         <p class="manageLink">
             {gt text='Create «otherEntity.name.formatForDisplay»' assign='createTitle'}
-            <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='edit' ot='«otherEntity.name.formatForCode»' «relationAliasNameParam.formatForDB»="«FOR pkField : relatedEntity.getPrimaryKeyFields SEPARATOR '_'»`$«relatedEntity.name.formatForCode».«pkField.name.formatForCode»`«ENDFOR»" returnTo='«controller.formattedName»Display«relatedEntity.name.formatForCodeCapital»'}" title="{$createTitle}" class="z-icon-es-add">
+            <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='edit' ot='«otherEntity.name.formatForCode»' «relationAliasNameParam.formatForDB»="«relatedEntity.idFieldsAsParameterTemplate»" returnTo='«controller.formattedName»Display«relatedEntity.name.formatForCodeCapital»'}" title="{$createTitle}" class="z-icon-es-add">
                 {$createTitle}
             </a>
         </p>

@@ -321,7 +321,7 @@ class Entities {
                     «IF controller.hasActions('view') || controller.hasActions('display')»
                         if (in_array($currentFunc, array('main', 'view', 'display'))) {
                             «IF controller.hasActions('edit')»
-                                if (SecurityUtil::checkPermission('«appName»::', '.*', ACCESS_EDIT)) {
+                                if (SecurityUtil::checkPermission('«appName»:«name.formatForCodeCapital»:', «idFieldsAsParameterCode('this')» . '::', ACCESS_EDIT)) {
                             «IF !readOnly»«/*create is allowed, but editing not*/»
                                 $this->_actions[] = array(
                                     'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»)),
@@ -345,7 +345,7 @@ class Entities {
                                 }
                             «ENDIF»
                             «IF controller.hasActions('delete')»
-                                if (SecurityUtil::checkPermission('«appName»::', '.*', ACCESS_DELETE)) {
+                                if (SecurityUtil::checkPermission('«appName»:«name.formatForCodeCapital»:', «idFieldsAsParameterCode('this')» . '::', ACCESS_DELETE)) {
                                     $this->_actions[] = array(
                                         'url' => array('type' => '«controller.formattedName»', 'func' => 'delete', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»)),
                                         'icon' => 'delete',

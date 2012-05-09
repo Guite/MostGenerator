@@ -13,7 +13,7 @@ class ThirdParty {
          */
         public static function pendingContentListener(Zikula_Event $event)
         {
-            if (!SecurityUtil::checkPermission('«appName»::', '::', ACCESS_MODERATE)) {
+            if (!SecurityUtil::checkPermission('«appName»:objecttype:', 'ids::', ACCESS_MODERATE)) {
                 return;
             }
             /** this is an example implementation from the Users module

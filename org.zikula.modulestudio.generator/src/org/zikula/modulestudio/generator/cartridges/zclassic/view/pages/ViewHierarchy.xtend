@@ -36,7 +36,7 @@ class ViewHierarchy {
 
         <p>
             «IF controller.hasActions('edit')»
-                {checkpermissionblock component='«appName»::' instance='.*' level="ACCESS_ADD"}
+                {checkpermissionblock component='«appName»:«name.formatForCodeCapital»:' instance='.*' level='ACCESS_ADD'}
                     {gt text='Add root node' assign='addRootTitle'}
                     <a id="z-tree-addroot" href="javascript:void(0)" title="{$addRootTitle}" style="display: none" class="z-icon-es-add">{$addRootTitle}</a>
 

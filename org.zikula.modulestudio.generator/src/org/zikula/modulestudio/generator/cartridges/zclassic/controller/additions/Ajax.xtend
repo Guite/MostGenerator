@@ -41,7 +41,7 @@ class Ajax {
              */ 
             public function getCommonUsersList()
             {
-                if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_EDIT)) {
+                if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
                     return true;
                 }
 
@@ -85,7 +85,7 @@ class Ajax {
              */
             public function getItemList()
             {
-                if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_EDIT)) {
+                if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
                     return true;
                 }
 
@@ -180,7 +180,7 @@ class Ajax {
             public function checkForDuplicate()
             {
                 $this->checkAjaxToken();
-                $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_EDIT));
+                $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
 
                 $objectType = $this->request->request->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
                 if (!in_array($objectType, «app.appName»_Util_Controller::getObjectTypes('controllerAction', array('controller' => '«formattedName»', 'action' => 'checkForDuplicate')))) {
@@ -257,7 +257,7 @@ class Ajax {
              */
             public function toggleFlag()
             {
-                $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name. '::', '::', ACCESS_EDIT));
+                $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name. '::Ajax', '::', ACCESS_EDIT));
 
                 $objectType = $this->request->request->filter('ot', '', FILTER_SANITIZE_STRING);
                 $field = $this->request->request->filter('field', '', FILTER_SANITIZE_STRING);
@@ -302,7 +302,7 @@ class Ajax {
              */
             public function handleTreeOperation()
             {
-                $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_EDIT));
+                $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
 
                 «val treeEntities = app.getTreeEntities»
                 // parameter specifying which type of objects we are treating

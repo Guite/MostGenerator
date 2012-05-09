@@ -99,10 +99,10 @@ class SimpleApproval {
         function «appName»_workflow_simpleapproval_permissioncheck($obj, $permLevel, $currentUser)
         {
             /** TODO */
-            $component = '«appName»::';
+            $component = '«appName»:objecttype:';
             // process $obj and calculate an instance
             /** TODO */
-            $instance = '::';
+            $instance = 'ids::';
 
             return SecurityUtil::checkPermission($component, $instance, $permLevel, $currentUser);
         }

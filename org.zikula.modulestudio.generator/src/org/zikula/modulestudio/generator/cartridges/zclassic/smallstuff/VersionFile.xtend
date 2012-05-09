@@ -3,16 +3,18 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.Relationship
+import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class VersionFile {
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
 
@@ -58,12 +60,12 @@ class VersionFile {
                 // define special capabilities of this module
                 $meta['capabilities'] = array(
                                   HookUtil::SUBSCRIBER_CAPABLE => array('enabled' => true)
-/*,
+        /*,
                                   HookUtil::PROVIDER_CAPABLE => array('enabled' => true), // TODO: see #15
                                   'authentication' => array('version' => '1.0'),
                                   'profile'        => array('version' => '1.0', 'anotherkey' => 'anothervalue'),
                                   'message'        => array('version' => '1.0', 'anotherkey' => 'anothervalue')
-*/
+        */
                 );
 
                 // permission schema
@@ -84,7 +86,7 @@ class VersionFile {
              */
             protected function setupHookBundles()
             {
-«val appName = name.formatForDB»
+        «val appName = name.formatForDB»
                 «FOR entity : getAllEntities»
                     «/* we register one hook subscriber bundle foreach entity type */»
                     «val areaName = entity.nameMultiple.formatForDB»
@@ -142,6 +144,7 @@ class VersionFile {
     def private permissionSchema(Application it) '''
         $meta['securityschema'] = array(
             '«appName»::' => '::',
+            '«appName»::Ajax' => '::',
             «FOR entity : getAllEntities»«entity.permissionSchema(appName)»«ENDFOR»
         );
         // DEBUG: permission schema aspect ends
@@ -156,13 +159,13 @@ class VersionFile {
     '''
 
     def private permissionSchema(Entity it, String appName) '''
-        «IF !incoming.isEmpty»
-            «FOR relation : incoming»«relation.permissionSchema(appName)»«ENDFOR»
+        '«appName»:«name.formatForCodeCapital»:' => '«name.formatForCodeCapital» ID::',
+        «IF !getIncomingJoinRelations.isEmpty»
+            «FOR relation : getIncomingJoinRelations»«relation.permissionSchema(appName)»«ENDFOR»
         «ENDIF»
-        '«appName»:«name.formatForCodeCapital»:' => '«name.formatForCodeCapital»ID::',
     '''
 
-    def private permissionSchema(Relationship it, String modName) '''
-        '«modName»:«source.name.formatForCodeCapital»:«target.name.formatForCodeCapital»' => '«source.name.formatForCodeCapital»ID:«target.name.formatForCodeCapital»ID:',
+    def private permissionSchema(JoinRelationship it, String modName) '''
+        '«modName»:«source.name.formatForCodeCapital»:«target.name.formatForCodeCapital»' => '«source.name.formatForCodeCapital» ID:«target.name.formatForCodeCapital» ID:',
     '''
 }

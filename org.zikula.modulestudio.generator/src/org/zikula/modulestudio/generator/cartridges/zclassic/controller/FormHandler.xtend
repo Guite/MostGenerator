@@ -348,7 +348,7 @@ class FormHandler {
             $this->mode = ($hasIdentifier) ? 'edit' : 'create';
 
             if ($this->mode == 'edit') {
-                if (!SecurityUtil::checkPermission($this->permissionComponent, '::', ACCESS_EDIT)) {
+                if (!SecurityUtil::checkPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_EDIT)) {
                     // set an error message and return false
                     return LogUtil::registerPermissionError();
                 }
@@ -612,7 +612,7 @@ class FormHandler {
         public function HandleCommand(Zikula_Form_View $view, &$args)
         {
             if ($args['commandName'] == 'delete') {
-                if (!SecurityUtil::checkPermission($this->permissionComponent, '::', ACCESS_DELETE)) {
+                if (!SecurityUtil::checkPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_DELETE)) {
                     return LogUtil::registerPermissionError();
                 }
             }
