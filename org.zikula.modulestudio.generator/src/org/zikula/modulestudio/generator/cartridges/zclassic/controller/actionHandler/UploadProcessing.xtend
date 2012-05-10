@@ -44,6 +44,7 @@ class UploadProcessing {
                             $existingObjectData = $uploadManager->deleteUploadFile($this->objectType, $existingObjectData, $uploadField);
                             if (empty($existingObjectData[$uploadField])) {
                                 $existingObject[$uploadField] = '';
+                                $existingObject[$uploadField . 'Meta'] = array();
                             }
                         }
                         unset($formData[$uploadField . 'DeleteFile']);
@@ -64,6 +65,7 @@ class UploadProcessing {
                     $existingObjectData = $uploadManager->deleteUploadFile($this->objectType, $existingObjectData, $uploadField);
                     if (empty($existingObjectData[$uploadField])) {
                         $existingObject[$uploadField] = '';
+                        $existingObject[$uploadField . 'Meta'] = array();
                     }
                 }
 
