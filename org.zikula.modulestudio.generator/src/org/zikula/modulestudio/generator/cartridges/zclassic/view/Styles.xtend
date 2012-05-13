@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -11,6 +12,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Styles {
+    @Inject extension ControllerExtensions = new ControllerExtensions()
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
@@ -71,6 +73,7 @@ class Styles {
         «ENDIF»
         «validationStyles»
         «autoCompletion»
+        «viewFilterForm»
         «IF interactiveInstallation»
 
             dl#«name.formatForDB»featurelist {
@@ -213,6 +216,30 @@ class Styles {
                 «ENDIF»
             «ENDIF»
 
+        «ENDIF»
+    '''
+
+    def private viewFilterForm(Application it) '''
+        «IF !getAllControllers.map(e|e.hasActions('view')).isEmpty»
+            div.«appName.toLowerCase»-view form.«prefix»QuickNavForm {
+                margin: 10px 0;
+                padding: 8px 12px;
+                border: 1px solid #ccc;
+            }
+
+            div.«appName.toLowerCase»-view form.«prefix»QuickNavForm fieldset {
+                padding: 3px 10px;
+                margin-bottom: 0;
+            }
+
+            div.«appName.toLowerCase»-view form.«prefix»QuickNavForm fieldset h3 {
+                margin-top: 0;
+            }
+
+            div.«appName.toLowerCase»-view form.«prefix»QuickNavForm fieldset #num {
+                width: 50px;
+                text-align: right;
+            }
         «ENDIF»
     '''
 }

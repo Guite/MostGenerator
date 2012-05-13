@@ -14,21 +14,24 @@ import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.NamedObject
 import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.OneToOneRelationship
+import de.guite.modulestudio.metamodel.modulestudio.UserController
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.ViewQuickNavForm
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
-import de.guite.modulestudio.metamodel.modulestudio.UserController
 
 class View {
     @Inject extension ControllerExtensions = new ControllerExtensions()
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension UrlExtensions = new UrlExtensions()
     @Inject extension Utils = new Utils()
@@ -49,6 +52,7 @@ class View {
         println('Generating ' + controller.formattedName + ' view templates for entity "' + name.formatForDisplay + '"')
         this.listType = listType
         fsa.generateFile(templateFile(controller, name, 'view'), viewView(appName, controller))
+        new ViewQuickNavForm().generate(it, appName, controller, fsa)
     }
 
     def private viewView(Entity it, String appName, Controller controller) '''
@@ -97,6 +101,8 @@ class View {
                 {$linkTitle}
             </a>
         «ENDIF»
+
+        {include file='«controller.formattedName»/«name.formatForCode»/view_quickNav.tpl'}{* see template file for available options *}
 
         «viewItemList(appName, controller)»
 
@@ -259,9 +265,17 @@ class View {
     '''
 
     def private headerSortingLink(Object it, Controller controller, Entity entity, String fieldName, String label) '''
-        {sortlink __linktext='«label.formatForDisplayCapital»' sort='«fieldName»' currentsort=$sort sortdir=$sdir all=$all modname='«controller.container.application.appName»' type='«controller.formattedName»' func='view' ot='«entity.name.formatForCode»'}
+        {sortlink __linktext='«label.formatForDisplayCapital»' sort='«fieldName»'«headerSortingLinkParameters(entity)» modname='«controller.container.application.appName»' type='«controller.formattedName»' func='view' ot='«entity.name.formatForCode»'}
     '''
 
+    def private headerSortingLinkParameters(Entity it) ''' currentsort=$sort sortdir=$sdir all=$all«IF categorisable» catid=$catId«ENDIF»«sortParamsForIncomingRelations»«sortParamsForListFields»«sortParamsForUserFields»«sortParamsForCountryFields»«sortParamsForLanguageFields»«IF hasAbstractStringFieldsEntity» searchterm=$searchterm«ENDIF» pageSize=$pageSize«sortParamsForBooleanFields»'''
+
+    def private sortParamsForIncomingRelations(Entity it) '''«IF !getIncomingJoinRelationsWithOneSource.isEmpty»«FOR relation: getIncomingJoinRelationsWithOneSource»«val sourceAliasName = relation.getRelationAliasName(false).formatForCodeCapital» «sourceAliasName»=$«sourceAliasName»«ENDFOR»«ENDIF»'''
+    def private sortParamsForListFields(Entity it) '''«IF hasListFieldsEntity»«FOR field : getListFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
+    def private sortParamsForUserFields(Entity it) '''«IF hasUserFieldsEntity»«FOR field : getUserFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
+    def private sortParamsForCountryFields(Entity it) '''«IF hasCountryFieldsEntity»«FOR field : getCountryFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
+    def private sortParamsForLanguageFields(Entity it) '''«IF hasLanguageFieldsEntity»«FOR field : getLanguageFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
+    def private sortParamsForBooleanFields(Entity it) '''«IF hasBooleanFieldsEntity»«FOR field : getBooleanFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
 
     def private displayEntry(Object it, Controller controller, Boolean useTarget) '''
         «IF listType != 3»

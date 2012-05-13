@@ -33,7 +33,7 @@ class Selection {
 
     def private selectionBaseClass(Application it) '''
 		/**
-		 * Selection api base class
+		 * Selection api base class.
 		 */
 		class «appName»_«fillingApi»Base_Selection extends Zikula_AbstractApi
 		{
@@ -43,9 +43,9 @@ class Selection {
 
     def private selectionBaseImpl(Application it) '''
         /**
-         * Get list of identifier fields for a given object type.
+         * Gets the list of identifier fields for a given object type.
          *
-         * @param string  $args['ot'] The object type to be treated (optional)
+         * @param string $args['ot'] The object type to be treated (optional)
          *
          * @return array List of identifier field names.
          */
@@ -59,7 +59,7 @@ class Selection {
         }
 
         /**
-         * Select a single entity.
+         * Selects a single entity.
          *
          * @param string  $args['ot']       The object type to retrieve (optional)
          * @param mixed   $args['id']       The id (or array of ids) to use to retrieve the object (default=null).
@@ -99,14 +99,76 @@ class Selection {
         }
 
         /**
-         * Select a list of entities by different criteria.
+         * Selects a single entity by different criteria, using only the
+         * primary string/text field«IF hasSluggable», the slug «ENDIF»and the identifier.
+         * There are no joins used.
+         *
+         * @param string  $args['ot']       The object type to retrieve (optional)
+         * @param mixed   $args['id']       The id (or array of ids) to use to retrieve the object (default=null).
+         «IF hasSluggable»
+          * @param string  $args['slug']     Slug to use as selection criteria instead of id (optional) (default=null).
+         «ENDIF»
+         *
+         * @return mixed Desired entity object or null.
+         */
+        public function getEntity($args)
+        {
+            if (!isset($args['id'])«IF hasSluggable» && !isset($args['slug'])«ENDIF») {
+                return LogUtil::registerArgsError();
+            }
+            $objectType = $this->determineObjectType($args, 'getEntity');
+            $repository = $this->getRepository($objectType);
+
+            $idValues = $args['id'];
+            «IF hasSluggable»
+                $slug = isset($args['slug']) ? $args['slug'] : null;
+            «ENDIF»
+
+            «IF hasSluggable»
+                $entity = null;
+                if ($slug != null) {
+                    $entity = $repository->selectBySlugSimple($slug);
+                } else {
+                    $entity = $repository->selectByIdSimple($idValues);
+                }
+            «ELSE»
+                $entity = $repository->selectByIdSimple($idValues);
+            «ENDIF»
+
+            return $entity;
+        }
+
+        /**
+         * Selects a simple list of entities by different criteria, using only the
+         * primary string/text field«IF hasSluggable», the slug «ENDIF»and the identifier.
+         * There are no joins used.
+         *
+         * @param string  $args['ot']      The object type to retrieve (optional)
+         * @param string  $args['where']   The where clause to use when retrieving the collection (optional) (default='').
+         * @param string  $args['orderBy'] The order-by clause to use when retrieving the collection (optional) (default='').
+         *
+         * @return Array with retrieved collection.
+         */
+        public function getEntitiesSimple($args)
+        {
+            $objectType = $this->determineObjectType($args, 'getEntitiesSimple');
+            $repository = $this->getRepository($objectType);
+
+            $where = isset($args['where']) ? $args['where'] : '';
+            $orderBy = isset($args['orderBy']) ? $args['orderBy'] : '';
+
+            return $repository->selectWhereSimple($where, $orderBy);
+        }
+
+        /**
+         * Selects a list of entities by different criteria.
          *
          * @param string  $args['ot']       The object type to retrieve (optional)
          * @param string  $args['where']    The where clause to use when retrieving the collection (optional) (default='').
          * @param string  $args['orderBy']  The order-by clause to use when retrieving the collection (optional) (default='').
          * @param boolean $args['useJoins'] Whether to include joining related objects (optional) (default=true).
          *
-         * @return Array with retrieved collection and amount of total records affected by this query.
+         * @return Array with retrieved collection.
          */
         public function getEntities($args)
         {
@@ -121,7 +183,7 @@ class Selection {
         }
 
         /**
-         * Select a list of entities by different criteria.
+         * Selects a list of entities by different criteria.
          *
          * @param string  $args['ot']             The object type to retrieve (optional)
          * @param string  $args['where']          The where clause to use when retrieving the collection (optional) (default='').
@@ -152,7 +214,7 @@ class Selection {
         }
 
         /**
-         * Select tree of given object type.
+         * Determines object type using controller util methods.
          *
          * @param string $args['ot'] The object type to retrieve (optional)
          * @param string $methodName Name of calling method
@@ -168,7 +230,7 @@ class Selection {
         }
 
         /**
-         * Return repository instance for a certain object type.
+         * Returns repository instance for a certain object type.
          *
          * @param string $objectType The desired object type.
          *
@@ -184,7 +246,7 @@ class Selection {
         «IF hasTrees»
 
             /**
-             * Select tree of given object type.
+             * Selects tree of given object type.
              *
              * @param string  $args['ot']       The object type to retrieve (optional)
              * @param integer $args['rootId']   Optional id of root node to use as a branch, defaults to 0 which corresponds to the whole tree.
@@ -208,7 +270,7 @@ class Selection {
             }
 
             /**
-             * Get all trees at once.
+             * Gets all trees at once.
              *
              * @param string  $args['ot']       The object type to retrieve (optional)
              * @param boolean $args['useJoins'] Whether to include joining related objects (optional) (default=true).
@@ -229,7 +291,7 @@ class Selection {
 
     def private selectionImpl(Application it) '''
         /**
-         * Selection api implementation class
+         * Selection api implementation class.
          */
         class «appName»_«fillingApi»Selection extends «appName»_«fillingApi»Base_Selection
         {

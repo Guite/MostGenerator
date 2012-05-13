@@ -8,6 +8,7 @@ import de.guite.modulestudio.metamodel.modulestudio.UserController
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Ajax
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.UrlRouting
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Category
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Selection
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ShortUrls
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.DisplayFunctions
@@ -40,6 +41,8 @@ class ControllerLayer {
         this.app = it
         getAllControllers.forEach(e|e.generate(fsa))
         new Selection().generate(it, fsa)
+        if (hasCategorisableEntities)
+            new Category().generate(it, fsa)
         new UtilMethods().generate(it, fsa)
         if (hasUserController)
             new UrlRouting().generate(it, fsa)

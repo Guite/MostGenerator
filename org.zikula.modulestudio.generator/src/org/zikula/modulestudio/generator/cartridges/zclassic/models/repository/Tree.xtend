@@ -20,7 +20,7 @@ class Tree {
 
     def private selectTree(Entity it) '''
         /**
-         * Select tree of «nameMultiple.formatForCode».
+         * Selects tree of «nameMultiple.formatForCode».
          *
          * @param integer $rootId   Optional id of root node to use as a branch, defaults to 0 which corresponds to the whole tree.
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
@@ -50,7 +50,7 @@ class Tree {
 
     def private selectAllTrees(Entity it) '''
         /**
-         * Select all trees at once.
+         * Selects all trees at once.
          *
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
          *

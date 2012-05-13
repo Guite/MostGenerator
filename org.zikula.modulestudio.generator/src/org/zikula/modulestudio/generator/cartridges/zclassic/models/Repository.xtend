@@ -115,7 +115,7 @@ class Repository {
             «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, false, '')»
 
             /**
-             * Return name of the field used as title / name for entities of this repository.
+             * Returns name of the field used as title / name for entities of this repository.
              *
              * @return string name of field to be used as title. 
              */
@@ -127,7 +127,7 @@ class Repository {
             }
 
             /**
-             * Return name of the field used for describing entities of this repository.
+             * Returns name of the field used for describing entities of this repository.
              *
              * @return string name of field to be used as description. 
              */
@@ -147,7 +147,7 @@ class Repository {
             }
 
             /**
-             * Return name of the first upload field which is capable for handling images.
+             * Returns name of the first upload field which is capable for handling images.
              *
              * @return string name of field to be used for preview images 
              */
@@ -208,13 +208,85 @@ class Repository {
 
             $templateParameters = array();
 
-            // nothing per default, this is for manual enhancements
+            $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST');
+            if ($currentFunc == 'view') {
+                $templateParameters = $this->getViewQuickNavParameters($context, $args);
+            }
+
             // in the concrete child class you could do something like
             // $parameters = parent::getAdditionalTemplateParameters($context, $args);
             // $parameters['myvar'] = 'myvalue';
             // return $parameters;
 
             return $templateParameters;
+        }
+
+        /**
+         * Returns an array of additional template variables for view quick navigation forms.
+         *
+         * @param string $context Usage context (allowed values: controllerAction, api, actionHandler, block, contentType).
+         * @param array  $args    Additional arguments.
+         *
+         * @return array List of template variables to be assigned.
+         */
+        protected function getViewQuickNavParameters($context = '', $args = array())
+        {
+            if (!in_array($context, array('controllerAction', 'api', 'actionHandler', 'block', 'contentType'))) {
+                $context = 'controllerAction';
+            }
+
+            $parameters = array();
+            «IF categorisable»
+                $parameters['catId'] = (int) FormUtil::getPassedValue('catid', 0, 'GET');
+            «ENDIF»
+            «IF !getIncomingJoinRelationsWithOneSource.isEmpty»
+                «FOR relation: getIncomingJoinRelationsWithOneSource»
+                    «val sourceAliasName = relation.getRelationAliasName(false).formatForCodeCapital»
+                    $parameters['«sourceAliasName»'] = FormUtil::getPassedValue('«sourceAliasName»', 0, 'GET');
+                «ENDFOR»
+            «ENDIF»
+            «IF hasListFieldsEntity»
+                «FOR field : getListFieldsEntity»
+                    «val fieldName = field.name.formatForCode»
+                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                «ENDFOR»
+            «ENDIF»
+            «IF hasUserFieldsEntity»
+                «FOR field : getUserFieldsEntity»
+                    «val fieldName = field.name.formatForCode»
+                    $parameters['«fieldName»'] = (int) FormUtil::getPassedValue('«fieldName»', 0, 'GET');
+                «ENDFOR»
+            «ENDIF»
+            «IF hasCountryFieldsEntity»
+                «FOR field : getCountryFieldsEntity»
+                    «val fieldName = field.name.formatForCode»
+                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                «ENDFOR»
+            «ENDIF»
+            «IF hasLanguageFieldsEntity»
+                «FOR field : getLanguageFieldsEntity»
+                    «val fieldName = field.name.formatForCode»
+                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                «ENDFOR»
+            «ENDIF»
+            «IF hasAbstractStringFieldsEntity»
+                $parameters['searchterm'] = FormUtil::getPassedValue('searchterm', '', 'GET');
+            «ENDIF»
+            «/* not needed as already handled in the controller $pageSize = ModUtil::getVar('«container.application.appName»', 'pageSize', 10);
+            $parameters['pageSize'] = (int) FormUtil::getPassedValue('pageSize', $pageSize, 'GET');*/»
+            «IF hasBooleanFieldsEntity»
+                «FOR field : getBooleanFieldsEntity»
+                    «val fieldName = field.name.formatForCode»
+                    $parameters['«fieldName»'] = (int) FormUtil::getPassedValue('«fieldName»', 0, 'GET');
+                «ENDFOR»
+            «ENDIF»
+
+            // in the concrete child class you could do something like
+            // $parameters = parent::getViewQuickNavParameters($context, $args);
+            // $parameters['myvar'] = 'myvalue';
+            // return $parameters;
+
+            return $parameters;
         }
     '''
 
@@ -238,7 +310,7 @@ class Repository {
     def private userDeleteFunctions(Entity it) '''
         «IF standardFields»
         /**
-         * Delete all objects created by a certain user.
+         * Deletes all objects created by a certain user.
          *
          * @param integer $userId The userid of the creator to be removed.
          */
@@ -260,7 +332,7 @@ class Repository {
         }
 
         /**
-         * Delete all objects updated by a certain user.
+         * Deletes all objects updated by a certain user.
          *
          * @param integer $userId The userid of the last editor to be removed.
          */
@@ -369,7 +441,7 @@ class Repository {
 
     def private selectById(Entity it) '''
         /**
-         * Select object from the database.
+         * Selects an object from the database.
          *
          * @param mixed   $id       The id (or array of ids) to use to retrieve the object (optional) (default=null).
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
@@ -399,11 +471,45 @@ class Repository {
 
             return $query->getOneOrNullResult();
         }
+
+        /**
+         * Selects an object from the database.
+         * This version uses no joins at all and selects only a minimal set of fields.
+         *
+         * @TODO merge both queries into one more flexible version.
+         *
+         * @param mixed   $id       The id (or array of ids) to use to retrieve the object (optional) (default=null).
+         *
+         * @return array|«implClassModelEntity» retrieved data array or «implClassModelEntity» instance
+         */
+        public function selectByIdSimple($id = 0)
+        {
+            // check id parameter
+            if ($id == 0) {
+                return LogUtil::registerArgsError();
+            }
+
+            $where = '';
+            if (is_array($id)) {
+                foreach ($id as $fieldName => $fieldValue) {
+                    if (!empty($where)) {
+                        $where .= ' AND ';
+                    }
+                    $where .= 'tbl.' . DataUtil::formatForStore($fieldName) . ' = \'' . DataUtil::formatForStore($fieldValue) . '\'';
+                }
+            } else {
+                $where .= 'tbl.id = ' . DataUtil::formatForStore($id);
+            }
+
+            $query = $this->_intBaseQuerySimple($where, '');
+
+            return $query->getOneOrNullResult();
+        }
     '''
 
     def private selectBySlug(Entity it) '''
         /**
-         * Select object by slug field
+         * Selects an object by slug field.
          *
          * @param string  $slugTitle The slug value
          * @param boolean $useJoins  Whether to include joining related objects (optional) (default=true).
@@ -426,11 +532,38 @@ class Repository {
 
             return $query->getOneOrNullResult();
         }
+
+        /**
+         * Selects an object by slug field.
+         * This version uses no joins at all and selects only a minimal set of fields.
+         *
+         * @TODO merge both queries into one more flexible version.
+         *
+         * @param string  $slugTitle The slug value
+         * @param integer $excludeId Optional id to be excluded (used for unique validation).
+         *
+         * @return «implClassModelEntity» retrieved instance of «implClassModelEntity»
+         */
+        public function selectBySlugSimple($slugTitle = '', $excludeId = 0)
+        {
+            // check input parameter
+            if ($slugTitle == '') {
+                return LogUtil::registerArgsError();
+            }
+
+            $where = 'tbl.slug = \'' . DataUtil::formatForStore($slugTitle) . '\'';
+            if ($excludeId > 0) {
+                $where .= ' AND tbl.id != ' . DataUtil::formatForStore($excludeId);
+            }
+            $query = $this->_intBaseQuerySimple($where, '');
+
+            return $query->getOneOrNullResult();
+        }
     '''
 
     def private selectWhere(Entity it) '''
         /**
-         * Select with a given where clause.
+         * Selects a list of objects with a given where clause.
          *
          * @param string  $where    The where clause to use when retrieving the collection (optional) (default='').
          * @param string  $orderBy  The order-by clause to use when retrieving the collection (optional) (default='').
@@ -444,11 +577,29 @@ class Repository {
 
             return $query->getResult();
         }
+
+        /**
+         * Selects a list of objects with a given where clause.
+         * This version uses no joins at all and selects only a minimal set of fields.
+         *
+         * @TODO merge both queries into one more flexible version.
+         *
+         * @param string  $where   The where clause to use when retrieving the collection (optional) (default='').
+         * @param string  $orderBy The order-by clause to use when retrieving the collection (optional) (default='').
+         *
+         * @return ArrayCollection collection containing retrieved «implClassModelEntity» instances
+         */
+        public function selectWhereSimple($where = '', $orderBy = '')
+        {
+            $query = $this->_intBaseQuerySimple($where, $orderBy);
+
+            return $query->getResult();
+        }
     '''
 
     def private selectWherePaginated(Entity it) '''
         /**
-         * Select with a given where clause and pagination parameters.
+         * Selects a list of objects with a given where clause and pagination parameters.
          *
          * @param string  $where          The where clause to use when retrieving the collection (optional) (default='').
          * @param string  $orderBy        The order-by clause to use when retrieving the collection (optional) (default='').
@@ -460,6 +611,8 @@ class Repository {
          */
         public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
         {
+            $where = $this->addCommonViewFilters($where);
+
             $query = $this->_intBaseQuery($where, $orderBy, $useJoins);
             $offset = ($currentPage-1) * $resultsPerPage;
 
@@ -480,11 +633,51 @@ class Repository {
 
             return array($result, $count);
         }
+
+        /**
+         * Adds quick navigationr related filter options to where clause.
+         *
+         * @param string $where The where clause to be enriched (optional) (default='').
+         *
+         * @return String Enriched where clause.
+         */
+        protected function addCommonViewFilters($where = '')
+        {
+            $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST');
+            if ($currentFunc != 'view') {
+                return $where;
+            }
+            $parameters = $this->getViewQuickNavParameters($context, $args);
+            foreach ($parameters as $k => $v) {
+                if ($k == 'catId') {
+                    // category filter
+                    if ($v > 0) {
+                        if (!empty($where)) {
+                            $where .= ' AND ';
+                        }
+                        $where .= 'tblCategories.category = ' . DataUtil::formatForStore($v);
+                    }
+                } elseif ($k == 'searchterm') {
+                    // quick search
+                    if (!empty($where)) {
+                        $where .= ' AND ';
+                    }
+                    $where .= '(' . $this->createSearchFilter($v) . ')';
+                } else {
+                    // field filter
+                    if (!empty($where)) {
+                        $where .= ' AND ';
+                    }
+                    $where .= 'tbl.' . DataUtil::formatForStore($k) . ' = \'' . DataUtil::formatForStore($v) . '\'';
+                }
+            }
+            return $where;
+        }
     '''
 
     def private selectSearch(Entity it) '''
         /**
-         * Select entities by a given search fragment.
+         * Selects entities by a given search fragment.
          *
          * @param string  $fragment       The fragment to search for.
          * @param string  $exclude        Comma separated list with ids to be excluded from search.
@@ -509,24 +702,37 @@ class Repository {
                 $where .= 'tbl.id NOT IN (' . implode(', ', $exclude) . ')';
             }
 
-            $fragment = DataUtil::formatForStore($fragment);
-
-            $whereSub = '';
-            «FOR field : getDerivedFields.filter(e|!e.primaryKey && e.isContainedInSearch)»
-                $whereSub .= ((!empty($whereSub)) ? ' OR ' : '') . 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE \'%' . $fragment . '%\'«ELSE»= \'' . $fragment . '\'«ENDIF»';
-            «ENDFOR»
-
+            $whereSub = $this->createSearchFilter($fragment);
             if (!empty($whereSub)) {
                 $where .= ((!empty($where)) ? ' AND (' . $whereSub . ')' : $whereSub);
             }
 
             return $this->selectWherePaginated($where, $orderBy, $currentPage, $resultsPerPage, $useJoins);
         }
+
+        /**
+         * Creates where clause for search query.
+         *
+         * @param string $fragment The fragment to search for.
+         *
+         * @return string built where clause.
+         */
+        protected function createSearchFilter($fragment = '')
+        {
+            $fragment = DataUtil::formatForStore($fragment);
+
+            $where = '';
+            «FOR field : getDerivedFields.filter(e|!e.primaryKey && e.isContainedInSearch)»
+                $where .= ((!empty($where)) ? ' OR ' : '') . 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE \'%' . $fragment . '%\'«ELSE»= \'' . $fragment . '\'«ENDIF»';
+            «ENDFOR»
+
+            return $where;
+        }
     '''
 
     def private selectCount(Entity it) '''
         /**
-         * Select count with a given where clause.
+         * Selects entity count with a given where clause.
          *
          * @param string  $where    The where clause to use when retrieving the object count (optional) (default='').
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
@@ -566,7 +772,7 @@ class Repository {
 
     def private detectUniqueState(Entity it) '''
         /**
-         * Check for unique values.
+         * Checks for unique values.
          *
          * @param string $fieldName  The name of the property to be checked
          * @param string $fieldValue The value of the property to be checked
@@ -588,7 +794,7 @@ class Repository {
 
     def private intBaseQuery(Entity it) '''
         /**
-         * Build a generic Doctrine query supporting WHERE and ORDER BY
+         * Builds a generic Doctrine query supporting WHERE and ORDER BY.
          *
          * @param string  $where    The where clause to use when retrieving the collection (optional) (default='').
          * @param string  $orderBy  The order-by clause to use when retrieving the collection (optional) (default='').
@@ -620,33 +826,75 @@ class Repository {
                 $qb->add('orderBy', 'tbl.' . $orderBy);
             }
 
-            $query = $qb->getQuery();
-
-            // TODO - see https://github.com/zikula/core/issues/118
-            // use FilterUtil to support generic filtering
-            //$fu = new FilterUtil('«container.application.appName»', $this);
-
-            // you could set explicit filters at this point, something like
-            // $fu->setFilter('type:eq:' . $args['type'] . ',id:eq:' . $args['id']);
-            // supported operators: eq, ne, like, lt, le, gt, ge, null, notnull
-
-            // process request input filters and add them to the query.
-            //$fu->enrichQuery($query);
-
-            «IF hasTranslatableFields»
-                // set the translation query hint
-                $query->setHint(
-                    \Doctrine\ORM\Query::HINT_CUSTOM_OUTPUT_WALKER,
-                    'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
-                );
-
-            «ENDIF»
-            «IF hasPessimisticReadLock»
-                $query->setLockMode(LockMode::«lockType.asConstant»);
-            «ENDIF»
-
-            return $query;
+            «intBaseQueryCommonParts»
         }
+
+        /**
+         * Builds a generic Doctrine query supporting WHERE and ORDER BY.
+         * This version uses no joins at all and selects only a minimal set of fields.
+         *
+         * @TODO merge both queries into one more flexible version.
+         *
+         * @param string  $where   The where clause to use when retrieving the collection (optional) (default='').
+         * @param string  $orderBy The order-by clause to use when retrieving the collection (optional) (default='').
+         *
+         * @return Doctrine\ORM\Query query instance to be further processed
+         */
+        protected function _intBaseQuerySimple($where = '', $orderBy = '')
+        {
+            $titleField = $this->getTitleFieldName();
+            $selection = '«FOR pkField : getPrimaryKeyFields SEPARATOR ', '»tbl.«pkField.name.formatForCode»«ENDFOR»';
+            if ($titleField != '') {
+                $selection .= ', tbl.' . $titleField;
+            }
+            «IF hasSluggableFields»
+                $selection .= ', tbl.slug';
+            «ENDIF»
+
+            $qb = $this->getEntityManager()->createQueryBuilder();
+            $qb->select($selection)
+               ->from('«implClassModelEntity»', 'tbl');
+
+            if (!empty($where)) {
+                $qb->where($where);
+            }
+
+            // add order by clause
+            if (!empty($orderBy)) {
+                $qb->add('orderBy', 'tbl.' . $orderBy);
+            }
+
+            «intBaseQueryCommonParts»
+        }
+    '''
+
+    def private intBaseQueryCommonParts(Entity it) '''
+        $query = $qb->getQuery();
+
+        // TODO - see https://github.com/zikula/core/issues/118
+        // use FilterUtil to support generic filtering
+        //$fu = new FilterUtil('«container.application.appName»', $this);
+
+        // you could set explicit filters at this point, something like
+        // $fu->setFilter('type:eq:' . $args['type'] . ',id:eq:' . $args['id']);
+        // supported operators: eq, ne, like, lt, le, gt, ge, null, notnull
+
+        // process request input filters and add them to the query.
+        //$fu->enrichQuery($query);
+
+        «IF hasTranslatableFields»
+            // set the translation query hint
+            $query->setHint(
+                \Doctrine\ORM\Query::HINT_CUSTOM_OUTPUT_WALKER,
+                'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
+            );
+
+        «ENDIF»
+        «IF hasPessimisticReadLock»
+            $query->setLockMode(LockMode::«lockType.asConstant»);
+        «ENDIF»
+
+        return $query;
     '''
 
     def private singleSortingField(EntityField it) {

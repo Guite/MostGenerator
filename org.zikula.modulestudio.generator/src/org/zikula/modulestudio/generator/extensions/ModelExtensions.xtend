@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.extensions
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AbstractIntegerField
+import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.ArrayField
 import de.guite.modulestudio.metamodel.modulestudio.BooleanField
@@ -11,6 +12,7 @@ import de.guite.modulestudio.metamodel.modulestudio.DecimalField
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityChangeTrackingPolicy
+import de.guite.modulestudio.metamodel.modulestudio.EntityField
 import de.guite.modulestudio.metamodel.modulestudio.EntityIdentifierStrategy
 import de.guite.modulestudio.metamodel.modulestudio.EntityIndexType
 import de.guite.modulestudio.metamodel.modulestudio.EntityLockType
@@ -21,15 +23,13 @@ import de.guite.modulestudio.metamodel.modulestudio.ListVar
 import de.guite.modulestudio.metamodel.modulestudio.Models
 import de.guite.modulestudio.metamodel.modulestudio.ObjectField
 import de.guite.modulestudio.metamodel.modulestudio.StringField
+import de.guite.modulestudio.metamodel.modulestudio.TextField
 import de.guite.modulestudio.metamodel.modulestudio.TimeField
 import de.guite.modulestudio.metamodel.modulestudio.UploadField
 import de.guite.modulestudio.metamodel.modulestudio.UploadNamingScheme
 import de.guite.modulestudio.metamodel.modulestudio.UserField
-import java.util.List
 import java.util.ArrayList
-import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField
-import de.guite.modulestudio.metamodel.modulestudio.TextField
-import de.guite.modulestudio.metamodel.modulestudio.EntityField
+import java.util.List
 
 /**
  * This class contains model related extension methods.
@@ -404,6 +404,48 @@ class ModelExtensions {
         getDerivedFields.filter(typeof(StringField)).filter(e|e.country == true)
     }
 
+    /**
+     * Checks whether this entity has at least one language field.
+     */
+    def hasLanguageFieldsEntity(Entity it) {
+        !getLanguageFieldsEntity.isEmpty
+    }
+
+    /**
+     * Returns a list of all language fields of this entity.
+     */
+    def getLanguageFieldsEntity(Entity it) {
+        getDerivedFields.filter(typeof(StringField)).filter(e|e.language == true)
+    }
+
+    /**
+     * Checks whether this entity has at least one textual field.
+     */
+    def hasAbstractStringFieldsEntity(Entity it) {
+        !getAbstractStringFieldsEntity.isEmpty
+    }
+
+    /**
+     * Returns a list of all language fields of this entity.
+     */
+    def getAbstractStringFieldsEntity(Entity it) {
+        getDerivedFields.filter(typeof(AbstractStringField))
+    }
+
+
+    /**
+     * Returns a list of all boolean fields of this entity.
+     */
+    def getBooleanFieldsEntity(Entity it) {
+        fields.filter(typeof(BooleanField))
+    }
+
+    /**
+     * Checks whether this entity has at least one boolean field.
+     */
+    def hasBooleanFieldsEntity(Entity it) {
+        !getBooleanFieldsEntity.isEmpty
+    }
 
     /**
      * Checks whether this entity has at least one boolean field having ajax toggle enabled.
@@ -416,7 +458,7 @@ class ModelExtensions {
      * Returns a list of all boolean fields having ajax toggle enabled.
      */
     def getBooleansWithAjaxToggleEntity(Entity it) {
-        fields.filter(typeof(BooleanField)).filter(e|e.ajaxTogglability)
+        getBooleanFieldsEntity.filter(e|e.ajaxTogglability)
     }
 
     /**

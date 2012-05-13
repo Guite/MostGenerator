@@ -2,13 +2,21 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascr
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.modulestudio.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import de.guite.modulestudio.metamodel.modulestudio.DerivedField
+import de.guite.modulestudio.metamodel.modulestudio.BooleanField
+import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 
 class DisplayFunctions {
+    @Inject extension ControllerExtensions = new ControllerExtensions()
+    @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
@@ -25,12 +33,14 @@ class DisplayFunctions {
 
         «initItemActions»
 
+        «IF !getAllControllers.map(e|e.hasActions('view')).isEmpty»
+            «initQuickNavigation»
+        «ENDIF»
         «IF !getJoinRelations.isEmpty»
             «initRelationWindow»
         «ENDIF»
         «IF hasBooleansWithAjaxToggle»
             «initToggle»
-
             «toggleFlag»
         «ENDIF»
     '''
@@ -98,6 +108,102 @@ class DisplayFunctions {
         }
     '''
 
+    def private initQuickNavigation(Application it) '''
+        /**
+         * Initialise the quick navigation panel in list views.
+         */
+        function «prefix»InitQuickNavigation(objectType, controller)
+        {
+            if ($('«prefix»' + objectType + 'QuickNavForm') == undefined) {
+                return;
+            }
+
+            if ($('categoryid') != undefined) {
+                $('categoryid').observe('change', «initQuickNavigationSubmitCall(prefix)»);
+            }
+            if ($('sortby') != undefined) {
+                $('sortby').observe('change', «initQuickNavigationSubmitCall(prefix)»);
+            }
+            if ($('sortdir') != undefined) {
+                $('sortdir').observe('change', «initQuickNavigationSubmitCall(prefix)»);
+            }
+            if ($('num') != undefined) {
+                $('num').observe('change', «initQuickNavigationSubmitCall(prefix)»);
+            }
+
+            switch (objectType) {
+            «FOR entity : getAllEntities»
+                «entity.initQuickNavigationEntity»
+            «ENDFOR»
+            }
+        }
+
+        /**
+         * Submits a quick navigation form.
+         */
+        function «prefix»SubmitQuickNavForm(objectType)
+        {
+            $('«prefix»' + objectType + 'QuickNavForm').submit();
+        }
+    '''
+
+    def private initQuickNavigationSubmitCall(String prefix) '''function() { «prefix»SubmitQuickNavForm(objectType); }'''
+
+    def private initQuickNavigationEntity(Entity it) '''
+        case '«name.formatForCode»':
+                    «IF !getIncomingJoinRelationsWithOneSource.isEmpty»
+                        «FOR relation: getIncomingJoinRelationsWithOneSource»
+                            «relation.jsInit»
+                        «ENDFOR»
+                    «ENDIF»
+                    «IF hasListFieldsEntity»
+                        «FOR field : getListFieldsEntity»
+                            «field.jsInit»
+                        «ENDFOR»
+                    «ENDIF»
+                    «IF hasUserFieldsEntity»
+                        «FOR field : getUserFieldsEntity»
+                            «field.jsInit»
+                        «ENDFOR»
+                    «ENDIF»
+                    «IF hasCountryFieldsEntity»
+                        «FOR field : getCountryFieldsEntity»
+                            «field.jsInit»
+                        «ENDFOR»
+                    «ENDIF»
+                    «IF hasLanguageFieldsEntity»
+                        «FOR field : getLanguageFieldsEntity»
+                            «field.jsInit»
+                        «ENDFOR»
+                    «ENDIF»
+                    «IF hasBooleanFieldsEntity»
+                        «FOR field : getBooleanFieldsEntity»
+                            «field.jsInit»
+                        «ENDFOR»
+                    «ENDIF»
+                    break;
+    '''
+
+    def private dispatch jsInit(DerivedField it) '''
+        if ($('«name.formatForCode»') != undefined) {
+            $('«name.formatForCode»').observe('change', «initQuickNavigationSubmitCall(entity.container.application.prefix)»);
+        }
+    '''
+
+    def private dispatch jsInit(BooleanField it) '''
+        if ($('«name.formatForCode»') != undefined) {
+            $('«name.formatForCode»').observe('click', «initQuickNavigationSubmitCall(entity.container.application.prefix)»)
+                                     .observe('keypress', «initQuickNavigationSubmitCall(entity.container.application.prefix)»);
+        }
+    '''
+
+    def private dispatch jsInit(JoinRelationship it) '''
+        «val sourceAliasName = getRelationAliasName(false).formatForCodeCapital»
+        if ($('«sourceAliasName»') != undefined) {
+            $('«sourceAliasName»').observe('change', «initQuickNavigationSubmitCall(container.application.prefix)»);
+        }
+    '''
+
     def private initRelationWindow(Application it) '''
         /**
          * Helper function to create new Zikula.UI.Window instances.
@@ -143,6 +249,7 @@ class DisplayFunctions {
                 «prefix»ToggleFlag(objectType, fieldName, itemId);
             }).show();
         }
+
     '''
 
     def private toggleFlag(Application it) '''
