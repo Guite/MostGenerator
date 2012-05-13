@@ -52,7 +52,7 @@ class ViewQuickNavForm {
         /* <![CDATA[ */
             document.observe('dom:loaded', function() {
                 «app.prefix»InitQuickNavigation('«name.formatForCode»', '«controller.formattedName»');
-                {{if isset($searchFilter) && $searchFilter eq false}
+                {{if isset($searchFilter) && $searchFilter eq false}}
                     {{* we can hide the submit button if we have no quick search field *}}
                     $('quicknav_submit').hide();
                 {{/if}}
@@ -64,15 +64,12 @@ class ViewQuickNavForm {
 
     def private formFields(Entity it) '''
         «categoriesField»
-        «IF !getIncomingJoinRelationsWithOneSource.isEmpty»
-            «FOR relation: getIncomingJoinRelationsWithOneSource»
+        «IF !getBidirectionalIncomingJoinRelationsWithOneSource.isEmpty»
+            «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
                 «relation.formField»
             «ENDFOR»
         «ENDIF»
         «IF hasListFieldsEntity»
-            {php}
-                $listHelper = new «container.application.appName»_Util_ListEntries();
-            {/php}
             «FOR field : getListFieldsEntity»
                 «field.formField»
             «ENDFOR»
@@ -149,12 +146,9 @@ class ViewQuickNavForm {
     def private dispatch formFieldImpl(ListField it) '''
         «val fieldName = name.formatForCode»
         <label for="«fieldName»">{gt text='«name.formatForDisplayCapital»'}</label>
-        {php}
-            $this->assign('listEntries', $listHelper->getEntries('«entity.name.formatForCode»', '«fieldName»'));
-        {/php}
         <select id="«fieldName»" name="«fieldName»">
             <option value="">{$lblDefault}</option>
-        {foreach item='option' from=$listEntries}
+        {foreach item='option' from=$«fieldName»Items}
             <option value="{$option.value}"{if $option.title ne ''} title="{$option.title|safetext}"{/if}{if $option.value eq $«fieldName»} selected="selected"{/if}>{$option.text|safetext}</option>
         {/foreach}
         </select>
@@ -203,7 +197,8 @@ class ViewQuickNavForm {
             <input type="hidden" name="sort" value="{$sort}" />
             <input type="hidden" name="sdir" value="{if $sdir eq 'desc'}asc{else}desc{/if}" />
         {/if}
-        {if !isset($pageSize) || $pageSize eq true}
+        {if !isset($pageSizeSelector) || $pageSizeSelector eq true}
+            {assign var='pageSize' value=$pager.itemsperpage}
             <label for="num">{gt text='Page size'}</label>
             &nbsp;
             <select id="num" name="num">

@@ -109,12 +109,17 @@ class DisplayFunctions {
     '''
 
     def private initQuickNavigation(Application it) '''
+        function «prefix»CapitaliseFirstLetter(string)
+        {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
         /**
          * Initialise the quick navigation panel in list views.
          */
         function «prefix»InitQuickNavigation(objectType, controller)
         {
-            if ($('«prefix»' + objectType + 'QuickNavForm') == undefined) {
+            if ($('«prefix»' + «prefix»CapitaliseFirstLetter(objectType) + 'QuickNavForm') == undefined) {
                 return;
             }
 
@@ -143,7 +148,7 @@ class DisplayFunctions {
          */
         function «prefix»SubmitQuickNavForm(objectType)
         {
-            $('«prefix»' + objectType + 'QuickNavForm').submit();
+            $('«prefix»' + «prefix»CapitaliseFirstLetter(objectType) + 'QuickNavForm').submit();
         }
     '''
 
@@ -151,8 +156,8 @@ class DisplayFunctions {
 
     def private initQuickNavigationEntity(Entity it) '''
         case '«name.formatForCode»':
-                    «IF !getIncomingJoinRelationsWithOneSource.isEmpty»
-                        «FOR relation: getIncomingJoinRelationsWithOneSource»
+                    «IF !getBidirectionalIncomingJoinRelationsWithOneSource.isEmpty»
+                        «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
                             «relation.jsInit»
                         «ENDFOR»
                     «ENDIF»

@@ -85,6 +85,12 @@ class ModelJoinExtensions {
         incoming.filter(typeof(OneToOneRelationship)) + incoming.filter(typeof(OneToManyRelationship))
     }
     /**
+     * Returns a list of all incoming bidirectional join relations which are either one2one or one2many.
+     */
+    def getBidirectionalIncomingJoinRelationsWithOneSource(Entity it) {
+        getIncomingJoinRelationsWithOneSource.filter(e|e.bidirectional)
+    }
+    /**
      * Returns a list of all incoming join relations which are either one2one, one2many or many2one.
      */
     def getIncomingJoinRelationsWithoutManyToMany(Entity it) {

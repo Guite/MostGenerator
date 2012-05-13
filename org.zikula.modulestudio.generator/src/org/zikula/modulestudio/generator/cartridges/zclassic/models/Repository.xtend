@@ -211,6 +211,14 @@ class Repository {
             $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST');
             if ($currentFunc == 'view') {
                 $templateParameters = $this->getViewQuickNavParameters($context, $args);
+                «IF hasListFieldsEntity»
+                    $serviceManager = ServiceUtil::getManager();
+                    $listHelper = new RecipeManager_Util_ListEntries($serviceManager);
+                    «FOR field : getListFieldsEntity»
+                        «var fieldName = field.name.formatForCode»
+                        $templateParameters['«fieldName»Items'] = $listHelper->getEntries('«name.formatForCode»', '«fieldName»');
+                    «ENDFOR»
+                «ENDIF»
             }
 
             // in the concrete child class you could do something like
@@ -239,8 +247,8 @@ class Repository {
             «IF categorisable»
                 $parameters['catId'] = (int) FormUtil::getPassedValue('catid', 0, 'GET');
             «ENDIF»
-            «IF !getIncomingJoinRelationsWithOneSource.isEmpty»
-                «FOR relation: getIncomingJoinRelationsWithOneSource»
+            «IF !getBidirectionalIncomingJoinRelationsWithOneSource.isEmpty»
+                «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
                     «val sourceAliasName = relation.getRelationAliasName(false).formatForCodeCapital»
                     $parameters['«sourceAliasName»'] = FormUtil::getPassedValue('«sourceAliasName»', 0, 'GET');
                 «ENDFOR»
@@ -659,16 +667,20 @@ class Repository {
                     }
                 } elseif ($k == 'searchterm') {
                     // quick search
-                    if (!empty($where)) {
-                        $where .= ' AND ';
+                    if (!empty($v)) {
+                        if (!empty($where)) {
+                            $where .= ' AND ';
+                        }
+                        $where .= '(' . $this->createSearchFilter($v) . ')';
                     }
-                    $where .= '(' . $this->createSearchFilter($v) . ')';
                 } else {
                     // field filter
-                    if (!empty($where)) {
-                        $where .= ' AND ';
+                    if ($v != '' || (is_numeric($v) && $v > 0)) {
+                        if (!empty($where)) {
+                            $where .= ' AND ';
+                        }
+                        $where .= 'tbl.' . DataUtil::formatForStore($k) . ' = \'' . DataUtil::formatForStore($v) . '\'';
                     }
-                    $where .= 'tbl.' . DataUtil::formatForStore($k) . ' = \'' . DataUtil::formatForStore($v) . '\'';
                 }
             }
             return $where;
@@ -722,6 +734,10 @@ class Repository {
             $fragment = DataUtil::formatForStore($fragment);
 
             $where = '';
+            if ($fragment == '') {
+                return $where;
+            }
+
             «FOR field : getDerivedFields.filter(e|!e.primaryKey && e.isContainedInSearch)»
                 $where .= ((!empty($where)) ? ' OR ' : '') . 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE \'%' . $fragment . '%\'«ELSE»= \'' . $fragment . '\'«ENDIF»';
             «ENDFOR»
