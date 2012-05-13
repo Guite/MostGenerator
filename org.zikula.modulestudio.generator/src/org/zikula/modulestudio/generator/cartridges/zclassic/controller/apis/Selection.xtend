@@ -111,7 +111,7 @@ class Selection {
          *
          * @return mixed Desired entity object or null.
          */
-        public function getEntity($args)
+        public function getEntitySimple($args)
         {
             if (!isset($args['id'])«IF hasSluggable» && !isset($args['slug'])«ENDIF») {
                 return LogUtil::registerArgsError();
