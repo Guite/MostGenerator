@@ -213,7 +213,7 @@ class Repository {
                 $templateParameters = $this->getViewQuickNavParameters($context, $args);
                 «IF hasListFieldsEntity»
                     $serviceManager = ServiceUtil::getManager();
-                    $listHelper = new RecipeManager_Util_ListEntries($serviceManager);
+                    $listHelper = new «container.application.appName»_Util_ListEntries($serviceManager);
                     «FOR field : getListFieldsEntity»
                         «var fieldName = field.name.formatForCode»
                         $templateParameters['«fieldName»Items'] = $listHelper->getEntries('«name.formatForCode»', '«fieldName»');
