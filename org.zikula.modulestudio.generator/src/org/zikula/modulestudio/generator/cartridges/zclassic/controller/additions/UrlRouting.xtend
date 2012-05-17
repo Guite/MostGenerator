@@ -66,7 +66,7 @@ class UrlRouting {
                 $this->requirements = array(
                     'func'          => '\w+',
                     'ot'            => '\w+',
-                    'title'         => '[^/.]+', // title used for slugs ([^/.]+ = all chars except / and .)
+                    'slug'          => '[^/.]+', // slugs ([^/.]+ = all chars except / and .)
                     'displayending' => '(?:' . $displayDefaultEnding . '|xml|pdf|json|kml)',
                     'viewending'    => '(?:\.csv|\.rss|\.atom|\.xml|\.pdf|\.json|\.kml)?',
                     'id'            => '\d+'
@@ -139,9 +139,9 @@ class UrlRouting {
         protected function initRouteForEachSlugType($prefix, $patternStart, $patternEnd, $defaults, $fieldRequirements)
         {
             // entities with unique slug (slug only)
-            $this->router->set($prefix . 'a', new Zikula_Routing_UrlRoute($patternStart . ':title.' . $patternEnd,        $defaults, $fieldRequirements));
+            $this->router->set($prefix . 'a', new Zikula_Routing_UrlRoute($patternStart . ':slug.' . $patternEnd,        $defaults, $fieldRequirements));
             // entities with non-unique slug (slug and id)
-            $this->router->set($prefix . 'b', new Zikula_Routing_UrlRoute($patternStart . ':title.:id.' . $patternEnd,    $defaults, $fieldRequirements));
+            $this->router->set($prefix . 'b', new Zikula_Routing_UrlRoute($patternStart . ':slug.:id.' . $patternEnd,    $defaults, $fieldRequirements));
             // entities without slug (id)
             $this->router->set($prefix . 'c', new Zikula_Routing_UrlRoute($patternStart . 'id.:id.' . $patternEnd,        $defaults, $fieldRequirements));
         }

@@ -7,6 +7,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
@@ -17,6 +18,7 @@ import org.zikula.modulestudio.generator.extensions.UrlExtensions
 class Redirect {
     @Inject extension ControllerExtensions = new ControllerExtensions()
     @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension UrlExtensions = new UrlExtensions()
@@ -169,7 +171,7 @@ class Redirect {
                             «IF someController.hasActions('display')»
                                 case '«controllerName»Display«sourceEntity.name.formatForCodeCapital»':
                                     if (!empty($this->«incomingRelation.getRelationAliasName(false)»)) {
-                                        return ModUtil::url($this->name, '«controllerName»', 'display', array('ot' => '«sourceEntity.name.formatForCode»', 'id' => $this->«incomingRelation.getRelationAliasName(false)»));
+                                        return ModUtil::url($this->name, '«controllerName»', 'display', array('ot' => '«sourceEntity.name.formatForCode»', 'id' => $this->«incomingRelation.getRelationAliasName(false)»«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»));
                                     }
                                     return $this->getDefaultReturnUrl($args, $obj);
                             «ENDIF»

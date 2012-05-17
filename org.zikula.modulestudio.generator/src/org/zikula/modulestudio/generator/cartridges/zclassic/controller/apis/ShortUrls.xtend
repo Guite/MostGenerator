@@ -126,16 +126,24 @@ class ShortUrls {
                     }
                 }
 
-                $slugTitle = '';
-                if ($id > 0) {
-                    $slugTitle = $routerFacade->getFormattedSlug($objectType, $args['func'], $args['args'], $id);
+                // check if we have a valid slug given
+                if (isset($args['args']['slug']) && (!$args['args']['slug'] || $args['args']['slug'] == $id)) {
+                    unset($args['args']['slug']);
                 }
-
-                if (!empty($slugTitle) && $slugTitle != $id) {
-                    // add slug expression
-                    $args['args']['title'] = $slugTitle;
-                } else {
-                    // readd id
+                // try to determine missing slug
+                if (!isset($args['args']['slug'])) {
+                    $slug = '';
+                    if ($id > 0) {
+                        $slug = $routerFacade->getFormattedSlug($objectType, $args['func'], $args['args'], $id);
+                    }
+                    if (!empty($slug) && $slug != $id) {
+                        // add slug expression
+                        $args['args']['slug'] = $slug;
+                    }
+                }
+                // check if we have one now
+                if (!isset($args['args']['slug'])) {
+                    // readd id as fallback
                     $args['args']['id'] = $id;
                 }
             }

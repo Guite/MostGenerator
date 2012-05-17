@@ -9,6 +9,7 @@ import de.guite.modulestudio.metamodel.modulestudio.DerivedField
  */
 class UrlExtensions {
     @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
 
     /**
@@ -55,10 +56,11 @@ class UrlExtensions {
      * @return String collected url parameter string
      */
     def modUrlDisplayWithFreeOt(Entity it, String objName, Boolean template, String otVar) {
-        if (template)
-            "func='display' ot=" + otVar + modUrlPrimaryKeyParams(objName, template)
-        else
-            "'display', array('ot' => " + otVar + modUrlPrimaryKeyParams(objName, template) + ")"
+        if (template) {
+            "func='display' ot='" + otVar + modUrlPrimaryKeyParams(objName, template) + '"' + appendSlug(objName, template)
+        } else {
+            "'display', array('ot' => " + otVar + modUrlPrimaryKeyParams(objName, template) + appendSlug(objName, template) + ')'
+        }
     }
     /**
      * Creates the parameters for a modurl call to a display function relating a given entity,
@@ -70,7 +72,16 @@ class UrlExtensions {
      * @return String collected url parameter string
      */
     def modUrlDisplay(Entity it, String objName, Boolean template) {
-        modUrlGeneric('display', name, objName, template)
+        modUrlGeneric('display', name, objName, template) + appendSlug(objName, template)
+    }
+    /**
+     * Appends the slug parameter (if available) to display url arguments.
+     */
+    def private appendSlug(Entity it, String objName, Boolean template) {
+        if (hasSluggableFields) {
+            if (template) ' slug=$' + objName + '.slug'
+            else ", 'slug' => $" + objName + "['slug']"
+        } else ''
     }
     /**
      * Creates the parameters for a modurl call to an edit function relating a given entity,

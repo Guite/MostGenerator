@@ -301,7 +301,7 @@ class Entities {
                         if (in_array($currentFunc, array('main', 'view'))) {
                             «IF controller.tempIsAdminController && container.application.hasUserController && container.application.getMainUserController.hasActions('display')»
                                 $this->_actions[] = array(
-                                    'url' => array('type' => 'user', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»)),
+                                    'url' => array('type' => 'user', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
                                     'icon' => 'preview',
                                     'linkTitle' => __('Open preview page', $dom),
                                     'linkText' => __('Preview', $dom)
@@ -310,7 +310,7 @@ class Entities {
                             «IF controller.hasActions('display')»
                                 «val leadingField = getLeadingField»
                                 $this->_actions[] = array(
-                                    'url' => array('type' => '«controller.formattedName»', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»)),
+                                    'url' => array('type' => '«controller.formattedName»', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
                                     'icon' => 'display',
                                     'linkTitle' => «IF leadingField != null»str_replace('"', '', $this['«leadingField.name.formatForCode»'])«ELSE»__('Open detail page', $dom)«ENDIF»,
                                     'linkText' => __('Details', $dom)

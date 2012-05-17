@@ -673,6 +673,9 @@ class FormHandler {
                 // Let any hooks know that we have created or updated an item
                 $urlArgs = array('ot' => $this->objectType);
                 $urlArgs = $this->addIdentifiersToUrlArgs($urlArgs);
+                if (isset($this->entityRef['slug'])) {
+                    $urlArgs['slug'] = $this->entityRef['slug'];
+                }
                 $url = new Zikula_ModUrl($this->name, '«formattedName»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.process_edit', $this->createCompositeIdentifier(), $url);
                 $this->notifyHooks($hook);

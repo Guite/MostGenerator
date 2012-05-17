@@ -281,6 +281,10 @@ class ControllerAction {
             }
             $instanceId .= $idValues[$idField];
         }
+        $currentUrlArgs['id'] = $instanceId;
+        if (isset($entity['slug'])) {
+            $currentUrlArgs['slug'] = $entity['slug'];
+        }
         $currentUrlObject = new Zikula_ModUrl($this->name, '«controller.formattedName»', 'display', ZLanguage::getLanguageCode(), $currentUrlArgs);
 
         «permissionCheck("' . ucwords($objectType) . '", "$instanceId . ")»
