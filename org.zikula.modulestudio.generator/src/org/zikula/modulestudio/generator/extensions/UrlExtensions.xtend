@@ -24,9 +24,9 @@ class UrlExtensions {
      */
     def modUrlGeneric(Entity it, String func, String ot, String objName, Boolean template) {
         if (template)
-            "func='" + func + "' ot='" + ot.formatForCode + "'" + modUrlPrimaryKeyParams(objName, template)
+            "func='" + func + "' ot='" + ot.formatForCode + "'" + modUrlPrimaryKeyParams(objName, template) + (if (func == 'display') appendSlug(objName, template) else '')
         else
-            "'" + func + "', array('ot' => '" + ot.formatForCode + "'" + modUrlPrimaryKeyParams(objName, template) + ")"
+            "'" + func + "', array('ot' => '" + ot.formatForCode + "'" + modUrlPrimaryKeyParams(objName, template) + (if (func == 'display') appendSlug(objName, template) else '') + ")"
     }
     /**
      * Creates the parameters for a modurl call relating a given entity,
@@ -72,7 +72,7 @@ class UrlExtensions {
      * @return String collected url parameter string
      */
     def modUrlDisplay(Entity it, String objName, Boolean template) {
-        modUrlGeneric('display', name, objName, template) + appendSlug(objName, template)
+        modUrlGeneric('display', name, objName, template)
     }
     /**
      * Appends the slug parameter (if available) to display url arguments.
