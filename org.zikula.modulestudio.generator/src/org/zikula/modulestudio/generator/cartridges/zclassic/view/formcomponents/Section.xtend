@@ -46,8 +46,8 @@ class Section {
                 <legend>{gt text='Map'}</legend>
                 <div id="mapContainer" class="«app.appName.formatForDB»MapContainer">
                 </div>
-            </fieldset>
             «ENDIF»
+            </fieldset>
 
         «ENDIF»
         «IF attributable»
