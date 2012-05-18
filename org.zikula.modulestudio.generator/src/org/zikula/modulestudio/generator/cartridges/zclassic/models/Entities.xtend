@@ -443,7 +443,7 @@ class Entities {
         «FOR mandatoryField : mandatoryFields.filter(typeof(DecimalField)).filter(e|e.defaultValue == null || e.defaultValue == '' || e.defaultValue == '0')»
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(typeof(AbstractDateField)).filter(e|e.defaultValue.length == 0)»
+        «FOR mandatoryField : mandatoryFields.filter(typeof(AbstractDateField)).filter(e|e.defaultValue == null || e.defaultValue == '' || e.defaultValue.length == 0)»
             $this->«mandatoryField.name.formatForCode» = «mandatoryField.defaultAssignment»;
         «ENDFOR»
         «FOR mandatoryField : mandatoryFields.filter(typeof(FloatField)).filter(e|e.defaultValue == null || e.defaultValue == '' || e.defaultValue == '0')»
