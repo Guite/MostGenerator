@@ -32,7 +32,6 @@ class ContentTypeView {
 
     def private displayDescTemplate(Entity it, Application app) '''
         {* Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context *}
-
         <dl>
             {foreach item='item' from=$items}
                 «val leadingField = getLeadingField»
@@ -63,7 +62,6 @@ class ContentTypeView {
 
     def private displayTemplate(Entity it, Application app) '''
         {* Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context *}
-
         {foreach item='item' from=$items}
             «val leadingField = getLeadingField»
             «IF leadingField != null»

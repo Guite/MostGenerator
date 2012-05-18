@@ -22,13 +22,11 @@ class BlocksView {
 
     def private displayTemplate(Application it) '''
         {* Purpose of this template: Display items within a block (fallback template) *}
-
         Default block for generic item list.
     '''
 
     def private editTemplate(Application it) '''
         {* Purpose of this template: Edit block for generic item list *}
-
         <div class="z-formrow">
             <label for="«appName»_objecttype">{gt text='Object type'}:</label>
             <select id="«appName»_objecttype" name="objecttype" size="1">
@@ -37,7 +35,6 @@ class BlocksView {
                 «ENDFOR»
             </select>
         </div>
-
         <div class="z-formrow">
             <label for="«appName»_sorting">{gt text='Sorting'}:</label>
             <select id="«appName»_sorting" name="sorting">
@@ -46,12 +43,10 @@ class BlocksView {
                 <option value="alpha"{if $sorting eq 'default' || ($sorting != 'random' && $sorting != 'newest')} selected="selected"{/if}>{gt text='Default'}</option>
             </select>
         </div>
-
         <div class="z-formrow">
             <label for="«appName»_amount">{gt text='Amount'}:</label>
             <input type="text" id="«appName»_amount" name="amount" size="10" value="{$amount|default:"5"}" />
         </div>
-
         <div class="z-formrow">
             <label for="«appName»_template">{gt text='Template File'}:</label>
             <select id="«appName»_template" name="template">
@@ -59,7 +54,6 @@ class BlocksView {
                 <option value="itemlist_display_description.tpl"{if $template eq 'itemlist_display_description.tpl'} selected="selected"{/if}>{gt text='With description'}</option>
             </select>
         </div>
-
         <div class="z-formrow">
             <label for="«appName»_filter">{gt text='Filter (expert option)'}:</label>
             <input type="text" id="«appName»_filter" name="filter" size="40" value="{$filterValue|default:""}" />

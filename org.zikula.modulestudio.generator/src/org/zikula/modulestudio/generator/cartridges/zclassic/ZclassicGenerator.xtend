@@ -17,6 +17,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.addition
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Blocks
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ContentType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Mailz
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Search
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Repository
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Bootstrap
@@ -113,6 +114,11 @@ println('TODO: progress monitor')
         pm.newTask('Additions: Mailz api')
         println('Generating mailz api')
         new Mailz().generate(it, fsa)
+        if (!getAllEntities.filter(e|e.hasAbstractStringFieldsEntity).isEmpty) {
+            pm.newTask('Additions: Search api')
+            println('Generating search api')
+            new Search().generate(it, fsa)
+        }
         pm.newTask('Additions: Tag support')
         println('Generating tag support')
         new Tag().generate(it, fsa)

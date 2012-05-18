@@ -47,7 +47,7 @@ class Blocks {
 
     def private listBlockBaseImpl(Application it) '''
         /**
-         * Initialise the block
+         * Initialise the block.
          */
         public function init()
         {
@@ -55,9 +55,9 @@ class Blocks {
         }
 
         /**
-         * Get information on the block
+         * Get information on the block.
          *
-         * @return       array       The block information
+         * @return array The block information
          */
         public function info()
         {
@@ -79,10 +79,10 @@ class Blocks {
         }
 
         /**
-         * Display the block
+         * Display the block.
          *
-         * @param        array       $blockinfo a blockinfo structure
-         * @return       output      the rendered block
+         * @param array $blockinfo a blockinfo structure
+         * @return output the rendered block
          */
         public function display($blockinfo)
         {
@@ -193,10 +193,10 @@ class Blocks {
         }
 
         /**
-         * Modify block settings
+         * Modify block settings.
          *
-         * @param        array       $blockinfo a blockinfo structure
-         * @return       output      the block form
+         * @param array $blockinfo a blockinfo structure
+         * @return output the block form
          */
         public function modify($blockinfo)
         {
@@ -236,10 +236,10 @@ class Blocks {
         }
 
         /**
-         * Update block settings
+         * Update block settings.
          *
-         * @param        array       $blockinfo a blockinfo structure
-         * @return       $blockinfo  the modified blockinfo structure
+         * @param array $blockinfo a blockinfo structure
+         * @return $blockinfo the modified blockinfo structure
          */
         public function update($blockinfo)
         {

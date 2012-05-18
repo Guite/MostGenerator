@@ -136,9 +136,9 @@ class Ajax {
                     «ENDIF»
                     foreach ($entities as $item) {
                         // class="informal" --> show in dropdown, but do not copy in the input field after selection
-                        $itemTitle = ((!empty($titleFieldName)) ? $item[$titleFieldName] : $this->__('Item'));
+                        $itemTitle = (!empty($titleFieldName)) ? $item[$titleFieldName] : $this->__('Item');
                         $itemTitleStripped = str_replace('"', '', $itemTitle);
-                        $itemDescription = ((isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName])) ? $item[$descriptionFieldName] : '');//$this->__('No description yet.'));
+                        $itemDescription = (isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName])) ? $item[$descriptionFieldName] : '';//$this->__('No description yet.');
                         $itemId = '';
                         foreach ($idFields as $idField) {
                             $itemId .= ((!empty($itemId)) ? '_' : '') . $item[$idField];
