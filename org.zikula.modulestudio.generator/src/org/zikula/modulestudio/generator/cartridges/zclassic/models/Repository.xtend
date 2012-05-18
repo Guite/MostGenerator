@@ -98,10 +98,9 @@ class Repository {
              */
             protected $defaultSortingField = '«(if (hasSortableFields) getSortableFields.head else getLeadingField).name.formatForCode»';
 
-            /**
+            /**«/* @TODO to be refactored */»
              * Retrieves an array with all fields which can be used for sorting instances.
              *
-             * @TODO to be refactored
              * @return array
              */
             public function getAllowedSortingFields()
@@ -331,7 +330,8 @@ class Repository {
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->delete('«implClassModelEntity»', 'tbl')
-               ->where('tbl.createdUserId = ?', $userId);
+               ->where('tbl.createdUserId = :creator')
+               ->setParameter('creator', $userId);
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -353,7 +353,8 @@ class Repository {
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->delete('«implClassModelEntity»', 'tbl')
-               ->where('tbl.updatedUserId = ?', $userId);
+               ->where('tbl.updatedUserId = :editor')
+               ->setParameter('editor', $userId);
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -378,7 +379,8 @@ class Repository {
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->update('«implClassModelEntity»', 'tbl')
                ->set('tbl.createdUserId', $newUserId)
-               ->where('tbl.createdUserId = ?', $userId);
+               ->where('tbl.createdUserId = :creator')
+               ->setParameter('creator', $userId);
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -403,7 +405,8 @@ class Repository {
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->update('«implClassModelEntity»', 'tbl')
                ->set('tbl.updatedUserId', $newUserId)
-               ->where('tbl.updatedUserId = ?', $userId);
+               ->where('tbl.updatedUserId = :editor')
+               ->setParameter('editor', $userId);
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -437,7 +440,8 @@ class Repository {
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->update('«implClassModelEntity»', 'tbl')
                ->set('tbl.' . $userFieldName, $newUserId)
-               ->where('tbl.' . $userFieldName + ' = ?', $userId);
+               ->where('tbl.' . $userFieldName . ' = :user')
+               ->setParameter('user', $userId);
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -449,9 +453,32 @@ class Repository {
 
     def private selectById(Entity it) '''
         /**
+         * Adds id filters to given query instance.
+         *
+         * @param mixed          $id The id (or array of ids) to use to retrieve the object.
+         * @param Doctrine_Query $q  Query to be enhanced.
+         *
+         * @return Doctrine_Query Enriched query instance.
+         */
+        protected function addIdFilter($id, $q)
+        {
+            if (is_array($id)) {
+                foreach ($id as $fieldName => $fieldValue) {
+                    $fieldName = DataUtil::formatForStore($fieldName);
+                    $q->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
+                      ->setParameter($fieldName, $fieldValue);
+                }
+            } else {
+                $q->andWhere('tbl.id = :id')«/* TODO fix composite keys */»
+                  ->setParameter('id', $id);
+            }
+            return $q;
+        }
+
+        /**
          * Selects an object from the database.
          *
-         * @param mixed   $id       The id (or array of ids) to use to retrieve the object (optional) (default=null).
+         * @param mixed   $id       The id (or array of ids) to use to retrieve the object (optional) (default=0).
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
          *
          * @return array|«implClassModelEntity» retrieved data array or «implClassModelEntity» instance
@@ -463,19 +490,9 @@ class Repository {
                 return LogUtil::registerArgsError();
             }
 
-            $where = '';
-            if (is_array($id)) {
-                foreach ($id as $fieldName => $fieldValue) {
-                    if (!empty($where)) {
-                        $where .= ' AND ';
-                    }
-                    $where .= 'tbl.' . DataUtil::formatForStore($fieldName) . ' = \'' . DataUtil::formatForStore($fieldValue) . '\'';
-                }
-            } else {
-                $where .= 'tbl.id = ' . DataUtil::formatForStore($id);
-            }
+            $query = $this->_intBaseQuery('', '', $useJoins);
 
-            $query = $this->_intBaseQuery($where, '', $useJoins);
+            $query = $this->addIdFilter($id, $query);
 
             return $query->getOneOrNullResult();
         }
@@ -497,19 +514,9 @@ class Repository {
                 return LogUtil::registerArgsError();
             }
 
-            $where = '';
-            if (is_array($id)) {
-                foreach ($id as $fieldName => $fieldValue) {
-                    if (!empty($where)) {
-                        $where .= ' AND ';
-                    }
-                    $where .= 'tbl.' . DataUtil::formatForStore($fieldName) . ' = \'' . DataUtil::formatForStore($fieldValue) . '\'';
-                }
-            } else {
-                $where .= 'tbl.id = ' . DataUtil::formatForStore($id);
-            }
+            $query = $this->_intBaseQuerySimple('', '');
 
-            $query = $this->_intBaseQuerySimple($where, '');
+            $query = $this->addIdFilter($id, $query);
 
             return $query->getOneOrNullResult();
         }
@@ -532,11 +539,15 @@ class Repository {
                 return LogUtil::registerArgsError();
             }
 
-            $where = 'tbl.slug = \'' . DataUtil::formatForStore($slugTitle) . '\'';
+            $query = $this->_intBaseQuery('', '', $useJoins);
+
+            $query->andWhere('tbl.slug = :slug')
+                  ->setParameter('slug', $slugTitle);
+
             if ($excludeId > 0) {
-                $where .= ' AND tbl.id != ' . DataUtil::formatForStore($excludeId);
+                $query->andWhere('tbl.id != :excludeId')«/* TODO fix composite keys */»
+                      ->setParameter('excludeId', $excludeId);
             }
-            $query = $this->_intBaseQuery($where, '', $useJoins);
 
             return $query->getOneOrNullResult();
         }
@@ -559,11 +570,15 @@ class Repository {
                 return LogUtil::registerArgsError();
             }
 
-            $where = 'tbl.slug = \'' . DataUtil::formatForStore($slugTitle) . '\'';
+            $query = $this->_intBaseQuerySimple('', '');
+
+            $query->andWhere('tbl.slug = :slug')
+                  ->setParameter('slug', $slugTitle);
+
             if ($excludeId > 0) {
-                $where .= ' AND tbl.id != ' . DataUtil::formatForStore($excludeId);
+                $query->andWhere('tbl.id != :excludeId')«/* TODO fix composite keys */»
+                      ->setParameter('excludeId', $excludeId);
             }
-            $query = $this->_intBaseQuerySimple($where, '');
 
             return $query->getOneOrNullResult();
         }
@@ -607,7 +622,7 @@ class Repository {
 
     def private selectWherePaginated(Entity it) '''
         /**
-         * Selects a list of objects with a given where clause and pagination parameters.
+         * Returns query instance for retrieving a list of objects with a given where clause and pagination parameters.
          *
          * @param string  $where          The where clause to use when retrieving the collection (optional) (default='').
          * @param string  $orderBy        The order-by clause to use when retrieving the collection (optional) (default='').
@@ -615,13 +630,12 @@ class Repository {
          * @param integer $resultsPerPage Amount of items to select
          * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true).
          *
-         * @return Array with retrieved collection and amount of total records affected by this query.
+         * @return Doctrine_Query created query instance.
          */
-        public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
+        protected function getSelectWherePaginatedQuery($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
         {
-            $where = $this->addCommonViewFilters($where);
-
             $query = $this->_intBaseQuery($where, $orderBy, $useJoins);
+            $query = $this->addCommonViewFilters($query);
             $offset = ($currentPage-1) * $resultsPerPage;
 
             // count the total number of affected items
@@ -636,6 +650,23 @@ class Repository {
                 $query->setFirstResult($offset)
                       ->setMaxResults($resultsPerPage);
             «ENDIF»
+            return $query;
+        }
+
+        /**
+         * Selects a list of objects with a given where clause and pagination parameters.
+         *
+         * @param string  $where          The where clause to use when retrieving the collection (optional) (default='').
+         * @param string  $orderBy        The order-by clause to use when retrieving the collection (optional) (default='').
+         * @param integer $currentPage    Where to start selection
+         * @param integer $resultsPerPage Amount of items to select
+         * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true).
+         *
+         * @return Array with retrieved collection and amount of total records affected by this query.
+         */
+        public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
+        {
+            $query = $this->getSelectWherePaginatedQuery($where, $orderBy, $currentPage, $resultsPerPage, $useJoins);
 
             $result = $query->getResult();
 
@@ -643,47 +674,41 @@ class Repository {
         }
 
         /**
-         * Adds quick navigationr related filter options to where clause.
+         * Adds quick navigation related filter options as where clauses.
          *
-         * @param string $where The where clause to be enriched (optional) (default='').
+         * @param Doctrine_Query $query The query to be enhanced.
          *
-         * @return String Enriched where clause.
+         * @return Doctrine_Query Enriched query instance.
          */
-        protected function addCommonViewFilters($where = '')
+        protected function addCommonViewFilters($query = '')
         {
             $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST');
             if ($currentFunc != 'view') {
-                return $where;
+                return $query;
             }
+
             $parameters = $this->getViewQuickNavParameters($context, $args);
             foreach ($parameters as $k => $v) {
                 if ($k == 'catId') {
                     // category filter
                     if ($v > 0) {
-                        if (!empty($where)) {
-                            $where .= ' AND ';
-                        }
-                        $where .= 'tblCategories.category = ' . DataUtil::formatForStore($v);
+                        $query->andWhere('tblCategories.category = :category')
+                              ->setParameter('category', $v);
                     }
                 } elseif ($k == 'searchterm') {
                     // quick search
                     if (!empty($v)) {
-                        if (!empty($where)) {
-                            $where .= ' AND ';
-                        }
-                        $where .= '(' . $this->createSearchFilter($v) . ')';
+                        $query = $this->addSearchFilter($query, $v);
                     }
                 } else {
                     // field filter
                     if ($v != '' || (is_numeric($v) && $v > 0)) {
-                        if (!empty($where)) {
-                            $where .= ' AND ';
-                        }
-                        $where .= 'tbl.' . DataUtil::formatForStore($k) . ' = \'' . DataUtil::formatForStore($v) . '\'';
+                        $query->andWhere('tbl.' . $k . ' = :' . $k)
+                              ->setParameter($k, $v);
                     }
                 }
             }
-            return $where;
+            return $query;
         }
     '''
 
@@ -702,61 +727,59 @@ class Repository {
          */
         public function selectSearch($fragment = '', $exclude = array(), $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
         {
-            $where = '';
+            $query = $this->getSelectWherePaginatedQuery('', $orderBy, $currentPage, $resultsPerPage, $useJoins);
             if (count($exclude) > 0) {
-                $exclude = DataUtil::formatForStore($exclude);
-«/*            foreach ($idFields as $idField) {
-    if (!empty($where)) {
-        $where .= ' AND ';
-    }
-    $where .= 'tbl.' . $idField . ' NOT IN (' . implode(', ', $exclude) . ')';
-}*/»
-                $where .= 'tbl.id NOT IN (' . implode(', ', $exclude) . ')';
+                $exclude = implode(', ', $exclude);
+                $query->andWhere('tbl.id NOT IN (:excludeList)')«/* TODO fix composite keys */»
+                      ->setParameter('excludeList', $exclude);
             }
 
-            $whereSub = $this->createSearchFilter($fragment);
-            if (!empty($whereSub)) {
-                $where .= ((!empty($where)) ? ' AND (' . $whereSub . ')' : $whereSub);
-            }
+            $query = $this->addSearchFilter($query, $fragment);
 
-            return $this->selectWherePaginated($where, $orderBy, $currentPage, $resultsPerPage, $useJoins);
+            $result = $query->getResult();
+
+            return array($result, $count);
         }
 
         /**
-         * Creates where clause for search query.
+         * Adds where clause for search query.
          *
-         * @param string $fragment The fragment to search for.
+         * @param Doctrine_Query $query    The query instance to be enhanced.
+         * @param string         $fragment The fragment to search for.
          *
-         * @return string built where clause.
+         * @return Doctrine_Query The enrichted query instance.
          */
-        protected function createSearchFilter($fragment = '')
+        protected function addSearchFilter($query, $fragment = '')
         {
-            $fragment = DataUtil::formatForStore($fragment);
-
-            $where = '';
             if ($fragment == '') {
-                return $where;
+                return $query;
             }
 
+            $where = '';
             «FOR field : getDerivedFields.filter(e|!e.primaryKey && e.isContainedInSearch)»
-                $where .= ((!empty($where)) ? ' OR ' : '') . 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE \'%' . $fragment . '%\'«ELSE»= \'' . $fragment . '\'«ENDIF»';
+                $where .= ((!empty($where)) ? ' OR ' : '');
+                $where .= 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE %:fragment%«ELSE»= :fragment«ENDIF»';
             «ENDFOR»
+            $where = '(' . $where . ')';
 
-            return $where;
+            $query->andWhere($where)
+                  ->setParameter('fragment', $fragment);
+
+            return $query;
         }
     '''
 
     def private selectCount(Entity it) '''
         /**
-         * Selects entity count with a given where clause.
+         * Returns query for a count query.
          *
          * @param string  $where    The where clause to use when retrieving the object count (optional) (default='').
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
          *
-         * @return integer amount of affected records
+         * @return Doctrine_Query created query instance.
          * @TODO fix usage of joins; please remove the first line and test.
          */
-        public function selectCount($where = '', $useJoins = true)
+        protected function getCountQuery($where = '', $useJoins = true)
         {
             $useJoins = false;
 
@@ -778,7 +801,20 @@ class Repository {
             }
 
             $query = $qb->getQuery();
+            return $query;
+        }
 
+        /**
+         * Selects entity count with a given where clause.
+         *
+         * @param string  $where    The where clause to use when retrieving the object count (optional) (default='').
+         * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
+         *
+         * @return integer amount of affected records
+         */
+        public function selectCount($where = '', $useJoins = true)
+        {
+            $query = $this->getCountQuery($where, $useJoins);
             «IF hasPessimisticReadLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
             «ENDIF»
@@ -797,13 +833,20 @@ class Repository {
          */
         public function detectUniqueState($fieldName, $fieldValue, $excludeid = 0)
         {
-            $where = 'tbl.' . $fieldName . ' = \'' . DataUtil::formatForStore($fieldValue) . '\'';
+            $query = $this->getCountQuery($where, $useJoins);
+            $query->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
+                  ->setParameter($fieldName, $fieldValue);
 
             if ($excludeid > 0) {
-                $where .= ' AND tbl.id != \'' . (int) DataUtil::formatForStore($excludeid) . '\'';
+                $query->andWhere('tbl.id != :excludeId')
+                      ->setParameter('excludeId', $excludeid);
             }
 
-            $count = $this->selectCount($where);
+            «IF hasPessimisticReadLock»
+                $query->setLockMode(LockMode::«lockType.asConstant»);
+            «ENDIF»
+            $count = $query->getSingleScalarResult();
+
             return ($count == 0);
         }
     '''
@@ -846,7 +889,10 @@ class Repository {
 
             // add order by clause
             if (!empty($orderBy)) {
-                $qb->add('orderBy', 'tbl.' . $orderBy);
+                if (strpos($orderBy, '.') !== false) {
+                    $orderBy = 'tbl.' . $orderBy;
+                }
+                $qb->add('orderBy', $orderBy);
             }
 
             «intBaseQueryCommonParts»

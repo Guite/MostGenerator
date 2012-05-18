@@ -45,11 +45,9 @@ class LinkTable {
         {
             public function truncateTable()
             {
-                $query = $this->getEntityManager()
-                    ->createQuery('DELETE «implClassModelRefEntity»');
-        «/*IF hasPessimisticWriteLock)»
-                $query->setLockMode(LockMode::«lockType.asConstant)»);
-        «ENDIF*/»
+                $qb = $this->getEntityManager()->createQueryBuilder();
+                $qb->delete('«implClassModelRefEntity»', 'tbl');
+                $query = $qb->getQuery();
                 $query->execute();
             }
         }

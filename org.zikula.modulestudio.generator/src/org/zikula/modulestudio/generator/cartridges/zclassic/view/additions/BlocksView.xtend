@@ -54,7 +54,7 @@ class BlocksView {
                 <option value="itemlist_display_description.tpl"{if $template eq 'itemlist_display_description.tpl'} selected="selected"{/if}>{gt text='With description'}</option>
             </select>
         </div>
-        <div class="z-formrow">
+        <div class="z-formrow" style="display: none"«/* TODO: wait until FilterUtil is ready for Doctrine 2 */»>
             <label for="«appName»_filter">{gt text='Filter (expert option)'}:</label>
             <input type="text" id="«appName»_filter" name="filter" size="40" value="{$filterValue|default:""}" />
             <div class="z-formnote">({gt text='Syntax examples'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)</div>
