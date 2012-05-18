@@ -21,9 +21,9 @@ class Search {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val blockPath = appName.getAppSourceLibPath + 'Api/'
-        fsa.generateFile(blockPath + 'Base/Search.php', searchApiBaseFile)
-        fsa.generateFile(blockPath + 'Search.php', searchApiFile)
+        val apiPath = appName.getAppSourceLibPath + 'Api/'
+        fsa.generateFile(apiPath + 'Base/Search.php', searchApiBaseFile)
+        fsa.generateFile(apiPath + 'Search.php', searchApiFile)
         new SearchView().generate(it, fsa)
     }
 
@@ -61,12 +61,12 @@ class Search {
         /**
          * Get search plugin information.
          *
-         * @return array The block information
+         * @return array The search plugin information
          */
         public function info()
         {
-            return array('title'     => '«appName»',
-                         'functions' => array('«appName»' => 'search'));
+            return array('title'     => $this->name,
+                         'functions' => array($this->name => 'search'));
         }
     '''
 
@@ -78,11 +78,11 @@ class Search {
          */
         public function options($args)
         {
-            if (!SecurityUtil::checkPermission('«appName»::', '::', ACCESS_READ)) {
+            if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
                 return '';
             }
 
-            $view = Zikula_View::getInstance('«appName»');
+            $view = Zikula_View::getInstance($this->name);
 
             «FOR entity : getAllEntities.filter(e|e.hasAbstractStringFieldsEntity)»
                 «val fieldName = 'active_' + entity.name.formatForCode»
@@ -99,7 +99,7 @@ class Search {
          */
         public function search($args)
         {
-            if (!SecurityUtil::checkPermission('«appName»::', '::', ACCESS_READ)) {
+            if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
                 return '';
             }
 
@@ -139,7 +139,7 @@ class Search {
                 }
                 $where = Search_Api_User::construct_where($args, $whereArray, $languageField);
 
-                $repository = $entityManager->getRepository('«appName»_Entity_' . ucfirst($objectType));
+                $repository = $entityManager->getRepository($this->name . '_Entity_' . ucfirst($objectType));
                 // get objects from database
                 list($entities, $objectCount) = $repository->selectWherePaginated($where, '', $currentPage, $resultsPerPage, false);
 
@@ -147,7 +147,7 @@ class Search {
                     continue;
                 }
 
-                $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
+                $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
                 $titleField = $repository->getTitleFieldName();
                 $descriptionField = $repository->getDescriptionFieldName();
                 «val hasUserDisplay = !getAllUserControllers.filter(e|e.hasActions('display')).isEmpty»
@@ -173,7 +173,7 @@ class Search {
                         }
 
                     «ENDIF»
-                    if (!SecurityUtil::checkPermission('«appName»:' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
+                    if (!SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
                         continue;
                     }
 
@@ -186,7 +186,7 @@ class Search {
                         'text'    => $description,
                         'extra'   => «IF hasUserDisplay»serialize($urlArgs)«ELSE»''«ENDIF»,
                         'created' => $created,
-                        'module'  => '«appName»',
+                        'module'  => $this->name,
                         'session' => $sessionId
                     );
 
@@ -210,7 +210,7 @@ class Search {
             «IF hasUserDisplay»
                 $datarow = &$args['datarow'];
                 $urlArgs = unserialize($datarow['extra']);
-                $datarow['url'] = ModUril::url('«appName»', 'user', 'display', $urlArgs);
+                $datarow['url'] = ModUril::url($this->name, 'user', 'display', $urlArgs);
             «ELSE»
                 // nothing to do as we have no display pages which could be linked
             «ENDIF»

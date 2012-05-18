@@ -836,6 +836,13 @@ class Repository {
             if (!empty($where)) {
                 $qb->where($where);
             }
+            «IF standardFields»
+                $onlyOwn = (int) FormUtil::getPassedValue('own', 0, 'GETPOST');
+                if ($onlyOwn == 1) {
+                    $qb->andWhere('tbl.createdUserId = :creator')
+                       ->setParameter('creator', UserUtil::getVar('uid'));
+                }
+            «ENDIF»
 
             // add order by clause
             if (!empty($orderBy)) {

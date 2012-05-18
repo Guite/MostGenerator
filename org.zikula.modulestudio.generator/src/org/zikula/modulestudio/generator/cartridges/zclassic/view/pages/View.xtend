@@ -82,6 +82,10 @@ class View {
             «ENDIF»
             {/checkpermissionblock}
         «ENDIF»
+        {assign var='own' value=0}
+        {if isset($showOwnEntries) && $showOwnEntries eq 1}
+            {assign var='own' value=1}
+        {/if}
         {assign var='all' value=0}
         {if isset($showAllEntries) && $showAllEntries eq 1}
             {gt text='Back to paginated view' assign='linkTitle'}
@@ -268,7 +272,7 @@ class View {
         {sortlink __linktext='«label.formatForDisplayCapital»' sort='«fieldName»'«headerSortingLinkParameters(entity)» modname='«controller.container.application.appName»' type='«controller.formattedName»' func='view' ot='«entity.name.formatForCode»'}
     '''
 
-    def private headerSortingLinkParameters(Entity it) ''' currentsort=$sort sortdir=$sdir all=$all«IF categorisable» catid=$catId«ENDIF»«sortParamsForIncomingRelations»«sortParamsForListFields»«sortParamsForUserFields»«sortParamsForCountryFields»«sortParamsForLanguageFields»«IF hasAbstractStringFieldsEntity» searchterm=$searchterm«ENDIF» pageSize=$pageSize«sortParamsForBooleanFields»'''
+    def private headerSortingLinkParameters(Entity it) ''' currentsort=$sort sortdir=$sdir all=$all own=$own«IF categorisable» catid=$catId«ENDIF»«sortParamsForIncomingRelations»«sortParamsForListFields»«sortParamsForUserFields»«sortParamsForCountryFields»«sortParamsForLanguageFields»«IF hasAbstractStringFieldsEntity» searchterm=$searchterm«ENDIF» pageSize=$pageSize«sortParamsForBooleanFields»'''
 
     def private sortParamsForIncomingRelations(Entity it) '''«IF !getIncomingJoinRelationsWithOneSource.isEmpty»«FOR relation: getIncomingJoinRelationsWithOneSource»«val sourceAliasName = relation.getRelationAliasName(false).formatForCodeCapital» «sourceAliasName»=$«sourceAliasName»«ENDFOR»«ENDIF»'''
     def private sortParamsForListFields(Entity it) '''«IF hasListFieldsEntity»«FOR field : getListFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''

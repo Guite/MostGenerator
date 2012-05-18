@@ -14,6 +14,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Listener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Uploads
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Workflow
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Tag
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Account
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Blocks
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ContentType
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Mailz
@@ -119,6 +120,9 @@ println('TODO: progress monitor')
             println('Generating search api')
             new Search().generate(it, fsa)
         }
+        pm.newTask('Additions: Account api')
+        println('Generating account api')
+        new Account().generate(it, fsa)
         pm.newTask('Additions: Tag support')
         println('Generating tag support')
         new Tag().generate(it, fsa)

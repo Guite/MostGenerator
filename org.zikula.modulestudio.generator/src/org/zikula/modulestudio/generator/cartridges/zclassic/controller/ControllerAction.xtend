@@ -205,6 +205,12 @@ class ControllerAction {
             'orderBy' => $sort . ' ' . $sdir
         );
 
+        $showOwnEntries = (int) (isset($args['own']) && !empty($args['own'])) ? $args['own'] : $this->request->query->filter('own', 0, FILTER_VALIDATE_INT);
+        $this->view->assign('showOwnEntries', $showOwnEntries);
+        if ($showOwnEntries == 1) {
+            $currentUrlArgs['own'] = 1;
+        }
+
         $showAllEntries = (int) (isset($args['all']) && !empty($args['all'])) ? $args['all'] : $this->request->query->filter('all', 0, FILTER_VALIDATE_INT);
         $this->view->assign('showAllEntries', $showAllEntries);
         if ($showAllEntries == 1) {
