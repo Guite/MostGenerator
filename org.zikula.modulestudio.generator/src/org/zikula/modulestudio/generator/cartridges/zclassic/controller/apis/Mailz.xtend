@@ -133,10 +133,10 @@ class Mailz {
                  ->assign($repository->getAdditionalTemplateParameters('api', array('name' => 'mailz')));
 
             if ($args['contenttype'] == 't') { /* text */
-                return $view->fetch('mailz/itemlist_«leadingEntity.name.formatForCodeCapital»_text.tpl');
+                return $view->fetch('mailz/itemlist_«leadingEntity.name.formatForCode»_text.tpl');
             } else {
                 //return $view->fetch('contenttype/itemlist_display.html');
-                return $view->fetch('mailz/itemlist_«leadingEntity.name.formatForCodeCapital»_html.tpl');
+                return $view->fetch('mailz/itemlist_«leadingEntity.name.formatForCode»_html.tpl');
             }
         }
     '''

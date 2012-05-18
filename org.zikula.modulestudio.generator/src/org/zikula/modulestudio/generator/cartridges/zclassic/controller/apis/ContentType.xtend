@@ -89,7 +89,7 @@ class ContentType {
                 $data['amount'] = 1;
             }
             if (!isset($data['template'])) {
-                $data['template'] = 'itemlist_' . ucwords($this->objectType) . '_display.tpl';
+                $data['template'] = 'itemlist_' . $this->objectType . '_display.tpl';
             }
             if (!isset($data['filter'])) {
                 $data['filter'] = '';
@@ -156,7 +156,7 @@ class ContentType {
             if (!empty($this->template) && $this->view->template_exists('contenttype/' . $this->template)) {
                 $output = $this->view->fetch('contenttype/' . $this->template);
             }
-            $templateForObjectType = str_replace('itemlist_', 'itemlist_' . ucwords($this->objectType) . '_', $this->template);
+            $templateForObjectType = str_replace('itemlist_', 'itemlist_' . $this->objectType . '_', $this->template);
             if ($this->view->template_exists('contenttype/' . $templateForObjectType)) {
                 $output = $this->view->fetch('contenttype/' . $templateForObjectType);
             } elseif ($this->view->template_exists('contenttype/' . $this->template)) {

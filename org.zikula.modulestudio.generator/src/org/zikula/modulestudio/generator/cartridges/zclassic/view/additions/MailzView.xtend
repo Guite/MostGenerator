@@ -22,8 +22,8 @@ class MailzView {
     def generate(Application it, IFileSystemAccess fsa) {
     	val templatePath = appName.getAppSourcePath + 'templates/mailz/'
         for (entity : getAllEntities) {
-            fsa.generateFile(templatePath + 'itemlist_' + entity.name.formatForCode.toFirstUpper + '_text.tpl', entity.textTemplate(it))
-            fsa.generateFile(templatePath + 'itemlist_' + entity.name.formatForCode.toFirstUpper + '_html.tpl', entity.htmlTemplate(it))
+            fsa.generateFile(templatePath + 'itemlist_' + entity.name.formatForCode + '_text.tpl', entity.textTemplate(it))
+            fsa.generateFile(templatePath + 'itemlist_' + entity.name.formatForCode + '_html.tpl', entity.htmlTemplate(it))
         }
     }
 
