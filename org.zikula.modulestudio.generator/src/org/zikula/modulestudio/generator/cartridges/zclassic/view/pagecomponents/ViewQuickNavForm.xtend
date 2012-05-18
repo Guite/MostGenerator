@@ -190,8 +190,8 @@ class ViewQuickNavForm {
             «ENDIF»
             </select>
             <select id="sortdir" name="sortdir">
-                <option value="asc"{if $sdir eq 'asc'} selected="selected"{/if}>{gt text='ascending' assign='dummy'}aufsteigend</option>
-                <option value="desc"{if $sdir eq 'desc'} selected="selected"{/if}>{gt text='descending' assign='dummy'}absteigend</option>
+                <option value="asc"{if $sdir eq 'asc'} selected="selected"{/if}>{gt text='ascending'}</option>
+                <option value="desc"{if $sdir eq 'desc'} selected="selected"{/if}>{gt text='descending'}</option>
             </select>
         {else}
             <input type="hidden" name="sort" value="{$sort}" />
