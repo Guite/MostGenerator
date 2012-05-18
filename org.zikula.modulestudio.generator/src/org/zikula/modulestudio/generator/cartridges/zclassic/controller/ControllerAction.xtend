@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import com.google.inject.Inject
-import de.guite.modulestudio.metamodel.modulestudio.AccountController
 import de.guite.modulestudio.metamodel.modulestudio.Action
 import de.guite.modulestudio.metamodel.modulestudio.AdminController
 import de.guite.modulestudio.metamodel.modulestudio.AjaxController
@@ -13,7 +12,6 @@ import de.guite.modulestudio.metamodel.modulestudio.DeleteAction
 import de.guite.modulestudio.metamodel.modulestudio.DisplayAction
 import de.guite.modulestudio.metamodel.modulestudio.EditAction
 import de.guite.modulestudio.metamodel.modulestudio.MainAction
-import de.guite.modulestudio.metamodel.modulestudio.SearchController
 import de.guite.modulestudio.metamodel.modulestudio.UserController
 import de.guite.modulestudio.metamodel.modulestudio.ViewAction
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
@@ -165,14 +163,7 @@ class ControllerAction {
                         return $this->view->fetch('«controller.formattedName»/main.tpl');
                         «/*«ENDIF»*/»
                     '''
-            AccountController: ''
             AjaxController: ''
-            SearchController: '''
-                        «/*
-                            New Search API:
-                            http://community.zikula.org/index.php?module=Wiki&tag=ModuleProgrammingPart4
-                        */»
-                    '''
             CustomController: '''
                         // return main template
                         return $this->view->fetch('«controller.formattedName»/main.tpl');
