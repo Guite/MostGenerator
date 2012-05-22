@@ -650,7 +650,7 @@ class Repository {
                 $query->setFirstResult($offset)
                       ->setMaxResults($resultsPerPage);
             «ENDIF»
-            return $query;
+            return array($query, $count);
         }
 
         /**
@@ -666,7 +666,7 @@ class Repository {
          */
         public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
         {
-            $query = $this->getSelectWherePaginatedQuery($where, $orderBy, $currentPage, $resultsPerPage, $useJoins);
+            list($query, $count) = $this->getSelectWherePaginatedQuery($where, $orderBy, $currentPage, $resultsPerPage, $useJoins);
 
             $result = $query->getResult();
 
@@ -727,7 +727,7 @@ class Repository {
          */
         public function selectSearch($fragment = '', $exclude = array(), $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
         {
-            $query = $this->getSelectWherePaginatedQuery('', $orderBy, $currentPage, $resultsPerPage, $useJoins);
+            list($query, $count) = $this->getSelectWherePaginatedQuery('', $orderBy, $currentPage, $resultsPerPage, $useJoins);
             if (count($exclude) > 0) {
                 $exclude = implode(', ', $exclude);
                 $query->andWhere('tbl.id NOT IN (:excludeList)')«/* TODO fix composite keys */»
@@ -889,7 +889,7 @@ class Repository {
 
             // add order by clause
             if (!empty($orderBy)) {
-                if (strpos($orderBy, '.') !== false) {
+                if (strpos($orderBy, '.') === false) {
                     $orderBy = 'tbl.' . $orderBy;
                 }
                 $qb->add('orderBy', $orderBy);
