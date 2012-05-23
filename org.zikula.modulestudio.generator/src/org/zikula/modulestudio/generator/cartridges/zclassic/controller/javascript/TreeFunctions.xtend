@@ -16,6 +16,7 @@ class TreeFunctions {
      * Entry point for tree-related javascript functions.
      */
     def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating javascript for tree functions')
         fsa.generateFile(getAppSourcePath(appName) + 'javascript/' + appName + '_tree.js', generate)
     }
 

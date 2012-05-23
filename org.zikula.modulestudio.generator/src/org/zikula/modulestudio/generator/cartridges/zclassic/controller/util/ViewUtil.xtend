@@ -19,6 +19,7 @@ class ViewUtil {
      * Entry point for the Util class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating utility class for view layer')
     	val utilPath = appName.getAppSourceLibPath + 'Util/'
         fsa.generateFile(utilPath + 'Base/View.php', viewFunctionsBaseFile)
         fsa.generateFile(utilPath + 'View.php', viewFunctionsFile)

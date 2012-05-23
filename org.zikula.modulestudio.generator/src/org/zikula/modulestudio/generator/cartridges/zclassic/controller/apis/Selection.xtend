@@ -16,6 +16,7 @@ class Selection {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating selection api')
         val apiPath = appName.getAppSourceLibPath + 'Api/'
         fsa.generateFile(apiPath + 'Base/Selection.php', selectionBaseFile)
         fsa.generateFile(apiPath + 'Selection.php', selectionFile)

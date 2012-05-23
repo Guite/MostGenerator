@@ -16,6 +16,7 @@ class Finder {
      * Entry point for the javascript file with validation functionality.
      */
     def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating javascript for finder component')
         fsa.generateFile(getAppSourcePath(appName) + 'javascript/' + appName + '_finder.js', generate)
     }
 

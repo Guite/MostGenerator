@@ -32,6 +32,7 @@ class Listeners {
      * Entry point for persistent event listeners.
      */
     def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating event listeners')
         val listenerPath = getAppSourceLibPath(appName) + 'Listener/'
         fsa.generateFile(listenerPath + 'Core.php', listenersCoreFile)
         fsa.generateFile(listenerPath + 'Installer.php', listenersInstallerFile)

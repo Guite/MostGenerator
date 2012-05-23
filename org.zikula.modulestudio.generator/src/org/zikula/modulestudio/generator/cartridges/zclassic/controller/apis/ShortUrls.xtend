@@ -33,7 +33,7 @@ class ShortUrls {
         /**
          * Forms custom url string.
          *
-         * @return       string custom url string
+         * @return string custom url string
          */
         public function encodeurl($args)
         {
@@ -177,7 +177,7 @@ class ShortUrls {
         /**
          * Decodes the custom url string.
          *
-         * @return       bool true if successful, false otherwise
+         * @return bool true if successful, false otherwise
          */
         public function decodeurl($args)
         {

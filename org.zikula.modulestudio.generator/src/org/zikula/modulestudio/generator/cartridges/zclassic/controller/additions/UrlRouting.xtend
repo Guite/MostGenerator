@@ -26,6 +26,7 @@ class UrlRouting {
      * Start point for the router creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating router facade for short url resolution')
         fsa.generateFile(appName.getAppSourceLibPath + 'Base/RouterFacade.php', routerFacadeBaseFile)
         fsa.generateFile(appName.getAppSourceLibPath + 'RouterFacade.php', routerFacadeFile)
     }

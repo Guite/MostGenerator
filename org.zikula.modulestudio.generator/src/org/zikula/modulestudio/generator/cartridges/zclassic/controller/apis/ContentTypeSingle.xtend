@@ -19,6 +19,7 @@ class ContentTypeSingle {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating content type for single objects')
         val contentTypePath = appName.getAppSourceLibPath + 'ContentType/'
         fsa.generateFile(contentTypePath + 'Base/Item.php', contentTypeBaseFile)
         fsa.generateFile(contentTypePath + 'Item.php', contentTypeFile)

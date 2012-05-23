@@ -8,6 +8,7 @@ import de.guite.modulestudio.metamodel.modulestudio.UserController
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Ajax
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ExternalController
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Scribite
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.UrlRouting
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Category
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Selection
@@ -51,6 +52,8 @@ class ControllerLayer {
         new UtilMethods().generate(it, fsa)
         if (hasUserController)
             new UrlRouting().generate(it, fsa)
+        // scribite integration
+        new Scribite().generate(it, fsa)
 
         // JavaScript
         new Finder().generate(it, fsa)

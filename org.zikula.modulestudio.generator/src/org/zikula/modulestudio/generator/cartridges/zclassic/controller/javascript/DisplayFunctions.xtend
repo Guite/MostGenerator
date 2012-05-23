@@ -26,6 +26,7 @@ class DisplayFunctions {
      * Entry point for the javascript file with display functionality.
      */
     def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating javascript for display functions')
         fsa.generateFile(getAppSourcePath(appName) + 'javascript/' + appName + '.js', generate)
     }
 

@@ -21,6 +21,7 @@ class ContentTypeList {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating content type for multiple objects')
         val contentTypePath = appName.getAppSourceLibPath + 'ContentType/'
         fsa.generateFile(contentTypePath + 'Base/ItemList.php', contentTypeBaseFile)
         fsa.generateFile(contentTypePath + 'ItemList.php', contentTypeFile)

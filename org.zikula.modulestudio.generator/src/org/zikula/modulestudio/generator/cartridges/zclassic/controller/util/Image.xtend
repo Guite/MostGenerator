@@ -19,6 +19,7 @@ class Image {
      * Entry point for the Util class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating utility class for image handling')
     	val utilPath = appName.getAppSourceLibPath + 'Util/'
         fsa.generateFile(utilPath + 'Base/Image.php', imageFunctionsBaseFile)
         fsa.generateFile(utilPath + 'Image.php', imageFunctionsFile)

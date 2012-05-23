@@ -21,6 +21,7 @@ class BlockList {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating block for multiple objects')
         val blockPath = appName.getAppSourceLibPath + 'Block/'
         fsa.generateFile(blockPath + 'Base/ItemList.php', listBlockBaseFile)
         fsa.generateFile(blockPath + 'ItemList.php', listBlockFile)

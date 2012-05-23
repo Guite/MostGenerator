@@ -18,6 +18,7 @@ class EditFunctions {
      * Entry point for the javascript file with edit functionality.
      */
     def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating javascript for edit functions')
         fsa.generateFile(getAppSourcePath(appName) + 'javascript/' + appName + '_editFunctions.js', generate)
     }
 

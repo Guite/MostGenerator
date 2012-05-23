@@ -18,6 +18,7 @@ class Validation {
      * Entry point for the javascript file with validation functionality.
      */
     def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating javascript for validation')
         fsa.generateFile(getAppSourcePath(appName) + 'javascript/' + appName + '_validation.js', generate)
     }
 

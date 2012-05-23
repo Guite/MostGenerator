@@ -14,6 +14,7 @@ class Category {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating category api')
         val apiPath = appName.getAppSourceLibPath + 'Api/'
         fsa.generateFile(apiPath + 'Base/Category.php', categoryBaseFile)
         fsa.generateFile(apiPath + 'Category.php', categoryFile)
