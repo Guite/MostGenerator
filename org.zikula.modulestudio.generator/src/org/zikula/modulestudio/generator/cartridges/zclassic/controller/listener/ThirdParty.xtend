@@ -42,6 +42,11 @@ class ThirdParty {
         {
             // intended is using the add() method to add a plugin like below
             $types = $event->getSubject();
+
+            // plugin for showing a single item
+            $types->add('«appName»_ContentType_Item');
+
+            // plugin for showing a list of multiple items
             $types->add('«appName»_ContentType_ItemList');
         }
     '''

@@ -118,7 +118,7 @@ class EditFunctions {
                     relationHandler['acInstance'] = new Ajax.Autocompleter(
                         idPrefix + 'Selector',
                         idPrefix + 'SelectorChoices',
-                        Zikula.Config['baseURL'] + 'ajax.php?module=«appName»&func=getItemList',
+                        Zikula.Config['baseURL'] + 'ajax.php?module=«appName»&func=getItemListAutoCompletion',
                         acOptions
                     );
                 }

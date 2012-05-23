@@ -7,12 +7,14 @@ import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.UserController
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Ajax
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.ExternalController
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.UrlRouting
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Category
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Selection
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ShortUrls
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.DisplayFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.EditFunctions
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Finder
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.TreeFunctions
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript.Validation
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -40,6 +42,9 @@ class ControllerLayer {
     def generate(Application it, IFileSystemAccess fsa) {
         this.app = it
         getAllControllers.forEach(e|e.generate(fsa))
+        // controller for external calls
+        new ExternalController().generate(it, fsa)
+        // selection api
         new Selection().generate(it, fsa)
         if (hasCategorisableEntities)
             new Category().generate(it, fsa)
@@ -48,6 +53,7 @@ class ControllerLayer {
             new UrlRouting().generate(it, fsa)
 
         // JavaScript
+        new Finder().generate(it, fsa)
         if (hasEditActions)
             new EditFunctions().generate(it, fsa)
         new DisplayFunctions().generate(it, fsa)

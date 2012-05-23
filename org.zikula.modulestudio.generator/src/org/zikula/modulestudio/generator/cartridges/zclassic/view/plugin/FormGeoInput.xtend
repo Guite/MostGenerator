@@ -51,7 +51,7 @@ class FormGeoInput {
              *
              * @return string
              */
-            function getFilename()
+            public function getFilename()
             {
                 return __FILE__;
             }
@@ -65,7 +65,7 @@ class FormGeoInput {
              * @see    Zikula_Form_AbstractPlugin
              * @return void
              */
-            function create(Zikula_Form_View $view, &$params)
+            public function create(Zikula_Form_View $view, &$params)
             {
                 $params['maxLength'] = 11;
                 $params['width'] = '6em';
@@ -94,7 +94,7 @@ class FormGeoInput {
              *
              * @return void
              */
-            function validate(Zikula_Form_View $view)
+            public function validate(Zikula_Form_View $view)
             {
                 parent::validate($view);
 
@@ -118,7 +118,7 @@ class FormGeoInput {
              *
              * @return string Parsed Text.
              */
-            function parseValue(Zikula_Form_View $view, $text)
+            public function parseValue(Zikula_Form_View $view, $text)
             {
                 if ($text === '') {
                     return null;
@@ -138,7 +138,7 @@ class FormGeoInput {
              *
              * @return string Formatted value.
              */
-            function formatValue(Zikula_Form_View $view, $value)
+            public function formatValue(Zikula_Form_View $view, $value)
             {
                 return number_format($value, 7, '.', '');
             }

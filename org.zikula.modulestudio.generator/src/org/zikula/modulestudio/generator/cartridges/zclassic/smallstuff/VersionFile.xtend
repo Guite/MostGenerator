@@ -145,6 +145,7 @@ class VersionFile {
         $meta['securityschema'] = array(
             '«appName»::' => '::',
             '«appName»::Ajax' => '::',
+            '«appName»:ItemListBlock:' => 'Block title::',
             «FOR entity : getAllEntities»«entity.permissionSchema(appName)»«ENDFOR»
         );
         // DEBUG: permission schema aspect ends

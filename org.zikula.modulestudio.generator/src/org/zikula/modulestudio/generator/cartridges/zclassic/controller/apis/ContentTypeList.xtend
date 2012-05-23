@@ -4,13 +4,13 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ContentTypeView
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ContentTypeListView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class ContentType {
+class ContentTypeList {
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
@@ -22,7 +22,7 @@ class ContentType {
         val contentTypePath = appName.getAppSourceLibPath + 'ContentType/'
         fsa.generateFile(contentTypePath + 'Base/ItemList.php', contentTypeBaseFile)
         fsa.generateFile(contentTypePath + 'ItemList.php', contentTypeFile)
-        new ContentTypeView().generate(it, fsa)
+        new ContentTypeListView().generate(it, fsa)
     }
 
     def private contentTypeBaseFile(Application it) '''
@@ -65,19 +65,20 @@ class ContentType {
         public function getTitle()
         {
             $dom = ZLanguage::getModuleDomain('«appName»');
-            return __('«appName» items', $dom);
+            return __('«appName» list view', $dom);
         }
 
         public function getDescription()
         {
             $dom = ZLanguage::getModuleDomain('«appName»');
-            return __('Display «appName» items.', $dom);
+            return __('Display list of «appName» objects.', $dom);
         }
 
         public function loadData(&$data)
         {
-            if (!isset($data['objectType']) || !in_array($data['objectType'], «appName»_Util_Controller::getObjectTypes('contentType'))) {
-                $data['objectType'] = «appName»_Util_Controller::getDefaultObjectType('contentType');
+            $utilArgs = array('name' => 'list');
+            if (!isset($data['objectType']) || !in_array($data['objectType'], «appName»_Util_Controller::getObjectTypes('contentType', $utilArgs))) {
+                $data['objectType'] = «appName»_Util_Controller::getDefaultObjectType('contentType', $utilArgs);
             }
 
             $this->objectType = $data['objectType'];

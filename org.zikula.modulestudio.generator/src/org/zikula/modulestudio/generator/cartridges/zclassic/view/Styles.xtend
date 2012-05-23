@@ -24,10 +24,11 @@ class Styles {
      * Entry point for application styles.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        fsa.generateFile(appName.getAppSourcePath + 'style/style.css', styleDefines)
+        fsa.generateFile(appName.getAppSourcePath + 'style/style.css', appStyles)
+        fsa.generateFile(appName.getAppSourcePath + 'style/finder.css', finderStyles)
     }
 
-    def private styleDefines(Application it) '''
+    def private appStyles(Application it) '''
         /* view pages */
         div#z-maincontent.z-module-«name.formatForDB» table tbody tr td {
             vertical-align: top;
@@ -241,5 +242,59 @@ class Styles {
                 text-align: right;
             }
         «ENDIF»
+    '''
+
+    def private finderStyles(Application it) '''
+        body {
+            background-color: #DDD;
+            margin: 10px;
+            text-align: left;
+        }
+
+        .«prefix()»form fieldset,
+        .«prefix()»form fieldset legend {
+            background-color: #FFF;
+            border: none;
+        }
+
+        #«prefix()»itemcontainer {
+            background-color: #EEE;
+            height: 300px;
+            overflow: auto;
+            padding: 5px;
+        }
+
+        #«prefix()»itemcontainer ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #«prefix()»itemcontainer a {
+            color: #000;
+            margin: 0.1em 0.2em;
+            text-decoration: underline;
+        }
+        #«prefix()»itemcontainer a:hover,
+        #«prefix()»itemcontainer a:focus,
+        #«prefix()»itemcontainer a:active {
+            color: #900;
+            text-decoration: none;
+        }
+
+        #«prefix()»itemcontainer a img {
+            border: none;
+        }
+
+        #«prefix()»itemcontainer a img {
+            border: 1px solid #CCC;
+            background-color: #F5F5F5;
+            padding: 0.5em;
+        }
+        #«prefix()»itemcontainer a:hover img,
+        #«prefix()»itemcontainer a:focus img,
+        #«prefix()»itemcontainer a:active img {
+            background-color: #FFF;
+        }
     '''
 }

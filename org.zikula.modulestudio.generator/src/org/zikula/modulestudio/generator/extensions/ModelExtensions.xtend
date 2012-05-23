@@ -426,10 +426,38 @@ class ModelExtensions {
     }
 
     /**
-     * Returns a list of all language fields of this entity.
+     * Returns a list of all textual fields of this entity.
      */
     def getAbstractStringFieldsEntity(Entity it) {
         getDerivedFields.filter(typeof(AbstractStringField))
+    }
+
+    /**
+     * Checks whether this entity has at least one string field.
+     */
+    def hasStringFieldsEntity(Entity it) {
+        !getStringFieldsEntity.isEmpty
+    }
+
+    /**
+     * Returns a list of all string fields of this entity.
+     */
+    def getStringFieldsEntity(Entity it) {
+        getDerivedFields.filter(typeof(StringField))
+    }
+
+    /**
+     * Checks whether this entity has at least one text field.
+     */
+    def hasTextFieldsEntity(Entity it) {
+        !getTextFieldsEntity.isEmpty
+    }
+
+    /**
+     * Returns a list of all text fields of this entity.
+     */
+    def getTextFieldsEntity(Entity it) {
+        getDerivedFields.filter(typeof(TextField))
     }
 
 

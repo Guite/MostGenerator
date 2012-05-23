@@ -15,8 +15,9 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Uploads
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Workflow
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Tag
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Account
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Blocks
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ContentType
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.BlockList
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ContentTypeList
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ContentTypeSingle
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Mailz
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Search
 import org.zikula.modulestudio.generator.cartridges.zclassic.models.Entities
@@ -103,15 +104,11 @@ println('TODO: progress monitor')
 
         pm.newTask('Additions: Blocks')
         println('Generating blocks')
-        new Blocks().generate(it, fsa)
-    if (hasUploads) {
-        pm.newTask('Additions: Upload handlers')
-        println('Generating upload handlers')
-        new Uploads().generate(it, fsa)
-    }
+        new BlockList().generate(it, fsa)
         pm.newTask('Additions: Content type api')
         println('Generating content type api')
-        new ContentType().generate(it, fsa)
+        new ContentTypeList().generate(it, fsa)
+        new ContentTypeSingle().generate(it, fsa)
         pm.newTask('Additions: Mailz api')
         println('Generating mailz api')
         new Mailz().generate(it, fsa)
@@ -123,6 +120,11 @@ println('TODO: progress monitor')
         pm.newTask('Additions: Account api')
         println('Generating account api')
         new Account().generate(it, fsa)
+        if (hasUploads) {
+            pm.newTask('Additions: Upload handlers')
+            println('Generating upload handlers')
+            new Uploads().generate(it, fsa)
+        }
         pm.newTask('Additions: Tag support')
         println('Generating tag support')
         new Tag().generate(it, fsa)

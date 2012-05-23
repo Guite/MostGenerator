@@ -8,6 +8,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormCol
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormCountrySelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormFrame
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormGeoInput
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormItemSelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormatGeoData
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetCountryName
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetFileSize
@@ -42,6 +43,7 @@ class Plugins {
             new TreeJS().generate(it, fsa)
             new TreeSelector().generate(it, fsa)
         }
+        new FormItemSelector().generate(it, fsa)
         if (hasColourFields) {
             new FormColourInput().generate(it, fsa)
         }

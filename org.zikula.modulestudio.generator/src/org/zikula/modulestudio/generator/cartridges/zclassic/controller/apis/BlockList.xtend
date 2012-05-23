@@ -10,7 +10,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class Blocks {
+class BlockList {
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
@@ -68,8 +68,8 @@ class Blocks {
             }
 
             return array('module'           => '«appName»',
-                         'text_type'        => $this->__('Item list'),
-                         'text_type_long'   => $this->__('Show a list of «appName» items based on different criteria.'),
+                         'text_type'        => $this->__('«appName» list view'),
+                         'text_type_long'   => $this->__('Display list of «appName» objects.'),
                          'allow_multiple'   => true,
                          'form_content'     => false,
                          'form_refresh'     => false,
@@ -119,8 +119,9 @@ class Blocks {
 
             ModUtil::initOOModule('«appName»');
 
-            if (!isset($vars['objectType']) || !in_array($vars['objectType'], «appName»_Util_Controller::getObjectTypes('block'))) {
-                $vars['objectType'] = «appName»_Util_Controller::getDefaultObjectType('block');
+            $utilArgs = array('name' => 'list');
+            if (!isset($vars['objectType']) || !in_array($vars['objectType'], «appName»_Util_Controller::getObjectTypes('block', $utilArgs))) {
+                $vars['objectType'] = «appName»_Util_Controller::getDefaultObjectType('block', $utilArgs);
             }
 
             $objectType = $vars['objectType'];

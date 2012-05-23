@@ -53,7 +53,7 @@ class FormColourInput {
              *
              * @return string
              */
-            function getFilename()
+            public function getFilename()
             {
                 return __FILE__;
             }
@@ -67,7 +67,7 @@ class FormColourInput {
              * @see    Zikula_Form_AbstractPlugin
              * @return void
              */
-            function create(Zikula_Form_View $view, &$params)
+            public function create(Zikula_Form_View $view, &$params)
             {
                 $params['maxLength'] = 7;
                 $params['width'] = '8em';
@@ -96,7 +96,7 @@ class FormColourInput {
              *
              * @return string The rendered output
              */
-            function render(Zikula_Form_View $view)
+            public function render(Zikula_Form_View $view)
             {
                 static $firstTime = true;
                 if ($firstTime) {
@@ -135,7 +135,7 @@ class FormColourInput {
              *
              * @return string Parsed Text.
              */
-            function parseValue(Zikula_Form_View $view, $text)
+            public function parseValue(Zikula_Form_View $view, $text)
             {
                 if (empty($text)) {
                     return null;
@@ -151,7 +151,7 @@ class FormColourInput {
              *
              * @return void
              */
-            function validate(Zikula_Form_View $view)
+            public function validate(Zikula_Form_View $view)
             {
                 parent::validate($view);
 
@@ -168,7 +168,7 @@ class FormColourInput {
                     }
                 }
             }
-}
+        }
     '''
 
     def private formColourInputImpl(Application it) '''

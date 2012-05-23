@@ -54,7 +54,7 @@ class FormCountrySelector {
              *
              * @return string
              */
-            function getFilename()
+            public function getFilename()
             {
                 return __FILE__;
             }
@@ -67,7 +67,7 @@ class FormCountrySelector {
              *
              * @return void
              */
-            function load(Zikula_Form_View $view, &$params)
+            public function load(Zikula_Form_View $view, &$params)
             {
                 $this->validCountryList = array();
                 $isFiltered = false;
