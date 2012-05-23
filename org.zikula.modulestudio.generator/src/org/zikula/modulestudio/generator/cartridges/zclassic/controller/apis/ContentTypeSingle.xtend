@@ -107,7 +107,7 @@ class ContentTypeSingle {
                 return ModUtil::func('«appName»', 'external', 'display', $this->getDisplayArguments());
             }
             $dom = ZLanguage::getModuleDomain('«appName»');
-            return __('No medium selected.', $dom);
+            return __('No item selected.', $dom);
         }
 
         protected function getDisplayArguments()
