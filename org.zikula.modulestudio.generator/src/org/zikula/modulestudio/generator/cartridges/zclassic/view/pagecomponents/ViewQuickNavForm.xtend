@@ -159,7 +159,7 @@ class ViewQuickNavForm {
         «val sourceAliasName = getRelationAliasName(false).formatForCodeCapital»
         {if !isset($«sourceName»Filter) || $«sourceName»Filter eq true}
             <label for="«sourceAliasName»">{gt text='«source.nameMultiple.formatForDisplayCapital»'}</label>
-            {modapifunc modname='«container.application.appName»' type='selection' func='getEntitiesSimple' ot='«source.name.formatForCode»' assign='listEntries'}
+            {modapifunc modname='«container.application.appName»' type='selection' func='getEntities' ot='«source.name.formatForCode»' slimMode=true assign='listEntries'}
             <select id="«sourceAliasName»" name="«sourceAliasName»">
                 <option value="">{$lblDefault}</option>
             {foreach item='option' from=$listEntries}

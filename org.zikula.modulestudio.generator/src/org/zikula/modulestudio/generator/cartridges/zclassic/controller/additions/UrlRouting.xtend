@@ -248,7 +248,7 @@ class UrlRouting {
     def private getSlugForItem(Entity it) '''
             case '«name.formatForCode»':
                 «IF hasSluggableFields»
-                        $item = ModUtil::apiFunc('«container.application.appName»', 'selection', 'getEntitySimple', array('ot' => $objectType, 'id' => $itemid));
+                        $item = ModUtil::apiFunc('«container.application.appName»', 'selection', 'getEntity', array('ot' => $objectType, 'id' => $itemid, 'slimMode' => true));
                         «IF slugUnique»
                             $slug = $item['slug'];
                         «ELSE»

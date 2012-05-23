@@ -68,6 +68,7 @@ class Selection {
           * @param string  $args['slug']     Slug to use as selection criteria instead of id (optional) (default=null).
          «ENDIF»
          * @param boolean $args['useJoins'] Whether to include joining related objects (optional) (default=true).
+         * @param boolean $args['slimMode'] If activated only some basic fields are selected without using any joins (optional) (default=false).
          *
          * @return mixed Desired entity object or null.
          */
@@ -84,81 +85,20 @@ class Selection {
                 $slug = isset($args['slug']) ? $args['slug'] : null;
             «ENDIF»
             $useJoins = isset($args['useJoins']) ? ((bool) $args['useJoins']) : true;
+            $slimMode = isset($args['slimMode']) ? ((bool) $args['slimMode']) : false;
 
             «IF hasSluggable»
                 $entity = null;
                 if ($slug != null) {
-                    $entity = $repository->selectBySlug($slug, $useJoins);
+                    $entity = $repository->selectBySlug($slug, $useJoins, $slimMode);
                 } else {
-                    $entity = $repository->selectById($idValues, $useJoins);
+                    $entity = $repository->selectById($idValues, $useJoins, $slimMode);
                 }
             «ELSE»
-                $entity = $repository->selectById($idValues, $useJoins);
+                $entity = $repository->selectById($idValues, $useJoins, $slimMode);
             «ENDIF»
 
             return $entity;
-        }
-
-        /**
-         * Selects a single entity by different criteria, using only the
-         * primary string/text field«IF hasSluggable», the slug «ENDIF»and the identifier.
-         * There are no joins used.
-         *
-         * @param string  $args['ot']       The object type to retrieve (optional)
-         * @param mixed   $args['id']       The id (or array of ids) to use to retrieve the object (default=null).
-         «IF hasSluggable»
-          * @param string  $args['slug']     Slug to use as selection criteria instead of id (optional) (default=null).
-         «ENDIF»
-         *
-         * @return mixed Desired entity object or null.
-         */
-        public function getEntitySimple($args)
-        {
-            if (!isset($args['id'])«IF hasSluggable» && !isset($args['slug'])«ENDIF») {
-                return LogUtil::registerArgsError();
-            }
-            $objectType = $this->determineObjectType($args, 'getEntity');
-            $repository = $this->getRepository($objectType);
-
-            $idValues = $args['id'];
-            «IF hasSluggable»
-                $slug = isset($args['slug']) ? $args['slug'] : null;
-            «ENDIF»
-
-            «IF hasSluggable»
-                $entity = null;
-                if ($slug != null) {
-                    $entity = $repository->selectBySlugSimple($slug);
-                } else {
-                    $entity = $repository->selectByIdSimple($idValues);
-                }
-            «ELSE»
-                $entity = $repository->selectByIdSimple($idValues);
-            «ENDIF»
-
-            return $entity;
-        }
-
-        /**
-         * Selects a simple list of entities by different criteria, using only the
-         * primary string/text field«IF hasSluggable», the slug «ENDIF»and the identifier.
-         * There are no joins used.
-         *
-         * @param string  $args['ot']      The object type to retrieve (optional)
-         * @param string  $args['where']   The where clause to use when retrieving the collection (optional) (default='').
-         * @param string  $args['orderBy'] The order-by clause to use when retrieving the collection (optional) (default='').
-         *
-         * @return Array with retrieved collection.
-         */
-        public function getEntitiesSimple($args)
-        {
-            $objectType = $this->determineObjectType($args, 'getEntitiesSimple');
-            $repository = $this->getRepository($objectType);
-
-            $where = isset($args['where']) ? $args['where'] : '';
-            $orderBy = isset($args['orderBy']) ? $args['orderBy'] : '';
-
-            return $repository->selectWhereSimple($where, $orderBy);
         }
 
         /**
@@ -168,6 +108,7 @@ class Selection {
          * @param string  $args['where']    The where clause to use when retrieving the collection (optional) (default='').
          * @param string  $args['orderBy']  The order-by clause to use when retrieving the collection (optional) (default='').
          * @param boolean $args['useJoins'] Whether to include joining related objects (optional) (default=true).
+         * @param boolean $args['slimMode'] If activated only some basic fields are selected without using any joins (optional) (default=false).
          *
          * @return Array with retrieved collection.
          */
@@ -179,8 +120,9 @@ class Selection {
             $where = isset($args['where']) ? $args['where'] : '';
             $orderBy = isset($args['orderBy']) ? $args['orderBy'] : '';
             $useJoins = isset($args['useJoins']) ? ((bool) $args['useJoins']) : true;
+            $slimMode = isset($args['slimMode']) ? ((bool) $args['slimMode']) : false;
 
-            return $repository->selectWhere($where, $orderBy, $useJoins);
+            return $repository->selectWhere($where, $orderBy, $useJoins, $slimMode);
         }
 
         /**
@@ -192,6 +134,7 @@ class Selection {
          * @param integer $args['currentPage']    Where to start selection
          * @param integer $args['resultsPerPage'] Amount of items to select
          * @param boolean $args['useJoins']       Whether to include joining related objects (optional) (default=true).
+         * @param boolean $args['slimMode']       If activated only some basic fields are selected without using any joins (optional) (default=false).
          *
          * @return Array with retrieved collection and amount of total records affected by this query.
          */
@@ -205,13 +148,14 @@ class Selection {
             $currentPage = isset($args['currentPage']) ? $args['currentPage'] : 1;
             $resultsPerPage = isset($args['resultsPerPage']) ? $args['resultsPerPage'] : 25;
             $useJoins = isset($args['useJoins']) ? ((bool) $args['useJoins']) : true;
+            $slimMode = isset($args['slimMode']) ? ((bool) $args['slimMode']) : false;
 
             if ($orderBy == 'RAND()') {
                 // random ordering is disabled for now, see https://github.com/Guite/MostGenerator/issues/143
                 $orderBy = $repository->getDefaultSortingField();
             }
 
-            return $repository->selectWherePaginated($where, $orderBy, $currentPage, $resultsPerPage, $useJoins);
+            return $repository->selectWherePaginated($where, $orderBy, $currentPage, $resultsPerPage, $useJoins, $slimMode);
         }
 
         /**

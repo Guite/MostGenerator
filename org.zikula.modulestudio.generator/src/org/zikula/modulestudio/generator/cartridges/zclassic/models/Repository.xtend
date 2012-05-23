@@ -98,7 +98,7 @@ class Repository {
              */
             protected $defaultSortingField = '«(if (hasSortableFields) getSortableFields.head else getLeadingField).name.formatForCode»';
 
-            /**«/* @TODO to be refactored */»
+            /**
              * Retrieves an array with all fields which can be used for sorting instances.
              *
              * @return array
@@ -455,23 +455,27 @@ class Repository {
         /**
          * Adds id filters to given query instance.
          *
-         * @param mixed          $id The id (or array of ids) to use to retrieve the object.
+         * @param «IF hasCompositeKeys»mixed  «ELSE»integer«ENDIF»        $id The id (or array of ids) to use to retrieve the object.
          * @param Doctrine_Query $q  Query to be enhanced.
          *
          * @return Doctrine_Query Enriched query instance.
          */
         protected function addIdFilter($id, $q)
         {
-            if (is_array($id)) {
-                foreach ($id as $fieldName => $fieldValue) {
-                    $fieldName = DataUtil::formatForStore($fieldName);
-                    $q->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
-                      ->setParameter($fieldName, $fieldValue);
-                }
-            } else {
-                $q->andWhere('tbl.id = :id')«/* TODO fix composite keys */»
+            «IF hasCompositeKeys»
+                if (is_array($id)) {
+                    foreach ($id as $fieldName => $fieldValue) {
+                        $fieldName = DataUtil::formatForStore($fieldName);
+                        $q->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
+                          ->setParameter($fieldName, $fieldValue);
+                    }
+                } else {
+            «ENDIF»
+                $q->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» = :id')
                   ->setParameter('id', $id);
-            }
+            «IF hasCompositeKeys»
+                }
+            «ENDIF»
             return $q;
         }
 
@@ -480,41 +484,18 @@ class Repository {
          *
          * @param mixed   $id       The id (or array of ids) to use to retrieve the object (optional) (default=0).
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
+         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false).
          *
          * @return array|«implClassModelEntity» retrieved data array or «implClassModelEntity» instance
          */
-        public function selectById($id = 0, $useJoins = true)
+        public function selectById($id = 0, $useJoins = true, $slimMode = false)
         {
             // check id parameter
             if ($id == 0) {
                 return LogUtil::registerArgsError();
             }
 
-            $query = $this->_intBaseQuery('', '', $useJoins);
-
-            $query = $this->addIdFilter($id, $query);
-
-            return $query->getOneOrNullResult();
-        }
-
-        /**
-         * Selects an object from the database.
-         * This version uses no joins at all and selects only a minimal set of fields.
-         *
-         * @TODO merge both queries into one more flexible version.
-         *
-         * @param mixed   $id       The id (or array of ids) to use to retrieve the object (optional) (default=null).
-         *
-         * @return array|«implClassModelEntity» retrieved data array or «implClassModelEntity» instance
-         */
-        public function selectByIdSimple($id = 0)
-        {
-            // check id parameter
-            if ($id == 0) {
-                return LogUtil::registerArgsError();
-            }
-
-            $query = $this->_intBaseQuerySimple('', '');
+            $query = $this->_intBaseQuery('', '', $useJoins, $slimMode);
 
             $query = $this->addIdFilter($id, $query);
 
@@ -528,59 +509,48 @@ class Repository {
          *
          * @param string  $slugTitle The slug value
          * @param boolean $useJoins  Whether to include joining related objects (optional) (default=true).
+         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false).
          * @param integer $excludeId Optional id to be excluded (used for unique validation).
          *
          * @return «implClassModelEntity» retrieved instance of «implClassModelEntity»
          */
-        public function selectBySlug($slugTitle = '', $useJoins = true, $excludeId = 0)
+        public function selectBySlug($slugTitle = '', $useJoins = true, $slimMode = false, $excludeId = 0)
         {
             // check input parameter
             if ($slugTitle == '') {
                 return LogUtil::registerArgsError();
             }
 
-            $query = $this->_intBaseQuery('', '', $useJoins);
+            $query = $this->_intBaseQuery('', '', $useJoins, $slimMode);
 
             $query->andWhere('tbl.slug = :slug')
                   ->setParameter('slug', $slugTitle);
 
-            if ($excludeId > 0) {
-                $query->andWhere('tbl.id != :excludeId')«/* TODO fix composite keys */»
-                      ->setParameter('excludeId', $excludeId);
-            }
+            $query = $this->addExclusion($query, $excludeId);
 
             return $query->getOneOrNullResult();
         }
 
         /**
-         * Selects an object by slug field.
-         * This version uses no joins at all and selects only a minimal set of fields.
-         *
-         * @TODO merge both queries into one more flexible version.
-         *
-         * @param string  $slugTitle The slug value
-         * @param integer $excludeId Optional id to be excluded (used for unique validation).
-         *
-         * @return «implClassModelEntity» retrieved instance of «implClassModelEntity»
+         * Adds where clauses excluding desired identifiers from selection.
          */
-        public function selectBySlugSimple($slugTitle = '', $excludeId = 0)
+        protected function addExclusion($query, $excludeId)
         {
-            // check input parameter
-            if ($slugTitle == '') {
-                return LogUtil::registerArgsError();
-            }
-
-            $query = $this->_intBaseQuerySimple('', '');
-
-            $query->andWhere('tbl.slug = :slug')
-                  ->setParameter('slug', $slugTitle);
-
-            if ($excludeId > 0) {
-                $query->andWhere('tbl.id != :excludeId')«/* TODO fix composite keys */»
+            «IF hasCompositeKeys»
+                if (is_array($excludeId)) {
+                    foreach ($id as $fieldName => $fieldValue) {
+                        $fieldName = DataUtil::formatForStore($fieldName);
+                        $q->andWhere('tbl.' . $fieldName . ' != :' . $fieldName)
+                          ->setParameter($fieldName, $fieldValue);
+                    }
+                } elseif ($excludeId > 0) {
+            «ELSE»
+                if ($excludeId > 0) {
+            «ENDIF»
+                $query->andWhere('tbl.id != :excludeId')
                       ->setParameter('excludeId', $excludeId);
             }
-
-            return $query->getOneOrNullResult();
+            return $query;
         }
     '''
 
@@ -591,30 +561,13 @@ class Repository {
          * @param string  $where    The where clause to use when retrieving the collection (optional) (default='').
          * @param string  $orderBy  The order-by clause to use when retrieving the collection (optional) (default='').
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
+         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false).
          *
          * @return ArrayCollection collection containing retrieved «implClassModelEntity» instances
          */
-        public function selectWhere($where = '', $orderBy = '', $useJoins = true)
+        public function selectWhere($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
         {
-            $query = $this->_intBaseQuery($where, $orderBy, $useJoins);
-
-            return $query->getResult();
-        }
-
-        /**
-         * Selects a list of objects with a given where clause.
-         * This version uses no joins at all and selects only a minimal set of fields.
-         *
-         * @TODO merge both queries into one more flexible version.
-         *
-         * @param string  $where   The where clause to use when retrieving the collection (optional) (default='').
-         * @param string  $orderBy The order-by clause to use when retrieving the collection (optional) (default='').
-         *
-         * @return ArrayCollection collection containing retrieved «implClassModelEntity» instances
-         */
-        public function selectWhereSimple($where = '', $orderBy = '')
-        {
-            $query = $this->_intBaseQuerySimple($where, $orderBy);
+            $query = $this->_intBaseQuery($where, $orderBy, $useJoins, $slimMode);
 
             return $query->getResult();
         }
@@ -730,7 +683,7 @@ class Repository {
             list($query, $count) = $this->getSelectWherePaginatedQuery('', $orderBy, $currentPage, $resultsPerPage, $useJoins);
             if (count($exclude) > 0) {
                 $exclude = implode(', ', $exclude);
-                $query->andWhere('tbl.id NOT IN (:excludeList)')«/* TODO fix composite keys */»
+                $query->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» NOT IN (:excludeList)')«/* TODO fix composite keys */»
                       ->setParameter('excludeList', $exclude);
             }
 
@@ -783,7 +736,7 @@ class Repository {
         {
             $useJoins = false;
 
-            $selection = 'COUNT(tbl.id) AS num«nameMultiple.formatForCodeCapital»';
+            $selection = 'COUNT(tbl.«getFirstPrimaryKey.name.formatForCode») AS num«nameMultiple.formatForCodeCapital»';
             if ($useJoins === true) {
                 $selection .= $this->addJoinsToSelection();
             }
@@ -828,19 +781,16 @@ class Repository {
          *
          * @param string $fieldName  The name of the property to be checked
          * @param string $fieldValue The value of the property to be checked
-         * @param int    $excludeid  Id of «nameMultiple.formatForDisplay» to exclude (optional).
+         * @param int    $excludeId  Id of «nameMultiple.formatForDisplay» to exclude (optional).
          * @return boolean result of this check, true if the given «name.formatForDisplay» does not already exist
          */
-        public function detectUniqueState($fieldName, $fieldValue, $excludeid = 0)
+        public function detectUniqueState($fieldName, $fieldValue, $excludeId = 0)
         {
             $query = $this->getCountQuery($where, $useJoins);
             $query->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
                   ->setParameter($fieldName, $fieldValue);
 
-            if ($excludeid > 0) {
-                $query->andWhere('tbl.id != :excludeId')
-                      ->setParameter('excludeId', $excludeid);
-            }
+            $query = $this->addExclusion($query, $excludeId);
 
             «IF hasPessimisticReadLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -858,12 +808,29 @@ class Repository {
          * @param string  $where    The where clause to use when retrieving the collection (optional) (default='').
          * @param string  $orderBy  The order-by clause to use when retrieving the collection (optional) (default='').
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
+         * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false).
          *
          * @return Doctrine\ORM\Query query instance to be further processed
          */
-        protected function _intBaseQuery($where = '', $orderBy = '', $useJoins = true)
+        protected function _intBaseQuery($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
         {
+            // normally we select the whole table
             $selection = 'tbl';
+
+            if ($slimMode === true) {
+                // but for the slim version we select only the basic fields, and no joins
+
+                $titleField = $this->getTitleFieldName();
+                $selection = '«FOR pkField : getPrimaryKeyFields SEPARATOR ', '»tbl.«pkField.name.formatForCode»«ENDFOR»';
+                if ($titleField != '') {
+                    $selection .= ', tbl.' . $titleField;
+                }
+                «IF hasSluggableFields»
+                    $selection .= ', tbl.slug';
+                «ENDIF»
+                $useJoins = false;
+            }
+
             if ($useJoins === true) {
                 $selection .= $this->addJoinsToSelection();
             }
@@ -893,44 +860,6 @@ class Repository {
                     $orderBy = 'tbl.' . $orderBy;
                 }
                 $qb->add('orderBy', $orderBy);
-            }
-
-            «intBaseQueryCommonParts»
-        }
-
-        /**
-         * Builds a generic Doctrine query supporting WHERE and ORDER BY.
-         * This version uses no joins at all and selects only a minimal set of fields.
-         *
-         * @TODO merge both queries into one more flexible version.
-         *
-         * @param string  $where   The where clause to use when retrieving the collection (optional) (default='').
-         * @param string  $orderBy The order-by clause to use when retrieving the collection (optional) (default='').
-         *
-         * @return Doctrine\ORM\Query query instance to be further processed
-         */
-        protected function _intBaseQuerySimple($where = '', $orderBy = '')
-        {
-            $titleField = $this->getTitleFieldName();
-            $selection = '«FOR pkField : getPrimaryKeyFields SEPARATOR ', '»tbl.«pkField.name.formatForCode»«ENDFOR»';
-            if ($titleField != '') {
-                $selection .= ', tbl.' . $titleField;
-            }
-            «IF hasSluggableFields»
-                $selection .= ', tbl.slug';
-            «ENDIF»
-
-            $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->select($selection)
-               ->from('«implClassModelEntity»', 'tbl');
-
-            if (!empty($where)) {
-                $qb->where($where);
-            }
-
-            // add order by clause
-            if (!empty($orderBy)) {
-                $qb->add('orderBy', 'tbl.' . $orderBy);
             }
 
             «intBaseQueryCommonParts»
