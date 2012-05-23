@@ -123,7 +123,7 @@ class ExternalController {
             PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
 
             $objectType = isset($args['objectType']) ? $args['objectType'] : '';
-            $utilArgs = array('controller' => 'external', 'action' => 'findItem');
+            $utilArgs = array('controller' => 'external', 'action' => 'finder');
             if (!in_array($objectType, «appName»_Util_Controller::getObjectTypes('controller', $utilArgs))) {
                 $objectType = «appName»_Util_Controller::getDefaultObjectType('controllerType', $utilArgs);
             }

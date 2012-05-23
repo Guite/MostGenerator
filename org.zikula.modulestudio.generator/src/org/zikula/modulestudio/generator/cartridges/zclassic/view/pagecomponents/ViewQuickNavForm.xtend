@@ -109,7 +109,7 @@ class ViewQuickNavForm {
                 <label for="categoryid">{gt text='Category'}</label>
                 &nbsp;
                 {modapifunc modname='«container.application.appName»' type='category' func='getMainCat' assign='mainCategory'}
-                {selector_category category=$mainCategory name='categoryid' field='id' defaultText=$lblDefault editLink=false selectedValue=$catId}
+                {selector_category category=$mainCategory name='catid' field='id' defaultText=$lblDefault editLink=false selectedValue=$catId}
             {/if}
         «ENDIF»
     '''

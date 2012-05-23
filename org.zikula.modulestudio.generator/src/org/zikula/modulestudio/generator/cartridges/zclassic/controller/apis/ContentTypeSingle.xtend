@@ -46,9 +46,9 @@ class ContentTypeSingle {
     '''
 
     def private contentTypeBaseImpl(Application it) '''
-        private $objectType;
-        private $id;
-        private $displayMode;
+        protected $objectType;
+        protected $id;
+        protected $displayMode;
 
         public function getModule()
         {
@@ -109,7 +109,7 @@ class ContentTypeSingle {
             return __('No medium selected.', $dom);
         }
 
-        private function getDisplayArguments()
+        protected function getDisplayArguments()
         {
             return array('objectType' => $this->objectType,
                          'source' => 'contentType',

@@ -158,7 +158,7 @@ class Ajax {
             return new Zikula_Response_Ajax($slimItems);
         }
 
-        private function prepareSlimItem($objectType, $item, $itemId, $titleField, $descriptionField)
+        protected function prepareSlimItem($objectType, $item, $itemId, $titleField, $descriptionField)
         {
             $view = Zikula_View::getInstance('«app.appName»', false);
             $view->assign($objectType, $item);

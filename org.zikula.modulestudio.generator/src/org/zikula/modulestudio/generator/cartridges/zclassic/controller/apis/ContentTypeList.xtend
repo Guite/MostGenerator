@@ -6,12 +6,14 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ContentTypeListView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ContentTypeList {
     @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
@@ -46,11 +48,16 @@ class ContentTypeList {
     '''
 
     def private contentTypeBaseImpl(Application it) '''
-        private $objectType;
-        private $sorting;
-        private $amount;
-        private $template;
-        private $filter;
+        protected $objectType;
+        protected $sorting;
+        protected $amount;
+        protected $template;
+        protected $filter;
+        «IF hasCategorisableEntities»
+            protected $categorisableObjectTypes;
+            protected $mainCategory;
+            protected $catId;
+        «ENDIF»
 
         public function getModule()
         {
@@ -95,11 +102,25 @@ class ContentTypeList {
             if (!isset($data['filter'])) {
                 $data['filter'] = '';
             }
+            «IF hasCategorisableEntities»
+                if (!isset($data['mainCategory'])) {
+                    $data['mainCategory'] = null;
+                }
+                if (!isset($data['catId'])) {
+                    $data['catId'] = 0;
+                }
+
+                $this->categorisableObjectTypes = array(«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
+            «ENDIF»
 
             $this->sorting = $data['sorting'];
             $this->amount = $data['amount'];
             $this->template = $data['template'];
             $this->filter = $data['filter'];
+            «IF hasCategorisableEntities»
+                $this->mainCategory = $data['mainCategory'];
+                $this->catId = $data['catId'];
+            «ENDIF»
         }
 
         public function display()
@@ -111,33 +132,25 @@ class ContentTypeList {
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository('«appName»_Entity_' . ucfirst($this->objectType));
 
-            $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
-
-            $sortParam = '';
-            if ($this->sorting == 'random') {
-                $sortParam = 'RAND()';
-            } elseif ($this->sorting == 'newest') {
-                if (count($idFields) == 1) {
-                    $sortParam = $idFields[0] . ' DESC';
-                } else {
-                    foreach ($idFields as $idField) {
-                        if (!empty($sortParam)) {
-                            $sortParam .= ', ';
+            $where = $this->filter;
+            «IF hasCategorisableEntities»
+                if (in_array($this->objectType, $this->categorisableObjectTypes)) {
+                    if ($this->catId > 0) {
+                        if (!empty($where)) {
+                            $where .= ' AND ';
                         }
-                        $sortParam .= $idField . ' ASC';
+                        $where .= 'tblCategories.category = ' . DataUtil::formatForStore($this->catId);
                     }
                 }
-            } elseif ($this->sorting == 'default') {
-                $sortParam = $repository->getDefaultSortingField() . ' ASC';
-            }
+            «ENDIF»
 
             $resultsPerPage = (($this->amount) ? $this->amount : 1);
 
             // get objects from database
             $selectionArgs = array(
                 'ot' => $objectType,
-                'where' => $this->filter,
-                'orderBy' => $sortParam,
+                'where' => $where,
+                'orderBy' => $this->getSortParam($repository),
                 'currentPage' => 1,
                 'resultsPerPage' => $resultsPerPage
             );
@@ -167,6 +180,38 @@ class ContentTypeList {
             }
 
             return $output;
+        }
+
+        /**
+         * Determines the order by parameter for item selection.
+         *
+         * @param array $blockinfo a blockinfo structure
+         * @return string the sorting clause
+         */
+        protected function getSortParam($repository)
+        {
+            if ($this->sorting == 'random') {
+                return 'RAND()';
+            }
+
+            $sortParam = '';
+            if ($this->sorting == 'newest') {
+                $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $this->objectType));
+                if (count($idFields) == 1) {
+                    $sortParam = $idFields[0] . ' DESC';
+                } else {
+                    foreach ($idFields as $idField) {
+                        if (!empty($sortParam)) {
+                            $sortParam .= ', ';
+                        }
+                        $sortParam .= $idField . ' ASC';
+                    }
+                }
+            } elseif ($this->sorting == 'default') {
+                $sortParam = $repository->getDefaultSortingField() . ' ASC';
+            }
+
+            return $sortParam;
         }
 
         public function displayEditing()

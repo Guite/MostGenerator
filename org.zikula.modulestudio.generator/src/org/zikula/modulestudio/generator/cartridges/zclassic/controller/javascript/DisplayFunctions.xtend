@@ -123,8 +123,8 @@ class DisplayFunctions {
                 return;
             }
 
-            if ($('categoryid') != undefined) {
-                $('categoryid').observe('change', «initQuickNavigationSubmitCall(prefix)»);
+            if ($('catid') != undefined) {
+                $('catid').observe('change', «initQuickNavigationSubmitCall(prefix)»);
             }
             if ($('sortby') != undefined) {
                 $('sortby').observe('change', «initQuickNavigationSubmitCall(prefix)»);

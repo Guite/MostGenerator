@@ -6,12 +6,14 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.BlocksView
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class BlockList {
     @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
@@ -46,12 +48,20 @@ class BlockList {
     '''
 
     def private listBlockBaseImpl(Application it) '''
+        «IF hasCategorisableEntities»
+            protected $categorisableObjectTypes;
+
+        «ENDIF»
         /**
          * Initialise the block.
          */
         public function init()
         {
             SecurityUtil::registerPermissionSchema('«appName»:ItemListBlock:', 'Block title::');
+            «IF hasCategorisableEntities»
+
+                $this->categorisableObjectTypes = array(«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
+            «ENDIF»
         }
 
         /**
@@ -111,11 +121,19 @@ class BlockList {
                 $vars['amount'] = 5;
             }
             if (!isset($vars['template'])) {
-                $vars['template'] = 'itemlist_' . ucwords($vars['objectType']) . '_display.tpl';
+                $vars['template'] = 'itemlist_' . DataUtil::formatForOS($vars['objectType']) . '_display.tpl';
             }
             if (!isset($vars['filter'])) {
                 $vars['filter'] = '';
             }
+            «IF hasCategorisableEntities»
+                if (!isset($vars['mainCategory'])) {
+                    $vars['mainCategory'] = null;
+                }
+                if (!isset($vars['catId'])) {
+                    $vars['catId'] = 0;
+                }
+            «ENDIF»
 
             ModUtil::initOOModule('«appName»');
 
@@ -130,31 +148,23 @@ class BlockList {
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository('«appName»_Entity_' . ucfirst($objectType));
 
-            $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
-
-            $sortParam = '';
-            if ($vars['sorting'] == 'random') {
-                $sortParam = 'RAND()';
-            } elseif ($vars['sorting'] == 'newest') {
-                if (count($idFields) == 1) {
-                    $sortParam = $idFields[0] . ' DESC';
-                } else {
-                    foreach ($idFields as $idField) {
-                        if (!empty($sortParam)) {
-                            $sortParam .= ', ';
+            $where = $vars['filter'];
+            «IF hasCategorisableEntities»
+                if (in_array($vars['objectType'], $this->categorisableObjectTypes)) {
+                    if ($vars['catId'] > 0) {
+                        if (!empty($where)) {
+                            $where .= ' AND ';
                         }
-                        $sortParam .= $idField . ' ASC';
+                        $where .= 'tblCategories.category = ' . DataUtil::formatForStore($vars['catId']);
                     }
                 }
-            } elseif ($vars['sorting'] == 'default') {
-                $sortParam = $repository->getDefaultSortingField() . ' ASC';
-            }
+            «ENDIF»
 
             // get objects from database
             $selectionArgs = array(
                 'ot' => $objectType,
-                'where' => $vars['filter'],
-                'orderBy' => $sortParam,
+                'where' => $where,
+                'orderBy' => $this->getSortParam($vars, $repository),
                 'currentPage' => 1,
                 'resultsPerPage' => $vars['amount']
             );
@@ -174,7 +184,7 @@ class BlockList {
             }
 
             $output = '';
-            $templateForObjectType = str_replace('itemlist_', 'itemlist_' . ucwords($objectType) . '_', $vars['template']);
+            $templateForObjectType = str_replace('itemlist_', 'itemlist_' . DataUtil::formatForOS($objectType) . '_', $vars['template']);
             if ($this->view->template_exists('contenttype/' . $templateForObjectType)) {
                 $output = $this->view->fetch('contenttype/' . $templateForObjectType);
             } elseif ($this->view->template_exists('contenttype/' . $vars['template'])) {
@@ -191,6 +201,38 @@ class BlockList {
 
             // return the block to the theme
             return BlockUtil::themeBlock($blockinfo);
+        }
+
+        /**
+         * Determines the order by parameter for item selection.
+         *
+         * @param array $blockinfo a blockinfo structure
+         * @return string the sorting clause
+         */
+        protected function getSortParam($vars, $repository)
+        {
+            if ($vars['sorting'] == 'random') {
+                return 'RAND()';
+            }
+
+            $sortParam = '';
+            if ($vars['sorting'] == 'newest') {
+                $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $vars['objectType']));
+                if (count($idFields) == 1) {
+                    $sortParam = $idFields[0] . ' DESC';
+                } else {
+                    foreach ($idFields as $idField) {
+                        if (!empty($sortParam)) {
+                            $sortParam .= ', ';
+                        }
+                        $sortParam .= $idField . ' ASC';
+                    }
+                }
+            } elseif ($vars['sorting'] == 'default') {
+                $sortParam = $repository->getDefaultSortingField() . ' ASC';
+            }
+
+            return $sortParam;
         }
 
         /**
@@ -215,11 +257,19 @@ class BlockList {
                 $vars['amount'] = 5;
             }
             if (!isset($vars['template'])) {
-                $vars['template'] = 'itemlist_' . $vars['objectType'] . '_display.tpl';
+                $vars['template'] = 'itemlist_' . DataUtil::formatForOS($vars['objectType']) . '_display.tpl';
             }
             if (!isset($vars['filter'])) {
                 $vars['filter'] = '';
             }
+            «IF hasCategorisableEntities»
+                if (!isset($vars['mainCategory'])) {
+                    $vars['mainCategory'] = null;
+                }
+                if (!isset($vars['catId'])) {
+                    $vars['catId'] = 0;
+                }
+            «ENDIF»
 
             $this->view->setCaching(false);
 
@@ -228,9 +278,9 @@ class BlockList {
 
             // clear the block cache
             $this->view->clear_cache('block/itemlist_display.tpl');
-            $this->view->clear_cache('block/itemlist_' . ucwords($vars['objectType']) . '_display.tpl');
+            $this->view->clear_cache('block/itemlist_' . DataUtil::formatForOS($vars['objectType']) . '_display.tpl');
             $this->view->clear_cache('block/itemlist_display_description.tpl');
-            $this->view->clear_cache('block/itemlist_' . ucwords($vars['objectType']) . '_display_description.tpl');
+            $this->view->clear_cache('block/itemlist_' . DataUtil::formatForOS($vars['objectType']) . '_display_description.tpl');
 
             // Return the output that has been generated by this function
             return $this->view->fetch('block/itemlist_modify.tpl');
@@ -256,6 +306,15 @@ class BlockList {
             if (!in_array($vars['objectType'], «appName»_Util_Controller::getObjectTypes('block'))) {
                 $vars['objectType'] = «appName»_Util_Controller::getDefaultObjectType('block');
             }
+            «IF hasCategorisableEntities»
+
+                $vars['mainCategory'] = null;
+                $vars['catId'] = 0;
+                if (in_array($vars['objectType'], $this->categorisableObjectTypes)) {
+                    $vars['mainCategory'] = ModUtil::apiFunc('«appName»', 'category', 'getMainCat', array('ot' => $vars['objectType']));
+                    $vars['catId'] = (int) $this->request->request->filter('catid', 0, FILTER_SANITIZE_INT);
+                }
+            «ENDIF»
 
             // write back the new contents
             $blockinfo['content'] = BlockUtil::varsToContent($vars);

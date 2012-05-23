@@ -267,7 +267,7 @@ class ExternalView {
             <p>
                 <label for="{$baseID}_catid"{$leftSide}>{gt text='Category'}:</label>
                 {gt text='All' assign='lblDef'}
-                {selector_category category=$mainCategory name="`$baseID`_catid" field='id' defaultText=$lblDef editLink=false selectedValue=$catID}
+                {selector_category category=$mainCategory name="`$baseID`_catid" field='id' defaultText=$lblDef editLink=false selectedValue=$catId}
                 <br{$break} />
             </p>
         «ENDIF»

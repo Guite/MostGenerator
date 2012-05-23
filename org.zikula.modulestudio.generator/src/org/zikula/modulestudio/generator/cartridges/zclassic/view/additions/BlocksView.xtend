@@ -35,6 +35,14 @@ class BlocksView {
                 «ENDFOR»
             </select>
         </div>
+        {if $mainCategory ne null}
+            <div class="z-formrow">
+                <label for="catid" value="{gt text='Category'}">
+                {gt text='All' assign='lblDef'}
+                {selector_category category=$mainCategory name='catid' field='id' defaultText=$lblDef editLink=false selectedValue=$catId}
+                <p class="z-formnote">{gt text='This is an optional filter.'}</p>
+            </div>
+        {/if}
         <div class="z-formrow">
             <label for="«appName»_sorting">{gt text='Sorting'}:</label>
             <select id="«appName»_sorting" name="sorting">
