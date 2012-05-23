@@ -609,7 +609,7 @@ class FormHandler {
          * @see Zikula_Form_Plugin_Button
          * @see Zikula_Form_Plugin_ImageButton
          */
-        public function HandleCommand(Zikula_Form_View $view, &$args)
+        public function handleCommand(Zikula_Form_View $view, &$args)
         {
             if ($args['commandName'] == 'delete') {
                 if (!SecurityUtil::checkPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_DELETE)) {
@@ -679,6 +679,10 @@ class FormHandler {
                 $url = new Zikula_ModUrl($this->name, '«formattedName»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.process_edit', $this->createCompositeIdentifier(), $url);
                 $this->notifyHooks($hook);
+
+                // An item was created or updated, so we clear all cached pages of item lists and this item.
+                $cacheArgs = array('ot' => $this->objectType, 'item' => $entity);
+                ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
             } else if ($args['commandName'] == 'delete') {
                 // event handling if user clicks on delete
 
@@ -698,6 +702,10 @@ class FormHandler {
                 // Let any hooks know that we have deleted an item
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.process_delete', $this->createCompositeIdentifier());
                 $this->notifyHooks($hook);
+
+                // An item was deleted, so we clear all cached pages this item.
+                $cacheArgs = array('ot' => $this->objectType, 'item' => $entity);
+                ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
             } else if ($args['commandName'] == 'cancel') {
                 // event handling if user clicks on cancel
             }

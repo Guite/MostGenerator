@@ -145,6 +145,22 @@ class ContentTypeList {
                 }
             «ENDIF»
 
+            $this->view->setCaching(Zikula_View::CACHE_ENABLED);
+            // set cache id
+            $component = '«appName»:' . ucwords($this->objectType) . ':';
+            $instance = '::';
+            $accessLevel = ACCESS_READ;
+            if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
+            if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
+            $this->view->setCacheId('view|ot_' . $this->objectType . '_sort_' . $this->sorting . '_amount_' . $this->amount . '_' . $accessLevel);
+
+            $template = $this->getDisplayTemplate();
+
+            // if page is cached return cached content
+            if ($this->view->is_cached($template)) {
+                return $this->view->fetch($template);
+            }
+
             $resultsPerPage = (($this->amount) ? $this->amount : 1);
 
             // get objects from database
@@ -157,8 +173,6 @@ class ContentTypeList {
             );
             list($entities, $objectCount) = ModUtil::apiFunc('«appName»', 'selection', 'getEntitiesPaginated', $selectionArgs);
 
-            $this->view->setCaching(true);
-
             $data = array('objectType' => $this->objectType, 'sorting' => $this->sorting, 'amount' => $this->amount, 'filter' => $this->filter, 'template' => $this->template);
 
             // assign block vars and fetched data
@@ -167,20 +181,29 @@ class ContentTypeList {
                        ->assign('items', $entities)
                        ->assign($repository->getAdditionalTemplateParameters('contentType'));
 
-            $output = '';
+            $output = $this->view->fetch($template);
+
+            return $output;
+        }
+
+        /**
+         * Returns the template used for output.
+         */
+        protected function getDisplayTemplate()
+        {
+            $template = '';
             if (!empty($this->template) && $this->view->template_exists('contenttype/' . $this->template)) {
-                $output = $this->view->fetch('contenttype/' . $this->template);
+                $template = 'contenttype/' . $this->template;
             }
             $templateForObjectType = str_replace('itemlist_', 'itemlist_' . $this->objectType . '_', $this->template);
             if ($this->view->template_exists('contenttype/' . $templateForObjectType)) {
-                $output = $this->view->fetch('contenttype/' . $templateForObjectType);
+                $template = 'contenttype/' . $templateForObjectType;
             } elseif ($this->view->template_exists('contenttype/' . $this->template)) {
-                $output = $this->view->fetch('contenttype/' . $this->template);
+                $template = 'contenttype/' . $this->template;
             } else {
-                $output = $this->view->fetch('contenttype/itemlist_display.tpl');
+                $template = 'contenttype/itemlist_display.tpl';
             }
-
-            return $output;
+            return $template;
         }
 
         /**

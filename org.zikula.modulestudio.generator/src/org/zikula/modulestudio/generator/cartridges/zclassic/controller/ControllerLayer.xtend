@@ -106,7 +106,7 @@ class ControllerLayer {
             «IF isAjaxController»
 
             «ELSE»
-                «new ControllerHelper().controllerPostInitialize(it, true)»
+                «new ControllerHelper().controllerPostInitialize(it, isUserController)»
             «ENDIF»
 
             «val actionHelper = new ControllerAction()»

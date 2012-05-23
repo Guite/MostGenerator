@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.additio
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.ControllerHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ExternalView
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -40,6 +41,8 @@ class ExternalController {
 		 */
 		class «appName»_Controller_Base_External extends Zikula_AbstractController
 		{
+            «new ControllerHelper().controllerPostInitialize(it, false)»
+
 		    «externalBaseImpl»
 		}
     '''
@@ -67,7 +70,8 @@ class ExternalController {
 
             $id = (isset($args['id'])) ? $args['id'] : $getData->filter('id', null, FILTER_SANITIZE_STRING);
 
-            if (!SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', $id . '::', ACCESS_READ)) {
+            $component = $this->name . ':' . ucwords($objectType) . ':';
+            if (!SecurityUtil::checkPermission($component, $id . '::', ACCESS_READ)) {
                 return '';
             }
 
@@ -83,11 +87,9 @@ class ExternalController {
 
             unset($args);
 
-            $entityClass = '«appName»_Entity_' . ucwords($objectType);
-            $repository = $this->entityManager->getRepository($entityClass);
-
+            $repository = $this->entityManager->getRepository('«appName»_Entity_' . ucwords($objectType));
             $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
-            $idValues = array('id' => $id);
+            $idValues = array('id' => $id);«/** TODO consider composite keys properly */»
 
             $hasIdentifier = «appName»_Util_Controller::isValidIdentifier($idValues);
             //$this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
@@ -103,7 +105,23 @@ class ExternalController {
                 return $this->__('No such item.');
             }
 
-            $view = Zikula_View::getInstance('«appName»', true);
+            $instance = $id . '::';«/** TODO consider composite keys properly
+            $instanceId = '';
+            foreach ($idFields as $idField) {
+                if (!empty($instanceId)) {
+                    $instanceId .= '_';
+                }
+                $instanceId .= $idValues[$idField];
+            }
+            $instance = $instanceId . '::';
+             */»
+
+            $this->view->setCaching(Zikula_View::CACHE_ENABLED);
+            // set cache id
+            $accessLevel = ACCESS_READ;
+            if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
+            if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
+            $this->view->setCacheId($objectType . '|' . $id . '|a' . $accessLevel);
 
             $view->assign('objectType', $objectType)
                  ->assign('source', $source)
@@ -129,10 +147,9 @@ class ExternalController {
                 $objectType = «appName»_Util_Controller::getDefaultObjectType('controllerType', $utilArgs);
             }
 
-            $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT));
+            $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT), LogUtil::getErrorMsgPermission());
 
-            $entityClass = '«appName»_Entity_' . ucfirst($objectType);
-            $repository = $this->entityManager->getRepository($entityClass);
+            $repository = $this->entityManager->getRepository('«appName»_Entity_' . ucfirst($objectType));
 
             $getData = $this->request->query;
 

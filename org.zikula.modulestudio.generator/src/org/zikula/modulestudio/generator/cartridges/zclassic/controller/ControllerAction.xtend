@@ -123,10 +123,10 @@ class ControllerAction {
     def private permissionCheck(Action it, String objectTypeVar, String instanceId) {
         switch controller {
             AdminController: '''
-                        $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', ACCESS_ADMIN));
+                        $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', ACCESS_ADMIN), LogUtil::getErrorMsgPermission());
                     '''
             default: '''
-                        $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', «getPermissionAccessLevel»));
+                        $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', «getPermissionAccessLevel»), LogUtil::getErrorMsgPermission());
                     '''
         }
     }
@@ -149,10 +149,16 @@ class ControllerAction {
     def private dispatch actionImplBody(MainAction it, String appName) {
         switch controller {
             UserController: '''
+                        // set caching id
+                        $this->view->setCacheId('main');
+
                         // return main template
                         return $this->view->fetch('«controller.formattedName»/main.tpl');
                     '''
             AdminController: '''
+                        // set caching id
+                        $this->view->setCacheId('main');
+
                         «/*
                         «IF controller.container.application.needsConfig»
                             // call config method
@@ -165,6 +171,9 @@ class ControllerAction {
                     '''
             AjaxController: ''
             CustomController: '''
+                        // set caching id
+                        $this->view->setCacheId('main');
+
                         // return main template
                         return $this->view->fetch('«controller.formattedName»/main.tpl');
                     '''
@@ -206,21 +215,40 @@ class ControllerAction {
         );
 
         $showOwnEntries = (int) (isset($args['own']) && !empty($args['own'])) ? $args['own'] : $this->request->query->filter('own', 0, FILTER_VALIDATE_INT);
-        $this->view->assign('showOwnEntries', $showOwnEntries);
+        $showAllEntries = (int) (isset($args['all']) && !empty($args['all'])) ? $args['all'] : $this->request->query->filter('all', 0, FILTER_VALIDATE_INT);
+
+        $this->view->assign('showOwnEntries', $showOwnEntries)
+                   ->assign('showAllEntries', $showAllEntries);
         if ($showOwnEntries == 1) {
             $currentUrlArgs['own'] = 1;
         }
-
-        $showAllEntries = (int) (isset($args['all']) && !empty($args['all'])) ? $args['all'] : $this->request->query->filter('all', 0, FILTER_VALIDATE_INT);
-        $this->view->assign('showAllEntries', $showAllEntries);
         if ($showAllEntries == 1) {
-            // item list without pagination
+            $currentUrlArgs['all'] = 1;
+        }
+
+        // prepare access level for cache id
+        $accessLevel = ACCESS_READ;
+        $component = '«appName»:' . ucwords($this->objectType) . ':';
+        $instance = '::';
+        if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
+        if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
+
+        $templateFile = «appName»_Util_View::getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args);
+        $cacheId = 'view|ot_' . $this->objectType . '_sort_' . $sort . '_' . $sdir;
+
+        if ($showAllEntries == 1) {
+            // set cache id
+            $this->view->setCacheId($cacheId . '_all_1_own_' . $showOwnEntries . '_' . $accessLevel);
+
+            // if page is cached return cached content
+            if ($this->view->is_cached($templateFile)) {
+                return «appName»_Util_View::processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args, $templateFile);
+            }
+
+            // retrieve item list without pagination
             $entities = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
             $objectCount = count($entities);
-            $currentUrlArgs['all'] = 1;
         } else {
-            // item list with pagination
-
             // the current offset which is used to calculate the pagination
             $currentPage = (int) (isset($args['pos']) && !empty($args['pos'])) ? $args['pos'] : $this->request->query->filter('pos', 1, FILTER_VALIDATE_INT);
 
@@ -231,6 +259,15 @@ class ControllerAction {
                 $resultsPerPage = ($csv == 1) ? 999999 : $this->getVar('pageSize', 10);
             }
 
+            // set cache id
+            $this->view->setCacheId($cacheId . '_amount_' . $resultsPerPage . '_page_' . $currentPage . '_own_' . $showOwnEntries . '_' . $accessLevel);
+
+            // if page is cached return cached content
+            if ($this->view->is_cached($templateFile)) {
+                return «appName»_Util_View::processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args, $templateFile);
+            }
+
+            // retrieve item list with pagination
             $selectionArgs['currentPage'] = $currentPage;
             $selectionArgs['resultsPerPage'] = $resultsPerPage;
             list($entities, $objectCount) = ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
@@ -251,7 +288,7 @@ class ControllerAction {
                    ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
         // fetch and return the appropriate template
-        return «appName»_Util_View::processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args);
+        return «appName»_Util_View::processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args, $templateFile);
     '''
 
     def private dispatch actionImplBody(DisplayAction it, String appName) '''
@@ -286,13 +323,23 @@ class ControllerAction {
 
         «permissionCheck("' . ucwords($objectType) . '", "$instanceId . ")»
 
+        $templateFile = «appName»_Util_View::getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'display', $args);
+
+        // set cache id
+        $component = $this->name . ':' . ucwords($objectType) . ':';
+        $instance = $instanceId . '::';
+        $accessLevel = ACCESS_READ;
+        if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
+        if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
+        $this->view->setCacheId($objectType . '|' . $instanceId . '|a' . $accessLevel);
+
         // assign output data to view object.
         $this->view->assign($objectType, $entity)
                    ->assign('currentUrlObject', $currentUrlObject)
                    ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
         // fetch and return the appropriate template
-        return «appName»_Util_View::processTemplate($this->view, '«controller.formattedName»', $objectType, 'display', $args);
+        return «appName»_Util_View::processTemplate($this->view, '«controller.formattedName»', $objectType, 'display', $args, $templateFile);
     '''
 
     def private checkForSlug(Controller it) {
@@ -359,8 +406,10 @@ class ControllerAction {
             $this->registerStatus($this->__('Done! Item deleted.'));
             // TODO call post delete process hooks
 
-            // clear view cache to reflect our changes
-            $this->view->clear_cache();
+
+            // An item was deleted, so we clear all cached pages this item.
+            $cacheArgs = array('ot' => $objectType, 'item' => $entity);
+            ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
 
             // redirect to the «IF controller.hasActions('view')»list of the current object type«ELSE»main page«ENDIF»
             $this->redirect(ModUtil::url($this->name, '«controller.formattedName»', «IF controller.hasActions('view')»'view',
@@ -368,6 +417,9 @@ class ControllerAction {
         }
 
         $repository = $this->entityManager->getRepository('«appName»_Entity_' . ucfirst($objectType));
+
+        // set caching id
+        $this->view->setCaching(Zikula_View::CACHE_DISABLED);
 
         // assign the object we loaded above
         $this->view->assign($objectType, $entity)

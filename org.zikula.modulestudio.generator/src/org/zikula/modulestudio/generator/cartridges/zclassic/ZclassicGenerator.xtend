@@ -16,6 +16,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Workflow
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Tag
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Account
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.BlockList
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Cache
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ContentTypeList
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ContentTypeSingle
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Mailz
@@ -112,14 +113,17 @@ println('TODO: progress monitor')
         pm.newTask('Additions: Mailz api')
         println('Generating mailz api')
         new Mailz().generate(it, fsa)
+        pm.newTask('Additions: Account api')
+        println('Generating account api')
+        new Account().generate(it, fsa)
+        pm.newTask('Additions: Cache api')
+        println('Generating cache api')
+        new Cache().generate(it, fsa)
         if (!getAllEntities.filter(e|e.hasAbstractStringFieldsEntity).isEmpty) {
             pm.newTask('Additions: Search api')
             println('Generating search api')
             new Search().generate(it, fsa)
         }
-        pm.newTask('Additions: Account api')
-        println('Generating account api')
-        new Account().generate(it, fsa)
         if (hasUploads) {
             pm.newTask('Additions: Upload handlers')
             println('Generating upload handlers')

@@ -42,7 +42,7 @@ class ViewUtil {
         class «appName»_«fillingUtil»Base_View extends Zikula_AbstractBase
         {
             /**
-             * Utility method for managing view templates.
+             * Determines the view template for a certain method with given parameters.
              *
              * @param Zikula_View $view       Reference to view object.
              * @param string      $type       Current type (admin, user, ...).
@@ -50,9 +50,9 @@ class ViewUtil {
              * @param string      $func       Current function (main, view, ...).
              * @param array       $args       Additional arguments.
              *
-             * @return mixed Output.
+             * @return string name of template file.
              */
-            public static function processTemplate($view, $type, $objectType, $func, $args = array())
+            public static function getViewTemplate($view, $type, $objectType, $func, $args = array())
             {
                 // create the base template name
                 $template = DataUtil::formatForOS($type . '/' . $objectType . '/' . $func);
@@ -66,6 +66,28 @@ class ViewUtil {
                     $template .= '_' . DataUtil::formatForOS($tpl);
                 }
                 $template .= '.' . $templateExtension;
+
+                return $template;
+            }
+
+            /**
+             * Utility method for managing view templates.
+             *
+             * @param Zikula_View $view       Reference to view object.
+             * @param string      $type       Current type (admin, user, ...).
+             * @param string      $objectType Name of treated entity type.
+             * @param string      $func       Current function (main, view, ...).
+             * @param string      $template   Optional assignment of precalculated template file.
+             * @param array       $args       Additional arguments.
+             *
+             * @return mixed Output.
+             */
+            public static function processTemplate($view, $type, $objectType, $func, $args = array(), $template = '')
+            {
+                $templateExtension = self::determineExtension($view, $type, $objectType, $func, $args);
+                if (empty($template)) {
+                    $template = self::getViewTemplate($view, $type, $objectType, $func, $args);
+                }
 
                 // look whether we need output with or without the theme
                 $raw = (bool) (isset($args['raw']) && !empty($args['raw'])) ? $args['raw'] : FormUtil::getPassedValue('raw', false, 'GETPOST', FILTER_VALIDATE_BOOLEAN);

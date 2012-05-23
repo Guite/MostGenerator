@@ -129,6 +129,16 @@ class ControllerExtensions {
     }
 
     /**
+     * Checks whether a given controller is instance of UserController.
+     */
+    def isUserController(Controller it) {
+        switch it {
+            UserController: true
+            default: false
+        }
+    }
+
+    /**
      * Determines the controller in which the config action is living.
      */
     def configController(Application it) {

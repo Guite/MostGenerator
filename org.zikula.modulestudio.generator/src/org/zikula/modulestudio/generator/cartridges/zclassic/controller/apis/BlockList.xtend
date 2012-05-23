@@ -161,6 +161,22 @@ class BlockList {
                 }
             «ENDIF»
 
+            $this->view->setCaching(Zikula_View::CACHE_ENABLED);
+            // set cache id
+            $component = '«appName»:' . ucwords($objectType) . ':';
+            $instance = '::';
+            $accessLevel = ACCESS_READ;
+            if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
+            if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
+            $this->view->setCacheId('view|ot_' . $objectType . '_sort_' . $vars['sorting'] . '_amount_' . $vars['amount'] . '_' . $accessLevel);
+
+            $template = $this->getDisplayTemplate($vars);
+
+            // if page is cached return cached content
+            if ($this->view->is_cached($template)) {
+                return $this->view->fetch($template);
+            }
+
             // get objects from database
             $selectionArgs = array(
                 'ot' => $objectType,
@@ -170,8 +186,6 @@ class BlockList {
                 'resultsPerPage' => $vars['amount']
             );
             list($entities, $objectCount) = ModUtil::apiFunc('«appName»', 'selection', 'getEntitiesPaginated', $selectionArgs);
-
-            $this->view->setCaching(true);
 
             // assign block vars and fetched data
             $this->view->assign('vars', $vars)
@@ -184,24 +198,35 @@ class BlockList {
                 $blockinfo['title'] = $this->__('«appName» items');
             }
 
-            $output = '';
-            $templateForObjectType = str_replace('itemlist_', 'itemlist_' . DataUtil::formatForOS($objectType) . '_', $vars['template']);
-            if ($this->view->template_exists('contenttype/' . $templateForObjectType)) {
-                $output = $this->view->fetch('contenttype/' . $templateForObjectType);
-            } elseif ($this->view->template_exists('contenttype/' . $vars['template'])) {
-                $output = $this->view->fetch('contenttype/' . $vars['template']);
-            } elseif ($this->view->template_exists('block/' . $templateForObjectType)) {
-                $output = $this->view->fetch('block/' . $templateForObjectType);
-            } elseif ($this->view->template_exists('block/' . $vars['template'])) {
-            $output = $this->view->fetch('block/' . $vars['template']);
-            } else {
-                $output = $this->view->fetch('block/itemlist.tpl');
-            }
+            $output = $this->view->fetch($template);
 
             $blockinfo['content'] = $output;
 
             // return the block to the theme
             return BlockUtil::themeBlock($blockinfo);
+        }
+
+        /**
+         * Returns the template used for output.
+         */
+        protected function getDisplayTemplate($vars)
+        {
+            $objectType = $vars['objectType'];
+            $templateForObjectType = str_replace('itemlist_', 'itemlist_' . DataUtil::formatForOS($objectType) . '_', $vars['template']);
+
+            $template = '';
+            if ($this->view->template_exists('contenttype/' . $templateForObjectType)) {
+                $template = 'contenttype/' . $templateForObjectType;
+            } elseif ($this->view->template_exists('contenttype/' . $vars['template'])) {
+                $template = 'contenttype/' . $vars['template'];
+            } elseif ($this->view->template_exists('block/' . $templateForObjectType)) {
+                $template = 'block/' . $templateForObjectType;
+            } elseif ($this->view->template_exists('block/' . $vars['template'])) {
+                $template = 'block/' . $vars['template'];
+            } else {
+                $template = 'block/itemlist.tpl';
+            }
+            return $template;
         }
 
         /**
