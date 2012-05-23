@@ -208,7 +208,7 @@ class Repository {
             $templateParameters = array();
 
             $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST');
-            if ($currentFunc == 'view') {
+            if (in_array($currentFunc, array('main', 'view'))) {
                 $templateParameters = $this->getViewQuickNavParameters($context, $args);
                 «IF hasListFieldsEntity»
                     $serviceManager = ServiceUtil::getManager();
