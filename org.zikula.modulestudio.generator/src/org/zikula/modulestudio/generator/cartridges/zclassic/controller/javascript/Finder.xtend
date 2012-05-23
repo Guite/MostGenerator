@@ -109,7 +109,7 @@ class Finder {
         «name.formatForDB».finder.selectItem = function(itemId) {
             var editor = $F('editorName');
             if (editor == 'xinha') {
-                if (window.opener.currentSimpleMediaEditor != null) {
+                if (window.opener.current«appName»Editor != null) {
                     var html = getPasteSnippet('html', itemId);
 
                     window.opener.current«appName»Editor.focusEditor();
