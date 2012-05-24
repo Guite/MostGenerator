@@ -723,7 +723,7 @@ class Repository {
             $where = '';
             «FOR field : getDerivedFields.filter(e|!e.primaryKey && e.isContainedInSearch)»
                 $where .= ((!empty($where)) ? ' OR ' : '');
-                $where .= 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE \'%' . $fragment . '%\''«ELSE»= ' . $fragment«ENDIF»;
+                $where .= 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE \'%' . $fragment . '%\''«ELSE»= \'' . $fragment . '\''«ENDIF»;
             «ENDFOR»
             $where = '(' . $where . ')';
 
