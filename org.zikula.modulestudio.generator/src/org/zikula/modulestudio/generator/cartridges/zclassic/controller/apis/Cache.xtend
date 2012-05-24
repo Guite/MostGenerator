@@ -106,7 +106,7 @@ class Cache {
             «ENDIF*/»
             «IF getMainUserController.hasActions('custom')»
                 «FOR customAction : getMainUserController.actions.filter(typeof(CustomAction))»
-                    $cacheIds[] = '«customAction.name.formatForCode»';
+                    $cacheIds[] = '«customAction.name.formatForCode.toFirstLower»';
                 «ENDFOR»
             «ENDIF»
 
@@ -136,10 +136,10 @@ class Cache {
             «ENDIF*/»
             «IF getMainUserController.hasActions('custom')»
                 «FOR customAction : getMainUserController.actions.filter(typeof(CustomAction))»
-                    $cacheIds[] = '«appName»/user/«customAction.name.formatForCode»'; // «customAction.name.formatForCode» function
+                    $cacheIds[] = '«appName»/user/«customAction.name.formatForCode.toFirstLower»'; // «customAction.name.formatForCode» function
                 «ENDFOR»
             «ENDIF»
-
+            $theme = Zikula_View_Theme::getInstance();
             $theme->clear_cacheid_allthemes($cacheIds);
         }
     '''
