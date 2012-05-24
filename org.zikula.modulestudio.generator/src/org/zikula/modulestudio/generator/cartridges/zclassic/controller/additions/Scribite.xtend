@@ -50,7 +50,7 @@ class Scribite {
                 }
           3. Below this add
                 if (ModUtil::available('«appName»')) {
-                    PageUtil::AddVar('javascript', 'modules/«appName»/javascript/finder.js');
+                    PageUtil::AddVar('javascript', 'modules/«appName»/javascript/«appName»_finder.js');
                 }
           4. Copy or move all files from modules/«appName»/docs/scribite/includes/ into modules/Scribite/includes/.
 
