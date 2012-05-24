@@ -1175,7 +1175,7 @@ class FormHandler {
                 case 'update':
                             $message = $this->__('Done! «name.formatForDisplayCapital» updated.');
                             break;
-                case 'update':
+                case 'delete':
                             $message = $this->__('Done! «name.formatForDisplayCapital» deleted.');
                             break;
             }
