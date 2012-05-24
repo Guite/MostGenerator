@@ -644,7 +644,7 @@ class Repository {
         protected function addCommonViewFilters($qb)
         {
             $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST');
-            if ($currentFunc != 'view') {
+            if ($currentFunc != 'view' && $currentFunc != 'finder') {
                 return $qb;
             }
 

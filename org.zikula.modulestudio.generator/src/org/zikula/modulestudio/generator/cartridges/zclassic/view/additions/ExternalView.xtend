@@ -135,8 +135,15 @@ class ExternalView {
         {/if}
         </head>
         <body>
+            «IF app.getAllEntities.size > 1»
+                <p>{gt text='Switch to'}:
+                «FOR entity : app.getAllEntities.filter(e|e.name != name) SEPARATOR ' | '»
+                    <a href="{modurl modname='«app.appName»' type='external' func='finder' objectType='«entity.name.formatForCode»' editor=$editorName}" title="{gt text='Search and select «entity.name.formatForDisplay»'}">{gt text='«entity.nameMultiple.formatForDisplayCapital»'}</a>
+                «ENDFOR»
+                </p>
+            «ENDIF»
             <form action="{$ourEntry|default:'index.php'}" id="selectorForm" method="get" class="z-form">
-                <input type="hidden" name="module" value="{modgetinfo module='«app.appName»' info='displayname'}" />
+                <input type="hidden" name="module" value="«app.appName»" />
                 <input type="hidden" name="type" value="external" />
                 <input type="hidden" name="func" value="finder" />
                 <input type="hidden" name="objectType" value="{$objectType}" />
@@ -167,12 +174,12 @@ class ExternalView {
                             <ul>
                             {foreach item='«name.formatForCode»' from=$objectData}
                                 <li>
-                                    <a href="#" onclick="«app.name.formatForDB».finder.selectItem({$«name.formatForCode».«getFirstPrimaryKey»})" onkeypress="«app.name.formatForDB».finder.selectItem({$«name.formatForCode».«getFirstPrimaryKey»})">
+                                    <a href="#" onclick="«app.name.formatForDB».finder.selectItem({$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»})" onkeypress="«app.name.formatForDB».finder.selectItem({$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»})">
                                         {$«name.formatForCode».«getLeadingField.name.formatForCode»}
                                     </a>
-                                    <input type="hidden" id="url{$«name.formatForCode».«getFirstPrimaryKey»}" value="«IF app.hasUserController»{modurl modname='«app.appName»' type='user' «modUrlDisplay(name.formatForCode, true)»}«ENDIF»" />
-                                    <input type="hidden" id="title{$«name.formatForCode».«getFirstPrimaryKey»}" value="{$«name.formatForCode».«getLeadingField.name.formatForCode»|replace:"\"":""}" />
-                                    <input type="hidden" id="desc{$«name.formatForCode».«getFirstPrimaryKey»}" value="{capture assign='description'}«displayDescription('', '')»{/capture}{$description|strip_tags|replace:"\"":""}" />
+                                    <input type="hidden" id="url{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" value="«IF app.hasUserController»{modurl modname='«app.appName»' type='user' «modUrlDisplay(name.formatForCode, true)»}«ENDIF»" />
+                                    <input type="hidden" id="title{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" value="{$«name.formatForCode».«getLeadingField.name.formatForCode»|replace:"\"":""}" />
+                                    <input type="hidden" id="desc{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" value="{capture assign='description'}«displayDescription('', '')»{/capture}{$description|strip_tags|replace:"\"":""}" />
                                 </li>
                             {foreachelse}
                                 <li>{gt text='No entries found.'}</li>

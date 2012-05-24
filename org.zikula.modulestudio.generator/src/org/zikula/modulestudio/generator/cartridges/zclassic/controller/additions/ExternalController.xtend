@@ -7,11 +7,15 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Controll
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.additions.ExternalView
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 
 class ExternalController {
+    @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
+    @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
 
@@ -141,7 +145,8 @@ class ExternalController {
         {
             PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
 
-            $objectType = isset($args['objectType']) ? $args['objectType'] : '';
+            $getData = $this->request->query;
+            $objectType = isset($args['objectType']) ? $args['objectType'] : $getData->filter('objectType', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             $utilArgs = array('controller' => 'external', 'action' => 'finder');
             if (!in_array($objectType, «appName»_Util_Controller::getObjectTypes('controller', $utilArgs))) {
                 $objectType = «appName»_Util_Controller::getDefaultObjectType('controllerType', $utilArgs);
@@ -150,8 +155,6 @@ class ExternalController {
             $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT), LogUtil::getErrorMsgPermission());
 
             $repository = $this->entityManager->getRepository('«appName»_Entity_' . ucfirst($objectType));
-
-            $getData = $this->request->query;
 
             $editor = (isset($args['editor']) && !empty($args['editor'])) ? $args['editor'] : $getData->filter('editor', '', FILTER_SANITIZE_STRING);
             if (empty($editor) || !in_array($editor, array('xinha', 'tinymce'/*, 'ckeditor'*/))) {
