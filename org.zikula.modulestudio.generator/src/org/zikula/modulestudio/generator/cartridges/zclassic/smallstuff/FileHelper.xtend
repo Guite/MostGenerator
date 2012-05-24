@@ -103,30 +103,28 @@ class FileHelper {
             $this->«name» = $«name»;
     '''
 
-    def private setterAssignmentNumeric(DerivedField it, String name, String type) {
-        val aggregators = getAggregatingRelationships
-        if (!aggregators.isEmpty) '''
+    def private setterAssignmentNumeric(DerivedField it, String name, String type) '''
+        «val aggregators = getAggregatingRelationships»
+        «IF !aggregators.isEmpty»
             $diff = abs($this->«name» - $«name»);
-        '''
-        '''
-            $this->«name» = $«name»;
-        '''
-        if (!aggregators.isEmpty) {
-        	for (aggregator : aggregators) '''
-                $this->«aggregator.sourceAlias.formatForCode»->add«name.formatForCodeCapital»Without«entity.name.formatForCodeCapital»($diff);
-            '''
-        }
-    }
+        «ENDIF»
+        $this->«name» = $«name»;
+        «IF !aggregators.isEmpty»
+        	«FOR aggregator : aggregators»
+        	$this->«aggregator.sourceAlias.formatForCode»->add«name.formatForCodeCapital»Without«entity.name.formatForCodeCapital»($diff);
+            «ENDFOR»
+        «ENDIF»
+    '''
 
-    def private dispatch setterAssignment(IntegerField it, String name, String type) {
-        setterAssignmentNumeric(name, type)
-    }
-    def private dispatch setterAssignment(DecimalField it, String name, String type) {
-        setterAssignmentNumeric(name, type)
-    }
-    def private dispatch setterAssignment(FloatField it, String name, String type) {
-        setterAssignmentNumeric(name, type)
-    }
+    def private dispatch setterAssignment(IntegerField it, String name, String type) '''
+        «setterAssignmentNumeric(name, type)»
+    '''
+    def private dispatch setterAssignment(DecimalField it, String name, String type) '''
+        «setterAssignmentNumeric(name, type)»
+    '''
+    def private dispatch setterAssignment(FloatField it, String name, String type) '''
+        «setterAssignmentNumeric(name, type)»
+    '''
 
     def private dispatch setterAssignment(AbstractDateField it, String name, String type) '''
             if (is_object($«name») && $«name» instanceOf \DateTime) {
