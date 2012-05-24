@@ -78,9 +78,6 @@ class Display {
 
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             «callDisplayHooks(appName, controller)»
-            «IF useGroupingPanels('display')»
-                </div>
-            «ENDIF»
             «itemActions(appName, controller)»
             «IF !refedElems.isEmpty»
                 <br style="clear: right" />
