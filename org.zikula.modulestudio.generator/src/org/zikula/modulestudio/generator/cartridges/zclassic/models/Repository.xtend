@@ -464,20 +464,16 @@ class Repository {
          */
         protected function addIdFilter($id, $qb)
         {
-            «IF hasCompositeKeys»
-                if (is_array($id)) {
-                    foreach ($id as $fieldName => $fieldValue) {
-                        $fieldName = DataUtil::formatForStore($fieldName);
-                        $qb->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
-                           ->setParameter($fieldName, $fieldValue);
-                    }
-                } else {
-            «ENDIF»
-            $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» = :id')
-               ->setParameter('id', $id);
-            «IF hasCompositeKeys»
+            if (is_array($id)) {
+                foreach ($id as $fieldName => $fieldValue) {
+                    $fieldName = DataUtil::formatForStore($fieldName);
+                    $qb->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
+                       ->setParameter($fieldName, $fieldValue);
                 }
-            «ENDIF»
+            } else {
+                $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» = :id')
+                   ->setParameter('id', $id);
+            }
             return $qb;
         }
 
