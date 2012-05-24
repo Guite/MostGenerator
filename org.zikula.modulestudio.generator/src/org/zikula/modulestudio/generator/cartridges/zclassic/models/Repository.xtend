@@ -466,7 +466,6 @@ class Repository {
         {
             if (is_array($id)) {
                 foreach ($id as $fieldName => $fieldValue) {
-                    $fieldName = DataUtil::formatForStore($fieldName);
                     $qb->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
                        ->setParameter($fieldName, $fieldValue);
                 }
@@ -546,7 +545,6 @@ class Repository {
             «IF hasCompositeKeys»
                 if (is_array($excludeId)) {
                     foreach ($id as $fieldName => $fieldValue) {
-                        $fieldName = DataUtil::formatForStore($fieldName);
                         $qb->andWhere('tbl.' . $fieldName . ' != :' . $fieldName)
                            ->setParameter($fieldName, $fieldValue);
                     }
@@ -720,15 +718,16 @@ class Repository {
                 return $qb;
             }
 
+            $fragment = DataUtil::formatForStore($fragment);
+
             $where = '';
             «FOR field : getDerivedFields.filter(e|!e.primaryKey && e.isContainedInSearch)»
                 $where .= ((!empty($where)) ? ' OR ' : '');
-                $where .= 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE %:fragment%«ELSE»= :fragment«ENDIF»';
+                $where .= 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE \'%' . $fragment . '%\''«ELSE»= ' . $fragment«ENDIF»;
             «ENDFOR»
             $where = '(' . $where . ')';
 
-            $qb->andWhere($where)
-               ->setParameter('fragment', $fragment);
+            $qb->andWhere($where);
 
             return $qb;
         }
