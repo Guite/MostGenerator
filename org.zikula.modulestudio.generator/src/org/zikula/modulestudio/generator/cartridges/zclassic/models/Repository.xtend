@@ -186,6 +186,8 @@ class Repository {
 
             «intBaseQuery»
 
+            «intGetQueryFromBuilder»
+
             «new Joins().generate(it, app)»
         }
     '''
@@ -455,28 +457,28 @@ class Repository {
         /**
          * Adds id filters to given query instance.
          *
-         * @param «IF hasCompositeKeys»mixed  «ELSE»integer«ENDIF»        $id The id (or array of ids) to use to retrieve the object.
-         * @param Doctrine_Query $q  Query to be enhanced.
+         * @param «IF hasCompositeKeys»mixed  «ELSE»integer«ENDIF»                   $id The id (or array of ids) to use to retrieve the object.
+         * @param Doctrine\ORM\QueryBuilder $qb Query builder to be enhanced.
          *
-         * @return Doctrine_Query Enriched query instance.
+         * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
          */
-        protected function addIdFilter($id, $q)
+        protected function addIdFilter($id, $qb)
         {
             «IF hasCompositeKeys»
                 if (is_array($id)) {
                     foreach ($id as $fieldName => $fieldValue) {
                         $fieldName = DataUtil::formatForStore($fieldName);
-                        $q->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
-                          ->setParameter($fieldName, $fieldValue);
+                        $qb->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
+                           ->setParameter($fieldName, $fieldValue);
                     }
                 } else {
             «ENDIF»
-                $q->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» = :id')
-                  ->setParameter('id', $id);
+                $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» = :id')
+                   ->setParameter('id', $id);
             «IF hasCompositeKeys»
                 }
             «ENDIF»
-            return $q;
+            return $qb;
         }
 
         /**
@@ -495,9 +497,11 @@ class Repository {
                 return LogUtil::registerArgsError();
             }
 
-            $query = $this->_intBaseQuery('', '', $useJoins, $slimMode);
+            $qb = $this->_intBaseQuery('', '', $useJoins, $slimMode);
 
-            $query = $this->addIdFilter($id, $query);
+            $qb = $this->addIdFilter($id, $qb);
+
+            $query = $this->getQueryFromBuilder($qb);
 
             return $query->getOneOrNullResult();
         }
@@ -521,36 +525,43 @@ class Repository {
                 return LogUtil::registerArgsError();
             }
 
-            $query = $this->_intBaseQuery('', '', $useJoins, $slimMode);
+            $qb = $this->_intBaseQuery('', '', $useJoins, $slimMode);
 
-            $query->andWhere('tbl.slug = :slug')
-                  ->setParameter('slug', $slugTitle);
+            $qb->andWhere('tbl.slug = :slug')
+               ->setParameter('slug', $slugTitle);
 
-            $query = $this->addExclusion($query, $excludeId);
+            $qb = $this->addExclusion($qb, $excludeId);
+
+            $query = $this->getQueryFromBuilder($qb);
 
             return $query->getOneOrNullResult();
         }
 
         /**
          * Adds where clauses excluding desired identifiers from selection.
+         *
+         * @param Doctrine\ORM\QueryBuilder $qb        Query builder to be enhanced.
+         * @param «IF hasCompositeKeys»mixed  «ELSE»integer«ENDIF»                   $excludeId The id (or array of ids) to be excluded from selection.
+         *
+         * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
          */
-        protected function addExclusion($query, $excludeId)
+        protected function addExclusion($qb, $excludeId)
         {
             «IF hasCompositeKeys»
                 if (is_array($excludeId)) {
                     foreach ($id as $fieldName => $fieldValue) {
                         $fieldName = DataUtil::formatForStore($fieldName);
-                        $q->andWhere('tbl.' . $fieldName . ' != :' . $fieldName)
-                          ->setParameter($fieldName, $fieldValue);
+                        $qb->andWhere('tbl.' . $fieldName . ' != :' . $fieldName)
+                           ->setParameter($fieldName, $fieldValue);
                     }
                 } elseif ($excludeId > 0) {
             «ELSE»
                 if ($excludeId > 0) {
             «ENDIF»
-                $query->andWhere('tbl.id != :excludeId')
-                      ->setParameter('excludeId', $excludeId);
+                $qb->andWhere('tbl.id != :excludeId')
+                   ->setParameter('excludeId', $excludeId);
             }
-            return $query;
+            return $qb;
         }
     '''
 
@@ -567,7 +578,9 @@ class Repository {
          */
         public function selectWhere($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
         {
-            $query = $this->_intBaseQuery($where, $orderBy, $useJoins, $slimMode);
+            $qb = $this->_intBaseQuery($where, $orderBy, $useJoins, $slimMode);
+
+            $query = $this->getQueryFromBuilder($qb);
 
             return $query->getResult();
         }
@@ -575,20 +588,20 @@ class Repository {
 
     def private selectWherePaginated(Entity it) '''
         /**
-         * Returns query instance for retrieving a list of objects with a given where clause and pagination parameters.
+         * Returns query builder instance for retrieving a list of objects with a given where clause and pagination parameters.
          *
-         * @param string  $where          The where clause to use when retrieving the collection (optional) (default='').
-         * @param string  $orderBy        The order-by clause to use when retrieving the collection (optional) (default='').
-         * @param integer $currentPage    Where to start selection
-         * @param integer $resultsPerPage Amount of items to select
-         * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true).
+         * @param Doctrine\ORM\QueryBuilder $qb             Query builder to be enhanced.
+         * @param integer                   $currentPage    Where to start selection
+         * @param integer                   $resultsPerPage Amount of items to select
+         * @param boolean                   $useJoins       Whether to include joining related objects (optional) (default=true).
          *
-         * @return Doctrine_Query created query instance.
+         * @return array Created query instance and amount of affected items.
          */
-        protected function getSelectWherePaginatedQuery($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
+        protected function getSelectWherePaginatedQuery($qb, $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
         {
-            $query = $this->_intBaseQuery($where, $orderBy, $useJoins);
-            $query = $this->addCommonViewFilters($query);
+            $qb = $this->addCommonViewFilters($qb);
+
+            $query = $this->getQueryFromBuilder($qb);
             $offset = ($currentPage-1) * $resultsPerPage;
 
             // count the total number of affected items
@@ -619,7 +632,8 @@ class Repository {
          */
         public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
         {
-            list($query, $count) = $this->getSelectWherePaginatedQuery($where, $orderBy, $currentPage, $resultsPerPage, $useJoins);
+            $qb = $this->_intBaseQuery($where, $orderBy, $useJoins);
+            list($query, $count) = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage, $useJoins);
 
             $result = $query->getResult();
 
@@ -629,15 +643,15 @@ class Repository {
         /**
          * Adds quick navigation related filter options as where clauses.
          *
-         * @param Doctrine_Query $query The query to be enhanced.
+         * @param Doctrine\ORM\QueryBuilder $qb Query builder to be enhanced.
          *
-         * @return Doctrine_Query Enriched query instance.
+         * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
          */
-        protected function addCommonViewFilters($query = '')
+        protected function addCommonViewFilters($qb)
         {
             $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST');
             if ($currentFunc != 'view') {
-                return $query;
+                return $qb;
             }
 
             $parameters = $this->getViewQuickNavParameters($context, $args);
@@ -645,23 +659,23 @@ class Repository {
                 if ($k == 'catId') {
                     // category filter
                     if ($v > 0) {
-                        $query->andWhere('tblCategories.category = :category')
-                              ->setParameter('category', $v);
+                        $qb->andWhere('tblCategories.category = :category')
+                           ->setParameter('category', $v);
                     }
                 } elseif ($k == 'searchterm') {
                     // quick search
                     if (!empty($v)) {
-                        $query = $this->addSearchFilter($query, $v);
+                        $qb = $this->addSearchFilter($qb, $v);
                     }
                 } else {
                     // field filter
                     if ($v != '' || (is_numeric($v) && $v > 0)) {
-                        $query->andWhere('tbl.' . $k . ' = :' . $k)
-                              ->setParameter($k, $v);
+                        $qb->andWhere('tbl.' . $k . ' = :' . $k)
+                           ->setParameter($k, $v);
                     }
                 }
             }
-            return $query;
+            return $qb;
         }
     '''
 
@@ -680,14 +694,16 @@ class Repository {
          */
         public function selectSearch($fragment = '', $exclude = array(), $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
         {
-            list($query, $count) = $this->getSelectWherePaginatedQuery('', $orderBy, $currentPage, $resultsPerPage, $useJoins);
+            $qb = $this->_intBaseQuery($where, $orderBy, $useJoins);
             if (count($exclude) > 0) {
                 $exclude = implode(', ', $exclude);
-                $query->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» NOT IN (:excludeList)')«/* TODO fix composite keys */»
-                      ->setParameter('excludeList', $exclude);
+                $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» NOT IN (:excludeList)')«/* TODO fix composite keys */»
+                   ->setParameter('excludeList', $exclude);
             }
 
-            $query = $this->addSearchFilter($query, $fragment);
+            $qb = $this->addSearchFilter($qb, $fragment);
+
+            list($query, $count) = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage, $useJoins);
 
             $result = $query->getResult();
 
@@ -697,15 +713,15 @@ class Repository {
         /**
          * Adds where clause for search query.
          *
-         * @param Doctrine_Query $query    The query instance to be enhanced.
-         * @param string         $fragment The fragment to search for.
+         * @param Doctrine\ORM\QueryBuilder $qb       Query builder to be enhanced.
+         * @param string                    $fragment The fragment to search for.
          *
-         * @return Doctrine_Query The enrichted query instance.
+         * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
          */
-        protected function addSearchFilter($query, $fragment = '')
+        protected function addSearchFilter($qb, $fragment = '')
         {
             if ($fragment == '') {
-                return $query;
+                return $qb;
             }
 
             $where = '';
@@ -715,21 +731,21 @@ class Repository {
             «ENDFOR»
             $where = '(' . $where . ')';
 
-            $query->andWhere($where)
-                  ->setParameter('fragment', $fragment);
+            $qb->andWhere($where)
+               ->setParameter('fragment', $fragment);
 
-            return $query;
+            return $qb;
         }
     '''
 
     def private selectCount(Entity it) '''
         /**
-         * Returns query for a count query.
+         * Returns query builder instance for a count query.
          *
          * @param string  $where    The where clause to use when retrieving the object count (optional) (default='').
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
          *
-         * @return Doctrine_Query created query instance.
+         * @return Doctrine\ORM\QueryBuilder Created query builder instance.
          * @TODO fix usage of joins; please remove the first line and test.
          */
         protected function getCountQuery($where = '', $useJoins = true)
@@ -753,8 +769,7 @@ class Repository {
                 $qb->where($where);
             }
 
-            $query = $qb->getQuery();
-            return $query;
+            return $qb;
         }
 
         /**
@@ -767,7 +782,8 @@ class Repository {
          */
         public function selectCount($where = '', $useJoins = true)
         {
-            $query = $this->getCountQuery($where, $useJoins);
+            $qb = $this->getCountQuery($where, $useJoins);
+            $query = $qb->getQuery();
             «IF hasPessimisticReadLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
             «ENDIF»
@@ -786,11 +802,13 @@ class Repository {
          */
         public function detectUniqueState($fieldName, $fieldValue, $excludeId = 0)
         {
-            $query = $this->getCountQuery($where, $useJoins);
-            $query->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
-                  ->setParameter($fieldName, $fieldValue);
+            $qb = $this->getCountQuery($where, $useJoins);
+            $qb->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
+               ->setParameter($fieldName, $fieldValue);
 
-            $query = $this->addExclusion($query, $excludeId);
+            $qb = $this->addExclusion($qb, $excludeId);
+
+            $query = $qb->getQuery();
 
             «IF hasPessimisticReadLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -810,7 +828,7 @@ class Repository {
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
          * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false).
          *
-         * @return Doctrine\ORM\Query query instance to be further processed
+         * @return Doctrine\ORM\QueryBuilder query builder instance to be further processed
          */
         protected function _intBaseQuery($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
         {
@@ -862,37 +880,47 @@ class Repository {
                 $qb->add('orderBy', $orderBy);
             }
 
-            «intBaseQueryCommonParts»
+            return $qb;
         }
     '''
 
-    def private intBaseQueryCommonParts(Entity it) '''
-        $query = $qb->getQuery();
+    def private intGetQueryFromBuilder(Entity it) '''
+        /**
+         * Retrieves Doctrine query from query builder, applying FilterUtil and other common actions.
+         *
+         * @param Doctrine\ORM\QueryBuilder $qb Query builder instance
+         *
+         * @return Doctrine\ORM\Query query instance to be further processed
+         */
+        protected function getQueryFromBuilder(Doctrine\ORM\QueryBuilder $qb)
+        {
+            $query = $qb->getQuery();
 
-        // TODO - see https://github.com/zikula/core/issues/118
-        // use FilterUtil to support generic filtering
-        //$fu = new FilterUtil('«container.application.appName»', $this);
+            // TODO - see https://github.com/zikula/core/issues/118
+            // use FilterUtil to support generic filtering
+            //$fu = new FilterUtil('«container.application.appName»', $this);
 
-        // you could set explicit filters at this point, something like
-        // $fu->setFilter('type:eq:' . $args['type'] . ',id:eq:' . $args['id']);
-        // supported operators: eq, ne, like, lt, le, gt, ge, null, notnull
+            // you could set explicit filters at this point, something like
+            // $fu->setFilter('type:eq:' . $args['type'] . ',id:eq:' . $args['id']);
+            // supported operators: eq, ne, like, lt, le, gt, ge, null, notnull
 
-        // process request input filters and add them to the query.
-        //$fu->enrichQuery($query);
+            // process request input filters and add them to the query.
+            //$fu->enrichQuery($query);
 
-        «IF hasTranslatableFields»
-            // set the translation query hint
-            $query->setHint(
-                \Doctrine\ORM\Query::HINT_CUSTOM_OUTPUT_WALKER,
-                'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
-            );
+            «IF hasTranslatableFields»
+                // set the translation query hint
+                $query->setHint(
+                    \Doctrine\ORM\Query::HINT_CUSTOM_OUTPUT_WALKER,
+                    'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
+                );
 
-        «ENDIF»
-        «IF hasPessimisticReadLock»
-            $query->setLockMode(LockMode::«lockType.asConstant»);
-        «ENDIF»
+            «ENDIF»
+            «IF hasPessimisticReadLock»
+                $query->setLockMode(LockMode::«lockType.asConstant»);
+            «ENDIF»
 
-        return $query;
+            return $query;
+        }
     '''
 
     def private singleSortingField(EntityField it) {
