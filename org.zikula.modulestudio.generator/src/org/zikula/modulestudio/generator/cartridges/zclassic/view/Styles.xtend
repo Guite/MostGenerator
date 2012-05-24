@@ -128,7 +128,7 @@ class Styles {
                 }
 
             «ENDIF»
-            // hide legends if z-panels are used as both contain the same labels
+            /* hide legends if z-panels are used as both contain the same labels */
             div.«name.formatForDB»-edit .z-panel-content legend {
                 display: none;
             }
