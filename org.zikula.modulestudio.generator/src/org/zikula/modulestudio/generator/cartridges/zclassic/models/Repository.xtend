@@ -473,8 +473,8 @@ class Repository {
                     }
                 } else {
             «ENDIF»
-                $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» = :id')
-                   ->setParameter('id', $id);
+            $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» = :id')
+               ->setParameter('id', $id);
             «IF hasCompositeKeys»
                 }
             «ENDIF»

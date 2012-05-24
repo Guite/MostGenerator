@@ -348,14 +348,14 @@ class ControllerAction {
 
                         // check for unique permalinks (without id)
                         $hasSlug = false;
-                        $slugTitle = '';
+                        $slug = '';
                         if ($hasIdentifier === false) {
                             $entityClass = $this->name . '_Entity_' . ucfirst($objectType);
                             $objectTemp = new $entityClass();
                             $hasSlug = $objectTemp->get_hasUniqueSlug();
                             if ($hasSlug) {
-                                $slugTitle = (isset($args['title']) && !empty($args['title'])) ? $args['title'] : $this->request->query->filter('title', '', FILTER_SANITIZE_STRING);
-                                $hasSlug = (!empty($slugTitle));
+                                $slug = (isset($args['slug']) && !empty($args['slug'])) ? $args['slug'] : $this->request->query->filter('slug', '', FILTER_SANITIZE_STRING);
+                                $hasSlug = (!empty($slug));
                             }
                         }
                         $hasIdentifier |= $hasSlug;
@@ -366,7 +366,7 @@ class ControllerAction {
 
     def private addSlugToSelection(Controller it) {
         switch it {
-            UserController: ', \'slug\' => $slugTitle'
+            UserController: ', \'slug\' => $slug'
             default: ''
         }
     }
