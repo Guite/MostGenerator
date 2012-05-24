@@ -202,7 +202,7 @@ class TreeFunctions {
                             Zikula.UI.Alert(req.getMessage(), Zikula.__('Error', 'module_«appName.formatForDB»_js'));
                             return Zikula.TreeSortable.categoriesTree.revertInsertion();
                         }
-                return true;
+                        return true;
                     }
                 });
             return request.success();
