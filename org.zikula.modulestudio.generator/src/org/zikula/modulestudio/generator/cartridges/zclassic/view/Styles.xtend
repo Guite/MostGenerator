@@ -128,6 +128,11 @@ class Styles {
                 }
 
             «ENDIF»
+            // hide legends if z-panels are used as both contain the same labels
+            div.«name.formatForDB»-edit .z-panel-content legend {
+                display: none;
+            }
+
             «IF hasUserFields»
                 div.«prefix»LiveSearchUser {
                     margin: 0;
