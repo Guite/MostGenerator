@@ -80,9 +80,9 @@ class ExternalView {
     '''
 
     def private displaySnippet(Entity it) '''
-        «IF hasUploadFieldsEntity»
-            «val uploadField = getUploadFieldsEntity.head»
-            «fieldHelper.displayField(uploadField, name.formatForCode, 'display')»
+        «IF hasImageFieldsEntity»
+            «val imageField = getImageFieldsEntity.head»
+            «fieldHelper.displayField(imageField, name.formatForCode, 'display')»
         «ELSE»
             &nbsp;
         «ENDIF»
@@ -102,7 +102,7 @@ class ExternalView {
         {* Purpose of this template: Display item information for previewing from other modules *}
         <dl id="«name.formatForCode»{$«name.formatForCode».«getFirstPrimaryKey»}">
         <dt>{$«name.formatForCode».«getLeadingField.name.formatForCode»|notifyfilters:'«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'|htmlentities}</dt>
-        «IF hasUploadFieldsEntity»
+        «IF hasImageFieldsEntity»
             <dd>«displaySnippet»</dd>
         «ENDIF»
         «displayDescription('<dd>', '</dd>')»
