@@ -60,8 +60,12 @@ class Tree {
         {
             $trees = array();
 
+            $slimMode = false;
+
             // get all root nodes
-            $rootNodes = $this->_intBaseQuery('tbl.lvl = 0', '', $useJoins)->getResult();
+            $qb = $this->_intBaseQuery('tbl.lvl = 0', '', $useJoins, $slimMode);
+            $query = $this->getQueryFromBuilder($qb);
+            $rootNodes = $query->getResult();
 
             foreach ($rootNodes as $rootNode) {
                 // fetch children
