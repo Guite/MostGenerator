@@ -37,13 +37,13 @@ class Relations {
                 <h4>
             «ELSE»
                 {if isset($items) && $items ne null}
-                <ul class="relatedItemList «name.formatForCodeCapital»">
+                <ul class="relatedItemList «name.formatForCode»">
                 {foreach name='relLoop' item='item' from=$items}
                     <li>
             «ENDIF»
             «IF controller.hasActions('display')»
                 {if !$nolink}
-                    <a href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)»}">
+                    <a href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)»}" title="{$item.«leadingField.name.formatForCode»|replace:"\"":""}">
                 {/if}
             «ENDIF»
             «val leadingField = getLeadingField»
@@ -55,24 +55,26 @@ class Relations {
             «IF controller.hasActions('display')»
                 {if !$nolink}
                     </a>
+                    <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" style="display: none">
+                        {icon type='view' size='extrasmall' __alt='Quick view'}
+                    </a>
                 {/if}
-                <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" style="display: none">
-                    {icon type='view' size='extrasmall' __alt='Quick view'}
-                </a>
             «ENDIF»
             «IF !many»</h4>
             «ENDIF»
-            <script type="text/javascript">
-            /* <![CDATA[ */
-                document.observe('dom:loaded', function() {
-                    «IF leadingField != null»
-                        «app.prefix»InitInlineWindow($('«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$item.«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$item.«leadingField.name.formatForCode»|replace:"'":""}}');
-                    «ELSE»
-                         «app.prefix»InitInlineWindow($('«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$item.«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{gt text='«name.formatForDisplayCapital»'|replace:"'":""}}');
-                    «ENDIF»
-                });
-            /* ]]> */
-            </script>
+            «IF controller.hasActions('display')»
+                <script type="text/javascript">
+                /* <![CDATA[ */
+                    document.observe('dom:loaded', function() {
+                        «IF leadingField != null»
+                            «app.prefix»InitInlineWindow($('«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$item.«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$item.«leadingField.name.formatForCode»|replace:"'":""}}');
+                        «ELSE»
+                             «app.prefix»InitInlineWindow($('«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$item.«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{gt text='«name.formatForDisplayCapital»'|replace:"'":""}}');
+                        «ENDIF»
+                    });
+                /* ]]> */
+                </script>
+            «ENDIF»
             «IF hasImageFieldsEntity»
                 <br />
                 «val imageFieldName = getImageFieldsEntity.head.name.formatForCode»
