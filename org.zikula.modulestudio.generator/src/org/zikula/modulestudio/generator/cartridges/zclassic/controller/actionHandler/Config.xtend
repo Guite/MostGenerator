@@ -42,7 +42,7 @@ class Config {
 
     def private configHandlerBaseImpl(Application it) '''
         /**
-         * Configuration handler base class
+         * Configuration handler base class.
          */
         class «tempBaseClassConfigHandler» extends Zikula_Form_AbstractHandler
         {
@@ -163,7 +163,7 @@ class Config {
 
     def private configHandlerImpl(Application it) '''
         /**
-         * Configuration handler implementation class
+         * Configuration handler implementation class.
          */
         class «tempImplClassConfigHandler» extends «tempBaseClassConfigHandler»
         {
