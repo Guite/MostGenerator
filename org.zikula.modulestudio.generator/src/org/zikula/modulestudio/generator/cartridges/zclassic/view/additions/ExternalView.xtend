@@ -177,7 +177,7 @@ class ExternalView {
                                     <a href="#" onclick="«app.name.formatForDB».finder.selectItem({$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»})" onkeypress="«app.name.formatForDB».finder.selectItem({$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»})">
                                         {$«name.formatForCode».«getLeadingField.name.formatForCode»}
                                     </a>
-                                    <input type="hidden" id="url{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" value="«IF app.hasUserController»{modurl modname='«app.appName»' type='user' «modUrlDisplay(name.formatForCode, true)»}«ENDIF»" />
+                                    <input type="hidden" id="url{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" value="«IF app.hasUserController»{modurl modname='«app.appName»' type='user' «modUrlDisplay(name.formatForCode, true)» fqurl=true}«ENDIF»" />
                                     <input type="hidden" id="title{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" value="{$«name.formatForCode».«getLeadingField.name.formatForCode»|replace:"\"":""}" />
                                     <input type="hidden" id="desc{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" value="{capture assign='description'}«displayDescription('', '')»{/capture}{$description|strip_tags|replace:"\"":""}" />
                                 </li>
