@@ -10,6 +10,8 @@ class ThirdParty {
     def generate(Application it) '''
         /**
          * Listener for pending content items.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function pendingContentListener(Zikula_Event $event)
         {
@@ -37,6 +39,8 @@ class ThirdParty {
          *
          * This event occurs when the Content module is 'searching' for Content plugins.
          * The subject is an instance of Content_Types.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function contentGetTypes(Zikula_Event $event)
         {

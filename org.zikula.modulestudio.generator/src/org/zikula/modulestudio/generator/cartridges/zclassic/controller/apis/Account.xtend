@@ -50,6 +50,8 @@ class Account {
         /**
          * Return an array of items to show in the your account panel.
          *
+         * @param array $args List of arguments.
+         *
          * @return array List of collected account items
          */
         public function getall($args)

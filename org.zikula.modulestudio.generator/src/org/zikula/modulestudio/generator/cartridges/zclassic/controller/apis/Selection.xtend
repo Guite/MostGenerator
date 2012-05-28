@@ -163,6 +163,8 @@ class Selection {
          *
          * @param string $args['ot'] The object type to retrieve (optional)
          * @param string $methodName Name of calling method
+         *
+         * @return string the object type.
          */
         protected function determineObjectType($args, $methodName = '')
         {

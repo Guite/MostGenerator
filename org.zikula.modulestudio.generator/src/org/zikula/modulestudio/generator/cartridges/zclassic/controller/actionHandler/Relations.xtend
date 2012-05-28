@@ -106,6 +106,11 @@ class Relations {
         /**
          * Select a related object in create mode.
          *
+         * @param string  $objectType             The currently treated object type.
+         * @param string  $relationInputFieldName Name of input field for storing the relations.
+         * @param boolean $many                   Whether one or many objects are assigned.
+         * @param string  $source                 The data source used (GET or POST).
+         *
          * @return array Single result or list of results.
          */
         protected function retrieveRelatedObjects($objectType, $relationInputFieldName, $many = false, $source = 'GET')
@@ -157,6 +162,8 @@ class Relations {
     def updateRelationLinks(Entity it) '''
         /**
          * Helper method for updating links to related records.
+         *
+         * @param object $entity Currently treated entity instance.
          */
         protected function updateRelationLinks($entity)
         {

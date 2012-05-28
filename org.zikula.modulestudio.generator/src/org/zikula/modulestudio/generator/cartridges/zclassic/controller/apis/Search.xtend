@@ -75,6 +75,8 @@ class Search {
         /**
          * Display the search form.
          *
+         * @param array $args List of arguments.
+         *
          * @return string template output
          */
         public function options($args)
@@ -97,6 +99,10 @@ class Search {
     def private search(Application it) '''
         /**
          * Executes the actual search process.
+         *
+         * @param array $args List of arguments.
+         *
+         * @return boolean
          */
         public function search($args)
         {
@@ -204,6 +210,10 @@ class Search {
     def private searchCheck(Application it) '''
         /**
          * Assign URL to items.
+         *
+         * @param array $args List of arguments.
+         *
+         * @return boolean
          */
         public function search_check($args)
         {

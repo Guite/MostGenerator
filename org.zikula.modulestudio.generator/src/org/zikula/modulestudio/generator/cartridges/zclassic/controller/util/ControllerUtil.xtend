@@ -132,6 +132,11 @@ class ControllerUtil {
 
             /**
              * Create nice permalinks.
+             *
+             * @param string $name The given object title.
+             *
+             * @return string processed permalink.
+             * @deprecated made obsolete by Doctrine extensions.
              */
             public static function formatPermalink($name)
             {
@@ -148,7 +153,6 @@ class ControllerUtil {
                  *
                  * @param string $objectType Name of treated entity type.
                  * @param string $fieldName  Name of upload field.
-                 * @param array  $args       Additional arguments.
                  *
                  * @return mixed Output.
                  */

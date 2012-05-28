@@ -115,6 +115,8 @@ class ControllerLayer {
 
                 /**
                  * This method cares for a redirect within an inline frame.
+                 *
+                 * @return boolean
                  */
                 public function handleInlineRedirect()
                 {

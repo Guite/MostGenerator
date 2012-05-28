@@ -132,15 +132,14 @@ class Repository {
              */
             public function getDescriptionFieldName()
            {
-                $fieldName = '';
                 «val textFields = fields.filter(typeof(TextField)).filter(e|!e.leading)»
+                «val stringFields = fields.filter(typeof(StringField)).filter(e|!e.leading && !e.password)»
                 «IF !textFields.isEmpty»
                     $fieldName = '«textFields.head.name.formatForCode»';
+                «ELSEIF !stringFields.isEmpty»
+                    $fieldName = '«stringFields.head.name.formatForCode»';
                 «ELSE»
-                    «val stringFields = fields.filter(typeof(StringField)).filter(e|!e.leading && !e.password)»
-                    «IF !stringFields.isEmpty»
-                        $fieldName = '«stringFields.head.name.formatForCode»';
-                    «ENDIF»
+                    $fieldName = '';
                 «ENDIF»
                 return $fieldName;
             }
@@ -322,6 +321,8 @@ class Repository {
          * Deletes all objects created by a certain user.
          *
          * @param integer $userId The userid of the creator to be removed.
+         *
+         * @return void
          */
         public function deleteCreator($userId)
         {
@@ -345,6 +346,8 @@ class Repository {
          * Deletes all objects updated by a certain user.
          *
          * @param integer $userId The userid of the last editor to be removed.
+         *
+         * @return void
          */
         public function deleteLastEditor($userId)
         {
@@ -369,6 +372,8 @@ class Repository {
          *
          * @param integer $userId    The userid of the creator to be replaced.
          * @param integer $newUserId The new userid of the creator as replacement.
+         *
+         * @return void
          */
         public function updateCreator($userId, $newUserId)
         {
@@ -395,6 +400,8 @@ class Repository {
          *
          * @param integer $userId    The userid of the last editor to be replaced.
          * @param integer $newUserId The new userid of the last editor as replacement.
+         *
+         * @return void
          */
         public function updateLastEditor($userId, $newUserId)
         {
@@ -426,6 +433,8 @@ class Repository {
          * @param string  $fieldName The name of the user field.
          * @param integer $userId    The userid to be replaced.
          * @param integer $newUserId The new userid as replacement.
+         *
+         * @return void
          */
         public function updateUserField($userFieldName, $userId, $newUserId)
         {
@@ -457,7 +466,7 @@ class Repository {
         /**
          * Adds id filters to given query instance.
          *
-         * @param «IF hasCompositeKeys»mixed  «ELSE»integer«ENDIF»                   $id The id (or array of ids) to use to retrieve the object.
+         * @param mixed                     $id The id (or array of ids) to use to retrieve the object.
          * @param Doctrine\ORM\QueryBuilder $qb Query builder to be enhanced.
          *
          * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
@@ -587,11 +596,10 @@ class Repository {
          * @param Doctrine\ORM\QueryBuilder $qb             Query builder to be enhanced.
          * @param integer                   $currentPage    Where to start selection
          * @param integer                   $resultsPerPage Amount of items to select
-         * @param boolean                   $useJoins       Whether to include joining related objects (optional) (default=true).
          *
          * @return array Created query instance and amount of affected items.
          */
-        protected function getSelectWherePaginatedQuery($qb, $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
+        protected function getSelectWherePaginatedQuery($qb, $currentPage = 1, $resultsPerPage = 25)
         {
             $qb = $this->addCommonViewFilters($qb);
 
@@ -627,7 +635,7 @@ class Repository {
         public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
         {
             $qb = $this->_intBaseQuery($where, $orderBy, $useJoins);
-            list($query, $count) = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage, $useJoins);
+            list($query, $count) = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
 
             $result = $query->getResult();
 
@@ -648,7 +656,7 @@ class Repository {
                 return $qb;
             }
 
-            $parameters = $this->getViewQuickNavParameters($context, $args);
+            $parameters = $this->getViewQuickNavParameters('', array());
             foreach ($parameters as $k => $v) {
                 if ($k == 'catId') {
                     // category filter
@@ -678,7 +686,7 @@ class Repository {
          * Selects entities by a given search fragment.
          *
          * @param string  $fragment       The fragment to search for.
-         * @param string  $exclude        Comma separated list with ids to be excluded from search.
+         * @param array   $exclude        Comma separated list with ids to be excluded from search.
          * @param string  $orderBy        The order-by clause to use when retrieving the collection (optional) (default='').
          * @param integer $currentPage    Where to start selection
          * @param integer $resultsPerPage Amount of items to select
@@ -688,7 +696,7 @@ class Repository {
          */
         public function selectSearch($fragment = '', $exclude = array(), $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
         {
-            $qb = $this->_intBaseQuery($where, $orderBy, $useJoins);
+            $qb = $this->_intBaseQuery('', $orderBy, $useJoins);
             if (count($exclude) > 0) {
                 $exclude = implode(', ', $exclude);
                 $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» NOT IN (:excludeList)')«/* TODO fix composite keys */»
@@ -697,7 +705,7 @@ class Repository {
 
             $qb = $this->addSearchFilter($qb, $fragment);
 
-            list($query, $count) = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage, $useJoins);
+            list($query, $count) = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
 
             $result = $query->getResult();
 
@@ -797,7 +805,7 @@ class Repository {
          */
         public function detectUniqueState($fieldName, $fieldValue, $excludeId = 0)
         {
-            $qb = $this->getCountQuery($where, $useJoins);
+            $qb = $this->getCountQuery('', false);
             $qb->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
                ->setParameter($fieldName, $fieldValue);
 

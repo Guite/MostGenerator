@@ -61,7 +61,7 @@ class Image {
             public static function getThumb($filePath = '', $width = 100, $height = 80, $thumbArgs = array())
             {
                 if (empty($filePath) || !file_exists($filePath)) {
-                    return;
+                    return '';
                 }
                 if (!is_array($thumbArgs)) {
                     $thumbArgs = array();
@@ -152,7 +152,7 @@ class Image {
                     // save thumb file
                     $saveOptions = array();
                     if (in_array($pathInfo['extension'], array('jpg', 'jpeg', 'png'))) {
-                        $saveOptions['quality'] = 85;
+                        $saveOptions['quality'] = $this->getDefaultQuality($pathInfo['extension']);
                     }
                     $thumb->save($thumbFilePath);
 
@@ -167,6 +167,18 @@ class Image {
                     return $filePath;
                 }
             }
+        }
+
+        /**
+         * Returns the quality to be used for a given file extension.
+         *
+         * @param string $extension The file extension
+         *
+         * @return integer the desired quality
+         */
+        protected function getDefaultQuality($extension)
+        {
+            return 85;
         }
     '''
 

@@ -60,9 +60,6 @@ class ExampleData {
             $this->entityManager->transactional(function($entityManager) {
                 «getDefaultDataSource.exampleRowImpl»
             });
-
-            // Insertion successful
-            return true;
         }
     '''
 

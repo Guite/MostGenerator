@@ -41,7 +41,9 @@ class ControllerAction {
          * «actionDocMethodDescription»
         «actionDocMethodDocumentation»
          *
+         * @param array $args List of arguments.
         «actionDocMethodParams»
+         *
          * @return mixed Output.
          */
     '''
@@ -247,7 +249,6 @@ class ControllerAction {
 
             // retrieve item list without pagination
             $entities = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
-            $objectCount = count($entities);
         } else {
             // the current offset which is used to calculate the pagination
             $currentPage = (int) (isset($args['pos']) && !empty($args['pos'])) ? $args['pos'] : $this->request->query->filter('pos', 1, FILTER_VALIDATE_INT);

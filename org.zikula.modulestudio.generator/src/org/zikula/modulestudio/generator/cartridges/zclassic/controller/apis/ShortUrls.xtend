@@ -33,6 +33,8 @@ class ShortUrls {
         /**
          * Forms custom url string.
          *
+         * @param array $args List of arguments.
+         *
          * @return string custom url string
          */
         public function encodeurl($args)
@@ -55,9 +57,6 @@ class ShortUrls {
             if (!in_array($args['func'], $customFuncs)) {
                 return false;
             }
-
-            // reference to current language
-            $lang = ZLanguage::getLanguageCode();
 
             // initialise url routing rules
             $routerFacade = new «app.appName»_RouterFacade();
@@ -176,6 +175,8 @@ class ShortUrls {
     def decodeUrl (UserController it) '''
         /**
          * Decodes the custom url string.
+         *
+         * @param array $args List of arguments.
          *
          * @return bool true if successful, false otherwise
          */

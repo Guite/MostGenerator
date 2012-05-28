@@ -342,7 +342,7 @@ class Forms {
                     var result = valid.validate();
                 {{/if}}
 
-                $('{{if $mode eq 'create'}}btnCreate{{else}}btnUpdate{{/if}}').observe('click', function(event) {
+                {{if $mode eq 'create'}}$('btnCreate'){{else}}$('btnUpdate'){{/if}}.observe('click', function (event) {
                     var result = valid.validate();
                     if (!result) {
                         // validation error, abort form submit

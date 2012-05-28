@@ -15,6 +15,8 @@ class Core {
          * The event subject is the class where the method was not found.
          * Must exit if $event['method'] does not match whatever the handler expects.
          * Modify $event->data and $event->stop().
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function apiMethodNotFound(Zikula_Event $event)
         {
@@ -24,6 +26,8 @@ class Core {
          * Listener for the `core.preinit` event.
          *
          * Occurs after the config.php is loaded.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function preInit(Zikula_Event $event)
         {
@@ -34,6 +38,8 @@ class Core {
          *
          * Occurs after each `System::init()` stage, `$event['stage']` contains the stage.
          * To check if the handler should execute, do `if($event['stage'] & System::CORE_STAGES_*)`.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function init(Zikula_Event $event)
         {
@@ -43,6 +49,8 @@ class Core {
          * Listener for the `core.postinit` event.
          *
          * Occurs just before System::init() exits from normal execution.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function postInit(Zikula_Event $event)
         {
@@ -58,6 +66,8 @@ class Core {
          * The event subject is the class where the method was not found.
          * Must exit if `$event['method']` does not match whatever the handler expects.
          * Modify `$event->data` and `$event->stop()`.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function controllerMethodNotFound(Zikula_Event $event)
         {

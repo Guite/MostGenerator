@@ -42,6 +42,11 @@ class VersionFile {
          */
         class «appName»_Base_Version extends Zikula_AbstractVersion
         {
+            /**
+             * Retrieves meta data information for this application.
+             *
+             * @return array List of meta data.
+             */
             public function getMetaData()
             {
                 $meta = array();

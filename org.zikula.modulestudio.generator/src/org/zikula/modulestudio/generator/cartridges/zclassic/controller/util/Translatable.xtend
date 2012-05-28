@@ -59,14 +59,19 @@ class Translatable {
              * Return list of translatable fields per entity.
              * These are required to be determined to recognize
              * that they have to be selected from according translation tables.
+             *
+             * @param string $objectType The currently treated object type.
+             *
+             * @return array list of translatable fields
              */
             public static function getTranslatableFields($objectType)
             {
                 $dom = ZLanguage::getModuleDomain('«appName»');
                 $fields = array();
                 switch ($objectType) {
-                «FOR entity : getTranslatableEntities»«entity.translatableFieldList»
-                «ENDFOR»
+                    «FOR entity : getTranslatableEntities»
+                        «entity.translatableFieldList»
+                    «ENDFOR»
                 }
                 return $fields;
             }
@@ -76,8 +81,9 @@ class Translatable {
              * This ensures easy compatibility to the Forms plugins where it
              * it is not possible yet to define sub arrays in the group attribute.
              *
-             * @param string              $objectType Treated object type.
+             * @param string              $objectType The currently treated object type.
              * @param Zikula_EntityAccess $entity     The entity being edited.
+             *
              * @return array collected translations having the locales as keys
              */
             public static function prepareEntityForEdit($objectType, $entity)
@@ -131,8 +137,9 @@ class Translatable {
              * This ensures easy compatibility to the Forms plugins where it
              * it is not possible yet to define sub arrays in the group attribute.
              *
-             * @param string $objectType Treated object type.
+             * @param string $objectType The currently treated object type.
              * @param array  $formData   Form data containing translations.
+             *
              * @return array collected translations having the locales as keys
              */
             public static function processEntityAfterEdit($objectType, $formData)

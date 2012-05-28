@@ -60,28 +60,53 @@ class ContentTypeList {
             protected $catId;
         «ENDIF»
 
+        /**
+         * Returns the module providing this content type.
+         *
+         * @return string The module name.
+         */
         public function getModule()
         {
             return '«appName»';
         }
 
+        /**
+         * Returns the name of this content type.
+         *
+         * @return string The content type name.
+         */
         public function getName()
         {
             return 'ItemList';
         }
 
+        /**
+         * Returns the title of this content type.
+         *
+         * @return string The content type title.
+         */
         public function getTitle()
         {
             $dom = ZLanguage::getModuleDomain('«appName»');
             return __('«appName» list view', $dom);
         }
 
+        /**
+         * Returns the description of this content type.
+         *
+         * @return string The content type description.
+         */
         public function getDescription()
         {
             $dom = ZLanguage::getModuleDomain('«appName»');
             return __('Display list of «appName» objects.', $dom);
         }
 
+        /**
+         * Loads the data.
+         *
+         * @param array $data Data array with parameters.
+         */
         public function loadData(&$data)
         {
             $utilArgs = array('name' => 'list');
@@ -124,6 +149,11 @@ class ContentTypeList {
             «ENDIF»
         }
 
+        /**
+         * Displays the data.
+         *
+         * @return string The returned output.
+         */
         public function display()
         {
             $dom = ZLanguage::getModuleDomain('«appName»');
@@ -165,7 +195,7 @@ class ContentTypeList {
 
             // get objects from database
             $selectionArgs = array(
-                'ot' => $objectType,
+                'ot' => $this->objectType,
                 'where' => $where,
                 'orderBy' => $this->getSortParam($repository),
                 'currentPage' => 1,
@@ -188,6 +218,8 @@ class ContentTypeList {
 
         /**
          * Returns the template used for output.
+         *
+         * @return string the template path.
          */
         protected function getDisplayTemplate()
         {
@@ -209,8 +241,9 @@ class ContentTypeList {
         /**
          * Determines the order by parameter for item selection.
          *
-         * @param array $blockinfo a blockinfo structure
-         * @return string the sorting clause
+         * @param Doctrine_Repository $repository The repository used for data fetching.
+         *
+         * @return string the sorting clause.
          */
         protected function getSortParam($repository)
         {
@@ -238,11 +271,19 @@ class ContentTypeList {
             return $sortParam;
         }
 
+        /**
+         * Displays the data for editing.
+         */
         public function displayEditing()
         {
             return $this->display();
         }
 
+        /**
+         * Returns the default data.
+         *
+         * @return array Default data and parameters.
+         */
         public function getDefaultData()
         {
             return array('objectType' => '«getLeadingEntity.name.formatForCode»',
@@ -252,9 +293,12 @@ class ContentTypeList {
                          'filter' => '');
         }
 
+        /**
+         * Executes additional actions for the editing mode.
+         */
         public function startEditing()
         {
-            $dom = ZLanguage::getModuleDomain('«appName»');
+            // ensure our custom plugins are loaded
             array_push($this->view->plugins_dir, 'modules/«appName»/templates/plugins');
         }
     '''

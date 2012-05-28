@@ -31,17 +31,21 @@ class DisplayFunctions {
     }
 
     def private generate(Application it) '''
+        'use strict';
 
         «initItemActions»
-
         «IF !getAllControllers.map(e|e.hasActions('view')).isEmpty»
+
             «initQuickNavigation»
         «ENDIF»
         «IF !getJoinRelations.isEmpty»
+
             «initRelationWindow»
         «ENDIF»
         «IF hasBooleansWithAjaxToggle»
+
             «initToggle»
+
             «toggleFlag»
         «ENDIF»
     '''
@@ -50,29 +54,31 @@ class DisplayFunctions {
         /**
          * Initialises the context menu for item actions.
          */
-        function «prefix»InitItemActions(objectType, func, containerId)
-        {
-            var triggerId = containerId + 'trigger';
+        function «prefix»InitItemActions(objectType, func, containerId) {
+            var triggerId, contextMenu, iconFile;
+
+            triggerId = containerId + 'trigger';
+
             // attach context menu
-            var contextMenu = new Control.ContextMenu(triggerId, { leftClick: true, animation: false });
+            contextMenu = new Control.ContextMenu(triggerId, { leftClick: true, animation: false });
 
             // process normal links
-            $$('#' + containerId + ' a').each(function(elem) {
+            $$('#' + containerId + ' a').each(function (elem) {
                 // hide it
                 elem.hide();
                 // determine the link text
                 var linkText = '';
-                if (func == 'display') {
+                if (func === 'display') {
                     linkText = elem.innerHTML;
-                } else if (func == 'view') {
-                    elem.select('img').each(function(imgElem) {
+                } else if (func === 'view') {
+                    elem.select('img').each(function (imgElem) {
                         linkText = imgElem.readAttribute('alt');
                     });
                 }
 
                 // determine the icon
-                var iconFile = '';
-                if (func == 'display') {
+                iconFile = '';
+                if (func === 'display') {
                     if (elem.hasClassName('z-icon-es-preview')) {
                         iconFile = 'xeyes.png';
                     } else if (elem.hasClassName('z-icon-es-display')) {
@@ -86,21 +92,21 @@ class DisplayFunctions {
                     } else if (elem.hasClassName('z-icon-es-back')) {
                         iconFile = 'agt_back';
                     }
-                    if (iconFile != '') {
+                    if (iconFile !== '') {
                         iconFile = '/images/icons/extrasmall/' + iconFile + '.png';
                     }
-                } else if (func == 'view') {
-                    elem.select('img').each(function(imgElem) {
+                } else if (func === 'view') {
+                    elem.select('img').each(function (imgElem) {
                         iconFile = imgElem.readAttribute('src');
                     });
                 }
-                if (iconFile != '') {
+                if (iconFile !== '') {
                     iconFile = '<img src="' + iconFile + '" width="16" height="16" alt="' + linkText + '" /> ';
                 }
 
                 contextMenu.addItem({
                     label: iconFile + linkText,
-                    callback: function() {
+                    callback: function () {
                         window.location = elem.readAttribute('href');
                     }
                 });
@@ -110,30 +116,35 @@ class DisplayFunctions {
     '''
 
     def private initQuickNavigation(Application it) '''
-        function «prefix»CapitaliseFirstLetter(string)
-        {
+        function «prefix»CapitaliseFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        /**
+         * Submits a quick navigation form.
+         */
+        function «prefix»SubmitQuickNavForm(objectType) {
+            $('«prefix»' + «prefix»CapitaliseFirstLetter(objectType) + 'QuickNavForm').submit();
         }
 
         /**
          * Initialise the quick navigation panel in list views.
          */
-        function «prefix»InitQuickNavigation(objectType, controller)
-        {
-            if ($('«prefix»' + «prefix»CapitaliseFirstLetter(objectType) + 'QuickNavForm') == undefined) {
+        function «prefix»InitQuickNavigation(objectType, controller) {
+            if ($('«prefix»' + «prefix»CapitaliseFirstLetter(objectType) + 'QuickNavForm') === undefined) {
                 return;
             }
 
-            if ($('catid') != undefined) {
+            if ($('catid') !== undefined) {
                 $('catid').observe('change', «initQuickNavigationSubmitCall(prefix)»);
             }
-            if ($('sortby') != undefined) {
+            if ($('sortby') !== undefined) {
                 $('sortby').observe('change', «initQuickNavigationSubmitCall(prefix)»);
             }
-            if ($('sortdir') != undefined) {
+            if ($('sortdir') !== undefined) {
                 $('sortdir').observe('change', «initQuickNavigationSubmitCall(prefix)»);
             }
-            if ($('num') != undefined) {
+            if ($('num') !== undefined) {
                 $('num').observe('change', «initQuickNavigationSubmitCall(prefix)»);
             }
 
@@ -141,63 +152,57 @@ class DisplayFunctions {
             «FOR entity : getAllEntities»
                 «entity.initQuickNavigationEntity»
             «ENDFOR»
+            default:
+                break;
             }
-        }
-
-        /**
-         * Submits a quick navigation form.
-         */
-        function «prefix»SubmitQuickNavForm(objectType)
-        {
-            $('«prefix»' + «prefix»CapitaliseFirstLetter(objectType) + 'QuickNavForm').submit();
         }
     '''
 
-    def private initQuickNavigationSubmitCall(String prefix) '''function() { «prefix»SubmitQuickNavForm(objectType); }'''
+    def private initQuickNavigationSubmitCall(String prefix) '''function () { «prefix»SubmitQuickNavForm(objectType); }'''
 
     def private initQuickNavigationEntity(Entity it) '''
         case '«name.formatForCode»':
-                    «IF !getBidirectionalIncomingJoinRelationsWithOneSource.isEmpty»
-                        «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
-                            «relation.jsInit»
-                        «ENDFOR»
-                    «ENDIF»
-                    «IF hasListFieldsEntity»
-                        «FOR field : getListFieldsEntity»
-                            «field.jsInit»
-                        «ENDFOR»
-                    «ENDIF»
-                    «IF hasUserFieldsEntity»
-                        «FOR field : getUserFieldsEntity»
-                            «field.jsInit»
-                        «ENDFOR»
-                    «ENDIF»
-                    «IF hasCountryFieldsEntity»
-                        «FOR field : getCountryFieldsEntity»
-                            «field.jsInit»
-                        «ENDFOR»
-                    «ENDIF»
-                    «IF hasLanguageFieldsEntity»
-                        «FOR field : getLanguageFieldsEntity»
-                            «field.jsInit»
-                        «ENDFOR»
-                    «ENDIF»
-                    «IF hasBooleanFieldsEntity»
-                        «FOR field : getBooleanFieldsEntity»
-                            «field.jsInit»
-                        «ENDFOR»
-                    «ENDIF»
-                    break;
+            «IF !getBidirectionalIncomingJoinRelationsWithOneSource.isEmpty»
+                «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
+                    «relation.jsInit»
+                «ENDFOR»
+            «ENDIF»
+            «IF hasListFieldsEntity»
+                «FOR field : getListFieldsEntity»
+                    «field.jsInit»
+                «ENDFOR»
+            «ENDIF»
+            «IF hasUserFieldsEntity»
+                «FOR field : getUserFieldsEntity»
+                    «field.jsInit»
+                «ENDFOR»
+            «ENDIF»
+            «IF hasCountryFieldsEntity»
+                «FOR field : getCountryFieldsEntity»
+                    «field.jsInit»
+                «ENDFOR»
+            «ENDIF»
+            «IF hasLanguageFieldsEntity»
+                «FOR field : getLanguageFieldsEntity»
+                    «field.jsInit»
+                «ENDFOR»
+            «ENDIF»
+            «IF hasBooleanFieldsEntity»
+                «FOR field : getBooleanFieldsEntity»
+                    «field.jsInit»
+                «ENDFOR»
+            «ENDIF»
+            break;
     '''
 
     def private dispatch jsInit(DerivedField it) '''
-        if ($('«name.formatForCode»') != undefined) {
+        if ($('«name.formatForCode»') !== undefined) {
             $('«name.formatForCode»').observe('change', «initQuickNavigationSubmitCall(entity.container.application.prefix)»);
         }
     '''
 
     def private dispatch jsInit(BooleanField it) '''
-        if ($('«name.formatForCode»') != undefined) {
+        if ($('«name.formatForCode»') !== undefined) {
             $('«name.formatForCode»').observe('click', «initQuickNavigationSubmitCall(entity.container.application.prefix)»)
                                      .observe('keypress', «initQuickNavigationSubmitCall(entity.container.application.prefix)»);
         }
@@ -205,7 +210,7 @@ class DisplayFunctions {
 
     def private dispatch jsInit(JoinRelationship it) '''
         «val sourceAliasName = getRelationAliasName(false).formatForCodeCapital»
-        if ($('«sourceAliasName»') != undefined) {
+        if ($('«sourceAliasName»') !== undefined) {
             $('«sourceAliasName»').observe('change', «initQuickNavigationSubmitCall(container.application.prefix)»);
         }
     '''
@@ -216,13 +221,14 @@ class DisplayFunctions {
          * For edit forms we use "iframe: true" to ensure file uploads work without problems.
          * For all other windows we use "iframe: false" because we want the escape key working.
          */
-        function «prefix»InitInlineWindow(containerElem, title)
-        {
+        function «prefix»InitInlineWindow(containerElem, title) {
+            var newWindow;
+
             // show the container (hidden for users without JavaScript)
             containerElem.show();
 
             // define the new window instance
-            var newWindow = new Zikula.UI.Window(
+            newWindow = new Zikula.UI.Window(
                 containerElem,
                 {
                     minmax: true,

@@ -263,6 +263,7 @@ class Entities {
          * Start validation and raise exception if invalid data is found.
          *
          * @return void.
+         * @throws Zikula_Exception
          */
         public function validate()
         {

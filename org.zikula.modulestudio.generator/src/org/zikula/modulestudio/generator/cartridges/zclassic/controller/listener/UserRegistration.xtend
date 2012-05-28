@@ -9,6 +9,8 @@ class UserRegistration {
          * Listener for the `module.users.ui.registration.started` event.
          *
          * Occurs at the beginning of the registration process, before the registration form is displayed to the user.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function started(Zikula_Event $event)
         {
@@ -79,6 +81,8 @@ class UserRegistration {
          * be expecting to return to the log-in screen . Being redirected to a different page might be disorienting to the user. Second, 
          * all event handlers are being notified of this event. This is not a `notify()` event. An event handler that was notified 
          * prior to the current handler may already have changed the `'redirecturl'`.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function succeeded(Zikula_Event $event)
         {
@@ -102,6 +106,8 @@ class UserRegistration {
          * user may be expecting to be directed to a page containing information on why the registration failed. Being redirected to a different 
          * page might be disorienting to the user. Second, all event handlers are being notified of this event. This is not a 
          * `notify()` event. An event handler that was notified prior to the current handler may already have changed the `'redirecturl'`.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function failed(Zikula_Event $event)
         {
@@ -115,6 +121,8 @@ class UserRegistration {
          * full user record. Instead, a `user.account.create` event will fire.
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the registration record that was created.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function create(Zikula_Event $event)
         {
@@ -126,6 +134,8 @@ class UserRegistration {
          * Occurs after a registration record is updated (likely through the admin panel, but not guaranteed).
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the registration record, with the updated values.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function update(Zikula_Event $event)
         {
@@ -138,6 +148,8 @@ class UserRegistration {
          * through the approval/denial process, or it could happen because the registration request expired. This event
          * will not fire if a registration record is converted to a full user account record. Instead, a `user.account.create`
          * event will fire. This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function delete(Zikula_Event $event)
         {

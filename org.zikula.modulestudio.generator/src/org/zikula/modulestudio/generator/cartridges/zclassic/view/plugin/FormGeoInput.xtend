@@ -48,6 +48,7 @@ class FormGeoInput {
         {
             /**
              * Get filename of this file.
+             * The information is used to re-establish the plugins on postback.
              *
              * @return string
              */

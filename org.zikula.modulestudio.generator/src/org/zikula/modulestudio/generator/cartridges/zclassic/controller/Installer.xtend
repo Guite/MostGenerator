@@ -82,10 +82,15 @@ class Installer {
 
     def private installerBaseImpl(Application it) '''
         «funcInit»
+
         «funcUpdate»
+
         «funcDelete»
+
         «funcListEntityClasses»
+
         «new ExampleData().generate(it)»
+
         «new EventListener().generate(it)»
     '''
 
@@ -171,15 +176,15 @@ class Installer {
          *
          * If the upgrade fails at some point, it returns the last upgraded version.
          *
-         * @param integer $oldversion Version to upgrade from.
+         * @param integer $oldVersion Version to upgrade from.
          *
          * @return boolean True on success, false otherwise.
          */
-        public function upgrade($oldversion)
+        public function upgrade($oldVersion)
         {
         /*
             // Upgrade dependent on old version number
-            switch ($oldversion) {
+            switch ($oldVersion) {
                 case 1.0.0:
                     // do something
                     // ...

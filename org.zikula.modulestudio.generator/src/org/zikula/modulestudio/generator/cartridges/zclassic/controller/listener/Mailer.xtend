@@ -12,6 +12,8 @@ class Mailer {
          * Subject is `Mailer_Api_User` with `$args`.
          * This is a notifyUntil event so the event must `$event->stop()` and set any
          * return data into `$event->data`, or `$event->setData()`.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function sendMessage(Zikula_Event $event)
         {

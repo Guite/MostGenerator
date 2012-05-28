@@ -226,7 +226,6 @@ class Uploads {
             }
 
             // validate image file
-            $imgInfo = array();
             $isImage = in_array($extension, $this->imageFileTypes);
             if ($isImage) {
                 $imgInfo = getimagesize($file['tmp_name']);

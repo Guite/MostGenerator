@@ -353,7 +353,6 @@ class EventListener {
 
 
     def private postLoadImpl(Entity it/* PostLoad it */) '''
-        $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
         $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST', FILTER_SANITIZE_STRING);
         «IF hasUploadFieldsEntity»
             // initialise the upload handler

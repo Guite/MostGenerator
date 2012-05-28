@@ -143,6 +143,7 @@ class ExternalView {
                 </p>
             «ENDIF»
             <form action="{$ourEntry|default:'index.php'}" id="selectorForm" method="get" class="z-form">
+            <div>
                 <input type="hidden" name="module" value="«app.appName»" />
                 <input type="hidden" name="type" value="external" />
                 <input type="hidden" name="func" value="finder" />
@@ -234,6 +235,7 @@ class ExternalView {
                     <input type="button" id="«app.appName»_cancel" name="cancelButton" value="{gt text='Cancel'}" />
                     <br />
                 </fieldset>
+            </div>
             </form>
 
             <script type="text/javascript">

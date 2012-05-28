@@ -21,39 +21,43 @@ class Finder {
     }
 
     def private generate(Application it) '''
+        'use strict';
+
+        var current«appName»Editor = null;
+        var current«appName»Input = null;
+
+        /**
+         * Returns the attributes used for the popup window. 
+         * @return {String}
+         */
+        function getPopupAttributes() {
+            var pWidth, pHeight;
+
+            pWidth = screen.width * 0.75;
+            pHeight = screen.height * 0.66;
+            return 'width=' + pWidth + ',height=' + pHeight + ',scrollbars,resizable';
+        }
 
         /**
          * Open a popup window with the finder triggered by a Xinha button.
          */
-        function «appName»FinderXinha(editor, «prefix()»URL)
-        {
+        function «appName»FinderXinha(editor, «prefix()»URL) {
+        	var popupAttributes;
+
             // Save editor for access in selector window
             current«appName»Editor = editor;
 
-            window.open(«prefix()»URL, '', getPopupAttributes());
-        }
-
-        function getPopupAttributes()
-        {
-            var pWidth = screen.width * 0.75;
-            var pHeight = screen.height * 0.66;
-            return 'width=' + pWidth + ',height=' + pHeight + ',scrollbars,resizable';
+            popupAttributes = getPopupAttributes();
+            window.open(«prefix()»URL, '', popupAttributes);
         }
 
 
-        //=============================================================================
-        // Internal stuff
-        //=============================================================================
 
-        // htmlArea 3.0 editor for access in selector window
-        var current«appName»Editor = null;
-        var current«appName»Input = null;
+        var «name.formatForDB» = {};
 
-        var «name.formatForDB» = {}
+        «name.formatForDB».finder = {};
 
-        «name.formatForDB».finder = {}
-
-        «name.formatForDB».finder.onLoad = function(baseID, selectedId) {
+        «name.formatForDB».finder.onLoad = function (baseId, selectedId) {
             $('«appName»_sort').observe('change', «name.formatForDB».finder.onParamChanged);
             $('«appName»_sortdir').observe('change', «name.formatForDB».finder.onParamChanged);
             $('«appName»_pagesize').observe('change', «name.formatForDB».finder.onParamChanged);
@@ -61,42 +65,46 @@ class Finder {
                                    .observe('keypress', «name.formatForDB».finder.onParamChanged);
             $('«appName»_submit').hide();
             $('«appName»_cancel').observe('click', «name.formatForDB».finder.handleCancel);
-        }
+        };
 
-        «name.formatForDB».finder.onParamChanged = function() {
+        «name.formatForDB».finder.onParamChanged = function () {
             $('selectorForm').submit();
-        }
+        };
 
-        «name.formatForDB».finder.handleCancel = function() {
-            var editor = $F('editorName');
-            if (editor == 'xinha') {
-                var w = parent.window;
+        «name.formatForDB».finder.handleCancel = function () {
+            var editor, w;
+
+            editor = $F('editorName');
+            if (editor === 'xinha') {
+                w = parent.window;
                 window.close();
                 w.focus();
-            } else if (editor == 'tinymce') {
+            } else if (editor === 'tinymce') {
                 tinyMCEPopup.close();
                 //«prefix()»ClosePopup();
-            } else if (editor == 'ckeditor') {
+            } else if (editor === 'ckeditor') {
                 /** to be done*/
             } else {
                 alert('Close Editor: ' + editor);
             }
-        }
+        };
 
 
         function getPasteSnippet(mode, itemId) {
-            var itemUrl = $F('url' + itemId);
-            var itemTitle = $F('title' + itemId);
-            var itemDescription = $F('desc' + itemId);
+            var itemUrl, itemTitle, itemDescription, pasteMode;
 
-            var pasteMode = $F('«appName»_pasteas');
+            itemUrl = $F('url' + itemId);
+            itemTitle = $F('title' + itemId);
+            itemDescription = $F('desc' + itemId);
 
-            if (pasteMode == 2 || pasteMode != 1) {
+            pasteMode = $F('«appName»_pasteas');
+
+            if (pasteMode === 2 || pasteMode !== 1) {
                 return itemId;
             }
 
             // return link to item
-            if (mode == 'url') {
+            if (mode === 'url') {
                 // plugin mode
                 return itemUrl;
             } else {
@@ -107,28 +115,30 @@ class Finder {
 
 
         // User clicks on "select item" button
-        «name.formatForDB».finder.selectItem = function(itemId) {
-            var editor = $F('editorName');
-            if (editor == 'xinha') {
-                if (window.opener.current«appName»Editor != null) {
-                    var html = getPasteSnippet('html', itemId);
+        «name.formatForDB».finder.selectItem = function (itemId) {
+            var editor, html;
+
+            editor = $F('editorName');
+            if (editor === 'xinha') {
+                if (window.opener.current«appName»Editor !== null) {
+                    html = getPasteSnippet('html', itemId);
 
                     window.opener.current«appName»Editor.focusEditor();
                     window.opener.current«appName»Editor.insertHTML(html);
                 } else {
-                    var html = getPasteSnippet('url', itemId);
+                    html = getPasteSnippet('url', itemId);
                     var currentInput = window.opener.current«appName»Input;
 
-                    if (currentInput.tagName == 'INPUT') {
+                    if (currentInput.tagName === 'INPUT') {
                         // Simply overwrite value of input elements
                         currentInput.value = html;
-                    } else if (currentInput.tagName == 'TEXTAREA') {
+                    } else if (currentInput.tagName === 'TEXTAREA') {
                         // Try to paste into textarea - technique depends on environment
-                        if (typeof document.selection != 'undefined') {
+                        if (typeof document.selection !== 'undefined') {
                             // IE: Move focus to textarea (which fortunately keeps its current selection) and overwrite selection
                             currentInput.focus();
                             window.opener.document.selection.createRange().text = html;
-                        } else if (typeof currentInput.selectionStart != 'undefined') {
+                        } else if (typeof currentInput.selectionStart !== 'undefined') {
                             // Firefox: Get start and end points of selection and create new value based on old value
                             var startPos = currentInput.selectionStart;
                             var endPos = currentInput.selectionEnd;
@@ -141,18 +151,18 @@ class Finder {
                         }
                     }
                 }
-            } else if (editor == 'tinymce') {
-                var html = getPasteSnippet('html', itemId);
+            } else if (editor === 'tinymce') {
+                html = getPasteSnippet('html', itemId);
                 tinyMCEPopup.editor.execCommand('mceInsertContent', false, html);
                 tinyMCEPopup.close();
                 return;
-            } else if (editor == 'ckeditor') {
+            } else if (editor === 'ckeditor') {
                 /** to be done*/
             } else {
                 alert('Insert into Editor: ' + editor);
             }
             «prefix()»ClosePopup();
-        }
+        };
 
 
         function «prefix()»ClosePopup() {
@@ -169,93 +179,97 @@ class Finder {
 
         «name.formatForDB».itemSelector = {};
         «name.formatForDB».itemSelector.items = {};
-        «name.formatForDB».itemSelector.baseID = 0;
+        «name.formatForDB».itemSelector.baseId = 0;
         «name.formatForDB».itemSelector.selectedId = 0;
 
-        «name.formatForDB».itemSelector.onLoad = function(baseID, selectedId) {
-            «name.formatForDB».itemSelector.baseID = baseID;
+        «name.formatForDB».itemSelector.onLoad = function (baseId, selectedId) {
+            «name.formatForDB».itemSelector.baseId = baseId;
             «name.formatForDB».itemSelector.selectedId = selectedId;
 
             // required as a changed object type requires a new instance of the item selector plugin
-            $(baseID + '_objecttype').observe('change', «name.formatForDB».itemSelector.onParamChanged);
+            $(baseId + '_objecttype').observe('change', «name.formatForDB».itemSelector.onParamChanged);
 
-            if ($(baseID + '_catid') != undefined) {
-                $(baseID + '_catid').observe('change', «name.formatForDB».itemSelector.onParamChanged);
+            if ($(baseId + '_catid') !== undefined) {
+                $(baseId + '_catid').observe('change', «name.formatForDB».itemSelector.onParamChanged);
             }
-            $(baseID + '_id').observe('change', «name.formatForDB».itemSelector.onItemChanged);
-            $(baseID + '_sort').observe('change', «name.formatForDB».itemSelector.onParamChanged);
-            $(baseID + '_sortdir').observe('change', «name.formatForDB».itemSelector.onParamChanged);
+            $(baseId + '_id').observe('change', «name.formatForDB».itemSelector.onItemChanged);
+            $(baseId + '_sort').observe('change', «name.formatForDB».itemSelector.onParamChanged);
+            $(baseId + '_sortdir').observe('change', «name.formatForDB».itemSelector.onParamChanged);
             $('«appName»_gosearch').observe('click', «name.formatForDB».itemSelector.onParamChanged)
-                                   .observe('keypress', «name.formatForDB».itemSelector.onParamChanged)
+                                   .observe('keypress', «name.formatForDB».itemSelector.onParamChanged);
 
             «name.formatForDB».itemSelector.getItemList();
-        }
+        };
 
-        «name.formatForDB».itemSelector.onParamChanged = function() {
-            var baseID = «name.formatForDB».itemSelector.baseID;
+        «name.formatForDB».itemSelector.onParamChanged = function () {
             $('ajax_indicator').show();
 
             «name.formatForDB».itemSelector.getItemList();
-        }
+        };
 
-        «name.formatForDB».itemSelector.getItemList = function() {
-            var baseID = «name.formatForDB».itemSelector.baseID;
-            var pars = 'objectType=' + baseID + '&';
-            if ($(baseID + '_catid') != undefined) {
-                pars += 'catid=' + $F(baseID + '_catid') + '&';
+        «name.formatForDB».itemSelector.getItemList = function () {
+            var baseId, pars, request;
+
+            baseId = «name.formatForDB».itemSelector.baseId;
+            pars = 'objectType=' + baseId + '&';
+            if ($(baseId + '_catid') !== undefined) {
+                pars += 'catid=' + $F(baseId + '_catid') + '&';
             }
-            pars += 'sort=' + $F(baseID + '_sort') + '&' +
-                    'sortdir=' + $F(baseID + '_sortdir') + '&' +
-                    'searchterm=' + $F(baseID + '_searchterm');
+            pars += 'sort=' + $F(baseId + '_sort') + '&' +
+                    'sortdir=' + $F(baseId + '_sortdir') + '&' +
+                    'searchterm=' + $F(baseId + '_searchterm');
 
-            new Zikula.Ajax.Request('ajax.php?module=«appName»&func=getItemListFinder', {
+            request = new Zikula.Ajax.Request('ajax.php?module=«appName»&func=getItemListFinder', {
                 method: 'post',
                 parameters: pars,
                 onFailure: function(req) {
                     Zikula.showajaxerror(req.getMessage());
-                    return;
                 },
                 onSuccess: function(req) {
-                    var baseID = «name.formatForDB».itemSelector.baseID;
-                    «name.formatForDB».itemSelector.items[baseID] = req.getData();
+                    var baseId;
+                    baseId = «name.formatForDB».itemSelector.baseId;
+                    «name.formatForDB».itemSelector.items[baseId] = req.getData();
                     $('ajax_indicator').hide();
                     «name.formatForDB».itemSelector.updateItemDropdownEntries();
                     «name.formatForDB».itemSelector.updatePreview();
                 }
             });
-        }
+        };
 
-        «name.formatForDB».itemSelector.updateItemDropdownEntries = function() {
-            var baseID = «name.formatForDB».itemSelector.baseID;
-            var itemSelector = $(baseID + '_id');
+        «name.formatForDB».itemSelector.updateItemDropdownEntries = function () {
+        	var baseId, itemSelector, items, i, item;
 
+            baseId = «name.formatForDB».itemSelector.baseId;
+            itemSelector = $(baseId + '_id');
             itemSelector.length = 0;
 
-            var items = «name.formatForDB».itemSelector.items[baseID];
+            items = «name.formatForDB».itemSelector.items[baseId];
             for (i = 0; i < items.length; ++i) {
-                var item = items[i];
+                item = items[i];
                 itemSelector.options[i] = new Option(item.title, item.id, false);
             }
 
             if («name.formatForDB».itemSelector.selectedId > 0) {
-                $(baseID + '_id').value = «name.formatForDB».itemSelector.selectedId;
+                $(baseId + '_id').value = «name.formatForDB».itemSelector.selectedId;
             }
-        }
+        };
 
-        «name.formatForDB».itemSelector.updatePreview = function() {
-            var baseID = «name.formatForDB».itemSelector.baseID;
-            var items = «name.formatForDB».itemSelector.items[baseID];
+        «name.formatForDB».itemSelector.updatePreview = function () {
+            var baseId, items, selectedElement, i;
 
-            $(baseID + '_previewcontainer').hide();
+            baseId = «name.formatForDB».itemSelector.baseId;
+            items = «name.formatForDB».itemSelector.items[baseId];
 
-            if (items.length == 0) {
+            $(baseId + '_previewcontainer').hide();
+
+            if (items.length === 0) {
                 return;
             }
 
-            var selectedElement = items[0];
+            selectedElement = items[0];
             if («name.formatForDB».itemSelector.selectedId > 0) {
-                for (i = 0; i < items.length; ++i) {
-                    if (items[i].id == «name.formatForDB».itemSelector.selectedId) {
+                for (var i = 0; i < items.length; ++i) {
+                    if (items[i].id === «name.formatForDB».itemSelector.selectedId) {
                         selectedElement = items[i];
                         break;
                     }
@@ -263,17 +277,20 @@ class Finder {
             }
 
             if (selectedElement !== null) {
-                $(baseID + '_previewcontainer').update(window.atob(selectedElement.previewInfo))
+                $(baseId + '_previewcontainer').update(window.atob(selectedElement.previewInfo))
                                                .show();
             }
-        }
+        };
 
-        «name.formatForDB».itemSelector.onItemChanged = function() {
-            var baseID = «name.formatForDB».itemSelector.baseID;
-            var itemSelector = $(baseID + '_id');
-            var preview = window.atob(«name.formatForDB».itemSelector.items[baseID][itemSelector.selectedIndex].previewInfo);
-            $(baseID + '_previewcontainer').update(preview);
-            «name.formatForDB».itemSelector.selectedId = $F(baseID + '_id');
-        }
+        «name.formatForDB».itemSelector.onItemChanged = function () {
+            var baseId, itemSelector, preview;
+
+            baseId = «name.formatForDB».itemSelector.baseId;
+            itemSelector = $(baseId + '_id');
+            preview = window.atob(«name.formatForDB».itemSelector.items[baseId][itemSelector.selectedIndex].previewInfo);
+
+            $(baseId + '_previewcontainer').update(preview);
+            «name.formatForDB».itemSelector.selectedId = $F(baseId + '_id');
+        };
     '''
 }

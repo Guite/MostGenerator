@@ -26,7 +26,7 @@ class GetFileSize {
         /**
          * The «appName.formatForDB»GetFileSize modifier displays the size of a given file in a readable way.
          *
-         * @param string  $size     File size in bytes.
+         * @param integer $size     File size in bytes.
          * @param string  $filepath The input file path including file name (if file size is not known).
          * @param boolean $nodesc   If set to true the description will not be appended.
          * @param boolean $onlydesc If set to true only the description will be returned.

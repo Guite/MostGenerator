@@ -100,8 +100,7 @@ class Ajax {
         /**
          * Retrieve item list for finder selections in Forms, Content type plugin and Scribite.
          *
-         * @param string $ot Treated object type.
-         * @params TODO
+         * @param array $args List of arguments.
          *
          * @return Zikula_Response_Ajax
          */
@@ -158,6 +157,17 @@ class Ajax {
             return new Zikula_Response_Ajax($slimItems);
         }
 
+        /**
+         * Builds and returns a slim data array from a given entity.
+         *
+         * @param string $objectType       The currently treated object type.
+         * @param object $item             The currently treated entity.
+         * @param string $itemid           Data item identifier(s).
+         * @param string $titleField       Name of item title field.
+         * @param string $descriptionField Name of item description field.
+         *
+         * @return array The slim data representation.
+         */
         protected function prepareSlimItem($objectType, $item, $itemId, $titleField, $descriptionField)
         {
             $view = Zikula_View::getInstance('«app.appName»', false);
@@ -252,7 +262,7 @@ class Ajax {
                     «IF app.hasImageFields»
                         // check for preview image
                         if (!empty($previewFieldName) && !empty($item[$previewFieldName]) && isset($item[$previewFieldName . 'FullPath'])) {
-                            $thumbImagePath = «app.appName»_Util_Image::getThumb($item[$previewFieldName], $item[$previewFieldName . 'FullPath'], $thumbWidth, $thumbHeight);
+                            $thumbImagePath = «app.appName»_Util_Image::getThumb($item[$previewFieldName . 'FullPath'], $thumbWidth, $thumbHeight);
                             $preview = '<img src="' . $thumbImagePath . '" width="' . $thumbWidth . '" height="' . $thumbHeight . '" alt="' . $itemTitleStripped . '" />';
                             $out .= '<div class="itempreview informal" id="itempreview' . $itemId . '">' . $preview . '</div>';
                         }
@@ -330,7 +340,7 @@ class Ajax {
                         «IF entity.hasSluggableFields && entity.slugUnique»
                             case 'slug':
                                     $repository = $this->entityManager->getRepository($entityClass);
-                                    $entity = $repository->selectBySlug($slugTitle, false, $exclude);
+                                    $entity = $repository->selectBySlug($value, false, $exclude);
                                     $result = ($entity != null && isset($entity['slug']));
                                     break;
                         «ENDIF»
@@ -399,6 +409,7 @@ class Ajax {
          * @param string $op The operation which should be performed.
          *
          * @return Zikula_Response_Ajax
+         * @throws Zikula_Exception_Ajax_Fatal
          */
         public function handleTreeOperation()
         {

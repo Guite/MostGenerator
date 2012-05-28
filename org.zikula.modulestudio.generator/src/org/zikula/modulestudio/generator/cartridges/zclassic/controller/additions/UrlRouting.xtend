@@ -136,6 +136,12 @@ class UrlRouting {
 
         /**
          * Helper function to route permalinks for different slug types.
+         *
+         * @param string $prefix
+         * @param string $patternStart
+         * @param string $patternEnd
+         * @param string $defaults
+         * @param string $fieldRequirements
          */
         protected function initRouteForEachSlugType($prefix, $patternStart, $patternEnd, $defaults, $fieldRequirements)
         {
@@ -155,7 +161,7 @@ class UrlRouting {
          * @param string $objectType Name of treated entity type.
          * @param string $func       Name of function.
          *
-         * @return $string Name of the group folder
+         * @return string Name of the group folder
          */
         public function getGroupingFolderFromObjectType($objectType, $func)
         {
@@ -234,8 +240,6 @@ class UrlRouting {
         public function getFormattedSlug($objectType, $func, $args, $itemid)
         {
             $slug = '';
-            $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->getService('doctrine.entitymanager');
 
             switch ($objectType) {
                 «FOR entity : getAllEntities»«entity.getSlugForItem»«ENDFOR»

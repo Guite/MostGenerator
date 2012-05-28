@@ -10,6 +10,8 @@ class ModuleInstaller {
          *
          * Called after a module is successfully installed.
          * Receives `$modinfo` as args.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function moduleInstalled(Zikula_Event $event)
         {
@@ -20,6 +22,8 @@ class ModuleInstaller {
          *
          * Called after a module is successfully upgraded.
          * Receives `$modinfo` as args.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function moduleUpgraded(Zikula_Event $event)
         {
@@ -30,6 +34,8 @@ class ModuleInstaller {
          *
          * Called after a module is successfully uninstalled.
          * Receives `$modinfo` as args.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function moduleUninstalled(Zikula_Event $event)
         {
@@ -40,6 +46,8 @@ class ModuleInstaller {
          *
          * Called after a hook subscriber area is unregistered.
          * Receives args['areaid'] as the areaId.  Use this to remove orphan data associated with this area.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function subscriberAreaUninstalled(Zikula_Event $event)
         {

@@ -322,6 +322,8 @@ class FormHandler {
          *
          * This method takes care of all necessary initialisation of our data and form states.
          *
+         * @param Zikula_Form_View $view The form view instance.
+         *
          * @return boolean False in case of initialization errors, otherwise true.
          */
         public function initialize(Zikula_Form_View $view)
@@ -359,7 +361,7 @@ class FormHandler {
                     // try to guarantee that only one person at a time can be editing this entity
                     ModUtil::apiFunc('PageLock', 'user', 'pageLock',
                                              array('lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier(),
-                                                   'returnUrl' => $this->getRedirectUrl(null, $entity)));
+                                                   'returnUrl' => $this->getRedirectUrl(null)));
                 }
             }
             else {
@@ -367,7 +369,7 @@ class FormHandler {
                     return LogUtil::registerPermissionError();
                 }
 
-                $entity = $this->initEntityForCreation($entityClass);
+                $entity = $this->initEntityForCreation();
             }
 
             $this->view->assign('mode', $this->mode)
@@ -481,7 +483,7 @@ class FormHandler {
          *
          * @return Zikula_EntityAccess desired entity instance or null 
          */
-        protected function initEntityForCreation($entityClass)
+        protected function initEntityForCreation()
         {
             $this->hasTemplateId = false;
             $templateId = $this->request->query->get('astemplate', '');
@@ -505,8 +507,7 @@ class FormHandler {
                 foreach ($this->idFields as $idField) {
                     $entity[$idField] = null;
                 }
-            }
-            else {
+            } else {
                 $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
                 $entity = new $entityClass();
             }
@@ -606,8 +607,14 @@ class FormHandler {
          * depending on the command source, but you should at least find a <var>$args['commandName']</var>
          * value indicating the name of the command. The command name is normally specified by the plugin
          * that initiated the command.
+         *
+         * @param Zikula_Form_View $view The form view instance.
+         * @param array            $args Additional arguments.
+         *
          * @see Zikula_Form_Plugin_Button
          * @see Zikula_Form_Plugin_ImageButton
+         *
+         * @return mixed Redirect or false on errors.
          */
         public function handleCommand(Zikula_Form_View $view, &$args)
         {
@@ -623,9 +630,6 @@ class FormHandler {
                     return false;
                 }
             }
-
-            $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
-            $repository = $this->entityManager->getRepository($entityClass);
 
             $otherFormData = $this->fetchInputData($view, $args);
             if ($otherFormData === false) {
@@ -720,7 +724,7 @@ class FormHandler {
                                  array('lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier()));
             }
 
-            return $this->view->redirect($this->getRedirectUrl($args, $entity));
+            return $this->view->redirect($this->getRedirectUrl($args));
         }
         «IF app.hasAttributableEntities»
 
@@ -861,6 +865,11 @@ class FormHandler {
     def private fetchInputData(Controller it, Application app, String actionName) '''
         /**
          * Input data processing called by handleCommand method.
+         *
+         * @param Zikula_Form_View $view The form view instance.
+         * @param array            $args Additional arguments.
+         *
+         * @return array form data after processing.
          */
         public function fetchInputData(Zikula_Form_View $view, &$args)
         {
@@ -1090,6 +1099,8 @@ class FormHandler {
          *
          * This method takes care of all necessary initialisation of our data and form states.
          *
+         * @param Zikula_Form_View $view The form view instance.
+         *
          * @return boolean False in case of initialization errors, otherwise true.
          */
         public function initialize(Zikula_Form_View $view)
@@ -1143,6 +1154,11 @@ class FormHandler {
          * Command event handler.
          *
          * This event handler is called when a command is issued by the user.
+         *
+         * @param Zikula_Form_View $view The form view instance.
+         * @param array            $args Additional arguments.
+         *
+         * @return mixed Redirect or false on errors.
          */
         public function handleCommand(Zikula_Form_View $view, &$args)
         {
@@ -1151,7 +1167,7 @@ class FormHandler {
                 return $result;
             }
 
-            return $this->view->redirect($this->getRedirectUrl($args, $entity));
+            return $this->view->redirect($this->getRedirectUrl($args));
         }
 
         /**
@@ -1186,6 +1202,11 @@ class FormHandler {
     def private fetchInputData(Entity it, Application app, Controller controller, String actionName) '''
         /**
          * Input data processing called by handleCommand method.
+         *
+         * @param Zikula_Form_View $view The form view instance.
+         * @param array            $args Additional arguments.
+         *
+         * @return array form data after processing.
          */
         public function fetchInputData(Zikula_Form_View $view, &$args)
         {

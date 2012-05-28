@@ -67,7 +67,7 @@ class Scribite {
          * Contributing: http://tinymce.moxiecode.com/contributing
          */
 
-        (function() {
+        (function () {
             // Load plugin specific language pack
             tinymce.PluginManager.requireLangPack('«name.formatForDB»');
 
@@ -80,9 +80,9 @@ class Scribite {
                  * @param {tinymce.Editor} ed Editor instance that the plugin is initialized in.
                  * @param {string} url Absolute URL to where the plugin is located.
                  */
-                init : function(ed, url) {
+                init : function (ed, url) {
                     // Register the command so that it can be invoked by using tinyMCE.activeEditor.execCommand('mce«appName»');
-                    ed.addCommand('mce«appName»', function() {
+                    ed.addCommand('mce«appName»', function () {
                         ed.windowManager.open({
                             file : Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=tinymce',
                             width : (screen.width * 0.75),
@@ -101,12 +101,12 @@ class Scribite {
                         title : '«name.formatForDB».desc',
                         cmd : 'mce«appName»',
                         «/*image : url + '/img/«appName».gif'*/»
-                        image : '/images/icons/extrasmall/favorites.png',
+                        image : '/images/icons/extrasmall/favorites.png'
                     });
 
                     // Add a node change handler, selects the button in the UI when a image is selected
-                    ed.onNodeChange.add(function(ed, cm, n) {
-                        cm.setActive('«name.formatForDB»', n.nodeName == 'IMG');
+                    ed.onNodeChange.add(function (ed, cm, n) {
+                        cm.setActive('«name.formatForDB»', n.nodeName === 'IMG');
                     });
                 },
 
@@ -120,7 +120,7 @@ class Scribite {
                  * @param {tinymce.ControlManager} cm Control manager to use inorder to create new control.
                  * @return {tinymce.ui.Control} New control instance or null if no control was created.
                  */
-                createControl : function(n, cm) {
+                createControl : function (n, cm) {
                     return null;
                 },
 
@@ -130,7 +130,7 @@ class Scribite {
                  *
                  * @return {Object} Name/value array containing information about the plugin.
                  */
-                getInfo : function() {
+                getInfo : function () {
                     return {
                         longname : '«appName» for tinymce',
                         author : '«author»',
@@ -143,7 +143,7 @@ class Scribite {
 
             // Register plugin
             tinymce.PluginManager.add('«name.formatForDB»', tinymce.plugins.«appName»Plugin);
-        })();
+        }());
     '''
 
     def private tinyLangDe(Application it) '''
@@ -167,24 +167,29 @@ class Scribite {
         // Distributed under the same terms as xinha itself.
         // This notice MUST stay intact for use (see license.txt).
 
+        'use strict';
+
         function «appName»(editor) {
+            var cfg, self;
+
             this.editor = editor;
-            var cfg = editor.config;
-            var self = this;
+            cfg = editor.config;
+            self = this;
 
             cfg.registerButton({
                 id       : '«appName»',
                 tooltip  : 'Insert «appName» object',
-                «/*image    : _editor_url + 'plugins/«appName»/img/ed_«appName».gif',*/»
+             // image    : _editor_url + 'plugins/«appName»/img/ed_«appName».gif',
                 image    : '/images/icons/extrasmall/favorites.png',
                 textMode : false,
-                action   : function(editor) {
-                    url = Zikula.Config.baseURL + 'index.php'/*Zikula.Config.entrypoint*/ + '?module=«appName»&type=external&func=finder&editor=xinha';
+                action   : function (editor) {
+                    var url = Zikula.Config.baseURL + 'index.php'/*Zikula.Config.entrypoint*/ + '?module=«appName»&type=external&func=finder&editor=xinha';
                     «appName»FinderXinha(editor, url);
                 }
-            })
+            });
             cfg.addToolbarElement('«appName»', 'insertimage', 1);
         }
+
         «appName»._pluginInfo = {
             name          : '«appName» for xinha',
             version       : '«version»',

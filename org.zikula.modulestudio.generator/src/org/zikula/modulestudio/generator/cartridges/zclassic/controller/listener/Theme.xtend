@@ -11,6 +11,8 @@ class Theme {
          * Occurs on the startup of the `Zikula_View_Theme#__construct()`.
          * The subject is the Zikula_View_Theme instance.
          * Is useful to setup a customized theme configuration or cache_id.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function preInit(Zikula_Event $event)
         {
@@ -21,6 +23,8 @@ class Theme {
          *
          * Occurs just before `Zikula_View_Theme#__construct()` finishes.
          * The subject is the Zikula_View_Theme instance.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function init(Zikula_Event $event)
         {
@@ -31,6 +35,8 @@ class Theme {
          *
          * Runs just before `Theme#load_config()` completed.
          * Subject is the Theme instance.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function loadConfig(Zikula_Event $event)
         {
@@ -42,6 +48,8 @@ class Theme {
          * Occurs in `Theme::themefooter()` just after getting the `$maincontent`.
          * The event subject is `$this` (Theme instance) and has $maincontent as the event data
          * which you can modify with `$event->setData()` in the event handler.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function preFetch(Zikula_Event $event)
         {
@@ -53,6 +61,8 @@ class Theme {
          * Occurs in `Theme::themefooter()` just after rendering the theme.
          * The event subject is `$this` (Theme instance) and the event data is the rendered
          * output which you can modify with `$event->setData()` in the event handler.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function postFetch(Zikula_Event $event)
         {

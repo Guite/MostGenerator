@@ -405,7 +405,7 @@ class Association {
         /**
          * Removes an instance of «type» from the list of «name.formatForDisplay».
          *
-         * @param «type» $«name».
+         * @param «type» $«nameSingle».
          *
          * @return void
          */

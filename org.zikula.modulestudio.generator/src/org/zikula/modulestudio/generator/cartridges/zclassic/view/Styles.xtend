@@ -251,19 +251,19 @@ class Styles {
 
     def private finderStyles(Application it) '''
         body {
-            background-color: #DDD;
+            background-color: #ddd;
             margin: 10px;
             text-align: left;
         }
 
         .«prefix()»form fieldset,
         .«prefix()»form fieldset legend {
-            background-color: #FFF;
+            background-color: #fff;
             border: none;
         }
 
         #«prefix()»itemcontainer {
-            background-color: #EEE;
+            background-color: #eee;
             height: 300px;
             overflow: auto;
             padding: 5px;
@@ -292,14 +292,14 @@ class Styles {
         }
 
         #«prefix()»itemcontainer a img {
-            border: 1px solid #CCC;
-            background-color: #F5F5F5;
+            border: 1px solid #ccc;
+            background-color: #f5f5f5;
             padding: 0.5em;
         }
         #«prefix()»itemcontainer a:hover img,
         #«prefix()»itemcontainer a:focus img,
         #«prefix()»itemcontainer a:active img {
-            background-color: #FFF;
+            background-color: #fff;
         }
     '''
 }

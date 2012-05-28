@@ -50,6 +50,7 @@ class FormColourInput {
         {
             /**
              * Get filename of this file.
+             * The information is used to re-establish the plugins on postback.
              *
              * @return string
              */
@@ -149,7 +150,7 @@ class FormColourInput {
              *
              * @param Zikula_Form_View $view Reference to Zikula_Form_View object.
              *
-             * @return void
+             * @return boolean
              */
             public function validate(Zikula_Form_View $view)
             {
@@ -161,7 +162,7 @@ class FormColourInput {
 
                 if (strlen($this->text) > 0) {
                     $regex = '/^#?(([a-fA-F0-9]{3}){1,2})$/';
-                    $result = preg_match($regex, $this->entity[$fieldName]);
+                    $result = preg_match($regex, $this->entity[$this->id]);
                     if (!$result) {
                         $this->setError(__('Error! Invalid colour.'));
                         return false;

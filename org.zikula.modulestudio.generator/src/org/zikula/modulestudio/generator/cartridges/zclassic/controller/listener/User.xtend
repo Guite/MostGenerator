@@ -22,6 +22,8 @@ class User {
          * Receives arg['type'] with the type of result to be filtered
          * and the $themeName in the $event->data which can be modified.
          * Must $event->stop() if handler performs filter.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function getTheme(Zikula_Event $event)
         {
@@ -35,6 +37,8 @@ class User {
          * The full user record created is available as the subject.
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the user record that was created.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function create(Zikula_Event $event)
         {
@@ -47,6 +51,8 @@ class User {
          * The full updated user record is available as the subject.
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the user record, with the updated values.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function update(Zikula_Event $event)
         {
@@ -60,6 +66,8 @@ class User {
          * The full user record deleted is available as the subject.
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the user record that is being deleted.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function delete(Zikula_Event $event)
         {

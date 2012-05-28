@@ -13,6 +13,8 @@ class Page {
          *
          * This single filter can be used to override all css or js scripts or any other var types
          * sent to `PageUtil::addVar()`.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function pageutilAddvarFilter(Zikula_Event $event)
         {
@@ -28,6 +30,8 @@ class Page {
          * Listener for the `system.outputfilter` event.
          *
          * Filter type event for output filter HTML sanitisation.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function systemOutputFilter(Zikula_Event $event)
         {

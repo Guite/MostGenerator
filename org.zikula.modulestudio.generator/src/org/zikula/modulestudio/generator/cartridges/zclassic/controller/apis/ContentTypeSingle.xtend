@@ -51,28 +51,53 @@ class ContentTypeSingle {
         protected $id;
         protected $displayMode;
 
+        /**
+         * Returns the module providing this content type.
+         *
+         * @return string The module name.
+         */
         public function getModule()
         {
             return '«appName»';
         }
 
+        /**
+         * Returns the name of this content type.
+         *
+         * @return string The content type name.
+         */
         public function getName()
         {
             return 'Item';
         }
 
+        /**
+         * Returns the title of this content type.
+         *
+         * @return string The content type title.
+         */
         public function getTitle()
         {
             $dom = ZLanguage::getModuleDomain('«appName»');
             return __('«appName» detail view', $dom);
         }
 
+        /**
+         * Returns the description of this content type.
+         *
+         * @return string The content type description.
+         */
         public function getDescription()
         {
             $dom = ZLanguage::getModuleDomain('«appName»');
             return __('Display or link a single «appName» object.', $dom);
         }
 
+        /**
+         * Loads the data.
+         *
+         * @param array $data Data array with parameters.
+         */
         public function loadData(&$data)
         {
             $utilArgs = array('name' => 'detail');
@@ -93,6 +118,11 @@ class ContentTypeSingle {
             $this->displayMode = $data['displayMode'];
         }
 
+        /**
+         * Displays the data.
+         *
+         * @return string The returned output.
+         */
         public function display()
         {
             if ($this->id != null && !empty($this->displayMode)) {
@@ -101,6 +131,9 @@ class ContentTypeSingle {
             return '';
         }
 
+        /**
+         * Displays the data for editing.
+         */
         public function displayEditing()
         {
             if ($this->id != null && !empty($this->displayMode)) {
@@ -110,6 +143,11 @@ class ContentTypeSingle {
             return __('No item selected.', $dom);
         }
 
+        /**
+         * Returns common arguments for display data selection with the external api.
+         *
+         * @return array Display arguments.
+         */
         protected function getDisplayArguments()
         {
             return array('objectType' => $this->objectType,
@@ -119,6 +157,11 @@ class ContentTypeSingle {
             );
         }
 
+        /**
+         * Returns the default data.
+         *
+         * @return array Default data and parameters.
+         */
         public function getDefaultData()
         {
             return array('objectType' => '«getLeadingEntity.name.formatForCode»',
@@ -126,9 +169,12 @@ class ContentTypeSingle {
                          'displayMode' => 'embed');
         }
 
+        /**
+         * Executes additional actions for the editing mode.
+         */
         public function startEditing()
         {
-            $dom = ZLanguage::getModuleDomain('«appName»');
+            // ensure our custom plugins are loaded
             array_push($this->view->plugins_dir, 'modules/«appName»/templates/plugins');
 
             // required as parameter for the item selector plugin

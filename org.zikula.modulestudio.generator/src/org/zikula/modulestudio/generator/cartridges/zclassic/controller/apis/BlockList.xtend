@@ -92,8 +92,9 @@ class BlockList {
         /**
          * Display the block.
          *
-         * @param array $blockinfo a blockinfo structure
-         * @return output the rendered block
+         * @param array $blockinfo the blockinfo structure
+         *
+         * @return string output of the rendered block
          */
         public function display($blockinfo)
         {
@@ -208,6 +209,10 @@ class BlockList {
 
         /**
          * Returns the template used for output.
+         *
+         * @param array $vars List of block variables.
+         *
+         * @return string the template path.
          */
         protected function getDisplayTemplate($vars)
         {
@@ -232,8 +237,10 @@ class BlockList {
         /**
          * Determines the order by parameter for item selection.
          *
-         * @param array $blockinfo a blockinfo structure
-         * @return string the sorting clause
+         * @param array               $vars       List of block variables.
+         * @param Doctrine_Repository $repository The repository used for data fetching.
+         *
+         * @return string the sorting clause.
          */
         protected function getSortParam($vars, $repository)
         {
@@ -264,8 +271,9 @@ class BlockList {
         /**
          * Modify block settings.
          *
-         * @param array $blockinfo a blockinfo structure
-         * @return output the block form
+         * @param array $blockinfo the blockinfo structure
+         *
+         * @return string output of the block editing form.
          */
         public function modify($blockinfo)
         {
@@ -315,8 +323,9 @@ class BlockList {
         /**
          * Update block settings.
          *
-         * @param array $blockinfo a blockinfo structure
-         * @return $blockinfo the modified blockinfo structure
+         * @param array $blockinfo the blockinfo structure
+         *
+         * @return array the modified blockinfo structure.
          */
         public function update($blockinfo)
         {

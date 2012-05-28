@@ -43,8 +43,12 @@ class FormFrame {
             public $useTabs;
             public $cssClass = 'tabs';
 
-            // Plugins MUST implement this function as it is stated here.
-            // The information is used to re-establish the plugins on postback.
+            /**
+             * Get filename of this file.
+             * The information is used to re-establish the plugins on postback.
+             *
+             * @return string
+             */
             public function getFilename()
             {
                 return __FILE__;
@@ -87,6 +91,10 @@ class FormFrame {
              * RenderEnd event handler.
              *
              * Default action is to return an empty string.
+             *
+             * @param Zikula_Form_View $view Reference to Zikula_Form_View object.
+             *
+             * @return string The rendered output.
              */
             public function renderEnd(Zikula_Form_View $view)
             {

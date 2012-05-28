@@ -20,7 +20,12 @@ class UploadProcessing {
 
     def private handleUploads(Controller it, Application app) '''
         /**
-         * Helper method to process upload fields
+         * Helper method to process upload fields.
+         *
+         * @param array  $formData       The form input data.
+         * @param object $existingObject Data of existing entity object.
+         *
+         * @return array form data after processing.
          */
         protected function handleUploads($formData, $existingObject)
         {

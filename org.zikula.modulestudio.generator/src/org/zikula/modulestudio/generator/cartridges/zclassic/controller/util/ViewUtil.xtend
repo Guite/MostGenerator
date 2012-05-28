@@ -142,11 +142,10 @@ class ViewUtil {
             /**
              * Get list of available template extensions.
              *
-             * @param Zikula_View $view       Reference to view object.
-             * @param string      $type       Current type (admin, user, ...).
-             * @param string      $objectType Name of treated entity type.
-             * @param string      $func       Current function (main, view, ...).
-             * @param array       $args       Additional arguments.
+             * @param string $type       Current type (admin, user, ...).
+             * @param string $objectType Name of treated entity type.
+             * @param string $func       Current function (main, view, ...).
+             * @param array  $args       Additional arguments.
              *
              * @return array List of allowed template extensions.
              */

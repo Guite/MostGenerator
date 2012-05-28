@@ -21,6 +21,8 @@ class UserLogin {
          * resulting in the user being redirected to the full log-in screen for corrections.
          *
          * This event does not have any subject, arguments, or data.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function started(Zikula_Event $event)
         {
@@ -136,6 +138,8 @@ class UserLogin {
          *     SessionUtil::setVar('Users_Controller_User_changePassword', $sessionVars, 'Zikula_Users' true, true);
          *
          * where `$sessionVars` contains the information discussed previously.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function veto(Zikula_Event $event)
         {
@@ -171,6 +175,8 @@ class UserLogin {
          *
          * Finally, this event only fires in the event of a "normal" UI-oriented log-in attempt. A module attempting to log in
          * programmatically by directly calling the core functions will not see this event fired.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function succeeded(Zikula_Event $event)
         {
@@ -198,6 +204,8 @@ class UserLogin {
          * Finally, this event only fires in the event of a "normal" UI-oriented log-in attempt. A module attempting to log in
          * programmatically by directly calling `UserUtil::loginUsing()` will not see this event fired. Instead, the
          * `Users_Controller_User#login()` function can be called with the appropriate parameters, if the event is desired.
+         *
+         * @param Zikula_Event $event The event instance.
          */
         public static function failed(Zikula_Event $event)
         {

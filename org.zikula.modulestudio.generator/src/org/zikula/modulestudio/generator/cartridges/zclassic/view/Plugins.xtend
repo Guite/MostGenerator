@@ -29,7 +29,6 @@ class Plugins {
 
     def generate(Application it, IFileSystemAccess fsa) {
         new ActionUrl().generate(it, fsa)
-        new ImageThumb().generate(it, fsa)
         new FormFrame().generate(it, fsa)
         new SelectorObjectTypes().generate(it, fsa)
         new SelectorTemplates().generate(it, fsa)

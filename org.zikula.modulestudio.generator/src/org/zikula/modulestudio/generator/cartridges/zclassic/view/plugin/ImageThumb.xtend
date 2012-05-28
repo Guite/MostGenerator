@@ -29,15 +29,14 @@ class ImageThumb {
         /**
          * The «appName.formatForDB»ImageThumb modifier displays a thumbnail image.
          *
-         * @param  string $fileName  The input file name.
-         * @param  string $filePath  The input file path (including file name).
+         * @param  string $filePath  The input file path (including the file name).
          * @param  int    $width     Desired width.
          * @param  int    $height    Desired height.
          * @param  array  $thumbArgs Additional arguments.
          *
          * @return string The thumbnail file path.
          */
-        function smarty_modifier_«appName.formatForDB»ImageThumb($fileName = '', $filePath = '', $width = 100, $height = 80, $thumbArgs = array())
+        function smarty_modifier_«appName.formatForDB»ImageThumb($filePath = '', $width = 100, $height = 80, $thumbArgs = array())
         {
             /**
              * By overriding this plugin or the util method called below you may add further thumbnail arguments

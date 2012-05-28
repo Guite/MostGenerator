@@ -48,10 +48,10 @@ class ListEntries {
             /**
              * Return the name or names for a given list item.
              *
-             * @param string  $value      The dropdown value to process.
-             * @param string  $objectType The treated object type.
-             * @param string  $fieldName  The list field's name.
-             * @param string  $delimiter  String used as separator for multiple selections.
+             * @param string $value      The dropdown value to process.
+             * @param string $objectType The treated object type.
+             * @param string $fieldName  The list field's name.
+             * @param string $delimiter  String used as separator for multiple selections.
              *
              * @return string List item name.
              */
@@ -115,8 +115,8 @@ class ListEntries {
             /**
              * Determine whether a certain dropdown field has a multi selection or not.
              *
-             * @param string  $objectType The treated object type.
-             * @param string  $fieldName  The list field's name.
+             * @param string $objectType The treated object type.
+             * @param string $fieldName  The list field's name.
              *
              * @return boolean True if this is a multi list false otherwise.
              */
@@ -126,16 +126,22 @@ class ListEntries {
                     return false;
                 }
 
+                $result = false;
                 switch ($objectType) {
                     «FOR entity : getAllEntities.filter(e|e.hasListFieldsEntity)»
                         case '«entity.name.formatForCode»':
                             switch ($fieldName) {
                                 «FOR listField : entity.getListFieldsEntity»
-                                    case '«listField.name.formatForCode»': return «listField.multiple.displayBool»;
+                                    case '«listField.name.formatForCode»':
+                                        $result = «listField.multiple.displayBool»;
+                                        break;
                                 «ENDFOR»
                             }
+                            break;
                     «ENDFOR»
                 }
+
+                return $result;
             }
 
             /**
@@ -152,18 +158,27 @@ class ListEntries {
                     return array();
                 }
 
+                $entries = array();
                 switch ($objectType) {
                     «FOR entity : getAllEntities.filter(e|e.hasListFieldsEntity)»
                         case '«entity.name.formatForCode»':
                             switch ($fieldName) {
                                 «FOR listField : entity.getListFieldsEntity»
-                                    case '«listField.name.formatForCode»': return $this->get«listField.name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
+                                    case '«listField.name.formatForCode»':
+                                        $entries = $this->get«listField.name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
+                                        break;
                                 «ENDFOR»
                             }
+                            break;
                     «ENDFOR»
                 }
+
+                return $entries;
             }
-            «FOR listField : getAllListFields»«listField.getItemsImpl»«ENDFOR»
+            «FOR listField : getAllListFields»
+
+                «listField.getItemsImpl»
+            «ENDFOR»
         }
     '''
 

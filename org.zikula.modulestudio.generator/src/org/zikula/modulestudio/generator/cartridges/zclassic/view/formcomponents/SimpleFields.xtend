@@ -132,7 +132,7 @@ class SimpleFields {
                       {gt text='Current file'}:
                       <a href="{$«realName»FullPathUrl}" title="{$«objName».«entity.getLeadingField.name.formatForCode»|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB»]"{/if}>
                       {if $«realName»Meta.isImage}
-                          <img src="{$«realName»|«appNameSmall»ImageThumb:$«realName»FullPath:80:50}" width="80" height="50" alt="{$«objName».«entity.getLeadingField.name.formatForCode»|replace:"\"":""}" />
+                          <img src="{$«realName»FullPath|«appNameSmall»ImageThumb:80:50}" width="80" height="50" alt="{$«objName».«entity.getLeadingField.name.formatForCode»|replace:"\"":""}" />
                       {else}
                           {gt text='Download'} ({$«realName»Meta.size|«appNameSmall»GetFileSize:$«realName»FullPath:false:false})
                       {/if}

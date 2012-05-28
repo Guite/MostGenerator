@@ -45,7 +45,7 @@ class ExternalController {
 		 */
 		class «appName»_Controller_Base_External extends Zikula_AbstractController
 		{
-            «new ControllerHelper().controllerPostInitialize(it, false)»
+    «new ControllerHelper().controllerPostInitialize(it, false)»
 
 		    «externalBaseImpl»
 		}
@@ -55,12 +55,13 @@ class ExternalController {
         /**
          * Displays one item of a certain object type using a separate template for external usages.
          *
-         * @param string $ot          The object type
-         * @param int    $id          Identifier of the item to be shown
-         * @param string $source      Source of this call (contentType or scribite)
-         * @param string $displayMode Display mode (link or embed)
+         * @param array  $args              List of arguments.
+         * @param string $args[ot]          The object type
+         * @param int    $args[id]          Identifier of the item to be shown
+         * @param string $args[source]      Source of this call (contentType or scribite)
+         * @param string $args[displayMode] Display mode (link or embed)
          *
-         * @return string Desired data output
+         * @return string Desired data output.
          */
         public function display($args)
         {
@@ -127,17 +128,19 @@ class ExternalController {
             if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
             $this->view->setCacheId($objectType . '|' . $id . '|a' . $accessLevel);
 
-            $view->assign('objectType', $objectType)
-                 ->assign('source', $source)
-                 ->assign('item', $objectData)
-                 ->assign('displayMode', $displayMode);
+            $this->view->assign('objectType', $objectType)
+                      ->assign('source', $source)
+                      ->assign('item', $objectData)
+                      ->assign('displayMode', $displayMode);
 
-            return $view->fetch('external/' . $objectType . '/display.tpl');
+            return $this->view->fetch('external/' . $objectType . '/display.tpl');
         }
 
         /**
          * Popup selector for scribite plugins.
          * Finds items of a certain object type.
+         *
+         * @param array $args List of arguments.
          *
          * @return output The external item finder page
          */

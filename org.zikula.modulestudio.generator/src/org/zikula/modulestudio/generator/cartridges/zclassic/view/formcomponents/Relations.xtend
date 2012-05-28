@@ -234,7 +234,7 @@ class Relations {
                 <br />
                 «val imageFieldName = targetEntity.getImageFieldsEntity.head.name.formatForCode»
                 {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPath)}
-                    <img src="{$item.«imageFieldName»|«app.appName.formatForDB»ImageThumb:$item.«imageFieldName»FullPath:50:40}" width="50" height="40" alt="«IF leadingField != null»{$item.«leadingField.name.formatForCode»«ELSE»{gt text='«targetEntity.name.formatForDisplayCapital»«ENDIF»|replace:"\"":""}" />
+                    <img src="{$item.«imageFieldName»FullPath|«app.appName.formatForDB»ImageThumb:50:40}" width="50" height="40" alt="«IF leadingField != null»{$item.«leadingField.name.formatForCode»«ELSE»{gt text='«targetEntity.name.formatForDisplayCapital»«ENDIF»|replace:"\"":""}" />
                 {/if}
             «ENDIF»
         </li>

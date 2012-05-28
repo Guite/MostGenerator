@@ -26,6 +26,8 @@ class Redirect {
     def getRedirectCodes(Controller it, Application app, String actionName) '''
         /**
          * Get list of allowed redirect codes.
+         *
+         * @return array list of possible redirect codes
          */
         protected function getRedirectCodes()
         {
@@ -52,6 +54,8 @@ class Redirect {
     def getRedirectCodes(Entity it, Application app, Controller controller, String actionName) '''
         /**
          * Get list of allowed redirect codes.
+         *
+         * @return array list of possible redirect codes
          */
         protected function getRedirectCodes()
         {
@@ -80,8 +84,12 @@ class Redirect {
         /**
          * Get the default redirect url. Required if no returnTo parameter has been supplied.
          * This method is called in handleCommand so we know which command has been performed.
+         *
+         * @param array  $args List of arguments.
+         *
+         * @return string The default redirect url.
          */
-        protected function getDefaultReturnUrl($args, $obj)
+        protected function getDefaultReturnUrl($args)
         {
             «IF controller.hasActions('view')»
                 // redirect to the list of «nameMultiple.formatForCode»
@@ -116,8 +124,12 @@ class Redirect {
     def getRedirectUrl(Entity it, Application app, Controller controller, String actionName) '''
         /**
          * Get url to redirect to.
+         *
+         * @param array  $args List of arguments.
+         *
+         * @return string The redirect url.
          */
-        protected function getRedirectUrl($args, $obj)
+        protected function getRedirectUrl($args)
         {
             if ($this->inlineUsage == true) {
                 $urlArgs = array('idp' => $this->idPrefix,
@@ -134,7 +146,7 @@ class Redirect {
             // normal usage, compute return url from given redirect code
             if (!in_array($this->returnTo, $this->getRedirectCodes())) {
                 // invalid return code, so return the default url
-                return $this->getDefaultReturnUrl($args, $obj);
+                return $this->getDefaultReturnUrl($args);
             }
 
             // parse given redirect code and return corresponding url
@@ -155,7 +167,7 @@ class Redirect {
                                     if ($args['commandName'] != 'delete' && !($this->mode == 'create' && $args['commandName'] == 'cancel')) {
                                         return ModUtil::url($this->name, '«controllerName»', $this->addIdentifiersToUrlArgs());
                                     }
-                                    return $this->getDefaultReturnUrl($args, $obj);
+                                    return $this->getDefaultReturnUrl($args);
                     «ENDIF»
                 «ENDFOR»
                 «FOR incomingRelation : getIncomingJoinRelationsWithOneSource»
@@ -173,13 +185,13 @@ class Redirect {
                                     if (!empty($this->«incomingRelation.getRelationAliasName(false)»)) {
                                         return ModUtil::url($this->name, '«controllerName»', 'display', array('ot' => '«sourceEntity.name.formatForCode»', 'id' => $this->«incomingRelation.getRelationAliasName(false)»«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»));
                                     }
-                                    return $this->getDefaultReturnUrl($args, $obj);
+                                    return $this->getDefaultReturnUrl($args);
                             «ENDIF»
                         «ENDFOR»
                     «ENDIF»
                 «ENDFOR»
                         default:
-                                    return $this->getDefaultReturnUrl($args, $obj);
+                                    return $this->getDefaultReturnUrl($args);
             }
         }
     '''
