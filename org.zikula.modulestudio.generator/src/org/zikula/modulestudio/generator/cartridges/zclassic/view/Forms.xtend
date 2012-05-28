@@ -349,7 +349,7 @@ class Forms {
                         Event.stop(event);
                     } else {
                         // hide form buttons to prevent double submits by accident
-                        $$('div.z-formbuttons input').each(function(btn) {
+                        $$('div.z-formbuttons input').each(function (btn) {
                             btn.hide();
                         });
                     }

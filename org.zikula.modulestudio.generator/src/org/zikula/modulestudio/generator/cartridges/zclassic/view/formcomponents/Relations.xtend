@@ -266,11 +266,11 @@ class Relations {
                 val uniqueNameForJs = getUniqueRelationNameForJs(app, targetEntity, many, incoming, relationAliasName)
                 if (!insideLoader) '''
                     var newItem = new Object();
-                    newItem['ot'] = '«(if (targetEntity == target) source else target).name.formatForCode»';
-                    newItem['alias'] = '«relationAliasName.formatForCodeCapital»';
-                    newItem['prefix'] = '«uniqueNameForJs»SelectorDoNew';
-                    newItem['acInstance'] = null;
-                    newItem['windowInstance'] = null;
+                    newItem.ot = '«(if (targetEntity == target) source else target).name.formatForCode»';
+                    newItem.alias = '«relationAliasName.formatForCodeCapital»';
+                    newItem.prefix = '«uniqueNameForJs»SelectorDoNew';
+                    newItem.acInstance = null;
+                    newItem.windowInstance = null;
                     relationHandler.push(newItem);
                 '''
                 else '''
