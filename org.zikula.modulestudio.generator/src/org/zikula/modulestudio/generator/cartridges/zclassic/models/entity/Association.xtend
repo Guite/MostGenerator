@@ -339,10 +339,11 @@ class Association {
          */
         public function add«name.toFirstUpper»(«addParameters(useTarget, nameSingle, type, false)»)
         {
-            «addAssignment(useTarget, name, nameSingle)»
+            «addAssignment(useTarget, selfIsMany, name, nameSingle)»
             «IF bidirectional && !useTarget»
                 «val ownAliasName = getRelationAliasName(!useTarget).toFirstUpper»
-                «IF selfIsMany»
+                «val otherIsMany = isManySide(!useTarget)»
+                «IF otherIsMany»
                     $«nameSingle»->add«ownAliasName»($this);
                 «ELSE»
                     $«nameSingle»->set«ownAliasName»($this);
@@ -353,8 +354,7 @@ class Association {
     '''
 
     def private dispatch addParameters(JoinRelationship it, Boolean useTarget, String name, String type, Boolean withDescription) '''
-        «type» $«name»«IF withDescription»«/*TODO description*/»«ENDIF»
-    '''
+        «type» $«name»«IF withDescription»«/*TODO description*/»«ENDIF»'''
     def private dispatch addParameters(OneToManyRelationship it, Boolean useTarget, String name, String type, Boolean withDescription) '''
         «IF !useTarget && !source.getAggregateFields.isEmpty»
             «val targetField = source.getAggregateFields.head.getAggregateTargetField»
@@ -363,20 +363,20 @@ class Association {
             «type» $«name»«IF withDescription»«/*TODO description*/»«ENDIF»
         «ENDIF»'''
 
-    def private addAssignmentDefault(JoinRelationship it, Boolean useTarget, String name, String nameSingle) '''
-        $this->«name»[] = $«nameSingle»;
+    def private addAssignmentDefault(JoinRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle) '''
+        $this->«name»«IF selfIsMany»[]«ENDIF» = $«nameSingle»;
     '''
-    def private dispatch addAssignment(JoinRelationship it, Boolean useTarget, String name, String nameSingle) '''
-        «addAssignmentDefault(useTarget, name, nameSingle)»
+    def private dispatch addAssignment(JoinRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle) '''
+        «addAssignmentDefault(useTarget, selfIsMany, name, nameSingle)»
     '''
-    def private dispatch addAssignment(OneToManyRelationship it, Boolean useTarget, String name, String nameSingle) '''
+    def private dispatch addAssignment(OneToManyRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle) '''
         «IF !useTarget && indexBy != null && indexBy != ''»
             $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital»()] = $«nameSingle»;
         «ELSEIF !useTarget && !source.getAggregateFields.isEmpty»
             «val sourceField = source.getAggregateFields.head»
             «val targetField = sourceField.getAggregateTargetField»
             $«getRelationAliasName(true)» = new «target.implClassModelEntity»($this, $«targetField.name.formatForCode»);
-            $this->«name»[] = $«nameSingle»;
+            $this->«name»«IF selfIsMany»[]«ENDIF» = $«nameSingle»;
             $this->«sourceField.name.formatForCode» += $«targetField.name.formatForCode»;
             return $«getRelationAliasName(true)»;
         }
@@ -390,14 +390,14 @@ class Association {
         {
             $this->«sourceField.name.formatForCode» += $«targetField.name.formatForCode»;
         «ELSE»
-            «addAssignmentDefault(useTarget, name, nameSingle)»
+            «addAssignmentDefault(useTarget, selfIsMany, name, nameSingle)»
         «ENDIF»
     '''
-    def private dispatch addAssignment(ManyToManyRelationship it, Boolean useTarget, String name, String nameSingle) '''
+    def private dispatch addAssignment(ManyToManyRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle) '''
         «IF !useTarget && indexBy != null && indexBy != ''»
             $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital»()] = $«nameSingle»;
         «ELSE»
-            «addAssignmentDefault(useTarget, name, nameSingle)»
+            «addAssignmentDefault(useTarget, selfIsMany, name, nameSingle)»
         «ENDIF»
     '''
 
@@ -414,7 +414,8 @@ class Association {
             $this->«name»->removeElement($«nameSingle»);
             «IF bidirectional && !useTarget»
                 «val ownAliasName = getRelationAliasName(!useTarget).toFirstUpper»
-                «IF selfIsMany»
+                «val otherIsMany = isManySide(!useTarget)»
+                «IF otherIsMany»
                     $«nameSingle»->remove«ownAliasName»($this);
                 «ELSE»
                     $«nameSingle»->set«ownAliasName»(null);
