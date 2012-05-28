@@ -303,8 +303,10 @@ class Association {
         «ELSE»
             «fh.getterAndSetterMethods(it, aliasName, entityClass, false, true, 'null')»
         «ENDIF»
-        «addMethod(useTarget, isMany, aliasName, singleName, entityClass)»
-        «removeMethod(useTarget, isMany, aliasName, singleName, entityClass)»
+        «IF isMany»
+            «addMethod(useTarget, isMany, aliasName, singleName, entityClass)»
+            «removeMethod(useTarget, isMany, aliasName, singleName, entityClass)»
+        «ENDIF»
     '''
 
     def private dispatch relationAccessorAdditions(JoinRelationship it, Boolean useTarget, String aliasName, String singleName) '''
@@ -411,7 +413,11 @@ class Association {
          */
         public function remove«name.toFirstUpper»(«type» $«nameSingle»)
         {
-            $this->«name»->removeElement($«nameSingle»);
+            «IF selfIsMany»
+                $this->«name»->removeElement($«nameSingle»);
+            «ELSE»
+                $this->«name» = null;
+            «ENDIF»
             «IF bidirectional && !useTarget»
                 «val ownAliasName = getRelationAliasName(!useTarget).toFirstUpper»
                 «val otherIsMany = isManySide(!useTarget)»

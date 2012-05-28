@@ -175,6 +175,7 @@ class Relations {
     def private updateRelationLinks(JoinRelationship it, Boolean incoming) '''
         «val relationAliasName = getRelationAliasName(!incoming).formatForCodeCapital»
         «val many = isManySide(!incoming)»
+        «val manyOtherSide = isManySide(incoming)»
         «val uniqueNameForJs = getUniqueRelationNameForJs(container.application, (if (incoming) target else source), false, incoming, relationAliasName)»
         «IF many && getEditStageCode(incoming) > 0»
             «val objectType = (if (incoming) source else target).name.formatForCode»
@@ -185,15 +186,26 @@ class Relations {
                     «IF many»
                         «IF incoming»
                             foreach ($entity->get«relationAliasName»() as $relatedItem) {
+                            «IF manyOtherSide»
+                                $relatedItem->remove«(if (incoming) source else target).name.formatForCodeCapital»($entity);
+                            «ELSE»
+                                $relatedItem->set«(if (incoming) source else target).name.formatForCodeCapital»(null);
+                            «ENDIF»
                                 $entity->remove«relationAliasName»($relatedItem);
                             }
                         «ELSE»
-                            $entity->get«relationAliasName»()->clear();
+                            //$entity->get«relationAliasName»()->clear();
+                            foreach ($entity->get«relationAliasName»() as $relatedItem) {
+                            «IF manyOtherSide»
+                                $relatedItem->remove«(if (incoming) source else target).name.formatForCodeCapital»($entity);
+                            «ELSE»
+                                $relatedItem->set«(if (incoming) source else target).name.formatForCodeCapital»(null);
+                            «ENDIF»
+                                $entity->remove«relationAliasName»($relatedItem);
+                            }
                         «ENDIF»
-                    «ELSE»
-                        «IF nullable»
-                            $entity->set«relationAliasName»(null);
-                        «ENDIF»
+                    «ELSEIF nullable»
+                        $entity->set«relationAliasName»(null);
                     «ENDIF»
                 }
                 if (!empty($relatedIds)) {
