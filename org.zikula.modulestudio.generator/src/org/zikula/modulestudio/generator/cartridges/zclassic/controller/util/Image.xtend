@@ -152,7 +152,7 @@ class Image {
                     // save thumb file
                     $saveOptions = array();
                     if (in_array($pathInfo['extension'], array('jpg', 'jpeg', 'png'))) {
-                        $saveOptions['quality'] = $this->getDefaultQuality($pathInfo['extension']);
+                        $saveOptions['quality'] = self::getDefaultQuality($pathInfo['extension']);
                     }
                     $thumb->save($thumbFilePath);
 
@@ -167,18 +167,18 @@ class Image {
                     return $filePath;
                 }
             }
-        }
 
-        /**
-         * Returns the quality to be used for a given file extension.
-         *
-         * @param string $extension The file extension
-         *
-         * @return integer the desired quality
-         */
-        protected function getDefaultQuality($extension)
-        {
-            return 85;
+            /**
+             * Returns the quality to be used for a given file extension.
+             *
+             * @param string $extension The file extension
+             *
+             * @return integer the desired quality
+             */
+            protected static function getDefaultQuality($extension)
+            {
+                return 85;
+            }
         }
     '''
 
