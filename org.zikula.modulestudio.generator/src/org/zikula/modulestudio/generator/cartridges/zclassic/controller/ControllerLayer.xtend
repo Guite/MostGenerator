@@ -178,9 +178,9 @@ class ControllerLayer {
         {
             «IF !isAjaxController»
             /**
-             * Returns available «name» panel links.
+             * Returns available «name.formatForDB» panel links.
              *
-             * @return array Array of admin links
+             * @return array Array of «name.formatForDB» links.
              */
             public function getlinks()
             {
