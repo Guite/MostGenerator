@@ -165,7 +165,7 @@ class Redirect {
                     «IF someController.hasActions('display')»
                         case '«controllerName»Display':
                                     if ($args['commandName'] != 'delete' && !($this->mode == 'create' && $args['commandName'] == 'cancel')) {
-                                        return ModUtil::url($this->name, '«controllerName»', $this->addIdentifiersToUrlArgs());
+                                        return ModUtil::url($this->name, '«controllerName»', 'display', $this->addIdentifiersToUrlArgs());
                                     }
                                     return $this->getDefaultReturnUrl($args);
                     «ENDIF»
