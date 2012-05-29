@@ -169,6 +169,8 @@ class Repository {
                 «selectBySlug»
             «ENDIF»
 
+            «addExclusion»
+
             «selectWhere»
 
             «selectWherePaginated»
@@ -540,7 +542,9 @@ class Repository {
 
             return $query->getOneOrNullResult();
         }
+    '''
 
+    def private addExclusion(Entity it) '''
         /**
          * Adds where clauses excluding desired identifiers from selection.
          *
