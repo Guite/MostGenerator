@@ -216,7 +216,7 @@ class EditFunctions {
             elemPrefix = idPrefix + 'Reference_' + newItemId;
             itemPreview = '';
 
-            if ($('itempreview' + selectedListItem.id) !== undefined) {
+            if ($('itempreview' + selectedListItem.id) !== null) {
                 itemPreview = $('itempreview' + selectedListItem.id).innerHTML;
             }
 
