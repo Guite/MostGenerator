@@ -174,71 +174,77 @@ class Relations {
 
     def private updateRelationLinks(JoinRelationship it, Boolean incoming) '''
         «val relationAliasName = getRelationAliasName(!incoming).formatForCodeCapital»
+        «val relationAliasNameReverse = getRelationAliasName(incoming).formatForCodeCapital»
         «val many = isManySide(!incoming)»
         «val manyOtherSide = isManySide(incoming)»
         «val uniqueNameForJs = getUniqueRelationNameForJs(container.application, (if (incoming) target else source), false, incoming, relationAliasName)»
         «IF many && getEditStageCode(incoming) > 0»
-            «val objectType = (if (incoming) source else target).name.formatForCode»
-            «IF incoming || many»«/*only incoming for now, see https://github.com/Guite/MostGenerator/issues/10*/»
-                $relatedIds = $this->request->request->get('«uniqueNameForJs»ItemList', '');
-                if ($this->mode != 'create') {
-                    // remove all existing references
-                    «IF many»
-                        «IF incoming»
-                            foreach ($entity->get«relationAliasName»() as $relatedItem) {
-                            «IF manyOtherSide»
-                                $relatedItem->remove«(if (incoming) targetAlias else sourceAlias).formatForCodeCapital»($entity);
-                            «ELSE»
-                                $relatedItem->set«(if (incoming) targetAlias else sourceAlias).formatForCodeCapital»(null);
+        «IF (incoming && bidirectional) || many»«/*only incoming for now, see https://github.com/Guite/MostGenerator/issues/10*/»
+            $relatedIds = $this->request->request->get('«uniqueNameForJs»ItemList', '');
+            if ($this->mode != 'create') {
+                // remove all existing references
+                «IF many»
+                    «IF !incoming»
+                        foreach ($entity->get«relationAliasName»() as $relatedItem) {
+                            «IF bidirectional»
+                                «IF manyOtherSide»
+                                    $relatedItem->remove«relationAliasNameReverse.toFirstUpper»($entity);
+                                «ELSE»
+                                    $relatedItem->set«relationAliasNameReverse.toFirstUpper»(null);
+                                «ENDIF»
                             «ENDIF»
-                                $entity->remove«relationAliasName»($relatedItem);
-                            }
-                        «ELSE»
-                            //$entity->get«relationAliasName»()->clear();
-                            foreach ($entity->get«relationAliasName»() as $relatedItem) {
-                            «IF manyOtherSide»
-                                $relatedItem->remove«(if (incoming) source else target).name.formatForCodeCapital»($entity);
-                            «ELSE»
-                                $relatedItem->set«(if (incoming) source else target).name.formatForCodeCapital»(null);
-                            «ENDIF»
-                                $entity->remove«relationAliasName»($relatedItem);
-                            }
-                        «ENDIF»
-                    «ELSEIF nullable»
-                        $entity->set«relationAliasName»(null);
-                    «ENDIF»
-                }
-                if (!empty($relatedIds)) {
-                    $relatedIds = explode(',', $relatedIds);
-                    if (is_array($relatedIds) && count($relatedIds)) {
-                        $idFields = ModUtil::apiFunc('«container.application.appName»', 'selection', 'getIdFields', array('ot' => '«objectType»'));
-                        $relatedIdValues = $this->decodeCompositeIdentifier($relatedIds, $idFields);
-
-                        $where = '';
-                        foreach ($idFields as $idField) {
-                            if (!empty($where)) {
-                                $where .= ' AND ';
-                            }
-                            $where .= 'tbl.' . $idField . ' IN (' . implode(', ', $relatedIdValues[$idField]) . ')';
+                            $entity->remove«relationAliasName»($relatedItem);
                         }
-                        $linkObjects = ModUtil::apiFunc($this->name, 'selection', 'getEntities', array('ot' => '«objectType»', 'where' => $where));
+                    «ELSEIF bidirectional»
+                        foreach ($entity->get«relationAliasName»() as $relatedItem) {
+                            «IF manyOtherSide»
+                                $relatedItem->remove«relationAliasNameReverse.toFirstUpper»($entity);
+                            «ELSE»
+                                $relatedItem->set«relationAliasNameReverse.toFirstUpper»(null);
+                            «ENDIF»
+                            $entity->remove«relationAliasName»($relatedItem);
+                        }
+                    «ENDIF»
+                «ELSEIF nullable && (!incoming || bidirectional)»
+                    $entity->set«relationAliasName»(null);
+                «ENDIF»
+            }
+            if (!empty($relatedIds)) {
+                if (!is_array($relatedIds)) {
+                    $relatedIds = explode(',', $relatedIds);
+                }
+                «val objectType = (if (incoming) source else target).name.formatForCode»
+                if (is_array($relatedIds) && count($relatedIds)) {
+                    $idFields = ModUtil::apiFunc('«container.application.appName»', 'selection', 'getIdFields', array('ot' => '«objectType»'));
+                    $relatedIdValues = $this->decodeCompositeIdentifier($relatedIds, $idFields);
+
+                    $where = '';
+                    foreach ($idFields as $idField) {
+                        if (!empty($where)) {
+                            $where .= ' AND ';
+                        }
+                        $where .= 'tbl.' . $idField . ' IN (' . implode(', ', $relatedIdValues[$idField]) . ')';
+                    }
+                    $linkObjects = ModUtil::apiFunc($this->name, 'selection', 'getEntities', array('ot' => '«objectType»', 'where' => $where));
+                    «IF !incoming || bidirectional»
                         if (!is_object($entity->get«relationAliasName»())) {
                             $entity->set«relationAliasName»(new Doctrine\Common\Collections\ArrayCollection());
                         }
-                        // create new links
-                        foreach ($linkObjects as $relatedObject) {
-                            «IF many»
-                               if ($entity->get«relationAliasName»()->contains($relatedObject)) {
-                                    continue;
-                                }
-                                $entity->add«relationAliasName»($relatedObject);
-                            «ELSE»
-                                $entity->set«relationAliasName»($relatedObject);
-                            «ENDIF»
-                        }
+                    «ENDIF»
+                    // create new links
+                    foreach ($linkObjects as $relatedObject) {
+                        «IF many»
+                            if ($entity->get«relationAliasName»()->contains($relatedObject)) {
+                                continue;
+                            }
+                            $entity->add«relationAliasName»($relatedObject);
+                        «ELSEIF !incoming || bidirectional»
+                            $entity->set«relationAliasName»($relatedObject);
+                        «ENDIF»
                     }
                 }
-            «ENDIF»
+            }
+        «ENDIF»
         «ENDIF»
     '''
 }
