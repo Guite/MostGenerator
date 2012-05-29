@@ -187,9 +187,9 @@ class Relations {
                         «IF incoming»
                             foreach ($entity->get«relationAliasName»() as $relatedItem) {
                             «IF manyOtherSide»
-                                $relatedItem->remove«(if (incoming) source else target).name.formatForCodeCapital»($entity);
+                                $relatedItem->remove«(if (incoming) targetAlias else sourceAlias).formatForCodeCapital»($entity);
                             «ELSE»
-                                $relatedItem->set«(if (incoming) source else target).name.formatForCodeCapital»(null);
+                                $relatedItem->set«(if (incoming) targetAlias else sourceAlias).formatForCodeCapital»(null);
                             «ENDIF»
                                 $entity->remove«relationAliasName»($relatedItem);
                             }
