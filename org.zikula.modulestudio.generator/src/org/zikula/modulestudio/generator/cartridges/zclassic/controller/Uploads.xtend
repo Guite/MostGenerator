@@ -26,7 +26,6 @@ class Uploads {
     def generate(Application it, IFileSystemAccess fsa) {
     	this.fsa = fsa
         createUploadFolders
-        println('Generating upload handlers')
         fsa.generateFile(getAppSourceLibPath(appName) + 'Base/UploadHandler.php', uploadHandlerBaseFile)
         fsa.generateFile(getAppSourceLibPath(appName) + 'UploadHandler.php', uploadHandlerFile)
     }

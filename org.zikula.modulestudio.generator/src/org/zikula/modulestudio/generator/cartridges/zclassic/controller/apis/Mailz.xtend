@@ -19,7 +19,6 @@ class Mailz {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating mailz api')
         val apiPath = appName.getAppSourceLibPath + 'Api/'
         fsa.generateFile(apiPath + 'Base/Mailz.php', mailzBaseFile)
         fsa.generateFile(apiPath + 'Mailz.php', mailzFile)

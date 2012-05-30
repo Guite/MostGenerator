@@ -21,7 +21,6 @@ class Search {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating search api')
         val apiPath = appName.getAppSourceLibPath + 'Api/'
         fsa.generateFile(apiPath + 'Base/Search.php', searchApiBaseFile)
         fsa.generateFile(apiPath + 'Search.php', searchApiFile)

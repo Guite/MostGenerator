@@ -20,7 +20,6 @@ class Account {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        println('Generating account api')
         val apiPath = appName.getAppSourceLibPath + 'Api/'
         fsa.generateFile(apiPath + 'Base/Account.php', accountApiBaseFile)
         fsa.generateFile(apiPath + 'Account.php', accountApiFile)
