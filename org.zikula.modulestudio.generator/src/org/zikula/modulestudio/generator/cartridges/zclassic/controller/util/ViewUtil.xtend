@@ -180,6 +180,9 @@ class ViewUtil {
                 // first the content, to set page vars
                 $output = $view->fetch($template);
 
+                // make local images absolute
+                $output = str_replace('img src="/', 'img src="' . dirname(ZLOADER_PATH) . '/', $output);
+
                 // see http://codeigniter.com/forums/viewthread/69388/P15/#561214
                 //$output = utf8_decode($output);
 
