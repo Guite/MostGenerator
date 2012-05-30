@@ -447,7 +447,7 @@ class Extensions {
              *     }«/*,commented out because the length of these four fields * 3 is more than 1000 bytes with UTF-8 (requiring 3 bytes per char)
              *     uniqueConstraints={
              *         @ORM\UniqueConstraint(name="lookup_unique_idx", columns={
-             *             "locale", "object_class", "foreign_key", "field"
+             *             "locale", "object_class", "field", "foreign_key"
              *         })
              *     }*/»
              * )
