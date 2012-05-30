@@ -305,16 +305,17 @@ class ControllerAction {
 
         $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues«controller.addSlugToSelection»));
         $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
+        unset($idValues);
 
         // build ModUrl instance for display hooks; also create identifier for permission check
         $currentUrlArgs = array('ot' => $objectType);
         $instanceId = '';
         foreach ($idFields as $idField) {
-            $currentUrlArgs[$idField] = $idValues[$idField];
+            $currentUrlArgs[$idField] = $entity[$idField];
             if (!empty($instanceId)) {
                 $instanceId .= '_';
             }
-            $instanceId .= $idValues[$idField];
+            $instanceId .= $entity[$idField];
         }
         $currentUrlArgs['id'] = $instanceId;
         if (isset($entity['slug'])) {
