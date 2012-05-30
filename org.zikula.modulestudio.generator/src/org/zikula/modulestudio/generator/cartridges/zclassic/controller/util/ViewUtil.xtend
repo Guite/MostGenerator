@@ -98,6 +98,7 @@ class ViewUtil {
                 if ($raw == true) {
                     // standalone output
                     if ($templateExtension == 'pdf') {
+                        $template = str_replace('.pdf', '.tpl', $template);
                         return self::processPdf($view, $template);
                     } else {
                         $view->display($template);
