@@ -150,7 +150,7 @@ class Association {
     def private dispatch outgoingMappingDescription(JoinRelationship it, String sourceName, String targetName) {
     	switch (it) {
             OneToOneRelationship: '''One «sourceName» [«source.name.formatForDisplay»] has one «targetName» [«target.name.formatForDisplay»] (INVERSE SIDE)'''
-            ManyToOneRelationship: '''One «sourceName» [«source.nameMultiple.formatForDisplay»] have one «targetName» [«target.name.formatForDisplay»] (OWNING SIDE)'''
+            ManyToOneRelationship: '''Many «sourceName» [«source.nameMultiple.formatForDisplay»] have one «targetName» [«target.name.formatForDisplay»] (OWNING SIDE)'''
     	    default: ''
     	}
     }

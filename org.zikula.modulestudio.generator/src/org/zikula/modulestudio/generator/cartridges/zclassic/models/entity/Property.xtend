@@ -63,7 +63,6 @@ class Property {
         protected $«name.formatForCode»Meta = array();
 
         «persistentProperty(name.formatForCode, fieldTypeAsString, '')»
-
         /**
          * The full path to the «name.formatForDisplay».
          *
