@@ -99,7 +99,7 @@ class Finder {
 
             pasteMode = $F('«appName»_pasteas');
 
-            if (pasteMode === 2 || pasteMode !== 1) {
+            if (pasteMode === '2' || pasteMode !== '1') {
                 return itemId;
             }
 
