@@ -10,6 +10,7 @@ import de.guite.modulestudio.metamodel.modulestudio.EntityField
 import de.guite.modulestudio.metamodel.modulestudio.FloatField
 import de.guite.modulestudio.metamodel.modulestudio.ListField
 import de.guite.modulestudio.metamodel.modulestudio.StringField
+import de.guite.modulestudio.metamodel.modulestudio.TimeField
 import de.guite.modulestudio.metamodel.modulestudio.UploadField
 import de.guite.modulestudio.metamodel.modulestudio.UrlField
 import de.guite.modulestudio.metamodel.modulestudio.UserField
@@ -151,4 +152,7 @@ class SimpleFields {
 
     def dispatch displayField(DatetimeField it, String objName, String page) '''
         {$«objName».«name.formatForCode»|dateformat:'datetimebrief'}'''
+
+    def dispatch displayField(TimeField it, String objName, String page) '''
+        {$«objName».«name.formatForCode»|dateformat:'timebrief'}'''
 }
