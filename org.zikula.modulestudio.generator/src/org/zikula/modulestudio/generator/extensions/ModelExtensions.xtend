@@ -10,6 +10,7 @@ import de.guite.modulestudio.metamodel.modulestudio.DateField
 import de.guite.modulestudio.metamodel.modulestudio.DatetimeField
 import de.guite.modulestudio.metamodel.modulestudio.DecimalField
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
+import de.guite.modulestudio.metamodel.modulestudio.EmailField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityChangeTrackingPolicy
 import de.guite.modulestudio.metamodel.modulestudio.EntityField
@@ -27,6 +28,7 @@ import de.guite.modulestudio.metamodel.modulestudio.TextField
 import de.guite.modulestudio.metamodel.modulestudio.TimeField
 import de.guite.modulestudio.metamodel.modulestudio.UploadField
 import de.guite.modulestudio.metamodel.modulestudio.UploadNamingScheme
+import de.guite.modulestudio.metamodel.modulestudio.UrlField
 import de.guite.modulestudio.metamodel.modulestudio.UserField
 import java.util.ArrayList
 import java.util.List
@@ -619,8 +621,10 @@ class ModelExtensions {
                              else 'bigint'
             }
     	    DecimalField: 'decimal'
-    	    AbstractStringField: 'string'
+    	    StringField: 'string'
     	    TextField: 'text'
+    	    EmailField: 'string'
+    	    UrlField: 'string'
     	    ArrayField: 'array'
     	    ObjectField: 'object'
     	    DatetimeField: 'datetime'
