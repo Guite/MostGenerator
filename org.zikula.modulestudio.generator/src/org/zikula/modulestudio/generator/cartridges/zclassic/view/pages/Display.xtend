@@ -183,29 +183,33 @@ class Display {
         <dd>
         {if isset($«relObjName») && $«relObjName» ne null}
           {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
+          «IF controller.hasActions('display')»
             <a href="{modurl modname='«container.application.appName»' type='«controller.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)»}">
+          «ENDIF»
             «val leadingField = linkEntity.getLeadingField»
             «IF leadingField != null»
                 {$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:""}
             «ELSE»
                 {gt text='«linkEntity.name.formatForDisplayCapital»'}
             «ENDIF»
-        </a>
-        <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«container.application.appName»' type='«controller.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" style="display: none">
-            {icon type='view' size='extrasmall' __alt='Quick view'}
-        </a>
-        <script type="text/javascript">
-        /* <![CDATA[ */
-            document.observe('dom:loaded', function() {
-                «val leadingLinkField = linkEntity.getLeadingField»
-                «IF leadingLinkField != null»
-                    «container.application.prefix»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName».«leadingLinkField.name.formatForCode»|replace:"'":""}}');
-                «ELSE»
-                    «container.application.prefix»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{gt text='«linkEntity.name.formatForDisplayCapital»'|replace:"'":""}}');
-                «ENDIF»
-            });
-        /* ]]> */
-        </script>
+          «IF controller.hasActions('display')»
+            </a>
+            <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«container.application.appName»' type='«controller.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" style="display: none">
+                {icon type='view' size='extrasmall' __alt='Quick view'}
+            </a>
+            <script type="text/javascript">
+            /* <![CDATA[ */
+                document.observe('dom:loaded', function() {
+                    «val leadingLinkField = linkEntity.getLeadingField»
+                    «IF leadingLinkField != null»
+                        «container.application.prefix»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName».«leadingLinkField.name.formatForCode»|replace:"'":""}}');
+                    «ELSE»
+                        «container.application.prefix»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{gt text='«linkEntity.name.formatForDisplayCapital»'|replace:"'":""}}');
+                    «ENDIF»
+                });
+            /* ]]> */
+            </script>
+          «ENDIF»
           {else}
         «IF leadingField != null»
             {$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:""}
