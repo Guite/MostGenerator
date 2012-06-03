@@ -343,8 +343,9 @@ class FormHandler {
             $this->idFields = $objectTemp->get_idFields();
 
             // retrieve identifier of the object we wish to view
-            $this->idValues = «app.appName»_Util_Controller::retrieveIdentifier($this->request, array(), $this->objectType, $this->idFields);
-            $hasIdentifier = «app.appName»_Util_Controller::isValidIdentifier($this->idValues);
+            $controllerHelper = new «app.appName»_Util_Controller($this->view->getServiceManager());
+            $this->idValues = $controllerHelper->retrieveIdentifier($this->request, array(), $this->objectType, $this->idFields);
+            $hasIdentifier = $controllerHelper->isValidIdentifier($this->idValues);
 
             $entity = null;
             $this->mode = ($hasIdentifier) ? 'edit' : 'create';
@@ -524,7 +525,8 @@ class FormHandler {
             protected function initTranslationsForEdit($entity)
             {
                 // retrieve translated fields
-                $translations = «app.appName»_Util_Translatable::prepareEntityForEdit($this->objectType, $entity);
+                $translatableHelper = new «app.appName»_Util_Translatable($this->view->getServiceManager());
+                $translations = $translatableHelper->prepareEntityForEdit($this->objectType, $entity);
 
                 // assign translations
                 foreach ($translations as $locale => $translationData) {
@@ -798,7 +800,10 @@ class FormHandler {
             {
                 $entityTransClass = $this->name . '_Entity_' . ucfirst($this->objectType) . 'Translation';
                 $transRepository = $this->entityManager->getRepository($entityTransClass);
-                $translations = «container.application.appName»_Util_Translatable::processEntityAfterEdit($this->objectType, $formData);
+
+                $translatableHelper = new «container.application.appName»_Util_Translatable($this->view->getServiceManager());
+                $translations = $translatableHelper->processEntityAfterEdit($this->objectType, $formData);
+
                 foreach ($translations as $translation) {
                     foreach ($translation['fields'] as $fieldName => $value) {
                         $transRepository->translate($entity, $fieldName, $translation['locale'], $value);
@@ -926,7 +931,8 @@ class FormHandler {
 
                     «/*no slug input element yet, see https://github.com/l3pp4rd/DoctrineExtensions/issues/140
                     «IF hasSluggableFields && slugUpdatable»
-                        $entityData['slug'] = «container.application.appName»_Util_Controller::formatPermalink($entityData['slug']);
+                        $controllerHelper = new «container.application.appName»_Util_Controller($this->view->getServiceManager());
+                        $entityData['slug'] = $controllerHelper->formatPermalink($entityData['slug']);
                     «ENDIF»
                 */»
                 }

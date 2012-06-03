@@ -169,9 +169,10 @@ class Selection {
         protected function determineObjectType($args, $methodName = '')
         {
             $objectType = isset($args['ot']) ? $args['ot'] : '';
+            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             $utilArgs = array('api' => 'selection', 'action' => $methodName);
-            if (!in_array($objectType, «appName»_Util_Controller::getObjectTypes('api', $utilArgs))) {
-                $objectType = «appName»_Util_Controller::getDefaultObjectType('api', $utilArgs);
+            if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $utilArgs))) {
+                $objectType = $controllerHelper->getDefaultObjectType('api', $utilArgs);
             }
             return $objectType;
         }

@@ -58,7 +58,7 @@ class Image {
              *
              * @return string The thumbnail file path.
              */
-            public static function getThumb($filePath = '', $width = 100, $height = 80, $thumbArgs = array())
+            public function getThumb($filePath = '', $width = 100, $height = 80, $thumbArgs = array())
             {
                 if (empty($filePath) || !file_exists($filePath)) {
                     return '';
@@ -152,7 +152,7 @@ class Image {
                     // save thumb file
                     $saveOptions = array();
                     if (in_array($pathInfo['extension'], array('jpg', 'jpeg', 'png'))) {
-                        $saveOptions['quality'] = self::getDefaultQuality($pathInfo['extension']);
+                        $saveOptions['quality'] = $this->getDefaultQuality($pathInfo['extension']);
                     }
                     $thumb->save($thumbFilePath);
 
@@ -175,7 +175,7 @@ class Image {
              *
              * @return integer the desired quality
              */
-            protected static function getDefaultQuality($extension)
+            protected function getDefaultQuality($extension)
             {
                 return 85;
             }

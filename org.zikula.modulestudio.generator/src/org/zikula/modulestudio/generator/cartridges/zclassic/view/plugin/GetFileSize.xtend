@@ -48,7 +48,9 @@ class GetFileSize {
                 return '';
             }
 
-            $result = «appName»_Util_View::getReadableFileSize($size, $nodesc, $onlydesc);
+            $serviceManager = ServiceUtil::getManager();
+            $viewHelper = new «appName»_Util_View($serviceManager);
+            $result = $viewHelper->getReadableFileSize($size, $nodesc, $onlydesc);
 
             return $result;
         }

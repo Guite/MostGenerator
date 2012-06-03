@@ -156,9 +156,10 @@ class Installer {
     def private checkIfUploadFoldersAreWritable(Application it) '''
         «val uploadEntities = getUploadEntities»
         «IF !uploadEntities.isEmpty»
+            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «FOR uploadEntity : uploadEntities»
             «FOR uploadField : uploadEntity.getUploadFieldsEntity»
-                $basePath = «appName»_Util_Controller::getFileBaseFolder('«uploadField.entity.name.formatForCode»', '«uploadField.name.formatForCode»');
+                $basePath = $controllerHelper->getFileBaseFolder('«uploadField.entity.name.formatForCode»', '«uploadField.name.formatForCode»');
                 if (!is_dir($basePath)) {
                     return LogUtil::registerError($this->__f('The upload folder "%s" does not exist. Please create it before installing this application.', array($basePath)));
                 }

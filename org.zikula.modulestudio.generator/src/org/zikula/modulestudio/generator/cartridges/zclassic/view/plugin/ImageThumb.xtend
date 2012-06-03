@@ -38,11 +38,14 @@ class ImageThumb {
          */
         function smarty_modifier_«appName.formatForDB»ImageThumb($filePath = '', $width = 100, $height = 80, $thumbArgs = array())
         {
+            $serviceManager = ServiceUtil::getManager();
+            $imageHelper = new «appName»_Util_Image($serviceManager);
+
             /**
              * By overriding this plugin or the util method called below you may add further thumbnail arguments
              * based on custom conditions.
              */
-            return «appName»_Util_Image::getThumb($filePath, $width, $height, $thumbArgs);
+            return $imageHelper->getThumb($filePath, $width, $height, $thumbArgs);
         }
     '''
 }

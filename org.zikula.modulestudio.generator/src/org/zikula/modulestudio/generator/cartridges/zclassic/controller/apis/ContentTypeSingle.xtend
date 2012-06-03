@@ -100,9 +100,12 @@ class ContentTypeSingle {
          */
         public function loadData(&$data)
         {
+            $serviceManager = ServiceUtil::getManager();
+            $controllerHelper = new «appName»_Util_Controller($serviceManager);
+
             $utilArgs = array('name' => 'detail');
-            if (!isset($data['objectType']) || !in_array($data['objectType'], «appName»_Util_Controller::getObjectTypes('contentType', $utilArgs))) {
-                $data['objectType'] = «appName»_Util_Controller::getDefaultObjectType('contentType', $utilArgs);
+            if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $utilArgs))) {
+                $data['objectType'] = $controllerHelper->getDefaultObjectType('contentType', $utilArgs);
             }
 
             $this->objectType = $data['objectType'];

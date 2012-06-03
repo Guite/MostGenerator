@@ -66,11 +66,12 @@ class ExternalController {
         public function display($args)
         {
             $getData = $this->request->query;
+            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
 
             $objectType = isset($args['objectType']) ? $args['objectType'] : '';
             $utilArgs = array('controller' => 'external', 'action' => 'display');
-            if (!in_array($objectType, «appName»_Util_Controller::getObjectTypes('controller', $utilArgs))) {
-                $objectType = «appName»_Util_Controller::getDefaultObjectType('controllerType', $utilArgs);
+            if (!in_array($objectType, $controllerHelper->getObjectTypes('controller', $utilArgs))) {
+                $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
             }
 
             $id = (isset($args['id'])) ? $args['id'] : $getData->filter('id', null, FILTER_SANITIZE_STRING);
@@ -96,7 +97,7 @@ class ExternalController {
             $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
             $idValues = array('id' => $id);«/** TODO consider composite keys properly */»
 
-            $hasIdentifier = «appName»_Util_Controller::isValidIdentifier($idValues);
+            $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
             //$this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
             if (!$hasIdentifier) {
                 return $this->__('Error! Invalid identifier received.');
@@ -149,10 +150,12 @@ class ExternalController {
             PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
 
             $getData = $this->request->query;
+            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+
             $objectType = isset($args['objectType']) ? $args['objectType'] : $getData->filter('objectType', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             $utilArgs = array('controller' => 'external', 'action' => 'finder');
-            if (!in_array($objectType, «appName»_Util_Controller::getObjectTypes('controller', $utilArgs))) {
-                $objectType = «appName»_Util_Controller::getDefaultObjectType('controllerType', $utilArgs);
+            if (!in_array($objectType, $controllerHelper->getObjectTypes('controller', $utilArgs))) {
+                $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
             }
 
             $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT), LogUtil::getErrorMsgPermission());

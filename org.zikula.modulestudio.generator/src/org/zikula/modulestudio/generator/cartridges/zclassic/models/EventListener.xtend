@@ -357,6 +357,8 @@ class EventListener {
         «IF hasUploadFieldsEntity»
             // initialise the upload handler
             $uploadManager = new «container.application.appName»_UploadHandler();
+            $serviceManager = ServiceUtil::getManager();
+            $controllerHelper = new «container.application.appName»_Util_Controller($serviceManager);
         «ENDIF»
 
         «FOR field : fields»«field.sanitizeForOutput»«ENDFOR»
@@ -407,7 +409,7 @@ class EventListener {
     def private sanitizeForOutputUpload(UploadField it) '''
         «val realName = name.formatForCode»
         if (!empty($this['«realName»'])) {
-            $basePath = «entity.container.application.appName»_Util_Controller::getFileBaseFolder('«entity.name.formatForCode»', '«realName»');
+            $basePath = $controllerHelper->getFileBaseFolder('«entity.name.formatForCode»', '«realName»');
             $fullPath = $basePath .  $this['«realName»'];
             $this['«realName»FullPath'] = $fullPath;
             $this['«realName»FullPathURL'] = System::getBaseUrl() . $fullPath;

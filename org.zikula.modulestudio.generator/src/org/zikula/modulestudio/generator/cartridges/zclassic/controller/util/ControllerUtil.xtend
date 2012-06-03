@@ -51,7 +51,7 @@ class ControllerUtil {
              *
              * @return array List of allowed object types.
              */
-            public static function getObjectTypes($context = '', $args = array())
+            public function getObjectTypes($context = '', $args = array())
             {
                 if (!in_array($context, array('controllerAction', 'api', 'actionHandler', 'block', 'contentType'))) {
                     $context = 'controllerAction';
@@ -72,7 +72,7 @@ class ControllerUtil {
              *
              * @return string The name of the default object type.
              */
-            public static function getDefaultObjectType($context = '', $args = array())
+            public function getDefaultObjectType($context = '', $args = array())
             {
                 if (!in_array($context, array('controllerAction', 'api', 'actionHandler', 'block', 'contentType'))) {
                     $context = 'controllerAction';
@@ -92,7 +92,7 @@ class ControllerUtil {
              *
              * @return array List of fetched identifiers.
              */
-            public static function retrieveIdentifier(Zikula_Request_Http $request, array $args, $objectType = '', array $idFields)
+            public function retrieveIdentifier(Zikula_Request_Http $request, array $args, $objectType = '', array $idFields)
             {
                 $idValues = array();
                 foreach ($idFields as $idField) {
@@ -117,7 +117,7 @@ class ControllerUtil {
              *
              * @return boolean Whether all identifiers are set or not.
              */
-            public static function isValidIdentifier(array $idValues)
+            public function isValidIdentifier(array $idValues)
             {
                 if (!count($idValues)) {
                     return false;
@@ -138,7 +138,7 @@ class ControllerUtil {
              * @return string processed permalink.
              * @deprecated made obsolete by Doctrine extensions.
              */
-            public static function formatPermalink($name)
+            public function formatPermalink($name)
             {
                 $name = str_replace(array('ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü', 'ß', '.', '?', '"', '/', ':', 'é', 'è', 'â'),
                                     array('ae', 'oe', 'ue', 'Ae', 'Oe', 'Ue', 'ss', '', '', '', '-', '-', 'e', 'e', 'a'),
@@ -156,10 +156,10 @@ class ControllerUtil {
                  *
                  * @return mixed Output.
                  */
-                public static function getFileBaseFolder($objectType, $fieldName)
+                public function getFileBaseFolder($objectType, $fieldName)
                 {
-                    if (!in_array($objectType, self::getObjectTypes())) {
-                        $objectType = self::getDefaultObjectType();
+                    if (!in_array($objectType, $this->getObjectTypes())) {
+                        $objectType = $this->getDefaultObjectType();
                     }
 
                     $basePath = FileUtil::getDataDirectory() . '/«appName»/';

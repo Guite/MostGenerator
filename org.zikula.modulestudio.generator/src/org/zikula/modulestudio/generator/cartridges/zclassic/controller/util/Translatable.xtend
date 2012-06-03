@@ -64,7 +64,7 @@ class Translatable {
              *
              * @return array list of translatable fields
              */
-            public static function getTranslatableFields($objectType)
+            public function getTranslatableFields($objectType)
             {
                 $dom = ZLanguage::getModuleDomain('«appName»');
                 $fields = array();
@@ -86,7 +86,7 @@ class Translatable {
              *
              * @return array collected translations having the locales as keys
              */
-            public static function prepareEntityForEdit($objectType, $entity)
+            public function prepareEntityForEdit($objectType, $entity)
             {
                 $translations = array();
 
@@ -96,7 +96,7 @@ class Translatable {
                 }
 
                 // check if we have translated fields registered for the given object type
-                $fields = self::getTranslatableFields($objectType);
+                $fields = $this->getTranslatableFields($objectType);
                 if (!count($fields)) {
                     return $translations;
                 }
@@ -142,7 +142,7 @@ class Translatable {
              *
              * @return array collected translations having the locales as keys
              */
-            public static function processEntityAfterEdit($objectType, $formData)
+            public function processEntityAfterEdit($objectType, $formData)
             {
                 $translations = array();
                 // check arguments
@@ -150,7 +150,7 @@ class Translatable {
                     return $translations;
                 }
 
-                $fields = self::getTranslatableFields($objectType);
+                $fields = $this->getTranslatableFields($objectType);
                 if (!count($fields)) {
                     return $translations;
                 }

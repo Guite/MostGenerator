@@ -60,8 +60,9 @@ class Cache {
             $objectType = $args['ot'];
             $item = $args['item'];
 
+            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             $utilArgs = array('api' => 'cache', 'action' => 'clearItemCache');
-            if (!in_array($objectType, «appName»_Util_Controller::getObjectTypes('controllerAction', $utilArgs))) {
+            if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 return;
             }
 

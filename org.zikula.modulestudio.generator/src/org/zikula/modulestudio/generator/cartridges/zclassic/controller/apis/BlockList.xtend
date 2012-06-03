@@ -139,15 +139,16 @@ class BlockList {
 
             ModUtil::initOOModule('«appName»');
 
+            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+
             $utilArgs = array('name' => 'list');
-            if (!isset($vars['objectType']) || !in_array($vars['objectType'], «appName»_Util_Controller::getObjectTypes('block', $utilArgs))) {
-                $vars['objectType'] = «appName»_Util_Controller::getDefaultObjectType('block', $utilArgs);
+            if (!isset($vars['objectType']) || !in_array($vars['objectType'], $controllerHelper->getObjectTypes('block', $utilArgs))) {
+                $vars['objectType'] = $controllerHelper->getDefaultObjectType('block', $utilArgs);
             }
 
             $objectType = $vars['objectType'];
 
-            $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->getService('doctrine.entitymanager');
+            $entityManager = $this->serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository('«appName»_Entity_' . ucfirst($objectType));
 
             $where = $vars['filter'];
@@ -338,8 +339,10 @@ class BlockList {
             $vars['template'] = $this->request->request->get('template', '');
             $vars['filter'] = $this->request->request->get('filter', '');
 
-            if (!in_array($vars['objectType'], «appName»_Util_Controller::getObjectTypes('block'))) {
-                $vars['objectType'] = «appName»_Util_Controller::getDefaultObjectType('block');
+            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+
+            if (!in_array($vars['objectType'], $controllerHelper->getObjectTypes('block'))) {
+                $vars['objectType'] = $controllerHelper->getDefaultObjectType('block');
             }
             «IF hasCategorisableEntities»
 

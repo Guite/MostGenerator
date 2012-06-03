@@ -165,8 +165,11 @@ class Uploads {
             $fileNameParts[count($fileNameParts) - 1] = $extension;
             $fileName = implode('.', $fileNameParts);
 
+            $serviceManager = ServiceUtil::getManager();
+            $controllerHelper = new «appName»_Util_Controller($serviceManager);
+
             // retrieve the final file name
-            $basePath = «appName»_Util_Controller::getFileBaseFolder($objectType, $fieldName);
+            $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
             $fileName = $this->determineFileName($objectType, $fieldName, $basePath, $fileName, $extension);
 
             if (!move_uploaded_file($fileData[$fieldName]['tmp_name'], $basePath . $fileName)) {
@@ -477,8 +480,11 @@ class Uploads {
                 return $objectData;
             }
 
+            $serviceManager = ServiceUtil::getManager();
+            $controllerHelper = new «appName»_Util_Controller($serviceManager);
+
             // determine file system information
-            $basePath = «appName»_Util_Controller::getFileBaseFolder($objectType, $fieldName);
+            $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
             $fileName = $objectData[$fieldName];
 
             // remove original file

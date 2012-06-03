@@ -116,8 +116,9 @@ class Ajax {
             } elseif ($this->request->isGet() && $this->request->query->has('ot')) {
                 $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             }
-            if (!in_array($objectType, «app.appName»_Util_Controller::getObjectTypes('controllerAction', array('controller' => '«formattedName»', 'action' => 'getItemListFinder')))) {
-                $objectType = «app.appName»_Util_Controller::getDefaultObjectType('controllerAction', array('controller' => '«formattedName»', 'action' => 'getItemListFinder'));
+            $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
+            if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', array('controller' => '«formattedName»', 'action' => 'getItemListFinder')))) {
+                $objectType = $controllerHelper->getDefaultObjectType('controllerAction', array('controller' => '«formattedName»', 'action' => 'getItemListFinder'));
             }
 
             $repository = $this->entityManager->getRepository('«app.appName»_Entity_' . ucfirst($objectType));
@@ -206,8 +207,9 @@ class Ajax {
             } elseif ($this->request->isGet() && $this->request->query->has('ot')) {
                 $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             }
-            if (!in_array($objectType, «app.appName»_Util_Controller::getObjectTypes('controllerAction', array('controller' => '«formattedName»', 'action' => 'getItemListAutoCompletion')))) {
-                $objectType = «app.appName»_Util_Controller::getDefaultObjectType('controllerAction', array('controller' => '«formattedName»', 'action' => 'getItemListAutoCompletion'));
+            $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
+            if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', array('controller' => '«formattedName»', 'action' => 'getItemListAutoCompletion')))) {
+                $objectType = $controllerHelper->getDefaultObjectType('controllerAction', array('controller' => '«formattedName»', 'action' => 'getItemListAutoCompletion'));
             }
 
             $repository = $this->entityManager->getRepository('«app.appName»_Entity_' . ucfirst($objectType));
@@ -241,6 +243,12 @@ class Ajax {
                 $descriptionFieldName = $repository->getDescriptionFieldName();
                 $previewFieldName = $repository->getPreviewFieldName();
 
+                $imageHelper = null;
+                if (!empty($previewFieldName)) {
+                    $serviceManager = ServiceUtil::getManager();
+                    $imageHelper = new «app.appName»_Util_Image($serviceManager);
+                }
+
                 «IF app.hasImageFields»
                     $thumbWidth = 100;
                     $thumbHeight = 80;
@@ -262,7 +270,7 @@ class Ajax {
                     «IF app.hasImageFields»
                         // check for preview image
                         if (!empty($previewFieldName) && !empty($item[$previewFieldName]) && isset($item[$previewFieldName . 'FullPath'])) {
-                            $thumbImagePath = «app.appName»_Util_Image::getThumb($item[$previewFieldName . 'FullPath'], $thumbWidth, $thumbHeight);
+                            $thumbImagePath = $imageHelper->getThumb($item[$previewFieldName . 'FullPath'], $thumbWidth, $thumbHeight);
                             $preview = '<img src="' . $thumbImagePath . '" width="' . $thumbWidth . '" height="' . $thumbHeight . '" alt="' . $itemTitleStripped . '" />';
                             $out .= '<div class="itempreview informal" id="itempreview' . $itemId . '">' . $preview . '</div>';
                         }
@@ -293,8 +301,9 @@ class Ajax {
             $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
 
             $objectType = $this->request->request->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
-            if (!in_array($objectType, «app.appName»_Util_Controller::getObjectTypes('controllerAction', array('controller' => '«formattedName»', 'action' => 'checkForDuplicate')))) {
-                $objectType = «app.appName»_Util_Controller::getDefaultObjectType('controllerAction', array('controller' => '«formattedName»', 'action' => 'checkForDuplicate'));
+            $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
+            if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', array('controller' => '«formattedName»', 'action' => 'checkForDuplicate')))) {
+                $objectType = $controllerHelper->getDefaultObjectType('controllerAction', array('controller' => '«formattedName»', 'action' => 'checkForDuplicate'));
             }
 
             $fieldName = $this->request->request->filter('fn', '', FILTER_SANITIZE_STRING);

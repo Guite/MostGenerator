@@ -64,9 +64,10 @@ class ShortUrls {
             $router = $routerFacade->getRouter();
 
             // initialise object type
+            $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
             $utilArgs = array('controller' => 'user', 'action' => 'encodeurl');
-            $allowedObjectTypes = «app.appName»_Util_Controller::getObjectTypes('api', $utilArgs);
-            $objectType = ((isset($args['args']['ot']) && in_array($args['args']['ot'], $allowedObjectTypes)) ? $args['args']['ot'] : «app.appName»_Util_Controller::getDefaultObjectType('api', $utilArgs));
+            $allowedObjectTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
+            $objectType = ((isset($args['args']['ot']) && in_array($args['args']['ot'], $allowedObjectTypes)) ? $args['args']['ot'] : $controllerHelper->getDefaultObjectType('api', $utilArgs));
 
             // initialise group folder
             $groupFolder = $routerFacade->getGroupingFolderFromObjectType($objectType, $args['func'], $args['args']);

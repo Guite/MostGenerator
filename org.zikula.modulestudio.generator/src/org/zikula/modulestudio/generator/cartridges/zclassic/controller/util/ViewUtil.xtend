@@ -52,13 +52,13 @@ class ViewUtil {
              *
              * @return string name of template file.
              */
-            public static function getViewTemplate($view, $type, $objectType, $func, $args = array())
+            public function getViewTemplate($view, $type, $objectType, $func, $args = array())
             {
                 // create the base template name
                 $template = DataUtil::formatForOS($type . '/' . $objectType . '/' . $func);
 
                 // check for template extension
-                $templateExtension = self::determineExtension($view, $type, $objectType, $func, $args);
+                $templateExtension = $this->determineExtension($view, $type, $objectType, $func, $args);
 
                 // check whether a special template is used
                 $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : FormUtil::getPassedValue('tpl', '', 'GETPOST', FILTER_SANITIZE_STRING);
@@ -82,11 +82,11 @@ class ViewUtil {
              *
              * @return mixed Output.
              */
-            public static function processTemplate($view, $type, $objectType, $func, $args = array(), $template = '')
+            public function processTemplate($view, $type, $objectType, $func, $args = array(), $template = '')
             {
-                $templateExtension = self::determineExtension($view, $type, $objectType, $func, $args);
+                $templateExtension = $this->determineExtension($view, $type, $objectType, $func, $args);
                 if (empty($template)) {
-                    $template = self::getViewTemplate($view, $type, $objectType, $func, $args);
+                    $template = $this->getViewTemplate($view, $type, $objectType, $func, $args);
                 }
 
                 // look whether we need output with or without the theme
@@ -99,7 +99,7 @@ class ViewUtil {
                     // standalone output
                     if ($templateExtension == 'pdf') {
                         $template = str_replace('.pdf', '.tpl', $template);
-                        return self::processPdf($view, $template);
+                        return $this->processPdf($view, $template);
                     } else {
                         $view->display($template);
                     }
@@ -121,14 +121,14 @@ class ViewUtil {
              *
              * @return array List of allowed template extensions.
              */
-            protected static function determineExtension($view, $type, $objectType, $func, $args = array())
+            protected function determineExtension($view, $type, $objectType, $func, $args = array())
             {
                 $templateExtension = 'tpl';
                 if (!in_array($func, array('view', 'display'))) {
                     return $templateExtension;
                 }
 
-                $extParams = self::availableExtensions($type, $objectType, $func, $args);
+                $extParams = $this->availableExtensions($type, $objectType, $func, $args);
                 foreach ($extParams as $extension) {
                     $extensionCheck = (int)FormUtil::getPassedValue('use' . $extension . 'ext', 0, 'GET', FILTER_VALIDATE_INT);
                     //$extensionCheck = (int)$this->request->query->filter('use' . $extension . 'ext', 0, FILTER_VALIDATE_INT);
@@ -150,7 +150,7 @@ class ViewUtil {
              *
              * @return array List of allowed template extensions.
              */
-            public static function availableExtensions($type, $objectType, $func, $args = array())
+            public function availableExtensions($type, $objectType, $func, $args = array())
             {
                 $extParams = array();
                 if ($func == 'view') {
@@ -175,7 +175,7 @@ class ViewUtil {
              *
              * @return mixed Output.
              */
-            protected static function processPdf(Zikula_View $view, $template)
+            protected function processPdf(Zikula_View $view, $template)
             {
                 // first the content, to set page vars
                 $output = $view->fetch($template);
@@ -189,10 +189,11 @@ class ViewUtil {
                 // then the surrounding
                 $output = $view->fetch('include_pdfheader.tpl') . $output . '</body></html>';
 
+                $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
                 // create name of the pdf output file
-                $fileTitle = «appName»_Util_Controller::formatPermalink(System::getVar('sitename'))
+                $fileTitle = $controllerHelper->formatPermalink(System::getVar('sitename'))
                            . '-'
-                           . «appName»_Util_Controller::formatPermalink(PageUtil::getVar('title'))
+                           . $controllerHelper->formatPermalink(PageUtil::getVar('title'))
                            . '-' . date('Ymd') . '.pdf';
 
                 // if ($_GET['dbg'] == 1) die($output);
@@ -223,7 +224,7 @@ class ViewUtil {
                  *
                  * @return string File size in a readable form.
                  */
-                public static function getReadableFileSize($size, $nodesc = false, $onlydesc = false)
+                public function getReadableFileSize($size, $nodesc = false, $onlydesc = false)
                 {
                     $dom = ZLanguage::getModuleDomain('«appName»');
                     $sizeDesc = __('Bytes', $dom);

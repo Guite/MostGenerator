@@ -108,11 +108,13 @@ class ControllerAction {
         «IF tempIsMainAction»
             «permissionCheck('', '')»
         «ELSE»
+            $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
+
             // parameter specifying which type of objects we are treating
             $objectType = (isset($args['ot']) && !empty($args['ot'])) ? $args['ot'] : $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             $utilArgs = array('controller' => '«controller.formattedName»', 'action' => '«name.formatForCode.toFirstLower»');
-            if (!in_array($objectType, «app.appName»_Util_Controller::getObjectTypes('controllerAction', $utilArgs))) {
-                $objectType = «app.appName»_Util_Controller::getDefaultObjectType('controllerAction', $utilArgs);
+            if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
+                $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
             }
             «permissionCheck("' . ucwords($objectType) . '", '')»
         «ENDIF»
@@ -184,6 +186,7 @@ class ControllerAction {
 
     def private dispatch actionImplBody(ViewAction it, String appName) '''
         $repository = $this->entityManager->getRepository($this->name . '_Entity_' . ucfirst($objectType));
+        $viewHelper = new «appName»_Util_View($this->serviceManager);
         «IF controller.container.application.hasTrees»
 
             $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : $this->request->query->filter('tpl', '', FILTER_SANITIZE_STRING);
@@ -192,7 +195,7 @@ class ControllerAction {
                 $this->view->assign('trees', $trees)
                            ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
                 // fetch and return the appropriate template
-                return «appName»_Util_View::processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args);
+                return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args);
             }
         «ENDIF»
 
@@ -235,7 +238,7 @@ class ControllerAction {
         if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
         if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
 
-        $templateFile = «appName»_Util_View::getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args);
+        $templateFile = $viewHelper->getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args);
         $cacheId = 'view|ot_' . $this->objectType . '_sort_' . $sort . '_' . $sdir;
 
         if ($showAllEntries == 1) {
@@ -244,7 +247,7 @@ class ControllerAction {
 
             // if page is cached return cached content
             if ($this->view->is_cached($templateFile)) {
-                return «appName»_Util_View::processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args, $templateFile);
+                return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args, $templateFile);
             }
 
             // retrieve item list without pagination
@@ -265,7 +268,7 @@ class ControllerAction {
 
             // if page is cached return cached content
             if ($this->view->is_cached($templateFile)) {
-                return «appName»_Util_View::processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args, $templateFile);
+                return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args, $templateFile);
             }
 
             // retrieve item list with pagination
@@ -289,7 +292,7 @@ class ControllerAction {
                    ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
         // fetch and return the appropriate template
-        return «appName»_Util_View::processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args, $templateFile);
+        return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args, $templateFile);
     '''
 
     def private dispatch actionImplBody(DisplayAction it, String appName) '''
@@ -298,8 +301,8 @@ class ControllerAction {
         $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
         // retrieve identifier of the object we wish to view
-        $idValues = «appName»_Util_Controller::retrieveIdentifier($this->request, $args, $objectType, $idFields);
-        $hasIdentifier = «appName»_Util_Controller::isValidIdentifier($idValues);
+        $idValues = $controllerHelper->retrieveIdentifier($this->request, $args, $objectType, $idFields);
+        $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
         «controller.checkForSlug»
         $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
 
@@ -325,7 +328,8 @@ class ControllerAction {
 
         «permissionCheck("' . ucwords($objectType) . '", "$instanceId . ")»
 
-        $templateFile = «appName»_Util_View::getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'display', $args);
+        $viewHelper = new «appName»_Util_View($this->serviceManager);
+        $templateFile = $viewHelper->getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'display', $args);
 
         // set cache id
         $component = $this->name . ':' . ucwords($objectType) . ':';
@@ -341,7 +345,7 @@ class ControllerAction {
                    ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
         // fetch and return the appropriate template
-        return «appName»_Util_View::processTemplate($this->view, '«controller.formattedName»', $objectType, 'display', $args, $templateFile);
+        return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'display', $args, $templateFile);
     '''
 
     def private checkForSlug(Controller it) {
@@ -389,8 +393,8 @@ class ControllerAction {
         $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
         // retrieve identifier of the object we wish to delete
-        $idValues = «appName»_Util_Controller::retrieveIdentifier($this->request, $args, $objectType, $idFields);
-        $hasIdentifier = «appName»_Util_Controller::isValidIdentifier($idValues);
+        $idValues = $controllerHelper->retrieveIdentifier($this->request, $args, $objectType, $idFields);
+        $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
 
         $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
 
@@ -428,7 +432,8 @@ class ControllerAction {
                    ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
         // fetch and return the appropriate template
-        return «appName»_Util_View::processTemplate($this->view, '«controller.formattedName»', $objectType, 'delete', $args);
+        $viewHelper = new «appName»_Util_View($this->serviceManager);
+        return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'delete', $args);
     '''
 
     def private dispatch actionImplBody(CustomAction it, String appName) '''
