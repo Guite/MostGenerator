@@ -626,6 +626,7 @@ class ModelExtensions {
     	    EmailField: 'string'
     	    UrlField: 'string'
     	    UploadField: 'string'
+    	    ListField: 'string'
     	    ArrayField: 'array'
     	    ObjectField: 'object'
     	    DatetimeField: 'datetime'
