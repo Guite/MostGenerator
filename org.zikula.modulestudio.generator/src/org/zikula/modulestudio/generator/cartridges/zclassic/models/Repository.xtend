@@ -509,7 +509,8 @@ class Repository {
 
             $query = $this->getQueryFromBuilder($qb);
 
-            return $query->getOneOrNullResult();
+            $results = $query->getResult();//OneOrNullResult();
+            return (count($results) > 0) ? $results[0] : null;
         }
     '''
 
@@ -540,7 +541,8 @@ class Repository {
 
             $query = $this->getQueryFromBuilder($qb);
 
-            return $query->getOneOrNullResult();
+            $results = $query->getResult();//OneOrNullResult();
+            return (count($results) > 0) ? $results[0] : null;
         }
     '''
 
