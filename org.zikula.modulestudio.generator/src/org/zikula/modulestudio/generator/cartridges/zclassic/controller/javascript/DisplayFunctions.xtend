@@ -51,16 +51,32 @@ class DisplayFunctions {
     '''
 
     def private initItemActions(Application it) '''
+        var «prefix()»ContextMenu;
+
+        «prefix()»ContextMenu = Class.create(Control.ContextMenu, {
+            selectMenuItem: function ($super, event, item, item_container) {
+                // open in new tab / window when right-clicked
+                if (event.isRightClick()) {
+                    item.callback(this.clicked, true);
+                    event.stop(); // close the menu
+                    return;
+                }
+                // open in current window when left-clicked
+                return $super(event, item, item_container);
+            }
+        });
+
         /**
          * Initialises the context menu for item actions.
          */
-        function «prefix»InitItemActions(objectType, func, containerId) {
+        function «prefix()»InitItemActions(objectType, func, containerId) {
             var triggerId, contextMenu, iconFile;
 
             triggerId = containerId + 'trigger';
 
             // attach context menu
-            contextMenu = new Control.ContextMenu(triggerId, { leftClick: true, animation: false });
+            //contextMenu = new Control.ContextMenu(triggerId, { leftClick: true, animation: false });
+            contextMenu = new «prefix()»ContextMenu(triggerId, { leftClick: true, animation: false });
 
             // process normal links
             $$('#' + containerId + ' a').each(function (elem) {
@@ -106,8 +122,15 @@ class DisplayFunctions {
 
                 contextMenu.addItem({
                     label: iconFile + linkText,
-                    callback: function () {
-                        window.location = elem.readAttribute('href');
+                    callback: function (selectedMenuItem, isRightClick) {
+                        var url;
+
+                        url = elem.readAttribute('href');
+                        if (isRightClick) {
+                            window.open(url);
+                        } else {
+                            window.location = url;
+                        }
                     }
                 });
             });
@@ -116,36 +139,36 @@ class DisplayFunctions {
     '''
 
     def private initQuickNavigation(Application it) '''
-        function «prefix»CapitaliseFirstLetter(string) {
+        function «prefix()»CapitaliseFirstLetter(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
         }
 
         /**
          * Submits a quick navigation form.
          */
-        function «prefix»SubmitQuickNavForm(objectType) {
-            $('«prefix»' + «prefix»CapitaliseFirstLetter(objectType) + 'QuickNavForm').submit();
+        function «prefix()»SubmitQuickNavForm(objectType) {
+            $('«prefix()»' + «prefix()»CapitaliseFirstLetter(objectType) + 'QuickNavForm').submit();
         }
 
         /**
          * Initialise the quick navigation panel in list views.
          */
-        function «prefix»InitQuickNavigation(objectType, controller) {
-            if ($('«prefix»' + «prefix»CapitaliseFirstLetter(objectType) + 'QuickNavForm') === undefined) {
+        function «prefix()»InitQuickNavigation(objectType, controller) {
+            if ($('«prefix()»' + «prefix()»CapitaliseFirstLetter(objectType) + 'QuickNavForm') === undefined) {
                 return;
             }
 
             if ($('catid') !== undefined) {
-                $('catid').observe('change', «initQuickNavigationSubmitCall(prefix)»);
+                $('catid').observe('change', «initQuickNavigationSubmitCall(prefix())»);
             }
             if ($('sortby') !== undefined) {
-                $('sortby').observe('change', «initQuickNavigationSubmitCall(prefix)»);
+                $('sortby').observe('change', «initQuickNavigationSubmitCall(prefix())»);
             }
             if ($('sortdir') !== undefined) {
-                $('sortdir').observe('change', «initQuickNavigationSubmitCall(prefix)»);
+                $('sortdir').observe('change', «initQuickNavigationSubmitCall(prefix())»);
             }
             if ($('num') !== undefined) {
-                $('num').observe('change', «initQuickNavigationSubmitCall(prefix)»);
+                $('num').observe('change', «initQuickNavigationSubmitCall(prefix())»);
             }
 
             switch (objectType) {
@@ -221,7 +244,7 @@ class DisplayFunctions {
          * For edit forms we use "iframe: true" to ensure file uploads work without problems.
          * For all other windows we use "iframe: false" because we want the escape key working.
          */
-        function «prefix»InitInlineWindow(containerElem, title) {
+        function «prefix()»InitInlineWindow(containerElem, title) {
             var newWindow;
 
             // show the container (hidden for users without JavaScript)
@@ -251,14 +274,14 @@ class DisplayFunctions {
         /**
          * Initialise ajax-based toggle for boolean fields.
          */
-        function «prefix»InitToggle(objectType, fieldName, itemId)
+        function «prefix()»InitToggle(objectType, fieldName, itemId)
         {
             var idSuffix = fieldName.toLowerCase() + itemId;
             if ($('toggle' + idSuffix) == undefined) {
                 return;
             }
             $('toggle' + idSuffix).observe('click', function() {
-                «prefix»ToggleFlag(objectType, fieldName, itemId);
+                «prefix()»ToggleFlag(objectType, fieldName, itemId);
             }).show();
         }
 
@@ -268,7 +291,7 @@ class DisplayFunctions {
         /**
          * Toggle a certain flag for a given item.
          */
-        function «prefix»ToggleFlag(objectType, fieldName, itemId)
+        function «prefix()»ToggleFlag(objectType, fieldName, itemId)
         {
             var pars = 'ot=' + objectType + '&field=' + fieldName + '&id=' + itemId;
 
