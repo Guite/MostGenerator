@@ -237,7 +237,7 @@ class Finder {
         };
 
         «name.formatForDB».itemSelector.updateItemDropdownEntries = function () {
-        	var baseId, itemSelector, items, i, item;
+            var baseId, itemSelector, items, i, item;
 
             baseId = «name.formatForDB».itemSelector.baseId;
             itemSelector = $(baseId + '_id');
