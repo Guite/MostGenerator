@@ -32,6 +32,8 @@ Workflow {
     component = @msManual { dir = 'customers' name = 'LeisurePlaces' }
     component = @msManual { dir = 'customers' name = 'MenuSuggestion' }
     component = @msManual { dir = 'customers' name = 'PlantManager' }
+    component = @msManual { dir = 'customers' name = 'SimpleClaims' }
+    component = @msManual { dir = 'customers' name = 'SimplePolls' }
     component = @msManual { dir = 'customers' name = 'SimpleProductList' }
     component = @msManual { dir = 'customers' name = 'SimpleVarieties' }
     component = @msManual { dir = 'customers' name = 'VineyardManager' }
