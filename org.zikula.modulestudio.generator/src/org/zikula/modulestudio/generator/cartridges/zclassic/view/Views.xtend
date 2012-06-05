@@ -141,9 +141,7 @@ class Views {
         {pageaddvar name='javascript' value='livepipe'}
         {pageaddvar name='javascript' value='zikula.ui'}
         {pageaddvar name='javascript' value='zikula.imageviewer'}
-        «IF !getJoinRelations.isEmpty || hasBooleansWithAjaxToggle»
-            {pageaddvar name='javascript' value='modules/«appName»/javascript/«appName».js'}
-        «ENDIF»
+        {pageaddvar name='javascript' value='modules/«appName»/javascript/«appName».js'}
 
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             «IF controller.tempIsAdminController»
