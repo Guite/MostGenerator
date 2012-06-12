@@ -223,7 +223,7 @@ class Uploads {
                 $fileSize = filesize($file['tmp_name']);
                 if ($fileSize > $maxSize) {
                     $maxSizeMB = $maxSize / (1024 * 1024);
-                    return LogUtil::registerError(__('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
+                    return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
                 }
             }
 
