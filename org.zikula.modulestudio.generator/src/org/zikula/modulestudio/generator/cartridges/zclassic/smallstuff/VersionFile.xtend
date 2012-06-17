@@ -10,6 +10,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import de.guite.modulestudio.metamodel.modulestudio.ReferredApplication
 
 class VersionFile {
     @Inject extension FormattingExtensions = new FormattingExtensions()
@@ -79,7 +80,7 @@ class VersionFile {
                 «IF !referredApplications.isEmpty»
                     // module dependencies
                     $meta['dependencies'] = array(
-                        «FOR referredApp : referredApplications SEPARATOR ','»«appDependency»«ENDFOR»
+                        «FOR referredApp : referredApplications SEPARATOR ','»«referredApp.appDependency»«ENDFOR»
                     );
                 «ENDIF»
 
@@ -157,10 +158,10 @@ class VersionFile {
     '''
 
 
-    def private appDependency(Application it) '''
-        array('modname'    => '«appName»',
-              'minversion' => '«version»',
-              'maxversion' => '',
+    def private appDependency(ReferredApplication it) '''
+        array('modname'    => '«name.formatForCode.toFirstUpper»',
+              'minversion' => '«minVersion»',
+              'maxversion' => '«maxVersion»',
               'status'     => ModUtil::DEPENDENCY_REQUIRED«/* TODO: ModUtil::RECOMMENDED, ModUtil::CONFLICTS */»)
     '''
 
