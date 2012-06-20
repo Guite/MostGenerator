@@ -156,7 +156,7 @@ class ViewQuickNavForm {
 
     def private dispatch formField(JoinRelationship it) '''
         «val sourceName = source.name.formatForCode»
-        «val sourceAliasName = getRelationAliasName(false).formatForCodeCapital»
+        «val sourceAliasName = getRelationAliasName(false)»
         {if !isset($«sourceName»Filter) || $«sourceName»Filter eq true}
             <label for="«sourceAliasName»">{gt text='«source.nameMultiple.formatForDisplayCapital»'}</label>
             {modapifunc modname='«container.application.appName»' type='selection' func='getEntities' ot='«source.name.formatForCode»' slimMode=true assign='listEntries'}

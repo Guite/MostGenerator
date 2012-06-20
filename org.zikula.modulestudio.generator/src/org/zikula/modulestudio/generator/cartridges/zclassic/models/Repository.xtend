@@ -251,7 +251,7 @@ class Repository {
             «ENDIF»
             «IF !getBidirectionalIncomingJoinRelationsWithOneSource.isEmpty»
                 «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
-                    «val sourceAliasName = relation.getRelationAliasName(false).formatForCodeCapital»
+                    «val sourceAliasName = relation.getRelationAliasName(false)»
                     $parameters['«sourceAliasName»'] = FormUtil::getPassedValue('«sourceAliasName»', 0, 'GET');
                 «ENDFOR»
             «ENDIF»

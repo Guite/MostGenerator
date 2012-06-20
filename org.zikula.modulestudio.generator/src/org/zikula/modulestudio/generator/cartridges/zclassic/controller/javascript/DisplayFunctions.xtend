@@ -232,7 +232,7 @@ class DisplayFunctions {
     '''
 
     def private dispatch jsInit(JoinRelationship it) '''
-        «val sourceAliasName = getRelationAliasName(false).formatForCodeCapital»
+        «val sourceAliasName = getRelationAliasName(false)»
         if ($('«sourceAliasName»') !== undefined) {
             $('«sourceAliasName»').observe('change', «initQuickNavigationSubmitCall(container.application.prefix)»);
         }
