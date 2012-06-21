@@ -11,8 +11,20 @@ import de.guite.modulestudio.metamodel.modulestudio.Controller
  * Extension methods for naming classes and building file pathes.
  */
 class NamingExtensions {
+
+    /**
+     * Extensions related to the controller layer.
+     */
     @Inject extension ControllerExtensions = new ControllerExtensions()
+
+    /**
+     * Extensions used for formatting element names.
+     */
     @Inject extension FormattingExtensions = new FormattingExtensions()
+
+    /**
+     * Additional utility methods.
+     */
     @Inject extension Utils = new Utils()
 
     /**

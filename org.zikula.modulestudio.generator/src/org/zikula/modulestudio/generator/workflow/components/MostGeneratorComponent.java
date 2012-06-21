@@ -19,32 +19,41 @@ import org.zikula.modulestudio.generator.cartridges.MostGenerator;
 
 import com.google.inject.Injector;
 
+/**
+ * Workflow component class for invoking the generator.
+ */
 public class MostGeneratorComponent extends GeneratorComponent implements
         IWorkflowComponent {
-    private Injector injector;
-    private final List<String> slotNames = newArrayList();
-    private final Map<String, String> outlets = newHashMap();
-
-    private String cartridge = "";
 
     /**
-     * registering an {@link ISetup}, which causes the execution of
+     * The injector.
+     */
+    private Injector injector;
+
+    /**
+     * List of slot names.
+     */
+    private List<String> slotNames = newArrayList();
+
+    /**
+     * List of outlets.
+     */
+    private Map<String, String> outlets = newHashMap();
+
+    /**
+     * Name of current cartridge.
+     */
+    private String cartridge = ""; //$NON-NLS-1$
+
+    /**
+     * Registers an {@link ISetup}, which causes the execution of
      * {@link ISetup#createInjectorAndDoEMFRegistration()} the resulting
      * {@link com.google.inject.Inject} is stored and used to obtain the used
      * {@link IGenerator}.
      */
     @Override
     public void setRegister(ISetup setup) {
-        injector = setup.createInjectorAndDoEMFRegistration();
-    }
-
-    /**
-     * sets the {@link Injector} to be used to obtain the used
-     * {@link IGenerator} instance.
-     */
-    @Override
-    public void setInjector(Injector injector) {
-        this.injector = injector;
+        setInjector(setup.createInjectorAndDoEMFRegistration());
     }
 
     /**
@@ -56,20 +65,23 @@ public class MostGeneratorComponent extends GeneratorComponent implements
         this.slotNames.add(slot);
     }
 
+    /**
+     * Performs actions before the invocation.
+     */
     @Override
     public void preInvoke() {
-        if (slotNames.isEmpty()) {
+        if (getSlotNames().isEmpty()) {
             throw new IllegalStateException("no 'slot' has been configured.");
         }
-        if (injector == null) {
+        if (getInjector() == null) {
             throw new IllegalStateException(
                     "no Injector has been configured. Use 'register' with an ISetup or 'injector' directly.");
         }
-        if (outlets.isEmpty()) {
+        if (getOutlets().isEmpty()) {
             throw new IllegalStateException("no 'outlet' has been configured.");
         }
 
-        for (final Entry<String, String> outlet : outlets.entrySet()) {
+        for (final Entry<String, String> outlet : getOutlets().entrySet()) {
             if (outlet.getKey() == null) {
                 throw new IllegalStateException(
                         "One of the outlets was configured without a name");
@@ -81,42 +93,83 @@ public class MostGeneratorComponent extends GeneratorComponent implements
         }
     }
 
+    /**
+     * Represents an outlet of the generator.
+     */
     public static class Outlet {
 
+        /**
+         * Name of the outlet.
+         */
         private String outletName = IFileSystemAccess.DEFAULT_OUTPUT;
+
+        /**
+         * The output path.
+         */
         private String path;
 
+        /**
+         * Returns name of the outlet.
+         * 
+         * @return The outlet name.
+         */
+        public String getOutletName() {
+            return this.outletName;
+        }
+
+        /**
+         * Sets outlet name.
+         * 
+         * @param outputName
+         *            The given name.
+         */
         public void setOutletName(String outputName) {
             this.outletName = outputName;
         }
 
-        public void setPath(String path) {
-            this.path = path;
-        }
-
-        public String getOutletName() {
-            return outletName;
-        }
-
+        /**
+         * Returns the path.
+         * 
+         * @return The path.
+         */
         public String getPath() {
-            return path;
+            return this.path;
+        }
+
+        /**
+         * Sets path.
+         * 
+         * @param newPath
+         *            The given path.
+         */
+        public void setPath(String newPath) {
+            this.path = newPath;
         }
     }
 
     /**
-     * an outlet is defined by a name and a path. The generator will internally
+     * An outlet is defined by a name and a path. The generator will internally
      * choose one of the configured outlets when generating a file. the given
      * path defines the root directory of the outlet.
+     * 
+     * @param out
+     *            The given {@link Outlet}.
      */
     public void addOutlet(Outlet out) {
-        outlets.put(out.outletName, out.path);
+        getOutlets().put(out.getOutletName(), out.getPath());
     }
 
+    /**
+     * Invokes the workflow component.
+     * 
+     * @param ctx
+     *            The given {@link IWorkflowContext} instance.
+     */
     @Override
     public void invoke(IWorkflowContext ctx) {
         final IGenerator instance = getCompiler();
         final IFileSystemAccess fileSystemAccess = getConfiguredFileSystemAccess();
-        for (final String slot : slotNames) {
+        for (final String slot : getSlotNames()) {
             final Object object = ctx.get(slot);
             if (object == null) {
                 throw new IllegalStateException("Slot '" + slot
@@ -148,33 +201,106 @@ public class MostGeneratorComponent extends GeneratorComponent implements
     @Override
     protected IGenerator getCompiler() {
         // return injector.getInstance(IGenerator.class);
-        final MostGenerator generator = (MostGenerator) injector
+        final MostGenerator generator = (MostGenerator) getInjector()
                 .getInstance(IGenerator.class);
-        generator.setCartridge(cartridge);
+        generator.setCartridge(getCartridge());
         return generator;
     }
 
     @Override
     protected IFileSystemAccess getConfiguredFileSystemAccess() {
-        final JavaIoFileSystemAccess configuredFileSystemAccess = injector
+        final JavaIoFileSystemAccess configuredFileSystemAccess = getInjector()
                 .getInstance(JavaIoFileSystemAccess.class);
-        for (final Entry<String, String> outs : outlets.entrySet()) {
+        for (final Entry<String, String> outs : getOutlets().entrySet()) {
             configuredFileSystemAccess.setOutputPath(outs.getKey(),
                     outs.getValue());
         }
         return configuredFileSystemAccess;
     }
 
+    /**
+     * Performs actions after the invocation.
+     */
     @Override
     public void postInvoke() {
-
+        // Nothing to do here yet
     }
 
+    /**
+     * Returns the current injector.
+     * 
+     * @return The {@link Injector} instance.
+     */
+    public Injector getInjector() {
+        return this.injector;
+    }
+
+    /**
+     * Sets the {@link Injector} to be used to obtain the used
+     * {@link IGenerator} instance.
+     * 
+     * @param newInjector
+     *            The given {@link Injector} instance.
+     */
+    @Override
+    public void setInjector(Injector newInjector) {
+        this.injector = newInjector;
+    }
+
+    /**
+     * Returns the list of slot names.
+     * 
+     * @return The list of slot names.
+     */
+    public List<String> getSlotNames() {
+        return this.slotNames;
+    }
+
+    /**
+     * Sets the list of slot names.
+     * 
+     * @param newNames
+     *            the new names to set.
+     */
+    public void setSlotNames(List<String> newNames) {
+        this.slotNames = newNames;
+    }
+
+    /**
+     * Returns the list of outlets.
+     * 
+     * @return The list of outlets.
+     */
+    public Map<String, String> getOutlets() {
+        return this.outlets;
+    }
+
+    /**
+     * Sets the list of outlets.
+     * 
+     * @param newOutlets
+     *            the new outlets to set.
+     */
+    public void setOutlets(Map<String, String> newOutlets) {
+        this.outlets = newOutlets;
+    }
+
+    /**
+     * Returns name of the current cartridge.
+     * 
+     * @return The cartridge name.
+     */
     public String getCartridge() {
-        return cartridge;
+        return this.cartridge;
     }
 
+    /**
+     * Sets name of the current cartridge.
+     * 
+     * @param cartridgeName
+     *            The given name.
+     */
     public void setCartridge(String cartridgeName) {
-        cartridge = cartridgeName;
+        this.cartridge = cartridgeName;
     }
 }

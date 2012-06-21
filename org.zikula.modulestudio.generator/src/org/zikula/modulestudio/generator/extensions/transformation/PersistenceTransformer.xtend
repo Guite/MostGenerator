@@ -11,11 +11,21 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
  * This class adds primary key fields to all entities of an application.
  */
 class PersistenceTransformer {
+
+    /**
+     * Extension methods for formatting names.
+     */
     @Inject extension FormattingExtensions = new FormattingExtensions()
+
+    /**
+     * Extension methods related to the model layer.
+     */
     @Inject extension ModelExtensions = new ModelExtensions()
 
     /**
      * Transformation entrypoint consuming the application instance.
+     *
+     * @param it The given {@link Application} instance.
      */
     def modify(Application it) {
         println('Starting model transformation')
@@ -26,8 +36,10 @@ class PersistenceTransformer {
 
     /**
      * Transformation processing for a single entity.
+     *
+     * @param it The currently treated {@link Entity} instance.
      */
-    def private handleEntity(Entity it) {
+    def private void handleEntity(Entity it) {
         //println('Transforming entity ' + name)
         //println('Field size before: ' + fields.size + ' fields')
         if (getPrimaryKeyFields.isEmpty) addPrimaryKey
@@ -37,9 +49,8 @@ class PersistenceTransformer {
     /**
      * Adds a primary key to a given entity.
      * 
-     * @param Entity
-     *            given Entity instance
-     * @return flag if insertion was successful
+     * @param entity The given {@link Entity} instance
+     * @return Boolean Whether the insertion was successful or not.
      */
     def private addPrimaryKey(Entity entity) {
         try {
@@ -54,11 +65,11 @@ class PersistenceTransformer {
     }
 
     /**
-     * Returns a new primary key field field.
-     * 
-     * @param Entity
-     *            given Entity instance
-     * @return flag if insertion was successful
+     * Creates a new identifier field.
+     *
+     * @param colName The column name.
+     * @param isPrimary Whether the field should be primary or not.
+     * @return Boolean Whether the insertion was successful or not.
      */
     def private createIdColumn(String colName, Boolean isPrimary) {
         val factory = new ModulestudioFactoryImpl()

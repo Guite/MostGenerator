@@ -7,12 +7,32 @@ import javax.xml.parsers.ParserConfigurationException
 import org.w3c.dom.Document
 import org.xml.sax.SAXException
 
+/**
+ * Xml reader class.
+ */
 class XmlReader {
 
+    /**
+     * Link to DTD specifying the allowed xml elements.
+     */
     //String DTD = 'resources/pntables.dtd'
+
+    /**
+     * Handle for the input file.
+     */
     File inputFile
+
+    /**
+     * The xml input document.
+     */
     public Document document
 
+    /**
+     * The constructor.
+     *
+     * @param fileName Name of the xml input file.
+     * @throws Exception In case something goes wrong.
+     */
     new(String fileName) throws Exception {
         if (fileName.isEmpty()) {
             throw new Exception(
@@ -22,6 +42,11 @@ class XmlReader {
         readFileContent();
     }
 
+    /**
+     * Reads in the file content.
+     *
+     * @return Object the {@link Document} instance.
+     */
     def private readFileContent() {
         try {
             val builderFactory = DocumentBuilderFactory::newInstance

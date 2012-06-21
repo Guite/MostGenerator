@@ -18,7 +18,15 @@ import de.guite.modulestudio.metamodel.modulestudio.Relationship
  * This class contains model join relationship related extension methods.
  */
 class ModelJoinExtensions {
+
+    /**
+     * Extensions used for formatting element names.
+     */
     @Inject extension FormattingExtensions = new FormattingExtensions()
+
+    /**
+     * Extensions related to the model layer.
+     */
     @Inject extension ModelExtensions = new ModelExtensions()
 
     /**

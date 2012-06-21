@@ -9,6 +9,9 @@ import org.eclipse.core.runtime.IProgressMonitor
 import org.eclipse.emf.mwe2.language.Mwe2StandaloneSetup
 import org.eclipse.emf.mwe2.launch.runtime.Mwe2Runner
 
+/**
+ * The outer generator class running the MWE2 workflow.
+ */
 class ModuleStudioGenerator {
 
     /**
@@ -39,6 +42,9 @@ class ModuleStudioGenerator {
 
     /**
      * Default constructor.
+     *
+     * @param application The given {@link Application} instance
+     * @param monitor The {@link IProgressMonitor} instance
      */
     new(Application application, IProgressMonitor monitor) {
         properties = new HashMap<String, String>();
@@ -81,14 +87,12 @@ class ModuleStudioGenerator {
 
     /**
      * Starts the default workflow for a given output path.
-     * 
-     * @param output
-     *            path
-     * @param cartridge
-     *            name
-     * @return whether generation was successful
-     * @throws CoreException
-     * @throws IOException
+     *
+     * @param outputPath The given output path.
+     * @param cartridgeName Name of currently processed cartridge.
+     * @return Boolean Whether the generation was successful or not.
+     * @throws CoreException In case something goes wrong.
+     * @throws IOException In case input or output errors occur.
      */
     def runWorkflow(String outputPath, String cartridgeName)
             throws CoreException, IOException {
@@ -97,16 +101,13 @@ class ModuleStudioGenerator {
 
     /**
      * Starts a given workflow for a given output path.
-     * 
-     * @param output
-     *            path
-     * @param cartridge
-     *            name
-     * @param custom
-     *            workflow file
-     * @return whether generation was successful
-     * @throws CoreException
-     * @throws IOException
+     *
+     * @param outputPath The given output path.
+     * @param cartridgeName Name of currently processed cartridge.
+     * @param wfFile Name of custom workflow file.
+     * @return Boolean Whether the generation was successful or not.
+     * @throws CoreException In case something goes wrong.
+     * @throws IOException In case input or output errors occur.
      */
     def runWorkflow(String outputPath, String cartridgeName,
             String wfFile) throws CoreException, IOException {
@@ -117,11 +118,11 @@ class ModuleStudioGenerator {
     }
 
     /**
-     * Processes the internal workflow execution.
-     * 
-     * @return whether generation was successful
-     * @throws CoreException
-     * @throws IOException
+     * Executes the workflow internally.
+     *
+     * @return Boolean Whether the generation was successful or not.
+     * @throws CoreException In case something goes wrong.
+     * @throws IOException In case input or output errors occur.
      */
     def private runWorkflowInternal() throws CoreException, IOException {
         // The generator cartridge to execute (zclassic, zoo, reporting)
@@ -209,52 +210,66 @@ class ModuleStudioGenerator {
      */
 
     /**
-     * @return the default workflow file
+     * Returns the default workflow file.
+     *
+     * @return String the default workflow file.
      */
     def private getDefaultWorkflowFile() {
         'msWorkflow.mwe2'
     }
 
     /**
-     * @return the workflow file
+     * Returns the workflow file.
+     *
+     * @return String the workflow file.
      */
     def getWorkflowFile() {
         'src/org/zikula/modulestudio/generator/workflow/' + workflowFile
     }
 
     /**
-     * @param workflowFile
-     *            the workflowFile to set
+     * Sets the workflow file.
+     *
+     * @param wfFile The workflow file to set.
+     * @return String The new workflow file.
      */
-    def private setWorkflowFile(String workflowFile) {
-        this.workflowFile = workflowFile
+    def private setWorkflowFile(String wfFile) {
+        this.workflowFile = wfFile
     }
 
     /**
-     * @param cartridgeName
-     *            the cartridgeName to set
+     * Sets the cartridge name.
+     *
+     * @param cartridge The cartridge name to set.
+     * @return String The new cartridge name.
      */
-    def private setCartridgeName(String cartridgeName) {
-        this.cartridgeName = cartridgeName
+    def private setCartridgeName(String cartridge) {
+        this.cartridgeName = cartridge
     }
 
     /**
-     * @return the outputPath
+     * Returns the output path.
+     *
+     * @return String the output path.
      */
     def getOutputPath() {
         outputPath
     }
 
     /**
-     * @param outputPath
-     *            the outputPath to set
+     * Sets the output path.
+     *
+     * @param path The output path to set.
+     * @return String The new output path.
      */
-    def private setOutputPath(String outputPath) {
-        this.outputPath = outputPath
+    def private setOutputPath(String path) {
+        this.outputPath = path
     }
 
     /**
-     * @return the properties
+     * Returns the list of workflow properties.
+     *
+     * @return the property list.
      */
     def getProperties() {
         properties
@@ -263,10 +278,10 @@ class ModuleStudioGenerator {
     /**
      * Adds a property to the workflow properties map.
      * 
-     * @param name
-     * @param value
+     * @param name Property name
+     * @param value Property value
      */
-    def addProperty(String name, String value) {
+    def void addProperty(String name, String value) {
         if (properties.containsKey(name))
             properties.remove(name)
 

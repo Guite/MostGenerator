@@ -24,13 +24,11 @@ class Installer {
     @Inject extension Utils = new Utils()
 
     FileHelper fh = new FileHelper()
-    IFileSystemAccess fsa
 
     /**
      * Entry point for application installer.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-    	this.fsa = fsa
         fsa.generateFile(getAppSourceLibPath(appName) + 'Base/Installer.php', installerBaseFile)
         fsa.generateFile(getAppSourceLibPath(appName) + 'Installer.php', installerFile)
         if (interactiveInstallation == true) {

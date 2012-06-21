@@ -20,11 +20,32 @@ import org.w3c.dom.NodeList
  */
 class XmlImporter {
 
+    /**
+     * The application.
+     */
     Application app
+
+    /**
+     * The factory for creating semantic elements.
+     */
     ModulestudioFactory factory
+
+    /**
+     * Application name.
+     */
     String appName
+
+    /**
+     * The xml input document.
+     */
     Document document
 
+    /**
+     * The constructor reading the input file.
+     *
+     * @param fileName Name of the xml input file.
+     * @throws Exception In case something goes wrong.
+     */
     new(String fileName) throws Exception {
         if (fileName.isEmpty) {
             throw new Exception(
@@ -33,10 +54,13 @@ class XmlImporter {
         val xmlReader = new XmlReader(fileName)
         val fileNameParts = fileName.split('/')
         val rawFileName = fileNameParts.get(fileNameParts.size - 1).replaceAll(' ', '').replaceAll('.xml', '')
-        appName = convertToCamelCase(rawFileName)
+        appName = convertToMixedCase(rawFileName)
         document = xmlReader.document
     }
 
+    /**
+     * Wrapper for the actual import process.
+     */
     def process() {
         createModel
         processElements
@@ -44,7 +68,7 @@ class XmlImporter {
     }
 
     /**
-     * Create basic model instance and set basic properties.
+     * Creates the model instance and sets basic properties.
      */
     def private createModel() {
         // Initialise the model (probably unneeded now)
@@ -73,6 +97,9 @@ class XmlImporter {
         controllerContainer.processViews = viewContainer
     }
 
+    /**
+     * Processes the elements in the xml file.
+     */
     def private processElements() {
         val NodeList nodes = document.getElementsByTagName('table')
         val modelContainer = app.models.head
@@ -117,12 +144,25 @@ class XmlImporter {
         }
     }
 
+    /**
+     * Determines whether a given field name should be considered as a standard field or not.
+     *
+     * @param fieldName Name of given field.
+     * @return boolean whether it is a standard field or not.
+     */
     def private isStandardField(String fieldName) {
         return (fieldName.equals('obj_status')
         	 || fieldName.equals('cr_date') || fieldName.equals('cr_uid')
         	 || fieldName.equals('lu_date') || fieldName.equals('lu_uid'))
     }
 
+    /**
+     * Processes a given field.
+     *
+     * @param it The {@link Entity} where this field belongs to.
+     * @param fieldData Xml input data for the field.
+     * @return boolean whether everything was okay or not.
+     */
     def private processField(Entity it, Element fieldData) {
         val fieldName = fieldData.getAttribute('name')
         val fieldType = fieldData.getAttribute('type')
@@ -256,6 +296,12 @@ class XmlImporter {
         true
     }
 
+    /**
+     * Returns the length for an integer field, depending on a given field type.
+     *
+     * @param fieldType The given integer type.
+     * @return integer The proposed length for this integer field.
+     */
     def private getIntegerLength(String fieldType) {
         if (fieldType.equals('INT')) 4
         if (fieldType.equals('TINYINT')) 1
@@ -265,8 +311,15 @@ class XmlImporter {
         10
     }
 
+    /**
+     * Configures basic field properties.
+     *
+     * @param it The {@link DerivedField} which should be configured.
+     * @param fieldData Xml input data for the field.
+     * @return Object The block expression of this method.
+     */
     def private setBasicFieldProperties(DerivedField it, Element fieldData) {
-        val fieldName = convertToCamelCase(fieldData.getAttribute('name'))
+        val fieldName = convertToMixedCase(fieldData.getAttribute('name'))
         val fieldType = fieldData.getAttribute("type")
         val fieldNullable = fieldData.getAttribute('nullable')
         val fieldDefault = fieldData.getAttribute('default')
@@ -283,7 +336,13 @@ class XmlImporter {
         }
     }
 
-    def private convertToCamelCase(String fieldName) {
+    /**
+     * Converts a given field name to mixed case.
+     *
+     * @param fieldName The given field name.
+     * @return string The field name in mixed case.
+     */
+    def private convertToMixedCase(String fieldName) {
         if (!fieldName.contains('_')) {
             fieldName
         }
@@ -297,6 +356,13 @@ class XmlImporter {
         sb.toString
     }
 
+    /**
+     * Processes a given index.
+     *
+     * @param it The {@link EntityIndex} which should be processed.
+     * @param indexData Xml input data for the index.
+     * @return boolean whether everything was okay or not.
+     */
     def private processIndex(Entity it, Element indexData) {
         val indexName = indexData.getAttribute('name')
         val indexFieldList = indexData.getAttribute('fields')
@@ -316,7 +382,7 @@ class XmlImporter {
     }
 
     /**
-     * Save the created model content to a .mostapp file.
+     * Saves the created model content into a .mostapp file.
      */
     def private saveModel() {
         // Obtain a new resource set

@@ -3,15 +3,22 @@ package org.zikula.modulestudio.generator.application;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+/**
+ * The activator class for this bundle.
+ */
 public class Activator extends AbstractUIPlugin {
-    // The plug-in ID
-    public static final String PLUGIN_ID = "org.zikula.modulestudio.generator";
+    /**
+     * The plug-in ID.
+     */
+    public static final String PLUGIN_ID = "org.zikula.modulestudio.generator"; //$NON-NLS-1$
 
-    // The shared instance
+    /**
+     * The shared instance.
+     */
     private static Activator plugin;
 
     /**
-     * The constructor
+     * The constructor.
      */
     public Activator() {
         // nothing to do here
@@ -42,7 +49,7 @@ public class Activator extends AbstractUIPlugin {
     }
 
     /**
-     * Returns the shared instance
+     * Returns the shared instance.
      * 
      * @return the shared instance
      */

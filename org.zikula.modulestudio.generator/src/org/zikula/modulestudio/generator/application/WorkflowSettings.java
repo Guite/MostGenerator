@@ -22,35 +22,106 @@ import de.guite.modulestudio.metamodel.modulestudio.Application;
  */
 public class WorkflowSettings {
 
-    ArrayList availableCartridges = new ArrayList();
-    ArrayList selectedCartridges = new ArrayList();
-    public String outputPath = null;
-    File outputDir = null;
-    String modelPath = null;
-    public Diagram diagram = null;
-    Application app = null;
-    public PreferencesHint diagramPreferencesHint = null;
-    IProgressMonitor progressMonitor = null;
-    File reportDir = null;
-    ArrayList availableReports = new ArrayList();
-    Object[] selectedReports = null;
-    IWorkbenchWindow workbenchWindow = null;
-    IWorkbench workbench = null;
-    String reportPath = "/org/zikula/modulestudio/generator/cartridges/reporting/reports";
+    /**
+     * List of available cartridges.
+     */
+    private ArrayList<String> availableCartridges = new ArrayList<String>();
 
+    /**
+     * List of selected cartridges.
+     */
+    private ArrayList<Object> selectedCartridges = new ArrayList<Object>();
+
+    /**
+     * The output path.
+     */
+    private String outputPath = null;
+
+    /**
+     * File handle for output directory.
+     */
+    private File outputDir = null;
+
+    /**
+     * The model path.
+     */
+    private String modelPath = null;
+
+    /**
+     * Reference to current diagram.
+     */
+    private Diagram diagram = null;
+
+    /**
+     * The application instance described by the model.
+     */
+    private Application app = null;
+
+    /**
+     * Preference hint.
+     */
+    private PreferencesHint diagramPreferencesHint = null;
+
+    /**
+     * The progress monitor.
+     */
+    private IProgressMonitor progressMonitor = null;
+
+    /**
+     * File handle for report directory.
+     */
+    private File reportDir = null;
+
+    /**
+     * List of available reports.
+     */
+    private ArrayList<String> availableReports = new ArrayList<String>();
+
+    /**
+     * List of selected reports.
+     */
+    private Object[] selectedReports = null;
+
+    /**
+     * The workbench window reference.
+     */
+    private IWorkbenchWindow workbenchWindow = null;
+
+    /**
+     * The workbench reference.
+     */
+    private IWorkbench workbench = null;
+
+    /**
+     * Path containing the report files.
+     */
+    private String reportPath = "/org/zikula/modulestudio/generator/cartridges/reporting/reports"; //$NON-NLS-1$
+
+    /**
+     * The constructor.
+     * 
+     * @throws Exception
+     *             In case something goes wrong.
+     */
     public WorkflowSettings() throws Exception {
-        this.availableCartridges.add("zclassic");
-        this.availableCartridges.add("zoo");
-        this.availableCartridges.add("reporting");
-        this.selectedCartridges.add("zclassic");
-        this.selectedCartridges.add("reporting");
+        this.availableCartridges.add("zclassic"); //$NON-NLS-1$
+        this.availableCartridges.add("zoo"); //$NON-NLS-1$
+        this.availableCartridges.add("reporting"); //$NON-NLS-1$
+        this.selectedCartridges.add("zclassic"); //$NON-NLS-1$
+        this.selectedCartridges.add("reporting"); //$NON-NLS-1$
 
         collectAvailableReports();
     }
 
+    /**
+     * Collect available reports.
+     * 
+     * @throws Exception
+     *             In case something goes wrong.
+     */
     private void collectAvailableReports() throws Exception {
         java.net.URL[] resources = FileLocator.findEntries(
-                Platform.getBundle(Activator.PLUGIN_ID), new Path("/src"
+                Platform.getBundle(Activator.PLUGIN_ID), new Path("/src" //$NON-NLS-1$
                         + this.reportPath));
         final java.net.URL[] resourcesExported = FileLocator.findEntries(
                 Platform.getBundle(Activator.PLUGIN_ID), new Path(
@@ -71,13 +142,13 @@ public class WorkflowSettings {
 
                 @Override
                 public boolean accept(File dir, String name) {
-                    if (name.contains(".rptdesign")) {
+                    if (name.contains(".rptdesign")) { //$NON-NLS-1$
                         return true;
                     }
                     return false;
                 }
             })) {
-                this.availableReports.add(file.replace(".rptdesign", ""));
+                this.availableReports.add(file.replace(".rptdesign", "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
         } catch (final URISyntaxException e) {
@@ -89,70 +160,297 @@ public class WorkflowSettings {
         }
     }
 
+    /**
+     * Returns the workbench window.
+     * 
+     * @return {@link IWorkbenchWindow} The workbench window instance.
+     */
     public IWorkbenchWindow getWorkbenchWindow() {
         return this.workbenchWindow;
     }
 
+    /**
+     * Sets the workbench window.
+     * 
+     * @param window
+     *            The workbench window instance.
+     */
     public void setWorkbenchWindow(IWorkbenchWindow window) {
         this.workbenchWindow = window;
     }
 
+    /**
+     * Returns the workbench.
+     * 
+     * @return {@link IWorkbench} The workbench instance.
+     */
     public IWorkbench getWorkbench() {
         return this.workbench;
     }
 
+    /**
+     * Sets the workbench.
+     * 
+     * @param w
+     *            The workbench instance.
+     */
+    public void setWorkbench(IWorkbench w) {
+        this.workbench = w;
+    }
+
+    /**
+     * Returns the progress monitor.
+     * 
+     * @return {@link IProgressMonitor} The progress monitor instance.
+     */
     public IProgressMonitor getProgressMonitor() {
         return this.progressMonitor;
     }
 
-    public void setWorkbench(IWorkbench workbench) {
-        this.workbench = workbench;
-    }
-
-    public ArrayList getAvailableCartridges() {
+    /**
+     * Returns the list of available cartridges.
+     * 
+     * @return Cartridge list.
+     */
+    public ArrayList<String> getAvailableCartridges() {
         return this.availableCartridges;
     }
 
-    public ArrayList getSelectedCartridges() {
+    /**
+     * Returns the list of selected cartridges.
+     * 
+     * @return Cartridge list.
+     */
+    public ArrayList<Object> getSelectedCartridges() {
         return this.selectedCartridges;
     }
 
-    public ArrayList getAvailableReports() {
+    /**
+     * Returns the list of available reports.
+     * 
+     * @return Report list.
+     */
+    public ArrayList<String> getAvailableReports() {
         return this.availableReports;
     }
 
-    public void setApp(Application app) {
-        this.app = app;
+    /**
+     * Sets the application instance.
+     * 
+     * @param application
+     *            The given application.
+     */
+    public void setApp(Application application) {
+        this.app = application;
     }
 
-    public void setDiagram(Diagram diagram) {
-        this.diagram = diagram;
+    /**
+     * Sets the diagram instance.
+     * 
+     * @param d
+     *            The given diagram.
+     */
+    public void setDiagram(Diagram d) {
+        this.diagram = d;
     }
 
+    /**
+     * Sets the diagram preferences hint.
+     * 
+     * @param hint
+     *            The given diagram preferences hint.
+     */
     public void setDiagramPreferencesHint(PreferencesHint hint) {
         this.diagramPreferencesHint = hint;
     }
 
+    /**
+     * Sets the progress monitor.
+     * 
+     * @param monitor
+     *            The given progress monitor instance.
+     */
     public void setProgressMonitor(IProgressMonitor monitor) {
         this.progressMonitor = monitor;
     }
 
-    public void setOutputPath(String path) {
+    /**
+     * Sets the output path.
+     * 
+     * @param path
+     *            The given path string.
+     */
+    public void setOutputPath(final String path) {
         this.outputPath = path;
-        this.outputDir = new File(outputPath);
+        this.outputDir = new File(path);
     }
 
-    public void setModelPath(String path) {
+    /**
+     * Sets the model path.
+     * 
+     * @param path
+     *            The given path string.
+     */
+    public void setModelPath(final String path) {
         this.modelPath = path;
     }
 
-    public void setSelectedCartridges(Object[] cartridges) {
-        for (final Object object : cartridges) {
-            this.selectedCartridges.add(object);
+    /**
+     * Sets the list of selected cartridges.
+     * 
+     * @param objects
+     *            The given cartridge list.
+     */
+    public void setSelectedCartridges(final Object[] objects) {
+        for (final Object cartridge : objects) {
+            this.selectedCartridges.add(cartridge);
         }
     }
 
+    /**
+     * Sets the list of selected reports.
+     * 
+     * @param reports
+     *            The given report list.
+     */
     public void setSelectedReports(Object[] reports) {
         this.selectedReports = reports;
+    }
+
+    /**
+     * Returns the output directory.
+     * 
+     * @return the outputDir
+     */
+    public File getOutputDir() {
+        return this.outputDir;
+    }
+
+    /**
+     * Sets the output directory.
+     * 
+     * @param dir
+     *            the given value.
+     */
+    public void setOutputDir(File dir) {
+        this.outputDir = dir;
+    }
+
+    /**
+     * Returns the report directory.
+     * 
+     * @return the reportDir
+     */
+    public File getReportDir() {
+        return this.reportDir;
+    }
+
+    /**
+     * @param dir
+     *            the reportDir to set
+     */
+    public void setReportDir(File dir) {
+        this.reportDir = dir;
+    }
+
+    /**
+     * Returns the report path.
+     * 
+     * @return the reportPath
+     */
+    public String getReportPath() {
+        return this.reportPath;
+    }
+
+    /**
+     * @param path
+     *            the reportPath to set
+     */
+    public void setReportPath(String path) {
+        this.reportPath = path;
+    }
+
+    /**
+     * Returns the output path.
+     * 
+     * @return the outputPath
+     */
+    public String getOutputPath() {
+        return this.outputPath;
+    }
+
+    /**
+     * Returns the model path.
+     * 
+     * @return the modelPath
+     */
+    public String getModelPath() {
+        return this.modelPath;
+    }
+
+    /**
+     * Returns the diagram reference.
+     * 
+     * @return the diagram
+     */
+    public Diagram getDiagram() {
+        return this.diagram;
+    }
+
+    /**
+     * Returns the application instance.
+     * 
+     * @return the application
+     */
+    public Application getApp() {
+        return this.app;
+    }
+
+    /**
+     * Returns the diagram preferences hint.
+     * 
+     * @return the diagramPreferencesHint
+     */
+    public PreferencesHint getDiagramPreferencesHint() {
+        return this.diagramPreferencesHint;
+    }
+
+    /**
+     * Returns the list of selected reports.
+     * 
+     * @return the report list
+     */
+    public Object[] getSelectedReports() {
+        return this.selectedReports;
+    }
+
+    /**
+     * Sets the list of available cartridges.
+     * 
+     * @param cartridges
+     *            the given list.
+     */
+    public void setAvailableCartridges(ArrayList<String> cartridges) {
+        this.availableCartridges = cartridges;
+    }
+
+    /**
+     * Sets the list of selected cartridges.
+     * 
+     * @param cartridges
+     *            the given list.
+     */
+    public void setSelectedCartridges(ArrayList<Object> cartridges) {
+        this.selectedCartridges = cartridges;
+    }
+
+    /**
+     * Sets the list of available reports.
+     * 
+     * @param reports
+     *            the given list.
+     */
+    public void setAvailableReports(ArrayList<String> reports) {
+        this.availableReports = reports;
     }
 }

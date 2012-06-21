@@ -17,39 +17,82 @@ import de.guite.modulestudio.metamodel.modulestudio.ModulestudioPackage;
  * @author Karsten Thoms (karsten.thoms@itemis.de)
  */
 public class ModuleStudioResourceLoader extends ResourceLoaderDefaultImpl {
-    private final ClassLoader pluginCL;
 
+    /**
+     * The class loader.
+     */
+    private ClassLoader pluginCL;
+
+    /**
+     * The constructor.
+     * 
+     * @throws CoreException
+     *             In case something goes wrong.
+     */
     public ModuleStudioResourceLoader() throws CoreException {
         super();
-        pluginCL = createClassLoader();
+        this.setPluginCL(createClassLoader());
     }
 
     /**
-     * Returns classloader for the meta model project
+     * Returns the class loader for the meta model project
      * 
+     * @return The {@link ClassLoader} instance.
      * @throws CoreException
+     *             In case something goes wrong.
      */
     public ClassLoader createClassLoader() throws CoreException {
         return ModulestudioPackage.class.getClassLoader();
     }
 
-    // @Override
+    /**
+     * Returns the internal resource for a given path.
+     * 
+     * @param path
+     *            String with path to resource.
+     * @return The {@link URL} instance for the resource.
+     */
     protected URL internalGetResource(String path) {
-        URL resource = pluginCL.getResource(path);
+        URL resource = getPluginCL().getResource(path);
         if (resource == null) {
             resource = super.getResource(path);
         }
         return resource;
     }
 
-    // @Override
+    /**
+     * Returns the internal resource for a given path as stream.
+     * 
+     * @param path
+     *            String with path to resource.
+     * @return The {@link InputStream} instance for the resource.
+     */
     protected InputStream internalGetResourceAsStream(String path) {
-        URL url = internalGetResource(path);
+        final URL url = internalGetResource(path);
         try {
             return url != null ? url.openStream() : null;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
             return super.getResourceAsStream(path);
         }
+    }
+
+    /**
+     * Returns the plugin {@link ClassLoader}.
+     * 
+     * @return the {@link ClassLoader} instance.
+     */
+    public ClassLoader getPluginCL() {
+        return this.pluginCL;
+    }
+
+    /**
+     * Sets the plugin {@link ClassLoader}.
+     * 
+     * @param cl
+     *            the {@link ClassLoader} instance.
+     */
+    public void setPluginCL(ClassLoader cl) {
+        this.pluginCL = cl;
     }
 }

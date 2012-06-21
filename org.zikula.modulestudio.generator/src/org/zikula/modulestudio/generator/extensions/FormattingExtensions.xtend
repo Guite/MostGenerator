@@ -6,10 +6,10 @@ package org.zikula.modulestudio.generator.extensions
 class FormattingExtensions {
 
     /**
-     * Replaces special chars, like german umlauts, by international version.
+     * Replaces special chars, like German umlauts, by international version.
      *
-     * @param String given input string
-     * @return string without special characters
+     * @param s given input string
+     * @return String without special characters.
      */
     def replaceSpecialChars(String s) {
         s.replace("Ä", "Ae").replace("ä", "ae").replace("Ö", "Oe")
@@ -20,8 +20,8 @@ class FormattingExtensions {
     /**
      * Formats a string for usage in generated source code.
      *
-     * @param String given input string
-     * @return string formatted for source code usage
+     * @param s given input string
+     * @return String formatted for source code usage.
      */
     def formatForCode(String s) {
         s.replaceSpecialChars
@@ -30,8 +30,8 @@ class FormattingExtensions {
     /**
      * Formats a string for usage in generated source code starting with capital.
      *
-     * @param String given input string
-     * @return string formatted for source code usage
+     * @param s given input string
+     * @return String formatted for source code usage.
      */
     def formatForCodeCapital(String s) {
 	    s.formatForCode.toFirstUpper
@@ -40,8 +40,8 @@ class FormattingExtensions {
     /**
      * Formats a string for usage in generated source code in lowercase.
      *
-     * @param String given input string
-     * @return string formatted for database usage
+     * @param s given input string
+     * @return String formatted for database usage.
      */
     def formatForDB(String s) {
         s.replaceSpecialChars.toLowerCase
@@ -51,8 +51,8 @@ class FormattingExtensions {
      * Formats a string for improved output readability.
      * For example federalStateName becomes federal state name.
      *
-     * @param String given input string
-     * @return string formatted for display
+     * @param s given input string
+     * @return String formatted for display.
      */
     def formatForDisplay(String s) {
         var result = ""
@@ -75,8 +75,8 @@ class FormattingExtensions {
      * Formats a string for improved output readability starting with capital.
      * For example federalStateName becomes Federal state name.
      *
-     * @param String given input string
-     * @return string formatted for display
+     * @param s given input string
+     * @return String formatted for display.
      */
     def formatForDisplayCapital(String s) {
         var result = ""
@@ -104,8 +104,8 @@ class FormattingExtensions {
     /**
      * Displays a boolean value as string ("true" or "false").
      *
-     * @param Boolean given input boolean
-     * @return string value of given boolean
+     * @param b given input boolean
+     * @return String value of given boolean.
      */
     def displayBool(Boolean b) {
     	if (b) "true"
