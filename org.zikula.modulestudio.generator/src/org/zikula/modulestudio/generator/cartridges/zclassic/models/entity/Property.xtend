@@ -95,7 +95,9 @@ class Property {
          «IF primaryKey»
              «IF !entity.hasCompositeKeys»«/* || entity.identifierStrategy == EntityIdentifierStrategy::ASSIGNED-»*/»
               * @ORM\Id
-              * @ORM\GeneratedValue«IF entity.identifierStrategy != EntityIdentifierStrategy::NONE»(strategy="«entity.identifierStrategy.asConstant()»")«ENDIF»
+              «IF entity.identifierStrategy != EntityIdentifierStrategy::NONE»
+               * @ORM\GeneratedValue(strategy="«entity.identifierStrategy.asConstant()»")
+              «ENDIF»
             «ELSE»
               * @ORM\Id
           «ENDIF»
