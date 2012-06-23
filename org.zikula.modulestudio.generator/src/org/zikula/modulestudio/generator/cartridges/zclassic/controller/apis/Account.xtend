@@ -91,7 +91,7 @@ class Account {
             «ENDIF»
             «IF !getAllAdminControllers.isEmpty»
                 if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
-                    $item[] = array(
+                    $items[] = array(
                         'url'   => ModUtil::url($this->name, 'admin', 'main'),
                         'title' => $this->__('«name.formatForDisplayCapital» Backend'),
                         'icon'   => 'configure.png',
