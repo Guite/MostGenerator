@@ -50,7 +50,7 @@ class Installer {
 
     def private installerBaseClass(Application it) '''
         /**
-         * Installer base class
+         * Installer base class.
          */
         class «appName»_Base_Installer extends Zikula_AbstractInstaller
         {
@@ -70,7 +70,7 @@ class Installer {
 
     def private interactiveBaseClass(Application it) '''
         /**
-         * Interactive installer base class
+         * Interactive installer base class.
          */
         class «appName»_Controller_Base_Interactiveinstaller extends Zikula_Controller_AbstractInteractiveInstaller
         {
@@ -290,7 +290,7 @@ class Installer {
 
     def private installerImpl(Application it) '''
         /**
-         * Installer implementation class
+         * Installer implementation class.
          */
         class «appName»_Installer extends «appName»_Base_Installer
         {
@@ -300,7 +300,7 @@ class Installer {
 
     def private interactiveImpl(Application it) '''
         /**
-         * Interactive installer implementation class
+         * Interactive installer implementation class.
          */
         class «appName»_Controller_Interactiveinstaller extends «appName»_Controller_Base_Interactiveinstaller
         {
