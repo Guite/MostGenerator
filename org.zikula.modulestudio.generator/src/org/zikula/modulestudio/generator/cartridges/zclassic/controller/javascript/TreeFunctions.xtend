@@ -33,6 +33,21 @@ class TreeFunctions {
     '''
 
     def private initTreeNodes(Application it) '''
+        var «prefix()»TreeContextMenu;
+
+        «prefix()»TreeContextMenu = Class.create(Zikula.UI.ContextMenu, {
+            selectMenuItem: function ($super, event, item, item_container) {
+                // open in new tab / window when right-clicked
+                if (event.isRightClick()) {
+                    item.callback(this.clicked, true);
+                    event.stop(); // close the menu
+                    return;
+                }
+                // open in current window when left-clicked
+                return $super(event, item, item_container);
+            }
+        });
+
         /**
          * Initialise event handlers for all nodes of a given tree root.
          */
@@ -48,7 +63,7 @@ class TreeFunctions {
                 elem.id = liRef.id + 'link';
 
                 // and use it to attach a context menu
-                contextMenu = new Control.ContextMenu(elem.id, { leftClick: true, animation: false });
+                contextMenu = new «prefix()»ContextMenu(elem.id, { leftClick: true, animation: false });
                 if (hasDisplay === true) {
                     contextMenu.addItem({
                         label: '<img src="/images/icons/extrasmall/kview.png" width="16" height="16" alt="' + Zikula.__('Display', 'module_«appName.formatForDB»_js') + '" /> '

@@ -53,7 +53,7 @@ class DisplayFunctions {
     def private initItemActions(Application it) '''
         var «prefix()»ContextMenu;
 
-        «prefix()»ContextMenu = Class.create(Control.ContextMenu, {
+        «prefix()»ContextMenu = Class.create(Zikula.UI.ContextMenu, {
             selectMenuItem: function ($super, event, item, item_container) {
                 // open in new tab / window when right-clicked
                 if (event.isRightClick()) {
@@ -75,7 +75,6 @@ class DisplayFunctions {
             triggerId = containerId + 'trigger';
 
             // attach context menu
-            //contextMenu = new Control.ContextMenu(triggerId, { leftClick: true, animation: false });
             contextMenu = new «prefix()»ContextMenu(triggerId, { leftClick: true, animation: false });
 
             // process normal links
