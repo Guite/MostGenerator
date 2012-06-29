@@ -161,11 +161,11 @@ class Config {
     def private dispatch init(ListVar it) '''
         // initialise list entries for the '«name.formatForDisplay»' setting
         «/*        $listEntries = $modVars['«name.formatForCode)»'];*/»
-        $modVars['«name.formatForCode»Items'] = array(«FOR item : items SEPARATOR ','»«item.init»«ENDFOR»
+        $modVars['«name.formatForCode»Items'] = array(«FOR item : items SEPARATOR ','»«item.itemDefinition»«ENDFOR»
         );
     '''
 
-    def private init(ListVarItem it) '''
+    def private itemDefinition(ListVarItem it) '''
             array('value' => '«name.formatForCode»', 'text' => '«name.formatForDisplayCapital»')
     '''
 

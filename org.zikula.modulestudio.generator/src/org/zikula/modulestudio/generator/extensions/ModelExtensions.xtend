@@ -237,7 +237,7 @@ class ModelExtensions {
     /**
      * Returns a list of all fields with leading = true of this entity.
      */
-    def getLeadingField(Entity it) {
+    def DerivedField getLeadingField(Entity it) {
         if (!getDerivedFields.isEmpty)
             getDerivedFields.findFirst(e|e.leading == true)
         else if (isInheriting)

@@ -161,7 +161,6 @@ class XmlImporter {
      *
      * @param it The {@link Entity} where this field belongs to.
      * @param fieldData Xml input data for the field.
-     * @return boolean whether everything was okay or not.
      */
     def private processField(Entity it, Element fieldData) {
         val fieldName = fieldData.getAttribute('name')
@@ -169,131 +168,128 @@ class XmlImporter {
         val fieldLength = fieldData.getAttribute('length')
         val fieldNullable = fieldData.getAttribute('nullable')
         val fieldDefault = fieldData.getAttribute('default')
-        if (fieldName.isEmpty || fieldType.isEmpty
-                || fieldNullable.isEmpty) {
-            false
-        }
-
-        if (fieldType.equals('BOOLEAN')) {
-            val field = factory.createBooleanField
-            setBasicFieldProperties(field, fieldData)
-            field.defaultValue = (if (!fieldDefault.isEmpty && fieldDefault.toLowerCase == 'true') 'true' else 'false')
-            fields.add(field)
-        } else if (fieldType.equals('INT') || fieldType.equals('TINYINT')
-                || fieldType.equals('SMALLINT')
-                || fieldType.equals('MEDIUMINT') || fieldType.equals('BIGINT')) {
-            val fieldAutoInc = fieldData.getAttribute('autoincrement')
-            val fieldPrimary = fieldData.getAttribute('primary')
-
-            if (fieldName.equals('uid') || fieldName.equals('userid')
-                    || fieldName.equals('user_id') || fieldName.equals('user')) {
-                val field = factory.createUserField
+        if (!fieldName.isEmpty && !fieldType.isEmpty
+                && !fieldNullable.isEmpty) {
+            if (fieldType.equals('BOOLEAN')) {
+                val field = factory.createBooleanField
                 setBasicFieldProperties(field, fieldData)
-                if (!fieldLength.isEmpty)
-                    field.length = Integer::parseInt(fieldLength)
-                else
-                    field.length = getIntegerLength(fieldType)
-                field.primaryKey = (fieldPrimary.equals('true') && fieldAutoInc.equals('true'))
-                if (!fieldDefault.isEmpty)
-                    field.defaultValue = Integer::parseInt(fieldDefault).toString
+                field.defaultValue = (if (!fieldDefault.isEmpty && fieldDefault.toLowerCase == 'true') 'true' else 'false')
                 fields.add(field)
-            } else {
-                val field = factory.createIntegerField
+            } else if (fieldType.equals('INT') || fieldType.equals('TINYINT')
+                    || fieldType.equals('SMALLINT')
+                    || fieldType.equals('MEDIUMINT') || fieldType.equals('BIGINT')) {
+                val fieldAutoInc = fieldData.getAttribute('autoincrement')
+                val fieldPrimary = fieldData.getAttribute('primary')
+
+                if (fieldName.equals('uid') || fieldName.equals('userid')
+                        || fieldName.equals('user_id') || fieldName.equals('user')) {
+                    val field = factory.createUserField
+                    setBasicFieldProperties(field, fieldData)
+                    if (!fieldLength.isEmpty)
+                        field.length = Integer::parseInt(fieldLength)
+                    else
+                        field.length = getIntegerLength(fieldType)
+                    field.primaryKey = (fieldPrimary.equals('true') && fieldAutoInc.equals('true'))
+                    if (!fieldDefault.isEmpty)
+                        field.defaultValue = Integer::parseInt(fieldDefault).toString
+                    fields.add(field)
+                } else {
+                    val field = factory.createIntegerField
+                    setBasicFieldProperties(field, fieldData)
+                    if (!fieldLength.isEmpty)
+                        field.length = Integer::parseInt(fieldLength)
+                    else
+                        field.length = getIntegerLength(fieldType)
+                        field.primaryKey = (fieldPrimary.equals('true') && fieldAutoInc.equals('true'))
+                    if (!fieldDefault.isEmpty)
+                        field.defaultValue = Integer::parseInt(fieldDefault).toString
+                    fields.add(field)
+                }
+            } else if (fieldType.equals('VARCHAR')) {
+                if (fieldName.equals('file') || fieldName.equals('filename')
+                        || fieldName.equals('image')
+                        || fieldName.equals('imagefile')
+                        || fieldName.equals('upload')
+                        || fieldName.equals('uploadfile')) {
+                    val field = factory.createUploadField
+                    setBasicFieldProperties(field, fieldData)
+                    if (!fieldLength.isEmpty) {
+                        field.length = Integer::parseInt(fieldLength)
+                    }
+                    fields.add(field)
+                } else if (fieldName.equals('email') || fieldName.equals('emailaddress')) {
+                    val field = factory.createEmailField
+                    setBasicFieldProperties(field, fieldData)
+                    if (!fieldLength.isEmpty)
+                        field.length = Integer::parseInt(fieldLength)
+                    if (!fieldDefault.isEmpty)
+                        field.defaultValue = fieldDefault
+                    fields.add(field)
+                } else if (fieldName.equals('url') || fieldName.equals('homepage')) {
+                    val field = factory.createUrlField
+                    setBasicFieldProperties(field, fieldData)
+                    if (!fieldLength.isEmpty)
+                        field.length = Integer::parseInt(fieldLength)
+                    if (!fieldDefault.isEmpty)
+                        field.defaultValue = fieldDefault
+                    fields.add(field)
+                } else {
+                    val field = factory.createStringField
+                    setBasicFieldProperties(field, fieldData)
+                    if (!fieldLength.isEmpty)
+                        field.length = Integer::parseInt(fieldLength)
+                    if (fieldName.equals('country')) {
+                        field.country = true
+                        field.nospace = true
+                    } else if (fieldName.equals('colour')) {
+                        field.htmlcolour = true
+                        field.nospace = true
+                    } else if (fieldName.equals('language')) {
+                        field.language = true
+                        field.nospace = true
+                    }
+                    if (!fieldDefault.isEmpty)
+                        field.defaultValue = fieldDefault
+                    fields.add(field)
+                }
+            } else if (fieldType.equals('TEXT') || fieldType.equals('LONGTEXT')) {
+                val field = factory.createTextField
                 setBasicFieldProperties(field, fieldData)
                 if (!fieldLength.isEmpty)
                     field.length = Integer::parseInt(fieldLength)
-                else
-                    field.length = getIntegerLength(fieldType)
-                field.primaryKey = (fieldPrimary.equals('true') && fieldAutoInc.equals('true'))
                 if (!fieldDefault.isEmpty)
-                    field.defaultValue = Integer::parseInt(fieldDefault).toString
+                    field.defaultValue = fieldDefault
+                fields.add(field)
+            } else if (fieldType.equals('NUMERIC')) {
+                val field = factory.createDecimalField
+                setBasicFieldProperties(field, fieldData)
+                if (!fieldLength.isEmpty)
+                    field.length = Integer::parseInt(fieldLength)
+                if (!fieldDefault.isEmpty)
+                    field.defaultValue = Float::parseFloat(fieldDefault).toString
+                    fields.add(field)
+            } else if (fieldType.equals('FLOAT')) {
+                val field = factory.createFloatField
+                setBasicFieldProperties(field, fieldData)
+                if (!fieldLength.isEmpty)
+                    field.length = Integer::parseInt(fieldLength)
+                if (!fieldDefault.isEmpty)
+                    field.defaultValue = Float::parseFloat(fieldDefault).toString
+                fields.add(field)
+            } else if (fieldType.equals('DATETIME')) {
+                val field = factory.createDatetimeField
+                setBasicFieldProperties(field, fieldData)
+                if (!fieldDefault.isEmpty)
+                    field.defaultValue = fieldDefault
+                fields.add(field)
+            } else if (fieldType.equals('DATE')) {
+                val field = factory.createDateField
+                setBasicFieldProperties(field, fieldData)
+                if (!fieldDefault.isEmpty)
+                    field.defaultValue = fieldDefault
                 fields.add(field)
             }
-        } else if (fieldType.equals('VARCHAR')) {
-            if (fieldName.equals('file') || fieldName.equals('filename')
-                    || fieldName.equals('image')
-                    || fieldName.equals('imagefile')
-                    || fieldName.equals('upload')
-                    || fieldName.equals('uploadfile')) {
-                val field = factory.createUploadField
-                setBasicFieldProperties(field, fieldData)
-                if (!fieldLength.isEmpty) {
-                    field.length = Integer::parseInt(fieldLength)
-                }
-                fields.add(field)
-            } else if (fieldName.equals('email') || fieldName.equals('emailaddress')) {
-                val field = factory.createEmailField
-                setBasicFieldProperties(field, fieldData)
-                if (!fieldLength.isEmpty)
-                    field.length = Integer::parseInt(fieldLength)
-                if (!fieldDefault.isEmpty)
-                    field.defaultValue = fieldDefault
-                fields.add(field)
-            } else if (fieldName.equals('url') || fieldName.equals('homepage')) {
-                val field = factory.createUrlField
-                setBasicFieldProperties(field, fieldData)
-                if (!fieldLength.isEmpty)
-                    field.length = Integer::parseInt(fieldLength)
-                if (!fieldDefault.isEmpty)
-                    field.defaultValue = fieldDefault
-                fields.add(field)
-            } else {
-                val field = factory.createStringField
-                setBasicFieldProperties(field, fieldData)
-                if (!fieldLength.isEmpty)
-                    field.length = Integer::parseInt(fieldLength)
-                if (fieldName.equals('country')) {
-                    field.country = true
-                    field.nospace = true
-                } else if (fieldName.equals('colour')) {
-                    field.htmlcolour = true
-                    field.nospace = true
-                } else if (fieldName.equals('language')) {
-                    field.language = true
-                    field.nospace = true
-                }
-                if (!fieldDefault.isEmpty)
-                    field.defaultValue = fieldDefault
-                fields.add(field)
-            }
-        } else if (fieldType.equals('TEXT') || fieldType.equals('LONGTEXT')) {
-            val field = factory.createTextField
-            setBasicFieldProperties(field, fieldData)
-            if (!fieldLength.isEmpty)
-                field.length = Integer::parseInt(fieldLength)
-            if (!fieldDefault.isEmpty)
-                field.defaultValue = fieldDefault
-            fields.add(field)
-        } else if (fieldType.equals('NUMERIC')) {
-            val field = factory.createDecimalField
-            setBasicFieldProperties(field, fieldData)
-            if (!fieldLength.isEmpty)
-                field.length = Integer::parseInt(fieldLength)
-            if (!fieldDefault.isEmpty)
-                field.defaultValue = Float::parseFloat(fieldDefault).toString
-            fields.add(field)
-        } else if (fieldType.equals('FLOAT')) {
-            val field = factory.createFloatField
-            setBasicFieldProperties(field, fieldData)
-            if (!fieldLength.isEmpty)
-                field.length = Integer::parseInt(fieldLength)
-            if (!fieldDefault.isEmpty)
-                field.defaultValue = Float::parseFloat(fieldDefault).toString
-            fields.add(field)
-        } else if (fieldType.equals('DATETIME')) {
-            val field = factory.createDatetimeField
-            setBasicFieldProperties(field, fieldData)
-            if (!fieldDefault.isEmpty)
-                field.defaultValue = fieldDefault
-            fields.add(field)
-        } else if (fieldType.equals('DATE')) {
-            val field = factory.createDateField
-            setBasicFieldProperties(field, fieldData)
-            if (!fieldDefault.isEmpty)
-                field.defaultValue = fieldDefault
-            fields.add(field)
         }
-        true
     }
 
     /**
@@ -303,12 +299,14 @@ class XmlImporter {
      * @return integer The proposed length for this integer field.
      */
     def private getIntegerLength(String fieldType) {
-        if (fieldType.equals('INT')) 4
-        if (fieldType.equals('TINYINT')) 1
-        if (fieldType.equals('SMALLINT')) 2
-        if (fieldType.equals('MEDIUMINT')) 4
-        if (fieldType.equals('BIGINT')) 8
-        10
+        var result = 0
+        if (fieldType.equals('INT')) result = 4
+        if (fieldType.equals('TINYINT')) result = 1
+        if (fieldType.equals('SMALLINT')) result = 2
+        if (fieldType.equals('MEDIUMINT')) result = 4
+        if (fieldType.equals('BIGINT')) result = 8
+        if (result == 0) result = 10
+        result
     }
 
     /**
@@ -343,17 +341,19 @@ class XmlImporter {
      * @return string The field name in mixed case.
      */
     def private convertToMixedCase(String fieldName) {
+        var result = ""
         if (!fieldName.contains('_')) {
-            fieldName
+            result = fieldName
+        } else {
+            val fieldNameParts = fieldName.split('_')
+            val sb = new StringBuilder()
+            for (fieldNamePart : fieldNameParts) {
+                sb.append(fieldNamePart.substring(0, 1).toUpperCase)
+                sb.append(fieldNamePart.substring(1).toLowerCase)
+            }
+            result = sb.toString
         }
-
-        val fieldNameParts = fieldName.split('_')
-        val sb = new StringBuilder()
-        for (fieldNamePart : fieldNameParts) {
-            sb.append(fieldNamePart.substring(0, 1).toUpperCase)
-            sb.append(fieldNamePart.substring(1).toLowerCase)
-        }
-        sb.toString
+        result
     }
 
     /**
@@ -366,19 +366,17 @@ class XmlImporter {
     def private processIndex(Entity it, Element indexData) {
         val indexName = indexData.getAttribute('name')
         val indexFieldList = indexData.getAttribute('fields')
-        if (indexName.isEmpty || indexFieldList.isEmpty) {
-            false
+        if (!indexName.isEmpty && !indexFieldList.isEmpty) {
+            val indexFields = indexFieldList.split(',')
+            val index = factory.createEntityIndex
+            index.name = indexName
+            for (indexField : indexFields) {
+                val indexItem = factory.createEntityIndexItem
+                indexItem.name = indexField
+                index.items.add(indexItem)
+            }
+            indexes.add(index)
         }
-        val indexFields = indexFieldList.split(',')
-        val index = factory.createEntityIndex
-        index.name = indexName
-        for (indexField : indexFields) {
-            val indexItem = factory.createEntityIndexItem
-            indexItem.name = indexField
-            index.items.add(indexItem)
-        }
-        indexes.add(index)
-        true
     }
 
     /**

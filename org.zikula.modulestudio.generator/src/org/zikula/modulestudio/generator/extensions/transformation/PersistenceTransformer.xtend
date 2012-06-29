@@ -23,7 +23,7 @@ class PersistenceTransformer {
     @Inject extension ModelExtensions = new ModelExtensions()
 
     /**
-     * Transformation entrypoint consuming the application instance.
+     * Transformation entry point consuming the application instance.
      *
      * @param it The given {@link Application} instance.
      */
@@ -50,18 +50,9 @@ class PersistenceTransformer {
      * Adds a primary key to a given entity.
      * 
      * @param entity The given {@link Entity} instance
-     * @return Boolean Whether the insertion was successful or not.
      */
     def private addPrimaryKey(Entity entity) {
-        try {
-            entity.fields.add(0,
-                    createIdColumn('', true))
-        } catch (Exception e) {
-            false
-        } finally {
-            // nothing to do here (yet)
-        }
-        true
+        entity.fields.add(0, createIdColumn('', true))
     }
 
     /**
@@ -69,7 +60,7 @@ class PersistenceTransformer {
      *
      * @param colName The column name.
      * @param isPrimary Whether the field should be primary or not.
-     * @return Boolean Whether the insertion was successful or not.
+     * @return IntegerField The created column object.
      */
     def private createIdColumn(String colName, Boolean isPrimary) {
         val factory = new ModulestudioFactoryImpl()
