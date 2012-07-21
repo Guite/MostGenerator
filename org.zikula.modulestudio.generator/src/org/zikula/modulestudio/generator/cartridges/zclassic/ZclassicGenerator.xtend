@@ -13,7 +13,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Installe
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Listeners
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Uploads
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Workflow
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Tag
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Account
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.BlockList
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Cache
@@ -129,9 +128,9 @@ println('TODO: progress monitor')
             println('Generating upload handlers')
             new Uploads().generate(it, fsa)
         }
-        pm.newTask('Additions: Tag support')
+        /*pm.newTask('Additions: Tag support')
         println('Generating tag support')
-        new Tag().generate(it, fsa)
+        new Tag().generate(it, fsa)*/
         pm.newTask('Additions: Translations')
         println('Generating translations')
         new Translations().generate(it, fsa)
