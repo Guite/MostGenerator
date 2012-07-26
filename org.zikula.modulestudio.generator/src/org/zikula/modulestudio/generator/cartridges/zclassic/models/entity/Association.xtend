@@ -27,8 +27,8 @@ class Association {
      * If we have an outgoing association useTarget is true; for an incoming one it is false.
      */
     def generate(JoinRelationship it, Boolean useTarget) {
-        val sourceName = getRelationAliasName(false)
-        val targetName = getRelationAliasName(true)
+        val sourceName = getRelationAliasName(false).toFirstLower
+        val targetName = getRelationAliasName(true).toFirstLower
         val entityClass = (if (useTarget) target else source).implClassModelEntity
         directionSwitch(useTarget, sourceName, targetName, entityClass)
     }
