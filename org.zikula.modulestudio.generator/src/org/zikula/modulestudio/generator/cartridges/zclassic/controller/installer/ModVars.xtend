@@ -23,32 +23,35 @@ class ModVars {
     	}
     }
 
-    def valSession2Mod(Variable it) {
+    def dispatch valSession2Mod(Variable it) {
         switch (it) {
             BoolVar: '''«IF value == 'true'»true«ELSE»false«ENDIF»'''
             IntVar: value
-            ListVar: '''«IF it.multiple»array(«ENDIF»«FOR item : it.getDefaultItems SEPARATOR ', '»«valSession2Mod»«ENDFOR»«IF it.multiple»)«ENDIF»'''
-            ListVarItem: '''«IF it.^default == true»'«name.formatForCode»'«ENDIF»'''
+            ListVar: '''«IF it.multiple»array(«ENDIF»«FOR item : it.getDefaultItems SEPARATOR ', '»«item.valSession2Mod»«ENDFOR»«IF it.multiple»)«ENDIF»'''
             default: '\'' + value + '\''
     	}
     }
 
-    def valDirect2Mod(Variable it) {
+    def dispatch valSession2Mod(ListVarItem it) '''«IF it.^default == true»'«name.formatForCode»'«ENDIF»'''
+
+    def dispatch valDirect2Mod(Variable it) {
         switch (it) {
             BoolVar: '''«IF value == 'true'»true«ELSE»false«ENDIF»'''
             IntVar: value
-            ListVar: '''«IF it.multiple»array(«ENDIF»«FOR item : it.getDefaultItems SEPARATOR ', '»«valDirect2Mod»«ENDFOR»«IF it.multiple»)«ENDIF»'''
-            ListVarItem: '\'' + name.formatForCode + '\''
+            ListVar: '''«IF it.multiple»array(«ENDIF»«FOR item : it.getDefaultItems SEPARATOR ', '»«item.valDirect2Mod»«ENDFOR»«IF it.multiple»)«ENDIF»'''
             default: '\'' + value + '\''
     	}
     }
+
+    def dispatch valDirect2Mod(ListVarItem it) ''' '«name.formatForCode»' '''
 
     // for interactive installer
-    def valForm2SessionDefault(Variable it) {
+    def dispatch valForm2SessionDefault(Variable it) {
         switch (it) {
-            ListVar: '''«IF it.multiple»serialize(array(«ENDIF»«FOR item : it.getDefaultItems SEPARATOR ', '»«valForm2SessionDefault»«ENDFOR»«IF it.multiple»))«ENDIF»'''
-            ListVarItem: '\'' + name.formatForCode + '\''
+            ListVar: '''«IF it.multiple»serialize(array(«ENDIF»«FOR item : it.getDefaultItems SEPARATOR ', '»«item.valForm2SessionDefault»«ENDFOR»«IF it.multiple»))«ENDIF»'''
             default: '\'' + value.formatForCode + '\''
     	}
     }
+
+    def dispatch valForm2SessionDefault(ListVarItem it) ''' '«name.formatForCode»' '''
 }
