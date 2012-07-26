@@ -5,19 +5,16 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class TemplateHeaders {
     @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
 
     def generate(Application it, IFileSystemAccess fsa) {
-    	if (hasUploads)
-            fsa.generateFile(viewPluginFilePath('function', 'TemplateHeaders'), templateHeadersFile)
+        fsa.generateFile(viewPluginFilePath('function', 'TemplateHeaders'), templateHeadersFile)
     }
 
     def private templateHeadersFile(Application it) '''
