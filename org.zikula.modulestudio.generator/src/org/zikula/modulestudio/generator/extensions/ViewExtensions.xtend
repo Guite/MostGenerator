@@ -44,8 +44,8 @@ class ViewExtensions {
      */
     def private panelWeight(Entity it, String page) {
         var weight = 1
-        if (fields.size > 5) weight = weight + 1
-        if (fields.size > 10) weight = weight + 1
+        //if (fields.size > 5) weight = weight + 1
+        //if (fields.size > 10) weight = weight + 1
         if (page == 'edit' && incoming.size > 1) weight = weight + 1
         if (page == 'edit' && outgoing.size > 1) weight = weight + 1
 
