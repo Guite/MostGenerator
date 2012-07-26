@@ -93,7 +93,7 @@ class Extensions {
             /**
              * The coordinate's latitude part.
              *
-             * @ORM\Column(type="decimal", precision=7, scale=3)
+             * @ORM\Column(type="decimal", precision=10, scale=7)
              * @var decimal $latitude.
              */
             protected $latitude = 0.00;
@@ -101,7 +101,7 @@ class Extensions {
             /**
              * The coordinate's longitude part.
              *
-             * @ORM\Column(type="decimal", precision=7, scale=3)
+             * @ORM\Column(type="decimal", precision=10, scale=7)
              * @var decimal $longitude.
              */
             protected $longitude = 0.00;
