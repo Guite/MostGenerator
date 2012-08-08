@@ -14,6 +14,11 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
+import de.guite.modulestudio.metamodel.modulestudio.DerivedField
+import de.guite.modulestudio.metamodel.modulestudio.ListField
+import de.guite.modulestudio.metamodel.modulestudio.DateField
+import de.guite.modulestudio.metamodel.modulestudio.DatetimeField
+import de.guite.modulestudio.metamodel.modulestudio.TimeField
 
 class Relations {
     @Inject extension ControllerExtensions = new ControllerExtensions()
@@ -43,12 +48,12 @@ class Relations {
             «ENDIF»
             «IF controller.hasActions('display')»
                 {if !$nolink}
-                    <a href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)»}" title="{$item.«leadingField.name.formatForCode»|replace:"\"":""}">
+                    <a href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)»}" title="{$item.«leadingField.displayLeadingField»|replace:"\"":""}">
                 {/if}
             «ENDIF»
             «val leadingField = getLeadingField»
             «IF leadingField != null»
-                {$item.«leadingField.name.formatForCode»}
+                {$item.«leadingField.displayLeadingField»}
             «ELSE»
                 {gt text='«name.formatForDisplayCapital»'}
             «ENDIF»
@@ -93,6 +98,16 @@ class Relations {
                 {/if}
             «ENDIF»
         ''')
+    }
+
+    def private displayLeadingField(DerivedField it) {
+        switch (it) {
+            ListField: '''«it.name.formatForCode»|«entity.container.application.appName.formatForDB»GetListEntry:'«entity.name.formatForCode»':'«name.formatForCode»'|safetext'''
+            DateField: '''«it.name.formatForCode»|dateformat:"datebrief"'''
+            DatetimeField: '''«it.name.formatForCode»|dateformat:"datetimebrief"'''
+            TimeField: '''«it.name.formatForCode»|dateformat:"timebrief"'''
+            default: '''«it.name.formatForCode»'''
+        }
     }
 
     def displayRelatedItems(JoinRelationship it, String appName, Controller controller, Entity relatedEntity) '''
