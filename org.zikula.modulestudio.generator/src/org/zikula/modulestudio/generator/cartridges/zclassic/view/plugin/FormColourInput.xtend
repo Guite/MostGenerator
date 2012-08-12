@@ -162,7 +162,7 @@ class FormColourInput {
 
                 if (strlen($this->text) > 0) {
                     $regex = '/^#?(([a-fA-F0-9]{3}){1,2})$/';
-                    $result = preg_match($regex, $this->entity[$this->id]);
+                    $result = preg_match($regex, $this->text);
                     if (!$result) {
                         $this->setError(__('Error! Invalid colour.'));
                         return false;
