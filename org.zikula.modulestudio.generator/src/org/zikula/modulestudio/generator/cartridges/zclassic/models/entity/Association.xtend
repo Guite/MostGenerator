@@ -216,19 +216,21 @@ class Association {
    	    && !unique && nullable && onDelete == '' && onUpdate == '') ''' * @ORM\JoinTable(name="«foreignTableName»")'''
         else ''' * @ORM\JoinTable(name="«foreignTableName»",
         «joinTableDetails(useTarget)»
-             * )'''
+         * )'''
     }
 
-    def private joinTableDetails(JoinRelationship it, Boolean useTarget) {
-        val joinedEntityLocal = { if (useTarget) source else target }
-        val joinedEntityForeign = { if (useTarget) target else source }
-        val joinColumnsLocal = { if (useTarget) getSourceFields else getTargetFields }
-        val joinColumnsForeign = { if (useTarget) getTargetFields else getSourceFields }
-        if (joinColumnsForeign.size > 1) joinColumnsMultiple(useTarget, joinedEntityLocal, joinColumnsLocal)
-        else joinColumnsSingle(useTarget, joinedEntityLocal, joinColumnsLocal)
-        if (joinColumnsForeign.size > 1) ''' *      inverseJoinColumns={«FOR joinColumnForeign : joinColumnsForeign SEPARATOR ', '»«joinColumn(joinColumnForeign, joinedEntityForeign.getFirstPrimaryKey.name.formatForDB, useTarget)»«ENDFOR»}'''
-        else ''' *      inverseJoinColumns={«joinColumn(joinColumnsForeign.head, joinedEntityForeign.getFirstPrimaryKey.name.formatForDB, useTarget)»}'''
-    }
+    def private joinTableDetails(JoinRelationship it, Boolean useTarget) '''
+        «val joinedEntityLocal = { if (useTarget) source else target }»
+        «val joinedEntityForeign = { if (useTarget) target else source }»
+        «val joinColumnsLocal = { if (useTarget) getSourceFields else getTargetFields }»
+        «val joinColumnsForeign = { if (useTarget) getTargetFields else getSourceFields }»
+        «IF (joinColumnsForeign.size > 1)»«joinColumnsMultiple(useTarget, joinedEntityLocal, joinColumnsLocal)»
+        «ELSE»«joinColumnsSingle(useTarget, joinedEntityLocal, joinColumnsLocal)»
+        «ENDIF»
+        «IF (joinColumnsForeign.size > 1)» *      inverseJoinColumns={«FOR joinColumnForeign : joinColumnsForeign SEPARATOR ', '»«joinColumn(joinColumnForeign, joinedEntityForeign.getFirstPrimaryKey.name.formatForDB, useTarget)»«ENDFOR»}
+        «ELSE» *      inverseJoinColumns={«joinColumn(joinColumnsForeign.head, joinedEntityForeign.getFirstPrimaryKey.name.formatForDB, useTarget)»}
+        «ENDIF»
+    '''
 
     def private joinColumnsMultiple(JoinRelationship it, Boolean useTarget, Entity joinedEntityLocal, String[] joinColumnsLocal) ''' *      joinColumns={«FOR joinColumnLocal : joinColumnsLocal SEPARATOR ', '»«joinColumn(joinColumnLocal, joinedEntityLocal.getFirstPrimaryKey.name.formatForDB, !useTarget)»«ENDFOR»},'''
 
