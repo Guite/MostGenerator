@@ -282,9 +282,13 @@ class ModelExtensions {
      * At the moment instances of ArrayField and ObjectField are excluded.
      */
     def getEditableFields(Entity it) {
-        val nonPkFields = getDerivedFields.filter(e|!e.primaryKey)
+        var fields = getDerivedFields
+        if (it.identifierStrategy != EntityIdentifierStrategy::NONE) {
+            fields = fields.filter(e|!e.primaryKey)
+        }
+
         var ArrayList<DerivedField> wantedFields = newArrayList()
-        for (field : nonPkFields) {
+        for (field : fields) {
             if (!(field instanceof ArrayField || field instanceof ObjectField)) {
                 wantedFields.add(field)
             }
