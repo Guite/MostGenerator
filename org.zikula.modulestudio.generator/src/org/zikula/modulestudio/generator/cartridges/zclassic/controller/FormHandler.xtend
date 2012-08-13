@@ -1027,7 +1027,7 @@ class FormHandler {
                 $this->objectType = '«name.formatForCode»';
                 $this->objectTypeCapital = '«name.formatForCodeCapital»';
                 $this->objectTypeLower = '«name.formatForDB»';
-                $this->objectTypeLowerMultiple = '«nameMultiple.formatForCode»';
+                $this->objectTypeLowerMultiple = '«nameMultiple.formatForDB»';
 
                 $this->hasPageLockSupport = «hasPageLockSupport.displayBool»;
                 «IF app.hasAttributableEntities»
