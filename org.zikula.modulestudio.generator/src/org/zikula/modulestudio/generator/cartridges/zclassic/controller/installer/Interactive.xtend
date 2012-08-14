@@ -39,7 +39,7 @@ class Interactive {
             $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
             // fetch and return the appropriate template
-            return $this->view->fetch('«appName»_init_interactive.tpl');
+            return $this->view->fetch('init/interactive.tpl');
         }
     '''
 
@@ -56,7 +56,7 @@ class Interactive {
             $submit = $this->request->request->get('submit', null);
             if (!$submit) {
                 // fetch and return the appropriate template
-                return $this->view->fetch('«appName»_init_step2.tpl');
+                return $this->view->fetch('init/step2.tpl');
             }
 
             $this->checkCsrfToken();
@@ -91,7 +91,7 @@ class Interactive {
             $this->view->assign('activate', $activate);
 
             // fetch and return the appropriate template
-            return $this->view->fetch('«appName»_init_step3.tpl');
+            return $this->view->fetch('init/step3.tpl');
         }
     '''
 
@@ -122,7 +122,7 @@ class Interactive {
             $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
             // fetch and return the appropriate template
-            return $this->view->fetch('«appName»_init_delete.tpl');
+            return $this->view->fetch('init/delete.tpl');
         }
     '''
 }
