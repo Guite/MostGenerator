@@ -71,7 +71,7 @@ class Relations {
         «val useTarget = !incoming»
         «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
         «val many = it.isManySide(useTarget)»
-        «val uniqueNameForJs = getUniqueRelationNameForJs(container.application, (if (!incoming) target else source), false, incoming, relationAliasName)»
+        «val uniqueNameForJs = getUniqueRelationNameForJs(container.application, (if (incoming) target else source), false, incoming, relationAliasName)»
         // reassign the «(if (incoming) source else target).getEntityNameSingularPlural(many).formatForDisplay» eventually chosen by the user
         $selectedRelations['«relationAliasName.toFirstLower»'] = «retrieveRelatedObjectsCall((if (incoming) source else target).name, uniqueNameForJs, many)»;
     '''
