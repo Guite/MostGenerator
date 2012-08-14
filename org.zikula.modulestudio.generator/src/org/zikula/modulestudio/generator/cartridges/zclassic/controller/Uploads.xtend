@@ -160,8 +160,8 @@ class Uploads {
             // retrieve the final file name
             $fileName = $fileData[$fieldName]['name'];
             $fileNameParts = explode('.', $fileName);
-            $extension = $fileNameParts[count($fileNameParts) - 1];
-            $extension = str_replace('jpeg', 'jpg', strtolower($extension));
+            $extension = strtolower($fileNameParts[count($fileNameParts) - 1]);
+            $extension = str_replace('jpeg', 'jpg', $extension);
             $fileNameParts[count($fileNameParts) - 1] = $extension;
             $fileName = implode('.', $fileNameParts);
 
@@ -209,8 +209,8 @@ class Uploads {
             // extract file extension
             $fileName = $file['name'];
             $fileNameParts = explode('.', $fileName);
-            $extension = $fileNameParts[count($fileNameParts) - 1];
-            $extension = str_replace('jpeg', 'jpg', strtolower($extension));
+            $extension = strtolower($fileNameParts[count($fileNameParts) - 1]);
+            $extension = str_replace('jpeg', 'jpg', $extension);
 
             // validate extension
             $isValidExtension = $this->isAllowedFileExtension($objectType, $fieldName, $extension);
@@ -264,7 +264,7 @@ class Uploads {
 
             $extensionarr = explode('.', $fileName);
             $meta = array();
-            $meta['extension'] = $extensionarr[count($extensionarr) - 1];
+            $meta['extension'] = strtolower($extensionarr[count($extensionarr) - 1]);
             $meta['size'] = filesize($filePath);
             $meta['isImage'] = (in_array($meta['extension'], $this->imageFileTypes) ? true : false);
 
