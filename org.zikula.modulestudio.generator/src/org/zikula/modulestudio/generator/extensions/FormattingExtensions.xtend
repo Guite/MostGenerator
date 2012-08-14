@@ -18,13 +18,13 @@ class FormattingExtensions {
     }
 
     /**
-     * Formats a string for usage in generated source code.
+     * Formats a string for usage in generated source code starting not with capital.
      *
      * @param s given input string
      * @return String formatted for source code usage.
      */
     def formatForCode(String s) {
-        s.replaceSpecialChars
+        s.replaceSpecialChars.toFirstLower
     }
 
     /**
@@ -38,7 +38,7 @@ class FormattingExtensions {
     }
 
     /**
-     * Formats a string for usage in generated source code in lowercase.
+     * Formats a string for usage in generated source code in lower case.
      *
      * @param s given input string
      * @return String formatted for database usage.
@@ -48,8 +48,8 @@ class FormattingExtensions {
     }
 
     /**
-     * Formats a string for improved output readability.
-     * For example federalStateName becomes federal state name.
+     * Formats a string for improved output readability starting not with capital.
+     * For example FederalStateName becomes federal state name.
      *
      * @param s given input string
      * @return String formatted for display.
@@ -68,7 +68,7 @@ class FormattingExtensions {
             result = result + sc.toLowerCase
         }
 
-        result.trim
+        result.trim.toFirstLower
     }
 
     /**
@@ -79,26 +79,7 @@ class FormattingExtensions {
      * @return String formatted for display.
      */
     def formatForDisplayCapital(String s) {
-        var result = ""
-        val helpString = replaceSpecialChars(s)
-
-        val helpChars = helpString.toCharArray
-
-        var i = 0
-        for (c : helpChars) {
-            val sc = c.toString
-            if (sc.matches("[A-Z]")) {
-                result = result + " "
-            }
-            if (i == 0) {
-                result = result + sc.toUpperCase
-            } else {
-                result = result + sc.toLowerCase
-            }
-            i = i + 1
-        }
-
-        result.trim
+        s.formatForDisplay.toFirstUpper
     }
 
     /**

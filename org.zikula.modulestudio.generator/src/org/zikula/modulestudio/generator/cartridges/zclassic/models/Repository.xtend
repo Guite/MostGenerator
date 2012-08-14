@@ -96,7 +96,7 @@ class Repository {
             /**
              * @var string The default sorting field/expression.
              */
-            protected $defaultSortingField = '«(if (hasSortableFields) getSortableFields.head else getLeadingField).name.formatForCode.toFirstLower»';
+            protected $defaultSortingField = '«(if (hasSortableFields) getSortableFields.head else getLeadingField).name.formatForCode»';
 
             /**
              * Retrieves an array with all fields which can be used for sorting instances.
@@ -937,14 +937,14 @@ class Repository {
             DerivedField : {
                 val joins = entity.incoming.filter(typeof(JoinRelationship)).filter(e|formatForDB(e.getSourceFields.head) == name.formatForDB)
                 if (!joins.isEmpty) '''
-                     '«joins.head.source.name.formatForCode.toFirstLower»',
+                     '«joins.head.source.name.formatForCode»',
                      '''
                 else '''
-                     '«name.formatForCode.toFirstLower»',
+                     '«name.formatForCode»',
                      '''
             }
             CalculatedField: '''
-                     '«name.formatForCode.toFirstLower»',
+                     '«name.formatForCode»',
                      '''
         }
     }

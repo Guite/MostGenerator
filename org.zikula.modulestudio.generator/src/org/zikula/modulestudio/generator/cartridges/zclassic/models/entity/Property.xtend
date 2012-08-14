@@ -58,24 +58,24 @@ class Property {
          «IF translatable»
           * @Gedmo\Translatable
          «ENDIF»
-         * @var array $«name.formatForCode.toFirstLower»Meta.
+         * @var array $«name.formatForCode»Meta.
          */
-        protected $«name.formatForCode.toFirstLower.toFirstLower»Meta = array();
+        protected $«name.formatForCode»Meta = array();
 
         «persistentProperty(name.formatForCode, fieldTypeAsString, '')»
         /**
-         * The full path to the «name.formatForDisplay.toFirstLower».
+         * The full path to the «name.formatForDisplay».
          *
-         * @var string $«name.formatForCode.toFirstLower»FullPath.
+         * @var string $«name.formatForCode»FullPath.
          */
-        protected $«name.formatForCode.toFirstLower»FullPath = '';
+        protected $«name.formatForCode»FullPath = '';
 
         /**
-         * Full «name.formatForDisplay.toFirstLower» path as url.
+         * Full «name.formatForDisplay» path as url.
          *
-         * @var string $«name.formatForCode.toFirstLower»FullPathUrl.
+         * @var string $«name.formatForCode»FullPathUrl.
          */
-        protected $«name.formatForCode.toFirstLower»FullPathUrl = '';
+        protected $«name.formatForCode»FullPathUrl = '';
     '''
 
     def dispatch persistentProperty(ArrayField it) {
@@ -105,9 +105,9 @@ class Property {
         «new Extensions().columnExtensions(it)»
          * @ORM\Column(«persistentPropertyImpl(type)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
         «persistentPropertyAdditions»
-         * @var «type» $«name.toFirstLower».
+         * @var «type» $«name.formatForCode».
          */
-        «modifier» $«name.toFirstLower»«IF init != ''»«init»«ELSE» = «defaultFieldData»«ENDIF»;
+        «modifier» $«name.formatForCode»«IF init != ''»«init»«ELSE» = «defaultFieldData»«ENDIF»;
         «/* this last line is on purpose */»
     '''
 
