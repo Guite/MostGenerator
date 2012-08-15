@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 
 class Theme {
 
-    def generate(Application it) '''
+    def generate(Application it, Boolean isBase) '''
         /**
          * Listener for the `theme.preinit` event.
          *
@@ -16,6 +16,9 @@ class Theme {
          */
         public static function preInit(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::preInit($event);
+            «ENDIF»
         }
 
         /**
@@ -28,6 +31,9 @@ class Theme {
          */
         public static function init(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::init($event);
+            «ENDIF»
         }
 
         /**
@@ -40,6 +46,9 @@ class Theme {
          */
         public static function loadConfig(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::loadConfig($event);
+            «ENDIF»
         }
 
         /**
@@ -53,6 +62,9 @@ class Theme {
          */
         public static function preFetch(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::preFetch($event);
+            «ENDIF»
         }
 
         /**
@@ -66,6 +78,9 @@ class Theme {
          */
         public static function postFetch(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::postFetch($event);
+            «ENDIF»
         }
     '''
 }

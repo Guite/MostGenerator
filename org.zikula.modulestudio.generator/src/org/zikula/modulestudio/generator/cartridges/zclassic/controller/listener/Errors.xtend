@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 
 class Errors {
 
-    def generate(Application it) '''
+    def generate(Application it, Boolean isBase) '''
         /**
          * Listener for the `setup.errorreporting` event.
          *
@@ -16,6 +16,9 @@ class Errors {
          */
         public static function setupErrorReporting(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::setupErrorReporting($event);
+            «ENDIF»
         }
 
         /**
@@ -28,6 +31,9 @@ class Errors {
          */
         public static function systemError(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::systemError($event);
+            «ENDIF»
         }
     '''
 }

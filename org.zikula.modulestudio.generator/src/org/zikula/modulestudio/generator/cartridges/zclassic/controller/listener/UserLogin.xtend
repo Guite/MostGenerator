@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 
 class UserLogin {
 
-    def generate(Application it) '''
+    def generate(Application it, Boolean isBase) '''
         /**
          * Listener for the `module.users.ui.login.started` event.
          *
@@ -26,6 +26,9 @@ class UserLogin {
          */
         public static function started(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::started($event);
+            «ENDIF»
         }
 
         /**
@@ -143,6 +146,9 @@ class UserLogin {
          */
         public static function veto(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::veto($event);
+            «ENDIF»
         }
 
         /**
@@ -180,6 +186,9 @@ class UserLogin {
          */
         public static function succeeded(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::succeeded($event);
+            «ENDIF»
         }
 
         /**
@@ -209,6 +218,9 @@ class UserLogin {
          */
         public static function failed(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::failed($event);
+            «ENDIF»
         }
     '''
 }

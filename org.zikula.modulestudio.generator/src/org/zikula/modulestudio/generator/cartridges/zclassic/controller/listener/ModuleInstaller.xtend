@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 
 class ModuleInstaller {
 
-    def generate(Application it) '''
+    def generate(Application it, Boolean isBase) '''
         /**
          * Listener for the `installer.module.installed` event.
          *
@@ -15,6 +15,9 @@ class ModuleInstaller {
          */
         public static function moduleInstalled(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::moduleInstalled($event);
+            «ENDIF»
         }
 
         /**
@@ -27,6 +30,9 @@ class ModuleInstaller {
          */
         public static function moduleUpgraded(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::moduleUpgraded($event);
+            «ENDIF»
         }
 
         /**
@@ -39,18 +45,24 @@ class ModuleInstaller {
          */
         public static function moduleUninstalled(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::moduleUninstalled($event);
+            «ENDIF»
         }
 
         /**
          * Listener for the `installer.subscriberarea.uninstalled` event.
          *
          * Called after a hook subscriber area is unregistered.
-         * Receives args['areaid'] as the areaId.  Use this to remove orphan data associated with this area.
+         * Receives args['areaid'] as the areaId. Use this to remove orphan data associated with this area.
          *
          * @param Zikula_Event $event The event instance.
          */
         public static function subscriberAreaUninstalled(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::subscriberAreaUninstalled($event);
+            «ENDIF»
         }
     '''
 }

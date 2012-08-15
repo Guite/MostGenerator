@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 
 class UserRegistration {
 
-    def generate(Application it) '''
+    def generate(Application it, Boolean isBase) '''
         /**
          * Listener for the `module.users.ui.registration.started` event.
          *
@@ -14,6 +14,9 @@ class UserRegistration {
          */
         public static function started(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::started($event);
+            «ENDIF»
         }
 
         /**
@@ -86,6 +89,9 @@ class UserRegistration {
          */
         public static function succeeded(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::succeeded($event);
+            «ENDIF»
         }
 
         /**
@@ -95,22 +101,29 @@ class UserRegistration {
          * The next step for the user is a page that displays the status, including any possible error messages.
          * The event subject contains null.
          * The arguments of the event are as follows:
-         * `'redirecturl'` will initially contain an empty string. This can be modified to change where the user is redirected following the failed login.
+         * `'redirecturl'` will initially contain an empty string. This can be modified to change where the user
+         * is redirected following the failed login.
          *
          * __The `'redirecturl'` argument__ controls where the user will be directed following a failed log-in attempt.
-         * Initially, it will be an empty string, indicating that the user will be redirected to a page that displays status and error information.
+         * Initially, it will be an empty string, indicating that the user will be redirected to a page
+         * that displays status and error information.
          *
          * If a `'redirecturl'` is specified by any entity intercepting and processing the `user.login.failed` event, then
          * the user will be redirected to the URL provided, instead of being redirected to the status/error display page.
-         * An event handler should carefully consider whether changing the `'redirecturl'` argument is appropriate. First, the 
-         * user may be expecting to be directed to a page containing information on why the registration failed. Being redirected to a different 
-         * page might be disorienting to the user. Second, all event handlers are being notified of this event. This is not a 
-         * `notify()` event. An event handler that was notified prior to the current handler may already have changed the `'redirecturl'`.
+         * An event handler should carefully consider whether changing the `'redirecturl'` argument is appropriate.
+         * First, the user may be expecting to be directed to a page containing information on why the registration failed.
+         * Being redirected to a different page might be disorienting to the user.
+         * Second, all event handlers are being notified of this event.
+         * This is not a `notify()` event.
+         * An event handler that was notified prior to the current handler may already have changed the `'redirecturl'`.
          *
          * @param Zikula_Event $event The event instance.
          */
         public static function failed(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::failed($event);
+            «ENDIF»
         }
 
         /**
@@ -126,6 +139,9 @@ class UserRegistration {
          */
         public static function create(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::create($event);
+            «ENDIF»
         }
 
         /**
@@ -139,6 +155,9 @@ class UserRegistration {
          */
         public static function update(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::update($event);
+            «ENDIF»
         }
 
         /**
@@ -153,6 +172,9 @@ class UserRegistration {
          */
         public static function delete(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::delete($event);
+            «ENDIF»
         }
     '''
 }

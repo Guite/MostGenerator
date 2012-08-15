@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 
 class Group {
 
-    def generate(Application it) '''
+    def generate(Application it, Boolean isBase) '''
         /**
          * Listener for the `group.create` event.
          *
@@ -15,6 +15,9 @@ class Group {
          */
         public static function create(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::create($event);
+            «ENDIF»
         }
 
         /**
@@ -27,6 +30,9 @@ class Group {
          */
         public static function update(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::update($event);
+            «ENDIF»
         }
 
         /**
@@ -40,6 +46,9 @@ class Group {
          */
         public static function delete(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::delete($event);
+            «ENDIF»
         }
 
         /**
@@ -54,6 +63,9 @@ class Group {
          */
         public static function addUser(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::addUser($event);
+            «ENDIF»
         }
 
         /**
@@ -67,6 +79,9 @@ class Group {
          */
         public static function removeUser(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::removeUser($event);
+            «ENDIF»
         }
     '''
 }

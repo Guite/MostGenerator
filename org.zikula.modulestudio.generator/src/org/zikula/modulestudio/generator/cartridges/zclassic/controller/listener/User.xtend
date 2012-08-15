@@ -14,7 +14,7 @@ class User {
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
 
-    def generate(Application it) '''
+    def generate(Application it, Boolean isBase) '''
         /**
          * Listener for the `user.gettheme` event.
          *
@@ -27,6 +27,9 @@ class User {
          */
         public static function getTheme(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::getTheme($event);
+            «ENDIF»
         }
 
         /**
@@ -42,6 +45,9 @@ class User {
          */
         public static function create(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::create($event);
+            «ENDIF»
         }
 
         /**
@@ -56,6 +62,9 @@ class User {
          */
         public static function update(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::update($event);
+            «ENDIF»
         }
 
         /**
@@ -71,12 +80,16 @@ class User {
          */
         public static function delete(Zikula_Event $event)
         {
-        	«IF hasStandardFieldEntities || hasUserFields»
-        	$userRecord = $event->getSubject();
-        	$uid = $userRecord['uid'];
-        	$serviceManager = ServiceUtil::getManager();
-        	$entityManager = $serviceManager->getService('doctrine.entitymanager');
-        	«FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
+            «IF !isBase»
+                parent::delete($event);
+            «ELSE»
+            	«IF hasStandardFieldEntities || hasUserFields»
+            	$userRecord = $event->getSubject();
+            	$uid = $userRecord['uid'];
+            	$serviceManager = ServiceUtil::getManager();
+            	$entityManager = $serviceManager->getService('doctrine.entitymanager');
+            	«FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
+                «ENDIF»
             «ENDIF»
         }
     '''

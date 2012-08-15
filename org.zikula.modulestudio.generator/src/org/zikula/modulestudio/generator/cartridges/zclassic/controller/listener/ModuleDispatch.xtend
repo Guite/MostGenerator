@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 
 class ModuleDispatch {
 
-    def generate(Application it) '''
+    def generate(Application it, Boolean isBase) '''
         /**
          * Listener for the `module_dispatch.postloadgeneric` event.
          *
@@ -15,6 +15,9 @@ class ModuleDispatch {
          */
         public static function postLoadGeneric(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::postLoadGeneric($event);
+            «ENDIF»
         }
 
         /**
@@ -27,6 +30,9 @@ class ModuleDispatch {
          */
         public static function preExecute(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::preExecute($event);
+            «ENDIF»
         }
 
         /**
@@ -41,6 +47,9 @@ class ModuleDispatch {
          */
         public static function postExecute(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::postExecute($event);
+            «ENDIF»
         }
 
         /**
@@ -56,6 +65,9 @@ class ModuleDispatch {
          */
         public static function customClassname(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::customClassName($event);
+            «ENDIF»
         }
     '''
 }

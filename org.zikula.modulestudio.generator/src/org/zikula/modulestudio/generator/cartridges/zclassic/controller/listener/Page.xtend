@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 
 class Page {
 
-    def generate(Application it) '''
+    def generate(Application it, Boolean isBase) '''
         /**
          * Listener for the `pageutil.addvar_filter` event.
          *
@@ -18,11 +18,15 @@ class Page {
          */
         public static function pageutilAddvarFilter(Zikula_Event $event)
         {
-           // Simply test with something like
-           /*
-               if (($key = array_search('system/Users/javascript/somescript.js', $event->data)) !== false) {
-               $event->data[$key] = 'config/javascript/myoverride.js';
-                   }
+            «IF !isBase»
+                parent::pageutilAddvarFilter($event);
+            «ENDIF»
+
+            // Simply test with something like
+            /*
+                if (($key = array_search('system/Users/javascript/somescript.js', $event->data)) !== false) {
+                    $event->data[$key] = 'config/javascript/myoverride.js';
+                }
             */
         }
 
@@ -35,6 +39,9 @@ class Page {
          */
         public static function systemOutputFilter(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::systemOutputFilter($event);
+            «ENDIF»
         }
     '''
 }

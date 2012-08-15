@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 
 class Mailer {
 
-    def generate(Application it) '''
+    def generate(Application it, Boolean isBase) '''
         /**
          * Listener for the `module.mailer.api.sendmessage` event.
          *
@@ -17,6 +17,9 @@ class Mailer {
          */
         public static function sendMessage(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::sendMessage($event);
+            «ENDIF»
         }
     '''
 }

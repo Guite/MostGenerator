@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 
 class Core {
 
-    def generate(Application it) '''
+    def generate(Application it, Boolean isBase) '''
         /**
          * Listener for the `api.method_not_found` event.
          *
@@ -20,6 +20,9 @@ class Core {
          */
         public static function apiMethodNotFound(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::apiMethodNotFound($event);
+            «ENDIF»
         }
 
         /**
@@ -31,6 +34,9 @@ class Core {
          */
         public static function preInit(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::preInit($event);
+            «ENDIF»
         }
 
         /**
@@ -43,6 +49,9 @@ class Core {
          */
         public static function init(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::init($event);
+            «ENDIF»
         }
 
         /**
@@ -54,6 +63,9 @@ class Core {
          */
         public static function postInit(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::postInit($event);
+            «ENDIF»
         }
 
         /**
@@ -71,6 +83,10 @@ class Core {
          */
         public static function controllerMethodNotFound(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::controllerMethodNotFound($event);
+            «ENDIF»
+
             // You can have multiple of these methods.
             // See system/Extensions/lib/Extensions/HookUI.php for an example.
         }

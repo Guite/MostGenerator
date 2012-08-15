@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 
 class Users {
 
-    def generate(Application it) '''
+    def generate(Application it, Boolean isBase) '''
         /**
          * Listener for the `module.users.config.updated` event.
          *
@@ -15,6 +15,9 @@ class Users {
          */
         public static function configUpdated(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::configUpdated($event);
+            «ENDIF»
         }
     '''
 }

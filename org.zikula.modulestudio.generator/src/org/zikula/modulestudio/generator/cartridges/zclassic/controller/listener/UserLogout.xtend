@@ -4,7 +4,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 
 class UserLogout {
 
-    def generate(Application it) '''
+    def generate(Application it, Boolean isBase) '''
         /**
          * Listener for the `module.users.ui.logout.succeeded` event.
          *
@@ -16,6 +16,9 @@ class UserLogout {
          */
         public static function succeeded(Zikula_Event $event)
         {
+            «IF !isBase»
+                parent::succeeded($event);
+            «ENDIF»
         }
     '''
 }
