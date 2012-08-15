@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
+import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.OneToOneRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -33,11 +34,17 @@ class Csv {
         «FOR field : getDerivedFields.filter(e|!e.primaryKey) SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"«geoFieldName.toFirstUpper»"«ENDFOR»«ENDIF»
         «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.headerLineRelation(false)»«ENDFOR»
         «FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.headerLineRelation(true)»«ENDFOR»
+        «FOR relation : incoming.filter(typeof(ManyToManyRelationship)).filter(e|e.bidirectional)»«relation.headerLineRelation(false)»«ENDFOR»
+        «FOR relation : outgoing.filter(typeof(OneToManyRelationship))»«relation.headerLineRelation(true)»«ENDFOR»
+        «FOR relation : outgoing.filter(typeof(ManyToManyRelationship))»«relation.headerLineRelation(true)»«ENDFOR»
         «val objName = name.formatForCode»
         {foreach item='«objName»' from=$items}
             «FOR field : getDerivedFields.filter(e|!e.primaryKey) SEPARATOR ';'»«field.displayEntry(controller)»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{$«name.formatForCode».«geoFieldName»|formatnumber:7}"«ENDFOR»«ENDIF»
-            «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.displayEntry(controller, false)»«ENDFOR»
-            «FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.displayEntry(controller, true)»«ENDFOR»
+            «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.displayRelatedEntry(controller, false)»«ENDFOR»
+            «FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.displayRelatedEntry(controller, true)»«ENDFOR»
+            «FOR relation : incoming.filter(typeof(ManyToManyRelationship)).filter(e|e.bidirectional)»«relation.displayRelatedEntries(controller, false)»«ENDFOR»
+            «FOR relation : outgoing.filter(typeof(OneToManyRelationship))»«relation.displayRelatedEntries(controller, true)»«ENDFOR»
+            «FOR relation : outgoing.filter(typeof(ManyToManyRelationship))»«relation.displayRelatedEntries(controller, true)»«ENDFOR»
         {/foreach}
     '''
 
@@ -50,10 +57,27 @@ class Csv {
     def private displayEntry(DerivedField it, Controller controller) '''
         "«fieldHelper.displayField(it, entity.name.formatForCode, 'viewcsv')»"'''
 
-    def private displayEntry(JoinRelationship it, Controller controller, Boolean useTarget) '''
+    def private displayRelatedEntry(JoinRelationship it, Controller controller, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
         «val mainEntity = (if (!useTarget) target else source)»
         «val linkEntity = (if (useTarget) target else source)»
         «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
-        {if isset($«relObjName») && $«relObjName» ne null}{$«relObjName».«linkEntity.getLeadingField.name.formatForCode»«/*|nl2br*/»|default:""}{/if}'''
+        «val leadingField = linkEntity.getLeadingField»
+        {if isset($«relObjName») && $«relObjName» ne null}«IF leadingField != null»{$«relObjName».«linkEntity.getLeadingField.name.formatForCode»«/*|nl2br*/»|default:""}«ELSE»«/*TODO*/»«ENDIF»{/if}'''
+
+    def private displayRelatedEntries(JoinRelationship it, Controller controller, Boolean useTarget) '''
+        «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
+        «val linkEntity = (if (useTarget) target else source)»
+        «val relObjName = 'item.' + relationAliasName»
+        «val leadingField = linkEntity.getLeadingField»
+        «IF leadingField != null»
+            {if isset($«relObjName») && $«relObjName» ne null}
+                {foreach name='relationLoop' item='relatedItem' from=$«relObjName»}
+                {$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:''}{if !$smarty.foreach.relationLoop.last}, {/if}
+                {/foreach}
+            {/if}
+        «ELSE»
+            «/*TODO*/»
+        «ENDIF»
+    '''
 }

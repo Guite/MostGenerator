@@ -6,6 +6,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
+import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.OneToOneRelationship
 import de.guite.modulestudio.metamodel.modulestudio.StringField
@@ -66,8 +67,11 @@ class Xml {
                     <«geoFieldName»>{$item.«geoFieldName»|formatnumber:7}</«geoFieldName»>
                 «ENDFOR»
             «ENDIF»
-            «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.displayEntry(controller, false)»«ENDFOR»
-            «FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.displayEntry(controller, true)»«ENDFOR»
+            «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.displayRelatedEntry(controller, false)»«ENDFOR»
+            «FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.displayRelatedEntry(controller, true)»«ENDFOR»
+            «FOR relation : incoming.filter(typeof(ManyToManyRelationship)).filter(e|e.bidirectional)»«relation.displayRelatedEntries(controller, false)»«ENDFOR»
+            «FOR relation : outgoing.filter(typeof(OneToManyRelationship))»«relation.displayRelatedEntries(controller, true)»«ENDFOR»
+            «FOR relation : outgoing.filter(typeof(ManyToManyRelationship))»«relation.displayRelatedEntries(controller, true)»«ENDFOR»
         </«name.formatForDB»>
     '''
 
@@ -94,13 +98,31 @@ class Xml {
         <«name.formatForCode»«fieldHelper.displayField(it, 'item', 'viewxml')»</«name.formatForCode»>
     '''
 
-    def private displayEntry(JoinRelationship it, Controller controller, Boolean useTarget) '''
+    def private displayRelatedEntry(JoinRelationship it, Controller controller, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
         «val linkEntity = (if (useTarget) target else source)»
         «val relObjName = 'item.' + relationAliasName»
         «val leadingField = linkEntity.getLeadingField»
         «IF leadingField != null»
-            <«relationAliasName.toFirstLower»>{if isset($«relObjName») && $«relObjName» ne null}{$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:""}{/if}</«relationAliasName.toFirstLower»>
+            <«relationAliasName.toFirstLower»>{if isset($«relObjName») && $«relObjName» ne null}{$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:''}{/if}</«relationAliasName.toFirstLower»>
+        «ELSE»
+            «/*TODO*/»
+        «ENDIF»
+    '''
+
+    def private displayRelatedEntries(JoinRelationship it, Controller controller, Boolean useTarget) '''
+        «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
+        «val linkEntity = (if (useTarget) target else source)»
+        «val relObjName = 'item.' + relationAliasName»
+        «val leadingField = linkEntity.getLeadingField»
+        «IF leadingField != null»
+            <«relationAliasName.toFirstLower»>
+            {if isset($«relObjName») && $«relObjName» ne null}
+                {foreach name='relationLoop' item='relatedItem' from=$«relObjName»}
+                <«linkEntity.name.formatForCode»>{$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:''}</«linkEntity.name.formatForCode»>
+                {/foreach}
+            {/if}
+            </«relationAliasName.toFirstLower»>
         «ELSE»
             «/*TODO*/»
         «ENDIF»
