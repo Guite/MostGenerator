@@ -148,9 +148,9 @@ class ExampleData {
                 $«entityName»«number»->setRgt(«IF number == 1»«container.numExampleRows*2»«ELSE»«((number-1)*2)+1»«ENDIF»);
                 $«entityName»«number»->setRoot($treeCounterRoot);
             «ENDIF»
-            «FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR» 
-            «FOR relation : outgoing.filter(typeof(ManyToOneRelationship))»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR»
-            «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.exampleRowAssignmentIncoming(entityName, number)»«ENDFOR»
+            «FOR relation : outgoing.filter(typeof(OneToOneRelationship)).filter(e|e.target.container.application == app)»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR» 
+            «FOR relation : outgoing.filter(typeof(ManyToOneRelationship)).filter(e|e.target.container.application == app)»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR»
+            «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional).filter(e|e.source.container.application == app)»«relation.exampleRowAssignmentIncoming(entityName, number)»«ENDFOR»
         «ENDFOR»
         «persistExampleObjects(app)»
         «IF tree != EntityTreeType::NONE»

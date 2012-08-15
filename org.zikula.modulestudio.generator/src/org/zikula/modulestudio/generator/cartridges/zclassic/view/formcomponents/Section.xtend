@@ -64,8 +64,8 @@ class Section {
         «IF metaData»
             {include file='«controller.formattedName»/include_metadata_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
         «ENDIF»
-        «FOR relation : getBidirectionalIncomingJoinRelations»«relationHelper.generate(relation, app, controller, true, true, fsa)»«ENDFOR»
-        «FOR relation : getOutgoingJoinRelations»«relationHelper.generate(relation, app, controller, true, false, fsa)»«ENDFOR»
+        «FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app)»«relationHelper.generate(relation, app, controller, true, true, fsa)»«ENDFOR»
+        «FOR relation : getOutgoingJoinRelations.filter(e|e.target.container.application == app)»«relationHelper.generate(relation, app, controller, true, false, fsa)»«ENDFOR»
     '''
 
     def private displayHooks(Entity it, Application app) '''

@@ -42,23 +42,11 @@ class Association {
 
     def private unidirectional(JoinRelationship it, Boolean useTarget, String sourceName, String targetName, String entityClass) '''
         «IF useTarget»
-            «IF source == target»
-                /**
-                 * Self relations were not working yet, must be retested with Doctrine 2.
-                 * See #9 for more information
-                 */
-            «ENDIF»
             «outgoing(sourceName, targetName, entityClass)»
         «ENDIF»
     '''
 
     def private bidirectional(JoinRelationship it, Boolean useTarget, String sourceName, String targetName, String entityClass) '''
-        «IF source == target»
-            /**
-             * Self relations were not working yet, must be retested with Doctrine 2.
-             * See #9 for more information
-             */
-        «ENDIF»
         «IF !useTarget»
             «incoming(sourceName, targetName, entityClass)»
         «ELSE»

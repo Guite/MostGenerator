@@ -61,8 +61,8 @@ class Forms {
             «formTemplateHeader(app, controller, actionName)»
             «formTemplateBody(app, controller, actionName, fsa)»
         ''')
-        for (relation : getBidirectionalIncomingJoinRelations) relationHelper.generate(relation, app, controller, false, true, fsa)
-        for (relation : getOutgoingJoinRelations) relationHelper.generate(relation, app, controller, false, false, fsa)
+        for (relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app)) relationHelper.generate(relation, app, controller, false, true, fsa)
+        for (relation : getOutgoingJoinRelations.filter(e|e.target.container.application == app)) relationHelper.generate(relation, app, controller, false, false, fsa)
     }
 
     def private formTemplateHeader(Entity it, Application app, Controller controller, String actionName) '''
@@ -272,7 +272,7 @@ class Forms {
 
                         function newCoordinatesEventHandler() {
                             var location = new mxn.LatLonPoint($F('latitude'), $F('longitude'));
-                            marker.hide();
+                            marker.addClassName('z-hide');
                             mapstraction.removeMarker(marker);
                             marker = new mxn.Marker(location);
                             mapstraction.addMarker(marker,true);
@@ -312,8 +312,8 @@ class Forms {
         /* <![CDATA[ */
             var editImage = '<img src="{{$editImageArray.src}}" width="16" height="16" alt="" />';
             var removeImage = '<img src="{{$deleteImageArray.src}}" width="16" height="16" alt="" />';
-            «val incomingJoins = getBidirectionalIncomingJoinRelations»
-            «val outgoingJoins = outgoingJoinRelations»
+            «val incomingJoins = getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app)»
+            «val outgoingJoins = outgoingJoinRelations.filter(e|e.target.container.application == app)»
             «IF !incomingJoins.isEmpty || !outgoingJoins.isEmpty»
                 var relationHandler = new Array();
                 «FOR relation : incomingJoins»«relationHelper.initJs(relation, app, it, true, false)»«ENDFOR»
@@ -351,7 +351,7 @@ class Forms {
                     } else {
                         // hide form buttons to prevent double submits by accident
                         $$('div.z-formbuttons input').each(function (btn) {
-                            btn.hide();
+                            btn.addClassName('z-hide');
                         });
                     }
                     return result;
@@ -397,7 +397,7 @@ class Forms {
                 evt.preventDefault();
                 $('«name.formatForCode»').setAttribute('type', 'input');
                 $('«name.formatForCode»').setAttribute('type', 'file');
-            }).show();
+            }).removeClassName('z-hide');
         }
     '''
 
@@ -407,7 +407,7 @@ class Forms {
                 evt.preventDefault();
                 $('«name.formatForCode»').value = '';
                 $('«name.formatForCode»cal').update(Zikula.__('No date set.', 'module_«entity.container.application.appName»'));
-            }).show();
+            }).removeClassName('z-hide');
         «ENDIF»
     '''
 

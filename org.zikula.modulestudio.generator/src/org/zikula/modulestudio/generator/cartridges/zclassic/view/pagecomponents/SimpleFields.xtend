@@ -29,13 +29,13 @@ class SimpleFields {
     def dispatch displayField(BooleanField it, String objName, String page) {
         if (ajaxTogglability && (page == 'view' || page == 'display')) '''
             {assign var='itemid' value=$«objName».«entity.getFirstPrimaryKey.name.formatForCode»}
-            <a id="toggle«name.formatForDB»{$itemid}" href="javascript:void(0);" style="display: none">
+            <a id="toggle«name.formatForDB»{$itemid}" href="javascript:void(0);" class="z-hide">
             {if $«objName».«name.formatForCode»}
-                {icon type='ok' size='extrasmall' __alt='Yes' id="yes«name.formatForDB»_`$itemid`" __title="This setting is enabled. Click here to disable it."}
-                {icon type='cancel' size='extrasmall' __alt='No' id="no«name.formatForDB»_`$itemid`" __title="This setting is disabled. Click here to enable it." style="display: none;"}
+                {icon type='ok' size='extrasmall' __alt='Yes' id="yes«name.formatForDB»_`$itemid`" __title='This setting is enabled. Click here to disable it.'}
+                {icon type='cancel' size='extrasmall' __alt='No' id="no«name.formatForDB»_`$itemid`" __title='This setting is disabled. Click here to enable it.' class='z-hide'}
             {else}
-                {icon type='ok' size='extrasmall' __alt='Yes' id="yes«name.formatForDB»_`$itemid`" __title="This setting is enabled. Click here to disable it." style="display: none;"}
-                {icon type='cancel' size='extrasmall' __alt='No' id="no«name.formatForDB»_`$itemid`" __title="This setting is disabled. Click here to enable it."}
+                {icon type='ok' size='extrasmall' __alt='Yes' id="yes«name.formatForDB»_`$itemid`" __title='This setting is enabled. Click here to disable it.' class='z-hide'}
+                {icon type='cancel' size='extrasmall' __alt='No' id="no«name.formatForDB»_`$itemid`" __title='This setting is disabled. Click here to enable it.'}
             {/if}
             </a>
             <noscript><div id="noscript«name.formatForDB»{$itemid}">

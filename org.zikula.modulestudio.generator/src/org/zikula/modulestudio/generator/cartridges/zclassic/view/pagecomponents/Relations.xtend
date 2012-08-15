@@ -32,7 +32,7 @@ class Relations {
 
     def displayItemList(Entity it, Application app, Controller controller, Boolean many, IFileSystemAccess fsa) {
         fsa.generateFile(templateFile(controller, name, 'include_displayItemList' + (if (many) 'Many' else 'One')), '''
-            {* purpose of this template: inclusion template for display of related «nameMultiple.formatForDisplayCapital» in «controller.formattedName» area *}
+            {* purpose of this template: inclusion template for display of related «nameMultiple.formatForDisplay» in «controller.formattedName» area *}
             «IF controller.hasActions('display')»
                 {if !isset($nolink)}
                     {assign var='nolink' value=false}
@@ -60,7 +60,7 @@ class Relations {
             «IF controller.hasActions('display')»
                 {if !$nolink}
                     </a>
-                    <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" style="display: none">
+                    <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="z-hide">
                         {icon type='view' size='extrasmall' __alt='Quick view'}
                     </a>
                 {/if}
@@ -74,7 +74,7 @@ class Relations {
                         «IF leadingField != null»
                             «app.prefix»InitInlineWindow($('«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$item.«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$item.«leadingField.name.formatForCode»|replace:"'":""}}');
                         «ELSE»
-                             «app.prefix»InitInlineWindow($('«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$item.«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{gt text='«name.formatForDisplayCapital»'|replace:"'":""}}');
+                            «app.prefix»InitInlineWindow($('«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$item.«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{gt text='«name.formatForDisplayCapital»'|replace:"'":""}}');
                         «ENDIF»
                     });
                 /* ]]> */

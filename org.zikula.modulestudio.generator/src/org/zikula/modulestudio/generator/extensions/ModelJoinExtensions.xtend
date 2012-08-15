@@ -33,7 +33,7 @@ class ModelJoinExtensions {
      * Returns the table name for a certain join side, including the application specific prefix.
      */
     def fullJoinTableName(JoinRelationship it, Boolean useTarget, Entity joinedEntityForeign) {
-        tableNameWithPrefix(container.application, getJoinTableName(useTarget, joinedEntityForeign))
+        tableNameWithPrefix((if (useTarget) target.container.application else source.container.application), getJoinTableName(useTarget, joinedEntityForeign))
     }
 
     /**

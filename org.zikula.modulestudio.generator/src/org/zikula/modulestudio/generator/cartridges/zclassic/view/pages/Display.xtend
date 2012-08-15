@@ -51,7 +51,7 @@ class Display {
         {pagesetvar name='title' value=$templateTitle|@html_entity_decode}
         «controller.templateHeader(it, appName)»
 
-        «val refedElems = getOutgoingJoinRelations + incoming.filter(typeof(ManyToManyRelationship))»
+        «val refedElems = getOutgoingJoinRelations.filter(e|e.target.container.application == it.container.application) + incoming.filter(typeof(ManyToManyRelationship)).filter(e|e.source.container.application == it.container.application)»
         «IF !refedElems.isEmpty»
             {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
                 <div class="«appName.formatForDB»RightBox">
@@ -146,12 +146,12 @@ class Display {
             AdminController: '''
                 <div class="z-admin-content-pagetitle">
                     {icon type='display' size='small' __alt='Details'}
-                    <h3>{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«entity.nameMultiple.formatForDB».filter'}{icon id='itemactionstrigger' type='options' size='extrasmall' __alt='Actions' style='display: none' class='z-pointer'}</h3>
+                    <h3>{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«entity.nameMultiple.formatForDB».filter'}{icon id='itemactionstrigger' type='options' size='extrasmall' __alt='Actions' class='z-pointer z-hide'}</h3>
                 </div>
             '''
             default: '''
                 <div class="z-frontendcontainer">
-                    <h2>{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«entity.nameMultiple.formatForDB».filter'}{icon id='itemactionstrigger' type='options' size='extrasmall' __alt='Actions' style='display: none' class='z-pointer'}</h2>
+                    <h2>{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«entity.nameMultiple.formatForDB».filter'}{icon id='itemactionstrigger' type='options' size='extrasmall' __alt='Actions' class='z-pointer z-hide'}</h2>
             '''
         }
     }
@@ -183,8 +183,14 @@ class Display {
         <dd>
         {if isset($«relObjName») && $«relObjName» ne null}
           {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-          «IF controller.hasActions('display')»
-            <a href="{modurl modname='«container.application.appName»' type='«controller.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)»}">
+          «var Controller linkController = null»
+          «IF container.application == linkEntity.container.application && controller.hasActions('display')»
+              «linkController = controller»
+          «ELSEIF linkEntity.container.application.hasUserController && linkEntity.container.application.getMainUserController.hasActions('display')»
+              «linkController = linkEntity.container.application.getMainUserController»
+          «ENDIF»
+          «IF linkController != null»
+              <a href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)»}">
           «ENDIF»
             «val leadingField = linkEntity.getLeadingField»
             «IF leadingField != null»
@@ -192,9 +198,9 @@ class Display {
             «ELSE»
                 {gt text='«linkEntity.name.formatForDisplayCapital»'}
             «ENDIF»
-          «IF controller.hasActions('display')»
+          «IF linkController != null»
             </a>
-            <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«container.application.appName»' type='«controller.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" style="display: none">
+            <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="z-hide">
                 {icon type='view' size='extrasmall' __alt='Quick view'}
             </a>
             <script type="text/javascript">

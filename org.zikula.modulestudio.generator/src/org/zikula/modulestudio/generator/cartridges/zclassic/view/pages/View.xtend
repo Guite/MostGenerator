@@ -308,16 +308,24 @@ class View {
         «val linkEntity = (if (useTarget) target else source)»
         «var relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
         {if isset($«relObjName») && $«relObjName» ne null}
-            «IF controller.hasActions('display')»
-                «val leadingField = linkEntity.getLeadingField»
-                <a href="{modurl modname='«container.application.appName»' type='«controller.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)»}">
-                «IF leadingField != null»
-                    {$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:""}
-                «ELSE»
-                    {gt text='«linkEntity.name.formatForDisplayCapital»'}
-                «ENDIF»
+            «var Controller linkController = null»
+            «IF container.application == linkEntity.container.application && controller.hasActions('display')»
+                «linkController = controller»
+            «ELSEIF linkEntity.container.application.hasUserController && linkEntity.container.application.getMainUserController.hasActions('display')»
+                «linkController = linkEntity.container.application.getMainUserController»
+            «ENDIF»
+            «IF linkController != null»
+                <a href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)»}">
+            «ENDIF»
+              «val leadingField = linkEntity.getLeadingField»
+              «IF leadingField != null»
+                  {$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:""}
+              «ELSE»
+                  {gt text='«linkEntity.name.formatForDisplayCapital»'}
+              «ENDIF»
+            «IF linkController != null»
                 </a>
-                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«container.application.appName»' type='«controller.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" style="display: none">
+                <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«container.application.appName»' type='«controller.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="z-hide">
                     {icon type='view' size='extrasmall' __alt='Quick view'}
                 </a>
                 <script type="text/javascript">
@@ -327,13 +335,6 @@ class View {
                     });
                 /* ]]> */
                 </script>
-            «ELSE»
-                «val leadingField = linkEntity.getLeadingField»
-                «IF leadingField != null»
-                    {$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:""}
-                «ELSE»
-                    {gt text='«linkEntity.name.formatForDisplayCapital»'}
-                «ENDIF»
             «ENDIF»
         {else}
             {gt text='Not set.'}
@@ -373,7 +374,7 @@ class View {
                 {foreach item='option' from=$«objName»._actions}
                     <a href="{$option.url.type|«appName.formatForDB»ActionUrl:$option.url.func:$option.url.arguments}" title="{$option.linkTitle|safetext}"{if $option.icon eq 'preview'} target="_blank"{/if}>{icon type=$option.icon size='extrasmall' alt=$option.linkText|safetext}</a>
                 {/foreach}
-                {icon id="«itemActionContainerIdForSmarty»trigger" type='options' size='extrasmall' __alt='Actions' style='display: none' class='z-pointer'}
+                {icon id="«itemActionContainerIdForSmarty»trigger" type='options' size='extrasmall' __alt='Actions' class='z-pointer z-hide'}
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     document.observe('dom:loaded', function() {

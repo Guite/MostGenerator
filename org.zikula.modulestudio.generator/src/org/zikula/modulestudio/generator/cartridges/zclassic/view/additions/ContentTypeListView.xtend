@@ -107,7 +107,7 @@ class ContentTypeListView {
             {formdropdownlist id='«appName»_template' dataField='template' group='data' mandatory=true items=$allTemplates}
         </div>
 
-        <div class="z-formrow" style="display: none"«/* TODO: wait until FilterUtil is ready for Doctrine 2 */»>
+        <div class="z-formrow z-hide"«/* TODO: wait until FilterUtil is ready for Doctrine 2 - see https://github.com/zikula/core/issues/118 */»>
             {formlabel for='«appName»_filter' __text='Filter (expert option)'}
             {formtextinput id='«appName»_filter' dataField='filter' group='data' mandatory=false maxLength=255}
             <div class="z-formnote">({gt text='Syntax examples'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)</div>

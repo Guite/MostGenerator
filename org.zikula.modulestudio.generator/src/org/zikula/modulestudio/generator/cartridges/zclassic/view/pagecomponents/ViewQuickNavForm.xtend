@@ -54,7 +54,7 @@ class ViewQuickNavForm {
                 «app.prefix»InitQuickNavigation('«name.formatForCode»', '«controller.formattedName»');
                 {{if isset($searchFilter) && $searchFilter eq false}}
                     {{* we can hide the submit button if we have no quick search field *}}
-                    $('quicknav_submit').hide();
+                    $('quicknav_submit').addClassName('z-hide');
                 {{/if}}
             });
         /* ]]> */
@@ -64,8 +64,9 @@ class ViewQuickNavForm {
 
     def private formFields(Entity it) '''
         «categoriesField»
-        «IF !getBidirectionalIncomingJoinRelationsWithOneSource.isEmpty»
-            «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
+        «val incomingRelations = getBidirectionalIncomingJoinRelationsWithOneSource»
+        «IF !incomingRelations.isEmpty»
+            «FOR relation: incomingRelations»
                 «relation.formField»
             «ENDFOR»
         «ENDIF»
@@ -159,7 +160,7 @@ class ViewQuickNavForm {
         «val sourceAliasName = getRelationAliasName(false)»
         {if !isset($«sourceName»Filter) || $«sourceName»Filter eq true}
             <label for="«sourceAliasName»">{gt text='«source.nameMultiple.formatForDisplayCapital»'}</label>
-            {modapifunc modname='«container.application.appName»' type='selection' func='getEntities' ot='«source.name.formatForCode»' slimMode=true assign='listEntries'}
+            {modapifunc modname='«source.container.application.appName»' type='selection' func='getEntities' ot='«source.name.formatForCode»' slimMode=true assign='listEntries'}
             <select id="«sourceAliasName»" name="«sourceAliasName»">
                 <option value="">{$lblDefault}</option>
             {foreach item='option' from=$listEntries}

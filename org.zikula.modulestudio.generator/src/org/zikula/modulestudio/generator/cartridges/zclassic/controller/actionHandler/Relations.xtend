@@ -25,7 +25,7 @@ class Relations {
     @Inject extension Utils = new Utils()
 
     def incomingInitialisation(Entity it) '''
-        «val uniOwningAssociations = getIncomingJoinRelations.filter(e|!e.bidirectional)»
+        «val uniOwningAssociations = getIncomingJoinRelations.filter(e|!e.bidirectional).filter(e|e.source.container.application == it.container.application)»
         «IF !uniOwningAssociations.isEmpty»
 
             // save parent identifiers of unidirectional incoming relationships
@@ -61,8 +61,8 @@ class Relations {
         public function reassignRelatedObjects()
         {
             $selectedRelations = array();
-            «FOR relation : incoming.filter(typeof(JoinRelationship)).filter(e|e.bidirectional)»«relation.reassignRelatedObjects(true)»«ENDFOR»
-            «FOR relation : outgoing.filter(typeof(JoinRelationship))»«relation.reassignRelatedObjects(false)»«ENDFOR»
+            «FOR relation : incoming.filter(typeof(JoinRelationship)).filter(e|e.bidirectional).filter(e|e.source.container.application == it.container.application)»«relation.reassignRelatedObjects(true)»«ENDFOR»
+            «FOR relation : outgoing.filter(typeof(JoinRelationship)).filter(e|e.target.container.application == it.container.application)»«relation.reassignRelatedObjects(false)»«ENDFOR»
             $this->view->assign('selectedRelations', $selectedRelations);
         }
     '''
@@ -167,8 +167,8 @@ class Relations {
          */
         protected function updateRelationLinks($entity)
         {
-            «FOR relation : incoming.filter(typeof(ManyToManyRelationship))»«relation.updateRelationLinks(true)»«ENDFOR»
-            «FOR relation : outgoing.filter(typeof(JoinRelationship))»«relation.updateRelationLinks(false)»«ENDFOR»
+            «FOR relation : incoming.filter(typeof(ManyToManyRelationship)).filter(e|e.source.container.application == it.container.application)»«relation.updateRelationLinks(true)»«ENDFOR»
+            «FOR relation : outgoing.filter(typeof(JoinRelationship)).filter(e|e.target.container.application == it.container.application)»«relation.updateRelationLinks(false)»«ENDFOR»
         }
     '''
 

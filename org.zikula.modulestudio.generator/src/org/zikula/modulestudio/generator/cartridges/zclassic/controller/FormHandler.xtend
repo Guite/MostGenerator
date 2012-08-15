@@ -1121,8 +1121,8 @@ class FormHandler {
                 «ENDIF»
             } else {
                 if ($this->hasTemplateId !== true) {
-                    «FOR relation : getBidirectionalIncomingJoinRelations»«relationHelper.initRelatedObjectDefault(relation, true)»«ENDFOR»
-                    «FOR relation : getOutgoingJoinRelations»«relationHelper.initRelatedObjectDefault(relation, false)»«ENDFOR»
+                    «FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app)»«relationHelper.initRelatedObjectDefault(relation, true)»«ENDFOR»
+                    «FOR relation : getOutgoingJoinRelations.filter(e|e.target.container.application == app)»«relationHelper.initRelatedObjectDefault(relation, false)»«ENDFOR»
                 }
             }
 
@@ -1224,7 +1224,7 @@ class FormHandler {
             $entityData = array();
 
             $this->reassignRelatedObjects();
-            «FOR relation : getIncomingJoinRelationsWithoutManyToMany»«relationHelper.fetchRelationValue(relation, true)»«ENDFOR»
+            «FOR relation : getIncomingJoinRelationsWithoutManyToMany.filter(e|e.source.container.application == app)»«relationHelper.fetchRelationValue(relation, true)»«ENDFOR»
 
             // assign fetched data
             if (count($entityData) > 0) {
@@ -1271,7 +1271,7 @@ class FormHandler {
                     echo $this->__('Sorry, but someone else has already changed this record. Please apply the changes again!');
                 }
             «ENDIF»
-            «val uniOwningAssociations = getIncomingJoinRelations.filter(e|!e.bidirectional)»
+            «val uniOwningAssociations = getIncomingJoinRelations.filter(e|!e.bidirectional).filter(e|e.source.container.application == app)»
             «IF !uniOwningAssociations.isEmpty»
 
                 // save incoming relationship from parent entity

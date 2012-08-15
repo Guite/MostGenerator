@@ -80,7 +80,7 @@ class DisplayFunctions {
             // process normal links
             $$('#' + containerId + ' a').each(function (elem) {
                 // hide it
-                elem.hide();
+                elem.addClassName('z-hide');
                 // determine the link text
                 var linkText = '';
                 if (func === 'display') {
@@ -133,7 +133,7 @@ class DisplayFunctions {
                     }
                 });
             });
-            $(triggerId).show();
+            $(triggerId).removeClassName('z-hide');
         }
     '''
 
@@ -247,7 +247,7 @@ class DisplayFunctions {
             var newWindow;
 
             // show the container (hidden for users without JavaScript)
-            containerElem.show();
+            containerElem.removeClassName('z-hide');
 
             // define the new window instance
             newWindow = new Zikula.UI.Window(
@@ -281,7 +281,7 @@ class DisplayFunctions {
             }
             $('toggle' + idSuffix).observe('click', function() {
                 «prefix()»ToggleFlag(objectType, fieldName, itemId);
-            }).show();
+            }).removeClassName('z-hide');
         }
 
     '''
@@ -312,11 +312,11 @@ class DisplayFunctions {
                         var idSuffix = fieldName.toLowerCase() + '_' + itemId;
                         var state = data.state;
                         if (state === true) {
-                            $('no' + idSuffix).hide();
-                            $('yes' + idSuffix).show();
+                            $('no' + idSuffix).addClassName('z-hide');
+                            $('yes' + idSuffix).removeClassName('z-hide');
                         } else {
-                            $('yes' + idSuffix).hide();
-                            $('no' + idSuffix).show();
+                            $('yes' + idSuffix).addClassName('z-hide');
+                            $('no' + idSuffix).removeClassName('z-hide');
                         }
                     }
                 }

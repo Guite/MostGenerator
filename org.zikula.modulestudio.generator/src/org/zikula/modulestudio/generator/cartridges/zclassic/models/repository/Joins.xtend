@@ -21,7 +21,17 @@ class Joins {
          */
         protected function addJoinsToSelection()
         {
-            $selection = '«FOR relation : getBidirectionalIncomingJoinRelations»«relation.addJoin(false, 'select')»«ENDFOR»«FOR relation : getOutgoingJoinRelations»«relation.addJoin(true, 'select')»«ENDFOR»';
+            $selection = '«FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app)»«relation.addJoin(false, 'select')»«ENDFOR»«FOR relation : getOutgoingJoinRelations.filter(e|e.target.container.application == app)»«relation.addJoin(true, 'select')»«ENDFOR»';
+            «FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application != app)»
+                if (ModUtil::available('«relation.source.container.application.name.formatForCodeCapital»')) {
+                    $selection .= '«relation.addJoin(false, 'select')»';
+                }
+            «ENDFOR»
+            «FOR relation : getOutgoingJoinRelations.filter(e|e.target.container.application != app)»
+                if (ModUtil::available('«relation.target.container.application.name.formatForCodeCapital»')) {
+                    $selection .= '«relation.addJoin(true, 'select')»';
+                }
+            «ENDFOR»
             return $selection;
         }
 
@@ -34,14 +44,24 @@ class Joins {
          */
         protected function addJoinsToFrom(QueryBuilder $qb)
         {
-            «FOR relation : getBidirectionalIncomingJoinRelations»«relation.addJoin(false, 'from')»«ENDFOR»
-            «FOR relation : getOutgoingJoinRelations»«relation.addJoin(true, 'from')»«ENDFOR»
+            «FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application != app)»«relation.addJoin(false, 'from')»«ENDFOR»
+            «FOR relation : getOutgoingJoinRelations.filter(e|e.target.container.application != app)»«relation.addJoin(true, 'from')»«ENDFOR»
+            «FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application != app)»
+                if (ModUtil::available('«relation.source.container.application.name.formatForCodeCapital»')) {
+                    «relation.addJoin(false, 'from')»
+                }
+            «ENDFOR»
+            «FOR relation : getOutgoingJoinRelations.filter(e|e.target.container.application != app)»
+                if (ModUtil::available('«relation.target.container.application.name.formatForCodeCapital»')) {
+                    «relation.addJoin(true, 'from')»
+                }
+            «ENDFOR»
             return $qb;
         }
     '''
 
     def private addJoin(JoinRelationship it, Boolean incoming, String target) {
-        val relationAliasName = getRelationAliasName(incoming).formatForCodeCapital.toFirstUpper
+        val relationAliasName = getRelationAliasName(incoming).formatForCodeCapital
         if (target == 'select') ''', tbl«relationAliasName»'''
         else if (target == 'from') '''
             $qb->leftJoin('tbl.«relationAliasName.toFirstLower»', 'tbl«relationAliasName»');

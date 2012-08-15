@@ -168,7 +168,7 @@ class Relations {
 
     def private component_AutoComplete(JoinRelationship it, Application app, Controller controller, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
         <div class="«app.prefix»RelationRightSide">
-            <a id="{$idPrefix}AddLink" href="javascript:void(0);" style="display: none">{gt text='«IF !many»Select«ELSE»Add«ENDIF» «targetEntity.name.formatForDisplay»'}</a>
+            <a id="{$idPrefix}AddLink" href="javascript:void(0);" class="z-hide">{gt text='«IF !many»Select«ELSE»Add«ENDIF» «targetEntity.name.formatForDisplay»'}</a>
             <div id="{$idPrefix}AddFields">
                 <label for="{$idPrefix}Selector">{gt text='Find «targetEntity.name.formatForDisplay»'}</label>
                 <br />
@@ -264,17 +264,19 @@ class Relations {
                 val relationAliasName = getRelationAliasName(!incoming).formatForCodeCapital
                 val many = (!incoming || tempInitJsIsManyToMany)
                 val uniqueNameForJs = getUniqueRelationNameForJs(app, targetEntity, many, incoming, relationAliasName)
+                val linkEntity = if (targetEntity == target) source else target
                 if (!insideLoader) '''
                     var newItem = new Object();
-                    newItem.ot = '«(if (targetEntity == target) source else target).name.formatForCode»';
+                    newItem.ot = '«linkEntity.name.formatForCode»';
                     newItem.alias = '«relationAliasName.formatForCodeCapital»';
                     newItem.prefix = '«uniqueNameForJs»SelectorDoNew';
+                    newItem.moduleName = '«linkEntity.container.application.appName»';
                     newItem.acInstance = null;
                     newItem.windowInstance = null;
                     relationHandler.push(newItem);
                 '''
                 else '''
-                    «app.prefix»InitRelationItemsForm('«(if (targetEntity == target) source else target).name.formatForCode»', '«uniqueNameForJs»', «IF stageCode > 1»true«ELSE»false«ENDIF»);
+                    «app.prefix»InitRelationItemsForm('«linkEntity.name.formatForCode»', '«uniqueNameForJs»', «IF stageCode > 1»true«ELSE»false«ENDIF»);
                 '''
             }
         }

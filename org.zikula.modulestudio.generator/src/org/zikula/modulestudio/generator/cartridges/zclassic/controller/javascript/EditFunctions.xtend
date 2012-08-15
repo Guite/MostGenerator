@@ -91,10 +91,10 @@ class EditFunctions {
             }
 
             // show/hide the toggle link
-            $(idPrefix + 'AddLink').toggle();
+            $(idPrefix + 'AddLink').toggleClassName('z-hide');
 
             // hide/show the fields
-            $(idPrefix + 'AddFields').toggle();
+            $(idPrefix + 'AddFields').toggleClassName('z-hide');
         }
     '''
 
@@ -276,11 +276,15 @@ class EditFunctions {
 
             // add handling for the toggle link if existing
             if ($(idPrefix + 'AddLink') !== undefined) {
-                $(idPrefix + 'AddLink').observe('click', function (e) { «prefixSmall»ToggleRelatedItemForm(idPrefix); });
+                $(idPrefix + 'AddLink').observe('click', function (e) {
+                    «prefixSmall»ToggleRelatedItemForm(idPrefix);
+                });
             }
             // add handling for the cancel button
             if ($(idPrefix + 'SelectorDoCancel') !== undefined) {
-                $(idPrefix + 'SelectorDoCancel').observe('click', function (e) { «prefixSmall»ResetRelatedItemForm(idPrefix); });
+                $(idPrefix + 'SelectorDoCancel').observe('click', function (e) {
+                    «prefixSmall»ResetRelatedItemForm(idPrefix);
+                });
             }
             // clear values and ensure starting state
             «prefixSmall»ResetRelatedItemForm(idPrefix);
@@ -310,7 +314,7 @@ class EditFunctions {
                     relationHandler.acInstance = new Ajax.Autocompleter(
                         idPrefix + 'Selector',
                         idPrefix + 'SelectorChoices',
-                        Zikula.Config.baseURL + 'ajax.php?module=«appName»&func=getItemListAutoCompletion',
+                        Zikula.Config.baseURL + 'ajax.php?module=' + relationHandler.moduleName + '&func=getItemListAutoCompletion',
                         acOptions
                     );
                 }

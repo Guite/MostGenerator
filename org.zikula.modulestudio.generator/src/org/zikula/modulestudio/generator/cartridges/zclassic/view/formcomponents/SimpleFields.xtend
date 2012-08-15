@@ -112,11 +112,11 @@ class SimpleFields {
                 {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClass(it)»}
             {else}
                 {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=false readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClassEdit(it)»}
-                <p class="z-formnote"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" style="display: none">{gt text='Reset to empty value'}</a></p>
+                <p class="z-formnote"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></p>
             {/if}
         «ELSE»
             {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClass(it)»}
-            <p class="z-formnote"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" style="display: none">{gt text='Reset to empty value'}</a></p>
+            <p class="z-formnote"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></p>
         «ENDIF»
 
             <div class="z-formnote">{gt text='Allowed file extensions:'} <span id="fileextensions«name.formatForCode»">«allowedExtensions»</span></div>
@@ -191,7 +191,7 @@ class SimpleFields {
         {/if}
         «/*TODO: visible=false*/»
         «IF !mandatory»
-            <p class="z-formnote"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" style="display: none">{gt text='Reset to empty value'}</a></p>
+            <p class="z-formnote"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></p>
         «ENDIF»
     '''
 
@@ -202,7 +202,7 @@ class SimpleFields {
             {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' useSelectionMode=true defaultValue='«IF defaultValue != null && defaultValue != '' && defaultValue != 'now'»«defaultValue»«ELSE»today«ENDIF»'«validationHelper.fieldValidationCssClass(it)»}
         {/if}
         «IF !mandatory»
-            <p class="z-formnote"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" style="display: none">{gt text='Reset to empty value'}</a></p>
+            <p class="z-formnote"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></p>
         «ENDIF»
     '''
 

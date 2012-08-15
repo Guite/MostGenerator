@@ -42,7 +42,7 @@ class Utils {
      * @return String The formatted name.
      */
     def appName(Application it) {
-    	name.formatForCode.toFirstUpper
+    	name.formatForCodeCapital
     }
 
     /**

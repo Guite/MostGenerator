@@ -60,7 +60,7 @@ class Redirect {
         protected function getRedirectCodes()
         {
             $codes = parent::getRedirectCodes();
-            «FOR incomingRelation : getIncomingJoinRelationsWithOneSource»
+            «FOR incomingRelation : getIncomingJoinRelationsWithOneSource.filter(e|e.source.container.application == app)»
                 «val sourceEntity = incomingRelation.source»
                 «IF sourceEntity.name != it.name»
                     «FOR someController : app.getAllControllers»
@@ -172,7 +172,7 @@ class Redirect {
                                     return $this->getDefaultReturnUrl($args);
                     «ENDIF»
                 «ENDFOR»
-                «FOR incomingRelation : getIncomingJoinRelationsWithOneSource»
+                «FOR incomingRelation : getIncomingJoinRelationsWithOneSource.filter(e|e.source.container.application == app)»
                     «val sourceEntity = incomingRelation.source»
                     «IF sourceEntity.name != it.name»
                         «FOR someController : app.getAllControllers.filter(e|!e.isAjaxController)»

@@ -38,7 +38,7 @@ class ViewHierarchy {
             «IF controller.hasActions('edit')»
                 {checkpermissionblock component='«appName»:«name.formatForCodeCapital»:' instance='.*' level='ACCESS_ADD'}
                     {gt text='Add root node' assign='addRootTitle'}
-                    <a id="z-tree-addroot" href="javascript:void(0)" title="{$addRootTitle}" style="display: none" class="z-icon-es-add">{$addRootTitle}</a>
+                    <a id="z-tree-addroot" href="javascript:void(0)" title="{$addRootTitle}" class="z-icon-es-add z-hide">{$addRootTitle}</a>
 
                     <script type="text/javascript">
                 /* <![CDATA[ */
@@ -46,7 +46,7 @@ class ViewHierarchy {
                        $('z-tree-addroot').observe('click', function(event) {
                            «appPrefix»PerformTreeOperation('«name.formatForCode»', 1, 'addRootNode');
                            Event.stop(event);
-                       }).show();
+                       }).removeClassName('z-hide');
                 });
                 /* ]]> */
                 </script>
