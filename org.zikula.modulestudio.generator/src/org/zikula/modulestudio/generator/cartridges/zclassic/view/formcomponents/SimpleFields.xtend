@@ -112,9 +112,11 @@ class SimpleFields {
                 {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClass(it)»}
             {else}
                 {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=false readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClassEdit(it)»}
+                <p class="z-formnote"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" style="display: none">{gt text='Reset to empty value'}</a></p>
             {/if}
         «ELSE»
             {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClass(it)»}
+            <p class="z-formnote"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" style="display: none">{gt text='Reset to empty value'}</a></p>
         «ENDIF»
 
             <div class="z-formnote">{gt text='Allowed file extensions:'} <span id="fileextensions«name.formatForCode»">«allowedExtensions»</span></div>

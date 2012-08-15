@@ -11,6 +11,7 @@ import de.guite.modulestudio.metamodel.modulestudio.DatetimeField
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.EditAction
 import de.guite.modulestudio.metamodel.modulestudio.Entity
+import de.guite.modulestudio.metamodel.modulestudio.UploadField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.Relations
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.formcomponents.Section
@@ -384,14 +385,29 @@ class Forms {
 
     def private additionalInitScript(DerivedField it) {
         switch it {
+            UploadField: additionalInitScriptUpload
             DatetimeField: additionalInitScriptCalendar
             DateField: additionalInitScriptCalendar
         }
     }
 
+    def private additionalInitScriptUpload(UploadField it) '''
+        if ($('reset«name.formatForCodeCapital»Val') != undefined) {
+            $('reset«name.formatForCodeCapital»Val').observe('click', function (evt) {
+                evt.preventDefault();
+                $('«name.formatForCode»').setAttribute('type', 'input');
+                $('«name.formatForCode»').setAttribute('type', 'file');
+            }).show();
+        }
+    '''
+
     def private additionalInitScriptCalendar(AbstractDateField it) '''
         «IF !mandatory»
-            $('reset«name.formatForCodeCapital»Val').observe('click', function() { $('«name.formatForCode»').value = ''; $('«name.formatForCode»cal').update(Zikula.__('No date set.', 'module_«entity.container.application.appName»')); }).show();
+            $('reset«name.formatForCodeCapital»Val').observe('click', function (evt) {
+                evt.preventDefault();
+                $('«name.formatForCode»').value = '';
+                $('«name.formatForCode»cal').update(Zikula.__('No date set.', 'module_«entity.container.application.appName»'));
+            }).show();
         «ENDIF»
     '''
 
@@ -401,7 +417,6 @@ class Forms {
 
     def private inlineRedirectHandlerImpl(Controller it, Application app) '''
         {* purpose of this template: close an iframe from within this iframe *}
-
         <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
         <html xmlns="http://www.w3.org/1999/xhtml">
             <head>
