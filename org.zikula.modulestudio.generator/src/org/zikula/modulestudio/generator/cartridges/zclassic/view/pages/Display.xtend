@@ -377,12 +377,10 @@ class Display {
         {/if}
         {if !isset($directParent) || $directParent eq true}
             {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='directParent' assign='directParent'}
-            {if $directParent ne null && count($directParent) gt 0}
+            {if $directParent ne null}
                 <h4>{gt text='Direct parent'}</h4>
                 <ul>
-                {foreach item='node' from=$directParent}
-                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
-                {/foreach}
+                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('directParent', true)»}"«IF leadingField != null» title="{$directParent.«leadingField.name.formatForCode»|replace:'"':''}">{$directParent.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
                 </ul>
             {/if}
         {/if}

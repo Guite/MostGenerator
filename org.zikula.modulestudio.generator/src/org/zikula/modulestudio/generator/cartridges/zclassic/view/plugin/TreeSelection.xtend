@@ -83,7 +83,7 @@ class TreeSelection {
                     }
                     if (count($path) > 0) {
                         // remove root level
-                        unset($path[0]);
+                        array_shift($path);
                     }
                     if ($params['target'] == 'allParents') {
                         $result = $path;
