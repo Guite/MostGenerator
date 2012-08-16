@@ -209,6 +209,8 @@ class XmlImporter {
                 if (fieldName.equals('file') || fieldName.equals('filename')
                         || fieldName.equals('image')
                         || fieldName.equals('imagefile')
+                        || fieldName.equals('video')
+                        || fieldName.equals('videofile')
                         || fieldName.equals('upload')
                         || fieldName.equals('uploadfile')) {
                     val field = factory.createUploadField
@@ -217,7 +219,7 @@ class XmlImporter {
                         field.length = Integer::parseInt(fieldLength)
                     }
                     fields.add(field)
-                } else if (fieldName.equals('email') || fieldName.equals('emailaddress')) {
+                } else if (fieldName.equals('email') || fieldName.equals('emailaddress') || fieldName.equals('mailaddress')) {
                     val field = factory.createEmailField
                     setBasicFieldProperties(field, fieldData)
                     if (!fieldLength.isEmpty)
@@ -225,7 +227,7 @@ class XmlImporter {
                     if (!fieldDefault.isEmpty)
                         field.defaultValue = fieldDefault
                     fields.add(field)
-                } else if (fieldName.equals('url') || fieldName.equals('homepage')) {
+                } else if (fieldName.equals('url') || fieldName.equals('homepage') || fieldName.equals('website')) {
                     val field = factory.createUrlField
                     setBasicFieldProperties(field, fieldData)
                     if (!fieldLength.isEmpty)
@@ -241,10 +243,10 @@ class XmlImporter {
                     if (fieldName.equals('country')) {
                         field.country = true
                         field.nospace = true
-                    } else if (fieldName.equals('colour')) {
+                    } else if (fieldName.equals('colour') || fieldName.equals('color')) {
                         field.htmlcolour = true
                         field.nospace = true
-                    } else if (fieldName.equals('language')) {
+                    } else if (fieldName.equals('language') || fieldName.equals('lang') || fieldName.equals('locale')) {
                         field.language = true
                         field.nospace = true
                     }
