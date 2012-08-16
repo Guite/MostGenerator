@@ -532,7 +532,7 @@ class Uploads {
          */
         public function deleteThumbnailImages($fileName, $basePath)
         {
-            // get extension again, but including the dot
+            // get file extension including the dot
             $fileExtension = FileUtil::getExtension($fileName, true);
             $thumbFileNameBase = str_replace($fileExtension, '', $fileName) . '_tmb_';
             $thumbFileNameBaseLength = strlen($thumbFileNameBase);
