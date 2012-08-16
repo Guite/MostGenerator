@@ -18,6 +18,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.Selecto
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.SelectorTemplates
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TemplateHeaders
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeJS
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeSelection
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeSelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ValidationError
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -41,6 +42,7 @@ class Plugins {
         if (hasTrees) {
             new TreeJS().generate(it, fsa)
             new TreeSelector().generate(it, fsa)
+            new TreeSelection().generate(it, fsa)
         }
         new FormItemSelector().generate(it, fsa)
         if (hasColourFields) {

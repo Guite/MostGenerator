@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.modulestudio.AdminController
 import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
+import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
 import de.guite.modulestudio.metamodel.modulestudio.IntegerField
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
@@ -36,6 +37,9 @@ class Display {
     def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' display templates for entity "' + name.formatForDisplay + '"')
         fsa.generateFile(templateFile(controller, name, 'display'), displayView(appName, controller))
+        if (tree != EntityTreeType::NONE) {
+            fsa.generateFile(templateFile(controller, name, 'display_treeRelatives'), treeRelatives(appName, controller))
+        }
     }
 
     def private displayView(Entity it, String appName, Controller controller) '''
@@ -297,6 +301,18 @@ class Display {
         «IF categorisable»
             {include file='«controller.formattedName»/include_categories_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
+        «IF tree != EntityTreeType::NONE»
+            «IF useGroupingPanels('display')»
+                <h3 class="map z-panel-header z-panel-indicator z-pointer">{gt text='Relatives'}</h3>
+                <div class="map z-panel-content" style="display: none">
+            «ELSE»
+                <h3 class="map">{gt text='Relatives'}</h3>
+            «ENDIF»
+                    {include file='«controller.formattedName»/«name.formatForCode»/display_treeRelatives.tpl' allChildren=true directChildren=true allParents=true directParent=true predecessors=true successors=true preandsuccessors=true}
+            «IF useGroupingPanels('display')»
+                </div>
+            «ENDIF»
+        «ENDIF»
         «IF standardFields»
             {include file='«controller.formattedName»/include_standardfields_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
@@ -319,4 +335,89 @@ class Display {
     '''
 
     def private displayHookId(Entity it) '''«IF !hasCompositeKeys»$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»«ELSE»"«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«name.formatForCode».«pkField.name.formatForCode»`«ENDFOR»"«ENDIF»'''
+
+    def private treeRelatives(Entity it, String appName, Controller controller) '''
+        «val objName = name.formatForCode»
+        «val appPrefix = container.application.prefix»
+        «val leadingField = getLeadingField»
+        {* purpose of this template: show different forms of relatives for a given tree node *}
+        <h3>Verwandte Zutaten</h3>
+        {if !isset($allChildren) || $allChildren eq true}
+            {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='allChildren' assign='allChildren'}
+            {if $allChildren ne null && count($allChildren) gt 0}
+                <h4>{gt text='All children'}</h4>
+                <ul>
+                {foreach item='node' from=$allChildren}
+                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                {/foreach}
+                </ul>
+            {/if}
+        {/if}
+        {if !isset($directChildren) || $directChildren eq true}
+            {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='directChildren' assign='directChildren'}
+            {if $directChildren ne null && count($directChildren) gt 0}
+                <h4>{gt text='Direct children'}</h4>
+                <ul>
+                {foreach item='node' from=$directChildren}
+                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                {/foreach}
+                </ul>
+            {/if}
+        {/if}
+        {if !isset($allParents) || $allParents eq true}
+            {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='allParents' assign='allParents'}
+            {if $allParents ne null && count($allParents) gt 0}
+                <h4>{gt text='All parents'}</h4>
+                <ul>
+                {foreach item='node' from=$allParents}
+                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                {/foreach}
+                </ul>
+            {/if}
+        {/if}
+        {if !isset($directParent) || $directParent eq true}
+            {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='directParent' assign='directParent'}
+            {if $directParent ne null && count($directParent) gt 0}
+                <h4>{gt text='Direct parent'}</h4>
+                <ul>
+                {foreach item='node' from=$directParent}
+                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                {/foreach}
+                </ul>
+            {/if}
+        {/if}
+        {if !isset($predecessors) || $predecessors eq true}
+            {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='predecessors' assign='predecessors'}
+            {if $predecessors ne null && count($predecessors) gt 0}
+                <h4>{gt text='Predecessors'}</h4>
+                <ul>
+                {foreach item='node' from=$predecessors}
+                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                {/foreach}
+                </ul>
+            {/if}
+        {/if}
+        {if !isset($successors) || $successors eq true}
+            {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='successors' assign='successors'}
+            {if $successors ne null && count($successors) gt 0}
+                <h4>{gt text='Successors'}</h4>
+                <ul>
+                {foreach item='node' from=$successors}
+                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                {/foreach}
+                </ul>
+            {/if}
+        {/if}
+        {if !isset($preandsuccessors) || $preandsuccessors eq true}
+            {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='preandsuccessors' assign='preandsuccessors'}
+            {if $preandsuccessors ne null && count($preandsuccessors) gt 0}
+                <h4>{gt text='Siblings'}</h4>
+                <ul>
+                {foreach item='node' from=$preandsuccessors}
+                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                {/foreach}
+                </ul>
+            {/if}
+        {/if}
+    '''
 }

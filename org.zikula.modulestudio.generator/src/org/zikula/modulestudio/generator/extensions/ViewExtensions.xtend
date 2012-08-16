@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.extensions
 import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.UserController
+import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
 
 /**
  * This class contains view related extension methods.
@@ -54,6 +55,7 @@ class ViewExtensions {
         if (metaData) weight = weight + 1
         if (standardFields) weight = weight + 1
         if (geographical) weight = weight + 1
+        if (tree != EntityTreeType::NONE) weight = weight + 1
         weight
     }
 }
