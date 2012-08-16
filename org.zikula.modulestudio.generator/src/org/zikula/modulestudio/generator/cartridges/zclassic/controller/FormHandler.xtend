@@ -501,13 +501,11 @@ class FormHandler {
                     $i++;
                 }
                 // reuse existing entity
-                $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $templateIdValues));
-                if ($entity == null) {
+                $entityT = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $templateIdValues));
+                if ($entityT == null) {
                     return LogUtil::registerError($this->__('No such item.'));
                 }
-                foreach ($this->idFields as $idField) {
-                    $entity[$idField] = null;
-                }
+                $entity = clone $entityT;
             } else {
                 $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
                 $entity = new $entityClass();

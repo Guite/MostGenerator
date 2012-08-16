@@ -102,6 +102,8 @@ class Entities {
             «entityInfo(app)»
 
             «thEvLi.generateBase(it)»
+
+            «cloneImpl(app)»
         }
     '''
 
@@ -514,5 +516,59 @@ class Entities {
                 }
             }
         «ENDIF»
+    '''
+
+    def private cloneImpl(Entity it, Application app) '''
+        «val joinsIn = getBidirectionalIncomingJoinRelations»
+        «val joinsOut = getOutgoingJoinRelations»
+        /**
+         * Clone interceptor implementation.
+         * This method is for example called by the reuse functionality.
+        «IF joinsIn.isEmpty && joinsOut.isEmpty»
+         * Performs a quite simple shallow copy.
+        «ELSE»
+         * Performs a deep copy. 
+        «ENDIF»
+         *
+         * See also:
+         * (1) http://docs.doctrine-project.org/en/latest/cookbook/implementing-wakeup-or-clone.html
+         * (2) http://www.sunilb.com/php/php5-oops-tutorial-magic-methods-__clone-method
+         * (3) http://stackoverflow.com/questions/185934/how-do-i-create-a-copy-of-an-object-in-php
+         */
+        public function __clone()
+        {
+            // If the entity has an identity, proceed as normal.
+            if («FOR field : primaryKeyFields SEPARATOR ' && '»$this->«field.name.formatForCode»«ENDFOR») {
+                // create new instance
+                «/* TODO: consider custom constructor arguments (indexed, aggregated - see above) */»
+                $entity = new «implClassModelEntity»();
+                // unset identifiers
+                «FOR field : primaryKeyFields»
+                    $entity->set«field.name.formatForCodeCapital»(null);
+                «ENDFOR»
+                // copy simple fields
+                «FOR field : getDerivedFields.filter(e|!e.primaryKey)»
+                    $entity->set«field.name.formatForCodeCapital»($this->get«field.name.formatForCodeCapital»());
+                «ENDFOR»
+
+                «IF !joinsIn.isEmpty || !joinsOut.isEmpty»
+                    // handle related objects
+                    // prevent shared references by doing a deep copy - see (2) and (3) for more information
+                    «FOR relation : joinsIn»
+                        «var aliasName = relation.getRelationAliasName(false)»
+                        $this->«aliasName» = clone $this->«aliasName»;
+                        $entity->set«aliasName.toFirstUpper»($this->«aliasName»);
+                    «ENDFOR»
+                    «FOR relation : joinsOut»
+                        «var aliasName = relation.getRelationAliasName(true)»
+                        $this->«aliasName» = clone $this->«aliasName»;
+                        $entity->set«aliasName.toFirstUpper»($this->«aliasName»);
+                    «ENDFOR»
+                «ENDIF»
+
+                return $entity;
+            }
+            // otherwise do nothing, do NOT throw an exception!
+        }
     '''
 }
