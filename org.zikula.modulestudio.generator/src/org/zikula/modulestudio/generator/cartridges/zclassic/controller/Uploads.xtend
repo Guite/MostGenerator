@@ -126,6 +126,8 @@ class Uploads {
             «handleError»
 
             «deleteUploadFile»
+
+            «deleteThumbnailImages»
         }
     '''
 
@@ -511,13 +513,25 @@ class Uploads {
             $objectData[$fieldName] = '';
             $objectData[$fieldName . 'Meta'] = array();
 
-
             $fileExtension = FileUtil::getExtension($fileName, false);
-            if (!in_array($fileExtension, $this->imageFileTypes) || $fileExtension == 'swf') {
-                // we are done, so let's return
-                return $objectData;
+            if (in_array($fileExtension, $this->imageFileTypes) && $fileExtension != 'swf') {
+                // remove thumbnail images as well
+                $this->deleteThumbnailImages($fileName, $basePath);
             }
 
+            return $objectData;
+        }
+    '''
+
+    def private deleteThumbnailImages(Application it) '''
+        /**
+         * Deletes all thumbnails created from a certain original image.
+         *
+         * @param string $fileName Name of original file.
+         * @param string $basePath Upload folder containing the original file.
+         */
+        public function deleteThumbnailImages($fileName, $basePath)
+        {
             // get extension again, but including the dot
             $fileExtension = FileUtil::getExtension($fileName, true);
             $thumbFileNameBase = str_replace($fileExtension, '', $fileName) . '_tmb_';
@@ -534,8 +548,6 @@ class Uploads {
                 }
                 unlink($thumbPath . $thumbFile);
             }
-
-            return $objectData;
         }
     '''
 
