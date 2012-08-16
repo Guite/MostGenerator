@@ -36,10 +36,10 @@ class ModVars {
 
     def dispatch valDirect2Mod(Variable it) {
         switch (it) {
-            BoolVar: '''«IF value == 'true'»true«ELSE»false«ENDIF»'''
+            BoolVar: '''«IF value != null && value == 'true'»true«ELSE»false«ENDIF»'''
             IntVar: value
             ListVar: '''«IF it.multiple»array(«ENDIF»«FOR item : it.getDefaultItems SEPARATOR ', '»«item.valDirect2Mod»«ENDFOR»«IF it.multiple»)«ENDIF»'''
-            default: '\'' + value + '\''
+            default: '\'' + (if (value != null) value else '') + '\''
     	}
     }
 

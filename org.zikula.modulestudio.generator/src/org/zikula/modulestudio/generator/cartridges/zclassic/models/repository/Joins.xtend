@@ -44,8 +44,8 @@ class Joins {
          */
         protected function addJoinsToFrom(QueryBuilder $qb)
         {
-            «FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application != app)»«relation.addJoin(false, 'from')»«ENDFOR»
-            «FOR relation : getOutgoingJoinRelations.filter(e|e.target.container.application != app)»«relation.addJoin(true, 'from')»«ENDFOR»
+            «FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app)»«relation.addJoin(false, 'from')»«ENDFOR»
+            «FOR relation : getOutgoingJoinRelations.filter(e|e.target.container.application == app)»«relation.addJoin(true, 'from')»«ENDFOR»
             «FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application != app)»
                 if (ModUtil::available('«relation.source.container.application.name.formatForCodeCapital»')) {
                     «relation.addJoin(false, 'from')»
