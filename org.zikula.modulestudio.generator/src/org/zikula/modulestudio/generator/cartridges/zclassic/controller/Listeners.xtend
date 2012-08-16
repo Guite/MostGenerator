@@ -74,7 +74,7 @@ class Listeners {
     	/**
     	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for core events.
     	 */
-    	class «appName»_Listener_«IF isBase»Base_«ENDIF»Core
+    	class «IF !isBase»«appName»_Listener_Core extends «ENDIF»«appName»_Listener_Base_Core
     	{
     	    «new Core().generate(it, isBase)»
     	}
@@ -85,7 +85,7 @@ class Listeners {
     	/**
     	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for module installer events.
     	 */
-    	class «appName»_Listener_«IF isBase»Base_«ENDIF»Installer
+    	class «IF !isBase»«appName»_Listener_Installer extends «ENDIF»«appName»_Listener_Base_Installer
     	{
     	    «new ModuleInstaller().generate(it, isBase)»
     	}
@@ -96,7 +96,7 @@ class Listeners {
     	/**
     	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for dispatching modules.
     	 */
-    	class «appName»_Listener_«IF isBase»Base_«ENDIF»ModuleDispatch
+    	class «IF !isBase»«appName»_Listener_ModuleDispatch extends «ENDIF»«appName»_Listener_Base_ModuleDispatch
     	{
     	    «new ModuleDispatch().generate(it, isBase)»
     	}
@@ -107,7 +107,7 @@ class Listeners {
     	/**
     	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for mailing events.
     	 */
-    	class «appName»_Listener_«IF isBase»Base_«ENDIF»Mailer
+    	class «IF !isBase»«appName»_Listener_Mailer extends «ENDIF»«appName»_Listener_Base_Mailer
     	{
     	    «new Mailer().generate(it, isBase)»
     	}
@@ -118,7 +118,7 @@ class Listeners {
     	/**
     	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for page-related events.
     	 */
-    	class «appName»_Listener_«IF isBase»Base_«ENDIF»Page
+    	class «IF !isBase»«appName»_Listener_Page extends «ENDIF»«appName»_Listener_Base_Page
     	{
     	    «new Page().generate(it, isBase)»
     	}
@@ -129,7 +129,7 @@ class Listeners {
     	/**
     	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for error-related events.
     	 */
-    	class «appName»_Listener_«IF isBase»Base_«ENDIF»Errors
+    	class «IF !isBase»«appName»_Listener_Errors extends «ENDIF»«appName»_Listener_Base_Errors
     	{
     	    «new Errors().generate(it, isBase)»
     	}
@@ -140,7 +140,7 @@ class Listeners {
     	/**
     	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for theme-related events.
     	 */
-    	class «appName»_Listener_«IF isBase»Base_«ENDIF»Theme
+    	class «IF !isBase»«appName»_Listener_Theme extends «ENDIF»«appName»_Listener_Base_Theme
     	{
     	    «new Theme().generate(it, isBase)»
     	}
@@ -151,7 +151,7 @@ class Listeners {
     	/**
     	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for view-related events.
     	 */
-    	class «appName»_Listener_«IF isBase»Base_«ENDIF»View
+    	class «IF !isBase»«appName»_Listener_View extends «ENDIF»«appName»_Listener_Base_View
     	{
     	    «new View().generate(it, isBase)»
     	}
@@ -162,7 +162,7 @@ class Listeners {
     	/**
     	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user login events.
     	 */
-    	class «appName»_Listener_«IF isBase»Base_«ENDIF»UserLogin
+    	class «IF !isBase»«appName»_Listener_UserLogin extends «ENDIF»«appName»_Listener_Base_UserLogin
     	{
     	    «new UserLogin().generate(it, isBase)»
     	}
@@ -173,7 +173,7 @@ class Listeners {
     	/**
     	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user logout events.
     	 */
-    	class «appName»_Listener_«IF isBase»Base_«ENDIF»UserLogout
+    	class «IF !isBase»«appName»_Listener_UserLogout extends «ENDIF»«appName»_Listener_Base_UserLogout
     	{
     	    «new UserLogout().generate(it, isBase)»
     	}
@@ -184,7 +184,7 @@ class Listeners {
     	/**
     	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user-related events.
     	 */
-    	class «appName»_Listener_«IF isBase»Base_«ENDIF»User
+    	class «IF !isBase»«appName»_Listener_User extends «ENDIF»«appName»_Listener_Base_User
     	{
     	    «new User().generate(it, isBase)»
     	}
@@ -195,7 +195,7 @@ class Listeners {
     	/**
     	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user registration events.
     	 */
-    	class «appName»_Listener_«IF isBase»Base_«ENDIF»UserRegistration
+    	class «IF !isBase»«appName»_Listener_UserRegistration extends «ENDIF»«appName»_Listener_Base_UserRegistration
     	{
     	    «new UserRegistration().generate(it, isBase)»
     	}
@@ -206,7 +206,7 @@ class Listeners {
     	/**
     	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for events of the Users module.
     	 */
-    	class «appName»_Listener_«IF isBase»Base_«ENDIF»Users
+    	class «IF !isBase»«appName»_Listener_Users extends «ENDIF»«appName»_Listener_Base_Users
     	{
      	    «new Users().generate(it, isBase)»
     	}
@@ -217,7 +217,7 @@ class Listeners {
     	/**
     	 * Event handler implementation class for group-related events.
     	 */
-    	class «appName»_Listener_«IF isBase»Base_«ENDIF»Group
+    	class «IF !isBase»«appName»_Listener_Group extends «ENDIF»«appName»_Listener_Base_Group
     	{
     	    «new Group().generate(it, isBase)»
     	}
@@ -228,7 +228,7 @@ class Listeners {
     	/**
     	 * Event handler implementation class for special purposes and 3rd party api support.
     	 */
-    	class «appName»_Listener_«IF isBase»Base_«ENDIF»ThirdParty
+    	class «IF !isBase»«appName»_Listener_ThirdParty extends «ENDIF»«appName»_Listener_Base_ThirdParty
     	{
     	    «new ThirdParty().generate(it, isBase)»
     	}
