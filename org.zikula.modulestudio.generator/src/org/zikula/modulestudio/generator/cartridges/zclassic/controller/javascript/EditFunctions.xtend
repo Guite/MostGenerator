@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascript
 
 import com.google.inject.Inject
+import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -27,6 +28,16 @@ class EditFunctions {
 
         «initUserField»
 
+        «IF hasUploads»
+            «resetUploadField»
+            «initUploadField»
+
+        «ENDIF»
+        «IF !getAllEntities.filter(e|e.getDerivedFields.filter(typeof(AbstractDateField)).isEmpty).isEmpty»
+            «resetDateField»
+            «initDateField»
+
+        «ENDIF»
         «relationFunctions»
     '''
 
@@ -56,6 +67,60 @@ class EditFunctions {
             }
 
         «ENDIF»
+    '''
+
+    def private resetUploadField(Application it) '''
+        /**
+         * Resets the value of an upload / file input field.
+         */
+        function «prefix»ResetUploadField(fieldName) {
+            if ($(fieldName) != undefined) {
+                $(fieldName).setAttribute('type', 'input');
+                $(fieldName).setAttribute('type', 'file');
+            }
+        }
+    '''
+
+    def private initUploadField(Application it) '''
+        /**
+         * Initialises the reset button for a certain upload input.
+         */
+        function «prefix»InitUploadField(fieldName) {
+            if ($('reset' + fieldName.capitalize() + 'Val') != undefined) {
+                $('reset' + fieldName.capitalize() + 'Val').observe('click', function (evt) {
+                    evt.preventDefault();
+                    «prefix»ResetUploadField(fieldName);
+                }).removeClassName('z-hide');
+            }
+        }
+    '''
+
+    def private resetDateField(Application it) '''
+        /**
+         * Resets the value of a date or datetime input field.
+         */
+        function «prefix»ResetDateField(fieldName) {
+            if ($(fieldName) != undefined) {
+                $(fieldName).value = '';
+            }
+            if ($(fieldName + 'cal') != undefined) {
+                $(fieldName + 'cal').update(Zikula.__('No date set.', 'module_«appName»'));
+            }
+        }
+    '''
+
+    def private initDateField(Application it) '''
+        /**
+         * Initialises the reset button for a certain date input.
+         */
+        function «prefix»InitDateField(fieldName) {
+            if ($('reset' + fieldName.capitalize() + 'Val') != undefined) {
+                $('reset' + fieldName.capitalize() + 'Val').observe('click', function (evt) {
+                    evt.preventDefault();
+                    «prefix»ResetDateField(fieldName);
+                }).removeClassName('z-hide');
+            }
+        }
     '''
 
     def private relationFunctions(Application it) '''

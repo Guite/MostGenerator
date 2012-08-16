@@ -115,7 +115,7 @@ class SimpleFields {
                 <p class="z-formnote"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></p>
             {/if}
         «ELSE»
-            {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClass(it)»}
+            {formuploadinput «groupAndId(groupSuffix, idSuffix)» mandatory=false readOnly=«readonly.displayBool»«validationHelper.fieldValidationCssClass(it)»}
             <p class="z-formnote"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></p>
         «ENDIF»
 
@@ -123,31 +123,38 @@ class SimpleFields {
         «IF allowedFileSize > 0»
             <div class="z-formnote">{gt text='Allowed file size:'} {'«allowedFileSize»'|«entity.container.application.appName.formatForDB»GetFileSize:'':false:false}</div>
         «ENDIF»
-            {if $mode ne 'create'}
-            «val appNameSmall = entity.container.application.name.formatForDB»
-            «val objName = entity.name.formatForCode»
-            «val realName = objName + '.' + name.formatForCode»
-            «IF !mandatory»
-                {if $«realName» ne ''}
-            «ENDIF»
-                  <div class="z-formnote">
-                      {gt text='Current file'}:
-                      <a href="{$«realName»FullPathUrl}" title="{$«objName».«entity.getLeadingField.name.formatForCode»|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB»]"{/if}>
-                      {if $«realName»Meta.isImage}
-                          <img src="{$«realName»FullPath|«appNameSmall»ImageThumb:80:50}" width="80" height="50" alt="{$«objName».«entity.getLeadingField.name.formatForCode»|replace:"\"":""}" />
-                      {else}
-                          {gt text='Download'} ({$«realName»Meta.size|«appNameSmall»GetFileSize:$«realName»FullPath:false:false})
-                      {/if}
-                      </a>
-                  </div>
-            «IF !mandatory»
-                  <div class="z-formnote">
-                      {formcheckbox group='«entity.name.formatForDB»' id='«name.formatForCode»DeleteFile' readOnly=false __title='Delete «name.formatForDisplay» ?'}
-                      {formlabel for='«name.formatForCode»DeleteFile' __text='Delete existing file'}
-                  </div>
-                  {/if}
-            «ENDIF»
+        «decideWhetherToShowCurrentFile»
+    '''
+
+    def private decideWhetherToShowCurrentFile(UploadField it) '''
+        «val fieldName = entity.name.formatForCode + '.' + name.formatForCode»
+        {if $mode ne 'create'}
+            {if $«fieldName» ne ''}
+                «showCurrentFile»
             {/if}
+        {/if}
+    '''
+
+    def private showCurrentFile(UploadField it) '''
+        «val appNameSmall = entity.container.application.appName.formatForDB»
+        «val objName = entity.name.formatForCode»
+        «val realName = objName + '.' + name.formatForCode»
+        <div class="z-formnote">
+            {gt text='Current file'}:
+            <a href="{$«realName»FullPathUrl}" title="{$«objName».«entity.getLeadingField.name.formatForCode»|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB»]"{/if}>
+            {if $«realName»Meta.isImage}
+                <img src="{$«realName»FullPath|«appNameSmall»ImageThumb:80:50}" width="80" height="50" alt="{$«objName».«entity.getLeadingField.name.formatForCode»|replace:"\"":""}" />
+            {else}
+                {gt text='Download'} ({$«realName»Meta.size|«appNameSmall»GetFileSize:$«realName»FullPath:false:false})
+            {/if}
+            </a>
+        </div>
+        «IF !mandatory»
+            <div class="z-formnote">
+                {formcheckbox group='«entity.name.formatForDB»' id='«name.formatForCode»DeleteFile' readOnly=false __title='Delete «name.formatForDisplay» ?'}
+                {formlabel for='«name.formatForCode»DeleteFile' __text='Delete existing file'}
+            </div>
+        «ENDIF»
     '''
 
     def private dispatch formField(ListField it, String groupSuffix, String idSuffix) '''

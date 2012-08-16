@@ -392,22 +392,12 @@ class Forms {
     }
 
     def private additionalInitScriptUpload(UploadField it) '''
-        if ($('reset«name.formatForCodeCapital»Val') != undefined) {
-            $('reset«name.formatForCodeCapital»Val').observe('click', function (evt) {
-                evt.preventDefault();
-                $('«name.formatForCode»').setAttribute('type', 'input');
-                $('«name.formatForCode»').setAttribute('type', 'file');
-            }).removeClassName('z-hide');
-        }
+        «entity.container.application.prefix»InitUploadField('«name.formatForCode»');
     '''
 
     def private additionalInitScriptCalendar(AbstractDateField it) '''
         «IF !mandatory»
-            $('reset«name.formatForCodeCapital»Val').observe('click', function (evt) {
-                evt.preventDefault();
-                $('«name.formatForCode»').value = '';
-                $('«name.formatForCode»cal').update(Zikula.__('No date set.', 'module_«entity.container.application.appName»'));
-            }).removeClassName('z-hide');
+            «entity.container.application.prefix»InitDateField('«name.formatForCode»');
         «ENDIF»
     '''
 

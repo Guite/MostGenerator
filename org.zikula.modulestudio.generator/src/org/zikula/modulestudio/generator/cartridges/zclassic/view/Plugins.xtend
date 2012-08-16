@@ -21,42 +21,52 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeJS
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeSelection
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeSelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ValidationError
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 
 class Plugins {
+    @Inject extension ControllerExtensions = new ControllerExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
 
     def generate(Application it, IFileSystemAccess fsa) {
         new ActionUrl().generate(it, fsa)
-        new FormFrame().generate(it, fsa)
         new SelectorObjectTypes().generate(it, fsa)
         new SelectorTemplates().generate(it, fsa)
         new TemplateHeaders().generate(it, fsa)
-        new ValidationError().generate(it, fsa)
+        if (hasEditActions) {
+            new FormFrame().generate(it, fsa)
+            new ValidationError().generate(it, fsa)
+        }
         if (hasUploads) {
             new ImageThumb().generate(it, fsa)
             new GetFileSize().generate(it, fsa)
         }
         if (hasTrees) {
             new TreeJS().generate(it, fsa)
-            new TreeSelector().generate(it, fsa)
+            if (hasEditActions) {
+                new TreeSelector().generate(it, fsa)
+            }
             new TreeSelection().generate(it, fsa)
         }
         new FormItemSelector().generate(it, fsa)
-        if (hasColourFields) {
+        if (hasColourFields && hasEditActions) {
             new FormColourInput().generate(it, fsa)
         }
         if (hasCountryFields) {
-            new FormCountrySelector().generate(it, fsa)
+            if (hasEditActions) {
+                new FormCountrySelector().generate(it, fsa)
+            }
             new GetCountryName().generate(it, fsa)
         }
         if (hasListFields) {
             new GetListEntry().generate(it, fsa)
         }
         if (getAllEntities.exists(e|e.geographical)) {
-            new FormGeoInput().generate(it, fsa)
+            if (hasEditActions) {
+                new FormGeoInput().generate(it, fsa)
+            }
             new FormatGeoData().generate(it, fsa)
         }
     }

@@ -78,7 +78,7 @@ class FormGeoInput {
             /**
              * Helper method to determine css class.
              *
-             * @see    Zikula_Form_Plugin_TextInput
+             * @see Zikula_Form_Plugin_TextInput
              *
              * @return string the list of css classes to apply
              */

@@ -80,7 +80,7 @@ class FormColourInput {
             /**
              * Helper method to determine css class.
              *
-             * @see    Zikula_Form_Plugin_TextInput
+             * @see Zikula_Form_Plugin_TextInput
              *
              * @return string the list of css classes to apply
              */
@@ -114,7 +114,7 @@ class FormColourInput {
                     return $result;
                 }
 
-                $result .= "<script type=\"text/javascript\" charset=\"utf-8\">
+                $result .= "<script type=\"text/javascript\">
                     /* <![CDATA[ */
                         var namePicky = new PickyColor({
                             field: '" . $this->id . "',
