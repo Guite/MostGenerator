@@ -155,11 +155,12 @@ class ControllerUtil {
                  * @param string $fieldName  Name of upload field.
                  *
                  * @return mixed Output.
+                 * @throws Exception if invalid object type is given.
                  */
                 public function getFileBaseFolder($objectType, $fieldName)
                 {
                     if (!in_array($objectType, $this->getObjectTypes())) {
-                        $objectType = $this->getDefaultObjectType();
+                        throw new Exception('Error! Invalid object type received.');
                     }
 
                     $basePath = FileUtil::getDataDirectory() . '/«appName»/';

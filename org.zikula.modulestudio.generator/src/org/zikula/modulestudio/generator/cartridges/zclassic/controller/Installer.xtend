@@ -157,12 +157,17 @@ class Installer {
             $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
             «FOR uploadEntity : uploadEntities»
             «FOR uploadField : uploadEntity.getUploadFieldsEntity»
-                $basePath = $controllerHelper->getFileBaseFolder('«uploadField.entity.name.formatForCode»', '«uploadField.name.formatForCode»');
-                if (!is_dir($basePath)) {
-                    return LogUtil::registerError($this->__f('The upload folder "%s" does not exist. Please create it before installing this application.', array($basePath)));
+                try {
+                    $basePath = $controllerHelper->getFileBaseFolder('«uploadField.entity.name.formatForCode»', '«uploadField.name.formatForCode»');
+                    if (!is_dir($basePath)) {
+                        return LogUtil::registerError($this->__f('The upload folder "%s" does not exist. Please create it before installing this application.', array($basePath)));
+                    }
+                    if (!is_writable($basePath)) {
+                        return LogUtil::registerError($this->__f('The upload folder "%s" is not writable. Please change permissions accordingly before installing this application.', array($basePath)));
+                    }
                 }
-                if (!is_writable($basePath)) {
-                    return LogUtil::registerError($this->__f('The upload folder "%s" is not writable. Please change permissions accordingly before installing this application.', array($basePath)));
+                catch (Exception $e) {
+                    return LogUtil::registerError($e->getMessage());
                 }
             «ENDFOR»
             «ENDFOR»

@@ -169,7 +169,12 @@ class Uploads {
             $controllerHelper = new «appName»_Util_Controller($serviceManager);
 
             // retrieve the final file name
-            $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
+            try {
+                $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
+            }
+            catch (Exception $e) {
+                return LogUtil::registerError($e->getMessage());
+            }
             $fileName = $this->determineFileName($objectType, $fieldName, $basePath, $fileName, $extension);
 
             if (!move_uploaded_file($fileData[$fieldName]['tmp_name'], $basePath . $fileName)) {
@@ -490,7 +495,13 @@ class Uploads {
             $controllerHelper = new «appName»_Util_Controller($serviceManager);
 
             // determine file system information
-            $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
+            try {
+                $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
+            }
+            catch (Exception $e) {
+                LogUtil::registerError($e->getMessage());
+                return $objectData;
+            }
             $fileName = $objectData[$fieldName];
 
             // remove original file

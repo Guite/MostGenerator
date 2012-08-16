@@ -409,7 +409,12 @@ class EventListener {
     def private sanitizeForOutputUpload(UploadField it) '''
         «val realName = name.formatForCode»
         if (!empty($this['«realName»'])) {
-            $basePath = $controllerHelper->getFileBaseFolder('«entity.name.formatForCode»', '«realName»');
+            try {
+                $basePath = $controllerHelper->getFileBaseFolder('«entity.name.formatForCode»', '«realName»');
+            }
+            catch (Exception $e) {
+                return LogUtil::registerError($e->getMessage());
+            }
             $fullPath = $basePath .  $this['«realName»'];
             $this['«realName»FullPath'] = $fullPath;
             $this['«realName»FullPathURL'] = System::getBaseUrl() . $fullPath;
