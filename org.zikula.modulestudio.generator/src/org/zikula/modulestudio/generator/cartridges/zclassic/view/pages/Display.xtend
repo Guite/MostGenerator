@@ -308,7 +308,7 @@ class Display {
             «ELSE»
                 <h3 class="map">{gt text='Relatives'}</h3>
             «ENDIF»
-                    {include file='«controller.formattedName»/«name.formatForCode»/display_treeRelatives.tpl' allChildren=true directChildren=true allParents=true directParent=true predecessors=true successors=true preandsuccessors=true}
+                    {include file='«controller.formattedName»/«name.formatForCode»/display_treeRelatives.tpl' allParents=true directParent=true allChildren=true directChildren=true predecessors=true successors=true preandsuccessors=true}
             «IF useGroupingPanels('display')»
                 </div>
             «ENDIF»
@@ -341,7 +341,27 @@ class Display {
         «val appPrefix = container.application.prefix»
         «val leadingField = getLeadingField»
         {* purpose of this template: show different forms of relatives for a given tree node *}
-        <h3>Verwandte Zutaten</h3>
+        <h3>{gt text='Related «nameMultiple.formatForDisplay»'}</h3>
+        {if !isset($allParents) || $allParents eq true}
+            {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='allParents' assign='allParents'}
+            {if $allParents ne null && count($allParents) gt 0}
+                <h4>{gt text='All parents'}</h4>
+                <ul>
+                {foreach item='node' from=$allParents}
+                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                {/foreach}
+                </ul>
+            {/if}
+        {/if}
+        {if !isset($directParent) || $directParent eq true}
+            {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='directParent' assign='directParent'}
+            {if $directParent ne null}
+                <h4>{gt text='Direct parent'}</h4>
+                <ul>
+                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('directParent', true)»}"«IF leadingField != null» title="{$directParent.«leadingField.name.formatForCode»|replace:'"':''}">{$directParent.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                </ul>
+            {/if}
+        {/if}
         {if !isset($allChildren) || $allChildren eq true}
             {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='allChildren' assign='allChildren'}
             {if $allChildren ne null && count($allChildren) gt 0}
@@ -361,26 +381,6 @@ class Display {
                 {foreach item='node' from=$directChildren}
                     <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
                 {/foreach}
-                </ul>
-            {/if}
-        {/if}
-        {if !isset($allParents) || $allParents eq true}
-            {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='allParents' assign='allParents'}
-            {if $allParents ne null && count($allParents) gt 0}
-                <h4>{gt text='All parents'}</h4>
-                <ul>
-                {foreach item='node' from=$allParents}
-                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
-                {/foreach}
-                </ul>
-            {/if}
-        {/if}
-        {if !isset($directParent) || $directParent eq true}
-            {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='directParent' assign='directParent'}
-            {if $directParent ne null}
-                <h4>{gt text='Direct parent'}</h4>
-                <ul>
-                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('directParent', true)»}"«IF leadingField != null» title="{$directParent.«leadingField.name.formatForCode»|replace:'"':''}">{$directParent.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
                 </ul>
             {/if}
         {/if}

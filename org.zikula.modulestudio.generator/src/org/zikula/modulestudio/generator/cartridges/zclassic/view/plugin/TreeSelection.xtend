@@ -29,7 +29,7 @@ class TreeSelection {
          * Available parameters:
          *   - objectType: Name of treated object type.
          *   - node:       Given entity as tree entry point.
-         *   - target:     One of 'allChildren', 'directChildren', 'allParents', 'directParent', 'predecessors', 'successors', 'preandsuccessors'
+         *   - target:     One of 'allParents', 'directParent', 'allChildren', 'directChildren', 'predecessors', 'successors', 'preandsuccessors'
          *   - assign:     Variable where the results are assigned to.
          *
          * @param  array       $params  All attributes passed to this function from the template.
@@ -47,7 +47,7 @@ class TreeSelection {
                 return false;
             }
 
-            $allowedTargets = array('allChildren', 'directChildren', 'allParents', 'directParent', 'predecessors', 'successors', 'preandsuccessors');
+            $allowedTargets = array('allParents', 'directParent', 'allChildren', 'directChildren', 'predecessors', 'successors', 'preandsuccessors');
             if (!isset($params['target']) || empty($params['target']) || !in_array($params['target'], $allowedTargets)) {
                 $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeSelection', 'target')));
                 return false;
@@ -67,13 +67,6 @@ class TreeSelection {
             $result = null;
 
             switch ($params['target']) {
-                case 'allChildren':
-                case 'directChildren':
-                    $direct = ($params['target'] == 'directChildren');
-                    $sortByField = ($titleFieldName != '') ? $titleFieldName : null;
-                    $sortDirection = 'ASC';
-                    $result = $repository->children($node, $direct, $sortByField, $sortDirection);
-                    break;
                 case 'allParents':
                 case 'directParent':
                     $path = $repository->getPath($node);
@@ -90,6 +83,13 @@ class TreeSelection {
                     } elseif ($params['target'] == 'directParent' && count($path) > 0) {
                         $result = $path[count($path)-1];
                     }
+                    break;
+                case 'allChildren':
+                case 'directChildren':
+                    $direct = ($params['target'] == 'directChildren');
+                    $sortByField = ($titleFieldName != '') ? $titleFieldName : null;
+                    $sortDirection = 'ASC';
+                    $result = $repository->children($node, $direct, $sortByField, $sortDirection);
                     break;
                 case 'predecessors':
                     $includeSelf = false;
