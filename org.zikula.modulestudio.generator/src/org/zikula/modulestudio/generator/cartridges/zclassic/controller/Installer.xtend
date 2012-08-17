@@ -72,7 +72,7 @@ class Installer {
         /**
          * Interactive installer base class.
          */
-        class «appName»_Controller_Base_Interactiveinstaller extends Zikula_Controller_AbstractInteractiveInstaller
+        class «appName»_Controller_Base_InteractiveInstaller extends Zikula_Controller_AbstractInteractiveInstaller
         {
             «new Interactive().generate(it)»
         }
@@ -307,7 +307,7 @@ class Installer {
         /**
          * Interactive installer implementation class.
          */
-        class «appName»_Controller_Interactiveinstaller extends «appName»_Controller_Base_Interactiveinstaller
+        class «appName»_Controller_InteractiveInstaller extends «appName»_Controller_Base_InteractiveInstaller
         {
             // feel free to extend the installer here
         }
