@@ -225,6 +225,16 @@ class Repository {
                         $templateParameters['«fieldName»Items'] = $listHelper->getEntries('«name.formatForCode»', '«fieldName»');
                     «ENDFOR»
                 «ENDIF»
+                «IF hasBooleanFieldsEntity»
+                    $booleanSelectorItems = array(
+                        array('value' => 'no', 'text' => __('No')),
+                        array('value' => 'yes', 'text' => __('Yes'))
+                    );
+                    «FOR field : getBooleanFieldsEntity»
+                        «val fieldName = field.name.formatForCode»
+                        $templateParameters['«fieldName»Items'] = $booleanSelectorItems;
+                    «ENDFOR»
+                «ENDIF»
             }
 
             // in the concrete child class you could do something like
@@ -291,7 +301,7 @@ class Repository {
             «IF hasBooleanFieldsEntity»
                 «FOR field : getBooleanFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = (int) FormUtil::getPassedValue('«fieldName»', 0, 'GET');
+                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
                 «ENDFOR»
             «ENDIF»
 
@@ -679,6 +689,15 @@ class Repository {
                     if (!empty($v)) {
                         $qb = $this->addSearchFilter($qb, $v);
                     }
+                «IF hasBooleanFieldsEntity»
+                } elseif (in_array($k, array(«FOR field : getBooleanFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»))) {
+                    // boolean filter
+                    if ($v == 'no') {
+                        $qb->andWhere('tbl.' . $k . ' = 0)
+                    } elseif ($v == 'yes' || $v == '1') {
+                        $qb->andWhere('tbl.' . $k . ' = 1)
+                    }
+                «ENDIF»
                 } else {
                     // field filter
                     if ($v != '' || (is_numeric($v) && $v > 0)) {

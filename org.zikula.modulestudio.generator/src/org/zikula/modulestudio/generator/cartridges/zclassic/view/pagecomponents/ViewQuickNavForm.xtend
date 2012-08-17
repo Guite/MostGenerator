@@ -124,8 +124,13 @@ class ViewQuickNavForm {
 
     def private dispatch formFieldImpl(BooleanField it) '''
         «val fieldName = name.formatForCode»
-        <input type="checkbox" id="«fieldName»" name="«fieldName»" value="1"{if $«fieldName» eq 1} checked="checked"{/if} />
         <label for="«fieldName»">{gt text='«name.formatForDisplayCapital»'}</label>
+        <select id="«fieldName»" name="«fieldName»">
+            <option value="">{$lblDefault}</option>
+        {foreach item='option' from=$«fieldName»Items}
+            <option value="{$option.value}"{if $option.value eq $«fieldName»} selected="selected"{/if}>{$option.text|safetext}</option>
+        {/foreach}
+        </select>
     '''
 
     def private dispatch formFieldImpl(StringField it) '''
