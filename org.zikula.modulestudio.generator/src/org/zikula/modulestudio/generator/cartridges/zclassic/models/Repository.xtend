@@ -187,6 +187,10 @@ class Repository {
 
             «intBaseQuery»
 
+            «IF !hasCompositeKeys»«/* id list shuffling is not supported for composite keys yet */»
+                «getIdentifierListForRandomSorting»
+
+            «ENDIF»
             «intGetQueryFromBuilder»
 
             «new Joins().generate(it, app)»
@@ -881,6 +885,20 @@ class Repository {
                 }
             «ENDIF»
 
+            if ($orderBy == 'RAND()') {
+                // random selection
+                «IF hasCompositeKeys»
+                    // not supported for composite keys yet
+                «ELSE»
+                    $idValues = $this->getIdentifierListForRandomSorting();
+                    $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» IN (:idValues)')
+                       ->setParameter('idValues', $idValues);
+                «ENDIF»
+
+                // no specific ordering in the main query for random items
+                $orderBy = '';
+            }
+
             // add order by clause
             if (!empty($orderBy)) {
                 if (strpos($orderBy, '.') === false) {
@@ -890,6 +908,34 @@ class Repository {
             }
 
             return $qb;
+        }
+    '''
+
+    def private getIdentifierListForRandomSorting(Entity it) '''
+        /**
+         * Retrieves a random list of identifiers.
+         *
+         * @return array Collected identifiers.
+         */
+        protected function getIdentifierListForRandomSorting()
+        {
+            $idList = array();
+
+            // query all primary keys in slim mode without any joins
+            $allEntities = $this->selectWhere('', '', false, true);
+
+            if (!$allEntities || !is_array($allEntities) || !count($allEntities)) {
+                return $idList;
+            }
+
+            foreach ($allEntities as $entity) {
+                $idList[] = $entity->get«getFirstPrimaryKey.name.formatForCodeCapital»();
+            }
+
+            // shuffle the id array
+            shuffle($idList);
+
+            return $idList;
         }
     '''
 

@@ -150,11 +150,6 @@ class Selection {
             $useJoins = isset($args['useJoins']) ? ((bool) $args['useJoins']) : true;
             $slimMode = isset($args['slimMode']) ? ((bool) $args['slimMode']) : false;
 
-            if ($orderBy == 'RAND()') {
-                // random ordering is disabled for now, see https://github.com/Guite/MostGenerator/issues/143
-                $orderBy = $repository->getDefaultSortingField();
-            }
-
             return $repository->selectWherePaginated($where, $orderBy, $currentPage, $resultsPerPage, $useJoins, $slimMode);
         }
 
