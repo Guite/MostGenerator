@@ -336,7 +336,7 @@ class Association {
         public function add«name.toFirstUpper»(«addParameters(useTarget, nameSingle, type, false)»)
         {
             «addAssignment(useTarget, selfIsMany, name, nameSingle)»
-            «IF bidirectional && !useTarget»
+            «IF bidirectional && useTarget»
                 «val ownAliasName = getRelationAliasName(!useTarget).toFirstUpper»
                 «val otherIsMany = isManySide(!useTarget)»
                 «IF otherIsMany»
@@ -412,7 +412,7 @@ class Association {
             «ELSE»
                 $this->«name» = null;
             «ENDIF»
-            «IF bidirectional && !useTarget»
+            «IF bidirectional && useTarget»
                 «val ownAliasName = getRelationAliasName(!useTarget).toFirstUpper»
                 «val otherIsMany = isManySide(!useTarget)»
                 «IF otherIsMany»
