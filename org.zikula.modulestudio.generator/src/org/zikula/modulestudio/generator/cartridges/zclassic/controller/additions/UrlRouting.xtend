@@ -88,7 +88,7 @@ class UrlRouting {
 
             «getFormattedSlug»
 
-            «fh.getterAndSetterMethods(it, 'router', 'Zikula_Routing_UrlRouter', false, true, 'null')»
+            «fh.getterAndSetterMethods(it, 'router', 'Zikula_Routing_UrlRouter', false, true, 'null', '')»
         }
     '''
 

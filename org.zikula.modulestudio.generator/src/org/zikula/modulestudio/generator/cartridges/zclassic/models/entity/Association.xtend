@@ -289,17 +289,29 @@ class Association {
 
     def private relationAccessorImpl(JoinRelationship it, Boolean useTarget, String aliasName) '''
         «val entityClass = { (if (useTarget) target else source).implClassModelEntity }»
-        «val singleName = { (if (useTarget) target else source).name }»
+        «val nameSingle = { (if (useTarget) target else source).name }»
         «val isMany = isManySide(useTarget)»
         «IF isMany»
-            «fh.getterAndSetterMethods(it, aliasName, entityClass, true, false, '')»
-            «relationAccessorAdditions(useTarget, aliasName, singleName)»
+            «fh.getterAndSetterMethods(it, aliasName, entityClass, true, false, '', relationSetterCustomImpl(useTarget, aliasName))»
+            «relationAccessorAdditions(useTarget, aliasName, nameSingle)»
         «ELSE»
-            «fh.getterAndSetterMethods(it, aliasName, entityClass, false, true, 'null')»
+            «fh.getterAndSetterMethods(it, aliasName, entityClass, false, true, 'null', '')»
         «ENDIF»
         «IF isMany»
-            «addMethod(useTarget, isMany, aliasName, singleName, entityClass)»
-            «removeMethod(useTarget, isMany, aliasName, singleName, entityClass)»
+            «addMethod(useTarget, isMany, aliasName, nameSingle, entityClass)»
+            «removeMethod(useTarget, isMany, aliasName, nameSingle, entityClass)»
+        «ENDIF»
+    '''
+
+    def private relationSetterCustomImpl(JoinRelationship it, Boolean useTarget, String aliasName) '''
+        «IF bidirectional && useTarget»
+            «val otherIsMany = isManySide(!useTarget)»
+            «IF otherIsMany»
+                «val nameSingle = { (if (useTarget) target else source).name }»
+                for ($«aliasName» as $«nameSingle») {
+                    $this->add«aliasName.toFirstUpper»($«nameSingle»);
+                }
+            «ENDIF»
         «ENDIF»
     '''
 

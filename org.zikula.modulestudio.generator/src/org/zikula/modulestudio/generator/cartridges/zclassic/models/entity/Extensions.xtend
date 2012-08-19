@@ -242,26 +242,26 @@ class Extensions {
 
     def additionalAccessors(Entity it) '''
         «IF geographical»
-            «fh.getterAndSetterMethods(it, 'latitude', 'decimal', false, false, '')»
-            «fh.getterAndSetterMethods(it, 'longitude', 'decimal', false, false, '')»
+            «fh.getterAndSetterMethods(it, 'latitude', 'decimal', false, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'longitude', 'decimal', false, false, '', '')»
         «ENDIF»
         «IF hasSluggableFields»
             «fh.getterMethod(it, 'slug', 'string', false)»
-            «/*fh.getterAndSetterMethods(it, 'slug', 'string', false, false, '')*/»
+            «/*fh.getterAndSetterMethods(it, 'slug', 'string', false, false, '', '')*/»
         «ENDIF»
         «IF tree != EntityTreeType::NONE»
-            «fh.getterAndSetterMethods(it, 'lft', 'integer', false, false, '')»
-            «fh.getterAndSetterMethods(it, 'lvl', 'integer', false, false, '')»
-            «fh.getterAndSetterMethods(it, 'rgt', 'integer', false, false, '')»
-            «fh.getterAndSetterMethods(it, 'root', 'integer', false, false, '')»
-            «fh.getterAndSetterMethods(it, 'parent', implClassModelEntity, false, true, 'null')»
-            «fh.getterAndSetterMethods(it, 'children', 'array', true, false, '')»
+            «fh.getterAndSetterMethods(it, 'lft', 'integer', false, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'lvl', 'integer', false, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'rgt', 'integer', false, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'root', 'integer', false, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'parent', implClassModelEntity, false, true, 'null', '')»
+            «fh.getterAndSetterMethods(it, 'children', 'array', true, false, '', '')»
         «ENDIF»
         «IF hasTranslatableFields»
-            «fh.getterAndSetterMethods(it, 'locale', 'string', false, false, '')»
+            «fh.getterAndSetterMethods(it, 'locale', 'string', false, false, '', '')»
         «ENDIF»
         «IF metaData»
-            «fh.getterAndSetterMethods(it, 'metadata', implClassModel('', 'metaData'), false, true, 'null')»
+            «fh.getterAndSetterMethods(it, 'metadata', implClassModel('', 'metaData'), false, true, 'null', '')»
         «ENDIF»
         «IF attributable»
             «fh.getterMethod(it, 'attributes', 'array', true)»
@@ -287,13 +287,13 @@ class Extensions {
                 }
         «ENDIF»
         «IF categorisable»
-            «fh.getterAndSetterMethods(it, 'categories', 'array', true, false, '')»
+            «fh.getterAndSetterMethods(it, 'categories', 'array', true, false, '', '')»
         «ENDIF»
         «IF standardFields»
-            «fh.getterAndSetterMethods(it, 'createdUserId', 'integer', true, false, '')»
-            «fh.getterAndSetterMethods(it, 'updatedUserId', 'integer', true, false, '')»
-            «fh.getterAndSetterMethods(it, 'createdDate', 'datetime', true, false, '')»
-            «fh.getterAndSetterMethods(it, 'updatedDate', 'datetime', true, false, '')»
+            «fh.getterAndSetterMethods(it, 'createdUserId', 'integer', true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'updatedUserId', 'integer', true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'createdDate', 'datetime', true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'updatedDate', 'datetime', true, false, '', '')»
         «ENDIF»
     '''
 

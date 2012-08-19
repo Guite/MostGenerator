@@ -42,9 +42,9 @@ class FileHelper {
     '''
 
 
-    def getterAndSetterMethods(Object it, String name, String type, Boolean isMany, Boolean useHint, String init) '''
+    def getterAndSetterMethods(Object it, String name, String type, Boolean isMany, Boolean useHint, String init, CharSequence customImpl) '''
         «getterMethod(name, type, isMany)»
-        «setterMethod(name, type, isMany, useHint, init)»
+        «setterMethod(name, type, isMany, useHint, init, customImpl)»
     '''
 
     def getterMethod(Object it, String name, String type, Boolean isMany) '''
@@ -60,7 +60,7 @@ class FileHelper {
         «/* this last line is on purpose */»
     '''
 
-    def setterMethod(Object it, String name, String type, Boolean isMany, Boolean useHint, String init) '''
+    def setterMethod(Object it, String name, String type, Boolean isMany, Boolean useHint, String init, CharSequence customImpl) '''
         /**
          * Set «name.formatForDisplay».
          *
@@ -70,7 +70,11 @@ class FileHelper {
          */
         public function set«name.formatForCodeCapital»(«IF useHint»«type» «ENDIF»$«name»«IF init != ''» = «init»«ENDIF»)
         {
-            «setterMethodImpl(name, type)»
+            «IF customImpl != null && customImpl != ''»
+                «customImpl»
+            «ELSE»
+                «setterMethodImpl(name, type)»
+            «ENDIF»
         }
         «/* this last line is on purpose */»
     '''

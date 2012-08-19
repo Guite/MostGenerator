@@ -111,7 +111,7 @@ class Repository {
                 );
             }
 
-            «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, false, '')»
+            «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, false, '', '')»
 
             /**
              * Returns name of the field used as title / name for entities of this repository.

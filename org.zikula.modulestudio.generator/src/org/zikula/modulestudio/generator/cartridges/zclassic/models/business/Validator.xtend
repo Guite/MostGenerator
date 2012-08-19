@@ -543,7 +543,7 @@ class Validator {
             «checkForUniqueSlugValues(app)»
         «ENDIF»
 
-        «fh.getterAndSetterMethods(app, 'entity', 'Zikula_EntityAccess', false, true, 'null')»
+        «fh.getterAndSetterMethods(app, 'entity', 'Zikula_EntityAccess', false, true, 'null', '')»
     '''
 
     def private checkForUniqueValues(Entity it, Application app) '''

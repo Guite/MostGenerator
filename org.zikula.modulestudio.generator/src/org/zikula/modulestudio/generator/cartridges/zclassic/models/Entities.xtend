@@ -234,11 +234,11 @@ class Entities {
 
         «constructor(false)»
 
-        «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, '')»
-        «fh.getterAndSetterMethods(it, '_idFields', 'array', false, true, 'Array()')»
-        «fh.getterAndSetterMethods(it, '_validator', implClassModel('validator', ''), false, true, 'null')»
-        «fh.getterAndSetterMethods(it, '_hasUniqueSlug', 'boolean', false, false, '')»
-        «fh.getterAndSetterMethods(it, '_actions', 'array', false, true, 'Array()')»
+        «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, '', '')»
+        «fh.getterAndSetterMethods(it, '_idFields', 'array', false, true, 'Array()', '')»
+        «fh.getterAndSetterMethods(it, '_validator', implClassModel('validator', ''), false, true, 'null', '')»
+        «fh.getterAndSetterMethods(it, '_hasUniqueSlug', 'boolean', false, false, '', '')»
+        «fh.getterAndSetterMethods(it, '_actions', 'array', false, true, 'Array()', '')»
         «propertyChangedListener»
 
         «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
