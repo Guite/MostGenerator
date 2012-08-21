@@ -693,9 +693,9 @@ class Repository {
                 } elseif (in_array($k, array(«FOR field : getBooleanFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»))) {
                     // boolean filter
                     if ($v == 'no') {
-                        $qb->andWhere('tbl.' . $k . ' = 0)
+                        $qb->andWhere('tbl.' . $k . ' = 0');
                     } elseif ($v == 'yes' || $v == '1') {
-                        $qb->andWhere('tbl.' . $k . ' = 1)
+                        $qb->andWhere('tbl.' . $k . ' = 1');
                     }
                 «ENDIF»
                 } else {
