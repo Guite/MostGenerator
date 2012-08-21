@@ -10,6 +10,7 @@ import de.guite.modulestudio.metamodel.modulestudio.CustomAction
 import de.guite.modulestudio.metamodel.modulestudio.DeleteAction
 import de.guite.modulestudio.metamodel.modulestudio.DisplayAction
 import de.guite.modulestudio.metamodel.modulestudio.EditAction
+import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.MainAction
 import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
@@ -139,6 +140,23 @@ class ControllerExtensions {
     }
 
     /**
+     * Returns the controller instance to be used for linking to a display
+     * page of a given entity.
+     * The main purpose of this function is to consider joins from or to entities
+     * of other models/modules properly.
+     */
+    def getLinkController(Application it, Controller currentController, Entity entity) {
+        val Application entityApp = entity.container.application
+        var Controller linkController = null
+        if (it == entityApp && currentController.hasActions('display')) {
+            linkController = currentController
+        } else if (entityApp.hasUserController && entityApp.getMainUserController.hasActions('display')) {
+            linkController = entityApp.getMainUserController
+        }
+        linkController
+    }
+
+    /**
      * Determines the controller in which the config action is living.
      */
     def configController(Application it) {
@@ -217,6 +235,7 @@ class ControllerExtensions {
     /**
      * Returns a list of numbers based on a given count variable.
      * This is a helper method allowing a while loop inside the template syntax.
+     * Used for creating a certain amount of example data.
      */
     def getListForCounter(Integer amount) {
         val theList = new ArrayList<Integer>()

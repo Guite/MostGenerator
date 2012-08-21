@@ -187,12 +187,7 @@ class Display {
         <dd>
         {if isset($«relObjName») && $«relObjName» ne null}
           {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-          «var Controller linkController = null»
-          «IF container.application == linkEntity.container.application && controller.hasActions('display')»
-              «linkController = controller»
-          «ELSEIF linkEntity.container.application.hasUserController && linkEntity.container.application.getMainUserController.hasActions('display')»
-              «linkController = linkEntity.container.application.getMainUserController»
-          «ENDIF»
+          «var linkController = getLinkController(container.application, controller, linkEntity)»
           «IF linkController != null»
               <a href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)»}">
           «ENDIF»
