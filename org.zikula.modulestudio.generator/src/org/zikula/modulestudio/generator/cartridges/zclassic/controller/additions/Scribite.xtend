@@ -22,16 +22,30 @@ class Scribite {
         var docPath = getAppSourcePath(appName) + 'docs/scribite/'
         fsa.generateFile(docPath + 'integration.txt', integration)
 
-        docPath = docPath + 'includes/'
-        fsa.generateFile(docPath + 'ckeditor/index.html', msUrl)
+        docPath = docPath + 'plugins/'
 
-        var pluginPath = docPath + 'tinymce/plugins/' + name.formatForDB + '/'
+        //fsa.generateFile(docPath + 'Aloha/index.html', msUrl)
+
+        //fsa.generateFile(docPath + 'CKEditor/javascript/ckeditor/index.html', msUrl)
+
+        //fsa.generateFile(docPath + 'MarkItUp/javascript/markitup/index.html', msUrl)
+
+        //fsa.generateFile(docPath + 'NicEdit/javascript/nicedit/index.html', msUrl)
+
+        var pluginPath = docPath + 'TinyMCE/javascript/tinymce/plugins/' + name.formatForDB + '/'
         fsa.generateFile(pluginPath + 'editor_plugin.js', tinyPlugin)
         fsa.generateFile(pluginPath + 'langs/de.js', tinyLangDe)
         fsa.generateFile(pluginPath + 'langs/en.js', tinyLangEn)
 
-        pluginPath = docPath + 'xinha/plugins/' + appName + '/'
+        pluginPath = docPath + 'WYMeditor/javascript/wymeditor/plugins/' + name.formatForDB + '/'
+        //fsa.generateFile(pluginPath + 'index.html', msUrl)
+
+        //fsa.generateFile(docPath + 'Wysihtml5/javascript/index.html', msUrl)
+
+        pluginPath = docPath + 'Xinha/javascript/xinha/plugins/' + appName + '/'
         fsa.generateFile(pluginPath + appName + '.js', xinhaPlugin)
+
+        //fsa.generateFile(docPath + 'YUI/index.html', msUrl)
     }
 
     def private integration(Application it) '''
@@ -52,7 +66,7 @@ class Scribite {
                 if (ModUtil::available('«appName»')) {
                     PageUtil::AddVar('javascript', 'modules/«appName»/javascript/«appName»_finder.js');
                 }
-          4. Copy or move all files from modules/«appName»/docs/scribite/includes/ into modules/Scribite/includes/.
+          4. Copy or move all files from modules/«appName»/docs/scribite/plugins/ into modules/Scribite/plugins/.
 
     '''
 
