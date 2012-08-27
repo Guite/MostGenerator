@@ -143,7 +143,7 @@ class Config {
                         return LogUtil::registerError($this->__('Error! Failed to set configuration variables.'));
                     }
 
-                   LogUtil::registerStatus($this->__('Done! Module configuration updated.'));
+                    LogUtil::registerStatus($this->__('Done! Module configuration updated.'));
                 } else if ($args['commandName'] == 'cancel') {
                     // nothing to do there
                 }
