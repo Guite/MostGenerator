@@ -67,12 +67,12 @@ class Config {
             public function initialize(Zikula_Form_View $view)
             {
                 // permission check
-                if (!SecurityUtil::checkPermission('«appName»::', '::', ACCESS_ADMIN)) {
+                if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
                     return $view->registerError(LogUtil::registerPermissionError());
                 }
 
                 // retrieve module vars
-                $modVars = ModUtil::getVar('«appName»'«/*$this->getVars() Zikula_Form_AbstractHandler does not inherit from Zikula_Base (yet)*/»);
+                $modVars = $this->getVars();
                 «FOR modvar : getAllVariables»«modvar.init»«ENDFOR»
 
                 // assign all module vars
@@ -139,7 +139,7 @@ class Config {
                     $data = $this->view->getValues();
 
                     // update all module vars
-                    if (!ModUtil::setVars('«appName»', $data['config'])) {
+                    if (!$this->setVars($data['config'])) {
                         return LogUtil::registerError($this->__('Error! Failed to set configuration variables.'));
                     }
 
@@ -149,7 +149,7 @@ class Config {
                 }
 
                 // redirect back to the config page
-                $url = ModUtil::url('«appName»', '«configController.formatForDB»', 'config');
+                $url = ModUtil::url($this->name, '«configController.formatForDB»', 'config');
                 return $this->view->redirect($url);
             }
         }

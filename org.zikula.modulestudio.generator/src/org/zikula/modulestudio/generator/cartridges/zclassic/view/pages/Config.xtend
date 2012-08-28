@@ -65,6 +65,7 @@ class Config {
                 </div>
             «ENDIF»
         </div>
+        {include file='«configController.formatForDB»/footer.tpl'}
         «IF !getAllVariables.filter(e|e.documentation != null && e.documentation != '').isEmpty»
             <script type="text/javascript">
             /* <![CDATA[ */
@@ -74,7 +75,6 @@ class Config {
             /* ]]> */
             </script>
         «ENDIF»
-        {include file='«configController.formatForDB»/footer.tpl'}
     '''
 
     def private configSection(Variables it, Boolean hasMultipleConfigSections) '''
