@@ -80,7 +80,7 @@ class Xml {
     '''
 
     def private dispatch displayEntry(BooleanField it, Controller controller) '''
-        <«name.formatForCode»>{if !$item.«name»}0{else}1{/if}</«name.formatForCode»>
+        <«name.formatForCode»>{if !$item.«name.formatForCode»}0{else}1{/if}</«name.formatForCode»>
     '''
 
     def private displayEntryCdata(DerivedField it, Controller controller) '''

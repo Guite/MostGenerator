@@ -52,14 +52,13 @@ class Csv {
     def private headerLine(DerivedField it) '''
         "{gt text='«name.formatForDisplayCapital»'}"'''
 
-    def private headerLineRelation(JoinRelationship it, Boolean useTarget) '''
-        "{gt text='«getRelationAliasName(useTarget).formatForDisplayCapital»'}"'''
+    def private headerLineRelation(JoinRelationship it, Boolean useTarget) ''';"{gt text='«getRelationAliasName(useTarget).formatForDisplayCapital»'}"'''
 
     def private dispatch displayEntry(DerivedField it, Controller controller) '''
         "«fieldHelper.displayField(it, entity.name.formatForCode, 'viewcsv')»"'''
 
     def private dispatch displayEntry(BooleanField it, Controller controller) '''
-        "{if !$item.«name»}0{else}1{/if}"'''
+        "{if !$«entity.name.formatForCode».«name.formatForCode»}0{else}1{/if}"'''
 
     def private displayRelatedEntry(JoinRelationship it, Controller controller, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
@@ -67,14 +66,15 @@ class Csv {
         «val linkEntity = (if (useTarget) target else source)»
         «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
         «val leadingField = linkEntity.getLeadingField»
-        {if isset($«relObjName») && $«relObjName» ne null}«IF leadingField != null»{$«relObjName».«linkEntity.getLeadingField.name.formatForCode»«/*|nl2br*/»|default:""}«ELSE»«/*TODO*/»«ENDIF»{/if}'''
+        ;"{if isset($«relObjName») && $«relObjName» ne null}«IF leadingField != null»{$«relObjName».«linkEntity.getLeadingField.name.formatForCode»«/*|nl2br*/»|default:""}«ELSE»«/*TODO*/»«ENDIF»{/if}"'''
 
     def private displayRelatedEntries(JoinRelationship it, Controller controller, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
+        «val mainEntity = (if (!useTarget) target else source)»
         «val linkEntity = (if (useTarget) target else source)»
-        «val relObjName = 'item.' + relationAliasName»
+        «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
         «val leadingField = linkEntity.getLeadingField»
-        «IF leadingField != null»
+        ";«IF leadingField != null»
             {if isset($«relObjName») && $«relObjName» ne null}
                 {foreach name='relationLoop' item='relatedItem' from=$«relObjName»}
                 {$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:''}{if !$smarty.foreach.relationLoop.last}, {/if}
@@ -82,6 +82,5 @@ class Csv {
             {/if}
         «ELSE»
             «/*TODO*/»
-        «ENDIF»
-    '''
+        «ENDIF»"'''
 }
