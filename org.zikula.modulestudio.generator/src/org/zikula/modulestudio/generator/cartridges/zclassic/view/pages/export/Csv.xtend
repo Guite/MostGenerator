@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export
 
 import com.google.inject.Inject
+import de.guite.modulestudio.metamodel.modulestudio.BooleanField
 import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
@@ -54,8 +55,11 @@ class Csv {
     def private headerLineRelation(JoinRelationship it, Boolean useTarget) '''
         "{gt text='«getRelationAliasName(useTarget).formatForDisplayCapital»'}"'''
 
-    def private displayEntry(DerivedField it, Controller controller) '''
+    def private dispatch displayEntry(DerivedField it, Controller controller) '''
         "«fieldHelper.displayField(it, entity.name.formatForCode, 'viewcsv')»"'''
+
+    def private dispatch displayEntry(BooleanField it, Controller controller) '''
+        "{if !$item.«name»}0{else}1{/if}"'''
 
     def private displayRelatedEntry(JoinRelationship it, Controller controller, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
