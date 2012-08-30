@@ -119,7 +119,7 @@ class Xml {
             <«relationAliasName.toFirstLower»>
             {if isset($«relObjName») && $«relObjName» ne null}
                 {foreach name='relationLoop' item='relatedItem' from=$«relObjName»}
-                <«linkEntity.name.formatForCode»>{$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:''}</«linkEntity.name.formatForCode»>
+                <«linkEntity.name.formatForCode»>{$relatedItem.«leadingField.name.formatForCode»«/*|nl2br*/»|default:''}</«linkEntity.name.formatForCode»>
                 {/foreach}
             {/if}
             </«relationAliasName.toFirstLower»>

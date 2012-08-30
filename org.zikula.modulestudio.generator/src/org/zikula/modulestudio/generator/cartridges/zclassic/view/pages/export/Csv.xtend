@@ -77,7 +77,7 @@ class Csv {
         ;"«IF leadingField != null»
             {if isset($«relObjName») && $«relObjName» ne null}
                 {foreach name='relationLoop' item='relatedItem' from=$«relObjName»}
-                {$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:''}{if !$smarty.foreach.relationLoop.last}, {/if}
+                {$relatedItem.«leadingField.name.formatForCode»«/*|nl2br*/»|default:''}{if !$smarty.foreach.relationLoop.last}, {/if}
                 {/foreach}
             {/if}
         «ELSE»
