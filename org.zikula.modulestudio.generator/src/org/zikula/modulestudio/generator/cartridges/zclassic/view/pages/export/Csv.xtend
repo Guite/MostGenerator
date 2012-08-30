@@ -74,7 +74,7 @@ class Csv {
         «val linkEntity = (if (useTarget) target else source)»
         «val relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
         «val leadingField = linkEntity.getLeadingField»
-        ";«IF leadingField != null»
+        ;"«IF leadingField != null»
             {if isset($«relObjName») && $«relObjName» ne null}
                 {foreach name='relationLoop' item='relatedItem' from=$«relObjName»}
                 {$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:''}{if !$smarty.foreach.relationLoop.last}, {/if}
