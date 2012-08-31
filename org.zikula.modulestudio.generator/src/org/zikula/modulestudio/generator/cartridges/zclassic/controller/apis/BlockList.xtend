@@ -176,7 +176,8 @@ class BlockList {
 
             // if page is cached return cached content
             if ($this->view->is_cached($template)) {
-                return $this->view->fetch($template);
+                $blockinfo['content'] = $this->view->fetch($template);
+                return BlockUtil::themeBlock($blockinfo);
             }
 
             // get objects from database
