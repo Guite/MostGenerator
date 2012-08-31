@@ -307,7 +307,7 @@ class BlockList {
                 }
             «ENDIF»
 
-            $this->view->setCaching(false);
+            $this->view->setCaching(Zikula_View::CACHE_DISABLED);
 
             // assign the approriate values
             $this->view->assign($vars);
