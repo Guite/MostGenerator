@@ -39,13 +39,13 @@ class BlockList {
     '''
 
     def private listBlockBaseClass(Application it) '''
-		/**
-		 * Generic item list block base class.
-		 */
-		class «appName»_Block_Base_ItemList extends Zikula_Controller_AbstractBlock
-		{
-		    «listBlockBaseImpl»
-		}
+        /**
+         * Generic item list block base class.
+         */
+        class «appName»_Block_Base_ItemList extends Zikula_Controller_AbstractBlock
+        {
+            «listBlockBaseImpl»
+        }
     '''
 
     def private listBlockBaseImpl(Application it) '''
@@ -78,15 +78,15 @@ class BlockList {
                 $requirementMessage .= $this->__('Notice: This block will not be displayed until you activate the «appName» module.');
             }
 
-            return array('module'           => '«appName»',
-                         'text_type'        => $this->__('«appName» list view'),
-                         'text_type_long'   => $this->__('Display list of «appName» objects.'),
-                         'allow_multiple'   => true,
-                         'form_content'     => false,
-                         'form_refresh'     => false,
-                         'show_preview'     => true,
-                         'admin_tableless'  => true,
-                         'requirement'      => $requirementMessage);
+            return array('module'          => '«appName»',
+                         'text_type'       => $this->__('«appName» list view'),
+                         'text_type_long'  => $this->__('Display list of «appName» objects.'),
+                         'allow_multiple'  => true,
+                         'form_content'    => false,
+                         'form_refresh'    => false,
+                         'show_preview'    => true,
+                         'admin_tableless' => true,
+                         'requirement'     => $requirementMessage);
         }
 
         /**
