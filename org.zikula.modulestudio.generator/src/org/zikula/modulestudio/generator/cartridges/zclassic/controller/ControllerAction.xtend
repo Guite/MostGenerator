@@ -233,13 +233,13 @@ class ControllerAction {
 
         // prepare access level for cache id
         $accessLevel = ACCESS_READ;
-        $component = '«appName»:' . ucwords($this->objectType) . ':';
+        $component = '«appName»:' . ucwords($objectType) . ':';
         $instance = '::';
         if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
         if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
 
         $templateFile = $viewHelper->getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args);
-        $cacheId = 'view|ot_' . $this->objectType . '_sort_' . $sort . '_' . $sdir;
+        $cacheId = 'view|ot_' . $objectType . '_sort_' . $sort . '_' . $sdir;
 
         if ($showAllEntries == 1) {
             // set cache id
