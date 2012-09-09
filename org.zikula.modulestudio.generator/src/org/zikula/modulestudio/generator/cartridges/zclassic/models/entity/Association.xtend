@@ -150,11 +150,10 @@ class Association {
     	}
     }
 
-    def private dispatch outgoingMappingAdditions(JoinRelationship it) {
-    }
-    def private dispatch outgoingMappingAdditions(OneToOneRelationship it) {
-        if (orphanRemoval) ', orphanRemoval=true'
-    }
+    def private dispatch outgoingMappingAdditions(JoinRelationship it) ''''''
+    def private dispatch outgoingMappingAdditions(OneToOneRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»'''
+    def private dispatch outgoingMappingAdditions(OneToManyRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»«IF indexBy != null && indexBy != ''», indexBy="«indexBy»"«ENDIF»)'''
+    def private dispatch outgoingMappingAdditions(ManyToManyRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»«IF indexBy != null && indexBy != ''», indexBy="«indexBy»"«ENDIF»'''
 
     def private dispatch outgoing(OneToManyRelationship it, String sourceName, String targetName, String entityClass) '''
         /**
@@ -163,7 +162,7 @@ class Association {
          «IF !bidirectional»
           * @ORM\ManyToMany(targetEntity="«entityClass»"«additionalOptions(false)»)
          «ELSE»
-          * @ORM\OneToMany(targetEntity="«entityClass»", mappedBy="«sourceName»"«additionalOptions(false)»«IF orphanRemoval», orphanRemoval=true«ENDIF»«IF indexBy != null && indexBy != ''», indexBy="«indexBy»"«ENDIF»)
+          * @ORM\OneToMany(targetEntity="«entityClass»", mappedBy="«sourceName»"«additionalOptions(false)»«outgoingMappingAdditions»
          «ENDIF»
         «joinDetails(true)»
          «IF orderBy != null && orderBy != ''»
@@ -181,7 +180,7 @@ class Association {
         /**
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
          *
-         * @ORM\ManyToMany(targetEntity="«entityClass»"«IF bidirectional», inversedBy="«sourceName»"«ENDIF»«additionalOptions(false)»«IF indexBy != null && indexBy != ''», indexBy="«indexBy»"«ENDIF»)
+         * @ORM\ManyToMany(targetEntity="«entityClass»"«IF bidirectional», inversedBy="«sourceName»"«ENDIF»«additionalOptions(false)»«outgoingMappingAdditions»)
         «joinDetails(true)»
          «IF orderBy != null && orderBy != ''»
           * @ORM\OrderBy({"«orderBy»" = "ASC"})
