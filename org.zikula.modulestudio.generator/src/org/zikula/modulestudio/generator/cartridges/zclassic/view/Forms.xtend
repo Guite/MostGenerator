@@ -245,7 +245,7 @@ class Forms {
                     var mapstraction;
                     var marker;
                     Event.observe(window, 'load', function() {
-                        mapstraction = new mxn.Mapstraction('mapContainer', 'googlev3');
+                        mapstraction = new mxn.Mapstraction('mapcontainer', 'googlev3');
                         mapstraction.addControls({
                             pan: true,
                             zoom: 'small',

@@ -45,7 +45,8 @@ class Display {
     def private displayView(Entity it, String appName, Controller controller) '''
         {* purpose of this template: «nameMultiple.formatForDisplay» display view in «controller.formattedName» area *}
         {include file='«controller.formattedName»/header.tpl'}
-        <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display">
+        «val refedElems = getOutgoingJoinRelations.filter(e|e.target.container.application == it.container.application) + incoming.filter(typeof(ManyToManyRelationship)).filter(e|e.source.container.application == it.container.application)»
+        <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display«IF !refedElems.isEmpty» withrightbox«ENDIF»">
         «val objName = name.formatForCode»
         «val leadingField = getLeadingField»
         {gt text='«name.formatForDisplayCapital»' assign='templateTitle'}
@@ -55,10 +56,9 @@ class Display {
         {pagesetvar name='title' value=$templateTitle|@html_entity_decode}
         «controller.templateHeader(it, appName)»
 
-        «val refedElems = getOutgoingJoinRelations.filter(e|e.target.container.application == it.container.application) + incoming.filter(typeof(ManyToManyRelationship)).filter(e|e.source.container.application == it.container.application)»
         «IF !refedElems.isEmpty»
             {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-                <div class="«appName.formatForDB»RightBox">
+                <div class="«appName.toLowerCase»rightbox">
                     «val relationHelper = new Relations()»
                     «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, controller, it)»«ENDFOR»
                 </div>
@@ -264,7 +264,7 @@ class Display {
                 /* <![CDATA[ */
                     var mapstraction;
                     Event.observe(window, 'load', function() {
-                        mapstraction = new mxn.Mapstraction('mapContainer', 'googlev3');
+                        mapstraction = new mxn.Mapstraction('mapcontainer', 'googlev3');
                         mapstraction.addControls({
                             pan: true,
                             zoom: 'small',
@@ -284,7 +284,7 @@ class Display {
                 /* ]]> */
                 </script>
             {/pageaddvarblock}
-            <div id="mapContainer" class="«controller.container.application.appName.formatForDB»MapContainer">
+            <div id="mapcontainer" class="«controller.container.application.appName.toLowerCase»mapcontainer">
             </div>
             «IF useGroupingPanels('display')»
                 </div>

@@ -35,26 +35,31 @@ class Styles {
         }
 
         /* display pages */
-        div.«appName.formatForDB»RightBox {
+        «appName.toLowerCase»-display.withrightbox div.z-panel-content {
+            float: left;
+            width: 79%;
+        }
+        «appName.toLowerCase»-display div.«appName.toLowerCase»rightbox {
             float: right;
             margin: 0 1em;
             padding: .5em;
+            width: 20%;
             /*border: 1px solid #666;*/
         }
 
-        div.«appName.formatForDB»RightBox h3 {
+        «appName.toLowerCase»-display div.«appName.toLowerCase»rightbox h3 {
             color: #333;
             font-weight: 400;
             border-bottom: 1px solid #CCC;
             padding-bottom: 8px;
         }
 
-        div.«appName.formatForDB»RightBox p.manageLink {
+        «appName.toLowerCase»-display div.«appName.toLowerCase»rightbox p.manageLink {
             margin-left: 18px;
         }
         «IF hasGeographical»
 
-            div.«appName.formatForDB»MapContainer {
+            div.«appName.toLowerCase»mapcontainer {
                 height: 400px;
             }
         «ENDIF»

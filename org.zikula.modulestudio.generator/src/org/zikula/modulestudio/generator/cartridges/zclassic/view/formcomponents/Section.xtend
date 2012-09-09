@@ -44,7 +44,7 @@ class Section {
             «ELSE»
             <fieldset>
                 <legend>{gt text='Map'}</legend>
-                <div id="mapContainer" class="«app.appName.formatForDB»MapContainer">
+                <div id="mapcontainer" class="«app.appName.toLowerCase»mapcontainer">
                 </div>
             «ENDIF»
             </fieldset>
