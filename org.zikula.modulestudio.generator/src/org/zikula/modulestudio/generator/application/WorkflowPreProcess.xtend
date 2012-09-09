@@ -12,26 +12,26 @@ public class WorkflowPreProcess {
     WorkflowSettings settings
 
     def run(WorkflowSettings settings) throws ExceptionBase {
-        this.settings = settings;
+        this.settings = settings
         cartridgeTasks
         directoryTasks
     }
 
     def private cartridgeTasks() throws NoCartridgesSelected {
-        if (settings.selectedCartridges.size == 0) {
+        if (settings.getSelectedCartridges.size == 0) {
             throw new NoCartridgesSelected()
         }
     }
 
     def private directoryTasks() throws DirectoryNotEmptyException {
-        val existingFiles = settings.outputDir.listFiles
+        val existingFiles = settings.getOutputDir.listFiles
         if (existingFiles.size > 0) {
             throw new DirectoryNotEmptyException()
         }
     }
 
     def emptyDestinationDirectory() {
-        emptyDir(this.settings.outputDir)
+        emptyDir(this.settings.getOutputDir)
     }
 
     def private emptyDir(File dir) {

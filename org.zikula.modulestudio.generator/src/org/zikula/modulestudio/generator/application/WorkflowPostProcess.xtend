@@ -24,11 +24,11 @@ class WorkflowPostProcess {
      * Executes the workflow.
      */
     def run() {
-        if (settings.selectedCartridges.contains('zclassic')) {
+        if (settings.getSelectedCartridges.contains('zclassic')) {
         	copyAdminImage
         }
 
-        if (settings.selectedCartridges.contains('reporting')) {
+        if (settings.getSelectedCartridges.contains('reporting')) {
         	exportBirtReports
         }
     }
@@ -50,9 +50,9 @@ class WorkflowPostProcess {
                 val fileUrl = FileLocator::toFileURL(url)
                 val file = new File(fileUrl.getPath)
                 fileCopy.sourceFile = file.absolutePath
-                fileCopy.targetFile = settings.outputPath + '/zclassic/'
-                                    + settings.app.name + '/src/modules/'
-                                    + settings.app.name + '/images/admin.png'
+                fileCopy.targetFile = settings.getOutputPath + '/zclassic/'
+                                    + settings.getApp.name + '/src/modules/'
+                                    + settings.getApp.name + '/images/admin.png'
                 fileCopy.invoke(null)
             } catch (IOException e) {
                 // TODO Auto-generated catch block
@@ -67,18 +67,18 @@ class WorkflowPostProcess {
     def private exportBirtReports() {
         try {
             val bundle = Platform::getBundle(Activator::PLUGIN_ID)
-            val resources = FileLocator::findEntries(bundle, new Path(settings.reportPath))
+            val resources = FileLocator::findEntries(bundle, new Path(settings.getReportPath))
 
             val dir = new File(FileLocator::toFileURL(resources.head).toURI)
 
             val reportingFacade = new ReportingFacade()
-            reportingFacade.outputPath = settings.outputPath
-            reportingFacade.modelPath = settings.modelPath
+            reportingFacade.outputPath = settings.getOutputPath
+            reportingFacade.modelPath = settings.getModelPath
             reportingFacade.setUp
-            for (report : settings.selectedReports) {
-                settings.progressMonitor.subTask('Reporting: ' + report.toString)
+            for (report : settings.getSelectedReports) {
+                settings.getProgressMonitor.subTask('Reporting: ' + report.toString)
                 reportingFacade.startExport(dir.toString + '/' + report.toString + '.rptdesign', report.toString + '.pdf')
-                settings.progressMonitor.subTask('')
+                settings.getProgressMonitor.subTask('')
             }
             reportingFacade.shutDown
         } catch (Exception e) {

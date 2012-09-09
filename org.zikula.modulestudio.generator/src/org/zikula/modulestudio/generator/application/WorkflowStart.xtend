@@ -26,16 +26,16 @@ class WorkflowStart {
      * Workflow facade executing the actual model-to-text workflows.
      */
     def private performM2T() throws ExceptionBase {
-        if (settings.selectedCartridges.size == 1 && settings.selectedCartridges.head == 'reporting') {
+        if (settings.getSelectedCartridges.size == 1 && settings.getSelectedCartridges.head == 'reporting') {
             return;
         }
 
         try {
             // instantiate generator with Application instance and progress monitor
-            val msGen = new ModuleStudioGenerator(settings.app, settings.progressMonitor)
-            for (singleCartridge : settings.selectedCartridges) {
+            val msGen = new ModuleStudioGenerator(settings.getApp, settings.getProgressMonitor)
+            for (singleCartridge : settings.getSelectedCartridges) {
                 // run workflow
-                val generateResult = msGen.runWorkflow(settings.outputPath, singleCartridge.toString)
+                val generateResult = msGen.runWorkflow(settings.getOutputPath, singleCartridge.toString)
                 if (!generateResult) {
                     throw new M2TFailedCartridgeIncomplete(singleCartridge.toString)
                 }
