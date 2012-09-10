@@ -36,7 +36,7 @@ class StandardFields {
                 {usergetvar name='uname' uid=$obj.createdUserId assign='cr_uname'}
                 {if $modvars.ZConfig.profilemodule ne ''}
                     {* if we have a profile module link to the user profile *}
-                    {modurl modname=$modvars.ZConfig.profilemodule func='view' uname=$cr_uname assign='profileLink'}
+                    {modurl modname=$modvars.ZConfig.profilemodule type='user' func='view' uname=$cr_uname assign='profileLink'}
                     {assign var='profileLink' value=$profileLink|safetext}
                     {assign var='profileLink' value="<a href=\"`$profileLink`\">`$cr_uname`</a>"}
                 {else}
@@ -50,7 +50,7 @@ class StandardFields {
                 {usergetvar name='uname' uid=$obj.updatedUserId assign='lu_uname'}
                 {if $modvars.ZConfig.profilemodule ne ''}
                     {* if we have a profile module link to the user profile *}
-                    {modurl modname=$modvars.ZConfig.profilemodule func='view' uname=$lu_uname assign='profileLink'}
+                    {modurl modname=$modvars.ZConfig.profilemodule type='user' func='view' uname=$lu_uname assign='profileLink'}
                     {assign var='profileLink' value=$profileLink|safetext}
                     {assign var='profileLink' value="<a href=\"`$profileLink`\">`$lu_uname`</a>"}
                 {else}
