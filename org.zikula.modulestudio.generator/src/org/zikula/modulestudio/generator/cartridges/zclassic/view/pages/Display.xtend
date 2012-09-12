@@ -119,12 +119,12 @@ class Display {
     '''
 
     def private fieldDetails(Entity it, String appName, Controller controller) '''
+        «var displayFields = getDisplayFields»
+        «IF leadingField != null && leadingField.showLeadingFieldInTitle»
+            «displayFields = displayFields.filter(e|!e.leading)»
+        «ENDIF»
         <dl id="«appName»_body">
-            «IF leadingField != null && leadingField.showLeadingFieldInTitle»
-                «FOR field : getDerivedFields.filter(e|!e.leading && !e.primaryKey)»«field.displayEntry(controller)»«ENDFOR»
-            «ELSE»
-                «FOR field : getDerivedFields.filter(e|!e.primaryKey)»«field.displayEntry(controller)»«ENDFOR»
-            «ENDIF»
+            «FOR field : displayFields»«field.displayEntry(controller)»«ENDFOR»
             «IF geographical»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
                     <dt>{gt text='«geoFieldName.toFirstUpper»'}</dt>

@@ -278,6 +278,17 @@ class ModelExtensions {
     def idFieldsAsParameterTemplate(Entity it) '''«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»`$«name.formatForCode».«pkField.name.formatForCode»`«ENDFOR»'''
 
     /**
+     * Returns a list of all fields which should be displayed.
+     */
+    def getDisplayFields(Entity it) {
+        var fields = getDerivedFields
+        if (it.identifierStrategy != EntityIdentifierStrategy::NONE) {
+            fields = fields.filter(e|!e.primaryKey)
+        }
+        fields
+    }
+
+    /**
      * Returns a list of all editable fields of the given entity.
      * At the moment instances of ArrayField and ObjectField are excluded.
      */
