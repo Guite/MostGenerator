@@ -6,12 +6,9 @@ import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
-import de.guite.modulestudio.metamodel.modulestudio.IntegerField
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
-import de.guite.modulestudio.metamodel.modulestudio.StringField
-import de.guite.modulestudio.metamodel.modulestudio.TextField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.Relations
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pagecomponents.SimpleFields
@@ -119,12 +116,8 @@ class Display {
     '''
 
     def private fieldDetails(Entity it, String appName, Controller controller) '''
-        «var displayFields = getDisplayFields»
-        «IF leadingField != null && leadingField.showLeadingFieldInTitle»
-            «displayFields = displayFields.filter(e|!e.leading)»
-        «ENDIF»
         <dl id="«appName»_body">
-            «FOR field : displayFields»«field.displayEntry(controller)»«ENDFOR»
+            «FOR field : getLeadingDisplayFields»«field.displayEntry(controller)»«ENDFOR»
             «IF geographical»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
                     <dt>{gt text='«geoFieldName.toFirstUpper»'}</dt>
@@ -135,15 +128,6 @@ class Display {
             «/*«FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.displayEntry(controller, true)»«ENDFOR»*/»
         </dl>
     '''
-
-    def private showLeadingFieldInTitle(DerivedField it) {
-        switch it {
-            IntegerField: true
-            StringField: true
-            TextField: true
-            default: false
-        }
-    }
 
     def private templateHeader(Controller it, Entity entity, String appName) {
         switch it {

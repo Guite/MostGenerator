@@ -30,10 +30,9 @@ class Csv {
     }
 
     def private csvView(Entity it, String appName, Controller controller) '''
-        «val displayFields = getDisplayFields»
         {* purpose of this template: «nameMultiple.formatForDisplay» view csv view in «controller.formattedName» area *}
         {«appName.formatForDB»TemplateHeaders contentType='text/comma-separated-values; charset=iso-8859-15' asAttachment=true filename='«nameMultiple.formatForCodeCapital».csv'}
-        «FOR field : displayFields SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"«geoFieldName.toFirstUpper»"«ENDFOR»«ENDIF»
+        «FOR field : getDisplayFields SEPARATOR ';'»«field.headerLine»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"«geoFieldName.toFirstUpper»"«ENDFOR»«ENDIF»
         «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.headerLineRelation(false)»«ENDFOR»
         «FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.headerLineRelation(true)»«ENDFOR»
         «FOR relation : incoming.filter(typeof(ManyToManyRelationship)).filter(e|e.bidirectional)»«relation.headerLineRelation(false)»«ENDFOR»
@@ -41,7 +40,7 @@ class Csv {
         «FOR relation : outgoing.filter(typeof(ManyToManyRelationship))»«relation.headerLineRelation(true)»«ENDFOR»
         «val objName = name.formatForCode»
         {foreach item='«objName»' from=$items}
-            «FOR field : displayFields SEPARATOR ';'»«field.displayEntry(controller)»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{$«name.formatForCode».«geoFieldName»|formatnumber:7}"«ENDFOR»«ENDIF»
+            «FOR field : getDisplayFields SEPARATOR ';'»«field.displayEntry(controller)»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{$«name.formatForCode».«geoFieldName»|formatnumber:7}"«ENDFOR»«ENDIF»
             «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.displayRelatedEntry(controller, false)»«ENDFOR»
             «FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.displayRelatedEntry(controller, true)»«ENDFOR»
             «FOR relation : incoming.filter(typeof(ManyToManyRelationship)).filter(e|e.bidirectional)»«relation.displayRelatedEntries(controller, false)»«ENDFOR»

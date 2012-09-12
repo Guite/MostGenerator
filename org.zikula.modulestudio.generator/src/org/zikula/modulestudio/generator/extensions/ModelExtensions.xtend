@@ -289,6 +289,26 @@ class ModelExtensions {
     }
 
     /**
+     * Returns a list of all fields which should be displayed.
+     */
+    def getLeadingDisplayFields(Entity it) {
+        var fields = getDisplayFields
+        if (leadingField != null && leadingField.showLeadingFieldInTitle) {
+            fields = fields.filter(e|!e.leading)
+        }
+        fields
+    }
+
+    def showLeadingFieldInTitle(DerivedField it) {
+        switch it {
+            IntegerField: true
+            StringField: true
+            TextField: true
+            default: false
+        }
+    }
+
+    /**
      * Returns a list of all editable fields of the given entity.
      * At the moment instances of ArrayField and ObjectField are excluded.
      */

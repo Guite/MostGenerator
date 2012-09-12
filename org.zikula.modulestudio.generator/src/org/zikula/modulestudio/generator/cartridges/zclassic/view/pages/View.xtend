@@ -135,20 +135,19 @@ class View {
     '''
 
     def private viewItemList(Entity it, String appName, Controller controller) '''
-        «val displayFields = getDisplayFields»
             «IF listType != 3»
                 <«listType.asListTag»>
             «ELSE»
                 <table class="z-datatable">
                     <colgroup>
-                        «FOR field : displayFields»«field.columnDef»«ENDFOR»
+                        «FOR field : getDisplayFields»«field.columnDef»«ENDFOR»
                         «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.columnDef(false)»«ENDFOR»
                         «FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.columnDef(true)»«ENDFOR»
                         <col id="citemactions" />
                     </colgroup>
                     <thead>
                     <tr>
-                        «FOR field : displayFields»«field.headerLine(controller)»«ENDFOR»
+                        «FOR field : getDisplayFields»«field.headerLine(controller)»«ENDFOR»
                         «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.headerLine(controller, false)»«ENDFOR»
                         «FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.headerLine(controller, true)»«ENDFOR»
                         <th id="hitemactions" scope="col" class="z-right z-order-unsorted">{gt text='Actions'}</th>
@@ -165,7 +164,7 @@ class View {
                 «ELSEIF listType == 3»
                     <tr class="{cycle values='z-odd, z-even'}">
                 «ENDIF»
-                    «FOR field : displayFields»«field.displayEntry(controller, false)»«ENDFOR»
+                    «FOR field : getDisplayFields»«field.displayEntry(controller, false)»«ENDFOR»
                     «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.displayEntry(controller, false)»«ENDFOR»
                     «FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.displayEntry(controller, true)»«ENDFOR»
                     «itemActions(appName, controller)»
@@ -183,7 +182,7 @@ class View {
                     <dt>
                 «ELSEIF listType == 3»
                     <tr class="z-«controller.tableClass»tableempty">
-                      <td class="z-left" colspan="«(displayFields.size + outgoing.filter(typeof(OneToOneRelationship)).size)»">«/*fields.size -1 (id) +1 (actions)*/»
+                      <td class="z-left" colspan="«(getDisplayFields.size + outgoing.filter(typeof(OneToOneRelationship)).size)»">«/*fields.size -1 (id) +1 (actions)*/»
                 «ENDIF»
                 {gt text='No «nameMultiple.formatForDisplay» found.'}
                 «IF listType < 2»
