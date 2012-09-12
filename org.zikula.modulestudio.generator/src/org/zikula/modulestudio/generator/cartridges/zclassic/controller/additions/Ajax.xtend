@@ -330,6 +330,11 @@ class Ajax {
             }
 
             $exclude = $this->request->request->get('ex', '');
+            «IF !container.application.getAllEntities.filter(e|e.hasCompositeKeys).isEmpty»
+            if (strpos($exclude, '_') !== false) {
+                $exclude = explode('_', $exclude);
+            }
+            «ENDIF» 
 
             $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
             $object = new $entityClass(); 
@@ -344,7 +349,7 @@ class Ajax {
                         switch ($fieldName) {
                         «FOR uniqueField : uniqueFields»
                             case '«uniqueField.name.formatForCode»':
-                                    $result = $repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude);
+                                    $result = $repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude«IF !container.application.getAllEntities.filter(e|e.hasCompositeKeys).isEmpty»[0]«ENDIF»);
                                     break;
                         «ENDFOR»
                         «IF entity.hasSluggableFields && entity.slugUnique»

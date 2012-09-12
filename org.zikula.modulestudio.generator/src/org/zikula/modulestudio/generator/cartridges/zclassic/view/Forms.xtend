@@ -335,7 +335,7 @@ class Forms {
                 «FOR relation : incomingJoins»«relationHelper.initJs(relation, app, it, true, true)»«ENDFOR»
                 «FOR relation : outgoingJoins»«relationHelper.initJs(relation, app, it, false, true)»«ENDFOR»
 
-                «container.application.prefix»AddCommonValidationRules('«name.formatForCode»', '{{if $mode eq 'create'}}{{else}}«FOR pkField : getPrimaryKeyFields»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
+                «container.application.prefix»AddCommonValidationRules('«name.formatForCode»', '{{if $mode eq 'create'}}{{else}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
 
                 // observe button events instead of form submit
                 var valid = new Validation('{{$__formid}}', {onSubmit: false, immediate: true, focusOnError: false});
