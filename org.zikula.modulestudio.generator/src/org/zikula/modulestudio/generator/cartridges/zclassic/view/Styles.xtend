@@ -35,11 +35,11 @@ class Styles {
         }
 
         /* display pages */
-        «appName.toLowerCase»-display.withrightbox div.z-panel-content {
+        .«appName.toLowerCase»-display.withrightbox div.z-panel-content {
             float: left;
             width: 79%;
         }
-        «appName.toLowerCase»-display div.«appName.toLowerCase»rightbox {
+        .«appName.toLowerCase»-display div.«appName.toLowerCase»rightbox {
             float: right;
             margin: 0 1em;
             padding: .5em;
@@ -47,14 +47,14 @@ class Styles {
             /*border: 1px solid #666;*/
         }
 
-        «appName.toLowerCase»-display div.«appName.toLowerCase»rightbox h3 {
+        .«appName.toLowerCase»-display div.«appName.toLowerCase»rightbox h3 {
             color: #333;
             font-weight: 400;
             border-bottom: 1px solid #CCC;
             padding-bottom: 8px;
         }
 
-        «appName.toLowerCase»-display div.«appName.toLowerCase»rightbox p.manageLink {
+        .«appName.toLowerCase»-display div.«appName.toLowerCase»rightbox p.manageLink {
             margin-left: 18px;
         }
         «IF hasGeographical»
