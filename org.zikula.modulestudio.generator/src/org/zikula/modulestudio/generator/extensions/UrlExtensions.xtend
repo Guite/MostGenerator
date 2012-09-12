@@ -190,7 +190,7 @@ class UrlExtensions {
      */
     def getSingleParamForCode(Iterable<DerivedField> it, String objName) {
         if (size == 0) ''
-        else ", '" + head.name.formatForDB + "' => $" + objName + "['" + head.name.formatForDB + "']"
+        else ", '" + head.name.formatForCode + "' => $" + objName + "['" + head.name.formatForCode + "']"
          + getSingleParamForCode(tail, objName)
     }
 
@@ -203,7 +203,7 @@ class UrlExtensions {
      */
     def getSingleParamForTemplate(Iterable<DerivedField> it, String objName) {
         if (size == 0) ''
-        else ' ' + head.name.formatForDB + '=$' + objName + '.' + head.name.formatForDB
+        else ' ' + head.name.formatForCode + '=$' + objName + '.' + head.name.formatForCode
            + tail.getSingleParamForTemplate(objName)
     }
 
