@@ -289,7 +289,7 @@ class Ajax {
          *
          * @param string $ot       Treated object type.
          * @param string $fragment The fragment of the entered item name.
-         * @param string $exclude  Optinal identifier to be excluded from search).
+         * @param string $exclude  Optinal identifier to be excluded from search.
          *
          * @throws Zikula_Exception If something fatal occurs.
          *
@@ -329,7 +329,7 @@ class Ajax {
                 return new Zikula_Response_Ajax_BadData($this->__('Error: invalid input.'));
             }
 
-            $exclude = $this->request->request->get('ex', 0);
+            $exclude = $this->request->request->get('ex', '');
 
             $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
             $object = new $entityClass(); 
