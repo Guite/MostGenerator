@@ -289,7 +289,7 @@ class Ajax {
          *
          * @param string $ot       Treated object type.
          * @param string $fragment The fragment of the entered item name.
-         * @param string $exclude  Comma separated list with ids of other items (to be excluded from search).
+         * @param string $exclude  Optinal identifier to be excluded from search).
          *
          * @throws Zikula_Exception If something fatal occurs.
          *
@@ -329,7 +329,7 @@ class Ajax {
                 return new Zikula_Response_Ajax_BadData($this->__('Error: invalid input.'));
             }
 
-            $exclude = (int) $this->request->request->filter('ex', 0, FILTER_VALIDATE_INT);
+            $exclude = $this->request->request->get('ex', 0);
 
             $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
             $object = new $entityClass(); 
@@ -340,15 +340,15 @@ class Ajax {
                 «val uniqueFields = entity.getUniqueDerivedFields.filter(e|!e.primaryKey)»
                 «IF !uniqueFields.isEmpty || (entity.hasSluggableFields && entity.slugUnique)»
                     case '«entity.name.formatForCode»':
+                        $repository = $this->entityManager->getRepository($entityClass);
                         switch ($fieldName) {
                         «FOR uniqueField : uniqueFields»
                             case '«uniqueField.name.formatForCode»':
-                                    $result = $object->get_validator()->checkIf«uniqueField.name.formatForCodeCapital»Exists($value, $exclude);
+                                    $result = $repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude);
                                     break;
                         «ENDFOR»
                         «IF entity.hasSluggableFields && entity.slugUnique»
                             case 'slug':
-                                    $repository = $this->entityManager->getRepository($entityClass);
                                     $entity = $repository->selectBySlug($value, false, $exclude);
                                     $result = ($entity != null && isset($entity['slug']));
                                     break;
