@@ -657,7 +657,12 @@ class FormHandler {
                     }
                 «ENDIF»
 
-                $this->performUpdate($args);
+                try {
+                    $this->performUpdate($args);
+                } catch (Exception $e) {
+                    LogUtil::registerError($e->getMessage());
+                    return false;
+                }
 
                 $success = true;
                 if ($args['commandName'] == 'create') {
@@ -698,8 +703,13 @@ class FormHandler {
                 }
 
                 // delete entity
-                $this->entityManager->remove($entity);
-                $this->entityManager->flush();
+                try {
+                    $this->entityManager->remove($entity);
+                    $this->entityManager->flush();
+                } catch (Exception $e) {
+                    LogUtil::registerError($e->getMessage());
+                    return false;
+                }
 
                 $this->addDefaultMessage($args, true);
 
