@@ -306,8 +306,8 @@ class Association {
         «IF bidirectional && useTarget»
             «val otherIsMany = isManySide(!useTarget)»
             «IF otherIsMany»
-                «val nameSingle = { (if (useTarget) target else source).name }»
-                for ($«aliasName» as $«nameSingle») {
+                «val nameSingle = { (if (useTarget) target else source).name + 'Single' }»
+                foreach ($«aliasName» as $«nameSingle») {
                     $this->add«aliasName.toFirstUpper»($«nameSingle»);
                 }
             «ENDIF»
