@@ -756,12 +756,22 @@ class Repository {
             }
 
             $fragment = DataUtil::formatForStore($fragment);
+            $fragmentIsNumeric = is_numeric($fragment);
 
+            «val searchFields = getDisplayFields.filter(e|e.isContainedInTextualSearch(false))»
+            «val searchFieldsNumeric = getDisplayFields.filter(e|e.isContainedInNumericSearch(true))»
             $where = '';
-            «FOR field : getDerivedFields.filter(e|!e.primaryKey && e.isContainedInSearch)»
+            if (!$fragmentIsNumeric) {
+            «FOR field : searchFields»
                 $where .= ((!empty($where)) ? ' OR ' : '');
                 $where .= 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE \'%' . $fragment . '%\''«ELSE»= \'' . $fragment . '\''«ENDIF»;
             «ENDFOR»
+            } else {
+            «FOR field : searchFieldsNumeric»
+                $where .= ((!empty($where)) ? ' OR ' : '');
+                $where .= 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE \'%' . $fragment . '%\''«ELSE»= \'' . $fragment . '\''«ENDIF»;
+            «ENDFOR»
+            }
             $where = '(' . $where . ')';
 
             $qb->andWhere($where);
@@ -1014,12 +1024,24 @@ class Repository {
         }
     }
 
-    def private isContainedInSearch(DerivedField it) {
+    def private isContainedInTextualSearch(DerivedField it) {
         switch it {
             BooleanField: false
+            AbstractIntegerField: false
+            DecimalField: false
+            FloatField: false
             ArrayField: false
             ObjectField: false
             default: true
+        }
+    }
+
+    def private isContainedInNumericSearch(DerivedField it) {
+        switch it {
+            AbstractIntegerField: true
+            DecimalField: true
+            FloatField: true
+            default: isContainedInTextualSearch(it)
         }
     }
 
