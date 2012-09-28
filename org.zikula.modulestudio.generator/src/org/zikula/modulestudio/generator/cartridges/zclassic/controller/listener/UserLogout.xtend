@@ -11,6 +11,8 @@ class UserLogout {
          * Occurs right after a successful logout.
          * All handlers are notified.
          * The event's subject contains the user's user record.
+         * Args contain array of `array('authentication_method' => $authenticationMethod,
+         *                              'uid'                   => $uid));`
          *
          * @param Zikula_Event $event The event instance.
          */
