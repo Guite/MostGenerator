@@ -74,7 +74,7 @@ class Cache {
                 return;
             }
 
-            «IF getMainUserController.hasActions('display')»
+            «IF hasUserController && getMainUserController.hasActions('display')»
                 // create full identifier (considering composite keys)
                 $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
                 $instanceId = '';
@@ -89,6 +89,7 @@ class Cache {
 
             // Clear View_cache
             $cacheIds = array();
+            «IF hasUserController»
             «IF getMainUserController.hasActions('main')»
                 $cacheIds[] = 'main';
             «ENDIF»
@@ -109,6 +110,7 @@ class Cache {
                     $cacheIds[] = '«customAction.name.formatForCode.toFirstLower»';
                 «ENDFOR»
             «ENDIF»
+            «ENDIF»
 
             $view = Zikula_View::getInstance('«appName»');
             foreach ($cacheIds as $cacheId) {
@@ -119,6 +121,7 @@ class Cache {
             // Clear Theme_cache
             $cacheIds = array();
             $cacheIds[] = 'homepage'; // for homepage (can be assigned in the Settings module)
+            «IF hasUserController»
             «IF getMainUserController.hasActions('main')»
                 $cacheIds[] = '«appName»/user/main'; // main function
             «ENDIF»
@@ -138,6 +141,7 @@ class Cache {
                 «FOR customAction : getMainUserController.actions.filter(typeof(CustomAction))»
                     $cacheIds[] = '«appName»/user/«customAction.name.formatForCode.toFirstLower»'; // «customAction.name.formatForCode» function
                 «ENDFOR»
+            «ENDIF»
             «ENDIF»
             $theme = Zikula_View_Theme::getInstance();
             $theme->clear_cacheid_allthemes($cacheIds);
