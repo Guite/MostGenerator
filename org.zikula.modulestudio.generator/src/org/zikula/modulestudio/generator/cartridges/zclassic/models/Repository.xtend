@@ -1,15 +1,21 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models
 
 import com.google.inject.Inject
+import de.guite.modulestudio.metamodel.modulestudio.AbstractIntegerField
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.modulestudio.ArrayField
+import de.guite.modulestudio.metamodel.modulestudio.BooleanField
 import de.guite.modulestudio.metamodel.modulestudio.CalculatedField
+import de.guite.modulestudio.metamodel.modulestudio.DecimalField
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityField
 import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
+import de.guite.modulestudio.metamodel.modulestudio.FloatField
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ManyToOneRelationship
+import de.guite.modulestudio.metamodel.modulestudio.ObjectField
 import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.StringField
 import de.guite.modulestudio.metamodel.modulestudio.TextField
@@ -25,9 +31,6 @@ import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import de.guite.modulestudio.metamodel.modulestudio.BooleanField
-import de.guite.modulestudio.metamodel.modulestudio.ArrayField
-import de.guite.modulestudio.metamodel.modulestudio.ObjectField
 
 class Repository {
     @Inject extension FormattingExtensions = new FormattingExtensions()
@@ -758,8 +761,8 @@ class Repository {
             $fragment = DataUtil::formatForStore($fragment);
             $fragmentIsNumeric = is_numeric($fragment);
 
-            «val searchFields = getDisplayFields.filter(e|e.isContainedInTextualSearch(false))»
-            «val searchFieldsNumeric = getDisplayFields.filter(e|e.isContainedInNumericSearch(true))»
+            «val searchFields = getDisplayFields.filter(e|e.isContainedInTextualSearch)»
+            «val searchFieldsNumeric = getDisplayFields.filter(e|e.isContainedInNumericSearch)»
             $where = '';
             if (!$fragmentIsNumeric) {
             «FOR field : searchFields»
