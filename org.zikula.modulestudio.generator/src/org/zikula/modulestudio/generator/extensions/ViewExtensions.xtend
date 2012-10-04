@@ -3,12 +3,15 @@ package org.zikula.modulestudio.generator.extensions
 import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.UserController
-import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
+import com.google.inject.Inject
+import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 
 /**
  * This class contains view related extension methods.
  */
 class ViewExtensions {
+    @Inject extension ControllerExtensions = new ControllerExtensions()
+
     /**
      * Temporary hack due to Zikula core bug with theme parameter in short urls
      * as we use the Printer theme for the quick view.
@@ -36,6 +39,18 @@ class ViewExtensions {
     }
 
     /**
+     * Determines if a given relationship is part
+     * of an edit form or not.
+     *
+     * @param it Given {@link JoinRelationship} instance.
+     * @param useTarget Whether the target side or the source side should be used.
+     * @return Boolean The determined result.
+     */
+    def private isPartOfEditForm(JoinRelationship it, Boolean useTarget) {
+        (getEditStageCode(!useTarget) > 0)
+    }
+
+    /**
      * Counts the amount of visible groups of a given Entity
      * for display and edit pages.
      *
@@ -47,15 +62,15 @@ class ViewExtensions {
         var weight = 1
         //if (fields.size > 5) weight = weight + 1
         //if (fields.size > 10) weight = weight + 1
-        if (page == 'edit' && incoming.size > 1) weight = weight + 1
-        if (page == 'edit' && outgoing.size > 1) weight = weight + 1
+        if (page == 'edit' && incoming.filter(typeof(JoinRelationship)).filter(e|e.isPartOfEditForm(true)).size > 1) weight = weight + 1
+        if (page == 'edit' && outgoing.filter(typeof(JoinRelationship)).filter(e|e.isPartOfEditForm(false)).size > 1) weight = weight + 1
 
         if (attributable) weight = weight + 1
         if (categorisable) weight = weight + 1
         if (metaData) weight = weight + 1
         if (standardFields) weight = weight + 1
         if (geographical) weight = weight + 1
-        if (tree != EntityTreeType::NONE) weight = weight + 1
+        //if (tree != EntityTreeType::NONE) weight = weight + 1
         weight
     }
 }
