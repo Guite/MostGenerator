@@ -317,12 +317,12 @@ class Display {
 
     def private treeRelatives(Entity it, String appName, Controller controller) '''
         «val objName = name.formatForCode»
-        «val appPrefix = container.application.prefix»
+        «val pluginPrefix = container.application.appName.formatForDB»
         «val leadingField = getLeadingField»
         {* purpose of this template: show different forms of relatives for a given tree node *}
         <h3>{gt text='Related «nameMultiple.formatForDisplay»'}</h3>
         {if !isset($allParents) || $allParents eq true}
-            {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='allParents' assign='allParents'}
+            {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='allParents' assign='allParents'}
             {if $allParents ne null && count($allParents) gt 0}
                 <h4>{gt text='All parents'}</h4>
                 <ul>
@@ -333,7 +333,7 @@ class Display {
             {/if}
         {/if}
         {if !isset($directParent) || $directParent eq true}
-            {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='directParent' assign='directParent'}
+            {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='directParent' assign='directParent'}
             {if $directParent ne null}
                 <h4>{gt text='Direct parent'}</h4>
                 <ul>
@@ -342,7 +342,7 @@ class Display {
             {/if}
         {/if}
         {if !isset($allChildren) || $allChildren eq true}
-            {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='allChildren' assign='allChildren'}
+            {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='allChildren' assign='allChildren'}
             {if $allChildren ne null && count($allChildren) gt 0}
                 <h4>{gt text='All children'}</h4>
                 <ul>
@@ -353,7 +353,7 @@ class Display {
             {/if}
         {/if}
         {if !isset($directChildren) || $directChildren eq true}
-            {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='directChildren' assign='directChildren'}
+            {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='directChildren' assign='directChildren'}
             {if $directChildren ne null && count($directChildren) gt 0}
                 <h4>{gt text='Direct children'}</h4>
                 <ul>
@@ -364,7 +364,7 @@ class Display {
             {/if}
         {/if}
         {if !isset($predecessors) || $predecessors eq true}
-            {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='predecessors' assign='predecessors'}
+            {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='predecessors' assign='predecessors'}
             {if $predecessors ne null && count($predecessors) gt 0}
                 <h4>{gt text='Predecessors'}</h4>
                 <ul>
@@ -375,7 +375,7 @@ class Display {
             {/if}
         {/if}
         {if !isset($successors) || $successors eq true}
-            {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='successors' assign='successors'}
+            {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='successors' assign='successors'}
             {if $successors ne null && count($successors) gt 0}
                 <h4>{gt text='Successors'}</h4>
                 <ul>
@@ -386,7 +386,7 @@ class Display {
             {/if}
         {/if}
         {if !isset($preandsuccessors) || $preandsuccessors eq true}
-            {«appPrefix»TreeSelection objectType='ingredient' node=$«objName» target='preandsuccessors' assign='preandsuccessors'}
+            {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='preandsuccessors' assign='preandsuccessors'}
             {if $preandsuccessors ne null && count($preandsuccessors) gt 0}
                 <h4>{gt text='Siblings'}</h4>
                 <ul>
