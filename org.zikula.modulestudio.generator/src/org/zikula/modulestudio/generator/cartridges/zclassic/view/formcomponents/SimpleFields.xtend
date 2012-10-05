@@ -174,7 +174,7 @@ class SimpleFields {
             {if $«entity.name.formatForDB».«realName» gt 0}
                 {usergetvar name='uname' uid=$«entity.name.formatForDB».«realName» assign='userSelectorDefaultValue'}
             {/if}
-            {formtextinput group='«entity.name.formatForDB»' id='«realName»Selector' mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter a part of the user name to search' dataBased=false text=$userSelectorDefaultValue cssClass='«IF mandatory»required «ENDIF»validate-alphanum«IF unique» validate-unique«ENDIF»'}
+            {formtextinput group='«entity.name.formatForDB»' id='«realName»Selector' mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter a part of the user name to search' maxLength=25 dataBased=false text=$userSelectorDefaultValue cssClass='«IF mandatory»required «ENDIF»validate-alphanum«IF unique» validate-unique«ENDIF»'}
             {img src='indicator_circle.gif' modname='core' set='ajax' alt='' id='«realName»Indicator' style='display: none'}
             <div id="«realName»SelectorChoices" class="«entity.container.application.prefix»AutoCompleteUser"></div>
         </div>
