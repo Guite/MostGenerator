@@ -237,8 +237,16 @@ class Relations {
                             if ($entity->get«relationAliasName»()->contains($relatedObject)) {
                                 continue;
                             }
+                            «IF bidirectional»
+                                «IF manyOtherSide»
+                                    $relatedObject->add«relationAliasNameReverse.toFirstUpper»($entity);
+                                «ELSE»
+                                    $relatedObject->set«relationAliasNameReverse.toFirstUpper»($entity);
+                                «ENDIF»
+                            «ENDIF»
                             $entity->add«relationAliasName»($relatedObject);
                         «ELSEIF !incoming || bidirectional»
+                            $relatedObject->set«relationAliasNameReverse.toFirstUpper»(null);
                             $entity->set«relationAliasName»($relatedObject);
                         «ENDIF»
                     }
