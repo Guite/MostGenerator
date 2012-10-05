@@ -326,9 +326,6 @@ class Forms {
                     // initialise auto completion for user fields
                     «FOR userField : userFields»
                         «val realName = userField.name.formatForCode»
-                        {{if isset($«realName») && $«realName» gt 0}}
-                            $('«realName»Selector').value = '{{usergetvar name='uname' uid=$«realName»}}';
-                        {{/if}}
                         «app.prefix»InitUserField('«realName»', 'get«name.formatForCodeCapital»«realName.formatForCodeCapital»Users');
                     «ENDFOR»
                 «ENDIF»
