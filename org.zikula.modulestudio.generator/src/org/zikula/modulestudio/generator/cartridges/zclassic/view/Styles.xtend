@@ -159,14 +159,23 @@ class Styles {
             div.«prefix»AutoCompleteWithImage«ENDIF» {
                 position: relative !important;
                 top: 2px !important;
-                left: 0 !important;
-                width: 100px;
+                width: 191px !important;
                 background-color: #fff;
                 border: 1px solid #888;
                 margin: 0;
                 padding: 0;
             }
 
+            div.«prefix»AutoComplete«IF hasImageFields»,
+            div.«prefix»AutoCompleteWithImage«ENDIF» {
+                left: 0 !important;
+            }
+            «IF hasUserFields»
+                div.«prefix»AutoCompleteUser {
+                    left: 29% !important;
+                }
+
+            «ENDIF»
             div.«prefix»AutoComplete ul«IF hasUserFields»,
             div.«prefix»AutoCompleteUser ul«ENDIF»«IF hasImageFields»,
             div.«prefix»AutoCompleteWithImage ul«ENDIF» {
