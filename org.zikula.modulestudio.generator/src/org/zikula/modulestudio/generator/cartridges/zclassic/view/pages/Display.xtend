@@ -292,11 +292,11 @@ class Display {
                 </div>
             «ENDIF»
         «ENDIF»
-        «IF standardFields»
-            {include file='«controller.formattedName»/include_standardfields_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
-        «ENDIF»
         «IF metaData»
             {include file='«controller.formattedName»/include_metadata_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
+        «ENDIF»
+        «IF standardFields»
+            {include file='«controller.formattedName»/include_standardfields_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
     '''
 

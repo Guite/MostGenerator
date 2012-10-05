@@ -56,16 +56,16 @@ class Section {
         «IF categorisable»
             {include file='«controller.formattedName»/include_categories_edit.tpl' obj=$«name.formatForDB» groupName='«name.formatForDB»Obj'«IF useGroupingPanels('edit')» panel=true«ENDIF»}
         «ENDIF»
+        «FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app)»«relationHelper.generate(relation, app, controller, true, true, fsa)»«ENDFOR»
+        «FOR relation : getOutgoingJoinRelations.filter(e|e.target.container.application == app)»«relationHelper.generate(relation, app, controller, true, false, fsa)»«ENDFOR»
+        «IF metaData»
+            {include file='«controller.formattedName»/include_metadata_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
+        «ENDIF»
         «IF standardFields»
             {if $mode ne 'create'}
                 {include file='«controller.formattedName»/include_standardfields_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
             {/if}
         «ENDIF»
-        «IF metaData»
-            {include file='«controller.formattedName»/include_metadata_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
-        «ENDIF»
-        «FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app)»«relationHelper.generate(relation, app, controller, true, true, fsa)»«ENDFOR»
-        «FOR relation : getOutgoingJoinRelations.filter(e|e.target.container.application == app)»«relationHelper.generate(relation, app, controller, true, false, fsa)»«ENDFOR»
     '''
 
     def private displayHooks(Entity it, Application app) '''
