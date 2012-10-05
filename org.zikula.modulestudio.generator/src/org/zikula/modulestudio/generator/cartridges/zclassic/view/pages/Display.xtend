@@ -282,10 +282,10 @@ class Display {
         «ENDIF»
         «IF tree != EntityTreeType::NONE»
             «IF useGroupingPanels('display')»
-                <h3 class="map z-panel-header z-panel-indicator z-pointer">{gt text='Relatives'}</h3>
-                <div class="map z-panel-content" style="display: none">
+                <h3 class="relatives z-panel-header z-panel-indicator z-pointer">{gt text='Relatives'}</h3>
+                <div class="relatives z-panel-content" style="display: none">
             «ELSE»
-                <h3 class="map">{gt text='Relatives'}</h3>
+                <h3 class="relatives">{gt text='Relatives'}</h3>
             «ENDIF»
                     {include file='«controller.formattedName»/«name.formatForCode»/display_treeRelatives.tpl' allParents=true directParent=true allChildren=true directChildren=true predecessors=true successors=true preandsuccessors=true}
             «IF useGroupingPanels('display')»
@@ -321,24 +321,26 @@ class Display {
         «val leadingField = getLeadingField»
         {* purpose of this template: show different forms of relatives for a given tree node *}
         <h3>{gt text='Related «nameMultiple.formatForDisplay»'}</h3>
-        {if !isset($allParents) || $allParents eq true}
-            {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='allParents' assign='allParents'}
-            {if $allParents ne null && count($allParents) gt 0}
-                <h4>{gt text='All parents'}</h4>
-                <ul>
-                {foreach item='node' from=$allParents}
-                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
-                {/foreach}
-                </ul>
+        {if $«objName».root ne 1}
+            {if !isset($allParents) || $allParents eq true}
+                {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='allParents' assign='allParents'}
+                {if $allParents ne null && count($allParents) gt 0}
+                    <h4>{gt text='All parents'}</h4>
+                    <ul>
+                    {foreach item='node' from=$allParents}
+                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                    {/foreach}
+                    </ul>
+                {/if}
             {/if}
-        {/if}
-        {if !isset($directParent) || $directParent eq true}
-            {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='directParent' assign='directParent'}
-            {if $directParent ne null}
-                <h4>{gt text='Direct parent'}</h4>
-                <ul>
-                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('directParent', true)»}"«IF leadingField != null» title="{$directParent.«leadingField.name.formatForCode»|replace:'"':''}">{$directParent.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
-                </ul>
+            {if !isset($directParent) || $directParent eq true}
+                {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='directParent' assign='directParent'}
+                {if $directParent ne null}
+                    <h4>{gt text='Direct parent'}</h4>
+                    <ul>
+                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('directParent', true)»}"«IF leadingField != null» title="{$directParent.«leadingField.name.formatForCode»|replace:'"':''}">{$directParent.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                    </ul>
+                {/if}
             {/if}
         {/if}
         {if !isset($allChildren) || $allChildren eq true}
@@ -363,37 +365,39 @@ class Display {
                 </ul>
             {/if}
         {/if}
-        {if !isset($predecessors) || $predecessors eq true}
-            {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='predecessors' assign='predecessors'}
-            {if $predecessors ne null && count($predecessors) gt 0}
-                <h4>{gt text='Predecessors'}</h4>
-                <ul>
-                {foreach item='node' from=$predecessors}
-                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
-                {/foreach}
-                </ul>
+        {if $«objName».root ne 1}
+            {if !isset($predecessors) || $predecessors eq true}
+                {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='predecessors' assign='predecessors'}
+                {if $predecessors ne null && count($predecessors) gt 0}
+                    <h4>{gt text='Predecessors'}</h4>
+                    <ul>
+                    {foreach item='node' from=$predecessors}
+                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                    {/foreach}
+                    </ul>
+                {/if}
             {/if}
-        {/if}
-        {if !isset($successors) || $successors eq true}
-            {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='successors' assign='successors'}
-            {if $successors ne null && count($successors) gt 0}
-                <h4>{gt text='Successors'}</h4>
-                <ul>
-                {foreach item='node' from=$successors}
-                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
-                {/foreach}
-                </ul>
+            {if !isset($successors) || $successors eq true}
+                {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='successors' assign='successors'}
+                {if $successors ne null && count($successors) gt 0}
+                    <h4>{gt text='Successors'}</h4>
+                    <ul>
+                    {foreach item='node' from=$successors}
+                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                    {/foreach}
+                    </ul>
+                {/if}
             {/if}
-        {/if}
-        {if !isset($preandsuccessors) || $preandsuccessors eq true}
-            {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='preandsuccessors' assign='preandsuccessors'}
-            {if $preandsuccessors ne null && count($preandsuccessors) gt 0}
-                <h4>{gt text='Siblings'}</h4>
-                <ul>
-                {foreach item='node' from=$preandsuccessors}
-                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
-                {/foreach}
-                </ul>
+            {if !isset($preandsuccessors) || $preandsuccessors eq true}
+                {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='preandsuccessors' assign='preandsuccessors'}
+                {if $preandsuccessors ne null && count($preandsuccessors) gt 0}
+                    <h4>{gt text='Siblings'}</h4>
+                    <ul>
+                    {foreach item='node' from=$preandsuccessors}
+                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                    {/foreach}
+                    </ul>
+                {/if}
             {/if}
         {/if}
     '''
