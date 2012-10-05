@@ -265,7 +265,7 @@ class Ajax {
                     $out .= '<li id="' . $itemId . '" title="' . $itemTitleStripped . '">';
                     $out .= '<div class="itemtitle">' . $itemTitle . '</div>';
                     if (!empty($itemDescription)) {
-                        $out .= '<div class="itemdesc informal">' . $itemDescription . '</div>';
+                        $out .= '<div class="itemdesc informal">' . substr($itemDescription, 0, 50) . '&hellip;</div>';
                     }
                     «IF app.hasImageFields»
                         // check for preview image
