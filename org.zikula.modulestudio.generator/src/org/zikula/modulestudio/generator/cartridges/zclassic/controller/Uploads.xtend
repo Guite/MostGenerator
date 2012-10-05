@@ -343,14 +343,14 @@ class Uploads {
                     «FOR uploadField : uploadFields»«uploadField.isAllowedFileExtensionFieldCase»«ENDFOR»
                 }
             «ELSE»
-                $allowedExtensions = array('«uploadFields.head.allowedExtensions.replaceAll(', ', "', '")»');
+                $allowedExtensions = array('«uploadFields.head.allowedExtensions.replaceAll(', ', "', '").replaceAll(',', "', '")»');
             «ENDIF»
                 break;
     '''
 
     def private isAllowedFileExtensionFieldCase(UploadField it) '''
         case '«name.formatForCode»':
-            $allowedExtensions = array('«allowedExtensions.replaceAll(', ', "', '")»');
+            $allowedExtensions = array('«allowedExtensions.replaceAll(', ', "', '").replaceAll(',', "', '")»');
             break;
     '''
 
