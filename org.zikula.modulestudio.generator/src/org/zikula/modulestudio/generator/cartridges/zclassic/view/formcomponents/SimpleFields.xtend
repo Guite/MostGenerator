@@ -170,7 +170,11 @@ class SimpleFields {
         «val realName = name.formatForCode»
         <div id="«realName»LiveSearch" class="«entity.container.application.prefix»LiveSearchUser z-hide">
             {icon type='search' size='extrasmall' __alt='Search user'}
-            {formtextinput group='«entity.name.formatForDB»' id='«realName»Selector' mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter a part of the user name to search' maxLength=«length» cssClass='«IF mandatory»required «ENDIF»validate-alphanum«IF unique» validate-unique«ENDIF»'}
+            {assign var='userSelectorDefaultValue' value=''}
+            {if $«entity.name.formatForDB».«realName» gt 0}
+                {usergetvar name='uname' uid=$«entity.name.formatForDB».«realName» assign='userSelectorDefaultValue'}
+            {/if}
+            {formtextinput group='«entity.name.formatForDB»' id='«realName»Selector' mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter a part of the user name to search' dataBased=false text=$userSelectorDefaultValue cssClass='«IF mandatory»required «ENDIF»validate-alphanum«IF unique» validate-unique«ENDIF»'}
             {img src='indicator_circle.gif' modname='core' set='ajax' alt='' id='«realName»Indicator' style='display: none'}
             <div id="«realName»SelectorChoices" class="«entity.container.application.prefix»AutoCompleteUser"></div>
         </div>
