@@ -195,7 +195,7 @@ class Relations {
                 {«includeStatement»}
             {/if}
         </div>
-        <br style="clear: both" />
+        <br class="z-clearer" />
     '''
 
     def private component_AutoCompleteIncludeStatement(JoinRelationship it, Controller controller, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
