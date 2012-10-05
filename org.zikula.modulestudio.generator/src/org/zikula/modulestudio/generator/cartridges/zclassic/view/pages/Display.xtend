@@ -116,7 +116,7 @@ class Display {
     '''
 
     def private fieldDetails(Entity it, String appName, Controller controller) '''
-        <dl id="«appName»_body">
+        <dl>
             «FOR field : getLeadingDisplayFields»«field.displayEntry(controller)»«ENDFOR»
             «IF geographical»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
