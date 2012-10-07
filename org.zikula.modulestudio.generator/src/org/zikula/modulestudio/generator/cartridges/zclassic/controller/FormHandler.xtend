@@ -943,6 +943,17 @@ class FormHandler {
                         $entityData['slug'] = $controllerHelper->formatPermalink($entityData['slug']);
                     «ENDIF»
                 */»
+                «IF app.hasUploads»
+                } else {
+                    // remove fields for form options to prevent them being merged into the entity object
+                    if (count($this->uploadFields) > 0) {
+                        foreach ($this->uploadFields as $uploadField => $isMandatory) {
+                            if (isset($entityData[$uploadField . 'DeleteFile'])) {
+                                unset($entityData[$uploadField . 'DeleteFile']);
+                            }
+                        }
+                    }
+                «ENDIF»
                 }
             «ENDIF»
 
