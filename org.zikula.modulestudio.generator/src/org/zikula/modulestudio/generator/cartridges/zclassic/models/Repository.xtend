@@ -961,7 +961,7 @@ class Repository {
             }
 
             foreach ($allEntities as $entity) {
-                $idList[] = $entity->get«getFirstPrimaryKey.name.formatForCodeCapital»();
+                $idList[] = $entity['«getFirstPrimaryKey.name.formatForCode»'];
             }
 
             // shuffle the id array
