@@ -85,8 +85,8 @@ class Core {
         {
             «IF !isBase»
                 parent::controllerMethodNotFound($event);
-            «ENDIF»
 
+            «ENDIF»
             // You can have multiple of these methods.
             // See system/Extensions/lib/Extensions/HookUI.php for an example.
         }

@@ -83,12 +83,14 @@ class User {
             «IF !isBase»
                 parent::delete($event);
             «ELSE»
-            	«IF hasStandardFieldEntities || hasUserFields»
-            	$userRecord = $event->getSubject();
-            	$uid = $userRecord['uid'];
-            	$serviceManager = ServiceUtil::getManager();
-            	$entityManager = $serviceManager->getService('doctrine.entitymanager');
-            	«FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
+                «IF hasStandardFieldEntities || hasUserFields»
+                ModUtil::initOOModule('FreelancerProjects');
+
+                $userRecord = $event->getSubject();
+                $uid = $userRecord['uid'];
+                $serviceManager = ServiceUtil::getManager();
+                $entityManager = $serviceManager->getService('doctrine.entitymanager');
+                «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
                 «ENDIF»
             «ENDIF»
         }

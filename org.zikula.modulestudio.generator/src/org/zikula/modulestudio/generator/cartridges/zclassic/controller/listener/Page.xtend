@@ -20,8 +20,8 @@ class Page {
         {
             «IF !isBase»
                 parent::pageutilAddvarFilter($event);
-            «ENDIF»
 
+            «ENDIF»
             // Simply test with something like
             /*
                 if (($key = array_search('system/Users/javascript/somescript.js', $event->data)) !== false) {

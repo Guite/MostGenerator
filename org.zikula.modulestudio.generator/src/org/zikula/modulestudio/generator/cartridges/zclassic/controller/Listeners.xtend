@@ -70,167 +70,167 @@ class Listeners {
     }
 
     def private listenersCoreFile(Application it, Boolean isBase) '''
-    	«fh.phpFileHeader(it)»
-    	/**
-    	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for core events.
-    	 */
-    	class «IF !isBase»«appName»_Listener_Core extends «ENDIF»«appName»_Listener_Base_Core
-    	{
-    	    «new Core().generate(it, isBase)»
-    	}
+        «fh.phpFileHeader(it)»
+        /**
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for core events.
+         */
+        class «IF !isBase»«appName»_Listener_Core extends «ENDIF»«appName»_Listener_Base_Core
+        {
+            «new Core().generate(it, isBase)»
+        }
     '''
 
     def private listenersInstallerFile(Application it, Boolean isBase) '''
-    	«fh.phpFileHeader(it)»
-    	/**
-    	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for module installer events.
-    	 */
-    	class «IF !isBase»«appName»_Listener_Installer extends «ENDIF»«appName»_Listener_Base_Installer
-    	{
-    	    «new ModuleInstaller().generate(it, isBase)»
-    	}
+        «fh.phpFileHeader(it)»
+        /**
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for module installer events.
+         */
+        class «IF !isBase»«appName»_Listener_Installer extends «ENDIF»«appName»_Listener_Base_Installer
+        {
+            «new ModuleInstaller().generate(it, isBase)»
+        }
     '''
 
     def private listenersModuleDispatchFile(Application it, Boolean isBase) '''
-    	«fh.phpFileHeader(it)»
-    	/**
-    	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for dispatching modules.
-    	 */
-    	class «IF !isBase»«appName»_Listener_ModuleDispatch extends «ENDIF»«appName»_Listener_Base_ModuleDispatch
-    	{
-    	    «new ModuleDispatch().generate(it, isBase)»
-    	}
+        «fh.phpFileHeader(it)»
+        /**
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for dispatching modules.
+         */
+        class «IF !isBase»«appName»_Listener_ModuleDispatch extends «ENDIF»«appName»_Listener_Base_ModuleDispatch
+        {
+            «new ModuleDispatch().generate(it, isBase)»
+        }
     '''
 
     def private listenersMailerFile(Application it, Boolean isBase) '''
-    	«fh.phpFileHeader(it)»
-    	/**
-    	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for mailing events.
-    	 */
-    	class «IF !isBase»«appName»_Listener_Mailer extends «ENDIF»«appName»_Listener_Base_Mailer
-    	{
-    	    «new Mailer().generate(it, isBase)»
-    	}
+        «fh.phpFileHeader(it)»
+        /**
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for mailing events.
+         */
+        class «IF !isBase»«appName»_Listener_Mailer extends «ENDIF»«appName»_Listener_Base_Mailer
+        {
+            «new Mailer().generate(it, isBase)»
+        }
     '''
 
     def private listenersPageFile(Application it, Boolean isBase) '''
-    	«fh.phpFileHeader(it)»
-    	/**
-    	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for page-related events.
-    	 */
-    	class «IF !isBase»«appName»_Listener_Page extends «ENDIF»«appName»_Listener_Base_Page
-    	{
-    	    «new Page().generate(it, isBase)»
-    	}
+        «fh.phpFileHeader(it)»
+        /**
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for page-related events.
+         */
+        class «IF !isBase»«appName»_Listener_Page extends «ENDIF»«appName»_Listener_Base_Page
+        {
+            «new Page().generate(it, isBase)»
+        }
     '''
 
     def private listenersErrorsFile(Application it, Boolean isBase) '''
-    	«fh.phpFileHeader(it)»
-    	/**
-    	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for error-related events.
-    	 */
-    	class «IF !isBase»«appName»_Listener_Errors extends «ENDIF»«appName»_Listener_Base_Errors
-    	{
-    	    «new Errors().generate(it, isBase)»
-    	}
+        «fh.phpFileHeader(it)»
+        /**
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for error-related events.
+         */
+        class «IF !isBase»«appName»_Listener_Errors extends «ENDIF»«appName»_Listener_Base_Errors
+        {
+            «new Errors().generate(it, isBase)»
+        }
     '''
 
     def private listenersThemeFile(Application it, Boolean isBase) '''
-    	«fh.phpFileHeader(it)»
-    	/**
-    	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for theme-related events.
-    	 */
-    	class «IF !isBase»«appName»_Listener_Theme extends «ENDIF»«appName»_Listener_Base_Theme
-    	{
-    	    «new Theme().generate(it, isBase)»
-    	}
+        «fh.phpFileHeader(it)»
+        /**
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for theme-related events.
+         */
+        class «IF !isBase»«appName»_Listener_Theme extends «ENDIF»«appName»_Listener_Base_Theme
+        {
+            «new Theme().generate(it, isBase)»
+        }
     '''
 
     def private listenersViewFile(Application it, Boolean isBase) '''
-    	«fh.phpFileHeader(it)»
-    	/**
-    	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for view-related events.
-    	 */
-    	class «IF !isBase»«appName»_Listener_View extends «ENDIF»«appName»_Listener_Base_View
-    	{
-    	    «new View().generate(it, isBase)»
-    	}
+        «fh.phpFileHeader(it)»
+        /**
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for view-related events.
+         */
+        class «IF !isBase»«appName»_Listener_View extends «ENDIF»«appName»_Listener_Base_View
+        {
+            «new View().generate(it, isBase)»
+        }
     '''
 
     def private listenersUserLoginFile(Application it, Boolean isBase) '''
-    	«fh.phpFileHeader(it)»
-    	/**
-    	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user login events.
-    	 */
-    	class «IF !isBase»«appName»_Listener_UserLogin extends «ENDIF»«appName»_Listener_Base_UserLogin
-    	{
-    	    «new UserLogin().generate(it, isBase)»
-    	}
+        «fh.phpFileHeader(it)»
+        /**
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user login events.
+         */
+        class «IF !isBase»«appName»_Listener_UserLogin extends «ENDIF»«appName»_Listener_Base_UserLogin
+        {
+            «new UserLogin().generate(it, isBase)»
+        }
     '''
 
     def private listenersUserLogoutFile(Application it, Boolean isBase) '''
-    	«fh.phpFileHeader(it)»
-    	/**
-    	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user logout events.
-    	 */
-    	class «IF !isBase»«appName»_Listener_UserLogout extends «ENDIF»«appName»_Listener_Base_UserLogout
-    	{
-    	    «new UserLogout().generate(it, isBase)»
-    	}
+        «fh.phpFileHeader(it)»
+        /**
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user logout events.
+         */
+        class «IF !isBase»«appName»_Listener_UserLogout extends «ENDIF»«appName»_Listener_Base_UserLogout
+        {
+            «new UserLogout().generate(it, isBase)»
+        }
     '''
 
     def private listenersUserFile(Application it, Boolean isBase) '''
-    	«fh.phpFileHeader(it)»
-    	/**
-    	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user-related events.
-    	 */
-    	class «IF !isBase»«appName»_Listener_User extends «ENDIF»«appName»_Listener_Base_User
-    	{
-    	    «new User().generate(it, isBase)»
-    	}
+        «fh.phpFileHeader(it)»
+        /**
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user-related events.
+         */
+        class «IF !isBase»«appName»_Listener_User extends «ENDIF»«appName»_Listener_Base_User
+        {
+            «new User().generate(it, isBase)»
+        }
     '''
 
     def private listenersUserRegistrationFile(Application it, Boolean isBase) '''
-    	«fh.phpFileHeader(it)»
-    	/**
-    	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user registration events.
-    	 */
-    	class «IF !isBase»«appName»_Listener_UserRegistration extends «ENDIF»«appName»_Listener_Base_UserRegistration
-    	{
-    	    «new UserRegistration().generate(it, isBase)»
-    	}
+        «fh.phpFileHeader(it)»
+        /**
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user registration events.
+         */
+        class «IF !isBase»«appName»_Listener_UserRegistration extends «ENDIF»«appName»_Listener_Base_UserRegistration
+        {
+            «new UserRegistration().generate(it, isBase)»
+        }
     '''
 
     def private listenersUsersFile(Application it, Boolean isBase) '''
-    	«fh.phpFileHeader(it)»
-    	/**
-    	 * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for events of the Users module.
-    	 */
-    	class «IF !isBase»«appName»_Listener_Users extends «ENDIF»«appName»_Listener_Base_Users
-    	{
-     	    «new Users().generate(it, isBase)»
-    	}
+        «fh.phpFileHeader(it)»
+        /**
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for events of the Users module.
+         */
+        class «IF !isBase»«appName»_Listener_Users extends «ENDIF»«appName»_Listener_Base_Users
+        {
+            «new Users().generate(it, isBase)»
+        }
     '''
 
     def private listenersGroupFile(Application it, Boolean isBase) '''
-    	«fh.phpFileHeader(it)»
-    	/**
-    	 * Event handler implementation class for group-related events.
-    	 */
-    	class «IF !isBase»«appName»_Listener_Group extends «ENDIF»«appName»_Listener_Base_Group
-    	{
-    	    «new Group().generate(it, isBase)»
-    	}
+        «fh.phpFileHeader(it)»
+        /**
+         * Event handler implementation class for group-related events.
+         */
+        class «IF !isBase»«appName»_Listener_Group extends «ENDIF»«appName»_Listener_Base_Group
+        {
+            «new Group().generate(it, isBase)»
+        }
     '''
 
     def private listenersThirdPartyFile(Application it, Boolean isBase) '''
-    	«fh.phpFileHeader(it)»
-    	/**
-    	 * Event handler implementation class for special purposes and 3rd party api support.
-    	 */
-    	class «IF !isBase»«appName»_Listener_ThirdParty extends «ENDIF»«appName»_Listener_Base_ThirdParty
-    	{
-    	    «new ThirdParty().generate(it, isBase)»
-    	}
+        «fh.phpFileHeader(it)»
+        /**
+         * Event handler implementation class for special purposes and 3rd party api support.
+         */
+        class «IF !isBase»«appName»_Listener_ThirdParty extends «ENDIF»«appName»_Listener_Base_ThirdParty
+        {
+            «new ThirdParty().generate(it, isBase)»
+        }
     '''
 }
