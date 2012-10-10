@@ -73,7 +73,7 @@ class UrlExtensions {
      */
     def modUrlDisplayWithFreeOt(Entity it, String objName, Boolean template, String otVar) {
         if (template) {
-            "func='display' ot='" + otVar + modUrlPrimaryKeyParams(objName, template) + '"' + appendSlug(objName, template)
+            "func='display' ot=" + otVar + modUrlPrimaryKeyParams(objName, template) + appendSlug(objName, template)
         } else {
             "'display', array('ot' => " + otVar + modUrlPrimaryKeyParams(objName, template) + appendSlug(objName, template) + ')'
         }

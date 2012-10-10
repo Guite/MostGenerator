@@ -71,8 +71,7 @@ class MailzView {
     '''
 
     def private mailzEntryHtmlLinkUrlDisplay(Entity it, Application app) '''
-        {modurl modname='«app.appName»' type='user' «modUrlDisplayWithFreeOt('item', true, '$objectType')» fqurl=true}
-    '''
+        {modurl modname='«app.appName»' type='user' «modUrlDisplayWithFreeOt('item', true, '$objectType')» fqurl=true}'''
 
     def private mailzEntryHtmlLinkUrlMain(Entity it, Application app) '''
         «IF app.hasUserController»
@@ -85,8 +84,7 @@ class MailzView {
             «ENDIF»
         «ELSE»
             {homepage}
-        «ENDIF»
-    '''
+        «ENDIF»'''
 
     def private mailzEntryHtmlLinkText(Entity it, Application app) '''
         «val leadingField = getLeadingField»
