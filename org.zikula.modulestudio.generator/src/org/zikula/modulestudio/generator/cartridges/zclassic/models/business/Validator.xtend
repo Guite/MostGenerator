@@ -557,7 +557,7 @@ class Validator {
          */
         public function isUniqueValue($fieldName)
         {
-            if (empty($this->entity[$fieldName])) {
+            if ($this->entity[$fieldName] == '') {
                 return false;
             }
 
