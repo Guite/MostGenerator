@@ -180,7 +180,11 @@ class SimpleFields {
         </div>
         <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
         <input type="hidden" id="«realName»" name="«realName»" value="{$«entity.name.formatForDB».«realName»}" />
-        {if $mode ne 'create' && $«realName» && !$inlineUsage}<div class="z-formnote"><a href="{modurl modname='Users' type='admin' func='modify' userid=$«realName»}" title="{gt text='Switch to the user administration'}">{gt text='Manage user'}</a></div>{/if}
+        {if $mode ne 'create' && $«entity.name.formatForDB».«realName» && !$inlineUsage}
+            {checkpermissionblock component='Users::' instance='.*' level='ACCESS_ADMIN'}
+            <div class="z-formnote"><a href="{modurl modname='Users' type='admin' func='modify' userid=$«entity.name.formatForDB».«realName»}" title="{gt text='Switch to the user administration'}">{gt text='Manage user'}</a></div>
+            {/checkpermissionblock}
+        {/if}
     '''
 
     def private dispatch formField(AbstractDateField it, String groupSuffix, String idSuffix) '''
