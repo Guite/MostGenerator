@@ -41,7 +41,7 @@ class Relations {
             «IF !many»
                 <h4>
             «ELSE»
-                {if isset($items) && $items ne null}
+                {if isset($items) && $items ne null && count($items) gt 0}
                 <ul class="relatedItemList «name.formatForCode»">
                 {foreach name='relLoop' item='item' from=$items}
                     <li>
@@ -68,6 +68,7 @@ class Relations {
             «IF !many»</h4>
             «ENDIF»
             «IF controller.hasActions('display')»
+                {if !$nolink}
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     document.observe('dom:loaded', function() {
@@ -79,6 +80,7 @@ class Relations {
                     });
                 /* ]]> */
                 </script>
+                {/if}
             «ENDIF»
             «IF hasImageFieldsEntity»
                 <br />
