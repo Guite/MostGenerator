@@ -346,9 +346,7 @@ class ControllerAction {
         }
     }
 
-    def private prepareDisplayPermissionCheck(Controller it) {
-        switch it {
-            AjaxController: '''
+    def private prepareDisplayPermissionCheckWithoutCurrentUrlArgs() '''
         // create identifier for permission check
         $instanceId = '';
         foreach ($idFields as $idField) {
@@ -357,7 +355,11 @@ class ControllerAction {
             }
             $instanceId .= $entity[$idField];
         }
-                    '''
+    '''
+
+    def private prepareDisplayPermissionCheck(Controller it) {
+        switch it {
+            AjaxController: prepareDisplayPermissionCheckWithoutCurrentUrlArgs
             default: '''
         // build ModUrl instance for display hooks; also create identifier for permission check
         $currentUrlArgs = array('ot' => $objectType);
@@ -406,7 +408,44 @@ class ControllerAction {
         }
     }
 
-    def private dispatch actionImplBody(EditAction it, String appName) '''
+    def private dispatch actionImplBody(EditAction it, String appName) {
+        switch controller {
+            AjaxController: '''
+        $this->checkAjaxToken();
+        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+
+        $data = (isset($args['data']) && !empty($args['data'])) ? $args['data'] : $this->request->query->filter('data', null);
+        $data = json_decode($data, true);
+
+        $idValues = array();
+        foreach ($idFields as $idField) {
+            $idValues[$idField] = isset($data[$idField]) ? $data[$idField] : '';
+        }
+        $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
+        $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
+
+        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
+        $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
+        unset($idValues);
+
+        «prepareDisplayPermissionCheckWithoutCurrentUrlArgs»
+
+        «permissionCheck("' . ucwords($objectType) . '", "$instanceId . ")»
+
+        // TODO: call pre edit validate hooks
+        foreach ($idFields as $idField) {
+            unset($data[$idField]);
+        }
+        foreach ($data as $key => $value) {
+            $entity[$key] = $value;
+        }
+        $this->entityManager->persist($entity);
+        $this->entityManager->flush();
+        // TODO: call post edit process hooks
+
+        return new Zikula_Response_Ajax(array('result' => true, $objectType => $entity->toArray()));
+                    '''
+            default: '''
         «/* new ActionHandler().formCreate(appName, controller.formattedName, 'edit')*/»
         // create new Form reference
         $view = FormUtil::newForm($this->name, $this);
@@ -416,7 +455,9 @@ class ControllerAction {
 
         // execute form using supplied template and page event handler
         return $view->execute('«controller.formattedName»/' . $objectType . '/edit.tpl', new $handlerClass());
-    '''
+                    '''
+        }
+    }
 
     def private dispatch actionImplBody(DeleteAction it, String appName) '''
         $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
