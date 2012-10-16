@@ -310,42 +310,11 @@ class ControllerAction {
         $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
         unset($idValues);
 
-        // build ModUrl instance for display hooks; also create identifier for permission check
-        $currentUrlArgs = array('ot' => $objectType);
-        $instanceId = '';
-        foreach ($idFields as $idField) {
-            $currentUrlArgs[$idField] = $entity[$idField];
-            if (!empty($instanceId)) {
-                $instanceId .= '_';
-            }
-            $instanceId .= $entity[$idField];
-        }
-        $currentUrlArgs['id'] = $instanceId;
-        if (isset($entity['slug'])) {
-            $currentUrlArgs['slug'] = $entity['slug'];
-        }
-        $currentUrlObject = new Zikula_ModUrl($this->name, '«controller.formattedName»', 'display', ZLanguage::getLanguageCode(), $currentUrlArgs);
+        «controller.prepareDisplayPermissionCheck»
 
         «permissionCheck("' . ucwords($objectType) . '", "$instanceId . ")»
 
-        $viewHelper = new «appName»_Util_View($this->serviceManager);
-        $templateFile = $viewHelper->getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'display', $args);
-
-        // set cache id
-        $component = $this->name . ':' . ucwords($objectType) . ':';
-        $instance = $instanceId . '::';
-        $accessLevel = ACCESS_READ;
-        if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
-        if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
-        $this->view->setCacheId($objectType . '|' . $instanceId . '|a' . $accessLevel);
-
-        // assign output data to view object.
-        $this->view->assign($objectType, $entity)
-                   ->assign('currentUrlObject', $currentUrlObject)
-                   ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
-
-        // fetch and return the appropriate template
-        return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'display', $args, $templateFile);
+        «controller.processDisplayOutput»
     '''
 
     def private checkForSlug(Controller it) {
@@ -374,6 +343,66 @@ class ControllerAction {
         switch it {
             UserController: ', \'slug\' => $slug'
             default: ''
+        }
+    }
+
+    def private prepareDisplayPermissionCheck(Controller it) {
+        switch it {
+            AjaxController: '''
+        // create identifier for permission check
+        $instanceId = '';
+        foreach ($idFields as $idField) {
+            if (!empty($instanceId)) {
+                $instanceId .= '_';
+            }
+            $instanceId .= $entity[$idField];
+        }
+                    '''
+            default: '''
+        // build ModUrl instance for display hooks; also create identifier for permission check
+        $currentUrlArgs = array('ot' => $objectType);
+        $instanceId = '';
+        foreach ($idFields as $idField) {
+            $currentUrlArgs[$idField] = $entity[$idField];
+            if (!empty($instanceId)) {
+                $instanceId .= '_';
+            }
+            $instanceId .= $entity[$idField];
+        }
+        $currentUrlArgs['id'] = $instanceId;
+        if (isset($entity['slug'])) {
+            $currentUrlArgs['slug'] = $entity['slug'];
+        }
+        $currentUrlObject = new Zikula_ModUrl($this->name, '«formattedName»', 'display', ZLanguage::getLanguageCode(), $currentUrlArgs);
+                    '''
+        }
+    }
+
+    def private processDisplayOutput(Controller it) {
+        switch it {
+            AjaxController: '''
+        return new Zikula_Response_Ajax(array('result' => true, $objectType => $entity->toArray()));
+                    '''
+            default: '''
+        $viewHelper = new «container.application.appName»_Util_View($this->serviceManager);
+        $templateFile = $viewHelper->getViewTemplate($this->view, '«formattedName»', $objectType, 'display', $args);
+
+        // set cache id
+        $component = $this->name . ':' . ucwords($objectType) . ':';
+        $instance = $instanceId . '::';
+        $accessLevel = ACCESS_READ;
+        if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
+        if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
+        $this->view->setCacheId($objectType . '|' . $instanceId . '|a' . $accessLevel);
+
+        // assign output data to view object.
+        $this->view->assign($objectType, $entity)
+                   ->assign('currentUrlObject', $currentUrlObject)
+                   ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
+
+        // fetch and return the appropriate template
+        return $viewHelper->processTemplate($this->view, '«formattedName»', $objectType, 'display', $args, $templateFile);
+                    '''
         }
     }
 
