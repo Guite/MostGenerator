@@ -28,13 +28,13 @@ class ControllerUtil {
     }
 
     def private controllerFunctionsBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«controllerFunctionsBaseImpl»
+        «fh.phpFileHeader(it)»
+        «controllerFunctionsBaseImpl»
     '''
 
     def private controllerFunctionsFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«controllerFunctionsImpl»
+        «fh.phpFileHeader(it)»
+        «controllerFunctionsImpl»
     '''
 
     def private controllerFunctionsBaseImpl(Application it) '''
@@ -186,6 +186,61 @@ class ControllerUtil {
                     }
 
                     return $basePath;
+                }
+
+                /**
+                 * Creates upload folder and tmb subfolder as well as an .htaccess file within it.
+                 *
+                 * @param string $objectType        Name of treated entity type.
+                 * @param string $fieldName         Name of upload field.
+                 * @param string $allowedExtensions String with list of allowed file extensions (separated by ", ").
+                 *
+                 * @return Boolean whether everything went okay or not.
+                 */
+                public function checkAndCreateUploadFolder($objectType, $fieldName, $allowedExtensions = '')
+                {
+                    $dom = ZLanguage::getModuleDomain('«appName»');
+                    $uploadPath = $this->getFileBaseFolder($objectType, $fieldName);
+
+                    // Check if directory exist and try to create it if needed
+                    if (!is_dir($uploadPath) && !FileUtil::mkdirs($uploadPath, 0777)) {
+                        LogUtil::registerStatus(__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath), $dom));
+                        return false;
+                    }
+
+                    // Check if directory is writable and change permissions if needed
+                    if (!is_writable($uploadPath) && !chmod($uploadPath, 0777)) {
+                        LogUtil::registerStatus(__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath), $dom));
+                        return false;
+                    }
+
+                    $thumbPath = $uploadPath . 'tmb/';
+
+                    // Check if directory exist and try to create it if needed
+                    if (!is_dir($thumbPath) && !FileUtil::mkdirs($thumbPath, 0777)) {
+                        LogUtil::registerStatus(__f('Warning! The upload thumbnail directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($thumbPath), $dom));
+                        return false;
+                    }
+
+                    // Check if directory is writable and change permissions if needed
+                    if (!is_writable($thumbPath) && !chmod($thumbPath, 0777)) {
+                        LogUtil::registerStatus(__f('Warning! The upload thumbnail directory at "%s" exists but is not writable by the webserver.', array($thumbPath), $dom));
+                        return false;
+                    }
+
+                    // Write a htaccess file into the upload directory
+                    $htaccessFilePath = $uploadPath . '.htaccess';
+                    $htaccessFileTemplate = 'modules/«appName»/docs/htaccessTemplate';
+                    if (!file_exists($htaccessFilePath) && file_exists($htaccessFileTemplate)) {
+                        $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
+                        $htaccessContent = str_replace('__EXTENSIONS__', $extensions, FileUtil::readFile($htaccessFileTemplate));
+                        if (!FileUtil::writeFile($htaccessFilePath, $htaccessContent)) {
+                            LogUtil::registerStatus(__f('Warning! Could not but could not write the .htaccess file at "%s".', array($htaccessFilePath), $dom));
+                            return false;
+                        }
+                    }
+
+                    return true;
                 }
             «ENDIF»
         }

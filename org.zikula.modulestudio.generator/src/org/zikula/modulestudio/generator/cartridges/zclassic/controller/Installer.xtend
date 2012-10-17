@@ -39,13 +39,13 @@ class Installer {
     }
 
     def private installerBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«installerBaseClass»
+        «fh.phpFileHeader(it)»
+        «installerBaseClass»
     '''
 
     def private installerFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«installerImpl»
+        «fh.phpFileHeader(it)»
+        «installerImpl»
     '''
 
     def private installerBaseClass(Application it) '''
@@ -59,13 +59,13 @@ class Installer {
     '''
 
     def private interactiveBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
+        «fh.phpFileHeader(it)»
         «interactiveBaseClass»
     '''
 
     def private interactiveFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«interactiveImpl»
+        «fh.phpFileHeader(it)»
+        «interactiveImpl»
     '''
 
     def private interactiveBaseClass(Application it) '''
@@ -100,7 +100,7 @@ class Installer {
          */
         public function install()
         {
-            «checkIfUploadFoldersAreWritable»
+            «processUploadFolders»
             // create all tables from according entity definitions
             try {
                 DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses());
@@ -151,26 +151,23 @@ class Installer {
         }
     '''
 
-    def private checkIfUploadFoldersAreWritable(Application it) '''
-        «val uploadEntities = getUploadEntities»
-        «IF !uploadEntities.isEmpty»
-            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
-            «FOR uploadEntity : uploadEntities»
-            «FOR uploadField : uploadEntity.getUploadFieldsEntity»
-                try {
-                    $basePath = $controllerHelper->getFileBaseFolder('«uploadField.entity.name.formatForCode»', '«uploadField.name.formatForCode»');
-                    if (!is_dir($basePath)) {
-                        return LogUtil::registerError($this->__f('The upload folder "%s" does not exist. Please create it before installing this application.', array($basePath)));
-                    }
-                    if (!is_writable($basePath)) {
-                        return LogUtil::registerError($this->__f('The upload folder "%s" is not writable. Please change permissions accordingly before installing this application.', array($basePath)));
-                    }
-                }
-                catch (Exception $e) {
-                    return LogUtil::registerError($e->getMessage());
-                }
-            «ENDFOR»
-            «ENDFOR»
+    def private processUploadFolders(Application it) '''
+        «IF hasUploads»
+            // Check if upload directories exist and if needed create them
+            try {
+                $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+                «FOR uploadEntity : getUploadEntities»
+                «FOR uploadField : uploadEntity.getUploadFieldsEntity»
+                    $result = $controllerHelper->checkAndCreateUploadFolder('«uploadField.entity.name.formatForCode»', '«uploadField.name.formatForCode»', '«uploadField.allowedExtensions»');
+                    «/*if (!$result) {
+                        return false;
+                    }*/»
+                «ENDFOR»
+                «ENDFOR»
+            }
+            catch (Exception $e) {
+                return LogUtil::registerError($e->getMessage());
+            }
         «ENDIF»
     '''
 
@@ -251,6 +248,12 @@ class Installer {
                 // remove category registry entries
                 ModUtil::dbInfoLoad('Categories');
                 DBUtil::deleteWhere('categories_registry', "modname = '«appName»'");
+            «ENDIF»
+            «IF !uploadEntities.isEmpty»
+
+                // remind user about upload folders not being deleted
+                $uploadPath = FileUtil::getDataDirectory() . '/«appName»/';
+                LogUtil::registerStatus($this->__f('The upload directories at [%s] can be removed manually', $uploadPath));
             «ENDIF»
 
             // deletion successful

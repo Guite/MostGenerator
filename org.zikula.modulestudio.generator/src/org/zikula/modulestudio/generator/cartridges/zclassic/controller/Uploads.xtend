@@ -24,20 +24,20 @@ class Uploads {
      * Entry point for the upload handler.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-    	this.fsa = fsa
+        this.fsa = fsa
         createUploadFolders
         fsa.generateFile(getAppSourceLibPath(appName) + 'Base/UploadHandler.php', uploadHandlerBaseFile)
         fsa.generateFile(getAppSourceLibPath(appName) + 'UploadHandler.php', uploadHandlerFile)
     }
 
     def private uploadHandlerBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«uploadHandlerBaseImpl»
+        «fh.phpFileHeader(it)»
+        «uploadHandlerBaseImpl»
     '''
 
     def private uploadHandlerFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«uploadHandlerImpl»
+        «fh.phpFileHeader(it)»
+        «uploadHandlerImpl»
     '''
 
     def private createUploadFolders(Application it) {
@@ -57,6 +57,8 @@ class Uploads {
                 fsa.generateFile(getAppUploadPath(appName) + subFolderName + uploadFields.head.subFolderPathSegment + '/tmb/index.html', msUrl)
             }
         }
+        val docPath = getAppSourcePath(appName) + 'docs/'
+        fsa.generateFile(docPath + 'htaccessTemplate', htAcessTemplate)
     }
 
     def private uploadFolder(UploadField it, String folder) {
@@ -71,6 +73,18 @@ class Uploads {
         # ----------------------------------------------------------------------
         deny from all
         <FilesMatch "\.(«allowedExtensions.replaceAll(", ", "|")»)$">
+            order allow,deny
+            allow from all
+        </filesmatch>
+    '''
+
+    def private htAccessTemplate(Application it) '''
+        # generated at «timestamp» by ModuleStudio «msVersion» («msUrl»)
+        # ----------------------------------------------------------------------
+        # Purpose of file: give access to upload files treated in this directory
+        # ----------------------------------------------------------------------
+        deny from all
+        <FilesMatch "\.(__EXTENSIONS__)$">
             order allow,deny
             allow from all
         </filesmatch>
