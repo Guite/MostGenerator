@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin
+package org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
@@ -8,7 +8,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class FormCountrySelector {
+class CountrySelector {
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()

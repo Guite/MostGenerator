@@ -4,11 +4,12 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ActionUrl
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormColourInput
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormCountrySelector
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormFrame
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormGeoInput
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormItemSelector
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.ColourInput
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.CountrySelector
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.Frame
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.GeoInput
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.ItemSelector
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.TreeSelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormatGeoData
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetCountryName
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetFileSize
@@ -19,7 +20,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.Selecto
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TemplateHeaders
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeJS
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeSelection
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeSelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ValidationError
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
@@ -36,7 +36,7 @@ class Plugins {
         new SelectorTemplates().generate(it, fsa)
         new TemplateHeaders().generate(it, fsa)
         if (hasEditActions) {
-            new FormFrame().generate(it, fsa)
+            new Frame().generate(it, fsa)
             new ValidationError().generate(it, fsa)
         }
         if (hasUploads) {
@@ -50,13 +50,13 @@ class Plugins {
             }
             new TreeSelection().generate(it, fsa)
         }
-        new FormItemSelector().generate(it, fsa)
+        new ItemSelector().generate(it, fsa)
         if (hasColourFields && hasEditActions) {
-            new FormColourInput().generate(it, fsa)
+            new ColourInput().generate(it, fsa)
         }
         if (hasCountryFields) {
             if (hasEditActions) {
-                new FormCountrySelector().generate(it, fsa)
+                new CountrySelector().generate(it, fsa)
             }
             new GetCountryName().generate(it, fsa)
         }
@@ -65,7 +65,7 @@ class Plugins {
         }
         if (getAllEntities.exists(e|e.geographical)) {
             if (hasEditActions) {
-                new FormGeoInput().generate(it, fsa)
+                new GeoInput().generate(it, fsa)
             }
             new FormatGeoData().generate(it, fsa)
         }
