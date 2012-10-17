@@ -88,7 +88,7 @@ class SimpleFields {
         «ELSEIF language»
             {formlanguageselector «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»'}
         «ELSEIF htmlcolour»
-            {«entity.container.application.appName.formatForDB»ColourInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»'}
+            {«entity.container.application.appName.formatForDB»ColourInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Choose the «name.formatForDisplay» of the «entity.name.formatForDisplay»'«validationHelper.fieldValidationCssClass(it)»}
         «ELSE»
             {formtextinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' textMode='«IF password»password«ELSE»singleline«ENDIF»'«IF minLength > 0» minLength=«minLength»«ENDIF» maxLength=«length»«validationHelper.fieldValidationCssClass(it)»}
         «ENDIF»
@@ -166,23 +166,10 @@ class SimpleFields {
     '''
 
     def private dispatch formField(UserField it, String groupSuffix, String idSuffix) '''
-        {* to be replaced by a plugin (see https://github.com/Guite/MostGenerator/issues/86 for more information) *} 
-        «val realName = name.formatForCode»
-        <div id="«realName»LiveSearch" class="«entity.container.application.prefix»LiveSearchUser z-hide">
-            {icon type='search' size='extrasmall' __alt='Search user'}
-            {assign var='userSelectorDefaultValue' value=''}
-            {if $«entity.name.formatForDB».«realName» gt 0}
-                {usergetvar name='uname' uid=$«entity.name.formatForDB».«realName» assign='userSelectorDefaultValue'}
-            {/if}
-            {formtextinput group='«entity.name.formatForDB»' id='«realName»Selector' mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter a part of the user name to search' maxLength=25 dataBased=false text=$userSelectorDefaultValue cssClass='«IF mandatory»required «ENDIF»validate-alphanum«IF unique» validate-unique«ENDIF»'}
-            {img src='indicator_circle.gif' modname='core' set='ajax' alt='' id='«realName»Indicator' style='display: none'}
-            <div id="«realName»SelectorChoices" class="«entity.container.application.prefix»AutoCompleteUser"></div>
-        </div>
-        <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
-        <input type="hidden" id="«realName»" name="«realName»" value="{$«entity.name.formatForDB».«realName»}" />
-        {if $mode ne 'create' && $«entity.name.formatForDB».«realName» && !$inlineUsage}
+        {«entity.container.application.appName.formatForDB»UserInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter a part of the user name to search' maxLength=25 cssClass='«IF mandatory»required «ENDIF»validate-alphanum«IF unique» validate-unique«ENDIF»'}
+        {if $mode ne 'create' && $«entity.name.formatForDB».«name.formatForDB» && !$inlineUsage}
             {checkpermissionblock component='Users::' instance='.*' level='ACCESS_ADMIN'}
-            <div class="z-formnote"><a href="{modurl modname='Users' type='admin' func='modify' userid=$«entity.name.formatForDB».«realName»}" title="{gt text='Switch to the user administration'}">{gt text='Manage user'}</a></div>
+            <div class="z-formnote"><a href="{modurl modname='Users' type='admin' func='modify' userid=$«entity.name.formatForDB».«name.formatForDB»}" title="{gt text='Switch to the user administration'}">{gt text='Manage user'}</a></div>
             {/checkpermissionblock}
         {/if}
     '''

@@ -10,6 +10,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.Fr
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.GeoInput
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.ItemSelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.TreeSelector
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.UserInput
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormatGeoData
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetCountryName
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetFileSize
@@ -62,6 +63,11 @@ class Plugins {
         }
         if (hasListFields) {
             new GetListEntry().generate(it, fsa)
+        }
+        if (hasUserFields) {
+            if (hasEditActions) {
+                new UserInput().generate(it, fsa)
+            }
         }
         if (getAllEntities.exists(e|e.geographical)) {
             if (hasEditActions) {
