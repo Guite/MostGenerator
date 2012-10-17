@@ -68,8 +68,7 @@ class UserInput {
              */
             public function create(Zikula_Form_View $view, &$params)
             {
-                $params['maxLength'] = 7;
-                $params['width'] = '8em';
+                $params['maxLength'] = 25;
 
                 // let parent plugin do the work in detail
                 parent::create($view, $params);
