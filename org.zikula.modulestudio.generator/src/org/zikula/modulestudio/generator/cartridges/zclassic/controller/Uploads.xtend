@@ -58,7 +58,7 @@ class Uploads {
             }
         }
         val docPath = getAppSourcePath(appName) + 'docs/'
-        fsa.generateFile(docPath + 'htaccessTemplate', htAcessTemplate)
+        fsa.generateFile(docPath + 'htaccessTemplate', htAccessTemplate)
     }
 
     def private uploadFolder(UploadField it, String folder) {
