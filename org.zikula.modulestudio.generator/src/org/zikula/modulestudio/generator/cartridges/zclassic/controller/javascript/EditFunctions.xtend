@@ -4,12 +4,14 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class EditFunctions {
+    @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
@@ -140,8 +142,6 @@ class EditFunctions {
             «initRelatedItemsForm(prefix)»
 
             «closeWindowFromInside»
-
-            // TODO: support auto-hiding notification windows (see https://github.com/zikula/core/issues/121 for more information)
         «ENDIF»
     '''
 
@@ -434,7 +434,9 @@ class EditFunctions {
                             // activate it
                             relationHandler.acInstance.activate();
                             // show a message 
-                            Zikula.UI.Alert('Action has been completed.', 'Information');
+                            Zikula.UI.Alert(Zikula.__('Action has been completed.', 'module_«appName.formatForDB»_js'), Zikula.__('Information','module_«appName.formatForDB»_js'), {
+                                autoClose: 3 // time in seconds
+                            });
                         }
                     }
                     // look whether there is a windows instance
