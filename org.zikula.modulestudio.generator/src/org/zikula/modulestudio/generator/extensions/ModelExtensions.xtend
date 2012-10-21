@@ -563,6 +563,8 @@ class ModelExtensions {
             case EntityIdentifierStrategy::SEQUENCE                 : 'SEQUENCE'
             case EntityIdentifierStrategy::TABLE                    : 'TABLE'
             case EntityIdentifierStrategy::IDENTITY                 : 'IDENTITY'
+            case EntityIdentifierStrategy::UUID                     : 'UUID'
+            case EntityIdentifierStrategy::CUSTOM                   : 'CUSTOM'
             default: ''
         }
     }
