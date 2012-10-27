@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.modulestudio.ApplicationDependencyType
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -162,8 +163,16 @@ class VersionFile {
         array('modname'    => '«name.formatForCode.toFirstUpper»',
               'minversion' => '«minVersion»',
               'maxversion' => '«maxVersion»',
-              'status'     => ModUtil::DEPENDENCY_REQUIRED«/* TODO: ModUtil::RECOMMENDED, ModUtil::CONFLICTS */»)
+              'status'     => ModUtil::DEPENDENCY_«appDependencyType»)
     '''
+
+    def private appDependencyType(ReferredApplication it) {
+        switch it.dependencyType {
+            case ApplicationDependencyType::RECOMMENDATION: 'RECOMMENDED'
+            case ApplicationDependencyType::CONFLICT: 'CONFLICTS'
+            default: 'REQUIRED'
+        }
+    }
 
     def private permissionSchema(Entity it, String appName) '''
         '«appName»:«name.formatForCodeCapital»:' => '«name.formatForCodeCapital» ID::',
