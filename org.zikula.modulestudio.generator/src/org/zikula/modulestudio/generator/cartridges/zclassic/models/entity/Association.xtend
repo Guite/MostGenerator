@@ -200,7 +200,7 @@ class Association {
         val joinColumnsForeign = { if (useTarget) getTargetFields else getSourceFields }
         val foreignTableName = fullJoinTableName(useTarget, joinedEntityForeign)
         if (joinColumnsForeign.containsDefaultIdField(joinedEntityForeign) && joinColumnsLocal.containsDefaultIdField(joinedEntityLocal)
-   	    && !unique && nullable && onDelete == '' && onUpdate == '') ''' * @ORM\JoinTable(name="«foreignTableName»")'''
+   	    && !unique && nullable && onDelete == '') ''' * @ORM\JoinTable(name="«foreignTableName»")'''
         else ''' * @ORM\JoinTable(name="«foreignTableName»",
         «joinTableDetails(useTarget)»
          * )'''
@@ -224,7 +224,7 @@ class Association {
     def private joinColumnsSingle(JoinRelationship it, Boolean useTarget, Entity joinedEntityLocal, String[] joinColumnsLocal) ''' *      joinColumns={«joinColumn(joinColumnsLocal.head, joinedEntityLocal.getFirstPrimaryKey.name.formatForDB, !useTarget)»},'''
 
     def private joinColumn(JoinRelationship it, String columnName, String referencedColumnName, Boolean useTarget) '''
-        @ORM\JoinColumn(name="«joinColumnName(columnName, useTarget)»", referencedColumnName="«referencedColumnName»" «IF unique», unique=true«ENDIF»«IF !nullable», nullable=false«ENDIF»«IF onDelete != ''», onDelete="«onDelete»"«ENDIF»«IF onUpdate != ''», onUpdate="«onUpdate»"«ENDIF»)
+        @ORM\JoinColumn(name="«joinColumnName(columnName, useTarget)»", referencedColumnName="«referencedColumnName»" «IF unique», unique=true«ENDIF»«IF !nullable», nullable=false«ENDIF»«IF onDelete != ''», onDelete="«onDelete»"«ENDIF»)
     '''
 
     def private joinColumnName(JoinRelationship it, String columnName, Boolean useTarget) {
