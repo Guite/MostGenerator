@@ -20,8 +20,8 @@ class TreeJS {
     }
 
     def private treeJsFile(Application it) '''
-    	«new FileHelper().phpFileHeader(it)»
-    	«treeJsImpl»
+        «new FileHelper().phpFileHeader(it)»
+        «treeJsImpl»
     '''
 
     def private treeJsImpl(Application it) '''

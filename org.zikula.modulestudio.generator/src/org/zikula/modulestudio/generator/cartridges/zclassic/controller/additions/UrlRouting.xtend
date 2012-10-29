@@ -32,13 +32,13 @@ class UrlRouting {
     }
 
     def private routerFacadeBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«routerFacadeBaseImpl»
+        «fh.phpFileHeader(it)»
+        «routerFacadeBaseImpl»
     '''
 
     def private routerFacadeFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«routerFacadeImpl»
+        «fh.phpFileHeader(it)»
+        «routerFacadeImpl»
     '''
 
     def private routerFacadeBaseImpl(Application it) '''

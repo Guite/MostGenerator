@@ -30,25 +30,25 @@ class ExternalController {
     }
 
     def private externalBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«externalBaseClass»
+        «fh.phpFileHeader(it)»
+        «externalBaseClass»
     '''
 
     def private externalFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«externalImpl»
+        «fh.phpFileHeader(it)»
+        «externalImpl»
     '''
 
     def private externalBaseClass(Application it) '''
-		/**
-		 * Controller for external calls base class.
-		 */
-		class «appName»_Controller_Base_External extends Zikula_AbstractController
-		{
+        /**
+         * Controller for external calls base class.
+         */
+        class «appName»_Controller_Base_External extends Zikula_AbstractController
+        {
     «new ControllerHelper().controllerPostInitialize(it, false)»
 
-		    «externalBaseImpl»
-		}
+            «externalBaseImpl»
+        }
     '''
 
     def private externalBaseImpl(Application it) '''

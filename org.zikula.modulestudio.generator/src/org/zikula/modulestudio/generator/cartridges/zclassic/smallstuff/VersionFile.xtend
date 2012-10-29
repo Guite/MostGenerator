@@ -29,13 +29,13 @@ class VersionFile {
     }
 
     def private versionBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«appInfoBaseImpl»
+        «fh.phpFileHeader(it)»
+        «appInfoBaseImpl»
     '''
 
     def private versionFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«appInfoImpl»
+        «fh.phpFileHeader(it)»
+        «appInfoImpl»
     '''
 
     def private appInfoBaseImpl(Application it) '''

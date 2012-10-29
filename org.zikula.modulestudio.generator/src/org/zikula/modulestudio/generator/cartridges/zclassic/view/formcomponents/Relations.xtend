@@ -35,7 +35,7 @@ class Relations {
      * If onlyInclude is true then only the Smarty include is created, otherwise the included file.
      */
     def dispatch generate(JoinRelationship it, Application app, Controller controller, Boolean onlyInclude, Boolean incoming, IFileSystemAccess fsa) {
-    	this.fsa = fsa
+        this.fsa = fsa
         val stageCode = getEditStageCode(incoming)
         /* Look if we have to do anything by checking stage codes which represent different edit behaviors*/
         if ((!incoming && stageCode == 2) || (incoming && (stageCode == 1 || stageCode == 3))) {

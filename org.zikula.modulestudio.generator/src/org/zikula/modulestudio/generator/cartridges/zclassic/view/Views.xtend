@@ -87,7 +87,7 @@ class Views {
                 for (action : controller.actions.filter(typeof(CustomAction))) customHelper.generate(action, it, controller, fsa)
 
                 if (controller.hasActions('display')) {
-                    // TODO: use relations to generate only required ones
+                    // TODO: use relations to generate only required ones (???)
                     for (entity : getAllEntities) {
                         relationHelper.displayItemList(entity, it, controller, false, fsa)
                         relationHelper.displayItemList(entity, it, controller, true, fsa)

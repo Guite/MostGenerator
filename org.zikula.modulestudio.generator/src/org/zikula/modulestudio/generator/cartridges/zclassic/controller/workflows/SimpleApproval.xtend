@@ -17,20 +17,20 @@ class SimpleApproval {
      * Entry point for Simple Approval workflow.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-    	val workflowPath = appName.getAppSourcePath + 'workflows/'
+        val workflowPath = appName.getAppSourcePath + 'workflows/'
         fsa.generateFile(workflowPath + 'simpleapproval.xml', xmlSchema)
         fsa.generateFile(workflowPath + 'function.standard_permissioncheck.php', permissionCheckFile)
         fsa.generateFile(workflowPath + 'operations/function.updateObjectStatus.php', updateStatusOperationFile)
     }
 
     def private permissionCheckFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«permissionCheckImpl»
+        «fh.phpFileHeader(it)»
+        «permissionCheckImpl»
     '''
 
     def private updateStatusOperationFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«updateStatusOperationImpl»
+        «fh.phpFileHeader(it)»
+        «updateStatusOperationImpl»
     '''
 
     def private xmlSchema(Application it) '''
