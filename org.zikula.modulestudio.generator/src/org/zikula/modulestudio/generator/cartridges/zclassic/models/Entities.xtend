@@ -2,10 +2,13 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
+import de.guite.modulestudio.metamodel.modulestudio.AdminController
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.DateField
 import de.guite.modulestudio.metamodel.modulestudio.DatetimeField
 import de.guite.modulestudio.metamodel.modulestudio.DecimalField
+import de.guite.modulestudio.metamodel.modulestudio.EmailField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityChangeTrackingPolicy
 import de.guite.modulestudio.metamodel.modulestudio.EntityIndex
@@ -33,8 +36,6 @@ import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import de.guite.modulestudio.metamodel.modulestudio.Controller
-import de.guite.modulestudio.metamodel.modulestudio.AdminController
 
 class Entities {
     @Inject extension ControllerExtensions = new ControllerExtensions()
@@ -269,6 +270,15 @@ class Entities {
          */
         public function validate()
         {
+        «val emailFields = getDerivedFields().filter(typeof(EmailField))»
+        «IF emailFields.size > 0»
+                // decode possibly encoded mail addresses (#201)
+            «FOR emailField : emailFields»
+                if (strpos($this['«emailField.name.formatForCode»'], '&#') !== false) {
+                    $this['«emailField.name.formatForCode»'] = html_entity_decode($this['«emailField.name.formatForCode»']);
+                }
+            «ENDFOR»
+        «ENDIF»
             $result = $this->initValidator()->validateAll();
             if (is_array($result)) {
                 throw new Zikula_Exception($result['message'], $result['code'], $result['debugArray']);

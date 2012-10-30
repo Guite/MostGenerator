@@ -17,10 +17,10 @@ class ModVars {
     @Inject extension ModelExtensions = new ModelExtensions()
 
     def valFromSession(Variable it) {
-    	switch it {
-    	    ListVar: '''«IF it.multiple»serialize(«ENDIF»$sessionValue«IF it.multiple»)«ENDIF»'''
-    	    default: '''$sessionValue'''
-    	}
+        switch it {
+            ListVar: '''«IF it.multiple»serialize(«ENDIF»$sessionValue«IF it.multiple»)«ENDIF»'''
+            default: '''$sessionValue'''
+        }
     }
 
     def dispatch valSession2Mod(Variable it) {
@@ -29,7 +29,7 @@ class ModVars {
             IntVar: value
             ListVar: '''«IF it.multiple»array(«ENDIF»«FOR item : it.getDefaultItems SEPARATOR ', '»«item.valSession2Mod»«ENDFOR»«IF it.multiple»)«ENDIF»'''
             default: '\'' + value + '\''
-    	}
+        }
     }
 
     def dispatch valSession2Mod(ListVarItem it) '''«IF it.^default == true»'«name.formatForCode»'«ENDIF»'''
@@ -40,7 +40,7 @@ class ModVars {
             IntVar: value
             ListVar: '''«IF it.multiple»array(«ENDIF»«FOR item : it.getDefaultItems SEPARATOR ', '»«item.valDirect2Mod»«ENDFOR»«IF it.multiple»)«ENDIF»'''
             default: '\'' + (if (value != null) value else '') + '\''
-    	}
+        }
     }
 
     def dispatch valDirect2Mod(ListVarItem it) ''' '«name.formatForCode»' '''
@@ -50,7 +50,7 @@ class ModVars {
         switch (it) {
             ListVar: '''«IF it.multiple»serialize(array(«ENDIF»«FOR item : it.getDefaultItems SEPARATOR ', '»«item.valForm2SessionDefault»«ENDFOR»«IF it.multiple»))«ENDIF»'''
             default: '\'' + value.formatForCode + '\''
-    	}
+        }
     }
 
     def dispatch valForm2SessionDefault(ListVarItem it) ''' '«name.formatForCode»' '''
