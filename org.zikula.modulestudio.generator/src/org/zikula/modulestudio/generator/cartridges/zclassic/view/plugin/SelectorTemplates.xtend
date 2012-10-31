@@ -40,6 +40,7 @@ class SelectorTemplates {
 
             $result[] = array('text' => $view->__('Only item titles'), 'value' => 'itemlist_display.tpl');
             $result[] = array('text' => $view->__('With description'), 'value' => 'itemlist_display_description.tpl');
+            $result[] = array('text' => $view->__('Custom template'), 'value' => 'custom');
 
             if (array_key_exists('assign', $params)) {
                 $view->assign($params['assign'], $result);

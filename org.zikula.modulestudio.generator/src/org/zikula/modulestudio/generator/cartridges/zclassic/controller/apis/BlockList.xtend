@@ -125,6 +125,9 @@ class BlockList {
             if (!isset($vars['template'])) {
                 $vars['template'] = 'itemlist_' . DataUtil::formatForOS($vars['objectType']) . '_display.tpl';
             }
+            if (!isset($vars['customTemplate'])) {
+                $vars['customTemplate'] = '';
+            }
             if (!isset($vars['filter'])) {
                 $vars['filter'] = '';
             }
@@ -218,21 +221,26 @@ class BlockList {
          */
         protected function getDisplayTemplate($vars)
         {
-            $objectType = $vars['objectType'];
-            $templateForObjectType = str_replace('itemlist_', 'itemlist_' . DataUtil::formatForOS($objectType) . '_', $vars['template']);
+            $templateFile = $vars['template'];
+            if ($templateFile == 'custom') {
+                $templateFile = $vars['customTemplate'];
+            }
+
+            $templateForObjectType = str_replace('itemlist_', 'itemlist_' . DataUtil::formatForOS($vars['objectType']) . '_', $templateFile);
 
             $template = '';
             if ($this->view->template_exists('contenttype/' . $templateForObjectType)) {
                 $template = 'contenttype/' . $templateForObjectType;
-            } elseif ($this->view->template_exists('contenttype/' . $vars['template'])) {
-                $template = 'contenttype/' . $vars['template'];
             } elseif ($this->view->template_exists('block/' . $templateForObjectType)) {
                 $template = 'block/' . $templateForObjectType;
-            } elseif ($this->view->template_exists('block/' . $vars['template'])) {
-                $template = 'block/' . $vars['template'];
+            } elseif ($this->view->template_exists('contenttype/' . $templateFile)) {
+                $template = 'contenttype/' . $templateFile;
+            } elseif ($this->view->template_exists('block/' . $templateFile)) {
+                $template = 'block/' . $templateFile;
             } else {
                 $template = 'block/itemlist.tpl';
             }
+
             return $template;
         }
 
@@ -295,6 +303,9 @@ class BlockList {
             if (!isset($vars['template'])) {
                 $vars['template'] = 'itemlist_' . DataUtil::formatForOS($vars['objectType']) . '_display.tpl';
             }
+            if (!isset($vars['customTemplate'])) {
+                $vars['customTemplate'] = '';
+            }
             if (!isset($vars['filter'])) {
                 $vars['filter'] = '';
             }
@@ -338,6 +349,7 @@ class BlockList {
             $vars['sorting'] = $this->request->request->filter('sorting', 'default', FILTER_SANITIZE_STRING);
             $vars['amount'] = (int) $this->request->request->filter('amount', 5, FILTER_VALIDATE_INT);
             $vars['template'] = $this->request->request->get('template', '');
+            $vars['customTemplate'] = $this->request->request->get('customtemplate', '');
             $vars['filter'] = $this->request->request->get('filter', '');
 
             $controllerHelper = new «appName»_Util_Controller($this->serviceManager);

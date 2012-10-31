@@ -53,6 +53,7 @@ class ContentTypeList {
         protected $sorting;
         protected $amount;
         protected $template;
+        protected $customTemplate;
         protected $filter;
         «IF hasCategorisableEntities»
             protected $categorisableObjectTypes;
@@ -128,6 +129,9 @@ class ContentTypeList {
             if (!isset($data['template'])) {
                 $data['template'] = 'itemlist_' . $this->objectType . '_display.tpl';
             }
+            if (!isset($data['customTemplate'])) {
+                $data['customTemplate'] = '';
+            }
             if (!isset($data['filter'])) {
                 $data['filter'] = '';
             }
@@ -145,6 +149,7 @@ class ContentTypeList {
             $this->sorting = $data['sorting'];
             $this->amount = $data['amount'];
             $this->template = $data['template'];
+            $this->customTemplate = $data['customTemplate'];
             $this->filter = $data['filter'];
             «IF hasCategorisableEntities»
                 $this->mainCategory = $data['mainCategory'];
@@ -226,18 +231,22 @@ class ContentTypeList {
          */
         protected function getDisplayTemplate()
         {
-            $template = '';
-            if (!empty($this->template) && $this->view->template_exists('contenttype/' . $this->template)) {
-                $template = 'contenttype/' . $this->template;
+            $templateFile = $this->template;
+            if ($templateFile == 'custom') {
+                $templateFile = $this->customTemplate;
             }
-            $templateForObjectType = str_replace('itemlist_', 'itemlist_' . $this->objectType . '_', $this->template);
+
+            $templateForObjectType = str_replace('itemlist_', 'itemlist_' . $this->objectType . '_', $templateFile);
+
+            $template = '';
             if ($this->view->template_exists('contenttype/' . $templateForObjectType)) {
                 $template = 'contenttype/' . $templateForObjectType;
-            } elseif ($this->view->template_exists('contenttype/' . $this->template)) {
-                $template = 'contenttype/' . $this->template;
+            } elseif ($this->view->template_exists('contenttype/' . $templateFile)) {
+                $template = 'contenttype/' . $templateFile;
             } else {
                 $template = 'contenttype/itemlist_display.tpl';
             }
+
             return $template;
         }
 
@@ -293,6 +302,7 @@ class ContentTypeList {
                          'sorting' => 'default',
                          'amount' => 1,
                          'template' => 'itemlist_display.tpl',
+                         'customTemplate' => '',
                          'filter' => '');
         }
 

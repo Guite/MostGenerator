@@ -29,7 +29,7 @@ class ContentTypeSingleView {
         <div style="margin-left: 80px">
             <div{* class="z-formrow"*}>
                 {«appName.formatForDB»SelectorItems id='id' group='data' objectType=$objectType}
-                «/* EVENTUELL PRO OBJECTTYPE */»
+                «/* MAYBE PER OBJECTTYPE */»
             </div>
 
             <div{* class="z-formrow"*}>

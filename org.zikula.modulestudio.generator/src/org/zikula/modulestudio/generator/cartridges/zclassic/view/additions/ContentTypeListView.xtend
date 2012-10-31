@@ -98,20 +98,46 @@ class ContentTypeListView {
 
         <div class="z-formrow">
             {formlabel for='«appName»_amount' __text='Amount'}
-            {formtextinput id='«appName»_amount' dataField='amount' group='data' mandatory=true maxLength=2}
+            {formintinput id='«appName»_amount' dataField='amount' group='data' mandatory=true maxLength=2}
         </div>
 
         <div class="z-formrow">
-            {formlabel for='«appName»_template' __text='Template File'}
+            {formlabel for='«appName»_template' __text='Template'}
             {«appName.formatForDB»SelectorTemplates assign='allTemplates'}
             {formdropdownlist id='«appName»_template' dataField='template' group='data' mandatory=true items=$allTemplates}
+        </div>
+
+        <div id="customtemplatearea" class="z-formrow z-hide">
+            {formlabel for='«appName»_customtemplate' __text='Custom template'}
+            {formtextinput id='«appName»_customtemplate' dataField='customTemplate' group='data' mandatory=false maxLength=80}
+            <div class="z-sub z-formnote">{gt text='Example'}: <em>itemlist_{objecttype}_display.tpl</em></div>
         </div>
 
         <div class="z-formrow z-hide"«/* TODO: wait until FilterUtil is ready for Doctrine 2 - see https://github.com/zikula/core/issues/118 */»>
             {formlabel for='«appName»_filter' __text='Filter (expert option)'}
             {formtextinput id='«appName»_filter' dataField='filter' group='data' mandatory=false maxLength=255}
-            <div class="z-formnote">({gt text='Syntax examples'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)</div>
+            <div class="z-sub z-formnote">({gt text='Syntax examples'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)</div>
         </div>
+
+        {pageaddvar name='javascript' value='prototype'}
+        <script type="text/javascript">
+        /* <![CDATA[ */
+            function «prefix()»ToggleCustomTemplate() {
+                if ($F('«appName»_template') == 'custom') {
+                    $('customtemplatearea').show();
+                } else {
+                    $('customtemplatearea').hide();
+                }
+            }
+
+            document.observe('dom:loaded', function() {
+                «prefix()»ToggleCustomTemplate();
+                $('«appName»_template').observe('change', function(e) {
+                    «prefix()»ToggleCustomTemplate();
+                });
+            });
+        /* ]]> */
+        </script>
     '''
 
     def private detailLink(Entity it, String appName) '''

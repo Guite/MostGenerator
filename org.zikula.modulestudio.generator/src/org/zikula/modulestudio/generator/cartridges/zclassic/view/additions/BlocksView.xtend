@@ -35,6 +35,7 @@ class BlocksView {
                 «ENDFOR»
             </select>
         </div>
+
         {if $mainCategory ne null}
             <div class="z-formrow">
                 <label for="catid">{gt text='Category'}</label>
@@ -43,6 +44,7 @@ class BlocksView {
                 <p class="z-formnote">{gt text='This is an optional filter.'}</p>
             </div>
         {/if}
+
         <div class="z-formrow">
             <label for="«appName»_sorting">{gt text='Sorting'}:</label>
             <select id="«appName»_sorting" name="sorting">
@@ -51,21 +53,51 @@ class BlocksView {
                 <option value="alpha"{if $sorting eq 'default' || ($sorting != 'random' && $sorting != 'newest')} selected="selected"{/if}>{gt text='Default'}</option>
             </select>
         </div>
+
         <div class="z-formrow">
             <label for="«appName»_amount">{gt text='Amount'}:</label>
             <input type="text" id="«appName»_amount" name="amount" size="10" value="{$amount|default:"5"}" />
         </div>
+
         <div class="z-formrow">
-            <label for="«appName»_template">{gt text='Template File'}:</label>
+            <label for="«appName»_template">{gt text='Template'}:</label>
             <select id="«appName»_template" name="template">
                 <option value="itemlist_display.tpl"{if $template eq 'itemlist_display.tpl'} selected="selected"{/if}>{gt text='Only item titles'}</option>
                 <option value="itemlist_display_description.tpl"{if $template eq 'itemlist_display_description.tpl'} selected="selected"{/if}>{gt text='With description'}</option>
+                <option value="custom"{if $template eq 'custom'} selected="selected"{/if}>{gt text='Custom template'}</option>
             </select>
         </div>
+
+        <div id="customtemplatearea" class="z-formrow z-hide">
+            <label for="«appName»_customtemplate">{gt text='Custom template'}:</label>
+            <input type="text" id="«appName»__customtemplate" name="customtemplate" size="40" maxlength="80" value="{$customTemplate|default:''}" />
+            <div class="z-sub z-formnote">{gt text='Example'}: <em>itemlist_{objecttype}_display.tpl</em></div>
+        </div>
+
         <div class="z-formrow z-hide"«/* TODO: wait until FilterUtil is ready for Doctrine 2 - see https://github.com/zikula/core/issues/118 */»>
             <label for="«appName»_filter">{gt text='Filter (expert option)'}:</label>
-            <input type="text" id="«appName»_filter" name="filter" size="40" value="{$filterValue|default:""}" />
-            <div class="z-formnote">({gt text='Syntax examples'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)</div>
+            <input type="text" id="«appName»_filter" name="filter" size="40" value="{$filterValue|default:''}" />
+            <div class="z-sub z-formnote">({gt text='Syntax examples'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)</div>
         </div>
+
+        {pageaddvar name='javascript' value='prototype'}
+        <script type="text/javascript">
+        /* <![CDATA[ */
+            function «prefix()»ToggleCustomTemplate() {
+                if ($F('«appName»_template') == 'custom') {
+                    $('customtemplatearea').show();
+                } else {
+                    $('customtemplatearea').hide();
+                }
+            }
+
+            document.observe('dom:loaded', function() {
+                «prefix()»ToggleCustomTemplate();
+                $('«appName»_template').observe('change', function(e) {
+                    «prefix()»ToggleCustomTemplate();
+                });
+            });
+        /* ]]> */
+        </script>
     '''
 }
