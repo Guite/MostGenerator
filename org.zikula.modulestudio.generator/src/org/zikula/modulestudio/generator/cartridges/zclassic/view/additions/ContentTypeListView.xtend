@@ -124,9 +124,9 @@ class ContentTypeListView {
         /* <![CDATA[ */
             function «prefix()»ToggleCustomTemplate() {
                 if ($F('«appName»_template') == 'custom') {
-                    $('customtemplatearea').show();
+                    $('customtemplatearea').removeClassName('z-hide');
                 } else {
-                    $('customtemplatearea').hide();
+                    $('customtemplatearea').addClassName('z-hide');
                 }
             }
 
