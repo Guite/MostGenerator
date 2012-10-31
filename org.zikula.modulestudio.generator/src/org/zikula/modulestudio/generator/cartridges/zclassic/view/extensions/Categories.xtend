@@ -56,10 +56,17 @@ class Categories {
             <legend>{gt text='Categories'}</legend>
             {formvolatile}
             {foreach key='registryId' item='registryCid' from=$registries}
+                {gt text='Category' assign='categorySelectorLabel'}
+                {assign var='selectionMode' value='single'}
+                {if $multiSelectionPerRegistry.$registryId eq true}
+                    {gt text='Categories' assign='categorySelectorLabel'}
+                    {assign var='selectionMode' value='multiple'}
+                {/if}
                 <div class="z-formrow">
-                    {formlabel for="category_`$registryId`" __text='Category'}
+                    {formlabel for="category_`$registryId`" text=$categorySelectorLabel}
                     {formcategoryselector id="category_`$registryId`" category=$registryCid
-                                          dataField='categories' group=$groupName registryId=$registryId doctrine2=true}
+                                          dataField='categories' group=$groupName registryId=$registryId doctrine2=true
+                                          selectionMode=$selectionMode}
                 </div>
             {/foreach}
             {/formvolatile}

@@ -167,9 +167,20 @@ class ExternalController {
                 return 'Error: Invalid editor context given for external controller action.';
             }
             «IF hasCategorisableEntities»
-                $categoryId = (isset($args['catid'])) ? $args['catid'] : $getData->filter('catid', 0, FILTER_VALIDATE_INT);
-                if (!is_numeric($categoryId)) {
-                    $categoryId = 0;
+                $mainCategory = ModUtil::apiFunc('«appName»', 'category', 'getMainCat', array('ot' => $objectType));
+                $categoryIds = array();
+                $registryId = 'Main';«/* TODO: support for multiple category trees - see #213 */»
+                $hasMultiSelection = ModUtil::apiFunc('«appName»', 'category', 'hasMultipleSelection', array('ot' => $objectType, 'registry' => $registryId));
+                if ($hasMultiSelection === true) {
+                    $categoryIds = $getData->get('catids', array());
+                    if (!is_array($categoryIds)) {
+                        $categoryIds = explode(', ', $categoryIds);
+                    }
+                } else {
+                    $categoryId = (int) $getData->filter('catid', 0, FILTER FILTER_VALIDATE_INT);
+                    if ($categoryId > 0) {
+                        $categoryIds[] = $categoryId;
+                    }
                 }
 
             «ENDIF»
@@ -203,8 +214,9 @@ class ExternalController {
                  ->assign('objectType', $objectType)
                  ->assign('objectData', $objectData)
                  «IF hasCategorisableEntities»
-                     ->assign('catId', $categoryId)
-                     ->assign('mainCategory', ModUtil::apiFunc('«appName»', 'category', 'getMainCat', array('ot' => $objectType))
+                     ->assign('mainCategory', $mainCategory)
+                     ->assign('categoryHasMultiSelection', $hasMultiSelection)
+                     ->assign('catIds', $categoryIds)
                  «ENDIF»
                  ->assign('sort', $sort)
                  ->assign('sortdir', $sdir)

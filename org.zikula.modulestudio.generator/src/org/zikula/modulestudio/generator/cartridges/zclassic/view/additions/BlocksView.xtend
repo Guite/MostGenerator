@@ -34,14 +34,28 @@ class BlocksView {
                     <option value="«entity.name.formatForCode»"{if $objectType eq '«entity.name.formatForCode»'} selected="selected"{/if}>{gt text='«entity.nameMultiple.formatForDisplayCapital»'}</option>
                 «ENDFOR»
             </select>
+            <div class="z-sub z-formnote">{gt text='If you change this please save the block once to reload the parameters below.'}</div>
         </div>
 
         {if $mainCategory ne null}
             <div class="z-formrow">
-                <label for="catid">{gt text='Category'}</label>
-                {gt text='All' assign='lblDef'}
-                {selector_category category=$mainCategory name='catid' field='id' defaultText=$lblDef editLink=false selectedValue=$catId}
-                <p class="z-formnote">{gt text='This is an optional filter.'}</p>
+                {assign var='registryId' value='Main'}«/* TODO: support for multiple category trees - see #213 */»
+                {modapifunc modname='«appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$registryId assign='hasMultiSelection'}
+                {gt text='Category' assign='categoryLabel'}
+                {assign var='categorySelectorId' value='catid'}
+                {assign var='categorySelectorName' value='catid'}
+                {assign var='categorySelectorSize' value='1'}
+                {if $hasMultiSelection eq true}
+                    {gt text='Categories' assign='categoryLabel'}
+                    {assign var='categorySelectorName' value='catids'}
+                    {assign var='categorySelectorId' value='catids__'}
+                    {assign var='categorySelectorSize' value='8'}
+                {/if}
+                <label for="{$categorySelectorId}">{$categoryLabel}</label>
+                &nbsp;
+                {gt text='All' assign='lblDefault'}
+                {selector_category category=$mainCategory name=$categorySelectorName field='id' selectedValue=$catIds defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
+                <div class="z-sub z-formnote">{gt text='This is an optional filter.'}</div>
             </div>
         {/if}
 

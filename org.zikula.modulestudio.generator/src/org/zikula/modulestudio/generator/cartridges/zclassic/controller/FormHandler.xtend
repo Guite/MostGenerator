@@ -580,7 +580,14 @@ class FormHandler {
 
                 // load and assign registered categories
                 $categories = CategoryRegistryUtil::getRegisteredModuleCategories($this->name, $this->objectTypeCapital, $this->idFields[0]);
-                $this->view->assign('registries', $categories);
+
+                // check if multiple selection is allowed for this object type
+                $multiSelectionPerRegistry = array();
+                foreach ($categories as $registryId => $registryCid) {
+                    $multiSelectionPerRegistry[$registryId] = ModUtil::apiFunc($this->name, 'category', 'hasMultipleSelection', array('ot' => $this->objectType, 'registry' => $registryId));
+                }
+                $this->view->assign('registries', $categories)
+                           ->assign('multiSelectionPerRegistry', $multiSelectionPerRegistry);
             }
         «ENDIF»
         «IF app.hasMetaDataEntities»

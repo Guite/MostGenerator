@@ -60,12 +60,15 @@ class ExternalView {
                 «displaySnippet»
             </div>
 
+            {* you can distinguish the context like this: *}
             {*if $source eq 'contentType'}
                 ...
             {elseif $source eq 'scribite'}
                 ...
             {/if*}
             «IF hasAbstractStringFieldsEntity || categorisable»
+
+            {* you can enable more details about the item: *}
             {*
                 <p class="«app.prefix()»externaldesc">
                     «displayDescription('', '<br />')»
@@ -153,10 +156,22 @@ class ExternalView {
                 <fieldset>
                     <legend>{gt text='Search and select «name.formatForDisplay»'}</legend>
                     «IF categorisable»
+                        {gt text='Category' assign='categoryLabel'}
+                        {assign var='categorySelectorId' value='catid'}
+                        {assign var='categorySelectorName' value='catid'}
+                        {assign var='categorySelectorSize' value='1'}
+                        {if $categoryHasMultiSelection eq true}
+                            {gt text='Categories' assign='categoryLabel'}
+                            {assign var='categorySelectorName' value='catids'}
+                            {assign var='categorySelectorId' value='catids__'}
+                            {assign var='categorySelectorSize' value='8'}
+                        {/if}
                         <div class="z-formrow">
-                            <label for="«app.appName»_cid">{gt text='Category'}:</label>
-                            {gt text='All' assign='lblDef'}
-                            {selector_category category=$mainCategory name='catid' field='id' defaultText=$lblDef editLink=false submit=true selectedValue=$catId}
+                            <label for="{$categorySelectorId}">{$categoryLabel}</label>
+                            &nbsp;
+                            {gt text='All' assign='lblDefault'}
+                            {selector_category category=$mainCategory name=$categorySelectorName field='id' selectedValue=$catIds defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
+                            <div class="z-sub z-formnote">{gt text='This is an optional filter.'}</div>
                         </div>
 
                     «ENDIF»
@@ -274,15 +289,27 @@ class ExternalView {
         {assign var='break' value=' style="clear: left"'}
         «IF categorisable»
             <p>
-                <label for="{$baseID}_catid"{$leftSide}>{gt text='Category'}:</label>
-                {gt text='All' assign='lblDef'}
-                {selector_category category=$mainCategory name="`$baseID`_catid" field='id' defaultText=$lblDef editLink=false selectedValue=$catId}
+                {assign var='registryId' value='Main'}«/* TODO: support for multiple category trees - see #213 */»
+                {modapifunc modname='«app.appName»' type='category' func='hasMultipleSelection' ot='«name.formatForCode»' registry=$registryId assign='categoryHasMultiSelection'}
+                {gt text='Category' assign='categoryLabel'}
+                {assign var='categorySelectorId' value='catid'}
+                {assign var='categorySelectorName' value='catid'}
+                {assign var='categorySelectorSize' value='1'}
+                {if $categoryHasMultiSelection eq true}
+                    {gt text='Categories' assign='categoryLabel'}
+                    {assign var='categorySelectorName' value='catids'}
+                    {assign var='categorySelectorId' value='catids__'}
+                    {assign var='categorySelectorSize' value='8'}
+                {/if}
+
+                <label for="{$baseID}_{$categorySelectorId}"{$leftSide}>{$categoryLabel}:</label>
+                {selector_category category=$mainCategory name="`$baseID`_`$categorySelectorName`" field='id' selectedValue=$catIds defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
                 <br{$break} />
             </p>
         «ENDIF»
         <p>
             <label for="{$baseID}_id"{$leftSide}>{gt text='«name.formatForDisplayCapital»'}:</label>
-            <select id="{$baseID}_id" name="id" {$rightSide}>
+            <select id="{$baseID}_id" name="id"{$rightSide}>
                 {foreach item='«name.formatForCode»' from=$items}{strip}
                     <option value="{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}"{if $selectedId eq $«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»} selected="selected"{/if}>
                         {$«name.formatForCode».«getLeadingField.name.formatForCode»}
@@ -295,7 +322,7 @@ class ExternalView {
         </p>
         <p>
             <label for="{$baseID}_sort"{$leftSide}>{gt text='Sort by'}:</label>
-            <select id="{$baseID}_sort" name="sort" {$rightSide}>
+            <select id="{$baseID}_sort" name="sort"{$rightSide}>
                 «FOR field : getDerivedFields»
                     <option value="«field.name.formatForCode»"{if $sort eq '«field.name.formatForCode»'} selected="selected"{/if}>{gt text='«field.name.formatForDisplayCapital»'}</option>
                 «ENDFOR»

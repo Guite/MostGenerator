@@ -63,7 +63,7 @@ class ViewQuickNavForm {
     '''
 
     def private formFields(Entity it) '''
-        «categoriesField»
+        «categoriesFields»
         «val incomingRelations = getBidirectionalIncomingJoinRelationsWithOneSource»
         «IF !incomingRelations.isEmpty»
             «FOR relation: incomingRelations»
@@ -104,13 +104,25 @@ class ViewQuickNavForm {
         «ENDIF»
     '''
 
-    def private categoriesField(Entity it) '''
+    def private categoriesFields(Entity it) '''
         «IF categorisable»
             {if !isset($categoryFilter) || $categoryFilter eq true}
-                <label for="categoryid">{gt text='Category'}</label>
-                &nbsp;
                 {modapifunc modname='«container.application.appName»' type='category' func='getMainCat' assign='mainCategory'}
-                {selector_category category=$mainCategory name='catid' field='id' defaultText=$lblDefault editLink=false selectedValue=$catId}
+                {assign var='registryId' value='Main'}«/* TODO: support for multiple category trees - see #213 */»
+                {modapifunc modname='«container.application.appName»' type='category' func='hasMultipleSelection' ot='«name.formatForCode»' registry=$registryId assign='hasMultiSelection'}
+                {gt text='Category' assign='categoryLabel'}
+                {assign var='categorySelectorId' value='catid'}
+                {assign var='categorySelectorName' value='catid'}
+                {assign var='categorySelectorSize' value='1'}
+                {if $hasMultiSelection eq true}
+                    {gt text='Categories' assign='categoryLabel'}
+                    {assign var='categorySelectorName' value='catids'}
+                    {assign var='categorySelectorId' value='catids__'}
+                    {assign var='categorySelectorSize' value='5'}
+                {/if}
+                <label for="{$categorySelectorId}">{$categoryLabel}</label>
+                &nbsp;
+                {selector_category category=$mainCategory name=$categorySelectorName field='id' selectedValue=$catId defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
             {/if}
         «ENDIF»
     '''

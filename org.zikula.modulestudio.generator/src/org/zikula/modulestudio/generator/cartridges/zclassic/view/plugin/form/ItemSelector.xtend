@@ -115,10 +115,23 @@ class ItemSelector {
 
                     $categorisableObjectTypes = array(«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
                     $mainCategory = null;
-                    $catId = 0;
+                    $catIds = array();
                     if (in_array($this->objectType, $categorisableObjectTypes)) {
                         $mainCategory = ModUtil::apiFunc('«appName»', 'category', 'getMainCat', array('ot' => $this->objectType));
-                        $catId = (int) FormUtil::getPassedValue('catid', 0, 'POST', FILTER_SANITIZE_INT);
+
+                        $registryId = 'Main';«/* TODO: support for multiple category trees - see #213 */»
+                        $hasMultiSelection = ModUtil::apiFunc('«appName»', 'category', 'hasMultipleSelection', array('ot' => $this->objectType, 'registry' => $registryId));
+                        if ($hasMultiSelection === true) {
+                            $catIds = FormUtil::getPassedValue('catids', array(), 'POST');
+                            if (!is_array($catIds)) {
+                                $catIds = explode(', ', $catIds);
+                            }
+                        } else {
+                            $catId = (int) FormUtil::getPassedValue('catid', 0, 'POST', FILTER_VALIDATE_INT);
+                            if ($catId > 0) {
+                                $catIds[] = $catId;
+                            }
+                        }
                     }
                 «ENDIF»
 
@@ -140,7 +153,7 @@ class ItemSelector {
                 $view->assign('items', $objectData)
                 «IF hasCategorisableEntities»
                      ->assign('mainCategory', $mainCategory)
-                     ->assign('catID', $catId)
+                     ->assign('catIds', $catIds)
                «ENDIF»
                      ->assign('selectedId', $this->selectedItemId);
 

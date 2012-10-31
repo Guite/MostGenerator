@@ -58,7 +58,7 @@ class ContentTypeList {
         «IF hasCategorisableEntities»
             protected $categorisableObjectTypes;
             protected $mainCategory;
-            protected $catId;
+            protected $catIds;
         «ENDIF»
 
         /**
@@ -139,8 +139,15 @@ class ContentTypeList {
                 if (!isset($data['mainCategory'])) {
                     $data['mainCategory'] = null;
                 }
-                if (!isset($data['catId'])) {
-                    $data['catId'] = 0;
+                if (!isset($data['catIds'])) {
+                    $data['catIds'] = array();
+                    // backwards compatibility
+                    if (isset($data['catId'])) {
+                        $data['catIds'][] = $data['catId'];
+                        unset($data['catId']);
+                    }
+                } elseif (!is_array($data['catIds'])) {
+                    $data['catIds'] = explode(',', $data['catIds']);
                 }
 
                 $this->categorisableObjectTypes = array(«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
@@ -153,7 +160,7 @@ class ContentTypeList {
             $this->filter = $data['filter'];
             «IF hasCategorisableEntities»
                 $this->mainCategory = $data['mainCategory'];
-                $this->catId = $data['catId'];
+                $this->catIds = $data['catIds'];
             «ENDIF»
         }
 
@@ -173,12 +180,14 @@ class ContentTypeList {
 
             $where = $this->filter;
             «IF hasCategorisableEntities»
+                // apply category filters
                 if (in_array($this->objectType, $this->categorisableObjectTypes)) {
-                    if ($this->catId > 0) {
+                    $this->mainCategory = ModUtil::apiFunc('«appName»', 'category', 'getMainCat', array('ot' => $this->objectType));
+                    if (is_array($this->catIds) && count($this->catIds) > 0) {
                         if (!empty($where)) {
                             $where .= ' AND ';
                         }
-                        $where .= 'tblCategories.category = ' . DataUtil::formatForStore($this->catId);
+                        $where .= 'tblCategories.category IN (' . DataUtil::formatForStore(implode(', ', $this->catIds)) . ')';
                     }
                 }
             «ENDIF»
@@ -211,11 +220,18 @@ class ContentTypeList {
             );
             list($entities, $objectCount) = ModUtil::apiFunc('«appName»', 'selection', 'getEntitiesPaginated', $selectionArgs);
 
-            $data = array('objectType' => $this->objectType, 'sorting' => $this->sorting, 'amount' => $this->amount, 'filter' => $this->filter, 'template' => $this->template);
+            $data = array('objectType' => $this->objectType,
+                          'catids' => $this->catIds,
+                          'sorting' => $this->sorting,
+                          'amount' => $this->amount,
+                          'template' => $this->template,
+                          'customTemplate' => $this->customTemplate,
+                          'filter' => $this->filter);
 
             // assign block vars and fetched data
             $this->view->assign('vars', $data)
                        ->assign('objectType', $this->objectType)
+                       ->assign('mainCategory', $this->mainCategory)
                        ->assign('items', $entities)
                        ->assign($repository->getAdditionalTemplateParameters('contentType'));
 

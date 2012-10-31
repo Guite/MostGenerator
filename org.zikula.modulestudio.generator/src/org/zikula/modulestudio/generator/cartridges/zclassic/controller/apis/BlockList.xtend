@@ -135,8 +135,15 @@ class BlockList {
                 if (!isset($vars['mainCategory'])) {
                     $vars['mainCategory'] = null;
                 }
-                if (!isset($vars['catId'])) {
-                    $vars['catId'] = 0;
+                if (!isset($vars['catIds'])) {
+                    $vars['catIds'] = array();
+                    // backwards compatibility
+                    if (isset($vars['catId'])) {
+                        $vars['catIds'][] = $vars['catId'];
+                        unset($vars['catId']);
+                    }
+                } elseif (!is_array($vars['catIds'])) {
+                    $vars['catIds'] = explode(',', $vars['catIds']);
                 }
             «ENDIF»
 
@@ -156,12 +163,13 @@ class BlockList {
 
             $where = $vars['filter'];
             «IF hasCategorisableEntities»
+                // apply category filters
                 if (in_array($vars['objectType'], $this->categorisableObjectTypes)) {
-                    if ($vars['catId'] > 0) {
+                    if (is_array($vars['catIds']) && count($vars['catIds']) > 0) {
                         if (!empty($where)) {
                             $where .= ' AND ';
                         }
-                        $where .= 'tblCategories.category = ' . DataUtil::formatForStore($vars['catId']);
+                        $where .= 'tblCategories.category IN (' . DataUtil::formatForStore(implode(', ', $vars['catIds'])) . ')';
                     }
                 }
             «ENDIF»
@@ -313,8 +321,15 @@ class BlockList {
                 if (!isset($vars['mainCategory'])) {
                     $vars['mainCategory'] = null;
                 }
-                if (!isset($vars['catId'])) {
-                    $vars['catId'] = 0;
+                if (!isset($vars['catIds'])) {
+                    $vars['catIds'] = array();
+                    // backwards compatibility
+                    if (isset($vars['catId'])) {
+                        $vars['catIds'][] = $vars['catId'];
+                        unset($vars['catId']);
+                    }
+                } elseif (!is_array($vars['catIds'])) {
+                    $vars['catIds'] = explode(',', $vars['catIds']);
                 }
             «ENDIF»
 
@@ -363,7 +378,21 @@ class BlockList {
                 $vars['catId'] = 0;
                 if (in_array($vars['objectType'], $this->categorisableObjectTypes)) {
                     $vars['mainCategory'] = ModUtil::apiFunc('«appName»', 'category', 'getMainCat', array('ot' => $vars['objectType']));
-                    $vars['catId'] = (int) $this->request->request->filter('catid', 0, FILTER_SANITIZE_INT);
+
+                    $registryId = 'Main';«/* TODO: support for multiple category trees - see #213 */»
+                    $hasMultiSelection = ModUtil::apiFunc('«appName»', 'category', 'hasMultipleSelection', array('ot' => $vars['objectType'], 'registry' => $registryId));
+                    if ($hasMultiSelection === true) {
+                        $vars['catIds'] = $this->request->request->get('catids', array());
+                        if (!is_array($vars['catIds'])) {
+                            $vars['catIds'] = explode(', ', $vars['catIds']);
+                        }
+                    } else {
+                        $catId = (int) $this->request->request->filter('catid', 0, FILTER_VALIDATE_INT);
+                        $vars['catIds'] = array();
+                        if ($catId > 0) {
+                            $vars['catIds'][] = $catId;
+                        }
+                    }
                 }
             «ENDIF»
 
