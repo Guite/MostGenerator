@@ -142,6 +142,8 @@ class Uploads {
             «deleteUploadFile»
 
             «deleteThumbnailImages»
+
+            «getThumbnailFolderName»
         }
     '''
 
@@ -530,7 +532,7 @@ class Uploads {
             $fileExtension = FileUtil::getExtension($fileName, false);
             if (in_array($fileExtension, $this->imageFileTypes) && $fileExtension != 'swf') {
                 // remove thumbnail images as well
-                $this->deleteThumbnailImages($fileName, $basePath);
+                $this->deleteThumbnailImages($objectType, $fieldName, $fileName, $basePath);
             }
 
             return $objectData;
@@ -541,10 +543,12 @@ class Uploads {
         /**
          * Deletes all thumbnails created from a certain original image.
          *
-         * @param string $fileName Name of original file.
-         * @param string $basePath Upload folder containing the original file.
+         * @param string $objectType Currently treated entity type.
+         * @param string $fieldName  Name of upload field.
+         * @param string $fileName   Name of original file.
+         * @param string $basePath   Upload folder containing the original file.
          */
-        public function deleteThumbnailImages($fileName, $basePath)
+        public function deleteThumbnailImages($objectType, $fieldName, $fileName, $basePath)
         {
             // get file extension including the dot
             $fileExtension = FileUtil::getExtension($fileName, true);
@@ -552,7 +556,8 @@ class Uploads {
             $thumbFileNameBaseLength = strlen($thumbFileNameBase);
 
             // remove image thumbnails
-            $thumbPath = $basePath . 'tmb/';
+            $thumbFolder = $this->getThumbnailFolderName($objectType, $fieldName);
+            $thumbPath = $basePath . $thumbFolder . '/';
             $thumbFiles = FileUtil::getFiles($thumbPath, false, true, null, 'f'); // non-recursive, relative pathes
             foreach ($thumbFiles as $thumbFile) {
                 $thumbFileBase = substr($thumbFile, 0, $thumbFileNameBaseLength);
@@ -562,6 +567,19 @@ class Uploads {
                 }
                 unlink($thumbPath . $thumbFile);
             }
+        }
+    '''
+
+    def private getThumbnailFolderName(Application it) '''
+        /**
+         * Retrieves the name of the subdirectory used for storing thumbnail images.
+         *
+         * @param string $objectType Currently treated entity type.
+         * @param string $fieldName  Name of upload field.
+         */
+        public function getThumbnailFolderName($objectType, $fieldName)
+        {
+            return 'tmb';
         }
     '''
 

@@ -270,7 +270,7 @@ class Ajax {
                     «IF app.hasImageFields»
                         // check for preview image
                         if (!empty($previewFieldName) && !empty($item[$previewFieldName]) && isset($item[$previewFieldName . 'FullPath'])) {
-                            $thumbImagePath = $imageHelper->getThumb($item[$previewFieldName . 'FullPath'], $thumbWidth, $thumbHeight);
+                            $thumbImagePath = $imageHelper->getThumb($item[$previewFieldName . 'FullPath'], $objectType, $previewFieldName, $thumbWidth, $thumbHeight);
                             $preview = '<img src="' . $thumbImagePath . '" width="' . $thumbWidth . '" height="' . $thumbHeight . '" alt="' . $itemTitleStripped . '" />';
                             $out .= '<div class="itempreview informal" id="itempreview' . $itemId . '">' . $preview . '</div>';
                         }

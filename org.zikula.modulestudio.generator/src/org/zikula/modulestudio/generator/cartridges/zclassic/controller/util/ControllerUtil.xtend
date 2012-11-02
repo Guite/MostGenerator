@@ -214,7 +214,9 @@ class ControllerUtil {
                         return false;
                     }
 
-                    $thumbPath = $uploadPath . 'tmb/';
+                    $uploadHandler = new «appName»_UploadHandler();
+                    $thumbFolder = $uploadHandler->getThumbnailFolderName($objectType, $fieldName);
+                    $thumbPath = $uploadPath . $thumbFolder . '/';
 
                     // Check if directory exist and try to create it if needed
                     if (!is_dir($thumbPath) && !FileUtil::mkdirs($thumbPath, 0777)) {

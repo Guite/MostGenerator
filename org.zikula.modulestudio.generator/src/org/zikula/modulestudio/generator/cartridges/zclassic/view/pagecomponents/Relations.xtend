@@ -87,9 +87,9 @@ class Relations {
                 «val imageFieldName = getImageFieldsEntity.head.name.formatForCode»
                 {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPath)}
                     «IF leadingField != null»
-                        <img src="{$item.«imageFieldName»FullPath|«app.appName.formatForDB»ImageThumb:50:40}" width="50" height="40" alt="{$item.«leadingField.name.formatForCode»|replace:"\"":""}" />
+                        <img src="{$item.«imageFieldName»FullPath|«app.appName.formatForDB»ImageThumb:'«name.formatForCode»':'«imageFieldName»':50:40}" width="50" height="40" alt="{$item.«leadingField.name.formatForCode»|replace:"\"":""}" />
                     «ELSE»
-                        <img src="{$item.«imageFieldName»FullPath|«app.appName.formatForDB»ImageThumb:50:40}" width="50" height="40" alt="{gt text='«name.formatForDisplayCapital»'|replace:"\"":""}" />
+                        <img src="{$item.«imageFieldName»FullPath|«app.appName.formatForDB»ImageThumb:'«name.formatForCode»':'«imageFieldName»':50:40}" width="50" height="40" alt="{gt text='«name.formatForDisplayCapital»'|replace:"\"":""}" />
                     «ENDIF»
                 {/if}
             «ENDIF»

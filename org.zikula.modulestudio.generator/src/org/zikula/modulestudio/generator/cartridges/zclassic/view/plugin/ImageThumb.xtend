@@ -29,14 +29,16 @@ class ImageThumb {
         /**
          * The «appName.formatForDB»ImageThumb modifier displays a thumbnail image.
          *
-         * @param  string $filePath  The input file path (including the file name).
-         * @param  int    $width     Desired width.
-         * @param  int    $height    Desired height.
-         * @param  array  $thumbArgs Additional arguments.
+         * @param string $filePath   The input file path (including the file name).
+         * @param string $objectType Currently treated entity type.
+         * @param string $fieldName  Name of upload field.
+         * @param int    $width      Desired width.
+         * @param int    $height     Desired height.
+         * @param array  $thumbArgs  Additional arguments.
          *
          * @return string The thumbnail file path.
          */
-        function smarty_modifier_«appName.formatForDB»ImageThumb($filePath = '', $width = 100, $height = 80, $thumbArgs = array())
+        function smarty_modifier_«appName.formatForDB»ImageThumb($filePath = '', $objectType = '', $fieldName = '', $width = 100, $height = 80, $thumbArgs = array())
         {
             $serviceManager = ServiceUtil::getManager();
             $imageHelper = new «appName»_Util_Image($serviceManager);
@@ -45,7 +47,7 @@ class ImageThumb {
              * By overriding this plugin or the util method called below you may add further thumbnail arguments
              * based on custom conditions.
              */
-            return $imageHelper->getThumb($filePath, $width, $height, $thumbArgs);
+            return $imageHelper->getThumb($objectType, $fieldName, $filePath, $width, $height, $thumbArgs);
         }
     '''
 }

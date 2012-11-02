@@ -51,14 +51,16 @@ class Image {
              *
              * It serves for creating and displaying a thumbnail image.
              *
-             * @param  string    $filePath   The input file path (including file name).
-             * @param  int       $width      Desired width.
-             * @param  int       $height     Desired height.
-             * @param  array     $thumbArgs  Additional arguments.
+             * @param string $filePath   The input file path (including file name).
+             * @param string $objectType Currently treated entity type.
+             * @param string $fieldName  Name of upload field.
+             * @param int    $width      Desired width.
+             * @param int    $height     Desired height.
+             * @param array  $thumbArgs  Additional arguments.
              *
              * @return string The thumbnail file path.
              */
-            public function getThumb($filePath = '', $width = 100, $height = 80, $thumbArgs = array())
+            public function getThumb($filePath = '', $objectType = '', $fieldName = '', $width = 100, $height = 80, $thumbArgs = array())
             {
                 if (empty($filePath) || !file_exists($filePath)) {
                     return '';
@@ -69,7 +71,9 @@ class Image {
 
                 // compute thumbnail file path using a sub folder
                 $pathInfo = pathinfo($filePath);
-                $thumbFilePath = $pathInfo['dirname'] . '/tmb/' . $pathInfo['filename'] . '_' . $width . 'x' . $height . '.' . $pathInfo['extension'];
+                $uploadHandler => new «appName»_UploadHandler();
+                $thumbFolder = $uploadHandler->getThumbnailFolderName($objectType, $fieldName);
+                $thumbFilePath = $pathInfo['dirname'] . '/' . $thumbFolder . '/' . $pathInfo['filename'] . '_' . $width . 'x' . $height . '.' . $pathInfo['extension'];
 
                 // return thumbnail file path if it is already existing
                 if (file_exists($thumbFilePath)) {

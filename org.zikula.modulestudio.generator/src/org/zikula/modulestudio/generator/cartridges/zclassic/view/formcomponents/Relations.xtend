@@ -202,7 +202,7 @@ class Relations {
         include file='«controller.formattedName»/«targetEntity.name.formatForCode»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' '''
 
     def private component_ItemList(JoinRelationship it, Application app, Controller controller, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
-        {* purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplayCapital» in «controller.formattedName» area *}
+        {* purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» in «controller.formattedName» area *}
         «IF includeEditing»
             {icon type='edit' size='extrasmall' assign='editImageArray'}
             {assign var="editImage" value="<img src=\"`$editImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
@@ -234,7 +234,7 @@ class Relations {
                 <br />
                 «val imageFieldName = targetEntity.getImageFieldsEntity.head.name.formatForCode»
                 {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPath)}
-                    <img src="{$item.«imageFieldName»FullPath|«app.appName.formatForDB»ImageThumb:50:40}" width="50" height="40" alt="«IF leadingField != null»{$item.«leadingField.name.formatForCode»«ELSE»{gt text='«targetEntity.name.formatForDisplayCapital»«ENDIF»|replace:"\"":""}" />
+                    <img src="{$item.«imageFieldName»FullPath|«app.appName.formatForDB»ImageThumb:'«targetEntity.name.formatForCode»':'«imageFieldName»':50:40}" width="50" height="40" alt="«IF leadingField != null»{$item.«leadingField.name.formatForCode»«ELSE»{gt text='«targetEntity.name.formatForDisplayCapital»«ENDIF»|replace:"\"":""}" />
                 {/if}
             «ENDIF»
         </li>
