@@ -47,7 +47,7 @@ class ImageThumb {
              * By overriding this plugin or the util method called below you may add further thumbnail arguments
              * based on custom conditions.
              */
-            return $imageHelper->getThumb($objectType, $fieldName, $filePath, $width, $height, $thumbArgs);
+            return $imageHelper->getThumb($filePath, $objectType, $fieldName, $width, $height, $thumbArgs);
         }
     '''
 }
