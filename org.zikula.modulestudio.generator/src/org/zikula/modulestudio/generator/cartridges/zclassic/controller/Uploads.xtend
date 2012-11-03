@@ -144,6 +144,8 @@ class Uploads {
             «deleteThumbnailImages»
 
             «getThumbnailFolderName»
+
+            «getThumbnailFileSuffix»
         }
     '''
 
@@ -552,7 +554,8 @@ class Uploads {
         {
             // get file extension including the dot
             $fileExtension = FileUtil::getExtension($fileName, true);
-            $thumbFileNameBase = str_replace($fileExtension, '', $fileName) . '_tmb_';
+            $thumbFileNameBase = str_replace($fileExtension, '', $fileName);
+            $thumbFileNameBase .= '_' . $this->getThumbnailFileSuffix($objectType, $fieldName) . '_';
             $thumbFileNameBaseLength = strlen($thumbFileNameBase);
 
             // remove image thumbnails
@@ -578,6 +581,19 @@ class Uploads {
          * @param string $fieldName  Name of upload field.
          */
         public function getThumbnailFolderName($objectType, $fieldName)
+        {
+            return 'tmb';
+        }
+    '''
+
+    def private getThumbnailFileSuffix(Application it) '''
+        /**
+         * Retrieves the suffix to be used for thumbnail file names.
+         *
+         * @param string $objectType Currently treated entity type.
+         * @param string $fieldName  Name of upload field.
+         */
+        public function getThumbnailFileSuffix($objectType, $fieldName)
         {
             return 'tmb';
         }

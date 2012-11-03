@@ -189,7 +189,7 @@ class ControllerUtil {
                 }
 
                 /**
-                 * Creates upload folder and tmb subfolder as well as an .htaccess file within it.
+                 * Creates upload folder including a subfolder for thumbnail and an .htaccess file within it.
                  *
                  * @param string $objectType        Name of treated entity type.
                  * @param string $fieldName         Name of upload field.
