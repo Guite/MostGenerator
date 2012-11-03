@@ -192,6 +192,9 @@ class ContentTypeList {
                 }
             «ENDIF»
 
+            // ensure that the view does not look for templates in the Content module (#218)
+            $this->view->toplevelmodule = '«appName»';
+
             $this->view->setCaching(Zikula_View::CACHE_ENABLED);
             // set cache id
             $component = '«appName»:' . ucwords($this->objectType) . ':';
@@ -327,6 +330,9 @@ class ContentTypeList {
          */
         public function startEditing()
         {
+            // ensure that the view does not look for templates in the Content module (#218)
+            $this->view->toplevelmodule = '«appName»';
+
             // ensure our custom plugins are loaded
             array_push($this->view->plugins_dir, 'modules/«appName»/templates/plugins');
         }
