@@ -502,7 +502,7 @@ class Repository {
          *
          * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
          */
-        protected function addIdFilter($id, $qb)
+        protected function addIdFilter($id, Doctrine\ORM\QueryBuilder $qb)
         {
             if (is_array($id)) {
                 foreach ($id as $fieldName => $fieldValue) {
@@ -584,7 +584,7 @@ class Repository {
          *
          * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
          */
-        protected function addExclusion($qb, $excludeId)
+        protected function addExclusion(Doctrine\ORM\QueryBuilder $qb, $excludeId)
         {
             «IF hasCompositeKeys»
                 if (is_array($excludeId)) {
@@ -634,7 +634,7 @@ class Repository {
          *
          * @return array Created query instance and amount of affected items.
          */
-        protected function getSelectWherePaginatedQuery($qb, $currentPage = 1, $resultsPerPage = 25)
+        protected function getSelectWherePaginatedQuery(Doctrine\ORM\QueryBuilder $qb, $currentPage = 1, $resultsPerPage = 25)
         {
             $qb = $this->addCommonViewFilters($qb);
 
@@ -684,7 +684,7 @@ class Repository {
          *
          * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
          */
-        protected function addCommonViewFilters($qb)
+        protected function addCommonViewFilters(Doctrine\ORM\QueryBuilder $qb)
         {
             $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST');
             if ($currentFunc != 'view' && $currentFunc != 'finder') {
@@ -770,7 +770,7 @@ class Repository {
          *
          * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
          */
-        protected function addSearchFilter($qb, $fragment = '')
+        protected function addSearchFilter(Doctrine\ORM\QueryBuilder $qb, $fragment = '')
         {
             if ($fragment == '') {
                 return $qb;

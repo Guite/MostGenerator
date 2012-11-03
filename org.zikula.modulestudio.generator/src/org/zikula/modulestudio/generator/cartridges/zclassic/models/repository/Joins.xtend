@@ -42,7 +42,7 @@ class Joins {
          *
          * @return String Enhancement for from clause.
          */
-        protected function addJoinsToFrom(QueryBuilder $qb)
+        protected function addJoinsToFrom(Doctrine\ORM\QueryBuilder $qb)
         {
             «FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app)»«relation.addJoin(false, 'from')»«ENDFOR»
             «FOR relation : getOutgoingJoinRelations.filter(e|e.target.container.application == app)»«relation.addJoin(true, 'from')»«ENDFOR»
