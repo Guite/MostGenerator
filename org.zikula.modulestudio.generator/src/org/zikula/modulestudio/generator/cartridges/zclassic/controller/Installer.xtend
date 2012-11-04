@@ -129,14 +129,19 @@ class Installer {
                 «ENDFOR»
             «ENDIF»
 
-            // create the default data for «appName»
+            // create the default data for «appName.formatForDisplay»
             $this->createDefaultData();
             «IF hasCategorisableEntities»
 
-                // add entries to category registry
+                // add default entries to category registry (property named Main)
                 $rootcat = CategoryUtil::getCategoryByPath('/__SYSTEM__/Modules/Global');
+                include_once 'modules/«appName»/lib/«appName»/Api/Base/Category.php';
+                include_once 'modules/«appName»/lib/«appName»/Api/Category.php';
+                $categoryApi = new «appName»_Api_Category($this->serviceManager);
+
                 «FOR entity : getCategorisableEntities»
-                    CategoryRegistryUtil::insertEntry('«appName»', '«entity.name.formatForCodeCapital»', 'Main', $rootcat['id']);
+                    $primaryRegistry = $categoryApi->getPrimaryProperty(array('ot' => '«entity.name.formatForCodeCapital»'));
+                    CategoryRegistryUtil::insertEntry('«appName»', '«entity.name.formatForCodeCapital»', $primaryRegistry, $rootcat['id']);
                 «ENDFOR»
             «ENDIF»
 

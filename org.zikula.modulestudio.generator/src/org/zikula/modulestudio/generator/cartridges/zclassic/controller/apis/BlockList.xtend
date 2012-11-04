@@ -132,11 +132,13 @@ class BlockList {
                 $vars['filter'] = '';
             }
             «IF hasCategorisableEntities»
+
                 if (!isset($vars['catIds'])) {
-                    $vars['catIds'] = array('Main' => array());
+                    $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $vars['objectType']));
+                    $vars['catIds'] = array($primaryRegistry => array());
                     // backwards compatibility
                     if (isset($vars['catId'])) {
-                        $vars['catIds']['Main'][] = $vars['catId'];
+                        $vars['catIds'][$primaryRegistry][] = $vars['catId'];
                         unset($vars['catId']);
                     }
                 } elseif (!is_array($vars['catIds'])) {
@@ -328,11 +330,13 @@ class BlockList {
                 $vars['filter'] = '';
             }
             «IF hasCategorisableEntities»
+
                 if (!isset($vars['catIds'])) {
-                    $vars['catIds'] = array('Main' => array());
+                    $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $vars['objectType']));
+                    $vars['catIds'] = array($primaryRegistry => array());
                     // backwards compatibility
                     if (isset($vars['catId'])) {
-                        $vars['catIds']['Main'][] = $vars['catId'];
+                        $vars['catIds'][$primaryRegistry][] = $vars['catId'];
                         unset($vars['catId']);
                     }
                 } elseif (!is_array($vars['catIds'])) {
@@ -381,7 +385,8 @@ class BlockList {
             }
             «IF hasCategorisableEntities»
 
-                $vars['catIds'] = array('Main' => array());
+                $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $vars['objectType']));
+                $vars['catIds'] = array($primaryRegistry => array());
                 if (in_array($vars['objectType'], $this->categorisableObjectTypes)) {
                     $vars['catIds'] = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $vars['objectType']));
                 }

@@ -136,11 +136,13 @@ class ContentTypeList {
                 $data['filter'] = '';
             }
             «IF hasCategorisableEntities»
+
                 if (!isset($data['catIds'])) {
-                    $data['catIds'] = array();
+                    $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $vars['objectType']));
+                    $data['catIds'] = array($primaryRegistry => array());
                     // backwards compatibility
                     if (isset($data['catId'])) {
-                        $data['catIds'][] = $data['catId'];
+                        $data['catIds'][$primaryRegistry][] = $data['catId'];
                         unset($data['catId']);
                     }
                 } elseif (!is_array($data['catIds'])) {
