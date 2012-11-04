@@ -373,7 +373,7 @@ class Extensions {
         «ENDIF»
 
         /**
-        «extensionClassDesc(classType)»
+         * «extensionClassDesc(classType)»
          *
          * This is the base «classType.formatForDisplay» class for «name.formatForDisplay» entities.
          */
@@ -393,12 +393,9 @@ class Extensions {
         {
         «IF classType == 'metaData' || classType == 'attribute' || classType == 'category'»
             /**
-        «IF classType == 'metaData'»
-             * @ORM\OneToOne(targetEntity="«implClassModelEntity»", inversedBy="metadata")
-        «ELSEIF classType == 'attribute'»
-             * @ORM\ManyToOne(targetEntity="«implClassModelEntity»", inversedBy="attributes")
-        «ELSEIF classType == 'category'»
-             * @ORM\ManyToOne(targetEntity="«implClassModelEntity»", inversedBy="categories")
+        «IF classType == 'metaData'»     * @ORM\OneToOne(targetEntity="«implClassModelEntity»", inversedBy="metadata")
+        «ELSEIF classType == 'attribute'»     * @ORM\ManyToOne(targetEntity="«implClassModelEntity»", inversedBy="attributes")
+        «ELSEIF classType == 'category'»     * @ORM\ManyToOne(targetEntity="«implClassModelEntity»", inversedBy="categories")
         «ENDIF»
              * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKeyFields.head.name.formatForCode»"«IF classType == 'metaData'», unique=true«ENDIF»)
              * @var «implClassModelEntity»
@@ -432,7 +429,7 @@ class Extensions {
         use Doctrine\ORM\Mapping as ORM;
 
         /**
-        «extensionClassDesc(classType)»
+         * «extensionClassDesc(classType)»
          *
          * This is the concrete «classType.formatForDisplay» class for «name.formatForDisplay» entities.
         «IF classType == 'closure'»
@@ -489,17 +486,17 @@ class Extensions {
 
     def private extensionClassDesc(Entity it, String classType) '''
         «IF classType == 'closure'»
-         * Entity extension domain class storing «name.formatForDisplay» tree closures.
+            Entity extension domain class storing «name.formatForDisplay» tree closures.
         «ELSEIF classType == 'translation'»
-         * Entity extension domain class storing «name.formatForDisplay» translations.
+            Entity extension domain class storing «name.formatForDisplay» translations.
         «ELSEIF classType == 'logEntry'»
-         * Entity extension domain class storing «name.formatForDisplay» log entries.
+            Entity extension domain class storing «name.formatForDisplay» log entries.
         «ELSEIF classType == 'metaData'»
-         * Entity extension domain class storing «name.formatForDisplay» meta data.
+            Entity extension domain class storing «name.formatForDisplay» meta data.
         «ELSEIF classType == 'attribute'»
-         * Entity extension domain class storing «name.formatForDisplay» attributes.
+            Entity extension domain class storing «name.formatForDisplay» attributes.
         «ELSEIF classType == 'category'»
-         * Entity extension domain class storing «name.formatForDisplay» categories.
+            Entity extension domain class storing «name.formatForDisplay» categories.
         «ENDIF»
     '''
 

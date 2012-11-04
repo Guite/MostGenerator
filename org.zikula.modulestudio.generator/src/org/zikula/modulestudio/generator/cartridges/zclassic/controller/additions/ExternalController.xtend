@@ -167,22 +167,10 @@ class ExternalController {
                 return 'Error: Invalid editor context given for external controller action.';
             }
             «IF hasCategorisableEntities»
-                $mainCategory = ModUtil::apiFunc('«appName»', 'category', 'getMainCat', array('ot' => $objectType));
-                $categoryIds = array();
-                $registryId = 'Main';«/* TODO: support for multiple category trees - see #213 */»
-                $hasMultiSelection = ModUtil::apiFunc('«appName»', 'category', 'hasMultipleSelection', array('ot' => $objectType, 'registry' => $registryId));
-                if ($hasMultiSelection === true) {
-                    $categoryIds = $getData->get('catids', array());
-                    if (!is_array($categoryIds)) {
-                        $categoryIds = explode(', ', $categoryIds);
-                    }
-                } else {
-                    $categoryId = (int) $getData->filter('catid', 0, FILTER FILTER_VALIDATE_INT);
-                    if ($categoryId > 0) {
-                        $categoryIds[] = $categoryId;
-                    }
-                }
 
+                // fetch selected categories to reselect them in the output
+                // the actual filtering is done inside the repository class
+                $categoryIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $objectType, 'source' => 'GET'));
             «ENDIF»
             $sort = (isset($args['sort']) && !empty($args['sort'])) ? $args['sort'] : $getData->filter('sort', '', FILTER_SANITIZE_STRING);
             if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
@@ -213,16 +201,22 @@ class ExternalController {
             $view->assign('editorName', $editor)
                  ->assign('objectType', $objectType)
                  ->assign('objectData', $objectData)
-                 «IF hasCategorisableEntities»
-                     ->assign('mainCategory', $mainCategory)
-                     ->assign('categoryHasMultiSelection', $hasMultiSelection)
-                     ->assign('catIds', $categoryIds)
-                 «ENDIF»
                  ->assign('sort', $sort)
                  ->assign('sortdir', $sdir)
                  ->assign('currentPage', $currentPage)
                  ->assign('pager', array('numitems'     => $objectCount,
                                          'itemsperpage' => $resultsPerPage));
+            «IF hasCategorisableEntities»
+
+                // assign category properties
+                $properties = null;
+                if (in_array($objectType, $this->categorisableObjectTypes)) {
+                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
+                }
+                $view->assign('properties', $properties)
+                     ->assign('catIds', $categoryIds);
+            «ENDIF»
+
             return $view->display('external/' . $objectType . '/find.tpl');
         }
     '''

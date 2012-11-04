@@ -264,19 +264,7 @@ class Repository {
 
             $parameters = array();
             «IF categorisable»
-                $registryId = 'Main';«/* TODO: support for multiple category trees - see #213 */»
-                $hasMultiSelection = ModUtil::apiFunc($this->name, 'category', 'hasMultipleSelection', array('ot' => '«name.formatForCode»', 'registry' => $registryId));
-                $parameters['catId'] = (int) FormUtil::getPassedValue('catid', 0, 'GET');
-                if ($hasMultiSelection == true) {
-                    $parameters['catIdList'] = FormUtil::getPassedValue('catids', array(), 'GET');
-                    if (!is_array($parameters['catIdList'])) {
-                        $parameters['catIdList'] = explode(',', $parameters['catIdList']);
-                    }
-                    if ($parameters['catId'] > 0 && !in_array($parameters['catId'], $parameters['catIdList'])) {
-                        $parameters['catIdList'][] = $parameters['catId'];
-                    }
-                    unset($parameters['catId']);
-                }
+                $parameters['catIdList'] = ModUtil::apiFunc($this->name, 'category', 'retrieveCategoriesFromRequest', array('ot' => '«name.formatForCode»', 'source' => 'GET'));
             «ENDIF»
             «IF !getBidirectionalIncomingJoinRelationsWithOneSource.isEmpty»
                 «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
@@ -701,9 +689,13 @@ class Repository {
                     }
                 } elseif ($k == 'catIdList') {
                     // multi category filter
-                    if ($v > 0) {
-                        $qb->andWhereIn('tblCategories.category IN (:categories)')
-                           ->setParameter('categories', $v);
+                    /* old
+                    $qb->andWhereIn('tblCategories.category IN (:categories)')
+                       ->setParameter('categories', $v);
+                     */
+                    $categoryFiltersPerRegistry = ModUtil::apiFunc('«container.application.appName»', 'category', 'buildFilterClauses', array('ot' => $objectType, 'catids' => $v));
+                    if (count($categoryFiltersPerRegistry) > 0) {
+                        $qb->andWhere('(' . implode(' OR ', $categoryFiltersPerRegistry) . ')');
                     }
                 } elseif ($k == 'searchterm') {
                     // quick search

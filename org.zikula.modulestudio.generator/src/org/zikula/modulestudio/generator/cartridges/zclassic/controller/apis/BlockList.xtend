@@ -132,14 +132,11 @@ class BlockList {
                 $vars['filter'] = '';
             }
             «IF hasCategorisableEntities»
-                if (!isset($vars['mainCategory'])) {
-                    $vars['mainCategory'] = null;
-                }
                 if (!isset($vars['catIds'])) {
-                    $vars['catIds'] = array();
+                    $vars['catIds'] = array('Main' => array());
                     // backwards compatibility
                     if (isset($vars['catId'])) {
-                        $vars['catIds'][] = $vars['catId'];
+                        $vars['catIds']['Main'][] = $vars['catId'];
                         unset($vars['catId']);
                     }
                 } elseif (!is_array($vars['catIds'])) {
@@ -163,13 +160,21 @@ class BlockList {
 
             $where = $vars['filter'];
             «IF hasCategorisableEntities»
+                $properties = null;
+                if (in_array($vars['objectType'], $this->categorisableObjectTypes)) {
+                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $vars['objectType']));
+                }
+
                 // apply category filters
                 if (in_array($vars['objectType'], $this->categorisableObjectTypes)) {
                     if (is_array($vars['catIds']) && count($vars['catIds']) > 0) {
-                        if (!empty($where)) {
-                            $where .= ' AND ';
+                        $categoryFiltersPerRegistry = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', array('ot' => $objectType, 'catids' => $vars['catIds']));
+                        if (count($categoryFiltersPerRegistry) > 0) {
+                            if (!empty($where)) {
+                                $where .= ' AND ';
+                            }
+                            $where .= '(' . implode(' OR ', $categoryFiltersPerRegistry) . ')';
                         }
-                        $where .= 'tblCategories.category IN (' . DataUtil::formatForStore(implode(', ', $vars['catIds'])) . ')';
                     }
                 }
             «ENDIF»
@@ -206,6 +211,11 @@ class BlockList {
                        ->assign('objectType', $objectType)
                        ->assign('items', $entities)
                        ->assign($repository->getAdditionalTemplateParameters('block'));
+            «IF hasCategorisableEntities»
+
+                // assign category properties
+                $this->view->assign('properties', $properties);
+            «ENDIF»
 
             // set a block title
             if (empty($blockinfo['title'])) {
@@ -318,14 +328,11 @@ class BlockList {
                 $vars['filter'] = '';
             }
             «IF hasCategorisableEntities»
-                if (!isset($vars['mainCategory'])) {
-                    $vars['mainCategory'] = null;
-                }
                 if (!isset($vars['catIds'])) {
-                    $vars['catIds'] = array();
+                    $vars['catIds'] = array('Main' => array());
                     // backwards compatibility
                     if (isset($vars['catId'])) {
-                        $vars['catIds'][] = $vars['catId'];
+                        $vars['catIds']['Main'][] = $vars['catId'];
                         unset($vars['catId']);
                     }
                 } elseif (!is_array($vars['catIds'])) {
@@ -374,25 +381,9 @@ class BlockList {
             }
             «IF hasCategorisableEntities»
 
-                $vars['mainCategory'] = null;
-                $vars['catId'] = 0;
+                $vars['catIds'] = array('Main' => array());
                 if (in_array($vars['objectType'], $this->categorisableObjectTypes)) {
-                    $vars['mainCategory'] = ModUtil::apiFunc('«appName»', 'category', 'getMainCat', array('ot' => $vars['objectType']));
-
-                    $registryId = 'Main';«/* TODO: support for multiple category trees - see #213 */»
-                    $hasMultiSelection = ModUtil::apiFunc('«appName»', 'category', 'hasMultipleSelection', array('ot' => $vars['objectType'], 'registry' => $registryId));
-                    if ($hasMultiSelection === true) {
-                        $vars['catIds'] = $this->request->request->get('catids', array());
-                        if (!is_array($vars['catIds'])) {
-                            $vars['catIds'] = explode(', ', $vars['catIds']);
-                        }
-                    } else {
-                        $catId = (int) $this->request->request->filter('catid', 0, FILTER_VALIDATE_INT);
-                        $vars['catIds'] = array();
-                        if ($catId > 0) {
-                            $vars['catIds'][] = $catId;
-                        }
-                    }
+                    $vars['catIds'] = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $vars['objectType']));
                 }
             «ENDIF»
 

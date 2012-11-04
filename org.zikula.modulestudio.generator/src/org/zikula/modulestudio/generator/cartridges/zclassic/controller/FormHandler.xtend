@@ -579,14 +579,14 @@ class FormHandler {
                 $this->view->assign($this->objectTypeLower . 'Obj', $entity);
 
                 // load and assign registered categories
-                $categories = CategoryRegistryUtil::getRegisteredModuleCategories($this->name, $this->objectTypeCapital, $this->idFields[0]);
+                $registries = ModUtil::apiFunc($this->name, 'category', 'getAllPropertiesWithMainCat', array('ot' => $this->objectType, 'arraykey' => $this->idFields[0]));
 
                 // check if multiple selection is allowed for this object type
                 $multiSelectionPerRegistry = array();
-                foreach ($categories as $registryId => $registryCid) {
+                foreach ($registries as $registryId => $registryCid) {
                     $multiSelectionPerRegistry[$registryId] = ModUtil::apiFunc($this->name, 'category', 'hasMultipleSelection', array('ot' => $this->objectType, 'registry' => $registryId));
                 }
-                $this->view->assign('registries', $categories)
+                $this->view->assign('registries', $registries)
                            ->assign('multiSelectionPerRegistry', $multiSelectionPerRegistry);
             }
         «ENDIF»

@@ -37,26 +37,29 @@ class BlocksView {
             <div class="z-sub z-formnote">{gt text='If you change this please save the block once to reload the parameters below.'}</div>
         </div>
 
-        {if $mainCategory ne null}
-            <div class="z-formrow">
-                {assign var='registryId' value='Main'}«/* TODO: support for multiple category trees - see #213 */»
-                {modapifunc modname='«appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$registryId assign='hasMultiSelection'}
-                {gt text='Category' assign='categoryLabel'}
-                {assign var='categorySelectorId' value='catid'}
-                {assign var='categorySelectorName' value='catid'}
-                {assign var='categorySelectorSize' value='1'}
-                {if $hasMultiSelection eq true}
-                    {gt text='Categories' assign='categoryLabel'}
-                    {assign var='categorySelectorName' value='catids'}
-                    {assign var='categorySelectorId' value='catids__'}
-                    {assign var='categorySelectorSize' value='8'}
-                {/if}
-                <label for="{$categorySelectorId}">{$categoryLabel}</label>
-                &nbsp;
-                {gt text='All' assign='lblDefault'}
-                {selector_category category=$mainCategory name=$categorySelectorName field='id' selectedValue=$catIds defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
-                <div class="z-sub z-formnote">{gt text='This is an optional filter.'}</div>
-            </div>
+        {if $properties ne null && is_array($properties)}
+            {gt text='All' assign='lblDefault'}
+            {nocache}
+            {foreach item='propertyName' from=$properties}
+                <div class="z-formrow">
+                    {modapifunc modname='«appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$propertyName assign='hasMultiSelection'}
+                    {gt text='Category' assign='categoryLabel'}
+                    {assign var='categorySelectorId' value='catid'}
+                    {assign var='categorySelectorName' value='catid'}
+                    {assign var='categorySelectorSize' value='1'}
+                    {if $hasMultiSelection eq true}
+                        {gt text='Categories' assign='categoryLabel'}
+                        {assign var='categorySelectorName' value='catids'}
+                        {assign var='categorySelectorId' value='catids__'}
+                        {assign var='categorySelectorSize' value='8'}
+                    {/if}
+                    <label for="{$categorySelectorId}{$propertyName}">{$categoryLabel}</label>
+                    &nbsp;
+                    {selector_category name="`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIds.$propertyName categoryRegistryModule='«appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
+                    <div class="z-sub z-formnote">{gt text='This is an optional filter.'}</div>
+                </div>
+            {/foreach}
+            {/nocache}
         {/if}
 
         <div class="z-formrow">

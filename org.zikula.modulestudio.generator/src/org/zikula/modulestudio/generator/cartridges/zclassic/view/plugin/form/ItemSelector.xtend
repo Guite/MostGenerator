@@ -114,24 +114,11 @@ class ItemSelector {
                 «IF hasCategorisableEntities»
 
                     $categorisableObjectTypes = array(«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
-                    $mainCategory = null;
                     $catIds = array();
                     if (in_array($this->objectType, $categorisableObjectTypes)) {
-                        $mainCategory = ModUtil::apiFunc('«appName»', 'category', 'getMainCat', array('ot' => $this->objectType));
-
-                        $registryId = 'Main';«/* TODO: support for multiple category trees - see #213 */»
-                        $hasMultiSelection = ModUtil::apiFunc('«appName»', 'category', 'hasMultipleSelection', array('ot' => $this->objectType, 'registry' => $registryId));
-                        if ($hasMultiSelection === true) {
-                            $catIds = FormUtil::getPassedValue('catids', array(), 'POST');
-                            if (!is_array($catIds)) {
-                                $catIds = explode(', ', $catIds);
-                            }
-                        } else {
-                            $catId = (int) FormUtil::getPassedValue('catid', 0, 'POST', FILTER_VALIDATE_INT);
-                            if ($catId > 0) {
-                                $catIds[] = $catId;
-                            }
-                        }
+                        // fetch selected categories to reselect them in the output
+                        // the actual filtering is done inside the repository class
+                        $catIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $this->objectType));
                     }
                 «ENDIF»
 
@@ -151,13 +138,19 @@ class ItemSelector {
 
                 $view = Zikula_View::getInstance('«appName»', false);
                 $view->assign('items', $objectData)
-                «IF hasCategorisableEntities»
-                     ->assign('mainCategory', $mainCategory)
-                     ->assign('catIds', $catIds)
-               «ENDIF»
                      ->assign('selectedId', $this->selectedItemId);
+            «IF hasCategorisableEntities»
 
-                return $view->fetch('external/' . $this->objectType . '/selectItem.tpl');
+                // assign category properties
+                $properties = null;
+                if (in_array($this->objectType, $categorisableObjectTypes)) {
+                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
+                }
+                $view->assign('properties', $properties)
+                     ->assign('catIds', $catIds)
+            «ENDIF»
+
+                return $view->fetch('external/' . $this->objectType . '/select.tpl');
             }
 
             /**

@@ -50,18 +50,19 @@ class Category {
          *
          * @param string $args['ot']       The object type to be treated (optional)
          * @param string $args['registry'] Name of category registry to be used (optional)
+         * @deprecated Use the methods getAllProperties, getAllPropertiesWithMainCat, getMainCatForProperty and getPrimaryProperty instead.
          *
          * @return mixed Category array on success, false on failure
          */
         public function getMainCat($args)
         {
             if (isset($args['registry'])) {
-                $args['registry'] = 'Main';
+                $args['registry'] = $this->getPrimaryProperty($args);
             }
 
             $objectType = $this->determineObjectType($args, 'getMainCat');
 
-            return CategoryRegistryUtil::getRegisteredModuleCategory('«appName»', ucwords($objectType), $args['registry'], 32); // 32 == /__System/Modules/Global
+            return CategoryRegistryUtil::getRegisteredModuleCategory($this->name, ucwords($objectType), $args['registry'], 32); // 32 == /__System/Modules/Global
         }
 
         /**
@@ -69,7 +70,7 @@ class Category {
          * or not. Subclass can override this method to apply a custom behaviour
          * to certain category registries for example.
          *
-         * @param string $args['ot'] The object type to be treated (optional)
+         * @param string $args['ot']       The object type to be treated (optional)
          * @param string $args['registry'] Name of category registry to be used (optional)
          *
          * @return boolean true if multiple selection is allowed, else false
@@ -78,7 +79,7 @@ class Category {
         {
             if (isset($args['registry'])) {
                 // default to the primary registry
-                $args['registry'] = 'Main';
+                $args['registry'] = $this->getPrimaryProperty($args);
             }
 
             $objectType = $this->determineObjectType($args, 'hasMultipleSelection');
@@ -99,6 +100,139 @@ class Category {
         }
 
         /**
+         * Retrieves input data from POST for all registries.
+         *
+         * @param string $args['ot']     The object type to be treated (optional)
+         * @param string $args['source'] Where to retrieve the data from (defaults to POST)
+         *
+         * @return array The fetched data indexed by the registry id.
+         */
+        protected function retrieveCategoriesFromRequest($args)
+        {
+            $dataSource = $this->request->request;
+            if ($source == 'GET') {
+                $dataSource = $this->request->query;
+            }
+
+            $catIdsPerRegistry = array();
+
+            $properties = $this->getAllProperties($args);
+            foreach ($properties as $propertyName => $propertyId) {
+                $hasMultiSelection = $this->hasMultipleSelection(array('ot' => $vars['objectType'], 'registry' => $propertyName));
+                if ($hasMultiSelection === true) {
+                    $inputValue = $dataSource->get('catids' . $propertyName, array());
+                    if (!is_array($inputValue)) {
+                        $inputValue = explode(', ', $inputValue);
+                    }
+                } else {
+                    $inputVal = (int) $dataSource->filter('catid' . $propertyName, 0, FILTER_VALIDATE_INT);
+                    $inputValue = array();
+                    if ($inputVal > 0) {
+                        $inputValue[] = $inputVal;
+                    }
+                }
+                $catIdsPerRegistry[$propertyName] = $inputValue;
+            }
+
+            return $catIdsPerRegistry;
+        }
+
+        /**
+         * Builds a list of where clauses for a given list of categories.
+         *
+         * @param string $args['ot']     The object type to be treated (optional)
+         * @param string $args['catids'] Category ids grouped by property name
+         *
+         * @return array List of where clauses per registry / property.
+         */
+        protected function buildFilterClauses($args)
+        {
+            $properties = $this->getAllProperties($args);
+            $catIds = $args['catids'];
+            $result = array();
+
+            foreach ($properties as $propertyName => $propertyId) {
+                if (!isset($catIds[$propertyName]) || !is_array($catIds[$propertyName]) || !count($catIds[$propertyName])) {
+                    continue;
+                }
+
+                $result[] = '(tblCategories.category IN (' . DataUtil::formatForStore(implode(', ', $catIds[$propertyName])) . ') AND tblCategories.categoryRegistryId = ' . $propertyId . ')';
+            }
+
+            return $result;
+        }
+
+        /**
+         * Returns a list of all registries / properties for a given object type.
+         *
+         * @param string $args['ot'] The object type to retrieve (optional)
+         *
+         * @return array list of the registries (property name as key, id as value).
+         */
+        protected function getAllProperties($args)
+        {
+            $objectType = $this->determineObjectType($args, 'getAllProperties');
+
+            $propertyIdsPerName = CategoryRegistryUtil::getRegisteredModuleCategoriesIds($this->name, ucwords($objectType));
+
+            return $propertyIdsPerName;
+        }
+
+        /**
+         * Returns a list of all registries with main category for a given object type.
+         *
+         * @param string $args['ot']       The object type to retrieve (optional)
+         * @param string $args['arraykey'] Key for the result array (optional)
+         *
+         * @return array list of the registries (registry id as key, main category id as value).
+         */
+        protected function getAllPropertiesWithMainCat($args)
+        {
+            $objectType = $this->determineObjectType($args, 'getAllPropertiesWithMainCat');
+
+            if (!isset($args['arraykey'])) {
+                $args['arraykey'] = '';
+            }
+
+            $registryInfo = CategoryRegistryUtil::getRegisteredModuleCategories($this->name, ucwords($objectType), $args['arraykey']);
+
+            return $registryInfo;
+        }
+
+        /**
+         * Returns the main category id for a given object type and a certain property name.
+         *
+         * @param string $args['ot']       The object type to retrieve (optional)
+         * @param string $args['property'] The property name (optional)
+         *
+         * @return integer The main category id of desired tree.
+         */
+        protected function getMainCatForProperty($args)
+        {
+            $objectType = $this->determineObjectType($args, 'getMainCatForProperty');
+
+            $catId = CategoryRegistryUtil::getRegisteredModuleCategory($this->name, ucwords($objectType), $args['property']);
+
+            return $catId;
+        }
+
+        /**
+         * Returns the name of the primary registry.
+         *
+         * @param string $args['ot'] The object type to retrieve (optional)
+         *
+         * @return string name of the main registry.
+         */
+        protected function getPrimaryProperty($args)
+        {
+            $objectType = $this->determineObjectType($args, 'getPrimaryProperty');
+
+            $registry = 'Main';
+
+            return $registry;
+        }
+
+        /**
          * Determine object type using controller util methods.
          *
          * @param string $args['ot'] The object type to retrieve (optional)
@@ -114,6 +248,7 @@ class Category {
             if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('api', $utilArgs);
             }
+
             return $objectType;
         }
     '''

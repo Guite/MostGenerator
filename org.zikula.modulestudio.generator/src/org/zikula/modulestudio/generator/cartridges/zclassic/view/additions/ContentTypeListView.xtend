@@ -85,25 +85,31 @@ class ContentTypeListView {
             <div class="z-sub z-formnote">{gt text='If you change this please save the element once to reload the parameters below.'}</div>
         </div>
 
-        {formvolatile}«/* preparation: formvolatile is required for #213 as we will loop over registries */»
-        {if $mainCategory ne null}
-            <div class="z-formrow">
-                {assign var='registryId' value='Main'}«/* TODO: support for multiple category trees - see #213 */»
-                {modapifunc modname='«appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$registryId assign='hasMultiSelection'}
-                {gt text='Category' assign='categorySelectorLabel'}
-                {assign var='selectionMode' value='single'}
-                {if $hasMultiSelection eq true}
-                    {gt text='Categories' assign='categorySelectorLabel'}
-                    {assign var='selectionMode' value='multiple'}
-                {/if}
+        {formvolatile}
+        {if $properties ne null && is_array($properties)}
+            {nocache}
+            {foreach key='registryId' item='registryCid' from=$registries}
+                {assign var='propName' value=''}
+                {foreach key='propertyName' item='propertyId' from=$properties}
+                    {if $propertyId eq $registryId}
+                        {assign var='propName' value=$propertyName}
+                    {/if}
+                {/foreach}
                 <div class="z-formrow">
-                    {formlabel for='«appName»_catids' text=$categorySelectorLabel}
-                    {formcategoryselector id='«appName»_catids' category=$mainCategory
+                    {modapifunc modname='«appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$propertyName assign='hasMultiSelection'}
+                    {gt text='Category' assign='categorySelectorLabel'}
+                    {assign var='selectionMode' value='single'}
+                    {if $hasMultiSelection eq true}
+                        {gt text='Categories' assign='categorySelectorLabel'}
+                        {assign var='selectionMode' value='multiple'}
+                    {/if}
+                    {formlabel for="«appName»_catids`$propertyName`" text=$categorySelectorLabel}
+                    {formcategoryselector id="«appName»_catids`$propertyName`" category=$registryCid
                                           dataField='catids' group='data' registryId=$registryId doctrine2=true
                                           selectionMode=$selectionMode}
+                    <div class="z-sub z-formnote">{gt text='This is an optional filter.'}</div>
                 </div>
-                <div class="z-sub z-formnote">{gt text='This is an optional filter.'}</div>
-            </div>
+            {/foreach}
         {/if}
         {/formvolatile}
 

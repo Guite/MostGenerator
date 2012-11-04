@@ -156,25 +156,33 @@ class ExternalView {
                 <fieldset>
                     <legend>{gt text='Search and select «name.formatForDisplay»'}</legend>
                     «IF categorisable»
-                        {gt text='Category' assign='categoryLabel'}
-                        {assign var='categorySelectorId' value='catid'}
-                        {assign var='categorySelectorName' value='catid'}
-                        {assign var='categorySelectorSize' value='1'}
-                        {if $categoryHasMultiSelection eq true}
-                            {gt text='Categories' assign='categoryLabel'}
-                            {assign var='categorySelectorName' value='catids'}
-                            {assign var='categorySelectorId' value='catids__'}
-                            {assign var='categorySelectorSize' value='8'}
-                        {/if}
-                        <div class="z-formrow">
-                            <label for="{$categorySelectorId}">{$categoryLabel}</label>
-                            &nbsp;
-                            {gt text='All' assign='lblDefault'}
-                            {selector_category category=$mainCategory name=$categorySelectorName field='id' selectedValue=$catIds defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
-                            <div class="z-sub z-formnote">{gt text='This is an optional filter.'}</div>
-                        </div>
 
+                        {if $properties ne null && is_array($properties)}
+                            {gt text='All' assign='lblDefault'}
+                            {nocache}
+                            {foreach key='propertyName' item='propertyId' from=$properties}
+                                <div class="z-formrow">
+                                    {modapifunc modname='«app.appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$propertyName assign='hasMultiSelection'}
+                                    {gt text='Category' assign='categoryLabel'}
+                                    {assign var='categorySelectorId' value='catid'}
+                                    {assign var='categorySelectorName' value='catid'}
+                                    {assign var='categorySelectorSize' value='1'}
+                                    {if $hasMultiSelection eq true}
+                                        {gt text='Categories' assign='categoryLabel'}
+                                        {assign var='categorySelectorName' value='catids'}
+                                        {assign var='categorySelectorId' value='catids__'}
+                                        {assign var='categorySelectorSize' value='8'}
+                                    {/if}
+                                    <label for="{$categorySelectorId}{$propertyName}">{$categoryLabel}</label>
+                                    &nbsp;
+                                    {selector_category name="`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIds.$propertyName categoryRegistryModule='«app.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
+                                    <div class="z-sub z-formnote">{gt text='This is an optional filter.'}</div>
+                                </div>
+                            {/foreach}
+                            {/nocache}
+                        {/if}
                     «ENDIF»
+
                     <div class="z-formrow">
                         <label for="«app.appName»_pasteas">{gt text='Paste as'}:</label>
                         <select id="«app.appName»_pasteas" name="pasteas">
@@ -288,24 +296,31 @@ class ExternalView {
         {assign var='rightSide' value=' style="float: left"'}
         {assign var='break' value=' style="clear: left"'}
         «IF categorisable»
-            <p>
-                {assign var='registryId' value='Main'}«/* TODO: support for multiple category trees - see #213 */»
-                {modapifunc modname='«app.appName»' type='category' func='hasMultipleSelection' ot='«name.formatForCode»' registry=$registryId assign='categoryHasMultiSelection'}
-                {gt text='Category' assign='categoryLabel'}
-                {assign var='categorySelectorId' value='catid'}
-                {assign var='categorySelectorName' value='catid'}
-                {assign var='categorySelectorSize' value='1'}
-                {if $categoryHasMultiSelection eq true}
-                    {gt text='Categories' assign='categoryLabel'}
-                    {assign var='categorySelectorName' value='catids'}
-                    {assign var='categorySelectorId' value='catids__'}
-                    {assign var='categorySelectorSize' value='8'}
-                {/if}
 
-                <label for="{$baseID}_{$categorySelectorId}"{$leftSide}>{$categoryLabel}:</label>
-                {selector_category category=$mainCategory name="`$baseID`_`$categorySelectorName`" field='id' selectedValue=$catIds defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
-                <br{$break} />
-            </p>
+            {if $properties ne null && is_array($properties)}
+                {gt text='All' assign='lblDefault'}
+                {nocache}
+                {foreach item='property' from=$properties}
+                    <p>
+                        {modapifunc modname='«app.appName»' type='category' func='hasMultipleSelection' ot='«name.formatForCode»' registry=$property assign='hasMultiSelection'}
+                        {gt text='Category' assign='categoryLabel'}
+                        {assign var='categorySelectorId' value='catid'}
+                        {assign var='categorySelectorName' value='catid'}
+                        {assign var='categorySelectorSize' value='1'}
+                        {if $hasMultiSelection eq true}
+                            {gt text='Categories' assign='categoryLabel'}
+                            {assign var='categorySelectorName' value='catids'}
+                            {assign var='categorySelectorId' value='catids__'}
+                            {assign var='categorySelectorSize' value='8'}
+                        {/if}
+                        <label for="{$baseID}_{$categorySelectorId}{$property}"{$leftSide}>{$categoryLabel}:</label>
+                        &nbsp;
+                        {selector_category name="`$baseID`_`$categorySelectorName``$property`" field='id' selectedValue=$catIds.$propertyName categoryRegistryModule='«app.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$property defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
+                        <br{$break} />
+                    </p>
+                {/foreach}
+                {/nocache}
+            {/if}
         «ENDIF»
         <p>
             <label for="{$baseID}_id"{$leftSide}>{gt text='«name.formatForDisplayCapital»'}:</label>

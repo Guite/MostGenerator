@@ -107,22 +107,28 @@ class ViewQuickNavForm {
     def private categoriesFields(Entity it) '''
         «IF categorisable»
             {if !isset($categoryFilter) || $categoryFilter eq true}
-                {modapifunc modname='«container.application.appName»' type='category' func='getMainCat' assign='mainCategory'}
-                {assign var='registryId' value='Main'}«/* TODO: support for multiple category trees - see #213 */»
-                {modapifunc modname='«container.application.appName»' type='category' func='hasMultipleSelection' ot='«name.formatForCode»' registry=$registryId assign='hasMultiSelection'}
-                {gt text='Category' assign='categoryLabel'}
-                {assign var='categorySelectorId' value='catid'}
-                {assign var='categorySelectorName' value='catid'}
-                {assign var='categorySelectorSize' value='1'}
-                {if $hasMultiSelection eq true}
-                    {gt text='Categories' assign='categoryLabel'}
-                    {assign var='categorySelectorName' value='catids'}
-                    {assign var='categorySelectorId' value='catids__'}
-                    {assign var='categorySelectorSize' value='5'}
+                {modapifunc modname='«container.application.appName»' type='category' func='getAllProperties' assign='properties'}
+                {if $properties ne null && is_array($properties)}
+                    {gt text='All' assign='lblDefault'}
+                    {nocache}
+                    {foreach key='propertyName' item='propertyId' from=$properties}
+                        {modapifunc modname='«container.application.appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$propertyName assign='hasMultiSelection'}
+                        {gt text='Category' assign='categoryLabel'}
+                        {assign var='categorySelectorId' value='catid'}
+                        {assign var='categorySelectorName' value='catid'}
+                        {assign var='categorySelectorSize' value='1'}
+                        {if $hasMultiSelection eq true}
+                            {gt text='Categories' assign='categoryLabel'}
+                            {assign var='categorySelectorName' value='catids'}
+                            {assign var='categorySelectorId' value='catids__'}
+                            {assign var='categorySelectorSize' value='5'}
+                        {/if}
+                        <label for="{$categorySelectorId}{$propertyName}">{$categoryLabel}</label>
+                        &nbsp;
+                        {selector_category name="`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIdList.$propertyName categoryRegistryModule='«container.application.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
+                    {/foreach}
+                    {/nocache}
                 {/if}
-                <label for="{$categorySelectorId}">{$categoryLabel}</label>
-                &nbsp;
-                {selector_category category=$mainCategory name=$categorySelectorName field='id' selectedValue=$catId defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
             {/if}
         «ENDIF»
     '''

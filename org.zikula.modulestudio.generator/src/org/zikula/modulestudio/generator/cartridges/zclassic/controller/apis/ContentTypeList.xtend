@@ -57,7 +57,7 @@ class ContentTypeList {
         protected $filter;
         «IF hasCategorisableEntities»
             protected $categorisableObjectTypes;
-            protected $mainCategory;
+            protected $catProperties;
             protected $catIds;
         «ENDIF»
 
@@ -136,9 +136,6 @@ class ContentTypeList {
                 $data['filter'] = '';
             }
             «IF hasCategorisableEntities»
-                if (!isset($data['mainCategory'])) {
-                    $data['mainCategory'] = null;
-                }
                 if (!isset($data['catIds'])) {
                     $data['catIds'] = array();
                     // backwards compatibility
@@ -159,7 +156,12 @@ class ContentTypeList {
             $this->customTemplate = $data['customTemplate'];
             $this->filter = $data['filter'];
             «IF hasCategorisableEntities»
-                $this->mainCategory = $data['mainCategory'];
+
+                // fetch category properties
+                $this->catProperties = null;
+                if (in_array($this->objectType, $this->categorisableObjectTypes)) {
+                    $this->catProperties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
+                }
                 $this->catIds = $data['catIds'];
             «ENDIF»
         }
@@ -180,14 +182,17 @@ class ContentTypeList {
 
             $where = $this->filter;
             «IF hasCategorisableEntities»
+
                 // apply category filters
                 if (in_array($this->objectType, $this->categorisableObjectTypes)) {
-                    $this->mainCategory = ModUtil::apiFunc('«appName»', 'category', 'getMainCat', array('ot' => $this->objectType));
                     if (is_array($this->catIds) && count($this->catIds) > 0) {
-                        if (!empty($where)) {
-                            $where .= ' AND ';
+                        $categoryFiltersPerRegistry = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', array('ot' => $this->objectType, 'catids' => $this->catIds));
+                        if (count($categoryFiltersPerRegistry) > 0) {
+                            if (!empty($where)) {
+                                $where .= ' AND ';
+                            }
+                            $where .= '(' . implode(' OR ', $categoryFiltersPerRegistry) . ')';
                         }
-                        $where .= 'tblCategories.category IN (' . DataUtil::formatForStore(implode(', ', $this->catIds)) . ')';
                     }
                 }
             «ENDIF»
@@ -234,9 +239,13 @@ class ContentTypeList {
             // assign block vars and fetched data
             $this->view->assign('vars', $data)
                        ->assign('objectType', $this->objectType)
-                       ->assign('mainCategory', $this->mainCategory)
                        ->assign('items', $entities)
                        ->assign($repository->getAdditionalTemplateParameters('contentType'));
+            «IF hasCategorisableEntities»
+
+                // assign category properties
+                $this->view->assign('properties', $this->catProperties);
+            «ENDIF»
 
             $output = $this->view->fetch($template);
 
