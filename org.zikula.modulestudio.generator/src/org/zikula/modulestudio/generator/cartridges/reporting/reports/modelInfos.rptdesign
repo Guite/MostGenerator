@@ -1,32 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.22" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 2.6.1.v20100902 Build &lt;2.6.1.v20100915-1750></property>
+<report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.2.1.v201209101448 Build &lt;4.2.1.v20120912-1721></property>
     <list-property name="userProperties">
         <structure>
-            <property name="name">Data Cube.Eigenschaften.x</property>
+            <property name="name">applicationData.properties.x</property>
             <property name="type">integer</property>
             <property name="isVisible">false</property>
         </structure>
         <structure>
-            <property name="name">Data Cube.Eigenschaften.y</property>
+            <property name="name">applicationData.properties.y</property>
             <property name="type">integer</property>
             <property name="isVisible">false</property>
         </structure>
     </list-property>
-    <property name="Data Cube.Eigenschaften.x">135</property>
-    <property name="Data Cube.Eigenschaften.y">80</property>
+    <property name="applicationData.properties.x">135</property>
+    <property name="applicationData.properties.y">80</property>
     <simple-property-list name="includeResource">
         <value>i18n/generic/generic</value>
     </simple-property-list>
     <list-property name="includeScripts">
         <property>reportingHelpers.js</property>
     </list-property>
-    <property name="units">in</property>
     <list-property name="propertyBindings">
         <structure>
             <property name="name">MODEL_URI</property>
             <property name="id">7</property>
-            <expression name="value" type="javascript">params["modelPath"].value</expression>
+            <expression name="value" type="javascript">params['modelPath'].value</expression>
         </structure>
         <structure>
             <property name="name">OdaConnProfileName</property>
@@ -37,6 +36,7 @@
             <property name="id">7</property>
         </structure>
     </list-property>
+    <property name="units">in</property>
     <property name="iconFile">/templates/blank_report.gif</property>
     <property name="bidiLayoutOrientation">ltr</property>
     <property name="imageDPI">129</property>
@@ -1347,7 +1347,7 @@
   </Interactivity>
   <EmptyMessage>
     <Caption>
-      <Value>Dieses Modell enthält keine Tabellen.</Value>
+      <Value>This model does not contain any entities or tables.</Value>
       <Font>
         <Alignment>
           <horizontalAlignment>Center</horizontalAlignment>
