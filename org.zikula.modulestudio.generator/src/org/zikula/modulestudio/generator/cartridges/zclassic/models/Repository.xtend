@@ -66,13 +66,13 @@ class Repository {
     }
 
     def private modelRepositoryBaseFile(Entity it, Application app) '''
-    	«fh.phpFileHeader(app)»
-    	«modelRepositoryBaseImpl(app)»
+        «fh.phpFileHeader(app)»
+        «modelRepositoryBaseImpl(app)»
     '''
 
     def private modelRepositoryFile(Entity it, Application app) '''
-    	«fh.phpFileHeader(app)»
-    	«modelRepositoryImpl(app)»
+        «fh.phpFileHeader(app)»
+        «modelRepositoryImpl(app)»
     '''
 
     def private modelRepositoryBaseImpl(Entity it, Application app) '''
@@ -693,7 +693,7 @@ class Repository {
                     $qb->andWhereIn('tblCategories.category IN (:categories)')
                        ->setParameter('categories', $v);
                      */
-                    $categoryFiltersPerRegistry = ModUtil::apiFunc('«container.application.appName»', 'category', 'buildFilterClauses', array('ot' => $objectType, 'catids' => $v));
+                    $categoryFiltersPerRegistry = ModUtil::apiFunc('«container.application.appName»', 'category', 'buildFilterClauses', array('ot' => '«name.formatForDisplay»', 'catids' => $v));
                     if (count($categoryFiltersPerRegistry) > 0) {
                         $qb->andWhere('(' . implode(' OR ', $categoryFiltersPerRegistry) . ')');
                     }

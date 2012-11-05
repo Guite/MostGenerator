@@ -32,6 +32,11 @@ class Joins {
                     $selection .= '«relation.addJoin(true, 'select')»';
                 }
             «ENDFOR»
+            «IF categorisable»
+
+                $selection = ', tblCategories';
+            «ENDIF»
+
             return $selection;
         }
 
@@ -56,6 +61,11 @@ class Joins {
                     «relation.addJoin(true, 'from')»
                 }
             «ENDFOR»
+            «IF categorisable»
+
+                $qb->leftJoin('tbl.categories', 'tblCategories');
+            «ENDIF»
+
             return $qb;
         }
     '''

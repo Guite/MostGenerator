@@ -110,15 +110,16 @@ class Category {
         public function retrieveCategoriesFromRequest($args)
         {
             $dataSource = $this->request->request;
-            if ($source == 'GET') {
+            if (isset($args['source']) && $args['source'] == 'GET') {
                 $dataSource = $this->request->query;
             }
 
             $catIdsPerRegistry = array();
 
+            $objectType = $this->determineObjectType($args, 'retrieveCategoriesFromRequest');
             $properties = $this->getAllProperties($args);
             foreach ($properties as $propertyName => $propertyId) {
-                $hasMultiSelection = $this->hasMultipleSelection(array('ot' => $vars['objectType'], 'registry' => $propertyName));
+                $hasMultiSelection = $this->hasMultipleSelection(array('ot' => $objectType, 'registry' => $propertyName));
                 if ($hasMultiSelection === true) {
                     $inputValue = $dataSource->get('catids' . $propertyName, array());
                     if (!is_array($inputValue)) {
