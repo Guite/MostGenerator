@@ -277,7 +277,7 @@ class View {
 
     def private headerSortingLinkParameters(Entity it) ''' currentsort=$sort sortdir=$sdir all=$all own=$own«IF categorisable» catid=$catId«ENDIF»«sortParamsForIncomingRelations»«sortParamsForListFields»«sortParamsForUserFields»«sortParamsForCountryFields»«sortParamsForLanguageFields»«IF hasAbstractStringFieldsEntity» searchterm=$searchterm«ENDIF» pageSize=$pageSize«sortParamsForBooleanFields»'''
 
-    def private sortParamsForIncomingRelations(Entity it) '''«IF !getIncomingJoinRelationsWithOneSource.isEmpty»«FOR relation: getIncomingJoinRelationsWithOneSource»«val sourceAliasName = relation.getRelationAliasName(false).formatForCodeCapital» «sourceAliasName»=$«sourceAliasName»«ENDFOR»«ENDIF»'''
+    def private sortParamsForIncomingRelations(Entity it) '''«IF !getIncomingJoinRelationsWithOneSource.isEmpty»«FOR relation: getIncomingJoinRelationsWithOneSource»«val sourceAliasName = relation.getRelationAliasName(false).formatForCode» «sourceAliasName»=$«sourceAliasName»«ENDFOR»«ENDIF»'''
     def private sortParamsForListFields(Entity it) '''«IF hasListFieldsEntity»«FOR field : getListFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
     def private sortParamsForUserFields(Entity it) '''«IF hasUserFieldsEntity»«FOR field : getUserFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
     def private sortParamsForCountryFields(Entity it) '''«IF hasCountryFieldsEntity»«FOR field : getCountryFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
