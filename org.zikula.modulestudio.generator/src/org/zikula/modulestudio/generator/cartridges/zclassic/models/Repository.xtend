@@ -264,7 +264,7 @@ class Repository {
 
             $parameters = array();
             «IF categorisable»
-                $parameters['catIdList'] = ModUtil::apiFunc($this->name, 'category', 'retrieveCategoriesFromRequest', array('ot' => '«name.formatForCode»', 'source' => 'GET'));
+                $parameters['catIdList'] = ModUtil::apiFunc('«container.application.appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => '«name.formatForCode»', 'source' => 'GET'));
             «ENDIF»
             «IF !getBidirectionalIncomingJoinRelationsWithOneSource.isEmpty»
                 «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
