@@ -25,23 +25,23 @@ class Category {
     }
 
     def private categoryBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«categoryBaseClass»
-	'''
+        «fh.phpFileHeader(it)»
+        «categoryBaseClass»
+    '''
 
     def private categoryFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«categoryImpl»
+        «fh.phpFileHeader(it)»
+        «categoryImpl»
     '''
 
     def private categoryBaseClass(Application it) '''
-		/**
-		 * Category api base class.
-		 */
-		class «appName»_«fillingApi»Base_Category extends Zikula_AbstractApi
-		{
-		    «categoryBaseImpl»
-		}
+        /**
+         * Category api base class.
+         */
+        class «appName»_«fillingApi»Base_Category extends Zikula_AbstractApi
+        {
+            «categoryBaseImpl»
+        }
     '''
 
     def private categoryBaseImpl(Application it) '''
@@ -107,7 +107,7 @@ class Category {
          *
          * @return array The fetched data indexed by the registry id.
          */
-        protected function retrieveCategoriesFromRequest($args)
+        public function retrieveCategoriesFromRequest($args)
         {
             $dataSource = $this->request->request;
             if ($source == 'GET') {
@@ -145,7 +145,7 @@ class Category {
          *
          * @return array List of where clauses per registry / property.
          */
-        protected function buildFilterClauses($args)
+        public function buildFilterClauses($args)
         {
             $properties = $this->getAllProperties($args);
             $catIds = $args['catids'];
@@ -169,7 +169,7 @@ class Category {
          *
          * @return array list of the registries (property name as key, id as value).
          */
-        protected function getAllProperties($args)
+        public function getAllProperties($args)
         {
             $objectType = $this->determineObjectType($args, 'getAllProperties');
 
@@ -186,7 +186,7 @@ class Category {
          *
          * @return array list of the registries (registry id as key, main category id as value).
          */
-        protected function getAllPropertiesWithMainCat($args)
+        public function getAllPropertiesWithMainCat($args)
         {
             $objectType = $this->determineObjectType($args, 'getAllPropertiesWithMainCat');
 
@@ -207,7 +207,7 @@ class Category {
          *
          * @return integer The main category id of desired tree.
          */
-        protected function getMainCatForProperty($args)
+        public function getMainCatForProperty($args)
         {
             $objectType = $this->determineObjectType($args, 'getMainCatForProperty');
 
@@ -223,7 +223,7 @@ class Category {
          *
          * @return string name of the main registry.
          */
-        protected function getPrimaryProperty($args)
+        public function getPrimaryProperty($args)
         {
             $objectType = $this->determineObjectType($args, 'getPrimaryProperty');
 
