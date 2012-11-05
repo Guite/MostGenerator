@@ -108,7 +108,7 @@ class Installer {
                 if (System::isDevelopmentMode()) {
                     LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                 }
-                $return Message = $this->__f('An error was encountered while creating the tables for the %s module.', array($this->getName()));
+                $returnMessage = $this->__f('An error was encountered while creating the tables for the %s module.', array($this->getName()));
                 if (!System::isDevelopmentMode()) {
                     $returnMessage .= ' ' . $this->__('Please enable the development mode by editing the /config/config.php file in order to reveal the error details.');
                 }
