@@ -275,7 +275,7 @@ class View {
         {sortlink __linktext='«label.formatForDisplayCapital»' sort='«fieldName»'«headerSortingLinkParameters(entity)» modname='«controller.container.application.appName»' type='«controller.formattedName»' func='view' ot='«entity.name.formatForCode»'}
     '''
 
-    def private headerSortingLinkParameters(Entity it) ''' currentsort=$sort sortdir=$sdir all=$all own=$own«IF categorisable» catid=$catId«ENDIF»«sortParamsForIncomingRelations»«sortParamsForListFields»«sortParamsForUserFields»«sortParamsForCountryFields»«sortParamsForLanguageFields»«IF hasAbstractStringFieldsEntity» searchterm=$searchterm«ENDIF» pageSize=$pageSize«sortParamsForBooleanFields»'''
+    def private headerSortingLinkParameters(Entity it) ''' currentsort=$sort sortdir=$sdir all=$all own=$own«IF categorisable» catidMain=$catIdList.Main«ENDIF»«sortParamsForIncomingRelations»«sortParamsForListFields»«sortParamsForUserFields»«sortParamsForCountryFields»«sortParamsForLanguageFields»«IF hasAbstractStringFieldsEntity» searchterm=$searchterm«ENDIF» pageSize=$pageSize«sortParamsForBooleanFields»'''
 
     def private sortParamsForIncomingRelations(Entity it) '''«IF !getIncomingJoinRelationsWithOneSource.isEmpty»«FOR relation: getIncomingJoinRelationsWithOneSource»«val sourceAliasName = relation.getRelationAliasName(false).formatForCode» «sourceAliasName»=$«sourceAliasName»«ENDFOR»«ENDIF»'''
     def private sortParamsForListFields(Entity it) '''«IF hasListFieldsEntity»«FOR field : getListFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
