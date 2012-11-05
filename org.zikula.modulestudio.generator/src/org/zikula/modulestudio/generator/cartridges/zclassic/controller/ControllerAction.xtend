@@ -241,6 +241,7 @@ class ControllerAction {
         $templateFile = $viewHelper->getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args);
         $cacheId = 'view|ot_' . $objectType . '_sort_' . $sort . '_' . $sdir;
 
+        $resultsPerPage = 0;
         if ($showAllEntries == 1) {
             // set cache id
             $this->view->setCacheId($cacheId . '_all_1_own_' . $showOwnEntries . '_' . $accessLevel);
@@ -288,6 +289,7 @@ class ControllerAction {
         $this->view->assign('items', $entities)
                    ->assign('sort', $sort)
                    ->assign('sdir', $sdir)
+                   ->assign('pageSize', $resultsPerPage)
                    ->assign('currentUrlObject', $currentUrlObject)
                    ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 

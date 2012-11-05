@@ -223,7 +223,6 @@ class ViewQuickNavForm {
             <input type="hidden" name="sdir" value="{if $sdir eq 'desc'}asc{else}desc{/if}" />
         {/if}
         {if !isset($pageSizeSelector) || $pageSizeSelector eq true}
-            {assign var='pageSize' value=$pager.itemsperpage}
             <label for="num">{gt text='Page size'}</label>
             &nbsp;
             <select id="num" name="num">
