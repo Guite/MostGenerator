@@ -35,6 +35,7 @@ class ViewQuickNavForm {
         «val objName = name.formatForCode»
         {* purpose of this template: «nameMultiple.formatForDisplay» view filter form in «controller.formattedName» area *}
         {checkpermissionblock component='«app.appName»:«name.formatForCodeCapital»:' instance='.*' level='ACCESS_EDIT'}
+        {assign var='objectType' value='«name.formatForCode»'}
         <form action="{$modvars.ZConfig.entrypoint|default:'index.php'}" method="get" id="«app.prefix»«name.formatForCodeCapital»QuickNavForm" class="«app.prefix»QuickNavForm">
             <fieldset>
                 <h3>{gt text='Quick navigation'}</h3>
