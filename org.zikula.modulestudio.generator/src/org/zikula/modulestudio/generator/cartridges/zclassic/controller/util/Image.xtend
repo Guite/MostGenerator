@@ -20,19 +20,19 @@ class Image {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for image handling')
-    	val utilPath = appName.getAppSourceLibPath + 'Util/'
+        val utilPath = appName.getAppSourceLibPath + 'Util/'
         fsa.generateFile(utilPath + 'Base/Image.php', imageFunctionsBaseFile)
         fsa.generateFile(utilPath + 'Image.php', imageFunctionsFile)
     }
 
     def private imageFunctionsBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«imageFunctionsBaseImpl»
+        «fh.phpFileHeader(it)»
+        «imageFunctionsBaseImpl»
     '''
 
     def private imageFunctionsFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«imageFunctionsImpl»
+        «fh.phpFileHeader(it)»
+        «imageFunctionsImpl»
     '''
 
     def imageFunctionsBaseImpl(Application it) '''
@@ -71,7 +71,7 @@ class Image {
 
                 // compute thumbnail file path using a sub folder
                 $pathInfo = pathinfo($filePath);
-                $uploadHandler => new «appName»_UploadHandler();
+                $uploadHandler = new «appName»_UploadHandler();
                 $thumbFolder = $uploadHandler->getThumbnailFolderName($objectType, $fieldName);
                 $thumbFilePath = $pathInfo['dirname'] . '/' . $thumbFolder . '/' . $pathInfo['filename'] . '_' . $width . 'x' . $height . '.' . $pathInfo['extension'];
 
