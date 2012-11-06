@@ -24,20 +24,20 @@ class Config {
      * Entry point for config form handler.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-    	if (needsConfig) {
+        if (needsConfig) {
             fsa.generateFile(getAppSourcePath(appName) + tempBaseClassConfigHandler.asFile, configHandlerBaseFile)
             fsa.generateFile(getAppSourcePath(appName) + tempImplClassConfigHandler.asFile, configHandlerFile)
         }
     }
 
     def private configHandlerBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«configHandlerBaseImpl»
+        «fh.phpFileHeader(it)»
+        «configHandlerBaseImpl»
     '''
 
     def private configHandlerFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«configHandlerImpl»
+        «fh.phpFileHeader(it)»
+        «configHandlerImpl»
     '''
 
     def private configHandlerBaseImpl(Application it) '''
@@ -150,6 +150,7 @@ class Config {
 
                 // redirect back to the config page
                 $url = ModUtil::url($this->name, '«configController.formatForDB»', 'config');
+
                 return $this->view->redirect($url);
             }
         }

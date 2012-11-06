@@ -34,19 +34,19 @@ class Translatable {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for translatable entities')
-    	val utilPath = appName.getAppSourceLibPath + 'Util/'
+        val utilPath = appName.getAppSourceLibPath + 'Util/'
         fsa.generateFile(utilPath + 'Base/Translatable.php', translatableFunctionsBaseFile)
         fsa.generateFile(utilPath + 'Translatable.php', translatableFunctionsFile)
     }
 
     def private translatableFunctionsBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«translatableFunctionsBaseImpl»
+        «fh.phpFileHeader(it)»
+        «translatableFunctionsBaseImpl»
     '''
 
     def private translatableFunctionsFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«translatableFunctionsImpl»
+        «fh.phpFileHeader(it)»
+        «translatableFunctionsImpl»
     '''
 
     def private translatableFunctionsBaseImpl(Application it) '''
@@ -73,6 +73,7 @@ class Translatable {
                         «entity.translatableFieldList»
                     «ENDFOR»
                 }
+
                 return $fields;
             }
 
@@ -182,6 +183,7 @@ class Translatable {
                         unset($formData[$field['name'] . $locale]);
                     }
                 }
+
                 return $translations;
             }
         }

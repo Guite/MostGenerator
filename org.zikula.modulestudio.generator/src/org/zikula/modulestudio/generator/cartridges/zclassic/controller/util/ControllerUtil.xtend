@@ -61,6 +61,7 @@ class ControllerUtil {
                 «FOR entity : getAllEntities»
                     $allowedObjectTypes[] = '«entity.name.formatForCode»';
                 «ENDFOR»
+
                 return $allowedObjectTypes;
             }
 
@@ -79,6 +80,7 @@ class ControllerUtil {
                 }
 
                 $defaultObjectType = '«getLeadingEntity.name.formatForCode»';
+
                 return $defaultObjectType;
             }
 
@@ -107,6 +109,7 @@ class ControllerUtil {
                     }
                     $idValues[$idField] = $id;
                 }
+
                 return $idValues;
             }
 
@@ -122,11 +125,13 @@ class ControllerUtil {
                 if (!count($idValues)) {
                     return false;
                 }
+
                 foreach ($idValues as $idField => $idValue) {
                     if (!$idValue) {
                         return false;
                     }
                 }
+
                 return true;
             }
 
@@ -144,6 +149,7 @@ class ControllerUtil {
                                     array('ae', 'oe', 'ue', 'Ae', 'Oe', 'Ue', 'ss', '', '', '', '-', '-', 'e', 'e', 'a'),
                                     $name);
                 $name = DataUtil::formatPermalink($name);
+
                 return strtolower($name);
             }
             «IF hasUploads»

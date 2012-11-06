@@ -20,19 +20,19 @@ class ViewUtil {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for view layer')
-    	val utilPath = appName.getAppSourceLibPath + 'Util/'
+        val utilPath = appName.getAppSourceLibPath + 'Util/'
         fsa.generateFile(utilPath + 'Base/View.php', viewFunctionsBaseFile)
         fsa.generateFile(utilPath + 'View.php', viewFunctionsFile)
     }
 
     def private viewFunctionsBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«viewFunctionsBaseImpl»
+        «fh.phpFileHeader(it)»
+        «viewFunctionsBaseImpl»
     '''
 
     def private viewFunctionsFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«viewFunctionsImpl»
+        «fh.phpFileHeader(it)»
+        «viewFunctionsImpl»
     '''
 
     def private viewFunctionsBaseImpl(Application it) '''
@@ -137,6 +137,7 @@ class ViewUtil {
                         break;
                     }
                 }
+
                 return $templateExtension;
             }
 
@@ -164,6 +165,7 @@ class ViewUtil {
                         $extParams = array('xml', 'json', 'kml'/*, 'pdf'*/);
                     }
                 }
+
                 return $extParams;
             }
 
@@ -211,6 +213,7 @@ class ViewUtil {
 
                 // prevent additional output by shutting down the system
                 System::shutDown();
+
                 return true;
             }
             «IF hasUploads»
@@ -258,6 +261,7 @@ class ViewUtil {
 
                     // return either only the description or the complete string
                     $result = ($onlydesc) ? $sizeDesc : $size;
+
                     return $result;
                 }
             «ENDIF»

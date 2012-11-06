@@ -41,7 +41,7 @@ class FormHandler {
     }
 
     def private generate(Action it, Application app, IFileSystemAccess fsa) {
-    	controller.generate(app, 'edit', fsa)
+        controller.generate(app, 'edit', fsa)
         for (entity : app.getAllEntities) entity.generate(app, controller, 'edit', fsa)
     }
 
@@ -59,38 +59,38 @@ class FormHandler {
      * Entry point for generic Form handler base classes.
      */
     def private generate(Controller it, Application app, String actionName, IFileSystemAccess fsa) {
-    	println('Generating "' + name + '" form handler base class')
+        println('Generating "' + name + '" form handler base class')
         fsa.generateFile(app.appName.appSourcePath + baseClassFormHandler(actionName).asFile, formHandlerCommonBaseFile(app, actionName))
         fsa.generateFile(app.appName.appSourcePath + implClassFormHandler(actionName).asFile, formHandlerCommonFile(app, actionName))
     }
 
     def private formHandlerCommonBaseFile(Controller it, Application app, String actionName) '''
-    	«fh.phpFileHeader(app)»
-    	«formHandlerCommonBaseImpl(app, actionName)»
+        «fh.phpFileHeader(app)»
+        «formHandlerCommonBaseImpl(app, actionName)»
     '''
 
     def private formHandlerCommonFile(Controller it, Application app, String actionName) '''
-    	«fh.phpFileHeader(app)»
-    	«formHandlerCommonImpl(app, actionName)»
+        «fh.phpFileHeader(app)»
+        «formHandlerCommonImpl(app, actionName)»
     '''
 
     /**
      * Entry point for Form handler classes per entity.
      */
     def private generate(Entity it, Application app, Controller controller, String actionName, IFileSystemAccess fsa) {
-    	println('Generating "' + controller.formattedName + '" form handler classes for "' + name + '_' + actionName + '"')
+        println('Generating "' + controller.formattedName + '" form handler classes for "' + name + '_' + actionName + '"')
         fsa.generateFile(app.appName.appSourcePath + baseClassFormHandler(controller, name, actionName).asFile, formHandlerBaseFile(app, controller, actionName))
         fsa.generateFile(app.appName.appSourcePath + implClassFormHandler(controller, name, actionName).asFile, formHandlerFile(app, controller, actionName))
     }
 
     def private formHandlerBaseFile(Entity it, Application app, Controller controller, String actionName) '''
-    	«fh.phpFileHeader(app)»
-    	«formHandlerBaseImpl(app, controller, actionName)»
+        «fh.phpFileHeader(app)»
+        «formHandlerBaseImpl(app, controller, actionName)»
     '''
 
     def private formHandlerFile(Entity it, Application app, Controller controller, String actionName) '''
-    	«fh.phpFileHeader(app)»
-    	«formHandlerImpl(app, controller, actionName)»
+        «fh.phpFileHeader(app)»
+        «formHandlerImpl(app, controller, actionName)»
     '''
 
 
@@ -447,6 +447,7 @@ class FormHandler {
                     $i++;
                 }
             }
+
             return $idValues;
         }
 
@@ -476,6 +477,7 @@ class FormHandler {
             if ($entity == null) {
                 return LogUtil::registerError($this->__('No such item.'));
             }
+
             return $entity;
         }
 
@@ -860,6 +862,7 @@ class FormHandler {
                         }
                         break;
             }
+
             return $message;
         }
 
@@ -1227,6 +1230,7 @@ class FormHandler {
                             $message = $this->__('Done! «name.formatForDisplayCapital» deleted.');
                             break;
             }
+
             return $message;
         }
     '''

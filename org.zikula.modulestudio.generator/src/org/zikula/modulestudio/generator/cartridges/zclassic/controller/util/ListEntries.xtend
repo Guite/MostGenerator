@@ -24,19 +24,19 @@ class ListEntries {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for list entries')
-    	val utilPath = appName.getAppSourceLibPath + 'Util/'
+        val utilPath = appName.getAppSourceLibPath + 'Util/'
         fsa.generateFile(utilPath + 'Base/ListEntries.php', listFieldFunctionsBaseFile)
         fsa.generateFile(utilPath + 'ListEntries.php', listFieldFunctionsFile)
     }
 
     def private listFieldFunctionsBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«listFieldFunctionsBaseImpl»
+        «fh.phpFileHeader(it)»
+        «listFieldFunctionsBaseImpl»
     '''
 
     def private listFieldFunctionsFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«listFieldFunctionsImpl»
+        «fh.phpFileHeader(it)»
+        «listFieldFunctionsImpl»
     '''
 
     def private listFieldFunctionsBaseImpl(Application it) '''
@@ -109,6 +109,7 @@ class ListEntries {
                 if ($listValues[0] == '') {
                     unset($listValues[0]);
                 }
+
                 return $listValues;
             }
 
@@ -193,6 +194,7 @@ class ListEntries {
             $states = array();
             $dom = ZLanguage::getModuleDomain('«entity.container.application.appName»');
             «FOR item : items»«item.entryInfo»«ENDFOR»
+
             return $states;
         }
     '''

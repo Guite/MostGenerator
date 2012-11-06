@@ -167,6 +167,7 @@ class Image {
                     $dom = ZLanguage::getModuleDomain('«appName»');
                     // log this exception
                     LogUtil::registerError(__f('An error occured during thumbnail creation: %s', array($e->getMessage()), $dom));
+
                     // return the original image as fallback
                     return $filePath;
                 }

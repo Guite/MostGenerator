@@ -153,6 +153,7 @@ class Relations {
                 'resultsPerPage' => 50
             );
             list($entities, $objectCount) = ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
+
             return (($many) ? $entities : $entities[0]);
         }
     '''

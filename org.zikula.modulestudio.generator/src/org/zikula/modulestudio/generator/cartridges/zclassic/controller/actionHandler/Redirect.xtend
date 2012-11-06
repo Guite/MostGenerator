@@ -47,6 +47,7 @@ class Redirect {
                     $codes[] = '«controllerName»Display';
                 «ENDIF»
             «ENDFOR»
+
             return $codes;
         }
     '''
@@ -76,6 +77,7 @@ class Redirect {
                     «ENDFOR»
                 «ENDIF»
             «ENDFOR»
+
             return $codes;
         }
     '''
@@ -117,6 +119,7 @@ class Redirect {
                     */
                 «ENDIF»
             «ENDIF»
+
             return $url;
         }
     '''
