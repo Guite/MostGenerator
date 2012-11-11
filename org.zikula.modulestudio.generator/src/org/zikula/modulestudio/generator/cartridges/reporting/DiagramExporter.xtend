@@ -169,7 +169,7 @@ class DiagramExporter {
      *            The given input diagram.
      * @return Whether everything worked fine or not.
      * @throws CoreException
-     *             In case an error occured.
+     *             In case an error occurred.
      */
     def private saveCurrentDiagramAs(ImageFileFormat format,
             Diagram inputDiagram) throws CoreException {
