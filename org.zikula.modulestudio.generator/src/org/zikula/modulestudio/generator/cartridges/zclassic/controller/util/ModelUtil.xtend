@@ -14,7 +14,7 @@ class ModelUtil {
     FileHelper fh = new FileHelper()
 
     /**
-     * Entry point for the Util class creation.
+     * Entry point for the utility class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for model layer')

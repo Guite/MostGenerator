@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
@@ -12,13 +13,14 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class ControllerUtil {
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
 
     FileHelper fh = new FileHelper()
 
     /**
-     * Entry point for the Util class creation.
+     * Entry point for the utility class creation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for controller layer')
@@ -249,6 +251,52 @@ class ControllerUtil {
                     }
 
                     return true;
+                }
+            «ENDIF»
+            «IF hasGeographical»
+
+                /**
+                 * Example method for performing geo coding in PHP.
+                 * To use this please customise it to your needs in the concrete subclass.
+                 * There is also a method on JS level available in «getAppSourcePath(appName)»javascript/«appName»_editFunctions.js.
+                 *
+                 * @param string $address The address input string.
+                 *
+                 * @return Array The determined coordinates.
+                 */
+                public function performGeoCoding($address)
+                {
+                    $lang = ZLanguage::getLanguageCode();
+                    $url = 'http://maps.google.com/maps/api/geocode/xml?address=' . urlencode($address);
+                    $url .= '&region=' . $lang . '&language=' . $lang . '&sensor=false';
+
+                    // we can either use Snoopy if available
+                    //require_once('modules/«appName»/lib/vendor/Snoopy/Snoopy.class.php');
+                    //$snoopy = new Snoopy();
+                    //$snoopy->fetch($url);
+                    //$xmlContent = $snoopy->results;
+
+                    // we can also use curl
+                    // example do be done
+
+                    // or we can use the plain file_get_contents method
+                    // requires allow_url_fopen = true in php.ini which is NOT good for security
+                    $xmlContent = file_get_contents($url);
+
+                    // parse the markup
+                    $xml = new SimpleXMLElement($xmlContent);
+                    //$xml = simplexml_load_string($xmlContent, 'SimpleXMLElement', LIBXML_NOCDATA);
+
+                    // create the result array
+                    $result = array('latitude' => 0, 'longitude' => 0);
+
+                    $lat = $xml->xpath('result/geometry/location/lat');
+                    $result['latitude'] = (float)$lat[0];
+
+                    $lng = $xml->xpath('result/geometry/location/lng');
+                    $result['longitude'] = (float)$lng[0];
+
+                    return $result;
                 }
             «ENDIF»
         }

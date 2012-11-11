@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
@@ -13,6 +14,7 @@ import org.zikula.modulestudio.generator.extensions.Utils
 class EditFunctions {
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
@@ -38,6 +40,10 @@ class EditFunctions {
         «IF !getAllEntities.filter(e|e.getDerivedFields.filter(typeof(AbstractDateField)).isEmpty).isEmpty»
             «resetDateField»
             «initDateField»
+
+        «ENDIF»
+        «IF hasGeographical»
+            «initGeoCoding»
 
         «ENDIF»
         «relationFunctions»
@@ -122,6 +128,34 @@ class EditFunctions {
                     «prefix»ResetDateField(fieldName);
                 }).removeClassName('z-hide');
             }
+        }
+    '''
+
+    def private initGeoCoding(Application it) '''
+        /**
+         * Example method for initialising geo coding functionality in JavaScript.
+         * To use this please customise the form field names to your needs.
+         * There is also a method on PHP level available in the «appName»_Util_Controller class.
+         */
+        function «prefix»InitGeoCoding() {
+            $('linkGetCoordinates').observe('click', function (evt) {
+                var geocoder = new mxn.Geocoder('googlev3', «prefix»GeoCodeReturn, «prefix»GeoCodeErrorCallback);
+
+                var address = {
+                    address : $F('street') + ' ' + $F('houseNumber') + ' ' + $F('zipcode') + ' ' + $F('city') + ' ' + $F('country')
+                };
+                geocoder.geocode(address);
+
+                function «prefix»GeoCodeErrorCallback (status) {
+                    Zikula.UI.Alert(Zikula.__('Error during geocoding:', 'module_«appName»') + ' ' + status);
+                }
+
+                function «prefix»GeoCodeReturn (location) {
+                    Form.Element.setValue('latitude', location.point.lat.toFixed(4));
+                    Form.Element.setValue('longitude', location.point.lng.toFixed(4));
+                    newCoordinatesEventHandler();
+                }
+            });
         }
     '''
 
