@@ -3,7 +3,7 @@ package org.zikula.modulestudio.generator.extensions.transformation
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.impl.ModulestudioFactoryImpl
+import de.guite.modulestudio.metamodel.modulestudio.ModulestudioFactory
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 
@@ -63,7 +63,7 @@ class PersistenceTransformer {
      * @return IntegerField The created column object.
      */
     def private createIdColumn(String colName, Boolean isPrimary) {
-        val factory = new ModulestudioFactoryImpl()
+        val factory = ModulestudioFactory::eINSTANCE
         val idField = factory.createIntegerField
         if (isPrimary)
             idField.name = 'id'
