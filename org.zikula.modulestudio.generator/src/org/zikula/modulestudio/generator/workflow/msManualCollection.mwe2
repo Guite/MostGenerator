@@ -14,7 +14,9 @@ Workflow {
     component = @msManual { dir = 'customers' name = 'AddressList' }
     component = @msManual { dir = 'customers' name = 'AdShare' }
     component = @msManual { dir = 'customers' name = 'ConstructionProjects' }
+    component = @msManual { dir = 'customers' name = 'FreelancerProjects' }
     component = @msManual { dir = 'customers' name = 'FreestyleModels' }
+    component = @msManual { dir = 'customers' name = 'GastroGuide' }
     component = @msManual { dir = 'customers' name = 'GuiCustomer' }
     component = @msManual { dir = 'customers' name = 'GuiErpSync' }
     component = @msManual { dir = 'customers' name = 'GuiOrder' }
@@ -36,6 +38,7 @@ Workflow {
     component = @msManual { dir = 'customers' name = 'SimplePolls' }
     component = @msManual { dir = 'customers' name = 'SimpleProductList' }
     component = @msManual { dir = 'customers' name = 'SimpleVarieties' }
+    component = @msManual { dir = 'customers' name = 'SurveyManager' }
     component = @msManual { dir = 'customers' name = 'VineyardManager' }
     component = @msManual { dir = 'customers' name = 'YouthWorkout' }
 
@@ -53,7 +56,10 @@ Workflow {
     component = @msManual { dir = 'own/wh'   name = 'WhFacts' }
     component = @msManual { dir = 'own/wh'   name = 'WhMedia' }
     component = @msManual { dir = 'own/wh'   name = 'WhOffers' }
+    component = @msManual { dir = 'own'      name = 'IukEvents' }
     component = @msManual { dir = 'own'      name = 'MyPortfolio' }
+    component = @msManual { dir = 'own'      name = 'SimpleClients' }
+    component = @msManual { dir = 'own'      name = 'SimpleLists' }
 
     component = @msManual { dir = 'zikula'   name = 'CampManager' }
     component = @msManual { dir = 'zikula'   name = 'Connector' }
