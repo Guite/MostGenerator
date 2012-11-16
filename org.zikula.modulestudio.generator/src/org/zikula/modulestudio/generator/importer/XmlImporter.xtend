@@ -120,8 +120,8 @@ class XmlImporter {
                 entity.name = entityName
                 entity.nameMultiple = entityName
 
-                entity.attributable = table.getAttribute('enableAttribution').equals('true')
-                entity.categorisable = table.getAttribute('enableCategorization').equals('true')
+                entity.attributable = table.getAttribute('enableAttribution').equalsIgnoreCase('true')
+                entity.categorisable = table.getAttribute('enableCategorization').equalsIgnoreCase('true')
 
                 var j = 0
                 while (j < fields.length) {
@@ -151,9 +151,9 @@ class XmlImporter {
      * @return boolean whether it is a standard field or not.
      */
     def private isStandardField(String fieldName) {
-        return (fieldName.equals('obj_status')
-        	 || fieldName.equals('cr_date') || fieldName.equals('cr_uid')
-        	 || fieldName.equals('lu_date') || fieldName.equals('lu_uid'))
+        return (fieldName.equalsIgnoreCase('obj_status')
+        	 || fieldName.equalsIgnoreCase('cr_date') || fieldName.equalsIgnoreCase('cr_uid')
+        	 || fieldName.equalsIgnoreCase('lu_date') || fieldName.equalsIgnoreCase('lu_uid'))
     }
 
     /**
@@ -164,7 +164,7 @@ class XmlImporter {
      */
     def private processField(Entity it, Element fieldData) {
         val fieldName = fieldData.getAttribute('name')
-        val fieldType = fieldData.getAttribute('type')
+        val fieldType = fieldData.getAttribute('type').toUpperCase
         val fieldLength = fieldData.getAttribute('length')
         val fieldNullable = fieldData.getAttribute('nullable')
         val fieldDefault = fieldData.getAttribute('default')
@@ -181,15 +181,15 @@ class XmlImporter {
                 val fieldAutoInc = fieldData.getAttribute('autoincrement')
                 val fieldPrimary = fieldData.getAttribute('primary')
 
-                if (fieldName.equals('uid') || fieldName.equals('userid')
-                        || fieldName.equals('user_id') || fieldName.equals('user')) {
+                if (fieldName.equalsIgnoreCase('uid') || fieldName.equalsIgnoreCase('userid')
+                        || fieldName.equalsIgnoreCase('user_id') || fieldName.equalsIgnoreCase('user')) {
                     val field = factory.createUserField
                     setBasicFieldProperties(field, fieldData)
                     if (!fieldLength.isEmpty)
                         field.length = Integer::parseInt(fieldLength)
                     else
                         field.length = getIntegerLength(fieldType)
-                    field.primaryKey = (fieldPrimary.equals('true') && fieldAutoInc.equals('true'))
+                    field.primaryKey = (fieldPrimary.equalsIgnoreCase('true') && fieldAutoInc.equalsIgnoreCase('true'))
                     if (!fieldDefault.isEmpty)
                         field.defaultValue = Integer::parseInt(fieldDefault).toString
                     fields.add(field)
@@ -200,26 +200,26 @@ class XmlImporter {
                         field.length = Integer::parseInt(fieldLength)
                     else
                         field.length = getIntegerLength(fieldType)
-                        field.primaryKey = (fieldPrimary.equals('true') && fieldAutoInc.equals('true'))
+                        field.primaryKey = (fieldPrimary.equalsIgnoreCase('true') && fieldAutoInc.equalsIgnoreCase('true'))
                     if (!fieldDefault.isEmpty)
                         field.defaultValue = Integer::parseInt(fieldDefault).toString
                     fields.add(field)
                 }
             } else if (fieldType.equals('VARCHAR')) {
                 if (fieldName.equals('file') || fieldName.equals('filename')
-                        || fieldName.equals('image')
-                        || fieldName.equals('imagefile')
-                        || fieldName.equals('video')
-                        || fieldName.equals('videofile')
-                        || fieldName.equals('upload')
-                        || fieldName.equals('uploadfile')) {
+                        || fieldName.equalsIgnoreCase('image')
+                        || fieldName.equalsIgnoreCase('imagefile')
+                        || fieldName.equalsIgnoreCase('video')
+                        || fieldName.equalsIgnoreCase('videofile')
+                        || fieldName.equalsIgnoreCase('upload')
+                        || fieldName.equalsIgnoreCase('uploadfile')) {
                     val field = factory.createUploadField
                     setBasicFieldProperties(field, fieldData)
                     if (!fieldLength.isEmpty) {
                         field.length = Integer::parseInt(fieldLength)
                     }
                     fields.add(field)
-                } else if (fieldName.equals('email') || fieldName.equals('emailaddress') || fieldName.equals('mailaddress')) {
+                } else if (fieldName.equalsIgnoreCase('email') || fieldName.equalsIgnoreCase('emailaddress') || fieldName.equalsIgnoreCase('mailaddress')) {
                     val field = factory.createEmailField
                     setBasicFieldProperties(field, fieldData)
                     if (!fieldLength.isEmpty)
@@ -227,7 +227,7 @@ class XmlImporter {
                     if (!fieldDefault.isEmpty)
                         field.defaultValue = fieldDefault
                     fields.add(field)
-                } else if (fieldName.equals('url') || fieldName.equals('homepage') || fieldName.equals('website')) {
+                } else if (fieldName.equalsIgnoreCase('url') || fieldName.equalsIgnoreCase('homepage') || fieldName.equalsIgnoreCase('website')) {
                     val field = factory.createUrlField
                     setBasicFieldProperties(field, fieldData)
                     if (!fieldLength.isEmpty)
@@ -240,13 +240,13 @@ class XmlImporter {
                     setBasicFieldProperties(field, fieldData)
                     if (!fieldLength.isEmpty)
                         field.length = Integer::parseInt(fieldLength)
-                    if (fieldName.equals('country')) {
+                    if (fieldName.equalsIgnoreCase('country')) {
                         field.country = true
                         field.nospace = true
-                    } else if (fieldName.equals('colour') || fieldName.equals('color')) {
+                    } else if (fieldName.equalsIgnoreCase('colour') || fieldName.equalsIgnoreCase('color')) {
                         field.htmlcolour = true
                         field.nospace = true
-                    } else if (fieldName.equals('language') || fieldName.equals('lang') || fieldName.equals('locale')) {
+                    } else if (fieldName.equalsIgnoreCase('language') || fieldName.equalsIgnoreCase('lang') || fieldName.equalsIgnoreCase('locale')) {
                         field.language = true
                         field.nospace = true
                     }
@@ -321,14 +321,14 @@ class XmlImporter {
     def private setBasicFieldProperties(DerivedField it, Element fieldData) {
         val fieldName = convertToMixedCase(fieldData.getAttribute('name'))
         val fieldType = fieldData.getAttribute("type")
-        val fieldNullable = fieldData.getAttribute('nullable')
+        val fieldNullable = fieldData.getAttribute('nullable').toLowerCase
         val fieldDefault = fieldData.getAttribute('default')
         val isDateField = fieldType.equals('DATETIME') || fieldType.equals('DATE')
         name = fieldName
         nullable = fieldNullable.equals('true')
         if (!fieldDefault.isEmpty && !fieldDefault.equals("''") && !fieldDefault.equals('NULL')) {
             if (fieldType.equals('BOOLEAN')) {
-                val isSet = fieldDefault.equals('true') || fieldDefault.equals('1')
+                val isSet = fieldDefault.equalsIgnoreCase('true') || fieldDefault.equals('1')
                 defaultValue = (if (isSet) 'true' else 'false')
             } else if (!(isDateField && fieldDefault.equals('DEFTIMESTAMP'))) {
                 defaultValue = fieldDefault
