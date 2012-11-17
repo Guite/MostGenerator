@@ -359,7 +359,7 @@ class Forms {
                         headerSelector: 'h3',
                         headerClassName: 'z-panel-header z-panel-indicator',
                         contentClassName: 'z-panel-content',
-                        active: ['z-panel-header-fields']
+                        active: $('z-panel-header-fields')
                     });
                 «ENDIF»
 
