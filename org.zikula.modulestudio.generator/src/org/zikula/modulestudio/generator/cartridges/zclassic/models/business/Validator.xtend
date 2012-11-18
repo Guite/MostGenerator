@@ -653,13 +653,13 @@ class Validator {
         «IF entity.incoming.filter(typeof(JoinRelationship)).filter(e|e.targetField == name).isEmpty
          && entity.outgoing.filter(typeof(JoinRelationship)).filter(e|e.sourceField == name).isEmpty»
             «validationCallsInteger»
-            «IF minValue != 0»
+            «IF minValue.toString != '0'»
                 if (!$this->isIntegerNotLowerThan('«name.formatForCode»', «minValue»)) {
                     $errorInfo['message'] = __f('Error! Field value must not be lower than %2$s (%1$s).', array('«name.formatForCode»', «minValue»), $dom);
                     return $errorInfo;
                 }
             «ENDIF»
-            «IF maxValue != 0»
+            «IF maxValue.toString != '0'»
                 if (!$this->isIntegerNotHigherThan('«name.formatForCode»', «maxValue»)) {
                     $errorInfo['message'] = __f('Error! Field value must not be higher than %2$s (%1$s).', array('«name.formatForCode»', «maxValue»), $dom);
                     return $errorInfo;
