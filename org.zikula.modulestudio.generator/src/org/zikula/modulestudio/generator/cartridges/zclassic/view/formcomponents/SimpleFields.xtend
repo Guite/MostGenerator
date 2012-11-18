@@ -189,10 +189,10 @@ class SimpleFields {
         {if $mode ne 'create'}
             {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true«validationHelper.fieldValidationCssClass(it)»}
         {else}
-            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true defaultValue='«IF defaultValue != null && defaultValue != '' && defaultValue != 'now'»«defaultValue»«ELSE»now«ENDIF»'«validationHelper.fieldValidationCssClass(it)»}
+            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true«IF defaultValue != null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='now'«ENDIF»«validationHelper.fieldValidationCssClass(it)»}
         {/if}
         «/*TODO: visible=false*/»
-        «IF !mandatory»
+        «IF !mandatory && nullable»
             <p class="z-formnote"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></p>
         «ENDIF»
     '''
@@ -201,9 +201,9 @@ class SimpleFields {
         {if $mode ne 'create'}
             {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' useSelectionMode=true«validationHelper.fieldValidationCssClass(it)»}
         {else}
-            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' useSelectionMode=true defaultValue='«IF defaultValue != null && defaultValue != '' && defaultValue != 'now'»«defaultValue»«ELSE»today«ENDIF»'«validationHelper.fieldValidationCssClass(it)»}
+            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' useSelectionMode=true«IF defaultValue != null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='today'«ENDIF»«validationHelper.fieldValidationCssClass(it)»}
         {/if}
-        «IF !mandatory»
+        «IF !mandatory && nullable»
             <p class="z-formnote"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></p>
         «ENDIF»
     '''

@@ -393,7 +393,7 @@ class Forms {
     '''
 
     def private additionalInitScriptCalendar(AbstractDateField it) '''
-        «IF !mandatory»
+        «IF !mandatory && nullable»
             «entity.container.application.prefix»InitDateField('«name.formatForCode»');
         «ENDIF»
     '''
