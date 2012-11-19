@@ -4,12 +4,10 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Image {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
 
@@ -36,153 +34,98 @@ class Image {
     '''
 
     def imageFunctionsBaseImpl(Application it) '''
-        use Imagine\Image\Box;
-        use Imagine\Image\Color;
-        use Imagine\Image\Point;
-
         /**
          * Utility base class for image helper methods.
          */
         class «appName»_«fillingUtil»Base_Image extends Zikula_AbstractBase
         {
             /**
-             * This method is used by the «appName.formatForDB»ImageThumb modifier
-             * as well as the Ajax controller of this application.
+             * This method returns an Imagine manager with a certain preset
+             * which is chosen depending on the given arguments.
              *
-             * It serves for creating and displaying a thumbnail image.
-             *
-             * @param string $filePath   The input file path (including file name).
              * @param string $objectType Currently treated entity type.
              * @param string $fieldName  Name of upload field.
-             * @param int    $width      Desired width.
-             * @param int    $height     Desired height.
-             * @param array  $thumbArgs  Additional arguments.
+             * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType).
+             * @param array  $args       Additional arguments.
              *
-             * @return string The thumbnail file path.
+             * @return SystemPlugin_Imagine_Manager The desired manager.
              */
-            public function getThumb($filePath = '', $objectType = '', $fieldName = '', $width = 100, $height = 80, $thumbArgs = array())
+            public function getManager($objectType = '', $fieldName = '', $context = '', $args = array())
             {
-                if (empty($filePath) || !file_exists($filePath)) {
-                    return '';
-                }
-                if (!is_array($thumbArgs)) {
-                    $thumbArgs = array();
+                if (!in_array($context, array('controllerAction', 'api', 'actionHandler', 'block', 'contentType'))) {
+                    $context = 'controllerAction';
                 }
 
-                // compute thumbnail file path using a sub folder
-                $pathInfo = pathinfo($filePath);
-                $uploadHandler = new «appName»_UploadHandler();
-                $thumbFolder = $uploadHandler->getThumbnailFolderName($objectType, $fieldName);
-                $thumbFilePath = $pathInfo['dirname'] . '/' . $thumbFolder . '/' . $pathInfo['filename'] . '_' . $width . 'x' . $height . '.' . $pathInfo['extension'];
+                $presetName = '';
+                if ($context == 'controllerAction') {
+                    if (!isset($args['controller'])) {
+                        $args['controller'] = 'user';
+                    }
+                    if (!isset($args['action'])) {
+                        $args['action'] = 'main';
+                    }
 
-                // return thumbnail file path if it is already existing
-                if (file_exists($thumbFilePath)) {
-                    return $thumbFilePath;
-                }
-
-                // use Imagine library for creating the thumbnail image
-                // documentation can be found at https://github.com/avalanche123/Imagine/tree/master/docs/en
-                try {
-                    // create instance of Imagine
-                    $imagine = new Imagine\Gd\Imagine();
-                    // alternative
-                    // $imagine = new Imagine\Imagick\Imagine();
-
-                    // open image to be processed
-                    $image = $imagine->open($filePath);
-                    // remember the image size
-                    $originalSize = $image->getSize();
-
-                    if (isset($thumbArgs['crop']) && $thumbArgs['crop'] == true && isset($thumbArgs['x']) && isset($thumbArgs['y'])) {
-                        // crop the image
-                        $thumb = $image->crop(new Point($thumbArgs['x'], $thumbArgs['y']), new Box($width, $height));
+                    if ($args['controller'] == 'ajax' && $args['action'] == 'getItemListAutoCompletion') {
+                        $presetName = $this->name . '_ajax_autocomplete';
                     } else {
-                        // scale down thumbnails per default
-                        $thumbMode = Imagine\Image\ImageInterface::THUMBNAIL_INSET;
-                        if (isset($thumbArgs['thumbMode']) && $thumbArgs['thumbMode'] == Imagine\Image\ImageInterface::THUMBNAIL_OUTBOUND) {
-                            // cut out thumbnail
-                            $thumbMode = Imagine\Image\ImageInterface::THUMBNAIL_OUTBOUND;
-                        }
-
-                        // define target dimension
-                        $thumbSize = new Box($width, $height);
-                        // $thumbSize->increase(25); // add 25 pixels to x and y values
-                        // $thumbSize->scale(2); // double x and y values
-
-                        $thumb = $image->thumbnail($thumbSize, $thumbMode);
+                        $presetName = $this->name . '_' . $args['controller'] . '_' . $args['action'];
                     }
-
-                    /**
-                     * You can do many other image manipulations here as well:
-                     *    resize, rotate, crop, save, copy, paste, apply mask and many more
-                     * It would even be possible to visualise the image histogram.
-                     * See https://github.com/avalanche123/Imagine/blob/master/docs/en/image.rst
-                     *
-                     * Small example from manual:
-                     *
-                     *     $bgColour = new Color('fff', 30).darken(40);
-                     *     $thumb = $image->resize(new Box(15, 25))
-                     *         ->rotate(45, $bgColour)
-                     *         ->crop(new Point(0, 0), new Box(45, 45));
-                     */
-
-                    /**
-                     * Create a new image with fully-transparent black background:
-                     *     $bgColour = new Color('000', 100);
-                     *     $thumb = $imagine->create($thumbSize, $bgColour);
-                     * Create a new image with a vertical gradient background:
-                     *     $thumb = $imagine->create($thumbSize)
-                     *         ->fill(
-                     *             new Imagine\Fill\Gradient\Vertical(
-                     *                 $size->getHeight(),
-                     *                 new Color(array(127, 127, 127)),
-                     *                 new Color('fff')
-                     *             )
-                     *         );
-                     */
-
-                    /**
-                     * If you want to do drawings with elements like ellipse, chord or polygon
-                     * see https://github.com/avalanche123/Imagine/blob/master/docs/en/drawing.rst
-                     *
-                     *     $centerPoint = new Point($thumbSize->getWidth()/2, $thumbSize->getHeight()/2);
-                     */
-
-                    /**
-                     * For font usage use
-                     * $font = $imagine->font($file, $size, $colour);
-                     */
-
-                    // save thumb file
-                    $saveOptions = array();
-                    if (in_array($pathInfo['extension'], array('jpg', 'jpeg', 'png'))) {
-                        $saveOptions['quality'] = $this->getDefaultQuality($pathInfo['extension']);
-                    }
-                    $thumb->save($thumbFilePath);
-
-                    // return path to created thumbnail image
-                    return $thumbFilePath;
-
-                } catch (Imagine\Exception\Exception $e) {
-                    $dom = ZLanguage::getModuleDomain('«appName»');
-                    // log this exception
-                    LogUtil::registerError(__f('An error occured during thumbnail creation: %s', array($e->getMessage()), $dom));
-
-                    // return the original image as fallback
-                    return $filePath;
                 }
+                if (empty($presetName)) {
+                    $presetName = $this->name . '_default';
+                }
+
+                $preset = $this->getPreset($objectType, $fieldName, $presetName, $context, $args);
+
+                $manager = $this->getServiceManager()->getService('systemplugin.imagine.manager');
+                $manager->setModule($this->name)
+                        ->setPreset($presetName);
+
+                return $manager;
             }
 
             /**
-             * Returns the quality to be used for a given file extension.
+             * This method returns an Imagine preset for the given arguments.
              *
-             * @param string $extension The file extension
+             * @param string $objectType Currently treated entity type.
+             * @param string $fieldName  Name of upload field.
+             * @param string $presetName Name of desired preset.
+             * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType).
+             * @param array  $args       Additional arguments.
              *
-             * @return integer the desired quality
+             * @return SystemPlugin_Imagine_Preset The selected preset.
              */
-            protected function getDefaultQuality($extension)
+            public function getPreset($objectType = '', $fieldName = '', $presetName = '', $context = '', $args = array())
             {
-                return 85;
+                $presetData = array(
+                    'width'     => 100,      // thumbnail width in pixels
+                    'height'    => 100 ,     // thumbnail height in pixels
+                    'mode'      => 'inset',  // inset or outset
+                    'extension' => null      // file extension for thumbnails (jpg, png, gif; null for original file type)
+                );
+
+                if ($presetName == $this->name . '_ajax_autocomplete') {
+                    $presetData['width'] = 100;
+                    $presetData['height'] = 80;
+                } elseif ($presetName == $this->name . '_relateditem') {
+                    $presetData['width'] = 50;
+                    $presetData['height'] = 40;
+                } elseif ($context == 'controllerAction') {
+                    if ($args['action'] == 'view') {
+                        $presetData['width'] = 32;
+                        $presetData['height'] = 20;
+                    } elseif ($args['action'] == 'display') {
+                        $presetData['width'] = 250;
+                        $presetData['height'] = 150;
+                    } elseif ($args['action'] == 'display') {
+                        $presetData['width'] = 80;
+                        $presetData['height'] = 50;
+                    }
+                }
+
+                $preset = new SystemPlugin_Imagine_Preset($presetName, $presetData);
+
+                return $preset;
             }
         }
     '''

@@ -217,27 +217,45 @@ class Repository {
 
             $templateParameters = array();
 
-            $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST');
-            if (in_array($currentFunc, array('main', 'view'))) {
-                $templateParameters = $this->getViewQuickNavParameters($context, $args);
-                «IF hasListFieldsEntity»
-                    $serviceManager = ServiceUtil::getManager();
-                    $listHelper = new «container.application.appName»_Util_ListEntries($serviceManager);
-                    «FOR field : getListFieldsEntity»
-                        «var fieldName = field.name.formatForCode»
-                        $templateParameters['«fieldName»Items'] = $listHelper->getEntries('«name.formatForCode»', '«fieldName»');
+            if ($context == 'controllerAction) {
+                if (!isset($args['action'])) {
+                    $args['action'] = FormUtil::getPassedValue('func', 'main', 'GETPOST');
+                }
+                if (in_array($args['action'], array('main', 'view'))) {
+                    $templateParameters = $this->getViewQuickNavParameters($context, $args);
+                    «IF hasListFieldsEntity»
+                        $serviceManager = ServiceUtil::getManager();
+                        $listHelper = new «container.application.appName»_Util_ListEntries($serviceManager);
+                        «FOR field : getListFieldsEntity»
+                            «var fieldName = field.name.formatForCode»
+                            $templateParameters['«fieldName»Items'] = $listHelper->getEntries('«name.formatForCode»', '«fieldName»');
+                        «ENDFOR»
+                    «ENDIF»
+                    «IF hasBooleanFieldsEntity»
+                        $booleanSelectorItems = array(
+                            array('value' => 'no', 'text' => __('No')),
+                            array('value' => 'yes', 'text' => __('Yes'))
+                        );
+                        «FOR field : getBooleanFieldsEntity»
+                            «val fieldName = field.name.formatForCode»
+                            $templateParameters['«fieldName»Items'] = $booleanSelectorItems;
+                        «ENDFOR»
+                    «ENDIF»
+                }
+
+                // initialise Imagine preset manager instances
+                «IF hasUploadFieldsEntity»
+
+                    $objectType = '«name.formatForCode»';
+                    $imageHelper = new «container.application.appName»_Util_Image(ServiceUtil::getManager());
+                    «FOR uploadField : getUploadFieldsEntity»
+                        $parameters[$objectType . 'ThumbManager«uploadField.name.formatForCodeCapital»'] = $imageHelper->getManager($objectType, '«uploadField.name.formatForCode»', $context, $args);
                     «ENDFOR»
                 «ENDIF»
-                «IF hasBooleanFieldsEntity»
-                    $booleanSelectorItems = array(
-                        array('value' => 'no', 'text' => __('No')),
-                        array('value' => 'yes', 'text' => __('Yes'))
-                    );
-                    «FOR field : getBooleanFieldsEntity»
-                        «val fieldName = field.name.formatForCode»
-                        $templateParameters['«fieldName»Items'] = $booleanSelectorItems;
-                    «ENDFOR»
-                «ENDIF»
+                if (in_array($args['action'], array('display', 'view'))) {
+                    // use seperate preset for images in related items
+                    $parameters['relationThumbPreset'] = $imageHelper->getPreset('', '', '«container.application.appName»_relateditem', $context, $args);
+                }
             }
 
             // in the concrete child class you could do something like

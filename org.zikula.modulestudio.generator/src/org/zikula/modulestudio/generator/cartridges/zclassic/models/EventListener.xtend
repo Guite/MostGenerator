@@ -150,7 +150,16 @@ class EventListener {
         protected function performPostRemoveCallback()
         {
             // echo 'deleted a record ...';
-            «IF hasUploadFieldsEntity»
+            «IF it.hasUploadFieldsEntity»
+                «IF it.hasCompositeKeys»
+                    $objectIds = array();
+                    «FOR pkField : it.getPrimaryKeyFields»
+                        $objectIds[] = $this['«pkField.name.formatForCode»'];
+                    «ENDFOR»
+                    $objectId = implode('-', $objectIds);
+                «ELSE»
+                    $objectId = $this['«it.primaryKeyFields.head.name.formatForCode»'];
+                «ENDIF»
                 // initialise the upload handler
                 $uploadManager = new «container.application.appName»_UploadHandler();
 
@@ -161,9 +170,10 @@ class EventListener {
                     }
 
                     // remove upload file (and image thumbnails)
-                    $uploadManager->deleteUploadFile('«it.name.formatForCode»', $this, $uploadField);
+                    $uploadManager->deleteUploadFile('«it.name.formatForCode»', $this, $uploadField, $objectId);
                 }
             «ENDIF»
+
             return true;
         }
 «/*}*/»«/*    def private eventListenerBaseImpl(PreUpdate it) {*/»

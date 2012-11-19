@@ -208,8 +208,9 @@ class Ajax {
                 $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             }
             $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
-            if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', array('controller' => '«formattedName»', 'action' => 'getItemListAutoCompletion')))) {
-                $objectType = $controllerHelper->getDefaultObjectType('controllerAction', array('controller' => '«formattedName»', 'action' => 'getItemListAutoCompletion'));
+            $utilArgs = array('controller' => '«formattedName»', 'action' => 'getItemListAutoCompletion');
+            if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
+                $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
             }
 
             $repository = $this->entityManager->getRepository('«app.appName»_Entity_' . ucfirst($objectType));
@@ -242,19 +243,14 @@ class Ajax {
                 $titleFieldName = $repository->getTitleFieldName();
                 $descriptionFieldName = $repository->getDescriptionFieldName();
                 $previewFieldName = $repository->getPreviewFieldName();
-
-                $imageHelper = null;
-                if (!empty($previewFieldName)) {
-                    $serviceManager = ServiceUtil::getManager();
-                    $imageHelper = new «app.appName»_Util_Image($serviceManager);
-                }
-
                 «IF app.hasImageFields»
-                    $thumbWidth = 100;
-                    $thumbHeight = 80;
+                    if (!empty($previewFieldName)) {
+                        $imageHelper = new «app.appName»_Util_Image($this->serviceManager);
+                        $imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
+                    }
                 «ENDIF»
                 foreach ($entities as $item) {
-                    // class="informal" --> show in dropdown, but do not copy in the input field after selection
+                    // class="informal" --> show in dropdown, but do nots copy in the input field after selection
                     $itemTitle = (!empty($titleFieldName)) ? $item[$titleFieldName] : $this->__('Item');
                     $itemTitleStripped = str_replace('"', '', $itemTitle);
                     $itemDescription = (isset($item[$descriptionFieldName]) && !empty($item[$descriptionFieldName])) ? $item[$descriptionFieldName] : '';//$this->__('No description yet.');
@@ -270,7 +266,8 @@ class Ajax {
                     «IF app.hasImageFields»
                         // check for preview image
                         if (!empty($previewFieldName) && !empty($item[$previewFieldName]) && isset($item[$previewFieldName . 'FullPath'])) {
-                            $thumbImagePath = $imageHelper->getThumb($item[$previewFieldName . 'FullPath'], $objectType, $previewFieldName, $thumbWidth, $thumbHeight);
+                            $fullObjectId = $objectType . '-' . $itemId;
+                            $thumbImagePath = $imagineManager->getThumb($item[$previewFieldName], $fullObjectId);
                             $preview = '<img src="' . $thumbImagePath . '" width="' . $thumbWidth . '" height="' . $thumbHeight . '" alt="' . $itemTitleStripped . '" />';
                             $out .= '<div class="itempreview informal" id="itempreview' . $itemId . '">' . $preview . '</div>';
                         }

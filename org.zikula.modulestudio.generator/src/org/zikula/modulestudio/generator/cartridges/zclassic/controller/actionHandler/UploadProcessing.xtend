@@ -37,6 +37,8 @@ class UploadProcessing {
             $uploadManager = new «app.appName»_UploadHandler();
             $existingObjectData = $existingObject->toArray();
 
+            $objectId = ($this->mode != 'create') ? $this->idValues[0] : 0;
+
             // process all fields
             foreach ($this->uploadFields as $uploadField => $isMandatory) {
                 // check if an existing file must be deleted
@@ -46,7 +48,7 @@ class UploadProcessing {
                     if (isset($formData[$uploadField . 'DeleteFile'])) {
                         if ($hasOldFile && $formData[$uploadField . 'DeleteFile'] === true) {
                             // remove upload file (and image thumbnails)
-                            $existingObjectData = $uploadManager->deleteUploadFile($this->objectType, $existingObjectData, $uploadField);
+                            $existingObjectData = $uploadManager->deleteUploadFile($this->objectType, $existingObjectData, $uploadField, $objectId);
                             if (empty($existingObjectData[$uploadField])) {
                                 $existingObject[$uploadField] = '';
                                 $existingObject[$uploadField . 'Meta'] = array();
@@ -67,7 +69,7 @@ class UploadProcessing {
 
                 if ($hasOldFile && $hasBeenDeleted !== true && $this->mode != 'create') {
                     // remove old upload file (and image thumbnails)
-                    $existingObjectData = $uploadManager->deleteUploadFile($this->objectType, $existingObjectData, $uploadField);
+                    $existingObjectData = $uploadManager->deleteUploadFile($this->objectType, $existingObjectData, $uploadField, $objectId);
                     if (empty($existingObjectData[$uploadField])) {
                         $existingObject[$uploadField] = '';
                         $existingObject[$uploadField . 'Meta'] = array();

@@ -85,12 +85,8 @@ class Relations {
             «IF hasImageFieldsEntity»
                 <br />
                 «val imageFieldName = getImageFieldsEntity.head.name.formatForCode»
-                {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPath)}
-                    «IF leadingField != null»
-                        <img src="{$item.«imageFieldName»FullPath|«app.appName.formatForDB»ImageThumb:'«name.formatForCode»':'«imageFieldName»':50:40}" width="50" height="40" alt="{$item.«leadingField.name.formatForCode»|replace:"\"":""}" />
-                    «ELSE»
-                        <img src="{$item.«imageFieldName»FullPath|«app.appName.formatForDB»ImageThumb:'«name.formatForCode»':'«imageFieldName»':50:40}" width="50" height="40" alt="{gt text='«name.formatForDisplayCapital»'|replace:"\"":""}" />
-                    «ENDIF»
+                {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPath) && $item.«imageFieldName»Meta.isImage}
+                    {thumb image=$item.«imageFieldName»FullPath objectid="«name.formatForCode»«IF hasCompositeKeys»«FOR pkField : getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true «IF leadingField != null»img_alt=$item.«leadingField.name.formatForCode»«ELSE»__img_alt='«name.formatForDisplayCapital»'«ENDIF»}
                 {/if}
             «ENDIF»
             «IF many»

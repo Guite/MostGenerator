@@ -15,7 +15,6 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormatG
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetCountryName
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetFileSize
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetListEntry
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ImageThumb
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.SelectorObjectTypes
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.SelectorTemplates
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TemplateHeaders
@@ -41,7 +40,6 @@ class Plugins {
             new ValidationError().generate(it, fsa)
         }
         if (hasUploads) {
-            new ImageThumb().generate(it, fsa)
             new GetFileSize().generate(it, fsa)
         }
         if (hasTrees) {

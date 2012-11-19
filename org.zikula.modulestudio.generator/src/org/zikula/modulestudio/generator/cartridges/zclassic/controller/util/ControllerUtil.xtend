@@ -222,22 +222,6 @@ class ControllerUtil {
                         return false;
                     }
 
-                    $uploadHandler = new «appName»_UploadHandler();
-                    $thumbFolder = $uploadHandler->getThumbnailFolderName($objectType, $fieldName);
-                    $thumbPath = $uploadPath . $thumbFolder . '/';
-
-                    // Check if directory exist and try to create it if needed
-                    if (!is_dir($thumbPath) && !FileUtil::mkdirs($thumbPath, 0777)) {
-                        LogUtil::registerStatus(__f('Warning! The upload thumbnail directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($thumbPath), $dom));
-                        return false;
-                    }
-
-                    // Check if directory is writable and change permissions if needed
-                    if (!is_writable($thumbPath) && !chmod($thumbPath, 0777)) {
-                        LogUtil::registerStatus(__f('Warning! The upload thumbnail directory at "%s" exists but is not writable by the webserver.', array($thumbPath), $dom));
-                        return false;
-                    }
-
                     // Write a htaccess file into the upload directory
                     $htaccessFilePath = $uploadPath . '.htaccess';
                     $htaccessFileTemplate = 'modules/«appName»/docs/htaccessTemplate';

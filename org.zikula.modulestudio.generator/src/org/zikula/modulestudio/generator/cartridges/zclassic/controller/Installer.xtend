@@ -108,7 +108,7 @@ class Installer {
                 if (System::isDevelopmentMode()) {
                     LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                 }
-                $returnMessage = $this->__f('An error was encountered while creating the tables for the %s module.', array($this->getName()));
+                $returnMessage = $this->__f('An error was encountered while creating the tables for the %s module.', array($this->name));
                 if (!System::isDevelopmentMode()) {
                     $returnMessage .= ' ' . $this->__('Please enable the development mode by editing the /config/config.php file in order to reveal the error details.');
                 }
@@ -129,7 +129,7 @@ class Installer {
                 «ENDFOR»
             «ENDIF»
 
-            // create the default data for «appName.formatForDisplay»
+            // create the default data
             $this->createDefaultData();
             «IF hasCategorisableEntities»
 
@@ -141,7 +141,7 @@ class Installer {
 
                 «FOR entity : getCategorisableEntities»
                     $primaryRegistry = $categoryApi->getPrimaryProperty(array('ot' => '«entity.name.formatForCodeCapital»'));
-                    CategoryRegistryUtil::insertEntry('«appName»', '«entity.name.formatForCodeCapital»', $primaryRegistry, $rootcat['id']);
+                    CategoryRegistryUtil::insertEntry($this->name, '«entity.name.formatForCodeCapital»', $primaryRegistry, $rootcat['id']);
                 «ENDFOR»
             «ENDIF»
 
@@ -235,11 +235,11 @@ class Installer {
                 if (System::isDevelopmentMode()) {
                     LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                 }
-                return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %s module.', array($this->getName())));
+                return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %s module.', array($this->name)));
             }
 
             // unregister persistent event handlers
-            EventUtil::unregisterPersistentModuleHandlers('«appName»');
+            EventUtil::unregisterPersistentModuleHandlers($this->name);
 
             // unregister hook subscriber bundles
             HookUtil::unregisterSubscriberBundles($this->version->getHookSubscriberBundles());
@@ -256,12 +256,16 @@ class Installer {
 
                 // remove category registry entries
                 ModUtil::dbInfoLoad('Categories');
-                DBUtil::deleteWhere('categories_registry', "modname = '«appName»'");
+                DBUtil::deleteWhere('categories_registry', 'modname = \'' . $this->name . '\'');
             «ENDIF»
             «IF !uploadEntities.isEmpty»
+                // remove all thumbnails
+                $manager = $this->getServiceManager()->getService('systemplugin.imagine.manager');
+                $manager->setModule($this->name);
+                $manager->cleanupModuleThumbs();
 
                 // remind user about upload folders not being deleted
-                $uploadPath = FileUtil::getDataDirectory() . '/«appName»/';
+                $uploadPath = FileUtil::getDataDirectory() . '/' . $this->name . '/';
                 LogUtil::registerStatus($this->__f('The upload directories at [%s] can be removed manually', $uploadPath));
             «ENDIF»
 
