@@ -192,8 +192,8 @@ class ColourInput {
          * The «appName.formatForDB»ColourInput plugin handles fields carrying a html colour code.
          * It provides a colour picker for convenient editing.
          *
-         * @param  array            $params  All attributes passed to this function from the template.
-         * @param  Zikula_Form_View $view    Reference to the view object.
+         * @param array            $params  All attributes passed to this function from the template.
+         * @param Zikula_Form_View $view    Reference to the view object.
          *
          * @return string The output of the plugin.
          */

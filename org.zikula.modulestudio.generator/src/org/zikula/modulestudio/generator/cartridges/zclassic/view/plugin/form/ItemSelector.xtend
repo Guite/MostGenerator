@@ -21,7 +21,7 @@ class ItemSelector {
         val formPluginPath = appName.getAppSourceLibPath + 'Form/Plugin/'
         fsa.generateFile(formPluginPath + 'Base/ItemSelector.php', itemSelectorBaseFile)
         fsa.generateFile(formPluginPath + 'ItemSelector.php', itemSelectorFile)
-        fsa.generateFile(viewPluginFilePath('function', 'SelectorItems'), itemSelectorPluginFile)
+        fsa.generateFile(viewPluginFilePath('function', 'ItemSelector'), itemSelectorPluginFile)
     }
 
     def private itemSelectorBaseFile(Application it) '''
@@ -45,7 +45,18 @@ class ItemSelector {
          */
         class «appName»_Form_Plugin_Base_ItemSelector extends Zikula_Form_Plugin_TextInput
         {
+            /**
+             * The treated object type.
+             *
+             * @var string
+             */
             protected $objectType = '';
+
+            /**
+             * Identifier of selected object.
+             *
+             * @var integer
+             */
             protected $selectedItemId = 0;
 
             /**
@@ -233,14 +244,14 @@ class ItemSelector {
 
     def private itemSelectorPluginImpl(Application it) '''
         /**
-         * The «appName.formatForDB»SelectorItem plugin provides items for a dropdown selector.
+         * The «appName.formatForDB»ItemSelector plugin provides items for a dropdown selector.
          *
          * @param  array            $params All attributes passed to this function from the template.
          * @param  Zikula_Form_View $view   Reference to the view object.
          *
          * @return string The output of the plugin.
          */
-        function smarty_function_«appName.formatForDB»GeoInput($params, $view)
+        function smarty_function_«appName.formatForDB»ItemSelector($params, $view)
         {
             return $view->registerPlugin('«appName»_Form_Plugin_ItemSelector', $params);
         }

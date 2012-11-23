@@ -40,7 +40,7 @@ class TemplateHeaders {
         function smarty_function_«appName.formatForDB»TemplateHeaders($params, $view)
         {
             if (!isset($params['contentType'])) {
-                $view->trigger_error($view->__f('%1$s: missing parameter \'%2$s\'', array('smarty_function_«appName.formatForDB»TemplateHeaders', 'contentType')));
+                $view->trigger_error($view->__f('%1$s: missing parameter \'%2$s\'', array('«appName.formatForDB»TemplateHeaders', 'contentType')));
             }
 
             // apply header

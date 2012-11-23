@@ -22,13 +22,13 @@ class ContentTypeSingleView {
 
         <div class="z-formrow">
             {formlabel for='«appName»_objecttype' __text='Object type'}
-            {«appName.formatForDB»SelectorObjectTypes assign='allObjectTypes'}
+            {«appName.formatForDB»ObjectTypeSelector assign='allObjectTypes'}
             {formdropdownlist id='«appName»_objecttype' dataField='objectType' group='data' mandatory=true items=$allObjectTypes}
         </div>
 
         <div style="margin-left: 80px">
             <div{* class="z-formrow"*}>
-                {«appName.formatForDB»SelectorItems id='id' group='data' objectType=$objectType}
+                {«appName.formatForDB»ItemSelector id='id' group='data' objectType=$objectType}
                 «/* MAYBE PER OBJECTTYPE */»
             </div>
 

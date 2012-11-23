@@ -49,15 +49,68 @@ class ContentTypeList {
     '''
 
     def private contentTypeBaseImpl(Application it) '''
+        /**
+         * The treated object type.
+         *
+         * @var string
+         */
         protected $objectType;
+
+        /**
+         * The sorting criteria.
+         *
+         * @var string
+         */
         protected $sorting;
+
+        /**
+         * The amount of desired items.
+         *
+         * @var integer
+         */
         protected $amount;
+
+        /**
+         * Name of template file.
+         *
+         * @var string
+         */
         protected $template;
+
+        /**
+         * Name of custom template file.
+         *
+         * @var string
+         */
         protected $customTemplate;
+
+        /**
+         * Optional filters.
+         *
+         * @var string
+         */
         protected $filter;
         «IF hasCategorisableEntities»
+
+            /**
+             * List of object types allowing categorisation.
+             *
+             * @var array
+             */
             protected $categorisableObjectTypes;
+
+            /**
+             * List of category properties (registries) for different trees.
+             *
+             * @var array
+             */
             protected $catProperties;
+
+            /**
+             * List of category ids with sub arrays for each registry.
+             *
+             * @var array
+             */
             protected $catIds;
         «ENDIF»
 
@@ -89,6 +142,7 @@ class ContentTypeList {
         public function getTitle()
         {
             $dom = ZLanguage::getModuleDomain('«appName»');
+
             return __('«appName» list view', $dom);
         }
 
@@ -100,6 +154,7 @@ class ContentTypeList {
         public function getDescription()
         {
             $dom = ZLanguage::getModuleDomain('«appName»');
+
             return __('Display list of «appName» objects.', $dom);
         }
 

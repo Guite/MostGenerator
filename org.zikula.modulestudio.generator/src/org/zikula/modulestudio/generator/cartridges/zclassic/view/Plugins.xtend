@@ -4,23 +4,25 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ActionUrl
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormatGeoData
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetCountryName
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetFileSize
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetListEntry
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ObjectTypeSelector
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TemplateHeaders
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TemplateSelector
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeJS
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeSelection
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ValidationError
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.ColourInput
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.CountrySelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.Frame
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.GeoInput
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.ItemSelector
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.RelationSelectorAutoComplete
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.RelationSelectorList
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.TreeSelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.UserInput
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormatGeoData
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetCountryName
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetFileSize
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetListEntry
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.SelectorObjectTypes
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.SelectorTemplates
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TemplateHeaders
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeJS
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeSelection
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ValidationError
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -32,8 +34,8 @@ class Plugins {
 
     def generate(Application it, IFileSystemAccess fsa) {
         new ActionUrl().generate(it, fsa)
-        new SelectorObjectTypes().generate(it, fsa)
-        new SelectorTemplates().generate(it, fsa)
+        new ObjectTypeSelector().generate(it, fsa)
+        new TemplateSelector().generate(it, fsa)
         new TemplateHeaders().generate(it, fsa)
         if (hasEditActions) {
             new Frame().generate(it, fsa)
@@ -72,6 +74,10 @@ class Plugins {
                 new GeoInput().generate(it, fsa)
             }
             new FormatGeoData().generate(it, fsa)
+        }
+        if (hasEditActions && !models.map(e|e.relations).flatten.toList.empty) {
+            new RelationSelectorList().generate(it, fsa)
+            new RelationSelectorAutoComplete().generate(it, fsa)
         }
     }
 }

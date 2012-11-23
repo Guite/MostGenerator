@@ -30,9 +30,9 @@ class ValidationError {
          * error messages for different client-side validation error types.
          *
          * Available parameters:
-         *   - id:       Optional id of element as part of unique error message element.
-         *   - class:    Treated validation class.
-         *   - assign:   If set, the results are assigned to the corresponding variable instead of printed out.
+         *   - id:     Optional id of element as part of unique error message element.
+         *   - class:  Treated validation class.
+         *   - assign: If set, the results are assigned to the corresponding variable instead of printed out.
          *
          * @param  array            $params All attributes passed to this function from the template.
          * @param  Zikula_Form_View $view   Reference to the view object.
@@ -83,8 +83,10 @@ class ValidationError {
 
             if (array_key_exists('assign', $params)) {
                 $view->assign($params['assign'], $message);
+
                 return;
             }
+
             return $message;
         }
     '''

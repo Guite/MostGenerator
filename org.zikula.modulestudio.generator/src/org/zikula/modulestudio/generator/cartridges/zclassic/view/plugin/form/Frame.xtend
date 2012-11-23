@@ -40,7 +40,18 @@ class Frame {
          */
         class «appName»_Form_Plugin_FormFrame extends Zikula_Form_AbstractPlugin
         {
+            /**
+             * Whether a tabbed panel should be used or not.
+             *
+             * @var boolean
+             */
             public $useTabs;
+
+            /**
+             * Name of css class to be used for the frame element.
+             *
+             * @var string
+             */
             public $cssClass = 'tabs';
 
             /**
@@ -65,6 +76,7 @@ class Frame {
              * @param Zikula_Form_View $view    Reference to Zikula_Form_View object.
              * @param array            &$params Parameters passed from the Smarty plugin function.
              *
+             * @see    Zikula_Form_AbstractPlugin
              * @return void
              */
             public function create(Zikula_Form_View $view, &$params)
@@ -84,7 +96,8 @@ class Frame {
             public function renderBegin(Zikula_Form_View $view)
             {
                 $tabClass = $this->useTabs ? ' ' . $this->cssClass : '';
-                return "<div class=\"«appName.formatForDB»Form{$tabClass}\">\n";
+
+                return '<div class="«appName.formatForDB»Form' . $tabClass . '">' . "\n";
             }
 
             /**
@@ -98,7 +111,7 @@ class Frame {
              */
             public function renderEnd(Zikula_Form_View $view)
             {
-                return "</div>\n";
+                return '</div>' . "\n";
             }
         }
     '''
@@ -110,9 +123,9 @@ class Frame {
          * Available parameters:
          *   - assign:   If set, the results are assigned to the corresponding variable instead of printed out.
          *
-         * @param  array            $params  All attributes passed to this function from the template.
-         * @param  string           $content The content of the block.
-         * @param  Zikula_Form_View $view    Reference to the view object.
+         * @param array            $params  All attributes passed to this function from the template.
+         * @param string           $content The content of the block.
+         * @param Zikula_Form_View $view    Reference to the view object.
          *
          * @return string The output of the plugin.
          */

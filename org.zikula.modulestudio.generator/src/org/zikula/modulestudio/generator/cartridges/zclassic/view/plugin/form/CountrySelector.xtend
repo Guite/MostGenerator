@@ -45,7 +45,9 @@ class CountrySelector {
         class «appName»_Form_Plugin_Base_CountrySelector extends Zikula_Form_Plugin_DropdownList
         {
             /**
-             * Optional filter for displaying only selected countries in the list.
+             * Optional filter for displaying only certain countries in the list.
+             *
+             * @var array
              */
             protected $validCountryList;
 
@@ -112,8 +114,8 @@ class CountrySelector {
          * The «appName.formatForDB»CountrySelector plugin creates a country dropdown list.
          * It understands an optional argument to limit the select options to a given set of allowed countries.
          *
-         * @param  array            $params All attributes passed to this function from the template.
-         * @param  Zikula_Form_View $view   Reference to the view object.
+         * @param array            $params All attributes passed to this function from the template.
+         * @param Zikula_Form_View $view   Reference to the view object.
          *
          * @return string The output of the plugin.
          */

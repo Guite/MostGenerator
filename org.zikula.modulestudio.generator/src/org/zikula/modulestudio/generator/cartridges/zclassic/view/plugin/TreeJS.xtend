@@ -45,11 +45,13 @@ class TreeJS {
         {
             if (!isset($params['objectType']) || empty($params['objectType'])) {
                 $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeJS', 'objectType')));
+
                 return false;
             }
 
             if (!isset($params['tree']) || empty($params['tree'])) {
                 $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeJS', 'tree')));
+
                 return false;
             }
 
@@ -113,8 +115,10 @@ class TreeJS {
 
             if (array_key_exists('assign', $params)) {
                 $view->assign($params['assign'], $result);
+
                 return;
             }
+
             return $result;
         }
     '''

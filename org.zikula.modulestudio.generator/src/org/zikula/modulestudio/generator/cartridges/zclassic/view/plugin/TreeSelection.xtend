@@ -39,22 +39,26 @@ class TreeSelection {
         {
             if (!isset($params['objectType']) || empty($params['objectType'])) {
                 $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeSelection', 'objectType')));
+
                 return false;
             }
 
             if (!isset($params['node']) || !is_object($params['node'])) {
                 $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeSelection', 'node')));
+
                 return false;
             }
 
             $allowedTargets = array('allParents', 'directParent', 'allChildren', 'directChildren', 'predecessors', 'successors', 'preandsuccessors');
             if (!isset($params['target']) || empty($params['target']) || !in_array($params['target'], $allowedTargets)) {
                 $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeSelection', 'target')));
+
                 return false;
             }
 
             if (!isset($params['assign']) || empty($params['assign'])) {
                 $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeSelection', 'assign')));
+
                 return false;
             }
 

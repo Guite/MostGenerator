@@ -26,7 +26,7 @@ class GetCountryName {
         /**
          * The «appName.formatForDB»GetCountryName modifier displays the country name for a given country code.
          *
-         * @param string  $countryCode The country code to process.
+         * @param string $countryCode The country code to process.
          *
          * @return string Country name.
          */
@@ -36,6 +36,7 @@ class GetCountryName {
             if ($result === false) {
                 $result = $countryCode;
             }
+
             return $result;
         }
     '''

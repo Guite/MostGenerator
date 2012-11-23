@@ -9,14 +9,14 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
-class SelectorObjectTypes {
+class ObjectTypeSelector {
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        fsa.generateFile(viewPluginFilePath('function', 'SelectorObjectTypes'), selectorObjectTypesFile)
+        fsa.generateFile(viewPluginFilePath('function', 'ObjectTypeSelector'), selectorObjectTypesFile)
     }
 
     def private selectorObjectTypesFile(Application it) '''
@@ -26,17 +26,17 @@ class SelectorObjectTypes {
 
     def private selectorObjectTypesImpl(Application it) '''
         /**
-         * The «appName.formatForDB»SelectorObjectTypes plugin provides items for a dropdown selector.
+         * The «appName.formatForDB»ObjectTypeSelector plugin provides items for a dropdown selector.
          *
          * Available parameters:
-         *   - assign:   If set, the results are assigned to the corresponding variable instead of printed out.
+         *   - assign: If set, the results are assigned to the corresponding variable instead of printed out.
          *
-         * @param  array            $params  All attributes passed to this function from the template.
-         * @param  Zikula_Form_View $view    Reference to the view object.
+         * @param  array            $params All attributes passed to this function from the template.
+         * @param  Zikula_Form_View $view   Reference to the view object.
          *
          * @return string The output of the plugin.
          */
-        function smarty_function_«appName.formatForDB»SelectorObjectTypes($params, $view)
+        function smarty_function_«appName.formatForDB»ObjectTypeSelector($params, $view)
         {
             $result = array();
 
@@ -44,8 +44,10 @@ class SelectorObjectTypes {
 
             if (array_key_exists('assign', $params)) {
                 $view->assign($params['assign'], $result);
+
                 return;
             }
+
             return $result;
         }
     '''

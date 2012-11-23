@@ -84,6 +84,7 @@ class UserInput {
             protected function getStyleClass()
             {
                 $class = parent::getStyleClass();
+
                 return str_replace('z-form-text', 'z-form-user', $class);
             }
 
@@ -119,19 +120,21 @@ class UserInput {
                     $selectorDefaultValue = UserUtil::getVar('uname', intval($this->text));
                 }
 
-                $result = "<div id=\"" . $this->getId() . "LiveSearch\" class=\"«prefix»LiveSearchUser z-hide\">
-                        <img src=\"/images/icons/extrasmall/search.png\" alt=\"" . __('Search user', $dom) . "\" title=\"" . __('Search user', $dom) . "\" width=\"16\" height=\"16\" />
-                        <input type=\"text\" id=\"" . $this->getId() . "Selector\" name=\"" . $this->getId() . "Selector\"{$titleHtml}{$sizeHtml}{$maxLengthHtml}{$readOnlyHtml} class=\"{$class}\" value=\"{$selectorDefaultValue}\"{$attributes} />
-                        <img src=\"/images/ajax/indicator_circle.gif\" alt=\"\" id=\"" . $this->getId() . "Indicator\" style=\"display: none\" width=\"16\" height=\"16\" />
-                        <div id=\"" . $this->getId() . "SelectorChoices\" class=\"«prefix»AutoCompleteUser\"></div>";
+                $searchTitle = __('Search user', $dom);
+                $selectorAttributes = $titleHtml . $sizeHtml . $maxLengthHtml . $readOnlyHtml . ' value="' . $selectorDefaultValue . '" class="' . $class . '"' . $attributes;
+                $result = '<div id="' . $this->getId() . 'LiveSearch" class="«prefix»LiveSearchUser z-hide">
+                        <img src="/images/icons/extrasmall/search.png" alt="' . $searchTitle . '" title="' . $searchTitle . '" width="16" height="16" />
+                        <input type="text" id="' . $this->getId() . 'Selector" name="' . $this->getId() . 'Selector"' . $selectorAttributes . ' />
+                        <img src="/images/ajax/indicator_circle.gif" alt="" id="' . $this->getId() . 'Indicator" style="display: none" width="16" height="16" />
+                        <div id="' . $this->getId() . 'SelectorChoices" class="«prefix»AutoCompleteUser"></div>';
 
                 if ($this->mandatory && $this->mandatorysym) {
                     $result .= '<span class="z-form-mandatory-flag">*</span>';
                 }
 
-                $result .= "</div>";
-                $result .= "<noscript><p>" . __('This function requires JavaScript activated!', $dom) . "</p></noscript>";
-                $result .= "<input type=\"hidden\" id=\"" . $this->getId() . "\" name=\"" . $this->getId() . "\" value=\"" . DataUtil::formatForDisplay($this->text) . "\" />";
+                $result .= '</div>' . "\n";
+                $result .= '<noscript><p>' . __('This function requires JavaScript activated!', $dom) . '</p></noscript>' . "\n";
+                $result .= '<input type="hidden" id="' . $this->getId() . '" name="' . $this->getId() . '" value="' . DataUtil::formatForDisplay($this->text) . '" />' . "\n";
 
                 return $result;
             }
@@ -172,6 +175,7 @@ class UserInput {
                     $uid = intval($this->text);
                     if (UserUtil::getVar('uname', $uid) == null) {
                         $this->setError(__('Error! Invalid user.'));
+
                         return false;
                     }
                 }
@@ -197,8 +201,8 @@ class UserInput {
          * The «appName.formatForDB»UserInput plugin handles fields carrying user ids.
          * It provides an autocomplete for user names.
          *
-         * @param  array            $params  All attributes passed to this function from the template.
-         * @param  Zikula_Form_View $view    Reference to the view object.
+         * @param array            $params  All attributes passed to this function from the template.
+         * @param Zikula_Form_View $view    Reference to the view object.
          *
          * @return string The output of the plugin.
          */

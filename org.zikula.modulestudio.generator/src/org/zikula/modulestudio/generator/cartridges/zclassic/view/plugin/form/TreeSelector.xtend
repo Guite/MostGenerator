@@ -55,42 +55,42 @@ class TreeSelector {
              *
              * @var string
              */
-            public $objectType;
+            protected $objectType = '';
 
             /**
              * Root node id (when using multiple roots).
              *
              * @var integer
              */
-            public $root;
+            protected $root;
 
             /**
              * Name of the field to display.
              *
              * @var string
              */
-            public $displayField = '';
+            protected $displayField = '';
 
             /**
              * Name of optional second field to display.
              *
              * @var string
              */
-            public $displayFieldTwo = '';
+            protected $displayFieldTwo = '';
 
             /**
              * Whether to display an empty value to select nothing.
              *
              * @var boolean
              */
-            public $showEmptyValue = 0;
+            protected $showEmptyValue = false;
 
             /**
              * Get filename of this file.
              *
              * @return string
              */
-            function getFilename()
+            public function getFilename()
             {
                 return __FILE__;
             }
@@ -104,11 +104,10 @@ class TreeSelector {
              * @see    Zikula_Form_Plugin
              * @return void
              */
-            function create($view, &$params)
+            public function create($view, &$params)
             {
                 if (!isset($params['objectType']) || empty($params['objectType'])) {
-                    $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.',
-                                             array('«prefix»TreeSelector', 'objectType')));
+                    $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeSelector', 'objectType')));
                 }
                 $this->objectType = $params['objectType'];
                 unset($params['objectType']);
@@ -116,8 +115,7 @@ class TreeSelector {
                 $this->root = (isset($params['root']) && is_numeric($params['root']) && $params['root'] > 0) ? $params['root'] : 1;
 
                 if (!isset($params['displayField']) || empty($params['displayField'])) {
-                    $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.',
-                                             array('«prefix»TreeSelector', 'displayField')));
+                    $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeSelector', 'displayField')));
                 }
                 $this->displayField = $params['displayField'];
                 unset($params['displayField']);
@@ -126,6 +124,9 @@ class TreeSelector {
                 if (isset($params['displayField2'])) {
                     $this->displayFieldTwo = $params['displayField2'];
                     unset($params['displayField2']);
+                } elseif (isset($params['displayFieldTwo'])) {
+                    $this->displayFieldTwo = $params['displayFieldTwo'];
+                    unset($params['displayFieldTwo']);
                 }
 
                 if (isset($params['showEmptyValue'])) {
@@ -146,9 +147,9 @@ class TreeSelector {
              *
              * @return void
              */
-            function load($view, &$params)
+            public function load($view, &$params)
             {
-                if ($this->showEmptyValue != 0) {
+                if ($this->showEmptyValue != false) {
                     $this->addItem('- - -', 0);
                 }
 

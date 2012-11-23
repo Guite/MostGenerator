@@ -80,7 +80,7 @@ class ContentTypeListView {
 
         <div class="z-formrow">
             {formlabel for='«appName»_objecttype' __text='Object type'}
-            {«appName.formatForDB»SelectorObjectTypes assign='allObjectTypes'}
+            {«appName.formatForDB»ObjectTypeSelector assign='allObjectTypes'}
             {formdropdownlist id='«appName»_objecttype' dataField='objectType' group='data' mandatory=true items=$allObjectTypes}
             <div class="z-sub z-formnote">{gt text='If you change this please save the element once to reload the parameters below.'}</div>
         </div>
@@ -132,7 +132,7 @@ class ContentTypeListView {
 
         <div class="z-formrow">
             {formlabel for='«appName»_template' __text='Template'}
-            {«appName.formatForDB»SelectorTemplates assign='allTemplates'}
+            {«appName.formatForDB»TemplateSelector assign='allTemplates'}
             {formdropdownlist id='«appName»_template' dataField='template' group='data' mandatory=true items=$allTemplates}
         </div>
 
