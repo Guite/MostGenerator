@@ -12,9 +12,9 @@ class FormattingExtensions {
      * @return String without special characters.
      */
     def replaceSpecialChars(String s) {
-        s.replace("Ä", "Ae").replace("ä", "ae").replace("Ö", "Oe")
-         .replace("ö", "oe").replace("Ü", "Ue").replace("ü", "ue")
-         .replace("ß", "ss").replaceAll("[\\W]", "")
+        s.replace('Ä', 'Ae').replace('ä', 'ae').replace('Ö', 'Oe')
+         .replace('ö', 'oe').replace('Ü', 'Ue').replace('ü', 'ue')
+         .replace('ß', 'ss').replaceAll('[\\W]', '')
     }
 
     /**
@@ -63,7 +63,7 @@ class FormattingExtensions {
         for (c : helpChars) {
             val sc = c.toString
             if (sc.matches("[A-Z]")) {
-                result = result + " "
+                result = result + ' '
             }
             result = result + sc.toLowerCase
         }
@@ -89,7 +89,7 @@ class FormattingExtensions {
      * @return String value of given boolean.
      */
     def displayBool(Boolean b) {
-    	if (b) "true"
-    	else "false"
+    	if (b) 'true'
+    	else 'false'
     }
 }

@@ -61,8 +61,7 @@ class Forms {
             «formTemplateHeader(app, controller, actionName)»
             «formTemplateBody(app, controller, actionName, fsa)»
         ''')
-        for (relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app)) relationHelper.generate(relation, app, controller, false, true, fsa)
-        for (relation : getOutgoingJoinRelations.filter(e|e.target.container.application == app)) relationHelper.generate(relation, app, controller, false, false, fsa)
+        relationHelper.generate(it, app, controller, false, fsa)
     }
 
     def private formTemplateHeader(Entity it, Application app, Controller controller, String actionName) '''
@@ -310,15 +309,7 @@ class Forms {
 
         <script type="text/javascript">
         /* <![CDATA[ */
-            var editImage = '<img src="{{$editImageArray.src}}" width="16" height="16" alt="" />';
-            var removeImage = '<img src="{{$deleteImageArray.src}}" width="16" height="16" alt="" />';
-            «val incomingJoins = getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app)»
-            «val outgoingJoins = outgoingJoinRelations.filter(e|e.target.container.application == app)»
-            «IF !incomingJoins.isEmpty || !outgoingJoins.isEmpty»
-                var relationHandler = new Array();
-                «FOR relation : incomingJoins»«relationHelper.initJs(relation, app, it, true, false)»«ENDFOR»
-                «FOR relation : outgoingJoins»«relationHelper.initJs(relation, app, it, false, false)»«ENDFOR»
-            «ENDIF»
+            «relationHelper.initJs(it, app, false)»
 
             document.observe('dom:loaded', function() {
                 «val userFields = getUserFieldsEntity»
@@ -329,8 +320,7 @@ class Forms {
                         «app.prefix»InitUserField('«realName»', 'get«name.formatForCodeCapital»«realName.formatForCodeCapital»Users');
                     «ENDFOR»
                 «ENDIF»
-                «FOR relation : incomingJoins»«relationHelper.initJs(relation, app, it, true, true)»«ENDFOR»
-                «FOR relation : outgoingJoins»«relationHelper.initJs(relation, app, it, false, true)»«ENDFOR»
+                «relationHelper.initJs(it, app, true)»
 
                 «container.application.prefix»AddCommonValidationRules('«name.formatForCode»', '{{if $mode eq 'create'}}{{else}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
 

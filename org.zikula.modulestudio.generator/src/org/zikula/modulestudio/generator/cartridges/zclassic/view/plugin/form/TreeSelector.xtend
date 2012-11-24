@@ -48,15 +48,8 @@ class TreeSelector {
          * This plugin creates a nested tree selector using a dropdown list.
          * The selected value of the base dropdown list will be set to ID of the selected tree node.
          */
-        class «appName»_Form_Plugin_Base_TreeSelector extends Zikula_Form_Plugin_DropdownList
+        class «appName»_Form_Plugin_Base_TreeSelector extends «appName»_Form_Plugin_AbstractObjectSelector
         {
-            /**
-             * The treated object type.
-             *
-             * @var string
-             */
-            protected $objectType = '';
-
             /**
              * Root node id (when using multiple roots).
              *
@@ -65,25 +58,25 @@ class TreeSelector {
             protected $root;
 
             /**
-             * Name of the field to display.
-             *
-             * @var string
-             */
-            protected $displayField = '';
-
-            /**
-             * Name of optional second field to display.
-             *
-             * @var string
-             */
-            protected $displayFieldTwo = '';
-
-            /**
-             * Whether to display an empty value to select nothing.
+             * Whether leaf nodes should be included or not.
              *
              * @var boolean
              */
-            protected $showEmptyValue = false;
+            protected $includeLeafNodes = true;
+
+            /**
+             * Whether the root node should be included or not.
+             *
+             * @var boolean
+             */
+            protected $includeRootNode = false;
+
+            /**
+             * Reference to the tree repository.
+             *
+             * @var Doctrine\ORM\EntityRepository
+             */
+            protected $repository = null;
 
             /**
              * Get filename of this file.
@@ -106,102 +99,87 @@ class TreeSelector {
              */
             public function create($view, &$params)
             {
-                if (!isset($params['objectType']) || empty($params['objectType'])) {
-                    $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeSelector', 'objectType')));
-                }
-                $this->objectType = $params['objectType'];
-                unset($params['objectType']);
-
                 $this->root = (isset($params['root']) && is_numeric($params['root']) && $params['root'] > 0) ? $params['root'] : 1;
-
-                if (!isset($params['displayField']) || empty($params['displayField'])) {
-                    $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('«appName.formatForDB»TreeSelector', 'displayField')));
-                }
-                $this->displayField = $params['displayField'];
-                unset($params['displayField']);
-
-                $this->displayFieldTwo = '';
-                if (isset($params['displayField2'])) {
-                    $this->displayFieldTwo = $params['displayField2'];
-                    unset($params['displayField2']);
-                } elseif (isset($params['displayFieldTwo'])) {
-                    $this->displayFieldTwo = $params['displayFieldTwo'];
-                    unset($params['displayFieldTwo']);
-                }
-
-                if (isset($params['showEmptyValue'])) {
-                    $this->showEmptyValue = $params['showEmptyValue'];
-                    unset($params['showEmptyValue']);
-                }
+                $this->includeLeafNodes = isset($params['includeLeaf']) ? $params['includeLeaf'] : true;
+                $this->includeRootNode = isset($params['includeRoot']) ? $params['includeRoot'] : false;
 
                 parent::create($view, $params);
 
-                $this->cssClass .= ' z-form-nestedsetlist';
+                $entityManager = ServiceUtil::getManager()->getService('doctrine.entitymanager');
+                $this->repository = $entityManager->getRepository($this->name . '_Entity_' . ucfirst($this->objectType));
             }
 
             /**
-             * Load event handler.
-             *
-             * @param Zikula_Form_View $view    Reference to Form render object.
-             * @param array            &$params Parameters passed from the Smarty plugin function.
-             *
-             * @return void
+             * Entry point for customised css class.
              */
-            public function load($view, &$params)
+            protected function getStyleClass()
             {
-                if ($this->showEmptyValue != false) {
-                    $this->addItem('- - -', 0);
-                }
+                return 'z-form-nestedsetlist';
+            }
 
-                $includeLeaf = isset($params['includeLeaf']) ? $params['includeLeaf'] : true;
-                $includeRoot = isset($params['includeRoot']) ? $params['includeRoot'] : false;
-
-                $treeNodes = array();
-
-                $serviceManager = ServiceUtil::getManager();
-                $entityManager = $serviceManager->getService('doctrine.entitymanager');
-                $repository = $entityManager->getRepository('«appName»_Entity_' . ucfirst($this->objectType));
-
-                $apiArgs = array('ot' => $this->objectType);
-                $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', $apiArgs);
-
-                $apiArgs['rootId'] = $this->root;
-                $treeNodes = ModUtil::apiFunc('«appName»', 'selection', 'getTree', $apiArgs);
+            /**
+             * Performs the actual data selection.
+             *
+             * @param array &$params Parameters passed from the Smarty plugin function.
+             *
+             * @return array List of selected objects.
+             */
+            protected function loadItems(&$params)
+            {
+                $apiArgs = array('ot' => $this->objectType
+                                 'rootId' => $this->root);
+                $treeNodes = ModUtil::apiFunc($this->name, 'selection', 'getTree', $apiArgs);
                 if (!$treeNodes) {
-                    $treeNodes = array();
+                    return array();
                 }
 
-                foreach ($treeNodes as $node) {
-                    $nodeLevel = $node->getLvl();
-                    if (!$includeRoot && $nodeLevel == 0) {
-                        // if we do not include the root node skip it
-                        continue;
-                    }
-                    if (!$includeLeaf && $repository->childCount($node) == 0) {
-                        // if we do not include leaf nodes skip them
-                        continue;
-                    }
+                return $treeNodes;
+            }
 
-                    // determine current list hierarchy level depending on root node inclusion
-                    $shownLevel = (($includeRoot) ? $nodeLevel : $nodeLevel - 1);
+            /**
+             * Determines whether a certain list item should be included or not.
+             * Allows to exclude undesired items after the selection has happened.
+             *
+             * @param Doctrine\ORM\Entity $item The treated entity.
+             *
+             * @return boolean Whether this entity should be included into the list.
+             */
+            protected function isIncluded($item)
+            {
+                $nodeLevel = $item->getLvl();
 
-                    // create the visible text for this entry
-                    $itemLabel = str_repeat('- - ', $shownLevel) . $node[$this->displayField];
-                    if (!empty($this->displayFieldTwo)) {
-                        $itemLabel .= ' (' . $node[$this->displayFieldTwo] . ')';
-                    }
-
-                    // create concatenated list of identifiers (for composite keys)
-                    $itemId = '';
-                    foreach ($idFields as $idField) {
-                        $itemId .= ((!empty($itemId)) ? '_' : '') . $node[$idField];
-                    }
-
-                    // add entity to selector list entries
-                    $this->addItem($itemLabel, $itemId);
+                if (!$this->includeRootNode && $nodeLevel == 0) {
+                    // if we do not include the root node skip it
+                    return false;
                 }
 
-                parent::load($view, $params);
+                if (!$this->includeLeafNodes && $this->repository->childCount($item) == 0) {
+                    // if we do not include leaf nodes skip them
+                    return false;
+                }
+
+                return true;
+            }
+
+            /**
+             * Calculates the label for a certain list item.
+             *
+             * @param Doctrine\ORM\Entity $item The treated entity.
+             *
+             * @return string The created label string.
+             */
+            protected function createItemLabel($item)
+            {
+                // determine current list hierarchy level depending on root node inclusion
+                $shownLevel = $item->getLvl();
+                if (!$this->includeRootNode) {
+                    $shownLevel--;
+                }
+                $praefix = str_repeat('- - ', $shownLevel);
+
+                $itemLabel = $praefix . parent::createItemLabel($item);
+
+                return $itemLabel;
             }
         }
     '''

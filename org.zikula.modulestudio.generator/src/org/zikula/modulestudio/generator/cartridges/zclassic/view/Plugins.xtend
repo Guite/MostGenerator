@@ -14,6 +14,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.Templat
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeJS
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TreeSelection
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ValidationError
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.AbstractObjectSelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.ColourInput
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.CountrySelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.Frame
@@ -33,51 +34,65 @@ class Plugins {
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        new ActionUrl().generate(it, fsa)
-        new ObjectTypeSelector().generate(it, fsa)
-        new TemplateSelector().generate(it, fsa)
-        new TemplateHeaders().generate(it, fsa)
+        viewPlugins(fsa)
         if (hasEditActions) {
-            new Frame().generate(it, fsa)
+            editPlugins(fsa)
             new ValidationError().generate(it, fsa)
+        }
+        otherPlugins(fsa)
+    }
+
+    def private viewPlugins(Application it, IFileSystemAccess fsa) {
+        new ActionUrl().generate(it, fsa)
+        new TemplateHeaders().generate(it, fsa)
+        if (hasCountryFields) {
+            new GetCountryName().generate(it, fsa)
         }
         if (hasUploads) {
             new GetFileSize().generate(it, fsa)
         }
-        if (hasTrees) {
-            new TreeJS().generate(it, fsa)
-            if (hasEditActions) {
-                new TreeSelector().generate(it, fsa)
-            }
-            new TreeSelection().generate(it, fsa)
-        }
-        new ItemSelector().generate(it, fsa)
-        if (hasColourFields && hasEditActions) {
-            new ColourInput().generate(it, fsa)
-        }
-        if (hasCountryFields) {
-            if (hasEditActions) {
-                new CountrySelector().generate(it, fsa)
-            }
-            new GetCountryName().generate(it, fsa)
-        }
         if (hasListFields) {
             new GetListEntry().generate(it, fsa)
         }
-        if (hasUserFields) {
-            if (hasEditActions) {
-                new UserInput().generate(it, fsa)
-            }
-        }
         if (getAllEntities.exists(e|e.geographical)) {
-            if (hasEditActions) {
-                new GeoInput().generate(it, fsa)
-            }
             new FormatGeoData().generate(it, fsa)
         }
-        if (hasEditActions && !models.map(e|e.relations).flatten.toList.empty) {
+        if (hasTrees) {
+            new TreeJS().generate(it, fsa)
+            new TreeSelection().generate(it, fsa)
+        }
+    }
+
+    def private editPlugins(Application it, IFileSystemAccess fsa) {
+        new Frame().generate(it, fsa)
+        if (hasColourFields) {
+            new ColourInput().generate(it, fsa)
+        }
+        if (hasCountryFields) {
+            new CountrySelector().generate(it, fsa)
+        }
+        if (getAllEntities.exists(e|e.geographical)) {
+            new GeoInput().generate(it, fsa)
+        }
+        val hasRelations = (!models.map(e|e.relations).flatten.toList.empty)
+        if (hasTrees || hasRelations) {
+            new AbstractObjectSelector().generate(it, fsa)
+        }
+        if (hasTrees) {
+            new TreeSelector().generate(it, fsa)
+        }
+        if (!models.map(e|e.relations).flatten.toList.empty) {
             new RelationSelectorList().generate(it, fsa)
             new RelationSelectorAutoComplete().generate(it, fsa)
         }
+        if (hasUserFields) {
+            new UserInput().generate(it, fsa)
+        }
+    }
+
+    def private otherPlugins(Application it, IFileSystemAccess fsa) {
+        new ItemSelector().generate(it, fsa)
+        new ObjectTypeSelector().generate(it, fsa)
+        new TemplateSelector().generate(it, fsa)
     }
 }

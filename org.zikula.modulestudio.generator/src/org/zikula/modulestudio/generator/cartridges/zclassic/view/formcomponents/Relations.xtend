@@ -6,7 +6,6 @@ import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
-import de.guite.modulestudio.metamodel.modulestudio.OneToOneRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -27,170 +26,122 @@ class Relations {
     @Inject extension ViewExtensions = new ViewExtensions()
     @Inject extension Utils = new Utils()
 
-    IFileSystemAccess fsa
+    Application app
+    Controller controller
 
     /**
      * Entry point for form sections treating related objects.
-     * Note many-to-many is handled in a separate define further down.
      * If onlyInclude is true then only the Smarty include is created, otherwise the included file.
      */
-    def dispatch generate(JoinRelationship it, Application app, Controller controller, Boolean onlyInclude, Boolean incoming, IFileSystemAccess fsa) {
-        this.fsa = fsa
+    def generate(Entity it, Application app, Controller controller, Boolean onlyInclude, IFileSystemAccess fsa) {
+        this.app = app
+        this.controller = controller
+        for (relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app)) relation.generate(onlyInclude, true, fsa)
+        for (relation : getOutgoingJoinRelations.filter(e|e.target.container.application == app)) relation.generate(onlyInclude, false, fsa)
+    }
+
+    def private generate(JoinRelationship it, Boolean onlyInclude, Boolean incoming, IFileSystemAccess fsa) {
         val stageCode = getEditStageCode(incoming)
-        /* Look if we have to do anything by checking stage codes which represent different edit behaviors*/
-        if ((!incoming && stageCode == 2) || (incoming && (stageCode == 1 || stageCode == 3))) {
-            if (!incoming) {
-                /* Exclude parent view for 1:1 and 1:n for now - see https://github.com/Guite/MostGenerator/issues/10*/
-                /* activeParentImpl(app, controller, onlyInclude) */
-            } else {
-                passiveChildImpl(app, controller, onlyInclude, stageCode)
-            }
+        if (stageCode < 1) {
+            return ''''''
         }
-    }
 
-    /**
-     * Parent/active/source view for 1:1 and 1:n.
-     * Not used yet because of https://github.com/Guite/MostGenerator/issues/10
-     *
-    def private activeParentImpl(JoinRelationship it, Application app, Controller controller, Boolean onlyInclude) {
-        if (onlyInclude) {
-            val relationAliasName = getRelationAliasName(true).formatForCodeCapital
-            val many = isManySide(true)
-            val uniqueNameForJs = getUniqueRelationNameForJs(app, target, many, true, relationAliasName)
-            '''
-                {include file='«controller.formattedName»/«target.name.formatForCode»/include_createChildItem«getTargetMultiplicity».tpl' aliasName='«relationAliasName.toFirstLower»' idPrefix='«uniqueNameForJs»'«IF source.useGroupingPanels('edit')» panel=true«ENDIF»}
-            '''
-        } else {
-            println('Generating ' + controller.formattedName + ' edit inclusion templates for entity "' + target.name.formatForDisplay + '"')
-            val usePlural = (!tempIsOneToOne)
-            val templateFileName = templateFile(controller, target.name, 'include_createChildItem' + getTargetMultiplicity)
-            fsa.generateFile(templateFileName, '''
-                {* purpose of this template: inclusion template for managing related «target.getEntityNameSingularPlural(usePlural).formatForDisplay» in «controller.formattedName» area *}
-                {if isset($panel) && $panel eq true}
-                    <h3 class="«ownEntity.nameMultiple.formatForDB» z-panel-header z-panel-indicator z-pointer">{gt text='«target.getEntityNameSingularPlural(usePlural).formatForDisplayCapital»'}</h3>
-                    <fieldset class="«target.getEntityNameSingularPlural(usePlural).formatForDB» z-panel-content" style="display: none">
-                {else}
-                    <fieldset class="«target.getEntityNameSingularPlural(usePlural).formatForDB»">
-                {/if}
-                    <legend>{gt text='«target.getEntityNameSingularPlural(usePlural).formatForDisplayCapital»'}</legend>
-                    <div class="z-formrow">
-                        «component_ParentEditing(app, controller, target, usePlural)»
-                    </div>
-                </fieldset>
-            ''')
+        val useTarget = !incoming
+        if (useTarget && !isManyToMany) {
+            /* Exclude parent view for 1:1 1:n and n:1 for now - see https://github.com/Guite/MostGenerator/issues/10 */
+            return ''''''
         }
-    }
-*/
-    /**
-     * Child/passive/target view for 1:1 and 1:n.
-     */
-    def private passiveChildImpl(JoinRelationship it, Application app, Controller controller, Boolean onlyInclude, Integer stageCode) {
-        val hasEdit = (stageCode == 3)
+
+        val hasEdit = (stageCode > 1)
         val editSnippet = if (hasEdit) 'Edit' else ''
-        if (onlyInclude) {
-            val relationAliasName = getRelationAliasName(false).formatForCodeCapital
-            val many = isManySide(false)
-            val uniqueNameForJs = getUniqueRelationNameForJs(app, target, many, false, relationAliasName)
-            '''
-                {include file='«controller.formattedName»/«source.name.formatForCode»/include_select«editSnippet»One.tpl' relItem=$«target.name.formatForDB» aliasName='«relationAliasName.toFirstLower»' idPrefix='«uniqueNameForJs»'«IF target.useGroupingPanels('edit')» panel=true«ENDIF»}
-            '''
+
+        var templateName = ''
+        if (useTarget && !isManyToMany) {
+            //templateName = 'include_createChildItem'
         } else {
-            println('Generating ' + controller.formattedName + ' edit inclusion templates for entity "' + source.name.formatForDisplay + '"')
-            val templateFileName = templateFile(controller, source.name, 'include_select' + editSnippet + 'One')
-            val usePlural = (!tempIsOneToOne)
-            fsa.generateFile(templateFileName, '''
-                {* purpose of this template: inclusion template for managing related «source.getEntityNameSingularPlural(usePlural).formatForDisplay» in «controller.formattedName» area *}
-                    {if isset($panel) && $panel eq true}
-                        <h3 class="«source.name.formatForDB» z-panel-header z-panel-indicator z-pointer">{gt text='«source.name.formatForDisplayCapital»'}</h3>
-                        <fieldset class="«source.name.formatForDB» z-panel-content" style="display: none">
-                    {else}
-                        <fieldset class="«source.name.formatForDB»">
-                    {/if}
-                    <legend>{gt text='«source.name.formatForDisplayCapital»'}</legend>
-                    <div class="z-formrow">
-                        «component_AutoComplete(app, controller, source, false, true, (hasEdit))»
-                    </div>
-                </fieldset>
-            ''')
-            val templateFileNameInclude = templateFile(controller, source.name, 'include_select' + editSnippet + 'ItemListOne')
-            fsa.generateFile(templateFileNameInclude, component_ItemList(app, controller, source, false, true, (stageCode == 3)))
+            templateName = 'include_select' + editSnippet
         }
-    }
+        templateName = templateName + getTargetMultiplicity(useTarget)
+        var templateNameItemList = 'include_select' + editSnippet + 'ItemList' + getTargetMultiplicity(useTarget)
 
-    def private tempIsOneToOne(JoinRelationship it) {
-        switch it {
-            OneToOneRelationship: true
-            default: false
-        }
-    }
-
-    def dispatch generate(ManyToManyRelationship it, Application app, Controller controller, Boolean onlyInclude, Boolean incoming, IFileSystemAccess fsa) {
-        this.fsa = fsa
-        val stageCode = getEditStageCode(incoming)
-        val hasEdit = (stageCode == 3)
-        val editSnippet = if (hasEdit) 'Edit' else ''
         val ownEntity = if (incoming) source else target
         val otherEntity = if (!incoming) source else target
-        if (stageCode == 1 || stageCode == 3) {
-            if (onlyInclude) {
-                val relationAliasName = getRelationAliasName(!incoming).formatForCodeCapital
-                val many = isManySide(!incoming)
-                val uniqueNameForJs = getUniqueRelationNameForJs(app, otherEntity, many, incoming, relationAliasName)
-                '''
-                {include file='«controller.formattedName»/«ownEntity.name.formatForCode»/include_select«editSnippet»Many.tpl' relItem=$«otherEntity.name.formatForDB» aliasName='«relationAliasName.toFirstLower»' idPrefix='«uniqueNameForJs»'«IF otherEntity.useGroupingPanels('edit')» panel=true«ENDIF»}
-                '''
-            } else {
-                println('Generating ' + controller.formattedName + ' edit inclusion templates for entity "' + ownEntity.name.formatForDisplay + '"')
-                fsa.generateFile(templateFile(controller, ownEntity.name, 'include_select' + editSnippet + 'Many'), '''
-                    {* purpose of this template: inclusion template for managing related «ownEntity.nameMultiple.formatForDisplayCapital» in «controller.formattedName» area *}
-                    {if isset($panel) && $panel eq true}
-                        <h3 class="«ownEntity.nameMultiple.formatForDB» z-panel-header z-panel-indicator z-pointer">{gt text='«ownEntity.nameMultiple.formatForDisplayCapital»'}</h3>
-                        <fieldset class="«ownEntity.nameMultiple.formatForDB» z-panel-content" style="display: none">
-                    {else}
-                        <fieldset class="«ownEntity.nameMultiple.formatForDB»">
-                    {/if}
-                        <legend>{gt text='«ownEntity.nameMultiple.formatForDisplayCapital»'}</legend>
-                        <div class="z-formrow">
-                            «manyToManyHandling(app, controller, otherEntity, ownEntity, incoming, stageCode)»
-                        </div>
-                    </fieldset>
-                ''')
-                fsa.generateFile(templateFile(controller, ownEntity.name, 'include_select' + editSnippet + 'ItemListMany'),
-                    component_ItemList(app, controller, ownEntity, true, incoming, hasEdit)
-                )
-            }
+        val many = isManySide(useTarget)
+
+        if (onlyInclude) {
+            val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital
+            val incomingForUniqueRelationName = if (!isManyToMany) useTarget else incoming
+            val uniqueNameForJs = getUniqueRelationNameForJs(app, otherEntity, many, incomingForUniqueRelationName, relationAliasName)
+            return includeStatementForEditTemplate(templateName, ownEntity, otherEntity, incoming, relationAliasName, uniqueNameForJs, hasEdit)
         }
+
+        // onlyInclude is false here, lets create the templates
+        println('Generating ' + controller.formattedName + ' edit inclusion templates for entity "' + ownEntity.name.formatForDisplay + '"')
+        val templateFileName = templateFile(controller, ownEntity.name, templateName)
+        val templateFileNameItemList = templateFile(controller, ownEntity.name, templateNameItemList)
+        fsa.generateFile(templateFileName, includedEditTemplate(ownEntity, otherEntity, incoming, hasEdit, many))
+        fsa.generateFile(templateFileNameItemList, component_ItemList(ownEntity, many, incoming, hasEdit))
     }
 
-    def private manyToManyHandling(ManyToManyRelationship it, Application app, Controller controller, Entity source, Entity target, Boolean incoming, Integer stageCode) {
-        component_AutoComplete(app, controller, target, true, incoming, (stageCode == 3))
-    }
+    def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Entity ownEntity, Entity linkingEntity, Boolean incoming, String relationAliasName, String uniqueNameForJs, Boolean hasEdit) '''
+        {include file='«controller.formattedName»/«ownEntity.name.formatForCode»/«templateName».tpl' group='«linkingEntity.name.formatForDB»' alias='«relationAliasName.toFirstLower»' mandatory=«(!nullable).displayBool» idPrefix='«uniqueNameForJs»' linkingItem=$«linkingEntity.name.formatForDB»«IF ownEntity.useGroupingPanels('edit')» panel=true«ENDIF» displayMode='«IF !usesAutoCompletion(!incoming)»dropdown«ELSE»autocomplete«ENDIF»' allowEditing=«hasEdit.displayBool»}
+    '''
 
-    def private component_AutoComplete(JoinRelationship it, Application app, Controller controller, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
-        <div class="«app.prefix»RelationRightSide">
-            <a id="{$idPrefix}AddLink" href="javascript:void(0);" class="z-hide">{gt text='«IF !many»Select«ELSE»Add«ENDIF» «targetEntity.name.formatForDisplay»'}</a>
-            <div id="{$idPrefix}AddFields">
-                <label for="{$idPrefix}Selector">{gt text='Find «targetEntity.name.formatForDisplay»'}</label>
-                <br />
-                {icon type='search' size='extrasmall' __alt='Search «targetEntity.name.formatForDisplay»'}
-                <input type="text" name="{$idPrefix}Selector" id="{$idPrefix}Selector" value="" />
-                <input type="hidden" name="{$idPrefix}Scope" id="{$idPrefix}Scope" value="«IF !many»0«ELSE»1«ENDIF»" />
-                {img src='indicator_circle.gif' modname='core' set='ajax' alt='' id="`$idPrefix`Indicator" style='display: none'}
-                <div id="{$idPrefix}SelectorChoices" class="«app.prefix»AutoComplete«IF targetEntity.hasImageFieldsEntity»WithImage«ENDIF»"></div>
-                <input type="button" id="{$idPrefix}SelectorDoCancel" name="{$idPrefix}SelectorDoCancel" value="{gt text='Cancel'}" class="z-button «app.prefix»InlineButton" />
-                «IF includeEditing»
-                    <a id="{$idPrefix}SelectorDoNew" href="{modurl modname='«app.appName»' type='«controller.formattedName»' func='edit' ot='«targetEntity.name.formatForCode»'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Create new «targetEntity.name.formatForDisplay»'}" class="z-button «app.prefix»InlineButton">{gt text='Create'}</a>
+    def private includedEditTemplate(JoinRelationship it, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
+        «val ownEntityName = ownEntity.getEntityNameSingularPlural(many)»
+        {* purpose of this template: inclusion template for managing related «ownEntityName.formatForDisplay» in «controller.formattedName» area *}
+        {if !isset($displayMode)}
+            {assign var='displayMode' value='dropdown'}
+        {/if}
+        {if !isset($allowEditing)}
+            {assign var='allowEditing' value=false}
+        {/if}
+        {if isset($panel) && $panel eq true}
+            <h3 class="«ownEntityName.formatForDB» z-panel-header z-panel-indicator z-pointer">{gt text='«ownEntityName.formatForDisplayCapital»'}</h3>
+            <fieldset class="«ownEntityName.formatForDB» z-panel-content" style="display: none">
+        {else}
+            <fieldset class="«ownEntityName.formatForDB»">
+        {/if}
+            <legend>{gt text='«ownEntityName.formatForDisplayCapital»'}</legend>
+            <div class="z-formrow">
+        «val pluginAttributes = formPluginAttributes(ownEntity, ownEntityName, ownEntity.name.formatForCode, many)»
+        «val appnameLower = container.application.appName.formatForDB»
+            {if $displayMode eq 'dropdown'}
+                {formlabel for=$alias __text='Choose «ownEntityName.formatForDisplay»'«IF !nullable» mandatorysym='1'«ENDIF»}
+                {«appnameLower»RelationSelectorList «pluginAttributes»}
+            {elseif $displayMode eq 'autocomplete'}
+                «IF !isManyToMany && !incoming»
+                    «component_ParentEditing(ownEntity, many)»
+                «ELSE»
+                    {assign var='createLink' value=''}
+                    {if $allowEditing eq true}
+                        {modurl modname='«app.appName»' type='«controller.formattedName»' func='edit' ot='«ownEntity.name.formatForCode»'«controller.additionalUrlParametersForQuickViewLink» assign='createLink'}
+                    {/if}
+                    {«appnameLower»RelationSelectorAutoComplete «pluginAttributes» idPrefix=$idPrefix createLink=$createLink selectedEntityName='«ownEntityName.formatForDisplay»' withImage=«ownEntity.hasImageFieldsEntity.displayBool»}
+                    «component_AutoComplete(ownEntity, many, incoming, hasEdit)»
                 «ENDIF»
+            {/if}
             </div>
-            <noscript><p>{gt text='This function requires JavaScript activated!'}</p></noscript>
-        </div>
-        <div class="«app.prefix»RelationLeftSide">
-            «val includeStatement = component_AutoCompleteIncludeStatement(controller, targetEntity, many, incoming, includeEditing)»
-            {if isset($userSelection.$aliasName) && $userSelection.$aliasName ne ''}
-                {* the user has submitted something *}
-                {«includeStatement» item«IF many»s«ENDIF»=$userSelection.$aliasName}
-            {elseif $mode ne 'create' || isset($relItem.$aliasName)}
-                {«includeStatement» item«IF many»s«ENDIF»=$relItem.$aliasName}
+        </fieldset>
+    '''
+
+    def private formPluginAttributes(JoinRelationship it, Entity ownEntity, String ownEntityName, String objectType, Boolean many) '''group=$group id=$alias mandatory=$mandatory __title='Choose the «ownEntityName.formatForDisplay»' selectionMode='«IF many»multiple«ELSE»single«ENDIF»' objectType='«objectType»' linkingItem=$linkingItem'''
+
+    def private component_ParentEditing(JoinRelationship it, Entity targetEntity, Boolean many) '''
+        «/*just a reminder for the parent view which is not tested yet (see #10)
+            Example: create children (e.g. an address) while creating a parent (e.g. a new customer).
+            Problem: address must know the customerid.
+            TODO: only for $mode ne create: 
+                <p>TODO ADD: button to create «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» with inline editing (form dialog)</p>
+                <p>TODO EDIT: display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» with inline editing (form dialog)</p>
+        */»
+    '''
+
+    def private component_AutoComplete(JoinRelationship it, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
+        <div class="«app.prefix()»RelationLeftSide">
+            «val includeStatement = component_IncludeStatementForAutoCompleterItemList(targetEntity, many, incoming, includeEditing)»
+            {if isset($linkingItem.$alias}
+                {«includeStatement» item«IF many»s«ENDIF»=$linkingItem.$alias}
             {else}
                 {«includeStatement»}
             {/if}
@@ -198,17 +149,17 @@ class Relations {
         <br class="z-clearer" />
     '''
 
-    def private component_AutoCompleteIncludeStatement(JoinRelationship it, Controller controller, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
+    def private component_IncludeStatementForAutoCompleterItemList(JoinRelationship it, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
         include file='«controller.formattedName»/«targetEntity.name.formatForCode»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' '''
 
-    def private component_ItemList(JoinRelationship it, Application app, Controller controller, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
+    def private component_ItemList(JoinRelationship it, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
         {* purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» in «controller.formattedName» area *}
         «IF includeEditing»
             {icon type='edit' size='extrasmall' assign='editImageArray'}
-            {assign var="editImage" value="<img src=\"`$editImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
+            {assign var='editImage' value="<img src=\"`$editImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
         «ENDIF»
         {icon type='delete' size='extrasmall' assign='removeImageArray'}
-        {assign var="removeImage" value="<img src=\"`$removeImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
+        {assign var='removeImage' value="<img src=\"`$removeImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
 
         <input type="hidden" id="{$idPrefix}ItemList" name="{$idPrefix}ItemList" value="{if isset($item«IF many»s«ENDIF») && (is_array($item«IF many»s«ENDIF») || is_object($item«IF many»s«ENDIF»))«IF !many»«FOR pkField : targetEntity.getPrimaryKeyFields» && isset($item.«pkField.name.formatForCode»)«ENDFOR»«ENDIF»}«IF many»{foreach name='relLoop' item='item' from=$items}«ENDIF»«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»«IF many»{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}«ENDIF»{/if}" />
         <input type="hidden" id="{$idPrefix}Mode" name="{$idPrefix}Mode" value="«IF includeEditing»1«ELSE»0«ENDIF»" />
@@ -244,45 +195,57 @@ class Relations {
         {/if}
         </ul>
     '''
-/*
-    def private component_ParentEditing(JoinRelationship it, Application app, Controller controller, Entity targetEntity, Boolean many) '''
-        «/*just a reminder for the parent view which is not tested yet (see #10)
-            Example: create children (e.g. an address) while creating a parent (e.g. a new customer).
-            Problem: address must know the customerid.
-            TODO: only for $mode ne create: 
-                <p>TODO ADD: button to create «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» with inline editing (form dialog)</p>
-                <p>TODO EDIT: display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» with inline editing (form dialog)</p>
-        *-/»
+
+    def initJs(Entity it, Application app, Boolean insideLoader) '''
+        «val incomingJoins = getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app && e.usesAutoCompletion(false))»
+        «val outgoingJoins = outgoingJoinRelations.filter(e|e.target.container.application == app && e.usesAutoCompletion(true))»
+        «IF !incomingJoins.isEmpty || !outgoingJoins.isEmpty»
+            «IF !insideLoader»
+                var editImage = '<img src="{{$editImageArray.src}}" width="16" height="16" alt="" />';
+                var removeImage = '<img src="{{$deleteImageArray.src}}" width="16" height="16" alt="" />';
+                var relationHandler = new Array();
+            «ENDIF»
+            «FOR relation : incomingJoins»«relation.initJs(app, it, true, insideLoader)»«ENDFOR»
+            «FOR relation : outgoingJoins»«relation.initJs(app, it, false, insideLoader)»«ENDFOR»
+        «ENDIF»
     '''
-*/
-    def initJs(JoinRelationship it, Application app, Entity targetEntity, Boolean incoming, Boolean insideLoader) {
+
+    def private initJs(JoinRelationship it, Application app, Entity targetEntity, Boolean incoming, Boolean insideLoader) {
         val stageCode = getEditStageCode(incoming)
-        /*Look if we have to do anything by checking stage codes which represent different edit behaviors*/
-        if ((!incoming && stageCode == 2) || ((incoming || tempInitJsIsManyToMany) && (stageCode == 1 || stageCode == 3))) {
-            /*Exclude parent view for 1:1 and 1:n for now - see https://github.com/Guite/MostGenerator/issues/10*/
-            if (incoming || tempInitJsIsManyToMany) {
-                val relationAliasName = getRelationAliasName(!incoming).formatForCodeCapital
-                val many = (!incoming || tempInitJsIsManyToMany)
-                val uniqueNameForJs = getUniqueRelationNameForJs(app, targetEntity, many, incoming, relationAliasName)
-                val linkEntity = if (targetEntity == target) source else target
-                if (!insideLoader) '''
-                    var newItem = new Object();
-                    newItem.ot = '«linkEntity.name.formatForCode»';
-                    newItem.alias = '«relationAliasName.formatForCodeCapital»';
-                    newItem.prefix = '«uniqueNameForJs»SelectorDoNew';
-                    newItem.moduleName = '«linkEntity.container.application.appName»';
-                    newItem.acInstance = null;
-                    newItem.windowInstance = null;
-                    relationHandler.push(newItem);
-                '''
-                else '''
-                    «app.prefix»InitRelationItemsForm('«linkEntity.name.formatForCode»', '«uniqueNameForJs»', «IF stageCode > 1»true«ELSE»false«ENDIF»);
-                '''
-            }
+        if (stageCode < 1) {
+            return ''''''
         }
+
+        val useTarget = !incoming
+        if (useTarget && !isManyToMany) {
+            /* Exclude parent view for 1:1 and 1:n for now - see https://github.com/Guite/MostGenerator/issues/10 */
+            return ''''''
+        }
+
+        if (!usesAutoCompletion(useTarget)) {
+            return ''''''
+        }
+
+        val relationAliasName = getRelationAliasName(!incoming).formatForCodeCapital
+        val many = isManySide(useTarget)
+        val uniqueNameForJs = getUniqueRelationNameForJs(app, targetEntity, many, incoming, relationAliasName)
+        val linkEntity = if (targetEntity == target) source else target
+        if (!insideLoader) '''
+            var newItem = new Object();
+            newItem.ot = '«linkEntity.name.formatForCode»';
+            newItem.alias = '«relationAliasName»';
+            newItem.prefix = '«uniqueNameForJs»SelectorDoNew';
+            newItem.moduleName = '«linkEntity.container.application.appName»';
+            newItem.acInstance = null;
+            newItem.windowInstance = null;
+            relationHandler.push(newItem);
+        '''
+        else '''
+            «app.prefix»InitRelationItemsForm('«linkEntity.name.formatForCode»', '«uniqueNameForJs»', «(stageCode > 1).displayBool»);
+        '''
     }
 
-    def private tempInitJsIsManyToMany(JoinRelationship it) {
+    def private isManyToMany(JoinRelationship it) {
         switch it {
             ManyToManyRelationship: true
             default: false

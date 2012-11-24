@@ -39,6 +39,7 @@ class Utils {
      * Returns the formatted name of the application.
      *
      * @param it The {@link Application} instance
+     *
      * @return String The formatted name.
      */
     def appName(Application it) {
@@ -49,6 +50,7 @@ class Utils {
      * Returns the lowercase application-specific prefix.
      *
      * @param it The {@link Application} instance
+     *
      * @return String The prefix.
      */
     def prefix(Application it) {
@@ -59,6 +61,7 @@ class Utils {
      * Checks whether any variables are part of the model or not.
      *
      * @param it The {@link Application} instance
+     *
      * @return Boolean The result.
      */
     def needsConfig(Application it) {
@@ -69,6 +72,7 @@ class Utils {
      * Checks whether there exist multiple variables containers.
      *
      * @param it The {@link Application} instance
+     *
      * @return Boolean The result.
      */
     def hasMultipleConfigSections(Application it) {
@@ -79,6 +83,7 @@ class Utils {
      * Returns the variables containers sorted by their sort order.
      *
      * @param it The {@link Application} instance
+     *
      * @return List<Variables> The selected list.
      */
     def getSortedVariableContainers(Application it) {
@@ -89,6 +94,7 @@ class Utils {
      * Returns all variables containers for a given application.
      *
      * @param it The {@link Application} instance
+     *
      * @return List<Variables> The selected list.
      */
     def getAllVariableContainers(Application it) {
@@ -99,6 +105,7 @@ class Utils {
      * Returns all variables for a given application.
      *
      * @param it The {@link Application} instance
+     *
      * @return List<Variable> The selected list.
      */
     def getAllVariables(Application it) {
@@ -110,6 +117,7 @@ class Utils {
      *
      * @param name The given name
      * @param suffix The given suffix
+     *
      * @return String The concatenated identifier.
      */
     def templateIdWithSuffix(String name, String suffix) {

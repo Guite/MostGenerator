@@ -13,6 +13,7 @@ import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.OneToOneRelationship
 import de.guite.modulestudio.metamodel.modulestudio.RelationFetchType
 import de.guite.modulestudio.metamodel.modulestudio.Relationship
+import de.guite.modulestudio.metamodel.modulestudio.RelationAutoCompletionUsage
 
 /**
  * This class contains model join relationship related extension methods.
@@ -218,11 +219,25 @@ class ModelJoinExtensions {
     /**
      * Returns a constant for the multiplicity of the target side of a join relationship.
      */
-    def getTargetMultiplicity(JoinRelationship it) {
+    def getTargetMultiplicity(JoinRelationship it, Boolean useTarget) {
         switch it {
             OneToOneRelationship: 'One'
-            ManyToOneRelationship: 'One'
-            default: 'Many' // OneToMany, ManyToMany
+            OneToManyRelationship: if (!useTarget) 'One' else 'Many'
+            ManyToOneRelationship: if (!useTarget) 'Many' else 'One'
+            default: 'Many' // ManyToMany
+        }
+    }
+
+    /**
+     * Checks for whether a certain relationship side has a multiplicity of one or many.
+     */
+    def usesAutoCompletion(JoinRelationship it, boolean useTarget) {
+        switch it.useAutoCompletion {
+            case RelationAutoCompletionUsage::NONE: false
+            case RelationAutoCompletionUsage::ONLY_SOURCE_SIDE: !useTarget
+            case RelationAutoCompletionUsage::ONLY_TARGET_SIDE: useTarget
+            case RelationAutoCompletionUsage::BOTH_SIDES: true
+            default: throw new Exception('Unknown auto completion state detected.')
         }
     }
 

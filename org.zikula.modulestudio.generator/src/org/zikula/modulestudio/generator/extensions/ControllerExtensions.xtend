@@ -188,19 +188,19 @@ class ControllerExtensions {
     def dispatch getEditStageCode(JoinRelationship it, Boolean incoming) {
         switch editType {
             case RelationEditType::ACTIVE_NONE_PASSIVE_CHOOSE:
-                if (incoming) 1 else 0
+                if (!incoming) 0 else 1
             case RelationEditType::ACTIVE_NONE_PASSIVE_EDIT:
-                if (incoming) 3 else 0
+                if (!incoming) 0 else 3
             case RelationEditType::ACTIVE_CHOOSE_PASSIVE_NONE:
-                if (incoming) 3 else 2 // invalid --> default as fallback
+                if (!incoming) 2 else 3 // invalid --> default as fallback
             case RelationEditType::ACTIVE_EDIT_PASSIVE_CHOOSE:
-                if (incoming) 1 else 2
+                if (!incoming) 2 else 1
             case RelationEditType::ACTIVE_EDIT_PASSIVE_EDIT:
-                if (incoming) 3 else 2 // default
+                if (!incoming) 2 else 3 // default
             case RelationEditType::ACTIVE_EDIT_PASSIVE_NONE:
-                if (incoming) 3 else 2 // invalid --> default as fallback
+                if (!incoming) 2 else 3 // invalid --> default as fallback
             default:
-                if (incoming) 3 else 2
+                if (!incoming) 2 else 3
         }
     }
 
@@ -216,19 +216,19 @@ class ControllerExtensions {
     def dispatch getEditStageCode(ManyToManyRelationship it, Boolean incoming) {
         switch editType {
             case RelationEditType::ACTIVE_NONE_PASSIVE_CHOOSE:
-                if (incoming) 1 else 0
+                if (!incoming) 0 else 1
             case RelationEditType::ACTIVE_NONE_PASSIVE_EDIT:
-                if (incoming) 3 else 0
+                if (!incoming) 0 else 3
             case RelationEditType::ACTIVE_CHOOSE_PASSIVE_NONE:
-                if (incoming) 0 else 1
+                if (!incoming) 1 else 0
             case RelationEditType::ACTIVE_EDIT_PASSIVE_CHOOSE:
-                if (incoming) 1 else 3
+                if (!incoming) 3 else 1
             case RelationEditType::ACTIVE_EDIT_PASSIVE_EDIT:
-                if (incoming) 3 else 3 // default
+                if (!incoming) 3 else 3 // default
             case RelationEditType::ACTIVE_EDIT_PASSIVE_NONE:
-                if (incoming) 0 else 3
+                if (!incoming) 3 else 0
             default:
-                if (incoming) 3 else 3
+                if (!incoming) 3 else 3
         }
     }
 

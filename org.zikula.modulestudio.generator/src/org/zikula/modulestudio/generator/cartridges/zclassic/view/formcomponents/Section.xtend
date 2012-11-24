@@ -8,7 +8,6 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
@@ -16,7 +15,6 @@ class Section {
     @Inject extension ControllerExtensions = new ControllerExtensions()
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
     @Inject extension ViewExtensions = new ViewExtensions()
     @Inject extension Utils = new Utils()
 
@@ -56,8 +54,7 @@ class Section {
         «IF categorisable»
             {include file='«controller.formattedName»/include_categories_edit.tpl' obj=$«name.formatForDB» groupName='«name.formatForDB»Obj'«IF useGroupingPanels('edit')» panel=true«ENDIF»}
         «ENDIF»
-        «FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app)»«relationHelper.generate(relation, app, controller, true, true, fsa)»«ENDFOR»
-        «FOR relation : getOutgoingJoinRelations.filter(e|e.target.container.application == app)»«relationHelper.generate(relation, app, controller, true, false, fsa)»«ENDFOR»
+        «relationHelper.generate(it, app, controller, true, fsa)»
         «IF metaData»
             {include file='«controller.formattedName»/include_metadata_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
         «ENDIF»

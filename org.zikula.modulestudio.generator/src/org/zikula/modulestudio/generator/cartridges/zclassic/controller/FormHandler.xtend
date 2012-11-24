@@ -7,42 +7,45 @@ import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler.Config
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler.OwningRelation
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler.Redirect
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler.UploadProcessing
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
-import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler.Relations
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler.Redirect
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler.UploadProcessing
 
 class FormHandler {
     @Inject extension ControllerExtensions = new ControllerExtensions()
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
 
     FileHelper fh = new FileHelper()
     Redirect redirectHelper = new Redirect()
-    Relations relationHelper = new Relations()
+    OwningRelation owningHelper = new OwningRelation()
+
+    Application app
+    Controller controller
 
     /**
      * Entry point for Form handler classes.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        for (action : getEditActions) action.generate(it, fsa)
+        app = it
+        for (action : getEditActions) action.generate(fsa)
         new Config().generate(it, fsa)
     }
 
-    def private generate(Action it, Application app, IFileSystemAccess fsa) {
-        controller.generate(app, 'edit', fsa)
-        for (entity : app.getAllEntities) entity.generate(app, controller, 'edit', fsa)
+    def private generate(Action it, IFileSystemAccess fsa) {
+        this.controller = it.controller
+        this.controller.generate('edit', fsa)
+        for (entity : app.getAllEntities) entity.generate('edit', fsa)
     }
 
     def formCreate(Action it, String appName, Controller controller, String actionName) '''
@@ -58,7 +61,7 @@ class FormHandler {
     /**
      * Entry point for generic Form handler base classes.
      */
-    def private generate(Controller it, Application app, String actionName, IFileSystemAccess fsa) {
+    def private generate(Controller it, String actionName, IFileSystemAccess fsa) {
         println('Generating "' + name + '" form handler base class')
         fsa.generateFile(app.appName.appSourcePath + baseClassFormHandler(actionName).asFile, formHandlerCommonBaseFile(app, actionName))
         fsa.generateFile(app.appName.appSourcePath + implClassFormHandler(actionName).asFile, formHandlerCommonFile(app, actionName))
@@ -66,35 +69,35 @@ class FormHandler {
 
     def private formHandlerCommonBaseFile(Controller it, Application app, String actionName) '''
         «fh.phpFileHeader(app)»
-        «formHandlerCommonBaseImpl(app, actionName)»
+        «formHandlerCommonBaseImpl(actionName)»
     '''
 
     def private formHandlerCommonFile(Controller it, Application app, String actionName) '''
         «fh.phpFileHeader(app)»
-        «formHandlerCommonImpl(app, actionName)»
+        «formHandlerCommonImpl(actionName)»
     '''
 
     /**
      * Entry point for Form handler classes per entity.
      */
-    def private generate(Entity it, Application app, Controller controller, String actionName, IFileSystemAccess fsa) {
+    def private generate(Entity it, String actionName, IFileSystemAccess fsa) {
         println('Generating "' + controller.formattedName + '" form handler classes for "' + name + '_' + actionName + '"')
-        fsa.generateFile(app.appName.appSourcePath + baseClassFormHandler(controller, name, actionName).asFile, formHandlerBaseFile(app, controller, actionName))
-        fsa.generateFile(app.appName.appSourcePath + implClassFormHandler(controller, name, actionName).asFile, formHandlerFile(app, controller, actionName))
+        fsa.generateFile(app.appName.appSourcePath + baseClassFormHandler(controller, name, actionName).asFile, formHandlerBaseFile(actionName))
+        fsa.generateFile(app.appName.appSourcePath + implClassFormHandler(controller, name, actionName).asFile, formHandlerFile(actionName))
     }
 
-    def private formHandlerBaseFile(Entity it, Application app, Controller controller, String actionName) '''
+    def private formHandlerBaseFile(Entity it, String actionName) '''
         «fh.phpFileHeader(app)»
-        «formHandlerBaseImpl(app, controller, actionName)»
+        «formHandlerBaseImpl(actionName)»
     '''
 
-    def private formHandlerFile(Entity it, Application app, Controller controller, String actionName) '''
+    def private formHandlerFile(Entity it, String actionName) '''
         «fh.phpFileHeader(app)»
-        «formHandlerImpl(app, controller, actionName)»
+        «formHandlerImpl(actionName)»
     '''
 
 
-    def private formHandlerCommonBaseImpl(Controller it, Application app, String actionName) '''
+    def private formHandlerCommonBaseImpl(Controller it, String actionName) '''
         /**
          * This handler class handles the page events of the Form called by the «formatForCode(app.appName + '_' + formattedName + '_' + actionName)»() function.
          * It collects common functionality required by different object types.
@@ -119,143 +122,180 @@ class FormHandler {
         class «baseClassFormHandler(it, actionName)» extends Zikula_Form_AbstractHandler
         {
             /**
-             * Persistent member vars
-             */
-
-            /**
-             * @var string Name of treated object type.
+             * Name of treated object type.
+             *
+             * @var string
              */
             protected $objectType;
 
             /**
-             * @var string Name of treated object type starting with upper case.
+             * Name of treated object type starting with upper case.
+             *
+             * @var string
              */
             protected $objectTypeCapital;
 
             /**
-             * @var string Lower case version.
+             * Lower case version.
+             *
+             * @var string
              */
             protected $objectTypeLower;
 
             /**
-             * @var string Lower case name of multiple items (needed for hook areas).
+             * Lower case name of multiple items (needed for hook areas).
+             *
+             * @var string
              */
             protected $objectTypeLowerMultiple;
 
             /**
-             * @var string Permission component based on object type.
+             * Permission component based on object type.
+             *
+             * @var string
              */
             protected $permissionComponent;
 
             /**
-             * @var Zikula_EntityAccess Reference to treated entity instance.
+             * Reference to treated entity instance.
+             *
+             * @var Zikula_EntityAccess
              */
             protected $entityRef = false;
 
             /**
-             * @var array List of identifier names.
+             * List of identifier names.
+             *
+             * @var array
              */
             protected $idFields = array();
 
             /**
-             * @var array List of identifiers of treated entity.
+             * List of identifiers of treated entity.
+             *
+             * @var array
              */
             protected $idValues = array();
+            «owningHelper.memberFields(it)»
 
             /**
-             * @var mixed List of identifiers for incoming relationships.
-             */
-            protected $incomingIds = array();
-
-            /**
-             * @var string One of "create" or "edit".
+             * One of "create" or "edit".
+             *
+             * @var string
              */
             protected $mode;
 
             /**
-             * @var string Code defining the redirect goal after command handling.
+             * Code defining the redirect goal after command handling.
+             *
+             * @var string
              */
             protected $returnTo = null;
 
             /**
-             * @var boolean Whether a create action is going to be repeated or not.
+             * Whether a create action is going to be repeated or not.
+             *
+             * @var boolean
              */
             protected $repeatCreateAction = false;
 
             /**
-             * @var string Url of current form with all parameters for multiple creations.
+             * Url of current form with all parameters for multiple creations.
+             *
+             * @var string
              */
             protected $repeatReturnUrl = null;
 
             /**
-             * @var string Whether this form is being used inline within a window.
+             * Whether this form is being used inline within a window.
+             *
+             * @var boolean
              */
             protected $inlineUsage = false;
 
             /**
-             * @var string Full prefix for related items.
+             * Full prefix for related items.
+             *
+             * @var string
              */
             protected $idPrefix = '';
 
             /**
-             * @var boolean Whether an existing item is used as template for a new one
+             * @Whether an existing item is used as template for a new one.
+             *
+             * var boolean
              */
             protected $hasTemplateId = false;
 
             /**
-             * @var boolean Whether the PageLock extension is used for this entity type or not.
+             * Whether the PageLock extension is used for this entity type or not.
+             *
+             * @var boolean
              */
             protected $hasPageLockSupport = false;
             «IF app.hasAttributableEntities»
 
                 /**
-                 * @var boolean Whether the entity has attributes or not.
+                 * Whether the entity has attributes or not.
+                 *
+                 * @var boolean
                  */
                 protected $hasAttributes = false;
             «ENDIF»
             «IF app.hasCategorisableEntities»
 
                 /**
-                 * @var boolean Whether the entity is categorisable or not.
+                 * Whether the entity is categorisable or not.
+                 *
+                 * @var boolean
                  */
                 protected $hasCategories = false;
             «ENDIF»
             «IF app.hasMetaDataEntities»
 
                 /**
-                 * @var boolean Whether the entity has meta data or not.
+                 * Whether the entity has meta data or not.
+                 *
+                 * @var boolean
                  */
                 protected $hasMetaData = false;
             «ENDIF»
             «IF app.hasTranslatable»
 
                 /**
-                 * @var boolean Whether the entity has translatable fields or not.
+                 * Whether the entity has translatable fields or not.
+                 *
+                 * @var boolean
                  */
                 protected $hasTranslatableFields = false;
             «ENDIF»
             «IF app.hasUploads»
 
                 /**
-                 * @var array Array with upload fields names and mandatory flags.
+                 * Array with upload field names and mandatory flags.
+                 *
+                 * @var array
                  */
                 protected $uploadFields = array();
             «ENDIF»
             «IF app.hasUserFields»
 
                 /**
-                 * @var array Array with user fields names and mandatory flags.
+                 * Array with user field names and mandatory flags.
+                 *
+                 * @var array
                  */
                 protected $userFields = array();
             «ENDIF»
             «IF app.hasListFields»
 
                 /**
-                 * @var array Array with list fields names and multiple flags.
+                 * Array with list field names and multiple flags.
+                 *
+                 * @var array
                  */
                 protected $listFields = array();
             «ENDIF»
-
 
 
             /**
@@ -276,16 +316,7 @@ class FormHandler {
             {
             }
 
-            «initialize(app, actionName)»
-
-            /**
-             * Method stub for own additions in subclasses.
-             *
-             * @depreciated to be removed in favour of postInitialize().
-             */
-            protected function initializeAdditions()
-            {
-            }
+            «initialize(actionName)»
 
             /**
              * Post-initialise hook.
@@ -300,23 +331,19 @@ class FormHandler {
                 $this->view->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
             }
 
-            «relationHelper.retrieveRelatedObjects(it, app)»
-
             «redirectHelper.getRedirectCodes(it, app, actionName)»
 
-            «handleCommand(app, actionName)»
+            «handleCommand(actionName)»
 
-            «fetchInputData(app, actionName)»
+            «fetchInputData(actionName)»
 
-            «performUpdate(app, actionName)»
-
-            «relationHelper.reassignRelatedObjects(it)»
+            «performUpdate(actionName)»
 
             «new UploadProcessing().generate(it)»
         }
     '''
 
-    def private initialize(Controller it, Application app, String actionName) '''
+    def private initialize(Controller it, String actionName) '''
         /**
          * Initialize form handler.
          *
@@ -352,7 +379,6 @@ class FormHandler {
 
             if ($this->mode == 'edit') {
                 if (!SecurityUtil::checkPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_EDIT)) {
-                    // set an error message and return false
                     return LogUtil::registerPermissionError();
                 }
 
@@ -426,36 +452,11 @@ class FormHandler {
         }
 
         /**
-         * Decode a list of concatenated identifier strings (for composite keys).
-         * This method is used for reading selected relationships.
-         *
-         * @param Array $itemIds List of concatenated identifiers.
-         * @param Array $idFields List of identifier names.
-         * @return Array with list of single identifiers. 
-         */
-        protected function decodeCompositeIdentifier($itemIds, $idFields)
-        {
-            $idValues = array();
-            foreach ($idFields as $idField) {
-                $idValues[$idField] = array();
-            }
-            foreach ($itemIds as $itemId) {
-                $itemIdParts = explode('_', $itemId);
-                $i = 0;
-                foreach ($idFields as $idField) {
-                    $idValues[$idField][] = $itemIdParts[$i];
-                    $i++;
-                }
-            }
-
-            return $idValues;
-        }
-
-        /**
          * Enrich a given args array for easy creation of display urls with composite keys.
          *
          * @param Array $args List of arguments to be extended.
-         * @return Array enriched arguments list. 
+         *
+         * @return Array Enriched arguments list. 
          */
         protected function addIdentifiersToUrlArgs($args = array())
         {
@@ -607,7 +608,7 @@ class FormHandler {
         «ENDIF»
     '''
 
-    def private handleCommand(Controller it, Application app, String actionName) '''
+    def private handleCommand(Controller it, String actionName) '''
         /**
          * Command event handler.
          *
@@ -885,7 +886,7 @@ class FormHandler {
         }
     '''
 
-    def private fetchInputData(Controller it, Application app, String actionName) '''
+    def private fetchInputData(Controller it, String actionName) '''
         /**
          * Input data processing called by handleCommand method.
          *
@@ -997,11 +998,11 @@ class FormHandler {
         }
     '''
 
-    def private performUpdate(Controller it, Application app, String actionName) '''
+    def private performUpdate(Controller it, String actionName) '''
         /**
          * Executing insert and update statements
          *
-         * @param Array   $args    arguments from handleCommand method.
+         * @param Array $args Arguments from handleCommand method.
          */
         public function performUpdate($args)
         {
@@ -1010,7 +1011,7 @@ class FormHandler {
     '''
 
 
-    def private formHandlerCommonImpl(Controller it, Application app, String actionName) '''
+    def private formHandlerCommonImpl(Controller it, String actionName) '''
         /**
          * This handler class handles the page events of the Form called by the «formatForCode(app.appName + '_' + formattedName + '_' + actionName)»() function.
          * It collects common functionality required by different object types.
@@ -1024,7 +1025,7 @@ class FormHandler {
 
 
 
-    def private formHandlerBaseImpl(Entity it, Application app, Controller controller, String actionName) '''
+    def private formHandlerBaseImpl(Entity it, String actionName) '''
         «IF hasOptimisticLock || hasPessimisticReadLock || hasPessimisticWriteLock»
             use Doctrine\DBAL\LockMode;
             «IF hasOptimisticLock»
@@ -1040,10 +1041,6 @@ class FormHandler {
          */
         class «baseClassFormHandler(controller, name, actionName)» extends «implClassFormHandler(controller, actionName)»
         {
-            /**
-             * Persistent member vars
-             */
-
             /**
              * Pre-initialise hook.
              *
@@ -1085,7 +1082,7 @@ class FormHandler {
                 «ENDIF»
             }
 
-            «initialize(app, controller, actionName)»
+            «initialize(actionName)»
 
             /**
              * Post-initialise hook.
@@ -1101,22 +1098,16 @@ class FormHandler {
 
             «redirectHelper.getDefaultReturnUrl(it, app, controller, actionName)»
 
-            «handleCommand(it, app, controller, actionName)»
+            «handleCommand(it, actionName)»
 
-            «fetchInputData(it, app, controller, actionName)»
-
-            «performUpdate(it, app, controller, actionName)»
+            «performUpdate(it, actionName)»
 
             «redirectHelper.getRedirectUrl(it, app, controller, actionName)»
-
-            «relationHelper.reassignRelatedObjects(it)»
-
-            «relationHelper.updateRelationLinks(it)»
         }
     '''
 
 
-    def private formHandlerImpl(Entity it, Application app, Controller controller, String actionName) '''
+    def private formHandlerImpl(Entity it, String actionName) '''
         /**
          * This handler class handles the page events of the Form called by the «formatForCode(app.appName + '_' + controller.formattedName + '_' + actionName)»() function.
          * It aims on the «name.formatForDisplay» object type.
@@ -1128,7 +1119,7 @@ class FormHandler {
     '''
 
 
-    def private initialize(Entity it, Application app, Controller controller, String actionName) '''
+    def private initialize(Entity it, String actionName) '''
         /**
          * Initialize form handler.
          *
@@ -1143,19 +1134,12 @@ class FormHandler {
             parent::initialize($view);
 
             $entity = $this->entityRef;
+            «IF hasOptimisticLock»
 
-            if ($this->mode == 'edit') {
-                «IF hasOptimisticLock»
+                if ($this->mode == 'edit') {
                     SessionUtil::setVar($this->name . 'EntityVersion', $entity->get«getVersionField.name.formatForCodeCapital»());
-                «ENDIF»
-            } else {
-                if ($this->hasTemplateId !== true) {
-                    «FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app)»«relationHelper.initRelatedObjectDefault(relation, true)»«ENDFOR»
-                    «FOR relation : getOutgoingJoinRelations.filter(e|e.target.container.application == app)»«relationHelper.initRelatedObjectDefault(relation, false)»«ENDFOR»
                 }
-            }
-
-            «relationHelper.incomingInitialisation(it)»
+            «ENDIF»
 
             // save entity reference for later reuse
             $this->entityRef = $entity;
@@ -1177,14 +1161,14 @@ class FormHandler {
             // assign data to template as array (makes translatable support easier)
             $this->view->assign($this->objectTypeLower, $entityData);
 
-            $this->initializeAdditions();
+            «owningHelper.initOwningAssociation(it)»
 
             // everything okay, no initialization errors occured
             return true;
         }
     '''
 
-    def private handleCommand(Entity it, Application app, Controller controller, String actionName) '''
+    def private handleCommand(Entity it, String actionName) '''
         /**
          * Command event handler.
          *
@@ -1208,8 +1192,9 @@ class FormHandler {
         /**
          * Get success or error message for default operations.
          *
-         * @param Array   $args    arguments from handleCommand method.
-         * @param Boolean $success true if this is a success, false for default error.
+         * @param Array   $args    Arguments from handleCommand method.
+         * @param Boolean $success Becomes true if this is a success, false for default error.
+         *
          * @return String desired status or error message.
          */
         protected function getDefaultMessage($args, $success = false)
@@ -1235,45 +1220,11 @@ class FormHandler {
         }
     '''
 
-    def private fetchInputData(Entity it, Application app, Controller controller, String actionName) '''
-        /**
-         * Input data processing called by handleCommand method.
-         *
-         * @param Zikula_Form_View $view The form view instance.
-         * @param array            $args Additional arguments.
-         *
-         * @return array form data after processing.
-         */
-        public function fetchInputData(Zikula_Form_View $view, &$args)
-        {
-            $otherFormData = parent::fetchInputData($view, $args);
-
-            // get treated entity reference from persisted member var
-            $entity = $this->entityRef;
-
-            $entityData = array();
-
-            $this->reassignRelatedObjects();
-            «FOR relation : getIncomingJoinRelationsWithoutManyToMany.filter(e|e.source.container.application == app)»«relationHelper.fetchRelationValue(relation, true)»«ENDFOR»
-
-            // assign fetched data
-            if (count($entityData) > 0) {
-                $entity->merge($entityData);
-            }
-
-            // save updated entity
-            $this->entityRef = $entity;
-
-            return $otherFormData;
-        }
-    '''
-
-
-    def private performUpdate(Entity it, Application app, Controller controller, String actionName) '''
+    def private performUpdate(Entity it, String actionName) '''
         /**
          * Executing insert and update statements
          *
-         * @param Array   $args    arguments from handleCommand method.
+         * @param Array $args Arguments from handleCommand method.
          */
         public function performUpdate($args)
         {
@@ -1288,7 +1239,7 @@ class FormHandler {
                         $this->entityManager->lock($entity, LockMode::OPTIMISTIC, $expectedVersion);
                     }
             «ENDIF»
-            $this->updateRelationLinks($entity);
+
             //$this->entityManager->transactional(function($entityManager) {
             «IF hasPessimisticWriteLock»
                 $this->entityManager->lock($entity, LockMode::«lockType.asConstant»);
@@ -1301,22 +1252,7 @@ class FormHandler {
                     echo $this->__('Sorry, but someone else has already changed this record. Please apply the changes again!');
                 }
             «ENDIF»
-            «val uniOwningAssociations = getIncomingJoinRelations.filter(e|!e.bidirectional).filter(e|e.source.container.application == app)»
-            «IF !uniOwningAssociations.isEmpty»
-
-                // save incoming relationship from parent entity
-                if ($args['commandName'] == 'create') {
-                «FOR uniOwningAssociation : uniOwningAssociations»
-                    if (!empty($this->incomingIds['«uniOwningAssociation.getRelationAliasName(false)»'])) {
-                        $relObj = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => '«uniOwningAssociation.source.name.formatForCode»', 'id' => $this->incomingIds['«uniOwningAssociation.getRelationAliasName(false)»']));
-                        if ($relObj != null) {
-                            $relObj->add«uniOwningAssociation.getRelationAliasName(true).toFirstUpper»($entity);
-                        }
-                    }
-                «ENDFOR»
-                    $this->entityManager->flush();
-                }
-            «ENDIF»
+            «owningHelper.saveOwningAssociation(it, app)»
         }
     '''
 }
