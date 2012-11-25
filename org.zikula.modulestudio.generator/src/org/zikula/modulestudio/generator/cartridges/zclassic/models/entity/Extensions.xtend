@@ -342,23 +342,23 @@ class Extensions {
     }
 
     def private extensionClassBaseFile(Entity it, Application app, String classType) '''
-    	«fh.phpFileHeader(app)»
-    	«extensionClassBaseImpl(it, app, classType)»
+        «fh.phpFileHeader(app)»
+        «extensionClassBaseImpl(it, app, classType)»
     '''
 
     def private extensionClassFile(Entity it, Application app, String classType) '''
-    	«fh.phpFileHeader(app)»
-    	«extensionClassImpl(it, app, classType)»
+        «fh.phpFileHeader(app)»
+        «extensionClassImpl(it, app, classType)»
     '''
 
     def private extensionClassRepositoryBaseFile(Entity it, Application app, String classType) '''
-    	«fh.phpFileHeader(app)»
-    	«extensionClassRepositoryBaseImpl(it, app, classType)»
+        «fh.phpFileHeader(app)»
+        «extensionClassRepositoryBaseImpl(it, app, classType)»
     '''
 
     def private extensionClassRepositoryFile(Entity it, Application app, String classType) '''
-    	«fh.phpFileHeader(app)»
-    	«extensionClassRepositoryImpl(it, app, classType)»
+        «fh.phpFileHeader(app)»
+        «extensionClassRepositoryImpl(it, app, classType)»
     '''
 
     def private extensionClassBaseImpl(Entity it, Application app, String classType) '''

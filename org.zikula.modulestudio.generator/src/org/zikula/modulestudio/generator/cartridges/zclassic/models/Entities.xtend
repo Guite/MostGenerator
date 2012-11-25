@@ -79,13 +79,13 @@ class Entities {
     }
 
     def private modelEntityBaseFile(Entity it, Application app) '''
-    	«fh.phpFileHeader(app)»
-    	«modelEntityBaseImpl(app)»
+        «fh.phpFileHeader(app)»
+        «modelEntityBaseImpl(app)»
     '''
 
     def private modelEntityFile(Entity it, Application app) '''
-    	«fh.phpFileHeader(app)»
-    	«modelEntityImpl(app)»
+        «fh.phpFileHeader(app)»
+        «modelEntityImpl(app)»
     '''
 
     def private modelEntityBaseImpl(Entity it, Application app) '''

@@ -112,54 +112,57 @@ class Property {
     '''
 
     def private persistentPropertyImpl(DerivedField it, String type) {
-    	switch (it) {
-    		DecimalField: '''type="«type»", precision=«it.length», scale=«it.scale»'''
-    		TextField: '''type="«type»", length=«it.length»'''
-    		StringField:
-    		    '''«/*type="«type»", */»length=«it.length»'''
-    		EmailField:
-    		    '''«/*type="«type»", */»length=«it.length»'''
-    		UrlField:
-    		    '''«/*type="«type»", */»length=«it.length»'''
-    		UploadField:
-    		    '''«/*type="«type»", */»length=«it.length»'''
-    		ListField:
-    		    '''«/*type="«type»", */»length=«it.length»'''
-    		default: '''type="«type»"'''
-    	}
+        switch (it) {
+            DecimalField: '''type="«type»", precision=«it.length», scale=«it.scale»'''
+            TextField: '''type="«type»", length=«it.length»'''
+            StringField:
+                '''«/*type="«type»", */»length=«it.length»'''
+            EmailField:
+                '''«/*type="«type»", */»length=«it.length»'''
+            UrlField:
+                '''«/*type="«type»", */»length=«it.length»'''
+            UploadField:
+                '''«/*type="«type»", */»length=«it.length»'''
+            ListField:
+                '''«/*type="«type»", */»length=«it.length»'''
+            default: '''type="«type»"'''
+        }
     }
 
     def private persistentPropertyAdditions(DerivedField it) {
-    	switch (it) {
-    	    IntegerField:
+        switch (it) {
+            IntegerField:
                 if (it.version && entity.hasOptimisticLock) '''
                  * @ORM\Version
                 '''
-    	    DatetimeField:
+            DatetimeField:
                 if (it.version && entity.hasOptimisticLock) '''
                  * @ORM\Version
                 '''
-    	}
+        }
     }
 
     def private defaultFieldData(EntityField it) {
-    	switch (it) {
-    		BooleanField:
-    		    if (it.defaultValue == true || it.defaultValue == 'true') 'true' else 'false'
-    	    AbstractIntegerField:
-    	        if (it.defaultValue != null && it.defaultValue.length > 0) it.defaultValue else '0'
-    	    DecimalField:
-    	        if (it.defaultValue != null && it.defaultValue.length > 0) it.defaultValue else '0.00'
-    	    ArrayField: 'array()'
-    	    ObjectField: 'null'
-    	    AbstractStringField: if (it.defaultValue != null && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'\''
-    	    AbstractDateField:
+        switch (it) {
+            BooleanField:
+                if (it.defaultValue == true || it.defaultValue == 'true') 'true' else 'false'
+            AbstractIntegerField:
+                if (it.defaultValue != null && it.defaultValue.length > 0) it.defaultValue else '0'
+            DecimalField:
+                if (it.defaultValue != null && it.defaultValue.length > 0) it.defaultValue else '0.00'
+            ArrayField: 'array()'
+            ObjectField: 'null'
+            AbstractStringField: if (it.defaultValue != null && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'\''
+            ListField: if (it.defaultValue != null && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'' + it.defaultFieldDataItems + '\''
+            AbstractDateField:
                 if (it.mandatory && it.defaultValue != null && it.defaultValue.length > 0 && it.defaultValue != 'now') '\'' + it.defaultValue + '\'' else 'null'
-    	    FloatField:
-    	        if (it.defaultValue != null && it.defaultValue.length > 0) it.defaultValue else '0'
-    	    default: '\'\''
-    	}
+            FloatField:
+                if (it.defaultValue != null && it.defaultValue.length > 0) it.defaultValue else '0'
+            default: '\'\''
+        }
     }
+
+    def dispatch defaultFieldDataItems(ListField it) '''«FOR defaultItem : items.filter(e|e.^default) SEPARATOR '###'»«defaultItem.value»«ENDFOR»'''
 
     def private fieldAccessorDefault(DerivedField it) '''
         «IF isIndexByField»

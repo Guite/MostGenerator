@@ -69,24 +69,24 @@ class Association {
     '''
 
     def private dispatch incomingMappingDescription(JoinRelationship it, String sourceName, String targetName) {
-    	switch it {
+        switch it {
             OneToOneRelationship: '''One «targetName» [«target.name.formatForDisplay»] is linked by one «sourceName» [«source.name.formatForDisplay»] (INVERSE SIDE)'''
             OneToManyRelationship: '''Many «targetName» [«target.nameMultiple.formatForDisplay»] are linked by one «sourceName» [«source.name.formatForDisplay»] (OWNING SIDE)'''
-    	    default: ''
-    	}
+            default: ''
+        }
     }
     def private incomingMappingDetails(JoinRelationship it) {
-    	switch it {
+        switch it {
             OneToOneRelationship case it.primaryKey: ''' * @ORM\Id'''
-    	    default: ''
-    	}
+            default: ''
+        }
     }
     def private incomingMappingType(JoinRelationship it) {
-    	switch it {
+        switch it {
             OneToOneRelationship: 'OneToOne'
             OneToManyRelationship: 'ManyToOne'
-    	    default: ''
-    	}
+            default: ''
+        }
     }
 
     def private dispatch incoming(ManyToOneRelationship it, String sourceName, String targetName, String entityClass) '''
@@ -136,18 +136,18 @@ class Association {
     '''
 
     def private dispatch outgoingMappingDescription(JoinRelationship it, String sourceName, String targetName) {
-    	switch (it) {
+        switch (it) {
             OneToOneRelationship: '''One «sourceName» [«source.name.formatForDisplay»] has one «targetName» [«target.name.formatForDisplay»] (INVERSE SIDE)'''
             ManyToOneRelationship: '''Many «sourceName» [«source.nameMultiple.formatForDisplay»] have one «targetName» [«target.name.formatForDisplay»] (OWNING SIDE)'''
-    	    default: ''
-    	}
+            default: ''
+        }
     }
     def private outgoingMappingType(JoinRelationship it) {
-    	switch (it) {
+        switch (it) {
             OneToOneRelationship: 'OneToOne'
             ManyToOneRelationship: 'ManyToOne'
-    	    default: ''
-    	}
+            default: ''
+        }
     }
 
     def private dispatch outgoingMappingAdditions(JoinRelationship it) ''''''
@@ -200,7 +200,7 @@ class Association {
         val joinColumnsForeign = { if (useTarget) getTargetFields else getSourceFields }
         val foreignTableName = fullJoinTableName(useTarget, joinedEntityForeign)
         if (joinColumnsForeign.containsDefaultIdField(joinedEntityForeign) && joinColumnsLocal.containsDefaultIdField(joinedEntityLocal)
-   	    && !unique && nullable && onDelete == '') ''' * @ORM\JoinTable(name="«foreignTableName»")'''
+           && !unique && nullable && onDelete == '') ''' * @ORM\JoinTable(name="«foreignTableName»")'''
         else ''' * @ORM\JoinTable(name="«foreignTableName»",
         «joinTableDetails(useTarget)»
          * )'''
