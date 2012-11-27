@@ -193,7 +193,7 @@ class ControllerUtil {
                         «ENDFOR»
                     }
 
-                    return $basePath;
+                    return DataUtil::formatForOS($basePath);
                 }
 
                 /**
