@@ -157,7 +157,7 @@ class UserLogin {
          * Occurs right after a successful attempt to log in, and just prior to redirecting the user to the desired page.
          * All handlers are notified.
          *
-         * The event subject contains the user's user record (from `UserUtil::getVars($event['uid'])`).
+         * The event subject contains the user's user record.
          * The arguments of the event are as follows:
          *     `'authentication_module'` an array containing the authenticating module name (`'modname'`) and method (`'method'`) 
          *       used to log the user in.
@@ -196,7 +196,7 @@ class UserLogin {
          *
          * Occurs right after an unsuccessful attempt to log in. All handlers are notified.
          *
-         * The event subject contains the user's user record (from `UserUtil::getVars($event['uid'])`) if it has been found, otherwise null.
+         * The event subject contains the user's user record if it has been found, otherwise null.
          * The arguments of the event are as follows:
          * `'authentication_module'` an array containing the authenticating module name (`'modname'`) and method (`'method'`) 
          *   used to log the user in.
