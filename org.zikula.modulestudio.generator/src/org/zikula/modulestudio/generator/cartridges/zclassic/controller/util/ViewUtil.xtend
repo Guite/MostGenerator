@@ -130,11 +130,11 @@ class ViewUtil {
 
                 $extParams = $this->availableExtensions($type, $objectType, $func, $args);
                 foreach ($extParams as $extension) {
-                    $templateVar = 'use' . $extension . 'ext';
-                    $extensionCheck = (isset($args[$templateVar]) && !empty($templateVar)) ? $templateVar : 0;
+                    $extensionVar = 'use' . $extension . 'ext';
+                    $extensionCheck = (isset($args[$extensionVar]) && !empty($extensionVar)) ? $extensionVar : 0;
                     if ($extensionCheck != 1) {
-                        $extensionCheck = (int)FormUtil::getPassedValue('use' . $extension . 'ext', 0, 'GET', FILTER_VALIDATE_INT);
-                        //$extensionCheck = (int)$this->request->query->filter('use' . $extension . 'ext', 0, FILTER_VALIDATE_INT);
+                        $extensionCheck = (int)FormUtil::getPassedValue($extensionVar, 0, 'GET', FILTER_VALIDATE_INT);
+                        //$extensionCheck = (int)$this->request->query->filter($extensionVar, 0, FILTER_VALIDATE_INT);
                     }
                     if ($extensionCheck == 1) {
                         $templateExtension = $extension;
