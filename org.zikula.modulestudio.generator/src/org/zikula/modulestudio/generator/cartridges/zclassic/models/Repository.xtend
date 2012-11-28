@@ -244,10 +244,10 @@ class Repository {
                 }
 
                 // initialise Imagine preset manager instances
+                $imageHelper = new «container.application.appName»_Util_Image(ServiceUtil::getManager());
                 «IF hasUploadFieldsEntity»
 
                     $objectType = '«name.formatForCode»';
-                    $imageHelper = new «container.application.appName»_Util_Image(ServiceUtil::getManager());
                     «FOR uploadField : getUploadFieldsEntity»
                         $parameters[$objectType . 'ThumbManager«uploadField.name.formatForCodeCapital»'] = $imageHelper->getManager($objectType, '«uploadField.name.formatForCode»', $context, $args);
                     «ENDFOR»
