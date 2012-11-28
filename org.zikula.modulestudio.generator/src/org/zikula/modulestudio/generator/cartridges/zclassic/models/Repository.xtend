@@ -217,7 +217,7 @@ class Repository {
 
             $templateParameters = array();
 
-            if ($context == 'controllerAction) {
+            if ($context == 'controllerAction') {
                 if (!isset($args['action'])) {
                     $args['action'] = FormUtil::getPassedValue('func', 'main', 'GETPOST');
                 }
