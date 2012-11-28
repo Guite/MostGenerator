@@ -39,7 +39,6 @@ class Validation {
         {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-digits'}
     '''
     def dispatch additionalValidationMessages(UserField it, String idSuffix) '''
-        {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-alphanum'}
     '''
     def dispatch additionalValidationMessages(DecimalField it, String idSuffix) '''
         {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-number'}
