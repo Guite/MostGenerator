@@ -153,20 +153,20 @@ class DisplayFunctions {
          * Initialise the quick navigation panel in list views.
          */
         function «prefix()»InitQuickNavigation(objectType, controller) {
-            if ($('«prefix()»' + «prefix()»CapitaliseFirstLetter(objectType) + 'QuickNavForm') === undefined) {
+            if ($('«prefix()»' + «prefix()»CapitaliseFirstLetter(objectType) + 'QuickNavForm') == undefined) {
                 return;
             }
 
-            if ($('catid') !== undefined) {
+            if ($('catid') != undefined) {
                 $('catid').observe('change', «initQuickNavigationSubmitCall(prefix())»);
             }
-            if ($('sortby') !== undefined) {
+            if ($('sortby') != undefined) {
                 $('sortby').observe('change', «initQuickNavigationSubmitCall(prefix())»);
             }
-            if ($('sortdir') !== undefined) {
+            if ($('sortdir') != undefined) {
                 $('sortdir').observe('change', «initQuickNavigationSubmitCall(prefix())»);
             }
-            if ($('num') !== undefined) {
+            if ($('num') != undefined) {
                 $('num').observe('change', «initQuickNavigationSubmitCall(prefix())»);
             }
 
@@ -218,13 +218,13 @@ class DisplayFunctions {
     '''
 
     def private dispatch jsInit(DerivedField it) '''
-        if ($('«name.formatForCode»') !== undefined) {
+        if ($('«name.formatForCode»') != undefined) {
             $('«name.formatForCode»').observe('change', «initQuickNavigationSubmitCall(entity.container.application.prefix)»);
         }
     '''
 
     def private dispatch jsInit(BooleanField it) '''
-        if ($('«name.formatForCode»') !== undefined) {
+        if ($('«name.formatForCode»') != undefined) {
             $('«name.formatForCode»').observe('click', «initQuickNavigationSubmitCall(entity.container.application.prefix)»)
                                      .observe('keypress', «initQuickNavigationSubmitCall(entity.container.application.prefix)»);
         }
@@ -232,7 +232,7 @@ class DisplayFunctions {
 
     def private dispatch jsInit(JoinRelationship it) '''
         «val sourceAliasName = getRelationAliasName(false)»
-        if ($('«sourceAliasName»') !== undefined) {
+        if ($('«sourceAliasName»') != undefined) {
             $('«sourceAliasName»').observe('change', «initQuickNavigationSubmitCall(container.application.prefix)»);
         }
     '''
