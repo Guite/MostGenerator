@@ -111,6 +111,10 @@ class ControllerLayer {
 
             «val actionHelper = new ControllerAction()»
             «FOR action : actions»«actionHelper.generate(action, app)»«ENDFOR»
+            «IF hasActions('view') && isAdminController»
+
+                «handleSelectedObjects»
+            «ENDIF»
             «IF hasActions('edit')»
 
                 /**
@@ -154,6 +158,107 @@ class ControllerLayer {
                 }
             «ENDIF»
             «new Ajax().additionalAjaxFunctions(it, app)»
+        }
+    '''
+
+    def private handleSelectedObjects(Controller it) '''
+        /**
+         * Process status changes for multiple items.
+         *
+         * This function processes the items selected in the admin view page.
+         * Multiple items may have their state changed or be deleted.
+         *
+         * @param array  items  Identifier list of the items to be processed.
+         * @param string action The action to be executed.
+         *
+         * @return bool true on sucess, false on failure.
+         */
+        public function handleselectedentries($args)
+        {
+            $this->checkCsrfToken();
+
+            $returnUrl = ModUtil::url($this->name, 'admin', 'main');
+
+            // Determine object type
+            $objectType = isset($args['ot']) ? $args['ot'] : $this->request->getPost()->get('ot', '');
+            if (!$objectType) {
+                return System::redirect($returnUrl);
+            }
+            $returnUrl = ModUtil::url($this->name, 'admin', 'view', array('ot' => $objectType));
+
+            // Get other parameters
+            $items = isset($args['items']) ? $args['items'] : $this->request->getPost()->get('items', null);
+            $action = isset($args['action']) ? $args['action'] : $this->request->getPost()->get('action', null);
+            $action = strtolower($action);
+
+            $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
+
+            // process each item
+            foreach ($items as $itemid) {
+                // check if item exists, and get record instance
+                $selectionArgs = array('ot' => $objectType, 'id' => $itemid, 'useJoins' => false);
+                $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', $selectionArgs);
+
+                // check if $action can be applied to this entity (may depend on it's current workflow state)
+                $allowedActions = $workflowHelper->getActionsForObject($entity);
+                $actionIds = array_keys($allowedActions);
+                if (!in_array($action, $actionIds)) {
+                    // action not allowed, skip this object
+                    continue;
+                }
+
+                $hookAreaPrefix = $entity->getHookAreaPrefix();
+
+                // Let any hooks perform additional validation actions
+                $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
+                $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
+                $validators = $this->notifyHooks($hook)->getValidators();
+                if ($validators->hasErrors()) {
+                    continue;
+                }
+
+                $success = false;
+                try {
+                    // execute the workflow action
+                    $success = $workflowHelper->executeAction($entity, $action);
+                } catch(Exception $e) {
+                    LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                }
+
+                if (!$success) {
+                    continue;
+                }
+
+                if ($action == 'delete') {
+                    LogUtil::registerStatus($this->__('Done! Item deleted.'));
+                }
+                else {
+                    LogUtil::registerStatus($this->__('Done! Item updated.'));
+                }
+
+                // Let any hooks know that we have updated or deleted an item
+                $hookType = $action == 'delete' ? 'process_delete' : 'process_edit';
+                $url = null;
+                if ($action != 'delete') {
+                    $urlArgs = array('ot' => $this->objectType);
+                    $urlArgs = $this->addIdentifiersToUrlArgs($urlArgs);
+                    if (isset($this->entityRef['slug'])) {
+                        $urlArgs['slug'] = $this->entityRef['slug'];
+                    }
+                    $url = new Zikula_ModUrl($this->name, '«formattedName»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                }
+                $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
+                $this->notifyHooks($hook);
+
+                // An item was updated or deleted, so we clear all cached pages for this item.
+                $cacheArgs = array('ot' => $objectType, 'item' => $entity);
+                ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
+            }
+
+            // clear view cache to reflect our changes
+            $this->view->clear_cache();
+
+            return System::redirect($returnUrl);
         }
     '''
 

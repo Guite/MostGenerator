@@ -4,6 +4,8 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.AbstractIntegerField
 import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField
+import de.guite.modulestudio.metamodel.modulestudio.DateField
+import de.guite.modulestudio.metamodel.modulestudio.DatetimeField
 import de.guite.modulestudio.metamodel.modulestudio.DecimalField
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.EmailField
@@ -71,10 +73,31 @@ class Validation {
     def dispatch additionalValidationMessages(ListField it, String idSuffix) {
     }
     def dispatch additionalValidationMessages(AbstractDateField it, String idSuffix) '''
+        «additionalValidationMessagesDefault(idSuffix)»
+    '''
+    def dispatch additionalValidationMessages(DatetimeField it, String idSuffix) '''
+        «additionalValidationMessagesDefault(idSuffix)»
+        «additionalValidationMessagesDateRange(idSuffix)»
+    '''
+    def dispatch additionalValidationMessages(DateField it, String idSuffix) '''
+        «additionalValidationMessagesDefault(idSuffix)»
+        «additionalValidationMessagesDateRange(idSuffix)»
+    '''
+    def private additionalValidationMessagesDefault(AbstractDateField it, String idSuffix) '''
         «IF past»
             {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-«fieldTypeAsString»-past'}
         «ELSEIF future»
             {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-«fieldTypeAsString»-past'}
+        «ENDIF»
+    '''
+    def private dispatch additionalValidationMessagesDateRange(DatetimeField it, String idSuffix) '''
+        «IF entity.getStartDateField != null && entity.getEndDateField != null»
+            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-daterange-«entity.name.formatForDB»'}
+        «ENDIF»
+    '''
+    def private dispatch additionalValidationMessagesDateRange(DateField it, String idSuffix) '''
+        «IF entity.getStartDateField != null && entity.getEndDateField != null»
+            {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-daterange-«entity.name.formatForDB»'}
         «ENDIF»
     '''
 
@@ -92,7 +115,14 @@ class Validation {
             UrlField: ' validate-url'
             UploadField: ' validate-upload'
             ListField: ''
-            AbstractDateField: '''«IF it.past» validate-«fieldTypeAsString»-past«ELSEIF it.future» validate-«fieldTypeAsString»-future«ENDIF»'''
+            AbstractDateField: fieldValidationCssClassAdditionsDefault
+            DatetimeField: '''«fieldValidationCssClassAdditionsDefault»«fieldValidationCssClassDateRange»'''
+            DateField: '''«fieldValidationCssClassAdditionsDefault»«fieldValidationCssClassDateRange»'''
         }
     }
+
+    def private fieldValidationCssClassAdditionsDefault(AbstractDateField it) '''«IF it.past» validate-«fieldTypeAsString»-past«ELSEIF it.future» validate-«fieldTypeAsString»-future«ENDIF»'''
+
+    def private dispatch fieldValidationCssClassDateRange(DatetimeField it) '''«IF entity.getStartDateField != null && entity.getEndDateField != null» validate-daterange-«entity.name.formatForDB»«ENDIF»'''
+    def private dispatch fieldValidationCssClassDateRange(DateField it) '''«IF entity.getStartDateField != null && entity.getEndDateField != null» validate-daterange-«entity.name.formatForDB»«ENDIF»'''
 }

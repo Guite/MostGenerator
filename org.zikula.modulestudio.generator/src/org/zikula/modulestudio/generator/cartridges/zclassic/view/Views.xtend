@@ -32,6 +32,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Views {
     @Inject extension ControllerExtensions = new ControllerExtensions()
@@ -40,6 +41,7 @@ class Views {
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
+    @Inject extension WorkflowExtensions = new WorkflowExtensions()
 
     IFileSystemAccess fsa
 
@@ -149,6 +151,16 @@ class Views {
                     <h2>{gt text='«appName.formatForDisplayCapital»' comment='This is the title of the header template'}</h2>
                     {modulelinks modname='«appName»' type='«controller.formattedName»'}
                 </div>
+            «ENDIF»
+            «IF needsApproval && controller.tempIsUserController»
+                {nocache}
+                    {«appName.formatForDB»ModerationObjects assign='moderationObjects'}
+                    {if count($moderationObjects) gt 0}
+                        {foreach item='modItem' from=$moderationObjects}
+                            <p class="z-informationmsg z-center"><a href="{modurl modname='«appName»' type='admin' func='view' ot=$modItem.objectType workflowState=$modItem.state}" class="z-bold">{$modItem.message}</a></p>
+                        {/foreach}
+                    {/if}
+                {/nocache}
             «ENDIF»
         {/if}
         «IF controller.tempIsAdminController»

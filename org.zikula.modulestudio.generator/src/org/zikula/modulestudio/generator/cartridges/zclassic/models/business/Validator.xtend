@@ -116,6 +116,7 @@ class Validator {
             public function isValidInteger($fieldName)
             {
                 $val = $this->entity[$fieldName];
+
                 return ($val == intval($val));
             }
 
@@ -155,6 +156,7 @@ class Validator {
                     return false;
                 }
                 $uname = UserUtil::getVar('uname', $this->entity[$fieldName]);
+
                 return (!is_null($uname) && !empty($uname));
             }
 
@@ -190,6 +192,7 @@ class Validator {
             public function isNumberNotShorterThan($fieldName, $length)
             {
                 $minValue = pow(10, $length-1);
+
                 return ($this->isValidNumber($fieldName) && $this->entity[$fieldName] > $minValue);
             }
 
@@ -203,6 +206,7 @@ class Validator {
             public function isNumberNotLongerThan($fieldName, $length)
             {
                 $maxValue = pow(10, $length);
+
                 return ($this->isValidNumber($fieldName) && $this->entity[$fieldName] < $maxValue);
             }
 
@@ -255,6 +259,7 @@ class Validator {
                 if ($caseSensitive === true) {
                     return (strstr($this->entity[$fieldName], $keyword) === false);
                 }
+
                 return (stristr($this->entity[$fieldName], $keyword) === false);
             }
 
@@ -285,6 +290,7 @@ class Validator {
                     return $result;
                 } 
                 $available = ZLanguage::getInstalledLanguages();
+
                 return in_array($this->entity[$fieldName], $available);
             }
 
@@ -297,6 +303,7 @@ class Validator {
             public function isValidCountry($fieldName)
             {
                 $countryMap = ZLanguage::countryMap();
+
                 return in_array($this->entity[$fieldName], array_keys($countryMap));
             }
 
@@ -309,6 +316,7 @@ class Validator {
             public function isValidHtmlColour($fieldName)
             {
                 $regex = '/^#?(([a-fA-F0-9]{3}){1,2})$/';
+
                 return preg_match($regex, $this->entity[$fieldName]);
             }
 
@@ -358,6 +366,7 @@ class Validator {
                 if ($mandatory === false) {
                 	return true;
             	}
+
                 return ($this->isValidDateTime($fieldName) && $this->entity[$fieldName]->format($format) < date($format));
             }
 
@@ -374,6 +383,7 @@ class Validator {
                 if ($mandatory === false) {
                 	return true;
             	}
+
                 return ($this->isValidDateTime($fieldName) && $this->entity[$fieldName]->format($format) > date($format));
             }
 
@@ -527,6 +537,7 @@ class Validator {
             «FOR df : getDerivedFields»
                 «validationCalls(df)»
             «ENDFOR»
+            «validationCallDateRange»
             «FOR udf : getUniqueDerivedFields.filter(e|!e.primaryKey)»
                 «validationCallUnique(udf)»
             «ENDFOR»
@@ -598,9 +609,20 @@ class Validator {
     def private dispatch validationCalls(DerivedField it) {
     }
 
+    def private validationCallDateRange(Entity it) '''
+        «val startDateField = getStartDateField»
+        «val endDateField = getEndDateField»
+        «IF startDateField != null && endDateField != null»
+            if ($this->entity['«startDateField.name.formatForCode»'] > $this->entity['«endDateField.name.formatForCode»']) {
+                $errorInfo['message'] = __f('Error! The start date (%1$s) must be before the end date (%2$s).', array('«startDateField.name.formatForDisplay»', '«endDateField.name.formatForDisplay»'), $dom);
+                return $errorInfo;
+            }
+        «ENDIF»
+    '''
+
     def private validationCallUnique(DerivedField it) '''
         if (!$this->isUniqueValue('«name.formatForCode»')) {
-            $errorInfo['message'] = __f('The «name.formatForDisplay» %s is already assigned. Please choose another «name.formatForDisplay».', array($this->entity['«name.formatForCode»']), $dom);
+            $errorInfo['message'] = __f('The %1$s %2$s is already assigned. Please choose another %1$s.', array('«name.formatForDisplay»', $this->entity['«name.formatForCode»']), $dom);
             return $errorInfo;
         }
     '''
@@ -614,19 +636,19 @@ class Validator {
 */
     def private dispatch validationCalls(BooleanField it) '''
         if (!$this->isValidBoolean('«name.formatForCode»')) {
-            $errorInfo['message'] = __f('Error! Field value must be a valid boolean (%s).', array('«name.formatForCode»'), $dom);
+            $errorInfo['message'] = __f('Error! Field value must be a valid boolean (%s).', array('«name.formatForDisplay»'), $dom);
             return $errorInfo;
         }
     '''
 /** replace by switch ? */
     def private validationCallsNumeric(DerivedField it) '''
         if (!$this->isValidNumber('«name.formatForCode»')) {
-            $errorInfo['message'] = __f('Error! Field value must be numeric (%s).', array('«name.formatForCode»'), $dom);
+            $errorInfo['message'] = __f('Error! Field value must be numeric (%s).', array('«name.formatForDisplay»'), $dom);
             return $errorInfo;
         }
         «IF mandatory»
             if (!$this->isNumberNotEmpty('«name.formatForCode»')) {
-                $errorInfo['message'] = __f('Error! Field value must not be 0 (%s).', array('«name.formatForCode»'), $dom);
+                $errorInfo['message'] = __f('Error! Field value must not be 0 (%s).', array('«name.formatForDisplay»'), $dom);
                 return $errorInfo;
             }
         «ENDIF»
@@ -634,12 +656,12 @@ class Validator {
 
     def private validationCallsInteger(AbstractIntegerField it) '''
         if (!$this->isValidInteger('«name.formatForCode»')) {
-            $errorInfo['message'] = __f('Error! Field value may only contain digits (%s).', array('«name.formatForCode»'), $dom);
+            $errorInfo['message'] = __f('Error! Field value may only contain digits (%s).', array('«name.formatForDisplay»'), $dom);
             return $errorInfo;
         }
         «IF mandatory && (!primaryKey || entity.hasCompositeKeys || entity.getVersionField == this)»
             if (!$this->isNumberNotEmpty('«name.formatForCode»')) {
-                $errorInfo['message'] = __f('Error! Field value must not be 0 (%s).', array('«name.formatForCode»'), $dom);
+                $errorInfo['message'] = __f('Error! Field value must not be 0 (%s).', array('«name.formatForDisplay»'), $dom);
                 return $errorInfo;
             }
         «ENDIF»
@@ -655,18 +677,18 @@ class Validator {
             «validationCallsInteger»
             «IF minValue.toString != '0'»
                 if (!$this->isIntegerNotLowerThan('«name.formatForCode»', «minValue»)) {
-                    $errorInfo['message'] = __f('Error! Field value must not be lower than %2$s (%1$s).', array('«name.formatForCode»', «minValue»), $dom);
+                    $errorInfo['message'] = __f('Error! Field value must not be lower than %2$s (%1$s).', array('«name.formatForDisplay»', «minValue»), $dom);
                     return $errorInfo;
                 }
             «ENDIF»
             «IF maxValue.toString != '0'»
                 if (!$this->isIntegerNotHigherThan('«name.formatForCode»', «maxValue»)) {
-                    $errorInfo['message'] = __f('Error! Field value must not be higher than %2$s (%1$s).', array('«name.formatForCode»', «maxValue»), $dom);
+                    $errorInfo['message'] = __f('Error! Field value must not be higher than %2$s (%1$s).', array('«name.formatForDisplay»', «maxValue»), $dom);
                     return $errorInfo;
                 }
             «ENDIF»
             if (!$this->isNumberNotLongerThan('«name.formatForCode»', «length»)) {
-                $errorInfo['message'] = __f('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForCode»', «length»), $dom);
+                $errorInfo['message'] = __f('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForDisplay»', «length»), $dom);
                 return $errorInfo;
             }
         «ENDIF»
@@ -674,14 +696,14 @@ class Validator {
     def private dispatch validationCalls(DecimalField it) '''
         «validationCallsNumeric»
         if (!$this->isNumberNotLongerThan('«name.formatForCode»', «(length+scale)»)) {
-            $errorInfo['message'] = __f('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForCode»', «(length+scale)»), $dom);
+            $errorInfo['message'] = __f('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForDisplay»', «(length+scale)»), $dom);
             return $errorInfo;
         }
     '''
     def private dispatch validationCalls(UserField it) '''
         «validationCallsInteger»
         if («IF !mandatory»$this->entity['«name.formatForCode»'] > 0 && «ENDIF»!$this->isValidUser('«name.formatForCode»')) {
-            $errorInfo['message'] = __f('Error! Field value must be a valid user id (%s).', array('«name.formatForCode»'), $dom);
+            $errorInfo['message'] = __f('Error! Field value must be a valid user id (%s).', array('«name.formatForDisplay»'), $dom);
             return $errorInfo;
         }
     '''
@@ -689,25 +711,25 @@ class Validator {
     def private validationCallsString(AbstractStringField it) '''
         «IF mandatory»
             if (!$this->isStringNotEmpty('«name.formatForCode»')) {
-                $errorInfo['message'] = __f('Error! Field value must not be empty (%s).', array('«name.formatForCode»'), $dom);
+                $errorInfo['message'] = __f('Error! Field value must not be empty (%s).', array('«name.formatForDisplay»'), $dom);
                 return $errorInfo;
             }
         «ENDIF»
         «IF nospace»
             if (!$this->isStringNotContaining('«name.formatForCode»', ' ')) {
-                $errorInfo['message'] = __f('Error! Field value must not contain space chars (%s).', array('«name.formatForCode»'), $dom);
+                $errorInfo['message'] = __f('Error! Field value must not contain space chars (%s).', array('«name.formatForDisplay»'), $dom);
                 return $errorInfo;
             }
         «ENDIF»
         «IF minLength > 0»
             if (!$this->isStringNotShorterThan('«name.formatForCode»', «minLength»)) {
-                $errorInfo['message'] = __f('Error! Length of field value must not be smaller than %2$s (%1$s).', array('«name.formatForCode»', «minLength»), $dom);
+                $errorInfo['message'] = __f('Error! Length of field value must not be smaller than %2$s (%1$s).', array('«name.formatForDisplay»', «minLength»), $dom);
                 return $errorInfo;
             }
         «ENDIF»
         «IF regexp != null && regexp != ''»
             if (!$this->isValidRegExp('«name.formatForCode»', '«regexp»')) {
-                $errorInfo['message'] = __f('Error! Field value must conform to regular expression [%2$s] (%1$s).', array('«name.formatForCode»', '«regexp»'), $dom);
+                $errorInfo['message'] = __f('Error! Field value must conform to regular expression [%2$s] (%1$s).', array('«name.formatForDisplay»', '«regexp»'), $dom);
                 return $errorInfo;
             }
         «ENDIF»
@@ -716,67 +738,67 @@ class Validator {
     '''
     def private dispatch validationCalls(StringField it) '''
         if (!$this->isStringNotLongerThan('«name.formatForCode»', «length»)) {
-            $errorInfo['message'] = __f('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForCode»', «length»), $dom);
+            $errorInfo['message'] = __f('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForDisplay»', «length»), $dom);
             return $errorInfo;
         }
         «validationCallsString»
         «IF fixed»
             if (!$this->isStringWithFixedLength('«name.formatForCode»', «length»)) {
-                $errorInfo['message'] = __f('Error! Length of field value must be %2$s (%1$s).', array('«name.formatForCode»', «length»), $dom);
+                $errorInfo['message'] = __f('Error! Length of field value must be %2$s (%1$s).', array('«name.formatForDisplay»', «length»), $dom);
                 return $errorInfo;
             }
         «ENDIF»
         «IF language»
             if («IF !mandatory»$this->entity['«name.formatForCode»'] != '' && «ENDIF»!$this->isValidLanguage('«name.formatForCode»', false)) {
-                $errorInfo['message'] = __f('Error! Field value must be a valid language code (%s).', array('«name.formatForCode»'), $dom);
+                $errorInfo['message'] = __f('Error! Field value must be a valid language code (%s).', array('«name.formatForDisplay»'), $dom);
                 return $errorInfo;
             }
         «ENDIF»
         «IF country»
             if («IF !mandatory»$this->entity['«name.formatForCode»'] != '' && «ENDIF»!$this->isValidCountry('«name.formatForCode»')) {
-                $errorInfo['message'] = __f('Error! Field value must be a valid country code (%s).', array('«name.formatForCode»'), $dom);
+                $errorInfo['message'] = __f('Error! Field value must be a valid country code (%s).', array('«name.formatForDisplay»'), $dom);
                 return $errorInfo;
             }
         «ENDIF»
         «IF htmlcolour»
             if («IF !mandatory»$this->entity['«name.formatForCode»'] != '' && «ENDIF»!$this->isValidHtmlColour('«name.formatForCode»')) {
-                $errorInfo['message'] = __f('Error! Field value must be a valid html colour code [#123 or #123456] (%s).', array('«name.formatForCode»'), $dom);
+                $errorInfo['message'] = __f('Error! Field value must be a valid html colour code [#123 or #123456] (%s).', array('«name.formatForDisplay»'), $dom);
                 return $errorInfo;
             }
         «ENDIF»
     '''
     def private dispatch validationCalls(TextField it) '''
         if (!$this->isStringNotLongerThan('«name.formatForCode»', «length»)) {
-            $errorInfo['message'] = __f('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForCode»', «length»), $dom);
+            $errorInfo['message'] = __f('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForDisplay»', «length»), $dom);
             return $errorInfo;
         }
         «validationCallsString»
     '''
     def private dispatch validationCalls(EmailField it) '''
         if (!$this->isStringNotLongerThan('«name.formatForCode»', «length»)) {
-            $errorInfo['message'] = __f('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForCode»', «length»), $dom);
+            $errorInfo['message'] = __f('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForDisplay»', «length»), $dom);
             return $errorInfo;
         }
         «validationCallsString»
         if («IF !mandatory»$this->entity['«name.formatForCode»'] != '' && «ENDIF»!$this->isValidEmail('«name.formatForCode»')) {
-            $errorInfo['message'] = __f('Error! Field value must be a valid email address (%s).', array('«name.formatForCode»'), $dom);
+            $errorInfo['message'] = __f('Error! Field value must be a valid email address (%s).', array('«name.formatForDisplay»'), $dom);
             return $errorInfo;
         }
     '''
     def private dispatch validationCalls(UrlField it) '''
         if (!$this->isStringNotLongerThan('«name.formatForCode»', «length»)) {
-            $errorInfo['message'] = __f('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForCode»', «length»), $dom);
+            $errorInfo['message'] = __f('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForDisplay»', «length»), $dom);
             return $errorInfo;
         }
         «validationCallsString»
         if («IF !mandatory»$this->entity['«name.formatForCode»'] != '' && «ENDIF»!$this->isValidUrl('«name.formatForCode»')) {
-            $errorInfo['message'] = __f('Error! Field value must be a valid url (%s).', array('«name.formatForCode»'), $dom);
+            $errorInfo['message'] = __f('Error! Field value must be a valid url (%s).', array('«name.formatForDisplay»'), $dom);
             return $errorInfo;
         }
     '''
     def private dispatch validationCalls(UploadField it) '''
         if (!$this->isStringNotLongerThan('«name.formatForCode»', «length»)) {
-            $errorInfo['message'] = __f('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForCode»', «length»), $dom);
+            $errorInfo['message'] = __f('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForDisplay»', «length»), $dom);
             return $errorInfo;
         }
         «validationCallsString»
@@ -784,7 +806,7 @@ class Validator {
     def private dispatch validationCalls(ListField it) '''
         «IF mandatory»
             if (!$this->isStringNotEmpty('«name.formatForCode»')) {
-                $errorInfo['message'] = __f('Error! Field value must not be empty (%s).', array('«name.formatForCode»'), $dom);
+                $errorInfo['message'] = __f('Error! Field value must not be empty (%s).', array('«name.formatForDisplay»'), $dom);
                 return $errorInfo;
             }
         «ENDIF»
@@ -796,7 +818,7 @@ class Validator {
     def private validationCallsDateTime(AbstractDateField it) '''
         «IF mandatory»
             if (!$this->isValidDateTime('«name.formatForCode»')) {
-                $errorInfo['message'] = __f('Error! Field value must be a valid datetime (%s).', array('«name.formatForCode»'), $dom);
+                $errorInfo['message'] = __f('Error! Field value must be a valid datetime (%s).', array('«name.formatForDisplay»'), $dom);
                 return $errorInfo;
             }
         «ENDIF»
@@ -808,12 +830,12 @@ class Validator {
         «validationCallsDateTime»
         «IF past»
             if (!$this->isDateTimeInPast('«name.formatForCode»', «mandatory.displayBool»)) {
-                $errorInfo['message'] = __f('Error! Field value must be a date in the past (%s).', array('«name.formatForCode»'), $dom);
+                $errorInfo['message'] = __f('Error! Field value must be a date in the past (%s).', array('«name.formatForDisplay»'), $dom);
                 return $errorInfo;
             }
         «ELSEIF future»
             if (!$this->isDateTimeInFuture('«name.formatForCode»', «mandatory.displayBool»)) {
-                $errorInfo['message'] = __f('Error! Field value must be a date in the future (%s).', array('«name.formatForCode»'), $dom);
+                $errorInfo['message'] = __f('Error! Field value must be a date in the future (%s).', array('«name.formatForDisplay»'), $dom);
                 return $errorInfo;
             }
         «ENDIF»
@@ -822,12 +844,12 @@ class Validator {
         «validationCallsDateTime»
         «IF past»
             if (!$this->isDateInPast('«name.formatForCode»', «mandatory.displayBool»)) {
-                $errorInfo['message'] = __f('Error! Field value must be a date in the past (%s).', array('«name.formatForCode»'), $dom);
+                $errorInfo['message'] = __f('Error! Field value must be a date in the past (%s).', array('«name.formatForDisplay»'), $dom);
                 return $errorInfo;
             }
         «ELSEIF future»
             if (!$this->isDateInFuture('«name.formatForCode»', «mandatory.displayBool»)) {
-                $errorInfo['message'] = __f('Error! Field value must be a date in the future (%s).', array('«name.formatForCode»'), $dom);
+                $errorInfo['message'] = __f('Error! Field value must be a date in the future (%s).', array('«name.formatForDisplay»'), $dom);
                 return $errorInfo;
             }
         «ENDIF»
@@ -836,12 +858,12 @@ class Validator {
         «validationCallsDateTime»
         «IF past»
             if (!$this->isTimeInPast('«name.formatForCode»', «mandatory.displayBool»)) {
-                $errorInfo['message'] = __f('Error! Field value must be a time in the past (%s).', array('«name.formatForCode»'), $dom);
+                $errorInfo['message'] = __f('Error! Field value must be a time in the past (%s).', array('«name.formatForDisplay»'), $dom);
                 return $errorInfo;
             }
         «ELSEIF future»
             if (!$this->isTimeInFuture('«name.formatForCode»', «mandatory.displayBool»)) {
-                $errorInfo['message'] = __f('Error! Field value must be a time in the future (%s).', array('«name.formatForCode»'), $dom);
+                $errorInfo['message'] = __f('Error! Field value must be a time in the future (%s).', array('«name.formatForDisplay»'), $dom);
                 return $errorInfo;
             }
         «ENDIF»
@@ -849,7 +871,7 @@ class Validator {
     def private dispatch validationCalls(FloatField it) '''
         «validationCallsNumeric»
         if (!$this->isNumberNotLongerThan('«name.formatForCode»', «length»)) {
-            $errorInfo['message'] = __f('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForCode»', «length»), $dom);
+            $errorInfo['message'] = __f('Error! Length of field value must not be higher than %2$s (%1$s).', array('«name.formatForDisplay»', «length»), $dom);
             return $errorInfo;
         }
     '''

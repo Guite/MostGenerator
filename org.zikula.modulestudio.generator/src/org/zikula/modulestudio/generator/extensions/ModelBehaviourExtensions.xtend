@@ -13,6 +13,10 @@ import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
  * This class contains model behaviour related extension methods.
  */
 class ModelBehaviourExtensions {
+
+    /**
+     * Extensions related to the model layer.
+     */
     @Inject extension ModelExtensions = new ModelExtensions()
 
     /**

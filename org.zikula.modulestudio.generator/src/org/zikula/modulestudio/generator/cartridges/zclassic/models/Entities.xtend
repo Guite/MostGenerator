@@ -196,36 +196,41 @@ class Entities {
 
     def private entityInfo(Entity it, Application app) '''
         /**
-         * @var string The tablename this object maps to
+         * @var string The tablename this object maps to.
          */
         protected $_objectType = '«name.formatForCode»';
 
         /**
-         * @var array List of primary key field names
+         * @var array List of primary key field names.
          */
         protected $_idFields = array();
 
         /**
-         * @var «implClassModel('validator', '')» The validator for this entity
+         * @var «implClassModel('validator', '')» The validator for this entity.
          */
         protected $_validator = null;
 
         /**
-         * @var boolean Whether this entity supports unique slugs
+         * @var boolean Whether this entity supports unique slugs.
          */
         protected $_hasUniqueSlug = false;
         «IF hasNotifyPolicy»
 
             /**
-             * @var array List of change notification listeners
+             * @var array List of change notification listeners.
              */
             protected $_propertyChangedListeners = array();
         «ENDIF»
 
         /**
-         * @var array List of available item actions
+         * @var array List of available item actions.
          */
         protected $_actions = array();
+
+        /**
+         * @var array The current workflow data of this object.
+         */
+        protected $__WORKFLOW__ = array();
 
         «FOR field : getDerivedFields»«thProp.persistentProperty(field)»«ENDFOR»
         «thExt.additionalProperties(it)»
@@ -240,6 +245,7 @@ class Entities {
         «fh.getterAndSetterMethods(it, '_validator', implClassModel('validator', ''), false, true, 'null', '')»
         «fh.getterAndSetterMethods(it, '_hasUniqueSlug', 'boolean', false, false, '', '')»
         «fh.getterAndSetterMethods(it, '_actions', 'array', false, true, 'Array()', '')»
+        «fh.getterAndSetterMethods(it, '__WORKFLOW__', 'array', false, true, 'Array()', '')»
         «propertyChangedListener»
 
         «FOR field : getDerivedFields»«thProp.fieldAccessor(field)»«ENDFOR»
@@ -383,6 +389,35 @@ class Entities {
                     «ENDIF»
                 }
             «ENDFOR»
+        }
+
+        /**
+         * Create concatenated identifier string (for composite keys).
+         *
+         * @return String concatenated identifiers.
+         */
+        protected function createCompositeIdentifier()
+        {
+            «IF hasCompositeKeys»
+                $itemId = '';
+                «FOR pkField : getPrimaryKeyFields»
+                    $itemId .= ((!empty($itemId)) ? '_' : '') . $this['«pkField.name.formatForCode»'];
+                «ENDFOR»
+            «ELSE»
+                $itemId = $this['«getFirstPrimaryKey.name.formatForCode»'];
+            «ENDIF»
+
+            return $itemId;
+        }
+
+        /**
+         * Return lower case name of multiple items needed for hook areas.
+         *
+         * @return string
+         */
+        public function getHookAreaPrefix()
+        {
+            return '«app.name.formatForDB».ui_hooks.«nameMultiple.formatForDB»';
         }
     '''
 

@@ -83,9 +83,8 @@ class Rss {
                     {/if}
                 «ENDIF»
                 «IF categorisable»
-                    {* TODO for later
-                    <category><![CDATA[{gt text='Categories'}: {$«objName».categories}]]></category>
-                    *}
+
+                    <category><![CDATA[{gt text='Categories'}: {foreach name='categoryLoop' key='propName' item='catMapping' from=$«objName».categories}{$catMapping.category.name|safetext}{if !$smarty.foreach.categoryLoop.last}, {/if}{/foreach}]]></category>
                 «ENDIF»
 
                 «val textFields = fields.filter(typeof(TextField)).filter(e|!e.leading)»

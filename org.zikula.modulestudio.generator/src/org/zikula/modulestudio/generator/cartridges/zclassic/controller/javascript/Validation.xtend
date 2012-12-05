@@ -2,10 +2,13 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascr
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.modulestudio.DateField
+import de.guite.modulestudio.metamodel.modulestudio.DatetimeField
+import de.guite.modulestudio.metamodel.modulestudio.TimeField
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Validation {
@@ -154,43 +157,90 @@ class Validation {
                     return allowedExtensions.test(val);
                 }],
                 «ENDIF»
-                ['validate-datetime-past', Zikula.__('Please select a value in the past.', 'module_«appName»'), function(val, elem) {
-                    var valStr, cmpVal;
-                    valStr = new String(val);
-                    cmpVal = «prefix»ReadDate(valStr, true);
-                    return Validation.get('IsEmpty').test(val) || (cmpVal < «prefix»Today('datetime'));
-                }],
-                ['validate-datetime-future', Zikula.__('Please select a value in the future.', 'module_«appName»'), function(val, elem) {
-                    var valStr, cmpVal;
-                    valStr = new String(val);
-                    cmpVal = «prefix»ReadDate(valStr, true);
-                    return Validation.get('IsEmpty').test(val) || (cmpVal >= «prefix»Today('datetime'));
-                }],
-                ['validate-date-past', Zikula.__('Please select a value in the past.', 'module_«appName»'), function(val, elem) {
-                    var valStr, cmpVal;
-                    valStr = new String(val);
-                    cmpVal = «prefix»ReadDate(valStr, false);
-                    return Validation.get('IsEmpty').test(val) || (cmpVal < «prefix»Today('date'));
-                }],
-                ['validate-date-future', Zikula.__('Please select a value in the future.', 'module_«appName»'), function(val, elem) {
-                    var valStr, cmpVal;
-                    valStr = new String(val);
-                    cmpVal = «prefix»ReadDate(valStr, false);
-                    return Validation.get('IsEmpty').test(val) || (cmpVal >= «prefix»Today('date'));
-                }],
-                ['validate-time-past', Zikula.__('Please select a value in the past.', 'module_«appName»'), function(val, elem) {
-                    var cmpVal;
-                    cmpVal = new String(val);
-                    return Validation.get('IsEmpty').test(val) || (cmpVal < «prefix»Today('time'));
-                }],
-                ['validate-time-future', Zikula.__('Please select a value in the future.', 'module_«appName»'), function(val, elem) {
-                    var cmpVal;
-                    cmpVal = new String(val);
-                    return Validation.get('IsEmpty').test(val) || (cmpVal >= «prefix()»Today('time'));
-                }]«IF getAllEntities.exists(e|e.getUniqueDerivedFields.filter(f|!f.primaryKey).size > 0)»,
+                «val datetimeFields = getAllEntities.filter(typeof(DatetimeField))»
+                «IF !datetimeFields.isEmpty»
+                    «IF datetimeFields.exists(e|e.past)»
+                        ['validate-datetime-past', Zikula.__('Please select a value in the past.', 'module_«appName»'), function(val, elem) {
+                            var valStr, cmpVal;
+                            valStr = new String(val);
+                            cmpVal = «prefix»ReadDate(valStr, true);
+                            return Validation.get('IsEmpty').test(val) || (cmpVal < «prefix»Today('datetime'));
+                        }],
+                    «ENDIF»
+                    «IF datetimeFields.exists(e|e.future)»
+                        ['validate-datetime-future', Zikula.__('Please select a value in the future.', 'module_«appName»'), function(val, elem) {
+                            var valStr, cmpVal;
+                            valStr = new String(val);
+                            cmpVal = «prefix»ReadDate(valStr, true);
+                            return Validation.get('IsEmpty').test(val) || (cmpVal >= «prefix»Today('datetime'));
+                        }],
+                    «ENDIF»
+                «ENDIF»
+                «val dateFields = getAllEntities.filter(typeof(DateField))»
+                «IF !dateFields.isEmpty»
+                    «IF dateFields.exists(e|e.past)»
+                        ['validate-date-past', Zikula.__('Please select a value in the past.', 'module_«appName»'), function(val, elem) {
+                            var valStr, cmpVal;
+                            valStr = new String(val);
+                            cmpVal = «prefix»ReadDate(valStr, false);
+                            return Validation.get('IsEmpty').test(val) || (cmpVal < «prefix»Today('date'));
+                        }],
+                    «ENDIF»
+                    «IF dateFields.exists(e|e.future)»
+                        ['validate-date-future', Zikula.__('Please select a value in the future.', 'module_«appName»'), function(val, elem) {
+                            var valStr, cmpVal;
+                            valStr = new String(val);
+                            cmpVal = «prefix»ReadDate(valStr, false);
+                            return Validation.get('IsEmpty').test(val) || (cmpVal >= «prefix»Today('date'));
+                        }],
+                    «ENDIF»
+                «ENDIF»
+                «val timeFields = getAllEntities.filter(typeof(TimeField))»
+                «IF !timeFields.isEmpty»
+                    «IF timeFields.exists(e|e.past)»
+                        ['validate-time-past', Zikula.__('Please select a value in the past.', 'module_«appName»'), function(val, elem) {
+                            var cmpVal;
+                            cmpVal = new String(val);
+                            return Validation.get('IsEmpty').test(val) || (cmpVal < «prefix»Today('time'));
+                        }],
+                    «ENDIF»
+                    «IF timeFields.exists(e|e.future)»
+                        ['validate-time-future', Zikula.__('Please select a value in the future.', 'module_«appName»'), function(val, elem) {
+                            var cmpVal;
+                            cmpVal = new String(val);
+                            return Validation.get('IsEmpty').test(val) || (cmpVal >= «prefix()»Today('time'));
+                        }],
+                    «ENDIF»
+                «ENDIF»
+                «FOR entity : getAllEntities»
+                    «val startDateField = entity.getStartDateField»
+                    «val endDateField = entity.getEndDateField»
+                    «IF startDateField != null && endDateField != null»
+                        «val validateClass = 'validate-daterange-' + entity.name.formatForDB»
+                        «val startFieldName = startDateField.name.formatForCode»
+                        «val endFieldName = endDateField.name.formatForCode»
+                        ['«validateClass»', Zikula.__('The start must be before the end.', 'module_«appName»'), function(val, elem) {
+                            var cmpVal, cmpVal2, result;
+
+                            cmpVal = «prefix»ReadDate($F('«startFieldName»'), «(startDateField instanceof DatetimeField)»);
+                            cmpVal2 = «prefix»ReadDate($F('«endFieldName»'), «(endDateField instanceof DatetimeField)»);
+                            result = (cmpVal <= cmpVal2);
+                            if (result) {
+                                $('advice-«validateClass»-«startFieldName»').hide();
+                                $('advice-«validateClass»-«endFieldName»').hide();
+                                $('«startFieldName»').removeClassName('validation-failed').addClassName('validation-passed');
+                                $('«endFieldName»').removeClassName('validation-failed').addClassName('validation-passed');
+                            }
+
+                            return false;
+                        }],
+                    «ENDIF»
+                «ENDFOR»
+                «IF getAllEntities.exists(e|e.getUniqueDerivedFields.filter(f|!f.primaryKey).size > 0)»
                 ['validate-unique', Zikula.__('This value is already assigned, but must be unique. Please change it.', 'module_«appName»'), function(val, elem) {
                     return «prefix»UniqueCheck('«name.formatForCode»', val, elem, id);
-                }]«ENDIF»
+                }]
+                «ENDIF»
             ]);
         }
     '''

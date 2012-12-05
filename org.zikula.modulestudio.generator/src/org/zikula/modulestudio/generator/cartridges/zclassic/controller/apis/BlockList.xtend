@@ -224,9 +224,7 @@ class BlockList {
                 $blockinfo['title'] = $this->__('«appName» items');
             }
 
-            $output = $this->view->fetch($template);
-
-            $blockinfo['content'] = $output;
+            $blockinfo['content'] = $this->view->fetch($template);;
 
             // return the block to the theme
             return BlockUtil::themeBlock($blockinfo);

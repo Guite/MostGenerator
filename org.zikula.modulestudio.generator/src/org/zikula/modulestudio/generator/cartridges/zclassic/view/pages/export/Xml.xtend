@@ -61,12 +61,13 @@ class Xml {
         {* purpose of this template: «nameMultiple.formatForDisplay» xml inclusion template in «controller.formattedName» area *}
         <«name.formatForDB»«FOR pkField : getPrimaryKeyFields» «pkField.name.formatForCode»="{$item.«pkField.name.formatForCode»}"«ENDFOR»«IF standardFields» createdon="{$item.createdDate|dateformat}" updatedon="{$item.updatedDate|dateformat}"«ENDIF»>
             «FOR field : getDerivedFields.filter(e|e.primaryKey)»«field.displayEntry(controller)»«ENDFOR»
-            «FOR field : getDerivedFields.filter(e|!e.primaryKey)»«field.displayEntry(controller)»«ENDFOR»
+            «FOR field : getDerivedFields.filter(e|!e.primaryKey && e.name != 'workflowState')»«field.displayEntry(controller)»«ENDFOR»
             «IF geographical»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
                     <«geoFieldName»>{$item.«geoFieldName»|formatnumber:7}</«geoFieldName»>
                 «ENDFOR»
             «ENDIF»
+            <workflowState>{$item.workflowState|«appName.formatForDB»ObjectState:false|lower}</workflowState>
             «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.displayRelatedEntry(controller, false)»«ENDFOR»
             «FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.displayRelatedEntry(controller, true)»«ENDFOR»
             «FOR relation : incoming.filter(typeof(ManyToManyRelationship)).filter(e|e.bidirectional)»«relation.displayRelatedEntries(controller, false)»«ENDFOR»
@@ -106,7 +107,7 @@ class Xml {
         «IF leadingField != null»
             <«relationAliasName.toFirstLower»>{if isset($«relObjName») && $«relObjName» ne null}{$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:''}{/if}</«relationAliasName.toFirstLower»>
         «ELSE»
-            «/*TODO*/»
+            «linkEntity.name.formatForDisplay»
         «ENDIF»
     '''
 
@@ -124,7 +125,7 @@ class Xml {
             {/if}
             </«relationAliasName.toFirstLower»>
         «ELSE»
-            «/*TODO*/»
+            «linkEntity.nameMultiple.formatForDisplay»
         «ENDIF»
     '''
 }

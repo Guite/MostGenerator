@@ -4,15 +4,23 @@ import org.zikula.modulestudio.generator.application.WorkflowSettings
 import org.zikula.modulestudio.generator.cartridges.reporting.DiagramExporter
 
 /**
- * TODO: javadocs needed for class, members and methods
+ * Diagram exporter facade.
  */
 class WorkflowDiagramExporter {
     WorkflowSettings settings
 
+    /**
+     * Constructor accepting the workflow settings.
+     *
+     * @param WorkflowSettings settings
+     */
     new(WorkflowSettings settings) {
         this.settings = settings
     }
 
+    /**
+     * Start exporting the diagrams by delegating to DiagramExporter instance.
+     */
     def run() {
         try {
             val diagramExporter = new DiagramExporter(settings)

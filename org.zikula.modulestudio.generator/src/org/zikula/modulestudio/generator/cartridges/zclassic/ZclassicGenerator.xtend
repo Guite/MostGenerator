@@ -13,8 +13,10 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Installe
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Listeners
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Uploads
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Workflow
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Tag
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Account
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.BlockList
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.BlockModeration
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Cache
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ContentTypeList
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.ContentTypeSingle
@@ -32,12 +34,16 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.Images
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Plugins
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Styles
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Views
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 import org.zikula.modulestudio.generator.workflow.components.ManualProgressMonitor
 
 class ZclassicGenerator implements IGenerator {
 
+    @Inject extension ControllerExtensions = new ControllerExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
+    @Inject extension WorkflowExtensions = new WorkflowExtensions()
 
     override doGenerate(Resource resource, IFileSystemAccess fsa) {
         generate(resource.contents.head as Application, fsa)
@@ -105,6 +111,9 @@ println('TODO: progress monitor')
         pm.newTask('Additions: Blocks')
         println('Generating blocks')
         new BlockList().generate(it, fsa)
+        if (needsApproval) {
+            new BlockModeration().generate(it, fsa)
+        }
         pm.newTask('Additions: Content type api')
         println('Generating content type api')
         new ContentTypeList().generate(it, fsa)
@@ -128,9 +137,12 @@ println('TODO: progress monitor')
             println('Generating upload handlers')
             new Uploads().generate(it, fsa)
         }
-        /*pm.newTask('Additions: Tag support')
-        println('Generating tag support')
-        new Tag().generate(it, fsa)*/
+        if ((hasUserController && getMainUserController.hasActions('display'))
+            || (!getAllAdminControllers.isEmpty && getAllAdminControllers.head.hasActions('display'))) {
+            pm.newTask('Additions: Tag support')
+            println('Generating tag support')
+            new Tag().generate(it, fsa)
+        }
         pm.newTask('Additions: Translations')
         println('Generating translations')
         new Translations().generate(it, fsa)

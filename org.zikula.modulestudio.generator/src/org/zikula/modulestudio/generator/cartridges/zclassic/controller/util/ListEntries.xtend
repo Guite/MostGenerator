@@ -45,142 +45,162 @@ class ListEntries {
          */
         class «appName»_«fillingUtil»Base_ListEntries extends Zikula_AbstractBase
         {
-            /**
-             * Return the name or names for a given list item.
-             *
-             * @param string $value      The dropdown value to process.
-             * @param string $objectType The treated object type.
-             * @param string $fieldName  The list field's name.
-             * @param string $delimiter  String used as separator for multiple selections.
-             *
-             * @return string List item name.
-             */
-            public function resolve($value, $objectType = '', $fieldName = '', $delimiter = ', ')
-            {
-                if (empty($value) || empty($objectType) || empty($fieldName)) {
-                    return $value;
-                }
-
-                $isMulti = $this->hasMultipleSelection($objectType, $fieldName);
-                if ($isMulti === true) {
-                    $value = $this->extractMultiList($value);
-                }
-
-                $options = $this->getEntries($objectType, $fieldName);
-                $result = '';
-
-                if ($isMulti === true) {
-                    foreach ($options as $option) {
-                        if (!in_array($option['value'], $value)) {
-                            continue;
-                        }
-                        if (!empty($result)) {
-                            $result .= $delimiter;
-                        }
-                        $result .= $option['text'];
-                    }
-                } else {
-                    foreach ($options as $option) {
-                        if ($option['value'] != $value) {
-                            continue;
-                        }
-                        $result = $option['text'];
-                        break;
-                    }
-                }
-
-                return $result;
-            }
-
-            /**
-             * Extract concatenated multi selection.
-             *
-             * @param string  $value The dropdown value to process.
-             *
-             * @return array List of single values.
-             */
-            public function extractMultiList($value)
-            {
-                $listValues = explode('###', $value);
-                $numValues = count($listValues);
-                if ($numValues > 1 && $listValues[$numValues-1] == '') {
-                    unset($listValues[$numValues-1]);
-                }
-                if ($listValues[0] == '') {
-                    unset($listValues[0]);
-                }
-
-                return $listValues;
-            }
-
-            /**
-             * Determine whether a certain dropdown field has a multi selection or not.
-             *
-             * @param string $objectType The treated object type.
-             * @param string $fieldName  The list field's name.
-             *
-             * @return boolean True if this is a multi list false otherwise.
-             */
-            public function hasMultipleSelection($objectType, $fieldName)
-            {
-                if (empty($objectType) || empty($fieldName)) {
-                    return false;
-                }
-
-                $result = false;
-                switch ($objectType) {
-                    «FOR entity : getAllEntities.filter(e|e.hasListFieldsEntity)»
-                        case '«entity.name.formatForCode»':
-                            switch ($fieldName) {
-                                «FOR listField : entity.getListFieldsEntity»
-                                    case '«listField.name.formatForCode»':
-                                        $result = «listField.multiple.displayBool»;
-                                        break;
-                                «ENDFOR»
-                            }
-                            break;
-                    «ENDFOR»
-                }
-
-                return $result;
-            }
-
-            /**
-             * Get entries for a certain dropdown field.
-             *
-             * @param string  $objectType The treated object type.
-             * @param string  $fieldName  The list field's name.
-             *
-             * @return array Array with desired list entries.
-             */
-            public function getEntries($objectType, $fieldName)
-            {
-                if (empty($objectType) || empty($fieldName)) {
-                    return array();
-                }
-
-                $entries = array();
-                switch ($objectType) {
-                    «FOR entity : getAllEntities.filter(e|e.hasListFieldsEntity)»
-                        case '«entity.name.formatForCode»':
-                            switch ($fieldName) {
-                                «FOR listField : entity.getListFieldsEntity»
-                                    case '«listField.name.formatForCode»':
-                                        $entries = $this->get«listField.name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
-                                        break;
-                                «ENDFOR»
-                            }
-                            break;
-                    «ENDFOR»
-                }
-
-                return $entries;
-            }
-            «FOR listField : getAllListFields»
-
-                «listField.getItemsImpl»
-            «ENDFOR»
+            «resolve»
+            «extractMultiList»
+            «hasMultipleSelection»
+            «getEntries»
+            «additions»
         }
+    '''
+
+    def private resolve(Application it) '''
+        /**
+         * Return the name or names for a given list item.
+         *
+         * @param string $value      The dropdown value to process.
+         * @param string $objectType The treated object type.
+         * @param string $fieldName  The list field's name.
+         * @param string $delimiter  String used as separator for multiple selections.
+         *
+         * @return string List item name.
+         */
+        public function resolve($value, $objectType = '', $fieldName = '', $delimiter = ', ')
+        {
+            if (empty($value) || empty($objectType) || empty($fieldName)) {
+                return $value;
+            }
+
+            $isMulti = $this->hasMultipleSelection($objectType, $fieldName);
+            if ($isMulti === true) {
+                $value = $this->extractMultiList($value);
+            }
+
+            $options = $this->getEntries($objectType, $fieldName);
+            $result = '';
+
+            if ($isMulti === true) {
+                foreach ($options as $option) {
+                    if (!in_array($option['value'], $value)) {
+                        continue;
+                    }
+                    if (!empty($result)) {
+                        $result .= $delimiter;
+                    }
+                    $result .= $option['text'];
+                }
+            } else {
+                foreach ($options as $option) {
+                    if ($option['value'] != $value) {
+                        continue;
+                    }
+                    $result = $option['text'];
+                    break;
+                }
+            }
+
+            return $result;
+        }
+
+    '''
+
+    def private extractMultiList(Application it) '''
+        /**
+         * Extract concatenated multi selection.
+         *
+         * @param string  $value The dropdown value to process.
+         *
+         * @return array List of single values.
+         */
+        public function extractMultiList($value)
+        {
+            $listValues = explode('###', $value);
+            $numValues = count($listValues);
+            if ($numValues > 1 && $listValues[$numValues-1] == '') {
+                unset($listValues[$numValues-1]);
+            }
+            if ($listValues[0] == '') {
+                unset($listValues[0]);
+            }
+
+            return $listValues;
+        }
+
+    '''
+
+    def private hasMultipleSelection(Application it) '''
+        /**
+         * Determine whether a certain dropdown field has a multi selection or not.
+         *
+         * @param string $objectType The treated object type.
+         * @param string $fieldName  The list field's name.
+         *
+         * @return boolean True if this is a multi list false otherwise.
+         */
+        public function hasMultipleSelection($objectType, $fieldName)
+        {
+            if (empty($objectType) || empty($fieldName)) {
+                return false;
+            }
+
+            $result = false;
+            switch ($objectType) {
+                «FOR entity : getAllEntities.filter(e|e.hasListFieldsEntity)»
+                    case '«entity.name.formatForCode»':
+                        switch ($fieldName) {
+                            «FOR listField : entity.getListFieldsEntity»
+                                case '«listField.name.formatForCode»':
+                                    $result = «listField.multiple.displayBool»;
+                                    break;
+                            «ENDFOR»
+                        }
+                        break;
+                «ENDFOR»
+            }
+
+            return $result;
+        }
+
+    '''
+
+    def private getEntries(Application it) '''
+        /**
+         * Get entries for a certain dropdown field.
+         *
+         * @param string  $objectType The treated object type.
+         * @param string  $fieldName  The list field's name.
+         *
+         * @return array Array with desired list entries.
+         */
+        public function getEntries($objectType, $fieldName)
+        {
+            if (empty($objectType) || empty($fieldName)) {
+                return array();
+            }
+
+            $entries = array();
+            switch ($objectType) {
+                «FOR entity : getAllEntities.filter(e|e.hasListFieldsEntity)»
+                    case '«entity.name.formatForCode»':
+                        switch ($fieldName) {
+                            «FOR listField : entity.getListFieldsEntity»
+                                case '«listField.name.formatForCode»':
+                                    $entries = $this->get«listField.name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»();
+                                    break;
+                            «ENDFOR»
+                        }
+                        break;
+                «ENDFOR»
+            }
+
+            return $entries;
+        }
+    '''
+
+    def private additions(Application it) '''
+        «FOR listField : getAllListFields»
+
+            «listField.getItemsImpl»
+        «ENDFOR»
     '''
 
     def private getItemsImpl(ListField it) '''
@@ -192,8 +212,13 @@ class ListEntries {
         public function get«name.formatForCodeCapital»EntriesFor«entity.name.formatForCodeCapital»()
         {
             $states = array();
-            $dom = ZLanguage::getModuleDomain('«entity.container.application.appName»');
-            «FOR item : items»«item.entryInfo»«ENDFOR»
+            «IF name == 'workflowState'»
+                «val visibleStates = items.filter(e|e.value != 'initial' && e.value != 'deleted')»
+                «FOR item : visibleStates»«item.entryInfo»«ENDFOR»
+                «FOR item : visibleStates»«item.entryInfoNegative»«ENDFOR»
+            «ELSE»
+                «FOR item : items»«item.entryInfo»«ENDFOR»
+            «ENDIF»
 
             return $states;
         }
@@ -201,9 +226,16 @@ class ListEntries {
 
     def private entryInfo(ListFieldItem it) '''
         $states[] = array('value' => '«value.replaceAll("'", "")»',
-                          'text'  => __('«name.formatForDisplayCapital.replaceAll("'", "")»', $dom),
-                          'title' => «IF documentation != null && documentation != ''»__('«documentation.replaceAll("'", "")»', $dom)«ELSE»''«ENDIF»,
+                          'text'  => $this->__('«name.formatForDisplayCapital.replaceAll("'", "")»'),
+                          'title' => «IF documentation != null && documentation != ''»$this->__('«documentation.replaceAll("'", "")»')«ELSE»''«ENDIF»,
                           'image' => '«IF image != null && image != ''»«image».png«ENDIF»');
+    '''
+
+    def private entryInfoNegative(ListFieldItem it) '''
+        $states[] = array('value' => '!«value.replaceAll("'", "")»',
+                          'text'  => $this->__('All except «name.formatForDisplay.replaceAll("'", "")»'),
+                          'title' => $this->__('Shows all items except these which are «name.formatForDisplay.replaceAll("'", "")»'),
+                          'image' => '');
     '''
 
     def private listFieldFunctionsImpl(Application it) '''

@@ -46,7 +46,7 @@ class Selection {
         /**
          * Gets the list of identifier fields for a given object type.
          *
-         * @param string $args['ot'] The object type to be treated (optional)
+         * @param string $args['ot'] The object type to be treated (optional).
          *
          * @return array List of identifier field names.
          */
@@ -62,7 +62,7 @@ class Selection {
         /**
          * Selects a single entity.
          *
-         * @param string  $args['ot']       The object type to retrieve (optional)
+         * @param string  $args['ot']       The object type to retrieve (optional).
          * @param mixed   $args['id']       The id (or array of ids) to use to retrieve the object (default=null).
          «IF hasSluggable»
           * @param string  $args['slug']     Slug to use as selection criteria instead of id (optional) (default=null).
@@ -104,7 +104,7 @@ class Selection {
         /**
          * Selects a list of entities by different criteria.
          *
-         * @param string  $args['ot']       The object type to retrieve (optional)
+         * @param string  $args['ot']       The object type to retrieve (optional).
          * @param string  $args['where']    The where clause to use when retrieving the collection (optional) (default='').
          * @param string  $args['orderBy']  The order-by clause to use when retrieving the collection (optional) (default='').
          * @param boolean $args['useJoins'] Whether to include joining related objects (optional) (default=true).
@@ -128,11 +128,11 @@ class Selection {
         /**
          * Selects a list of entities by different criteria.
          *
-         * @param string  $args['ot']             The object type to retrieve (optional)
+         * @param string  $args['ot']             The object type to retrieve (optional).
          * @param string  $args['where']          The where clause to use when retrieving the collection (optional) (default='').
          * @param string  $args['orderBy']        The order-by clause to use when retrieving the collection (optional) (default='').
-         * @param integer $args['currentPage']    Where to start selection
-         * @param integer $args['resultsPerPage'] Amount of items to select
+         * @param integer $args['currentPage']    Where to start selection.
+         * @param integer $args['resultsPerPage'] Amount of items to select.
          * @param boolean $args['useJoins']       Whether to include joining related objects (optional) (default=true).
          * @param boolean $args['slimMode']       If activated only some basic fields are selected without using any joins (optional) (default=false).
          *
@@ -156,8 +156,8 @@ class Selection {
         /**
          * Determines object type using controller util methods.
          *
-         * @param string $args['ot'] The object type to retrieve (optional)
-         * @param string $methodName Name of calling method
+         * @param string $args['ot'] The object type to retrieve (optional).
+         * @param string $methodName Name of calling method.
          *
          * @return string the object type.
          */
@@ -191,7 +191,7 @@ class Selection {
             /**
              * Selects tree of given object type.
              *
-             * @param string  $args['ot']       The object type to retrieve (optional)
+             * @param string  $args['ot']       The object type to retrieve (optional).
              * @param integer $args['rootId']   Optional id of root node to use as a branch, defaults to 0 which corresponds to the whole tree.
              * @param boolean $args['useJoins'] Whether to include joining related objects (optional) (default=true).
              *
@@ -215,7 +215,7 @@ class Selection {
             /**
              * Gets all trees at once.
              *
-             * @param string  $args['ot']       The object type to retrieve (optional)
+             * @param string  $args['ot']       The object type to retrieve (optional).
              * @param boolean $args['useJoins'] Whether to include joining related objects (optional) (default=true).
              *
              * @return array|ArrayCollection retrieved data array or tree node objects.

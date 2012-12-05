@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.extensions.transformation
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
+import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
 import de.guite.modulestudio.metamodel.modulestudio.ModulestudioFactory
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
@@ -44,6 +45,7 @@ class PersistenceTransformer {
         //println('Field size before: ' + fields.size + ' fields')
         if (getPrimaryKeyFields.isEmpty) addPrimaryKey
         //println('Added primary key, field size now: ' + fields.size + ' fields')
+        addWorkflowState
     }
 
     /**
@@ -64,14 +66,123 @@ class PersistenceTransformer {
      */
     def private createIdColumn(String colName, Boolean isPrimary) {
         val factory = ModulestudioFactory::eINSTANCE
-        val idField = factory.createIntegerField
-        if (isPrimary)
-            idField.name = 'id'
-        else
-            idField.name = colName.formatForCode + '_id'
-        idField.length = 9
-        idField.primaryKey = isPrimary
-        idField.unique = isPrimary
+        val idField = factory.createIntegerField => [
+            name = if (isPrimary) 'id' else colName.formatForCode + '_id'
+            length = 9
+            primaryKey = isPrimary
+            unique = isPrimary
+        ]
         idField
+    }
+
+    /**
+     * Adds a list field for the workflow state to a given entity.
+     * 
+     * @param entity The given {@link Entity} instance
+     */
+    def private addWorkflowState(Entity entity) {
+        val factory = ModulestudioFactory::eINSTANCE
+        val listField = factory.createListField => [
+            name = 'workflowState'
+            documentation = 'the current workflow state'
+            length = 20
+            defaultValue = 'initial'
+            multiple = false
+        ]
+        listField.items.add(
+            factory.createListFieldItem => [
+                name = 'Initial'
+                value = 'initial'
+                documentation = 'Pseudo-state for content which is just created and not persisted yet.'
+            ]
+        )
+
+        if (entity.ownerPermission) {
+            listField.items.add(
+                factory.createListFieldItem => [
+                    name = 'Deferred'
+                    value = 'deferred'
+                    documentation = 'Content has not been submitted yet or has been waiting, but was rejected.'
+                ]
+            )
+        }
+
+        if (entity.workflow != EntityWorkflowType::NONE) {
+            listField.items.add(
+                factory.createListFieldItem => [
+                    name = 'Waiting'
+                    value = 'waiting'
+                    documentation = 'Content has been submitted and waits for approval.'
+                ]
+            )
+
+            if (entity.workflow == EntityWorkflowType::ENTERPRISE) {
+                listField.items.add(
+                    factory.createListFieldItem => [
+                        name = 'Accepted'
+                        value = 'accepted'
+                        documentation = 'Content has been submitted and accepted, but still waits for approval.'
+                    ]
+                )
+            }
+        }
+
+        listField.items.add(
+            factory.createListFieldItem => [
+                name = 'Approved'
+                value = 'approved'
+                documentation = 'Content has been approved and is available online.'
+            ]
+        )
+
+        if (entity.hasTray) {
+            listField.items.add(
+                factory.createListFieldItem => [
+                    name = 'Suspended'
+                    value = 'suspended'
+                    documentation = 'Content has been approved, but is temporarily offline.'
+                ]
+            )
+        }
+
+        if (entity.hasArchive) {
+            listField.items.add(
+                factory.createListFieldItem => [
+                    name = 'Archived'
+                    value = 'archived'
+                    documentation = 'Content has reached the end and became archived.'
+                ]
+            )
+        }
+
+        if (entity.softDeleteable) {
+            listField.items.add(
+                factory.createListFieldItem => [
+                    name = 'Trashed'
+                    value = 'trashed'
+                    documentation = 'Content has been marked as deleted, but is still persisted in the database.'
+                ]
+            )
+        }
+
+        listField.items.add(
+            factory.createListFieldItem => [
+                name = 'Deleted'
+                value = 'deleted'
+                documentation = 'Pseudo-state for content which has been deleted from the database.'
+            ]
+        )
+
+        entity.fields.add(1, listField)
+
+        val wfIndex = factory.createEntityIndex => [
+            name = 'workflowStateIndex'
+        ]
+        wfIndex.items.add(
+            factory.createEntityIndexItem => [
+                name = 'workflowState'
+            ]
+        )
+        entity.indexes.add(wfIndex)
     }
 }

@@ -3,11 +3,19 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listene
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class ThirdParty {
     @Inject extension Utils = new Utils()
+    @Inject extension WorkflowExtensions = new WorkflowExtensions()
 
     def generate(Application it, Boolean isBase) '''
+        «pendingContentListener(isBase)»
+
+        «contentGetTypes(isBase)»
+    '''
+
+    def private pendingContentListener(Application it, Boolean isBase) '''
         /**
          * Listener for pending content items.
          *
@@ -18,26 +26,42 @@ class ThirdParty {
             «IF !isBase»
                 parent::pendingContentListener($event);
             «ELSE»
-                if (!SecurityUtil::checkPermission('«appName»:objecttype:', 'ids::', ACCESS_MODERATE)) {
-                    return;
-                }
-                /** this is an example implementation from the Users module
-                $approvalOrder = ModUtil::getVar('Users', 'moderation_order', UserUtil::APPROVAL_ANY);
-                $filter = array('approved_by' => 0);
-                if ($approvalOrder == UserUtil::APPROVAL_AFTER) {
-                    $filter['isverified'] = true;
-                }
-                $numPendingApproval = ModUtil::apiFunc('Users', 'registration', 'countAll', array('filter' => $filter));
-
-                if (!empty($numPendingApproval)) {
-                    $collection = new Zikula_Collection_Container('Users');
-                    $collection->add(new Zikula_Provider_AggregateItem('registrations', __('Registrations pending approval'), $numPendingApproval, 'admin', 'viewRegistrations'));
-                    $event->getSubject()->add($collection);
-                }
-                */
+                «pendingContentListenerImpl»
             «ENDIF»
         }
+    '''
 
+    def private pendingContentListenerImpl(Application it) '''
+        «IF !needsApproval»
+            // nothing required here as no entities use enhanced workflows including approval actions
+        «ELSE»
+            $serviceManager = ServiceUtil::getManager();
+            $workflowHelper = new «appName»_Util_Workflow($serviceManager);
+            $modname = '«appName»';
+            $useJoins = false;
+
+            $collection = new Zikula_Collection_Container($modname);
+            $amounts = $workflowHelper->collectAmountOfModerationItems();
+            if (count($amounts) > 0) {
+                foreach ($amounts as $amountInfo) {
+                    $aggregateType = $amountInfo['aggregateType'];
+                    $description = $amountInfo['description'];
+                    $amount = $amountInfo['amount'];
+                    $viewArgs = array('ot' => $amountInfo['objectType'],
+                                      'workflowState' => $amountInfo['state']);
+                    $aggregateItem = new Zikula_Provider_AggregateItem($aggregateType, $description, $amount, 'admin', 'view', $viewArgs);
+                    $collection->add($aggregateItem);
+                }
+
+                // add collected items for pending content
+                if ($collection->count() > 0) {
+                    $event->getSubject()->add($collection);
+                }
+            }
+        «ENDIF»
+    '''
+
+    def private contentGetTypes(Application it, Boolean isBase) '''
         /**
          * Listener for the `module.content.gettypes` event.
          *
@@ -50,17 +74,20 @@ class ThirdParty {
         {
             «IF !isBase»
                 parent::contentGetTypes($event);
-
             «ELSE»
-                // intended is using the add() method to add a plugin like below
-                $types = $event->getSubject();
-    
-                // plugin for showing a single item
-                $types->add('«appName»_ContentType_Item');
-    
-                // plugin for showing a list of multiple items
-                $types->add('«appName»_ContentType_ItemList');
+                «contentGetTypesImpl»
             «ENDIF»
         }
+    '''
+
+    def private contentGetTypesImpl(Application it) '''
+        // intended is using the add() method to add a plugin like below
+        $types = $event->getSubject();
+
+        // plugin for showing a single item
+        $types->add('«appName»_ContentType_Item');
+
+        // plugin for showing a list of multiple items
+        $types->add('«appName»_ContentType_ItemList');
     '''
 }

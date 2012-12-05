@@ -29,7 +29,7 @@ class Kml {
         <?xml version="1.0" encoding="UTF-8"?>
         <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
         <Document>
-        {foreach item='item' from=$items name='coordinates'}
+        {foreach item='item' from=$items}
             <Placemark>
                 «val stringFields = fields.filter(typeof(StringField)) + fields.filter(typeof(TextField))»
                 <name>«IF !stringFields.isEmpty»{$item->get«stringFields.head.name.formatForCodeCapital»()}«ELSE»{gt text='«name.formatForDisplayCapital»'}«ENDIF»</name>

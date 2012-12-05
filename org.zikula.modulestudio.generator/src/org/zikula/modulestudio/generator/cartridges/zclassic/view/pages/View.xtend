@@ -8,9 +8,11 @@ import de.guite.modulestudio.metamodel.modulestudio.DecimalField
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
+import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
 import de.guite.modulestudio.metamodel.modulestudio.FloatField
 import de.guite.modulestudio.metamodel.modulestudio.IntegerField
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
+import de.guite.modulestudio.metamodel.modulestudio.ListField
 import de.guite.modulestudio.metamodel.modulestudio.NamedObject
 import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.OneToOneRelationship
@@ -26,6 +28,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class View {
     @Inject extension ControllerExtensions = new ControllerExtensions()
@@ -36,6 +39,7 @@ class View {
     @Inject extension UrlExtensions = new UrlExtensions()
     @Inject extension Utils = new Utils()
     @Inject extension ViewExtensions = new ViewExtensions()
+    @Inject extension WorkflowExtensions = new WorkflowExtensions()
 
     SimpleFields fieldHelper = new SimpleFields()
 
@@ -108,29 +112,54 @@ class View {
 
         {include file='«controller.formattedName»/«name.formatForCode»/view_quickNav.tpl'}{* see template file for available options *}
 
-        «viewItemList(appName, controller)»
+        «viewForm(appName, controller)»
 
-        {if !isset($showAllEntries) || $showAllEntries ne 1}
-            {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page'}
-        {/if}
         «callDisplayHooks(appName, controller)»
         «controller.templateFooter»
         </div>
         {include file='«controller.formattedName»/footer.tpl'}
 
-        «IF hasBooleansWithAjaxToggleEntity»
+        «IF hasBooleansWithAjaxToggleEntity || (listType == 3 && controller.tableClass == 'admin')»
             <script type="text/javascript">
             /* <![CDATA[ */
                 document.observe('dom:loaded', function() {
-                {{foreach item='«objName»' from=$items}}
-                    {{assign var='itemid' value=$«objName».«getFirstPrimaryKey.name.formatForCode»}}
-                    «FOR field : getBooleansWithAjaxToggleEntity»
-                        «container.application.prefix»InitToggle('«objName»', '«field.name.formatForCode»', '{{$itemid}}');
-                    «ENDFOR»
-                {{/foreach}}
+                «IF hasBooleansWithAjaxToggleEntity»
+                    {{foreach item='«objName»' from=$items}}
+                        {{assign var='itemid' value=$«objName».«getFirstPrimaryKey.name.formatForCode»}}
+                        «FOR field : getBooleansWithAjaxToggleEntity»
+                            «container.application.prefix»InitToggle('«objName»', '«field.name.formatForCode»', '{{$itemid}}');
+                        «ENDFOR»
+                    {{/foreach}}
+                «ENDIF»
+                «IF listType == 3 && controller.tableClass == 'admin'»
+                    {{* init the "toggle all" functionality *}}
+                    if ($('toggle_«nameMultiple.formatForCode»') != undefined) {
+                        $('toggle_«nameMultiple.formatForCode»').observe('click', function (e) {
+                            Zikula.toggleInput('«nameMultiple.formatForCode»_view');
+                            e.stop()
+                        });
+                    }
+                «ENDIF»
                 });
             /* ]]> */
             </script>
+        «ENDIF»
+    '''
+
+    def private viewForm(Entity it, String appName, Controller controller) '''
+        «IF listType == 3 && controller.tableClass == 'admin'»
+            <form class="z-form" id="«nameMultiple.formatForCode»_view" action="{modurl modname='«appName»' type='«controller.formattedName»' func='handleselectedentries'}" method="post">
+                <div>
+                    <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
+                    <input type="hidden" name="ot" value="«name.formatForCode»" />
+                    «viewItemList(appName, controller)»
+                    «pagerCall»
+                    «massActionFields(appName)»
+                </div>
+            </form>
+        «ELSE»
+            «viewItemList(appName, controller)»
+            «pagerCall»
         «ENDIF»
     '''
 
@@ -143,6 +172,9 @@ class View {
             «ELSE»
                 <table class="z-datatable">
                     <colgroup>
+                        «IF controller.tableClass == 'admin'»
+                            <col id="cselect" />
+                        «ENDIF»
                         «FOR field : listItemsFields»«field.columnDef»«ENDFOR»
                         «FOR relation : listItemsIn»«relation.columnDef(false)»«ENDFOR»
                         «FOR relation : listItemsOut»«relation.columnDef(true)»«ENDFOR»
@@ -150,6 +182,11 @@ class View {
                     </colgroup>
                     <thead>
                     <tr>
+                        «IF controller.tableClass == 'admin'»
+                            <th id="hselect" scope="col" align="center" valign="middle">
+                                <input type="checkbox" id="toggle_«nameMultiple.formatForCode»" />
+                            </th>
+                        «ENDIF»
                         «FOR field : listItemsFields»«field.headerLine(controller)»«ENDFOR»
                         «FOR relation : listItemsIn»«relation.headerLine(controller, false)»«ENDFOR»
                         «FOR relation : listItemsOut»«relation.headerLine(controller, true)»«ENDFOR»
@@ -166,6 +203,11 @@ class View {
                     <dt>
                 «ELSEIF listType == 3»
                     <tr class="{cycle values='z-odd, z-even'}">
+                        «IF controller.tableClass == 'admin'»
+                            <td headers="hselect" align="center" valign="top">
+                                <input type="checkbox" name="items[]" value="{$«name.formatForCode».«getPrimaryKeyFields.head.name.formatForCode»}" class="«nameMultiple.formatForCode»_checkbox" />
+                            </td>
+                        «ENDIF»
                 «ENDIF»
                     «FOR field : listItemsFields»«field.displayEntry(controller, false)»«ENDFOR»
                     «FOR relation : listItemsIn»«relation.displayEntry(controller, false)»«ENDFOR»
@@ -185,7 +227,7 @@ class View {
                     <dt>
                 «ELSEIF listType == 3»
                     <tr class="z-«controller.tableClass»tableempty">
-                      <td class="z-left" colspan="«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1)»">
+                      <td class="z-left" colspan="«(listItemsFields.size + listItemsIn.size + listItemsOut.size + 1 + (if (controller.tableClass == 'admin') 1 else 0))»">
                 «ENDIF»
                 {gt text='No «nameMultiple.formatForDisplay» found.'}
                 «IF listType < 2»
@@ -204,6 +246,45 @@ class View {
                     </tbody>
                 </table>
             «ENDIF»
+    '''
+
+    def private pagerCall(Entity it) '''
+
+        {if !isset($showAllEntries) || $showAllEntries ne 1}
+            {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page'}
+        {/if}
+    '''
+
+    def private massActionFields(Entity it, String appName) '''
+        <fieldset>
+            <label for="«appName.formatForDB»_action">{gt text='With selected «nameMultiple.formatForDisplay»'}</label>
+            <select id="«appName.formatForDB»_action" name="action">
+                <option value="">{gt text='Choose action'}</option>
+            «IF workflow != EntityWorkflowType::NONE»
+                «IF workflow == EntityWorkflowType::ENTERPRISE»
+                    <option value="accept" title="«getWorkflowActionDescription(workflow, 'Accept')»">{gt text='Accept'}</option>
+                    «IF ownerPermission»
+                        <option value="reject" title="«getWorkflowActionDescription(workflow, 'Reject')»">{gt text='Reject'}</option>
+                    «ENDIF»
+                    <option value="demote" title="«getWorkflowActionDescription(workflow, 'Demote')»">{gt text='Demote'}</option>
+                «ENDIF»
+                <option value="approve" title="«getWorkflowActionDescription(workflow, 'Approve')»">{gt text='Approve'}</option>
+            «ENDIF»
+            «IF hasTray»
+                <option value="unpublish" title="«getWorkflowActionDescription(workflow, 'Unpublish')»">{gt text='Unpublish'}</option>
+                <option value="publish" title="«getWorkflowActionDescription(workflow, 'Publish')»">{gt text='Publish'}</option>
+            «ENDIF»
+            «IF hasTray»
+                <option value="archive" title="«getWorkflowActionDescription(workflow, 'Archive')»">{gt text='Archive'}</option>
+            «ENDIF»
+            «IF softDeleteable»
+                <option value="trash" title="«getWorkflowActionDescription(workflow, 'Trash')»">{gt text='Trash'}</option>
+                <option value="recover" title="«getWorkflowActionDescription(workflow, 'Recover')»">{gt text='Recover'}</option>
+            «ENDIF»
+                <option value="delete">{gt text='Delete'}</option>
+            </select>
+            <input type="submit" value="{gt text='Submit'}" />
+        </fieldset>
     '''
 
     def private tableClass(Controller it) {
@@ -285,14 +366,22 @@ class View {
     def private sortParamsForBooleanFields(Entity it) '''«IF hasBooleanFieldsEntity»«FOR field : getBooleanFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
 
     def private displayEntry(Object it, Controller controller, Boolean useTarget) '''
+        «val cssClass = entryContainerCssClass»
         «IF listType != 3»
-            <«listType.asItemTag»>
+            <«listType.asItemTag»«IF cssClass != ''» class="«cssClass»"«ENDIF»>
         «ELSE»
-            <td headers="h«markupIdCode(useTarget)»" class="z-«alignment»">
+            <td headers="h«markupIdCode(useTarget)»" class="z-«alignment»«IF cssClass != ''» «cssClass»«ENDIF»">
         «ENDIF»
             «displayEntryInner(controller, useTarget)»
         </«listType.asItemTag»>
     '''
+
+    def private dispatch entryContainerCssClass(Object it) {
+        return ''
+    }
+    def private dispatch entryContainerCssClass(ListField it) {
+        if (name == 'workflowState') 'z-nowrap' else ''
+    }
 
     def private dispatch displayEntryInner(Object it, Controller controller, Boolean useTarget) {
     }
@@ -300,6 +389,8 @@ class View {
     def private dispatch displayEntryInner(DerivedField it, Controller controller, Boolean useTarget) '''
         «IF leading == true»
             {$«entity.name.formatForCode».«name.formatForCode»|notifyfilters:'«entity.container.application.appName.formatForDB».filterhook.«entity.nameMultiple.formatForDB»'}
+        «ELSEIF name == 'workflowState'»
+            {$«entity.name.formatForCode».workflowState|«controller.container.application.appName.formatForDB»ObjectState}
         «ELSE»
             «fieldHelper.displayField(it, entity.name.formatForCode, 'view')»
         «ENDIF»

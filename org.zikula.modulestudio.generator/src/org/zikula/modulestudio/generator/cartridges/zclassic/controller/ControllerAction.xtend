@@ -455,8 +455,12 @@ class ControllerAction {
         // build form handler class name
         $handlerClass = $this->name . '_Form_Handler_«controller.formattedName.toFirstUpper»_' . ucfirst($objectType) . '_Edit';
 
+        // determine the output template
+        $viewHelper = new «appName»_Util_View($this->serviceManager);
+        $template = $viewHelper->getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'edit', $args);
+
         // execute form using supplied template and page event handler
-        return $view->execute('«controller.formattedName»/' . $objectType . '/edit.tpl', new $handlerClass());
+        return $view->execute($template, new $handlerClass());
                     '''
         }
     }
@@ -473,25 +477,53 @@ class ControllerAction {
         $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
         $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
 
-        $confirmation = (bool) (isset($args['confirmation']) && !empty($args['confirmation'])) ? $args['confirmation'] : $this->request->request->filter('confirmation', false, FILTER_VALIDATE_BOOLEAN);
+        $workflowHelper = new «appName»_Util_Workflow($this->serviceManager);
+        $deleteActionId = 'delete';
+        $deleteAllowed = false;
+        $actions = $workflowHelper->getActionsForObject($entity);
+        if ($actions === false || !is_array($actions)) {
+            return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
+        }
+        foreach ($actions as $actionId => $action) {
+            if ($actionId != $deleteActionId) {
+                continue;
+            }
+            $deleteAllowed = true;
+            break;
+        }
+        if (!$deleteAllowed) {
+            return LogUtil::registerError($this->__('Error! It is not allowed to delete this entity.'));
+        }
 
+        $confirmation = (bool) (isset($args['confirmation']) && !empty($args['confirmation'])) ? $args['confirmation'] : $this->request->request->filter('confirmation', false, FILTER_VALIDATE_BOOLEAN);
         if ($confirmation) {
             $this->checkCsrfToken();
 
-            // TODO call pre delete validation hooks
-            $this->entityManager->remove($entity);
-            $this->entityManager->flush();
-            $this->registerStatus($this->__('Done! Item deleted.'));
-            // TODO call post delete process hooks
+            $hookAreaPrefix = $entity->getHookAreaPrefix();
+            $hookType = 'validate_delete';
+            // Let any hooks perform additional validation actions
+            $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
+            $validators = $this->notifyHooks($hook)->getValidators();
+            if (!$validators->hasErrors()) {
+                // execute the workflow action
+                $success = $workflowHelper->executeAction($entity, $deleteActionId);
+                if ($success) {
+                    $this->registerStatus($this->__('Done! Item deleted.'));
+                }
 
+                // Let any hooks know that we have created, updated or deleted an item
+                $hookType = 'process_delete';
+                $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier());
+                $this->notifyHooks($hook);
 
-            // An item was deleted, so we clear all cached pages this item.
-            $cacheArgs = array('ot' => $objectType, 'item' => $entity);
-            ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
+                // An item was deleted, so we clear all cached pages this item.
+                $cacheArgs = array('ot' => $objectType, 'item' => $entity);
+                ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
 
-            // redirect to the «IF controller.hasActions('view')»list of the current object type«ELSE»main page«ENDIF»
-            $this->redirect(ModUtil::url($this->name, '«controller.formattedName»', «IF controller.hasActions('view')»'view',
-                                                                                        array('ot' => $objectType)«ELSE»'main'«ENDIF»));
+                // redirect to the «IF controller.hasActions('view')»list of the current object type«ELSE»main page«ENDIF»
+                $this->redirect(ModUtil::url($this->name, '«controller.formattedName»', «IF controller.hasActions('view')»'view',
+                                                                                            array('ot' => $objectType)«ELSE»'main'«ENDIF»));
+            }
         }
 
         $repository = $this->entityManager->getRepository('«appName»_Entity_' . ucfirst($objectType));

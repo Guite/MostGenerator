@@ -127,11 +127,13 @@ class EventListener {
         protected function performPreRemoveCallback()
         {
             // delete workflow for this entity
-            /*$result = Zikula_Workflow_Util::deleteWorkflow($this);
+            $workflow = $this['__WORKFLOW__'];
+            $result = (bool) DBUtil::deleteObjectByID('workflows', $workflow['id']);
             if ($result === false) {
                 $dom = ZLanguage::getModuleDomain('«container.application.appName»');
-                return LogUtil::registerError(__('Error! Could not remove stored workflow.', $dom));
-            }*/
+                return LogUtil::registerError(__('Error! Could not remove stored workflow. Deletion has been aborted.', $dom));
+            }
+
             return true;
         }
 «/*}*/»«/*    def private eventListenerBaseImpl(PostRemove it) {*/»
@@ -365,15 +367,36 @@ class EventListener {
     def private postLoadImpl(Entity it/* PostLoad it */) '''
         $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST', FILTER_SANITIZE_STRING);
         «IF hasUploadFieldsEntity»
+
             // initialise the upload handler
             $uploadManager = new «container.application.appName»_UploadHandler();
             $serviceManager = ServiceUtil::getManager();
             $controllerHelper = new «container.application.appName»_Util_Controller($serviceManager);
         «ENDIF»
 
+        «loadWorkflow»
+
         «FOR field : fields»«field.sanitizeForOutput»«ENDFOR»
     '''
 
+    def private loadWorkflow(Entity it) '''
+        // apply workflow with most important information
+        $idColumn = '«primaryKeyFields.head.name.formatForCode»';
+        $this['__WORKFLOW__'] = array(
+            'state' => $this['workflowState'],
+            'obj_table' => $this['_objectType'],
+            'obj_idcolumn' => $idColumn,
+            'obj_id' => $this[$idColumn]);
+
+        // load the real workflow only when required (e. g. when func is edit or delete)
+        if (!in_array($currentFunc, array('main', 'view', 'display'))) {
+            $result = Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«container.application.appName»');
+            if (!$result) {
+                $dom = ZLanguage::getModuleDomain('«container.application.appName»');
+                LogUtil::registerError(__('Error! Could not load the associated workflow.', $dom));
+            }
+        }
+    '''
 
     def private sanitizeForOutput(EntityField it) {
         switch (it) {

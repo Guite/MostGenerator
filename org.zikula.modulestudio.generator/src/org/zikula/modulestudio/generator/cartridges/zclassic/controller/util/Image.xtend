@@ -33,104 +33,112 @@ class Image {
         «imageFunctionsImpl»
     '''
 
-    def imageFunctionsBaseImpl(Application it) '''
+    def private imageFunctionsBaseImpl(Application it) '''
         /**
          * Utility base class for image helper methods.
          */
         class «appName»_«fillingUtil»Base_Image extends Zikula_AbstractBase
         {
-            /**
-             * This method returns an Imagine manager with a certain preset
-             * which is chosen depending on the given arguments.
-             *
-             * @param string $objectType Currently treated entity type.
-             * @param string $fieldName  Name of upload field.
-             * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType).
-             * @param array  $args       Additional arguments.
-             *
-             * @return SystemPlugin_Imagine_Manager The desired manager.
-             */
-            public function getManager($objectType = '', $fieldName = '', $context = '', $args = array())
-            {
-                if (!in_array($context, array('controllerAction', 'api', 'actionHandler', 'block', 'contentType'))) {
-                    $context = 'controllerAction';
-                }
+            «getManager»
 
-                $presetName = '';
-                if ($context == 'controllerAction') {
-                    if (!isset($args['controller'])) {
-                        $args['controller'] = 'user';
-                    }
-                    if (!isset($args['action'])) {
-                        $args['action'] = 'main';
-                    }
-
-                    if ($args['controller'] == 'ajax' && $args['action'] == 'getItemListAutoCompletion') {
-                        $presetName = $this->name . '_ajax_autocomplete';
-                    } else {
-                        $presetName = $this->name . '_' . $args['controller'] . '_' . $args['action'];
-                    }
-                }
-                if (empty($presetName)) {
-                    $presetName = $this->name . '_default';
-                }
-
-                $preset = $this->getPreset($objectType, $fieldName, $presetName, $context, $args);
-
-                $manager = $this->getServiceManager()->getService('systemplugin.imagine.manager');
-                $manager->setModule($this->name)
-                        ->setPreset($presetName);
-
-                return $manager;
-            }
-
-            /**
-             * This method returns an Imagine preset for the given arguments.
-             *
-             * @param string $objectType Currently treated entity type.
-             * @param string $fieldName  Name of upload field.
-             * @param string $presetName Name of desired preset.
-             * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType).
-             * @param array  $args       Additional arguments.
-             *
-             * @return SystemPlugin_Imagine_Preset The selected preset.
-             */
-            public function getPreset($objectType = '', $fieldName = '', $presetName = '', $context = '', $args = array())
-            {
-                $presetData = array(
-                    'width'     => 100,      // thumbnail width in pixels
-                    'height'    => 100 ,     // thumbnail height in pixels
-                    'mode'      => 'inset',  // inset or outset
-                    'extension' => null      // file extension for thumbnails (jpg, png, gif; null for original file type)
-                );
-
-                if ($presetName == $this->name . '_ajax_autocomplete') {
-                    $presetData['width'] = 100;
-                    $presetData['height'] = 80;
-                } elseif ($presetName == $this->name . '_relateditem') {
-                    $presetData['width'] = 50;
-                    $presetData['height'] = 40;
-                } elseif ($context == 'controllerAction') {
-                    if ($args['action'] == 'view') {
-                        $presetData['width'] = 32;
-                        $presetData['height'] = 20;
-                    } elseif ($args['action'] == 'display') {
-                        $presetData['width'] = 250;
-                        $presetData['height'] = 150;
-                    } elseif ($args['action'] == 'display') {
-                        $presetData['width'] = 80;
-                        $presetData['height'] = 50;
-                    }
-                }
-
-                $preset = new SystemPlugin_Imagine_Preset($presetName, $presetData);
-
-                return $preset;
-            }
+            «getPreset»
         }
     '''
 
-    def imageFunctionsImpl(Application it) '''
+    def private getManager(Application it) '''
+        /**
+         * This method returns an Imagine manager with a certain preset
+         * which is chosen depending on the given arguments.
+         *
+         * @param string $objectType Currently treated entity type.
+         * @param string $fieldName  Name of upload field.
+         * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType).
+         * @param array  $args       Additional arguments.
+         *
+         * @return SystemPlugin_Imagine_Manager The desired manager.
+         */
+        public function getManager($objectType = '', $fieldName = '', $context = '', $args = array())
+        {
+            if (!in_array($context, array('controllerAction', 'api', 'actionHandler', 'block', 'contentType'))) {
+                $context = 'controllerAction';
+            }
+
+            $presetName = '';
+            if ($context == 'controllerAction') {
+                if (!isset($args['controller'])) {
+                    $args['controller'] = 'user';
+                }
+                if (!isset($args['action'])) {
+                    $args['action'] = 'main';
+                }
+
+                if ($args['controller'] == 'ajax' && $args['action'] == 'getItemListAutoCompletion') {
+                    $presetName = $this->name . '_ajax_autocomplete';
+                } else {
+                    $presetName = $this->name . '_' . $args['controller'] . '_' . $args['action'];
+                }
+            }
+            if (empty($presetName)) {
+                $presetName = $this->name . '_default';
+            }
+
+            $preset = $this->getPreset($objectType, $fieldName, $presetName, $context, $args);
+
+            $manager = $this->getServiceManager()->getService('systemplugin.imagine.manager');
+            $manager->setModule($this->name)
+                    ->setPreset($presetName);
+
+            return $manager;
+        }
+    '''
+
+    def private getPreset(Application it) '''
+        /**
+         * This method returns an Imagine preset for the given arguments.
+         *
+         * @param string $objectType Currently treated entity type.
+         * @param string $fieldName  Name of upload field.
+         * @param string $presetName Name of desired preset.
+         * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType).
+         * @param array  $args       Additional arguments.
+         *
+         * @return SystemPlugin_Imagine_Preset The selected preset.
+         */
+        public function getPreset($objectType = '', $fieldName = '', $presetName = '', $context = '', $args = array())
+        {
+            $presetData = array(
+                'width'     => 100,      // thumbnail width in pixels
+                'height'    => 100 ,     // thumbnail height in pixels
+                'mode'      => 'inset',  // inset or outset
+                'extension' => null      // file extension for thumbnails (jpg, png, gif; null for original file type)
+            );
+
+            if ($presetName == $this->name . '_ajax_autocomplete') {
+                $presetData['width'] = 100;
+                $presetData['height'] = 80;
+            } elseif ($presetName == $this->name . '_relateditem') {
+                $presetData['width'] = 50;
+                $presetData['height'] = 40;
+            } elseif ($context == 'controllerAction') {
+                if ($args['action'] == 'view') {
+                    $presetData['width'] = 32;
+                    $presetData['height'] = 20;
+                } elseif ($args['action'] == 'display') {
+                    $presetData['width'] = 250;
+                    $presetData['height'] = 150;
+                } elseif ($args['action'] == 'display') {
+                    $presetData['width'] = 80;
+                    $presetData['height'] = 50;
+                }
+            }
+
+            $preset = new SystemPlugin_Imagine_Preset($presetName, $presetData);
+
+            return $preset;
+        }
+    '''
+
+    def private imageFunctionsImpl(Application it) '''
         /**
          * Utility implementation class for image helper methods.
          */

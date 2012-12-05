@@ -134,15 +134,17 @@ class Display {
             AdminController: '''
                 <div class="z-admin-content-pagetitle">
                     {icon type='display' size='small' __alt='Details'}
-                    <h3>{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«entity.nameMultiple.formatForDB».filter'}{icon id='itemactionstrigger' type='options' size='extrasmall' __alt='Actions' class='z-pointer z-hide'}</h3>
+                    <h3>«templateHeading(entity, appName)»</h3>
                 </div>
             '''
             default: '''
                 <div class="z-frontendcontainer">
-                    <h2>{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«entity.nameMultiple.formatForDB».filter'}{icon id='itemactionstrigger' type='options' size='extrasmall' __alt='Actions' class='z-pointer z-hide'}</h2>
+                    <h2>«templateHeading(entity, appName)»</h2>
             '''
         }
     }
+
+    def private templateHeading(Entity it, String appName) '''{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'} ({$«name.formatForCode».workflowState|«appName.formatForDB»ObjectState:false|lower}){icon id='itemactionstrigger' type='options' size='extrasmall' __alt='Actions' class='z-pointer z-hide'}'''
 
     def private templateFooter(Controller it) {
         switch it {

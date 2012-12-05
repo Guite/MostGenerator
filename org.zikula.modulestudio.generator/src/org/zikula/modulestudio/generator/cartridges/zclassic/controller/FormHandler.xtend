@@ -17,6 +17,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class FormHandler {
     @Inject extension ControllerExtensions = new ControllerExtensions()
@@ -25,6 +26,7 @@ class FormHandler {
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
+    @Inject extension WorkflowExtensions = new WorkflowExtensions()
 
     FileHelper fh = new FileHelper()
     Redirect redirectHelper = new Redirect()
@@ -141,13 +143,6 @@ class FormHandler {
              * @var string
              */
             protected $objectTypeLower;
-
-            /**
-             * Lower case name of multiple items (needed for hook areas).
-             *
-             * @var string
-             */
-            protected $objectTypeLowerMultiple;
 
             /**
              * Permission component based on object type.
@@ -337,7 +332,7 @@ class FormHandler {
 
             «fetchInputData(actionName)»
 
-            «performUpdate(actionName)»
+            «applyAction(actionName)»
 
             «new UploadProcessing().generate(it)»
         }
@@ -428,6 +423,14 @@ class FormHandler {
 
             // save entity reference for later reuse
             $this->entityRef = $entity;
+
+            $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
+            $actions = $workflowHelper->getActionsForObject($entity);
+            if ($actions === false || !is_array($actions)) {
+                return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
+            }
+            // assign list of allowed actions to the view for further processing
+            $this->view->assign('actions', $actions);
 
             // everything okay, no initialization errors occured
             return true;
@@ -628,13 +631,10 @@ class FormHandler {
          */
         public function handleCommand(Zikula_Form_View $view, &$args)
         {
-            if ($args['commandName'] == 'delete') {
-                if (!SecurityUtil::checkPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_DELETE)) {
-                    return LogUtil::registerPermissionError();
-                }
-            }
+            $action = $args['commandName'];
+            $isRegularAction = !in_array($action, array('delete', 'cancel'));
 
-            if (!in_array($args['commandName'], array('delete', 'cancel'))) {
+            if ($isRegularAction) {
                 // do forms validation including checking all validators on the page to validate their input
                 if (!$this->view->isValid()) {
                     return false;
@@ -646,95 +646,52 @@ class FormHandler {
                  return false;
             }
 
-            $hookAreaPrefix = '«app.name.formatForDB».ui_hooks.' . $this->objectTypeLowerMultiple;
+            $hookAreaPrefix = $entity->getHookAreaPrefix();
+            if ($action != 'cancel') {
+                $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
+
+                // Let any hooks perform additional validation actions
+                $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
+                $validators = $this->notifyHooks($hook)->getValidators();
+                if ($validators->hasErrors()) {
+                    return false;
+                }
+            }
 
             // get treated entity reference from persisted member var
             $entity = $this->entityRef;
+            «IF app.hasTranslatable»
 
-            if (in_array($args['commandName'], array('create', 'update'))) {
-                // event handling if user clicks on create or update
-
-                // Let any hooks perform additional validation actions
-                $hook = new Zikula_ValidationHook($hookAreaPrefix . '.validate_edit', new Zikula_Hook_ValidationProviders());
-                $validators = $this->notifyHooks($hook)->getValidators();
-                if ($validators->hasErrors()) {
-                    return false;
+                if ($isRegularAction && $this->hasTranslatableFields === true) {
+                    $this->processTranslationsForUpdate($entity, $otherFormData);
                 }
-                «IF app.hasTranslatable»
+            «ENDIF»
 
-                    if ($this->hasTranslatableFields === true) {
-                        $this->processTranslationsForUpdate($entity, $otherFormData);
-                    }
-                «ENDIF»
-
-                try {
-                    $this->performUpdate($args);
-                } catch (Exception $e) {
-                    LogUtil::registerError($e->getMessage());
+            if ($action != 'cancel') {
+                $success = $this->applyAction($args);
+                if (!$success) {
+                    // the workflow operation failed
                     return false;
                 }
 
-                $success = true;
-                if ($args['commandName'] == 'create') {
-                    // store new identifier
-                    foreach ($this->idFields as $idField) {
-                        $this->idValues[$idField] = $entity[$idField];
-                        // check if the insert has worked, might become obsolete due to exception usage
-                        if (!$this->idValues[$idField]) {
-                            $success = false;
-                            break;
-                        }
+                // Let any hooks know that we have created, updated or deleted an item
+                $hookType = $action == 'delete' ? 'process_delete' : 'process_edit';
+                $url = null;
+                if ($action != 'delete') {
+                    $urlArgs = array('ot' => $this->objectType);
+                    $urlArgs = $this->addIdentifiersToUrlArgs($urlArgs);
+                    if (isset($this->entityRef['slug'])) {
+                        $urlArgs['slug'] = $this->entityRef['slug'];
                     }
-                } else if ($args['commandName'] == 'update') {
+                    $url = new Zikula_ModUrl($this->name, '«formattedName»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
                 }
-                $this->addDefaultMessage($args, $success);
-
-                // Let any hooks know that we have created or updated an item
-                $urlArgs = array('ot' => $this->objectType);
-                $urlArgs = $this->addIdentifiersToUrlArgs($urlArgs);
-                if (isset($this->entityRef['slug'])) {
-                    $urlArgs['slug'] = $this->entityRef['slug'];
-                }
-                $url = new Zikula_ModUrl($this->name, '«formattedName»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
-                $hook = new Zikula_ProcessHook($hookAreaPrefix . '.process_edit', $this->createCompositeIdentifier(), $url);
+                $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $this->createCompositeIdentifier(), $url);
                 $this->notifyHooks($hook);
 
-                // An item was created or updated, so we clear all cached pages of item lists and this item.
+                // An item was created, updated or deleted, so we clear all cached pages for this item.
                 $cacheArgs = array('ot' => $this->objectType, 'item' => $entity);
                 ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
-            } else if ($args['commandName'] == 'delete') {
-                // event handling if user clicks on delete
 
-                // Let any hooks perform additional validation actions
-                $hook = new Zikula_ValidationHook($hookAreaPrefix . '.validate_delete', new Zikula_Hook_ValidationProviders());
-                $validators = $this->notifyHooks($hook)->getValidators();
-                if ($validators->hasErrors()) {
-                    return false;
-                }
-
-                // delete entity
-                try {
-                    $this->entityManager->remove($entity);
-                    $this->entityManager->flush();
-                } catch (Exception $e) {
-                    LogUtil::registerError($e->getMessage());
-                    return false;
-                }
-
-                $this->addDefaultMessage($args, true);
-
-                // Let any hooks know that we have deleted an item
-                $hook = new Zikula_ProcessHook($hookAreaPrefix . '.process_delete', $this->createCompositeIdentifier());
-                $this->notifyHooks($hook);
-
-                // An item was deleted, so we clear all cached pages this item.
-                $cacheArgs = array('ot' => $this->objectType, 'item' => $entity);
-                ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
-            } else if ($args['commandName'] == 'cancel') {
-                // event handling if user clicks on cancel
-            }
-
-            if ($args['commandName'] != 'cancel') {
                 // clear view cache to reflect our changes
                 $this->view->clear_cache();
             }
@@ -827,6 +784,9 @@ class FormHandler {
                         $transRepository->translate($entity, $fieldName, $translation['locale'], $value);
                     }
                 }
+
+                // save updated entity
+                $this->entityRef = $entity;
             }
         «ENDIF»
 
@@ -908,7 +868,7 @@ class FormHandler {
 
             «IF app.hasUserFields || app.hasUploads || app.hasListFields || (app.hasSluggable && !app.getAllEntities.filter(e|e.slugUpdatable).isEmpty)»
 
-                if (in_array($args['commandName'], array('create', 'update', 'delete'))) {
+                if ($args['commandName'] != 'cancel') {
                     «IF app.hasUserFields»
                         if (count($this->userFields) > 0) {
                             foreach ($this->userFields as $userField => $isMandatory) {
@@ -969,7 +929,7 @@ class FormHandler {
             «ENDIF»
 
             if (isset($entityData['repeatcreation'])) {
-                if ($args['commandName'] == 'create') {
+                if ($this->mode == 'create') {
                     $this->repeatCreateAction = $entityData['repeatcreation'];
                 }
                 unset($entityData['repeatcreation']);
@@ -998,15 +958,18 @@ class FormHandler {
         }
     '''
 
-    def private performUpdate(Controller it, String actionName) '''
+    def private applyAction(Controller it, String actionName) '''
         /**
-         * Executing insert and update statements
+         * This method executes a certain workflow action.
          *
          * @param Array $args Arguments from handleCommand method.
+         *
+         * @return bool Whether everything worked well or not.
          */
-        public function performUpdate($args)
+        public function applyAction($args)
         {
             // stub for subclasses
+            return false;
         }
     '''
 
@@ -1053,7 +1016,6 @@ class FormHandler {
                 $this->objectType = '«name.formatForCode»';
                 $this->objectTypeCapital = '«name.formatForCodeCapital»';
                 $this->objectTypeLower = '«name.formatForDB»';
-                $this->objectTypeLowerMultiple = '«nameMultiple.formatForDB»';
 
                 $this->hasPageLockSupport = «hasPageLockSupport.displayBool»;
                 «IF app.hasAttributableEntities»
@@ -1100,7 +1062,7 @@ class FormHandler {
 
             «handleCommand(it, actionName)»
 
-            «performUpdate(it, actionName)»
+            «applyAction(it, actionName)»
 
             «redirectHelper.getRedirectUrl(it, app, controller, actionName)»
         }
@@ -1205,14 +1167,17 @@ class FormHandler {
 
             $message = '';
             switch ($args['commandName']) {
-                case 'create':
+            «IF app.hasWorkflowState('deferred')»
+                case 'defer':
+            «ENDIF»
+                case 'submit':
                             $message = $this->__('Done! «name.formatForDisplayCapital» created.');
-                            break;
-                case 'update':
-                            $message = $this->__('Done! «name.formatForDisplayCapital» updated.');
                             break;
                 case 'delete':
                             $message = $this->__('Done! «name.formatForDisplayCapital» deleted.');
+                            break;
+                default:
+                            $message = $this->__('Done! «name.formatForDisplayCapital» updated.');
                             break;
             }
 
@@ -1220,39 +1185,68 @@ class FormHandler {
         }
     '''
 
-    def private performUpdate(Entity it, String actionName) '''
+    def private applyAction(Entity it, String actionName) '''
         /**
-         * Executing insert and update statements
+         * This method executes a certain workflow action.
          *
          * @param Array $args Arguments from handleCommand method.
+         *
+         * @return bool Whether everything worked well or not.
          */
-        public function performUpdate($args)
+        public function applyAction($args)
         {
             // get treated entity reference from persisted member var
             $entity = $this->entityRef;
 
-            «IF hasOptimisticLock»
-                $expectedVersion = SessionUtil::getVar($this->name . 'EntityVersion', 1);
-                try {
-                    if ($this->mode != 'create') {
-                        // assert version
-                        $this->entityManager->lock($entity, LockMode::OPTIMISTIC, $expectedVersion);
-                    }
+            $action = $args['commandName'];
+            «IF hasOptimisticLock || hasPessimisticWriteLock»
+
+                $applyLock = ($this->mode != 'create' && $action != 'delete');
+                «IF hasOptimisticLock»
+                    $expectedVersion = SessionUtil::getVar($this->name . 'EntityVersion', 1);
+                «ENDIF»
             «ENDIF»
 
-            //$this->entityManager->transactional(function($entityManager) {
-            «IF hasPessimisticWriteLock»
-                $this->entityManager->lock($entity, LockMode::«lockType.asConstant»);
-            «ENDIF»
-                $this->entityManager->persist($entity);
-                $this->entityManager->flush();
-            //});
+            try {
+                «IF hasOptimisticLock || hasPessimisticWriteLock»
+                    if ($applyLock) {
+                        // assert version
+                        «IF hasOptimisticLock»
+                            $this->entityManager->lock($entity, LockMode::OPTIMISTIC, $expectedVersion);
+                        «ELSEIF hasPessimisticWriteLock»
+                            $this->entityManager->lock($entity, LockMode::«lockType.asConstant»);
+                        «ENDIF»
+                    }
+                «ENDIF»
+
+                // execute the workflow action
+                $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
+                $success = $workflowHelper->executeAction($entity, $action);
             «IF hasOptimisticLock»
                 } catch(OptimisticLockException $e) {
-                    echo $this->__('Sorry, but someone else has already changed this record. Please apply the changes again!');
-                }
+                    LogUtil::registerError($this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
             «ENDIF»
+            } catch(Exception $e) {
+                LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+            }
+
+            $this->addDefaultMessage($args, $success);
+
+            if ($success && $this->mode == 'create') {
+                // store new identifier
+                foreach ($this->idFields as $idField) {
+                    $this->idValues[$idField] = $entity[$idField];
+                    /* deprecated: check if the insert has worked, might become obsolete due to exception usage
+                    if (!$this->idValues[$idField]) {
+                        $success = false;
+                        break;
+                    }*/
+                }
+            }
+
             «owningHelper.saveOwningAssociation(it, app)»
+
+            return $success;
         }
     '''
 }

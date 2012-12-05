@@ -130,6 +130,16 @@ class ControllerExtensions {
     }
 
     /**
+     * Checks whether a given controller is instance of AdminController.
+     */
+    def isAdminController(Controller it) {
+        switch it {
+            AdminController: true
+            default: false
+        }
+    }
+
+    /**
      * Checks whether a given controller is instance of UserController.
      */
     def isUserController(Controller it) {

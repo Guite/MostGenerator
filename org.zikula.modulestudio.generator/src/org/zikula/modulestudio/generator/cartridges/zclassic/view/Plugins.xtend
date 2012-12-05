@@ -8,6 +8,8 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.FormatG
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetCountryName
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetFileSize
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.GetListEntry
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ModerationObjects
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ObjectState
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.ObjectTypeSelector
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TemplateHeaders
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.TemplateSelector
@@ -27,11 +29,13 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.Us
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Plugins {
     @Inject extension ControllerExtensions = new ControllerExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
+    @Inject extension WorkflowExtensions = new WorkflowExtensions()
 
     def generate(Application it, IFileSystemAccess fsa) {
         viewPlugins(fsa)
@@ -44,6 +48,7 @@ class Plugins {
 
     def private viewPlugins(Application it, IFileSystemAccess fsa) {
         new ActionUrl().generate(it, fsa)
+        new ObjectState().generate(it, fsa)
         new TemplateHeaders().generate(it, fsa)
         if (hasCountryFields) {
             new GetCountryName().generate(it, fsa)
@@ -60,6 +65,9 @@ class Plugins {
         if (hasTrees) {
             new TreeJS().generate(it, fsa)
             new TreeSelection().generate(it, fsa)
+        }
+        if (needsApproval) {
+            new ModerationObjects().generate(it, fsa)
         }
     }
 

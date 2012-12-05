@@ -292,7 +292,7 @@ class ModelExtensions {
      * Returns a list of all fields which should be displayed.
      */
     def getLeadingDisplayFields(Entity it) {
-        var fields = getDisplayFields
+        var fields = getDisplayFields.filter(e|e.name != 'workflowState')
         if (leadingField != null && leadingField.showLeadingFieldInTitle) {
             fields = fields.filter(e|!e.leading)
         }
@@ -313,7 +313,7 @@ class ModelExtensions {
      * At the moment instances of ArrayField and ObjectField are excluded.
      */
     def getEditableFields(Entity it) {
-        var fields = getDerivedFields
+        var fields = getDerivedFields.filter(e|e.name != 'workflowState')
         if (it.identifierStrategy != EntityIdentifierStrategy::NONE) {
             fields = fields.filter(e|!e.primaryKey)
         }
@@ -621,9 +621,9 @@ class ModelExtensions {
         if (!intVersions.isEmpty)
             intVersions.head
         else {
-            val dateVersions = fields.filter(typeof(DatetimeField)).filter(e|e.version)
-            if (!dateVersions.isEmpty)
-                dateVersions.head
+            val datetimeVersions = fields.filter(typeof(DatetimeField)).filter(e|e.version)
+            if (!datetimeVersions.isEmpty)
+                datetimeVersions.head
         }
     }
 
@@ -638,6 +638,28 @@ class ModelExtensions {
 
     def containsDefaultIdField(Iterable<String> l, Entity entity) {
         isDefaultIdFieldName(entity, l.head) || (l.size > 1 && containsDefaultIdField(l.tail, entity));
+    }
+
+    def getStartDateField(Entity it) {
+        val datetimeFields = fields.filter(typeof(DatetimeField)).filter(e|e.startDate)
+        if (!datetimeFields.isEmpty)
+            datetimeFields.head
+        else {
+            val dateFields = fields.filter(typeof(DateField)).filter(e|e.startDate)
+            if (!dateFields.isEmpty)
+                dateFields.head
+        }
+    }
+
+    def getEndDateField(Entity it) {
+        val datetimeFields = fields.filter(typeof(DatetimeField)).filter(e|e.endDate)
+        if (!datetimeFields.isEmpty)
+            datetimeFields.head
+        else {
+            val dateFields = fields.filter(typeof(DateField)).filter(e|e.endDate)
+            if (!dateFields.isEmpty)
+                dateFields.head
+        }
     }
 
 

@@ -32,8 +32,8 @@ class TreeSelection {
          *   - target:     One of 'allParents', 'directParent', 'allChildren', 'directChildren', 'predecessors', 'successors', 'preandsuccessors'
          *   - assign:     Variable where the results are assigned to.
          *
-         * @param  array       $params  All attributes passed to this function from the template.
-         * @param  Zikula_View $view    Reference to the view object.
+         * @param  array       $params All attributes passed to this function from the template.
+         * @param  Zikula_View $view   Reference to the view object.
          */
         function smarty_function_«appName.formatForDB»TreeSelection($params, $view)
         {

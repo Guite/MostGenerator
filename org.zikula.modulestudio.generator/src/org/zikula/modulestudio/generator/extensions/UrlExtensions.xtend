@@ -179,7 +179,6 @@ class UrlExtensions {
         else
             getSingleParamForCode(getPrimaryKeyFields, objName, customVarName)
     }
-/** TODO refactor using loops */
 
     /**
      * Returns a single parameter pair for a modurl call in a source code file.
@@ -222,7 +221,7 @@ class UrlExtensions {
     }
 
     /**
-     * Return. a single parameter pair for a modurl call in a template file.
+     * Returns a single parameter pair for a modurl call in a template file.
      *
      * @param it An {@link Iterable} of primary key fields to be linked to
      * @param objName The name of the object variable carrying the entity object in the output

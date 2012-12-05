@@ -108,7 +108,7 @@ class Installer {
                 if (System::isDevelopmentMode()) {
                     LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                 }
-                $returnMessage = $this->__f('An error was encountered while creating the tables for the %s module.', array($this->name));
+                $returnMessage = $this->__f('An error was encountered while creating the tables for the %s extension.', array($this->name));
                 if (!System::isDevelopmentMode()) {
                     $returnMessage .= ' ' . $this->__('Please enable the development mode by editing the /config/config.php file in order to reveal the error details.');
                 }
@@ -205,7 +205,7 @@ class Installer {
                         if (System::isDevelopmentMode()) {
                             LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                         }
-                        return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %s module.', array($this->getName())));
+                        return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %s extension.', array($this->getName())));
                     }
             }
         */
@@ -226,7 +226,7 @@ class Installer {
             // delete stored object workflows
             $result = Zikula_Workflow_Util::deleteWorkflowsForModule($this->getName());
             if ($result === false) {
-                return LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %s module.', array($this->getName())));
+                return LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
             }
 
             try {
@@ -235,7 +235,7 @@ class Installer {
                 if (System::isDevelopmentMode()) {
                     LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                 }
-                return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %s module.', array($this->name)));
+                return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %s extension.', array($this->name)));
             }
 
             // unregister persistent event handlers
@@ -259,6 +259,7 @@ class Installer {
                 DBUtil::deleteWhere('categories_registry', 'modname = \'' . $this->name . '\'');
             «ENDIF»
             «IF !uploadEntities.isEmpty»
+
                 // remove all thumbnails
                 $manager = $this->getServiceManager()->getService('systemplugin.imagine.manager');
                 $manager->setModule($this->name);

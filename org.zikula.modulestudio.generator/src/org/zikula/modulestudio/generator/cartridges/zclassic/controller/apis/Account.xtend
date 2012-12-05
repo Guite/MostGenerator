@@ -76,7 +76,7 @@ class Account {
 
             // Create an array of links to return
             «IF !getAllUserControllers.isEmpty && getMainUserController.hasActions('view')»
-                «FOR entity : getAllEntities.filter(e|e.standardFields)»
+                «FOR entity : getAllEntities.filter(e|e.standardFields && e.ownerPermission)»
                     $objectType = '«entity.name.formatForCode»';
                     if (SecurityUtil::checkPermission($this->name . ':' . ucwords($objectType) . ':', '::', ACCESS_READ)) {
                         $items[] = array(

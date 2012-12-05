@@ -311,6 +311,23 @@ class Forms {
         /* <![CDATA[ */
             «relationHelper.initJs(it, app, false)»
 
+            var formButtons, formValidator;
+
+            function handleFormButton (event) {
+                var result = formValidator.validate();
+                if (!result) {
+                    // validation error, abort form submit
+                    Event.stop(event);
+                } else {
+                    // hide form buttons to prevent double submits by accident
+                    formButtons.each(function (btn) {
+                        btn.addClassName('z-hide');
+                    });
+                }
+
+                return result;
+            }
+
             document.observe('dom:loaded', function() {
                 «val userFields = getUserFieldsEntity»
                 «IF !userFields.isEmpty»
@@ -322,26 +339,19 @@ class Forms {
                 «ENDIF»
                 «relationHelper.initJs(it, app, true)»
 
-                «container.application.prefix»AddCommonValidationRules('«name.formatForCode»', '{{if $mode eq 'create'}}{{else}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
-
-                // observe button events instead of form submit
-                var valid = new Validation('{{$__formid}}', {onSubmit: false, immediate: true, focusOnError: false});
+                «container.application.prefix»AddCommonValidationRules('«name.formatForCode»', '{{if $mode ne 'create'}}«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$«name.formatForDB».«pkField.name.formatForCode»}}«ENDFOR»{{/if}}');
+                {{* observe validation on button events instead of form submit to exclude the cancel command *}}
+                formValidator = new Validation('{{$__formid}}', {onSubmit: false, immediate: true, focusOnError: false});
                 {{if $mode ne 'create'}}
-                    var result = valid.validate();
+                    var result = formValidator.validate();
                 {{/if}}
 
-                {{if $mode eq 'create'}}$('btnCreate'){{else}}$('btnUpdate'){{/if}}.observe('click', function (event) {
-                    var result = valid.validate();
-                    if (!result) {
-                        // validation error, abort form submit
-                        Event.stop(event);
-                    } else {
-                        // hide form buttons to prevent double submits by accident
-                        $$('div.z-formbuttons input').each(function (btn) {
-                            btn.addClassName('z-hide');
-                        });
+                formButtons = $('{{$__formid}}').select('div.z-formbuttons input');
+
+                formButtons.each(function (elem) {
+                    if (elem.id != 'btnCancel') {
+                        elem.observe('click', handleFormButton);
                     }
-                    return result;
                 });
                 «IF useGroupingPanels('edit')»
 

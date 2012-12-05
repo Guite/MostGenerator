@@ -6,6 +6,8 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.ArrayField
 import de.guite.modulestudio.metamodel.modulestudio.BooleanField
 import de.guite.modulestudio.metamodel.modulestudio.CalculatedField
+import de.guite.modulestudio.metamodel.modulestudio.DateField
+import de.guite.modulestudio.metamodel.modulestudio.DatetimeField
 import de.guite.modulestudio.metamodel.modulestudio.DecimalField
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
@@ -41,14 +43,18 @@ class Repository {
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
 
+    IFileSystemAccess fsa
     FileHelper fh = new FileHelper()
+    Application app
 
     /**
      * Entry point for Doctrine repository classes.
      */
 
     def generate(Application it, IFileSystemAccess fsa) {
-        getAllEntities.filter(e|!e.mappedSuperClass).forEach(e|e.generate(it, fsa))
+        this.fsa = fsa
+        app = it
+        getAllEntities.filter(e|!e.mappedSuperClass).forEach(e|e.generate)
 
         val linkTable = new LinkTable()
         for (relation : getJoinRelations.filter(typeof(ManyToManyRelationship))) linkTable.generate(relation, it, fsa)
@@ -57,25 +63,25 @@ class Repository {
     /**
      * Creates a repository class file for every Entity instance.
      */
-    def private generate(Entity it, Application app, IFileSystemAccess fsa) {
+    def private generate(Entity it) {
         println('Generating repository classes for entity "' + name.formatForDisplay + '"')
         if (!isInheriting) {
-            fsa.generateFile(getAppSourcePath(app.appName) + baseClassModel('repository', '').asFile, modelRepositoryBaseFile(app))
+            fsa.generateFile(getAppSourcePath(app.appName) + baseClassModel('repository', '').asFile, modelRepositoryBaseFile)
         }
-        fsa.generateFile(getAppSourcePath(app.appName) + implClassModel('repository', '').asFile, modelRepositoryFile(app))
+        fsa.generateFile(getAppSourcePath(app.appName) + implClassModel('repository', '').asFile, modelRepositoryFile)
     }
 
-    def private modelRepositoryBaseFile(Entity it, Application app) '''
+    def private modelRepositoryBaseFile(Entity it) '''
         «fh.phpFileHeader(app)»
-        «modelRepositoryBaseImpl(app)»
+        «modelRepositoryBaseImpl»
     '''
 
-    def private modelRepositoryFile(Entity it, Application app) '''
+    def private modelRepositoryFile(Entity it) '''
         «fh.phpFileHeader(app)»
-        «modelRepositoryImpl(app)»
+        «modelRepositoryImpl»
     '''
 
-    def private modelRepositoryBaseImpl(Entity it, Application app) '''
+    def private modelRepositoryBaseImpl(Entity it) '''
         «IF tree != EntityTreeType::NONE»
             use Gedmo\Tree\Entity\Repository\«tree.asConstant.toFirstUpper»TreeRepository;
         «ELSE»
@@ -119,19 +125,20 @@ class Repository {
             /**
              * Returns name of the field used as title / name for entities of this repository.
              *
-             * @return string name of field to be used as title. 
+             * @return string Name of field to be used as title.
              */
             public function getTitleFieldName()
             {
                 «val leadingField = getLeadingField»
                 $fieldName = '«IF leadingField != null»«leadingField.name.formatForCode»«ENDIF»';
+
                 return $fieldName;
             }
 
             /**
              * Returns name of the field used for describing entities of this repository.
              *
-             * @return string name of field to be used as description. 
+             * @return string Name of field to be used as description.
              */
             public function getDescriptionFieldName()
            {
@@ -144,17 +151,32 @@ class Repository {
                 «ELSE»
                     $fieldName = '';
                 «ENDIF»
+
                 return $fieldName;
             }
 
             /**
              * Returns name of the first upload field which is capable for handling images.
              *
-             * @return string name of field to be used for preview images 
+             * @return string Name of field to be used for preview images.
              */
             public function getPreviewFieldName()
             {
                 $fieldName = '«IF hasImageFieldsEntity»«getImageFieldsEntity.head.name.formatForCode»«ENDIF»';
+
+                return $fieldName;
+            }
+
+            /**
+             * Returns name of the the date(time) field to be used for representing the start
+             * of this object. Used for providing meta data to the tag module.
+             *
+             * @return string Name of field to be used as date.
+             */
+            public function getStartDateFieldName()
+            {
+                $fieldName = '«IF getStartDateField != null»«getStartDateField.name.formatForCode»«ELSEIF standardFields»createdDate«ENDIF»';
+
                 return $fieldName;
             }
 
@@ -190,6 +212,10 @@ class Repository {
 
             «intBaseQuery»
 
+            «intBaseQueryWhere»
+
+            «intBaseQueryOrderBy»
+
             «IF !hasCompositeKeys»«/* id list shuffling is not supported for composite keys yet */»
                 «getIdentifierListForRandomSorting»
 
@@ -197,6 +223,10 @@ class Repository {
             «intGetQueryFromBuilder»
 
             «new Joins().generate(it, app)»
+            «IF hasArchive && getEndDateField != null»
+
+                «archiveObjects(it)»
+            «ENDIF»
         }
     '''
 
@@ -339,6 +369,8 @@ class Repository {
         /**
          * Helper method for truncating the table.
          * Used during installation when inserting default data.
+         *
+         * @return void
          */
         public function truncateTable()
         {
@@ -623,6 +655,7 @@ class Repository {
         public function selectWhere($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
         {
             $qb = $this->_intBaseQuery($where, $orderBy, $useJoins, $slimMode);
+            $qb = $this->addCommonViewFilters($qb);
 
             $query = $this->getQueryFromBuilder($qb);
 
@@ -732,15 +765,59 @@ class Repository {
                 } else {
                     // field filter
                     if ($v != '' || (is_numeric($v) && $v > 0)) {
-                        $qb->andWhere('tbl.' . $k . ' = :' . $k)
-                           ->setParameter($k, DataUtil::formatForStore($v));
+                        if ($k == 'workflowState' && substr($v, 0, 1) == '!') {
+                            $qb->andWhere('tbl.' . $k . ' != :' . $k)
+                               ->setParameter($k, DataUtil::formatForStore(substr($v, 1, strlen($v)-1)));
+                        } else {
+                            $qb->andWhere('tbl.' . $k . ' = :' . $k)
+                               ->setParameter($k, DataUtil::formatForStore($v));
+                       }
                     }
                 }
+            }
+
+            // apply default filters
+            $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
+            if ($currentType != 'admin') {
+                if (!in_array('workflowState', array_keys($parameters))) {
+                    $qb->andWhere('tbl.workflowState = :onlineState')
+                       ->setParameter('onlineState', 'approved');
+                }
+                «applyDefaultDateRangeFilter»
             }
 
             return $qb;
         }
     '''
+
+    def private applyDefaultDateRangeFilter(Entity it) '''
+        «val startDateField = getStartDateField»
+        «val endDateField = getEndDateField»
+        «IF startDateField != null»
+            $startDate = FormUtil::getPassedValue('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow», 'GET');
+            $qb->andWhere('«whereClauseForDateRangeFilter('>=', startDateField, 'startDate')»')
+               ->setParameter('startDate', $startDate);
+        «ENDIF»
+        «IF endDateField != null»
+            $endDate = FormUtil::getPassedValue('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow», 'GET');
+            $qb->andWhere('«whereClauseForDateRangeFilter('<=', endDateField, 'endDate')»')
+               ->setParameter('endDate', $endDate);
+        «ENDIF»
+    '''
+
+    def private dispatch defaultValueForNow(EntityField it) '''""'''
+
+    def private dispatch defaultValueForNow(DatetimeField it) '''date('Y-m-d H:i:s')'''
+
+    def private dispatch defaultValueForNow(DateField it) '''date('Y-m-d')'''
+
+    def private whereClauseForDateRangeFilter(Entity it, String operator, DerivedField dateField, String paramName) {
+        val dateFieldName = dateField.name.formatForCode
+        if (dateField.mandatory)
+            '''tbl.«dateFieldName» «operator» :«paramName»'''
+        else
+            '''(tbl.«dateFieldName» «operator» :«paramName» OR tbl.«dateFieldName» IS NULL)'''
+    }
 
     def private selectSearch(Entity it) '''
         /**
@@ -936,10 +1013,29 @@ class Repository {
                 $this->addJoinsToFrom($qb);
             }
 
+            $this->_intBaseQueryAddWhere($qb, $where);
+            $this->_intBaseQueryAddOrderBy($qb, $orderBy);
+
+            return $qb;
+        }
+    '''
+
+    def private intBaseQueryWhere(Entity it) '''
+        /**
+         * Adds WHERE clause to given query builder.
+         *
+         * @param Doctrine\ORM\QueryBuilder $qb    Given query builder instance.
+         * @param string                    $where The where clause to use when retrieving the collection (optional) (default='').
+         *
+         * @return Doctrine\ORM\QueryBuilder query builder instance to be further processed
+         */
+        protected function _intBaseQueryAddWhere(QueryBuilder $qb, $where = '')
+        {
             if (!empty($where)) {
                 $qb->where($where);
             }
             «IF standardFields»
+
                 $onlyOwn = (int) FormUtil::getPassedValue('own', 0, 'GETPOST');
                 if ($onlyOwn == 1) {
                     $uid = UserUtil::getVar('uid');
@@ -948,6 +1044,21 @@ class Repository {
                 }
             «ENDIF»
 
+            return $qb;
+        }
+    '''
+
+    def private intBaseQueryOrderBy(Entity it) '''
+        /**
+         * Adds ORDER BY clause to given query builder.
+         *
+         * @param Doctrine\ORM\QueryBuilder $qb      Given query builder instance.
+         * @param string                    $orderBy The order-by clause to use when retrieving the collection (optional) (default='').
+         *
+         * @return Doctrine\ORM\QueryBuilder query builder instance to be further processed
+         */
+        protected function _intBaseQueryAddOrderBy(QueryBuilder $qb, $orderBy = '')
+        {
             if ($orderBy == 'RAND()') {
                 // random selection
                 «IF hasCompositeKeys»
@@ -1100,8 +1211,84 @@ class Repository {
         «ENDIF»
     '''
 
+    def private archiveObjects(Entity it) '''
+        /**
+         * Update for «nameMultiple.formatForDisplay» becoming archived.
+         *
+         * @return bool If everything went right or not.
+         */
+        public function archiveObjects()
+        {
+            «val endField = getEndDateField»
+            «IF endField instanceof DatetimeField»
+                $today = date('Y-m-d H:i:s');
+            «ELSEIF endField instanceof DateField»
+                $today = date('Y-m-d') . ' 00:00:00';
+            «ENDIF»
 
-    def private modelRepositoryImpl(Entity it, Application app) '''
+            $qb = $this->_intBaseQuery('', '', false);
+
+            /*$qb->andWhere('tbl.workflowState != :archivedState')
+               ->setParameter('archivedState', 'archived');*/
+            $qb->andWhere('tbl.workflowState = :approvedState')
+               ->setParameter('approvedState', 'approved');
+
+            $qb->andWhere('tbl.«endField.name.formatForCode» < :today')
+               ->setParameter('today', $today);
+
+            $query = $this->getQueryFromBuilder($qb);
+
+            $affectedEntities = $query->getResult();
+
+            $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
+            $action = 'archive';
+            $workflowHelper = new «app.appName»_Util_Workflow(ServiceUtil::getManager());
+
+            foreach ($affectedEntities as $entity) {
+                $hookAreaPrefix = $entity->getHookAreaPrefix();
+
+                // Let any hooks perform additional validation actions
+                $hookType = 'validate_edit';
+                $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
+                $validators = $this->notifyHooks($hook)->getValidators();
+                if ($validators->hasErrors()) {
+                    continue;
+                }
+
+                $success = false;
+                try {
+                    // execute the workflow action
+                    $success = $workflowHelper->executeAction($entity, $action);
+                } catch(Exception $e) {
+                    LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                }
+
+                if (!$success) {
+                    continue;
+                }
+
+                // Let any hooks know that we have updated an item
+                $hookType = 'process_edit';
+                $urlArgs = array('ot' => $entity['_objectType']);
+                $urlArgs = $this->addIdentifiersToUrlArgs($urlArgs);
+                if (isset($this->entityRef['slug'])) {
+                    $urlArgs['slug'] = $this->entityRef['slug'];
+                }
+                $url = new Zikula_ModUrl($this->name, $currentType, 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
+                $this->notifyHooks($hook);
+
+                // An item was updated, so we clear all cached pages for this item.
+                $cacheArgs = array('ot' => $entity['_objectType'], 'item' => $entity);
+                ModUtil::apiFunc('«app.appName»', 'cache', 'clearItemCache', $cacheArgs);
+            }
+
+            return true;
+        }
+    '''
+
+
+    def private modelRepositoryImpl(Entity it) '''
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.
          *

@@ -340,11 +340,11 @@ class Association {
         /**
          * Adds an instance of «type» to the list of «name.formatForDisplay».
          *
-         * @param «addParameters(useTarget, nameSingle, type, true)».
+         * @param «addParameters(useTarget, nameSingle, type)» The instance to be added to the collection.
          *
          * @return void
          */
-        public function add«name.toFirstUpper»(«addParameters(useTarget, nameSingle, type, false)»)
+        public function add«name.toFirstUpper»(«addParameters(useTarget, nameSingle, type)»)
         {
             «addAssignment(useTarget, selfIsMany, name, nameSingle)»
             «IF bidirectional && useTarget»
@@ -360,14 +360,14 @@ class Association {
         «/* this last line is on purpose */»
     '''
 
-    def private dispatch addParameters(JoinRelationship it, Boolean useTarget, String name, String type, Boolean withDescription) '''
-        «type» $«name»«IF withDescription»«/*TODO description*/»«ENDIF»'''
-    def private dispatch addParameters(OneToManyRelationship it, Boolean useTarget, String name, String type, Boolean withDescription) '''
+    def private dispatch addParameters(JoinRelationship it, Boolean useTarget, String name, String type) '''
+        «type» $«name»'''
+    def private dispatch addParameters(OneToManyRelationship it, Boolean useTarget, String name, String type) '''
         «IF !useTarget && !source.getAggregateFields.isEmpty»
             «val targetField = source.getAggregateFields.head.getAggregateTargetField»
-            «IF withDescription»«targetField.fieldTypeAsString» «ENDIF»$«targetField.name.formatForCode»«IF withDescription»«/*TODO description*/»«ENDIF»
+            «targetField.fieldTypeAsString» $«targetField.name.formatForCode»
         «ELSE»
-            «type» $«name»«IF withDescription»«/*TODO description*/»«ENDIF»
+            «type» $«name»
         «ENDIF»'''
 
     def private addAssignmentDefault(JoinRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle) '''
@@ -391,7 +391,7 @@ class Association {
         /**
          * Additional add function for internal use.
          *
-         * @param «targetField.fieldTypeAsString» $«targetField.name.formatForCode»«/*TODO description*/»
+         * @param «targetField.fieldTypeAsString» $«targetField.name.formatForCode» Given instance to be used for aggregation.
          */
         protected function add«targetField.name.formatForCodeCapital»Without«getRelationAliasName(true).formatForCodeCapital»($«targetField.name.formatForCode»)
         {
