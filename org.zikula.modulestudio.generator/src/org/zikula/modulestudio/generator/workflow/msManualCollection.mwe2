@@ -14,6 +14,9 @@ Workflow {
     component = @msManual { dir = 'customers' name = 'AddressList' }
     component = @msManual { dir = 'customers' name = 'AdShare' }
     component = @msManual { dir = 'customers' name = 'ConstructionProjects' }
+    component = @msManual { dir = 'customers' name = 'EjubaAddresses' }
+    component = @msManual { dir = 'customers' name = 'EjubaEvents' }
+    component = @msManual { dir = 'customers' name = 'EjubaMaterials' }
     component = @msManual { dir = 'customers' name = 'FreelancerProjects' }
     component = @msManual { dir = 'customers' name = 'FreestyleModels' }
     component = @msManual { dir = 'customers' name = 'GastroGuide' }
