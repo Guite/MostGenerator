@@ -224,7 +224,7 @@ class ModuleStudioGenerator {
      * @return String the workflow file.
      */
     def getWorkflowFile() {
-        'src/org/zikula/modulestudio/generator/workflow/' + workflowFile
+        'org/zikula/modulestudio/generator/workflow/' + workflowFile
     }
 
     /**

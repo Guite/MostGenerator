@@ -11,8 +11,6 @@ import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Platform
 import org.eclipse.gmf.runtime.diagram.core.preferences.PreferencesHint
 import org.eclipse.gmf.runtime.notation.Diagram
-import org.eclipse.ui.IWorkbench
-import org.eclipse.ui.IWorkbenchWindow
 
 /**
  * This class collects required workflow properties.
@@ -80,16 +78,6 @@ public class WorkflowSettings {
     Object[] selectedReports = null
 
     /**
-     * The workbench window reference.
-     */
-    //IWorkbenchWindow workbenchWindow = null
-
-    /**
-     * The workbench reference.
-     */
-    //IWorkbench workbench = null
-
-    /**
      * Path containing the report files.
      */
     String reportPath = '/org/zikula/modulestudio/generator/cartridges/reporting/reports'; //$NON-NLS-1$
@@ -144,44 +132,6 @@ public class WorkflowSettings {
             // TODO Auto-generated catch block
             e.printStackTrace
         }
-    }
-
-    /**
-     * Returns the workbench window.
-     * 
-     * @return {@link IWorkbenchWindow} The workbench window instance.
-     * /
-    public IWorkbenchWindow getWorkbenchWindow() {
-        return this.workbenchWindow;
-    }
-
-    /**
-     * Sets the workbench window.
-     * 
-     * @param window
-     *            The workbench window instance.
-     */
-    def setWorkbenchWindow(IWorkbenchWindow window) {
-        workbenchWindow = window
-    }
-
-    /**
-     * Returns the workbench.
-     * 
-     * @return {@link IWorkbench} The workbench instance.
-     * /
-    public IWorkbench getWorkbench() {
-        return this.workbench;
-    }
-
-    /**
-     * Sets the workbench.
-     * 
-     * @param w
-     *            The workbench instance.
-     */
-    def setWorkbench(IWorkbench w) {
-        workbench = w
     }
 
     /**
