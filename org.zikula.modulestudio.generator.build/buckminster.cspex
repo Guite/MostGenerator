@@ -5,10 +5,24 @@
     xmlns="http://www.eclipse.org/buckminster/CSpec-1.0" componentType="eclipse.feature" version="1.0.0">
     <dependencies>
         <dependency name="org.eclipse.rcp" componentType="eclipse.feature"/>
+        <dependency name="org.eclipse.xtext.xtend2.standalone" componentType="osgi.bundle"/>
+        <dependency name="org.eclipse.xtext.xtend2.lib" componentType="osgi.bundle"/>
         <dependency name="de.guite.modulestudio.branding" componentType="osgi.bundle"/>
         <dependency name="org.aopalliance" componentType="osgi.bundle"/>
     </dependencies>
     <actions>
+        <!-- trigger Xtend2 builder -->
+        <public name="compile.xtend.classes" actor="ant">
+            <actorProperties>
+                <property key="buildFile" value="build.xml" />
+                <property key="targets" value="compile.xtend.classes" />
+            </actorProperties>
+            <properties>
+            </properties>
+            <products alias="destination">
+                <path path="dummy_output_generator/" />
+            </products>
+        </public>
         <!-- move p2 repository to final destination -->
         <public name="finish.repository" actor="ant">
             <actorProperties>

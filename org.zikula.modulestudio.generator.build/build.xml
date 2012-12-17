@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="project" basedir=".">
+    <target name="compile.xtend.classes" description="Compile Xtend 2 classes to Java classes">
+        <echo>Compiling Xtend 2 classes to Java classes</echo>
+
+        <java classname="org.eclipse.xtext.xtend2.compiler.batch.Main">
+            <arg value="-d"/>
+            <arg value="xtend-bin"/>
+            <arg value="src"/>
+        </java>
+    </target>
+
     <target name="finish.repository">
         <move todir="${workspace.root}/site.p2.artifact">
             <fileset dir="${outputPath}/site.p2"/>
