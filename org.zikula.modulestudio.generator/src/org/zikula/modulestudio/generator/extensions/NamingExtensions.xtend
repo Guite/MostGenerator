@@ -279,7 +279,7 @@ class NamingExtensions {
      * Returns the base path for the generated application.
      */
     def getAppSourcePath(String appName) {
-        'src/modules/' + appName + '/'
+        ''
     }
 
     /**
@@ -293,13 +293,13 @@ class NamingExtensions {
      * Returns the base path for uploaded files of the generated application.
      */
     def getAppUploadPath(String appName) {
-        'src/userdata/' + appName + '/'
+        'Resources/userdata/' + appName + '/'
     }
 
     /**
      * Returns the base path for the test source code of the generated application.
      */
     def getAppTestsPath(String appName) {
-        'tests/'
+        'Tests/'
     }
 }
