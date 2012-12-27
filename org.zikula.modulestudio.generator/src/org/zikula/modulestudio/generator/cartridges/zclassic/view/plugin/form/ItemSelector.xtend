@@ -25,18 +25,18 @@ class ItemSelector {
     }
 
     def private itemSelectorBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«itemSelectorBaseImpl»
+        «fh.phpFileHeader(it)»
+        «itemSelectorBaseImpl»
     '''
 
     def private itemSelectorFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«itemSelectorImpl»
+        «fh.phpFileHeader(it)»
+        «itemSelectorImpl»
     '''
 
     def private itemSelectorPluginFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«itemSelectorPluginImpl»
+        «fh.phpFileHeader(it)»
+        «itemSelectorPluginImpl»
     '''
 
     def private itemSelectorBaseImpl(Application it) '''
@@ -158,7 +158,7 @@ class ItemSelector {
                     $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
                 }
                 $view->assign('properties', $properties)
-                     ->assign('catIds', $catIds)
+                     ->assign('catIds', $catIds);
             «ENDIF»
 
                 return $view->fetch('external/' . $this->objectType . '/select.tpl');
