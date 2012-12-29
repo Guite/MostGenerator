@@ -45,10 +45,24 @@ class ExternalController {
          */
         class «appName»_Controller_Base_External extends Zikula_AbstractController
         {
-    «new ControllerHelper().controllerPostInitialize(it, false)»
+        «IF hasCategorisableEntities»
+            /**
+             * List of object types allowing categorisation.
+             *
+             * @var array
+             */
+            protected $categorisableObjectTypes;
+
+        «ENDIF»
+        «val additionalCommands = if (hasCategorisableEntities) categoryInitialisation else ''»
+    «new ControllerHelper().controllerPostInitialize(it, false, additionalCommands)»
 
             «externalBaseImpl»
         }
+    '''
+
+    def private categoryInitialisation(Application it) '''
+        $this->categorisableObjectTypes = array(«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
     '''
 
     def private externalBaseImpl(Application it) '''

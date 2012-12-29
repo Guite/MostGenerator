@@ -14,7 +14,7 @@ class Interactive {
     @Inject extension Utils = new Utils()
 
     def generate(Application it) '''
-        «new ControllerHelper().controllerPostInitialize(it, false)»
+        «new ControllerHelper().controllerPostInitialize(it, false, '')»
 
         «funcInteractiveInit»
 

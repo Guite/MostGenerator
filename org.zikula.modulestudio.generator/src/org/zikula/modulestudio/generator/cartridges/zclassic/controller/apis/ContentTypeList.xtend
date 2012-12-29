@@ -29,23 +29,23 @@ class ContentTypeList {
     }
 
     def private contentTypeBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«contentTypeBaseClass»
+        «fh.phpFileHeader(it)»
+        «contentTypeBaseClass»
     '''
 
     def private contentTypeFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«contentTypeImpl»
+        «fh.phpFileHeader(it)»
+        «contentTypeImpl»
     '''
 
     def private contentTypeBaseClass(Application it) '''
-		/**
-		 * Generic item list content plugin base class.
-		 */
-		class «appName»_ContentType_Base_ItemList extends Content_AbstractContentType
-		{
-		    «contentTypeBaseImpl»
-		}
+        /**
+         * Generic item list content plugin base class.
+         */
+        class «appName»_ContentType_Base_ItemList extends Content_AbstractContentType
+        {
+            «contentTypeBaseImpl»
+        }
     '''
 
     def private contentTypeBaseImpl(Application it) '''

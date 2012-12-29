@@ -6,7 +6,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 class ControllerHelper {
     @Inject extension FormattingExtensions = new FormattingExtensions()
 
-    def controllerPostInitialize(Object it, Boolean caching) '''
+    def controllerPostInitialize(Object it, Boolean caching, String additionalCommands) '''
         /**
          * Post initialise.
          *
@@ -18,6 +18,9 @@ class ControllerHelper {
         {
             // Set caching to «caching.displayBool» by default.
             $this->view->setCaching(Zikula_View::CACHE_«IF caching»ENABLED«ELSE»DISABLED«ENDIF»);
+            «IF additionalCommands != ''»
+                «additionalCommands»
+            «ENDIF»
         }
     '''
 

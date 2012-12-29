@@ -29,13 +29,13 @@ class BlockList {
     }
 
     def private listBlockBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«listBlockBaseClass»
+        «fh.phpFileHeader(it)»
+        «listBlockBaseClass»
     '''
 
     def private listBlockFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«listBlockImpl»
+        «fh.phpFileHeader(it)»
+        «listBlockImpl»
     '''
 
     def private listBlockBaseClass(Application it) '''
@@ -50,6 +50,11 @@ class BlockList {
 
     def private listBlockBaseImpl(Application it) '''
         «IF hasCategorisableEntities»
+            /**
+             * List of object types allowing categorisation.
+             *
+             * @var array
+             */
             protected $categorisableObjectTypes;
 
         «ENDIF»
