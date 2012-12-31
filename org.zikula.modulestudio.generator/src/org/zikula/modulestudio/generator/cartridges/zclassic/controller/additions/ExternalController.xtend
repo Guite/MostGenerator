@@ -55,7 +55,7 @@ class ExternalController {
 
         «ENDIF»
         «val additionalCommands = if (hasCategorisableEntities) categoryInitialisation else ''»
-    «new ControllerHelper().controllerPostInitialize(it, false, additionalCommands)»
+    «new ControllerHelper().controllerPostInitialize(it, false, additionalCommands.toString)»
 
             «externalBaseImpl»
         }
