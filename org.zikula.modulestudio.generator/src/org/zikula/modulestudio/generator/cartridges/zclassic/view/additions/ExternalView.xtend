@@ -34,7 +34,7 @@ class ExternalView {
 
     def private displayTemplate(Entity it, Application app) '''
         {* Purpose of this template: Display one certain «name.formatForDisplay» within an external context *}
-        <div id="«name.formatForCode»{$«name.formatForCode».«getFirstPrimaryKey»}" class="«app.prefix()»external«name.formatForDB»">
+        <div id="«name.formatForCode»{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}" class="«app.prefix()»external«name.formatForDB»">
         {if $displayMode eq 'link'}
             <p«IF app.hasUserController» class="«app.prefix()»externallink"«ENDIF»>
             «IF app.hasUserController»
@@ -103,7 +103,7 @@ class ExternalView {
 
     def private itemInfoTemplate(Entity it, Application app) '''
         {* Purpose of this template: Display item information for previewing from other modules *}
-        <dl id="«name.formatForCode»{$«name.formatForCode».«getFirstPrimaryKey»}">
+        <dl id="«name.formatForCode»{$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»}">
         <dt>{$«name.formatForCode».«getLeadingField.name.formatForCode»|notifyfilters:'«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'|htmlentities}</dt>
         «IF hasImageFieldsEntity»
             <dd>«displaySnippet»</dd>
