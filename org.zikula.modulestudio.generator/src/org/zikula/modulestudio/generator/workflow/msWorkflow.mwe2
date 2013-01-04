@@ -6,9 +6,7 @@ module org.zikula.modulestudio.generator.workflow.msWorkflow
 
 import org.eclipse.emf.mwe.utils.DirectoryCleaner
 import org.eclipse.emf.mwe.utils.FileCopy
-//import org.eclipse.emf.mwe.utils.Reader
 import org.eclipse.emf.mwe.utils.StandaloneSetup
-import org.eclipse.emf.mwe.utils.Writer
 import org.eclipse.emf.mwe.core.container.IfComponent
 import org.eclipse.xtend.check.CheckComponent
 //import org.eclipse.xtext.generator.GeneratorComponent

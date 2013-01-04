@@ -1,15 +1,17 @@
 package org.zikula.modulestudio.generator.importer
 
+import com.google.inject.Injector
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.ModulestudioFactory
 import de.guite.modulestudio.metamodel.modulestudio.ModulestudioPackage
+import de.guite.modulestudio.ui.internal.MostDslActivator
 import java.io.IOException
 import java.util.Collections
 import org.eclipse.emf.common.util.URI
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
-import org.eclipse.gmf.runtime.emf.core.resources.GMFResourceFactory
+import org.eclipse.xtext.resource.XtextResource
+import org.eclipse.xtext.resource.XtextResourceSet
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.w3c.dom.NodeList
@@ -106,8 +108,8 @@ class XmlImporter {
 
         var i = 0
         while (i < nodes.length) {
-        	i = i + 1
-            val table = nodes.item(i) as Element
+            i = i + 1
+            val table = nodes.item(i-1) as Element
             val entity = factory.createEntity
             val fields = table.getElementsByTagName('column')
 
@@ -125,19 +127,19 @@ class XmlImporter {
 
                 var j = 0
                 while (j < fields.length) {
-                    j = j + 1
                     val fieldData = fields.item(j) as Element
                     if (!isStandardField(fieldData.getAttribute('name'))) {
                         entity.processField(fieldData)
                     }
+                    j = j + 1
                 }
 
                 val NodeList indexes = table.getElementsByTagName('index')
                 j = 0
                 while (j < indexes.length) {
-                    j = j + 1
                     val indexData = indexes.item(j) as Element
                     entity.processIndex(indexData)
+                    j = j + 1
                 }
                 modelContainer.entities.add(entity)
             }
@@ -385,23 +387,29 @@ class XmlImporter {
      * Saves the created model content into a .mostapp file.
      */
     def private saveModel() {
-        // Obtain a new resource set
-        val resourceSet = new ResourceSetImpl()
+        // Obtain resource set of textual notation
+        val Injector injector = MostDslActivator::getInstance()
+                    .getInjector(MostDslActivator::DE_GUITE_MODULESTUDIO_MOSTDSL)
+        val XtextResourceSet resourceSet = injector.getInstance(typeof(XtextResourceSet))
+        resourceSet.addLoadOption(XtextResource::OPTION_RESOLVE_ALL, Boolean::TRUE)
 
-        resourceSet.resourceFactoryRegistry.extensionToFactoryMap.put('mostapp', new GMFResourceFactory())
-        resourceSet.packageRegistry.put(ModulestudioPackage::eNS_URI, ModulestudioPackage::eINSTANCE)
+        //resourceSet.resourceFactoryRegistry.extensionToFactoryMap.put('mostapp', new XtextResourceFactory())
+        resourceSet.packageRegistry.put(ModulestudioPackage::eNS_URI, ModulestudioPackage::eINSTANCE.eClass())
 
         // Create a resource
         val resource = resourceSet.createResource(URI::createURI('MOST_output/' + appName + '.mostapp'))
+
         // Get the first model element and cast it to the right type
         resource.contents.add(app)
 
-        // Now save the content.
+        // Now save the content
         try {
             resource.save(Collections::EMPTY_MAP)
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace
         }
+
+        resource.unload
     }
 }
