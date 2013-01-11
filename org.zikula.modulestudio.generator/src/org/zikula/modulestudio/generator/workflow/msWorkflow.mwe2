@@ -10,13 +10,15 @@ import org.eclipse.emf.mwe.utils.StandaloneSetup
 import org.eclipse.emf.mwe.core.container.IfComponent
 import org.eclipse.xtend.check.CheckComponent
 //import org.eclipse.xtext.generator.GeneratorComponent
-import org.eclipse.xtext.mwe.Reader
 import org.zikula.modulestudio.generator.cartridges.MostGeneratorSetup
 import org.zikula.modulestudio.generator.cartridges.MostGeneratorSupport
 import org.zikula.modulestudio.generator.workflow.components.DirectoryCreator
 import org.zikula.modulestudio.generator.workflow.components.Logger
+import org.zikula.modulestudio.generator.workflow.components.ModelReader
+import org.zikula.modulestudio.generator.workflow.components.ModelWriter
 import org.zikula.modulestudio.generator.workflow.components.MostGeneratorComponent
 import org.zikula.modulestudio.generator.workflow.components.StopWatch
+import org.zikula.modulestudio.generator.workflow.components.Validator
 
 // The model to be processed (file name without extension)
 var modelName
@@ -41,6 +43,8 @@ var modelFile = '${modelPath}/${modelName}.mostapp'
 var diagramFile = '${modelPath}/${modelName}.mostdiagram'
 var modelFileCopy = '${targetDir}/${modelName}.mostapp'
 var diagramFileCopy = '${targetDir}/${modelName}.mostdiagram'
+var modelFileEnriched = '${modelPath}/${modelName}_enriched.mostapp'
+var modelFileEnrichedCopy = '${targetDir}/${modelName}_enriched.mostapp'
 
 var mostSlot = 'mostModel'
 
@@ -61,42 +65,14 @@ Workflow {
 
     component = Logger { message = 'Reading input file:' }
     component = Logger { message = modelFile }
-    component = Reader {
-        path = modelPath //modelFile
-        // create Injector for generator module
-        register = MostGeneratorSetup {}
-        loadResource = {
-            slot = mostSlot
-        }
+    component = ModelReader {
+        uri = modelFile
+        slot = mostSlot
     }
 
-    component = Logger { message = 'Applying validation.' }
-    component = IfComponent {
-        cond = doValidation
-        if = {
-            cond = doValidation
-/*
-            // check components for constraints
-            component = CheckComponent {
-                // define all used meta models
-                metaModel = mmEMF
-                metaModel = mmModuleStudio
-
-                // provide check files
-                checkFile = 'checks::main'
-                checkFile = 'checks::model'
-                checkFile = 'checks::controller'
-                checkFile = 'checks::view'
-
-                // on which part of the model the checks should work (our application with all children)
-                emfAllChildrenSlot = mostSlot
-/*
-                expression = 'model'
-                // expression = 'model.eAllContents.union({model})'
-* /
-            }
-*/
-        }
+    component = Validator {
+        enabled = doValidation
+        slot = mostSlot
     }
 
     component = Logger { message = 'Creating output directory ${targetDirCartridge}.' }
@@ -107,24 +83,6 @@ Workflow {
     component = Logger { message = 'Clearing output directory ${targetDirCartridge}.' }
     component = DirectoryCleaner {
        directory = targetDirCartridge
-    }
-
-    component = Logger { message = 'Copying model artifacts.' }
-    component = IfComponent {
-        cond = doModelCopy
-        if = {
-            cond = doModelCopy
-            // copy original domain model into target folder
-            component = FileCopy {
-                sourceFile = modelFile
-                targetFile = modelFileCopy
-            }
-            // copy diagram model into target folder
-            component = FileCopy {
-                sourceFile = diagramFile
-                targetFile = diagramFileCopy
-            }
-        }
     }
 
     // start generator component
@@ -138,6 +96,37 @@ Workflow {
         // specify where to put the generated code
         outlet = {
             path = '${targetDirCartridge}/${modelName}/'
+        }
+    }
+
+    component = Logger { message = 'Writing enriched model file for reference:' }
+    component = Logger { message = modelFileEnriched }
+    component = ModelWriter {
+        uri = modelFileEnriched
+        slot = mostSlot
+    }
+
+
+    component = Logger { message = 'Copying model artifacts.' }
+    component = IfComponent {
+        cond = doModelCopy
+        if = {
+            cond = doModelCopy
+            // copy original domain model into target folder
+            component = FileCopy {
+                sourceFile = modelFile
+                targetFile = modelFileCopy
+            }
+            // copy enriched domain model into target folder
+            component = FileCopy {
+                sourceFile = modelFileEnriched
+                targetFile = modelFileEnrichedCopy
+            }
+            // copy diagram model into target folder
+            component = FileCopy {
+                sourceFile = diagramFile
+                targetFile = diagramFileCopy
+            }
         }
     }
 
