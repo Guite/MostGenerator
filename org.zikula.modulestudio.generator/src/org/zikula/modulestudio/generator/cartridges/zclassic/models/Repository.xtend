@@ -683,9 +683,7 @@ class Repository {
             // count the total number of affected items
             $count = Paginate::getTotalQueryResults($query);
 
-            «IF !(outgoing.filter(typeof(OneToManyRelationship)).isEmpty
-               && outgoing.filter(typeof(ManyToManyRelationship)).isEmpty
-               && incoming.filter(typeof(ManyToOneRelationship)).isEmpty)»
+            «IF !(outgoing.filter(typeof(JoinRelationship)).isEmpty && incoming.filter(typeof(JoinRelationship)).isEmpty)»
                 // prefetch unique relationship ids for given pagination frame
                 $query = Paginate::getPaginateQuery($query, $offset, $resultsPerPage);
             «ELSE»
