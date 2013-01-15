@@ -3,11 +3,12 @@ package org.zikula.modulestudio.generator.workflow.components
 import org.eclipse.emf.mwe.core.monitor.NullProgressMonitor
 import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowComponent
 import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext
+import org.eclipse.core.runtime.IProgressMonitor
 
 /**
  * Workflow component for manual progress monitor.
  */
-class ManualProgressMonitor implements IWorkflowComponent {
+class ManualProgressMonitor implements IWorkflowComponent, IProgressMonitor {
 
     /**
      * The output slot.
@@ -44,7 +45,7 @@ class ManualProgressMonitor implements IWorkflowComponent {
             // ctx.set(outputSlot, monitor)
 
             // create dummy monitor and assign it to workflow context
-            ctx.put(outputSlot, new NullProgressMonitor())
+            ctx.put(outputSlot, this);//new NullProgressMonitor())
         }
 	}
 	
@@ -61,4 +62,40 @@ class ManualProgressMonitor implements IWorkflowComponent {
 	override postInvoke() {
 		// nothing to do yet
 	}
+
+    override beginTask(String name, int totalWork) {
+        //throw new UnsupportedOperationException("Auto-generated function stub")
+        println(name)
+    }
+    
+    override done() {
+        //throw new UnsupportedOperationException("Auto-generated function stub")
+    }
+    
+    override internalWorked(double work) {
+        //throw new UnsupportedOperationException("Auto-generated function stub")
+    }
+    
+    override isCanceled() {
+        //throw new UnsupportedOperationException("Auto-generated function stub")
+        false
+    }
+    
+    override setCanceled(boolean value) {
+        //throw new UnsupportedOperationException("Auto-generated function stub")
+    }
+    
+    override setTaskName(String name) {
+        //throw new UnsupportedOperationException("Auto-generated function stub")
+    }
+    
+    override subTask(String name) {
+        //throw new UnsupportedOperationException("Auto-generated function stub")
+        println(name)
+    }
+    
+    override worked(int work) {
+        //throw new UnsupportedOperationException("Auto-generated function stub")
+    }
+    
 }

@@ -36,7 +36,6 @@ Bundle-Activator: org.zikula.modulestudio.generator.application.Activator
 Export-Package: org.zikula.modulestudio.generator.application,
  org.zikula.modulestudio.generator.cartridges.reporting,
  org.zikula.modulestudio.generator.cartridges.zclassic,
- org.zikula.modulestudio.generator.cartridges.zoo,
  org.zikula.modulestudio.generator.exceptions,
  org.zikula.modulestudio.generator.importer
 Eclipse-BuddyPolicy: dependent

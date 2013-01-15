@@ -90,7 +90,6 @@ public class WorkflowSettings {
      */
     new() throws Exception {
         availableCartridges.add('zclassic') //$NON-NLS-1$
-        availableCartridges.add('zoo') //$NON-NLS-1$
         availableCartridges.add('reporting') //$NON-NLS-1$
         selectedCartridges.add('zclassic') //$NON-NLS-1$
         selectedCartridges.add('reporting') //$NON-NLS-1$

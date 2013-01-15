@@ -10,7 +10,7 @@ module org.zikula.modulestudio.generator.workflow.msManual
 var name
 // model folder
 var dir
-// cartridge name (zclassic, zoo, reporting)
+// cartridge name (zclassic, reporting)
 var cartridge = 'zclassic'
 
 // The path where to find the model, without trailing slash

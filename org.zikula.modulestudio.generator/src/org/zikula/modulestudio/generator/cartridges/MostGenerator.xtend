@@ -6,14 +6,16 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
 import org.zikula.modulestudio.generator.cartridges.zclassic.ZclassicGenerator
-import org.zikula.modulestudio.generator.cartridges.zoo.ZooGenerator
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.transformation.PersistenceTransformer
+import org.eclipse.core.runtime.IProgressMonitor
 
 class MostGenerator implements IGenerator {
     @Inject extension ModelExtensions
 
     String cartridge = ''
+
+    IProgressMonitor monitor = null
 
     override void doGenerate(Resource resource, IFileSystemAccess fsa) {
         val app = resource.contents.head as Application
@@ -25,9 +27,9 @@ class MostGenerator implements IGenerator {
             app.transform
 
     	if (cartridge == 'zclassic')
-    	    new ZclassicGenerator().generate(app, fsa)
-    	else if (cartridge == 'zoo')
-    	    new ZooGenerator().generate(app, fsa)
+    	    new ZclassicGenerator().generate(app, fsa, monitor)
+    	//else if (cartridge == 'something')
+    	//    new SomethingGenerator().generate(app, fsa, monitor)
     }
 
     def private transform(Application it) {
@@ -36,5 +38,9 @@ class MostGenerator implements IGenerator {
 
     def setCartridge(String cartridgeName) {
         cartridge = cartridgeName
+    }
+
+    def setMonitor(IProgressMonitor pm) {
+        monitor = pm
     }
 }

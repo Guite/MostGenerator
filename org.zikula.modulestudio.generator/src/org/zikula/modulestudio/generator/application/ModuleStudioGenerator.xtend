@@ -74,7 +74,7 @@ class ModuleStudioGenerator {
         addProperty('modelName', modelFile)
         // The path where to find the model, without trailing slash
         addProperty('modelPath', modelPathOnly)
-        // The generator cartridge to execute (zclassic, zoo, reporting)
+        // The generator cartridge to execute (zclassic, reporting)
         addProperty('cartridgeName', cartridgeName)
         // whether to validate the model before processing
         addProperty('doValidation', 'true')
@@ -125,7 +125,7 @@ class ModuleStudioGenerator {
      * @throws IOException In case input or output errors occur.
      */
     def private runWorkflowInternal() throws CoreException, IOException {
-        // The generator cartridge to execute (zclassic, zoo, reporting)
+        // The generator cartridge to execute (zclassic, reporting)
         addProperty('cartridgeName', cartridgeName)
 
         // Destination folder
@@ -134,13 +134,6 @@ class ModuleStudioGenerator {
         // save old ClassLoader
         //val before = Thread::currentThread().getContextClassLoader
         var success = false
-        /**
-         * IResource resource = givenEditorResource...
-         * // set the work folder
-         * properties.put('basedir', getProject.getLocation.toOSString)
-         * // access current resource
-         * properties.put('model', resource.getLocation.toOSString)
-         */
 
         try {
             //val resourceLoader = new ModuleStudioResourceLoader()
@@ -165,49 +158,6 @@ class ModuleStudioGenerator {
 
         success
     }
-
-    /**
-     * Catch issues during generation for error reporting. /
-     * private void prepareLogger(final IResource resource) {
-     *     Logger l = Logger::getLogger(org.eclipse.workflow.WorkflowRunner);
-     *     /* TODO Mwe2Runner
-     * / // create a handler which will be added to the java.util.logging Logger class used during the workflow
-     *     Handler h = new Handler() {
-     * 
-     * @Override public void close() throws SecurityException { }
-     * @Override public void publish(LogRecord record) {
-     *     if (record.getLevel == Level::SEVERE) {
-     *         addMarker((IFile) resource, record.getMessage, 1, IMarker::SEVERITY_ERROR);
-     *     } else if (record.getLevel == Level::WARNING) {
-     *         addMarker((IFile) resource, record.getMessage, 1, IMarker::SEVERITY_WARNING);
-     *     }
-     * }
-     * @Override public void flush { } }; l.addHandler(h); }
-     */
-    /**
-     * 
-     * @return returns the path to resources in other plugins / private String
-     *     getPluginResourcePath(String pluginid, String fileName) throws IOException {
-     *         // simple solution only for images:
-     *         Activator.findImageDescriptor
-     * 
-     * 
-     *         // get bundle for given plugin
-     *         val bundle = Platform::getBundle(pluginid)
-     *         val path = new Path(fileName)
-     * 
-     *         // returns something like
-     *         "bundleentry://bundle_number/path_to_your_file"
-     *         val url = FileLocator::find(bundle, path, Collections::EMPTY_MAP)
-     * 
-     *         // if one wants to read a file physically:
-     *         // val fileUrl = FileLocator::toFileURL(url)
-     *         // val file = new File(fileUrl.getPath)
-     * 
-     *         val result = new Path(FileLocator::resolve(url).getFile).toFile.toString
-     *         result
-     *     }
-     */
 
     /**
      * Returns the default workflow file.

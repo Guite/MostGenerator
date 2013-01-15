@@ -6,13 +6,13 @@ module org.zikula.modulestudio.generator.workflow.msManualTesting
  */
 
 // The model to be processed (file name without extension)
-var modelName = 'RecipeManager'
+var modelName = 'MyPortfolio'
 
 // The path where to find the model, without trailing slash
 //var modelPath = '/home/axel/projects/GitClones/Applications/models/zikula'
 var modelPath = '/home/axel/model'
 
-// The generator cartridge to execute (zclassic, zoo, reporting)
+// The generator cartridge to execute (zclassic, reporting)
 var cartridge = 'zclassic'
 
 // Destination folder

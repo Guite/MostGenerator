@@ -24,7 +24,7 @@ import org.zikula.modulestudio.generator.workflow.components.Validator
 var modelName
 // The path where to find the model, without trailing slash
 var modelPath
-// The generator cartridge to execute (zclassic, zoo, documentation, reporting)
+// The generator cartridge to execute (zclassic, reporting)
 var cartridgeName
 
 // whether to validate the model before processing
@@ -93,6 +93,7 @@ Workflow {
         register = MostGeneratorSetup {}
         slot = mostSlot
         cartridge = cartridgeName
+//progressMonitor = monitor
         // specify where to put the generated code
         outlet = {
             path = '${targetDirCartridge}/${modelName}/'

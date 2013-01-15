@@ -2,7 +2,7 @@ module org.zikula.modulestudio.generator.workflow.msManualCollection
 
 /**
  * This workflow processes whole collection of example models, calls msManual workflow for each entry.
- * Allowed cartridges: zclassic, zoo, reporting.
+ * Allowed cartridges: zclassic, reporting.
  */
 
 Workflow {
@@ -67,7 +67,6 @@ Workflow {
     component = @msManual { dir = 'zikula'   name = 'CampManager' }
     component = @msManual { dir = 'zikula'   name = 'Connector' }
     component = @msManual { dir = 'zikula'   name = 'EMR' }
-    component = @msManual { dir = 'zikula'   name = 'EMR' cartridge = 'zoo' }
     component = @msManual { dir = 'zikula'   name = 'EMR' cartridge = 'reporting' }
     component = @msManual { dir = 'zikula'   name = 'KnowledgeBase' }
     component = @msManual { dir = 'zikula'   name = 'Participation' }
