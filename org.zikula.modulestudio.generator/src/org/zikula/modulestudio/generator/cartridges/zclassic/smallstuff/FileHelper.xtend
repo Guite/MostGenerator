@@ -24,7 +24,7 @@ class FileHelper {
         /**
          * «name».
          *
-         * @copyright «author»
+         * @copyright «author» («vendor»)
          * @license «license»
          * @package «name»
          * @author «author»«IF email != null && email != ''» <«email»>«ENDIF».
