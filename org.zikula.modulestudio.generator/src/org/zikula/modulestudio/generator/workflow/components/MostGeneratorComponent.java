@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowComponent;
 import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext;
@@ -45,11 +44,6 @@ public class MostGeneratorComponent extends GeneratorComponent implements
      * Name of current cartridge.
      */
     private String cartridge = ""; //$NON-NLS-1$
-
-    /**
-     * Progress monitor.
-     */
-    private IProgressMonitor monitor = null;
 
     /**
      * Registers an {@link ISetup}, which causes the execution of
@@ -210,7 +204,7 @@ public class MostGeneratorComponent extends GeneratorComponent implements
         final MostGenerator generator = (MostGenerator) getInjector()
                 .getInstance(IGenerator.class);
         generator.setCartridge(getCartridge());
-        generator.setMonitor(this.getProgressMonitor());
+
         return generator;
     }
 
@@ -290,25 +284,6 @@ public class MostGeneratorComponent extends GeneratorComponent implements
      */
     public void setOutlets(Map<String, String> newOutlets) {
         this.outlets = newOutlets;
-    }
-
-    /**
-     * Returns progress monitor instance.
-     * 
-     * @return The progress monitor.
-     */
-    public IProgressMonitor getProgressMonitor() {
-        return this.monitor;
-    }
-
-    /**
-     * Sets the progress monitor instance.
-     * 
-     * @param pm
-     *            The given monitor.
-     */
-    public void setProgressMonitor(IProgressMonitor pm) {
-        this.monitor = pm;
     }
 
     /**

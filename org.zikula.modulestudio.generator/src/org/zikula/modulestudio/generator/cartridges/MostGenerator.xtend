@@ -11,7 +11,7 @@ import org.zikula.modulestudio.generator.extensions.transformation.PersistenceTr
 import org.eclipse.core.runtime.IProgressMonitor
 
 class MostGenerator implements IGenerator {
-    @Inject extension ModelExtensions
+    @Inject extension ModelExtensions = new ModelExtensions()
 
     String cartridge = ''
 

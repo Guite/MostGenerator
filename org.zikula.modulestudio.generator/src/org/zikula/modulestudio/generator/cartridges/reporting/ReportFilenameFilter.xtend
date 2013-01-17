@@ -1,4 +1,4 @@
-package org.zikula.modulestudio.generator.application
+package org.zikula.modulestudio.generator.cartridges.reporting
 
 import java.io.FilenameFilter
 import java.io.File

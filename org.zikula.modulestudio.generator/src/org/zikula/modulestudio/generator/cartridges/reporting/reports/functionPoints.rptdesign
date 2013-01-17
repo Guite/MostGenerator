@@ -59,7 +59,7 @@
         </oda-data-source>
     </data-sources>
     <data-sets>
-        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.ecore.dataSet" name="Relationships" id="603">
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.ecore.dataSet" name="relationshipData" id="603">
             <list-property name="columnHints">
                 <structure>
                     <property name="columnName">Entity::incoming::target::name</property>
@@ -71,7 +71,6 @@
                 </structure>
                 <structure>
                     <property name="columnName">NamedObject::name</property>
-                    <property name="alias">tableName</property>
                     <text-property name="displayName">NamedObject::name</text-property>
                 </structure>
             </list-property>
@@ -229,7 +228,7 @@ countRows(row["Entity::fields::name"],attribute)</expression>
                 </structure>
                 <structure>
                     <property name="columnName">NamedObject::name</property>
-                    <property name="alias">Table name</property>
+                    <property name="alias">tableName</property>
                     <text-property name="displayName">NamedObject::name</text-property>
                 </structure>
             </list-property>
@@ -282,12 +281,12 @@ countRows(row["Entity::fields::name"],attribute)</expression>
                     </structure>
                     <structure>
                         <property name="position">10</property>
-                        <property name="name">Table name</property>
+                        <property name="name">tableName</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
                         <property name="position">11</property>
-                        <property name="name">Relationships</property>
+                        <property name="name">relationshipData</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
@@ -1135,7 +1134,7 @@ countRows(row["Entity::fields::name"],attribute)</expression>
                     <property name="borderTopStyle">solid</property>
                     <property name="borderTopWidth">thin</property>
                     <label id="61">
-                        <text-property name="text">Autor</text-property>
+                        <text-property name="text">Author</text-property>
                     </label>
                 </cell>
                 <cell id="918">
@@ -1181,7 +1180,7 @@ countRows(row["Entity::fields::name"],attribute)</expression>
                     <property name="borderTopStyle">solid</property>
                     <property name="borderTopWidth">thin</property>
                     <label id="62">
-                        <text-property name="text">E-Mail</text-property>
+                        <text-property name="text">Email</text-property>
                     </label>
                 </cell>
                 <cell id="920">
@@ -1319,7 +1318,7 @@ countRows(row["Entity::fields::name"],attribute)</expression>
                     <property name="borderTopStyle">solid</property>
                     <property name="borderTopWidth">thin</property>
                     <label id="65">
-                        <text-property name="text">Lizenz</text-property>
+                        <text-property name="text">Licence</text-property>
                     </label>
                 </cell>
                 <cell id="925">
@@ -1356,7 +1355,7 @@ countRows(row["Entity::fields::name"],attribute)</expression>
             <property name="fontWeight">bold</property>
             <property name="paddingTop">5pt</property>
             <property name="paddingBottom">5pt</property>
-            <text-property name="text">Funktionspunktanalyse</text-property>
+            <text-property name="text">Function point analysis</text-property>
         </label>
         <grid id="10">
             <property name="fontSize">8pt</property>
@@ -1594,7 +1593,7 @@ viewCount = 0;
                             <structure>
                                 <property name="name">relations</property>
                                 <text-property name="displayName">Relations</text-property>
-                                <expression name="expression" type="javascript">dataSetRow['relations']</expression>
+                                <expression name="expression" type="javascript">dataSetRow['relationAmount']</expression>
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
@@ -1606,18 +1605,11 @@ viewCount = 0;
                             <structure>
                                 <property name="name">tableName</property>
                                 <text-property name="displayName">NamedObject::name</text-property>
-                                <expression name="expression" type="javascript">dataSetRow['tableName']</expression>
+                                <expression name="expression" type="javascript">dataSetRow['NamedObject::name']</expression>
                                 <property name="dataType">string</property>
                             </structure>
                         </list-property>
                         <structure name="toc"/>
-                        <list-property name="sort">
-                            <structure>
-                                <expression name="key" type="javascript">row['tableName']</expression>
-                                <property name="direction">asc</property>
-                                <property name="strength">-1</property>
-                            </structure>
-                        </list-property>
                         <column id="729"/>
                         <column id="730"/>
                         <column id="731"/>
@@ -1774,7 +1766,7 @@ applicationData['complexity'][calculateComplexityApplicationData(columnAmount, r
                                     <property name="borderTopWidth">thin</property>
                                     <text id="932">
                                         <method name="onCreate"><![CDATA[var columnAmount = parseInt(this.getRowData().getColumnValue(1));
-var relationen = parseInt(this.getRowData().getColumnValue(0));
+var relations = parseInt(this.getRowData().getColumnValue(0));
 
 var result = calculateComplexityApplicationData(columnAmount, relations);
 
@@ -2232,7 +2224,7 @@ this.text = applicationData['fps'][2];]]></method>
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
                                     <label id="777">
-                                        <text-property name="text">Tabellenname</text-property>
+                                        <text-property name="text">Table name</text-property>
                                     </label>
                                 </cell>
                                 <cell id="764">
@@ -2711,9 +2703,9 @@ viewCount += countElements(columnAmount);]]></method>
                         <property name="dataSet">Output</property>
                         <list-property name="boundDataColumns">
                             <structure>
-                                <property name="name">Entity::nestedSet</property>
-                                <text-property name="displayName">Entity::nestedSet</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["Entity::nestedSet"]</expression>
+                                <property name="name">Entity::tree</property>
+                                <text-property name="displayName">Entity::tree</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["Entity::tree"]</expression>
                                 <property name="dataType">string</property>
                             </structure>
                             <structure>
@@ -2750,7 +2742,7 @@ viewCount += countElements(columnAmount);]]></method>
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
                                     <label id="863">
-                                        <text-property name="text">Tabellenname</text-property>
+                                        <text-property name="text">Table name</text-property>
                                     </label>
                                 </cell>
                                 <cell id="850">
@@ -2801,7 +2793,7 @@ viewCount += countElements(columnAmount);]]></method>
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
                                     <label id="941">
-                                        <text-property name="text">Komplexität</text-property>
+                                        <text-property name="text">Complexity</text-property>
                                     </label>
                                 </cell>
                             </row>
@@ -3252,7 +3244,7 @@ this.text = outputs['fps'][2];]]></method>
                     <text id="55">
                         <property name="fontWeight">bold</property>
                         <property name="contentType">auto</property>
-                        <text-property name="content"><![CDATA[Summe unjustierter Funktionspunkte]]></text-property>
+                        <text-property name="content"><![CDATA[Sum of unadjusted function points]]></text-property>
                     </text>
                 </cell>
                 <cell id="53">

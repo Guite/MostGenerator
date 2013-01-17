@@ -8,6 +8,7 @@ import org.eclipse.core.runtime.Platform
 import org.eclipse.emf.mwe.utils.FileCopy
 import org.zikula.modulestudio.generator.application.Activator
 import org.zikula.modulestudio.generator.cartridges.reporting.ReportingFacade
+import org.zikula.modulestudio.generator.workflow.components.ModelFileCopier
 
 /**
  * Workflow post processing for copying the admin image (zclassic) and
@@ -24,6 +25,7 @@ class WorkflowPostProcess {
      * Executes the workflow.
      */
     def run() {
+        copyModelFiles
         if (settings.getSelectedCartridges.contains('zclassic')) {
         	copyAdminImage
         }
@@ -34,13 +36,29 @@ class WorkflowPostProcess {
     }
 
     /**
+     * Copies the model files into the output folder.
+     */
+    def private copyModelFiles() {
+        val srcPath = settings.modelPath.replaceFirst("file:", "")
+        val modelFileName = new File(srcPath).name
+        val copier = new ModelFileCopier()
+        copier.setSourceModelFile(srcPath)
+        copier.setTargetModelFile(settings.outputPath + '/model/' + modelFileName)
+        copier.setSourceModelFileEnriched(srcPath.replace('.mostapp', '_enriched.mostapp'))
+        copier.setTargetModelFileEnriched(settings.outputPath + '/model/' + modelFileName.replace('.mostapp', '_enriched.mostapp'))
+        copier.setSourceDiagramFile(srcPath.replace('.mostapp', '.mostdiagram'))
+        copier.setTargetDiagramFile(settings.outputPath + '/model/' + modelFileName.replace('.mostapp', '.mostdiagram'))
+        copier.invoke
+    }
+
+    /**
      * Copies the admin image for zclassic cartridge.
      */
     def private copyAdminImage() {
         val fileCopy = new FileCopy()
         val bundle = Platform::getBundle(Activator::PLUGIN_ID)
         var resources = FileLocator::findEntries(bundle, new Path('/src/resources/images/MOST_48.png'))
-        val resourcesExported = FileLocator::findEntries(bundle, new Path(/* 'src' + */'/resources/images/MOST_48.png'))
+        val resourcesExported = FileLocator::findEntries(bundle, new Path('/resources/images/MOST_48.png'))
         if (resources.size == 0) {
             resources = resourcesExported
         }
@@ -51,8 +69,7 @@ class WorkflowPostProcess {
                 val file = new File(fileUrl.getPath)
                 fileCopy.sourceFile = file.absolutePath
                 fileCopy.targetFile = settings.getOutputPath + '/zclassic/'
-                                    + settings.getApp.name + '/src/modules/'
-                                    + settings.getApp.name + '/images/admin.png'
+                                    + settings.getAppName + '/images/admin.png'
                 fileCopy.invoke(null)
             } catch (IOException e) {
                 // TODO Auto-generated catch block
@@ -67,17 +84,20 @@ class WorkflowPostProcess {
     def private exportBirtReports() {
         try {
             val bundle = Platform::getBundle(Activator::PLUGIN_ID)
-            val resources = FileLocator::findEntries(bundle, new Path(settings.getReportPath))
-
-            val dir = new File(FileLocator::toFileURL(resources.head).toURI)
+            var resources = FileLocator::findEntries(bundle, new Path(settings.getReportPath))
+            val resourcesExported = FileLocator::findEntries(bundle, new Path('src/' + settings.getReportPath))
+            if (resources.size < 1) {
+                resources = resourcesExported
+            }
+            var File dir = new File(FileLocator::toFileURL(resources.head).toURI)
 
             val reportingFacade = new ReportingFacade()
             reportingFacade.outputPath = settings.getOutputPath
-            reportingFacade.modelPath = settings.getModelPath
+            reportingFacade.modelPath = settings.getModelPath.replaceFirst('file:', '')
             reportingFacade.setUp
             for (report : settings.getSelectedReports) {
                 settings.getProgressMonitor.subTask('Reporting: ' + report.toString)
-                reportingFacade.startExport(dir.toString + '/' + report.toString + '.rptdesign', report.toString + '.pdf')
+                reportingFacade.startExport(dir.toString + '/' + report.toString + '.rptdesign', report.toString)
                 settings.getProgressMonitor.subTask('')
             }
             reportingFacade.shutDown

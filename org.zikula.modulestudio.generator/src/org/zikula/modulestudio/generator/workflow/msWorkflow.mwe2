@@ -14,6 +14,7 @@ import org.zikula.modulestudio.generator.cartridges.MostGeneratorSetup
 import org.zikula.modulestudio.generator.cartridges.MostGeneratorSupport
 import org.zikula.modulestudio.generator.workflow.components.DirectoryCreator
 import org.zikula.modulestudio.generator.workflow.components.Logger
+import org.zikula.modulestudio.generator.workflow.components.ModelFileCopier
 import org.zikula.modulestudio.generator.workflow.components.ModelReader
 import org.zikula.modulestudio.generator.workflow.components.ModelWriter
 import org.zikula.modulestudio.generator.workflow.components.MostGeneratorComponent
@@ -41,10 +42,10 @@ var targetDirCartridge = '${targetDir}${cartridgeName}'
 // calculated from input vars
 var modelFile = '${modelPath}/${modelName}.mostapp'
 var diagramFile = '${modelPath}/${modelName}.mostdiagram'
-var modelFileCopy = '${targetDir}/${modelName}.mostapp'
-var diagramFileCopy = '${targetDir}/${modelName}.mostdiagram'
+var modelFileCopy = '${targetDir}/model/${modelName}.mostapp'
+var diagramFileCopy = '${targetDir}/model/${modelName}.mostdiagram'
 var modelFileEnriched = '${modelPath}/${modelName}_enriched.mostapp'
-var modelFileEnrichedCopy = '${targetDir}/${modelName}_enriched.mostapp'
+var modelFileEnrichedCopy = '${targetDir}/model/${modelName}_enriched.mostapp'
 
 var mostSlot = 'mostModel'
 
@@ -70,6 +71,7 @@ Workflow {
         slot = mostSlot
     }
 
+    component = Logger { message = 'Running validator component.' }
     component = Validator {
         enabled = doValidation
         slot = mostSlot
@@ -93,7 +95,6 @@ Workflow {
         register = MostGeneratorSetup {}
         slot = mostSlot
         cartridge = cartridgeName
-//progressMonitor = monitor
         // specify where to put the generated code
         outlet = {
             path = '${targetDirCartridge}/${modelName}/'
@@ -107,28 +108,18 @@ Workflow {
         slot = mostSlot
     }
 
-
     component = Logger { message = 'Copying model artifacts.' }
-    component = IfComponent {
-        cond = doModelCopy
-        if = {
-            cond = doModelCopy
-            // copy original domain model into target folder
-            component = FileCopy {
-                sourceFile = modelFile
-                targetFile = modelFileCopy
-            }
-            // copy enriched domain model into target folder
-            component = FileCopy {
-                sourceFile = modelFileEnriched
-                targetFile = modelFileEnrichedCopy
-            }
-            // copy diagram model into target folder
-            component = FileCopy {
-                sourceFile = diagramFile
-                targetFile = diagramFileCopy
-            }
-        }
+    component = ModelFileCopier {
+        enabled = doModelCopy
+        // original domain model
+        sourceModelFile = modelFile
+        targetModelFile = modelFileCopy
+        // enriched domain model
+        sourceModelFileEnriched = modelFileEnriched
+        targetModelFileEnriched = modelFileEnrichedCopy
+        // diagram model
+        sourceDiagramFile = diagramFile
+        targetDiagramFile = diagramFileCopy
     }
 
     // output required generation time

@@ -61,10 +61,6 @@
                     <text-property name="displayName">Entity::nameMultiple</text-property>
                 </structure>
                 <structure>
-                    <property name="columnName">Entity::timestampable</property>
-                    <text-property name="displayName">Entity::timestampable</text-property>
-                </structure>
-                <structure>
                     <property name="columnName">Entity::tree</property>
                     <text-property name="displayName">Entity::tree</text-property>
                 </structure>
@@ -87,6 +83,10 @@
                 <structure>
                     <property name="columnName">Entity::metaData</property>
                     <text-property name="displayName">Entity::metaData</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">Entity::softDeleteable</property>
+                    <text-property name="displayName">Entity::softDeleteable</text-property>
                 </structure>
                 <structure>
                     <property name="columnName">Entity::loggable</property>
@@ -114,37 +114,37 @@
                     </structure>
                     <structure>
                         <property name="position">2</property>
-                        <property name="name">Entity::timestampable</property>
-                        <property name="dataType">string</property>
-                    </structure>
-                    <structure>
-                        <property name="position">3</property>
                         <property name="name">Entity::tree</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">4</property>
+                        <property name="position">3</property>
                         <property name="name">Entity::geographical</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">5</property>
+                        <property name="position">4</property>
                         <property name="name">Entity::standardFields</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">6</property>
+                        <property name="position">5</property>
                         <property name="name">Entity::categorisable</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">7</property>
+                        <property name="position">6</property>
                         <property name="name">Entity::attributable</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
-                        <property name="position">8</property>
+                        <property name="position">7</property>
                         <property name="name">Entity::metaData</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">Entity::softDeleteable</property>
                         <property name="dataType">string</property>
                     </structure>
                     <structure>
@@ -179,44 +179,44 @@
                 </structure>
                 <structure>
                     <property name="position">2</property>
-                    <property name="name">Entity::timestampable</property>
-                    <property name="nativeName">Entity::timestampable</property>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="position">3</property>
                     <property name="name">Entity::tree</property>
                     <property name="nativeName">Entity::tree</property>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="position">4</property>
+                    <property name="position">3</property>
                     <property name="name">Entity::geographical</property>
                     <property name="nativeName">Entity::geographical</property>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="position">5</property>
+                    <property name="position">4</property>
                     <property name="name">Entity::standardFields</property>
                     <property name="nativeName">Entity::standardFields</property>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="position">6</property>
+                    <property name="position">5</property>
                     <property name="name">Entity::categorisable</property>
                     <property name="nativeName">Entity::categorisable</property>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="position">7</property>
+                    <property name="position">6</property>
                     <property name="name">Entity::attributable</property>
                     <property name="nativeName">Entity::attributable</property>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="position">8</property>
+                    <property name="position">7</property>
                     <property name="name">Entity::metaData</property>
                     <property name="nativeName">Entity::metaData</property>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">Entity::softDeleteable</property>
+                    <property name="nativeName">Entity::softDeleteable</property>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -286,7 +286,7 @@
             <list-property name="privateDriverProperties">
                 <ex-property>
                     <name>COLUMN_DEFINITIONS</name>
-                    <value>Entity::nameMultiple,Entity::timestampable,Entity::tree,Entity::geographical,Entity::standardFields,Entity::categorisable,Entity::attributable,Entity::metaData,Entity::loggable,Entity::fields::name,NamedObject::name,NamedObject::documentation,</value>
+                    <value>Entity::nameMultiple,Entity::tree,Entity::geographical,Entity::standardFields,Entity::categorisable,Entity::attributable,Entity::metaData,Entity::softDeleteable,Entity::loggable,Entity::fields::name,NamedObject::name,NamedObject::documentation,</value>
                 </ex-property>
                 <ex-property>
                     <name>OCL_ECORE_INVARIANT</name>
@@ -1606,33 +1606,9 @@
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">Entity::versionable</property>
-                    <text-property name="displayName">Entity::versionable</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["Entity::versionable"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">Entity::timestampable</property>
-                    <text-property name="displayName">Entity::timestampable</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["Entity::timestampable"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">Entity::sluggable</property>
-                    <text-property name="displayName">Entity::sluggable</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["Entity::sluggable"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">Entity::nestedSet</property>
-                    <text-property name="displayName">Entity::nestedSet</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["Entity::nestedSet"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">Entity::searchable</property>
-                    <text-property name="displayName">Entity::searchable</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["Entity::searchable"]</expression>
+                    <property name="name">Entity::tree</property>
+                    <text-property name="displayName">Entity::tree</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["Entity::tree"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -1678,15 +1654,9 @@
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
-                    <property name="name">Entity::i18n</property>
-                    <text-property name="displayName">Entity::i18n</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["Entity::i18n"]</expression>
-                    <property name="dataType">string</property>
-                </structure>
-                <structure>
-                    <property name="name">Entity::softDelete</property>
-                    <text-property name="displayName">Entity::softDelete</text-property>
-                    <expression name="expression" type="javascript">dataSetRow["Entity::softDelete"]</expression>
+                    <property name="name">Entity::softDeleteable</property>
+                    <text-property name="displayName">Entity::softDeleteable</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["Entity::softDeleteable"]</expression>
                     <property name="dataType">string</property>
                 </structure>
                 <structure>
@@ -1939,50 +1909,11 @@
                                     <property name="borderTopColor">#000000</property>
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
-                                    <label id="632">
-                                        <text-property name="text">Searchable</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="684">
-                                    <property name="borderBottomColor">#000000</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftColor">#000000</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#000000</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#000000</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
-                                    <image id="623">
-                                        <property name="height">0.17054263565891473in</property>
-                                        <property name="width">0.17054263565891473in</property>
-                                        <property name="source">file</property>
-                                        <expression name="uri" type="javascript">row["Entity::searchable"]+ ".gif"</expression>
-                                    </image>
-                                </cell>
-                            </row>
-                            <row id="685">
-                                <cell id="686">
-                                    <property name="borderBottomColor">#000000</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftColor">#000000</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#000000</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#000000</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
                                     <label id="629">
                                         <text-property name="text">Categorisable</text-property>
                                     </label>
                                 </cell>
-                                <cell id="687">
+                                <cell id="684">
                                     <property name="borderBottomColor">#000000</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">thin</property>
@@ -2002,46 +1933,9 @@
                                         <expression name="uri" type="javascript">row["Entity::categorisable"] + ".gif"</expression>
                                     </image>
                                 </cell>
-                                <cell id="688">
-                                    <property name="borderBottomColor">#000000</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftColor">#000000</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#000000</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#000000</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
-                                    <label id="633">
-                                        <text-property name="text">Sluggable</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="689">
-                                    <property name="borderBottomColor">#000000</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftColor">#000000</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#000000</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#000000</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
-                                    <image id="624">
-                                        <property name="height">0.17054263565891473in</property>
-                                        <property name="width">0.17054263565891473in</property>
-                                        <property name="source">file</property>
-                                        <expression name="uri" type="javascript">row["Entity::sluggable"]+ ".gif"</expression>
-                                    </image>
-                                </cell>
                             </row>
-                            <row id="690">
-                                <cell id="691">
+                            <row id="685">
+                                <cell id="686">
                                     <property name="borderBottomColor">#000000</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">thin</property>
@@ -2058,7 +1952,7 @@
                                         <text-property name="text">Geographical</text-property>
                                     </label>
                                 </cell>
-                                <cell id="692">
+                                <cell id="687">
                                     <property name="borderBottomColor">#000000</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">thin</property>
@@ -2076,6 +1970,82 @@
                                         <property name="width">0.17054263565891473in</property>
                                         <property name="source">file</property>
                                         <expression name="uri" type="javascript">row["Entity::geographical"] + ".gif"</expression>
+                                    </image>
+                                </cell>
+                                <cell id="688">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftColor">#000000</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightColor">#000000</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="752">
+                                        <text-property name="text">Loggable</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="689">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftColor">#000000</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightColor">#000000</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <image id="776">
+                                        <property name="height">0.17054263565891473in</property>
+                                        <property name="width">0.17054263565891473in</property>
+                                        <property name="source">file</property>
+                                        <expression name="uri" type="javascript">row["Entity::loggable"] + ".gif"</expression>
+                                    </image>
+                                </cell>
+                            </row>
+                            <row id="690">
+                                <cell id="691">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftColor">#000000</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightColor">#000000</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <label id="759">
+                                        <text-property name="text">Metadata</text-property>
+                                    </label>
+                                </cell>
+                                <cell id="692">
+                                    <property name="borderBottomColor">#000000</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">thin</property>
+                                    <property name="borderLeftColor">#000000</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">thin</property>
+                                    <property name="borderRightColor">#000000</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">thin</property>
+                                    <property name="borderTopColor">#000000</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">thin</property>
+                                    <image id="777">
+                                        <property name="height">0.17054263565891473in</property>
+                                        <property name="width">0.17054263565891473in</property>
+                                        <property name="source">file</property>
+                                        <expression name="uri" type="javascript">row["Entity::metaData"] + ".gif"</expression>
                                     </image>
                                 </cell>
                                 <cell id="693">
@@ -2112,7 +2082,7 @@
                                         <property name="height">0.17054263565891473in</property>
                                         <property name="width">0.17054263565891473in</property>
                                         <property name="source">file</property>
-                                        <expression name="uri" type="javascript">row["Entity::softDelete"] + ".gif"</expression>
+                                        <expression name="uri" type="javascript">row["Entity::softDeleteable"] + ".gif"</expression>
                                     </image>
                                 </cell>
                             </row>
@@ -2130,48 +2100,11 @@
                                     <property name="borderTopColor">#000000</property>
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
-                                    <label id="748">
-                                        <text-property name="text">i18n</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="767">
-                                    <property name="borderBottomColor">#000000</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftColor">#000000</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#000000</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#000000</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
-                                    <image id="775">
-                                        <property name="height">0.17054263565891473in</property>
-                                        <property name="width">0.17054263565891473in</property>
-                                        <property name="source">file</property>
-                                        <expression name="uri" type="javascript">row["Entity::i18n"] + ".gif"</expression>
-                                    </image>
-                                </cell>
-                                <cell id="768">
-                                    <property name="borderBottomColor">#000000</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftColor">#000000</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#000000</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#000000</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
                                     <label id="634">
                                         <text-property name="text">Standard fields</text-property>
                                     </label>
                                 </cell>
-                                <cell id="769">
+                                <cell id="767">
                                     <property name="borderBottomColor">#000000</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">thin</property>
@@ -2191,161 +2124,7 @@
                                         <expression name="uri" type="javascript">row["Entity::standardFields"]+ ".gif"</expression>
                                     </image>
                                 </cell>
-                            </row>
-                            <row id="770">
-                                <cell id="771">
-                                    <property name="borderBottomColor">#000000</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftColor">#000000</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#000000</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#000000</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
-                                    <label id="752">
-                                        <text-property name="text">Loggable</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="772">
-                                    <property name="borderBottomColor">#000000</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftColor">#000000</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#000000</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#000000</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
-                                    <image id="776">
-                                        <property name="height">0.17054263565891473in</property>
-                                        <property name="width">0.17054263565891473in</property>
-                                        <property name="source">file</property>
-                                        <expression name="uri" type="javascript">row["Entity::loggable"] + ".gif"</expression>
-                                    </image>
-                                </cell>
-                                <cell id="773">
-                                    <property name="borderBottomColor">#000000</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftColor">#000000</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#000000</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#000000</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
-                                    <label id="635">
-                                        <text-property name="text">Timestampable</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="774">
-                                    <property name="borderBottomColor">#000000</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftColor">#000000</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#000000</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#000000</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
-                                    <image id="626">
-                                        <property name="height">0.17054263565891473in</property>
-                                        <property name="width">0.17054263565891473in</property>
-                                        <property name="source">file</property>
-                                        <expression name="uri" type="javascript">row["Entity::timestampable"]+ ".gif"</expression>
-                                    </image>
-                                </cell>
-                            </row>
-                            <row id="695">
-                                <cell id="696">
-                                    <property name="borderBottomColor">#000000</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftColor">#000000</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#000000</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#000000</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
-                                    <label id="759">
-                                        <text-property name="text">Metadata</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="697">
-                                    <property name="borderBottomColor">#000000</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftColor">#000000</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#000000</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#000000</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
-                                    <image id="777">
-                                        <property name="height">0.17054263565891473in</property>
-                                        <property name="width">0.17054263565891473in</property>
-                                        <property name="source">file</property>
-                                        <expression name="uri" type="javascript">row["Entity::metaData"] + ".gif"</expression>
-                                    </image>
-                                </cell>
-                                <cell id="698">
-                                    <property name="borderBottomColor">#000000</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftColor">#000000</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#000000</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#000000</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
-                                    <label id="636">
-                                        <text-property name="text">Versionable</text-property>
-                                    </label>
-                                </cell>
-                                <cell id="699">
-                                    <property name="borderBottomColor">#000000</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftColor">#000000</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#000000</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#000000</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
-                                    <image id="627">
-                                        <property name="height">0.17054263565891473in</property>
-                                        <property name="width">0.17054263565891473in</property>
-                                        <property name="source">file</property>
-                                        <expression name="uri" type="javascript">row["Entity::versionable"] + ".gif"</expression>
-                                    </image>
-                                </cell>
-                            </row>
-                            <row id="700">
-                                <cell id="701">
+                                <cell id="768">
                                     <property name="borderBottomColor">#000000</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">thin</property>
@@ -2359,10 +2138,10 @@
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">thin</property>
                                     <label id="631">
-                                        <text-property name="text">Nested set</text-property>
+                                        <text-property name="text">Tree</text-property>
                                     </label>
                                 </cell>
-                                <cell id="702">
+                                <cell id="769">
                                     <property name="borderBottomColor">#000000</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">thin</property>
@@ -2379,36 +2158,8 @@
                                         <property name="height">0.17054263565891473in</property>
                                         <property name="width">0.17054263565891473in</property>
                                         <property name="source">file</property>
-                                        <expression name="uri" type="javascript">row["Entity::nestedSet"] + ".gif"</expression>
+                                        <expression name="uri" type="javascript">row["Entity::tree"] + ".gif"</expression>
                                     </image>
-                                </cell>
-                                <cell id="703">
-                                    <property name="borderBottomColor">#000000</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftColor">#000000</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#000000</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#000000</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
-                                </cell>
-                                <cell id="704">
-                                    <property name="borderBottomColor">#000000</property>
-                                    <property name="borderBottomStyle">solid</property>
-                                    <property name="borderBottomWidth">thin</property>
-                                    <property name="borderLeftColor">#000000</property>
-                                    <property name="borderLeftStyle">solid</property>
-                                    <property name="borderLeftWidth">thin</property>
-                                    <property name="borderRightColor">#000000</property>
-                                    <property name="borderRightStyle">solid</property>
-                                    <property name="borderRightWidth">thin</property>
-                                    <property name="borderTopColor">#000000</property>
-                                    <property name="borderTopStyle">solid</property>
-                                    <property name="borderTopWidth">thin</property>
                                 </cell>
                             </row>
                         </grid>

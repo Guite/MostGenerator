@@ -1,5 +1,6 @@
 package org.zikula.modulestudio.generator.cartridges.reporting
 
+import java.io.File
 import java.util.logging.Level
 import org.eclipse.birt.core.framework.Platform
 import org.eclipse.birt.report.engine.api.EngineConfig
@@ -7,7 +8,7 @@ import org.eclipse.birt.report.engine.api.EngineConstants
 import org.eclipse.birt.report.engine.api.IReportEngine
 import org.eclipse.birt.report.engine.api.IReportEngineFactory
 import org.eclipse.birt.report.engine.api.IRunAndRenderTask
-import org.eclipse.birt.report.engine.api.PDFRenderOption
+import org.eclipse.birt.report.engine.api.RenderOption
 import org.eclipse.birt.report.engine.api.ReportEngine
 
 /**
@@ -41,11 +42,6 @@ public class ReportingFacade {
     IRunAndRenderTask task = null
 
     /**
-     * PDF render options.
-     */
-    PDFRenderOption pdfRenderOptions = null
-
-    /**
      * Sets up prerequisites.
      */
     def setUp() {
@@ -57,7 +53,12 @@ public class ReportingFacade {
             hm.put(EngineConstants::APPCONTEXT_CLASSLOADER_KEY,
                     typeof(ReportEngine).classLoader)
             config.appContext = hm
-            config.setLogConfig(outputPath + '/reporting/', //$NON-NLS-1$
+            val reportPath = outputPath + '/reporting/' //$NON-NLS-1$
+            val reportPathDir = new File(reportPath)
+            if (!reportPathDir.exists) {
+                reportPathDir.mkdir
+            }
+            config.setLogConfig(reportPath, //$NON-NLS-1$
                     Level::WARNING)
 
             Platform::startup(config)
@@ -78,23 +79,36 @@ public class ReportingFacade {
      */
     def startExport(String reportPath, String outputName) {
         try {
-            // diagramExporterLock.objet.wait
-            task = engine.createRunAndRenderTask(engine.openReportDesign(reportPath))
-            task.setParameterValue('modelPath', //$NON-NLS-1$
-                    'file:' + (modelPath.toString)) //$NON-NLS-1$
-            task.setParameterValue('diagramPath', //$NON-NLS-1$
-                    'file:' + (outputPath + '/diagrams/')) //$NON-NLS-1$ //$NON-NLS-2$
-
-            pdfRenderOptions = new PDFRenderOption()
-            pdfRenderOptions.outputFileName = outputPath + '/reporting/' + outputName //$NON-NLS-1$
-            pdfRenderOptions.outputFormat = 'pdf' //$NON-NLS-1$
-
-            task.renderOption = pdfRenderOptions
-            task.run
-
+            singleExport(reportPath, outputName, 'html')
+            singleExport(reportPath, outputName, 'pdf')
         } catch (Exception ex) {
             ex.printStackTrace
         }
+    }
+
+    /**
+     * Does a single export for a certain file format.
+     * 
+     * @param reportPath
+     *            The path to the report.
+     * @param outputName
+     *            Desired name of output file.
+     * @param fileExtension
+     *            Desired file format.
+     */
+    def private singleExport(String reportPath, String outputName, String fileExtension) {
+        task = engine.createRunAndRenderTask(engine.openReportDesign(reportPath))
+        task.setParameterValue('modelPath', //$NON-NLS-1$
+                'file:' + (modelPath)) //$NON-NLS-1$
+        task.setParameterValue('diagramPath', //$NON-NLS-1$
+                'file:' + (outputPath + '/diagrams/')) //$NON-NLS-1$ //$NON-NLS-2$
+
+        var RenderOption renderOptions = new RenderOption()
+        renderOptions.outputFileName = outputPath + '/reporting/' + outputName + '.' + fileExtension //$NON-NLS-1$
+        renderOptions.outputFormat = fileExtension
+        task.renderOption = renderOptions
+        task.run
+        task.close
     }
 
     /**
@@ -102,7 +116,6 @@ public class ReportingFacade {
      */
     def shutDown() {
         try {
-            task.close
             engine.destroy
             Platform::shutdown
         } catch (Exception ex) {
@@ -125,6 +138,6 @@ public class ReportingFacade {
      * @param path The given path.
      */
     def setModelPath(String path) {
-        outputPath = path
+        modelPath = path
     }
 }

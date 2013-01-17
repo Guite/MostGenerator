@@ -16,9 +16,7 @@ import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
 import de.guite.modulestudio.metamodel.modulestudio.FloatField
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
-import de.guite.modulestudio.metamodel.modulestudio.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.modulestudio.ObjectField
-import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.StringField
 import de.guite.modulestudio.metamodel.modulestudio.TextField
 import org.eclipse.xtext.generator.IFileSystemAccess

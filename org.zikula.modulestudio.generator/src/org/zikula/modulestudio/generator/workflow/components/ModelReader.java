@@ -22,13 +22,52 @@ public class ModelReader extends WorkflowComponentWithSlot {
     private String uri = ""; //$NON-NLS-1$
 
     /**
-     * Invokes the workflow component.
+     * Invokes the workflow component from the outside.
+     * 
+     * @return The created Resource instance.
+     */
+    public Resource invoke() {
+        return getResource();
+    }
+
+    /**
+     * Invokes the workflow component from a workflow.
      * 
      * @param ctx
      *            The given {@link IWorkflowContext} instance.
      */
     @Override
     public void invoke(IWorkflowContext ctx) {
+        final Resource resource = getResource();
+        ctx.put(getSlot(), resource);
+    }
+
+    /**
+     * Retrieves the resource for the given uri.
+     * 
+     * @return The created Resource instance.
+     */
+    protected Resource getResource() {
+        final Injector injector = getInjector();
+        final XtextResourceSet resourceSet = injector
+                .getInstance(XtextResourceSet.class);
+        resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL,
+                Boolean.TRUE);
+
+        final String uri = getUri();
+        final URI fileURI = (uri.substring(0, 4).equals("file")) ? URI
+                .createURI(uri) : URI.createFileURI(uri);
+        final Resource resource = resourceSet.getResource(fileURI, true);
+
+        return resource;
+    }
+
+    /**
+     * Returns the injector.
+     * 
+     * @return The injector.
+     */
+    protected Injector getInjector() {
         MostDslActivator mostDslActivator = null;
         mostDslActivator = MostDslActivator.getInstance();
         Injector injector = null;
@@ -42,14 +81,8 @@ public class ModelReader extends WorkflowComponentWithSlot {
             injector = new MostDslStandaloneSetup()
                     .createInjectorAndDoEMFRegistration();
         }
-        final XtextResourceSet resourceSet = injector
-                .getInstance(XtextResourceSet.class);
-        resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL,
-                Boolean.TRUE);
 
-        final URI fileURI = URI.createFileURI(this.getUri());
-        final Resource resource = resourceSet.getResource(fileURI, true);
-        ctx.put(getSlot(), resource);
+        return injector;
     }
 
     /**

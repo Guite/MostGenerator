@@ -1,6 +1,5 @@
 package org.zikula.modulestudio.generator.application
 
-import de.guite.modulestudio.metamodel.modulestudio.Application
 import java.io.File
 import java.io.IOException
 import java.net.URISyntaxException
@@ -11,6 +10,7 @@ import org.eclipse.core.runtime.Path
 import org.eclipse.core.runtime.Platform
 import org.eclipse.gmf.runtime.diagram.core.preferences.PreferencesHint
 import org.eclipse.gmf.runtime.notation.Diagram
+import org.zikula.modulestudio.generator.cartridges.reporting.ReportFilenameFilter
 
 /**
  * This class collects required workflow properties.
@@ -48,12 +48,17 @@ public class WorkflowSettings {
     Diagram diagram = null
 
     /**
-     * The application instance described by the model.
+     * Name of the application instance described by the model.
      */
-    Application app = null
+    String appName = ''
 
     /**
-     * Preference hint.
+     * Version of the application instance described by the model.
+     */
+    String appVersion = ''
+
+    /**
+     * Preference hint for reporting.
      */
     PreferencesHint diagramPreferencesHint = null
 
@@ -61,11 +66,6 @@ public class WorkflowSettings {
      * The progress monitor.
      */
     IProgressMonitor progressMonitor = null
-
-    /**
-     * File handle for report directory.
-     */
-    File reportDir = null
 
     /**
      * List of available reports.
@@ -118,8 +118,7 @@ public class WorkflowSettings {
         }
 
         try {
-            reportDir = new File(FileLocator::toFileURL(resources.head).toURI)
-
+            val reportDir = new File(FileLocator::toFileURL(resources.head).toURI)
             for (file : reportDir.list(new ReportFilenameFilter())) {
                 availableReports.add(file.replace('.rptdesign', '')) //$NON-NLS-1$ //$NON-NLS-2$
             }
@@ -170,13 +169,23 @@ public class WorkflowSettings {
     }
 
     /**
-     * Sets the application instance.
+     * Sets the application name.
      * 
-     * @param application
-     *            The given application.
+     * @param name
+     *            The given name.
      */
-    def setApp(Application application) {
-        app = application
+    def setAppName(String name) {
+        appName = name
+    }
+
+    /**
+     * Sets the application version.
+     * 
+     * @param version
+     *            The given version.
+     */
+    def setAppVersion(String version) {
+        appVersion = version
     }
 
     /**
@@ -190,7 +199,7 @@ public class WorkflowSettings {
     }
 
     /**
-     * Sets the diagram preferences hint.
+     * Sets the diagram preferences hint for reporting.
      * 
      * @param hint
      *            The given diagram preferences hint.
@@ -262,51 +271,12 @@ public class WorkflowSettings {
     }
 
     /**
-     * Sets the output directory.
-     * 
-     * @param dir
-     *            the given value.
-     * /
-    public void setOutputDir(File dir) {
-        this.outputDir = dir;
-    }
-
-    /**
-     * Returns the report directory.
-     * 
-     * @return the reportDir
-     * /
-    public File getReportDir() {
-        return this.reportDir;
-    }
-
-    /**
-     * Sets the report directory.
-     *
-     * @param dir
-     *            the reportDir to set
-     * /
-    public void setReportDir(File dir) {
-        this.reportDir = dir;
-    }
-
-    /**
      * Returns the report path.
      * 
      * @return the reportPath
      */
     def getReportPath() {
         reportPath
-    }
-
-    /**
-     * Sets the report path.
-     *
-     * @param path
-     *            the reportPath to set
-     * /
-    public void setReportPath(String path) {
-        this.reportPath = path;
     }
 
     /**
@@ -337,16 +307,25 @@ public class WorkflowSettings {
     }
 
     /**
-     * Returns the application instance.
+     * Returns the application name.
      * 
-     * @return the application
+     * @return the name
      */
-    def getApp() {
-        app
+    def getAppName() {
+        appName
     }
 
     /**
-     * Returns the diagram preferences hint.
+     * Returns the application version.
+     * 
+     * @return the version
+     */
+    def getAppVersion() {
+        appVersion
+    }
+
+    /**
+     * Returns the diagram preferences hint for reporting.
      * 
      * @return the diagramPreferencesHint
      */
@@ -362,34 +341,4 @@ public class WorkflowSettings {
     def getSelectedReports() {
         selectedReports
     }
-
-    /**
-     * Sets the list of available cartridges.
-     * 
-     * @param cartridges
-     *            the given list.
-     * /
-    public void setAvailableCartridges(ArrayList<String> cartridges) {
-        this.availableCartridges = cartridges;
-    }
-
-    /**
-     * Sets the list of selected cartridges.
-     * 
-     * @param cartridges
-     *            the given list.
-     * /
-    public void setSelectedCartridges(ArrayList<Object> cartridges) {
-        this.selectedCartridges = cartridges;
-    }
-
-    /**
-     * Sets the list of available reports.
-     * 
-     * @param reports
-     *            the given list.
-     * /
-    public void setAvailableReports(ArrayList<String> reports) {
-        this.availableReports = reports;
-    }*/
 }
