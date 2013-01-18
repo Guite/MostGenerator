@@ -17,7 +17,7 @@ class Bootstrap {
     @Inject extension Utils = new Utils()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        fsa.generateFile(getAppSourcePath(appName) + 'bootstrap.php', bootstrapFile)
+        fsa.generateFile(getAppSourcePath + 'bootstrap.php', bootstrapFile)
     }
 
     def private bootstrapFile(Application it) '''

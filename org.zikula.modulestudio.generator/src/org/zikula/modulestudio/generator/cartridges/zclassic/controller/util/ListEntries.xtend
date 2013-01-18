@@ -24,7 +24,7 @@ class ListEntries {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for list entries')
-        val utilPath = appName.getAppSourceLibPath + 'Util/'
+        val utilPath = getAppSourceLibPath + 'Util/'
         fsa.generateFile(utilPath + 'Base/ListEntries.php', listFieldFunctionsBaseFile)
         fsa.generateFile(utilPath + 'ListEntries.php', listFieldFunctionsFile)
     }

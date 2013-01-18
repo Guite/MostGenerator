@@ -14,7 +14,7 @@ class Images {
      * Entry point for all application images.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        val imagePath = appName.getAppSourcePath + 'images/'
+        val imagePath = getAppSourcePath + 'images/'
         // This index.html file will be removed later. At the moment we need it to create according directories.
         fsa.generateFile(imagePath + 'index.html', msUrl)
 

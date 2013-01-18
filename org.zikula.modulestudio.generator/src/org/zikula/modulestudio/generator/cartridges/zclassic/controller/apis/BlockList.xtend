@@ -22,7 +22,7 @@ class BlockList {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating block for multiple objects')
-        val blockPath = appName.getAppSourceLibPath + 'Block/'
+        val blockPath = getAppSourceLibPath + 'Block/'
         fsa.generateFile(blockPath + 'Base/ItemList.php', listBlockBaseFile)
         fsa.generateFile(blockPath + 'ItemList.php', listBlockFile)
         new BlocksView().generate(it, fsa)

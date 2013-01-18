@@ -15,7 +15,7 @@ class BlocksView {
     @Inject extension Utils = new Utils()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val templatePath = appName.getAppSourcePath + 'templates/block/'
+        val templatePath = getAppSourcePath + 'templates/block/'
         fsa.generateFile(templatePath + 'itemlist.tpl', displayTemplate)
         fsa.generateFile(templatePath + 'itemlist_modify.tpl', editTemplate)
     }

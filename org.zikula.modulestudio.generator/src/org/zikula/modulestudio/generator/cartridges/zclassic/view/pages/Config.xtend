@@ -21,7 +21,7 @@ class Config {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating config template')
-        fsa.generateFile(appName.getAppSourcePath + 'templates/' + configController.formatForDB + '/config.tpl', configView)
+        fsa.generateFile(getAppSourcePath + 'templates/' + configController.formatForDB + '/config.tpl', configView)
     }
 
     def private configView(Application it) '''

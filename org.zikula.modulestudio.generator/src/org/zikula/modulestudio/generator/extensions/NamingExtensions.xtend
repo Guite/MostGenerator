@@ -229,7 +229,7 @@ class NamingExtensions {
      * Returns the base path for a certain template file.
      */
     def templateFileBase(Controller it, String entityName, String actionName) {
-        getAppSourcePath(container.application.appName) + 'templates/' + formattedName + '/' + entityName.formatForCode + '/' + actionName
+        getAppSourcePath(container.application) + 'templates/' + formattedName + '/' + entityName.formatForCode + '/' + actionName
     }
 
     /**
@@ -259,7 +259,7 @@ class NamingExtensions {
      * Returns the full file path for a view plugin file.
      */
     def viewPluginFilePath(Application it, String pluginType, String pluginName) {
-        getAppSourcePath(appName) + 'templates/plugins/' + pluginType + '.' + appName.formatForDB + pluginName + '.php'
+        getAppSourcePath + 'templates/plugins/' + pluginType + '.' + appName.formatForDB + pluginName + '.php'
     }
 
 
@@ -278,28 +278,37 @@ class NamingExtensions {
     /**
      * Returns the base path for the generated application.
      */
-    def getAppSourcePath(String appName) {
-        ''
+    def getAppSourcePath(Application it) {
+        if (targets('1.3.5'))
+            'src/modules/' + appName + '/'
+        else
+            ''
     }
 
     /**
      * Returns the base path for the source code of the generated application.
      */
-    def getAppSourceLibPath(String appName) {
-        getAppSourcePath(appName) + 'lib/' + appName + '/'
+    def getAppSourceLibPath(Application it) {
+        getAppSourcePath + 'lib/' + appName + '/'
     }
 
     /**
      * Returns the base path for uploaded files of the generated application.
      */
-    def getAppUploadPath(String appName) {
-        'Resources/userdata/' + appName + '/'
+    def getAppUploadPath(Application it) {
+        if (targets('1.3.5'))
+            'src/userdata/' + appName + '/'
+        else
+            'Resources/userdata/' + appName + '/'
     }
 
     /**
      * Returns the base path for the test source code of the generated application.
      */
-    def getAppTestsPath(String appName) {
-        'Tests/'
+    def getAppTestsPath(Application it) {
+        if (targets('1.3.5'))
+            'tests/'
+        else
+            'Tests/'
     }
 }

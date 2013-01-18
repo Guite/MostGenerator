@@ -19,7 +19,7 @@ class Cache {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val apiPath = appName.getAppSourceLibPath + 'Api/'
+        val apiPath = getAppSourceLibPath + 'Api/'
         fsa.generateFile(apiPath + 'Base/Cache.php', cacheApiBaseFile)
         fsa.generateFile(apiPath + 'Cache.php', cacheApiFile)
     }

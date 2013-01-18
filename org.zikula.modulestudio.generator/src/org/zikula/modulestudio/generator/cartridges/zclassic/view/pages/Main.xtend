@@ -15,7 +15,7 @@ class Main {
 
     def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' main templates for entity "' + name.formatForDisplay + '"')
-        fsa.generateFile(appName.getAppSourcePath + 'templates/' + controller.formattedName + '/main.tpl', mainView(appName, controller))
+        fsa.generateFile(container.application.getAppSourcePath + 'templates/' + controller.formattedName + '/main.tpl', mainView(appName, controller))
     }
 
     def private mainView(Entity it, String appName, Controller controller) '''

@@ -24,7 +24,7 @@ class EditFunctions {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating javascript for edit functions')
-        fsa.generateFile(getAppSourcePath(appName) + 'javascript/' + appName + '_editFunctions.js', generate)
+        fsa.generateFile(getAppSourcePath + 'javascript/' + appName + '_editFunctions.js', generate)
     }
 
     def private generate(Application it) '''

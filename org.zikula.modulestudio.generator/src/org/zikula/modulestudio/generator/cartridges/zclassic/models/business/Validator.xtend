@@ -48,8 +48,8 @@ class Validator {
      */
     def generateCommon(Application it, IFileSystemAccess fsa) {
         println("Generating base validator class")
-        fsa.generateFile(appName.getAppSourcePath + baseClassDefault(it, '', 'Validator').asFile, validatorCommonBaseFile)
-        fsa.generateFile(appName.getAppSourcePath + implClassDefault(it, '', 'Validator').asFile, validatorCommonFile)
+        fsa.generateFile(getAppSourcePath + baseClassDefault(it, '', 'Validator').asFile, validatorCommonBaseFile)
+        fsa.generateFile(getAppSourcePath + implClassDefault(it, '', 'Validator').asFile, validatorCommonFile)
     }
 
     def private validatorCommonBaseFile(Application it) '''
@@ -479,9 +479,9 @@ class Validator {
     def generateWrapper(Entity it, Application app, IFileSystemAccess fsa) {
         println('Generating validator classes for entity "' + name.formatForDisplay + '"')
         if (!isInheriting) {
-            fsa.generateFile(app.appName.getAppSourcePath + baseClassModel('validator', '').asFile, validatorBaseFile(app))
+            fsa.generateFile(app.getAppSourcePath + baseClassModel('validator', '').asFile, validatorBaseFile(app))
         }
-        fsa.generateFile(app.appName.getAppSourcePath + implClassModel('validator', '').asFile, validatorFile(app))
+        fsa.generateFile(app.getAppSourcePath + implClassModel('validator', '').asFile, validatorFile(app))
     }
 
     def private validatorBaseFile(Entity it, Application app) '''

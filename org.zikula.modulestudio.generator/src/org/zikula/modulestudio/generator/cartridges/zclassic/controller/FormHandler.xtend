@@ -65,8 +65,8 @@ class FormHandler {
      */
     def private generate(Controller it, String actionName, IFileSystemAccess fsa) {
         println('Generating "' + name + '" form handler base class')
-        fsa.generateFile(app.appName.appSourcePath + baseClassFormHandler(actionName).asFile, formHandlerCommonBaseFile(app, actionName))
-        fsa.generateFile(app.appName.appSourcePath + implClassFormHandler(actionName).asFile, formHandlerCommonFile(app, actionName))
+        fsa.generateFile(app.appSourcePath + baseClassFormHandler(actionName).asFile, formHandlerCommonBaseFile(app, actionName))
+        fsa.generateFile(app.appSourcePath + implClassFormHandler(actionName).asFile, formHandlerCommonFile(app, actionName))
     }
 
     def private formHandlerCommonBaseFile(Controller it, Application app, String actionName) '''
@@ -84,8 +84,8 @@ class FormHandler {
      */
     def private generate(Entity it, String actionName, IFileSystemAccess fsa) {
         println('Generating "' + controller.formattedName + '" form handler classes for "' + name + '_' + actionName + '"')
-        fsa.generateFile(app.appName.appSourcePath + baseClassFormHandler(controller, name, actionName).asFile, formHandlerBaseFile(actionName))
-        fsa.generateFile(app.appName.appSourcePath + implClassFormHandler(controller, name, actionName).asFile, formHandlerFile(actionName))
+        fsa.generateFile(app.appSourcePath + baseClassFormHandler(controller, name, actionName).asFile, formHandlerBaseFile(actionName))
+        fsa.generateFile(app.appSourcePath + implClassFormHandler(controller, name, actionName).asFile, formHandlerFile(actionName))
     }
 
     def private formHandlerBaseFile(Entity it, String actionName) '''

@@ -16,7 +16,7 @@ class GeoInput {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val formPluginPath = appName.getAppSourceLibPath + 'Form/Plugin/'
+        val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
         fsa.generateFile(formPluginPath + 'Base/GeoInput.php', formGeoInputBaseFile)
         fsa.generateFile(formPluginPath + 'GeoInput.php', formGeoInputFile)
         fsa.generateFile(viewPluginFilePath('function', 'GeoInput'), formGeoInputPluginFile)

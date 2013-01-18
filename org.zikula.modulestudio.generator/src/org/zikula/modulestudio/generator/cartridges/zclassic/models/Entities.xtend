@@ -73,9 +73,9 @@ class Entities {
     def private generate(Entity it, Application app, IFileSystemAccess fsa) {
         println('Generating entity classes for entity "' + name.formatForDisplay + '"')
         if (!isInheriting) {
-            fsa.generateFile(getAppSourcePath(app.appName) + baseClassModelEntity.asFile, modelEntityBaseFile(app))
+            fsa.generateFile(app.getAppSourcePath + baseClassModelEntity.asFile, modelEntityBaseFile(app))
         }
-        fsa.generateFile(getAppSourcePath(app.appName) + implClassModelEntity.asFile, modelEntityFile(app))
+        fsa.generateFile(app.getAppSourcePath + implClassModelEntity.asFile, modelEntityFile(app))
     }
 
     def private modelEntityBaseFile(Entity it, Application app) '''

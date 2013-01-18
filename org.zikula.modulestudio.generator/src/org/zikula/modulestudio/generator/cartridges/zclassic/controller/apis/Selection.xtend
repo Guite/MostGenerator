@@ -17,7 +17,7 @@ class Selection {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating selection api')
-        val apiPath = appName.getAppSourceLibPath + 'Api/'
+        val apiPath = getAppSourceLibPath + 'Api/'
         fsa.generateFile(apiPath + 'Base/Selection.php', selectionBaseFile)
         fsa.generateFile(apiPath + 'Selection.php', selectionFile)
     }

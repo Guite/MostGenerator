@@ -19,7 +19,7 @@ class Category {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating category api')
-        val apiPath = appName.getAppSourceLibPath + 'Api/'
+        val apiPath = getAppSourceLibPath + 'Api/'
         fsa.generateFile(apiPath + 'Base/Category.php', categoryBaseFile)
         fsa.generateFile(apiPath + 'Category.php', categoryFile)
     }

@@ -13,7 +13,7 @@ class ContentTypeSingleView {
     @Inject extension Utils = new Utils()
 
     def generate(Application it, IFileSystemAccess fsa) {
-    	val templatePath = appName.getAppSourcePath + 'templates/contenttype/'
+    	val templatePath = getAppSourcePath + 'templates/contenttype/'
         fsa.generateFile(templatePath + 'item_edit.tpl', editTemplate)
     }
 

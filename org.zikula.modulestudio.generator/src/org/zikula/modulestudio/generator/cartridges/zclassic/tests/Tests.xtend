@@ -17,7 +17,7 @@ class Tests {
      * Entry point for module unit test classes.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-    	var testsPath = appName.getAppTestsPath
+    	var testsPath = getAppTestsPath
         fsa.generateFile(testsPath + 'bootstrap.php', bootstrapFile)
         fsa.generateFile(testsPath + 'AllTests.php', testSuiteFile)
         fsa.generateFile(testsPath + 'ClassLoader.php', classLoaderFile)

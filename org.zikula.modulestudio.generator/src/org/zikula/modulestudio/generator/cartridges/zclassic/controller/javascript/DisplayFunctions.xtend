@@ -27,7 +27,7 @@ class DisplayFunctions {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating javascript for display functions')
-        fsa.generateFile(getAppSourcePath(appName) + 'javascript/' + appName + '.js', generate)
+        fsa.generateFile(getAppSourcePath + 'javascript/' + appName + '.js', generate)
     }
 
     def private generate(Application it) '''

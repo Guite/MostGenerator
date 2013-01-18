@@ -19,7 +19,7 @@ class Frame {
 
     def generate(Application it, IFileSystemAccess fsa) {
         if (hasEditActions) {
-            fsa.generateFile(appName.getAppSourceLibPath + 'Form/Plugin/FormFrame.php', formFrameFile)
+            fsa.generateFile(getAppSourceLibPath + 'Form/Plugin/FormFrame.php', formFrameFile)
             fsa.generateFile(viewPluginFilePath('block', 'FormFrame'), formFramePluginFile)
         }
     }

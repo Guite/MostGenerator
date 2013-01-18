@@ -16,7 +16,7 @@ class UserInput {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val formPluginPath = appName.getAppSourceLibPath + 'Form/Plugin/'
+        val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
         fsa.generateFile(formPluginPath + 'Base/UserInput.php', formUserInputBaseFile)
         fsa.generateFile(formPluginPath + 'UserInput.php', formUserInputFile)
         fsa.generateFile(viewPluginFilePath('function', 'UserInput'), formUserInputPluginFile)

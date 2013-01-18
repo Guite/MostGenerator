@@ -17,8 +17,8 @@ class Translations {
     	// These index.html files will be removed later. At the moment we need them
     	// for creating according directories.
     	// See https://github.com/Guite/MostGenerator/issues/8 for more information.
-        fsa.generateFile(getAppSourcePath(appName) + 'locale/index.html', msUrl)
-        fsa.generateFile(getAppSourcePath(appName) + 'locale/de/index.html', msUrl)
-        fsa.generateFile(getAppSourcePath(appName) + 'locale/de/LC_MESSAGES/index.html', msUrl)
+        fsa.generateFile(getAppSourcePath + 'locale/index.html', msUrl)
+        fsa.generateFile(getAppSourcePath + 'locale/de/index.html', msUrl)
+        fsa.generateFile(getAppSourcePath + 'locale/de/LC_MESSAGES/index.html', msUrl)
     }
 }

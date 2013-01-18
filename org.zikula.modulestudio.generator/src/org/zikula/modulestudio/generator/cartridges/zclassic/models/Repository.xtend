@@ -64,9 +64,9 @@ class Repository {
     def private generate(Entity it) {
         println('Generating repository classes for entity "' + name.formatForDisplay + '"')
         if (!isInheriting) {
-            fsa.generateFile(getAppSourcePath(app.appName) + baseClassModel('repository', '').asFile, modelRepositoryBaseFile)
+            fsa.generateFile(app.getAppSourcePath + baseClassModel('repository', '').asFile, modelRepositoryBaseFile)
         }
-        fsa.generateFile(getAppSourcePath(app.appName) + implClassModel('repository', '').asFile, modelRepositoryFile)
+        fsa.generateFile(app.getAppSourcePath + implClassModel('repository', '').asFile, modelRepositoryFile)
     }
 
     def private modelRepositoryBaseFile(Entity it) '''

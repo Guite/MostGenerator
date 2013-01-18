@@ -70,11 +70,11 @@ class ControllerLayer {
      */
     def private generate(Controller it, IFileSystemAccess fsa) {
         println('Generating "' + formattedName + '" controller classes')
-        fsa.generateFile(getAppSourcePath(app.appName) + baseClassController.asFile, controllerBaseFile)
-        fsa.generateFile(getAppSourcePath(app.appName) + implClassController.asFile, controllerFile)
+        fsa.generateFile(app.getAppSourcePath + baseClassController.asFile, controllerBaseFile)
+        fsa.generateFile(app.getAppSourcePath + implClassController.asFile, controllerFile)
         println('Generating "' + formattedName + '" api classes')
-        fsa.generateFile(getAppSourcePath(app.appName) + baseClassApi.asFile, apiBaseFile)
-        fsa.generateFile(getAppSourcePath(app.appName) + implClassApi.asFile, apiFile)
+        fsa.generateFile(app.getAppSourcePath + baseClassApi.asFile, apiBaseFile)
+        fsa.generateFile(app.getAppSourcePath + implClassApi.asFile, apiFile)
     }
 
     def private controllerBaseFile(Controller it) '''

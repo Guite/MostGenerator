@@ -23,7 +23,7 @@ class VersionFile {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val destPath = appName.getAppSourceLibPath
+        val destPath = getAppSourceLibPath
         fsa.generateFile(destPath + 'Base/Version.php', versionBaseFile)
         fsa.generateFile(destPath + 'Version.php', versionFile)
     }
@@ -61,8 +61,13 @@ class VersionFile {
                 //! url version of name, should be in lowercase without space
                 $meta['url']                  = $this->__('«appName.formatForDB»');
                 // core requirement
-                $meta['core_min']             = '1.3.2'; // requires minimum 1.3.2 or later
-                $meta['core_max']             = '1.3.99'; // not ready for 1.4.0 yet
+                «IF targets('1.3.5')»
+                    $meta['core_min']             = '1.3.5'; // requires minimum 1.3.5
+                    $meta['core_max']             = '1.3.5'; // not ready for 1.3.6 yet
+                «ELSE»
+                    $meta['core_min']             = '1.3.6'; // requires minimum 1.3.6 or later
+                    $meta['core_max']             = '1.3.99'; // not ready for 1.4.0 yet
+                «ENDIF»
 
                 // define special capabilities of this module
                 $meta['capabilities'] = array(

@@ -20,7 +20,7 @@ class InstallerView {
     @Inject extension Utils = new Utils()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val templatePath = appName.getAppSourcePath + 'templates/init/'
+        val templatePath = getAppSourcePath + 'templates/init/'
         fsa.generateFile(templatePath + 'interactive.tpl', tplInit)
         if (needsConfig)
             fsa.generateFile(templatePath + 'step2.tpl', tplInitStep2)

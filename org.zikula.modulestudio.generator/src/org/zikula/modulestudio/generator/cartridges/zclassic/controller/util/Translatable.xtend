@@ -34,7 +34,7 @@ class Translatable {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for translatable entities')
-        val utilPath = appName.getAppSourceLibPath + 'Util/'
+        val utilPath = getAppSourceLibPath + 'Util/'
         fsa.generateFile(utilPath + 'Base/Translatable.php', translatableFunctionsBaseFile)
         fsa.generateFile(utilPath + 'Translatable.php', translatableFunctionsFile)
     }

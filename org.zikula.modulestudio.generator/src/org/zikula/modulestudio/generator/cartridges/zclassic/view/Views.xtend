@@ -127,7 +127,7 @@ class Views {
     }
 
     def private headerFooterFile(Application it, Controller controller) {
-    	val templatePath = appName.getAppSourcePath + 'templates/' + controller.formattedName
+    	val templatePath = getAppSourcePath + 'templates/' + controller.formattedName
         fsa.generateFile(templatePath + '/header.tpl', headerImpl(controller))
         fsa.generateFile(templatePath + '/footer.tpl', footerImpl(controller))
     }
@@ -196,7 +196,7 @@ class Views {
     '''
 
     def private pdfHeaderFile(Application it) {
-        fsa.generateFile(appName.getAppSourcePath + 'templates/include_pdfheader.tpl', pdfHeaderImpl)
+        fsa.generateFile(getAppSourcePath + 'templates/include_pdfheader.tpl', pdfHeaderImpl)
     }
 
     def private pdfHeaderImpl(Application it) '''

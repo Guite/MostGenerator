@@ -22,7 +22,7 @@ class ContentTypeListView {
     @Inject extension Utils = new Utils()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val templatePath = appName.getAppSourcePath + 'templates/contenttype/'
+        val templatePath = getAppSourcePath + 'templates/contenttype/'
         for (entity : getAllEntities) {
             fsa.generateFile(templatePath + 'itemlist_' + entity.name.formatForCode + '_display_description.tpl', entity.displayDescTemplate(it))
             fsa.generateFile(templatePath + 'itemlist_' + entity.name.formatForCode + '_display.tpl', entity.displayTemplate(it))

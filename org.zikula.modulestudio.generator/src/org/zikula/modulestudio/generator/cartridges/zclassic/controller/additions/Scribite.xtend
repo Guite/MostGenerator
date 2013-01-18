@@ -19,7 +19,7 @@ class Scribite {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating Scribite support')
-        var docPath = getAppSourcePath(appName) + 'docs/scribite/'
+        var docPath = getAppSourcePath + 'docs/scribite/'
         fsa.generateFile(docPath + 'integration.txt', integration)
 
         docPath = docPath + 'plugins/'

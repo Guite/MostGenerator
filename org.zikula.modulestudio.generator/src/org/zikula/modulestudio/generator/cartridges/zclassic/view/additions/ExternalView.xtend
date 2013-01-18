@@ -24,7 +24,7 @@ class ExternalView {
 
     def generate(Application it, IFileSystemAccess fsa) {
         for (entity : getAllEntities) {
-            val templatePath = appName.getAppSourcePath + 'templates/external/' + entity.name.formatForCode + '/'
+            val templatePath = getAppSourcePath + 'templates/external/' + entity.name.formatForCode + '/'
             fsa.generateFile(templatePath + 'display.tpl', entity.displayTemplate(it))
             fsa.generateFile(templatePath + 'info.tpl', entity.itemInfoTemplate(it))
             fsa.generateFile(templatePath + 'find.tpl', entity.findTemplate(it))

@@ -27,7 +27,7 @@ class WorkflowUtil {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for workflows')
-        val utilPath = appName.getAppSourceLibPath + 'Util/'
+        val utilPath = getAppSourceLibPath + 'Util/'
         fsa.generateFile(utilPath + 'Base/Workflow.php', workflowFunctionsBaseFile)
         fsa.generateFile(utilPath + 'Workflow.php', workflowFunctionsFile)
     }

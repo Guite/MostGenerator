@@ -15,10 +15,10 @@ He­re are a few short hints which be­co­me hel­pful for cust­o­mi­sing yo
         - pla­cing them in /con­fig/tem­pla­tes/ for ex­amp­le is a good idea for de­ve­lop­ment.
     * If you need dis­play-ori­en­ted ad­di­tio­nal lo­gic, sim­ply crea­te a ren­der plu­gin en­cap­su­la­ting your ef­forts
       in a fi­le which is not af­fec­ted by the ge­ne­ra­tor.
-    * Per­form lo­gi­cal en­han­ce­ments in the do­main clas­ses. See lib/*, tho­se fi­les ex­tend lib/*/Ba­se/*.
+    * Per­form lo­gi­cal en­han­ce­ments in the do­main clas­ses.
       The Base classes contain generated code, while the actual objects extend from them.
       So you can do all customisations in the empty classes, keeping your manual code separated.
-    * The fi­le Util.​php contains some convenience methods which can be ea­si­ly used to enable/disa­ble
+    * The controller util class contain some convenience methods which can be ea­si­ly used to enable/disa­ble
       certain use ca­ses (li­ke view, dis­play, ...) for par­ti­cu­lar ob­ject ty­pes wi­t­hin cust­om con­di­ti­ons.
     * Do­cu­ment your chan­ges to sim­pli­fy mer­ging pro­cess af­ter re­ge­ne­ra­ti­on.
       Be su­re you will need and love it: add so­me fields la­ter on, get a new ge­ne­ra­tor ver­si­on fi­xing

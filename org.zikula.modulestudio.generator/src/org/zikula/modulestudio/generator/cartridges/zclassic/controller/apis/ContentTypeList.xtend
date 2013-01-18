@@ -22,7 +22,7 @@ class ContentTypeList {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating content type for multiple objects')
-        val contentTypePath = appName.getAppSourceLibPath + 'ContentType/'
+        val contentTypePath = getAppSourceLibPath + 'ContentType/'
         fsa.generateFile(contentTypePath + 'Base/ItemList.php', contentTypeBaseFile)
         fsa.generateFile(contentTypePath + 'ItemList.php', contentTypeFile)
         new ContentTypeListView().generate(it, fsa)

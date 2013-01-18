@@ -7,7 +7,6 @@ import de.guite.modulestudio.metamodel.modulestudio.ListFieldItem
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 import java.util.ArrayList
 
@@ -17,7 +16,6 @@ import java.util.ArrayList
 class Definition {
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
     @Inject extension WorkflowExtensions = new WorkflowExtensions()
 
     Application app
@@ -34,7 +32,7 @@ class Definition {
     def generate(Application it, IFileSystemAccess fsa) {
         app = it
         this.fsa = fsa
-        outputPath = appName.getAppSourcePath + 'workflows/'
+        outputPath = getAppSourcePath + 'workflows/'
 
         generate(EntityWorkflowType::NONE)
         generate(EntityWorkflowType::STANDARD)

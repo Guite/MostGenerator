@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.extensions
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.modulestudio.CoreVersion
 import de.guite.modulestudio.metamodel.modulestudio.Variable
 import de.guite.modulestudio.metamodel.modulestudio.Variables
 import java.util.Date
@@ -55,6 +56,25 @@ class Utils {
      */
     def prefix(Application it) {
         prefix.formatForDB
+    }
+
+    /**
+     * Checks whether a given core version is targeted or not.
+     *
+     * @param it The {@link Application} instance
+     * @param version The version in question
+     *
+     * @return Boolean The result.
+     */
+    def targets(Application it, String version) {
+        switch (targetCoreVersion) {
+            case CoreVersion::ZK135:
+                (version == '1.3.5')
+            case CoreVersion::ZK136:
+                (version != '1.3.5')
+            default:
+                (version != '1.3.5')
+        }
     }
 
     /**

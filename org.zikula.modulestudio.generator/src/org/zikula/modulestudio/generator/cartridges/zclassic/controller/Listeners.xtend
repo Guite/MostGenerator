@@ -33,7 +33,7 @@ class Listeners {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating event listener base classes')
-        val listenerBasePath = getAppSourceLibPath(appName) + 'Listener/Base/'
+        val listenerBasePath = getAppSourceLibPath + 'Listener/Base/'
         fsa.generateFile(listenerBasePath + 'Core.php', listenersCoreFile(true))
         fsa.generateFile(listenerBasePath + 'Installer.php', listenersInstallerFile(true))
         fsa.generateFile(listenerBasePath + 'ModuleDispatch.php', listenersModuleDispatchFile(true))
@@ -51,7 +51,7 @@ class Listeners {
         fsa.generateFile(listenerBasePath + 'ThirdParty.php', listenersThirdPartyFile(true))
 
         println('Generating event listener implementation classes')
-        val listenerPath = getAppSourceLibPath(appName) + 'Listener/'
+        val listenerPath = getAppSourceLibPath + 'Listener/'
         fsa.generateFile(listenerPath + 'Core.php', listenersCoreFile(false))
         fsa.generateFile(listenerPath + 'Installer.php', listenersInstallerFile(false))
         fsa.generateFile(listenerPath + 'ModuleDispatch.php', listenersModuleDispatchFile(false))

@@ -32,7 +32,7 @@ class Operations {
     def generate(Application it, IFileSystemAccess fsa) {
         app = it
         this.fsa = fsa
-        outputPath = appName.getAppSourcePath + 'workflows/operations/'
+        outputPath = getAppSourcePath + 'workflows/operations/'
 
         generate(EntityWorkflowType::NONE)
         generate(EntityWorkflowType::STANDARD)

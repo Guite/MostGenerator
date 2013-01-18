@@ -20,7 +20,7 @@ class ContentTypeSingle {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating content type for single objects')
-        val contentTypePath = appName.getAppSourceLibPath + 'ContentType/'
+        val contentTypePath = getAppSourceLibPath + 'ContentType/'
         fsa.generateFile(contentTypePath + 'Base/Item.php', contentTypeBaseFile)
         fsa.generateFile(contentTypePath + 'Item.php', contentTypeFile)
         new ContentTypeSingleView().generate(it, fsa)

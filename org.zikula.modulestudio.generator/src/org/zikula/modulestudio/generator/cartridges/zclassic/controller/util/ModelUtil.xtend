@@ -18,7 +18,7 @@ class ModelUtil {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for model layer')
-        val utilPath = appName.getAppSourceLibPath + 'Util/'
+        val utilPath = getAppSourceLibPath + 'Util/'
         fsa.generateFile(utilPath + 'Base/Model.php', modelFunctionsBaseFile)
         fsa.generateFile(utilPath + 'Model.php', modelFunctionsFile)
     }

@@ -29,11 +29,11 @@ class Installer {
      * Entry point for application installer.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        fsa.generateFile(getAppSourceLibPath(appName) + 'Base/Installer.php', installerBaseFile)
-        fsa.generateFile(getAppSourceLibPath(appName) + 'Installer.php', installerFile)
+        fsa.generateFile(getAppSourceLibPath + 'Base/Installer.php', installerBaseFile)
+        fsa.generateFile(getAppSourceLibPath + 'Installer.php', installerFile)
         if (interactiveInstallation == true) {
-            fsa.generateFile(getAppSourceLibPath(appName) + 'Controller/Base/InteractiveInstaller.php', interactiveBaseFile)
-            fsa.generateFile(getAppSourceLibPath(appName) + 'Controller/InteractiveInstaller.php', interactiveFile)
+            fsa.generateFile(getAppSourceLibPath + 'Controller/Base/InteractiveInstaller.php', interactiveBaseFile)
+            fsa.generateFile(getAppSourceLibPath + 'Controller/InteractiveInstaller.php', interactiveFile)
             new InstallerView().generate(it, fsa)
         }
     }

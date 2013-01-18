@@ -16,7 +16,7 @@ class BlockModeration {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating block for moderation')
-        val blockPath = appName.getAppSourceLibPath + 'Block/'
+        val blockPath = getAppSourceLibPath + 'Block/'
         fsa.generateFile(blockPath + 'Base/Moderation.php', moderationBlockBaseFile)
         fsa.generateFile(blockPath + 'Moderation.php', moderationBlockFile)
         new BlockModerationView().generate(it, fsa)

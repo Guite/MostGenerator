@@ -18,7 +18,7 @@ class ItemSelector {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val formPluginPath = appName.getAppSourceLibPath + 'Form/Plugin/'
+        val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
         fsa.generateFile(formPluginPath + 'Base/ItemSelector.php', itemSelectorBaseFile)
         fsa.generateFile(formPluginPath + 'ItemSelector.php', itemSelectorFile)
         fsa.generateFile(viewPluginFilePath('function', 'ItemSelector'), itemSelectorPluginFile)

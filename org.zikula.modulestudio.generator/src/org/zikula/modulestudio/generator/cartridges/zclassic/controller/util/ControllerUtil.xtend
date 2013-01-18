@@ -24,7 +24,7 @@ class ControllerUtil {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for controller layer')
-        val utilPath = appName.getAppSourceLibPath + 'Util/'
+        val utilPath = getAppSourceLibPath + 'Util/'
         fsa.generateFile(utilPath + 'Base/Controller.php', controllerFunctionsBaseFile)
         fsa.generateFile(utilPath + 'Controller.php', controllerFunctionsFile)
     }
@@ -276,7 +276,7 @@ class ControllerUtil {
         /**
          * Example method for performing geo coding in PHP.
          * To use this please customise it to your needs in the concrete subclass.
-         * There is also a method on JS level available in «getAppSourcePath(appName)»javascript/«appName»_editFunctions.js.
+         * There is also a method on JS level available in «getAppSourcePath»javascript/«appName»_editFunctions.js.
          *
          * @param string $address The address input string.
          *

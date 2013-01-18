@@ -26,8 +26,8 @@ class Uploads {
     def generate(Application it, IFileSystemAccess fsa) {
         this.fsa = fsa
         createUploadFolders
-        fsa.generateFile(getAppSourceLibPath(appName) + 'Base/UploadHandler.php', uploadHandlerBaseFile)
-        fsa.generateFile(getAppSourceLibPath(appName) + 'UploadHandler.php', uploadHandlerFile)
+        fsa.generateFile(getAppSourceLibPath + 'Base/UploadHandler.php', uploadHandlerBaseFile)
+        fsa.generateFile(getAppSourceLibPath + 'UploadHandler.php', uploadHandlerFile)
     }
 
     def private uploadHandlerBaseFile(Application it) '''
@@ -42,28 +42,28 @@ class Uploads {
 
     def private createUploadFolders(Application it) {
         /* This index.html files will be removed later. At the moment we need them to create according directories. */
-        fsa.generateFile(getAppUploadPath(appName) + 'index.html', msUrl)
+        fsa.generateFile(getAppUploadPath + 'index.html', msUrl)
         for (entity : getUploadEntities) {
             val subFolderName = entity.nameMultiple.formatForDB + '/'
-            fsa.generateFile(getAppUploadPath(appName) + subFolderName + '/index.html', msUrl)
+            fsa.generateFile(getAppUploadPath + subFolderName + '/index.html', msUrl)
             val uploadFields = entity.getUploadFieldsEntity
             if (uploadFields.size > 1) {
                 for (uploadField : uploadFields) {
                     uploadField.uploadFolder(subFolderName + uploadField.subFolderPathSegment)
-                    fsa.generateFile(getAppUploadPath(appName) + subFolderName + uploadField.subFolderPathSegment + '/tmb/index.html', msUrl)
+                    fsa.generateFile(getAppUploadPath + subFolderName + uploadField.subFolderPathSegment + '/tmb/index.html', msUrl)
                 }
             } else if (uploadFields.size > 0) {
                 uploadFields.head.uploadFolder(subFolderName + uploadFields.head.subFolderPathSegment)
-                fsa.generateFile(getAppUploadPath(appName) + subFolderName + uploadFields.head.subFolderPathSegment + '/tmb/index.html', msUrl)
+                fsa.generateFile(getAppUploadPath + subFolderName + uploadFields.head.subFolderPathSegment + '/tmb/index.html', msUrl)
             }
         }
-        val docPath = getAppSourcePath(appName) + 'docs/'
+        val docPath = getAppSourcePath + 'docs/'
         fsa.generateFile(docPath + 'htaccessTemplate', htAccessTemplate)
     }
 
     def private uploadFolder(UploadField it, String folder) {
-        fsa.generateFile(getAppUploadPath(entity.container.application.appName) + folder + '/index.html', msUrl)
-        fsa.generateFile(getAppUploadPath(entity.container.application.appName) + folder + '/.htaccess', htAccess)
+        fsa.generateFile(getAppUploadPath(entity.container.application) + folder + '/index.html', msUrl)
+        fsa.generateFile(getAppUploadPath(entity.container.application) + folder + '/.htaccess', htAccess)
     }
 
     def private htAccess(UploadField it) '''

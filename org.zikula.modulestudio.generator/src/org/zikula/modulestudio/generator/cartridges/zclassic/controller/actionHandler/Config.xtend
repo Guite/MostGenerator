@@ -25,8 +25,8 @@ class Config {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         if (needsConfig) {
-            fsa.generateFile(getAppSourcePath(appName) + tempBaseClassConfigHandler.asFile, configHandlerBaseFile)
-            fsa.generateFile(getAppSourcePath(appName) + tempImplClassConfigHandler.asFile, configHandlerFile)
+            fsa.generateFile(getAppSourcePath + tempBaseClassConfigHandler.asFile, configHandlerBaseFile)
+            fsa.generateFile(getAppSourcePath + tempImplClassConfigHandler.asFile, configHandlerFile)
         }
     }
 

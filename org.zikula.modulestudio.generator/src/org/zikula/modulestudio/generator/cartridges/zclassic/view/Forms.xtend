@@ -399,7 +399,7 @@ class Forms {
     '''
 
     def private inlineRedirectHandlerFile(Controller it, Application app, IFileSystemAccess fsa) {
-        fsa.generateFile(app.appName.getAppSourcePath + 'templates/' + formattedName + '/inlineRedirectHandler.tpl', inlineRedirectHandlerImpl(app))
+        fsa.generateFile(app.getAppSourcePath + 'templates/' + formattedName + '/inlineRedirectHandler.tpl', inlineRedirectHandlerImpl(app))
     }
 
     def private inlineRedirectHandlerImpl(Controller it, Application app) '''

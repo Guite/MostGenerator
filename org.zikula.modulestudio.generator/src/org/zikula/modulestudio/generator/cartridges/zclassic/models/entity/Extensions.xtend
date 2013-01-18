@@ -1,21 +1,20 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity
 
 import com.google.inject.Inject
-import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.DerivedField
-import de.guite.modulestudio.metamodel.modulestudio.AbstractIntegerField
 import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
-import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
+import de.guite.modulestudio.metamodel.modulestudio.AbstractIntegerField
+import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.modulestudio.DerivedField
+import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityTimestampableType
+import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
+import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
-import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.eclipse.xtext.generator.IFileSystemAccess
 
 class Extensions {
     @Inject extension FormattingExtensions = new FormattingExtensions()
@@ -23,7 +22,6 @@ class Extensions {
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
     @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
 
     FileHelper fh = new FileHelper()
 
@@ -330,14 +328,14 @@ class Extensions {
      */
     def private extensionClasses(Entity it, Application app, String classType, IFileSystemAccess fsa) {
         if (!isInheriting) {
-            fsa.generateFile(getAppSourcePath(app.appName) + baseClassModel('', classType).asFile, extensionClassBaseFile(it, app, classType))
+            fsa.generateFile(app.getAppSourcePath + baseClassModel('', classType).asFile, extensionClassBaseFile(it, app, classType))
             if (classType != 'closure') {
-                fsa.generateFile(getAppSourcePath(app.appName) + baseClassModel('repository', classType).asFile, extensionClassRepositoryBaseFile(it, app, classType))
+                fsa.generateFile(app.getAppSourcePath + baseClassModel('repository', classType).asFile, extensionClassRepositoryBaseFile(it, app, classType))
             }
         }
-        fsa.generateFile(getAppSourcePath(app.appName) + implClassModel('', classType).asFile, extensionClassFile(it, app, classType))
+        fsa.generateFile(app.getAppSourcePath + implClassModel('', classType).asFile, extensionClassFile(it, app, classType))
         if (classType != 'closure') {
-            fsa.generateFile(getAppSourcePath(app.appName) + implClassModel('repository', classType).asFile, extensionClassRepositoryFile(it, app, classType))
+            fsa.generateFile(app.getAppSourcePath + implClassModel('repository', classType).asFile, extensionClassRepositoryFile(it, app, classType))
         }
     }
 

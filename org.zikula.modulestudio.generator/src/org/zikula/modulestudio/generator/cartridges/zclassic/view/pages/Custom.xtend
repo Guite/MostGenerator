@@ -23,7 +23,7 @@ class Custom {
 
     def dispatch generate(CustomAction it, Application app, Controller controller, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' templates for custom action "' + name.formatForDisplay + '"')
-        fsa.generateFile(app.appName.getAppSourcePath + 'templates/' + controller.formattedName + '/' + name.formatForCode.toFirstLower + '.tpl', customView(it, app, controller))
+        fsa.generateFile(app.getAppSourcePath + 'templates/' + controller.formattedName + '/' + name.formatForCode.toFirstLower + '.tpl', customView(it, app, controller))
         ''' '''
     }
 

@@ -16,7 +16,7 @@ class RelationSelectorAutoComplete {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val formPluginPath = appName.getAppSourceLibPath + 'Form/Plugin/'
+        val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
         fsa.generateFile(formPluginPath + 'Base/RelationSelectorAutoComplete.php', relationSelectorBaseFile)
         fsa.generateFile(formPluginPath + 'RelationSelectorAutoComplete.php', relationSelectorFile)
         fsa.generateFile(viewPluginFilePath('function', 'RelationSelectorAutoComplete'), relationSelectorPluginFile)

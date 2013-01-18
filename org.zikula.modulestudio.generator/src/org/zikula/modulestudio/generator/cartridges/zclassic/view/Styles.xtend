@@ -24,8 +24,8 @@ class Styles {
      * Entry point for application styles.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        fsa.generateFile(appName.getAppSourcePath + 'style/style.css', appStyles)
-        fsa.generateFile(appName.getAppSourcePath + 'style/finder.css', finderStyles)
+        fsa.generateFile(getAppSourcePath + 'style/style.css', appStyles)
+        fsa.generateFile(getAppSourcePath + 'style/finder.css', finderStyles)
     }
 
     def private appStyles(Application it) '''

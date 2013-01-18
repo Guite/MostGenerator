@@ -11,7 +11,7 @@ class BlockModerationView {
     @Inject extension Utils = new Utils()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val templatePath = appName.getAppSourcePath + 'templates/block/'
+        val templatePath = getAppSourcePath + 'templates/block/'
         fsa.generateFile(templatePath + 'moderation.tpl', displayTemplate)
     }
 

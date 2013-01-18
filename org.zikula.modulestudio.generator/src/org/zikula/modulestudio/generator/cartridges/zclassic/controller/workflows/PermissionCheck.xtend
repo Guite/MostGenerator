@@ -37,7 +37,7 @@ class PermissionCheck {
     def generate(Application it, IFileSystemAccess fsa) {
         app = it
         this.fsa = fsa
-        outputPath = appName.getAppSourcePath + 'workflows/'
+        outputPath = getAppSourcePath + 'workflows/'
 
         generate(EntityWorkflowType::NONE)
         generate(EntityWorkflowType::STANDARD)

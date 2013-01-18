@@ -18,7 +18,7 @@ class Tag {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val tagPath = appName.getAppSourceLibPath + 'TaggedObjectMeta/'
+        val tagPath = getAppSourceLibPath + 'TaggedObjectMeta/'
         fsa.generateFile(tagPath + 'Base/' + appName + '.php', tagBaseFile)
         fsa.generateFile(tagPath + appName + '.php', tagFile)
         //new TagView().generate(it, fsa)

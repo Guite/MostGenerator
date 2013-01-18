@@ -4,15 +4,13 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
-import org.zikula.modulestudio.generator.extensions.Utils
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 
 class LinkTable {
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
 
     FileHelper fh = new FileHelper()
 
@@ -20,8 +18,8 @@ class LinkTable {
      * Creates a reference table class file for every many-to-many relationship instance.
      */
     def generate(ManyToManyRelationship it, Application app, IFileSystemAccess fsa) {
-        fsa.generateFile(getAppSourcePath(app.appName) + baseClassModelRefRepository.asFile, modelRefRepositoryBaseFile(app))
-        fsa.generateFile(getAppSourcePath(app.appName) + implClassModelRefRepository.asFile, modelRefRepositoryFile(app))
+        fsa.generateFile(app.getAppSourcePath + baseClassModelRefRepository.asFile, modelRefRepositoryBaseFile(app))
+        fsa.generateFile(app.getAppSourcePath + implClassModelRefRepository.asFile, modelRefRepositoryFile(app))
     }
 
     def private modelRefRepositoryBaseFile(ManyToManyRelationship it, Application app) '''

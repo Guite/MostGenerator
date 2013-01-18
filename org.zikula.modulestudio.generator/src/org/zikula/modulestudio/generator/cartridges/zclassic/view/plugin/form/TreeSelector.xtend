@@ -19,7 +19,7 @@ class TreeSelector {
 
     def generate(Application it, IFileSystemAccess fsa) {
     	if (hasTrees) {
-    	    val formPluginPath = appName.getAppSourceLibPath + 'Form/Plugin/'
+    	    val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
             fsa.generateFile(formPluginPath + 'Base/TreeSelector.php', treeSelectorBaseFile)
             fsa.generateFile(formPluginPath + 'TreeSelector.php', treeSelectorFile)
             fsa.generateFile(viewPluginFilePath('function', 'TreeSelector'), treeSelectorPluginFile)

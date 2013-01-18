@@ -23,7 +23,7 @@ class ExternalController {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating external controller')
-        val controllerPath = appName.getAppSourceLibPath + 'Controller/'
+        val controllerPath = getAppSourceLibPath + 'Controller/'
         fsa.generateFile(controllerPath + 'Base/External.php', externalBaseFile)
         fsa.generateFile(controllerPath + 'External.php', externalFile)
         new ExternalView().generate(it, fsa)
