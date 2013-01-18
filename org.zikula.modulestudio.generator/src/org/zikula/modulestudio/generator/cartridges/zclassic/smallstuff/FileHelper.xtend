@@ -26,7 +26,9 @@ class FileHelper {
          *
          * @copyright «author» («vendor»)
          * @license «license»
+         «IF targets('1.3.5')»
          * @package «name»
+         «ENDIF»
          * @author «author»«IF email != null && email != ''» <«email»>«ENDIF».
          * @link «IF url != ''»«url»«ELSE»«msUrl»«ENDIF»
          * @link http://zikula.org
