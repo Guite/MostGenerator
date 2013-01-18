@@ -9,7 +9,6 @@ import org.eclipse.emf.mwe.utils.FileCopy
 import org.eclipse.emf.mwe.utils.StandaloneSetup
 import org.eclipse.emf.mwe.core.container.IfComponent
 import org.eclipse.xtend.check.CheckComponent
-//import org.eclipse.xtext.generator.GeneratorComponent
 import org.zikula.modulestudio.generator.cartridges.MostGeneratorSetup
 import org.zikula.modulestudio.generator.cartridges.MostGeneratorSupport
 import org.zikula.modulestudio.generator.workflow.components.DirectoryCreator
