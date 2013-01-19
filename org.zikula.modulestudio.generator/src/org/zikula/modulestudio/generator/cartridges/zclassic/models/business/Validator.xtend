@@ -48,8 +48,8 @@ class Validator {
      */
     def generateCommon(Application it, IFileSystemAccess fsa) {
         println("Generating base validator class")
-        fsa.generateFile(getAppSourcePath + baseClassDefault(it, '', 'Validator').asFile, validatorCommonBaseFile)
-        fsa.generateFile(getAppSourcePath + implClassDefault(it, '', 'Validator').asFile, validatorCommonFile)
+        fsa.generateFile(getAppSourceLibPath + 'Base/Validator.php', validatorCommonBaseFile)
+        fsa.generateFile(getAppSourceLibPath + 'Validator.php', validatorCommonFile)
     }
 
     def private validatorCommonBaseFile(Application it) '''
@@ -63,12 +63,20 @@ class Validator {
     '''
 
     def private validatorCommonBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Base;
+
+        «ENDIF»
         /**
          * Validator class for encapsulating common entity validation methods.
          *
          * This is the base validation class with general checks.
          */
-        abstract class «baseClassDefault('', 'Validator')» extends Zikula_AbstractBase
+        «IF targets('1.3.5')»
+        abstract class «appName»_Base_Validator extends Zikula_AbstractBase
+        «ELSE»
+        class Validator extends \Zikula_AbstractBase
+        «ENDIF»
         {
             /**
              * @var Zikula_EntityAccess The entity instance which is treated by this validator.
@@ -462,12 +470,20 @@ class Validator {
     '''
 
     def private validatorCommonImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»;
+
+        «ENDIF»
         /**
          * Validator class for encapsulating common entity validation methods.
          *
          * This is the concrete validation class with general checks.
          */
-        class «implClassDefault('', 'Validator')» extends «baseClassDefault('', 'Validator')»
+        «IF targets('1.3.5')»
+        class «appName»_Validator extends «appName»_Base_Validator
+        «ELSE»
+        class Validator extends Base\Validator
+        «ENDIF»
         {
             // here you can add custom validation methods or override existing checks
         }
@@ -478,10 +494,12 @@ class Validator {
      */
     def generateWrapper(Entity it, Application app, IFileSystemAccess fsa) {
         println('Generating validator classes for entity "' + name.formatForDisplay + '"')
+        val validatorPath = app.getAppSourceLibPath + 'Entity/Validator/'
+        val validatorFileName = name.formatForCodeCapital + '.php'
         if (!isInheriting) {
-            fsa.generateFile(app.getAppSourcePath + baseClassModel('validator', '').asFile, validatorBaseFile(app))
+            fsa.generateFile(validatorPath + 'Base/' + validatorFileName, validatorBaseFile(app))
         }
-        fsa.generateFile(app.getAppSourcePath + implClassModel('validator', '').asFile, validatorFile(app))
+        fsa.generateFile(validatorPath + validatorFileName, validatorFile(app))
     }
 
     def private validatorBaseFile(Entity it, Application app) '''
@@ -495,24 +513,40 @@ class Validator {
     '''
 
     def private validatorBaseImpl(Entity it, Application app) '''
+        «IF !app.targets('1.3.5')»
+            namespace «app.appName»\Entity\Validator\Base;
+
+        «ENDIF»
         /**
          * Validator class for encapsulating entity validation methods.
          *
          * This is the base validation class for «name.formatForDisplay» entities.
          */
-        class «baseClassModel('validator', '')» extends «implClassDefault(app, '', 'Validator')»
+        «IF app.targets('1.3.5')»
+        class «app.appName»_Entity_Validator_Base_«name.formatForDisplayCapital» extends «app.appName»_Validator
+        «ELSE»
+        class «name.formatForDisplayCapital» extends «app.appName»_Validator
+        «ENDIF»
         {
             «validatorBaseImplBody(app, false)»
         }
     '''
 
     def private validatorImpl(Entity it, Application app) '''
+        «IF !app.targets('1.3.5')»
+            namespace «app.appName»\Entity\Validator;
+
+        «ENDIF»
         /**
          * Validator class for encapsulating entity validation methods.
          *
          * This is the concrete validation class for «name.formatForDisplay» entities.
          */
-        class «implClassModel('validator', '')» extends «IF isInheriting»«parentType.implClassModel('validator', '')»«ELSE»«baseClassModel('validator', '')»«ENDIF»
+        «IF app.targets('1.3.5')»
+        class «app.appName»_Entity_Validator_«name.formatForDisplayCapital» extends «IF isInheriting»«app.appName»_Entity_Validator_«parentType.name.formatForDisplayCapital»«ELSE»«app.appName»_Entity_Validator_Base_«name.formatForDisplayCapital»«ENDIF»
+        «ELSE»
+        class «name.formatForDisplayCapital» extends «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\«app.appName»_Validator«ENDIF»
+        «ENDIF»
         {
             // here you can add custom validation methods or override existing checks
         «IF isInheriting»

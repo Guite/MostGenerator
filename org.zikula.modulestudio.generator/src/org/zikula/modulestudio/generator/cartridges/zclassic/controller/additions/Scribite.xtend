@@ -19,7 +19,7 @@ class Scribite {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating Scribite support')
-        var docPath = getAppSourcePath + 'docs/scribite/'
+        var docPath = getAppDocPath + 'scribite/'
         fsa.generateFile(docPath + 'integration.txt', integration)
 
         docPath = docPath + 'plugins/'
@@ -57,16 +57,16 @@ class Scribite {
         the actual Scribite enhancements must be done manually (as long as no better solution exists).
 
         Just follow these few steps to complete the integration:
-          1. Open modules/Scribite/lib/Scribite/Api/User.php in your favourite text editor.
+          1. Open modules/Scribite/«IF targets('1.3.5')»lib/Scribite/«ENDIF»Api/User.php in your favourite text editor.
           2. Search for
                 if (ModUtil::available('SimpleMedia')) {
-                    PageUtil::AddVar('javascript', 'modules/SimpleMedia/javascript/findItem.js');
+                    PageUtil::AddVar('javascript', 'modules/SimpleMedia/«IF targets('1.3.5')»javascript«ELSE»Resources/public/js«ENDIF»/findItem.js');
                 }
           3. Below this add
                 if (ModUtil::available('«appName»')) {
-                    PageUtil::AddVar('javascript', 'modules/«appName»/javascript/«appName»_finder.js');
+                    PageUtil::AddVar('javascript', 'modules/«appName»/«IF targets('1.3.5')»javascript«ELSE»Resources/public/js«ENDIF»/«appName»_finder.js');
                 }
-          4. Copy or move all files from modules/«appName»/docs/scribite/plugins/ into modules/Scribite/plugins/.
+          4. Copy or move all files from «IF targets('1.3.5')»modules/«appName»«ELSE»Resources«ENDIF»/docs/scribite/plugins/ into modules/Scribite/plugins/.
 
     '''
 

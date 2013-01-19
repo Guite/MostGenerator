@@ -21,8 +21,10 @@ class Account {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val apiPath = getAppSourceLibPath + 'Api/'
-        fsa.generateFile(apiPath + 'Base/Account.php', accountApiBaseFile)
-        fsa.generateFile(apiPath + 'Account.php', accountApiFile)
+        val apiClassSuffix = if (!targets('1.3.5')) 'Api' else ''
+        val apiFileName = 'Account' + apiClassSuffix + '.php'
+        fsa.generateFile(apiPath + 'Base/' + apiFileName, accountApiBaseFile)
+        fsa.generateFile(apiPath + apiFileName, accountApiFile)
     }
 
     def private accountApiBaseFile(Application it) '''
@@ -36,10 +38,18 @@ class Account {
     '''
 
     def private accountApiBaseClass(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Api\Base;
+
+        «ENDIF»
 		/**
 		 * Account api base class.
 		 */
-		class «appName»_Api_Base_Account extends Zikula_AbstractApi
+        «IF targets('1.3.5')»
+        class «appName»_Api_Base_Account extends Zikula_AbstractApi
+        «ELSE»
+        class AccountApi extends \Zikula_AbstractApi
+        «ENDIF»
 		{
 		    «accountApiBaseImpl»
 		}
@@ -53,7 +63,7 @@ class Account {
          *
          * @return array List of collected account items
          */
-        public function getall($args)
+        public function getall(array $args = array())
         {
             // collect items in an array
             $items = array();
@@ -92,7 +102,7 @@ class Account {
             «IF !getAllAdminControllers.isEmpty»
                 if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
                     $items[] = array(
-                        'url'   => ModUtil::url($this->name, 'admin', 'main'),
+                        'url'   => ModUtil::url($this->name, 'admin', '«IF targets('1.3.5')»main«ELSE»index«ENDIF»'),
                         'title' => $this->__('«name.formatForDisplayCapital» Backend'),
                         'icon'   => 'configure.png',
                         'module' => 'core',
@@ -107,10 +117,18 @@ class Account {
     '''
 
     def private accountApiImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Api;
+
+        «ENDIF»
         /**
          * Account api implementation class.
          */
+        «IF targets('1.3.5')»
         class «appName»_Api_Account extends «appName»_Api_Base_Account
+        «ELSE»
+        class AccountApi extends Base\AccountApi
+        «ENDIF»
         {
             // feel free to extend the account api here
         }

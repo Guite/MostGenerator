@@ -18,8 +18,10 @@ class Selection {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating selection api')
         val apiPath = getAppSourceLibPath + 'Api/'
-        fsa.generateFile(apiPath + 'Base/Selection.php', selectionBaseFile)
-        fsa.generateFile(apiPath + 'Selection.php', selectionFile)
+        val apiClassSuffix = if (!targets('1.3.5')) 'Api' else ''
+        val apiFileName = 'Selection' + apiClassSuffix + '.php'
+        fsa.generateFile(apiPath + 'Base/' + apiFileName, selectionBaseFile)
+        fsa.generateFile(apiPath + apiFileName, selectionFile)
     }
 
     def private selectionBaseFile(Application it) '''
@@ -33,10 +35,18 @@ class Selection {
     '''
 
     def private selectionBaseClass(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Api\Base;
+
+        «ENDIF»
 		/**
 		 * Selection api base class.
 		 */
-		class «appName»_«fillingApi»Base_Selection extends Zikula_AbstractApi
+        «IF targets('1.3.5')»
+        class «appName»_Api_Base_Selection extends Zikula_AbstractApi
+        «ELSE»
+        class SelectionApi extends \Zikula_AbstractApi
+        «ENDIF»
 		{
 		    «selectionBaseImpl»
 		}
@@ -50,7 +60,7 @@ class Selection {
          *
          * @return array List of identifier field names.
          */
-        public function getIdFields($args)
+        public function getIdFields(array $args = array())
         {
             $objectType = $this->determineObjectType($args, 'getIdFields');
             $entityClass = '«appName»_Entity_' . ucfirst($objectType);
@@ -72,7 +82,7 @@ class Selection {
          *
          * @return mixed Desired entity object or null.
          */
-        public function getEntity($args)
+        public function getEntity(array $args = array())
         {
             if (!isset($args['id'])«IF hasSluggable» && !isset($args['slug'])«ENDIF») {
                 return LogUtil::registerArgsError();
@@ -112,7 +122,7 @@ class Selection {
          *
          * @return Array with retrieved collection.
          */
-        public function getEntities($args)
+        public function getEntities(array $args = array())
         {
             $objectType = $this->determineObjectType($args, 'getEntities');
             $repository = $this->getRepository($objectType);
@@ -138,7 +148,7 @@ class Selection {
          *
          * @return Array with retrieved collection and amount of total records affected by this query.
          */
-        public function getEntitiesPaginated($args)
+        public function getEntitiesPaginated(array $args = array())
         {
             $objectType = $this->determineObjectType($args, 'getEntitiesPaginated');
             $repository = $this->getRepository($objectType);
@@ -161,10 +171,10 @@ class Selection {
          *
          * @return string the object type.
          */
-        protected function determineObjectType($args, $methodName = '')
+        protected function determineObjectType(array $args = array(), $methodName = '')
         {
             $objectType = isset($args['ot']) ? $args['ot'] : '';
-            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->serviceManager);
             $utilArgs = array('api' => 'selection', 'action' => $methodName);
             if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('api', $utilArgs);
@@ -197,7 +207,7 @@ class Selection {
              *
              * @return array|ArrayCollection retrieved data array or tree node objects.
              */
-            public function getTree($args)
+            public function getTree(array $args = array())
             {
                 if (!isset($args['rootId'])) {
                     return LogUtil::registerArgsError();
@@ -220,7 +230,7 @@ class Selection {
              *
              * @return array|ArrayCollection retrieved data array or tree node objects.
              */
-            public function getAllTrees($args)
+            public function getAllTrees(array $args = array())
             {
                 $objectType = $this->determineObjectType($args, 'getTree');
                 $repository = $this->getRepository($objectType);
@@ -233,10 +243,18 @@ class Selection {
     '''
 
     def private selectionImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Api;
+
+        «ENDIF»
         /**
          * Selection api implementation class.
          */
-        class «appName»_«fillingApi»Selection extends «appName»_«fillingApi»Base_Selection
+        «IF targets('1.3.5')»
+        class «appName»_Api_Selection extends «appName»_Api_Base_Selection
+        «ELSE»
+        class SelectionApi extends Base\SelectionApi
+        «ENDIF»
         {
             // feel free to extend the selection api here
         }

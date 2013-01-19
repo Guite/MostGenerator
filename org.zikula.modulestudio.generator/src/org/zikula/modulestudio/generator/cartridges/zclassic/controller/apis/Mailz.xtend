@@ -20,8 +20,10 @@ class Mailz {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val apiPath = getAppSourceLibPath + 'Api/'
-        fsa.generateFile(apiPath + 'Base/Mailz.php', mailzBaseFile)
-        fsa.generateFile(apiPath + 'Mailz.php', mailzFile)
+        val apiClassSuffix = if (!targets('1.3.5')) 'Api' else ''
+        val apiFileName = 'Mailz' + apiClassSuffix + '.php'
+        fsa.generateFile(apiPath + 'Base/' + apiFileName, mailzBaseFile)
+        fsa.generateFile(apiPath + apiFileName, mailzFile)
         new MailzView().generate(it, fsa)
     }
 
@@ -36,10 +38,18 @@ class Mailz {
     '''
 
     def private mailzBaseClass(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Api\Base;
+
+        «ENDIF»
 		/**
 		 * Mailz api base class.
 		 */
-		class «appName»_Api_Base_Mailz extends Zikula_AbstractApi
+        «IF targets('1.3.5')»
+        class «appName»_Api_Base_Mailz extends Zikula_AbstractApi
+        «ELSE»
+        class MailzApi extends \Zikula_AbstractApi
+        «ENDIF»
 		{
 		    «mailzBaseImpl»
 		}
@@ -53,7 +63,7 @@ class Mailz {
          *
          * @return array List of provided plugin functions.
          */
-        public function getPlugins($args)
+        public function getPlugins(array $args = array())
         {
             «val itemDesc = getLeadingEntity.nameMultiple.formatForDisplay»
             $plugins = array();
@@ -84,7 +94,7 @@ class Mailz {
          *
          * @return string output of plugin template.
          */
-        public function getContent($args)
+        public function getContent(array $args = array())
         {
             ModUtil::initOOModule('«appName»');
             // $args is something like:
@@ -137,19 +147,27 @@ class Mailz {
                  ->assign($repository->getAdditionalTemplateParameters('api', array('name' => 'mailz')));
 
             if ($args['contenttype'] == 't') { /* text */
-                return $view->fetch('mailz/itemlist_«leadingEntity.name.formatForCode»_text.tpl');
+                return $view->fetch('«IF targets('1.3.5')»mailz«ELSE»Mailz«ENDIF»/itemlist_«leadingEntity.name.formatForCode»_text.tpl');
             } else {
-                //return $view->fetch('contenttype/itemlist_display.html');
-                return $view->fetch('mailz/itemlist_«leadingEntity.name.formatForCode»_html.tpl');
+                //return $view->fetch('«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/itemlist_display.html');
+                return $view->fetch('«IF targets('1.3.5')»mailz«ELSE»Mailz«ENDIF»/itemlist_«leadingEntity.name.formatForCode»_html.tpl');
             }
         }
     '''
 
     def private mailzImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Api;
+
+        «ENDIF»
         /**
          * Mailz api implementation class.
          */
+        «IF targets('1.3.5')»
         class «appName»_Api_Mailz extends «appName»_Api_Base_Mailz
+        «ELSE»
+        class MailzApi extends Base\MailzApi
+        «ENDIF»
         {
             // feel free to extend the mailz api here
         }

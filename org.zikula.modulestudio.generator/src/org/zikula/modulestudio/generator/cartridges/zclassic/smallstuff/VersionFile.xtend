@@ -23,9 +23,10 @@ class VersionFile {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val destPath = getAppSourceLibPath
-        fsa.generateFile(destPath + 'Base/Version.php', versionBaseFile)
-        fsa.generateFile(destPath + 'Version.php', versionFile)
+        val versionPrefix = if (!targets('1.3.5')) appName else ''
+        val versionFileName = versionPrefix + 'Version.php'
+        fsa.generateFile(getAppSourceLibPath + 'Base/' + versionFileName, versionBaseFile)
+        fsa.generateFile(getAppSourceLibPath + versionFileName, versionFile)
     }
 
     def private versionBaseFile(Application it) '''
@@ -39,10 +40,18 @@ class VersionFile {
     '''
 
     def private appInfoBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Base;
+
+        «ENDIF»
         /**
          * Version information base class.
          */
+        «IF targets('1.3.5')»
         class «appName»_Base_Version extends Zikula_AbstractVersion
+        «ELSE»
+        class «appName»Version extends \Zikula_AbstractVersion
+        «ENDIF»
         {
             /**
              * Retrieves meta data information for this application.
@@ -141,10 +150,18 @@ class VersionFile {
     '''
 
     def private appInfoImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»;
+
+        «ENDIF»
         /**
          * Version information implementation class.
          */
+        «IF targets('1.3.5')»
         class «appName»_Version extends «appName»_Base_Version
+        «ELSE»
+        class «appName»Version extends Base\«appName»Version
+        «ENDIF»
         {
             // custom enhancements can go here
         }
@@ -162,7 +179,6 @@ class VersionFile {
         );
         // DEBUG: permission schema aspect ends
     '''
-
 
     def private appDependency(ReferredApplication it) '''
         array('modname'    => '«name.formatForCode.toFirstUpper»',

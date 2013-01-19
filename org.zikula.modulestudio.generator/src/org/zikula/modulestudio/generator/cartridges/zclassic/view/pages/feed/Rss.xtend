@@ -11,6 +11,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Rss {
     @Inject extension ControllerExtensions = new ControllerExtensions()
@@ -18,6 +19,7 @@ class Rss {
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension UrlExtensions = new UrlExtensions()
+    @Inject extension Utils = new Utils()
 
     def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' rss view templates for entity "' + name.formatForDisplay + '"')
@@ -63,8 +65,8 @@ class Rss {
                 «ELSE»
                     <title><![CDATA[{if isset($«objName».updatedDate) && $«objName».updatedDate ne null}{$«objName».updatedDate|dateformat} - {/if}{gt text='«name.formatForDisplayCapital»'}]]></title>
                 «ENDIF»
-                <link>{modurl modname='«appName»' type='«controller.formattedName»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode»'«ENDIF» fqurl='1'}</link>
-                <guid>{modurl modname='«appName»' type='«controller.formattedName»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode»'«ENDIF» fqurl='1'}</guid>
+                <link>{modurl modname='«appName»' type='«controller.formattedName»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF controller.hasActions('view')»view«ELSE»«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»«ENDIF»' ot='«name.formatForCode»'«ENDIF» fqurl='1'}</link>
+                <guid>{modurl modname='«appName»' type='«controller.formattedName»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF controller.hasActions('view')»view«ELSE»«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»«ENDIF»' ot='«name.formatForCode»'«ENDIF» fqurl='1'}</guid>
                 «IF !standardFields»
                     «IF metaData»
                         {if isset($«objName».__META__) && isset($«objName».__META__.author)}

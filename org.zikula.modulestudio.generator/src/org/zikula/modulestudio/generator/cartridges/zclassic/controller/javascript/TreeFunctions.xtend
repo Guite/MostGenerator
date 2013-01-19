@@ -17,7 +17,7 @@ class TreeFunctions {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating javascript for tree functions')
-        fsa.generateFile(getAppSourcePath + 'javascript/' + appName + '_tree.js', generate)
+        fsa.generateFile(getAppJsPath + appName + '_tree.js', generate)
     }
 
     def private generate(Application it) '''

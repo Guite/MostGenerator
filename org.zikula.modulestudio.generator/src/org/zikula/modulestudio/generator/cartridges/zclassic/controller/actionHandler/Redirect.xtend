@@ -11,6 +11,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 /**
  * Redirect processing functions for edit form handlers.
@@ -22,6 +23,7 @@ class Redirect {
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension UrlExtensions = new UrlExtensions()
+    @Inject extension Utils = new Utils()
 
     def getRedirectCodes(Controller it, Application app, String actionName) '''
         /**
@@ -34,8 +36,8 @@ class Redirect {
             $codes = array();
             «FOR someController : app.getAllControllers»
                 «val controllerName = someController.formattedName»
-                «IF someController.hasActions('main')»
-                    // main page of «controllerName» area
+                «IF someController.hasActions('index')»
+                    // «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» page of «controllerName» area
                     $codes[] = '«controllerName»';
                 «ENDIF»
                 «IF someController.hasActions('view')»
@@ -100,9 +102,9 @@ class Redirect {
                     $viewArgs['tpl'] = 'tree';
                 «ENDIF»
                 $url = ModUtil::url($this->name, '«controller.formattedName»', 'view', $viewArgs);
-            «ELSEIF controller.hasActions('main')»
-                // redirect to the main page
-                $url = ModUtil::url($this->name, '«controller.formattedName»', 'main');
+            «ELSEIF controller.hasActions('index')»
+                // redirect to the «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» page
+                $url = ModUtil::url($this->name, '«controller.formattedName»', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
             «ELSE»
                 $url = System::getHomepageUrl();
             «ENDIF»
@@ -156,9 +158,9 @@ class Redirect {
             switch ($this->returnTo) {
                 «FOR someController : app.getAllControllers.filter(e|!e.isAjaxController)»
                     «val controllerName = someController.formattedName»
-                    «IF someController.hasActions('main')»
+                    «IF someController.hasActions('index')»
                         case '«controllerName»':
-                                    return ModUtil::url($this->name, '«controllerName»', 'main');
+                                    return ModUtil::url($this->name, '«controllerName»', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
                     «ENDIF»
                     «IF someController.hasActions('view')»
                         case '«controllerName»View':

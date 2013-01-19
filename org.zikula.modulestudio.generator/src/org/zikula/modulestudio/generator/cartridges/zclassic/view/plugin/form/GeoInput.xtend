@@ -38,13 +38,21 @@ class GeoInput {
     '''
 
     def private formGeoInputBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Form\Plugin\Base;
+
+        «ENDIF»
         /**
          * Geo value input.
          *
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the geo input inherits from it.
          */
+        «IF targets('1.3.5')»
         class «appName»_Form_Plugin_Base_GeoInput extends Zikula_Form_Plugin_TextInput
+        «ELSE»
+        class GeoInput extends \Zikula_Form_Plugin_TextInput
+        «ENDIF»
         {
             /**
              * Get filename of this file.
@@ -147,13 +155,21 @@ class GeoInput {
     '''
 
     def private formGeoInputImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Form\Plugin;
+
+        «ENDIF»
         /**
          * Geo value input.
          *
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the geo input inherits from it.
          */
+        «IF targets('1.3.5')»
         class «appName»_Form_Plugin_GeoInput extends «appName»_Form_Plugin_Base_GeoInput
+        «ELSE»
+        class GeoInput extends Base\GeoInput
+        «ENDIF»
         {
             // feel free to add your customisation here
         }

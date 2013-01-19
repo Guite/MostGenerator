@@ -20,7 +20,7 @@ class MailzView {
     @Inject extension Utils = new Utils()
 
     def generate(Application it, IFileSystemAccess fsa) {
-    	val templatePath = getAppSourcePath + 'templates/mailz/'
+        val templatePath = getViewPath + (if (targets('1.3.5')) 'mailz' else 'Mailz') + '/'
         for (entity : getAllEntities) {
             fsa.generateFile(templatePath + 'itemlist_' + entity.name.formatForCode + '_text.tpl', entity.textTemplate(it))
             fsa.generateFile(templatePath + 'itemlist_' + entity.name.formatForCode + '_html.tpl', entity.htmlTemplate(it))
@@ -51,7 +51,7 @@ class MailzView {
         </ul>
         *}
 
-        {include file='contenttype/itemlist_«name.formatForCode.toFirstUpper»_display_description.tpl'}
+        {include file='«IF app.targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/itemlist_«name.formatForCode.toFirstUpper»_display_description.tpl'}
     '''
 
     def private mailzEntryText(Entity it, String appName) '''
@@ -77,10 +77,10 @@ class MailzView {
         «IF app.hasUserController»
             «IF app.getMainUserController.hasActions('view')»
                 {modurl modname='«app.appName»' type='user' func='view' fqurl=true}
-            «ELSEIF app.getMainUserController.hasActions('main')»
-                {modurl modname='«app.appName»' type='user' func='main' fqurl=true}
+            «ELSEIF app.getMainUserController.hasActions('index')»
+                {modurl modname='«app.appName»' type='user' func='«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»' fqurl=true}
             «ELSE»
-                {modurl modname='«app.appName»' type='user' func='main' fqurl=true}
+                {modurl modname='«app.appName»' type='user' func='«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»' fqurl=true}
             «ENDIF»
         «ELSE»
             {homepage}

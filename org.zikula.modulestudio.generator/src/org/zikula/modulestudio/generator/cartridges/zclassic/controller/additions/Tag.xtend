@@ -35,10 +35,18 @@ class Tag {
     '''
 
     def private tagBaseClass(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\TaggedObjectMeta\Base;
+
+        «ENDIF»
 		/**
 		 * This class provides object meta data for the Tag module.
 		 */
-		class «appName»_TaggedObjectMeta_Base_«appName» extends Tag_AbstractTaggedObjectMeta
+        «IF targets('1.3.5')»
+        class «appName»_TaggedObjectMeta_Base_«appName» extends Tag_AbstractTaggedObjectMeta
+        «ELSE»
+        class «appName» extends \Tag_AbstractTaggedObjectMeta
+        «ENDIF»
 		{
 		    «tagBaseImpl»
 		}
@@ -129,10 +137,18 @@ class Tag {
     '''
 
     def private tagImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\TaggedObjectMeta;
+
+        «ENDIF»
         /**
          * This class provides object meta data for the Tag module.
          */
+        «IF targets('1.3.5')»
         class «appName»_TaggedObjectMeta_«appName» extends «appName»_TaggedObjectMeta_Base_«appName»
+        «ELSE»
+        class «appName» extends Base\«appName»
+        «ENDIF»
         {
             // feel free to extend the tag support here
         }

@@ -84,7 +84,7 @@ class Relations {
     }
 
     def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Entity ownEntity, Entity linkingEntity, Boolean incoming, String relationAliasName, String uniqueNameForJs, Boolean hasEdit) '''
-        {include file='«controller.formattedName»/«ownEntity.name.formatForCode»/«templateName».tpl' group='«linkingEntity.name.formatForDB»' alias='«relationAliasName.toFirstLower»' mandatory=«(!nullable).displayBool» idPrefix='«uniqueNameForJs»' linkingItem=$«linkingEntity.name.formatForDB»«IF ownEntity.useGroupingPanels('edit')» panel=true«ENDIF» displayMode='«IF !usesAutoCompletion(!incoming)»dropdown«ELSE»autocomplete«ENDIF»' allowEditing=«hasEdit.displayBool»}
+        {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»/«ownEntity.name.formatForCode»«ELSE»«controller.formattedName.toFirstUpper»/«ownEntity.name.formatForCodeCapital»«ENDIF»/«templateName».tpl' group='«linkingEntity.name.formatForDB»' alias='«relationAliasName.toFirstLower»' mandatory=«(!nullable).displayBool» idPrefix='«uniqueNameForJs»' linkingItem=$«linkingEntity.name.formatForDB»«IF ownEntity.useGroupingPanels('edit')» panel=true«ENDIF» displayMode='«IF !usesAutoCompletion(!incoming)»dropdown«ELSE»autocomplete«ENDIF»' allowEditing=«hasEdit.displayBool»}
     '''
 
     def private includedEditTemplate(JoinRelationship it, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
@@ -150,7 +150,7 @@ class Relations {
     '''
 
     def private component_IncludeStatementForAutoCompleterItemList(JoinRelationship it, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
-        include file='«controller.formattedName»/«targetEntity.name.formatForCode»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' '''
+        include file='«IF container.application.targets('1.3.5')»«controller.formattedName»/«targetEntity.name.formatForCode»«ELSE»«controller.formattedName.toFirstUpper»/«targetEntity.name.formatForCodeCapital»«ENDIF»/include_select«IF includeEditing»Edit«ENDIF»ItemList«IF !many»One«ELSE»Many«ENDIF».tpl' '''
 
     def private component_ItemList(JoinRelationship it, Entity targetEntity, Boolean many, Boolean incoming, Boolean includeEditing) '''
         {* purpose of this template: inclusion template for display of related «targetEntity.getEntityNameSingularPlural(many).formatForDisplay» in «controller.formattedName» area *}

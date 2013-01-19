@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.view.pages
 
 import com.google.inject.Inject
+import de.guite.modulestudio.metamodel.modulestudio.AdminController
 import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
@@ -9,7 +10,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
-import de.guite.modulestudio.metamodel.modulestudio.AdminController
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Delete {
     @Inject extension ControllerExtensions = new ControllerExtensions()
@@ -17,6 +18,7 @@ class Delete {
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension UrlExtensions = new UrlExtensions()
+    @Inject extension Utils = new Utils()
 
     def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' delete templates for entity "' + name.formatForDisplay + '"')
@@ -25,7 +27,7 @@ class Delete {
 
     def private deleteView(Entity it, String appName, Controller controller) '''
         {* purpose of this template: «nameMultiple.formatForDisplay» delete confirmation view in «controller.formattedName» area *}
-        {include file='«controller.formattedName»/header.tpl'}
+        {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-delete">
         {gt text='Delete «name.formatForDisplay»' assign='templateTitle'}
         {pagesetvar name='title' value=$templateTitle}
@@ -51,7 +53,7 @@ class Delete {
         </form>
         «controller.templateFooter»
         </div>
-        {include file='«controller.formattedName»/footer.tpl'}
+        {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/footer.tpl'}
     '''
 
     def private templateHeader(Controller it) {

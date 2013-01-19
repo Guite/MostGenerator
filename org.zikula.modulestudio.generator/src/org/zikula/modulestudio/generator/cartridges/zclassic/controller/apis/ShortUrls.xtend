@@ -37,10 +37,10 @@ class ShortUrls {
          *
          * @return string custom url string
          */
-        public function encodeurl($args)
+        public function encodeurl(array $args = array())
         {
             // check if we have the required input
-            if (!is_array($args) || !isset($args['modname']) || !isset($args['func'])) {
+            if (!isset($args['modname']) || !isset($args['func'])) {
                 return LogUtil::registerArgsError();
             }
 
@@ -59,12 +59,12 @@ class ShortUrls {
             }
 
             // initialise url routing rules
-            $routerFacade = new «app.appName»_RouterFacade();
+            $routerFacade = new «app.appName»«IF app.targets('1.3.5')»_«ELSE»\«ENDIF»RouterFacade();
             // get router itself for convenience
             $router = $routerFacade->getRouter();
 
             // initialise object type
-            $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
+            $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->serviceManager);
             $utilArgs = array('controller' => 'user', 'action' => 'encodeurl');
             $allowedObjectTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
             $objectType = ((isset($args['args']['ot']) && in_array($args['args']['ot'], $allowedObjectTypes)) ? $args['args']['ot'] : $controllerHelper->getDefaultObjectType('api', $utilArgs));
@@ -181,7 +181,7 @@ class ShortUrls {
          *
          * @return bool true if successful, false otherwise
          */
-        public function decodeurl($args)
+        public function decodeurl(array $args = array())
         {
             // check we actually have some vars to work with
             if (!is_array($args) || !isset($args['vars']) || !is_array($args['vars']) || !count($args['vars'])) {
@@ -196,8 +196,8 @@ class ShortUrls {
 
             // set the correct function name based on our input
             if (empty($args['vars'][2])) {
-                // no func and no vars = main
-                System::queryStringSetVar('func', 'main');
+                // no func and no vars = «IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»
+                System::queryStringSetVar('func', '«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»');
                 return true;
             } else if (in_array($args['vars'][2], $funcs) && !in_array($args['vars'][2], $customFuncs)) {
                 // normal url scheme, no need for special decoding
@@ -249,7 +249,7 @@ class ShortUrls {
 
             // post processing
             if (!isset($parameters['func'])) {
-                $parameters['func'] = '«IF hasActions('view')»view«ELSEIF hasActions('display')»display«ELSE»main«ENDIF»';
+                $parameters['func'] = '«IF hasActions('view')»view«ELSEIF hasActions('display')»display«ELSE»«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»«ENDIF»';
             }
 
             $func = $parameters['func'];

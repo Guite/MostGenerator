@@ -1,8 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
+import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class UserLogin {
+    @Inject extension Utils = new Utils()
 
     def generate(Application it, Boolean isBase) '''
         /**
@@ -22,9 +25,9 @@ class UserLogin {
          *
          * This event does not have any subject, arguments, or data.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function started(Zikula_Event $event)
+        public static function started(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::started($event);
@@ -40,7 +43,7 @@ class UserLogin {
          *
          * This event uses `notify()`, so handlers are called until either one vetoes the login attempt,
          * or there are no more handlers for the event.
-         * A handler that needs to veto a login attempt should call `stop()`. This will prevent other handlers
+         * A handler that needs to veto a login attempt should call `stop«IF !targets('1.3.5')»Propagation«ENDIF»()`. This will prevent other handlers
          * from receiving the event, will return to the login process, and will prevent the login from taking place.
          * A handler that vetoes a login attempt should set an appropriate error message and give any additional
          * feedback to the user attempting to log in that might be appropriate. If a handler does not
@@ -57,7 +60,7 @@ class UserLogin {
          *     `'authentication_method'` will contain the name of the module and the name of the method that was used to authenticated the user.
          *     `'uid'` will contain the user's uid.
          *
-         * An event handler can prevent (veto) the log-in attempt by calling `stop()` on the event. This is 
+         * An event handler can prevent (veto) the log-in attempt by calling `stop«IF !targets('1.3.5')»Propagation«ENDIF»()` on the event. This is 
          * enough to ensure that the log-in attempt is stopped, however this will result in a `Zikula_Exception_Forbidden`
          * exception being thrown. 
          *
@@ -115,7 +118,7 @@ class UserLogin {
          * The Users module uses this method to handle users who have been forced by the administrator to change their password 
          * prior to logging in. The code used for the notification might look like the following example:
          *
-         *     $event->stop();
+         *     $event->stop«IF !targets('1.3.5')»Propagation«ENDIF»();
          *     $event->setData(array(
          *         'redirect_func'  => array(
          *             'modname'   => 'Users',
@@ -142,9 +145,9 @@ class UserLogin {
          *
          * where `$sessionVars` contains the information discussed previously.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function veto(Zikula_Event $event)
+        public static function veto(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::veto($event);
@@ -182,9 +185,9 @@ class UserLogin {
          * Finally, this event only fires in the event of a "normal" UI-oriented log-in attempt. A module attempting to log in
          * programmatically by directly calling the core functions will not see this event fired.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function succeeded(Zikula_Event $event)
+        public static function succeeded(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::succeeded($event);
@@ -212,11 +215,11 @@ class UserLogin {
          *
          * Finally, this event only fires in the event of a "normal" UI-oriented log-in attempt. A module attempting to log in
          * programmatically by directly calling `UserUtil::loginUsing()` will not see this event fired. Instead, the
-         * `Users_Controller_User#login()` function can be called with the appropriate parameters, if the event is desired.
+         * `«IF targets('1.3.5')»Users_Controller_User«ELSE»Users\Controller\UserController«ENDIF»#login()` function can be called with the appropriate parameters, if the event is desired.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function failed(Zikula_Event $event)
+        public static function failed(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::failed($event);

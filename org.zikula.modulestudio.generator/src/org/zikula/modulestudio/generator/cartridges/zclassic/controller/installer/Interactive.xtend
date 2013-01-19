@@ -34,12 +34,16 @@ class Interactive {
          *
          * @return string|boolean Output.
          */
-        public function install()
+        public function install«IF !targets('1.3.5')»Action«ENDIF»()
         {
             $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
             // fetch and return the appropriate template
+            «IF targets('1.3.5')»
             return $this->view->fetch('init/interactive.tpl');
+            «ELSE»
+            return $this->response($this->view->fetch('Init/interactive.tpl'));
+            «ENDIF»
         }
     '''
 
@@ -49,14 +53,18 @@ class Interactive {
          *
          * @return string|boolean Output.
          */
-        public function interactiveinitstep2()
+        public function interactiveinitstep2«IF !targets('1.3.5')»Action«ENDIF»()
         {
             $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
             $submit = $this->request->request->get('submit', null);
             if (!$submit) {
                 // fetch and return the appropriate template
+                «IF targets('1.3.5')»
                 return $this->view->fetch('init/step2.tpl');
+                «ELSE»
+                return $this->response($this->view->fetch('Init/step2.tpl'));
+                «ENDIF»
             }
 
             $this->checkCsrfToken();
@@ -71,7 +79,7 @@ class Interactive {
             $activate = (bool) $this->request->request->filter('activate', false, FILTER_VALIDATE_BOOLEAN);
             $activate = (!empty($activate)) ? true : false;
 
-            return System::redirect(ModUtil::url('«appName»', 'init', 'interactiveinitstep3', array('activate' => $activate)));
+            return $this->redirect(ModUtil::url('«appName»', 'init', 'interactiveinitstep3', array('activate' => $activate)));
         }
     '''
 
@@ -81,7 +89,7 @@ class Interactive {
          *
          * @return string|boolean Output.
          */
-        public function interactiveinitstep3()
+        public function interactiveinitstep3«IF !targets('1.3.5')»Action«ENDIF»()
         {
             $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
@@ -91,7 +99,11 @@ class Interactive {
             $this->view->assign('activate', $activate);
 
             // fetch and return the appropriate template
+            «IF targets('1.3.5')»
             return $this->view->fetch('init/step3.tpl');
+            «ELSE»
+            return $this->response($this->view->fetch('Init/step3.tpl'));
+            «ENDIF»
         }
     '''
 
@@ -101,7 +113,7 @@ class Interactive {
          *
          * @return string|boolean Output.
          */
-        function upgrade()
+        public function upgrade«IF !targets('1.3.5')»Action«ENDIF»()
         {
             $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
@@ -117,12 +129,16 @@ class Interactive {
          *
          * @return string Output.
          */
-        public function uninstall()
+        public function uninstall«IF !targets('1.3.5')»Action«ENDIF»()
         {
             $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
             // fetch and return the appropriate template
+            «IF targets('1.3.5')»
             return $this->view->fetch('init/delete.tpl');
+            «ELSE»
+            return $this->response($this->view->fetch('Init/delete.tpl'));
+            «ENDIF»
         }
     '''
 }

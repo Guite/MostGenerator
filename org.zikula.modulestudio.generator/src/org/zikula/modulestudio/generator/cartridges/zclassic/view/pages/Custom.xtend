@@ -23,23 +23,24 @@ class Custom {
 
     def dispatch generate(CustomAction it, Application app, Controller controller, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' templates for custom action "' + name.formatForDisplay + '"')
-        fsa.generateFile(app.getAppSourcePath + 'templates/' + controller.formattedName + '/' + name.formatForCode.toFirstLower + '.tpl', customView(it, app, controller))
+        val templatePath = app.getViewPath + (if (app.targets('1.3.5')) controller.formattedName else controller.formattedName.toFirstUpper) + '/'
+        fsa.generateFile(templatePath + name.formatForCode.toFirstLower + '.tpl', customView(it, app, controller))
         ''' '''
     }
 
     def private customView(CustomAction it, Application app, Controller controller) '''
         {* purpose of this template: show output of «name.formatForDisplay» action in «controller.formattedName» area *}
-        {include file='«controller.formattedName»/header.tpl'}
+        {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
         <div class="«app.appName.toLowerCase»-«name.formatForDB» «app.appName.toLowerCase»-«name.formatForDB»">
         {gt text='«name.formatForDisplayCapital»' assign='templateTitle'}
         {pagesetvar name='title' value=$templateTitle}
         «controller.templateHeader(name)»
 
-        <p>Please override this template by moving it from <em>/modules/«app.appName»/templates/«controller.formattedName»/«name.formatForCode.toFirstLower».tpl</em> to either your <em>/themes/YourTheme/templates/modules/«app.appName»/«controller.formattedName»/«name.formatForCode.toFirstLower».tpl</em> or <em>/config/templates/«app.appName»/«controller.formattedName»/«name.formatForCode.toFirstLower».tpl</em>.</p>
+        <p>Please override this template by moving it from <em>/modules/«app.appName»/«IF app.targets('1.3.5')»templates/«controller.formattedName»«ELSE»Resources/views/«controller.formattedName.toFirstUpper»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em> to either your <em>/themes/YourTheme/templates/modules/«app.appName»/«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em> or <em>/config/templates/«app.appName»/«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/«name.formatForCode.toFirstLower».tpl</em>.</p>
 
         «controller.templateFooter»
         </div>
-        {include file='«controller.formattedName»/footer.tpl'}
+        {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/footer.tpl'}
     '''
 
     def private templateHeader(Controller it, String actionName) {

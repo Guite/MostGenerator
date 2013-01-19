@@ -40,10 +40,18 @@ class ControllerUtil {
     '''
 
     def private controllerFunctionsBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Util\Base;
+
+        «ENDIF»
         /**
          * Utility base class for controller helper methods.
          */
-        class «appName»_«fillingUtil»Base_Controller extends Zikula_AbstractBase
+        «IF targets('1.3.5')»
+        class «appName»_Util_Base_Controller extends Zikula_AbstractBase
+        «ELSE»
+        class Controller extends \Zikula_AbstractBase
+        «ENDIF»
         {
             «getObjectTypes»
 
@@ -241,18 +249,17 @@ class ControllerUtil {
          */
         public function checkAndCreateUploadFolder($objectType, $fieldName, $allowedExtensions = '')
         {
-            $dom = ZLanguage::getModuleDomain('«appName»');
             $uploadPath = $this->getFileBaseFolder($objectType, $fieldName);
 
             // Check if directory exist and try to create it if needed
             if (!is_dir($uploadPath) && !FileUtil::mkdirs($uploadPath, 0777)) {
-                LogUtil::registerStatus(__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath), $dom));
+                LogUtil::registerStatus($this->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath)));
                 return false;
             }
 
             // Check if directory is writable and change permissions if needed
             if (!is_writable($uploadPath) && !chmod($uploadPath, 0777)) {
-                LogUtil::registerStatus(__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath), $dom));
+                LogUtil::registerStatus($this->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath)));
                 return false;
             }
 
@@ -263,7 +270,7 @@ class ControllerUtil {
                 $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
                 $htaccessContent = str_replace('__EXTENSIONS__', $extensions, FileUtil::readFile($htaccessFileTemplate));
                 if (!FileUtil::writeFile($htaccessFilePath, $htaccessContent)) {
-                    LogUtil::registerStatus(__f('Warning! Could not but could not write the .htaccess file at "%s".', array($htaccessFilePath), $dom));
+                    LogUtil::registerStatus($this->__f('Warning! Could not but could not write the .htaccess file at "%s".', array($htaccessFilePath)));
                     return false;
                 }
             }
@@ -289,7 +296,7 @@ class ControllerUtil {
             $url .= '&region=' . $lang . '&language=' . $lang . '&sensor=false';
 
             // we can either use Snoopy if available
-            //require_once('modules/«appName»/lib/vendor/Snoopy/Snoopy.class.php');
+            //require_once('modules/«appName»/«IF targets('1.3.5')»lib/«ENDIF»vendor/Snoopy/Snoopy.class.php');
             //$snoopy = new Snoopy();
             //$snoopy->fetch($url);
             //$xmlContent = $snoopy->results;
@@ -319,10 +326,18 @@ class ControllerUtil {
     '''
 
     def private controllerFunctionsImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Util;
+
+        «ENDIF»
         /**
          * Utility implementation class for controller helper methods.
          */
-        class «appName»_«fillingUtil»Controller extends «appName»_«fillingUtil»Base_Controller
+        «IF targets('1.3.5')»
+        class «appName»_Util_Controller extends «appName»_Util_Base_Controller
+        «ELSE»
+        class Controller extends Base\Controller
+        «ENDIF»
         {
             // feel free to add your own convenience methods here
         }

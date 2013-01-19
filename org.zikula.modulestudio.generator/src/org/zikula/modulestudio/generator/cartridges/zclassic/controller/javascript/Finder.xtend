@@ -17,7 +17,7 @@ class Finder {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating javascript for finder component')
-        fsa.generateFile(getAppSourcePath + 'javascript/' + appName + '_finder.js', generate)
+        fsa.generateFile(getAppJsPath + appName + '_finder.js', generate)
     }
 
     def private generate(Application it) '''

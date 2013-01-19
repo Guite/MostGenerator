@@ -38,10 +38,18 @@ class RelationSelectorAutoComplete {
     '''
 
     def private relationSelectorBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Form\Plugin;
+
+        «ENDIF»
         /**
          * Relation selector plugin base class.
          */
+        «IF targets('1.3.5')»
         class «appName»_Form_Plugin_Base_RelationSelectorAutoComplete extends «appName»_Form_Plugin_AbstractObjectSelector
+        «ELSE»
+        class Base\RelationSelectorAutoComplete extends AbstractObjectSelector
+        «ENDIF»
         {
             /**
              * Identifier prefix (unique name for JS).
@@ -195,10 +203,18 @@ class RelationSelectorAutoComplete {
     '''
 
     def private relationSelectorImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Form\Plugin;
+
+        «ENDIF»
         /**
          * Relation selector plugin implementation class.
          */
+        «IF targets('1.3.5')»
         class «appName»_Form_Plugin_RelationSelectorAutoComplete extends «appName»_Form_Plugin_Base_RelationSelectorAutoComplete
+        «ELSE»
+        class RelationSelectorAutoComplete extends Base\RelationSelectorAutoComplete
+        «ENDIF»
         {
             // feel free to add your customisation here
         }

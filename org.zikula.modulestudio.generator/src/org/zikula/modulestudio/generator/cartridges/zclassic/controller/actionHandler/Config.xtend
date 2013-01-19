@@ -25,8 +25,9 @@ class Config {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         if (needsConfig) {
-            fsa.generateFile(getAppSourcePath + tempBaseClassConfigHandler.asFile, configHandlerBaseFile)
-            fsa.generateFile(getAppSourcePath + tempImplClassConfigHandler.asFile, configHandlerFile)
+            val formHandlerFolder = getAppSourceLibPath + 'Form/Handler/' + configController.toFirstUpper + '/'
+            fsa.generateFile(formHandlerFolder + 'Base/Config.php', configHandlerBaseFile)
+            fsa.generateFile(formHandlerFolder + 'Config.php', configHandlerFile)
         }
     }
 
@@ -41,10 +42,18 @@ class Config {
     '''
 
     def private configHandlerBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Form\Handler\«configController.toFirstUpper»\Base;
+
+        «ENDIF»
         /**
          * Configuration handler base class.
          */
-        class «tempBaseClassConfigHandler» extends Zikula_Form_AbstractHandler
+        «IF targets('1.3.5')»
+        class «appName»_Form_Handler_«configController.toFirstUpper»_Base_Config extends Zikula_Form_AbstractHandler
+        «ELSE»
+        class Config extends \Zikula_Form_AbstractHandler
+        «ENDIF»
         {
             /**
              * Post construction hook.
@@ -171,10 +180,18 @@ class Config {
     '''
 
     def private configHandlerImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Form\Handler\«configController.toFirstUpper»;
+
+        «ENDIF»
         /**
          * Configuration handler implementation class.
          */
-        class «tempImplClassConfigHandler» extends «tempBaseClassConfigHandler»
+        «IF targets('1.3.5')»
+        class «appName»_Form_Handler_«configController.toFirstUpper»_Config extends «appName»_Form_Handler_«configController.toFirstUpper»_Base_Config
+        «ELSE»
+        class Config extends Base\Config
+        «ENDIF»
         {
             // feel free to extend the base handler class here
         }

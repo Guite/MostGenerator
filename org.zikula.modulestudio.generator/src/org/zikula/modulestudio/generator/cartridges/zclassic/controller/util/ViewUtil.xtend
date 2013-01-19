@@ -36,10 +36,18 @@ class ViewUtil {
     '''
 
     def private viewFunctionsBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Util\Base;
+
+        «ENDIF»
         /**
          * Utility base class for view helper methods.
          */
-        class «appName»_«fillingUtil»Base_View extends Zikula_AbstractBase
+        «IF targets('1.3.5')»
+        class «appName»_Util_Base_View extends Zikula_AbstractBase
+        «ELSE»
+        class View extends \Zikula_AbstractBase
+        «ENDIF»
         {
             «getViewTemplate»
 
@@ -64,7 +72,7 @@ class ViewUtil {
          * @param Zikula_View $view       Reference to view object.
          * @param string      $type       Current type (admin, user, ...).
          * @param string      $objectType Name of treated entity type.
-         * @param string      $func       Current function (main, view, ...).
+         * @param string      $func       Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
          * @param array       $args       Additional arguments.
          *
          * @return string name of template file.
@@ -72,7 +80,7 @@ class ViewUtil {
         public function getViewTemplate($view, $type, $objectType, $func, $args = array())
         {
             // create the base template name
-            $template = DataUtil::formatForOS($type . '/' . $objectType . '/' . $func);
+            $template = DataUtil::formatForOS(«IF targets('1.3.5')»$type . '/' . $objectType«ELSE»ucwords($type) . '/' . ucwords($objectType)«ENDIF» . '/' . $func);
 
             // check for template extension
             $templateExtension = $this->determineExtension($view, $type, $objectType, $func, $args);
@@ -95,7 +103,7 @@ class ViewUtil {
          * @param Zikula_View $view       Reference to view object.
          * @param string      $type       Current type (admin, user, ...).
          * @param string      $objectType Name of treated entity type.
-         * @param string      $func       Current function (main, view, ...).
+         * @param string      $func       Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
          * @param string      $template   Optional assignment of precalculated template file.
          * @param array       $args       Additional arguments.
          *
@@ -120,13 +128,23 @@ class ViewUtil {
                     $template = str_replace('.pdf', '.tpl', $template);
                     return $this->processPdf($view, $template);
                 } else {
+                    «IF targets('1.3.5')»
                     $view->display($template);
+                    «ELSE»
+                    return new \Zikula\Core\Response\PlainResponse($view->display($template));
+                    «ENDIF»
                 }
+                «IF targets('1.3.5')»
                 System::shutDown();
+                «ENDIF»
             }
 
             // normal output
+            «IF targets('1.3.5')»
             return $view->fetch($template);
+            «ELSE»
+            return $this->response($view->fetch($template));
+            «ENDIF»
         }
     '''
 
@@ -137,7 +155,7 @@ class ViewUtil {
          * @param Zikula_View $view       Reference to view object.
          * @param string      $type       Current type (admin, user, ...).
          * @param string      $objectType Name of treated entity type.
-         * @param string      $func       Current function (main, view, ...).
+         * @param string      $func       Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
          * @param array       $args       Additional arguments.
          *
          * @return array List of allowed template extensions.
@@ -173,7 +191,7 @@ class ViewUtil {
          *
          * @param string $type       Current type (admin, user, ...).
          * @param string $objectType Name of treated entity type.
-         * @param string $func       Current function (main, view, ...).
+         * @param string $func       Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
          * @param array  $args       Additional arguments.
          *
          * @return array List of allowed template extensions.
@@ -220,7 +238,7 @@ class ViewUtil {
             // then the surrounding
             $output = $view->fetch('include_pdfheader.tpl') . $output . '</body></html>';
 
-            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->serviceManager);
             // create name of the pdf output file
             $fileTitle = $controllerHelper->formatPermalink(System::getVar('sitename'))
                        . '-'
@@ -259,19 +277,18 @@ class ViewUtil {
          */
         public function getReadableFileSize($size, $nodesc = false, $onlydesc = false)
         {
-            $dom = ZLanguage::getModuleDomain('«appName»');
-            $sizeDesc = __('Bytes', $dom);
+            $sizeDesc = $this->__('Bytes');
             if ($size >= 1024) {
                 $size /= 1024;
-                $sizeDesc = __('KB', $dom);
+                $sizeDesc = $this->__('KB');
             }
             if ($size >= 1024) {
                 $size /= 1024;
-                $sizeDesc = __('MB', $dom);
+                $sizeDesc = $this->__('MB');
             }
             if ($size >= 1024) {
                 $size /= 1024;
-                $sizeDesc = __('GB', $dom);
+                $sizeDesc = $this->__('GB');
             }
             $sizeDesc = '&nbsp;' . $sizeDesc;
 
@@ -297,10 +314,18 @@ class ViewUtil {
     '''
 
     def private viewFunctionsImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Util;
+
+        «ENDIF»
         /**
          * Utility implementation class for view helper methods.
          */
-        class «appName»_«fillingUtil»View extends «appName»_«fillingUtil»Base_View
+        «IF targets('1.3.5')»
+        class «appName»_Util_View extends «appName»_Util_Base_View
+        «ELSE»
+        class View extends Base\View
+        «ENDIF»
         {
             // feel free to add your own convenience methods here
         }

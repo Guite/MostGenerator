@@ -11,6 +11,7 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Atom {
     @Inject extension ControllerExtensions = new ControllerExtensions()
@@ -18,6 +19,7 @@ class Atom {
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension UrlExtensions = new UrlExtensions()
+    @Inject extension Utils = new Utils()
 
     def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' atom view templates for entity "' + name.formatForDisplay + '"')
@@ -38,11 +40,11 @@ class Atom {
             </author>
         {assign var='numItems' value=$items|@count}
         {if $numItems}
-        {capture assign='uniqueID'}tag:{$baseurl|replace:'http://':''|replace:'/':''},{$items[0].createdDate|dateformat|default:$smarty.now|dateformat:'%Y-%m-%d'}:{modurl modname='«appName»' type='«controller.formattedName»' «IF controller.hasActions('display')»«modUrlDisplay('items[0]', true)»«ELSE»func='«IF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode»'«ENDIF»}{/capture}
+        {capture assign='uniqueID'}tag:{$baseurl|replace:'http://':''|replace:'/':''},{$items[0].createdDate|dateformat|default:$smarty.now|dateformat:'%Y-%m-%d'}:{modurl modname='«appName»' type='«controller.formattedName»' «IF controller.hasActions('display')»«modUrlDisplay('items[0]', true)»«ELSE»func='«IF controller.hasActions('view')»view«ELSE»«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»«ENDIF»' ot='«name.formatForCode»'«ENDIF»}{/capture}
             <id>{$uniqueID}</id>
             <updated>{$items[0].updatedDate|default:$smarty.now|dateformat:'%Y-%m-%dT%H:%M:%SZ'}</updated>
         {/if}
-            <link rel="alternate" type="text/html" hreflang="{lang}" href="{modurl modname='«appName»' type='«controller.formattedName»' func='«IF controller.hasActions('main')»main«ELSE»«controller.actions.head.name.formatForCode»«ENDIF»' fqurl=1}" />
+            <link rel="alternate" type="text/html" hreflang="{lang}" href="{modurl modname='«appName»' type='«controller.formattedName»' func='«IF controller.hasActions('index')»«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»«ELSE»«controller.actions.head.name.formatForCode»«ENDIF»' fqurl=1}" />
             <link rel="self" type="application/atom+xml" href="{php}echo substr(System::getBaseURL(), 0, strlen(System::getBaseURL())-1);{/php}{getcurrenturi}" />
             <rights>Copyright (c) {php}echo date('Y');{/php}, {$baseurl}</rights>
 
@@ -54,9 +56,9 @@ class Atom {
                 «ELSE»
                     <title type="html">{gt text='«name.formatForCodeCapital»'}</title>
                 «ENDIF»
-                <link rel="alternate" type="text/html" href="{modurl modname='«appName»' type='«controller.formattedName»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode»'«ENDIF» fqurl='1'}" />
+                <link rel="alternate" type="text/html" href="{modurl modname='«appName»' type='«controller.formattedName»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF controller.hasActions('view')»view«ELSE»«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»«ENDIF»' ot='«name.formatForCode»'«ENDIF» fqurl='1'}" />
 
-                {capture assign='uniqueID'}tag:{$baseurl|replace:'http://':''|replace:'/':''},{$«objName».createdDate|dateformat|default:$smarty.now|dateformat:'%Y-%m-%d'}:{modurl modname='«appName»' type='«controller.formattedName»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF controller.hasActions('view')»view«ELSE»main«ENDIF»' ot='«name.formatForCode»'«ENDIF»}{/capture}
+                {capture assign='uniqueID'}tag:{$baseurl|replace:'http://':''|replace:'/':''},{$«objName».createdDate|dateformat|default:$smarty.now|dateformat:'%Y-%m-%d'}:{modurl modname='«appName»' type='«controller.formattedName»' «IF controller.hasActions('display')»«modUrlDisplay(objName, true)»«ELSE»func='«IF controller.hasActions('view')»view«ELSE»«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»«ENDIF»' ot='«name.formatForCode»'«ENDIF»}{/capture}
                 <id>{$uniqueID}</id>
                 «IF standardFields»
                     {if isset($«objName».updatedDate) && $«objName».updatedDate ne null}

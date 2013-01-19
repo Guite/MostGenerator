@@ -41,7 +41,7 @@ class Display {
 
     def private displayView(Entity it, String appName, Controller controller) '''
         {* purpose of this template: «nameMultiple.formatForDisplay» display view in «controller.formattedName» area *}
-        {include file='«controller.formattedName»/header.tpl'}
+        {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
         «val refedElems = getOutgoingJoinRelations.filter(e|e.target.container.application == it.container.application) + incoming.filter(typeof(ManyToManyRelationship)).filter(e|e.source.container.application == it.container.application)»
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display«IF !refedElems.isEmpty» withrightbox«ENDIF»">
         «val objName = name.formatForCode»
@@ -72,7 +72,7 @@ class Display {
         «fieldDetails(appName, controller)»
         «IF useGroupingPanels('display')»
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
-            </div>
+            </div>«/* fields panel */»
         {/if}
         «ENDIF»
         «displayExtensions(controller, objName)»
@@ -80,6 +80,9 @@ class Display {
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             «callDisplayHooks(appName, controller)»
             «itemActions(appName, controller)»
+            «IF useGroupingPanels('display')»
+                </div>«/* panels */»
+            «ENDIF»
             «IF !refedElems.isEmpty»
                 <br style="clear: right" />
             «ENDIF»
@@ -87,7 +90,7 @@ class Display {
 
         «controller.templateFooter»
         </div>
-        {include file='«controller.formattedName»/footer.tpl'}
+        {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/footer.tpl'}
 
         «IF hasBooleansWithAjaxToggleEntity || useGroupingPanels('display')»
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
@@ -175,7 +178,7 @@ class Display {
           {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
           «var linkController = getLinkController(container.application, controller, linkEntity)»
           «IF linkController != null»
-              <a href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)»}">
+              <a href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)»}">{strip}
           «ENDIF»
             «val leadingField = linkEntity.getLeadingField»
             «IF leadingField != null»
@@ -184,10 +187,8 @@ class Display {
                 {gt text='«linkEntity.name.formatForDisplayCapital»'}
             «ENDIF»
           «IF linkController != null»
-            </a>
-            <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="z-hide">
-                {icon type='view' size='extrasmall' __alt='Quick view'}
-            </a>
+            {/strip}</a>
+            <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
             <script type="text/javascript">
             /* <![CDATA[ */
                 document.observe('dom:loaded', function() {
@@ -277,10 +278,10 @@ class Display {
             «ENDIF»
         «ENDIF»
         «IF attributable»
-            {include file='«controller.formattedName»/include_attributes_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
+            {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/include_attributes_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
         «IF categorisable»
-            {include file='«controller.formattedName»/include_categories_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
+            {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/include_categories_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
         «IF tree != EntityTreeType::NONE»
             «IF useGroupingPanels('display')»
@@ -289,16 +290,16 @@ class Display {
             «ELSE»
                 <h3 class="relatives">{gt text='Relatives'}</h3>
             «ENDIF»
-                    {include file='«controller.formattedName»/«name.formatForCode»/display_treeRelatives.tpl' allParents=true directParent=true allChildren=true directChildren=true predecessors=true successors=true preandsuccessors=true}
+                    {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»/«name.formatForCode»«ELSE»«controller.formattedName.toFirstUpper»/«name.formatForCodeCapital»«ENDIF»/display_treeRelatives.tpl' allParents=true directParent=true allChildren=true directChildren=true predecessors=true successors=true preandsuccessors=true}
             «IF useGroupingPanels('display')»
                 </div>
             «ENDIF»
         «ENDIF»
         «IF metaData»
-            {include file='«controller.formattedName»/include_metadata_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
+            {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/include_metadata_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
         «IF standardFields»
-            {include file='«controller.formattedName»/include_standardfields_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
+            {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/include_standardfields_display.tpl' obj=$«objName»«IF useGroupingPanels('display')» panel=true«ENDIF»}
         «ENDIF»
     '''
 

@@ -40,10 +40,18 @@ class ItemSelector {
     '''
 
     def private itemSelectorBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Form\Plugin\Base;
+
+        «ENDIF»
         /**
          * Item selector plugin base class.
          */
+        «IF targets('1.3.5')»
         class «appName»_Form_Plugin_Base_ItemSelector extends Zikula_Form_Plugin_TextInput
+        «ELSE»
+        class ItemSelector extends \Zikula_Form_Plugin_TextInput
+        «ENDIF»
         {
             /**
              * The treated object type.
@@ -161,7 +169,7 @@ class ItemSelector {
                      ->assign('catIds', $catIds);
             «ENDIF»
 
-                return $view->fetch('external/' . $this->objectType . '/select.tpl');
+                return $view->fetch(«IF targets('1.3.5')»'external/' . $this->objectType«ELSE»'External/' . ucwords($this->objectType)«ENDIF» . '/select.tpl');
             }
 
             /**
@@ -233,10 +241,18 @@ class ItemSelector {
     '''
 
     def private itemSelectorImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Form\Plugin;
+
+        «ENDIF»
         /**
          * Item selector plugin implementation class.
          */
+        «IF targets('1.3.5')»
         class «appName»_Form_Plugin_ItemSelector extends «appName»_Form_Plugin_Base_ItemSelector
+        «ELSE»
+        class ItemSelector extends Base\ItemSelector
+        «ENDIF»
         {
             // feel free to add your customisation here
         }

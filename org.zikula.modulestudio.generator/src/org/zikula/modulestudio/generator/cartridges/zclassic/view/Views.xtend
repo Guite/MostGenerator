@@ -17,7 +17,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Config
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Custom
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Delete
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Display
-import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Main
+import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.Index
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.View
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.ViewHierarchy
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.pages.export.Csv
@@ -51,9 +51,9 @@ class Views {
         for (controller : getAllControllers) {
             if (controller.tempIsUserController || controller.tempIsAdminController) {
                 headerFooterFile(controller)
-                if (controller.hasActions('main')) {
-                    var pageHelper = new Main()
-                    for (entity : getAllEntities) pageHelper.generate(entity, appName, controller, fsa)
+                if (controller.hasActions('index')) {
+                    var pageHelper = new Index()
+                    for (entity : getAllEntities) pageHelper.generate(entity, controller, fsa)
                 }
                 if (controller.hasActions('view')) {
                     var pageHelperView = new View()
@@ -127,21 +127,20 @@ class Views {
     }
 
     def private headerFooterFile(Application it, Controller controller) {
-    	val templatePath = getAppSourcePath + 'templates/' + controller.formattedName
-        fsa.generateFile(templatePath + '/header.tpl', headerImpl(controller))
-        fsa.generateFile(templatePath + '/footer.tpl', footerImpl(controller))
+        val templatePath = getViewPath + (if (targets('1.3.5')) controller.formattedName else controller.formattedName.toFirstUpper) + '/'
+        fsa.generateFile(templatePath + 'header.tpl', headerImpl(controller))
+        fsa.generateFile(templatePath + 'footer.tpl', footerImpl(controller))
     }
 
     def private headerImpl(Application it, Controller controller) '''
         {* purpose of this template: header for «controller.formattedName» area *}
-
         {pageaddvar name='javascript' value='prototype'}
         {pageaddvar name='javascript' value='validation'}
         {pageaddvar name='javascript' value='zikula'}
         {pageaddvar name='javascript' value='livepipe'}
         {pageaddvar name='javascript' value='zikula.ui'}
         {pageaddvar name='javascript' value='zikula.imageviewer'}
-        {pageaddvar name='javascript' value='modules/«appName»/javascript/«appName».js'}
+        {pageaddvar name='javascript' value='modules/«appName»/«IF targets('1.3.5')»javascript«ELSE»«getAppJsPath»«ENDIF»/«appName».js'}
 
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             «IF controller.tempIsAdminController»
@@ -171,7 +170,6 @@ class Views {
 
     def private footerImpl(Application it, Controller controller) '''
         {* purpose of this template: footer for «controller.formattedName» area *}
-
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             «new FileHelper().msWeblink(it)»
             «IF controller.tempIsAdminController»
@@ -180,7 +178,7 @@ class Views {
         «IF hasEditActions»
         {elseif isset($smarty.get.func) && $smarty.get.func eq 'edit'}
             {pageaddvar name='stylesheet' value='styles/core.css'}
-            {pageaddvar name='stylesheet' value='modules/«appName»/style/style.css'}
+            {pageaddvar name='stylesheet' value='modules/«appName»/«IF targets('1.3.5')»style«ELSE»«getAppCssPath»«ENDIF»/style.css'}
             {pageaddvar name='stylesheet' value='system/Theme/style/form/style.css'}
             {pageaddvar name='stylesheet' value='themes/Andreas08/style/fluid960gs/reset.css'}
             {capture assign='pageStyles'}
@@ -196,7 +194,7 @@ class Views {
     '''
 
     def private pdfHeaderFile(Application it) {
-        fsa.generateFile(getAppSourcePath + 'templates/include_pdfheader.tpl', pdfHeaderImpl)
+        fsa.generateFile(getViewPath + 'include_pdfheader.tpl', pdfHeaderImpl)
     }
 
     def private pdfHeaderImpl(Application it) '''

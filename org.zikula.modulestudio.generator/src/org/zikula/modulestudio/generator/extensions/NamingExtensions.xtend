@@ -2,10 +2,9 @@ package org.zikula.modulestudio.generator.extensions
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
-import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
-import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.Controller
+import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
+import de.guite.modulestudio.metamodel.modulestudio.Entity
 
 /**
  * Extension methods for naming classes and building file pathes.
@@ -28,190 +27,6 @@ class NamingExtensions {
     @Inject extension Utils = new Utils()
 
     /**
-     * Returns the common prefix for class names.
-     */
-    def classPraefix(Application it) {
-        appName + '_'
-  	}
-
-    /**
-     * Returns the common suffix for class names.
-     */
-    def classSuffix() {
-        '.php'
-    }
-
-    /**
-     * Converts a given class name to it's file path.
-     */
-    def asFile(String className) {
-        'lib/' + className.replaceAll('_', '/') + classSuffix
-    }
-
-
-    /**
-     * Returns the full class name for implementation classes.
-     */
-    def implClassDefault(Application it, String filling, String suffix) {
-        classPraefix + filling + suffix
-    }
-    /**
-     * Returns the full class name for base classes.
-     */
-    def baseClassDefault(Application it, String filling, String suffix) {
-        implClassDefault(filling + 'Base_', suffix)
-    }
-
-
-    /**
-     * Returns the part of entity class names representing the folder.
-     */
-    def fillingEntity() { 'Entity_' }
-    /**
-     * Returns the part of controller class names representing the folder.
-     */
-    def fillingController() { 'Controller_' }
-    /**
-     * Returns the part of api class names representing the folder.
-     */
-    def fillingApi() { 'Api_' }
-    /**
-     * Returns the part of form handler class names representing the folder.
-     */
-    def fillingFormHandler() { 'Form_Handler_' }
-    /**
-     * Returns the part of util class names representing the folder.
-     */
-    def fillingUtil() { 'Util_' }
-
-    /**
-     * Prepares a given string for being used as part of a class name.
-     */
-    def prepClassPart(String str) {
-        str.formatForCode.toFirstUpper
-    }
-
-    /**
-     * Returns the full class name for a model base class.
-     */
-    def baseClassModel(Entity it, String subfolder, String suffix) {
-        if (subfolder != '')
-            baseClassDefault(container.application, fillingEntity + subfolder.toFirstUpper + '_', prepClassPart(name + suffix.toFirstUpper))
-        else
-            baseClassDefault(container.application, fillingEntity, prepClassPart(name + suffix.toFirstUpper))
-    }
-    /**
-     * Returns the full class name for a model implementation class.
-     */
-    def implClassModel(Entity it, String subfolder, String suffix) {
-        if (subfolder != '')
-	        implClassDefault(container.application, fillingEntity + subfolder.toFirstUpper + '_', prepClassPart(name + suffix.toFirstUpper))
-        else
-            implClassDefault(container.application, fillingEntity, prepClassPart(name + suffix.toFirstUpper))
-    }
-
-    /**
-     * Returns the full class name for a model entity base class.
-     */
-    def baseClassModelEntity(Entity it) {
-        baseClassModel('', '')
-    }
-    /**
-     * Returns the full class name for a model entity implementation class.
-     */
-    def implClassModelEntity(Entity it) {
-	    implClassModel('', '')
-	}
-
-    /**
-     * Returns the full class name for a model link entity base class.
-     */
-    def baseClassModelRefEntity(ManyToManyRelationship it) {
-        baseClassDefault(container.application, fillingEntity, prepClassPart(refClass))
-    }
-    /**
-     * Returns the full class name for a model link entity implementation class.
-     */
-    def implClassModelRefEntity(ManyToManyRelationship it) {
-        implClassDefault(container.application, fillingEntity, prepClassPart(refClass))
-    }
-    /**
-     * Returns the full class name for a model link repository base class.
-     */
-    def baseClassModelRefRepository(ManyToManyRelationship it) {
-        baseClassDefault(container.application, fillingEntity + 'Repository_', prepClassPart(refClass))
-    }
-    /**
-     * Returns the full class name for a model link repository implementation class.
-     */
-    def implClassModelRefRepository(ManyToManyRelationship it) {
-        implClassDefault(container.application, fillingEntity + 'Repository_', prepClassPart(refClass))
-    }
-
-    /**
-     * Returns the full class name for a controller base class.
-     */
-    def baseClassController(Controller it) {
-        baseClassDefault(container.application, fillingController, prepClassPart(name))
-    }
-    /**
-     * Returns the full class name for a controller implementation class.
-     */
-    def implClassController(Controller it) {
-        implClassDefault(container.application, fillingController, prepClassPart(name))
-    }
-    /**
-     * Returns the full class name for an api base class.
-     */
-    def baseClassApi(Controller it) {
-        baseClassDefault(container.application, fillingApi, prepClassPart(name))
-    }
-    /**
-     * Returns the full class name for an api implementation class.
-     */
-    def implClassApi(Controller it) {
-        implClassDefault(container.application, fillingApi, prepClassPart(name))
-    }
-    /**
-     * Returns the full class name for a form handler base class collecting entity-independent common code.
-     */
-    def baseClassFormHandler(Controller it, String actionName) {
-        baseClassDefault(container.application, fillingFormHandler + prepClassPart(name) + '_', prepClassPart(actionName))
-    }
-    /**
-     * Returns the full class name for a form handler implementation class collecting entity-independent common code.
-     */
-    def implClassFormHandler(Controller it, String actionName) {
-        implClassDefault(container.application, fillingFormHandler + prepClassPart(name) + '_', prepClassPart(actionName))
-    }
-    /**
-     * Returns the full class name for a form handler base class of a given entity.
-     */
-    def baseClassFormHandler(Controller it, String entityName, String actionName) {
-        baseClassDefault(container.application, fillingFormHandler + prepClassPart(name) + '_' + prepClassPart(entityName) + '_', prepClassPart(actionName))
-    }
-    /**
-     * Returns the full class name for a form handler implementation class of a given entity.
-     */
-    def implClassFormHandler(Controller it, String entityName, String actionName) {
-        implClassDefault(container.application, fillingFormHandler + prepClassPart(name) + '_' + prepClassPart(entityName) + '_', prepClassPart(actionName))
-    }
-
-
-    /**
-     * Returns the full class name for the form handler base class of the config action.
-     */
-    def tempBaseClassConfigHandler(Application it) {
-        baseClassDefault(fillingFormHandler + configController.toFirstUpper + '_', prepClassPart('Config'))
-    }
-    /**
-     * Returns the full class name for the form handler implementation class of the config action.
-     */
-    def tempImplClassConfigHandler(Application it) {
-        implClassDefault(fillingFormHandler + configController.toFirstUpper + '_', prepClassPart('Config'))
-    }
-
-    /**
      * Concatenates two strings being used for a template path.
      */
     def prepTemplatePart(String origin, String addition) {
@@ -229,7 +44,10 @@ class NamingExtensions {
      * Returns the base path for a certain template file.
      */
     def templateFileBase(Controller it, String entityName, String actionName) {
-        getAppSourcePath(container.application) + 'templates/' + formattedName + '/' + entityName.formatForCode + '/' + actionName
+        if (container.application.targets('1.3.5'))
+            container.application.getViewPath + formattedName + '/' + entityName.formatForCode + '/' + actionName
+        else
+            container.application.getViewPath + formattedName.toFirstUpper + '/' + entityName.formatForCodeCapital + '/' + actionName
     }
 
     /**
@@ -259,7 +77,7 @@ class NamingExtensions {
      * Returns the full file path for a view plugin file.
      */
     def viewPluginFilePath(Application it, String pluginType, String pluginName) {
-        getAppSourcePath + 'templates/plugins/' + pluginType + '.' + appName.formatForDB + pluginName + '.php'
+        getViewPath + 'plugins/' + pluginType + '.' + appName.formatForDB + pluginName + '.php'
     }
 
 
@@ -267,13 +85,30 @@ class NamingExtensions {
      * Returns the alias name for one side of a given relationship.
      */
     def getRelationAliasName(JoinRelationship it, Boolean useTarget) {
-        (if (useTarget)
-            (if (targetAlias != null && targetAlias != '') targetAlias else target.implClassModelEntity)
-         else
-            (if (sourceAlias != null && sourceAlias != '') sourceAlias else source.implClassModelEntity)
-        ).formatForCode
+        var String result
+        if (useTarget && targetAlias != null && targetAlias != '') {
+            result = targetAlias
+        }
+        else if (!useTarget && sourceAlias != null && sourceAlias != '') {
+            result = sourceAlias
+        }
+        else {
+            result = (if (useTarget) target else source).entityClassName('', false)
+        }
+
+        result.formatForCode
     }
 
+    /**
+     * Returns the class name for a certain entity class.
+     */
+    def entityClassName(Entity it, String suffix, Boolean isBase) {
+        val app = container.application
+        if (app.targets('1.3.5'))
+            app.appName + '_Entity_' + (if (isBase) 'Base_' else '') + name.formatForCodeCapital + suffix.formatForCodeCapital
+        else
+            app.appName + '\\Entity\\' + (if (isBase) 'Base\\' else '') + name.formatForCodeCapital + suffix.formatForCodeCapital + 'Entity'
+    }
 
     /**
      * Returns the base path for the generated application.
@@ -289,7 +124,84 @@ class NamingExtensions {
      * Returns the base path for the source code of the generated application.
      */
     def getAppSourceLibPath(Application it) {
-        getAppSourcePath + 'lib/' + appName + '/'
+        if (targets('1.3.5'))
+            getAppSourcePath + 'lib/' + appName + '/'
+        else
+            getAppSourcePath
+    }
+
+    /**
+     * Returns the base path for any documentation.
+     */
+    def getAppDocPath(Application it) {
+        if (targets('1.3.5'))
+            getAppSourcePath + 'docs/'
+        else
+            getResourcesPath + 'docs/'
+    }
+
+    /**
+     * Returns the base path for the locale artifacts.
+     */
+    def getAppLocalePath(Application it) {
+        if (targets('1.3.5'))
+            getAppSourcePath + 'locale/'
+        else
+            getResourcesPath + 'locale/'
+    }
+
+    /**
+     * Returns the base path for any resources.
+     */
+    def getResourcesPath(Application it) {
+        'Resources/'
+    }
+
+    /**
+     * Returns the base path for any assets.
+     */
+    def getAssetPath(Application it) {
+        getResourcesPath + 'public/'
+    }
+
+    /**
+     * Returns the base path for all view templates.
+     */
+    def getViewPath(Application it) {
+        if (targets('1.3.5'))
+            getAppSourcePath + 'templates/'
+        else
+            getResourcesPath + 'views/'
+    }
+
+    /**
+     * Returns the base path for image files.
+     */
+    def getAppImagePath(Application it) {
+        if (targets('1.3.5'))
+            getAppSourcePath + 'images/'
+        else
+            getAssetPath + 'images/'
+    }
+
+    /**
+     * Returns the base path for css files.
+     */
+    def getAppCssPath(Application it) {
+        if (targets('1.3.5'))
+            getAppSourcePath + 'style/'
+        else
+            getAssetPath + 'css/'
+    }
+
+    /**
+     * Returns the base path for js files.
+     */
+    def getAppJsPath(Application it) {
+        if (targets('1.3.5'))
+            getAppSourcePath + 'javascript/'
+        else
+            getAssetPath + 'js/'
     }
 
     /**

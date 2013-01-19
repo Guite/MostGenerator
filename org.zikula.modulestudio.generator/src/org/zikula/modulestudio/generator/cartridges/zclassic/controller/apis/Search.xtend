@@ -22,8 +22,10 @@ class Search {
 
     def generate(Application it, IFileSystemAccess fsa) {
         val apiPath = getAppSourceLibPath + 'Api/'
-        fsa.generateFile(apiPath + 'Base/Search.php', searchApiBaseFile)
-        fsa.generateFile(apiPath + 'Search.php', searchApiFile)
+        val apiClassSuffix = if (!targets('1.3.5')) 'Api' else ''
+        val apiFileName = 'Search' + apiClassSuffix + '.php'
+        fsa.generateFile(apiPath + 'Base/' + apiFileName, searchApiBaseFile)
+        fsa.generateFile(apiPath + apiFileName, searchApiFile)
         new SearchView().generate(it, fsa)
     }
 
@@ -38,10 +40,18 @@ class Search {
     '''
 
     def private searchApiBaseClass(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Api\Base;
+
+        «ENDIF»
 		/**
 		 * Search api base class.
 		 */
-		class «appName»_Api_Base_Search extends Zikula_AbstractApi
+        «IF targets('1.3.5')»
+        class «appName»_Api_Base_Search extends Zikula_AbstractApi
+        «ELSE»
+        class SearchApi extends \Zikula_AbstractApi
+        «ENDIF»
 		{
 		    «searchApiBaseImpl»
 		}
@@ -78,7 +88,7 @@ class Search {
          *
          * @return string template output
          */
-        public function options($args)
+        public function options(array $args = array())
         {
             if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
                 return '';
@@ -91,7 +101,7 @@ class Search {
                 $view->assign('«fieldName»', (!isset($args['«fieldName»']) || isset($args['active']['«fieldName»'])));
             «ENDFOR»
 
-            return $view->fetch('search/options.tpl');
+            return $view->fetch('«IF targets('1.3.5')»search«ELSE»Search«ENDIF»/options.tpl');
         }
     '''
 
@@ -103,7 +113,7 @@ class Search {
          *
          * @return boolean
          */
-        public function search($args)
+        public function search(array $args = array())
         {
             if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
                 return '';
@@ -118,7 +128,7 @@ class Search {
             // retrieve list of activated object types
             $searchTypes = isset($args['objectTypes']) ? (array)$args['objectTypes'] : (array)FormUtil::getPassedValue('search_«appName.formatForDB»_types', array(), 'GETPOST');
 
-            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->serviceManager);
             $utilArgs = array('api' => 'search', 'action' => 'search');
             $allowedTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
             $entityManager = ServiceUtil::getService('doctrine.entitymanager');
@@ -144,7 +154,7 @@ class Search {
                             break;
                     «ENDFOR»
                 }
-                $where = Search_Api_User::construct_where($args, $whereArray, $languageField);
+                $where = «IF targets('1.3.5')»Search_Api_User«ELSE»\Search\Api\UserApi«ENDIF»::construct_where($args, $whereArray, $languageField);
 
                 $repository = $entityManager->getRepository($this->name . '_Entity_' . ucfirst($objectType));
                 // get objects from database
@@ -215,7 +225,7 @@ class Search {
          *
          * @return boolean
          */
-        public function search_check($args)
+        public function search_check(array $args = array())
         {
             «val hasUserDisplay = !getAllUserControllers.filter(e|e.hasActions('display')).isEmpty»
             «IF hasUserDisplay»
@@ -230,10 +240,18 @@ class Search {
     '''
 
     def private searchApiImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Api;
+
+        «ENDIF»
         /**
          * Search api implementation class.
          */
+        «IF targets('1.3.5')»
         class «appName»_Api_Search extends «appName»_Api_Base_Search
+        «ELSE»
+        class SearchApi extends Base\SearchApi
+        «ENDIF»
         {
             // feel free to extend the search api here
         }

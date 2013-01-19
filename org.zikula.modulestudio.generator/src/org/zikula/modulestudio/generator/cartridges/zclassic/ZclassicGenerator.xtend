@@ -26,6 +26,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.models.Repository
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Bootstrap
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.ComposerFile
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Docs
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.ModuleFile
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Translations
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.VersionFile
 import org.zikula.modulestudio.generator.cartridges.zclassic.tests.Tests
@@ -55,6 +56,7 @@ class ZclassicGenerator implements IGenerator {
     def generate(Application it, IFileSystemAccess fsa, IProgressMonitor pm) {
         pm?.subTask('Basic information')
         println('Generating basic information')
+        new ModuleFile().generate(it, fsa)
         new VersionFile().generate(it, fsa)
         new ComposerFile().generate(it, fsa)
 

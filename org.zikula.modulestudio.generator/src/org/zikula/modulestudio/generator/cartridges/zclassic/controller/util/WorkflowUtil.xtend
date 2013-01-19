@@ -43,10 +43,18 @@ class WorkflowUtil {
     '''
 
     def private workflowFunctionsBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Util\Base;
+
+        «ENDIF»
         /**
          * Utility base class for workflow helper methods.
          */
-        class «appName»_«fillingUtil»Base_Workflow extends Zikula_AbstractBase
+        «IF targets('1.3.5')»
+        class «appName»_Util_Base_Workflow extends Zikula_AbstractBase
+        «ELSE»
+        class Workflow extends \Zikula_AbstractBase
+        «ENDIF»
         {
             «getObjectStates»
             «getStateInfo»
@@ -186,7 +194,7 @@ class WorkflowUtil {
             $wfActions = Zikula_Workflow_Util::getActionsForObject($entity, $objectType, $idcolumn, $this->name);
 
             // as we use the workflows for multiple object types we must maybe filter out some actions
-            $listHelper = new «appName»_Util_ListEntries($this->serviceManager);
+            $listHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»ListEntries($this->serviceManager);
             $states = $listHelper->getEntries($objectType, 'workflowState');
             $allowedStates = array();
             foreach ($states as $state) {
@@ -389,10 +397,18 @@ class WorkflowUtil {
     '''
 
     def private workflowFunctionsImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Util;
+
+        «ENDIF»
         /**
          * Utility implementation class for workflow helper methods.
          */
-        class «appName»_«fillingUtil»Workflow extends «appName»_«fillingUtil»Base_Workflow
+        «IF targets('1.3.5')»
+        class «appName»_Util_Workflow extends «appName»_Util_Base_Workflow
+        «ELSE»
+        class Workflow extends Base\Workflow
+        «ENDIF»
         {
             // feel free to add your own convenience methods here
         }

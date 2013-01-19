@@ -70,11 +70,18 @@ class ControllerLayer {
      */
     def private generate(Controller it, IFileSystemAccess fsa) {
         println('Generating "' + formattedName + '" controller classes')
-        fsa.generateFile(app.getAppSourcePath + baseClassController.asFile, controllerBaseFile)
-        fsa.generateFile(app.getAppSourcePath + implClassController.asFile, controllerFile)
+        val controllerPath = app.getAppSourceLibPath + 'Controller/'
+        val controllerClassSuffix = if (!app.targets('1.3.5')) 'Controller' else ''
+        val controllerFileName = name.formatForCodeCapital + controllerClassSuffix + '.php'
+        fsa.generateFile(controllerPath + 'Base/' + controllerFileName, controllerBaseFile)
+        fsa.generateFile(controllerPath + controllerFileName, controllerFile)
+
         println('Generating "' + formattedName + '" api classes')
-        fsa.generateFile(app.getAppSourcePath + baseClassApi.asFile, apiBaseFile)
-        fsa.generateFile(app.getAppSourcePath + implClassApi.asFile, apiFile)
+        val apiPath = app.getAppSourceLibPath + 'Api/'
+        val apiClassSuffix = if (!app.targets('1.3.5')) 'Api' else ''
+        val apiFileName = name.formatForCodeCapital + apiClassSuffix + '.php'
+        fsa.generateFile(apiPath + 'Base/' + apiFileName, apiBaseFile)
+        fsa.generateFile(apiPath + apiFileName, apiFile)
     }
 
     def private controllerBaseFile(Controller it) '''
@@ -98,10 +105,18 @@ class ControllerLayer {
     '''
 
     def private controllerBaseImpl(Controller it) '''
+        «IF !app.targets('1.3.5')»
+            namespace «app.appName»\Controller\Base;
+
+        «ENDIF»
         /**
          * «name» controller class.
          */
-        class «baseClassController» extends Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»
+        «IF app.targets('1.3.5')»
+        class «app.appName»_Controller_Base_«name.formatForCodeCapital» extends Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»
+        «ELSE»
+        class «name.formatForCodeCapital» extends \Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»
+        «ENDIF»
         {
             «IF isAjaxController»
 
@@ -122,7 +137,7 @@ class ControllerLayer {
                  *
                  * @return boolean
                  */
-                public function handleInlineRedirect()
+                public function handleInlineRedirect«IF !app.targets('1.3.5')»Action«ENDIF»()
                 {
                     $itemId = (int) $this->request->query->filter('id', 0, FILTER_VALIDATE_INT);
                     $idPrefix = $this->request->query->filter('idp', '', FILTER_SANITIZE_STRING);
@@ -134,9 +149,15 @@ class ControllerLayer {
                     $this->view->assign('itemId', $itemId)
                                ->assign('idPrefix', $idPrefix)
                                ->assign('commandName', $commandName)
-                               ->assign('jcssConfig', JCSSUtil::getJSConfig())
-                               ->display('«formattedName»/inlineRedirectHandler.tpl');
+                               ->assign('jcssConfig', JCSSUtil::getJSConfig());
+
+                    «IF app.targets('1.3.5')»
+                    $view->display('«formattedName»/inlineRedirectHandler.tpl');
+
                     return true;
+                    «ELSE»
+                    return new \Zikula\Core\Response\PlainResponse($view->display('«formattedName.toFirstUpper»/inlineRedirectHandler.tpl'));
+                    «ENDIF»
                 }
             «ENDIF»
             «IF app.needsConfig && isConfigController»
@@ -146,7 +167,7 @@ class ControllerLayer {
                  *
                  * @return string Output
                  */
-                public function config()
+                public function config«IF !app.targets('1.3.5')»Action«ENDIF»()
                 {
                     $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN));
 
@@ -173,11 +194,11 @@ class ControllerLayer {
          *
          * @return bool true on sucess, false on failure.
          */
-        public function handleselectedentries($args)
+        public function handleselectedentries«IF !app.targets('1.3.5')»Action«ENDIF»(array $args = array())
         {
             $this->checkCsrfToken();
 
-            $returnUrl = ModUtil::url($this->name, 'admin', 'main');
+            $returnUrl = ModUtil::url($this->name, 'admin', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
 
             // Determine object type
             $objectType = isset($args['ot']) ? $args['ot'] : $this->request->getPost()->get('ot', '');
@@ -191,7 +212,7 @@ class ControllerLayer {
             $action = isset($args['action']) ? $args['action'] : $this->request->getPost()->get('action', null);
             $action = strtolower($action);
 
-            $workflowHelper = new «app.appName»_Util_Workflow($this->serviceManager);
+            $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Workflow($this->serviceManager);
 
             // process each item
             foreach ($items as $itemid) {
@@ -211,8 +232,13 @@ class ControllerLayer {
 
                 // Let any hooks perform additional validation actions
                 $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
+                «IF app.targets('1.3.5')»
                 $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
                 $validators = $this->notifyHooks($hook)->getValidators();
+                «ELSE»
+                $hook = new Zikula\Core\Hook\ValidationHook(new Zikula\Core\Hook\ValidationProviders());
+                $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
+                «ENDIF»
                 if ($validators->hasErrors()) {
                     continue;
                 }
@@ -247,8 +273,13 @@ class ControllerLayer {
                     }
                     $url = new Zikula_ModUrl($this->name, '«formattedName»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
                 }
+                «IF app.targets('1.3.5')»
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
                 $this->notifyHooks($hook);
+                «ELSE»
+                $hook = new \Zikula\Core\Hook\ProcessHook($entity->createCompositeIdentifier(), $url);
+                $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
+                «ENDIF»
 
                 // An item was updated or deleted, so we clear all cached pages for this item.
                 $cacheArgs = array('ot' => $objectType, 'item' => $entity);
@@ -264,10 +295,19 @@ class ControllerLayer {
 
 
     def private controllerImpl(Controller it) '''
+        «val app = container.application»
+        «IF !app.targets('1.3.5')»
+            namespace «app.appName»\Controller;
+
+        «ENDIF»
         /**
          * This is the «name» controller class providing navigation and interaction functionality.
          */
-        class «implClassController» extends «baseClassController»
+        «IF !app.targets('1.3.5')»
+        class «app.appName»_Controller_«name.formatForCodeCapital» extends «app.appName»_Controller_Base_«name.formatForCodeCapital»
+        «ELSE»
+        class «name.formatForCodeCapital»Controller extends Base\«name.formatForCodeCapital»Controller
+        «ENDIF»
         {
             // feel free to add your own controller methods here
         }
@@ -276,10 +316,19 @@ class ControllerLayer {
 
 
     def private apiBaseImpl(Controller it) '''
+        «val app = container.application»
+        «IF !app.targets('1.3.5')»
+            namespace «app.appName»\Api\Base;
+
+        «ENDIF»
         /**
          * This is the «name» api helper class.
          */
-        class «baseClassApi» extends Zikula_AbstractApi
+        «IF !app.targets('1.3.5')»
+        class «app.appName»_Api_Base_«name.formatForCodeCapital» extends Zikula_AbstractApi
+        «ELSE»
+        class «name.formatForCodeCapital» extends \Zikula_AbstractApi
+        «ENDIF»
         {
             «IF !isAjaxController»
             /**
@@ -320,7 +369,7 @@ class ControllerLayer {
             AdminController case !container.getUserControllers.isEmpty: '''
                     «val userController = container.getUserControllers.head»
                     if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
-                        $links[] = array('url' => ModUtil::url($this->name, '«userController.formattedName»', «userController.mainUrlDetails»),
+                        $links[] = array('url' => ModUtil::url($this->name, '«userController.formattedName»', «userController.indexUrlDetails»),
                                          'text' => $this->__('Frontend'),
                                          'title' => $this->__('Switch to user area.'),
                                          'class' => 'z-icon-es-home');
@@ -329,7 +378,7 @@ class ControllerLayer {
             UserController case !container.getAdminControllers.isEmpty: '''
                     «val adminController = container.getAdminControllers.head»
                     if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
-                        $links[] = array('url' => ModUtil::url($this->name, '«adminController.formattedName»', «adminController.mainUrlDetails»),
+                        $links[] = array('url' => ModUtil::url($this->name, '«adminController.formattedName»', «adminController.indexUrlDetails»),
                                          'text' => $this->__('Backend'),
                                          'title' => $this->__('Switch to administration area.'),
                                          'class' => 'z-icon-es-options');
@@ -353,17 +402,26 @@ class ControllerLayer {
     }
 
     def private apiImpl(Controller it) '''
+        «val app = container.application»
+        «IF !app.targets('1.3.5')»
+            namespace «app.appName»\Api;
+
+        «ENDIF»
         /**
          * This is the «name» api helper class.
          */
-        class «implClassApi» extends «baseClassApi»
+        «IF app.targets('1.3.5')»
+        class «app.appName»_Api_«name.formatForCodeCapital» extends «app.appName»_Api_Base_«name.formatForCodeCapital»
+        «ELSE»
+        class «name.formatForCodeCapital»Api extends Base\«name.formatForCodeCapital»Api
+        «ENDIF»
         {
             // feel free to add own api methods here
         }
     '''
 
-    def private mainUrlDetails(Controller it) {
-        if (hasActions('main')) '\'main\''
+    def private indexUrlDetails(Controller it) {
+        if (hasActions('index')) '\'' + (if (app.targets('1.3.5')) 'main' else 'index') + '\''
         else if (hasActions('view')) '\'view\', array(\'ot\' => \'' + container.application.getLeadingEntity.name.formatForCode + '\')'
         else if (container.application.needsConfig && isConfigController) '\'config\''
         else '\'hooks\''

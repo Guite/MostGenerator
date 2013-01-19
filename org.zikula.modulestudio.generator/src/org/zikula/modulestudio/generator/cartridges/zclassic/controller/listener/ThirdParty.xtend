@@ -19,9 +19,9 @@ class ThirdParty {
         /**
          * Listener for pending content items.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function pendingContentListener(Zikula_Event $event)
+        public static function pendingContentListener(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::pendingContentListener($event);
@@ -36,7 +36,7 @@ class ThirdParty {
             // nothing required here as no entities use enhanced workflows including approval actions
         «ELSE»
             $serviceManager = ServiceUtil::getManager();
-            $workflowHelper = new «appName»_Util_Workflow($serviceManager);
+            $workflowHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Workflow($serviceManager);
             $modname = '«appName»';
             $useJoins = false;
 
@@ -68,9 +68,9 @@ class ThirdParty {
          * This event occurs when the Content module is 'searching' for Content plugins.
          * The subject is an instance of Content_Types.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function contentGetTypes(Zikula_Event $event)
+        public static function contentGetTypes(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::contentGetTypes($event);

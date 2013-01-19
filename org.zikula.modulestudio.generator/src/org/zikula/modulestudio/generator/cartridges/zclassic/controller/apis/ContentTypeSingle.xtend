@@ -37,10 +37,18 @@ class ContentTypeSingle {
     '''
 
     def private contentTypeBaseClass(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\ContentType\Base;
+
+        «ENDIF»
 		/**
 		 * Generic single item display content plugin base class.
 		 */
-		class «appName»_ContentType_Base_Item extends Content_AbstractContentType
+        «IF targets('1.3.5')»
+        class «appName»_ContentType_Base_Item extends Content_AbstractContentType
+        «ELSE»
+        class Item extends \Content_AbstractContentType
+        «ENDIF»
 		{
 		    «contentTypeBaseImpl»
 		}
@@ -101,7 +109,7 @@ class ContentTypeSingle {
         public function loadData(&$data)
         {
             $serviceManager = ServiceUtil::getManager();
-            $controllerHelper = new «appName»_Util_Controller($serviceManager);
+            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($serviceManager);
 
             $utilArgs = array('name' => 'detail');
             if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $utilArgs))) {
@@ -178,7 +186,11 @@ class ContentTypeSingle {
         public function startEditing()
         {
             // ensure our custom plugins are loaded
+            «IF targets('1.3.5')»
             array_push($this->view->plugins_dir, 'modules/«appName»/templates/plugins');
+            «ELSE»
+            array_push($this->view->plugins_dir, 'modules/«appName»/Resources/views/plugins');
+            «ENDIF»
 
             // required as parameter for the item selector plugin
             $this->view->assign('objectType', $this->objectType);
@@ -186,10 +198,18 @@ class ContentTypeSingle {
     '''
 
     def private contentTypeImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\ContentType;
+
+        «ENDIF»
         /**
          * Generic single item display content plugin implementation class.
          */
+        «IF targets('1.3.5')»
         class «appName»_ContentType_Item extends «appName»_ContentType_Base_Item
+        «ELSE»
+        class Item extends Base\Item
+        «ENDIF»
         {
             // feel free to extend the content type here
         }

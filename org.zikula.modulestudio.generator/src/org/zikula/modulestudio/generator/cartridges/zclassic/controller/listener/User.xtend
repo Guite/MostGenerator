@@ -7,12 +7,14 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class User {
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
+    @Inject extension Utils = new Utils()
 
     def generate(Application it, Boolean isBase) '''
         /**
@@ -21,11 +23,11 @@ class User {
          * Called during UserUtil::getTheme() and is used to filter the results.
          * Receives arg['type'] with the type of result to be filtered
          * and the $themeName in the $event->data which can be modified.
-         * Must $event->stop() if handler performs filter.
+         * Must $event->stop«IF !targets('1.3.5')»Propagation«ENDIF»() if handler performs filter.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function getTheme(Zikula_Event $event)
+        public static function getTheme(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::getTheme($event);
@@ -41,9 +43,9 @@ class User {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the user record that was created.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function create(Zikula_Event $event)
+        public static function create(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::create($event);
@@ -58,9 +60,9 @@ class User {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the user record, with the updated values.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function update(Zikula_Event $event)
+        public static function update(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::update($event);
@@ -76,15 +78,15 @@ class User {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the user record that is being deleted.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function delete(Zikula_Event $event)
+        public static function delete(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::delete($event);
             «ELSE»
                 «IF hasStandardFieldEntities || hasUserFields»
-                ModUtil::initOOModule('FreelancerProjects');
+                ModUtil::initOOModule('«appName»');
 
                 $userRecord = $event->getSubject();
                 $uid = $userRecord['uid'];
@@ -99,7 +101,7 @@ class User {
     def private userDelete(Entity it) '''
         «IF standardFields || hasUserFieldsEntity»
 
-        $repo = $entityManager->getRepository('«implClassModelEntity»');
+        $repo = $entityManager->getRepository('«entityClassName('', false)»');
         «IF standardFields»
             // delete all «nameMultiple.formatForDisplay» created by this user
             $repo->deleteCreator($uid);

@@ -72,10 +72,13 @@ class Entities {
      */
     def private generate(Entity it, Application app, IFileSystemAccess fsa) {
         println('Generating entity classes for entity "' + name.formatForDisplay + '"')
+        val entityPath = app.getAppSourceLibPath + 'Entity/'
+        val entityClassSuffix = if (!app.targets('1.3.5')) 'Entity' else ''
+        val entityFileName = name.formatForCodeCapital + entityClassSuffix + '.php'
         if (!isInheriting) {
-            fsa.generateFile(app.getAppSourcePath + baseClassModelEntity.asFile, modelEntityBaseFile(app))
+            fsa.generateFile(entityPath + 'Base/' + entityFileName, modelEntityBaseFile(app))
         }
-        fsa.generateFile(app.getAppSourcePath + implClassModelEntity.asFile, modelEntityFile(app))
+        fsa.generateFile(entityPath + entityFileName, modelEntityFile(app))
     }
 
     def private modelEntityBaseFile(Entity it, Application app) '''
@@ -89,6 +92,10 @@ class Entities {
     '''
 
     def private modelEntityBaseImpl(Entity it, Application app) '''
+        «IF !app.targets('1.3.5')»
+            namespace «app.appName»\Entity\Base;
+
+        «ENDIF»
         «imports»
 
         /**
@@ -98,7 +105,11 @@ class Entities {
          *
          * @abstract
          */
-        abstract class «baseClassModelEntity» extends Zikula_EntityAccess«IF hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
+        «IF app.targets('1.3.5')»
+        abstract class «entityClassName('', true)» extends Zikula_EntityAccess«IF hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
+        «ELSE»
+        abstract class «name.formatForCodeCapital» extends \Zikula_EntityAccess«IF hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
+        «ENDIF»
         {
             «entityInfo(app)»
 
@@ -129,10 +140,14 @@ class Entities {
     def private indexField(EntityIndexItem it) '''"«name.formatForCode»"'''
 
     def private discriminatorInfo(InheritanceRelationship it) '''
-        , "«source.name.formatForCode»" = "«source.implClassModelEntity»"
+        , "«source.name.formatForCode»" = "«source.entityClassName('', false)»"
     '''
 
     def private modelEntityImpl(Entity it, Application app) '''
+        «IF !app.targets('1.3.5')»
+            namespace «app.appName»\Entity;
+
+        «ENDIF»
         «imports»
 
         /**
@@ -143,7 +158,7 @@ class Entities {
          «IF mappedSuperClass»
           * @ORM\MappedSuperclass
          «ELSE»
-          * @ORM\Entity(repositoryClass="«implClassModel('repository', '')»"«IF readOnly», readOnly=true«ENDIF»)
+          * @ORM\Entity(repositoryClass="«IF app.targets('1.3.5')»«app.appName»_Entity_Repository_«name.formatForCodeCapital»«ELSE»«app.appName»\Entity\Repository\«name.formatForCodeCapital»«ENDIF»"«IF readOnly», readOnly=true«ENDIF»)
          «ENDIF»
          «IF indexes.isEmpty»
           * @ORM\Table(name="«fullEntityTableName»")
@@ -164,14 +179,18 @@ class Entities {
          «IF isTopSuperClass»
           * @ORM\InheritanceType("«getChildRelations.head.strategy.asConstant»")
           * @ORM\DiscriminatorColumn(name="«getChildRelations.head.discriminatorColumn.formatForCode»"«/*, type="string"*/»)
-          * @ORM\DiscriminatorMap({"«name.formatForCode»" = "«implClassModelEntity»"«FOR relation : getChildRelations»«relation.discriminatorInfo»«ENDFOR»})
+          * @ORM\DiscriminatorMap({"«name.formatForCode»" = "«entityClassName('', false)»"«FOR relation : getChildRelations»«relation.discriminatorInfo»«ENDFOR»})
          «ENDIF»
          «IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT»
           * @ORM\ChangeTrackingPolicy("«changeTrackingPolicy.asConstant»")
          «ENDIF»
          * @ORM\HasLifecycleCallbacks
          */
-        class «implClassModelEntity» extends «IF isInheriting»«parentType.implClassModelEntity»«ELSE»«baseClassModelEntity»«ENDIF»
+        «IF app.targets('1.3.5')»
+        abstract class «entityClassName('', false)» extends «IF isInheriting»«parentType.entityClassName('', false)»«ELSE»«entityClassName('', true)»«ENDIF»
+        «ELSE»
+        abstract class «name.formatForCodeCapital» extends «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\«name.formatForCodeCapital»«ENDIF»
+        «ENDIF»
         {
             // feel free to add your own methods here
             «IF isInheriting»
@@ -204,9 +223,9 @@ class Entities {
          * @var array List of primary key field names.
          */
         protected $_idFields = array();
-
+        «val validatorClass = if (app.targets('1.3.5')) app.appName + '_Entity_Repository_' + name.formatForCodeCapital else app.appName + '\\Entity\\Repository\\' + name.formatForCodeCapital»
         /**
-         * @var «implClassModel('validator', '')» The validator for this entity.
+         * @var «validatorClass» The validator for this entity.
          */
         protected $_validator = null;
 
@@ -242,7 +261,7 @@ class Entities {
 
         «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, '', '')»
         «fh.getterAndSetterMethods(it, '_idFields', 'array', false, true, 'Array()', '')»
-        «fh.getterAndSetterMethods(it, '_validator', implClassModel('validator', ''), false, true, 'null', '')»
+        «fh.getterAndSetterMethods(it, '_validator', validatorClass, false, true, 'null', '')»
         «fh.getterAndSetterMethods(it, '_hasUniqueSlug', 'boolean', false, false, '', '')»
         «fh.getterAndSetterMethods(it, '_actions', 'array', false, true, 'Array()', '')»
         «fh.getterAndSetterMethods(it, '__WORKFLOW__', 'array', false, true, 'Array()', '')»
@@ -257,14 +276,14 @@ class Entities {
         /**
          * Initialise validator and return it's instance.
          *
-         * @return «implClassModel('validator', '')» The validator for this entity.
+         * @return «validatorClass» The validator for this entity.
          */
         public function initValidator()
         {
             if (!is_null($this->_validator)) {
                 return $this->_validator;
             }
-            $this->_validator = new «implClassModel('validator', '')»($this);
+            $this->_validator = new «validatorClass»($this);
             return $this->_validator;
         }
 
@@ -311,13 +330,13 @@ class Entities {
             }
 
             $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
-            $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST', FILTER_SANITIZE_STRING);
+            $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
             «val appName = app.appName»
             $dom = ZLanguage::getModuleDomain('«appName»');
             «FOR controller : app.getAdminAndUserControllers»
                 if ($currentType == '«controller.formattedName»') {
                     «IF controller.hasActions('view')»
-                        if (in_array($currentFunc, array('main', 'view'))) {
+                        if (in_array($currentFunc, array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view'))) {
                             «IF controller.tempIsAdminController && container.application.hasUserController && container.application.getMainUserController.hasActions('display')»
                                 $this->_actions[] = array(
                                     'url' => array('type' => 'user', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
@@ -338,7 +357,7 @@ class Entities {
                         }
                     «ENDIF»
                     «IF controller.hasActions('view') || controller.hasActions('display')»
-                        if (in_array($currentFunc, array('main', 'view', 'display'))) {
+                        if (in_array($currentFunc, array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view', 'display'))) {
                             «IF controller.hasActions('edit')»
                                 if (SecurityUtil::checkPermission('«appName»:«name.formatForCodeCapital»:', «idFieldsAsParameterCode('this')» . '::', ACCESS_EDIT)) {
                             «IF !readOnly»«/*create is allowed, but editing not*/»
@@ -454,7 +473,7 @@ class Entities {
             «val indexRelation = getIncomingJoinRelations.filter(e|e.isIndexed).head»
             «val sourceAlias = getRelationAliasName(indexRelation, false)»
             «val indexBy = indexRelation.getIndexByField»
-            $«indexBy.formatForCode»,«IF withTypeHints» «indexRelation.source.implClassModelEntity»«ENDIF» $«sourceAlias.formatForCode»«constructorArgumentsDefault(true)»
+            $«indexBy.formatForCode»,«IF withTypeHints» «indexRelation.source.entityClassName('', false)»«ENDIF» $«sourceAlias.formatForCode»«constructorArgumentsDefault(true)»
         «ELSEIF isAggregated»
             «FOR aggregator : getAggregators SEPARATOR ', '»
                 «FOR relation : aggregator.getAggregatingRelationships SEPARATOR ', '»
@@ -586,7 +605,7 @@ class Entities {
             if («FOR field : primaryKeyFields SEPARATOR ' && '»$this->«field.name.formatForCode»«ENDFOR») {
                 // create new instance
                 «/* TODO: consider custom constructor arguments (indexed, aggregated - see above) */»
-                $entity = new «implClassModelEntity»();
+                $entity = new «entityClassName('', false)»();
                 // unset identifiers
                 «FOR field : primaryKeyFields»
                     $entity->set«field.name.formatForCodeCapital»(null);

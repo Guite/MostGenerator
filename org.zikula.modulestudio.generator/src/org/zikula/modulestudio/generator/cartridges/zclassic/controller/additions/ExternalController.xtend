@@ -24,8 +24,10 @@ class ExternalController {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating external controller')
         val controllerPath = getAppSourceLibPath + 'Controller/'
-        fsa.generateFile(controllerPath + 'Base/External.php', externalBaseFile)
-        fsa.generateFile(controllerPath + 'External.php', externalFile)
+        val controllerClassSuffix = if (!targets('1.3.5')) 'Controller' else ''
+        val controllerFileName = 'External' + controllerClassSuffix + '.php'
+        fsa.generateFile(controllerPath + 'Base/' + controllerFileName, externalBaseFile)
+        fsa.generateFile(controllerPath + controllerFileName, externalFile)
         new ExternalView().generate(it, fsa)
     }
 
@@ -40,10 +42,18 @@ class ExternalController {
     '''
 
     def private externalBaseClass(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Controller\Base;
+
+        «ENDIF»
         /**
          * Controller for external calls base class.
          */
+        «IF targets('1.3.5')»
         class «appName»_Controller_Base_External extends Zikula_AbstractController
+        «ELSE»
+        class ExternalController extends \Zikula_AbstractController
+        «ENDIF»
         {
         «IF hasCategorisableEntities»
             /**
@@ -77,10 +87,10 @@ class ExternalController {
          *
          * @return string Desired data output.
          */
-        public function display($args)
+        public function display«IF !targets('1.3.5')»Action«ENDIF»(array $args = array())
         {
             $getData = $this->request->query;
-            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->serviceManager);
 
             $objectType = isset($args['objectType']) ? $args['objectType'] : '';
             $utilArgs = array('controller' => 'external', 'action' => 'display');
@@ -148,7 +158,11 @@ class ExternalController {
                       ->assign('item', $objectData)
                       ->assign('displayMode', $displayMode);
 
+            «IF targets('1.3.5')»
             return $this->view->fetch('external/' . $objectType . '/display.tpl');
+            «ELSE»
+            return $this->response($this->view->fetch('External/' . ucwords($objectType) . '/display.tpl'));
+            «ENDIF»
         }
 
         /**
@@ -159,12 +173,12 @@ class ExternalController {
          *
          * @return output The external item finder page
          */
-        public function finder($args)
+        public function finder«IF !targets('1.3.5')»Action«ENDIF»(array $args = array())
         {
             PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
 
             $getData = $this->request->query;
-            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->serviceManager);
 
             $objectType = isset($args['objectType']) ? $args['objectType'] : $getData->filter('objectType', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             $utilArgs = array('controller' => 'external', 'action' => 'finder');
@@ -231,15 +245,27 @@ class ExternalController {
                      ->assign('catIds', $categoryIds);
             «ENDIF»
 
+            «IF targets('1.3.5')»
             return $view->display('external/' . $objectType . '/find.tpl');
+            «ELSE»
+            return new \Zikula\Core\Response\PlainResponse($view->display('External/' . ucwords($objectType) . '/find.tpl'));
+            «ENDIF»
         }
     '''
 
     def private externalImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Controller;
+
+        «ENDIF»
         /**
          * Controller for external calls implementation class.
          */
+        «IF targets('1.3.5')»
         class «appName»_Controller_External extends «appName»_Controller_Base_External
+        «ELSE»
+        class ExternalController extends Base\ExternalController
+        «ENDIF»
         {
             // feel free to extend the external controller here
         }

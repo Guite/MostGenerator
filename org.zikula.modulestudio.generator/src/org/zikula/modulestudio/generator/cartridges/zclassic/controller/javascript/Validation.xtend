@@ -22,7 +22,7 @@ class Validation {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating javascript for validation')
-        fsa.generateFile(getAppSourcePath + 'javascript/' + appName + '_validation.js', generate)
+        fsa.generateFile(getAppJsPath + appName + '_validation.js', generate)
     }
 
     def private generate(Application it) '''

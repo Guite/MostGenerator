@@ -34,10 +34,18 @@ class Image {
     '''
 
     def private imageFunctionsBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Util\Base;
+
+        «ENDIF»
         /**
          * Utility base class for image helper methods.
          */
-        class «appName»_«fillingUtil»Base_Image extends Zikula_AbstractBase
+        «IF targets('1.3.5')»
+        class «appName»_Util_Base_Image extends Zikula_AbstractBase
+        «ELSE»
+        class Image extends \Zikula_AbstractBase
+        «ENDIF»
         {
             «getManager»
 
@@ -69,7 +77,7 @@ class Image {
                     $args['controller'] = 'user';
                 }
                 if (!isset($args['action'])) {
-                    $args['action'] = 'main';
+                    $args['action'] = '«IF targets('1.3.5')»main«ELSE»index«ENDIF»';
                 }
 
                 if ($args['controller'] == 'ajax' && $args['action'] == 'getItemListAutoCompletion') {
@@ -139,10 +147,18 @@ class Image {
     '''
 
     def private imageFunctionsImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Util;
+
+        «ENDIF»
         /**
          * Utility implementation class for image helper methods.
          */
-        class «appName»_«fillingUtil»Image extends «appName»_«fillingUtil»Base_Image
+        «IF targets('1.3.5')»
+        class «appName»_Util_Image extends «appName»_Util_Base_Image
+        «ELSE»
+        class Image extends Base\Image
+        «ENDIF»
         {
             // feel free to add your own convenience methods here
         }

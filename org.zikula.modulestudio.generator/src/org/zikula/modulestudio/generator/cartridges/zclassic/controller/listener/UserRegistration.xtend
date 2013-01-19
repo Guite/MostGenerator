@@ -1,8 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
+import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class UserRegistration {
+    @Inject extension Utils = new Utils()
 
     def generate(Application it, Boolean isBase) '''
         /**
@@ -10,9 +13,9 @@ class UserRegistration {
          *
          * Occurs at the beginning of the registration process, before the registration form is displayed to the user.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function started(Zikula_Event $event)
+        public static function started(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::started($event);
@@ -85,9 +88,9 @@ class UserRegistration {
          * all event handlers are being notified of this event. This is not a `notify()` event. An event handler that was notified 
          * prior to the current handler may already have changed the `'redirecturl'`.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function succeeded(Zikula_Event $event)
+        public static function succeeded(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::succeeded($event);
@@ -117,9 +120,9 @@ class UserRegistration {
          * This is not a `notify()` event.
          * An event handler that was notified prior to the current handler may already have changed the `'redirecturl'`.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function failed(Zikula_Event $event)
+        public static function failed(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::failed($event);
@@ -135,9 +138,9 @@ class UserRegistration {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the registration record that was created.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function create(Zikula_Event $event)
+        public static function create(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::create($event);

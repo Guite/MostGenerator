@@ -22,7 +22,7 @@ class Docs {
      */
     def generate(Application it, IFileSystemAccess fsa) {
         fsa.generateFile('README.md', ReadmeMarkup)
-        val docPath = getAppSourcePath + 'docs/'
+        val docPath = getAppDocPath
         fsa.generateFile(docPath + 'credits.md', Credits)
         fsa.generateFile(docPath + 'changelog.md', Changelog)
         fsa.generateFile(docPath + 'developers.md', new DeveloperHints().generate(it))

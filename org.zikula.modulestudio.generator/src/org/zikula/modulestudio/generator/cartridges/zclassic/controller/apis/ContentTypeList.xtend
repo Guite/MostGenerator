@@ -39,10 +39,18 @@ class ContentTypeList {
     '''
 
     def private contentTypeBaseClass(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\ContentType\Base;
+
+        «ENDIF»
         /**
          * Generic item list content plugin base class.
          */
+        «IF targets('1.3.5')»
         class «appName»_ContentType_Base_ItemList extends Content_AbstractContentType
+        «ELSE»
+        class ItemList extends \Content_AbstractContentType
+        «ENDIF»
         {
             «contentTypeBaseImpl»
         }
@@ -166,7 +174,7 @@ class ContentTypeList {
         public function loadData(&$data)
         {
             $serviceManager = ServiceUtil::getManager();
-            $controllerHelper = new «appName»_Util_Controller($serviceManager);
+            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($serviceManager);
 
             $utilArgs = array('name' => 'list');
             if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $utilArgs))) {
@@ -324,12 +332,12 @@ class ContentTypeList {
             $templateForObjectType = str_replace('itemlist_', 'itemlist_' . $this->objectType . '_', $templateFile);
 
             $template = '';
-            if ($this->view->template_exists('contenttype/' . $templateForObjectType)) {
-                $template = 'contenttype/' . $templateForObjectType;
-            } elseif ($this->view->template_exists('contenttype/' . $templateFile)) {
-                $template = 'contenttype/' . $templateFile;
+            if ($this->view->template_exists('«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType)) {
+                $template = '«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType;
+            } elseif ($this->view->template_exists('«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile)) {
+                $template = '«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile;
             } else {
-                $template = 'contenttype/itemlist_display.tpl';
+                $template = '«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/itemlist_display.tpl';
             }
 
             return $template;
@@ -400,15 +408,27 @@ class ContentTypeList {
             $this->view->toplevelmodule = '«appName»';
 
             // ensure our custom plugins are loaded
+            «IF targets('1.3.5')»
             array_push($this->view->plugins_dir, 'modules/«appName»/templates/plugins');
+            «ELSE»
+            array_push($this->view->plugins_dir, 'modules/«appName»/Resources/views/plugins');
+            «ENDIF»
         }
     '''
 
     def private contentTypeImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\ContentType;
+
+        «ENDIF»
         /**
          * Generic item list content plugin implementation class.
          */
+        «IF targets('1.3.5')»
         class «appName»_ContentType_ItemList extends «appName»_ContentType_Base_ItemList
+        «ELSE»
+        class ItemList extends Base\ItemList
+        «ENDIF»
         {
             // feel free to extend the content type here
         }

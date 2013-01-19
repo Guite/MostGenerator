@@ -77,7 +77,7 @@ class ControllerExtensions {
      */
     def hasActions(Controller it, String type) {
         switch (type) {
-            case 'main'     : !actions.filter(typeof(MainAction)).isEmpty 
+            case 'index'    : !actions.filter(typeof(MainAction)).isEmpty 
             case 'view'     : !actions.filter(typeof(ViewAction)).isEmpty 
             case 'display'  : !actions.filter(typeof(DisplayAction)).isEmpty 
             case 'edit'     : !actions.filter(typeof(EditAction)).isEmpty

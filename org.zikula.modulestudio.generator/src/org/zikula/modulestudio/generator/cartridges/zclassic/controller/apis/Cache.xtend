@@ -19,9 +19,12 @@ class Cache {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
+        println('Generating cache api')
         val apiPath = getAppSourceLibPath + 'Api/'
-        fsa.generateFile(apiPath + 'Base/Cache.php', cacheApiBaseFile)
-        fsa.generateFile(apiPath + 'Cache.php', cacheApiFile)
+        val apiClassSuffix = if (!targets('1.3.5')) 'Api' else ''
+        val apiFileName = 'Cache' + apiClassSuffix + '.php'
+        fsa.generateFile(apiPath + 'Base/' + apiFileName, cacheApiBaseFile)
+        fsa.generateFile(apiPath + apiFileName, cacheApiFile)
     }
 
     def private cacheApiBaseFile(Application it) '''
@@ -35,10 +38,18 @@ class Cache {
     '''
 
     def private cacheApiBaseClass(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Api\Base;
+
+        «ENDIF»
 		/**
 		 * Cache api base class.
 		 */
-		class «appName»_Api_Base_Cache extends Zikula_AbstractApi
+        «IF targets('1.3.5')»
+        class «appName»_Api_Base_Cache extends Zikula_AbstractApi
+        «ELSE»
+        class CacheApi extends \Zikula_AbstractApi
+        «ENDIF»
 		{
 		    «cacheApiBaseImpl»
 		}
@@ -51,7 +62,7 @@ class Cache {
          * @param $args['ot']   the treated object type
          * @param $args['item'] the actual object
          */
-        public function clearItemCache($args)
+        public function clearItemCache(array $args = array())
         {
             if (!isset($args['ot']) || !isset($args['item'])) {
                 return;
@@ -60,7 +71,7 @@ class Cache {
             $objectType = $args['ot'];
             $item = $args['item'];
 
-            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->serviceManager);
             $utilArgs = array('api' => 'cache', 'action' => 'clearItemCache');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 return;
@@ -90,8 +101,8 @@ class Cache {
             // Clear View_cache
             $cacheIds = array();
             «IF hasUserController»
-            «IF getMainUserController.hasActions('main')»
-                $cacheIds[] = 'main';
+            «IF getMainUserController.hasActions('index')»
+                $cacheIds[] = '«IF targets('1.3.5')»main«ELSE»index«ENDIF»';
             «ENDIF»
             «IF getMainUserController.hasActions('view')»
                 $cacheIds[] = 'view';
@@ -122,8 +133,8 @@ class Cache {
             $cacheIds = array();
             $cacheIds[] = 'homepage'; // for homepage (can be assigned in the Settings module)
             «IF hasUserController»
-            «IF getMainUserController.hasActions('main')»
-                $cacheIds[] = '«appName»/user/main'; // main function
+            «IF getMainUserController.hasActions('index')»
+                $cacheIds[] = '«appName»/user/«IF targets('1.3.5')»main«ELSE»index«ENDIF»'; // «IF targets('1.3.5')»main«ELSE»index«ENDIF» function
             «ENDIF»
             «IF getMainUserController.hasActions('view')»
                 $cacheIds[] = '«appName»/user/view/' . $objectType; // view function (list views)
@@ -139,7 +150,7 @@ class Cache {
             «ENDIF*/»
             «IF getMainUserController.hasActions('custom')»
                 «FOR customAction : getMainUserController.actions.filter(typeof(CustomAction))»
-                    $cacheIds[] = '«appName»/user/«customAction.name.formatForCode.toFirstLower»'; // «customAction.name.formatForCode» function
+                    $cacheIds[] = '«appName»/user/«customAction.name.formatForCode.toFirstLower»'; // «customAction.name.formatForDisplay» function
                 «ENDFOR»
             «ENDIF»
             «ENDIF»
@@ -149,10 +160,18 @@ class Cache {
     '''
 
     def private cacheApiImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Api;
+
+        «ENDIF»
         /**
          * Cache api implementation class.
          */
+        «IF targets('1.3.5')»
         class «appName»_Api_Cache extends «appName»_Api_Base_Cache
+        «ELSE»
+        class CacheApi extends Base\CacheApi
+        «ENDIF»
         {
             // feel free to extend the cache api here
         }

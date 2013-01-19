@@ -42,10 +42,18 @@ class UrlRouting {
     '''
 
     def private routerFacadeBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Base;
+
+        «ENDIF»
         /**
          * Url router facade base class
          */
+        «IF targets('1.3.5')»
         class «appName»_Base_RouterFacade
+        «ELSE»
+        class RouterFacade
+        «ENDIF»
         {
             /**
              * @var Zikula_Routing_UrlRouter The router which is used internally
@@ -273,10 +281,18 @@ class UrlRouting {
     '''
 
     def private routerFacadeImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»;
+
+        «ENDIF»
         /**
          * Url router facade implementation class.
          */
+        «IF targets('1.3.5')»
         class «appName»_RouterFacade extends «appName»_Base_RouterFacade
+        «ELSE»
+        class RouterFacade extends Base\RouterFacade
+        «ENDIF»
         {
             // here you can customise the data which is provided to the url router.
         }

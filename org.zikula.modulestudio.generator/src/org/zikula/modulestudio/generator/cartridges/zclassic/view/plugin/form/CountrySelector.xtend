@@ -38,11 +38,19 @@ class CountrySelector {
     '''
 
     def private formCountrySelectorBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Form\Plugin\Base;
+
+        «ENDIF»
         /**
          * This plugin creates a country dropdown list.
          * It understands an optional argument to limit the select options to a given set of allowed countries.
          */
+        «IF targets('1.3.5')»
         class «appName»_Form_Plugin_Base_CountrySelector extends Zikula_Form_Plugin_DropdownList
+        «ELSE»
+        class CountrySelector extends \Zikula_Form_Plugin_DropdownList
+        «ENDIF»
         {
             /**
              * Optional filter for displaying only certain countries in the list.
@@ -99,11 +107,19 @@ class CountrySelector {
     '''
 
     def private formCountrySelectorImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Form\Plugin;
+
+        «ENDIF»
         /**
          * This plugin creates a country dropdown list.
          * It understands an optional argument to limit the select options to a given set of allowed countries.
          */
+        «IF targets('1.3.5')»
         class «appName»_Form_Plugin_CountrySelector extends «appName»_Form_Plugin_Base_CountrySelector
+        «ELSE»
+        class CountrySelector extends Base\CountrySelector
+        «ENDIF»
         {
             // feel free to add your customisation here
         }

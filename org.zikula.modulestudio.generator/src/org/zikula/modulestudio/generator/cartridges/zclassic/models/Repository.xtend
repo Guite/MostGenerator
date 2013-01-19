@@ -63,10 +63,12 @@ class Repository {
      */
     def private generate(Entity it) {
         println('Generating repository classes for entity "' + name.formatForDisplay + '"')
+        val repositoryPath = app.getAppSourceLibPath + 'Entity/Repository/'
+        val repositoryFileName = name.formatForCodeCapital + '.php'
         if (!isInheriting) {
-            fsa.generateFile(app.getAppSourcePath + baseClassModel('repository', '').asFile, modelRepositoryBaseFile)
+            fsa.generateFile(repositoryPath + 'Base/' + repositoryFileName, modelRepositoryBaseFile)
         }
-        fsa.generateFile(app.getAppSourcePath + implClassModel('repository', '').asFile, modelRepositoryFile)
+        fsa.generateFile(repositoryPath + repositoryFileName, modelRepositoryFile)
     }
 
     def private modelRepositoryBaseFile(Entity it) '''
@@ -80,6 +82,10 @@ class Repository {
     '''
 
     def private modelRepositoryBaseImpl(Entity it) '''
+        «IF !app.targets('1.3.5')»
+            namespace «app.appName»\Entity\Repository\Base;
+
+        «ENDIF»
         «IF tree != EntityTreeType::NONE»
             use Gedmo\Tree\Entity\Repository\«tree.asConstant.toFirstUpper»TreeRepository;
         «ELSE»
@@ -98,7 +104,11 @@ class Repository {
          *
          * This is the base repository class for «name.formatForDisplay» entities.
          */
-        class «baseClassModel('repository', '')» extends «IF tree != EntityTreeType::NONE»«tree.asConstant.toFirstUpper»TreeRepository«ELSE»EntityRepository«ENDIF»
+        «IF app.targets('1.3.5')»
+        class «app.appName»_Entity_Repository_Base_«name.formatForCodeCapital» extends «IF tree != EntityTreeType::NONE»«tree.asConstant.toFirstUpper»TreeRepository«ELSE»EntityRepository«ENDIF»
+        «ELSE»
+        class «name.formatForCodeCapital» extends \«IF tree != EntityTreeType::NONE»«tree.asConstant.toFirstUpper»TreeRepository«ELSE»EntityRepository«ENDIF»
+        «ENDIF»
         {
             /**
              * @var string The default sorting field/expression.
@@ -247,13 +257,13 @@ class Repository {
 
             if ($context == 'controllerAction') {
                 if (!isset($args['action'])) {
-                    $args['action'] = FormUtil::getPassedValue('func', 'main', 'GETPOST');
+                    $args['action'] = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST');
                 }
-                if (in_array($args['action'], array('main', 'view'))) {
+                if (in_array($args['action'], array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view'))) {
                     $templateParameters = $this->getViewQuickNavParameters($context, $args);
                     «IF hasListFieldsEntity»
                         $serviceManager = ServiceUtil::getManager();
-                        $listHelper = new «container.application.appName»_Util_ListEntries($serviceManager);
+                        $listHelper = new «container.application.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»ListEntries($serviceManager);
                         «FOR field : getListFieldsEntity»
                             «var fieldName = field.name.formatForCode»
                             $templateParameters['«fieldName»Items'] = $listHelper->getEntries('«name.formatForCode»', '«fieldName»');
@@ -272,7 +282,7 @@ class Repository {
                 }
 
                 // initialise Imagine preset manager instances
-                $imageHelper = new «container.application.appName»_Util_Image(ServiceUtil::getManager());
+                $imageHelper = new «container.application.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Image(ServiceUtil::getManager());
                 «IF hasUploadFieldsEntity»
 
                     $objectType = '«name.formatForCode»';
@@ -373,7 +383,7 @@ class Repository {
         public function truncateTable()
         {
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->delete('«implClassModelEntity»', 'tbl');
+            $qb->delete('«entityClassName('', false)»', 'tbl');
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -399,7 +409,7 @@ class Repository {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->delete('«implClassModelEntity»', 'tbl')
+            $qb->delete('«entityClassName('', false)»', 'tbl')
                ->where('tbl.createdUserId = :creator')
                ->setParameter('creator', DataUtil::formatForStore($userId));
             $query = $qb->getQuery();
@@ -424,7 +434,7 @@ class Repository {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->delete('«implClassModelEntity»', 'tbl')
+            $qb->delete('«entityClassName('', false)»', 'tbl')
                ->where('tbl.updatedUserId = :editor')
                ->setParameter('editor', DataUtil::formatForStore($userId));
             $query = $qb->getQuery();
@@ -451,7 +461,7 @@ class Repository {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->update('«implClassModelEntity»', 'tbl')
+            $qb->update('«entityClassName('', false)»', 'tbl')
                ->set('tbl.createdUserId', $newUserId)
                ->where('tbl.createdUserId = :creator')
                ->setParameter('creator', DataUtil::formatForStore($userId));
@@ -479,7 +489,7 @@ class Repository {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->update('«implClassModelEntity»', 'tbl')
+            $qb->update('«entityClassName('', false)»', 'tbl')
                ->set('tbl.updatedUserId', $newUserId)
                ->where('tbl.updatedUserId = :editor')
                ->setParameter('editor', DataUtil::formatForStore($userId));
@@ -516,7 +526,7 @@ class Repository {
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->update('«implClassModelEntity»', 'tbl')
+            $qb->update('«entityClassName('', false)»', 'tbl')
                ->set('tbl.' . $userFieldName, $newUserId)
                ->where('tbl.' . $userFieldName . ' = :user')
                ->setParameter('user', DataUtil::formatForStore($userId));
@@ -559,7 +569,7 @@ class Repository {
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
          * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false).
          *
-         * @return array|«implClassModelEntity» retrieved data array or «implClassModelEntity» instance
+         * @return array|«entityClassName('', false)» retrieved data array or «entityClassName('', false)» instance
          */
         public function selectById($id = 0, $useJoins = true, $slimMode = false)
         {
@@ -588,7 +598,7 @@ class Repository {
          * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false).
          * @param integer $excludeId Optional id to be excluded (used for unique validation).
          *
-         * @return «implClassModelEntity» retrieved instance of «implClassModelEntity»
+         * @return «entityClassName('', false)» retrieved instance of «entityClassName('', false)»
          */
         public function selectBySlug($slugTitle = '', $useJoins = true, $slimMode = false, $excludeId = 0)
         {
@@ -648,7 +658,7 @@ class Repository {
          * @param boolean $useJoins Whether to include joining related objects (optional) (default=true).
          * @param boolean $slimMode If activated only some basic fields are selected without using any joins (optional) (default=false).
          *
-         * @return ArrayCollection collection containing retrieved «implClassModelEntity» instances
+         * @return ArrayCollection collection containing retrieved «entityClassName('', false)» instances
          */
         public function selectWhere($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
         {
@@ -721,7 +731,7 @@ class Repository {
          */
         protected function addCommonViewFilters(Doctrine\ORM\QueryBuilder $qb)
         {
-            $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST');
+            $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST');
             if ($currentFunc != 'view' && $currentFunc != 'finder') {
                 return $qb;
             }
@@ -906,7 +916,7 @@ class Repository {
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->select($selection)
-               ->from('«implClassModelEntity»', 'tbl');
+               ->from('«entityClassName('', false)»', 'tbl');
 
             if ($useJoins === true) {
                 $this->addJoinsToFrom($qb);
@@ -1003,7 +1013,7 @@ class Repository {
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->select($selection)
-               ->from('«implClassModelEntity»', 'tbl');
+               ->from('«entityClassName('', false)»', 'tbl');
 
             if ($useJoins === true) {
                 $this->addJoinsToFrom($qb);
@@ -1238,15 +1248,20 @@ class Repository {
 
             $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
             $action = 'archive';
-            $workflowHelper = new «app.appName»_Util_Workflow(ServiceUtil::getManager());
+            $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Workflow(ServiceUtil::getManager());
 
             foreach ($affectedEntities as $entity) {
                 $hookAreaPrefix = $entity->getHookAreaPrefix();
 
                 // Let any hooks perform additional validation actions
                 $hookType = 'validate_edit';
+                «IF app.targets('1.3.5')»
                 $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
                 $validators = $this->notifyHooks($hook)->getValidators();
+                «ELSE»
+                $hook = new Zikula\Core\Hook\ValidationHook(new Zikula\Core\Hook\ValidationProviders());
+                $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
+                «ENDIF»
                 if ($validators->hasErrors()) {
                     continue;
                 }
@@ -1271,8 +1286,13 @@ class Repository {
                     $urlArgs['slug'] = $this->entityRef['slug'];
                 }
                 $url = new Zikula_ModUrl($this->name, $currentType, 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                «IF app.targets('1.3.5')»
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
                 $this->notifyHooks($hook);
+                «ELSE»
+                $hook = new \Zikula\Core\Hook\ProcessHook($entity->createCompositeIdentifier(), $url);
+                $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
+                «ENDIF»
 
                 // An item was updated, so we clear all cached pages for this item.
                 $cacheArgs = array('ot' => $entity['_objectType'], 'item' => $entity);
@@ -1285,12 +1305,20 @@ class Repository {
 
 
     def private modelRepositoryImpl(Entity it) '''
+        «IF !app.targets('1.3.5')»
+            namespace «app.appName»\Entity\Repository;
+
+        «ENDIF»
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.
          *
          * This is the concrete repository class for «name.formatForDisplay» entities.
          */
-        class «implClassModel('repository', '')» extends «IF isInheriting»«parentType.implClassModel('repository', '')»«ELSE»«baseClassModel('repository', '')»«ENDIF»
+        «IF app.targets('1.3.5')»
+        class «app.appName»_Entity_Repository_«name.formatForCodeCapital» extends «IF isInheriting»«app.appName»_Entity_Repository_«parentType.name.formatForCodeCapital»«app.appName»_Entity_Repository_Base_«name.formatForCodeCapital»«ENDIF»
+        «ELSE»
+        class «name.formatForCodeCapital» extends «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\«name.formatForCodeCapital»«ENDIF»
+        «ENDIF»
         {
             // feel free to add your own methods here, like for example reusable DQL queries
         }

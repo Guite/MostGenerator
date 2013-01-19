@@ -32,10 +32,18 @@ class AbstractObjectSelector {
     '''
 
     def private selectorBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Form\Plugin\Base;
+
+        «ENDIF»
         /**
          * Abstract object selector plugin base class.
          */
+        «IF targets('1.3.5')»
         abstract class «appName»_Form_Plugin_Base_AbstractObjectSelector extends Zikula_Form_Plugin_DropdownList
+        «ELSE»
+        class AbstractObjectSelector extends \Zikula_Form_Plugin_DropdownList
+        «ENDIF»
         {
             «memberVars»
 
@@ -511,6 +519,10 @@ class AbstractObjectSelector {
     '''
 
     def private selectorImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Form\Plugin;
+
+        «ENDIF»
         /**
          * Abstract object selector plugin implementation class.
          */

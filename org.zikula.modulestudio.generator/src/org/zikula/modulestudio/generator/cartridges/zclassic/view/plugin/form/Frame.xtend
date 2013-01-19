@@ -35,10 +35,18 @@ class Frame {
     '''
 
     def private formFrameImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Form\Plugin;
+
+        «ENDIF»
         /**
          * Wrapper class for styling <div> elements and a validation summary.
          */
+        «IF targets('1.3.5')»
         class «appName»_Form_Plugin_FormFrame extends Zikula_Form_AbstractPlugin
+        «ELSE»
+        class FormFrame extends \Zikula_Form_AbstractPlugin
+        «ENDIF»
         {
             /**
              * Whether a tabbed panel should be used or not.

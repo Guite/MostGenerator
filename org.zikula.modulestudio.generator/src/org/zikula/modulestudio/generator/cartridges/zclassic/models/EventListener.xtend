@@ -63,7 +63,7 @@ class EventListener {
          *     - no access to entity manager or unit of work apis
          *     - no access to associations (not initialised yet)
          *
-         * @see «implClassModelEntity»::postLoadCallback()
+         * @see «entityClassName('', false)»::postLoadCallback()
          * @return boolean true if completed successfully else false.
          */
         protected function performPostLoadCallback()
@@ -85,7 +85,7 @@ class EventListener {
          *       if this method is called by cascade persist
          *     - no creation of other entities allowed
          *
-         * @see «implClassModelEntity»::prePersistCallback()
+         * @see «entityClassName('', false)»::prePersistCallback()
          * @return boolean true if completed successfully else false.
          */
         protected function performPrePersistCallback()
@@ -104,7 +104,7 @@ class EventListener {
          * Restrictions:
          *     - no access to entity manager or unit of work apis
          *
-         * @see «implClassModelEntity»::postPersistCallback()
+         * @see «entityClassName('', false)»::postPersistCallback()
          * @return boolean true if completed successfully else false.
          */
         protected function performPostPersistCallback()
@@ -121,7 +121,7 @@ class EventListener {
          *     - no access to entity manager or unit of work apis
          *     - will not be called for a DQL DELETE statement
          *
-         * @see «implClassModelEntity»::preRemoveCallback()
+         * @see «entityClassName('', false)»::preRemoveCallback()
          * @return boolean true if completed successfully else false.
          */
         protected function performPreRemoveCallback()
@@ -146,7 +146,7 @@ class EventListener {
          *     - no access to entity manager or unit of work apis
          *     - will not be called for a DQL DELETE statement
          *
-         * @see «implClassModelEntity»::postRemoveCallback()
+         * @see «entityClassName('', false)»::postRemoveCallback()
          * @return boolean true if completed successfully else false.
          */
         protected function performPostRemoveCallback()
@@ -163,7 +163,7 @@ class EventListener {
                     $objectId = $this['«it.primaryKeyFields.head.name.formatForCode»'];
                 «ENDIF»
                 // initialise the upload handler
-                $uploadManager = new «container.application.appName»_UploadHandler();
+                $uploadManager = new «container.application.appName»«IF container.application.targets('1.3.5')»_«ELSE»\«ENDIF»UploadHandler();
 
                 $uploadFields = array(«FOR uploadField : getUploadFieldsEntity SEPARATOR ', '»'«uploadField.name.formatForCode»'«ENDFOR»);
                 foreach ($uploadFields as $uploadField) {
@@ -190,7 +190,7 @@ class EventListener {
          *     - changes on properties won't be recognized by flush as well
          *     - no creation of other entities allowed
          *
-         * @see «implClassModelEntity»::preUpdateCallback()
+         * @see «entityClassName('', false)»::preUpdateCallback()
          * @return boolean true if completed successfully else false.
          */
         protected function performPreUpdateCallback()
@@ -208,7 +208,7 @@ class EventListener {
          *     - no access to entity manager or unit of work apis
          *     - will not be called for a DQL UPDATE statement
          *
-         * @see «implClassModelEntity»::postUpdateCallback()
+         * @see «entityClassName('', false)»::postUpdateCallback()
          * @return boolean true if completed successfully else false.
          */
         protected function performPostUpdateCallback()
@@ -222,7 +222,7 @@ class EventListener {
          * This combines the PrePersist and PreUpdate events.
          * For more information see corresponding callback handlers.
          *
-         * @see «implClassModelEntity»::preSaveCallback()
+         * @see «entityClassName('', false)»::preSaveCallback()
          * @return boolean true if completed successfully else false.
          */
         protected function performPreSaveCallback()
@@ -237,7 +237,7 @@ class EventListener {
          * This combines the PostPersist and PostUpdate events.
          * For more information see corresponding callback handlers.
          *
-         * @see «implClassModelEntity»::postSaveCallback()
+         * @see «entityClassName('', false)»::postSaveCallback()
          * @return boolean true if completed successfully else false.
          */
         protected function performPostSaveCallback()
@@ -255,7 +255,7 @@ class EventListener {
          * Post-Process the data after the entity has been constructed by the entity manager.
          *
          * @ORM\PostLoad
-         * @see «baseClassModelEntity»::performPostLoadCallback()
+         * @see «entityClassName('', false)»::performPostLoadCallback()
          * @return void.
          */
         public function postLoadCallback()
@@ -267,7 +267,7 @@ class EventListener {
          * Pre-Process the data prior to an insert operation.
          *
          * @ORM\PrePersist
-         * @see «baseClassModelEntity»::performPrePersistCallback()
+         * @see «entityClassName('', false)»::performPrePersistCallback()
          * @return void.
          */
         public function prePersistCallback()
@@ -279,7 +279,7 @@ class EventListener {
          * Post-Process the data after an insert operation.
          *
          * @ORM\PostPersist
-         * @see «baseClassModelEntity»::performPostPersistCallback()
+         * @see «entityClassName('', false)»::performPostPersistCallback()
          * @return void.
          */
         public function postPersistCallback()
@@ -291,7 +291,7 @@ class EventListener {
          * Pre-Process the data prior a delete operation.
          *
          * @ORM\PreRemove
-         * @see «baseClassModelEntity»::performPreRemoveCallback()
+         * @see «entityClassName('', false)»::performPreRemoveCallback()
          * @return void.
          */
         public function preRemoveCallback()
@@ -303,7 +303,7 @@ class EventListener {
          * Post-Process the data after a delete.
          *
          * @ORM\PostRemove
-         * @see «baseClassModelEntity»::performPostRemoveCallback()
+         * @see «entityClassName('', false)»::performPostRemoveCallback()
          * @return void
          */
         public function postRemoveCallback()
@@ -315,7 +315,7 @@ class EventListener {
          * Pre-Process the data prior to an update operation.
          *
          * @ORM\PreUpdate
-         * @see «baseClassModelEntity»::performPreUpdateCallback()
+         * @see «entityClassName('', false)»::performPreUpdateCallback()
          * @return void.
          */
         public function preUpdateCallback()
@@ -327,7 +327,7 @@ class EventListener {
          * Post-Process the data after an update operation.
          *
          * @ORM\PostUpdate
-         * @see «baseClassModelEntity»::performPostUpdateCallback()
+         * @see «entityClassName('', false)»::performPostUpdateCallback()
          * @return void.
          */
         public function postUpdateCallback()
@@ -340,7 +340,7 @@ class EventListener {
          *
          * @ORM\PrePersist
          * @ORM\PreUpdate
-         * @see «baseClassModelEntity»::performPreSaveCallback()
+         * @see «entityClassName('', false)»::performPreSaveCallback()
          * @return void.
          */
         public function preSaveCallback()
@@ -353,7 +353,7 @@ class EventListener {
          *
          * @ORM\PostPersist
          * @ORM\PostUpdate
-         * @see «baseClassModelEntity»::performPostSaveCallback()
+         * @see «entityClassName('', false)»::performPostSaveCallback()
          * @return void.
          */
         public function postSaveCallback()
@@ -365,13 +365,14 @@ class EventListener {
 
 
     def private postLoadImpl(Entity it/* PostLoad it */) '''
-        $currentFunc = FormUtil::getPassedValue('func', 'main', 'GETPOST', FILTER_SANITIZE_STRING);
+        «val app = container.application»
+        $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
         «IF hasUploadFieldsEntity»
 
             // initialise the upload handler
-            $uploadManager = new «container.application.appName»_UploadHandler();
+            $uploadManager = new «app.appName»«IF app.targets('1.3.5')»_«ELSE»\«ENDIF»UploadHandler();
             $serviceManager = ServiceUtil::getManager();
-            $controllerHelper = new «container.application.appName»_Util_Controller($serviceManager);
+            $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($serviceManager);
         «ENDIF»
 
         «loadWorkflow»
@@ -380,6 +381,7 @@ class EventListener {
     '''
 
     def private loadWorkflow(Entity it) '''
+        «val app = container.application»
         // apply workflow with most important information
         $idColumn = '«primaryKeyFields.head.name.formatForCode»';
         $this['__WORKFLOW__'] = array(
@@ -389,10 +391,10 @@ class EventListener {
             'obj_id' => $this[$idColumn]);
 
         // load the real workflow only when required (e. g. when func is edit or delete)
-        if (!in_array($currentFunc, array('main', 'view', 'display'))) {
-            $result = Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«container.application.appName»');
+        if (!in_array($currentFunc, array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view', 'display'))) {
+            $result = Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«app.appName»');
             if (!$result) {
-                $dom = ZLanguage::getModuleDomain('«container.application.appName»');
+                $dom = ZLanguage::getModuleDomain('«app.appName»');
                 LogUtil::registerError(__('Error! Could not load the associated workflow.', $dom));
             }
         }

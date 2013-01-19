@@ -1,8 +1,11 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 
+import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class ModuleDispatch {
+    @Inject extension Utils = new Utils()
 
     def generate(Application it, Boolean isBase) '''
         /**
@@ -11,9 +14,9 @@ class ModuleDispatch {
          * Called after a module api or controller has been loaded.
          * Receives the args `array('modinfo' => $modinfo, 'type' => $type, 'force' => $force, 'api' => $api)`.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function postLoadGeneric(Zikula_Event $event)
+        public static function postLoadGeneric(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::postLoadGeneric($event);
@@ -26,9 +29,9 @@ class ModuleDispatch {
          * Occurs in `ModUtil::exec()` after function call with the following args:
          * `array('modname' => $modname, 'modfunc' => $modfunc, 'args' => $args, 'modinfo' => $modinfo, 'type' => $type, 'api' => $api)`.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function preExecute(Zikula_Event $event)
+        public static function preExecute(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::preExecute($event);
@@ -43,9 +46,9 @@ class ModuleDispatch {
          * Receives the modules output with `$event->getData();`.
          * Can modify this output with `$event->setData($data);`.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function postExecute(Zikula_Event $event)
+        public static function postExecute(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::postExecute($event);
@@ -59,11 +62,11 @@ class ModuleDispatch {
          * In order to override a pre-existing controller/api method, use this event type to override the class name that is loaded.
          * This allows to override the methods using inheritance.
          * Receives no subject, args of `array('modname' => $modname, 'modinfo' => $modinfo, 'type' => $type, 'api' => $api)`
-         * and 'event data' of `$className`. This can be altered by setting `$event->setData()` followed by `$event->stop()`.
+         * and 'event data' of `$className`. This can be altered by setting `$event->setData()` followed by `$event->stop«IF !targets('1.3.5')»Propagation«ENDIF»()`.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function customClassname(Zikula_Event $event)
+        public static function customClassname(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::customClassName($event);

@@ -54,7 +54,7 @@ class Ajax {
         «IF !userFields.isEmpty»
             «FOR userField : userFields»
 
-                public function get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»Users()
+                public function get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»Users«IF !app.targets('1.3.5')»Action«ENDIF»()
                 {
                     return $this->getCommonUsersList();
                 }
@@ -63,16 +63,16 @@ class Ajax {
             /**
              * Retrieve a general purpose list of users.
              */ 
-            public function getCommonUsersList()
+            public function getCommonUsersList«IF !app.targets('1.3.5')»Action«ENDIF»()
             {
                 if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
                     return true;
                 }
 
                 $fragment = '';
-                if ($this->request->isPost() && $this->request->request->has('fragment')) {
+                if ($this->request->«IF app.targets('1.3.5')»isPost()«ELSE»isMethod('POST')«ENDIF» && $this->request->request->has('fragment')) {
                     $fragment = $this->request->request->get('fragment', '');
-                } elseif ($this->request->isGet() && $this->request->query->has('fragment')) {
+                } elseif ($this->request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $this->request->query->has('fragment')) {
                     $fragment = $this->request->query->get('fragment', '');
                 }
 
@@ -104,19 +104,19 @@ class Ajax {
          *
          * @return Zikula_Response_Ajax
          */
-        public function getItemListFinder($args)
+        public function getItemListFinder«IF !app.targets('1.3.5')»Action«ENDIF»(array $args = array())
         {
             if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
                 return true;
             }
 
             $objectType = '«app.getLeadingEntity.name.formatForCode»';
-            if ($this->request->isPost() && $this->request->request->has('ot')) {
+            if ($this->request->«IF app.targets('1.3.5')»isPost()«ELSE»isMethod('POST')«ENDIF» && $this->request->request->has('ot')) {
                 $objectType = $this->request->request->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
-            } elseif ($this->request->isGet() && $this->request->query->has('ot')) {
+            } elseif ($this->request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $this->request->query->has('ot')) {
                 $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             }
-            $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
+            $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->serviceManager);
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', array('controller' => '«formattedName»', 'action' => 'getItemListFinder')))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerAction', array('controller' => '«formattedName»', 'action' => 'getItemListFinder'));
             }
@@ -173,7 +173,7 @@ class Ajax {
         {
             $view = Zikula_View::getInstance('«app.appName»', false);
             $view->assign($objectType, $item);
-            $previewInfo = base64_encode($view->fetch('external/' . $objectType . '/info.tpl'));
+            $previewInfo = base64_encode($view->fetch(«IF app.targets('1.3.5')»'external/' . $objectType«ELSE»'External/' . ucwords($objectType)«ENDIF» . '/info.tpl'));
 
             $title = ($titleField != '') ? $item[$titleField] : '';
             $description = ($descriptionField != '') ? $item[$descriptionField] : '';
@@ -195,19 +195,19 @@ class Ajax {
          *
          * @return Zikula_Response_Ajax_Plain
          */
-        public function getItemListAutoCompletion()
+        public function getItemListAutoCompletion«IF !app.targets('1.3.5')»Action«ENDIF»()
         {
             if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
                 return true;
             }
 
             $objectType = '«app.getLeadingEntity.name.formatForCode»';
-            if ($this->request->isPost() && $this->request->request->has('ot')) {
+            if ($this->request->«IF app.targets('1.3.5')»isPost()«ELSE»isMethod('POST')«ENDIF» && $this->request->request->has('ot')) {
                 $objectType = $this->request->request->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
-            } elseif ($this->request->isGet() && $this->request->query->has('ot')) {
+            } elseif ($this->request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $this->request->query->has('ot')) {
                 $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             }
-            $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
+            $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->serviceManager);
             $utilArgs = array('controller' => '«formattedName»', 'action' => 'getItemListAutoCompletion');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
@@ -218,10 +218,10 @@ class Ajax {
 
             $fragment = '';
             $exclude = '';
-            if ($this->request->isPost() && $this->request->request->has('fragment')) {
+            if ($this->request->«IF app.targets('1.3.5')»isPost()«ELSE»isMethod('POST')«ENDIF» && $this->request->request->has('fragment')) {
                 $fragment = $this->request->request->get('fragment', '');
                 $exclude = $this->request->request->get('exclude', '');
-            } elseif ($this->request->isGet() && $this->request->query->has('fragment')) {
+            } elseif ($this->request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $this->request->query->has('fragment')) {
                 $fragment = $this->request->query->get('fragment', '');
                 $exclude = $this->request->query->get('exclude', '');
             }
@@ -245,7 +245,7 @@ class Ajax {
                 $previewFieldName = $repository->getPreviewFieldName();
                 «IF app.hasImageFields»
                     if (!empty($previewFieldName)) {
-                        $imageHelper = new «app.appName»_Util_Image($this->serviceManager);
+                        $imageHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Image($this->serviceManager);
                         $imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
                     }
                 «ENDIF»
@@ -276,6 +276,8 @@ class Ajax {
                 }
             }
             $out .= '</ul>';
+
+            // return response
             return new Zikula_Response_Ajax_Plain($out);
         }
     '''
@@ -292,13 +294,13 @@ class Ajax {
          *
          * @return Zikula_Response_Ajax
          */
-        public function checkForDuplicate()
+        public function checkForDuplicate«IF !app.targets('1.3.5')»Action«ENDIF»()
         {
             $this->checkAjaxToken();
             $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
 
             $objectType = $this->request->request->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
-            $controllerHelper = new «app.appName»_Util_Controller($this->serviceManager);
+            $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->serviceManager);
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', array('controller' => '«formattedName»', 'action' => 'checkForDuplicate')))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerAction', array('controller' => '«formattedName»', 'action' => 'checkForDuplicate'));
             }
@@ -376,7 +378,7 @@ class Ajax {
          *
          * @return Zikula_Response_Ajax
          */
-        public function toggleFlag()
+        public function toggleFlag«IF !app.targets('1.3.5')»Action«ENDIF»()
         {
             $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name. '::Ajax', '::', ACCESS_EDIT));
 
@@ -422,7 +424,7 @@ class Ajax {
          * @return Zikula_Response_Ajax
          * @throws Zikula_Exception_Ajax_Fatal
          */
-        public function handleTreeOperation()
+        public function handleTreeOperation«IF !app.targets('1.3.5')»Action«ENDIF»()
         {
             $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
 

@@ -42,13 +42,21 @@ class TreeSelector {
     '''
 
     def private treeSelectorBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Form\Plugin;
+
+        «ENDIF»
         /**
          * Tree selector.
          *
          * This plugin creates a nested tree selector using a dropdown list.
          * The selected value of the base dropdown list will be set to ID of the selected tree node.
          */
+        «IF targets('1.3.5')»
         class «appName»_Form_Plugin_Base_TreeSelector extends «appName»_Form_Plugin_AbstractObjectSelector
+        «ELSE»
+        class Base\TreeSelector extends AbstractObjectSelector
+        «ENDIF»
         {
             /**
              * Root node id (when using multiple roots).
@@ -185,13 +193,21 @@ class TreeSelector {
     '''
 
     def private treeSelectorImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Form\Plugin;
+
+        «ENDIF»
         /**
          * Tree selector.
          *
          * This plugin creates a nested tree selector using a dropdown list.
          * The selected value of the base dropdown list will be set to ID of the selected tree node.
          */
+        «IF targets('1.3.5')»
         class «appName»_Form_Plugin_TreeSelector extends «appName»_Form_Plugin_Base_TreeSelector
+        «ELSE»
+        class TreeSelector extends Base\TreeSelector
+        «ENDIF»
         {
             // feel free to add your customisation here
         }

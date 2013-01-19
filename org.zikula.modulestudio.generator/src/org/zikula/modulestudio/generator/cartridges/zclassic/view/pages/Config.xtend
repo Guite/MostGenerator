@@ -21,12 +21,13 @@ class Config {
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating config template')
-        fsa.generateFile(getAppSourcePath + 'templates/' + configController.formatForDB + '/config.tpl', configView)
+        val templatePath = getViewPath + (if (targets('1.3.5')) configController.formatForDB else configController.formatForDB.toFirstUpper) + '/'
+        fsa.generateFile(templatePath + 'config.tpl', configView)
     }
 
     def private configView(Application it) '''
         {* purpose of this template: module configuration *}
-        {include file='«configController.formatForDB»/header.tpl'}
+        {include file='«IF targets('1.3.5')»«configController.formatForDB»«ELSE»«configController.formatForDB.toFirstUpper»«ENDIF»/header.tpl'}
         <div class="«appName.toLowerCase»-config">
             {gt text='Settings' assign='templateTitle'}
             {pagesetvar name='title' value=$templateTitle}
@@ -65,7 +66,7 @@ class Config {
                 </div>
             «ENDIF»
         </div>
-        {include file='«configController.formatForDB»/footer.tpl'}
+        {include file='«IF targets('1.3.5')»«configController.formatForDB»«ELSE»«configController.formatForDB.toFirstUpper»«ENDIF»/footer.tpl'}
         «IF !getAllVariables.filter(e|e.documentation != null && e.documentation != '').isEmpty»
             <script type="text/javascript">
             /* <![CDATA[ */

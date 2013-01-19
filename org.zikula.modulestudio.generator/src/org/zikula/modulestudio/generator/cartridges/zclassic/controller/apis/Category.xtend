@@ -20,8 +20,10 @@ class Category {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating category api')
         val apiPath = getAppSourceLibPath + 'Api/'
-        fsa.generateFile(apiPath + 'Base/Category.php', categoryBaseFile)
-        fsa.generateFile(apiPath + 'Category.php', categoryFile)
+        val apiClassSuffix = if (!targets('1.3.5')) 'Api' else ''
+        val apiFileName = 'Category' + apiClassSuffix + '.php'
+        fsa.generateFile(apiPath + 'Base/' + apiFileName, categoryBaseFile)
+        fsa.generateFile(apiPath + apiFileName, categoryFile)
     }
 
     def private categoryBaseFile(Application it) '''
@@ -35,10 +37,18 @@ class Category {
     '''
 
     def private categoryBaseClass(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Api\Base;
+
+        «ENDIF»
         /**
          * Category api base class.
          */
-        class «appName»_«fillingApi»Base_Category extends Zikula_AbstractApi
+        «IF targets('1.3.5')»
+        class «appName»_Api_Base_Category extends Zikula_AbstractApi
+        «ELSE»
+        class CategoryApi extends \Zikula_AbstractApi
+        «ENDIF»
         {
             «categoryBaseImpl»
         }
@@ -54,7 +64,7 @@ class Category {
          *
          * @return mixed Category array on success, false on failure
          */
-        public function getMainCat($args)
+        public function getMainCat(array $args = array())
         {
             if (isset($args['registry'])) {
                 $args['registry'] = $this->getPrimaryProperty($args);
@@ -75,7 +85,7 @@ class Category {
          *
          * @return boolean true if multiple selection is allowed, else false
          */
-        public function hasMultipleSelection($args)
+        public function hasMultipleSelection(array $args = array())
         {
             if (isset($args['registry'])) {
                 // default to the primary registry
@@ -107,7 +117,7 @@ class Category {
          *
          * @return array The fetched data indexed by the registry id.
          */
-        public function retrieveCategoriesFromRequest($args)
+        public function retrieveCategoriesFromRequest(array $args = array())
         {
             $dataSource = $this->request->request;
             if (isset($args['source']) && $args['source'] == 'GET') {
@@ -146,7 +156,7 @@ class Category {
          *
          * @return array List of where clauses per registry / property.
          */
-        public function buildFilterClauses($args)
+        public function buildFilterClauses(array $args = array())
         {
             $properties = $this->getAllProperties($args);
             $catIds = $args['catids'];
@@ -170,7 +180,7 @@ class Category {
          *
          * @return array list of the registries (property name as key, id as value).
          */
-        public function getAllProperties($args)
+        public function getAllProperties(array $args = array())
         {
             $objectType = $this->determineObjectType($args, 'getAllProperties');
 
@@ -187,7 +197,7 @@ class Category {
          *
          * @return array list of the registries (registry id as key, main category id as value).
          */
-        public function getAllPropertiesWithMainCat($args)
+        public function getAllPropertiesWithMainCat(array $args = array())
         {
             $objectType = $this->determineObjectType($args, 'getAllPropertiesWithMainCat');
 
@@ -208,7 +218,7 @@ class Category {
          *
          * @return integer The main category id of desired tree.
          */
-        public function getMainCatForProperty($args)
+        public function getMainCatForProperty(array $args = array())
         {
             $objectType = $this->determineObjectType($args, 'getMainCatForProperty');
 
@@ -224,7 +234,7 @@ class Category {
          *
          * @return string name of the main registry.
          */
-        public function getPrimaryProperty($args)
+        public function getPrimaryProperty(array $args = array())
         {
             $objectType = $this->determineObjectType($args, 'getPrimaryProperty');
 
@@ -241,10 +251,10 @@ class Category {
          *
          * @return string name of the determined object type
          */
-        protected function determineObjectType($args, $methodName = '')
+        protected function determineObjectType(array $args = array(), $methodName = '')
         {
             $objectType = isset($args['ot']) ? $args['ot'] : '';
-            $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->serviceManager);
             $utilArgs = array('api' => 'category', 'action' => $methodName);
             if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('api', $utilArgs);
@@ -255,10 +265,18 @@ class Category {
     '''
 
     def private categoryImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Api;
+
+        «ENDIF»
         /**
          * Category api implementation class.
          */
-        class «appName»_«fillingApi»Category extends «appName»_«fillingApi»Base_Category
+        «IF targets('1.3.5')»
+        class «appName»_Api_Category extends «appName»_Api_Base_Category
+        «ELSE»
+        class CategoryApi extends Base\CategoryApi
+        «ENDIF»
         {
             // feel free to extend the category api at this place
         }

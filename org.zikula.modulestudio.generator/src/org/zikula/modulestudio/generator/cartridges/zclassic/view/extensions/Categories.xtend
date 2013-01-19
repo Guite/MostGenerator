@@ -6,13 +6,15 @@ import de.guite.modulestudio.metamodel.modulestudio.Controller
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Categories {
     @Inject extension ControllerExtensions = new ControllerExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
+    @Inject extension Utils = new Utils()
 
     def generate (Application it, Controller controller, IFileSystemAccess fsa) {
-        val templatePath = getAppSourcePath + 'templates/' + controller.formattedName + '/'
+        val templatePath = getViewPath + (if (targets('1.3.5')) controller.formattedName else controller.formattedName.toFirstUpper) + '/'
         if (controller.hasActions('view') || controller.hasActions('display'))
             fsa.generateFile(templatePath + 'include_categories_display.tpl', categoriesViewImpl(controller))
         if (controller.hasActions('edit'))

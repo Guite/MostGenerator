@@ -20,7 +20,7 @@ class InstallerView {
     @Inject extension Utils = new Utils()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        val templatePath = getAppSourcePath + 'templates/init/'
+        val templatePath = getViewPath + (if (targets('1.3.5')) 'init' else 'Init') + '/'
         fsa.generateFile(templatePath + 'interactive.tpl', tplInit)
         if (needsConfig)
             fsa.generateFile(templatePath + 'step2.tpl', tplInitStep2)
@@ -38,6 +38,7 @@ class InstallerView {
         <dl id="«name.formatForDB»featurelist">
             <dt>{gt text='«getLeadingEntity.name.formatForDisplayCapital» management.'}</dt>
             <dd>{gt text='Easy management of «getLeadingEntity.nameMultiple.formatForDisplay»«IF getAllEntities.size > 1» and «IF models.map(e|e.relations).size > 1»related«ELSE»other«ENDIF» artifacts«ENDIF».'}</dd>
+            <dd>{gt text='Included workflow support.'}</dd>
         «IF hasAttributableEntities || hasCategorisableEntities || !hasGeographical
          || hasLoggable || hasMetaDataEntities || hasSortable || hasStandardFieldEntities || hasTranslatable || hasTrees»
             <dt>{gt text='Behaviours and extensions'}</dt>
@@ -80,9 +81,7 @@ class InstallerView {
             <dd>{gt text='Entities, controllers, hooks, templates, plugins and more.'}</dd>
         </dl>
         <p>
-            <a href="{modurl modname='«appName»' type='init' func='interactiveinitstep«IF needsConfig»2«ELSE»3«ENDIF»'}" title="{gt text='Continue'}">
-                {gt text='Continue'}
-            </a>
+            <a href="{modurl modname='«appName»' type='init' func='interactiveinitstep«IF needsConfig»2«ELSE»3«ENDIF»'}" title="{gt text='Continue'}">{gt text='Continue'}</a>
         </p>
     '''
 
@@ -121,9 +120,7 @@ class InstallerView {
         <p>{gt text='Thank you for installing «appName».<br />Click on the bottom link to finish the installation.' html='1'}</p>
         <p>
             {insert name='csrftoken' assign='csrftoken'}
-            <a href="{modurl modname='Extensions' type='admin' func='initialise' csrftoken=$csrftoken activate=$activate}" title="{gt text='Continue'}">
-                {gt text='Continue'}
-            </a>
+            <a href="{modurl modname='Extensions' type='admin' func='initialise' csrftoken=$csrftoken activate=$activate}" title="{gt text='Continue'}">{gt text='Continue'}</a>
         </p>
     '''
 
@@ -137,14 +134,10 @@ class InstallerView {
         <p>{gt text='Thank you for using «appName».<br />This application is going to be removed now!' html='1'}</p>
         <p>
             {insert name='csrftoken' assign='csrftoken'}
-            <a href="{modurl modname='Extensions' type='admin' func='remove' csrftoken=$csrftoken}" title="{gt text='Uninstall «appName»'}">
-                {gt text='Uninstall «appName»'}
-            </a>
+            <a href="{modurl modname='Extensions' type='admin' func='remove' csrftoken=$csrftoken}" title="{gt text='Uninstall «appName»'}">{gt text='Uninstall «appName»'}</a>
         </p>
         <p>
-            <a href="{modurl modname='Extensions' type='admin' func='view'}" title="{gt text='Cancel uninstallation'}">
-                {gt text='Cancel'}
-            </a>
+            <a href="{modurl modname='Extensions' type='admin' func='view'}" title="{gt text='Cancel uninstallation'}">{gt text='Cancel'}</a>
         </p>
     '''
 }

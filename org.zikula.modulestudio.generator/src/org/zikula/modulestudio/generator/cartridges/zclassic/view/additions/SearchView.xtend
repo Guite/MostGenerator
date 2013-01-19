@@ -15,7 +15,7 @@ class SearchView {
     @Inject extension Utils = new Utils()
 
     def generate(Application it, IFileSystemAccess fsa) {
-    	val templatePath = getAppSourcePath + 'templates/search/'
+        val templatePath = getViewPath + (if (targets('1.3.5')) 'search' else 'Search') + '/'
         fsa.generateFile(templatePath + 'options.tpl', optionsTemplate)
     }
 

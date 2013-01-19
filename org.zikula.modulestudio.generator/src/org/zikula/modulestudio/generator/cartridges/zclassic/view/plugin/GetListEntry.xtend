@@ -41,7 +41,7 @@ class GetListEntry {
             }
 
             $serviceManager = ServiceUtil::getManager();
-            $helper = new «appName»_Util_ListEntries($serviceManager);
+            $helper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»ListEntries($serviceManager);
 
             return $helper->resolve($value, $objectType, $fieldName, $delimiter);
         }

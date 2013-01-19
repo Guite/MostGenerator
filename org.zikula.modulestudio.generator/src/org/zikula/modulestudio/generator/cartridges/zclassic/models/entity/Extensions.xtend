@@ -15,6 +15,7 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Extensions {
     @Inject extension FormattingExtensions = new FormattingExtensions()
@@ -22,6 +23,7 @@ class Extensions {
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
     @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
+    @Inject extension Utils = new Utils()
 
     FileHelper fh = new FileHelper()
 
@@ -34,15 +36,15 @@ class Extensions {
      */
     def classExtensions(Entity it) '''
         «IF loggable»
-         * @Gedmo\Loggable(logEntryClass="«implClassModel('', 'logEntry')»")
+         * @Gedmo\Loggable(logEntryClass="«entityClassName('logEntry', false)»")
         «ENDIF»
         «IF hasTranslatableFields»
-         * @Gedmo\TranslationEntity(class="«implClassModel('', 'translation')»")
+         * @Gedmo\TranslationEntity(class="«entityClassName('translation', false)»")
         «ENDIF»
         «IF tree != EntityTreeType::NONE»
          * @Gedmo\Tree(type="«tree.asConstant»")
             «IF tree == EntityTreeType::CLOSURE»
-             * @Gedmo\TreeClosure(class="«implClassModel('', 'closure')»")
+             * @Gedmo\TreeClosure(class="«entityClassName('closure', false)»")
             «ENDIF»
         «ENDIF»
     '''
@@ -161,48 +163,48 @@ class Extensions {
              * Bidirectional - Many children [«name.formatForDisplay»] are linked by one parent [«name.formatForDisplay»] (OWNING SIDE).
              *
              * @Gedmo\TreeParent
-             * @ORM\ManyToOne(targetEntity="«implClassModelEntity»", inversedBy="children")
+             * @ORM\ManyToOne(targetEntity="«entityClassName('', false)»", inversedBy="children")
              * @ORM\JoinColumn(name="parent_id", referencedColumnName="«getPrimaryKeyFields.head.name.formatForDisplay»", onDelete="SET NULL")
-             * @var «implClassModelEntity» $parent.
+             * @var «entityClassName('', false)» $parent.
              */
             protected $parent;
 
             /**
              * Bidirectional - One parent [«name.formatForDisplay»] has many children [«name.formatForDisplay»] (INVERSE SIDE).
              *
-             * @ORM\OneToMany(targetEntity="«implClassModelEntity»", mappedBy="parent")
+             * @ORM\OneToMany(targetEntity="«entityClassName('', false)»", mappedBy="parent")
              * @ORM\OrderBy({"lft" = "ASC"})
-             * @var «implClassModelEntity» $children.
+             * @var «entityClassName('', false)» $children.
              */
             protected $children;
         «ENDIF»
         «IF metaData»
 
             /**
-             * @ORM\OneToOne(targetEntity="«implClassModel('', 'metaData')»", 
+             * @ORM\OneToOne(targetEntity="«entityClassName('metaData', false)»", 
              *               mappedBy="entity", cascade={"all"},
              *               orphanRemoval=true)
-             * @var «implClassModel('', 'metaData')»
+             * @var «entityClassName('metaData', false)»
              */
             protected $metadata;
         «ENDIF»
         «IF attributable»
 
             /**
-             * @ORM\OneToMany(targetEntity="«implClassModel('', 'attribute')»", 
+             * @ORM\OneToMany(targetEntity="«entityClassName('attribute', false)»", 
              *                mappedBy="entity", cascade={"all"}, 
              *                orphanRemoval=true, indexBy="name")
-             * @var «implClassModel('', 'attribute')»
+             * @var «entityClassName('attribute', false)»
              */
             protected $attributes;
         «ENDIF»
         «IF categorisable»
 
             /**
-             * @ORM\OneToMany(targetEntity="«implClassModel('', 'category')»", 
+             * @ORM\OneToMany(targetEntity="«entityClassName('category', false)»", 
              *                mappedBy="entity", cascade={"all"}, 
              *                orphanRemoval=true, indexBy="categoryRegistryId")
-             * @var «implClassModel('', 'category')»
+             * @var «entityClassName('category', false)»
              */
             protected $categories;
         «ENDIF»
@@ -252,14 +254,14 @@ class Extensions {
             «fh.getterAndSetterMethods(it, 'lvl', 'integer', false, false, '', '')»
             «fh.getterAndSetterMethods(it, 'rgt', 'integer', false, false, '', '')»
             «fh.getterAndSetterMethods(it, 'root', 'integer', false, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'parent', implClassModelEntity, false, true, 'null', '')»
+            «fh.getterAndSetterMethods(it, 'parent', entityClassName('', false), false, true, 'null', '')»
             «fh.getterAndSetterMethods(it, 'children', 'array', true, false, '', '')»
         «ENDIF»
         «IF hasTranslatableFields»
             «fh.getterAndSetterMethods(it, 'locale', 'string', false, false, '', '')»
         «ENDIF»
         «IF metaData»
-            «fh.getterAndSetterMethods(it, 'metadata', implClassModel('', 'metaData'), false, true, 'null', '')»
+            «fh.getterAndSetterMethods(it, 'metadata', entityClassName('metaData', false), false, true, 'null', '')»
         «ENDIF»
         «IF attributable»
             «fh.getterMethod(it, 'attributes', 'array', true)»
@@ -280,7 +282,7 @@ class Extensions {
                             $this->attributes[$name]->setValue($value);
                         }
                     } else {
-                        $this->attributes[$name] = new «implClassModel('', 'attribute')»($name, $value, $this);
+                        $this->attributes[$name] = new «entityClassName('attribute', false)»($name, $value, $this);
                     }
                 }
         «ENDIF»
@@ -327,15 +329,20 @@ class Extensions {
      * Single extension class.
      */
     def private extensionClasses(Entity it, Application app, String classType, IFileSystemAccess fsa) {
+        val entityPath = app.getAppSourceLibPath + 'Entity/'
+        val entitySuffix = if (app.targets('1.3.5')) '' else 'Entity'
+        val entityFileName = name.formatForCodeCapital + classType.formatForCodeCapital + entitySuffix + '.php'
+        val repositoryPath = entityPath + 'Repository/'
+        val repositoryFileName = name.formatForCodeCapital + classType.formatForCodeCapital + '.php'
         if (!isInheriting) {
-            fsa.generateFile(app.getAppSourcePath + baseClassModel('', classType).asFile, extensionClassBaseFile(it, app, classType))
+            fsa.generateFile(entityPath + 'Base/' + entityFileName, extensionClassBaseFile(it, app, classType))
             if (classType != 'closure') {
-                fsa.generateFile(app.getAppSourcePath + baseClassModel('repository', classType).asFile, extensionClassRepositoryBaseFile(it, app, classType))
+                fsa.generateFile(repositoryPath + 'Base/' + repositoryFileName, extensionClassRepositoryBaseFile(it, app, classType))
             }
         }
-        fsa.generateFile(app.getAppSourcePath + implClassModel('', classType).asFile, extensionClassFile(it, app, classType))
+        fsa.generateFile(entityPath + entityFileName, extensionClassFile(it, app, classType))
         if (classType != 'closure') {
-            fsa.generateFile(app.getAppSourcePath + implClassModel('repository', classType).asFile, extensionClassRepositoryFile(it, app, classType))
+            fsa.generateFile(repositoryPath + repositoryFileName, extensionClassRepositoryFile(it, app, classType))
         }
     }
 
@@ -360,6 +367,10 @@ class Extensions {
     '''
 
     def private extensionClassBaseImpl(Entity it, Application app, String classType) '''
+        «IF !app.targets('1.3.5')»
+            namespace «app.appName»\Entity\Base;
+
+        «ENDIF»
         «IF classType == 'closure'»
             use Gedmo\Tree\Entity\AbstractClosure;
         «ELSEIF classType == 'translation'»
@@ -376,34 +387,34 @@ class Extensions {
          * This is the base «classType.formatForDisplay» class for «name.formatForDisplay» entities.
          */
         «IF classType == 'closure'»
-        class «baseClassModel('', classType)» extends AbstractClosure
+        class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»\«ENDIF»AbstractClosure
         «ELSEIF classType == 'translation'»
-        class «baseClassModel('', classType)» extends AbstractTranslation
+        class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»\«ENDIF»AbstractTranslation
         «ELSEIF classType == 'logEntry'»
-        class «baseClassModel('', classType)» extends AbstractLogEntry
+        class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»\«ENDIF»AbstractLogEntry
         «ELSEIF classType == 'metaData'»
-        class «baseClassModel('', classType)» extends Zikula_Doctrine2_Entity_EntityMetadata
+        class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»\«ENDIF»Zikula_Doctrine2_Entity_EntityMetadata
         «ELSEIF classType == 'attribute'»
-        class «baseClassModel('', classType)» extends Zikula_Doctrine2_Entity_EntityAttribute
+        class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»\«ENDIF»Zikula_Doctrine2_Entity_EntityAttribute
         «ELSEIF classType == 'category'»
-        class «baseClassModel('', classType)» extends Zikula_Doctrine2_Entity_EntityCategory
+        class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»\«ENDIF»Zikula_Doctrine2_Entity_EntityCategory
         «ENDIF»
         {
         «IF classType == 'metaData' || classType == 'attribute' || classType == 'category'»
             /**
-        «IF classType == 'metaData'»     * @ORM\OneToOne(targetEntity="«implClassModelEntity»", inversedBy="metadata")
-        «ELSEIF classType == 'attribute'»     * @ORM\ManyToOne(targetEntity="«implClassModelEntity»", inversedBy="attributes")
-        «ELSEIF classType == 'category'»     * @ORM\ManyToOne(targetEntity="«implClassModelEntity»", inversedBy="categories")
+        «IF classType == 'metaData'»     * @ORM\OneToOne(targetEntity="«entityClassName('', false)»", inversedBy="metadata")
+        «ELSEIF classType == 'attribute'»     * @ORM\ManyToOne(targetEntity="«entityClassName('', false)»", inversedBy="attributes")
+        «ELSEIF classType == 'category'»     * @ORM\ManyToOne(targetEntity="«entityClassName('', false)»", inversedBy="categories")
         «ENDIF»
              * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKeyFields.head.name.formatForCode»"«IF classType == 'metaData'», unique=true«ENDIF»)
-             * @var «implClassModelEntity»
+             * @var «entityClassName('', false)»
              */
             protected $entity;
 
             /**
              * Get reference to owning entity.
              *
-             * @return «implClassModelEntity»
+             * @return «entityClassName('', false)»
              */
             public function getEntity()
             {
@@ -413,9 +424,9 @@ class Extensions {
             /**
              * Set reference to owning entity.
              *
-             * @param «implClassModelEntity» $entity
+             * @param «entityClassName('', false)» $entity
              */
-            public function setEntity(/*«implClassModelEntity» */$entity)
+            public function setEntity(/*«entityClassName('', false)» */$entity)
             {
                 $this->entity = $entity;
             }
@@ -424,16 +435,26 @@ class Extensions {
     '''
 
     def private extensionClassImpl(Entity it, Application app, String classType) '''
+        «IF !app.targets('1.3.5')»
+            namespace «app.appName»\Entity;
+
+        «ENDIF»
         use Doctrine\ORM\Mapping as ORM;
 
         /**
          * «extensionClassDesc(classType)»
          *
          * This is the concrete «classType.formatForDisplay» class for «name.formatForDisplay» entities.
+        «var String repositoryClass»
+        «IF app.targets('1.3.5')»
+            «repositoryClass = app.appName + '_Entity_Repository_' + name.formatForCodeCapital + classType.formatForCodeCapital»
+        «ELSE»
+            «repositoryClass = app.appName + '\\Entity\\Repository\\' + name.formatForCodeCapital + classType.formatForCodeCapital»
+        «ENDIF»
         «IF classType == 'closure'»
         «ELSEIF classType == 'translation'»
              *
-             * @ORM\Entity(repositoryClass="«baseClassModel('repository', classType)»")
+             * @ORM\Entity(repositoryClass="«repositoryClass»")
              * @ORM\Table(name="«fullEntityTableName»_translation",
              *     indexes={
              *         @ORM\Index(name="translations_lookup_idx", columns={
@@ -448,7 +469,7 @@ class Extensions {
              * )
         «ELSEIF classType == 'logEntry'»
              *
-             * @ORM\Entity(repositoryClass="«baseClassModel('repository', classType)»")
+             * @ORM\Entity(repositoryClass="«repositoryClass»")
              * @ORM\Table(name="«fullEntityTableName»_log_entry",
              *     indexes={
              *         @ORM\Index(name="log_class_lookup_idx", columns={"object_class"}),
@@ -457,7 +478,7 @@ class Extensions {
              *     }
              * )
         «ELSEIF classType == 'metaData' || classType == 'attribute' || classType == 'category'»
-             * @ORM\Entity(repositoryClass="«baseClassModel('repository', classType)»")
+             * @ORM\Entity(repositoryClass="«repositoryClass»")
                 «IF classType == 'metaData'»
                  * @ORM\Table(name="«fullEntityTableName»_metadata")
                 «ELSEIF classType == 'attribute'»
@@ -475,7 +496,11 @@ class Extensions {
                 «ENDIF»
         «ENDIF»
          */
-        class «implClassModel('', classType)» extends «IF isInheriting»«parentType.implClassModel('', classType)»«ELSE»«baseClassModel('', classType)»«ENDIF»
+        «IF app.targets('1.3.5')»
+        class «entityClassName(classType, false)» extends «IF isInheriting»«parentType.entityClassName(classType, false)»«ELSE»«entityClassName(classType, true)»«ENDIF»
+        «ELSE»
+        class «name.formatForCodeCapital»«classType.formatForCodeCapital» extends «IF isInheriting»«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»«ELSE»Base\«name.formatForCodeCapital»«classType.formatForCodeCapital»«ENDIF»
+        «ENDIF»
         {
             // feel free to add your own methods here
         }
@@ -500,6 +525,10 @@ class Extensions {
 
 
     def private extensionClassRepositoryBaseImpl(Entity it, Application app, String classType) '''
+        «IF !app.targets('1.3.5')»
+            namespace «app.appName»\Entity\Repository\Base;
+
+        «ENDIF»
         «IF classType == 'translation'»
             use Gedmo\Translatable\Entity\Repository\TranslationRepository;
         «ELSEIF classType == 'logEntry'»
@@ -513,18 +542,30 @@ class Extensions {
          *
          * This is the base repository class for «name.formatForDisplay» «classType.formatForDisplay» entities.
          */
-        class «baseClassModel('repository', classType)» extends «IF classType == 'translation'»Translation«ELSEIF classType == 'logEntry'»LogEntry«ELSE»Entity«ENDIF»Repository
+        «IF app.targets('1.3.5')»
+        class «app.appName»_Entity_Repository_Base_«name.formatForCodeCapital»«classType.formatForCodeCapital» extends «IF classType == 'translation'»Translation«ELSEIF classType == 'logEntry'»LogEntry«ELSE»Entity«ENDIF»Repository
+        «ELSE»
+        class «name.formatForCodeCapital»«classType.formatForCodeCapital» extends \«IF classType == 'translation'»Translation«ELSEIF classType == 'logEntry'»LogEntry«ELSE»Entity«ENDIF»Repository
+        «ENDIF»
         {
         }
     '''
 
     def private extensionClassRepositoryImpl(Entity it, Application app, String classType) '''
+        «IF !app.targets('1.3.5')»
+            namespace «app.appName»\Entity\Repository;
+
+        «ENDIF»
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.
          *
          * This is the concrete repository class for «name.formatForDisplay» «classType.formatForDisplay» entities.
          */
-        class «implClassModel('repository', classType)» extends «IF isInheriting»«parentType.implClassModel('repository', classType)»«ELSE»«baseClassModel('repository', classType)»«ENDIF»
+        «IF app.targets('1.3.5')»
+        class «app.appName»_Entity_Repository_«name.formatForCodeCapital»«classType.formatForCodeCapital» extends «IF isInheriting»«app.appName»_Entity_Repository_«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»«ELSE»«app.appName»_Entity_Repository_Base_«name.formatForCodeCapital»«classType.formatForCodeCapital»«ENDIF»
+        «ELSE»
+        class «name.formatForCodeCapital»«classType.formatForCodeCapital» extends «IF isInheriting»«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»«ELSE»Base\«name.formatForCodeCapital»«classType.formatForCodeCapital»«ENDIF»
+        «ENDIF»
         {
             // feel free to add your own methods here
         }

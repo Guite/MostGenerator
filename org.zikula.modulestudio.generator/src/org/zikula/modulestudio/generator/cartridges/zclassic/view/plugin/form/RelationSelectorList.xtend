@@ -38,10 +38,18 @@ class RelationSelectorList {
     '''
 
     def private relationSelectorBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Form\Plugin;
+
+        «ENDIF»
         /**
          * Relation selector plugin base class.
          */
+        «IF targets('1.3.5')»
         class «appName»_Form_Plugin_Base_RelationSelectorList extends «appName»_Form_Plugin_AbstractObjectSelector
+        «ELSE»
+        class Base\RelationSelectorList extends AbstractObjectSelector
+        «ENDIF»
         {
             /**
              * Get filename of this file.
@@ -99,10 +107,18 @@ class RelationSelectorList {
     '''
 
     def private relationSelectorImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Form\Plugin;
+
+        «ENDIF»
         /**
          * Relation selector plugin implementation class.
          */
+        «IF targets('1.3.5')»
         class «appName»_Form_Plugin_RelationSelectorList extends «appName»_Form_Plugin_Base_RelationSelectorList
+        «ELSE»
+        class RelationSelectorList extends Base\RelationSelectorList
+        «ENDIF»
         {
             // feel free to add your customisation here
         }

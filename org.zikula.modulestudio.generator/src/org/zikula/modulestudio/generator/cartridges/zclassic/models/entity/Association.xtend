@@ -29,7 +29,7 @@ class Association {
     def generate(JoinRelationship it, Boolean useTarget) {
         val sourceName = getRelationAliasName(false).toFirstLower
         val targetName = getRelationAliasName(true).toFirstLower
-        val entityClass = (if (useTarget) target else source).implClassModelEntity
+        val entityClass = (if (useTarget) target else source).entityClassName('', false)
         directionSwitch(useTarget, sourceName, targetName, entityClass)
     }
 
@@ -287,7 +287,7 @@ class Association {
     '''
 
     def private relationAccessorImpl(JoinRelationship it, Boolean useTarget, String aliasName) '''
-        «val entityClass = { (if (useTarget) target else source).implClassModelEntity }»
+        «val entityClass = { (if (useTarget) target else source).entityClassName('', false) }»
         «val nameSingle = { (if (useTarget) target else source).name }»
         «val isMany = isManySide(useTarget)»
         «IF isMany»
@@ -320,9 +320,9 @@ class Association {
     def private dispatch relationAccessorAdditions(OneToManyRelationship it, Boolean useTarget, String aliasName, String singleName) '''
         «IF !useTarget && indexBy != null && indexBy != ''»
             /**
-             * Returns an instance of «source.implClassModelEntity» from the list of «getRelationAliasName(useTarget)» by its given «indexBy.formatForDisplay» index.
+             * Returns an instance of «source.entityClassName('', false)» from the list of «getRelationAliasName(useTarget)» by its given «indexBy.formatForDisplay» index.
              *
-             * @param «source.implClassModelEntity» $«indexBy.formatForCode».
+             * @param «source.entityClassName('', false)» $«indexBy.formatForCode».
              */
             public function get«singleName.formatForCodeCapital»($«indexBy.formatForCode»)
             {
@@ -382,7 +382,7 @@ class Association {
         «ELSEIF !useTarget && !source.getAggregateFields.isEmpty»
             «val sourceField = source.getAggregateFields.head»
             «val targetField = sourceField.getAggregateTargetField»
-            $«getRelationAliasName(true)» = new «target.implClassModelEntity»($this, $«targetField.name.formatForCode»);
+            $«getRelationAliasName(true)» = new «target.entityClassName('', false)»($this, $«targetField.name.formatForCode»);
             $this->«name»«IF selfIsMany»[]«ENDIF» = $«nameSingle»;
             $this->«sourceField.name.formatForCode» += $«targetField.name.formatForCode»;
             return $«getRelationAliasName(true)»;

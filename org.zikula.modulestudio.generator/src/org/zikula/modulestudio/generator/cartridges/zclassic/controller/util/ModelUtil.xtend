@@ -34,19 +34,35 @@ class ModelUtil {
     '''
 
     def private modelFunctionsBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Util\Base;
+
+        «ENDIF»
         /**
          * Utility base class for model helper methods.
          */
-        class «appName»_«fillingUtil»Base_Model extends Zikula_AbstractBase
+        «IF targets('1.3.5')»
+        class «appName»_Util_Base_Model extends Zikula_AbstractBase
+        «ELSE»
+        class Model extends \Zikula_AbstractBase
+        «ENDIF»
         {
         }
     '''
 
     def private modelFunctionsImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Util;
+
+        «ENDIF»
         /**
          * Utility implementation class for model helper methods.
          */
-        class «appName»_«fillingUtil»Model extends «appName»_«fillingUtil»Base_Model
+        «IF targets('1.3.5')»
+        class «appName»_Util_Model extends «appName»_Util_Base_Model
+        «ELSE»
+        class Model extends Base\Model
+        «ENDIF»
         {
             // feel free to add your own convenience methods here
         }

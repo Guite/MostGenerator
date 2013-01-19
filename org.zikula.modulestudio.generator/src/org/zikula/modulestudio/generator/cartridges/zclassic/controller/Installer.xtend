@@ -29,11 +29,17 @@ class Installer {
      * Entry point for application installer.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        fsa.generateFile(getAppSourceLibPath + 'Base/Installer.php', installerBaseFile)
-        fsa.generateFile(getAppSourceLibPath + 'Installer.php', installerFile)
+        val installerPrefix = if (!targets('1.3.5')) appName else ''
+        val installerFileName = installerPrefix + 'Installer.php'
+        fsa.generateFile(getAppSourceLibPath + 'Base/' + installerFileName, installerBaseFile)
+        fsa.generateFile(getAppSourceLibPath + installerFileName, installerFile)
+
         if (interactiveInstallation == true) {
-            fsa.generateFile(getAppSourceLibPath + 'Controller/Base/InteractiveInstaller.php', interactiveBaseFile)
-            fsa.generateFile(getAppSourceLibPath + 'Controller/InteractiveInstaller.php', interactiveFile)
+            val controllerPath = getAppSourceLibPath + 'Controller/'
+            val controllerClassSuffix = if (!targets('1.3.5')) 'Controller' else ''
+            val controllerFileName = 'InteractiveInstaller' + controllerClassSuffix + '.php'
+            fsa.generateFile(controllerPath + 'Base/' + controllerFileName, interactiveBaseFile)
+            fsa.generateFile(controllerPath + controllerFileName, interactiveFile)
             new InstallerView().generate(it, fsa)
         }
     }
@@ -49,10 +55,18 @@ class Installer {
     '''
 
     def private installerBaseClass(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Base;
+
+        «ENDIF»
         /**
          * Installer base class.
          */
+        «IF targets('1.3.5')»
         class «appName»_Base_Installer extends Zikula_AbstractInstaller
+        «ELSE»
+        class «appName»Installer extends \Zikula_AbstractInstaller
+        «ENDIF»
         {
             «installerBaseImpl»
         }
@@ -69,10 +83,18 @@ class Installer {
     '''
 
     def private interactiveBaseClass(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Controller\Base;
+
+        «ENDIF»
         /**
          * Interactive installer base class.
          */
+        «IF targets('1.3.5')»
         class «appName»_Controller_Base_InteractiveInstaller extends Zikula_Controller_AbstractInteractiveInstaller
+        «ELSE»
+        class InteractiveInstallerController extends \Zikula_Controller_AbstractInteractiveInstaller
+        «ENDIF»
         {
             «new Interactive().generate(it)»
         }
@@ -135,9 +157,15 @@ class Installer {
 
                 // add default entries to category registry (property named Main)
                 $rootcat = CategoryUtil::getCategoryByPath('/__SYSTEM__/Modules/Global');
-                include_once 'modules/«appName»/lib/«appName»/Api/Base/Category.php';
-                include_once 'modules/«appName»/lib/«appName»/Api/Category.php';
-                $categoryApi = new «appName»_Api_Category($this->serviceManager);
+                «IF targets('1.3.5')»
+                    include_once 'modules/«appName»/lib/«appName»/Api/Base/Category.php';
+                    include_once 'modules/«appName»/lib/«appName»/Api/Category.php';
+                    $categoryApi = new «appName»_Api_Category($this->serviceManager);
+                «ELSE»
+                    include_once 'modules/«appName»/Api/Base/Category.php';
+                    include_once 'modules/«appName»/Api/Category.php';
+                    $categoryApi = new «appName»_Api_Category($this->serviceManager);
+                «ENDIF»
 
                 «FOR entity : getCategorisableEntities»
                     $primaryRegistry = $categoryApi->getPrimaryProperty(array('ot' => '«entity.name.formatForCodeCapital»'));
@@ -164,7 +192,7 @@ class Installer {
         «IF hasUploads»
             // Check if upload directories exist and if needed create them
             try {
-                $controllerHelper = new «appName»_Util_Controller($this->serviceManager);
+                $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->serviceManager);
                 «FOR uploadEntity : getUploadEntities»
                 «FOR uploadField : uploadEntity.getUploadFieldsEntity»
                     $result = $controllerHelper->checkAndCreateUploadFolder('«uploadField.entity.name.formatForCode»', '«uploadField.name.formatForCode»', '«uploadField.allowedExtensions»');
@@ -285,24 +313,24 @@ class Installer {
         {
             $classNames = array();
             «FOR entity : getAllEntities»
-                $classNames[] = '«entity.implClassModelEntity»';
+                $classNames[] = '«entity.entityClassName('', false)»';
                 «IF entity.loggable»
-                    $classNames[] = '«entity.implClassModel('', 'logEntry')»';
+                    $classNames[] = '«entity.entityClassName('logEntry', false)»';
                 «ENDIF»
                 «IF entity.tree == EntityTreeType::CLOSURE»
-                    $classNames[] = '«entity.implClassModel('', 'closure')»';
+                    $classNames[] = '«entity.entityClassName('closure', false)»';
                 «ENDIF»
                 «IF entity.hasTranslatableFields»
-                    $classNames[] = '«entity.implClassModel('', 'translation')»';
+                    $classNames[] = '«entity.entityClassName('translation', false)»';
                 «ENDIF»
                 «IF entity.metaData»
-                    $classNames[] = '«entity.implClassModel('', 'metaData')»';
+                    $classNames[] = '«entity.entityClassName('metaData', false)»';
                 «ENDIF»
                 «IF entity.attributable»
-                    $classNames[] = '«entity.implClassModel('', 'attribute')»';
+                    $classNames[] = '«entity.entityClassName('attribute', false)»';
                 «ENDIF»
                 «IF entity.categorisable»
-                    $classNames[] = '«entity.implClassModel('', 'category')»';
+                    $classNames[] = '«entity.entityClassName('category', false)»';
                 «ENDIF»
             «ENDFOR»
 
@@ -311,20 +339,36 @@ class Installer {
     '''
 
     def private installerImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»;
+
+        «ENDIF»
         /**
          * Installer implementation class.
          */
+        «IF targets('1.3.5')»
         class «appName»_Installer extends «appName»_Base_Installer
+        «ELSE»
+        class «appName»Installer extends Base\«appName»Installer
+        «ENDIF»
         {
             // feel free to extend the installer here
         }
     '''
 
     def private interactiveImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Controller;
+
+        «ENDIF»
         /**
          * Interactive installer implementation class.
          */
+        «IF targets('1.3.5')»
         class «appName»_Controller_InteractiveInstaller extends «appName»_Controller_Base_InteractiveInstaller
+        «ELSE»
+        class InteractiveInstaller extends Base\InteractiveInstaller
+        «ENDIF»
         {
             // feel free to extend the installer here
         }

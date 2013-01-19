@@ -48,7 +48,7 @@ class Relations {
             «ENDIF»
             «IF controller.hasActions('display')»
                 {if !$nolink}
-                    <a href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)»}" title="{$item.«leadingField.displayLeadingField»|replace:"\"":""}">
+                    <a href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)»}" title="{$item.«leadingField.displayLeadingField»|replace:"\"":""}">{strip}
                 {/if}
             «ENDIF»
             «val leadingField = getLeadingField»
@@ -59,10 +59,8 @@ class Relations {
             «ENDIF»
             «IF controller.hasActions('display')»
                 {if !$nolink}
-                    </a>
-                    <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="z-hide">
-                        {icon type='view' size='extrasmall' __alt='Quick view'}
-                    </a>
+                    {/strip}</a>
+                    <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
                 {/if}
             «ENDIF»
             «IF !many»</h4>
@@ -118,7 +116,7 @@ class Relations {
         <h3>{gt text='«otherEntity.getEntityNameSingularPlural(many).formatForDisplayCapital»'}</h3>
 
         {if isset($«relatedEntity.name.formatForCode».«relationAliasName») && $«relatedEntity.name.formatForCode».«relationAliasName» ne null}
-            {include file='«controller.formattedName»/«otherEntity.name.formatForCode»/include_displayItemList«IF many»Many«ELSE»One«ENDIF».tpl' item«IF many»s«ENDIF»=$«relatedEntity.name.formatForCode».«relationAliasName»}
+            {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»/«otherEntity.name.formatForCode»«ELSE»«controller.formattedName.toFirstUpper»/«otherEntity.name.formatForCodeCapital»«ENDIF»/include_displayItemList«IF many»Many«ELSE»One«ENDIF».tpl' item«IF many»s«ENDIF»=$«relatedEntity.name.formatForCode».«relationAliasName»}
         {/if}
 
         «IF controller.hasActions('edit')»
@@ -129,9 +127,7 @@ class Relations {
             {if $authAdmin || (isset($uid) && isset($«relatedEntity.name.formatForCode».createdUserId) && $«relatedEntity.name.formatForCode».createdUserId eq $uid)}
             <p class="manageLink">
                 {gt text='Create «otherEntity.name.formatForDisplay»' assign='createTitle'}
-                <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='edit' ot='«otherEntity.name.formatForCode»' «relationAliasNameParam.formatForDB»="«relatedEntity.idFieldsAsParameterTemplate»" returnTo='«controller.formattedName»Display«relatedEntity.name.formatForCodeCapital»'}" title="{$createTitle}" class="z-icon-es-add">
-                    {$createTitle}
-                </a>
+                <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='edit' ot='«otherEntity.name.formatForCode»' «relationAliasNameParam.formatForDB»="«relatedEntity.idFieldsAsParameterTemplate»" returnTo='«controller.formattedName»Display«relatedEntity.name.formatForCodeCapital»'}" title="{$createTitle}" class="z-icon-es-add">{$createTitle}</a>
             </p>
             {/if}
             «IF !many»

@@ -37,7 +37,7 @@ class ObjectState {
         function smarty_modifier_«appName.formatForDB»ObjectState($state = 'initial', $withIcon = true)
         {
             $serviceManager = ServiceUtil::getManager();
-            $workflowHelper = new «appName»_Util_Workflow($serviceManager);
+            $workflowHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Workflow($serviceManager);
             $stateInfo = $workflowHelper->getStateInfo($state);
 
             $result = $stateInfo['text'];

@@ -66,9 +66,9 @@ class Forms {
 
     def private formTemplateHeader(Entity it, Application app, Controller controller, String actionName) '''
         {* purpose of this template: build the Form to «actionName.formatForDisplay» an instance of «name.formatForDisplay» *}
-        {include file='«controller.formattedName»/header.tpl'}
-        {pageaddvar name='javascript' value='modules/«app.appName»/javascript/«app.appName»_editFunctions.js'}
-        {pageaddvar name='javascript' value='modules/«app.appName»/javascript/«app.appName»_validation.js'}
+        {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
+        {pageaddvar name='javascript' value='modules/«app.appName»/«IF app.targets('1.3.5')»javascript«ELSE»«app.getAppJsPath»«ENDIF»/«app.appName»_editFunctions.js'}
+        {pageaddvar name='javascript' value='modules/«app.appName»/«IF app.targets('1.3.5')»javascript«ELSE»«app.getAssetPath»«ENDIF»/«app.appName»_validation.js'}
 
         {if $mode eq 'edit'}
             {gt text='Edit «name.formatForDisplay»' assign='templateTitle'}
@@ -146,7 +146,7 @@ class Forms {
 
             «controller.templateFooter»
         </div>
-        {include file='«controller.formattedName»/footer.tpl'}
+        {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/footer.tpl'}
 
         «formTemplateJS(app, controller, actionName)»
     '''
@@ -399,7 +399,8 @@ class Forms {
     '''
 
     def private inlineRedirectHandlerFile(Controller it, Application app, IFileSystemAccess fsa) {
-        fsa.generateFile(app.getAppSourcePath + 'templates/' + formattedName + '/inlineRedirectHandler.tpl', inlineRedirectHandlerImpl(app))
+        val templatePath = app.getViewPath + (if (app.targets('1.3.5')) formattedName else formattedName.toFirstUpper) + '/'
+        fsa.generateFile(templatePath + 'inlineRedirectHandler.tpl', inlineRedirectHandlerImpl(app))
     }
 
     def private inlineRedirectHandlerImpl(Controller it, Application app) '''
@@ -413,7 +414,7 @@ class Forms {
                 <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.js"></script>
                 <script type="text/javascript" src="{$baseurl}javascript/livepipe/livepipe.combined.min.js"></script>
                 <script type="text/javascript" src="{$baseurl}javascript/helpers/Zikula.UI.js"></script>
-                <script type="text/javascript" src="{$baseurl}modules/«app.appName»/javascript/«app.appName»_editFunctions.js"></script>
+                <script type="text/javascript" src="{$baseurl}modules/«app.appName»/«IF app.targets('1.3.5')»javascript«ELSE»«app.getAppJsPath»«ENDIF»/«app.appName»_editFunctions.js"></script>
             </head>
             <body>
                 <script type="text/javascript">

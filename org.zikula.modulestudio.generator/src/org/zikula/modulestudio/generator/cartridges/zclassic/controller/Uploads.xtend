@@ -91,10 +91,18 @@ class Uploads {
     '''
 
     def private uploadHandlerBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Base;
+
+        «ENDIF»
         /**
          * Upload handler base class.
          */
+        «IF targets('1.3.5')»
         class «appName»_Base_UploadHandler
+        «ELSE»
+        class UploadHandler
+        «ENDIF»
         {
             /**
              * @var array List of object types with upload fields.
@@ -180,7 +188,7 @@ class Uploads {
             $fileName = implode('.', $fileNameParts);
 
             $serviceManager = ServiceUtil::getManager();
-            $controllerHelper = new «appName»_Util_Controller($serviceManager);
+            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($serviceManager);
 
             // retrieve the final file name
             try {
@@ -507,7 +515,7 @@ class Uploads {
             }
 
             $serviceManager = ServiceUtil::getManager();
-            $controllerHelper = new «appName»_Util_Controller($serviceManager);
+            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($serviceManager);
 
             // determine file system information
             try {
@@ -544,10 +552,18 @@ class Uploads {
     '''
 
     def private uploadHandlerImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»;
+
+        «ENDIF»
         /**
          * Upload handler implementation class.
          */
+        «IF targets('1.3.5')»
         class «appName»_UploadHandler extends «appName»_Base_UploadHandler
+        «ELSE»
+        class UploadHandler extends Base\UploadHandler
+        «ENDIF»
         {
             // feel free to add your upload handler enhancements here
         }

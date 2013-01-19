@@ -50,10 +50,18 @@ class Translatable {
     '''
 
     def private translatableFunctionsBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Util\Base;
+
+        «ENDIF»
         /**
          * Utility base class for translatable helper methods.
          */
-        class «appName»_«fillingUtil»Base_Translatable extends Zikula_AbstractBase
+        «IF targets('1.3.5')»
+        class «appName»_Util_Base_Translatable extends Zikula_AbstractBase
+        «ELSE»
+        class Translatable extends \Zikula_AbstractBase
+        «ENDIF»
         {
             «getTranslatableFieldsImpl»
 
@@ -75,7 +83,6 @@ class Translatable {
          */
         public function getTranslatableFields($objectType)
         {
-            $dom = ZLanguage::getModuleDomain('«appName»');
             $fields = array();
             switch ($objectType) {
                 «FOR entity : getTranslatableEntities»
@@ -234,10 +241,10 @@ class Translatable {
                           'default' => '«IF it.defaultValue != null && it.defaultValue != ''»«it.defaultValue»«ENDIF»')'''
             DerivedField: '''
                     array('name' => '«name»',
-                          'default' => __('«IF it.defaultValue != null && it.defaultValue != ''»«it.defaultValue»«ELSE»«name.formatForDisplayCapital»«ENDIF»', $dom))'''
+                          'default' => $this->__('«IF it.defaultValue != null && it.defaultValue != ''»«it.defaultValue»«ELSE»«name.formatForDisplayCapital»«ENDIF»'))'''
             CalculatedField: '''
                     array('name'    => '«name»',
-                          'default' => __('«name.formatForDisplayCapital»', $dom))'''
+                          'default' => $this->__('«name.formatForDisplayCapital»'))'''
         }
     }
 
@@ -250,10 +257,18 @@ class Translatable {
                           'default' => '')'''
 
     def private translatableFunctionsImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Util;
+
+        «ENDIF»
         /**
          * Utility implementation class for translatable helper methods.
          */
-        class «appName»_«fillingUtil»Translatable extends «appName»_«fillingUtil»Base_Translatable
+        «IF targets('1.3.5')»
+        class «appName»_Util_Translatable extends «appName»_Util_Base_Translatable
+        «ELSE»
+        class Translatable extends Base\Translatable
+        «ENDIF»
         {
             // feel free to add your own convenience methods here
         }

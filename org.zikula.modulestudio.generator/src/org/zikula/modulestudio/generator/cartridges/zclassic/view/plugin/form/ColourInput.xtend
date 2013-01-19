@@ -38,6 +38,10 @@ class ColourInput {
     '''
 
     def private formColourInputBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Form\Plugin\Base;
+
+        «ENDIF»
         /**
          * Colour field plugin including colour picker.
          *
@@ -46,7 +50,11 @@ class ColourInput {
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the colour input inherits from it.
          */
+        «IF targets('1.3.5')»
         class «appName»_Form_Plugin_Base_ColourInput extends Zikula_Form_Plugin_TextInput
+        «ELSE»
+        class ColourInput extends \Zikula_Form_Plugin_TextInput
+        «ENDIF»
         {
             /**
              * Get filename of this file.
@@ -173,6 +181,10 @@ class ColourInput {
     '''
 
     def private formColourInputImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Form\Plugin;
+
+        «ENDIF»
         /**
          * Colour field plugin including colour picker.
          *
@@ -181,7 +193,11 @@ class ColourInput {
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the colour input inherits from it.
          */
+        «IF targets('1.3.5')»
         class «appName»_Form_Plugin_ColourInput extends «appName»_Form_Plugin_Base_ColourInput
+        «ELSE»
+        class ColourInput extends Base\ColourInput
+        «ENDIF»
         {
             // feel free to add your customisation here
         }

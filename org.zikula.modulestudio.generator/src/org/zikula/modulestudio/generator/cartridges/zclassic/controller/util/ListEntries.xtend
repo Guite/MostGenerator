@@ -40,10 +40,18 @@ class ListEntries {
     '''
 
     def private listFieldFunctionsBaseImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Util\Base;
+
+        «ENDIF»
         /**
          * Utility base class for list field entries related methods.
          */
-        class «appName»_«fillingUtil»Base_ListEntries extends Zikula_AbstractBase
+        «IF targets('1.3.5')»
+        class «appName»_Util_Base_ListEntries extends Zikula_AbstractBase
+        «ELSE»
+        class ListEntries extends \Zikula_AbstractBase
+        «ENDIF»
         {
             «resolve»
             «extractMultiList»
@@ -239,10 +247,18 @@ class ListEntries {
     '''
 
     def private listFieldFunctionsImpl(Application it) '''
+        «IF !targets('1.3.5')»
+            namespace «appName»\Util;
+
+        «ENDIF»
         /**
          * Utility implementation class for list field entries related methods.
          */
-        class «appName»_«fillingUtil»ListEntries extends «appName»_«fillingUtil»Base_ListEntries
+        «IF targets('1.3.5')»
+        class «appName»_Util_ListEntries extends «appName»_Util_Base_ListEntries
+        «ELSE»
+        class ListEntries extends Base\ListEntries
+        «ENDIF»
         {
             // feel free to add your own convenience methods here
         }

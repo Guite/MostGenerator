@@ -8,11 +8,13 @@ import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import de.guite.modulestudio.metamodel.modulestudio.AdminController
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class ViewHierarchy {
     @Inject extension ControllerExtensions = new ControllerExtensions()
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
+    @Inject extension Utils = new Utils()
 
     def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' tree view templates for entity "' + name.formatForDisplay + '"')
@@ -24,7 +26,7 @@ class ViewHierarchy {
         «val objName = name.formatForCode»
         «val appPrefix = container.application.prefix»
         {* purpose of this template: «nameMultiple.formatForDisplay» tree view in «controller.formattedName» area *}
-        {include file='«controller.formattedName»/header.tpl'}
+        {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-viewhierarchy">
         {gt text='«name.formatForDisplayCapital» hierarchy' assign='templateTitle'}
         {pagesetvar name='title' value=$templateTitle}
@@ -61,22 +63,20 @@ class ViewHierarchy {
                 {/checkpermissionblock}
             «ENDIF»
             {gt text='Switch to table view' assign='switchTitle'}
-            <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«objName»'}" title="{$switchTitle}" class="z-icon-es-view">
-                {$switchTitle}
-            </a>
+            <a href="{modurl modname='«appName»' type='«controller.formattedName»' func='view' ot='«objName»'}" title="{$switchTitle}" class="z-icon-es-view">{$switchTitle}</a>
         </p>
 
         {foreach key='rootId' item='treeNodes' from=$trees}
-            {include file='«controller.formattedName»/«name.formatForCode»/view_tree_items.tpl' rootId=$rootId items=$treeNodes}
+            {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»/«name.formatForCode»«ELSE»«controller.formattedName.toFirstUpper»/«name.formatForCodeCapital»«ENDIF»/view_tree_items.tpl' rootId=$rootId items=$treeNodes}
         {foreachelse}
-            {include file='«controller.formattedName»/«name.formatForCode»/view_tree_items.tpl' rootId=1 items=null}
+            {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»/«name.formatForCode»«ELSE»«controller.formattedName.toFirstUpper»/«name.formatForCodeCapital»«ENDIF»/view_tree_items.tpl' rootId=1 items=null}
         {/foreach}
 
         <br style="clear: left" />
 
         «controller.templateFooter»
         </div>
-        {include file='«controller.formattedName»/footer.tpl'}
+        {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/footer.tpl'}
     '''
 
     def private templateHeader(Controller it) {
