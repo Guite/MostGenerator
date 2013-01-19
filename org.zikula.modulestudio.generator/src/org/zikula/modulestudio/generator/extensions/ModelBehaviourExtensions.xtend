@@ -243,7 +243,8 @@ class ModelBehaviourExtensions {
      */
     def dispatch asConstant(EntitySlugStyle slugStyle) {
         switch slugStyle {
-            case EntitySlugStyle::LOWERCASE                  : 'default'
+            case EntitySlugStyle::LOWERCASE                  : 'lower'
+            case EntitySlugStyle::UPPERCASE                  : 'upper'
             case EntitySlugStyle::CAMEL                      : 'camel'
             default: 'default'
         }
