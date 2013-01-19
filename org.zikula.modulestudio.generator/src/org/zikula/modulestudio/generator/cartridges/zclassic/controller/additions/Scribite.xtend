@@ -82,10 +82,10 @@ class Scribite {
 
     def private ckPlugin(Application it) '''
         /**
-         * @license Copyright (c) 2003-2013, SimpleMedia - Erik Spaan. All rights reserved.
+         * @license Copyright (c) 2003-2013, «appName» - Erik Spaan. All rights reserved.
          */
 
-        CKEDITOR.plugins.add('simplemedia', {
+        CKEDITOR.plugins.add('«appName»', {
             requires: 'popup',
             lang: 'en,nl,de',
             init: function (editor) {
