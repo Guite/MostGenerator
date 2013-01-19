@@ -396,6 +396,9 @@ class Extensions {
             use Gedmo\Loggable\Entity\«IF !app.targets('1.3.5')»MappedSuperclass\«ENDIF»AbstractLogEntry;
         «ELSEIF classType == 'metaData' || classType == 'attribute' || classType == 'category'»
             use Doctrine\ORM\Mapping as ORM;
+            «IF !app.targets('1.3.5')»
+            use Zikula\Doctrine2\Entity\Entity«classType.toFirstUpper»
+            «ENDIF»
         «ENDIF»
 
         /**
@@ -410,11 +413,11 @@ class Extensions {
         «ELSEIF classType == 'logEntry'»
         class «entityClassName(classType, false)» extends AbstractLogEntry
         «ELSEIF classType == 'metaData'»
-        class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»\«ENDIF»Zikula_Doctrine2_Entity_EntityMetadata
+        class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»EntityMetadata«ELSE»Zikula_Doctrine2_Entity_EntityMetadata«ENDIF»
         «ELSEIF classType == 'attribute'»
-        class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»\«ENDIF»Zikula_Doctrine2_Entity_EntityAttribute
+        class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»EntityAttribute«ELSE»Zikula_Doctrine2_Entity_EntityAttribute«ENDIF»
         «ELSEIF classType == 'category'»
-        class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»\«ENDIF»Zikula_Doctrine2_Entity_EntityCategory
+        class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»EntityCategory«ELSE»Zikula_Doctrine2_Entity_EntityCategory«ENDIF»
         «ENDIF»
         {
         «IF classType == 'metaData' || classType == 'attribute' || classType == 'category'»
