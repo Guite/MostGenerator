@@ -44,6 +44,13 @@ class ControllerAction {
         «actionDoc»
         public function «IF !app.targets('1.3.5')»indexAction«ELSE»main«ENDIF»(array $args = array())
         {
+            «IF app.hasSoftDeleteable && !app.targets('1.3.5')»
+                «IF controller.tempIsAdminController»
+                $this->entityManager->getFilters()->disable('soft-deleteable');
+                «ELSE»
+                $this->entityManager->getFilters()->enable('soft-deleteable');
+                «ENDIF»
+            «ENDIF»
             «actionImpl»
         }
         «/* this line is on purpose */»
