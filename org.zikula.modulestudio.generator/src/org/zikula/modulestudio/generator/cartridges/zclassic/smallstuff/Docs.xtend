@@ -21,15 +21,14 @@ class Docs {
      * Entry point for module documentation.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        fsa.generateFile('README.md', ReadmeMarkup)
+        fsa.generateFile(getAppSourcePath + 'CHANGELOG.md', Changelog)
+        fsa.generateFile(getAppSourcePath + 'README.md', ReadmeMarkup)
         val docPath = getAppDocPath
         fsa.generateFile(docPath + 'credits.md', Credits)
-        fsa.generateFile(docPath + 'changelog.md', Changelog)
         fsa.generateFile(docPath + 'developers.md', new DeveloperHints().generate(it))
         fsa.generateFile(docPath + 'doctrine.md', DoctrineHints)
         fsa.generateFile(docPath + 'modulestudio.md', MostText)
-        fsa.generateFile(docPath + 'readme_de.md', ReadmeDE)
-        fsa.generateFile(docPath + 'readme.md', Readme)
+        fsa.generateFile(docPath + 'install.md', Install)
         fsa.generateFile(docPath + 'license.md', License)
     }
 
@@ -69,22 +68,7 @@ class Docs {
         If you are interested in a new level of Zikula development, visit «msUrl».
     '''
 
-    def private ReadmeDE(Application it) '''
-        INSTALLATIONSANLEITUNG
-        ======================
-
-        1) Kopieren Sie «appName» in das Verzeichnis modules.
-        2) Initialisieren und aktivieren Sie «appName» in der Modulverwaltung.
-        «IF hasUploads»
-            3) Setzen Sie das Verzeichnis `userdata/«appName»/` inklusive aller Unterordner auf beschreibbar.
-        «ENDIF»
-
-        Bei Fragen und anderen Anmerkungen besuchen Sie unsere Homepage «url».
-
-        «ReadmeFooter»
-    '''
-
-    def private Readme(Application it) '''
+    def private Install(Application it) '''
         INSTALLATION INSTRUCTIONS
         =========================
 
