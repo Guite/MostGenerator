@@ -187,7 +187,7 @@ class Uploads {
             $fileNameParts[count($fileNameParts) - 1] = $extension;
             $fileName = implode('.', $fileNameParts);
 
-            $serviceManager = ServiceUtil::getManager();
+            $serviceManager = \ServiceUtil::getManager();
             $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($serviceManager);
 
             // retrieve the final file name
@@ -195,12 +195,12 @@ class Uploads {
                 $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
             }
             catch (Exception $e) {
-                return LogUtil::registerError($e->getMessage());
+                return \LogUtil::registerError($e->getMessage());
             }
             $fileName = $this->determineFileName($objectType, $fieldName, $basePath, $fileName, $extension);
 
             if (!move_uploaded_file($fileData[$fieldName]['tmp_name'], $basePath . $fileName)) {
-                return LogUtil::registerError(__('Error! Could not move your file to the destination folder.', $dom));
+                return \LogUtil::registerError(__('Error! Could not move your file to the destination folder.', $dom));
             }
 
             // collect data to return
@@ -230,7 +230,7 @@ class Uploads {
                 if (is_array($file)) {
                     return $this->handleError($file);
                 }
-                return LogUtil::registerError(__('Error! No file found.', $dom));
+                return \LogUtil::registerError(__('Error! No file found.', $dom));
             }
 
             // extract file extension
@@ -242,7 +242,7 @@ class Uploads {
             // validate extension
             $isValidExtension = $this->isAllowedFileExtension($objectType, $fieldName, $extension);
             if ($isValidExtension === false) {
-                return LogUtil::registerError(__('Error! This file type is not allowed. Please choose another file format.', $dom));
+                return \LogUtil::registerError(__('Error! This file type is not allowed. Please choose another file format.', $dom));
             }
 
             $maxSize = $this->allowedFileSizes[$objectType][$fieldName];
@@ -252,11 +252,11 @@ class Uploads {
                     $maxSizeKB = $maxSize / 1024;
                     if ($maxSizeKB < 1024) {
                         $maxSizeKB = DataUtil::formatNumber($maxSizeKB); 
-                        return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', array($maxSizeKB), $dom));
+                        return \LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', array($maxSizeKB), $dom));
                     }
                     $maxSizeMB = $maxSizeKB / 1024;
                     $maxSizeMB = DataUtil::formatNumber($maxSizeMB); 
-                    return LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
+                    return \LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
                 }
             }
 
@@ -265,7 +265,7 @@ class Uploads {
             if ($isImage) {
                 $imgInfo = getimagesize($file['tmp_name']);
                 if (!is_array($imgInfo) || !$imgInfo[0] || !$imgInfo[1]) {
-                    return LogUtil::registerError(__('Error! This file type seems not to be a valid image.', $dom));
+                    return \LogUtil::registerError(__('Error! This file type seems not to be a valid image.', $dom));
                 }
             }
 
@@ -488,7 +488,7 @@ class Uploads {
                     $errmsg = 'Unknown error';
                     break;
             }
-            return LogUtil::registerError('Error with upload: ' . $errmsg);
+            return \LogUtil::registerError('Error with upload: ' . $errmsg);
         }
     '''
 
@@ -514,7 +514,7 @@ class Uploads {
                 return $objectData;
             }
 
-            $serviceManager = ServiceUtil::getManager();
+            $serviceManager = \ServiceUtil::getManager();
             $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($serviceManager);
 
             // determine file system information
@@ -522,7 +522,7 @@ class Uploads {
                 $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
             }
             catch (Exception $e) {
-                LogUtil::registerError($e->getMessage());
+                \LogUtil::registerError($e->getMessage());
                 return $objectData;
             }
             $fileName = $objectData[$fieldName];
@@ -536,13 +536,13 @@ class Uploads {
             $objectData[$fieldName . 'Meta'] = array();
 
             // check whether we have to consider thumbnails, too
-            $fileExtension = FileUtil::getExtension($fileName, false);
+            $fileExtension = \FileUtil::getExtension($fileName, false);
             if (!in_array($fileExtension, $this->imageFileTypes) || $fileExtension == 'swf') {
                 return $objectData;
             }
 
             // remove thumbnail images as well
-            $manager = ServiceUtil::getManager()->getService('systemplugin.imagine.manager');
+            $manager = \ServiceUtil::getManager()->getService('systemplugin.imagine.manager');
             $manager->setModule('«appName»');
             $fullObjectId = $objectType . '-' . $objectId;
             $manager->removeImageThumbs($filePath, $fullObjectId);

@@ -58,7 +58,7 @@ class BlockModeration {
          */
         public function init()
         {
-            SecurityUtil::registerPermissionSchema('«appName»:ModerationBlock:', 'Block title::');
+            \SecurityUtil::registerPermissionSchema('«appName»:ModerationBlock:', 'Block title::');
         }
 
         /**
@@ -70,7 +70,7 @@ class BlockModeration {
         {
             $requirementMessage = '';
             // check if the module is available at all
-            if (!ModUtil::available('«appName»')) {
+            if (!\ModUtil::available('«appName»')) {
                 $requirementMessage .= $this->__('Notice: This block will not be displayed until you activate the «appName» module.');
             }
 
@@ -95,20 +95,20 @@ class BlockModeration {
         public function display($blockinfo)
         {
             // only show block content if the user has the required permissions
-            if (!SecurityUtil::checkPermission('«appName»:ModerationBlock:', "$blockinfo[title]::", ACCESS_OVERVIEW)) {
+            if (!\SecurityUtil::checkPermission('«appName»:ModerationBlock:', "$blockinfo[title]::", ACCESS_OVERVIEW)) {
                 return false;
             }
 
             // check if the module is available at all
-            if (!ModUtil::available('«appName»')) {
+            if (!\ModUtil::available('«appName»')) {
                 return false;
             }
 
-            if (!UserUtil::isLoggedIn()) {
+            if (!\UserUtil::isLoggedIn()) {
                 return false;
             }
 
-            ModUtil::initOOModule('«appName»');
+            \ModUtil::initOOModule('«appName»');
 
             $this->view->setCaching(Zikula_View::CACHE_DISABLED);
             $template = $this->getDisplayTemplate($vars);
@@ -127,7 +127,7 @@ class BlockModeration {
             $blockinfo['content'] = $this->view->fetch($template);
 
             // return the block to the theme
-            return BlockUtil::themeBlock($blockinfo);
+            return \BlockUtil::themeBlock($blockinfo);
         }
 
         /**

@@ -154,10 +154,10 @@ class ControllerAction {
     def private permissionCheck(Action it, String objectTypeVar, String instanceId) {
         switch controller {
             AdminController: '''
-                        $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', ACCESS_ADMIN), LogUtil::getErrorMsgPermission());
+                        $this->throwForbiddenUnless(\SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', ACCESS_ADMIN), \LogUtil::getErrorMsgPermission());
                     '''
             default: '''
-                        $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', «getPermissionAccessLevel»), LogUtil::getErrorMsgPermission());
+                        $this->throwForbiddenUnless(\SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', «getPermissionAccessLevel»), \LogUtil::getErrorMsgPermission());
                     '''
         }
     }
@@ -230,7 +230,7 @@ class ControllerAction {
 
             $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : $this->request->query->filter('tpl', '', FILTER_SANITIZE_STRING);
             if ($tpl == 'tree') {
-                $trees = ModUtil::apiFunc($this->name, 'selection', 'getAllTrees', array('ot' => $objectType));
+                $trees = \ModUtil::apiFunc($this->name, 'selection', 'getAllTrees', array('ot' => $objectType));
                 $this->view->assign('trees', $trees)
                            ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
                 // fetch and return the appropriate template
@@ -274,8 +274,8 @@ class ControllerAction {
         $accessLevel = ACCESS_READ;
         $component = '«app.appName»:' . ucwords($objectType) . ':';
         $instance = '::';
-        if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
-        if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
+        if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
+        if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
 
         $templateFile = $viewHelper->getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args);
         $cacheId = 'view|ot_' . $objectType . '_sort_' . $sort . '_' . $sdir;
@@ -291,7 +291,7 @@ class ControllerAction {
             }
 
             // retrieve item list without pagination
-            $entities = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
+            $entities = \ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
         } else {
             // the current offset which is used to calculate the pagination
             $currentPage = (int) (isset($args['pos']) && !empty($args['pos'])) ? $args['pos'] : $this->request->query->filter('pos', 1, FILTER_VALIDATE_INT);
@@ -314,7 +314,7 @@ class ControllerAction {
             // retrieve item list with pagination
             $selectionArgs['currentPage'] = $currentPage;
             $selectionArgs['resultsPerPage'] = $resultsPerPage;
-            list($entities, $objectCount) = ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
+            list($entities, $objectCount) = \ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
 
             $this->view->assign('currentPage', $currentPage)
                        ->assign('pager', array('numitems'     => $objectCount,
@@ -339,7 +339,7 @@ class ControllerAction {
     def private dispatch actionImplBody(DisplayAction it) '''
         $repository = $this->entityManager->getRepository($this->name . '_Entity_' . ucfirst($objectType));
 
-        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+        $idFields = \ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
         // retrieve identifier of the object we wish to view
         $idValues = $controllerHelper->retrieveIdentifier($this->request, $args, $objectType, $idFields);
@@ -347,7 +347,7 @@ class ControllerAction {
         «controller.checkForSlug»
         $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
 
-        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues«controller.addSlugToSelection»));
+        $entity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues«controller.addSlugToSelection»));
         $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
         unset($idValues);
 
@@ -434,8 +434,8 @@ class ControllerAction {
         $component = $this->name . ':' . ucwords($objectType) . ':';
         $instance = $instanceId . '::';
         $accessLevel = ACCESS_READ;
-        if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
-        if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
+        if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
+        if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
         $this->view->setCacheId($objectType . '|' . $instanceId . '|a' . $accessLevel);
 
         // assign output data to view object.
@@ -453,7 +453,7 @@ class ControllerAction {
         switch controller {
             AjaxController: '''
         $this->checkAjaxToken();
-        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+        $idFields = \ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
         $data = (isset($args['data']) && !empty($args['data'])) ? $args['data'] : $this->request->query->filter('data', null);
         $data = json_decode($data, true);
@@ -465,7 +465,7 @@ class ControllerAction {
         $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
         $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
 
-        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
+        $entity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
         $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
         unset($idValues);
 
@@ -489,7 +489,7 @@ class ControllerAction {
             default: '''
         «/* new ActionHandler().formCreate(appName, controller.formattedName, 'edit')*/»
         // create new Form reference
-        $view = FormUtil::newForm($this->name, $this);
+        $view = \FormUtil::newForm($this->name, $this);
 
         // build form handler class name
         «IF app.targets('1.3.5')»
@@ -509,7 +509,7 @@ class ControllerAction {
     }
 
     def private dispatch actionImplBody(DeleteAction it) '''
-        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+        $idFields = \ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
         // retrieve identifier of the object we wish to delete
         $idValues = $controllerHelper->retrieveIdentifier($this->request, $args, $objectType, $idFields);
@@ -517,7 +517,7 @@ class ControllerAction {
 
         $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
 
-        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
+        $entity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
         $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
 
         $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Workflow($this->serviceManager);
@@ -525,7 +525,7 @@ class ControllerAction {
         $deleteAllowed = false;
         $actions = $workflowHelper->getActionsForObject($entity);
         if ($actions === false || !is_array($actions)) {
-            return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
+            return \LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
         }
         foreach ($actions as $actionId => $action) {
             if ($actionId != $deleteActionId) {
@@ -535,7 +535,7 @@ class ControllerAction {
             break;
         }
         if (!$deleteAllowed) {
-            return LogUtil::registerError($this->__('Error! It is not allowed to delete this entity.'));
+            return \LogUtil::registerError($this->__('Error! It is not allowed to delete this entity.'));
         }
 
         $confirmation = (bool) (isset($args['confirmation']) && !empty($args['confirmation'])) ? $args['confirmation'] : $this->request->request->filter('confirmation', false, FILTER_VALIDATE_BOOLEAN);
@@ -571,10 +571,10 @@ class ControllerAction {
 
                 // An item was deleted, so we clear all cached pages this item.
                 $cacheArgs = array('ot' => $objectType, 'item' => $entity);
-                ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
+                \ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
 
                 // redirect to the «IF controller.hasActions('view')»list of the current object type«ELSE»«IF app.targets('1.3.5')»main«ELSE»index«ENDIF» page«ENDIF»
-                $this->redirect(ModUtil::url($this->name, '«controller.formattedName»', «IF controller.hasActions('view')»'view',
+                $this->redirect(\ModUtil::url($this->name, '«controller.formattedName»', «IF controller.hasActions('view')»'view',
                                                                                             array('ot' => $objectType)«ELSE»'«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»'«ENDIF»));
             }
         }

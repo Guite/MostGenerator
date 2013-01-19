@@ -127,14 +127,14 @@ class Installer {
             try {
                 DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses());
             } catch (Exception $e) {
-                if (System::isDevelopmentMode()) {
-                    LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
+                if (\System::isDevelopmentMode()) {
+                    \LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                 }
                 $returnMessage = $this->__f('An error was encountered while creating the tables for the %s extension.', array($this->name));
-                if (!System::isDevelopmentMode()) {
+                if (!\System::isDevelopmentMode()) {
                     $returnMessage .= ' ' . $this->__('Please enable the development mode by editing the /config/config.php file in order to reveal the error details.');
                 }
-                return LogUtil::registerError($returnMessage);
+                return \LogUtil::registerError($returnMessage);
             }
             «IF !getAllVariableContainers.isEmpty»
 
@@ -142,9 +142,9 @@ class Installer {
                 «val modvarHelper = new ModVars()»
                 «FOR modvar : getAllVariables»
                     «IF interactiveInstallation == true»
-                        $sessionValue = SessionUtil::getVar('«formatForCode(name + '_' + modvar.name)»');
+                        $sessionValue = \SessionUtil::getVar('«formatForCode(name + '_' + modvar.name)»');
                         $this->setVar('«modvar.name.formatForCode»', (($sessionValue <> false) ? «modvarHelper.valFromSession(modvar)» : «modvarHelper.valSession2Mod(modvar)»));
-                        SessionUtil::delVar(«formatForCode(name + '_' + modvar.name)»);
+                        \SessionUtil::delVar(«formatForCode(name + '_' + modvar.name)»);
                     «ELSE»
                         $this->setVar('«modvar.name.formatForCode»', «modvarHelper.valDirect2Mod(modvar)»);
                     «ENDIF»
@@ -156,7 +156,7 @@ class Installer {
             «IF hasCategorisableEntities»
 
                 // add default entries to category registry (property named Main)
-                $rootcat = CategoryUtil::getCategoryByPath('/__SYSTEM__/Modules/Global');
+                $rootcat = \CategoryUtil::getCategoryByPath('/__SYSTEM__/Modules/Global');
                 «IF targets('1.3.5')»
                     include_once 'modules/«appName»/lib/«appName»/Api/Base/Category.php';
                     include_once 'modules/«appName»/lib/«appName»/Api/Category.php';
@@ -169,7 +169,7 @@ class Installer {
 
                 «FOR entity : getCategorisableEntities»
                     $primaryRegistry = $categoryApi->getPrimaryProperty(array('ot' => '«entity.name.formatForCodeCapital»'));
-                    CategoryRegistryUtil::insertEntry($this->name, '«entity.name.formatForCodeCapital»', $primaryRegistry, $rootcat['id']);
+                    \CategoryRegistryUtil::insertEntry($this->name, '«entity.name.formatForCodeCapital»', $primaryRegistry, $rootcat['id']);
                 «ENDFOR»
             «ENDIF»
 
@@ -177,10 +177,10 @@ class Installer {
             $this->registerPersistentEventHandlers();
 
             // register hook subscriber bundles
-            HookUtil::registerSubscriberBundles($this->version->getHookSubscriberBundles());
+            \HookUtil::registerSubscriberBundles($this->version->getHookSubscriberBundles());
             «/*TODO see #15
                 // register hook provider bundles
-                HookUtil::registerProviderBundles($this->version->getHookProviderBundles());
+                \HookUtil::registerProviderBundles($this->version->getHookProviderBundles());
             */»
 
             // initialisation successful
@@ -203,7 +203,7 @@ class Installer {
                 «ENDFOR»
             }
             catch (Exception $e) {
-                return LogUtil::registerError($e->getMessage());
+                return \LogUtil::registerError($e->getMessage());
             }
         «ENDIF»
     '''
@@ -230,10 +230,10 @@ class Installer {
                     try {
                         DoctrineHelper::updateSchema($this->entityManager, $this->listEntityClasses());
                     } catch (Exception $e) {
-                        if (System::isDevelopmentMode()) {
-                            LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
+                        if (\System::isDevelopmentMode()) {
+                            \LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                         }
-                        return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %s extension.', array($this->getName())));
+                        return \LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %s extension.', array($this->getName())));
                     }
             }
         */
@@ -254,26 +254,26 @@ class Installer {
             // delete stored object workflows
             $result = Zikula_Workflow_Util::deleteWorkflowsForModule($this->getName());
             if ($result === false) {
-                return LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
+                return \LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
             }
 
             try {
                 DoctrineHelper::dropSchema($this->entityManager, $this->listEntityClasses());
             } catch (Exception $e) {
-                if (System::isDevelopmentMode()) {
-                    LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
+                if (\System::isDevelopmentMode()) {
+                    \LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                 }
-                return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %s extension.', array($this->name)));
+                return \LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %s extension.', array($this->name)));
             }
 
             // unregister persistent event handlers
-            EventUtil::unregisterPersistentModuleHandlers($this->name);
+            \EventUtil::unregisterPersistentModuleHandlers($this->name);
 
             // unregister hook subscriber bundles
-            HookUtil::unregisterSubscriberBundles($this->version->getHookSubscriberBundles());
+            \HookUtil::unregisterSubscriberBundles($this->version->getHookSubscriberBundles());
             «/*TODO see #15
                 // unregister hook provider bundles
-                HookUtil::unregisterProviderBundles($this->version->getHookProviderBundles());
+                \HookUtil::unregisterProviderBundles($this->version->getHookProviderBundles());
             */»
             «IF !getAllVariables.isEmpty»
 
@@ -283,8 +283,8 @@ class Installer {
             «IF hasCategorisableEntities»
 
                 // remove category registry entries
-                ModUtil::dbInfoLoad('Categories');
-                DBUtil::deleteWhere('categories_registry', 'modname = \'' . $this->name . '\'');
+                \ModUtil::dbInfoLoad('Categories');
+                \DBUtil::deleteWhere('categories_registry', 'modname = \'' . $this->name . '\'');
             «ENDIF»
             «IF !uploadEntities.isEmpty»
 
@@ -294,8 +294,8 @@ class Installer {
                 $manager->cleanupModuleThumbs();
 
                 // remind user about upload folders not being deleted
-                $uploadPath = FileUtil::getDataDirectory() . '/' . $this->name . '/';
-                LogUtil::registerStatus($this->__f('The upload directories at [%s] can be removed manually', $uploadPath));
+                $uploadPath = \FileUtil::getDataDirectory() . '/' . $this->name . '/';
+                \LogUtil::registerStatus($this->__f('The upload directories at [%s] can be removed manually', $uploadPath));
             «ENDIF»
 
             // deletion successful

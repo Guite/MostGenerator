@@ -11,7 +11,7 @@ class Errors {
         /**
          * Listener for the `setup.errorreporting` event.
          *
-         * Invoked during `System::init()`.
+         * Invoked during `\System::init()`.
          * Used to activate `set_error_handler()`.
          * Event must `stop«IF !targets('1.3.5')»Propagation«ENDIF»()`.
          *

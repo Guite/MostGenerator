@@ -120,13 +120,13 @@ class Translatable {
                 return $translations;
             }
 
-            if (System::getVar('multilingual') != 1) {
+            if (\System::getVar('multilingual') != 1) {
                 // Translatable extension did already fetch current translation
                 return $translations;
             }
 
             // prepare form data to edit multiple translations at once
-            $serviceManager = ServiceUtil::getManager();
+            $serviceManager = \ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
 
             // get translations
@@ -178,7 +178,7 @@ class Translatable {
 
             $supportedLocales = ZLanguage::getInstalledLanguages();
             $useOnlyCurrentLocale = true;
-            if (System::getVar('multilingual') == 1) {
+            if (\System::getVar('multilingual') == 1) {
                 $useOnlyCurrentLocale = false;
                 $currentLanguage = ZLanguage::getLanguageCode();
                 foreach ($supportedLocales as $locale) {

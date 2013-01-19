@@ -82,7 +82,7 @@ class PermissionCheck {
             $component = '«app.appName»:' . ucwords($objectType) . ':';
 
             // calculate the permission instance
-            $idFields = ModUtil::apiFunc('«app.appName»', 'selection', 'getIdFields', array('ot' => $objectType));
+            $idFields = \ModUtil::apiFunc('«app.appName»', 'selection', 'getIdFields', array('ot' => $objectType));
             $instanceId = '';
             foreach ($idFields as $idField) {
                 if (!empty($instanceId)) {
@@ -93,7 +93,7 @@ class PermissionCheck {
             $instance = $instanceId . '::';
 
             // now perform the permission check
-            $result = SecurityUtil::checkPermission($component, $instance, $permLevel, $currentUser);
+            $result = \SecurityUtil::checkPermission($component, $instance, $permLevel, $currentUser);
             «val entitiesWithOwnerPermission = app.getAllEntities.filter(e|e.standardFields && e.ownerPermission)»
             «IF !entitiesWithOwnerPermission.isEmpty»
 

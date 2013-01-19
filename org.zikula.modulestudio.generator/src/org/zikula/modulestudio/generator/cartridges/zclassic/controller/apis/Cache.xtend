@@ -78,7 +78,7 @@ class Cache {
             }
 
             if ($item && !is_array($item) && !is_object($item)) {
-                $item = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $item, 'useJoins' => false, 'slimMode' => true));
+                $item = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $item, 'useJoins' => false, 'slimMode' => true));
             }
 
             if (!$item) {
@@ -87,7 +87,7 @@ class Cache {
 
             «IF hasUserController && getMainUserController.hasActions('display')»
                 // create full identifier (considering composite keys)
-                $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+                $idFields = \ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
                 $instanceId = '';
                 foreach ($idFields as $idField) {
                     if (!empty($instanceId)) {

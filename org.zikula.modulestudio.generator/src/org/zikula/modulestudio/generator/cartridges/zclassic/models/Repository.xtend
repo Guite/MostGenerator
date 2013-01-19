@@ -261,12 +261,12 @@ class Repository {
 
             if ($context == 'controllerAction') {
                 if (!isset($args['action'])) {
-                    $args['action'] = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST');
+                    $args['action'] = \FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST');
                 }
                 if (in_array($args['action'], array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view'))) {
                     $templateParameters = $this->getViewQuickNavParameters($context, $args);
                     «IF hasListFieldsEntity»
-                        $serviceManager = ServiceUtil::getManager();
+                        $serviceManager = \ServiceUtil::getManager();
                         $listHelper = new «container.application.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»ListEntries($serviceManager);
                         «FOR field : getListFieldsEntity»
                             «var fieldName = field.name.formatForCode»
@@ -286,7 +286,7 @@ class Repository {
                 }
 
                 // initialise Imagine preset manager instances
-                $imageHelper = new «container.application.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Image(ServiceUtil::getManager());
+                $imageHelper = new «container.application.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Image(\ServiceUtil::getManager());
                 «IF hasUploadFieldsEntity»
 
                     $objectType = '«name.formatForCode»';
@@ -324,47 +324,47 @@ class Repository {
 
             $parameters = array();
             «IF categorisable»
-                $parameters['catIdList'] = ModUtil::apiFunc('«container.application.appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => '«name.formatForCode»', 'source' => 'GET'));
+                $parameters['catIdList'] = \ModUtil::apiFunc('«container.application.appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => '«name.formatForCode»', 'source' => 'GET'));
             «ENDIF»
             «IF !getBidirectionalIncomingJoinRelationsWithOneSource.isEmpty»
                 «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
                     «val sourceAliasName = relation.getRelationAliasName(false)»
-                    $parameters['«sourceAliasName»'] = FormUtil::getPassedValue('«sourceAliasName»', 0, 'GET');
+                    $parameters['«sourceAliasName»'] = \FormUtil::getPassedValue('«sourceAliasName»', 0, 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasListFieldsEntity»
                 «FOR field : getListFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                    $parameters['«fieldName»'] = \FormUtil::getPassedValue('«fieldName»', '', 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasUserFieldsEntity»
                 «FOR field : getUserFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = (int) FormUtil::getPassedValue('«fieldName»', 0, 'GET');
+                    $parameters['«fieldName»'] = (int) \FormUtil::getPassedValue('«fieldName»', 0, 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasCountryFieldsEntity»
                 «FOR field : getCountryFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                    $parameters['«fieldName»'] = \FormUtil::getPassedValue('«fieldName»', '', 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasLanguageFieldsEntity»
                 «FOR field : getLanguageFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                    $parameters['«fieldName»'] = \FormUtil::getPassedValue('«fieldName»', '', 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasAbstractStringFieldsEntity»
-                $parameters['searchterm'] = FormUtil::getPassedValue('searchterm', '', 'GET');
+                $parameters['searchterm'] = \FormUtil::getPassedValue('searchterm', '', 'GET');
             «ENDIF»
-            «/* not needed as already handled in the controller $pageSize = ModUtil::getVar('«container.application.appName»', 'pageSize', 10);
-            $parameters['pageSize'] = (int) FormUtil::getPassedValue('pageSize', $pageSize, 'GET');*/»
+            «/* not needed as already handled in the controller $pageSize = \ModUtil::getVar('«container.application.appName»', 'pageSize', 10);
+            $parameters['pageSize'] = (int) \FormUtil::getPassedValue('pageSize', $pageSize, 'GET');*/»
             «IF hasBooleanFieldsEntity»
                 «FOR field : getBooleanFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                    $parameters['«fieldName»'] = \FormUtil::getPassedValue('«fieldName»', '', 'GET');
                 «ENDFOR»
             «ENDIF»
 
@@ -409,7 +409,7 @@ class Repository {
         {
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)) {
-                return LogUtil::registerArgsError();
+                return \LogUtil::registerArgsError();
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
@@ -434,7 +434,7 @@ class Repository {
         {
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)) {
-                return LogUtil::registerArgsError();
+                return \LogUtil::registerArgsError();
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
@@ -461,7 +461,7 @@ class Repository {
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)
              || $newUserId == 0 || !is_numeric($newUserId)) {
-                return LogUtil::registerArgsError();
+                return \LogUtil::registerArgsError();
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
@@ -489,7 +489,7 @@ class Repository {
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)
              || $newUserId == 0 || !is_numeric($newUserId)) {
-                return LogUtil::registerArgsError();
+                return \LogUtil::registerArgsError();
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
@@ -521,12 +521,12 @@ class Repository {
         {
             // check field parameter
             if (empty($userFieldName) || !in_array($userFieldName, array(«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»))) {
-                return LogUtil::registerArgsError();
+                return \LogUtil::registerArgsError();
             }
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)
              || $newUserId == 0 || !is_numeric($newUserId)) {
-                return LogUtil::registerArgsError();
+                return \LogUtil::registerArgsError();
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
@@ -579,7 +579,7 @@ class Repository {
         {
             // check id parameter
             if ($id == 0) {
-                return LogUtil::registerArgsError();
+                return \LogUtil::registerArgsError();
             }
 
             $qb = $this->_intBaseQuery('', '', $useJoins, $slimMode);
@@ -608,7 +608,7 @@ class Repository {
         {
             // check input parameter
             if ($slugTitle == '') {
-                return LogUtil::registerArgsError();
+                return \LogUtil::registerArgsError();
             }
 
             $qb = $this->_intBaseQuery('', '', $useJoins, $slimMode);
@@ -753,7 +753,7 @@ class Repository {
          */
         protected function addCommonViewFilters(Doctrine\ORM\QueryBuilder $qb)
         {
-            $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST');
+            $currentFunc = \FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST');
             if ($currentFunc != 'view' && $currentFunc != 'finder') {
                 return $qb;
             }
@@ -772,7 +772,7 @@ class Repository {
                     $qb->andWhereIn('tblCategories.category IN (:categories)')
                        ->setParameter('categories', DataUtil::formatForStore($v));
                      */
-                    $categoryFiltersPerRegistry = ModUtil::apiFunc('«container.application.appName»', 'category', 'buildFilterClauses', array('ot' => '«name.formatForDisplay»', 'catids' => $v));
+                    $categoryFiltersPerRegistry = \ModUtil::apiFunc('«container.application.appName»', 'category', 'buildFilterClauses', array('ot' => '«name.formatForDisplay»', 'catids' => $v));
                     if (count($categoryFiltersPerRegistry) > 0) {
                         $qb->andWhere('(' . implode(' OR ', $categoryFiltersPerRegistry) . ')');
                     }
@@ -805,7 +805,7 @@ class Repository {
             }
 
             // apply default filters
-            $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
+            $currentType = \FormUtil::getPassedValue('type', 'user', 'GETPOST');
             if ($currentType != 'admin') {
                 if (!in_array('workflowState', array_keys($parameters))) {
                     $qb->andWhere('tbl.workflowState = :onlineState')
@@ -822,12 +822,12 @@ class Repository {
         «val startDateField = getStartDateField»
         «val endDateField = getEndDateField»
         «IF startDateField != null»
-            $startDate = FormUtil::getPassedValue('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow», 'GET');
+            $startDate = \FormUtil::getPassedValue('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow», 'GET');
             $qb->andWhere('«whereClauseForDateRangeFilter('>=', startDateField, 'startDate')»')
                ->setParameter('startDate', $startDate);
         «ENDIF»
         «IF endDateField != null»
-            $endDate = FormUtil::getPassedValue('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow», 'GET');
+            $endDate = \FormUtil::getPassedValue('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow», 'GET');
             $qb->andWhere('«whereClauseForDateRangeFilter('<=', endDateField, 'endDate')»')
                ->setParameter('endDate', $endDate);
         «ENDIF»
@@ -1075,9 +1075,9 @@ class Repository {
             }
             «IF standardFields»
 
-                $onlyOwn = (int) FormUtil::getPassedValue('own', 0, 'GETPOST');
+                $onlyOwn = (int) \FormUtil::getPassedValue('own', 0, 'GETPOST');
                 if ($onlyOwn == 1) {
-                    $uid = UserUtil::getVar('uid');
+                    $uid = \UserUtil::getVar('uid');
                     $qb->andWhere('tbl.createdUserId = :creator')
                        ->setParameter('creator', DataUtil::formatForStore($uid));
                 }
@@ -1282,9 +1282,9 @@ class Repository {
 
             $affectedEntities = $query->getResult();
 
-            $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
+            $currentType = \FormUtil::getPassedValue('type', 'user', 'GETPOST');
             $action = 'archive';
-            $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Workflow(ServiceUtil::getManager());
+            $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Workflow(\ServiceUtil::getManager());
 
             foreach ($affectedEntities as $entity) {
                 $hookAreaPrefix = $entity->getHookAreaPrefix();
@@ -1307,7 +1307,7 @@ class Repository {
                     // execute the workflow action
                     $success = $workflowHelper->executeAction($entity, $action);
                 } catch(Exception $e) {
-                    LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                    \LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                 }
 
                 if (!$success) {
@@ -1332,7 +1332,7 @@ class Repository {
 
                 // An item was updated, so we clear all cached pages for this item.
                 $cacheArgs = array('ot' => $entity['_objectType'], 'item' => $entity);
-                ModUtil::apiFunc('«app.appName»', 'cache', 'clearItemCache', $cacheArgs);
+                \ModUtil::apiFunc('«app.appName»', 'cache', 'clearItemCache', $cacheArgs);
             }
 
             return true;

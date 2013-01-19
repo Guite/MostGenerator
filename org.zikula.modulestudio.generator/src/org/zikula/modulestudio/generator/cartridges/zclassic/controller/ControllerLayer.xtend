@@ -149,7 +149,7 @@ class ControllerLayer {
                     $this->view->assign('itemId', $itemId)
                                ->assign('idPrefix', $idPrefix)
                                ->assign('commandName', $commandName)
-                               ->assign('jcssConfig', JCSSUtil::getJSConfig());
+                               ->assign('jcssConfig', \JCSSUtil::getJSConfig());
 
                     «IF app.targets('1.3.5')»
                     $view->display('«formattedName»/inlineRedirectHandler.tpl');
@@ -169,10 +169,10 @@ class ControllerLayer {
                  */
                 public function config«IF !app.targets('1.3.5')»Action«ENDIF»()
                 {
-                    $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN));
+                    $this->throwForbiddenUnless(\SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN));
 
                     // Create new Form reference
-                    $view = FormUtil::newForm($this->name, $this);
+                    $view = \FormUtil::newForm($this->name, $this);
 
                     // Execute form using supplied template and page event handler
                     return $view->execute('«app.configController.formatForDB»/config.tpl', new «app.appName»_Form_Handler_«app.configController.formatForDB.toFirstUpper»_Config());
@@ -198,14 +198,14 @@ class ControllerLayer {
         {
             $this->checkCsrfToken();
 
-            $returnUrl = ModUtil::url($this->name, 'admin', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
+            $returnUrl = \ModUtil::url($this->name, 'admin', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
 
             // Determine object type
             $objectType = isset($args['ot']) ? $args['ot'] : $this->request->getPost()->get('ot', '');
             if (!$objectType) {
-                return System::redirect($returnUrl);
+                return \System::redirect($returnUrl);
             }
-            $returnUrl = ModUtil::url($this->name, 'admin', 'view', array('ot' => $objectType));
+            $returnUrl = \ModUtil::url($this->name, 'admin', 'view', array('ot' => $objectType));
 
             // Get other parameters
             $items = isset($args['items']) ? $args['items'] : $this->request->getPost()->get('items', null);
@@ -218,7 +218,7 @@ class ControllerLayer {
             foreach ($items as $itemid) {
                 // check if item exists, and get record instance
                 $selectionArgs = array('ot' => $objectType, 'id' => $itemid, 'useJoins' => false);
-                $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', $selectionArgs);
+                $entity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', $selectionArgs);
 
                 // check if $action can be applied to this entity (may depend on it's current workflow state)
                 $allowedActions = $workflowHelper->getActionsForObject($entity);
@@ -248,7 +248,7 @@ class ControllerLayer {
                     // execute the workflow action
                     $success = $workflowHelper->executeAction($entity, $action);
                 } catch(Exception $e) {
-                    LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                    \LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                 }
 
                 if (!$success) {
@@ -256,10 +256,10 @@ class ControllerLayer {
                 }
 
                 if ($action == 'delete') {
-                    LogUtil::registerStatus($this->__('Done! Item deleted.'));
+                    \LogUtil::registerStatus($this->__('Done! Item deleted.'));
                 }
                 else {
-                    LogUtil::registerStatus($this->__('Done! Item updated.'));
+                    \LogUtil::registerStatus($this->__('Done! Item updated.'));
                 }
 
                 // Let any hooks know that we have updated or deleted an item
@@ -283,13 +283,13 @@ class ControllerLayer {
 
                 // An item was updated or deleted, so we clear all cached pages for this item.
                 $cacheArgs = array('ot' => $objectType, 'item' => $entity);
-                ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
+                \ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
             }
 
             // clear view cache to reflect our changes
             $this->view->clear_cache();
 
-            return System::redirect($returnUrl);
+            return \System::redirect($returnUrl);
         }
     '''
 
@@ -343,16 +343,16 @@ class ControllerLayer {
                 «menuLinksBetweenControllers»
                 «IF hasActions('view')»
                     «FOR entity : app.getAllEntities»
-                        if (SecurityUtil::checkPermission($this->name . ':«entity.name.formatForCodeCapital»:', '::', ACCESS_«menuLinksPermissionLevel»)) {
-                            $links[] = array('url' => ModUtil::url($this->name, '«formattedName»', 'view', array('ot' => '«entity.name.formatForCode»')),
+                        if (\SecurityUtil::checkPermission($this->name . ':«entity.name.formatForCodeCapital»:', '::', ACCESS_«menuLinksPermissionLevel»)) {
+                            $links[] = array('url' => \ModUtil::url($this->name, '«formattedName»', 'view', array('ot' => '«entity.name.formatForCode»')),
                                              'text' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'),
                                              'title' => $this->__('«entity.name.formatForDisplayCapital» list'));
                         }
                     «ENDFOR»
                 «ENDIF»
                 «IF app.needsConfig && isConfigController»
-                    if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
-                        $links[] = array('url' => ModUtil::url($this->name, '«app.configController.formatForDB»', 'config'),
+                    if (\SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+                        $links[] = array('url' => \ModUtil::url($this->name, '«app.configController.formatForDB»', 'config'),
                                          'text' => $this->__('Configuration'),
                                          'title' => $this->__('Manage settings for this application'));
                     }
@@ -368,8 +368,8 @@ class ControllerLayer {
         switch it {
             AdminController case !container.getUserControllers.isEmpty: '''
                     «val userController = container.getUserControllers.head»
-                    if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
-                        $links[] = array('url' => ModUtil::url($this->name, '«userController.formattedName»', «userController.indexUrlDetails»),
+                    if (\SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
+                        $links[] = array('url' => \ModUtil::url($this->name, '«userController.formattedName»', «userController.indexUrlDetails»),
                                          'text' => $this->__('Frontend'),
                                          'title' => $this->__('Switch to user area.'),
                                          'class' => 'z-icon-es-home');
@@ -377,8 +377,8 @@ class ControllerLayer {
                     '''
             UserController case !container.getAdminControllers.isEmpty: '''
                     «val adminController = container.getAdminControllers.head»
-                    if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
-                        $links[] = array('url' => ModUtil::url($this->name, '«adminController.formattedName»', «adminController.indexUrlDetails»),
+                    if (\SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+                        $links[] = array('url' => \ModUtil::url($this->name, '«adminController.formattedName»', «adminController.indexUrlDetails»),
                                          'text' => $this->__('Backend'),
                                          'title' => $this->__('Switch to administration area.'),
                                          'class' => 'z-icon-es-options');

@@ -43,7 +43,7 @@ class Rss {
             <channel>
                 <title>{$channelTitle}</title>
                 <link>{$baseurl|escape:'html'}</link>
-                <atom:link href="{php}echo substr(System::getBaseURL(), 0, strlen(System::getBaseURL())-1);{/php}{getcurrenturi}" rel="self" type="application/rss+xml" />
+                <atom:link href="{php}echo substr(\System::getBaseURL(), 0, strlen(\System::getBaseURL())-1);{/php}{getcurrenturi}" rel="self" type="application/rss+xml" />
                 <description>{$channelDesc} - {$modvars.ZConfig.slogan}</description>
                 <language>{lang}</language>
                 {* commented out as $imagepath is not defined and we can't know whether this logo exists or not

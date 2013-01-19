@@ -163,7 +163,7 @@ class Validator {
                 if (!$this->isValidInteger($fieldName)) {
                     return false;
                 }
-                $uname = UserUtil::getVar('uname', $this->entity[$fieldName]);
+                $uname = \UserUtil::getVar('uname', $this->entity[$fieldName]);
 
                 return (!is_null($uname) && !empty($uname));
             }
@@ -606,7 +606,7 @@ class Validator {
                 return false;
             }
 
-            $serviceManager = ServiceUtil::getManager();
+            $serviceManager = \ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository('«app.appName»_Entity_«name.formatForCodeCapital»');
 
@@ -630,7 +630,7 @@ class Validator {
                 return false;
             }
 
-            $serviceManager = ServiceUtil::getManager();
+            $serviceManager = \ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository('«app.appName»_Entity_«name.formatForCodeCapital»');
 

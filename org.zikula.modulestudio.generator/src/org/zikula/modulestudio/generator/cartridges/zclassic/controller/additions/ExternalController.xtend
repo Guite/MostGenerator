@@ -101,7 +101,7 @@ class ExternalController {
             $id = (isset($args['id'])) ? $args['id'] : $getData->filter('id', null, FILTER_SANITIZE_STRING);
 
             $component = $this->name . ':' . ucwords($objectType) . ':';
-            if (!SecurityUtil::checkPermission($component, $id . '::', ACCESS_READ)) {
+            if (!\SecurityUtil::checkPermission($component, $id . '::', ACCESS_READ)) {
                 return '';
             }
 
@@ -118,7 +118,7 @@ class ExternalController {
             unset($args);
 
             $repository = $this->entityManager->getRepository('«appName»_Entity_' . ucwords($objectType));
-            $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
+            $idFields = \ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
             $idValues = array('id' => $id);«/** TODO consider composite keys properly */»
 
             $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
@@ -149,8 +149,8 @@ class ExternalController {
             $this->view->setCaching(Zikula_View::CACHE_ENABLED);
             // set cache id
             $accessLevel = ACCESS_READ;
-            if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
-            if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
+            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
+            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
             $this->view->setCacheId($objectType . '|' . $id . '|a' . $accessLevel);
 
             $this->view->assign('objectType', $objectType)
@@ -175,7 +175,7 @@ class ExternalController {
          */
         public function finder«IF !targets('1.3.5')»Action«ENDIF»(array $args = array())
         {
-            PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
+            \PageUtil::addVar('stylesheet', \ThemeUtil::getModuleStylesheet('«appName»'));
 
             $getData = $this->request->query;
             $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->serviceManager);
@@ -186,7 +186,7 @@ class ExternalController {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
             }
 
-            $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT), LogUtil::getErrorMsgPermission());
+            $this->throwForbiddenUnless(\SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT), \LogUtil::getErrorMsgPermission());
 
             $repository = $this->entityManager->getRepository('«appName»_Entity_' . ucfirst($objectType));
 
@@ -198,7 +198,7 @@ class ExternalController {
 
                 // fetch selected categories to reselect them in the output
                 // the actual filtering is done inside the repository class
-                $categoryIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $objectType, 'source' => 'GET'));
+                $categoryIds = \ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $objectType, 'source' => 'GET'));
             «ENDIF»
             $sort = (isset($args['sort']) && !empty($args['sort'])) ? $args['sort'] : $getData->filter('sort', '', FILTER_SANITIZE_STRING);
             if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
@@ -239,7 +239,7 @@ class ExternalController {
                 // assign category properties
                 $properties = null;
                 if (in_array($objectType, $this->categorisableObjectTypes)) {
-                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
+                    $properties = \ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
                 }
                 $view->assign('properties', $properties)
                      ->assign('catIds', $categoryIds);

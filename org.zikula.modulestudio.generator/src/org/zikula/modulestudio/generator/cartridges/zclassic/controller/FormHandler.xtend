@@ -52,7 +52,7 @@ class FormHandler {
 
     def formCreate(Action it, String appName, Controller controller, String actionName) '''
         // Create new Form reference
-        $view = FormUtil::newForm('«appName.formatForCode»', $this);
+        $view = \FormUtil::newForm('«appName.formatForCode»', $this);
 
         «val controllerPraefix = formatForCode(appName + '_Form_Handler_' + controller.name.formatForCodeCapital + actionName.formatForCodeCapital)»
 
@@ -363,13 +363,13 @@ class FormHandler {
          */
         public function initialize(Zikula_Form_View $view)
         {
-            $this->inlineUsage = ((UserUtil::getTheme() == 'Printer') ? true : false);
+            $this->inlineUsage = ((\UserUtil::getTheme() == 'Printer') ? true : false);
             $this->idPrefix = $this->request->query->filter('idp', '', FILTER_SANITIZE_STRING);
 
             // initialise redirect goal
             $this->returnTo = $this->request->query->filter('returnTo', null, FILTER_SANITIZE_STRING);
             // store current uri for repeated creations
-            $this->repeatReturnUrl = System::getCurrentURI();
+            $this->repeatReturnUrl = \System::getCurrentURI();
 
             $this->permissionComponent = $this->name . ':' . $this->objectTypeCapital . ':';
 
@@ -386,22 +386,22 @@ class FormHandler {
             $this->mode = ($hasIdentifier) ? 'edit' : 'create';
 
             if ($this->mode == 'edit') {
-                if (!SecurityUtil::checkPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_EDIT)) {
-                    return LogUtil::registerPermissionError();
+                if (!\SecurityUtil::checkPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_EDIT)) {
+                    return \LogUtil::registerPermissionError();
                 }
 
                 $entity = $this->initEntityForEdit();
 
-                if ($this->hasPageLockSupport === true && ModUtil::available('PageLock')) {
+                if ($this->hasPageLockSupport === true && \ModUtil::available('PageLock')) {
                     // try to guarantee that only one person at a time can be editing this entity
-                    ModUtil::apiFunc('PageLock', 'user', 'pageLock',
+                    \ModUtil::apiFunc('PageLock', 'user', 'pageLock',
                                              array('lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier(),
                                                    'returnUrl' => $this->getRedirectUrl(null)));
                 }
             }
             else {
-                if (!SecurityUtil::checkPermission($this->permissionComponent, '::', ACCESS_ADD)) {
-                    return LogUtil::registerPermissionError();
+                if (!\SecurityUtil::checkPermission($this->permissionComponent, '::', ACCESS_ADD)) {
+                    return \LogUtil::registerPermissionError();
                 }
 
                 $entity = $this->initEntityForCreation();
@@ -440,7 +440,7 @@ class FormHandler {
             $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Workflow($this->serviceManager);
             $actions = $workflowHelper->getActionsForObject($entity);
             if ($actions === false || !is_array($actions)) {
-                return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
+                return \LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
             }
             // assign list of allowed actions to the view for further processing
             $this->view->assign('actions', $actions);
@@ -490,9 +490,9 @@ class FormHandler {
          */
         protected function initEntityForEdit()
         {
-            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $this->idValues));
+            $entity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $this->idValues));
             if ($entity == null) {
-                return LogUtil::registerError($this->__('No such item.'));
+                return \LogUtil::registerError($this->__('No such item.'));
             }
 
             return $entity;
@@ -520,9 +520,9 @@ class FormHandler {
                     $i++;
                 }
                 // reuse existing entity
-                $entityT = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $templateIdValues));
+                $entityT = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $templateIdValues));
                 if ($entityT == null) {
-                    return LogUtil::registerError($this->__('No such item.'));
+                    return \LogUtil::registerError($this->__('No such item.'));
                 }
                 $entity = clone $entityT;
             } else {
@@ -598,12 +598,12 @@ class FormHandler {
                 $this->view->assign($this->objectTypeLower . 'Obj', $entity);
 
                 // load and assign registered categories
-                $registries = ModUtil::apiFunc($this->name, 'category', 'getAllPropertiesWithMainCat', array('ot' => $this->objectType, 'arraykey' => $this->idFields[0]));
+                $registries = \ModUtil::apiFunc($this->name, 'category', 'getAllPropertiesWithMainCat', array('ot' => $this->objectType, 'arraykey' => $this->idFields[0]));
 
                 // check if multiple selection is allowed for this object type
                 $multiSelectionPerRegistry = array();
                 foreach ($registries as $registryId => $registryCid) {
-                    $multiSelectionPerRegistry[$registryId] = ModUtil::apiFunc($this->name, 'category', 'hasMultipleSelection', array('ot' => $this->objectType, 'registry' => $registryId));
+                    $multiSelectionPerRegistry[$registryId] = \ModUtil::apiFunc($this->name, 'category', 'hasMultipleSelection', array('ot' => $this->objectType, 'registry' => $registryId));
                 }
                 $this->view->assign('registries', $registries)
                            ->assign('multiSelectionPerRegistry', $multiSelectionPerRegistry);
@@ -713,14 +713,14 @@ class FormHandler {
 
                 // An item was created, updated or deleted, so we clear all cached pages for this item.
                 $cacheArgs = array('ot' => $this->objectType, 'item' => $entity);
-                ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
+                \ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
 
                 // clear view cache to reflect our changes
                 $this->view->clear_cache();
             }
 
             if ($this->hasPageLockSupport === true && $this->mode == 'edit') {
-                ModUtil::apiFunc('PageLock', 'user', 'releaseLock',
+                \ModUtil::apiFunc('PageLock', 'user', 'releaseLock',
                                  array('lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier()));
             }
 
@@ -861,9 +861,9 @@ class FormHandler {
             $message = $this->getDefaultMessage($args, $success);
             if (!empty($message)) {
                 if ($success === true) {
-                    LogUtil::registerStatus($message);
+                    \LogUtil::registerStatus($message);
                 } else {
-                    LogUtil::registerError($message);
+                    \LogUtil::registerError($message);
                 }
             }
         }
@@ -1149,7 +1149,7 @@ class FormHandler {
             «IF hasOptimisticLock»
 
                 if ($this->mode == 'edit') {
-                    SessionUtil::setVar($this->name . 'EntityVersion', $entity->get«getVersionField.name.formatForCodeCapital»());
+                    \SessionUtil::setVar($this->name . 'EntityVersion', $entity->get«getVersionField.name.formatForCodeCapital»());
                 }
             «ENDIF»
 
@@ -1253,7 +1253,7 @@ class FormHandler {
 
                 $applyLock = ($this->mode != 'create' && $action != 'delete');
                 «IF hasOptimisticLock»
-                    $expectedVersion = SessionUtil::getVar($this->name . 'EntityVersion', 1);
+                    $expectedVersion = \SessionUtil::getVar($this->name . 'EntityVersion', 1);
                 «ENDIF»
             «ENDIF»
 
@@ -1274,10 +1274,10 @@ class FormHandler {
                 $success = $workflowHelper->executeAction($entity, $action);
             «IF hasOptimisticLock»
                 } catch(OptimisticLockException $e) {
-                    LogUtil::registerError($this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
+                    \LogUtil::registerError($this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
             «ENDIF»
             } catch(Exception $e) {
-                LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                \LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
             }
 
             $this->addDefaultMessage($args, $success);

@@ -90,7 +90,7 @@ class Search {
          */
         public function options(array $args = array())
         {
-            if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
+            if (!\SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
                 return '';
             }
 
@@ -115,23 +115,23 @@ class Search {
          */
         public function search(array $args = array())
         {
-            if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
+            if (!\SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
                 return '';
             }
 
             // ensure that database information of Search module is loaded
-            ModUtil::dbInfoLoad('Search');
+            \ModUtil::dbInfoLoad('Search');
 
             // save session id as it is used when inserting search results below
             $sessionId  = session_id();
 
             // retrieve list of activated object types
-            $searchTypes = isset($args['objectTypes']) ? (array)$args['objectTypes'] : (array)FormUtil::getPassedValue('search_«appName.formatForDB»_types', array(), 'GETPOST');
+            $searchTypes = isset($args['objectTypes']) ? (array)$args['objectTypes'] : (array)\FormUtil::getPassedValue('search_«appName.formatForDB»_types', array(), 'GETPOST');
 
             $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->serviceManager);
             $utilArgs = array('api' => 'search', 'action' => 'search');
             $allowedTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
-            $entityManager = ServiceUtil::getService('doctrine.entitymanager');
+            $entityManager = \ServiceUtil::getService('doctrine.entitymanager');
             $currentPage = 1;
             $resultsPerPage = 50;
 
@@ -164,7 +164,7 @@ class Search {
                     continue;
                 }
 
-                $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+                $idFields = \ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
                 $titleField = $repository->getTitleFieldName();
                 $descriptionField = $repository->getDescriptionFieldName();
                 «val hasUserDisplay = !getAllUserControllers.filter(e|e.hasActions('display')).isEmpty»
@@ -190,7 +190,7 @@ class Search {
                         }
 
                     «ENDIF»
-                    if (!SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
+                    if (!\SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
                         continue;
                     }
 
@@ -207,8 +207,8 @@ class Search {
                         'session' => $sessionId
                     );
 
-                    if (!DBUtil::insertObject($searchItem, 'search_result')) {
-                        return LogUtil::registerError($this->__('Error! Could not save the search results.'));
+                    if (!\DBUtil::insertObject($searchItem, 'search_result')) {
+                        return \LogUtil::registerError($this->__('Error! Could not save the search results.'));
                     }
                 }
             }

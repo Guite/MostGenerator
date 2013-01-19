@@ -85,7 +85,7 @@ class Selection {
         public function getEntity(array $args = array())
         {
             if (!isset($args['id'])«IF hasSluggable» && !isset($args['slug'])«ENDIF») {
-                return LogUtil::registerArgsError();
+                return \LogUtil::registerArgsError();
             }
             $objectType = $this->determineObjectType($args, 'getEntity');
             $repository = $this->getRepository($objectType);
@@ -192,7 +192,7 @@ class Selection {
         protected function getRepository($objectType = '')
         {
             if (empty($objectType)) {
-                return LogUtil::registerArgsError();
+                return \LogUtil::registerArgsError();
             }
             return $this->entityManager->getRepository('«appName»_Entity_' . ucfirst($objectType));
         }
@@ -210,7 +210,7 @@ class Selection {
             public function getTree(array $args = array())
             {
                 if (!isset($args['rootId'])) {
-                    return LogUtil::registerArgsError();
+                    return \LogUtil::registerArgsError();
                 }
                 $rootId = $args['rootId'];
 

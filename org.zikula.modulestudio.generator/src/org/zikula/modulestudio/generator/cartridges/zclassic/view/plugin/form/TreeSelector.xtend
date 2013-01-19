@@ -113,7 +113,7 @@ class TreeSelector {
 
                 parent::create($view, $params);
 
-                $entityManager = ServiceUtil::getManager()->getService('doctrine.entitymanager');
+                $entityManager = \ServiceUtil::getManager()->getService('doctrine.entitymanager');
                 $this->repository = $entityManager->getRepository($this->name . '_Entity_' . ucfirst($this->objectType));
             }
 
@@ -136,7 +136,7 @@ class TreeSelector {
             {
                 $apiArgs = array('ot' => $this->objectType
                                  'rootId' => $this->root);
-                $treeNodes = ModUtil::apiFunc($this->name, 'selection', 'getTree', $apiArgs);
+                $treeNodes = \ModUtil::apiFunc($this->name, 'selection', 'getTree', $apiArgs);
                 if (!$treeNodes) {
                     return array();
                 }

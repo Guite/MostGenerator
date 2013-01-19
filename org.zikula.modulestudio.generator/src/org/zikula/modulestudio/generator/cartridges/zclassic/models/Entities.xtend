@@ -329,8 +329,8 @@ class Entities {
                 return;
             }
 
-            $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
-            $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
+            $currentType = \FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
+            $currentFunc = \FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
             «val appName = app.appName»
             $dom = ZLanguage::getModuleDomain('«appName»');
             «FOR controller : app.getAdminAndUserControllers»
@@ -359,7 +359,7 @@ class Entities {
                     «IF controller.hasActions('view') || controller.hasActions('display')»
                         if (in_array($currentFunc, array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view', 'display'))) {
                             «IF controller.hasActions('edit')»
-                                if (SecurityUtil::checkPermission('«appName»:«name.formatForCodeCapital»:', «idFieldsAsParameterCode('this')» . '::', ACCESS_EDIT)) {
+                                if (\SecurityUtil::checkPermission('«appName»:«name.formatForCodeCapital»:', «idFieldsAsParameterCode('this')» . '::', ACCESS_EDIT)) {
                             «IF !readOnly»«/*create is allowed, but editing not*/»
                                 $this->_actions[] = array(
                                     'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»)),
@@ -383,7 +383,7 @@ class Entities {
                                 }
                             «ENDIF»
                             «IF controller.hasActions('delete')»
-                                if (SecurityUtil::checkPermission('«appName»:«name.formatForCodeCapital»:', «idFieldsAsParameterCode('this')» . '::', ACCESS_DELETE)) {
+                                if (\SecurityUtil::checkPermission('«appName»:«name.formatForCodeCapital»:', «idFieldsAsParameterCode('this')» . '::', ACCESS_DELETE)) {
                                     $this->_actions[] = array(
                                         'url' => array('type' => '«controller.formattedName»', 'func' => 'delete', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»)),
                                         'icon' => 'delete',
@@ -505,7 +505,7 @@ class Entities {
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
         «FOR mandatoryField : mandatoryFields.filter(typeof(UserField)).filter(e|e.defaultValue == null || e.defaultValue == '' || e.defaultValue == '0')»
-            $this->«mandatoryField.name.formatForCode» = UserUtil::getVar('uid');
+            $this->«mandatoryField.name.formatForCode» = \UserUtil::getVar('uid');
         «ENDFOR»
         «FOR mandatoryField : mandatoryFields.filter(typeof(DecimalField)).filter(e|e.defaultValue == null || e.defaultValue == '' || e.defaultValue == '0')»
             $this->«mandatoryField.name.formatForCode» = 1;

@@ -86,7 +86,7 @@ class ViewUtil {
             $templateExtension = $this->determineExtension($view, $type, $objectType, $func, $args);
 
             // check whether a special template is used
-            $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : FormUtil::getPassedValue('tpl', '', 'GETPOST', FILTER_SANITIZE_STRING);
+            $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : \FormUtil::getPassedValue('tpl', '', 'GETPOST', FILTER_SANITIZE_STRING);
             if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.' . $templateExtension)) {
                 $template .= '_' . DataUtil::formatForOS($tpl);
             }
@@ -117,7 +117,7 @@ class ViewUtil {
             }
 
             // look whether we need output with or without the theme
-            $raw = (bool) (isset($args['raw']) && !empty($args['raw'])) ? $args['raw'] : FormUtil::getPassedValue('raw', false, 'GETPOST', FILTER_VALIDATE_BOOLEAN);
+            $raw = (bool) (isset($args['raw']) && !empty($args['raw'])) ? $args['raw'] : \FormUtil::getPassedValue('raw', false, 'GETPOST', FILTER_VALIDATE_BOOLEAN);
             if (!$raw && in_array($templateExtension, array('csv', 'rss', 'atom', 'xml', 'pdf', 'vcard', 'ical', 'json', 'kml'))) {
                 $raw = true;
             }
@@ -135,7 +135,7 @@ class ViewUtil {
                     «ENDIF»
                 }
                 «IF targets('1.3.5')»
-                System::shutDown();
+                \System::shutDown();
                 «ENDIF»
             }
 
@@ -172,7 +172,7 @@ class ViewUtil {
                 $extensionVar = 'use' . $extension . 'ext';
                 $extensionCheck = (isset($args[$extensionVar]) && !empty($extensionVar)) ? $extensionVar : 0;
                 if ($extensionCheck != 1) {
-                    $extensionCheck = (int)FormUtil::getPassedValue($extensionVar, 0, 'GET', FILTER_VALIDATE_INT);
+                    $extensionCheck = (int)\FormUtil::getPassedValue($extensionVar, 0, 'GET', FILTER_VALIDATE_INT);
                     //$extensionCheck = (int)$this->request->query->filter($extensionVar, 0, FILTER_VALIDATE_INT);
                 }
                 if ($extensionCheck == 1) {
@@ -200,13 +200,13 @@ class ViewUtil {
         {
             $extParams = array();
             if ($func == 'view') {
-                if (SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_ADMIN)) {
+                if (\SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_ADMIN)) {
                     $extParams = array('csv', 'rss', 'atom', 'xml', 'json', 'kml'/*, 'pdf'*/);
                 } else {
                     $extParams = array('rss', 'atom'/*, 'pdf'*/);
                 }
             } elseif ($func == 'display') {
-                if (SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_ADMIN)) {
+                if (\SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_ADMIN)) {
                     $extParams = array('xml', 'json', 'kml'/*, 'pdf'*/);
                 }
             }
@@ -240,9 +240,9 @@ class ViewUtil {
 
             $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->serviceManager);
             // create name of the pdf output file
-            $fileTitle = $controllerHelper->formatPermalink(System::getVar('sitename'))
+            $fileTitle = $controllerHelper->formatPermalink(\System::getVar('sitename'))
                        . '-'
-                       . $controllerHelper->formatPermalink(PageUtil::getVar('title'))
+                       . $controllerHelper->formatPermalink(\PageUtil::getVar('title'))
                        . '-' . date('Ymd') . '.pdf';
 
             // if ($_GET['dbg'] == 1) die($output);
@@ -259,7 +259,7 @@ class ViewUtil {
             $pdf->stream($fileTitle);
 
             // prevent additional output by shutting down the system
-            System::shutDown();
+            \System::shutDown();
 
             return true;
         }

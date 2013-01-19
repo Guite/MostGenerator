@@ -70,7 +70,7 @@ class UrlRouting {
              */
             function __construct()
             {
-                $displayDefaultEnding = System::getVar('shorturlsext', 'html');
+                $displayDefaultEnding = \System::getVar('shorturlsext', 'html');
                 «/*Modifier: + (1..n), * (0..n), ? (0..1), {x,y} (x..y)*/»
                 $this->requirements = array(
                     'func'          => '\w+',
@@ -110,7 +110,7 @@ class UrlRouting {
         protected function initUrlRoutes()
         {
             $fieldRequirements = $this->requirements;
-            $isDefaultModule = (System::getVar('shorturlsdefaultmodule', '') == '«appName»');
+            $isDefaultModule = (\System::getVar('shorturlsdefaultmodule', '') == '«appName»');
 
             $defaults = array();
             $modulePrefix = '';
@@ -260,12 +260,12 @@ class UrlRouting {
     def private getSlugForItem(Entity it) '''
             case '«name.formatForCode»':
                 «IF hasSluggableFields»
-                        $item = ModUtil::apiFunc('«container.application.appName»', 'selection', 'getEntity', array('ot' => $objectType, 'id' => $itemid, 'slimMode' => true));
+                        $item = \ModUtil::apiFunc('«container.application.appName»', 'selection', 'getEntity', array('ot' => $objectType, 'id' => $itemid, 'slimMode' => true));
                         «IF slugUnique»
                             $slug = $item['slug'];
                         «ELSE»
                             // make non-unique slug unique by adding the identifier
-                            $idFields = ModUtil::apiFunc('«container.application.appName»', 'selection', 'getIdFields', array('ot' => $objectType));
+                            $idFields = \ModUtil::apiFunc('«container.application.appName»', 'selection', 'getIdFields', array('ot' => $objectType));
 
                             // concatenate identifiers (for composite keys)
                             $itemId = '';

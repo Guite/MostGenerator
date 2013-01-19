@@ -62,7 +62,7 @@ class TreeSelection {
                 return false;
             }
 
-            $serviceManager = ServiceUtil::getManager();
+            $serviceManager = \ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository('«appName»_Entity_' . ucfirst($params['objectType']));
             $titleFieldName = $repository->getTitleFieldName();

@@ -17,7 +17,7 @@ class Page {
          * Subject is the `$varname`, and `$event->data` an array of values to be modified by the filter.
          *
          * This single filter can be used to override all css or js scripts or any other var types
-         * sent to `PageUtil::addVar()`.
+         * sent to `\PageUtil::addVar()`.
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */

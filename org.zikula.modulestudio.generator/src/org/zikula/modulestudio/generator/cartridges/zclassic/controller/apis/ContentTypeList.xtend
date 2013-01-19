@@ -173,7 +173,7 @@ class ContentTypeList {
          */
         public function loadData(&$data)
         {
-            $serviceManager = ServiceUtil::getManager();
+            $serviceManager = \ServiceUtil::getManager();
             $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($serviceManager);
 
             $utilArgs = array('name' => 'list');
@@ -201,7 +201,7 @@ class ContentTypeList {
             «IF hasCategorisableEntities»
 
                 if (!isset($data['catIds'])) {
-                    $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $vars['objectType']));
+                    $primaryRegistry = \ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $vars['objectType']));
                     $data['catIds'] = array($primaryRegistry => array());
                     // backwards compatibility
                     if (isset($data['catId'])) {
@@ -225,7 +225,7 @@ class ContentTypeList {
                 // fetch category properties
                 $this->catProperties = null;
                 if (in_array($this->objectType, $this->categorisableObjectTypes)) {
-                    $this->catProperties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
+                    $this->catProperties = \ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
                 }
                 $this->catIds = $data['catIds'];
             «ENDIF»
@@ -239,9 +239,9 @@ class ContentTypeList {
         public function display()
         {
             $dom = ZLanguage::getModuleDomain('«appName»');
-            ModUtil::initOOModule('«appName»');
+            \ModUtil::initOOModule('«appName»');
 
-            $serviceManager = ServiceUtil::getManager();
+            $serviceManager = \ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository('«appName»_Entity_' . ucfirst($this->objectType));
 
@@ -251,7 +251,7 @@ class ContentTypeList {
                 // apply category filters
                 if (in_array($this->objectType, $this->categorisableObjectTypes)) {
                     if (is_array($this->catIds) && count($this->catIds) > 0) {
-                        $categoryFiltersPerRegistry = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', array('ot' => $this->objectType, 'catids' => $this->catIds));
+                        $categoryFiltersPerRegistry = \ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', array('ot' => $this->objectType, 'catids' => $this->catIds));
                         if (count($categoryFiltersPerRegistry) > 0) {
                             if (!empty($where)) {
                                 $where .= ' AND ';
@@ -270,8 +270,8 @@ class ContentTypeList {
             $component = '«appName»:' . ucwords($this->objectType) . ':';
             $instance = '::';
             $accessLevel = ACCESS_READ;
-            if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
-            if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
+            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
+            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
             $this->view->setCacheId('view|ot_' . $this->objectType . '_sort_' . $this->sorting . '_amount_' . $this->amount . '_' . $accessLevel);
 
             $template = $this->getDisplayTemplate();
@@ -291,7 +291,7 @@ class ContentTypeList {
                 'currentPage' => 1,
                 'resultsPerPage' => $resultsPerPage
             );
-            list($entities, $objectCount) = ModUtil::apiFunc('«appName»', 'selection', 'getEntitiesPaginated', $selectionArgs);
+            list($entities, $objectCount) = \ModUtil::apiFunc('«appName»', 'selection', 'getEntitiesPaginated', $selectionArgs);
 
             $data = array('objectType' => $this->objectType,
                           'catids' => $this->catIds,
@@ -358,7 +358,7 @@ class ContentTypeList {
 
             $sortParam = '';
             if ($this->sorting == 'newest') {
-                $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $this->objectType));
+                $idFields = \ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $this->objectType));
                 if (count($idFields) == 1) {
                     $sortParam = $idFields[0] . ' DESC';
                 } else {

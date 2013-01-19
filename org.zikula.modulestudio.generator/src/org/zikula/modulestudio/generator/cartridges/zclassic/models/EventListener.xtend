@@ -128,10 +128,10 @@ class EventListener {
         {
             // delete workflow for this entity
             $workflow = $this['__WORKFLOW__'];
-            $result = (bool) DBUtil::deleteObjectByID('workflows', $workflow['id']);
+            $result = (bool) \DBUtil::deleteObjectByID('workflows', $workflow['id']);
             if ($result === false) {
                 $dom = ZLanguage::getModuleDomain('«container.application.appName»');
-                return LogUtil::registerError(__('Error! Could not remove stored workflow. Deletion has been aborted.', $dom));
+                return \LogUtil::registerError(__('Error! Could not remove stored workflow. Deletion has been aborted.', $dom));
             }
 
             return true;
@@ -366,12 +366,12 @@ class EventListener {
 
     def private postLoadImpl(Entity it/* PostLoad it */) '''
         «val app = container.application»
-        $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
+        $currentFunc = \FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
         «IF hasUploadFieldsEntity»
 
             // initialise the upload handler
             $uploadManager = new «app.appName»«IF app.targets('1.3.5')»_«ELSE»\«ENDIF»UploadHandler();
-            $serviceManager = ServiceUtil::getManager();
+            $serviceManager = \ServiceUtil::getManager();
             $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($serviceManager);
         «ENDIF»
 
@@ -395,7 +395,7 @@ class EventListener {
             $result = Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«app.appName»');
             if (!$result) {
                 $dom = ZLanguage::getModuleDomain('«app.appName»');
-                LogUtil::registerError(__('Error! Could not load the associated workflow.', $dom));
+                \LogUtil::registerError(__('Error! Could not load the associated workflow.', $dom));
             }
         }
     '''
@@ -448,11 +448,11 @@ class EventListener {
                 $basePath = $controllerHelper->getFileBaseFolder('«entity.name.formatForCode»', '«realName»');
             }
             catch (Exception $e) {
-                return LogUtil::registerError($e->getMessage());
+                return \LogUtil::registerError($e->getMessage());
             }
             $fullPath = $basePath .  $this['«realName»'];
             $this['«realName»FullPath'] = $fullPath;
-            $this['«realName»FullPathURL'] = System::getBaseUrl() . $fullPath;
+            $this['«realName»FullPathURL'] = \System::getBaseUrl() . $fullPath;
 
             // just some backwards compatibility stuff«/*TODO: remove somewhen*/»
             if (!isset($this['«realName»Meta']) || !is_array($this['«realName»Meta']) || !count($this['«realName»Meta'])) {

@@ -41,7 +41,7 @@ class ShortUrls {
         {
             // check if we have the required input
             if (!isset($args['modname']) || !isset($args['func'])) {
-                return LogUtil::registerArgsError();
+                return \LogUtil::registerArgsError();
             }
 
             // set default values
@@ -78,7 +78,7 @@ class ShortUrls {
             $args['args']['ot'] = $groupFolder;
 
             // handle special templates
-            $displayDefaultEnding = System::getVar('shorturlsext', 'html');
+            $displayDefaultEnding = \System::getVar('shorturlsext', 'html');
             $endingPrefix = ($args['func'] == 'view') ? '.' : '';
             foreach (array('csv', 'rss', 'atom', 'xml', 'pdf', 'json', 'kml') as $ending) {
                 if (!isset($args['args']['use' . $ending . 'ext'])) {
@@ -166,7 +166,7 @@ class ShortUrls {
             }
 
             // enforce url name of the module, but do only 1 replacement to avoid changing other params
-            $modInfo = ModUtil::getInfoFromName('«app.appName»');
+            $modInfo = \ModUtil::getInfoFromName('«app.appName»');
             $result = preg_replace('/' . $modInfo['name'] . '/', $modInfo['url'], $result, 1);
 
             return $result;
@@ -185,7 +185,7 @@ class ShortUrls {
         {
             // check we actually have some vars to work with
             if (!is_array($args) || !isset($args['vars']) || !is_array($args['vars']) || !count($args['vars'])) {
-                return LogUtil::registerArgsError();
+                return \LogUtil::registerArgsError();
             }
 
             // define the available user functions
@@ -197,7 +197,7 @@ class ShortUrls {
             // set the correct function name based on our input
             if (empty($args['vars'][2])) {
                 // no func and no vars = «IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»
-                System::queryStringSetVar('func', '«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»');
+                \System::queryStringSetVar('func', '«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»');
                 return true;
             } else if (in_array($args['vars'][2], $funcs) && !in_array($args['vars'][2], $customFuncs)) {
                 // normal url scheme, no need for special decoding
@@ -207,7 +207,7 @@ class ShortUrls {
             $func = $args['vars'][2];
 
             // usually the language is in $args['vars'][0], except no mod name is in the url and we are set as start app
-            $modInfo = ModUtil::getInfoFromName('«app.appName»');
+            $modInfo = \ModUtil::getInfoFromName('«app.appName»');
             $lang = (strtolower($args['vars'][0]) == $modInfo['url']) ? $args['vars'][1] : $args['vars'][0];
 
             // remove some unrequired parameters
@@ -229,7 +229,7 @@ class ShortUrls {
                 $url .= '/';
             }
 
-            $isDefaultModule = (System::getVar('shorturlsdefaultmodule', '') == $modInfo['name']);
+            $isDefaultModule = (\System::getVar('shorturlsdefaultmodule', '') == $modInfo['name']);
             if (!$isDefaultModule) {
                 $url = $modInfo['url'] . '/' . $url;
             }
@@ -257,7 +257,7 @@ class ShortUrls {
             $parameters['ot'] = $routerFacade->getObjectTypeFromGroupingFolder($parameters['ot'], $func);
 
             // handle special templates
-            $displayDefaultEnding = System::getVar('shorturlsext', 'html');
+            $displayDefaultEnding = \System::getVar('shorturlsext', 'html');
             $endingPrefix = ($func == 'view') ? '.' : '';
             if (isset($parameters[$func . 'ending']) && !empty($parameters[$func . 'ending']) && $parameters[$func . 'ending'] != ($endingPrefix . $displayDefaultEnding)) {
                 if ($func == 'view') {
@@ -276,7 +276,7 @@ class ShortUrls {
 
             // write vars to GET
             foreach ($parameters as $k => $v) {
-                System::queryStringSetVar($k, $v);
+                \System::queryStringSetVar($k, $v);
             }
 
             return true;

@@ -34,7 +34,7 @@ class ActionUrl {
          */
         function smarty_modifier_«appName.formatForDB»ActionUrl($urlType, $urlFunc, $urlArguments)
         {
-            return DataUtil::formatForDisplay(ModUtil::url('«appName»', $urlType, $urlFunc, $urlArguments));
+            return DataUtil::formatForDisplay(\ModUtil::url('«appName»', $urlType, $urlFunc, $urlArguments));
         }
     '''
 }

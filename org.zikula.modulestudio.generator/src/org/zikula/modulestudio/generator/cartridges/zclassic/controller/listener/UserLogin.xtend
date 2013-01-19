@@ -55,7 +55,7 @@ class UserLogin {
          * Care should be taken to ensure that sensitive operations done within a handler for this event
          * do not introduce breaches of security.
          *
-         * The subject of the event will contain the user's account record, equivalent to `UserUtil::getVars($uid)`.
+         * The subject of the event will contain the user's account record, equivalent to `\UserUtil::getVars($uid)`.
          * The arguments of the event are:
          *     `'authentication_method'` will contain the name of the module and the name of the method that was used to authenticated the user.
          *     `'uid'` will contain the user's uid.
@@ -110,7 +110,7 @@ class UserLogin {
          *     `'authentication_method'` An array containing the `'modname'` (module name) of the authentication module, and
          *                               the `'method'` name of the authentication method being used by the user who is logging in.
          *     `'rememberme'` A flag indicating whether the user checked the box to remain logged in.
-         *     `'user_obj'` The user object array (same as received when calling `UserUtil::getVars($uid);`) of the user who is
+         *     `'user_obj'` The user object array (same as received when calling `\UserUtil::getVars($uid);`) of the user who is
          *                  logging in.
          *
          * This information is also passed back to the log-in process when the user is redirected back there.
@@ -134,14 +134,14 @@ class UserLogin {
          *         ),
          *     ));
          *
-         *     LogUtil::registerError(__("Your log-in request was not completed. You must change your web site account's password first."));
+         *     \LogUtil::registerError(__("Your log-in request was not completed. You must change your web site account's password first."));
          *
          * In this example, the user will be redirected to the URL pointing to the `changePassword` function. This URL is constructed by calling 
-         * `ModUtil::url()` with the modname, type, func, and args specified in the above array. The `changePassword` function also needs access
+         * `\ModUtil::url()` with the modname, type, func, and args specified in the above array. The `changePassword` function also needs access
          * to the information from the log-in attempt, which will be stored in the session variable and namespace specified. This is accomplished
-         * by calling `SessionUtil::setVar()` prior to the redirect, as follows:
+         * by calling `\SessionUtil::setVar()` prior to the redirect, as follows:
          *
-         *     SessionUtil::setVar('Users_Controller_User_changePassword', $sessionVars, 'Zikula_Users' true, true);
+         *     \SessionUtil::setVar('Users_Controller_User_changePassword', $sessionVars, 'Zikula_Users' true, true);
          *
          * where `$sessionVars` contains the information discussed previously.
          *
@@ -214,7 +214,7 @@ class UserLogin {
          * the user will be redirected to the URL provided, instead of being presented with the log-in form.
          *
          * Finally, this event only fires in the event of a "normal" UI-oriented log-in attempt. A module attempting to log in
-         * programmatically by directly calling `UserUtil::loginUsing()` will not see this event fired. Instead, the
+         * programmatically by directly calling `\UserUtil::loginUsing()` will not see this event fired. Instead, the
          * `«IF targets('1.3.5')»Users_Controller_User«ELSE»Users\Controller\UserController«ENDIF»#login()` function can be called with the appropriate parameters, if the event is desired.
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.

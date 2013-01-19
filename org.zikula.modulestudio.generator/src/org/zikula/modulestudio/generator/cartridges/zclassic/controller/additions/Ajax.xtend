@@ -65,7 +65,7 @@ class Ajax {
              */ 
             public function getCommonUsersList«IF !app.targets('1.3.5')»Action«ENDIF»()
             {
-                if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+                if (!\SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
                     return true;
                 }
 
@@ -76,13 +76,13 @@ class Ajax {
                     $fragment = $this->request->query->get('fragment', '');
                 }
 
-                ModUtil::dbInfoLoad('Users');
-                $tables = DBUtil::getTables();
+                \ModUtil::dbInfoLoad('Users');
+                $tables = \DBUtil::getTables();
 
                 $usersColumn = $tables['users_column'];
 
                 $where = 'WHERE ' . $usersColumn['uname'] . ' REGEXP \'(' . DataUtil::formatForStore($fragment) . ')\'';
-                $results = DBUtil::selectObjectArray('users', $where);
+                $results = \DBUtil::selectObjectArray('users', $where);
 
                 $out = '<ul>';
                 if (is_array($results) && count($results) > 0) {
@@ -106,7 +106,7 @@ class Ajax {
          */
         public function getItemListFinder«IF !app.targets('1.3.5')»Action«ENDIF»(array $args = array())
         {
-            if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+            if (!\SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
                 return true;
             }
 
@@ -122,7 +122,7 @@ class Ajax {
             }
 
             $repository = $this->entityManager->getRepository('«app.appName»_Entity_' . ucfirst($objectType));
-            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+            $idFields = \ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
             $titleField = $repository->getTitleFieldName();
             $descriptionField = $repository->getDescriptionFieldName();
 
@@ -149,7 +149,7 @@ class Ajax {
                 foreach ($idFields as $idField) {
                     $itemId .= ((!empty($itemId)) ? '_' : '') . $item[$idField];
                 }
-                if (!SecurityUtil::checkPermission($component, $itemId . '::', ACCESS_READ)) {
+                if (!\SecurityUtil::checkPermission($component, $itemId . '::', ACCESS_READ)) {
                     continue;
                 }
                 $slimItems[] = $this->prepareSlimItem($objectType, $item, $itemId, $titleField, $descriptionField);
@@ -197,7 +197,7 @@ class Ajax {
          */
         public function getItemListAutoCompletion«IF !app.targets('1.3.5')»Action«ENDIF»()
         {
-            if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+            if (!\SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
                 return true;
             }
 
@@ -214,7 +214,7 @@ class Ajax {
             }
 
             $repository = $this->entityManager->getRepository('«app.appName»_Entity_' . ucfirst($objectType));
-            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+            $idFields = \ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
             $fragment = '';
             $exclude = '';
@@ -297,7 +297,7 @@ class Ajax {
         public function checkForDuplicate«IF !app.targets('1.3.5')»Action«ENDIF»()
         {
             $this->checkAjaxToken();
-            $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
+            $this->throwForbiddenUnless(\SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
 
             $objectType = $this->request->request->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->serviceManager);
@@ -380,7 +380,7 @@ class Ajax {
          */
         public function toggleFlag«IF !app.targets('1.3.5')»Action«ENDIF»()
         {
-            $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name. '::Ajax', '::', ACCESS_EDIT));
+            $this->throwForbiddenUnless(\SecurityUtil::checkPermission($this->name. '::Ajax', '::', ACCESS_EDIT));
 
             $objectType = $this->request->request->filter('ot', '', FILTER_SANITIZE_STRING);
             $field = $this->request->request->filter('field', '', FILTER_SANITIZE_STRING);
@@ -397,7 +397,7 @@ class Ajax {
             }
 
             // select data from data source
-            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id));
+            $entity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id));
             if ($entity == null) {
                 return new Zikula_Response_Ajax_NotFound($this->__('No such item.'));
             }
@@ -426,7 +426,7 @@ class Ajax {
          */
         public function handleTreeOperation«IF !app.targets('1.3.5')»Action«ENDIF»()
         {
-            $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
+            $this->throwForbiddenUnless(\SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
 
             «val treeEntities = app.getTreeEntities»
             // parameter specifying which type of objects we are treating
@@ -443,7 +443,7 @@ class Ajax {
 
             $op = DataUtil::convertFromUTF8($this->request->request->filter('op', '', FILTER_SANITIZE_STRING));
             if (!in_array($op, array('addRootNode', 'addChildNode', 'deleteNode', 'moveNode', 'moveNodeTo'))) {
-                LogUtil::registerError($this->__('Error: invalid operation.'));
+                \LogUtil::registerError($this->__('Error: invalid operation.'));
                 throw new Zikula_Exception_Ajax_Fatal();
             }
 
@@ -452,7 +452,7 @@ class Ajax {
             if (!in_array($op, array('addRootNode', 'addChildNode'))) {
                 $id = (int) $this->request->request->filter('id', 0, FILTER_VALIDATE_INT);
                 if (!$id) {
-                    LogUtil::registerError($this->__('Error: invalid node.'));
+                    \LogUtil::registerError($this->__('Error: invalid node.'));
                     throw new Zikula_Exception_Ajax_Fatal();
                 }
             }
@@ -464,7 +464,7 @@ class Ajax {
             if (!in_array($op, array('addRootNode'))) {
                 $rootId = (int) $this->request->request->filter('root', 0, FILTER_VALIDATE_INT);
                 if (!$rootId) {
-                    LogUtil::registerError($this->__('Error: invalid root node.'));
+                    \LogUtil::registerError($this->__('Error: invalid root node.'));
                     throw new Zikula_Exception_Ajax_Fatal();
                 }
             }
@@ -472,14 +472,14 @@ class Ajax {
             // Select tree
             $tree = null;
             if (!in_array($op, array('addRootNode'))) {
-                $tree = ModUtil::apiFunc($this->name, 'selection', 'getTree', array('ot' => $objectType, 'rootId' => $rootId));
+                $tree = \ModUtil::apiFunc($this->name, 'selection', 'getTree', array('ot' => $objectType, 'rootId' => $rootId));
             }
 
             // verification and recovery of tree
             $verificationResult = $repository->verify();
             if (is_array($verificationResult)) {
                 foreach ($verificationResult as $errorMsg) {
-                    LogUtil::registerError($errorMsg);
+                    \LogUtil::registerError($errorMsg);
                 }
             }
             $repository->recover();
@@ -528,7 +528,7 @@ class Ajax {
                 case 'addChildNode':
                                 $parentId = (int) $this->request->request->filter('pid', 0, FILTER_VALIDATE_INT);
                                 if (!$parentId) {
-                                    LogUtil::registerError($this->__('Error: invalid parent node.'));
+                                    \LogUtil::registerError($this->__('Error: invalid parent node.'));
                                     throw new Zikula_Exception_Ajax_Fatal();
                                 }
 
@@ -542,7 +542,7 @@ class Ajax {
                                     $childEntity->merge($objectData);
 
                                     //$childEntity->setParent($parentEntity);
-                                    $parentEntity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $parentId, 'useJoins' => false));
+                                    $parentEntity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $parentId, 'useJoins' => false));
                                     if ($parentEntity == null) {
                                         return new Zikula_Response_Ajax_NotFound($this->__('No such item.'));
                                     }
@@ -552,7 +552,7 @@ class Ajax {
                                 break;
                 case 'deleteNode':
                                 // remove node from tree and reparent all children
-                                $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
+                                $entity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
                                 if ($entity == null) {
                                     return new Zikula_Response_Ajax_NotFound($this->__('No such item.'));
                                 }
@@ -562,11 +562,11 @@ class Ajax {
                 case 'moveNode':
                                 $moveDirection = $this->request->request->filter('direction', '', FILTER_SANITIZE_STRING);
                                 if (!in_array($moveDirection, array('up', 'down'))) {
-                                    LogUtil::registerError($this->__('Error: invalid direction.'));
+                                    \LogUtil::registerError($this->__('Error: invalid direction.'));
                                     throw new Zikula_Exception_Ajax_Fatal();
                                 }
 
-                                $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
+                                $entity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
                                 if ($entity == null) {
                                     return new Zikula_Response_Ajax_NotFound($this->__('No such item.'));
                                 }
@@ -582,19 +582,19 @@ class Ajax {
                 case 'moveNodeTo':
                                 $moveDirection = $this->request->request->filter('direction', '', FILTER_SANITIZE_STRING);
                                 if (!in_array($moveDirection, array('after', 'before', 'bottom'))) {
-                                    LogUtil::registerError($this->__('Error: invalid direction.'));
+                                    \LogUtil::registerError($this->__('Error: invalid direction.'));
                                     throw new Zikula_Exception_Ajax_Fatal();
                                 }
 
                                 $destId = (int) $this->request->request->filter('destid', 0, FILTER_VALIDATE_INT);
                                 if (!$destId) {
-                                    LogUtil::registerError($this->__('Error: invalid destination node.'));
+                                    \LogUtil::registerError($this->__('Error: invalid destination node.'));
                                     throw new Zikula_Exception_Ajax_Fatal();
                                 }
 
                                 //$this->entityManager->transactional(function($entityManager) {
-                                    $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
-                                    $destEntity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $destId, 'useJoins' => false));
+                                    $entity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
+                                    $destEntity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $destId, 'useJoins' => false));
                                     if ($entity == null || $destEntity == null) {
                                         return new Zikula_Response_Ajax_NotFound($this->__('No such item.'));
                                     }
@@ -615,7 +615,7 @@ class Ajax {
 
             // Renew tree
             /** postponed, for now we do a page reload
-            $returnValue['data'] = ModUtil::apiFunc($this->name, 'selection', 'getTree', array('ot' => $objectType, 'rootId' => $rootId));
+            $returnValue['data'] = \ModUtil::apiFunc($this->name, 'selection', 'getTree', array('ot' => $objectType, 'rootId' => $rootId));
             */
 
             return new Zikula_Response_Ajax($returnValue);

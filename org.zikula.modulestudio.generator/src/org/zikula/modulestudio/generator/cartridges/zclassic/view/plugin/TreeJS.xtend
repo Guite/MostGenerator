@@ -69,7 +69,7 @@ class TreeJS {
                 «controllerEditActionFlags»
             }
 
-            $serviceManager = ServiceUtil::getManager();
+            $serviceManager = \ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository('«appName»_Entity_' . ucfirst($params['objectType']));
             $titleFieldName = $repository->getTitleFieldName();
@@ -80,7 +80,7 @@ class TreeJS {
             $result = array();
 
             foreach ($params['tree'] as $item) {
-                $url = (($controllerHasEditAction) ? ModUtil::url('«appName»', $params['controller'], 'edit', array('ot' => $params['objectType'], $idField => $item[$idField])) : '');
+                $url = (($controllerHasEditAction) ? \ModUtil::url('«appName»', $params['controller'], 'edit', array('ot' => $params['objectType'], $idField => $item[$idField])) : '');
 
                 $parentItem = $item->getParent();
 

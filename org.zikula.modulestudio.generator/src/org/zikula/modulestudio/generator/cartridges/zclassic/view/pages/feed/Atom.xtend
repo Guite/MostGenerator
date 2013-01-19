@@ -45,7 +45,7 @@ class Atom {
             <updated>{$items[0].updatedDate|default:$smarty.now|dateformat:'%Y-%m-%dT%H:%M:%SZ'}</updated>
         {/if}
             <link rel="alternate" type="text/html" hreflang="{lang}" href="{modurl modname='«appName»' type='«controller.formattedName»' func='«IF controller.hasActions('index')»«IF container.application.targets('1.3.5')»main«ELSE»index«ENDIF»«ELSE»«controller.actions.head.name.formatForCode»«ENDIF»' fqurl=1}" />
-            <link rel="self" type="application/atom+xml" href="{php}echo substr(System::getBaseURL(), 0, strlen(System::getBaseURL())-1);{/php}{getcurrenturi}" />
+            <link rel="self" type="application/atom+xml" href="{php}echo substr(\System::getBaseURL(), 0, strlen(\System::getBaseURL())-1);{/php}{getcurrenturi}" />
             <rights>Copyright (c) {php}echo date('Y');{/php}, {$baseurl}</rights>
 
         {foreach item='«objName»' from=$items}

@@ -96,17 +96,17 @@ class Mailz {
          */
         public function getContent(array $args = array())
         {
-            ModUtil::initOOModule('«appName»');
+            \ModUtil::initOOModule('«appName»');
             // $args is something like:
             // Array ( [uid] => 5 [contenttype] => h [pluginid] => 1 [nid] => 1 [last] => 0000-00-00 00:00:00 [params] => Array ( [] => ) ) 1
             «val leadingEntity = getLeadingEntity»
             $objectType = '«leadingEntity.name.formatForCode»';
 
-            $serviceManager = ServiceUtil::getManager();
+            $serviceManager = \ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository('«appName»_Entity_' . ucfirst($objectType));
 
-            $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
+            $idFields = \ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
 
             $sortParam = '';
             if ($args['pluginid'] == 2) {
@@ -135,7 +135,7 @@ class Mailz {
                 'currentPage' => 1,
                 'resultsPerPage' => $resultsPerPage
             );
-            list($entities, $objectCount) = ModUtil::apiFunc('«appName»', 'selection', 'getEntitiesPaginated', $selectionArgs);
+            list($entities, $objectCount) = \ModUtil::apiFunc('«appName»', 'selection', 'getEntitiesPaginated', $selectionArgs);
 
             $view = Zikula_View::getInstance('«appName»', true);
 

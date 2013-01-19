@@ -109,8 +109,8 @@ class ColourInput {
             {
                 static $firstTime = true;
                 if ($firstTime) {
-                    PageUtil::addVar('stylesheet', 'javascript/picky_color/picky_color.css');
-                    PageUtil::addVar('javascript', 'javascript/picky_color/picky_color.js');
+                    \PageUtil::addVar('stylesheet', 'javascript/picky_color/picky_color.css');
+                    \PageUtil::addVar('javascript', 'javascript/picky_color/picky_color.js');
                 }
                 $firstTime = false;
 

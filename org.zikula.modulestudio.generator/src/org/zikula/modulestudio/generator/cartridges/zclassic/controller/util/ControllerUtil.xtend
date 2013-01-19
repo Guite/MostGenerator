@@ -211,7 +211,7 @@ class ControllerUtil {
                 throw new Exception('Error! Invalid object type received.');
             }
 
-            $basePath = FileUtil::getDataDirectory() . '/«appName»/';
+            $basePath = \FileUtil::getDataDirectory() . '/«appName»/';
 
             switch ($objectType) {
                 «FOR entity : getUploadEntities»
@@ -252,14 +252,14 @@ class ControllerUtil {
             $uploadPath = $this->getFileBaseFolder($objectType, $fieldName);
 
             // Check if directory exist and try to create it if needed
-            if (!is_dir($uploadPath) && !FileUtil::mkdirs($uploadPath, 0777)) {
-                LogUtil::registerStatus($this->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath)));
+            if (!is_dir($uploadPath) && !\FileUtil::mkdirs($uploadPath, 0777)) {
+                \LogUtil::registerStatus($this->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath)));
                 return false;
             }
 
             // Check if directory is writable and change permissions if needed
             if (!is_writable($uploadPath) && !chmod($uploadPath, 0777)) {
-                LogUtil::registerStatus($this->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath)));
+                \LogUtil::registerStatus($this->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath)));
                 return false;
             }
 
@@ -268,9 +268,9 @@ class ControllerUtil {
             $htaccessFileTemplate = 'modules/«appName»/docs/htaccessTemplate';
             if (!file_exists($htaccessFilePath) && file_exists($htaccessFileTemplate)) {
                 $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
-                $htaccessContent = str_replace('__EXTENSIONS__', $extensions, FileUtil::readFile($htaccessFileTemplate));
-                if (!FileUtil::writeFile($htaccessFilePath, $htaccessContent)) {
-                    LogUtil::registerStatus($this->__f('Warning! Could not but could not write the .htaccess file at "%s".', array($htaccessFilePath)));
+                $htaccessContent = str_replace('__EXTENSIONS__', $extensions, \FileUtil::readFile($htaccessFileTemplate));
+                if (!\FileUtil::writeFile($htaccessFilePath, $htaccessContent)) {
+                    \LogUtil::registerStatus($this->__f('Warning! Could not but could not write the .htaccess file at "%s".', array($htaccessFilePath)));
                     return false;
                 }
             }

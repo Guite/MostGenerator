@@ -98,7 +98,7 @@ class Operations {
         }
 
         // get entity manager
-        $serviceManager = ServiceUtil::getManager();
+        $serviceManager = \ServiceUtil::getManager();
         $entityManager = $serviceManager->getService('doctrine.entitymanager');
 
         // save entity data
@@ -109,13 +109,13 @@ class Operations {
             //});
             $result = true;
         } catch (Exception $e) {
-            LogUtil::registerError($e->getMessage());
+            \LogUtil::registerError($e->getMessage());
         }
     '''
 
     def private deleteImpl() '''
         // get entity manager
-        $serviceManager = ServiceUtil::getManager();
+        $serviceManager = \ServiceUtil::getManager();
         $entityManager = $serviceManager->getService('doctrine.entitymanager');
 
         // delete entity
@@ -124,7 +124,7 @@ class Operations {
             $entityManager->flush();
             $result = true;
         } catch (Exception $e) {
-            LogUtil::registerError($e->getMessage());
+            \LogUtil::registerError($e->getMessage());
         }
     '''
 }

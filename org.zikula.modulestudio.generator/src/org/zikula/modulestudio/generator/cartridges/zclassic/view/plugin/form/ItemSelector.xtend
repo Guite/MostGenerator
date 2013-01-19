@@ -120,15 +120,15 @@ class ItemSelector {
             {
                 static $firstTime = true;
                 if ($firstTime) {
-                    PageUtil::addVar('javascript', 'prototype');
-                    PageUtil::addVar('javascript', 'Zikula.UI'); // imageviewer
-                    PageUtil::addVar('javascript', 'modules/«appName»/javascript/finder.js');
-                    PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
+                    \PageUtil::addVar('javascript', 'prototype');
+                    \PageUtil::addVar('javascript', 'Zikula.UI'); // imageviewer
+                    \PageUtil::addVar('javascript', 'modules/«appName»/javascript/finder.js');
+                    \PageUtil::addVar('stylesheet', \ThemeUtil::getModuleStylesheet('«appName»'));
                 }
                 $firstTime = false;
 
-                if (!SecurityUtil::checkPermission('«appName»:' . ucwords($this->objectType) . ':', '::', ACCESS_COMMENT)) {
-                    return false; //LogUtil::registerPermissionError();
+                if (!\SecurityUtil::checkPermission('«appName»:' . ucwords($this->objectType) . ':', '::', ACCESS_COMMENT)) {
+                    return false; //\LogUtil::registerPermissionError();
                 }
                 «IF hasCategorisableEntities»
 
@@ -137,11 +137,11 @@ class ItemSelector {
                     if (in_array($this->objectType, $categorisableObjectTypes)) {
                         // fetch selected categories to reselect them in the output
                         // the actual filtering is done inside the repository class
-                        $catIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $this->objectType));
+                        $catIds = \ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $this->objectType));
                     }
                 «ENDIF»
 
-                $serviceManager = ServiceUtil::getManager();
+                $serviceManager = \ServiceUtil::getManager();
                 $entityManager = $serviceManager->getService('doctrine.entitymanager');
 
                 $repository = $entityManager->getRepository('«appName»_Entity_' . ucfirst($this->objectType));
@@ -163,7 +163,7 @@ class ItemSelector {
                 // assign category properties
                 $properties = null;
                 if (in_array($this->objectType, $categorisableObjectTypes)) {
-                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
+                    $properties = \ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
                 }
                 $view->assign('properties', $properties)
                      ->assign('catIds', $catIds);

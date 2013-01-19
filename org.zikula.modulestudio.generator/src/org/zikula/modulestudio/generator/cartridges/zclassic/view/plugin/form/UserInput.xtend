@@ -125,7 +125,7 @@ class UserInput {
 
                 $selectorDefaultValue = '';
                 if (intval($this->text) > 0) {
-                    $selectorDefaultValue = UserUtil::getVar('uname', intval($this->text));
+                    $selectorDefaultValue = \UserUtil::getVar('uname', intval($this->text));
                 }
 
                 $searchTitle = __('Search user', $dom);
@@ -181,7 +181,7 @@ class UserInput {
 
                 if (strlen($this->text) > 0) {
                     $uid = intval($this->text);
-                    if (UserUtil::getVar('uname', $uid) == null) {
+                    if (\UserUtil::getVar('uname', $uid) == null) {
                         $this->setError(__('Error! Invalid user.'));
 
                         return false;

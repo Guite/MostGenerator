@@ -72,12 +72,12 @@ class Tag {
             $objectType = isset($urlArgs['ot']) ? $urlArgs['ot'] : '«getLeadingEntity.name.formatForCode»';
 
             $component = $module . ':' . ucwords($objectType) . ':';
-            $perm = SecurityUtil::checkPermission($component, $objectId . '::', ACCESS_READ);
+            $perm = \SecurityUtil::checkPermission($component, $objectId . '::', ACCESS_READ);
             if (!$perm) {
                 return;
             }
 
-            $serviceManager = ServiceUtil::getManager();
+            $serviceManager = \ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository($module . '_Entity_' . ucwords($objectType));
             $useJoins = false;
@@ -98,7 +98,7 @@ class Tag {
             }
 
             if (method_exists($entity, 'getCreatedUserId')) {
-                $this->setObjectAuthor(UserUtil::getVar('uname', $entity['createdUserId']));
+                $this->setObjectAuthor(\UserUtil::getVar('uname', $entity['createdUserId']));
             } else {
                 $this->setObjectAuthor('');
             }

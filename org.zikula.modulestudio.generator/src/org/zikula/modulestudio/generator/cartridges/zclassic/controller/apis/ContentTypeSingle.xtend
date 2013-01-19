@@ -108,7 +108,7 @@ class ContentTypeSingle {
          */
         public function loadData(&$data)
         {
-            $serviceManager = ServiceUtil::getManager();
+            $serviceManager = \ServiceUtil::getManager();
             $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($serviceManager);
 
             $utilArgs = array('name' => 'detail');
@@ -137,7 +137,7 @@ class ContentTypeSingle {
         public function display()
         {
             if ($this->id != null && !empty($this->displayMode)) {
-                return ModUtil::func('«appName»', 'external', 'display', $this->getDisplayArguments());
+                return \ModUtil::func('«appName»', 'external', 'display', $this->getDisplayArguments());
             }
             return '';
         }
@@ -148,7 +148,7 @@ class ContentTypeSingle {
         public function displayEditing()
         {
             if ($this->id != null && !empty($this->displayMode)) {
-                return ModUtil::func('«appName»', 'external', 'display', $this->getDisplayArguments());
+                return \ModUtil::func('«appName»', 'external', 'display', $this->getDisplayArguments());
             }
             $dom = ZLanguage::getModuleDomain('«appName»');
             return __('No item selected.', $dom);

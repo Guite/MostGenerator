@@ -101,12 +101,12 @@ class Redirect {
                 «IF tree != EntityTreeType::NONE»
                     $viewArgs['tpl'] = 'tree';
                 «ENDIF»
-                $url = ModUtil::url($this->name, '«controller.formattedName»', 'view', $viewArgs);
+                $url = \ModUtil::url($this->name, '«controller.formattedName»', 'view', $viewArgs);
             «ELSEIF controller.hasActions('index')»
                 // redirect to the «IF app.targets('1.3.5')»main«ELSE»index«ENDIF» page
-                $url = ModUtil::url($this->name, '«controller.formattedName»', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
+                $url = \ModUtil::url($this->name, '«controller.formattedName»', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
             «ELSE»
-                $url = System::getHomepageUrl();
+                $url = \System::getHomepageUrl();
             «ENDIF»
 
             «IF controller.hasActions('display')»
@@ -115,7 +115,7 @@ class Redirect {
                 «ENDIF»
                 if ($args['commandName'] != 'delete' && !($this->mode == 'create' && $args['commandName'] == 'cancel')) {
                     // redirect to the detail page of treated «name.formatForCode»
-                    $url = ModUtil::url($this->name, '«controller.formattedName»', «modUrlDisplay('this->idValues', false)»);
+                    $url = \ModUtil::url($this->name, '«controller.formattedName»', «modUrlDisplay('this->idValues', false)»);
                 }
                 «IF tree != EntityTreeType::NONE»
                     */
@@ -141,7 +141,7 @@ class Redirect {
                                  'com' => $args['commandName']);
                 $urlArgs = $this->addIdentifiersToUrlArgs($urlArgs);
                 // inline usage, return to special function for closing the Zikula.UI.Window instance
-                return ModUtil::url($this->name, '«controller.formattedName»', 'handleInlineRedirect', $urlArgs);
+                return \ModUtil::url($this->name, '«controller.formattedName»', 'handleInlineRedirect', $urlArgs);
             }
 
             if ($this->repeatCreateAction) {
@@ -160,11 +160,11 @@ class Redirect {
                     «val controllerName = someController.formattedName»
                     «IF someController.hasActions('index')»
                         case '«controllerName»':
-                                    return ModUtil::url($this->name, '«controllerName»', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
+                                    return \ModUtil::url($this->name, '«controllerName»', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
                     «ENDIF»
                     «IF someController.hasActions('view')»
                         case '«controllerName»View':
-                                    return ModUtil::url($this->name, '«controllerName»', 'view',
+                                    return \ModUtil::url($this->name, '«controllerName»', 'view',
                                                              array('ot' => $this->objectType));
                     «ENDIF»
                     «IF someController.hasActions('display')»
@@ -172,7 +172,7 @@ class Redirect {
                                     if ($args['commandName'] != 'delete' && !($this->mode == 'create' && $args['commandName'] == 'cancel')) {
                                         $urlArgs = $this->addIdentifiersToUrlArgs();
                                         $urlArgs['ot'] = $this->objectType;
-                                        return ModUtil::url($this->name, '«controllerName»', 'display', $urlArgs);
+                                        return \ModUtil::url($this->name, '«controllerName»', 'display', $urlArgs);
                                     }
                                     return $this->getDefaultReturnUrl($args);
                     «ENDIF»
@@ -184,13 +184,13 @@ class Redirect {
                             «val controllerName = someController.formattedName»
                             «IF someController.hasActions('view')»
                                 case '«controllerName»View«sourceEntity.name.formatForCodeCapital»':
-                                    return ModUtil::url($this->name, '«controllerName»', 'view',
+                                    return \ModUtil::url($this->name, '«controllerName»', 'view',
                                                              array('ot' => '«sourceEntity.name.formatForCode»'));
                             «ENDIF»
                             «IF someController.hasActions('display')»
                                 case '«controllerName»Display«sourceEntity.name.formatForCodeCapital»':
                                     if (!empty($this->«incomingRelation.getRelationAliasName(false)»)) {
-                                        return ModUtil::url($this->name, '«controllerName»', 'display', array('ot' => '«sourceEntity.name.formatForCode»', 'id' => $this->«incomingRelation.getRelationAliasName(false)»«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»));
+                                        return \ModUtil::url($this->name, '«controllerName»', 'display', array('ot' => '«sourceEntity.name.formatForCode»', 'id' => $this->«incomingRelation.getRelationAliasName(false)»«IF sourceEntity.hasSluggableFields»«/*, 'slug' => 'TODO'*/»«ENDIF»));
                                     }
                                     return $this->getDefaultReturnUrl($args);
                             «ENDIF»

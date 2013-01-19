@@ -26,7 +26,7 @@ class ModuleDispatch {
         /**
          * Listener for the `module_dispatch.preexecute` event.
          *
-         * Occurs in `ModUtil::exec()` after function call with the following args:
+         * Occurs in `\ModUtil::exec()` after function call with the following args:
          * `array('modname' => $modname, 'modfunc' => $modfunc, 'args' => $args, 'modinfo' => $modinfo, 'type' => $type, 'api' => $api)`.
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
@@ -41,7 +41,7 @@ class ModuleDispatch {
         /**
          * Listener for the `module_dispatch.postexecute` event.
          *
-         * Occurs in `ModUtil::exec()` after function call with the following args:
+         * Occurs in `\ModUtil::exec()` after function call with the following args:
          * `array('modname' => $modname, 'modfunc' => $modfunc, 'args' => $args, 'modinfo' => $modinfo, 'type' => $type, 'api' => $api)`.
          * Receives the modules output with `$event->getData();`.
          * Can modify this output with `$event->setData($data);`.
@@ -58,7 +58,7 @@ class ModuleDispatch {
         /**
          * Listener for the `module_dispatch.custom_classname` event.
          *
-         * In order to override the classname calculated in `ModUtil::exec()`.
+         * In order to override the classname calculated in `\ModUtil::exec()`.
          * In order to override a pre-existing controller/api method, use this event type to override the class name that is loaded.
          * This allows to override the methods using inheritance.
          * Receives no subject, args of `array('modname' => $modname, 'modinfo' => $modinfo, 'type' => $type, 'api' => $api)`

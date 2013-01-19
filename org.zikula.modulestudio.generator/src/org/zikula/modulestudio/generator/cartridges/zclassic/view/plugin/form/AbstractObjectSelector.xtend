@@ -166,7 +166,7 @@ class AbstractObjectSelector {
             }
             if (empty($this->displayField)) {
                 // fallback to the leading field
-                $entityManager = ServiceUtil::getManager()->getService('doctrine.entitymanager');
+                $entityManager = \ServiceUtil::getManager()->getService('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($this->name . '_Entity_' . ucfirst($this->objectType));
                 $this->displayField = $repository->getTitleFieldName();
             }
@@ -210,7 +210,7 @@ class AbstractObjectSelector {
 
             parent::create($view, $params);
 
-            $this->idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $this->objectType));
+            $this->idFields = \ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $this->objectType));
             $this->cssClass .= ' ' . $this->getStyleClass() . ' ' . strtolower($this->objectType);
         }
 
@@ -272,7 +272,7 @@ class AbstractObjectSelector {
 
             if ($this->resultsPerPage < 1) {
                 // no pagination
-                $entities = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
+                $entities = \ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
 
                 return $entities;
             }
@@ -281,7 +281,7 @@ class AbstractObjectSelector {
             $selectionArgs['currentPage'] = $this->currentPage;
             $selectionArgs['resultsPerPage'] = $this->resultsPerPage;
 
-            list($entities, $objectCount) = ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
+            list($entities, $objectCount) = \ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
 
             return $entities;
         }
@@ -329,13 +329,13 @@ class AbstractObjectSelector {
             $alias = $this->id;
             $many = ($this->selectionMode == 'multiple');
 
-            $serviceManager = ServiceUtil::getManager();
+            $serviceManager = \ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository($this->name . '_Entity_' . ucfirst($this->objectType));
 
             $inputValue = $this->getSelectedValue();
             if (empty($inputValue) || !$inputValue) {
-                $inputValue = FormUtil::getPassedValue($this->inputName, '', $source);
+                $inputValue = \FormUtil::getPassedValue($this->inputName, '', $source);
             }
             if (empty($inputValue)) {
                 return $many ? array() : null;
@@ -368,7 +368,7 @@ class AbstractObjectSelector {
                 'where' => $this->buildWhereClause($inputValue),
                 'orderBy' => $this->orderBy
             );
-            $relatedItems = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
+            $relatedItems = \ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
 
             return $relatedItems;
         }

@@ -80,9 +80,9 @@ class VersionFile {
 
                 // define special capabilities of this module
                 $meta['capabilities'] = array(
-                                  HookUtil::SUBSCRIBER_CAPABLE => array('enabled' => true)
+                                  \HookUtil::SUBSCRIBER_CAPABLE => array('enabled' => true)
         /*,
-                                  HookUtil::PROVIDER_CAPABLE => array('enabled' => true), // TODO: see #15
+                                  \HookUtil::PROVIDER_CAPABLE => array('enabled' => true), // TODO: see #15
                                   'authentication' => array('version' => '1.0'),
                                   'profile'        => array('version' => '1.0', 'anotherkey' => 'anothervalue'),
                                   'message'        => array('version' => '1.0', 'anotherkey' => 'anothervalue')
@@ -184,7 +184,7 @@ class VersionFile {
         array('modname'    => '«name.formatForCode.toFirstUpper»',
               'minversion' => '«minVersion»',
               'maxversion' => '«maxVersion»',
-              'status'     => ModUtil::DEPENDENCY_«appDependencyType»)
+              'status'     => \ModUtil::DEPENDENCY_«appDependencyType»)
     '''
 
     def private appDependencyType(ReferredApplication it) {

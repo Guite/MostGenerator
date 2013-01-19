@@ -48,7 +48,7 @@ class GetFileSize {
                 return '';
             }
 
-            $serviceManager = ServiceUtil::getManager();
+            $serviceManager = \ServiceUtil::getManager();
             $viewHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»View($serviceManager);
             $result = $viewHelper->getReadableFileSize($size, $nodesc, $onlydesc);
 

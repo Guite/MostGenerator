@@ -20,7 +20,7 @@ class User {
         /**
          * Listener for the `user.gettheme` event.
          *
-         * Called during UserUtil::getTheme() and is used to filter the results.
+         * Called during \UserUtil::getTheme() and is used to filter the results.
          * Receives arg['type'] with the type of result to be filtered
          * and the $themeName in the $event->data which can be modified.
          * Must $event->stop«IF !targets('1.3.5')»Propagation«ENDIF»() if handler performs filter.
@@ -86,11 +86,11 @@ class User {
                 parent::delete($event);
             «ELSE»
                 «IF hasStandardFieldEntities || hasUserFields»
-                ModUtil::initOOModule('«appName»');
+                \ModUtil::initOOModule('«appName»');
 
                 $userRecord = $event->getSubject();
                 $uid = $userRecord['uid'];
-                $serviceManager = ServiceUtil::getManager();
+                $serviceManager = \ServiceUtil::getManager();
                 $entityManager = $serviceManager->getService('doctrine.entitymanager');
                 «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
                 «ENDIF»
