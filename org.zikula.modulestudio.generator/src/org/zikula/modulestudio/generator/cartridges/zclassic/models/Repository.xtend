@@ -97,7 +97,11 @@ class Repository {
             use Doctrine\DBAL\LockMode;
         «ENDIF»
 
+        «IF app.targets('1.3.5')»
         use DoctrineExtensions\Paginate\Paginate;
+        «ELSE»
+        use Doctrine\ORM\Tools\Pagination\Paginator;
+        «ENDIF»
 
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.
@@ -688,16 +692,23 @@ class Repository {
             $query = $this->getQueryFromBuilder($qb);
             $offset = ($currentPage-1) * $resultsPerPage;
 
-            // count the total number of affected items
-            $count = Paginate::getTotalQueryResults($query);
+            «IF app.targets('1.3.5')»
+                // count the total number of affected items
+                $count = Paginate::getTotalQueryResults($query);
 
-            «IF !(outgoing.filter(typeof(JoinRelationship)).isEmpty && incoming.filter(typeof(JoinRelationship)).isEmpty)»
-                // prefetch unique relationship ids for given pagination frame
-                $query = Paginate::getPaginateQuery($query, $offset, $resultsPerPage);
+                «IF !(outgoing.filter(typeof(JoinRelationship)).isEmpty && incoming.filter(typeof(JoinRelationship)).isEmpty)»
+                    // prefetch unique relationship ids for given pagination frame
+                    $query = Paginate::getPaginateQuery($query, $offset, $resultsPerPage);
+                «ELSE»
+                    $query->setFirstResult($offset)
+                          ->setMaxResults($resultsPerPage);
+                «ENDIF»
             «ELSE»
                 $query->setFirstResult($offset)
                       ->setMaxResults($resultsPerPage);
+                $count = 0; // will be set at a later stage (in calling method)
             «ENDIF»
+
             return array($query, $count);
         }
 
@@ -717,7 +728,18 @@ class Repository {
             $qb = $this->_intBaseQuery($where, $orderBy, $useJoins);
             list($query, $count) = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
 
+            «IF app.targets('1.3.5')»
             $result = $query->getResult();
+            «ELSE»
+                «IF !(outgoing.filter(typeof(JoinRelationship)).isEmpty && incoming.filter(typeof(JoinRelationship)).isEmpty)»
+                    $paginator = new Paginator($query, true);
+                «ELSE»
+                    $paginator = new Paginator($query, false);
+                «ENDIF»
+
+                $count = count($paginator);
+                $result = $paginator;
+            «ENDIF»
 
             return array($result, $count);
         }
@@ -851,7 +873,18 @@ class Repository {
 
             list($query, $count) = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
 
+            «IF app.targets('1.3.5')»
             $result = $query->getResult();
+            «ELSE»
+                «IF !(outgoing.filter(typeof(JoinRelationship)).isEmpty && incoming.filter(typeof(JoinRelationship)).isEmpty)»
+                    $paginator = new Paginator($query, true);
+                «ELSE»
+                    $paginator = new Paginator($query, false);
+                «ENDIF»
+
+                $count = count($paginator);
+                $result = $paginator;
+            «ENDIF»
 
             return array($result, $count);
         }

@@ -1,34 +1,36 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity
 
 import com.google.inject.Inject
-import de.guite.modulestudio.metamodel.modulestudio.EntityField
-import de.guite.modulestudio.metamodel.modulestudio.DerivedField
-import de.guite.modulestudio.metamodel.modulestudio.BooleanField
+import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.AbstractIntegerField
-import de.guite.modulestudio.metamodel.modulestudio.IntegerField
-import de.guite.modulestudio.metamodel.modulestudio.DecimalField
 import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField
+import de.guite.modulestudio.metamodel.modulestudio.ArrayField
+import de.guite.modulestudio.metamodel.modulestudio.BooleanField
+import de.guite.modulestudio.metamodel.modulestudio.DatetimeField
+import de.guite.modulestudio.metamodel.modulestudio.DecimalField
+import de.guite.modulestudio.metamodel.modulestudio.DerivedField
+import de.guite.modulestudio.metamodel.modulestudio.EmailField
+import de.guite.modulestudio.metamodel.modulestudio.EntityField
+import de.guite.modulestudio.metamodel.modulestudio.EntityIdentifierStrategy
+import de.guite.modulestudio.metamodel.modulestudio.FloatField
+import de.guite.modulestudio.metamodel.modulestudio.IntegerField
+import de.guite.modulestudio.metamodel.modulestudio.ListField
+import de.guite.modulestudio.metamodel.modulestudio.ObjectField
 import de.guite.modulestudio.metamodel.modulestudio.StringField
 import de.guite.modulestudio.metamodel.modulestudio.TextField
-import de.guite.modulestudio.metamodel.modulestudio.EmailField
-import de.guite.modulestudio.metamodel.modulestudio.UrlField
-import de.guite.modulestudio.metamodel.modulestudio.ListField
 import de.guite.modulestudio.metamodel.modulestudio.UploadField
-import de.guite.modulestudio.metamodel.modulestudio.ArrayField
-import de.guite.modulestudio.metamodel.modulestudio.ObjectField
-import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
-import de.guite.modulestudio.metamodel.modulestudio.DatetimeField
-import de.guite.modulestudio.metamodel.modulestudio.FloatField
-import de.guite.modulestudio.metamodel.modulestudio.EntityIdentifierStrategy
+import de.guite.modulestudio.metamodel.modulestudio.UrlField
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
-import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Property {
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
+    @Inject extension Utils = new Utils()
 
     FileHelper fh = new FileHelper()
 
@@ -38,13 +40,12 @@ class Property {
 
     /**
      * Do only use integer (no smallint or bigint) for version fields.
-     * This is just a hack for a minor bug in Doctrine 2.
-     * See http://www.doctrine-project.org/jira/browse/DDC-1290 for more information.
-     * After this has been fixed the following define for IntegerField can be removed
-     * completely as the define for DerivedField can be used then instead.
+     * This is just a hack for a minor bug in Doctrine 2.1 (fixed in 2.2).
+     * After we dropped support for Zikula 1.3.5 the following define for IntegerField
+     * can be removed completely as the define for DerivedField can be used then instead.
      */
     def dispatch persistentProperty(IntegerField it) {
-        if (version && entity.hasOptimisticLock)
+        if (version && entity.hasOptimisticLock && entity.container.application.targets('1.3.5'))
             persistentProperty(name.formatForCode, 'integer', '')
         else
             persistentProperty(name.formatForCode, fieldTypeAsString, '')

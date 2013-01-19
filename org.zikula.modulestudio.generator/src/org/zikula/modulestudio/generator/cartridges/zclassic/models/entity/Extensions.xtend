@@ -372,11 +372,11 @@ class Extensions {
 
         «ENDIF»
         «IF classType == 'closure'»
-            use Gedmo\Tree\Entity\AbstractClosure;
+            use Gedmo\Tree\Entity\«IF !app.targets('1.3.5')»MappedSuperclass\«ENDIF»AbstractClosure;
         «ELSEIF classType == 'translation'»
-            use Gedmo\Translatable\Entity\AbstractTranslation;
+            use Gedmo\Translatable\Entity\«IF !app.targets('1.3.5')»MappedSuperclass\«ENDIF»AbstractTranslation;
         «ELSEIF classType == 'logEntry'»
-            use Gedmo\Loggable\Entity\AbstractLogEntry;
+            use Gedmo\Loggable\Entity\«IF !app.targets('1.3.5')»MappedSuperclass\«ENDIF»AbstractLogEntry;
         «ELSEIF classType == 'metaData' || classType == 'attribute' || classType == 'category'»
             use Doctrine\ORM\Mapping as ORM;
         «ENDIF»
@@ -387,11 +387,11 @@ class Extensions {
          * This is the base «classType.formatForDisplay» class for «name.formatForDisplay» entities.
          */
         «IF classType == 'closure'»
-        class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»\«ENDIF»AbstractClosure
+        class «entityClassName(classType, false)» extends AbstractClosure
         «ELSEIF classType == 'translation'»
-        class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»\«ENDIF»AbstractTranslation
+        class «entityClassName(classType, false)» extends AbstractTranslation
         «ELSEIF classType == 'logEntry'»
-        class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»\«ENDIF»AbstractLogEntry
+        class «entityClassName(classType, false)» extends AbstractLogEntry
         «ELSEIF classType == 'metaData'»
         class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»\«ENDIF»Zikula_Doctrine2_Entity_EntityMetadata
         «ELSEIF classType == 'attribute'»
