@@ -265,7 +265,7 @@ class ControllerUtil {
 
             // Write a htaccess file into the upload directory
             $htaccessFilePath = $uploadPath . '.htaccess';
-            $htaccessFileTemplate = 'modules/«appName»/docs/htaccessTemplate';
+            $htaccessFileTemplate = 'modules/«appName»/«IF targets('1.3.5')»docs«ELSE»«getAppDocPath»«ENDIF»/htaccessTemplate';
             if (!file_exists($htaccessFilePath) && file_exists($htaccessFileTemplate)) {
                 $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
                 $htaccessContent = str_replace('__EXTENSIONS__', $extensions, \FileUtil::readFile($htaccessFileTemplate));

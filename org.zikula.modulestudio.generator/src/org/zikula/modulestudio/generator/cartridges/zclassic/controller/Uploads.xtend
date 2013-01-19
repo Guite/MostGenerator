@@ -57,7 +57,7 @@ class Uploads {
                 fsa.generateFile(getAppUploadPath + subFolderName + uploadFields.head.subFolderPathSegment + '/tmb/index.html', msUrl)
             }
         }
-        val docPath = getAppSourcePath + 'docs/'
+        val docPath = getAppSourcePath + (if (targets('1.3.5')) 'docs/' else getAppDocPath)
         fsa.generateFile(docPath + 'htaccessTemplate', htAccessTemplate)
     }
 
