@@ -127,6 +127,10 @@ class Display {
                     <dd>{$«name.formatForCode».«geoFieldName»|«appName.formatForDB»FormatGeoData}</dd>
                 «ENDFOR»
             «ENDIF»
+            «IF softDeleteable»
+                <dt>{gt text='Deleted at'}</dt>
+                <dd>{$«name.formatForCode».deletedAt|dateformat:'datebrief'}</dd>
+            «ENDIF»
             «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.displayEntry(controller, false)»«ENDFOR»
             «/*«FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.displayEntry(controller, true)»«ENDFOR»*/»
         </dl>

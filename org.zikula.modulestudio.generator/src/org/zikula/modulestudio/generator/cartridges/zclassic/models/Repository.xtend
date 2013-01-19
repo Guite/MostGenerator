@@ -1242,6 +1242,9 @@ class Repository {
              'latitude',
              'longitude',
         «ENDIF»
+        «IF softDeleteable && !container.application.targets('1.3.5')»
+             'deletedAt',
+        «ENDIF»
         «IF standardFields»
              'createdUserId',
              'updatedUserId',

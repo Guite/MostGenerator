@@ -67,6 +67,9 @@ class Xml {
                     <«geoFieldName»>{$item.«geoFieldName»|formatnumber:7}</«geoFieldName»>
                 «ENDFOR»
             «ENDIF»
+            «IF softDeleteable»
+                <deletedAt>{$item.deletedAt|dateformat:'datebrief'}</deletedAt>
+            «ENDIF»
             <workflowState>{$item.workflowState|«appName.formatForDB»ObjectState:false|lower}</workflowState>
             «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.displayRelatedEntry(controller, false)»«ENDFOR»
             «FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.displayRelatedEntry(controller, true)»«ENDFOR»

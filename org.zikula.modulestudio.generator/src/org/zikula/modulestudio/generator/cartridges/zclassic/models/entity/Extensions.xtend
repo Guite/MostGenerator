@@ -35,18 +35,22 @@ class Extensions {
      * Class annotations.
      */
     def classExtensions(Entity it) '''
-        «IF loggable»
+         «IF loggable»
          * @Gedmo\Loggable(logEntryClass="«entityClassName('logEntry', false)»")
-        «ENDIF»
-        «IF hasTranslatableFields»
+         «ENDIF»
+         «IF softDeleteable && !container.application.targets('1.3.5')»
+         * @Gedmo\SoftDeleteable(fieldName="deletedAt")
+         «ENDIF»
+         «IF hasTranslatableFields»
          * @Gedmo\TranslationEntity(class="«entityClassName('translation', false)»")
-        «ENDIF»
-        «IF tree != EntityTreeType::NONE»
+         «ENDIF»
+         «IF tree != EntityTreeType::NONE»
          * @Gedmo\Tree(type="«tree.asConstant»")
             «IF tree == EntityTreeType::CLOSURE»
              * @Gedmo\TreeClosure(class="«entityClassName('closure', false)»")
             «ENDIF»
-        «ENDIF»
+         «ENDIF»
+        «IF 3 < 2»dummy for indentation«ENDIF»
     '''
 
     /**
@@ -105,6 +109,16 @@ class Extensions {
              * @var decimal $longitude.
              */
             protected $longitude = 0.00;
+        «ENDIF»
+        «IF softDeleteable»
+
+            /**
+             * Date of when this item has been marked as deleted.
+             *
+             * @ORM\Column(type="datetime", nullable=true)
+             * @var datetime $deletedAt.
+             */
+            protected $deletedAt;
         «ENDIF»
         «IF hasSluggableFields»
 
@@ -244,6 +258,9 @@ class Extensions {
         «IF geographical»
             «fh.getterAndSetterMethods(it, 'latitude', 'decimal', false, false, '', '')»
             «fh.getterAndSetterMethods(it, 'longitude', 'decimal', false, false, '', '')»
+        «ENDIF»
+        «IF softDeleteable»
+            «fh.getterAndSetterMethods(it, 'deletedAt', 'datetime', false, false, '', '')»
         «ENDIF»
         «IF hasSluggableFields»
             «fh.getterMethod(it, 'slug', 'string', false)»
