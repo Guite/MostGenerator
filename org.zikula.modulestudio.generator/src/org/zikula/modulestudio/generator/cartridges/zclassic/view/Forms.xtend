@@ -216,18 +216,16 @@ class Forms {
     '''
 
     def private slugField(Entity it, String groupSuffix, String idSuffix) '''
-        «/*no slug input element yet, see https://github.com/l3pp4rd/DoctrineExtensions/issues/140
-        «IF hasSluggableFields && slugUpdatable»
+        «IF hasSluggableFields && slugUpdatable && !container.application.targets('1.3.5')»
             <div class="z-formrow">
-                {formlabel for=«templateIdWithSuffix('slug', idSuffix)» __text='Permalink'«IF slugUnique» mandatorysym='1'«ENDIF»}
-                {formtextinput group=«templateIdWithSuffix(name.formatForDB, groupSuffix)» id=«templateIdWithSuffix('slug', idSuffix)» mandatory=«slugUnique.displayBool«ENDIF» readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay)»«IF !slugUnique» or let this field free to create one automatically«ENDIF»' textMode='singleline' maxLength=255«IF slugUnique» cssClass='required validate-unique'«ENDIF»}
+                {formlabel for=«templateIdWithSuffix('slug', idSuffix)» __text='Permalink'«/*IF slugUnique» mandatorysym='1'«ENDIF*/»}
+                {formtextinput group=«templateIdWithSuffix(name.formatForDB, groupSuffix)» id=«templateIdWithSuffix('slug', idSuffix)» mandatory=false«/*slugUnique.displayBool*/» readOnly=false __title='You can input a custom permalink for the «name.formatForDisplay»«IF !slugUnique» or let this field free to create one automatically«ENDIF»' textMode='singleline' maxLength=255«IF slugUnique» cssClass='«/*required */»validate-unique'«ENDIF»}
             «IF slugUnique»
-                {«container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='required'}
+                «/*{«container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='required'}*/»
                 {«container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix('slug', idSuffix)» class='validate-unique'}
             «ENDIF»
         </div>
         «ENDIF»
-        */»
     '''
 
     def private formTemplateJS(Entity it, Application app, Controller controller, String actionName) '''

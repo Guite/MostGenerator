@@ -59,7 +59,7 @@ class Extensions {
     def private columnExtensionsDefault(DerivedField it) '''
         «IF translatable» * @Gedmo\Translatable
         «ENDIF»
-        «IF sluggablePosition > 0» * @Gedmo\Sluggable(slugField="slug", position=«sluggablePosition»)
+        «IF sluggablePosition > 0 && entity.container.application.targets('1.3.5')» * @Gedmo\Sluggable(slugField="slug", position=«sluggablePosition»)
         «ENDIF»
         «IF sortableGroup» * @Gedmo\SortableGroup
         «ENDIF»
@@ -126,7 +126,11 @@ class Extensions {
              «IF hasTranslatableSlug»
                  * @Gedmo\Translatable
              «ENDIF»
+             «IF container.application.targets('1.3.5')»
              * @Gedmo\Slug(style="«slugStyle.asConstant»", separator="«slugSeparator»"«IF !slugUnique», unique=false«ENDIF»«IF !slugUpdatable», updatable=false«ENDIF»)
+             «ELSE»
+             * @Gedmo\Slug(fields={«FOR field : getSluggableFields SEPARATOR ', '»"«field.name.formatForCode»"«ENDFOR»}«IF !slugUpdatable», updatable=false«ENDIF»«IF !slugUnique», unique=false«ENDIF», separator="«slugSeparator»", style="«slugStyle.asConstant»")
+             «ENDIF»
              * @ORM\Column(type="string", length=«slugLength»«IF !slugUnique», unique=false«ENDIF»)
              * @var string $slug.
              */
@@ -263,8 +267,11 @@ class Extensions {
             «fh.getterAndSetterMethods(it, 'deletedAt', 'datetime', false, false, '', '')»
         «ENDIF»
         «IF hasSluggableFields»
+            «IF container.application.targets('1.3.5')»
             «fh.getterMethod(it, 'slug', 'string', false)»
-            «/*fh.getterAndSetterMethods(it, 'slug', 'string', false, false, '', '')*/»
+            «ELSE»
+            «fh.getterAndSetterMethods(it, 'slug', 'string', false, false, '', '')»
+            «ENDIF»
         «ENDIF»
         «IF tree != EntityTreeType::NONE»
             «fh.getterAndSetterMethods(it, 'lft', 'integer', false, false, '', '')»

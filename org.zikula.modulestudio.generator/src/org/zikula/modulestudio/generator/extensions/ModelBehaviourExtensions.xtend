@@ -172,7 +172,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all derived fields with the sluggable extension enabled.
      */
     def getSluggableFields(Entity it) {
-        getDerivedFields.filter(e|e.sluggablePosition > 0)
+        getDerivedFields.filter(e|e.sluggablePosition > 0).sortBy(e|e.sluggablePosition)
     }
 
     /**
