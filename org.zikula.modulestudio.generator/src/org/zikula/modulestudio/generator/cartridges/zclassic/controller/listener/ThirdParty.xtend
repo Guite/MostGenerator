@@ -2,10 +2,14 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listene
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class ThirdParty {
+    @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
     @Inject extension WorkflowExtensions = new WorkflowExtensions()
 
@@ -13,6 +17,12 @@ class ThirdParty {
         «pendingContentListener(isBase)»
 
         «contentGetTypes(isBase)»
+        «IF !targets('1.3.5')»
+
+        «getEditorHelpers(isBase)»
+        «getTinyMcePlugins(isBase)»
+        «getCKEditorPlugins(isBase)»
+        «ENDIF»
     '''
 
     def private pendingContentListener(Application it, Boolean isBase) '''
@@ -89,5 +99,95 @@ class ThirdParty {
 
         // plugin for showing a list of multiple items
         $types->add('«appName»_ContentType_ItemList');
+    '''
+
+    def private getEditorHelpers(Application it, Boolean isBase) '''
+        /**
+         * Listener for the `module.scribite.editorhelpers` event.
+         *
+         * This occurs when Scribite adds pagevars to the editor page.
+         * «appName» will use this to add a javascript helper to add custom items.
+         *
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         */
+        public static function getEditorHelpers(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        {
+            «IF !isBase»
+                parent::getEditorHelpers($event);
+            «ELSE»
+                «getEditorHelpersImpl»
+            «ENDIF»
+        }
+    '''
+
+    def private getEditorHelpersImpl(Application it) '''
+        // intended is using the add() method to add a helper like below
+        $helpers = $event->getSubject();
+
+        $helpers->add(
+            array('module' => '«appName»',
+                  'type'   => 'javascript',
+                  'path'   => 'modules/«appName»/«getAppJsPath»/«appName»_finder.js')
+        );
+    '''
+
+    def private getTinyMcePlugins(Application it, Boolean isBase) '''
+        /**
+         * Listener for the `moduleplugin.tinymce.externalplugins` event.
+         *
+         * Adds external plugin to TinyMCE.
+         *
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         */
+        public static function getTinyMcePlugins(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        {
+            «IF !isBase»
+                parent::getTinyMcePlugins($event);
+            «ELSE»
+                «getTinyMcePluginsImpl»
+            «ENDIF»
+        }
+    '''
+
+    def private getTinyMcePluginsImpl(Application it) '''
+        // intended is using the add() method to add a plugin like below
+        $plugins = $event->getSubject();
+
+        $plugins->add(
+            array('name' => '«appName.formatForDB»',
+                  'path' => 'modules/«appName»/docs/scribite/plugins/TinyMCE/vendor/tiny_mce/plugins/«appName.formatForDB»/editor_plugin.js'
+            )
+        );
+    '''
+
+    def private getCKEditorPlugins(Application it, Boolean isBase) '''
+        /**
+         * Listener for the `moduleplugin.ckeditor.externalplugins` event.
+         *
+         * Adds external plugin to CKEditor.
+         *
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         */
+        public static function getCKEditorPlugins(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        {
+            «IF !isBase»
+                parent::getCKEditorPlugins($event);
+            «ELSE»
+                «getCKEditorPluginsImpl»
+            «ENDIF»
+        }
+    '''
+
+    def private getCKEditorPluginsImpl(Application it) '''
+        // intended is using the add() method to add a plugin like below
+        $plugins = $event->getSubject();
+
+        $plugins->add(
+            array('name' => '«appName.formatForDB»',
+                  'path' => 'modules/«appName»/docs/scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»/',
+                  'file' => 'plugin.js',
+                  'img'  => 'ed_«appName.formatForDB».gif'));
+            )
+        );
     '''
 }

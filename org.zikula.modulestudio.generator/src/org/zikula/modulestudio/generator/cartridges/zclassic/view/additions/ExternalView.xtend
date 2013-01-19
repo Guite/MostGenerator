@@ -133,9 +133,11 @@ class ExternalView {
             <script type="text/javascript" src="{$baseurl}javascript/ajax/original_uncompressed/dragdrop.js"></script>
             <script type="text/javascript" src="{$baseurl}javascript/ajax/original_uncompressed/effects.js"></script>
             <script type="text/javascript" src="{$baseurl}modules/«app.appName»/«IF app.targets('1.3.5')»javascript«ELSE»«app.getAppJsPath»«ENDIF»/«app.appName»_finder.js"></script>
+        «IF app.targets('1.3.5')»
         {if $editorName eq 'tinymce'}
             <script type="text/javascript" src="{$baseurl}modules/Scribite/includes/tinymce/tiny_mce_popup.js"></script>
         {/if}
+        «ENDIF»
         </head>
         <body>
             «IF app.getAllEntities.size > 1»

@@ -51,6 +51,20 @@ class Finder {
             window.open(«prefix()»URL, '', popupAttributes);
         }
 
+        /**
+         * Open a popup window with the finder triggered by a CKEditor button.
+         */
+        function «appName»FinderCKEditor(editor, «prefix()»URL) {
+            // Save editor for access in selector window
+            current«appName»Editor = editor;
+
+            editor.popup(
+                Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=ckeditor',
+                /*width*/ '80%', /*height*/ '70%',
+                'location=no,menubar=no,toolbar=no,dependent=yes,minimizable=no,modal=yes,alwaysRaised=yes,resizable=yes,scrollbars=yes'
+            );
+        }
+
 
 
         var «name.formatForDB» = {};
@@ -80,10 +94,9 @@ class Finder {
                 window.close();
                 w.focus();
             } else if (editor === 'tinymce') {
-                tinyMCEPopup.close();
-                //«prefix()»ClosePopup();
+                «prefix()»ClosePopup();
             } else if (editor === 'ckeditor') {
-                /** to be done*/
+                «prefix()»ClosePopup();
             } else {
                 alert('Close Editor: ' + editor);
             }
@@ -96,7 +109,6 @@ class Finder {
             itemUrl = $F('url' + itemId);
             itemTitle = $F('title' + itemId);
             itemDescription = $F('desc' + itemId);
-
             pasteMode = $F('«appName»_pasteas');
 
             if (pasteMode === '2' || pasteMode !== '1') {
@@ -153,9 +165,8 @@ class Finder {
                 }
             } else if (editor === 'tinymce') {
                 html = getPasteSnippet('html', itemId);
-                tinyMCEPopup.editor.execCommand('mceInsertContent', false, html);
-                tinyMCEPopup.close();
-                return;
+                window.opener.tinyMCE.activeEditor.execCommand('mceInsertContent', false, html);
+                // other tinymce commands: mceImage, mceInsertLink, mceReplaceContent, see http://www.tinymce.com/wiki.php/Command_identifiers
             } else if (editor === 'ckeditor') {
                 /** to be done*/
             } else {

@@ -24,25 +24,30 @@ class Scribite {
 
         docPath = docPath + 'plugins/'
 
-        //fsa.generateFile(docPath + 'Aloha/index.html', msUrl)
+        //fsa.generateFile(docPath + 'Aloha/vendor/aloha/index.html', msUrl)
 
-        //fsa.generateFile(docPath + 'CKEditor/javascript/ckeditor/index.html', msUrl)
+        var pluginPath = docPath + 'CKEditor/vendor/ckeditor/plugins/' + name.formatForDB + '/'
+        fsa.generateFile(pluginPath + 'plugin.js', ckPlugin)
+        fsa.generateFile(pluginPath + 'lang/de.js', ckLangDe)
+        fsa.generateFile(pluginPath + 'lang/en.js', ckLangEn)
+        fsa.generateFile(pluginPath + 'lang/nl.js', ckLangNl)
 
-        //fsa.generateFile(docPath + 'MarkItUp/javascript/markitup/index.html', msUrl)
+        //fsa.generateFile(docPath + 'MarkItUp/vendor/markitup/index.html', msUrl)
 
-        //fsa.generateFile(docPath + 'NicEdit/javascript/nicedit/index.html', msUrl)
+        //fsa.generateFile(docPath + 'NicEdit/vendor/nicedit/index.html', msUrl)
 
-        var pluginPath = docPath + 'TinyMCE/javascript/tinymce/plugins/' + name.formatForDB + '/'
+        pluginPath = docPath + 'TinyMCE/vendor/tinymce/plugins/' + name.formatForDB + '/'
         fsa.generateFile(pluginPath + 'editor_plugin.js', tinyPlugin)
         fsa.generateFile(pluginPath + 'langs/de.js', tinyLangDe)
         fsa.generateFile(pluginPath + 'langs/en.js', tinyLangEn)
+        fsa.generateFile(pluginPath + 'langs/nl.js', tinyLangNl)
 
-        pluginPath = docPath + 'WYMeditor/javascript/wymeditor/plugins/' + name.formatForDB + '/'
+        pluginPath = docPath + 'WYMeditor/vendor/wymeditor/plugins/' + name.formatForDB + '/'
         //fsa.generateFile(pluginPath + 'index.html', msUrl)
 
         //fsa.generateFile(docPath + 'Wysihtml5/javascript/index.html', msUrl)
 
-        pluginPath = docPath + 'Xinha/javascript/xinha/plugins/' + appName + '/'
+        pluginPath = docPath + 'Xinha/vendor/xinha/plugins/' + appName + '/'
         fsa.generateFile(pluginPath + appName + '.js', xinhaPlugin)
 
         //fsa.generateFile(docPath + 'YUI/index.html', msUrl)
@@ -54,10 +59,12 @@ class Scribite {
 
         It is easy to include «appName» in your Scribite editors.
         While «appName» contains already the a popup for selecting «getLeadingEntity.nameMultiple.formatForDisplay» and other items,
-        the actual Scribite enhancements must be done manually (as long as no better solution exists).
+        the actual Scribite enhancements must be done manually for Scribite <= 4.3.
+        From Scribite 5.0 onwards the integration is automatic. The necessary javascript is loaded via event system and the
+        plugins are already in the Scribite package.
 
-        Just follow these few steps to complete the integration:
-          1. Open modules/Scribite/«IF targets('1.3.5')»lib/Scribite/«ENDIF»Api/User.php in your favourite text editor.
+        Just follow these few steps to complete the integration for Scribite <= 4.3:
+          1. Open modules/Scribite/lib/Scribite/Api/User.php in your favourite text editor.
           2. Search for
                 if (ModUtil::available('SimpleMedia')) {
                     PageUtil::AddVar('javascript', 'modules/SimpleMedia/«IF targets('1.3.5')»javascript«ELSE»Resources/public/js«ENDIF»/findItem.js');
@@ -68,6 +75,56 @@ class Scribite {
                 }
           4. Copy or move all files from «IF targets('1.3.5')»modules/«appName»«ELSE»Resources«ENDIF»/docs/scribite/plugins/ into modules/Scribite/plugins/.
 
+        Just follow these few steps to complete the integration for Scribite >= 5.0:
+         1. Check if the plugins for «appName» are in Scribite/plugins/EDITOR/vendor/plugins. If not then copy from
+            modules/«appName»/«IF targets('1.3.5')»docs«ELSE»«getAppDocPath»«ENDIF»/scribite/plugins into modules/Scribite/plugins.
+    '''
+
+    def private ckPlugin(Application it) '''
+        /**
+         * @license Copyright (c) 2003-2013, SimpleMedia - Erik Spaan. All rights reserved.
+         */
+
+        CKEDITOR.plugins.add('simplemedia', {
+            requires: 'popup',
+            lang: 'en,nl,de',
+            init: function (editor) {
+                editor.addCommand('insert«appName»', {
+                    exec: function (editor) {
+                        var url = Zikula.Config.baseURL + Zikula.Config.entrypoint + '?module=«appName»&type=external&func=finder&editor=ckeditor';
+                        // call method in «appName»_Finder.js and also give current editor
+                        «appName»FinderCKEditor(editor, url);
+                    }
+                });
+                editor.ui.addButton('«appName.formatForDB»', {
+                    label: 'Insert «appName» object',
+                    command: 'insert«appName»',
+                 // icon: this.path + 'images/ed_«appName.formatForDB».png'
+                    icon: '/images/icons/extrasmall/favorites.png'
+                });
+            }
+        });
+    '''
+
+    def private ckLangDe(Application it) '''
+        tinyMCE.addI18n('de.«name.formatForDB»', {
+            title : '«appName»-Objekt einfügen',
+            alt: '«appName»-Objekt einfügen'
+        });
+    '''
+
+    def private ckLangEn(Application it) '''
+        CKEDITOR.plugins.setLang('«name.formatForDB»', 'en', {
+            title: 'Insert «appName» object',
+            alt: 'Insert «appName» object'
+        });
+    '''
+
+    def private ckLangNl(Application it) '''
+        tinyMCE.addI18n('nl.«name.formatForDB»', {
+            title : '«appName» Object invoegen',
+            alt: '«appName» Object invoegen'
+        });
     '''
 
     def private tinyPlugin(Application it) '''
@@ -114,7 +171,7 @@ class Scribite {
                     ed.addButton('«name.formatForDB»', {
                         title : '«name.formatForDB».desc',
                         cmd : 'mce«appName»',
-                        «/*image : url + '/img/«appName».gif'*/»
+                     // image : url + '/img/«appName».gif'
                         image : '/images/icons/extrasmall/favorites.png'
                     });
 
@@ -169,6 +226,12 @@ class Scribite {
     def private tinyLangEn(Application it) '''
         tinyMCE.addI18n('en.«name.formatForDB»', {
             desc : 'Insert «appName» object'
+        });
+    '''
+
+    def private tinyLangNl(Application it) '''
+        tinyMCE.addI18n('nl.«name.formatForDB»', {
+            desc : '«appName» Object invoegen'
         });
     '''
 
