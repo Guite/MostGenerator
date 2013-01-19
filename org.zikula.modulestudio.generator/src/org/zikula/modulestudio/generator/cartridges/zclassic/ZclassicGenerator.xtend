@@ -28,6 +28,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Composer
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Docs
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.ModuleFile
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Translations
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.TravisFile
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.VersionFile
 import org.zikula.modulestudio.generator.cartridges.zclassic.tests.Tests
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.Forms
@@ -59,6 +60,7 @@ class ZclassicGenerator implements IGenerator {
         new ModuleFile().generate(it, fsa)
         new VersionFile().generate(it, fsa)
         new ComposerFile().generate(it, fsa)
+        new TravisFile().generate(it, fsa)
 
         pm?.subTask('Model: Entity classes')
         println('Generating entity classes')
