@@ -26,6 +26,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.models.Repository
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Bootstrap
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.ComposerFile
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Docs
+import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.GitIgnore
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.ModuleFile
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.Translations
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.TravisFile
@@ -60,6 +61,7 @@ class ZclassicGenerator implements IGenerator {
         new ModuleFile().generate(it, fsa)
         new VersionFile().generate(it, fsa)
         new ComposerFile().generate(it, fsa)
+        new GitIgnore().generate(it, fsa)
         new TravisFile().generate(it, fsa)
 
         pm?.subTask('Model: Entity classes')
