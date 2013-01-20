@@ -68,9 +68,18 @@ class WorkflowPostProcess {
                 val fileUrl = FileLocator::toFileURL(url)
                 val file = new File(fileUrl.getPath)
                 fileCopy.sourceFile = file.absolutePath
-                fileCopy.targetFile = settings.getOutputPath + '/zclassic/'
-                                    + settings.getAppName + '/images/admin.png'
-                fileCopy.invoke(null)
+
+                val targetBasePath = settings.getOutputPath + '/zclassic/' + settings.getAppName + '/'
+                var imageFolder = 'Resources/public/images'
+                var targetFolder = new File(targetBasePath + imageFolder)
+                if (!targetFolder.exists()) {
+                    imageFolder = 'images' // BC support for 1.3.5
+                    targetFolder = new File(targetBasePath + imageFolder)
+                }
+                if (targetFolder.exists()) {
+                    fileCopy.targetFile = targetBasePath + imageFolder + '/admin.png'
+                    fileCopy.invoke(null)
+                }
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace
