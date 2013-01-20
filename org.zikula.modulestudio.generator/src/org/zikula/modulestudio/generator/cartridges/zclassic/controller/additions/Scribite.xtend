@@ -81,10 +81,6 @@ class Scribite {
     '''
 
     def private ckPlugin(Application it) '''
-        /**
-         * @license Copyright (c) 2003-2013, «appName» - Erik Spaan. All rights reserved.
-         */
-
         CKEDITOR.plugins.add('«appName»', {
             requires: 'popup',
             lang: 'en,nl,de',
