@@ -85,23 +85,23 @@ class ControllerLayer {
     }
 
     def private controllerBaseFile(Controller it) '''
-    	«fh.phpFileHeader(app)»
-    	«controllerBaseImpl»
+        «fh.phpFileHeader(app)»
+        «controllerBaseImpl»
     '''
 
     def private controllerFile(Controller it) '''
-    	«fh.phpFileHeader(app)»
-    	«controllerImpl»
+        «fh.phpFileHeader(app)»
+        «controllerImpl»
     '''
 
     def private apiBaseFile(Controller it) '''
-    	«fh.phpFileHeader(app)»
-    	«apiBaseImpl»
+        «fh.phpFileHeader(app)»
+        «apiBaseImpl»
     '''
 
     def private apiFile(Controller it) '''
-    	«fh.phpFileHeader(app)»
-    	«apiImpl»
+        «fh.phpFileHeader(app)»
+        «apiImpl»
     '''
 
     def private controllerBaseImpl(Controller it) '''
@@ -124,8 +124,8 @@ class ControllerLayer {
                 «new ControllerHelper().controllerPostInitialize(it, isUserController, '')»
             «ENDIF»
 
-            «val actionHelper = new ControllerAction()»
-            «FOR action : actions»«actionHelper.generate(action, app)»«ENDFOR»
+            «val actionHelper = new ControllerAction(app)»
+            «FOR action : actions»«actionHelper.generate(action)»«ENDFOR»
             «IF hasActions('view') && isAdminController»
 
                 «handleSelectedObjects»

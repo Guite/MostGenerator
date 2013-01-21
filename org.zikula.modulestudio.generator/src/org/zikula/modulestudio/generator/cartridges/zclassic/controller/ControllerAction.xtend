@@ -29,8 +29,11 @@ class ControllerAction {
 
     Application app
 
-    def dispatch generate(Action it, Application app) '''
-        «this.app = app»
+    new(Application app) {
+        this.app = app
+    }
+
+    def dispatch generate(Action it) '''
         «actionDoc»
         public function «name.formatForCode.toFirstLower»«IF !app.targets('1.3.5')»Action«ENDIF»(array $args = array())
         {
@@ -46,8 +49,7 @@ class ControllerAction {
         «/* this line is on purpose */»
     '''
 
-    def dispatch generate(MainAction it, Application app) '''
-        «this.app = app»
+    def dispatch generate(MainAction it) '''
         «actionDoc»
         public function «IF !app.targets('1.3.5')»indexAction«ELSE»main«ENDIF»(array $args = array())
         {
