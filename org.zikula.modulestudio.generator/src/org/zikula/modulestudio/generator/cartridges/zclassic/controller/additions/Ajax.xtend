@@ -126,12 +126,12 @@ class Ajax {
             $titleField = $repository->getTitleFieldName();
             $descriptionField = $repository->getDescriptionFieldName();
 
-            $sort = (isset($args['sort']) && !empty($args['sort'])) ? $args['sort'] : $this->request->getPost()->filter('sort', '', FILTER_SANITIZE_STRING);
+            $sort = (isset($args['sort']) && !empty($args['sort'])) ? $args['sort'] : $this->request->request->filter('sort', '', FILTER_SANITIZE_STRING);
             if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
                 $sort = $repository->getDefaultSortingField();
             }
 
-            $sdir = (isset($args['sortdir']) && !empty($args['sortdir'])) ? $args['sortdir'] : $this->request->getPost()->filter('sortdir', '', FILTER_SANITIZE_STRING);
+            $sdir = (isset($args['sortdir']) && !empty($args['sortdir'])) ? $args['sortdir'] : $this->request->request->filter('sortdir', '', FILTER_SANITIZE_STRING);
             $sdir = strtolower($sdir);
             if ($sdir != 'asc' && $sdir != 'desc') {
                 $sdir = 'asc';

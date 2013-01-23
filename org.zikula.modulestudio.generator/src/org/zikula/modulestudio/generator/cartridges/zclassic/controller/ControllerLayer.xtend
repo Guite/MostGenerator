@@ -201,15 +201,15 @@ class ControllerLayer {
             $returnUrl = \ModUtil::url($this->name, 'admin', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
 
             // Determine object type
-            $objectType = isset($args['ot']) ? $args['ot'] : $this->request->getPost()->get('ot', '');
+            $objectType = isset($args['ot']) ? $args['ot'] : $this->request->request->get('ot', '');
             if (!$objectType) {
                 return \System::redirect($returnUrl);
             }
             $returnUrl = \ModUtil::url($this->name, 'admin', 'view', array('ot' => $objectType));
 
             // Get other parameters
-            $items = isset($args['items']) ? $args['items'] : $this->request->getPost()->get('items', null);
-            $action = isset($args['action']) ? $args['action'] : $this->request->getPost()->get('action', null);
+            $items = isset($args['items']) ? $args['items'] : $this->request->request->get('items', null);
+            $action = isset($args['action']) ? $args['action'] : $this->request->request->get('action', null);
             $action = strtolower($action);
 
             $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Workflow($this->serviceManager);

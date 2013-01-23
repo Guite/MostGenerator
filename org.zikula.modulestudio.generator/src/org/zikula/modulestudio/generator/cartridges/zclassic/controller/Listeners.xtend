@@ -81,7 +81,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Core extends «ENDIF»«appName»_Listener_Base_Core
         «ELSE»
-        class Core«IF !isBase» extends Base\Core«ENDIF»
+        class CoreListener«IF !isBase» extends Base\CoreListener«ENDIF»
         «ENDIF»
         {
             «new Core().generate(it, isBase)»
@@ -100,7 +100,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Installer extends «ENDIF»«appName»_Listener_Base_Installer
         «ELSE»
-        class Installer«IF !isBase» extends Base\Installer«ENDIF»
+        class InstallerListener«IF !isBase» extends Base\InstallerListener«ENDIF»
         «ENDIF»
         {
             «new ModuleInstaller().generate(it, isBase)»
@@ -119,7 +119,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_ModuleDispatch extends «ENDIF»«appName»_Listener_Base_ModuleDispatch
         «ELSE»
-        class ModuleDispatch«IF !isBase» extends Base\ModuleDispatch«ENDIF»
+        class ModuleDispatchListener«IF !isBase» extends Base\ModuleDispatchListener«ENDIF»
         «ENDIF»
         {
             «new ModuleDispatch().generate(it, isBase)»
@@ -138,7 +138,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Mailer extends «ENDIF»«appName»_Listener_Base_Mailer
         «ELSE»
-        class Mailer«IF !isBase» extends Base\Mailer«ENDIF»
+        class MailerListener«IF !isBase» extends Base\MailerListener«ENDIF»
         «ENDIF»
         {
             «new Mailer().generate(it, isBase)»
@@ -157,7 +157,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Page extends «ENDIF»«appName»_Listener_Base_Page
         «ELSE»
-        class Page«IF !isBase» extends Base\Page«ENDIF»
+        class PageListener«IF !isBase» extends Base\PageListener«ENDIF»
         «ENDIF»
         {
             «new Page().generate(it, isBase)»
@@ -176,7 +176,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Errors extends «ENDIF»«appName»_Listener_Base_Errors
         «ELSE»
-        class Errors«IF !isBase» extends Base\Errors«ENDIF»
+        class ErrorsListener«IF !isBase» extends Base\ErrorsListener«ENDIF»
         «ENDIF»
         {
             «new Errors().generate(it, isBase)»
@@ -195,7 +195,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Theme extends «ENDIF»«appName»_Listener_Base_Theme
         «ELSE»
-        class Theme«IF !isBase» extends Base\Theme«ENDIF»
+        class ThemeListener«IF !isBase» extends Base\ThemeListener«ENDIF»
         «ENDIF»
         {
             «new Theme().generate(it, isBase)»
@@ -214,7 +214,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_View extends «ENDIF»«appName»_Listener_Base_View
         «ELSE»
-        class View«IF !isBase» extends Base\View«ENDIF»
+        class ViewListener«IF !isBase» extends Base\ViewListener«ENDIF»
         «ENDIF»
         {
             «new View().generate(it, isBase)»
@@ -233,7 +233,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_UserLogin extends «ENDIF»«appName»_Listener_Base_UserLogin
         «ELSE»
-        class UserLogin«IF !isBase» extends Base\UserLogin«ENDIF»
+        class UserLoginListener«IF !isBase» extends Base\UserLoginListener«ENDIF»
         «ENDIF»
         {
             «new UserLogin().generate(it, isBase)»
@@ -252,7 +252,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_UserLogout extends «ENDIF»«appName»_Listener_Base_UserLogout
         «ELSE»
-        class UserLogout«IF !isBase» extends Base\UserLogout«ENDIF»
+        class UserLogoutListener«IF !isBase» extends Base\UserLogoutListener«ENDIF»
         «ENDIF»
         {
             «new UserLogout().generate(it, isBase)»
@@ -271,7 +271,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_User extends «ENDIF»«appName»_Listener_Base_User
         «ELSE»
-        class User«IF !isBase» extends Base\User«ENDIF»
+        class UserListener«IF !isBase» extends Base\UserListener«ENDIF»
         «ENDIF»
         {
             «new User().generate(it, isBase)»
@@ -290,7 +290,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_UserRegistration extends «ENDIF»«appName»_Listener_Base_UserRegistration
         «ELSE»
-        class UserRegistration«IF !isBase» extends Base\UserRegistration«ENDIF»
+        class UserRegistrationListener«IF !isBase» extends Base\UserRegistrationListener«ENDIF»
         «ENDIF»
         {
             «new UserRegistration().generate(it, isBase)»
@@ -309,7 +309,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Users extends «ENDIF»«appName»_Listener_Base_Users
         «ELSE»
-        class Users«IF !isBase» extends Base\Users«ENDIF»
+        class UsersListener«IF !isBase» extends Base\UsersListener«ENDIF»
         «ENDIF»
         {
             «new Users().generate(it, isBase)»
@@ -328,7 +328,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Group extends «ENDIF»«appName»_Listener_Base_Group
         «ELSE»
-        class Group«IF !isBase» extends Base\Group«ENDIF»
+        class GroupListener«IF !isBase» extends Base\GroupListener«ENDIF»
         «ENDIF»
         {
             «new Group().generate(it, isBase)»
@@ -347,7 +347,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_ThirdParty extends «ENDIF»«appName»_Listener_Base_ThirdParty
         «ELSE»
-        class ThirdParty«IF !isBase» extends Base\ThirdParty«ENDIF»
+        class ThirdPartyListener«IF !isBase» extends Base\ThirdPartyListener«ENDIF»
         «ENDIF»
         {
             «new ThirdParty().generate(it, isBase)»
