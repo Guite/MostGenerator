@@ -76,7 +76,11 @@ class Entities {
         val entityClassSuffix = if (!app.targets('1.3.5')) 'Entity' else ''
         val entityFileName = name.formatForCodeCapital + entityClassSuffix + '.php'
         if (!isInheriting) {
+            if (app.targets('1.3.5')) {
             fsa.generateFile(entityPath + 'Base/' + entityFileName, modelEntityBaseFile(app))
+            } else {
+            fsa.generateFile(entityPath + 'Base/Abstract' + entityFileName, modelEntityBaseFile(app))
+            }
         }
         fsa.generateFile(entityPath + entityFileName, modelEntityFile(app))
     }
@@ -108,7 +112,8 @@ class Entities {
         «IF app.targets('1.3.5')»
         abstract class «entityClassName('', true)» extends Zikula_EntityAccess«IF hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
         «ELSE»
-        abstract class «name.formatForCodeCapital» extends \Zikula_EntityAccess«IF hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
+        abstract class Abstract«name.formatForCodeCapital» extends \Zikula_EntityAccess«IF hasNotifyPolicy» implements
+            NotifyPropertyChanged«ENDIF»
         «ENDIF»
         {
             «entityInfo(app)»
@@ -187,9 +192,9 @@ class Entities {
          * @ORM\HasLifecycleCallbacks
          */
         «IF app.targets('1.3.5')»
-        abstract class «entityClassName('', false)» extends «IF isInheriting»«parentType.entityClassName('', false)»«ELSE»«entityClassName('', true)»«ENDIF»
+        class «entityClassName('', false)» extends «IF isInheriting»«parentType.entityClassName('', false)»«ELSE»«entityClassName('', true)»«ENDIF»
         «ELSE»
-        abstract class «name.formatForCodeCapital» extends «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\«name.formatForCodeCapital»«ENDIF»
+        class «name.formatForCodeCapital» extends «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»«ENDIF»
         «ENDIF»
         {
             // feel free to add your own methods here

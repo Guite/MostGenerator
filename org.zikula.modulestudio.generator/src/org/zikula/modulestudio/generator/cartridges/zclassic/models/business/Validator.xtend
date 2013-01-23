@@ -48,8 +48,12 @@ class Validator {
      */
     def generateCommon(Application it, IFileSystemAccess fsa) {
         println("Generating base validator class")
-        fsa.generateFile(getAppSourceLibPath + 'Base/Validator.php', validatorCommonBaseFile)
-        fsa.generateFile(getAppSourceLibPath + 'Validator.php', validatorCommonFile)
+        var fileName = 'Validator.php'
+        if (!targets('1.3.5')) {
+            fileName = 'Abstract' + fileName
+        }
+        fsa.generateFile(getAppSourceLibPath + 'Base/' + fileName, validatorCommonBaseFile)
+        fsa.generateFile(getAppSourceLibPath + fileName, validatorCommonFile)
     }
 
     def private validatorCommonBaseFile(Application it) '''
@@ -75,7 +79,7 @@ class Validator {
         «IF targets('1.3.5')»
         abstract class «appName»_Base_Validator extends Zikula_AbstractBase
         «ELSE»
-        class Validator extends \Zikula_AbstractBase
+        abstract class AbstractValidator extends \Zikula_AbstractBase
         «ENDIF»
         {
             /**
@@ -482,7 +486,7 @@ class Validator {
         «IF targets('1.3.5')»
         class «appName»_Validator extends «appName»_Base_Validator
         «ELSE»
-        class Validator extends Base\Validator
+        class Validator extends Base\AbstractValidator
         «ENDIF»
         {
             // here you can add custom validation methods or override existing checks
