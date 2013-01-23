@@ -267,7 +267,7 @@ class Repository {
                     $templateParameters = $this->getViewQuickNavParameters($context, $args);
                     «IF hasListFieldsEntity»
                         $serviceManager = \ServiceUtil::getManager();
-                        $listHelper = new «container.application.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»ListEntries($serviceManager);
+                        $listHelper = new «container.application.appName»«IF app.targets('1.3.5')»_Util_ListEntries«ELSE»\Util\ListEntriesUtil«ENDIF»($serviceManager);
                         «FOR field : getListFieldsEntity»
                             «var fieldName = field.name.formatForCode»
                             $templateParameters['«fieldName»Items'] = $listHelper->getEntries('«name.formatForCode»', '«fieldName»');
@@ -286,7 +286,7 @@ class Repository {
                 }
 
                 // initialise Imagine preset manager instances
-                $imageHelper = new «container.application.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Image(\ServiceUtil::getManager());
+                $imageHelper = new «container.application.appName»«IF app.targets('1.3.5')»_Util_Image«ELSE»\Util\ImageUtil«ENDIF»(\ServiceUtil::getManager());
                 «IF hasUploadFieldsEntity»
 
                     $objectType = '«name.formatForCode»';
@@ -1284,7 +1284,7 @@ class Repository {
 
             $currentType = \FormUtil::getPassedValue('type', 'user', 'GETPOST');
             $action = 'archive';
-            $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Workflow(\ServiceUtil::getManager());
+            $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»(\ServiceUtil::getManager());
 
             foreach ($affectedEntities as $entity) {
                 $hookAreaPrefix = $entity->getHookAreaPrefix();

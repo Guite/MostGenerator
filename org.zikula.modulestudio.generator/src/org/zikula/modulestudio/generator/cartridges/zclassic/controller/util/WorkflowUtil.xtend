@@ -28,8 +28,9 @@ class WorkflowUtil {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for workflows')
         val utilPath = getAppSourceLibPath + 'Util/'
-        fsa.generateFile(utilPath + 'Base/Workflow.php', workflowFunctionsBaseFile)
-        fsa.generateFile(utilPath + 'Workflow.php', workflowFunctionsFile)
+        val utilSuffix = (if (targets('1.3.5')) '' else 'Util')
+        fsa.generateFile(utilPath + 'Base/Workflow' + utilSuffix + '.php', workflowFunctionsBaseFile)
+        fsa.generateFile(utilPath + 'Workflow' + utilSuffix + '.php', workflowFunctionsFile)
     }
 
     def private workflowFunctionsBaseFile(Application it) '''
@@ -53,7 +54,7 @@ class WorkflowUtil {
         «IF targets('1.3.5')»
         class «appName»_Util_Base_Workflow extends Zikula_AbstractBase
         «ELSE»
-        class Workflow extends \Zikula_AbstractBase
+        class WorkflowUtil extends \Zikula_AbstractBase
         «ENDIF»
         {
             «getObjectStates»
@@ -194,7 +195,7 @@ class WorkflowUtil {
             $wfActions = Zikula_Workflow_Util::getActionsForObject($entity, $objectType, $idcolumn, $this->name);
 
             // as we use the workflows for multiple object types we must maybe filter out some actions
-            $listHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»ListEntries($this->serviceManager);
+            $listHelper = new «IF targets('1.3.5')»«appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($this->serviceManager);
             $states = $listHelper->getEntries($objectType, 'workflowState');
             $allowedStates = array();
             foreach ($states as $state) {
@@ -407,7 +408,7 @@ class WorkflowUtil {
         «IF targets('1.3.5')»
         class «appName»_Util_Workflow extends «appName»_Util_Base_Workflow
         «ELSE»
-        class Workflow extends Base\Workflow
+        class WorkflowUtil extends Base\WorkflowUtil
         «ENDIF»
         {
             // feel free to add your own convenience methods here

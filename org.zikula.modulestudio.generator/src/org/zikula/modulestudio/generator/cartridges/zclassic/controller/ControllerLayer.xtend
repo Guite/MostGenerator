@@ -212,7 +212,7 @@ class ControllerLayer {
             $action = isset($args['action']) ? $args['action'] : $this->request->request->get('action', null);
             $action = strtolower($action);
 
-            $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Workflow($this->serviceManager);
+            $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»($this->serviceManager);
 
             // process each item
             foreach ($items as $itemid) {

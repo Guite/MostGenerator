@@ -137,7 +137,7 @@ class EditFunctions {
         /**
          * Example method for initialising geo coding functionality in JavaScript.
          * To use this please customise the form field names to your needs.
-         * There is also a method on PHP level available in the «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller class.
+         * There is also a method on PHP level available in the «appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF» class.
          */
         function «prefix»InitGeoCoding() {
             $('linkGetCoordinates').observe('click', function (evt) {

@@ -35,8 +35,9 @@ class Translatable {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for translatable entities')
         val utilPath = getAppSourceLibPath + 'Util/'
-        fsa.generateFile(utilPath + 'Base/Translatable.php', translatableFunctionsBaseFile)
-        fsa.generateFile(utilPath + 'Translatable.php', translatableFunctionsFile)
+        val utilSuffix = (if (targets('1.3.5')) '' else 'Util')
+        fsa.generateFile(utilPath + 'Base/Translatable' + utilSuffix + '.php', translatableFunctionsBaseFile)
+        fsa.generateFile(utilPath + 'Translatable' + utilSuffix + '.php', translatableFunctionsFile)
     }
 
     def private translatableFunctionsBaseFile(Application it) '''
@@ -60,7 +61,7 @@ class Translatable {
         «IF targets('1.3.5')»
         class «appName»_Util_Base_Translatable extends Zikula_AbstractBase
         «ELSE»
-        class Translatable extends \Zikula_AbstractBase
+        class TranslatableUtil extends \Zikula_AbstractBase
         «ENDIF»
         {
             «getTranslatableFieldsImpl»
@@ -267,7 +268,7 @@ class Translatable {
         «IF targets('1.3.5')»
         class «appName»_Util_Translatable extends «appName»_Util_Base_Translatable
         «ELSE»
-        class Translatable extends Base\Translatable
+        class TranslatableUtil extends Base\TranslatableUtil
         «ENDIF»
         {
             // feel free to add your own convenience methods here

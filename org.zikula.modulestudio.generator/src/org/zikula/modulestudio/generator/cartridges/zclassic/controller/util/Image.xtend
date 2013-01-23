@@ -19,8 +19,9 @@ class Image {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for image handling')
         val utilPath = getAppSourceLibPath + 'Util/'
-        fsa.generateFile(utilPath + 'Base/Image.php', imageFunctionsBaseFile)
-        fsa.generateFile(utilPath + 'Image.php', imageFunctionsFile)
+        val utilSuffix = (if (targets('1.3.5')) '' else 'Util')
+        fsa.generateFile(utilPath + 'Base/Image' + utilSuffix + '.php', imageFunctionsBaseFile)
+        fsa.generateFile(utilPath + 'Image' + utilSuffix + '.php', imageFunctionsFile)
     }
 
     def private imageFunctionsBaseFile(Application it) '''
@@ -44,7 +45,7 @@ class Image {
         «IF targets('1.3.5')»
         class «appName»_Util_Base_Image extends Zikula_AbstractBase
         «ELSE»
-        class Image extends \Zikula_AbstractBase
+        class ImageUtil extends \Zikula_AbstractBase
         «ENDIF»
         {
             «getManager»
@@ -157,7 +158,7 @@ class Image {
         «IF targets('1.3.5')»
         class «appName»_Util_Image extends «appName»_Util_Base_Image
         «ELSE»
-        class Image extends Base\Image
+        class ImageUtil extends Base\ImageUtil
         «ENDIF»
         {
             // feel free to add your own convenience methods here

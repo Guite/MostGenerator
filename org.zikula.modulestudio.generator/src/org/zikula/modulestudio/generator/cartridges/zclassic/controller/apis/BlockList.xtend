@@ -163,7 +163,7 @@ class BlockList {
 
             \ModUtil::initOOModule('«appName»');
 
-            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->serviceManager);
+            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
 
             $utilArgs = array('name' => 'list');
             if (!isset($vars['objectType']) || !in_array($vars['objectType'], $controllerHelper->getObjectTypes('block', $utilArgs))) {
@@ -391,7 +391,7 @@ class BlockList {
             $vars['customTemplate'] = $this->request->request->get('customtemplate', '');
             $vars['filter'] = $this->request->request->get('filter', '');
 
-            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->serviceManager);
+            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
 
             if (!in_array($vars['objectType'], $controllerHelper->getObjectTypes('block'))) {
                 $vars['objectType'] = $controllerHelper->getDefaultObjectType('block');

@@ -25,8 +25,9 @@ class ControllerUtil {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for controller layer')
         val utilPath = getAppSourceLibPath + 'Util/'
-        fsa.generateFile(utilPath + 'Base/Controller.php', controllerFunctionsBaseFile)
-        fsa.generateFile(utilPath + 'Controller.php', controllerFunctionsFile)
+        val utilSuffix = (if (targets('1.3.5')) '' else 'Util')
+        fsa.generateFile(utilPath + 'Base/Controller' + utilSuffix + '.php', controllerFunctionsBaseFile)
+        fsa.generateFile(utilPath + 'Controller' + utilSuffix + '.php', controllerFunctionsFile)
     }
 
     def private controllerFunctionsBaseFile(Application it) '''
@@ -50,7 +51,7 @@ class ControllerUtil {
         «IF targets('1.3.5')»
         class «appName»_Util_Base_Controller extends Zikula_AbstractBase
         «ELSE»
-        class Controller extends \Zikula_AbstractBase
+        class ControllerUtil extends \Zikula_AbstractBase
         «ENDIF»
         {
             «getObjectTypes»
@@ -336,7 +337,7 @@ class ControllerUtil {
         «IF targets('1.3.5')»
         class «appName»_Util_Controller extends «appName»_Util_Base_Controller
         «ELSE»
-        class Controller extends Base\Controller
+        class ControllerUtil extends Base\ControllerUtil
         «ENDIF»
         {
             // feel free to add your own convenience methods here

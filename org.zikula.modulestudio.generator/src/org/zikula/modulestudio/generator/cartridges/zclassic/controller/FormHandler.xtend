@@ -268,6 +268,15 @@ class FormHandler {
                  */
                 protected $hasMetaData = false;
             «ENDIF»
+            «IF app.hasSluggable»
+
+                /**
+                 * Whether the entity has an editable slug or not.
+                 *
+                 * @var boolean
+                 */
+                protected $hasSlugUpdatableField = false;
+            «ENDIF»
             «IF app.hasTranslatable»
 
                 /**
@@ -378,7 +387,7 @@ class FormHandler {
             $this->idFields = $objectTemp->get_idFields();
 
             // retrieve identifier of the object we wish to view
-            $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->view->getServiceManager());
+            $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->view->getServiceManager());
             $this->idValues = $controllerHelper->retrieveIdentifier($this->request, array(), $this->objectType, $this->idFields);
             $hasIdentifier = $controllerHelper->isValidIdentifier($this->idValues);
 
@@ -437,7 +446,7 @@ class FormHandler {
             // save entity reference for later reuse
             $this->entityRef = $entity;
 
-            $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Workflow($this->serviceManager);
+            $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»($this->serviceManager);
             $actions = $workflowHelper->getActionsForObject($entity);
             if ($actions === false || !is_array($actions)) {
                 return \LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
@@ -542,7 +551,7 @@ class FormHandler {
             protected function initTranslationsForEdit($entity)
             {
                 // retrieve translated fields
-                $translatableHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Translatable($this->view->getServiceManager());
+                $translatableHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Translatable«ELSE»\Util\TranslatableUtil«ENDIF»($this->view->getServiceManager());
                 $translations = $translatableHelper->prepareEntityForEdit($this->objectType, $entity);
 
                 // assign translations
@@ -799,7 +808,7 @@ class FormHandler {
                 $entityTransClass = $this->name . '_Entity_' . ucfirst($this->objectType) . 'Translation';
                 $transRepository = $this->entityManager->getRepository($entityTransClass);
 
-                $translatableHelper = new «container.application.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Translatable($this->view->getServiceManager());
+                $translatableHelper = new «container.application.appName»«IF app.targets('1.3.5')»_Util_Translatable«ELSE»\Util\TranslatableUtil«ENDIF»($this->view->getServiceManager());
                 $translations = $translatableHelper->processEntityAfterEdit($this->objectType, $formData);
 
                 foreach ($translations as $translation) {
@@ -930,13 +939,13 @@ class FormHandler {
                             }
                         }
                     «ENDIF»
+                    «IF !app.targets('1.3.5') && app.hasSluggable»
 
-                    «/*no slug input element yet, see https://github.com/l3pp4rd/DoctrineExtensions/issues/140
-                    «IF hasSluggableFields && slugUpdatable»
-                        $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->view->getServiceManager());
-                        $entityData['slug'] = $controllerHelper->formatPermalink($entityData['slug']);
+                        if ($this->hasSlugUpdatableField === true) {
+                            $controllerHelper = new «app.appName»\Util\ControllerUtil($this->view->getServiceManager());
+                            $entityData['slug'] = $controllerHelper->formatPermalink($entityData['slug']);
+                        }
                     «ENDIF»
-                */»
                 «IF app.hasUploads»
                 } else {
                     // remove fields for form options to prevent them being merged into the entity object
@@ -1068,6 +1077,9 @@ class FormHandler {
                 «IF app.hasMetaDataEntities»
                     $this->hasMetaData = «metaData.displayBool»;
                 «ENDIF»
+                «IF app.hasSluggable»
+                    $this->hasSlugUpdatableField = «(!app.targets('1.3.5') && hasSluggableFields && slugUpdatable).displayBool»;
+                «ENDIF»
                 «IF app.hasTranslatable»
                     $this->hasTranslatableFields = «hasTranslatableFields.displayBool»;
                 «ENDIF»
@@ -1160,7 +1172,7 @@ class FormHandler {
             «IF app.hasListFields»
 
                 if (count($this->listFields) > 0) {
-                    $helper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»ListEntries($this->view->getServiceManager());
+                    $helper = new «app.appName»«IF app.targets('1.3.5')»_Util_ListEntries«ELSE»\Util\ListEntriesUtil«ENDIF»($this->view->getServiceManager());
                     foreach ($this->listFields as $listField => $isMultiple) {
                         $entityData[$listField . 'Items'] = $helper->getEntries($this->objectType, $listField);
                         if ($isMultiple) {
@@ -1270,7 +1282,7 @@ class FormHandler {
                 «ENDIF»
 
                 // execute the workflow action
-                $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Workflow($this->serviceManager);
+                $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»($this->serviceManager);
                 $success = $workflowHelper->executeAction($entity, $action);
             «IF hasOptimisticLock»
                 } catch(OptimisticLockException $e) {

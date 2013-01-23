@@ -21,8 +21,9 @@ class ViewUtil {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for view layer')
         val utilPath = getAppSourceLibPath + 'Util/'
-        fsa.generateFile(utilPath + 'Base/View.php', viewFunctionsBaseFile)
-        fsa.generateFile(utilPath + 'View.php', viewFunctionsFile)
+        val utilSuffix = (if (targets('1.3.5')) '' else 'Util')
+        fsa.generateFile(utilPath + 'Base/View' + utilSuffix + '.php', viewFunctionsBaseFile)
+        fsa.generateFile(utilPath + 'View' + utilSuffix + '.php', viewFunctionsFile)
     }
 
     def private viewFunctionsBaseFile(Application it) '''
@@ -46,7 +47,7 @@ class ViewUtil {
         «IF targets('1.3.5')»
         class «appName»_Util_Base_View extends Zikula_AbstractBase
         «ELSE»
-        class View extends \Zikula_AbstractBase
+        class ViewUtil extends \Zikula_AbstractBase
         «ENDIF»
         {
             «getViewTemplate»
@@ -238,7 +239,7 @@ class ViewUtil {
             // then the surrounding
             $output = $view->fetch('include_pdfheader.tpl') . $output . '</body></html>';
 
-            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($this->serviceManager);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
             // create name of the pdf output file
             $fileTitle = $controllerHelper->formatPermalink(\System::getVar('sitename'))
                        . '-'
@@ -324,7 +325,7 @@ class ViewUtil {
         «IF targets('1.3.5')»
         class «appName»_Util_View extends «appName»_Util_Base_View
         «ELSE»
-        class View extends Base\View
+        class ViewUtil extends Base\ViewUtil
         «ENDIF»
         {
             // feel free to add your own convenience methods here

@@ -46,7 +46,7 @@ class ThirdParty {
             // nothing required here as no entities use enhanced workflows including approval actions
         «ELSE»
             $serviceManager = \ServiceUtil::getManager();
-            $workflowHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Workflow($serviceManager);
+            $workflowHelper = new «appName»«IF targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»($serviceManager);
             $modname = '«appName»';
             $useJoins = false;
 

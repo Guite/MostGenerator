@@ -372,7 +372,7 @@ class EventListener {
             // initialise the upload handler
             $uploadManager = new «app.appName»«IF app.targets('1.3.5')»_«ELSE»\«ENDIF»UploadHandler();
             $serviceManager = \ServiceUtil::getManager();
-            $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($serviceManager);
+            $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($serviceManager);
         «ENDIF»
 
         «loadWorkflow»

@@ -109,7 +109,7 @@ class ContentTypeSingle {
         public function loadData(&$data)
         {
             $serviceManager = \ServiceUtil::getManager();
-            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_«ELSE»\Util\«ENDIF»Controller($serviceManager);
+            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($serviceManager);
 
             $utilArgs = array('name' => 'detail');
             if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $utilArgs))) {

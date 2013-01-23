@@ -25,8 +25,9 @@ class ListEntries {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for list entries')
         val utilPath = getAppSourceLibPath + 'Util/'
-        fsa.generateFile(utilPath + 'Base/ListEntries.php', listFieldFunctionsBaseFile)
-        fsa.generateFile(utilPath + 'ListEntries.php', listFieldFunctionsFile)
+        val utilSuffix = (if (targets('1.3.5')) '' else 'Util')
+        fsa.generateFile(utilPath + 'Base/ListEntries' + utilSuffix + '.php', listFieldFunctionsBaseFile)
+        fsa.generateFile(utilPath + 'ListEntries' + utilSuffix + '.php', listFieldFunctionsFile)
     }
 
     def private listFieldFunctionsBaseFile(Application it) '''
@@ -50,7 +51,7 @@ class ListEntries {
         «IF targets('1.3.5')»
         class «appName»_Util_Base_ListEntries extends Zikula_AbstractBase
         «ELSE»
-        class ListEntries extends \Zikula_AbstractBase
+        class ListEntriesUtil extends \Zikula_AbstractBase
         «ENDIF»
         {
             «resolve»
@@ -257,7 +258,7 @@ class ListEntries {
         «IF targets('1.3.5')»
         class «appName»_Util_ListEntries extends «appName»_Util_Base_ListEntries
         «ELSE»
-        class ListEntries extends Base\ListEntries
+        class ListEntriesUtil extends Base\ListEntriesUtil
         «ENDIF»
         {
             // feel free to add your own convenience methods here

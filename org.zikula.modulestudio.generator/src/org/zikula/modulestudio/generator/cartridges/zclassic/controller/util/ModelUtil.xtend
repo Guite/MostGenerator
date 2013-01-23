@@ -19,8 +19,9 @@ class ModelUtil {
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating utility class for model layer')
         val utilPath = getAppSourceLibPath + 'Util/'
-        fsa.generateFile(utilPath + 'Base/Model.php', modelFunctionsBaseFile)
-        fsa.generateFile(utilPath + 'Model.php', modelFunctionsFile)
+        val utilSuffix = (if (targets('1.3.5')) '' else 'Util')
+        fsa.generateFile(utilPath + 'Base/Model' + utilSuffix + '.php', modelFunctionsBaseFile)
+        fsa.generateFile(utilPath + 'Model' + utilSuffix + '.php', modelFunctionsFile)
     }
 
     def private modelFunctionsBaseFile(Application it) '''
@@ -44,7 +45,7 @@ class ModelUtil {
         «IF targets('1.3.5')»
         class «appName»_Util_Base_Model extends Zikula_AbstractBase
         «ELSE»
-        class Model extends \Zikula_AbstractBase
+        class ModelUtil extends \Zikula_AbstractBase
         «ENDIF»
         {
         }
@@ -61,7 +62,7 @@ class ModelUtil {
         «IF targets('1.3.5')»
         class «appName»_Util_Model extends «appName»_Util_Base_Model
         «ELSE»
-        class Model extends Base\Model
+        class ModelUtil extends Base\ModelUtil
         «ENDIF»
         {
             // feel free to add your own convenience methods here
