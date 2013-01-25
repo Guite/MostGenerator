@@ -72,5 +72,24 @@ class ModuleDispatch {
                 parent::customClassName($event);
             «ENDIF»
         }
+
+        /**
+         * Listener for the `module_dispatch.service_links` event.
+         *
+         * Occurs when building admin menu items.
+         * Adds sublinks to a Services menu that is appended to all modules if populated.
+         * Triggered by module_dispatch.postexecute in bootstrap.
+         *
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         */
+        public static function serviceLinks(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        {
+            «IF !isBase»
+                parent::customClassName($event);
+
+                // Format data like so:
+                // $event->data[] = array('url' => ModUtil::url('«appName»', 'user', 'main'), 'text' => __('Link Text'));
+            «ENDIF»
+        }
     '''
 }

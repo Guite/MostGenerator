@@ -26,6 +26,9 @@ class EventListener {
             \EventUtil::registerPersistentModuleHandler('«appName»', 'core.postinit', array('«callableClass»', 'postInit'));
             \EventUtil::registerPersistentModuleHandler('«appName»', 'controller.method_not_found', array('«callableClass»', 'controllerMethodNotFound'));
 
+            // front controller -> «var callableClass = listenerBase + 'FrontController' + listenerSuffix»
+            \EventUtil::registerPersistentModuleHandler('«appName»', 'frontcontroller.predispatch', array('«callableClass»', 'preDispatch'));
+
             // installer -> «callableClass = listenerBase + 'Installer' + listenerSuffix»
             \EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.installed', array('«callableClass»', 'moduleInstalled'));
             \EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.upgraded', array('«callableClass»', 'moduleUpgraded'));
@@ -37,6 +40,7 @@ class EventListener {
             \EventUtil::registerPersistentModuleHandler('«appName»', 'module_dispatch.preexecute', array('«callableClass»', 'preExecute'));
             \EventUtil::registerPersistentModuleHandler('«appName»', 'module_dispatch.postexecute', array('«callableClass»', 'postExecute'));
             \EventUtil::registerPersistentModuleHandler('«appName»', 'module_dispatch.custom_classname', array('«callableClass»', 'customClassname'));
+            \EventUtil::registerPersistentModuleHandler('«appName»', 'module_dispatch.service_links', array('«callableClass»', 'serviceLinks'));
 
             // mailer -> «callableClass = listenerBase + 'Mailer' + listenerSuffix»
             \EventUtil::registerPersistentModuleHandler('«appName»', 'module.mailer.api.sendmessage', array('«callableClass»', 'sendMessage'));

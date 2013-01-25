@@ -5,6 +5,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Core
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Errors
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.FrontController
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Group
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Mailer
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.ModuleDispatch
@@ -35,6 +36,7 @@ class Listeners {
         println('Generating event listener base classes')
         val listenerBasePath = getAppSourceLibPath + 'Listener/Base/'
         fsa.generateFile(listenerBasePath + 'Core.php', listenersCoreFile(true))
+        fsa.generateFile(listenerBasePath + 'FrontController.php', listenersFrontControllerFile(true))
         fsa.generateFile(listenerBasePath + 'Installer.php', listenersInstallerFile(true))
         fsa.generateFile(listenerBasePath + 'ModuleDispatch.php', listenersModuleDispatchFile(true))
         fsa.generateFile(listenerBasePath + 'Mailer.php', listenersMailerFile(true))
@@ -53,6 +55,7 @@ class Listeners {
         println('Generating event listener implementation classes')
         val listenerPath = getAppSourceLibPath + 'Listener/'
         fsa.generateFile(listenerPath + 'Core.php', listenersCoreFile(false))
+        fsa.generateFile(listenerPath + 'FrontController.php', listenersFrontControllerFile(false))
         fsa.generateFile(listenerPath + 'Installer.php', listenersInstallerFile(false))
         fsa.generateFile(listenerPath + 'ModuleDispatch.php', listenersModuleDispatchFile(false))
         fsa.generateFile(listenerPath + 'Mailer.php', listenersMailerFile(false))
@@ -85,6 +88,25 @@ class Listeners {
         «ENDIF»
         {
             «new Core().generate(it, isBase)»
+        }
+    '''
+
+    def private listenersFrontControllerFile(Application it, Boolean isBase) '''
+        «fh.phpFileHeader(it)»
+        «IF !targets('1.3.5')»
+            namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
+
+        «ENDIF»
+        /**
+         * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for frontend controller interaction events.
+         */
+        «IF targets('1.3.5')»
+        class «IF !isBase»«appName»_Listener_FrontController extends «ENDIF»«appName»_Listener_Base_FrontController
+        «ELSE»
+        class FrontControllerListener«IF !isBase» extends Base\FrontControllerListener«ENDIF»
+        «ENDIF»
+        {
+            «new FrontController().generate(it, isBase)»
         }
     '''
 
