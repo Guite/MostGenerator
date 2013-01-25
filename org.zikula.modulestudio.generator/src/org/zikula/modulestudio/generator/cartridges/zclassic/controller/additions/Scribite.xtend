@@ -36,7 +36,7 @@ class Scribite {
 
         //fsa.generateFile(docPath + 'NicEdit/vendor/nicedit/index.html', msUrl)
 
-        pluginPath = docPath + 'TinyMce/vendor/tinymce/plugins/' + name.formatForDB + '/'
+        pluginPath = docPath + 'TinyMce/vendor/tiny_mce/plugins/' + name.formatForDB + '/'
         fsa.generateFile(pluginPath + 'editor_plugin.js', tinyPlugin)
         fsa.generateFile(pluginPath + 'langs/de.js', tinyLangDe)
         fsa.generateFile(pluginPath + 'langs/en.js', tinyLangEn)
