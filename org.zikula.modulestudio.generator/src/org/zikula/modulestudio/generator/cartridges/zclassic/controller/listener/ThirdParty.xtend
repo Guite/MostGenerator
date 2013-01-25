@@ -155,7 +155,7 @@ class ThirdParty {
 
         $plugins->add(
             array('name' => '«appName.formatForDB»',
-                  'path' => 'modules/«appName»/docs/scribite/plugins/TinyMCE/vendor/tiny_mce/plugins/«appName.formatForDB»/editor_plugin.js'
+                  'path' => 'modules/«appName»/docs/scribite/plugins/TinyMce/vendor/tiny_mce/plugins/«appName.formatForDB»/editor_plugin.js'
             )
         );
     '''
