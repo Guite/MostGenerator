@@ -303,7 +303,7 @@ class ControllerLayer {
         /**
          * This is the «name» controller class providing navigation and interaction functionality.
          */
-        «IF !app.targets('1.3.5')»
+        «IF app.targets('1.3.5')»
         class «app.appName»_Controller_«name.formatForCodeCapital» extends «app.appName»_Controller_Base_«name.formatForCodeCapital»
         «ELSE»
         class «name.formatForCodeCapital»Controller extends Base\«name.formatForCodeCapital»Controller
@@ -324,7 +324,7 @@ class ControllerLayer {
         /**
          * This is the «name» api helper class.
          */
-        «IF !app.targets('1.3.5')»
+        «IF app.targets('1.3.5')»
         class «app.appName»_Api_Base_«name.formatForCodeCapital» extends Zikula_AbstractApi
         «ELSE»
         class «name.formatForCodeCapital» extends \Zikula_AbstractApi
