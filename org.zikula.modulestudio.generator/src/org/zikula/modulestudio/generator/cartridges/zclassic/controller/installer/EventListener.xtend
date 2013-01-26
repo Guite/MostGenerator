@@ -26,7 +26,7 @@ class EventListener {
             \EventUtil::registerPersistentModuleHandler('«appName»', 'core.postinit', array('«callableClass»', 'postInit'));
             \EventUtil::registerPersistentModuleHandler('«appName»', 'controller.method_not_found', array('«callableClass»', 'controllerMethodNotFound'));
 
-            // front controller -> «var callableClass = listenerBase + 'FrontController' + listenerSuffix»
+            // front controller -> «callableClass = listenerBase + 'FrontController' + listenerSuffix»
             \EventUtil::registerPersistentModuleHandler('«appName»', 'frontcontroller.predispatch', array('«callableClass»', 'preDispatch'));
 
             // installer -> «callableClass = listenerBase + 'Installer' + listenerSuffix»
