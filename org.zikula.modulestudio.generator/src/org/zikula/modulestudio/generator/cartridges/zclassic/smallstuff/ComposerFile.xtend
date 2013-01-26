@@ -42,6 +42,7 @@ class ComposerFile {
             "psr-0": { "«appName»\\": "" },
         },
         "require": {
+            "php": ">5.3.2"
         },
         "suggest": {
         }
