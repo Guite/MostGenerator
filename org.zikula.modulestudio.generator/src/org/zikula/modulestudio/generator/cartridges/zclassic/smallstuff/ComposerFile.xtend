@@ -38,6 +38,9 @@ class ComposerFile {
                 "homepage": "«url»"
             }
         ],
+        "autoload": {
+            "psr-0": { "«appName»\\": "" },
+        },
         "require": {
         },
         "suggest": {
