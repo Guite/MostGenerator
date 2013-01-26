@@ -42,7 +42,7 @@ class WorkflowStart {
         try {
             val modelPathFull = settings.modelPath
             // The path where to find the model, without trailing slash
-            val modelPathOnly = modelPathFull.substring(0, modelPathFull.lastIndexOf(File::separator))
+            val modelPathOnly = modelPathFull.substring(0, modelPathFull.lastIndexOf('/'))
             // The model to be processed (file name without extension)
             modelName = modelPathFull.replace(modelPathOnly, '').replace('.mostapp', '').replaceFirst('/', '')
 
