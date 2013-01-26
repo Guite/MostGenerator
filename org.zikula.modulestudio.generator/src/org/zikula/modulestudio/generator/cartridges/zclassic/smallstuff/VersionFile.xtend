@@ -111,7 +111,7 @@ class VersionFile {
                 «FOR entity : getAllEntities»
                     «/* we register one hook subscriber bundle foreach entity type */»
                     «val areaName = entity.nameMultiple.formatForDB»
-                    $bundle = new Zikula_HookManager_SubscriberBundle($this->name, 'subscriber.«appName».ui_hooks.«areaName»', 'ui_hooks', __('«appName» «entity.nameMultiple.formatForDisplayCapital» Display Hooks'));
+                    $bundle = new Zikula\Component\HookDispatcher\SubscriberBundle($this->name, 'subscriber.«appName».ui_hooks.«areaName»', 'ui_hooks', __('«appName» «entity.nameMultiple.formatForDisplayCapital» Display Hooks'));
                     «/* $bundle->addEvent('hook type', 'event name triggered by *this* module');*/»
                     // Display hook for view/display templates.
                     $bundle->addEvent('display_view', '«appName».ui_hooks.«areaName».display_view');
@@ -129,7 +129,7 @@ class VersionFile {
                     $bundle->addEvent('process_delete', '«appName».ui_hooks.«areaName».process_delete');
                     $this->registerHookSubscriberBundle($bundle);
 
-                    $bundle = new Zikula_HookManager_SubscriberBundle($this->name, 'subscriber.«appName».filter_hooks.«areaName»', 'filter_hooks', __('«appName» «entity.nameMultiple.formatForDisplayCapital» Filter Hooks'));
+                    $bundle = new Zikula\Component\HookDispatcher\SubscriberBundle($this->name, 'subscriber.«appName».filter_hooks.«areaName»', 'filter_hooks', __('«appName» «entity.nameMultiple.formatForDisplayCapital» Filter Hooks'));
                     // A filter applied to the given area.
                     $bundle->addEvent('filter', '«appName».filter_hooks.«areaName».filter');
                     $this->registerHookSubscriberBundle($bundle);

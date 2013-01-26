@@ -248,7 +248,7 @@ class ExternalController {
             «IF targets('1.3.5')»
             return $view->display('external/' . $objectType . '/find.tpl');
             «ELSE»
-            return new \Zikula\Core\Response\PlainResponse($view->display('External/' . ucwords($objectType) . '/find.tpl'));
+            return new Zikula\Core\Response\PlainResponse($view->display('External/' . ucwords($objectType) . '/find.tpl'));
             «ENDIF»
         }
     '''

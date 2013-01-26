@@ -551,7 +551,7 @@ class ControllerAction {
             $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
             $validators = $this->notifyHooks($hook)->getValidators();
             «ELSE»
-            $hook = new \Zikula\Core\Hook\ValidationHook(new Zikula\Core\Hook\ValidationProviders());
+            $hook = new Zikula\Core\Hook\ValidationHook(new Zikula\Core\Hook\ValidationProviders());
             $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
             «ENDIF»
             if (!$validators->hasErrors()) {
@@ -567,7 +567,7 @@ class ControllerAction {
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier());
                 $this->notifyHooks($hook);
                 «ELSE»
-                $hook = new \Zikula\Core\Hook\ProcessHook($entity->createCompositeIdentifier());
+                $hook = new Zikula\Core\Hook\ProcessHook($entity->createCompositeIdentifier());
                 $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
                 «ENDIF»
 
