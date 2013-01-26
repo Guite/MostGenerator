@@ -110,7 +110,7 @@ class Entities {
          * @abstract
          */
         «IF app.targets('1.3.5')»
-        abstract class «entityClassName('', true)» extends Zikula_EntityAccess«IF hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
+        abstract class «app.appName»_Entity_Base_«name.formatForCodeCapital» extends Zikula_EntityAccess«IF hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
         «ELSE»
         abstract class Abstract«name.formatForCodeCapital» extends \Zikula_EntityAccess«IF hasNotifyPolicy» implements
             NotifyPropertyChanged«ENDIF»
