@@ -225,7 +225,7 @@ class WorkflowUtil {
          *
          * @param string $actionId Id of the treated action.
          */
-        protected getButtonClassForAction($actionId)
+        protected function getButtonClassForAction($actionId)
         {
             $buttonClass = '';
             switch ($actionId) {
