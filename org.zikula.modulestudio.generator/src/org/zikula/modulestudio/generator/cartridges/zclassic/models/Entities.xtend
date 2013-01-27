@@ -521,6 +521,7 @@ class Entities {
         «FOR mandatoryField : mandatoryFields.filter(typeof(FloatField)).filter(e|e.defaultValue == null || e.defaultValue == '' || e.defaultValue == '0')»
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
+        $this->workflowState = 'initial';
         «IF isIndexByTarget»
             «val indexRelation = incoming.filter(typeof(JoinRelationship)).filter(e|e.isIndexed).head»
             «val sourceAlias = getRelationAliasName(indexRelation, false)»
