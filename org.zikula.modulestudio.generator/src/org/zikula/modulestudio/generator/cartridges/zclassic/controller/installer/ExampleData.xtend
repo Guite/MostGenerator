@@ -128,15 +128,9 @@ class ExampleData {
     '''
 
     def private initExampleObjects(Entity it, Application app) '''
-        «var String entityClassName»
-        «IF app.targets('1.3.5')»
-            «entityClassName = app.appName + '_Entity_' + name.formatForCodeCapital»
-        «ELSE»
-            «entityClassName = app.appName + '\\Entity\\' + name.formatForCodeCapital + 'Entity'»
-        «ENDIF»
         «var exampleNumbers = getListForCounter(container.numExampleRows)»
         «FOR number : exampleNumbers»
-            $«name.formatForCode»«number» = new «entityClassName»(«exampleRowsConstructorArguments(number)»);
+            $«name.formatForCode»«number» = new «app.appName»«IF app.targets('1.3.5')»_Entity_«name.formatForCodeCapital»«ELSE»\Entity\«name.formatForCodeCapital»Entity«ENDIF»(«exampleRowsConstructorArguments(number)»);
         «ENDFOR»
         «/* this last line is on purpose */»
     '''
