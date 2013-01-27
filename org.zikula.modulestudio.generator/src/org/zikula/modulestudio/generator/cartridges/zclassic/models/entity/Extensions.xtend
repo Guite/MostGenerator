@@ -414,15 +414,15 @@ class Extensions {
          * This is the base «classType.formatForDisplay» class for «name.formatForDisplay» entities.
          */
         «IF classType == 'closure'»
-        class «entityClassName(classType, false)» extends AbstractClosure
+        class «entityClassName(classType, true)» extends AbstractClosure
         «ELSEIF classType == 'translation'»
-        class «entityClassName(classType, false)» extends AbstractTranslation
+        class «entityClassName(classType, true)» extends AbstractTranslation
         «ELSEIF classType == 'logEntry'»
-        class «entityClassName(classType, false)» extends AbstractLogEntry
+        class «entityClassName(classType, true)» extends AbstractLogEntry
         «ELSEIF classType == 'metaData'»
-        class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»Entity«classType.toFirstUpper»«ELSE»Zikula_Doctrine2_Entity_EntityMetadata«ENDIF»
+        class «entityClassName(classType, true)» extends «IF !app.targets('1.3.5')»Entity«classType.toFirstUpper»«ELSE»Zikula_Doctrine2_Entity_EntityMetadata«ENDIF»
         «ELSEIF classType == 'attribute' || classType == 'category'»
-        class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»Entity«classType.toFirstUpper»«ELSE»Zikula_Doctrine2_Entity_Entity«classType.toFirstUpper»«ENDIF»
+        class «entityClassName(classType, true)» extends «IF !app.targets('1.3.5')»Entity«classType.toFirstUpper»«ELSE»Zikula_Doctrine2_Entity_Entity«classType.toFirstUpper»«ENDIF»
         «ENDIF»
         {
         «IF classType == 'metaData' || classType == 'attribute' || classType == 'category'»
