@@ -90,7 +90,7 @@ class WorkflowUtil {
     def private stateInfo(ListFieldItem it) '''
         $states[] = array('value' => '«value»',
                           'text' => $this->__('«name»'),
-                          'icon' => '«stateIcon».png');
+                          'icon' => '«stateIcon»led.png');
     '''
 
     def private stateIcon(ListFieldItem it) {
