@@ -375,29 +375,9 @@ class EventListener {
             $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($serviceManager);
         «ENDIF»
 
-        «loadWorkflow»
+        $this->initWorkflow();
 
         «FOR field : fields»«field.sanitizeForOutput»«ENDFOR»
-    '''
-
-    def private loadWorkflow(Entity it) '''
-        «val app = container.application»
-        // apply workflow with most important information
-        $idColumn = '«primaryKeyFields.head.name.formatForCode»';
-        $this['__WORKFLOW__'] = array(
-            'state' => $this['workflowState'],
-            'obj_table' => $this['_objectType'],
-            'obj_idcolumn' => $idColumn,
-            'obj_id' => $this[$idColumn]);
-
-        // load the real workflow only when required (e. g. when func is edit or delete)
-        if (!in_array($currentFunc, array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view', 'display'))) {
-            $result = Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«app.appName»');
-            if (!$result) {
-                $dom = ZLanguage::getModuleDomain('«app.appName»');
-                \LogUtil::registerError(__('Error! Could not load the associated workflow.', $dom));
-            }
-        }
     '''
 
     def private sanitizeForOutput(EntityField it) {

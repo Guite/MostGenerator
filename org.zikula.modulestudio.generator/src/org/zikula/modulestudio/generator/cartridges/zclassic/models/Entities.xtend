@@ -293,6 +293,16 @@ class Entities {
         }
 
         /**
+         * Set/retrieve the workflow details.
+         */
+        protected function initWorkflow()
+        {
+            $currentFunc = \FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
+
+            «loadWorkflow»
+        }
+
+        /**
          * Start validation and raise exception if invalid data is found.
          *
          * @return void.
@@ -452,6 +462,35 @@ class Entities {
         }
     }
 
+    def private loadWorkflow(Entity it) '''
+        «val app = container.application»
+        // apply workflow with most important information
+        $idColumn = '«primaryKeyFields.head.name.formatForCode»';
+        $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»(ServiceUtil::getManager());
+        $schemaName = $workflowHelper->getWorkflowName($this['_objectType']);
+        $this['__WORKFLOW__'] = array(
+            'state' => $this['workflowState'],
+            'obj_table' => $this['_objectType'],
+            'obj_idcolumn' => $idColumn,
+            'obj_id' => $this[$idColumn],
+            'schemaname' => $schemaName);
+
+        // load the real workflow only when required (e. g. when func is edit or delete)
+        if (!in_array($currentFunc, array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view', 'display'))) {
+            $result = Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«app.appName»');
+            if (!$result) {
+                $dom = ZLanguage::getModuleDomain('«app.appName»');
+                \LogUtil::registerError(__('Error! Could not load the associated workflow.', $dom));
+            }
+        }
+
+        if (!isset($this['__WORKFLOW__']['schemaname'])) {
+            $workflow = $this['__WORKFLOW__'];
+            $workflow['schemaname'] = $schemaName;
+            $this['__WORKFLOW__'] = $workflow;
+        }
+    '''
+
     def private constructor(Entity it, Boolean isInheriting) '''
         /**
          * Constructor.
@@ -540,6 +579,7 @@ class Entities {
         «ENDIF»
         $this->_idFields = array(«FOR pkField : getPrimaryKeyFields SEPARATOR ', '»'«pkField.name.formatForCode»'«ENDFOR»);
         $this->initValidator();
+        $this->initWorkflow();
         $this->_hasUniqueSlug = «IF hasSluggableFields && slugUnique»true«ELSE»false«ENDIF»;
         «thAssoc.initCollections(it)»
     '''
