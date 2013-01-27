@@ -42,7 +42,7 @@ class Finder {
          * Open a popup window with the finder triggered by a Xinha button.
          */
         function «appName»FinderXinha(editor, «prefix()»URL) {
-        	var popupAttributes;
+            var popupAttributes;
 
             // Save editor for access in selector window
             current«appName»Editor = editor;

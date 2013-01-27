@@ -27,5 +27,5 @@ Workflow {
         targetDir = targetDir
         doValidation = 'true'      // whether to validate the model before processing
         doModelCopy = 'true'       // whether to copy the models into the target folder
-	}
+    }
 }

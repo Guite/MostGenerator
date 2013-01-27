@@ -18,8 +18,8 @@ class GetCountryName {
     }
 
     def private getCountryNameFile(Application it) '''
-    	«new FileHelper().phpFileHeader(it)»
-    	«getCountryNameImpl»
+        «new FileHelper().phpFileHeader(it)»
+        «getCountryNameImpl»
     '''
 
     def private getCountryNameImpl(Application it) '''

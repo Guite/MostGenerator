@@ -18,8 +18,8 @@ class TemplateHeaders {
     }
 
     def private templateHeadersFile(Application it) '''
-    	«new FileHelper().phpFileHeader(it)»
-    	«templateHeadersImpl»
+        «new FileHelper().phpFileHeader(it)»
+        «templateHeadersImpl»
     '''
 
     def private templateHeadersImpl(Application it) '''

@@ -94,6 +94,7 @@ class PersistenceTransformer {
                 name = 'Initial'
                 value = 'initial'
                 documentation = 'Pseudo-state for content which is just created and not persisted yet.'
+                ^default = true
             ]
         )
 

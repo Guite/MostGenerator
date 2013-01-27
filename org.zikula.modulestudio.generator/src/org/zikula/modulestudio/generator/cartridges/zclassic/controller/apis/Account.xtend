@@ -28,13 +28,13 @@ class Account {
     }
 
     def private accountApiBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«accountApiBaseClass»
+        «fh.phpFileHeader(it)»
+        «accountApiBaseClass»
     '''
 
     def private accountApiFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«accountApiImpl»
+        «fh.phpFileHeader(it)»
+        «accountApiImpl»
     '''
 
     def private accountApiBaseClass(Application it) '''
@@ -42,17 +42,17 @@ class Account {
             namespace «appName»\Api\Base;
 
         «ENDIF»
-		/**
-		 * Account api base class.
-		 */
+        /**
+         * Account api base class.
+         */
         «IF targets('1.3.5')»
         class «appName»_Api_Base_Account extends Zikula_AbstractApi
         «ELSE»
         class AccountApi extends \Zikula_AbstractApi
         «ENDIF»
-		{
-		    «accountApiBaseImpl»
-		}
+        {
+            «accountApiBaseImpl»
+        }
     '''
 
     def private accountApiBaseImpl(Application it) '''

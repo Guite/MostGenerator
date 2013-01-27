@@ -18,8 +18,8 @@ class TemplateSelector {
     }
 
     def private selectorTemplatesFile(Application it) '''
-    	«new FileHelper().phpFileHeader(it)»
-    	«selectorTemplatesImpl»
+        «new FileHelper().phpFileHeader(it)»
+        «selectorTemplatesImpl»
     '''
 
     def private selectorTemplatesImpl(Application it) '''

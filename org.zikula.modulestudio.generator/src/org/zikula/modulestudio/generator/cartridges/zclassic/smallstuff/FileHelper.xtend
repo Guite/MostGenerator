@@ -116,8 +116,8 @@ class FileHelper {
         «ENDIF»
         $this->«name» = $«name»;
         «IF !aggregators.isEmpty»
-        	«FOR aggregator : aggregators»
-        	$this->«aggregator.sourceAlias.formatForCode»->add«name.formatForCodeCapital»Without«entity.name.formatForCodeCapital»($diff);
+            «FOR aggregator : aggregators»
+            $this->«aggregator.sourceAlias.formatForCode»->add«name.formatForCodeCapital»Without«entity.name.formatForCodeCapital»($diff);
             «ENDFOR»
         «ENDIF»
     '''

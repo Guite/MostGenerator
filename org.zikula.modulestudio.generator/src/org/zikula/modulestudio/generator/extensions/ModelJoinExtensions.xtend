@@ -134,14 +134,14 @@ class ModelJoinExtensions {
      * Checks for whether the entity has outgoing join relations which are either one2many or many2many.
      */
     def hasOutgoingCollections(Entity it) {
-	    !getOutgoingCollections.isEmpty
+        !getOutgoingCollections.isEmpty
     }
 
     /**
      * Checks for whether the entity has incoming join relations which are either many2one or many2many.
      */
     def hasIncomingCollections(Entity it) {
-	    !getIncomingCollections.isEmpty
+        !getIncomingCollections.isEmpty
     }
 
     /**
@@ -149,7 +149,7 @@ class ModelJoinExtensions {
      * one2many or many2many, or incoming join relations which are either many2one or many2many.
      */
     def hasCollections(Entity it) {
-	    !getCollections.isEmpty
+        !getCollections.isEmpty
     }
 
 

@@ -30,13 +30,13 @@ class Search {
     }
 
     def private searchApiBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«searchApiBaseClass»
+        «fh.phpFileHeader(it)»
+        «searchApiBaseClass»
     '''
 
     def private searchApiFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«searchApiImpl»
+        «fh.phpFileHeader(it)»
+        «searchApiImpl»
     '''
 
     def private searchApiBaseClass(Application it) '''
@@ -44,17 +44,17 @@ class Search {
             namespace «appName»\Api\Base;
 
         «ENDIF»
-		/**
-		 * Search api base class.
-		 */
+        /**
+         * Search api base class.
+         */
         «IF targets('1.3.5')»
         class «appName»_Api_Base_Search extends Zikula_AbstractApi
         «ELSE»
         class SearchApi extends \Zikula_AbstractApi
         «ENDIF»
-		{
-		    «searchApiBaseImpl»
-		}
+        {
+            «searchApiBaseImpl»
+        }
     '''
 
     def private searchApiBaseImpl(Application it) '''

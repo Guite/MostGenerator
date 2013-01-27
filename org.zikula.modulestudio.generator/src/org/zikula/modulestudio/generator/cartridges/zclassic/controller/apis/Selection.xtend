@@ -25,13 +25,13 @@ class Selection {
     }
 
     def private selectionBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«selectionBaseClass»
-	'''
+        «fh.phpFileHeader(it)»
+        «selectionBaseClass»
+    '''
 
     def private selectionFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«selectionImpl»
+        «fh.phpFileHeader(it)»
+        «selectionImpl»
     '''
 
     def private selectionBaseClass(Application it) '''
@@ -39,17 +39,17 @@ class Selection {
             namespace «appName»\Api\Base;
 
         «ENDIF»
-		/**
-		 * Selection api base class.
-		 */
+        /**
+         * Selection api base class.
+         */
         «IF targets('1.3.5')»
         class «appName»_Api_Base_Selection extends Zikula_AbstractApi
         «ELSE»
         class SelectionApi extends \Zikula_AbstractApi
         «ENDIF»
-		{
-		    «selectionBaseImpl»
-		}
+        {
+            «selectionBaseImpl»
+        }
     '''
 
     def private selectionBaseImpl(Application it) '''

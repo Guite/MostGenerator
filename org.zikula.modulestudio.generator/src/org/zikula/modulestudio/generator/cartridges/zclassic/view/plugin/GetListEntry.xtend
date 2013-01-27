@@ -18,8 +18,8 @@ class GetListEntry {
     }
 
     def private getListEntryFile(Application it) '''
-    	«new FileHelper().phpFileHeader(it)»
-    	«getListEntryImpl»
+        «new FileHelper().phpFileHeader(it)»
+        «getListEntryImpl»
     '''
 
     def private getListEntryImpl(Application it) '''

@@ -26,10 +26,10 @@ class MostGenerator implements IGenerator {
         if (pkFields.isEmpty)
             app.transform
 
-    	if (cartridge == 'zclassic')
-    	    new ZclassicGenerator().generate(app, fsa, monitor)
-    	//else if (cartridge == 'something')
-    	//    new SomethingGenerator().generate(app, fsa, monitor)
+        if (cartridge == 'zclassic')
+            new ZclassicGenerator().generate(app, fsa, monitor)
+        //else if (cartridge == 'something')
+        //    new SomethingGenerator().generate(app, fsa, monitor)
     }
 
     def private transform(Application it) {

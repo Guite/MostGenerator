@@ -154,8 +154,8 @@ class XmlImporter {
      */
     def private isStandardField(String fieldName) {
         return (fieldName.equalsIgnoreCase('obj_status')
-        	 || fieldName.equalsIgnoreCase('cr_date') || fieldName.equalsIgnoreCase('cr_uid')
-        	 || fieldName.equalsIgnoreCase('lu_date') || fieldName.equalsIgnoreCase('lu_uid'))
+             || fieldName.equalsIgnoreCase('cr_date') || fieldName.equalsIgnoreCase('cr_uid')
+             || fieldName.equalsIgnoreCase('lu_date') || fieldName.equalsIgnoreCase('lu_uid'))
     }
 
     /**

@@ -28,13 +28,13 @@ class Cache {
     }
 
     def private cacheApiBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«cacheApiBaseClass»
+        «fh.phpFileHeader(it)»
+        «cacheApiBaseClass»
     '''
 
     def private cacheApiFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«cacheApiImpl»
+        «fh.phpFileHeader(it)»
+        «cacheApiImpl»
     '''
 
     def private cacheApiBaseClass(Application it) '''
@@ -42,17 +42,17 @@ class Cache {
             namespace «appName»\Api\Base;
 
         «ENDIF»
-		/**
-		 * Cache api base class.
-		 */
+        /**
+         * Cache api base class.
+         */
         «IF targets('1.3.5')»
         class «appName»_Api_Base_Cache extends Zikula_AbstractApi
         «ELSE»
         class CacheApi extends \Zikula_AbstractApi
         «ENDIF»
-		{
-		    «cacheApiBaseImpl»
-		}
+        {
+            «cacheApiBaseImpl»
+        }
     '''
 
     def private cacheApiBaseImpl(Application it) '''

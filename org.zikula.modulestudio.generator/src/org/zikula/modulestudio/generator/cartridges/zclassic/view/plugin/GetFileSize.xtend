@@ -18,8 +18,8 @@ class GetFileSize {
     }
 
     def private getFileSizeFile(Application it) '''
-    	«new FileHelper().phpFileHeader(it)»
-    	«getFileSizeImpl»
+        «new FileHelper().phpFileHeader(it)»
+        «getFileSizeImpl»
     '''
 
     def private getFileSizeImpl(Application it) '''

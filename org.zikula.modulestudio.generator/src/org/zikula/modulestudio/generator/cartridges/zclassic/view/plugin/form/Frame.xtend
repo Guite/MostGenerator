@@ -25,13 +25,13 @@ class Frame {
     }
 
     def private formFrameFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«formFrameImpl»
+        «fh.phpFileHeader(it)»
+        «formFrameImpl»
     '''
 
     def private formFramePluginFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«formFramePluginImpl»
+        «fh.phpFileHeader(it)»
+        «formFramePluginImpl»
     '''
 
     def private formFrameImpl(Application it) '''

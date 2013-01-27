@@ -34,7 +34,7 @@ class FormattingExtensions {
      * @return String formatted for source code usage.
      */
     def formatForCodeCapital(String s) {
-	    s.formatForCode.toFirstUpper
+        s.formatForCode.toFirstUpper
     }
 
     /**
@@ -89,7 +89,7 @@ class FormattingExtensions {
      * @return String value of given boolean.
      */
     def displayBool(Boolean b) {
-    	if (b) 'true'
-    	else 'false'
+        if (b) 'true'
+        else 'false'
     }
 }

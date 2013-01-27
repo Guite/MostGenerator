@@ -20,8 +20,8 @@ class ObjectTypeSelector {
     }
 
     def private selectorObjectTypesFile(Application it) '''
-    	«new FileHelper().phpFileHeader(it)»
-    	«selectorObjectTypesImpl»
+        «new FileHelper().phpFileHeader(it)»
+        «selectorObjectTypesImpl»
     '''
 
     def private selectorObjectTypesImpl(Application it) '''

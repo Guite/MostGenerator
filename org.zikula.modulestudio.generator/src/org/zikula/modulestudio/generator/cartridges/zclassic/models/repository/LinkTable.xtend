@@ -27,13 +27,13 @@ class LinkTable {
     }
 
     def private modelRefRepositoryBaseFile(ManyToManyRelationship it, Application app) '''
-    	«fh.phpFileHeader(app)»
-    	«modelRefRepositoryBaseImpl(app)»
+        «fh.phpFileHeader(app)»
+        «modelRefRepositoryBaseImpl(app)»
     '''
 
     def private modelRefRepositoryFile(ManyToManyRelationship it, Application app) '''
-    	«fh.phpFileHeader(app)»
-    	«modelRefRepositoryImpl(app)»
+        «fh.phpFileHeader(app)»
+        «modelRefRepositoryImpl(app)»
     '''
 
     def private modelRefRepositoryBaseImpl(ManyToManyRelationship it, Application app) '''

@@ -23,18 +23,18 @@ class GeoInput {
     }
 
     def private formGeoInputBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«formGeoInputBaseImpl»
+        «fh.phpFileHeader(it)»
+        «formGeoInputBaseImpl»
     '''
 
     def private formGeoInputFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«formGeoInputImpl»
+        «fh.phpFileHeader(it)»
+        «formGeoInputImpl»
     '''
 
     def private formGeoInputPluginFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«formGeoInputPluginImpl»
+        «fh.phpFileHeader(it)»
+        «formGeoInputPluginImpl»
     '''
 
     def private formGeoInputBaseImpl(Application it) '''

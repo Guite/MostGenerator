@@ -18,8 +18,8 @@ class TreeSelector {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-    	if (hasTrees) {
-    	    val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
+        if (hasTrees) {
+            val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
             fsa.generateFile(formPluginPath + 'Base/TreeSelector.php', treeSelectorBaseFile)
             fsa.generateFile(formPluginPath + 'TreeSelector.php', treeSelectorFile)
             fsa.generateFile(viewPluginFilePath('function', 'TreeSelector'), treeSelectorPluginFile)
@@ -27,18 +27,18 @@ class TreeSelector {
     }
 
     def private treeSelectorBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«treeSelectorBaseImpl»
+        «fh.phpFileHeader(it)»
+        «treeSelectorBaseImpl»
     '''
 
     def private treeSelectorFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«treeSelectorImpl»
+        «fh.phpFileHeader(it)»
+        «treeSelectorImpl»
     '''
 
     def private treeSelectorPluginFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«treeSelectorPluginImpl»
+        «fh.phpFileHeader(it)»
+        «treeSelectorPluginImpl»
     '''
 
     def private treeSelectorBaseImpl(Application it) '''

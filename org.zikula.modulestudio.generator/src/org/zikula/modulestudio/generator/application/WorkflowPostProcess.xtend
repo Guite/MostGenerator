@@ -27,11 +27,11 @@ class WorkflowPostProcess {
     def run() {
         copyModelFiles
         if (settings.getSelectedCartridges.contains('zclassic')) {
-        	copyAdminImage
+            copyAdminImage
         }
 
         if (settings.getSelectedCartridges.contains('reporting')) {
-        	exportBirtReports
+            exportBirtReports
         }
     }
 

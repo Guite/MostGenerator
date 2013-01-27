@@ -16,25 +16,25 @@ class CountrySelector {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-    	val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
+        val formPluginPath = getAppSourceLibPath + 'Form/Plugin/'
         fsa.generateFile(formPluginPath + 'Base/CountrySelector.php', formCountrySelectorBaseFile)
         fsa.generateFile(formPluginPath + 'CountrySelector.php', formCountrySelectorFile)
         fsa.generateFile(viewPluginFilePath('function', 'CountrySelector'), formCountrySelectorPluginFile)
     }
 
     def private formCountrySelectorBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«formCountrySelectorBaseImpl»
+        «fh.phpFileHeader(it)»
+        «formCountrySelectorBaseImpl»
     '''
 
     def private formCountrySelectorFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«formCountrySelectorImpl»
+        «fh.phpFileHeader(it)»
+        «formCountrySelectorImpl»
     '''
 
     def private formCountrySelectorPluginFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«formCountrySelectorPluginImpl»
+        «fh.phpFileHeader(it)»
+        «formCountrySelectorPluginImpl»
     '''
 
     def private formCountrySelectorBaseImpl(Application it) '''

@@ -18,8 +18,8 @@ class ActionUrl {
     }
 
     def private actionUrlFile(Application it) '''
-    	«new FileHelper().phpFileHeader(it)»
-    	«actionUrlImpl»
+        «new FileHelper().phpFileHeader(it)»
+        «actionUrlImpl»
     '''
 
     def private actionUrlImpl(Application it) '''

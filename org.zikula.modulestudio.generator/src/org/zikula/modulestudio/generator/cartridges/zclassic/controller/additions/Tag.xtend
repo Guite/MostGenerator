@@ -25,13 +25,13 @@ class Tag {
     }
 
     def private tagBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«tagBaseClass»
+        «fh.phpFileHeader(it)»
+        «tagBaseClass»
     '''
 
     def private tagFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«tagImpl»
+        «fh.phpFileHeader(it)»
+        «tagImpl»
     '''
 
     def private tagBaseClass(Application it) '''
@@ -39,17 +39,17 @@ class Tag {
             namespace «appName»\TaggedObjectMeta\Base;
 
         «ENDIF»
-		/**
-		 * This class provides object meta data for the Tag module.
-		 */
+        /**
+         * This class provides object meta data for the Tag module.
+         */
         «IF targets('1.3.5')»
         class «appName»_TaggedObjectMeta_Base_«appName» extends Tag_AbstractTaggedObjectMeta
         «ELSE»
         class «appName» extends \Tag_AbstractTaggedObjectMeta
         «ENDIF»
-		{
-		    «tagBaseImpl»
-		}
+        {
+            «tagBaseImpl»
+        }
     '''
 
     def private tagBaseImpl(Application it) '''

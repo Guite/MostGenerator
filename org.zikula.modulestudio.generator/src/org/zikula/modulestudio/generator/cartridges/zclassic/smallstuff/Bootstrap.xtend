@@ -21,8 +21,8 @@ class Bootstrap {
     }
 
     def private bootstrapFile(Application it) '''
-    	«new FileHelper().phpFileHeader(it)»
-    	«bootstrapImpl»
+        «new FileHelper().phpFileHeader(it)»
+        «bootstrapImpl»
     '''
 
     def private bootstrapImpl(Application it) '''

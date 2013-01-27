@@ -28,13 +28,13 @@ class Mailz {
     }
 
     def private mailzBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-		«mailzBaseClass»
+        «fh.phpFileHeader(it)»
+        «mailzBaseClass»
     '''
 
     def private mailzFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«mailzImpl»
+        «fh.phpFileHeader(it)»
+        «mailzImpl»
     '''
 
     def private mailzBaseClass(Application it) '''
@@ -42,17 +42,17 @@ class Mailz {
             namespace «appName»\Api\Base;
 
         «ENDIF»
-		/**
-		 * Mailz api base class.
-		 */
+        /**
+         * Mailz api base class.
+         */
         «IF targets('1.3.5')»
         class «appName»_Api_Base_Mailz extends Zikula_AbstractApi
         «ELSE»
         class MailzApi extends \Zikula_AbstractApi
         «ENDIF»
-		{
-		    «mailzBaseImpl»
-		}
+        {
+            «mailzBaseImpl»
+        }
     '''
 
     def private mailzBaseImpl(Application it) '''

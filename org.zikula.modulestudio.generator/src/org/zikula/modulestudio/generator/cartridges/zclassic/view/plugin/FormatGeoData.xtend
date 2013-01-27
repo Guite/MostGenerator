@@ -18,8 +18,8 @@ class FormatGeoData {
     }
 
     def private formatGeoDataFile(Application it) '''
-    	«new FileHelper().phpFileHeader(it)»
-    	«formatGeoDataImpl»
+        «new FileHelper().phpFileHeader(it)»
+        «formatGeoDataImpl»
     '''
 
     def private formatGeoDataImpl(Application it) '''

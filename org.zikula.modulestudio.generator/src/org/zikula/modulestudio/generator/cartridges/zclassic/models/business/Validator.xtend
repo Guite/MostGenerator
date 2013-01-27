@@ -57,13 +57,13 @@ class Validator {
     }
 
     def private validatorCommonBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«validatorCommonBaseImpl»
+        «fh.phpFileHeader(it)»
+        «validatorCommonBaseImpl»
     '''
 
     def private validatorCommonFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«validatorCommonImpl»
+        «fh.phpFileHeader(it)»
+        «validatorCommonImpl»
     '''
 
     def private validatorCommonBaseImpl(Application it) '''
@@ -376,8 +376,8 @@ class Validator {
             protected function isDateTimeValueInPast($fieldName, $format, $mandatory = true)
             {
                 if ($mandatory === false) {
-                	return true;
-            	}
+                    return true;
+                }
 
                 return ($this->isValidDateTime($fieldName) && $this->entity[$fieldName]->format($format) < date($format));
             }
@@ -393,8 +393,8 @@ class Validator {
             protected function isDateTimeValueInFuture($fieldName, $format, $mandatory = true)
             {
                 if ($mandatory === false) {
-                	return true;
-            	}
+                    return true;
+                }
 
                 return ($this->isValidDateTime($fieldName) && $this->entity[$fieldName]->format($format) > date($format));
             }
@@ -507,13 +507,13 @@ class Validator {
     }
 
     def private validatorBaseFile(Entity it, Application app) '''
-    	«fh.phpFileHeader(app)»
-    	«validatorBaseImpl(app)»
+        «fh.phpFileHeader(app)»
+        «validatorBaseImpl(app)»
     '''
 
     def private validatorFile(Entity it, Application app) '''
-    	«fh.phpFileHeader(app)»
-    	«validatorImpl(app)»
+        «fh.phpFileHeader(app)»
+        «validatorImpl(app)»
     '''
 
     def private validatorBaseImpl(Entity it, Application app) '''

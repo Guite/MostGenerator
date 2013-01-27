@@ -98,7 +98,7 @@ class ControllerExtensions {
      * Returns a list of all edit actions in the given application.
      */
     def getEditActions(Application it) {
-    	getAllControllers.map(e|e.actions).flatten.filter(typeof(EditAction))
+        getAllControllers.map(e|e.actions).flatten.filter(typeof(EditAction))
     }
 
     /**

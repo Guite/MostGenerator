@@ -20,8 +20,8 @@ class ValidationError {
     }
 
     def private validationErrorFile(Application it) '''
-    	«new FileHelper().phpFileHeader(it)»
-    	«validationErrorImpl»
+        «new FileHelper().phpFileHeader(it)»
+        «validationErrorImpl»
     '''
 
     def private validationErrorImpl(Application it) '''

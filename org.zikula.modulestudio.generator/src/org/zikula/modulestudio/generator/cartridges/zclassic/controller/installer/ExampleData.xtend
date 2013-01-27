@@ -239,36 +239,36 @@ class ExampleData {
 
     def private exampleRowValueText(DerivedField it, Entity dataEntity, Integer number) {
         switch it {
-        	StringField: exampleRowValueTextLength(dataEntity, number, it.length)
-        	TextField: exampleRowValueTextLength(dataEntity, number, it.length)
-        	EmailField: exampleRowValueTextLength(dataEntity, number, it.length)
-        	UrlField: exampleRowValueTextLength(dataEntity, number, it.length)
+            StringField: exampleRowValueTextLength(dataEntity, number, it.length)
+            TextField: exampleRowValueTextLength(dataEntity, number, it.length)
+            EmailField: exampleRowValueTextLength(dataEntity, number, it.length)
+            UrlField: exampleRowValueTextLength(dataEntity, number, it.length)
             default: '\'' + entity.name.formatForDisplayCapital + ' ' + name.formatForDisplay + ' ' + number + '\''
         }
     }
     def private exampleRowValue(DerivedField it, Entity dataEntity, Integer number) {
         switch it {
-        	BooleanField: if (defaultValue == true || defaultValue == 'true') 'true' else 'false'
-        	IntegerField: exampleRowValueNumber(dataEntity, number)
-        	DecimalField: exampleRowValueNumber(dataEntity, number)
-        	StringField: if (it.country || it.language) 'ZLanguage::getLanguageCode()' else if (it.htmlcolour) '\'#ff6600\'' else exampleRowValueText(dataEntity, number)
-        	TextField: exampleRowValueText(dataEntity, number)
-        	EmailField: '\'' + entity.container.application.email + '\''
-        	UrlField: '\'' + entity.container.application.url + '\''
-        	UploadField: exampleRowValueText(dataEntity, number)
-        	UserField: /* admin */2
-        	ArrayField: exampleRowValueNumber(dataEntity, number)
-        	ObjectField: exampleRowValueText(dataEntity, number)
-        	DatetimeField: '''«IF it.past»$dtPast«ELSEIF it.future»$dtFuture«ELSE»$dtNow«ENDIF»'''
-        	DateField: '''«IF it.past»$dPast«ELSEIF it.future»$dFuture«ELSE»$dNow«ENDIF»'''
-        	TimeField: '''«IF it.past»$tPast«ELSEIF it.future»$tFuture«ELSE»$tNow«ENDIF»'''
-        	FloatField: exampleRowValueNumber(dataEntity, number)
-        	ListField: ''''«IF it.multiple»###«FOR item : getDefaultItems SEPARATOR '###'»«item.exampleRowValue»«ENDFOR»###«ELSE»«FOR item : getDefaultItems»«item.exampleRowValue»«ENDFOR»«ENDIF»'«/**/»'''
+            BooleanField: if (defaultValue == true || defaultValue == 'true') 'true' else 'false'
+            IntegerField: exampleRowValueNumber(dataEntity, number)
+            DecimalField: exampleRowValueNumber(dataEntity, number)
+            StringField: if (it.country || it.language) 'ZLanguage::getLanguageCode()' else if (it.htmlcolour) '\'#ff6600\'' else exampleRowValueText(dataEntity, number)
+            TextField: exampleRowValueText(dataEntity, number)
+            EmailField: '\'' + entity.container.application.email + '\''
+            UrlField: '\'' + entity.container.application.url + '\''
+            UploadField: exampleRowValueText(dataEntity, number)
+            UserField: /* admin */2
+            ArrayField: exampleRowValueNumber(dataEntity, number)
+            ObjectField: exampleRowValueText(dataEntity, number)
+            DatetimeField: '''«IF it.past»$dtPast«ELSEIF it.future»$dtFuture«ELSE»$dtNow«ENDIF»'''
+            DateField: '''«IF it.past»$dPast«ELSEIF it.future»$dFuture«ELSE»$dNow«ENDIF»'''
+            TimeField: '''«IF it.past»$tPast«ELSEIF it.future»$tFuture«ELSE»$tNow«ENDIF»'''
+            FloatField: exampleRowValueNumber(dataEntity, number)
+            ListField: ''''«IF it.multiple»###«FOR item : getDefaultItems SEPARATOR '###'»«item.exampleRowValue»«ENDFOR»###«ELSE»«FOR item : getDefaultItems»«item.exampleRowValue»«ENDFOR»«ENDIF»'«/**/»'''
             default: ''
         }
     }
 
     def private exampleRowValue(ListFieldItem it) {
-    	if (^default) value else ''
+        if (^default) value else ''
     }
 }

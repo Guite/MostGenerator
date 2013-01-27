@@ -44,7 +44,7 @@ class Utils {
      * @return String The formatted name.
      */
     def appName(Application it) {
-    	name.formatForCodeCapital
+        name.formatForCodeCapital
     }
 
     /**
@@ -85,7 +85,7 @@ class Utils {
      * @return Boolean The result.
      */
     def needsConfig(Application it) {
-    	!getAllVariables.isEmpty
+        !getAllVariables.isEmpty
     }
 
     /**
@@ -107,7 +107,7 @@ class Utils {
      * @return List<Variables> The selected list.
      */
     def getSortedVariableContainers(Application it) {
-    	getAllVariableContainers.sortBy(e|e.sortOrder)
+        getAllVariableContainers.sortBy(e|e.sortOrder)
     }
 
     /**
@@ -145,7 +145,7 @@ class Utils {
             '"' + name + '`' + suffix + '`"'
         else
             "'" + name + "'"
-	}
+    }
 
     /**
      * Returns the current timestamp to mark the generation time.
@@ -153,7 +153,7 @@ class Utils {
      * @return String The current timestamp.
      */
     def timestamp() {
-    	val currentTime = System::currentTimeMillis()
+        val currentTime = System::currentTimeMillis()
         val d = new Date(currentTime)
         d.toString
     }

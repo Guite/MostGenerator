@@ -76,7 +76,7 @@ class ModelExtensions {
      * Returns the leading entity in the primary model container.
      */
     def getLeadingEntity(Application it) {
-    	getEntitiesFromDefaultDataSource.findFirst(e|e.leading)
+        getEntitiesFromDefaultDataSource.findFirst(e|e.leading)
     }
 
     /**
@@ -633,7 +633,7 @@ class ModelExtensions {
     }
 
     def isDefaultIdFieldName(Entity it, String s) {
-    	newArrayList('id', name.formatForDB + 'id', name.formatForDB + '_id').contains(s)
+        newArrayList('id', name.formatForDB + 'id', name.formatForDB + '_id').contains(s)
     }
 
     def containsDefaultIdField(Iterable<String> l, Entity entity) {
@@ -668,9 +668,9 @@ class ModelExtensions {
      * Prints an output string describing the type of the given derived field.
      */
     def fieldTypeAsString(DerivedField it) {
-    	switch (it) {
-    	    BooleanField: 'boolean'
-    	    AbstractIntegerField: {
+        switch (it) {
+            BooleanField: 'boolean'
+            AbstractIntegerField: {
                         // choose mapping type depending on length
                         // a SMALLINT ranges up to 32767 and is therefore not appropriate for 5 digits
                         // an INT ranges up to 2147483647 and is therefore good for up to 9 digits
@@ -679,20 +679,20 @@ class ModelExtensions {
                         else if (it.length < 10) 'integer'
                              else 'bigint'
             }
-    	    DecimalField: 'decimal'
-    	    StringField: 'string'
-    	    TextField: 'text'
-    	    EmailField: 'string'
-    	    UrlField: 'string'
-    	    UploadField: 'string'
-    	    ListField: 'string'
-    	    ArrayField: 'array'
-    	    ObjectField: 'object'
-    	    DatetimeField: 'datetime'
-    	    DateField: 'date'
-    	    TimeField: 'time'
-    	    FloatField: 'float'
-    	    default: throw new Exception('Unknown field type received.')
-    	}
+            DecimalField: 'decimal'
+            StringField: 'string'
+            TextField: 'text'
+            EmailField: 'string'
+            UrlField: 'string'
+            UploadField: 'string'
+            ListField: 'string'
+            ArrayField: 'array'
+            ObjectField: 'object'
+            DatetimeField: 'datetime'
+            DateField: 'date'
+            TimeField: 'time'
+            FloatField: 'float'
+            default: throw new Exception('Unknown field type received.')
+        }
     }
 }

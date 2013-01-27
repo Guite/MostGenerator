@@ -46,8 +46,8 @@ class Views {
     IFileSystemAccess fsa
 
     def generate(Application it, IFileSystemAccess fsa) {
-    	this.fsa = fsa
-    	val relationHelper = new Relations()
+        this.fsa = fsa
+        val relationHelper = new Relations()
         for (controller : getAllControllers) {
             if (controller.tempIsUserController || controller.tempIsAdminController) {
                 headerFooterFile(controller)

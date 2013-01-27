@@ -27,13 +27,13 @@ class ContentTypeSingle {
     }
 
     def private contentTypeBaseFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«contentTypeBaseClass»
+        «fh.phpFileHeader(it)»
+        «contentTypeBaseClass»
     '''
 
     def private contentTypeFile(Application it) '''
-    	«fh.phpFileHeader(it)»
-    	«contentTypeImpl»
+        «fh.phpFileHeader(it)»
+        «contentTypeImpl»
     '''
 
     def private contentTypeBaseClass(Application it) '''
@@ -41,17 +41,17 @@ class ContentTypeSingle {
             namespace «appName»\ContentType\Base;
 
         «ENDIF»
-		/**
-		 * Generic single item display content plugin base class.
-		 */
+        /**
+         * Generic single item display content plugin base class.
+         */
         «IF targets('1.3.5')»
         class «appName»_ContentType_Base_Item extends Content_AbstractContentType
         «ELSE»
         class Item extends \Content_AbstractContentType
         «ENDIF»
-		{
-		    «contentTypeBaseImpl»
-		}
+        {
+            «contentTypeBaseImpl»
+        }
     '''
 
     def private contentTypeBaseImpl(Application it) '''
