@@ -419,7 +419,9 @@ class Extensions {
         class «entityClassName(classType, false)» extends AbstractTranslation
         «ELSEIF classType == 'logEntry'»
         class «entityClassName(classType, false)» extends AbstractLogEntry
-        «ELSEIF classType == 'metaData' || classType == 'attribute' || classType == 'category'»
+        «ELSEIF classType == 'metaData'»
+        class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»Entity«classType.toFirstUpper»«ELSE»Zikula_Doctrine2_Entity_EntityMetadata«ENDIF»
+        «ELSEIF classType == 'attribute' || classType == 'category'»
         class «entityClassName(classType, false)» extends «IF !app.targets('1.3.5')»Entity«classType.toFirstUpper»«ELSE»Zikula_Doctrine2_Entity_Entity«classType.toFirstUpper»«ENDIF»
         «ENDIF»
         {
