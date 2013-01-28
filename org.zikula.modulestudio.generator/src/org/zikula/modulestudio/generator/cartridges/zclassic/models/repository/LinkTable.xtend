@@ -20,7 +20,7 @@ class LinkTable {
      * Creates a reference table class file for every many-to-many relationship instance.
      */
     def generate(ManyToManyRelationship it, Application app, IFileSystemAccess fsa) {
-        val repositoryPath = app.getAppSourceLibPath + 'Entity/Repository'
+        val repositoryPath = app.getAppSourceLibPath + 'Entity/Repository/'
         val repositoryFile = refClass.formatForCodeCapital + '.php'
         fsa.generateFile(repositoryPath + 'Base/' + repositoryFile, modelRefRepositoryBaseFile(app))
         fsa.generateFile(repositoryPath + repositoryFile, modelRefRepositoryFile(app))
