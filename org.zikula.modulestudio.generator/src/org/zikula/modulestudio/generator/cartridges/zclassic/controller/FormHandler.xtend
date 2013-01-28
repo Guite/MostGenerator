@@ -668,6 +668,9 @@ class FormHandler {
                  return false;
             }
 
+            // get treated entity reference from persisted member var
+            $entity = $this->entityRef;
+
             $hookAreaPrefix = $entity->getHookAreaPrefix();
             if ($action != 'cancel') {
                 $hookType = $action == 'delete' ? 'validate_delete' : 'validate_edit';
@@ -684,9 +687,6 @@ class FormHandler {
                     return false;
                 }
             }
-
-            // get treated entity reference from persisted member var
-            $entity = $this->entityRef;
             «IF app.hasTranslatable»
 
                 if ($isRegularAction && $this->hasTranslatableFields === true) {
