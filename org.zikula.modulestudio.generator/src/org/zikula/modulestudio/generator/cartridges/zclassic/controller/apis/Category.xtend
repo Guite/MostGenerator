@@ -133,7 +133,7 @@ class Category {
                 if ($hasMultiSelection === true) {
                     $inputValue = $dataSource->get('catids' . $propertyName, array());
                     if (!is_array($inputValue)) {
-                        $inputValue = explode(', ', $inputValue);
+                        $inputValue = explode(',', $inputValue);
                     }
                 } else {
                     $inputVal = (int) $dataSource->filter('catid' . $propertyName, 0, FILTER_VALIDATE_INT);

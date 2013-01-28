@@ -56,7 +56,7 @@ class UrlRouting {
         «ENDIF»
         {
             /**
-             * @var Zikula_Routing_UrlRouter The router which is used internally
+             * @var «IF targets('1.3.5')»Zikula_Routing_UrlRouter«ELSE»\Zikula\Routing\UrlRouter«ENDIF» The router which is used internally
              */
             protected $router;
 
@@ -82,7 +82,7 @@ class UrlRouting {
                 );
 
                 // initialise and reference router instance
-                $this->router = new Zikula_Routing_UrlRouter();
+                $this->router = new «IF targets('1.3.5')»Zikula_Routing_UrlRouter«ELSE»\Zikula\Routing\UrlRouter«ENDIF»();
 
                 // add generic routes
                 return $this->initUrlRoutes();
@@ -96,7 +96,11 @@ class UrlRouting {
 
             «getFormattedSlug»
 
-            «fh.getterAndSetterMethods(it, 'router', 'Zikula_Routing_UrlRouter', false, true, 'null', '')»
+            «IF targets('1.3.5')»
+                «fh.getterAndSetterMethods(it, 'router', 'Zikula_Routing_UrlRouter', false, true, 'null', '')»
+            «ELSE»
+                «fh.getterAndSetterMethods(it, 'router', '\Zikula\Routing\UrlRouter', false, true, 'null', '')»
+            «ENDIF»
         }
     '''
 
@@ -105,7 +109,7 @@ class UrlRouting {
         /**
          * Initialise the url routes for this application.
          *
-         * @return Zikula_Routing_UrlRouter The router instance treating all initialised routes
+         * @return «IF targets('1.3.5')»Zikula_Routing_UrlRouter«ELSE»\Zikula\Routing\UrlRouter«ENDIF» The router instance treating all initialised routes
          */
         protected function initUrlRoutes()
         {
@@ -123,7 +127,7 @@ class UrlRouting {
                 $defaults['func'] = 'view';
                 $viewFolder = 'view';
                 // normal views (e.g. orders/ or customers.xml)
-                $this->router->set('va', new Zikula_Routing_UrlRoute($modulePrefix . $viewFolder . '/:ot:viewending', $defaults, $fieldRequirements));
+                $this->router->set('va', new «IF targets('1.3.5')»Zikula_Routing_UrlRoute«ELSE»\Zikula\Routing\UrlRoute«ENDIF»($modulePrefix . $viewFolder . '/:ot:viewending', $defaults, $fieldRequirements));
 
                 // TODO filter views (e.g. /orders/customer/mr-smith.csv)
                 // $this->initRouteForEachSlugType('vn', $modulePrefix . $viewFolder . '/:ot/:filterot/', ':viewending', $defaults, $fieldRequirements);
@@ -154,11 +158,11 @@ class UrlRouting {
         protected function initRouteForEachSlugType($prefix, $patternStart, $patternEnd, $defaults, $fieldRequirements)
         {
             // entities with unique slug (slug only)
-            $this->router->set($prefix . 'a', new Zikula_Routing_UrlRoute($patternStart . ':slug.' . $patternEnd,        $defaults, $fieldRequirements));
+            $this->router->set($prefix . 'a', new «IF targets('1.3.5')»Zikula_Routing_UrlRoute«ELSE»\Zikula\Routing\UrlRoute«ENDIF»($patternStart . ':slug.' . $patternEnd,        $defaults, $fieldRequirements));
             // entities with non-unique slug (slug and id)
-            $this->router->set($prefix . 'b', new Zikula_Routing_UrlRoute($patternStart . ':slug.:id.' . $patternEnd,    $defaults, $fieldRequirements));
+            $this->router->set($prefix . 'b', new «IF targets('1.3.5')»Zikula_Routing_UrlRoute«ELSE»\Zikula\Routing\UrlRoute«ENDIF»($patternStart . ':slug.:id.' . $patternEnd,    $defaults, $fieldRequirements));
             // entities without slug (id)
-            $this->router->set($prefix . 'c', new Zikula_Routing_UrlRoute($patternStart . 'id.:id.' . $patternEnd,        $defaults, $fieldRequirements));
+            $this->router->set($prefix . 'c', new «IF targets('1.3.5')»Zikula_Routing_UrlRoute«ELSE»\Zikula\Routing\UrlRoute«ENDIF»($patternStart . 'id.:id.' . $patternEnd,        $defaults, $fieldRequirements));
         }
     '''
 
