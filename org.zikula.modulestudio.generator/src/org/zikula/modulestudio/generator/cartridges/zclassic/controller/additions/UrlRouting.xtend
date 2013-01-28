@@ -99,7 +99,7 @@ class UrlRouting {
             «IF targets('1.3.5')»
                 «fh.getterAndSetterMethods(it, 'router', 'Zikula_Routing_UrlRouter', false, true, 'null', '')»
             «ELSE»
-                «fh.getterAndSetterMethods(it, 'router', '\Zikula\Routing\UrlRouter', false, true, 'null', '')»
+                «fh.getterAndSetterMethods(it, 'router', '\\Zikula\\Routing\\UrlRouter', false, true, 'null', '')»
             «ENDIF»
         }
     '''

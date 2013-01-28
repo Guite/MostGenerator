@@ -50,7 +50,7 @@ class ThirdParty {
             $modname = '«appName»';
             $useJoins = false;
 
-            $collection = new IF targets('1.3.5')»Zikula_Collection_Container«ELSE»\Zikula\Collection\Container«ENDIF»($modname);
+            $collection = new «IF targets('1.3.5')»Zikula_Collection_Container«ELSE»\Zikula\Collection\Container«ENDIF»($modname);
             $amounts = $workflowHelper->collectAmountOfModerationItems();
             if (count($amounts) > 0) {
                 foreach ($amounts as $amountInfo) {

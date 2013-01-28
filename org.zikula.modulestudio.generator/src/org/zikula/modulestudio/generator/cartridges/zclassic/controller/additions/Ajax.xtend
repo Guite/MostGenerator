@@ -92,7 +92,7 @@ class Ajax {
                 }
                 $out .= '</ul>';
 
-                «IF targets('1.3.5')»
+                «IF app.targets('1.3.5')»
                 return new Zikula_Response_Ajax_Plain($out);
                 «ELSE»
                 return new \Zikula\Core\Response\Ajax\Plain($view->display('External/' . ucwords($objectType) . '/find.tpl'));
