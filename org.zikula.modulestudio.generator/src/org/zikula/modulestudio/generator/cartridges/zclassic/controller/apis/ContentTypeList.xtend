@@ -174,7 +174,7 @@ class ContentTypeList {
         public function loadData(&$data)
         {
             $serviceManager = \ServiceUtil::getManager();
-            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($serviceManager);
+            $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($serviceManager);
 
             $utilArgs = array('name' => 'list');
             if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $utilArgs))) {
@@ -270,8 +270,12 @@ class ContentTypeList {
             $component = '«appName»:' . ucwords($this->objectType) . ':';
             $instance = '::';
             $accessLevel = ACCESS_READ;
-            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
-            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
+            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
+                $accessLevel = ACCESS_COMMENT;
+            }
+            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+                $accessLevel = ACCESS_EDIT;
+            }
             $this->view->setCacheId('view|ot_' . $this->objectType . '_sort_' . $this->sorting . '_amount_' . $this->amount . '_' . $accessLevel);
 
             $template = $this->getDisplayTemplate();

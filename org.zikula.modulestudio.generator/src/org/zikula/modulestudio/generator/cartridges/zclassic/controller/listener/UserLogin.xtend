@@ -25,9 +25,9 @@ class UserLogin {
          *
          * This event does not have any subject, arguments, or data.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function started(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function started(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::started($event);
@@ -145,9 +145,9 @@ class UserLogin {
          *
          * where `$sessionVars` contains the information discussed previously.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function veto(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function veto(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::veto($event);
@@ -185,9 +185,9 @@ class UserLogin {
          * Finally, this event only fires in the event of a "normal" UI-oriented log-in attempt. A module attempting to log in
          * programmatically by directly calling the core functions will not see this event fired.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function succeeded(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function succeeded(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::succeeded($event);
@@ -217,9 +217,9 @@ class UserLogin {
          * programmatically by directly calling `\UserUtil::loginUsing()` will not see this event fired. Instead, the
          * `«IF targets('1.3.5')»Users_Controller_User«ELSE»Users\Controller\UserController«ENDIF»#login()` function can be called with the appropriate parameters, if the event is desired.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function failed(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function failed(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::failed($event);

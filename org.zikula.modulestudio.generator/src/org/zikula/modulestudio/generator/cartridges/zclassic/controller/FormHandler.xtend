@@ -387,7 +387,7 @@ class FormHandler {
             $this->idFields = $objectTemp->get_idFields();
 
             // retrieve identifier of the object we wish to view
-            $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->view->getServiceManager());
+            $controllerHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->view->getServiceManager());
             $this->idValues = $controllerHelper->retrieveIdentifier($this->request, array(), $this->objectType, $this->idFields);
             $hasIdentifier = $controllerHelper->isValidIdentifier($this->idValues);
 
@@ -407,8 +407,7 @@ class FormHandler {
                                              array('lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier(),
                                                    'returnUrl' => $this->getRedirectUrl(null)));
                 }
-            }
-            else {
+            } else {
                 if (!\SecurityUtil::checkPermission($this->permissionComponent, '::', ACCESS_ADD)) {
                     return \LogUtil::registerPermissionError();
                 }
@@ -446,7 +445,7 @@ class FormHandler {
             // save entity reference for later reuse
             $this->entityRef = $entity;
 
-            $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»($this->view->getServiceManager());
+            $workflowHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»($this->view->getServiceManager());
             $actions = $workflowHelper->getActionsForObject($entity);
             if ($actions === false || !is_array($actions)) {
                 return \LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
@@ -551,7 +550,7 @@ class FormHandler {
             protected function initTranslationsForEdit($entity)
             {
                 // retrieve translated fields
-                $translatableHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Translatable«ELSE»\Util\TranslatableUtil«ENDIF»($this->view->getServiceManager());
+                $translatableHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Translatable«ELSE»\Util\TranslatableUtil«ENDIF»($this->view->getServiceManager());
                 $translations = $translatableHelper->prepareEntityForEdit($this->objectType, $entity);
 
                 // assign translations
@@ -680,7 +679,7 @@ class FormHandler {
                 $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
                 $validators = $this->notifyHooks($hook)->getValidators();
                 «ELSE»
-                $hook = new Zikula\Core\Hook\ValidationHook(new Zikula\Core\Hook\ValidationProviders());
+                $hook = new \Zikula\Core\Hook\ValidationHook(new \Zikula\Core\Hook\ValidationProviders());
                 $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
                 «ENDIF»
                 if ($validators->hasErrors()) {
@@ -716,7 +715,7 @@ class FormHandler {
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $this->createCompositeIdentifier(), $url);
                 $this->notifyHooks($hook);
                 «ELSE»
-                $hook = new Zikula\Core\Hook\ProcessHook($this->createCompositeIdentifier(), $url);
+                $hook = new \Zikula\Core\Hook\ProcessHook($this->createCompositeIdentifier(), $url);
                 $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
                 «ENDIF»
 
@@ -808,7 +807,7 @@ class FormHandler {
                 $entityTransClass = $this->name . '_Entity_' . ucfirst($this->objectType) . 'Translation';
                 $transRepository = $this->entityManager->getRepository($entityTransClass);
 
-                $translatableHelper = new «container.application.appName»«IF app.targets('1.3.5')»_Util_Translatable«ELSE»\Util\TranslatableUtil«ENDIF»($this->view->getServiceManager());
+                $translatableHelper = new \«container.application.appName»«IF app.targets('1.3.5')»_Util_Translatable«ELSE»\Util\TranslatableUtil«ENDIF»($this->view->getServiceManager());
                 $translations = $translatableHelper->processEntityAfterEdit($this->objectType, $formData);
 
                 foreach ($translations as $translation) {
@@ -942,7 +941,7 @@ class FormHandler {
                     «IF !app.targets('1.3.5') && app.hasSluggable»
 
                         if ($this->hasSlugUpdatableField === true) {
-                            $controllerHelper = new «app.appName»\Util\ControllerUtil($this->view->getServiceManager());
+                            $controllerHelper = new \«app.appName»\Util\ControllerUtil($this->view->getServiceManager());
                             $entityData['slug'] = $controllerHelper->formatPermalink($entityData['slug']);
                         }
                     «ENDIF»

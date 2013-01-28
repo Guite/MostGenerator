@@ -71,7 +71,7 @@ class Cache {
             $objectType = $args['ot'];
             $item = $args['item'];
 
-            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
             $utilArgs = array('api' => 'cache', 'action' => 'clearItemCache');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 return;

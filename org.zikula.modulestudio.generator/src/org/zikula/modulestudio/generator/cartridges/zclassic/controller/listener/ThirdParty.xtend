@@ -29,9 +29,9 @@ class ThirdParty {
         /**
          * Listener for pending content items.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function pendingContentListener(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function pendingContentListener(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::pendingContentListener($event);
@@ -46,11 +46,11 @@ class ThirdParty {
             // nothing required here as no entities use enhanced workflows including approval actions
         «ELSE»
             $serviceManager = \ServiceUtil::getManager();
-            $workflowHelper = new «appName»«IF targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»($serviceManager);
+            $workflowHelper = new \«appName»«IF targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»($serviceManager);
             $modname = '«appName»';
             $useJoins = false;
 
-            $collection = new Zikula_Collection_Container($modname);
+            $collection = new IF targets('1.3.5')»Zikula_Collection_Container«ELSE»\Zikula\Collection\Container«ENDIF»($modname);
             $amounts = $workflowHelper->collectAmountOfModerationItems();
             if (count($amounts) > 0) {
                 foreach ($amounts as $amountInfo) {
@@ -59,7 +59,7 @@ class ThirdParty {
                     $amount = $amountInfo['amount'];
                     $viewArgs = array('ot' => $amountInfo['objectType'],
                                       'workflowState' => $amountInfo['state']);
-                    $aggregateItem = new Zikula_Provider_AggregateItem($aggregateType, $description, $amount, 'admin', 'view', $viewArgs);
+                    $aggregateItem = new «IF targets('1.3.5')»Zikula_Provider_AggregateItem«ELSE»\Zikula\Provider\AggregateItem«ENDIF»($aggregateType, $description, $amount, 'admin', 'view', $viewArgs);
                     $collection->add($aggregateItem);
                 }
 
@@ -78,9 +78,9 @@ class ThirdParty {
          * This event occurs when the Content module is 'searching' for Content plugins.
          * The subject is an instance of Content_Types.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function contentGetTypes(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function contentGetTypes(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::contentGetTypes($event);
@@ -108,9 +108,9 @@ class ThirdParty {
          * This occurs when Scribite adds pagevars to the editor page.
          * «appName» will use this to add a javascript helper to add custom items.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function getEditorHelpers(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function getEditorHelpers(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::getEditorHelpers($event);
@@ -137,9 +137,9 @@ class ThirdParty {
          *
          * Adds external plugin to TinyMCE.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function getTinyMcePlugins(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function getTinyMcePlugins(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::getTinyMcePlugins($event);
@@ -166,9 +166,9 @@ class ThirdParty {
          *
          * Adds external plugin to CKEditor.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function getCKEditorPlugins(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function getCKEditorPlugins(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::getCKEditorPlugins($event);

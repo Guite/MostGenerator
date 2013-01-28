@@ -15,9 +15,9 @@ class Theme {
          * The subject is the Zikula_View_Theme instance.
          * Is useful to setup a customized theme configuration or cache_id.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function preInit(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function preInit(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::preInit($event);
@@ -30,9 +30,9 @@ class Theme {
          * Occurs just before `Zikula_View_Theme#__construct()` finishes.
          * The subject is the Zikula_View_Theme instance.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function init(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function init(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::init($event);
@@ -45,9 +45,9 @@ class Theme {
          * Runs just before `Theme#load_config()` completed.
          * Subject is the Theme instance.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function loadConfig(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function loadConfig(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::loadConfig($event);
@@ -61,9 +61,9 @@ class Theme {
          * The event subject is `$this` (Theme instance) and has $maincontent as the event data
          * which you can modify with `$event->setData()` in the event handler.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function preFetch(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function preFetch(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::preFetch($event);

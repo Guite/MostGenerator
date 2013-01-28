@@ -162,9 +162,9 @@ class Installer {
                     include_once 'modules/«appName»/lib/«appName»/Api/Category.php';
                     $categoryApi = new «appName»_Api_Category($this->serviceManager);
                 «ELSE»
-                    include_once 'modules/«appName»/Api/Base/Category.php';
-                    include_once 'modules/«appName»/Api/Category.php';
-                    $categoryApi = new «appName»_Api_Category($this->serviceManager);
+                    include_once 'modules/«appName»/Api/Base/CategoryApi.php';
+                    include_once 'modules/«appName»/Api/CategoryApi.php';
+                    $categoryApi = new \«appName»\Api\CategoryApi($this->serviceManager);
                 «ENDIF»
 
                 «FOR entity : getCategorisableEntities»
@@ -192,7 +192,7 @@ class Installer {
         «IF hasUploads»
             // Check if upload directories exist and if needed create them
             try {
-                $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+                $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
                 «FOR uploadEntity : getUploadEntities»
                 «FOR uploadField : uploadEntity.getUploadFieldsEntity»
                     $result = $controllerHelper->checkAndCreateUploadFolder('«uploadField.entity.name.formatForCode»', '«uploadField.name.formatForCode»', '«uploadField.allowedExtensions»');

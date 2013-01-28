@@ -156,7 +156,7 @@ class ControllerLayer {
 
                     return true;
                     «ELSE»
-                    return new Zikula\Core\Response\PlainResponse($view->display('«formattedName.toFirstUpper»/inlineRedirectHandler.tpl'));
+                    return new \Zikula\Core\Response\PlainResponse($view->display('«formattedName.toFirstUpper»/inlineRedirectHandler.tpl'));
                     «ENDIF»
                 }
             «ENDIF»
@@ -175,7 +175,7 @@ class ControllerLayer {
                     $view = \FormUtil::newForm($this->name, $this);
 
                     // Execute form using supplied template and page event handler
-                    return $view->execute('«app.configController.formatForDB»/config.tpl', new «app.appName»_Form_Handler_«app.configController.formatForDB.toFirstUpper»_Config());
+                    return $view->execute('«app.configController.formatForDB»/config.tpl', new «IF app.targets('1.3.5')»«app.appName»_Form_Handler_«app.configController.formatForDB.toFirstUpper»_Config«ELSE»\«app.appName»\Form\Handler\«app.configController.formatForDB.toFirstUpper»\Config«ENDIF»());
                 }
             «ENDIF»
             «new Ajax().additionalAjaxFunctions(it, app)»
@@ -212,7 +212,7 @@ class ControllerLayer {
             $action = isset($args['action']) ? $args['action'] : $this->request->request->get('action', null);
             $action = strtolower($action);
 
-            $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»($this->serviceManager);
+            $workflowHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»($this->serviceManager);
 
             // process each item
             foreach ($items as $itemid) {
@@ -236,7 +236,7 @@ class ControllerLayer {
                 $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
                 $validators = $this->notifyHooks($hook)->getValidators();
                 «ELSE»
-                $hook = new Zikula\Core\Hook\ValidationHook(new Zikula\Core\Hook\ValidationProviders());
+                $hook = new \Zikula\Core\Hook\ValidationHook(new Zikula\Core\Hook\ValidationProviders());
                 $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
                 «ENDIF»
                 if ($validators->hasErrors()) {
@@ -277,7 +277,7 @@ class ControllerLayer {
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
                 $this->notifyHooks($hook);
                 «ELSE»
-                $hook = new Zikula\Core\Hook\ProcessHook($entity->createCompositeIdentifier(), $url);
+                $hook = new \Zikula\Core\Hook\ProcessHook($entity->createCompositeIdentifier(), $url);
                 $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
                 «ENDIF»
 

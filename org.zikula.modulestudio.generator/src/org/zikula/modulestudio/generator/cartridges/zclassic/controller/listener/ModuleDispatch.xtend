@@ -14,9 +14,9 @@ class ModuleDispatch {
          * Called after a module api or controller has been loaded.
          * Receives the args `array('modinfo' => $modinfo, 'type' => $type, 'force' => $force, 'api' => $api)`.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function postLoadGeneric(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function postLoadGeneric(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::postLoadGeneric($event);
@@ -29,9 +29,9 @@ class ModuleDispatch {
          * Occurs in `\ModUtil::exec()` after function call with the following args:
          * `array('modname' => $modname, 'modfunc' => $modfunc, 'args' => $args, 'modinfo' => $modinfo, 'type' => $type, 'api' => $api)`.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function preExecute(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function preExecute(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::preExecute($event);
@@ -46,9 +46,9 @@ class ModuleDispatch {
          * Receives the modules output with `$event->getData();`.
          * Can modify this output with `$event->setData($data);`.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function postExecute(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function postExecute(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::postExecute($event);
@@ -64,9 +64,9 @@ class ModuleDispatch {
          * Receives no subject, args of `array('modname' => $modname, 'modinfo' => $modinfo, 'type' => $type, 'api' => $api)`
          * and 'event data' of `$className`. This can be altered by setting `$event->setData()` followed by `$event->stop«IF !targets('1.3.5')»Propagation«ENDIF»()`.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function customClassname(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function customClassname(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::customClassName($event);
@@ -80,9 +80,9 @@ class ModuleDispatch {
          * Adds sublinks to a Services menu that is appended to all modules if populated.
          * Triggered by module_dispatch.postexecute in bootstrap.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
-        public static function serviceLinks(«IF targets('1.3.5')»Zikula_Event«ELSE»Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function serviceLinks(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::customClassName($event);

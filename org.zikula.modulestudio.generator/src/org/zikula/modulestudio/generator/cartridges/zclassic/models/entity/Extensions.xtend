@@ -474,7 +474,7 @@ class Extensions {
         «IF app.targets('1.3.5')»
             «repositoryClass = app.appName + '_Entity_Repository_' + name.formatForCodeCapital + classType.formatForCodeCapital»
         «ELSE»
-            «repositoryClass = app.appName + '\\Entity\\Repository\\' + name.formatForCodeCapital + classType.formatForCodeCapital»
+            «repositoryClass = '\\' + app.appName + '\\Entity\\Repository\\' + name.formatForCodeCapital + classType.formatForCodeCapital»
         «ENDIF»
         «IF classType == 'closure'»
         «ELSEIF classType == 'translation'»
@@ -570,7 +570,7 @@ class Extensions {
         «IF app.targets('1.3.5')»
         class «app.appName»_Entity_Repository_Base_«name.formatForCodeCapital»«classType.formatForCodeCapital» extends «IF classType == 'translation'»Translation«ELSEIF classType == 'logEntry'»LogEntry«ELSE»Entity«ENDIF»Repository
         «ELSE»
-        class «name.formatForCodeCapital»«classType.formatForCodeCapital» extends \«IF classType == 'translation'»Translation«ELSEIF classType == 'logEntry'»LogEntry«ELSE»Entity«ENDIF»Repository
+        class «name.formatForCodeCapital»«classType.formatForCodeCapital» extends «IF classType == 'translation'»Translation«ELSEIF classType == 'logEntry'»LogEntry«ELSE»Entity«ENDIF»Repository
         «ENDIF»
         {
         }

@@ -128,7 +128,7 @@ class Search {
             // retrieve list of activated object types
             $searchTypes = isset($args['objectTypes']) ? (array)$args['objectTypes'] : (array)\FormUtil::getPassedValue('search_«appName.formatForDB»_types', array(), 'GETPOST');
 
-            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
             $utilArgs = array('api' => 'search', 'action' => 'search');
             $allowedTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
             $entityManager = \ServiceUtil::getService('doctrine.entitymanager');

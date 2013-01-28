@@ -163,7 +163,7 @@ class Entities {
          «IF mappedSuperClass»
           * @ORM\MappedSuperclass
          «ELSE»
-          * @ORM\Entity(repositoryClass="«IF app.targets('1.3.5')»«app.appName»_Entity_Repository_«name.formatForCodeCapital»«ELSE»«app.appName»\Entity\Repository\«name.formatForCodeCapital»«ENDIF»"«IF readOnly», readOnly=true«ENDIF»)
+          * @ORM\Entity(repositoryClass="«IF app.targets('1.3.5')»«app.appName»_Entity_Repository_«name.formatForCodeCapital»«ELSE»\«app.appName»\Entity\Repository\«name.formatForCodeCapital»«ENDIF»"«IF readOnly», readOnly=true«ENDIF»)
          «ENDIF»
          «IF indexes.isEmpty»
           * @ORM\Table(name="«fullEntityTableName»")
@@ -228,7 +228,7 @@ class Entities {
          * @var array List of primary key field names.
          */
         protected $_idFields = array();
-        «val validatorClass = if (app.targets('1.3.5')) app.appName + '_Entity_Validator_' + name.formatForCodeCapital else app.appName + '\\Entity\\Validator\\' + name.formatForCodeCapital»
+        «val validatorClass = if (app.targets('1.3.5')) app.appName + '_Entity_Validator_' + name.formatForCodeCapital else '\\' + app.appName + '\\Entity\\Validator\\' + name.formatForCodeCapital»
         /**
          * @var «validatorClass» The validator for this entity.
          */
@@ -466,7 +466,7 @@ class Entities {
         «val app = container.application»
         // apply workflow with most important information
         $idColumn = '«primaryKeyFields.head.name.formatForCode»';
-        $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»(ServiceUtil::getManager());
+        $workflowHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»(ServiceUtil::getManager());
         $schemaName = $workflowHelper->getWorkflowName($this['_objectType']);
         $this['__WORKFLOW__'] = array(
             'state' => $this['workflowState'],

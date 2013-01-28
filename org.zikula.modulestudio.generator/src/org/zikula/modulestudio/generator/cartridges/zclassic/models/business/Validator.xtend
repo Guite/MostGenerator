@@ -549,7 +549,7 @@ class Validator {
         «IF app.targets('1.3.5')»
         class «app.appName»_Entity_Validator_«name.formatForDisplayCapital» extends «IF isInheriting»«app.appName»_Entity_Validator_«parentType.name.formatForDisplayCapital»«ELSE»«app.appName»_Entity_Validator_Base_«name.formatForDisplayCapital»«ENDIF»
         «ELSE»
-        class «name.formatForDisplayCapital» extends «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\«app.appName»_Validator«ENDIF»
+        class «name.formatForDisplayCapital» extends «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\«name.formatForDisplayCapital»«ENDIF»
         «ENDIF»
         {
             // here you can add custom validation methods or override existing checks

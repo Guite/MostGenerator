@@ -188,7 +188,7 @@ class Uploads {
             $fileName = implode('.', $fileNameParts);
 
             $serviceManager = \ServiceUtil::getManager();
-            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($serviceManager);
+            $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($serviceManager);
 
             // retrieve the final file name
             try {
@@ -515,7 +515,7 @@ class Uploads {
             }
 
             $serviceManager = \ServiceUtil::getManager();
-            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($serviceManager);
+            $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($serviceManager);
 
             // determine file system information
             try {

@@ -111,7 +111,7 @@ class Repository {
         «IF app.targets('1.3.5')»
         class «app.appName»_Entity_Repository_Base_«name.formatForCodeCapital» extends «IF tree != EntityTreeType::NONE»«tree.asConstant.toFirstUpper»TreeRepository«ELSE»EntityRepository«ENDIF»
         «ELSE»
-        class «name.formatForCodeCapital» extends \«IF tree != EntityTreeType::NONE»«tree.asConstant.toFirstUpper»TreeRepository«ELSE»EntityRepository«ENDIF»
+        class «name.formatForCodeCapital» extends «IF tree != EntityTreeType::NONE»«tree.asConstant.toFirstUpper»TreeRepository«ELSE»EntityRepository«ENDIF»
         «ENDIF»
         {
             /**
@@ -267,7 +267,7 @@ class Repository {
                     $templateParameters = $this->getViewQuickNavParameters($context, $args);
                     «IF hasListFieldsEntity»
                         $serviceManager = \ServiceUtil::getManager();
-                        $listHelper = new «container.application.appName»«IF app.targets('1.3.5')»_Util_ListEntries«ELSE»\Util\ListEntriesUtil«ENDIF»($serviceManager);
+                        $listHelper = new \«container.application.appName»«IF app.targets('1.3.5')»_Util_ListEntries«ELSE»\Util\ListEntriesUtil«ENDIF»($serviceManager);
                         «FOR field : getListFieldsEntity»
                             «var fieldName = field.name.formatForCode»
                             $templateParameters['«fieldName»Items'] = $listHelper->getEntries('«name.formatForCode»', '«fieldName»');
@@ -286,7 +286,7 @@ class Repository {
                 }
 
                 // initialise Imagine preset manager instances
-                $imageHelper = new «container.application.appName»«IF app.targets('1.3.5')»_Util_Image«ELSE»\Util\ImageUtil«ENDIF»(\ServiceUtil::getManager());
+                $imageHelper = new \«container.application.appName»«IF app.targets('1.3.5')»_Util_Image«ELSE»\Util\ImageUtil«ENDIF»(\ServiceUtil::getManager());
                 «IF hasUploadFieldsEntity»
 
                     $objectType = '«name.formatForCode»';
@@ -1284,7 +1284,7 @@ class Repository {
 
             $currentType = \FormUtil::getPassedValue('type', 'user', 'GETPOST');
             $action = 'archive';
-            $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»(\ServiceUtil::getManager());
+            $workflowHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»(\ServiceUtil::getManager());
 
             foreach ($affectedEntities as $entity) {
                 $hookAreaPrefix = $entity->getHookAreaPrefix();
@@ -1295,7 +1295,7 @@ class Repository {
                 $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
                 $validators = $this->notifyHooks($hook)->getValidators();
                 «ELSE»
-                $hook = new Zikula\Core\Hook\ValidationHook(new Zikula\Core\Hook\ValidationProviders());
+                $hook = new \Zikula\Core\Hook\ValidationHook(new \Zikula\Core\Hook\ValidationProviders());
                 $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
                 «ENDIF»
                 if ($validators->hasErrors()) {
@@ -1326,7 +1326,7 @@ class Repository {
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
                 $this->notifyHooks($hook);
                 «ELSE»
-                $hook = new Zikula\Core\Hook\ProcessHook($entity->createCompositeIdentifier(), $url);
+                $hook = new \Zikula\Core\Hook\ProcessHook($entity->createCompositeIdentifier(), $url);
                 $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
                 «ENDIF»
 

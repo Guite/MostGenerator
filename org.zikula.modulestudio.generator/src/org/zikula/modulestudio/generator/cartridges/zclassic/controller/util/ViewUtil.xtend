@@ -132,7 +132,7 @@ class ViewUtil {
                     «IF targets('1.3.5')»
                     $view->display($template);
                     «ELSE»
-                    return new Zikula\Core\Response\PlainResponse($view->display($template));
+                    return new \Zikula\Core\Response\PlainResponse($view->display($template));
                     «ENDIF»
                 }
                 «IF targets('1.3.5')»

@@ -267,10 +267,10 @@ class Association {
         «FOR relation : getOutgoingCollections»«relation.initCollection(true)»«ENDFOR»
         «FOR relation : getIncomingCollections»«relation.initCollection(false)»«ENDFOR»
         «IF attributable»
-            $this->attributes = new Doctrine\Common\Collections\ArrayCollection();
+            $this->attributes = new \Doctrine\Common\Collections\ArrayCollection();
         «ENDIF»
         «IF categorisable»
-            $this->categories = new Doctrine\Common\Collections\ArrayCollection();
+            $this->categories = new \Doctrine\Common\Collections\ArrayCollection();
         «ENDIF»
     '''
 

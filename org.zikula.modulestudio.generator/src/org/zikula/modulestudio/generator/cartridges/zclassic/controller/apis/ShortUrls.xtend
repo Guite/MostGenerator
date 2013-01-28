@@ -59,12 +59,12 @@ class ShortUrls {
             }
 
             // initialise url routing rules
-            $routerFacade = new «app.appName»«IF app.targets('1.3.5')»_«ELSE»\«ENDIF»RouterFacade();
+            $routerFacade = new \«app.appName»«IF app.targets('1.3.5')»_«ELSE»\«ENDIF»RouterFacade();
             // get router itself for convenience
             $router = $routerFacade->getRouter();
 
             // initialise object type
-            $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
             $utilArgs = array('controller' => 'user', 'action' => 'encodeurl');
             $allowedObjectTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
             $objectType = ((isset($args['args']['ot']) && in_array($args['args']['ot'], $allowedObjectTypes)) ? $args['args']['ot'] : $controllerHelper->getDefaultObjectType('api', $utilArgs));

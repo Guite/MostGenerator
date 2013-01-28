@@ -91,7 +91,12 @@ class Ajax {
                     }
                 }
                 $out .= '</ul>';
+
+                «IF targets('1.3.5')»
                 return new Zikula_Response_Ajax_Plain($out);
+                «ELSE»
+                return new \Zikula\Core\Response\Ajax\Plain($view->display('External/' . ucwords($objectType) . '/find.tpl'));
+                «ENDIF»
             }
         «ENDIF»
     '''
@@ -116,7 +121,7 @@ class Ajax {
             } elseif ($this->request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $this->request->query->has('ot')) {
                 $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             }
-            $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', array('controller' => '«formattedName»', 'action' => 'getItemListFinder')))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerAction', array('controller' => '«formattedName»', 'action' => 'getItemListFinder'));
             }
@@ -207,7 +212,7 @@ class Ajax {
             } elseif ($this->request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $this->request->query->has('ot')) {
                 $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             }
-            $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
             $utilArgs = array('controller' => '«formattedName»', 'action' => 'getItemListAutoCompletion');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
@@ -245,7 +250,7 @@ class Ajax {
                 $previewFieldName = $repository->getPreviewFieldName();
                 «IF app.hasImageFields»
                     if (!empty($previewFieldName)) {
-                        $imageHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Image«ELSE»\Util\ImageUtil«ENDIF»($this->serviceManager);
+                        $imageHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Image«ELSE»\Util\ImageUtil«ENDIF»($this->serviceManager);
                         $imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
                     }
                 «ENDIF»
@@ -300,7 +305,7 @@ class Ajax {
             $this->throwForbiddenUnless(\SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
 
             $objectType = $this->request->request->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
-            $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', array('controller' => '«formattedName»', 'action' => 'checkForDuplicate')))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerAction', array('controller' => '«formattedName»', 'action' => 'checkForDuplicate'));
             }

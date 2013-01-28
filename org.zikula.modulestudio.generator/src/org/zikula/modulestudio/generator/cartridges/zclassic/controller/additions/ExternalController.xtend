@@ -90,7 +90,7 @@ class ExternalController {
         public function display«IF !targets('1.3.5')»Action«ENDIF»(array $args = array())
         {
             $getData = $this->request->query;
-            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
 
             $objectType = isset($args['objectType']) ? $args['objectType'] : '';
             $utilArgs = array('controller' => 'external', 'action' => 'display');
@@ -178,7 +178,7 @@ class ExternalController {
             \PageUtil::addVar('stylesheet', \ThemeUtil::getModuleStylesheet('«appName»'));
 
             $getData = $this->request->query;
-            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
 
             $objectType = isset($args['objectType']) ? $args['objectType'] : $getData->filter('objectType', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             $utilArgs = array('controller' => 'external', 'action' => 'finder');
@@ -248,7 +248,7 @@ class ExternalController {
             «IF targets('1.3.5')»
             return $view->display('external/' . $objectType . '/find.tpl');
             «ELSE»
-            return new Zikula\Core\Response\PlainResponse($view->display('External/' . ucwords($objectType) . '/find.tpl'));
+            return new \Zikula\Core\Response\PlainResponse($view->display('External/' . ucwords($objectType) . '/find.tpl'));
             «ENDIF»
         }
     '''

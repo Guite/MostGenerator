@@ -163,7 +163,7 @@ class BlockList {
 
             \ModUtil::initOOModule('«appName»');
 
-            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
 
             $utilArgs = array('name' => 'list');
             if (!isset($vars['objectType']) || !in_array($vars['objectType'], $controllerHelper->getObjectTypes('block', $utilArgs))) {
@@ -201,8 +201,12 @@ class BlockList {
             $component = '«appName»:' . ucwords($objectType) . ':';
             $instance = '::';
             $accessLevel = ACCESS_READ;
-            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
-            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
+            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
+                $accessLevel = ACCESS_COMMENT;
+            }
+            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+                $accessLevel = ACCESS_EDIT;
+            }
             $this->view->setCacheId('view|ot_' . $objectType . '_sort_' . $vars['sorting'] . '_amount_' . $vars['amount'] . '_' . $accessLevel);
 
             $template = $this->getDisplayTemplate($vars);
@@ -391,7 +395,7 @@ class BlockList {
             $vars['customTemplate'] = $this->request->request->get('customtemplate', '');
             $vars['filter'] = $this->request->request->get('filter', '');
 
-            $controllerHelper = new «appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
 
             if (!in_array($vars['objectType'], $controllerHelper->getObjectTypes('block'))) {
                 $vars['objectType'] = $controllerHelper->getDefaultObjectType('block');

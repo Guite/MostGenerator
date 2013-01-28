@@ -137,7 +137,7 @@ class ControllerAction {
         «IF tempIsIndexAction»
             «permissionCheck('', '')»
         «ELSE»
-            $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
 
             // parameter specifying which type of objects we are treating
             $objectType = (isset($args['ot']) && !empty($args['ot'])) ? $args['ot'] : $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
@@ -227,7 +227,7 @@ class ControllerAction {
 
     def private dispatch actionImplBody(ViewAction it) '''
         $repository = $this->entityManager->getRepository($this->name . '_Entity_' . ucfirst($objectType));
-        $viewHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_View«ELSE»\Util\ViewUtil«ENDIF»($this->serviceManager);
+        $viewHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_View«ELSE»\Util\ViewUtil«ENDIF»($this->serviceManager);
         «IF controller.container.application.hasTrees»
 
             $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : $this->request->query->filter('tpl', '', FILTER_SANITIZE_STRING);
@@ -276,8 +276,12 @@ class ControllerAction {
         $accessLevel = ACCESS_READ;
         $component = '«app.appName»:' . ucwords($objectType) . ':';
         $instance = '::';
-        if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
-        if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
+        if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
+            $accessLevel = ACCESS_COMMENT;
+        }
+        if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+            $accessLevel = ACCESS_EDIT;
+        }
 
         $templateFile = $viewHelper->getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args);
         $cacheId = 'view|ot_' . $objectType . '_sort_' . $sort . '_' . $sdir;
@@ -429,15 +433,19 @@ class ControllerAction {
         return new Zikula_Response_Ajax(array('result' => true, $objectType => $entity->toArray()));
                     '''
             default: '''
-        $viewHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_View«ELSE»\Util\ViewUtil«ENDIF»($this->serviceManager);
+        $viewHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_View«ELSE»\Util\ViewUtil«ENDIF»($this->serviceManager);
         $templateFile = $viewHelper->getViewTemplate($this->view, '«formattedName»', $objectType, 'display', $args);
 
         // set cache id
         $component = $this->name . ':' . ucwords($objectType) . ':';
         $instance = $instanceId . '::';
         $accessLevel = ACCESS_READ;
-        if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
-        if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
+        if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
+            $accessLevel = ACCESS_COMMENT;
+        }
+        if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+            $accessLevel = ACCESS_EDIT;
+        }
         $this->view->setCacheId($objectType . '|' . $instanceId . '|a' . $accessLevel);
 
         // assign output data to view object.
@@ -497,11 +505,11 @@ class ControllerAction {
         «IF app.targets('1.3.5')»
         $handlerClass = $this->name . '_Form_Handler_«controller.formattedName.toFirstUpper»_' . ucfirst($objectType) . '_Edit';
         «ELSE»
-        $handlerClass = $this->name . '\Form\Handler\«controller.formattedName.toFirstUpper»\' . ucfirst($objectType) . '\Edit';
+        $handlerClass = '\\' . $this->name . '\Form\Handler\«controller.formattedName.toFirstUpper»\' . ucfirst($objectType) . '\Edit';
         «ENDIF»
 
         // determine the output template
-        $viewHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_View«ELSE»\Util\ViewUtil«ENDIF»($this->serviceManager);
+        $viewHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_View«ELSE»\Util\ViewUtil«ENDIF»($this->serviceManager);
         $template = $viewHelper->getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'edit', $args);
 
         // execute form using supplied template and page event handler
@@ -522,7 +530,7 @@ class ControllerAction {
         $entity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
         $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
 
-        $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»($this->serviceManager);
+        $workflowHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»($this->serviceManager);
         $deleteActionId = 'delete';
         $deleteAllowed = false;
         $actions = $workflowHelper->getActionsForObject($entity);
@@ -551,7 +559,7 @@ class ControllerAction {
             $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
             $validators = $this->notifyHooks($hook)->getValidators();
             «ELSE»
-            $hook = new Zikula\Core\Hook\ValidationHook(new Zikula\Core\Hook\ValidationProviders());
+            $hook = new \Zikula\Core\Hook\ValidationHook(new \Zikula\Core\Hook\ValidationProviders());
             $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
             «ENDIF»
             if (!$validators->hasErrors()) {
@@ -567,7 +575,7 @@ class ControllerAction {
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier());
                 $this->notifyHooks($hook);
                 «ELSE»
-                $hook = new Zikula\Core\Hook\ProcessHook($entity->createCompositeIdentifier());
+                $hook = new \Zikula\Core\Hook\ProcessHook($entity->createCompositeIdentifier());
                 $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
                 «ENDIF»
 
@@ -591,7 +599,7 @@ class ControllerAction {
                    ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
         // fetch and return the appropriate template
-        $viewHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_View«ELSE»\Util\ViewUtil«ENDIF»($this->serviceManager);
+        $viewHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_View«ELSE»\Util\ViewUtil«ENDIF»($this->serviceManager);
         return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'delete', $args);
     '''
 

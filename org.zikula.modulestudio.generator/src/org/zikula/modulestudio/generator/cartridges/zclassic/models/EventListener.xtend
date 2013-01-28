@@ -163,7 +163,7 @@ class EventListener {
                     $objectId = $this['«it.primaryKeyFields.head.name.formatForCode»'];
                 «ENDIF»
                 // initialise the upload handler
-                $uploadManager = new «container.application.appName»«IF container.application.targets('1.3.5')»_«ELSE»\«ENDIF»UploadHandler();
+                $uploadManager = new \«container.application.appName»«IF container.application.targets('1.3.5')»_«ELSE»\«ENDIF»UploadHandler();
 
                 $uploadFields = array(«FOR uploadField : getUploadFieldsEntity SEPARATOR ', '»'«uploadField.name.formatForCode»'«ENDFOR»);
                 foreach ($uploadFields as $uploadField) {
@@ -370,9 +370,9 @@ class EventListener {
         «IF hasUploadFieldsEntity»
 
             // initialise the upload handler
-            $uploadManager = new «app.appName»«IF app.targets('1.3.5')»_«ELSE»\«ENDIF»UploadHandler();
+            $uploadManager = new \«app.appName»«IF app.targets('1.3.5')»_«ELSE»\«ENDIF»UploadHandler();
             $serviceManager = \ServiceUtil::getManager();
-            $controllerHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($serviceManager);
+            $controllerHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($serviceManager);
         «ENDIF»
 
         $this->initWorkflow();
