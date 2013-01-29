@@ -47,8 +47,9 @@ class Relations {
                     <li>
             «ENDIF»
             «IF controller.hasActions('display')»
+                {strip}
                 {if !$nolink}
-                    <a href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)»}" title="{$item.«leadingField.displayLeadingField»|replace:"\"":""}">{strip}
+                    <a href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)»}" title="{$item.«leadingField.displayLeadingField»|replace:"\"":""}">
                 {/if}
             «ENDIF»
             «val leadingField = getLeadingField»
@@ -59,9 +60,10 @@ class Relations {
             «ENDIF»
             «IF controller.hasActions('display')»
                 {if !$nolink}
-                    {/strip}</a>
+                    </a>
                     <a id="«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«app.appName»' type='«controller.formattedName»' «modUrlDisplay('item', true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
                 {/if}
+                {/strip}
             «ENDIF»
             «IF !many»</h4>
             «ENDIF»
