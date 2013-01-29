@@ -210,10 +210,6 @@ class WorkflowUtil {
                 }
 
                 $actions[$actionId] = $action;
-                if ($schemaName == 'none' && $actionId == 'submit') {
-                    // call submit button 'Create' if no approval is required
-                    $actions[$actionId]['title'] = $this->__('Create');
-                }
                 $actions[$actionId]['buttonClass'] = $this->getButtonClassForAction($actionId);
             }
 
