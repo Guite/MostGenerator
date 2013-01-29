@@ -533,6 +533,12 @@ class FormHandler {
                     return \LogUtil::registerError($this->__('No such item.'));
                 }
                 $entity = clone $entityT;
+
+                // reset the workflow state
+                $entity->setWorkflowState('initial');
+                $workflowData = $entity->get__WORKFLOW__();
+                $workflowData['state'] = 'initial';
+                $entity->set__WORKFLOW__($workflowData);
             } else {
                 $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
                 $entity = new $entityClass();
