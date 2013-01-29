@@ -274,7 +274,7 @@ class View {
                 <option value="unpublish" title="«getWorkflowActionDescription(workflow, 'Unpublish')»">{gt text='Unpublish'}</option>
                 <option value="publish" title="«getWorkflowActionDescription(workflow, 'Publish')»">{gt text='Publish'}</option>
             «ENDIF»
-            «IF hasTray»
+            «IF hasArchive»
                 <option value="archive" title="«getWorkflowActionDescription(workflow, 'Archive')»">{gt text='Archive'}</option>
             «ENDIF»
             «IF softDeleteable»
