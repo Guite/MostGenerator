@@ -667,7 +667,9 @@ class Repository {
         public function selectWhere($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
         {
             $qb = $this->_intBaseQuery($where, $orderBy, $useJoins, $slimMode);
-            $qb = $this->addCommonViewFilters($qb);
+            if (!$useJoins || !$slimMode) {
+                $qb = $this->addCommonViewFilters($qb);
+            }
 
             $query = $this->getQueryFromBuilder($qb);
 
