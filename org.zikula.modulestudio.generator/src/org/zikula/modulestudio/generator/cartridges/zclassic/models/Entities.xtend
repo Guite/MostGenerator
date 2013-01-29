@@ -112,7 +112,7 @@ class Entities {
         «IF app.targets('1.3.5')»
         abstract class «app.appName»_Entity_Base_«name.formatForCodeCapital» extends Zikula_EntityAccess«IF hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
         «ELSE»
-        abstract class Abstract«name.formatForCodeCapital» extends \Zikula_EntityAccess«IF hasNotifyPolicy» implements
+        abstract class Abstract«name.formatForCodeCapital»Entity extends \Zikula_EntityAccess«IF hasNotifyPolicy» implements
             NotifyPropertyChanged«ENDIF»
         «ENDIF»
         {
@@ -194,7 +194,7 @@ class Entities {
         «IF app.targets('1.3.5')»
         class «entityClassName('', false)» extends «IF isInheriting»«parentType.entityClassName('', false)»«ELSE»«entityClassName('', true)»«ENDIF»
         «ELSE»
-        class «name.formatForCodeCapital» extends «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»«ENDIF»
+        class «name.formatForCodeCapital»Entity extends «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»Entity«ENDIF»
         «ENDIF»
         {
             // feel free to add your own methods here

@@ -61,7 +61,7 @@ class Forms {
             «formTemplateHeader(app, controller, actionName)»
             «formTemplateBody(app, controller, actionName, fsa)»
         ''')
-        relationHelper.generate(it, app, controller, false, fsa)
+        relationHelper.generateInclusionTemplate(it, app, controller, fsa)
     }
 
     def private formTemplateHeader(Entity it, Application app, Controller controller, String actionName) '''

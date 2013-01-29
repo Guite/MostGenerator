@@ -163,7 +163,8 @@ class Display {
     }
 
     def private displayEntry(DerivedField it, Controller controller) '''
-        <dt>{gt text='«name.formatForDisplayCapital»'}</dt>
+        «val fieldLabel = if (name == 'workflowState') 'state' else name»
+        <dt>{gt text='«fieldLabel.formatForDisplayCapital»'}</dt>
         <dd>«displayEntryImpl»</dd>
     '''
 

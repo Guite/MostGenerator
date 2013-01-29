@@ -54,7 +54,7 @@ class Section {
         «IF categorisable»
             {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/include_categories_edit.tpl' obj=$«name.formatForDB» groupName='«name.formatForDB»Obj'«IF useGroupingPanels('edit')» panel=true«ENDIF»}
         «ENDIF»
-        «relationHelper.generate(it, app, controller, true, fsa)»
+        «relationHelper.generateIncludeStatement(it, app, controller, fsa)»
         «IF metaData»
             {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/include_metadata_edit.tpl' obj=$«name.formatForDB»«IF useGroupingPanels('edit')» panel=true«ENDIF»}
         «ENDIF»

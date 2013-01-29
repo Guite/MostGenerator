@@ -338,7 +338,8 @@ class View {
 
     def private headerLine(DerivedField it, Controller controller) '''
         <th id="h«markupIdCode(false)»" scope="col" class="z-«alignment»">
-            «headerSortingLink(controller, entity, name.formatForCode, name)»
+            «val fieldLabel = if (name == 'workflowState') 'state' else name»
+            «headerSortingLink(controller, entity, name.formatForCode, fieldLabel)»
         </th>
     '''
 
