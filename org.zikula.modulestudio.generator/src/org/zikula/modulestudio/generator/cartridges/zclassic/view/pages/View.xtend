@@ -176,12 +176,9 @@ class View {
                     </colgroup>
                     <thead>
                     <tr>
-                        {modapifunc modname='«appName»' type='category' func='hasMultipleSelection' ot='issue' registry='main' assign='hasMultiSelection'}
-                        {if $hasMultiSelection eq true}
+                        «IF categorisable»
                             {assign var='catIdListMainString' value=','|implode:$catIdList.Main}
-                        {else}
-                            {assign var='catIdListMainString' value=$catIdList.Main}
-                        {/if}
+                        «ENDIF»
                         «IF controller.tableClass == 'admin'»
                             <th id="hselect" scope="col" align="center" valign="middle">
                                 <input type="checkbox" id="toggle_«nameMultiple.formatForCode»" />
