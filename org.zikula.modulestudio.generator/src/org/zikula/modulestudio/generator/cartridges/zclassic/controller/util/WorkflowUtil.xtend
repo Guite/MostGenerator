@@ -365,7 +365,7 @@ class WorkflowUtil {
                     'aggregateType' => '«nameMultiple.formatForCode»«requiredAction.toFirstUpper»',
                     'description' => $this->__('«nameMultiple.formatForCodeCapital» pending «requiredAction»'),
                     'amount' => $amount,
-                    'objectType' => $objectType
+                    'objectType' => $objectType,
                     'state' => $state,
                     'message' => $this->_fn('One «name.formatForDisplay» is waiting for «requiredAction».', '%s «nameMultiple.formatForDisplay» are waiting for «requiredAction».', $amount, array($amount))
                 );
