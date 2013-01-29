@@ -75,9 +75,9 @@ class Definition {
     def private statesImpl() '''
         <!-- define the available states -->
         <states>
-        «FOR state : states»
-            «state.stateImpl»
-        «ENDFOR»
+            «FOR state : states»
+                «state.stateImpl»
+            «ENDFOR»
         </states>
     '''
 

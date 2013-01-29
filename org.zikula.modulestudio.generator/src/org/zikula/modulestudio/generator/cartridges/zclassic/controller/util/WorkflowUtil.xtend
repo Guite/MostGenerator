@@ -225,58 +225,58 @@ class WorkflowUtil {
         {
             $buttonClass = '';
             switch ($actionId) {
-            «IF hasWorkflowState('deferred')»
-                case 'defer':
-                    $buttonClass = '';
-                    break;
-            «ENDIF»
+                «IF hasWorkflowState('deferred')»
+                    case 'defer':
+                        $buttonClass = '';
+                        break;
+                «ENDIF»
                 case 'submit':
                     $buttonClass = 'ok';//'new';
                     break;
                 case 'update':
                     $buttonClass = 'save';//'edit';
                     break;
-            «IF hasWorkflowState('deferred')»
-                case 'reject':
-                    $buttonClass = '';
-                    break;
-            «ENDIF»
-            «IF hasWorkflowState('accepted')»
-                case 'accept':
-                    $buttonClass = 'ok';
-                    break;
-            «ENDIF»
-            «IF hasWorkflow(EntityWorkflowType::STANDARD) || hasWorkflow(EntityWorkflowType::ENTERPRISE)»
-                case 'approve':
-                    $buttonClass = 'ok';
-                    break;
-            «ENDIF»
-            «IF hasWorkflowState('accepted')»
-                case 'demote':
-                    $buttonClass = '';
-                    break;
-            «ENDIF»
-            «IF hasWorkflowState('suspended')»
-                case 'unpublish':
-                    $buttonClass = '';//'filter';
-                    break;
-                case 'publish':
-                    $buttonClass = 'ok';
-                    break;
-            «ENDIF»
-            «IF hasWorkflowState('archived')»
-                case 'archive':
-                    $buttonClass = 'archive';
-                    break;
-            «ENDIF»
-            «IF hasWorkflowState('trashed')»
-                case 'trash':
-                    $buttonClass = '';
-                    break;
-                case 'recover':
-                    $buttonClass = 'ok';
-                    break;
-            «ENDIF»
+                «IF hasWorkflowState('deferred')»
+                    case 'reject':
+                        $buttonClass = '';
+                        break;
+                «ENDIF»
+                «IF hasWorkflowState('accepted')»
+                    case 'accept':
+                        $buttonClass = 'ok';
+                        break;
+                «ENDIF»
+                «IF hasWorkflow(EntityWorkflowType::STANDARD) || hasWorkflow(EntityWorkflowType::ENTERPRISE)»
+                    case 'approve':
+                        $buttonClass = 'ok';
+                        break;
+                «ENDIF»
+                «IF hasWorkflowState('accepted')»
+                    case 'demote':
+                        $buttonClass = '';
+                        break;
+                «ENDIF»
+                «IF hasWorkflowState('suspended')»
+                    case 'unpublish':
+                        $buttonClass = '';//'filter';
+                        break;
+                    case 'publish':
+                        $buttonClass = 'ok';
+                        break;
+                «ENDIF»
+                «IF hasWorkflowState('archived')»
+                    case 'archive':
+                        $buttonClass = 'archive';
+                        break;
+                «ENDIF»
+                «IF hasWorkflowState('trashed')»
+                    case 'trash':
+                        $buttonClass = '';
+                        break;
+                    case 'recover':
+                        $buttonClass = 'ok';
+                        break;
+                «ENDIF»
                 case 'delete':
                     $buttonClass = 'delete z-btred';
                     break;

@@ -130,22 +130,21 @@ class PermissionCheck {
     def private gettextStates(ListFieldItem lastState) '''
         // state titles
         'states' => array(
-        «FOR state : states»
-            «gettextState(state)»«IF state != lastState»,«ENDIF»
-        «ENDFOR»
+            «FOR state : states»
+                «gettextState(state)»«IF state != lastState»,«ENDIF»
+            «ENDFOR»
         ),
     '''
 
     def private gettextState(ListFieldItem it) '''
-        no__('«name»') => no__('«documentation»')
-    '''
+        no__('«name»') => no__('«documentation»')'''
 
     def private gettextActionsPerState(ListFieldItem lastState) '''
         // action titles and descriptions for each state
         'actions' => array(
-        «FOR state : states»
-            «gettextActionsForState(state)»«IF state != lastState»,«ENDIF»
-        «ENDFOR»
+            «FOR state : states»
+                «gettextActionsForState(state)»«IF state != lastState»,«ENDIF»
+            «ENDFOR»
         )
     '''
 
@@ -171,10 +170,10 @@ class PermissionCheck {
     }
 
     def private actionsForInitial(ListFieldItem it) '''
-        «deferAction»
         «submitAction»
         «submitAndAcceptAction»
         «submitAndApproveAction»
+        «deferAction»
     '''
 
     def private actionsForDeferred(ListFieldItem it) '''
