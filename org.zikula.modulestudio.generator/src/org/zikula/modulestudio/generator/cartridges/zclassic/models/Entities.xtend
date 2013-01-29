@@ -430,7 +430,7 @@ class Entities {
          *
          * @return String concatenated identifiers.
          */
-        protected function createCompositeIdentifier()
+        public function createCompositeIdentifier()
         {
             «IF hasCompositeKeys»
                 $itemId = '';
