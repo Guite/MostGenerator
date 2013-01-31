@@ -733,7 +733,7 @@ class FormHandler {
                 $this->view->clear_cache();
             }
 
-            if ($this->hasPageLockSupport === true && $this->mode == 'edit') {
+            if ($this->hasPageLockSupport === true && $this->mode == 'edit' && \ModUtil::available('PageLock')) {
                 \ModUtil::apiFunc('PageLock', 'user', 'releaseLock',
                                  array('lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier()));
             }
