@@ -131,9 +131,10 @@ class UserInput {
                 $searchTitle = __('Search user', $dom);
                 $selectorAttributes = $titleHtml . $sizeHtml . $maxLengthHtml . $readOnlyHtml . ' value="' . $selectorDefaultValue . '" class="' . $class . '"' . $attributes;
                 $result = '<div id="' . $this->getId() . 'LiveSearch" class="«prefix»LiveSearchUser z-hide">
-                        <img src="/images/icons/extrasmall/search.png" alt="' . $searchTitle . '" title="' . $searchTitle . '" width="16" height="16" />
+                        <img src="/images/icons/extrasmall/search.png" width="16" height="16" alt="' . $searchTitle . '" title="' . $searchTitle . '" />
                         <input type="text" id="' . $this->getId() . 'Selector" name="' . $this->getId() . 'Selector"' . $selectorAttributes . ' />
-                        <img src="/images/ajax/indicator_circle.gif" alt="" id="' . $this->getId() . 'Indicator" style="display: none" width="16" height="16" />
+                        <img src="/images/ajax/indicator_circle.gif" width="16" height="16" alt="" id="' . $this->getId() . 'Indicator" style="display: none" />
+                        <span id="' . $this->getId() . 'NoResultsHint" class="z-hide">' . __('No results found!', $dom) . '</span>
                         <div id="' . $this->getId() . 'SelectorChoices" class="«prefix»AutoCompleteUser"></div>';
 
                 if ($this->mandatory && $this->mandatorysym) {

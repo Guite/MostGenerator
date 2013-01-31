@@ -30,6 +30,7 @@ class EditFunctions {
     def private generate(Application it) '''
         'use strict';
 
+        «relationFunctionsPreparation»
         «initUserField»
 
         «IF hasUploads»
@@ -54,7 +55,7 @@ class EditFunctions {
     def private initUserField(Application it) '''
         «IF hasUserFields»
             /**
-             * Initialise a user field with autocompletion.
+             * Initialises a user field with auto completion.
              */
             function «prefix»InitUserField(fieldName, getterName) {
                 if ($(fieldName + 'LiveSearch') === undefined) {
@@ -159,6 +160,53 @@ class EditFunctions {
                 }
             });
         }
+    '''
+
+    def private relationFunctionsPreparation(Application it) '''
+        «IF !getJoinRelations.isEmpty»
+
+            /**
+             * Override method of Scriptaculous auto completer method.
+             * Purpose: better feedback if no results are found (#247).
+             * See http://stackoverflow.com/questions/657839/scriptaculous-ajax-autocomplete-empty-response for more information.
+             */
+            Ajax.Autocompleter.prototype.updateChoices = function (choices) {
+                if (!this.changed && this.hasFocus) {
+                    if (!choices || choices == '<ul></ul>') {
+                        this.stopIndicator();
+                        var idPrefix = this.options.indicator.replace('Indicator', '');
+                        if ($(idPrefix + 'NoResultsHint') != undefined) {
+                            $(idPrefix + 'NoResultsHint').removeClassName('z-hide');
+                        }
+                    } else {
+                        this.update.innerHTML = choices;
+                        Element.cleanWhitespace(this.update);
+                        Element.cleanWhitespace(this.update.down());
+
+                        if (this.update.firstChild && this.update.down().childNodes) {
+                            this.entryCount = this.update.down().childNodes.length;
+                            for (var i = 0; i < this.entryCount; i++) {
+                                var entry = this.getEntry(i);
+                                entry.autocompleteIndex = i;
+                                this.addObservers(entry);
+                            }
+                        } else {
+                            this.entryCount = 0;
+                        }
+
+                        this.stopIndicator();
+                        this.index = 0;
+
+                        if (this.entryCount == 1 && this.options.autoSelect) {
+                            this.selectEntry();
+                            this.hide();
+                        } else {
+                            this.render();
+                        }
+                    }
+                }
+            }
+        «ENDIF»
     '''
 
     def private relationFunctions(Application it) '''
@@ -306,7 +354,7 @@ class EditFunctions {
 
     def private selectRelatedItem(Application it) '''
         /**
-         * Add a related item to selection which has been chosen by auto completion
+         * Adds a related item to selection which has been chosen by auto completion.
          */
         function «prefix»SelectRelatedItem(objectType, idPrefix, inputField, selectedListItem) {
             var newItemId, newTitle, includeEditing, editLink, removeLink, elemPrefix, itemPreview, li, editHref, fldPreview, itemIds, itemIdsArr;
@@ -402,6 +450,11 @@ class EditFunctions {
                     if ($(idPrefix + 'ItemList') !== undefined) {
                         queryString += '&exclude=' + $F(idPrefix + 'ItemList');
                     }
+
+                    if ($(idPrefix + 'NoResultsHint') != undefined) {
+                        $(idPrefix + 'NoResultsHint').addClassName('z-hide');
+                    }
+
                     return queryString;
                 },
                 afterUpdateElement: function (inputField, selectedListItem) {
