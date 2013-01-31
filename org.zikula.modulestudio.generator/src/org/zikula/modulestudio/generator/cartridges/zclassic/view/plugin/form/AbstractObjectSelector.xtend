@@ -76,6 +76,13 @@ class AbstractObjectSelector {
 
     def private memberVars(Application it) '''
         /**
+         * Name of the owning module.
+         *
+         * @var string
+         */
+        protected $name = '«appName»';
+
+        /**
          * The treated object type.
          *
          * @var string
