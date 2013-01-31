@@ -306,7 +306,7 @@ class AbstractObjectSelector {
         protected function preprocessIdentifiers(Zikula_Form_View $view, &$params)
         {
             $entityData = isset($params['linkingItem']) ? $params['linkingItem'] : $view->get_template_vars('linkingItem');
-            $entityObj = $view->get_template_vars(strlower($this->objectType) . 'Obj');
+            $entityObj = $view->get_template_vars(strtolower($this->objectType) . 'Obj');
             $alias = $this->id;
             $itemIds = array();
             if (isset($entityData[$alias])) {
@@ -357,7 +357,7 @@ class AbstractObjectSelector {
             }
 
             $relatedItems = $this->fetchRelatedItems($view, $inputValue);
-            $this->assignRelatedItemsToEntity($view, $selectedItems);
+            $this->assignRelatedItemsToEntity($view, $relatedItems);
         }
 
         /**
@@ -384,14 +384,14 @@ class AbstractObjectSelector {
          * Reassign related items to the edited entity.
          *
          * @param Zikula_Form_View $view          Reference to Zikula_Form_View object.
-         * @param array            $selectedItems The related objects fetched in fetchRelatedItems().
+         * @param array            $relatedItems  The related objects fetched in fetchRelatedItems().
          *
          * @return void
          */
-        protected function assignRelatedItemsToEntity($view, $selectedItems)
+        protected function assignRelatedItemsToEntity($view, $relatedItems)
         {
             // retrieve edited entity
-            $objVar = strlower($this->objectType) . 'Obj';
+            $objVar = strtolower($this->objectType) . 'Obj';
             $entity = $view->get_template_vars($objVar);
 
             $alias = $this->id;
@@ -433,6 +433,7 @@ class AbstractObjectSelector {
                     $where .= 'tbl.' . $idField . ' IN (' . DataUtil::formatForStore(implode(', ', $idsPerField[$idField])) . ')';
                 }
             } else {
+                $many = ($this->selectionMode == 'multiple');
                 $idField = reset($this->idFields);
                 if ($many) {
                     $where .= 'tbl.' . $idField . ' IN (' . DataUtil::formatForStore(implode(', ', $inputValue)) . ')';
