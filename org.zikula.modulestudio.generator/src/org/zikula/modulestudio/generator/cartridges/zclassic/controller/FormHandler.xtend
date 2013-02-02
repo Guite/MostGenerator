@@ -946,7 +946,7 @@ class FormHandler {
                     «ENDIF»
                     «IF !app.targets('1.3.5') && app.hasSluggable»
 
-                        if ($this->hasSlugUpdatableField === true) {
+                        if ($this->hasSlugUpdatableField === true && isset($entityData['slug'])) {
                             $controllerHelper = new \«app.appName»\Util\ControllerUtil($this->view->getServiceManager());
                             $entityData['slug'] = $controllerHelper->formatPermalink($entityData['slug']);
                         }
