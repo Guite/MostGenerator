@@ -143,7 +143,8 @@ class ViewQuickNavForm {
 
     def private dispatch formFieldImpl(BooleanField it) '''
         «val fieldName = name.formatForCode»
-        <label for="«fieldName»">{gt text='«name.formatForDisplayCapital»'}</label>
+        «val fieldLabel = if (name == 'workflowState') 'state' else name»
+        <label for="«fieldName»">{gt text='«fieldLabel.formatForDisplayCapital»'}</label>
         <select id="«fieldName»" name="«fieldName»">
             <option value="">{$lblDefault}</option>
         {foreach item='option' from=$«fieldName»Items}
