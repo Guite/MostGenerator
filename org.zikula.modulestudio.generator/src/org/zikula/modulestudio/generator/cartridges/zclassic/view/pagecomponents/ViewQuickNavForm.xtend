@@ -108,7 +108,7 @@ class ViewQuickNavForm {
     def private categoriesFields(Entity it) '''
         «IF categorisable»
             {if !isset($categoryFilter) || $categoryFilter eq true}
-                {modapifunc modname='«container.application.appName»' type='category' func='getAllProperties' assign='properties'}
+                {modapifunc modname='«container.application.appName»' type='category' func='getAllProperties' ot=$objectType assign='properties'}
                 {if $properties ne null && is_array($properties)}
                     {gt text='All' assign='lblDefault'}
                     {nocache}
