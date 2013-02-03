@@ -351,10 +351,10 @@ class View {
     '''
 
     def private headerSortingLink(Object it, Controller controller, Entity entity, String fieldName, String label) '''
-        {sortlink __linktext='«label.formatForDisplayCapital»' sort='«fieldName»'«headerSortingLinkParameters(entity)» modname='«controller.container.application.appName»' type='«controller.formattedName»' func='view' ot='«entity.name.formatForCode»'}
+        {sortlink __linktext='«label.formatForDisplayCapital»' currentsort=$sort type='«controller.formattedName»' func='view' ot='«entity.name.formatForCode»' sort='«fieldName»'«headerSortingLinkParameters(entity)» modname='«controller.container.application.appName»'}
     '''
 
-    def private headerSortingLinkParameters(Entity it) ''' currentsort=$sort sortdir=$sdir all=$all own=$own«IF categorisable» catidMain=$catIdListMainString«ENDIF»«sortParamsForIncomingRelations»«sortParamsForListFields»«sortParamsForUserFields»«sortParamsForCountryFields»«sortParamsForLanguageFields»«IF hasAbstractStringFieldsEntity» searchterm=$searchterm«ENDIF» pageSize=$pageSize«sortParamsForBooleanFields»'''
+    def private headerSortingLinkParameters(Entity it) ''' sortdir=$sdir all=$all own=$own«IF categorisable» catidMain=$catIdListMainString«ENDIF»«sortParamsForIncomingRelations»«sortParamsForListFields»«sortParamsForUserFields»«sortParamsForCountryFields»«sortParamsForLanguageFields»«IF hasAbstractStringFieldsEntity» searchterm=$searchterm«ENDIF» pageSize=$pageSize«sortParamsForBooleanFields»'''
 
     def private sortParamsForIncomingRelations(Entity it) '''«IF !getIncomingJoinRelationsWithOneSource.isEmpty»«FOR relation: getIncomingJoinRelationsWithOneSource»«val sourceAliasName = relation.getRelationAliasName(false).formatForCode» «sourceAliasName»=$«sourceAliasName»«ENDFOR»«ENDIF»'''
     def private sortParamsForListFields(Entity it) '''«IF hasListFieldsEntity»«FOR field : getListFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
