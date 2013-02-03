@@ -984,6 +984,9 @@ class FormHandler {
                 }
             «ENDIF»
 
+            // search for relationship plugins to update the corresponding data
+            $entityData = $this->writeRelationDataToEntity($view, $entity, $entityData);
+
             // assign fetched data
             $entity->merge($entityData);
 
@@ -992,6 +995,44 @@ class FormHandler {
 
             // return remaining form data
             return $formData;
+        }
+
+        /**
+         * Updates the entity with new relationship data.
+         *
+         * @param Zikula_Form_View    $view       The form view instance.
+         * @param Zikula_EntityAccess $entity     Reference to the updated entity.
+         * @param array               $entityData Entity related form data.
+         *
+         * @return array form data after processing.
+         */
+        protected function writeRelationDataToEntity(Zikula_Form_View $view, $entity, $entityData)
+        {
+            $entityData = $this->writeRelationDataToEntity_rec($entity, $entityData, $view->plugins);
+
+            return $entityData;
+        }
+
+        /**
+         * Searches for relationship plugins to write their updated values
+         * back to the given entity.
+         *
+         * @param Zikula_EntityAccess $entity     Reference to the updated entity.
+         * @param array               $entityData Entity related form data.
+         * @param array               $plugins    List of form plugin which are searched.
+         *
+         * @return array form data after processing.
+         */
+        protected function writeRelationDataToEntity_rec($entity, $entityData, $plugins)
+        {
+            foreach ($plugins as $plugin) {
+                if ($plugin instanceof «IF app.targets('1.3.5')»«app.appName»_Form_Plugin_AbstractObjectSelector«ELSE»\«app.appName»\Form\Plugin\AbstractObjectSelector«ENDIF» && method_exists($plugin, 'assignRelatedItemsToEntity')) {
+                    $entityData = $plugin->assignRelatedItemsToEntity($entity, $entityData);
+                }
+                $entityData = $this->writeRelationDataToEntity_rec($entity, $entityData, $plugin->plugins);
+            }
+
+            return $entityData;
         }
     '''
 
@@ -1255,11 +1296,15 @@ class FormHandler {
 
             $message = '';
             switch ($args['commandName']) {
-            «IF app.hasWorkflowState('deferred')»
-                case 'defer':
-            «ENDIF»
+                «IF app.hasWorkflowState('deferred')»
+                 case 'defer':
+                «ENDIF»
                 case 'submit':
-                            $message = $this->__('Done! «name.formatForDisplayCapital» created.');
+                            if ($this->mode == 'create') {
+                                $message = $this->__('Done! «name.formatForDisplayCapital» created.');
+                            } else {
+                                $message = $this->__('Done! «name.formatForDisplayCapital» updated.');
+                            }
                             break;
                 case 'delete':
                             $message = $this->__('Done! «name.formatForDisplayCapital» deleted.');

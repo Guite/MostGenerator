@@ -45,7 +45,7 @@ class Tag {
         «IF targets('1.3.5')»
         class «appName»_TaggedObjectMeta_Base_«appName» extends Tag_AbstractTaggedObjectMeta
         «ELSE»
-        class «appName» extends \Tag_AbstractTaggedObjectMeta
+        class «appName» extends \Tag\AbstractTaggedObjectMeta
         «ENDIF»
         {
             «tagBaseImpl»

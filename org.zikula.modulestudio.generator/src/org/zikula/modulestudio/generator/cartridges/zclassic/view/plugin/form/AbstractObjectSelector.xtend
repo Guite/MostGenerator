@@ -64,6 +64,8 @@ class AbstractObjectSelector {
 
             «loadItems»
 
+            «setSelectedValue»
+
             «relationPreProcess»
 
             «relationPostProcess»
@@ -145,6 +147,13 @@ class AbstractObjectSelector {
          * @var boolean
          */
         public $showEmptyValue = false;
+
+        /**
+         * List of selected items.
+         *
+         * @var boolean
+         */
+        public $selectedItems = array();
     '''
 
     def private createPlugin(Application it) '''
@@ -294,6 +303,36 @@ class AbstractObjectSelector {
         }
     '''
 
+    def private setSelectedValue(Application it) '''
+        /**
+         * Set the selected value.
+         *
+         * @param mixed $value Selected value.
+         *
+         * @return void
+         */
+        public function setSelectedValue($value)
+        {
+            $newValue = null;
+            if ($this->selectionMode == 'single') {
+                if ($value instanceof «IF targets('1.3.5')»Zikula_«ELSE»\Zikula\«ENDIF»EntityAccess && method_exists($value, 'createCompositeIdentifier')) {
+                    $newValue = $value->createCompositeIdentifier();
+                }
+            } else {
+                $newValue = array();
+                if (is_array($value) || $value instanceof \Doctrine\Common\Collections\Collection) {
+                    foreach ($value as $entity) {
+                        if ($entity instanceof «IF targets('1.3.5')»Zikula_«ELSE»\Zikula\«ENDIF»EntityAccess && method_exists($entity, 'createCompositeIdentifier')) {
+                            $newValue[] = $entity->createCompositeIdentifier();
+                        }
+                    }
+                }
+            }
+
+            return parent::setSelectedValue($newValue);
+        }
+    '''
+
     def private relationPreProcess(Application it) '''
         /**
          * Pre-process relationship identifiers.
@@ -356,8 +395,7 @@ class AbstractObjectSelector {
                 return $many ? array() : null;
             }
 
-            $relatedItems = $this->fetchRelatedItems($view, $inputValue);
-            $this->assignRelatedItemsToEntity($view, $relatedItems);
+            $this->selectedItems = $this->fetchRelatedItems($view, $inputValue);
         }
 
         /**
@@ -383,17 +421,13 @@ class AbstractObjectSelector {
         /**
          * Reassign related items to the edited entity.
          *
-         * @param Zikula_Form_View $view          Reference to Zikula_Form_View object.
-         * @param array            $relatedItems  The related objects fetched in fetchRelatedItems().
+         * @param Zikula_EntityAccess $entity     Reference to the updated entity.
+         * @param array               $entityData Entity related form data.
          *
-         * @return void
+         * @return array form data after processing.
          */
-        protected function assignRelatedItemsToEntity($view, $relatedItems)
+        public function assignRelatedItemsToEntity($entity, $entityData)
         {
-            // retrieve edited entity
-            $objVar = strtolower($this->objectType) . 'Obj';
-            $entity = $view->get_template_vars($objVar);
-
             $alias = $this->id;
             $many = ($this->selectionMode == 'multiple');
 
@@ -407,16 +441,21 @@ class AbstractObjectSelector {
                 $entity[$alias] = null;
             }
 
+            if (isset($entityData[$alias])) {
+                unset($entityData[$alias]);
+            }
+
             // create new references
             $getter = 'get' . ucwords($alias);
             $assignMethod = ($many ? 'add' : 'set') . ucwords($alias);
-            foreach ($relatedItems as $relatedItem) {
+            foreach ($this->selectedItems as $relatedItem) {
                 if ($many && $entity->$getter()->contains($relatedItem)) {
                     continue;
                 }
                 $entity->$assignMethod($relatedItem);
             }
-            $view->assign($objVar, $entity);
+
+            return $entityData;
         }
     '''
 
