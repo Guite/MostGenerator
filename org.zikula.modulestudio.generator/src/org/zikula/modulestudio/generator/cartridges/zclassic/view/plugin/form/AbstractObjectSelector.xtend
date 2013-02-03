@@ -80,35 +80,35 @@ class AbstractObjectSelector {
          *
          * @var string
          */
-        protected $name = '«appName»';
+        public $name = '«appName»';
 
         /**
          * The treated object type.
          *
          * @var string
          */
-        protected $objectType = '';
+        public $objectType = '';
 
         /**
          * List of identifier field names.
          *
          * @var array
          */
-        protected $idFields = array();
+        public $idFields = array();
 
         /**
          * Where clause.
          *
          * @var string
          */
-        protected $where = '';
+        public $where = '';
 
         /**
          * OrderBy clause.
          *
          * @var string
          */
-        protected $orderBy = '';
+        public $orderBy = '';
 
         /**
          * The amount of objects to select.
@@ -116,35 +116,35 @@ class AbstractObjectSelector {
          *
          * @var integer
          */
-        protected $resultsPerPage = 0;
+        public $resultsPerPage = 0;
 
         /**
          * The current page offset.
          *
          * @var integer
          */
-        protected $currentPage = 1;
+        public $currentPage = 1;
 
         /**
          * Name of the field to display.
          *
          * @var string
          */
-        protected $displayField = '';
+        public $displayField = '';
 
         /**
          * Name of optional second field to display.
          *
          * @var string
          */
-        protected $displayFieldTwo = '';
+        public $displayFieldTwo = '';
 
         /**
          * Whether to display an empty value to select nothing.
          *
          * @var boolean
          */
-        protected $showEmptyValue = false;
+        public $showEmptyValue = false;
     '''
 
     def private createPlugin(Application it) '''

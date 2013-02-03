@@ -56,28 +56,28 @@ class RelationSelectorAutoComplete {
              *
              * @var string
              */
-            protected $idPrefix = '';
+            public $idPrefix = '';
 
             /**
              * Url for inline creation of new related items (if allowed).
              *
              * @var string
              */
-            protected $createLink = '';
+            public $createLink = '';
 
             /**
              * Name of entity to be selected.
              *
              * @var string
              */
-            protected $selectedEntityName = '';
+            public $selectedEntityName = '';
 
             /**
              * Whether the treated entity has an image field or not.
              *
              * @var boolean
              */
-            protected $withImage = false;
+            public $withImage = false;
 
             /**
              * Get filename of this file.

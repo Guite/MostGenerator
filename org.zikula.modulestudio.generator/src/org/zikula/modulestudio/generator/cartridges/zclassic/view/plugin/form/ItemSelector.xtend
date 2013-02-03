@@ -58,14 +58,14 @@ class ItemSelector {
              *
              * @var string
              */
-            protected $objectType = '';
+            public $objectType = '';
 
             /**
              * Identifier of selected object.
              *
              * @var integer
              */
-            protected $selectedItemId = 0;
+            public $selectedItemId = 0;
 
             /**
              * Get filename of this file.

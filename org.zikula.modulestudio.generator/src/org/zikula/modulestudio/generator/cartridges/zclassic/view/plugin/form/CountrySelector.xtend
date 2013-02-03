@@ -57,7 +57,7 @@ class CountrySelector {
              *
              * @var array
              */
-            protected $validCountryList;
+            public $validCountryList;
 
             /**
              * Get filename of this file.

@@ -63,28 +63,28 @@ class TreeSelector {
              *
              * @var integer
              */
-            protected $root;
+            public $root;
 
             /**
              * Whether leaf nodes should be included or not.
              *
              * @var boolean
              */
-            protected $includeLeafNodes = true;
+            public $includeLeafNodes = true;
 
             /**
              * Whether the root node should be included or not.
              *
              * @var boolean
              */
-            protected $includeRootNode = false;
+            public $includeRootNode = false;
 
             /**
              * Reference to the tree repository.
              *
              * @var Doctrine\ORM\EntityRepository
              */
-            protected $repository = null;
+            public $repository = null;
 
             /**
              * Get filename of this file.
