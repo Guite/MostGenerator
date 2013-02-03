@@ -110,6 +110,7 @@ class ContentTypeListView {
                     <div class="z-sub z-formnote">{gt text='This is an optional filter.'}</div>
                 </div>
             {/foreach}
+            {/nocache}
         {/if}
         {/formvolatile}
 
@@ -139,7 +140,7 @@ class ContentTypeListView {
         <div id="customtemplatearea" class="z-formrow z-hide">
             {formlabel for='«appName»_customtemplate' __text='Custom template'}
             {formtextinput id='«appName»_customtemplate' dataField='customTemplate' group='data' mandatory=false maxLength=80}
-            <div class="z-sub z-formnote">{gt text='Example'}: <em>itemlist_{objecttype}_display.tpl</em></div>
+            <div class="z-sub z-formnote">{gt text='Example'}: <em>itemlist_[objecttype]_display.tpl</em></div>
         </div>
 
         <div class="z-formrow z-hide"«/* TODO: wait until FilterUtil is ready for Doctrine 2 - see https://github.com/zikula/core/issues/118 */»>
