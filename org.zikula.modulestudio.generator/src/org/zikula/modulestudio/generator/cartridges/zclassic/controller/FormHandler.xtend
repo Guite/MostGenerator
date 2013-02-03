@@ -408,7 +408,7 @@ class FormHandler {
                                                    'returnUrl' => $this->getRedirectUrl(null)));
                 }
             } else {
-                if (!\SecurityUtil::checkPermission($this->permissionComponent, '::', ACCESS_ADD)) {
+                if (!\SecurityUtil::checkPermission($this->permissionComponent, '::', ACCESS_EDIT)) {
                     return \LogUtil::registerPermissionError();
                 }
 
@@ -494,7 +494,7 @@ class FormHandler {
         /**
          * Initialise existing entity for editing.
          *
-         * @return Zikula_EntityAccess desired entity instance or null 
+         * @return Zikula_EntityAccess desired entity instance or null
          */
         protected function initEntityForEdit()
         {
@@ -509,7 +509,7 @@ class FormHandler {
         /**
          * Initialise new entity for creation.
          *
-         * @return Zikula_EntityAccess desired entity instance or null 
+         * @return Zikula_EntityAccess desired entity instance or null
          */
         protected function initEntityForCreation()
         {
@@ -1113,6 +1113,27 @@ class FormHandler {
             {
                 parent::postInitialize();
             }
+            «IF ownerPermission && standardFields»
+
+                /**
+                 * Initialise existing entity for editing.
+                 *
+                 * @return Zikula_EntityAccess desired entity instance or null
+                 */
+                protected function initEntityForEdit()
+                {
+                    $entity = parent::initEntityForEdit();
+
+                    // only allow editing for the owner or people with higher permissions
+                    if (isset($entity['createdUserId']) && $entity['createdUserId'] != \UserUtil::getVar('uid')) {
+                        if (!\SecurityUtil::checkPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
+                            return \LogUtil::registerPermissionError();
+                        }
+                    }
+
+                    return $entity;
+                }
+            «ENDIF»
 
             «redirectHelper.getRedirectCodes(it, app, controller, actionName)»
 

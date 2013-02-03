@@ -46,7 +46,7 @@ class ExternalView {
             «ENDIF»
             </p>
         {/if}
-        {checkpermissionblock component='«app.appName»::' instance='.*' level='ACCESS_EDIT'}
+        {checkpermissionblock component='«app.appName»::' instance='::' level='ACCESS_EDIT'}
             {if $displayMode eq 'embed'}
                 <p class="«app.prefix()»externaltitle">
                     <strong>{$«name.formatForCode».«getLeadingField.name.formatForCode»|notifyfilters:'«app.name.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}</strong>

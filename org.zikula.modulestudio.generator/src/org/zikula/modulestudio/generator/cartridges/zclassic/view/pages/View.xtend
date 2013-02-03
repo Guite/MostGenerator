@@ -73,7 +73,7 @@ class View {
         «ENDIF»
 
         «IF controller.hasActions('edit')»
-            {checkpermissionblock component='«appName»:«name.formatForCodeCapital»:' instance='.*' level='ACCESS_ADD'}
+            {checkpermissionblock component='«appName»:«name.formatForCodeCapital»:' instance='::' level='ACCESS_EDIT'}
             «IF tree != EntityTreeType::NONE»
                 {*
             «ENDIF»

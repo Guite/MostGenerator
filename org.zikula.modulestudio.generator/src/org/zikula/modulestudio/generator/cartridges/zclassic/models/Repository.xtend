@@ -810,8 +810,17 @@ class Repository {
             $currentType = \FormUtil::getPassedValue('type', 'user', 'GETPOST');
             if ($currentType != 'admin') {
                 if (!in_array('workflowState', array_keys($parameters))) {
-                    $qb->andWhere('tbl.workflowState = :onlineState')
-                       ->setParameter('onlineState', 'approved');
+                    // per default we show approved «nameMultiple.formatForDisplay» only
+                    $onlineStates = array('approved');
+                    «IF ownerPermission»
+                        $onlyOwn = (int) \FormUtil::getPassedValue('own', 0, 'GETPOST');
+                        if ($onlyOwn == 1) {
+                            // allow the owner to see his deferred «nameMultiple.formatForDisplay»
+                            $onlineStates[] = 'deferred';
+                        }
+                    «ENDIF»
+                    $qb->andWhereIn('tbl.workflowState IN (:onlineStates)')
+                       ->setParameter('onlineStates', DataUtil::formatForStore($onlineStates));
                 }
                 «applyDefaultDateRangeFilter»
             }

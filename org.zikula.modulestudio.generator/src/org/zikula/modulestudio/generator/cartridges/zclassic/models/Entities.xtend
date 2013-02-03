@@ -373,32 +373,24 @@ class Entities {
                     «ENDIF»
                     «IF controller.hasActions('view') || controller.hasActions('display')»
                         if (in_array($currentFunc, array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view', 'display'))) {
+                            «IF controller.hasActions('edit') || controller.hasActions('delete')»
+                                 $component = '«appName»:«name.formatForCodeCapital»:';
+                                 $instance = «idFieldsAsParameterCode('this')» . '::';
+                            «ENDIF»
                             «IF controller.hasActions('edit')»
-                                if (\SecurityUtil::checkPermission('«appName»:«name.formatForCodeCapital»:', «idFieldsAsParameterCode('this')» . '::', ACCESS_EDIT)) {
-                            «IF !readOnly»«/*create is allowed, but editing not*/»
-                                $this->_actions[] = array(
-                                    'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»)),
-                                    'icon' => 'edit',
-                                    'linkTitle' => __('Edit', $dom),
-                                    'linkText' => __('Edit', $dom)
-                                );
-                            «ENDIF»
-                            «IF tree != EntityTreeType::NONE»
-                                /*
-                            «ENDIF»
-                                    $this->_actions[] = array(
-                                        'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false, 'astemplate')»)),
-                                        'icon' => 'saveas',
-                                        'linkTitle' => __('Reuse for new item', $dom),
-                                        'linkText' => __('Reuse', $dom)
-                                    );
-                            «IF tree != EntityTreeType::NONE»
-                                */
-                            «ENDIF»
+                                if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+                                    «IF ownerPermission && standardFields»
+                                        // only allow editing for the owner or people with higher permissions
+                                        if ($this['createdUserId'] == \UserUtil::getVar('uid') || \SecurityUtil::checkPermission($component, $instance, ACCESS_ADD)) {
+                                            «itemActionsForEditAction(controller)»
+                                        }
+                                    «ELSE»
+                                        «itemActionsForEditAction(controller)»
+                                    «ENDIF»
                                 }
                             «ENDIF»
                             «IF controller.hasActions('delete')»
-                                if (\SecurityUtil::checkPermission('«appName»:«name.formatForCodeCapital»:', «idFieldsAsParameterCode('this')» . '::', ACCESS_DELETE)) {
+                                if (\SecurityUtil::checkPermission($component, $instance, ACCESS_DELETE)) {
                                     $this->_actions[] = array(
                                         'url' => array('type' => '«controller.formattedName»', 'func' => 'delete', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»)),
                                         'icon' => 'delete',
@@ -461,6 +453,25 @@ class Entities {
             default: false
         }
     }
+
+    def private itemActionsForEditAction(Entity it, Controller controller) '''
+        «IF !readOnly»«/*create is allowed, but editing not*/»
+            $this->_actions[] = array(
+                'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»)),
+                'icon' => 'edit',
+                'linkTitle' => __('Edit', $dom),
+                'linkText' => __('Edit', $dom)
+            );
+        «ENDIF»
+        «IF tree == EntityTreeType::NONE»
+                $this->_actions[] = array(
+                    'url' => array('type' => '«controller.formattedName»', 'func' => 'edit', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false, 'astemplate')»)),
+                    'icon' => 'saveas',
+                    'linkTitle' => __('Reuse for new item', $dom),
+                    'linkText' => __('Reuse', $dom)
+                );
+        «ENDIF»
+    '''
 
     def private loadWorkflow(Entity it) '''
         «val app = container.application»

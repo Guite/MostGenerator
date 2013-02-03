@@ -149,8 +149,12 @@ class ExternalController {
             $this->view->setCaching(Zikula_View::CACHE_ENABLED);
             // set cache id
             $accessLevel = ACCESS_READ;
-            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) $accessLevel = ACCESS_COMMENT;
-            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) $accessLevel = ACCESS_EDIT;
+            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
+                $accessLevel = ACCESS_COMMENT;
+            }
+            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+                $accessLevel = ACCESS_EDIT;
+            }
             $this->view->setCacheId($objectType . '|' . $id . '|a' . $accessLevel);
 
             $this->view->assign('objectType', $objectType)

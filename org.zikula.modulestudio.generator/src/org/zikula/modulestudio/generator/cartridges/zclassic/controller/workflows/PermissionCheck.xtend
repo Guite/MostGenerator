@@ -98,7 +98,7 @@ class PermissionCheck {
             «IF !entitiesWithOwnerPermission.isEmpty»
 
                 // check whether the current user is the owner
-                if (!$result && isset($obj['createdUser']) && $obj['createdUser'] == $currentUser) {
+                if (!$result && isset($obj['createdUserId']) && $obj['createdUserId'] == $currentUser) {
                     // allow author update operations for all states which occur before 'approved' in the object's life cycle.
                     $result = in_array($actionId, array('initial'«IF app.hasWorkflowState(wfType, 'deferred')», 'deferred'«ENDIF»«IF wfType != EntityWorkflowType::NONE», 'waiting'«ENDIF», 'accepted'));
                 }
