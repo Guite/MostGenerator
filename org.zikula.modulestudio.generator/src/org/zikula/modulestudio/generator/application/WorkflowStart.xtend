@@ -1,7 +1,6 @@
 package org.zikula.modulestudio.generator.application
 
 import com.google.inject.Injector
-import java.io.File
 import java.io.IOException
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.MostGenerator
