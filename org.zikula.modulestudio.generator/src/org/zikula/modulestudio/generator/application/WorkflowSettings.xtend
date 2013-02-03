@@ -246,6 +246,7 @@ public class WorkflowSettings {
      *            The given cartridge list.
      */
     def setSelectedCartridges(Object[] objects) {
+        selectedCartridges.clear
         for (cartridge : objects) {
             selectedCartridges.add(cartridge)
         }
