@@ -73,7 +73,7 @@ class WorkflowPostProcess {
                 var imageFolder = 'Resources/public/images'
                 var targetFolder = new File(targetBasePath + imageFolder)
                 if (!targetFolder.exists()) {
-                    imageFolder = 'images' // BC support for 1.3.5
+                    imageFolder = 'src/modules/' + settings.getAppName + '/images' // BC support for 1.3.5
                     targetFolder = new File(targetBasePath + imageFolder)
                 }
                 if (targetFolder.exists()) {
