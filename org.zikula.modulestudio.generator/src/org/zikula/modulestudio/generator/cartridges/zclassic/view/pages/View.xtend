@@ -351,7 +351,7 @@ class View {
     '''
 
     def private headerSortingLink(Object it, Controller controller, Entity entity, String fieldName, String label) '''
-        {sortlink __linktext='«label.formatForDisplayCapital»' currentsort=$sort type='«controller.formattedName»' func='view' ot='«entity.name.formatForCode»' sort='«fieldName»'«headerSortingLinkParameters(entity)» modname='«controller.container.application.appName»'}
+        {sortlink __linktext='«label.formatForDisplayCapital»' currentsort=$sort modname='«controller.container.application.appName»' type='«controller.formattedName»' func='view' ot='«entity.name.formatForCode»' sort='«fieldName»'«headerSortingLinkParameters(entity)»}
     '''
 
     def private headerSortingLinkParameters(Entity it) ''' sortdir=$sdir all=$all own=$own«IF categorisable» catidMain=$catIdListMainString«ENDIF»«sortParamsForIncomingRelations»«sortParamsForListFields»«sortParamsForUserFields»«sortParamsForCountryFields»«sortParamsForLanguageFields»«IF hasAbstractStringFieldsEntity» searchterm=$searchterm«ENDIF» pageSize=$pageSize«sortParamsForBooleanFields»'''
