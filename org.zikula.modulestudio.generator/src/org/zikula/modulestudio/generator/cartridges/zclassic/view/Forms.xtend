@@ -298,8 +298,17 @@ class Forms {
                         }
 
                         function handlePositionError(evt) {
-                            Zikula.UI.Alert(evt.message, Zikula.__('Error during geolocation', 'module_emotion'));
+                            Zikula.UI.Alert(evt.message, Zikula.__('Error during geolocation', 'module_«app.appName.formatForDB»'));
                         }
+                        {{*
+                            Initialise geocoding functionality.
+                            In contrast to the map picker this one determines coordinates for a given address.
+                            To use this please customise the form field names inside the function to your needs.
+                            You can find it in «app.getAppJsPath»«app.appName»_editFunctions.js
+                            Furthermore you will need a link or a button with id="linkGetCoordinates" which will
+                            be used by the script for adding a corresponding click event handler.
+                            «app.prefix»InitGeocoding();
+                        *}}
                     });
                 /* ]]> */
                 </script>

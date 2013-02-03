@@ -284,7 +284,9 @@ class ControllerUtil {
         /**
          * Example method for performing geo coding in PHP.
          * To use this please customise it to your needs in the concrete subclass.
-         * There is also a method on JS level available in «getAppSourcePath»javascript/«appName»_editFunctions.js.
+         * Also you have to call this method in a PrePersist-Handler of the
+         * corresponding entity class.
+         * There is also a method on JS level available in «getAppJsPath»«appName»_editFunctions.js.
          *
          * @param string $address The address input string.
          *
