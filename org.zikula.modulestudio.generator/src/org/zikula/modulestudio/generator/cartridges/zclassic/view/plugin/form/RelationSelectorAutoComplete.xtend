@@ -39,7 +39,7 @@ class RelationSelectorAutoComplete {
 
     def private relationSelectorBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Form\Plugin;
+            namespace «appName»\Form\Plugin\Base;
 
         «ENDIF»
         /**
@@ -48,7 +48,7 @@ class RelationSelectorAutoComplete {
         «IF targets('1.3.5')»
         class «appName»_Form_Plugin_Base_RelationSelectorAutoComplete extends «appName»_Form_Plugin_AbstractObjectSelector
         «ELSE»
-        class Base\RelationSelectorAutoComplete extends AbstractObjectSelector
+        class RelationSelectorAutoComplete extends \«appName»\Form\Plugin\AbstractObjectSelector
         «ENDIF»
         {
             /**
@@ -147,7 +147,7 @@ class RelationSelectorAutoComplete {
              */
             public function render(Zikula_Form_View $view)
             {
-                $dom = ZLanguage::getModuleDomain('«appName»');
+                $dom = \ZLanguage::getModuleDomain('«appName»');
                 $many = ($this->selectionMode == 'multiple');
 
                 $entityName = $this->selectedEntityName;
@@ -160,7 +160,7 @@ class RelationSelectorAutoComplete {
                 $addLink = '<a id="' . $idPrefix . 'AddLink" href="javascript:void(0);" class="z-hide">' . $addLinkText . '</a>';
                 $createLink = '';
                 if ($this->createLink != '') {
-                    $createLink = '<a id="' . 'SelectorDoNew" href="' . DataUtil::formatForDisplay($this->createLink) . '" title="' . __f('Create new %s', array($entityName), $dom) . '" class="z-button «prefix()»InlineButton">' . __('Create', $dom) . '</a>';
+                    $createLink = '<a id="' . 'SelectorDoNew" href="' . \DataUtil::formatForDisplay($this->createLink) . '" title="' . __f('Create new %s', array($entityName), $dom) . '" class="z-button «prefix()»InlineButton">' . __('Create', $dom) . '</a>';
                 }
 
                 $alias = $this->id;
@@ -232,7 +232,7 @@ class RelationSelectorAutoComplete {
          */
         function smarty_function_«appName.formatForDB»RelationSelectorAutoComplete($params, $view)
         {
-            return $view->registerPlugin('«appName»_Form_Plugin_RelationSelectorAutoComplete', $params);
+            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_RelationSelectorAutoComplete«ELSE»\\«appName»\\Form\\Plugin\\RelationSelectorAutoComplete«ENDIF»', $params);
         }
     '''
 }

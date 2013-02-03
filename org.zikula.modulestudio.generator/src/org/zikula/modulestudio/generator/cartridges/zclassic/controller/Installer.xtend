@@ -125,7 +125,7 @@ class Installer {
             «processUploadFolders»
             // create all tables from according entity definitions
             try {
-                DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses());
+                \DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses());
             } catch (Exception $e) {
                 if (\System::isDevelopmentMode()) {
                     \LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
@@ -228,7 +228,7 @@ class Installer {
                     // ...
                     // update the database schema
                     try {
-                        DoctrineHelper::updateSchema($this->entityManager, $this->listEntityClasses());
+                        \DoctrineHelper::updateSchema($this->entityManager, $this->listEntityClasses());
                     } catch (Exception $e) {
                         if (\System::isDevelopmentMode()) {
                             \LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
@@ -252,13 +252,13 @@ class Installer {
         public function uninstall()
         {
             // delete stored object workflows
-            $result = Zikula_Workflow_Util::deleteWorkflowsForModule($this->getName());
+            $result = \Zikula_Workflow_Util::deleteWorkflowsForModule($this->getName());
             if ($result === false) {
                 return \LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
             }
 
             try {
-                DoctrineHelper::dropSchema($this->entityManager, $this->listEntityClasses());
+                \DoctrineHelper::dropSchema($this->entityManager, $this->listEntityClasses());
             } catch (Exception $e) {
                 if (\System::isDevelopmentMode()) {
                     \LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());

@@ -182,8 +182,13 @@ class AbstractObjectSelector {
             }
             if (empty($this->displayField)) {
                 // fallback to the leading field
+                «IF targets('1.3.5')»
+                    $entityClass = $this->name . '_Entity_' . ucwords($this->objectType);
+                «ELSE»
+                    $entityClass = '\\' . $this->name . '\\Entity\\' . ucwords($this->objectType) . 'Entity';
+                «ENDIF»
                 $entityManager = \ServiceUtil::getManager()->getService('doctrine.entitymanager');
-                $repository = $entityManager->getRepository($this->name . '_Entity_' . ucfirst($this->objectType));
+                $repository = $entityManager->getRepository($entityClass);
                 $this->displayField = $repository->getTitleFieldName();
             }
 
@@ -375,9 +380,14 @@ class AbstractObjectSelector {
             $alias = $this->id;
             $many = ($this->selectionMode == 'multiple');
 
+            «IF targets('1.3.5')»
+                $entityClass = $this->name . '_Entity_' . ucwords($this->objectType);
+            «ELSE»
+                $entityClass = '\\' . $this->name . '\\Entity\\' . ucwords($this->objectType) . 'Entity';
+            «ENDIF»
             $serviceManager = \ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
-            $repository = $entityManager->getRepository($this->name . '_Entity_' . ucfirst($this->objectType));
+            $repository = $entityManager->getRepository($entityClass);
 
             $inputValue = $this->getSelectedValue();
             if (empty($inputValue) || !$inputValue) {
@@ -469,15 +479,15 @@ class AbstractObjectSelector {
                     if (!empty($where)) {
                         $where .= ' AND ';
                     }
-                    $where .= 'tbl.' . $idField . ' IN (' . DataUtil::formatForStore(implode(', ', $idsPerField[$idField])) . ')';
+                    $where .= 'tbl.' . $idField . ' IN (' . \DataUtil::formatForStore(implode(', ', $idsPerField[$idField])) . ')';
                 }
             } else {
                 $many = ($this->selectionMode == 'multiple');
                 $idField = reset($this->idFields);
                 if ($many) {
-                    $where .= 'tbl.' . $idField . ' IN (' . DataUtil::formatForStore(implode(', ', $inputValue)) . ')';
+                    $where .= 'tbl.' . $idField . ' IN (' . \DataUtil::formatForStore(implode(', ', $inputValue)) . ')';
                 } else {
-                    $where .= 'tbl.' . $idField . ' = \'' . DataUtil::formatForStore($inputValue) . '\'';
+                    $where .= 'tbl.' . $idField . ' = \'' . \DataUtil::formatForStore($inputValue) . '\'';
                 }
             }
             if (!empty($this->where)) {
@@ -573,7 +583,11 @@ class AbstractObjectSelector {
         /**
          * Abstract object selector plugin implementation class.
          */
+        «IF targets('1.3.5')»
         abstract class «appName»_Form_Plugin_AbstractObjectSelector extends «appName»_Form_Plugin_Base_AbstractObjectSelector
+        «ELSE»
+        class AbstractObjectSelector extends Base\AbstractObjectSelector
+        «ENDIF»
         {
             // feel free to add your customisation here
         }

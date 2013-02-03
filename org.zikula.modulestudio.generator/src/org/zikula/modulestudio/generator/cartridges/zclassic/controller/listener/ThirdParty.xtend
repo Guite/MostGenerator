@@ -186,7 +186,7 @@ class ThirdParty {
             array('name' => '«appName.formatForDB»',
                   'path' => 'modules/«appName»/docs/scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»/',
                   'file' => 'plugin.js',
-                  'img'  => 'ed_«appName.formatForDB».gif'));
+                  'img'  => 'ed_«appName.formatForDB».gif'
             )
         );
     '''

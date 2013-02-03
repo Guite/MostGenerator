@@ -141,10 +141,14 @@ class ItemSelector {
                     }
                 «ENDIF»
 
+                «IF targets('1.3.5')»
+                    $entityClass = '«appName»_Entity_' . ucwords($this->objectType);
+                «ELSE»
+                    $entityClass = '\\«appName»\\Entity\\' . ucwords($this->objectType) . 'Entity';
+                «ENDIF»
                 $serviceManager = \ServiceUtil::getManager();
                 $entityManager = $serviceManager->getService('doctrine.entitymanager');
-
-                $repository = $entityManager->getRepository('«appName»_Entity_' . ucfirst($this->objectType));
+                $repository = $entityManager->getRepository($entityClass);
 
                 $sort = $repository->getDefaultSortingField();
                 $sdir = 'asc';
@@ -155,7 +159,7 @@ class ItemSelector {
 
                 $objectData = $repository->selectWhere($where, $sortParam);
 
-                $view = Zikula_View::getInstance('«appName»', false);
+                $view = \Zikula_View::getInstance('«appName»', false);
                 $view->assign('items', $objectData)
                      ->assign('selectedId', $this->selectedItemId);
             «IF hasCategorisableEntities»
@@ -269,7 +273,7 @@ class ItemSelector {
          */
         function smarty_function_«appName.formatForDB»ItemSelector($params, $view)
         {
-            return $view->registerPlugin('«appName»_Form_Plugin_ItemSelector', $params);
+            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_ItemSelector«ELSE»\\«appName»\\Form\\Plugin\\ItemSelector«ENDIF»', $params);
         }
     '''
 }

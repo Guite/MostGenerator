@@ -123,7 +123,7 @@ class Cache {
             «ENDIF»
             «ENDIF»
 
-            $view = Zikula_View::getInstance('«appName»');
+            $view = \Zikula_View::getInstance('«appName»');
             foreach ($cacheIds as $cacheId) {
                 $view->clear_cache(null, $cacheId);
             }
@@ -154,7 +154,7 @@ class Cache {
                 «ENDFOR»
             «ENDIF»
             «ENDIF»
-            $theme = Zikula_View_Theme::getInstance();
+            $theme = \Zikula_View_Theme::getInstance();
             $theme->clear_cacheid_allthemes($cacheIds);
         }
     '''

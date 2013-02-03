@@ -39,7 +39,7 @@ class RelationSelectorList {
 
     def private relationSelectorBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Form\Plugin;
+            namespace «appName»\Form\Plugin\Base;
 
         «ENDIF»
         /**
@@ -48,7 +48,7 @@ class RelationSelectorList {
         «IF targets('1.3.5')»
         class «appName»_Form_Plugin_Base_RelationSelectorList extends «appName»_Form_Plugin_AbstractObjectSelector
         «ELSE»
-        class Base\RelationSelectorList extends AbstractObjectSelector
+        class RelationSelectorList extends \«appName»\Form\Plugin\AbstractObjectSelector
         «ENDIF»
         {
             /**
@@ -135,7 +135,7 @@ class RelationSelectorList {
          */
         function smarty_function_«appName.formatForDB»RelationSelectorList($params, $view)
         {
-            return $view->registerPlugin('«appName»_Form_Plugin_RelationSelectorList', $params);
+            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_RelationSelectorList«ELSE»\\«appName»\\Form\\Plugin\\RelationSelectorList«ENDIF»', $params);
         }
     '''
 }

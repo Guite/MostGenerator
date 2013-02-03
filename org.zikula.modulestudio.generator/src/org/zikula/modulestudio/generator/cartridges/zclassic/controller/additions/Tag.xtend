@@ -56,13 +56,13 @@ class Tag {
         /**
          * Constructor.
          *
-         * @param integer       $objectId  Identifier of treated object.
-         * @param integer       $areaId    Name of hook area.
-         * @param string        $module    Name of the owning module.
-         * @param type          $urlString **deprecated**
-         * @param Zikula_ModUrl $urlObject Object carrying url arguments.
+         * @param integer             $objectId  Identifier of treated object.
+         * @param integer             $areaId    Name of hook area.
+         * @param string              $module    Name of the owning module.
+         * @param string              $urlString **deprecated**
+         * @param \Zikula«IF targets('1.3.5')»_ModUrl«ELSE»\Core\ModUrl«ENDIF» $urlObject Object carrying url arguments.
          */
-        function __construct($objectId, $areaId, $module, $urlString = null, Zikula_ModUrl $urlObject = null)
+        function __construct($objectId, $areaId, $module, $urlString = null, \Zikula«IF targets('1.3.5')»_ModUrl«ELSE»\Core\ModUrl«ENDIF» $urlObject = null)
         {
             // call base constructor to store arguments in member vars
             parent::__construct($objectId, $areaId, $module, $urlString, $urlObject);
@@ -77,9 +77,14 @@ class Tag {
                 return;
             }
 
+            «IF targets('1.3.5')»
+                $entityClass = $module . '_Entity_' . ucwords($objectType);
+            «ELSE»
+                $entityClass = '\\' . $module . '\\Entity\\' . ucwords($objectType) . 'Entity';
+            «ENDIF»
             $serviceManager = \ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
-            $repository = $entityManager->getRepository($module . '_Entity_' . ucwords($objectType));
+            $repository = $entityManager->getRepository($entityClass);
             $useJoins = false;
 
             /** TODO support composite identifiers properly at this point */

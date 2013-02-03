@@ -43,7 +43,7 @@ class TreeSelector {
 
     def private treeSelectorBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Form\Plugin;
+            namespace «appName»\Form\Plugin\Base;
 
         «ENDIF»
         /**
@@ -55,7 +55,7 @@ class TreeSelector {
         «IF targets('1.3.5')»
         class «appName»_Form_Plugin_Base_TreeSelector extends «appName»_Form_Plugin_AbstractObjectSelector
         «ELSE»
-        class Base\TreeSelector extends AbstractObjectSelector
+        class TreeSelector extends \«appName»\Form\Plugin\AbstractObjectSelector
         «ENDIF»
         {
             /**
@@ -113,8 +113,13 @@ class TreeSelector {
 
                 parent::create($view, $params);
 
+                «IF targets('1.3.5')»
+                    $entityClass = $this->name . '_Entity_' . ucwords($this->objectType);
+                «ELSE»
+                    $entityClass = '\\' . $this->Name . '\\Entity\\' . ucwords($this->objectType) . 'Entity';
+                «ENDIF»
                 $entityManager = \ServiceUtil::getManager()->getService('doctrine.entitymanager');
-                $this->repository = $entityManager->getRepository($this->name . '_Entity_' . ucfirst($this->objectType));
+                $this->repository = $entityManager->getRepository($entityClass);
             }
 
             /**
@@ -225,7 +230,7 @@ class TreeSelector {
          */
         function smarty_function_«appName.formatForDB»TreeSelector($params, $view)
         {
-            return $view->registerPlugin('«appName»_Form_Plugin_TreeSelector', $params);
+            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_TreeSelector«ELSE»\\«appName»\\Form\\Plugin\\TreeSelector«ENDIF»', $params);
         }
     '''
 }

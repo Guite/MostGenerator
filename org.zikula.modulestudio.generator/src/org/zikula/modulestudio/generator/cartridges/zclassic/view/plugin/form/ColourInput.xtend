@@ -114,7 +114,7 @@ class ColourInput {
                 }
                 $firstTime = false;
 
-                $dom = ZLanguage::getModuleDomain('«appName»');
+                $dom = \ZLanguage::getModuleDomain('«appName»');
 
                 $result = parent::render($view);
 
@@ -126,7 +126,7 @@ class ColourInput {
                     /* <![CDATA[ */
                         var namePicky = new PickyColor({
                             field: '" . $this->getId() . "',
-                            color: '" . DataUtil::formatForDisplay($this->text) . "',
+                            color: '" . \DataUtil::formatForDisplay($this->text) . "',
                             colorWell: '" . $this->getId() . "',
                             closeText: '" . __('Close', $dom) . "'
                         })
@@ -215,7 +215,7 @@ class ColourInput {
          */
         function smarty_function_«appName.formatForDB»ColourInput($params, $view)
         {
-            return $view->registerPlugin('«appName»_Form_Plugin_ColourInput', $params);
+            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_ColourInput«ELSE»\\«appName»\\Form\\Plugin\\ColourInput«ENDIF»', $params);
         }
     '''
 }

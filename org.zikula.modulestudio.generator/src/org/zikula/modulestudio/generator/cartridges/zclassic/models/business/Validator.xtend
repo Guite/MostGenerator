@@ -296,12 +296,12 @@ class Validator {
              */
             public function isValidLanguage($fieldName, $onlyInstalled = false)
             {
-                $languageMap = ZLanguage::languageMap();
+                $languageMap = \ZLanguage::languageMap();
                 $result = in_array($this->entity[$fieldName], array_keys($languageMap));        
                 if (!$result || !$onlyInstalled) {
                     return $result;
                 } 
-                $available = ZLanguage::getInstalledLanguages();
+                $available = \ZLanguage::getInstalledLanguages();
 
                 return in_array($this->entity[$fieldName], $available);
             }
@@ -314,7 +314,7 @@ class Validator {
              */
             public function isValidCountry($fieldName)
             {
-                $countryMap = ZLanguage::countryMap();
+                $countryMap = \ZLanguage::countryMap();
 
                 return in_array($this->entity[$fieldName], array_keys($countryMap));
             }
@@ -486,7 +486,7 @@ class Validator {
         «IF targets('1.3.5')»
         class «appName»_Validator extends «appName»_Base_Validator
         «ELSE»
-        class Validator extends Base\AbstractValidator
+        class AbstractValidator extends Base\AbstractValidator
         «ENDIF»
         {
             // here you can add custom validation methods or override existing checks
@@ -499,7 +499,8 @@ class Validator {
     def generateWrapper(Entity it, Application app, IFileSystemAccess fsa) {
         println('Generating validator classes for entity "' + name.formatForDisplay + '"')
         val validatorPath = app.getAppSourceLibPath + 'Entity/Validator/'
-        val validatorFileName = name.formatForCodeCapital + '.php'
+        val validatorSuffix = (if (app.targets('1.3.5')) '' else 'Validator')
+        val validatorFileName = name.formatForCodeCapital + validatorSuffix + '.php'
         if (!isInheriting) {
             fsa.generateFile(validatorPath + 'Base/' + validatorFileName, validatorBaseFile(app))
         }
@@ -529,7 +530,7 @@ class Validator {
         «IF app.targets('1.3.5')»
         class «app.appName»_Entity_Validator_Base_«name.formatForDisplayCapital» extends «app.appName»_Validator
         «ELSE»
-        class «name.formatForDisplayCapital» extends «app.appName»_Validator
+        class «name.formatForDisplayCapital»Validator extends \«app.appName»\AbstractValidator
         «ENDIF»
         {
             «validatorBaseImplBody(app, false)»
@@ -549,7 +550,7 @@ class Validator {
         «IF app.targets('1.3.5')»
         class «app.appName»_Entity_Validator_«name.formatForDisplayCapital» extends «IF isInheriting»«app.appName»_Entity_Validator_«parentType.name.formatForDisplayCapital»«ELSE»«app.appName»_Entity_Validator_Base_«name.formatForDisplayCapital»«ENDIF»
         «ELSE»
-        class «name.formatForDisplayCapital» extends «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\«name.formatForDisplayCapital»«ENDIF»
+        class «name.formatForDisplayCapital»Validator extends «IF isInheriting»\«app.appName»\Entity\Validator\«parentType.name.formatForCodeCapital»Validator«ELSE»Base\«name.formatForDisplayCapital»Validator«ENDIF»
         «ENDIF»
         {
             // here you can add custom validation methods or override existing checks
@@ -568,7 +569,7 @@ class Validator {
         public function validateAll()
         {
             $errorInfo = array('message' => '', 'code' => 0, 'debugArray' => array());
-            $dom = ZLanguage::getModuleDomain('«app.appName»');
+            $dom = \ZLanguage::getModuleDomain('«app.appName»');
             «IF isInheriting»
                 parent::validateAll();
             «ENDIF» 
@@ -579,11 +580,10 @@ class Validator {
             «FOR udf : getUniqueDerivedFields.filter(e|!e.primaryKey)»
                 «validationCallUnique(udf)»
             «ENDFOR»
-            «/* no slug input element yet, see https://github.com/l3pp4rd/DoctrineExtensions/issues/140
             «IF hasSluggableFields && slugUpdatable && slugUnique»
                 «validationCallUniqueSlug»
             «ENDIF»
-            */»
+
             return true;
         }
 
@@ -610,11 +610,17 @@ class Validator {
                 return false;
             }
 
+            «IF app.targets('1.3.5')»
+                $entityClass = '«app.appName»_Entity_«name.formatForCodeCapital»';
+            «ELSE»
+                $entityClass = '\\«app.appName»\\Entity\\«name.formatForCodeCapital»Entity';
+            «ENDIF»
             $serviceManager = \ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
-            $repository = $entityManager->getRepository('«app.appName»_Entity_«name.formatForCodeCapital»');
+            $repository = $entityManager->getRepository($entityClass);
 
             $excludeid = $this->entity['«getFirstPrimaryKey.name.formatForCode»'];
+
             return $repository->detectUniqueState($fieldName, $this->entity[$fieldName], $excludeid);
         }
     '''
@@ -634,11 +640,17 @@ class Validator {
                 return false;
             }
 
+            «IF app.targets('1.3.5')»
+                $entityClass = '«app.appName»_Entity_«name.formatForCodeCapital»';
+            «ELSE»
+                $entityClass = '\\«app.appName»\\Entity\\«name.formatForCodeCapital»Entity';
+            «ENDIF»
             $serviceManager = \ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
-            $repository = $entityManager->getRepository('«app.appName»_Entity_«name.formatForCodeCapital»');
+            $repository = $entityManager->getRepository($entityClass);
 
             $excludeid = $this->entity['«getFirstPrimaryKey.name.formatForCode»'];
+
             return $repository->detectUniqueState('slug', $value, $excludeid);
         }
     '''
@@ -664,14 +676,14 @@ class Validator {
             return $errorInfo;
         }
     '''
-/*
+
     def private validationCallUniqueSlug(Entity it) '''
         if (!$this->isUniqueSlug()) {
             $errorInfo['message'] = __f('The slug %s is already assigned. Please choose another slug.', array($this->entity['slug']), $dom);
             return $errorInfo;
         }
     '''
-*/
+
     def private dispatch validationCalls(BooleanField it) '''
         if (!$this->isValidBoolean('«name.formatForCode»')) {
             $errorInfo['message'] = __f('Error! Field value must be a valid boolean (%s).', array('«name.formatForDisplay»'), $dom);

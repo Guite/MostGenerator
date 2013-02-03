@@ -110,7 +110,7 @@ class BlockModeration {
 
             \ModUtil::initOOModule('«appName»');
 
-            $this->view->setCaching(Zikula_View::CACHE_DISABLED);
+            $this->view->setCaching(\Zikula_View::CACHE_DISABLED);
             $template = $this->getDisplayTemplate($vars);
 
             $workflowHelper = new \«appName»«IF targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»($this->serviceManager);

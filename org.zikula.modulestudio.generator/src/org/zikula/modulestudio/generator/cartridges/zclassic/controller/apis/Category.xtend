@@ -167,7 +167,7 @@ class Category {
                     continue;
                 }
 
-                $result[] = '(tblCategories.category IN (' . DataUtil::formatForStore(implode(', ', $catIds[$propertyName])) . ') AND tblCategories.categoryRegistryId = ' . $propertyId . ')';
+                $result[] = '(tblCategories.category IN (' . \DataUtil::formatForStore(implode(', ', $catIds[$propertyName])) . ') AND tblCategories.categoryRegistryId = ' . $propertyId . ')';
             }
 
             return $result;

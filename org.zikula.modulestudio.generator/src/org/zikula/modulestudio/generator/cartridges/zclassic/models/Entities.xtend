@@ -228,7 +228,7 @@ class Entities {
          * @var array List of primary key field names.
          */
         protected $_idFields = array();
-        «val validatorClass = if (app.targets('1.3.5')) app.appName + '_Entity_Validator_' + name.formatForCodeCapital else '\\' + app.appName + '\\Entity\\Validator\\' + name.formatForCodeCapital»
+        «val validatorClass = if (app.targets('1.3.5')) app.appName + '_Entity_Validator_' + name.formatForCodeCapital else '\\' + app.appName + '\\Entity\\Validator\\' + name.formatForCodeCapital + 'Validator'»
         /**
          * @var «validatorClass» The validator for this entity.
          */
@@ -289,6 +289,7 @@ class Entities {
                 return $this->_validator;
             }
             $this->_validator = new «validatorClass»($this);
+
             return $this->_validator;
         }
 
@@ -347,7 +348,7 @@ class Entities {
             $currentType = \FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
             $currentFunc = \FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
             «val appName = app.appName»
-            $dom = ZLanguage::getModuleDomain('«appName»');
+            $dom = \ZLanguage::getModuleDomain('«appName»');
             «FOR controller : app.getAdminAndUserControllers»
                 if ($currentType == '«controller.formattedName»') {
                     «IF controller.hasActions('view')»
@@ -477,7 +478,7 @@ class Entities {
         «val app = container.application»
         // apply workflow with most important information
         $idColumn = '«primaryKeyFields.head.name.formatForCode»';
-        $workflowHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»(ServiceUtil::getManager());
+        $workflowHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»(\ServiceUtil::getManager());
         $schemaName = $workflowHelper->getWorkflowName($this['_objectType']);
         $this['__WORKFLOW__'] = array(
             'state' => $this['workflowState'],
@@ -488,9 +489,9 @@ class Entities {
 
         // load the real workflow only when required (e. g. when func is edit or delete)
         if (!in_array($currentFunc, array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view', 'display'))) {
-            $result = Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«app.appName»');
+            $result = \Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«app.appName»');
             if (!$result) {
-                $dom = ZLanguage::getModuleDomain('«app.appName»');
+                $dom = \ZLanguage::getModuleDomain('«app.appName»');
                 \LogUtil::registerError(__('Error! Could not load the associated workflow.', $dom));
             }
         }

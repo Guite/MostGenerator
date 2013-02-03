@@ -65,7 +65,7 @@ class Operations {
          */
         function «app.appName»_operation_«opName»(&$entity, $params)
         {
-            $dom = ZLanguage::getModuleDomain('«app.appName»');
+            $dom = \ZLanguage::getModuleDomain('«app.appName»');
 «/*
             // handling of additional parameters
             // $params['foobar'] = isset($params['foobar']) ? (bool)$params['foobar'] : false;

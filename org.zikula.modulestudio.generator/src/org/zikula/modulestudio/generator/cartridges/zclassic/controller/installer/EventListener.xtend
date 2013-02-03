@@ -17,7 +17,7 @@ class EventListener {
          */
         protected function registerPersistentEventHandlers()
         {
-            «val listenerBase = '\\' + appName + (if (targets('1.3.5')) '_Listener_' else '\\Listener\\')»
+            «val listenerBase = appName + (if (targets('1.3.5')) '_Listener_' else '\\Listener\\')»
             «val listenerSuffix = (if (targets('1.3.5')) '' else 'Listener')»
             // core -> «var callableClass = listenerBase + 'Core' + listenerSuffix»
             \EventUtil::registerPersistentModuleHandler('«appName»', 'api.method_not_found', array('«callableClass»', 'apiMethodNotFound'));

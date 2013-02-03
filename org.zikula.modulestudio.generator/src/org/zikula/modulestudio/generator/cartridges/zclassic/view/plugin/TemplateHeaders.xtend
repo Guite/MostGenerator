@@ -32,8 +32,8 @@ class TemplateHeaders {
          *   - asAttachment: If set to true the file will be offered for downloading.
          *   - filename:     Name of download file.
          *
-         * @param  array       $params All attributes passed to this function from the template.
-         * @param  Zikula_View $view   Reference to the view object.
+         * @param  array        $params All attributes passed to this function from the template.
+         * @param  \Zikula_View $view   Reference to the view object.
          *
          * @return boolean false.
          */

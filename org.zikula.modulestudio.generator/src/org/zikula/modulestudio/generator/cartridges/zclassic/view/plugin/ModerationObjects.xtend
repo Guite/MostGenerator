@@ -30,8 +30,8 @@ class ModerationObjects {
          * The «appName.formatForDB»ModerationObjects plugin determines the amount of «IF hasWorkflow(EntityWorkflowType::ENTERPRISE)»unaccepted and «ENDIF»unapproved objects.
          * It uses the same logic as the moderation block and the pending content listener.
          *
-         * @param  array       $params All attributes passed to this function from the template.
-         * @param  Zikula_View $view   Reference to the view object.
+         * @param  array        $params All attributes passed to this function from the template.
+         * @param  \Zikula_View $view   Reference to the view object.
          */
         function smarty_function_«appName.formatForDB»ModerationObjects($params, $view)
         {

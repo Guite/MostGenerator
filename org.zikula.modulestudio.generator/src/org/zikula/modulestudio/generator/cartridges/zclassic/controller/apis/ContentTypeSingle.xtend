@@ -86,7 +86,8 @@ class ContentTypeSingle {
          */
         public function getTitle()
         {
-            $dom = ZLanguage::getModuleDomain('«appName»');
+            $dom = \ZLanguage::getModuleDomain('«appName»');
+
             return __('«appName» detail view', $dom);
         }
 
@@ -97,7 +98,8 @@ class ContentTypeSingle {
          */
         public function getDescription()
         {
-            $dom = ZLanguage::getModuleDomain('«appName»');
+            $dom = \ZLanguage::getModuleDomain('«appName»');
+
             return __('Display or link a single «appName» object.', $dom);
         }
 
@@ -150,7 +152,8 @@ class ContentTypeSingle {
             if ($this->id != null && !empty($this->displayMode)) {
                 return \ModUtil::func('«appName»', 'external', 'display', $this->getDisplayArguments());
             }
-            $dom = ZLanguage::getModuleDomain('«appName»');
+            $dom = \ZLanguage::getModuleDomain('«appName»');
+
             return __('No item selected.', $dom);
         }
 

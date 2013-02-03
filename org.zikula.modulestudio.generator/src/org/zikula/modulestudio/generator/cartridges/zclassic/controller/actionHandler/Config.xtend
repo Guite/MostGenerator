@@ -26,8 +26,9 @@ class Config {
     def generate(Application it, IFileSystemAccess fsa) {
         if (needsConfig) {
             val formHandlerFolder = getAppSourceLibPath + 'Form/Handler/' + configController.toFirstUpper + '/'
-            fsa.generateFile(formHandlerFolder + 'Base/Config.php', configHandlerBaseFile)
-            fsa.generateFile(formHandlerFolder + 'Config.php', configHandlerFile)
+            val handlerSuffix = (if(targets('1.3.5')) '' else 'Handler')
+            fsa.generateFile(formHandlerFolder + 'Base/Config' + handlerSuffix + '.php', configHandlerBaseFile)
+            fsa.generateFile(formHandlerFolder + 'Config' + handlerSuffix + '.php', configHandlerFile)
         }
     }
 
@@ -52,7 +53,7 @@ class Config {
         «IF targets('1.3.5')»
         class «appName»_Form_Handler_«configController.toFirstUpper»_Base_Config extends Zikula_Form_AbstractHandler
         «ELSE»
-        class Config extends \Zikula_Form_AbstractHandler
+        class ConfigHandler extends \Zikula_Form_AbstractHandler
         «ENDIF»
         {
             /**
@@ -190,7 +191,7 @@ class Config {
         «IF targets('1.3.5')»
         class «appName»_Form_Handler_«configController.toFirstUpper»_Config extends «appName»_Form_Handler_«configController.toFirstUpper»_Base_Config
         «ELSE»
-        class Config extends Base\Config
+        class ConfigHandler extends Base\ConfigHandler
         «ENDIF»
         {
             // feel free to extend the base handler class here

@@ -115,7 +115,7 @@ class ControllerLayer {
         «IF app.targets('1.3.5')»
         class «app.appName»_Controller_Base_«name.formatForCodeCapital» extends Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»
         «ELSE»
-        class «name.formatForCodeCapital» extends \Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»
+        class «name.formatForCodeCapital»Controller extends \Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»
         «ENDIF»
         {
             «IF isAjaxController»
@@ -174,8 +174,10 @@ class ControllerLayer {
                     // Create new Form reference
                     $view = \FormUtil::newForm($this->name, $this);
 
+                    $templateName = '«IF app.targets('1.3.5')»«app.configController.formatForDB»«ELSE»«app.configController.formatForCodeCapital»«ENDIF»/config.tpl';
+
                     // Execute form using supplied template and page event handler
-                    return $view->execute('«app.configController.formatForDB»/config.tpl', new «IF app.targets('1.3.5')»«app.appName»_Form_Handler_«app.configController.formatForDB.toFirstUpper»_Config«ELSE»\«app.appName»\Form\Handler\«app.configController.formatForDB.toFirstUpper»\Config«ENDIF»());
+                    return $view->execute($templateName, new «IF app.targets('1.3.5')»«app.appName»_Form_Handler_«app.configController.formatForDB.toFirstUpper»_Config«ELSE»\«app.appName»\Form\Handler\«app.configController.formatForDB.toFirstUpper»\ConfigHandler«ENDIF»());
                 }
             «ENDIF»
             «new Ajax().additionalAjaxFunctions(it, app)»
@@ -257,8 +259,7 @@ class ControllerLayer {
 
                 if ($action == 'delete') {
                     \LogUtil::registerStatus($this->__('Done! Item deleted.'));
-                }
-                else {
+                } else {
                     \LogUtil::registerStatus($this->__('Done! Item updated.'));
                 }
 
@@ -271,7 +272,7 @@ class ControllerLayer {
                     if (isset($this->entityRef['slug'])) {
                         $urlArgs['slug'] = $this->entityRef['slug'];
                     }
-                    $url = new Zikula_ModUrl($this->name, '«formattedName»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                    $url = new \Zikula«IF app.targets('1.3.5')»_ModUrl«ELSE»\Core\ModUrl«ENDIF»($this->name, '«formattedName»', 'display', \ZLanguage::getLanguageCode(), $urlArgs);
                 }
                 «IF app.targets('1.3.5')»
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
@@ -327,7 +328,7 @@ class ControllerLayer {
         «IF app.targets('1.3.5')»
         class «app.appName»_Api_Base_«name.formatForCodeCapital» extends Zikula_AbstractApi
         «ELSE»
-        class «name.formatForCodeCapital» extends \Zikula_AbstractApi
+        class «name.formatForCodeCapital»Api extends \Zikula_AbstractApi
         «ENDIF»
         {
             «IF !isAjaxController»

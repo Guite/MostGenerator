@@ -94,7 +94,7 @@ class CountrySelector {
                     $this->addItem('---', null);
                 }
 
-                $allCountries = ZLanguage::countryMap();
+                $allCountries = \ZLanguage::countryMap();
                 foreach ($allCountries as $countryCode => $countryName) {
                     if (!$isFiltered || in_array($countryCode, $this->validCountryList)) {
                         $this->addItem($countryName, $countryCode);
@@ -137,7 +137,7 @@ class CountrySelector {
          */
         function smarty_function_«appName.formatForDB»CountrySelector($params, $view)
         {
-            return $view->registerPlugin('«appName»_Form_Plugin_CountrySelector', $params);
+            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_CountrySelector«ELSE»\\«appName»\\Form\\Plugin\\CountrySelector«ENDIF»', $params);
         }
     '''
 }

@@ -354,12 +354,13 @@ class Extensions {
      */
     def private extensionClasses(Entity it, Application app, String classType, IFileSystemAccess fsa) {
         val entityPath = app.getAppSourceLibPath + 'Entity/'
+        val entityPrefix = if (app.targets('1.3.5')) '' else 'Abstract'
         val entitySuffix = if (app.targets('1.3.5')) '' else 'Entity'
         val entityFileName = name.formatForCodeCapital + classType.formatForCodeCapital + entitySuffix + '.php'
         val repositoryPath = entityPath + 'Repository/'
         val repositoryFileName = name.formatForCodeCapital + classType.formatForCodeCapital + '.php'
         if (!isInheriting) {
-            fsa.generateFile(entityPath + 'Base/' + entityFileName, extensionClassBaseFile(it, app, classType))
+            fsa.generateFile(entityPath + 'Base/' + entityPrefix + entityFileName, extensionClassBaseFile(it, app, classType))
             if (classType != 'closure') {
                 fsa.generateFile(repositoryPath + 'Base/' + repositoryFileName, extensionClassRepositoryBaseFile(it, app, classType))
             }
@@ -404,7 +405,11 @@ class Extensions {
         «ELSEIF classType == 'metaData' || classType == 'attribute' || classType == 'category'»
             use Doctrine\ORM\Mapping as ORM;
             «IF !app.targets('1.3.5')»
-            use Zikula\Core\Doctrine\Entity\Entity«classType.toFirstUpper»
+                «IF classType == 'metaData'»
+                    use Zikula\Core\Doctrine\Entity\AbstractEntityMetadata;
+                «ELSEIF classType == 'attribute' || classType == 'category'»
+                    use Zikula\Core\Doctrine\Entity\AbstractEntity«classType.toFirstUpper»;
+                «ENDIF»
             «ENDIF»
         «ENDIF»
 
@@ -413,17 +418,7 @@ class Extensions {
          *
          * This is the base «classType.formatForDisplay» class for «name.formatForDisplay» entities.
          */
-        «IF classType == 'closure'»
-        class «entityClassName(classType, true)» extends AbstractClosure
-        «ELSEIF classType == 'translation'»
-        class «entityClassName(classType, true)» extends AbstractTranslation
-        «ELSEIF classType == 'logEntry'»
-        class «entityClassName(classType, true)» extends AbstractLogEntry
-        «ELSEIF classType == 'metaData'»
-        class «entityClassName(classType, true)» extends «IF !app.targets('1.3.5')»Entity«classType.toFirstUpper»«ELSE»Zikula_Doctrine2_Entity_EntityMetadata«ENDIF»
-        «ELSEIF classType == 'attribute' || classType == 'category'»
-        class «entityClassName(classType, true)» extends «IF !app.targets('1.3.5')»Entity«classType.toFirstUpper»«ELSE»Zikula_Doctrine2_Entity_Entity«classType.toFirstUpper»«ENDIF»
-        «ENDIF»
+        «IF !app.targets('1.3.5')»abstract «ENDIF»class «IF !app.targets('1.3.5')»Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»Entity«ELSE»«entityClassName(classType, true)»«ENDIF» extends «extensionBaseClass(app, classType)»
         {
         «IF classType == 'metaData' || classType == 'attribute' || classType == 'category'»
             /**
@@ -457,6 +452,15 @@ class Extensions {
             }
         «ENDIF»
         }
+    '''
+
+    def private extensionBaseClass(Entity it, Application app, String classType) '''
+        «IF classType == 'closure'»AbstractClosure
+        «ELSEIF classType == 'translation'»AbstractTranslation
+        «ELSEIF classType == 'logEntry'»AbstractLogEntry
+        «ELSEIF classType == 'metaData'»«IF !app.targets('1.3.5')»AbstractEntityMetadata«ELSE»Zikula_Doctrine2_Entity_EntityMetadata«ENDIF»
+        «ELSEIF classType == 'attribute' || classType == 'category'»«IF app.targets('1.3.5')»Zikula_Doctrine2_Entity_«ENDIF»AbstractEntity«classType.toFirstUpper»
+        «ENDIF»
     '''
 
     def private extensionClassImpl(Entity it, Application app, String classType) '''
@@ -524,7 +528,7 @@ class Extensions {
         «IF app.targets('1.3.5')»
         class «entityClassName(classType, false)» extends «IF isInheriting»«parentType.entityClassName(classType, false)»«ELSE»«entityClassName(classType, true)»«ENDIF»
         «ELSE»
-        class «name.formatForCodeCapital»«classType.formatForCodeCapital» extends «IF isInheriting»«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»«ELSE»Base\«name.formatForCodeCapital»«classType.formatForCodeCapital»«ENDIF»
+        class «name.formatForCodeCapital»«classType.formatForCodeCapital»Entity extends «IF isInheriting»«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»Entity«ELSE»Base\Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»Entity«ENDIF»
         «ENDIF»
         {
             // feel free to add your own methods here

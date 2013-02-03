@@ -149,7 +149,7 @@ class ContentTypeList {
          */
         public function getTitle()
         {
-            $dom = ZLanguage::getModuleDomain('«appName»');
+            $dom = \ZLanguage::getModuleDomain('«appName»');
 
             return __('«appName» list view', $dom);
         }
@@ -161,7 +161,7 @@ class ContentTypeList {
          */
         public function getDescription()
         {
-            $dom = ZLanguage::getModuleDomain('«appName»');
+            $dom = \ZLanguage::getModuleDomain('«appName»');
 
             return __('Display list of «appName» objects.', $dom);
         }
@@ -238,12 +238,17 @@ class ContentTypeList {
          */
         public function display()
         {
-            $dom = ZLanguage::getModuleDomain('«appName»');
+            $dom = \ZLanguage::getModuleDomain('«appName»');
             \ModUtil::initOOModule('«appName»');
 
+            «IF targets('1.3.5')»
+                $entityClass = '«appName»_Entity_' . ucwords($this->objectType);
+            «ELSE»
+                $entityClass = '\\«appName»\\Entity\\' . ucwords($this->objectType) . 'Entity';
+            «ENDIF»
             $serviceManager = \ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
-            $repository = $entityManager->getRepository('«appName»_Entity_' . ucfirst($this->objectType));
+            $repository = $entityManager->getRepository($entityClass);
 
             $where = $this->filter;
             «IF hasCategorisableEntities»
@@ -265,7 +270,7 @@ class ContentTypeList {
             // ensure that the view does not look for templates in the Content module (#218)
             $this->view->toplevelmodule = '«appName»';
 
-            $this->view->setCaching(Zikula_View::CACHE_ENABLED);
+            $this->view->setCaching(\Zikula_View::CACHE_ENABLED);
             // set cache id
             $component = '«appName»:' . ucwords($this->objectType) . ':';
             $instance = '::';

@@ -32,8 +32,8 @@ class TreeSelection {
          *   - target:     One of 'allParents', 'directParent', 'allChildren', 'directChildren', 'predecessors', 'successors', 'preandsuccessors'
          *   - assign:     Variable where the results are assigned to.
          *
-         * @param  array       $params All attributes passed to this function from the template.
-         * @param  Zikula_View $view   Reference to the view object.
+         * @param  array        $params All attributes passed to this function from the template.
+         * @param  \Zikula_View $view   Reference to the view object.
          */
         function smarty_function_«appName.formatForDB»TreeSelection($params, $view)
         {
@@ -62,9 +62,14 @@ class TreeSelection {
                 return false;
             }
 
+            «IF targets('1.3.5')»
+                $entityClass = '«appName»_Entity_' . ucwords($params['objectType']);
+            «ELSE»
+                $entityClass = '\\«appName»\\Entity\\' . ucwords($params['objectType']) . 'Entity';
+            «ENDIF»
             $serviceManager = \ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
-            $repository = $entityManager->getRepository('«appName»_Entity_' . ucfirst($params['objectType']));
+            $repository = $entityManager->getRepository($entityClass);
             $titleFieldName = $repository->getTitleFieldName();
 
             $node = $params['node'];

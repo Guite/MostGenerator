@@ -76,10 +76,11 @@ class ExampleData {
     def private truncateTable(Entity it) '''
         «val app = container.application»
         «IF app.targets('1.3.5')»
-        $entityManager->getRepository('«app.appName»_Entity_«name.formatForCodeCapital»')->truncateTable();
+            $entityClass = '«app.appName»_Entity_«name.formatForCodeCapital»';
         «ELSE»
-        $entityManager->getRepository('\«app.appName»\Entity\«name.formatForCodeCapital»Entity')->truncateTable();
+            $entityClass = '\\«app.appName»\\Entity\\«name.formatForCodeCapital»Entity';
         «ENDIF»
+        $entityManager->getRepository($entityClass)->truncateTable();
     '''
 
     def private createExampleRows(Models it) '''
@@ -144,7 +145,7 @@ class ExampleData {
             «ENDIF»
             «FOR field : getFieldsForExampleData»«exampleRowAssignment(field, it, entityName, number)»«ENDFOR»
             «/*«IF hasTranslatableFields»
-                $«entityName»«number»->setLocale(ZLanguage::getLanguageCode());
+                $«entityName»«number»->setLocale(\ZLanguage::getLanguageCode());
             «ENDIF»*/»
             «IF tree != EntityTreeType::NONE»
                 $«entityName»«number»->setParent(«IF number == 1»null«ELSE»$«entityName»1«ENDIF»);
@@ -251,7 +252,7 @@ class ExampleData {
             BooleanField: if (defaultValue == true || defaultValue == 'true') 'true' else 'false'
             IntegerField: exampleRowValueNumber(dataEntity, number)
             DecimalField: exampleRowValueNumber(dataEntity, number)
-            StringField: if (it.country || it.language) 'ZLanguage::getLanguageCode()' else if (it.htmlcolour) '\'#ff6600\'' else exampleRowValueText(dataEntity, number)
+            StringField: if (it.country || it.language) '\\ZLanguage::getLanguageCode()' else if (it.htmlcolour) '\'#ff6600\'' else exampleRowValueText(dataEntity, number)
             TextField: exampleRowValueText(dataEntity, number)
             EmailField: '\'' + entity.container.application.email + '\''
             UrlField: '\'' + entity.container.application.url + '\''

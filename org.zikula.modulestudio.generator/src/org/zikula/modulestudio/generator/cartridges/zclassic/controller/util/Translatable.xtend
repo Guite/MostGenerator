@@ -131,11 +131,16 @@ class Translatable {
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
 
             // get translations
-            $repository = $entityManager->getRepository('«appName»_Entity_' . ucwords($objectType) . 'Translation');
+            «IF targets('1.3.5')»
+                $entityClass = '«appName»_Entity_' . ucwords($objectType) . 'Translation';
+            «ELSE»
+                $entityClass = '\\«appName»\\Entity\\' . ucwords($objectType) . 'TranslationEntity';
+            «ENDIF»
+            $repository = $entityManager->getRepository($entityClass);
             $entityTranslations = $repository->findTranslations($entity);
 
-            $supportedLocales = ZLanguage::getInstalledLanguages();
-            $currentLanguage = ZLanguage::getLanguageCode();
+            $supportedLocales = \ZLanguage::getInstalledLanguages();
+            $currentLanguage = \ZLanguage::getLanguageCode();
             foreach ($supportedLocales as $locale) {
                 if ($locale == $currentLanguage) {
                     // Translatable extension did already fetch current translation
@@ -177,11 +182,11 @@ class Translatable {
                 return $translations;
             }
 
-            $supportedLocales = ZLanguage::getInstalledLanguages();
+            $supportedLocales = \ZLanguage::getInstalledLanguages();
             $useOnlyCurrentLocale = true;
             if (\System::getVar('multilingual') == 1) {
                 $useOnlyCurrentLocale = false;
-                $currentLanguage = ZLanguage::getLanguageCode();
+                $currentLanguage = \ZLanguage::getLanguageCode();
                 foreach ($supportedLocales as $locale) {
                     if ($locale == $currentLanguage) {
                         // skip current language as this is not treated as translation on controller level
@@ -196,7 +201,7 @@ class Translatable {
                 }
             }
             if ($useOnlyCurrentLocale === true) {
-                $locale = ZLanguage::getLanguageCode();
+                $locale = \ZLanguage::getLanguageCode();
                 $translations[$locale] = array('locale' => $locale, 'fields' => array());
                 $translationData = $formData[strtolower($objectType) . $locale];
                 foreach ($fields as $field) {

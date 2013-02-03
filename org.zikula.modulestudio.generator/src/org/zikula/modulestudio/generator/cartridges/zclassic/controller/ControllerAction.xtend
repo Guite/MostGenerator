@@ -226,9 +226,14 @@ class ControllerAction {
     }
 
     def private dispatch actionImplBody(ViewAction it) '''
-        $repository = $this->entityManager->getRepository($this->name . '_Entity_' . ucfirst($objectType));
+        «IF app.targets('1.3.5')»
+            $entityClass = $this->name . '_Entity_' . ucwords($objectType);
+        «ELSE»
+            $entityClass = '\\' . $this->name . '\\Entity\\' . ucwords($objectType) . 'Entity';
+        «ENDIF»
+        $repository = $this->entityManager->getRepository($entityClass);
         $viewHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_View«ELSE»\Util\ViewUtil«ENDIF»($this->serviceManager);
-        «IF controller.container.application.hasTrees»
+        «IF app.hasTrees»
 
             $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : $this->request->query->filter('tpl', '', FILTER_SANITIZE_STRING);
             if ($tpl == 'tree') {
@@ -328,7 +333,7 @@ class ControllerAction {
         }
 
         // build ModUrl instance for display hooks
-        $currentUrlObject = new Zikula_ModUrl($this->name, '«controller.formattedName»', 'view', ZLanguage::getLanguageCode(), $currentUrlArgs);
+        $currentUrlObject = new \Zikula«IF app.targets('1.3.5')»_ModUrl«ELSE»\Core\ModUrl«ENDIF»($this->name, '«controller.formattedName»', 'view', \ZLanguage::getLanguageCode(), $currentUrlArgs);
 
         // assign the object data, sorting information and details for creating the pager
         $this->view->assign('items', $entities)
@@ -343,7 +348,12 @@ class ControllerAction {
     '''
 
     def private dispatch actionImplBody(DisplayAction it) '''
-        $repository = $this->entityManager->getRepository($this->name . '_Entity_' . ucfirst($objectType));
+        «IF app.targets('1.3.5')»
+            $entityClass = $this->name . '_Entity_' . ucwords($objectType);
+        «ELSE»
+            $entityClass = '\\' . $this->name . '\\Entity\\' . ucwords($objectType) . 'Entity';
+        «ENDIF»
+        $repository = $this->entityManager->getRepository($entityClass);
 
         $idFields = \ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
@@ -422,7 +432,7 @@ class ControllerAction {
         if (isset($entity['slug'])) {
             $currentUrlArgs['slug'] = $entity['slug'];
         }
-        $currentUrlObject = new Zikula_ModUrl($this->name, '«formattedName»', 'display', ZLanguage::getLanguageCode(), $currentUrlArgs);
+        $currentUrlObject = new \Zikula«IF app.targets('1.3.5')»_ModUrl«ELSE»\Core\ModUrl«ENDIF»($this->name, '«formattedName»', 'display', \ZLanguage::getLanguageCode(), $currentUrlArgs);
                     '''
         }
     }
@@ -505,7 +515,7 @@ class ControllerAction {
         «IF app.targets('1.3.5')»
         $handlerClass = $this->name . '_Form_Handler_«controller.formattedName.toFirstUpper»_' . ucfirst($objectType) . '_Edit';
         «ELSE»
-        $handlerClass = '\\' . $this->name . '\Form\Handler\«controller.formattedName.toFirstUpper»\' . ucfirst($objectType) . '\Edit';
+        $handlerClass = '\\' . $this->name . '\\Form\\Handler\\«controller.formattedName.toFirstUpper»\\' . ucfirst($objectType) . '\\EditHandler';
         «ENDIF»
 
         // determine the output template
@@ -589,10 +599,15 @@ class ControllerAction {
             }
         }
 
-        $repository = $this->entityManager->getRepository('«app.appName»_Entity_' . ucfirst($objectType));
+        «IF app.targets('1.3.5')»
+            $entityClass = $this->name . '_Entity_' . ucwords($objectType);
+        «ELSE»
+            $entityClass = '\\' . $this->name . '\\Entity\\' . ucwords($objectType) . 'Entity';
+        «ENDIF»
+        $repository = $this->entityManager->getRepository($entityClass);
 
         // set caching id
-        $this->view->setCaching(Zikula_View::CACHE_DISABLED);
+        $this->view->setCaching(\Zikula_View::CACHE_DISABLED);
 
         // assign the object we loaded above
         $this->view->assign($objectType, $entity)

@@ -94,7 +94,7 @@ class Search {
                 return '';
             }
 
-            $view = Zikula_View::getInstance($this->name);
+            $view = \Zikula_View::getInstance($this->name);
 
             «FOR entity : getAllEntities.filter(e|e.hasAbstractStringFieldsEntity)»
                 «val fieldName = 'active_' + entity.name.formatForCode»
@@ -156,7 +156,13 @@ class Search {
                 }
                 $where = «IF targets('1.3.5')»Search_Api_User«ELSE»\Search\Api\UserApi«ENDIF»::construct_where($args, $whereArray, $languageField);
 
-                $repository = $entityManager->getRepository($this->name . '_Entity_' . ucfirst($objectType));
+                «IF targets('1.3.5')»
+                    $entityClass = $this->name . '_Entity_' . ucwords($objectType);
+                «ELSE»
+                    $entityClass = '\\' . $this->name . '\\Entity\\' . ucwords($objectType) . 'Entity';
+                «ENDIF»
+                $repository = $entityManager->getRepository($entityClass);
+
                 // get objects from database
                 list($entities, $objectCount) = $repository->selectWherePaginated($where, '', $currentPage, $resultsPerPage, false);
 
@@ -198,7 +204,7 @@ class Search {
                     $description = ($descriptionField != '') ? $entity[$descriptionField] : '';
                     $created = (isset($entity['createdDate'])) ? $entity['createdDate'] : '';
 
-                    $searchItem = array(
+                    $searchItemData = array(
                         'title'   => $title,
                         'text'    => $description,
                         'extra'   => «IF hasUserDisplay»serialize($urlArgs)«ELSE»''«ENDIF»,
@@ -207,9 +213,23 @@ class Search {
                         'session' => $sessionId
                     );
 
-                    if (!\DBUtil::insertObject($searchItem, 'search_result')) {
+                    «IF targets('1.3.5')»
+                    if (!\DBUtil::insertObject($searchItemData, 'search_result')) {
                         return \LogUtil::registerError($this->__('Error! Could not save the search results.'));
                     }
+                    «ELSE»
+                    $searchItem = new \Users\Entity\SearchResultEntity();
+                    foreach ($searchItemData as $k => $v) {
+                        $fieldName = ($k == 'session') ? 'sesid' : $k;
+                        $searchItem[$fieldName] = $v;
+                    }
+                    try {
+                        $this->entityManager->persist($searchItem);
+                        $this->entityManager->flush();
+                    } catch (\Exception $e) {
+                        return \LogUtil::registerError($this->__('Error! Could not save the search results.'));
+                    }
+                    «ENDIF»
                 }
             }
 

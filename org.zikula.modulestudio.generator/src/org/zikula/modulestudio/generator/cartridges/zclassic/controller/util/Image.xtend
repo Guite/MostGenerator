@@ -64,7 +64,7 @@ class Image {
          * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType).
          * @param array  $args       Additional arguments.
          *
-         * @return SystemPlugin_Imagine_Manager The desired manager.
+         * @return \SystemPlugin_Imagine_Manager The desired manager.
          */
         public function getManager($objectType = '', $fieldName = '', $context = '', $args = array())
         {
@@ -111,7 +111,7 @@ class Image {
          * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType).
          * @param array  $args       Additional arguments.
          *
-         * @return SystemPlugin_Imagine_Preset The selected preset.
+         * @return \SystemPlugin_Imagine_Preset The selected preset.
          */
         public function getPreset($objectType = '', $fieldName = '', $presetName = '', $context = '', $args = array())
         {
@@ -141,7 +141,7 @@ class Image {
                 }
             }
 
-            $preset = new SystemPlugin_Imagine_Preset($presetName, $presetData);
+            $preset = new \SystemPlugin_Imagine_Preset($presetName, $presetData);
 
             return $preset;
         }

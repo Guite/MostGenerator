@@ -63,9 +63,14 @@ class Selection {
         public function getIdFields(array $args = array())
         {
             $objectType = $this->determineObjectType($args, 'getIdFields');
+            «IF targets('1.3.5')»
             $entityClass = '«appName»_Entity_' . ucfirst($objectType);
+            «ELSE»
+            $entityClass = '\\«appName»\\Entity\\' . ucfirst($objectType) . 'Entity';
+            «ENDIF»
             $objectTemp = new $entityClass(); 
             $idFields = $objectTemp->get_idFields();
+
             return $idFields;
         }
 
@@ -195,7 +200,14 @@ class Selection {
             if (empty($objectType)) {
                 return \LogUtil::registerArgsError();
             }
-            return $this->entityManager->getRepository('«appName»_Entity_' . ucfirst($objectType));
+
+            «IF targets('1.3.5')»
+                $entityClass = '«appName»_Entity_' . ucwords($objectType);
+            «ELSE»
+                $entityClass = '\\«appName»\\Entity\\' . ucwords($objectType) . 'Entity';
+            «ENDIF»
+
+            return $this->entityManager->getRepository($entityClass);
         }
         «IF hasTrees»
 

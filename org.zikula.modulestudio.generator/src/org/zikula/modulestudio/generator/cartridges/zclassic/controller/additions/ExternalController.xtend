@@ -42,19 +42,19 @@ class ExternalController {
     '''
 
     def private externalBaseClass(Application it) '''
-        «IF !targets('1.3.5')»
-            namespace «appName»\Controller\Base;
+    «IF !targets('1.3.5')»
+        namespace «appName»\Controller\Base;
 
-        «ENDIF»
-        /**
-         * Controller for external calls base class.
-         */
-        «IF targets('1.3.5')»
+    «ENDIF»
+    /**
+     * Controller for external calls base class.
+     */
+    «IF targets('1.3.5')»
         class «appName»_Controller_Base_External extends Zikula_AbstractController
-        «ELSE»
+    «ELSE»
         class ExternalController extends \Zikula_AbstractController
-        «ENDIF»
-        {
+    «ENDIF»
+    {
         «IF hasCategorisableEntities»
             /**
              * List of object types allowing categorisation.
@@ -65,10 +65,10 @@ class ExternalController {
 
         «ENDIF»
         «val additionalCommands = if (hasCategorisableEntities) categoryInitialisation else ''»
-    «new ControllerHelper().controllerPostInitialize(it, false, additionalCommands.toString)»
+        «new ControllerHelper().controllerPostInitialize(it, false, additionalCommands.toString)»
 
-            «externalBaseImpl»
-        }
+        «externalBaseImpl»
+    }
     '''
 
     def private categoryInitialisation(Application it) '''
@@ -117,7 +117,12 @@ class ExternalController {
 
             unset($args);
 
-            $repository = $this->entityManager->getRepository('«appName»_Entity_' . ucwords($objectType));
+            «IF targets('1.3.5')»
+                $entityClass = '«appName»_Entity_' . ucwords($objectType);
+            «ELSE»
+                $entityClass = '\\«appName»\\Entity\\' . ucwords($objectType) . 'Entity';
+            «ENDIF»
+            $repository = $this->entityManager->getRepository($entityClass);
             $idFields = \ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
             $idValues = array('id' => $id);«/** TODO consider composite keys properly */»
 
@@ -146,7 +151,7 @@ class ExternalController {
             $instance = $instanceId . '::';
              */»
 
-            $this->view->setCaching(Zikula_View::CACHE_ENABLED);
+            $this->view->setCaching(\Zikula_View::CACHE_ENABLED);
             // set cache id
             $accessLevel = ACCESS_READ;
             if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
@@ -192,7 +197,12 @@ class ExternalController {
 
             $this->throwForbiddenUnless(\SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT), \LogUtil::getErrorMsgPermission());
 
-            $repository = $this->entityManager->getRepository('«appName»_Entity_' . ucfirst($objectType));
+            «IF targets('1.3.5')»
+                $entityClass = '«appName»_Entity_' . ucwords($objectType);
+            «ELSE»
+                $entityClass = '\\«appName»\\Entity\\' . ucwords($objectType) . 'Entity';
+            «ENDIF»
+            $repository = $this->entityManager->getRepository($entityClass);
 
             $editor = (isset($args['editor']) && !empty($args['editor'])) ? $args['editor'] : $getData->filter('editor', '', FILTER_SANITIZE_STRING);
             if (empty($editor) || !in_array($editor, array('xinha', 'tinymce'/*, 'ckeditor'*/))) {
@@ -228,7 +238,7 @@ class ExternalController {
             $where = '';
             list($objectData, $objectCount) = $repository->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
 
-            $view = Zikula_View::getInstance('«appName»', false);
+            $view = \Zikula_View::getInstance('«appName»', false);
 
             $view->assign('editorName', $editor)
                  ->assign('objectType', $objectType)

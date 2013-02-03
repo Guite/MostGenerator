@@ -163,7 +163,7 @@ class Uploads {
          */
         public function performFileUpload($objectType, $fileData, $fieldName)
         {
-            $dom = ZLanguage::getModuleDomain('«appName»');
+            $dom = \ZLanguage::getModuleDomain('«appName»');
 
             $result = array('fileName' => '',
                             'metaData' => array());
@@ -223,7 +223,7 @@ class Uploads {
          */
         protected function validateFileUpload($objectType, $file, $fieldName)
         {
-            $dom = ZLanguage::getModuleDomain('«appName»');
+            $dom = \ZLanguage::getModuleDomain('«appName»');
 
             // check if a file has been uploaded properly without errors
             if ((!is_array($file)) || (is_array($file) && ($file['error'] != '0'))) {
@@ -251,11 +251,11 @@ class Uploads {
                 if ($fileSize > $maxSize) {
                     $maxSizeKB = $maxSize / 1024;
                     if ($maxSizeKB < 1024) {
-                        $maxSizeKB = DataUtil::formatNumber($maxSizeKB); 
+                        $maxSizeKB = \DataUtil::formatNumber($maxSizeKB); 
                         return \LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s kilobytes.', array($maxSizeKB), $dom));
                     }
                     $maxSizeMB = $maxSizeKB / 1024;
-                    $maxSizeMB = DataUtil::formatNumber($maxSizeMB); 
+                    $maxSizeMB = \DataUtil::formatNumber($maxSizeMB); 
                     return \LogUtil::registerError(__f('Error! Your file is too big. Please keep it smaller than %s megabytes.', array($maxSizeMB), $dom));
                 }
             }

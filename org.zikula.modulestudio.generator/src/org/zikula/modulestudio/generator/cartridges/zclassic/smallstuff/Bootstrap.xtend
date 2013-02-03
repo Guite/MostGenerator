@@ -80,7 +80,7 @@ class Bootstrap {
             «ENDIF»
             «IF hasTranslatable»
                 $translatableListener = $helper->getListener('translatable');
-                //$translatableListener->setTranslatableLocale(ZLanguage::getLanguageCode());
+                //$translatableListener->setTranslatableLocale(\ZLanguage::getLanguageCode());
                 $currentLanguage = preg_replace('#[^a-z-].#', '', \FormUtil::getPassedValue('lang', \System::getVar('language_i18n', 'en'), 'GET'));
                 $translatableListener->setTranslatableLocale($currentLanguage);
                 /**
@@ -116,7 +116,12 @@ class Bootstrap {
                 «FOR entity : entitiesWithArchive»
 
                     // update for «entity.nameMultiple.formatForDisplay» becoming archived
-                    $repository = $entityManager->getRepository('«appName»_Entity_«entity.name.formatForCodeCapital»');
+                    «IF targets('1.3.5')»
+                        $entityClass = '«appName»_Entity_«entity.name.formatForCodeCapital»';
+                    «ELSE»
+                        $entityClass = '\\«appName»\\Entity\\«entity.name.formatForCodeCapital»Entity';
+                    «ENDIF»
+                    $repository = $entityManager->getRepository($entityClass);
                     $repository->archiveObjects();
                 «ENDFOR»
             }

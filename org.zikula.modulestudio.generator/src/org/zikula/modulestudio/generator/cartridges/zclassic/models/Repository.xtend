@@ -415,7 +415,7 @@ class Repository {
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->delete('«entityClassName('', false)»', 'tbl')
                ->where('tbl.createdUserId = :creator')
-               ->setParameter('creator', DataUtil::formatForStore($userId));
+               ->setParameter('creator', \DataUtil::formatForStore($userId));
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -440,7 +440,7 @@ class Repository {
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->delete('«entityClassName('', false)»', 'tbl')
                ->where('tbl.updatedUserId = :editor')
-               ->setParameter('editor', DataUtil::formatForStore($userId));
+               ->setParameter('editor', \DataUtil::formatForStore($userId));
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -468,7 +468,7 @@ class Repository {
             $qb->update('«entityClassName('', false)»', 'tbl')
                ->set('tbl.createdUserId', $newUserId)
                ->where('tbl.createdUserId = :creator')
-               ->setParameter('creator', DataUtil::formatForStore($userId));
+               ->setParameter('creator', \DataUtil::formatForStore($userId));
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -496,7 +496,7 @@ class Repository {
             $qb->update('«entityClassName('', false)»', 'tbl')
                ->set('tbl.updatedUserId', $newUserId)
                ->where('tbl.updatedUserId = :editor')
-               ->setParameter('editor', DataUtil::formatForStore($userId));
+               ->setParameter('editor', \DataUtil::formatForStore($userId));
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -533,7 +533,7 @@ class Repository {
             $qb->update('«entityClassName('', false)»', 'tbl')
                ->set('tbl.' . $userFieldName, $newUserId)
                ->where('tbl.' . $userFieldName . ' = :user')
-               ->setParameter('user', DataUtil::formatForStore($userId));
+               ->setParameter('user', \DataUtil::formatForStore($userId));
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -557,11 +557,11 @@ class Repository {
             if (is_array($id)) {
                 foreach ($id as $fieldName => $fieldValue) {
                     $qb->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
-                       ->setParameter($fieldName, DataUtil::formatForStore($fieldValue));
+                       ->setParameter($fieldName, \DataUtil::formatForStore($fieldValue));
                 }
             } else {
                 $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» = :id')
-                   ->setParameter('id', DataUtil::formatForStore($id));
+                   ->setParameter('id', \DataUtil::formatForStore($id));
             }
             return $qb;
         }
@@ -614,7 +614,7 @@ class Repository {
             $qb = $this->_intBaseQuery('', '', $useJoins, $slimMode);
 
             $qb->andWhere('tbl.slug = :slug')
-               ->setParameter('slug', DataUtil::formatForStore($slugTitle));
+               ->setParameter('slug', \DataUtil::formatForStore($slugTitle));
 
             $qb = $this->addExclusion($qb, $excludeId);
 
@@ -640,14 +640,14 @@ class Repository {
                 if (is_array($excludeId)) {
                     foreach ($id as $fieldName => $fieldValue) {
                         $qb->andWhere('tbl.' . $fieldName . ' != :' . $fieldName)
-                           ->setParameter($fieldName, DataUtil::formatForStore($fieldValue));
+                           ->setParameter($fieldName, \DataUtil::formatForStore($fieldValue));
                     }
                 } elseif ($excludeId > 0) {
             «ELSE»
                 if ($excludeId > 0) {
             «ENDIF»
                 $qb->andWhere('tbl.id != :excludeId')
-                   ->setParameter('excludeId', DataUtil::formatForStore($excludeId));
+                   ->setParameter('excludeId', \DataUtil::formatForStore($excludeId));
             }
             return $qb;
         }
@@ -766,13 +766,13 @@ class Repository {
                     // single category filter
                     if ($v > 0) {
                         $qb->andWhere('tblCategories.category = :category')
-                           ->setParameter('category', DataUtil::formatForStore($v));
+                           ->setParameter('category', \DataUtil::formatForStore($v));
                     }
                 } elseif ($k == 'catIdList') {
                     // multi category filter
                     /* old
                     $qb->andWhereIn('tblCategories.category IN (:categories)')
-                       ->setParameter('categories', DataUtil::formatForStore($v));
+                       ->setParameter('categories', \DataUtil::formatForStore($v));
                      */
                     $categoryFiltersPerRegistry = \ModUtil::apiFunc('«container.application.appName»', 'category', 'buildFilterClauses', array('ot' => '«name.formatForDisplay»', 'catids' => $v));
                     if (count($categoryFiltersPerRegistry) > 0) {
@@ -797,10 +797,10 @@ class Repository {
                     if ($v != '' || (is_numeric($v) && $v > 0)) {
                         if ($k == 'workflowState' && substr($v, 0, 1) == '!') {
                             $qb->andWhere('tbl.' . $k . ' != :' . $k)
-                               ->setParameter($k, DataUtil::formatForStore(substr($v, 1, strlen($v)-1)));
+                               ->setParameter($k, \DataUtil::formatForStore(substr($v, 1, strlen($v)-1)));
                         } else {
                             $qb->andWhere('tbl.' . $k . ' = :' . $k)
-                               ->setParameter($k, DataUtil::formatForStore($v));
+                               ->setParameter($k, \DataUtil::formatForStore($v));
                        }
                     }
                 }
@@ -820,7 +820,7 @@ class Repository {
                         }
                     «ENDIF»
                     $qb->andWhereIn('tbl.workflowState IN (:onlineStates)')
-                       ->setParameter('onlineStates', DataUtil::formatForStore($onlineStates));
+                       ->setParameter('onlineStates', \DataUtil::formatForStore($onlineStates));
                 }
                 «applyDefaultDateRangeFilter»
             }
@@ -877,7 +877,7 @@ class Repository {
             if (count($exclude) > 0) {
                 $exclude = implode(', ', $exclude);
                 $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» NOT IN (:excludeList)')«/* TODO fix composite keys */»
-                   ->setParameter('excludeList', DataUtil::formatForStore($exclude));
+                   ->setParameter('excludeList', \DataUtil::formatForStore($exclude));
             }
 
             $qb = $this->addSearchFilter($qb, $fragment);
@@ -914,7 +914,7 @@ class Repository {
                 return $qb;
             }
 
-            $fragment = DataUtil::formatForStore($fragment);
+            $fragment = \DataUtil::formatForStore($fragment);
             $fragmentIsNumeric = is_numeric($fragment);
 
             «val searchFields = getDisplayFields.filter(e|e.isContainedInTextualSearch)»
@@ -1006,7 +1006,7 @@ class Repository {
         {
             $qb = $this->getCountQuery('', false);
             $qb->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
-               ->setParameter($fieldName, DataUtil::formatForStore($fieldValue));
+               ->setParameter($fieldName, \DataUtil::formatForStore($fieldValue));
 
             $qb = $this->addExclusion($qb, $excludeId);
 
@@ -1090,7 +1090,7 @@ class Repository {
                 if ($onlyOwn == 1) {
                     $uid = \UserUtil::getVar('uid');
                     $qb->andWhere('tbl.createdUserId = :creator')
-                       ->setParameter('creator', DataUtil::formatForStore($uid));
+                       ->setParameter('creator', \DataUtil::formatForStore($uid));
                 }
             «ENDIF»
 
@@ -1116,7 +1116,7 @@ class Repository {
                 «ELSE»
                     $idValues = $this->getIdentifierListForRandomSorting();
                     $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» IN (:idValues)')
-                       ->setParameter('idValues', DataUtil::formatForStore($idValues));
+                       ->setParameter('idValues', \DataUtil::formatForStore($idValues));
                 «ENDIF»
 
                 // no specific ordering in the main query for random items
@@ -1332,7 +1332,7 @@ class Repository {
                 if (isset($this->entityRef['slug'])) {
                     $urlArgs['slug'] = $this->entityRef['slug'];
                 }
-                $url = new Zikula_ModUrl($this->name, $currentType, 'display', ZLanguage::getLanguageCode(), $urlArgs);
+                $url = new Zikula«IF app.targets('1.3.5')»_ModUrl«ELSE»\Core\ModUrl«ENDIF»($this->name, $currentType, 'display', \ZLanguage::getLanguageCode(), $urlArgs);
                 «IF app.targets('1.3.5')»
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
                 $this->notifyHooks($hook);

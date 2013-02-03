@@ -36,8 +36,8 @@ class TreeJS {
          *   - root:       Optional id of root node, defaults to 1.
          *   - assign:     If set, the results are assigned to the corresponding variable instead of printed out.
          *
-         * @param  array       $params  All attributes passed to this function from the template.
-         * @param  Zikula_View $view    Reference to the view object.
+         * @param  array        $params  All attributes passed to this function from the template.
+         * @param  \Zikula_View $view    Reference to the view object.
          *
          * @return string The output of the plugin.
          */
@@ -69,9 +69,14 @@ class TreeJS {
                 «controllerEditActionFlags»
             }
 
+            «IF targets('1.3.5')»
+                $entityClass = '«appName»_Entity_' . ucwords($params['objectType']);
+            «ELSE»
+                $entityClass = '\\«appName»\\Entity\\' . ucwords($params['objectType']) . 'Entity';
+            «ENDIF»
             $serviceManager = \ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
-            $repository = $entityManager->getRepository('«appName»_Entity_' . ucfirst($params['objectType']));
+            $repository = $entityManager->getRepository($entityClass);
             $titleFieldName = $repository->getTitleFieldName();
             $descriptionFieldName = $repository->getDescriptionFieldName();
 
@@ -96,7 +101,7 @@ class TreeJS {
             }
 
             // instantiate and initialise the output tree object
-            $tree = new Zikula_Tree();
+            $tree = new \Zikula_Tree();
             $tree->setOption('id', 'itemtree' . $params['root']);
             //$tree->setOption('objid', $idField);
             $tree->setOption('treeClass', 'z-nestedsetlist');

@@ -102,9 +102,14 @@ class Mailz {
             «val leadingEntity = getLeadingEntity»
             $objectType = '«leadingEntity.name.formatForCode»';
 
+            «IF targets('1.3.5')»
+                $entityClass = '«appName»_Entity_' . ucwords($objectType);
+            «ELSE»
+                $entityClass = '\\«appName»\\Entity\\' . ucwords($objectType) . 'Entity';
+            «ENDIF»
             $serviceManager = \ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
-            $repository = $entityManager->getRepository('«appName»_Entity_' . ucfirst($objectType));
+            $repository = $entityManager->getRepository($entityClass);
 
             $idFields = \ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
 
@@ -137,7 +142,7 @@ class Mailz {
             );
             list($entities, $objectCount) = \ModUtil::apiFunc('«appName»', 'selection', 'getEntitiesPaginated', $selectionArgs);
 
-            $view = Zikula_View::getInstance('«appName»', true);
+            $view = \Zikula_View::getInstance('«appName»', true);
 
             //$data = array('sorting' => $this->sorting, 'amount' => $this->amount, 'filter' => $this->filter, 'template' => $this->template);
             //$view->assign('vars', $data);

@@ -170,7 +170,7 @@ class WorkflowUtil {
             $schema = null;
             $schemaName = $this->getWorkflowName($objectType);
             if ($schemaName != '') {
-                $schema = Zikula_Workflow_Util::loadSchema($schemaName, $this->name);
+                $schema = \Zikula_Workflow_Util::loadSchema($schemaName, $this->name);
             }
 
             return $schema;
@@ -192,7 +192,7 @@ class WorkflowUtil {
             $objectType = $entity['_objectType'];
             $schemaName = $this->getWorkflowName($objectType);
             $idcolumn = $entity['__WORKFLOW__']['obj_idcolumn'];
-            $wfActions = Zikula_Workflow_Util::getActionsForObject($entity, $objectType, $idcolumn, $this->name);
+            $wfActions = \Zikula_Workflow_Util::getActionsForObject($entity, $objectType, $idcolumn, $this->name);
 
             // as we use the workflows for multiple object types we must maybe filter out some actions
             $listHelper = new «IF targets('1.3.5')»«appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($this->serviceManager);
@@ -305,7 +305,7 @@ class WorkflowUtil {
             $objectType = $entity['_objectType'];
             $schemaName = $this->getWorkflowName($objectType);
             $idcolumn = $entity['__WORKFLOW__']['obj_idcolumn'];
-            $result = Zikula_Workflow_Util::executeAction($schemaName, $entity, $actionId, $objectType, $this->name, $idcolumn);
+            $result = \Zikula_Workflow_Util::executeAction($schemaName, $entity, $actionId, $objectType, $this->name, $idcolumn);
 
             return $result;
         }
@@ -381,9 +381,14 @@ class WorkflowUtil {
          */
         public function getAmountOfModerationItems($objectType, $state)
         {
+            «IF targets('1.3.5')»
+                $entityClass = $this->name . '_Entity_' . ucwords($objectType);
+            «ELSE»
+                $entityClass = '\\' . $this->name . '\\Entity\\' . ucwords($objectType) . 'Entity';
+            «ENDIF»
             $entityManager = $this->serviceManager->getService('doctrine.entitymanager');
 
-            $repository = $entityManager->getRepository($this->name . '_Entity_' . ucfirst($objectType));
+            $repository = $entityManager->getRepository($entityClass);
 
             $where = 'tbl.workflowState = \'' . $state . '\'';
             $useJoins = false;

@@ -70,26 +70,26 @@ class ViewUtil {
         /**
          * Determines the view template for a certain method with given parameters.
          *
-         * @param Zikula_View $view       Reference to view object.
-         * @param string      $type       Current type (admin, user, ...).
-         * @param string      $objectType Name of treated entity type.
-         * @param string      $func       Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
-         * @param array       $args       Additional arguments.
+         * @param \Zikula_View $view       Reference to view object.
+         * @param string       $type       Current type (admin, user, ...).
+         * @param string       $objectType Name of treated entity type.
+         * @param string       $func       Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
+         * @param array        $args       Additional arguments.
          *
          * @return string name of template file.
          */
         public function getViewTemplate($view, $type, $objectType, $func, $args = array())
         {
             // create the base template name
-            $template = DataUtil::formatForOS(«IF targets('1.3.5')»$type . '/' . $objectType«ELSE»ucwords($type) . '/' . ucwords($objectType)«ENDIF» . '/' . $func);
+            $template = \DataUtil::formatForOS(«IF targets('1.3.5')»$type . '/' . $objectType«ELSE»ucwords($type) . '/' . ucwords($objectType)«ENDIF» . '/' . $func);
 
             // check for template extension
             $templateExtension = $this->determineExtension($view, $type, $objectType, $func, $args);
 
             // check whether a special template is used
             $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : \FormUtil::getPassedValue('tpl', '', 'GETPOST', FILTER_SANITIZE_STRING);
-            if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.' . $templateExtension)) {
-                $template .= '_' . DataUtil::formatForOS($tpl);
+            if (!empty($tpl) && $view->template_exists($template . '_' . \DataUtil::formatForOS($tpl) . '.' . $templateExtension)) {
+                $template .= '_' . \DataUtil::formatForOS($tpl);
             }
             $template .= '.' . $templateExtension;
 
@@ -101,12 +101,12 @@ class ViewUtil {
         /**
          * Utility method for managing view templates.
          *
-         * @param Zikula_View $view       Reference to view object.
-         * @param string      $type       Current type (admin, user, ...).
-         * @param string      $objectType Name of treated entity type.
-         * @param string      $func       Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
-         * @param string      $template   Optional assignment of precalculated template file.
-         * @param array       $args       Additional arguments.
+         * @param \Zikula_View $view       Reference to view object.
+         * @param string       $type       Current type (admin, user, ...).
+         * @param string       $objectType Name of treated entity type.
+         * @param string       $func       Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
+         * @param string       $template   Optional assignment of precalculated template file.
+         * @param array        $args       Additional arguments.
          *
          * @return mixed Output.
          */
@@ -144,7 +144,7 @@ class ViewUtil {
             «IF targets('1.3.5')»
             return $view->fetch($template);
             «ELSE»
-            return $this->response($view->fetch($template));
+            return new \Symfony\Component\HttpFoundation\Response($view->fetch($template));
             «ENDIF»
         }
     '''
@@ -153,11 +153,11 @@ class ViewUtil {
         /**
          * Get extension of the currently treated template.
          *
-         * @param Zikula_View $view       Reference to view object.
-         * @param string      $type       Current type (admin, user, ...).
-         * @param string      $objectType Name of treated entity type.
-         * @param string      $func       Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
-         * @param array       $args       Additional arguments.
+         * @param \Zikula_View $view       Reference to view object.
+         * @param string       $type       Current type (admin, user, ...).
+         * @param string       $objectType Name of treated entity type.
+         * @param string       $func       Current function («IF targets('1.3.5')»main«ELSE»index«ENDIF», view, ...).
+         * @param array        $args       Additional arguments.
          *
          * @return array List of allowed template extensions.
          */
@@ -220,12 +220,12 @@ class ViewUtil {
         /**
          * Processes a template file using dompdf (LGPL).
          *
-         * @param Zikula_View $view     Reference to view object.
-         * @param string      $template Name of template to use.
+         * @param \Zikula_View $view     Reference to view object.
+         * @param string       $template Name of template to use.
          *
          * @return mixed Output.
          */
-        protected function processPdf(Zikula_View $view, $template)
+        protected function processPdf(\Zikula_View $view, $template)
         {
             // first the content, to set page vars
             $output = $view->fetch($template);

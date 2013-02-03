@@ -190,7 +190,7 @@ class ControllerUtil {
             $name = str_replace(array('ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü', 'ß', '.', '?', '"', '/', ':', 'é', 'è', 'â'),
                                 array('ae', 'oe', 'ue', 'Ae', 'Oe', 'Ue', 'ss', '', '', '', '-', '-', 'e', 'e', 'a'),
                                 $name);
-            $name = DataUtil::formatPermalink($name);
+            $name = \DataUtil::formatPermalink($name);
 
             return strtolower($name);
         }
@@ -234,7 +234,7 @@ class ControllerUtil {
                 «ENDFOR»
             }
 
-            return DataUtil::formatForOS($basePath);
+            return \DataUtil::formatForOS($basePath);
         }
     '''
 
@@ -265,8 +265,8 @@ class ControllerUtil {
             }
 
             // Write a htaccess file into the upload directory
-            $htaccessFilePath = $uploadPath . '.htaccess';
-            $htaccessFileTemplate = 'modules/«appName»/«IF targets('1.3.5')»docs«ELSE»«getAppDocPath»«ENDIF»/htaccessTemplate';
+            $htaccessFilePath = $uploadPath . '/.htaccess';
+            $htaccessFileTemplate = 'modules/«appName»/«IF targets('1.3.5')»docs/«ELSE»«getAppDocPath»«ENDIF»htaccessTemplate';
             if (!file_exists($htaccessFilePath) && file_exists($htaccessFileTemplate)) {
                 $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
                 $htaccessContent = str_replace('__EXTENSIONS__', $extensions, \FileUtil::readFile($htaccessFileTemplate));
@@ -294,7 +294,7 @@ class ControllerUtil {
          */
         public function performGeoCoding($address)
         {
-            $lang = ZLanguage::getLanguageCode();
+            $lang = \ZLanguage::getLanguageCode();
             $url = 'http://maps.google.com/maps/api/geocode/xml?address=' . urlencode($address);
             $url .= '&region=' . $lang . '&language=' . $lang . '&sensor=false';
 

@@ -128,9 +128,22 @@ class EventListener {
         {
             // delete workflow for this entity
             $workflow = $this['__WORKFLOW__'];
+            «IF container.application.targets('1.3.5')»
             $result = (bool) \DBUtil::deleteObjectByID('workflows', $workflow['id']);
+            «ELSE»
+            $serviceManager = \ServiceUtil::getManager();
+            $entityManager = $serviceManager->getService('doctrine.entitymanager');
+            $result = true;
+            try {
+                $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowsEntity', $workflow['id']);
+                $entityManager->remove($workflow);
+                $entityManager->flush();
+            } catch (\Exception $e) {
+                $result = false;
+            }
+            «ENDIF»
             if ($result === false) {
-                $dom = ZLanguage::getModuleDomain('«container.application.appName»');
+                $dom = \ZLanguage::getModuleDomain('«container.application.appName»');
                 return \LogUtil::registerError(__('Error! Could not remove stored workflow. Deletion has been aborted.', $dom));
             }
 
@@ -386,10 +399,10 @@ class EventListener {
                              $this['«name.formatForCode»'] = (bool) $this['«name.formatForCode»'];
                          '''
             AbstractIntegerField: '''
-                             $this['«name.formatForCode»'] = (int) ((isset($this['«name.formatForCode»']) && !empty($this['«name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode»']) : 0);
+                             $this['«name.formatForCode»'] = (int) ((isset($this['«name.formatForCode»']) && !empty($this['«name.formatForCode»'])) ? \DataUtil::formatForDisplay($this['«name.formatForCode»']) : 0);
                          '''
             DecimalField: '''
-                             $this['«name.formatForCode»'] = (float) ((isset($this['«name.formatForCode»']) && !empty($this['«name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode»']) : 0.00);
+                             $this['«name.formatForCode»'] = (float) ((isset($this['«name.formatForCode»']) && !empty($this['«name.formatForCode»'])) ? \DataUtil::formatForDisplay($this['«name.formatForCode»']) : 0.00);
                          '''
             StringField: sanitizeForOutputHTML
             TextField: sanitizeForOutputHTML
@@ -397,27 +410,27 @@ class EventListener {
             ListField: sanitizeForOutputHTMLWithZero
             UploadField: sanitizeForOutputUpload
             ArrayField: '''
-                             $this['«name.formatForCode»'] = ((isset($this['«name.formatForCode»']) && is_array($this['«name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode»']) : array());
+                             $this['«name.formatForCode»'] = ((isset($this['«name.formatForCode»']) && is_array($this['«name.formatForCode»'])) ? \DataUtil::formatForDisplay($this['«name.formatForCode»']) : array());
                          '''
             AbstractDateField: ''
             FloatField: '''
-                             $this['«name.formatForCode»'] = (float) ((isset($this['«name.formatForCode»']) && !empty($this['«name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode»']) : 0.00);
+                             $this['«name.formatForCode»'] = (float) ((isset($this['«name.formatForCode»']) && !empty($this['«name.formatForCode»'])) ? \DataUtil::formatForDisplay($this['«name.formatForCode»']) : 0.00);
                          '''
             default: '''
-                        $this['«it.name.formatForCode»'] = ((isset($this['«it.name.formatForCode»']) && !empty($this['«it.name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«it.name.formatForCode»']) : '');
+                        $this['«it.name.formatForCode»'] = ((isset($this['«it.name.formatForCode»']) && !empty($this['«it.name.formatForCode»'])) ? \DataUtil::formatForDisplay($this['«it.name.formatForCode»']) : '');
                     '''
         }
     }
 
     def private sanitizeForOutputHTML(EntityField it) '''
         if ($currentFunc != 'edit') {
-            $this['«it.name.formatForCode»'] = ((isset($this['«it.name.formatForCode»']) && !empty($this['«it.name.formatForCode»'])) ? DataUtil::formatForDisplayHTML($this['«it.name.formatForCode»']) : '');
+            $this['«it.name.formatForCode»'] = ((isset($this['«it.name.formatForCode»']) && !empty($this['«it.name.formatForCode»'])) ? \DataUtil::formatForDisplayHTML($this['«it.name.formatForCode»']) : '');
         }
     '''
 
     def private sanitizeForOutputHTMLWithZero(EntityField it) '''
         if ($currentFunc != 'edit') {
-            $this['«it.name.formatForCode»'] = (((isset($this['«it.name.formatForCode»']) && !empty($this['«it.name.formatForCode»'])) || $this['«it.name.formatForCode»'] == 0) ? DataUtil::formatForDisplayHTML($this['«it.name.formatForCode»']) : '');
+            $this['«it.name.formatForCode»'] = (((isset($this['«it.name.formatForCode»']) && !empty($this['«it.name.formatForCode»'])) || $this['«it.name.formatForCode»'] == 0) ? \DataUtil::formatForDisplayHTML($this['«it.name.formatForCode»']) : '');
         }
     '''
 

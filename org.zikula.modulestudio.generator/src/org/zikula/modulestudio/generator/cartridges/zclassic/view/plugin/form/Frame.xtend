@@ -144,8 +144,8 @@ class Frame {
             // do that explicitively in the templates.
 
             // We need to concatenate the output of boths plugins.
-            $result = $view->registerPlugin('Zikula_Form_Plugin_ValidationSummary', $params);
-            $result .= $view->registerBlock('«appName»_Form_Plugin_FormFrame', $params, $content);
+            $result = $view->registerPlugin('\\Zikula_Form_Plugin_ValidationSummary', $params);
+            $result .= $view->registerBlock('«IF targets('1.3.5')»«appName»_Form_Plugin_FormFrame«ELSE»\\«appName»\\Form\\Plugin\\FormFrame«ENDIF»', $params, $content);
 
             return $result;
         }

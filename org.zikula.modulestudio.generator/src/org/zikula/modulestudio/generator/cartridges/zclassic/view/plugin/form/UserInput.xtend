@@ -105,7 +105,7 @@ class UserInput {
              */
             public function render(Zikula_Form_View $view)
             {
-                $dom = ZLanguage::getModuleDomain('«appName»');
+                $dom = \ZLanguage::getModuleDomain('«appName»');
 
                 //$result = parent::render($view);
 
@@ -143,7 +143,7 @@ class UserInput {
 
                 $result .= '</div>' . "\n";
                 $result .= '<noscript><p>' . __('This function requires JavaScript activated!', $dom) . '</p></noscript>' . "\n";
-                $result .= '<input type="hidden" id="' . $this->getId() . '" name="' . $this->getId() . '" value="' . DataUtil::formatForDisplay($this->text) . '" />' . "\n";
+                $result .= '<input type="hidden" id="' . $this->getId() . '" name="' . $this->getId() . '" value="' . \DataUtil::formatForDisplay($this->text) . '" />' . "\n";
 
                 return $result;
             }
@@ -225,7 +225,7 @@ class UserInput {
          */
         function smarty_function_«appName.formatForDB»UserInput($params, $view)
         {
-            return $view->registerPlugin('«appName»_Form_Plugin_UserInput', $params);
+            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_UserInput«ELSE»\\«appName»\\Form\\Plugin\\UserInput«ENDIF»', $params);
         }
     '''
 }
