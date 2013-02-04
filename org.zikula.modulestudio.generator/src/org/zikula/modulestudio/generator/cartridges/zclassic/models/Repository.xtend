@@ -285,19 +285,21 @@ class Repository {
                     «ENDIF»
                 }
 
-                // initialise Imagine preset manager instances
-                $imageHelper = new \«container.application.appName»«IF app.targets('1.3.5')»_Util_Image«ELSE»\Util\ImageUtil«ENDIF»(\ServiceUtil::getManager());
-                «IF hasUploadFieldsEntity»
+                «IF app.hasUploads»
+                    // initialise Imagine preset manager instances
+                    $imageHelper = new \«container.application.appName»«IF app.targets('1.3.5')»_Util_Image«ELSE»\Util\ImageUtil«ENDIF»(\ServiceUtil::getManager());
+                    «IF hasUploadFieldsEntity»
 
-                    $objectType = '«name.formatForCode»';
-                    «FOR uploadField : getUploadFieldsEntity»
-                        $parameters[$objectType . 'ThumbManager«uploadField.name.formatForCodeCapital»'] = $imageHelper->getManager($objectType, '«uploadField.name.formatForCode»', $context, $args);
-                    «ENDFOR»
+                        $objectType = '«name.formatForCode»';
+                        «FOR uploadField : getUploadFieldsEntity»
+                            $parameters[$objectType . 'ThumbManager«uploadField.name.formatForCodeCapital»'] = $imageHelper->getManager($objectType, '«uploadField.name.formatForCode»', $context, $args);
+                        «ENDFOR»
+                    «ENDIF»
+                    if (in_array($args['action'], array('display', 'view'))) {
+                        // use seperate preset for images in related items
+                        $parameters['relationThumbPreset'] = $imageHelper->getPreset('', '', '«container.application.appName»_relateditem', $context, $args);
+                    }
                 «ENDIF»
-                if (in_array($args['action'], array('display', 'view'))) {
-                    // use seperate preset for images in related items
-                    $parameters['relationThumbPreset'] = $imageHelper->getPreset('', '', '«container.application.appName»_relateditem', $context, $args);
-                }
             }
 
             // in the concrete child class you could do something like
