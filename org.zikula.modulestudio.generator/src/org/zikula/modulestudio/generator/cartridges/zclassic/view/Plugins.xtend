@@ -29,16 +29,21 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.view.plugin.form.Us
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Plugins {
     @Inject extension ControllerExtensions = new ControllerExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
+    @Inject extension Utils = new Utils()
     @Inject extension WorkflowExtensions = new WorkflowExtensions()
 
     def generate(Application it, IFileSystemAccess fsa) {
         viewPlugins(fsa)
+        if (hasEditActions || needsConfig) {
+            new Frame().generate(it, fsa)
+        }
         if (hasEditActions) {
             editPlugins(fsa)
             new ValidationError().generate(it, fsa)
@@ -72,7 +77,6 @@ class Plugins {
     }
 
     def private editPlugins(Application it, IFileSystemAccess fsa) {
-        new Frame().generate(it, fsa)
         if (hasColourFields) {
             new ColourInput().generate(it, fsa)
         }
