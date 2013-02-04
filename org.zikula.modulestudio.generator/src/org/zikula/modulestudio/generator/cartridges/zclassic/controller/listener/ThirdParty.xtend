@@ -77,6 +77,7 @@ class ThirdParty {
          *
          * This event occurs when the Content module is 'searching' for Content plugins.
          * The subject is an instance of Content_Types.
+         * You can register custom content types as well as custom layout types.
          *
          * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
          */
