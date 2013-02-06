@@ -1,7 +1,6 @@
 # Commands for building a p2 site for the generator
 
-# materialise stuff by cquery/mspec/rmap
-import --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "scm/org.zikula.modulestudio.generator.build/most.mspec"
+# materialise stuff by cquery/rmap
 resolve --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "scm/org.zikula.modulestudio.generator.build/most.cquery"
 
 # compile Xtend 2 classes
