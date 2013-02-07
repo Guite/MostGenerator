@@ -65,7 +65,7 @@ class Ajax {
              */ 
             public function getCommonUsersList«IF !app.targets('1.3.5')»Action«ENDIF»()
             {
-                if (!\SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+                if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
                     return true;
                 }
 
@@ -77,25 +77,25 @@ class Ajax {
                 }
 
                 «IF app.targets('1.3.5')»
-                \ModUtil::dbInfoLoad('Users');
-                $tables = \DBUtil::getTables();
+                ModUtil::dbInfoLoad('Users');
+                $tables = DBUtil::getTables();
 
                 $usersColumn = $tables['users_column'];
 
-                $where = 'WHERE ' . $usersColumn['uname'] . ' REGEXP \'(' . \DataUtil::formatForStore($fragment) . ')\'';
-                $results = \DBUtil::selectObjectArray('users', $where);
+                $where = 'WHERE ' . $usersColumn['uname'] . ' REGEXP \'(' . DataUtil::formatForStore($fragment) . ')\'';
+                $results = DBUtil::selectObjectArray('users', $where);
                 «ELSE»
-                \ModUtil::initOOModule('Users');
+                ModUtil::initOOModule('Users');
 
                 $dql = "SELECT u FROM Users\Entity\UserEntity u WHERE u.uname LIKE '% " . DataUtil::formatForStore($fragment) . "%'";
                 $query = $this->entityManager->createQuery($dql);
-                $results = $query->getResult(\Doctrine\ORM\AbstractQuery::HYDRATE_ARRAY);
+                $results = $query->getResult(AbstractQuery::HYDRATE_ARRAY);
                 «ENDIF»
 
                 $out = '<ul>';
                 if (is_array($results) && count($results) > 0) {
                     foreach($results as $result) {
-                        $out .= '<li>' . \DataUtil::formatForDisplay($result['uname']) . '<input type="hidden" id="' . \DataUtil::formatForDisplay($result['uname']) . '" value="' . $result['uid'] . '" /></li>';
+                        $out .= '<li>' . DataUtil::formatForDisplay($result['uname']) . '<input type="hidden" id="' . DataUtil::formatForDisplay($result['uname']) . '" value="' . $result['uid'] . '" /></li>';
                     }
                 }
                 $out .= '</ul>';
@@ -103,7 +103,7 @@ class Ajax {
                 «IF app.targets('1.3.5')»
                 return new Zikula_Response_Ajax_Plain($out);
                 «ELSE»
-                return new \Zikula\Core\Response\Ajax\Plain($view->display('External/' . ucwords($objectType) . '/find.tpl'));
+                return new Plain($view->display('External/' . ucwords($objectType) . '/find.tpl'));
                 «ENDIF»
             }
         «ENDIF»
@@ -115,11 +115,11 @@ class Ajax {
          *
          * @param array $args List of arguments.
          *
-         * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»\Zikula\Core\Response\Ajax\AjaxResponse«ENDIF»
+         * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
          */
         public function getItemListFinder«IF !app.targets('1.3.5')»Action«ENDIF»(array $args = array())
         {
-            if (!\SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+            if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
                 return true;
             }
 
@@ -129,9 +129,10 @@ class Ajax {
             } elseif ($this->request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $this->request->query->has('ot')) {
                 $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             }
-            $controllerHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
-            if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', array('controller' => '«formattedName»', 'action' => 'getItemListFinder')))) {
-                $objectType = $controllerHelper->getDefaultObjectType('controllerAction', array('controller' => '«formattedName»', 'action' => 'getItemListFinder'));
+            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
+            $utilArgs = array('controller' => '«formattedName»', 'action' => 'getItemListFinder');
+            if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
+                $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
             }
 
             «IF app.targets('1.3.5')»
@@ -140,7 +141,7 @@ class Ajax {
                 $entityClass = '\\«app.appName»\\Entity\\' . ucfirst($objectType) . 'Entity';
             «ENDIF»
             $repository = $this->entityManager->getRepository($entityClass);
-            $idFields = \ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
             $titleField = $repository->getTitleFieldName();
             $descriptionField = $repository->getDescriptionFieldName();
 
@@ -167,13 +168,13 @@ class Ajax {
                 foreach ($idFields as $idField) {
                     $itemId .= ((!empty($itemId)) ? '_' : '') . $item[$idField];
                 }
-                if (!\SecurityUtil::checkPermission($component, $itemId . '::', ACCESS_READ)) {
+                if (!SecurityUtil::checkPermission($component, $itemId . '::', ACCESS_READ)) {
                     continue;
                 }
                 $slimItems[] = $this->prepareSlimItem($objectType, $item, $itemId, $titleField, $descriptionField);
             }
 
-            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»\Zikula\Core\Response\Ajax\AjaxResponse«ENDIF»($slimItems);
+            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($slimItems);
         }
 
         /**
@@ -189,7 +190,7 @@ class Ajax {
          */
         protected function prepareSlimItem($objectType, $item, $itemId, $titleField, $descriptionField)
         {
-            $view = \Zikula_View::getInstance('«app.appName»', false);
+            $view = Zikula_View::getInstance('«app.appName»', false);
             $view->assign($objectType, $item);
             $previewInfo = base64_encode($view->fetch(«IF app.targets('1.3.5')»'external/' . $objectType«ELSE»'External/' . ucwords($objectType)«ENDIF» . '/info.tpl'));
 
@@ -211,11 +212,11 @@ class Ajax {
          * @param string $fragment The fragment of the entered item name.
          * @param string $exclude  Comma separated list with ids of other items (to be excluded from search).
          *
-         * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax_Plain«ELSE»\Zikula\Core\Response\Ajax\Plain«ENDIF»
+         * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax_Plain«ELSE»Plain«ENDIF»
          */
         public function getItemListAutoCompletion«IF !app.targets('1.3.5')»Action«ENDIF»()
         {
-            if (!\SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
+            if (!SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT)) {
                 return true;
             }
 
@@ -225,7 +226,7 @@ class Ajax {
             } elseif ($this->request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $this->request->query->has('ot')) {
                 $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             }
-            $controllerHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
             $utilArgs = array('controller' => '«formattedName»', 'action' => 'getItemListAutoCompletion');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
@@ -237,7 +238,7 @@ class Ajax {
                 $entityClass = '\\«app.appName»\\Entity\\' . ucfirst($objectType) . 'Entity';
             «ENDIF»
             $repository = $this->entityManager->getRepository($entityClass);
-            $idFields = \ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+            $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
             $fragment = '';
             $exclude = '';
@@ -268,7 +269,7 @@ class Ajax {
                 $previewFieldName = $repository->getPreviewFieldName();
                 «IF app.hasImageFields»
                     if (!empty($previewFieldName)) {
-                        $imageHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Image«ELSE»\Util\ImageUtil«ENDIF»($this->serviceManager);
+                        $imageHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Image«ELSE»ImageUtil«ENDIF»($this->serviceManager);
                         $imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
                     }
                 «ENDIF»
@@ -301,7 +302,7 @@ class Ajax {
             $out .= '</ul>';
 
             // return response
-            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_Plain«ELSE»\Zikula\Core\Response\Ajax\Plain«ENDIF»($out);
+            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_Plain«ELSE»Plain«ENDIF»($out);
         }
     '''
 
@@ -315,24 +316,25 @@ class Ajax {
          *
          * @throws \Zikula_Exception If something fatal occurs.
          *
-         * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»\Zikula\Core\Response\Ajax\AjaxResponse«ENDIF»
+         * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
          */
         public function checkForDuplicate«IF !app.targets('1.3.5')»Action«ENDIF»()
         {
             $this->checkAjaxToken();
-            $this->throwForbiddenUnless(\SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
+            $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
 
             $objectType = $this->request->request->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
-            $controllerHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
-            if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', array('controller' => '«formattedName»', 'action' => 'checkForDuplicate')))) {
-                $objectType = $controllerHelper->getDefaultObjectType('controllerAction', array('controller' => '«formattedName»', 'action' => 'checkForDuplicate'));
+            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
+            $utilArgs = array('controller' => '«formattedName»', 'action' => 'checkForDuplicate');
+            if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
+                $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
             }
 
             $fieldName = $this->request->request->filter('fn', '', FILTER_SANITIZE_STRING);
             $value = $this->request->request->get('v', '');
 
             if (empty($fieldName) || empty($value)) {
-                return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_BadData«ELSE»\Zikula\Core\Response\Ajax\BadDataResponse«ENDIF»($this->__('Error: invalid input.'));
+                return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_BadData«ELSE»BadDataResponse«ENDIF»($this->__('Error: invalid input.'));
             }
 
             // check if the given field is existing and unique
@@ -348,7 +350,7 @@ class Ajax {
                 «ENDFOR»
             }
             if (!count($uniqueFields) || !in_array($fieldName, $uniqueFields)) {
-                return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_BadData«ELSE»\Zikula\Core\Response\Ajax\BadDataResponse«ENDIF»($this->__('Error: invalid input.'));
+                return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_BadData«ELSE»BadDataResponse«ENDIF»($this->__('Error: invalid input.'));
             }
 
             $exclude = $this->request->request->get('ex', '');
@@ -393,7 +395,7 @@ class Ajax {
             // return response
             $result = array('isDuplicate' => $result);
 
-            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»\Zikula\Core\Response\Ajax\AjaxResponse«ENDIF»($result);
+            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
         }
     '''
 
@@ -405,11 +407,11 @@ class Ajax {
          * @param string $field The field to be toggled.
          * @param int    $id    Identifier of treated entity.
          *
-         * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»\Zikula\Core\Response\Ajax\AjaxResponse«ENDIF»
+         * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
          */
         public function toggleFlag«IF !app.targets('1.3.5')»Action«ENDIF»()
         {
-            $this->throwForbiddenUnless(\SecurityUtil::checkPermission($this->name. '::Ajax', '::', ACCESS_EDIT));
+            $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name. '::Ajax', '::', ACCESS_EDIT));
 
             $objectType = $this->request->request->filter('ot', '', FILTER_SANITIZE_STRING);
             $field = $this->request->request->filter('field', '', FILTER_SANITIZE_STRING);
@@ -422,13 +424,13 @@ class Ajax {
                 || ($objectType == '«entity.name.formatForCode»' && !in_array($field, array(«FOR field : entity.getBooleansWithAjaxToggleEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»)))
             «ENDFOR»
             ) {
-                return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_BadData«ELSE»\Zikula\Core\Response\Ajax\BadDataResponse«ENDIF»($this->__('Error: invalid input.'));
+                return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_BadData«ELSE»BadDataResponse«ENDIF»($this->__('Error: invalid input.'));
             }
 
             // select data from data source
-            $entity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id));
+            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id));
             if ($entity == null) {
-                return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»\Zikula\Core\Response\Ajax\NotFoundResponse«ENDIF»($this->__('No such item.'));
+                return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
             }
 
             // toggle the flag
@@ -441,7 +443,7 @@ class Ajax {
             $result = array('id' => $id,
                             'state' => $entity[$field]);
 
-            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»\Zikula\Core\Response\Ajax\AjaxResponse«ENDIF»($result);
+            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
         }
     '''
 
@@ -452,16 +454,16 @@ class Ajax {
          * @param string $ot Treated object type.
          * @param string $op The operation which should be performed.
          *
-         * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»\Zikula\Core\Response\Ajax\AjaxResponse«ENDIF»
-         * @throws «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»\Zikula\Core\Response\Ajax\FatalResponse«ENDIF»
+         * @return «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»
+         * @throws «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»
          */
         public function handleTreeOperation«IF !app.targets('1.3.5')»Action«ENDIF»()
         {
-            $this->throwForbiddenUnless(\SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
+            $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
 
             «val treeEntities = app.getTreeEntities»
             // parameter specifying which type of objects we are treating
-            $objectType = \DataUtil::convertFromUTF8($this->request->request->filter('ot', '«treeEntities.head.name.formatForCode»', FILTER_SANITIZE_STRING));
+            $objectType = DataUtil::convertFromUTF8($this->request->request->filter('ot', '«treeEntities.head.name.formatForCode»', FILTER_SANITIZE_STRING));
             // ensure that we use only object types with tree extension enabled
             if (!in_array($objectType, array(«FOR treeEntity : treeEntities SEPARATOR ", "»'«treeEntity.name.formatForCode»'«ENDFOR»))) {
                 $objectType = '«treeEntities.head.name.formatForCode»';
@@ -472,9 +474,9 @@ class Ajax {
                 'message' => ''
             );
 
-            $op = \DataUtil::convertFromUTF8($this->request->request->filter('op', '', FILTER_SANITIZE_STRING));
+            $op = DataUtil::convertFromUTF8($this->request->request->filter('op', '', FILTER_SANITIZE_STRING));
             if (!in_array($op, array('addRootNode', 'addChildNode', 'deleteNode', 'moveNode', 'moveNodeTo'))) {
-                throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»\Zikula\Core\Response\Ajax\FatalResponse«ENDIF»($this->__('Error: invalid operation.'));
+                throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid operation.'));
             }
 
             // Get id of treated node
@@ -482,7 +484,7 @@ class Ajax {
             if (!in_array($op, array('addRootNode', 'addChildNode'))) {
                 $id = (int) $this->request->request->filter('id', 0, FILTER_VALIDATE_INT);
                 if (!$id) {
-                    throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»\Zikula\Core\Response\Ajax\FatalResponse«ENDIF»($this->__('Error: invalid node.'));
+                    throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid node.'));
                 }
             }
 
@@ -497,21 +499,21 @@ class Ajax {
             if (!in_array($op, array('addRootNode'))) {
                 $rootId = (int) $this->request->request->filter('root', 0, FILTER_VALIDATE_INT);
                 if (!$rootId) {
-                    throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»\Zikula\Core\Response\Ajax\FatalResponse«ENDIF»($this->__('Error: invalid root node.'));
+                    throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid root node.'));
                 }
             }
 
             // Select tree
             $tree = null;
             if (!in_array($op, array('addRootNode'))) {
-                $tree = \ModUtil::apiFunc($this->name, 'selection', 'getTree', array('ot' => $objectType, 'rootId' => $rootId));
+                $tree = ModUtil::apiFunc($this->name, 'selection', 'getTree', array('ot' => $objectType, 'rootId' => $rootId));
             }
 
             // verification and recovery of tree
             $verificationResult = $repository->verify();
             if (is_array($verificationResult)) {
                 foreach ($verificationResult as $errorMsg) {
-                    \LogUtil::registerError($errorMsg);
+                    LogUtil::registerError($errorMsg);
                 }
             }
             $repository->recover();
@@ -550,7 +552,7 @@ class Ajax {
                                     }
                                     $object->merge($objectData);
                                     «/*IF hasTranslatableFields»
-                                        $object->setLocale(\ZLanguage::getLanguageCode());
+                                        $object->setLocale(ZLanguage::getLanguageCode());
                                     «ENDIF*/»
                                     // save new object to set the root id
                                     $this->entityManager->persist($object);
@@ -560,7 +562,7 @@ class Ajax {
                 case 'addChildNode':
                                 $parentId = (int) $this->request->request->filter('pid', 0, FILTER_VALIDATE_INT);
                                 if (!$parentId) {
-                                    throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»\Zikula\Core\Response\Ajax\FatalResponse«ENDIF»($this->__('Error: invalid parent node.'));
+                                    throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid parent node.'));
                                 }
 
                                 //$this->entityManager->transactional(function($entityManager) {
@@ -573,9 +575,9 @@ class Ajax {
                                     $childEntity->merge($objectData);
 
                                     //$childEntity->setParent($parentEntity);
-                                    $parentEntity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $parentId, 'useJoins' => false));
+                                    $parentEntity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $parentId, 'useJoins' => false));
                                     if ($parentEntity == null) {
-                                        return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»\Zikula\Core\Response\Ajax\NotFoundResponse«ENDIF»($this->__('No such item.'));
+                                        return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
                                     }
                                     $repository->persistAsLastChildOf($childEntity, $parentEntity);
                                 //});
@@ -583,9 +585,9 @@ class Ajax {
                                 break;
                 case 'deleteNode':
                                 // remove node from tree and reparent all children
-                                $entity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
+                                $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
                                 if ($entity == null) {
-                                    return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»\Zikula\Core\Response\Ajax\NotFoundResponse«ENDIF»($this->__('No such item.'));
+                                    return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
                                 }
                                 $repository->removeFromTree($entity);
                                 $this->entityManager->clear(); // clear cached nodes
@@ -593,12 +595,12 @@ class Ajax {
                 case 'moveNode':
                                 $moveDirection = $this->request->request->filter('direction', '', FILTER_SANITIZE_STRING);
                                 if (!in_array($moveDirection, array('up', 'down'))) {
-                                    throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»\Zikula\Core\Response\Ajax\FatalResponse«ENDIF»($this->__('Error: invalid direction.'));
+                                    throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid direction.'));
                                 }
 
-                                $entity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
+                                $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
                                 if ($entity == null) {
-                                    return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»\Zikula\Core\Response\Ajax\NotFoundResponse«ENDIF»($this->__('No such item.'));
+                                    return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
                                 }
 
                                 if ($moveDirection == 'up') {
@@ -612,19 +614,19 @@ class Ajax {
                 case 'moveNodeTo':
                                 $moveDirection = $this->request->request->filter('direction', '', FILTER_SANITIZE_STRING);
                                 if (!in_array($moveDirection, array('after', 'before', 'bottom'))) {
-                                    throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»\Zikula\Core\Response\Ajax\FatalResponse«ENDIF»($this->__('Error: invalid direction.'));
+                                    throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid direction.'));
                                 }
 
                                 $destId = (int) $this->request->request->filter('destid', 0, FILTER_VALIDATE_INT);
                                 if (!$destId) {
-                                    throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»\Zikula\Core\Response\Ajax\FatalResponse«ENDIF»($this->__('Error: invalid destination node.'));
+                                    throw new «IF app.targets('1.3.5')»Zikula_Exception_Ajax_Fatal«ELSE»FatalResponse«ENDIF»($this->__('Error: invalid destination node.'));
                                 }
 
                                 //$this->entityManager->transactional(function($entityManager) {
-                                    $entity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
-                                    $destEntity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $destId, 'useJoins' => false));
+                                    $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $id, 'useJoins' => false));
+                                    $destEntity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $destId, 'useJoins' => false));
                                     if ($entity == null || $destEntity == null) {
-                                        return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»\Zikula\Core\Response\Ajax\NotFoundResponse«ENDIF»($this->__('No such item.'));
+                                        return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
                                     }
 
                                     if ($moveDirection == 'after') {
@@ -643,10 +645,10 @@ class Ajax {
 
             // Renew tree
             /** postponed, for now we do a page reload
-            $returnValue['data'] = \ModUtil::apiFunc($this->name, 'selection', 'getTree', array('ot' => $objectType, 'rootId' => $rootId));
+            $returnValue['data'] = ModUtil::apiFunc($this->name, 'selection', 'getTree', array('ot' => $objectType, 'rootId' => $rootId));
             */
 
-            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»\Zikula\Core\Response\Ajax\AjaxResponse«ENDIF»($returnValue);
+            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($returnValue);
         }
     '''
 }

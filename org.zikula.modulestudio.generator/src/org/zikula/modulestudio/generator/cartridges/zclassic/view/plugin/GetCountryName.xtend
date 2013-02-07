@@ -32,7 +32,7 @@ class GetCountryName {
          */
         function smarty_modifier_«appName.formatForDB»GetCountryName($countryCode)
         {
-            $result = \ZLanguage::getCountryName($countryCode);
+            $result = ZLanguage::getCountryName($countryCode);
             if ($result === false) {
                 $result = $countryCode;
             }

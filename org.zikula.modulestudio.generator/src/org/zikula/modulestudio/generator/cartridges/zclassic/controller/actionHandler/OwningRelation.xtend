@@ -29,7 +29,7 @@ class OwningRelation {
 
             // save parent identifiers of unidirectional incoming relationships
             «FOR relation : uniOwningAssociations»
-                $this->incomingIds['«relation.getRelationAliasName(false)»'] = \FormUtil::getPassedValue('«relation.getRelationAliasName(false)»', '', 'GET');
+                $this->incomingIds['«relation.getRelationAliasName(false)»'] = FormUtil::getPassedValue('«relation.getRelationAliasName(false)»', '', 'GET');
             «ENDFOR»
         «ENDIF»
     '''
@@ -46,7 +46,7 @@ class OwningRelation {
             if ($args['commandName'] == 'create') {
             «FOR uniOwningAssociation : uniOwningAssociations»
                 if (!empty($this->incomingIds['«uniOwningAssociation.getRelationAliasName(false)»'])) {
-                    $relObj = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => '«uniOwningAssociation.source.name.formatForCode»', 'id' => $this->incomingIds['«uniOwningAssociation.getRelationAliasName(false)»']));
+                    $relObj = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => '«uniOwningAssociation.source.name.formatForCode»', 'id' => $this->incomingIds['«uniOwningAssociation.getRelationAliasName(false)»']));
                     if ($relObj != null) {
                         $relObj->add«uniOwningAssociation.getRelationAliasName(true).toFirstUpper»($entity);
                     }

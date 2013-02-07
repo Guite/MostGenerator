@@ -36,7 +36,7 @@ class Interactive {
          */
         public function install«IF !targets('1.3.5')»Action«ENDIF»()
         {
-            $this->throwForbiddenUnless(\SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+            $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
             // fetch and return the appropriate template
             «IF targets('1.3.5')»
@@ -55,7 +55,7 @@ class Interactive {
          */
         public function interactiveinitstep2«IF !targets('1.3.5')»Action«ENDIF»()
         {
-            $this->throwForbiddenUnless(\SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+            $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
             $submit = $this->request->request->get('submit', null);
             if (!$submit) {
@@ -72,14 +72,14 @@ class Interactive {
             «val modVarHelper = new ModVars()»
             «FOR modvar : getAllVariables»
                 $formValue = $this->request->request->get('«modvar.name.formatForCode»', «modVarHelper.valForm2SessionDefault(modvar)»);
-                \SessionUtil::setVar('«formatForCode(name + '_' + modvar.name)»', $formValue);
+                SessionUtil::setVar('«formatForCode(name + '_' + modvar.name)»', $formValue);
 
             «ENDFOR»
 
             $activate = (bool) $this->request->request->filter('activate', false, FILTER_VALIDATE_BOOLEAN);
             $activate = (!empty($activate)) ? true : false;
 
-            return $this->redirect(\ModUtil::url('«appName»', 'init', 'interactiveinitstep3', array('activate' => $activate)));
+            return $this->redirect(ModUtil::url('«appName»', 'init', 'interactiveinitstep3', array('activate' => $activate)));
         }
     '''
 
@@ -91,7 +91,7 @@ class Interactive {
          */
         public function interactiveinitstep3«IF !targets('1.3.5')»Action«ENDIF»()
         {
-            $this->throwForbiddenUnless(\SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+            $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
             $activate = (bool) $this->request->request->filter('activate', false, FILTER_VALIDATE_BOOLEAN);
 
@@ -115,7 +115,7 @@ class Interactive {
          */
         public function upgrade«IF !targets('1.3.5')»Action«ENDIF»()
         {
-            $this->throwForbiddenUnless(\SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+            $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
             // TODO
 
@@ -131,7 +131,7 @@ class Interactive {
          */
         public function uninstall«IF !targets('1.3.5')»Action«ENDIF»()
         {
-            $this->throwForbiddenUnless(\SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
+            $this->throwForbiddenUnless(SecurityUtil::checkPermission('::', '::', ACCESS_ADMIN));
 
             // fetch and return the appropriate template
             «IF targets('1.3.5')»

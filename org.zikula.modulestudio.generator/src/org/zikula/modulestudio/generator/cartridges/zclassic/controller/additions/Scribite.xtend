@@ -66,12 +66,12 @@ class Scribite {
         Just follow these few steps to complete the integration for Scribite <= 4.3:
           1. Open modules/Scribite/lib/Scribite/Api/User.php in your favourite text editor.
           2. Search for
-                if (\ModUtil::available('SimpleMedia')) {
-                    \PageUtil::AddVar('javascript', 'modules/SimpleMedia/«IF targets('1.3.5')»javascript«ELSE»Resources/public/js«ENDIF»/findItem.js');
+                if (ModUtil::available('SimpleMedia')) {
+                    PageUtil::AddVar('javascript', 'modules/SimpleMedia/«IF targets('1.3.5')»javascript«ELSE»Resources/public/js«ENDIF»/findItem.js');
                 }
           3. Below this add
-                if (\ModUtil::available('«appName»')) {
-                    \PageUtil::AddVar('javascript', 'modules/«appName»/«IF targets('1.3.5')»javascript«ELSE»Resources/public/js«ENDIF»/«appName»_finder.js');
+                if (ModUtil::available('«appName»')) {
+                    PageUtil::AddVar('javascript', 'modules/«appName»/«IF targets('1.3.5')»javascript«ELSE»Resources/public/js«ENDIF»/«appName»_finder.js');
                 }
           4. Copy or move all files from «IF targets('1.3.5')»modules/«appName»«ELSE»Resources«ENDIF»/docs/scribite/plugins/ into modules/Scribite/plugins/.
 

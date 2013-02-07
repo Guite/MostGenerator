@@ -23,12 +23,12 @@ class Joins {
         {
             $selection = '«FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app)»«relation.addJoin(false, 'select')»«ENDFOR»«FOR relation : getOutgoingJoinRelations.filter(e|e.target.container.application == app)»«relation.addJoin(true, 'select')»«ENDFOR»';
             «FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application != app)»
-                if (\ModUtil::available('«relation.source.container.application.name.formatForCodeCapital»')) {
+                if (ModUtil::available('«relation.source.container.application.name.formatForCodeCapital»')) {
                     $selection .= '«relation.addJoin(false, 'select')»';
                 }
             «ENDFOR»
             «FOR relation : getOutgoingJoinRelations.filter(e|e.target.container.application != app)»
-                if (\ModUtil::available('«relation.target.container.application.name.formatForCodeCapital»')) {
+                if (ModUtil::available('«relation.target.container.application.name.formatForCodeCapital»')) {
                     $selection .= '«relation.addJoin(true, 'select')»';
                 }
             «ENDFOR»
@@ -47,17 +47,17 @@ class Joins {
          *
          * @return String Enhancement for from clause.
          */
-        protected function addJoinsToFrom(Doctrine\ORM\QueryBuilder $qb)
+        protected function addJoinsToFrom(QueryBuilder $qb)
         {
             «FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app)»«relation.addJoin(false, 'from')»«ENDFOR»
             «FOR relation : getOutgoingJoinRelations.filter(e|e.target.container.application == app)»«relation.addJoin(true, 'from')»«ENDFOR»
             «FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application != app)»
-                if (\ModUtil::available('«relation.source.container.application.name.formatForCodeCapital»')) {
+                if (ModUtil::available('«relation.source.container.application.name.formatForCodeCapital»')) {
                     «relation.addJoin(false, 'from')»
                 }
             «ENDFOR»
             «FOR relation : getOutgoingJoinRelations.filter(e|e.target.container.application != app)»
-                if (\ModUtil::available('«relation.target.container.application.name.formatForCodeCapital»')) {
+                if (ModUtil::available('«relation.target.container.application.name.formatForCodeCapital»')) {
                     «relation.addJoin(true, 'from')»
                 }
             «ENDFOR»

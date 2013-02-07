@@ -52,7 +52,7 @@ class FormHandler {
 
     def formCreate(Action it, String appName, Controller controller, String actionName) '''
         // Create new Form reference
-        $view = \FormUtil::newForm('«appName.formatForCode»', $this);
+        $view = FormUtil::newForm('«appName.formatForCode»', $this);
 
         «IF controller.container.application.targets('1.3.5')»
             $handlerClass = '«appName»_Form_Handler_«controller.name.formatForCodeCapital»_«actionName.formatForCodeCapital»';
@@ -114,6 +114,29 @@ class FormHandler {
         «IF !app.targets('1.3.5')»
             namespace «app.appName»\Form\Handler\«name.formatForCodeCapital»\Base;
 
+            use «app.appName»\Form\Plugin\AbstractObjectSelector;
+            «IF app.hasUploads»
+                use «app.appName»\UploadHandler;
+            «ENDIF»
+            use «app.appName»\Util\ControllerUtil;
+            «IF app.hasTranslatable»
+                use «app.appName»\Util\TranslatableUtil;
+            «ENDIF»
+            use «app.appName»\Util\WorkflowUtil;
+
+            use LogUtil;
+            use ModUtil;
+            use SecurityUtil;
+            use System;
+            use UserUtil;
+            use Zikula_Form_AbstractHandler;
+            use Zikula_Form_View;
+            use ZLanguage;
+            use Zikula\Core\Hook\ProcessHook;
+            use Zikula\Core\Hook\ValidationHook;
+            use Zikula\Core\Hook\ValidationProviders;
+            use Zikula\Core\ModUrl;
+
         «ENDIF»
         /**
          * This handler class handles the page events of the Form called by the «formatForCode(app.appName + '_' + formattedName + '_' + actionName)»() function.
@@ -139,7 +162,7 @@ class FormHandler {
         «IF app.targets('1.3.5')»
         class «app.appName»_Form_Handler_«name.formatForCodeCapital»_Base_«actionName.formatForCodeCapital» extends Zikula_Form_AbstractHandler
         «ELSE»
-        class «actionName.formatForCodeCapital»Handler extends \Zikula_Form_AbstractHandler
+        class «actionName.formatForCodeCapital»Handler extends Zikula_Form_AbstractHandler
         «ENDIF»
         {
             /**
@@ -382,13 +405,13 @@ class FormHandler {
          */
         public function initialize(Zikula_Form_View $view)
         {
-            $this->inlineUsage = ((\UserUtil::getTheme() == 'Printer') ? true : false);
+            $this->inlineUsage = ((UserUtil::getTheme() == 'Printer') ? true : false);
             $this->idPrefix = $this->request->query->filter('idp', '', FILTER_SANITIZE_STRING);
 
             // initialise redirect goal
             $this->returnTo = $this->request->query->filter('returnTo', null, FILTER_SANITIZE_STRING);
             // store current uri for repeated creations
-            $this->repeatReturnUrl = \System::getCurrentURI();
+            $this->repeatReturnUrl = System::getCurrentURI();
 
             $this->permissionComponent = $this->name . ':' . $this->objectTypeCapital . ':';
 
@@ -401,7 +424,7 @@ class FormHandler {
             $this->idFields = $objectTemp->get_idFields();
 
             // retrieve identifier of the object we wish to view
-            $controllerHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->view->getServiceManager());
+            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->view->getServiceManager());
             $this->idValues = $controllerHelper->retrieveIdentifier($this->request, array(), $this->objectType, $this->idFields);
             $hasIdentifier = $controllerHelper->isValidIdentifier($this->idValues);
 
@@ -409,21 +432,21 @@ class FormHandler {
             $this->mode = ($hasIdentifier) ? 'edit' : 'create';
 
             if ($this->mode == 'edit') {
-                if (!\SecurityUtil::checkPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_EDIT)) {
-                    return \LogUtil::registerPermissionError();
+                if (!SecurityUtil::checkPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_EDIT)) {
+                    return LogUtil::registerPermissionError();
                 }
 
                 $entity = $this->initEntityForEdit();
 
-                if ($this->hasPageLockSupport === true && \ModUtil::available('PageLock')) {
+                if ($this->hasPageLockSupport === true && ModUtil::available('PageLock')) {
                     // try to guarantee that only one person at a time can be editing this entity
-                    \ModUtil::apiFunc('PageLock', 'user', 'pageLock',
+                    ModUtil::apiFunc('PageLock', 'user', 'pageLock',
                                              array('lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier(),
                                                    'returnUrl' => $this->getRedirectUrl(null)));
                 }
             } else {
-                if (!\SecurityUtil::checkPermission($this->permissionComponent, '::', ACCESS_EDIT)) {
-                    return \LogUtil::registerPermissionError();
+                if (!SecurityUtil::checkPermission($this->permissionComponent, '::', ACCESS_EDIT)) {
+                    return LogUtil::registerPermissionError();
                 }
 
                 $entity = $this->initEntityForCreation();
@@ -459,10 +482,10 @@ class FormHandler {
             // save entity reference for later reuse
             $this->entityRef = $entity;
 
-            $workflowHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»($this->view->getServiceManager());
+            $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->view->getServiceManager());
             $actions = $workflowHelper->getActionsForObject($entity);
             if ($actions === false || !is_array($actions)) {
-                return \LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
+                return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
             }
             // assign list of allowed actions to the view for further processing
             $this->view->assign('actions', $actions);
@@ -512,9 +535,9 @@ class FormHandler {
          */
         protected function initEntityForEdit()
         {
-            $entity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $this->idValues));
+            $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $this->idValues));
             if ($entity == null) {
-                return \LogUtil::registerError($this->__('No such item.'));
+                return LogUtil::registerError($this->__('No such item.'));
             }
 
             return $entity;
@@ -542,9 +565,9 @@ class FormHandler {
                     $i++;
                 }
                 // reuse existing entity
-                $entityT = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $templateIdValues));
+                $entityT = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $this->objectType, 'id' => $templateIdValues));
                 if ($entityT == null) {
-                    return \LogUtil::registerError($this->__('No such item.'));
+                    return LogUtil::registerError($this->__('No such item.'));
                 }
                 $entity = clone $entityT;
 
@@ -574,7 +597,7 @@ class FormHandler {
             protected function initTranslationsForEdit($entity)
             {
                 // retrieve translated fields
-                $translatableHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Translatable«ELSE»\Util\TranslatableUtil«ENDIF»($this->view->getServiceManager());
+                $translatableHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Translatable«ELSE»TranslatableUtil«ENDIF»($this->view->getServiceManager());
                 $translations = $translatableHelper->prepareEntityForEdit($this->objectType, $entity);
 
                 // assign translations
@@ -583,7 +606,7 @@ class FormHandler {
                 }
 
                 // assign list of installed languages for translatable extension
-                $this->view->assign('supportedLocales', \ZLanguage::getInstalledLanguages());
+                $this->view->assign('supportedLocales', ZLanguage::getInstalledLanguages());
             }
         «ENDIF»
         «IF app.hasAttributableEntities»
@@ -630,12 +653,12 @@ class FormHandler {
                 $this->view->assign($this->objectTypeLower . 'Obj', $entity);
 
                 // load and assign registered categories
-                $registries = \ModUtil::apiFunc($this->name, 'category', 'getAllPropertiesWithMainCat', array('ot' => $this->objectType, 'arraykey' => $this->idFields[0]));
+                $registries = ModUtil::apiFunc($this->name, 'category', 'getAllPropertiesWithMainCat', array('ot' => $this->objectType, 'arraykey' => $this->idFields[0]));
 
                 // check if multiple selection is allowed for this object type
                 $multiSelectionPerRegistry = array();
                 foreach ($registries as $registryId => $registryCid) {
-                    $multiSelectionPerRegistry[$registryId] = \ModUtil::apiFunc($this->name, 'category', 'hasMultipleSelection', array('ot' => $this->objectType, 'registry' => $registryId));
+                    $multiSelectionPerRegistry[$registryId] = ModUtil::apiFunc($this->name, 'category', 'hasMultipleSelection', array('ot' => $this->objectType, 'registry' => $registryId));
                 }
                 $this->view->assign('registries', $registries)
                            ->assign('multiSelectionPerRegistry', $multiSelectionPerRegistry);
@@ -703,7 +726,7 @@ class FormHandler {
                 $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
                 $validators = $this->notifyHooks($hook)->getValidators();
                 «ELSE»
-                $hook = new \Zikula\Core\Hook\ValidationHook(new \Zikula\Core\Hook\ValidationProviders());
+                $hook = new ValidationHook(new ValidationProviders());
                 $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
                 «ENDIF»
                 if ($validators->hasErrors()) {
@@ -733,26 +756,26 @@ class FormHandler {
                     if (isset($this->entityRef['slug'])) {
                         $urlArgs['slug'] = $this->entityRef['slug'];
                     }
-                    $url = new \Zikula«IF app.targets('1.3.5')»_ModUrl«ELSE»\Core\ModUrl«ENDIF»($this->name, '«formattedName»', 'display', \ZLanguage::getLanguageCode(), $urlArgs);
+                    $url = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, '«formattedName»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
                 }
                 «IF app.targets('1.3.5')»
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $this->createCompositeIdentifier(), $url);
                 $this->notifyHooks($hook);
                 «ELSE»
-                $hook = new \Zikula\Core\Hook\ProcessHook($this->createCompositeIdentifier(), $url);
+                $hook = new ProcessHook($this->createCompositeIdentifier(), $url);
                 $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
                 «ENDIF»
 
                 // An item was created, updated or deleted, so we clear all cached pages for this item.
                 $cacheArgs = array('ot' => $this->objectType, 'item' => $entity);
-                \ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
+                ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
 
                 // clear view cache to reflect our changes
                 $this->view->clear_cache();
             }
 
-            if ($this->hasPageLockSupport === true && $this->mode == 'edit' && \ModUtil::available('PageLock')) {
-                \ModUtil::apiFunc('PageLock', 'user', 'releaseLock',
+            if ($this->hasPageLockSupport === true && $this->mode == 'edit' && ModUtil::available('PageLock')) {
+                ModUtil::apiFunc('PageLock', 'user', 'releaseLock',
                                  array('lockName' => $this->name . $this->objectTypeCapital . $this->createCompositeIdentifier()));
             }
 
@@ -839,7 +862,7 @@ class FormHandler {
                 «ENDIF»
                 $transRepository = $this->entityManager->getRepository($entityTransClass);
 
-                $translatableHelper = new \«container.application.appName»«IF app.targets('1.3.5')»_Util_Translatable«ELSE»\Util\TranslatableUtil«ENDIF»($this->view->getServiceManager());
+                $translatableHelper = new «IF app.targets('1.3.5')»«container.application.appName»_Util_Translatable«ELSE»TranslatableUtil«ENDIF»($this->view->getServiceManager());
                 $translations = $translatableHelper->processEntityAfterEdit($this->objectType, $formData);
 
                 foreach ($translations as $translation) {
@@ -901,9 +924,9 @@ class FormHandler {
             $message = $this->getDefaultMessage($args, $success);
             if (!empty($message)) {
                 if ($success === true) {
-                    \LogUtil::registerStatus($message);
+                    LogUtil::registerStatus($message);
                 } else {
-                    \LogUtil::registerError($message);
+                    LogUtil::registerError($message);
                 }
             }
         }
@@ -973,7 +996,7 @@ class FormHandler {
                     «IF !app.targets('1.3.5') && app.hasSluggable»
 
                         if ($this->hasSlugUpdatableField === true && isset($entityData['slug'])) {
-                            $controllerHelper = new \«app.appName»\Util\ControllerUtil($this->view->getServiceManager());
+                            $controllerHelper = new ControllerUtil($this->view->getServiceManager());
                             $entityData['slug'] = $controllerHelper->formatPermalink($entityData['slug']);
                         }
                     «ENDIF»
@@ -1052,7 +1075,7 @@ class FormHandler {
         protected function writeRelationDataToEntity_rec($entity, $entityData, $plugins)
         {
             foreach ($plugins as $plugin) {
-                if ($plugin instanceof «IF app.targets('1.3.5')»«app.appName»_Form_Plugin_AbstractObjectSelector«ELSE»\«app.appName»\Form\Plugin\AbstractObjectSelector«ENDIF» && method_exists($plugin, 'assignRelatedItemsToEntity')) {
+                if ($plugin instanceof «IF app.targets('1.3.5')»«app.appName»_Form_Plugin_AbstractObjectSelector«ELSE»AbstractObjectSelector«ENDIF» && method_exists($plugin, 'assignRelatedItemsToEntity')) {
                     $entityData = $plugin->assignRelatedItemsToEntity($entity, $entityData);
                 }
                 $entityData = $this->writeRelationDataToEntity_rec($entity, $entityData, $plugin->plugins);
@@ -1106,14 +1129,33 @@ class FormHandler {
         «IF !app.targets('1.3.5')»
             namespace «app.appName»\Form\Handler\«controller.name.formatForCodeCapital»\«name.formatForCodeCapital»\Base;
 
+            use «app.appName»\Util\ControllerUtil;
+            «IF app.hasListFields»
+                use «app.appName»\Util\ListEntriesUtil;
+            «ENDIF»
+            use «app.appName»\Util\WorkflowUtil;
+
         «ENDIF»
         «IF hasOptimisticLock || hasPessimisticReadLock || hasPessimisticWriteLock»
             use Doctrine\DBAL\LockMode;
             «IF hasOptimisticLock»
                 use Doctrine\ORM\OptimisticLockException;
             «ENDIF»
-
         «ENDIF»
+        «IF !app.targets('1.3.5')»
+
+            use FormUtil;
+            use LogUtil;
+            use ModUtil;
+            use SecurityUtil;
+            «IF hasOptimisticLock»
+                use SessionUtil;
+            «ENDIF»
+            use System;
+            use UserUtil;
+            use Zikula_Form_View;
+        «ENDIF»
+
         /**
          * This handler class handles the page events of the Form called by the «formatForCode(app.appName + '_' + controller.formattedName + '_' + actionName)»() function.
          * It aims on the «name.formatForDisplay» object type.
@@ -1192,9 +1234,9 @@ class FormHandler {
                     $entity = parent::initEntityForEdit();
 
                     // only allow editing for the owner or people with higher permissions
-                    if (isset($entity['createdUserId']) && $entity['createdUserId'] != \UserUtil::getVar('uid')) {
-                        if (!\SecurityUtil::checkPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
-                            return \LogUtil::registerPermissionError();
+                    if (isset($entity['createdUserId']) && $entity['createdUserId'] != UserUtil::getVar('uid')) {
+                        if (!SecurityUtil::checkPermission($this->permissionComponent, $this->createCompositeIdentifier() . '::', ACCESS_ADD)) {
+                            return LogUtil::registerPermissionError();
                         }
                     }
 
@@ -1254,7 +1296,7 @@ class FormHandler {
             «IF hasOptimisticLock»
 
                 if ($this->mode == 'edit') {
-                    \SessionUtil::setVar($this->name . 'EntityVersion', $entity->get«getVersionField.name.formatForCodeCapital»());
+                    SessionUtil::setVar($this->name . 'EntityVersion', $entity->get«getVersionField.name.formatForCodeCapital»());
                 }
             «ENDIF»
 
@@ -1265,7 +1307,7 @@ class FormHandler {
             «IF app.hasListFields»
 
                 if (count($this->listFields) > 0) {
-                    $helper = new \«app.appName»«IF app.targets('1.3.5')»_Util_ListEntries«ELSE»\Util\ListEntriesUtil«ENDIF»($this->view->getServiceManager());
+                    $helper = new «IF app.targets('1.3.5')»«app.appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($this->view->getServiceManager());
                     foreach ($this->listFields as $listField => $isMultiple) {
                         $entityData[$listField . 'Items'] = $helper->getEntries($this->objectType, $listField);
                         if ($isMultiple) {
@@ -1362,7 +1404,7 @@ class FormHandler {
 
                 $applyLock = ($this->mode != 'create' && $action != 'delete');
                 «IF hasOptimisticLock»
-                    $expectedVersion = \SessionUtil::getVar($this->name . 'EntityVersion', 1);
+                    $expectedVersion = SessionUtil::getVar($this->name . 'EntityVersion', 1);
                 «ENDIF»
             «ENDIF»
 
@@ -1379,14 +1421,14 @@ class FormHandler {
                 «ENDIF»
 
                 // execute the workflow action
-                $workflowHelper = new «app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»($this->view->getServiceManager());
+                $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->view->getServiceManager());
                 $success = $workflowHelper->executeAction($entity, $action);
             «IF hasOptimisticLock»
                 } catch(OptimisticLockException $e) {
-                    \LogUtil::registerError($this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
+                    LogUtil::registerError($this->__('Sorry, but someone else has already changed this record. Please apply the changes again!'));
             «ENDIF»
-            } catch(Exception $e) {
-                \LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+            } catch(\Exception $e) {
+                LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
             }
 
             $this->addDefaultMessage($args, $success);

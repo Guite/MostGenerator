@@ -44,15 +44,21 @@ class ControllerUtil {
         «IF !targets('1.3.5')»
             namespace «appName»\Util\Base;
 
+            use DataUtil;
+            «IF hasUploads»
+                use FileUtil;
+                use LogUtil;
+            «ENDIF»
+            use Zikula_AbstractBase;
+            «IF hasGeographical»
+                use ZLanguage;
+            «ENDIF»
+
         «ENDIF»
         /**
          * Utility base class for controller helper methods.
          */
-        «IF targets('1.3.5')»
-        class «appName»_Util_Base_Controller extends Zikula_AbstractBase
-        «ELSE»
-        class ControllerUtil extends \Zikula_AbstractBase
-        «ENDIF»
+        class «IF targets('1.3.5')»«appName»_Util_Base_Controller«ELSE»ControllerUtil«ENDIF» extends Zikula_AbstractBase
         {
             «getObjectTypes»
 
@@ -190,7 +196,7 @@ class ControllerUtil {
             $name = str_replace(array('ä', 'ö', 'ü', 'Ä', 'Ö', 'Ü', 'ß', '.', '?', '"', '/', ':', 'é', 'è', 'â'),
                                 array('ae', 'oe', 'ue', 'Ae', 'Oe', 'Ue', 'ss', '', '', '', '-', '-', 'e', 'e', 'a'),
                                 $name);
-            $name = \DataUtil::formatPermalink($name);
+            $name = DataUtil::formatPermalink($name);
 
             return strtolower($name);
         }
@@ -212,7 +218,7 @@ class ControllerUtil {
                 throw new Exception('Error! Invalid object type received.');
             }
 
-            $basePath = \FileUtil::getDataDirectory() . '/«appName»/';
+            $basePath = FileUtil::getDataDirectory() . '/«appName»/';
 
             switch ($objectType) {
                 «FOR entity : getUploadEntities»
@@ -234,7 +240,7 @@ class ControllerUtil {
                 «ENDFOR»
             }
 
-            return \DataUtil::formatForOS($basePath);
+            return DataUtil::formatForOS($basePath);
         }
     '''
 
@@ -253,14 +259,14 @@ class ControllerUtil {
             $uploadPath = $this->getFileBaseFolder($objectType, $fieldName);
 
             // Check if directory exist and try to create it if needed
-            if (!is_dir($uploadPath) && !\FileUtil::mkdirs($uploadPath, 0777)) {
-                \LogUtil::registerStatus($this->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath)));
+            if (!is_dir($uploadPath) && !FileUtil::mkdirs($uploadPath, 0777)) {
+                LogUtil::registerStatus($this->__f('The upload directory "%s" does not exist and could not be created. Try to create it yourself and make sure that this folder is accessible via the web and writable by the webserver.', array($uploadPath)));
                 return false;
             }
 
             // Check if directory is writable and change permissions if needed
             if (!is_writable($uploadPath) && !chmod($uploadPath, 0777)) {
-                \LogUtil::registerStatus($this->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath)));
+                LogUtil::registerStatus($this->__f('Warning! The upload directory at "%s" exists but is not writable by the webserver.', array($uploadPath)));
                 return false;
             }
 
@@ -269,9 +275,9 @@ class ControllerUtil {
             $htaccessFileTemplate = 'modules/«appName»/«IF targets('1.3.5')»docs/«ELSE»«getAppDocPath»«ENDIF»htaccessTemplate';
             if (!file_exists($htaccessFilePath) && file_exists($htaccessFileTemplate)) {
                 $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
-                $htaccessContent = str_replace('__EXTENSIONS__', $extensions, \FileUtil::readFile($htaccessFileTemplate));
-                if (!\FileUtil::writeFile($htaccessFilePath, $htaccessContent)) {
-                    \LogUtil::registerStatus($this->__f('Warning! Could not but could not write the .htaccess file at "%s".', array($htaccessFilePath)));
+                $htaccessContent = str_replace('__EXTENSIONS__', $extensions, FileUtil::readFile($htaccessFileTemplate));
+                if (!FileUtil::writeFile($htaccessFilePath, $htaccessContent)) {
+                    LogUtil::registerStatus($this->__f('Warning! Could not but could not write the .htaccess file at "%s".', array($htaccessFilePath)));
                     return false;
                 }
             }
@@ -294,7 +300,7 @@ class ControllerUtil {
          */
         public function performGeoCoding($address)
         {
-            $lang = \ZLanguage::getLanguageCode();
+            $lang = ZLanguage::getLanguageCode();
             $url = 'http://maps.google.com/maps/api/geocode/xml?address=' . urlencode($address);
             $url .= '&region=' . $lang . '&language=' . $lang . '&sensor=false';
 

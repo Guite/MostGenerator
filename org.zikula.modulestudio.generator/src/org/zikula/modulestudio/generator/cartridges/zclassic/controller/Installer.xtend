@@ -58,15 +58,28 @@ class Installer {
         «IF !targets('1.3.5')»
             namespace «appName»\Base;
 
+            «IF hasCategorisableEntities»
+                use CategoryUtil;
+                use CategoryRegistryUtil;
+                use DBUtil;
+            «ENDIF»
+            use EventUtil;
+            «IF hasUploads»
+                use FileUtil;
+            «ENDIF»
+            use HookUtil;
+            «IF hasCategorisableEntities»
+                use ModUtil;
+            «ENDIF»
+            use System;
+            use Zikula_AbstractInstaller;
+            use Zikula_Workflow_Util;
+
         «ENDIF»
         /**
          * Installer base class.
          */
-        «IF targets('1.3.5')»
-        class «appName»_Base_Installer extends Zikula_AbstractInstaller
-        «ELSE»
-        class «appName»Installer extends \Zikula_AbstractInstaller
-        «ENDIF»
+        class «IF targets('1.3.5')»«appName»_Base_«ELSE»«appName»«ENDIF»Installer extends Zikula_AbstractInstaller
         {
             «installerBaseImpl»
         }
@@ -86,6 +99,20 @@ class Installer {
         «IF !targets('1.3.5')»
             namespace «appName»\Controller\Base;
 
+            use «appName»\Util\ControllerUtil;
+
+            use DoctrineHelper;
+            use LogUtil;
+            «IF needsConfig»
+                use ModUtil;
+            «ENDIF»
+            use SecurityUtil;
+            «IF !getAllVariableContainers.isEmpty»
+                use SessionUtil;
+            «ENDIF»
+            use Zikula_Controller_AbstractInteractiveInstaller;
+            use ZLanguage;
+
         «ENDIF»
         /**
          * Interactive installer base class.
@@ -93,7 +120,7 @@ class Installer {
         «IF targets('1.3.5')»
         class «appName»_Controller_Base_InteractiveInstaller extends Zikula_Controller_AbstractInteractiveInstaller
         «ELSE»
-        class InteractiveInstallerController extends \Zikula_Controller_AbstractInteractiveInstaller
+        class InteractiveInstallerController extends Zikula_Controller_AbstractInteractiveInstaller
         «ENDIF»
         {
             «new Interactive().generate(it)»
@@ -125,16 +152,16 @@ class Installer {
             «processUploadFolders»
             // create all tables from according entity definitions
             try {
-                \DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses());
-            } catch (Exception $e) {
-                if (\System::isDevelopmentMode()) {
-                    \LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
+                DoctrineHelper::createSchema($this->entityManager, $this->listEntityClasses());
+            } catch (\Exception $e) {
+                if (System::isDevelopmentMode()) {
+                    LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                 }
                 $returnMessage = $this->__f('An error was encountered while creating the tables for the %s extension.', array($this->name));
-                if (!\System::isDevelopmentMode()) {
+                if (!System::isDevelopmentMode()) {
                     $returnMessage .= ' ' . $this->__('Please enable the development mode by editing the /config/config.php file in order to reveal the error details.');
                 }
-                return \LogUtil::registerError($returnMessage);
+                return LogUtil::registerError($returnMessage);
             }
             «IF !getAllVariableContainers.isEmpty»
 
@@ -142,9 +169,9 @@ class Installer {
                 «val modvarHelper = new ModVars()»
                 «FOR modvar : getAllVariables»
                     «IF interactiveInstallation == true»
-                        $sessionValue = \SessionUtil::getVar('«formatForCode(name + '_' + modvar.name)»');
+                        $sessionValue = SessionUtil::getVar('«formatForCode(name + '_' + modvar.name)»');
                         $this->setVar('«modvar.name.formatForCode»', (($sessionValue <> false) ? «modvarHelper.valFromSession(modvar)» : «modvarHelper.valSession2Mod(modvar)»));
-                        \SessionUtil::delVar(«formatForCode(name + '_' + modvar.name)»);
+                        SessionUtil::delVar(«formatForCode(name + '_' + modvar.name)»);
                     «ELSE»
                         $this->setVar('«modvar.name.formatForCode»', «modvarHelper.valDirect2Mod(modvar)»);
                     «ENDIF»
@@ -156,7 +183,7 @@ class Installer {
             «IF hasCategorisableEntities»
 
                 // add default entries to category registry (property named Main)
-                $rootcat = \CategoryUtil::getCategoryByPath('/__SYSTEM__/Modules/Global');
+                $rootcat = CategoryUtil::getCategoryByPath('/__SYSTEM__/Modules/Global');
                 «IF targets('1.3.5')»
                     include_once 'modules/«appName»/lib/«appName»/Api/Base/Category.php';
                     include_once 'modules/«appName»/lib/«appName»/Api/Category.php';
@@ -169,7 +196,7 @@ class Installer {
 
                 «FOR entity : getCategorisableEntities»
                     $primaryRegistry = $categoryApi->getPrimaryProperty(array('ot' => '«entity.name.formatForCodeCapital»'));
-                    \CategoryRegistryUtil::insertEntry($this->name, '«entity.name.formatForCodeCapital»', $primaryRegistry, $rootcat['id']);
+                    CategoryRegistryUtil::insertEntry($this->name, '«entity.name.formatForCodeCapital»', $primaryRegistry, $rootcat['id']);
                 «ENDFOR»
             «ENDIF»
 
@@ -177,10 +204,10 @@ class Installer {
             $this->registerPersistentEventHandlers();
 
             // register hook subscriber bundles
-            \HookUtil::registerSubscriberBundles($this->version->getHookSubscriberBundles());
+            HookUtil::registerSubscriberBundles($this->version->getHookSubscriberBundles());
             «/*TODO see #15
                 // register hook provider bundles
-                \HookUtil::registerProviderBundles($this->version->getHookProviderBundles());
+                HookUtil::registerProviderBundles($this->version->getHookProviderBundles());
             */»
 
             // initialisation successful
@@ -192,7 +219,7 @@ class Installer {
         «IF hasUploads»
             // Check if upload directories exist and if needed create them
             try {
-                $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+                $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
                 «FOR uploadEntity : getUploadEntities»
                 «FOR uploadField : uploadEntity.getUploadFieldsEntity»
                     $result = $controllerHelper->checkAndCreateUploadFolder('«uploadField.entity.name.formatForCode»', '«uploadField.name.formatForCode»', '«uploadField.allowedExtensions»');
@@ -201,9 +228,8 @@ class Installer {
                     }*/»
                 «ENDFOR»
                 «ENDFOR»
-            }
-            catch (Exception $e) {
-                return \LogUtil::registerError($e->getMessage());
+            } catch (\Exception $e) {
+                return LogUtil::registerError($e->getMessage());
             }
         «ENDIF»
     '''
@@ -228,12 +254,12 @@ class Installer {
                     // ...
                     // update the database schema
                     try {
-                        \DoctrineHelper::updateSchema($this->entityManager, $this->listEntityClasses());
-                    } catch (Exception $e) {
-                        if (\System::isDevelopmentMode()) {
-                            \LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
+                        DoctrineHelper::updateSchema($this->entityManager, $this->listEntityClasses());
+                    } catch (\Exception $e) {
+                        if (System::isDevelopmentMode()) {
+                            LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                         }
-                        return \LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %s extension.', array($this->getName())));
+                        return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %s extension.', array($this->getName())));
                     }
             }
         */
@@ -252,28 +278,28 @@ class Installer {
         public function uninstall()
         {
             // delete stored object workflows
-            $result = \Zikula_Workflow_Util::deleteWorkflowsForModule($this->getName());
+            $result = Zikula_Workflow_Util::deleteWorkflowsForModule($this->getName());
             if ($result === false) {
-                return \LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
+                return LogUtil::registerError($this->__f('An error was encountered while removing stored object workflows for the %s extension.', array($this->getName())));
             }
 
             try {
-                \DoctrineHelper::dropSchema($this->entityManager, $this->listEntityClasses());
-            } catch (Exception $e) {
-                if (\System::isDevelopmentMode()) {
-                    \LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
+                DoctrineHelper::dropSchema($this->entityManager, $this->listEntityClasses());
+            } catch (\Exception $e) {
+                if (System::isDevelopmentMode()) {
+                    LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                 }
-                return \LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %s extension.', array($this->name)));
+                return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %s extension.', array($this->name)));
             }
 
             // unregister persistent event handlers
-            \EventUtil::unregisterPersistentModuleHandlers($this->name);
+            EventUtil::unregisterPersistentModuleHandlers($this->name);
 
             // unregister hook subscriber bundles
-            \HookUtil::unregisterSubscriberBundles($this->version->getHookSubscriberBundles());
+            HookUtil::unregisterSubscriberBundles($this->version->getHookSubscriberBundles());
             «/*TODO see #15
                 // unregister hook provider bundles
-                \HookUtil::unregisterProviderBundles($this->version->getHookProviderBundles());
+                HookUtil::unregisterProviderBundles($this->version->getHookProviderBundles());
             */»
             «IF !getAllVariables.isEmpty»
 
@@ -283,10 +309,10 @@ class Installer {
             «IF hasCategorisableEntities»
 
                 // remove category registry entries
-                \ModUtil::dbInfoLoad('Categories');
-                \DBUtil::deleteWhere('categories_registry', 'modname = \'' . $this->name . '\'');
+                ModUtil::dbInfoLoad('Categories');
+                DBUtil::deleteWhere('categories_registry', 'modname = \'' . $this->name . '\'');
             «ENDIF»
-            «IF !uploadEntities.isEmpty»
+            «IF hasUploads»
 
                 // remove all thumbnails
                 $manager = $this->getServiceManager()->getService('systemplugin.imagine.manager');
@@ -294,8 +320,8 @@ class Installer {
                 $manager->cleanupModuleThumbs();
 
                 // remind user about upload folders not being deleted
-                $uploadPath = \FileUtil::getDataDirectory() . '/' . $this->name . '/';
-                \LogUtil::registerStatus($this->__f('The upload directories at [%s] can be removed manually', $uploadPath));
+                $uploadPath = FileUtil::getDataDirectory() . '/' . $this->name . '/';
+                LogUtil::registerStatus($this->__f('The upload directories at [%s] can be removed manually', $uploadPath));
             «ENDIF»
 
             // deletion successful

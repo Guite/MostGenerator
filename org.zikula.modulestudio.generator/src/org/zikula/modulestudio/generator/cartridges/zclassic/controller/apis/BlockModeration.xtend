@@ -38,15 +38,20 @@ class BlockModeration {
         «IF !targets('1.3.5')»
             namespace «appName»\Block\Base;
 
+            use «appName»\Util\WorkflowUtil;
+
+            use BlockUtil;
+            use ModUtil;
+            use SecurityUtil;
+            use UserUtil;
+            use Zikula_Controller_AbstractBlock;
+            use Zikula_View;
+
         «ENDIF»
         /**
          * Moderation block base class.
          */
-        «IF targets('1.3.5')»
-        class «appName»_Block_Base_Moderation extends Zikula_Controller_AbstractBlock
-        «ELSE»
-        class Moderation extends \Zikula_Controller_AbstractBlock
-        «ENDIF»
+        class «IF targets('1.3.5')»«appName»_Block_Base_Moderation«ELSE»ModerationBlock«ENDIF» extends Zikula_Controller_AbstractBlock
         {
             «moderationBlockBaseImpl»
         }
@@ -58,7 +63,7 @@ class BlockModeration {
          */
         public function init()
         {
-            \SecurityUtil::registerPermissionSchema('«appName»:ModerationBlock:', 'Block title::');
+            SecurityUtil::registerPermissionSchema('«appName»:ModerationBlock:', 'Block title::');
         }
 
         /**
@@ -70,7 +75,7 @@ class BlockModeration {
         {
             $requirementMessage = '';
             // check if the module is available at all
-            if (!\ModUtil::available('«appName»')) {
+            if (!ModUtil::available('«appName»')) {
                 $requirementMessage .= $this->__('Notice: This block will not be displayed until you activate the «appName» module.');
             }
 
@@ -95,25 +100,25 @@ class BlockModeration {
         public function display($blockinfo)
         {
             // only show block content if the user has the required permissions
-            if (!\SecurityUtil::checkPermission('«appName»:ModerationBlock:', "$blockinfo[title]::", ACCESS_OVERVIEW)) {
+            if (!SecurityUtil::checkPermission('«appName»:ModerationBlock:', "$blockinfo[title]::", ACCESS_OVERVIEW)) {
                 return false;
             }
 
             // check if the module is available at all
-            if (!\ModUtil::available('«appName»')) {
+            if (!ModUtil::available('«appName»')) {
                 return false;
             }
 
-            if (!\UserUtil::isLoggedIn()) {
+            if (!UserUtil::isLoggedIn()) {
                 return false;
             }
 
-            \ModUtil::initOOModule('«appName»');
+            ModUtil::initOOModule('«appName»');
 
-            $this->view->setCaching(\Zikula_View::CACHE_DISABLED);
+            $this->view->setCaching(Zikula_View::CACHE_DISABLED);
             $template = $this->getDisplayTemplate($vars);
 
-            $workflowHelper = new \«appName»«IF targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»($this->serviceManager);
+            $workflowHelper = new «IF targets('1.3.5')»«appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager);
             $amounts = $workflowHelper->collectAmountOfModerationItems();
 
             // assign block vars and fetched data
@@ -127,7 +132,7 @@ class BlockModeration {
             $blockinfo['content'] = $this->view->fetch($template);
 
             // return the block to the theme
-            return \BlockUtil::themeBlock($blockinfo);
+            return BlockUtil::themeBlock($blockinfo);
         }
 
         /**

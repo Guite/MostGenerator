@@ -43,15 +43,19 @@ class VersionFile {
         «IF !targets('1.3.5')»
             namespace «appName»\Base;
 
+            use HookUtil;
+            «IF !referredApplications.isEmpty»
+                use ModUtil;
+            «ENDIF»
+            use Zikula_AbstractVersion;
+            use Zikula\Component\HookDispatcher\ProviderBundle;
+            use Zikula\Component\HookDispatcher\SubscriberBundle;
+
         «ENDIF»
         /**
          * Version information base class.
          */
-        «IF targets('1.3.5')»
-        class «appName»_Base_Version extends Zikula_AbstractVersion
-        «ELSE»
-        class «appName»Version extends \Zikula_AbstractVersion
-        «ENDIF»
+        class «IF targets('1.3.5')»«appName»_Base_«ELSE»«appName»«ENDIF»Version extends Zikula_AbstractVersion
         {
             /**
              * Retrieves meta data information for this application.
@@ -80,9 +84,9 @@ class VersionFile {
 
                 // define special capabilities of this module
                 $meta['capabilities'] = array(
-                                  \HookUtil::SUBSCRIBER_CAPABLE => array('enabled' => true)
+                                  HookUtil::SUBSCRIBER_CAPABLE => array('enabled' => true)
         /*,
-                                  \HookUtil::PROVIDER_CAPABLE => array('enabled' => true), // TODO: see #15
+                                  HookUtil::PROVIDER_CAPABLE => array('enabled' => true), // TODO: see #15
                                   'authentication' => array('version' => '1.0'),
                                   'profile'        => array('version' => '1.0', 'anotherkey' => 'anothervalue'),
                                   'message'        => array('version' => '1.0', 'anotherkey' => 'anothervalue')
@@ -111,7 +115,7 @@ class VersionFile {
                 «FOR entity : getAllEntities»
                     «/* we register one hook subscriber bundle foreach entity type */»
                     «val areaName = entity.nameMultiple.formatForDB»
-                    $bundle = new \Zikula«IF targets('1.3.5')»_HookManager_«ELSE»\Component\HookDispatcher\«ENDIF»SubscriberBundle($this->name, 'subscriber.«appName».ui_hooks.«areaName»', 'ui_hooks', __('«appName» «entity.nameMultiple.formatForDisplayCapital» Display Hooks'));
+                    $bundle = new «IF targets('1.3.5')»Zikula_HookManager_«ENDIF»SubscriberBundle($this->name, 'subscriber.«appName».ui_hooks.«areaName»', 'ui_hooks', __('«appName» «entity.nameMultiple.formatForDisplayCapital» Display Hooks'));
                     «/* $bundle->addEvent('hook type', 'event name triggered by *this* module');*/»
                     // Display hook for view/display templates.
                     $bundle->addEvent('display_view', '«appName».ui_hooks.«areaName».display_view');
@@ -129,7 +133,7 @@ class VersionFile {
                     $bundle->addEvent('process_delete', '«appName».ui_hooks.«areaName».process_delete');
                     $this->registerHookSubscriberBundle($bundle);
 
-                    $bundle = new \Zikula«IF targets('1.3.5')»_HookManager_«ELSE»\Component\HookDispatcher\«ENDIF»SubscriberBundle($this->name, 'subscriber.«appName».filter_hooks.«areaName»', 'filter_hooks', __('«appName» «entity.nameMultiple.formatForDisplayCapital» Filter Hooks'));
+                    $bundle = new «IF targets('1.3.5')»Zikula_HookManager_«ENDIF»SubscriberBundle($this->name, 'subscriber.«appName».filter_hooks.«areaName»', 'filter_hooks', __('«appName» «entity.nameMultiple.formatForDisplayCapital» Filter Hooks'));
                     // A filter applied to the given area.
                     $bundle->addEvent('filter', '«appName».filter_hooks.«areaName».filter');
                     $this->registerHookSubscriberBundle($bundle);
@@ -138,7 +142,7 @@ class VersionFile {
                 «/* TODO see #15
                     Example for name of provider area: provider_area.comments.general
 
-                    $bundle = new \Zikula«IF targets('1.3.5')»_HookManager_«ELSE»\Component\HookDispatcher\«ENDIF»ProviderBundle($this->name, 'provider.ratings.ui_hooks.rating', 'ui_hooks', $this->__('Ratings Hook Poviders'));
+                    $bundle = new «IF targets('1.3.5')»Zikula_HookManager_«ENDIF»ProviderBundle($this->name, 'provider.ratings.ui_hooks.rating', 'ui_hooks', $this->__('Ratings Hook Poviders'));
                     $bundle->addServiceHandler('display_view', 'Ratings_Hooks', 'uiView', 'ratings.service');
                     // add other hooks as needed
                     $this->registerHookProviderBundle($bundle);
@@ -184,7 +188,7 @@ class VersionFile {
         array('modname'    => '«name.formatForCode.toFirstUpper»',
               'minversion' => '«minVersion»',
               'maxversion' => '«maxVersion»',
-              'status'     => \ModUtil::DEPENDENCY_«appDependencyType»)
+              'status'     => ModUtil::DEPENDENCY_«appDependencyType»)
     '''
 
     def private appDependencyType(ReferredApplication it) {

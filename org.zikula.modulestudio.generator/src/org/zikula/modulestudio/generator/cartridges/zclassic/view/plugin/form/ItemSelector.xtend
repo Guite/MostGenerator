@@ -43,15 +43,20 @@ class ItemSelector {
         «IF !targets('1.3.5')»
             namespace «appName»\Form\Plugin\Base;
 
+            use ModUtil;
+            use PageUtil;
+            use SecurityUtil;
+            use ServiceUtil;
+            use ThemeUtil;
+            use Zikula_Form_Plugin_TextInput;
+            use Zikula_Form_View;
+            use Zikula_View;
+
         «ENDIF»
         /**
          * Item selector plugin base class.
          */
-        «IF targets('1.3.5')»
-        class «appName»_Form_Plugin_Base_ItemSelector extends Zikula_Form_Plugin_TextInput
-        «ELSE»
-        class ItemSelector extends \Zikula_Form_Plugin_TextInput
-        «ENDIF»
+        class «IF targets('1.3.5')»«appName»_Form_Plugin_Base_«ENDIF»ItemSelector extends Zikula_Form_Plugin_TextInput
         {
             /**
              * The treated object type.
@@ -120,15 +125,15 @@ class ItemSelector {
             {
                 static $firstTime = true;
                 if ($firstTime) {
-                    \PageUtil::addVar('javascript', 'prototype');
-                    \PageUtil::addVar('javascript', 'Zikula.UI'); // imageviewer
-                    \PageUtil::addVar('javascript', 'modules/«appName»/javascript/finder.js');
-                    \PageUtil::addVar('stylesheet', \ThemeUtil::getModuleStylesheet('«appName»'));
+                    PageUtil::addVar('javascript', 'prototype');
+                    PageUtil::addVar('javascript', 'Zikula.UI'); // imageviewer
+                    PageUtil::addVar('javascript', 'modules/«appName»/javascript/finder.js');
+                    PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
                 }
                 $firstTime = false;
 
-                if (!\SecurityUtil::checkPermission('«appName»:' . ucwords($this->objectType) . ':', '::', ACCESS_COMMENT)) {
-                    return false; //\LogUtil::registerPermissionError();
+                if (!SecurityUtil::checkPermission('«appName»:' . ucwords($this->objectType) . ':', '::', ACCESS_COMMENT)) {
+                    return false;
                 }
                 «IF hasCategorisableEntities»
 
@@ -137,7 +142,7 @@ class ItemSelector {
                     if (in_array($this->objectType, $categorisableObjectTypes)) {
                         // fetch selected categories to reselect them in the output
                         // the actual filtering is done inside the repository class
-                        $catIds = \ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $this->objectType));
+                        $catIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $this->objectType));
                     }
                 «ENDIF»
 
@@ -146,7 +151,7 @@ class ItemSelector {
                 «ELSE»
                     $entityClass = '\\«appName»\\Entity\\' . ucwords($this->objectType) . 'Entity';
                 «ENDIF»
-                $serviceManager = \ServiceUtil::getManager();
+                $serviceManager = ServiceUtil::getManager();
                 $entityManager = $serviceManager->getService('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
 
@@ -159,7 +164,7 @@ class ItemSelector {
 
                 $objectData = $repository->selectWhere($where, $sortParam);
 
-                $view = \Zikula_View::getInstance('«appName»', false);
+                $view = Zikula_View::getInstance('«appName»', false);
                 $view->assign('items', $objectData)
                      ->assign('selectedId', $this->selectedItemId);
             «IF hasCategorisableEntities»
@@ -167,7 +172,7 @@ class ItemSelector {
                 // assign category properties
                 $properties = null;
                 if (in_array($this->objectType, $categorisableObjectTypes)) {
-                    $properties = \ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
+                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
                 }
                 $view->assign('properties', $properties)
                      ->assign('catIds', $catIds);

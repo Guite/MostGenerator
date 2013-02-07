@@ -35,6 +35,15 @@ class AbstractObjectSelector {
         «IF !targets('1.3.5')»
             namespace «appName»\Form\Plugin\Base;
 
+            use DataUtil;
+            use Doctrine\Common\Collections\Collection;
+            use FormUtil;
+            use ModUtil;
+            use ServiceUtil;
+            use Zikula_EntityAccess;
+            use Zikula_Form_Plugin_DropdownList;
+            use Zikula_Form_View;
+
         «ENDIF»
         /**
          * Abstract object selector plugin base class.
@@ -42,7 +51,7 @@ class AbstractObjectSelector {
         «IF targets('1.3.5')»
         abstract class «appName»_Form_Plugin_Base_AbstractObjectSelector extends Zikula_Form_Plugin_DropdownList
         «ELSE»
-        class AbstractObjectSelector extends \Zikula_Form_Plugin_DropdownList
+        class AbstractObjectSelector extends Zikula_Form_Plugin_DropdownList
         «ENDIF»
         {
             «memberVars»
@@ -187,7 +196,7 @@ class AbstractObjectSelector {
                 «ELSE»
                     $entityClass = '\\' . $this->name . '\\Entity\\' . ucwords($this->objectType) . 'Entity';
                 «ENDIF»
-                $entityManager = \ServiceUtil::getManager()->getService('doctrine.entitymanager');
+                $entityManager = ServiceUtil::getManager()->getService('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
                 $this->displayField = $repository->getTitleFieldName();
             }
@@ -231,7 +240,7 @@ class AbstractObjectSelector {
 
             parent::create($view, $params);
 
-            $this->idFields = \ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $this->objectType));
+            $this->idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $this->objectType));
             $this->cssClass .= ' ' . $this->getStyleClass() . ' ' . strtolower($this->objectType);
         }
 
@@ -293,7 +302,7 @@ class AbstractObjectSelector {
 
             if ($this->resultsPerPage < 1) {
                 // no pagination
-                $entities = \ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
+                $entities = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
 
                 return $entities;
             }
@@ -302,7 +311,7 @@ class AbstractObjectSelector {
             $selectionArgs['currentPage'] = $this->currentPage;
             $selectionArgs['resultsPerPage'] = $this->resultsPerPage;
 
-            list($entities, $objectCount) = \ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
+            list($entities, $objectCount) = ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
 
             return $entities;
         }
@@ -320,14 +329,14 @@ class AbstractObjectSelector {
         {
             $newValue = null;
             if ($this->selectionMode == 'single') {
-                if ($value instanceof «IF targets('1.3.5')»Zikula_«ELSE»\Zikula\«ENDIF»EntityAccess && method_exists($value, 'createCompositeIdentifier')) {
+                if ($value instanceof Zikula_EntityAccess && method_exists($value, 'createCompositeIdentifier')) {
                     $newValue = $value->createCompositeIdentifier();
                 }
             } else {
                 $newValue = array();
-                if (is_array($value) || $value instanceof \Doctrine\Common\Collections\Collection) {
+                if (is_array($value) || $value instanceof Collection) {
                     foreach ($value as $entity) {
-                        if ($entity instanceof «IF targets('1.3.5')»Zikula_«ELSE»\Zikula\«ENDIF»EntityAccess && method_exists($entity, 'createCompositeIdentifier')) {
+                        if ($entity instanceof Zikula_EntityAccess && method_exists($entity, 'createCompositeIdentifier')) {
                             $newValue[] = $entity->createCompositeIdentifier();
                         }
                     }
@@ -385,13 +394,13 @@ class AbstractObjectSelector {
             «ELSE»
                 $entityClass = '\\' . $this->name . '\\Entity\\' . ucwords($this->objectType) . 'Entity';
             «ENDIF»
-            $serviceManager = \ServiceUtil::getManager();
+            $serviceManager = ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
 
             $inputValue = $this->getSelectedValue();
             if (empty($inputValue) || !$inputValue) {
-                $inputValue = \FormUtil::getPassedValue($this->inputName, '', $source);
+                $inputValue = FormUtil::getPassedValue($this->inputName, '', $source);
             }
             if (empty($inputValue)) {
                 return $many ? array() : null;
@@ -423,7 +432,7 @@ class AbstractObjectSelector {
                 'where' => $this->buildWhereClause($inputValue),
                 'orderBy' => $this->orderBy
             );
-            $relatedItems = \ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
+            $relatedItems = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
 
             return $relatedItems;
         }
@@ -479,15 +488,15 @@ class AbstractObjectSelector {
                     if (!empty($where)) {
                         $where .= ' AND ';
                     }
-                    $where .= 'tbl.' . $idField . ' IN (' . \DataUtil::formatForStore(implode(', ', $idsPerField[$idField])) . ')';
+                    $where .= 'tbl.' . $idField . ' IN (' . DataUtil::formatForStore(implode(', ', $idsPerField[$idField])) . ')';
                 }
             } else {
                 $many = ($this->selectionMode == 'multiple');
                 $idField = reset($this->idFields);
                 if ($many) {
-                    $where .= 'tbl.' . $idField . ' IN (' . \DataUtil::formatForStore(implode(', ', $inputValue)) . ')';
+                    $where .= 'tbl.' . $idField . ' IN (' . DataUtil::formatForStore(implode(', ', $inputValue)) . ')';
                 } else {
-                    $where .= 'tbl.' . $idField . ' = \'' . \DataUtil::formatForStore($inputValue) . '\'';
+                    $where .= 'tbl.' . $idField . ' = \'' . DataUtil::formatForStore($inputValue) . '\'';
                 }
             }
             if (!empty($this->where)) {

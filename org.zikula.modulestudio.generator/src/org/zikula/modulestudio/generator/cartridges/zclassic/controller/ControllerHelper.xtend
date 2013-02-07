@@ -17,7 +17,7 @@ class ControllerHelper {
         protected function postInitialize()
         {
             // Set caching to «caching.displayBool» by default.
-            $this->view->setCaching(\Zikula_View::CACHE_«IF caching»ENABLED«ELSE»DISABLED«ENDIF»);
+            $this->view->setCaching(Zikula_View::CACHE_«IF caching»ENABLED«ELSE»DISABLED«ENDIF»);
             «IF additionalCommands != ''»
                 «additionalCommands»
             «ENDIF»

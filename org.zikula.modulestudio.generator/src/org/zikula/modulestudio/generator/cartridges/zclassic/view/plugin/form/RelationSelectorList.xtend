@@ -41,6 +41,8 @@ class RelationSelectorList {
         «IF !targets('1.3.5')»
             namespace «appName»\Form\Plugin\Base;
 
+            use Zikula_Form_View;
+
         «ENDIF»
         /**
          * Relation selector plugin base class.

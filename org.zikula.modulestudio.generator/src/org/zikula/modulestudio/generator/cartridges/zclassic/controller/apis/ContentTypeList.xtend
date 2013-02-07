@@ -42,6 +42,14 @@ class ContentTypeList {
         «IF !targets('1.3.5')»
             namespace «appName»\ContentType\Base;
 
+            use «appName»\Util\ControllerUtil;
+
+            use ModUtil;
+            use SecurityUtil;
+            use ServiceUtil;
+            use Zikula_View;
+            use ZLanguage;
+
         «ENDIF»
         /**
          * Generic item list content plugin base class.
@@ -149,7 +157,7 @@ class ContentTypeList {
          */
         public function getTitle()
         {
-            $dom = \ZLanguage::getModuleDomain('«appName»');
+            $dom = ZLanguage::getModuleDomain('«appName»');
 
             return __('«appName» list view', $dom);
         }
@@ -161,7 +169,7 @@ class ContentTypeList {
          */
         public function getDescription()
         {
-            $dom = \ZLanguage::getModuleDomain('«appName»');
+            $dom = ZLanguage::getModuleDomain('«appName»');
 
             return __('Display list of «appName» objects.', $dom);
         }
@@ -173,8 +181,8 @@ class ContentTypeList {
          */
         public function loadData(&$data)
         {
-            $serviceManager = \ServiceUtil::getManager();
-            $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($serviceManager);
+            $serviceManager = ServiceUtil::getManager();
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($serviceManager);
 
             $utilArgs = array('name' => 'list');
             if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $utilArgs))) {
@@ -201,7 +209,7 @@ class ContentTypeList {
             «IF hasCategorisableEntities»
 
                 if (!isset($data['catIds'])) {
-                    $primaryRegistry = \ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $vars['objectType']));
+                    $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $vars['objectType']));
                     $data['catIds'] = array($primaryRegistry => array());
                     // backwards compatibility
                     if (isset($data['catId'])) {
@@ -225,7 +233,7 @@ class ContentTypeList {
                 // fetch category properties
                 $this->catProperties = null;
                 if (in_array($this->objectType, $this->categorisableObjectTypes)) {
-                    $this->catProperties = \ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
+                    $this->catProperties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
                 }
                 $this->catIds = $data['catIds'];
             «ENDIF»
@@ -238,15 +246,15 @@ class ContentTypeList {
          */
         public function display()
         {
-            $dom = \ZLanguage::getModuleDomain('«appName»');
-            \ModUtil::initOOModule('«appName»');
+            $dom = ZLanguage::getModuleDomain('«appName»');
+            ModUtil::initOOModule('«appName»');
 
             «IF targets('1.3.5')»
                 $entityClass = '«appName»_Entity_' . ucwords($this->objectType);
             «ELSE»
                 $entityClass = '\\«appName»\\Entity\\' . ucwords($this->objectType) . 'Entity';
             «ENDIF»
-            $serviceManager = \ServiceUtil::getManager();
+            $serviceManager = ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
 
@@ -256,7 +264,7 @@ class ContentTypeList {
                 // apply category filters
                 if (in_array($this->objectType, $this->categorisableObjectTypes)) {
                     if (is_array($this->catIds) && count($this->catIds) > 0) {
-                        $categoryFiltersPerRegistry = \ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', array('ot' => $this->objectType, 'catids' => $this->catIds));
+                        $categoryFiltersPerRegistry = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', array('ot' => $this->objectType, 'catids' => $this->catIds));
                         if (count($categoryFiltersPerRegistry) > 0) {
                             if (!empty($where)) {
                                 $where .= ' AND ';
@@ -270,15 +278,15 @@ class ContentTypeList {
             // ensure that the view does not look for templates in the Content module (#218)
             $this->view->toplevelmodule = '«appName»';
 
-            $this->view->setCaching(\Zikula_View::CACHE_ENABLED);
+            $this->view->setCaching(Zikula_View::CACHE_ENABLED);
             // set cache id
             $component = '«appName»:' . ucwords($this->objectType) . ':';
             $instance = '::';
             $accessLevel = ACCESS_READ;
-            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
+            if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
                 $accessLevel = ACCESS_COMMENT;
             }
-            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+            if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
                 $accessLevel = ACCESS_EDIT;
             }
             $this->view->setCacheId('view|ot_' . $this->objectType . '_sort_' . $this->sorting . '_amount_' . $this->amount . '_' . $accessLevel);
@@ -300,7 +308,7 @@ class ContentTypeList {
                 'currentPage' => 1,
                 'resultsPerPage' => $resultsPerPage
             );
-            list($entities, $objectCount) = \ModUtil::apiFunc('«appName»', 'selection', 'getEntitiesPaginated', $selectionArgs);
+            list($entities, $objectCount) = ModUtil::apiFunc('«appName»', 'selection', 'getEntitiesPaginated', $selectionArgs);
 
             $data = array('objectType' => $this->objectType,
                           'catids' => $this->catIds,
@@ -367,7 +375,7 @@ class ContentTypeList {
 
             $sortParam = '';
             if ($this->sorting == 'newest') {
-                $idFields = \ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $this->objectType));
+                $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $this->objectType));
                 if (count($idFields) == 1) {
                     $sortParam = $idFields[0] . ' DESC';
                 } else {

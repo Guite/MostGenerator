@@ -129,9 +129,9 @@ class EventListener {
             // delete workflow for this entity
             $workflow = $this['__WORKFLOW__'];
             «IF container.application.targets('1.3.5')»
-            $result = (bool) \DBUtil::deleteObjectByID('workflows', $workflow['id']);
+            $result = (bool) DBUtil::deleteObjectByID('workflows', $workflow['id']);
             «ELSE»
-            $serviceManager = \ServiceUtil::getManager();
+            $serviceManager = ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $result = true;
             try {
@@ -143,8 +143,8 @@ class EventListener {
             }
             «ENDIF»
             if ($result === false) {
-                $dom = \ZLanguage::getModuleDomain('«container.application.appName»');
-                return \LogUtil::registerError(__('Error! Could not remove stored workflow. Deletion has been aborted.', $dom));
+                $dom = ZLanguage::getModuleDomain('«container.application.appName»');
+                return LogUtil::registerError(__('Error! Could not remove stored workflow. Deletion has been aborted.', $dom));
             }
 
             return true;
@@ -176,7 +176,7 @@ class EventListener {
                     $objectId = $this['«it.primaryKeyFields.head.name.formatForCode»'];
                 «ENDIF»
                 // initialise the upload handler
-                $uploadManager = new \«container.application.appName»«IF container.application.targets('1.3.5')»_«ELSE»\«ENDIF»UploadHandler();
+                $uploadManager = new «IF container.application.targets('1.3.5')»«container.application.appName»_«ENDIF»UploadHandler();
 
                 $uploadFields = array(«FOR uploadField : getUploadFieldsEntity SEPARATOR ', '»'«uploadField.name.formatForCode»'«ENDFOR»);
                 foreach ($uploadFields as $uploadField) {
@@ -379,13 +379,13 @@ class EventListener {
 
     def private postLoadImpl(Entity it/* PostLoad it */) '''
         «val app = container.application»
-        $currentFunc = \FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
+        $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
         «IF hasUploadFieldsEntity»
 
             // initialise the upload handler
-            $uploadManager = new \«app.appName»«IF app.targets('1.3.5')»_«ELSE»\«ENDIF»UploadHandler();
-            $serviceManager = \ServiceUtil::getManager();
-            $controllerHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($serviceManager);
+            $uploadManager = new «IF app.targets('1.3.5')»«app.appName»_«ENDIF»UploadHandler();
+            $serviceManager = ServiceUtil::getManager();
+            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($serviceManager);
         «ENDIF»
 
         $this->initWorkflow();
@@ -399,10 +399,10 @@ class EventListener {
                              $this['«name.formatForCode»'] = (bool) $this['«name.formatForCode»'];
                          '''
             AbstractIntegerField: '''
-                             $this['«name.formatForCode»'] = (int) ((isset($this['«name.formatForCode»']) && !empty($this['«name.formatForCode»'])) ? \DataUtil::formatForDisplay($this['«name.formatForCode»']) : 0);
+                             $this['«name.formatForCode»'] = (int) ((isset($this['«name.formatForCode»']) && !empty($this['«name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode»']) : 0);
                          '''
             DecimalField: '''
-                             $this['«name.formatForCode»'] = (float) ((isset($this['«name.formatForCode»']) && !empty($this['«name.formatForCode»'])) ? \DataUtil::formatForDisplay($this['«name.formatForCode»']) : 0.00);
+                             $this['«name.formatForCode»'] = (float) ((isset($this['«name.formatForCode»']) && !empty($this['«name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode»']) : 0.00);
                          '''
             StringField: sanitizeForOutputHTML
             TextField: sanitizeForOutputHTML
@@ -410,27 +410,27 @@ class EventListener {
             ListField: sanitizeForOutputHTMLWithZero
             UploadField: sanitizeForOutputUpload
             ArrayField: '''
-                             $this['«name.formatForCode»'] = ((isset($this['«name.formatForCode»']) && is_array($this['«name.formatForCode»'])) ? \DataUtil::formatForDisplay($this['«name.formatForCode»']) : array());
+                             $this['«name.formatForCode»'] = ((isset($this['«name.formatForCode»']) && is_array($this['«name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode»']) : array());
                          '''
             AbstractDateField: ''
             FloatField: '''
-                             $this['«name.formatForCode»'] = (float) ((isset($this['«name.formatForCode»']) && !empty($this['«name.formatForCode»'])) ? \DataUtil::formatForDisplay($this['«name.formatForCode»']) : 0.00);
+                             $this['«name.formatForCode»'] = (float) ((isset($this['«name.formatForCode»']) && !empty($this['«name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«name.formatForCode»']) : 0.00);
                          '''
             default: '''
-                        $this['«it.name.formatForCode»'] = ((isset($this['«it.name.formatForCode»']) && !empty($this['«it.name.formatForCode»'])) ? \DataUtil::formatForDisplay($this['«it.name.formatForCode»']) : '');
+                        $this['«it.name.formatForCode»'] = ((isset($this['«it.name.formatForCode»']) && !empty($this['«it.name.formatForCode»'])) ? DataUtil::formatForDisplay($this['«it.name.formatForCode»']) : '');
                     '''
         }
     }
 
     def private sanitizeForOutputHTML(EntityField it) '''
         if ($currentFunc != 'edit') {
-            $this['«it.name.formatForCode»'] = ((isset($this['«it.name.formatForCode»']) && !empty($this['«it.name.formatForCode»'])) ? \DataUtil::formatForDisplayHTML($this['«it.name.formatForCode»']) : '');
+            $this['«it.name.formatForCode»'] = ((isset($this['«it.name.formatForCode»']) && !empty($this['«it.name.formatForCode»'])) ? DataUtil::formatForDisplayHTML($this['«it.name.formatForCode»']) : '');
         }
     '''
 
     def private sanitizeForOutputHTMLWithZero(EntityField it) '''
         if ($currentFunc != 'edit') {
-            $this['«it.name.formatForCode»'] = (((isset($this['«it.name.formatForCode»']) && !empty($this['«it.name.formatForCode»'])) || $this['«it.name.formatForCode»'] == 0) ? \DataUtil::formatForDisplayHTML($this['«it.name.formatForCode»']) : '');
+            $this['«it.name.formatForCode»'] = (((isset($this['«it.name.formatForCode»']) && !empty($this['«it.name.formatForCode»'])) || $this['«it.name.formatForCode»'] == 0) ? DataUtil::formatForDisplayHTML($this['«it.name.formatForCode»']) : '');
         }
     '''
 
@@ -439,13 +439,12 @@ class EventListener {
         if (!empty($this['«realName»'])) {
             try {
                 $basePath = $controllerHelper->getFileBaseFolder('«entity.name.formatForCode»', '«realName»');
-            }
-            catch (Exception $e) {
-                return \LogUtil::registerError($e->getMessage());
+            } catch (Exception $e) {
+                return LogUtil::registerError($e->getMessage());
             }
             $fullPath = $basePath .  $this['«realName»'];
             $this['«realName»FullPath'] = $fullPath;
-            $this['«realName»FullPathURL'] = \System::getBaseUrl() . $fullPath;
+            $this['«realName»FullPathURL'] = System::getBaseUrl() . $fullPath;
 
             // just some backwards compatibility stuff«/*TODO: remove somewhen*/»
             if (!isset($this['«realName»Meta']) || !is_array($this['«realName»Meta']) || !count($this['«realName»Meta'])) {

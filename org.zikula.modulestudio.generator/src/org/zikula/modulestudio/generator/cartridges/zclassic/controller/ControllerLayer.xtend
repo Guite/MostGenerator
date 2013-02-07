@@ -108,15 +108,57 @@ class ControllerLayer {
         «IF !app.targets('1.3.5')»
             namespace «app.appName»\Controller\Base;
 
+            «IF app.needsConfig && isConfigController»
+                use «app.appName»\Form\Handler\«app.configController.formatForDB.toFirstUpper»\ConfigHandler;
+            «ENDIF»
+            use «app.appName»\Util\ControllerUtil;
+            «IF isAjaxController && app.hasImageFields»
+                use «app.appName»\Util\ImageUtil;
+            «ENDIF»
+            use «app.appName»\Util\ViewUtil;
+            «IF (hasActions('view') && isAdminController) || hasActions('delete')»
+                use «app.appName»\Util\WorkflowUtil;
+            «ENDIF»
+
+            «IF isAjaxController»
+                use DataUtil;
+                «IF !app.getAllUserFields.isEmpty»
+                    use Doctrine\ORM\AbstractQuery;
+                «ENDIF»
+            «ENDIF»
+            use FormUtil;
+            «IF hasActions('edit')»
+                use JCSSUtil;
+            «ENDIF»
+            use LogUtil;
+            use ModUtil;
+            use SecurityUtil;
+            «IF hasActions('view') && isAdminController»
+                use System;
+            «ENDIF»
+            use Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»;
+            use Zikula_View;
+            use ZLanguage;
+            «IF (hasActions('view') && isAdminController) || hasActions('delete')»
+                use Zikula\Core\Hook\ProcessHook;
+                use Zikula\Core\Hook\ValidationHook;
+                use Zikula\Core\Hook\ValidationProviders;
+            «ENDIF»
+            use Zikula\Core\ModUrl;
+            «IF isAjaxController»
+                use Zikula\Core\Response\Ajax\AjaxResponse;
+                use Zikula\Core\Response\Ajax\BadDataResponse;
+                use Zikula\Core\Response\Ajax\FatalResponse;
+                use Zikula\Core\Response\Ajax\NotFoundResponse;
+                use Zikula\Core\Response\Ajax\Plain;
+            «ENDIF»
+            use Zikula\Core\Response\PlainResponse;
+
         «ENDIF»
         /**
          * «name» controller class.
          */
-        «IF app.targets('1.3.5')»
-        class «app.appName»_Controller_Base_«name.formatForCodeCapital» extends Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»
-        «ELSE»
-        class «name.formatForCodeCapital»Controller extends \Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»
-        «ENDIF»
+        class «IF app.targets('1.3.5')»«app.appName»_Controller_Base_«name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»Controller«ENDIF» extends Zikula_«IF !isAjaxController»AbstractController«ELSE»Controller_AbstractAjax«ENDIF»
         {
             «IF isAjaxController»
 
@@ -149,14 +191,14 @@ class ControllerLayer {
                     $this->view->assign('itemId', $itemId)
                                ->assign('idPrefix', $idPrefix)
                                ->assign('commandName', $commandName)
-                               ->assign('jcssConfig', \JCSSUtil::getJSConfig());
+                               ->assign('jcssConfig', JCSSUtil::getJSConfig());
 
                     «IF app.targets('1.3.5')»
                     $view->display('«formattedName»/inlineRedirectHandler.tpl');
 
                     return true;
                     «ELSE»
-                    return new \Zikula\Core\Response\PlainResponse($view->display('«formattedName.toFirstUpper»/inlineRedirectHandler.tpl'));
+                    return new PlainResponse($view->display('«formattedName.toFirstUpper»/inlineRedirectHandler.tpl'));
                     «ENDIF»
                 }
             «ENDIF»
@@ -169,15 +211,15 @@ class ControllerLayer {
                  */
                 public function config«IF !app.targets('1.3.5')»Action«ENDIF»()
                 {
-                    $this->throwForbiddenUnless(\SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN));
+                    $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN));
 
                     // Create new Form reference
-                    $view = \FormUtil::newForm($this->name, $this);
+                    $view = FormUtil::newForm($this->name, $this);
 
                     $templateName = '«IF app.targets('1.3.5')»«app.configController.formatForDB»«ELSE»«app.configController.formatForCodeCapital»«ENDIF»/config.tpl';
 
                     // Execute form using supplied template and page event handler
-                    return $view->execute($templateName, new «IF app.targets('1.3.5')»«app.appName»_Form_Handler_«app.configController.formatForDB.toFirstUpper»_Config«ELSE»\«app.appName»\Form\Handler\«app.configController.formatForDB.toFirstUpper»\ConfigHandler«ENDIF»());
+                    return $view->execute($templateName, new «IF app.targets('1.3.5')»«app.appName»_Form_Handler_«app.configController.formatForDB.toFirstUpper»_Config«ELSE»ConfigHandler«ENDIF»());
                 }
             «ENDIF»
             «new Ajax().additionalAjaxFunctions(it, app)»
@@ -200,27 +242,27 @@ class ControllerLayer {
         {
             $this->checkCsrfToken();
 
-            $returnUrl = \ModUtil::url($this->name, 'admin', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
+            $returnUrl = ModUtil::url($this->name, 'admin', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»');
 
             // Determine object type
             $objectType = isset($args['ot']) ? $args['ot'] : $this->request->request->get('ot', '');
             if (!$objectType) {
-                return \System::redirect($returnUrl);
+                return System::redirect($returnUrl);
             }
-            $returnUrl = \ModUtil::url($this->name, 'admin', 'view', array('ot' => $objectType));
+            $returnUrl = ModUtil::url($this->name, 'admin', 'view', array('ot' => $objectType));
 
             // Get other parameters
             $items = isset($args['items']) ? $args['items'] : $this->request->request->get('items', null);
             $action = isset($args['action']) ? $args['action'] : $this->request->request->get('action', null);
             $action = strtolower($action);
 
-            $workflowHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»($this->serviceManager);
+            $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager);
 
             // process each item
             foreach ($items as $itemid) {
                 // check if item exists, and get record instance
                 $selectionArgs = array('ot' => $objectType, 'id' => $itemid, 'useJoins' => false);
-                $entity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', $selectionArgs);
+                $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', $selectionArgs);
 
                 // check if $action can be applied to this entity (may depend on it's current workflow state)
                 $allowedActions = $workflowHelper->getActionsForObject($entity);
@@ -238,7 +280,7 @@ class ControllerLayer {
                 $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
                 $validators = $this->notifyHooks($hook)->getValidators();
                 «ELSE»
-                $hook = new \Zikula\Core\Hook\ValidationHook(new Zikula\Core\Hook\ValidationProviders());
+                $hook = new ValidationHook(new ValidationProviders());
                 $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
                 «ENDIF»
                 if ($validators->hasErrors()) {
@@ -249,8 +291,8 @@ class ControllerLayer {
                 try {
                     // execute the workflow action
                     $success = $workflowHelper->executeAction($entity, $action);
-                } catch(Exception $e) {
-                    \LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                } catch(\Exception $e) {
+                    LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                 }
 
                 if (!$success) {
@@ -258,9 +300,9 @@ class ControllerLayer {
                 }
 
                 if ($action == 'delete') {
-                    \LogUtil::registerStatus($this->__('Done! Item deleted.'));
+                    LogUtil::registerStatus($this->__('Done! Item deleted.'));
                 } else {
-                    \LogUtil::registerStatus($this->__('Done! Item updated.'));
+                    LogUtil::registerStatus($this->__('Done! Item updated.'));
                 }
 
                 // Let any hooks know that we have updated or deleted an item
@@ -272,25 +314,25 @@ class ControllerLayer {
                     if (isset($this->entityRef['slug'])) {
                         $urlArgs['slug'] = $this->entityRef['slug'];
                     }
-                    $url = new \Zikula«IF app.targets('1.3.5')»_ModUrl«ELSE»\Core\ModUrl«ENDIF»($this->name, '«formattedName»', 'display', \ZLanguage::getLanguageCode(), $urlArgs);
+                    $url = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, '«formattedName»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
                 }
                 «IF app.targets('1.3.5')»
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
                 $this->notifyHooks($hook);
                 «ELSE»
-                $hook = new \Zikula\Core\Hook\ProcessHook($entity->createCompositeIdentifier(), $url);
+                $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
                 $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
                 «ENDIF»
 
                 // An item was updated or deleted, so we clear all cached pages for this item.
                 $cacheArgs = array('ot' => $objectType, 'item' => $entity);
-                \ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
+                ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
             }
 
             // clear view cache to reflect our changes
             $this->view->clear_cache();
 
-            return \System::redirect($returnUrl);
+            return System::redirect($returnUrl);
         }
     '''
 
@@ -321,15 +363,23 @@ class ControllerLayer {
         «IF !app.targets('1.3.5')»
             namespace «app.appName»\Api\Base;
 
+            «IF isUserController»
+                use «app.appName»\RouterFacade;
+                use «app.appName»\Util\ControllerUtil;
+                use LogUtil;
+            «ENDIF»
+            use ModUtil;
+            use SecurityUtil;
+            «IF isUserController»
+                use System;
+            «ENDIF»
+            use Zikula_AbstractApi;
+
         «ENDIF»
         /**
          * This is the «name» api helper class.
          */
-        «IF app.targets('1.3.5')»
-        class «app.appName»_Api_Base_«name.formatForCodeCapital» extends Zikula_AbstractApi
-        «ELSE»
-        class «name.formatForCodeCapital»Api extends \Zikula_AbstractApi
-        «ENDIF»
+        class «IF app.targets('1.3.5')»«app.appName»_Api_Base_«name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»Api«ENDIF» extends Zikula_AbstractApi
         {
             «IF !isAjaxController»
             /**
@@ -344,20 +394,21 @@ class ControllerLayer {
                 «menuLinksBetweenControllers»
                 «IF hasActions('view')»
                     «FOR entity : app.getAllEntities»
-                        if (\SecurityUtil::checkPermission($this->name . ':«entity.name.formatForCodeCapital»:', '::', ACCESS_«menuLinksPermissionLevel»)) {
-                            $links[] = array('url' => \ModUtil::url($this->name, '«formattedName»', 'view', array('ot' => '«entity.name.formatForCode»')),
+                        if (SecurityUtil::checkPermission($this->name . ':«entity.name.formatForCodeCapital»:', '::', ACCESS_«menuLinksPermissionLevel»)) {
+                            $links[] = array('url' => ModUtil::url($this->name, '«formattedName»', 'view', array('ot' => '«entity.name.formatForCode»')),
                                              'text' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'),
                                              'title' => $this->__('«entity.name.formatForDisplayCapital» list'));
                         }
                     «ENDFOR»
                 «ENDIF»
                 «IF app.needsConfig && isConfigController»
-                    if (\SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
-                        $links[] = array('url' => \ModUtil::url($this->name, '«app.configController.formatForDB»', 'config'),
+                    if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+                        $links[] = array('url' => ModUtil::url($this->name, '«app.configController.formatForDB»', 'config'),
                                          'text' => $this->__('Configuration'),
                                          'title' => $this->__('Manage settings for this application'));
                     }
                 «ENDIF»
+
                 return $links;
             }
             «ENDIF»
@@ -369,8 +420,8 @@ class ControllerLayer {
         switch it {
             AdminController case !container.getUserControllers.isEmpty: '''
                     «val userController = container.getUserControllers.head»
-                    if (\SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
-                        $links[] = array('url' => \ModUtil::url($this->name, '«userController.formattedName»', «userController.indexUrlDetails»),
+                    if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
+                        $links[] = array('url' => ModUtil::url($this->name, '«userController.formattedName»', «userController.indexUrlDetails»),
                                          'text' => $this->__('Frontend'),
                                          'title' => $this->__('Switch to user area.'),
                                          'class' => 'z-icon-es-home');
@@ -378,8 +429,8 @@ class ControllerLayer {
                     '''
             UserController case !container.getAdminControllers.isEmpty: '''
                     «val adminController = container.getAdminControllers.head»
-                    if (\SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
-                        $links[] = array('url' => \ModUtil::url($this->name, '«adminController.formattedName»', «adminController.indexUrlDetails»),
+                    if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+                        $links[] = array('url' => ModUtil::url($this->name, '«adminController.formattedName»', «adminController.indexUrlDetails»),
                                          'text' => $this->__('Backend'),
                                          'title' => $this->__('Switch to administration area.'),
                                          'class' => 'z-icon-es-options');

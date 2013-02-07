@@ -38,6 +38,12 @@ class Tag {
         «IF !targets('1.3.5')»
             namespace «appName»\TaggedObjectMeta\Base;
 
+            use DateUtil;
+            use SecurityUtil;
+            use ServiceUtil;
+            use UserUtil;
+            use Zikula\Core\ModUrl;
+
         «ENDIF»
         /**
          * This class provides object meta data for the Tag module.
@@ -60,9 +66,9 @@ class Tag {
          * @param integer             $areaId    Name of hook area.
          * @param string              $module    Name of the owning module.
          * @param string              $urlString **deprecated**
-         * @param \Zikula«IF targets('1.3.5')»_ModUrl«ELSE»\Core\ModUrl«ENDIF» $urlObject Object carrying url arguments.
+         * @param «IF targets('1.3.5')»Zikula_«ENDIF»ModUrl $urlObject Object carrying url arguments.
          */
-        function __construct($objectId, $areaId, $module, $urlString = null, \Zikula«IF targets('1.3.5')»_ModUrl«ELSE»\Core\ModUrl«ENDIF» $urlObject = null)
+        function __construct($objectId, $areaId, $module, $urlString = null, «IF targets('1.3.5')»Zikula_«ENDIF»ModUrl $urlObject = null)
         {
             // call base constructor to store arguments in member vars
             parent::__construct($objectId, $areaId, $module, $urlString, $urlObject);
@@ -72,7 +78,7 @@ class Tag {
             $objectType = isset($urlArgs['ot']) ? $urlArgs['ot'] : '«getLeadingEntity.name.formatForCode»';
 
             $component = $module . ':' . ucwords($objectType) . ':';
-            $perm = \SecurityUtil::checkPermission($component, $objectId . '::', ACCESS_READ);
+            $perm = SecurityUtil::checkPermission($component, $objectId . '::', ACCESS_READ);
             if (!$perm) {
                 return;
             }
@@ -82,7 +88,7 @@ class Tag {
             «ELSE»
                 $entityClass = '\\' . $module . '\\Entity\\' . ucwords($objectType) . 'Entity';
             «ENDIF»
-            $serviceManager = \ServiceUtil::getManager();
+            $serviceManager = ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
             $useJoins = false;
@@ -103,7 +109,7 @@ class Tag {
             }
 
             if (method_exists($entity, 'getCreatedUserId')) {
-                $this->setObjectAuthor(\UserUtil::getVar('uname', $entity['createdUserId']));
+                $this->setObjectAuthor(UserUtil::getVar('uname', $entity['createdUserId']));
             } else {
                 $this->setObjectAuthor('');
             }

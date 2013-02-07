@@ -43,15 +43,23 @@ class Search {
         «IF !targets('1.3.5')»
             namespace «appName»\Api\Base;
 
+            use «appName»\Util\ControllerUtil;
+
+            use FormUtil;
+            use LogUtil;
+            use ModUtil;
+            use SecurityUtil;
+            use ServiceUtil;
+            use Zikula_AbstractApi;
+            use Zikula_View;
+
+            use Users\Entity\SearchResultEntity;
+
         «ENDIF»
         /**
          * Search api base class.
          */
-        «IF targets('1.3.5')»
-        class «appName»_Api_Base_Search extends Zikula_AbstractApi
-        «ELSE»
-        class SearchApi extends \Zikula_AbstractApi
-        «ENDIF»
+        class «IF targets('1.3.5')»«appName»_Api_Base_Search«ELSE»SearchApi«ENDIF» extends Zikula_AbstractApi
         {
             «searchApiBaseImpl»
         }
@@ -90,11 +98,11 @@ class Search {
          */
         public function options(array $args = array())
         {
-            if (!\SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
+            if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
                 return '';
             }
 
-            $view = \Zikula_View::getInstance($this->name);
+            $view = Zikula_View::getInstance($this->name);
 
             «FOR entity : getAllEntities.filter(e|e.hasAbstractStringFieldsEntity)»
                 «val fieldName = 'active_' + entity.name.formatForCode»
@@ -115,23 +123,23 @@ class Search {
          */
         public function search(array $args = array())
         {
-            if (!\SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
+            if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
                 return '';
             }
 
             // ensure that database information of Search module is loaded
-            \ModUtil::dbInfoLoad('Search');
+            ModUtil::dbInfoLoad('Search');
 
             // save session id as it is used when inserting search results below
             $sessionId  = session_id();
 
             // retrieve list of activated object types
-            $searchTypes = isset($args['objectTypes']) ? (array)$args['objectTypes'] : (array)\FormUtil::getPassedValue('search_«appName.formatForDB»_types', array(), 'GETPOST');
+            $searchTypes = isset($args['objectTypes']) ? (array)$args['objectTypes'] : (array) FormUtil::getPassedValue('search_«appName.formatForDB»_types', array(), 'GETPOST');
 
-            $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
             $utilArgs = array('api' => 'search', 'action' => 'search');
             $allowedTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
-            $entityManager = \ServiceUtil::getService('doctrine.entitymanager');
+            $entityManager = ServiceUtil::getService('doctrine.entitymanager');
             $currentPage = 1;
             $resultsPerPage = 50;
 
@@ -170,7 +178,7 @@ class Search {
                     continue;
                 }
 
-                $idFields = \ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+                $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
                 $titleField = $repository->getTitleFieldName();
                 $descriptionField = $repository->getDescriptionFieldName();
                 «val hasUserDisplay = !getAllUserControllers.filter(e|e.hasActions('display')).isEmpty»
@@ -196,7 +204,7 @@ class Search {
                         }
 
                     «ENDIF»
-                    if (!\SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
+                    if (!SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
                         continue;
                     }
 
@@ -214,11 +222,11 @@ class Search {
                     );
 
                     «IF targets('1.3.5')»
-                    if (!\DBUtil::insertObject($searchItemData, 'search_result')) {
-                        return \LogUtil::registerError($this->__('Error! Could not save the search results.'));
+                    if (!DBUtil::insertObject($searchItemData, 'search_result')) {
+                        return LogUtil::registerError($this->__('Error! Could not save the search results.'));
                     }
                     «ELSE»
-                    $searchItem = new \Users\Entity\SearchResultEntity();
+                    $searchItem = new SearchResultEntity();
                     foreach ($searchItemData as $k => $v) {
                         $fieldName = ($k == 'session') ? 'sesid' : $k;
                         $searchItem[$fieldName] = $v;
@@ -227,7 +235,7 @@ class Search {
                         $this->entityManager->persist($searchItem);
                         $this->entityManager->flush();
                     } catch (\Exception $e) {
-                        return \LogUtil::registerError($this->__('Error! Could not save the search results.'));
+                        return LogUtil::registerError($this->__('Error! Could not save the search results.'));
                     }
                     «ENDIF»
                 }

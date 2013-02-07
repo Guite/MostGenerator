@@ -47,15 +47,15 @@ class WorkflowUtil {
         «IF !targets('1.3.5')»
             namespace «appName»\Util\Base;
 
+            use SecurityUtil;
+            use Zikula_AbstractBase;
+            use Zikula_Workflow_Util;
+
         «ENDIF»
         /**
          * Utility base class for workflow helper methods.
          */
-        «IF targets('1.3.5')»
-        class «appName»_Util_Base_Workflow extends Zikula_AbstractBase
-        «ELSE»
-        class WorkflowUtil extends \Zikula_AbstractBase
-        «ENDIF»
+        class «IF targets('1.3.5')»«appName»_Util_Base_Workflow«ELSE»WorkflowUtil«ENDIF» extends Zikula_AbstractBase
         {
             «getObjectStates»
             «getStateInfo»
@@ -170,7 +170,7 @@ class WorkflowUtil {
             $schema = null;
             $schemaName = $this->getWorkflowName($objectType);
             if ($schemaName != '') {
-                $schema = \Zikula_Workflow_Util::loadSchema($schemaName, $this->name);
+                $schema = Zikula_Workflow_Util::loadSchema($schemaName, $this->name);
             }
 
             return $schema;
@@ -192,7 +192,7 @@ class WorkflowUtil {
             $objectType = $entity['_objectType'];
             $schemaName = $this->getWorkflowName($objectType);
             $idcolumn = $entity['__WORKFLOW__']['obj_idcolumn'];
-            $wfActions = \Zikula_Workflow_Util::getActionsForObject($entity, $objectType, $idcolumn, $this->name);
+            $wfActions = Zikula_Workflow_Util::getActionsForObject($entity, $objectType, $idcolumn, $this->name);
 
             // as we use the workflows for multiple object types we must maybe filter out some actions
             $listHelper = new «IF targets('1.3.5')»«appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($this->serviceManager);
@@ -305,7 +305,7 @@ class WorkflowUtil {
             $objectType = $entity['_objectType'];
             $schemaName = $this->getWorkflowName($objectType);
             $idcolumn = $entity['__WORKFLOW__']['obj_idcolumn'];
-            $result = \Zikula_Workflow_Util::executeAction($schemaName, $entity, $actionId, $objectType, $this->name, $idcolumn);
+            $result = Zikula_Workflow_Util::executeAction($schemaName, $entity, $actionId, $objectType, $this->name, $idcolumn);
 
             return $result;
         }
@@ -354,7 +354,7 @@ class WorkflowUtil {
     def private readAmountForObjectTypeAndState(Entity it, String requiredAction) '''
         $objectType = '«name.formatForCode»';
         «val permissionLevel = if (requiredAction == 'approval') 'ADD' else if (requiredAction == 'acceptance') 'EDIT' else 'MODERATE'»
-        if (\SecurityUtil::checkPermission($modname . ':' . ucwords($objectType) . ':', '::', ACCESS_«permissionLevel»)) {
+        if (SecurityUtil::checkPermission($modname . ':' . ucwords($objectType) . ':', '::', ACCESS_«permissionLevel»)) {
             $amount = $this->getAmountOfModerationItems($objectType, $state);
             if ($amount > 0) {
                 $amounts[] = array(

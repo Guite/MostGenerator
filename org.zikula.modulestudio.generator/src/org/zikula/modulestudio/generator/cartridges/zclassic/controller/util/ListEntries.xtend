@@ -44,15 +44,12 @@ class ListEntries {
         «IF !targets('1.3.5')»
             namespace «appName»\Util\Base;
 
+            use Zikula_AbstractBase;
         «ENDIF»
         /**
          * Utility base class for list field entries related methods.
          */
-        «IF targets('1.3.5')»
-        class «appName»_Util_Base_ListEntries extends Zikula_AbstractBase
-        «ELSE»
-        class ListEntriesUtil extends \Zikula_AbstractBase
-        «ENDIF»
+        class «IF targets('1.3.5')»«appName»_Util_Base_ListEntries«ELSE»ListEntriesUtil«ENDIF» extends Zikula_AbstractBase
         {
             «resolve»
             «extractMultiList»

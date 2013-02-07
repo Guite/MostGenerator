@@ -41,15 +41,17 @@ class Cache {
         «IF !targets('1.3.5')»
             namespace «appName»\Api\Base;
 
+            use «appName»\Util\ControllerUtil;
+
+            use ModUtil;
+            use Zikula_AbstractApi;
+            use Zikula_View;
+            use Zikula_View_Theme;
         «ENDIF»
         /**
          * Cache api base class.
          */
-        «IF targets('1.3.5')»
-        class «appName»_Api_Base_Cache extends Zikula_AbstractApi
-        «ELSE»
-        class CacheApi extends \Zikula_AbstractApi
-        «ENDIF»
+        class «IF targets('1.3.5')»«appName»_Api_Base_Cache«ELSE»CacheApi«ENDIF» extends Zikula_AbstractApi
         {
             «cacheApiBaseImpl»
         }
@@ -71,14 +73,14 @@ class Cache {
             $objectType = $args['ot'];
             $item = $args['item'];
 
-            $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
             $utilArgs = array('api' => 'cache', 'action' => 'clearItemCache');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 return;
             }
 
             if ($item && !is_array($item) && !is_object($item)) {
-                $item = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $item, 'useJoins' => false, 'slimMode' => true));
+                $item = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $item, 'useJoins' => false, 'slimMode' => true));
             }
 
             if (!$item) {
@@ -87,7 +89,7 @@ class Cache {
 
             «IF hasUserController && getMainUserController.hasActions('display')»
                 // create full identifier (considering composite keys)
-                $idFields = \ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+                $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
                 $instanceId = '';
                 foreach ($idFields as $idField) {
                     if (!empty($instanceId)) {
@@ -123,7 +125,7 @@ class Cache {
             «ENDIF»
             «ENDIF»
 
-            $view = \Zikula_View::getInstance('«appName»');
+            $view = Zikula_View::getInstance('«appName»');
             foreach ($cacheIds as $cacheId) {
                 $view->clear_cache(null, $cacheId);
             }
@@ -154,7 +156,7 @@ class Cache {
                 «ENDFOR»
             «ENDIF»
             «ENDIF»
-            $theme = \Zikula_View_Theme::getInstance();
+            $theme = Zikula_View_Theme::getInstance();
             $theme->clear_cacheid_allthemes($cacheIds);
         }
     '''

@@ -101,6 +101,23 @@ class Entities {
 
         «ENDIF»
         «imports»
+        «IF !app.targets('1.3.5')»
+
+            use «app.appName»\UploadHandler;
+            use «app.appName»\Util\ControllerUtil;
+            use «app.appName»\Util\WorkflowUtil;
+
+            use DataUtil;
+            use FormUtil;
+            use LogUtil;
+            use SecurityUtil;
+            use ServiceUtil;
+            use System;
+            use UserUtil;
+            use Zikula_EntityAccess;
+            use Zikula_Workflow_Util;
+            use ZLanguage;
+        «ENDIF»
 
         /**
          * Entity class that defines the entity structure and behaviours.
@@ -112,7 +129,7 @@ class Entities {
         «IF app.targets('1.3.5')»
         abstract class «app.appName»_Entity_Base_«name.formatForCodeCapital» extends Zikula_EntityAccess«IF hasNotifyPolicy» implements NotifyPropertyChanged«ENDIF»
         «ELSE»
-        abstract class Abstract«name.formatForCodeCapital»Entity extends \Zikula_EntityAccess«IF hasNotifyPolicy» implements
+        abstract class Abstract«name.formatForCodeCapital»Entity extends Zikula_EntityAccess«IF hasNotifyPolicy» implements
             NotifyPropertyChanged«ENDIF»
         «ENDIF»
         {
@@ -131,8 +148,8 @@ class Entities {
         «ENDIF»
         «thExt.imports(it)»
         «IF hasNotifyPolicy»
-            use Doctrine\Common\NotifyPropertyChanged,
-                Doctrine\Common\PropertyChangedListener;
+            use Doctrine\Common\NotifyPropertyChanged;
+            use Doctrine\Common\PropertyChangedListener;
         «ENDIF»
         «IF standardFields»
             use DoctrineExtensions\StandardFields\Mapping\Annotation as ZK;
@@ -298,7 +315,7 @@ class Entities {
          */
         protected function initWorkflow()
         {
-            $currentFunc = \FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
+            $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
 
             «loadWorkflow»
         }
@@ -345,10 +362,10 @@ class Entities {
                 return;
             }
 
-            $currentType = \FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
-            $currentFunc = \FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
+            $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST', FILTER_SANITIZE_STRING);
+            $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
             «val appName = app.appName»
-            $dom = \ZLanguage::getModuleDomain('«appName»');
+            $dom = ZLanguage::getModuleDomain('«appName»');
             «FOR controller : app.getAdminAndUserControllers»
                 if ($currentType == '«controller.formattedName»') {
                     «IF controller.hasActions('view')»
@@ -379,10 +396,10 @@ class Entities {
                                  $instance = «idFieldsAsParameterCode('this')» . '::';
                             «ENDIF»
                             «IF controller.hasActions('edit')»
-                                if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+                                if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
                                     «IF ownerPermission && standardFields»
                                         // only allow editing for the owner or people with higher permissions
-                                        if ($this['createdUserId'] == \UserUtil::getVar('uid') || \SecurityUtil::checkPermission($component, $instance, ACCESS_ADD)) {
+                                        if ($this['createdUserId'] == UserUtil::getVar('uid') || SecurityUtil::checkPermission($component, $instance, ACCESS_ADD)) {
                                             «itemActionsForEditAction(controller)»
                                         }
                                     «ELSE»
@@ -391,7 +408,7 @@ class Entities {
                                 }
                             «ENDIF»
                             «IF controller.hasActions('delete')»
-                                if (\SecurityUtil::checkPermission($component, $instance, ACCESS_DELETE)) {
+                                if (SecurityUtil::checkPermission($component, $instance, ACCESS_DELETE)) {
                                     $this->_actions[] = array(
                                         'url' => array('type' => '«controller.formattedName»', 'func' => 'delete', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»)),
                                         'icon' => 'delete',
@@ -478,7 +495,7 @@ class Entities {
         «val app = container.application»
         // apply workflow with most important information
         $idColumn = '«primaryKeyFields.head.name.formatForCode»';
-        $workflowHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»(\ServiceUtil::getManager());
+        $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»(ServiceUtil::getManager());
         $schemaName = $workflowHelper->getWorkflowName($this['_objectType']);
         $this['__WORKFLOW__'] = array(
             'state' => $this['workflowState'],
@@ -489,10 +506,10 @@ class Entities {
 
         // load the real workflow only when required (e. g. when func is edit or delete)
         if (!in_array($currentFunc, array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view', 'display'))) {
-            $result = \Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«app.appName»');
+            $result = Zikula_Workflow_Util::getWorkflowForObject($this, $this['_objectType'], $idColumn, '«app.appName»');
             if (!$result) {
-                $dom = \ZLanguage::getModuleDomain('«app.appName»');
-                \LogUtil::registerError(__('Error! Could not load the associated workflow.', $dom));
+                $dom = ZLanguage::getModuleDomain('«app.appName»');
+                LogUtil::registerError(__('Error! Could not load the associated workflow.', $dom));
             }
         }
 
@@ -561,7 +578,7 @@ class Entities {
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
         «FOR mandatoryField : mandatoryFields.filter(typeof(UserField)).filter(e|e.defaultValue == null || e.defaultValue == '' || e.defaultValue == '0')»
-            $this->«mandatoryField.name.formatForCode» = \UserUtil::getVar('uid');
+            $this->«mandatoryField.name.formatForCode» = UserUtil::getVar('uid');
         «ENDFOR»
         «FOR mandatoryField : mandatoryFields.filter(typeof(DecimalField)).filter(e|e.defaultValue == null || e.defaultValue == '' || e.defaultValue == '0')»
             $this->«mandatoryField.name.formatForCode» = 1;

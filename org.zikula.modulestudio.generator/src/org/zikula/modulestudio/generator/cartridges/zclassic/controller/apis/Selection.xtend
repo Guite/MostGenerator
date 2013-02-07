@@ -38,15 +38,16 @@ class Selection {
         «IF !targets('1.3.5')»
             namespace «appName»\Api\Base;
 
+            use «appName»\Util\ControllerUtil;
+
+            use LogUtil;
+            use Zikula_AbstractApi;
+
         «ENDIF»
         /**
          * Selection api base class.
          */
-        «IF targets('1.3.5')»
-        class «appName»_Api_Base_Selection extends Zikula_AbstractApi
-        «ELSE»
-        class SelectionApi extends \Zikula_AbstractApi
-        «ENDIF»
+        class «IF targets('1.3.5')»«appName»_Api_Base_Selection«ELSE»SelectionApi«ENDIF» extends Zikula_AbstractApi
         {
             «selectionBaseImpl»
         }
@@ -90,7 +91,7 @@ class Selection {
         public function getEntity(array $args = array())
         {
             if (!isset($args['id'])«IF hasSluggable» && !isset($args['slug'])«ENDIF») {
-                return \LogUtil::registerArgsError();
+                return LogUtil::registerArgsError();
             }
             $objectType = $this->determineObjectType($args, 'getEntity');
             $repository = $this->getRepository($objectType);
@@ -179,7 +180,7 @@ class Selection {
         protected function determineObjectType(array $args = array(), $methodName = '')
         {
             $objectType = isset($args['ot']) ? $args['ot'] : '';
-            $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
             $utilArgs = array('api' => 'selection', 'action' => $methodName);
             if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('api', $utilArgs);
@@ -198,7 +199,7 @@ class Selection {
         protected function getRepository($objectType = '')
         {
             if (empty($objectType)) {
-                return \LogUtil::registerArgsError();
+                return LogUtil::registerArgsError();
             }
 
             «IF targets('1.3.5')»
@@ -223,7 +224,7 @@ class Selection {
             public function getTree(array $args = array())
             {
                 if (!isset($args['rootId'])) {
-                    return \LogUtil::registerArgsError();
+                    return LogUtil::registerArgsError();
                 }
                 $rootId = $args['rootId'];
 

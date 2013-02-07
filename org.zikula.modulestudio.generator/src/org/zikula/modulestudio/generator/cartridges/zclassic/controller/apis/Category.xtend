@@ -40,15 +40,17 @@ class Category {
         «IF !targets('1.3.5')»
             namespace «appName»\Api\Base;
 
+            use «appName»\Util\ControllerUtil;
+
+            use CategoryRegistryUtil;
+            use DataUtil;
+            use Zikula_AbstractApi;
+
         «ENDIF»
         /**
          * Category api base class.
          */
-        «IF targets('1.3.5')»
-        class «appName»_Api_Base_Category extends Zikula_AbstractApi
-        «ELSE»
-        class CategoryApi extends \Zikula_AbstractApi
-        «ENDIF»
+        class «IF targets('1.3.5')»«appName»_Api_Base_Category«ELSE»CategoryApi«ENDIF» extends Zikula_AbstractApi
         {
             «categoryBaseImpl»
         }
@@ -72,7 +74,7 @@ class Category {
 
             $objectType = $this->determineObjectType($args, 'getMainCat');
 
-            return \CategoryRegistryUtil::getRegisteredModuleCategory($this->name, ucwords($objectType), $args['registry'], 32); // 32 == /__System/Modules/Global
+            return CategoryRegistryUtil::getRegisteredModuleCategory($this->name, ucwords($objectType), $args['registry'], 32); // 32 == /__System/Modules/Global
         }
 
         /**
@@ -167,7 +169,7 @@ class Category {
                     continue;
                 }
 
-                $result[] = '(tblCategories.category IN (' . \DataUtil::formatForStore(implode(', ', $catIds[$propertyName])) . ') AND tblCategories.categoryRegistryId = ' . $propertyId . ')';
+                $result[] = '(tblCategories.category IN (' . DataUtil::formatForStore(implode(', ', $catIds[$propertyName])) . ') AND tblCategories.categoryRegistryId = ' . $propertyId . ')';
             }
 
             return $result;
@@ -184,7 +186,7 @@ class Category {
         {
             $objectType = $this->determineObjectType($args, 'getAllProperties');
 
-            $propertyIdsPerName = \CategoryRegistryUtil::getRegisteredModuleCategoriesIds($this->name, ucwords($objectType));
+            $propertyIdsPerName = CategoryRegistryUtil::getRegisteredModuleCategoriesIds($this->name, ucwords($objectType));
 
             return $propertyIdsPerName;
         }
@@ -205,7 +207,7 @@ class Category {
                 $args['arraykey'] = '';
             }
 
-            $registryInfo = \CategoryRegistryUtil::getRegisteredModuleCategories($this->name, ucwords($objectType), $args['arraykey']);
+            $registryInfo = CategoryRegistryUtil::getRegisteredModuleCategories($this->name, ucwords($objectType), $args['arraykey']);
 
             return $registryInfo;
         }
@@ -222,7 +224,7 @@ class Category {
         {
             $objectType = $this->determineObjectType($args, 'getMainCatForProperty');
 
-            $catId = \CategoryRegistryUtil::getRegisteredModuleCategory($this->name, ucwords($objectType), $args['property']);
+            $catId = CategoryRegistryUtil::getRegisteredModuleCategory($this->name, ucwords($objectType), $args['property']);
 
             return $catId;
         }
@@ -254,7 +256,7 @@ class Category {
         protected function determineObjectType(array $args = array(), $methodName = '')
         {
             $objectType = isset($args['ot']) ? $args['ot'] : '';
-            $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
             $utilArgs = array('api' => 'category', 'action' => $methodName);
             if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('api', $utilArgs);

@@ -54,15 +54,16 @@ class Translatable {
         «IF !targets('1.3.5')»
             namespace «appName»\Util\Base;
 
+            use ServiceUtil;
+            use System;
+            use Zikula_AbstractBase;
+            use ZLanguage;
+
         «ENDIF»
         /**
          * Utility base class for translatable helper methods.
          */
-        «IF targets('1.3.5')»
-        class «appName»_Util_Base_Translatable extends Zikula_AbstractBase
-        «ELSE»
-        class TranslatableUtil extends \Zikula_AbstractBase
-        «ENDIF»
+        class «IF targets('1.3.5')»«appName»_Util_Base_Translatable«ELSE»TranslatableUtil«ENDIF» extends Zikula_AbstractBase
         {
             «getTranslatableFieldsImpl»
 
@@ -121,13 +122,13 @@ class Translatable {
                 return $translations;
             }
 
-            if (\System::getVar('multilingual') != 1) {
+            if (System::getVar('multilingual') != 1) {
                 // Translatable extension did already fetch current translation
                 return $translations;
             }
 
             // prepare form data to edit multiple translations at once
-            $serviceManager = \ServiceUtil::getManager();
+            $serviceManager = ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
 
             // get translations
@@ -139,8 +140,8 @@ class Translatable {
             $repository = $entityManager->getRepository($entityClass);
             $entityTranslations = $repository->findTranslations($entity);
 
-            $supportedLocales = \ZLanguage::getInstalledLanguages();
-            $currentLanguage = \ZLanguage::getLanguageCode();
+            $supportedLocales = ZLanguage::getInstalledLanguages();
+            $currentLanguage = ZLanguage::getLanguageCode();
             foreach ($supportedLocales as $locale) {
                 if ($locale == $currentLanguage) {
                     // Translatable extension did already fetch current translation
@@ -182,11 +183,11 @@ class Translatable {
                 return $translations;
             }
 
-            $supportedLocales = \ZLanguage::getInstalledLanguages();
+            $supportedLocales = ZLanguage::getInstalledLanguages();
             $useOnlyCurrentLocale = true;
-            if (\System::getVar('multilingual') == 1) {
+            if (System::getVar('multilingual') == 1) {
                 $useOnlyCurrentLocale = false;
-                $currentLanguage = \ZLanguage::getLanguageCode();
+                $currentLanguage = ZLanguage::getLanguageCode();
                 foreach ($supportedLocales as $locale) {
                     if ($locale == $currentLanguage) {
                         // skip current language as this is not treated as translation on controller level
@@ -201,7 +202,7 @@ class Translatable {
                 }
             }
             if ($useOnlyCurrentLocale === true) {
-                $locale = \ZLanguage::getLanguageCode();
+                $locale = ZLanguage::getLanguageCode();
                 $translations[$locale] = array('locale' => $locale, 'fields' => array());
                 $translationData = $formData[strtolower($objectType) . $locale];
                 foreach ($fields as $field) {

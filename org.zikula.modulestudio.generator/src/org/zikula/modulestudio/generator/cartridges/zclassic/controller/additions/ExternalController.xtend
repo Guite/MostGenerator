@@ -45,15 +45,22 @@ class ExternalController {
     «IF !targets('1.3.5')»
         namespace «appName»\Controller\Base;
 
+        use «appName»\Util\ControllerUtil;
+
+        use LogUtil;
+        use ModUtil;
+        use PageUtil;
+        use SecurityUtil;
+        use ThemeUtil;
+        use Zikula_AbstractController;
+        use Zikula_View;
+        use Zikula\Core\Response\PlainResponse;
+
     «ENDIF»
     /**
      * Controller for external calls base class.
      */
-    «IF targets('1.3.5')»
-        class «appName»_Controller_Base_External extends Zikula_AbstractController
-    «ELSE»
-        class ExternalController extends \Zikula_AbstractController
-    «ENDIF»
+    class «IF targets('1.3.5')»«appName»_Controller_Base_External«ELSE»ExternalController«ENDIF» extends Zikula_AbstractController
     {
         «IF hasCategorisableEntities»
             /**
@@ -90,7 +97,7 @@ class ExternalController {
         public function display«IF !targets('1.3.5')»Action«ENDIF»(array $args = array())
         {
             $getData = $this->request->query;
-            $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
 
             $objectType = isset($args['objectType']) ? $args['objectType'] : '';
             $utilArgs = array('controller' => 'external', 'action' => 'display');
@@ -101,7 +108,7 @@ class ExternalController {
             $id = (isset($args['id'])) ? $args['id'] : $getData->filter('id', null, FILTER_SANITIZE_STRING);
 
             $component = $this->name . ':' . ucwords($objectType) . ':';
-            if (!\SecurityUtil::checkPermission($component, $id . '::', ACCESS_READ)) {
+            if (!SecurityUtil::checkPermission($component, $id . '::', ACCESS_READ)) {
                 return '';
             }
 
@@ -123,7 +130,7 @@ class ExternalController {
                 $entityClass = '\\«appName»\\Entity\\' . ucwords($objectType) . 'Entity';
             «ENDIF»
             $repository = $this->entityManager->getRepository($entityClass);
-            $idFields = \ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
+            $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
             $idValues = array('id' => $id);«/** TODO consider composite keys properly */»
 
             $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
@@ -151,13 +158,13 @@ class ExternalController {
             $instance = $instanceId . '::';
              */»
 
-            $this->view->setCaching(\Zikula_View::CACHE_ENABLED);
+            $this->view->setCaching(Zikula_View::CACHE_ENABLED);
             // set cache id
             $accessLevel = ACCESS_READ;
-            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
+            if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
                 $accessLevel = ACCESS_COMMENT;
             }
-            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+            if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
                 $accessLevel = ACCESS_EDIT;
             }
             $this->view->setCacheId($objectType . '|' . $id . '|a' . $accessLevel);
@@ -184,10 +191,10 @@ class ExternalController {
          */
         public function finder«IF !targets('1.3.5')»Action«ENDIF»(array $args = array())
         {
-            \PageUtil::addVar('stylesheet', \ThemeUtil::getModuleStylesheet('«appName»'));
+            PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
 
             $getData = $this->request->query;
-            $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
 
             $objectType = isset($args['objectType']) ? $args['objectType'] : $getData->filter('objectType', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             $utilArgs = array('controller' => 'external', 'action' => 'finder');
@@ -195,7 +202,7 @@ class ExternalController {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerType', $utilArgs);
             }
 
-            $this->throwForbiddenUnless(\SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT), \LogUtil::getErrorMsgPermission());
+            $this->throwForbiddenUnless(SecurityUtil::checkPermission('«appName»:' . ucwords($objectType) . ':', '::', ACCESS_COMMENT), LogUtil::getErrorMsgPermission());
 
             «IF targets('1.3.5')»
                 $entityClass = '«appName»_Entity_' . ucwords($objectType);
@@ -212,7 +219,7 @@ class ExternalController {
 
                 // fetch selected categories to reselect them in the output
                 // the actual filtering is done inside the repository class
-                $categoryIds = \ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $objectType, 'source' => 'GET'));
+                $categoryIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $objectType, 'source' => 'GET'));
             «ENDIF»
             $sort = (isset($args['sort']) && !empty($args['sort'])) ? $args['sort'] : $getData->filter('sort', '', FILTER_SANITIZE_STRING);
             if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {
@@ -238,7 +245,7 @@ class ExternalController {
             $where = '';
             list($objectData, $objectCount) = $repository->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
 
-            $view = \Zikula_View::getInstance('«appName»', false);
+            $view = Zikula_View::getInstance('«appName»', false);
 
             $view->assign('editorName', $editor)
                  ->assign('objectType', $objectType)
@@ -253,7 +260,7 @@ class ExternalController {
                 // assign category properties
                 $properties = null;
                 if (in_array($objectType, $this->categorisableObjectTypes)) {
-                    $properties = \ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
+                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
                 }
                 $view->assign('properties', $properties)
                      ->assign('catIds', $categoryIds);
@@ -262,7 +269,7 @@ class ExternalController {
             «IF targets('1.3.5')»
             return $view->display('external/' . $objectType . '/find.tpl');
             «ELSE»
-            return new \Zikula\Core\Response\PlainResponse($view->display('External/' . ucwords($objectType) . '/find.tpl'));
+            return new PlainResponse($view->display('External/' . ucwords($objectType) . '/find.tpl'));
             «ENDIF»
         }
     '''

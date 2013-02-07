@@ -34,7 +34,7 @@ class UploadProcessing {
             }
 
             // initialise the upload handler
-            $uploadManager = new \«app.appName»«IF app.targets('1.3.5')»_«ELSE»\«ENDIF»UploadHandler();
+            $uploadManager = new «IF app.targets('1.3.5')»«app.appName»_«ENDIF»UploadHandler();
             $existingObjectData = $existingObject->toArray();
 
             $objectId = ($this->mode != 'create') ? $this->idValues[0] : 0;

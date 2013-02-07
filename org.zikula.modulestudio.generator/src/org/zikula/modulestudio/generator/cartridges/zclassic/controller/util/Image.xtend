@@ -38,15 +38,14 @@ class Image {
         «IF !targets('1.3.5')»
             namespace «appName»\Util\Base;
 
+            use SystemPlugin_Imagine_Preset;
+            use Zikula_AbstractBase;
+
         «ENDIF»
         /**
          * Utility base class for image helper methods.
          */
-        «IF targets('1.3.5')»
-        class «appName»_Util_Base_Image extends Zikula_AbstractBase
-        «ELSE»
-        class ImageUtil extends \Zikula_AbstractBase
-        «ENDIF»
+        class «IF targets('1.3.5')»«appName»_Util_Base_Image«ELSE»ImageUtil«ENDIF» extends Zikula_AbstractBase
         {
             «getManager»
 
@@ -64,7 +63,7 @@ class Image {
          * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType).
          * @param array  $args       Additional arguments.
          *
-         * @return \SystemPlugin_Imagine_Manager The desired manager.
+         * @return SystemPlugin_Imagine_Manager The desired manager.
          */
         public function getManager($objectType = '', $fieldName = '', $context = '', $args = array())
         {
@@ -111,7 +110,7 @@ class Image {
          * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType).
          * @param array  $args       Additional arguments.
          *
-         * @return \SystemPlugin_Imagine_Preset The selected preset.
+         * @return SystemPlugin_Imagine_Preset The selected preset.
          */
         public function getPreset($objectType = '', $fieldName = '', $presetName = '', $context = '', $args = array())
         {
@@ -141,7 +140,7 @@ class Image {
                 }
             }
 
-            $preset = new \SystemPlugin_Imagine_Preset($presetName, $presetData);
+            $preset = new Preset($presetName, $presetData);
 
             return $preset;
         }

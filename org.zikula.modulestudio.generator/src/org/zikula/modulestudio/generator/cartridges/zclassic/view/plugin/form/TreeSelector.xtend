@@ -45,6 +45,10 @@ class TreeSelector {
         «IF !targets('1.3.5')»
             namespace «appName»\Form\Plugin\Base;
 
+            use ModUtil;
+            use ServiceUtil;
+            use Zikula_Form_View;
+
         «ENDIF»
         /**
          * Tree selector.
@@ -118,7 +122,7 @@ class TreeSelector {
                 «ELSE»
                     $entityClass = '\\' . $this->Name . '\\Entity\\' . ucwords($this->objectType) . 'Entity';
                 «ENDIF»
-                $entityManager = \ServiceUtil::getManager()->getService('doctrine.entitymanager');
+                $entityManager = ServiceUtil::getManager()->getService('doctrine.entitymanager');
                 $this->repository = $entityManager->getRepository($entityClass);
             }
 
@@ -141,7 +145,7 @@ class TreeSelector {
             {
                 $apiArgs = array('ot' => $this->objectType
                                  'rootId' => $this->root);
-                $treeNodes = \ModUtil::apiFunc($this->name, 'selection', 'getTree', $apiArgs);
+                $treeNodes = ModUtil::apiFunc($this->name, 'selection', 'getTree', $apiArgs);
                 if (!$treeNodes) {
                     return array();
                 }

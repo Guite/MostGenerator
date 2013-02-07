@@ -46,15 +46,17 @@ class Config {
         «IF !targets('1.3.5')»
             namespace «appName»\Form\Handler\«configController.toFirstUpper»\Base;
 
+            use LogUtil;
+            use ModUtil;
+            use SecurityUtil;
+            use Zikula_Form_AbstractHandler;
+            use Zikula_Form_View;
+
         «ENDIF»
         /**
          * Configuration handler base class.
          */
-        «IF targets('1.3.5')»
-        class «appName»_Form_Handler_«configController.toFirstUpper»_Base_Config extends Zikula_Form_AbstractHandler
-        «ELSE»
-        class ConfigHandler extends \Zikula_Form_AbstractHandler
-        «ENDIF»
+        class «IF targets('1.3.5')»«appName»_Form_Handler_«configController.toFirstUpper»_Base_Config«ELSE»ConfigHandler«ENDIF» extends Zikula_Form_AbstractHandler
         {
             /**
              * Post construction hook.
@@ -77,8 +79,8 @@ class Config {
             public function initialize(Zikula_Form_View $view)
             {
                 // permission check
-                if (!\SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
-                    return $view->registerError(\LogUtil::registerPermissionError());
+                if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+                    return $view->registerError(LogUtil::registerPermissionError());
                 }
 
                 // retrieve module vars
@@ -150,16 +152,16 @@ class Config {
 
                     // update all module vars
                     if (!$this->setVars($data['config'])) {
-                        return \LogUtil::registerError($this->__('Error! Failed to set configuration variables.'));
+                        return LogUtil::registerError($this->__('Error! Failed to set configuration variables.'));
                     }
 
-                    \LogUtil::registerStatus($this->__('Done! Module configuration updated.'));
+                    LogUtil::registerStatus($this->__('Done! Module configuration updated.'));
                 } else if ($args['commandName'] == 'cancel') {
                     // nothing to do there
                 }
 
                 // redirect back to the config page
-                $url = \ModUtil::url($this->name, '«configController.formatForDB»', 'config');
+                $url = ModUtil::url($this->name, '«configController.formatForDB»', 'config');
 
                 return $this->view->redirect($url);
             }

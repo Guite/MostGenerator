@@ -41,6 +41,12 @@ class UserInput {
         «IF !targets('1.3.5')»
             namespace «appName»\Form\Plugin\Base;
 
+            use DataUtil;
+            use UserUtil;
+            use Zikula_Form_Plugin_TextInput;
+            use Zikula_Form_View;
+            use ZLanguage;
+
         «ENDIF»
         /**
          * User field plugin providing an autocomplete for user names.
@@ -48,11 +54,7 @@ class UserInput {
          * You can also use all of the features from the Zikula_Form_Plugin_TextInput plugin since
          * the user input inherits from it.
          */
-        «IF targets('1.3.5')»
-        class «appName»_Form_Plugin_Base_UserInput extends Zikula_Form_Plugin_TextInput
-        «ELSE»
-        class UserInput extends \Zikula_Form_Plugin_TextInput
-        «ENDIF»
+        class «IF targets('1.3.5')»«appName»_Form_Plugin_Base_«ENDIF»UserInput extends Zikula_Form_Plugin_TextInput
         {
             /**
              * Get filename of this file.
@@ -105,7 +107,7 @@ class UserInput {
              */
             public function render(Zikula_Form_View $view)
             {
-                $dom = \ZLanguage::getModuleDomain('«appName»');
+                $dom = ZLanguage::getModuleDomain('«appName»');
 
                 //$result = parent::render($view);
 
@@ -125,7 +127,7 @@ class UserInput {
 
                 $selectorDefaultValue = '';
                 if (intval($this->text) > 0) {
-                    $selectorDefaultValue = \UserUtil::getVar('uname', intval($this->text));
+                    $selectorDefaultValue = UserUtil::getVar('uname', intval($this->text));
                 }
 
                 $searchTitle = __('Search user', $dom);
@@ -143,7 +145,7 @@ class UserInput {
 
                 $result .= '</div>' . "\n";
                 $result .= '<noscript><p>' . __('This function requires JavaScript activated!', $dom) . '</p></noscript>' . "\n";
-                $result .= '<input type="hidden" id="' . $this->getId() . '" name="' . $this->getId() . '" value="' . \DataUtil::formatForDisplay($this->text) . '" />' . "\n";
+                $result .= '<input type="hidden" id="' . $this->getId() . '" name="' . $this->getId() . '" value="' . DataUtil::formatForDisplay($this->text) . '" />' . "\n";
 
                 return $result;
             }
@@ -182,7 +184,7 @@ class UserInput {
 
                 if (strlen($this->text) > 0) {
                     $uid = intval($this->text);
-                    if (\UserUtil::getVar('uname', $uid) == null) {
+                    if (UserUtil::getVar('uname', $uid) == null) {
                         $this->setError(__('Error! Invalid user.'));
 
                         return false;

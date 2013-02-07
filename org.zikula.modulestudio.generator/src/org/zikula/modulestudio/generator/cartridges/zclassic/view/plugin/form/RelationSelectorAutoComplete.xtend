@@ -41,6 +41,10 @@ class RelationSelectorAutoComplete {
         «IF !targets('1.3.5')»
             namespace «appName»\Form\Plugin\Base;
 
+            use DataUtil;
+            use Zikula_Form_View;
+            use ZLanguage;
+
         «ENDIF»
         /**
          * Relation selector plugin base class.
@@ -147,7 +151,7 @@ class RelationSelectorAutoComplete {
              */
             public function render(Zikula_Form_View $view)
             {
-                $dom = \ZLanguage::getModuleDomain('«appName»');
+                $dom = ZLanguage::getModuleDomain('«appName»');
                 $many = ($this->selectionMode == 'multiple');
 
                 $entityName = $this->selectedEntityName;
@@ -160,7 +164,7 @@ class RelationSelectorAutoComplete {
                 $addLink = '<a id="' . $idPrefix . 'AddLink" href="javascript:void(0);" class="z-hide">' . $addLinkText . '</a>';
                 $createLink = '';
                 if ($this->createLink != '') {
-                    $createLink = '<a id="' . 'SelectorDoNew" href="' . \DataUtil::formatForDisplay($this->createLink) . '" title="' . __f('Create new %s', array($entityName), $dom) . '" class="z-button «prefix()»InlineButton">' . __('Create', $dom) . '</a>';
+                    $createLink = '<a id="' . 'SelectorDoNew" href="' . DataUtil::formatForDisplay($this->createLink) . '" title="' . __f('Create new %s', array($entityName), $dom) . '" class="z-button «prefix()»InlineButton">' . __('Create', $dom) . '</a>';
                 }
 
                 $alias = $this->id;

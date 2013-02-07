@@ -20,12 +20,18 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.Users
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.listener.View
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
+import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Listeners {
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
+    @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
+    @Inject extension WorkflowExtensions = new WorkflowExtensions()
 
     FileHelper fh = new FileHelper()
 
@@ -78,6 +84,10 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF isBase»
+                use Zikula\Core\Event\GenericEvent;
+
+            «ENDIF»
         «ENDIF»
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for core events.
@@ -97,6 +107,10 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF isBase»
+                use Zikula\Core\Event\GenericEvent;
+
+            «ENDIF»
         «ENDIF»
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for frontend controller interaction events.
@@ -116,6 +130,10 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF isBase»
+                use Zikula\Core\Event\GenericEvent;
+
+            «ENDIF»
         «ENDIF»
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for module installer events.
@@ -135,6 +153,11 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF isBase»
+                use ModUtil;
+                use Zikula\Core\Event\GenericEvent;
+
+            «ENDIF»
         «ENDIF»
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for dispatching modules.
@@ -154,6 +177,10 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF isBase»
+                use Zikula\Core\Event\GenericEvent;
+
+            «ENDIF»
         «ENDIF»
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for mailing events.
@@ -173,6 +200,10 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF isBase»
+                use Zikula\Core\Event\GenericEvent;
+
+            «ENDIF»
         «ENDIF»
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for page-related events.
@@ -192,6 +223,10 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF isBase»
+                use Zikula\Core\Event\GenericEvent;
+
+            «ENDIF»
         «ENDIF»
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for error-related events.
@@ -211,6 +246,10 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF isBase»
+                use Zikula\Core\Event\GenericEvent;
+
+            «ENDIF»
         «ENDIF»
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for theme-related events.
@@ -230,6 +269,10 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF isBase»
+                use Zikula\Core\Event\GenericEvent;
+
+            «ENDIF»
         «ENDIF»
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for view-related events.
@@ -249,6 +292,10 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF isBase»
+                use Zikula\Core\Event\GenericEvent;
+
+            «ENDIF»
         «ENDIF»
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user login events.
@@ -268,6 +315,10 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF isBase»
+                use Zikula\Core\Event\GenericEvent;
+
+            «ENDIF»
         «ENDIF»
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user logout events.
@@ -287,6 +338,14 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF isBase»
+                «IF hasStandardFieldEntities || hasUserFields»
+                    use ModUtil;
+                    use ServiceUtil;
+                «ENDIF»
+                use Zikula\Core\Event\GenericEvent;
+
+            «ENDIF»
         «ENDIF»
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user-related events.
@@ -306,6 +365,10 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF isBase»
+                use Zikula\Core\Event\GenericEvent;
+
+            «ENDIF»
         «ENDIF»
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for user registration events.
@@ -325,6 +388,10 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF isBase»
+                use Zikula\Core\Event\GenericEvent;
+
+            «ENDIF»
         «ENDIF»
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for events of the Users module.
@@ -344,6 +411,10 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF isBase»
+                use Zikula\Core\Event\GenericEvent;
+
+            «ENDIF»
         «ENDIF»
         /**
          * Event handler implementation class for group-related events.
@@ -363,6 +434,18 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF isBase»
+                «IF needsApproval»
+                    use «appName»\Util\WorkflowUtil;
+                    use ServiceUtil;
+                    use Zikula\Collection\Container;
+                «ENDIF»
+                use Zikula\Core\Event\GenericEvent;
+                «IF needsApproval»
+                    use Zikula\Provider\AggregateItem;
+                «ENDIF»
+
+            «ENDIF»
         «ENDIF»
         /**
          * Event handler implementation class for special purposes and 3rd party api support.

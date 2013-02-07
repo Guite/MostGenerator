@@ -41,15 +41,17 @@ class Account {
         «IF !targets('1.3.5')»
             namespace «appName»\Api\Base;
 
+            use LogUtil;
+            use ModUtil;
+            use SecurityUtil;
+            use UserUtil;
+            use Zikula_AbstractApi;
+
         «ENDIF»
         /**
          * Account api base class.
          */
-        «IF targets('1.3.5')»
-        class «appName»_Api_Base_Account extends Zikula_AbstractApi
-        «ELSE»
-        class AccountApi extends \Zikula_AbstractApi
-        «ENDIF»
+        class «IF targets('1.3.5')»«appName»_Api_Base_Account«ELSE»AccountApi«ENDIF» extends Zikula_AbstractApi
         {
             «accountApiBaseImpl»
         }
@@ -73,24 +75,24 @@ class Account {
                 return $items;
             }
 
-            $userName = (isset($args['uname'])) ? $args['uname'] : \UserUtil::getVar('uname');
+            $userName = (isset($args['uname'])) ? $args['uname'] : UserUtil::getVar('uname');
             // does this user exist?
-            if (\UserUtil::getIdFromName($userName) === false) {
+            if (UserUtil::getIdFromName($userName) === false) {
                 // user does not exist
                 return $items;
             }
 
-            if (!\SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_OVERVIEW)) {
-                return \LogUtil::registerPermissionError();
+            if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_OVERVIEW)) {
+                return LogUtil::registerPermissionError();
             }
 
             // Create an array of links to return
             «IF !getAllUserControllers.isEmpty && getMainUserController.hasActions('view')»
                 «FOR entity : getAllEntities.filter(e|e.standardFields && e.ownerPermission)»
                     $objectType = '«entity.name.formatForCode»';
-                    if (\SecurityUtil::checkPermission($this->name . ':' . ucwords($objectType) . ':', '::', ACCESS_READ)) {
+                    if (SecurityUtil::checkPermission($this->name . ':' . ucwords($objectType) . ':', '::', ACCESS_READ)) {
                         $items[] = array(
-                            'url' => \ModUtil::url($this->name, 'user', 'view', array('ot' => $objectType, 'own' => 1)),
+                            'url' => ModUtil::url($this->name, 'user', 'view', array('ot' => $objectType, 'own' => 1)),
                             'title'   => $this->__('My «entity.nameMultiple.formatForDisplay»'),
                             'icon'    => 'windowlist.png',
                             'module'  => 'core',
@@ -100,9 +102,9 @@ class Account {
                 «ENDFOR»
             «ENDIF»
             «IF !getAllAdminControllers.isEmpty»
-                if (\SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
+                if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
                     $items[] = array(
-                        'url'   => \ModUtil::url($this->name, 'admin', '«IF targets('1.3.5')»main«ELSE»index«ENDIF»'),
+                        'url'   => ModUtil::url($this->name, 'admin', '«IF targets('1.3.5')»main«ELSE»index«ENDIF»'),
                         'title' => $this->__('«name.formatForDisplayCapital» Backend'),
                         'icon'   => 'configure.png',
                         'module' => 'core',

@@ -20,14 +20,14 @@ class User {
         /**
          * Listener for the `user.gettheme` event.
          *
-         * Called during \UserUtil::getTheme() and is used to filter the results.
+         * Called during UserUtil::getTheme() and is used to filter the results.
          * Receives arg['type'] with the type of result to be filtered
          * and the $themeName in the $event->data which can be modified.
          * Must $event->stop«IF !targets('1.3.5')»Propagation«ENDIF»() if handler performs filter.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function getTheme(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function getTheme(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::getTheme($event);
@@ -43,9 +43,9 @@ class User {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the user record that was created.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function create(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function create(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::create($event);
@@ -60,9 +60,9 @@ class User {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the user record, with the updated values.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function update(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function update(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::update($event);
@@ -78,19 +78,19 @@ class User {
          * This is a storage-level event, not a UI event. It should not be used for UI-level actions such as redirects.
          * The subject of the event is set to the user record that is being deleted.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function delete(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function delete(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::delete($event);
             «ELSE»
                 «IF hasStandardFieldEntities || hasUserFields»
-                \ModUtil::initOOModule('«appName»');
+                ModUtil::initOOModule('«appName»');
 
                 $userRecord = $event->getSubject();
                 $uid = $userRecord['uid'];
-                $serviceManager = \ServiceUtil::getManager();
+                $serviceManager = ServiceUtil::getManager();
                 $entityManager = $serviceManager->getService('doctrine.entitymanager');
                 «FOR entity : getAllEntities»«entity.userDelete»«ENDFOR»
                 «ENDIF»

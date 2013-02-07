@@ -44,15 +44,20 @@ class BlockList {
         «IF !targets('1.3.5')»
             namespace «appName»\Block\Base;
 
+            use «appName»\Util\ControllerUtil;
+
+            use BlockUtil;
+            use DataUtil;
+            use ModUtil;
+            use SecurityUtil;
+            use Zikula_Controller_AbstractBlock;
+            use Zikula_View;
+
         «ENDIF»
         /**
          * Generic item list block base class.
          */
-        «IF targets('1.3.5')»
-        class «appName»_Block_Base_ItemList extends Zikula_Controller_AbstractBlock
-        «ELSE»
-        class ItemList extends \Zikula_Controller_AbstractBlock
-        «ENDIF»
+        class «IF targets('1.3.5')»«appName»_Block_Base_ItemList«ELSE»ItemListBlock«ENDIF» extends Zikula_Controller_AbstractBlock
         {
             «listBlockBaseImpl»
         }
@@ -73,7 +78,7 @@ class BlockList {
          */
         public function init()
         {
-            \SecurityUtil::registerPermissionSchema('«appName»:ItemListBlock:', 'Block title::');
+            SecurityUtil::registerPermissionSchema('«appName»:ItemListBlock:', 'Block title::');
             «IF hasCategorisableEntities»
 
                 $this->categorisableObjectTypes = array(«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
@@ -89,7 +94,7 @@ class BlockList {
         {
             $requirementMessage = '';
             // check if the module is available at all
-            if (!\ModUtil::available('«appName»')) {
+            if (!ModUtil::available('«appName»')) {
                 $requirementMessage .= $this->__('Notice: This block will not be displayed until you activate the «appName» module.');
             }
 
@@ -114,17 +119,17 @@ class BlockList {
         public function display($blockinfo)
         {
             // only show block content if the user has the required permissions
-            if (!\SecurityUtil::checkPermission('«appName»:ItemListBlock:', "$blockinfo[title]::", ACCESS_OVERVIEW)) {
+            if (!SecurityUtil::checkPermission('«appName»:ItemListBlock:', "$blockinfo[title]::", ACCESS_OVERVIEW)) {
                 return false;
             }
 
             // check if the module is available at all
-            if (!\ModUtil::available('«appName»')) {
+            if (!ModUtil::available('«appName»')) {
                 return false;
             }
 
             // get current block content
-            $vars = \BlockUtil::varsFromContent($blockinfo['content']);
+            $vars = BlockUtil::varsFromContent($blockinfo['content']);
             $vars['bid'] = $blockinfo['bid'];
 
             // set default values for all params which are not properly set
@@ -138,7 +143,7 @@ class BlockList {
                 $vars['amount'] = 5;
             }
             if (!isset($vars['template'])) {
-                $vars['template'] = 'itemlist_' . \DataUtil::formatForOS($vars['objectType']) . '_display.tpl';
+                $vars['template'] = 'itemlist_' . DataUtil::formatForOS($vars['objectType']) . '_display.tpl';
             }
             if (!isset($vars['customTemplate'])) {
                 $vars['customTemplate'] = '';
@@ -149,7 +154,7 @@ class BlockList {
             «IF hasCategorisableEntities»
 
                 if (!isset($vars['catIds'])) {
-                    $primaryRegistry = \ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $vars['objectType']));
+                    $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $vars['objectType']));
                     $vars['catIds'] = array($primaryRegistry => array());
                     // backwards compatibility
                     if (isset($vars['catId'])) {
@@ -161,9 +166,9 @@ class BlockList {
                 }
             «ENDIF»
 
-            \ModUtil::initOOModule('«appName»');
+            ModUtil::initOOModule('«appName»');
 
-            $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
 
             $utilArgs = array('name' => 'list');
             if (!isset($vars['objectType']) || !in_array($vars['objectType'], $controllerHelper->getObjectTypes('block', $utilArgs))) {
@@ -184,13 +189,13 @@ class BlockList {
             «IF hasCategorisableEntities»
                 $properties = null;
                 if (in_array($vars['objectType'], $this->categorisableObjectTypes)) {
-                    $properties = \ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
+                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
                 }
 
                 // apply category filters
                 if (in_array($objectType, $this->categorisableObjectTypes)) {
                     if (is_array($vars['catIds']) && count($vars['catIds']) > 0) {
-                        $categoryFiltersPerRegistry = \ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', array('ot' => $objectType, 'catids' => $vars['catIds']));
+                        $categoryFiltersPerRegistry = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', array('ot' => $objectType, 'catids' => $vars['catIds']));
                         if (count($categoryFiltersPerRegistry) > 0) {
                             if (!empty($where)) {
                                 $where .= ' AND ';
@@ -201,15 +206,15 @@ class BlockList {
                 }
             «ENDIF»
 
-            $this->view->setCaching(\Zikula_View::CACHE_ENABLED);
+            $this->view->setCaching(Zikula_View::CACHE_ENABLED);
             // set cache id
             $component = '«appName»:' . ucwords($objectType) . ':';
             $instance = '::';
             $accessLevel = ACCESS_READ;
-            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
+            if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
                 $accessLevel = ACCESS_COMMENT;
             }
-            if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+            if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
                 $accessLevel = ACCESS_EDIT;
             }
             $this->view->setCacheId('view|ot_' . $objectType . '_sort_' . $vars['sorting'] . '_amount_' . $vars['amount'] . '_' . $accessLevel);
@@ -219,7 +224,7 @@ class BlockList {
             // if page is cached return cached content
             if ($this->view->is_cached($template)) {
                 $blockinfo['content'] = $this->view->fetch($template);
-                return \BlockUtil::themeBlock($blockinfo);
+                return BlockUtil::themeBlock($blockinfo);
             }
 
             // get objects from database
@@ -230,7 +235,7 @@ class BlockList {
                 'currentPage' => 1,
                 'resultsPerPage' => $vars['amount']
             );
-            list($entities, $objectCount) = \ModUtil::apiFunc('«appName»', 'selection', 'getEntitiesPaginated', $selectionArgs);
+            list($entities, $objectCount) = ModUtil::apiFunc('«appName»', 'selection', 'getEntitiesPaginated', $selectionArgs);
 
             // assign block vars and fetched data
             $this->view->assign('vars', $vars)
@@ -251,7 +256,7 @@ class BlockList {
             $blockinfo['content'] = $this->view->fetch($template);;
 
             // return the block to the theme
-            return \BlockUtil::themeBlock($blockinfo);
+            return BlockUtil::themeBlock($blockinfo);
         }
 
         /**
@@ -268,7 +273,7 @@ class BlockList {
                 $templateFile = $vars['customTemplate'];
             }
 
-            $templateForObjectType = str_replace('itemlist_', 'itemlist_' . \DataUtil::formatForOS($vars['objectType']) . '_', $templateFile);
+            $templateForObjectType = str_replace('itemlist_', 'itemlist_' . DataUtil::formatForOS($vars['objectType']) . '_', $templateFile);
 
             $template = '';
             if ($this->view->template_exists('«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType)) {
@@ -302,7 +307,7 @@ class BlockList {
 
             $sortParam = '';
             if ($vars['sorting'] == 'newest') {
-                $idFields = \ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $vars['objectType']));
+                $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $vars['objectType']));
                 if (count($idFields) == 1) {
                     $sortParam = $idFields[0] . ' DESC';
                 } else {
@@ -330,7 +335,7 @@ class BlockList {
         public function modify($blockinfo)
         {
             // Get current content
-            $vars = \BlockUtil::varsFromContent($blockinfo['content']);
+            $vars = BlockUtil::varsFromContent($blockinfo['content']);
 
             // set default values for all params which are not properly set
             if (!isset($vars['objectType']) || empty($vars['objectType'])) {
@@ -343,7 +348,7 @@ class BlockList {
                 $vars['amount'] = 5;
             }
             if (!isset($vars['template'])) {
-                $vars['template'] = 'itemlist_' . \DataUtil::formatForOS($vars['objectType']) . '_display.tpl';
+                $vars['template'] = 'itemlist_' . DataUtil::formatForOS($vars['objectType']) . '_display.tpl';
             }
             if (!isset($vars['customTemplate'])) {
                 $vars['customTemplate'] = '';
@@ -354,7 +359,7 @@ class BlockList {
             «IF hasCategorisableEntities»
 
                 if (!isset($vars['catIds'])) {
-                    $primaryRegistry = \ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $vars['objectType']));
+                    $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $vars['objectType']));
                     $vars['catIds'] = array($primaryRegistry => array());
                     // backwards compatibility
                     if (isset($vars['catId'])) {
@@ -366,16 +371,16 @@ class BlockList {
                 }
             «ENDIF»
 
-            $this->view->setCaching(\Zikula_View::CACHE_DISABLED);
+            $this->view->setCaching(Zikula_View::CACHE_DISABLED);
 
             // assign the approriate values
             $this->view->assign($vars);
 
             // clear the block cache
             $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_display.tpl');
-            $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_' . \DataUtil::formatForOS($vars['objectType']) . '_display.tpl');
+            $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_' . DataUtil::formatForOS($vars['objectType']) . '_display.tpl');
             $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_display_description.tpl');
-            $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_' . \DataUtil::formatForOS($vars['objectType']) . '_display_description.tpl');
+            $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_' . DataUtil::formatForOS($vars['objectType']) . '_display_description.tpl');
 
             // Return the output that has been generated by this function
             return $this->view->fetch('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_modify.tpl');
@@ -391,7 +396,7 @@ class BlockList {
         public function update($blockinfo)
         {
             // Get current content
-            $vars = \BlockUtil::varsFromContent($blockinfo['content']);
+            $vars = BlockUtil::varsFromContent($blockinfo['content']);
 
             $vars['objectType'] = $this->request->request->filter('objecttype', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             $vars['sorting'] = $this->request->request->filter('sorting', 'default', FILTER_SANITIZE_STRING);
@@ -400,22 +405,22 @@ class BlockList {
             $vars['customTemplate'] = $this->request->request->get('customtemplate', '');
             $vars['filter'] = $this->request->request->get('filter', '');
 
-            $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
 
             if (!in_array($vars['objectType'], $controllerHelper->getObjectTypes('block'))) {
                 $vars['objectType'] = $controllerHelper->getDefaultObjectType('block');
             }
             «IF hasCategorisableEntities»
 
-                $primaryRegistry = \ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $vars['objectType']));
+                $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $vars['objectType']));
                 $vars['catIds'] = array($primaryRegistry => array());
                 if (in_array($vars['objectType'], $this->categorisableObjectTypes)) {
-                    $vars['catIds'] = \ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $vars['objectType']));
+                    $vars['catIds'] = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $vars['objectType']));
                 }
             «ENDIF»
 
             // write back the new contents
-            $blockinfo['content'] = \BlockUtil::varsToContent($vars);
+            $blockinfo['content'] = BlockUtil::varsToContent($vars);
 
             // clear the block cache
             $this->view->clear_cache('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist_display.tpl');

@@ -40,6 +40,12 @@ class ContentTypeSingle {
         «IF !targets('1.3.5')»
             namespace «appName»\ContentType\Base;
 
+            use «appName»\Util\ControllerUtil;
+
+            use ModUtil;
+            use ServiceUtil;
+            use ZLanguage;
+
         «ENDIF»
         /**
          * Generic single item display content plugin base class.
@@ -86,7 +92,7 @@ class ContentTypeSingle {
          */
         public function getTitle()
         {
-            $dom = \ZLanguage::getModuleDomain('«appName»');
+            $dom = ZLanguage::getModuleDomain('«appName»');
 
             return __('«appName» detail view', $dom);
         }
@@ -98,7 +104,7 @@ class ContentTypeSingle {
          */
         public function getDescription()
         {
-            $dom = \ZLanguage::getModuleDomain('«appName»');
+            $dom = ZLanguage::getModuleDomain('«appName»');
 
             return __('Display or link a single «appName» object.', $dom);
         }
@@ -110,8 +116,8 @@ class ContentTypeSingle {
          */
         public function loadData(&$data)
         {
-            $serviceManager = \ServiceUtil::getManager();
-            $controllerHelper = new \«appName»«IF targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($serviceManager);
+            $serviceManager = ServiceUtil::getManager();
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($serviceManager);
 
             $utilArgs = array('name' => 'detail');
             if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $utilArgs))) {
@@ -139,7 +145,7 @@ class ContentTypeSingle {
         public function display()
         {
             if ($this->id != null && !empty($this->displayMode)) {
-                return \ModUtil::func('«appName»', 'external', 'display', $this->getDisplayArguments());
+                return ModUtil::func('«appName»', 'external', 'display', $this->getDisplayArguments());
             }
             return '';
         }
@@ -150,9 +156,9 @@ class ContentTypeSingle {
         public function displayEditing()
         {
             if ($this->id != null && !empty($this->displayMode)) {
-                return \ModUtil::func('«appName»', 'external', 'display', $this->getDisplayArguments());
+                return ModUtil::func('«appName»', 'external', 'display', $this->getDisplayArguments());
             }
-            $dom = \ZLanguage::getModuleDomain('«appName»');
+            $dom = ZLanguage::getModuleDomain('«appName»');
 
             return __('No item selected.', $dom);
         }

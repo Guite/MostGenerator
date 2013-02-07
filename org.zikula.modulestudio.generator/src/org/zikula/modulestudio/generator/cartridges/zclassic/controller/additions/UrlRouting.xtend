@@ -45,6 +45,11 @@ class UrlRouting {
         «IF !targets('1.3.5')»
             namespace «appName»\Base;
 
+            use ModUtil;
+            use System;
+            use Zikula\Routing\UrlRoute;
+            use Zikula\Routing\UrlRouter;
+
         «ENDIF»
         /**
          * Url router facade base class
@@ -56,7 +61,7 @@ class UrlRouting {
         «ENDIF»
         {
             /**
-             * @var «IF targets('1.3.5')»Zikula_Routing_UrlRouter«ELSE»\Zikula\Routing\UrlRouter«ENDIF» The router which is used internally
+             * @var «IF targets('1.3.5')»Zikula_Routing_«ENDIF»UrlRouter The router which is used internally
              */
             protected $router;
 
@@ -70,7 +75,7 @@ class UrlRouting {
              */
             function __construct()
             {
-                $displayDefaultEnding = \System::getVar('shorturlsext', 'html');
+                $displayDefaultEnding = System::getVar('shorturlsext', 'html');
                 «/*Modifier: + (1..n), * (0..n), ? (0..1), {x,y} (x..y)*/»
                 $this->requirements = array(
                     'func'          => '\w+',
@@ -82,7 +87,7 @@ class UrlRouting {
                 );
 
                 // initialise and reference router instance
-                $this->router = new «IF targets('1.3.5')»Zikula_Routing_UrlRouter«ELSE»\Zikula\Routing\UrlRouter«ENDIF»();
+                $this->router = new «IF targets('1.3.5')»Zikula_Routing_«ENDIF»UrlRouter();
 
                 // add generic routes
                 return $this->initUrlRoutes();
@@ -109,12 +114,12 @@ class UrlRouting {
         /**
          * Initialise the url routes for this application.
          *
-         * @return «IF targets('1.3.5')»Zikula_Routing_UrlRouter«ELSE»\Zikula\Routing\UrlRouter«ENDIF» The router instance treating all initialised routes
+         * @return «IF targets('1.3.5')»Zikula_Routing_UrlRouter«ENDIF»UrlRouter The router instance treating all initialised routes
          */
         protected function initUrlRoutes()
         {
             $fieldRequirements = $this->requirements;
-            $isDefaultModule = (\System::getVar('shorturlsdefaultmodule', '') == '«appName»');
+            $isDefaultModule = (System::getVar('shorturlsdefaultmodule', '') == '«appName»');
 
             $defaults = array();
             $modulePrefix = '';
@@ -127,7 +132,7 @@ class UrlRouting {
                 $defaults['func'] = 'view';
                 $viewFolder = 'view';
                 // normal views (e.g. orders/ or customers.xml)
-                $this->router->set('va', new «IF targets('1.3.5')»Zikula_Routing_UrlRoute«ELSE»\Zikula\Routing\UrlRoute«ENDIF»($modulePrefix . $viewFolder . '/:ot:viewending', $defaults, $fieldRequirements));
+                $this->router->set('va', new «IF targets('1.3.5')»Zikula_Routing_«ENDIF»UrlRoute($modulePrefix . $viewFolder . '/:ot:viewending', $defaults, $fieldRequirements));
 
                 // TODO filter views (e.g. /orders/customer/mr-smith.csv)
                 // $this->initRouteForEachSlugType('vn', $modulePrefix . $viewFolder . '/:ot/:filterot/', ':viewending', $defaults, $fieldRequirements);
@@ -158,11 +163,11 @@ class UrlRouting {
         protected function initRouteForEachSlugType($prefix, $patternStart, $patternEnd, $defaults, $fieldRequirements)
         {
             // entities with unique slug (slug only)
-            $this->router->set($prefix . 'a', new «IF targets('1.3.5')»Zikula_Routing_UrlRoute«ELSE»\Zikula\Routing\UrlRoute«ENDIF»($patternStart . ':slug.' . $patternEnd,        $defaults, $fieldRequirements));
+            $this->router->set($prefix . 'a', new «IF targets('1.3.5')»Zikula_Routing_«ENDIF»UrlRoute($patternStart . ':slug.' . $patternEnd,        $defaults, $fieldRequirements));
             // entities with non-unique slug (slug and id)
-            $this->router->set($prefix . 'b', new «IF targets('1.3.5')»Zikula_Routing_UrlRoute«ELSE»\Zikula\Routing\UrlRoute«ENDIF»($patternStart . ':slug.:id.' . $patternEnd,    $defaults, $fieldRequirements));
+            $this->router->set($prefix . 'b', new «IF targets('1.3.5')»Zikula_Routing_«ENDIF»UrlRoute($patternStart . ':slug.:id.' . $patternEnd,    $defaults, $fieldRequirements));
             // entities without slug (id)
-            $this->router->set($prefix . 'c', new «IF targets('1.3.5')»Zikula_Routing_UrlRoute«ELSE»\Zikula\Routing\UrlRoute«ENDIF»($patternStart . 'id.:id.' . $patternEnd,        $defaults, $fieldRequirements));
+            $this->router->set($prefix . 'c', new «IF targets('1.3.5')»Zikula_Routing_«ENDIF»UrlRoute($patternStart . 'id.:id.' . $patternEnd,        $defaults, $fieldRequirements));
         }
     '''
 
@@ -264,12 +269,12 @@ class UrlRouting {
     def private getSlugForItem(Entity it) '''
             case '«name.formatForCode»':
                 «IF hasSluggableFields»
-                        $item = \ModUtil::apiFunc('«container.application.appName»', 'selection', 'getEntity', array('ot' => $objectType, 'id' => $itemid, 'slimMode' => true));
+                        $item = ModUtil::apiFunc('«container.application.appName»', 'selection', 'getEntity', array('ot' => $objectType, 'id' => $itemid, 'slimMode' => true));
                         «IF slugUnique»
                             $slug = $item['slug'];
                         «ELSE»
                             // make non-unique slug unique by adding the identifier
-                            $idFields = \ModUtil::apiFunc('«container.application.appName»', 'selection', 'getIdFields', array('ot' => $objectType));
+                            $idFields = ModUtil::apiFunc('«container.application.appName»', 'selection', 'getIdFields', array('ot' => $objectType));
 
                             // concatenate identifiers (for composite keys)
                             $itemId = '';

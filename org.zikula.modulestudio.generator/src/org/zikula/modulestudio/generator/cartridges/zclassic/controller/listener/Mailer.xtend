@@ -16,9 +16,9 @@ class Mailer {
          * This is a notifyUntil event so the event must `$event->stop«IF !targets('1.3.5')»Propagation«ENDIF»()` and set any
          * return data into `$event->data`, or `$event->setData()`.
          *
-         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function sendMessage(«IF targets('1.3.5')»Zikula_Event«ELSE»\Zikula\Core\Event\GenericEvent«ENDIF» $event)
+        public static function sendMessage(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::sendMessage($event);

@@ -36,8 +36,8 @@ class TreeJS {
          *   - root:       Optional id of root node, defaults to 1.
          *   - assign:     If set, the results are assigned to the corresponding variable instead of printed out.
          *
-         * @param  array        $params  All attributes passed to this function from the template.
-         * @param  \Zikula_View $view    Reference to the view object.
+         * @param  array       $params  All attributes passed to this function from the template.
+         * @param  Zikula_View $view    Reference to the view object.
          *
          * @return string The output of the plugin.
          */
@@ -74,7 +74,7 @@ class TreeJS {
             «ELSE»
                 $entityClass = '\\«appName»\\Entity\\' . ucwords($params['objectType']) . 'Entity';
             «ENDIF»
-            $serviceManager = \ServiceUtil::getManager();
+            $serviceManager = ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
             $titleFieldName = $repository->getTitleFieldName();
@@ -85,7 +85,7 @@ class TreeJS {
             $result = array();
 
             foreach ($params['tree'] as $item) {
-                $url = (($controllerHasEditAction) ? \ModUtil::url('«appName»', $params['controller'], 'edit', array('ot' => $params['objectType'], $idField => $item[$idField])) : '');
+                $url = (($controllerHasEditAction) ? ModUtil::url('«appName»', $params['controller'], 'edit', array('ot' => $params['objectType'], $idField => $item[$idField])) : '');
 
                 $parentItem = $item->getParent();
 
@@ -101,7 +101,7 @@ class TreeJS {
             }
 
             // instantiate and initialise the output tree object
-            $tree = new \Zikula_Tree();
+            $tree = new Zikula_Tree();
             $tree->setOption('id', 'itemtree' . $params['root']);
             //$tree->setOption('objid', $idField);
             $tree->setOption('treeClass', 'z-nestedsetlist');

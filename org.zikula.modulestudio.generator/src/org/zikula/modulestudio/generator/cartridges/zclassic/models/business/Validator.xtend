@@ -70,17 +70,18 @@ class Validator {
         «IF !targets('1.3.5')»
             namespace «appName»\Base;
 
+            use UserUtil;
+            use Zikula_AbstractBase;
+            use Zikula_EntityAccess;
+            use ZLanguage;
+
         «ENDIF»
         /**
          * Validator class for encapsulating common entity validation methods.
          *
          * This is the base validation class with general checks.
          */
-        «IF targets('1.3.5')»
-        abstract class «appName»_Base_Validator extends Zikula_AbstractBase
-        «ELSE»
-        abstract class AbstractValidator extends \Zikula_AbstractBase
-        «ENDIF»
+        abstract class «IF targets('1.3.5')»«appName»_Base_Validator«ELSE»AbstractValidator«ENDIF» extends Zikula_AbstractBase
         {
             /**
              * @var Zikula_EntityAccess The entity instance which is treated by this validator.
@@ -167,7 +168,7 @@ class Validator {
                 if (!$this->isValidInteger($fieldName)) {
                     return false;
                 }
-                $uname = \UserUtil::getVar('uname', $this->entity[$fieldName]);
+                $uname = UserUtil::getVar('uname', $this->entity[$fieldName]);
 
                 return (!is_null($uname) && !empty($uname));
             }
@@ -296,12 +297,12 @@ class Validator {
              */
             public function isValidLanguage($fieldName, $onlyInstalled = false)
             {
-                $languageMap = \ZLanguage::languageMap();
+                $languageMap = ZLanguage::languageMap();
                 $result = in_array($this->entity[$fieldName], array_keys($languageMap));        
                 if (!$result || !$onlyInstalled) {
                     return $result;
                 } 
-                $available = \ZLanguage::getInstalledLanguages();
+                $available = ZLanguage::getInstalledLanguages();
 
                 return in_array($this->entity[$fieldName], $available);
             }
@@ -314,7 +315,7 @@ class Validator {
              */
             public function isValidCountry($fieldName)
             {
-                $countryMap = \ZLanguage::countryMap();
+                $countryMap = ZLanguage::countryMap();
 
                 return in_array($this->entity[$fieldName], array_keys($countryMap));
             }
@@ -521,6 +522,7 @@ class Validator {
         «IF !app.targets('1.3.5')»
             namespace «app.appName»\Entity\Validator\Base;
 
+            use ServiceUtil;
         «ENDIF»
         /**
          * Validator class for encapsulating entity validation methods.
@@ -541,6 +543,9 @@ class Validator {
         «IF !app.targets('1.3.5')»
             namespace «app.appName»\Entity\Validator;
 
+            «IF isInheriting»
+            use ServiceUtil;
+            «ENDIF»
         «ENDIF»
         /**
          * Validator class for encapsulating entity validation methods.
@@ -569,7 +574,7 @@ class Validator {
         public function validateAll()
         {
             $errorInfo = array('message' => '', 'code' => 0, 'debugArray' => array());
-            $dom = \ZLanguage::getModuleDomain('«app.appName»');
+            $dom = ZLanguage::getModuleDomain('«app.appName»');
             «IF isInheriting»
                 parent::validateAll();
             «ENDIF» 
@@ -615,7 +620,7 @@ class Validator {
             «ELSE»
                 $entityClass = '\\«app.appName»\\Entity\\«name.formatForCodeCapital»Entity';
             «ENDIF»
-            $serviceManager = \ServiceUtil::getManager();
+            $serviceManager = ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
 
@@ -645,7 +650,7 @@ class Validator {
             «ELSE»
                 $entityClass = '\\«app.appName»\\Entity\\«name.formatForCodeCapital»Entity';
             «ENDIF»
-            $serviceManager = \ServiceUtil::getManager();
+            $serviceManager = ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
 

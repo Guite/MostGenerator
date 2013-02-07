@@ -40,9 +40,9 @@ class Bootstrap {
         «IF !referredApplications.isEmpty»
 
             «FOR referredApp : referredApplications»
-                if (\ModUtil::available('«referredApp.name.formatForCodeCapital»')) {
+                if (ModUtil::available('«referredApp.name.formatForCodeCapital»')) {
                     // load Doctrine 2 data of «referredApp.name.formatForCodeCapital»
-                    \ModUtil::initOOModule('«referredApp.name.formatForCodeCapital»');
+                    ModUtil::initOOModule('«referredApp.name.formatForCodeCapital»');
                 }
             «ENDFOR»
         «ENDIF»
@@ -53,14 +53,14 @@ class Bootstrap {
     def private initExtensions(Application it) '''
         «IF hasTrees || hasLoggable || hasSluggable || hasSortable || hasTimestampable || hasTranslatable || hasStandardFieldEntities»
             // initialise doctrine extension listeners
-            $helper = \ServiceUtil::getService('doctrine_extensions');
+            $helper = ServiceUtil::getService('doctrine_extensions');
             «IF hasTrees»
                 $helper->getListener('tree');
             «ENDIF»
             «IF hasLoggable»
                 $loggableListener = $helper->getListener('loggable');
                 // set current user name to loggable listener
-                $userName = \UserUtil::isLoggedIn() ? \UserUtil::getVar('uname') : __('Guest');
+                $userName = UserUtil::isLoggedIn() ? UserUtil::getVar('uname') : __('Guest');
                 $loggableListener->setUsername($userName);
             «ENDIF»
             «IF hasSluggable»
@@ -80,8 +80,8 @@ class Bootstrap {
             «ENDIF»
             «IF hasTranslatable»
                 $translatableListener = $helper->getListener('translatable');
-                //$translatableListener->setTranslatableLocale(\ZLanguage::getLanguageCode());
-                $currentLanguage = preg_replace('#[^a-z-].#', '', \FormUtil::getPassedValue('lang', \System::getVar('language_i18n', 'en'), 'GET'));
+                //$translatableListener->setTranslatableLocale(ZLanguage::getLanguageCode());
+                $currentLanguage = preg_replace('#[^a-z-].#', '', FormUtil::getPassedValue('lang', System::getVar('language_i18n', 'en'), 'GET'));
                 $translatableListener->setTranslatableLocale($currentLanguage);
                 /**
                  * Sometimes it is desired to set a default translation as a fallback if record does not have a translation
@@ -89,7 +89,7 @@ class Bootstrap {
                  * But there is a way to specify a default locale which would force Entity to not update it`s field
                  * if current locale is not a default.
                  */
-                //$translatableListener->setDefaultLocale(\System::getVar('language_i18n', 'en'));
+                //$translatableListener->setDefaultLocale(System::getVar('language_i18n', 'en'));
             «ENDIF»
         «ENDIF»
     '''
@@ -101,7 +101,7 @@ class Bootstrap {
             
             function «prefix()»PerformRegularAmendments()
             {
-                $currentFunc = \FormUtil::getPassedValue('func', '«IF targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
+                $currentFunc = FormUtil::getPassedValue('func', '«IF targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
                 if ($currentFunc == 'edit') {
                     return;
                 }
@@ -112,7 +112,7 @@ class Bootstrap {
                     return;
                 }
 
-                $entityManager = \ServiceUtil::getService('doctrine.entitymanager');
+                $entityManager = ServiceUtil::getService('doctrine.entitymanager');
                 «FOR entity : entitiesWithArchive»
 
                     // update for «entity.nameMultiple.formatForDisplay» becoming archived

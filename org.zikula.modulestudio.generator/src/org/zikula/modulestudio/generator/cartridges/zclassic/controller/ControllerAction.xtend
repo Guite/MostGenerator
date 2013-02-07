@@ -137,7 +137,7 @@ class ControllerAction {
         «IF tempIsIndexAction»
             «permissionCheck('', '')»
         «ELSE»
-            $controllerHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Controller«ELSE»\Util\ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
 
             // parameter specifying which type of objects we are treating
             $objectType = (isset($args['ot']) && !empty($args['ot'])) ? $args['ot'] : $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
@@ -156,10 +156,10 @@ class ControllerAction {
     def private permissionCheck(Action it, String objectTypeVar, String instanceId) {
         switch controller {
             AdminController: '''
-                        $this->throwForbiddenUnless(\SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', ACCESS_ADMIN), \LogUtil::getErrorMsgPermission());
+                        $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', ACCESS_ADMIN), LogUtil::getErrorMsgPermission());
                     '''
             default: '''
-                        $this->throwForbiddenUnless(\SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', «getPermissionAccessLevel»), \LogUtil::getErrorMsgPermission());
+                        $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . ':«objectTypeVar»:', «instanceId»'::', «getPermissionAccessLevel»), LogUtil::getErrorMsgPermission());
                     '''
         }
     }
@@ -232,12 +232,12 @@ class ControllerAction {
             $entityClass = '\\' . $this->name . '\\Entity\\' . ucwords($objectType) . 'Entity';
         «ENDIF»
         $repository = $this->entityManager->getRepository($entityClass);
-        $viewHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_View«ELSE»\Util\ViewUtil«ENDIF»($this->serviceManager);
+        $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager);
         «IF app.hasTrees»
 
             $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : $this->request->query->filter('tpl', '', FILTER_SANITIZE_STRING);
             if ($tpl == 'tree') {
-                $trees = \ModUtil::apiFunc($this->name, 'selection', 'getAllTrees', array('ot' => $objectType));
+                $trees = ModUtil::apiFunc($this->name, 'selection', 'getAllTrees', array('ot' => $objectType));
                 $this->view->assign('trees', $trees)
                            ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
                 // fetch and return the appropriate template
@@ -281,10 +281,10 @@ class ControllerAction {
         $accessLevel = ACCESS_READ;
         $component = '«app.appName»:' . ucwords($objectType) . ':';
         $instance = '::';
-        if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
+        if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
             $accessLevel = ACCESS_COMMENT;
         }
-        if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+        if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
             $accessLevel = ACCESS_EDIT;
         }
 
@@ -302,7 +302,7 @@ class ControllerAction {
             }
 
             // retrieve item list without pagination
-            $entities = \ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
+            $entities = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
         } else {
             // the current offset which is used to calculate the pagination
             $currentPage = (int) (isset($args['pos']) && !empty($args['pos'])) ? $args['pos'] : $this->request->query->filter('pos', 1, FILTER_VALIDATE_INT);
@@ -325,7 +325,7 @@ class ControllerAction {
             // retrieve item list with pagination
             $selectionArgs['currentPage'] = $currentPage;
             $selectionArgs['resultsPerPage'] = $resultsPerPage;
-            list($entities, $objectCount) = \ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
+            list($entities, $objectCount) = ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
 
             $this->view->assign('currentPage', $currentPage)
                        ->assign('pager', array('numitems'     => $objectCount,
@@ -333,7 +333,7 @@ class ControllerAction {
         }
 
         // build ModUrl instance for display hooks
-        $currentUrlObject = new \Zikula«IF app.targets('1.3.5')»_ModUrl«ELSE»\Core\ModUrl«ENDIF»($this->name, '«controller.formattedName»', 'view', \ZLanguage::getLanguageCode(), $currentUrlArgs);
+        $currentUrlObject = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, '«controller.formattedName»', 'view', ZLanguage::getLanguageCode(), $currentUrlArgs);
 
         // assign the object data, sorting information and details for creating the pager
         $this->view->assign('items', $entities)
@@ -355,7 +355,7 @@ class ControllerAction {
         «ENDIF»
         $repository = $this->entityManager->getRepository($entityClass);
 
-        $idFields = \ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
         // retrieve identifier of the object we wish to view
         $idValues = $controllerHelper->retrieveIdentifier($this->request, $args, $objectType, $idFields);
@@ -363,7 +363,7 @@ class ControllerAction {
         «controller.checkForSlug»
         $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
 
-        $entity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues«controller.addSlugToSelection»));
+        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues«controller.addSlugToSelection»));
         $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
         unset($idValues);
 
@@ -432,7 +432,7 @@ class ControllerAction {
         if (isset($entity['slug'])) {
             $currentUrlArgs['slug'] = $entity['slug'];
         }
-        $currentUrlObject = new \Zikula«IF app.targets('1.3.5')»_ModUrl«ELSE»\Core\ModUrl«ENDIF»($this->name, '«formattedName»', 'display', \ZLanguage::getLanguageCode(), $currentUrlArgs);
+        $currentUrlObject = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, '«formattedName»', 'display', ZLanguage::getLanguageCode(), $currentUrlArgs);
                     '''
         }
     }
@@ -440,20 +440,20 @@ class ControllerAction {
     def private processDisplayOutput(Controller it) {
         switch it {
             AjaxController: '''
-        return new Zikula_Response_Ajax(array('result' => true, $objectType => $entity->toArray()));
+        return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»(array('result' => true, $objectType => $entity->toArray()));
                     '''
             default: '''
-        $viewHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_View«ELSE»\Util\ViewUtil«ENDIF»($this->serviceManager);
+        $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager);
         $templateFile = $viewHelper->getViewTemplate($this->view, '«formattedName»', $objectType, 'display', $args);
 
         // set cache id
         $component = $this->name . ':' . ucwords($objectType) . ':';
         $instance = $instanceId . '::';
         $accessLevel = ACCESS_READ;
-        if (\SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
+        if (SecurityUtil::checkPermission($component, $instance, ACCESS_COMMENT)) {
             $accessLevel = ACCESS_COMMENT;
         }
-        if (\SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
+        if (SecurityUtil::checkPermission($component, $instance, ACCESS_EDIT)) {
             $accessLevel = ACCESS_EDIT;
         }
         $this->view->setCacheId($objectType . '|' . $instanceId . '|a' . $accessLevel);
@@ -473,7 +473,7 @@ class ControllerAction {
         switch controller {
             AjaxController: '''
         $this->checkAjaxToken();
-        $idFields = \ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
         $data = (isset($args['data']) && !empty($args['data'])) ? $args['data'] : $this->request->query->filter('data', null);
         $data = json_decode($data, true);
@@ -485,7 +485,7 @@ class ControllerAction {
         $hasIdentifier = $controllerHelper->isValidIdentifier($idValues);
         $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
 
-        $entity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
+        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
         $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
         unset($idValues);
 
@@ -504,12 +504,12 @@ class ControllerAction {
         $this->entityManager->flush();
         // TODO: call post edit process hooks
 
-        return new Zikula_Response_Ajax(array('result' => true, $objectType => $entity->toArray()));
+        return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»(array('result' => true, $objectType => $entity->toArray()));
                     '''
             default: '''
         «/* new ActionHandler().formCreate(appName, controller.formattedName, 'edit')*/»
         // create new Form reference
-        $view = \FormUtil::newForm($this->name, $this);
+        $view = FormUtil::newForm($this->name, $this);
 
         // build form handler class name
         «IF app.targets('1.3.5')»
@@ -519,7 +519,7 @@ class ControllerAction {
         «ENDIF»
 
         // determine the output template
-        $viewHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_View«ELSE»\Util\ViewUtil«ENDIF»($this->serviceManager);
+        $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager);
         $template = $viewHelper->getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'edit', $args);
 
         // execute form using supplied template and page event handler
@@ -529,7 +529,7 @@ class ControllerAction {
     }
 
     def private dispatch actionImplBody(DeleteAction it) '''
-        $idFields = \ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
+        $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 
         // retrieve identifier of the object we wish to delete
         $idValues = $controllerHelper->retrieveIdentifier($this->request, $args, $objectType, $idFields);
@@ -537,15 +537,15 @@ class ControllerAction {
 
         $this->throwNotFoundUnless($hasIdentifier, $this->__('Error! Invalid identifier received.'));
 
-        $entity = \ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
+        $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
         $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
 
-        $workflowHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»($this->serviceManager);
+        $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager);
         $deleteActionId = 'delete';
         $deleteAllowed = false;
         $actions = $workflowHelper->getActionsForObject($entity);
         if ($actions === false || !is_array($actions)) {
-            return \LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
+            return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
         }
         foreach ($actions as $actionId => $action) {
             if ($actionId != $deleteActionId) {
@@ -555,7 +555,7 @@ class ControllerAction {
             break;
         }
         if (!$deleteAllowed) {
-            return \LogUtil::registerError($this->__('Error! It is not allowed to delete this entity.'));
+            return LogUtil::registerError($this->__('Error! It is not allowed to delete this entity.'));
         }
 
         $confirmation = (bool) (isset($args['confirmation']) && !empty($args['confirmation'])) ? $args['confirmation'] : $this->request->request->filter('confirmation', false, FILTER_VALIDATE_BOOLEAN);
@@ -569,7 +569,7 @@ class ControllerAction {
             $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
             $validators = $this->notifyHooks($hook)->getValidators();
             «ELSE»
-            $hook = new \Zikula\Core\Hook\ValidationHook(new \Zikula\Core\Hook\ValidationProviders());
+            $hook = new ValidationHook(new ValidationProviders());
             $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
             «ENDIF»
             if (!$validators->hasErrors()) {
@@ -585,16 +585,16 @@ class ControllerAction {
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier());
                 $this->notifyHooks($hook);
                 «ELSE»
-                $hook = new \Zikula\Core\Hook\ProcessHook($entity->createCompositeIdentifier());
+                $hook = new ProcessHook($entity->createCompositeIdentifier());
                 $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
                 «ENDIF»
 
                 // An item was deleted, so we clear all cached pages this item.
                 $cacheArgs = array('ot' => $objectType, 'item' => $entity);
-                \ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
+                ModUtil::apiFunc($this->name, 'cache', 'clearItemCache', $cacheArgs);
 
                 // redirect to the «IF controller.hasActions('view')»list of the current object type«ELSE»«IF app.targets('1.3.5')»main«ELSE»index«ENDIF» page«ENDIF»
-                $this->redirect(\ModUtil::url($this->name, '«controller.formattedName»', «IF controller.hasActions('view')»'view',
+                $this->redirect(ModUtil::url($this->name, '«controller.formattedName»', «IF controller.hasActions('view')»'view',
                                                                                             array('ot' => $objectType)«ELSE»'«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»'«ENDIF»));
             }
         }
@@ -607,14 +607,15 @@ class ControllerAction {
         $repository = $this->entityManager->getRepository($entityClass);
 
         // set caching id
-        $this->view->setCaching(\Zikula_View::CACHE_DISABLED);
+        $this->view->setCaching(Zikula_View::CACHE_DISABLED);
 
         // assign the object we loaded above
         $this->view->assign($objectType, $entity)
                    ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
         // fetch and return the appropriate template
-        $viewHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_View«ELSE»\Util\ViewUtil«ENDIF»($this->serviceManager);
+        $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager);
+
         return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'delete', $args);
     '''
 

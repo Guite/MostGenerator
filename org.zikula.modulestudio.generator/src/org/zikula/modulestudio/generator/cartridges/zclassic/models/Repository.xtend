@@ -85,6 +85,13 @@ class Repository {
         «IF !app.targets('1.3.5')»
             namespace «app.appName»\Entity\Repository\Base;
 
+            «IF app.hasUploads»
+                use «app.appName»\Util\ImageUtil;
+            «ENDIF»
+            «IF hasListFieldsEntity»
+                use «app.appName»\Util\ListEntriesUtil;
+            «ENDIF»
+            use «app.appName»\Util\WorkflowUtil;
         «ENDIF»
         «IF tree != EntityTreeType::NONE»
             use Gedmo\Tree\Entity\Repository\«tree.asConstant.toFirstUpper»TreeRepository;
@@ -103,6 +110,23 @@ class Repository {
         use Doctrine\ORM\Tools\Pagination\Paginator;
         «ENDIF»
 
+        «IF !app.targets('1.3.5')»
+            use DataUtil;
+            use FilterUtil;
+            use FormUtil;
+            use LogUtil;
+            use ModUtil;
+            use ServiceUtil;
+            use UserUtil;
+            «IF hasArchive && getEndDateField != null»
+                use ZLanguage;
+                use Zikula\Core\ModUrl;
+                use Zikula\Core\Hook\ProcessHook;
+                use Zikula\Core\Hook\ValidationHook;
+                use Zikula\Core\Hook\ValidationProviders;
+            «ENDIF»
+
+        «ENDIF»
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.
          *
@@ -261,13 +285,13 @@ class Repository {
 
             if ($context == 'controllerAction') {
                 if (!isset($args['action'])) {
-                    $args['action'] = \FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST');
+                    $args['action'] = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST');
                 }
                 if (in_array($args['action'], array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view'))) {
                     $templateParameters = $this->getViewQuickNavParameters($context, $args);
                     «IF hasListFieldsEntity»
-                        $serviceManager = \ServiceUtil::getManager();
-                        $listHelper = new \«container.application.appName»«IF app.targets('1.3.5')»_Util_ListEntries«ELSE»\Util\ListEntriesUtil«ENDIF»($serviceManager);
+                        $serviceManager = ServiceUtil::getManager();
+                        $listHelper = new «IF app.targets('1.3.5')»«container.application.appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($serviceManager);
                         «FOR field : getListFieldsEntity»
                             «var fieldName = field.name.formatForCode»
                             $templateParameters['«fieldName»Items'] = $listHelper->getEntries('«name.formatForCode»', '«fieldName»');
@@ -287,7 +311,7 @@ class Repository {
 
                 «IF app.hasUploads»
                     // initialise Imagine preset manager instances
-                    $imageHelper = new \«container.application.appName»«IF app.targets('1.3.5')»_Util_Image«ELSE»\Util\ImageUtil«ENDIF»(\ServiceUtil::getManager());
+                    $imageHelper = new «IF app.targets('1.3.5')»«container.application.appName»_Util_Image«ELSE»ImageUtil«ENDIF»(ServiceUtil::getManager());
                     «IF hasUploadFieldsEntity»
 
                         $objectType = '«name.formatForCode»';
@@ -326,47 +350,47 @@ class Repository {
 
             $parameters = array();
             «IF categorisable»
-                $parameters['catIdList'] = \ModUtil::apiFunc('«container.application.appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => '«name.formatForCode»', 'source' => 'GET'));
+                $parameters['catIdList'] = ModUtil::apiFunc('«container.application.appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => '«name.formatForCode»', 'source' => 'GET'));
             «ENDIF»
             «IF !getBidirectionalIncomingJoinRelationsWithOneSource.isEmpty»
                 «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
                     «val sourceAliasName = relation.getRelationAliasName(false)»
-                    $parameters['«sourceAliasName»'] = \FormUtil::getPassedValue('«sourceAliasName»', 0, 'GET');
+                    $parameters['«sourceAliasName»'] = FormUtil::getPassedValue('«sourceAliasName»', 0, 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasListFieldsEntity»
                 «FOR field : getListFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = \FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasUserFieldsEntity»
                 «FOR field : getUserFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = (int) \FormUtil::getPassedValue('«fieldName»', 0, 'GET');
+                    $parameters['«fieldName»'] = (int) FormUtil::getPassedValue('«fieldName»', 0, 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasCountryFieldsEntity»
                 «FOR field : getCountryFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = \FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasLanguageFieldsEntity»
                 «FOR field : getLanguageFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = \FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasAbstractStringFieldsEntity»
-                $parameters['searchterm'] = \FormUtil::getPassedValue('searchterm', '', 'GET');
+                $parameters['searchterm'] = FormUtil::getPassedValue('searchterm', '', 'GET');
             «ENDIF»
-            «/* not needed as already handled in the controller $pageSize = \ModUtil::getVar('«container.application.appName»', 'pageSize', 10);
-            $parameters['pageSize'] = (int) \FormUtil::getPassedValue('pageSize', $pageSize, 'GET');*/»
+            «/* not needed as already handled in the controller $pageSize = ModUtil::getVar('«container.application.appName»', 'pageSize', 10);
+            $parameters['pageSize'] = (int) FormUtil::getPassedValue('pageSize', $pageSize, 'GET');*/»
             «IF hasBooleanFieldsEntity»
                 «FOR field : getBooleanFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = \FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
                 «ENDFOR»
             «ENDIF»
 
@@ -411,13 +435,13 @@ class Repository {
         {
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)) {
-                return \LogUtil::registerArgsError();
+                return LogUtil::registerArgsError();
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->delete('«entityClassName('', false)»', 'tbl')
                ->where('tbl.createdUserId = :creator')
-               ->setParameter('creator', \DataUtil::formatForStore($userId));
+               ->setParameter('creator', DataUtil::formatForStore($userId));
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -436,13 +460,13 @@ class Repository {
         {
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)) {
-                return \LogUtil::registerArgsError();
+                return LogUtil::registerArgsError();
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->delete('«entityClassName('', false)»', 'tbl')
                ->where('tbl.updatedUserId = :editor')
-               ->setParameter('editor', \DataUtil::formatForStore($userId));
+               ->setParameter('editor', DataUtil::formatForStore($userId));
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -463,14 +487,14 @@ class Repository {
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)
              || $newUserId == 0 || !is_numeric($newUserId)) {
-                return \LogUtil::registerArgsError();
+                return LogUtil::registerArgsError();
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->update('«entityClassName('', false)»', 'tbl')
                ->set('tbl.createdUserId', $newUserId)
                ->where('tbl.createdUserId = :creator')
-               ->setParameter('creator', \DataUtil::formatForStore($userId));
+               ->setParameter('creator', DataUtil::formatForStore($userId));
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -491,14 +515,14 @@ class Repository {
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)
              || $newUserId == 0 || !is_numeric($newUserId)) {
-                return \LogUtil::registerArgsError();
+                return LogUtil::registerArgsError();
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->update('«entityClassName('', false)»', 'tbl')
                ->set('tbl.updatedUserId', $newUserId)
                ->where('tbl.updatedUserId = :editor')
-               ->setParameter('editor', \DataUtil::formatForStore($userId));
+               ->setParameter('editor', DataUtil::formatForStore($userId));
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -523,19 +547,19 @@ class Repository {
         {
             // check field parameter
             if (empty($userFieldName) || !in_array($userFieldName, array(«FOR field : getUserFieldsEntity SEPARATOR ', '»'«field.name.formatForCode»'«ENDFOR»))) {
-                return \LogUtil::registerArgsError();
+                return LogUtil::registerArgsError();
             }
             // check id parameter
             if ($userId == 0 || !is_numeric($userId)
              || $newUserId == 0 || !is_numeric($newUserId)) {
-                return \LogUtil::registerArgsError();
+                return LogUtil::registerArgsError();
             }
 
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->update('«entityClassName('', false)»', 'tbl')
                ->set('tbl.' . $userFieldName, $newUserId)
                ->where('tbl.' . $userFieldName . ' = :user')
-               ->setParameter('user', \DataUtil::formatForStore($userId));
+               ->setParameter('user', DataUtil::formatForStore($userId));
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -554,16 +578,16 @@ class Repository {
          *
          * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
          */
-        protected function addIdFilter($id, Doctrine\ORM\QueryBuilder $qb)
+        protected function addIdFilter($id, QueryBuilder $qb)
         {
             if (is_array($id)) {
                 foreach ($id as $fieldName => $fieldValue) {
                     $qb->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
-                       ->setParameter($fieldName, \DataUtil::formatForStore($fieldValue));
+                       ->setParameter($fieldName, DataUtil::formatForStore($fieldValue));
                 }
             } else {
                 $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» = :id')
-                   ->setParameter('id', \DataUtil::formatForStore($id));
+                   ->setParameter('id', DataUtil::formatForStore($id));
             }
             return $qb;
         }
@@ -581,7 +605,7 @@ class Repository {
         {
             // check id parameter
             if ($id == 0) {
-                return \LogUtil::registerArgsError();
+                return LogUtil::registerArgsError();
             }
 
             $qb = $this->_intBaseQuery('', '', $useJoins, $slimMode);
@@ -610,13 +634,13 @@ class Repository {
         {
             // check input parameter
             if ($slugTitle == '') {
-                return \LogUtil::registerArgsError();
+                return LogUtil::registerArgsError();
             }
 
             $qb = $this->_intBaseQuery('', '', $useJoins, $slimMode);
 
             $qb->andWhere('tbl.slug = :slug')
-               ->setParameter('slug', \DataUtil::formatForStore($slugTitle));
+               ->setParameter('slug', DataUtil::formatForStore($slugTitle));
 
             $qb = $this->addExclusion($qb, $excludeId);
 
@@ -636,20 +660,20 @@ class Repository {
          *
          * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
          */
-        protected function addExclusion(Doctrine\ORM\QueryBuilder $qb, $excludeId)
+        protected function addExclusion(QueryBuilder $qb, $excludeId)
         {
             «IF hasCompositeKeys»
                 if (is_array($excludeId)) {
                     foreach ($id as $fieldName => $fieldValue) {
                         $qb->andWhere('tbl.' . $fieldName . ' != :' . $fieldName)
-                           ->setParameter($fieldName, \DataUtil::formatForStore($fieldValue));
+                           ->setParameter($fieldName, DataUtil::formatForStore($fieldValue));
                     }
                 } elseif ($excludeId > 0) {
             «ELSE»
                 if ($excludeId > 0) {
             «ENDIF»
                 $qb->andWhere('tbl.id != :excludeId')
-                   ->setParameter('excludeId', \DataUtil::formatForStore($excludeId));
+                   ->setParameter('excludeId', DataUtil::formatForStore($excludeId));
             }
             return $qb;
         }
@@ -689,7 +713,7 @@ class Repository {
          *
          * @return array Created query instance and amount of affected items.
          */
-        protected function getSelectWherePaginatedQuery(Doctrine\ORM\QueryBuilder $qb, $currentPage = 1, $resultsPerPage = 25)
+        protected function getSelectWherePaginatedQuery(QueryBuilder $qb, $currentPage = 1, $resultsPerPage = 25)
         {
             $qb = $this->addCommonViewFilters($qb);
 
@@ -755,9 +779,9 @@ class Repository {
          *
          * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
          */
-        protected function addCommonViewFilters(Doctrine\ORM\QueryBuilder $qb)
+        protected function addCommonViewFilters(QueryBuilder $qb)
         {
-            $currentFunc = \FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST');
+            $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST');
             if ($currentFunc != 'view' && $currentFunc != 'finder') {
                 return $qb;
             }
@@ -768,15 +792,15 @@ class Repository {
                     // single category filter
                     if ($v > 0) {
                         $qb->andWhere('tblCategories.category = :category')
-                           ->setParameter('category', \DataUtil::formatForStore($v));
+                           ->setParameter('category', DataUtil::formatForStore($v));
                     }
                 } elseif ($k == 'catIdList') {
                     // multi category filter
                     /* old
                     $qb->andWhereIn('tblCategories.category IN (:categories)')
-                       ->setParameter('categories', \DataUtil::formatForStore($v));
+                       ->setParameter('categories', DataUtil::formatForStore($v));
                      */
-                    $categoryFiltersPerRegistry = \ModUtil::apiFunc('«container.application.appName»', 'category', 'buildFilterClauses', array('ot' => '«name.formatForDisplay»', 'catids' => $v));
+                    $categoryFiltersPerRegistry = ModUtil::apiFunc('«container.application.appName»', 'category', 'buildFilterClauses', array('ot' => '«name.formatForDisplay»', 'catids' => $v));
                     if (count($categoryFiltersPerRegistry) > 0) {
                         $qb->andWhere('(' . implode(' OR ', $categoryFiltersPerRegistry) . ')');
                     }
@@ -799,30 +823,30 @@ class Repository {
                     if ($v != '' || (is_numeric($v) && $v > 0)) {
                         if ($k == 'workflowState' && substr($v, 0, 1) == '!') {
                             $qb->andWhere('tbl.' . $k . ' != :' . $k)
-                               ->setParameter($k, \DataUtil::formatForStore(substr($v, 1, strlen($v)-1)));
+                               ->setParameter($k, DataUtil::formatForStore(substr($v, 1, strlen($v)-1)));
                         } else {
                             $qb->andWhere('tbl.' . $k . ' = :' . $k)
-                               ->setParameter($k, \DataUtil::formatForStore($v));
+                               ->setParameter($k, DataUtil::formatForStore($v));
                        }
                     }
                 }
             }
 
             // apply default filters
-            $currentType = \FormUtil::getPassedValue('type', 'user', 'GETPOST');
+            $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
             if ($currentType != 'admin') {
                 if (!in_array('workflowState', array_keys($parameters))) {
                     // per default we show approved «nameMultiple.formatForDisplay» only
                     $onlineStates = array('approved');
                     «IF ownerPermission»
-                        $onlyOwn = (int) \FormUtil::getPassedValue('own', 0, 'GETPOST');
+                        $onlyOwn = (int) FormUtil::getPassedValue('own', 0, 'GETPOST');
                         if ($onlyOwn == 1) {
                             // allow the owner to see his deferred «nameMultiple.formatForDisplay»
                             $onlineStates[] = 'deferred';
                         }
                     «ENDIF»
                     $qb->andWhereIn('tbl.workflowState IN (:onlineStates)')
-                       ->setParameter('onlineStates', \DataUtil::formatForStore($onlineStates));
+                       ->setParameter('onlineStates', DataUtil::formatForStore($onlineStates));
                 }
                 «applyDefaultDateRangeFilter»
             }
@@ -835,12 +859,12 @@ class Repository {
         «val startDateField = getStartDateField»
         «val endDateField = getEndDateField»
         «IF startDateField != null»
-            $startDate = \FormUtil::getPassedValue('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow», 'GET');
+            $startDate = FormUtil::getPassedValue('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow», 'GET');
             $qb->andWhere('«whereClauseForDateRangeFilter('>=', startDateField, 'startDate')»')
                ->setParameter('startDate', $startDate);
         «ENDIF»
         «IF endDateField != null»
-            $endDate = \FormUtil::getPassedValue('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow», 'GET');
+            $endDate = FormUtil::getPassedValue('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow», 'GET');
             $qb->andWhere('«whereClauseForDateRangeFilter('<=', endDateField, 'endDate')»')
                ->setParameter('endDate', $endDate);
         «ENDIF»
@@ -879,7 +903,7 @@ class Repository {
             if (count($exclude) > 0) {
                 $exclude = implode(', ', $exclude);
                 $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» NOT IN (:excludeList)')«/* TODO fix composite keys */»
-                   ->setParameter('excludeList', \DataUtil::formatForStore($exclude));
+                   ->setParameter('excludeList', DataUtil::formatForStore($exclude));
             }
 
             $qb = $this->addSearchFilter($qb, $fragment);
@@ -910,13 +934,13 @@ class Repository {
          *
          * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
          */
-        protected function addSearchFilter(Doctrine\ORM\QueryBuilder $qb, $fragment = '')
+        protected function addSearchFilter(QueryBuilder $qb, $fragment = '')
         {
             if ($fragment == '') {
                 return $qb;
             }
 
-            $fragment = \DataUtil::formatForStore($fragment);
+            $fragment = DataUtil::formatForStore($fragment);
             $fragmentIsNumeric = is_numeric($fragment);
 
             «val searchFields = getDisplayFields.filter(e|e.isContainedInTextualSearch)»
@@ -1008,7 +1032,7 @@ class Repository {
         {
             $qb = $this->getCountQuery('', false);
             $qb->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
-               ->setParameter($fieldName, \DataUtil::formatForStore($fieldValue));
+               ->setParameter($fieldName, DataUtil::formatForStore($fieldValue));
 
             $qb = $this->addExclusion($qb, $excludeId);
 
@@ -1088,11 +1112,11 @@ class Repository {
             }
             «IF standardFields»
 
-                $onlyOwn = (int) \FormUtil::getPassedValue('own', 0, 'GETPOST');
+                $onlyOwn = (int) FormUtil::getPassedValue('own', 0, 'GETPOST');
                 if ($onlyOwn == 1) {
-                    $uid = \UserUtil::getVar('uid');
+                    $uid = UserUtil::getVar('uid');
                     $qb->andWhere('tbl.createdUserId = :creator')
-                       ->setParameter('creator', \DataUtil::formatForStore($uid));
+                       ->setParameter('creator', DataUtil::formatForStore($uid));
                 }
             «ENDIF»
 
@@ -1118,7 +1142,7 @@ class Repository {
                 «ELSE»
                     $idValues = $this->getIdentifierListForRandomSorting();
                     $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» IN (:idValues)')
-                       ->setParameter('idValues', \DataUtil::formatForStore($idValues));
+                       ->setParameter('idValues', DataUtil::formatForStore($idValues));
                 «ENDIF»
 
                 // no specific ordering in the main query for random items
@@ -1173,7 +1197,7 @@ class Repository {
          *
          * @return Doctrine\ORM\Query query instance to be further processed
          */
-        protected function getQueryFromBuilder(Doctrine\ORM\QueryBuilder $qb)
+        protected function getQueryFromBuilder(QueryBuilder $qb)
         {
             $query = $qb->getQuery();
 
@@ -1191,7 +1215,7 @@ class Repository {
             «IF hasTranslatableFields»
                 // set the translation query hint
                 $query->setHint(
-                    \Doctrine\ORM\Query::HINT_CUSTOM_OUTPUT_WALKER,
+                    Query::HINT_CUSTOM_OUTPUT_WALKER,
                     'Gedmo\\Translatable\\Query\\TreeWalker\\TranslationWalker'
                 );
 
@@ -1295,9 +1319,9 @@ class Repository {
 
             $affectedEntities = $query->getResult();
 
-            $currentType = \FormUtil::getPassedValue('type', 'user', 'GETPOST');
+            $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
             $action = 'archive';
-            $workflowHelper = new \«app.appName»«IF app.targets('1.3.5')»_Util_Workflow«ELSE»\Util\WorkflowUtil«ENDIF»(\ServiceUtil::getManager());
+            $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»(ServiceUtil::getManager());
 
             foreach ($affectedEntities as $entity) {
                 $hookAreaPrefix = $entity->getHookAreaPrefix();
@@ -1308,7 +1332,7 @@ class Repository {
                 $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
                 $validators = $this->notifyHooks($hook)->getValidators();
                 «ELSE»
-                $hook = new \Zikula\Core\Hook\ValidationHook(new \Zikula\Core\Hook\ValidationProviders());
+                $hook = new ValidationHook(new ValidationProviders());
                 $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
                 «ENDIF»
                 if ($validators->hasErrors()) {
@@ -1320,7 +1344,7 @@ class Repository {
                     // execute the workflow action
                     $success = $workflowHelper->executeAction($entity, $action);
                 } catch(Exception $e) {
-                    \LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                    LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                 }
 
                 if (!$success) {
@@ -1334,18 +1358,18 @@ class Repository {
                 if (isset($this->entityRef['slug'])) {
                     $urlArgs['slug'] = $this->entityRef['slug'];
                 }
-                $url = new Zikula«IF app.targets('1.3.5')»_ModUrl«ELSE»\Core\ModUrl«ENDIF»($this->name, $currentType, 'display', \ZLanguage::getLanguageCode(), $urlArgs);
+                $url = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, $currentType, 'display', ZLanguage::getLanguageCode(), $urlArgs);
                 «IF app.targets('1.3.5')»
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
                 $this->notifyHooks($hook);
                 «ELSE»
-                $hook = new \Zikula\Core\Hook\ProcessHook($entity->createCompositeIdentifier(), $url);
+                $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
                 $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
                 «ENDIF»
 
                 // An item was updated, so we clear all cached pages for this item.
                 $cacheArgs = array('ot' => $entity['_objectType'], 'item' => $entity);
-                \ModUtil::apiFunc('«app.appName»', 'cache', 'clearItemCache', $cacheArgs);
+                ModUtil::apiFunc('«app.appName»', 'cache', 'clearItemCache', $cacheArgs);
             }
 
             return true;
