@@ -58,11 +58,14 @@ class Installer {
         «IF !targets('1.3.5')»
             namespace «appName»\Base;
 
+            use «appName»\Util\ControllerUtil;
+
             «IF hasCategorisableEntities»
                 use CategoryUtil;
                 use CategoryRegistryUtil;
                 use DBUtil;
             «ENDIF»
+            use DoctrineHelper;
             use EventUtil;
             «IF hasUploads»
                 use FileUtil;
@@ -99,9 +102,6 @@ class Installer {
         «IF !targets('1.3.5')»
             namespace «appName»\Controller\Base;
 
-            use «appName»\Util\ControllerUtil;
-
-            use DoctrineHelper;
             use LogUtil;
             «IF needsConfig»
                 use ModUtil;

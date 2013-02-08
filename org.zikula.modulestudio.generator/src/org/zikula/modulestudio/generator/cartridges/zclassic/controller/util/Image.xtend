@@ -140,7 +140,7 @@ class Image {
                 }
             }
 
-            $preset = new Preset($presetName, $presetData);
+            $preset = new SystemPlugin_Imagine_Preset($presetName, $presetData);
 
             return $preset;
         }
