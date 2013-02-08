@@ -135,7 +135,7 @@ class EventListener {
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $result = true;
             try {
-                $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowsEntity', $workflow['id']);
+                $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);
                 $entityManager->remove($workflow);
                 $entityManager->flush();
             } catch (\Exception $e) {
