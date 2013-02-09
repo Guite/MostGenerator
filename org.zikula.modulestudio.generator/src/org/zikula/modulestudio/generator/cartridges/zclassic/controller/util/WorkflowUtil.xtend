@@ -307,7 +307,7 @@ class WorkflowUtil {
             $idcolumn = $entity['__WORKFLOW__']['obj_idcolumn'];
             $result = Zikula_Workflow_Util::executeAction($schemaName, $entity, $actionId, $objectType, $this->name, $idcolumn);
 
-            return $result;
+            return ($result !== false);
         }
 
     '''
