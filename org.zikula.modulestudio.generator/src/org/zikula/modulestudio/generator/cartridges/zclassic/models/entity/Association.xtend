@@ -347,7 +347,8 @@ class Association {
         public function add«name.toFirstUpper»(«addParameters(useTarget, nameSingle, type)»)
         {
             «addAssignment(useTarget, selfIsMany, name, nameSingle)»
-            «IF bidirectional && useTarget»
+            «val generateInverseCalls = bidirectional && ((!isManyToMany && useTarget) || (isManyToMany && !useTarget))»
+            «IF generateInverseCalls»
                 «val ownAliasName = getRelationAliasName(!useTarget).toFirstUpper»
                 «val otherIsMany = isManySide(!useTarget)»
                 «IF otherIsMany»
@@ -359,6 +360,13 @@ class Association {
         }
         «/* this last line is on purpose */»
     '''
+
+    def private isManyToMany(JoinRelationship it) {
+        switch (it) {
+            ManyToManyRelationship: true
+            default: false
+        }
+    }
 
     def private dispatch addParameters(JoinRelationship it, Boolean useTarget, String name, String type) '''
         «type» $«name»'''
