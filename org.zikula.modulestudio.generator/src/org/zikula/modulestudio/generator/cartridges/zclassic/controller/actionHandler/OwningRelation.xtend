@@ -8,8 +8,10 @@ import de.guite.modulestudio.metamodel.modulestudio.ManyToManyRelationship
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 
 class OwningRelation {
+    @Inject extension ControllerExtensions = new ControllerExtensions()
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
@@ -44,11 +46,16 @@ class OwningRelation {
     '''
 
     def private getOwningAssociations(Entity it, Application refApp) {
-        getIncomingJoinRelations.filter(e|e.source.container.application == refApp)
+        getIncomingJoinRelations
+            .filter(e|e.source.container.application == refApp)
+            .filter(e|e.getEditStageCode(true) == 0)
     }
 
     def private getOwnedMMAssociations(Entity it, Application refApp) {
-        getOutgoingJoinRelations.filter(typeof(ManyToManyRelationship)).filter(e|e.source.container.application == refApp)
+        getOutgoingJoinRelations
+            .filter(typeof(ManyToManyRelationship))
+            .filter(e|e.source.container.application == refApp)
+            .filter(e|e.getEditStageCode(false) == 0)
     }
 
     def saveOwningAssociation(Entity it, Application app) '''
@@ -73,7 +80,7 @@ class OwningRelation {
 
             // save outgoing relationship to child entity
             if ($args['commandName'] == 'create') {
-                «FOR ownedMMAssociation : owningAssociations»
+                «FOR ownedMMAssociation : ownedMMAssociations»
                     if (!empty($this->incomingIds['«ownedMMAssociation.getRelationAliasName(true)»'])) {
                         $relObj = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => '«ownedMMAssociation.target.name.formatForCode»', 'id' => $this->incomingIds['«ownedMMAssociation.getRelationAliasName(true)»']));
                         if ($relObj != null) {
