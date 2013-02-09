@@ -1343,7 +1343,7 @@ class Repository {
                 try {
                     // execute the workflow action
                     $success = $workflowHelper->executeAction($entity, $action);
-                } catch(Exception $e) {
+                } catch(\Exception $e) {
                     LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
                 }
 

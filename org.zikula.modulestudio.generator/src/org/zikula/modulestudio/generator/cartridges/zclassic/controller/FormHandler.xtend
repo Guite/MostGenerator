@@ -1418,8 +1418,8 @@ class FormHandler {
                             $this->entityManager->lock($entity, LockMode::«lockType.asConstant»);
                         «ENDIF»
                     }
-                «ENDIF»
 
+                «ENDIF»
                 // execute the workflow action
                 $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->view->getServiceManager());
                 $success = $workflowHelper->executeAction($entity, $action);
