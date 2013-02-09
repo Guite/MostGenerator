@@ -303,14 +303,14 @@ class Association {
     '''
 
     def private relationSetterCustomImpl(JoinRelationship it, Boolean useTarget, String aliasName) '''
-        «IF bidirectional && useTarget»
-            «val otherIsMany = isManySide(!useTarget)»
-            «IF otherIsMany»
-                «val nameSingle = { (if (useTarget) target else source).name + 'Single' }»
-                foreach ($«aliasName» as $«nameSingle») {
-                    $this->add«aliasName.toFirstUpper»($«nameSingle»);
-                }
-            «ENDIF»
+        «val otherIsMany = isManySide(!useTarget)»
+        «IF otherIsMany»
+            «val nameSingle = { (if (useTarget) target else source).name + 'Single' }»
+            foreach ($«aliasName» as $«nameSingle») {
+                $this->add«aliasName.toFirstUpper»($«nameSingle»);
+            }
+        «ELSE»
+            $this->set«aliasName.toFirstUpper»($«aliasName»);
         «ENDIF»
     '''
 
