@@ -137,6 +137,8 @@ class Entities {
 
             «thEvLi.generateBase(it)»
 
+            «toStringImpl(app)»
+
             «cloneImpl(app)»
         }
     '''
@@ -657,17 +659,40 @@ class Entities {
         «ENDIF»
     '''
 
+    def private toStringImpl(Entity it, Application app) '''
+        /**
+         * ToString interceptor implementation.
+         * This method is useful for debugging purposes.
+         */
+        public function __toString()
+        {
+            «IF hasCompositeKeys»
+                $output = '';
+                «FOR field : primaryKeyFields»
+                    if (!empty($output)) {
+                        $output .= "\n";
+                    }
+                    $output .= $this->get«field.name.formatForCodeCapital»();
+                «ENDFOR»
+
+                return $output;
+            «ELSE»
+                return $this->get«primaryKeyFields.head.name.formatForCodeCapital»();
+            «ENDIF»
+        }
+    '''
+
     def private cloneImpl(Entity it, Application app) '''
         «val joinsIn = getBidirectionalIncomingJoinRelations»
         «val joinsOut = getOutgoingJoinRelations»
         /**
          * Clone interceptor implementation.
          * This method is for example called by the reuse functionality.
-        «IF joinsIn.isEmpty && joinsOut.isEmpty»
+         «IF joinsIn.isEmpty && joinsOut.isEmpty»
          * Performs a quite simple shallow copy.
-        «ELSE»
+         «ELSE»
          * Performs a deep copy. 
-        «ENDIF»
+         «ENDIF»
          *
          * See also:
          * (1) http://docs.doctrine-project.org/en/latest/cookbook/implementing-wakeup-or-clone.html
