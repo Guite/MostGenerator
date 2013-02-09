@@ -115,7 +115,11 @@ class Relations {
         «val relationAliasNameParam = getRelationAliasName(!useTarget).formatForCodeCapital»
         «val otherEntity = (if (!useTarget) source else target)»
         «val many = isManySideDisplay(useTarget)»
-        <h3>{gt text='«otherEntity.getEntityNameSingularPlural(many).formatForDisplayCapital»'}</h3>
+        «IF controller.name.formatForDB == 'admin'»
+            <h4>{gt text='«otherEntity.getEntityNameSingularPlural(many).formatForDisplayCapital»'}</h4>
+        «ELSE»
+            <h3>{gt text='«otherEntity.getEntityNameSingularPlural(many).formatForDisplayCapital»'}</h3>
+        «ENDIF»
 
         {if isset($«relatedEntity.name.formatForCode».«relationAliasName») && $«relatedEntity.name.formatForCode».«relationAliasName» ne null}
             {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»/«otherEntity.name.formatForCode»«ELSE»«controller.formattedName.toFirstUpper»/«otherEntity.name.formatForCodeCapital»«ENDIF»/include_displayItemList«IF many»Many«ELSE»One«ENDIF».tpl' item«IF many»s«ENDIF»=$«relatedEntity.name.formatForCode».«relationAliasName»}
