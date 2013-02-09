@@ -36,7 +36,11 @@ class AbstractObjectSelector {
             namespace «appName»\Form\Plugin\Base;
 
             use DataUtil;
-            use Doctrine\Common\Collections\Collection;
+        «ENDIF»
+        use Doctrine\Common\Collections\Collection;
+        «IF targets('1.3.5')»
+
+        «ELSE»
             use FormUtil;
             use ModUtil;
             use ServiceUtil;
