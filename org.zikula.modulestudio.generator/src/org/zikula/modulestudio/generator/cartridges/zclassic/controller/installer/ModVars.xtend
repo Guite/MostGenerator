@@ -25,8 +25,8 @@ class ModVars {
 
     def dispatch valSession2Mod(Variable it) {
         switch (it) {
-            BoolVar: '''«IF value == 'true'»true«ELSE»false«ENDIF»'''
-            IntVar: value
+            BoolVar: '''«IF value != null && value == 'true'»true«ELSE»false«ENDIF»'''
+            IntVar: '''«IF value != null»«value»«ELSE»0«ENDIF»'''
             ListVar: '''«IF it.multiple»array(«ENDIF»«FOR item : it.getDefaultItems SEPARATOR ', '»«item.valSession2Mod»«ENDFOR»«IF it.multiple»)«ENDIF»'''
             default: '\'' + value + '\''
         }
@@ -37,7 +37,7 @@ class ModVars {
     def dispatch valDirect2Mod(Variable it) {
         switch (it) {
             BoolVar: '''«IF value != null && value == 'true'»true«ELSE»false«ENDIF»'''
-            IntVar: value
+            IntVar: '''«IF value != null»«value»«ELSE»0«ENDIF»'''
             ListVar: '''«IF it.multiple»array(«ENDIF»«FOR item : it.getDefaultItems SEPARATOR ', '»«item.valDirect2Mod»«ENDFOR»«IF it.multiple»)«ENDIF»'''
             default: '\'' + (if (value != null) value else '') + '\''
         }
