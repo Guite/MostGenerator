@@ -5,9 +5,7 @@
       version="1.0.0.qualifier"
       provider-name="Zikula"
       plugin="de.guite.modulestudio.branding"
-      image="most_update_120.jpg"
-      license-feature="de.guite.modulestudio.license"
-      license-feature-version="1.0.0.qualifier">
+      image="most_update_120.jpg">
 
    <description url="%descriptionUrl">
       Generator build feature.
@@ -16,6 +14,10 @@
    <copyright url="%copyrightUrl">
       %copyright
    </copyright>
+
+   <license url="%licenseUrl">
+      %license
+   </license>
 
    <includes
          id="org.zikula.modulestudio.generator.feature"
