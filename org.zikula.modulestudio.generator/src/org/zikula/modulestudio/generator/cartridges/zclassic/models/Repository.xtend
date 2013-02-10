@@ -835,7 +835,7 @@ class Repository {
             // apply default filters
             $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
             if ($currentType != 'admin') {
-                if (!in_array('workflowState', array_keys($parameters))) {
+                if (!in_array('workflowState', array_keys($parameters)) || empty($parameters['workflowState'])) {
                     // per default we show approved «nameMultiple.formatForDisplay» only
                     $onlineStates = array('approved');
                     «IF ownerPermission»
@@ -845,7 +845,7 @@ class Repository {
                             $onlineStates[] = 'deferred';
                         }
                     «ENDIF»
-                    $qb->andWhereIn('tbl.workflowState IN (:onlineStates)')
+                    $qb->andWhere('tbl.workflowState IN (:onlineStates)')
                        ->setParameter('onlineStates', DataUtil::formatForStore($onlineStates));
                 }
                 «applyDefaultDateRangeFilter»
@@ -860,12 +860,12 @@ class Repository {
         «val endDateField = getEndDateField»
         «IF startDateField != null»
             $startDate = FormUtil::getPassedValue('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow», 'GET');
-            $qb->andWhere('«whereClauseForDateRangeFilter('>=', startDateField, 'startDate')»')
+            $qb->andWhere('«whereClauseForDateRangeFilter('<=', startDateField, 'startDate')»')
                ->setParameter('startDate', $startDate);
         «ENDIF»
         «IF endDateField != null»
             $endDate = FormUtil::getPassedValue('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow», 'GET');
-            $qb->andWhere('«whereClauseForDateRangeFilter('<=', endDateField, 'endDate')»')
+            $qb->andWhere('«whereClauseForDateRangeFilter('>=', endDateField, 'endDate')»')
                ->setParameter('endDate', $endDate);
         «ENDIF»
     '''
