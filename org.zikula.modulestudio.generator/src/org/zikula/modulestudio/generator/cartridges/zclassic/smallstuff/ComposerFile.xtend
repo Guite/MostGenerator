@@ -42,9 +42,14 @@ class ComposerFile {
             "psr-0": { "«appName»\\": "" }
         },
         "require": {
-            "php": ">5.3.2"
+            "php": ">5.3.3"
         },
         "suggest": {
+        },
+        "extra": {
+            "zikula": {
+                "class": "«appName»\\«appName»Module"
+            }
         }
     '''
 
