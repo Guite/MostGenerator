@@ -29,6 +29,11 @@ class PersistenceTransformer {
      * @param it The given {@link Application} instance.
      */
     def modify(Application it) {
+        // TEMPORARY
+        // avoid generating interactive installers
+        // until these have been fixed in the Zikula core
+        interactiveInstallation = false
+
         println('Starting model transformation')
         // handle all entities
         for (entity : getAllEntities)
