@@ -321,7 +321,7 @@ class Installer {
 
                 // remind user about upload folders not being deleted
                 $uploadPath = FileUtil::getDataDirectory() . '/' . $this->name . '/';
-                LogUtil::registerStatus($this->__f('The upload directories at [%s] can be removed manually', $uploadPath));
+                LogUtil::registerStatus($this->__f('The upload directories at [%s] can be removed manually.', $uploadPath));
             «ENDIF»
 
             // deletion successful
