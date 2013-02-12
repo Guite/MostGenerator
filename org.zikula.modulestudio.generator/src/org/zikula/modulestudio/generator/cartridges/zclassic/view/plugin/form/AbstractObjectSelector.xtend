@@ -503,7 +503,7 @@ class AbstractObjectSelector {
                 if ($many) {
                     $where .= 'tbl.' . $idField . ' IN (' . DataUtil::formatForStore(implode(', ', $inputValue)) . ')';
                 } else {
-                    $where .= 'tbl.' . $idField . ' = \'' . DataUtil::formatForStore($inputValue) . '\'';
+                    $where .= 'tbl.' . $idField . ' = \'' . DataUtil::formatForStore(array_shift($inputValue)) . '\'';
                 }
             }
             if (!empty($this->where)) {
