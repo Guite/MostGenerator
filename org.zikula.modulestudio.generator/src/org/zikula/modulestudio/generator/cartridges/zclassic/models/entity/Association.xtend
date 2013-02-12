@@ -311,6 +311,15 @@ class Association {
             }
         «ELSE»
             $this->set«aliasName.toFirstUpper»($«aliasName»);
+            «val generateInverseCalls = bidirectional && ((!isManyToMany && useTarget) || (isManyToMany && !useTarget))»
+            «IF generateInverseCalls»
+                «val ownAliasName = getRelationAliasName(!useTarget).toFirstUpper»
+                «IF otherIsMany»
+                    $«aliasName»->add«ownAliasName»($this);
+                «ELSE»
+                    $«aliasName»->set«ownAliasName»($this);
+                «ENDIF»
+            «ENDIF»
         «ENDIF»
     '''
 
@@ -374,9 +383,7 @@ class Association {
         «IF !useTarget && !source.getAggregateFields.isEmpty»
             «val targetField = source.getAggregateFields.head.getAggregateTargetField»
             «targetField.fieldTypeAsString» $«targetField.name.formatForCode»
-        «ELSE»
-            «type» $«name»
-        «ENDIF»'''
+        «ELSE»«type» $«name»«ENDIF»'''
 
     def private addAssignmentDefault(JoinRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle) '''
         $this->«name»«IF selfIsMany»[]«ENDIF» = $«nameSingle»;
