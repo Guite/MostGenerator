@@ -152,7 +152,7 @@ class WorkflowExtensions {
             case 'Demote':              return 'Disapprove content.'
             case 'Unpublish':           return 'Hide content temporarily.'
             case 'Publish':             return 'Make content available again.'
-            case 'Archive':             return 'Move content into the archive'
+            case 'Archive':             return 'Move content into the archive.'
             case 'Trash':               return 'Move content into the recycle bin.'
             case 'Recover':             return 'Recover content from the recycle bin.'
             case 'Delete':              return 'Delete content permanently.'
