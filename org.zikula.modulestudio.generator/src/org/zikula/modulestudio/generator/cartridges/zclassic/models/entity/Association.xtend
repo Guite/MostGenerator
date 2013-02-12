@@ -294,7 +294,7 @@ class Association {
             «fh.getterAndSetterMethods(it, aliasName, entityClass, true, false, '', relationSetterCustomImpl(useTarget, aliasName))»
             «relationAccessorAdditions(useTarget, aliasName, nameSingle)»
         «ELSE»
-            «fh.getterAndSetterMethods(it, aliasName, entityClass, false, true, 'null', '')»
+            «fh.getterAndSetterMethods(it, aliasName, entityClass, false, true, 'null', relationSetterCustomImpl(useTarget, aliasName))»
         «ENDIF»
         «IF isMany»
             «addMethod(useTarget, isMany, aliasName, nameSingle, entityClass)»
@@ -303,22 +303,18 @@ class Association {
     '''
 
     def private relationSetterCustomImpl(JoinRelationship it, Boolean useTarget, String aliasName) '''
-        «val otherIsMany = isManySide(!useTarget)»
+        «val otherIsMany = isManySide(useTarget)»
         «IF otherIsMany»
             «val nameSingle = { (if (useTarget) target else source).name + 'Single' }»
             foreach ($«aliasName» as $«nameSingle») {
                 $this->add«aliasName.toFirstUpper»($«nameSingle»);
             }
         «ELSE»
-            $this->set«aliasName.toFirstUpper»($«aliasName»);
+            $this->«aliasName.formatForCode» = $«aliasName»;
             «val generateInverseCalls = bidirectional && ((!isManyToMany && useTarget) || (isManyToMany && !useTarget))»
             «IF generateInverseCalls»
                 «val ownAliasName = getRelationAliasName(!useTarget).toFirstUpper»
-                «IF otherIsMany»
-                    $«aliasName»->add«ownAliasName»($this);
-                «ELSE»
-                    $«aliasName»->set«ownAliasName»($this);
-                «ENDIF»
+                $«aliasName»->set«ownAliasName»($this);
             «ENDIF»
         «ENDIF»
     '''
@@ -386,7 +382,7 @@ class Association {
         «ELSE»«type» $«name»«ENDIF»'''
 
     def private addAssignmentDefault(JoinRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle) '''
-        $this->«name»«IF selfIsMany»[]«ENDIF» = $«nameSingle»;
+        $this->«name»«IF selfIsMany»->add(«ELSE» = «ENDIF»$«nameSingle»«IF selfIsMany»)«ENDIF»;
     '''
     def private dispatch addAssignment(JoinRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle) '''
         «addAssignmentDefault(useTarget, selfIsMany, name, nameSingle)»

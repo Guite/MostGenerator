@@ -215,7 +215,7 @@ class Display {
         «ENDIF»
           {/if}
         {else}
-            {gt text='No set.'}
+            {gt text='Not set.'}
         {/if}
         </dd>
     '''

@@ -105,6 +105,13 @@ class AbstractObjectSelector {
         public $objectType = '';
 
         /**
+         * Reverse alias for inverse method calls.
+         *
+         * @var string
+         */
+        public $aliasReverse = '';
+
+        /**
          * List of identifier field names.
          *
          * @var array
@@ -162,6 +169,13 @@ class AbstractObjectSelector {
         public $showEmptyValue = false;
 
         /**
+         * List of preselected items.
+         *
+         * @var boolean
+         */
+        public $preselectedItems = array();
+
+        /**
          * List of selected items.
          *
          * @var boolean
@@ -186,6 +200,12 @@ class AbstractObjectSelector {
             }
             $this->objectType = $params['objectType'];
             unset($params['objectType']);
+
+            if (!isset($params['aliasReverse']) || empty($params['aliasReverse'])) {
+                $view->trigger_error(__f('Error! in %1$s: the %2$s parameter must be specified.', array('relationtesterRelationSelectorList', 'aliasReverse')));
+            }
+            $this->aliasReverse = $params['aliasReverse'];
+            unset($params['aliasReverse']);
 
             if (isset($params['displayField'])) {
                 if (!empty($params['displayField'])) {
@@ -268,6 +288,9 @@ class AbstractObjectSelector {
          */
         public function load(Zikula_Form_View $view, &$params)
         {
+            if (!$this->mandatory) {
+                $this->addItem('', '');
+            }
             if ($this->showEmptyValue != false) {
                 $this->addItem('- - -', 0);
             }
@@ -373,6 +396,7 @@ class AbstractObjectSelector {
                         $itemIds[] = $this->createItemIdentifier($relatedItem);
                     }
                 }
+                $this->preselectedItems = $relatedItems;
             }
             $entityData[$alias] = $itemIds;
             $view->assign('linkingItem', $entityData);
@@ -454,6 +478,8 @@ class AbstractObjectSelector {
             $alias = $this->id;
             $many = ($this->selectionMode == 'multiple');
 
+            $entity[$alias] = $this->preselectedItems;
+
             // remove all existing references
             if ($many) {
                 $removeMethod = 'remove' . ucwords($alias);
@@ -464,7 +490,7 @@ class AbstractObjectSelector {
                 $entity[$alias] = null;
             }
 
-            if (isset($entityData[$alias])) {
+            if (in_array($alias, array_keys($entityData))) {
                 unset($entityData[$alias]);
             }
 
@@ -476,6 +502,16 @@ class AbstractObjectSelector {
             foreach ($this->selectedItems as $relatedItem) {
                 if ($many && $entity->$getter()->contains($relatedItem)) {
                     continue;
+                }
+                if (!$many) {
+                    // check if we are assigning the parent (1-side) of a bidirectional 1:n relationship
+                    $inverseAddMethod = 'add' . ucwords($this->aliasReverse);
+                    if (method_exists($relatedItem, $inverseAddMethod)) {
+                        // call the inverse method which calls the method in $entity
+                        $relatedItem->$inverseAddMethod($entity);
+                        $entityManager->persist($relatedItem);
+                        continue;
+                    }
                 }
                 $entity->$assignMethod($relatedItem);
                 $entityManager->persist($relatedItem);

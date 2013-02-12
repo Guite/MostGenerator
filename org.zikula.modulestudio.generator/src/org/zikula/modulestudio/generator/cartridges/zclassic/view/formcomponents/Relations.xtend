@@ -66,9 +66,10 @@ class Relations {
 
         if (onlyInclude) {
             val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital
+            val relationAliasReverse = getRelationAliasName(!useTarget).formatForCodeCapital
             val incomingForUniqueRelationName = if (!isManyToMany) useTarget else incoming
             val uniqueNameForJs = getUniqueRelationNameForJs(app, otherEntity, many, incomingForUniqueRelationName, relationAliasName)
-            return includeStatementForEditTemplate(templateName, controller, ownEntity, otherEntity, incoming, relationAliasName, uniqueNameForJs, hasEdit)
+            return includeStatementForEditTemplate(templateName, controller, ownEntity, otherEntity, incoming, relationAliasName, relationAliasReverse, uniqueNameForJs, hasEdit)
         }
 
         // onlyInclude is false here, lets create the templates
@@ -92,8 +93,8 @@ class Relations {
         templateName
     }
 
-    def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Controller controller, Entity ownEntity, Entity linkingEntity, Boolean incoming, String relationAliasName, String uniqueNameForJs, Boolean hasEdit) '''
-        {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»/«ownEntity.name.formatForCode»«ELSE»«controller.formattedName.toFirstUpper»/«ownEntity.name.formatForCodeCapital»«ENDIF»/«templateName».tpl' group='«linkingEntity.name.formatForDB»' alias='«relationAliasName.toFirstLower»' mandatory=«(!nullable).displayBool» idPrefix='«uniqueNameForJs»' linkingItem=$«linkingEntity.name.formatForDB»«IF ownEntity.useGroupingPanels('edit')» panel=true«ENDIF» displayMode='«IF !usesAutoCompletion(!incoming)»dropdown«ELSE»autocomplete«ENDIF»' allowEditing=«hasEdit.displayBool»}
+    def private includeStatementForEditTemplate(JoinRelationship it, String templateName, Controller controller, Entity ownEntity, Entity linkingEntity, Boolean incoming, String relationAliasName, String relationAliasReverse, String uniqueNameForJs, Boolean hasEdit) '''
+        {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»/«ownEntity.name.formatForCode»«ELSE»«controller.formattedName.toFirstUpper»/«ownEntity.name.formatForCodeCapital»«ENDIF»/«templateName».tpl' group='«linkingEntity.name.formatForDB»' alias='«relationAliasName.toFirstLower»' aliasReverse='«relationAliasReverse.toFirstLower»' mandatory=«(!nullable).displayBool» idPrefix='«uniqueNameForJs»' linkingItem=$«linkingEntity.name.formatForDB»«IF ownEntity.useGroupingPanels('edit')» panel=true«ENDIF» displayMode='«IF !usesAutoCompletion(!incoming)»dropdown«ELSE»autocomplete«ENDIF»' allowEditing=«hasEdit.displayBool»}
     '''
 
     def private includedEditTemplate(JoinRelationship it, Application app, Controller controller, Entity ownEntity, Entity linkingEntity, Boolean incoming, Boolean hasEdit, Boolean many) '''
@@ -134,7 +135,7 @@ class Relations {
         </fieldset>
     '''
 
-    def private formPluginAttributes(JoinRelationship it, Entity ownEntity, String ownEntityName, String objectType, Boolean many) '''group=$group id=$alias mandatory=$mandatory __title='Choose the «ownEntityName.formatForDisplay»' selectionMode='«IF many»multiple«ELSE»single«ENDIF»' objectType='«objectType»' linkingItem=$linkingItem'''
+    def private formPluginAttributes(JoinRelationship it, Entity ownEntity, String ownEntityName, String objectType, Boolean many) '''group=$group id=$alias aliasReverse=$aliasReverse mandatory=$mandatory __title='Choose the «ownEntityName.formatForDisplay»' selectionMode='«IF many»multiple«ELSE»single«ENDIF»' objectType='«objectType»' linkingItem=$linkingItem'''
 
     def private component_ParentEditing(JoinRelationship it, Entity targetEntity, Boolean many) '''
         «/*just a reminder for the parent view which is not tested yet (see #10)
