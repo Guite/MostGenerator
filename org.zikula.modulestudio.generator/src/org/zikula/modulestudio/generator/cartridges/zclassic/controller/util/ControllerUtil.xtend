@@ -277,7 +277,7 @@ class ControllerUtil {
                 $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
                 $htaccessContent = str_replace('__EXTENSIONS__', $extensions, FileUtil::readFile($htaccessFileTemplate));
                 if (!FileUtil::writeFile($htaccessFilePath, $htaccessContent)) {
-                    LogUtil::registerStatus($this->__f('Warning! Could not but could not write the .htaccess file at "%s".', array($htaccessFilePath)));
+                    LogUtil::registerStatus($this->__f('Warning! Could not write the .htaccess file at "%s".', array($htaccessFilePath)));
                     return false;
                 }
             }
