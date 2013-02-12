@@ -140,7 +140,7 @@ class Views {
         {pageaddvar name='javascript' value='livepipe'}
         {pageaddvar name='javascript' value='zikula.ui'}
         {pageaddvar name='javascript' value='zikula.imageviewer'}
-        {pageaddvar name='javascript' value='modules/«appName»/«IF targets('1.3.5')»javascript«ELSE»«getAppJsPath»«ENDIF»/«appName».js'}
+        {pageaddvar name='javascript' value='modules/«appName»/«IF targets('1.3.5')»javascript/«ELSE»«getAppJsPath»«ENDIF»«appName».js'}
 
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             «IF controller.tempIsAdminController»
