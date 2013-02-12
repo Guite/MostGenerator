@@ -782,7 +782,7 @@ class Repository {
         protected function addCommonViewFilters(QueryBuilder $qb)
         {
             $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST');
-            if ($currentFunc != 'view' && $currentFunc != 'finder') {
+            if (!in_array($currentFunc, array('main', 'view', 'finder'))) {
                 return $qb;
             }
 
