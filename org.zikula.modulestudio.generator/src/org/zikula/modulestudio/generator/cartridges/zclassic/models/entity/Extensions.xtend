@@ -459,7 +459,7 @@ class Extensions {
         «ELSEIF classType == 'translation'»AbstractTranslation
         «ELSEIF classType == 'logEntry'»AbstractLogEntry
         «ELSEIF classType == 'metaData'»«IF !app.targets('1.3.5')»AbstractEntityMetadata«ELSE»Zikula_Doctrine2_Entity_EntityMetadata«ENDIF»
-        «ELSEIF classType == 'attribute' || classType == 'category'»«IF app.targets('1.3.5')»Zikula_Doctrine2_Entity_«ENDIF»AbstractEntity«classType.toFirstUpper»
+        «ELSEIF classType == 'attribute' || classType == 'category'»«IF app.targets('1.3.5')»Zikula_Doctrine2_Entity_«ELSE»Abstract«ENDIF»Entity«classType.toFirstUpper»
         «ENDIF»
     '''
 
