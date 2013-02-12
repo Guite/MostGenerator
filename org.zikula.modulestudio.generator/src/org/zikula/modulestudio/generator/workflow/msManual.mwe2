@@ -14,7 +14,7 @@ var dir
 var cartridge = 'zclassic'
 
 // The path where to find the model, without trailing slash
-var modelPath = '/home/axel/projects/GuiteSVN/trunk/models/${dir}'
+var modelPath = '/home/axel/projects/GitClones/Applications/models/${dir}'
 
 // Destination folder
 var targetDir = '/home/axel/batchOutput/${name}/${cartridge}/${name}/'
