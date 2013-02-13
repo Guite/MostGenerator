@@ -41,10 +41,10 @@ class Section {
             <fieldset class="map z-panel-content" style="display: none">
             «ELSE»
             <fieldset>
+            «ENDIF»
                 <legend>{gt text='Map'}</legend>
                 <div id="mapcontainer" class="«app.appName.toLowerCase»mapcontainer">
                 </div>
-            «ENDIF»
             </fieldset>
 
         «ENDIF»
