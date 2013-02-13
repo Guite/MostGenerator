@@ -4,13 +4,11 @@ import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Frame {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
@@ -18,10 +16,8 @@ class Frame {
     FileHelper fh = new FileHelper()
 
     def generate(Application it, IFileSystemAccess fsa) {
-        if (hasEditActions) {
-            fsa.generateFile(getAppSourceLibPath + 'Form/Plugin/FormFrame.php', formFrameFile)
-            fsa.generateFile(viewPluginFilePath('block', 'FormFrame'), formFramePluginFile)
-        }
+        fsa.generateFile(getAppSourceLibPath + 'Form/Plugin/FormFrame.php', formFrameFile)
+        fsa.generateFile(viewPluginFilePath('block', 'FormFrame'), formFramePluginFile)
     }
 
     def private formFrameFile(Application it) '''
