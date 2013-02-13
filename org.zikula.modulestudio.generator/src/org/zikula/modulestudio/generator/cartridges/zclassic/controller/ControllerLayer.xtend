@@ -309,11 +309,7 @@ class ControllerLayer {
                 $hookType = $action == 'delete' ? 'process_delete' : 'process_edit';
                 $url = null;
                 if ($action != 'delete') {
-                    $urlArgs = array('ot' => $this->objectType);
-                    $urlArgs = $this->addIdentifiersToUrlArgs($urlArgs);
-                    if (isset($this->entityRef['slug'])) {
-                        $urlArgs['slug'] = $this->entityRef['slug'];
-                    }
+                    $urlArgs = $entity->createUrlArgs();
                     $url = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, '«formattedName»', 'display', ZLanguage::getLanguageCode(), $urlArgs);
                 }
                 «IF app.targets('1.3.5')»

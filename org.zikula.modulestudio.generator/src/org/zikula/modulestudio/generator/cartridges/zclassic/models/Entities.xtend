@@ -438,6 +438,30 @@ class Entities {
         }
 
         /**
+         * Creates url arguments array for easy creation of display urls.
+         *
+         * @return Array The resulting arguments list. 
+         */
+        public function createUrlArgs()
+        {
+            $args = array('ot' => $this['_objectType']);
+
+            «IF hasCompositeKeys»
+                «FOR pkField : getPrimaryKeyFields»
+                    $args['«pkField.name.formatForCode»'] = $this['«pkField.name.formatForCode»'];
+                «ENDFOR»
+            «ELSE»
+                $args['«getFirstPrimaryKey.name.formatForCode»'] = $this['«getFirstPrimaryKey.name.formatForCode»'];
+            «ENDIF»
+
+            if (isset($this['slug'])) {
+                $args['slug'] = $this['slug'];
+            }
+
+            return $args;
+        }
+
+        /**
          * Create concatenated identifier string (for composite keys).
          *
          * @return String concatenated identifiers.
