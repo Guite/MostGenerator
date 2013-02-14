@@ -116,11 +116,11 @@ class Config {
     '''
 
     def private dispatch inputField(Variable it) '''
-        {formtextinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter this setting.'}
+        {formtextinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter the «name.formatForDisplay».'}
     '''
 
     def private dispatch inputField(IntVar it) '''
-        {formintinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter this setting. Only digits are allowed.'}
+        {formintinput id='«name.formatForCode»' group='config' maxLength=255 __title='Enter the «name.formatForDisplay». Only digits are allowed.'}
     '''
 
     def private dispatch inputField(BoolVar it) '''
@@ -129,9 +129,9 @@ class Config {
 
     def private dispatch inputField(ListVar it) '''
         «IF multiple»
-            {formcheckboxlist id='«name.formatForCode»' group='config' repeatColumns=2}
+            {formcheckboxlist id='«name.formatForCode»' group='config' repeatColumns=2 __title='Choose the «name.formatForDisplay»'}
         «ELSE»
-            {formdropdownlist id='«name.formatForCode»' group='config'«IF multiple» selectionMode='multiple'«ENDIF»}
+            {formdropdownlist id='«name.formatForCode»' group='config'«IF multiple» selectionMode='multiple'«ENDIF» __title='Choose the «name.formatForDisplay»'}
         «ENDIF»
     '''
 }
