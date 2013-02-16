@@ -280,6 +280,14 @@ class ModelExtensions {
     /**
      * Returns a list of all fields which should be displayed.
      */
+    def getDisplayFieldsForView(Entity it) {
+        var fields = getDisplayFields.exclude(typeof(ArrayField)).exclude(typeof(ObjectField))
+        fields.toList as List<DerivedField>
+    }
+
+    /**
+     * Returns a list of all fields which should be displayed.
+     */
     def getDisplayFields(Entity it) {
         var fields = getDerivedFields
         if (it.identifierStrategy != EntityIdentifierStrategy::NONE) {

@@ -158,7 +158,7 @@ class View {
     '''
 
     def private viewItemList(Entity it, String appName, Controller controller) '''
-            «val listItemsFields = getDisplayFields»
+            «val listItemsFields = getDisplayFieldsForView»
             «val listItemsIn = incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»
             «val listItemsOut = outgoing.filter(typeof(OneToOneRelationship))»
             «IF listType != 3»
