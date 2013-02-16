@@ -363,7 +363,7 @@ class Validator {
              */
             public function isValidDateTime($fieldName)
             {
-                return ($this->entity[$fieldName] instanceof DateTime);
+                return ($this->entity[$fieldName] instanceof \DateTime);
             }
 
             /**

@@ -30,7 +30,6 @@ import de.guite.modulestudio.metamodel.modulestudio.UploadField
 import de.guite.modulestudio.metamodel.modulestudio.UploadNamingScheme
 import de.guite.modulestudio.metamodel.modulestudio.UrlField
 import de.guite.modulestudio.metamodel.modulestudio.UserField
-import java.util.ArrayList
 import java.util.List
 
 /**
@@ -38,6 +37,7 @@ import java.util.List
  * TODO document class and methods.
  */
 class ModelExtensions {
+    @Inject extension CollectionUtils = new CollectionUtils()
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions()
 
@@ -235,7 +235,7 @@ class ModelExtensions {
     }
 
     /**
-     * Returns a list of all fields with leading = true of this entity.
+     * Returns the field having leading = true of this entity.
      */
     def DerivedField getLeadingField(Entity it) {
         if (!getDerivedFields.isEmpty)
@@ -317,13 +317,7 @@ class ModelExtensions {
         if (it.identifierStrategy != EntityIdentifierStrategy::NONE) {
             fields = fields.filter(e|!e.primaryKey)
         }
-
-        var ArrayList<DerivedField> wantedFields = newArrayList()
-        for (field : fields) {
-            if (!(field instanceof ArrayField || field instanceof ObjectField)) {
-                wantedFields.add(field)
-            }
-        }
+        val wantedFields = fields.exclude(typeof(ArrayField)).exclude(typeof(ObjectField))
         wantedFields.toList as List<DerivedField>
     }
 
@@ -332,16 +326,9 @@ class ModelExtensions {
      * At the moment instances of UploadField are excluded.
      */
     def getFieldsForExampleData(Entity it) {
-        val nonPkFields = getDerivedFields.filter(e|!e.primaryKey)
-        var ArrayList<DerivedField> wantedFields = newArrayList()
-        for (field : nonPkFields) {
-            if (!(field instanceof UploadField)) {
-                wantedFields.add(field)
-            }
-        }
-        wantedFields.toList as List<DerivedField>
+        val exampleFields = getDerivedFields.filter(e|!e.primaryKey).exclude(typeof(UploadField))
+        exampleFields.toList as List<DerivedField>
     }
-
 
     /**
      * Checks whether this entity has at least one user field.

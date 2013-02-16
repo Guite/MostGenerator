@@ -222,8 +222,8 @@ class Validation {
                         ['«validateClass»', Zikula.__('The start must be before the end.', 'module_«appName»'), function(val, elem) {
                             var cmpVal, cmpVal2, result;
 
-                            cmpVal = «prefix»ReadDate($F('«startFieldName»'), «(startDateField instanceof DatetimeField)»);
-                            cmpVal2 = «prefix»ReadDate($F('«endFieldName»'), «(endDateField instanceof DatetimeField)»);
+                            cmpVal = «prefix»ReadDate($F('«startFieldName»'), «(startDateField instanceof DatetimeField).displayBool»);
+                            cmpVal2 = «prefix»ReadDate($F('«endFieldName»'), «(endDateField instanceof DatetimeField).displayBool»);
                             result = (cmpVal <= cmpVal2);
                             if (result) {
                                 $('advice-«validateClass»-«startFieldName»').hide();
