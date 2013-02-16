@@ -386,13 +386,19 @@ class View {
 
     def private dispatch displayEntryInner(DerivedField it, Controller controller, Boolean useTarget) '''
         «IF leading == true»
-            {$«entity.name.formatForCode».«name.formatForCode»|notifyfilters:'«entity.container.application.appName.formatForDB».filterhook.«entity.nameMultiple.formatForDB»'}
+            «IF controller.hasActions('display')»
+                <a href="{modurl modname='«controller.container.application.appName»' type='«controller.formattedName»' «entity.modUrlDisplay(entity.name.formatForCode, true)»}" title="{gt text='View detail page'}">«displayLeadingEntry(controller)»</a>
+            «ELSE»
+                «displayLeadingEntry(controller)»
+            «ENDIF»
         «ELSEIF name == 'workflowState'»
             {$«entity.name.formatForCode».workflowState|«controller.container.application.appName.formatForDB»ObjectState}
         «ELSE»
             «fieldHelper.displayField(it, entity.name.formatForCode, 'view')»
         «ENDIF»
     '''
+
+    def private displayLeadingEntry(DerivedField it, Controller controller) '''{$«entity.name.formatForCode».«name.formatForCode»|notifyfilters:'«entity.container.application.appName.formatForDB».filterhook.«entity.nameMultiple.formatForDB»'}'''
 
     def private dispatch displayEntryInner(JoinRelationship it, Controller controller, Boolean useTarget) '''
         «val relationAliasName = getRelationAliasName(useTarget).formatForCodeCapital»
