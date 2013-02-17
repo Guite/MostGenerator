@@ -645,7 +645,7 @@ class Entities {
         $this->«targetField.name.formatForCode» = $«targetField.name.formatForCode»;
     '''
 
-    def private defaultAssignment(AbstractDateField it) '''DateTime::createFromFormat('«defaultFormat»', date('«defaultFormat»'))'''
+    def private defaultAssignment(AbstractDateField it) '''\DateTime::createFromFormat('«defaultFormat»', date('«defaultFormat»'))'''
     def private dispatch defaultFormat(AbstractDateField it) {
     }
     def private dispatch defaultFormat(DatetimeField it) '''Y-m-d H:i:s'''
