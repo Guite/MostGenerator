@@ -15,7 +15,6 @@ import org.zikula.modulestudio.generator.workflow.components.ModelReader
  */
 class WorkflowStart {
 
-    private String modelName = ''
     private String currentCartridge = ''
     public WorkflowSettings settings = new WorkflowSettings()
     public WorkflowPreProcess preProcess = new WorkflowPreProcess()
@@ -39,12 +38,6 @@ class WorkflowStart {
         var success = false
 
         try {
-            val modelPathFull = settings.modelPath
-            // The path where to find the model, without trailing slash
-            val modelPathOnly = modelPathFull.substring(0, modelPathFull.lastIndexOf('/'))
-            // The model to be processed (file name without extension)
-            modelName = modelPathFull.replace(modelPathOnly, '').replace('.mostapp', '').replaceFirst('/', '')
-
             val progressMonitor = settings.progressMonitor
             progressMonitor.beginTask('Generating "' + settings.appName + ' ' + settings.appVersion + '" ...', -1)
 
@@ -85,7 +78,7 @@ class WorkflowStart {
                 .getInstance(typeof(JavaIoFileSystemAccess))
 
         configuredFileSystemAccess.setOutputPath(
-            'DEFAULT_OUTPUT', settings.getOutputPath + '/' + currentCartridge + '/' + modelName + '/');
+            'DEFAULT_OUTPUT', settings.getOutputPath + '/' + currentCartridge + '/' + settings.getAppName + '/');
 
         configuredFileSystemAccess
     }
