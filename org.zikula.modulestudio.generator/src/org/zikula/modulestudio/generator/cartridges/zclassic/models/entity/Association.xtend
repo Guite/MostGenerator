@@ -423,7 +423,7 @@ class Association {
         /**
          * Removes an instance of «type» from the list of «name.formatForDisplay».
          *
-         * @param «type» $«nameSingle».
+         * @param «type» $«nameSingle» The instance to be removed from the collection.
          *
          * @return void
          */
@@ -434,7 +434,8 @@ class Association {
             «ELSE»
                 $this->«name» = null;
             «ENDIF»
-            «IF bidirectional && useTarget»
+            «val generateInverseCalls = bidirectional && ((!isManyToMany && useTarget) || (isManyToMany && !useTarget))»
+            «IF generateInverseCalls»
                 «val ownAliasName = getRelationAliasName(!useTarget).toFirstUpper»
                 «val otherIsMany = isManySide(!useTarget)»
                 «IF otherIsMany»

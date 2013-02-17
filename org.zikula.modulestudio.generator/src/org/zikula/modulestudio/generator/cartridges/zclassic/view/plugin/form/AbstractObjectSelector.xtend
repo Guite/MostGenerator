@@ -524,6 +524,19 @@ class AbstractObjectSelector {
     def private buildWhereClause(Application it) '''
         protected function buildWhereClause($inputValue)
         {
+            if (!$this->mandatory) {
+                // remove empty option if it has been selected
+                foreach ($inputValue as $k => $v) {
+                    if (!$v) {
+                        unset($inputValue[$k]);
+                    }
+                }
+            }
+            // readd filter value for returning nothing if no real item has been selected
+            if (count($inputValue) == 0) {
+                $inputValue[] = 0;
+            }
+
             $where = '';
             if (count($this->idFields) > 1) {
                 $idsPerField = $this->decodeCompositeIdentifier($inputValue);
@@ -604,20 +617,19 @@ class AbstractObjectSelector {
          * This method is used for reading selected relationships.
          *
          * @param Array $itemIds List of concatenated identifiers.
-         * @param Array $idFields List of identifier names.
          *
          * @return Array with list of single identifiers. 
          */
-        protected function decodeCompositeIdentifier($itemIds, $idFields)
+        protected function decodeCompositeIdentifier($itemIds)
         {
             $idValues = array();
-            foreach ($idFields as $idField) {
+            foreach ($this->idFields as $idField) {
                 $idValues[$idField] = array();
             }
             foreach ($itemIds as $itemId) {
                 $itemIdParts = explode('_', $itemId);
                 $i = 0;
-                foreach ($idFields as $idField) {
+                foreach ($this->idFields as $idField) {
                     $idValues[$idField][] = $itemIdParts[$i];
                     $i++;
                 }
