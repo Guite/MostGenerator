@@ -523,6 +523,8 @@ class Validator {
             namespace «app.appName»\Entity\Validator\Base;
 
             use ServiceUtil;
+            use ZLanguage;
+
         «ENDIF»
         /**
          * Validator class for encapsulating entity validation methods.
@@ -542,10 +544,12 @@ class Validator {
     def private validatorImpl(Entity it, Application app) '''
         «IF !app.targets('1.3.5')»
             namespace «app.appName»\Entity\Validator;
-
             «IF isInheriting»
+
             use ServiceUtil;
+            use ZLanguage;
             «ENDIF»
+
         «ENDIF»
         /**
          * Validator class for encapsulating entity validation methods.

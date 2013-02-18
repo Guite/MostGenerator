@@ -67,7 +67,7 @@ class Bootstrap {
                 $helper->getListener('sluggable');
             «ENDIF»
             «IF hasSoftDeleteable && !targets('1.3.5')»
-                $helper->getListener('soft-deleteable');
+                $helper->getListener('softdeleteable');
             «ENDIF»
             «IF hasSortable»
                 $helper->getListener('sortable');
