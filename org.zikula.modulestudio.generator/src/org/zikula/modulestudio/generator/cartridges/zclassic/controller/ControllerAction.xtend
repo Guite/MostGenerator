@@ -39,7 +39,7 @@ class ControllerAction {
         {
             «IF app.hasSoftDeleteable && !app.targets('1.3.5')»
                 «IF controller.tempIsAdminController»
-                $this->entityManager->getFilters()->disable('soft-deleteable');
+                //$this->entityManager->getFilters()->disable('soft-deleteable');
                 «ELSE»
                 $this->entityManager->getFilters()->enable('soft-deleteable');
                 «ENDIF»
@@ -55,7 +55,7 @@ class ControllerAction {
         {
             «IF app.hasSoftDeleteable && !app.targets('1.3.5')»
                 «IF controller.tempIsAdminController»
-                $this->entityManager->getFilters()->disable('soft-deleteable');
+                //$this->entityManager->getFilters()->disable('soft-deleteable');
                 «ELSE»
                 $this->entityManager->getFilters()->enable('soft-deleteable');
                 «ENDIF»
