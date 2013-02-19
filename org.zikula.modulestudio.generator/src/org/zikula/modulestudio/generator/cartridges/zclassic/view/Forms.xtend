@@ -270,7 +270,7 @@ class Forms {
 
                         function newCoordinatesEventHandler() {
                             var location = new mxn.LatLonPoint($F('latitude'), $F('longitude'));
-                            marker.addClassName('z-hide');
+                            marker.hide();
                             mapstraction.removeMarker(marker);
                             marker = new mxn.Marker(location);
                             mapstraction.addMarker(marker,true);
