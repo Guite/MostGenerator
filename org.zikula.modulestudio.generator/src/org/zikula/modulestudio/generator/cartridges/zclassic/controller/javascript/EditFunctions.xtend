@@ -143,23 +143,27 @@ class EditFunctions {
          */
         function «prefix»InitGeoCoding() {
             $('linkGetCoordinates').observe('click', function (evt) {
-                var geocoder = new mxn.Geocoder('googlev3', «prefix»GeoCodeReturn, «prefix»GeoCodeErrorCallback);
-
-                var address = {
-                    address : $F('street') + ' ' + $F('houseNumber') + ' ' + $F('zipcode') + ' ' + $F('city') + ' ' + $F('country')
-                };
-                geocoder.geocode(address);
-
-                function «prefix»GeoCodeErrorCallback (status) {
-                    Zikula.UI.Alert(Zikula.__('Error during geocoding:', 'module_«appName»') + ' ' + status);
-                }
-
-                function «prefix»GeoCodeReturn (location) {
-                    Form.Element.setValue('latitude', location.point.lat.toFixed(4));
-                    Form.Element.setValue('longitude', location.point.lng.toFixed(4));
-                    newCoordinatesEventHandler();
-                }
+                «prefix»DoGeoCoding();
             });
+        }
+
+        function «prefix»DoGeoCoding() {
+            var geocoder = new mxn.Geocoder('googlev3', «prefix»GeoCodeReturn, «prefix»GeoCodeErrorCallback);
+
+            var address = {
+                address : $F('street') + ' ' + $F('houseNumber') + ' ' + $F('zipcode') + ' ' + $F('city') + ' ' + $F('country')
+            };
+            geocoder.geocode(address);
+
+            function «prefix»GeoCodeErrorCallback (status) {
+                Zikula.UI.Alert(Zikula.__('Error during geocoding:', 'module_«appName»') + ' ' + status);
+            }
+
+            function «prefix»GeoCodeReturn (location) {
+                Form.Element.setValue('latitude', location.point.lat.toFixed(4));
+                Form.Element.setValue('longitude', location.point.lng.toFixed(4));
+                newCoordinatesEventHandler();
+            }
         }
     '''
 
