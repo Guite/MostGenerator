@@ -598,6 +598,7 @@ class Validator {
 
         «checkForUniqueValues(app)»
         «IF hasSluggableFields && slugUpdatable && slugUnique»
+
             «checkForUniqueSlugValues(app)»
         «ENDIF»
 
@@ -646,7 +647,7 @@ class Validator {
         {
             $value = $this->entity['slug'];
             if (empty($value)) {
-                return false;
+                return true;
             }
 
             «IF app.targets('1.3.5')»
