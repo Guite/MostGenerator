@@ -170,6 +170,12 @@ class Relations {
         «ENDIF»
         {icon type='delete' size='extrasmall' assign='removeImageArray'}
         {assign var='removeImage' value="<img src=\"`$removeImageArray.src`\" width=\"16\" height=\"16\" alt=\"\" />"}
+        «IF !many»
+
+        {if isset($item) && is_array($item) && !is_object($item[0])}
+            {modapifunc modname='«app.appName»' type='selection' func='getEntity' objectType='«targetEntity.name.formatForCode»' id=$item[0] assign='item'}
+        {/if}
+        «ENDIF»
 
         <input type="hidden" id="{$idPrefix}ItemList" name="{$idPrefix}ItemList" value="{if isset($item«IF many»s«ENDIF») && (is_array($item«IF many»s«ENDIF») || is_object($item«IF many»s«ENDIF»))«IF !many»«FOR pkField : targetEntity.getPrimaryKeyFields» && isset($item.«pkField.name.formatForCode»)«ENDFOR»«ENDIF»}«IF many»{foreach name='relLoop' item='item' from=$items}«ENDIF»«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»{$item.«pkField.name.formatForCode»}«ENDFOR»«IF many»{if $smarty.foreach.relLoop.last ne true},{/if}{/foreach}«ENDIF»{/if}" />
         <input type="hidden" id="{$idPrefix}Mode" name="{$idPrefix}Mode" value="«IF includeEditing»1«ELSE»0«ENDIF»" />

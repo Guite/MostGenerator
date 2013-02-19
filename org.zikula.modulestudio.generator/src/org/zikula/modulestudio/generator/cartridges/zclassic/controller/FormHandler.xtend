@@ -7,7 +7,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler.Config
-import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler.OwningRelation
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler.RelationPresets
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler.Redirect
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler.UploadProcessing
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
@@ -30,7 +30,7 @@ class FormHandler {
 
     FileHelper fh = new FileHelper()
     Redirect redirectHelper = new Redirect()
-    OwningRelation owningHelper = new OwningRelation()
+    RelationPresets relationPresetsHelper = new RelationPresets()
 
     Application app
     Controller controller
@@ -213,7 +213,7 @@ class FormHandler {
              * @var array
              */
             protected $idValues = array();
-            «owningHelper.memberFields(it)»
+            «relationPresetsHelper.memberFields(it)»
 
             /**
              * One of "create" or "edit".
@@ -1299,6 +1299,7 @@ class FormHandler {
                     SessionUtil::setVar($this->name . 'EntityVersion', $entity->get«getVersionField.name.formatForCodeCapital»());
                 }
             «ENDIF»
+            «relationPresetsHelper.initPresets(it)»
 
             // save entity reference for later reuse
             $this->entityRef = $entity;
@@ -1319,8 +1320,6 @@ class FormHandler {
 
             // assign data to template as array (makes translatable support easier)
             $this->view->assign($this->objectTypeLower, $entityData);
-
-            «owningHelper.initOwningAssociation(it)»
 
             // everything okay, no initialization errors occured
             return true;
@@ -1445,7 +1444,7 @@ class FormHandler {
                 }
             }
 
-            «owningHelper.saveOwningAssociation(it, app)»
+            «relationPresetsHelper.saveNonEditablePresets(it, app)»
 
             return $success;
         }

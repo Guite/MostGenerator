@@ -386,18 +386,25 @@ class AbstractObjectSelector {
         protected function preprocessIdentifiers(Zikula_Form_View $view, &$params)
         {
             $entityData = isset($params['linkingItem']) ? $params['linkingItem'] : $view->get_template_vars('linkingItem');
-            $entityObj = $view->get_template_vars(strtolower($this->objectType) . 'Obj');
+
             $alias = $this->id;
             $itemIds = array();
+            $many = ($this->selectionMode == 'multiple');
+
             if (isset($entityData[$alias])) {
                 $relatedItems = $entityData[$alias];
                 if (is_array($relatedItems) || is_object($relatedItems)) {
-                    foreach ($relatedItems as $relatedItem) {
-                        $itemIds[] = $this->createItemIdentifier($relatedItem);
+                    if ($many) {
+                        foreach ($relatedItems as $relatedItem) {
+                            $itemIds[] = $this->createItemIdentifier($relatedItem);
+                        }
+                    } else {
+                        $itemIds[] = $this->createItemIdentifier($relatedItems);
                     }
                 }
                 $this->preselectedItems = $relatedItems;
             }
+
             $entityData[$alias] = $itemIds;
             $view->assign('linkingItem', $entityData);
         }
