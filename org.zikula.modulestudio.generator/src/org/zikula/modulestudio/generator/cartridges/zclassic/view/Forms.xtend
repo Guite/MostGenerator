@@ -242,6 +242,16 @@ class Forms {
 
                     var mapstraction;
                     var marker;
+
+                    function newCoordinatesEventHandler() {
+                        var location = new mxn.LatLonPoint($F('latitude'), $F('longitude'));
+                        marker.hide();
+                        mapstraction.removeMarker(marker);
+                        marker = new mxn.Marker(location);
+                        mapstraction.addMarker(marker,true);
+                        mapstraction.setCenterAndZoom(location, 18);
+                    }
+
                     Event.observe(window, 'load', function() {
                         mapstraction = new mxn.Mapstraction('mapcontainer', 'googlev3');
                         mapstraction.addControls({
@@ -267,15 +277,6 @@ class Forms {
                         $('longitude').observe('change', function() {
                             newCoordinatesEventHandler();
                         });
-
-                        function newCoordinatesEventHandler() {
-                            var location = new mxn.LatLonPoint($F('latitude'), $F('longitude'));
-                            marker.hide();
-                            mapstraction.removeMarker(marker);
-                            marker = new mxn.Marker(location);
-                            mapstraction.addMarker(marker,true);
-                            mapstraction.setCenterAndZoom(location, 18);
-                        }
 
                         mapstraction.click.addHandler(function(event_name, event_source, event_args){
                             var coords = event_args.location;
