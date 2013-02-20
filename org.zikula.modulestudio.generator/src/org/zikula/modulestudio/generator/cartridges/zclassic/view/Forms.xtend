@@ -308,7 +308,7 @@ class Forms {
                             You can find it in «app.getAppJsPath»«app.appName»_editFunctions.js
                             Furthermore you will need a link or a button with id="linkGetCoordinates" which will
                             be used by the script for adding a corresponding click event handler.
-                            «app.prefix»InitGeocoding();
+                            «app.prefix»InitGeoCoding();
                         *}}
                     });
                 /* ]]> */
