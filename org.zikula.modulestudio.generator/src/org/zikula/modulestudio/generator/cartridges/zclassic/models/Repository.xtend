@@ -1319,9 +1319,11 @@ class Repository {
 
             $affectedEntities = $query->getResult();
 
+            $serviceManager = ServiceUtil::getManager();
+
             $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
             $action = 'archive';
-            $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»(ServiceUtil::getManager());
+            $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($serviceManager);
 
             foreach ($affectedEntities as $entity) {
                 $hookAreaPrefix = $entity->getHookAreaPrefix();
@@ -1330,10 +1332,10 @@ class Repository {
                 $hookType = 'validate_edit';
                 «IF app.targets('1.3.5')»
                 $hook = new Zikula_ValidationHook($hookAreaPrefix . '.' . $hookType, new Zikula_Hook_ValidationProviders());
-                $validators = $this->notifyHooks($hook)->getValidators();
+                $validators = $serviceManager->getService('zikula.hookmanager')->notify($hook)->getValidators();
                 «ELSE»
                 $hook = new ValidationHook(new ValidationProviders());
-                $validators = $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
+                $validators = $serviceManager->getService('hook_dispatcher')->dispatch($hookAreaPrefix . '.' . $hookType, $hook)->getValidators();
                 «ENDIF»
                 if ($validators->hasErrors()) {
                     continue;
@@ -1357,10 +1359,10 @@ class Repository {
                 $url = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, $currentType, 'display', ZLanguage::getLanguageCode(), $urlArgs);
                 «IF app.targets('1.3.5')»
                 $hook = new Zikula_ProcessHook($hookAreaPrefix . '.' . $hookType, $entity->createCompositeIdentifier(), $url);
-                $this->notifyHooks($hook);
+                $serviceManager->getService('zikula.hookmanager')->notify($hook);
                 «ELSE»
                 $hook = new ProcessHook($entity->createCompositeIdentifier(), $url);
-                $this->dispatchHooks($hookAreaPrefix . '.' . $hookType, $hook);
+                $serviceManager->getService('hook_dispatcher')->dispatch($hookAreaPrefix . '.' . $hookType, $hook);
                 «ENDIF»
 
                 // An item was updated, so we clear all cached pages for this item.
