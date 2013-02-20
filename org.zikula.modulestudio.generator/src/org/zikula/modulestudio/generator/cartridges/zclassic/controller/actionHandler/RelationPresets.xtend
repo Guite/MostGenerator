@@ -112,7 +112,11 @@ class RelationPresets {
         if (!empty($this->relationPresets['«alias»'])) {
             $relObj = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => '«otherObjectType»', 'id' => $this->relationPresets['«alias»']));
             if ($relObj != null) {
-                $relObj->«IF isManySide(useTarget)»add«ELSE»set«ENDIF»«aliasInverse.toFirstUpper»($entity);
+                «IF !useTarget && it instanceof ManyToManyRelationship»
+                    $entity->«IF isManySide(useTarget)»add«ELSE»set«ENDIF»«alias.toFirstUpper»($relObj);
+                «ELSE»
+                    $relObj->«IF isManySide(useTarget)»add«ELSE»set«ENDIF»«aliasInverse.toFirstUpper»($entity);
+                «ENDIF»
             }
         }
     '''
