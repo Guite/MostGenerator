@@ -36,7 +36,7 @@ class Section {
 
     def private extensionsAndRelations(Entity it, Application app, Controller controller, IFileSystemAccess fsa) '''
         «IF geographical»
-            <fieldset class="map">
+            <fieldset class="«app.appName.formatForDB»map">
                 <legend>{gt text='Map'}</legend>
                 <div id="mapcontainer" class="«app.appName.toLowerCase»mapcontainer">
                 </div>

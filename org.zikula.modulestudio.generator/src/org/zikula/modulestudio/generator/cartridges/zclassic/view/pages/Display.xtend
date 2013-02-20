@@ -243,7 +243,7 @@ class Display {
 
     def private displayExtensions(Entity it, Controller controller, String objName) '''
         «IF geographical»
-            <h3 class="map">{gt text='Map'}</h3>
+            <h3 class="«container.application.appName.formatForDB»map">{gt text='Map'}</h3>
             {pageaddvarblock name='header'}
                 <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
                 <script type="text/javascript" src="{$baseurl}plugins/Mapstraction/lib/vendor/mxn/mxn.js?(googlev3)"></script>
