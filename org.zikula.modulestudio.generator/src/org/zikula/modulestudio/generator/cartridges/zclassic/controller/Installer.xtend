@@ -71,6 +71,7 @@ class Installer {
                 use FileUtil;
             «ENDIF»
             use HookUtil;
+            use LogUtil;
             «IF hasCategorisableEntities»
                 use ModUtil;
             «ENDIF»
