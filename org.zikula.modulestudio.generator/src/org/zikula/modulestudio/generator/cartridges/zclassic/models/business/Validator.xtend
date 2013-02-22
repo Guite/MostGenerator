@@ -532,9 +532,9 @@ class Validator {
          * This is the base validation class for «name.formatForDisplay» entities.
          */
         «IF app.targets('1.3.5')»
-        class «app.appName»_Entity_Validator_Base_«name.formatForDisplayCapital» extends «app.appName»_Validator
+        class «app.appName»_Entity_Validator_Base_«name.formatForCodeCapital» extends «app.appName»_Validator
         «ELSE»
-        class «name.formatForDisplayCapital»Validator extends \«app.appName»\AbstractValidator
+        class «name.formatForCodeCapital»Validator extends \«app.appName»\AbstractValidator
         «ENDIF»
         {
             «validatorBaseImplBody(app, false)»
@@ -557,9 +557,9 @@ class Validator {
          * This is the concrete validation class for «name.formatForDisplay» entities.
          */
         «IF app.targets('1.3.5')»
-        class «app.appName»_Entity_Validator_«name.formatForDisplayCapital» extends «IF isInheriting»«app.appName»_Entity_Validator_«parentType.name.formatForDisplayCapital»«ELSE»«app.appName»_Entity_Validator_Base_«name.formatForDisplayCapital»«ENDIF»
+        class «app.appName»_Entity_Validator_«name.formatForCodeCapital» extends «IF isInheriting»«app.appName»_Entity_Validator_«parentType.name.formatForDisplayCapital»«ELSE»«app.appName»_Entity_Validator_Base_«name.formatForDisplayCapital»«ENDIF»
         «ELSE»
-        class «name.formatForDisplayCapital»Validator extends «IF isInheriting»\«app.appName»\Entity\Validator\«parentType.name.formatForCodeCapital»Validator«ELSE»Base\«name.formatForDisplayCapital»Validator«ENDIF»
+        class «name.formatForCodeCapital»Validator extends «IF isInheriting»\«app.appName»\Entity\Validator\«parentType.name.formatForCodeCapital»Validator«ELSE»Base\«name.formatForCodeCapital»Validator«ENDIF»
         «ENDIF»
         {
             // here you can add custom validation methods or override existing checks
