@@ -36,7 +36,12 @@ class Section {
 
     def private extensionsAndRelations(Entity it, Application app, Controller controller, IFileSystemAccess fsa) '''
         «IF geographical»
+            «IF useGroupingPanels('edit')»
+            <h3 class="«app.appName.formatForDB»map z-panel-header z-panel-indicator z-pointer">{gt text='Map'}</h3>
+            <fieldset class="«app.appName.formatForDB»map z-panel-content" style="display: none">
+            «ELSE»
             <fieldset class="«app.appName.formatForDB»map">
+            «ENDIF»
                 <legend>{gt text='Map'}</legend>
                 <div id="mapcontainer" class="«app.appName.toLowerCase»mapcontainer">
                 </div>

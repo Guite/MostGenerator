@@ -35,7 +35,8 @@ class ViewExtensions {
      * @return Boolean The result.
      */
     def useGroupingPanels(Entity it, String page) {
-        (panelWeight(page) > 3)
+        // return false for geographical always until we can redraw the map after panel activation
+        (!geographical && panelWeight(page) > 3)
     }
 
     /**
