@@ -856,9 +856,9 @@ class FormHandler {
             protected function processTranslationsForUpdate($entity, $formData)
             {
                 «IF app.targets('1.3.5')»
-                    $entityTransClass = $this->name . '_Entity_' . ucwords($objectType) . 'Translation';
+                    $entityTransClass = $this->name . '_Entity_' . ucwords($this->objectType) . 'Translation';
                 «ELSE»
-                    $entityTransClass = '\\' . $this->name . '\\Entity\\' . ucwords($objectType) . 'TranslationEntity';
+                    $entityTransClass = '\\' . $this->name . '\\Entity\\' . ucwords($this->objectType) . 'TranslationEntity';
                 «ENDIF»
                 $transRepository = $this->entityManager->getRepository($entityTransClass);
 
