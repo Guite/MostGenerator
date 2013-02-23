@@ -52,9 +52,13 @@ class ListEntries {
         class «IF targets('1.3.5')»«appName»_Util_Base_ListEntries«ELSE»ListEntriesUtil«ENDIF» extends Zikula_AbstractBase
         {
             «resolve»
+
             «extractMultiList»
+
             «hasMultipleSelection»
+
             «getEntries»
+
             «additions»
         }
     '''
