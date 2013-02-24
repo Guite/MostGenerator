@@ -268,7 +268,7 @@ class Forms {
 
                         // add a marker
                         marker = new mxn.Marker(latlon);
-                        mapstraction.addMarker(marker,true);
+                        mapstraction.addMarker(marker, true);
 
                         $('latitude').observe('change', function() {
                             newCoordinatesEventHandler();
@@ -280,8 +280,8 @@ class Forms {
 
                         mapstraction.click.addHandler(function(event_name, event_source, event_args){
                             var coords = event_args.location;
-                            Form.Element.setValue('latitude', coords.lat.toFixed(4));
-                            Form.Element.setValue('longitude', coords.lng.toFixed(4));
+                            Form.Element.setValue('latitude', coords.lat.toFixed(7));
+                            Form.Element.setValue('longitude', coords.lng.toFixed(7));
                             newCoordinatesEventHandler();
                         });
 
@@ -293,8 +293,8 @@ class Forms {
                         {{/if}}
 
                         function setDefaultCoordinates(position) {
-                            $('latitude').value = position.coords.latitude;
-                            $('longitude').value = position.coords.longitude;
+                            $('latitude').value = position.coords.latitude.toFixed(7);
+                            $('longitude').value = position.coords.longitude.toFixed(7);
                             newCoordinatesEventHandler();
                         }
 
