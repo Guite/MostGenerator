@@ -729,7 +729,7 @@ class Entities {
             if («FOR field : primaryKeyFields SEPARATOR ' && '»$this->«field.name.formatForCode»«ENDFOR») {
                 // create new instance
                 «/* TODO: consider custom constructor arguments (indexed, aggregated - see above) */»
-                $entity = new «entityClassName('', false)»();
+                $entity = new \«entityClassName('', false)»();
                 // unset identifiers
                 «FOR field : primaryKeyFields»
                     $entity->set«field.name.formatForCodeCapital»(null);
