@@ -478,7 +478,7 @@ class Extensions {
         «IF app.targets('1.3.5')»
             «repositoryClass = app.appName + '_Entity_Repository_' + name.formatForCodeCapital + classType.formatForCodeCapital»
         «ELSE»
-            «repositoryClass = '\\' + app.appName + '\\Entity\\Repository\\' + name.formatForCodeCapital + classType.formatForCodeCapital»
+            «repositoryClass = app.appName + '\\Entity\\Repository\\' + name.formatForCodeCapital + classType.formatForCodeCapital»
         «ENDIF»
         «IF classType == 'closure'»
         «ELSEIF classType == 'translation'»
