@@ -129,20 +129,24 @@ class EventListener {
         protected function performPreRemoveCallback()
         {
             // delete workflow for this entity
+            «IF !container.application.targets('1.3.5')»
+                $workflowHelper = new WorkflowUtil(ServiceUtil::getManager());
+                $workflowHelper->normaliseWorkflowData($this);
+            «ENDIF»
             $workflow = $this['__WORKFLOW__'];
             «IF container.application.targets('1.3.5')»
-            $result = (bool) DBUtil::deleteObjectByID('workflows', $workflow['id']);
+                $result = (bool) DBUtil::deleteObjectByID('workflows', $workflow['id']);
             «ELSE»
-            $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->getService('doctrine.entitymanager');
-            $result = true;
-            try {
-                $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);
-                $entityManager->remove($workflow);
-                $entityManager->flush();
-            } catch (\Exception $e) {
-                $result = false;
-            }
+                $serviceManager = ServiceUtil::getManager();
+                $entityManager = $serviceManager->getService('doctrine.entitymanager');
+                $result = true;
+                try {
+                    $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);
+                    $entityManager->remove($workflow);
+                    $entityManager->flush();
+                } catch (\Exception $e) {
+                    $result = false;
+                }
             «ENDIF»
             if ($result === false) {
                 $dom = ZLanguage::getModuleDomain('«container.application.appName»');

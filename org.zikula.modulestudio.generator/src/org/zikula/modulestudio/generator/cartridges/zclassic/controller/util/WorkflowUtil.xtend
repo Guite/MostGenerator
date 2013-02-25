@@ -345,11 +345,12 @@ class WorkflowUtil {
             }
 
             $entity['__WORKFLOW__'] = array(
-                'state' => $workflow->getState(),
-                'obj_table' => $workflow->getObjTable(),
-                'obj_idcolumn' => $workflow->getObjIdcolumn(),
-                'obj_id' => $workflow->getObjId(),
-                'schemaname' => $workflow->getSchemaname()
+                'id'            => $workflow->getId(),
+                'state'         => $workflow->getState(),
+                'obj_table'     => $workflow->getObjTable(),
+                'obj_idcolumn'  => $workflow->getObjIdcolumn(),
+                'obj_id'        => $workflow->getObjId(),
+                'schemaname'    => $workflow->getSchemaname()
             );
         }
 

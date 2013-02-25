@@ -115,6 +115,7 @@ class Entities {
             use System;
             use UserUtil;
             use Zikula_EntityAccess;
+            use Zikula_Exception;
             use Zikula_Workflow_Util;
             use ZLanguage;
         «ENDIF»
