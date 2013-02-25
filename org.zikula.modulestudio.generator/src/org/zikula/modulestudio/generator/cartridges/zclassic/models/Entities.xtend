@@ -599,7 +599,7 @@ class Entities {
                 $this->«pkField.name.formatForCode» = $«pkField.name.formatForCode»;
             «ENDFOR»
         «ENDIF»
-        «val mandatoryFields = getDerivedFields.filter(e|e.mandatory)»
+        «val mandatoryFields = getDerivedFields.filter(e|e.mandatory && !e.primaryKey)»
         «FOR mandatoryField : mandatoryFields.filter(typeof(IntegerField)).filter(e|e.defaultValue == null || e.defaultValue == '' || e.defaultValue == '0')»
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
