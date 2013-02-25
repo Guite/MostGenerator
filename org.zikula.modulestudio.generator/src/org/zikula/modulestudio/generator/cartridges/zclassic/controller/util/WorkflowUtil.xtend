@@ -63,6 +63,9 @@ class WorkflowUtil {
             «getWorkflowSchema»
             «getActionsForObject»
             «executeAction»
+            «IF !targets('1.3.5')»
+                «normaliseWorkflowData»
+            «ENDIF»
             «collectAmountOfModerationItems»
             «getAmountOfModerationItems»
         }
@@ -191,6 +194,11 @@ class WorkflowUtil {
             // get possible actions for this object in it's current workflow state
             $objectType = $entity['_objectType'];
             $schemaName = $this->getWorkflowName($objectType);
+            «IF !targets('1.3.5')»
+
+                $this->normaliseWorkflowData($entity);
+            «ENDIF»
+
             $idcolumn = $entity['__WORKFLOW__']['obj_idcolumn'];
             $wfActions = Zikula_Workflow_Util::getActionsForObject($entity, $objectType, $idcolumn, $this->name);
 
@@ -304,10 +312,45 @@ class WorkflowUtil {
         {
             $objectType = $entity['_objectType'];
             $schemaName = $this->getWorkflowName($objectType);
-            $idcolumn = $entity['__WORKFLOW__']['obj_idcolumn'];
+            «IF !targets('1.3.5')»
+
+                $this->normaliseWorkflowData($entity);
+            «ENDIF»
+
             $result = Zikula_Workflow_Util::executeAction($schemaName, $entity, $actionId, $objectType, $this->name, $idcolumn);
 
             return ($result !== false);
+        }
+
+    '''
+
+    def private normaliseWorkflowData(Application it) '''
+        /**
+         * Performs a conversion of the workflow object back to an array.
+         *
+         * @param Zikula_EntityAccess $entity The given entity instance.
+         *
+         * @return bool False on error or true if everything worked well.
+         */
+        protected function normaliseWorkflowData($entity)
+        {
+            $workflow = $entity['__WORKFLOW__'];
+            if (!isset($workflow[0])) {
+                return;
+            }
+
+            $workflow = $workflow[0];
+            if (!is_object($workflow)) {
+                return;
+            }
+
+            $entity['__WORKFLOW__'] = array(
+                'state' => $workflow->getState(),
+                'obj_table' => $workflow->getObjTable(),
+                'obj_idcolumn' => $workflow->getObjIdcolumn(),
+                'obj_id' => $workflow->getObjId(),
+                'schemaname' => $workflow->getSchemaname()
+            );
         }
 
     '''

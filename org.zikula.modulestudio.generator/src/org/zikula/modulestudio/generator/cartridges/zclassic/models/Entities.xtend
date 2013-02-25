@@ -539,7 +539,7 @@ class Entities {
             }
         }
 
-        if (!isset($this['__WORKFLOW__']['schemaname'])) {
+        if (!is_object($this['__WORKFLOW__']) && !isset($this['__WORKFLOW__']['schemaname'])) {
             $workflow = $this['__WORKFLOW__'];
             $workflow['schemaname'] = $schemaName;
             $this['__WORKFLOW__'] = $workflow;

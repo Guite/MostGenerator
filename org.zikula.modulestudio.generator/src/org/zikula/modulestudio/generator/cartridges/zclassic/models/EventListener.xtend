@@ -70,7 +70,9 @@ class EventListener {
         {
             // echo 'loaded a record ...';
             «postLoadImpl»
+
             $this->prepareItemActions();
+
             return true;
         }
 «/*}*/»«/*    def private eventListenerBaseImpl(PrePersist it) {*/»
