@@ -42,7 +42,7 @@ class ObjectState {
 
             $result = $stateInfo['text'];
             if ($withIcon === true) {
-                $result = '<img src="/images/icons/extrasmall/' . $stateInfo['icon'] . '" width="16" height="16" alt="' . $result . '" />&nbsp;&nbsp;' . $result;
+                $result = '<img src="' . System::getBaseUrl() . 'images/icons/extrasmall/' . $stateInfo['icon'] . '" width="16" height="16" alt="' . $result . '" />&nbsp;&nbsp;' . $result;
             }
 
             return $result;
