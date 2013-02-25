@@ -129,7 +129,12 @@ class BlockList {
             }
 
             // get current block content
-            $vars = BlockUtil::varsFromContent($blockinfo['content']);
+            «IF targets('1.3.5')»
+                $vars = BlockUtil::varsFromContent($blockinfo['content']);
+            «ELSE»
+                //$vars = BlockUtil::varsFromContent($blockinfo['content']);
+                $vars = unserialize($blockinfo['content']);
+            «ENDIF»
             $vars['bid'] = $blockinfo['bid'];
 
             // set default values for all params which are not properly set
@@ -335,7 +340,12 @@ class BlockList {
         public function modify($blockinfo)
         {
             // Get current content
-            $vars = BlockUtil::varsFromContent($blockinfo['content']);
+            «IF targets('1.3.5')»
+                $vars = BlockUtil::varsFromContent($blockinfo['content']);
+            «ELSE»
+                //$vars = BlockUtil::varsFromContent($blockinfo['content']);
+                $vars = unserialize($blockinfo['content']);
+            «ENDIF»
 
             // set default values for all params which are not properly set
             if (!isset($vars['objectType']) || empty($vars['objectType'])) {
