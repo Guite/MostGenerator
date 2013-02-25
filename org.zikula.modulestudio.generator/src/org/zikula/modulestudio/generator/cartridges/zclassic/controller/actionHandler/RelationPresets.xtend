@@ -115,7 +115,7 @@ class RelationPresets {
                 «IF !useTarget && it instanceof ManyToManyRelationship»
                     $entity->«IF isManySide(useTarget)»add«ELSE»set«ENDIF»«alias.toFirstUpper»($relObj);
                 «ELSE»
-                    $relObj->«IF isManySide(useTarget)»add«ELSE»set«ENDIF»«aliasInverse.toFirstUpper»($entity);
+                    $relObj->«IF isManySide(!useTarget)»add«ELSE»set«ENDIF»«aliasInverse.toFirstUpper»($entity);
                 «ENDIF»
             }
         }
