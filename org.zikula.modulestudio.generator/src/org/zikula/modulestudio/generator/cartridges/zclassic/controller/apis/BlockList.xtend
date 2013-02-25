@@ -443,7 +443,7 @@ class BlockList {
         «IF targets('1.3.5')»
         class «appName»_Block_ItemList extends «appName»_Block_Base_ItemList
         «ELSE»
-        class ItemList extends Base\ItemList
+        class ItemListBlock extends Base\ItemListBlock
         «ENDIF»
         {
             // feel free to extend the item list block here

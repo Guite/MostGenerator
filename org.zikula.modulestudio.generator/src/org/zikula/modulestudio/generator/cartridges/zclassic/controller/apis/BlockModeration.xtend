@@ -161,7 +161,7 @@ class BlockModeration {
         «IF targets('1.3.5')»
         class «appName»_Block_Moderation extends «appName»_Block_Base_Moderation
         «ELSE»
-        class Moderation extends Base\Moderation
+        class ModerationBlock extends Base\ModerationBlock
         «ENDIF»
         {
             // feel free to extend the moderation block here
