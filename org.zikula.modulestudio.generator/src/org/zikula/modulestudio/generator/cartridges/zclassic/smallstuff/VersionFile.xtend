@@ -5,13 +5,14 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.ApplicationDependencyType
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
+import de.guite.modulestudio.metamodel.modulestudio.ReferredApplication
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import de.guite.modulestudio.metamodel.modulestudio.ReferredApplication
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class VersionFile {
     @Inject extension FormattingExtensions = new FormattingExtensions()
@@ -19,6 +20,7 @@ class VersionFile {
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
+    @Inject extension WorkflowExtensions = new WorkflowExtensions()
 
     FileHelper fh = new FileHelper()
 
@@ -179,6 +181,9 @@ class VersionFile {
             '«appName»::' => '::',
             '«appName»::Ajax' => '::',
             '«appName»:ItemListBlock:' => 'Block title::',
+            «IF needsApproval»
+                '«appName»:ModerationBlock:' => 'Block title::',
+            «ENDIF»
             «FOR entity : getAllEntities»«entity.permissionSchema(appName)»«ENDFOR»
         );
         // DEBUG: permission schema aspect ends
