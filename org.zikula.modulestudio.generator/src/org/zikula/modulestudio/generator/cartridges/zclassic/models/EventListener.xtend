@@ -134,23 +134,25 @@ class EventListener {
                 $workflowHelper->normaliseWorkflowData($this);
             «ENDIF»
             $workflow = $this['__WORKFLOW__'];
-            «IF container.application.targets('1.3.5')»
-                $result = (bool) DBUtil::deleteObjectByID('workflows', $workflow['id']);
-            «ELSE»
-                $serviceManager = ServiceUtil::getManager();
-                $entityManager = $serviceManager->getService('doctrine.entitymanager');
-                $result = true;
-                try {
-                    $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);
-                    $entityManager->remove($workflow);
-                    $entityManager->flush();
-                } catch (\Exception $e) {
-                    $result = false;
+            if ($workflow['id'] > 0) {
+                «IF container.application.targets('1.3.5')»
+                    $result = (bool) DBUtil::deleteObjectByID('workflows', $workflow['id']);
+                «ELSE»
+                    $serviceManager = ServiceUtil::getManager();
+                    $entityManager = $serviceManager->getService('doctrine.entitymanager');
+                    $result = true;
+                    try {
+                        $workflow = $entityManager->find('Zikula\Core\Doctrine\Entity\WorkflowEntity', $workflow['id']);
+                        $entityManager->remove($workflow);
+                        $entityManager->flush();
+                    } catch (\Exception $e) {
+                        $result = false;
+                    }
+                «ENDIF»
+                if ($result === false) {
+                    $dom = ZLanguage::getModuleDomain('«container.application.appName»');
+                    return LogUtil::registerError(__('Error! Could not remove stored workflow. Deletion has been aborted.', $dom));
                 }
-            «ENDIF»
-            if ($result === false) {
-                $dom = ZLanguage::getModuleDomain('«container.application.appName»');
-                return LogUtil::registerError(__('Error! Could not remove stored workflow. Deletion has been aborted.', $dom));
             }
 
             return true;
