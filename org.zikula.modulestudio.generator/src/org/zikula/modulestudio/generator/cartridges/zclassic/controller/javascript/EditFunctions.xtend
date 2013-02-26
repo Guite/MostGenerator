@@ -65,7 +65,7 @@ class EditFunctions {
                 new Ajax.Autocompleter(
                     fieldName + 'Selector',
                     fieldName + 'SelectorChoices',
-                    Zikula.Config.baseURL + 'ajax.php?module=«appName»&func=' + getterName,
+                    Zikula.Config.baseURL + 'ajax.php?module=«appName»«IF !targets('1.3.5')»&type=ajax«ENDIF»&func=' + getterName,
                     {
                         paramName: 'fragment',
                         minChars: 3,
@@ -473,7 +473,7 @@ class EditFunctions {
                     relationHandler.acInstance = new Ajax.Autocompleter(
                         idPrefix + 'Selector',
                         idPrefix + 'SelectorChoices',
-                        Zikula.Config.baseURL + 'ajax.php?module=' + relationHandler.moduleName + '&func=getItemListAutoCompletion',
+                        Zikula.Config.baseURL + 'ajax.php?module=' + relationHandler.moduleName + '«IF !targets('1.3.5')»&type=ajax«ENDIF»&func=getItemListAutoCompletion',
                         acOptions
                     );
                 }

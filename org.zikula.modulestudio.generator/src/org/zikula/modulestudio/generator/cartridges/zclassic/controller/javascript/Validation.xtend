@@ -98,7 +98,7 @@ class Validation {
                 /** TODO fix the following call to work within validation context */
                 return true;
 
-                request = new Zikula.Ajax.Request(Zikula.Config.baseURL + 'ajax.php?module=«appName»&func=checkForDuplicate', {
+                request = new Zikula.Ajax.Request(Zikula.Config.baseURL + 'ajax.php?module=«appName»«IF !targets('1.3.5')»&type=ajax«ENDIF»&func=checkForDuplicate', {
                     method: 'post',
                     parameters: params,
                     authid: 'FormAuthid',«/*from the Forms framework*/»

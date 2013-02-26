@@ -230,7 +230,7 @@ class Finder {
                     'sortdir=' + $F(baseId + '_sortdir') + '&' +
                     'searchterm=' + $F(baseId + '_searchterm');
 
-            request = new Zikula.Ajax.Request('ajax.php?module=«appName»&func=getItemListFinder', {
+            request = new Zikula.Ajax.Request('ajax.php?module=«appName»«IF !targets('1.3.5')»&type=ajax«ENDIF»&func=getItemListFinder', {
                 method: 'post',
                 parameters: pars,
                 onFailure: function(req) {
