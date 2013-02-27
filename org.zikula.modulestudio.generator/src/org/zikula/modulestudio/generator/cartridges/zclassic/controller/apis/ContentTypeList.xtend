@@ -44,6 +44,9 @@ class ContentTypeList {
 
             use «appName»\Util\ControllerUtil;
 
+            «IF hasCategorisableEntities»
+                use CategoryUtil;
+            «ENDIF»
             use ModUtil;
             use SecurityUtil;
             use ServiceUtil;
@@ -449,6 +452,7 @@ class ContentTypeList {
 
                 // assign categories lists for simulating category selectors
                 $dom = ZLanguage::getModuleDomain('«appName»');
+                $locale = ZLanguage::getLanguageCode();
                 $categories = array();
                 foreach ($this->catRegistries as $registryId => $registryCid) {
                     $propName = '';
@@ -464,7 +468,6 @@ class ContentTypeList {
                     $catsForDropdown = array(
                         array('value' => '', 'text' => __('All', $dom))
                     );
-                    $locale = ZLanguage::getLanguageCode();
                     foreach ($cats as $cat) {
                         $catName = isset($cat['display_name'][$locale]) ? $cat['display_name'][$locale] : $cat['name'];
                         $catsForDropdown[] = array('value' => $cat['id'], 'text' => $catName);
