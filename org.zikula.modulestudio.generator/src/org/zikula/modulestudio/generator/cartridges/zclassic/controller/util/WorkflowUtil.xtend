@@ -332,7 +332,7 @@ class WorkflowUtil {
          *
          * @return bool False on error or true if everything worked well.
          */
-        protected function normaliseWorkflowData($entity)
+        public function normaliseWorkflowData($entity)
         {
             $workflow = $entity['__WORKFLOW__'];
             if (!isset($workflow[0])) {
