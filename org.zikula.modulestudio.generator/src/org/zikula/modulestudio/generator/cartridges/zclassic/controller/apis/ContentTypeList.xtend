@@ -446,6 +446,33 @@ class ContentTypeList {
                 // assign category data
                 $this->view->assign('registries', $this->catRegistries);
                 $this->view->assign('properties', $this->catProperties);
+
+                // assign categories lists for simulating category selectors
+                $dom = ZLanguage::getModuleDomain('«appName»');
+                $categories = array();
+                foreach ($this->catRegistries as $registryId => $registryCid) {
+                    $propName = '';
+                    foreach ($this->catProperties as $propertyName => $propertyId) {
+                        if ($propertyId == $registryId) {
+                            $propName = $propertyName;
+                            break;
+                        }
+                    }
+
+                    //$mainCategory = CategoryUtil::getCategoryByID($registryCid);
+                    $cats = CategoryUtil::getSubCategories($registryCid, true, true, false, true, false, null, '', null, 'sort_value');
+                    $catsForDropdown = array(
+                        array('value' => '', 'text' => __('All', $dom))
+                    );
+                    $locale = ZLanguage::getLanguageCode();
+                    foreach ($cats as $cat) {
+                        $catName = isset($cat['display_name'][$locale]) ? $cat['display_name'][$locale] : $cat['name'];
+                        $catsForDropdown[] = array('value' => $cat['id'], 'text' => $catName);
+                    }
+                    $categories[$propName] = $catsForDropdown;
+                }
+
+                $this->view->assign('categories', $categories);
             «ENDIF»
         }
     '''
