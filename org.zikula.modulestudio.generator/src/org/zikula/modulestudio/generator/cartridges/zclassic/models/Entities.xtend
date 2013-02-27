@@ -257,7 +257,7 @@ class Entities {
         /**
          * @var boolean Whether this entity supports unique slugs.
          */
-        protected $_hasUniqueSlug = false;
+        protected $_hasUniqueSlug = «IF hasSluggableFields && slugUnique»true«ELSE»false«ENDIF»;
         «IF hasNotifyPolicy»
 
             /**
