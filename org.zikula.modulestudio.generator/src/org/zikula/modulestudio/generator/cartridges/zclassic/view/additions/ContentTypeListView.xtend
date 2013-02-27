@@ -106,7 +106,7 @@ class ContentTypeListView {
                     {formlabel for="«appName»_catids`$propertyName`" text=$categorySelectorLabel}
                     {formcategoryselector id="«appName»_catids`$propertyName`" category=$registryCid
                                           dataField='catids' group='data' registryId=$registryId doctrine2=true
-                                          selectionMode=$selectionMode}
+                                          selectionMode=$selectionMode includeEmptyElement=true}
                     <div class="z-sub z-formnote">{gt text='This is an optional filter.'}</div>
                 </div>
             {/foreach}

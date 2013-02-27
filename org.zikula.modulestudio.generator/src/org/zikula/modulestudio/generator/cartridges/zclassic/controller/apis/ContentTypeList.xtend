@@ -116,7 +116,14 @@ class ContentTypeList {
             protected $categorisableObjectTypes;
 
             /**
-             * List of category properties (registries) for different trees.
+             * List of category registries for different trees.
+             *
+             * @var array
+             */
+            protected $catRegistries;
+            
+            /**
+             * List of category properties for different trees.
              *
              * @var array
              */
@@ -231,8 +238,11 @@ class ContentTypeList {
             «IF hasCategorisableEntities»
 
                 // fetch category properties
+                $this->catRegistries = null;
                 $this->catProperties = null;
                 if (in_array($this->objectType, $this->categorisableObjectTypes)) {
+                    $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $this->objectType));
+                    $this->catRegistries = ModUtil::apiFunc('«appName»', 'category', 'getAllPropertiesWithMainCat', array('ot' => $this->objectType, 'arraykey' => $idFields[0]));
                     $this->catProperties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
                 }
                 $this->catIds = $data['catIds'];
@@ -325,7 +335,8 @@ class ContentTypeList {
                        ->assign($repository->getAdditionalTemplateParameters('contentType'));
             «IF hasCategorisableEntities»
 
-                // assign category properties
+                // assign category data
+                $this->view->assign('registries', $this->catRegistries);
                 $this->view->assign('properties', $this->catProperties);
             «ENDIF»
 
@@ -429,6 +440,12 @@ class ContentTypeList {
             array_push($this->view->plugins_dir, 'modules/«appName»/templates/plugins');
             «ELSE»
             array_push($this->view->plugins_dir, 'modules/«appName»/Resources/views/plugins');
+            «ENDIF»
+            «IF hasCategorisableEntities»
+
+                // assign category data
+                $this->view->assign('registries', $this->catRegistries);
+                $this->view->assign('properties', $this->catProperties);
             «ENDIF»
         }
     '''

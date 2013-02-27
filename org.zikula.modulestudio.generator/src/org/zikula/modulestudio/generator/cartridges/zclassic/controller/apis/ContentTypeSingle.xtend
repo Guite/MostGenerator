@@ -147,6 +147,7 @@ class ContentTypeSingle {
             if ($this->id != null && !empty($this->displayMode)) {
                 return ModUtil::func('«appName»', 'external', 'display', $this->getDisplayArguments());
             }
+
             return '';
         }
 
