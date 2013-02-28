@@ -29,7 +29,7 @@ class MailzView {
 
     def private textTemplate(Entity it, Application app) '''
         {* Purpose of this template: Display «nameMultiple.formatForDisplay» in text mailings *}
-        {foreach item='item' from=$items}
+        {foreach item='«name.formatForCode»' from=$items}
             «mailzEntryText(app.appName)»
             -----
         {foreachelse}
@@ -41,7 +41,7 @@ class MailzView {
         {* Purpose of this template: Display «nameMultiple.formatForDisplay» in html mailings *}
         {*
         <ul>
-        {foreach item='item' from=$items}
+        {foreach item='«name.formatForCode»' from=$items}
             <li>
                 «mailzEntryHtml(app)»
             </li>
@@ -51,15 +51,15 @@ class MailzView {
         </ul>
         *}
 
-        {include file='«IF app.targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/itemlist_«name.formatForCode.toFirstUpper»_display_description.tpl'}
+        {include file='«IF app.targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/itemlist_«name.formatForCode»_display_description.tpl'}
     '''
 
     def private mailzEntryText(Entity it, String appName) '''
         «val leadingField = getLeadingField»
         «IF leadingField != null»
-            {$item.«leadingField.name.formatForCode»}
+            {$«name.formatForCode».«leadingField.name.formatForCode»}
         «ENDIF»
-        {modurl modname='«appName»' type='user' «modUrlDisplayWithFreeOt('item', true, '$objectType')» fqurl=true}
+        {modurl modname='«appName»' type='user' «modUrlDisplayWithFreeOt(name.formatForCode, true, '$objectType')» fqurl=true}
     '''
 
     def private mailzEntryHtml(Entity it, Application app) '''
@@ -71,7 +71,7 @@ class MailzView {
     '''
 
     def private mailzEntryHtmlLinkUrlDisplay(Entity it, Application app) '''
-        {modurl modname='«app.appName»' type='user' «modUrlDisplayWithFreeOt('item', true, '$objectType')» fqurl=true}'''
+        {modurl modname='«app.appName»' type='user' «modUrlDisplayWithFreeOt(name.formatForCode, true, '$objectType')» fqurl=true}'''
 
     def private mailzEntryHtmlLinkUrlMain(Entity it, Application app) '''
         «IF app.hasUserController»
@@ -88,7 +88,7 @@ class MailzView {
 
     def private mailzEntryHtmlLinkText(Entity it, Application app) '''
         «val leadingField = getLeadingField»
-        «IF leadingField != null»{$item.«leadingField.name.formatForCode»}
+        «IF leadingField != null»{$«name.formatForCode».«leadingField.name.formatForCode»}
         «ELSE»{gt text='«name.formatForDisplayCapital»'}
         «ENDIF»
     '''

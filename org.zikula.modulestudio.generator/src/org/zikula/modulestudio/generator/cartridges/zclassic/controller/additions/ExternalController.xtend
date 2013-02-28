@@ -140,9 +140,8 @@ class ExternalController {
             }
 
             // assign object data fetched from the database
-            $objectData = null;
-            $objectData = $repository->selectById($idValues);
-            if ((!is_array($objectData) && !is_object($objectData)) || !isset($objectData[$idFields[0]])) {
+            $entity = $repository->selectById($idValues);
+            if ((!is_array($entity) && !is_object($entity)) || !isset($entity[$idFields[0]])) {
                 //$this->throwNotFound($this->__('No such item.'));
                 return $this->__('No such item.');
             }
@@ -171,7 +170,7 @@ class ExternalController {
 
             $this->view->assign('objectType', $objectType)
                       ->assign('source', $source)
-                      ->assign('item', $objectData)
+                      ->assign('item', $entity)
                       ->assign('displayMode', $displayMode);
 
             «IF targets('1.3.5')»
@@ -243,13 +242,13 @@ class ExternalController {
                 $resultsPerPage = $this->getVar('pageSize', 20);
             }
             $where = '';
-            list($objectData, $objectCount) = $repository->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
+            list($entities, $objectCount) = $repository->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
 
             $view = Zikula_View::getInstance('«appName»', false);
 
             $view->assign('editorName', $editor)
                  ->assign('objectType', $objectType)
-                 ->assign('objectData', $objectData)
+                 ->assign('items', $entities)
                  ->assign('sort', $sort)
                  ->assign('sortdir', $sdir)
                  ->assign('currentPage', $currentPage)

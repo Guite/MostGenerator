@@ -33,23 +33,23 @@ class ContentTypeListView {
     def private displayDescTemplate(Entity it, Application app) '''
         {* Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context *}
         <dl>
-            {foreach item='item' from=$items}
+            {foreach item='«name.formatForCode»' from=$items}
                 «val leadingField = getLeadingField»
                 «IF leadingField != null»
-                    <dt>{$item.«leadingField.name.formatForCode»}</dt>
+                    <dt>{$«name.formatForCode».«leadingField.name.formatForCode»}</dt>
                 «ELSE»
                     <dt>{gt text='«name.formatForDisplayCapital»'}</dt>
                 «ENDIF»
                 «val textFields = fields.filter(typeof(TextField))»
                 «IF !textFields.isEmpty»
-                    {if $item.«textFields.head.name.formatForCode»}
-                        <dd>{$item.«textFields.head.name.formatForCode»|truncate:200:"..."}</dd>
+                    {if $«name.formatForCode».«textFields.head.name.formatForCode»}
+                        <dd>{$«name.formatForCode».«textFields.head.name.formatForCode»|truncate:200:"..."}</dd>
                     {/if}
                 «ELSE»
                     «val stringFields = fields.filter(typeof(StringField)).filter(e|!e.leading && !e.password)»
                     «IF !stringFields.isEmpty»
-                        {if $item.«stringFields.head.name.formatForCode»}
-                            <dd>{$item.«stringFields.head.name.formatForCode»|truncate:200:"..."}</dd>
+                        {if $«name.formatForCode».«stringFields.head.name.formatForCode»}
+                            <dd>{$«name.formatForCode».«stringFields.head.name.formatForCode»|truncate:200:"..."}</dd>
                         {/if}
                     «ENDIF»
                 «ENDIF»
@@ -62,10 +62,10 @@ class ContentTypeListView {
 
     def private displayTemplate(Entity it, Application app) '''
         {* Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context *}
-        {foreach item='item' from=$items}
+        {foreach item='«name.formatForCode»' from=$items}
             «val leadingField = getLeadingField»
             «IF leadingField != null»
-                <h3>{$item.«leadingField.name.formatForCode»}</h3>
+                <h3>{$«name.formatForCode».«leadingField.name.formatForCode»}</h3>
             «ELSE»
                 <h3>{gt text='«name.formatForDisplayCapital»'}</h3>
             «ENDIF»

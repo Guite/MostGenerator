@@ -17,7 +17,7 @@ Workflow {
     component = @msManual { dir = 'customers' name = 'ContentPool' }
     component = @msManual { dir = 'customers' name = 'EjubaAddresses' }
     component = @msManual { dir = 'customers' name = 'EjubaEvents' }
-    component = @msManual { dir = 'customers' name = 'EjubaLayout' }
+    component = @msManual { dir = 'customers' name = 'EjubaSettings' }
     component = @msManual { dir = 'customers' name = 'EjubaMaterials' }
     component = @msManual { dir = 'customers' name = 'FreelancerProjects' }
     component = @msManual { dir = 'customers' name = 'FreestyleModels' }

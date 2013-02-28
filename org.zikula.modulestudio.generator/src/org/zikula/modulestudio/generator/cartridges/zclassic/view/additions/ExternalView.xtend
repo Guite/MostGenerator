@@ -203,7 +203,7 @@ class ExternalView {
                         <label for="«app.appName»_objectid">{gt text='«name.formatForDisplayCapital»'}:</label>
                         <div id="«app.prefix()»itemcontainer">
                             <ul>
-                            {foreach item='«name.formatForCode»' from=$objectData}
+                            {foreach item='«name.formatForCode»' from=$items}
                                 <li>
                                     <a href="#" onclick="«app.name.formatForDB».finder.selectItem({$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»})" onkeypress="«app.name.formatForDB».finder.selectItem({$«name.formatForCode».«getFirstPrimaryKey.name.formatForCode»})">
                                         {$«name.formatForCode».«getLeadingField.name.formatForCode»}
