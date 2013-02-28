@@ -105,7 +105,7 @@ class ContentTypeListView {
                         {assign var='selectionMode' value='multiple'}
                     {/if}
                     {formlabel for="«appName»_catids`$propertyName`" text=$categorySelectorLabel}
-                    {formdropdownlist id="«appName»_catids`$propName`" items=$categories.$propName dataField='catids' group='data' selectionMode=$selectionMode}
+                    {formdropdownlist id="«appName»_catids`$propName`" items=$categories.$propName dataField="catids`$propName`" group='data' selectionMode=$selectionMode}
                     <div class="z-sub z-formnote">{gt text='This is an optional filter.' domain='module_«appName.formatForDB»'}</div>
                 </div>
             {/foreach}

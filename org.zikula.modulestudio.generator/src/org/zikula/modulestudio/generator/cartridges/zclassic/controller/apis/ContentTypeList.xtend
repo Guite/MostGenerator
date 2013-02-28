@@ -216,10 +216,26 @@ class ContentTypeList {
             if (!isset($data['filter'])) {
                 $data['filter'] = '';
             }
+
+            $this->sorting = $data['sorting'];
+            $this->amount = $data['amount'];
+            $this->template = $data['template'];
+            $this->customTemplate = $data['customTemplate'];
+            $this->filter = $data['filter'];
             «IF hasCategorisableEntities»
+                $this->categorisableObjectTypes = array(«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
+
+                // fetch category properties
+                $this->catRegistries = null;
+                $this->catProperties = null;
+                if (in_array($this->objectType, $this->categorisableObjectTypes)) {
+                    $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $this->objectType));
+                    $this->catRegistries = ModUtil::apiFunc('«appName»', 'category', 'getAllPropertiesWithMainCat', array('ot' => $this->objectType, 'arraykey' => $idFields[0]));
+                    $this->catProperties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
+                }
 
                 if (!isset($data['catIds'])) {
-                    $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $vars['objectType']));
+                    $primaryRegistry = ModUtil::apiFunc('«appName»', 'category', 'getPrimaryProperty', array('ot' => $this->objectType));
                     $data['catIds'] = array($primaryRegistry => array());
                     // backwards compatibility
                     if (isset($data['catId'])) {
@@ -230,24 +246,22 @@ class ContentTypeList {
                     $data['catIds'] = explode(',', $data['catIds']);
                 }
 
-                $this->categorisableObjectTypes = array(«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
-            «ENDIF»
-
-            $this->sorting = $data['sorting'];
-            $this->amount = $data['amount'];
-            $this->template = $data['template'];
-            $this->customTemplate = $data['customTemplate'];
-            $this->filter = $data['filter'];
-            «IF hasCategorisableEntities»
-
-                // fetch category properties
-                $this->catRegistries = null;
-                $this->catProperties = null;
-                if (in_array($this->objectType, $this->categorisableObjectTypes)) {
-                    $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $this->objectType));
-                    $this->catRegistries = ModUtil::apiFunc('«appName»', 'category', 'getAllPropertiesWithMainCat', array('ot' => $this->objectType, 'arraykey' => $idFields[0]));
-                    $this->catProperties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
+                foreach ($this->catRegistries as $registryId => $registryCid) {
+                    $propName = '';
+                    foreach ($this->catProperties as $propertyName => $propertyId) {
+                        if ($propertyId == $registryId) {
+                            $propName = $propertyName;
+                            break;
+                        }
+                    }
+                    if (isset($data['catids' . $propName])) {
+                        $data['catIds'][$propName] = $data['catids' . $propName];
+                    }
+                    if (!is_array($data['catIds'][$propName])) {
+                        $data['catIds'][$propName] = array($data['catIds'][$propName]);
+                    }
                 }
+
                 $this->catIds = $data['catIds'];
             «ENDIF»
         }
