@@ -800,7 +800,7 @@ class Repository {
                     $qb->andWhereIn('tblCategories.category IN (:categories)')
                        ->setParameter('categories', DataUtil::formatForStore($v));
                      */
-                    $categoryFiltersPerRegistry = ModUtil::apiFunc('«container.application.appName»', 'category', 'buildFilterClauses', array('ot' => '«name.formatForDisplay»', 'catids' => $v));
+                    $categoryFiltersPerRegistry = ModUtil::apiFunc('«container.application.appName»', 'category', 'buildFilterClauses', array('ot' => '«name.formatForCode»', 'catids' => $v));
                     if (count($categoryFiltersPerRegistry) > 0) {
                         $qb->andWhere('(' . implode(' OR ', $categoryFiltersPerRegistry) . ')');
                     }
