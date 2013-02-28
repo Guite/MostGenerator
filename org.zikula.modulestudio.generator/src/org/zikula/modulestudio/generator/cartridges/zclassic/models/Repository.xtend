@@ -781,10 +781,11 @@ class Repository {
          */
         protected function addCommonViewFilters(QueryBuilder $qb)
         {
+            /* commented out to allow default filters also for other calls, like content types and mailz
             $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST');
             if (!in_array($currentFunc, array('main', 'view', 'finder'))) {
                 return $qb;
-            }
+            }*/
 
             $parameters = $this->getViewQuickNavParameters('', array());
             foreach ($parameters as $k => $v) {
@@ -833,8 +834,9 @@ class Repository {
             }
 
             // apply default filters
+            $currentModule = FormUtil::getPassedValue('module', '', 'GETPOST');
             $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
-            if ($currentType != 'admin') {
+            if ($currentType != 'admin' || $currentModule != '«container.application.appName»') {
                 if (!in_array('workflowState', array_keys($parameters)) || empty($parameters['workflowState'])) {
                     // per default we show approved «nameMultiple.formatForDisplay» only
                     $onlineStates = array('approved');
