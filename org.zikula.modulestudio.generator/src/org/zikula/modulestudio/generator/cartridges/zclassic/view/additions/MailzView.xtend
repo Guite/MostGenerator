@@ -30,10 +30,10 @@ class MailzView {
     def private textTemplate(Entity it, Application app) '''
         {* Purpose of this template: Display «nameMultiple.formatForDisplay» in text mailings *}
         {foreach item='«name.formatForCode»' from=$items}
-            «mailzEntryText(app.appName)»
-            -----
+        «mailzEntryText(app.appName)»
+        -----
         {foreachelse}
-            {gt text='No «nameMultiple.formatForDisplay» found.'}
+        {gt text='No «nameMultiple.formatForDisplay» found.'}
         {/foreach}
     '''
 
