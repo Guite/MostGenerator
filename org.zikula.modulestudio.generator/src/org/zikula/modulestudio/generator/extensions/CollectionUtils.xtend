@@ -7,7 +7,7 @@ class CollectionUtils {
     /**
      * Filters a collection using multiple types.
      */
-    def Iterable filter(Iterable<?> unfiltered, Class... types) {
+    def Iterable filter(Iterable<Object> unfiltered, Class... types) {
         val typeFilter = Predicates::or(types.map[Predicates::instanceOf(it)])
         unfiltered.filter(typeFilter)
     }
