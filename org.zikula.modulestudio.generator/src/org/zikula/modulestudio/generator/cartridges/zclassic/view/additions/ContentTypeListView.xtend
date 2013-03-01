@@ -114,7 +114,8 @@ class ContentTypeListView {
         {/formvolatile}
 
         <div class="z-formrow">
-            {formlabel __text='Sorting'}
+            {gt text='Sorting' domain='module_«appName.formatForDB»' assign='sortingLabel'}
+            {formlabel text=$sortingLabel}
             <div>
                 {formradiobutton id='«appName»_srandom' value='random' dataField='sorting' group='data' mandatory=true}
                 {gt text='Random' domain='module_«appName.formatForDB»' assign='sortingRandomLabel'}
