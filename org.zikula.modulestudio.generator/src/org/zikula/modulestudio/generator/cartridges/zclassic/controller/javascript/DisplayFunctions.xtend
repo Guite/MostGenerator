@@ -108,7 +108,7 @@ class DisplayFunctions {
                         iconFile = 'agt_back';
                     }
                     if (iconFile !== '') {
-                        iconFile = '/images/icons/extrasmall/' + iconFile + '.png';
+                        iconFile = Zikula.Config.baseURL + 'images/icons/extrasmall/' + iconFile + '.png';
                     }
                 } else if (func === 'view') {
                     elem.select('img').each(function (imgElem) {
