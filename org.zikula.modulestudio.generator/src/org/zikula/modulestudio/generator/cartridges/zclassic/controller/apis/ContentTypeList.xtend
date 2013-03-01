@@ -258,7 +258,11 @@ class ContentTypeList {
                         $data['catIds'][$propName] = $data['catids' . $propName];
                     }
                     if (!is_array($data['catIds'][$propName])) {
-                        $data['catIds'][$propName] = array($data['catIds'][$propName]);
+                        if ($data['catIds'][$propName]) {
+                            $data['catIds'][$propName] = array($data['catIds'][$propName]);
+                        } else {
+                            $data['catIds'][$propName] = array();
+                        }
                     }
                 }
 
