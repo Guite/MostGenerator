@@ -75,7 +75,11 @@ class AbstractObjectSelector {
 
             «load»
 
+            «renderAttributes»
+
             «loadItems»
+
+            «validate»
 
             «setSelectedValue»
 
@@ -311,6 +315,23 @@ class AbstractObjectSelector {
         }
     '''
 
+    def private renderAttributes(Application it) '''
+        /**
+         * Render attributes.
+         *
+         * @param Zikula_Form_View $view Reference to Zikula_Form_View object.
+         *
+         * @return string
+         */
+        public function renderAttributes(Zikula_Form_View $view)
+        {
+            $attributes = parent::renderAttributes($view);
+            $attributes = str_replace(' linkingItem="Array"', '', $attributes);
+
+            return $attributes;
+        }
+    '''
+
     def private loadItems(Application it) '''
         /**
          * Performs the actual data selection.
@@ -341,6 +362,20 @@ class AbstractObjectSelector {
             list($entities, $objectCount) = ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
 
             return $entities;
+        }
+    '''
+
+    def private validate(Application it) '''
+        /**
+         * Validates the input.
+         *
+         * @param Zikula_Form_View $view Reference to Zikula_Form_View object.
+         *
+         * @return void
+         */
+        public function validate(Zikula_Form_View $view)
+        {
+            $this->clearValidation($view);
         }
     '''
 

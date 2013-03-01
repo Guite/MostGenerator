@@ -326,7 +326,7 @@ class Display {
         «val leadingField = getLeadingField»
         {* purpose of this template: show different forms of relatives for a given tree node *}
         <h3>{gt text='Related «nameMultiple.formatForDisplay»'}</h3>
-        {if $«objName».root ne 1}
+        {if $«objName».lvl gt 0}
             {if !isset($allParents) || $allParents eq true}
                 {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='allParents' assign='allParents'}
                 {if $allParents ne null && count($allParents) gt 0}
@@ -370,7 +370,7 @@ class Display {
                 </ul>
             {/if}
         {/if}
-        {if $«objName».root ne 1}
+        {if $«objName».lvl gt 0}
             {if !isset($predecessors) || $predecessors eq true}
                 {«pluginPrefix»TreeSelection objectType='«objName»' node=$«objName» target='predecessors' assign='predecessors'}
                 {if $predecessors ne null && count($predecessors) gt 0}

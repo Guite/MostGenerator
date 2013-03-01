@@ -316,7 +316,7 @@ class Entities {
         /**
          * Set/retrieve the workflow details.
          */
-        protected function initWorkflow()
+        public function initWorkflow()
         {
             $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
 

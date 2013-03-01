@@ -540,6 +540,8 @@ class FormHandler {
                 return LogUtil::registerError($this->__('No such item.'));
             }
 
+            $entity->initWorkflow();
+
             return $entity;
         }
 
@@ -618,16 +620,16 @@ class FormHandler {
              */
             protected function initAttributesForEdit($entity)
             {
-                $objectData = array();«/*$entity->toArray(); not required probably*/»
+                $entityData = array();«/*$entity->toArray(); not required probably*/»
 
                 // overwrite attributes array entry with a form compatible format
                 $attributes = array();
                 foreach ($this->getAttributeFieldNames() as $fieldName) {
                     $attributes[$fieldName] = $entity->getAttributes()->get($fieldName) ? $entity->getAttributes()->get($fieldName)->getValue() : '';
                 }
-                $objectData['attributes'] = $attributes;
+                $entityData['attributes'] = $attributes;
 
-                $this->view->assign($objectData);
+                $this->view->assign($entityData);
             }
 
             /**

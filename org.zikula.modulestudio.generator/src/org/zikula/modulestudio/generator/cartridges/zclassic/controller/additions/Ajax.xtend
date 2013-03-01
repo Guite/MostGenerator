@@ -159,11 +159,11 @@ class Ajax {
             $where = ''; // filters are processed inside the repository class
             $sortParam = $sort . ' ' . $sdir;
 
-            $objectData = $repository->selectWhere($where, $sortParam);
+            $entities = $repository->selectWhere($where, $sortParam);
 
             $slimItems = array();
             $component = $this->name . ':' . ucwords($objectType) . ':';
-            foreach ($objectData as $item) {
+            foreach ($entities as $item) {
                 $itemId = '';
                 foreach ($idFields as $idField) {
                     $itemId .= ((!empty($itemId)) ? '_' : '') . $item[$idField];
@@ -606,6 +606,8 @@ class Ajax {
                                 if ($entity == null) {
                                     return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
                                 }
+
+                                $entity->initWorkflow();
 
                                 // delete the object
                                 $action = 'delete';

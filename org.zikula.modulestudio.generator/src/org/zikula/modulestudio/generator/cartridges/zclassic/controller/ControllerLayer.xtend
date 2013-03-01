@@ -264,6 +264,8 @@ class ControllerLayer {
                 $selectionArgs = array('ot' => $objectType, 'id' => $itemid, 'useJoins' => false);
                 $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', $selectionArgs);
 
+                $entity->initWorkflow();
+
                 // check if $action can be applied to this entity (may depend on it's current workflow state)
                 $allowedActions = $workflowHelper->getActionsForObject($entity);
                 $actionIds = array_keys($allowedActions);

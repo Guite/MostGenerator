@@ -146,6 +146,8 @@ class ExternalController {
                 return $this->__('No such item.');
             }
 
+            $entity->initWorkflow();
+
             $instance = $id . '::';«/** TODO consider composite keys properly
             $instanceId = '';
             foreach ($idFields as $idField) {
@@ -243,6 +245,10 @@ class ExternalController {
             }
             $where = '';
             list($entities, $objectCount) = $repository->selectWherePaginated($where, $sortParam, $currentPage, $resultsPerPage);
+
+            foreach ($entities as $k => $entity) {
+                $entity->initWorkflow();
+            }
 
             $view = Zikula_View::getInstance('«appName»', false);
 

@@ -162,10 +162,10 @@ class ItemSelector {
                 $where = '';
                 $sortParam = $sort . ' ' . $sdir;
 
-                $objectData = $repository->selectWhere($where, $sortParam);
+                $entities = $repository->selectWhere($where, $sortParam);
 
                 $view = Zikula_View::getInstance('«appName»', false);
-                $view->assign('items', $objectData)
+                $view->assign('items', $entities)
                      ->assign('selectedId', $this->selectedItemId);
             «IF hasCategorisableEntities»
 

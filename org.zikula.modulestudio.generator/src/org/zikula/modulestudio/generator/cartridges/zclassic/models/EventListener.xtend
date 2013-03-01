@@ -396,8 +396,6 @@ class EventListener {
             $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($serviceManager);
         «ENDIF»
 
-        $this->initWorkflow();
-
         «FOR field : fields»«field.sanitizeForOutput»«ENDFOR»
     '''
 

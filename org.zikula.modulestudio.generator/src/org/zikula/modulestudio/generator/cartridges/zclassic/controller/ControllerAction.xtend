@@ -332,6 +332,10 @@ class ControllerAction {
                                                'itemsperpage' => $resultsPerPage));
         }
 
+        foreach ($entities as $k => $entity) {
+            $entity->initWorkflow();
+        }
+
         // build ModUrl instance for display hooks
         $currentUrlObject = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, '«controller.formattedName»', 'view', ZLanguage::getLanguageCode(), $currentUrlArgs);
 
@@ -366,6 +370,8 @@ class ControllerAction {
         $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues«controller.addSlugToSelection»));
         $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
         unset($idValues);
+
+        $entity->initWorkflow();
 
         «controller.prepareDisplayPermissionCheck»
 
@@ -539,6 +545,8 @@ class ControllerAction {
 
         $entity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $idValues));
         $this->throwNotFoundUnless($entity != null, $this->__('No such item.'));
+
+        $entity->initWorkflow();
 
         $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager);
         $deleteActionId = 'delete';

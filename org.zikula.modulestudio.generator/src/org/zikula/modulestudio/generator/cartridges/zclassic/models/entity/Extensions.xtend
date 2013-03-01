@@ -474,16 +474,10 @@ class Extensions {
          * «extensionClassDesc(classType)»
          *
          * This is the concrete «classType.formatForDisplay» class for «name.formatForDisplay» entities.
-        «var String repositoryClass»
-        «IF app.targets('1.3.5')»
-            «repositoryClass = app.appName + '_Entity_Repository_' + name.formatForCodeCapital + classType.formatForCodeCapital»
-        «ELSE»
-            «repositoryClass = app.appName + '\\Entity\\Repository\\' + name.formatForCodeCapital + classType.formatForCodeCapital»
-        «ENDIF»
         «IF classType == 'closure'»
         «ELSEIF classType == 'translation'»
              *
-             * @ORM\Entity(repositoryClass="«repositoryClass»")
+             * @ORM\Entity(repositoryClass="«repositoryClass(app, classType)»")
              * @ORM\Table(name="«fullEntityTableName»_translation",
              *     indexes={
              *         @ORM\Index(name="translations_lookup_idx", columns={
@@ -498,7 +492,7 @@ class Extensions {
              * )
         «ELSEIF classType == 'logEntry'»
              *
-             * @ORM\Entity(repositoryClass="«repositoryClass»")
+             * @ORM\Entity(repositoryClass="«repositoryClass(app, classType)»")
              * @ORM\Table(name="«fullEntityTableName»_log_entry",
              *     indexes={
              *         @ORM\Index(name="log_class_lookup_idx", columns={"object_class"}),
@@ -507,7 +501,7 @@ class Extensions {
              *     }
              * )
         «ELSEIF classType == 'metaData' || classType == 'attribute' || classType == 'category'»
-             * @ORM\Entity(repositoryClass="«repositoryClass»")
+             * @ORM\Entity(repositoryClass="«repositoryClass(app, classType)»")
                 «IF classType == 'metaData'»
                  * @ORM\Table(name="«fullEntityTableName»_metadata")
                 «ELSEIF classType == 'attribute'»
@@ -535,6 +529,9 @@ class Extensions {
         }
     '''
 
+    def private repositoryClass(Entity it, Application app, String classType) {
+        app.appName + (if (app.targets('1.3.5')) '_Entity_Repository_' else '\\Entity\\Repository\\') + name.formatForCodeCapital + classType.formatForCodeCapital
+    }
 
     def private extensionClassDesc(Entity it, String classType) '''
         «IF classType == 'closure'»

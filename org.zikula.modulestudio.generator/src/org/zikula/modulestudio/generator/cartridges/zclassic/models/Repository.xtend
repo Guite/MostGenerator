@@ -1328,6 +1328,8 @@ class Repository {
             $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($serviceManager);
 
             foreach ($affectedEntities as $entity) {
+                $entity->initWorkflow();
+
                 $hookAreaPrefix = $entity->getHookAreaPrefix();
 
                 // Let any hooks perform additional validation actions
