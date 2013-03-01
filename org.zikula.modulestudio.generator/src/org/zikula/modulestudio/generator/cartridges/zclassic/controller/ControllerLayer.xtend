@@ -116,7 +116,7 @@ class ControllerLayer {
                 use «app.appName»\Util\ImageUtil;
             «ENDIF»
             use «app.appName»\Util\ViewUtil;
-            «IF (hasActions('view') && isAdminController) || hasActions('delete')»
+            «IF (isAjaxController && app.hasTrees) || (hasActions('view') && isAdminController) || hasActions('delete')»
                 use «app.appName»\Util\WorkflowUtil;
             «ENDIF»
 

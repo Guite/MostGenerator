@@ -542,21 +542,28 @@ class Ajax {
             switch ($op) {
                 case 'addRootNode':
                                 //$this->entityManager->transactional(function($entityManager) {
-                                    $object = new $entityClass();
-                                    $objectData = array();
+                                    $entity = new $entityClass();
+                                    $entityData = array();
                                     if (!empty($titleFieldName)) {
-                                        $objectData[$titleFieldName] = $this->__('New root node');
+                                        $entityData[$titleFieldName] = $this->__('New root node');
                                     }
                                     if (!empty($descriptionFieldName)) {
-                                        $objectData[$descriptionFieldName] = $this->__('This is a new root node');
+                                        $entityData[$descriptionFieldName] = $this->__('This is a new root node');
                                     }
-                                    $object->merge($objectData);
+                                    $entity->merge($entityData);
                                     «/*IF hasTranslatableFields»
-                                        $object->setLocale(ZLanguage::getLanguageCode());
+                                        $entity->setLocale(ZLanguage::getLanguageCode());
                                     «ENDIF*/»
+
                                     // save new object to set the root id
-                                    $this->entityManager->persist($object);
-                                    $this->entityManager->flush();
+                                    $action = 'submit';
+                                    try {
+                                        // execute the workflow action
+                                        $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager);
+                                        $success = $workflowHelper->executeAction($entity, $action);
+                                    } catch(\Exception $e) {
+                                        LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                                    }
                                 //});
                                 break;
                 case 'addChildNode':
@@ -567,12 +574,22 @@ class Ajax {
 
                                 //$this->entityManager->transactional(function($entityManager) {
                                     $childEntity = new $entityClass();
-                                    $objectData = array();
-                                    $objectData[$titleFieldName] = $this->__('New child node');
+                                    $entityData = array();
+                                    $entityData[$titleFieldName] = $this->__('New child node');
                                     if (!empty($descriptionFieldName)) {
-                                        $objectData[$descriptionFieldName] = $this->__('This is a new child node');
+                                        $entityData[$descriptionFieldName] = $this->__('This is a new child node');
                                     }
-                                    $childEntity->merge($objectData);
+                                    $childEntity->merge($entityData);
+
+                                    // save new object
+                                    $action = 'submit';
+                                    try {
+                                        // execute the workflow action
+                                        $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager);
+                                        $success = $workflowHelper->executeAction($childEntity, $action);
+                                    } catch(\Exception $e) {
+                                        LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                                    }
 
                                     //$childEntity->setParent($parentEntity);
                                     $parentEntity = ModUtil::apiFunc($this->name, 'selection', 'getEntity', array('ot' => $objectType, 'id' => $parentId, 'useJoins' => false));
@@ -589,6 +606,17 @@ class Ajax {
                                 if ($entity == null) {
                                     return new «IF app.targets('1.3.5')»Zikula_Response_Ajax_NotFound«ELSE»NotFoundResponse«ENDIF»($this->__('No such item.'));
                                 }
+
+                                // delete the object
+                                $action = 'delete';
+                                try {
+                                    // execute the workflow action
+                                    $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager);
+                                    $success = $workflowHelper->executeAction($entity, $action);
+                                } catch(\Exception $e) {
+                                    LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
+                                }
+
                                 $repository->removeFromTree($entity);
                                 $this->entityManager->clear(); // clear cached nodes
                                 break;
