@@ -63,10 +63,10 @@ class TreeFunctions {
                 elem.id = liRef.id + 'link';
 
                 // and use it to attach a context menu
-                contextMenu = new «prefix()»ContextMenu(elem.id, { leftClick: true, animation: false });
+                contextMenu = new «prefix()»TreeContextMenu(elem.id, { leftClick: true, animation: false });
                 if (hasDisplay === true) {
                     contextMenu.addItem({
-                        label: '<img src="/images/icons/extrasmall/kview.png" width="16" height="16" alt="' + Zikula.__('Display', 'module_«appName.formatForDB»_js') + '" /> '
+                        label: '<img src="' + Zikula.Config.baseURL + 'images/icons/extrasmall/kview.png" width="16" height="16" alt="' + Zikula.__('Display', 'module_«appName.formatForDB»_js') + '" /> '
                              + Zikula.__('Display', 'module_«appName.formatForDB»_js'),
                         callback: function () {
                             currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
@@ -76,7 +76,7 @@ class TreeFunctions {
                 }
                 if (hasEdit === true) {
                     contextMenu.addItem({
-                        label: '<img src="/images/icons/extrasmall/edit.png" width="16" height="16" alt="' + Zikula.__('Edit', 'module_«appName.formatForDB»_js') + '" /> '
+                        label: '<img src="' + Zikula.Config.baseURL + 'images/icons/extrasmall/edit.png" width="16" height="16" alt="' + Zikula.__('Edit', 'module_«appName.formatForDB»_js') + '" /> '
                              + Zikula.__('Edit', 'module_«appName.formatForDB»_js'),
                         callback: function () {
                             currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
@@ -85,7 +85,7 @@ class TreeFunctions {
                     });
                 }
                 contextMenu.addItem({
-                    label: '<img src="/images/icons/extrasmall/insert_table_row.png" width="16" height="16" alt="' + Zikula.__('Add child node', 'module_«appName.formatForDB»_js') + '" /> '
+                    label: '<img src="' + Zikula.Config.baseURL + 'images/icons/extrasmall/insert_table_row.png" width="16" height="16" alt="' + Zikula.__('Add child node', 'module_«appName.formatForDB»_js') + '" /> '
                          + Zikula.__('Add child node', 'module_«appName.formatForDB»_js'),
                     callback: function () {
                         currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
@@ -93,7 +93,7 @@ class TreeFunctions {
                     }
                 });
                 contextMenu.addItem({
-                    label: '<img src="/images/icons/extrasmall/14_layer_deletelayer.png" width="16" height="16" alt="' + Zikula.__('Delete node', 'module_«appName.formatForDB»_js') + '" /> '
+                    label: '<img src="' + Zikula.Config.baseURL + 'images/icons/extrasmall/14_layer_deletelayer.png" width="16" height="16" alt="' + Zikula.__('Delete node', 'module_«appName.formatForDB»_js') + '" /> '
                          + Zikula.__('Delete node', 'module_«appName.formatForDB»_js'),
                     callback: function () {
                         var confirmQuestion;
@@ -109,7 +109,7 @@ class TreeFunctions {
                     }
                 });
                 contextMenu.addItem({
-                    label: '<img src="/images/icons/extrasmall/14_layer_raiselayer.png" width="16" height="16" alt="' + Zikula.__('Move up', 'module_«appName.formatForDB»_js') + '" /> '
+                    label: '<img src="' + Zikula.Config.baseURL + 'images/icons/extrasmall/14_layer_raiselayer.png" width="16" height="16" alt="' + Zikula.__('Move up', 'module_«appName.formatForDB»_js') + '" /> '
                          + Zikula.__('Move up', 'module_«appName.formatForDB»_js'),
                     condition: function () {
                         return !isRoot && !liRef.hasClassName('z-tree-first'); // has previous sibling
@@ -120,7 +120,7 @@ class TreeFunctions {
                     }
                 });
                 contextMenu.addItem({
-                    label: '<img src="/images/icons/extrasmall/14_layer_lowerlayer.png" width="16" height="16" alt="' + Zikula.__('Move down', 'module_«appName.formatForDB»_js') + '" /> '
+                    label: '<img src="' + Zikula.Config.baseURL + 'images/icons/extrasmall/14_layer_lowerlayer.png" width="16" height="16" alt="' + Zikula.__('Move down', 'module_«appName.formatForDB»_js') + '" /> '
                          + Zikula.__('Move down', 'module_«appName.formatForDB»_js'),
                     condition: function () {
                         return !isRoot && !liRef.hasClassName('z-tree-last'); // has next sibling
