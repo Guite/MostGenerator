@@ -14,12 +14,14 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
+import org.zikula.modulestudio.generator.extensions.Utils
 
 class Association {
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
+    @Inject extension Utils = new Utils()
 
     FileHelper fh = new FileHelper()
 
@@ -60,9 +62,9 @@ class Association {
          * Bidirectional - «incomingMappingDescription(it, sourceName, targetName)».
          *
         «incomingMappingDetails»
-         * @ORM\«incomingMappingType»(targetEntity="«entityClass»", inversedBy="«targetName»"«additionalOptions(true)»)
+         * @ORM\«incomingMappingType»(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»", inversedBy="«targetName»"«additionalOptions(true)»)
         «joinDetails(false)»
-         * @var «entityClass» $«sourceName».
+         * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass» $«sourceName».
          */
         protected $«sourceName»;
         «/* this last line is on purpose */»
@@ -96,9 +98,9 @@ class Association {
          «IF primaryKey»
              * @ORM\Id
          «ENDIF»
-         * @ORM\OneToOne(targetEntity="«entityClass»")
+         * @ORM\OneToOne(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»")
         «joinDetails(false)»
-         * @var «entityClass» $«sourceName».
+         * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass» $«sourceName».
          */
         protected $«sourceName»;
         «/* this last line is on purpose */»
@@ -111,8 +113,8 @@ class Association {
             /**
              * Bidirectional - «incomingMappingDescription(sourceName, targetName)».
              *
-             * @ORM\ManyToMany(targetEntity="«entityClass»", mappedBy="«targetName»"«additionalOptions(true)»)
-             * @var «entityClass»[] $«sourceName».
+             * @ORM\ManyToMany(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»", mappedBy="«targetName»"«additionalOptions(true)»)
+             * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»[] $«sourceName».
              */
             protected $«sourceName» = null;
         «ENDIF»
@@ -127,9 +129,9 @@ class Association {
         /**
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
          *
-         * @ORM\«outgoingMappingType»(targetEntity="«entityClass»"«IF bidirectional», mappedBy="«sourceName»"«ENDIF»«fetchTypeTag»«outgoingMappingAdditions»)
+         * @ORM\«outgoingMappingType»(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»"«IF bidirectional», mappedBy="«sourceName»"«ENDIF»«fetchTypeTag»«outgoingMappingAdditions»)
         «joinDetails(true)»
-         * @var «entityClass» $«targetName».
+         * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass» $«targetName».
          */
         protected $«targetName»;
         «/* this last line is on purpose */»
@@ -160,15 +162,15 @@ class Association {
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
          *
          «IF !bidirectional»
-          * @ORM\ManyToMany(targetEntity="«entityClass»"«additionalOptions(false)»)
+          * @ORM\ManyToMany(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»"«additionalOptions(false)»)
          «ELSE»
-          * @ORM\OneToMany(targetEntity="«entityClass»", mappedBy="«sourceName»"«additionalOptions(false)»«outgoingMappingAdditions»
+          * @ORM\OneToMany(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»", mappedBy="«sourceName»"«additionalOptions(false)»«outgoingMappingAdditions»
          «ENDIF»
         «joinDetails(true)»
          «IF orderBy != null && orderBy != ''»
           * @ORM\OrderBy({"«orderBy»" = "ASC"})
          «ENDIF»
-         * @var «entityClass»[] $«targetName».
+         * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»[] $«targetName».
          */
         protected $«targetName» = null;
         «/* this last line is on purpose */»
@@ -180,12 +182,12 @@ class Association {
         /**
          * «IF bidirectional»Bi«ELSE»Uni«ENDIF»directional - «outgoingMappingDescription(sourceName, targetName)».
          *
-         * @ORM\ManyToMany(targetEntity="«entityClass»"«IF bidirectional», inversedBy="«sourceName»"«ENDIF»«additionalOptions(false)»«outgoingMappingAdditions»)
+         * @ORM\ManyToMany(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»"«IF bidirectional», inversedBy="«sourceName»"«ENDIF»«additionalOptions(false)»«outgoingMappingAdditions»)
         «joinDetails(true)»
          «IF orderBy != null && orderBy != ''»
           * @ORM\OrderBy({"«orderBy»" = "ASC"})
          «ENDIF»
-         * @var «entityClass»[] $«targetName».
+         * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»[] $«targetName».
          */
         protected $«targetName» = null;
     '''
@@ -291,10 +293,10 @@ class Association {
         «val nameSingle = { (if (useTarget) target else source).name }»
         «val isMany = isManySide(useTarget)»
         «IF isMany»
-            «fh.getterAndSetterMethods(it, aliasName, entityClass, true, false, '', relationSetterCustomImpl(useTarget, aliasName))»
+            «fh.getterAndSetterMethods(it, aliasName, (if (!container.application.targets('1.3.5')) '\\') + entityClass, true, false, '', relationSetterCustomImpl(useTarget, aliasName))»
             «relationAccessorAdditions(useTarget, aliasName, nameSingle)»
         «ELSE»
-            «fh.getterAndSetterMethods(it, aliasName, entityClass, false, true, 'null', relationSetterCustomImpl(useTarget, aliasName))»
+            «fh.getterAndSetterMethods(it, aliasName, (if (!container.application.targets('1.3.5')) '\\') + entityClass, false, true, 'null', relationSetterCustomImpl(useTarget, aliasName))»
         «ENDIF»
         «IF isMany»
             «addMethod(useTarget, isMany, aliasName, nameSingle, entityClass)»
@@ -343,7 +345,7 @@ class Association {
 
     def private addMethod(JoinRelationship it, Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) '''
         /**
-         * Adds an instance of «type» to the list of «name.formatForDisplay».
+         * Adds an instance of «IF !container.application.targets('1.3.5')»\«ENDIF»«type» to the list of «name.formatForDisplay».
          *
          * @param «addParameters(useTarget, nameSingle, type)» The instance to be added to the collection.
          *
@@ -374,12 +376,12 @@ class Association {
     }
 
     def private dispatch addParameters(JoinRelationship it, Boolean useTarget, String name, String type) '''
-        «type» $«name»'''
+        «IF !container.application.targets('1.3.5')»\«ENDIF»«type» $«name»'''
     def private dispatch addParameters(OneToManyRelationship it, Boolean useTarget, String name, String type) '''
         «IF !useTarget && !source.getAggregateFields.isEmpty»
             «val targetField = source.getAggregateFields.head.getAggregateTargetField»
-            «targetField.fieldTypeAsString» $«targetField.name.formatForCode»
-        «ELSE»«type» $«name»«ENDIF»'''
+            «IF !container.application.targets('1.3.5')»\«ENDIF»«targetField.fieldTypeAsString» $«targetField.name.formatForCode»
+        «ELSE»«IF !container.application.targets('1.3.5')»\«ENDIF»«type» $«name»«ENDIF»'''
 
     def private addAssignmentDefault(JoinRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle) '''
         $this->«name»«IF selfIsMany»->add(«ELSE» = «ENDIF»$«nameSingle»«IF selfIsMany»)«ENDIF»;
@@ -421,13 +423,13 @@ class Association {
 
     def private removeMethod(JoinRelationship it, Boolean useTarget, Boolean selfIsMany, String name, String nameSingle, String type) '''
         /**
-         * Removes an instance of «type» from the list of «name.formatForDisplay».
+         * Removes an instance of «IF !container.application.targets('1.3.5')»\«ENDIF»«type» from the list of «name.formatForDisplay».
          *
-         * @param «type» $«nameSingle» The instance to be removed from the collection.
+         * @param «IF !container.application.targets('1.3.5')»\«ENDIF»«type» $«nameSingle» The instance to be removed from the collection.
          *
          * @return void
          */
-        public function remove«name.toFirstUpper»(«type» $«nameSingle»)
+        public function remove«name.toFirstUpper»(«IF !container.application.targets('1.3.5')»\«ENDIF»«type» $«nameSingle»)
         {
             «IF selfIsMany»
                 $this->«name»->removeElement($«nameSingle»);

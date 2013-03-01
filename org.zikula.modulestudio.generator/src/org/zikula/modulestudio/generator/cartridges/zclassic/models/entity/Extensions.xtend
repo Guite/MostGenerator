@@ -36,18 +36,18 @@ class Extensions {
      */
     def classExtensions(Entity it) '''
          «IF loggable»
-         * @Gedmo\Loggable(logEntryClass="«entityClassName('logEntry', false)»")
+         * @Gedmo\Loggable(logEntryClass="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('logEntry', false)»")
          «ENDIF»
          «IF softDeleteable && !container.application.targets('1.3.5')»
          * @Gedmo\SoftDeleteable(fieldName="deletedAt")
          «ENDIF»
          «IF hasTranslatableFields»
-         * @Gedmo\TranslationEntity(class="«entityClassName('translation', false)»")
+         * @Gedmo\TranslationEntity(class="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('translation', false)»")
          «ENDIF»
          «IF tree != EntityTreeType::NONE»
          * @Gedmo\Tree(type="«tree.asConstant»")
             «IF tree == EntityTreeType::CLOSURE»
-             * @Gedmo\TreeClosure(class="«entityClassName('closure', false)»")
+             * @Gedmo\TreeClosure(class="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('closure', false)»")
             «ENDIF»
          «ENDIF»
         «IF 3 < 2»dummy for indentation«ENDIF»
@@ -181,48 +181,48 @@ class Extensions {
              * Bidirectional - Many children [«name.formatForDisplay»] are linked by one parent [«name.formatForDisplay»] (OWNING SIDE).
              *
              * @Gedmo\TreeParent
-             * @ORM\ManyToOne(targetEntity="«entityClassName('', false)»", inversedBy="children")
+             * @ORM\ManyToOne(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»", inversedBy="children")
              * @ORM\JoinColumn(name="parent_id", referencedColumnName="«getPrimaryKeyFields.head.name.formatForDisplay»", onDelete="SET NULL")
-             * @var «entityClassName('', false)» $parent.
+             * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('', false)» $parent.
              */
             protected $parent;
 
             /**
              * Bidirectional - One parent [«name.formatForDisplay»] has many children [«name.formatForDisplay»] (INVERSE SIDE).
              *
-             * @ORM\OneToMany(targetEntity="«entityClassName('', false)»", mappedBy="parent")
+             * @ORM\OneToMany(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»", mappedBy="parent")
              * @ORM\OrderBy({"lft" = "ASC"})
-             * @var «entityClassName('', false)» $children.
+             * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('', false)» $children.
              */
             protected $children;
         «ENDIF»
         «IF metaData»
 
             /**
-             * @ORM\OneToOne(targetEntity="«entityClassName('metaData', false)»", 
+             * @ORM\OneToOne(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('metaData', false)»", 
              *               mappedBy="entity", cascade={"all"},
              *               orphanRemoval=true)
-             * @var «entityClassName('metaData', false)»
+             * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('metaData', false)»
              */
             protected $metadata;
         «ENDIF»
         «IF attributable»
 
             /**
-             * @ORM\OneToMany(targetEntity="«entityClassName('attribute', false)»", 
+             * @ORM\OneToMany(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('attribute', false)»", 
              *                mappedBy="entity", cascade={"all"}, 
              *                orphanRemoval=true, indexBy="name")
-             * @var «entityClassName('attribute', false)»
+             * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('attribute', false)»
              */
             protected $attributes;
         «ENDIF»
         «IF categorisable»
 
             /**
-             * @ORM\OneToMany(targetEntity="«entityClassName('category', false)»", 
+             * @ORM\OneToMany(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('category', false)»", 
              *                mappedBy="entity", cascade={"all"}, 
              *                orphanRemoval=true, indexBy="categoryRegistryId")
-             * @var «entityClassName('category', false)»
+             * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('category', false)»
              */
             protected $categories;
         «ENDIF»
@@ -278,14 +278,14 @@ class Extensions {
             «fh.getterAndSetterMethods(it, 'lvl', 'integer', false, false, '', '')»
             «fh.getterAndSetterMethods(it, 'rgt', 'integer', false, false, '', '')»
             «fh.getterAndSetterMethods(it, 'root', 'integer', false, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'parent', entityClassName('', false), false, true, 'null', '')»
+            «fh.getterAndSetterMethods(it, 'parent', (if (!container.application.targets('1.3.5')) '\\') + entityClassName('', false), false, true, 'null', '')»
             «fh.getterAndSetterMethods(it, 'children', 'array', true, false, '', '')»
         «ENDIF»
         «IF hasTranslatableFields»
             «fh.getterAndSetterMethods(it, 'locale', 'string', false, false, '', '')»
         «ENDIF»
         «IF metaData»
-            «fh.getterAndSetterMethods(it, 'metadata', entityClassName('metaData', false), false, true, 'null', '')»
+            «fh.getterAndSetterMethods(it, 'metadata', (if (!container.application.targets('1.3.5')) '\\') + entityClassName('metaData', false), false, true, 'null', '')»
         «ENDIF»
         «IF attributable»
             «fh.getterMethod(it, 'attributes', 'array', true)»
@@ -306,7 +306,7 @@ class Extensions {
                             $this->attributes[$name]->setValue($value);
                         }
                     } else {
-                        $this->attributes[$name] = new «entityClassName('attribute', false)»($name, $value, $this);
+                        $this->attributes[$name] = new «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('attribute', false)»($name, $value, $this);
                     }
                 }
         «ENDIF»
@@ -422,19 +422,19 @@ class Extensions {
         {
         «IF classType == 'metaData' || classType == 'attribute' || classType == 'category'»
             /**
-        «IF classType == 'metaData'»     * @ORM\OneToOne(targetEntity="«entityClassName('', false)»", inversedBy="metadata")
-        «ELSEIF classType == 'attribute'»     * @ORM\ManyToOne(targetEntity="«entityClassName('', false)»", inversedBy="attributes")
-        «ELSEIF classType == 'category'»     * @ORM\ManyToOne(targetEntity="«entityClassName('', false)»", inversedBy="categories")
+        «IF classType == 'metaData'»     * @ORM\OneToOne(targetEntity="«IF !app.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»", inversedBy="metadata")
+        «ELSEIF classType == 'attribute'»     * @ORM\ManyToOne(targetEntity="«IF !app.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»", inversedBy="attributes")
+        «ELSEIF classType == 'category'»     * @ORM\ManyToOne(targetEntity="«IF !app.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»", inversedBy="categories")
         «ENDIF»
              * @ORM\JoinColumn(name="entityId", referencedColumnName="«getPrimaryKeyFields.head.name.formatForCode»"«IF classType == 'metaData'», unique=true«ENDIF»)
-             * @var «entityClassName('', false)»
+             * @var «IF !app.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»
              */
             protected $entity;
 
             /**
              * Get reference to owning entity.
              *
-             * @return «entityClassName('', false)»
+             * @return «IF !app.targets('1.3.5')»\«ENDIF»«entityClassName('', false)»
              */
             public function getEntity()
             {
@@ -444,9 +444,9 @@ class Extensions {
             /**
              * Set reference to owning entity.
              *
-             * @param «entityClassName('', false)» $entity
+             * @param «IF !app.targets('1.3.5')»\«ENDIF»«entityClassName('', false)» $entity
              */
-            public function setEntity(/*«entityClassName('', false)» */$entity)
+            public function setEntity(/*«IF !app.targets('1.3.5')»\«ENDIF»«entityClassName('', false)» */$entity)
             {
                 $this->entity = $entity;
             }
@@ -501,7 +501,7 @@ class Extensions {
              *     }
              * )
         «ELSEIF classType == 'metaData' || classType == 'attribute' || classType == 'category'»
-             * @ORM\Entity(repositoryClass="«repositoryClass(app, classType)»")
+             * @ORM\Entity(repositoryClass="«IF !app.targets('1.3.5')»\«ENDIF»«repositoryClass(app, classType)»")
                 «IF classType == 'metaData'»
                  * @ORM\Table(name="«fullEntityTableName»_metadata")
                 «ELSEIF classType == 'attribute'»
