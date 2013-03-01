@@ -314,13 +314,30 @@ class Entities {
         }
 
         /**
-         * Set/retrieve the workflow details.
+         * Sets/retrieves the workflow details.
          */
         public function initWorkflow()
         {
             $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST', FILTER_SANITIZE_STRING);
 
             «loadWorkflow»
+        }
+
+        /**
+         * Resets workflow data back to initial state.
+         * To be used after cloning an entity object.
+         */
+        public function resetWorkflow()
+        {
+            $this->setWorkflowState('initial');
+            $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»(ServiceUtil::getManager());
+            $schemaName = $workflowHelper->getWorkflowName($this['_objectType']);
+            $this['__WORKFLOW__'] = array(
+                'state' => $this['workflowState'],
+                'obj_table' => $this['_objectType'],
+                'obj_idcolumn' => '«primaryKeyFields.head.name.formatForCode»',
+                'obj_id' => 0,
+                'schemaname' => $schemaName);
         }
 
         /**
@@ -736,7 +753,12 @@ class Entities {
                     $entity->set«field.name.formatForCodeCapital»(null);
                 «ENDFOR»
                 // copy simple fields
-                «FOR field : getDerivedFields.filter(e|!e.primaryKey)»
+                $entity->set_objectType($this->get_objectType());
+                $entity->set_idFields($this->get_idFields());
+                $entity->set_hasUniqueSlug($this->get_hasUniqueSlug());
+                $entity->set_actions($this->get_actions());
+                $entity->initValidator();
+                «FOR field : getDerivedFields.filter(e|!e.primaryKey && e.name != 'workflowState')»
                     $entity->set«field.name.formatForCodeCapital»($this->get«field.name.formatForCodeCapital»());
                 «ENDFOR»
 
