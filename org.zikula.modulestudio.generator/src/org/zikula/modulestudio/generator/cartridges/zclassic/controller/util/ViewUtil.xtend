@@ -138,7 +138,9 @@ class ViewUtil {
                     «IF targets('1.3.5')»
                     $view->display($template);
                     «ELSE»
-                    return new PlainResponse($view->display($template));
+                    //return new PlainResponse($view->display($template));
+                    $view->display($template);
+                    return true;
                     «ENDIF»
                 }
                 «IF targets('1.3.5')»
@@ -150,7 +152,8 @@ class ViewUtil {
             «IF targets('1.3.5')»
             return $view->fetch($template);
             «ELSE»
-            return new Response($view->fetch($template));
+            //return new Response($view->fetch($template));
+            return $view->fetch($template);
             «ENDIF»
         }
     '''
