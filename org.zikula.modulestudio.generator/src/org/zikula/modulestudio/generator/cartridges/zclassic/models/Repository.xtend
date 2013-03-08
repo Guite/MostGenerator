@@ -848,7 +848,7 @@ class Repository {
          */
         protected function applyDefaultFilters(QueryBuilder $qb, $parameters)
         {
-            $currentModule = FormUtil::getPassedValue('module', '', 'GETPOST');
+            $currentModule = ModUtil::getName();//FormUtil::getPassedValue('module', '', 'GETPOST');
             $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
             if ($currentType == 'admin' && $currentModule == '«container.application.appName»') {
                 return $qb;
