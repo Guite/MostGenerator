@@ -536,8 +536,6 @@ class AbstractObjectSelector {
                 unset($entityData[$alias]);
             }
 
-            $entityManager = ServiceUtil::getManager()->getService('doctrine.entitymanager');
-
             // create new references
             $getter = 'get' . ucwords($alias);
             $assignMethod = ($many ? 'add' : 'set') . ucwords($alias);
@@ -551,15 +549,25 @@ class AbstractObjectSelector {
                     if (method_exists($relatedItem, $inverseAddMethod)) {
                         // call the inverse method which calls the method in $entity
                         $relatedItem->$inverseAddMethod($entity);
-                        $entityManager->persist($relatedItem);
                         continue;
                     }
                 }
                 $entity->$assignMethod($relatedItem);
-                $entityManager->persist($relatedItem);
             }
 
             return $entityData;
+        }
+
+        /**
+         * Persists related items.
+         */
+        public function persistRelatedItems()
+        {
+            $entityManager = ServiceUtil::getManager()->getService('doctrine.entitymanager');
+        
+            foreach ($this->selectedItems as $relatedItem) {
+                $entityManager->persist($relatedItem);
+            }
         }
     '''
 

@@ -1036,6 +1036,10 @@ class FormHandler {
             // assign fetched data
             $entity->merge($entityData);
 
+            // we must persist related items now (after the merge) to avoid validation errors
+            // if cascades cause the main entity becoming persisted automatically, too
+            $this->persistRelationData();
+
             // save updated entity
             $this->entityRef = $entity;
 
@@ -1079,6 +1083,27 @@ class FormHandler {
             }
 
             return $entityData;
+        }
+
+        /**
+         * Persists any related items.
+         */
+        protected function persistRelationData()
+        {
+            $this->persistRelationData_rec($view->plugins);
+        }
+
+        /**
+         * Searches for relationship plugins to persist their related items.
+         */
+        protected function persistRelationData_rec($plugins)
+        {
+            foreach ($plugins as $plugin) {
+                if ($plugin instanceof «IF app.targets('1.3.5')»«app.appName»_Form_Plugin_AbstractObjectSelector«ELSE»AbstractObjectSelector«ENDIF» && method_exists($plugin, 'persistRelatedItems')) {
+                    $plugin->persistRelatedItems();
+                }
+                $this->persistRelationData_rec($plugin->plugins);
+            }
         }
     '''
 
