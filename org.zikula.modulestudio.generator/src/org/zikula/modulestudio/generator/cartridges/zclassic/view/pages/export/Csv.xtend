@@ -40,7 +40,7 @@ class Csv {
         «FOR relation : outgoing.filter(typeof(ManyToManyRelationship))»«relation.headerLineRelation(true)»«ENDFOR»
         «val objName = name.formatForCode»
         {foreach item='«objName»' from=$items}
-            «FOR field : getDisplayFields.filter(e|e.name != 'workflowState') SEPARATOR ';'»«field.displayEntry(controller)»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{$«name.formatForCode».«geoFieldName»|formatnumber:7}"«ENDFOR»«ENDIF»«IF softDeleteable»;"{$item.deletedAt|dateformat:'datebrief'}"«ENDIF»;"{$item.workflowState|«appName.formatForDB»ObjectState:false|lower}"
+            «FOR field : getDisplayFields.filter(e|e.name != 'workflowState') SEPARATOR ';'»«field.displayEntry(controller)»«ENDFOR»«IF geographical»«FOR geoFieldName : newArrayList('latitude', 'longitude')»;"{$«name.formatForCode».«geoFieldName»|«appName.formatForDB»FormatGeoData}"«ENDFOR»«ENDIF»«IF softDeleteable»;"{$item.deletedAt|dateformat:'datebrief'}"«ENDIF»;"{$item.workflowState|«appName.formatForDB»ObjectState:false|lower}"
             «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.displayRelatedEntry(controller, false)»«ENDFOR»
             «FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.displayRelatedEntry(controller, true)»«ENDFOR»
             «FOR relation : incoming.filter(typeof(ManyToManyRelationship)).filter(e|e.bidirectional)»«relation.displayRelatedEntries(controller, false)»«ENDFOR»

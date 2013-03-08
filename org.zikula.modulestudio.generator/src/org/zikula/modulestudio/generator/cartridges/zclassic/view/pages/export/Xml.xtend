@@ -64,7 +64,7 @@ class Xml {
             «FOR field : getDerivedFields.filter(e|!e.primaryKey && e.name != 'workflowState')»«field.displayEntry(controller)»«ENDFOR»
             «IF geographical»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
-                    <«geoFieldName»>{$item.«geoFieldName»|formatnumber:7}</«geoFieldName»>
+                    <«geoFieldName»>{$item.«geoFieldName»|«appName.formatForDB»FormatGeoData}</«geoFieldName»>
                 «ENDFOR»
             «ENDIF»
             «IF softDeleteable»
