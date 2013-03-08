@@ -833,25 +833,41 @@ class Repository {
                 }
             }
 
-            // apply default filters
+            $qb = $this->applyDefaultFilters($qb, $parameters);
+
+            return $qb;
+        }
+
+        /**
+         * Adds default filters as where clauses.
+         *
+         * @param Doctrine\ORM\QueryBuilder $qb         Query builder to be enhanced.
+         * @param array                     $parameters List of determined filter options.
+         *
+         * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
+         */
+        protected function applyDefaultFilters(QueryBuilder $qb, $parameters)
+        {
             $currentModule = FormUtil::getPassedValue('module', '', 'GETPOST');
             $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
-            if ($currentType != 'admin' || $currentModule != '«container.application.appName»') {
-                if (!in_array('workflowState', array_keys($parameters)) || empty($parameters['workflowState'])) {
-                    // per default we show approved «nameMultiple.formatForDisplay» only
-                    $onlineStates = array('approved');
-                    «IF ownerPermission»
-                        $onlyOwn = (int) FormUtil::getPassedValue('own', 0, 'GETPOST');
-                        if ($onlyOwn == 1) {
-                            // allow the owner to see his deferred «nameMultiple.formatForDisplay»
-                            $onlineStates[] = 'deferred';
-                        }
-                    «ENDIF»
-                    $qb->andWhere('tbl.workflowState IN (:onlineStates)')
-                       ->setParameter('onlineStates', DataUtil::formatForStore($onlineStates));
-                }
-                «applyDefaultDateRangeFilter»
+            if ($currentType == 'admin' && $currentModule == '«container.application.appName»') {
+                return $qb;
             }
+
+            if (!in_array('workflowState', array_keys($parameters)) || empty($parameters['workflowState'])) {
+                // per default we show approved «nameMultiple.formatForDisplay» only
+                $onlineStates = array('approved');
+                «IF ownerPermission»
+                    $onlyOwn = (int) FormUtil::getPassedValue('own', 0, 'GETPOST');
+                    if ($onlyOwn == 1) {
+                        // allow the owner to see his deferred «nameMultiple.formatForDisplay»
+                        $onlineStates[] = 'deferred';
+                    }
+                «ENDIF»
+                $qb->andWhere('tbl.workflowState IN (:onlineStates)')
+                   ->setParameter('onlineStates', DataUtil::formatForStore($onlineStates));
+            }
+            «applyDefaultDateRangeFilter»
 
             return $qb;
         }
