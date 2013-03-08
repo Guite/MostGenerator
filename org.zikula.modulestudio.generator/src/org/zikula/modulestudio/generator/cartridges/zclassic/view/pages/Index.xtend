@@ -30,7 +30,12 @@ class Index {
     def private indexView(Entity it, String pageName, Controller controller) '''
         {* purpose of this template: «nameMultiple.formatForDisplay» «pageName» view in «controller.formattedName» area *}
         «IF controller.hasActions('view')»
-        {modfunc modname='«app.appName»' type='«controller.formattedName»' func='view'}
+            «IF app.targets('1.3.5')»
+                {modfunc modname='«app.appName»' type='«controller.formattedName»' func='view'}
+            «ELSE»
+                {modfunc modname='«app.appName»' type='«controller.formattedName»' func='view' assign='response'}
+                {$response->getContent()}
+            «ENDIF»
         «ELSE»
             {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
             <p>{gt text='Welcome to the «controller.formattedName» section of the «app.appName.formatForDisplayCapital» application.'}</p>
