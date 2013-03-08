@@ -179,12 +179,10 @@ class Installer {
                 «ENDFOR»
             «ENDIF»
 
-            // create the default data
-            $this->createDefaultData();
+            $categoryRegistryIdsPerEntity = array();
             «IF hasCategorisableEntities»
 
-                // add default entries to category registry (property named Main)
-                $rootcat = CategoryUtil::getCategoryByPath('/__SYSTEM__/Modules/Global');
+                // add default entry for category registry (property named Main)
                 «IF targets('1.3.5')»
                     include_once 'modules/«appName»/lib/«appName»/Api/Base/Category.php';
                     include_once 'modules/«appName»/lib/«appName»/Api/Category.php';
@@ -194,12 +192,23 @@ class Installer {
                     include_once 'modules/«appName»/Api/CategoryApi.php';
                     $categoryApi = new \«appName»\Api\CategoryApi($this->serviceManager);
                 «ENDIF»
-
                 «FOR entity : getCategorisableEntities»
-                    $primaryRegistry = $categoryApi->getPrimaryProperty(array('ot' => '«entity.name.formatForCodeCapital»'));
-                    CategoryRegistryUtil::insertEntry($this->name, '«entity.name.formatForCodeCapital»', $primaryRegistry, $rootcat['id']);
+
+                    $registryData = array();
+                    $registryData['modname'] = $this->name;
+                    $registryData['table'] = '«entity.name.formatForCodeCapital»';
+                    $registryData['property'] = $categoryApi->getPrimaryProperty(array('ot' => '«entity.name.formatForCodeCapital»'));
+                    $registryData['category_id'] = CategoryUtil::getCategoryByPath('/__SYSTEM__/Modules/Global');
+                    $registryData['id'] = false;
+                    if (!DBUtil::insertObject($registryData, 'categories_registry')) {
+                        LogUtil::registerError($this->__f('Error! Could not create a category registry for the %s entity.', array('«entity.name.formatForDisplay»')));
+                    }
+                    $categoryRegistryIdsPerEntity['«entity.name.formatForCode»'] = $registryData['id'];
                 «ENDFOR»
             «ENDIF»
+
+            // create the default data
+            $this->createDefaultData($categoryRegistryIdsPerEntity);
 
             // register persistent event handlers
             $this->registerPersistentEventHandlers();

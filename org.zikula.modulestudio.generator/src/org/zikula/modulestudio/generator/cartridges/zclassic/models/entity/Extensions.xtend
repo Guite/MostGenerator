@@ -289,26 +289,27 @@ class Extensions {
         «ENDIF»
         «IF attributable»
             «fh.getterMethod(it, 'attributes', 'array', true)»
-                /**
-                 * Set attribute.
-                 *
-                 * @param string $name.
-                 * @param string $value.
-                 *
-                 * @return void
-                 */
-                public function setAttribute($name, $value)
-                {
-                    if(isset($this->attributes[$name])) {
-                        if($value == null) {
-                            $this->attributes->remove($name);
-                        } else {
-                            $this->attributes[$name]->setValue($value);
-                        }
+            /**
+             * Set attribute.
+             *
+             * @param string $name.
+             * @param string $value.
+             *
+             * @return void
+             */
+            public function setAttribute($name, $value)
+            {
+                if(isset($this->attributes[$name])) {
+                    if($value == null) {
+                        $this->attributes->remove($name);
                     } else {
-                        $this->attributes[$name] = new «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('attribute', false)»($name, $value, $this);
+                        $this->attributes[$name]->setValue($value);
                     }
+                } else {
+                    $this->attributes[$name] = new «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClassName('attribute', false)»($name, $value, $this);
                 }
+            }
+
         «ENDIF»
         «IF categorisable»
             «fh.getterAndSetterMethods(it, 'categories', 'array', true, false, '', '')»

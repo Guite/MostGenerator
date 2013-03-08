@@ -52,14 +52,13 @@ class ExampleData {
         /**
          * Create the default data for «appName».
          *
+         * @param array $categoryRegistryIdsPerEntity List of category registry ids.
+         *
          * @return void
          */
-        protected function createDefaultData()
+        protected function createDefaultData($categoryRegistryIdsPerEntity)
         {
-            // Ensure that tables are cleared
-            $this->entityManager->transactional(function($entityManager) {
-                «getDefaultDataSource.exampleRowImpl»
-            });
+            «getDefaultDataSource.exampleRowImpl»
         }
     '''
 
@@ -80,13 +79,14 @@ class ExampleData {
         «ELSE»
             $entityClass = '\\«app.appName»\\Entity\\«name.formatForCodeCapital»Entity';
         «ENDIF»
-        $entityManager->getRepository($entityClass)->truncateTable();
+        $this->entityManager->getRepository($entityClass)->truncateTable();
     '''
 
     def private createExampleRows(Models it) '''
         «initDateValues»
         «FOR entity : entities»«entity.initExampleObjects(application)»«ENDFOR»
         «FOR entity : entities»«entity.createExampleRows(application)»«ENDFOR»
+        «persistExampleObjects»
     '''
 
     def private initDateValues(Models it) '''
@@ -139,6 +139,10 @@ class ExampleData {
     def private createExampleRows(Entity it, Application app) '''
         «val entityName = name.formatForCode»
         «var exampleNumbers = getListForCounter(container.numExampleRows)»
+        «IF categorisable»
+            $categoryId = 41; // Business and work
+            $category = $this->entityManager->find('Zikula«IF app.targets('1.3.5')»_Doctrine2_Entity_Category«ELSE»\Core\Doctrine\Entity\CategoryEntity«ENDIF»', $categoryId);
+        «ENDIF»
         «FOR number : exampleNumbers»
             «IF isInheriting»
                 «FOR field : parentType.getFieldsForExampleData»«exampleRowAssignment(field, it, entityName, number)»«ENDFOR»
@@ -157,18 +161,61 @@ class ExampleData {
             «FOR relation : outgoing.filter(typeof(OneToOneRelationship)).filter(e|e.target.container.application == app)»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR» 
             «FOR relation : outgoing.filter(typeof(ManyToOneRelationship)).filter(e|e.target.container.application == app)»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR»
             «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional).filter(e|e.source.container.application == app)»«relation.exampleRowAssignmentIncoming(entityName, number)»«ENDFOR»
+            «IF categorisable»
+                // create category assignment
+                $«entityName»«number»->getCategories()->add(new \«app.appName»«IF app.targets('1.3.5')»_Entity_«name.formatForCodeCapital»Category«ELSE»\Entity\«name.formatForCodeCapital»CategoryEntity«ENDIF»($categoryRegistryIdsPerEntity['«name.formatForCode»'], $category, $«entityName»«number»));
+            «ENDIF»
+            «IF attributable»
+                // create example attributes
+                $«entityName»«number»->setAttribute('field1', 'first value');
+                $«entityName»«number»->setAttribute('field2', 'second value');
+                $«entityName»«number»->setAttribute('field3', 'third value');
+            «ENDIF»
+            «IF metaData»
+                // create meta data assignment
+                «IF app.targets('1.3.5')»
+                    $metaDataEntityClass = $this->name . '_Entity_«name.formatForCodeCapital»MetaData';
+                «ELSE»
+                    $metaDataEntityClass = '\\' . $this->name . '\\Entity\\«name.formatForCodeCapital»MetaDataEntity';
+                «ENDIF»
+                $metaData = new $metaDataEntityClass($entity);
+
+                $metaData->setTitle($this->__('Example title'));
+                $metaData->setAuthor($this->__('Example author'));
+                $metaData->setSubject($this->__('Example subject'));
+                $metaData->setKeywords($this->__('Example keywords, one, two, three'));
+                $metaData->setDescription($this->__('Example description'));
+                $metaData->setPublisher($this->__('Example publisher'));
+                $metaData->setContributor($this->__('Example contributor'));
+                $metaData->setPublisher($this->__('Example publisher'));
+                $metaData->setPublisher($this->__('Example publisher'));
+                $metaData->setPublisher($this->__('Example publisher'));
+                $metaData->setPublisher($this->__('Example publisher'));
+
+                $«entityName»«number»->setMetadata($metaData);
+            «ENDIF»
         «ENDFOR»
-        «persistExampleObjects(app)»
         «IF tree != EntityTreeType::NONE»
             $treeCounterRoot++;
         «ENDIF»
         «/* this last line is on purpose */»
     '''
 
-    def private persistExampleObjects(Entity it, Application app) '''
+    def private persistExampleObjects(Models it) '''
+        // execute the workflow action for each entity
+        $action = 'submit';
+        $workflowHelper = new «IF application.targets('1.3.5')»«application.appName»_Util_Workflow«ELSE»\«application.appName»\Util\WorkflowUtil«ENDIF»($this->serviceManager);
+        try {
+            «FOR entity : entities»«entity.persistEntities(application)»«ENDFOR»
+        } catch(\Exception $e) {
+            LogUtil::registerError($this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
+        }
+    '''
+
+    def private persistEntities(Entity it, Application app) '''
         «var exampleNumbers = getListForCounter(container.numExampleRows)»
         «FOR number : exampleNumbers»
-            $entityManager->persist($«name.formatForCode»«number»);
+            $success = $workflowHelper->executeAction($«name.formatForCode»«number», $action);
         «ENDFOR»
     '''
 
