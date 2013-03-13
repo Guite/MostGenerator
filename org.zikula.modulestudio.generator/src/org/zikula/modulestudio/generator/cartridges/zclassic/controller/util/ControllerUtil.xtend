@@ -73,6 +73,8 @@ class ControllerUtil {
 
                 «getFileBaseFolder»
 
+                «checkAndCreateAllUploadFolders»
+
                 «checkAndCreateUploadFolder»
             «ENDIF»
             «IF hasGeographical»
@@ -246,6 +248,30 @@ class ControllerUtil {
                 $result .= '/';
             }
 
+            if (!is_dir($result)) {
+                $this->checkAndCreateAllUploadFolders();
+            }
+
+            return $result;
+        }
+    '''
+
+    def private checkAndCreateAllUploadFolders(Application it) '''
+        /**
+         * Creates all required upload folders for this application.
+         *
+         * @return Boolean whether everything went okay or not.
+         */
+        public function checkAndCreateAllUploadFolders()
+        {
+            $result = true;
+            «FOR uploadEntity : getUploadEntities»
+
+                «FOR uploadField : uploadEntity.getUploadFieldsEntity»
+                    $result &= $this->checkAndCreateUploadFolder('«uploadField.entity.name.formatForCode»', '«uploadField.name.formatForCode»', '«uploadField.allowedExtensions»');
+                «ENDFOR»
+            «ENDFOR»
+
             return $result;
         }
     '''
@@ -260,7 +286,7 @@ class ControllerUtil {
          *
          * @return Boolean whether everything went okay or not.
          */
-        public function checkAndCreateUploadFolder($objectType, $fieldName, $allowedExtensions = '')
+        protected function checkAndCreateUploadFolder($objectType, $fieldName, $allowedExtensions = '')
         {
             $uploadPath = $this->getFileBaseFolder($objectType, $fieldName);
 

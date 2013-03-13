@@ -230,14 +230,7 @@ class Installer {
             // Check if upload directories exist and if needed create them
             try {
                 $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
-                «FOR uploadEntity : getUploadEntities»
-                «FOR uploadField : uploadEntity.getUploadFieldsEntity»
-                    $result = $controllerHelper->checkAndCreateUploadFolder('«uploadField.entity.name.formatForCode»', '«uploadField.name.formatForCode»', '«uploadField.allowedExtensions»');
-                    «/*if (!$result) {
-                        return false;
-                    }*/»
-                «ENDFOR»
-                «ENDFOR»
+                $controllerHelper->checkAndCreateAllUploadFolders();
             } catch (\Exception $e) {
                 return LogUtil::registerError($e->getMessage());
             }

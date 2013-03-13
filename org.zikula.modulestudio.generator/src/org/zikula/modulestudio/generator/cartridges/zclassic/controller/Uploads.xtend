@@ -201,7 +201,7 @@ class Uploads {
             // retrieve the final file name
             try {
                 $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 return LogUtil::registerError($e->getMessage());
             }
             $fileName = $this->determineFileName($objectType, $fieldName, $basePath, $fileName, $extension);
