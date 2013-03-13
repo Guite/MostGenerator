@@ -240,7 +240,13 @@ class ControllerUtil {
                 «ENDFOR»
             }
 
-            return DataUtil::formatForOS($basePath);
+            $result = DataUtil::formatForOS($basePath);
+            if (substr($result, -1, 1) != '/') {
+                // reappend the removed slash
+                $result .= '/';
+            }
+
+            return $result;
         }
     '''
 
