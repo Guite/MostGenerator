@@ -168,7 +168,7 @@ class ExternalView {
                             {gt text='All' assign='lblDefault'}
                             {nocache}
                             {foreach key='propertyName' item='propertyId' from=$properties}
-                                <div class="z-formrow">
+                                <div class="z-formrow categoryselector">
                                     {modapifunc modname='«app.appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$propertyName assign='hasMultiSelection'}
                                     {gt text='Category' assign='categoryLabel'}
                                     {assign var='categorySelectorId' value='catid'}
