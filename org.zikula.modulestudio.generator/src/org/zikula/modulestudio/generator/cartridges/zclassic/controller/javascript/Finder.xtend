@@ -72,7 +72,7 @@ class Finder {
         «name.formatForDB».finder = {};
 
         «name.formatForDB».finder.onLoad = function (baseId, selectedId) {
-            $$('div.categoryselector select').invoke('observe', 'change', ejubamaterials.finder.onParamChanged);
+            $$('div.categoryselector select').invoke('observe', 'change', «name.formatForDB».finder.onParamChanged);
             $('«appName»_sort').observe('change', «name.formatForDB».finder.onParamChanged);
             $('«appName»_sortdir').observe('change', «name.formatForDB».finder.onParamChanged);
             $('«appName»_pagesize').observe('change', «name.formatForDB».finder.onParamChanged);
