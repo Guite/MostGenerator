@@ -528,7 +528,7 @@ class Uploads {
             // determine file system information
             try {
                 $basePath = $controllerHelper->getFileBaseFolder($objectType, $fieldName);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 LogUtil::registerError($e->getMessage());
                 return $objectData;
             }
