@@ -36,7 +36,7 @@ class Scribite {
 
         //fsa.generateFile(docPath + 'NicEdit/vendor/nicedit/index.html', msUrl)
 
-        pluginPath = docPath + 'TinyMce/vendor/tiny_mce/plugins/' + name.formatForDB + '/'
+        pluginPath = docPath + (if (targets('1.3.5')) 'TineMCE' else 'TinyMce') + '/vendor/tiny_mce/plugins/' + name.formatForDB + '/'
         fsa.generateFile(pluginPath + 'editor_plugin.js', tinyPlugin)
         fsa.generateFile(pluginPath + 'langs/de.js', tinyLangDe)
         fsa.generateFile(pluginPath + 'langs/en.js', tinyLangEn)
@@ -47,7 +47,7 @@ class Scribite {
 
         //fsa.generateFile(docPath + 'Wysihtml5/javascript/index.html', msUrl)
 
-        pluginPath = docPath + 'Xinha/vendor/xinha/plugins/' + appName + '/'
+        pluginPath = docPath + 'Xinha/' + (if (targets('1.3.5')) 'plugins' else 'vendor') + '/xinha/plugins/' + appName + '/'
         fsa.generateFile(pluginPath + appName + '.js', xinhaPlugin)
 
         //fsa.generateFile(docPath + 'YUI/index.html', msUrl)
