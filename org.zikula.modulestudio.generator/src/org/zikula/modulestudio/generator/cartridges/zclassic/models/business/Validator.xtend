@@ -557,7 +557,7 @@ class Validator {
          * This is the concrete validation class for «name.formatForDisplay» entities.
          */
         «IF app.targets('1.3.5')»
-        class «app.appName»_Entity_Validator_«name.formatForCodeCapital» extends «IF isInheriting»«app.appName»_Entity_Validator_«parentType.name.formatForDisplayCapital»«ELSE»«app.appName»_Entity_Validator_Base_«name.formatForDisplayCapital»«ENDIF»
+        class «app.appName»_Entity_Validator_«name.formatForCodeCapital» extends «IF isInheriting»«app.appName»_Entity_Validator_«parentType.name.formatForCodeCapital»«ELSE»«app.appName»_Entity_Validator_Base_«name.formatForCodeCapital»«ENDIF»
         «ELSE»
         class «name.formatForCodeCapital»Validator extends «IF isInheriting»\«app.appName»\Entity\Validator\«parentType.name.formatForCodeCapital»Validator«ELSE»Base\«name.formatForCodeCapital»Validator«ENDIF»
         «ENDIF»
