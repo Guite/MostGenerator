@@ -132,20 +132,20 @@ class Validation {
          */
         function «prefix»AddCommonValidationRules(objectType, id) {
             Validation.addAllThese([
-                ['validate-nospace', Zikula.__('No spaces', 'module_«appName»'), function(val, elem) {
+                ['validate-nospace', Zikula.__('No spaces', 'module_«appName.formatForDB»_js'), function(val, elem) {
                     var valStr;
                     valStr = new String(val);
                     return (valStr.indexOf(' ') === -1);
                 }],
                 «IF hasColourFields»
-                ['validate-htmlcolour', Zikula.__('Please select a valid html colour code.', 'module_«appName»'), function(val, elem) {
+                ['validate-htmlcolour', Zikula.__('Please select a valid html colour code.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                     var valStr;
                     valStr = new String(val);
                     return Validation.get('IsEmpty').test(val) || (/^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(valStr));
                 }],
                 «ENDIF»
                 «IF hasUploads»
-                ['validate-upload', Zikula.__('Please select a valid file extension.', 'module_«appName»'), function(val, elem) {
+                ['validate-upload', Zikula.__('Please select a valid file extension.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                     var allowedExtensions;
                     if (val === '') {
                         return true;
@@ -160,7 +160,7 @@ class Validation {
                 «val datetimeFields = getAllEntityFields.filter(typeof(DatetimeField))»
                 «IF !datetimeFields.isEmpty»
                     «IF datetimeFields.exists(e|e.past)»
-                        ['validate-datetime-past', Zikula.__('Please select a value in the past.', 'module_«appName»'), function(val, elem) {
+                        ['validate-datetime-past', Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var valStr, cmpVal;
                             valStr = new String(val);
                             cmpVal = «prefix»ReadDate(valStr, true);
@@ -168,7 +168,7 @@ class Validation {
                         }],
                     «ENDIF»
                     «IF datetimeFields.exists(e|e.future)»
-                        ['validate-datetime-future', Zikula.__('Please select a value in the future.', 'module_«appName»'), function(val, elem) {
+                        ['validate-datetime-future', Zikula.__('Please select a value in the future.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var valStr, cmpVal;
                             valStr = new String(val);
                             cmpVal = «prefix»ReadDate(valStr, true);
@@ -179,7 +179,7 @@ class Validation {
                 «val dateFields = getAllEntityFields.filter(typeof(DateField))»
                 «IF !dateFields.isEmpty»
                     «IF dateFields.exists(e|e.past)»
-                        ['validate-date-past', Zikula.__('Please select a value in the past.', 'module_«appName»'), function(val, elem) {
+                        ['validate-date-past', Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var valStr, cmpVal;
                             valStr = new String(val);
                             cmpVal = «prefix»ReadDate(valStr, false);
@@ -187,7 +187,7 @@ class Validation {
                         }],
                     «ENDIF»
                     «IF dateFields.exists(e|e.future)»
-                        ['validate-date-future', Zikula.__('Please select a value in the future.', 'module_«appName»'), function(val, elem) {
+                        ['validate-date-future', Zikula.__('Please select a value in the future.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var valStr, cmpVal;
                             valStr = new String(val);
                             cmpVal = «prefix»ReadDate(valStr, false);
@@ -198,14 +198,14 @@ class Validation {
                 «val timeFields = getAllEntityFields.filter(typeof(TimeField))»
                 «IF !timeFields.isEmpty»
                     «IF timeFields.exists(e|e.past)»
-                        ['validate-time-past', Zikula.__('Please select a value in the past.', 'module_«appName»'), function(val, elem) {
+                        ['validate-time-past', Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var cmpVal;
                             cmpVal = new String(val);
                             return Validation.get('IsEmpty').test(val) || (cmpVal < «prefix»Today('time'));
                         }],
                     «ENDIF»
                     «IF timeFields.exists(e|e.future)»
-                        ['validate-time-future', Zikula.__('Please select a value in the future.', 'module_«appName»'), function(val, elem) {
+                        ['validate-time-future', Zikula.__('Please select a value in the future.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var cmpVal;
                             cmpVal = new String(val);
                             return Validation.get('IsEmpty').test(val) || (cmpVal >= «prefix()»Today('time'));
@@ -219,7 +219,7 @@ class Validation {
                         «val validateClass = 'validate-daterange-' + entity.name.formatForDB»
                         «val startFieldName = startDateField.name.formatForCode»
                         «val endFieldName = endDateField.name.formatForCode»
-                        ['«validateClass»', Zikula.__('The start must be before the end.', 'module_«appName»'), function(val, elem) {
+                        ['«validateClass»', Zikula.__('The start must be before the end.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var cmpVal, cmpVal2, result;
 
                             cmpVal = «prefix»ReadDate($F('«startFieldName»'), «(startDateField instanceof DatetimeField).displayBool»);
@@ -237,7 +237,7 @@ class Validation {
                     «ENDIF»
                 «ENDFOR»
                 «IF getAllEntities.exists(e|e.getUniqueDerivedFields.filter(f|!f.primaryKey).size > 0)»
-                ['validate-unique', Zikula.__('This value is already assigned, but must be unique. Please change it.', 'module_«appName»'), function(val, elem) {
+                ['validate-unique', Zikula.__('This value is already assigned, but must be unique. Please change it.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                     return «prefix»UniqueCheck('«name.formatForCode»', val, elem, id);
                 }]
                 «ENDIF»
