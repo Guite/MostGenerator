@@ -208,13 +208,14 @@ class ControllerUtil {
         /**
          * Retrieve the base path for given object type and upload field combination.
          *
-         * @param string $objectType Name of treated entity type.
-         * @param string $fieldName  Name of upload field.
+         * @param string  $objectType   Name of treated entity type.
+         * @param string  $fieldName    Name of upload field.
+         * @param boolean $ignoreCreate Whether to ignore the creation of upload folders on demand or not.
          *
          * @return mixed Output.
          * @throws Exception if invalid object type is given.
          */
-        public function getFileBaseFolder($objectType, $fieldName)
+        public function getFileBaseFolder($objectType, $fieldName, $ignoreCreate = false)
         {
             if (!in_array($objectType, $this->getObjectTypes())) {
                 throw new Exception('Error! Invalid object type received.');
@@ -248,7 +249,7 @@ class ControllerUtil {
                 $result .= '/';
             }
 
-            if (!is_dir($result)) {
+            if (!is_dir($result) && !$ignoreCreate) {
                 $this->checkAndCreateAllUploadFolders();
             }
 
@@ -288,7 +289,7 @@ class ControllerUtil {
          */
         protected function checkAndCreateUploadFolder($objectType, $fieldName, $allowedExtensions = '')
         {
-            $uploadPath = $this->getFileBaseFolder($objectType, $fieldName);
+            $uploadPath = $this->getFileBaseFolder($objectType, $fieldName, true);
 
             // Check if directory exist and try to create it if needed
             if (!is_dir($uploadPath) && !FileUtil::mkdirs($uploadPath, 0777)) {
