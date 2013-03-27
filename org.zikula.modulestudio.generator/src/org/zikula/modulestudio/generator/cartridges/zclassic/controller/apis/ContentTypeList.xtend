@@ -329,7 +329,7 @@ class ContentTypeList {
                 return $this->view->fetch($template);
             }
 
-            $resultsPerPage = (($this->amount) ? $this->amount : 1);
+            $resultsPerPage = (isset($this->amount) ? $this->amount : 1);
 
             // get objects from database
             $selectionArgs = array(
