@@ -145,7 +145,9 @@ class ControllerAction {
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
             }
-            «permissionCheck("' . ucwords($objectType) . '", '')»
+            if (!isset($args['skipPermissionCheck']) || $args['skipPermissionCheck'] != 1) {
+                «permissionCheck("' . ucwords($objectType) . '", '')»
+            }
         «ENDIF»
         «actionImplBody»
     '''
@@ -375,7 +377,9 @@ class ControllerAction {
 
         «controller.prepareDisplayPermissionCheck»
 
-        «permissionCheck("' . ucwords($objectType) . '", "$instanceId . ")»
+        if (!isset($args['skipPermissionCheck']) || $args['skipPermissionCheck'] != 1) {
+            «permissionCheck("' . ucwords($objectType) . '", "$instanceId . ")»
+        }
 
         «controller.processDisplayOutput»
     '''
