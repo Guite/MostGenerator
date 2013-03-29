@@ -41,26 +41,13 @@
 
    <requires>
       <import plugin="de.guite.modulestudio.metamodel" version="1.0.1" match="greaterOrEqual"/>
+      <import plugin="de.guite.modulestudio.mostdsl.ui" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.apache.ant" version="1.8.3" match="greaterOrEqual"/>
       <import plugin="org.apache.commons.cli" version="1.2.0" match="greaterOrEqual"/>
       <import plugin="org.apache.commons.logging" version="1.0.4" match="greaterOrEqual"/>
       <import plugin="org.apache.log4j" version="1.2.15" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.8.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.mwe2.launch" version="2.3.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.datatools.enablement.oda.ecore" version="1.0.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.gmf.runtime.diagram.ui" version="1.6.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.gmf.runtime.diagram.ui.render" version="1.6.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtend2.lib" version="2.3.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtext" version="2.3.1" match="greaterOrEqual"/>
-      <import plugin="org.hamcrest.core" version="1.1.0" match="greaterOrEqual"/>
-      <import plugin="org.junit" version="4.10.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.resources" version="3.8.1" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.datatools.connectivity.oda.consumer" version="3.2.5" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.datatools.connectivity.oda.profile" version="3.2.8" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.query.ocl" version="2.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ocl.ecore" version="3.2.0" match="greaterOrEqual"/>
-      <import plugin="com.ibm.icu" version="4.4.2" match="greaterOrEqual"/>
-      <import plugin="de.guite.modulestudio.mostdsl.ui" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.birt.chart.engine" version="4.2.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.birt.chart.device.extension" version="4.2.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.birt.chart.device.pdf" version="4.2.2" match="greaterOrEqual"/>
@@ -76,11 +63,24 @@
       <import plugin="org.eclipse.birt.report.engine.emitter.pdf" version="4.2.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.birt.report.engine.script.javascript" version="4.2.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.birt.report.item.crosstab.core" version="4.2.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.datatools.enablement.oda.ecore" version="1.0.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.gmf.runtime.diagram.ui" version="1.6.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.gmf.runtime.diagram.ui.render" version="1.6.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jface.text" version="3.8.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ui" version="3.104.0" match="greaterOrEqual"/>
+      <import plugin="org.hamcrest.core" version="1.1.0" match="greaterOrEqual"/>
+      <import plugin="org.junit" version="4.10.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources" version="3.8.1" match="greaterOrEqual"/>
       <import plugin="org.eclipse.datatools.connectivity.oda" version="3.3.4" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.datatools.connectivity.oda.consumer" version="3.2.5" match="greaterOrEqual"/>
       <import plugin="org.eclipse.datatools.connectivity.oda.design" version="3.3.6" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.datatools.connectivity.oda.profile" version="3.2.8" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.ecore.xmi" version="2.8.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.query.ocl" version="2.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ocl.ecore" version="3.2.0" match="greaterOrEqual"/>
+      <import plugin="com.ibm.icu" version="4.4.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtend2.lib" version="2.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext" version="2.4.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
