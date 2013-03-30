@@ -40,31 +40,37 @@ public class WorkflowSettings {
     /**
      * The model path.
      */
+    @Property
     String modelPath = null
 
     /**
      * Reference to current diagram.
      */
+    @Property
     Diagram diagram = null
 
     /**
      * Name of the application instance described by the model.
      */
+    @Property
     String appName = ''
 
     /**
      * Version of the application instance described by the model.
      */
+    @Property
     String appVersion = ''
 
     /**
      * Preference hint for reporting.
      */
+    @Property
     PreferencesHint diagramPreferencesHint = null
 
     /**
      * The progress monitor.
      */
+    @Property
     IProgressMonitor progressMonitor = null
 
     /**
@@ -75,11 +81,13 @@ public class WorkflowSettings {
     /**
      * List of selected reports.
      */
+    @Property
     Object[] selectedReports = null
 
     /**
      * Path containing the report files.
      */
+    @Property
     String reportPath = '/org/zikula/modulestudio/generator/cartridges/reporting/reports'; //$NON-NLS-1$
 
     /**
@@ -135,15 +143,6 @@ public class WorkflowSettings {
     }
 
     /**
-     * Returns the progress monitor.
-     * 
-     * @return {@link IProgressMonitor} The progress monitor instance.
-     */
-    def getProgressMonitor() {
-        progressMonitor
-    }
-
-    /**
      * Returns the list of available cartridges.
      * 
      * @return Cartridge list.
@@ -171,56 +170,6 @@ public class WorkflowSettings {
     }
 
     /**
-     * Sets the application name.
-     * 
-     * @param name
-     *            The given name.
-     */
-    def setAppName(String name) {
-        appName = name
-    }
-
-    /**
-     * Sets the application version.
-     * 
-     * @param version
-     *            The given version.
-     */
-    def setAppVersion(String version) {
-        appVersion = version
-    }
-
-    /**
-     * Sets the diagram instance.
-     * 
-     * @param d
-     *            The given diagram.
-     */
-    def setDiagram(Diagram d) {
-        diagram = d
-    }
-
-    /**
-     * Sets the diagram preferences hint for reporting.
-     * 
-     * @param hint
-     *            The given diagram preferences hint.
-     */
-    def setDiagramPreferencesHint(PreferencesHint hint) {
-        diagramPreferencesHint = hint
-    }
-
-    /**
-     * Sets the progress monitor.
-     * 
-     * @param monitor
-     *            The given progress monitor instance.
-     */
-    def setProgressMonitor(IProgressMonitor monitor) {
-        progressMonitor = monitor
-    }
-
-    /**
      * Sets the output path.
      * 
      * @param path
@@ -229,16 +178,6 @@ public class WorkflowSettings {
     def setOutputPath(String path) {
         outputPath = path
         outputDir = new File(path)
-    }
-
-    /**
-     * Sets the model path.
-     * 
-     * @param path
-     *            The given path string.
-     */
-    def setModelPath(String path) {
-        modelPath = path
     }
 
     /**
@@ -255,16 +194,6 @@ public class WorkflowSettings {
     }
 
     /**
-     * Sets the list of selected reports.
-     * 
-     * @param reports
-     *            The given report list.
-     */
-    def setSelectedReports(Object[] reports) {
-        selectedReports = reports
-    }
-
-    /**
      * Returns the output directory.
      * 
      * @return the outputDir
@@ -274,74 +203,11 @@ public class WorkflowSettings {
     }
 
     /**
-     * Returns the report path.
-     * 
-     * @return the reportPath
-     */
-    def getReportPath() {
-        reportPath
-    }
-
-    /**
      * Returns the output path.
      * 
      * @return the outputPath
      */
     def getOutputPath() {
         outputPath
-    }
-
-    /**
-     * Returns the model path.
-     * 
-     * @return the modelPath
-     */
-    def getModelPath() {
-        modelPath
-    }
-
-    /**
-     * Returns the diagram reference.
-     * 
-     * @return the diagram
-     */
-    def getDiagram() {
-        diagram
-    }
-
-    /**
-     * Returns the application name.
-     * 
-     * @return the name
-     */
-    def getAppName() {
-        appName
-    }
-
-    /**
-     * Returns the application version.
-     * 
-     * @return the version
-     */
-    def getAppVersion() {
-        appVersion
-    }
-
-    /**
-     * Returns the diagram preferences hint for reporting.
-     * 
-     * @return the diagramPreferencesHint
-     */
-    def getDiagramPreferencesHint() {
-        diagramPreferencesHint
-    }
-
-    /**
-     * Returns the list of selected reports.
-     * 
-     * @return the report list
-     */
-    def getSelectedReports() {
-        selectedReports
     }
 }
