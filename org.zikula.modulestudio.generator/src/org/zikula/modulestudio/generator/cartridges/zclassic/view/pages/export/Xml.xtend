@@ -107,7 +107,7 @@ class Xml {
         «val linkEntity = (if (useTarget) target else source)»
         «val relObjName = 'item.' + relationAliasName»
         «val leadingField = linkEntity.getLeadingField»
-        «IF leadingField != null»
+        «IF leadingField !== null»
             <«relationAliasName.toFirstLower»>{if isset($«relObjName») && $«relObjName» ne null}{$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:''}{/if}</«relationAliasName.toFirstLower»>
         «ELSE»
             «linkEntity.name.formatForDisplay»
@@ -119,7 +119,7 @@ class Xml {
         «val linkEntity = (if (useTarget) target else source)»
         «val relObjName = 'item.' + relationAliasName»
         «val leadingField = linkEntity.getLeadingField»
-        «IF leadingField != null»
+        «IF leadingField !== null»
             <«relationAliasName.toFirstLower»>
             {if isset($«relObjName») && $«relObjName» ne null}
                 {foreach name='relationLoop' item='relatedItem' from=$«relObjName»}

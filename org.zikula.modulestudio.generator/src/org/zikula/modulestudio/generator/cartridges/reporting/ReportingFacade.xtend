@@ -10,6 +10,7 @@ import org.eclipse.birt.report.engine.api.IReportEngineFactory
 import org.eclipse.birt.report.engine.api.IRunAndRenderTask
 import org.eclipse.birt.report.engine.api.RenderOption
 import org.eclipse.birt.report.engine.api.ReportEngine
+import org.eclipse.birt.report.engine.api.EngineException
 
 /**
  * Facade class for the reporting cartridge.
@@ -96,7 +97,7 @@ public class ReportingFacade {
      * @param fileExtension
      *            Desired file format.
      */
-    def private singleExport(String reportPath, String outputName, String fileExtension) {
+    def private singleExport(String reportPath, String outputName, String fileExtension) throws EngineException {
         task = engine.createRunAndRenderTask(engine.openReportDesign(reportPath))
         task.setParameterValue('modelPath', //$NON-NLS-1$
                 'file:' + (modelPath)) //$NON-NLS-1$

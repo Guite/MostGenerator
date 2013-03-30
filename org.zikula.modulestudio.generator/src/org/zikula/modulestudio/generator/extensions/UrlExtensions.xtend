@@ -187,7 +187,7 @@ class UrlExtensions {
      * @param objName The name of the object variable carrying the entity object in the output
      * @return String collected url parameter string.
      */
-    def getSingleParamForCode(Iterable<DerivedField> it, String objName) {
+    def CharSequence getSingleParamForCode(Iterable<DerivedField> it, String objName) {
         if (size == 0) ''
         else ", '" + head.name.formatForCode + "' => $" + objName + "['" + head.name.formatForCode + "']"
          + getSingleParamForCode(tail, objName)
@@ -200,7 +200,7 @@ class UrlExtensions {
      * @param objName The name of the object variable carrying the entity object in the output
      * @return String collected url parameter string.
      */
-    def getSingleParamForTemplate(Iterable<DerivedField> it, String objName) {
+    def CharSequence getSingleParamForTemplate(Iterable<DerivedField> it, String objName) {
         if (size == 0) ''
         else ' ' + head.name.formatForCode + '=$' + objName + '.' + head.name.formatForCode
            + tail.getSingleParamForTemplate(objName)

@@ -237,8 +237,8 @@ class ListEntries {
     def private entryInfo(ListFieldItem it) '''
         $states[] = array('value' => '«value.replaceAll("'", "")»',
                           'text'  => $this->__('«name.formatForDisplayCapital.replaceAll("'", "")»'),
-                          'title' => «IF documentation != null && documentation != ''»$this->__('«documentation.replaceAll("'", "")»')«ELSE»''«ENDIF»,
-                          'image' => '«IF image != null && image != ''»«image».png«ENDIF»');
+                          'title' => «IF documentation !== null && documentation != ''»$this->__('«documentation.replaceAll("'", "")»')«ELSE»''«ENDIF»,
+                          'image' => '«IF image !== null && image != ''»«image».png«ENDIF»');
     '''
 
     def private entryInfoNegative(ListFieldItem it) '''

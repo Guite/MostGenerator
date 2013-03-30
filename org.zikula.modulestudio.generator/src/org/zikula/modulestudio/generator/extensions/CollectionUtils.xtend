@@ -15,7 +15,7 @@ class CollectionUtils {
     /**
      * Filters a collection excluding a certain type.
      */
-    def Iterable exclude(Iterable<?> unfiltered, Class type) {
+    def Iterable<?> exclude(Iterable<?> unfiltered, Class type) {
         val exclusionFilter = Predicates::not(Predicates::instanceOf(type))
         unfiltered.filter(exclusionFilter)
     }

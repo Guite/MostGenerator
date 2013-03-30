@@ -13,7 +13,6 @@ import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.EmailField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.EntityChangeTrackingPolicy
-import de.guite.modulestudio.metamodel.modulestudio.EntityField
 import de.guite.modulestudio.metamodel.modulestudio.EntityIdentifierStrategy
 import de.guite.modulestudio.metamodel.modulestudio.EntityIndexType
 import de.guite.modulestudio.metamodel.modulestudio.EntityLockType
@@ -62,14 +61,14 @@ class ModelExtensions {
      * Returns a list of all entity fields in this application.
      */
     def getAllEntityFields(Application it) {
-        getAllEntities.map(e|e.fields).flatten.toList as List<EntityField>
+        getAllEntities.map(e|e.fields).flatten.toList
     }
 
     /**
      * Returns a list of all entity fields in a certain model container.
      */
     def getModelEntityFields(Models it) {
-        entities.map(e|e.fields).flatten.toList as List<EntityField>
+        entities.map(e|e.fields).flatten.toList
     }
 
     /**
@@ -301,7 +300,7 @@ class ModelExtensions {
      */
     def getLeadingDisplayFields(Entity it) {
         var fields = getDisplayFields.filter(e|e.name != 'workflowState')
-        if (leadingField != null && leadingField.showLeadingFieldInTitle) {
+        if (leadingField !== null && leadingField.showLeadingFieldInTitle) {
             fields = fields.filter(e|!e.leading)
         }
         fields
@@ -419,7 +418,7 @@ class ModelExtensions {
      * Returns a list of all colour fields of this entity.
      */
     def getColourFieldsEntity(Entity it) {
-        getDerivedFields.filter(typeof(StringField)).filter(e|e.htmlcolour != null && e.htmlcolour != '')
+        getDerivedFields.filter(typeof(StringField)).filter(e|e.htmlcolour)
     }
 
     /**
@@ -525,7 +524,7 @@ class ModelExtensions {
      * Returns a list of all integer fields which are used as aggregates.
      */
     def getAggregateFields(Entity it) {
-        fields.filter(typeof(IntegerField)).filter(e|e.aggregateFor != null && e.aggregateFor != '')
+        fields.filter(typeof(IntegerField)).filter(e|e.aggregateFor !== null && e.aggregateFor != '')
     }
 
     /**
@@ -533,7 +532,7 @@ class ModelExtensions {
      * that is either the subFolderName attribute (if set) or the name otherwise.
      */
     def subFolderPathSegment(UploadField it) {
-        (if (subFolderName != null && subFolderName != '') subFolderName else name).formatForDB
+        (if (subFolderName !== null && subFolderName != '') subFolderName else name).formatForDB
     }
 
     /**
@@ -631,7 +630,7 @@ class ModelExtensions {
         newArrayList('id', name.formatForDB + 'id', name.formatForDB + '_id').contains(s)
     }
 
-    def containsDefaultIdField(Iterable<String> l, Entity entity) {
+    def boolean containsDefaultIdField(Iterable<String> l, Entity entity) {
         isDefaultIdFieldName(entity, l.head) || (l.size > 1 && containsDefaultIdField(l.tail, entity));
     }
 
@@ -687,7 +686,7 @@ class ModelExtensions {
             DateField: 'date'
             TimeField: 'time'
             FloatField: 'float'
-            default: throw new Exception('Unknown field type received.')
+            default: ''
         }
     }
 }

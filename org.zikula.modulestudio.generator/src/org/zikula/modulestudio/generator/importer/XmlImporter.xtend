@@ -4,6 +4,7 @@ import com.google.inject.Injector
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
+import de.guite.modulestudio.metamodel.modulestudio.EntityIndex
 import de.guite.modulestudio.metamodel.modulestudio.ModulestudioFactory
 import de.guite.modulestudio.metamodel.modulestudio.ModulestudioPackage
 import de.guite.modulestudio.ui.internal.MostDslActivator

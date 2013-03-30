@@ -32,7 +32,7 @@ class ViewHierarchy {
         {pagesetvar name='title' value=$templateTitle}
         «controller.templateHeader»
 
-        «IF documentation != null && documentation != ''»
+        «IF documentation !== null && documentation != ''»
             <p class="sectiondesc">«documentation»</p>
         «ENDIF»
 

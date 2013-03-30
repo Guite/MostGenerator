@@ -403,7 +403,7 @@ class Entities {
                                 $this->_actions[] = array(
                                     'url' => array('type' => '«controller.formattedName»', 'func' => 'display', 'arguments' => array('ot' => '«name.formatForCode»'«modUrlPrimaryKeyParams('this', false)»«IF hasSluggableFields», 'slug' => $this->slug«ENDIF»)),
                                     'icon' => 'display',
-                                    'linkTitle' => «IF leadingField != null»str_replace('"', '', $this['«leadingField.name.formatForCode»'])«ELSE»__('Open detail page', $dom)«ENDIF»,
+                                    'linkTitle' => «IF leadingField !== null»str_replace('"', '', $this['«leadingField.name.formatForCode»'])«ELSE»__('Open detail page', $dom)«ENDIF»,
                                     'linkText' => __('Details', $dom)
                                 );
                             «ENDIF»
@@ -618,19 +618,19 @@ class Entities {
             «ENDFOR»
         «ENDIF»
         «val mandatoryFields = getDerivedFields.filter(e|e.mandatory && !e.primaryKey)»
-        «FOR mandatoryField : mandatoryFields.filter(typeof(IntegerField)).filter(e|e.defaultValue == null || e.defaultValue == '' || e.defaultValue == '0')»
+        «FOR mandatoryField : mandatoryFields.filter(typeof(IntegerField)).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue == '0')»
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(typeof(UserField)).filter(e|e.defaultValue == null || e.defaultValue == '' || e.defaultValue == '0')»
+        «FOR mandatoryField : mandatoryFields.filter(typeof(UserField)).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue == '0')»
             $this->«mandatoryField.name.formatForCode» = UserUtil::getVar('uid');
         «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(typeof(DecimalField)).filter(e|e.defaultValue == null || e.defaultValue == '' || e.defaultValue == '0')»
+        «FOR mandatoryField : mandatoryFields.filter(typeof(DecimalField)).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue == '0')»
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(typeof(AbstractDateField)).filter(e|e.defaultValue == null || e.defaultValue == '' || e.defaultValue.length == 0)»
+        «FOR mandatoryField : mandatoryFields.filter(typeof(AbstractDateField)).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue.length == 0)»
             $this->«mandatoryField.name.formatForCode» = «mandatoryField.defaultAssignment»;
         «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(typeof(FloatField)).filter(e|e.defaultValue == null || e.defaultValue == '' || e.defaultValue == '0')»
+        «FOR mandatoryField : mandatoryFields.filter(typeof(FloatField)).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue == '0')»
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
         $this->workflowState = 'initial';

@@ -3,10 +3,7 @@ package org.zikula.modulestudio.generator.extensions
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.CoreVersion
-import de.guite.modulestudio.metamodel.modulestudio.Variable
-import de.guite.modulestudio.metamodel.modulestudio.Variables
 import java.util.Date
-import java.util.List
 
 /**
  * Miscellaneous utility methods.
@@ -118,7 +115,7 @@ class Utils {
      * @return List<Variables> The selected list.
      */
     def getAllVariableContainers(Application it) {
-        models.map(e|e.variables).flatten.toList as List<Variables>
+        models.map(e|e.variables).flatten.toList
     }
 
     /**
@@ -129,7 +126,7 @@ class Utils {
      * @return List<Variable> The selected list.
      */
     def getAllVariables(Application it) {
-        getAllVariableContainers.map(e|e.vars).flatten.toList as List<Variable>
+        getAllVariableContainers.map(e|e.vars).flatten.toList
     }
 
     /**
@@ -141,7 +138,7 @@ class Utils {
      * @return String The concatenated identifier.
      */
     def templateIdWithSuffix(String name, String suffix) {
-        if (suffix != null && suffix != '')
+        if (suffix !== null && suffix != '')
             '"' + name + '`' + suffix + '`"'
         else
             "'" + name + "'"

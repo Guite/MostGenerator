@@ -40,7 +40,7 @@ class ControllerLayer {
     /**
      * Entry point for the controller creation.
      */
-    def generate(Application it, IFileSystemAccess fsa) {
+    def void generate(Application it, IFileSystemAccess fsa) {
         this.app = it
         getAllControllers.forEach(e|e.generate(fsa))
         // controller for external calls

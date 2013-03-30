@@ -86,13 +86,11 @@ class NamingExtensions {
      */
     def getRelationAliasName(JoinRelationship it, Boolean useTarget) {
         var String result
-        if (useTarget && targetAlias != null && targetAlias != '') {
+        if (useTarget && targetAlias !== null && targetAlias != '') {
             result = targetAlias
-        }
-        else if (!useTarget && sourceAlias != null && sourceAlias != '') {
+        } else if (!useTarget && sourceAlias !== null && sourceAlias != '') {
             result = sourceAlias
-        }
-        else {
+        } else {
             result = (if (useTarget) target else source).entityClassName('', false)
         }
 

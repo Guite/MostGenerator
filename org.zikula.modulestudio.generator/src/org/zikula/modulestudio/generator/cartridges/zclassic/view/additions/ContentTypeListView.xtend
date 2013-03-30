@@ -35,7 +35,7 @@ class ContentTypeListView {
         <dl>
             {foreach item='«name.formatForCode»' from=$items}
                 «val leadingField = getLeadingField»
-                «IF leadingField != null»
+                «IF leadingField !== null»
                     <dt>{$«name.formatForCode».«leadingField.name.formatForCode»}</dt>
                 «ELSE»
                     <dt>{gt text='«name.formatForDisplayCapital»'}</dt>
@@ -64,7 +64,7 @@ class ContentTypeListView {
         {* Purpose of this template: Display «nameMultiple.formatForDisplay» within an external context *}
         {foreach item='«name.formatForCode»' from=$items}
             «val leadingField = getLeadingField»
-            «IF leadingField != null»
+            «IF leadingField !== null»
                 <h3>{$«name.formatForCode».«leadingField.name.formatForCode»}</h3>
             «ELSE»
                 <h3>{gt text='«name.formatForDisplayCapital»'}</h3>

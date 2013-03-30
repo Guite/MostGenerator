@@ -154,8 +154,8 @@ class Association {
 
     def private dispatch outgoingMappingAdditions(JoinRelationship it) ''''''
     def private dispatch outgoingMappingAdditions(OneToOneRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»'''
-    def private dispatch outgoingMappingAdditions(OneToManyRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»«IF indexBy != null && indexBy != ''», indexBy="«indexBy»"«ENDIF»)'''
-    def private dispatch outgoingMappingAdditions(ManyToManyRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»«IF indexBy != null && indexBy != ''», indexBy="«indexBy»"«ENDIF»'''
+    def private dispatch outgoingMappingAdditions(OneToManyRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»«IF indexBy !== null && indexBy != ''», indexBy="«indexBy»"«ENDIF»)'''
+    def private dispatch outgoingMappingAdditions(ManyToManyRelationship it) '''«IF orphanRemoval», orphanRemoval=true«ENDIF»«IF indexBy !== null && indexBy != ''», indexBy="«indexBy»"«ENDIF»'''
 
     def private dispatch outgoing(OneToManyRelationship it, String sourceName, String targetName, String entityClass) '''
         /**
@@ -167,7 +167,7 @@ class Association {
           * @ORM\OneToMany(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»", mappedBy="«sourceName»"«additionalOptions(false)»«outgoingMappingAdditions»
          «ENDIF»
         «joinDetails(true)»
-         «IF orderBy != null && orderBy != ''»
+         «IF orderBy !== null && orderBy != ''»
           * @ORM\OrderBy({"«orderBy»" = "ASC"})
          «ENDIF»
          * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»[] $«targetName».
@@ -184,7 +184,7 @@ class Association {
          *
          * @ORM\ManyToMany(targetEntity="«IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»"«IF bidirectional», inversedBy="«sourceName»"«ENDIF»«additionalOptions(false)»«outgoingMappingAdditions»)
         «joinDetails(true)»
-         «IF orderBy != null && orderBy != ''»
+         «IF orderBy !== null && orderBy != ''»
           * @ORM\OrderBy({"«orderBy»" = "ASC"})
          «ENDIF»
          * @var «IF !container.application.targets('1.3.5')»\«ENDIF»«entityClass»[] $«targetName».
@@ -325,7 +325,7 @@ class Association {
     '''
 
     def private dispatch relationAccessorAdditions(OneToManyRelationship it, Boolean useTarget, String aliasName, String singleName) '''
-        «IF !useTarget && indexBy != null && indexBy != ''»
+        «IF !useTarget && indexBy !== null && indexBy != ''»
             /**
              * Returns an instance of «source.entityClassName('', false)» from the list of «getRelationAliasName(useTarget)» by its given «indexBy.formatForDisplay» index.
              *
@@ -390,7 +390,7 @@ class Association {
         «addAssignmentDefault(useTarget, selfIsMany, name, nameSingle)»
     '''
     def private dispatch addAssignment(OneToManyRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle) '''
-        «IF !useTarget && indexBy != null && indexBy != ''»
+        «IF !useTarget && indexBy !== null && indexBy != ''»
             $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital»()] = $«nameSingle»;
         «ELSEIF !useTarget && !source.getAggregateFields.isEmpty»
             «val sourceField = source.getAggregateFields.head»
@@ -414,7 +414,7 @@ class Association {
         «ENDIF»
     '''
     def private dispatch addAssignment(ManyToManyRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle) '''
-        «IF !useTarget && indexBy != null && indexBy != ''»
+        «IF !useTarget && indexBy !== null && indexBy != ''»
             $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital»()] = $«nameSingle»;
         «ELSE»
             «addAssignmentDefault(useTarget, selfIsMany, name, nameSingle)»

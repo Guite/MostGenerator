@@ -23,35 +23,35 @@ class ModVars {
         }
     }
 
-    def dispatch valSession2Mod(Variable it) {
+    def dispatch CharSequence valSession2Mod(Variable it) {
         switch (it) {
-            BoolVar: '''«IF value != null && value == 'true'»true«ELSE»false«ENDIF»'''
-            IntVar: '''«IF value != null && value != ''»«value»«ELSE»0«ENDIF»'''
+            BoolVar: '''«IF value !== null && value == 'true'»true«ELSE»false«ENDIF»'''
+            IntVar: '''«IF value !== null && value != ''»«value»«ELSE»0«ENDIF»'''
             ListVar: '''«IF it.multiple»array(«ENDIF»«FOR item : it.getDefaultItems SEPARATOR ', '»«item.valSession2Mod»«ENDFOR»«IF it.multiple»)«ENDIF»'''
             default: '\'' + value + '\''
         }
     }
 
-    def dispatch valSession2Mod(ListVarItem it) '''«IF it.^default == true»'«name.formatForCode»'«ENDIF»'''
+    def dispatch CharSequence valSession2Mod(ListVarItem it) '''«IF it.^default == true»'«name.formatForCode»'«ENDIF»'''
 
-    def dispatch valDirect2Mod(Variable it) {
+    def dispatch CharSequence valDirect2Mod(Variable it) {
         switch (it) {
-            BoolVar: '''«IF value != null && value == 'true'»true«ELSE»false«ENDIF»'''
-            IntVar: '''«IF value != null && value != ''»«value»«ELSE»0«ENDIF»'''
+            BoolVar: '''«IF value !== null && value == 'true'»true«ELSE»false«ENDIF»'''
+            IntVar: '''«IF value !== null && value != ''»«value»«ELSE»0«ENDIF»'''
             ListVar: '''«IF it.multiple»array(«ENDIF»«FOR item : it.getDefaultItems SEPARATOR ', '»«item.valDirect2Mod»«ENDFOR»«IF it.multiple»)«ENDIF»'''
-            default: '\'' + (if (value != null) value else '') + '\''
+            default: '\'' + (if (value !== null) value else '') + '\''
         }
     }
 
-    def dispatch valDirect2Mod(ListVarItem it) ''' '«name.formatForCode»' '''
+    def dispatch CharSequence valDirect2Mod(ListVarItem it) ''' '«name.formatForCode»' '''
 
     // for interactive installer
-    def dispatch valForm2SessionDefault(Variable it) {
+    def dispatch CharSequence valForm2SessionDefault(Variable it) {
         switch (it) {
             ListVar: '''«IF it.multiple»serialize(array(«ENDIF»«FOR item : it.getDefaultItems SEPARATOR ', '»«item.valForm2SessionDefault»«ENDFOR»«IF it.multiple»))«ENDIF»'''
             default: '\'' + value.formatForCode + '\''
         }
     }
 
-    def dispatch valForm2SessionDefault(ListVarItem it) ''' '«name.formatForCode»' '''
+    def dispatch CharSequence valForm2SessionDefault(ListVarItem it) ''' '«name.formatForCode»' '''
 }

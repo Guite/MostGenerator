@@ -53,12 +53,12 @@ class SimpleFields {
     '''
 
     def private initDocumentationToolTip(DerivedField it) '''
-        «IF documentation != null && documentation != ''»
+        «IF documentation !== null && documentation != ''»
             {gt text='«documentation.replaceAll("'", '"')»' assign='toolTip'}
         «ENDIF»
     '''
 
-    def private formLabelAdditions(DerivedField it) '''«IF documentation != null && documentation != ''» class='«entity.container.application.appName.formatForDB»FormTooltips' title=$toolTip«ENDIF»'''
+    def private formLabelAdditions(DerivedField it) '''«IF documentation !== null && documentation != ''» class='«entity.container.application.appName.formatForDB»FormTooltips' title=$toolTip«ENDIF»'''
 
     def private formLabelText(DerivedField it) {
         name.formatForDisplayCapital
@@ -189,7 +189,7 @@ class SimpleFields {
         {if $mode ne 'create'}
             {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true«validationHelper.fieldValidationCssClass(it)»}
         {else}
-            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true«IF defaultValue != null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='now'«ENDIF»«validationHelper.fieldValidationCssClass(it)»}
+            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' includeTime=true«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='now'«ENDIF»«validationHelper.fieldValidationCssClass(it)»}
         {/if}
         «/*TODO: visible=false*/»
         «IF !mandatory && nullable»
@@ -201,7 +201,7 @@ class SimpleFields {
         {if $mode ne 'create'}
             {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' useSelectionMode=true«validationHelper.fieldValidationCssClass(it)»}
         {else}
-            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' useSelectionMode=true«IF defaultValue != null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='today'«ENDIF»«validationHelper.fieldValidationCssClass(it)»}
+            {formdateinput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» __title='Enter the «name.formatForDisplay» of the «entity.name.formatForDisplay»' useSelectionMode=true«IF defaultValue !== null && defaultValue != '' && defaultValue != 'now'» defaultValue='«defaultValue»'«ELSEIF mandatory || !nullable» defaultValue='today'«ENDIF»«validationHelper.fieldValidationCssClass(it)»}
         {/if}
         «IF !mandatory && nullable»
             <p class="z-formnote"><a id="reset«name.formatForCodeCapital»Val" href="javascript:void(0);" class="z-hide">{gt text='Reset to empty value'}</a></p>

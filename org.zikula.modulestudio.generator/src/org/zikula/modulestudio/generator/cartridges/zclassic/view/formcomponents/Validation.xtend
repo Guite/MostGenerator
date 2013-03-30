@@ -91,12 +91,12 @@ class Validation {
         «ENDIF»
     '''
     def private dispatch additionalValidationMessagesDateRange(DatetimeField it, String idSuffix) '''
-        «IF entity.getStartDateField != null && entity.getEndDateField != null»
+        «IF entity.getStartDateField !== null && entity.getEndDateField !== null»
             {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-daterange-«entity.name.formatForDB»'}
         «ENDIF»
     '''
     def private dispatch additionalValidationMessagesDateRange(DateField it, String idSuffix) '''
-        «IF entity.getStartDateField != null && entity.getEndDateField != null»
+        «IF entity.getStartDateField !== null && entity.getEndDateField !== null»
             {«entity.container.application.appName.formatForDB»ValidationError id=«templateIdWithSuffix(name.formatForCode, idSuffix)» class='validate-daterange-«entity.name.formatForDB»'}
         «ENDIF»
     '''
@@ -123,6 +123,6 @@ class Validation {
 
     def private fieldValidationCssClassAdditionsDefault(AbstractDateField it) '''«IF it.past» validate-«fieldTypeAsString»-past«ELSEIF it.future» validate-«fieldTypeAsString»-future«ENDIF»'''
 
-    def private dispatch fieldValidationCssClassDateRange(DatetimeField it) '''«IF entity.getStartDateField != null && entity.getEndDateField != null» validate-daterange-«entity.name.formatForDB»«ENDIF»'''
-    def private dispatch fieldValidationCssClassDateRange(DateField it) '''«IF entity.getStartDateField != null && entity.getEndDateField != null» validate-daterange-«entity.name.formatForDB»«ENDIF»'''
+    def private dispatch fieldValidationCssClassDateRange(DatetimeField it) '''«IF entity.getStartDateField !== null && entity.getEndDateField !== null» validate-daterange-«entity.name.formatForDB»«ENDIF»'''
+    def private dispatch fieldValidationCssClassDateRange(DateField it) '''«IF entity.getStartDateField !== null && entity.getEndDateField !== null» validate-daterange-«entity.name.formatForDB»«ENDIF»'''
 }

@@ -187,7 +187,7 @@ class ModelJoinExtensions {
             OneToManyRelationship: useTarget
             ManyToOneRelationship: !useTarget
             ManyToManyRelationship: true
-            default: throw new Exception('Unknown join relationship detected.')
+            default: false
         }
     }
 
@@ -201,7 +201,7 @@ class ModelJoinExtensions {
             OneToManyRelationship: useTarget
             ManyToOneRelationship: false/*!useTarget*/
             ManyToManyRelationship: true
-            default: throw new Exception('Unknown join relationship detected.')
+            default: false
         }
     }
 
@@ -237,7 +237,7 @@ class ModelJoinExtensions {
             case RelationAutoCompletionUsage::ONLY_SOURCE_SIDE: !useTarget
             case RelationAutoCompletionUsage::ONLY_TARGET_SIDE: useTarget
             case RelationAutoCompletionUsage::BOTH_SIDES: true
-            default: throw new Exception('Unknown auto completion state detected.')
+            default: false
         }
     }
 
@@ -246,7 +246,7 @@ class ModelJoinExtensions {
      * That is true if at least one incoming relation has an indexBy field set. 
      */
     def isIndexByTarget(Entity it) {
-        !incoming.filter(e|e.getIndexByField != null && e.getIndexByField != '').isEmpty
+        !incoming.filter(e|e.getIndexByField !== null && e.getIndexByField != '').isEmpty
     }
 
     /**
@@ -262,8 +262,8 @@ class ModelJoinExtensions {
      */
     def isIndexed(Relationship it) {
         switch it {
-            OneToManyRelationship: it.indexBy != null && it.indexBy != ''
-            ManyToManyRelationship: it.indexBy != null && it.indexBy != ''
+            OneToManyRelationship: it.indexBy !== null && it.indexBy != ''
+            ManyToManyRelationship: it.indexBy !== null && it.indexBy != ''
             default: false
         }
     }

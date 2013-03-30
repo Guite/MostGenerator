@@ -84,17 +84,19 @@ public class WorkflowSettings {
 
     /**
      * The constructor.
-     * 
-     * @throws Exception
-     *             In case something goes wrong.
      */
-    new() throws Exception {
+    new() {
         availableCartridges.add('zclassic') //$NON-NLS-1$
         availableCartridges.add('reporting') //$NON-NLS-1$
         selectedCartridges.add('zclassic') //$NON-NLS-1$
         selectedCartridges.add('reporting') //$NON-NLS-1$
 
-        collectAvailableReports
+        try {
+            collectAvailableReports
+        } catch (Exception exc) {
+            // TODO Auto-generated catch block
+            exc.printStackTrace
+        }
     }
 
     /**

@@ -47,7 +47,7 @@ class Display {
         «val objName = name.formatForCode»
         «val leadingField = getLeadingField»
         {gt text='«name.formatForDisplayCapital»' assign='templateTitle'}
-        «IF leadingField != null && leadingField.showLeadingFieldInTitle»
+        «IF leadingField !== null && leadingField.showLeadingFieldInTitle»
             {assign var='templateTitle' value=$«objName».«leadingField.name.formatForCode»|default:$templateTitle}
         «ENDIF»
         {pagesetvar name='title' value=$templateTitle|@html_entity_decode}
@@ -182,23 +182,23 @@ class Display {
         {if isset($«relObjName») && $«relObjName» ne null}
           {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
           «var linkController = getLinkController(container.application, controller, linkEntity)»
-          «IF linkController != null»
+          «IF linkController !== null»
               <a href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)»}">{strip}
           «ENDIF»
             «val leadingField = linkEntity.getLeadingField»
-            «IF leadingField != null»
+            «IF leadingField !== null»
                 {$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:""}
             «ELSE»
                 {gt text='«linkEntity.name.formatForDisplayCapital»'}
             «ENDIF»
-          «IF linkController != null»
+          «IF linkController !== null»
             {/strip}</a>
             <a id="«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
             <script type="text/javascript">
             /* <![CDATA[ */
                 document.observe('dom:loaded', function() {
                     «val leadingLinkField = linkEntity.getLeadingField»
-                    «IF leadingLinkField != null»
+                    «IF leadingLinkField !== null»
                         «container.application.prefix»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$«relObjName».«leadingLinkField.name.formatForCode»|replace:"'":""}}');
                     «ELSE»
                         «container.application.prefix»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{gt text='«linkEntity.name.formatForDisplayCapital»'|replace:"'":""}}');
@@ -208,7 +208,7 @@ class Display {
             </script>
           «ENDIF»
           {else}
-        «IF leadingField != null»
+        «IF leadingField !== null»
             {$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:""}
         «ELSE»
             {gt text='«linkEntity.name.formatForDisplayCapital»'}
@@ -333,7 +333,7 @@ class Display {
                     <h4>{gt text='All parents'}</h4>
                     <ul>
                     {foreach item='node' from=$allParents}
-                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField !== null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
                     {/foreach}
                     </ul>
                 {/if}
@@ -343,7 +343,7 @@ class Display {
                 {if $directParent ne null}
                     <h4>{gt text='Direct parent'}</h4>
                     <ul>
-                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('directParent', true)»}"«IF leadingField != null» title="{$directParent.«leadingField.name.formatForCode»|replace:'"':''}">{$directParent.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('directParent', true)»}"«IF leadingField !== null» title="{$directParent.«leadingField.name.formatForCode»|replace:'"':''}">{$directParent.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
                     </ul>
                 {/if}
             {/if}
@@ -354,7 +354,7 @@ class Display {
                 <h4>{gt text='All children'}</h4>
                 <ul>
                 {foreach item='node' from=$allChildren}
-                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField !== null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
                 {/foreach}
                 </ul>
             {/if}
@@ -365,7 +365,7 @@ class Display {
                 <h4>{gt text='Direct children'}</h4>
                 <ul>
                 {foreach item='node' from=$directChildren}
-                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                    <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField !== null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
                 {/foreach}
                 </ul>
             {/if}
@@ -377,7 +377,7 @@ class Display {
                     <h4>{gt text='Predecessors'}</h4>
                     <ul>
                     {foreach item='node' from=$predecessors}
-                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField !== null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
                     {/foreach}
                     </ul>
                 {/if}
@@ -388,7 +388,7 @@ class Display {
                     <h4>{gt text='Successors'}</h4>
                     <ul>
                     {foreach item='node' from=$successors}
-                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField !== null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
                     {/foreach}
                     </ul>
                 {/if}
@@ -399,7 +399,7 @@ class Display {
                     <h4>{gt text='Siblings'}</h4>
                     <ul>
                     {foreach item='node' from=$preandsuccessors}
-                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField != null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
+                        <li><a href="{modurl modname='«appName»' type='«controller.formattedName»' «modUrlDisplay('node', true)»}"«IF leadingField !== null» title="{$node.«leadingField.name.formatForCode»|replace:'"':''}">{$node.«leadingField.name.formatForCode»}«ELSE»>{gt text='«name.formatForCodeCapital»'}«ENDIF»</a></li>
                     {/foreach}
                     </ul>
                 {/if}

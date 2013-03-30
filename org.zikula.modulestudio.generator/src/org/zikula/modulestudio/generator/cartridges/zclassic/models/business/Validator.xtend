@@ -672,7 +672,7 @@ class Validator {
     def private validationCallDateRange(Entity it) '''
         «val startDateField = getStartDateField»
         «val endDateField = getEndDateField»
-        «IF startDateField != null && endDateField != null»
+        «IF startDateField !== null && endDateField !== null»
             if ($this->entity['«startDateField.name.formatForCode»'] > $this->entity['«endDateField.name.formatForCode»']) {
                 $errorInfo['message'] = __f('Error! The start date (%1$s) must be before the end date (%2$s).', array('«startDateField.name.formatForDisplay»', '«endDateField.name.formatForDisplay»'), $dom);
                 return $errorInfo;
@@ -787,7 +787,7 @@ class Validator {
                 return $errorInfo;
             }
         «ENDIF»
-        «IF regexp != null && regexp != ''»
+        «IF regexp !== null && regexp != ''»
             if (!$this->isValidRegExp('«name.formatForCode»', '«regexp»')) {
                 $errorInfo['message'] = __f('Error! Field value must conform to regular expression [%2$s] (%1$s).', array('«name.formatForDisplay»', '«regexp»'), $dom);
                 return $errorInfo;

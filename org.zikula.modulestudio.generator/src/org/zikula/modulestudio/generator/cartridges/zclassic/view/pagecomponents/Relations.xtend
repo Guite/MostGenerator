@@ -53,7 +53,7 @@ class Relations {
                 {/if}
             «ENDIF»
             «val leadingField = getLeadingField»
-            «IF leadingField != null»
+            «IF leadingField !== null»
                 {$item.«leadingField.displayLeadingField»}
             «ELSE»
                 {gt text='«name.formatForDisplayCapital»'}
@@ -72,7 +72,7 @@ class Relations {
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     document.observe('dom:loaded', function() {
-                        «IF leadingField != null»
+                        «IF leadingField !== null»
                             «app.prefix»InitInlineWindow($('«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$item.«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{$item.«leadingField.name.formatForCode»|replace:"'":""}}');
                         «ELSE»
                             «app.prefix»InitInlineWindow($('«name.formatForCode»Item«FOR pkField : getPrimaryKeyFields SEPARATOR '_'»{{$item.«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{gt text='«name.formatForDisplayCapital»'|replace:"'":""}}');
@@ -86,7 +86,7 @@ class Relations {
                 <br />
                 «val imageFieldName = getImageFieldsEntity.head.name.formatForCode»
                 {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPath) && $item.«imageFieldName»Meta.isImage}
-                    {thumb image=$item.«imageFieldName»FullPath objectid="«name.formatForCode»«IF hasCompositeKeys»«FOR pkField : getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true «IF leadingField != null»img_alt=$item.«leadingField.name.formatForCode»«ELSE»__img_alt='«name.formatForDisplayCapital»'«ENDIF»}
+                    {thumb image=$item.«imageFieldName»FullPath objectid="«name.formatForCode»«IF hasCompositeKeys»«FOR pkField : getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true «IF leadingField !== null»img_alt=$item.«leadingField.name.formatForCode»«ELSE»__img_alt='«name.formatForDisplayCapital»'«ENDIF»}
                 {/if}
             «ENDIF»
             «IF many»

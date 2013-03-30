@@ -67,7 +67,7 @@ class View {
         {gt text='«name.formatForDisplayCapital» list' assign='templateTitle'}
         {pagesetvar name='title' value=$templateTitle}
         «controller.templateHeader»
-        «IF documentation != null && documentation != ''»
+        «IF documentation !== null && documentation != ''»
 
             <p class="sectiondesc">«documentation»</p>
         «ENDIF»
@@ -407,22 +407,22 @@ class View {
         «var relObjName = mainEntity.name.formatForCode + '.' + relationAliasName»
         {if isset($«relObjName») && $«relObjName» ne null}
             «var linkController = getLinkController(container.application, controller, linkEntity)»
-            «IF linkController != null»
+            «IF linkController !== null»
                 <a href="{modurl modname='«linkEntity.container.application.appName»' type='«linkController.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)»}">{strip}
             «ENDIF»
               «val leadingField = linkEntity.getLeadingField»
-              «IF leadingField != null»
+              «IF leadingField !== null»
                   {$«relObjName».«leadingField.name.formatForCode»«/*|nl2br*/»|default:""}
               «ELSE»
                   {gt text='«linkEntity.name.formatForDisplayCapital»'}
               «ENDIF»
-            «IF linkController != null»
+            «IF linkController !== null»
                 {/strip}</a>
                 <a id="«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{$«relObjName».«pkField.name.formatForCode»}«ENDFOR»Display" href="{modurl modname='«container.application.appName»' type='«controller.formattedName»' «linkEntity.modUrlDisplay(relObjName, true)» theme='Printer'«controller.additionalUrlParametersForQuickViewLink»}" title="{gt text='Open quick view window'}" class="z-hide">{icon type='view' size='extrasmall' __alt='Quick view'}</a>
                 <script type="text/javascript">
                 /* <![CDATA[ */
                     document.observe('dom:loaded', function() {
-                        «container.application.prefix»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{«IF leadingField != null»$«relObjName».«leadingField.name.formatForCode»«ELSE»gt text='«linkEntity.name.formatForDisplayCapital»'«ENDIF»|replace:"'":""}}');
+                        «container.application.prefix»InitInlineWindow($('«linkEntity.name.formatForCode»Item«FOR pkField : mainEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«mainEntity.name.formatForCode».«pkField.name.formatForCode»}}«ENDFOR»_rel_«FOR pkField : linkEntity.getPrimaryKeyFields SEPARATOR '_'»{{$«relObjName».«pkField.name.formatForCode»}}«ENDFOR»Display'), '{{«IF leadingField !== null»$«relObjName».«leadingField.name.formatForCode»«ELSE»gt text='«linkEntity.name.formatForDisplayCapital»'«ENDIF»|replace:"'":""}}');
                     });
                 /* ]]> */
                 </script>

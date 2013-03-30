@@ -34,9 +34,9 @@ public class WorkflowPreProcess {
         emptyDir(this.settings.getOutputDir)
     }
 
-    def private emptyDir(File dir) {
+    def private void emptyDir(File dir) {
         val files = dir.listFiles
-        if (files != null) {
+        if (files !== null) {
             for (file : files) {
                 if (file.isDirectory) {
                     emptyDir(file)

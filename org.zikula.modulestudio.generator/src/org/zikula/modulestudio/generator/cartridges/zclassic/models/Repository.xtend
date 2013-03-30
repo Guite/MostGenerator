@@ -118,7 +118,7 @@ class Repository {
             use ModUtil;
             use ServiceUtil;
             use UserUtil;
-            «IF hasArchive && getEndDateField != null»
+            «IF hasArchive && getEndDateField !== null»
                 use ZLanguage;
                 use Zikula\Core\ModUrl;
                 use Zikula\Core\Hook\ProcessHook;
@@ -166,7 +166,7 @@ class Repository {
             public function getTitleFieldName()
             {
                 «val leadingField = getLeadingField»
-                $fieldName = '«IF leadingField != null»«leadingField.name.formatForCode»«ENDIF»';
+                $fieldName = '«IF leadingField !== null»«leadingField.name.formatForCode»«ENDIF»';
 
                 return $fieldName;
             }
@@ -211,7 +211,7 @@ class Repository {
              */
             public function getStartDateFieldName()
             {
-                $fieldName = '«IF getStartDateField != null»«getStartDateField.name.formatForCode»«ELSEIF standardFields»createdDate«ENDIF»';
+                $fieldName = '«IF getStartDateField !== null»«getStartDateField.name.formatForCode»«ELSEIF standardFields»createdDate«ENDIF»';
 
                 return $fieldName;
             }
@@ -259,7 +259,7 @@ class Repository {
             «intGetQueryFromBuilder»
 
             «new Joins().generate(it, app)»
-            «IF hasArchive && getEndDateField != null»
+            «IF hasArchive && getEndDateField !== null»
 
                 «archiveObjects(it)»
             «ENDIF»
@@ -876,12 +876,12 @@ class Repository {
     def private applyDefaultDateRangeFilter(Entity it) '''
         «val startDateField = getStartDateField»
         «val endDateField = getEndDateField»
-        «IF startDateField != null»
+        «IF startDateField !== null»
             $startDate = FormUtil::getPassedValue('«startDateField.name.formatForCode»', «startDateField.defaultValueForNow», 'GET');
             $qb->andWhere('«whereClauseForDateRangeFilter('<=', startDateField, 'startDate')»')
                ->setParameter('startDate', $startDate);
         «ENDIF»
-        «IF endDateField != null»
+        «IF endDateField !== null»
             $endDate = FormUtil::getPassedValue('«endDateField.name.formatForCode»', «endDateField.defaultValueForNow», 'GET');
             $qb->andWhere('«whereClauseForDateRangeFilter('>=', endDateField, 'endDate')»')
                ->setParameter('endDate', $endDate);

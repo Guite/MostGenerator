@@ -67,7 +67,7 @@ class Config {
             «ENDIF»
         </div>
         {include file='«IF targets('1.3.5')»«configController.formatForDB»«ELSE»«configController.formatForDB.toFirstUpper»«ENDIF»/footer.tpl'}
-        «IF !getAllVariables.filter(e|e.documentation != null && e.documentation != '').isEmpty»
+        «IF !getAllVariables.filter(e|e.documentation !== null && e.documentation != '').isEmpty»
             <script type="text/javascript">
             /* <![CDATA[ */
                 document.observe('dom:loaded', function() {
@@ -85,13 +85,13 @@ class Config {
         «ENDIF»
         <fieldset>
             «IF hasMultipleConfigSections»
-                «IF documentation != null && documentation != ''»
+                «IF documentation !== null && documentation != ''»
                     <legend>{gt text='«documentation.replaceAll("'", "")»'}</legend>
                 «ELSE»
                     <legend>{gt text='«name.formatForDisplayCapital»'}</legend>
                 «ENDIF»
             «ELSE»
-                «IF documentation != null && documentation != ''»
+                «IF documentation !== null && documentation != ''»
                     <legend>{gt text='«documentation.replaceAll("'", "")»'}</legend>
                 «ELSE»
                     <legend>{gt text='Here you can manage all basic settings for this application.'}</legend>
@@ -107,10 +107,10 @@ class Config {
 
     def private formRow(Variable it) '''
         <div class="z-formrow">
-            «IF documentation != null && documentation != ""»
+            «IF documentation !== null && documentation != ""»
                 {gt text='«documentation.replaceAll("'", '"')»' assign='toolTip'}
             «ENDIF»
-            {formlabel for='«name.formatForCode»' __text='«name.formatForDisplayCapital»'«IF documentation != null && documentation != ''» class='«container.container.application.appName.formatForDB»FormTooltips' title=$toolTip«ENDIF»}
+            {formlabel for='«name.formatForCode»' __text='«name.formatForDisplayCapital»'«IF documentation !== null && documentation != ''» class='«container.container.application.appName.formatForDB»FormTooltips' title=$toolTip«ENDIF»}
             «inputField»
         </div>
     '''

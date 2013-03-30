@@ -51,7 +51,7 @@ class Atom {
         {foreach item='«objName»' from=$items}
             <entry>
                 «val leadingField = getLeadingField»
-                «IF leadingField != null»
+                «IF leadingField !== null»
                     <title type="html">{$«objName».«leadingField.name.formatForCode»|notifyfilters:'«appName.formatForDB».filterhook.«nameMultiple.formatForDB»'}</title>
                 «ELSE»
                     <title type="html">{gt text='«name.formatForCodeCapital»'}</title>
@@ -99,7 +99,7 @@ class Atom {
                     «ELSEIF !stringFields.isEmpty»
                         {$«objName».«stringFields.head.name.formatForCode»|truncate:150:"&hellip;"|default:'-'}
                     «ELSE»
-                        «IF leadingField != null»
+                        «IF leadingField !== null»
                             {$«objName».«leadingField.name.formatForCode»|truncate:150:"&hellip;"|default:'-'}
                         «ENDIF»
                     «ENDIF»
@@ -114,7 +114,7 @@ class Atom {
                     «ELSEIF stringFields.size > 1»
                         {$«objName».«stringFields.tail.head.name.formatForCode»|replace:'<br>':'<br />'}
                     «ELSE»
-                        «IF leadingField != null»
+                        «IF leadingField !== null»
                             {$«objName».«leadingField.name.formatForCode»|replace:'<br>':'<br />'}
                         «ENDIF»
                     «ENDIF»

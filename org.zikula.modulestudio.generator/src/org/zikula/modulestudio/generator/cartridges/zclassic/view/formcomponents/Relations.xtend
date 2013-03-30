@@ -188,7 +188,7 @@ class Relations {
         {assign var='idPrefixItem' value="`$idPrefix`Reference_«FOR pkField : targetEntity.getPrimaryKeyFields SEPARATOR '_'»`$item.«pkField.name.formatForCode»`«ENDFOR»"}
         <li id="{$idPrefixItem}">
             «val leadingField = targetEntity.getLeadingField»
-            «IF leadingField != null»
+            «IF leadingField !== null»
                 {$item.«leadingField.name.formatForCode»}
             «ELSE»
                 {gt text='«targetEntity.name.formatForDisplayCapital»'}
@@ -201,7 +201,7 @@ class Relations {
                 <br />
                 «val imageFieldName = targetEntity.getImageFieldsEntity.head.name.formatForCode»
                 {if $item.«imageFieldName» ne '' && isset($item.«imageFieldName»FullPath) && $item.«imageFieldName»Meta.isImage}
-                    {thumb image=$item.«imageFieldName»FullPath objectid="«targetEntity.name.formatForCode»«IF targetEntity.hasCompositeKeys»«FOR pkField : targetEntity.getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«targetEntity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true «IF leadingField != null»img_alt=$item.«leadingField.name.formatForCode»«ELSE»__img_alt='«targetEntity.name.formatForDisplayCapital»'«ENDIF»}
+                    {thumb image=$item.«imageFieldName»FullPath objectid="«targetEntity.name.formatForCode»«IF targetEntity.hasCompositeKeys»«FOR pkField : targetEntity.getPrimaryKeyFields»-`$item.«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$item.«targetEntity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$relationThumbPreset tag=true «IF leadingField !== null»img_alt=$item.«leadingField.name.formatForCode»«ELSE»__img_alt='«targetEntity.name.formatForDisplayCapital»'«ENDIF»}
                 {/if}
             «ENDIF»
         </li>

@@ -84,7 +84,7 @@ class Extensions {
 
     def private timestampableDetails(AbstractDateField it) '''
         «IF timestampable == EntityTimestampableType::CHANGE»
-            field="«timestampableChangeTriggerField.formatForCode»"«IF timestampableChangeTriggerValue != null && timestampableChangeTriggerValue != ''», value="«timestampableChangeTriggerValue.formatForCode»"«ENDIF»
+            field="«timestampableChangeTriggerField.formatForCode»"«IF timestampableChangeTriggerValue !== null && timestampableChangeTriggerValue != ''», value="«timestampableChangeTriggerValue.formatForCode»"«ENDIF»
         «ENDIF»
     '''
 

@@ -215,7 +215,7 @@ class Validation {
                 «FOR entity : getAllEntities»
                     «val startDateField = entity.getStartDateField»
                     «val endDateField = entity.getEndDateField»
-                    «IF startDateField != null && endDateField != null»
+                    «IF startDateField !== null && endDateField !== null»
                         «val validateClass = 'validate-daterange-' + entity.name.formatForDB»
                         «val startFieldName = startDateField.name.formatForCode»
                         «val endFieldName = endDateField.name.formatForCode»

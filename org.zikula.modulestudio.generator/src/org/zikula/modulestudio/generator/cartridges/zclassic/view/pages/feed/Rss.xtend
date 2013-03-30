@@ -60,7 +60,7 @@ class Rss {
         {foreach item='«objName»' from=$items}
             <item>
                 «val leadingField = getLeadingField»
-                «IF leadingField != null»
+                «IF leadingField !== null»
                     <title><![CDATA[{if isset($«objName».updatedDate) && $«objName».updatedDate ne null}{$«objName».updatedDate|dateformat} - {/if}{$«objName».«leadingField.name.formatForCode»|notifyfilters:'«appName.formatForDB».filterhook.«nameMultiple.formatForDB»'}]]></title>
                 «ELSE»
                     <title><![CDATA[{if isset($«objName».updatedDate) && $«objName».updatedDate ne null}{$«objName».updatedDate|dateformat} - {/if}{gt text='«name.formatForDisplayCapital»'}]]></title>
@@ -98,7 +98,7 @@ class Rss {
                     «ELSEIF !stringFields.isEmpty»
                         {$«objName».«stringFields.head.name.formatForCode»|replace:'<br>':'<br />'}
                     «ELSE»
-                        «IF leadingField != null»
+                        «IF leadingField !== null»
                             {$«objName».«leadingField.name.formatForCode»|replace:'<br>':'<br />'}
                         «ENDIF»
                     «ENDIF»

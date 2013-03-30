@@ -74,14 +74,14 @@ class WorkflowExtensions {
      * Determines whether any entity in the given application using a certain workflow can have the given state.
      */
     def hasWorkflowState(Application it, EntityWorkflowType wfType, String state) {
-        hasWorkflow(wfType) && !getEntitiesForWorkflow(wfType).filter(e|e.hasWorkflowState(state)).isEmpty
+        hasWorkflow(wfType) && !getEntitiesForWorkflow(wfType).filter(e|e.hasWorkflowStateEntity(state)).isEmpty
     }
 
     /**
      * Determines whether any entity in the given application can have the given state.
      */
     def hasWorkflowState(Application it, String state) {
-        !getAllEntities.filter(e|e.hasWorkflowState(state)).isEmpty
+        !getAllEntities.filter(e|e.hasWorkflowStateEntity(state)).isEmpty
     }
 
     /**
@@ -118,7 +118,7 @@ class WorkflowExtensions {
     /**
      * Determines whether the given entity has the given workflow state or not.
      */
-    def hasWorkflowState(Entity it, String state) {
+    def hasWorkflowStateEntity(Entity it, String state) {
         !getWorkflowStateItems(state).isEmpty
     }
 
