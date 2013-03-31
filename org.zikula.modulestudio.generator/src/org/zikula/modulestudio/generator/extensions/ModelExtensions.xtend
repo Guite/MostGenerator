@@ -16,6 +16,7 @@ import de.guite.modulestudio.metamodel.modulestudio.EntityChangeTrackingPolicy
 import de.guite.modulestudio.metamodel.modulestudio.EntityIdentifierStrategy
 import de.guite.modulestudio.metamodel.modulestudio.EntityIndexType
 import de.guite.modulestudio.metamodel.modulestudio.EntityLockType
+import de.guite.modulestudio.metamodel.modulestudio.EntityWorkflowType
 import de.guite.modulestudio.metamodel.modulestudio.FloatField
 import de.guite.modulestudio.metamodel.modulestudio.IntegerField
 import de.guite.modulestudio.metamodel.modulestudio.ListField
@@ -291,6 +292,9 @@ class ModelExtensions {
         var fields = getDerivedFields
         if (it.identifierStrategy != EntityIdentifierStrategy::NONE) {
             fields = fields.filter(e|!e.primaryKey)
+        }
+        if (workflow == EntityWorkflowType::NONE) {
+            fields = fields.filter(e|e.name != 'workflowState')
         }
         fields
     }
