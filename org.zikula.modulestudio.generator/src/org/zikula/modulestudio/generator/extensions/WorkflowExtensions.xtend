@@ -123,14 +123,14 @@ class WorkflowExtensions {
     }
 
     /**
-     * Determines whether the given entity has the given workflow state or not.
+     * Retrieves a certain workflow state.
      */
     def getWorkflowStateItem(Entity it, String state) {
         getWorkflowStateItems(state).head
     }
 
     /**
-     * Determines whether the given entity has the given workflow state or not.
+     * Determines a list of desired workflow states.
      */
     def private getWorkflowStateItems(Entity it, String state) {
         getWorkflowStateField.items.filter(e|e.value == state.toLowerCase)
@@ -158,5 +158,12 @@ class WorkflowExtensions {
             case 'Delete':              return 'Delete content permanently.'
         }
         return ''
+    }
+
+    /**
+     * Determines whether workflow state field should be visible for the given entity or not.
+     */
+    def hasVisibleWorkflow(Entity it) {
+        workflow != EntityWorkflowType::NONE || ownerPermission || hasTray || hasArchive || softDeleteable
     }
 }
