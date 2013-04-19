@@ -47,7 +47,6 @@
       <import plugin="org.apache.commons.logging" version="1.0.4" match="greaterOrEqual"/>
       <import plugin="org.apache.log4j" version="1.2.15" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime" version="3.8.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.mwe2.launch" version="2.3.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.birt.chart.engine" version="4.2.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.birt.chart.device.extension" version="4.2.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.birt.chart.device.pdf" version="4.2.2" match="greaterOrEqual"/>
@@ -79,8 +78,9 @@
       <import plugin="org.eclipse.emf.query.ocl" version="2.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.ocl.ecore" version="3.2.0" match="greaterOrEqual"/>
       <import plugin="com.ibm.icu" version="4.4.2" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtend2.lib" version="2.4.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtext" version="2.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.mwe2.launch" version="2.4.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtend2.lib" version="2.4.1" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.xtext" version="2.4.1" match="greaterOrEqual"/>
    </requires>
 
    <plugin
