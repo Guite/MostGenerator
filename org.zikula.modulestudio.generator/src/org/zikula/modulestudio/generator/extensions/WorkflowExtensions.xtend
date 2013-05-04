@@ -13,7 +13,7 @@ class WorkflowExtensions {
     /**
      * Extensions related to the model layer.
      */
-    @Inject extension ModelExtensions = new ModelExtensions()
+	@Inject extension ModelWorkflowExtensions = new ModelWorkflowExtensions()
 
     /**
      * Determines whether any entity in the given application uses a certain workflow type.
@@ -26,6 +26,7 @@ class WorkflowExtensions {
      * Returns all entities using the given workflow type.
      */
     def getEntitiesForWorkflow(Application it, EntityWorkflowType wfType) {
+    	println(getAllEntities)
         getAllEntities.filter(e|e.workflow == wfType)
     }
 

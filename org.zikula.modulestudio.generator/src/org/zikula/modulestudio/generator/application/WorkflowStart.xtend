@@ -9,6 +9,10 @@ import org.zikula.modulestudio.generator.exceptions.ExceptionBase
 import org.zikula.modulestudio.generator.exceptions.M2TFailedGeneratorResourceNotFound
 import org.zikula.modulestudio.generator.exceptions.M2TUnknownException
 import org.zikula.modulestudio.generator.workflow.components.ModelReader
+import org.eclipse.emf.ecore.resource.Resource
+import org.eclipse.emf.ecore.util.Diagnostician
+import org.eclipse.emf.common.util.Diagnostic
+import de.guite.modulestudio.metamodel.modulestudio.Application
 
 /**
  * Main entry point for the workflow.
@@ -18,6 +22,36 @@ class WorkflowStart {
     private String currentCartridge = ''
     public WorkflowSettings settings = new WorkflowSettings()
     public WorkflowPreProcess preProcess = new WorkflowPreProcess()
+    private Resource model = null;
+
+	/**
+	 * Validate the model
+	 * 
+	 */
+	def validate() {
+		val progressMonitor = settings.progressMonitor
+		progressMonitor.beginTask('Validating "' + settings.appName + ' ' + settings.appVersion + '" ...', -1)
+    	
+    	var diag = Diagnostician::INSTANCE.validate(getModel.contents.get(0))
+    	
+    	switch  diag.getSeverity {
+    		case Diagnostic::ERROR: {
+    			progressMonitor.subTask("Errors: " + diag.toString)
+    			progressMonitor.done();
+    			return false;
+    		}
+    		case Diagnostic::WARNING: {
+    			progressMonitor.subTask("Warnings: " + diag.toString)
+    			progressMonitor.done();
+    			return true;
+    		}
+    		default: {
+    			progressMonitor.subTask("Valid: " + diag.toString)
+    			progressMonitor.done();
+    			return true;
+    		}
+    	}
+	}
 
     /**
      * Executes the workflow; preProcess.run() has already been called.
@@ -50,12 +84,9 @@ class WorkflowStart {
                     generator.setCartridge(currentCartridge)
                     generator.setMonitor(settings.progressMonitor)
 
-                    val reader = new ModelReader()
-                    reader.setUri(settings.modelPath)
-                    val resource = reader.invoke
                     val fileSystemAccess = getConfiguredFileSystemAccess
 
-                    generator.doGenerate(resource, fileSystemAccess)
+                    generator.doGenerate(getModel, fileSystemAccess)
                 }
             }
             success = true
@@ -81,5 +112,23 @@ class WorkflowStart {
             'DEFAULT_OUTPUT', settings.getOutputPath + '/' + currentCartridge + '/' + settings.getAppName + '/');
 
         configuredFileSystemAccess
+    }
+    
+    def private getModel() {
+    	if (model === null) {
+        	val reader = new ModelReader()
+        	reader.setUri(settings.modelPath)
+        	model = reader.invoke
+    	}
+    	model
+    }
+    
+    def readSettingsFromModel() {
+    	val model = getModel
+    	val app = model.contents.get(0) as Application;
+    	println(app.getName())
+    	settings.appName = app.name
+		settings.appVersion = app.version
+    	return
     }
 }
