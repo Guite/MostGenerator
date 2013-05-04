@@ -26,7 +26,6 @@ class WorkflowExtensions {
      * Returns all entities using the given workflow type.
      */
     def getEntitiesForWorkflow(Application it, EntityWorkflowType wfType) {
-    	println(getAllEntities)
         getAllEntities.filter(e|e.workflow == wfType)
     }
 
