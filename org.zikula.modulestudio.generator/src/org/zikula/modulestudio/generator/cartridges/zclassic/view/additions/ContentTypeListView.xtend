@@ -178,6 +178,6 @@ class ContentTypeListView {
     '''
 
     def private detailLink(Entity it, String appName) '''
-        <a href="{modurl modname='«appName»' type='user' «modUrlDisplayWithFreeOt('item', true, '$objectType')»}">{gt text='Read more'}</a>
+        <a href="{modurl modname='«appName»' type='user' «modUrlDisplayWithFreeOt(name.formatForCode, true, '$objectType')»}">{gt text='Read more'}</a>
     '''
 }
