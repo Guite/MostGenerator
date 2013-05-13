@@ -310,18 +310,18 @@ class Repository {
                 }
 
                 «IF app.hasUploads»
-                    // initialise Imagine preset manager instances
+                    // initialise Imagine preset instances
                     $imageHelper = new «IF app.targets('1.3.5')»«container.application.appName»_Util_Image«ELSE»ImageUtil«ENDIF»(ServiceUtil::getManager());
                     «IF hasUploadFieldsEntity»
 
                         $objectType = '«name.formatForCode»';
                         «FOR uploadField : getUploadFieldsEntity»
-                            $templateParameters[$objectType . 'ThumbManager«uploadField.name.formatForCodeCapital»'] = $imageHelper->getManager($objectType, '«uploadField.name.formatForCode»', $context, $args);
+                            $templateParameters[$objectType . 'ThumbPreset«uploadField.name.formatForCodeCapital»'] = $imageHelper->getPreset($objectType, '«uploadField.name.formatForCode»', $context, $args);
                         «ENDFOR»
                     «ENDIF»
                     if (in_array($args['action'], array('display', 'view'))) {
                         // use separate preset for images in related items
-                        $templateParameters['relationThumbPreset'] = $imageHelper->getPreset('', '', '«container.application.appName»_relateditem', $context, $args);
+                        $templateParameters['relationThumbPreset'] = $imageHelper->getCustomPreset('', '', '«container.application.appName»_relateditem', $context, $args);
                     }
                 «ENDIF»
             }
