@@ -316,12 +316,12 @@ class Repository {
 
                         $objectType = '«name.formatForCode»';
                         «FOR uploadField : getUploadFieldsEntity»
-                            $parameters[$objectType . 'ThumbManager«uploadField.name.formatForCodeCapital»'] = $imageHelper->getManager($objectType, '«uploadField.name.formatForCode»', $context, $args);
+                            $templateParameters[$objectType . 'ThumbManager«uploadField.name.formatForCodeCapital»'] = $imageHelper->getManager($objectType, '«uploadField.name.formatForCode»', $context, $args);
                         «ENDFOR»
                     «ENDIF»
                     if (in_array($args['action'], array('display', 'view'))) {
-                        // use seperate preset for images in related items
-                        $parameters['relationThumbPreset'] = $imageHelper->getPreset('', '', '«container.application.appName»_relateditem', $context, $args);
+                        // use separate preset for images in related items
+                        $templateParameters['relationThumbPreset'] = $imageHelper->getPreset('', '', '«container.application.appName»_relateditem', $context, $args);
                     }
                 «ENDIF»
             }
