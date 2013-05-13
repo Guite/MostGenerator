@@ -1316,6 +1316,11 @@ class Repository {
          */
         public function archiveObjects()
         {
+            if (!SecurityUtil::checkPermission('«app.appName»', '.*', ACCESS_EDIT)) {
+                // current user has no permission for executing the archive workflow action
+                return true;
+            }
+
             «val endField = getEndDateField»
             «IF endField instanceof DatetimeField»
                 $today = date('Y-m-d H:i:s');
