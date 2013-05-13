@@ -134,9 +134,6 @@ class Image {
                 } elseif ($args['action'] == 'display') {
                     $presetData['width'] = 250;
                     $presetData['height'] = 150;
-                } elseif ($args['action'] == 'display') {
-                    $presetData['width'] = 80;
-                    $presetData['height'] = 50;
                 }
             }
 
