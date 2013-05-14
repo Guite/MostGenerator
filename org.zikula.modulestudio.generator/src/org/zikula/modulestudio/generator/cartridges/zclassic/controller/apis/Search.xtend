@@ -154,7 +154,7 @@ class Search {
                     «FOR entity : getAllEntities.filter(e|e.hasAbstractStringFieldsEntity)»
                         case '«entity.name.formatForCode»':
                             «FOR field : entity.getAbstractStringFieldsEntity»
-                                $whereArray[] = '«field.name.formatForCode»';
+                                $whereArray[] = 'tbl.«field.name.formatForCode»';
                             «ENDFOR»
                             «IF entity.hasLanguageFieldsEntity»
                             $languageField = '«entity.getLanguageFieldsEntity.head»';
@@ -210,7 +210,7 @@ class Search {
 
                     $title = ($titleField != '') ? $entity[$titleField] : $this->__('Item');
                     $description = ($descriptionField != '') ? $entity[$descriptionField] : '';
-                    $created = (isset($entity['createdDate'])) ? $entity['createdDate'] : '';
+                    $created = (isset($entity['createdDate'])) ? $entity['createdDate']->format('Y-m-d H:i:s') : '';
 
                     $searchItemData = array(
                         'title'   => $title,
@@ -259,7 +259,7 @@ class Search {
             «IF hasUserDisplay»
                 $datarow = &$args['datarow'];
                 $urlArgs = unserialize($datarow['extra']);
-                $datarow['url'] = ModUril::url($this->name, 'user', 'display', $urlArgs);
+                $datarow['url'] = ModUtil::url($this->name, 'user', 'display', $urlArgs);
             «ELSE»
                 // nothing to do as we have no display pages which could be linked
             «ENDIF»
