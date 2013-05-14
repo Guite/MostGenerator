@@ -199,9 +199,10 @@ class Search {
                     }
                     «IF hasUserDisplay»
                         $urlArgs['id'] = $instanceId;
+                        /* commented out as it could exceed the maximum length of the 'extra' field
                         if (isset($entity['slug'])) {
                             $urlArgs['slug'] = $entity['slug'];
-                        }
+                        }*/
 
                     «ENDIF»
                     if (!SecurityUtil::checkPermission($this->name . ':' . ucfirst($objectType) . ':', $instanceId . '::', ACCESS_OVERVIEW)) {
