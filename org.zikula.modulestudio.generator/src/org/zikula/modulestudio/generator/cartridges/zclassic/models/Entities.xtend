@@ -255,6 +255,11 @@ class Entities {
         protected $_validator = null;
 
         /**
+         * @var boolean Option to bypass validation if needed.
+         */
+        protected $_bypassValidation = false;
+
+        /**
          * @var boolean Whether this entity supports unique slugs.
          */
         protected $_hasUniqueSlug = «IF hasSluggableFields && slugUnique»true«ELSE»false«ENDIF»;
@@ -287,6 +292,7 @@ class Entities {
         «fh.getterAndSetterMethods(it, '_objectType', 'string', false, false, '', '')»
         «fh.getterAndSetterMethods(it, '_idFields', 'array', false, true, 'Array()', '')»
         «fh.getterAndSetterMethods(it, '_validator', validatorClass, false, true, 'null', '')»
+        «fh.getterAndSetterMethods(it, '_bypassValidation', 'boolean', false, false, '', '')»
         «fh.getterAndSetterMethods(it, '_hasUniqueSlug', 'boolean', false, false, '', '')»
         «fh.getterAndSetterMethods(it, '_actions', 'array', false, true, 'Array()', '')»
         «fh.getterAndSetterMethods(it, '__WORKFLOW__', 'array', false, true, 'Array()', '')»
@@ -348,6 +354,10 @@ class Entities {
          */
         public function validate()
         {
+            if ($this->_bypassValidation === true) {
+                return;
+            }
+
         «val emailFields = getDerivedFields().filter(typeof(EmailField))»
         «IF emailFields.size > 0»
                 // decode possibly encoded mail addresses (#201)
