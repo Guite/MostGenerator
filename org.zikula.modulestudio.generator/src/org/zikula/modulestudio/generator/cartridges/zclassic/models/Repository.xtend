@@ -361,7 +361,7 @@ class Repository {
             «IF !getBidirectionalIncomingJoinRelationsWithOneSource.isEmpty»
                 «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
                     «val sourceAliasName = relation.getRelationAliasName(false)»
-                    $parameters['«sourceAliasName»'] = isset($this->controllerArguments['«sourceAliasName']) ? $this->controllerArguments['«sourceAliasName'] : FormUtil::getPassedValue('«sourceAliasName»', 0, 'GET');
+                    $parameters['«sourceAliasName»'] = isset($this->controllerArguments['«sourceAliasName»']) ? $this->controllerArguments['«sourceAliasName»'] : FormUtil::getPassedValue('«sourceAliasName»', 0, 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasListFieldsEntity»
