@@ -97,7 +97,7 @@ class Operations {
             $entity['workflowState'] = $params['nextstate'];
             if ($params['nextstate'] == 'archived') {
                 // bypass validator (for example an end date could have lost it's "value in future")
-                $entity['bypassValidation'] = true;
+                $entity['_bypassValidation'] = true;
             }
         }
 
