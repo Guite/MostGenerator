@@ -144,6 +144,11 @@ class Repository {
             protected $defaultSortingField = '«(if (hasSortableFields) getSortableFields.head else getLeadingField).name.formatForCode»';
 
             /**
+             * @var array Additional arguments given by the calling controller.
+             */
+            protected $controllerArguments = array();
+
+            /**
              * Retrieves an array with all fields which can be used for sorting instances.
              *
              * @return array
@@ -157,6 +162,7 @@ class Repository {
             }
 
             «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'controllerArguments', 'array', false, true, 'Array()', '')»
 
             /**
              * Returns name of the field used as title / name for entities of this repository.
@@ -350,47 +356,47 @@ class Repository {
 
             $parameters = array();
             «IF categorisable»
-                $parameters['catIdList'] = ModUtil::apiFunc('«container.application.appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => '«name.formatForCode»', 'source' => 'GET'));
+                $parameters['catIdList'] = ModUtil::apiFunc('«container.application.appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => '«name.formatForCode»', 'source' => 'GET', 'controllerArgs' => $this->controllerArguments));
             «ENDIF»
             «IF !getBidirectionalIncomingJoinRelationsWithOneSource.isEmpty»
                 «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
                     «val sourceAliasName = relation.getRelationAliasName(false)»
-                    $parameters['«sourceAliasName»'] = FormUtil::getPassedValue('«sourceAliasName»', 0, 'GET');
+                    $parameters['«sourceAliasName»'] = isset($this->controllerArguments['«sourceAliasName']) ? $this->controllerArguments['«sourceAliasName'] : FormUtil::getPassedValue('«sourceAliasName»', 0, 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasListFieldsEntity»
                 «FOR field : getListFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                    $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : FormUtil::getPassedValue('«fieldName»', '', 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasUserFieldsEntity»
                 «FOR field : getUserFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = (int) FormUtil::getPassedValue('«fieldName»', 0, 'GET');
+                    $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : (int) FormUtil::getPassedValue('«fieldName»', 0, 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasCountryFieldsEntity»
                 «FOR field : getCountryFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                    $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : FormUtil::getPassedValue('«fieldName»', '', 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasLanguageFieldsEntity»
                 «FOR field : getLanguageFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                    $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : FormUtil::getPassedValue('«fieldName»', '', 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasAbstractStringFieldsEntity»
-                $parameters['searchterm'] = FormUtil::getPassedValue('searchterm', '', 'GET');
+                $parameters['searchterm'] = isset($this->controllerArguments['searchterm']) ? $this->controllerArguments['searchterm'] : FormUtil::getPassedValue('searchterm', '', 'GET');
             «ENDIF»
             «/* not needed as already handled in the controller $pageSize = ModUtil::getVar('«container.application.appName»', 'pageSize', 10);
-            $parameters['pageSize'] = (int) FormUtil::getPassedValue('pageSize', $pageSize, 'GET');*/»
+            $parameters['pageSize'] = isset($this->controllerArguments['pageSize']) ? $this->controllerArguments['pageSize'] : (int) FormUtil::getPassedValue('pageSize', $pageSize, 'GET');*/»
             «IF hasBooleanFieldsEntity»
                 «FOR field : getBooleanFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                    $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : FormUtil::getPassedValue('«fieldName»', '', 'GET');
                 «ENDFOR»
             «ENDIF»
 

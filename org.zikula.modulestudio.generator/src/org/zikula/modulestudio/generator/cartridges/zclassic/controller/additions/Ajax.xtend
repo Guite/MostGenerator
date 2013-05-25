@@ -141,6 +141,7 @@ class Ajax {
                 $entityClass = '\\«app.appName»\\Entity\\' . ucfirst($objectType) . 'Entity';
             «ENDIF»
             $repository = $this->entityManager->getRepository($entityClass);
+            $repository->setControllerArguments($args);
             $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
             $titleField = $repository->getTitleFieldName();
             $descriptionField = $repository->getDescriptionFieldName();

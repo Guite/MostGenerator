@@ -125,6 +125,7 @@ class Category {
             if (isset($args['source']) && $args['source'] == 'GET') {
                 $dataSource = $this->request->query;
             }
+            $controllerArgs = isset($args['controllerArgs']) && is_array($args['controllerArgs']) ? $args['controllerArgs'] : array();
 
             $catIdsPerRegistry = array();
 
@@ -133,12 +134,14 @@ class Category {
             foreach ($properties as $propertyName => $propertyId) {
                 $hasMultiSelection = $this->hasMultipleSelection(array('ot' => $objectType, 'registry' => $propertyName));
                 if ($hasMultiSelection === true) {
-                    $inputValue = $dataSource->get('catids' . $propertyName, array());
+                    $argName = 'catids' . $propertyName;
+                    $inputValue = isset($controllerArgs[$argName]) ? $controllerArgs[$argName] : $dataSource->get($argName, array());
                     if (!is_array($inputValue)) {
                         $inputValue = explode(',', $inputValue);
                     }
                 } else {
-                    $inputVal = (int) $dataSource->filter('catid' . $propertyName, 0, FILTER_VALIDATE_INT);
+                    $argName = 'catid' . $propertyName;
+                    $inputVal = isset($controllerArgs[$argName]) ? $controllerArgs[$argName] : (int) $dataSource->filter($argName, 0, FILTER_VALIDATE_INT);
                     $inputValue = array();
                     if ($inputVal > 0) {
                         $inputValue[] = $inputVal;
