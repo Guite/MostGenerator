@@ -153,8 +153,8 @@ class Property {
                 if (it.defaultValue !== null && it.defaultValue.length > 0) it.defaultValue else '0.00'
             ArrayField: 'array()'
             ObjectField: 'null'
-            AbstractStringField: if (it.defaultValue !== null && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'\''
             ListField: if (it.defaultValue !== null && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'' + it.defaultFieldDataItems + '\''
+            AbstractStringField: if (it.defaultValue !== null && it.defaultValue.length > 0) '\'' + it.defaultValue + '\'' else '\'\''
             AbstractDateField:
                 if (it.mandatory && it.defaultValue !== null && it.defaultValue.length > 0 && it.defaultValue != 'now') '\'' + it.defaultValue + '\'' else 'null'
             FloatField:
