@@ -831,6 +831,9 @@ class Repository {
                         if ($k == 'workflowState' && substr($v, 0, 1) == '!') {
                             $qb->andWhere('tbl.' . $k . ' != :' . $k)
                                ->setParameter($k, DataUtil::formatForStore(substr($v, 1, strlen($v)-1)));
+                        } elseif (substr($v, 0, 1) == '%') {
+                            $qb->andWhere('tbl.' . $k . ' LIKE :' . $k)
+                               ->setParameter($k, '%' . DataUtil::formatForStore($v) . '%');
                         } else {
                             $qb->andWhere('tbl.' . $k . ' = :' . $k)
                                ->setParameter($k, DataUtil::formatForStore($v));
