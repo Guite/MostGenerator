@@ -33,11 +33,14 @@ Workflow {
     component = @msManual { dir = 'customers' name = 'GuiShipping' }
     component = @msManual { dir = 'customers' name = 'GuiShop' }
     component = @msManual { dir = 'customers' name = 'HandyDB' }
+    component = @msManual { dir = 'customers' name = 'HistoricProducts' }
     component = @msManual { dir = 'customers' name = 'JsRefPool' }
     component = @msManual { dir = 'customers' name = 'JuFeBo' }
     component = @msManual { dir = 'customers' name = 'KongProjects' }
     component = @msManual { dir = 'customers' name = 'LeisurePlaces' }
     component = @msManual { dir = 'customers' name = 'MenuSuggestion' }
+    component = @msManual { dir = 'customers' name = 'MwcMath' }
+    component = @msManual { dir = 'customers' name = 'MwcPayment' }
     component = @msManual { dir = 'customers' name = 'PlantManager' }
     component = @msManual { dir = 'customers' name = 'SimpleClaims' }
     component = @msManual { dir = 'customers' name = 'SimplePolls' }
