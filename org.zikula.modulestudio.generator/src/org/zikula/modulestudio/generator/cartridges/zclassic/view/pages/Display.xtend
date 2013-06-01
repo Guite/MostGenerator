@@ -20,6 +20,7 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
+import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Display {
     @Inject extension ControllerExtensions = new ControllerExtensions()
@@ -30,6 +31,7 @@ class Display {
     @Inject extension UrlExtensions = new UrlExtensions()
     @Inject extension Utils = new Utils()
     @Inject extension ViewExtensions = new ViewExtensions()
+    @Inject extension WorkflowExtensions = new WorkflowExtensions()
 
     def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' display templates for entity "' + name.formatForDisplay + '"')
@@ -151,7 +153,7 @@ class Display {
         }
     }
 
-    def private templateHeading(Entity it, String appName) '''{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'} ({$«name.formatForCode».workflowState|«appName.formatForDB»ObjectState:false|lower}){icon id='itemactionstrigger' type='options' size='extrasmall' __alt='Actions' class='z-pointer z-hide'}'''
+    def private templateHeading(Entity it, String appName) '''{$templateTitle|notifyfilters:'«appName.formatForDB».filter_hooks.«nameMultiple.formatForDB».filter'}«IF hasVisibleWorkflow» ({$«name.formatForCode».workflowState|«appName.formatForDB»ObjectState:false|lower})«ENDIF»{icon id='itemactionstrigger' type='options' size='extrasmall' __alt='Actions' class='z-pointer z-hide'}'''
 
     def private templateFooter(Controller it) {
         switch it {
