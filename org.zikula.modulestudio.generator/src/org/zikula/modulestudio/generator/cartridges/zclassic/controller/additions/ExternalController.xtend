@@ -173,7 +173,7 @@ class ExternalController {
 
             $this->view->assign('objectType', $objectType)
                       ->assign('source', $source)
-                      ->assign('item', $entity)
+                      ->assign($objectType, $entity)
                       ->assign('displayMode', $displayMode);
 
             «IF targets('1.3.5')»

@@ -28,8 +28,8 @@ class ContentTypeSingleView {
                 <span class="z-sub z-formnote">{gt text='If you change this please save the element once to reload the parameters below.'}</span>
             </div>
             <div{* class="z-formrow"*}>
-                {«appName.formatForDB»ItemSelector id='id' group='data' objectType=$objectType}
-                «/* MAYBE PER OBJECTTYPE */»
+                <p>{gt text='Please select your item here. You can resort the dropdown list and reduce it\'s entries by applying filters. On the right side you will see a preview of the selected entry.'}</p>
+                {«appName.formatForDB»ItemSelector id='id' group='data' objectType=$objectType}«/* MAYBE PER OBJECTTYPE */»
             </div>
 
             <div{* class="z-formrow"*}>

@@ -199,10 +199,10 @@ class Finder {
             «name.formatForDB».itemSelector.selectedId = selectedId;
 
             // required as a changed object type requires a new instance of the item selector plugin
-            $(baseId + '_objecttype').observe('change', «name.formatForDB».itemSelector.onParamChanged);
+            $('«appName»_objecttype').observe('change', «name.formatForDB».itemSelector.onParamChanged);
 
-            if ($(baseId + '_catid') !== undefined) {
-                $(baseId + '_catid').observe('change', «name.formatForDB».itemSelector.onParamChanged);
+            if ($(baseId + '_catidMain') != undefined) {
+                $(baseId + '_catidMain').observe('change', «name.formatForDB».itemSelector.onParamChanged);
             }
             $(baseId + '_id').observe('change', «name.formatForDB».itemSelector.onItemChanged);
             $(baseId + '_sort').observe('change', «name.formatForDB».itemSelector.onParamChanged);
@@ -223,9 +223,9 @@ class Finder {
             var baseId, pars, request;
 
             baseId = «name.formatForDB».itemSelector.baseId;
-            pars = 'objectType=' + baseId + '&';
-            if ($(baseId + '_catid') !== undefined) {
-                pars += 'catid=' + $F(baseId + '_catid') + '&';
+            pars = 'ot=' + baseId + '&';
+            if ($(baseId + '_catidMain') != undefined) {
+                pars += 'catidMain=' + $F(baseId + '_catidMain') + '&';
             }
             pars += 'sort=' + $F(baseId + '_sort') + '&' +
                     'sortdir=' + $F(baseId + '_sortdir') + '&' +

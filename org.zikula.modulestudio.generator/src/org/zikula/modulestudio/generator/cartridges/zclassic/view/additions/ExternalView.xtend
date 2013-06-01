@@ -307,9 +307,9 @@ class ExternalView {
             {if $properties ne null && is_array($properties)}
                 {gt text='All' assign='lblDefault'}
                 {nocache}
-                {foreach item='property' from=$properties}
+                {foreach key='propertyName' item='propertyId' from=$properties}
                     <p>
-                        {modapifunc modname='«app.appName»' type='category' func='hasMultipleSelection' ot='«name.formatForCode»' registry=$property assign='hasMultiSelection'}
+                        {modapifunc modname='«app.appName»' type='category' func='hasMultipleSelection' ot='«name.formatForCode»' registry=$propertyName assign='hasMultiSelection'}
                         {gt text='Category' assign='categoryLabel'}
                         {assign var='categorySelectorId' value='catid'}
                         {assign var='categorySelectorName' value='catid'}
@@ -320,9 +320,9 @@ class ExternalView {
                             {assign var='categorySelectorId' value='catids__'}
                             {assign var='categorySelectorSize' value='8'}
                         {/if}
-                        <label for="{$baseID}_{$categorySelectorId}{$property}"{$leftSide}>{$categoryLabel}:</label>
+                        <label for="{$baseID}_{$categorySelectorId}{$propertyName}"{$leftSide}>{$categoryLabel}:</label>
                         &nbsp;
-                        {selector_category name="`$baseID`_`$categorySelectorName``$property`" field='id' selectedValue=$catIds.$propertyName categoryRegistryModule='«app.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$property defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
+                        {selector_category name="`$baseID`_`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIds.$propertyName categoryRegistryModule='«app.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
                         <br{$break} />
                     </p>
                 {/foreach}

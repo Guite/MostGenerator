@@ -40,7 +40,7 @@ class BlocksView {
         {if $properties ne null && is_array($properties)}
             {gt text='All' assign='lblDefault'}
             {nocache}
-            {foreach item='propertyName' from=$properties}
+            {foreach key='propertyName' item='propertyId' from=$properties}
                 <div class="z-formrow">
                     {modapifunc modname='«appName»' type='category' func='hasMultipleSelection' ot=$objectType registry=$propertyName assign='hasMultiSelection'}
                     {gt text='Category' assign='categoryLabel'}

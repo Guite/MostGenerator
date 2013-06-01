@@ -119,7 +119,9 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Additions: Content type api')
         println('Generating content type api')
         new ContentTypeList().generate(it, fsa)
-        new ContentTypeSingle().generate(it, fsa)
+        if (hasUserController && getMainUserController.hasActions('display')) {
+            new ContentTypeSingle().generate(it, fsa)
+        }
         pm?.subTask('Additions: Newsletter plugin')
         println('Generating newsletter plugin')
         new Newsletter().generate(it, fsa)

@@ -5,12 +5,14 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
+import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ItemSelector {
     @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension ModelExtensions = new ModelExtensions()
     @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
@@ -127,7 +129,7 @@ class ItemSelector {
                 if ($firstTime) {
                     PageUtil::addVar('javascript', 'prototype');
                     PageUtil::addVar('javascript', 'Zikula.UI'); // imageviewer
-                    PageUtil::addVar('javascript', 'modules/«appName»/javascript/finder.js');
+                    PageUtil::addVar('javascript', 'modules/«appName»/javascript/«appName»_finder.js');
                     PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
                 }
                 $firstTime = false;
@@ -145,6 +147,8 @@ class ItemSelector {
                         $catIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $this->objectType));
                     }
                 «ENDIF»
+
+                $this->selectedItemId = $this->text;
 
                 «IF targets('1.3.5')»
                     $entityClass = '«appName»_Entity_' . ucwords($this->objectType);
@@ -165,18 +169,19 @@ class ItemSelector {
                 $entities = $repository->selectWhere($where, $sortParam);
 
                 $view = Zikula_View::getInstance('«appName»', false);
-                $view->assign('items', $entities)
+                $view->assign('objectType', $this->objectType)
+                     ->assign('items', $entities)
                      ->assign('selectedId', $this->selectedItemId);
-            «IF hasCategorisableEntities»
+                «IF hasCategorisableEntities»
 
-                // assign category properties
-                $properties = null;
-                if (in_array($this->objectType, $categorisableObjectTypes)) {
-                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
-                }
-                $view->assign('properties', $properties)
-                     ->assign('catIds', $catIds);
-            «ENDIF»
+                    // assign category properties
+                    $properties = null;
+                    if (in_array($this->objectType, $categorisableObjectTypes)) {
+                        $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $this->objectType));
+                    }
+                    $view->assign('properties', $properties)
+                         ->assign('catIds', $catIds);
+                «ENDIF»
 
                 return $view->fetch(«IF targets('1.3.5')»'external/' . $this->objectType«ELSE»'External/' . ucwords($this->objectType)«ENDIF» . '/select.tpl');
             }
@@ -191,60 +196,8 @@ class ItemSelector {
             public function decode(Zikula_Form_View $view)
             {
                 parent::decode($view);
-                $value = explode(';', $this->text);
-                $this->objectType = $value[0];
-                $this->selectedItemId = $value[1];
-            }
-
-            /**
-             * Parses a value.
-             *
-             * @param Zikula_Form_View $view Reference to Zikula_Form_View object.
-             * @param string           $text Text.
-             *
-             * @return string Parsed Text.
-             */
-            public function parseValue(Zikula_Form_View $view, $text)
-            {
-                $valueParts = array($this->objectType, $this->selectedItemId);
-                return implode(';', $valueParts);
-            }
-
-            /**
-             * Load values.
-             *
-             * Called internally by the plugin itself to load values from the render.
-             * Can also by called when some one is calling the render object's Zikula_Form_ViewetValues.
-             *
-             * @param Zikula_Form_View $view    Reference to Zikula_Form_View object.
-             * @param array            &$values Values to load.
-             *
-             * @return void
-             */
-            public function loadValue(Zikula_Form_View $view, &$values)
-            {
-                if (!$this->dataBased) {
-                    return;
-                }
-
-                $value = null;
-
-                if ($this->group == null) {
-                    if (array_key_exists($this->dataField, $values)) {
-                        $value = $values[$this->dataField];
-                    }
-                } else {
-                    if (array_key_exists($this->group, $values) && array_key_exists($this->dataField, $values[$this->group])) {
-                        $value = $values[$this->group][$this->dataField];
-                    }
-                }
-
-                if ($value !== null) {
-                    //$this->text = $this->formatValue($view, $value);
-                    $value = explode(';', $value);
-                    $this->objectType = $value[0];
-                    $this->selectedItemId = $value[1];
-                }
+                $this->objectType = FormUtil::getPassedValue('«appName»_objecttype', '«getLeadingEntity.name.formatForCode»', 'POST');
+                $this->selectedItemId = $this->text;
             }
         }
     '''
