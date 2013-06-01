@@ -34,7 +34,7 @@ class BlocksView {
                     <option value="«entity.name.formatForCode»"{if $objectType eq '«entity.name.formatForCode»'} selected="selected"{/if}>{gt text='«entity.nameMultiple.formatForDisplayCapital»'}</option>
                 «ENDFOR»
             </select>
-            <div class="z-sub z-formnote">{gt text='If you change this please save the block once to reload the parameters below.'}</div>
+            <span class="z-sub z-formnote">{gt text='If you change this please save the block once to reload the parameters below.'}</span>
         </div>
 
         {if $properties ne null && is_array($properties)}
@@ -56,7 +56,7 @@ class BlocksView {
                     <label for="{$categorySelectorId}{$propertyName}">{$categoryLabel}</label>
                     &nbsp;
                     {selector_category name="`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIds.$propertyName categoryRegistryModule='«appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
-                    <div class="z-sub z-formnote">{gt text='This is an optional filter.'}</div>
+                    <span class="z-sub z-formnote">{gt text='This is an optional filter.'}</span>
                 </div>
             {/foreach}
             {/nocache}
@@ -73,7 +73,7 @@ class BlocksView {
 
         <div class="z-formrow">
             <label for="«appName»_amount">{gt text='Amount'}:</label>
-            <input type="text" id="«appName»_amount" name="amount" size="10" value="{$amount|default:"5"}" />
+            <input type="text" id="«appName»_amount" name="amount" maxlength="2" size="10" value="{$amount|default:"5"}" />
         </div>
 
         <div class="z-formrow">
@@ -88,13 +88,13 @@ class BlocksView {
         <div id="customtemplatearea" class="z-formrow z-hide">
             <label for="«appName»_customtemplate">{gt text='Custom template'}:</label>
             <input type="text" id="«appName»__customtemplate" name="customtemplate" size="40" maxlength="80" value="{$customTemplate|default:''}" />
-            <div class="z-sub z-formnote">{gt text='Example'}: <em>itemlist_{objecttype}_display.tpl</em></div>
+            <span class="z-sub z-formnote">{gt text='Example'}: <em>itemlist_{objecttype}_display.tpl</em></span>
         </div>
 
         <div class="z-formrow z-hide"«/* TODO: wait until FilterUtil is ready for Doctrine 2 - see https://github.com/zikula/core/issues/118 */»>
             <label for="«appName»_filter">{gt text='Filter (expert option)'}:</label>
             <input type="text" id="«appName»_filter" name="filter" size="40" value="{$filterValue|default:''}" />
-            <div class="z-sub z-formnote">({gt text='Syntax examples'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)</div>
+            <span class="z-sub z-formnote">({gt text='Syntax examples'}: <kbd>name:like:foobar</kbd> {gt text='or'} <kbd>status:ne:3</kbd>)</span>
         </div>
 
         {pageaddvar name='javascript' value='prototype'}

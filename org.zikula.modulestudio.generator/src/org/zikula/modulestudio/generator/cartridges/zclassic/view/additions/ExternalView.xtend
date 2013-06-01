@@ -183,7 +183,7 @@ class ExternalView {
                                     <label for="{$categorySelectorId}{$propertyName}">{$categoryLabel}</label>
                                     &nbsp;
                                     {selector_category name="`$categorySelectorName``$propertyName`" field='id' selectedValue=$catIds.$propertyName categoryRegistryModule='«app.appName»' categoryRegistryTable=$objectType categoryRegistryProperty=$propertyName defaultText=$lblDefault editLink=false multipleSize=$categorySelectorSize}
-                                    <div class="z-sub z-formnote">{gt text='This is an optional filter.'}</div>
+                                    <span class="z-sub z-formnote">{gt text='This is an optional filter.'}</span>
                                 </div>
                             {/foreach}
                             {/nocache}
