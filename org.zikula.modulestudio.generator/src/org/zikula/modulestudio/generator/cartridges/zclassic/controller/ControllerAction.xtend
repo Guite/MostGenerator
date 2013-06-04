@@ -234,6 +234,7 @@ class ControllerAction {
             $entityClass = '\\' . $this->name . '\\Entity\\' . ucwords($objectType) . 'Entity';
         «ENDIF»
         $repository = $this->entityManager->getRepository($entityClass);
+        $repository->setControllerArguments($args);
         $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager);
         «IF app.hasTrees»
 
@@ -360,6 +361,7 @@ class ControllerAction {
             $entityClass = '\\' . $this->name . '\\Entity\\' . ucwords($objectType) . 'Entity';
         «ENDIF»
         $repository = $this->entityManager->getRepository($entityClass);
+        $repository->setControllerArguments($args);
 
         $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
 

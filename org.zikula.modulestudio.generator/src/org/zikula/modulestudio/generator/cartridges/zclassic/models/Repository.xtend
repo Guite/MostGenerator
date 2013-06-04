@@ -144,6 +144,11 @@ class Repository {
             protected $defaultSortingField = '«(if (hasSortableFields) getSortableFields.head else getLeadingField).name.formatForCode»';
 
             /**
+             * @var array Additional arguments given by the calling controller.
+             */
+            protected $controllerArguments = array();
+
+            /**
              * Retrieves an array with all fields which can be used for sorting instances.
              *
              * @return array
@@ -157,6 +162,7 @@ class Repository {
             }
 
             «fh.getterAndSetterMethods(it, 'defaultSortingField', 'string', false, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'controllerArguments', 'array', false, true, 'Array()', '')»
 
             /**
              * Returns name of the field used as title / name for entities of this repository.
@@ -310,18 +316,18 @@ class Repository {
                 }
 
                 «IF app.hasUploads»
-                    // initialise Imagine preset manager instances
+                    // initialise Imagine preset instances
                     $imageHelper = new «IF app.targets('1.3.5')»«container.application.appName»_Util_Image«ELSE»ImageUtil«ENDIF»(ServiceUtil::getManager());
                     «IF hasUploadFieldsEntity»
 
                         $objectType = '«name.formatForCode»';
                         «FOR uploadField : getUploadFieldsEntity»
-                            $parameters[$objectType . 'ThumbManager«uploadField.name.formatForCodeCapital»'] = $imageHelper->getManager($objectType, '«uploadField.name.formatForCode»', $context, $args);
+                            $templateParameters[$objectType . 'ThumbPreset«uploadField.name.formatForCodeCapital»'] = $imageHelper->getPreset($objectType, '«uploadField.name.formatForCode»', $context, $args);
                         «ENDFOR»
                     «ENDIF»
                     if (in_array($args['action'], array('display', 'view'))) {
-                        // use seperate preset for images in related items
-                        $parameters['relationThumbPreset'] = $imageHelper->getPreset('', '', '«container.application.appName»_relateditem', $context, $args);
+                        // use separate preset for images in related items
+                        $templateParameters['relationThumbPreset'] = $imageHelper->getCustomPreset('', '', '«container.application.appName»_relateditem', $context, $args);
                     }
                 «ENDIF»
             }
@@ -350,47 +356,47 @@ class Repository {
 
             $parameters = array();
             «IF categorisable»
-                $parameters['catIdList'] = ModUtil::apiFunc('«container.application.appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => '«name.formatForCode»', 'source' => 'GET'));
+                $parameters['catIdList'] = ModUtil::apiFunc('«container.application.appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => '«name.formatForCode»', 'source' => 'GET', 'controllerArgs' => $this->controllerArguments));
             «ENDIF»
             «IF !getBidirectionalIncomingJoinRelationsWithOneSource.isEmpty»
                 «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
                     «val sourceAliasName = relation.getRelationAliasName(false)»
-                    $parameters['«sourceAliasName»'] = FormUtil::getPassedValue('«sourceAliasName»', 0, 'GET');
+                    $parameters['«sourceAliasName»'] = isset($this->controllerArguments['«sourceAliasName»']) ? $this->controllerArguments['«sourceAliasName»'] : FormUtil::getPassedValue('«sourceAliasName»', 0, 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasListFieldsEntity»
                 «FOR field : getListFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                    $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : FormUtil::getPassedValue('«fieldName»', '', 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasUserFieldsEntity»
                 «FOR field : getUserFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = (int) FormUtil::getPassedValue('«fieldName»', 0, 'GET');
+                    $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : (int) FormUtil::getPassedValue('«fieldName»', 0, 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasCountryFieldsEntity»
                 «FOR field : getCountryFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                    $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : FormUtil::getPassedValue('«fieldName»', '', 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasLanguageFieldsEntity»
                 «FOR field : getLanguageFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                    $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : FormUtil::getPassedValue('«fieldName»', '', 'GET');
                 «ENDFOR»
             «ENDIF»
             «IF hasAbstractStringFieldsEntity»
-                $parameters['searchterm'] = FormUtil::getPassedValue('searchterm', '', 'GET');
+                $parameters['searchterm'] = isset($this->controllerArguments['searchterm']) ? $this->controllerArguments['searchterm'] : FormUtil::getPassedValue('searchterm', '', 'GET');
             «ENDIF»
             «/* not needed as already handled in the controller $pageSize = ModUtil::getVar('«container.application.appName»', 'pageSize', 10);
-            $parameters['pageSize'] = (int) FormUtil::getPassedValue('pageSize', $pageSize, 'GET');*/»
+            $parameters['pageSize'] = isset($this->controllerArguments['pageSize']) ? $this->controllerArguments['pageSize'] : (int) FormUtil::getPassedValue('pageSize', $pageSize, 'GET');*/»
             «IF hasBooleanFieldsEntity»
                 «FOR field : getBooleanFieldsEntity»
                     «val fieldName = field.name.formatForCode»
-                    $parameters['«fieldName»'] = FormUtil::getPassedValue('«fieldName»', '', 'GET');
+                    $parameters['«fieldName»'] = isset($this->controllerArguments['«fieldName»']) ? $this->controllerArguments['«fieldName»'] : FormUtil::getPassedValue('«fieldName»', '', 'GET');
                 «ENDFOR»
             «ENDIF»
 
@@ -825,6 +831,9 @@ class Repository {
                         if ($k == 'workflowState' && substr($v, 0, 1) == '!') {
                             $qb->andWhere('tbl.' . $k . ' != :' . $k)
                                ->setParameter($k, DataUtil::formatForStore(substr($v, 1, strlen($v)-1)));
+                        } elseif (substr($v, 0, 1) == '%') {
+                            $qb->andWhere('tbl.' . $k . ' LIKE :' . $k)
+                               ->setParameter($k, '%' . DataUtil::formatForStore($v) . '%');
                         } else {
                             $qb->andWhere('tbl.' . $k . ' = :' . $k)
                                ->setParameter($k, DataUtil::formatForStore($v));
@@ -1316,6 +1325,11 @@ class Repository {
          */
         public function archiveObjects()
         {
+            if (!SecurityUtil::checkPermission('«app.appName»', '.*', ACCESS_EDIT)) {
+                // current user has no permission for executing the archive workflow action
+                return true;
+            }
+
             «val endField = getEndDateField»
             «IF endField instanceof DatetimeField»
                 $today = date('Y-m-d H:i:s');

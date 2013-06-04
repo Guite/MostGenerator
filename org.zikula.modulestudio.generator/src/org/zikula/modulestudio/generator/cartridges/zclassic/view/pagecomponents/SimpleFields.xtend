@@ -133,7 +133,7 @@ class SimpleFields {
             «ENDIF»
               <a href="{$«realName»FullPathURL}" title="{$«objName».«entity.getLeadingField.name.formatForCode»|replace:"\"":""}"{if $«realName»Meta.isImage} rel="imageviewer[«entity.name.formatForDB»]"{/if}>
               {if $«realName»Meta.isImage}
-                  {thumb image=$«realName»FullPath objectid="«entity.name.formatForCode»«IF entity.hasCompositeKeys»«FOR pkField : entity.getPrimaryKeyFields»-`$«objName».«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$«objName».«entity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" manager=$«entity.name.formatForCode»ThumbManager«name.formatForCodeCapital» tag=true img_alt=$«objName».«entity.getLeadingField.name.formatForCode»}
+                  {thumb image=$«realName»FullPath objectid="«entity.name.formatForCode»«IF entity.hasCompositeKeys»«FOR pkField : entity.getPrimaryKeyFields»-`$«objName».«pkField.name.formatForCode»`«ENDFOR»«ELSE»-`$«objName».«entity.primaryKeyFields.head.name.formatForCode»`«ENDIF»" preset=$«entity.name.formatForCode»ThumbPreset«name.formatForCodeCapital» tag=true img_alt=$«objName».«entity.getLeadingField.name.formatForCode»}
               {else}
                   {gt text='Download'} ({$«realName»Meta.size|«appNameSmall»GetFileSize:$«realName»FullPath:false:false})
               {/if}

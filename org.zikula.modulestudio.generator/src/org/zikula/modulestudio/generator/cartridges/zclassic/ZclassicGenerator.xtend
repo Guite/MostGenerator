@@ -12,6 +12,7 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Installe
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Listeners
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Uploads
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Workflow
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Newsletter
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.additions.Tag
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.Account
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.apis.BlockList
@@ -118,7 +119,12 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Additions: Content type api')
         println('Generating content type api')
         new ContentTypeList().generate(it, fsa)
-        new ContentTypeSingle().generate(it, fsa)
+        if (hasUserController && getMainUserController.hasActions('display')) {
+            new ContentTypeSingle().generate(it, fsa)
+        }
+        pm?.subTask('Additions: Newsletter plugin')
+        println('Generating newsletter plugin')
+        new Newsletter().generate(it, fsa)
         pm?.subTask('Additions: Mailz api')
         println('Generating mailz api')
         new Mailz().generate(it, fsa)

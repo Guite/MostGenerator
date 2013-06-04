@@ -47,25 +47,24 @@ class Image {
          */
         class «IF targets('1.3.5')»«appName»_Util_Base_Image«ELSE»ImageUtil«ENDIF» extends Zikula_AbstractBase
         {
-            «getManager»
-
             «getPreset»
+
+            «getCustomPreset»
         }
     '''
 
-    def private getManager(Application it) '''
+    def private getPreset(Application it) '''
         /**
-         * This method returns an Imagine manager with a certain preset
-         * which is chosen depending on the given arguments.
+         * This method returns an Imagine preset for the given arguments.
          *
          * @param string $objectType Currently treated entity type.
          * @param string $fieldName  Name of upload field.
          * @param string $context    Usage context (allowed values: controllerAction, api, actionHandler, block, contentType).
          * @param array  $args       Additional arguments.
          *
-         * @return SystemPlugin_Imagine_Manager The desired manager.
+         * @return SystemPlugin_Imagine_Preset The selected preset.
          */
-        public function getManager($objectType = '', $fieldName = '', $context = '', $args = array())
+        public function getPreset($objectType = '', $fieldName = '', $context = '', $args = array())
         {
             if (!in_array($context, array('controllerAction', 'api', 'actionHandler', 'block', 'contentType'))) {
                 $context = 'controllerAction';
@@ -90,17 +89,13 @@ class Image {
                 $presetName = $this->name . '_default';
             }
 
-            $preset = $this->getPreset($objectType, $fieldName, $presetName, $context, $args);
+            $preset = $this->getCustomPreset($objectType, $fieldName, $presetName, $context, $args);
 
-            $manager = $this->getServiceManager()->getService('systemplugin.imagine.manager');
-            $manager->setModule($this->name)
-                    ->setPreset($presetName);
-
-            return $manager;
+            return $preset;
         }
     '''
 
-    def private getPreset(Application it) '''
+    def private getCustomPreset(Application it) '''
         /**
          * This method returns an Imagine preset for the given arguments.
          *
@@ -112,7 +107,7 @@ class Image {
          *
          * @return SystemPlugin_Imagine_Preset The selected preset.
          */
-        public function getPreset($objectType = '', $fieldName = '', $presetName = '', $context = '', $args = array())
+        public function getCustomPreset($objectType = '', $fieldName = '', $presetName = '', $context = '', $args = array())
         {
             $presetData = array(
                 'width'     => 100,      // thumbnail width in pixels
@@ -134,9 +129,6 @@ class Image {
                 } elseif ($args['action'] == 'display') {
                     $presetData['width'] = 250;
                     $presetData['height'] = 150;
-                } elseif ($args['action'] == 'display') {
-                    $presetData['width'] = 80;
-                    $presetData['height'] = 50;
                 }
             }
 

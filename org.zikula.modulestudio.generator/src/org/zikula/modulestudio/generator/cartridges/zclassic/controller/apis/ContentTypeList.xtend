@@ -226,8 +226,8 @@ class ContentTypeList {
                 $this->categorisableObjectTypes = array(«FOR entity : getCategorisableEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
 
                 // fetch category properties
-                $this->catRegistries = null;
-                $this->catProperties = null;
+                $this->catRegistries = array();
+                $this->catProperties = array();
                 if (in_array($this->objectType, $this->categorisableObjectTypes)) {
                     $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $this->objectType));
                     $this->catRegistries = ModUtil::apiFunc('«appName»', 'category', 'getAllPropertiesWithMainCat', array('ot' => $this->objectType, 'arraykey' => $idFields[0]));

@@ -10,7 +10,7 @@ import com.google.inject.Module;
 public class MostGeneratorSupport extends AbstractGenericResourceSupport {
 
     /**
-     * Creates the Guite module.
+     * Creates the Guice module.
      * 
      * @return The {@link MostGeneratorModule} instance.
      */

@@ -130,6 +130,7 @@ class ExternalController {
                 $entityClass = '\\«appName»\\Entity\\' . ucwords($objectType) . 'Entity';
             «ENDIF»
             $repository = $this->entityManager->getRepository($entityClass);
+            $repository->setControllerArguments($args);
             $idFields = ModUtil::apiFunc('«appName»', 'selection', 'getIdFields', array('ot' => $objectType));
             $idValues = array('id' => $id);«/** TODO consider composite keys properly */»
 
@@ -172,7 +173,7 @@ class ExternalController {
 
             $this->view->assign('objectType', $objectType)
                       ->assign('source', $source)
-                      ->assign('item', $entity)
+                      ->assign($objectType, $entity)
                       ->assign('displayMode', $displayMode);
 
             «IF targets('1.3.5')»
@@ -211,6 +212,7 @@ class ExternalController {
                 $entityClass = '\\«appName»\\Entity\\' . ucwords($objectType) . 'Entity';
             «ENDIF»
             $repository = $this->entityManager->getRepository($entityClass);
+            $repository->setControllerArguments($args);
 
             $editor = (isset($args['editor']) && !empty($args['editor'])) ? $args['editor'] : $getData->filter('editor', '', FILTER_SANITIZE_STRING);
             if (empty($editor) || !in_array($editor, array('xinha', 'tinymce'/*, 'ckeditor'*/))) {
@@ -220,7 +222,7 @@ class ExternalController {
 
                 // fetch selected categories to reselect them in the output
                 // the actual filtering is done inside the repository class
-                $categoryIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $objectType, 'source' => 'GET'));
+                $categoryIds = ModUtil::apiFunc('«appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => $objectType, 'source' => 'GET', 'controllerArgs' => $args));
             «ENDIF»
             $sort = (isset($args['sort']) && !empty($args['sort'])) ? $args['sort'] : $getData->filter('sort', '', FILTER_SANITIZE_STRING);
             if (empty($sort) || !in_array($sort, $repository->getAllowedSortingFields())) {

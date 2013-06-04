@@ -58,7 +58,7 @@ class Mailz {
 
     def private mailzBaseImpl(Application it) '''
         /**
-         * Get mailz plugins with type / title.
+         * Returns existing Mailz plugins with type / title.
          *
          * @param array $args List of arguments.
          *
@@ -84,7 +84,7 @@ class Mailz {
         }
 
         /**
-         * Get content for plugins.
+         * Returns the content for a given Mailz plugin.
          *
          * @param array    $args                List of arguments.
          * @param int      $args['pluginid']    id number of plugin (internal id for this module, see getPlugins method).
@@ -148,7 +148,7 @@ class Mailz {
             //$data = array('sorting' => $this->sorting, 'amount' => $this->amount, 'filter' => $this->filter, 'template' => $this->template);
             //$view->assign('vars', $data);
 
-            $view->assign('objectType', '«leadingEntity.name.formatForCode»')
+            $view->assign('objectType', $objectType)
                  ->assign('items', $entities)
                  ->assign($repository->getAdditionalTemplateParameters('api', array('name' => 'mailz')));
 

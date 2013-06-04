@@ -198,7 +198,8 @@ class Installer {
                     $registryData['modname'] = $this->name;
                     $registryData['table'] = '«entity.name.formatForCodeCapital»';
                     $registryData['property'] = $categoryApi->getPrimaryProperty(array('ot' => '«entity.name.formatForCodeCapital»'));
-                    $registryData['category_id'] = CategoryUtil::getCategoryByPath('/__SYSTEM__/Modules/Global');
+                    $categoryGlobal = CategoryUtil::getCategoryByPath('/__SYSTEM__/Modules/Global');
+                    $registryData['category_id'] = $categoryGlobal['id'];
                     $registryData['id'] = false;
                     if (!DBUtil::insertObject($registryData, 'categories_registry')) {
                         LogUtil::registerError($this->__f('Error! Could not create a category registry for the %s entity.', array('«entity.name.formatForDisplay»')));

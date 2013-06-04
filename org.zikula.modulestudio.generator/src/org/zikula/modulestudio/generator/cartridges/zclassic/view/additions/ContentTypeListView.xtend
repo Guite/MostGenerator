@@ -83,7 +83,7 @@ class ContentTypeListView {
             {formlabel for='«appName»_objecttype' text=$objectTypeSelectorLabel}
             {«appName.formatForDB»ObjectTypeSelector assign='allObjectTypes'}
             {formdropdownlist id='«appName»_objecttype' dataField='objectType' group='data' mandatory=true items=$allObjectTypes}
-            <div class="z-sub z-formnote">{gt text='If you change this please save the element once to reload the parameters below.' domain='module_«appName.formatForDB»'}</div>
+            <span class="z-sub z-formnote">{gt text='If you change this please save the element once to reload the parameters below.' domain='module_«appName.formatForDB»'}</span>
         </div>
 
         {formvolatile}
@@ -106,7 +106,7 @@ class ContentTypeListView {
                     {/if}
                     {formlabel for="«appName»_catids`$propertyName`" text=$categorySelectorLabel}
                     {formdropdownlist id="«appName»_catids`$propName`" items=$categories.$propName dataField="catids`$propName`" group='data' selectionMode=$selectionMode}
-                    <div class="z-sub z-formnote">{gt text='This is an optional filter.' domain='module_«appName.formatForDB»'}</div>
+                    <span class="z-sub z-formnote">{gt text='This is an optional filter.' domain='module_«appName.formatForDB»'}</span>
                 </div>
             {/foreach}
             {/nocache}
@@ -146,14 +146,14 @@ class ContentTypeListView {
             {gt text='Custom template' domain='module_«appName.formatForDB»' assign='customTemplateLabel'}
             {formlabel for='«appName»_customtemplate' text=$customTemplateLabel}
             {formtextinput id='«appName»_customtemplate' dataField='customTemplate' group='data' mandatory=false maxLength=80}
-            <div class="z-sub z-formnote">{gt text='Example' domain='module_«appName.formatForDB»'}: <em>itemlist_[objecttype]_display.tpl</em></div>
+            <span class="z-sub z-formnote">{gt text='Example' domain='module_«appName.formatForDB»'}: <em>itemlist_[objecttype]_display.tpl</em></span>
         </div>
 
         <div class="z-formrow z-hide"«/* TODO: wait until FilterUtil is ready for Doctrine 2 - see https://github.com/zikula/core/issues/118 */»>
             {gt text='Filter (expert option)' domain='module_«appName.formatForDB»' assign='filterLabel'}
             {formlabel for='«appName»_filter' text=$filterLabel}
             {formtextinput id='«appName»_filter' dataField='filter' group='data' mandatory=false maxLength=255}
-            <div class="z-sub z-formnote">({gt text='Syntax examples' domain='module_«appName.formatForDB»'}: <kbd>name:like:foobar</kbd> {gt text='or' domain='module_«appName.formatForDB»'} <kbd>status:ne:3</kbd>)</div>
+            <span class="z-sub z-formnote">({gt text='Syntax examples' domain='module_«appName.formatForDB»'}: <kbd>name:like:foobar</kbd> {gt text='or' domain='module_«appName.formatForDB»'} <kbd>status:ne:3</kbd>)</span>
         </div>
 
         {pageaddvar name='javascript' value='prototype'}
@@ -178,6 +178,6 @@ class ContentTypeListView {
     '''
 
     def private detailLink(Entity it, String appName) '''
-        <a href="{modurl modname='«appName»' type='user' «modUrlDisplayWithFreeOt('item', true, '$objectType')»}">{gt text='Read more'}</a>
+        <a href="{modurl modname='«appName»' type='user' «modUrlDisplayWithFreeOt(name.formatForCode, true, '$objectType')»}">{gt text='Read more'}</a>
     '''
 }

@@ -129,7 +129,9 @@ class ListEntries {
                 unset($listValues[$numValues-1]);
             }
             if ($listValues[0] == '') {
-                unset($listValues[0]);
+                // use array_shift insteaf of unset for proper key reindexing
+                // keys must start with 0, otherwise the dropdownlist form plugin gets confused
+                array_shift($listValues);
             }
 
             return $listValues;

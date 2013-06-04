@@ -175,7 +175,11 @@ class ViewQuickNavForm {
         <select id="«fieldName»" name="«fieldName»">
             <option value="">{$lblDefault}</option>
         {foreach item='option' from=$«fieldName»Items}
+        «IF multiple»
+            <option value="%{$option.value}"{if $option.title ne ''} title="{$option.title|safetext}"{/if}{if "%`$option.value`" eq $formats} selected="selected"{/if}>{$option.text|safetext}</option>
+        «ELSE»
             <option value="{$option.value}"{if $option.title ne ''} title="{$option.title|safetext}"{/if}{if $option.value eq $«fieldName»} selected="selected"{/if}>{$option.text|safetext}</option>
+        «ENDIF»
         {/foreach}
         </select>
     '''
