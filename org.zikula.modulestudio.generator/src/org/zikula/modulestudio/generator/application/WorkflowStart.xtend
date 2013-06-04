@@ -46,7 +46,7 @@ class WorkflowStart {
     			return true;
     		}
     		default: {
-    			progressMonitor.subTask("Valid: " + diag.toString)
+    			progressMonitor.subTask("Valid")
     			progressMonitor.done();
     			return true;
     		}
