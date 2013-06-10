@@ -6,12 +6,25 @@ resolve --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster
 # compile Xtend 2 classes
 perform "org.zikula.modulestudio.generator.build#compile.xtend.classes"
 
+# gather metrics on source code level
+perform --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "org.zikula.modulestudio.generator.build#metrics.prebuild"
+
 # build workspace
 build
 #build --thorough
 
-# build p2 repository
+# run tests and code coverage (buckminster emma --help)
+emma --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" --launch "org.zikula.modulestudio.generator.tests/AllTests.launch" --terseXML --flatXML --output "${WORKSPACE}output/test_results/junit/alltests.xml" --xml "${WORKSPACE}output/test_results/coverage/alltests.xml" --stderr --stdout
+#emma --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" --launch "org.zikula.modulestudio.generator.tests/OtherTests.launch" --terseXML --flatXML --output "${WORKSPACE}output/test_results/junit/othertests.xml" --xml "${WORKSPACE}output/test_results/coverage/othertests.xml" --stderr --stdout
+
+# build feature p2 repository
 perform --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "org.zikula.modulestudio.generator.build#site.p2"
 
-# move it to /site.p2.artifact/
+# gather metrics on byte code level
+perform --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "org.zikula.modulestudio.generator.build#metrics.postbuild"
+
+# move repository to /site.p2.artifact/
 perform "org.zikula.modulestudio.generator.build#finish.repository"
+
+# generate API documentation
+perform --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "org.zikula.modulestudio.generator.build#create.documentation"

@@ -4,11 +4,12 @@
     xmlns:bc="http://www.eclipse.org/buckminster/Common-1.0"
     xmlns="http://www.eclipse.org/buckminster/CSpec-1.0" componentType="eclipse.feature" version="1.0.0">
     <dependencies>
+        <dependency name="org.aopalliance" componentType="osgi.bundle"/>
         <dependency name="org.eclipse.rcp" componentType="eclipse.feature"/>
         <dependency name="org.eclipse.xtext.xtend2.standalone" componentType="osgi.bundle"/>
         <dependency name="org.eclipse.xtext.xtend2.lib" componentType="osgi.bundle"/>
         <dependency name="de.guite.modulestudio.branding" componentType="osgi.bundle"/>
-        <dependency name="org.aopalliance" componentType="osgi.bundle"/>
+        <dependency name="org.zikula.modulestudio.generator.tests" componentType="osgi.bundle"/>
     </dependencies>
     <actions>
         <!-- trigger Xtend2 builder -->
@@ -23,6 +24,66 @@
                 <path path="dummy_output_generator/" />
             </products>
         </public>
+
+        <!-- perform all test analysis for the source code specified in referenced ant file -->
+        <public name="metrics.prebuild" actor="ant">
+            <actorProperties>
+                <property key="buildFile" value="${workspace.root}/refProduct/bundles/de.guite.modulestudio.build/test/metrics_prebuild.xml" />
+                <property key="targets" value="perform.all.tests" />
+            </actorProperties>
+            <properties>
+                <!-- path to root build directory from view of this build plugin -->
+                <property key="WORKSPACE" value="${workspace.root}" />
+                <!-- location of reports output directory -->
+                <property key="reports" value="${workspace.root}/reports" />
+                <!-- location of external tools on the dev server -->
+                <property key="externalTools" value="${workspace.root}/refProduct/bundles/de.guite.modulestudio.build/tools" />
+            </properties>
+            <products alias="destination" base="${buckminster.output}">
+                <path path="reports/" />
+            </products>
+        </public>
+
+        <!-- perform all test analysis for the byte code specified in referenced ant file -->
+        <public name="metrics.postbuild" actor="ant">
+            <actorProperties>
+                <property key="buildFile" value="${workspace.root}/refProduct/bundles/de.guite.modulestudio.build/test/metrics_postbuild.xml" />
+                <property key="targets" value="perform.all.tests" />
+            </actorProperties>
+            <properties>
+                <!-- path to root build directory from view of this build plugin -->
+                <property key="WORKSPACE" value="${workspace.root}" />
+                <!-- location of reports output directory -->
+                <property key="reports" value="${workspace.root}/reports" />
+                <!-- location of external tools on the dev server -->
+                <property key="externalTools" value="${workspace.root}/refProduct/bundles/de.guite.modulestudio.build/tools" />
+            </properties>
+            <products alias="destination" base="${buckminster.output}">
+                <path path="reports/" />
+            </products>
+        </public>
+
+        <!-- perform component documentation tasks specified in referenced ant file -->
+        <public name="create.documentation" actor="ant">
+            <actorProperties>
+                <property key="buildFile" value="${workspace.root}/refProduct/bundles/de.guite.modulestudio.build/document/documentation.xml" />
+                <property key="targets" value="create.component.documentation" />
+            </actorProperties>
+            <properties>
+                <!-- path to root build directory from view of this build plugin -->
+                <property key="WORKSPACE" value="${workspace.root}" />
+                <!-- location of documentation output directory -->
+                <property key="docFolder" value="${workspace.root}" />
+                <!-- location of target platform -->
+                <property key="target.platform" value="${workspace.root}/../../MOST-1_Prepare-1_Target_Platform/workspace/.metadata/.plugins/org.eclipse.pde.core/.bundle_pool/plugins/" />
+                <!-- location of external tools on the dev server -->
+                <property key="externalTools" value="${workspace.root}/refProduct/bundles/de.guite.modulestudio.build/tools" />
+            </properties>
+            <products alias="destination" base="${buckminster.output}">
+                <path path="documentation/" />
+            </products>
+        </public>
+
         <!-- move p2 repository to final destination -->
         <public name="finish.repository" actor="ant">
             <actorProperties>
