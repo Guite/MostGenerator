@@ -111,7 +111,7 @@ class Image {
         {
             $presetData = array(
                 'width'     => 100,      // thumbnail width in pixels
-                'height'    => 100 ,     // thumbnail height in pixels
+                'height'    => 100,      // thumbnail height in pixels
                 'mode'      => 'inset',  // inset or outset
                 'extension' => null      // file extension for thumbnails (jpg, png, gif; null for original file type)
             );
