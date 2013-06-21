@@ -11,7 +11,6 @@ import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
-import de.guite.modulestudio.metamodel.modulestudio.BooleanField
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 
 class DisplayFunctions {
