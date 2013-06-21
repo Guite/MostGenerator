@@ -223,13 +223,6 @@ class DisplayFunctions {
         }
     '''
 
-    def private dispatch jsInit(BooleanField it) '''
-        if ($('«name.formatForCode»') != undefined) {
-            $('«name.formatForCode»').observe('click', «initQuickNavigationSubmitCall(entity.container.application.prefix)»)
-                                     .observe('keypress', «initQuickNavigationSubmitCall(entity.container.application.prefix)»);
-        }
-    '''
-
     def private dispatch jsInit(JoinRelationship it) '''
         «val sourceAliasName = getRelationAliasName(false)»
         if ($('«sourceAliasName»') != undefined) {
