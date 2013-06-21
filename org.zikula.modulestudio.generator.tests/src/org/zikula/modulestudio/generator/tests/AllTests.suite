@@ -1,0 +1,33 @@
+package org.zikula.modulestudio.generator.tests
+
+#Generator Testing Suite
+ 
+This suite tests the ModuleStudio **generators**.
+
+## Unit tests
+ 
+This is a subsection in which we list all our unit specs:
+
+### Application parts
+
+- \org\.zikula\.modulestudio\.generator\.tests\.application\..*\
+
+### General extensions
+
+- \org\.zikula\.modulestudio\.generator\.tests\.extensions\..*\
+
+### Cartridges
+
+This sub section treats different generator cartridges in detail.
+
+#### Zikula classic
+
+- \org\.zikula\.modulestudio\.generator\.tests\.zclassic\..*\
+
+#### Reporting
+
+- \org\.zikula\.modulestudio\.generator\.tests\.model\..*\
+
+### XML importer
+
+- \org\.zikula\.modulestudio\.generator\.tests\.importer\..*\

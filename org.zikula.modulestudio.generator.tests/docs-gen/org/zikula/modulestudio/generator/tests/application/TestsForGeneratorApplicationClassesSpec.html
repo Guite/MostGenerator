@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Tests for generator application classes</title>
+<meta name="description" content="">
+<meta name="author" content="Jnario">
+
+<!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+<link rel="stylesheet" href="../../../../../../css/bootstrap.min.css">
+<link rel="stylesheet" href="../../../../../../css/bootstrap-responsive.min.css">
+<link rel="stylesheet" href="../../../../../../css/custom.css">
+<link rel="stylesheet" href="../../../../../../css/prettify.css">
+<script type="text/javascript" src="../../../../../../js/prettify.js"></script>
+<script type="text/javascript" src="../../../../../../js/lang-jnario.js"></script>
+<script type="text/javascript" src="../../../../../../js/jquery.js"></script>
+<script type="text/javascript" src="../../../../../../js/bootstrap-tab.js"></script>
+</head>
+
+<body onload="prettyPrint()">
+	<div class="container">
+		<div class="tabbable">
+			<div class="content">
+				<div class="page-header pending">
+					<h1>Tests for generator application classes</h1>
+					  <ul class="nav nav-tabs pull-right">
+					    <li class="active"><a href="#spec" data-toggle="tab">Spec</a></li>
+						<li><a href="#source" data-toggle="tab">Source</a></li>
+					  </ul>
+				</div>
+				<div class="row">
+					<div class="span12">
+						  <div class="tab-content">
+							  	<div class="tab-pane active" id="spec">
+<p>This class tests certain aspects of the Application meta class.</p>
+<ul><li><p id="First_generator_test" class="example notrun"><strong>First generator test</strong></p>
+<p>Testing a code generator.</p>
+<pre class="prettyprint lang-spec linenums">
+val app = '''
+    application SimpleNews {
+        documentation 'Simple news extension'
+        vendor 'Guite'
+        author 'Axel Guckelsberger'
+        email 'info@guite.de'
+        url 'http://guite.de'
+        prefix 'sinew'
+        modelLayer {
+            modelContainer Models {
+            }
+        }
+        controllingLayer {
+            controllerContainer Controller {
+                modelContext ( 'SimpleNews.Model' )
+                processViews = 'SimpleNews.Views'
+            }
+        }
+        viewLayer {
+            viewContainer Views {
+                controller 'SimpleNews.Controller'
+            }
+        }
+    }
+'''.parse
+
+// To capture the results we use a special kind of IFileSystemAccess
+// that keeps the files InMemory and does not write them to the disk.
+fsa = new InMemoryFileSystemAccess
+
+// Call the generator with our test resource and a InMemoryFileSystemAccess.
+generator.doGenerate(app.eResource, fsa)
+
+println('Binary files:')
+println(fsa.binaryFiles)
+println('Text files:')
+println(fsa.textFiles)
+
+fsa.textFiles.size should not be 0
+
+checkTextFile('bootstrap.php',
+    '''
+    here comes the expected output
+    ''')
+
+checkTextFile('SomeClass.php',
+    '''
+    public class SomeClass
+    {
+         // expected code
+    }
+    ''')</pre>
+</li></ul>
+							</div>
+						    <div class="tab-pane" id="source">
+						    	<h3>Application.spec</h3>
+						    	<p>
+<pre class="prettyprint lang-spec linenums">
+package org.zikula.modulestudio.generator.tests.application
+
+import com.google.inject.Inject
+import de.guite.modulestudio.metamodel.modulestudio.Application
+import org.eclipse.xtext.generator.IFileSystemAccess
+import org.eclipse.xtext.generator.IGenerator
+import org.eclipse.xtext.generator.InMemoryFileSystemAccess
+import org.eclipse.xtext.junit4.util.ParseHelper
+import org.jnario.runner.CreateWith
+import org.zikula.modulestudio.generator.tests.lib.GuiceSpecCreator
+
+/**
+ * This class tests certain aspects of the Application meta class.
+ */
+@CreateWith(typeof(GuiceSpecCreator))
+describe 'Tests for generator application classes' {
+
+    //@Inject MostGenerator generator
+    @Inject IGenerator generator
+
+    @Inject extension ParseHelper&lt;Application&gt;
+
+    var InMemoryFileSystemAccess fsa
+
+    /**
+     * Testing a code generator.
+     */
+    fact 'First generator test' {
+        val app = '''
+            application SimpleNews {
+                documentation 'Simple news extension'
+                vendor 'Guite'
+                author 'Axel Guckelsberger'
+                email 'info@guite.de'
+                url 'http://guite.de'
+                prefix 'sinew'
+                modelLayer {
+                    modelContainer Models {
+                    }
+                }
+                controllingLayer {
+                    controllerContainer Controller {
+                        modelContext ( 'SimpleNews.Model' )
+                        processViews = 'SimpleNews.Views'
+                    }
+                }
+                viewLayer {
+                    viewContainer Views {
+                        controller 'SimpleNews.Controller'
+                    }
+                }
+            }
+        '''.parse
+
+        // To capture the results we use a special kind of IFileSystemAccess
+        // that keeps the files InMemory and does not write them to the disk.
+        fsa = new InMemoryFileSystemAccess
+
+        // Call the generator with our test resource and a InMemoryFileSystemAccess.
+        generator.doGenerate(app.eResource, fsa)
+
+        println('Binary files:')
+        println(fsa.binaryFiles)
+        println('Text files:')
+        println(fsa.textFiles)
+
+        fsa.textFiles.size should not be 0
+
+        checkTextFile('bootstrap.php',
+            '''
+            here comes the expected output
+            ''')
+
+        checkTextFile('SomeClass.php',
+            '''
+            public class SomeClass
+            {
+                 // expected code
+            }
+            ''')
+    }
+
+    def private checkTextFile(String fileName, String content) {
+        val filePath = IFileSystemAccess::DEFAULT_OUTPUT + fileName
+        fsa.textFiles.containsKey(filePath) should be true
+        fsa.textFiles.get(filePath).toString should be content
+    }
+
+    /**
+     * Strategic aspect: tests verifying the generator output are not always a good idea as
+     * generator templates are often subject of amendments.
+     *
+     * Therefore we should primarily write unit tests for the extensions that are
+     * used by the generator in order to test them intensively.
+     * 
+     * Testing generator output can still make sense for doing integration tests though.
+     */
+}
+</pre>
+						    </p></div>
+						  </div>
+					</div> 
+				</div> <!-- /row -->
+			</div> <!-- /content -->
+		</div> <!-- /tabbable -->
+		<footer>
+			<p><small>Generated by <a href="http://www.jnario.org">Jnario</a>.</small></p>
+		</footer>
+	</div> <!-- /container -->
+
+</body>
+</html>
