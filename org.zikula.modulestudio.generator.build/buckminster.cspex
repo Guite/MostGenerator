@@ -91,7 +91,7 @@
                 <property key="targets" value="finish.repository" />
             </actorProperties>
             <properties>
-                <property key="outputPath" value="/var/lib/jenkins/jobs/MOST-1_Prepare-5_Generator/workspace/output/org.zikula.modulestudio.generator.build_1.0.0-eclipse.feature" />
+                <property key="outputPath" value="/var/lib/jenkins/jobs/MOST-1_Prepare-4_Generator/workspace/output/org.zikula.modulestudio.generator.build_1.0.0-eclipse.feature" />
             </properties>
             <products alias="destination">
                 <path path="dummy_output_generator/" />
