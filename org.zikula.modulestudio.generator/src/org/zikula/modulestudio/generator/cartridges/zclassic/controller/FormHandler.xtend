@@ -706,10 +706,12 @@ class FormHandler {
                 }
             }
 
-            $otherFormData = $this->fetchInputData($view, $args);
-            if ($otherFormData === false) {
-                 return false;
-            }
+            if ($action != 'cancel') {
+                $otherFormData = $this->fetchInputData($view, $args);
+            	if ($otherFormData === false) {
+                	return false;
+            	}
+        	}
 
             // get treated entity reference from persisted member var
             $entity = $this->entityRef;
