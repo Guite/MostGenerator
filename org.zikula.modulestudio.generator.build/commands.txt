@@ -4,7 +4,8 @@
 resolve --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "scm/org.zikula.modulestudio.generator.build/most.cquery"
 
 # compile Xtend 2 classes
-perform "org.zikula.modulestudio.generator.build#compile.xtend.classes"
+#perform "org.zikula.modulestudio.generator.build#compile.xtend.classes"
+launch --stderr --stdout -l "org.zikula.modulestudio.generator.build/XtendCompiler.launch"
 
 # gather metrics on source code level
 perform --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "org.zikula.modulestudio.generator.build#metrics.prebuild"
