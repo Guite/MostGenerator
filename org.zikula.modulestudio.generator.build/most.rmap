@@ -15,6 +15,11 @@
             <uri format="file:////var/lib/jenkins/jobs/MOST-1_Prepare-2_MetaModel/lastSuccessful/archive/site.p2.artifact" />
         </provider>
     </searchPath>
+	    <searchPath name="most.mostdsl">
+        <provider readerType="p2" componentTypes="osgi.bundle,eclipse.feature" mutable="false" source="false">
+            <uri format="file:////var/lib/jenkins/jobs/MOST-1_Prepare-3_TextualEditor/lastSuccessful/archive/site.p2.artifact" />
+        </provider>
+    </searchPath>
     <searchPath name="most.product">
         <provider readerType="local" componentTypes="osgi.bundle,eclipse.feature" mutable="false">
             <uri format="{0}/refProduct/bundles/{1}">
@@ -34,6 +39,7 @@
 
     <locator searchPathRef="most.generator" pattern="^org\.zikula\.modulestudio\.generator(\..*)?" />
     <locator searchPathRef="most.metamodel" pattern="^de\.guite\.modulestudio\.metamodel(\..*)?" />
+	<locator searchPathRef="most.mostdsl" pattern="^de\.guite\.modulestudio\.mostdsl(\..*)?" />
     <locator searchPathRef="most.product" pattern="^de\.guite\.modulestudio(\..+)?" />
     <locator searchPathRef="most.product.helpers.reporting" failOnError="false" />
     <redirect href="../../refProduct/bundles/de.guite.modulestudio.build/build/most_eclipse.rmap" />
