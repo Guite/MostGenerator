@@ -390,9 +390,15 @@ class ControllerLayer {
                 $links = array();
 
                 «menuLinksBetweenControllers»
+
+                $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
+                $utilArgs = array('api' => '«it.formattedName»', 'action' => 'getlinks');
+                $allowedObjectTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
+
                 «IF hasActions('view')»
                     «FOR entity : app.getAllEntities»
-                        if (SecurityUtil::checkPermission($this->name . ':«entity.name.formatForCodeCapital»:', '::', ACCESS_«menuLinksPermissionLevel»)) {
+                        if (in_array('«entity.name.formatForCode»', $allowedObjectTypes)
+                            && SecurityUtil::checkPermission($this->name . ':«entity.name.formatForCodeCapital»:', '::', ACCESS_«menuLinksPermissionLevel»)) {
                             $links[] = array('url' => ModUtil::url($this->name, '«formattedName»', 'view', array('ot' => '«entity.name.formatForCode»')),
                                              'text' => $this->__('«entity.nameMultiple.formatForDisplayCapital»'),
                                              'title' => $this->__('«entity.name.formatForDisplayCapital» list'));
