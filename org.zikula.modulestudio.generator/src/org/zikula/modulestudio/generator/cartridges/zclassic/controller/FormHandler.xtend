@@ -1040,7 +1040,7 @@ class FormHandler {
 
             // we must persist related items now (after the merge) to avoid validation errors
             // if cascades cause the main entity becoming persisted automatically, too
-            $this->persistRelationData();
+            $this->persistRelationData($view);
 
             // save updated entity
             $this->entityRef = $entity;
@@ -1089,8 +1089,10 @@ class FormHandler {
 
         /**
          * Persists any related items.
+         *
+         * @param Zikula_Form_View $view The form view instance.
          */
-        protected function persistRelationData()
+        protected function persistRelationData(Zikula_Form_View $view)
         {
             $this->persistRelationData_rec($view->plugins);
         }
