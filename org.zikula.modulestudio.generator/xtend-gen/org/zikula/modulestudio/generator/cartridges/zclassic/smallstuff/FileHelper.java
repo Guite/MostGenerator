@@ -1,0 +1,553 @@
+package org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff;
+
+import com.google.common.base.Objects;
+import com.google.inject.Inject;
+import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField;
+import de.guite.modulestudio.metamodel.modulestudio.Application;
+import de.guite.modulestudio.metamodel.modulestudio.BooleanField;
+import de.guite.modulestudio.metamodel.modulestudio.DecimalField;
+import de.guite.modulestudio.metamodel.modulestudio.DerivedField;
+import de.guite.modulestudio.metamodel.modulestudio.Entity;
+import de.guite.modulestudio.metamodel.modulestudio.FloatField;
+import de.guite.modulestudio.metamodel.modulestudio.IntegerField;
+import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship;
+import java.util.Arrays;
+import org.eclipse.xtend2.lib.StringConcatenation;
+import org.eclipse.xtext.xbase.lib.Extension;
+import org.eclipse.xtext.xbase.lib.Functions.Function0;
+import org.eclipse.xtext.xbase.lib.IterableExtensions;
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions;
+import org.zikula.modulestudio.generator.extensions.ModelExtensions;
+import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions;
+import org.zikula.modulestudio.generator.extensions.Utils;
+
+@SuppressWarnings("all")
+public class FileHelper {
+  @Inject
+  @Extension
+  private FormattingExtensions _formattingExtensions = new Function0<FormattingExtensions>() {
+    public FormattingExtensions apply() {
+      FormattingExtensions _formattingExtensions = new FormattingExtensions();
+      return _formattingExtensions;
+    }
+  }.apply();
+  
+  @Inject
+  @Extension
+  private ModelExtensions _modelExtensions = new Function0<ModelExtensions>() {
+    public ModelExtensions apply() {
+      ModelExtensions _modelExtensions = new ModelExtensions();
+      return _modelExtensions;
+    }
+  }.apply();
+  
+  @Inject
+  @Extension
+  private ModelJoinExtensions _modelJoinExtensions = new Function0<ModelJoinExtensions>() {
+    public ModelJoinExtensions apply() {
+      ModelJoinExtensions _modelJoinExtensions = new ModelJoinExtensions();
+      return _modelJoinExtensions;
+    }
+  }.apply();
+  
+  @Inject
+  @Extension
+  private Utils _utils = new Function0<Utils>() {
+    public Utils apply() {
+      Utils _utils = new Utils();
+      return _utils;
+    }
+  }.apply();
+  
+  public CharSequence phpFileHeader(final Application it) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("<?php");
+    _builder.newLine();
+    _builder.append("/**");
+    _builder.newLine();
+    _builder.append(" ");
+    _builder.append("* ");
+    String _name = it.getName();
+    _builder.append(_name, " ");
+    _builder.append(".");
+    _builder.newLineIfNotEmpty();
+    _builder.append(" ");
+    _builder.append("*");
+    _builder.newLine();
+    _builder.append(" ");
+    _builder.append("* @copyright ");
+    String _author = it.getAuthor();
+    _builder.append(_author, " ");
+    _builder.append(" (");
+    String _vendor = it.getVendor();
+    _builder.append(_vendor, " ");
+    _builder.append(")");
+    _builder.newLineIfNotEmpty();
+    _builder.append(" ");
+    _builder.append("* @license ");
+    String _license = it.getLicense();
+    _builder.append(_license, " ");
+    _builder.newLineIfNotEmpty();
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append(" ");
+        _builder.append("* @package ");
+        String _name_1 = it.getName();
+        _builder.append(_name_1, " ");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    _builder.append(" ");
+    _builder.append("* @author ");
+    String _author_1 = it.getAuthor();
+    _builder.append(_author_1, " ");
+    {
+      boolean _and = false;
+      String _email = it.getEmail();
+      boolean _tripleNotEquals = (_email != null);
+      if (!_tripleNotEquals) {
+        _and = false;
+      } else {
+        String _email_1 = it.getEmail();
+        boolean _notEquals = (!Objects.equal(_email_1, ""));
+        _and = (_tripleNotEquals && _notEquals);
+      }
+      if (_and) {
+        _builder.append(" <");
+        String _email_2 = it.getEmail();
+        _builder.append(_email_2, " ");
+        _builder.append(">");
+      }
+    }
+    _builder.append(".");
+    _builder.newLineIfNotEmpty();
+    _builder.append(" ");
+    _builder.append("* @link ");
+    {
+      String _url = it.getUrl();
+      boolean _notEquals_1 = (!Objects.equal(_url, ""));
+      if (_notEquals_1) {
+        String _url_1 = it.getUrl();
+        _builder.append(_url_1, " ");
+      } else {
+        String _msUrl = this._utils.msUrl();
+        _builder.append(_msUrl, " ");
+      }
+    }
+    _builder.newLineIfNotEmpty();
+    _builder.append(" ");
+    _builder.append("* @link http://zikula.org");
+    _builder.newLine();
+    _builder.append(" ");
+    _builder.append("* @version Generated by ModuleStudio ");
+    String _msVersion = this._utils.msVersion();
+    _builder.append(_msVersion, " ");
+    _builder.append(" (");
+    String _msUrl_1 = this._utils.msUrl();
+    _builder.append(_msUrl_1, " ");
+    _builder.append(") at ");
+    String _timestamp = this._utils.timestamp();
+    _builder.append(_timestamp, " ");
+    _builder.append(".");
+    _builder.newLineIfNotEmpty();
+    _builder.append(" ");
+    _builder.append("*/");
+    _builder.newLine();
+    _builder.newLine();
+    return _builder;
+  }
+  
+  public CharSequence msWeblink(final Application it) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("<p class=\"z-center\">");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("Powered by <a href=\"");
+    String _msUrl = this._utils.msUrl();
+    _builder.append(_msUrl, "    ");
+    _builder.append("\" title=\"Get the MOST out of Zikula!\">ModuleStudio ");
+    String _msVersion = this._utils.msVersion();
+    _builder.append(_msVersion, "    ");
+    _builder.append("</a>");
+    _builder.newLineIfNotEmpty();
+    _builder.append("</p>");
+    _builder.newLine();
+    return _builder;
+  }
+  
+  public CharSequence getterAndSetterMethods(final Object it, final String name, final String type, final Boolean isMany, final Boolean useHint, final String init, final CharSequence customImpl) {
+    StringConcatenation _builder = new StringConcatenation();
+    CharSequence _terMethod = this.getterMethod(it, name, type, isMany);
+    _builder.append(_terMethod, "");
+    _builder.newLineIfNotEmpty();
+    CharSequence _setterMethod = this.setterMethod(it, name, type, isMany, useHint, init, customImpl);
+    _builder.append(_setterMethod, "");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
+  public CharSequence getterMethod(final Object it, final String name, final String type, final Boolean isMany) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("/**");
+    _builder.newLine();
+    _builder.append(" ");
+    _builder.append("* Get ");
+    String _formatForDisplay = this._formattingExtensions.formatForDisplay(name);
+    _builder.append(_formatForDisplay, " ");
+    _builder.append(".");
+    _builder.newLineIfNotEmpty();
+    _builder.append(" ");
+    _builder.append("*");
+    _builder.newLine();
+    _builder.append(" ");
+    _builder.append("* @return ");
+    _builder.append(type, " ");
+    {
+      boolean _and = false;
+      String _lowerCase = type.toLowerCase();
+      boolean _notEquals = (!Objects.equal(_lowerCase, "array"));
+      if (!_notEquals) {
+        _and = false;
+      } else {
+        _and = (_notEquals && (isMany).booleanValue());
+      }
+      if (_and) {
+        _builder.append("[]");
+      }
+    }
+    _builder.newLineIfNotEmpty();
+    _builder.append(" ");
+    _builder.append("*/");
+    _builder.newLine();
+    _builder.append("public function get");
+    String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(name);
+    _builder.append(_formatForCodeCapital, "");
+    _builder.append("()");
+    _builder.newLineIfNotEmpty();
+    _builder.append("{");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("return $this->");
+    _builder.append(name, "    ");
+    _builder.append(";");
+    _builder.newLineIfNotEmpty();
+    _builder.append("}");
+    _builder.newLine();
+    _builder.newLine();
+    return _builder;
+  }
+  
+  public CharSequence setterMethod(final Object it, final String name, final String type, final Boolean isMany, final Boolean useHint, final String init, final CharSequence customImpl) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("/**");
+    _builder.newLine();
+    _builder.append(" ");
+    _builder.append("* Set ");
+    String _formatForDisplay = this._formattingExtensions.formatForDisplay(name);
+    _builder.append(_formatForDisplay, " ");
+    _builder.append(".");
+    _builder.newLineIfNotEmpty();
+    _builder.append(" ");
+    _builder.append("*");
+    _builder.newLine();
+    _builder.append(" ");
+    _builder.append("* @param ");
+    _builder.append(type, " ");
+    {
+      boolean _and = false;
+      String _lowerCase = type.toLowerCase();
+      boolean _notEquals = (!Objects.equal(_lowerCase, "array"));
+      if (!_notEquals) {
+        _and = false;
+      } else {
+        _and = (_notEquals && (isMany).booleanValue());
+      }
+      if (_and) {
+        _builder.append("[]");
+      }
+    }
+    _builder.append(" $");
+    _builder.append(name, " ");
+    _builder.append(".");
+    _builder.newLineIfNotEmpty();
+    _builder.append(" ");
+    _builder.append("*");
+    _builder.newLine();
+    _builder.append(" ");
+    _builder.append("* @return void");
+    _builder.newLine();
+    _builder.append(" ");
+    _builder.append("*/");
+    _builder.newLine();
+    _builder.append("public function set");
+    String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(name);
+    _builder.append(_formatForCodeCapital, "");
+    _builder.append("(");
+    {
+      if ((useHint).booleanValue()) {
+        _builder.append(type, "");
+        _builder.append(" ");
+      }
+    }
+    _builder.append("$");
+    _builder.append(name, "");
+    {
+      boolean _notEquals_1 = (!Objects.equal(init, ""));
+      if (_notEquals_1) {
+        _builder.append(" = ");
+        _builder.append(init, "");
+      }
+    }
+    _builder.append(")");
+    _builder.newLineIfNotEmpty();
+    _builder.append("{");
+    _builder.newLine();
+    {
+      boolean _and_1 = false;
+      boolean _tripleNotEquals = (customImpl != null);
+      if (!_tripleNotEquals) {
+        _and_1 = false;
+      } else {
+        boolean _notEquals_2 = (!Objects.equal(customImpl, ""));
+        _and_1 = (_tripleNotEquals && _notEquals_2);
+      }
+      if (_and_1) {
+        _builder.append("    ");
+        _builder.append(customImpl, "    ");
+        _builder.newLineIfNotEmpty();
+      } else {
+        _builder.append("    ");
+        CharSequence _setterMethodImpl = this.setterMethodImpl(it, name, type);
+        _builder.append(_setterMethodImpl, "    ");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    _builder.append("}");
+    _builder.newLine();
+    _builder.newLine();
+    return _builder;
+  }
+  
+  private CharSequence _setterMethodImpl(final Object it, final String name, final String type) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("$this->");
+    _builder.append(name, "");
+    _builder.append(" = $");
+    _builder.append(name, "");
+    _builder.append(";");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
+  public CharSequence triggerPropertyChangeListeners(final DerivedField it, final String name) {
+    StringConcatenation _builder = new StringConcatenation();
+    {
+      Entity _entity = it.getEntity();
+      boolean _hasNotifyPolicy = this._modelExtensions.hasNotifyPolicy(_entity);
+      if (_hasNotifyPolicy) {
+        _builder.append("$this->_onPropertyChanged(\'");
+        String _formatForCode = this._formattingExtensions.formatForCode(name);
+        _builder.append(_formatForCode, "");
+        _builder.append("\', $this->");
+        String _formatForCode_1 = this._formattingExtensions.formatForCode(name);
+        _builder.append(_formatForCode_1, "");
+        _builder.append(", $");
+        _builder.append(name, "");
+        _builder.append(");");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    return _builder;
+  }
+  
+  private CharSequence _setterMethodImpl(final DerivedField it, final String name, final String type) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("if ($");
+    _builder.append(name, "");
+    _builder.append(" != $this->");
+    String _formatForCode = this._formattingExtensions.formatForCode(name);
+    _builder.append(_formatForCode, "");
+    _builder.append(") {");
+    _builder.newLineIfNotEmpty();
+    _builder.append("    ");
+    CharSequence _triggerPropertyChangeListeners = this.triggerPropertyChangeListeners(it, name);
+    _builder.append(_triggerPropertyChangeListeners, "    ");
+    _builder.newLineIfNotEmpty();
+    _builder.append("    ");
+    CharSequence _setterAssignment = this.setterAssignment(it, name, type);
+    _builder.append(_setterAssignment, "    ");
+    _builder.newLineIfNotEmpty();
+    _builder.append("}");
+    _builder.newLine();
+    return _builder;
+  }
+  
+  private CharSequence _setterMethodImpl(final BooleanField it, final String name, final String type) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("if ($");
+    _builder.append(name, "");
+    _builder.append(" !== $this->");
+    String _formatForCode = this._formattingExtensions.formatForCode(name);
+    _builder.append(_formatForCode, "");
+    _builder.append(") {");
+    _builder.newLineIfNotEmpty();
+    _builder.append("    ");
+    CharSequence _triggerPropertyChangeListeners = this.triggerPropertyChangeListeners(it, name);
+    _builder.append(_triggerPropertyChangeListeners, "    ");
+    _builder.newLineIfNotEmpty();
+    _builder.append("    ");
+    _builder.append("$this->");
+    _builder.append(name, "    ");
+    _builder.append(" = (bool)$");
+    _builder.append(name, "    ");
+    _builder.append(";");
+    _builder.newLineIfNotEmpty();
+    _builder.append("}");
+    _builder.newLine();
+    return _builder;
+  }
+  
+  private CharSequence _setterAssignment(final DerivedField it, final String name, final String type) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("$this->");
+    _builder.append(name, "");
+    _builder.append(" = $");
+    _builder.append(name, "");
+    _builder.append(";");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
+  private CharSequence setterAssignmentNumeric(final DerivedField it, final String name, final String type) {
+    StringConcatenation _builder = new StringConcatenation();
+    final Iterable<OneToManyRelationship> aggregators = this._modelJoinExtensions.getAggregatingRelationships(it);
+    _builder.newLineIfNotEmpty();
+    {
+      boolean _isEmpty = IterableExtensions.isEmpty(aggregators);
+      boolean _not = (!_isEmpty);
+      if (_not) {
+        _builder.append("$diff = abs($this->");
+        _builder.append(name, "");
+        _builder.append(" - $");
+        _builder.append(name, "");
+        _builder.append(");");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    _builder.append("$this->");
+    _builder.append(name, "");
+    _builder.append(" = $");
+    _builder.append(name, "");
+    _builder.append(";");
+    _builder.newLineIfNotEmpty();
+    {
+      boolean _isEmpty_1 = IterableExtensions.isEmpty(aggregators);
+      boolean _not_1 = (!_isEmpty_1);
+      if (_not_1) {
+        {
+          for(final OneToManyRelationship aggregator : aggregators) {
+            _builder.append("$this->");
+            String _sourceAlias = aggregator.getSourceAlias();
+            String _formatForCode = this._formattingExtensions.formatForCode(_sourceAlias);
+            _builder.append(_formatForCode, "");
+            _builder.append("->add");
+            String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(name);
+            _builder.append(_formatForCodeCapital, "");
+            _builder.append("Without");
+            Entity _entity = it.getEntity();
+            String _name = _entity.getName();
+            String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+            _builder.append(_formatForCodeCapital_1, "");
+            _builder.append("($diff);");
+            _builder.newLineIfNotEmpty();
+          }
+        }
+      }
+    }
+    return _builder;
+  }
+  
+  private CharSequence _setterAssignment(final IntegerField it, final String name, final String type) {
+    StringConcatenation _builder = new StringConcatenation();
+    CharSequence _setterAssignmentNumeric = this.setterAssignmentNumeric(it, name, type);
+    _builder.append(_setterAssignmentNumeric, "");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
+  private CharSequence _setterAssignment(final DecimalField it, final String name, final String type) {
+    StringConcatenation _builder = new StringConcatenation();
+    CharSequence _setterAssignmentNumeric = this.setterAssignmentNumeric(it, name, type);
+    _builder.append(_setterAssignmentNumeric, "");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
+  private CharSequence _setterAssignment(final FloatField it, final String name, final String type) {
+    StringConcatenation _builder = new StringConcatenation();
+    CharSequence _setterAssignmentNumeric = this.setterAssignmentNumeric(it, name, type);
+    _builder.append(_setterAssignmentNumeric, "");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
+  private CharSequence _setterAssignment(final AbstractDateField it, final String name, final String type) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("if (is_object($");
+    _builder.append(name, "");
+    _builder.append(") && $");
+    _builder.append(name, "");
+    _builder.append(" instanceOf \\DateTime) {");
+    _builder.newLineIfNotEmpty();
+    _builder.append("    ");
+    _builder.append("$this->");
+    _builder.append(name, "    ");
+    _builder.append(" = $");
+    _builder.append(name, "    ");
+    _builder.append(";");
+    _builder.newLineIfNotEmpty();
+    _builder.append("} else {");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("$this->");
+    _builder.append(name, "    ");
+    _builder.append(" = new \\DateTime($");
+    _builder.append(name, "    ");
+    _builder.append(");");
+    _builder.newLineIfNotEmpty();
+    _builder.append("}");
+    _builder.newLine();
+    return _builder;
+  }
+  
+  private CharSequence setterMethodImpl(final Object it, final String name, final String type) {
+    if (it instanceof BooleanField) {
+      return _setterMethodImpl((BooleanField)it, name, type);
+    } else if (it instanceof DerivedField) {
+      return _setterMethodImpl((DerivedField)it, name, type);
+    } else if (it != null) {
+      return _setterMethodImpl(it, name, type);
+    } else {
+      throw new IllegalArgumentException("Unhandled parameter types: " +
+        Arrays.<Object>asList(it, name, type).toString());
+    }
+  }
+  
+  private CharSequence setterAssignment(final DerivedField it, final String name, final String type) {
+    if (it instanceof IntegerField) {
+      return _setterAssignment((IntegerField)it, name, type);
+    } else if (it instanceof DecimalField) {
+      return _setterAssignment((DecimalField)it, name, type);
+    } else if (it instanceof FloatField) {
+      return _setterAssignment((FloatField)it, name, type);
+    } else if (it instanceof AbstractDateField) {
+      return _setterAssignment((AbstractDateField)it, name, type);
+    } else if (it != null) {
+      return _setterAssignment(it, name, type);
+    } else {
+      throw new IllegalArgumentException("Unhandled parameter types: " +
+        Arrays.<Object>asList(it, name, type).toString());
+    }
+  }
+}
