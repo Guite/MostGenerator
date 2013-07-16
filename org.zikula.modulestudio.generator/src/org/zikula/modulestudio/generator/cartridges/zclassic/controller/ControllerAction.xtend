@@ -641,11 +641,15 @@ class ControllerAction {
             /** TODO: custom logic */
         «ENDIF»
 
-        // return template
-        «IF app.targets('1.3.5')»
-        return $this->view->fetch('«controller.formattedName»/«name.formatForCode.toFirstLower».tpl');
+        «IF controller.isAjaxController»
+            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»(array('result' => true));
         «ELSE»
-        return $this->response($this->view->fetch('«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».tpl'));
+            // return template
+            «IF app.targets('1.3.5')»
+            return $this->view->fetch('«controller.formattedName»/«name.formatForCode.toFirstLower».tpl');
+            «ELSE»
+            return $this->response($this->view->fetch('«controller.formattedName.toFirstUpper»/«name.formatForCode.toFirstLower».tpl'));
+            «ENDIF»
         «ENDIF»
     '''
 

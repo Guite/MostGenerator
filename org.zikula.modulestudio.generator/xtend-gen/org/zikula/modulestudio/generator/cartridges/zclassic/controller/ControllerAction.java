@@ -1826,35 +1826,53 @@ public class ControllerAction {
       }
     }
     _builder.newLine();
-    _builder.append("// return template");
-    _builder.newLine();
     {
-      boolean _targets = this._utils.targets(this.app, "1.3.5");
-      if (_targets) {
-        _builder.append("return $this->view->fetch(\'");
-        Controller _controller_2 = it.getController();
-        String _formattedName = this._controllerExtensions.formattedName(_controller_2);
-        _builder.append(_formattedName, "");
-        _builder.append("/");
-        String _name_3 = it.getName();
-        String _formatForCode = this._formattingExtensions.formatForCode(_name_3);
-        String _firstLower = StringExtensions.toFirstLower(_formatForCode);
-        _builder.append(_firstLower, "");
-        _builder.append(".tpl\');");
+      Controller _controller_2 = it.getController();
+      boolean _isAjaxController = this._controllerExtensions.isAjaxController(_controller_2);
+      if (_isAjaxController) {
+        _builder.append("return new ");
+        {
+          boolean _targets = this._utils.targets(this.app, "1.3.5");
+          if (_targets) {
+            _builder.append("Zikula_Response_Ajax");
+          } else {
+            _builder.append("AjaxResponse");
+          }
+        }
+        _builder.append("(array(\'result\' => true));");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("return $this->response($this->view->fetch(\'");
-        Controller _controller_3 = it.getController();
-        String _formattedName_1 = this._controllerExtensions.formattedName(_controller_3);
-        String _firstUpper = StringExtensions.toFirstUpper(_formattedName_1);
-        _builder.append(_firstUpper, "");
-        _builder.append("/");
-        String _name_4 = it.getName();
-        String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_4);
-        String _firstLower_1 = StringExtensions.toFirstLower(_formatForCode_1);
-        _builder.append(_firstLower_1, "");
-        _builder.append(".tpl\'));");
-        _builder.newLineIfNotEmpty();
+        _builder.append("// return template");
+        _builder.newLine();
+        {
+          boolean _targets_1 = this._utils.targets(this.app, "1.3.5");
+          if (_targets_1) {
+            _builder.append("return $this->view->fetch(\'");
+            Controller _controller_3 = it.getController();
+            String _formattedName = this._controllerExtensions.formattedName(_controller_3);
+            _builder.append(_formattedName, "");
+            _builder.append("/");
+            String _name_3 = it.getName();
+            String _formatForCode = this._formattingExtensions.formatForCode(_name_3);
+            String _firstLower = StringExtensions.toFirstLower(_formatForCode);
+            _builder.append(_firstLower, "");
+            _builder.append(".tpl\');");
+            _builder.newLineIfNotEmpty();
+          } else {
+            _builder.append("return $this->response($this->view->fetch(\'");
+            Controller _controller_4 = it.getController();
+            String _formattedName_1 = this._controllerExtensions.formattedName(_controller_4);
+            String _firstUpper = StringExtensions.toFirstUpper(_formattedName_1);
+            _builder.append(_firstUpper, "");
+            _builder.append("/");
+            String _name_4 = it.getName();
+            String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_4);
+            String _firstLower_1 = StringExtensions.toFirstLower(_formatForCode_1);
+            _builder.append(_firstLower_1, "");
+            _builder.append(".tpl\'));");
+            _builder.newLineIfNotEmpty();
+          }
+        }
       }
     }
     return _builder;
