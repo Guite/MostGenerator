@@ -4,6 +4,7 @@ import com.google.common.base.Objects;
 import com.google.inject.Inject;
 import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField;
 import de.guite.modulestudio.metamodel.modulestudio.AbstractIntegerField;
+import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField;
 import de.guite.modulestudio.metamodel.modulestudio.Application;
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField;
 import de.guite.modulestudio.metamodel.modulestudio.Entity;
@@ -219,20 +220,26 @@ public class Extensions {
     }
     {
       boolean _and = false;
-      int _sluggablePosition = it.getSluggablePosition();
-      boolean _greaterThan = (_sluggablePosition > 0);
-      if (!_greaterThan) {
+      boolean _and_1 = false;
+      if (!(it instanceof AbstractStringField)) {
+        _and_1 = false;
+      } else {
+        int _sluggablePosition = ((AbstractStringField) it).getSluggablePosition();
+        boolean _greaterThan = (_sluggablePosition > 0);
+        _and_1 = ((it instanceof AbstractStringField) && _greaterThan);
+      }
+      if (!_and_1) {
         _and = false;
       } else {
         Entity _entity = it.getEntity();
         Models _container = _entity.getContainer();
         Application _application = _container.getApplication();
         boolean _targets = this._utils.targets(_application, "1.3.5");
-        _and = (_greaterThan && _targets);
+        _and = (_and_1 && _targets);
       }
       if (_and) {
         _builder.append(" * @Gedmo\\Sluggable(slugField=\"slug\", position=");
-        int _sluggablePosition_1 = it.getSluggablePosition();
+        int _sluggablePosition_1 = ((AbstractStringField) it).getSluggablePosition();
         _builder.append(_sluggablePosition_1, "");
         _builder.append(")");
         _builder.newLineIfNotEmpty();
@@ -463,9 +470,9 @@ public class Extensions {
             _builder.append(" ");
             _builder.append("* @Gedmo\\Slug(fields={");
             {
-              List<DerivedField> _sluggableFields = this._modelBehaviourExtensions.getSluggableFields(it);
+              List<AbstractStringField> _sluggableFields = this._modelBehaviourExtensions.getSluggableFields(it);
               boolean _hasElements = false;
-              for(final DerivedField field : _sluggableFields) {
+              for(final AbstractStringField field : _sluggableFields) {
                 if (!_hasElements) {
                   _hasElements = true;
                 } else {

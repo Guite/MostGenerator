@@ -4,6 +4,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField;
+import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField;
 import de.guite.modulestudio.metamodel.modulestudio.Application;
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField;
 import de.guite.modulestudio.metamodel.modulestudio.Entity;
@@ -303,32 +304,33 @@ public class ModelBehaviourExtensions {
    * Checks whether the entity contains at least one field with the sluggable extension enabled.
    */
   public boolean hasSluggableFields(final Entity it) {
-    List<DerivedField> _sluggableFields = this.getSluggableFields(it);
+    List<AbstractStringField> _sluggableFields = this.getSluggableFields(it);
     boolean _isEmpty = _sluggableFields.isEmpty();
     boolean _not = (!_isEmpty);
     return _not;
   }
   
   /**
-   * Returns a list of all derived fields with the sluggable extension enabled.
+   * Returns a list of all string type fields with the sluggable extension enabled.
    */
-  public List<DerivedField> getSluggableFields(final Entity it) {
+  public List<AbstractStringField> getSluggableFields(final Entity it) {
     Iterable<DerivedField> _derivedFields = this._modelExtensions.getDerivedFields(it);
-    final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-        public Boolean apply(final DerivedField e) {
+    Iterable<AbstractStringField> _filter = Iterables.<AbstractStringField>filter(_derivedFields, AbstractStringField.class);
+    final Function1<AbstractStringField,Boolean> _function = new Function1<AbstractStringField,Boolean>() {
+        public Boolean apply(final AbstractStringField e) {
           int _sluggablePosition = e.getSluggablePosition();
           boolean _greaterThan = (_sluggablePosition > 0);
           return Boolean.valueOf(_greaterThan);
         }
       };
-    Iterable<DerivedField> _filter = IterableExtensions.<DerivedField>filter(_derivedFields, _function);
-    final Function1<DerivedField,Integer> _function_1 = new Function1<DerivedField,Integer>() {
-        public Integer apply(final DerivedField e) {
+    Iterable<AbstractStringField> _filter_1 = IterableExtensions.<AbstractStringField>filter(_filter, _function);
+    final Function1<AbstractStringField,Integer> _function_1 = new Function1<AbstractStringField,Integer>() {
+        public Integer apply(final AbstractStringField e) {
           int _sluggablePosition = e.getSluggablePosition();
           return Integer.valueOf(_sluggablePosition);
         }
       };
-    List<DerivedField> _sortBy = IterableExtensions.<DerivedField, Integer>sortBy(_filter, _function_1);
+    List<AbstractStringField> _sortBy = IterableExtensions.<AbstractStringField, Integer>sortBy(_filter_1, _function_1);
     return _sortBy;
   }
   
@@ -446,14 +448,14 @@ public class ModelBehaviourExtensions {
    * Checks whether the entity contains at least one field with the translatable extension enabled.
    */
   public boolean hasTranslatableSlug(final Entity it) {
-    List<DerivedField> _sluggableFields = this.getSluggableFields(it);
-    final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-        public Boolean apply(final DerivedField e) {
+    List<AbstractStringField> _sluggableFields = this.getSluggableFields(it);
+    final Function1<AbstractStringField,Boolean> _function = new Function1<AbstractStringField,Boolean>() {
+        public Boolean apply(final AbstractStringField e) {
           boolean _isTranslatable = e.isTranslatable();
           return Boolean.valueOf(_isTranslatable);
         }
       };
-    Iterable<DerivedField> _filter = IterableExtensions.<DerivedField>filter(_sluggableFields, _function);
+    Iterable<AbstractStringField> _filter = IterableExtensions.<AbstractStringField>filter(_sluggableFields, _function);
     boolean _isEmpty = IterableExtensions.isEmpty(_filter);
     boolean _not = (!_isEmpty);
     return _not;

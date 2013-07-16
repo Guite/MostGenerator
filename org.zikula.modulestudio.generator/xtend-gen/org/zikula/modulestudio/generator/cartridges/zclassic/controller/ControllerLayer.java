@@ -1286,6 +1286,34 @@ public class ControllerLayer {
         CharSequence _menuLinksBetweenControllers = this.menuLinksBetweenControllers(it);
         _builder.append(_menuLinksBetweenControllers, "        ");
         _builder.newLineIfNotEmpty();
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("    ");
+        _builder.append("$controllerHelper = new ");
+        {
+          boolean _targets_2 = this._utils.targets(app, "1.3.5");
+          if (_targets_2) {
+            String _appName_4 = this._utils.appName(app);
+            _builder.append(_appName_4, "        ");
+            _builder.append("_Util_Controller");
+          } else {
+            _builder.append("ControllerUtil");
+          }
+        }
+        _builder.append("($this->serviceManager);");
+        _builder.newLineIfNotEmpty();
+        _builder.append("    ");
+        _builder.append("    ");
+        _builder.append("$utilArgs = array(\'api\' => \'");
+        String _formattedName = this._controllerExtensions.formattedName(it);
+        _builder.append(_formattedName, "        ");
+        _builder.append("\', \'action\' => \'getlinks\');");
+        _builder.newLineIfNotEmpty();
+        _builder.append("    ");
+        _builder.append("    ");
+        _builder.append("$allowedObjectTypes = $controllerHelper->getObjectTypes(\'api\', $utilArgs);");
+        _builder.newLine();
+        _builder.newLine();
         {
           boolean _hasActions = this._controllerExtensions.hasActions(it, "view");
           if (_hasActions) {
@@ -1294,25 +1322,34 @@ public class ControllerLayer {
               for(final Entity entity : _allEntities) {
                 _builder.append("    ");
                 _builder.append("    ");
-                _builder.append("if (SecurityUtil::checkPermission($this->name . \':");
+                _builder.append("if (in_array(\'");
                 String _name_5 = entity.getName();
-                String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_5);
-                _builder.append(_formatForCodeCapital_2, "        ");
+                String _formatForCode = this._formattingExtensions.formatForCode(_name_5);
+                _builder.append(_formatForCode, "        ");
+                _builder.append("\', $allowedObjectTypes)");
+                _builder.newLineIfNotEmpty();
+                _builder.append("    ");
+                _builder.append("    ");
+                _builder.append("    ");
+                _builder.append("&& SecurityUtil::checkPermission($this->name . \':");
+                String _name_6 = entity.getName();
+                String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_6);
+                _builder.append(_formatForCodeCapital_2, "            ");
                 _builder.append(":\', \'::\', ACCESS_");
                 String _menuLinksPermissionLevel = this.menuLinksPermissionLevel(it);
-                _builder.append(_menuLinksPermissionLevel, "        ");
+                _builder.append(_menuLinksPermissionLevel, "            ");
                 _builder.append(")) {");
                 _builder.newLineIfNotEmpty();
                 _builder.append("    ");
                 _builder.append("    ");
                 _builder.append("    ");
                 _builder.append("$links[] = array(\'url\' => ModUtil::url($this->name, \'");
-                String _formattedName = this._controllerExtensions.formattedName(it);
-                _builder.append(_formattedName, "            ");
+                String _formattedName_1 = this._controllerExtensions.formattedName(it);
+                _builder.append(_formattedName_1, "            ");
                 _builder.append("\', \'view\', array(\'ot\' => \'");
-                String _name_6 = entity.getName();
-                String _formatForCode = this._formattingExtensions.formatForCode(_name_6);
-                _builder.append(_formatForCode, "            ");
+                String _name_7 = entity.getName();
+                String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_7);
+                _builder.append(_formatForCode_1, "            ");
                 _builder.append("\')),");
                 _builder.newLineIfNotEmpty();
                 _builder.append("    ");
@@ -1328,8 +1365,8 @@ public class ControllerLayer {
                 _builder.append("    ");
                 _builder.append("                     ");
                 _builder.append("\'title\' => $this->__(\'");
-                String _name_7 = entity.getName();
-                String _formatForDisplayCapital_1 = this._formattingExtensions.formatForDisplayCapital(_name_7);
+                String _name_8 = entity.getName();
+                String _formatForDisplayCapital_1 = this._formattingExtensions.formatForDisplayCapital(_name_8);
                 _builder.append(_formatForDisplayCapital_1, "                             ");
                 _builder.append(" list\'));");
                 _builder.newLineIfNotEmpty();

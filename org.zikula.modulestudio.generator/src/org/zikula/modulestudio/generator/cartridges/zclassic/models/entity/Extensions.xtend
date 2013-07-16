@@ -16,6 +16,7 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
+import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField
 
 class Extensions {
     @Inject extension FormattingExtensions = new FormattingExtensions()
@@ -59,7 +60,7 @@ class Extensions {
     def private columnExtensionsDefault(DerivedField it) '''
         «IF translatable» * @Gedmo\Translatable
         «ENDIF»
-        «IF sluggablePosition > 0 && entity.container.application.targets('1.3.5')» * @Gedmo\Sluggable(slugField="slug", position=«sluggablePosition»)
+        «IF it instanceof AbstractStringField && (it as AbstractStringField).sluggablePosition > 0 && entity.container.application.targets('1.3.5')» * @Gedmo\Sluggable(slugField="slug", position=«(it as AbstractStringField).sluggablePosition»)
         «ENDIF»
         «IF sortableGroup» * @Gedmo\SortableGroup
         «ENDIF»

@@ -8,6 +8,7 @@ import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.EntitySlugStyle
 import de.guite.modulestudio.metamodel.modulestudio.EntityTimestampableType
 import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
+import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField
 
 /**
  * This class contains model behaviour related extension methods.
@@ -169,10 +170,10 @@ class ModelBehaviourExtensions {
     }
 
     /**
-     * Returns a list of all derived fields with the sluggable extension enabled.
+     * Returns a list of all string type fields with the sluggable extension enabled.
      */
     def getSluggableFields(Entity it) {
-        getDerivedFields.filter(e|e.sluggablePosition > 0).sortBy(e|e.sluggablePosition)
+        getDerivedFields.filter(typeof(AbstractStringField)).filter(e|e.sluggablePosition > 0).sortBy(e|e.sluggablePosition)
     }
 
     /**

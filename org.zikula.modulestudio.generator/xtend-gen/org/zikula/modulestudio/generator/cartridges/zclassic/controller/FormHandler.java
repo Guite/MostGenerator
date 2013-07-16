@@ -2989,7 +2989,7 @@ public class FormHandler {
     _builder.append("// if cascades cause the main entity becoming persisted automatically, too");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$this->persistRelationData();");
+    _builder.append("$this->persistRelationData($view);");
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
@@ -3123,9 +3123,15 @@ public class FormHandler {
     _builder.append("* Persists any related items.");
     _builder.newLine();
     _builder.append(" ");
+    _builder.append("*");
+    _builder.newLine();
+    _builder.append(" ");
+    _builder.append("* @param Zikula_Form_View $view The form view instance.");
+    _builder.newLine();
+    _builder.append(" ");
     _builder.append("*/");
     _builder.newLine();
-    _builder.append("protected function persistRelationData()");
+    _builder.append("protected function persistRelationData(Zikula_Form_View $view)");
     _builder.newLine();
     _builder.append("{");
     _builder.newLine();
