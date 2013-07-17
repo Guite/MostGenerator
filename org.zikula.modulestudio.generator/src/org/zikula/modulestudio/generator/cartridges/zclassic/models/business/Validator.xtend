@@ -589,18 +589,11 @@ class Validator {
             «FOR udf : getUniqueDerivedFields.filter(e|!e.primaryKey)»
                 «validationCallUnique(udf)»
             «ENDFOR»
-            «IF hasSluggableFields && slugUpdatable && slugUnique»
-                «validationCallUniqueSlug»
-            «ENDIF»
 
             return true;
         }
 
         «checkForUniqueValues(app)»
-        «IF hasSluggableFields && slugUpdatable && slugUnique»
-
-            «checkForUniqueSlugValues(app)»
-        «ENDIF»
 
         «fh.getterAndSetterMethods(app, 'entity', 'Zikula_EntityAccess', false, true, 'null', '')»
     '''
@@ -635,36 +628,6 @@ class Validator {
         }
     '''
 
-    def private checkForUniqueSlugValues(Entity it, Application app) '''
-        /**
-         * Check for unique slug values.
-         *
-         * This method determines if there already exist «nameMultiple.formatForDisplay» with the same slug.
-         *
-         * @return boolean result of this check, true if the given slug does not already exist
-         */
-        public function isUniqueSlug()
-        {
-            $value = $this->entity['slug'];
-            if (empty($value)) {
-                return true;
-            }
-
-            «IF app.targets('1.3.5')»
-                $entityClass = '«app.appName»_Entity_«name.formatForCodeCapital»';
-            «ELSE»
-                $entityClass = '\\«app.appName»\\Entity\\«name.formatForCodeCapital»Entity';
-            «ENDIF»
-            $serviceManager = ServiceUtil::getManager();
-            $entityManager = $serviceManager->getService('doctrine.entitymanager');
-            $repository = $entityManager->getRepository($entityClass);
-
-            $excludeid = $this->entity['«getFirstPrimaryKey.name.formatForCode»'];
-
-            return $repository->detectUniqueState('slug', $value, $excludeid);
-        }
-    '''
-
 
     def private dispatch validationCalls(DerivedField it) {
     }
@@ -683,13 +646,6 @@ class Validator {
     def private validationCallUnique(DerivedField it) '''
         if (!$this->isUniqueValue('«name.formatForCode»')) {
             $errorInfo['message'] = __f('The %1$s %2$s is already assigned. Please choose another %1$s.', array('«name.formatForDisplay»', $this->entity['«name.formatForCode»']), $dom);
-            return $errorInfo;
-        }
-    '''
-
-    def private validationCallUniqueSlug(Entity it) '''
-        if (!$this->isUniqueSlug()) {
-            $errorInfo['message'] = __f('The slug %s is already assigned. Please choose another slug.', array($this->entity['slug']), $dom);
             return $errorInfo;
         }
     '''
