@@ -39,7 +39,6 @@ import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper;
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions;
-import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions;
 import org.zikula.modulestudio.generator.extensions.ModelExtensions;
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions;
 import org.zikula.modulestudio.generator.extensions.NamingExtensions;
@@ -62,15 +61,6 @@ public class Validator {
     public ModelExtensions apply() {
       ModelExtensions _modelExtensions = new ModelExtensions();
       return _modelExtensions;
-    }
-  }.apply();
-  
-  @Inject
-  @Extension
-  private ModelBehaviourExtensions _modelBehaviourExtensions = new Function0<ModelBehaviourExtensions>() {
-    public ModelBehaviourExtensions apply() {
-      ModelBehaviourExtensions _modelBehaviourExtensions = new ModelBehaviourExtensions();
-      return _modelBehaviourExtensions;
     }
   }.apply();
   
@@ -1667,29 +1657,6 @@ public class Validator {
         _builder.newLineIfNotEmpty();
       }
     }
-    {
-      boolean _and = false;
-      boolean _and_1 = false;
-      boolean _hasSluggableFields = this._modelBehaviourExtensions.hasSluggableFields(it);
-      if (!_hasSluggableFields) {
-        _and_1 = false;
-      } else {
-        boolean _isSlugUpdatable = it.isSlugUpdatable();
-        _and_1 = (_hasSluggableFields && _isSlugUpdatable);
-      }
-      if (!_and_1) {
-        _and = false;
-      } else {
-        boolean _isSlugUnique = it.isSlugUnique();
-        _and = (_and_1 && _isSlugUnique);
-      }
-      if (_and) {
-        _builder.append("    ");
-        CharSequence _validationCallUniqueSlug = this.validationCallUniqueSlug(it);
-        _builder.append(_validationCallUniqueSlug, "    ");
-        _builder.newLineIfNotEmpty();
-      }
-    }
     _builder.newLine();
     _builder.append("    ");
     _builder.append("return true;");
@@ -1700,29 +1667,6 @@ public class Validator {
     CharSequence _checkForUniqueValues = this.checkForUniqueValues(it, app);
     _builder.append(_checkForUniqueValues, "");
     _builder.newLineIfNotEmpty();
-    {
-      boolean _and_2 = false;
-      boolean _and_3 = false;
-      boolean _hasSluggableFields_1 = this._modelBehaviourExtensions.hasSluggableFields(it);
-      if (!_hasSluggableFields_1) {
-        _and_3 = false;
-      } else {
-        boolean _isSlugUpdatable_1 = it.isSlugUpdatable();
-        _and_3 = (_hasSluggableFields_1 && _isSlugUpdatable_1);
-      }
-      if (!_and_3) {
-        _and_2 = false;
-      } else {
-        boolean _isSlugUnique_1 = it.isSlugUnique();
-        _and_2 = (_and_3 && _isSlugUnique_1);
-      }
-      if (_and_2) {
-        _builder.newLine();
-        CharSequence _checkForUniqueSlugValues = this.checkForUniqueSlugValues(it, app);
-        _builder.append(_checkForUniqueSlugValues, "");
-        _builder.newLineIfNotEmpty();
-      }
-    }
     _builder.newLine();
     CharSequence _terAndSetterMethods = this.fh.getterAndSetterMethods(app, "entity", "Zikula_EntityAccess", Boolean.valueOf(false), Boolean.valueOf(true), "null", "");
     _builder.append(_terAndSetterMethods, "");
@@ -1834,102 +1778,6 @@ public class Validator {
     return _builder;
   }
   
-  private CharSequence checkForUniqueSlugValues(final Entity it, final Application app) {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("/**");
-    _builder.newLine();
-    _builder.append(" ");
-    _builder.append("* Check for unique slug values.");
-    _builder.newLine();
-    _builder.append(" ");
-    _builder.append("*");
-    _builder.newLine();
-    _builder.append(" ");
-    _builder.append("* This method determines if there already exist ");
-    String _nameMultiple = it.getNameMultiple();
-    String _formatForDisplay = this._formattingExtensions.formatForDisplay(_nameMultiple);
-    _builder.append(_formatForDisplay, " ");
-    _builder.append(" with the same slug.");
-    _builder.newLineIfNotEmpty();
-    _builder.append(" ");
-    _builder.append("*");
-    _builder.newLine();
-    _builder.append(" ");
-    _builder.append("* @return boolean result of this check, true if the given slug does not already exist");
-    _builder.newLine();
-    _builder.append(" ");
-    _builder.append("*/");
-    _builder.newLine();
-    _builder.append("public function isUniqueSlug()");
-    _builder.newLine();
-    _builder.append("{");
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("$value = $this->entity[\'slug\'];");
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("if (empty($value)) {");
-    _builder.newLine();
-    _builder.append("        ");
-    _builder.append("return true;");
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("}");
-    _builder.newLine();
-    _builder.newLine();
-    {
-      boolean _targets = this._utils.targets(app, "1.3.5");
-      if (_targets) {
-        _builder.append("    ");
-        _builder.append("$entityClass = \'");
-        String _appName = this._utils.appName(app);
-        _builder.append(_appName, "    ");
-        _builder.append("_Entity_");
-        String _name = it.getName();
-        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
-        _builder.append(_formatForCodeCapital, "    ");
-        _builder.append("\';");
-        _builder.newLineIfNotEmpty();
-      } else {
-        _builder.append("    ");
-        _builder.append("$entityClass = \'\\\\");
-        String _appName_1 = this._utils.appName(app);
-        _builder.append(_appName_1, "    ");
-        _builder.append("\\\\Entity\\\\");
-        String _name_1 = it.getName();
-        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_1);
-        _builder.append(_formatForCodeCapital_1, "    ");
-        _builder.append("Entity\';");
-        _builder.newLineIfNotEmpty();
-      }
-    }
-    _builder.append("    ");
-    _builder.append("$serviceManager = ServiceUtil::getManager();");
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("$entityManager = $serviceManager->getService(\'doctrine.entitymanager\');");
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("$repository = $entityManager->getRepository($entityClass);");
-    _builder.newLine();
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("$excludeid = $this->entity[\'");
-    DerivedField _firstPrimaryKey = this._modelExtensions.getFirstPrimaryKey(it);
-    String _name_2 = _firstPrimaryKey.getName();
-    String _formatForCode = this._formattingExtensions.formatForCode(_name_2);
-    _builder.append(_formatForCode, "    ");
-    _builder.append("\'];");
-    _builder.newLineIfNotEmpty();
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("return $repository->detectUniqueState(\'slug\', $value, $excludeid);");
-    _builder.newLine();
-    _builder.append("}");
-    _builder.newLine();
-    return _builder;
-  }
-  
   private CharSequence _validationCalls(final DerivedField it) {
     return null;
   }
@@ -2000,21 +1848,6 @@ public class Validator {
     _builder.append(_formatForCode_1, "    ");
     _builder.append("\']), $dom);");
     _builder.newLineIfNotEmpty();
-    _builder.append("    ");
-    _builder.append("return $errorInfo;");
-    _builder.newLine();
-    _builder.append("}");
-    _builder.newLine();
-    return _builder;
-  }
-  
-  private CharSequence validationCallUniqueSlug(final Entity it) {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("if (!$this->isUniqueSlug()) {");
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("$errorInfo[\'message\'] = __f(\'The slug %s is already assigned. Please choose another slug.\', array($this->entity[\'slug\']), $dom);");
-    _builder.newLine();
     _builder.append("    ");
     _builder.append("return $errorInfo;");
     _builder.newLine();
