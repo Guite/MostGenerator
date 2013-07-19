@@ -3038,20 +3038,31 @@ public class Entities {
             String aliasName = this._namingExtensions.getRelationAliasName(relation, Boolean.valueOf(false));
             _builder.newLineIfNotEmpty();
             _builder.append("        ");
+            _builder.append("if ($this->get");
+            String _firstUpper = StringExtensions.toFirstUpper(aliasName);
+            _builder.append(_firstUpper, "        ");
+            _builder.append("() != null) {");
+            _builder.newLineIfNotEmpty();
+            _builder.append("        ");
+            _builder.append("    ");
             _builder.append("$this->");
-            _builder.append(aliasName, "        ");
+            _builder.append(aliasName, "            ");
             _builder.append(" = clone $this->");
-            _builder.append(aliasName, "        ");
+            _builder.append(aliasName, "            ");
             _builder.append(";");
             _builder.newLineIfNotEmpty();
             _builder.append("        ");
+            _builder.append("    ");
             _builder.append("$entity->set");
-            String _firstUpper = StringExtensions.toFirstUpper(aliasName);
-            _builder.append(_firstUpper, "        ");
+            String _firstUpper_1 = StringExtensions.toFirstUpper(aliasName);
+            _builder.append(_firstUpper_1, "            ");
             _builder.append("($this->");
-            _builder.append(aliasName, "        ");
+            _builder.append(aliasName, "            ");
             _builder.append(");");
             _builder.newLineIfNotEmpty();
+            _builder.append("        ");
+            _builder.append("}");
+            _builder.newLine();
           }
         }
         {
@@ -3060,20 +3071,31 @@ public class Entities {
             String aliasName_1 = this._namingExtensions.getRelationAliasName(relation_1, Boolean.valueOf(true));
             _builder.newLineIfNotEmpty();
             _builder.append("        ");
+            _builder.append("if ($this->get");
+            String _firstUpper_2 = StringExtensions.toFirstUpper(aliasName_1);
+            _builder.append(_firstUpper_2, "        ");
+            _builder.append("() != null) {");
+            _builder.newLineIfNotEmpty();
+            _builder.append("        ");
+            _builder.append("    ");
             _builder.append("$this->");
-            _builder.append(aliasName_1, "        ");
+            _builder.append(aliasName_1, "            ");
             _builder.append(" = clone $this->");
-            _builder.append(aliasName_1, "        ");
+            _builder.append(aliasName_1, "            ");
             _builder.append(";");
             _builder.newLineIfNotEmpty();
             _builder.append("        ");
+            _builder.append("    ");
             _builder.append("$entity->set");
-            String _firstUpper_1 = StringExtensions.toFirstUpper(aliasName_1);
-            _builder.append(_firstUpper_1, "        ");
+            String _firstUpper_3 = StringExtensions.toFirstUpper(aliasName_1);
+            _builder.append(_firstUpper_3, "            ");
             _builder.append("($this->");
-            _builder.append(aliasName_1, "        ");
+            _builder.append(aliasName_1, "            ");
             _builder.append(");");
             _builder.newLineIfNotEmpty();
+            _builder.append("        ");
+            _builder.append("}");
+            _builder.newLine();
           }
         }
       }

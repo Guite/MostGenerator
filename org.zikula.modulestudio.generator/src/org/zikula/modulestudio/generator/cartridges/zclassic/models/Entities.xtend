@@ -778,13 +778,17 @@ class Entities {
                     // prevent shared references by doing a deep copy - see (2) and (3) for more information
                     «FOR relation : joinsIn»
                         «var aliasName = relation.getRelationAliasName(false)»
-                        $this->«aliasName» = clone $this->«aliasName»;
-                        $entity->set«aliasName.toFirstUpper»($this->«aliasName»);
+                        if ($this->get«aliasName.toFirstUpper»() != null) {
+                            $this->«aliasName» = clone $this->«aliasName»;
+                            $entity->set«aliasName.toFirstUpper»($this->«aliasName»);
+                        }
                     «ENDFOR»
                     «FOR relation : joinsOut»
                         «var aliasName = relation.getRelationAliasName(true)»
-                        $this->«aliasName» = clone $this->«aliasName»;
-                        $entity->set«aliasName.toFirstUpper»($this->«aliasName»);
+                        if ($this->get«aliasName.toFirstUpper»() != null) {
+                            $this->«aliasName» = clone $this->«aliasName»;
+                            $entity->set«aliasName.toFirstUpper»($this->«aliasName»);
+                        }
                     «ENDFOR»
                 «ENDIF»
 
