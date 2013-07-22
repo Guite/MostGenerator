@@ -469,8 +469,9 @@ public class Property {
         }
         if (_and) {
           StringConcatenation _builder = new StringConcatenation();
-          _builder.append("* @ORM\\Version");
-          _builder.newLine();
+          _builder.append("", "");
+          _builder.append(" * @ORM\\Version");
+          _builder.newLineIfNotEmpty();
           _xifexpression = _builder;
         }
         _switchResult = _xifexpression;
@@ -492,8 +493,9 @@ public class Property {
         }
         if (_and) {
           StringConcatenation _builder = new StringConcatenation();
-          _builder.append("* @ORM\\Version");
-          _builder.newLine();
+          _builder.append("", "");
+          _builder.append(" * @ORM\\Version");
+          _builder.newLineIfNotEmpty();
           _xifexpression = _builder;
         }
         _switchResult = _xifexpression;

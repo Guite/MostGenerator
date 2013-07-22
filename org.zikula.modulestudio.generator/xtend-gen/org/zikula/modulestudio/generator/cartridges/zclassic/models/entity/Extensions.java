@@ -317,7 +317,7 @@ public class Extensions {
       EntityTimestampableType _timestampable = it.getTimestampable();
       boolean _equals = Objects.equal(_timestampable, EntityTimestampableType.CHANGE);
       if (_equals) {
-        _builder.append("field=\"");
+        _builder.append(", field=\"");
         String _timestampableChangeTriggerField = it.getTimestampableChangeTriggerField();
         String _formatForCode = this._formattingExtensions.formatForCode(_timestampableChangeTriggerField);
         _builder.append(_formatForCode, "");
@@ -341,7 +341,6 @@ public class Extensions {
             _builder.append("\"");
           }
         }
-        _builder.newLineIfNotEmpty();
       }
     }
     return _builder;

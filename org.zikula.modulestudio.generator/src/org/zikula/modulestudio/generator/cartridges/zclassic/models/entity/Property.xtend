@@ -134,11 +134,11 @@ class Property {
         switch (it) {
             IntegerField:
                 if (it.version && entity.hasOptimisticLock) '''
-                 * @ORM\Version
+                    «''» * @ORM\Version
                 '''
             DatetimeField:
                 if (it.version && entity.hasOptimisticLock) '''
-                 * @ORM\Version
+                    «''» * @ORM\Version
                 '''
         }
     }
