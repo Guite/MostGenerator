@@ -591,7 +591,7 @@ public class View {
         _builder.append(_viewItemList, "        ");
         _builder.newLineIfNotEmpty();
         _builder.append("        ");
-        CharSequence _pagerCall = this.pagerCall(it);
+        CharSequence _pagerCall = this.pagerCall(it, appName, controller);
         _builder.append(_pagerCall, "        ");
         _builder.newLineIfNotEmpty();
         _builder.append("        ");
@@ -607,7 +607,7 @@ public class View {
         CharSequence _viewItemList_1 = this.viewItemList(it, appName, controller);
         _builder.append(_viewItemList_1, "");
         _builder.newLineIfNotEmpty();
-        CharSequence _pagerCall_1 = this.pagerCall(it);
+        CharSequence _pagerCall_1 = this.pagerCall(it, appName, controller);
         _builder.append(_pagerCall_1, "");
         _builder.newLineIfNotEmpty();
       }
@@ -972,14 +972,23 @@ public class View {
     return _builder;
   }
   
-  private CharSequence pagerCall(final Entity it) {
+  private CharSequence pagerCall(final Entity it, final String appName, final Controller controller) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.newLine();
     _builder.append("{if !isset($showAllEntries) || $showAllEntries ne 1}");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("{pager rowcount=$pager.numitems limit=$pager.itemsperpage display=\'page\'}");
-    _builder.newLine();
+    _builder.append("{pager rowcount=$pager.numitems limit=$pager.itemsperpage display=\'page\' modname=\'");
+    _builder.append(appName, "    ");
+    _builder.append("\' type=\'");
+    String _formattedName = this._controllerExtensions.formattedName(controller);
+    _builder.append(_formattedName, "    ");
+    _builder.append("\' func=\'view\' ot=\'");
+    String _name = it.getName();
+    String _formatForCode = this._formattingExtensions.formatForCode(_name);
+    _builder.append(_formatForCode, "    ");
+    _builder.append("\'}");
+    _builder.newLineIfNotEmpty();
     _builder.append("{/if}");
     _builder.newLine();
     return _builder;

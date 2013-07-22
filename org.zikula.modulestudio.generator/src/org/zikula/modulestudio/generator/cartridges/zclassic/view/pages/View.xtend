@@ -147,13 +147,13 @@ class View {
                     <input type="hidden" name="csrftoken" value="{insert name='csrftoken'}" />
                     <input type="hidden" name="ot" value="«name.formatForCode»" />
                     «viewItemList(appName, controller)»
-                    «pagerCall»
+                    «pagerCall(appName, controller)»
                     «massActionFields(appName)»
                 </div>
             </form>
         «ELSE»
             «viewItemList(appName, controller)»
-            «pagerCall»
+            «pagerCall(appName, controller)»
         «ENDIF»
     '''
 
@@ -245,10 +245,10 @@ class View {
             «ENDIF»
     '''
 
-    def private pagerCall(Entity it) '''
+    def private pagerCall(Entity it, String appName, Controller controller) '''
 
         {if !isset($showAllEntries) || $showAllEntries ne 1}
-            {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page'}
+            {pager rowcount=$pager.numitems limit=$pager.itemsperpage display='page' modname='«appName»' type='«controller.formattedName»' func='view' ot='«name.formatForCode»'}
         {/if}
     '''
 
