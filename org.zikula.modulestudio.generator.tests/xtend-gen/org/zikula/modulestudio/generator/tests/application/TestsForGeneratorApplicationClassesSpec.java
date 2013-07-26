@@ -11,7 +11,6 @@ import org.eclipse.xtext.generator.InMemoryFileSystemAccess;
 import org.eclipse.xtext.junit4.util.ParseHelper;
 import org.eclipse.xtext.xbase.lib.Extension;
 import org.eclipse.xtext.xbase.lib.InputOutput;
-import org.hamcrest.StringDescription;
 import org.jnario.lib.Assert;
 import org.jnario.lib.Should;
 import org.jnario.runner.CreateWith;
@@ -130,9 +129,9 @@ public class TestsForGeneratorApplicationClassesSpec {
     int _size = _textFiles_1.size();
     boolean _should_be = Should.<Integer>should_be(Integer.valueOf(_size), Integer.valueOf(0));
     Assert.assertFalse("\nExpected fsa.textFiles.size should not be 0 but"
-     + "\n     fsa.textFiles.size is " + new StringDescription().appendValue(Integer.valueOf(_size)).toString()
-     + "\n     fsa.textFiles is " + new StringDescription().appendValue(_textFiles_1).toString()
-     + "\n     fsa is " + new StringDescription().appendValue(this.fsa).toString() + "\n", _should_be);
+     + "\n     fsa.textFiles.size is " + new org.hamcrest.StringDescription().appendValue(Integer.valueOf(_size)).toString()
+     + "\n     fsa.textFiles is " + new org.hamcrest.StringDescription().appendValue(_textFiles_1).toString()
+     + "\n     fsa is " + new org.hamcrest.StringDescription().appendValue(this.fsa).toString() + "\n", _should_be);
     
     StringConcatenation _builder_1 = new StringConcatenation();
     _builder_1.append("here comes the expected output");
@@ -159,22 +158,22 @@ public class TestsForGeneratorApplicationClassesSpec {
       boolean _containsKey = _textFiles.containsKey(filePath);
       boolean _should_be = Should.<Boolean>should_be(Boolean.valueOf(_containsKey), true);
       Assert.assertTrue("\nExpected fsa.textFiles.containsKey(filePath) should be true but"
-       + "\n     fsa.textFiles.containsKey(filePath) is " + new StringDescription().appendValue(Boolean.valueOf(_containsKey)).toString()
-       + "\n     fsa.textFiles is " + new StringDescription().appendValue(_textFiles).toString()
-       + "\n     fsa is " + new StringDescription().appendValue(this.fsa).toString()
-       + "\n     filePath is " + new StringDescription().appendValue(filePath).toString() + "\n", _should_be);
+       + "\n     fsa.textFiles.containsKey(filePath) is " + new org.hamcrest.StringDescription().appendValue(Boolean.valueOf(_containsKey)).toString()
+       + "\n     fsa.textFiles is " + new org.hamcrest.StringDescription().appendValue(_textFiles).toString()
+       + "\n     fsa is " + new org.hamcrest.StringDescription().appendValue(this.fsa).toString()
+       + "\n     filePath is " + new org.hamcrest.StringDescription().appendValue(filePath).toString() + "\n", _should_be);
       
       Map<String,CharSequence> _textFiles_1 = this.fsa.getTextFiles();
       CharSequence _get = _textFiles_1.get(filePath);
       String _string = _get.toString();
       boolean _should_be_1 = Should.<String>should_be(_string, content);
       Assert.assertTrue("\nExpected fsa.textFiles.get(filePath).toString should be content but"
-       + "\n     fsa.textFiles.get(filePath).toString is " + new StringDescription().appendValue(_string).toString()
-       + "\n     fsa.textFiles.get(filePath) is " + new StringDescription().appendValue(_get).toString()
-       + "\n     fsa.textFiles is " + new StringDescription().appendValue(_textFiles_1).toString()
-       + "\n     fsa is " + new StringDescription().appendValue(this.fsa).toString()
-       + "\n     filePath is " + new StringDescription().appendValue(filePath).toString()
-       + "\n     content is " + new StringDescription().appendValue(content).toString() + "\n", _should_be_1);
+       + "\n     fsa.textFiles.get(filePath).toString is " + new org.hamcrest.StringDescription().appendValue(_string).toString()
+       + "\n     fsa.textFiles.get(filePath) is " + new org.hamcrest.StringDescription().appendValue(_get).toString()
+       + "\n     fsa.textFiles is " + new org.hamcrest.StringDescription().appendValue(_textFiles_1).toString()
+       + "\n     fsa is " + new org.hamcrest.StringDescription().appendValue(this.fsa).toString()
+       + "\n     filePath is " + new org.hamcrest.StringDescription().appendValue(filePath).toString()
+       + "\n     content is " + new org.hamcrest.StringDescription().appendValue(content).toString() + "\n", _should_be_1);
       
       _xblockexpression = (true);
     }
