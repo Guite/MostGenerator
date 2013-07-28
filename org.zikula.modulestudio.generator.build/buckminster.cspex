@@ -75,7 +75,7 @@
                 <!-- location of documentation output directory -->
                 <property key="docFolder" value="${workspace.root}" />
                 <!-- location of target platform -->
-                <property key="target.platform" value="${workspace.root}/../../MOST-1_Prepare-1_Target_Platform/workspace/.metadata/.plugins/org.eclipse.pde.core/.bundle_pool/plugins/" />
+                <property key="target.platform" value="${workspace.root}/../../MOST-1_Prepare-1_Target_Platform/workspace/target.platform/plugins/" />
                 <!-- location of external tools on the dev server -->
                 <property key="externalTools" value="${workspace.root}/refProduct/de.guite.modulestudio.build/tools" />
             </properties>
