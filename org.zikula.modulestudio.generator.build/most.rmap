@@ -42,5 +42,5 @@
 	<locator searchPathRef="most.mostdsl" pattern="^de\.guite\.modulestudio\.mostdsl(\..*)?" />
     <locator searchPathRef="most.product" pattern="^de\.guite\.modulestudio(\..+)?" />
     <locator searchPathRef="most.product.helpers.reporting" failOnError="false" />
-    <redirect href="../../refProduct/bundles/de.guite.modulestudio.build/build/most_eclipse.rmap" />
+    <redirect href="../../refProduct/de.guite.modulestudio.build/builddeps.rmap" />
 </rmap>
