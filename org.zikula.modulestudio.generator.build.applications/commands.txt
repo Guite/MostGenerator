@@ -4,7 +4,7 @@ setpref baseline="Running Platform"
 # Commands for generating a module or another artifact with the generator
 
 # materialise stuff by cquery/rmap
-resolve --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "scm/org.zikula.modulestudio.generator.build.applications/most.cquery"
+resolve --properties "refProduct/de.guite.modulestudio.build/buckminster.properties" "scm/org.zikula.modulestudio.generator.build.applications/most.cquery"
 
 
 # build workspace
@@ -13,5 +13,5 @@ resolve --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster
 
 # start the mwe workflow
 
-perform -D pModelName=KongProjects -D pModelPath=$WORKSPACE/refApplications/models/customers -D pCartridge=zclassic -D pWorkflowFile=$WORKSPACE/scm/org.zikula.modulestudio.generator/src/org/zikula/modulestudio/generator/workflow/msManual.mwe -D outputPath=$WORKSPACE/output --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "org.zikula.modulestudio.generator.build.applications#start.generator.cartridge"
-# perform -D pModelName=KongProjects -D pModelPath=$WORKSPACE/refApplications/models/customers -D pCartridge=reporting -D pWorkflowFile=$WORKSPACE/scm/org.zikula.modulestudio.generator/src/org/zikula/modulestudio/generator/workflow/msManual.mwe -D outputPath=$WORKSPACE/output --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "org.zikula.modulestudio.generator.build.applications#start.generator.cartridge"
+perform -D pModelName=KongProjects -D pModelPath=$WORKSPACE/refApplications/models/customers -D pCartridge=zclassic -D pWorkflowFile=$WORKSPACE/scm/org.zikula.modulestudio.generator/src/org/zikula/modulestudio/generator/workflow/msManual.mwe -D outputPath=$WORKSPACE/output --properties "refProduct/de.guite.modulestudio.build/buckminster.properties" "org.zikula.modulestudio.generator.build.applications#start.generator.cartridge"
+# perform -D pModelName=KongProjects -D pModelPath=$WORKSPACE/refApplications/models/customers -D pCartridge=reporting -D pWorkflowFile=$WORKSPACE/scm/org.zikula.modulestudio.generator/src/org/zikula/modulestudio/generator/workflow/msManual.mwe -D outputPath=$WORKSPACE/output --properties "refProduct/de.guite.modulestudio.build/buckminster.properties" "org.zikula.modulestudio.generator.build.applications#start.generator.cartridge"

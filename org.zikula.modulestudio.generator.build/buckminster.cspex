@@ -28,7 +28,7 @@
         <!-- perform all test analysis for the source code specified in referenced ant file -->
         <public name="metrics.prebuild" actor="ant">
             <actorProperties>
-                <property key="buildFile" value="${workspace.root}/refProduct/bundles/de.guite.modulestudio.build/test/metrics_prebuild.xml" />
+                <property key="buildFile" value="${workspace.root}/refProduct/de.guite.modulestudio.build/test/metrics_prebuild.xml" />
                 <property key="targets" value="perform.all.tests" />
             </actorProperties>
             <properties>
@@ -37,7 +37,7 @@
                 <!-- location of reports output directory -->
                 <property key="reports" value="${workspace.root}/reports" />
                 <!-- location of external tools on the dev server -->
-                <property key="externalTools" value="${workspace.root}/refProduct/bundles/de.guite.modulestudio.build/tools" />
+                <property key="externalTools" value="${workspace.root}/refProduct/de.guite.modulestudio.build/tools" />
             </properties>
             <products alias="destination" base="${buckminster.output}">
                 <path path="reports/" />
@@ -47,7 +47,7 @@
         <!-- perform all test analysis for the byte code specified in referenced ant file -->
         <public name="metrics.postbuild" actor="ant">
             <actorProperties>
-                <property key="buildFile" value="${workspace.root}/refProduct/bundles/de.guite.modulestudio.build/test/metrics_postbuild.xml" />
+                <property key="buildFile" value="${workspace.root}/refProduct/de.guite.modulestudio.build/test/metrics_postbuild.xml" />
                 <property key="targets" value="perform.all.tests" />
             </actorProperties>
             <properties>
@@ -56,7 +56,7 @@
                 <!-- location of reports output directory -->
                 <property key="reports" value="${workspace.root}/reports" />
                 <!-- location of external tools on the dev server -->
-                <property key="externalTools" value="${workspace.root}/refProduct/bundles/de.guite.modulestudio.build/tools" />
+                <property key="externalTools" value="${workspace.root}/refProduct/de.guite.modulestudio.build/tools" />
             </properties>
             <products alias="destination" base="${buckminster.output}">
                 <path path="reports/" />
@@ -66,7 +66,7 @@
         <!-- perform component documentation tasks specified in referenced ant file -->
         <public name="create.documentation" actor="ant">
             <actorProperties>
-                <property key="buildFile" value="${workspace.root}/refProduct/bundles/de.guite.modulestudio.build/document/documentation.xml" />
+                <property key="buildFile" value="${workspace.root}/refProduct/de.guite.modulestudio.build/document/documentation.xml" />
                 <property key="targets" value="create.component.documentation" />
             </actorProperties>
             <properties>
@@ -77,7 +77,7 @@
                 <!-- location of target platform -->
                 <property key="target.platform" value="${workspace.root}/../../MOST-1_Prepare-1_Target_Platform/workspace/.metadata/.plugins/org.eclipse.pde.core/.bundle_pool/plugins/" />
                 <!-- location of external tools on the dev server -->
-                <property key="externalTools" value="${workspace.root}/refProduct/bundles/de.guite.modulestudio.build/tools" />
+                <property key="externalTools" value="${workspace.root}/refProduct/de.guite.modulestudio.build/tools" />
             </properties>
             <products alias="destination" base="${buckminster.output}">
                 <path path="documentation/" />

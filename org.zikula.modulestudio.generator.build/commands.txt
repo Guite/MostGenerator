@@ -1,31 +1,31 @@
 # Commands for building a p2 site for the generator
 
 # materialise stuff by cquery/rmap
-resolve --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "scm/org.zikula.modulestudio.generator.build/most.cquery"
+resolve --properties "refProduct/de.guite.modulestudio.build/buckminster.properties" "scm/org.zikula.modulestudio.generator.build/most.cquery"
 
 # compile Xtend 2 classes
 #perform "org.zikula.modulestudio.generator.build#compile.xtend.classes"
 #launch --stderr --stdout -l "org.zikula.modulestudio.generator.build/XtendCompiler.launch"
 
 # gather metrics on source code level
-perform --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "org.zikula.modulestudio.generator.build#metrics.prebuild"
+perform --properties "refProduct/de.guite.modulestudio.build/buckminster.properties" "org.zikula.modulestudio.generator.build#metrics.prebuild"
 
 # build workspace
 build
 #build --thorough
 
 # run tests and code coverage (buckminster emma --help)
-emma --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" --launch "org.zikula.modulestudio.generator.tests/AllTests.launch" --terseXML --flatXML --output "${WORKSPACE}output/test_results/junit/alltests.xml" --exec "${WORKSPACE}output/test_results/coverage/alltests.exec" --stderr --stdout
-#emma --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" --launch "org.zikula.modulestudio.generator.tests/OtherTests.launch" --terseXML --flatXML --output "${WORKSPACE}output/test_results/junit/othertests.xml" --exec "${WORKSPACE}output/test_results/coverage/othertests.exec" --stderr --stdout
+emma --properties "refProduct/de.guite.modulestudio.build/buckminster.properties" --launch "org.zikula.modulestudio.generator.tests/AllTests.launch" --terseXML --flatXML --output "${WORKSPACE}output/test_results/junit/alltests.xml" --exec "${WORKSPACE}output/test_results/coverage/alltests.exec" --stderr --stdout
+#emma --properties "refProduct/de.guite.modulestudio.build/buckminster.properties" --launch "org.zikula.modulestudio.generator.tests/OtherTests.launch" --terseXML --flatXML --output "${WORKSPACE}output/test_results/junit/othertests.xml" --exec "${WORKSPACE}output/test_results/coverage/othertests.exec" --stderr --stdout
 
 # build feature p2 repository
-perform --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "org.zikula.modulestudio.generator.build#site.p2"
+perform --properties "refProduct/de.guite.modulestudio.build/buckminster.properties" "org.zikula.modulestudio.generator.build#site.p2"
 
 # gather metrics on byte code level
-perform --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "org.zikula.modulestudio.generator.build#metrics.postbuild"
+perform --properties "refProduct/de.guite.modulestudio.build/buckminster.properties" "org.zikula.modulestudio.generator.build#metrics.postbuild"
 
 # move repository to /site.p2.artifact/
 perform "org.zikula.modulestudio.generator.build#finish.repository"
 
 # generate API documentation
-perform --properties "refProduct/bundles/de.guite.modulestudio.build/buckminster.properties" "org.zikula.modulestudio.generator.build#create.documentation"
+perform --properties "refProduct/de.guite.modulestudio.build/buckminster.properties" "org.zikula.modulestudio.generator.build#create.documentation"
