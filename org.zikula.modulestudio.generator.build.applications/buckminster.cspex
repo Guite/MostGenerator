@@ -4,17 +4,6 @@
     xmlns="http://www.eclipse.org/buckminster/CSpec-1.0">
     <dependencies>
         <!-- Place your Dependencies here -->
-        <dependency name="org.eclipse.emf.mwe.core" componentType="osgi.bundle" versionDesignator="1.1.0" versionType="OSGi"/>
-        <dependency name="org.apache.commons.cli" componentType="osgi.bundle" versionDesignator="1.2.0" versionType="OSGi"/>
-        <dependency name="org.apache.commons.logging" componentType="osgi.bundle" versionDesignator="1.0.4" versionType="OSGi"/>
-        <dependency name="org.eclipse.xtend.typesystem.emf" componentType="osgi.bundle" versionDesignator="1.0.1" versionType="OSGi"/>
-        <dependency name="org.eclipse.emf.mwe.utils" componentType="osgi.bundle" versionDesignator="1.1.0" versionType="OSGi"/>
-        <dependency name="org.eclipse.xtend.profiler" componentType="osgi.bundle" versionDesignator="1.0.1" versionType="OSGi"/>
-        <dependency name="org.eclipse.xtend" componentType="osgi.bundle" versionDesignator="1.1.0" versionType="OSGi"/>
-        <dependency name="org.eclipse.emf.ecore.xmi" componentType="osgi.bundle" versionDesignator="2.7.0" versionType="OSGi"/>
-        <dependency name="org.eclipse.xtend.util.stdlib" componentType="osgi.bundle" versionDesignator="1.0.1" versionType="OSGi"/>
-        <dependency name="org.zikula.modulestudio.generator" componentType="osgi.bundle" versionDesignator="1.0.0" versionType="OSGi"/>
-        <dependency name="org.eclipse.xpand" componentType="osgi.bundle" versionDesignator="1.1.0" versionType="OSGi"/>        
     </dependencies>
     <actions>
         <!-- execute generator cartridge for given application -->
