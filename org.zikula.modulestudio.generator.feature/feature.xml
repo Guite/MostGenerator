@@ -39,6 +39,10 @@
          id="org.eclipse.emf.mwe2.language.sdk"
          version="0.0.0"/>
 
+   <includes
+         id="org.eclipse.platform"
+         version="0.0.0"/>
+
    <requires>
       <import plugin="de.guite.modulestudio.metamodel" version="1.0.1" match="greaterOrEqual"/>
       <import plugin="de.guite.modulestudio.mostdsl.ui" version="1.0.0" match="greaterOrEqual"/>
