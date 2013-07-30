@@ -2,12 +2,14 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listene
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class ThirdParty {
+    @Inject extension ControllerExtensions = new ControllerExtensions()
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension NamingExtensions = new NamingExtensions()
     @Inject extension Utils = new Utils()
@@ -96,9 +98,11 @@ class ThirdParty {
     def private contentGetTypesImpl(Application it) '''
         // intended is using the add() method to add a plugin like below
         $types = $event->getSubject();
+        «IF hasUserController && getMainUserController.hasActions('display')»
 
-        // plugin for showing a single item
-        $types->add('«appName»_ContentType_Item');
+            // plugin for showing a single item
+            $types->add('«appName»_ContentType_Item');
+        «ENDIF»
 
         // plugin for showing a list of multiple items
         $types->add('«appName»_ContentType_ItemList');

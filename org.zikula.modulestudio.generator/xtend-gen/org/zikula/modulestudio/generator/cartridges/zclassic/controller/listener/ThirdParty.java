@@ -2,9 +2,11 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.listene
 
 import com.google.inject.Inject;
 import de.guite.modulestudio.metamodel.modulestudio.Application;
+import de.guite.modulestudio.metamodel.modulestudio.UserController;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Extension;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
+import org.zikula.modulestudio.generator.extensions.ControllerExtensions;
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions;
 import org.zikula.modulestudio.generator.extensions.NamingExtensions;
 import org.zikula.modulestudio.generator.extensions.Utils;
@@ -12,6 +14,15 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions;
 
 @SuppressWarnings("all")
 public class ThirdParty {
+  @Inject
+  @Extension
+  private ControllerExtensions _controllerExtensions = new Function0<ControllerExtensions>() {
+    public ControllerExtensions apply() {
+      ControllerExtensions _controllerExtensions = new ControllerExtensions();
+      return _controllerExtensions;
+    }
+  }.apply();
+  
   @Inject
   @Extension
   private FormattingExtensions _formattingExtensions = new Function0<FormattingExtensions>() {
@@ -307,14 +318,27 @@ public class ThirdParty {
     _builder.newLine();
     _builder.append("$types = $event->getSubject();");
     _builder.newLine();
-    _builder.newLine();
-    _builder.append("// plugin for showing a single item");
-    _builder.newLine();
-    _builder.append("$types->add(\'");
-    String _appName = this._utils.appName(it);
-    _builder.append(_appName, "");
-    _builder.append("_ContentType_Item\');");
-    _builder.newLineIfNotEmpty();
+    {
+      boolean _and = false;
+      boolean _hasUserController = this._controllerExtensions.hasUserController(it);
+      if (!_hasUserController) {
+        _and = false;
+      } else {
+        UserController _mainUserController = this._controllerExtensions.getMainUserController(it);
+        boolean _hasActions = this._controllerExtensions.hasActions(_mainUserController, "display");
+        _and = (_hasUserController && _hasActions);
+      }
+      if (_and) {
+        _builder.newLine();
+        _builder.append("// plugin for showing a single item");
+        _builder.newLine();
+        _builder.append("$types->add(\'");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
+        _builder.append("_ContentType_Item\');");
+        _builder.newLineIfNotEmpty();
+      }
+    }
     _builder.newLine();
     _builder.append("// plugin for showing a list of multiple items");
     _builder.newLine();
