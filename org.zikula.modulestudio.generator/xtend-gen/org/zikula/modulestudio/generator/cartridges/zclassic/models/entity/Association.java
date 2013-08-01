@@ -1535,17 +1535,21 @@ public class Association {
     _builder.newLineIfNotEmpty();
     final boolean isMany = this._modelJoinExtensions.isManySide(it, (useTarget).booleanValue());
     _builder.newLineIfNotEmpty();
+    String _xifexpression_2 = null;
+    Models _container = it.getContainer();
+    Application _application = _container.getApplication();
+    boolean _targets = this._utils.targets(_application, "1.3.5");
+    boolean _not = (!_targets);
+    if (_not) {
+      _xifexpression_2 = "\\";
+    } else {
+      _xifexpression_2 = "";
+    }
+    final String entityClassPrefix = _xifexpression_2;
+    _builder.newLineIfNotEmpty();
     {
       if (isMany) {
-        String _xifexpression_2 = null;
-        Models _container = it.getContainer();
-        Application _application = _container.getApplication();
-        boolean _targets = this._utils.targets(_application, "1.3.5");
-        boolean _not = (!_targets);
-        if (_not) {
-          _xifexpression_2 = "\\";
-        }
-        String _plus = (_xifexpression_2 + entityClass);
+        String _plus = (entityClassPrefix + entityClass);
         CharSequence _relationSetterCustomImpl = this.relationSetterCustomImpl(it, useTarget, aliasName);
         CharSequence _terAndSetterMethods = this.fh.getterAndSetterMethods(it, aliasName, _plus, Boolean.valueOf(true), Boolean.valueOf(false), "", _relationSetterCustomImpl);
         _builder.append(_terAndSetterMethods, "");
@@ -1554,15 +1558,7 @@ public class Association {
         _builder.append(_relationAccessorAdditions, "");
         _builder.newLineIfNotEmpty();
       } else {
-        String _xifexpression_3 = null;
-        Models _container_1 = it.getContainer();
-        Application _application_1 = _container_1.getApplication();
-        boolean _targets_1 = this._utils.targets(_application_1, "1.3.5");
-        boolean _not_1 = (!_targets_1);
-        if (_not_1) {
-          _xifexpression_3 = "\\";
-        }
-        String _plus_1 = (_xifexpression_3 + entityClass);
+        String _plus_1 = (entityClassPrefix + entityClass);
         CharSequence _relationSetterCustomImpl_1 = this.relationSetterCustomImpl(it, useTarget, aliasName);
         CharSequence _terAndSetterMethods_1 = this.fh.getterAndSetterMethods(it, aliasName, _plus_1, Boolean.valueOf(false), Boolean.valueOf(true), "null", _relationSetterCustomImpl_1);
         _builder.append(_terAndSetterMethods_1, "");
