@@ -312,10 +312,10 @@ class Extensions {
             «fh.getterAndSetterMethods(it, 'categories', 'array', true, false, '', '')»
         «ENDIF»
         «IF standardFields»
-            «fh.getterAndSetterMethods(it, 'createdUserId', 'integer', true, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'updatedUserId', 'integer', true, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'createdDate', 'datetime', true, false, '', '')»
-            «fh.getterAndSetterMethods(it, 'updatedDate', 'datetime', true, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'createdUserId', 'integer', false, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'updatedUserId', 'integer', false, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'createdDate', 'datetime', false, false, '', '')»
+            «fh.getterAndSetterMethods(it, 'updatedDate', 'datetime', false, false, '', '')»
         «ENDIF»
     '''
 

@@ -1162,16 +1162,16 @@ public class Extensions {
     {
       boolean _isStandardFields = it.isStandardFields();
       if (_isStandardFields) {
-        CharSequence _terAndSetterMethods_13 = this.fh.getterAndSetterMethods(it, "createdUserId", "integer", Boolean.valueOf(true), Boolean.valueOf(false), "", "");
+        CharSequence _terAndSetterMethods_13 = this.fh.getterAndSetterMethods(it, "createdUserId", "integer", Boolean.valueOf(false), Boolean.valueOf(false), "", "");
         _builder.append(_terAndSetterMethods_13, "");
         _builder.newLineIfNotEmpty();
-        CharSequence _terAndSetterMethods_14 = this.fh.getterAndSetterMethods(it, "updatedUserId", "integer", Boolean.valueOf(true), Boolean.valueOf(false), "", "");
+        CharSequence _terAndSetterMethods_14 = this.fh.getterAndSetterMethods(it, "updatedUserId", "integer", Boolean.valueOf(false), Boolean.valueOf(false), "", "");
         _builder.append(_terAndSetterMethods_14, "");
         _builder.newLineIfNotEmpty();
-        CharSequence _terAndSetterMethods_15 = this.fh.getterAndSetterMethods(it, "createdDate", "datetime", Boolean.valueOf(true), Boolean.valueOf(false), "", "");
+        CharSequence _terAndSetterMethods_15 = this.fh.getterAndSetterMethods(it, "createdDate", "datetime", Boolean.valueOf(false), Boolean.valueOf(false), "", "");
         _builder.append(_terAndSetterMethods_15, "");
         _builder.newLineIfNotEmpty();
-        CharSequence _terAndSetterMethods_16 = this.fh.getterAndSetterMethods(it, "updatedDate", "datetime", Boolean.valueOf(true), Boolean.valueOf(false), "", "");
+        CharSequence _terAndSetterMethods_16 = this.fh.getterAndSetterMethods(it, "updatedDate", "datetime", Boolean.valueOf(false), Boolean.valueOf(false), "", "");
         _builder.append(_terAndSetterMethods_16, "");
         _builder.newLineIfNotEmpty();
       }
