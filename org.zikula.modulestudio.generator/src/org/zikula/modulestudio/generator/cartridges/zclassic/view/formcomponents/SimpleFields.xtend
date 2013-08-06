@@ -127,7 +127,7 @@ class SimpleFields {
     '''
 
     def private decideWhetherToShowCurrentFile(UploadField it) '''
-        «val fieldName = entity.name.formatForCode + '.' + name.formatForCode»
+        «val fieldName = entity.name.formatForDB + '.' + name.formatForCode»
         {if $mode ne 'create'}
             {if $«fieldName» ne ''}
                 «showCurrentFile»
@@ -137,7 +137,7 @@ class SimpleFields {
 
     def private showCurrentFile(UploadField it) '''
         «val appNameSmall = entity.container.application.appName.formatForDB»
-        «val objName = entity.name.formatForCode»
+        «val objName = entity.name.formatForDB»
         «val realName = objName + '.' + name.formatForCode»
         <div class="z-formnote">
             {gt text='Current file'}:

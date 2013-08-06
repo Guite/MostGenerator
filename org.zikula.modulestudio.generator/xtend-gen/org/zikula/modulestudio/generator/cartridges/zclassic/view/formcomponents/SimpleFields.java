@@ -834,11 +834,11 @@ public class SimpleFields {
     StringConcatenation _builder = new StringConcatenation();
     Entity _entity = it.getEntity();
     String _name = _entity.getName();
-    String _formatForCode = this._formattingExtensions.formatForCode(_name);
-    String _plus = (_formatForCode + ".");
+    String _formatForDB = this._formattingExtensions.formatForDB(_name);
+    String _plus = (_formatForDB + ".");
     String _name_1 = it.getName();
-    String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_1);
-    final String fieldName = (_plus + _formatForCode_1);
+    String _formatForCode = this._formattingExtensions.formatForCode(_name_1);
+    final String fieldName = (_plus + _formatForCode);
     _builder.newLineIfNotEmpty();
     _builder.append("{if $mode ne \'create\'}");
     _builder.newLine();
@@ -869,7 +869,7 @@ public class SimpleFields {
     _builder.newLineIfNotEmpty();
     Entity _entity_1 = it.getEntity();
     String _name = _entity_1.getName();
-    final String objName = this._formattingExtensions.formatForCode(_name);
+    final String objName = this._formattingExtensions.formatForDB(_name);
     _builder.newLineIfNotEmpty();
     String _plus = (objName + ".");
     String _name_1 = it.getName();
