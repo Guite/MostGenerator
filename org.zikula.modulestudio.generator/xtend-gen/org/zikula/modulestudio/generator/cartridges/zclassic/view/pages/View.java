@@ -1026,39 +1026,39 @@ public class View {
           boolean _equals = Objects.equal(_workflow_1, EntityWorkflowType.ENTERPRISE);
           if (_equals) {
             _builder.append("    ");
-            _builder.append("<option value=\"accept\" title=\"");
+            _builder.append("<option value=\"accept\" title=\"{gt text=\'");
             EntityWorkflowType _workflow_2 = it.getWorkflow();
             String _workflowActionDescription = this._workflowExtensions.getWorkflowActionDescription(_workflow_2, "Accept");
             _builder.append(_workflowActionDescription, "    ");
-            _builder.append("\">{gt text=\'Accept\'}</option>");
+            _builder.append("\'}\">{gt text=\'Accept\'}</option>");
             _builder.newLineIfNotEmpty();
             {
               boolean _isOwnerPermission = it.isOwnerPermission();
               if (_isOwnerPermission) {
                 _builder.append("    ");
-                _builder.append("<option value=\"reject\" title=\"");
+                _builder.append("<option value=\"reject\" title=\"{gt text=\'");
                 EntityWorkflowType _workflow_3 = it.getWorkflow();
                 String _workflowActionDescription_1 = this._workflowExtensions.getWorkflowActionDescription(_workflow_3, "Reject");
                 _builder.append(_workflowActionDescription_1, "    ");
-                _builder.append("\">{gt text=\'Reject\'}</option>");
+                _builder.append("\'}\">{gt text=\'Reject\'}</option>");
                 _builder.newLineIfNotEmpty();
               }
             }
             _builder.append("    ");
-            _builder.append("<option value=\"demote\" title=\"");
+            _builder.append("<option value=\"demote\" title=\"{gt text=\'");
             EntityWorkflowType _workflow_4 = it.getWorkflow();
             String _workflowActionDescription_2 = this._workflowExtensions.getWorkflowActionDescription(_workflow_4, "Demote");
             _builder.append(_workflowActionDescription_2, "    ");
-            _builder.append("\">{gt text=\'Demote\'}</option>");
+            _builder.append("\'}\">{gt text=\'Demote\'}</option>");
             _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("    ");
-        _builder.append("<option value=\"approve\" title=\"");
+        _builder.append("<option value=\"approve\" title=\"{gt text=\'");
         EntityWorkflowType _workflow_5 = it.getWorkflow();
         String _workflowActionDescription_3 = this._workflowExtensions.getWorkflowActionDescription(_workflow_5, "Approve");
         _builder.append(_workflowActionDescription_3, "    ");
-        _builder.append("\">{gt text=\'Approve\'}</option>");
+        _builder.append("\'}\">{gt text=\'Approve\'}</option>");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -1066,18 +1066,18 @@ public class View {
       boolean _isHasTray = it.isHasTray();
       if (_isHasTray) {
         _builder.append("    ");
-        _builder.append("<option value=\"unpublish\" title=\"");
+        _builder.append("<option value=\"unpublish\" title=\"{gt text=\'");
         EntityWorkflowType _workflow_6 = it.getWorkflow();
         String _workflowActionDescription_4 = this._workflowExtensions.getWorkflowActionDescription(_workflow_6, "Unpublish");
         _builder.append(_workflowActionDescription_4, "    ");
-        _builder.append("\">{gt text=\'Unpublish\'}</option>");
+        _builder.append("\'}\">{gt text=\'Unpublish\'}</option>");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
-        _builder.append("<option value=\"publish\" title=\"");
+        _builder.append("<option value=\"publish\" title=\"{gt text=\'");
         EntityWorkflowType _workflow_7 = it.getWorkflow();
         String _workflowActionDescription_5 = this._workflowExtensions.getWorkflowActionDescription(_workflow_7, "Publish");
         _builder.append(_workflowActionDescription_5, "    ");
-        _builder.append("\">{gt text=\'Publish\'}</option>");
+        _builder.append("\'}\">{gt text=\'Publish\'}</option>");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -1085,11 +1085,11 @@ public class View {
       boolean _isHasArchive = it.isHasArchive();
       if (_isHasArchive) {
         _builder.append("    ");
-        _builder.append("<option value=\"archive\" title=\"");
+        _builder.append("<option value=\"archive\" title=\"{gt text=\'");
         EntityWorkflowType _workflow_8 = it.getWorkflow();
         String _workflowActionDescription_6 = this._workflowExtensions.getWorkflowActionDescription(_workflow_8, "Archive");
         _builder.append(_workflowActionDescription_6, "    ");
-        _builder.append("\">{gt text=\'Archive\'}</option>");
+        _builder.append("\'}\">{gt text=\'Archive\'}</option>");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -1097,24 +1097,28 @@ public class View {
       boolean _isSoftDeleteable = it.isSoftDeleteable();
       if (_isSoftDeleteable) {
         _builder.append("    ");
-        _builder.append("<option value=\"trash\" title=\"");
+        _builder.append("<option value=\"trash\" title=\"{gt text=\'");
         EntityWorkflowType _workflow_9 = it.getWorkflow();
         String _workflowActionDescription_7 = this._workflowExtensions.getWorkflowActionDescription(_workflow_9, "Trash");
         _builder.append(_workflowActionDescription_7, "    ");
-        _builder.append("\">{gt text=\'Trash\'}</option>");
+        _builder.append("\'}\">{gt text=\'Trash\'}</option>");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
-        _builder.append("<option value=\"recover\" title=\"");
+        _builder.append("<option value=\"recover\" title=\"{gt text=\'");
         EntityWorkflowType _workflow_10 = it.getWorkflow();
         String _workflowActionDescription_8 = this._workflowExtensions.getWorkflowActionDescription(_workflow_10, "Recover");
         _builder.append(_workflowActionDescription_8, "    ");
-        _builder.append("\">{gt text=\'Recover\'}</option>");
+        _builder.append("\'}\">{gt text=\'Recover\'}</option>");
         _builder.newLineIfNotEmpty();
       }
     }
     _builder.append("        ");
-    _builder.append("<option value=\"delete\">{gt text=\'Delete\'}</option>");
-    _builder.newLine();
+    _builder.append("<option value=\"delete\" title=\"{gt text=\'");
+    EntityWorkflowType _workflow_11 = it.getWorkflow();
+    String _workflowActionDescription_9 = this._workflowExtensions.getWorkflowActionDescription(_workflow_11, "Delete");
+    _builder.append(_workflowActionDescription_9, "        ");
+    _builder.append("\'}\">{gt text=\'Delete\'}</option>");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("</select>");
     _builder.newLine();

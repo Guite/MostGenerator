@@ -259,26 +259,26 @@ class View {
                 <option value="">{gt text='Choose action'}</option>
             «IF workflow != EntityWorkflowType::NONE»
                 «IF workflow == EntityWorkflowType::ENTERPRISE»
-                    <option value="accept" title="«getWorkflowActionDescription(workflow, 'Accept')»">{gt text='Accept'}</option>
+                    <option value="accept" title="{gt text='«getWorkflowActionDescription(workflow, 'Accept')»'}">{gt text='Accept'}</option>
                     «IF ownerPermission»
-                        <option value="reject" title="«getWorkflowActionDescription(workflow, 'Reject')»">{gt text='Reject'}</option>
+                        <option value="reject" title="{gt text='«getWorkflowActionDescription(workflow, 'Reject')»'}">{gt text='Reject'}</option>
                     «ENDIF»
-                    <option value="demote" title="«getWorkflowActionDescription(workflow, 'Demote')»">{gt text='Demote'}</option>
+                    <option value="demote" title="{gt text='«getWorkflowActionDescription(workflow, 'Demote')»'}">{gt text='Demote'}</option>
                 «ENDIF»
-                <option value="approve" title="«getWorkflowActionDescription(workflow, 'Approve')»">{gt text='Approve'}</option>
+                <option value="approve" title="{gt text='«getWorkflowActionDescription(workflow, 'Approve')»'}">{gt text='Approve'}</option>
             «ENDIF»
             «IF hasTray»
-                <option value="unpublish" title="«getWorkflowActionDescription(workflow, 'Unpublish')»">{gt text='Unpublish'}</option>
-                <option value="publish" title="«getWorkflowActionDescription(workflow, 'Publish')»">{gt text='Publish'}</option>
+                <option value="unpublish" title="{gt text='«getWorkflowActionDescription(workflow, 'Unpublish')»'}">{gt text='Unpublish'}</option>
+                <option value="publish" title="{gt text='«getWorkflowActionDescription(workflow, 'Publish')»'}">{gt text='Publish'}</option>
             «ENDIF»
             «IF hasArchive»
-                <option value="archive" title="«getWorkflowActionDescription(workflow, 'Archive')»">{gt text='Archive'}</option>
+                <option value="archive" title="{gt text='«getWorkflowActionDescription(workflow, 'Archive')»'}">{gt text='Archive'}</option>
             «ENDIF»
             «IF softDeleteable»
-                <option value="trash" title="«getWorkflowActionDescription(workflow, 'Trash')»">{gt text='Trash'}</option>
-                <option value="recover" title="«getWorkflowActionDescription(workflow, 'Recover')»">{gt text='Recover'}</option>
+                <option value="trash" title="{gt text='«getWorkflowActionDescription(workflow, 'Trash')»'}">{gt text='Trash'}</option>
+                <option value="recover" title="{gt text='«getWorkflowActionDescription(workflow, 'Recover')»'}">{gt text='Recover'}</option>
             «ENDIF»
-                <option value="delete">{gt text='Delete'}</option>
+                <option value="delete" title="{gt text='«getWorkflowActionDescription(workflow, 'Delete')»'}">{gt text='Delete'}</option>
             </select>
             <input type="submit" value="{gt text='Submit'}" />
         </fieldset>
