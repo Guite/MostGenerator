@@ -272,10 +272,10 @@ class View {
                 <option value="publish" title="{gt text='«getWorkflowActionDescription(workflow, 'Publish')»'}">{gt text='Publish'}</option>
             «ENDIF»
             «IF hasArchive»
-                <option value="archive" title="{gt text='«getWorkflowActionDescription(workflow, 'Archive')»'}">{gt text='Archive'}</option>
+                <option value="archive" title="{gt text='«getWorkflowActionDescription(workflow, 'Archive')»' comment='this is the verb, not the noun'}">{gt text='Archive'}</option>
             «ENDIF»
             «IF softDeleteable»
-                <option value="trash" title="{gt text='«getWorkflowActionDescription(workflow, 'Trash')»'}">{gt text='Trash'}</option>
+                <option value="trash" title="{gt text='«getWorkflowActionDescription(workflow, 'Trash')»' comment='this is the verb, not the noun'}">{gt text='Trash'}</option>
                 <option value="recover" title="{gt text='«getWorkflowActionDescription(workflow, 'Recover')»'}">{gt text='Recover'}</option>
             «ENDIF»
                 <option value="delete" title="{gt text='«getWorkflowActionDescription(workflow, 'Delete')»'}">{gt text='Delete'}</option>

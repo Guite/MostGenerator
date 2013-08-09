@@ -1089,7 +1089,7 @@ public class View {
         EntityWorkflowType _workflow_8 = it.getWorkflow();
         String _workflowActionDescription_6 = this._workflowExtensions.getWorkflowActionDescription(_workflow_8, "Archive");
         _builder.append(_workflowActionDescription_6, "    ");
-        _builder.append("\'}\">{gt text=\'Archive\'}</option>");
+        _builder.append("\' comment=\'this is the verb, not the noun\'}\">{gt text=\'Archive\'}</option>");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -1101,7 +1101,7 @@ public class View {
         EntityWorkflowType _workflow_9 = it.getWorkflow();
         String _workflowActionDescription_7 = this._workflowExtensions.getWorkflowActionDescription(_workflow_9, "Trash");
         _builder.append(_workflowActionDescription_7, "    ");
-        _builder.append("\'}\">{gt text=\'Trash\'}</option>");
+        _builder.append("\' comment=\'this is the verb, not the noun\'}\">{gt text=\'Trash\'}</option>");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("<option value=\"recover\" title=\"{gt text=\'");
