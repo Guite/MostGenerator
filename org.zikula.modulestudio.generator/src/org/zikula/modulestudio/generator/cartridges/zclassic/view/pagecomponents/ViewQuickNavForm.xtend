@@ -39,7 +39,7 @@ class ViewQuickNavForm {
         <form action="{$modvars.ZConfig.entrypoint|default:'index.php'}" method="get" id="«app.prefix»«name.formatForCodeCapital»QuickNavForm" class="«app.prefix»QuickNavForm">
             <fieldset>
                 <h3>{gt text='Quick navigation'}</h3>
-                <input type="hidden" name="module" value="{modgetinfo modname='«app.appName»' info='displayname'}" />
+                <input type="hidden" name="module" value="{modgetinfo modname='«app.appName»' info='url'}" />
                 <input type="hidden" name="type" value="«controller.formattedName»" />
                 <input type="hidden" name="func" value="view" />
                 <input type="hidden" name="ot" value="«objName»" />
