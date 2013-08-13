@@ -151,7 +151,7 @@ public class ViewQuickNavForm {
     _builder.append("<input type=\"hidden\" name=\"module\" value=\"{modgetinfo modname=\'");
     String _appName_1 = this._utils.appName(app);
     _builder.append(_appName_1, "        ");
-    _builder.append("\' info=\'displayname\'}\" />");
+    _builder.append("\' info=\'url\'}\" />");
     _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("<input type=\"hidden\" name=\"type\" value=\"");

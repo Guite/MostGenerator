@@ -512,6 +512,12 @@ public class SimpleFields {
           boolean _isMandatory_1 = it.isMandatory();
           String _displayBool_1 = this._formattingExtensions.displayBool(Boolean.valueOf(_isMandatory_1));
           _builder.append(_displayBool_1, "");
+          {
+            boolean _isMandatory_2 = it.isMandatory();
+            if (_isMandatory_2) {
+              _builder.append(" addAllOption=false");
+            }
+          }
           _builder.append(" __title=\'Choose the ");
           String _name_2 = it.getName();
           String _formatForDisplay_2 = this._formattingExtensions.formatForDisplay(_name_2);
@@ -537,8 +543,8 @@ public class SimpleFields {
             CharSequence _groupAndId_2 = this.groupAndId(it, groupSuffix, idSuffix);
             _builder.append(_groupAndId_2, "");
             _builder.append(" mandatory=");
-            boolean _isMandatory_2 = it.isMandatory();
-            String _displayBool_2 = this._formattingExtensions.displayBool(Boolean.valueOf(_isMandatory_2));
+            boolean _isMandatory_3 = it.isMandatory();
+            String _displayBool_2 = this._formattingExtensions.displayBool(Boolean.valueOf(_isMandatory_3));
             _builder.append(_displayBool_2, "");
             _builder.append(" __title=\'Choose the ");
             String _name_4 = it.getName();
@@ -559,8 +565,8 @@ public class SimpleFields {
             CharSequence _groupAndId_3 = this.groupAndId(it, groupSuffix, idSuffix);
             _builder.append(_groupAndId_3, "");
             _builder.append(" mandatory=");
-            boolean _isMandatory_3 = it.isMandatory();
-            String _displayBool_3 = this._formattingExtensions.displayBool(Boolean.valueOf(_isMandatory_3));
+            boolean _isMandatory_4 = it.isMandatory();
+            String _displayBool_3 = this._formattingExtensions.displayBool(Boolean.valueOf(_isMandatory_4));
             _builder.append(_displayBool_3, "");
             _builder.append(" readOnly=");
             boolean _isReadonly = it.isReadonly();
