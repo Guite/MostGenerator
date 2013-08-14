@@ -635,7 +635,22 @@ public class ViewQuickNavForm {
     String _name_1 = _source_3.getName();
     String _formatForCode = this._formattingExtensions.formatForCode(_name_1);
     _builder.append(_formatForCode, "    ");
-    _builder.append("\' slimMode=true assign=\'listEntries\'}");
+    _builder.append("\'");
+    {
+      Entity _source_4 = it.getSource();
+      DerivedField _leadingField = this._modelExtensions.getLeadingField(_source_4);
+      boolean _tripleNotEquals = (_leadingField != null);
+      if (_tripleNotEquals) {
+        _builder.append(" orderBy=\'tbl.");
+        Entity _source_5 = it.getSource();
+        DerivedField _leadingField_1 = this._modelExtensions.getLeadingField(_source_5);
+        String _name_2 = _leadingField_1.getName();
+        String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_2);
+        _builder.append(_formatForCode_1, "    ");
+        _builder.append("\'");
+      }
+    }
+    _builder.append(" slimMode=true assign=\'listEntries\'}");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("<select id=\"");
@@ -651,14 +666,14 @@ public class ViewQuickNavForm {
     _builder.append("{foreach item=\'option\' from=$listEntries}");
     _builder.newLine();
     {
-      Entity _source_4 = it.getSource();
-      boolean _hasCompositeKeys = this._modelExtensions.hasCompositeKeys(_source_4);
+      Entity _source_6 = it.getSource();
+      boolean _hasCompositeKeys = this._modelExtensions.hasCompositeKeys(_source_6);
       if (_hasCompositeKeys) {
         _builder.append("        ");
         _builder.append("{assign var=\'entryId\' value=\"");
         {
-          Entity _source_5 = it.getSource();
-          Iterable<DerivedField> _primaryKeyFields = this._modelExtensions.getPrimaryKeyFields(_source_5);
+          Entity _source_7 = it.getSource();
+          Iterable<DerivedField> _primaryKeyFields = this._modelExtensions.getPrimaryKeyFields(_source_7);
           boolean _hasElements = false;
           for(final DerivedField pkField : _primaryKeyFields) {
             if (!_hasElements) {
@@ -667,9 +682,9 @@ public class ViewQuickNavForm {
               _builder.appendImmediate("_", "        ");
             }
             _builder.append("`$option.");
-            String _name_2 = pkField.getName();
-            String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_2);
-            _builder.append(_formatForCode_1, "        ");
+            String _name_3 = pkField.getName();
+            String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_3);
+            _builder.append(_formatForCode_2, "        ");
             _builder.append("`");
           }
         }
@@ -679,32 +694,32 @@ public class ViewQuickNavForm {
         _builder.append("<option value=\"{$entryId}\"{if $entryId eq $");
         _builder.append(sourceAliasName, "        ");
         _builder.append("} selected=\"selected\"{/if}>{$option.");
-        Entity _source_6 = it.getSource();
-        DerivedField _leadingField = this._modelExtensions.getLeadingField(_source_6);
-        String _name_3 = _leadingField.getName();
-        String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_3);
-        _builder.append(_formatForCode_2, "        ");
+        Entity _source_8 = it.getSource();
+        DerivedField _leadingField_2 = this._modelExtensions.getLeadingField(_source_8);
+        String _name_4 = _leadingField_2.getName();
+        String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_4);
+        _builder.append(_formatForCode_3, "        ");
         _builder.append("}</option>");
         _builder.newLineIfNotEmpty();
       } else {
         _builder.append("        ");
         _builder.append("{assign var=\'entryId\' value=$option.");
-        Entity _source_7 = it.getSource();
-        DerivedField _firstPrimaryKey = this._modelExtensions.getFirstPrimaryKey(_source_7);
-        String _name_4 = _firstPrimaryKey.getName();
-        String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_4);
-        _builder.append(_formatForCode_3, "        ");
+        Entity _source_9 = it.getSource();
+        DerivedField _firstPrimaryKey = this._modelExtensions.getFirstPrimaryKey(_source_9);
+        String _name_5 = _firstPrimaryKey.getName();
+        String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_5);
+        _builder.append(_formatForCode_4, "        ");
         _builder.append("}");
         _builder.newLineIfNotEmpty();
         _builder.append("        ");
         _builder.append("<option value=\"{$entryId}\"{if $entryId eq $");
         _builder.append(sourceAliasName, "        ");
         _builder.append("} selected=\"selected\"{/if}>{$option.");
-        Entity _source_8 = it.getSource();
-        DerivedField _leadingField_1 = this._modelExtensions.getLeadingField(_source_8);
-        String _name_5 = _leadingField_1.getName();
-        String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_5);
-        _builder.append(_formatForCode_4, "        ");
+        Entity _source_10 = it.getSource();
+        DerivedField _leadingField_3 = this._modelExtensions.getLeadingField(_source_10);
+        String _name_6 = _leadingField_3.getName();
+        String _formatForCode_5 = this._formattingExtensions.formatForCode(_name_6);
+        _builder.append(_formatForCode_5, "        ");
         _builder.append("}</option>");
         _builder.newLineIfNotEmpty();
       }
