@@ -379,7 +379,7 @@ public class View {
         _builder.append(_formatForCodeCapital_1, "");
       }
     }
-    _builder.append("/view_quickNav.tpl\'");
+    _builder.append("/view_quickNav.tpl\' all=$all own=$own");
     {
       boolean _hasVisibleWorkflow = this._workflowExtensions.hasVisibleWorkflow(it);
       boolean _not = (!_hasVisibleWorkflow);

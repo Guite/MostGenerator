@@ -168,6 +168,12 @@ public class ViewQuickNavForm {
     _builder.append("\" />");
     _builder.newLineIfNotEmpty();
     _builder.append("        ");
+    _builder.append("<input type=\"hidden\" name=\"all\" value=\"{$all|default:0}\" />");
+    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("<input type=\"hidden\" name=\"own\" value=\"{$own|default:0}\" />");
+    _builder.newLine();
+    _builder.append("        ");
     _builder.append("{gt text=\'All\' assign=\'lblDefault\'}");
     _builder.newLine();
     _builder.append("        ");

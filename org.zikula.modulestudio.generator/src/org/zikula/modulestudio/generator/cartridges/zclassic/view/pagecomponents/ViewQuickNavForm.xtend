@@ -43,6 +43,8 @@ class ViewQuickNavForm {
                 <input type="hidden" name="type" value="«controller.formattedName»" />
                 <input type="hidden" name="func" value="view" />
                 <input type="hidden" name="ot" value="«objName»" />
+                <input type="hidden" name="all" value="{$all|default:0}" />
+                <input type="hidden" name="own" value="{$own|default:0}" />
                 {gt text='All' assign='lblDefault'}
                 «formFields»
                 <input type="submit" name="updateview" id="quicknav_submit" value="{gt text='OK'}" />
