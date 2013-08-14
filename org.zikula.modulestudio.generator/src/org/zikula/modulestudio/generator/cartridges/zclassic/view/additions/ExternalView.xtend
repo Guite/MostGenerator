@@ -193,8 +193,8 @@ class ExternalView {
                     <div class="z-formrow">
                         <label for="«app.appName»_pasteas">{gt text='Paste as'}:</label>
                         <select id="«app.appName»_pasteas" name="pasteas">
-                            <option value="1">{gt text='Link to the «name.formatForCode»'}</option>
-                            <option value="2">{gt text='ID of «name.formatForCode»'}</option>
+                            <option value="1">{gt text='Link to the «name.formatForDisplay»'}</option>
+                            <option value="2">{gt text='ID of «name.formatForDisplay»'}</option>
                         </select>
                     </div>
                     <br />
