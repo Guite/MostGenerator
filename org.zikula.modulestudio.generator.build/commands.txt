@@ -15,7 +15,7 @@ build
 #build --thorough
 
 # run tests and code coverage (buckminster emma --help)
-emma --properties "refProduct/de.guite.modulestudio.build/buckminster.properties" --launch "org.zikula.modulestudio.generator.tests/AllTests.launch" --terseXML --flatXML --output "${WORKSPACE}output/test_results/junit/alltests.xml" --exec "${WORKSPACE}output/test_results/coverage/alltests.exec" --stderr --stdout
+#emma --properties "refProduct/de.guite.modulestudio.build/buckminster.properties" --launch "org.zikula.modulestudio.generator.tests/AllTests.launch" --terseXML --flatXML --output "${WORKSPACE}output/test_results/junit/alltests.xml" --exec "${WORKSPACE}output/test_results/coverage/alltests.exec" --stderr --stdout
 #emma --properties "refProduct/de.guite.modulestudio.build/buckminster.properties" --launch "org.zikula.modulestudio.generator.tests/OtherTests.launch" --terseXML --flatXML --output "${WORKSPACE}output/test_results/junit/othertests.xml" --exec "${WORKSPACE}output/test_results/coverage/othertests.exec" --stderr --stdout
 
 # build feature p2 repository
