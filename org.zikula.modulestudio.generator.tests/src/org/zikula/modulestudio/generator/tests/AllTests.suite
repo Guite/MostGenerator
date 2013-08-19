@@ -27,7 +27,3 @@ This sub section treats different generator cartridges in detail.
 #### Reporting
 
 - \org\.zikula\.modulestudio\.generator\.tests\.model\..*\
-
-### XML importer
-
-- \org\.zikula\.modulestudio\.generator\.tests\.importer\..*\
