@@ -244,7 +244,7 @@ public class Account {
     _builder.append("if (!SecurityUtil::checkPermission($this->name . \'::\', \'::\', ACCESS_OVERVIEW)) {");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("return LogUtil::registerPermissionError();");
+    _builder.append("return $items;");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("}");

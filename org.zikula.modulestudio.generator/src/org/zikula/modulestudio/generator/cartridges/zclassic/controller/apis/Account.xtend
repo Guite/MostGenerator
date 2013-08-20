@@ -83,7 +83,7 @@ class Account {
             }
 
             if (!SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_OVERVIEW)) {
-                return LogUtil::registerPermissionError();
+                return $items;
             }
 
             // Create an array of links to return
