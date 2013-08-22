@@ -31,6 +31,9 @@ import org.zikula.modulestudio.generator.workflow.components.ModelReader;
  */
 @SuppressWarnings("all")
 public class WorkflowStart {
+  /**
+   * Name of currently processed generator cartridge.
+   */
   private String currentCartridge = "";
   
   public WorkflowSettings settings = new Function0<WorkflowSettings>() {
@@ -47,10 +50,19 @@ public class WorkflowStart {
     }
   }.apply();
   
+  /**
+   * Reference to the model's {@link Resource} object.
+   */
   private Resource model = null;
   
   /**
-   * Validate the model
+   * The Guice injector instance which may be provided
+   * if the generator is executed inside MOST.
+   */
+  public Injector injector = null;
+  
+  /**
+   * Validates the model.
    */
   public boolean validate() {
     final IProgressMonitor progressMonitor = this.settings.getProgressMonitor();
@@ -207,6 +219,10 @@ public class WorkflowStart {
         final ModelReader reader = _modelReader;
         String _modelPath = this.settings.getModelPath();
         reader.setUri(_modelPath);
+        boolean _tripleNotEquals = (this.injector != null);
+        if (_tripleNotEquals) {
+          reader.setInjector(this.injector);
+        }
         Resource _invoke = reader.invoke();
         this.model = _invoke;
       }

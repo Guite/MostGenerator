@@ -6,10 +6,12 @@ import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
+import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
+import de.guite.modulestudio.MostDslRuntimeModule;
 import de.guite.modulestudio.MostDslStandaloneSetup;
-import de.guite.modulestudio.ui.internal.MostDslActivator;
 
 /**
  * Workflow component class for reading the input model.
@@ -17,9 +19,19 @@ import de.guite.modulestudio.ui.internal.MostDslActivator;
 public class ModelReader extends WorkflowComponentWithSlot {
 
     /**
+     * Whether we are inside a manual mwe workflow or OSGi.
+     */
+    private Boolean isStandalone = false;
+
+    /**
      * The treated uri.
      */
     private String uri = ""; //$NON-NLS-1$
+
+    /**
+     * The Guice injector instance.
+     */
+    private Injector injector = null;
 
     /**
      * Invokes the workflow component from the outside.
@@ -63,26 +75,48 @@ public class ModelReader extends WorkflowComponentWithSlot {
     }
 
     /**
+     * Sets the standalone flag.
+     * 
+     * @param newValue
+     *            The given flag value.
+     */
+    public void setIsStandalone(Boolean newValue) {
+        this.isStandalone = newValue;
+    }
+
+    /**
+     * Sets the injector.
+     * 
+     * @param injector
+     *            The given {@link Injector} instance.
+     */
+    public void setInjector(Injector injector) {
+        this.injector = injector;
+    }
+
+    /**
      * Returns the injector.
      * 
      * @return The injector.
      */
     protected Injector getInjector() {
-        MostDslActivator mostDslActivator = null;
-        mostDslActivator = MostDslActivator.getInstance();
-        Injector injector = null;
-        if (mostDslActivator != null) {
-            // Within MOST
-            injector = mostDslActivator
-                    .getInjector(MostDslActivator.DE_GUITE_MODULESTUDIO_MOSTDSL);
+        if (this.injector != null) {
+            // injector given by MOST
+            return this.injector;
         }
-        if (injector == null) {
-            // Standalone execution
-            injector = new MostDslStandaloneSetup()
+
+        if (!this.isStandalone) {
+            // create injector for WebGen
+            final Module runtimeModule = new MostDslRuntimeModule();
+            this.injector = Guice.createInjector(runtimeModule);
+        }
+        else {
+            // standalone setup for mwe files
+            this.injector = new MostDslStandaloneSetup()
                     .createInjectorAndDoEMFRegistration();
         }
 
-        return injector;
+        return this.injector;
     }
 
     /**

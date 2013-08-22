@@ -68,6 +68,7 @@ Workflow {
     component = ModelReader {
         uri = modelFile
         slot = mostSlot
+        isStandalone = true
     }
 
     component = Logger { message = 'Running validator component.' }
