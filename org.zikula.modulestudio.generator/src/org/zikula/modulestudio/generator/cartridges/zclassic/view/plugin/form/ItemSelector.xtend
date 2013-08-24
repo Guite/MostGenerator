@@ -43,7 +43,7 @@ class ItemSelector {
 
     def private itemSelectorBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Form\Plugin\Base;
+            namespace «appNamespace»\Form\Plugin\Base;
 
             use ModUtil;
             use PageUtil;
@@ -129,7 +129,11 @@ class ItemSelector {
                 if ($firstTime) {
                     PageUtil::addVar('javascript', 'prototype');
                     PageUtil::addVar('javascript', 'Zikula.UI'); // imageviewer
+                    «IF targets('1.3.5')»
                     PageUtil::addVar('javascript', 'modules/«appName»/javascript/«appName»_finder.js');
+                    «ELSE»
+                    PageUtil::addVar('javascript', '«getAppJsPath»«appName»_finder.js');
+                    «ENDIF»
                     PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
                 }
                 $firstTime = false;
@@ -204,7 +208,7 @@ class ItemSelector {
 
     def private itemSelectorImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Form\Plugin;
+            namespace «appNamespace»\Form\Plugin;
 
         «ENDIF»
         /**

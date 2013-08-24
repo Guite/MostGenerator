@@ -256,7 +256,7 @@ class ControllerLayer {
             $action = isset($args['action']) ? $args['action'] : $this->request->request->get('action', null);
             $action = strtolower($action);
 
-            $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager);
+            $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
 
             // process each item
             foreach ($items as $itemid) {
@@ -391,7 +391,7 @@ class ControllerLayer {
 
                 «menuLinksBetweenControllers»
 
-                $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
+                $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
                 $utilArgs = array('api' => '«it.formattedName»', 'action' => 'getlinks');
                 $allowedObjectTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
 

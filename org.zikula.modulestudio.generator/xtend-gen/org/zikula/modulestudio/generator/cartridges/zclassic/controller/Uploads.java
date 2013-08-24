@@ -269,14 +269,14 @@ public class Uploads {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         _builder.append("use ");
-        String _appName_1 = this._utils.appName(it);
-        _builder.append(_appName_1, "");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
         _builder.append("\\Util\\ControllerUtil;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -285,6 +285,8 @@ public class Uploads {
         _builder.append("use FileUtil;");
         _builder.newLine();
         _builder.append("use LogUtil;");
+        _builder.newLine();
+        _builder.append("use ModUtil;");
         _builder.newLine();
         _builder.append("use ServiceUtil;");
         _builder.newLine();
@@ -305,8 +307,8 @@ public class Uploads {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
         _builder.append("_Base_UploadHandler");
         _builder.newLineIfNotEmpty();
       } else {
@@ -603,7 +605,18 @@ public class Uploads {
         _builder.append("ControllerUtil");
       }
     }
-    _builder.append("($serviceManager);");
+    _builder.append("($serviceManager");
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(", ModUtil::getModule(\'");
+        String _appName_2 = this._utils.appName(it);
+        _builder.append(_appName_2, "    ");
+        _builder.append("\')");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("    ");
@@ -1524,7 +1537,18 @@ public class Uploads {
         _builder.append("ControllerUtil");
       }
     }
-    _builder.append("($serviceManager);");
+    _builder.append("($serviceManager");
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(", ModUtil::getModule(\'");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "    ");
+        _builder.append("\')");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("    ");
@@ -1579,8 +1603,8 @@ public class Uploads {
     _builder.newLine();
     _builder.append("        ");
     _builder.append("$manager->setModule(\'");
-    String _appName_1 = this._utils.appName(it);
-    _builder.append(_appName_1, "        ");
+    String _appName_2 = this._utils.appName(it);
+    _builder.append(_appName_2, "        ");
     _builder.append("\');");
     _builder.newLineIfNotEmpty();
     _builder.append("        ");
@@ -1627,8 +1651,8 @@ public class Uploads {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -1646,11 +1670,11 @@ public class Uploads {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
+        _builder.append("_UploadHandler extends ");
         String _appName_1 = this._utils.appName(it);
         _builder.append(_appName_1, "");
-        _builder.append("_UploadHandler extends ");
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
         _builder.append("_Base_UploadHandler");
         _builder.newLineIfNotEmpty();
       } else {

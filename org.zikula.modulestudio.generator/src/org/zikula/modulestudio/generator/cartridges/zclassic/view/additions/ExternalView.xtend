@@ -122,8 +122,8 @@ class ExternalView {
         <head>
             <title>{gt text='Search and select «name.formatForDisplay»'}</title>
             <link type="text/css" rel="stylesheet" href="{$baseurl}style/core.css" />
-            <link type="text/css" rel="stylesheet" href="{$baseurl}modules/«app.appName»/«IF app.targets('1.3.5')»style/«ELSE»«app.getAppCssPath»«ENDIF»style.css" />
-            <link type="text/css" rel="stylesheet" href="{$baseurl}modules/«app.appName»/«IF app.targets('1.3.5')»style/«ELSE»«app.getAppCssPath»«ENDIF»finder.css" />
+            <link type="text/css" rel="stylesheet" href="{$baseurl}modules/«IF app.targets('1.3.5')»«app.appName»/style/«ELSE»«app.getAppCssPath»«ENDIF»style.css" />
+            <link type="text/css" rel="stylesheet" href="{$baseurl}modules/«IF app.targets('1.3.5')»«app.appName»/style/«ELSE»«app.getAppCssPath»«ENDIF»finder.css" />
             {assign var='ourEntry' value=$modvars.ZConfig.entrypoint}
             <script type="text/javascript">/* <![CDATA[ */
                 if (typeof(Zikula) == 'undefined') {var Zikula = {};}
@@ -137,7 +137,7 @@ class ExternalView {
             <script type="text/javascript" src="{$baseurl}javascript/ajax/original_uncompressed/scriptaculous.js"></script>
             <script type="text/javascript" src="{$baseurl}javascript/ajax/original_uncompressed/dragdrop.js"></script>
             <script type="text/javascript" src="{$baseurl}javascript/ajax/original_uncompressed/effects.js"></script>*}
-            <script type="text/javascript" src="{$baseurl}modules/«app.appName»/«IF app.targets('1.3.5')»javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_finder.js"></script>
+            <script type="text/javascript" src="{$baseurl}modules/«IF app.targets('1.3.5')»«app.appName»/javascript/«ELSE»«app.getAppJsPath»«ENDIF»«app.appName»_finder.js"></script>
         «IF app.targets('1.3.5')»
         {if $editorName eq 'tinymce'}
             <script type="text/javascript" src="{$baseurl}modules/Scribite/includes/tinymce/tiny_mce_popup.js"></script>

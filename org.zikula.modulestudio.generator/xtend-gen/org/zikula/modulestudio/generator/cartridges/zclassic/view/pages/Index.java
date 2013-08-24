@@ -158,8 +158,8 @@ public class Index {
         String _formattedName_5 = this._controllerExtensions.formattedName(controller);
         _builder.append(_formattedName_5, "");
         _builder.append(" section of the ");
-        String _appName_2 = this._utils.appName(this.app);
-        String _formatForDisplayCapital = this._formattingExtensions.formatForDisplayCapital(_appName_2);
+        String _name = this.app.getName();
+        String _formatForDisplayCapital = this._formattingExtensions.formatForDisplayCapital(_name);
         _builder.append(_formatForDisplayCapital, "");
         _builder.append(" application.\'}</p>");
         _builder.newLineIfNotEmpty();

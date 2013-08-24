@@ -43,9 +43,9 @@ class ExternalController {
 
     def private externalBaseClass(Application it) '''
     «IF !targets('1.3.5')»
-        namespace «appName»\Controller\Base;
+        namespace «appNamespace»\Controller\Base;
 
-        use «appName»\Util\ControllerUtil;
+        use «appNamespace»\Util\ControllerUtil;
 
         use LogUtil;
         use ModUtil;
@@ -97,7 +97,7 @@ class ExternalController {
         public function display«IF !targets('1.3.5')»Action«ENDIF»(array $args = array())
         {
             $getData = $this->request->query;
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
 
             $objectType = isset($args['objectType']) ? $args['objectType'] : '';
             $utilArgs = array('controller' => 'external', 'action' => 'display');
@@ -196,7 +196,7 @@ class ExternalController {
             PageUtil::addVar('stylesheet', ThemeUtil::getModuleStylesheet('«appName»'));
 
             $getData = $this->request->query;
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
 
             $objectType = isset($args['objectType']) ? $args['objectType'] : $getData->filter('objectType', '«getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             $utilArgs = array('controller' => 'external', 'action' => 'finder');
@@ -283,7 +283,7 @@ class ExternalController {
 
     def private externalImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Controller;
+            namespace «appNamespace»\Controller;
 
         «ENDIF»
         /**

@@ -61,9 +61,47 @@ public class Utils {
    * @return String The formatted name.
    */
   public String appName(final Application it) {
-    String _name = it.getName();
-    String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
-    return _formatForCodeCapital;
+    String _xifexpression = null;
+    boolean _targets = this.targets(it, "1.3.5");
+    if (_targets) {
+      String _name = it.getName();
+      String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
+      _xifexpression = _formatForCodeCapital;
+    } else {
+      String _vendor = it.getVendor();
+      String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_vendor);
+      String _name_1 = it.getName();
+      String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_1);
+      String _plus = (_formatForCodeCapital_1 + _formatForCodeCapital_2);
+      String _plus_1 = (_plus + "Module");
+      _xifexpression = _plus_1;
+    }
+    return _xifexpression;
+  }
+  
+  /**
+   * Returns the base namespace of the application.
+   * 
+   * @param it The {@link Application} instance
+   * 
+   * @return String The formatted namespace.
+   */
+  public String appNamespace(final Application it) {
+    String _xifexpression = null;
+    boolean _targets = this.targets(it, "1.3.5");
+    if (_targets) {
+      _xifexpression = "";
+    } else {
+      String _vendor = it.getVendor();
+      String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+      String _plus = (_formatForCodeCapital + "\\");
+      String _name = it.getName();
+      String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+      String _plus_1 = (_plus + _formatForCodeCapital_1);
+      String _plus_2 = (_plus_1 + "Module");
+      _xifexpression = _plus_2;
+    }
+    return _xifexpression;
   }
   
   /**

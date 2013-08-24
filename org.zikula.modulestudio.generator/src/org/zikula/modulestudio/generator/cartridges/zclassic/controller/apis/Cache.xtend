@@ -39,9 +39,9 @@ class Cache {
 
     def private cacheApiBaseClass(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Api\Base;
+            namespace «appNamespace»\Api\Base;
 
-            use «appName»\Util\ControllerUtil;
+            use «appNamespace»\Util\ControllerUtil;
 
             use ModUtil;
             use Zikula_AbstractApi;
@@ -73,7 +73,7 @@ class Cache {
             $objectType = $args['ot'];
             $item = $args['item'];
 
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $utilArgs = array('api' => 'cache', 'action' => 'clearItemCache');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 return;
@@ -163,7 +163,7 @@ class Cache {
 
     def private cacheApiImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Api;
+            namespace «appNamespace»\Api;
 
         «ENDIF»
         /**

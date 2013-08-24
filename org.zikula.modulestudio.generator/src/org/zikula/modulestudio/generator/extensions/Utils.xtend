@@ -41,7 +41,20 @@ class Utils {
      * @return String The formatted name.
      */
     def appName(Application it) {
-        name.formatForCodeCapital
+        if (targets('1.3.5')) name.formatForCodeCapital
+        else vendor.formatForCodeCapital + name.formatForCodeCapital + 'Module'
+    }
+
+    /**
+     * Returns the base namespace of the application.
+     *
+     * @param it The {@link Application} instance
+     *
+     * @return String The formatted namespace.
+     */
+    def appNamespace(Application it) {
+        if (targets('1.3.5')) ''
+        else vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module'
     }
 
     /**

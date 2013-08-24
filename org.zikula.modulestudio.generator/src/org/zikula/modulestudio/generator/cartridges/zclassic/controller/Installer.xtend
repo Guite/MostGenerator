@@ -29,7 +29,7 @@ class Installer {
      * Entry point for application installer.
      */
     def generate(Application it, IFileSystemAccess fsa) {
-        val installerPrefix = if (!targets('1.3.5')) appName else ''
+        val installerPrefix = if (!targets('1.3.5')) name.formatForCodeCapital + 'Module' else ''
         val installerFileName = installerPrefix + 'Installer.php'
         fsa.generateFile(getAppSourceLibPath + 'Base/' + installerFileName, installerBaseFile)
         fsa.generateFile(getAppSourceLibPath + installerFileName, installerFile)
@@ -56,9 +56,9 @@ class Installer {
 
     def private installerBaseClass(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Base;
+            namespace «appNamespace»\Base;
 
-            use «appName»\Util\ControllerUtil;
+            use «appNamespace»\Util\ControllerUtil;
 
             «IF hasCategorisableEntities»
                 use CategoryUtil;
@@ -72,9 +72,7 @@ class Installer {
             «ENDIF»
             use HookUtil;
             use LogUtil;
-            «IF hasCategorisableEntities»
-                use ModUtil;
-            «ENDIF»
+            use ModUtil;
             use System;
             use Zikula_AbstractInstaller;
             use Zikula_Workflow_Util;
@@ -101,7 +99,7 @@ class Installer {
 
     def private interactiveBaseClass(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Controller\Base;
+            namespace «appNamespace»\Controller\Base;
 
             use LogUtil;
             «IF needsConfig»
@@ -188,8 +186,8 @@ class Installer {
                     include_once 'modules/«appName»/lib/«appName»/Api/Category.php';
                     $categoryApi = new «appName»_Api_Category($this->serviceManager);
                 «ELSE»
-                    include_once 'modules/«appName»/Api/Base/CategoryApi.php';
-                    include_once 'modules/«appName»/Api/CategoryApi.php';
+                    include_once 'modules/«getAppSourcePath»/Api/Base/CategoryApi.php';
+                    include_once 'modules/«getAppSourcePath»/Api/CategoryApi.php';
                     $categoryApi = new \«appName»\Api\CategoryApi($this->serviceManager);
                 «ENDIF»
                 «FOR entity : getCategorisableEntities»
@@ -230,7 +228,7 @@ class Installer {
         «IF hasUploads»
             // Check if upload directories exist and if needed create them
             try {
-                $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
+                $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
                 $controllerHelper->checkAndCreateAllUploadFolders();
             } catch (\Exception $e) {
                 return LogUtil::registerError($e->getMessage());
@@ -370,7 +368,7 @@ class Installer {
 
     def private installerImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»;
+            namespace «appNamespace»;
 
         «ENDIF»
         /**
@@ -388,7 +386,7 @@ class Installer {
 
     def private interactiveImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Controller;
+            namespace «appNamespace»\Controller;
 
         «ENDIF»
         /**

@@ -127,7 +127,18 @@ public class ObjectState {
         _builder.append("\\Util\\WorkflowUtil");
       }
     }
-    _builder.append("($serviceManager);");
+    _builder.append("($serviceManager");
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(", ModUtil::getModule(\'");
+        String _appName_5 = this._utils.appName(it);
+        _builder.append(_appName_5, "    ");
+        _builder.append("\')");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$stateInfo = $workflowHelper->getStateInfo($state);");

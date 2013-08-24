@@ -242,8 +242,8 @@ public class Listeners {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Listener");
         {
           if ((isBase).booleanValue()) {
@@ -285,13 +285,13 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            String _appName_1 = this._utils.appName(it);
-            _builder.append(_appName_1, "");
+            String _appName = this._utils.appName(it);
+            _builder.append(_appName, "");
             _builder.append("_Listener_Core extends ");
           }
         }
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "");
         _builder.append("_Listener_Base_Core");
         _builder.newLineIfNotEmpty();
       } else {
@@ -327,8 +327,8 @@ public class Listeners {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Listener");
         {
           if ((isBase).booleanValue()) {
@@ -370,13 +370,13 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            String _appName_1 = this._utils.appName(it);
-            _builder.append(_appName_1, "");
+            String _appName = this._utils.appName(it);
+            _builder.append(_appName, "");
             _builder.append("_Listener_FrontController extends ");
           }
         }
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "");
         _builder.append("_Listener_Base_FrontController");
         _builder.newLineIfNotEmpty();
       } else {
@@ -412,8 +412,8 @@ public class Listeners {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Listener");
         {
           if ((isBase).booleanValue()) {
@@ -455,13 +455,13 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            String _appName_1 = this._utils.appName(it);
-            _builder.append(_appName_1, "");
+            String _appName = this._utils.appName(it);
+            _builder.append(_appName, "");
             _builder.append("_Listener_Installer extends ");
           }
         }
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "");
         _builder.append("_Listener_Base_Installer");
         _builder.newLineIfNotEmpty();
       } else {
@@ -497,8 +497,8 @@ public class Listeners {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Listener");
         {
           if ((isBase).booleanValue()) {
@@ -542,13 +542,13 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            String _appName_1 = this._utils.appName(it);
-            _builder.append(_appName_1, "");
+            String _appName = this._utils.appName(it);
+            _builder.append(_appName, "");
             _builder.append("_Listener_ModuleDispatch extends ");
           }
         }
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "");
         _builder.append("_Listener_Base_ModuleDispatch");
         _builder.newLineIfNotEmpty();
       } else {
@@ -584,8 +584,8 @@ public class Listeners {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Listener");
         {
           if ((isBase).booleanValue()) {
@@ -627,13 +627,13 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            String _appName_1 = this._utils.appName(it);
-            _builder.append(_appName_1, "");
+            String _appName = this._utils.appName(it);
+            _builder.append(_appName, "");
             _builder.append("_Listener_Mailer extends ");
           }
         }
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "");
         _builder.append("_Listener_Base_Mailer");
         _builder.newLineIfNotEmpty();
       } else {
@@ -669,8 +669,8 @@ public class Listeners {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Listener");
         {
           if ((isBase).booleanValue()) {
@@ -712,13 +712,13 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            String _appName_1 = this._utils.appName(it);
-            _builder.append(_appName_1, "");
+            String _appName = this._utils.appName(it);
+            _builder.append(_appName, "");
             _builder.append("_Listener_Page extends ");
           }
         }
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "");
         _builder.append("_Listener_Base_Page");
         _builder.newLineIfNotEmpty();
       } else {
@@ -754,8 +754,8 @@ public class Listeners {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Listener");
         {
           if ((isBase).booleanValue()) {
@@ -797,13 +797,13 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            String _appName_1 = this._utils.appName(it);
-            _builder.append(_appName_1, "");
+            String _appName = this._utils.appName(it);
+            _builder.append(_appName, "");
             _builder.append("_Listener_Errors extends ");
           }
         }
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "");
         _builder.append("_Listener_Base_Errors");
         _builder.newLineIfNotEmpty();
       } else {
@@ -839,8 +839,8 @@ public class Listeners {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Listener");
         {
           if ((isBase).booleanValue()) {
@@ -882,13 +882,13 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            String _appName_1 = this._utils.appName(it);
-            _builder.append(_appName_1, "");
+            String _appName = this._utils.appName(it);
+            _builder.append(_appName, "");
             _builder.append("_Listener_Theme extends ");
           }
         }
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "");
         _builder.append("_Listener_Base_Theme");
         _builder.newLineIfNotEmpty();
       } else {
@@ -924,8 +924,8 @@ public class Listeners {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Listener");
         {
           if ((isBase).booleanValue()) {
@@ -967,13 +967,13 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            String _appName_1 = this._utils.appName(it);
-            _builder.append(_appName_1, "");
+            String _appName = this._utils.appName(it);
+            _builder.append(_appName, "");
             _builder.append("_Listener_View extends ");
           }
         }
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "");
         _builder.append("_Listener_Base_View");
         _builder.newLineIfNotEmpty();
       } else {
@@ -1009,8 +1009,8 @@ public class Listeners {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Listener");
         {
           if ((isBase).booleanValue()) {
@@ -1052,13 +1052,13 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            String _appName_1 = this._utils.appName(it);
-            _builder.append(_appName_1, "");
+            String _appName = this._utils.appName(it);
+            _builder.append(_appName, "");
             _builder.append("_Listener_UserLogin extends ");
           }
         }
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "");
         _builder.append("_Listener_Base_UserLogin");
         _builder.newLineIfNotEmpty();
       } else {
@@ -1094,8 +1094,8 @@ public class Listeners {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Listener");
         {
           if ((isBase).booleanValue()) {
@@ -1137,13 +1137,13 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            String _appName_1 = this._utils.appName(it);
-            _builder.append(_appName_1, "");
+            String _appName = this._utils.appName(it);
+            _builder.append(_appName, "");
             _builder.append("_Listener_UserLogout extends ");
           }
         }
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "");
         _builder.append("_Listener_Base_UserLogout");
         _builder.newLineIfNotEmpty();
       } else {
@@ -1179,8 +1179,8 @@ public class Listeners {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Listener");
         {
           if ((isBase).booleanValue()) {
@@ -1238,13 +1238,13 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            String _appName_1 = this._utils.appName(it);
-            _builder.append(_appName_1, "");
+            String _appName = this._utils.appName(it);
+            _builder.append(_appName, "");
             _builder.append("_Listener_User extends ");
           }
         }
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "");
         _builder.append("_Listener_Base_User");
         _builder.newLineIfNotEmpty();
       } else {
@@ -1280,8 +1280,8 @@ public class Listeners {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Listener");
         {
           if ((isBase).booleanValue()) {
@@ -1323,13 +1323,13 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            String _appName_1 = this._utils.appName(it);
-            _builder.append(_appName_1, "");
+            String _appName = this._utils.appName(it);
+            _builder.append(_appName, "");
             _builder.append("_Listener_UserRegistration extends ");
           }
         }
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "");
         _builder.append("_Listener_Base_UserRegistration");
         _builder.newLineIfNotEmpty();
       } else {
@@ -1365,8 +1365,8 @@ public class Listeners {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Listener");
         {
           if ((isBase).booleanValue()) {
@@ -1408,13 +1408,13 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            String _appName_1 = this._utils.appName(it);
-            _builder.append(_appName_1, "");
+            String _appName = this._utils.appName(it);
+            _builder.append(_appName, "");
             _builder.append("_Listener_Users extends ");
           }
         }
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "");
         _builder.append("_Listener_Base_Users");
         _builder.newLineIfNotEmpty();
       } else {
@@ -1450,8 +1450,8 @@ public class Listeners {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Listener");
         {
           if ((isBase).booleanValue()) {
@@ -1485,13 +1485,13 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            String _appName_1 = this._utils.appName(it);
-            _builder.append(_appName_1, "");
+            String _appName = this._utils.appName(it);
+            _builder.append(_appName, "");
             _builder.append("_Listener_Group extends ");
           }
         }
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "");
         _builder.append("_Listener_Base_Group");
         _builder.newLineIfNotEmpty();
       } else {
@@ -1527,8 +1527,8 @@ public class Listeners {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Listener");
         {
           if ((isBase).booleanValue()) {
@@ -1544,8 +1544,8 @@ public class Listeners {
               boolean _needsApproval = this._workflowExtensions.needsApproval(it);
               if (_needsApproval) {
                 _builder.append("use ");
-                String _appName_1 = this._utils.appName(it);
-                _builder.append(_appName_1, "");
+                String _appNamespace_1 = this._utils.appNamespace(it);
+                _builder.append(_appNamespace_1, "");
                 _builder.append("\\Util\\WorkflowUtil;");
                 _builder.newLineIfNotEmpty();
                 _builder.append("use ServiceUtil;");
@@ -1583,13 +1583,13 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            String _appName_2 = this._utils.appName(it);
-            _builder.append(_appName_2, "");
+            String _appName = this._utils.appName(it);
+            _builder.append(_appName, "");
             _builder.append("_Listener_ThirdParty extends ");
           }
         }
-        String _appName_3 = this._utils.appName(it);
-        _builder.append(_appName_3, "");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "");
         _builder.append("_Listener_Base_ThirdParty");
         _builder.newLineIfNotEmpty();
       } else {

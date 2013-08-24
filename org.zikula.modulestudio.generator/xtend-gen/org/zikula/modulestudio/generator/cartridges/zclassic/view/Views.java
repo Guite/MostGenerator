@@ -351,13 +351,12 @@ public class Views {
     _builder.append("{pageaddvar name=\'javascript\' value=\'zikula.imageviewer\'}");
     _builder.newLine();
     _builder.append("{pageaddvar name=\'javascript\' value=\'modules/");
-    String _appName = this._utils.appName(it);
-    _builder.append(_appName, "");
-    _builder.append("/");
     {
       boolean _targets = this._utils.targets(it, "1.3.5");
       if (_targets) {
-        _builder.append("javascript/");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
+        _builder.append("/javascript/");
       } else {
         String _appJsPath = this._namingExtensions.getAppJsPath(it);
         _builder.append(_appJsPath, "");
@@ -383,16 +382,16 @@ public class Views {
         _builder.append("    ");
         _builder.append("    ");
         _builder.append("<h2>{gt text=\'");
-        String _appName_2 = this._utils.appName(it);
-        String _formatForDisplayCapital = this._formattingExtensions.formatForDisplayCapital(_appName_2);
+        String _name = it.getName();
+        String _formatForDisplayCapital = this._formattingExtensions.formatForDisplayCapital(_name);
         _builder.append(_formatForDisplayCapital, "        ");
         _builder.append("\' comment=\'This is the title of the header template\'}</h2>");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("    ");
         _builder.append("{modulelinks modname=\'");
-        String _appName_3 = this._utils.appName(it);
-        _builder.append(_appName_3, "        ");
+        String _appName_2 = this._utils.appName(it);
+        _builder.append(_appName_2, "        ");
         _builder.append("\' type=\'");
         String _formattedName_1 = this._controllerExtensions.formattedName(controller);
         _builder.append(_formattedName_1, "        ");
@@ -419,8 +418,8 @@ public class Views {
         _builder.append("    ");
         _builder.append("    ");
         _builder.append("{");
-        String _appName_4 = this._utils.appName(it);
-        String _formatForDB = this._formattingExtensions.formatForDB(_appName_4);
+        String _appName_3 = this._utils.appName(it);
+        String _formatForDB = this._formattingExtensions.formatForDB(_appName_3);
         _builder.append(_formatForDB, "        ");
         _builder.append("ModerationObjects assign=\'moderationObjects\'}");
         _builder.newLineIfNotEmpty();
@@ -435,8 +434,8 @@ public class Views {
         _builder.append("    ");
         _builder.append("            ");
         _builder.append("<p class=\"z-informationmsg z-center\"><a href=\"{modurl modname=\'");
-        String _appName_5 = this._utils.appName(it);
-        _builder.append(_appName_5, "                ");
+        String _appName_4 = this._utils.appName(it);
+        _builder.append(_appName_4, "                ");
         _builder.append("\' type=\'admin\' func=\'view\' ot=$modItem.objectType workflowState=$modItem.state}\" class=\"z-bold\">{$modItem.message}</a></p>");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
@@ -493,17 +492,16 @@ public class Views {
         _builder.append("{elseif isset($smarty.get.func) && $smarty.get.func eq \'edit\'}");
         _builder.newLine();
         _builder.append("    ");
-        _builder.append("{pageaddvar name=\'stylesheet\' value=\'styles/core.css\'}");
+        _builder.append("{pageaddvar name=\'stylesheet\' value=\'style/core.css\'}");
         _builder.newLine();
         _builder.append("    ");
         _builder.append("{pageaddvar name=\'stylesheet\' value=\'modules/");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "    ");
-        _builder.append("/");
         {
           boolean _targets = this._utils.targets(it, "1.3.5");
           if (_targets) {
-            _builder.append("style");
+            String _appName = this._utils.appName(it);
+            _builder.append(_appName, "    ");
+            _builder.append("/style");
           } else {
             String _appCssPath = this._namingExtensions.getAppCssPath(it);
             _builder.append(_appCssPath, "    ");
@@ -511,12 +509,24 @@ public class Views {
         }
         _builder.append("/style.css\'}");
         _builder.newLineIfNotEmpty();
-        _builder.append("    ");
-        _builder.append("{pageaddvar name=\'stylesheet\' value=\'system/Theme/style/form/style.css\'}");
-        _builder.newLine();
-        _builder.append("    ");
-        _builder.append("{pageaddvar name=\'stylesheet\' value=\'themes/Andreas08/style/fluid960gs/reset.css\'}");
-        _builder.newLine();
+        {
+          boolean _targets_1 = this._utils.targets(it, "1.3.5");
+          if (_targets_1) {
+            _builder.append("    ");
+            _builder.append("{pageaddvar name=\'stylesheet\' value=\'system/Theme/style/form/style.css\'}");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("{pageaddvar name=\'stylesheet\' value=\'themes/Andreas08/style/fluid960gs/reset.css\'}");
+            _builder.newLine();
+          } else {
+            _builder.append("    ");
+            _builder.append("{pageaddvar name=\'stylesheet\' value=\'system/Zikula/Module/ThemeModule/Resources/public/css/form/style.css\'}");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("{pageaddvar name=\'stylesheet\' value=\'themes/Zikula/Theme/Andreas08Theme/Resources/public/css/fluid960gs/reset.css\'}");
+            _builder.newLine();
+          }
+        }
         _builder.append("    ");
         _builder.append("{capture assign=\'pageStyles\'}");
         _builder.newLine();

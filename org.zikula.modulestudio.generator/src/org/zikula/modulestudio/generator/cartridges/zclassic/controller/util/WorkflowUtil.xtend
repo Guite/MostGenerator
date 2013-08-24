@@ -45,8 +45,9 @@ class WorkflowUtil {
 
     def private workflowFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Util\Base;
+            namespace «appNamespace»\Util\Base;
 
+            use ModUtil;
             use SecurityUtil;
             use Zikula_AbstractBase;
             use Zikula_Workflow_Util;
@@ -203,7 +204,7 @@ class WorkflowUtil {
             $wfActions = Zikula_Workflow_Util::getActionsForObject($entity, $objectType, $idcolumn, $this->name);
 
             // as we use the workflows for multiple object types we must maybe filter out some actions
-            $listHelper = new «IF targets('1.3.5')»«appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($this->serviceManager);
+            $listHelper = new «IF targets('1.3.5')»«appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $states = $listHelper->getEntries($objectType, 'workflowState');
             $allowedStates = array();
             foreach ($states as $state) {
@@ -444,7 +445,7 @@ class WorkflowUtil {
 
     def private workflowFunctionsImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Util;
+            namespace «appNamespace»\Util;
 
         «ENDIF»
         /**

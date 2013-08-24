@@ -103,8 +103,8 @@ public class Tag {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\TaggedObjectMeta\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -133,17 +133,17 @@ public class Tag {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
+        _builder.append("_TaggedObjectMeta_Base_");
         String _appName_1 = this._utils.appName(it);
         _builder.append(_appName_1, "");
-        _builder.append("_TaggedObjectMeta_Base_");
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
         _builder.append(" extends Tag_AbstractTaggedObjectMeta");
         _builder.newLineIfNotEmpty();
       } else {
         _builder.append("class ");
-        String _appName_3 = this._utils.appName(it);
-        _builder.append(_appName_3, "");
+        String _appName_2 = this._utils.appName(it);
+        _builder.append(_appName_2, "");
         _builder.append(" extends \\Tag\\AbstractTaggedObjectMeta");
         _builder.newLineIfNotEmpty();
       }
@@ -407,8 +407,8 @@ public class Tag {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\TaggedObjectMeta;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -426,25 +426,25 @@ public class Tag {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
+        _builder.append("_TaggedObjectMeta_");
         String _appName_1 = this._utils.appName(it);
         _builder.append(_appName_1, "");
-        _builder.append("_TaggedObjectMeta_");
+        _builder.append(" extends ");
         String _appName_2 = this._utils.appName(it);
         _builder.append(_appName_2, "");
-        _builder.append(" extends ");
+        _builder.append("_TaggedObjectMeta_Base_");
         String _appName_3 = this._utils.appName(it);
         _builder.append(_appName_3, "");
-        _builder.append("_TaggedObjectMeta_Base_");
-        String _appName_4 = this._utils.appName(it);
-        _builder.append(_appName_4, "");
         _builder.newLineIfNotEmpty();
       } else {
         _builder.append("class ");
+        String _appName_4 = this._utils.appName(it);
+        _builder.append(_appName_4, "");
+        _builder.append(" extends Base\\");
         String _appName_5 = this._utils.appName(it);
         _builder.append(_appName_5, "");
-        _builder.append(" extends Base\\");
-        String _appName_6 = this._utils.appName(it);
-        _builder.append(_appName_6, "");
         _builder.newLineIfNotEmpty();
       }
     }

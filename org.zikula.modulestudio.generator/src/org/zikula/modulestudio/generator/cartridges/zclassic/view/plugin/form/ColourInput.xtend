@@ -39,7 +39,7 @@ class ColourInput {
 
     def private formColourInputBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Form\Plugin\Base;
+            namespace «appNamespace»\Form\Plugin\Base;
 
             use DataUtil;
             use PageUtil;
@@ -184,7 +184,7 @@ class ColourInput {
 
     def private formColourInputImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Form\Plugin;
+            namespace «appNamespace»\Form\Plugin;
 
         «ENDIF»
         /**

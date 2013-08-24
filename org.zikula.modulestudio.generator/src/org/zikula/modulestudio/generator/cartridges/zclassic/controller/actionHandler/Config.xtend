@@ -44,7 +44,7 @@ class Config {
 
     def private configHandlerBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Form\Handler\«configController.toFirstUpper»\Base;
+            namespace «appNamespace»\Form\Handler\«configController.toFirstUpper»\Base;
 
             use LogUtil;
             use ModUtil;
@@ -184,7 +184,7 @@ class Config {
 
     def private configHandlerImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Form\Handler\«configController.toFirstUpper»;
+            namespace «appNamespace»\Form\Handler\«configController.toFirstUpper»;
 
         «ENDIF»
         /**

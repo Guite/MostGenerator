@@ -32,7 +32,7 @@ class Frame {
 
     def private formFrameImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Form\Plugin;
+            namespace «appNamespace»\Form\Plugin;
 
             use Zikula_Form_AbstractPlugin;
             use Zikula_Form_View;

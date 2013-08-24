@@ -424,7 +424,7 @@ class FormHandler {
             $this->idFields = $objectTemp->get_idFields();
 
             // retrieve identifier of the object we wish to view
-            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->view->getServiceManager());
+            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $this->idValues = $controllerHelper->retrieveIdentifier($this->request, array(), $this->objectType, $this->idFields);
             $hasIdentifier = $controllerHelper->isValidIdentifier($this->idValues);
 
@@ -482,7 +482,7 @@ class FormHandler {
             // save entity reference for later reuse
             $this->entityRef = $entity;
 
-            $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->view->getServiceManager());
+            $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $actions = $workflowHelper->getActionsForObject($entity);
             if ($actions === false || !is_array($actions)) {
                 return LogUtil::registerError($this->__('Error! Could not determine workflow actions.'));
@@ -594,7 +594,7 @@ class FormHandler {
             protected function initTranslationsForEdit($entity)
             {
                 // retrieve translated fields
-                $translatableHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Translatable«ELSE»TranslatableUtil«ENDIF»($this->view->getServiceManager());
+                $translatableHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Translatable«ELSE»TranslatableUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
                 $translations = $translatableHelper->prepareEntityForEdit($this->objectType, $entity);
 
                 // assign translations
@@ -861,7 +861,7 @@ class FormHandler {
                 «ENDIF»
                 $transRepository = $this->entityManager->getRepository($entityTransClass);
 
-                $translatableHelper = new «IF app.targets('1.3.5')»«container.application.appName»_Util_Translatable«ELSE»TranslatableUtil«ENDIF»($this->view->getServiceManager());
+                $translatableHelper = new «IF app.targets('1.3.5')»«container.application.appName»_Util_Translatable«ELSE»TranslatableUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
                 $translations = $translatableHelper->processEntityAfterEdit($this->objectType, $formData);
 
                 foreach ($translations as $translation) {
@@ -1334,7 +1334,7 @@ class FormHandler {
             «IF app.hasListFields»
 
                 if (count($this->listFields) > 0) {
-                    $helper = new «IF app.targets('1.3.5')»«app.appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($this->view->getServiceManager());
+                    $helper = new «IF app.targets('1.3.5')»«app.appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
                     foreach ($this->listFields as $listField => $isMultiple) {
                         $entityData[$listField . 'Items'] = $helper->getEntries($this->objectType, $listField);
                         if ($isMultiple) {
@@ -1446,7 +1446,7 @@ class FormHandler {
 
                 «ENDIF»
                 // execute the workflow action
-                $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->view->getServiceManager());
+                $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->view->getServiceManager()«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
                 $success = $workflowHelper->executeAction($entity, $action);
             «IF hasOptimisticLock»
                 } catch(OptimisticLockException $e) {

@@ -87,8 +87,8 @@ public class AbstractObjectSelector {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Form\\Plugin\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -130,8 +130,8 @@ public class AbstractObjectSelector {
       boolean _targets_2 = this._utils.targets(it, "1.3.5");
       if (_targets_2) {
         _builder.append("abstract class ");
-        String _appName_1 = this._utils.appName(it);
-        _builder.append(_appName_1, "");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
         _builder.append("_Form_Plugin_Base_AbstractObjectSelector extends Zikula_Form_Plugin_DropdownList");
         _builder.newLineIfNotEmpty();
       } else {
@@ -1770,8 +1770,8 @@ public class AbstractObjectSelector {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Form\\Plugin;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -1789,11 +1789,11 @@ public class AbstractObjectSelector {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
         _builder.append("abstract class ");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
+        _builder.append("_Form_Plugin_AbstractObjectSelector extends ");
         String _appName_1 = this._utils.appName(it);
         _builder.append(_appName_1, "");
-        _builder.append("_Form_Plugin_AbstractObjectSelector extends ");
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
         _builder.append("_Form_Plugin_Base_AbstractObjectSelector");
         _builder.newLineIfNotEmpty();
       } else {

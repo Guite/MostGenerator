@@ -143,7 +143,18 @@ public class ModerationObjects {
         _builder.append("\\Util\\WorkflowUtil");
       }
     }
-    _builder.append("($serviceManager);");
+    _builder.append("($serviceManager");
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(", ModUtil::getModule(\'");
+        String _appName_4 = this._utils.appName(it);
+        _builder.append(_appName_4, "    ");
+        _builder.append("\')");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$result = $workflowHelper->collectAmountOfModerationItems();");

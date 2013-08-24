@@ -36,7 +36,7 @@ class Image {
 
     def private imageFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Util\Base;
+            namespace «appNamespace»\Util\Base;
 
             use SystemPlugin_Imagine_Preset;
             use Zikula_AbstractBase;
@@ -140,7 +140,7 @@ class Image {
 
     def private imageFunctionsImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Util;
+            namespace «appNamespace»\Util;
 
         «ENDIF»
         /**

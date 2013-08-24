@@ -39,7 +39,7 @@ class Account {
 
     def private accountApiBaseClass(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Api\Base;
+            namespace «appNamespace»\Api\Base;
 
             use LogUtil;
             use ModUtil;
@@ -120,7 +120,7 @@ class Account {
 
     def private accountApiImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Api;
+            namespace «appNamespace»\Api;
 
         «ENDIF»
         /**

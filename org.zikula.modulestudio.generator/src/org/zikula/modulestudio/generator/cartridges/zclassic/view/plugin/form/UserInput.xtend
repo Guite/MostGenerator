@@ -39,7 +39,7 @@ class UserInput {
 
     def private formUserInputBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Form\Plugin\Base;
+            namespace «appNamespace»\Form\Plugin\Base;
 
             use DataUtil;
             use UserUtil;
@@ -196,7 +196,7 @@ class UserInput {
 
     def private formUserInputImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Form\Plugin;
+            namespace «appNamespace»\Form\Plugin;
 
         «ENDIF»
         /**

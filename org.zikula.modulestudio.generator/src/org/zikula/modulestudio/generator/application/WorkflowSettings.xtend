@@ -50,6 +50,12 @@ public class WorkflowSettings {
     Diagram diagram = null
 
     /**
+     * Name of the vendor of the application instance described by the model.
+     */
+    @Property
+    String appVendor = ''
+
+    /**
      * Name of the application instance described by the model.
      */
     @Property

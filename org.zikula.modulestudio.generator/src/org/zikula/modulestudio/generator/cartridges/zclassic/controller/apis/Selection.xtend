@@ -36,11 +36,12 @@ class Selection {
 
     def private selectionBaseClass(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Api\Base;
+            namespace «appNamespace»\Api\Base;
 
-            use «appName»\Util\ControllerUtil;
+            use «appNamespace»\Util\ControllerUtil;
 
             use LogUtil;
+            use ModUtil;
             use Zikula_AbstractApi;
 
         «ENDIF»
@@ -180,7 +181,7 @@ class Selection {
         protected function determineObjectType(array $args = array(), $methodName = '')
         {
             $objectType = isset($args['ot']) ? $args['ot'] : '';
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $utilArgs = array('api' => 'selection', 'action' => $methodName);
             if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('api', $utilArgs);
@@ -258,7 +259,7 @@ class Selection {
 
     def private selectionImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Api;
+            namespace «appNamespace»\Api;
 
         «ENDIF»
         /**

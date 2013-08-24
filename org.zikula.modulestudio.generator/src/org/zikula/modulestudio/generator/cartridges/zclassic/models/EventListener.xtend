@@ -393,7 +393,7 @@ class EventListener {
             // initialise the upload handler
             $uploadManager = new «IF app.targets('1.3.5')»«app.appName»_«ENDIF»UploadHandler();
             $serviceManager = ServiceUtil::getManager();
-            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($serviceManager);
+            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
         «ENDIF»
 
         «FOR field : fields»«field.sanitizeForOutput»«ENDFOR»

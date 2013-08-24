@@ -42,7 +42,7 @@ class ListEntries {
 
     def private listFieldFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Util\Base;
+            namespace «appNamespace»\Util\Base;
 
             use Zikula_AbstractBase;
         «ENDIF»
@@ -252,7 +252,7 @@ class ListEntries {
 
     def private listFieldFunctionsImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Util;
+            namespace «appNamespace»\Util;
 
         «ENDIF»
         /**

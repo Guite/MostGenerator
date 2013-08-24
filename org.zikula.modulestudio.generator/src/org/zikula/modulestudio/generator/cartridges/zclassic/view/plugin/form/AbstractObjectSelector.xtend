@@ -33,7 +33,7 @@ class AbstractObjectSelector {
 
     def private selectorBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Form\Plugin\Base;
+            namespace «appNamespace»\Form\Plugin\Base;
 
             use DataUtil;
         «ENDIF»
@@ -691,7 +691,7 @@ class AbstractObjectSelector {
 
     def private selectorImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Form\Plugin;
+            namespace «appNamespace»\Form\Plugin;
 
         «ENDIF»
         /**

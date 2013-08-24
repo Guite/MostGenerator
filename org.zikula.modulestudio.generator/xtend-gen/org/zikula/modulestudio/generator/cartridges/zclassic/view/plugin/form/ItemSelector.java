@@ -122,8 +122,8 @@ public class ItemSelector {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Form\\Plugin\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -158,8 +158,8 @@ public class ItemSelector {
     {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
-        String _appName_1 = this._utils.appName(it);
-        _builder.append(_appName_1, "");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
         _builder.append("_Form_Plugin_Base_");
       }
     }
@@ -362,15 +362,29 @@ public class ItemSelector {
     _builder.append("            ");
     _builder.append("PageUtil::addVar(\'javascript\', \'Zikula.UI\'); // imageviewer");
     _builder.newLine();
-    _builder.append("            ");
-    _builder.append("PageUtil::addVar(\'javascript\', \'modules/");
-    String _appName_2 = this._utils.appName(it);
-    _builder.append(_appName_2, "            ");
-    _builder.append("/javascript/");
-    String _appName_3 = this._utils.appName(it);
-    _builder.append(_appName_3, "            ");
-    _builder.append("_finder.js\');");
-    _builder.newLineIfNotEmpty();
+    {
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      if (_targets_2) {
+        _builder.append("            ");
+        _builder.append("PageUtil::addVar(\'javascript\', \'modules/");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "            ");
+        _builder.append("/javascript/");
+        String _appName_2 = this._utils.appName(it);
+        _builder.append(_appName_2, "            ");
+        _builder.append("_finder.js\');");
+        _builder.newLineIfNotEmpty();
+      } else {
+        _builder.append("            ");
+        _builder.append("PageUtil::addVar(\'javascript\', \'");
+        String _appJsPath = this._namingExtensions.getAppJsPath(it);
+        _builder.append(_appJsPath, "            ");
+        String _appName_3 = this._utils.appName(it);
+        _builder.append(_appName_3, "            ");
+        _builder.append("_finder.js\');");
+        _builder.newLineIfNotEmpty();
+      }
+    }
     _builder.append("            ");
     _builder.append("PageUtil::addVar(\'stylesheet\', ThemeUtil::getModuleStylesheet(\'");
     String _appName_4 = this._utils.appName(it);
@@ -452,8 +466,8 @@ public class ItemSelector {
     _builder.newLine();
     _builder.newLine();
     {
-      boolean _targets_2 = this._utils.targets(it, "1.3.5");
-      if (_targets_2) {
+      boolean _targets_3 = this._utils.targets(it, "1.3.5");
+      if (_targets_3) {
         _builder.append("        ");
         _builder.append("$entityClass = \'");
         String _appName_7 = this._utils.appName(it);
@@ -551,8 +565,8 @@ public class ItemSelector {
     _builder.append("        ");
     _builder.append("return $view->fetch(");
     {
-      boolean _targets_3 = this._utils.targets(it, "1.3.5");
-      if (_targets_3) {
+      boolean _targets_4 = this._utils.targets(it, "1.3.5");
+      if (_targets_4) {
         _builder.append("\'external/\' . $this->objectType");
       } else {
         _builder.append("\'External/\' . ucwords($this->objectType)");
@@ -623,8 +637,8 @@ public class ItemSelector {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Form\\Plugin;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -642,11 +656,11 @@ public class ItemSelector {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
+        _builder.append("_Form_Plugin_ItemSelector extends ");
         String _appName_1 = this._utils.appName(it);
         _builder.append(_appName_1, "");
-        _builder.append("_Form_Plugin_ItemSelector extends ");
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
         _builder.append("_Form_Plugin_Base_ItemSelector");
         _builder.newLineIfNotEmpty();
       } else {

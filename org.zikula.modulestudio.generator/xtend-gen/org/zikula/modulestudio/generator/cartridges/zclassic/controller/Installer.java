@@ -87,22 +87,24 @@ public class Installer {
     boolean _targets = this._utils.targets(it, "1.3.5");
     boolean _not = (!_targets);
     if (_not) {
-      String _appName = this._utils.appName(it);
-      _xifexpression = _appName;
+      String _name = it.getName();
+      String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
+      String _plus = (_formatForCodeCapital + "Module");
+      _xifexpression = _plus;
     } else {
       _xifexpression = "";
     }
     final String installerPrefix = _xifexpression;
     final String installerFileName = (installerPrefix + "Installer.php");
     String _appSourceLibPath = this._namingExtensions.getAppSourceLibPath(it);
-    String _plus = (_appSourceLibPath + "Base/");
-    String _plus_1 = (_plus + installerFileName);
+    String _plus_1 = (_appSourceLibPath + "Base/");
+    String _plus_2 = (_plus_1 + installerFileName);
     CharSequence _installerBaseFile = this.installerBaseFile(it);
-    fsa.generateFile(_plus_1, _installerBaseFile);
+    fsa.generateFile(_plus_2, _installerBaseFile);
     String _appSourceLibPath_1 = this._namingExtensions.getAppSourceLibPath(it);
-    String _plus_2 = (_appSourceLibPath_1 + installerFileName);
+    String _plus_3 = (_appSourceLibPath_1 + installerFileName);
     CharSequence _installerFile = this.installerFile(it);
-    fsa.generateFile(_plus_2, _installerFile);
+    fsa.generateFile(_plus_3, _installerFile);
     boolean _isInteractiveInstallation = it.isInteractiveInstallation();
     boolean _equals = (_isInteractiveInstallation == true);
     if (_equals) {
@@ -117,15 +119,15 @@ public class Installer {
         _xifexpression_1 = "";
       }
       final String controllerClassSuffix = _xifexpression_1;
-      String _plus_3 = ("InteractiveInstaller" + controllerClassSuffix);
-      final String controllerFileName = (_plus_3 + ".php");
-      String _plus_4 = (controllerPath + "Base/");
-      String _plus_5 = (_plus_4 + controllerFileName);
+      String _plus_4 = ("InteractiveInstaller" + controllerClassSuffix);
+      final String controllerFileName = (_plus_4 + ".php");
+      String _plus_5 = (controllerPath + "Base/");
+      String _plus_6 = (_plus_5 + controllerFileName);
       CharSequence _interactiveBaseFile = this.interactiveBaseFile(it);
-      fsa.generateFile(_plus_5, _interactiveBaseFile);
-      String _plus_6 = (controllerPath + controllerFileName);
+      fsa.generateFile(_plus_6, _interactiveBaseFile);
+      String _plus_7 = (controllerPath + controllerFileName);
       CharSequence _interactiveFile = this.interactiveFile(it);
-      fsa.generateFile(_plus_6, _interactiveFile);
+      fsa.generateFile(_plus_7, _interactiveFile);
       InstallerView _installerView = new InstallerView();
       _installerView.generate(it, fsa);
     }
@@ -160,14 +162,14 @@ public class Installer {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         _builder.append("use ");
-        String _appName_1 = this._utils.appName(it);
-        _builder.append(_appName_1, "");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
         _builder.append("\\Util\\ControllerUtil;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -197,13 +199,8 @@ public class Installer {
         _builder.newLine();
         _builder.append("use LogUtil;");
         _builder.newLine();
-        {
-          boolean _hasCategorisableEntities_1 = this._modelBehaviourExtensions.hasCategorisableEntities(it);
-          if (_hasCategorisableEntities_1) {
-            _builder.append("use ModUtil;");
-            _builder.newLine();
-          }
-        }
+        _builder.append("use ModUtil;");
+        _builder.newLine();
         _builder.append("use System;");
         _builder.newLine();
         _builder.append("use Zikula_AbstractInstaller;");
@@ -225,12 +222,12 @@ public class Installer {
     {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
         _builder.append("_Base_");
       } else {
-        String _appName_3 = this._utils.appName(it);
-        _builder.append(_appName_3, "");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "");
       }
     }
     _builder.append("Installer extends Zikula_AbstractInstaller");
@@ -275,8 +272,8 @@ public class Installer {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Controller\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -319,8 +316,8 @@ public class Installer {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
-        String _appName_1 = this._utils.appName(it);
-        _builder.append(_appName_1, "");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
         _builder.append("_Controller_Base_InteractiveInstaller extends Zikula_Controller_AbstractInteractiveInstaller");
         _builder.newLineIfNotEmpty();
       } else {
@@ -547,20 +544,20 @@ public class Installer {
           } else {
             _builder.append("    ");
             _builder.append("include_once \'modules/");
-            String _appName_6 = this._utils.appName(it);
-            _builder.append(_appName_6, "    ");
+            String _appSourcePath = this._namingExtensions.getAppSourcePath(it);
+            _builder.append(_appSourcePath, "    ");
             _builder.append("/Api/Base/CategoryApi.php\';");
             _builder.newLineIfNotEmpty();
             _builder.append("    ");
             _builder.append("include_once \'modules/");
-            String _appName_7 = this._utils.appName(it);
-            _builder.append(_appName_7, "    ");
+            String _appSourcePath_1 = this._namingExtensions.getAppSourcePath(it);
+            _builder.append(_appSourcePath_1, "    ");
             _builder.append("/Api/CategoryApi.php\';");
             _builder.newLineIfNotEmpty();
             _builder.append("    ");
             _builder.append("$categoryApi = new \\");
-            String _appName_8 = this._utils.appName(it);
-            _builder.append(_appName_8, "    ");
+            String _appName_6 = this._utils.appName(it);
+            _builder.append(_appName_6, "    ");
             _builder.append("\\Api\\CategoryApi($this->serviceManager);");
             _builder.newLineIfNotEmpty();
           }
@@ -679,7 +676,15 @@ public class Installer {
             _builder.append("ControllerUtil");
           }
         }
-        _builder.append("($this->serviceManager);");
+        _builder.append("($this->serviceManager");
+        {
+          boolean _targets_1 = this._utils.targets(it, "1.3.5");
+          boolean _not = (!_targets_1);
+          if (_not) {
+            _builder.append(", ModUtil::getModule($this->name)");
+          }
+        }
+        _builder.append(");");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("$controllerHelper->checkAndCreateAllUploadFolders();");
@@ -1060,8 +1065,8 @@ public class Installer {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -1079,20 +1084,20 @@ public class Installer {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
+        _builder.append("_Installer extends ");
         String _appName_1 = this._utils.appName(it);
         _builder.append(_appName_1, "");
-        _builder.append("_Installer extends ");
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
         _builder.append("_Base_Installer");
         _builder.newLineIfNotEmpty();
       } else {
         _builder.append("class ");
+        String _appName_2 = this._utils.appName(it);
+        _builder.append(_appName_2, "");
+        _builder.append("Installer extends Base\\");
         String _appName_3 = this._utils.appName(it);
         _builder.append(_appName_3, "");
-        _builder.append("Installer extends Base\\");
-        String _appName_4 = this._utils.appName(it);
-        _builder.append(_appName_4, "");
         _builder.append("Installer");
         _builder.newLineIfNotEmpty();
       }
@@ -1114,8 +1119,8 @@ public class Installer {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Controller;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -1133,11 +1138,11 @@ public class Installer {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
+        _builder.append("_Controller_InteractiveInstaller extends ");
         String _appName_1 = this._utils.appName(it);
         _builder.append(_appName_1, "");
-        _builder.append("_Controller_InteractiveInstaller extends ");
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
         _builder.append("_Controller_Base_InteractiveInstaller");
         _builder.newLineIfNotEmpty();
       } else {

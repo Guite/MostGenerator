@@ -16,8 +16,7 @@ class ModuleFile {
         if (targets('1.3.5')) {
             return
         }
-        val modulePrefix = if (!targets('1.3.5')) appName else ''
-        val moduleFileName = modulePrefix + 'Module.php'
+        val moduleFileName = appName + '.php'
         fsa.generateFile(getAppSourceLibPath + 'Base/' + moduleFileName, moduleBaseFile)
         fsa.generateFile(getAppSourceLibPath + moduleFileName, moduleFile)
     }
@@ -33,25 +32,25 @@ class ModuleFile {
     '''
 
     def private moduleBaseImpl(Application it) '''
-        namespace «appName»\Base;
+        namespace «appNamespace»\Base;
 
-        use Zikula\Bundle\CoreBundle\AbstractModule;
+        use Zikula\Core\AbstractModule;
 
         /**
-         * Version information base class.
+         * Module base class.
          */
-        class «appName»Module extends AbstractModule
+        class «appName» extends AbstractModule
         {
         }
     '''
 
     def private moduleInfoImpl(Application it) '''
-        namespace «appName»;
+        namespace «appNamespace»;
 
         /**
          * Module implementation class.
          */
-        class «appName»Module extends Base\«appName»Module
+        class «appName» extends Base\«appName»
         {
             // custom enhancements can go here
         }

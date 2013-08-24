@@ -77,7 +77,7 @@ class Scribite {
 
         Just follow these few steps to complete the integration for Scribite >= 5.0:
          1. Check if the plugins for «appName» are in Scribite/plugins/EDITOR/vendor/plugins. If not then copy from
-            modules/«appName»/«IF targets('1.3.5')»docs«ELSE»«getAppDocPath»«ENDIF»/scribite/plugins into modules/Scribite/plugins.
+            modules/«IF targets('1.3.5')»«appName»/docs«ELSE»«getAppDocPath»«ENDIF»/scribite/plugins into modules/Scribite/plugins.
     '''
 
     def private ckPlugin(Application it) '''

@@ -38,7 +38,7 @@ class Index {
             «ENDIF»
         «ELSE»
             {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
-            <p>{gt text='Welcome to the «controller.formattedName» section of the «app.appName.formatForDisplayCapital» application.'}</p>
+            <p>{gt text='Welcome to the «controller.formattedName» section of the «app.name.formatForDisplayCapital» application.'}</p>
             {include file='«IF app.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/footer.tpl'}
         «ENDIF»
     '''

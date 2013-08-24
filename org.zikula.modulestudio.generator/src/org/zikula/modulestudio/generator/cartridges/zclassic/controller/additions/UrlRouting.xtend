@@ -43,7 +43,7 @@ class UrlRouting {
 
     def private routerFacadeBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Base;
+            namespace «appNamespace»\Base;
 
             use ModUtil;
             use System;
@@ -291,7 +291,7 @@ class UrlRouting {
 
     def private routerFacadeImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»;
+            namespace «appNamespace»;
 
         «ENDIF»
         /**

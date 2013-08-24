@@ -42,17 +42,8 @@ public class ModuleFile {
     if (_targets) {
       return;
     }
-    String _xifexpression = null;
-    boolean _targets_1 = this._utils.targets(it, "1.3.5");
-    boolean _not = (!_targets_1);
-    if (_not) {
-      String _appName = this._utils.appName(it);
-      _xifexpression = _appName;
-    } else {
-      _xifexpression = "";
-    }
-    final String modulePrefix = _xifexpression;
-    final String moduleFileName = (modulePrefix + "Module.php");
+    String _appName = this._utils.appName(it);
+    final String moduleFileName = (_appName + ".php");
     String _appSourceLibPath = this._namingExtensions.getAppSourceLibPath(it);
     String _plus = (_appSourceLibPath + "Base/");
     String _plus_1 = (_plus + moduleFileName);
@@ -89,26 +80,26 @@ public class ModuleFile {
   private CharSequence moduleBaseImpl(final Application it) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("namespace ");
-    String _appName = this._utils.appName(it);
-    _builder.append(_appName, "");
+    String _appNamespace = this._utils.appNamespace(it);
+    _builder.append(_appNamespace, "");
     _builder.append("\\Base;");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
-    _builder.append("use Zikula\\Bundle\\CoreBundle\\AbstractModule;");
+    _builder.append("use Zikula\\Core\\AbstractModule;");
     _builder.newLine();
     _builder.newLine();
     _builder.append("/**");
     _builder.newLine();
     _builder.append(" ");
-    _builder.append("* Version information base class.");
+    _builder.append("* Module base class.");
     _builder.newLine();
     _builder.append(" ");
     _builder.append("*/");
     _builder.newLine();
     _builder.append("class ");
-    String _appName_1 = this._utils.appName(it);
-    _builder.append(_appName_1, "");
-    _builder.append("Module extends AbstractModule");
+    String _appName = this._utils.appName(it);
+    _builder.append(_appName, "");
+    _builder.append(" extends AbstractModule");
     _builder.newLineIfNotEmpty();
     _builder.append("{");
     _builder.newLine();
@@ -120,8 +111,8 @@ public class ModuleFile {
   private CharSequence moduleInfoImpl(final Application it) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("namespace ");
-    String _appName = this._utils.appName(it);
-    _builder.append(_appName, "");
+    String _appNamespace = this._utils.appNamespace(it);
+    _builder.append(_appNamespace, "");
     _builder.append(";");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
@@ -134,12 +125,11 @@ public class ModuleFile {
     _builder.append("*/");
     _builder.newLine();
     _builder.append("class ");
+    String _appName = this._utils.appName(it);
+    _builder.append(_appName, "");
+    _builder.append(" extends Base\\");
     String _appName_1 = this._utils.appName(it);
     _builder.append(_appName_1, "");
-    _builder.append("Module extends Base\\");
-    String _appName_2 = this._utils.appName(it);
-    _builder.append(_appName_2, "");
-    _builder.append("Module");
     _builder.newLineIfNotEmpty();
     _builder.append("{");
     _builder.newLine();

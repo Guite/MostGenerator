@@ -968,9 +968,6 @@ public class Repository {
       boolean _hasListFieldsEntity = this._modelExtensions.hasListFieldsEntity(it);
       if (_hasListFieldsEntity) {
         _builder.append("            ");
-        _builder.append("$serviceManager = ServiceUtil::getManager();");
-        _builder.newLine();
-        _builder.append("            ");
         _builder.append("$listHelper = new ");
         {
           boolean _targets_2 = this._utils.targets(this.app, "1.3.5");
@@ -984,7 +981,18 @@ public class Repository {
             _builder.append("ListEntriesUtil");
           }
         }
-        _builder.append("($serviceManager);");
+        _builder.append("(ServiceUtil::getManager()");
+        {
+          boolean _targets_3 = this._utils.targets(this.app, "1.3.5");
+          boolean _not = (!_targets_3);
+          if (_not) {
+            _builder.append(", ModUtil::getModule(\'");
+            String _appName_1 = this._utils.appName(this.app);
+            _builder.append(_appName_1, "            ");
+            _builder.append("\')");
+          }
+        }
+        _builder.append(");");
         _builder.newLineIfNotEmpty();
         {
           Iterable<ListField> _listFieldsEntity = this._modelExtensions.getListFieldsEntity(it);
@@ -1054,18 +1062,29 @@ public class Repository {
         _builder.append("        ");
         _builder.append("$imageHelper = new ");
         {
-          boolean _targets_3 = this._utils.targets(this.app, "1.3.5");
-          if (_targets_3) {
+          boolean _targets_4 = this._utils.targets(this.app, "1.3.5");
+          if (_targets_4) {
             Models _container_1 = it.getContainer();
             Application _application_1 = _container_1.getApplication();
-            String _appName_1 = this._utils.appName(_application_1);
-            _builder.append(_appName_1, "        ");
+            String _appName_2 = this._utils.appName(_application_1);
+            _builder.append(_appName_2, "        ");
             _builder.append("_Util_Image");
           } else {
             _builder.append("ImageUtil");
           }
         }
-        _builder.append("(ServiceUtil::getManager());");
+        _builder.append("(ServiceUtil::getManager()");
+        {
+          boolean _targets_5 = this._utils.targets(this.app, "1.3.5");
+          boolean _not_1 = (!_targets_5);
+          if (_not_1) {
+            _builder.append(", ModUtil::getModule(\'");
+            String _appName_3 = this._utils.appName(this.app);
+            _builder.append(_appName_3, "        ");
+            _builder.append("\')");
+          }
+        }
+        _builder.append(");");
         _builder.newLineIfNotEmpty();
         {
           boolean _hasUploadFieldsEntity = this._modelExtensions.hasUploadFieldsEntity(it);
@@ -1108,8 +1127,8 @@ public class Repository {
         _builder.append("$templateParameters[\'relationThumbPreset\'] = $imageHelper->getCustomPreset(\'\', \'\', \'");
         Models _container_2 = it.getContainer();
         Application _application_2 = _container_2.getApplication();
-        String _appName_2 = this._utils.appName(_application_2);
-        _builder.append(_appName_2, "            ");
+        String _appName_4 = this._utils.appName(_application_2);
+        _builder.append(_appName_4, "            ");
         _builder.append("_relateditem\', $context, $args);");
         _builder.newLineIfNotEmpty();
         _builder.append("        ");
@@ -1187,8 +1206,8 @@ public class Repository {
         _builder.append("$parameters[\'catIdList\'] = ModUtil::apiFunc(\'");
         Models _container_3 = it.getContainer();
         Application _application_3 = _container_3.getApplication();
-        String _appName_3 = this._utils.appName(_application_3);
-        _builder.append(_appName_3, "    ");
+        String _appName_5 = this._utils.appName(_application_3);
+        _builder.append(_appName_5, "    ");
         _builder.append("\', \'category\', \'retrieveCategoriesFromRequest\', array(\'ot\' => \'");
         String _name_6 = it.getName();
         String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_6);
@@ -1200,8 +1219,8 @@ public class Repository {
     {
       Iterable<JoinRelationship> _bidirectionalIncomingJoinRelationsWithOneSource = this._modelJoinExtensions.getBidirectionalIncomingJoinRelationsWithOneSource(it);
       boolean _isEmpty = IterableExtensions.isEmpty(_bidirectionalIncomingJoinRelationsWithOneSource);
-      boolean _not = (!_isEmpty);
-      if (_not) {
+      boolean _not_2 = (!_isEmpty);
+      if (_not_2) {
         {
           Iterable<JoinRelationship> _bidirectionalIncomingJoinRelationsWithOneSource_1 = this._modelJoinExtensions.getBidirectionalIncomingJoinRelationsWithOneSource(it);
           for(final JoinRelationship relation : _bidirectionalIncomingJoinRelationsWithOneSource_1) {
@@ -4209,7 +4228,18 @@ public class Repository {
         _builder.append("WorkflowUtil");
       }
     }
-    _builder.append("($serviceManager);");
+    _builder.append("($serviceManager");
+    {
+      boolean _targets_1 = this._utils.targets(this.app, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(", ModUtil::getModule(\'");
+        String _appName_2 = this._utils.appName(this.app);
+        _builder.append(_appName_2, "    ");
+        _builder.append("\')");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("    ");
@@ -4230,8 +4260,8 @@ public class Repository {
     _builder.append("$hookType = \'validate_edit\';");
     _builder.newLine();
     {
-      boolean _targets_1 = this._utils.targets(this.app, "1.3.5");
-      if (_targets_1) {
+      boolean _targets_2 = this._utils.targets(this.app, "1.3.5");
+      if (_targets_2) {
         _builder.append("        ");
         _builder.append("$hook = new Zikula_ValidationHook($hookAreaPrefix . \'.\' . $hookType, new Zikula_Hook_ValidationProviders());");
         _builder.newLine();
@@ -4301,16 +4331,16 @@ public class Repository {
     _builder.append("        ");
     _builder.append("$url = new ");
     {
-      boolean _targets_2 = this._utils.targets(this.app, "1.3.5");
-      if (_targets_2) {
+      boolean _targets_3 = this._utils.targets(this.app, "1.3.5");
+      if (_targets_3) {
         _builder.append("Zikula_");
       }
     }
     _builder.append("ModUrl($this->name, $currentType, \'display\', ZLanguage::getLanguageCode(), $urlArgs);");
     _builder.newLineIfNotEmpty();
     {
-      boolean _targets_3 = this._utils.targets(this.app, "1.3.5");
-      if (_targets_3) {
+      boolean _targets_4 = this._utils.targets(this.app, "1.3.5");
+      if (_targets_4) {
         _builder.append("        ");
         _builder.append("$hook = new Zikula_ProcessHook($hookAreaPrefix . \'.\' . $hookType, $entity->createCompositeIdentifier(), $url);");
         _builder.newLine();
@@ -4335,8 +4365,8 @@ public class Repository {
     _builder.newLine();
     _builder.append("        ");
     _builder.append("ModUtil::apiFunc(\'");
-    String _appName_2 = this._utils.appName(this.app);
-    _builder.append(_appName_2, "        ");
+    String _appName_3 = this._utils.appName(this.app);
+    _builder.append(_appName_3, "        ");
     _builder.append("\', \'cache\', \'clearItemCache\', $cacheArgs);");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");

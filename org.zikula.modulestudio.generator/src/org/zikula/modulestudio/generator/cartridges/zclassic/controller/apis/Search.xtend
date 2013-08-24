@@ -41,9 +41,9 @@ class Search {
 
     def private searchApiBaseClass(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Api\Base;
+            namespace «appNamespace»\Api\Base;
 
-            use «appName»\Util\ControllerUtil;
+            use «appNamespace»\Util\ControllerUtil;
 
             use FormUtil;
             use LogUtil;
@@ -136,7 +136,7 @@ class Search {
             // retrieve list of activated object types
             $searchTypes = isset($args['objectTypes']) ? (array)$args['objectTypes'] : (array) FormUtil::getPassedValue('search_«appName.formatForDB»_types', array(), 'GETPOST');
 
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $utilArgs = array('api' => 'search', 'action' => 'search');
             $allowedTypes = $controllerHelper->getObjectTypes('api', $utilArgs);
             $entityManager = ServiceUtil::getService('doctrine.entitymanager');
@@ -270,7 +270,7 @@ class Search {
 
     def private searchApiImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Api;
+            namespace «appNamespace»\Api;
 
         «ENDIF»
         /**

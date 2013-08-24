@@ -137,7 +137,7 @@ class ControllerAction {
         «IF tempIsIndexAction»
             «permissionCheck('', '')»
         «ELSE»
-            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
 
             // parameter specifying which type of objects we are treating
             $objectType = (isset($args['ot']) && !empty($args['ot'])) ? $args['ot'] : $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
@@ -235,7 +235,7 @@ class ControllerAction {
         «ENDIF»
         $repository = $this->entityManager->getRepository($entityClass);
         $repository->setControllerArguments($args);
-        $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager);
+        $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
         «IF app.hasTrees»
 
             $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : $this->request->query->filter('tpl', '', FILTER_SANITIZE_STRING);
@@ -455,7 +455,7 @@ class ControllerAction {
         return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»(array('result' => true, $objectType => $entity->toArray()));
                     '''
             default: '''
-        $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager);
+        $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
         $templateFile = $viewHelper->getViewTemplate($this->view, '«formattedName»', $objectType, 'display', $args);
 
         // set cache id
@@ -531,7 +531,7 @@ class ControllerAction {
         «ENDIF»
 
         // determine the output template
-        $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager);
+        $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
         $template = $viewHelper->getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'edit', $args);
 
         // execute form using supplied template and page event handler
@@ -554,7 +554,7 @@ class ControllerAction {
 
         $entity->initWorkflow();
 
-        $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager);
+        $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
         $deleteActionId = 'delete';
         $deleteAllowed = false;
         $actions = $workflowHelper->getActionsForObject($entity);
@@ -628,7 +628,7 @@ class ControllerAction {
                    ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
         // fetch and return the appropriate template
-        $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager);
+        $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
 
         return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'delete', $args);
     '''

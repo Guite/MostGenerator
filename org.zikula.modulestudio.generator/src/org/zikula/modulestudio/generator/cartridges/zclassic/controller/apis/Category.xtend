@@ -38,12 +38,13 @@ class Category {
 
     def private categoryBaseClass(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Api\Base;
+            namespace «appNamespace»\Api\Base;
 
-            use «appName»\Util\ControllerUtil;
+            use «appNamespace»\Util\ControllerUtil;
 
             use CategoryRegistryUtil;
             use DataUtil;
+            use ModUtil;
             use Zikula_AbstractApi;
 
         «ENDIF»
@@ -259,7 +260,7 @@ class Category {
         protected function determineObjectType(array $args = array(), $methodName = '')
         {
             $objectType = isset($args['ot']) ? $args['ot'] : '';
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $utilArgs = array('api' => 'category', 'action' => $methodName);
             if (!in_array($objectType, $controllerHelper->getObjectTypes('api', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('api', $utilArgs);
@@ -271,7 +272,7 @@ class Category {
 
     def private categoryImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Api;
+            namespace «appNamespace»\Api;
 
         «ENDIF»
         /**

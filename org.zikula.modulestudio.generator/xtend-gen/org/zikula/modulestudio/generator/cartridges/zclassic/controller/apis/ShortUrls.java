@@ -201,7 +201,15 @@ public class ShortUrls {
         _builder.append("ControllerUtil");
       }
     }
-    _builder.append("($this->serviceManager);");
+    _builder.append("($this->serviceManager");
+    {
+      boolean _targets_2 = this._utils.targets(this.app, "1.3.5");
+      boolean _not = (!_targets_2);
+      if (_not) {
+        _builder.append(", ModUtil::getModule($this->name)");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$utilArgs = array(\'controller\' => \'user\', \'action\' => \'encodeurl\');");

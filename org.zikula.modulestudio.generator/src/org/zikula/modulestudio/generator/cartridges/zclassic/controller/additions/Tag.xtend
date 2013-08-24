@@ -36,7 +36,7 @@ class Tag {
 
     def private tagBaseClass(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\TaggedObjectMeta\Base;
+            namespace «appNamespace»\TaggedObjectMeta\Base;
 
             use DateUtil;
             use SecurityUtil;
@@ -149,7 +149,7 @@ class Tag {
 
     def private tagImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\TaggedObjectMeta;
+            namespace «appNamespace»\TaggedObjectMeta;
 
         «ENDIF»
         /**

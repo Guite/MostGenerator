@@ -1124,9 +1124,21 @@ public class SimpleFields {
     _builder.append("{checkpermissionblock component=\'Users::\' instance=\'::\' level=\'ACCESS_ADMIN\'}");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("<div class=\"z-formnote\"><a href=\"{modurl modname=\'Users\' type=\'admin\' func=\'modify\' userid=$");
-    Entity _entity_2 = it.getEntity();
-    String _name_2 = _entity_2.getName();
+    _builder.append("<div class=\"z-formnote\"><a href=\"{modurl modname=\'");
+    {
+      Entity _entity_2 = it.getEntity();
+      Models _container_1 = _entity_2.getContainer();
+      Application _application_1 = _container_1.getApplication();
+      boolean _targets = this._utils.targets(_application_1, "1.3.5");
+      if (_targets) {
+        _builder.append("Users");
+      } else {
+        _builder.append("ZikulaUsersModule");
+      }
+    }
+    _builder.append("\' type=\'admin\' func=\'modify\' userid=$");
+    Entity _entity_3 = it.getEntity();
+    String _name_2 = _entity_3.getName();
     String _formatForDB_3 = this._formattingExtensions.formatForDB(_name_2);
     _builder.append(_formatForDB_3, "    ");
     _builder.append(".");

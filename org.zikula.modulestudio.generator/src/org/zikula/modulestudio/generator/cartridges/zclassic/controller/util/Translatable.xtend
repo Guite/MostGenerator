@@ -52,7 +52,7 @@ class Translatable {
 
     def private translatableFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Util\Base;
+            namespace «appNamespace»\Util\Base;
 
             use ServiceUtil;
             use System;
@@ -265,7 +265,7 @@ class Translatable {
 
     def private translatableFunctionsImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Util;
+            namespace «appNamespace»\Util;
 
         «ENDIF»
         /**

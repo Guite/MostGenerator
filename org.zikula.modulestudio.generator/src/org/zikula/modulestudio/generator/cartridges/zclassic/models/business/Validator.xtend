@@ -66,7 +66,7 @@ class Validator {
 
     def private validatorCommonBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Base;
+            namespace «appNamespace»\Base;
 
             use UserUtil;
             use Zikula_AbstractBase;
@@ -474,7 +474,7 @@ class Validator {
 
     def private validatorCommonImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»;
+            namespace «appNamespace»;
 
         «ENDIF»
         /**

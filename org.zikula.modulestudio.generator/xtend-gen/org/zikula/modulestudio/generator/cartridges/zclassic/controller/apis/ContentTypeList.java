@@ -113,14 +113,14 @@ public class ContentTypeList {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\ContentType\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         _builder.append("use ");
-        String _appName_1 = this._utils.appName(it);
-        _builder.append(_appName_1, "");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
         _builder.append("\\Util\\ControllerUtil;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -156,8 +156,8 @@ public class ContentTypeList {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
         _builder.append("_ContentType_Base_ItemList extends Content_AbstractContentType");
         _builder.newLineIfNotEmpty();
       } else {
@@ -505,7 +505,15 @@ public class ContentTypeList {
         _builder.append("ControllerUtil");
       }
     }
-    _builder.append("($serviceManager);");
+    _builder.append("($serviceManager");
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(", ModUtil::getModule($this->name)");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("    ");
@@ -807,8 +815,8 @@ public class ContentTypeList {
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     {
-      boolean _targets_1 = this._utils.targets(it, "1.3.5");
-      if (_targets_1) {
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      if (_targets_2) {
         _builder.append("    ");
         _builder.append("$entityClass = \'");
         String _appName_12 = this._utils.appName(it);
@@ -1098,8 +1106,8 @@ public class ContentTypeList {
     _builder.append("    ");
     _builder.append("if ($this->view->template_exists(\'");
     {
-      boolean _targets_2 = this._utils.targets(it, "1.3.5");
-      if (_targets_2) {
+      boolean _targets_3 = this._utils.targets(it, "1.3.5");
+      if (_targets_3) {
         _builder.append("contenttype");
       } else {
         _builder.append("ContentType");
@@ -1110,8 +1118,8 @@ public class ContentTypeList {
     _builder.append("        ");
     _builder.append("$template = \'");
     {
-      boolean _targets_3 = this._utils.targets(it, "1.3.5");
-      if (_targets_3) {
+      boolean _targets_4 = this._utils.targets(it, "1.3.5");
+      if (_targets_4) {
         _builder.append("contenttype");
       } else {
         _builder.append("ContentType");
@@ -1122,8 +1130,8 @@ public class ContentTypeList {
     _builder.append("    ");
     _builder.append("} elseif ($this->view->template_exists(\'");
     {
-      boolean _targets_4 = this._utils.targets(it, "1.3.5");
-      if (_targets_4) {
+      boolean _targets_5 = this._utils.targets(it, "1.3.5");
+      if (_targets_5) {
         _builder.append("contenttype");
       } else {
         _builder.append("ContentType");
@@ -1134,8 +1142,8 @@ public class ContentTypeList {
     _builder.append("        ");
     _builder.append("$template = \'");
     {
-      boolean _targets_5 = this._utils.targets(it, "1.3.5");
-      if (_targets_5) {
+      boolean _targets_6 = this._utils.targets(it, "1.3.5");
+      if (_targets_6) {
         _builder.append("contenttype");
       } else {
         _builder.append("ContentType");
@@ -1149,8 +1157,8 @@ public class ContentTypeList {
     _builder.append("        ");
     _builder.append("$template = \'");
     {
-      boolean _targets_6 = this._utils.targets(it, "1.3.5");
-      if (_targets_6) {
+      boolean _targets_7 = this._utils.targets(it, "1.3.5");
+      if (_targets_7) {
         _builder.append("contenttype");
       } else {
         _builder.append("ContentType");
@@ -1348,8 +1356,8 @@ public class ContentTypeList {
     _builder.append("// ensure our custom plugins are loaded");
     _builder.newLine();
     {
-      boolean _targets_7 = this._utils.targets(it, "1.3.5");
-      if (_targets_7) {
+      boolean _targets_8 = this._utils.targets(it, "1.3.5");
+      if (_targets_8) {
         _builder.append("    ");
         _builder.append("array_push($this->view->plugins_dir, \'modules/");
         String _appName_20 = this._utils.appName(it);
@@ -1359,9 +1367,9 @@ public class ContentTypeList {
       } else {
         _builder.append("    ");
         _builder.append("array_push($this->view->plugins_dir, \'modules/");
-        String _appName_21 = this._utils.appName(it);
-        _builder.append(_appName_21, "    ");
-        _builder.append("/Resources/views/plugins\');");
+        String _viewPath = this._namingExtensions.getViewPath(it);
+        _builder.append(_viewPath, "    ");
+        _builder.append("\u00BB/plugins\');");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -1384,8 +1392,8 @@ public class ContentTypeList {
         _builder.newLine();
         _builder.append("    ");
         _builder.append("$dom = ZLanguage::getModuleDomain(\'");
-        String _appName_22 = this._utils.appName(it);
-        _builder.append(_appName_22, "    ");
+        String _appName_21 = this._utils.appName(it);
+        _builder.append(_appName_21, "    ");
         _builder.append("\');");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
@@ -1487,8 +1495,8 @@ public class ContentTypeList {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\ContentType;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -1506,11 +1514,11 @@ public class ContentTypeList {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
+        _builder.append("_ContentType_ItemList extends ");
         String _appName_1 = this._utils.appName(it);
         _builder.append(_appName_1, "");
-        _builder.append("_ContentType_ItemList extends ");
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
         _builder.append("_ContentType_Base_ItemList");
         _builder.newLineIfNotEmpty();
       } else {
@@ -1527,16 +1535,16 @@ public class ContentTypeList {
     _builder.newLine();
     _builder.newLine();
     _builder.append("function ");
-    String _appName_3 = this._utils.appName(it);
-    _builder.append(_appName_3, "");
+    String _appName_2 = this._utils.appName(it);
+    _builder.append(_appName_2, "");
     _builder.append("_Api_ContentTypes_itemlist($args)");
     _builder.newLineIfNotEmpty();
     _builder.append("{");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("return new ");
-    String _appName_4 = this._utils.appName(it);
-    _builder.append(_appName_4, "    ");
+    String _appName_3 = this._utils.appName(it);
+    _builder.append(_appName_3, "    ");
     _builder.append("_Api_ContentTypes_itemListPlugin();");
     _builder.newLineIfNotEmpty();
     _builder.append("}");

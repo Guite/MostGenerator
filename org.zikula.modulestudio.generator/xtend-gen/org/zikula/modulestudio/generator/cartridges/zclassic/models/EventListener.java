@@ -1106,7 +1106,18 @@ public class EventListener {
             _builder.append("ControllerUtil");
           }
         }
-        _builder.append("($serviceManager);");
+        _builder.append("($serviceManager");
+        {
+          boolean _targets_3 = this._utils.targets(app, "1.3.5");
+          boolean _not = (!_targets_3);
+          if (_not) {
+            _builder.append(", ModUtil::getModule(\'");
+            String _appName_2 = this._utils.appName(app);
+            _builder.append(_appName_2, "");
+            _builder.append("\')");
+          }
+        }
+        _builder.append(");");
         _builder.newLineIfNotEmpty();
       }
     }

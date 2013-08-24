@@ -38,10 +38,11 @@ class ViewUtil {
 
     def private viewFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Util\Base;
+            namespace «appNamespace»\Util\Base;
 
             use DataUtil;
             use FormUtil;
+            use ModUtil;
             use PageUtil;
             use SecurityUtil;
             use System;
@@ -246,7 +247,7 @@ class ViewUtil {
             // then the surrounding
             $output = $view->fetch('include_pdfheader.tpl') . $output . '</body></html>';
 
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             // create name of the pdf output file
             $fileTitle = $controllerHelper->formatPermalink(System::getVar('sitename'))
                        . '-'
@@ -323,7 +324,7 @@ class ViewUtil {
 
     def private viewFunctionsImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Util;
+            namespace «appNamespace»\Util;
 
         «ENDIF»
         /**

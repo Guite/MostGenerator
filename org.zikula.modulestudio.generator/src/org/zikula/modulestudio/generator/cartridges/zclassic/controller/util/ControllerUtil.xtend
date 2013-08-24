@@ -42,7 +42,7 @@ class ControllerUtil {
 
     def private controllerFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Util\Base;
+            namespace «appNamespace»\Util\Base;
 
             use DataUtil;
             «IF hasUploads»
@@ -305,7 +305,7 @@ class ControllerUtil {
 
             // Write a htaccess file into the upload directory
             $htaccessFilePath = $uploadPath . '/.htaccess';
-            $htaccessFileTemplate = 'modules/«appName»/«IF targets('1.3.5')»docs/«ELSE»«getAppDocPath»«ENDIF»htaccessTemplate';
+            $htaccessFileTemplate = 'modules/«IF targets('1.3.5')»«appName»/docs/«ELSE»«getAppDocPath»«ENDIF»htaccessTemplate';
             if (!file_exists($htaccessFilePath) && file_exists($htaccessFileTemplate)) {
                 $extensions = str_replace(',', '|', str_replace(' ', '', $allowedExtensions));
                 $htaccessContent = str_replace('__EXTENSIONS__', $extensions, FileUtil::readFile($htaccessFileTemplate));
@@ -338,13 +338,13 @@ class ControllerUtil {
             $url .= '&region=' . $lang . '&language=' . $lang . '&sensor=false';
 
             // we can either use Snoopy if available
-            //require_once('modules/«appName»/«IF targets('1.3.5')»lib/«ENDIF»vendor/Snoopy/Snoopy.class.php');
+            //require_once('modules/«IF targets('1.3.5')»«appName»/lib/«ENDIF»vendor/Snoopy/Snoopy.class.php');
             //$snoopy = new Snoopy();
             //$snoopy->fetch($url);
             //$xmlContent = $snoopy->results;
 
             // we can also use curl
-            // example do be done
+            /** TODO example to be done */
 
             // or we can use the plain file_get_contents method
             // requires allow_url_fopen = true in php.ini which is NOT good for security
@@ -369,7 +369,7 @@ class ControllerUtil {
 
     def private controllerFunctionsImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Util;
+            namespace «appNamespace»\Util;
 
         «ENDIF»
         /**

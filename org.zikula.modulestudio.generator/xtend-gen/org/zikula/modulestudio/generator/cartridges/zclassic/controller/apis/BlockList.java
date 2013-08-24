@@ -125,14 +125,14 @@ public class BlockList {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Block\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         _builder.append("use ");
-        String _appName_1 = this._utils.appName(it);
-        _builder.append(_appName_1, "");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
         _builder.append("\\Util\\ControllerUtil;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -163,8 +163,8 @@ public class BlockList {
     {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
         _builder.append("_Block_Base_ItemList");
       } else {
         _builder.append("ItemListBlock");
@@ -543,7 +543,15 @@ public class BlockList {
         _builder.append("ControllerUtil");
       }
     }
-    _builder.append("($this->serviceManager);");
+    _builder.append("($this->serviceManager");
+    {
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_2);
+      if (_not) {
+        _builder.append(", ModUtil::getModule($this->name)");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("    ");
@@ -564,8 +572,8 @@ public class BlockList {
     _builder.newLine();
     _builder.newLine();
     {
-      boolean _targets_2 = this._utils.targets(it, "1.3.5");
-      if (_targets_2) {
+      boolean _targets_3 = this._utils.targets(it, "1.3.5");
+      if (_targets_3) {
         _builder.append("    ");
         _builder.append("$entityClass = \'");
         String _appName_11 = this._utils.appName(it);
@@ -857,8 +865,8 @@ public class BlockList {
     _builder.append("    ");
     _builder.append("if ($this->view->template_exists(\'");
     {
-      boolean _targets_3 = this._utils.targets(it, "1.3.5");
-      if (_targets_3) {
+      boolean _targets_4 = this._utils.targets(it, "1.3.5");
+      if (_targets_4) {
         _builder.append("contenttype");
       } else {
         _builder.append("ContentType");
@@ -869,8 +877,8 @@ public class BlockList {
     _builder.append("        ");
     _builder.append("$template = \'");
     {
-      boolean _targets_4 = this._utils.targets(it, "1.3.5");
-      if (_targets_4) {
+      boolean _targets_5 = this._utils.targets(it, "1.3.5");
+      if (_targets_5) {
         _builder.append("contenttype");
       } else {
         _builder.append("ContentType");
@@ -880,18 +888,6 @@ public class BlockList {
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("} elseif ($this->view->template_exists(\'");
-    {
-      boolean _targets_5 = this._utils.targets(it, "1.3.5");
-      if (_targets_5) {
-        _builder.append("block");
-      } else {
-        _builder.append("Block");
-      }
-    }
-    _builder.append("/\' . $templateForObjectType)) {");
-    _builder.newLineIfNotEmpty();
-    _builder.append("        ");
-    _builder.append("$template = \'");
     {
       boolean _targets_6 = this._utils.targets(it, "1.3.5");
       if (_targets_6) {
@@ -900,13 +896,25 @@ public class BlockList {
         _builder.append("Block");
       }
     }
+    _builder.append("/\' . $templateForObjectType)) {");
+    _builder.newLineIfNotEmpty();
+    _builder.append("        ");
+    _builder.append("$template = \'");
+    {
+      boolean _targets_7 = this._utils.targets(it, "1.3.5");
+      if (_targets_7) {
+        _builder.append("block");
+      } else {
+        _builder.append("Block");
+      }
+    }
     _builder.append("/\' . $templateForObjectType;");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("} elseif ($this->view->template_exists(\'");
     {
-      boolean _targets_7 = this._utils.targets(it, "1.3.5");
-      if (_targets_7) {
+      boolean _targets_8 = this._utils.targets(it, "1.3.5");
+      if (_targets_8) {
         _builder.append("contenttype");
       } else {
         _builder.append("ContentType");
@@ -917,8 +925,8 @@ public class BlockList {
     _builder.append("        ");
     _builder.append("$template = \'");
     {
-      boolean _targets_8 = this._utils.targets(it, "1.3.5");
-      if (_targets_8) {
+      boolean _targets_9 = this._utils.targets(it, "1.3.5");
+      if (_targets_9) {
         _builder.append("contenttype");
       } else {
         _builder.append("ContentType");
@@ -929,8 +937,8 @@ public class BlockList {
     _builder.append("    ");
     _builder.append("} elseif ($this->view->template_exists(\'");
     {
-      boolean _targets_9 = this._utils.targets(it, "1.3.5");
-      if (_targets_9) {
+      boolean _targets_10 = this._utils.targets(it, "1.3.5");
+      if (_targets_10) {
         _builder.append("block");
       } else {
         _builder.append("Block");
@@ -941,8 +949,8 @@ public class BlockList {
     _builder.append("        ");
     _builder.append("$template = \'");
     {
-      boolean _targets_10 = this._utils.targets(it, "1.3.5");
-      if (_targets_10) {
+      boolean _targets_11 = this._utils.targets(it, "1.3.5");
+      if (_targets_11) {
         _builder.append("block");
       } else {
         _builder.append("Block");
@@ -956,8 +964,8 @@ public class BlockList {
     _builder.append("        ");
     _builder.append("$template = \'");
     {
-      boolean _targets_11 = this._utils.targets(it, "1.3.5");
-      if (_targets_11) {
+      boolean _targets_12 = this._utils.targets(it, "1.3.5");
+      if (_targets_12) {
         _builder.append("block");
       } else {
         _builder.append("Block");
@@ -1098,8 +1106,8 @@ public class BlockList {
     _builder.append("// Get current content");
     _builder.newLine();
     {
-      boolean _targets_12 = this._utils.targets(it, "1.3.5");
-      if (_targets_12) {
+      boolean _targets_13 = this._utils.targets(it, "1.3.5");
+      if (_targets_13) {
         _builder.append("    ");
         _builder.append("$vars = BlockUtil::varsFromContent($blockinfo[\'content\']);");
         _builder.newLine();
@@ -1243,18 +1251,6 @@ public class BlockList {
     _builder.append("    ");
     _builder.append("$this->view->clear_cache(\'");
     {
-      boolean _targets_13 = this._utils.targets(it, "1.3.5");
-      if (_targets_13) {
-        _builder.append("block");
-      } else {
-        _builder.append("Block");
-      }
-    }
-    _builder.append("/itemlist_display.tpl\');");
-    _builder.newLineIfNotEmpty();
-    _builder.append("    ");
-    _builder.append("$this->view->clear_cache(\'");
-    {
       boolean _targets_14 = this._utils.targets(it, "1.3.5");
       if (_targets_14) {
         _builder.append("block");
@@ -1262,7 +1258,7 @@ public class BlockList {
         _builder.append("Block");
       }
     }
-    _builder.append("/itemlist_\' . DataUtil::formatForOS($vars[\'objectType\']) . \'_display.tpl\');");
+    _builder.append("/itemlist_display.tpl\');");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$this->view->clear_cache(\'");
@@ -1274,13 +1270,25 @@ public class BlockList {
         _builder.append("Block");
       }
     }
-    _builder.append("/itemlist_display_description.tpl\');");
+    _builder.append("/itemlist_\' . DataUtil::formatForOS($vars[\'objectType\']) . \'_display.tpl\');");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$this->view->clear_cache(\'");
     {
       boolean _targets_16 = this._utils.targets(it, "1.3.5");
       if (_targets_16) {
+        _builder.append("block");
+      } else {
+        _builder.append("Block");
+      }
+    }
+    _builder.append("/itemlist_display_description.tpl\');");
+    _builder.newLineIfNotEmpty();
+    _builder.append("    ");
+    _builder.append("$this->view->clear_cache(\'");
+    {
+      boolean _targets_17 = this._utils.targets(it, "1.3.5");
+      if (_targets_17) {
         _builder.append("block");
       } else {
         _builder.append("Block");
@@ -1295,8 +1303,8 @@ public class BlockList {
     _builder.append("    ");
     _builder.append("return $this->view->fetch(\'");
     {
-      boolean _targets_17 = this._utils.targets(it, "1.3.5");
-      if (_targets_17) {
+      boolean _targets_18 = this._utils.targets(it, "1.3.5");
+      if (_targets_18) {
         _builder.append("block");
       } else {
         _builder.append("Block");
@@ -1365,8 +1373,8 @@ public class BlockList {
     _builder.append("    ");
     _builder.append("$controllerHelper = new ");
     {
-      boolean _targets_18 = this._utils.targets(it, "1.3.5");
-      if (_targets_18) {
+      boolean _targets_19 = this._utils.targets(it, "1.3.5");
+      if (_targets_19) {
         String _appName_20 = this._utils.appName(it);
         _builder.append(_appName_20, "    ");
         _builder.append("_Util_Controller");
@@ -1374,7 +1382,15 @@ public class BlockList {
         _builder.append("ControllerUtil");
       }
     }
-    _builder.append("($this->serviceManager);");
+    _builder.append("($this->serviceManager");
+    {
+      boolean _targets_20 = this._utils.targets(it, "1.3.5");
+      boolean _not_1 = (!_targets_20);
+      if (_not_1) {
+        _builder.append(", ModUtil::getModule($this->name)");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("    ");
@@ -1428,8 +1444,8 @@ public class BlockList {
     _builder.append("    ");
     _builder.append("$this->view->clear_cache(\'");
     {
-      boolean _targets_19 = this._utils.targets(it, "1.3.5");
-      if (_targets_19) {
+      boolean _targets_21 = this._utils.targets(it, "1.3.5");
+      if (_targets_21) {
         _builder.append("block");
       } else {
         _builder.append("Block");
@@ -1440,8 +1456,8 @@ public class BlockList {
     _builder.append("    ");
     _builder.append("$this->view->clear_cache(\'");
     {
-      boolean _targets_20 = this._utils.targets(it, "1.3.5");
-      if (_targets_20) {
+      boolean _targets_22 = this._utils.targets(it, "1.3.5");
+      if (_targets_22) {
         _builder.append("block");
       } else {
         _builder.append("Block");
@@ -1452,8 +1468,8 @@ public class BlockList {
     _builder.append("    ");
     _builder.append("$this->view->clear_cache(\'");
     {
-      boolean _targets_21 = this._utils.targets(it, "1.3.5");
-      if (_targets_21) {
+      boolean _targets_23 = this._utils.targets(it, "1.3.5");
+      if (_targets_23) {
         _builder.append("block");
       } else {
         _builder.append("Block");
@@ -1464,8 +1480,8 @@ public class BlockList {
     _builder.append("    ");
     _builder.append("$this->view->clear_cache(\'");
     {
-      boolean _targets_22 = this._utils.targets(it, "1.3.5");
-      if (_targets_22) {
+      boolean _targets_24 = this._utils.targets(it, "1.3.5");
+      if (_targets_24) {
         _builder.append("block");
       } else {
         _builder.append("Block");
@@ -1489,8 +1505,8 @@ public class BlockList {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Block;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -1508,11 +1524,11 @@ public class BlockList {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
+        _builder.append("_Block_ItemList extends ");
         String _appName_1 = this._utils.appName(it);
         _builder.append(_appName_1, "");
-        _builder.append("_Block_ItemList extends ");
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
         _builder.append("_Block_Base_ItemList");
         _builder.newLineIfNotEmpty();
       } else {

@@ -125,8 +125,8 @@ public class Account {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Api\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -155,8 +155,8 @@ public class Account {
     {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
-        String _appName_1 = this._utils.appName(it);
-        _builder.append(_appName_1, "");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
         _builder.append("_Api_Base_Account");
       } else {
         _builder.append("AccountApi");
@@ -405,8 +405,8 @@ public class Account {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Api;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -424,11 +424,11 @@ public class Account {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
+        _builder.append("_Api_Account extends ");
         String _appName_1 = this._utils.appName(it);
         _builder.append(_appName_1, "");
-        _builder.append("_Api_Account extends ");
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
         _builder.append("_Api_Base_Account");
         _builder.newLineIfNotEmpty();
       } else {

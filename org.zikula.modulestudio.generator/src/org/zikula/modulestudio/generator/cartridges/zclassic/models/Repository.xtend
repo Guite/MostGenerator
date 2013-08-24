@@ -296,8 +296,7 @@ class Repository {
                 if (in_array($args['action'], array('«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'view'))) {
                     $templateParameters = $this->getViewQuickNavParameters($context, $args);
                     «IF hasListFieldsEntity»
-                        $serviceManager = ServiceUtil::getManager();
-                        $listHelper = new «IF app.targets('1.3.5')»«container.application.appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($serviceManager);
+                        $listHelper = new «IF app.targets('1.3.5')»«container.application.appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»(ServiceUtil::getManager()«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
                         «FOR field : getListFieldsEntity»
                             «var fieldName = field.name.formatForCode»
                             $templateParameters['«fieldName»Items'] = $listHelper->getEntries('«name.formatForCode»', '«fieldName»');
@@ -317,7 +316,7 @@ class Repository {
 
                 «IF app.hasUploads»
                     // initialise Imagine preset instances
-                    $imageHelper = new «IF app.targets('1.3.5')»«container.application.appName»_Util_Image«ELSE»ImageUtil«ENDIF»(ServiceUtil::getManager());
+                    $imageHelper = new «IF app.targets('1.3.5')»«container.application.appName»_Util_Image«ELSE»ImageUtil«ENDIF»(ServiceUtil::getManager()«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
                     «IF hasUploadFieldsEntity»
 
                         $objectType = '«name.formatForCode»';
@@ -1355,7 +1354,7 @@ class Repository {
 
             $currentType = FormUtil::getPassedValue('type', 'user', 'GETPOST');
             $action = 'archive';
-            $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($serviceManager);
+            $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
 
             foreach ($affectedEntities as $entity) {
                 $entity->initWorkflow();

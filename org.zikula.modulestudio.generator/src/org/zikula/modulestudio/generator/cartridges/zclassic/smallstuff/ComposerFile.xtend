@@ -39,7 +39,7 @@ class ComposerFile {
             }
         ],
         "autoload": {
-            "psr-0": { "«appName»\\": "" }
+            "psr-0": { "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\": "" }
         },
         "require": {
             "php": ">5.3.3"
@@ -48,7 +48,7 @@ class ComposerFile {
         },
         "extra": {
             "zikula": {
-                "class": "«appName»\\«appName»Module"
+                "class": "«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\«appName»"
             }
         }
     '''

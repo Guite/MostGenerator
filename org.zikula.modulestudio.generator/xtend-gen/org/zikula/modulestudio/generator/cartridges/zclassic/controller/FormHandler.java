@@ -1245,7 +1245,15 @@ public class FormHandler {
         _builder.append("ControllerUtil");
       }
     }
-    _builder.append("($this->view->getServiceManager());");
+    _builder.append("($this->view->getServiceManager()");
+    {
+      boolean _targets_2 = this._utils.targets(this.app, "1.3.5");
+      boolean _not = (!_targets_2);
+      if (_not) {
+        _builder.append(", ModUtil::getModule($this->name)");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$this->idValues = $controllerHelper->retrieveIdentifier($this->request, array(), $this->objectType, $this->idFields);");
@@ -1397,8 +1405,8 @@ public class FormHandler {
     _builder.append("    ");
     _builder.append("$workflowHelper = new ");
     {
-      boolean _targets_2 = this._utils.targets(this.app, "1.3.5");
-      if (_targets_2) {
+      boolean _targets_3 = this._utils.targets(this.app, "1.3.5");
+      if (_targets_3) {
         String _appName_1 = this._utils.appName(this.app);
         _builder.append(_appName_1, "    ");
         _builder.append("_Util_Workflow");
@@ -1406,7 +1414,15 @@ public class FormHandler {
         _builder.append("WorkflowUtil");
       }
     }
-    _builder.append("($this->view->getServiceManager());");
+    _builder.append("($this->view->getServiceManager()");
+    {
+      boolean _targets_4 = this._utils.targets(this.app, "1.3.5");
+      boolean _not_1 = (!_targets_4);
+      if (_not_1) {
+        _builder.append(", ModUtil::getModule($this->name)");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$actions = $workflowHelper->getActionsForObject($entity);");
@@ -1646,8 +1662,8 @@ public class FormHandler {
     _builder.append("} else {");
     _builder.newLine();
     {
-      boolean _targets_3 = this._utils.targets(this.app, "1.3.5");
-      if (_targets_3) {
+      boolean _targets_5 = this._utils.targets(this.app, "1.3.5");
+      if (_targets_5) {
         _builder.append("        ");
         _builder.append("$entityClass = $this->name . \'_Entity_\' . ucfirst($this->objectType);");
         _builder.newLine();
@@ -1697,8 +1713,8 @@ public class FormHandler {
         _builder.append("    ");
         _builder.append("$translatableHelper = new ");
         {
-          boolean _targets_4 = this._utils.targets(this.app, "1.3.5");
-          if (_targets_4) {
+          boolean _targets_6 = this._utils.targets(this.app, "1.3.5");
+          if (_targets_6) {
             String _appName_2 = this._utils.appName(this.app);
             _builder.append(_appName_2, "    ");
             _builder.append("_Util_Translatable");
@@ -1706,7 +1722,15 @@ public class FormHandler {
             _builder.append("TranslatableUtil");
           }
         }
-        _builder.append("($this->view->getServiceManager());");
+        _builder.append("($this->view->getServiceManager()");
+        {
+          boolean _targets_7 = this._utils.targets(this.app, "1.3.5");
+          boolean _not_2 = (!_targets_7);
+          if (_not_2) {
+            _builder.append(", ModUtil::getModule($this->name)");
+          }
+        }
+        _builder.append(");");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("$translations = $translatableHelper->prepareEntityForEdit($this->objectType, $entity);");
@@ -2396,7 +2420,15 @@ public class FormHandler {
             _builder.append("TranslatableUtil");
           }
         }
-        _builder.append("($this->view->getServiceManager());");
+        _builder.append("($this->view->getServiceManager()");
+        {
+          boolean _targets_6 = this._utils.targets(this.app, "1.3.5");
+          boolean _not = (!_targets_6);
+          if (_not) {
+            _builder.append(", ModUtil::getModule($this->name)");
+          }
+        }
+        _builder.append(");");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("$translations = $translatableHelper->processEntityAfterEdit($this->objectType, $formData);");
@@ -4051,7 +4083,15 @@ public class FormHandler {
             _builder.append("ListEntriesUtil");
           }
         }
-        _builder.append("($this->view->getServiceManager());");
+        _builder.append("($this->view->getServiceManager()");
+        {
+          boolean _targets_1 = this._utils.targets(this.app, "1.3.5");
+          boolean _not = (!_targets_1);
+          if (_not) {
+            _builder.append(", ModUtil::getModule($this->name)");
+          }
+        }
+        _builder.append(");");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
         _builder.append("    ");
@@ -4396,7 +4436,15 @@ public class FormHandler {
         _builder.append("WorkflowUtil");
       }
     }
-    _builder.append("($this->view->getServiceManager());");
+    _builder.append("($this->view->getServiceManager()");
+    {
+      boolean _targets_1 = this._utils.targets(this.app, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(", ModUtil::getModule($this->name)");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.append("        ");
     _builder.append("$success = $workflowHelper->executeAction($entity, $action);");

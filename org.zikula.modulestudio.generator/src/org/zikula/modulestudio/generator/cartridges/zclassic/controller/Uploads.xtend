@@ -92,13 +92,14 @@ class Uploads {
 
     def private uploadHandlerBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Base;
+            namespace «appNamespace»\Base;
 
-            use «appName»\Util\ControllerUtil;
+            use «appNamespace»\Util\ControllerUtil;
 
             use DataUtil;
             use FileUtil;
             use LogUtil;
+            use ModUtil;
             use ServiceUtil;
             use ZLanguage;
 
@@ -196,7 +197,7 @@ class Uploads {
             $fileName = implode('.', $fileNameParts);
 
             $serviceManager = ServiceUtil::getManager();
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($serviceManager);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($serviceManager«IF !targets('1.3.5')», ModUtil::getModule('«appName»')«ENDIF»);
 
             // retrieve the final file name
             try {
@@ -523,7 +524,7 @@ class Uploads {
             }
 
             $serviceManager = ServiceUtil::getManager();
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($serviceManager);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($serviceManager«IF !targets('1.3.5')», ModUtil::getModule('«appName»')«ENDIF»);
 
             // determine file system information
             try {
@@ -561,7 +562,7 @@ class Uploads {
 
     def private uploadHandlerImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»;
+            namespace «appNamespace»;
 
         «ENDIF»
         /**

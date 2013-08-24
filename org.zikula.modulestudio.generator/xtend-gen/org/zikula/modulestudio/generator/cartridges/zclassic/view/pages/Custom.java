@@ -155,17 +155,17 @@ public class Custom {
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("<p>Please override this template by moving it from <em>/modules/");
-    String _appName_2 = this._utils.appName(app);
-    _builder.append(_appName_2, "");
-    _builder.append("/");
     {
       boolean _targets_1 = this._utils.targets(app, "1.3.5");
       if (_targets_1) {
-        _builder.append("templates/");
+        String _appName_2 = this._utils.appName(app);
+        _builder.append(_appName_2, "");
+        _builder.append("/templates/");
         String _formattedName_3 = this._controllerExtensions.formattedName(controller);
         _builder.append(_formattedName_3, "");
       } else {
-        _builder.append("Resources/views/");
+        String _viewPath = this._namingExtensions.getViewPath(app);
+        _builder.append(_viewPath, "");
         String _formattedName_4 = this._controllerExtensions.formattedName(controller);
         String _firstUpper_1 = StringExtensions.toFirstUpper(_formattedName_4);
         _builder.append(_firstUpper_1, "");

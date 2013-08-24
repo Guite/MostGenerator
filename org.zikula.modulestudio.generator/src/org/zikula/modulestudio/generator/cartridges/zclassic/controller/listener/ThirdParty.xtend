@@ -50,7 +50,7 @@ class ThirdParty {
             // nothing required here as no entities use enhanced workflows including approval actions
         «ELSE»
             $serviceManager = ServiceUtil::getManager();
-            $workflowHelper = new «IF targets('1.3.5')»«appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($serviceManager);
+            $workflowHelper = new «IF targets('1.3.5')»«appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($serviceManager«IF !targets('1.3.5')», ModUtil::getModule('«appName»')«ENDIF»);
             $modname = '«appName»';
             $useJoins = false;
 
@@ -134,7 +134,7 @@ class ThirdParty {
         $helpers->add(
             array('module' => '«appName»',
                   'type'   => 'javascript',
-                  'path'   => 'modules/«appName»/«IF targets('1.3.5')»javascript/«ELSE»«getAppJsPath»«ENDIF»«appName»_finder.js')
+                  'path'   => 'modules/«IF targets('1.3.5')»«appName»/javascript/«ELSE»«getAppJsPath»«ENDIF»«appName»_finder.js')
         );
     '''
 
@@ -162,7 +162,7 @@ class ThirdParty {
 
         $plugins->add(
             array('name' => '«appName.formatForDB»',
-                  'path' => 'modules/«appName»/«IF targets('1.3.5')»docs/«ELSE»«getAppDocPath»«ENDIF»scribite/plugins/TinyMce/vendor/tiny_mce/plugins/«appName.formatForDB»/editor_plugin.js'
+                  'path' => 'modules/«IF targets('1.3.5')»«appName»/docs/«ELSE»«getAppDocPath»«ENDIF»scribite/plugins/TinyMce/vendor/tiny_mce/plugins/«appName.formatForDB»/editor_plugin.js'
             )
         );
     '''
@@ -191,7 +191,7 @@ class ThirdParty {
 
         $plugins->add(
             array('name' => '«appName.formatForDB»',
-                  'path' => 'modules/«appName»/«IF targets('1.3.5')»docs/«ELSE»«getAppDocPath»«ENDIF»scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»/',
+                  'path' => 'modules/«IF targets('1.3.5')»«appName»/docs/«ELSE»«getAppDocPath»«ENDIF»scribite/plugins/CKEditor/vendor/ckeditor/plugins/«appName.formatForDB»/',
                   'file' => 'plugin.js',
                   'img'  => 'ed_«appName.formatForDB».gif'
             )

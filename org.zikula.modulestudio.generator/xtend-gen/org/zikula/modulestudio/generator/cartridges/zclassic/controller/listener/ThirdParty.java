@@ -167,11 +167,22 @@ public class ThirdParty {
             _builder.append("WorkflowUtil");
           }
         }
-        _builder.append("($serviceManager);");
+        _builder.append("($serviceManager");
+        {
+          boolean _targets_1 = this._utils.targets(it, "1.3.5");
+          boolean _not_1 = (!_targets_1);
+          if (_not_1) {
+            _builder.append(", ModUtil::getModule(\'");
+            String _appName_1 = this._utils.appName(it);
+            _builder.append(_appName_1, "");
+            _builder.append("\')");
+          }
+        }
+        _builder.append(");");
         _builder.newLineIfNotEmpty();
         _builder.append("$modname = \'");
-        String _appName_1 = this._utils.appName(it);
-        _builder.append(_appName_1, "");
+        String _appName_2 = this._utils.appName(it);
+        _builder.append(_appName_2, "");
         _builder.append("\';");
         _builder.newLineIfNotEmpty();
         _builder.append("$useJoins = false;");
@@ -179,8 +190,8 @@ public class ThirdParty {
         _builder.newLine();
         _builder.append("$collection = new ");
         {
-          boolean _targets_1 = this._utils.targets(it, "1.3.5");
-          if (_targets_1) {
+          boolean _targets_2 = this._utils.targets(it, "1.3.5");
+          if (_targets_2) {
             _builder.append("Zikula_Collection_");
           }
         }
@@ -211,8 +222,8 @@ public class ThirdParty {
         _builder.append("        ");
         _builder.append("$aggregateItem = new ");
         {
-          boolean _targets_2 = this._utils.targets(it, "1.3.5");
-          if (_targets_2) {
+          boolean _targets_3 = this._utils.targets(it, "1.3.5");
+          if (_targets_3) {
             _builder.append("Zikula_Provider_");
           }
         }
@@ -438,13 +449,12 @@ public class ThirdParty {
     _builder.newLine();
     _builder.append("          ");
     _builder.append("\'path\'   => \'modules/");
-    String _appName_1 = this._utils.appName(it);
-    _builder.append(_appName_1, "          ");
-    _builder.append("/");
     {
       boolean _targets = this._utils.targets(it, "1.3.5");
       if (_targets) {
-        _builder.append("javascript/");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "          ");
+        _builder.append("/javascript/");
       } else {
         String _appJsPath = this._namingExtensions.getAppJsPath(it);
         _builder.append(_appJsPath, "          ");
@@ -539,13 +549,12 @@ public class ThirdParty {
     _builder.newLineIfNotEmpty();
     _builder.append("          ");
     _builder.append("\'path\' => \'modules/");
-    String _appName_1 = this._utils.appName(it);
-    _builder.append(_appName_1, "          ");
-    _builder.append("/");
     {
       boolean _targets = this._utils.targets(it, "1.3.5");
       if (_targets) {
-        _builder.append("docs/");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "          ");
+        _builder.append("/docs/");
       } else {
         String _appDocPath = this._namingExtensions.getAppDocPath(it);
         _builder.append(_appDocPath, "          ");
@@ -645,13 +654,12 @@ public class ThirdParty {
     _builder.newLineIfNotEmpty();
     _builder.append("          ");
     _builder.append("\'path\' => \'modules/");
-    String _appName_1 = this._utils.appName(it);
-    _builder.append(_appName_1, "          ");
-    _builder.append("/");
     {
       boolean _targets = this._utils.targets(it, "1.3.5");
       if (_targets) {
-        _builder.append("docs/");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "          ");
+        _builder.append("/docs/");
       } else {
         String _appDocPath = this._namingExtensions.getAppDocPath(it);
         _builder.append(_appDocPath, "          ");

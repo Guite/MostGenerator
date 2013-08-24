@@ -39,7 +39,7 @@ class Mailz {
 
     def private mailzBaseClass(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Api\Base;
+            namespace «appNamespace»\Api\Base;
 
             use ModUtil;
             use ServiceUtil;
@@ -163,7 +163,7 @@ class Mailz {
 
     def private mailzImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Api;
+            namespace «appNamespace»\Api;
 
         «ENDIF»
         /**

@@ -480,14 +480,13 @@ public class ViewHierarchy {
     _builder.newLine();
     _builder.newLine();
     _builder.append("{pageaddvar name=\'javascript\' value=\'modules/");
-    _builder.append(appName, "");
-    _builder.append("/");
     {
       Models _container_1 = it.getContainer();
       Application _application_1 = _container_1.getApplication();
       boolean _targets = this._utils.targets(_application_1, "1.3.5");
       if (_targets) {
-        _builder.append("javascript/");
+        _builder.append(appName, "");
+        _builder.append("/javascript/");
       } else {
         Models _container_2 = it.getContainer();
         Application _application_2 = _container_2.getApplication();

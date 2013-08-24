@@ -110,6 +110,7 @@ class Entities {
             use DataUtil;
             use FormUtil;
             use LogUtil;
+            use ModUtil;
             use SecurityUtil;
             use ServiceUtil;
             use System;
@@ -337,7 +338,7 @@ class Entities {
         public function resetWorkflow()
         {
             $this->setWorkflowState('initial');
-            $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»(ServiceUtil::getManager());
+            $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»(ServiceUtil::getManager()«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
             $schemaName = $workflowHelper->getWorkflowName($this['_objectType']);
             $this['__WORKFLOW__'] = array(
                 'state' => $this['workflowState'],
@@ -550,7 +551,7 @@ class Entities {
         «val app = container.application»
         // apply workflow with most important information
         $idColumn = '«primaryKeyFields.head.name.formatForCode»';
-        $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»(ServiceUtil::getManager());
+        $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»(ServiceUtil::getManager()«IF !app.targets('1.3.5')», ModUtil::getModule('«app.appName»')«ENDIF»);
         $schemaName = $workflowHelper->getWorkflowName($this['_objectType']);
         $this['__WORKFLOW__'] = array(
             'state' => $this['workflowState'],

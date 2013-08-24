@@ -210,13 +210,12 @@ public class Forms {
     _builder.append("/header.tpl\'}");
     _builder.newLineIfNotEmpty();
     _builder.append("{pageaddvar name=\'javascript\' value=\'modules/");
-    String _appName = this._utils.appName(app);
-    _builder.append(_appName, "");
-    _builder.append("/");
     {
       boolean _targets_1 = this._utils.targets(app, "1.3.5");
       if (_targets_1) {
-        _builder.append("javascript/");
+        String _appName = this._utils.appName(app);
+        _builder.append(_appName, "");
+        _builder.append("/javascript/");
       } else {
         String _appJsPath = this._namingExtensions.getAppJsPath(app);
         _builder.append(_appJsPath, "");
@@ -227,13 +226,12 @@ public class Forms {
     _builder.append("_editFunctions.js\'}");
     _builder.newLineIfNotEmpty();
     _builder.append("{pageaddvar name=\'javascript\' value=\'modules/");
-    String _appName_2 = this._utils.appName(app);
-    _builder.append(_appName_2, "");
-    _builder.append("/");
     {
       boolean _targets_2 = this._utils.targets(app, "1.3.5");
       if (_targets_2) {
-        _builder.append("javascript/");
+        String _appName_2 = this._utils.appName(app);
+        _builder.append(_appName_2, "");
+        _builder.append("/javascript/");
       } else {
         String _appJsPath_1 = this._namingExtensions.getAppJsPath(app);
         _builder.append(_appJsPath_1, "");
@@ -1521,13 +1519,12 @@ public class Forms {
     _builder.newLine();
     _builder.append("        ");
     _builder.append("<script type=\"text/javascript\" src=\"{$baseurl}modules/");
-    String _appName = this._utils.appName(app);
-    _builder.append(_appName, "        ");
-    _builder.append("/");
     {
       boolean _targets = this._utils.targets(app, "1.3.5");
       if (_targets) {
-        _builder.append("javascript");
+        String _appName = this._utils.appName(app);
+        _builder.append(_appName, "        ");
+        _builder.append("/javascript");
       } else {
         String _appJsPath = this._namingExtensions.getAppJsPath(app);
         _builder.append(_appJsPath, "        ");

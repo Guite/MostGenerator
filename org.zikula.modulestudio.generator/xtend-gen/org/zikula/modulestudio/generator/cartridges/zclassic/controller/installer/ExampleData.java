@@ -811,7 +811,16 @@ public class ExampleData {
         _builder.append("\\Util\\WorkflowUtil");
       }
     }
-    _builder.append("($this->serviceManager);");
+    _builder.append("($this->serviceManager");
+    {
+      Application _application_3 = it.getApplication();
+      boolean _targets_1 = this._utils.targets(_application_3, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(", ModUtil::getModule($this->name)");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.append("try {");
     _builder.newLine();
@@ -819,8 +828,8 @@ public class ExampleData {
     {
       EList<Entity> _entities = it.getEntities();
       for(final Entity entity : _entities) {
-        Application _application_3 = it.getApplication();
-        CharSequence _persistEntities = this.persistEntities(entity, _application_3);
+        Application _application_4 = it.getApplication();
+        CharSequence _persistEntities = this.persistEntities(entity, _application_4);
         _builder.append(_persistEntities, "    ");
       }
     }

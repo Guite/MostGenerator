@@ -82,7 +82,7 @@ class Listeners {
     def private listenersCoreFile(Application it, Boolean isBase) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
-            namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
+            namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF isBase»
                 use Zikula\Core\Event\GenericEvent;
@@ -105,7 +105,7 @@ class Listeners {
     def private listenersFrontControllerFile(Application it, Boolean isBase) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
-            namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
+            namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF isBase»
                 use Zikula\Core\Event\GenericEvent;
@@ -128,7 +128,7 @@ class Listeners {
     def private listenersInstallerFile(Application it, Boolean isBase) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
-            namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
+            namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF isBase»
                 use Zikula\Core\Event\GenericEvent;
@@ -151,7 +151,7 @@ class Listeners {
     def private listenersModuleDispatchFile(Application it, Boolean isBase) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
-            namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
+            namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF isBase»
                 use ModUtil;
@@ -175,7 +175,7 @@ class Listeners {
     def private listenersMailerFile(Application it, Boolean isBase) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
-            namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
+            namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF isBase»
                 use Zikula\Core\Event\GenericEvent;
@@ -198,7 +198,7 @@ class Listeners {
     def private listenersPageFile(Application it, Boolean isBase) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
-            namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
+            namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF isBase»
                 use Zikula\Core\Event\GenericEvent;
@@ -221,7 +221,7 @@ class Listeners {
     def private listenersErrorsFile(Application it, Boolean isBase) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
-            namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
+            namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF isBase»
                 use Zikula\Core\Event\GenericEvent;
@@ -244,7 +244,7 @@ class Listeners {
     def private listenersThemeFile(Application it, Boolean isBase) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
-            namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
+            namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF isBase»
                 use Zikula\Core\Event\GenericEvent;
@@ -267,7 +267,7 @@ class Listeners {
     def private listenersViewFile(Application it, Boolean isBase) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
-            namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
+            namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF isBase»
                 use Zikula\Core\Event\GenericEvent;
@@ -290,7 +290,7 @@ class Listeners {
     def private listenersUserLoginFile(Application it, Boolean isBase) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
-            namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
+            namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF isBase»
                 use Zikula\Core\Event\GenericEvent;
@@ -313,7 +313,7 @@ class Listeners {
     def private listenersUserLogoutFile(Application it, Boolean isBase) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
-            namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
+            namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF isBase»
                 use Zikula\Core\Event\GenericEvent;
@@ -336,7 +336,7 @@ class Listeners {
     def private listenersUserFile(Application it, Boolean isBase) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
-            namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
+            namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF isBase»
                 «IF hasStandardFieldEntities || hasUserFields»
@@ -363,7 +363,7 @@ class Listeners {
     def private listenersUserRegistrationFile(Application it, Boolean isBase) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
-            namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
+            namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF isBase»
                 use Zikula\Core\Event\GenericEvent;
@@ -386,7 +386,7 @@ class Listeners {
     def private listenersUsersFile(Application it, Boolean isBase) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
-            namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
+            namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF isBase»
                 use Zikula\Core\Event\GenericEvent;
@@ -409,7 +409,7 @@ class Listeners {
     def private listenersGroupFile(Application it, Boolean isBase) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
-            namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
+            namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF isBase»
                 use Zikula\Core\Event\GenericEvent;
@@ -432,11 +432,11 @@ class Listeners {
     def private listenersThirdPartyFile(Application it, Boolean isBase) '''
         «fh.phpFileHeader(it)»
         «IF !targets('1.3.5')»
-            namespace «appName»\Listener«IF isBase»\Base«ENDIF»;
+            namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF isBase»
                 «IF needsApproval»
-                    use «appName»\Util\WorkflowUtil;
+                    use «appNamespace»\Util\WorkflowUtil;
                     use ServiceUtil;
                     use Zikula\Collection\Container;
                 «ENDIF»

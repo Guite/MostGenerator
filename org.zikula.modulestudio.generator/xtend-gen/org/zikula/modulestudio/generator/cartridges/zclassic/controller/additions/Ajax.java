@@ -316,11 +316,11 @@ public class Ajax {
             _builder.newLine();
           } else {
             _builder.append("    ");
-            _builder.append("ModUtil::initOOModule(\'Users\');");
+            _builder.append("ModUtil::initOOModule(\'ZikulaUsersModule\');");
             _builder.newLine();
             _builder.newLine();
             _builder.append("    ");
-            _builder.append("$dql = \"SELECT u FROM Users\\Entity\\UserEntity u WHERE u.uname LIKE \'% \" . DataUtil::formatForStore($fragment) . \"%\'\";");
+            _builder.append("$dql = \"SELECT u FROM Zikula\\Module\\UsersModule\\Entity\\UserEntity u WHERE u.uname LIKE \'% \" . DataUtil::formatForStore($fragment) . \"%\'\";");
             _builder.newLine();
             _builder.append("    ");
             _builder.append("$query = $this->entityManager->createQuery($dql);");
@@ -487,7 +487,15 @@ public class Ajax {
         _builder.append("ControllerUtil");
       }
     }
-    _builder.append("($this->serviceManager);");
+    _builder.append("($this->serviceManager");
+    {
+      boolean _targets_5 = this._utils.targets(app, "1.3.5");
+      boolean _not_1 = (!_targets_5);
+      if (_not_1) {
+        _builder.append(", ModUtil::getModule($this->name)");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$utilArgs = array(\'controller\' => \'");
@@ -506,8 +514,8 @@ public class Ajax {
     _builder.newLine();
     _builder.newLine();
     {
-      boolean _targets_5 = this._utils.targets(app, "1.3.5");
-      if (_targets_5) {
+      boolean _targets_6 = this._utils.targets(app, "1.3.5");
+      if (_targets_6) {
         _builder.append("    ");
         _builder.append("$entityClass = \'");
         String _appName_1 = this._utils.appName(app);
@@ -619,8 +627,8 @@ public class Ajax {
     _builder.append("    ");
     _builder.append("return new ");
     {
-      boolean _targets_6 = this._utils.targets(app, "1.3.5");
-      if (_targets_6) {
+      boolean _targets_7 = this._utils.targets(app, "1.3.5");
+      if (_targets_7) {
         _builder.append("Zikula_Response_Ajax");
       } else {
         _builder.append("AjaxResponse");
@@ -679,8 +687,8 @@ public class Ajax {
     _builder.append("    ");
     _builder.append("$previewInfo = base64_encode($view->fetch(");
     {
-      boolean _targets_7 = this._utils.targets(app, "1.3.5");
-      if (_targets_7) {
+      boolean _targets_8 = this._utils.targets(app, "1.3.5");
+      if (_targets_8) {
         _builder.append("\'external/\' . $objectType");
       } else {
         _builder.append("\'External/\' . ucwords($objectType)");
@@ -834,7 +842,15 @@ public class Ajax {
         _builder.append("ControllerUtil");
       }
     }
-    _builder.append("($this->serviceManager);");
+    _builder.append("($this->serviceManager");
+    {
+      boolean _targets_5 = this._utils.targets(app, "1.3.5");
+      boolean _not_1 = (!_targets_5);
+      if (_not_1) {
+        _builder.append(", ModUtil::getModule($this->name)");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$utilArgs = array(\'controller\' => \'");
@@ -853,8 +869,8 @@ public class Ajax {
     _builder.newLine();
     _builder.newLine();
     {
-      boolean _targets_5 = this._utils.targets(app, "1.3.5");
-      if (_targets_5) {
+      boolean _targets_6 = this._utils.targets(app, "1.3.5");
+      if (_targets_6) {
         _builder.append("    ");
         _builder.append("$entityClass = \'");
         String _appName_1 = this._utils.appName(app);
@@ -886,8 +902,8 @@ public class Ajax {
     _builder.append("    ");
     _builder.append("if ($this->request->");
     {
-      boolean _targets_6 = this._utils.targets(app, "1.3.5");
-      if (_targets_6) {
+      boolean _targets_7 = this._utils.targets(app, "1.3.5");
+      if (_targets_7) {
         _builder.append("isPost()");
       } else {
         _builder.append("isMethod(\'POST\')");
@@ -904,8 +920,8 @@ public class Ajax {
     _builder.append("    ");
     _builder.append("} elseif ($this->request->");
     {
-      boolean _targets_7 = this._utils.targets(app, "1.3.5");
-      if (_targets_7) {
+      boolean _targets_8 = this._utils.targets(app, "1.3.5");
+      if (_targets_8) {
         _builder.append("isGet()");
       } else {
         _builder.append("isMethod(\'GET\')");
@@ -980,8 +996,8 @@ public class Ajax {
         _builder.append("    ");
         _builder.append("$imageHelper = new ");
         {
-          boolean _targets_8 = this._utils.targets(app, "1.3.5");
-          if (_targets_8) {
+          boolean _targets_9 = this._utils.targets(app, "1.3.5");
+          if (_targets_9) {
             String _appName_3 = this._utils.appName(app);
             _builder.append(_appName_3, "            ");
             _builder.append("_Util_Image");
@@ -989,7 +1005,15 @@ public class Ajax {
             _builder.append("ImageUtil");
           }
         }
-        _builder.append("($this->serviceManager);");
+        _builder.append("($this->serviceManager");
+        {
+          boolean _targets_10 = this._utils.targets(app, "1.3.5");
+          boolean _not_2 = (!_targets_10);
+          if (_not_2) {
+            _builder.append(", ModUtil::getModule($this->name)");
+          }
+        }
+        _builder.append(");");
         _builder.newLineIfNotEmpty();
         _builder.append("        ");
         _builder.append("    ");
@@ -1091,8 +1115,8 @@ public class Ajax {
     _builder.append("    ");
     _builder.append("return new ");
     {
-      boolean _targets_9 = this._utils.targets(app, "1.3.5");
-      if (_targets_9) {
+      boolean _targets_11 = this._utils.targets(app, "1.3.5");
+      if (_targets_11) {
         _builder.append("Zikula_Response_Ajax_Plain");
       } else {
         _builder.append("Plain");
@@ -1186,7 +1210,15 @@ public class Ajax {
         _builder.append("ControllerUtil");
       }
     }
-    _builder.append("($this->serviceManager);");
+    _builder.append("($this->serviceManager");
+    {
+      boolean _targets_3 = this._utils.targets(app, "1.3.5");
+      boolean _not_1 = (!_targets_3);
+      if (_not_1) {
+        _builder.append(", ModUtil::getModule($this->name)");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$utilArgs = array(\'controller\' => \'");
@@ -1217,8 +1249,8 @@ public class Ajax {
     _builder.append("        ");
     _builder.append("return new ");
     {
-      boolean _targets_3 = this._utils.targets(app, "1.3.5");
-      if (_targets_3) {
+      boolean _targets_4 = this._utils.targets(app, "1.3.5");
+      if (_targets_4) {
         _builder.append("Zikula_Response_Ajax_BadData");
       } else {
         _builder.append("BadDataResponse");
@@ -1256,8 +1288,8 @@ public class Ajax {
         {
           boolean _or = false;
           boolean _isEmpty = IterableExtensions.isEmpty(uniqueFields);
-          boolean _not_1 = (!_isEmpty);
-          if (_not_1) {
+          boolean _not_2 = (!_isEmpty);
+          if (_not_2) {
             _or = true;
           } else {
             boolean _and = false;
@@ -1268,7 +1300,7 @@ public class Ajax {
               boolean _isSlugUnique = entity.isSlugUnique();
               _and = (_hasSluggableFields && _isSlugUnique);
             }
-            _or = (_not_1 || _and);
+            _or = (_not_2 || _and);
           }
           if (_or) {
             _builder.append("        ");
@@ -1308,8 +1340,8 @@ public class Ajax {
               if (_and_1) {
                 {
                   boolean _isEmpty_1 = IterableExtensions.isEmpty(uniqueFields);
-                  boolean _not_2 = (!_isEmpty_1);
-                  if (_not_2) {
+                  boolean _not_3 = (!_isEmpty_1);
+                  if (_not_3) {
                     _builder.append(", ");
                   }
                 }
@@ -1335,8 +1367,8 @@ public class Ajax {
     _builder.append("        ");
     _builder.append("return new ");
     {
-      boolean _targets_4 = this._utils.targets(app, "1.3.5");
-      if (_targets_4) {
+      boolean _targets_5 = this._utils.targets(app, "1.3.5");
+      if (_targets_5) {
         _builder.append("Zikula_Response_Ajax_BadData");
       } else {
         _builder.append("BadDataResponse");
@@ -1363,8 +1395,8 @@ public class Ajax {
         };
       Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities_1, _function_1);
       boolean _isEmpty_2 = IterableExtensions.isEmpty(_filter);
-      boolean _not_3 = (!_isEmpty_2);
-      if (_not_3) {
+      boolean _not_4 = (!_isEmpty_2);
+      if (_not_4) {
         _builder.append("    ");
         _builder.append("if (strpos($exclude, \'_\') !== false) {");
         _builder.newLine();
@@ -1379,8 +1411,8 @@ public class Ajax {
     }
     _builder.newLine();
     {
-      boolean _targets_5 = this._utils.targets(app, "1.3.5");
-      if (_targets_5) {
+      boolean _targets_6 = this._utils.targets(app, "1.3.5");
+      if (_targets_6) {
         _builder.append("    ");
         _builder.append("$entityClass = \'");
         String _appName_1 = this._utils.appName(app);
@@ -1423,8 +1455,8 @@ public class Ajax {
         {
           boolean _or_1 = false;
           boolean _isEmpty_3 = IterableExtensions.isEmpty(uniqueFields_1);
-          boolean _not_4 = (!_isEmpty_3);
-          if (_not_4) {
+          boolean _not_5 = (!_isEmpty_3);
+          if (_not_5) {
             _or_1 = true;
           } else {
             boolean _and_2 = false;
@@ -1435,7 +1467,7 @@ public class Ajax {
               boolean _isSlugUnique_2 = entity_1.isSlugUnique();
               _and_2 = (_hasSluggableFields_2 && _isSlugUnique_2);
             }
-            _or_1 = (_not_4 || _and_2);
+            _or_1 = (_not_5 || _and_2);
           }
           if (_or_1) {
             _builder.append("    ");
@@ -1483,8 +1515,8 @@ public class Ajax {
                     };
                   Iterable<Entity> _filter_1 = IterableExtensions.<Entity>filter(_allEntities_3, _function_3);
                   boolean _isEmpty_4 = IterableExtensions.isEmpty(_filter_1);
-                  boolean _not_5 = (!_isEmpty_4);
-                  if (_not_5) {
+                  boolean _not_6 = (!_isEmpty_4);
+                  if (_not_6) {
                     _builder.append("[0]");
                   }
                 }
@@ -1554,8 +1586,8 @@ public class Ajax {
     _builder.append("    ");
     _builder.append("return new ");
     {
-      boolean _targets_6 = this._utils.targets(app, "1.3.5");
-      if (_targets_6) {
+      boolean _targets_7 = this._utils.targets(app, "1.3.5");
+      if (_targets_7) {
         _builder.append("Zikula_Response_Ajax");
       } else {
         _builder.append("AjaxResponse");
@@ -2297,7 +2329,15 @@ public class Ajax {
         _builder.append("WorkflowUtil");
       }
     }
-    _builder.append("($this->serviceManager);");
+    _builder.append("($this->serviceManager");
+    {
+      boolean _targets_8 = this._utils.targets(app, "1.3.5");
+      boolean _not_4 = (!_targets_8);
+      if (_not_4) {
+        _builder.append(", ModUtil::getModule($this->name)");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.append("                                ");
     _builder.append("$success = $workflowHelper->executeAction($entity, $action);");
@@ -2329,8 +2369,8 @@ public class Ajax {
     _builder.append("                            ");
     _builder.append("throw new ");
     {
-      boolean _targets_8 = this._utils.targets(app, "1.3.5");
-      if (_targets_8) {
+      boolean _targets_9 = this._utils.targets(app, "1.3.5");
+      if (_targets_9) {
         _builder.append("Zikula_Exception_Ajax_Fatal");
       } else {
         _builder.append("FatalResponse");
@@ -2382,8 +2422,8 @@ public class Ajax {
     _builder.append("                                ");
     _builder.append("$workflowHelper = new ");
     {
-      boolean _targets_9 = this._utils.targets(app, "1.3.5");
-      if (_targets_9) {
+      boolean _targets_10 = this._utils.targets(app, "1.3.5");
+      if (_targets_10) {
         String _appName_3 = this._utils.appName(app);
         _builder.append(_appName_3, "                                ");
         _builder.append("_Util_Workflow");
@@ -2391,7 +2431,15 @@ public class Ajax {
         _builder.append("WorkflowUtil");
       }
     }
-    _builder.append("($this->serviceManager);");
+    _builder.append("($this->serviceManager");
+    {
+      boolean _targets_11 = this._utils.targets(app, "1.3.5");
+      boolean _not_5 = (!_targets_11);
+      if (_not_5) {
+        _builder.append(", ModUtil::getModule($this->name)");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.append("                                ");
     _builder.append("$success = $workflowHelper->executeAction($childEntity, $action);");
@@ -2418,8 +2466,8 @@ public class Ajax {
     _builder.append("                                ");
     _builder.append("return new ");
     {
-      boolean _targets_10 = this._utils.targets(app, "1.3.5");
-      if (_targets_10) {
+      boolean _targets_12 = this._utils.targets(app, "1.3.5");
+      if (_targets_12) {
         _builder.append("Zikula_Response_Ajax_NotFound");
       } else {
         _builder.append("NotFoundResponse");
@@ -2457,8 +2505,8 @@ public class Ajax {
     _builder.append("                            ");
     _builder.append("return new ");
     {
-      boolean _targets_11 = this._utils.targets(app, "1.3.5");
-      if (_targets_11) {
+      boolean _targets_13 = this._utils.targets(app, "1.3.5");
+      if (_targets_13) {
         _builder.append("Zikula_Response_Ajax_NotFound");
       } else {
         _builder.append("NotFoundResponse");
@@ -2489,8 +2537,8 @@ public class Ajax {
     _builder.append("                            ");
     _builder.append("$workflowHelper = new ");
     {
-      boolean _targets_12 = this._utils.targets(app, "1.3.5");
-      if (_targets_12) {
+      boolean _targets_14 = this._utils.targets(app, "1.3.5");
+      if (_targets_14) {
         String _appName_4 = this._utils.appName(app);
         _builder.append(_appName_4, "                            ");
         _builder.append("_Util_Workflow");
@@ -2498,7 +2546,15 @@ public class Ajax {
         _builder.append("WorkflowUtil");
       }
     }
-    _builder.append("($this->serviceManager);");
+    _builder.append("($this->serviceManager");
+    {
+      boolean _targets_15 = this._utils.targets(app, "1.3.5");
+      boolean _not_6 = (!_targets_15);
+      if (_not_6) {
+        _builder.append(", ModUtil::getModule($this->name)");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.append("                            ");
     _builder.append("$success = $workflowHelper->executeAction($entity, $action);");
@@ -2534,8 +2590,8 @@ public class Ajax {
     _builder.append("                            ");
     _builder.append("throw new ");
     {
-      boolean _targets_13 = this._utils.targets(app, "1.3.5");
-      if (_targets_13) {
+      boolean _targets_16 = this._utils.targets(app, "1.3.5");
+      if (_targets_16) {
         _builder.append("Zikula_Exception_Ajax_Fatal");
       } else {
         _builder.append("FatalResponse");
@@ -2556,8 +2612,8 @@ public class Ajax {
     _builder.append("                            ");
     _builder.append("return new ");
     {
-      boolean _targets_14 = this._utils.targets(app, "1.3.5");
-      if (_targets_14) {
+      boolean _targets_17 = this._utils.targets(app, "1.3.5");
+      if (_targets_17) {
         _builder.append("Zikula_Response_Ajax_NotFound");
       } else {
         _builder.append("NotFoundResponse");
@@ -2603,8 +2659,8 @@ public class Ajax {
     _builder.append("                            ");
     _builder.append("throw new ");
     {
-      boolean _targets_15 = this._utils.targets(app, "1.3.5");
-      if (_targets_15) {
+      boolean _targets_18 = this._utils.targets(app, "1.3.5");
+      if (_targets_18) {
         _builder.append("Zikula_Exception_Ajax_Fatal");
       } else {
         _builder.append("FatalResponse");
@@ -2625,8 +2681,8 @@ public class Ajax {
     _builder.append("                            ");
     _builder.append("throw new ");
     {
-      boolean _targets_16 = this._utils.targets(app, "1.3.5");
-      if (_targets_16) {
+      boolean _targets_19 = this._utils.targets(app, "1.3.5");
+      if (_targets_19) {
         _builder.append("Zikula_Exception_Ajax_Fatal");
       } else {
         _builder.append("FatalResponse");
@@ -2653,8 +2709,8 @@ public class Ajax {
     _builder.append("                                ");
     _builder.append("return new ");
     {
-      boolean _targets_17 = this._utils.targets(app, "1.3.5");
-      if (_targets_17) {
+      boolean _targets_20 = this._utils.targets(app, "1.3.5");
+      if (_targets_20) {
         _builder.append("Zikula_Response_Ajax_NotFound");
       } else {
         _builder.append("NotFoundResponse");
@@ -2720,8 +2776,8 @@ public class Ajax {
     _builder.append("    ");
     _builder.append("return new ");
     {
-      boolean _targets_18 = this._utils.targets(app, "1.3.5");
-      if (_targets_18) {
+      boolean _targets_21 = this._utils.targets(app, "1.3.5");
+      if (_targets_21) {
         _builder.append("Zikula_Response_Ajax");
       } else {
         _builder.append("AjaxResponse");

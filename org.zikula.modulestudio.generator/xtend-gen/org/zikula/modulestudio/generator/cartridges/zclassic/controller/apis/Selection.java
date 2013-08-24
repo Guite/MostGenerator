@@ -101,18 +101,20 @@ public class Selection {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Api\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         _builder.append("use ");
-        String _appName_1 = this._utils.appName(it);
-        _builder.append(_appName_1, "");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
         _builder.append("\\Util\\ControllerUtil;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         _builder.append("use LogUtil;");
+        _builder.newLine();
+        _builder.append("use ModUtil;");
         _builder.newLine();
         _builder.append("use Zikula_AbstractApi;");
         _builder.newLine();
@@ -131,8 +133,8 @@ public class Selection {
     {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
         _builder.append("_Api_Base_Selection");
       } else {
         _builder.append("SelectionApi");
@@ -507,7 +509,15 @@ public class Selection {
         _builder.append("ControllerUtil");
       }
     }
-    _builder.append("($this->serviceManager);");
+    _builder.append("($this->serviceManager");
+    {
+      boolean _targets_2 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_2);
+      if (_not) {
+        _builder.append(", ModUtil::getModule($this->name)");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$utilArgs = array(\'api\' => \'selection\', \'action\' => $methodName);");
@@ -563,8 +573,8 @@ public class Selection {
     _builder.newLine();
     _builder.newLine();
     {
-      boolean _targets_2 = this._utils.targets(it, "1.3.5");
-      if (_targets_2) {
+      boolean _targets_3 = this._utils.targets(it, "1.3.5");
+      if (_targets_3) {
         _builder.append("    ");
         _builder.append("$entityClass = \'");
         String _appName_3 = this._utils.appName(it);
@@ -705,8 +715,8 @@ public class Selection {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Api;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -724,11 +734,11 @@ public class Selection {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
+        _builder.append("_Api_Selection extends ");
         String _appName_1 = this._utils.appName(it);
         _builder.append(_appName_1, "");
-        _builder.append("_Api_Selection extends ");
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
         _builder.append("_Api_Base_Selection");
         _builder.newLineIfNotEmpty();
       } else {

@@ -121,7 +121,7 @@ class UserLogin {
          *     $event->stop«IF !targets('1.3.5')»Propagation«ENDIF»();
          *     $event->setData(array(
          *         'redirect_func'  => array(
-         *             'modname'   => 'Users',
+         *             'modname'   => '«IF targets('1.3.5')»Users«ELSE»ZikulaUsersModule«ENDIF»',
          *             'type'      => 'user',
          *             'func'      => 'changePassword',
          *             'args'      => array(

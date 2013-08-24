@@ -408,7 +408,15 @@ public class ControllerAction {
             _builder.append("ControllerUtil");
           }
         }
-        _builder.append("($this->serviceManager);");
+        _builder.append("($this->serviceManager");
+        {
+          boolean _targets_1 = this._utils.targets(this.app, "1.3.5");
+          boolean _not = (!_targets_1);
+          if (_not) {
+            _builder.append(", ModUtil::getModule($this->name)");
+          }
+        }
+        _builder.append(");");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         _builder.append("// parameter specifying which type of objects we are treating");
@@ -747,7 +755,15 @@ public class ControllerAction {
         _builder.append("ViewUtil");
       }
     }
-    _builder.append("($this->serviceManager);");
+    _builder.append("($this->serviceManager");
+    {
+      boolean _targets_2 = this._utils.targets(this.app, "1.3.5");
+      boolean _not = (!_targets_2);
+      if (_not) {
+        _builder.append(", ModUtil::getModule($this->name)");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     {
       boolean _hasTrees = this._modelBehaviourExtensions.hasTrees(this.app);
@@ -1006,8 +1022,8 @@ public class ControllerAction {
     _builder.newLine();
     _builder.append("$currentUrlObject = new ");
     {
-      boolean _targets_2 = this._utils.targets(this.app, "1.3.5");
-      if (_targets_2) {
+      boolean _targets_3 = this._utils.targets(this.app, "1.3.5");
+      if (_targets_3) {
         _builder.append("Zikula_");
       }
     }
@@ -1308,7 +1324,15 @@ public class ControllerAction {
           _builder.append("ViewUtil");
         }
       }
-      _builder.append("($this->serviceManager);");
+      _builder.append("($this->serviceManager");
+      {
+        boolean _targets_1 = this._utils.targets(this.app, "1.3.5");
+        boolean _not = (!_targets_1);
+        if (_not) {
+          _builder.append(", ModUtil::getModule($this->name)");
+        }
+      }
+      _builder.append(");");
       _builder.newLineIfNotEmpty();
       _builder.append("$templateFile = $viewHelper->getViewTemplate($this->view, \'");
       String _formattedName = this._controllerExtensions.formattedName(it);
@@ -1494,7 +1518,15 @@ public class ControllerAction {
           _builder.append("ViewUtil");
         }
       }
-      _builder.append("($this->serviceManager);");
+      _builder.append("($this->serviceManager");
+      {
+        boolean _targets_2 = this._utils.targets(this.app, "1.3.5");
+        boolean _not = (!_targets_2);
+        if (_not) {
+          _builder.append(", ModUtil::getModule($this->name)");
+        }
+      }
+      _builder.append(");");
       _builder.newLineIfNotEmpty();
       _builder.append("$template = $viewHelper->getViewTemplate($this->view, \'");
       Controller _controller_3 = it.getController();
@@ -1546,7 +1578,15 @@ public class ControllerAction {
         _builder.append("WorkflowUtil");
       }
     }
-    _builder.append("($this->serviceManager);");
+    _builder.append("($this->serviceManager");
+    {
+      boolean _targets_1 = this._utils.targets(this.app, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(", ModUtil::getModule($this->name)");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.append("$deleteActionId = \'delete\';");
     _builder.newLine();
@@ -1606,8 +1646,8 @@ public class ControllerAction {
     _builder.append("// Let any hooks perform additional validation actions");
     _builder.newLine();
     {
-      boolean _targets_1 = this._utils.targets(this.app, "1.3.5");
-      if (_targets_1) {
+      boolean _targets_2 = this._utils.targets(this.app, "1.3.5");
+      if (_targets_2) {
         _builder.append("    ");
         _builder.append("$hook = new Zikula_ValidationHook($hookAreaPrefix . \'.\' . $hookType, new Zikula_Hook_ValidationProviders());");
         _builder.newLine();
@@ -1649,8 +1689,8 @@ public class ControllerAction {
     _builder.append("$hookType = \'process_delete\';");
     _builder.newLine();
     {
-      boolean _targets_2 = this._utils.targets(this.app, "1.3.5");
-      if (_targets_2) {
+      boolean _targets_3 = this._utils.targets(this.app, "1.3.5");
+      if (_targets_3) {
         _builder.append("        ");
         _builder.append("$hook = new Zikula_ProcessHook($hookAreaPrefix . \'.\' . $hookType, $entity->createCompositeIdentifier());");
         _builder.newLine();
@@ -1686,8 +1726,8 @@ public class ControllerAction {
         _builder.append("list of the current object type");
       } else {
         {
-          boolean _targets_3 = this._utils.targets(this.app, "1.3.5");
-          if (_targets_3) {
+          boolean _targets_4 = this._utils.targets(this.app, "1.3.5");
+          if (_targets_4) {
             _builder.append("main");
           } else {
             _builder.append("index");
@@ -1715,8 +1755,8 @@ public class ControllerAction {
       } else {
         _builder.append("\'");
         {
-          boolean _targets_4 = this._utils.targets(this.app, "1.3.5");
-          if (_targets_4) {
+          boolean _targets_5 = this._utils.targets(this.app, "1.3.5");
+          if (_targets_5) {
             _builder.append("main");
           } else {
             _builder.append("index");
@@ -1734,8 +1774,8 @@ public class ControllerAction {
     _builder.newLine();
     _builder.newLine();
     {
-      boolean _targets_5 = this._utils.targets(this.app, "1.3.5");
-      if (_targets_5) {
+      boolean _targets_6 = this._utils.targets(this.app, "1.3.5");
+      if (_targets_6) {
         _builder.append("$entityClass = $this->name . \'_Entity_\' . ucwords($objectType);");
         _builder.newLine();
       } else {
@@ -1763,8 +1803,8 @@ public class ControllerAction {
     _builder.newLine();
     _builder.append("$viewHelper = new ");
     {
-      boolean _targets_6 = this._utils.targets(this.app, "1.3.5");
-      if (_targets_6) {
+      boolean _targets_7 = this._utils.targets(this.app, "1.3.5");
+      if (_targets_7) {
         String _appName_1 = this._utils.appName(this.app);
         _builder.append(_appName_1, "");
         _builder.append("_Util_View");
@@ -1772,7 +1812,15 @@ public class ControllerAction {
         _builder.append("ViewUtil");
       }
     }
-    _builder.append("($this->serviceManager);");
+    _builder.append("($this->serviceManager");
+    {
+      boolean _targets_8 = this._utils.targets(this.app, "1.3.5");
+      boolean _not_1 = (!_targets_8);
+      if (_not_1) {
+        _builder.append(", ModUtil::getModule($this->name)");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("return $viewHelper->processTemplate($this->view, \'");

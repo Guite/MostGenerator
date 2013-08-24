@@ -243,13 +243,12 @@ public class Scribite {
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("modules/");
-    String _appName_7 = this._utils.appName(it);
-    _builder.append(_appName_7, "    ");
-    _builder.append("/");
     {
       boolean _targets_3 = this._utils.targets(it, "1.3.5");
       if (_targets_3) {
-        _builder.append("docs");
+        String _appName_7 = this._utils.appName(it);
+        _builder.append(_appName_7, "    ");
+        _builder.append("/docs");
       } else {
         String _appDocPath = this._namingExtensions.getAppDocPath(it);
         _builder.append(_appDocPath, "    ");

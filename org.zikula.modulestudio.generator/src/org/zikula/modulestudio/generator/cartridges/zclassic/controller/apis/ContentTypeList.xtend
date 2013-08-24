@@ -40,9 +40,9 @@ class ContentTypeList {
 
     def private contentTypeBaseClass(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\ContentType\Base;
+            namespace «appNamespace»\ContentType\Base;
 
-            use «appName»\Util\ControllerUtil;
+            use «appNamespace»\Util\ControllerUtil;
 
             «IF hasCategorisableEntities»
                 use CategoryUtil;
@@ -192,7 +192,7 @@ class ContentTypeList {
         public function loadData(&$data)
         {
             $serviceManager = ServiceUtil::getManager();
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($serviceManager);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
 
             $utilArgs = array('name' => 'list');
             if (!isset($data['objectType']) || !in_array($data['objectType'], $controllerHelper->getObjectTypes('contentType', $utilArgs))) {
@@ -460,7 +460,7 @@ class ContentTypeList {
             «IF targets('1.3.5')»
             array_push($this->view->plugins_dir, 'modules/«appName»/templates/plugins');
             «ELSE»
-            array_push($this->view->plugins_dir, 'modules/«appName»/Resources/views/plugins');
+            array_push($this->view->plugins_dir, 'modules/«getViewPath»»/plugins');
             «ENDIF»
             «IF hasCategorisableEntities»
 
@@ -500,7 +500,7 @@ class ContentTypeList {
 
     def private contentTypeImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\ContentType;
+            namespace «appNamespace»\ContentType;
 
         «ENDIF»
         /**

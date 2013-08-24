@@ -14,6 +14,7 @@ import org.eclipse.emf.mwe.utils.FileCopy;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
+import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.osgi.framework.Bundle;
 import org.zikula.modulestudio.generator.application.Activator;
 import org.zikula.modulestudio.generator.application.WorkflowSettings;
@@ -114,28 +115,36 @@ public class WorkflowPostProcess {
         String _outputPath = this.settings.getOutputPath();
         String _plus = (_outputPath + "/zclassic/");
         String _appName = this.settings.getAppName();
-        String _plus_1 = (_plus + _appName);
+        String _firstUpper = StringExtensions.toFirstUpper(_appName);
+        String _plus_1 = (_plus + _firstUpper);
         final String targetBasePath = (_plus_1 + "/");
-        String imageFolder = "Resources/public/images";
-        String _plus_2 = (targetBasePath + imageFolder);
-        File _file_1 = new File(_plus_2);
+        String _appVendor = this.settings.getAppVendor();
+        String _firstUpper_1 = StringExtensions.toFirstUpper(_appVendor);
+        String _plus_2 = (_firstUpper_1 + "/");
+        String _appName_1 = this.settings.getAppName();
+        String _firstUpper_2 = StringExtensions.toFirstUpper(_appName_1);
+        String _plus_3 = (_plus_2 + _firstUpper_2);
+        String imageFolder = (_plus_3 + "Module/Resources/public/images");
+        String _plus_4 = (targetBasePath + imageFolder);
+        File _file_1 = new File(_plus_4);
         File targetFolder = _file_1;
         boolean _exists = targetFolder.exists();
         boolean _not = (!_exists);
         if (_not) {
-          String _appName_1 = this.settings.getAppName();
-          String _plus_3 = ("src/modules/" + _appName_1);
-          String _plus_4 = (_plus_3 + "/images");
-          imageFolder = _plus_4;
-          String _plus_5 = (targetBasePath + imageFolder);
-          File _file_2 = new File(_plus_5);
+          String _appName_2 = this.settings.getAppName();
+          String _firstUpper_3 = StringExtensions.toFirstUpper(_appName_2);
+          String _plus_5 = ("src/modules/" + _firstUpper_3);
+          String _plus_6 = (_plus_5 + "/images");
+          imageFolder = _plus_6;
+          String _plus_7 = (targetBasePath + imageFolder);
+          File _file_2 = new File(_plus_7);
           targetFolder = _file_2;
         }
         boolean _exists_1 = targetFolder.exists();
         if (_exists_1) {
-          String _plus_6 = (targetBasePath + imageFolder);
-          String _plus_7 = (_plus_6 + "/admin.png");
-          fileCopy.setTargetFile(_plus_7);
+          String _plus_8 = (targetBasePath + imageFolder);
+          String _plus_9 = (_plus_8 + "/admin.png");
+          fileCopy.setTargetFile(_plus_9);
           fileCopy.invoke(null);
         }
       } catch (final Throwable _t) {

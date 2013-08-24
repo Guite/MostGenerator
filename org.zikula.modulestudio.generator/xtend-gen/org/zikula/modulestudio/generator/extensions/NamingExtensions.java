@@ -281,7 +281,14 @@ public class NamingExtensions {
       String _plus_1 = (_plus + "/");
       _xifexpression = _plus_1;
     } else {
-      _xifexpression = "";
+      String _vendor = it.getVendor();
+      String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+      String _plus_2 = (_formatForCodeCapital + "/");
+      String _name = it.getName();
+      String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+      String _plus_3 = (_plus_2 + _formatForCodeCapital_1);
+      String _plus_4 = (_plus_3 + "Module/");
+      _xifexpression = _plus_4;
     }
     return _xifexpression;
   }
@@ -346,7 +353,9 @@ public class NamingExtensions {
    * Returns the base path for any resources.
    */
   public String getResourcesPath(final Application it) {
-    return "Resources/";
+    String _appSourcePath = this.getAppSourcePath(it);
+    String _plus = (_appSourcePath + "Resources/");
+    return _plus;
   }
   
   /**
@@ -442,10 +451,12 @@ public class NamingExtensions {
       String _plus_1 = (_plus + "/");
       _xifexpression = _plus_1;
     } else {
+      String _resourcesPath = this.getResourcesPath(it);
+      String _plus_2 = (_resourcesPath + "userdata/");
       String _appName_1 = this._utils.appName(it);
-      String _plus_2 = ("Resources/userdata/" + _appName_1);
-      String _plus_3 = (_plus_2 + "/");
-      _xifexpression = _plus_3;
+      String _plus_3 = (_plus_2 + _appName_1);
+      String _plus_4 = (_plus_3 + "/");
+      _xifexpression = _plus_4;
     }
     return _xifexpression;
   }
@@ -459,7 +470,9 @@ public class NamingExtensions {
     if (_targets) {
       _xifexpression = "tests/";
     } else {
-      _xifexpression = "Tests/";
+      String _appSourcePath = this.getAppSourcePath(it);
+      String _plus = (_appSourcePath + "Tests/");
+      _xifexpression = _plus;
     }
     return _xifexpression;
   }

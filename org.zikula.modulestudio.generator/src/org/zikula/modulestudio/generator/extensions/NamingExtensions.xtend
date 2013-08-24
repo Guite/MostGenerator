@@ -115,7 +115,7 @@ class NamingExtensions {
         if (targets('1.3.5'))
             'src/modules/' + appName + '/'
         else
-            ''
+            vendor.formatForCodeCapital + '/' + name.formatForCodeCapital + 'Module/'
     }
 
     /**
@@ -152,7 +152,7 @@ class NamingExtensions {
      * Returns the base path for any resources.
      */
     def getResourcesPath(Application it) {
-        'Resources/'
+        getAppSourcePath + 'Resources/'
     }
 
     /**
@@ -209,7 +209,7 @@ class NamingExtensions {
         if (targets('1.3.5'))
             'src/userdata/' + appName + '/'
         else
-            'Resources/userdata/' + appName + '/'
+            getResourcesPath + 'userdata/' + appName + '/'
     }
 
     /**
@@ -219,6 +219,6 @@ class NamingExtensions {
         if (targets('1.3.5'))
             'tests/'
         else
-            'Tests/'
+            getAppSourcePath + 'Tests/'
     }
 }

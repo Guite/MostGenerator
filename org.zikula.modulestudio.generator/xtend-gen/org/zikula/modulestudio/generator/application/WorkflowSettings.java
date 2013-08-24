@@ -95,6 +95,25 @@ public class WorkflowSettings {
   }
   
   /**
+   * Name of the vendor of the application instance described by the model.
+   */
+  private String _appVendor = "";
+  
+  /**
+   * Name of the vendor of the application instance described by the model.
+   */
+  public String getAppVendor() {
+    return this._appVendor;
+  }
+  
+  /**
+   * Name of the vendor of the application instance described by the model.
+   */
+  public void setAppVendor(final String appVendor) {
+    this._appVendor = appVendor;
+  }
+  
+  /**
    * Name of the application instance described by the model.
    */
   private String _appName = "";

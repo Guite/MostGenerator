@@ -128,8 +128,8 @@ public class ControllerUtil {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Util\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -168,8 +168,8 @@ public class ControllerUtil {
     {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
-        String _appName_1 = this._utils.appName(it);
-        _builder.append(_appName_1, "");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
         _builder.append("_Util_Base_Controller");
       } else {
         _builder.append("ControllerUtil");
@@ -859,13 +859,12 @@ public class ControllerUtil {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("$htaccessFileTemplate = \'modules/");
-    String _appName = this._utils.appName(it);
-    _builder.append(_appName, "    ");
-    _builder.append("/");
     {
       boolean _targets = this._utils.targets(it, "1.3.5");
       if (_targets) {
-        _builder.append("docs/");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "    ");
+        _builder.append("/docs/");
       } else {
         String _appDocPath = this._namingExtensions.getAppDocPath(it);
         _builder.append(_appDocPath, "    ");
@@ -964,13 +963,12 @@ public class ControllerUtil {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("//require_once(\'modules/");
-    String _appName_1 = this._utils.appName(it);
-    _builder.append(_appName_1, "    ");
-    _builder.append("/");
     {
       boolean _targets = this._utils.targets(it, "1.3.5");
       if (_targets) {
-        _builder.append("lib/");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "    ");
+        _builder.append("/lib/");
       }
     }
     _builder.append("vendor/Snoopy/Snoopy.class.php\');");
@@ -989,7 +987,7 @@ public class ControllerUtil {
     _builder.append("// we can also use curl");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("// example do be done");
+    _builder.append("/** TODO example to be done */");
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
@@ -1048,8 +1046,8 @@ public class ControllerUtil {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Util;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -1067,11 +1065,11 @@ public class ControllerUtil {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
+        _builder.append("_Util_Controller extends ");
         String _appName_1 = this._utils.appName(it);
         _builder.append(_appName_1, "");
-        _builder.append("_Util_Controller extends ");
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
         _builder.append("_Util_Base_Controller");
         _builder.newLineIfNotEmpty();
       } else {

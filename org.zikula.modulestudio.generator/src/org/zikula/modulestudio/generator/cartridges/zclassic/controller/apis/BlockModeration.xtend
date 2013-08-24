@@ -36,9 +36,9 @@ class BlockModeration {
 
     def private moderationBlockBaseClass(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Block\Base;
+            namespace «appNamespace»\Block\Base;
 
-            use «appName»\Util\WorkflowUtil;
+            use «appNamespace»\Util\WorkflowUtil;
 
             use BlockUtil;
             use ModUtil;
@@ -118,7 +118,7 @@ class BlockModeration {
             $this->view->setCaching(Zikula_View::CACHE_DISABLED);
             $template = $this->getDisplayTemplate($vars);
 
-            $workflowHelper = new «IF targets('1.3.5')»«appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager);
+            $workflowHelper = new «IF targets('1.3.5')»«appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $amounts = $workflowHelper->collectAmountOfModerationItems();
 
             // assign block vars and fetched data
@@ -152,7 +152,7 @@ class BlockModeration {
 
     def private moderationBlockImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Block;
+            namespace «appNamespace»\Block;
 
         «ENDIF»
         /**

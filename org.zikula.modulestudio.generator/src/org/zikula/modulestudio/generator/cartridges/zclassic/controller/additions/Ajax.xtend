@@ -85,9 +85,9 @@ class Ajax {
                 $where = 'WHERE ' . $usersColumn['uname'] . ' REGEXP \'(' . DataUtil::formatForStore($fragment) . ')\'';
                 $results = DBUtil::selectObjectArray('users', $where);
                 «ELSE»
-                ModUtil::initOOModule('Users');
+                ModUtil::initOOModule('ZikulaUsersModule');
 
-                $dql = "SELECT u FROM Users\Entity\UserEntity u WHERE u.uname LIKE '% " . DataUtil::formatForStore($fragment) . "%'";
+                $dql = "SELECT u FROM Zikula\Module\UsersModule\Entity\UserEntity u WHERE u.uname LIKE '% " . DataUtil::formatForStore($fragment) . "%'";
                 $query = $this->entityManager->createQuery($dql);
                 $results = $query->getResult(AbstractQuery::HYDRATE_ARRAY);
                 «ENDIF»
@@ -129,7 +129,7 @@ class Ajax {
             } elseif ($this->request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $this->request->query->has('ot')) {
                 $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             }
-            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $utilArgs = array('controller' => '«formattedName»', 'action' => 'getItemListFinder');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
@@ -227,7 +227,7 @@ class Ajax {
             } elseif ($this->request->«IF app.targets('1.3.5')»isGet()«ELSE»isMethod('GET')«ENDIF» && $this->request->query->has('ot')) {
                 $objectType = $this->request->query->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
             }
-            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $utilArgs = array('controller' => '«formattedName»', 'action' => 'getItemListAutoCompletion');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
@@ -270,7 +270,7 @@ class Ajax {
                 $previewFieldName = $repository->getPreviewFieldName();
                 «IF app.hasImageFields»
                     if (!empty($previewFieldName)) {
-                        $imageHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Image«ELSE»ImageUtil«ENDIF»($this->serviceManager);
+                        $imageHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Image«ELSE»ImageUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
                         $imagineManager = $imageHelper->getManager($objectType, $previewFieldName, 'controllerAction', $utilArgs);
                     }
                 «ENDIF»
@@ -325,7 +325,7 @@ class Ajax {
             $this->throwForbiddenUnless(SecurityUtil::checkPermission($this->name . '::Ajax', '::', ACCESS_EDIT));
 
             $objectType = $this->request->request->filter('ot', '«app.getLeadingEntity.name.formatForCode»', FILTER_SANITIZE_STRING);
-            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager);
+            $controllerHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             $utilArgs = array('controller' => '«formattedName»', 'action' => 'checkForDuplicate');
             if (!in_array($objectType, $controllerHelper->getObjectTypes('controllerAction', $utilArgs))) {
                 $objectType = $controllerHelper->getDefaultObjectType('controllerAction', $utilArgs);
@@ -560,7 +560,7 @@ class Ajax {
                                     $action = 'submit';
                                     try {
                                         // execute the workflow action
-                                        $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager);
+                                        $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
                                         $success = $workflowHelper->executeAction($entity, $action);
                                     } catch(\Exception $e) {
                                         LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
@@ -586,7 +586,7 @@ class Ajax {
                                     $action = 'submit';
                                     try {
                                         // execute the workflow action
-                                        $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager);
+                                        $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
                                         $success = $workflowHelper->executeAction($childEntity, $action);
                                     } catch(\Exception $e) {
                                         LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));
@@ -614,7 +614,7 @@ class Ajax {
                                 $action = 'delete';
                                 try {
                                     // execute the workflow action
-                                    $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager);
+                                    $workflowHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_Workflow«ELSE»WorkflowUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
                                     $success = $workflowHelper->executeAction($entity, $action);
                                 } catch(\Exception $e) {
                                     LogUtil::registerError($this->__f('Sorry, but an unknown error occured during the %s action. Please apply the changes again!', array($action)));

@@ -35,7 +35,7 @@ class Newsletter {
 
     def private newsletterClass(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\NewsletterPlugin;
+            namespace «appNamespace»\NewsletterPlugin;
 
             use DataUtil;
             use ModUtil;

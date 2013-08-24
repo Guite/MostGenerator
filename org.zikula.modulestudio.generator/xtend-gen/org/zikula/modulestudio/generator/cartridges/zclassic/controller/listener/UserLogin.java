@@ -394,8 +394,17 @@ public class UserLogin {
     _builder.append("*         \'redirect_func\'  => array(");
     _builder.newLine();
     _builder.append(" ");
-    _builder.append("*             \'modname\'   => \'Users\',");
-    _builder.newLine();
+    _builder.append("*             \'modname\'   => \'");
+    {
+      boolean _targets_5 = this._utils.targets(it, "1.3.5");
+      if (_targets_5) {
+        _builder.append("Users");
+      } else {
+        _builder.append("ZikulaUsersModule");
+      }
+    }
+    _builder.append("\',");
+    _builder.newLineIfNotEmpty();
     _builder.append(" ");
     _builder.append("*             \'type\'      => \'user\',");
     _builder.newLine();
@@ -468,8 +477,8 @@ public class UserLogin {
     _builder.append(" ");
     _builder.append("* @param ");
     {
-      boolean _targets_5 = this._utils.targets(it, "1.3.5");
-      if (_targets_5) {
+      boolean _targets_6 = this._utils.targets(it, "1.3.5");
+      if (_targets_6) {
         _builder.append("Zikula_Event");
       } else {
         _builder.append("GenericEvent");
@@ -482,8 +491,8 @@ public class UserLogin {
     _builder.newLine();
     _builder.append("public static function veto(");
     {
-      boolean _targets_6 = this._utils.targets(it, "1.3.5");
-      if (_targets_6) {
+      boolean _targets_7 = this._utils.targets(it, "1.3.5");
+      if (_targets_7) {
         _builder.append("Zikula_Event");
       } else {
         _builder.append("GenericEvent");
@@ -599,8 +608,8 @@ public class UserLogin {
     _builder.append(" ");
     _builder.append("* @param ");
     {
-      boolean _targets_7 = this._utils.targets(it, "1.3.5");
-      if (_targets_7) {
+      boolean _targets_8 = this._utils.targets(it, "1.3.5");
+      if (_targets_8) {
         _builder.append("Zikula_Event");
       } else {
         _builder.append("GenericEvent");
@@ -613,8 +622,8 @@ public class UserLogin {
     _builder.newLine();
     _builder.append("public static function succeeded(");
     {
-      boolean _targets_8 = this._utils.targets(it, "1.3.5");
-      if (_targets_8) {
+      boolean _targets_9 = this._utils.targets(it, "1.3.5");
+      if (_targets_9) {
         _builder.append("Zikula_Event");
       } else {
         _builder.append("GenericEvent");
@@ -700,8 +709,8 @@ public class UserLogin {
     _builder.append(" ");
     _builder.append("* `");
     {
-      boolean _targets_9 = this._utils.targets(it, "1.3.5");
-      if (_targets_9) {
+      boolean _targets_10 = this._utils.targets(it, "1.3.5");
+      if (_targets_10) {
         _builder.append("Users_Controller_User");
       } else {
         _builder.append("Users\\Controller\\UserController");
@@ -715,8 +724,8 @@ public class UserLogin {
     _builder.append(" ");
     _builder.append("* @param ");
     {
-      boolean _targets_10 = this._utils.targets(it, "1.3.5");
-      if (_targets_10) {
+      boolean _targets_11 = this._utils.targets(it, "1.3.5");
+      if (_targets_11) {
         _builder.append("Zikula_Event");
       } else {
         _builder.append("GenericEvent");
@@ -729,8 +738,8 @@ public class UserLogin {
     _builder.newLine();
     _builder.append("public static function failed(");
     {
-      boolean _targets_11 = this._utils.targets(it, "1.3.5");
-      if (_targets_11) {
+      boolean _targets_12 = this._utils.targets(it, "1.3.5");
+      if (_targets_12) {
         _builder.append("Zikula_Event");
       } else {
         _builder.append("GenericEvent");

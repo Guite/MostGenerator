@@ -39,7 +39,7 @@ class RelationSelectorAutoComplete {
 
     def private relationSelectorBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Form\Plugin\Base;
+            namespace «appNamespace»\Form\Plugin\Base;
 
             use DataUtil;
             use Zikula_Form_View;
@@ -209,7 +209,7 @@ class RelationSelectorAutoComplete {
 
     def private relationSelectorImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Form\Plugin;
+            namespace «appNamespace»\Form\Plugin;
 
         «ENDIF»
         /**

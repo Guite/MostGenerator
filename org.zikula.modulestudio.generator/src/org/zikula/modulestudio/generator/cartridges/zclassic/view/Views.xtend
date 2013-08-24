@@ -140,14 +140,14 @@ class Views {
         {pageaddvar name='javascript' value='livepipe'}
         {pageaddvar name='javascript' value='zikula.ui'}
         {pageaddvar name='javascript' value='zikula.imageviewer'}
-        {pageaddvar name='javascript' value='modules/«appName»/«IF targets('1.3.5')»javascript/«ELSE»«getAppJsPath»«ENDIF»«appName».js'}
+        {pageaddvar name='javascript' value='modules/«IF targets('1.3.5')»«appName»/javascript/«ELSE»«getAppJsPath»«ENDIF»«appName».js'}
 
         {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
             «IF controller.tempIsAdminController»
                 {adminheader}
             «ELSE»
                 <div class="z-frontendbox">
-                    <h2>{gt text='«appName.formatForDisplayCapital»' comment='This is the title of the header template'}</h2>
+                    <h2>{gt text='«name.formatForDisplayCapital»' comment='This is the title of the header template'}</h2>
                     {modulelinks modname='«appName»' type='«controller.formattedName»'}
                 </div>
             «ENDIF»
@@ -177,10 +177,15 @@ class Views {
             «ENDIF»
         «IF hasEditActions»
         {elseif isset($smarty.get.func) && $smarty.get.func eq 'edit'}
-            {pageaddvar name='stylesheet' value='styles/core.css'}
-            {pageaddvar name='stylesheet' value='modules/«appName»/«IF targets('1.3.5')»style«ELSE»«getAppCssPath»«ENDIF»/style.css'}
+            {pageaddvar name='stylesheet' value='style/core.css'}
+            {pageaddvar name='stylesheet' value='modules/«IF targets('1.3.5')»«appName»/style«ELSE»«getAppCssPath»«ENDIF»/style.css'}
+            «IF targets('1.3.5')»
             {pageaddvar name='stylesheet' value='system/Theme/style/form/style.css'}
             {pageaddvar name='stylesheet' value='themes/Andreas08/style/fluid960gs/reset.css'}
+            «ELSE»
+            {pageaddvar name='stylesheet' value='system/Zikula/Module/ThemeModule/Resources/public/css/form/style.css'}
+            {pageaddvar name='stylesheet' value='themes/Zikula/Theme/Andreas08Theme/Resources/public/css/fluid960gs/reset.css'}
+            «ENDIF»
             {capture assign='pageStyles'}
             <style type="text/css">
                 body {

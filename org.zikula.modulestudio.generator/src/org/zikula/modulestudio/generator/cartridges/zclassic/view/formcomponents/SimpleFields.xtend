@@ -169,7 +169,7 @@ class SimpleFields {
         {«entity.container.application.appName.formatForDB»UserInput «groupAndId(groupSuffix, idSuffix)» mandatory=«mandatory.displayBool» readOnly=«readonly.displayBool» __title='Enter a part of the user name to search'«IF mandatory» cssClass='required'«ENDIF»}
         {if $mode ne 'create' && $«entity.name.formatForDB».«name.formatForDB» && !$inlineUsage}
             {checkpermissionblock component='Users::' instance='::' level='ACCESS_ADMIN'}
-            <div class="z-formnote"><a href="{modurl modname='Users' type='admin' func='modify' userid=$«entity.name.formatForDB».«name.formatForDB»}" title="{gt text='Switch to the user administration'}">{gt text='Manage user'}</a></div>
+            <div class="z-formnote"><a href="{modurl modname='«IF entity.container.application.targets('1.3.5')»Users«ELSE»ZikulaUsersModule«ENDIF»' type='admin' func='modify' userid=$«entity.name.formatForDB».«name.formatForDB»}" title="{gt text='Switch to the user administration'}">{gt text='Manage user'}</a></div>
             {/checkpermissionblock}
         {/if}
     '''

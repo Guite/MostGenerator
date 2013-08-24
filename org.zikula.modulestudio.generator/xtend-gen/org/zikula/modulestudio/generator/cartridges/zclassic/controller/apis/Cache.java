@@ -117,14 +117,14 @@ public class Cache {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Api\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         _builder.append("use ");
-        String _appName_1 = this._utils.appName(it);
-        _builder.append(_appName_1, "");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
         _builder.append("\\Util\\ControllerUtil;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -150,8 +150,8 @@ public class Cache {
     {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
         _builder.append("_Api_Base_Cache");
       } else {
         _builder.append("CacheApi");
@@ -222,7 +222,15 @@ public class Cache {
         _builder.append("ControllerUtil");
       }
     }
-    _builder.append("($this->serviceManager);");
+    _builder.append("($this->serviceManager");
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(", ModUtil::getModule($this->name)");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$utilArgs = array(\'api\' => \'cache\', \'action\' => \'clearItemCache\');");
@@ -319,8 +327,8 @@ public class Cache {
             _builder.append("    ");
             _builder.append("$cacheIds[] = \'");
             {
-              boolean _targets_1 = this._utils.targets(it, "1.3.5");
-              if (_targets_1) {
+              boolean _targets_2 = this._utils.targets(it, "1.3.5");
+              if (_targets_2) {
                 _builder.append("main");
               } else {
                 _builder.append("index");
@@ -415,8 +423,8 @@ public class Cache {
             _builder.append(_appName_2, "    ");
             _builder.append("/user/");
             {
-              boolean _targets_2 = this._utils.targets(it, "1.3.5");
-              if (_targets_2) {
+              boolean _targets_3 = this._utils.targets(it, "1.3.5");
+              if (_targets_3) {
                 _builder.append("main");
               } else {
                 _builder.append("index");
@@ -424,8 +432,8 @@ public class Cache {
             }
             _builder.append("\'; // ");
             {
-              boolean _targets_3 = this._utils.targets(it, "1.3.5");
-              if (_targets_3) {
+              boolean _targets_4 = this._utils.targets(it, "1.3.5");
+              if (_targets_4) {
                 _builder.append("main");
               } else {
                 _builder.append("index");
@@ -511,8 +519,8 @@ public class Cache {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Api;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -530,11 +538,11 @@ public class Cache {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
+        _builder.append("_Api_Cache extends ");
         String _appName_1 = this._utils.appName(it);
         _builder.append(_appName_1, "");
-        _builder.append("_Api_Cache extends ");
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
         _builder.append("_Api_Base_Cache");
         _builder.newLineIfNotEmpty();
       } else {

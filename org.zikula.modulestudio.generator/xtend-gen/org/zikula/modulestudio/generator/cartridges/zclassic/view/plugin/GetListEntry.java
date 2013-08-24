@@ -129,7 +129,18 @@ public class GetListEntry {
         _builder.append("\\Util\\ListEntriesUtil");
       }
     }
-    _builder.append("($serviceManager);");
+    _builder.append("($serviceManager");
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(", ModUtil::getModule(\'");
+        String _appName_3 = this._utils.appName(it);
+        _builder.append(_appName_3, "    ");
+        _builder.append("\')");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("    ");

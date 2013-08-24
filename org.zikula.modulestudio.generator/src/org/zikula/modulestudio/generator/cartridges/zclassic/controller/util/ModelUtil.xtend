@@ -36,7 +36,7 @@ class ModelUtil {
 
     def private modelFunctionsBaseImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Util\Base;
+            namespace «appNamespace»\Util\Base;
 
             use Zikula_AbstractBase;
 
@@ -51,7 +51,7 @@ class ModelUtil {
 
     def private modelFunctionsImpl(Application it) '''
         «IF !targets('1.3.5')»
-            namespace «appName»\Util;
+            namespace «appNamespace»\Util;
 
         «ENDIF»
         /**

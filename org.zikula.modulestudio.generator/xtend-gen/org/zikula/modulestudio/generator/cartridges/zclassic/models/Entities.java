@@ -305,6 +305,8 @@ public class Entities {
         _builder.newLine();
         _builder.append("use LogUtil;");
         _builder.newLine();
+        _builder.append("use ModUtil;");
+        _builder.newLine();
         _builder.append("use SecurityUtil;");
         _builder.newLine();
         _builder.append("use ServiceUtil;");
@@ -1194,7 +1196,18 @@ public class Entities {
         _builder.append("WorkflowUtil");
       }
     }
-    _builder.append("(ServiceUtil::getManager());");
+    _builder.append("(ServiceUtil::getManager()");
+    {
+      boolean _targets_3 = this._utils.targets(app, "1.3.5");
+      boolean _not = (!_targets_3);
+      if (_not) {
+        _builder.append(", ModUtil::getModule(\'");
+        String _appName_3 = this._utils.appName(app);
+        _builder.append(_appName_3, "    ");
+        _builder.append("\')");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$schemaName = $workflowHelper->getWorkflowName($this[\'_objectType\']);");
@@ -1359,8 +1372,8 @@ public class Entities {
     _builder.append("    ");
     _builder.append("$currentFunc = FormUtil::getPassedValue(\'func\', \'");
     {
-      boolean _targets_3 = this._utils.targets(app, "1.3.5");
-      if (_targets_3) {
+      boolean _targets_4 = this._utils.targets(app, "1.3.5");
+      if (_targets_4) {
         _builder.append("main");
       } else {
         _builder.append("index");
@@ -1392,8 +1405,8 @@ public class Entities {
             _builder.append("    ");
             _builder.append("if (in_array($currentFunc, array(\'");
             {
-              boolean _targets_4 = this._utils.targets(app, "1.3.5");
-              if (_targets_4) {
+              boolean _targets_5 = this._utils.targets(app, "1.3.5");
+              if (_targets_5) {
                 _builder.append("main");
               } else {
                 _builder.append("index");
@@ -1565,8 +1578,8 @@ public class Entities {
             _builder.append("    ");
             _builder.append("if (in_array($currentFunc, array(\'");
             {
-              boolean _targets_5 = this._utils.targets(app, "1.3.5");
-              if (_targets_5) {
+              boolean _targets_6 = this._utils.targets(app, "1.3.5");
+              if (_targets_6) {
                 _builder.append("main");
               } else {
                 _builder.append("index");
@@ -2073,7 +2086,18 @@ public class Entities {
         _builder.append("WorkflowUtil");
       }
     }
-    _builder.append("(ServiceUtil::getManager());");
+    _builder.append("(ServiceUtil::getManager()");
+    {
+      boolean _targets_1 = this._utils.targets(app, "1.3.5");
+      boolean _not = (!_targets_1);
+      if (_not) {
+        _builder.append(", ModUtil::getModule(\'");
+        String _appName_1 = this._utils.appName(app);
+        _builder.append(_appName_1, "");
+        _builder.append("\')");
+      }
+    }
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     _builder.append("$schemaName = $workflowHelper->getWorkflowName($this[\'_objectType\']);");
     _builder.newLine();
@@ -2099,8 +2123,8 @@ public class Entities {
     _builder.newLine();
     _builder.append("if (!in_array($currentFunc, array(\'");
     {
-      boolean _targets_1 = this._utils.targets(app, "1.3.5");
-      if (_targets_1) {
+      boolean _targets_2 = this._utils.targets(app, "1.3.5");
+      if (_targets_2) {
         _builder.append("main");
       } else {
         _builder.append("index");
@@ -2110,8 +2134,8 @@ public class Entities {
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("$result = Zikula_Workflow_Util::getWorkflowForObject($this, $this[\'_objectType\'], $idColumn, \'");
-    String _appName_1 = this._utils.appName(app);
-    _builder.append(_appName_1, "    ");
+    String _appName_2 = this._utils.appName(app);
+    _builder.append(_appName_2, "    ");
     _builder.append("\');");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -2119,8 +2143,8 @@ public class Entities {
     _builder.newLine();
     _builder.append("        ");
     _builder.append("$dom = ZLanguage::getModuleDomain(\'");
-    String _appName_2 = this._utils.appName(app);
-    _builder.append(_appName_2, "        ");
+    String _appName_3 = this._utils.appName(app);
+    _builder.append(_appName_3, "        ");
     _builder.append("\');");
     _builder.newLineIfNotEmpty();
     _builder.append("        ");
