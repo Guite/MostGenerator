@@ -33,6 +33,10 @@ class EventListener {
             EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.installed', array('«callableClass»', 'moduleInstalled'));
             EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.upgraded', array('«callableClass»', 'moduleUpgraded'));
             EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.uninstalled', array('«callableClass»', 'moduleUninstalled'));
+            «IF !targets('1.3.5')»
+            EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.activated', array('«callableClass»', 'moduleActivated'));
+            EventUtil::registerPersistentModuleHandler('«appName»', 'installer.module.deactivated', array('«callableClass»', 'moduleDeactivated'));
+            «ENDIF»
             EventUtil::registerPersistentModuleHandler('«appName»', 'installer.subscriberarea.uninstalled', array('«callableClass»', 'subscriberAreaUninstalled'));
 
             // modules -> «callableClass = listenerBase + 'ModuleDispatch' + listenerSuffix»
