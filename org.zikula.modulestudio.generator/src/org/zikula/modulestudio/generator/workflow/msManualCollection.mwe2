@@ -13,6 +13,7 @@ Workflow {
     component = @msManual { dir = 'customers/later' name = 'GuiSubscription' }
     component = @msManual { dir = 'customers' name = 'AddressList' }
     component = @msManual { dir = 'customers' name = 'AdShare' }
+    component = @msManual { dir = 'customers' name = 'CandidateCheck' }
     component = @msManual { dir = 'customers' name = 'ConstructionProjects' }
     component = @msManual { dir = 'customers' name = 'ContentPool' }
     component = @msManual { dir = 'customers' name = 'EjubaAddresses' }
