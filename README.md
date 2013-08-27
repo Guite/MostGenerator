@@ -11,4 +11,7 @@ The issue tracker can be found at [this github project][].
 For more information visit [the project homepage][].
 [the project homepage]: http://modulestudio.de/
 
+To regenerate your application with the latest Git version of the
+generator you can use [the WebGen service][].
+[the WebGen service]: https://github.com/Guite/MostWebGen
 
