@@ -81,7 +81,7 @@ class Installer {
         /**
          * Installer base class.
          */
-        class «IF targets('1.3.5')»«appName»_Base_«ELSE»«appName»«ENDIF»Installer extends Zikula_AbstractInstaller
+        class «IF targets('1.3.5')»«appName»_Base_«ELSE»«name.formatForCodeCapital»Module«ENDIF»Installer extends Zikula_AbstractInstaller
         {
             «installerBaseImpl»
         }
@@ -377,7 +377,7 @@ class Installer {
         «IF targets('1.3.5')»
         class «appName»_Installer extends «appName»_Base_Installer
         «ELSE»
-        class «appName»Installer extends Base\«appName»Installer
+        class «name.formatForCodeCapital»ModuleInstaller extends Base\«name.formatForCodeCapital»ModuleInstaller
         «ENDIF»
         {
             // feel free to extend the installer here

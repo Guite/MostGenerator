@@ -226,8 +226,10 @@ public class Installer {
         _builder.append(_appName, "");
         _builder.append("_Base_");
       } else {
-        String _appName_1 = this._utils.appName(it);
-        _builder.append(_appName_1, "");
+        String _name = it.getName();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
+        _builder.append(_formatForCodeCapital, "");
+        _builder.append("Module");
       }
     }
     _builder.append("Installer extends Zikula_AbstractInstaller");
@@ -1093,12 +1095,14 @@ public class Installer {
         _builder.newLineIfNotEmpty();
       } else {
         _builder.append("class ");
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "");
-        _builder.append("Installer extends Base\\");
-        String _appName_3 = this._utils.appName(it);
-        _builder.append(_appName_3, "");
-        _builder.append("Installer");
+        String _name = it.getName();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
+        _builder.append(_formatForCodeCapital, "");
+        _builder.append("ModuleInstaller extends Base\\");
+        String _name_1 = it.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_1);
+        _builder.append(_formatForCodeCapital_1, "");
+        _builder.append("ModuleInstaller");
         _builder.newLineIfNotEmpty();
       }
     }
