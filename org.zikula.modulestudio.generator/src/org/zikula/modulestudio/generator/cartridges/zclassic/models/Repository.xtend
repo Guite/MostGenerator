@@ -198,7 +198,7 @@ class Repository {
             }
 
             /**
-             * Returns name of the first upload field which is capable for handling images.
+             * Returns name of first upload field which is capable for handling images.
              *
              * @return string Name of field to be used for preview images.
              */
@@ -210,7 +210,7 @@ class Repository {
             }
 
             /**
-             * Returns name of the the date(time) field to be used for representing the start
+             * Returns name of the date(time) field to be used for representing the start
              * of this object. Used for providing meta data to the tag module.
              *
              * @return string Name of field to be used as date.
