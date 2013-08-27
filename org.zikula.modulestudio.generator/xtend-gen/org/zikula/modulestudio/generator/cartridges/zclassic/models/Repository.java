@@ -644,7 +644,7 @@ public class Repository {
     _builder.append("/**");
     _builder.newLine();
     _builder.append("     ");
-    _builder.append("* Returns name of the first upload field which is capable for handling images.");
+    _builder.append("* Returns name of first upload field which is capable for handling images.");
     _builder.newLine();
     _builder.append("     ");
     _builder.append("*");
@@ -687,7 +687,7 @@ public class Repository {
     _builder.append("/**");
     _builder.newLine();
     _builder.append("     ");
-    _builder.append("* Returns name of the the date(time) field to be used for representing the start");
+    _builder.append("* Returns name of the date(time) field to be used for representing the start");
     _builder.newLine();
     _builder.append("     ");
     _builder.append("* of this object. Used for providing meta data to the tag module.");
