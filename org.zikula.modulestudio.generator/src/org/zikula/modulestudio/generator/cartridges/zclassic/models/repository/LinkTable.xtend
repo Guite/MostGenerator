@@ -38,7 +38,7 @@ class LinkTable {
 
     def private modelRefRepositoryBaseImpl(ManyToManyRelationship it, Application app) '''
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Entity\Repository\Base;
+            namespace «app.appNamespace»\Entity\Repository\Base;
 
         «ENDIF»
         /**
@@ -69,7 +69,7 @@ class LinkTable {
 
     def private modelRefRepositoryImpl(ManyToManyRelationship it, Application app) '''
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Entity\Repository;
+            namespace «app.appNamespace»\Entity\Repository;
 
         «ENDIF»
         /**

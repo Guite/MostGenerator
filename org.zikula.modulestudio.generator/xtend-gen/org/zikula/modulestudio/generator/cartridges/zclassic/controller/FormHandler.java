@@ -335,8 +335,8 @@ public class FormHandler {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(app);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(app);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Form\\Handler\\");
         String _name = it.getName();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
@@ -345,38 +345,38 @@ public class FormHandler {
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         _builder.append("use ");
-        String _appName_1 = this._utils.appName(app);
-        _builder.append(_appName_1, "");
+        String _appNamespace_1 = this._utils.appNamespace(app);
+        _builder.append(_appNamespace_1, "");
         _builder.append("\\Form\\Plugin\\AbstractObjectSelector;");
         _builder.newLineIfNotEmpty();
         {
           boolean _hasUploads = this._modelExtensions.hasUploads(app);
           if (_hasUploads) {
             _builder.append("use ");
-            String _appName_2 = this._utils.appName(app);
-            _builder.append(_appName_2, "");
+            String _appNamespace_2 = this._utils.appNamespace(app);
+            _builder.append(_appNamespace_2, "");
             _builder.append("\\UploadHandler;");
             _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("use ");
-        String _appName_3 = this._utils.appName(app);
-        _builder.append(_appName_3, "");
+        String _appNamespace_3 = this._utils.appNamespace(app);
+        _builder.append(_appNamespace_3, "");
         _builder.append("\\Util\\ControllerUtil;");
         _builder.newLineIfNotEmpty();
         {
           boolean _hasTranslatable = this._modelBehaviourExtensions.hasTranslatable(app);
           if (_hasTranslatable) {
             _builder.append("use ");
-            String _appName_4 = this._utils.appName(app);
-            _builder.append(_appName_4, "");
+            String _appNamespace_4 = this._utils.appNamespace(app);
+            _builder.append(_appNamespace_4, "");
             _builder.append("\\Util\\TranslatableUtil;");
             _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("use ");
-        String _appName_5 = this._utils.appName(app);
-        _builder.append(_appName_5, "");
+        String _appNamespace_5 = this._utils.appNamespace(app);
+        _builder.append(_appNamespace_5, "");
         _builder.append("\\Util\\WorkflowUtil;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -411,8 +411,8 @@ public class FormHandler {
     _builder.newLine();
     _builder.append(" ");
     _builder.append("* This handler class handles the page events of the Form called by the ");
-    String _appName_6 = this._utils.appName(app);
-    String _plus = (_appName_6 + "_");
+    String _appName = this._utils.appName(app);
+    String _plus = (_appName + "_");
     String _formattedName = this._controllerExtensions.formattedName(it);
     String _plus_1 = (_plus + _formattedName);
     String _plus_2 = (_plus_1 + "_");
@@ -482,8 +482,8 @@ public class FormHandler {
       boolean _targets_1 = this._utils.targets(app, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
-        String _appName_7 = this._utils.appName(app);
-        _builder.append(_appName_7, "");
+        String _appName_1 = this._utils.appName(app);
+        _builder.append(_appName_1, "");
         _builder.append("_Form_Handler_");
         String _name_1 = it.getName();
         String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_1);
@@ -3246,8 +3246,8 @@ public class FormHandler {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(app);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(app);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Form\\Handler\\");
         String _name = it.getName();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
@@ -3261,8 +3261,8 @@ public class FormHandler {
     _builder.newLine();
     _builder.append(" ");
     _builder.append("* This handler class handles the page events of the Form called by the ");
-    String _appName_1 = this._utils.appName(app);
-    String _plus = (_appName_1 + "_");
+    String _appName = this._utils.appName(app);
+    String _plus = (_appName + "_");
     String _formattedName = this._controllerExtensions.formattedName(it);
     String _plus_1 = (_plus + _formattedName);
     String _plus_2 = (_plus_1 + "_");
@@ -3281,8 +3281,8 @@ public class FormHandler {
       boolean _targets_1 = this._utils.targets(app, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
-        String _appName_2 = this._utils.appName(app);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(app);
+        _builder.append(_appName_1, "");
         _builder.append("_Form_Handler_");
         String _name_1 = it.getName();
         String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_1);
@@ -3291,8 +3291,8 @@ public class FormHandler {
         String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(actionName);
         _builder.append(_formatForCodeCapital_2, "");
         _builder.append(" extends ");
-        String _appName_3 = this._utils.appName(app);
-        _builder.append(_appName_3, "");
+        String _appName_2 = this._utils.appName(app);
+        _builder.append(_appName_2, "");
         _builder.append("_Form_Handler_");
         String _name_2 = it.getName();
         String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_2);
@@ -3332,8 +3332,8 @@ public class FormHandler {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(app);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(app);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Form\\Handler\\");
         String _name = this.controller.getName();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
@@ -3346,23 +3346,23 @@ public class FormHandler {
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         _builder.append("use ");
-        String _appName_1 = this._utils.appName(app);
-        _builder.append(_appName_1, "");
+        String _appNamespace_1 = this._utils.appNamespace(app);
+        _builder.append(_appNamespace_1, "");
         _builder.append("\\Util\\ControllerUtil;");
         _builder.newLineIfNotEmpty();
         {
           boolean _hasListFields = this._modelExtensions.hasListFields(app);
           if (_hasListFields) {
             _builder.append("use ");
-            String _appName_2 = this._utils.appName(app);
-            _builder.append(_appName_2, "");
+            String _appNamespace_2 = this._utils.appNamespace(app);
+            _builder.append(_appNamespace_2, "");
             _builder.append("\\Util\\ListEntriesUtil;");
             _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("use ");
-        String _appName_3 = this._utils.appName(app);
-        _builder.append(_appName_3, "");
+        String _appNamespace_3 = this._utils.appNamespace(app);
+        _builder.append(_appNamespace_3, "");
         _builder.append("\\Util\\WorkflowUtil;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -3429,8 +3429,8 @@ public class FormHandler {
     _builder.newLine();
     _builder.append(" ");
     _builder.append("* This handler class handles the page events of the Form called by the ");
-    String _appName_4 = this._utils.appName(app);
-    String _plus = (_appName_4 + "_");
+    String _appName = this._utils.appName(app);
+    String _plus = (_appName + "_");
     String _formattedName = this._controllerExtensions.formattedName(this.controller);
     String _plus_1 = (_plus + _formattedName);
     String _plus_2 = (_plus_1 + "_");
@@ -3459,8 +3459,8 @@ public class FormHandler {
       boolean _targets_2 = this._utils.targets(app, "1.3.5");
       if (_targets_2) {
         _builder.append("class ");
-        String _appName_5 = this._utils.appName(app);
-        _builder.append(_appName_5, "");
+        String _appName_1 = this._utils.appName(app);
+        _builder.append(_appName_1, "");
         _builder.append("_Form_Handler_");
         String _name_3 = this.controller.getName();
         String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_3);
@@ -3473,8 +3473,8 @@ public class FormHandler {
         String _formatForCodeCapital_4 = this._formattingExtensions.formatForCodeCapital(actionName);
         _builder.append(_formatForCodeCapital_4, "");
         _builder.append(" extends ");
-        String _appName_6 = this._utils.appName(app);
-        _builder.append(_appName_6, "");
+        String _appName_2 = this._utils.appName(app);
+        _builder.append(_appName_2, "");
         _builder.append("_Form_Handler_");
         String _name_5 = this.controller.getName();
         String _formatForCodeCapital_5 = this._formattingExtensions.formatForCodeCapital(_name_5);
@@ -3488,8 +3488,8 @@ public class FormHandler {
         String _formatForCodeCapital_7 = this._formattingExtensions.formatForCodeCapital(actionName);
         _builder.append(_formatForCodeCapital_7, "");
         _builder.append("Handler extends \\");
-        String _appName_7 = this._utils.appName(app);
-        _builder.append(_appName_7, "");
+        String _appName_3 = this._utils.appName(app);
+        _builder.append(_appName_3, "");
         _builder.append("\\Form\\Handler\\");
         String _formattedName_1 = this._controllerExtensions.formattedName(this.controller);
         String _firstUpper = StringExtensions.toFirstUpper(_formattedName_1);
@@ -3876,8 +3876,8 @@ public class FormHandler {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(app);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(app);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Form\\Handler\\");
         String _name = this.controller.getName();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
@@ -3895,8 +3895,8 @@ public class FormHandler {
     _builder.newLine();
     _builder.append(" ");
     _builder.append("* This handler class handles the page events of the Form called by the ");
-    String _appName_1 = this._utils.appName(app);
-    String _plus = (_appName_1 + "_");
+    String _appName = this._utils.appName(app);
+    String _plus = (_appName + "_");
     String _formattedName = this._controllerExtensions.formattedName(this.controller);
     String _plus_1 = (_plus + _formattedName);
     String _plus_2 = (_plus_1 + "_");
@@ -3919,8 +3919,8 @@ public class FormHandler {
       boolean _targets_1 = this._utils.targets(app, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
-        String _appName_2 = this._utils.appName(app);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(app);
+        _builder.append(_appName_1, "");
         _builder.append("_Form_Handler_");
         String _name_3 = this.controller.getName();
         String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_3);
@@ -3933,8 +3933,8 @@ public class FormHandler {
         String _formatForCodeCapital_4 = this._formattingExtensions.formatForCodeCapital(actionName);
         _builder.append(_formatForCodeCapital_4, "");
         _builder.append(" extends ");
-        String _appName_3 = this._utils.appName(app);
-        _builder.append(_appName_3, "");
+        String _appName_2 = this._utils.appName(app);
+        _builder.append(_appName_2, "");
         _builder.append("_Form_Handler_");
         String _name_5 = this.controller.getName();
         String _formatForCodeCapital_5 = this._formattingExtensions.formatForCodeCapital(_name_5);

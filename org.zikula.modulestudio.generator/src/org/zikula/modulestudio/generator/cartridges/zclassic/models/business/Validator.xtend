@@ -518,7 +518,7 @@ class Validator {
 
     def private validatorBaseImpl(Entity it, Application app) '''
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Entity\Validator\Base;
+            namespace «app.appNamespace»\Entity\Validator\Base;
 
             use ServiceUtil;
             use ZLanguage;
@@ -541,7 +541,7 @@ class Validator {
 
     def private validatorImpl(Entity it, Application app) '''
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Entity\Validator;
+            namespace «app.appNamespace»\Entity\Validator;
             «IF isInheriting»
 
             use ServiceUtil;

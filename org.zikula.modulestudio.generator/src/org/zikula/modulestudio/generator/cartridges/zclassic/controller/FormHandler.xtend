@@ -112,17 +112,17 @@ class FormHandler {
     def private formHandlerCommonBaseImpl(Controller it, String actionName) '''
         «val app = container.application»
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Form\Handler\«name.formatForCodeCapital»\Base;
+            namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base;
 
-            use «app.appName»\Form\Plugin\AbstractObjectSelector;
+            use «app.appNamespace»\Form\Plugin\AbstractObjectSelector;
             «IF app.hasUploads»
-                use «app.appName»\UploadHandler;
+                use «app.appNamespace»\UploadHandler;
             «ENDIF»
-            use «app.appName»\Util\ControllerUtil;
+            use «app.appNamespace»\Util\ControllerUtil;
             «IF app.hasTranslatable»
-                use «app.appName»\Util\TranslatableUtil;
+                use «app.appNamespace»\Util\TranslatableUtil;
             «ENDIF»
-            use «app.appName»\Util\WorkflowUtil;
+            use «app.appNamespace»\Util\WorkflowUtil;
 
             use LogUtil;
             use ModUtil;
@@ -1126,7 +1126,7 @@ class FormHandler {
     def private formHandlerCommonImpl(Controller it, String actionName) '''
         «val app = container.application»
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Form\Handler\«name.formatForCodeCapital»;
+            namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»;
 
         «ENDIF»
         /**
@@ -1149,13 +1149,13 @@ class FormHandler {
     def private formHandlerBaseImpl(Entity it, String actionName) '''
         «val app = container.application»
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Form\Handler\«controller.name.formatForCodeCapital»\«name.formatForCodeCapital»\Base;
+            namespace «app.appNamespace»\Form\Handler\«controller.name.formatForCodeCapital»\«name.formatForCodeCapital»\Base;
 
-            use «app.appName»\Util\ControllerUtil;
+            use «app.appNamespace»\Util\ControllerUtil;
             «IF app.hasListFields»
-                use «app.appName»\Util\ListEntriesUtil;
+                use «app.appNamespace»\Util\ListEntriesUtil;
             «ENDIF»
-            use «app.appName»\Util\WorkflowUtil;
+            use «app.appNamespace»\Util\WorkflowUtil;
 
         «ENDIF»
         «IF hasOptimisticLock || hasPessimisticReadLock || hasPessimisticWriteLock»
@@ -1282,7 +1282,7 @@ class FormHandler {
     def private formHandlerImpl(Entity it, String actionName) '''
         «val app = container.application»
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Form\Handler\«controller.name.formatForCodeCapital»\«name.formatForCodeCapital»;
+            namespace «app.appNamespace»\Form\Handler\«controller.name.formatForCodeCapital»\«name.formatForCodeCapital»;
 
         «ENDIF»
         /**

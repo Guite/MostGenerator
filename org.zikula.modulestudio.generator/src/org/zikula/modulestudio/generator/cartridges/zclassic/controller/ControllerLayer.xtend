@@ -106,18 +106,18 @@ class ControllerLayer {
 
     def private controllerBaseImpl(Controller it) '''
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Controller\Base;
+            namespace «app.appNamespace»\Controller\Base;
 
             «IF app.needsConfig && isConfigController»
-                use «app.appName»\Form\Handler\«app.configController.formatForDB.toFirstUpper»\ConfigHandler;
+                use «app.appNamespace»\Form\Handler\«app.configController.formatForDB.toFirstUpper»\ConfigHandler;
             «ENDIF»
-            use «app.appName»\Util\ControllerUtil;
+            use «app.appNamespace»\Util\ControllerUtil;
             «IF isAjaxController && app.hasImageFields»
-                use «app.appName»\Util\ImageUtil;
+                use «app.appNamespace»\Util\ImageUtil;
             «ENDIF»
-            use «app.appName»\Util\ViewUtil;
+            use «app.appNamespace»\Util\ViewUtil;
             «IF (isAjaxController && app.hasTrees) || (hasActions('view') && isAdminController) || hasActions('delete')»
-                use «app.appName»\Util\WorkflowUtil;
+                use «app.appNamespace»\Util\WorkflowUtil;
             «ENDIF»
 
             «IF isAjaxController»
@@ -338,7 +338,7 @@ class ControllerLayer {
     def private controllerImpl(Controller it) '''
         «val app = container.application»
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Controller;
+            namespace «app.appNamespace»\Controller;
 
         «ENDIF»
         /**
@@ -359,11 +359,11 @@ class ControllerLayer {
     def private apiBaseImpl(Controller it) '''
         «val app = container.application»
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Api\Base;
+            namespace «app.appNamespace»\Api\Base;
 
             «IF isUserController»
-                use «app.appName»\RouterFacade;
-                use «app.appName»\Util\ControllerUtil;
+                use «app.appNamespace»\RouterFacade;
+                use «app.appNamespace»\Util\ControllerUtil;
                 use LogUtil;
             «ENDIF»
             use ModUtil;
@@ -460,7 +460,7 @@ class ControllerLayer {
     def private apiImpl(Controller it) '''
         «val app = container.application»
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Api;
+            namespace «app.appNamespace»\Api;
 
         «ENDIF»
         /**

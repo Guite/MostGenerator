@@ -215,8 +215,8 @@ public class Repository {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(this.app);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(this.app);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Entity\\Repository\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -224,8 +224,8 @@ public class Repository {
           boolean _hasUploads = this._modelExtensions.hasUploads(this.app);
           if (_hasUploads) {
             _builder.append("use ");
-            String _appName_1 = this._utils.appName(this.app);
-            _builder.append(_appName_1, "");
+            String _appNamespace_1 = this._utils.appNamespace(this.app);
+            _builder.append(_appNamespace_1, "");
             _builder.append("\\Util\\ImageUtil;");
             _builder.newLineIfNotEmpty();
           }
@@ -234,15 +234,15 @@ public class Repository {
           boolean _hasListFieldsEntity = this._modelExtensions.hasListFieldsEntity(it);
           if (_hasListFieldsEntity) {
             _builder.append("use ");
-            String _appName_2 = this._utils.appName(this.app);
-            _builder.append(_appName_2, "");
+            String _appNamespace_2 = this._utils.appNamespace(this.app);
+            _builder.append(_appNamespace_2, "");
             _builder.append("\\Util\\ListEntriesUtil;");
             _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("use ");
-        String _appName_3 = this._utils.appName(this.app);
-        _builder.append(_appName_3, "");
+        String _appNamespace_3 = this._utils.appNamespace(this.app);
+        _builder.append(_appNamespace_3, "");
         _builder.append("\\Util\\WorkflowUtil;");
         _builder.newLineIfNotEmpty();
       }
@@ -366,8 +366,8 @@ public class Repository {
       boolean _targets_3 = this._utils.targets(this.app, "1.3.5");
       if (_targets_3) {
         _builder.append("class ");
-        String _appName_4 = this._utils.appName(this.app);
-        _builder.append(_appName_4, "");
+        String _appName = this._utils.appName(this.app);
+        _builder.append(_appName, "");
         _builder.append("_Entity_Repository_Base_");
         String _name_1 = it.getName();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name_1);
@@ -4388,8 +4388,8 @@ public class Repository {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(this.app);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(this.app);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Entity\\Repository;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -4417,8 +4417,8 @@ public class Repository {
       boolean _targets_1 = this._utils.targets(this.app, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
-        String _appName_1 = this._utils.appName(this.app);
-        _builder.append(_appName_1, "");
+        String _appName = this._utils.appName(this.app);
+        _builder.append(_appName, "");
         _builder.append("_Entity_Repository_");
         String _name_1 = it.getName();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name_1);
@@ -4427,16 +4427,16 @@ public class Repository {
         {
           boolean _isInheriting = this._modelInheritanceExtensions.isInheriting(it);
           if (_isInheriting) {
-            String _appName_2 = this._utils.appName(this.app);
-            _builder.append(_appName_2, "");
+            String _appName_1 = this._utils.appName(this.app);
+            _builder.append(_appName_1, "");
             _builder.append("_Entity_Repository_");
             Entity _parentType = this._modelInheritanceExtensions.parentType(it);
             String _name_2 = _parentType.getName();
             String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_2);
             _builder.append(_formatForCodeCapital_1, "");
           } else {
-            String _appName_3 = this._utils.appName(this.app);
-            _builder.append(_appName_3, "");
+            String _appName_2 = this._utils.appName(this.app);
+            _builder.append(_appName_2, "");
             _builder.append("_Entity_Repository_Base_");
             String _name_3 = it.getName();
             String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_3);

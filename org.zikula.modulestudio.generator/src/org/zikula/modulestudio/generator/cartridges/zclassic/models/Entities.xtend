@@ -97,15 +97,15 @@ class Entities {
 
     def private modelEntityBaseImpl(Entity it, Application app) '''
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Entity\Base;
+            namespace «app.appNamespace»\Entity\Base;
 
         «ENDIF»
         «imports»
         «IF !app.targets('1.3.5')»
 
-            use «app.appName»\UploadHandler;
-            use «app.appName»\Util\ControllerUtil;
-            use «app.appName»\Util\WorkflowUtil;
+            use «app.appNamespace»\UploadHandler;
+            use «app.appNamespace»\Util\ControllerUtil;
+            use «app.appNamespace»\Util\WorkflowUtil;
 
             use DataUtil;
             use FormUtil;
@@ -171,7 +171,7 @@ class Entities {
 
     def private modelEntityImpl(Entity it, Application app) '''
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Entity;
+            namespace «app.appNamespace»\Entity;
 
         «ENDIF»
         «imports»

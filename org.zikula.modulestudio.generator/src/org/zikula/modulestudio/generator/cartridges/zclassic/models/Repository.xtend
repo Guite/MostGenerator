@@ -83,15 +83,15 @@ class Repository {
 
     def private modelRepositoryBaseImpl(Entity it) '''
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Entity\Repository\Base;
+            namespace «app.appNamespace»\Entity\Repository\Base;
 
             «IF app.hasUploads»
-                use «app.appName»\Util\ImageUtil;
+                use «app.appNamespace»\Util\ImageUtil;
             «ENDIF»
             «IF hasListFieldsEntity»
-                use «app.appName»\Util\ListEntriesUtil;
+                use «app.appNamespace»\Util\ListEntriesUtil;
             «ENDIF»
-            use «app.appName»\Util\WorkflowUtil;
+            use «app.appNamespace»\Util\WorkflowUtil;
         «ENDIF»
         «IF tree != EntityTreeType::NONE»
             use Gedmo\Tree\Entity\Repository\«tree.asConstant.toFirstUpper»TreeRepository;
@@ -1410,7 +1410,7 @@ class Repository {
 
     def private modelRepositoryImpl(Entity it) '''
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Entity\Repository;
+            namespace «app.appNamespace»\Entity\Repository;
 
         «ENDIF»
         /**

@@ -96,8 +96,8 @@ public class LinkTable {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(app);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(app);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Entity\\Repository\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -134,8 +134,8 @@ public class LinkTable {
       boolean _targets_1 = this._utils.targets(app, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
-        String _appName_1 = this._utils.appName(app);
-        _builder.append(_appName_1, "");
+        String _appName = this._utils.appName(app);
+        _builder.append(_appName, "");
         _builder.append("_Entity_Repository_Base_");
         String _refClass = it.getRefClass();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_refClass);
@@ -167,8 +167,8 @@ public class LinkTable {
       if (_targets_2) {
         _builder.append("        ");
         _builder.append("$qb->delete(\'");
-        String _appName_2 = this._utils.appName(app);
-        _builder.append(_appName_2, "        ");
+        String _appName_1 = this._utils.appName(app);
+        _builder.append(_appName_1, "        ");
         _builder.append("_Entity_");
         String _refClass_2 = it.getRefClass();
         String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_refClass_2);
@@ -178,8 +178,8 @@ public class LinkTable {
       } else {
         _builder.append("        ");
         _builder.append("$qb->delete(\'\\\\");
-        String _appName_3 = this._utils.appName(app);
-        _builder.append(_appName_3, "        ");
+        String _appName_2 = this._utils.appName(app);
+        _builder.append(_appName_2, "        ");
         _builder.append("\\\\Entity\\\\");
         String _refClass_3 = it.getRefClass();
         String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_refClass_3);
@@ -209,8 +209,8 @@ public class LinkTable {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(app);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(app);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Entity\\Repository;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -247,15 +247,15 @@ public class LinkTable {
       boolean _targets_1 = this._utils.targets(app, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
-        String _appName_1 = this._utils.appName(app);
-        _builder.append(_appName_1, "");
+        String _appName = this._utils.appName(app);
+        _builder.append(_appName, "");
         _builder.append("_Entity_Repository_");
         String _refClass = it.getRefClass();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_refClass);
         _builder.append(_formatForCodeCapital, "");
         _builder.append(" extends ");
-        String _appName_2 = this._utils.appName(app);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(app);
+        _builder.append(_appName_1, "");
         _builder.append("_Entity_Repository_Base_");
         String _refClass_1 = it.getRefClass();
         String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_refClass_1);

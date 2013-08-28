@@ -263,8 +263,8 @@ public class ControllerLayer {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(this.app);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(this.app);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Controller\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -279,8 +279,8 @@ public class ControllerLayer {
           }
           if (_and) {
             _builder.append("use ");
-            String _appName_1 = this._utils.appName(this.app);
-            _builder.append(_appName_1, "");
+            String _appNamespace_1 = this._utils.appNamespace(this.app);
+            _builder.append(_appNamespace_1, "");
             _builder.append("\\Form\\Handler\\");
             String _configController = this._controllerExtensions.configController(this.app);
             String _formatForDB = this._formattingExtensions.formatForDB(_configController);
@@ -291,8 +291,8 @@ public class ControllerLayer {
           }
         }
         _builder.append("use ");
-        String _appName_2 = this._utils.appName(this.app);
-        _builder.append(_appName_2, "");
+        String _appNamespace_2 = this._utils.appNamespace(this.app);
+        _builder.append(_appNamespace_2, "");
         _builder.append("\\Util\\ControllerUtil;");
         _builder.newLineIfNotEmpty();
         {
@@ -306,15 +306,15 @@ public class ControllerLayer {
           }
           if (_and_1) {
             _builder.append("use ");
-            String _appName_3 = this._utils.appName(this.app);
-            _builder.append(_appName_3, "");
+            String _appNamespace_3 = this._utils.appNamespace(this.app);
+            _builder.append(_appNamespace_3, "");
             _builder.append("\\Util\\ImageUtil;");
             _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("use ");
-        String _appName_4 = this._utils.appName(this.app);
-        _builder.append(_appName_4, "");
+        String _appNamespace_4 = this._utils.appNamespace(this.app);
+        _builder.append(_appNamespace_4, "");
         _builder.append("\\Util\\ViewUtil;");
         _builder.newLineIfNotEmpty();
         {
@@ -349,8 +349,8 @@ public class ControllerLayer {
           }
           if (_or) {
             _builder.append("use ");
-            String _appName_5 = this._utils.appName(this.app);
-            _builder.append(_appName_5, "");
+            String _appNamespace_5 = this._utils.appNamespace(this.app);
+            _builder.append(_appNamespace_5, "");
             _builder.append("\\Util\\WorkflowUtil;");
             _builder.newLineIfNotEmpty();
           }
@@ -479,8 +479,8 @@ public class ControllerLayer {
     {
       boolean _targets_1 = this._utils.targets(this.app, "1.3.5");
       if (_targets_1) {
-        String _appName_6 = this._utils.appName(this.app);
-        _builder.append(_appName_6, "");
+        String _appName = this._utils.appName(this.app);
+        _builder.append(_appName, "");
         _builder.append("_Controller_Base_");
         String _name_1 = it.getName();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name_1);
@@ -745,8 +745,8 @@ public class ControllerLayer {
         {
           boolean _targets_6 = this._utils.targets(this.app, "1.3.5");
           if (_targets_6) {
-            String _appName_7 = this._utils.appName(this.app);
-            _builder.append(_appName_7, "        ");
+            String _appName_1 = this._utils.appName(this.app);
+            _builder.append(_appName_1, "        ");
             _builder.append("_Form_Handler_");
             String _configController_3 = this._controllerExtensions.configController(this.app);
             String _formatForDB_2 = this._formattingExtensions.formatForDB(_configController_3);
@@ -1108,8 +1108,8 @@ public class ControllerLayer {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(app);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(app);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Controller;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -1130,15 +1130,15 @@ public class ControllerLayer {
       boolean _targets_1 = this._utils.targets(app, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
-        String _appName_1 = this._utils.appName(app);
-        _builder.append(_appName_1, "");
+        String _appName = this._utils.appName(app);
+        _builder.append(_appName, "");
         _builder.append("_Controller_");
         String _name_1 = it.getName();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name_1);
         _builder.append(_formatForCodeCapital, "");
         _builder.append(" extends ");
-        String _appName_2 = this._utils.appName(app);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(app);
+        _builder.append(_appName_1, "");
         _builder.append("_Controller_Base_");
         String _name_2 = it.getName();
         String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_2);
@@ -1177,8 +1177,8 @@ public class ControllerLayer {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(app);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(app);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Api\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -1186,13 +1186,13 @@ public class ControllerLayer {
           boolean _isUserController = this._controllerExtensions.isUserController(it);
           if (_isUserController) {
             _builder.append("use ");
-            String _appName_1 = this._utils.appName(app);
-            _builder.append(_appName_1, "");
+            String _appNamespace_1 = this._utils.appNamespace(app);
+            _builder.append(_appNamespace_1, "");
             _builder.append("\\RouterFacade;");
             _builder.newLineIfNotEmpty();
             _builder.append("use ");
-            String _appName_2 = this._utils.appName(app);
-            _builder.append(_appName_2, "");
+            String _appNamespace_2 = this._utils.appNamespace(app);
+            _builder.append(_appNamespace_2, "");
             _builder.append("\\Util\\ControllerUtil;");
             _builder.newLineIfNotEmpty();
             _builder.append("use LogUtil;");
@@ -1230,8 +1230,8 @@ public class ControllerLayer {
     {
       boolean _targets_1 = this._utils.targets(app, "1.3.5");
       if (_targets_1) {
-        String _appName_3 = this._utils.appName(app);
-        _builder.append(_appName_3, "");
+        String _appName = this._utils.appName(app);
+        _builder.append(_appName, "");
         _builder.append("_Api_Base_");
         String _name_1 = it.getName();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name_1);
@@ -1301,8 +1301,8 @@ public class ControllerLayer {
         {
           boolean _targets_2 = this._utils.targets(app, "1.3.5");
           if (_targets_2) {
-            String _appName_4 = this._utils.appName(app);
-            _builder.append(_appName_4, "        ");
+            String _appName_1 = this._utils.appName(app);
+            _builder.append(_appName_1, "        ");
             _builder.append("_Util_Controller");
           } else {
             _builder.append("ControllerUtil");
@@ -1588,8 +1588,8 @@ public class ControllerLayer {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(app);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(app);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Api;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -1610,15 +1610,15 @@ public class ControllerLayer {
       boolean _targets_1 = this._utils.targets(app, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
-        String _appName_1 = this._utils.appName(app);
-        _builder.append(_appName_1, "");
+        String _appName = this._utils.appName(app);
+        _builder.append(_appName, "");
         _builder.append("_Api_");
         String _name_1 = it.getName();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name_1);
         _builder.append(_formatForCodeCapital, "");
         _builder.append(" extends ");
-        String _appName_2 = this._utils.appName(app);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(app);
+        _builder.append(_appName_1, "");
         _builder.append("_Api_Base_");
         String _name_2 = it.getName();
         String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_2);

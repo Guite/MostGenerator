@@ -391,7 +391,7 @@ class Extensions {
 
     def private extensionClassBaseImpl(Entity it, Application app, String classType) '''
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Entity\Base;
+            namespace «app.appNamespace»\Entity\Base;
 
         «ENDIF»
         «IF classType == 'closure'»
@@ -463,7 +463,7 @@ class Extensions {
 
     def private extensionClassImpl(Entity it, Application app, String classType) '''
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Entity;
+            namespace «app.appNamespace»\Entity;
 
         «ENDIF»
         use Doctrine\ORM\Mapping as ORM;
@@ -550,7 +550,7 @@ class Extensions {
 
     def private extensionClassRepositoryBaseImpl(Entity it, Application app, String classType) '''
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Entity\Repository\Base;
+            namespace «app.appNamespace»\Entity\Repository\Base;
 
         «ENDIF»
         «IF classType == 'translation'»
@@ -577,7 +577,7 @@ class Extensions {
 
     def private extensionClassRepositoryImpl(Entity it, Application app, String classType) '''
         «IF !app.targets('1.3.5')»
-            namespace «app.appName»\Entity\Repository;
+            namespace «app.appNamespace»\Entity\Repository;
 
         «ENDIF»
         /**

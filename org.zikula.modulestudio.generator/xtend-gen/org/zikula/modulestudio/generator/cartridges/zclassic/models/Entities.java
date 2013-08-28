@@ -268,8 +268,8 @@ public class Entities {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(app);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(app);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Entity\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -284,18 +284,18 @@ public class Entities {
       if (_not_1) {
         _builder.newLine();
         _builder.append("use ");
-        String _appName_1 = this._utils.appName(app);
-        _builder.append(_appName_1, "");
+        String _appNamespace_1 = this._utils.appNamespace(app);
+        _builder.append(_appNamespace_1, "");
         _builder.append("\\UploadHandler;");
         _builder.newLineIfNotEmpty();
         _builder.append("use ");
-        String _appName_2 = this._utils.appName(app);
-        _builder.append(_appName_2, "");
+        String _appNamespace_2 = this._utils.appNamespace(app);
+        _builder.append(_appNamespace_2, "");
         _builder.append("\\Util\\ControllerUtil;");
         _builder.newLineIfNotEmpty();
         _builder.append("use ");
-        String _appName_3 = this._utils.appName(app);
-        _builder.append(_appName_3, "");
+        String _appNamespace_3 = this._utils.appNamespace(app);
+        _builder.append(_appNamespace_3, "");
         _builder.append("\\Util\\WorkflowUtil;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -354,8 +354,8 @@ public class Entities {
       boolean _targets_2 = this._utils.targets(app, "1.3.5");
       if (_targets_2) {
         _builder.append("abstract class ");
-        String _appName_4 = this._utils.appName(app);
-        _builder.append(_appName_4, "");
+        String _appName = this._utils.appName(app);
+        _builder.append(_appName, "");
         _builder.append("_Entity_Base_");
         String _name_1 = it.getName();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name_1);
@@ -520,8 +520,8 @@ public class Entities {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(app);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(app);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Entity;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -562,16 +562,16 @@ public class Entities {
         {
           boolean _targets_1 = this._utils.targets(app, "1.3.5");
           if (_targets_1) {
-            String _appName_1 = this._utils.appName(app);
-            _builder.append(_appName_1, " ");
+            String _appName = this._utils.appName(app);
+            _builder.append(_appName, " ");
             _builder.append("_Entity_Repository_");
             String _name_1 = it.getName();
             String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name_1);
             _builder.append(_formatForCodeCapital, " ");
           } else {
             _builder.append("\\");
-            String _appName_2 = this._utils.appName(app);
-            _builder.append(_appName_2, " ");
+            String _appName_1 = this._utils.appName(app);
+            _builder.append(_appName_1, " ");
             _builder.append("\\Entity\\Repository\\");
             String _name_2 = it.getName();
             String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_2);

@@ -247,22 +247,27 @@ public class NamingExtensions {
         String _plus_3 = (_plus_2 + _formatForCodeCapital_1);
         _xifexpression = _plus_3;
       } else {
-        String _appName_1 = this._utils.appName(app);
-        String _plus_4 = (_appName_1 + "\\Entity\\");
+        String _vendor = app.getVendor();
+        String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_vendor);
+        String _plus_4 = (_formatForCodeCapital_2 + "\\");
+        String _name_1 = app.getName();
+        String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_1);
+        String _plus_5 = (_plus_4 + _formatForCodeCapital_3);
+        String _plus_6 = (_plus_5 + "Module\\Entity\\");
         String _xifexpression_2 = null;
         if ((isBase).booleanValue()) {
           _xifexpression_2 = "Base\\";
         } else {
           _xifexpression_2 = "";
         }
-        String _plus_5 = (_plus_4 + _xifexpression_2);
-        String _name_1 = it.getName();
-        String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_1);
-        String _plus_6 = (_plus_5 + _formatForCodeCapital_2);
-        String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(suffix);
-        String _plus_7 = (_plus_6 + _formatForCodeCapital_3);
-        String _plus_8 = (_plus_7 + "Entity");
-        _xifexpression = _plus_8;
+        String _plus_7 = (_plus_6 + _xifexpression_2);
+        String _name_2 = it.getName();
+        String _formatForCodeCapital_4 = this._formattingExtensions.formatForCodeCapital(_name_2);
+        String _plus_8 = (_plus_7 + _formatForCodeCapital_4);
+        String _formatForCodeCapital_5 = this._formattingExtensions.formatForCodeCapital(suffix);
+        String _plus_9 = (_plus_8 + _formatForCodeCapital_5);
+        String _plus_10 = (_plus_9 + "Entity");
+        _xifexpression = _plus_10;
       }
       _xblockexpression = (_xifexpression);
     }

@@ -1403,8 +1403,8 @@ public class Validator {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(app);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(app);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Entity\\Validator\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
@@ -1437,15 +1437,15 @@ public class Validator {
       boolean _targets_1 = this._utils.targets(app, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
-        String _appName_1 = this._utils.appName(app);
-        _builder.append(_appName_1, "");
+        String _appName = this._utils.appName(app);
+        _builder.append(_appName, "");
         _builder.append("_Entity_Validator_Base_");
         String _name_1 = it.getName();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name_1);
         _builder.append(_formatForCodeCapital, "");
         _builder.append(" extends ");
-        String _appName_2 = this._utils.appName(app);
-        _builder.append(_appName_2, "");
+        String _appName_1 = this._utils.appName(app);
+        _builder.append(_appName_1, "");
         _builder.append("_Validator");
         _builder.newLineIfNotEmpty();
       } else {
@@ -1454,8 +1454,8 @@ public class Validator {
         String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_2);
         _builder.append(_formatForCodeCapital_1, "");
         _builder.append("Validator extends \\");
-        String _appName_3 = this._utils.appName(app);
-        _builder.append(_appName_3, "");
+        String _appName_2 = this._utils.appName(app);
+        _builder.append(_appName_2, "");
         _builder.append("\\AbstractValidator");
         _builder.newLineIfNotEmpty();
       }
@@ -1478,8 +1478,8 @@ public class Validator {
       boolean _not = (!_targets);
       if (_not) {
         _builder.append("namespace ");
-        String _appName = this._utils.appName(app);
-        _builder.append(_appName, "");
+        String _appNamespace = this._utils.appNamespace(app);
+        _builder.append(_appNamespace, "");
         _builder.append("\\Entity\\Validator;");
         _builder.newLineIfNotEmpty();
         {
@@ -1517,8 +1517,8 @@ public class Validator {
       boolean _targets_1 = this._utils.targets(app, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
-        String _appName_1 = this._utils.appName(app);
-        _builder.append(_appName_1, "");
+        String _appName = this._utils.appName(app);
+        _builder.append(_appName, "");
         _builder.append("_Entity_Validator_");
         String _name_1 = it.getName();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name_1);
@@ -1527,16 +1527,16 @@ public class Validator {
         {
           boolean _isInheriting_1 = this._modelInheritanceExtensions.isInheriting(it);
           if (_isInheriting_1) {
-            String _appName_2 = this._utils.appName(app);
-            _builder.append(_appName_2, "");
+            String _appName_1 = this._utils.appName(app);
+            _builder.append(_appName_1, "");
             _builder.append("_Entity_Validator_");
             Entity _parentType = this._modelInheritanceExtensions.parentType(it);
             String _name_2 = _parentType.getName();
             String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_2);
             _builder.append(_formatForCodeCapital_1, "");
           } else {
-            String _appName_3 = this._utils.appName(app);
-            _builder.append(_appName_3, "");
+            String _appName_2 = this._utils.appName(app);
+            _builder.append(_appName_2, "");
             _builder.append("_Entity_Validator_Base_");
             String _name_3 = it.getName();
             String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_3);
@@ -1554,8 +1554,8 @@ public class Validator {
           boolean _isInheriting_2 = this._modelInheritanceExtensions.isInheriting(it);
           if (_isInheriting_2) {
             _builder.append("\\");
-            String _appName_4 = this._utils.appName(app);
-            _builder.append(_appName_4, "");
+            String _appName_3 = this._utils.appName(app);
+            _builder.append(_appName_3, "");
             _builder.append("\\Entity\\Validator\\");
             Entity _parentType_1 = this._modelInheritanceExtensions.parentType(it);
             String _name_5 = _parentType_1.getName();
