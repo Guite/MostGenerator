@@ -982,11 +982,7 @@ class FormHandler {
                                     $values = $entityData[$listField];
                                     $entityData[$listField] = '';
                                     if (count($values) > 0) {
-                                        if (count($values) > 1) {
-                                            $entityData[$listField] = '###' . implode('###', $values) . '###';
-                                        } else {
-                                            $entityData[$listField] = '###' . $values . '###';
-                                        }
+                                        $entityData[$listField] = '###' . implode('###', $values) . '###';
                                     }
                                 }
                             }
