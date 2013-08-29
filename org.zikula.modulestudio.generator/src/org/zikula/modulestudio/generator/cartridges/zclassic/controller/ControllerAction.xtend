@@ -228,6 +228,7 @@ class ControllerAction {
     }
 
     def private dispatch actionImplBody(ViewAction it) '''
+        «val hasView = !controller.isAjaxController»
         «IF app.targets('1.3.5')»
             $entityClass = $this->name . '_Entity_' . ucwords($objectType);
         «ELSE»
@@ -235,17 +236,19 @@ class ControllerAction {
         «ENDIF»
         $repository = $this->entityManager->getRepository($entityClass);
         $repository->setControllerArguments($args);
-        $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
-        «IF app.hasTrees»
+        «IF hasView»
+            $viewHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_View«ELSE»ViewUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            «IF app.hasTrees»
 
-            $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : $this->request->query->filter('tpl', '', FILTER_SANITIZE_STRING);
-            if ($tpl == 'tree') {
-                $trees = ModUtil::apiFunc($this->name, 'selection', 'getAllTrees', array('ot' => $objectType));
-                $this->view->assign('trees', $trees)
-                           ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
-                // fetch and return the appropriate template
-                return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args);
-            }
+                $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : $this->request->query->filter('tpl', '', FILTER_SANITIZE_STRING);
+                if ($tpl == 'tree') {
+                    $trees = ModUtil::apiFunc($this->name, 'selection', 'getAllTrees', array('ot' => $objectType));
+                    $this->view->assign('trees', $trees)
+                               ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
+                    // fetch and return the appropriate template
+                    return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args);
+                }
+            «ENDIF»
         «ENDIF»
 
         // parameter for used sorting field
@@ -262,17 +265,26 @@ class ControllerAction {
         // convenience vars to make code clearer
         $currentUrlArgs = array('ot' => $objectType);
 
+        «IF controller.isAjaxController»
+            $where = (isset($args['where']) && !empty($args['where'])) ? $args['where'] : $this->request->query->filter('where', '');
+            $where = str_replace('"', '', $where);
+        «ELSE»
+            $where = '';
+        «ENDIF»
+
         $selectionArgs = array(
             'ot' => $objectType,
-            'where' => '',
+            'where' => $where,
             'orderBy' => $sort . ' ' . $sdir
         );
 
         $showOwnEntries = (int) (isset($args['own']) && !empty($args['own'])) ? $args['own'] : $this->request->query->filter('own', 0, FILTER_VALIDATE_INT);
         $showAllEntries = (int) (isset($args['all']) && !empty($args['all'])) ? $args['all'] : $this->request->query->filter('all', 0, FILTER_VALIDATE_INT);
 
-        $this->view->assign('showOwnEntries', $showOwnEntries)
-                   ->assign('showAllEntries', $showAllEntries);
+        «IF hasView»
+            $this->view->assign('showOwnEntries', $showOwnEntries)
+                       ->assign('showAllEntries', $showAllEntries);
+        «ENDIF»
         if ($showOwnEntries == 1) {
             $currentUrlArgs['own'] = 1;
         }
@@ -291,21 +303,27 @@ class ControllerAction {
             $accessLevel = ACCESS_EDIT;
         }
 
-        $templateFile = $viewHelper->getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args);
-        $cacheId = 'view|ot_' . $objectType . '_sort_' . $sort . '_' . $sdir;
-
+        «IF hasView»
+            $templateFile = $viewHelper->getViewTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args);
+            $cacheId = 'view|ot_' . $objectType . '_sort_' . $sort . '_' . $sdir;
+        «ENDIF»
         $resultsPerPage = 0;
         if ($showAllEntries == 1) {
-            // set cache id
-            $this->view->setCacheId($cacheId . '_all_1_own_' . $showOwnEntries . '_' . $accessLevel);
+            «IF hasView»
+                // set cache id
+                $this->view->setCacheId($cacheId . '_all_1_own_' . $showOwnEntries . '_' . $accessLevel);
 
-            // if page is cached return cached content
-            if ($this->view->is_cached($templateFile)) {
-                return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args, $templateFile);
-            }
+                // if page is cached return cached content
+                if ($this->view->is_cached($templateFile)) {
+                    return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args, $templateFile);
+                }
 
+            «ENDIF»
             // retrieve item list without pagination
             $entities = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
+            «IF !hasView»
+                $objectCount = count($entities);
+            «ENDIF»
         } else {
             // the current offset which is used to calculate the pagination
             $currentPage = (int) (isset($args['pos']) && !empty($args['pos'])) ? $args['pos'] : $this->request->query->filter('pos', 1, FILTER_VALIDATE_INT);
@@ -317,41 +335,79 @@ class ControllerAction {
                 $resultsPerPage = ($csv == 1) ? 999999 : $this->getVar('pageSize', 10);
             }
 
-            // set cache id
-            $this->view->setCacheId($cacheId . '_amount_' . $resultsPerPage . '_page_' . $currentPage . '_own_' . $showOwnEntries . '_' . $accessLevel);
+            «IF hasView»
+                // set cache id
+                $this->view->setCacheId($cacheId . '_amount_' . $resultsPerPage . '_page_' . $currentPage . '_own_' . $showOwnEntries . '_' . $accessLevel);
 
-            // if page is cached return cached content
-            if ($this->view->is_cached($templateFile)) {
-                return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args, $templateFile);
-            }
+                // if page is cached return cached content
+                if ($this->view->is_cached($templateFile)) {
+                    return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args, $templateFile);
+                }
 
+            «ENDIF»
             // retrieve item list with pagination
             $selectionArgs['currentPage'] = $currentPage;
             $selectionArgs['resultsPerPage'] = $resultsPerPage;
             list($entities, $objectCount) = ModUtil::apiFunc($this->name, 'selection', 'getEntitiesPaginated', $selectionArgs);
+            «IF hasView»
 
-            $this->view->assign('currentPage', $currentPage)
-                       ->assign('pager', array('numitems'     => $objectCount,
-                                               'itemsperpage' => $resultsPerPage));
+                $this->view->assign('currentPage', $currentPage)
+                           ->assign('pager', array('numitems'     => $objectCount,
+                                                   'itemsperpage' => $resultsPerPage));
+           «ENDIF»
         }
 
         foreach ($entities as $k => $entity) {
             $entity->initWorkflow();
         }
+        «IF hasView»
 
-        // build ModUrl instance for display hooks
-        $currentUrlObject = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, '«controller.formattedName»', 'view', ZLanguage::getLanguageCode(), $currentUrlArgs);
+            // build ModUrl instance for display hooks
+            $currentUrlObject = new «IF app.targets('1.3.5')»Zikula_«ENDIF»ModUrl($this->name, '«controller.formattedName»', 'view', ZLanguage::getLanguageCode(), $currentUrlArgs);
 
-        // assign the object data, sorting information and details for creating the pager
-        $this->view->assign('items', $entities)
-                   ->assign('sort', $sort)
-                   ->assign('sdir', $sdir)
-                   ->assign('pageSize', $resultsPerPage)
-                   ->assign('currentUrlObject', $currentUrlObject)
-                   ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
+            // assign the object data, sorting information and details for creating the pager
+            $this->view->assign('items', $entities)
+                       ->assign('sort', $sort)
+                       ->assign('sdir', $sdir)
+                       ->assign('pageSize', $resultsPerPage)
+                       ->assign('currentUrlObject', $currentUrlObject)
+                       ->assign($repository->getAdditionalTemplateParameters('controllerAction', $utilArgs));
 
-        // fetch and return the appropriate template
-        return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args, $templateFile);
+            // fetch and return the appropriate template
+            return $viewHelper->processTemplate($this->view, '«controller.formattedName»', $objectType, 'view', $args, $templateFile);
+        «ELSE»
+            $items = array();
+            «IF app.hasListFields»
+                $listHelper = new «IF app.targets('1.3.5')»«app.appName»_Util_ListEntries«ELSE»ListEntriesUtil«ENDIF»($this->serviceManager«IF !app.targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+                $listObjectTypes = array(«FOR entity : app.getListEntities SEPARATOR ', '»'«entity.name.formatForCode»'«ENDFOR»);
+                $hasListFields = (in_array($objectType, $listObjectTypes));
+
+                foreach ($entities as $item) {
+                    $currItem = $item->toArray();
+                    if ($hasListFields) {
+                        // convert list field values to their corresponding labels
+                        switch ($objectType) {
+                            «FOR entity : app.getListEntities»
+                                case '«entity.name.formatForCode»':
+                                    «FOR field : entity.getListFieldsEntity»
+                                        $currItem['«field.name.formatForCode»'] = $listHelper->resolve($currItem['«field.name.formatForCode»'], $objectType, '«field.name.formatForCode»', ', ');
+                                    «ENDFOR»
+                                    break;
+                            «ENDFOR»
+                        }
+                    }
+                    $items[] = $currItem;
+                }
+            «ELSE»
+                foreach ($entities as $item) {
+                    $items[] = $item->toArray();
+                }
+            «ENDIF»
+
+            $result = array('objectCount' => $objectCount, 'items' => $items);
+
+            return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»($result);
+        «ENDIF»
     '''
 
     def private dispatch actionImplBody(DisplayAction it) '''

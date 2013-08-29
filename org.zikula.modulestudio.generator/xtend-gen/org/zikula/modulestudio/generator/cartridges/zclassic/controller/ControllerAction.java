@@ -13,6 +13,7 @@ import de.guite.modulestudio.metamodel.modulestudio.DeleteAction;
 import de.guite.modulestudio.metamodel.modulestudio.DisplayAction;
 import de.guite.modulestudio.metamodel.modulestudio.EditAction;
 import de.guite.modulestudio.metamodel.modulestudio.Entity;
+import de.guite.modulestudio.metamodel.modulestudio.ListField;
 import de.guite.modulestudio.metamodel.modulestudio.MainAction;
 import de.guite.modulestudio.metamodel.modulestudio.UserController;
 import de.guite.modulestudio.metamodel.modulestudio.ViewAction;
@@ -730,6 +731,10 @@ public class ControllerAction {
   
   private CharSequence _actionImplBody(final ViewAction it) {
     StringConcatenation _builder = new StringConcatenation();
+    Controller _controller = it.getController();
+    boolean _isAjaxController = this._controllerExtensions.isAjaxController(_controller);
+    final boolean hasView = (!_isAjaxController);
+    _builder.newLineIfNotEmpty();
     {
       boolean _targets = this._utils.targets(this.app, "1.3.5");
       if (_targets) {
@@ -744,56 +749,60 @@ public class ControllerAction {
     _builder.newLine();
     _builder.append("$repository->setControllerArguments($args);");
     _builder.newLine();
-    _builder.append("$viewHelper = new ");
     {
-      boolean _targets_1 = this._utils.targets(this.app, "1.3.5");
-      if (_targets_1) {
-        String _appName = this._utils.appName(this.app);
-        _builder.append(_appName, "");
-        _builder.append("_Util_View");
-      } else {
-        _builder.append("ViewUtil");
-      }
-    }
-    _builder.append("($this->serviceManager");
-    {
-      boolean _targets_2 = this._utils.targets(this.app, "1.3.5");
-      boolean _not = (!_targets_2);
-      if (_not) {
-        _builder.append(", ModUtil::getModule($this->name)");
-      }
-    }
-    _builder.append(");");
-    _builder.newLineIfNotEmpty();
-    {
-      boolean _hasTrees = this._modelBehaviourExtensions.hasTrees(this.app);
-      if (_hasTrees) {
-        _builder.newLine();
-        _builder.append("$tpl = (isset($args[\'tpl\']) && !empty($args[\'tpl\'])) ? $args[\'tpl\'] : $this->request->query->filter(\'tpl\', \'\', FILTER_SANITIZE_STRING);");
-        _builder.newLine();
-        _builder.append("if ($tpl == \'tree\') {");
-        _builder.newLine();
-        _builder.append("    ");
-        _builder.append("$trees = ModUtil::apiFunc($this->name, \'selection\', \'getAllTrees\', array(\'ot\' => $objectType));");
-        _builder.newLine();
-        _builder.append("    ");
-        _builder.append("$this->view->assign(\'trees\', $trees)");
-        _builder.newLine();
-        _builder.append("               ");
-        _builder.append("->assign($repository->getAdditionalTemplateParameters(\'controllerAction\', $utilArgs));");
-        _builder.newLine();
-        _builder.append("    ");
-        _builder.append("// fetch and return the appropriate template");
-        _builder.newLine();
-        _builder.append("    ");
-        _builder.append("return $viewHelper->processTemplate($this->view, \'");
-        Controller _controller = it.getController();
-        String _formattedName = this._controllerExtensions.formattedName(_controller);
-        _builder.append(_formattedName, "    ");
-        _builder.append("\', $objectType, \'view\', $args);");
+      if (hasView) {
+        _builder.append("$viewHelper = new ");
+        {
+          boolean _targets_1 = this._utils.targets(this.app, "1.3.5");
+          if (_targets_1) {
+            String _appName = this._utils.appName(this.app);
+            _builder.append(_appName, "");
+            _builder.append("_Util_View");
+          } else {
+            _builder.append("ViewUtil");
+          }
+        }
+        _builder.append("($this->serviceManager");
+        {
+          boolean _targets_2 = this._utils.targets(this.app, "1.3.5");
+          boolean _not = (!_targets_2);
+          if (_not) {
+            _builder.append(", ModUtil::getModule($this->name)");
+          }
+        }
+        _builder.append(");");
         _builder.newLineIfNotEmpty();
-        _builder.append("}");
-        _builder.newLine();
+        {
+          boolean _hasTrees = this._modelBehaviourExtensions.hasTrees(this.app);
+          if (_hasTrees) {
+            _builder.newLine();
+            _builder.append("$tpl = (isset($args[\'tpl\']) && !empty($args[\'tpl\'])) ? $args[\'tpl\'] : $this->request->query->filter(\'tpl\', \'\', FILTER_SANITIZE_STRING);");
+            _builder.newLine();
+            _builder.append("if ($tpl == \'tree\') {");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("$trees = ModUtil::apiFunc($this->name, \'selection\', \'getAllTrees\', array(\'ot\' => $objectType));");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("$this->view->assign(\'trees\', $trees)");
+            _builder.newLine();
+            _builder.append("               ");
+            _builder.append("->assign($repository->getAdditionalTemplateParameters(\'controllerAction\', $utilArgs));");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("// fetch and return the appropriate template");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("return $viewHelper->processTemplate($this->view, \'");
+            Controller _controller_1 = it.getController();
+            String _formattedName = this._controllerExtensions.formattedName(_controller_1);
+            _builder.append(_formattedName, "    ");
+            _builder.append("\', $objectType, \'view\', $args);");
+            _builder.newLineIfNotEmpty();
+            _builder.append("}");
+            _builder.newLine();
+          }
+        }
       }
     }
     _builder.newLine();
@@ -825,13 +834,27 @@ public class ControllerAction {
     _builder.append("$currentUrlArgs = array(\'ot\' => $objectType);");
     _builder.newLine();
     _builder.newLine();
+    {
+      Controller _controller_2 = it.getController();
+      boolean _isAjaxController_1 = this._controllerExtensions.isAjaxController(_controller_2);
+      if (_isAjaxController_1) {
+        _builder.append("$where = (isset($args[\'where\']) && !empty($args[\'where\'])) ? $args[\'where\'] : $this->request->query->filter(\'where\', \'\');");
+        _builder.newLine();
+        _builder.append("$where = str_replace(\'\"\', \'\', $where);");
+        _builder.newLine();
+      } else {
+        _builder.append("$where = \'\';");
+        _builder.newLine();
+      }
+    }
+    _builder.newLine();
     _builder.append("$selectionArgs = array(");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("\'ot\' => $objectType,");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("\'where\' => \'\',");
+    _builder.append("\'where\' => $where,");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("\'orderBy\' => $sort . \' \' . $sdir");
@@ -844,11 +867,15 @@ public class ControllerAction {
     _builder.append("$showAllEntries = (int) (isset($args[\'all\']) && !empty($args[\'all\'])) ? $args[\'all\'] : $this->request->query->filter(\'all\', 0, FILTER_VALIDATE_INT);");
     _builder.newLine();
     _builder.newLine();
-    _builder.append("$this->view->assign(\'showOwnEntries\', $showOwnEntries)");
-    _builder.newLine();
-    _builder.append("           ");
-    _builder.append("->assign(\'showAllEntries\', $showAllEntries);");
-    _builder.newLine();
+    {
+      if (hasView) {
+        _builder.append("$this->view->assign(\'showOwnEntries\', $showOwnEntries)");
+        _builder.newLine();
+        _builder.append("           ");
+        _builder.append("->assign(\'showAllEntries\', $showAllEntries);");
+        _builder.newLine();
+      }
+    }
     _builder.append("if ($showOwnEntries == 1) {");
     _builder.newLine();
     _builder.append("    ");
@@ -890,49 +917,65 @@ public class ControllerAction {
     _builder.append("}");
     _builder.newLine();
     _builder.newLine();
-    _builder.append("$templateFile = $viewHelper->getViewTemplate($this->view, \'");
-    Controller _controller_1 = it.getController();
-    String _formattedName_1 = this._controllerExtensions.formattedName(_controller_1);
-    _builder.append(_formattedName_1, "");
-    _builder.append("\', $objectType, \'view\', $args);");
-    _builder.newLineIfNotEmpty();
-    _builder.append("$cacheId = \'view|ot_\' . $objectType . \'_sort_\' . $sort . \'_\' . $sdir;");
-    _builder.newLine();
-    _builder.newLine();
+    {
+      if (hasView) {
+        _builder.append("$templateFile = $viewHelper->getViewTemplate($this->view, \'");
+        Controller _controller_3 = it.getController();
+        String _formattedName_1 = this._controllerExtensions.formattedName(_controller_3);
+        _builder.append(_formattedName_1, "");
+        _builder.append("\', $objectType, \'view\', $args);");
+        _builder.newLineIfNotEmpty();
+        _builder.append("$cacheId = \'view|ot_\' . $objectType . \'_sort_\' . $sort . \'_\' . $sdir;");
+        _builder.newLine();
+      }
+    }
     _builder.append("$resultsPerPage = 0;");
     _builder.newLine();
     _builder.append("if ($showAllEntries == 1) {");
     _builder.newLine();
-    _builder.append("    ");
-    _builder.append("// set cache id");
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("$this->view->setCacheId($cacheId . \'_all_1_own_\' . $showOwnEntries . \'_\' . $accessLevel);");
-    _builder.newLine();
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("// if page is cached return cached content");
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("if ($this->view->is_cached($templateFile)) {");
-    _builder.newLine();
-    _builder.append("        ");
-    _builder.append("return $viewHelper->processTemplate($this->view, \'");
-    Controller _controller_2 = it.getController();
-    String _formattedName_2 = this._controllerExtensions.formattedName(_controller_2);
-    _builder.append(_formattedName_2, "        ");
-    _builder.append("\', $objectType, \'view\', $args, $templateFile);");
-    _builder.newLineIfNotEmpty();
-    _builder.append("    ");
-    _builder.append("}");
-    _builder.newLine();
-    _builder.newLine();
+    {
+      if (hasView) {
+        _builder.append("    ");
+        _builder.append("// set cache id");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("$this->view->setCacheId($cacheId . \'_all_1_own_\' . $showOwnEntries . \'_\' . $accessLevel);");
+        _builder.newLine();
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("// if page is cached return cached content");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("if ($this->view->is_cached($templateFile)) {");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("    ");
+        _builder.append("return $viewHelper->processTemplate($this->view, \'");
+        Controller _controller_4 = it.getController();
+        String _formattedName_2 = this._controllerExtensions.formattedName(_controller_4);
+        _builder.append(_formattedName_2, "        ");
+        _builder.append("\', $objectType, \'view\', $args, $templateFile);");
+        _builder.newLineIfNotEmpty();
+        _builder.append("    ");
+        _builder.append("}");
+        _builder.newLine();
+        _builder.newLine();
+      }
+    }
     _builder.append("    ");
     _builder.append("// retrieve item list without pagination");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("$entities = ModUtil::apiFunc($this->name, \'selection\', \'getEntities\', $selectionArgs);");
     _builder.newLine();
+    {
+      boolean _not_1 = (!hasView);
+      if (_not_1) {
+        _builder.append("    ");
+        _builder.append("$objectCount = count($entities);");
+        _builder.newLine();
+      }
+    }
     _builder.append("} else {");
     _builder.newLine();
     _builder.append("    ");
@@ -961,30 +1004,35 @@ public class ControllerAction {
     _builder.append("}");
     _builder.newLine();
     _builder.newLine();
-    _builder.append("    ");
-    _builder.append("// set cache id");
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("$this->view->setCacheId($cacheId . \'_amount_\' . $resultsPerPage . \'_page_\' . $currentPage . \'_own_\' . $showOwnEntries . \'_\' . $accessLevel);");
-    _builder.newLine();
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("// if page is cached return cached content");
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("if ($this->view->is_cached($templateFile)) {");
-    _builder.newLine();
-    _builder.append("        ");
-    _builder.append("return $viewHelper->processTemplate($this->view, \'");
-    Controller _controller_3 = it.getController();
-    String _formattedName_3 = this._controllerExtensions.formattedName(_controller_3);
-    _builder.append(_formattedName_3, "        ");
-    _builder.append("\', $objectType, \'view\', $args, $templateFile);");
-    _builder.newLineIfNotEmpty();
-    _builder.append("    ");
-    _builder.append("}");
-    _builder.newLine();
-    _builder.newLine();
+    {
+      if (hasView) {
+        _builder.append("    ");
+        _builder.append("// set cache id");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("$this->view->setCacheId($cacheId . \'_amount_\' . $resultsPerPage . \'_page_\' . $currentPage . \'_own_\' . $showOwnEntries . \'_\' . $accessLevel);");
+        _builder.newLine();
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("// if page is cached return cached content");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("if ($this->view->is_cached($templateFile)) {");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("    ");
+        _builder.append("return $viewHelper->processTemplate($this->view, \'");
+        Controller _controller_5 = it.getController();
+        String _formattedName_3 = this._controllerExtensions.formattedName(_controller_5);
+        _builder.append(_formattedName_3, "        ");
+        _builder.append("\', $objectType, \'view\', $args, $templateFile);");
+        _builder.newLineIfNotEmpty();
+        _builder.append("    ");
+        _builder.append("}");
+        _builder.newLine();
+        _builder.newLine();
+      }
+    }
     _builder.append("    ");
     _builder.append("// retrieve item list with pagination");
     _builder.newLine();
@@ -997,16 +1045,22 @@ public class ControllerAction {
     _builder.append("    ");
     _builder.append("list($entities, $objectCount) = ModUtil::apiFunc($this->name, \'selection\', \'getEntitiesPaginated\', $selectionArgs);");
     _builder.newLine();
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("$this->view->assign(\'currentPage\', $currentPage)");
-    _builder.newLine();
-    _builder.append("               ");
-    _builder.append("->assign(\'pager\', array(\'numitems\'     => $objectCount,");
-    _builder.newLine();
-    _builder.append("                                       ");
-    _builder.append("\'itemsperpage\' => $resultsPerPage));");
-    _builder.newLine();
+    {
+      if (hasView) {
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("$this->view->assign(\'currentPage\', $currentPage)");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("           ");
+        _builder.append("->assign(\'pager\', array(\'numitems\'     => $objectCount,");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("                                   ");
+        _builder.append("\'itemsperpage\' => $resultsPerPage));");
+        _builder.newLine();
+      }
+    }
     _builder.append("}");
     _builder.newLine();
     _builder.newLine();
@@ -1017,51 +1071,191 @@ public class ControllerAction {
     _builder.newLine();
     _builder.append("}");
     _builder.newLine();
-    _builder.newLine();
-    _builder.append("// build ModUrl instance for display hooks");
-    _builder.newLine();
-    _builder.append("$currentUrlObject = new ");
     {
-      boolean _targets_3 = this._utils.targets(this.app, "1.3.5");
-      if (_targets_3) {
-        _builder.append("Zikula_");
+      if (hasView) {
+        _builder.newLine();
+        _builder.append("// build ModUrl instance for display hooks");
+        _builder.newLine();
+        _builder.append("$currentUrlObject = new ");
+        {
+          boolean _targets_3 = this._utils.targets(this.app, "1.3.5");
+          if (_targets_3) {
+            _builder.append("Zikula_");
+          }
+        }
+        _builder.append("ModUrl($this->name, \'");
+        Controller _controller_6 = it.getController();
+        String _formattedName_4 = this._controllerExtensions.formattedName(_controller_6);
+        _builder.append(_formattedName_4, "");
+        _builder.append("\', \'view\', ZLanguage::getLanguageCode(), $currentUrlArgs);");
+        _builder.newLineIfNotEmpty();
+        _builder.newLine();
+        _builder.append("// assign the object data, sorting information and details for creating the pager");
+        _builder.newLine();
+        _builder.append("$this->view->assign(\'items\', $entities)");
+        _builder.newLine();
+        _builder.append("           ");
+        _builder.append("->assign(\'sort\', $sort)");
+        _builder.newLine();
+        _builder.append("           ");
+        _builder.append("->assign(\'sdir\', $sdir)");
+        _builder.newLine();
+        _builder.append("           ");
+        _builder.append("->assign(\'pageSize\', $resultsPerPage)");
+        _builder.newLine();
+        _builder.append("           ");
+        _builder.append("->assign(\'currentUrlObject\', $currentUrlObject)");
+        _builder.newLine();
+        _builder.append("           ");
+        _builder.append("->assign($repository->getAdditionalTemplateParameters(\'controllerAction\', $utilArgs));");
+        _builder.newLine();
+        _builder.newLine();
+        _builder.append("// fetch and return the appropriate template");
+        _builder.newLine();
+        _builder.append("return $viewHelper->processTemplate($this->view, \'");
+        Controller _controller_7 = it.getController();
+        String _formattedName_5 = this._controllerExtensions.formattedName(_controller_7);
+        _builder.append(_formattedName_5, "");
+        _builder.append("\', $objectType, \'view\', $args, $templateFile);");
+        _builder.newLineIfNotEmpty();
+      } else {
+        _builder.append("$items = array();");
+        _builder.newLine();
+        {
+          boolean _hasListFields = this._modelExtensions.hasListFields(this.app);
+          if (_hasListFields) {
+            _builder.append("$listHelper = new ");
+            {
+              boolean _targets_4 = this._utils.targets(this.app, "1.3.5");
+              if (_targets_4) {
+                String _appName_2 = this._utils.appName(this.app);
+                _builder.append(_appName_2, "");
+                _builder.append("_Util_ListEntries");
+              } else {
+                _builder.append("ListEntriesUtil");
+              }
+            }
+            _builder.append("($this->serviceManager");
+            {
+              boolean _targets_5 = this._utils.targets(this.app, "1.3.5");
+              boolean _not_2 = (!_targets_5);
+              if (_not_2) {
+                _builder.append(", ModUtil::getModule($this->name)");
+              }
+            }
+            _builder.append(");");
+            _builder.newLineIfNotEmpty();
+            _builder.append("$listObjectTypes = array(");
+            {
+              Iterable<Entity> _listEntities = this._modelExtensions.getListEntities(this.app);
+              boolean _hasElements = false;
+              for(final Entity entity : _listEntities) {
+                if (!_hasElements) {
+                  _hasElements = true;
+                } else {
+                  _builder.appendImmediate(", ", "");
+                }
+                _builder.append("\'");
+                String _name = entity.getName();
+                String _formatForCode = this._formattingExtensions.formatForCode(_name);
+                _builder.append(_formatForCode, "");
+                _builder.append("\'");
+              }
+            }
+            _builder.append(");");
+            _builder.newLineIfNotEmpty();
+            _builder.append("$hasListFields = (in_array($objectType, $listObjectTypes));");
+            _builder.newLine();
+            _builder.newLine();
+            _builder.append("foreach ($entities as $item) {");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("$currItem = $item->toArray();");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("if ($hasListFields) {");
+            _builder.newLine();
+            _builder.append("        ");
+            _builder.append("// convert list field values to their corresponding labels");
+            _builder.newLine();
+            _builder.append("        ");
+            _builder.append("switch ($objectType) {");
+            _builder.newLine();
+            {
+              Iterable<Entity> _listEntities_1 = this._modelExtensions.getListEntities(this.app);
+              for(final Entity entity_1 : _listEntities_1) {
+                _builder.append("            ");
+                _builder.append("case \'");
+                String _name_1 = entity_1.getName();
+                String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_1);
+                _builder.append(_formatForCode_1, "            ");
+                _builder.append("\':");
+                _builder.newLineIfNotEmpty();
+                {
+                  Iterable<ListField> _listFieldsEntity = this._modelExtensions.getListFieldsEntity(entity_1);
+                  for(final ListField field : _listFieldsEntity) {
+                    _builder.append("            ");
+                    _builder.append("    ");
+                    _builder.append("$currItem[\'");
+                    String _name_2 = field.getName();
+                    String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_2);
+                    _builder.append(_formatForCode_2, "                ");
+                    _builder.append("\'] = $listHelper->resolve($currItem[\'");
+                    String _name_3 = field.getName();
+                    String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_3);
+                    _builder.append(_formatForCode_3, "                ");
+                    _builder.append("\'], $objectType, \'");
+                    String _name_4 = field.getName();
+                    String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_4);
+                    _builder.append(_formatForCode_4, "                ");
+                    _builder.append("\', \', \');");
+                    _builder.newLineIfNotEmpty();
+                  }
+                }
+                _builder.append("            ");
+                _builder.append("    ");
+                _builder.append("break;");
+                _builder.newLine();
+              }
+            }
+            _builder.append("        ");
+            _builder.append("}");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("}");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("$items[] = $currItem;");
+            _builder.newLine();
+            _builder.append("}");
+            _builder.newLine();
+          } else {
+            _builder.append("foreach ($entities as $item) {");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("$items[] = $item->toArray();");
+            _builder.newLine();
+            _builder.append("}");
+            _builder.newLine();
+          }
+        }
+        _builder.newLine();
+        _builder.append("$result = array(\'objectCount\' => $objectCount, \'items\' => $items);");
+        _builder.newLine();
+        _builder.newLine();
+        _builder.append("return new ");
+        {
+          boolean _targets_6 = this._utils.targets(this.app, "1.3.5");
+          if (_targets_6) {
+            _builder.append("Zikula_Response_Ajax");
+          } else {
+            _builder.append("AjaxResponse");
+          }
+        }
+        _builder.append("($result);");
+        _builder.newLineIfNotEmpty();
       }
     }
-    _builder.append("ModUrl($this->name, \'");
-    Controller _controller_4 = it.getController();
-    String _formattedName_4 = this._controllerExtensions.formattedName(_controller_4);
-    _builder.append(_formattedName_4, "");
-    _builder.append("\', \'view\', ZLanguage::getLanguageCode(), $currentUrlArgs);");
-    _builder.newLineIfNotEmpty();
-    _builder.newLine();
-    _builder.append("// assign the object data, sorting information and details for creating the pager");
-    _builder.newLine();
-    _builder.append("$this->view->assign(\'items\', $entities)");
-    _builder.newLine();
-    _builder.append("           ");
-    _builder.append("->assign(\'sort\', $sort)");
-    _builder.newLine();
-    _builder.append("           ");
-    _builder.append("->assign(\'sdir\', $sdir)");
-    _builder.newLine();
-    _builder.append("           ");
-    _builder.append("->assign(\'pageSize\', $resultsPerPage)");
-    _builder.newLine();
-    _builder.append("           ");
-    _builder.append("->assign(\'currentUrlObject\', $currentUrlObject)");
-    _builder.newLine();
-    _builder.append("           ");
-    _builder.append("->assign($repository->getAdditionalTemplateParameters(\'controllerAction\', $utilArgs));");
-    _builder.newLine();
-    _builder.newLine();
-    _builder.append("// fetch and return the appropriate template");
-    _builder.newLine();
-    _builder.append("return $viewHelper->processTemplate($this->view, \'");
-    Controller _controller_5 = it.getController();
-    String _formattedName_5 = this._controllerExtensions.formattedName(_controller_5);
-    _builder.append(_formattedName_5, "");
-    _builder.append("\', $objectType, \'view\', $args, $templateFile);");
-    _builder.newLineIfNotEmpty();
     return _builder;
   }
   

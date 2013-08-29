@@ -312,34 +312,51 @@ public class ControllerLayer {
             _builder.newLineIfNotEmpty();
           }
         }
-        _builder.append("use ");
-        String _appNamespace_4 = this._utils.appNamespace(this.app);
-        _builder.append(_appNamespace_4, "");
-        _builder.append("\\Util\\ViewUtil;");
-        _builder.newLineIfNotEmpty();
         {
-          boolean _or = false;
-          boolean _or_1 = false;
           boolean _and_2 = false;
           boolean _isAjaxController_1 = this._controllerExtensions.isAjaxController(it);
           if (!_isAjaxController_1) {
             _and_2 = false;
           } else {
-            boolean _hasTrees = this._modelBehaviourExtensions.hasTrees(this.app);
-            _and_2 = (_isAjaxController_1 && _hasTrees);
+            boolean _hasListFields = this._modelExtensions.hasListFields(this.app);
+            _and_2 = (_isAjaxController_1 && _hasListFields);
           }
           if (_and_2) {
+            _builder.append("use ");
+            String _appNamespace_4 = this._utils.appNamespace(this.app);
+            _builder.append(_appNamespace_4, "");
+            _builder.append("\\Util\\ListEntriesUtil;");
+            _builder.newLineIfNotEmpty();
+          }
+        }
+        _builder.append("use ");
+        String _appNamespace_5 = this._utils.appNamespace(this.app);
+        _builder.append(_appNamespace_5, "");
+        _builder.append("\\Util\\ViewUtil;");
+        _builder.newLineIfNotEmpty();
+        {
+          boolean _or = false;
+          boolean _or_1 = false;
+          boolean _and_3 = false;
+          boolean _isAjaxController_2 = this._controllerExtensions.isAjaxController(it);
+          if (!_isAjaxController_2) {
+            _and_3 = false;
+          } else {
+            boolean _hasTrees = this._modelBehaviourExtensions.hasTrees(this.app);
+            _and_3 = (_isAjaxController_2 && _hasTrees);
+          }
+          if (_and_3) {
             _or_1 = true;
           } else {
-            boolean _and_3 = false;
+            boolean _and_4 = false;
             boolean _hasActions = this._controllerExtensions.hasActions(it, "view");
             if (!_hasActions) {
-              _and_3 = false;
+              _and_4 = false;
             } else {
               boolean _isAdminController = this._controllerExtensions.isAdminController(it);
-              _and_3 = (_hasActions && _isAdminController);
+              _and_4 = (_hasActions && _isAdminController);
             }
-            _or_1 = (_and_2 || _and_3);
+            _or_1 = (_and_3 || _and_4);
           }
           if (_or_1) {
             _or = true;
@@ -349,16 +366,16 @@ public class ControllerLayer {
           }
           if (_or) {
             _builder.append("use ");
-            String _appNamespace_5 = this._utils.appNamespace(this.app);
-            _builder.append(_appNamespace_5, "");
+            String _appNamespace_6 = this._utils.appNamespace(this.app);
+            _builder.append(_appNamespace_6, "");
             _builder.append("\\Util\\WorkflowUtil;");
             _builder.newLineIfNotEmpty();
           }
         }
         _builder.newLine();
         {
-          boolean _isAjaxController_2 = this._controllerExtensions.isAjaxController(it);
-          if (_isAjaxController_2) {
+          boolean _isAjaxController_3 = this._controllerExtensions.isAjaxController(it);
+          if (_isAjaxController_3) {
             _builder.append("use DataUtil;");
             _builder.newLine();
             {
@@ -388,23 +405,23 @@ public class ControllerLayer {
         _builder.append("use SecurityUtil;");
         _builder.newLine();
         {
-          boolean _and_4 = false;
+          boolean _and_5 = false;
           boolean _hasActions_3 = this._controllerExtensions.hasActions(it, "view");
           if (!_hasActions_3) {
-            _and_4 = false;
+            _and_5 = false;
           } else {
             boolean _isAdminController_1 = this._controllerExtensions.isAdminController(it);
-            _and_4 = (_hasActions_3 && _isAdminController_1);
+            _and_5 = (_hasActions_3 && _isAdminController_1);
           }
-          if (_and_4) {
+          if (_and_5) {
             _builder.append("use System;");
             _builder.newLine();
           }
         }
         _builder.append("use Zikula_");
         {
-          boolean _isAjaxController_3 = this._controllerExtensions.isAjaxController(it);
-          boolean _not_2 = (!_isAjaxController_3);
+          boolean _isAjaxController_4 = this._controllerExtensions.isAjaxController(it);
+          boolean _not_2 = (!_isAjaxController_4);
           if (_not_2) {
             _builder.append("AbstractController");
           } else {
@@ -419,19 +436,19 @@ public class ControllerLayer {
         _builder.newLine();
         {
           boolean _or_2 = false;
-          boolean _and_5 = false;
+          boolean _and_6 = false;
           boolean _hasActions_4 = this._controllerExtensions.hasActions(it, "view");
           if (!_hasActions_4) {
-            _and_5 = false;
+            _and_6 = false;
           } else {
             boolean _isAdminController_2 = this._controllerExtensions.isAdminController(it);
-            _and_5 = (_hasActions_4 && _isAdminController_2);
+            _and_6 = (_hasActions_4 && _isAdminController_2);
           }
-          if (_and_5) {
+          if (_and_6) {
             _or_2 = true;
           } else {
             boolean _hasActions_5 = this._controllerExtensions.hasActions(it, "delete");
-            _or_2 = (_and_5 || _hasActions_5);
+            _or_2 = (_and_6 || _hasActions_5);
           }
           if (_or_2) {
             _builder.append("use Zikula\\Core\\Hook\\ProcessHook;");
@@ -445,8 +462,8 @@ public class ControllerLayer {
         _builder.append("use Zikula\\Core\\ModUrl;");
         _builder.newLine();
         {
-          boolean _isAjaxController_4 = this._controllerExtensions.isAjaxController(it);
-          if (_isAjaxController_4) {
+          boolean _isAjaxController_5 = this._controllerExtensions.isAjaxController(it);
+          if (_isAjaxController_5) {
             _builder.append("use Zikula\\Core\\Response\\Ajax\\AjaxResponse;");
             _builder.newLine();
             _builder.append("use Zikula\\Core\\Response\\Ajax\\BadDataResponse;");
@@ -494,8 +511,8 @@ public class ControllerLayer {
     }
     _builder.append(" extends Zikula_");
     {
-      boolean _isAjaxController_5 = this._controllerExtensions.isAjaxController(it);
-      boolean _not_3 = (!_isAjaxController_5);
+      boolean _isAjaxController_6 = this._controllerExtensions.isAjaxController(it);
+      boolean _not_3 = (!_isAjaxController_6);
       if (_not_3) {
         _builder.append("AbstractController");
       } else {
@@ -506,8 +523,8 @@ public class ControllerLayer {
     _builder.append("{");
     _builder.newLine();
     {
-      boolean _isAjaxController_6 = this._controllerExtensions.isAjaxController(it);
-      if (_isAjaxController_6) {
+      boolean _isAjaxController_7 = this._controllerExtensions.isAjaxController(it);
+      if (_isAjaxController_7) {
         _builder.newLine();
       } else {
         _builder.append("    ");
@@ -533,15 +550,15 @@ public class ControllerLayer {
     }
     _builder.newLineIfNotEmpty();
     {
-      boolean _and_6 = false;
+      boolean _and_7 = false;
       boolean _hasActions_6 = this._controllerExtensions.hasActions(it, "view");
       if (!_hasActions_6) {
-        _and_6 = false;
+        _and_7 = false;
       } else {
         boolean _isAdminController_3 = this._controllerExtensions.isAdminController(it);
-        _and_6 = (_hasActions_6 && _isAdminController_3);
+        _and_7 = (_hasActions_6 && _isAdminController_3);
       }
-      if (_and_6) {
+      if (_and_7) {
         _builder.newLine();
         _builder.append("    ");
         CharSequence _handleSelectedObjects = this.handleSelectedObjects(it);
@@ -660,15 +677,15 @@ public class ControllerLayer {
       }
     }
     {
-      boolean _and_7 = false;
+      boolean _and_8 = false;
       boolean _needsConfig_1 = this._utils.needsConfig(this.app);
       if (!_needsConfig_1) {
-        _and_7 = false;
+        _and_8 = false;
       } else {
         boolean _isConfigController_1 = this._controllerExtensions.isConfigController(it);
-        _and_7 = (_needsConfig_1 && _isConfigController_1);
+        _and_8 = (_needsConfig_1 && _isConfigController_1);
       }
-      if (_and_7) {
+      if (_and_8) {
         _builder.newLine();
         _builder.append("    ");
         _builder.append("/**");
