@@ -59,7 +59,7 @@ class TreeSelector {
         «IF targets('1.3.5')»
         class «appName»_Form_Plugin_Base_TreeSelector extends «appName»_Form_Plugin_AbstractObjectSelector
         «ELSE»
-        class TreeSelector extends \«appName»\Form\Plugin\AbstractObjectSelector
+        class TreeSelector extends \«vendor.formatForCodeCapital»\«name.formatForCodeCapital»\Form\Plugin\AbstractObjectSelector
         «ENDIF»
         {
             /**
@@ -234,7 +234,7 @@ class TreeSelector {
          */
         function smarty_function_«appName.formatForDB»TreeSelector($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_TreeSelector«ELSE»\\«appName»\\Form\\Plugin\\TreeSelector«ENDIF»', $params);
+            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_TreeSelector«ELSE»\\«appNamespace»\\Form\\Plugin\\TreeSelector«ENDIF»', $params);
         }
     '''
 }

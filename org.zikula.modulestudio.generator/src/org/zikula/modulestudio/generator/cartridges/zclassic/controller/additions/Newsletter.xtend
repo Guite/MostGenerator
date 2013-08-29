@@ -209,7 +209,7 @@ class Newsletter {
             «IF targets('1.3.5')»
                 $entityClass = '«appName»_Entity_' . ucwords($objectType);
             «ELSE»
-                $entityClass = '\\«appName»\\Entity\\' . ucwords($objectType) . 'Entity';
+                $entityClass = '\\«appNamespace»\\Entity\\' . ucwords($objectType) . 'Entity';
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');

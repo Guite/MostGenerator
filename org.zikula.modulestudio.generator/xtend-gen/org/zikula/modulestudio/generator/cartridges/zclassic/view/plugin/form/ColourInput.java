@@ -611,8 +611,8 @@ public class ColourInput {
         _builder.append("_Form_Plugin_ColourInput");
       } else {
         _builder.append("\\\\");
-        String _appName_3 = this._utils.appName(it);
-        _builder.append(_appName_3, "    ");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "    ");
         _builder.append("\\\\Form\\\\Plugin\\\\ColourInput");
       }
     }

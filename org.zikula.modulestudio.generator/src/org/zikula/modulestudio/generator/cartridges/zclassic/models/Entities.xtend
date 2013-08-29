@@ -103,8 +103,10 @@ class Entities {
         «imports»
         «IF !app.targets('1.3.5')»
 
-            use «app.appNamespace»\UploadHandler;
-            use «app.appNamespace»\Util\ControllerUtil;
+            «IF hasUploadFieldsEntity»
+                use «app.appNamespace»\UploadHandler;
+                use «app.appNamespace»\Util\ControllerUtil;
+            «ENDIF»
             use «app.appNamespace»\Util\WorkflowUtil;
 
             use DataUtil;

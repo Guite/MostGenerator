@@ -176,7 +176,10 @@ public class FormHandler {
         _builder.newLineIfNotEmpty();
       } else {
         _builder.append("$handlerClass = \'\\\\");
-        _builder.append(appName, "");
+        Controllers _container_1 = controller.getContainer();
+        Application _application_1 = _container_1.getApplication();
+        String _appNamespace = this._utils.appNamespace(_application_1);
+        _builder.append(_appNamespace, "");
         _builder.append("\\\\Form\\\\Handler\\\\");
         String _name_1 = controller.getName();
         String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_1);

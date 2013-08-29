@@ -583,8 +583,8 @@ public class BlockList {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appName_12 = this._utils.appName(it);
-        _builder.append(_appName_12, "    ");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "    ");
         _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
@@ -611,8 +611,8 @@ public class BlockList {
         _builder.append("    ");
         _builder.append("    ");
         _builder.append("$properties = ModUtil::apiFunc(\'");
-        String _appName_13 = this._utils.appName(it);
-        _builder.append(_appName_13, "        ");
+        String _appName_12 = this._utils.appName(it);
+        _builder.append(_appName_12, "        ");
         _builder.append("\', \'category\', \'getAllProperties\', array(\'ot\' => $objectType));");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
@@ -632,8 +632,8 @@ public class BlockList {
         _builder.append("    ");
         _builder.append("        ");
         _builder.append("$categoryFiltersPerRegistry = ModUtil::apiFunc(\'");
-        String _appName_14 = this._utils.appName(it);
-        _builder.append(_appName_14, "            ");
+        String _appName_13 = this._utils.appName(it);
+        _builder.append(_appName_13, "            ");
         _builder.append("\', \'category\', \'buildFilterClauses\', array(\'ot\' => $objectType, \'catids\' => $vars[\'catIds\']));");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
@@ -678,8 +678,8 @@ public class BlockList {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("$component = \'");
-    String _appName_15 = this._utils.appName(it);
-    _builder.append(_appName_15, "    ");
+    String _appName_14 = this._utils.appName(it);
+    _builder.append(_appName_14, "    ");
     _builder.append(":\' . ucwords($objectType) . \':\';");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -756,8 +756,8 @@ public class BlockList {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("list($entities, $objectCount) = ModUtil::apiFunc(\'");
-    String _appName_16 = this._utils.appName(it);
-    _builder.append(_appName_16, "    ");
+    String _appName_15 = this._utils.appName(it);
+    _builder.append(_appName_15, "    ");
     _builder.append("\', \'selection\', \'getEntitiesPaginated\', $selectionArgs);");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
@@ -797,8 +797,8 @@ public class BlockList {
     _builder.newLine();
     _builder.append("        ");
     _builder.append("$blockinfo[\'title\'] = $this->__(\'");
-    String _appName_17 = this._utils.appName(it);
-    _builder.append(_appName_17, "        ");
+    String _appName_16 = this._utils.appName(it);
+    _builder.append(_appName_16, "        ");
     _builder.append(" items\');");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -1028,8 +1028,8 @@ public class BlockList {
     _builder.newLine();
     _builder.append("        ");
     _builder.append("$idFields = ModUtil::apiFunc(\'");
-    String _appName_18 = this._utils.appName(it);
-    _builder.append(_appName_18, "        ");
+    String _appName_17 = this._utils.appName(it);
+    _builder.append(_appName_17, "        ");
     _builder.append("\', \'selection\', \'getIdFields\', array(\'ot\' => $vars[\'objectType\']));");
     _builder.newLineIfNotEmpty();
     _builder.append("        ");
@@ -1193,8 +1193,8 @@ public class BlockList {
         _builder.append("    ");
         _builder.append("    ");
         _builder.append("$primaryRegistry = ModUtil::apiFunc(\'");
-        String _appName_19 = this._utils.appName(it);
-        _builder.append(_appName_19, "        ");
+        String _appName_18 = this._utils.appName(it);
+        _builder.append(_appName_18, "        ");
         _builder.append("\', \'category\', \'getPrimaryProperty\', array(\'ot\' => $vars[\'objectType\']));");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
@@ -1375,8 +1375,8 @@ public class BlockList {
     {
       boolean _targets_19 = this._utils.targets(it, "1.3.5");
       if (_targets_19) {
-        String _appName_20 = this._utils.appName(it);
-        _builder.append(_appName_20, "    ");
+        String _appName_19 = this._utils.appName(it);
+        _builder.append(_appName_19, "    ");
         _builder.append("_Util_Controller");
       } else {
         _builder.append("ControllerUtil");
@@ -1408,8 +1408,8 @@ public class BlockList {
         _builder.newLine();
         _builder.append("    ");
         _builder.append("$primaryRegistry = ModUtil::apiFunc(\'");
-        String _appName_21 = this._utils.appName(it);
-        _builder.append(_appName_21, "    ");
+        String _appName_20 = this._utils.appName(it);
+        _builder.append(_appName_20, "    ");
         _builder.append("\', \'category\', \'getPrimaryProperty\', array(\'ot\' => $vars[\'objectType\']));");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
@@ -1421,8 +1421,8 @@ public class BlockList {
         _builder.append("    ");
         _builder.append("    ");
         _builder.append("$vars[\'catIds\'] = ModUtil::apiFunc(\'");
-        String _appName_22 = this._utils.appName(it);
-        _builder.append(_appName_22, "        ");
+        String _appName_21 = this._utils.appName(it);
+        _builder.append(_appName_21, "        ");
         _builder.append("\', \'category\', \'retrieveCategoriesFromRequest\', array(\'ot\' => $vars[\'objectType\']));");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");

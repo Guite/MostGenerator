@@ -411,13 +411,20 @@ public class EditFunctions {
     _builder.newLine();
     _builder.append(" ");
     _builder.append("* There is also a method on PHP level available in the \\");
-    String _appName = this._utils.appName(it);
-    _builder.append(_appName, " ");
     {
       boolean _targets = this._utils.targets(it, "1.3.5");
       if (_targets) {
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, " ");
         _builder.append("_Util_Controller");
       } else {
+        String _vendor = it.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, " ");
+        _builder.append("\\");
+        String _name = it.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+        _builder.append(_formatForCodeCapital_1, " ");
         _builder.append("\\Util\\ControllerUtil");
       }
     }

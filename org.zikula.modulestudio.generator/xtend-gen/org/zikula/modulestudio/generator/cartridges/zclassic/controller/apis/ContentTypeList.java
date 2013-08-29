@@ -826,8 +826,8 @@ public class ContentTypeList {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appName_13 = this._utils.appName(it);
-        _builder.append(_appName_13, "    ");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "    ");
         _builder.append("\\\\Entity\\\\\' . ucwords($this->objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
@@ -862,8 +862,8 @@ public class ContentTypeList {
         _builder.append("    ");
         _builder.append("        ");
         _builder.append("$categoryFiltersPerRegistry = ModUtil::apiFunc(\'");
-        String _appName_14 = this._utils.appName(it);
-        _builder.append(_appName_14, "            ");
+        String _appName_13 = this._utils.appName(it);
+        _builder.append(_appName_13, "            ");
         _builder.append("\', \'category\', \'buildFilterClauses\', array(\'ot\' => $this->objectType, \'catids\' => $this->catIds));");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");
@@ -905,8 +905,8 @@ public class ContentTypeList {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("$this->view->toplevelmodule = \'");
-    String _appName_15 = this._utils.appName(it);
-    _builder.append(_appName_15, "    ");
+    String _appName_14 = this._utils.appName(it);
+    _builder.append(_appName_14, "    ");
     _builder.append("\';");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
@@ -918,8 +918,8 @@ public class ContentTypeList {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("$component = \'");
-    String _appName_16 = this._utils.appName(it);
-    _builder.append(_appName_16, "    ");
+    String _appName_15 = this._utils.appName(it);
+    _builder.append(_appName_15, "    ");
     _builder.append(":\' . ucwords($this->objectType) . \':\';");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -997,8 +997,8 @@ public class ContentTypeList {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("list($entities, $objectCount) = ModUtil::apiFunc(\'");
-    String _appName_17 = this._utils.appName(it);
-    _builder.append(_appName_17, "    ");
+    String _appName_16 = this._utils.appName(it);
+    _builder.append(_appName_16, "    ");
     _builder.append("\', \'selection\', \'getEntitiesPaginated\', $selectionArgs);");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
@@ -1218,8 +1218,8 @@ public class ContentTypeList {
     _builder.newLine();
     _builder.append("        ");
     _builder.append("$idFields = ModUtil::apiFunc(\'");
-    String _appName_18 = this._utils.appName(it);
-    _builder.append(_appName_18, "        ");
+    String _appName_17 = this._utils.appName(it);
+    _builder.append(_appName_17, "        ");
     _builder.append("\', \'selection\', \'getIdFields\', array(\'ot\' => $this->objectType));");
     _builder.newLineIfNotEmpty();
     _builder.append("        ");
@@ -1347,8 +1347,8 @@ public class ContentTypeList {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("$this->view->toplevelmodule = \'");
-    String _appName_19 = this._utils.appName(it);
-    _builder.append(_appName_19, "    ");
+    String _appName_18 = this._utils.appName(it);
+    _builder.append(_appName_18, "    ");
     _builder.append("\';");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
@@ -1360,8 +1360,8 @@ public class ContentTypeList {
       if (_targets_8) {
         _builder.append("    ");
         _builder.append("array_push($this->view->plugins_dir, \'modules/");
-        String _appName_20 = this._utils.appName(it);
-        _builder.append(_appName_20, "    ");
+        String _appName_19 = this._utils.appName(it);
+        _builder.append(_appName_19, "    ");
         _builder.append("/templates/plugins\');");
         _builder.newLineIfNotEmpty();
       } else {
@@ -1392,8 +1392,8 @@ public class ContentTypeList {
         _builder.newLine();
         _builder.append("    ");
         _builder.append("$dom = ZLanguage::getModuleDomain(\'");
-        String _appName_21 = this._utils.appName(it);
-        _builder.append(_appName_21, "    ");
+        String _appName_20 = this._utils.appName(it);
+        _builder.append(_appName_20, "    ");
         _builder.append("\');");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");

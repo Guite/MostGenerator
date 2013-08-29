@@ -325,8 +325,8 @@ public class Mailz {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appName_4 = this._utils.appName(it);
-        _builder.append(_appName_4, "    ");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "    ");
         _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
@@ -343,8 +343,8 @@ public class Mailz {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("$idFields = ModUtil::apiFunc(\'");
-    String _appName_5 = this._utils.appName(it);
-    _builder.append(_appName_5, "    ");
+    String _appName_4 = this._utils.appName(it);
+    _builder.append(_appName_4, "    ");
     _builder.append("\', \'selection\', \'getIdFields\', array(\'ot\' => $objectType));");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
@@ -427,15 +427,15 @@ public class Mailz {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("list($entities, $objectCount) = ModUtil::apiFunc(\'");
-    String _appName_6 = this._utils.appName(it);
-    _builder.append(_appName_6, "    ");
+    String _appName_5 = this._utils.appName(it);
+    _builder.append(_appName_5, "    ");
     _builder.append("\', \'selection\', \'getEntitiesPaginated\', $selectionArgs);");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("    ");
     _builder.append("$view = Zikula_View::getInstance(\'");
-    String _appName_7 = this._utils.appName(it);
-    _builder.append(_appName_7, "    ");
+    String _appName_6 = this._utils.appName(it);
+    _builder.append(_appName_6, "    ");
     _builder.append("\', true);");
     _builder.newLineIfNotEmpty();
     _builder.newLine();

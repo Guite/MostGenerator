@@ -68,7 +68,7 @@ class Selection {
             «IF targets('1.3.5')»
             $entityClass = '«appName»_Entity_' . ucfirst($objectType);
             «ELSE»
-            $entityClass = '\\«appName»\\Entity\\' . ucfirst($objectType) . 'Entity';
+            $entityClass = '\\«appNamespace»\\Entity\\' . ucfirst($objectType) . 'Entity';
             «ENDIF»
             $objectTemp = new $entityClass(); 
             $idFields = $objectTemp->get_idFields();
@@ -206,7 +206,7 @@ class Selection {
             «IF targets('1.3.5')»
                 $entityClass = '«appName»_Entity_' . ucwords($objectType);
             «ELSE»
-                $entityClass = '\\«appName»\\Entity\\' . ucwords($objectType) . 'Entity';
+                $entityClass = '\\«appNamespace»\\Entity\\' . ucwords($objectType) . 'Entity';
             «ENDIF»
 
             return $this->entityManager->getRepository($entityClass);

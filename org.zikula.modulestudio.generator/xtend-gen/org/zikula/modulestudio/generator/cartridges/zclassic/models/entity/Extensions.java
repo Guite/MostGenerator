@@ -2003,21 +2003,23 @@ public class Extensions {
   }
   
   private String repositoryClass(final Entity it, final Application app, final String classType) {
-    String _appName = this._utils.appName(app);
     String _xifexpression = null;
     boolean _targets = this._utils.targets(app, "1.3.5");
     if (_targets) {
-      _xifexpression = "_Entity_Repository_";
+      String _appName = this._utils.appName(app);
+      String _plus = (_appName + "_Entity_Repository_");
+      _xifexpression = _plus;
     } else {
-      _xifexpression = "\\Entity\\Repository\\";
+      String _appNamespace = this._utils.appNamespace(app);
+      String _plus_1 = (_appNamespace + "\\Entity\\Repository\\");
+      _xifexpression = _plus_1;
     }
-    String _plus = (_appName + _xifexpression);
     String _name = it.getName();
     String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
-    String _plus_1 = (_plus + _formatForCodeCapital);
+    String _plus_2 = (_xifexpression + _formatForCodeCapital);
     String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(classType);
-    String _plus_2 = (_plus_1 + _formatForCodeCapital_1);
-    return _plus_2;
+    String _plus_3 = (_plus_2 + _formatForCodeCapital_1);
+    return _plus_3;
   }
   
   private CharSequence extensionClassDesc(final Entity it, final String classType) {

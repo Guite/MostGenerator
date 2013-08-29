@@ -350,8 +350,8 @@ public class Translatable {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appName_1 = this._utils.appName(it);
-        _builder.append(_appName_1, "    ");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "    ");
         _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'TranslationEntity\';");
         _builder.newLineIfNotEmpty();
       }

@@ -109,6 +109,12 @@ public class ViewUtil {
         _builder.append("\\Util\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Util\\ControllerUtil;");
+        _builder.newLineIfNotEmpty();
+        _builder.newLine();
         _builder.append("use DataUtil;");
         _builder.newLine();
         _builder.append("use FormUtil;");

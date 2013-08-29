@@ -217,7 +217,7 @@ class ColourInput {
          */
         function smarty_function_«appName.formatForDB»ColourInput($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_ColourInput«ELSE»\\«appName»\\Form\\Plugin\\ColourInput«ENDIF»', $params);
+            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_ColourInput«ELSE»\\«appNamespace»\\Form\\Plugin\\ColourInput«ENDIF»', $params);
         }
     '''
 }

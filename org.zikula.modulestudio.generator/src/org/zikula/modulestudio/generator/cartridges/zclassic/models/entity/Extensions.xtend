@@ -528,7 +528,7 @@ class Extensions {
     '''
 
     def private repositoryClass(Entity it, Application app, String classType) {
-        app.appName + (if (app.targets('1.3.5')) '_Entity_Repository_' else '\\Entity\\Repository\\') + name.formatForCodeCapital + classType.formatForCodeCapital
+        (if (app.targets('1.3.5')) app.appName + '_Entity_Repository_' else app.appNamespace + '\\Entity\\Repository\\') + name.formatForCodeCapital + classType.formatForCodeCapital
     }
 
     def private extensionClassDesc(Entity it, String classType) '''

@@ -40,6 +40,8 @@ class ViewUtil {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Util\Base;
 
+            use «appNamespace»\Util\ControllerUtil;
+
             use DataUtil;
             use FormUtil;
             use ModUtil;

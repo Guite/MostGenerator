@@ -418,8 +418,8 @@ public class Bootstrap {
               } else {
                 _builder.append("    ");
                 _builder.append("$entityClass = \'\\\\");
-                String _appName_1 = this._utils.appName(it);
-                _builder.append(_appName_1, "    ");
+                String _appNamespace = this._utils.appNamespace(it);
+                _builder.append(_appNamespace, "    ");
                 _builder.append("\\\\Entity\\\\");
                 String _name_1 = entity.getName();
                 String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_1);

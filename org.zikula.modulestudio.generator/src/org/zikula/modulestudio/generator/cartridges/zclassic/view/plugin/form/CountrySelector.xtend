@@ -137,7 +137,7 @@ class CountrySelector {
          */
         function smarty_function_«appName.formatForDB»CountrySelector($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_CountrySelector«ELSE»\\«appName»\\Form\\Plugin\\CountrySelector«ENDIF»', $params);
+            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_CountrySelector«ELSE»\\«appNamespace»\\Form\\Plugin\\CountrySelector«ENDIF»', $params);
         }
     '''
 }

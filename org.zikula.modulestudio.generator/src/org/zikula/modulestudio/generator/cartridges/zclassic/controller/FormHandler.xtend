@@ -57,7 +57,7 @@ class FormHandler {
         «IF controller.container.application.targets('1.3.5')»
             $handlerClass = '«appName»_Form_Handler_«controller.name.formatForCodeCapital»_«actionName.formatForCodeCapital»';
         «ELSE»
-            $handlerClass = '\\«appName»\\Form\\Handler\\«controller.name.formatForCodeCapital»\\«actionName.formatForCodeCapital»Handler';
+            $handlerClass = '\\«controller.container.application.appNamespace»\\Form\\Handler\\«controller.name.formatForCodeCapital»\\«actionName.formatForCodeCapital»Handler';
         «ENDIF»
 
         // Execute form using supplied template and page event handler

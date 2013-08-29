@@ -194,8 +194,8 @@ public class Selection {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appName_1 = this._utils.appName(it);
-        _builder.append(_appName_1, "    ");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "    ");
         _builder.append("\\\\Entity\\\\\' . ucfirst($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
@@ -502,8 +502,8 @@ public class Selection {
     {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "    ");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "    ");
         _builder.append("_Util_Controller");
       } else {
         _builder.append("ControllerUtil");
@@ -577,15 +577,15 @@ public class Selection {
       if (_targets_3) {
         _builder.append("    ");
         _builder.append("$entityClass = \'");
-        String _appName_3 = this._utils.appName(it);
-        _builder.append(_appName_3, "    ");
+        String _appName_2 = this._utils.appName(it);
+        _builder.append(_appName_2, "    ");
         _builder.append("_Entity_\' . ucwords($objectType);");
         _builder.newLineIfNotEmpty();
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appName_4 = this._utils.appName(it);
-        _builder.append(_appName_4, "    ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "    ");
         _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }

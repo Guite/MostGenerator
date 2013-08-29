@@ -1207,15 +1207,15 @@ public class ControllerLayer {
             _builder.append(_appNamespace_1, "");
             _builder.append("\\RouterFacade;");
             _builder.newLineIfNotEmpty();
-            _builder.append("use ");
-            String _appNamespace_2 = this._utils.appNamespace(app);
-            _builder.append(_appNamespace_2, "");
-            _builder.append("\\Util\\ControllerUtil;");
-            _builder.newLineIfNotEmpty();
-            _builder.append("use LogUtil;");
-            _builder.newLine();
           }
         }
+        _builder.append("use ");
+        String _appNamespace_2 = this._utils.appNamespace(app);
+        _builder.append(_appNamespace_2, "");
+        _builder.append("\\Util\\ControllerUtil;");
+        _builder.newLineIfNotEmpty();
+        _builder.append("use LogUtil;");
+        _builder.newLine();
         _builder.append("use ModUtil;");
         _builder.newLine();
         _builder.append("use SecurityUtil;");

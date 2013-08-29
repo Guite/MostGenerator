@@ -157,7 +157,7 @@ class ItemSelector {
                 «IF targets('1.3.5')»
                     $entityClass = '«appName»_Entity_' . ucwords($this->objectType);
                 «ELSE»
-                    $entityClass = '\\«appName»\\Entity\\' . ucwords($this->objectType) . 'Entity';
+                    $entityClass = '\\«appNamespace»\\Entity\\' . ucwords($this->objectType) . 'Entity';
                 «ENDIF»
                 $serviceManager = ServiceUtil::getManager();
                 $entityManager = $serviceManager->getService('doctrine.entitymanager');
@@ -235,7 +235,7 @@ class ItemSelector {
          */
         function smarty_function_«appName.formatForDB»ItemSelector($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_ItemSelector«ELSE»\\«appName»\\Form\\Plugin\\ItemSelector«ENDIF»', $params);
+            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_ItemSelector«ELSE»\\«appNamespace»\\Form\\Plugin\\ItemSelector«ENDIF»', $params);
         }
     '''
 }

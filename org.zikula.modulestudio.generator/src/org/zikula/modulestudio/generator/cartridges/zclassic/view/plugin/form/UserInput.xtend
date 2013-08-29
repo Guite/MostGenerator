@@ -227,7 +227,7 @@ class UserInput {
          */
         function smarty_function_«appName.formatForDB»UserInput($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_UserInput«ELSE»\\«appName»\\Form\\Plugin\\UserInput«ENDIF»', $params);
+            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_UserInput«ELSE»\\«appNamespace»\\Form\\Plugin\\UserInput«ENDIF»', $params);
         }
     '''
 }

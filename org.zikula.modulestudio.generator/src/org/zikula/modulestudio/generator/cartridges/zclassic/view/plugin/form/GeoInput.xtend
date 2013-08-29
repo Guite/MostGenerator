@@ -185,7 +185,7 @@ class GeoInput {
          */
         function smarty_function_«appName.formatForDB»GeoInput($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_GeoInput«ELSE»\\«appName»\\Form\\Plugin\\GeoInput«ENDIF»', $params);
+            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_GeoInput«ELSE»\\«appNamespace»\\Form\\Plugin\\GeoInput«ENDIF»', $params);
         }
     '''
 }

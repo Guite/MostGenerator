@@ -366,9 +366,9 @@ class ControllerLayer {
 
             «IF isUserController»
                 use «app.appNamespace»\RouterFacade;
-                use «app.appNamespace»\Util\ControllerUtil;
-                use LogUtil;
             «ENDIF»
+            use «app.appNamespace»\Util\ControllerUtil;
+            use LogUtil;
             use ModUtil;
             use SecurityUtil;
             «IF isUserController»

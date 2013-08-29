@@ -50,7 +50,7 @@ class RelationSelectorList {
         «IF targets('1.3.5')»
         class «appName»_Form_Plugin_Base_RelationSelectorList extends «appName»_Form_Plugin_AbstractObjectSelector
         «ELSE»
-        class RelationSelectorList extends \«appName»\Form\Plugin\AbstractObjectSelector
+        class RelationSelectorList extends \«vendor.formatForCodeCapital»\«name.formatForCodeCapital»\Form\Plugin\AbstractObjectSelector
         «ENDIF»
         {
             /**
@@ -137,7 +137,7 @@ class RelationSelectorList {
          */
         function smarty_function_«appName.formatForDB»RelationSelectorList($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_RelationSelectorList«ELSE»\\«appName»\\Form\\Plugin\\RelationSelectorList«ENDIF»', $params);
+            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_RelationSelectorList«ELSE»\\«appNamespace»\\Form\\Plugin\\RelationSelectorList«ENDIF»', $params);
         }
     '''
 }

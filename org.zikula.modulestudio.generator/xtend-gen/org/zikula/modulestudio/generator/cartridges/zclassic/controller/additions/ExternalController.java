@@ -405,8 +405,8 @@ public class ExternalController {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appName_2 = this._utils.appName(it);
-        _builder.append(_appName_2, "    ");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "    ");
         _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
@@ -419,8 +419,8 @@ public class ExternalController {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("$idFields = ModUtil::apiFunc(\'");
-    String _appName_3 = this._utils.appName(it);
-    _builder.append(_appName_3, "    ");
+    String _appName_2 = this._utils.appName(it);
+    _builder.append(_appName_2, "    ");
     _builder.append("\', \'selection\', \'getIdFields\', array(\'ot\' => $objectType));");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -566,8 +566,8 @@ public class ExternalController {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("PageUtil::addVar(\'stylesheet\', ThemeUtil::getModuleStylesheet(\'");
-    String _appName_4 = this._utils.appName(it);
-    _builder.append(_appName_4, "    ");
+    String _appName_3 = this._utils.appName(it);
+    _builder.append(_appName_3, "    ");
     _builder.append("\'));");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
@@ -579,8 +579,8 @@ public class ExternalController {
     {
       boolean _targets_6 = this._utils.targets(it, "1.3.5");
       if (_targets_6) {
-        String _appName_5 = this._utils.appName(it);
-        _builder.append(_appName_5, "    ");
+        String _appName_4 = this._utils.appName(it);
+        _builder.append(_appName_4, "    ");
         _builder.append("_Util_Controller");
       } else {
         _builder.append("ControllerUtil");
@@ -620,8 +620,8 @@ public class ExternalController {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("$this->throwForbiddenUnless(SecurityUtil::checkPermission(\'");
-    String _appName_6 = this._utils.appName(it);
-    _builder.append(_appName_6, "    ");
+    String _appName_5 = this._utils.appName(it);
+    _builder.append(_appName_5, "    ");
     _builder.append(":\' . ucwords($objectType) . \':\', \'::\', ACCESS_COMMENT), LogUtil::getErrorMsgPermission());");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
@@ -630,15 +630,15 @@ public class ExternalController {
       if (_targets_8) {
         _builder.append("    ");
         _builder.append("$entityClass = \'");
-        String _appName_7 = this._utils.appName(it);
-        _builder.append(_appName_7, "    ");
+        String _appName_6 = this._utils.appName(it);
+        _builder.append(_appName_6, "    ");
         _builder.append("_Entity_\' . ucwords($objectType);");
         _builder.newLineIfNotEmpty();
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appName_8 = this._utils.appName(it);
-        _builder.append(_appName_8, "    ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "    ");
         _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
@@ -674,8 +674,8 @@ public class ExternalController {
         _builder.newLine();
         _builder.append("    ");
         _builder.append("$categoryIds = ModUtil::apiFunc(\'");
-        String _appName_9 = this._utils.appName(it);
-        _builder.append(_appName_9, "    ");
+        String _appName_7 = this._utils.appName(it);
+        _builder.append(_appName_7, "    ");
         _builder.append("\', \'category\', \'retrieveCategoriesFromRequest\', array(\'ot\' => $objectType, \'source\' => \'GET\', \'controllerArgs\' => $args));");
         _builder.newLineIfNotEmpty();
       }
@@ -754,8 +754,8 @@ public class ExternalController {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("$view = Zikula_View::getInstance(\'");
-    String _appName_10 = this._utils.appName(it);
-    _builder.append(_appName_10, "    ");
+    String _appName_8 = this._utils.appName(it);
+    _builder.append(_appName_8, "    ");
     _builder.append("\', false);");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
@@ -799,8 +799,8 @@ public class ExternalController {
         _builder.append("    ");
         _builder.append("    ");
         _builder.append("$properties = ModUtil::apiFunc(\'");
-        String _appName_11 = this._utils.appName(it);
-        _builder.append(_appName_11, "        ");
+        String _appName_9 = this._utils.appName(it);
+        _builder.append(_appName_9, "        ");
         _builder.append("\', \'category\', \'getAllProperties\', array(\'ot\' => $objectType));");
         _builder.newLineIfNotEmpty();
         _builder.append("    ");

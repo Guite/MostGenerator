@@ -477,8 +477,8 @@ public class ItemSelector {
       } else {
         _builder.append("        ");
         _builder.append("$entityClass = \'\\\\");
-        String _appName_8 = this._utils.appName(it);
-        _builder.append(_appName_8, "        ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "        ");
         _builder.append("\\\\Entity\\\\\' . ucwords($this->objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
@@ -516,8 +516,8 @@ public class ItemSelector {
     _builder.newLine();
     _builder.append("        ");
     _builder.append("$view = Zikula_View::getInstance(\'");
-    String _appName_9 = this._utils.appName(it);
-    _builder.append(_appName_9, "        ");
+    String _appName_8 = this._utils.appName(it);
+    _builder.append(_appName_8, "        ");
     _builder.append("\', false);");
     _builder.newLineIfNotEmpty();
     _builder.append("        ");
@@ -545,8 +545,8 @@ public class ItemSelector {
         _builder.append("        ");
         _builder.append("    ");
         _builder.append("$properties = ModUtil::apiFunc(\'");
-        String _appName_10 = this._utils.appName(it);
-        _builder.append(_appName_10, "            ");
+        String _appName_9 = this._utils.appName(it);
+        _builder.append(_appName_9, "            ");
         _builder.append("\', \'category\', \'getAllProperties\', array(\'ot\' => $this->objectType));");
         _builder.newLineIfNotEmpty();
         _builder.append("        ");
@@ -610,8 +610,8 @@ public class ItemSelector {
     _builder.newLine();
     _builder.append("        ");
     _builder.append("$this->objectType = FormUtil::getPassedValue(\'");
-    String _appName_11 = this._utils.appName(it);
-    _builder.append(_appName_11, "        ");
+    String _appName_10 = this._utils.appName(it);
+    _builder.append(_appName_10, "        ");
     _builder.append("_objecttype\', \'");
     Entity _leadingEntity = this._modelExtensions.getLeadingEntity(it);
     String _name_1 = _leadingEntity.getName();
@@ -725,8 +725,8 @@ public class ItemSelector {
         _builder.append("_Form_Plugin_ItemSelector");
       } else {
         _builder.append("\\\\");
-        String _appName_3 = this._utils.appName(it);
-        _builder.append(_appName_3, "    ");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "    ");
         _builder.append("\\\\Form\\\\Plugin\\\\ItemSelector");
       }
     }

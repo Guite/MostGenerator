@@ -194,8 +194,8 @@ public class TreeSelection {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appName_7 = this._utils.appName(it);
-        _builder.append(_appName_7, "    ");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "    ");
         _builder.append("\\\\Entity\\\\\' . ucwords($params[\'objectType\']) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }

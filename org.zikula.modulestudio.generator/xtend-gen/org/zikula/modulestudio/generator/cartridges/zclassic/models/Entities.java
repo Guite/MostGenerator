@@ -283,16 +283,21 @@ public class Entities {
       boolean _not_1 = (!_targets_1);
       if (_not_1) {
         _builder.newLine();
-        _builder.append("use ");
-        String _appNamespace_1 = this._utils.appNamespace(app);
-        _builder.append(_appNamespace_1, "");
-        _builder.append("\\UploadHandler;");
-        _builder.newLineIfNotEmpty();
-        _builder.append("use ");
-        String _appNamespace_2 = this._utils.appNamespace(app);
-        _builder.append(_appNamespace_2, "");
-        _builder.append("\\Util\\ControllerUtil;");
-        _builder.newLineIfNotEmpty();
+        {
+          boolean _hasUploadFieldsEntity = this._modelExtensions.hasUploadFieldsEntity(it);
+          if (_hasUploadFieldsEntity) {
+            _builder.append("use ");
+            String _appNamespace_1 = this._utils.appNamespace(app);
+            _builder.append(_appNamespace_1, "");
+            _builder.append("\\UploadHandler;");
+            _builder.newLineIfNotEmpty();
+            _builder.append("use ");
+            String _appNamespace_2 = this._utils.appNamespace(app);
+            _builder.append(_appNamespace_2, "");
+            _builder.append("\\Util\\ControllerUtil;");
+            _builder.newLineIfNotEmpty();
+          }
+        }
         _builder.append("use ");
         String _appNamespace_3 = this._utils.appNamespace(app);
         _builder.append(_appNamespace_3, "");

@@ -218,8 +218,8 @@ public class TreeJS {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appName_5 = this._utils.appName(it);
-        _builder.append(_appName_5, "    ");
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "    ");
         _builder.append("\\\\Entity\\\\\' . ucwords($params[\'objectType\']) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
@@ -253,8 +253,8 @@ public class TreeJS {
     _builder.newLine();
     _builder.append("        ");
     _builder.append("$url = (($controllerHasEditAction) ? ModUtil::url(\'");
-    String _appName_6 = this._utils.appName(it);
-    _builder.append(_appName_6, "        ");
+    String _appName_5 = this._utils.appName(it);
+    _builder.append(_appName_5, "        ");
     _builder.append("\', $params[\'controller\'], \'edit\', array(\'ot\' => $params[\'objectType\'], $idField => $item[$idField])) : \'\');");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
