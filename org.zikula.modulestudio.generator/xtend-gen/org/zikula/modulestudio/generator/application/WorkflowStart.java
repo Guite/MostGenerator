@@ -14,7 +14,6 @@ import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
-import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.zikula.modulestudio.generator.application.WorkflowPostProcess;
 import org.zikula.modulestudio.generator.application.WorkflowPreProcess;
@@ -76,16 +75,16 @@ public class WorkflowStart {
     progressMonitor.beginTask(_plus_3, _minus);
     Resource _model = this.getModel();
     EList<EObject> _contents = _model.getContents();
-    EObject _get = _contents.get(0);
-    Diagnostic diag = Diagnostician.INSTANCE.validate(_get);
+    EObject _head = IterableExtensions.<EObject>head(_contents);
+    Diagnostic diag = Diagnostician.INSTANCE.validate(_head);
     int _severity = diag.getSeverity();
     final int _switchValue = _severity;
     boolean _matched = false;
     if (!_matched) {
       if (Objects.equal(_switchValue,Diagnostic.ERROR)) {
         _matched=true;
-        String _string = diag.toString();
-        String _plus_4 = ("Errors: " + _string);
+        String _message = diag.getMessage();
+        String _plus_4 = ("Errors: " + _message);
         progressMonitor.subTask(_plus_4);
         progressMonitor.done();
         return false;
@@ -94,8 +93,8 @@ public class WorkflowStart {
     if (!_matched) {
       if (Objects.equal(_switchValue,Diagnostic.WARNING)) {
         _matched=true;
-        String _string_1 = diag.toString();
-        String _plus_5 = ("Warnings: " + _string_1);
+        String _message_1 = diag.getMessage();
+        String _plus_5 = ("Warnings: " + _message_1);
         progressMonitor.subTask(_plus_5);
         progressMonitor.done();
         return true;
@@ -234,12 +233,10 @@ public class WorkflowStart {
   public void readSettingsFromModel() {
     final Resource model = this.getModel();
     EList<EObject> _contents = model.getContents();
-    EObject _get = _contents.get(0);
-    final Application app = ((Application) _get);
+    EObject _head = IterableExtensions.<EObject>head(_contents);
+    final Application app = ((Application) _head);
     String _name = app.getName();
-    InputOutput.<String>println(_name);
-    String _name_1 = app.getName();
-    this.settings.setAppName(_name_1);
+    this.settings.setAppName(_name);
     String _version = app.getVersion();
     this.settings.setAppVersion(_version);
     return;
