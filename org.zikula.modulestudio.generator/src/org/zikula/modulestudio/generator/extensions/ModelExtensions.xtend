@@ -39,6 +39,7 @@ class ModelExtensions {
     @Inject extension CollectionUtils = new CollectionUtils()
     @Inject extension FormattingExtensions = new FormattingExtensions()
     @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions()
+    @Inject extension Utils = new Utils()
     @Inject extension WorkflowExtensions = new WorkflowExtensions()
 
     /**
@@ -173,9 +174,14 @@ class ModelExtensions {
 
     /**
      * Prepends the application database prefix to a given string.
+     * Beginning with Zikula 1.3.6 the vendor is prefixed, too.
      */
     def tableNameWithPrefix(Application it, String inputString) {
-        prefix + '_' + inputString
+        if (targets('1.3.5')) {
+            prefix + '_' + inputString
+        } else {
+            vendor.formatForDB + '_' + prefix() + '_' + inputString
+        }
     }
 
     /**

@@ -50,6 +50,7 @@ import org.eclipse.xtext.xbase.lib.ListExtensions;
 import org.zikula.modulestudio.generator.extensions.CollectionUtils;
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions;
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions;
+import org.zikula.modulestudio.generator.extensions.Utils;
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions;
 
 /**
@@ -82,6 +83,15 @@ public class ModelExtensions {
     public ModelInheritanceExtensions apply() {
       ModelInheritanceExtensions _modelInheritanceExtensions = new ModelInheritanceExtensions();
       return _modelInheritanceExtensions;
+    }
+  }.apply();
+  
+  @Inject
+  @Extension
+  private Utils _utils = new Function0<Utils>() {
+    public Utils apply() {
+      Utils _utils = new Utils();
+      return _utils;
     }
   }.apply();
   
@@ -338,12 +348,27 @@ public class ModelExtensions {
   
   /**
    * Prepends the application database prefix to a given string.
+   * Beginning with Zikula 1.3.6 the vendor is prefixed, too.
    */
   public String tableNameWithPrefix(final Application it, final String inputString) {
-    String _prefix = it.getPrefix();
-    String _plus = (_prefix + "_");
-    String _plus_1 = (_plus + inputString);
-    return _plus_1;
+    String _xifexpression = null;
+    boolean _targets = this._utils.targets(it, "1.3.5");
+    if (_targets) {
+      String _prefix = it.getPrefix();
+      String _plus = (_prefix + "_");
+      String _plus_1 = (_plus + inputString);
+      _xifexpression = _plus_1;
+    } else {
+      String _vendor = it.getVendor();
+      String _formatForDB = this._formattingExtensions.formatForDB(_vendor);
+      String _plus_2 = (_formatForDB + "_");
+      String _prefix_1 = this._utils.prefix(it);
+      String _plus_3 = (_plus_2 + _prefix_1);
+      String _plus_4 = (_plus_3 + "_");
+      String _plus_5 = (_plus_4 + inputString);
+      _xifexpression = _plus_5;
+    }
+    return _xifexpression;
   }
   
   /**
