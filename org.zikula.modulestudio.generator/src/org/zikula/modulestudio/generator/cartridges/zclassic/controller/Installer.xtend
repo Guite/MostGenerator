@@ -186,9 +186,9 @@ class Installer {
                     include_once 'modules/«appName»/lib/«appName»/Api/Category.php';
                     $categoryApi = new «appName»_Api_Category($this->serviceManager);
                 «ELSE»
-                    include_once 'modules/«getAppSourcePath»/Api/Base/CategoryApi.php';
-                    include_once 'modules/«getAppSourcePath»/Api/CategoryApi.php';
-                    $categoryApi = new \«appName»\Api\CategoryApi($this->serviceManager);
+                    include_once 'modules/«getAppSourcePath»Api/Base/CategoryApi.php';
+                    include_once 'modules/«getAppSourcePath»Api/CategoryApi.php';
+                    $categoryApi = new \«vendor.formatForCode»\«name.formatForCode»\Api\CategoryApi($this->serviceManager);
                 «ENDIF»
                 «FOR entity : getCategorisableEntities»
 
