@@ -19,29 +19,43 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
  */
 class WorkflowStart {
 
+    /**
+     * Name of currently processed generator cartridge.
+     */
     private String currentCartridge = ''
+
     public WorkflowSettings settings = new WorkflowSettings()
+
     public WorkflowPreProcess preProcess = new WorkflowPreProcess()
+
+    /**
+     * Reference to the model's {@link Resource} object.
+     */
     private Resource model = null;
 
+    /**
+     * The Guice injector instance which may be provided
+     * if the generator is executed inside MOST.
+     */
+    public Injector injector = null;
+
 	/**
-	 * Validate the model
-	 * 
+	 * Validates the model.
 	 */
 	def validate() {
 		val progressMonitor = settings.progressMonitor
 		progressMonitor.beginTask('Validating "' + settings.appName + ' ' + settings.appVersion + '" ...', -1)
     	
-    	val diag = Diagnostician::INSTANCE.validate(getModel.contents.get(0))
+    	var diag = Diagnostician::INSTANCE.validate(getModel.contents.head)
     	
     	switch  diag.getSeverity {
     		case Diagnostic::ERROR: {
-    			progressMonitor.subTask("Errors: " + diag.message)//TODO format return properly
+    			progressMonitor.subTask("Errors: " + diag.message)
     			progressMonitor.done();
     			return false;
     		}
     		case Diagnostic::WARNING: {
-    			progressMonitor.subTask("Warnings: " + diag.message)//TODO format return properly
+    			progressMonitor.subTask("Warnings: " + diag.message)
     			progressMonitor.done();
     			return true;
     		}
@@ -115,18 +129,21 @@ class WorkflowStart {
     }
     
     def private getModel() {
+        // do not read in the model again after validation did it already
     	if (model === null) {
         	val reader = new ModelReader()
-        	reader.setUri(settings.modelPath)
+        	reader.uri = settings.modelPath
+        	if (injector !== null) {
+        	   reader.injector = injector
+        	}
         	model = reader.invoke
     	}
     	model
     }
-    
+
     def readSettingsFromModel() {
     	val model = getModel
-    	val app = model.contents.get(0) as Application;
-    	println(app.getName())
+    	val app = model.contents.head as Application;
     	settings.appName = app.name
 		settings.appVersion = app.version
     	return
