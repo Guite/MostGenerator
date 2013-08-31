@@ -5,6 +5,7 @@ import com.google.inject.Injector;
 import de.guite.modulestudio.metamodel.modulestudio.Application;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.EList;
@@ -15,6 +16,7 @@ import org.eclipse.xtext.generator.JavaIoFileSystemAccess;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
+import org.zikula.modulestudio.generator.application.ErrorState;
 import org.zikula.modulestudio.generator.application.WorkflowPostProcess;
 import org.zikula.modulestudio.generator.application.WorkflowPreProcess;
 import org.zikula.modulestudio.generator.application.WorkflowSettings;
@@ -63,7 +65,7 @@ public class WorkflowStart {
   /**
    * Validates the model.
    */
-  public boolean validate() {
+  public ErrorState validate() {
     final IProgressMonitor progressMonitor = this.settings.getProgressMonitor();
     String _appName = this.settings.getAppName();
     String _plus = ("Validating \"" + _appName);
@@ -83,28 +85,40 @@ public class WorkflowStart {
     if (!_matched) {
       if (Objects.equal(_switchValue,Diagnostic.ERROR)) {
         _matched=true;
-        String _message = diag.getMessage();
-        String _plus_4 = ("Errors: " + _message);
+        String _validatorMessage = this.validatorMessage(diag);
+        String _plus_4 = ("Errors: " + _validatorMessage);
         progressMonitor.subTask(_plus_4);
         progressMonitor.done();
-        return false;
+        return ErrorState.ERROR;
       }
     }
     if (!_matched) {
       if (Objects.equal(_switchValue,Diagnostic.WARNING)) {
         _matched=true;
-        String _message_1 = diag.getMessage();
-        String _plus_5 = ("Warnings: " + _message_1);
+        String _validatorMessage_1 = this.validatorMessage(diag);
+        String _plus_5 = ("Warnings: " + _validatorMessage_1);
         progressMonitor.subTask(_plus_5);
         progressMonitor.done();
-        return true;
+        return ErrorState.WARN;
       }
     }
     {
       progressMonitor.subTask("Valid");
       progressMonitor.done();
-      return true;
+      return ErrorState.OK;
     }
+  }
+  
+  public String validatorMessage(final Diagnostic diag) {
+    String ret = "";
+    List<? extends Object> _data = diag.getData();
+    for (final Object c : _data) {
+      String _plus = (ret + "\n- ");
+      String _string = c.toString();
+      String _plus_1 = (_plus + _string);
+      ret = _plus_1;
+    }
+    return ret;
   }
   
   /**

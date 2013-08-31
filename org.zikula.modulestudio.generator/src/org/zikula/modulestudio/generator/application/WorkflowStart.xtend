@@ -1,3 +1,4 @@
+
 package org.zikula.modulestudio.generator.application
 
 import com.google.inject.Injector
@@ -13,6 +14,11 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.util.Diagnostician
 import org.eclipse.emf.common.util.Diagnostic
 import de.guite.modulestudio.metamodel.modulestudio.Application
+
+/**
+ * Return Value for Validate Method
+ */
+enum ErrorState { OK, WARN, ERROR }
 
 /**
  * Main entry point for the workflow.
@@ -50,21 +56,29 @@ class WorkflowStart {
     	
     	switch  diag.getSeverity {
     		case Diagnostic::ERROR: {
-    			progressMonitor.subTask("Errors: " + diag.message)
-    			progressMonitor.done();
-    			return false;
+    			progressMonitor.subTask("Errors: " + validatorMessage(diag))
+    			progressMonitor.done()
+    			return ErrorState::ERROR
     		}
     		case Diagnostic::WARNING: {
-    			progressMonitor.subTask("Warnings: " + diag.message)
-    			progressMonitor.done();
-    			return true;
+    			progressMonitor.subTask("Warnings: " + validatorMessage(diag))
+    			progressMonitor.done()
+    			return ErrorState::WARN
     		}
     		default: {
     			progressMonitor.subTask("Valid")
-    			progressMonitor.done();
-    			return true;
+    			progressMonitor.done()
+    			return ErrorState::OK
     		}
     	}
+	}
+
+	def validatorMessage(Diagnostic diag) {
+		var ret = ""
+		for(c: diag.data)
+			ret = ret + "\n- " + c.toString
+			
+		return ret
 	}
 
     /**
@@ -148,4 +162,6 @@ class WorkflowStart {
 		settings.appVersion = app.version
     	return
     }
+    
+    
 }
