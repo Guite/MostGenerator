@@ -740,6 +740,9 @@ public class Selection {
         _builder.append("\\Api;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\SelectionApi as BaseSelectionApi;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -762,7 +765,7 @@ public class Selection {
         _builder.append("_Api_Base_Selection");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class SelectionApi extends Base\\SelectionApi");
+        _builder.append("class SelectionApi extends BaseSelectionApi");
         _builder.newLine();
       }
     }

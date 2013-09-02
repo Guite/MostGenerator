@@ -154,6 +154,8 @@ class BlockModeration {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Block;
 
+            use Base\ModerationBlock as BaseModerationBlock;
+
         «ENDIF»
         /**
          * Moderation block implementation class.
@@ -161,7 +163,7 @@ class BlockModeration {
         «IF targets('1.3.5')»
         class «appName»_Block_Moderation extends «appName»_Block_Base_Moderation
         «ELSE»
-        class ModerationBlock extends Base\ModerationBlock
+        class ModerationBlock extends BaseModerationBlock
         «ENDIF»
         {
             // feel free to extend the moderation block here

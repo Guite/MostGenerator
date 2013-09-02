@@ -157,6 +157,8 @@ class GeoInput {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin;
 
+            use Base\GeoInput as BaseGeoInput;
+
         «ENDIF»
         /**
          * Geo value input.
@@ -167,7 +169,7 @@ class GeoInput {
         «IF targets('1.3.5')»
         class «appName»_Form_Plugin_GeoInput extends «appName»_Form_Plugin_Base_GeoInput
         «ELSE»
-        class GeoInput extends Base\GeoInput
+        class GeoInput extends BaseGeoInput
         «ENDIF»
         {
             // feel free to add your customisation here

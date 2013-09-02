@@ -929,6 +929,9 @@ public class ViewUtil {
         _builder.append("\\Util;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\ViewUtil as BaseViewUtil;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -951,7 +954,7 @@ public class ViewUtil {
         _builder.append("_Util_Base_View");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class ViewUtil extends Base\\ViewUtil");
+        _builder.append("class ViewUtil extends BaseViewUtil");
         _builder.newLine();
       }
     }

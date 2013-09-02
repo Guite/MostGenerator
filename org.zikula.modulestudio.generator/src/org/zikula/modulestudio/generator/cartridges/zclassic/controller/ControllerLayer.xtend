@@ -343,6 +343,8 @@ class ControllerLayer {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Controller;
 
+            use Base\«name.formatForCodeCapital»Controller as Base«name.formatForCodeCapital»Controller;
+
         «ENDIF»
         /**
          * This is the «name» controller class providing navigation and interaction functionality.
@@ -350,7 +352,7 @@ class ControllerLayer {
         «IF app.targets('1.3.5')»
         class «app.appName»_Controller_«name.formatForCodeCapital» extends «app.appName»_Controller_Base_«name.formatForCodeCapital»
         «ELSE»
-        class «name.formatForCodeCapital»Controller extends Base\«name.formatForCodeCapital»Controller
+        class «name.formatForCodeCapital»Controller extends Base«name.formatForCodeCapital»Controller
         «ENDIF»
         {
             // feel free to add your own controller methods here
@@ -465,6 +467,8 @@ class ControllerLayer {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Api;
 
+            use Base\«name.formatForCodeCapital»Api as Base«name.formatForCodeCapital»Api;
+
         «ENDIF»
         /**
          * This is the «name» api helper class.
@@ -472,7 +476,7 @@ class ControllerLayer {
         «IF app.targets('1.3.5')»
         class «app.appName»_Api_«name.formatForCodeCapital» extends «app.appName»_Api_Base_«name.formatForCodeCapital»
         «ELSE»
-        class «name.formatForCodeCapital»Api extends Base\«name.formatForCodeCapital»Api
+        class «name.formatForCodeCapital»Api extends Base«name.formatForCodeCapital»Api
         «ENDIF»
         {
             // feel free to add own api methods here

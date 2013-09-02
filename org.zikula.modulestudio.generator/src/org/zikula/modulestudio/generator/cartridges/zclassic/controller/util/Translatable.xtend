@@ -267,6 +267,8 @@ class Translatable {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Util;
 
+            use Base\TranslatableUtil as BaseTranslatableUtil;
+
         «ENDIF»
         /**
          * Utility implementation class for translatable helper methods.
@@ -274,7 +276,7 @@ class Translatable {
         «IF targets('1.3.5')»
         class «appName»_Util_Translatable extends «appName»_Util_Base_Translatable
         «ELSE»
-        class TranslatableUtil extends Base\TranslatableUtil
+        class TranslatableUtil extends BaseTranslatableUtil
         «ENDIF»
         {
             // feel free to add your own convenience methods here

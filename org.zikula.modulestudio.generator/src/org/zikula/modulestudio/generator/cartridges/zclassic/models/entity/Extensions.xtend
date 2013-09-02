@@ -465,6 +465,8 @@ class Extensions {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity;
 
+            use «IF isInheriting»«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»Entity«ELSE»Base\Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»Entity«ENDIF» as Base«IF isInheriting»«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»«ELSE»Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»«ENDIF»Entity
+
         «ENDIF»
         use Doctrine\ORM\Mapping as ORM;
 
@@ -520,7 +522,7 @@ class Extensions {
         «IF app.targets('1.3.5')»
         class «entityClassName(classType, false)» extends «IF isInheriting»«parentType.entityClassName(classType, false)»«ELSE»«entityClassName(classType, true)»«ENDIF»
         «ELSE»
-        class «name.formatForCodeCapital»«classType.formatForCodeCapital»Entity extends «IF isInheriting»«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»Entity«ELSE»Base\Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»Entity«ENDIF»
+        class «name.formatForCodeCapital»«classType.formatForCodeCapital»Entity extends Base«IF isInheriting»«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»«ELSE»Abstract«name.formatForCodeCapital»«classType.formatForCodeCapital»«ENDIF»Entity
         «ENDIF»
         {
             // feel free to add your own methods here
@@ -579,6 +581,8 @@ class Extensions {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity\Repository;
 
+            use «IF isInheriting»«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»«ELSE»Base\«name.formatForCodeCapital»«classType.formatForCodeCapital»«ENDIF» as Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»«classType.formatForCodeCapital»
+
         «ENDIF»
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.
@@ -588,7 +592,7 @@ class Extensions {
         «IF app.targets('1.3.5')»
         class «app.appName»_Entity_Repository_«name.formatForCodeCapital»«classType.formatForCodeCapital» extends «IF isInheriting»«app.appName»_Entity_Repository_«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»«ELSE»«app.appName»_Entity_Repository_Base_«name.formatForCodeCapital»«classType.formatForCodeCapital»«ENDIF»
         «ELSE»
-        class «name.formatForCodeCapital»«classType.formatForCodeCapital» extends «IF isInheriting»«parentType.name.formatForCodeCapital»«classType.formatForCodeCapital»«ELSE»Base\«name.formatForCodeCapital»«classType.formatForCodeCapital»«ENDIF»
+        class «name.formatForCodeCapital»«classType.formatForCodeCapital» extends Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»«classType.formatForCodeCapital»
         «ENDIF»
         {
             // feel free to add your own methods here

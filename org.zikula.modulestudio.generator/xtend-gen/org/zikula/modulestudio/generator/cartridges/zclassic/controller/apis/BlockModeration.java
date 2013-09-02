@@ -444,6 +444,9 @@ public class BlockModeration {
         _builder.append("\\Block;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\ModerationBlock as BaseModerationBlock;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -466,7 +469,7 @@ public class BlockModeration {
         _builder.append("_Block_Base_Moderation");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class ModerationBlock extends Base\\ModerationBlock");
+        _builder.append("class ModerationBlock extends BaseModerationBlock");
         _builder.newLine();
       }
     }

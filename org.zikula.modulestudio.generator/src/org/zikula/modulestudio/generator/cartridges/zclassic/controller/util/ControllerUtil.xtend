@@ -372,6 +372,8 @@ class ControllerUtil {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Util;
 
+            use Base\ControllerUtil as BaseControllerUtil;
+
         «ENDIF»
         /**
          * Utility implementation class for controller helper methods.
@@ -379,7 +381,7 @@ class ControllerUtil {
         «IF targets('1.3.5')»
         class «appName»_Util_Controller extends «appName»_Util_Base_Controller
         «ELSE»
-        class ControllerUtil extends Base\ControllerUtil
+        class ControllerUtil extends BaseControllerUtil
         «ENDIF»
         {
             // feel free to add your own convenience methods here

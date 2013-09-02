@@ -41,6 +41,8 @@ class RelationSelectorList {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin\Base;
 
+            use «vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Form\Plugin\AbstractObjectSelector as BaseAbstractObjectSelector;
+
             use Zikula_Form_View;
 
         «ENDIF»
@@ -50,7 +52,7 @@ class RelationSelectorList {
         «IF targets('1.3.5')»
         class «appName»_Form_Plugin_Base_RelationSelectorList extends «appName»_Form_Plugin_AbstractObjectSelector
         «ELSE»
-        class RelationSelectorList extends \«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Form\Plugin\AbstractObjectSelector
+        class RelationSelectorList extends BaseAbstractObjectSelector
         «ENDIF»
         {
             /**
@@ -112,6 +114,8 @@ class RelationSelectorList {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin;
 
+            use Base\RelationSelectorList as BaseRelationSelectorList;
+
         «ENDIF»
         /**
          * Relation selector plugin implementation class.
@@ -119,7 +123,7 @@ class RelationSelectorList {
         «IF targets('1.3.5')»
         class «appName»_Form_Plugin_RelationSelectorList extends «appName»_Form_Plugin_Base_RelationSelectorList
         «ELSE»
-        class RelationSelectorList extends Base\RelationSelectorList
+        class RelationSelectorList extends BaseRelationSelectorList
         «ENDIF»
         {
             // feel free to add your customisation here

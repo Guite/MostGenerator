@@ -211,6 +211,8 @@ class ContentTypeSingle {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\ContentType;
 
+            use Base\Item as BaseItem;
+
         «ENDIF»
         /**
          * Generic single item display content plugin implementation class.
@@ -218,7 +220,7 @@ class ContentTypeSingle {
         «IF targets('1.3.5')»
         class «appName»_ContentType_Item extends «appName»_ContentType_Base_Item
         «ELSE»
-        class Item extends Base\Item
+        class Item extends BaseItem
         «ENDIF»
         {
             // feel free to extend the content type here

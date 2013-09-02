@@ -328,6 +328,8 @@ class ViewUtil {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Util;
 
+            use Base\ViewUtil as BaseViewUtil;
+
         «ENDIF»
         /**
          * Utility implementation class for view helper methods.
@@ -335,7 +337,7 @@ class ViewUtil {
         «IF targets('1.3.5')»
         class «appName»_Util_View extends «appName»_Util_Base_View
         «ELSE»
-        class ViewUtil extends Base\ViewUtil
+        class ViewUtil extends BaseViewUtil
         «ENDIF»
         {
             // feel free to add your own convenience methods here

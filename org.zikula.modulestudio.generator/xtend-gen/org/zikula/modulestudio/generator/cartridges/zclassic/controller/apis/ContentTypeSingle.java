@@ -574,6 +574,9 @@ public class ContentTypeSingle {
         _builder.append("\\ContentType;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\Item as BaseItem;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -596,7 +599,7 @@ public class ContentTypeSingle {
         _builder.append("_ContentType_Base_Item");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class Item extends Base\\Item");
+        _builder.append("class Item extends BaseItem");
         _builder.newLine();
       }
     }

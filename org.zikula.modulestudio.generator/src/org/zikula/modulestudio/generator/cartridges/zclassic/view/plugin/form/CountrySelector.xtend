@@ -110,6 +110,8 @@ class CountrySelector {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin;
 
+            use Base\CountrySelector as BaseCountrySelector;
+
         «ENDIF»
         /**
          * This plugin creates a country dropdown list.
@@ -118,7 +120,7 @@ class CountrySelector {
         «IF targets('1.3.5')»
         class «appName»_Form_Plugin_CountrySelector extends «appName»_Form_Plugin_Base_CountrySelector
         «ELSE»
-        class CountrySelector extends Base\CountrySelector
+        class CountrySelector extends BaseCountrySelector
         «ENDIF»
         {
             // feel free to add your customisation here

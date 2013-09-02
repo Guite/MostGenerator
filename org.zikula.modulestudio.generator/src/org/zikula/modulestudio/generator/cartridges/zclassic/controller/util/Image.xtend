@@ -142,6 +142,8 @@ class Image {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Util;
 
+            use Base\ImageUtil as BaseImageUtil;
+
         «ENDIF»
         /**
          * Utility implementation class for image helper methods.
@@ -149,7 +151,7 @@ class Image {
         «IF targets('1.3.5')»
         class «appName»_Util_Image extends «appName»_Util_Base_Image
         «ELSE»
-        class ImageUtil extends Base\ImageUtil
+        class ImageUtil extends BaseImageUtil
         «ENDIF»
         {
             // feel free to add your own convenience methods here

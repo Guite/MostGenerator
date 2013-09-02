@@ -274,6 +274,8 @@ class Category {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Api;
 
+            use Base\CategoryApi as BaseCategoryApi;
+
         «ENDIF»
         /**
          * Category api implementation class.
@@ -281,7 +283,7 @@ class Category {
         «IF targets('1.3.5')»
         class «appName»_Api_Category extends «appName»_Api_Base_Category
         «ELSE»
-        class CategoryApi extends Base\CategoryApi
+        class CategoryApi extends BaseCategoryApi
         «ENDIF»
         {
             // feel free to extend the category api at this place

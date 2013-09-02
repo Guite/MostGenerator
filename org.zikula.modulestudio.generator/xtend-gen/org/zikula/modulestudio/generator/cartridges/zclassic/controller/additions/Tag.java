@@ -412,6 +412,15 @@ public class Tag {
         _builder.append("\\TaggedObjectMeta;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "");
+        _builder.append(" as Base");
+        String _appName_1 = this._utils.appName(it);
+        _builder.append(_appName_1, "");
+        _builder.append(";");
+        _builder.newLineIfNotEmpty();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -426,25 +435,25 @@ public class Tag {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
         _builder.append("class ");
-        String _appName = this._utils.appName(it);
-        _builder.append(_appName, "");
-        _builder.append("_TaggedObjectMeta_");
-        String _appName_1 = this._utils.appName(it);
-        _builder.append(_appName_1, "");
-        _builder.append(" extends ");
         String _appName_2 = this._utils.appName(it);
         _builder.append(_appName_2, "");
-        _builder.append("_TaggedObjectMeta_Base_");
+        _builder.append("_TaggedObjectMeta_");
         String _appName_3 = this._utils.appName(it);
         _builder.append(_appName_3, "");
+        _builder.append(" extends ");
+        String _appName_4 = this._utils.appName(it);
+        _builder.append(_appName_4, "");
+        _builder.append("_TaggedObjectMeta_Base_");
+        String _appName_5 = this._utils.appName(it);
+        _builder.append(_appName_5, "");
         _builder.newLineIfNotEmpty();
       } else {
         _builder.append("class ");
-        String _appName_4 = this._utils.appName(it);
-        _builder.append(_appName_4, "");
-        _builder.append(" extends Base\\");
-        String _appName_5 = this._utils.appName(it);
-        _builder.append(_appName_5, "");
+        String _appName_6 = this._utils.appName(it);
+        _builder.append(_appName_6, "");
+        _builder.append(" extends Base");
+        String _appName_7 = this._utils.appName(it);
+        _builder.append(_appName_7, "");
         _builder.newLineIfNotEmpty();
       }
     }

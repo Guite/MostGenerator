@@ -254,6 +254,8 @@ class ListEntries {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Util;
 
+            use Base\ListEntriesUtil as BaseListEntriesUtil;
+
         «ENDIF»
         /**
          * Utility implementation class for list field entries related methods.
@@ -261,7 +263,7 @@ class ListEntries {
         «IF targets('1.3.5')»
         class «appName»_Util_ListEntries extends «appName»_Util_Base_ListEntries
         «ELSE»
-        class ListEntriesUtil extends Base\ListEntriesUtil
+        class ListEntriesUtil extends BaseListEntriesUtil
         «ENDIF»
         {
             // feel free to add your own convenience methods here

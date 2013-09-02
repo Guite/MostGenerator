@@ -748,6 +748,9 @@ public class Category {
         _builder.append("\\Api;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\CategoryApi as BaseCategoryApi;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -770,7 +773,7 @@ public class Category {
         _builder.append("_Api_Base_Category");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class CategoryApi extends Base\\CategoryApi");
+        _builder.append("class CategoryApi extends BaseCategoryApi");
         _builder.newLine();
       }
     }

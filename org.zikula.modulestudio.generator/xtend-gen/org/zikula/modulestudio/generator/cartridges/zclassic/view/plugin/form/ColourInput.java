@@ -510,6 +510,9 @@ public class ColourInput {
         _builder.append("\\Form\\Plugin;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\ColourInput as BaseColourInput;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -547,7 +550,7 @@ public class ColourInput {
         _builder.append("_Form_Plugin_Base_ColourInput");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class ColourInput extends Base\\ColourInput");
+        _builder.append("class ColourInput extends BaseColourInput");
         _builder.newLine();
       }
     }

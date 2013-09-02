@@ -293,6 +293,8 @@ class UrlRouting {
         «IF !targets('1.3.5')»
             namespace «appNamespace»;
 
+            use Base\RouterFacade as BaseRouterFacade;
+
         «ENDIF»
         /**
          * Url router facade implementation class.
@@ -300,7 +302,7 @@ class UrlRouting {
         «IF targets('1.3.5')»
         class «appName»_RouterFacade extends «appName»_Base_RouterFacade
         «ELSE»
-        class RouterFacade extends Base\RouterFacade
+        class RouterFacade extends BaseRouterFacade
         «ENDIF»
         {
             // here you can customise the data which is provided to the url router.

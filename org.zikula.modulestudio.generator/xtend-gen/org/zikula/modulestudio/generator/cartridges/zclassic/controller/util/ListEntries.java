@@ -832,6 +832,9 @@ public class ListEntries {
         _builder.append("\\Util;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\ListEntriesUtil as BaseListEntriesUtil;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -854,7 +857,7 @@ public class ListEntries {
         _builder.append("_Util_Base_ListEntries");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class ListEntriesUtil extends Base\\ListEntriesUtil");
+        _builder.append("class ListEntriesUtil extends BaseListEntriesUtil");
         _builder.newLine();
       }
     }

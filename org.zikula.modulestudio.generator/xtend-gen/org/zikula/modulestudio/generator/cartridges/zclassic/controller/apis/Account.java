@@ -410,6 +410,9 @@ public class Account {
         _builder.append("\\Api;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\AccountApi as BaseAccountApi;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -432,7 +435,7 @@ public class Account {
         _builder.append("_Api_Base_Account");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class AccountApi extends Base\\AccountApi");
+        _builder.append("class AccountApi extends BaseAccountApi");
         _builder.newLine();
       }
     }

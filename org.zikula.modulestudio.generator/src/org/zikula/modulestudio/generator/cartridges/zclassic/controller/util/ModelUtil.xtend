@@ -53,6 +53,8 @@ class ModelUtil {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Util;
 
+            use Base\ModelUtil as BaseModelUtil;
+
         «ENDIF»
         /**
          * Utility implementation class for model helper methods.
@@ -60,7 +62,7 @@ class ModelUtil {
         «IF targets('1.3.5')»
         class «appName»_Util_Model extends «appName»_Util_Base_Model
         «ELSE»
-        class ModelUtil extends Base\ModelUtil
+        class ModelUtil extends BaseModelUtil
         «ENDIF»
         {
             // feel free to add your own convenience methods here

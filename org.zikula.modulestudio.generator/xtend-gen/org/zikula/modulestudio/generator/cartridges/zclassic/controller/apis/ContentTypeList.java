@@ -1505,6 +1505,9 @@ public class ContentTypeList {
         _builder.append("\\ContentType;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\ItemList as BaseItemList;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -1527,7 +1530,7 @@ public class ContentTypeList {
         _builder.append("_ContentType_Base_ItemList");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class ItemList extends Base\\ItemList");
+        _builder.append("class ItemList extends BaseItemList");
         _builder.newLine();
       }
     }

@@ -144,6 +144,9 @@ public class ModelUtil {
         _builder.append("\\Util;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\ModelUtil as BaseModelUtil;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -166,7 +169,7 @@ public class ModelUtil {
         _builder.append("_Util_Base_Model");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class ModelUtil extends Base\\ModelUtil");
+        _builder.append("class ModelUtil extends BaseModelUtil");
         _builder.newLine();
       }
     }

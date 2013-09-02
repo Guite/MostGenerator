@@ -165,6 +165,8 @@ class Cache {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Api;
 
+            use Base\CacheApi as BaseCacheApi;
+
         «ENDIF»
         /**
          * Cache api implementation class.
@@ -172,7 +174,7 @@ class Cache {
         «IF targets('1.3.5')»
         class «appName»_Api_Cache extends «appName»_Api_Base_Cache
         «ELSE»
-        class CacheApi extends Base\CacheApi
+        class CacheApi extends BaseCacheApi
         «ENDIF»
         {
             // feel free to extend the cache api here

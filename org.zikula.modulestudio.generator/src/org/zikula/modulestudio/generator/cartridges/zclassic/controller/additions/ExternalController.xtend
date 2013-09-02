@@ -285,6 +285,8 @@ class ExternalController {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Controller;
 
+            use Base\ExternalController as BaseExternalController;
+
         «ENDIF»
         /**
          * Controller for external calls implementation class.
@@ -292,7 +294,7 @@ class ExternalController {
         «IF targets('1.3.5')»
         class «appName»_Controller_External extends «appName»_Controller_Base_External
         «ELSE»
-        class ExternalController extends Base\ExternalController
+        class ExternalController extends BaseExternalController
         «ENDIF»
         {
             // feel free to extend the external controller here

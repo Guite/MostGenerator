@@ -431,6 +431,9 @@ public class GeoInput {
         _builder.append("\\Form\\Plugin;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\GeoInput as BaseGeoInput;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -462,7 +465,7 @@ public class GeoInput {
         _builder.append("_Form_Plugin_Base_GeoInput");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class GeoInput extends Base\\GeoInput");
+        _builder.append("class GeoInput extends BaseGeoInput");
         _builder.newLine();
       }
     }

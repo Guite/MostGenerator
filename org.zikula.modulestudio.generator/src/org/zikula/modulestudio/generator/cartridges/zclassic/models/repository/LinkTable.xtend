@@ -71,6 +71,8 @@ class LinkTable {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity\Repository;
 
+            use Base\«refClass.formatForCodeCapital» as Base«refClass.formatForCodeCapital»;
+
         «ENDIF»
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.
@@ -81,7 +83,7 @@ class LinkTable {
         «IF app.targets('1.3.5')»
         class «app.appName»_Entity_Repository_«refClass.formatForCodeCapital» extends «app.appName»_Entity_Repository_Base_«refClass.formatForCodeCapital»
         «ELSE»
-        class «refClass.formatForCodeCapital» extends Base\«refClass.formatForCodeCapital»
+        class «refClass.formatForCodeCapital» extends Base«refClass.formatForCodeCapital»
         «ENDIF»
         {
             // feel free to add your own methods here, like for example reusable DQL queries

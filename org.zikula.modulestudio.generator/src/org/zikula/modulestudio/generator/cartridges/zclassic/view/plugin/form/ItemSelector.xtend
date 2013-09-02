@@ -210,6 +210,8 @@ class ItemSelector {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin;
 
+            use Base\ItemSelector as BaseItemSelector;
+
         «ENDIF»
         /**
          * Item selector plugin implementation class.
@@ -217,7 +219,7 @@ class ItemSelector {
         «IF targets('1.3.5')»
         class «appName»_Form_Plugin_ItemSelector extends «appName»_Form_Plugin_Base_ItemSelector
         «ELSE»
-        class ItemSelector extends Base\ItemSelector
+        class ItemSelector extends BaseItemSelector
         «ENDIF»
         {
             // feel free to add your customisation here

@@ -693,6 +693,8 @@ class AbstractObjectSelector {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin;
 
+            use Base\AbstractObjectSelector as BaseAbstractObjectSelector;
+
         «ENDIF»
         /**
          * Abstract object selector plugin implementation class.
@@ -700,7 +702,7 @@ class AbstractObjectSelector {
         «IF targets('1.3.5')»
         abstract class «appName»_Form_Plugin_AbstractObjectSelector extends «appName»_Form_Plugin_Base_AbstractObjectSelector
         «ELSE»
-        class AbstractObjectSelector extends Base\AbstractObjectSelector
+        class AbstractObjectSelector extends BaseAbstractObjectSelector
         «ENDIF»
         {
             // feel free to add your customisation here

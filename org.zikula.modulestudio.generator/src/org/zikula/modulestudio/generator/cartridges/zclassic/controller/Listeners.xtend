@@ -84,6 +84,9 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF !isBase»
+                use Base\CoreListener as BaseCoreListener;
+            «ENDIF»
             use Zikula\Core\Event\GenericEvent;
         «ENDIF»
         /**
@@ -92,7 +95,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Core extends «ENDIF»«appName»_Listener_Base_Core
         «ELSE»
-        class CoreListener«IF !isBase» extends Base\CoreListener«ENDIF»
+        class CoreListener«IF !isBase» extends BaseCoreListener«ENDIF»
         «ENDIF»
         {
             «new Core().generate(it, isBase)»
@@ -104,6 +107,9 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF !isBase»
+                use Base\FrontControllerListener as BaseFrontControllerListener;
+            «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
         «ENDIF»
@@ -113,7 +119,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_FrontController extends «ENDIF»«appName»_Listener_Base_FrontController
         «ELSE»
-        class FrontControllerListener«IF !isBase» extends Base\FrontControllerListener«ENDIF»
+        class FrontControllerListener«IF !isBase» extends BaseFrontControllerListener«ENDIF»
         «ENDIF»
         {
             «new FrontController().generate(it, isBase)»
@@ -125,6 +131,9 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF !isBase»
+                use Base\InstallerListener as BaseInstallerListener;
+            «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
         «ENDIF»
@@ -134,7 +143,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Installer extends «ENDIF»«appName»_Listener_Base_Installer
         «ELSE»
-        class InstallerListener«IF !isBase» extends Base\InstallerListener«ENDIF»
+        class InstallerListener«IF !isBase» extends BaseInstallerListener«ENDIF»
         «ENDIF»
         {
             «new ModuleInstaller().generate(it, isBase)»
@@ -146,6 +155,9 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF !isBase»
+                use Base\ModuleDispatchListener as BaseModuleDispatchListener;
+            «ENDIF»
             «IF isBase»
                 use ModUtil;
             «ENDIF»
@@ -158,7 +170,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_ModuleDispatch extends «ENDIF»«appName»_Listener_Base_ModuleDispatch
         «ELSE»
-        class ModuleDispatchListener«IF !isBase» extends Base\ModuleDispatchListener«ENDIF»
+        class ModuleDispatchListener«IF !isBase» extends BaseModuleDispatchListener«ENDIF»
         «ENDIF»
         {
             «new ModuleDispatch().generate(it, isBase)»
@@ -170,6 +182,9 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF !isBase»
+                use Base\MailerListener as BaseMailerListener;
+            «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
         «ENDIF»
@@ -179,7 +194,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Mailer extends «ENDIF»«appName»_Listener_Base_Mailer
         «ELSE»
-        class MailerListener«IF !isBase» extends Base\MailerListener«ENDIF»
+        class MailerListener«IF !isBase» extends BaseMailerListener«ENDIF»
         «ENDIF»
         {
             «new Mailer().generate(it, isBase)»
@@ -191,6 +206,9 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF !isBase»
+                use Base\PageListener as BasePageListener;
+            «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
         «ENDIF»
@@ -200,7 +218,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Page extends «ENDIF»«appName»_Listener_Base_Page
         «ELSE»
-        class PageListener«IF !isBase» extends Base\PageListener«ENDIF»
+        class PageListener«IF !isBase» extends BasePageListener«ENDIF»
         «ENDIF»
         {
             «new Page().generate(it, isBase)»
@@ -212,6 +230,9 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF !isBase»
+                use Base\ErrorsListener as BaseErrorsListener;
+            «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
         «ENDIF»
@@ -221,7 +242,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Errors extends «ENDIF»«appName»_Listener_Base_Errors
         «ELSE»
-        class ErrorsListener«IF !isBase» extends Base\ErrorsListener«ENDIF»
+        class ErrorsListener«IF !isBase» extends BaseErrorsListener«ENDIF»
         «ENDIF»
         {
             «new Errors().generate(it, isBase)»
@@ -233,6 +254,9 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF !isBase»
+                use Base\ThemeListener as BaseThemeListener;
+            «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
         «ENDIF»
@@ -242,7 +266,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Theme extends «ENDIF»«appName»_Listener_Base_Theme
         «ELSE»
-        class ThemeListener«IF !isBase» extends Base\ThemeListener«ENDIF»
+        class ThemeListener«IF !isBase» extends BaseThemeListener«ENDIF»
         «ENDIF»
         {
             «new Theme().generate(it, isBase)»
@@ -254,6 +278,9 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF !isBase»
+                use Base\ViewListener as BaseViewListener;
+            «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
         «ENDIF»
@@ -263,7 +290,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_View extends «ENDIF»«appName»_Listener_Base_View
         «ELSE»
-        class ViewListener«IF !isBase» extends Base\ViewListener«ENDIF»
+        class ViewListener«IF !isBase» extends BaseViewListener«ENDIF»
         «ENDIF»
         {
             «new View().generate(it, isBase)»
@@ -275,6 +302,9 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF !isBase»
+                use Base\UserLoginListener as BaseUserLoginListener;
+            «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
         «ENDIF»
@@ -284,7 +314,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_UserLogin extends «ENDIF»«appName»_Listener_Base_UserLogin
         «ELSE»
-        class UserLoginListener«IF !isBase» extends Base\UserLoginListener«ENDIF»
+        class UserLoginListener«IF !isBase» extends BaseUserLoginListener«ENDIF»
         «ENDIF»
         {
             «new UserLogin().generate(it, isBase)»
@@ -296,6 +326,9 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF !isBase»
+                use Base\UserLogoutListener as BaseUserLogoutListener;
+            «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
         «ENDIF»
@@ -305,7 +338,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_UserLogout extends «ENDIF»«appName»_Listener_Base_UserLogout
         «ELSE»
-        class UserLogoutListener«IF !isBase» extends Base\UserLogoutListener«ENDIF»
+        class UserLogoutListener«IF !isBase» extends BaseUserLogoutListener«ENDIF»
         «ENDIF»
         {
             «new UserLogout().generate(it, isBase)»
@@ -322,6 +355,8 @@ class Listeners {
                     use ModUtil;
                     use ServiceUtil;
                 «ENDIF»
+            «ELSE»
+                use Base\UserListener as BaseUserListener;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -332,7 +367,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_User extends «ENDIF»«appName»_Listener_Base_User
         «ELSE»
-        class UserListener«IF !isBase» extends Base\UserListener«ENDIF»
+        class UserListener«IF !isBase» extends BaseUserListener«ENDIF»
         «ENDIF»
         {
             «new User().generate(it, isBase)»
@@ -344,6 +379,9 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF !isBase»
+                use Base\UserRegistrationListener as BaseUserRegistrationListener;
+            «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
         «ENDIF»
@@ -353,7 +391,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_UserRegistration extends «ENDIF»«appName»_Listener_Base_UserRegistration
         «ELSE»
-        class UserRegistrationListener«IF !isBase» extends Base\UserRegistrationListener«ENDIF»
+        class UserRegistrationListener«IF !isBase» extends BaseUserRegistrationListener«ENDIF»
         «ENDIF»
         {
             «new UserRegistration().generate(it, isBase)»
@@ -365,6 +403,9 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF !isBase»
+                use Base\UsersListener as BaseUsersListener;
+            «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
         «ENDIF»
@@ -374,7 +415,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Users extends «ENDIF»«appName»_Listener_Base_Users
         «ELSE»
-        class UsersListener«IF !isBase» extends Base\UsersListener«ENDIF»
+        class UsersListener«IF !isBase» extends BaseUsersListener«ENDIF»
         «ENDIF»
         {
             «new Users().generate(it, isBase)»
@@ -386,6 +427,9 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
+            «IF !isBase»
+                use Base\GroupListener as BaseGroupListener;
+            «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
         «ENDIF»
@@ -395,7 +439,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_Group extends «ENDIF»«appName»_Listener_Base_Group
         «ELSE»
-        class GroupListener«IF !isBase» extends Base\GroupListener«ENDIF»
+        class GroupListener«IF !isBase» extends BaseGroupListener«ENDIF»
         «ENDIF»
         {
             «new Group().generate(it, isBase)»
@@ -407,7 +451,9 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
-            «IF isBase»
+            «IF !isBase»
+                use Base\ThirdPartyListener as BaseThirdPartyListener;
+            «ELSE»
                 «IF needsApproval»
                     use «appNamespace»\Util\WorkflowUtil;
                     use ServiceUtil;
@@ -428,7 +474,7 @@ class Listeners {
         «IF targets('1.3.5')»
         class «IF !isBase»«appName»_Listener_ThirdParty extends «ENDIF»«appName»_Listener_Base_ThirdParty
         «ELSE»
-        class ThirdPartyListener«IF !isBase» extends Base\ThirdPartyListener«ENDIF»
+        class ThirdPartyListener«IF !isBase» extends BaseThirdPartyListener«ENDIF»
         «ENDIF»
         {
             «new ThirdParty().generate(it, isBase)»

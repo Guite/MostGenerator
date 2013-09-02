@@ -1128,6 +1128,8 @@ class FormHandler {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»;
 
+            use Base\«actionName.formatForCodeCapital»Handler as Base«actionName.formatForCodeCapital»Handler;
+
         «ENDIF»
         /**
          * This handler class handles the page events of the Form called by the «formatForCode(app.appName + '_' + formattedName + '_' + actionName)»() function.
@@ -1136,7 +1138,7 @@ class FormHandler {
         «IF app.targets('1.3.5')»
         class «app.appName»_Form_Handler_«name.formatForCodeCapital»_«actionName.formatForCodeCapital» extends «app.appName»_Form_Handler_«name.formatForCodeCapital»_Base_«actionName.formatForCodeCapital»
         «ELSE»
-        class «actionName.formatForCodeCapital»Handler extends Base\«actionName.formatForCodeCapital»Handler
+        class «actionName.formatForCodeCapital»Handler extends Base«actionName.formatForCodeCapital»Handler
         «ENDIF»
         {
             // feel free to extend the base handler class here
@@ -1151,6 +1153,7 @@ class FormHandler {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Form\Handler\«controller.name.formatForCodeCapital»\«name.formatForCodeCapital»\Base;
 
+            use «app.appNamespace»\Form\Handler\«controller.formattedName.toFirstUpper»\«actionName.formatForCodeCapital»Handler as Base«actionName.formatForCodeCapital»Handler;
             use «app.appNamespace»\Util\ControllerUtil;
             «IF app.hasListFields»
                 use «app.appNamespace»\Util\ListEntriesUtil;
@@ -1187,7 +1190,7 @@ class FormHandler {
         «IF app.targets('1.3.5')»
         class «app.appName»_Form_Handler_«controller.name.formatForCodeCapital»_«name.formatForCodeCapital»_Base_«actionName.formatForCodeCapital» extends «app.appName»_Form_Handler_«controller.name.formatForCodeCapital»_«actionName.formatForCodeCapital»
         «ELSE»
-        class «actionName.formatForCodeCapital»Handler extends \«app.appName»\Form\Handler\«controller.formattedName.toFirstUpper»\«actionName.formatForCodeCapital»Handler
+        class «actionName.formatForCodeCapital»Handler extends Base«actionName.formatForCodeCapital»Handler
         «ENDIF»
         {
             /**
@@ -1284,6 +1287,8 @@ class FormHandler {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Form\Handler\«controller.name.formatForCodeCapital»\«name.formatForCodeCapital»;
 
+            use Base\«actionName.formatForCodeCapital»Handler as Base«actionName.formatForCodeCapital»Handler;
+
         «ENDIF»
         /**
          * This handler class handles the page events of the Form called by the «formatForCode(app.appName + '_' + controller.formattedName + '_' + actionName)»() function.
@@ -1292,7 +1297,7 @@ class FormHandler {
         «IF app.targets('1.3.5')»
         class «app.appName»_Form_Handler_«controller.name.formatForCodeCapital»_«name.formatForCodeCapital»_«actionName.formatForCodeCapital» extends «app.appName»_Form_Handler_«controller.name.formatForCodeCapital»_«name.formatForCodeCapital»_Base_«actionName.formatForCodeCapital»
         «ELSE»
-        class «actionName.formatForCodeCapital»Handler extends Base\«actionName.formatForCodeCapital»Handler
+        class «actionName.formatForCodeCapital»Handler extends Base«actionName.formatForCodeCapital»Handler
         «ENDIF»
         {
             // feel free to extend the base handler class here

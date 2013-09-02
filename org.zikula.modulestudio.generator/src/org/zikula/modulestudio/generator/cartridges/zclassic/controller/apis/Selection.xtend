@@ -263,6 +263,8 @@ class Selection {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Api;
 
+            use Base\SelectionApi as BaseSelectionApi;
+
         «ENDIF»
         /**
          * Selection api implementation class.
@@ -270,7 +272,7 @@ class Selection {
         «IF targets('1.3.5')»
         class «appName»_Api_Selection extends «appName»_Api_Base_Selection
         «ELSE»
-        class SelectionApi extends Base\SelectionApi
+        class SelectionApi extends BaseSelectionApi
         «ENDIF»
         {
             // feel free to extend the selection api here

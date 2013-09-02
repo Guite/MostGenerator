@@ -214,6 +214,17 @@ public class LinkTable {
         _builder.append("\\Entity\\Repository;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\");
+        String _refClass = it.getRefClass();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_refClass);
+        _builder.append(_formatForCodeCapital, "");
+        _builder.append(" as Base");
+        String _refClass_1 = it.getRefClass();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_refClass_1);
+        _builder.append(_formatForCodeCapital_1, "");
+        _builder.append(";");
+        _builder.newLineIfNotEmpty();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -250,26 +261,26 @@ public class LinkTable {
         String _appName = this._utils.appName(app);
         _builder.append(_appName, "");
         _builder.append("_Entity_Repository_");
-        String _refClass = it.getRefClass();
-        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_refClass);
-        _builder.append(_formatForCodeCapital, "");
+        String _refClass_2 = it.getRefClass();
+        String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_refClass_2);
+        _builder.append(_formatForCodeCapital_2, "");
         _builder.append(" extends ");
         String _appName_1 = this._utils.appName(app);
         _builder.append(_appName_1, "");
         _builder.append("_Entity_Repository_Base_");
-        String _refClass_1 = it.getRefClass();
-        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_refClass_1);
-        _builder.append(_formatForCodeCapital_1, "");
-        _builder.newLineIfNotEmpty();
-      } else {
-        _builder.append("class ");
-        String _refClass_2 = it.getRefClass();
-        String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_refClass_2);
-        _builder.append(_formatForCodeCapital_2, "");
-        _builder.append(" extends Base\\");
         String _refClass_3 = it.getRefClass();
         String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_refClass_3);
         _builder.append(_formatForCodeCapital_3, "");
+        _builder.newLineIfNotEmpty();
+      } else {
+        _builder.append("class ");
+        String _refClass_4 = it.getRefClass();
+        String _formatForCodeCapital_4 = this._formattingExtensions.formatForCodeCapital(_refClass_4);
+        _builder.append(_formatForCodeCapital_4, "");
+        _builder.append(" extends Base");
+        String _refClass_5 = it.getRefClass();
+        String _formatForCodeCapital_5 = this._formattingExtensions.formatForCodeCapital(_refClass_5);
+        _builder.append(_formatForCodeCapital_5, "");
         _builder.newLineIfNotEmpty();
       }
     }

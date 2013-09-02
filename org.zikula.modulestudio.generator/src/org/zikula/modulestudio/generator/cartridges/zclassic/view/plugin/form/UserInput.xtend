@@ -198,6 +198,8 @@ class UserInput {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin;
 
+            use Base\UserInput as BaseUserInput;
+
         «ENDIF»
         /**
          * User field plugin providing an autocomplete for user names.
@@ -208,7 +210,7 @@ class UserInput {
         «IF targets('1.3.5')»
         class «appName»_Form_Plugin_UserInput extends «appName»_Form_Plugin_Base_UserInput
         «ELSE»
-        class UserInput extends Base\UserInput
+        class UserInput extends BaseUserInput
         «ENDIF»
         {
             // feel free to add your customisation here

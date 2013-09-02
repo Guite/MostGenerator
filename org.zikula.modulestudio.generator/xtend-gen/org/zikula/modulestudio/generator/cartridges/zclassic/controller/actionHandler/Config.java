@@ -551,6 +551,9 @@ public class Config {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\ConfigHandler as BaseConfigHandler;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -581,7 +584,7 @@ public class Config {
         _builder.append("_Base_Config");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class ConfigHandler extends Base\\ConfigHandler");
+        _builder.append("class ConfigHandler extends BaseConfigHandler");
         _builder.newLine();
       }
     }

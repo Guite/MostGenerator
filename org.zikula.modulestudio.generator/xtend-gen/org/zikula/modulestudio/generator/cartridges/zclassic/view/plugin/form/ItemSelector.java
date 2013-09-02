@@ -647,6 +647,9 @@ public class ItemSelector {
         _builder.append("\\Form\\Plugin;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\ItemSelector as BaseItemSelector;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -669,7 +672,7 @@ public class ItemSelector {
         _builder.append("_Form_Plugin_Base_ItemSelector");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class ItemSelector extends Base\\ItemSelector");
+        _builder.append("class ItemSelector extends BaseItemSelector");
         _builder.newLine();
       }
     }

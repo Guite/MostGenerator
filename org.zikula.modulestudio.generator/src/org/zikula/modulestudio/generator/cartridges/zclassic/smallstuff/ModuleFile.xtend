@@ -47,10 +47,12 @@ class ModuleFile {
     def private moduleInfoImpl(Application it) '''
         namespace «appNamespace»;
 
+        use Base\«appName» as Base«appName»;
+
         /**
          * Module implementation class.
          */
-        class «appName» extends Base\«appName»
+        class «appName» extends Base«appName»
         {
             // custom enhancements can go here
         }

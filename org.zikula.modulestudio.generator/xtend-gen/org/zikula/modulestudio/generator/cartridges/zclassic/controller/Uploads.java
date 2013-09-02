@@ -1657,6 +1657,9 @@ public class Uploads {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\UploadHandler as BaseUploadHandler;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -1679,7 +1682,7 @@ public class Uploads {
         _builder.append("_Base_UploadHandler");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class UploadHandler extends Base\\UploadHandler");
+        _builder.append("class UploadHandler extends BaseUploadHandler");
         _builder.newLine();
       }
     }

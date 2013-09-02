@@ -540,6 +540,9 @@ public class UserInput {
         _builder.append("\\Form\\Plugin;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\UserInput as BaseUserInput;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -571,7 +574,7 @@ public class UserInput {
         _builder.append("_Form_Plugin_Base_UserInput");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class UserInput extends Base\\UserInput");
+        _builder.append("class UserInput extends BaseUserInput");
         _builder.newLine();
       }
     }

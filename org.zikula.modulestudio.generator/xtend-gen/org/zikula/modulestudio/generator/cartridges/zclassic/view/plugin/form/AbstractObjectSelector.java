@@ -1791,6 +1791,9 @@ public class AbstractObjectSelector {
         _builder.append("\\Form\\Plugin;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\AbstractObjectSelector as BaseAbstractObjectSelector;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -1813,7 +1816,7 @@ public class AbstractObjectSelector {
         _builder.append("_Form_Plugin_Base_AbstractObjectSelector");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class AbstractObjectSelector extends Base\\AbstractObjectSelector");
+        _builder.append("class AbstractObjectSelector extends BaseAbstractObjectSelector");
         _builder.newLine();
       }
     }

@@ -151,6 +151,8 @@ class Tag {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\TaggedObjectMeta;
 
+            use Base\«appName» as Base«appName»;
+
         «ENDIF»
         /**
          * This class provides object meta data for the Tag module.
@@ -158,7 +160,7 @@ class Tag {
         «IF targets('1.3.5')»
         class «appName»_TaggedObjectMeta_«appName» extends «appName»_TaggedObjectMeta_Base_«appName»
         «ELSE»
-        class «appName» extends Base\«appName»
+        class «appName» extends Base«appName»
         «ENDIF»
         {
             // feel free to extend the tag support here

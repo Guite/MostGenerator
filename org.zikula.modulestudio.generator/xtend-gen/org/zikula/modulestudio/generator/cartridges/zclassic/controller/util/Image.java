@@ -389,6 +389,9 @@ public class Image {
         _builder.append("\\Util;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\ImageUtil as BaseImageUtil;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -411,7 +414,7 @@ public class Image {
         _builder.append("_Util_Base_Image");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class ImageUtil extends Base\\ImageUtil");
+        _builder.append("class ImageUtil extends BaseImageUtil");
         _builder.newLine();
       }
     }

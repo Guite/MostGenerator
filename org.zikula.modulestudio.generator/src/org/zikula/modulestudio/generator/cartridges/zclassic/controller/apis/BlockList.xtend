@@ -446,6 +446,8 @@ class BlockList {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Block;
 
+            use Base\ItemListBlock as BaseItemListBlock;
+
         «ENDIF»
         /**
          * Generic item list block implementation class.
@@ -453,7 +455,7 @@ class BlockList {
         «IF targets('1.3.5')»
         class «appName»_Block_ItemList extends «appName»_Block_Base_ItemList
         «ELSE»
-        class ItemListBlock extends Base\ItemListBlock
+        class ItemListBlock extends BaseItemListBlock
         «ENDIF»
         {
             // feel free to extend the item list block here

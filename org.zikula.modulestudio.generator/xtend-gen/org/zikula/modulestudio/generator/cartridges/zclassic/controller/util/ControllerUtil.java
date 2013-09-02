@@ -1053,6 +1053,9 @@ public class ControllerUtil {
         _builder.append("\\Util;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\ControllerUtil as BaseControllerUtil;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -1075,7 +1078,7 @@ public class ControllerUtil {
         _builder.append("_Util_Base_Controller");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class ControllerUtil extends Base\\ControllerUtil");
+        _builder.append("class ControllerUtil extends BaseControllerUtil");
         _builder.newLine();
       }
     }

@@ -175,6 +175,8 @@ class Entities {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity;
 
+            use «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»Entity«ENDIF» as Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Abstract«name.formatForCodeCapital»Entity«ENDIF»
+
         «ENDIF»
         «imports»
 
@@ -217,7 +219,7 @@ class Entities {
         «IF app.targets('1.3.5')»
         class «entityClassName('', false)» extends «IF isInheriting»«parentType.entityClassName('', false)»«ELSE»«entityClassName('', true)»«ENDIF»
         «ELSE»
-        class «name.formatForCodeCapital»Entity extends «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\Abstract«name.formatForCodeCapital»Entity«ENDIF»
+        class «name.formatForCodeCapital»Entity extends Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Abstract«name.formatForCodeCapital»Entity«ENDIF»
         «ENDIF»
         {
             // feel free to add your own methods here

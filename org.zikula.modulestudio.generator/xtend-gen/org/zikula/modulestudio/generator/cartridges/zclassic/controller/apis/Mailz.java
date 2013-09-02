@@ -531,6 +531,9 @@ public class Mailz {
         _builder.append("\\Api;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\MailzApi as BaseMailzApi;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -553,7 +556,7 @@ public class Mailz {
         _builder.append("_Api_Base_Mailz");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class MailzApi extends Base\\MailzApi");
+        _builder.append("class MailzApi extends BaseMailzApi");
         _builder.newLine();
       }
     }

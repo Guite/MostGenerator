@@ -159,6 +159,8 @@ class VersionFile {
         «IF !targets('1.3.5')»
             namespace «appNamespace»;
 
+            use Base\«name.formatForCodeCapital»ModuleVersion as Base«name.formatForCodeCapital»ModuleVersion;
+
         «ENDIF»
         /**
          * Version information implementation class.
@@ -166,7 +168,7 @@ class VersionFile {
         «IF targets('1.3.5')»
         class «appName»_Version extends «appName»_Base_Version
         «ELSE»
-        class «name.formatForCodeCapital»ModuleVersion extends Base\«name.formatForCodeCapital»ModuleVersion
+        class «name.formatForCodeCapital»ModuleVersion extends Base«name.formatForCodeCapital»ModuleVersion
         «ENDIF»
         {
             // custom enhancements can go here

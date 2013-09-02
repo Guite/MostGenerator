@@ -45,6 +45,8 @@ class TreeSelector {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin\Base;
 
+            use «vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Form\Plugin\AbstractObjectSelector as BaseAbstractObjectSelector;
+
             use ModUtil;
             use ServiceUtil;
             use Zikula_Form_View;
@@ -59,7 +61,7 @@ class TreeSelector {
         «IF targets('1.3.5')»
         class «appName»_Form_Plugin_Base_TreeSelector extends «appName»_Form_Plugin_AbstractObjectSelector
         «ELSE»
-        class TreeSelector extends \«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Form\Plugin\AbstractObjectSelector
+        class TreeSelector extends BaseAbstractObjectSelector
         «ENDIF»
         {
             /**
@@ -205,6 +207,8 @@ class TreeSelector {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin;
 
+            use Base\TreeSelector as BaseTreeSelector;
+
         «ENDIF»
         /**
          * Tree selector.
@@ -215,7 +219,7 @@ class TreeSelector {
         «IF targets('1.3.5')»
         class «appName»_Form_Plugin_TreeSelector extends «appName»_Form_Plugin_Base_TreeSelector
         «ELSE»
-        class TreeSelector extends Base\TreeSelector
+        class TreeSelector extends BaseTreeSelector
         «ENDIF»
         {
             // feel free to add your customisation here

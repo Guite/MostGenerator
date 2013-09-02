@@ -1515,6 +1515,9 @@ public class BlockList {
         _builder.append("\\Block;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\ItemListBlock as BaseItemListBlock;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -1537,7 +1540,7 @@ public class BlockList {
         _builder.append("_Block_Base_ItemList");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class ItemListBlock extends Base\\ItemListBlock");
+        _builder.append("class ItemListBlock extends BaseItemListBlock");
         _builder.newLine();
       }
     }

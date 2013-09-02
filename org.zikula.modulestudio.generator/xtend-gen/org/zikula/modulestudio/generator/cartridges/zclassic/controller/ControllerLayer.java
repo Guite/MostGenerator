@@ -1130,14 +1130,25 @@ public class ControllerLayer {
         _builder.append("\\Controller;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\");
+        String _name = it.getName();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
+        _builder.append(_formatForCodeCapital, "");
+        _builder.append("Controller as Base");
+        String _name_1 = it.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_1);
+        _builder.append(_formatForCodeCapital_1, "");
+        _builder.append("Controller;");
+        _builder.newLineIfNotEmpty();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
     _builder.newLine();
     _builder.append(" ");
     _builder.append("* This is the ");
-    String _name = it.getName();
-    _builder.append(_name, " ");
+    String _name_2 = it.getName();
+    _builder.append(_name_2, " ");
     _builder.append(" controller class providing navigation and interaction functionality.");
     _builder.newLineIfNotEmpty();
     _builder.append(" ");
@@ -1150,26 +1161,26 @@ public class ControllerLayer {
         String _appName = this._utils.appName(app);
         _builder.append(_appName, "");
         _builder.append("_Controller_");
-        String _name_1 = it.getName();
-        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name_1);
-        _builder.append(_formatForCodeCapital, "");
+        String _name_3 = it.getName();
+        String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_3);
+        _builder.append(_formatForCodeCapital_2, "");
         _builder.append(" extends ");
         String _appName_1 = this._utils.appName(app);
         _builder.append(_appName_1, "");
         _builder.append("_Controller_Base_");
-        String _name_2 = it.getName();
-        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_2);
-        _builder.append(_formatForCodeCapital_1, "");
-        _builder.newLineIfNotEmpty();
-      } else {
-        _builder.append("class ");
-        String _name_3 = it.getName();
-        String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_3);
-        _builder.append(_formatForCodeCapital_2, "");
-        _builder.append("Controller extends Base\\");
         String _name_4 = it.getName();
         String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_4);
         _builder.append(_formatForCodeCapital_3, "");
+        _builder.newLineIfNotEmpty();
+      } else {
+        _builder.append("class ");
+        String _name_5 = it.getName();
+        String _formatForCodeCapital_4 = this._formattingExtensions.formatForCodeCapital(_name_5);
+        _builder.append(_formatForCodeCapital_4, "");
+        _builder.append("Controller extends Base");
+        String _name_6 = it.getName();
+        String _formatForCodeCapital_5 = this._formattingExtensions.formatForCodeCapital(_name_6);
+        _builder.append(_formatForCodeCapital_5, "");
         _builder.append("Controller");
         _builder.newLineIfNotEmpty();
       }
@@ -1610,14 +1621,25 @@ public class ControllerLayer {
         _builder.append("\\Api;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\");
+        String _name = it.getName();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
+        _builder.append(_formatForCodeCapital, "");
+        _builder.append("Api as Base");
+        String _name_1 = it.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_1);
+        _builder.append(_formatForCodeCapital_1, "");
+        _builder.append("Api;");
+        _builder.newLineIfNotEmpty();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
     _builder.newLine();
     _builder.append(" ");
     _builder.append("* This is the ");
-    String _name = it.getName();
-    _builder.append(_name, " ");
+    String _name_2 = it.getName();
+    _builder.append(_name_2, " ");
     _builder.append(" api helper class.");
     _builder.newLineIfNotEmpty();
     _builder.append(" ");
@@ -1630,26 +1652,26 @@ public class ControllerLayer {
         String _appName = this._utils.appName(app);
         _builder.append(_appName, "");
         _builder.append("_Api_");
-        String _name_1 = it.getName();
-        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name_1);
-        _builder.append(_formatForCodeCapital, "");
+        String _name_3 = it.getName();
+        String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_3);
+        _builder.append(_formatForCodeCapital_2, "");
         _builder.append(" extends ");
         String _appName_1 = this._utils.appName(app);
         _builder.append(_appName_1, "");
         _builder.append("_Api_Base_");
-        String _name_2 = it.getName();
-        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_2);
-        _builder.append(_formatForCodeCapital_1, "");
-        _builder.newLineIfNotEmpty();
-      } else {
-        _builder.append("class ");
-        String _name_3 = it.getName();
-        String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_3);
-        _builder.append(_formatForCodeCapital_2, "");
-        _builder.append("Api extends Base\\");
         String _name_4 = it.getName();
         String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_4);
         _builder.append(_formatForCodeCapital_3, "");
+        _builder.newLineIfNotEmpty();
+      } else {
+        _builder.append("class ");
+        String _name_5 = it.getName();
+        String _formatForCodeCapital_4 = this._formattingExtensions.formatForCodeCapital(_name_5);
+        _builder.append(_formatForCodeCapital_4, "");
+        _builder.append("Api extends Base");
+        String _name_6 = it.getName();
+        String _formatForCodeCapital_5 = this._formattingExtensions.formatForCodeCapital(_name_6);
+        _builder.append(_formatForCodeCapital_5, "");
         _builder.append("Api");
         _builder.newLineIfNotEmpty();
       }

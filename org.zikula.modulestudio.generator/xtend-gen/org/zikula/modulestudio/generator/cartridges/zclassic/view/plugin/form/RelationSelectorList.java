@@ -106,6 +106,17 @@ public class RelationSelectorList {
         _builder.append("\\Form\\Plugin\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use ");
+        String _vendor = it.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "");
+        _builder.append("\\");
+        String _name = it.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+        _builder.append(_formatForCodeCapital_1, "");
+        _builder.append("Module\\Form\\Plugin\\AbstractObjectSelector as BaseAbstractObjectSelector;");
+        _builder.newLineIfNotEmpty();
+        _builder.newLine();
         _builder.append("use Zikula_Form_View;");
         _builder.newLine();
         _builder.newLine();
@@ -131,16 +142,8 @@ public class RelationSelectorList {
         _builder.append("_Form_Plugin_AbstractObjectSelector");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class RelationSelectorList extends \\");
-        String _vendor = it.getVendor();
-        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
-        _builder.append(_formatForCodeCapital, "");
-        _builder.append("\\");
-        String _name = it.getName();
-        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
-        _builder.append(_formatForCodeCapital_1, "");
-        _builder.append("Module\\Form\\Plugin\\AbstractObjectSelector");
-        _builder.newLineIfNotEmpty();
+        _builder.append("class RelationSelectorList extends BaseAbstractObjectSelector");
+        _builder.newLine();
       }
     }
     _builder.append("{");
@@ -306,6 +309,9 @@ public class RelationSelectorList {
         _builder.append("\\Form\\Plugin;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\RelationSelectorList as BaseRelationSelectorList;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -328,7 +334,7 @@ public class RelationSelectorList {
         _builder.append("_Form_Plugin_Base_RelationSelectorList");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class RelationSelectorList extends Base\\RelationSelectorList");
+        _builder.append("class RelationSelectorList extends BaseRelationSelectorList");
         _builder.newLine();
       }
     }

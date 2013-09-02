@@ -1077,6 +1077,17 @@ public class Installer {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\");
+        String _name = it.getName();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
+        _builder.append(_formatForCodeCapital, "");
+        _builder.append("ModuleInstaller as Base");
+        String _name_1 = it.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_1);
+        _builder.append(_formatForCodeCapital_1, "");
+        _builder.append("ModuleInstaller;");
+        _builder.newLineIfNotEmpty();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -1100,13 +1111,13 @@ public class Installer {
         _builder.newLineIfNotEmpty();
       } else {
         _builder.append("class ");
-        String _name = it.getName();
-        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
-        _builder.append(_formatForCodeCapital, "");
-        _builder.append("ModuleInstaller extends Base\\");
-        String _name_1 = it.getName();
-        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_1);
-        _builder.append(_formatForCodeCapital_1, "");
+        String _name_2 = it.getName();
+        String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_2);
+        _builder.append(_formatForCodeCapital_2, "");
+        _builder.append("ModuleInstaller extends Base");
+        String _name_3 = it.getName();
+        String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_3);
+        _builder.append(_formatForCodeCapital_3, "");
         _builder.append("ModuleInstaller");
         _builder.newLineIfNotEmpty();
       }
@@ -1133,6 +1144,9 @@ public class Installer {
         _builder.append("\\Controller;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\InteractiveInstaller as BaseInteractiveInstaller;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -1155,7 +1169,7 @@ public class Installer {
         _builder.append("_Controller_Base_InteractiveInstaller");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class InteractiveInstaller extends Base\\InteractiveInstaller");
+        _builder.append("class InteractiveInstaller extends BaseInteractiveInstaller");
         _builder.newLine();
       }
     }

@@ -855,6 +855,9 @@ public class ExternalController {
         _builder.append("\\Controller;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\ExternalController as BaseExternalController;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -877,7 +880,7 @@ public class ExternalController {
         _builder.append("_Controller_Base_External");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class ExternalController extends Base\\ExternalController");
+        _builder.append("class ExternalController extends BaseExternalController");
         _builder.newLine();
       }
     }

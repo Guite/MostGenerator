@@ -564,6 +564,8 @@ class Uploads {
         «IF !targets('1.3.5')»
             namespace «appNamespace»;
 
+            use Base\UploadHandler as BaseUploadHandler;
+
         «ENDIF»
         /**
          * Upload handler implementation class.
@@ -571,7 +573,7 @@ class Uploads {
         «IF targets('1.3.5')»
         class «appName»_UploadHandler extends «appName»_Base_UploadHandler
         «ELSE»
-        class UploadHandler extends Base\UploadHandler
+        class UploadHandler extends BaseUploadHandler
         «ENDIF»
         {
             // feel free to add your upload handler enhancements here

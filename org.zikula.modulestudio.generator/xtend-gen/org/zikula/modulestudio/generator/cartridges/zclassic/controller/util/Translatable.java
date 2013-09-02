@@ -830,6 +830,9 @@ public class Translatable {
         _builder.append("\\Util;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\TranslatableUtil as BaseTranslatableUtil;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -852,7 +855,7 @@ public class Translatable {
         _builder.append("_Util_Base_Translatable");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class TranslatableUtil extends Base\\TranslatableUtil");
+        _builder.append("class TranslatableUtil extends BaseTranslatableUtil");
         _builder.newLine();
       }
     }

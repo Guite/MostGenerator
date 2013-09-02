@@ -834,6 +834,9 @@ public class Search {
         _builder.append("\\Api;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\SearchApi as BaseSearchApi;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -856,7 +859,7 @@ public class Search {
         _builder.append("_Api_Base_Search");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class SearchApi extends Base\\SearchApi");
+        _builder.append("class SearchApi extends BaseSearchApi");
         _builder.newLine();
       }
     }

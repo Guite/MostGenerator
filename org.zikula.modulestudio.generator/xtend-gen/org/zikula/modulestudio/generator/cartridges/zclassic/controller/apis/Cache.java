@@ -524,6 +524,9 @@ public class Cache {
         _builder.append("\\Api;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\CacheApi as BaseCacheApi;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -546,7 +549,7 @@ public class Cache {
         _builder.append("_Api_Base_Cache");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class CacheApi extends Base\\CacheApi");
+        _builder.append("class CacheApi extends BaseCacheApi");
         _builder.newLine();
       }
     }

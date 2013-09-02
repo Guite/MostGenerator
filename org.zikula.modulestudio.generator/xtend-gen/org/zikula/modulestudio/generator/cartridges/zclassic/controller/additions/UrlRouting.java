@@ -877,6 +877,9 @@ public class UrlRouting {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\RouterFacade as BaseRouterFacade;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -899,7 +902,7 @@ public class UrlRouting {
         _builder.append("_Base_RouterFacade");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class RouterFacade extends Base\\RouterFacade");
+        _builder.append("class RouterFacade extends BaseRouterFacade");
         _builder.newLine();
       }
     }

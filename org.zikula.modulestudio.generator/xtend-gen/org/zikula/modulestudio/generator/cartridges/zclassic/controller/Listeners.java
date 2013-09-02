@@ -253,6 +253,13 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        {
+          boolean _not_1 = (!(isBase).booleanValue());
+          if (_not_1) {
+            _builder.append("use Base\\CoreListener as BaseCoreListener;");
+            _builder.newLine();
+          }
+        }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
         _builder.newLine();
       }
@@ -278,8 +285,8 @@ public class Listeners {
       if (_targets_1) {
         _builder.append("class ");
         {
-          boolean _not_1 = (!(isBase).booleanValue());
-          if (_not_1) {
+          boolean _not_2 = (!(isBase).booleanValue());
+          if (_not_2) {
             String _appName = this._utils.appName(it);
             _builder.append(_appName, "");
             _builder.append("_Listener_Core extends ");
@@ -292,9 +299,9 @@ public class Listeners {
       } else {
         _builder.append("class CoreListener");
         {
-          boolean _not_2 = (!(isBase).booleanValue());
-          if (_not_2) {
-            _builder.append(" extends Base\\CoreListener");
+          boolean _not_3 = (!(isBase).booleanValue());
+          if (_not_3) {
+            _builder.append(" extends BaseCoreListener");
           }
         }
         _builder.newLineIfNotEmpty();
@@ -333,6 +340,13 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        {
+          boolean _not_1 = (!(isBase).booleanValue());
+          if (_not_1) {
+            _builder.append("use Base\\FrontControllerListener as BaseFrontControllerListener;");
+            _builder.newLine();
+          }
+        }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
         _builder.newLine();
         _builder.newLine();
@@ -359,8 +373,8 @@ public class Listeners {
       if (_targets_1) {
         _builder.append("class ");
         {
-          boolean _not_1 = (!(isBase).booleanValue());
-          if (_not_1) {
+          boolean _not_2 = (!(isBase).booleanValue());
+          if (_not_2) {
             String _appName = this._utils.appName(it);
             _builder.append(_appName, "");
             _builder.append("_Listener_FrontController extends ");
@@ -373,9 +387,9 @@ public class Listeners {
       } else {
         _builder.append("class FrontControllerListener");
         {
-          boolean _not_2 = (!(isBase).booleanValue());
-          if (_not_2) {
-            _builder.append(" extends Base\\FrontControllerListener");
+          boolean _not_3 = (!(isBase).booleanValue());
+          if (_not_3) {
+            _builder.append(" extends BaseFrontControllerListener");
           }
         }
         _builder.newLineIfNotEmpty();
@@ -414,6 +428,13 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        {
+          boolean _not_1 = (!(isBase).booleanValue());
+          if (_not_1) {
+            _builder.append("use Base\\InstallerListener as BaseInstallerListener;");
+            _builder.newLine();
+          }
+        }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
         _builder.newLine();
         _builder.newLine();
@@ -440,8 +461,8 @@ public class Listeners {
       if (_targets_1) {
         _builder.append("class ");
         {
-          boolean _not_1 = (!(isBase).booleanValue());
-          if (_not_1) {
+          boolean _not_2 = (!(isBase).booleanValue());
+          if (_not_2) {
             String _appName = this._utils.appName(it);
             _builder.append(_appName, "");
             _builder.append("_Listener_Installer extends ");
@@ -454,9 +475,9 @@ public class Listeners {
       } else {
         _builder.append("class InstallerListener");
         {
-          boolean _not_2 = (!(isBase).booleanValue());
-          if (_not_2) {
-            _builder.append(" extends Base\\InstallerListener");
+          boolean _not_3 = (!(isBase).booleanValue());
+          if (_not_3) {
+            _builder.append(" extends BaseInstallerListener");
           }
         }
         _builder.newLineIfNotEmpty();
@@ -496,6 +517,13 @@ public class Listeners {
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         {
+          boolean _not_1 = (!(isBase).booleanValue());
+          if (_not_1) {
+            _builder.append("use Base\\ModuleDispatchListener as BaseModuleDispatchListener;");
+            _builder.newLine();
+          }
+        }
+        {
           if ((isBase).booleanValue()) {
             _builder.append("use ModUtil;");
             _builder.newLine();
@@ -527,8 +555,8 @@ public class Listeners {
       if (_targets_1) {
         _builder.append("class ");
         {
-          boolean _not_1 = (!(isBase).booleanValue());
-          if (_not_1) {
+          boolean _not_2 = (!(isBase).booleanValue());
+          if (_not_2) {
             String _appName = this._utils.appName(it);
             _builder.append(_appName, "");
             _builder.append("_Listener_ModuleDispatch extends ");
@@ -541,9 +569,9 @@ public class Listeners {
       } else {
         _builder.append("class ModuleDispatchListener");
         {
-          boolean _not_2 = (!(isBase).booleanValue());
-          if (_not_2) {
-            _builder.append(" extends Base\\ModuleDispatchListener");
+          boolean _not_3 = (!(isBase).booleanValue());
+          if (_not_3) {
+            _builder.append(" extends BaseModuleDispatchListener");
           }
         }
         _builder.newLineIfNotEmpty();
@@ -582,6 +610,13 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        {
+          boolean _not_1 = (!(isBase).booleanValue());
+          if (_not_1) {
+            _builder.append("use Base\\MailerListener as BaseMailerListener;");
+            _builder.newLine();
+          }
+        }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
         _builder.newLine();
         _builder.newLine();
@@ -608,8 +643,8 @@ public class Listeners {
       if (_targets_1) {
         _builder.append("class ");
         {
-          boolean _not_1 = (!(isBase).booleanValue());
-          if (_not_1) {
+          boolean _not_2 = (!(isBase).booleanValue());
+          if (_not_2) {
             String _appName = this._utils.appName(it);
             _builder.append(_appName, "");
             _builder.append("_Listener_Mailer extends ");
@@ -622,9 +657,9 @@ public class Listeners {
       } else {
         _builder.append("class MailerListener");
         {
-          boolean _not_2 = (!(isBase).booleanValue());
-          if (_not_2) {
-            _builder.append(" extends Base\\MailerListener");
+          boolean _not_3 = (!(isBase).booleanValue());
+          if (_not_3) {
+            _builder.append(" extends BaseMailerListener");
           }
         }
         _builder.newLineIfNotEmpty();
@@ -663,6 +698,13 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        {
+          boolean _not_1 = (!(isBase).booleanValue());
+          if (_not_1) {
+            _builder.append("use Base\\PageListener as BasePageListener;");
+            _builder.newLine();
+          }
+        }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
         _builder.newLine();
         _builder.newLine();
@@ -689,8 +731,8 @@ public class Listeners {
       if (_targets_1) {
         _builder.append("class ");
         {
-          boolean _not_1 = (!(isBase).booleanValue());
-          if (_not_1) {
+          boolean _not_2 = (!(isBase).booleanValue());
+          if (_not_2) {
             String _appName = this._utils.appName(it);
             _builder.append(_appName, "");
             _builder.append("_Listener_Page extends ");
@@ -703,9 +745,9 @@ public class Listeners {
       } else {
         _builder.append("class PageListener");
         {
-          boolean _not_2 = (!(isBase).booleanValue());
-          if (_not_2) {
-            _builder.append(" extends Base\\PageListener");
+          boolean _not_3 = (!(isBase).booleanValue());
+          if (_not_3) {
+            _builder.append(" extends BasePageListener");
           }
         }
         _builder.newLineIfNotEmpty();
@@ -744,6 +786,13 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        {
+          boolean _not_1 = (!(isBase).booleanValue());
+          if (_not_1) {
+            _builder.append("use Base\\ErrorsListener as BaseErrorsListener;");
+            _builder.newLine();
+          }
+        }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
         _builder.newLine();
         _builder.newLine();
@@ -770,8 +819,8 @@ public class Listeners {
       if (_targets_1) {
         _builder.append("class ");
         {
-          boolean _not_1 = (!(isBase).booleanValue());
-          if (_not_1) {
+          boolean _not_2 = (!(isBase).booleanValue());
+          if (_not_2) {
             String _appName = this._utils.appName(it);
             _builder.append(_appName, "");
             _builder.append("_Listener_Errors extends ");
@@ -784,9 +833,9 @@ public class Listeners {
       } else {
         _builder.append("class ErrorsListener");
         {
-          boolean _not_2 = (!(isBase).booleanValue());
-          if (_not_2) {
-            _builder.append(" extends Base\\ErrorsListener");
+          boolean _not_3 = (!(isBase).booleanValue());
+          if (_not_3) {
+            _builder.append(" extends BaseErrorsListener");
           }
         }
         _builder.newLineIfNotEmpty();
@@ -825,6 +874,13 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        {
+          boolean _not_1 = (!(isBase).booleanValue());
+          if (_not_1) {
+            _builder.append("use Base\\ThemeListener as BaseThemeListener;");
+            _builder.newLine();
+          }
+        }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
         _builder.newLine();
         _builder.newLine();
@@ -851,8 +907,8 @@ public class Listeners {
       if (_targets_1) {
         _builder.append("class ");
         {
-          boolean _not_1 = (!(isBase).booleanValue());
-          if (_not_1) {
+          boolean _not_2 = (!(isBase).booleanValue());
+          if (_not_2) {
             String _appName = this._utils.appName(it);
             _builder.append(_appName, "");
             _builder.append("_Listener_Theme extends ");
@@ -865,9 +921,9 @@ public class Listeners {
       } else {
         _builder.append("class ThemeListener");
         {
-          boolean _not_2 = (!(isBase).booleanValue());
-          if (_not_2) {
-            _builder.append(" extends Base\\ThemeListener");
+          boolean _not_3 = (!(isBase).booleanValue());
+          if (_not_3) {
+            _builder.append(" extends BaseThemeListener");
           }
         }
         _builder.newLineIfNotEmpty();
@@ -906,6 +962,13 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        {
+          boolean _not_1 = (!(isBase).booleanValue());
+          if (_not_1) {
+            _builder.append("use Base\\ViewListener as BaseViewListener;");
+            _builder.newLine();
+          }
+        }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
         _builder.newLine();
         _builder.newLine();
@@ -932,8 +995,8 @@ public class Listeners {
       if (_targets_1) {
         _builder.append("class ");
         {
-          boolean _not_1 = (!(isBase).booleanValue());
-          if (_not_1) {
+          boolean _not_2 = (!(isBase).booleanValue());
+          if (_not_2) {
             String _appName = this._utils.appName(it);
             _builder.append(_appName, "");
             _builder.append("_Listener_View extends ");
@@ -946,9 +1009,9 @@ public class Listeners {
       } else {
         _builder.append("class ViewListener");
         {
-          boolean _not_2 = (!(isBase).booleanValue());
-          if (_not_2) {
-            _builder.append(" extends Base\\ViewListener");
+          boolean _not_3 = (!(isBase).booleanValue());
+          if (_not_3) {
+            _builder.append(" extends BaseViewListener");
           }
         }
         _builder.newLineIfNotEmpty();
@@ -987,6 +1050,13 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        {
+          boolean _not_1 = (!(isBase).booleanValue());
+          if (_not_1) {
+            _builder.append("use Base\\UserLoginListener as BaseUserLoginListener;");
+            _builder.newLine();
+          }
+        }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
         _builder.newLine();
         _builder.newLine();
@@ -1013,8 +1083,8 @@ public class Listeners {
       if (_targets_1) {
         _builder.append("class ");
         {
-          boolean _not_1 = (!(isBase).booleanValue());
-          if (_not_1) {
+          boolean _not_2 = (!(isBase).booleanValue());
+          if (_not_2) {
             String _appName = this._utils.appName(it);
             _builder.append(_appName, "");
             _builder.append("_Listener_UserLogin extends ");
@@ -1027,9 +1097,9 @@ public class Listeners {
       } else {
         _builder.append("class UserLoginListener");
         {
-          boolean _not_2 = (!(isBase).booleanValue());
-          if (_not_2) {
-            _builder.append(" extends Base\\UserLoginListener");
+          boolean _not_3 = (!(isBase).booleanValue());
+          if (_not_3) {
+            _builder.append(" extends BaseUserLoginListener");
           }
         }
         _builder.newLineIfNotEmpty();
@@ -1068,6 +1138,13 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        {
+          boolean _not_1 = (!(isBase).booleanValue());
+          if (_not_1) {
+            _builder.append("use Base\\UserLogoutListener as BaseUserLogoutListener;");
+            _builder.newLine();
+          }
+        }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
         _builder.newLine();
         _builder.newLine();
@@ -1094,8 +1171,8 @@ public class Listeners {
       if (_targets_1) {
         _builder.append("class ");
         {
-          boolean _not_1 = (!(isBase).booleanValue());
-          if (_not_1) {
+          boolean _not_2 = (!(isBase).booleanValue());
+          if (_not_2) {
             String _appName = this._utils.appName(it);
             _builder.append(_appName, "");
             _builder.append("_Listener_UserLogout extends ");
@@ -1108,9 +1185,9 @@ public class Listeners {
       } else {
         _builder.append("class UserLogoutListener");
         {
-          boolean _not_2 = (!(isBase).booleanValue());
-          if (_not_2) {
-            _builder.append(" extends Base\\UserLogoutListener");
+          boolean _not_3 = (!(isBase).booleanValue());
+          if (_not_3) {
+            _builder.append(" extends BaseUserLogoutListener");
           }
         }
         _builder.newLineIfNotEmpty();
@@ -1167,6 +1244,9 @@ public class Listeners {
                 _builder.newLine();
               }
             }
+          } else {
+            _builder.append("use Base\\UserListener as BaseUserListener;");
+            _builder.newLine();
           }
         }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
@@ -1211,7 +1291,7 @@ public class Listeners {
         {
           boolean _not_2 = (!(isBase).booleanValue());
           if (_not_2) {
-            _builder.append(" extends Base\\UserListener");
+            _builder.append(" extends BaseUserListener");
           }
         }
         _builder.newLineIfNotEmpty();
@@ -1250,6 +1330,13 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        {
+          boolean _not_1 = (!(isBase).booleanValue());
+          if (_not_1) {
+            _builder.append("use Base\\UserRegistrationListener as BaseUserRegistrationListener;");
+            _builder.newLine();
+          }
+        }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
         _builder.newLine();
         _builder.newLine();
@@ -1276,8 +1363,8 @@ public class Listeners {
       if (_targets_1) {
         _builder.append("class ");
         {
-          boolean _not_1 = (!(isBase).booleanValue());
-          if (_not_1) {
+          boolean _not_2 = (!(isBase).booleanValue());
+          if (_not_2) {
             String _appName = this._utils.appName(it);
             _builder.append(_appName, "");
             _builder.append("_Listener_UserRegistration extends ");
@@ -1290,9 +1377,9 @@ public class Listeners {
       } else {
         _builder.append("class UserRegistrationListener");
         {
-          boolean _not_2 = (!(isBase).booleanValue());
-          if (_not_2) {
-            _builder.append(" extends Base\\UserRegistrationListener");
+          boolean _not_3 = (!(isBase).booleanValue());
+          if (_not_3) {
+            _builder.append(" extends BaseUserRegistrationListener");
           }
         }
         _builder.newLineIfNotEmpty();
@@ -1331,6 +1418,13 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        {
+          boolean _not_1 = (!(isBase).booleanValue());
+          if (_not_1) {
+            _builder.append("use Base\\UsersListener as BaseUsersListener;");
+            _builder.newLine();
+          }
+        }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
         _builder.newLine();
         _builder.newLine();
@@ -1357,8 +1451,8 @@ public class Listeners {
       if (_targets_1) {
         _builder.append("class ");
         {
-          boolean _not_1 = (!(isBase).booleanValue());
-          if (_not_1) {
+          boolean _not_2 = (!(isBase).booleanValue());
+          if (_not_2) {
             String _appName = this._utils.appName(it);
             _builder.append(_appName, "");
             _builder.append("_Listener_Users extends ");
@@ -1371,9 +1465,9 @@ public class Listeners {
       } else {
         _builder.append("class UsersListener");
         {
-          boolean _not_2 = (!(isBase).booleanValue());
-          if (_not_2) {
-            _builder.append(" extends Base\\UsersListener");
+          boolean _not_3 = (!(isBase).booleanValue());
+          if (_not_3) {
+            _builder.append(" extends BaseUsersListener");
           }
         }
         _builder.newLineIfNotEmpty();
@@ -1412,6 +1506,13 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        {
+          boolean _not_1 = (!(isBase).booleanValue());
+          if (_not_1) {
+            _builder.append("use Base\\GroupListener as BaseGroupListener;");
+            _builder.newLine();
+          }
+        }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
         _builder.newLine();
         _builder.newLine();
@@ -1430,8 +1531,8 @@ public class Listeners {
       if (_targets_1) {
         _builder.append("class ");
         {
-          boolean _not_1 = (!(isBase).booleanValue());
-          if (_not_1) {
+          boolean _not_2 = (!(isBase).booleanValue());
+          if (_not_2) {
             String _appName = this._utils.appName(it);
             _builder.append(_appName, "");
             _builder.append("_Listener_Group extends ");
@@ -1444,9 +1545,9 @@ public class Listeners {
       } else {
         _builder.append("class GroupListener");
         {
-          boolean _not_2 = (!(isBase).booleanValue());
-          if (_not_2) {
-            _builder.append(" extends Base\\GroupListener");
+          boolean _not_3 = (!(isBase).booleanValue());
+          if (_not_3) {
+            _builder.append(" extends BaseGroupListener");
           }
         }
         _builder.newLineIfNotEmpty();
@@ -1486,7 +1587,11 @@ public class Listeners {
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         {
-          if ((isBase).booleanValue()) {
+          boolean _not_1 = (!(isBase).booleanValue());
+          if (_not_1) {
+            _builder.append("use Base\\ThirdPartyListener as BaseThirdPartyListener;");
+            _builder.newLine();
+          } else {
             {
               boolean _needsApproval = this._workflowExtensions.needsApproval(it);
               if (_needsApproval) {
@@ -1532,8 +1637,8 @@ public class Listeners {
       if (_targets_1) {
         _builder.append("class ");
         {
-          boolean _not_1 = (!(isBase).booleanValue());
-          if (_not_1) {
+          boolean _not_2 = (!(isBase).booleanValue());
+          if (_not_2) {
             String _appName = this._utils.appName(it);
             _builder.append(_appName, "");
             _builder.append("_Listener_ThirdParty extends ");
@@ -1546,9 +1651,9 @@ public class Listeners {
       } else {
         _builder.append("class ThirdPartyListener");
         {
-          boolean _not_2 = (!(isBase).booleanValue());
-          if (_not_2) {
-            _builder.append(" extends Base\\ThirdPartyListener");
+          boolean _not_3 = (!(isBase).booleanValue());
+          if (_not_3) {
+            _builder.append(" extends BaseThirdPartyListener");
           }
         }
         _builder.newLineIfNotEmpty();

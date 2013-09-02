@@ -186,6 +186,8 @@ class ColourInput {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin;
 
+            use Base\ColourInput as BaseColourInput;
+
         «ENDIF»
         /**
          * Colour field plugin including colour picker.
@@ -198,7 +200,7 @@ class ColourInput {
         «IF targets('1.3.5')»
         class «appName»_Form_Plugin_ColourInput extends «appName»_Form_Plugin_Base_ColourInput
         «ELSE»
-        class ColourInput extends Base\ColourInput
+        class ColourInput extends BaseColourInput
         «ENDIF»
         {
             // feel free to add your customisation here

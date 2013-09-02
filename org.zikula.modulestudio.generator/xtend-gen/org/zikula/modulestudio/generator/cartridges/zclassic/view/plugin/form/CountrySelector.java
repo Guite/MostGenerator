@@ -299,6 +299,9 @@ public class CountrySelector {
         _builder.append("\\Form\\Plugin;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\CountrySelector as BaseCountrySelector;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -324,7 +327,7 @@ public class CountrySelector {
         _builder.append("_Form_Plugin_Base_CountrySelector");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class CountrySelector extends Base\\CountrySelector");
+        _builder.append("class CountrySelector extends BaseCountrySelector");
         _builder.newLine();
       }
     }

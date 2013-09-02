@@ -447,6 +447,8 @@ class WorkflowUtil {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Util;
 
+            use Base\WorkflowUtil as BaseWorkflowUtil;
+
         «ENDIF»
         /**
          * Utility implementation class for workflow helper methods.
@@ -454,7 +456,7 @@ class WorkflowUtil {
         «IF targets('1.3.5')»
         class «appName»_Util_Workflow extends «appName»_Util_Base_Workflow
         «ELSE»
-        class WorkflowUtil extends Base\WorkflowUtil
+        class WorkflowUtil extends BaseWorkflowUtil
         «ENDIF»
         {
             // feel free to add your own convenience methods here

@@ -1320,6 +1320,9 @@ public class WorkflowUtil {
         _builder.append("\\Util;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use Base\\WorkflowUtil as BaseWorkflowUtil;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -1342,7 +1345,7 @@ public class WorkflowUtil {
         _builder.append("_Util_Base_Workflow");
         _builder.newLineIfNotEmpty();
       } else {
-        _builder.append("class WorkflowUtil extends Base\\WorkflowUtil");
+        _builder.append("class WorkflowUtil extends BaseWorkflowUtil");
         _builder.newLine();
       }
     }

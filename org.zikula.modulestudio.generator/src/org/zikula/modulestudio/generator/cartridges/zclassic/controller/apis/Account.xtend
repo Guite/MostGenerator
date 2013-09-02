@@ -122,6 +122,8 @@ class Account {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Api;
 
+            use Base\AccountApi as BaseAccountApi;
+
         «ENDIF»
         /**
          * Account api implementation class.
@@ -129,7 +131,7 @@ class Account {
         «IF targets('1.3.5')»
         class «appName»_Api_Account extends «appName»_Api_Base_Account
         «ELSE»
-        class AccountApi extends Base\AccountApi
+        class AccountApi extends BaseAccountApi
         «ENDIF»
         {
             // feel free to extend the account api here

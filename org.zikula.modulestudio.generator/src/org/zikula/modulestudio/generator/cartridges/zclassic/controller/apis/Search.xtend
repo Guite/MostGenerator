@@ -272,6 +272,8 @@ class Search {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Api;
 
+            use Base\SearchApi as BaseSearchApi;
+
         «ENDIF»
         /**
          * Search api implementation class.
@@ -279,7 +281,7 @@ class Search {
         «IF targets('1.3.5')»
         class «appName»_Api_Search extends «appName»_Api_Base_Search
         «ELSE»
-        class SearchApi extends Base\SearchApi
+        class SearchApi extends BaseSearchApi
         «ENDIF»
         {
             // feel free to extend the search api here

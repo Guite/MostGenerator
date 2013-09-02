@@ -530,6 +530,40 @@ public class Entities {
         _builder.append("\\Entity;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
+        _builder.append("use ");
+        {
+          boolean _isInheriting = this._modelInheritanceExtensions.isInheriting(it);
+          if (_isInheriting) {
+            Entity _parentType = this._modelInheritanceExtensions.parentType(it);
+            String _name = _parentType.getName();
+            String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
+            _builder.append(_formatForCodeCapital, "");
+          } else {
+            _builder.append("Base\\Abstract");
+            String _name_1 = it.getName();
+            String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_1);
+            _builder.append(_formatForCodeCapital_1, "");
+            _builder.append("Entity");
+          }
+        }
+        _builder.append(" as Base");
+        {
+          boolean _isInheriting_1 = this._modelInheritanceExtensions.isInheriting(it);
+          if (_isInheriting_1) {
+            Entity _parentType_1 = this._modelInheritanceExtensions.parentType(it);
+            String _name_2 = _parentType_1.getName();
+            String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_2);
+            _builder.append(_formatForCodeCapital_2, "");
+          } else {
+            _builder.append("Abstract");
+            String _name_3 = it.getName();
+            String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_3);
+            _builder.append(_formatForCodeCapital_3, "");
+            _builder.append("Entity");
+          }
+        }
+        _builder.newLineIfNotEmpty();
+        _builder.newLine();
       }
     }
     CharSequence _imports = this.imports(it);
@@ -546,8 +580,8 @@ public class Entities {
     _builder.newLine();
     _builder.append(" ");
     _builder.append("* This is the concrete entity class for ");
-    String _name = it.getName();
-    String _formatForDisplay = this._formattingExtensions.formatForDisplay(_name);
+    String _name_4 = it.getName();
+    String _formatForDisplay = this._formattingExtensions.formatForDisplay(_name_4);
     _builder.append(_formatForDisplay, " ");
     _builder.append(" entities.");
     _builder.newLineIfNotEmpty();
@@ -570,17 +604,17 @@ public class Entities {
             String _appName = this._utils.appName(app);
             _builder.append(_appName, " ");
             _builder.append("_Entity_Repository_");
-            String _name_1 = it.getName();
-            String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name_1);
-            _builder.append(_formatForCodeCapital, " ");
+            String _name_5 = it.getName();
+            String _formatForCodeCapital_4 = this._formattingExtensions.formatForCodeCapital(_name_5);
+            _builder.append(_formatForCodeCapital_4, " ");
           } else {
             _builder.append("\\");
             String _appNamespace_1 = this._utils.appNamespace(app);
             _builder.append(_appNamespace_1, " ");
             _builder.append("\\Entity\\Repository\\");
-            String _name_2 = it.getName();
-            String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_2);
-            _builder.append(_formatForCodeCapital_1, " ");
+            String _name_6 = it.getName();
+            String _formatForCodeCapital_5 = this._formattingExtensions.formatForCodeCapital(_name_6);
+            _builder.append(_formatForCodeCapital_5, " ");
           }
         }
         _builder.append("\"");
@@ -704,8 +738,8 @@ public class Entities {
         _builder.newLineIfNotEmpty();
         _builder.append(" ");
         _builder.append("* @ORM\\DiscriminatorMap({\"");
-        String _name_3 = it.getName();
-        String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_3);
+        String _name_7 = it.getName();
+        String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_7);
         _builder.append(_formatForCode_1, " ");
         _builder.append("\" = \"");
         String _entityClassName = this._namingExtensions.entityClassName(it, "", Boolean.valueOf(false));
@@ -749,10 +783,10 @@ public class Entities {
         _builder.append(_entityClassName_1, "");
         _builder.append(" extends ");
         {
-          boolean _isInheriting = this._modelInheritanceExtensions.isInheriting(it);
-          if (_isInheriting) {
-            Entity _parentType = this._modelInheritanceExtensions.parentType(it);
-            String _entityClassName_2 = this._namingExtensions.entityClassName(_parentType, "", Boolean.valueOf(false));
+          boolean _isInheriting_2 = this._modelInheritanceExtensions.isInheriting(it);
+          if (_isInheriting_2) {
+            Entity _parentType_2 = this._modelInheritanceExtensions.parentType(it);
+            String _entityClassName_2 = this._namingExtensions.entityClassName(_parentType_2, "", Boolean.valueOf(false));
             _builder.append(_entityClassName_2, "");
           } else {
             String _entityClassName_3 = this._namingExtensions.entityClassName(it, "", Boolean.valueOf(true));
@@ -762,22 +796,22 @@ public class Entities {
         _builder.newLineIfNotEmpty();
       } else {
         _builder.append("class ");
-        String _name_4 = it.getName();
-        String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_4);
-        _builder.append(_formatForCodeCapital_2, "");
-        _builder.append("Entity extends ");
+        String _name_8 = it.getName();
+        String _formatForCodeCapital_6 = this._formattingExtensions.formatForCodeCapital(_name_8);
+        _builder.append(_formatForCodeCapital_6, "");
+        _builder.append("Entity extends Base");
         {
-          boolean _isInheriting_1 = this._modelInheritanceExtensions.isInheriting(it);
-          if (_isInheriting_1) {
-            Entity _parentType_1 = this._modelInheritanceExtensions.parentType(it);
-            String _name_5 = _parentType_1.getName();
-            String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_5);
-            _builder.append(_formatForCodeCapital_3, "");
+          boolean _isInheriting_3 = this._modelInheritanceExtensions.isInheriting(it);
+          if (_isInheriting_3) {
+            Entity _parentType_3 = this._modelInheritanceExtensions.parentType(it);
+            String _name_9 = _parentType_3.getName();
+            String _formatForCodeCapital_7 = this._formattingExtensions.formatForCodeCapital(_name_9);
+            _builder.append(_formatForCodeCapital_7, "");
           } else {
-            _builder.append("Base\\Abstract");
-            String _name_6 = it.getName();
-            String _formatForCodeCapital_4 = this._formattingExtensions.formatForCodeCapital(_name_6);
-            _builder.append(_formatForCodeCapital_4, "");
+            _builder.append("Abstract");
+            String _name_10 = it.getName();
+            String _formatForCodeCapital_8 = this._formattingExtensions.formatForCodeCapital(_name_10);
+            _builder.append(_formatForCodeCapital_8, "");
             _builder.append("Entity");
           }
         }
@@ -790,8 +824,8 @@ public class Entities {
     _builder.append("// feel free to add your own methods here");
     _builder.newLine();
     {
-      boolean _isInheriting_2 = this._modelInheritanceExtensions.isInheriting(it);
-      if (_isInheriting_2) {
+      boolean _isInheriting_4 = this._modelInheritanceExtensions.isInheriting(it);
+      if (_isInheriting_4) {
         _builder.append("    ");
         {
           Iterable<DerivedField> _derivedFields = this._modelExtensions.getDerivedFields(it);

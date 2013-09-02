@@ -165,6 +165,8 @@ class Mailz {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Api;
 
+            use Base\MailzApi as BaseMailzApi;
+
         «ENDIF»
         /**
          * Mailz api implementation class.
@@ -172,7 +174,7 @@ class Mailz {
         «IF targets('1.3.5')»
         class «appName»_Api_Mailz extends «appName»_Api_Base_Mailz
         «ELSE»
-        class MailzApi extends Base\MailzApi
+        class MailzApi extends BaseMailzApi
         «ENDIF»
         {
             // feel free to extend the mailz api here

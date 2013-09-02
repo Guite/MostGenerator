@@ -370,6 +370,8 @@ class Installer {
         «IF !targets('1.3.5')»
             namespace «appNamespace»;
 
+            use Base\«name.formatForCodeCapital»ModuleInstaller as Base«name.formatForCodeCapital»ModuleInstaller;
+
         «ENDIF»
         /**
          * Installer implementation class.
@@ -377,7 +379,7 @@ class Installer {
         «IF targets('1.3.5')»
         class «appName»_Installer extends «appName»_Base_Installer
         «ELSE»
-        class «name.formatForCodeCapital»ModuleInstaller extends Base\«name.formatForCodeCapital»ModuleInstaller
+        class «name.formatForCodeCapital»ModuleInstaller extends Base«name.formatForCodeCapital»ModuleInstaller
         «ENDIF»
         {
             // feel free to extend the installer here
@@ -388,6 +390,8 @@ class Installer {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Controller;
 
+            use Base\InteractiveInstaller as BaseInteractiveInstaller;
+
         «ENDIF»
         /**
          * Interactive installer implementation class.
@@ -395,7 +399,7 @@ class Installer {
         «IF targets('1.3.5')»
         class «appName»_Controller_InteractiveInstaller extends «appName»_Controller_Base_InteractiveInstaller
         «ELSE»
-        class InteractiveInstaller extends Base\InteractiveInstaller
+        class InteractiveInstaller extends BaseInteractiveInstaller
         «ENDIF»
         {
             // feel free to extend the installer here

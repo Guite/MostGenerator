@@ -1412,6 +1412,8 @@ class Repository {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity\Repository;
 
+            use «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\«name.formatForCodeCapital»«ENDIF» as Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»;
+
         «ENDIF»
         /**
          * Repository class used to implement own convenience methods for performing certain DQL queries.
@@ -1421,7 +1423,7 @@ class Repository {
         «IF app.targets('1.3.5')»
         class «app.appName»_Entity_Repository_«name.formatForCodeCapital» extends «IF isInheriting»«app.appName»_Entity_Repository_«parentType.name.formatForCodeCapital»«ELSE»«app.appName»_Entity_Repository_Base_«name.formatForCodeCapital»«ENDIF»
         «ELSE»
-        class «name.formatForCodeCapital» extends «IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»Base\«name.formatForCodeCapital»«ENDIF»
+        class «name.formatForCodeCapital» extends Base«IF isInheriting»«parentType.name.formatForCodeCapital»«ELSE»«name.formatForCodeCapital»«ENDIF»
         «ENDIF»
         {
             // feel free to add your own methods here, like for example reusable DQL queries
