@@ -178,12 +178,17 @@ public class LinkTable {
       } else {
         _builder.append("        ");
         _builder.append("$qb->delete(\'\\\\");
-        String _appName_2 = this._utils.appName(app);
-        _builder.append(_appName_2, "        ");
-        _builder.append("\\\\Entity\\\\");
-        String _refClass_3 = it.getRefClass();
-        String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_refClass_3);
+        String _vendor = app.getVendor();
+        String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_vendor);
         _builder.append(_formatForCodeCapital_3, "        ");
+        _builder.append("\\\\");
+        String _name_2 = app.getName();
+        String _formatForCodeCapital_4 = this._formattingExtensions.formatForCodeCapital(_name_2);
+        _builder.append(_formatForCodeCapital_4, "        ");
+        _builder.append("Module\\\\Entity\\\\");
+        String _refClass_3 = it.getRefClass();
+        String _formatForCodeCapital_5 = this._formattingExtensions.formatForCodeCapital(_refClass_3);
+        _builder.append(_formatForCodeCapital_5, "        ");
         _builder.append("\', \'tbl\');");
         _builder.newLineIfNotEmpty();
       }

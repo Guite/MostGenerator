@@ -138,7 +138,7 @@ class Ajax {
             «IF app.targets('1.3.5')»
                 $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
             «ELSE»
-                $entityClass = '\\«app.appName»\\Entity\\' . ucfirst($objectType) . 'Entity';
+                $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucfirst($objectType) . 'Entity';
             «ENDIF»
             $repository = $this->entityManager->getRepository($entityClass);
             $repository->setControllerArguments($args);
@@ -236,7 +236,7 @@ class Ajax {
             «IF app.targets('1.3.5')»
                 $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
             «ELSE»
-                $entityClass = '\\«app.appName»\\Entity\\' . ucfirst($objectType) . 'Entity';
+                $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucfirst($objectType) . 'Entity';
             «ENDIF»
             $repository = $this->entityManager->getRepository($entityClass);
             $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
@@ -364,7 +364,7 @@ class Ajax {
             «IF app.targets('1.3.5')»
                 $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
             «ELSE»
-                $entityClass = '\\«app.appName»\\Entity\\' . ucfirst($objectType) . 'Entity';
+                $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucfirst($objectType) . 'Entity';
             «ENDIF»
             $object = new $entityClass(); 
 
@@ -492,7 +492,7 @@ class Ajax {
             «IF app.targets('1.3.5')»
                 $entityClass = '«app.appName»_Entity_' . ucfirst($objectType);
             «ELSE»
-                $entityClass = '\\«app.appName»\\Entity\\' . ucfirst($objectType) . 'Entity';
+                $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucfirst($objectType) . 'Entity';
             «ENDIF»
             $repository = $this->entityManager->getRepository($entityClass);
 

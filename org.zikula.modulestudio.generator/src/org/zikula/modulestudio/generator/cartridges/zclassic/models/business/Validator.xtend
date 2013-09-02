@@ -623,7 +623,7 @@ class Validator {
             «IF app.targets('1.3.5')»
                 $entityClass = '«app.appName»_Entity_«name.formatForCodeCapital»';
             «ELSE»
-                $entityClass = '\\«app.appName»\\Entity\\«name.formatForCodeCapital»Entity';
+                $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\«name.formatForCodeCapital»Entity';
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');

@@ -131,7 +131,7 @@ class ExampleData {
     def private initExampleObjects(Entity it, Application app) '''
         «var exampleNumbers = getListForCounter(container.numExampleRows)»
         «FOR number : exampleNumbers»
-            $«name.formatForCode»«number» = new \«app.appName»«IF app.targets('1.3.5')»_Entity_«name.formatForCodeCapital»«ELSE»\Entity\«name.formatForCodeCapital»Entity«ENDIF»(«exampleRowsConstructorArguments(number)»);
+            $«name.formatForCode»«number» = new «IF app.targets('1.3.5')»\«app.appName»_Entity_«name.formatForCodeCapital»«ELSE»\«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»Entity«ENDIF»(«exampleRowsConstructorArguments(number)»);
         «ENDFOR»
         «/* this last line is on purpose */»
     '''
@@ -163,7 +163,7 @@ class ExampleData {
             «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional).filter(e|e.source.container.application == app)»«relation.exampleRowAssignmentIncoming(entityName, number)»«ENDFOR»
             «IF categorisable»
                 // create category assignment
-                $«entityName»«number»->getCategories()->add(new \«app.appName»«IF app.targets('1.3.5')»_Entity_«name.formatForCodeCapital»Category«ELSE»\Entity\«name.formatForCodeCapital»CategoryEntity«ENDIF»($categoryRegistryIdsPerEntity['«name.formatForCode»'], $category, $«entityName»«number»));
+                $«entityName»«number»->getCategories()->add(new «IF app.targets('1.3.5')»\«app.appName»_Entity_«name.formatForCodeCapital»Category«ELSE»\«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»CategoryEntity«ENDIF»($categoryRegistryIdsPerEntity['«name.formatForCode»'], $category, $«entityName»«number»));
             «ENDIF»
             «IF attributable»
                 // create example attributes

@@ -525,9 +525,14 @@ public class Ajax {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appName_2 = this._utils.appName(app);
-        _builder.append(_appName_2, "    ");
-        _builder.append("\\\\Entity\\\\\' . ucfirst($objectType) . \'Entity\';");
+        String _vendor = app.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "    ");
+        _builder.append("\\\\");
+        String _name_3 = app.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_3);
+        _builder.append(_formatForCodeCapital_1, "    ");
+        _builder.append("Module\\\\Entity\\\\\' . ucfirst($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -677,8 +682,8 @@ public class Ajax {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("$view = Zikula_View::getInstance(\'");
-    String _appName_3 = this._utils.appName(app);
-    _builder.append(_appName_3, "    ");
+    String _appName_2 = this._utils.appName(app);
+    _builder.append(_appName_2, "    ");
     _builder.append("\', false);");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -880,9 +885,14 @@ public class Ajax {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appName_2 = this._utils.appName(app);
-        _builder.append(_appName_2, "    ");
-        _builder.append("\\\\Entity\\\\\' . ucfirst($objectType) . \'Entity\';");
+        String _vendor = app.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "    ");
+        _builder.append("\\\\");
+        String _name_3 = app.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_3);
+        _builder.append(_formatForCodeCapital_1, "    ");
+        _builder.append("Module\\\\Entity\\\\\' . ucfirst($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -998,8 +1008,8 @@ public class Ajax {
         {
           boolean _targets_9 = this._utils.targets(app, "1.3.5");
           if (_targets_9) {
-            String _appName_3 = this._utils.appName(app);
-            _builder.append(_appName_3, "            ");
+            String _appName_2 = this._utils.appName(app);
+            _builder.append(_appName_2, "            ");
             _builder.append("_Util_Image");
           } else {
             _builder.append("ImageUtil");
@@ -1422,9 +1432,14 @@ public class Ajax {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appName_2 = this._utils.appName(app);
-        _builder.append(_appName_2, "    ");
-        _builder.append("\\\\Entity\\\\\' . ucfirst($objectType) . \'Entity\';");
+        String _vendor = app.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "    ");
+        _builder.append("\\\\");
+        String _name_3 = app.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_3);
+        _builder.append(_formatForCodeCapital_1, "    ");
+        _builder.append("Module\\\\Entity\\\\\' . ucfirst($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -1472,8 +1487,8 @@ public class Ajax {
           if (_or_1) {
             _builder.append("    ");
             _builder.append("case \'");
-            String _name_3 = entity_1.getName();
-            String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_3);
+            String _name_4 = entity_1.getName();
+            String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_4);
             _builder.append(_formatForCode_3, "    ");
             _builder.append("\':");
             _builder.newLineIfNotEmpty();
@@ -1490,8 +1505,8 @@ public class Ajax {
                 _builder.append("    ");
                 _builder.append("    ");
                 _builder.append("case \'");
-                String _name_4 = uniqueField_1.getName();
-                String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_4);
+                String _name_5 = uniqueField_1.getName();
+                String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_5);
                 _builder.append(_formatForCode_4, "        ");
                 _builder.append("\':");
                 _builder.newLineIfNotEmpty();
@@ -1499,8 +1514,8 @@ public class Ajax {
                 _builder.append("    ");
                 _builder.append("        ");
                 _builder.append("$result = $repository->detectUniqueState(\'");
-                String _name_5 = uniqueField_1.getName();
-                String _formatForCode_5 = this._formattingExtensions.formatForCode(_name_5);
+                String _name_6 = uniqueField_1.getName();
+                String _formatForCode_5 = this._formattingExtensions.formatForCode(_name_6);
                 _builder.append(_formatForCode_5, "                ");
                 _builder.append("\', $value, $exclude");
                 {
@@ -1989,9 +2004,14 @@ public class Ajax {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appName_1 = this._utils.appName(app);
-        _builder.append(_appName_1, "    ");
-        _builder.append("\\\\Entity\\\\\' . ucfirst($objectType) . \'Entity\';");
+        String _vendor = app.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "    ");
+        _builder.append("\\\\");
+        String _name_3 = app.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_3);
+        _builder.append(_formatForCodeCapital_1, "    ");
+        _builder.append("Module\\\\Entity\\\\\' . ucfirst($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -2086,8 +2106,8 @@ public class Ajax {
       for(final Entity entity : _treeEntities) {
         _builder.append("        ");
         _builder.append("case \'");
-        String _name_3 = entity.getName();
-        String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_3);
+        String _name_4 = entity.getName();
+        String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_4);
         _builder.append(_formatForCode_3, "        ");
         _builder.append("\':");
         _builder.newLineIfNotEmpty();
@@ -2144,8 +2164,8 @@ public class Ajax {
           boolean _not_1 = (!_isEmpty);
           if (_not_1) {
             StringField _head_2 = IterableExtensions.<StringField>head(stringFields);
-            String _name_4 = _head_2.getName();
-            String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_4);
+            String _name_5 = _head_2.getName();
+            String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_5);
             _builder.append(_formatForCode_4, "                ");
           }
         }
@@ -2180,8 +2200,8 @@ public class Ajax {
             _builder.append("        ");
             _builder.append("$descriptionFieldName = \'");
             TextField _head_3 = IterableExtensions.<TextField>head(textFields);
-            String _name_5 = _head_3.getName();
-            String _formatForCode_5 = this._formattingExtensions.formatForCode(_name_5);
+            String _name_6 = _head_3.getName();
+            String _formatForCode_5 = this._formattingExtensions.formatForCode(_name_6);
             _builder.append(_formatForCode_5, "                ");
             _builder.append("\';");
             _builder.newLineIfNotEmpty();
@@ -2247,8 +2267,8 @@ public class Ajax {
                 _builder.append("        ");
                 _builder.append("$descriptionFieldName = \'");
                 StringField _head_4 = IterableExtensions.<StringField>head(textStringFields);
-                String _name_6 = _head_4.getName();
-                String _formatForCode_6 = this._formattingExtensions.formatForCode(_name_6);
+                String _name_7 = _head_4.getName();
+                String _formatForCode_6 = this._formattingExtensions.formatForCode(_name_7);
                 _builder.append(_formatForCode_6, "                ");
                 _builder.append("\';");
                 _builder.newLineIfNotEmpty();
@@ -2322,8 +2342,8 @@ public class Ajax {
     {
       boolean _targets_7 = this._utils.targets(app, "1.3.5");
       if (_targets_7) {
-        String _appName_2 = this._utils.appName(app);
-        _builder.append(_appName_2, "                                ");
+        String _appName_1 = this._utils.appName(app);
+        _builder.append(_appName_1, "                                ");
         _builder.append("_Util_Workflow");
       } else {
         _builder.append("WorkflowUtil");
@@ -2424,8 +2444,8 @@ public class Ajax {
     {
       boolean _targets_10 = this._utils.targets(app, "1.3.5");
       if (_targets_10) {
-        String _appName_3 = this._utils.appName(app);
-        _builder.append(_appName_3, "                                ");
+        String _appName_2 = this._utils.appName(app);
+        _builder.append(_appName_2, "                                ");
         _builder.append("_Util_Workflow");
       } else {
         _builder.append("WorkflowUtil");
@@ -2539,8 +2559,8 @@ public class Ajax {
     {
       boolean _targets_14 = this._utils.targets(app, "1.3.5");
       if (_targets_14) {
-        String _appName_4 = this._utils.appName(app);
-        _builder.append(_appName_4, "                            ");
+        String _appName_3 = this._utils.appName(app);
+        _builder.append(_appName_3, "                            ");
         _builder.append("_Util_Workflow");
       } else {
         _builder.append("WorkflowUtil");

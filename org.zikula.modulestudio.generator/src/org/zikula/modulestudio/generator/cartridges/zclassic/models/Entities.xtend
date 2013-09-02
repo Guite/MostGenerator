@@ -254,7 +254,7 @@ class Entities {
          */
         protected $_idFields = array();
 
-        «val validatorClass = if (app.targets('1.3.5')) app.appName + '_Entity_Validator_' + name.formatForCodeCapital else '\\' + app.appName + '\\Entity\\Validator\\' + name.formatForCodeCapital + 'Validator'»
+        «val validatorClass = if (app.targets('1.3.5')) app.appName + '_Entity_Validator_' + name.formatForCodeCapital else '\\' + app.vendor.formatForCode + '\\' + app.name.formatForCode + 'Module\\Entity\\Validator\\' + name.formatForCodeCapital + 'Validator'»
         /**
          * @var «validatorClass» The validator for this entity.
          */

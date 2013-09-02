@@ -945,14 +945,19 @@ public class Entities {
       String _plus_1 = (_plus + _formatForCodeCapital);
       _xifexpression = _plus_1;
     } else {
-      String _appName_1 = this._utils.appName(app);
-      String _plus_2 = ("\\" + _appName_1);
-      String _plus_3 = (_plus_2 + "\\Entity\\Validator\\");
-      String _name_2 = it.getName();
-      String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_2);
-      String _plus_4 = (_plus_3 + _formatForCodeCapital_1);
-      String _plus_5 = (_plus_4 + "Validator");
-      _xifexpression = _plus_5;
+      String _vendor = app.getVendor();
+      String _formatForCode_1 = this._formattingExtensions.formatForCode(_vendor);
+      String _plus_2 = ("\\" + _formatForCode_1);
+      String _plus_3 = (_plus_2 + "\\");
+      String _name_2 = app.getName();
+      String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_2);
+      String _plus_4 = (_plus_3 + _formatForCode_2);
+      String _plus_5 = (_plus_4 + "Module\\Entity\\Validator\\");
+      String _name_3 = it.getName();
+      String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_3);
+      String _plus_6 = (_plus_5 + _formatForCodeCapital_1);
+      String _plus_7 = (_plus_6 + "Validator");
+      _xifexpression = _plus_7;
     }
     final String validatorClass = _xifexpression;
     _builder.newLineIfNotEmpty();
@@ -1228,8 +1233,8 @@ public class Entities {
     {
       boolean _targets_2 = this._utils.targets(app, "1.3.5");
       if (_targets_2) {
-        String _appName_2 = this._utils.appName(app);
-        _builder.append(_appName_2, "    ");
+        String _appName_1 = this._utils.appName(app);
+        _builder.append(_appName_1, "    ");
         _builder.append("_Util_Workflow");
       } else {
         _builder.append("WorkflowUtil");
@@ -1241,8 +1246,8 @@ public class Entities {
       boolean _not = (!_targets_3);
       if (_not) {
         _builder.append(", ModUtil::getModule(\'");
-        String _appName_3 = this._utils.appName(app);
-        _builder.append(_appName_3, "    ");
+        String _appName_2 = this._utils.appName(app);
+        _builder.append(_appName_2, "    ");
         _builder.append("\')");
       }
     }
@@ -1264,9 +1269,9 @@ public class Entities {
     _builder.append("\'obj_idcolumn\' => \'");
     Iterable<DerivedField> _primaryKeyFields = this._modelExtensions.getPrimaryKeyFields(it);
     DerivedField _head = IterableExtensions.<DerivedField>head(_primaryKeyFields);
-    String _name_3 = _head.getName();
-    String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_3);
-    _builder.append(_formatForCode_1, "        ");
+    String _name_4 = _head.getName();
+    String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_4);
+    _builder.append(_formatForCode_3, "        ");
     _builder.append("\',");
     _builder.newLineIfNotEmpty();
     _builder.append("        ");
@@ -1322,20 +1327,20 @@ public class Entities {
         {
           for(final EmailField emailField : emailFields) {
             _builder.append("if (strpos($this[\'");
-            String _name_4 = emailField.getName();
-            String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_4);
-            _builder.append(_formatForCode_2, "");
+            String _name_5 = emailField.getName();
+            String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_5);
+            _builder.append(_formatForCode_4, "");
             _builder.append("\'], \'&#\') !== false) {");
             _builder.newLineIfNotEmpty();
             _builder.append("    ");
             _builder.append("$this[\'");
-            String _name_5 = emailField.getName();
-            String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_5);
-            _builder.append(_formatForCode_3, "    ");
-            _builder.append("\'] = html_entity_decode($this[\'");
             String _name_6 = emailField.getName();
-            String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_6);
-            _builder.append(_formatForCode_4, "    ");
+            String _formatForCode_5 = this._formattingExtensions.formatForCode(_name_6);
+            _builder.append(_formatForCode_5, "    ");
+            _builder.append("\'] = html_entity_decode($this[\'");
+            String _name_7 = emailField.getName();
+            String _formatForCode_6 = this._formattingExtensions.formatForCode(_name_7);
+            _builder.append(_formatForCode_6, "    ");
             _builder.append("\']);");
             _builder.newLineIfNotEmpty();
             _builder.append("}");
@@ -1485,9 +1490,9 @@ public class Entities {
                 _builder.append("    ");
                 _builder.append("    ");
                 _builder.append("\'url\' => array(\'type\' => \'user\', \'func\' => \'display\', \'arguments\' => array(\'ot\' => \'");
-                String _name_7 = it.getName();
-                String _formatForCode_5 = this._formattingExtensions.formatForCode(_name_7);
-                _builder.append(_formatForCode_5, "                ");
+                String _name_8 = it.getName();
+                String _formatForCode_7 = this._formattingExtensions.formatForCode(_name_8);
+                _builder.append(_formatForCode_7, "                ");
                 _builder.append("\'");
                 CharSequence _modUrlPrimaryKeyParams = this._urlExtensions.modUrlPrimaryKeyParams(it, "this", Boolean.valueOf(false));
                 _builder.append(_modUrlPrimaryKeyParams, "                ");
@@ -1545,9 +1550,9 @@ public class Entities {
                 String _formattedName_1 = this._controllerExtensions.formattedName(controller);
                 _builder.append(_formattedName_1, "                ");
                 _builder.append("\', \'func\' => \'display\', \'arguments\' => array(\'ot\' => \'");
-                String _name_8 = it.getName();
-                String _formatForCode_6 = this._formattingExtensions.formatForCode(_name_8);
-                _builder.append(_formatForCode_6, "                ");
+                String _name_9 = it.getName();
+                String _formatForCode_8 = this._formattingExtensions.formatForCode(_name_9);
+                _builder.append(_formatForCode_8, "                ");
                 _builder.append("\'");
                 CharSequence _modUrlPrimaryKeyParams_1 = this._urlExtensions.modUrlPrimaryKeyParams(it, "this", Boolean.valueOf(false));
                 _builder.append(_modUrlPrimaryKeyParams_1, "                ");
@@ -1574,9 +1579,9 @@ public class Entities {
                   boolean _tripleNotEquals = (leadingField != null);
                   if (_tripleNotEquals) {
                     _builder.append("str_replace(\'\"\', \'\', $this[\'");
-                    String _name_9 = leadingField.getName();
-                    String _formatForCode_7 = this._formattingExtensions.formatForCode(_name_9);
-                    _builder.append(_formatForCode_7, "                ");
+                    String _name_10 = leadingField.getName();
+                    String _formatForCode_9 = this._formattingExtensions.formatForCode(_name_10);
+                    _builder.append(_formatForCode_9, "                ");
                     _builder.append("\'])");
                   } else {
                     _builder.append("__(\'Open detail page\', $dom)");
@@ -1642,8 +1647,8 @@ public class Entities {
                 _builder.append("$component = \'");
                 _builder.append(appName, "            ");
                 _builder.append(":");
-                String _name_10 = it.getName();
-                String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_10);
+                String _name_11 = it.getName();
+                String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_11);
                 _builder.append(_formatForCodeCapital_2, "            ");
                 _builder.append(":\';");
                 _builder.newLineIfNotEmpty();
@@ -1740,9 +1745,9 @@ public class Entities {
                 String _formattedName_2 = this._controllerExtensions.formattedName(controller);
                 _builder.append(_formattedName_2, "                    ");
                 _builder.append("\', \'func\' => \'delete\', \'arguments\' => array(\'ot\' => \'");
-                String _name_11 = it.getName();
-                String _formatForCode_8 = this._formattingExtensions.formatForCode(_name_11);
-                _builder.append(_formatForCode_8, "                    ");
+                String _name_12 = it.getName();
+                String _formatForCode_10 = this._formattingExtensions.formatForCode(_name_12);
+                _builder.append(_formatForCode_10, "                    ");
                 _builder.append("\'");
                 CharSequence _modUrlPrimaryKeyParams_2 = this._urlExtensions.modUrlPrimaryKeyParams(it, "this", Boolean.valueOf(false));
                 _builder.append(_modUrlPrimaryKeyParams_2, "                    ");
@@ -1808,9 +1813,9 @@ public class Entities {
                 String _formattedName_3 = this._controllerExtensions.formattedName(controller);
                 _builder.append(_formattedName_3, "                ");
                 _builder.append("\', \'func\' => \'view\', \'arguments\' => array(\'ot\' => \'");
-                String _name_12 = it.getName();
-                String _formatForCode_9 = this._formattingExtensions.formatForCode(_name_12);
-                _builder.append(_formatForCode_9, "                ");
+                String _name_13 = it.getName();
+                String _formatForCode_11 = this._formattingExtensions.formatForCode(_name_13);
+                _builder.append(_formatForCode_11, "                ");
                 _builder.append("\')),");
                 _builder.newLineIfNotEmpty();
                 _builder.append("    ");
@@ -1882,13 +1887,13 @@ public class Entities {
           for(final DerivedField pkField : _primaryKeyFields_1) {
             _builder.append("    ");
             _builder.append("$args[\'");
-            String _name_13 = pkField.getName();
-            String _formatForCode_10 = this._formattingExtensions.formatForCode(_name_13);
-            _builder.append(_formatForCode_10, "    ");
-            _builder.append("\'] = $this[\'");
             String _name_14 = pkField.getName();
-            String _formatForCode_11 = this._formattingExtensions.formatForCode(_name_14);
-            _builder.append(_formatForCode_11, "    ");
+            String _formatForCode_12 = this._formattingExtensions.formatForCode(_name_14);
+            _builder.append(_formatForCode_12, "    ");
+            _builder.append("\'] = $this[\'");
+            String _name_15 = pkField.getName();
+            String _formatForCode_13 = this._formattingExtensions.formatForCode(_name_15);
+            _builder.append(_formatForCode_13, "    ");
             _builder.append("\'];");
             _builder.newLineIfNotEmpty();
           }
@@ -1897,14 +1902,14 @@ public class Entities {
         _builder.append("    ");
         _builder.append("$args[\'");
         DerivedField _firstPrimaryKey = this._modelExtensions.getFirstPrimaryKey(it);
-        String _name_15 = _firstPrimaryKey.getName();
-        String _formatForCode_12 = this._formattingExtensions.formatForCode(_name_15);
-        _builder.append(_formatForCode_12, "    ");
+        String _name_16 = _firstPrimaryKey.getName();
+        String _formatForCode_14 = this._formattingExtensions.formatForCode(_name_16);
+        _builder.append(_formatForCode_14, "    ");
         _builder.append("\'] = $this[\'");
         DerivedField _firstPrimaryKey_1 = this._modelExtensions.getFirstPrimaryKey(it);
-        String _name_16 = _firstPrimaryKey_1.getName();
-        String _formatForCode_13 = this._formattingExtensions.formatForCode(_name_16);
-        _builder.append(_formatForCode_13, "    ");
+        String _name_17 = _firstPrimaryKey_1.getName();
+        String _formatForCode_15 = this._formattingExtensions.formatForCode(_name_17);
+        _builder.append(_formatForCode_15, "    ");
         _builder.append("\'];");
         _builder.newLineIfNotEmpty();
       }
@@ -1955,9 +1960,9 @@ public class Entities {
           for(final DerivedField pkField_1 : _primaryKeyFields_2) {
             _builder.append("    ");
             _builder.append("$itemId .= ((!empty($itemId)) ? \'_\' : \'\') . $this[\'");
-            String _name_17 = pkField_1.getName();
-            String _formatForCode_14 = this._formattingExtensions.formatForCode(_name_17);
-            _builder.append(_formatForCode_14, "    ");
+            String _name_18 = pkField_1.getName();
+            String _formatForCode_16 = this._formattingExtensions.formatForCode(_name_18);
+            _builder.append(_formatForCode_16, "    ");
             _builder.append("\'];");
             _builder.newLineIfNotEmpty();
           }
@@ -1966,9 +1971,9 @@ public class Entities {
         _builder.append("    ");
         _builder.append("$itemId = $this[\'");
         DerivedField _firstPrimaryKey_2 = this._modelExtensions.getFirstPrimaryKey(it);
-        String _name_18 = _firstPrimaryKey_2.getName();
-        String _formatForCode_15 = this._formattingExtensions.formatForCode(_name_18);
-        _builder.append(_formatForCode_15, "    ");
+        String _name_19 = _firstPrimaryKey_2.getName();
+        String _formatForCode_17 = this._formattingExtensions.formatForCode(_name_19);
+        _builder.append(_formatForCode_17, "    ");
         _builder.append("\'];");
         _builder.newLineIfNotEmpty();
       }
@@ -2000,8 +2005,8 @@ public class Entities {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("return \'");
-    String _name_19 = app.getName();
-    String _formatForDB = this._formattingExtensions.formatForDB(_name_19);
+    String _name_20 = app.getName();
+    String _formatForDB = this._formattingExtensions.formatForDB(_name_20);
     _builder.append(_formatForDB, "    ");
     _builder.append(".ui_hooks.");
     String _nameMultiple = it.getNameMultiple();

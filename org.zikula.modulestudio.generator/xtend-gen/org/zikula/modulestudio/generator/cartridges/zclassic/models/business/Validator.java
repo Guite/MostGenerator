@@ -1772,12 +1772,17 @@ public class Validator {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appName_1 = this._utils.appName(app);
-        _builder.append(_appName_1, "    ");
-        _builder.append("\\\\Entity\\\\");
-        String _name_3 = it.getName();
-        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_3);
+        String _vendor = app.getVendor();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_vendor);
         _builder.append(_formatForCodeCapital_1, "    ");
+        _builder.append("\\\\");
+        String _name_3 = app.getName();
+        String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_3);
+        _builder.append(_formatForCodeCapital_2, "    ");
+        _builder.append("Module\\\\Entity\\\\");
+        String _name_4 = it.getName();
+        String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_4);
+        _builder.append(_formatForCodeCapital_3, "    ");
         _builder.append("Entity\';");
         _builder.newLineIfNotEmpty();
       }
@@ -1795,8 +1800,8 @@ public class Validator {
     _builder.append("    ");
     _builder.append("$excludeid = $this->entity[\'");
     DerivedField _firstPrimaryKey = this._modelExtensions.getFirstPrimaryKey(it);
-    String _name_4 = _firstPrimaryKey.getName();
-    String _formatForCode = this._formattingExtensions.formatForCode(_name_4);
+    String _name_5 = _firstPrimaryKey.getName();
+    String _formatForCode = this._formattingExtensions.formatForCode(_name_5);
     _builder.append(_formatForCode, "    ");
     _builder.append("\'];");
     _builder.newLineIfNotEmpty();

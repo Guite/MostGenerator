@@ -59,7 +59,7 @@ class LinkTable {
                 «IF app.targets('1.3.5')»
                 $qb->delete('«app.appName»_Entity_«refClass.formatForCodeCapital»', 'tbl');
                 «ELSE»
-                $qb->delete('\\«app.appName»\\Entity\\«refClass.formatForCodeCapital»', 'tbl');
+                $qb->delete('\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\«refClass.formatForCodeCapital»', 'tbl');
                 «ENDIF»
                 $query = $qb->getQuery();
                 $query->execute();

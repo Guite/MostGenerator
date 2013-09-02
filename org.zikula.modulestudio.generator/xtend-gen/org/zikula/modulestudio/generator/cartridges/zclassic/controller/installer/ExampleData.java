@@ -440,21 +440,30 @@ public class ExampleData {
         String _formatForCode = this._formattingExtensions.formatForCode(_name);
         _builder.append(_formatForCode, "");
         _builder.append(number, "");
-        _builder.append(" = new \\");
-        String _appName = this._utils.appName(app);
-        _builder.append(_appName, "");
+        _builder.append(" = new ");
         {
           boolean _targets = this._utils.targets(app, "1.3.5");
           if (_targets) {
+            _builder.append("\\");
+            String _appName = this._utils.appName(app);
+            _builder.append(_appName, "");
             _builder.append("_Entity_");
             String _name_1 = it.getName();
             String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name_1);
             _builder.append(_formatForCodeCapital, "");
           } else {
-            _builder.append("\\Entity\\");
-            String _name_2 = it.getName();
-            String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_2);
+            _builder.append("\\");
+            String _vendor = app.getVendor();
+            String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_vendor);
             _builder.append(_formatForCodeCapital_1, "");
+            _builder.append("\\");
+            String _name_2 = app.getName();
+            String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_2);
+            _builder.append(_formatForCodeCapital_2, "");
+            _builder.append("Module\\Entity\\");
+            String _name_3 = it.getName();
+            String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_3);
+            _builder.append(_formatForCodeCapital_3, "");
             _builder.append("Entity");
           }
         }
@@ -671,28 +680,37 @@ public class ExampleData {
             _builder.append("$");
             _builder.append(entityName, "");
             _builder.append(number, "");
-            _builder.append("->getCategories()->add(new \\");
-            String _appName = this._utils.appName(app);
-            _builder.append(_appName, "");
+            _builder.append("->getCategories()->add(new ");
             {
               boolean _targets_1 = this._utils.targets(app, "1.3.5");
               if (_targets_1) {
+                _builder.append("\\");
+                String _appName = this._utils.appName(app);
+                _builder.append(_appName, "");
                 _builder.append("_Entity_");
                 String _name_1 = it.getName();
                 String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name_1);
                 _builder.append(_formatForCodeCapital, "");
                 _builder.append("Category");
               } else {
-                _builder.append("\\Entity\\");
-                String _name_2 = it.getName();
-                String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_2);
+                _builder.append("\\");
+                String _vendor = app.getVendor();
+                String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_vendor);
                 _builder.append(_formatForCodeCapital_1, "");
+                _builder.append("\\");
+                String _name_2 = app.getName();
+                String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_2);
+                _builder.append(_formatForCodeCapital_2, "");
+                _builder.append("Module\\Entity\\");
+                String _name_3 = it.getName();
+                String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_3);
+                _builder.append(_formatForCodeCapital_3, "");
                 _builder.append("CategoryEntity");
               }
             }
             _builder.append("($categoryRegistryIdsPerEntity[\'");
-            String _name_3 = it.getName();
-            String _formatForCode = this._formattingExtensions.formatForCode(_name_3);
+            String _name_4 = it.getName();
+            String _formatForCode = this._formattingExtensions.formatForCode(_name_4);
             _builder.append(_formatForCode, "");
             _builder.append("\'], $category, $");
             _builder.append(entityName, "");
@@ -732,24 +750,24 @@ public class ExampleData {
               boolean _targets_2 = this._utils.targets(app, "1.3.5");
               if (_targets_2) {
                 _builder.append("$metaDataEntityClass = $this->name . \'_Entity_");
-                String _name_4 = it.getName();
-                String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_4);
-                _builder.append(_formatForCodeCapital_2, "");
+                String _name_5 = it.getName();
+                String _formatForCodeCapital_4 = this._formattingExtensions.formatForCodeCapital(_name_5);
+                _builder.append(_formatForCodeCapital_4, "");
                 _builder.append("MetaData\';");
                 _builder.newLineIfNotEmpty();
               } else {
                 _builder.append("$metaDataEntityClass = \'\\\\");
-                String _vendor = app.getVendor();
-                String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_vendor);
-                _builder.append(_formatForCodeCapital_3, "");
-                _builder.append("\\\\");
-                String _name_5 = app.getName();
-                String _formatForCodeCapital_4 = this._formattingExtensions.formatForCodeCapital(_name_5);
-                _builder.append(_formatForCodeCapital_4, "");
-                _builder.append("Module\\\\Entity\\\\");
-                String _name_6 = it.getName();
-                String _formatForCodeCapital_5 = this._formattingExtensions.formatForCodeCapital(_name_6);
+                String _vendor_1 = app.getVendor();
+                String _formatForCodeCapital_5 = this._formattingExtensions.formatForCodeCapital(_vendor_1);
                 _builder.append(_formatForCodeCapital_5, "");
+                _builder.append("\\\\");
+                String _name_6 = app.getName();
+                String _formatForCodeCapital_6 = this._formattingExtensions.formatForCodeCapital(_name_6);
+                _builder.append(_formatForCodeCapital_6, "");
+                _builder.append("Module\\\\Entity\\\\");
+                String _name_7 = it.getName();
+                String _formatForCodeCapital_7 = this._formattingExtensions.formatForCodeCapital(_name_7);
+                _builder.append(_formatForCodeCapital_7, "");
                 _builder.append("MetaDataEntity\';");
                 _builder.newLineIfNotEmpty();
               }
