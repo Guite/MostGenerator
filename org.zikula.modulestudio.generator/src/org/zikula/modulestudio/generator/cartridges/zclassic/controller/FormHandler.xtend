@@ -57,7 +57,7 @@ class FormHandler {
         «IF controller.container.application.targets('1.3.5')»
             $handlerClass = '«appName»_Form_Handler_«controller.name.formatForCodeCapital»_«actionName.formatForCodeCapital»';
         «ELSE»
-            $handlerClass = '\\«controller.container.application.appNamespace»\\Form\\Handler\\«controller.name.formatForCodeCapital»\\«actionName.formatForCodeCapital»Handler';
+            $handlerClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Form\\Handler\\«controller.name.formatForCodeCapital»\\«actionName.formatForCodeCapital»Handler';
         «ENDIF»
 
         // Execute form using supplied template and page event handler
@@ -374,7 +374,7 @@ class FormHandler {
                 «IF app.targets('1.3.5')»
                     $entityClass = $this->name . '_Entity_' . ucwords($this->objectType);
                 «ELSE»
-                    $entityClass = '\\' . $this->name . '\\Entity\\' . ucwords($this->objectType) . 'Entity';
+                    $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
                 «ENDIF»
                 $repository = $this->entityManager->getRepository($entityClass);
                 $utilArgs = array('controller' => '«formattedName»', 'action' => '«actionName.formatForCode.toFirstLower»', 'mode' => $this->mode);
@@ -418,7 +418,7 @@ class FormHandler {
             «IF app.targets('1.3.5')»
             $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
             «ELSE»
-            $entityClass = '\\' . $this->name . '\\Entity\\' . ucfirst($this->objectType) . 'Entity';
+            $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
             «ENDIF»
             $objectTemp = new $entityClass();
             $this->idFields = $objectTemp->get_idFields();
@@ -577,7 +577,7 @@ class FormHandler {
                 «IF app.targets('1.3.5')»
                 $entityClass = $this->name . '_Entity_' . ucfirst($this->objectType);
                 «ELSE»
-                $entityClass = '\\' . $this->name . '\\Entity\\' . ucfirst($this->objectType) . 'Entity';
+                $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
                 «ENDIF»
                 $entity = new $entityClass();
             }

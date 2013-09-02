@@ -602,9 +602,14 @@ public class Newsletter {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appNamespace = this._utils.appNamespace(it);
-        _builder.append(_appNamespace, "    ");
-        _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
+        String _vendor = it.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "    ");
+        _builder.append("\\\\");
+        String _name_1 = it.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_1);
+        _builder.append(_formatForCodeCapital_1, "    ");
+        _builder.append("Module\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
     }

@@ -826,9 +826,14 @@ public class ContentTypeList {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appNamespace = this._utils.appNamespace(it);
-        _builder.append(_appNamespace, "    ");
-        _builder.append("\\\\Entity\\\\\' . ucwords($this->objectType) . \'Entity\';");
+        String _vendor = it.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "    ");
+        _builder.append("\\\\");
+        String _name_1 = it.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_1);
+        _builder.append(_formatForCodeCapital_1, "    ");
+        _builder.append("Module\\\\Entity\\\\\' . ucwords($this->objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -1307,8 +1312,8 @@ public class ContentTypeList {
     _builder.append("    ");
     _builder.append("return array(\'objectType\' => \'");
     Entity _leadingEntity = this._modelExtensions.getLeadingEntity(it);
-    String _name_1 = _leadingEntity.getName();
-    String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_1);
+    String _name_2 = _leadingEntity.getName();
+    String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_2);
     _builder.append(_formatForCode_1, "    ");
     _builder.append("\',");
     _builder.newLineIfNotEmpty();

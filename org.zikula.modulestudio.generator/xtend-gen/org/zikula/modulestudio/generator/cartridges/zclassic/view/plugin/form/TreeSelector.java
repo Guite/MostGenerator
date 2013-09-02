@@ -330,8 +330,16 @@ public class TreeSelector {
         _builder.newLine();
       } else {
         _builder.append("        ");
-        _builder.append("$entityClass = \'\\\\\' . $this->Name . \'\\\\Entity\\\\\' . ucwords($this->objectType) . \'Entity\';");
-        _builder.newLine();
+        _builder.append("$entityClass = \'\\\\");
+        String _vendor_1 = it.getVendor();
+        String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_vendor_1);
+        _builder.append(_formatForCodeCapital_2, "        ");
+        _builder.append("\\\\");
+        String _name_1 = it.getName();
+        String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_1);
+        _builder.append(_formatForCodeCapital_3, "        ");
+        _builder.append("Module\\\\Entity\\\\\' . ucwords($this->objectType) . \'Entity\';");
+        _builder.newLineIfNotEmpty();
       }
     }
     _builder.append("        ");
@@ -654,9 +662,14 @@ public class TreeSelector {
         _builder.append("_Form_Plugin_TreeSelector");
       } else {
         _builder.append("\\\\");
-        String _appNamespace = this._utils.appNamespace(it);
-        _builder.append(_appNamespace, "    ");
-        _builder.append("\\\\Form\\\\Plugin\\\\TreeSelector");
+        String _vendor = it.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "    ");
+        _builder.append("\\\\");
+        String _name = it.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+        _builder.append(_formatForCodeCapital_1, "    ");
+        _builder.append("Module\\\\Form\\\\Plugin\\\\TreeSelector");
       }
     }
     _builder.append("\', $params);");

@@ -176,17 +176,20 @@ public class FormHandler {
         _builder.newLineIfNotEmpty();
       } else {
         _builder.append("$handlerClass = \'\\\\");
-        Controllers _container_1 = controller.getContainer();
-        Application _application_1 = _container_1.getApplication();
-        String _appNamespace = this._utils.appNamespace(_application_1);
-        _builder.append(_appNamespace, "");
-        _builder.append("\\\\Form\\\\Handler\\\\");
-        String _name_1 = controller.getName();
-        String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_1);
+        String _vendor = this.app.getVendor();
+        String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_vendor);
         _builder.append(_formatForCodeCapital_2, "");
         _builder.append("\\\\");
-        String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(actionName);
+        String _name_1 = this.app.getName();
+        String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_1);
         _builder.append(_formatForCodeCapital_3, "");
+        _builder.append("Module\\\\Form\\\\Handler\\\\");
+        String _name_2 = controller.getName();
+        String _formatForCodeCapital_4 = this._formattingExtensions.formatForCodeCapital(_name_2);
+        _builder.append(_formatForCodeCapital_4, "");
+        _builder.append("\\\\");
+        String _formatForCodeCapital_5 = this._formattingExtensions.formatForCodeCapital(actionName);
+        _builder.append(_formatForCodeCapital_5, "");
         _builder.append("Handler\';");
         _builder.newLineIfNotEmpty();
       }
@@ -1104,8 +1107,16 @@ public class FormHandler {
         _builder.newLine();
       } else {
         _builder.append("        ");
-        _builder.append("$entityClass = \'\\\\\' . $this->name . \'\\\\Entity\\\\\' . ucwords($this->objectType) . \'Entity\';");
-        _builder.newLine();
+        _builder.append("$entityClass = \'\\\\");
+        String _vendor = app.getVendor();
+        String _formatForCodeCapital_4 = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital_4, "        ");
+        _builder.append("\\\\");
+        String _name_2 = app.getName();
+        String _formatForCodeCapital_5 = this._formattingExtensions.formatForCodeCapital(_name_2);
+        _builder.append(_formatForCodeCapital_5, "        ");
+        _builder.append("Module\\\\Entity\\\\\' . ucwords($this->objectType) . \'Entity\';");
+        _builder.newLineIfNotEmpty();
       }
     }
     _builder.append("        ");
@@ -1222,8 +1233,16 @@ public class FormHandler {
         _builder.newLine();
       } else {
         _builder.append("    ");
-        _builder.append("$entityClass = \'\\\\\' . $this->name . \'\\\\Entity\\\\\' . ucfirst($this->objectType) . \'Entity\';");
-        _builder.newLine();
+        _builder.append("$entityClass = \'\\\\");
+        String _vendor = this.app.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "    ");
+        _builder.append("\\\\");
+        String _name = this.app.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+        _builder.append(_formatForCodeCapital_1, "    ");
+        _builder.append("Module\\\\Entity\\\\\' . ucwords($this->objectType) . \'Entity\';");
+        _builder.newLineIfNotEmpty();
       }
     }
     _builder.append("    ");
@@ -1672,8 +1691,16 @@ public class FormHandler {
         _builder.newLine();
       } else {
         _builder.append("        ");
-        _builder.append("$entityClass = \'\\\\\' . $this->name . \'\\\\Entity\\\\\' . ucfirst($this->objectType) . \'Entity\';");
-        _builder.newLine();
+        _builder.append("$entityClass = \'\\\\");
+        String _vendor_1 = this.app.getVendor();
+        String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_vendor_1);
+        _builder.append(_formatForCodeCapital_2, "        ");
+        _builder.append("\\\\");
+        String _name_1 = this.app.getName();
+        String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_1);
+        _builder.append(_formatForCodeCapital_3, "        ");
+        _builder.append("Module\\\\Entity\\\\\' . ucwords($this->objectType) . \'Entity\';");
+        _builder.newLineIfNotEmpty();
       }
     }
     _builder.append("        ");

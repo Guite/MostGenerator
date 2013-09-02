@@ -418,12 +418,17 @@ public class Bootstrap {
               } else {
                 _builder.append("    ");
                 _builder.append("$entityClass = \'\\\\");
-                String _appNamespace = this._utils.appNamespace(it);
-                _builder.append(_appNamespace, "    ");
-                _builder.append("\\\\Entity\\\\");
-                String _name_1 = entity.getName();
-                String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_1);
+                String _vendor = it.getVendor();
+                String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_vendor);
                 _builder.append(_formatForCodeCapital_1, "    ");
+                _builder.append("\\\\");
+                String _name_1 = it.getName();
+                String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_1);
+                _builder.append(_formatForCodeCapital_2, "    ");
+                _builder.append("Module\\\\Entity\\\\");
+                String _name_2 = entity.getName();
+                String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_2);
+                _builder.append(_formatForCodeCapital_3, "    ");
                 _builder.append("Entity\';");
                 _builder.newLineIfNotEmpty();
               }

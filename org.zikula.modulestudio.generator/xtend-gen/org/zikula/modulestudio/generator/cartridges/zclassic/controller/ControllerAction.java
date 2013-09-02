@@ -1689,7 +1689,15 @@ public class ControllerAction {
           _builder.append("_\' . ucfirst($objectType) . \'_Edit\';");
           _builder.newLineIfNotEmpty();
         } else {
-          _builder.append("$handlerClass = \'\\\\\' . $this->name . \'\\\\Form\\\\Handler\\\\");
+          _builder.append("$handlerClass = \'\\\\");
+          String _vendor = this.app.getVendor();
+          String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+          _builder.append(_formatForCodeCapital, "");
+          _builder.append("\\\\");
+          String _name = this.app.getName();
+          String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+          _builder.append(_formatForCodeCapital_1, "");
+          _builder.append("Module\\\\Form\\\\Handler\\\\");
           Controller _controller_2 = it.getController();
           String _formattedName_1 = this._controllerExtensions.formattedName(_controller_2);
           String _firstUpper_1 = StringExtensions.toFirstUpper(_formattedName_1);

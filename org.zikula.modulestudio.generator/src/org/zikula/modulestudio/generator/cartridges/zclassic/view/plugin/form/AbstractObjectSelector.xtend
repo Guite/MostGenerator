@@ -222,7 +222,7 @@ class AbstractObjectSelector {
                 «IF targets('1.3.5')»
                     $entityClass = $this->name . '_Entity_' . ucwords($this->objectType);
                 «ELSE»
-                    $entityClass = '\\' . $this->name . '\\Entity\\' . ucwords($this->objectType) . 'Entity';
+                    $entityClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
                 «ENDIF»
                 $entityManager = ServiceUtil::getManager()->getService('doctrine.entitymanager');
                 $repository = $entityManager->getRepository($entityClass);
@@ -462,7 +462,7 @@ class AbstractObjectSelector {
             «IF targets('1.3.5')»
                 $entityClass = $this->name . '_Entity_' . ucwords($this->objectType);
             «ELSE»
-                $entityClass = '\\' . $this->name . '\\Entity\\' . ucwords($this->objectType) . 'Entity';
+                $entityClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
             «ENDIF»
             $serviceManager = ServiceUtil::getManager();
             $entityManager = $serviceManager->getService('doctrine.entitymanager');

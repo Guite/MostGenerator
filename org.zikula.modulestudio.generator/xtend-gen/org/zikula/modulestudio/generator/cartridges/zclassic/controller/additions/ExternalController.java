@@ -405,9 +405,14 @@ public class ExternalController {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appNamespace = this._utils.appNamespace(it);
-        _builder.append(_appNamespace, "    ");
-        _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
+        String _vendor = it.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "    ");
+        _builder.append("\\\\");
+        String _name = it.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+        _builder.append(_formatForCodeCapital_1, "    ");
+        _builder.append("Module\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -600,8 +605,8 @@ public class ExternalController {
     _builder.append("    ");
     _builder.append("$objectType = isset($args[\'objectType\']) ? $args[\'objectType\'] : $getData->filter(\'objectType\', \'");
     Entity _leadingEntity = this._modelExtensions.getLeadingEntity(it);
-    String _name = _leadingEntity.getName();
-    String _formatForCode = this._formattingExtensions.formatForCode(_name);
+    String _name_1 = _leadingEntity.getName();
+    String _formatForCode = this._formattingExtensions.formatForCode(_name_1);
     _builder.append(_formatForCode, "    ");
     _builder.append("\', FILTER_SANITIZE_STRING);");
     _builder.newLineIfNotEmpty();
@@ -637,9 +642,14 @@ public class ExternalController {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appNamespace_1 = this._utils.appNamespace(it);
-        _builder.append(_appNamespace_1, "    ");
-        _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
+        String _vendor_1 = it.getVendor();
+        String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_vendor_1);
+        _builder.append(_formatForCodeCapital_2, "    ");
+        _builder.append("\\\\");
+        String _name_2 = it.getName();
+        String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_2);
+        _builder.append(_formatForCodeCapital_3, "    ");
+        _builder.append("Module\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
     }

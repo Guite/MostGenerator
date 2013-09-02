@@ -575,8 +575,8 @@ public class Entities {
             _builder.append(_formatForCodeCapital, " ");
           } else {
             _builder.append("\\");
-            String _appName_1 = this._utils.appName(app);
-            _builder.append(_appName_1, " ");
+            String _appNamespace_1 = this._utils.appNamespace(app);
+            _builder.append(_appNamespace_1, " ");
             _builder.append("\\Entity\\Repository\\");
             String _name_2 = it.getName();
             String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_2);

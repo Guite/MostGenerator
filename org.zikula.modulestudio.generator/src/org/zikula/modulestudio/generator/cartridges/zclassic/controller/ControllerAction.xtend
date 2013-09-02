@@ -583,7 +583,7 @@ class ControllerAction {
         «IF app.targets('1.3.5')»
         $handlerClass = $this->name . '_Form_Handler_«controller.formattedName.toFirstUpper»_' . ucfirst($objectType) . '_Edit';
         «ELSE»
-        $handlerClass = '\\' . $this->name . '\\Form\\Handler\\«controller.formattedName.toFirstUpper»\\' . ucfirst($objectType) . '\\EditHandler';
+        $handlerClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Form\\Handler\\«controller.formattedName.toFirstUpper»\\' . ucfirst($objectType) . '\\EditHandler';
         «ENDIF»
 
         // determine the output template

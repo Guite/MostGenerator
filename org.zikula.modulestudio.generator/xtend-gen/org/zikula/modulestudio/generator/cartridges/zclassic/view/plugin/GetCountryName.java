@@ -93,8 +93,16 @@ public class GetCountryName {
     _builder.append("{");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$result = ZLanguage::getCountryName($countryCode);");
-    _builder.newLine();
+    _builder.append("$result = ");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append("\\");
+      }
+    }
+    _builder.append("ZLanguage::getCountryName($countryCode);");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("if ($result === false) {");
     _builder.newLine();

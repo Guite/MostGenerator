@@ -186,7 +186,7 @@ class Entities {
          «IF mappedSuperClass»
           * @ORM\MappedSuperclass
          «ELSE»
-          * @ORM\Entity(repositoryClass="«IF app.targets('1.3.5')»«app.appName»_Entity_Repository_«name.formatForCodeCapital»«ELSE»\«app.appName»\Entity\Repository\«name.formatForCodeCapital»«ENDIF»"«IF readOnly», readOnly=true«ENDIF»)
+          * @ORM\Entity(repositoryClass="«IF app.targets('1.3.5')»«app.appName»_Entity_Repository_«name.formatForCodeCapital»«ELSE»\«app.appNamespace»\Entity\Repository\«name.formatForCodeCapital»«ENDIF»"«IF readOnly», readOnly=true«ENDIF»)
          «ENDIF»
          «IF indexes.isEmpty»
           * @ORM\Table(name="«fullEntityTableName»")

@@ -559,13 +559,13 @@ public class Installer {
             _builder.append("    ");
             _builder.append("$categoryApi = new \\");
             String _vendor = it.getVendor();
-            String _formatForCode_4 = this._formattingExtensions.formatForCode(_vendor);
-            _builder.append(_formatForCode_4, "    ");
+            String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+            _builder.append(_formatForCodeCapital, "    ");
             _builder.append("\\");
             String _name_6 = it.getName();
-            String _formatForCode_5 = this._formattingExtensions.formatForCode(_name_6);
-            _builder.append(_formatForCode_5, "    ");
-            _builder.append("\\Api\\CategoryApi($this->serviceManager);");
+            String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_6);
+            _builder.append(_formatForCodeCapital_1, "    ");
+            _builder.append("Module\\Api\\CategoryApi($this->serviceManager);");
             _builder.newLineIfNotEmpty();
           }
         }
@@ -582,15 +582,15 @@ public class Installer {
             _builder.append("    ");
             _builder.append("$registryData[\'table\'] = \'");
             String _name_7 = entity.getName();
-            String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name_7);
-            _builder.append(_formatForCodeCapital, "    ");
+            String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_7);
+            _builder.append(_formatForCodeCapital_2, "    ");
             _builder.append("\';");
             _builder.newLineIfNotEmpty();
             _builder.append("    ");
             _builder.append("$registryData[\'property\'] = $categoryApi->getPrimaryProperty(array(\'ot\' => \'");
             String _name_8 = entity.getName();
-            String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_8);
-            _builder.append(_formatForCodeCapital_1, "    ");
+            String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_8);
+            _builder.append(_formatForCodeCapital_3, "    ");
             _builder.append("\'));");
             _builder.newLineIfNotEmpty();
             _builder.append("    ");
@@ -619,8 +619,8 @@ public class Installer {
             _builder.append("    ");
             _builder.append("$categoryRegistryIdsPerEntity[\'");
             String _name_10 = entity.getName();
-            String _formatForCode_6 = this._formattingExtensions.formatForCode(_name_10);
-            _builder.append(_formatForCode_6, "    ");
+            String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_10);
+            _builder.append(_formatForCode_4, "    ");
             _builder.append("\'] = $registryData[\'id\'];");
             _builder.newLineIfNotEmpty();
           }

@@ -143,13 +143,15 @@ public class GetFileSize {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("$viewHelper = new ");
-    String _appName_2 = this._utils.appName(it);
-    _builder.append(_appName_2, "    ");
     {
       boolean _targets = this._utils.targets(it, "1.3.5");
       if (_targets) {
+        String _appName_2 = this._utils.appName(it);
+        _builder.append(_appName_2, "    ");
         _builder.append("_Util_View");
       } else {
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "    ");
         _builder.append("\\Util\\ViewUtil");
       }
     }

@@ -213,12 +213,17 @@ public class ExampleData {
         _builder.newLineIfNotEmpty();
       } else {
         _builder.append("$entityClass = \'\\\\");
-        String _appName_1 = this._utils.appName(app);
-        _builder.append(_appName_1, "");
-        _builder.append("\\\\Entity\\\\");
-        String _name_1 = it.getName();
-        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_1);
+        String _vendor = app.getVendor();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_vendor);
         _builder.append(_formatForCodeCapital_1, "");
+        _builder.append("\\\\");
+        String _name_1 = app.getName();
+        String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_1);
+        _builder.append(_formatForCodeCapital_2, "");
+        _builder.append("Module\\\\Entity\\\\");
+        String _name_2 = it.getName();
+        String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_2);
+        _builder.append(_formatForCodeCapital_3, "");
         _builder.append("Entity\';");
         _builder.newLineIfNotEmpty();
       }

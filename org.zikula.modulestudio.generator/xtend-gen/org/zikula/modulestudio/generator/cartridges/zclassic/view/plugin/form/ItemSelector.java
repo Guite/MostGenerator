@@ -477,9 +477,14 @@ public class ItemSelector {
       } else {
         _builder.append("        ");
         _builder.append("$entityClass = \'\\\\");
-        String _appNamespace_1 = this._utils.appNamespace(it);
-        _builder.append(_appNamespace_1, "        ");
-        _builder.append("\\\\Entity\\\\\' . ucwords($this->objectType) . \'Entity\';");
+        String _vendor = it.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "        ");
+        _builder.append("\\\\");
+        String _name_1 = it.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_1);
+        _builder.append(_formatForCodeCapital_1, "        ");
+        _builder.append("Module\\\\Entity\\\\\' . ucwords($this->objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -614,8 +619,8 @@ public class ItemSelector {
     _builder.append(_appName_10, "        ");
     _builder.append("_objecttype\', \'");
     Entity _leadingEntity = this._modelExtensions.getLeadingEntity(it);
-    String _name_1 = _leadingEntity.getName();
-    String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_1);
+    String _name_2 = _leadingEntity.getName();
+    String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_2);
     _builder.append(_formatForCode_1, "        ");
     _builder.append("\', \'POST\');");
     _builder.newLineIfNotEmpty();
@@ -725,9 +730,14 @@ public class ItemSelector {
         _builder.append("_Form_Plugin_ItemSelector");
       } else {
         _builder.append("\\\\");
-        String _appNamespace = this._utils.appNamespace(it);
-        _builder.append(_appNamespace, "    ");
-        _builder.append("\\\\Form\\\\Plugin\\\\ItemSelector");
+        String _vendor = it.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "    ");
+        _builder.append("\\\\");
+        String _name = it.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+        _builder.append(_formatForCodeCapital_1, "    ");
+        _builder.append("Module\\\\Form\\\\Plugin\\\\ItemSelector");
       }
     }
     _builder.append("\', $params);");

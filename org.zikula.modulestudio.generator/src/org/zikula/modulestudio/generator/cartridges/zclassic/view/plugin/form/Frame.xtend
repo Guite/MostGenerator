@@ -140,7 +140,7 @@ class Frame {
 
             // We need to concatenate the output of boths plugins.
             $result = $view->registerPlugin('\\Zikula_Form_Plugin_ValidationSummary', $params);
-            $result .= $view->registerBlock('«IF targets('1.3.5')»«appName»_Form_Plugin_FormFrame«ELSE»\\«appNamespace»\\Form\\Plugin\\FormFrame«ENDIF»', $params, $content);
+            $result .= $view->registerBlock('«IF targets('1.3.5')»«appName»_Form_Plugin_FormFrame«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\FormFrame«ENDIF»', $params, $content);
 
             return $result;
         }

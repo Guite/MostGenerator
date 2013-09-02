@@ -236,7 +236,7 @@ class RelationSelectorAutoComplete {
          */
         function smarty_function_«appName.formatForDB»RelationSelectorAutoComplete($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_RelationSelectorAutoComplete«ELSE»\\«appNamespace»\\Form\\Plugin\\RelationSelectorAutoComplete«ENDIF»', $params);
+            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_RelationSelectorAutoComplete«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\RelationSelectorAutoComplete«ENDIF»', $params);
         }
     '''
 }

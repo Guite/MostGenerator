@@ -8,12 +8,22 @@ import org.eclipse.xtext.xbase.lib.Extension;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper;
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions;
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions;
 import org.zikula.modulestudio.generator.extensions.NamingExtensions;
 import org.zikula.modulestudio.generator.extensions.Utils;
 
 @SuppressWarnings("all")
 public class Selection {
+  @Inject
+  @Extension
+  private FormattingExtensions _formattingExtensions = new Function0<FormattingExtensions>() {
+    public FormattingExtensions apply() {
+      FormattingExtensions _formattingExtensions = new FormattingExtensions();
+      return _formattingExtensions;
+    }
+  }.apply();
+  
   @Inject
   @Extension
   private ModelBehaviourExtensions _modelBehaviourExtensions = new Function0<ModelBehaviourExtensions>() {
@@ -194,9 +204,14 @@ public class Selection {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appNamespace = this._utils.appNamespace(it);
-        _builder.append(_appNamespace, "    ");
-        _builder.append("\\\\Entity\\\\\' . ucfirst($objectType) . \'Entity\';");
+        String _vendor = it.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "    ");
+        _builder.append("\\\\");
+        String _name = it.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+        _builder.append(_formatForCodeCapital_1, "    ");
+        _builder.append("Module\\\\Entity\\\\\' . ucfirst($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -584,9 +599,14 @@ public class Selection {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appNamespace_1 = this._utils.appNamespace(it);
-        _builder.append(_appNamespace_1, "    ");
-        _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
+        String _vendor_1 = it.getVendor();
+        String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_vendor_1);
+        _builder.append(_formatForCodeCapital_2, "    ");
+        _builder.append("\\\\");
+        String _name_1 = it.getName();
+        String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_1);
+        _builder.append(_formatForCodeCapital_3, "    ");
+        _builder.append("Module\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
     }

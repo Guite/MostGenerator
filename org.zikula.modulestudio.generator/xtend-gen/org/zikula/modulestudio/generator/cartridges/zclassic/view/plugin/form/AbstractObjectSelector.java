@@ -562,8 +562,16 @@ public class AbstractObjectSelector {
         _builder.newLine();
       } else {
         _builder.append("        ");
-        _builder.append("$entityClass = \'\\\\\' . $this->name . \'\\\\Entity\\\\\' . ucwords($this->objectType) . \'Entity\';");
-        _builder.newLine();
+        _builder.append("$entityClass = \'\\\\");
+        String _vendor = it.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "        ");
+        _builder.append("\\\\");
+        String _name = it.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+        _builder.append(_formatForCodeCapital_1, "        ");
+        _builder.append("Module\\\\Entity\\\\\' . ucwords($this->objectType) . \'Entity\';");
+        _builder.newLineIfNotEmpty();
       }
     }
     _builder.append("        ");
@@ -1171,8 +1179,16 @@ public class AbstractObjectSelector {
         _builder.newLine();
       } else {
         _builder.append("    ");
-        _builder.append("$entityClass = \'\\\\\' . $this->name . \'\\\\Entity\\\\\' . ucwords($this->objectType) . \'Entity\';");
-        _builder.newLine();
+        _builder.append("$entityClass = \'\\\\");
+        String _vendor = it.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "    ");
+        _builder.append("\\\\");
+        String _name = it.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+        _builder.append(_formatForCodeCapital_1, "    ");
+        _builder.append("Module\\\\Entity\\\\\' . ucwords($this->objectType) . \'Entity\';");
+        _builder.newLineIfNotEmpty();
       }
     }
     _builder.append("    ");

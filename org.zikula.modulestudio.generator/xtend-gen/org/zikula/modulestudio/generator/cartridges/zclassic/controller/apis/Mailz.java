@@ -325,9 +325,14 @@ public class Mailz {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appNamespace = this._utils.appNamespace(it);
-        _builder.append(_appNamespace, "    ");
-        _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
+        String _vendor = it.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "    ");
+        _builder.append("\\\\");
+        String _name_1 = it.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_1);
+        _builder.append(_formatForCodeCapital_1, "    ");
+        _builder.append("Module\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -470,8 +475,8 @@ public class Mailz {
       }
     }
     _builder.append("/itemlist_");
-    String _name_1 = leadingEntity.getName();
-    String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_1);
+    String _name_2 = leadingEntity.getName();
+    String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_2);
     _builder.append(_formatForCode_1, "        ");
     _builder.append("_text.tpl\');");
     _builder.newLineIfNotEmpty();
@@ -501,8 +506,8 @@ public class Mailz {
       }
     }
     _builder.append("/itemlist_");
-    String _name_2 = leadingEntity.getName();
-    String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_2);
+    String _name_3 = leadingEntity.getName();
+    String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_3);
     _builder.append(_formatForCode_2, "        ");
     _builder.append("_html.tpl\');");
     _builder.newLineIfNotEmpty();

@@ -389,9 +389,14 @@ public class RelationSelectorList {
         _builder.append("_Form_Plugin_RelationSelectorList");
       } else {
         _builder.append("\\\\");
-        String _appNamespace = this._utils.appNamespace(it);
-        _builder.append(_appNamespace, "    ");
-        _builder.append("\\\\Form\\\\Plugin\\\\RelationSelectorList");
+        String _vendor = it.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "    ");
+        _builder.append("\\\\");
+        String _name = it.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+        _builder.append(_formatForCodeCapital_1, "    ");
+        _builder.append("Module\\\\Form\\\\Plugin\\\\RelationSelectorList");
       }
     }
     _builder.append("\', $params);");

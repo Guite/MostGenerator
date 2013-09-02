@@ -137,7 +137,7 @@ class RelationSelectorList {
          */
         function smarty_function_«appName.formatForDB»RelationSelectorList($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_RelationSelectorList«ELSE»\\«appNamespace»\\Form\\Plugin\\RelationSelectorList«ENDIF»', $params);
+            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_RelationSelectorList«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\RelationSelectorList«ENDIF»', $params);
         }
     '''
 }

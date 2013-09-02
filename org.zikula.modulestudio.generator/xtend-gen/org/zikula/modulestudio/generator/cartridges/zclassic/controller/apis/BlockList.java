@@ -583,9 +583,14 @@ public class BlockList {
       } else {
         _builder.append("    ");
         _builder.append("$entityClass = \'\\\\");
-        String _appNamespace = this._utils.appNamespace(it);
-        _builder.append(_appNamespace, "    ");
-        _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
+        String _vendor = it.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "    ");
+        _builder.append("\\\\");
+        String _name_2 = it.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_2);
+        _builder.append(_formatForCodeCapital_1, "    ");
+        _builder.append("Module\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -1130,8 +1135,8 @@ public class BlockList {
     _builder.append("        ");
     _builder.append("$vars[\'objectType\'] = \'");
     Entity _leadingEntity_1 = this._modelExtensions.getLeadingEntity(it);
-    String _name_2 = _leadingEntity_1.getName();
-    String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_2);
+    String _name_3 = _leadingEntity_1.getName();
+    String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_3);
     _builder.append(_formatForCode_2, "        ");
     _builder.append("\';");
     _builder.newLineIfNotEmpty();
@@ -1349,8 +1354,8 @@ public class BlockList {
     _builder.append("    ");
     _builder.append("$vars[\'objectType\'] = $this->request->request->filter(\'objecttype\', \'");
     Entity _leadingEntity_2 = this._modelExtensions.getLeadingEntity(it);
-    String _name_3 = _leadingEntity_2.getName();
-    String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_3);
+    String _name_4 = _leadingEntity_2.getName();
+    String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_4);
     _builder.append(_formatForCode_3, "    ");
     _builder.append("\', FILTER_SANITIZE_STRING);");
     _builder.newLineIfNotEmpty();

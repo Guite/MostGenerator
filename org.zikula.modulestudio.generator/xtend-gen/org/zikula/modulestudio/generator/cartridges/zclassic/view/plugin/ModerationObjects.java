@@ -133,13 +133,15 @@ public class ModerationObjects {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("$workflowHelper = new ");
-    String _appName_3 = this._utils.appName(it);
-    _builder.append(_appName_3, "    ");
     {
       boolean _targets = this._utils.targets(it, "1.3.5");
       if (_targets) {
+        String _appName_3 = this._utils.appName(it);
+        _builder.append(_appName_3, "    ");
         _builder.append("_Util_Workflow");
       } else {
+        String _appNamespace = this._utils.appNamespace(it);
+        _builder.append(_appNamespace, "    ");
         _builder.append("\\Util\\WorkflowUtil");
       }
     }

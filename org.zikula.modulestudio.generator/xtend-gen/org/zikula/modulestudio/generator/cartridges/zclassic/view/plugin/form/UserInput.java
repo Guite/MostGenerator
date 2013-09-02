@@ -635,9 +635,14 @@ public class UserInput {
         _builder.append("_Form_Plugin_UserInput");
       } else {
         _builder.append("\\\\");
-        String _appNamespace = this._utils.appNamespace(it);
-        _builder.append(_appNamespace, "    ");
-        _builder.append("\\\\Form\\\\Plugin\\\\UserInput");
+        String _vendor = it.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "    ");
+        _builder.append("\\\\");
+        String _name = it.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+        _builder.append(_formatForCodeCapital_1, "    ");
+        _builder.append("Module\\\\Form\\\\Plugin\\\\UserInput");
       }
     }
     _builder.append("\', $params);");

@@ -120,7 +120,7 @@ class TreeSelector {
                 «IF targets('1.3.5')»
                     $entityClass = $this->name . '_Entity_' . ucwords($this->objectType);
                 «ELSE»
-                    $entityClass = '\\' . $this->Name . '\\Entity\\' . ucwords($this->objectType) . 'Entity';
+                    $entityClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
                 «ENDIF»
                 $entityManager = ServiceUtil::getManager()->getService('doctrine.entitymanager');
                 $this->repository = $entityManager->getRepository($entityClass);
@@ -234,7 +234,7 @@ class TreeSelector {
          */
         function smarty_function_«appName.formatForDB»TreeSelector($params, $view)
         {
-            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_TreeSelector«ELSE»\\«appNamespace»\\Form\\Plugin\\TreeSelector«ENDIF»', $params);
+            return $view->registerPlugin('«IF targets('1.3.5')»«appName»_Form_Plugin_TreeSelector«ELSE»\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Form\\Plugin\\TreeSelector«ENDIF»', $params);
         }
     '''
 }
