@@ -156,19 +156,20 @@ public class Uploads {
         }
       }
     }
-    String _appSourcePath = this._namingExtensions.getAppSourcePath(it);
     String _xifexpression = null;
     boolean _targets = this._utils.targets(it, "1.3.5");
     if (_targets) {
-      _xifexpression = "docs/";
+      String _appSourcePath = this._namingExtensions.getAppSourcePath(it);
+      String _plus_1 = (_appSourcePath + "docs/");
+      _xifexpression = _plus_1;
     } else {
       String _appDocPath = this._namingExtensions.getAppDocPath(it);
       _xifexpression = _appDocPath;
     }
-    final String docPath = (_appSourcePath + _xifexpression);
-    String _plus_1 = (docPath + "htaccessTemplate");
+    final String docPath = _xifexpression;
+    String _plus_2 = (docPath + "htaccessTemplate");
     CharSequence _htAccessTemplate = this.htAccessTemplate(it);
-    this.fsa.generateFile(_plus_1, _htAccessTemplate);
+    this.fsa.generateFile(_plus_2, _htAccessTemplate);
   }
   
   private void uploadFolder(final UploadField it, final String folder) {
