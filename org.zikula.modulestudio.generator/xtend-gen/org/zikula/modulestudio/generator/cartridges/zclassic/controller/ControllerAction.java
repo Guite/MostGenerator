@@ -741,8 +741,16 @@ public class ControllerAction {
         _builder.append("$entityClass = $this->name . \'_Entity_\' . ucwords($objectType);");
         _builder.newLine();
       } else {
-        _builder.append("$entityClass = \'\\\\\' . $this->name . \'\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
-        _builder.newLine();
+        _builder.append("$entityClass = \'\\\\");
+        String _vendor = this.app.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "");
+        _builder.append("\\\\");
+        String _name = this.app.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+        _builder.append(_formatForCodeCapital_1, "");
+        _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
+        _builder.newLineIfNotEmpty();
       }
     }
     _builder.append("$repository = $this->entityManager->getRepository($entityClass);");
@@ -1156,8 +1164,8 @@ public class ControllerAction {
                   _builder.appendImmediate(", ", "");
                 }
                 _builder.append("\'");
-                String _name = entity.getName();
-                String _formatForCode = this._formattingExtensions.formatForCode(_name);
+                String _name_1 = entity.getName();
+                String _formatForCode = this._formattingExtensions.formatForCode(_name_1);
                 _builder.append(_formatForCode, "");
                 _builder.append("\'");
               }
@@ -1186,8 +1194,8 @@ public class ControllerAction {
               for(final Entity entity_1 : _listEntities_1) {
                 _builder.append("            ");
                 _builder.append("case \'");
-                String _name_1 = entity_1.getName();
-                String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_1);
+                String _name_2 = entity_1.getName();
+                String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_2);
                 _builder.append(_formatForCode_1, "            ");
                 _builder.append("\':");
                 _builder.newLineIfNotEmpty();
@@ -1197,16 +1205,16 @@ public class ControllerAction {
                     _builder.append("            ");
                     _builder.append("    ");
                     _builder.append("$currItem[\'");
-                    String _name_2 = field.getName();
-                    String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_2);
+                    String _name_3 = field.getName();
+                    String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_3);
                     _builder.append(_formatForCode_2, "                ");
                     _builder.append("\'] = $listHelper->resolve($currItem[\'");
-                    String _name_3 = field.getName();
-                    String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_3);
+                    String _name_4 = field.getName();
+                    String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_4);
                     _builder.append(_formatForCode_3, "                ");
                     _builder.append("\'], $objectType, \'");
-                    String _name_4 = field.getName();
-                    String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_4);
+                    String _name_5 = field.getName();
+                    String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_5);
                     _builder.append(_formatForCode_4, "                ");
                     _builder.append("\', \', \');");
                     _builder.newLineIfNotEmpty();
@@ -1267,8 +1275,16 @@ public class ControllerAction {
         _builder.append("$entityClass = $this->name . \'_Entity_\' . ucwords($objectType);");
         _builder.newLine();
       } else {
-        _builder.append("$entityClass = \'\\\\\' . $this->name . \'\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
-        _builder.newLine();
+        _builder.append("$entityClass = \'\\\\");
+        String _vendor = this.app.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "");
+        _builder.append("\\\\");
+        String _name = this.app.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+        _builder.append(_formatForCodeCapital_1, "");
+        _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
+        _builder.newLineIfNotEmpty();
       }
     }
     _builder.append("$repository = $this->entityManager->getRepository($entityClass);");
@@ -1344,9 +1360,26 @@ public class ControllerAction {
         _builder.newLine();
         _builder.append("if ($hasIdentifier === false) {");
         _builder.newLine();
-        _builder.append("    ");
-        _builder.append("$entityClass = $this->name . \'_Entity_\' . ucfirst($objectType);");
-        _builder.newLine();
+        {
+          boolean _targets = this._utils.targets(this.app, "1.3.5");
+          if (_targets) {
+            _builder.append("    ");
+            _builder.append("$entityClass = $this->name . \'_Entity_\' . ucwords($objectType);");
+            _builder.newLine();
+          } else {
+            _builder.append("    ");
+            _builder.append("$entityClass = \'\\\\");
+            String _vendor = this.app.getVendor();
+            String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+            _builder.append(_formatForCodeCapital, "    ");
+            _builder.append("\\\\");
+            String _name = this.app.getName();
+            String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+            _builder.append(_formatForCodeCapital_1, "    ");
+            _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
+            _builder.newLineIfNotEmpty();
+          }
+        }
         _builder.append("    ");
         _builder.append("$objectTemp = new $entityClass();");
         _builder.newLine();
@@ -1981,8 +2014,16 @@ public class ControllerAction {
         _builder.append("$entityClass = $this->name . \'_Entity_\' . ucwords($objectType);");
         _builder.newLine();
       } else {
-        _builder.append("$entityClass = \'\\\\\' . $this->name . \'\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
-        _builder.newLine();
+        _builder.append("$entityClass = \'\\\\");
+        String _vendor = this.app.getVendor();
+        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+        _builder.append(_formatForCodeCapital, "");
+        _builder.append("\\\\");
+        String _name = this.app.getName();
+        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+        _builder.append(_formatForCodeCapital_1, "");
+        _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
+        _builder.newLineIfNotEmpty();
       }
     }
     _builder.append("$repository = $this->entityManager->getRepository($entityClass);");

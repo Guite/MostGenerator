@@ -2369,8 +2369,16 @@ public class FormHandler {
             _builder.newLine();
           } else {
             _builder.append("        ");
-            _builder.append("$metaDataEntityClass = \'\\\\\' . $this->name . \'\\\\Entity\\\\\' . ucfirst($this->objectType) . \'MetaDataEntity\';");
-            _builder.newLine();
+            _builder.append("$metaDataEntityClass = \'\\\\");
+            String _vendor = this.app.getVendor();
+            String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+            _builder.append(_formatForCodeCapital, "        ");
+            _builder.append("\\\\");
+            String _name = this.app.getName();
+            String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+            _builder.append(_formatForCodeCapital_1, "        ");
+            _builder.append("\\\\Entity\\\\\' . ucfirst($this->objectType) . \'MetaDataEntity\';");
+            _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("        ");
@@ -2428,8 +2436,16 @@ public class FormHandler {
             _builder.newLine();
           } else {
             _builder.append("    ");
-            _builder.append("$entityTransClass = \'\\\\\' . $this->name . \'\\\\Entity\\\\\' . ucwords($this->objectType) . \'TranslationEntity\';");
-            _builder.newLine();
+            _builder.append("$entityTransClass = \'\\\\");
+            String _vendor_1 = this.app.getVendor();
+            String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_vendor_1);
+            _builder.append(_formatForCodeCapital_2, "    ");
+            _builder.append("\\\\");
+            String _name_1 = this.app.getName();
+            String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_1);
+            _builder.append(_formatForCodeCapital_3, "    ");
+            _builder.append("\\\\Entity\\\\\' . ucwords($this->objectType) . \'TranslationEntity\';");
+            _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("    ");
