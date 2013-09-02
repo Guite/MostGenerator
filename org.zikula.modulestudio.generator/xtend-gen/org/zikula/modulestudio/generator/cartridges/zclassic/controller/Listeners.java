@@ -333,13 +333,9 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        {
-          if ((isBase).booleanValue()) {
-            _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
-            _builder.newLine();
-            _builder.newLine();
-          }
-        }
+        _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -418,13 +414,9 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        {
-          if ((isBase).booleanValue()) {
-            _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
-            _builder.newLine();
-            _builder.newLine();
-          }
-        }
+        _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -507,11 +499,11 @@ public class Listeners {
           if ((isBase).booleanValue()) {
             _builder.append("use ModUtil;");
             _builder.newLine();
-            _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
-            _builder.newLine();
-            _builder.newLine();
           }
         }
+        _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -590,13 +582,9 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        {
-          if ((isBase).booleanValue()) {
-            _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
-            _builder.newLine();
-            _builder.newLine();
-          }
-        }
+        _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -675,13 +663,9 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        {
-          if ((isBase).booleanValue()) {
-            _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
-            _builder.newLine();
-            _builder.newLine();
-          }
-        }
+        _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -760,13 +744,9 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        {
-          if ((isBase).booleanValue()) {
-            _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
-            _builder.newLine();
-            _builder.newLine();
-          }
-        }
+        _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -845,13 +825,9 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        {
-          if ((isBase).booleanValue()) {
-            _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
-            _builder.newLine();
-            _builder.newLine();
-          }
-        }
+        _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -930,13 +906,9 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        {
-          if ((isBase).booleanValue()) {
-            _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
-            _builder.newLine();
-            _builder.newLine();
-          }
-        }
+        _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -1015,13 +987,9 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        {
-          if ((isBase).booleanValue()) {
-            _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
-            _builder.newLine();
-            _builder.newLine();
-          }
-        }
+        _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -1100,13 +1068,9 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        {
-          if ((isBase).booleanValue()) {
-            _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
-            _builder.newLine();
-            _builder.newLine();
-          }
-        }
+        _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -1203,11 +1167,11 @@ public class Listeners {
                 _builder.newLine();
               }
             }
-            _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
-            _builder.newLine();
-            _builder.newLine();
           }
         }
+        _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -1286,13 +1250,9 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        {
-          if ((isBase).booleanValue()) {
-            _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
-            _builder.newLine();
-            _builder.newLine();
-          }
-        }
+        _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -1371,13 +1331,9 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        {
-          if ((isBase).booleanValue()) {
-            _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
-            _builder.newLine();
-            _builder.newLine();
-          }
-        }
+        _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -1456,13 +1412,9 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        {
-          if ((isBase).booleanValue()) {
-            _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
-            _builder.newLine();
-            _builder.newLine();
-          }
-        }
+        _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
+        _builder.newLine();
+        _builder.newLine();
       }
     }
     _builder.append("/**");
@@ -1549,8 +1501,12 @@ public class Listeners {
                 _builder.newLine();
               }
             }
-            _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
-            _builder.newLine();
+          }
+        }
+        _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
+        _builder.newLine();
+        {
+          if ((isBase).booleanValue()) {
             {
               boolean _needsApproval_1 = this._workflowExtensions.needsApproval(it);
               if (_needsApproval_1) {
@@ -1558,9 +1514,9 @@ public class Listeners {
                 _builder.newLine();
               }
             }
-            _builder.newLine();
           }
         }
+        _builder.newLine();
       }
     }
     _builder.append("/**");
