@@ -232,7 +232,7 @@ class ControllerAction {
         «IF app.targets('1.3.5')»
             $entityClass = $this->name . '_Entity_' . ucwords($objectType);
         «ELSE»
-            $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»\\Entity\\' . ucwords($objectType) . 'Entity';
+            $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucwords($objectType) . 'Entity';
         «ENDIF»
         $repository = $this->entityManager->getRepository($entityClass);
         $repository->setControllerArguments($args);
@@ -414,7 +414,7 @@ class ControllerAction {
         «IF app.targets('1.3.5')»
             $entityClass = $this->name . '_Entity_' . ucwords($objectType);
         «ELSE»
-            $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»\\Entity\\' . ucwords($objectType) . 'Entity';
+            $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucwords($objectType) . 'Entity';
         «ENDIF»
         $repository = $this->entityManager->getRepository($entityClass);
         $repository->setControllerArguments($args);
@@ -453,7 +453,7 @@ class ControllerAction {
                             «IF app.targets('1.3.5')»
                                 $entityClass = $this->name . '_Entity_' . ucwords($objectType);
                             «ELSE»
-                                $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»\\Entity\\' . ucwords($objectType) . 'Entity';
+                                $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucwords($objectType) . 'Entity';
                             «ENDIF»
                             $objectTemp = new $entityClass();
                             $hasSlug = $objectTemp->get_hasUniqueSlug();
@@ -676,7 +676,7 @@ class ControllerAction {
         «IF app.targets('1.3.5')»
             $entityClass = $this->name . '_Entity_' . ucwords($objectType);
         «ELSE»
-            $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»\\Entity\\' . ucwords($objectType) . 'Entity';
+            $entityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucwords($objectType) . 'Entity';
         «ENDIF»
         $repository = $this->entityManager->getRepository($entityClass);
 

@@ -529,7 +529,7 @@ public class Search {
         String _name_2 = it.getName();
         String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_2);
         _builder.append(_formatForCodeCapital_1, "        ");
-        _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
+        _builder.append("Module\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
     }

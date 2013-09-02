@@ -176,7 +176,7 @@ class ExampleData {
                 «IF app.targets('1.3.5')»
                     $metaDataEntityClass = $this->name . '_Entity_«name.formatForCodeCapital»MetaData';
                 «ELSE»
-                    $metaDataEntityClass = '\\' . $this->name . '\\Entity\\«name.formatForCodeCapital»MetaDataEntity';
+                    $metaDataEntityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\«name.formatForCodeCapital»MetaDataEntity';
                 «ENDIF»
                 $metaData = new $metaDataEntityClass($entity);
 

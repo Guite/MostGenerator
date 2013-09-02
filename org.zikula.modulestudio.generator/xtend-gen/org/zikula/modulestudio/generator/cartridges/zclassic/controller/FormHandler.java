@@ -2377,7 +2377,7 @@ public class FormHandler {
             String _name = this.app.getName();
             String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
             _builder.append(_formatForCodeCapital_1, "        ");
-            _builder.append("\\\\Entity\\\\\' . ucfirst($this->objectType) . \'MetaDataEntity\';");
+            _builder.append("Module\\\\Entity\\\\\' . ucfirst($this->objectType) . \'MetaDataEntity\';");
             _builder.newLineIfNotEmpty();
           }
         }
@@ -2444,7 +2444,7 @@ public class FormHandler {
             String _name_1 = this.app.getName();
             String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_1);
             _builder.append(_formatForCodeCapital_3, "    ");
-            _builder.append("\\\\Entity\\\\\' . ucwords($this->objectType) . \'TranslationEntity\';");
+            _builder.append("Module\\\\Entity\\\\\' . ucwords($this->objectType) . \'TranslationEntity\';");
             _builder.newLineIfNotEmpty();
           }
         }

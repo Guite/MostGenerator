@@ -831,7 +831,7 @@ class FormHandler {
                     «IF app.targets('1.3.5')»
                     $metaDataEntityClass = $this->name . '_Entity_' . ucfirst($this->objectType) . 'MetaData';
                     «ELSE»
-                    $metaDataEntityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»\\Entity\\' . ucfirst($this->objectType) . 'MetaDataEntity';
+                    $metaDataEntityClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucfirst($this->objectType) . 'MetaDataEntity';
                     «ENDIF»
                     $metaData = new $metaDataEntityClass($entity);
                 }
@@ -857,7 +857,7 @@ class FormHandler {
                 «IF app.targets('1.3.5')»
                     $entityTransClass = $this->name . '_Entity_' . ucwords($this->objectType) . 'Translation';
                 «ELSE»
-                    $entityTransClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»\\Entity\\' . ucwords($this->objectType) . 'TranslationEntity';
+                    $entityTransClass = '\\«app.vendor.formatForCodeCapital»\\«app.name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'TranslationEntity';
                 «ENDIF»
                 $transRepository = $this->entityManager->getRepository($entityTransClass);
 

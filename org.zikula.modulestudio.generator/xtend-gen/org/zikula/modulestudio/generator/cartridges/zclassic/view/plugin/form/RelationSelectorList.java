@@ -139,7 +139,7 @@ public class RelationSelectorList {
         String _name = it.getName();
         String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
         _builder.append(_formatForCodeCapital_1, "");
-        _builder.append("\\Form\\Plugin\\AbstractObjectSelector");
+        _builder.append("Module\\Form\\Plugin\\AbstractObjectSelector");
         _builder.newLineIfNotEmpty();
       }
     }

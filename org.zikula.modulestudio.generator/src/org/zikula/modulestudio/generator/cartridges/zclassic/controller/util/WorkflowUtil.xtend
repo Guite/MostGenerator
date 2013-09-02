@@ -429,7 +429,7 @@ class WorkflowUtil {
             «IF targets('1.3.5')»
                 $entityClass = $this->name . '_Entity_' . ucwords($objectType);
             «ELSE»
-                $entityClass = '\\' . $this->name . '\\Entity\\' . ucwords($objectType) . 'Entity';
+                $entityClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($objectType) . 'Entity';
             «ENDIF»
             $entityManager = $this->serviceManager->getService('doctrine.entitymanager');
 

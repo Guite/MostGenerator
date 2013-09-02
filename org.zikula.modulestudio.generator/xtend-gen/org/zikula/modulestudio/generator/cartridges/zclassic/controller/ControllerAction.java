@@ -749,7 +749,7 @@ public class ControllerAction {
         String _name = this.app.getName();
         String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
         _builder.append(_formatForCodeCapital_1, "");
-        _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
+        _builder.append("Module\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -1283,7 +1283,7 @@ public class ControllerAction {
         String _name = this.app.getName();
         String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
         _builder.append(_formatForCodeCapital_1, "");
-        _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
+        _builder.append("Module\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
     }
@@ -1376,7 +1376,7 @@ public class ControllerAction {
             String _name = this.app.getName();
             String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
             _builder.append(_formatForCodeCapital_1, "    ");
-            _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
+            _builder.append("Module\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
             _builder.newLineIfNotEmpty();
           }
         }
@@ -2022,7 +2022,7 @@ public class ControllerAction {
         String _name = this.app.getName();
         String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
         _builder.append(_formatForCodeCapital_1, "");
-        _builder.append("\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
+        _builder.append("Module\\\\Entity\\\\\' . ucwords($objectType) . \'Entity\';");
         _builder.newLineIfNotEmpty();
       }
     }

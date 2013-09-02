@@ -144,7 +144,7 @@ class EditFunctions {
          * Example method for initialising geo coding functionality in JavaScript.
          * In contrast to the map picker this one determines coordinates for a given address.
          * To use this please customise the form field names to your needs.
-         * There is also a method on PHP level available in the \«IF targets('1.3.5')»«appName»_Util_Controller«ELSE»«vendor.formatForCodeCapital»\«name.formatForCodeCapital»\Util\ControllerUtil«ENDIF» class.
+         * There is also a method on PHP level available in the \«IF targets('1.3.5')»«appName»_Util_Controller«ELSE»«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Util\ControllerUtil«ENDIF» class.
          */
         function «prefix»InitGeoCoding()
         {

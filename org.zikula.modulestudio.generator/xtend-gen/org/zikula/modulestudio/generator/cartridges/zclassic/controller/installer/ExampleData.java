@@ -738,10 +738,18 @@ public class ExampleData {
                 _builder.append("MetaData\';");
                 _builder.newLineIfNotEmpty();
               } else {
-                _builder.append("$metaDataEntityClass = \'\\\\\' . $this->name . \'\\\\Entity\\\\");
-                String _name_5 = it.getName();
-                String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_5);
+                _builder.append("$metaDataEntityClass = \'\\\\");
+                String _vendor = app.getVendor();
+                String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_vendor);
                 _builder.append(_formatForCodeCapital_3, "");
+                _builder.append("\\\\");
+                String _name_5 = app.getName();
+                String _formatForCodeCapital_4 = this._formattingExtensions.formatForCodeCapital(_name_5);
+                _builder.append(_formatForCodeCapital_4, "");
+                _builder.append("Module\\\\Entity\\\\");
+                String _name_6 = it.getName();
+                String _formatForCodeCapital_5 = this._formattingExtensions.formatForCodeCapital(_name_6);
+                _builder.append(_formatForCodeCapital_5, "");
                 _builder.append("MetaDataEntity\';");
                 _builder.newLineIfNotEmpty();
               }

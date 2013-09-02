@@ -435,7 +435,7 @@ public class EditFunctions {
         String _name = it.getName();
         String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
         _builder.append(_formatForCodeCapital_1, " ");
-        _builder.append("\\Util\\ControllerUtil");
+        _builder.append("Module\\Util\\ControllerUtil");
       }
     }
     _builder.append(" class.");

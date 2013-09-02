@@ -59,7 +59,7 @@ class TreeSelector {
         «IF targets('1.3.5')»
         class «appName»_Form_Plugin_Base_TreeSelector extends «appName»_Form_Plugin_AbstractObjectSelector
         «ELSE»
-        class TreeSelector extends \«vendor.formatForCodeCapital»\«name.formatForCodeCapital»\Form\Plugin\AbstractObjectSelector
+        class TreeSelector extends \«vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Form\Plugin\AbstractObjectSelector
         «ENDIF»
         {
             /**
