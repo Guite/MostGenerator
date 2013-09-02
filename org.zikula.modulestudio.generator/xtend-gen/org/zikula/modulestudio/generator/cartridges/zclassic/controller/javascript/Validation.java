@@ -83,8 +83,10 @@ public class Validation {
     _builder.append("function ");
     String _prefix = it.getPrefix();
     _builder.append(_prefix, "");
-    _builder.append("Today(format) {");
+    _builder.append("Today(format)");
     _builder.newLineIfNotEmpty();
+    _builder.append("{");
+    _builder.newLine();
     _builder.append("    ");
     _builder.append("var timestamp, todayDate, month, day, hours, minutes, seconds;");
     _builder.newLine();
@@ -193,8 +195,10 @@ public class Validation {
     _builder.append("function ");
     String _prefix_1 = it.getPrefix();
     _builder.append(_prefix_1, "");
-    _builder.append("ReadDate(val, includeTime) {");
+    _builder.append("ReadDate(val, includeTime)");
     _builder.newLineIfNotEmpty();
+    _builder.append("{");
+    _builder.newLine();
     _builder.append("    ");
     _builder.append("// look if we have YYYY-MM-DD");
     _builder.newLine();
@@ -266,8 +270,10 @@ public class Validation {
         _builder.append("function ");
         String _prefix_2 = it.getPrefix();
         _builder.append(_prefix_2, "");
-        _builder.append("UniqueCheck(ucOt, val, elem, ucEx) {");
+        _builder.append("UniqueCheck(ucOt, val, elem, ucEx)");
         _builder.newLineIfNotEmpty();
+        _builder.append("{");
+        _builder.newLine();
         _builder.append("    ");
         _builder.append("var params, request;");
         _builder.newLine();
@@ -393,8 +399,10 @@ public class Validation {
     _builder.append("function ");
     String _prefix_3 = it.getPrefix();
     _builder.append(_prefix_3, "");
-    _builder.append("AddCommonValidationRules(objectType, id) {");
+    _builder.append("AddCommonValidationRules(objectType, id)");
     _builder.newLineIfNotEmpty();
+    _builder.append("{");
+    _builder.newLine();
     _builder.append("    ");
     _builder.append("Validation.addAllThese([");
     _builder.newLine();

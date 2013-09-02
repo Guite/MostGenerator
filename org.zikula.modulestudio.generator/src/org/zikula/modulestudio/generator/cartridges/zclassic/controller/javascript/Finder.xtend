@@ -30,7 +30,8 @@ class Finder {
          * Returns the attributes used for the popup window. 
          * @return {String}
          */
-        function getPopupAttributes() {
+        function getPopupAttributes()
+        {
             var pWidth, pHeight;
 
             pWidth = screen.width * 0.75;
@@ -41,7 +42,8 @@ class Finder {
         /**
          * Open a popup window with the finder triggered by a Xinha button.
          */
-        function «appName»FinderXinha(editor, «prefix()»URL) {
+        function «appName»FinderXinha(editor, «prefix()»URL)
+        {
             var popupAttributes;
 
             // Save editor for access in selector window
@@ -54,7 +56,8 @@ class Finder {
         /**
          * Open a popup window with the finder triggered by a CKEditor button.
          */
-        function «appName»FinderCKEditor(editor, «prefix()»URL) {
+        function «appName»FinderCKEditor(editor, «prefix()»URL)
+        {
             // Save editor for access in selector window
             current«appName»Editor = editor;
 
@@ -71,7 +74,8 @@ class Finder {
 
         «name.formatForDB».finder = {};
 
-        «name.formatForDB».finder.onLoad = function (baseId, selectedId) {
+        «name.formatForDB».finder.onLoad = function (baseId, selectedId)
+        {
             $$('div.categoryselector select').invoke('observe', 'change', «name.formatForDB».finder.onParamChanged);
             $('«appName»_sort').observe('change', «name.formatForDB».finder.onParamChanged);
             $('«appName»_sortdir').observe('change', «name.formatForDB».finder.onParamChanged);
@@ -82,11 +86,13 @@ class Finder {
             $('«appName»_cancel').observe('click', «name.formatForDB».finder.handleCancel);
         };
 
-        «name.formatForDB».finder.onParamChanged = function () {
+        «name.formatForDB».finder.onParamChanged = function ()
+        {
             $('selectorForm').submit();
         };
 
-        «name.formatForDB».finder.handleCancel = function () {
+        «name.formatForDB».finder.handleCancel = function ()
+        {
             var editor, w;
 
             editor = $F('editorName');
@@ -104,7 +110,8 @@ class Finder {
         };
 
 
-        function getPasteSnippet(mode, itemId) {
+        function getPasteSnippet(mode, itemId)
+        {
             var itemUrl, itemTitle, itemDescription, pasteMode;
 
             itemUrl = $F('url' + itemId);
@@ -128,7 +135,8 @@ class Finder {
 
 
         // User clicks on "select item" button
-        «name.formatForDB».finder.selectItem = function (itemId) {
+        «name.formatForDB».finder.selectItem = function (itemId)
+        {
             var editor, html;
 
             editor = $F('editorName');
@@ -177,7 +185,8 @@ class Finder {
         };
 
 
-        function «prefix()»ClosePopup() {
+        function «prefix()»ClosePopup()
+        {
             window.opener.focus();
             window.close();
         }
@@ -194,7 +203,8 @@ class Finder {
         «name.formatForDB».itemSelector.baseId = 0;
         «name.formatForDB».itemSelector.selectedId = 0;
 
-        «name.formatForDB».itemSelector.onLoad = function (baseId, selectedId) {
+        «name.formatForDB».itemSelector.onLoad = function (baseId, selectedId)
+        {
             «name.formatForDB».itemSelector.baseId = baseId;
             «name.formatForDB».itemSelector.selectedId = selectedId;
 
@@ -213,13 +223,15 @@ class Finder {
             «name.formatForDB».itemSelector.getItemList();
         };
 
-        «name.formatForDB».itemSelector.onParamChanged = function () {
+        «name.formatForDB».itemSelector.onParamChanged = function ()
+        {
             $('ajax_indicator').removeClassName('z-hide');
 
             «name.formatForDB».itemSelector.getItemList();
         };
 
-        «name.formatForDB».itemSelector.getItemList = function () {
+        «name.formatForDB».itemSelector.getItemList = function ()
+        {
             var baseId, pars, request;
 
             baseId = «name.formatForDB».itemSelector.baseId;
@@ -248,7 +260,8 @@ class Finder {
             });
         };
 
-        «name.formatForDB».itemSelector.updateItemDropdownEntries = function () {
+        «name.formatForDB».itemSelector.updateItemDropdownEntries = function ()
+        {
             var baseId, itemSelector, items, i, item;
 
             baseId = «name.formatForDB».itemSelector.baseId;
@@ -266,7 +279,8 @@ class Finder {
             }
         };
 
-        «name.formatForDB».itemSelector.updatePreview = function () {
+        «name.formatForDB».itemSelector.updatePreview = function ()
+        {
             var baseId, items, selectedElement, i;
 
             baseId = «name.formatForDB».itemSelector.baseId;
@@ -294,7 +308,8 @@ class Finder {
             }
         };
 
-        «name.formatForDB».itemSelector.onItemChanged = function () {
+        «name.formatForDB».itemSelector.onItemChanged = function ()
+        {
             var baseId, itemSelector, preview;
 
             baseId = «name.formatForDB».itemSelector.baseId;

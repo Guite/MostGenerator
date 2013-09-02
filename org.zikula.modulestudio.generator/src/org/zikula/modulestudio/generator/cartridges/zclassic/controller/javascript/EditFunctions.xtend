@@ -57,7 +57,8 @@ class EditFunctions {
             /**
              * Initialises a user field with auto completion.
              */
-            function «prefix»InitUserField(fieldName, getterName) {
+            function «prefix»InitUserField(fieldName, getterName)
+            {
                 if ($(fieldName + 'LiveSearch') === undefined) {
                     return;
                 }
@@ -84,7 +85,8 @@ class EditFunctions {
         /**
          * Resets the value of an upload / file input field.
          */
-        function «prefix»ResetUploadField(fieldName) {
+        function «prefix»ResetUploadField(fieldName)
+        {
             if ($(fieldName) != undefined) {
                 $(fieldName).setAttribute('type', 'input');
                 $(fieldName).setAttribute('type', 'file');
@@ -96,7 +98,8 @@ class EditFunctions {
         /**
          * Initialises the reset button for a certain upload input.
          */
-        function «prefix»InitUploadField(fieldName) {
+        function «prefix»InitUploadField(fieldName)
+        {
             if ($('reset' + fieldName.capitalize() + 'Val') != undefined) {
                 $('reset' + fieldName.capitalize() + 'Val').observe('click', function (evt) {
                     evt.preventDefault();
@@ -110,7 +113,8 @@ class EditFunctions {
         /**
          * Resets the value of a date or datetime input field.
          */
-        function «prefix»ResetDateField(fieldName) {
+        function «prefix»ResetDateField(fieldName)
+        {
             if ($(fieldName) != undefined) {
                 $(fieldName).value = '';
             }
@@ -124,7 +128,8 @@ class EditFunctions {
         /**
          * Initialises the reset button for a certain date input.
          */
-        function «prefix»InitDateField(fieldName) {
+        function «prefix»InitDateField(fieldName)
+        {
             if ($('reset' + fieldName.capitalize() + 'Val') != undefined) {
                 $('reset' + fieldName.capitalize() + 'Val').observe('click', function (evt) {
                     evt.preventDefault();
@@ -141,13 +146,15 @@ class EditFunctions {
          * To use this please customise the form field names to your needs.
          * There is also a method on PHP level available in the \«IF targets('1.3.5')»«appName»_Util_Controller«ELSE»«vendor.formatForCodeCapital»\«name.formatForCodeCapital»\Util\ControllerUtil«ENDIF» class.
          */
-        function «prefix»InitGeoCoding() {
+        function «prefix»InitGeoCoding()
+        {
             $('linkGetCoordinates').observe('click', function (evt) {
                 «prefix»DoGeoCoding();
             });
         }
 
-        function «prefix»DoGeoCoding() {
+        function «prefix»DoGeoCoding()
+        {
             var geocoder = new mxn.Geocoder('googlev3', «prefix»GeoCodeReturn, «prefix»GeoCodeErrorCallback);
 
             var address = {
@@ -175,7 +182,8 @@ class EditFunctions {
              * Purpose: better feedback if no results are found (#247).
              * See http://stackoverflow.com/questions/657839/scriptaculous-ajax-autocomplete-empty-response for more information.
              */
-            Ajax.Autocompleter.prototype.updateChoices = function (choices) {
+            Ajax.Autocompleter.prototype.updateChoices = function (choices)
+            {
                 if (!this.changed && this.hasFocus) {
                     if (!choices || choices == '<ul></ul>') {
                         this.stopIndicator();
@@ -238,7 +246,8 @@ class EditFunctions {
         /**
          * Toggles the fields of an auto completion field.
          */
-        function «prefix»ToggleRelatedItemForm(idPrefix) {
+        function «prefix»ToggleRelatedItemForm(idPrefix)
+        {
             // if we don't have a toggle link do nothing
             if ($(idPrefix + 'AddLink') === undefined) {
                 return;
@@ -256,7 +265,8 @@ class EditFunctions {
         /**
          * Resets an auto completion field.
          */
-        function «prefix»ResetRelatedItemForm(idPrefix) {
+        function «prefix»ResetRelatedItemForm(idPrefix)
+        {
             // hide the sub form
             «prefix»ToggleRelatedItemForm(idPrefix);
 
@@ -271,7 +281,8 @@ class EditFunctions {
          * For edit forms we use "iframe: true" to ensure file uploads work without problems.
          * For all other windows we use "iframe: false" because we want the escape key working.
          */
-        function «prefix»CreateWindowInstance(containerElem, useIframe) {
+        function «prefix»CreateWindowInstance(containerElem, useIframe)
+        {
             var newWindow;
 
             // define the new window instance
@@ -300,7 +311,8 @@ class EditFunctions {
         /**
          * Observe a link for opening an inline window
          */
-        function «prefix»InitInlineWindow(objectType, containerID) {
+        function «prefix»InitInlineWindow(objectType, containerID)
+        {
             var found, newItem;
 
             // whether the handler has been found
@@ -342,7 +354,8 @@ class EditFunctions {
         /**
          * Removes a related item from the list of selected ones.
          */
-        function «prefix»RemoveRelatedItem(idPrefix, removeId) {
+        function «prefix»RemoveRelatedItem(idPrefix, removeId)
+        {
             var itemIds, itemIdsArr;
 
             itemIds = $F(idPrefix + 'ItemList');
@@ -361,7 +374,8 @@ class EditFunctions {
         /**
          * Adds a related item to selection which has been chosen by auto completion.
          */
-        function «prefix»SelectRelatedItem(objectType, idPrefix, inputField, selectedListItem) {
+        function «prefix»SelectRelatedItem(objectType, idPrefix, inputField, selectedListItem)
+        {
             var newItemId, newTitle, includeEditing, editLink, removeLink, elemPrefix, itemPreview, li, editHref, fldPreview, itemIds, itemIdsArr;
 
             newItemId = selectedListItem.id;
@@ -425,7 +439,8 @@ class EditFunctions {
         /**
          * Initialise a relation field section with autocompletion and optional edit capabilities
          */
-        function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditing) {
+        function «prefixSmall»InitRelationItemsForm(objectType, idPrefix, includeEditing)
+        {
             var acOptions, itemIds, itemIdsArr;
 
             // add handling for the toggle link if existing
@@ -511,7 +526,8 @@ class EditFunctions {
         /**
          * Closes an iframe from the document displayed in it
          */
-        function «prefix»CloseWindowFromInside(idPrefix, itemId) {
+        function «prefix»CloseWindowFromInside(idPrefix, itemId)
+        {
             // if there is no parent window do nothing
             if (window.parent === '') {
                 return;

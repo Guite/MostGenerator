@@ -68,7 +68,8 @@ class DisplayFunctions {
         /**
          * Initialises the context menu for item actions.
          */
-        function «prefix()»InitItemActions(objectType, func, containerId) {
+        function «prefix()»InitItemActions(objectType, func, containerId)
+        {
             var triggerId, contextMenu, iconFile;
 
             triggerId = containerId + 'trigger';
@@ -137,21 +138,24 @@ class DisplayFunctions {
     '''
 
     def private initQuickNavigation(Application it) '''
-        function «prefix()»CapitaliseFirstLetter(string) {
+        function «prefix()»CapitaliseFirstLetter(string)
+        {
             return string.charAt(0).toUpperCase() + string.slice(1);
         }
 
         /**
          * Submits a quick navigation form.
          */
-        function «prefix()»SubmitQuickNavForm(objectType) {
+        function «prefix()»SubmitQuickNavForm(objectType)
+        {
             $('«prefix()»' + «prefix()»CapitaliseFirstLetter(objectType) + 'QuickNavForm').submit();
         }
 
         /**
          * Initialise the quick navigation panel in list views.
          */
-        function «prefix()»InitQuickNavigation(objectType, controller) {
+        function «prefix()»InitQuickNavigation(objectType, controller)
+        {
             if ($('«prefix()»' + «prefix()»CapitaliseFirstLetter(objectType) + 'QuickNavForm') == undefined) {
                 return;
             }
@@ -235,7 +239,8 @@ class DisplayFunctions {
          * For edit forms we use "iframe: true" to ensure file uploads work without problems.
          * For all other windows we use "iframe: false" because we want the escape key working.
          */
-        function «prefix()»InitInlineWindow(containerElem, title) {
+        function «prefix()»InitInlineWindow(containerElem, title)
+        {
             var newWindow;
 
             // show the container (hidden for users without JavaScript)

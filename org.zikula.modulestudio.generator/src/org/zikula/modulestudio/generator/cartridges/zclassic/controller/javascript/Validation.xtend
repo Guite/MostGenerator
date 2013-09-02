@@ -28,7 +28,8 @@ class Validation {
     def private generate(Application it) '''
         'use strict';
 
-        function «prefix»Today(format) {
+        function «prefix»Today(format)
+        {
             var timestamp, todayDate, month, day, hours, minutes, seconds;
 
             timestamp = new Date();
@@ -66,7 +67,8 @@ class Validation {
         }
 
         // returns YYYY-MM-DD even if date is in DD.MM.YYYY
-        function «prefix»ReadDate(val, includeTime) {
+        function «prefix»ReadDate(val, includeTime)
+        {
             // look if we have YYYY-MM-DD
             if (val.substr(4, 1) === '-' && val.substr(7, 1) === '-') {
                 return val;
@@ -86,7 +88,8 @@ class Validation {
             /**
              * Performs a duplicate check for unique fields
              */
-            function «prefix»UniqueCheck(ucOt, val, elem, ucEx) {
+            function «prefix»UniqueCheck(ucOt, val, elem, ucEx)
+            {
                 var params, request;
 
                 $('advice-validate-unique-' + elem.id).hide();
@@ -130,7 +133,8 @@ class Validation {
         /**
          * Add special validation rules.
          */
-        function «prefix»AddCommonValidationRules(objectType, id) {
+        function «prefix»AddCommonValidationRules(objectType, id)
+        {
             Validation.addAllThese([
                 ['validate-nospace', Zikula.__('No spaces', 'module_«appName.formatForDB»_js'), function(val, elem) {
                     var valStr;

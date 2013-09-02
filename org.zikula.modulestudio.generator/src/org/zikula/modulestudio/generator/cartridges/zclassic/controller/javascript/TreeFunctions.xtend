@@ -51,7 +51,8 @@ class TreeFunctions {
         /**
          * Initialise event handlers for all nodes of a given tree root.
          */
-        function «prefix»InitTreeNodes(objectType, controller, rootId, hasDisplay, hasEdit) {
+        function «prefix»InitTreeNodes(objectType, controller, rootId, hasDisplay, hasEdit)
+        {
             $$('#itemtree' + rootId + ' a').each(function (elem) {
                 var liRef, isRoot, contextMenu;
 
@@ -139,7 +140,8 @@ class TreeFunctions {
          * Helper function to start several different ajax actions
          * performing tree related amendments and operations.
          */
-        function «prefix»PerformTreeOperation(objectType, rootId, op) {
+        function «prefix»PerformTreeOperation(objectType, rootId, op)
+        {
             var opParam, pars, request;
 
             opParam = ((op === 'moveNodeUp' || op === 'moveNodeDown') ? 'moveNode' : op);
@@ -193,7 +195,8 @@ class TreeFunctions {
          *
          * @return true on success, otherwise the change will be reverted
          */
-        function «prefix»TreeSave(node, params, data) {
+        function «prefix»TreeSave(node, params, data)
+        {
             var nodeParts, rootId, nodeId, destId, pars, request;
 
             // do not allow inserts on root level

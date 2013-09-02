@@ -131,8 +131,10 @@ public class TreeFunctions {
     _builder.append("function ");
     String _prefix_2 = it.getPrefix();
     _builder.append(_prefix_2, "");
-    _builder.append("InitTreeNodes(objectType, controller, rootId, hasDisplay, hasEdit) {");
+    _builder.append("InitTreeNodes(objectType, controller, rootId, hasDisplay, hasEdit)");
     _builder.newLineIfNotEmpty();
+    _builder.append("{");
+    _builder.newLine();
     _builder.append("    ");
     _builder.append("$$(\'#itemtree\' + rootId + \' a\').each(function (elem) {");
     _builder.newLine();
@@ -456,8 +458,10 @@ public class TreeFunctions {
     _builder.append("function ");
     String _prefix = it.getPrefix();
     _builder.append(_prefix, "");
-    _builder.append("PerformTreeOperation(objectType, rootId, op) {");
+    _builder.append("PerformTreeOperation(objectType, rootId, op)");
     _builder.newLineIfNotEmpty();
+    _builder.append("{");
+    _builder.newLine();
     _builder.append("    ");
     _builder.append("var opParam, pars, request;");
     _builder.newLine();
@@ -626,8 +630,10 @@ public class TreeFunctions {
     _builder.append("function ");
     String _prefix = it.getPrefix();
     _builder.append(_prefix, "");
-    _builder.append("TreeSave(node, params, data) {");
+    _builder.append("TreeSave(node, params, data)");
     _builder.newLineIfNotEmpty();
+    _builder.append("{");
+    _builder.newLine();
     _builder.append("    ");
     _builder.append("var nodeParts, rootId, nodeId, destId, pars, request;");
     _builder.newLine();
