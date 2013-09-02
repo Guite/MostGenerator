@@ -14,6 +14,8 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.emf.ecore.util.Diagnostician
 import org.eclipse.emf.common.util.Diagnostic
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import org.eclipse.xtext.util.EmfFormatter
+import org.eclipse.xtext.validation.FeatureBasedDiagnostic
 
 /**
  * Return Value for Validate Method
@@ -56,12 +58,12 @@ class WorkflowStart {
     	
     	switch  diag.getSeverity {
     		case Diagnostic::ERROR: {
-    			progressMonitor.subTask("Errors: " + validatorMessage(diag))
+    			progressMonitor.subTask("Errors: \n" + validatorMessage(diag))
     			progressMonitor.done()
     			return ErrorState::ERROR
     		}
     		case Diagnostic::WARNING: {
-    			progressMonitor.subTask("Warnings: " + validatorMessage(diag))
+    			progressMonitor.subTask("Warnings: \n" + validatorMessage(diag))
     			progressMonitor.done()
     			return ErrorState::WARN
     		}
@@ -73,13 +75,12 @@ class WorkflowStart {
     	}
 	}
 
-	def validatorMessage(Diagnostic diag) {
-		var ret = ""
-		for(c: diag.data)
-			ret = ret + "\n- " + c.toString
-			
-		return ret
-	}
+	def validatorMessage(Diagnostic diag) 
+		'''
+		«FOR c: diag.children»
+		- «c.message» at «EmfFormatter.objPath((c as FeatureBasedDiagnostic).sourceEObject)»
+		«ENDFOR»
+		'''
 
     /**
      * Executes the workflow; preProcess.run() has already been called.

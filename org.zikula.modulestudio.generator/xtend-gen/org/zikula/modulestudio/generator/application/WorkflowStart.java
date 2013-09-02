@@ -12,7 +12,10 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.Diagnostician;
+import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.generator.JavaIoFileSystemAccess;
+import org.eclipse.xtext.util.EmfFormatter;
+import org.eclipse.xtext.validation.FeatureBasedDiagnostic;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
@@ -85,8 +88,8 @@ public class WorkflowStart {
     if (!_matched) {
       if (Objects.equal(_switchValue,Diagnostic.ERROR)) {
         _matched=true;
-        String _validatorMessage = this.validatorMessage(diag);
-        String _plus_4 = ("Errors: " + _validatorMessage);
+        CharSequence _validatorMessage = this.validatorMessage(diag);
+        String _plus_4 = ("Errors: \n" + _validatorMessage);
         progressMonitor.subTask(_plus_4);
         progressMonitor.done();
         return ErrorState.ERROR;
@@ -95,8 +98,8 @@ public class WorkflowStart {
     if (!_matched) {
       if (Objects.equal(_switchValue,Diagnostic.WARNING)) {
         _matched=true;
-        String _validatorMessage_1 = this.validatorMessage(diag);
-        String _plus_5 = ("Warnings: " + _validatorMessage_1);
+        CharSequence _validatorMessage_1 = this.validatorMessage(diag);
+        String _plus_5 = ("Warnings: \n" + _validatorMessage_1);
         progressMonitor.subTask(_plus_5);
         progressMonitor.done();
         return ErrorState.WARN;
@@ -109,16 +112,22 @@ public class WorkflowStart {
     }
   }
   
-  public String validatorMessage(final Diagnostic diag) {
-    String ret = "";
-    List<? extends Object> _data = diag.getData();
-    for (final Object c : _data) {
-      String _plus = (ret + "\n- ");
-      String _string = c.toString();
-      String _plus_1 = (_plus + _string);
-      ret = _plus_1;
+  public CharSequence validatorMessage(final Diagnostic diag) {
+    StringConcatenation _builder = new StringConcatenation();
+    {
+      List<Diagnostic> _children = diag.getChildren();
+      for(final Diagnostic c : _children) {
+        _builder.append("- ");
+        String _message = c.getMessage();
+        _builder.append(_message, "");
+        _builder.append(" at ");
+        EObject _sourceEObject = ((FeatureBasedDiagnostic) c).getSourceEObject();
+        String _objPath = EmfFormatter.objPath(_sourceEObject);
+        _builder.append(_objPath, "");
+        _builder.newLineIfNotEmpty();
+      }
     }
-    return ret;
+    return _builder;
   }
   
   /**
