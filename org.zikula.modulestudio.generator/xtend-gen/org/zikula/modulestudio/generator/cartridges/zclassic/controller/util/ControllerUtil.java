@@ -146,6 +146,8 @@ public class ControllerUtil {
         }
         _builder.append("use Zikula_AbstractBase;");
         _builder.newLine();
+        _builder.append("use Zikula_Request_Http;");
+        _builder.newLine();
         {
           boolean _hasGeographical = this._modelBehaviourExtensions.hasGeographical(it);
           if (_hasGeographical) {

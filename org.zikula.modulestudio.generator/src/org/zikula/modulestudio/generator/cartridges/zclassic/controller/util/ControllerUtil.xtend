@@ -50,6 +50,7 @@ class ControllerUtil {
                 use LogUtil;
             «ENDIF»
             use Zikula_AbstractBase;
+            use Zikula_Request_Http;
             «IF hasGeographical»
                 use ZLanguage;
             «ENDIF»
