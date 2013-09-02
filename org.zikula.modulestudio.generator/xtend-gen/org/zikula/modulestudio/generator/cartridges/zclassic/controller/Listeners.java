@@ -253,13 +253,8 @@ public class Listeners {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        {
-          if ((isBase).booleanValue()) {
-            _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
-            _builder.newLine();
-            _builder.newLine();
-          }
-        }
+        _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
+        _builder.newLine();
       }
     }
     _builder.append("/**");

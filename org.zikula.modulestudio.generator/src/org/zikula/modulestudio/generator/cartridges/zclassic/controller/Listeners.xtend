@@ -84,10 +84,7 @@ class Listeners {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
-            «IF isBase»
-                use Zikula\Core\Event\GenericEvent;
-
-            «ENDIF»
+            use Zikula\Core\Event\GenericEvent;
         «ENDIF»
         /**
          * Event handler «IF isBase»base«ELSE»implementation«ENDIF» class for core events.
