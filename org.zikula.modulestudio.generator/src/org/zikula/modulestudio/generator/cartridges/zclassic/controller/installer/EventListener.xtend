@@ -2,9 +2,11 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.install
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class EventListener {
+    @Inject extension FormattingExtensions = new FormattingExtensions();
     @Inject extension Utils = new Utils()
 
     /**
@@ -17,7 +19,7 @@ class EventListener {
          */
         protected function registerPersistentEventHandlers()
         {
-            «val listenerBase = appName + (if (targets('1.3.5')) '_Listener_' else '\\Listener\\')»
+            «val listenerBase = (if (targets('1.3.5')) appName + '_Listener_' else vendor.formatForCodeCapital + '\\' + name.formatForCodeCapital + 'Module\\Listener\\')»
             «val listenerSuffix = (if (targets('1.3.5')) '' else 'Listener')»
             // core -> «var callableClass = listenerBase + 'Core' + listenerSuffix»
             EventUtil::registerPersistentModuleHandler('«appName»', 'api.method_not_found', array('«callableClass»', 'apiMethodNotFound'));

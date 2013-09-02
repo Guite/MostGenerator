@@ -5,10 +5,20 @@ import de.guite.modulestudio.metamodel.modulestudio.Application;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Extension;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
+import org.zikula.modulestudio.generator.extensions.FormattingExtensions;
 import org.zikula.modulestudio.generator.extensions.Utils;
 
 @SuppressWarnings("all")
 public class EventListener {
+  @Inject
+  @Extension
+  private FormattingExtensions _formattingExtensions = new Function0<FormattingExtensions>() {
+    public FormattingExtensions apply() {
+      FormattingExtensions _formattingExtensions = new FormattingExtensions();
+      return _formattingExtensions;
+    }
+  }.apply();
+  
   @Inject
   @Extension
   private Utils _utils = new Function0<Utils>() {
@@ -39,15 +49,23 @@ public class EventListener {
     _builder.append("{");
     _builder.newLine();
     _builder.append("    ");
-    String _appName = this._utils.appName(it);
     String _xifexpression = null;
     boolean _targets = this._utils.targets(it, "1.3.5");
     if (_targets) {
-      _xifexpression = "_Listener_";
+      String _appName = this._utils.appName(it);
+      String _plus = (_appName + "_Listener_");
+      _xifexpression = _plus;
     } else {
-      _xifexpression = "\\Listener\\";
+      String _vendor = it.getVendor();
+      String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
+      String _plus_1 = (_formatForCodeCapital + "\\");
+      String _name = it.getName();
+      String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
+      String _plus_2 = (_plus_1 + _formatForCodeCapital_1);
+      String _plus_3 = (_plus_2 + "Module\\Listener\\");
+      _xifexpression = _plus_3;
     }
-    final String listenerBase = (_appName + _xifexpression);
+    final String listenerBase = _xifexpression;
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     String _xifexpression_1 = null;
@@ -61,8 +79,8 @@ public class EventListener {
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("// core -> ");
-    String _plus = (listenerBase + "Core");
-    String callableClass = (_plus + listenerSuffix);
+    String _plus_4 = (listenerBase + "Core");
+    String callableClass = (_plus_4 + listenerSuffix);
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("EventUtil::registerPersistentModuleHandler(\'");
@@ -107,9 +125,9 @@ public class EventListener {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("// front controller -> ");
-    String _plus_1 = (listenerBase + "FrontController");
-    String _plus_2 = (_plus_1 + listenerSuffix);
-    String _callableClass = callableClass = _plus_2;
+    String _plus_5 = (listenerBase + "FrontController");
+    String _plus_6 = (_plus_5 + listenerSuffix);
+    String _callableClass = callableClass = _plus_6;
     _builder.append(_callableClass, "    ");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -123,9 +141,9 @@ public class EventListener {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("// installer -> ");
-    String _plus_3 = (listenerBase + "Installer");
-    String _plus_4 = (_plus_3 + listenerSuffix);
-    String _callableClass_1 = callableClass = _plus_4;
+    String _plus_7 = (listenerBase + "Installer");
+    String _plus_8 = (_plus_7 + listenerSuffix);
+    String _callableClass_1 = callableClass = _plus_8;
     _builder.append(_callableClass_1, "    ");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -185,9 +203,9 @@ public class EventListener {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("// modules -> ");
-    String _plus_5 = (listenerBase + "ModuleDispatch");
-    String _plus_6 = (_plus_5 + listenerSuffix);
-    String _callableClass_2 = callableClass = _plus_6;
+    String _plus_9 = (listenerBase + "ModuleDispatch");
+    String _plus_10 = (_plus_9 + listenerSuffix);
+    String _callableClass_2 = callableClass = _plus_10;
     _builder.append(_callableClass_2, "    ");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -233,9 +251,9 @@ public class EventListener {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("// mailer -> ");
-    String _plus_7 = (listenerBase + "Mailer");
-    String _plus_8 = (_plus_7 + listenerSuffix);
-    String _callableClass_3 = callableClass = _plus_8;
+    String _plus_11 = (listenerBase + "Mailer");
+    String _plus_12 = (_plus_11 + listenerSuffix);
+    String _callableClass_3 = callableClass = _plus_12;
     _builder.append(_callableClass_3, "    ");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -249,9 +267,9 @@ public class EventListener {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("// page -> ");
-    String _plus_9 = (listenerBase + "Page");
-    String _plus_10 = (_plus_9 + listenerSuffix);
-    String _callableClass_4 = callableClass = _plus_10;
+    String _plus_13 = (listenerBase + "Page");
+    String _plus_14 = (_plus_13 + listenerSuffix);
+    String _callableClass_4 = callableClass = _plus_14;
     _builder.append(_callableClass_4, "    ");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -273,9 +291,9 @@ public class EventListener {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("// errors -> ");
-    String _plus_11 = (listenerBase + "Errors");
-    String _plus_12 = (_plus_11 + listenerSuffix);
-    String _callableClass_5 = callableClass = _plus_12;
+    String _plus_15 = (listenerBase + "Errors");
+    String _plus_16 = (_plus_15 + listenerSuffix);
+    String _callableClass_5 = callableClass = _plus_16;
     _builder.append(_callableClass_5, "    ");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -297,9 +315,9 @@ public class EventListener {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("// theme -> ");
-    String _plus_13 = (listenerBase + "Theme");
-    String _plus_14 = (_plus_13 + listenerSuffix);
-    String _callableClass_6 = callableClass = _plus_14;
+    String _plus_17 = (listenerBase + "Theme");
+    String _plus_18 = (_plus_17 + listenerSuffix);
+    String _callableClass_6 = callableClass = _plus_18;
     _builder.append(_callableClass_6, "    ");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -345,9 +363,9 @@ public class EventListener {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("// view -> ");
-    String _plus_15 = (listenerBase + "View");
-    String _plus_16 = (_plus_15 + listenerSuffix);
-    String _callableClass_7 = callableClass = _plus_16;
+    String _plus_19 = (listenerBase + "View");
+    String _plus_20 = (_plus_19 + listenerSuffix);
+    String _callableClass_7 = callableClass = _plus_20;
     _builder.append(_callableClass_7, "    ");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -369,9 +387,9 @@ public class EventListener {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("// user login -> ");
-    String _plus_17 = (listenerBase + "UserLogin");
-    String _plus_18 = (_plus_17 + listenerSuffix);
-    String _callableClass_8 = callableClass = _plus_18;
+    String _plus_21 = (listenerBase + "UserLogin");
+    String _plus_22 = (_plus_21 + listenerSuffix);
+    String _callableClass_8 = callableClass = _plus_22;
     _builder.append(_callableClass_8, "    ");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -409,9 +427,9 @@ public class EventListener {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("// user logout -> ");
-    String _plus_19 = (listenerBase + "UserLogout");
-    String _plus_20 = (_plus_19 + listenerSuffix);
-    String _callableClass_9 = callableClass = _plus_20;
+    String _plus_23 = (listenerBase + "UserLogout");
+    String _plus_24 = (_plus_23 + listenerSuffix);
+    String _callableClass_9 = callableClass = _plus_24;
     _builder.append(_callableClass_9, "    ");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -425,9 +443,9 @@ public class EventListener {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("// user -> ");
-    String _plus_21 = (listenerBase + "User");
-    String _plus_22 = (_plus_21 + listenerSuffix);
-    String _callableClass_10 = callableClass = _plus_22;
+    String _plus_25 = (listenerBase + "User");
+    String _plus_26 = (_plus_25 + listenerSuffix);
+    String _callableClass_10 = callableClass = _plus_26;
     _builder.append(_callableClass_10, "    ");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -465,9 +483,9 @@ public class EventListener {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("// registration -> ");
-    String _plus_23 = (listenerBase + "UserRegistration");
-    String _plus_24 = (_plus_23 + listenerSuffix);
-    String _callableClass_11 = callableClass = _plus_24;
+    String _plus_27 = (listenerBase + "UserRegistration");
+    String _plus_28 = (_plus_27 + listenerSuffix);
+    String _callableClass_11 = callableClass = _plus_28;
     _builder.append(_callableClass_11, "    ");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -521,9 +539,9 @@ public class EventListener {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("// users module -> ");
-    String _plus_25 = (listenerBase + "Users");
-    String _plus_26 = (_plus_25 + listenerSuffix);
-    String _callableClass_12 = callableClass = _plus_26;
+    String _plus_29 = (listenerBase + "Users");
+    String _plus_30 = (_plus_29 + listenerSuffix);
+    String _callableClass_12 = callableClass = _plus_30;
     _builder.append(_callableClass_12, "    ");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -537,9 +555,9 @@ public class EventListener {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("// group -> ");
-    String _plus_27 = (listenerBase + "Group");
-    String _plus_28 = (_plus_27 + listenerSuffix);
-    String _callableClass_13 = callableClass = _plus_28;
+    String _plus_31 = (listenerBase + "Group");
+    String _plus_32 = (_plus_31 + listenerSuffix);
+    String _callableClass_13 = callableClass = _plus_32;
     _builder.append(_callableClass_13, "    ");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -585,9 +603,9 @@ public class EventListener {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("// special purposes and 3rd party api support -> ");
-    String _plus_29 = (listenerBase + "ThirdParty");
-    String _plus_30 = (_plus_29 + listenerSuffix);
-    String _callableClass_14 = callableClass = _plus_30;
+    String _plus_33 = (listenerBase + "ThirdParty");
+    String _plus_34 = (_plus_33 + listenerSuffix);
+    String _callableClass_14 = callableClass = _plus_34;
     _builder.append(_callableClass_14, "    ");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
