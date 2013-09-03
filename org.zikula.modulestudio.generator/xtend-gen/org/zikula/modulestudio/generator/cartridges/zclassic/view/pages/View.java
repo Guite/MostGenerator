@@ -1809,13 +1809,13 @@ public class View {
         String _appName_1 = this._utils.appName(_application_2);
         _builder.append(_appName_1, "    ");
         _builder.append("\' type=\'");
-        String _formattedName_1 = this._controllerExtensions.formattedName(controller);
+        String _formattedName_1 = this._controllerExtensions.formattedName(linkController);
         _builder.append(_formattedName_1, "    ");
         _builder.append("\' ");
         String _modUrlDisplay_1 = this._urlExtensions.modUrlDisplay(linkEntity, relObjName, Boolean.valueOf(true));
         _builder.append(_modUrlDisplay_1, "    ");
         _builder.append(" theme=\'Printer\'");
-        String _additionalUrlParametersForQuickViewLink = this._viewExtensions.additionalUrlParametersForQuickViewLink(controller);
+        String _additionalUrlParametersForQuickViewLink = this._viewExtensions.additionalUrlParametersForQuickViewLink(linkController);
         _builder.append(_additionalUrlParametersForQuickViewLink, "    ");
         _builder.append("}\" title=\"{gt text=\'Open quick view window\'}\" class=\"z-hide\">{icon type=\'view\' size=\'extrasmall\' __alt=\'Quick view\'}</a>");
         _builder.newLineIfNotEmpty();
