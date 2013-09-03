@@ -184,7 +184,7 @@ class Scribite {
                  * method can be used to create those.
                  *
                  * @param {String} n Name of the control to create.
-                 * @param {tinymce.ControlManager} cm Control manager to use inorder to create new control.
+                 * @param {tinymce.ControlManager} cm Control manager to use in order to create new control.
                  * @return {tinymce.ui.Control} New control instance or null if no control was created.
                  */
                 createControl : function (n, cm) {

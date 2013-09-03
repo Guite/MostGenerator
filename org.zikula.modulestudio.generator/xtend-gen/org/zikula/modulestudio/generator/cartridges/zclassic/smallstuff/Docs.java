@@ -131,7 +131,16 @@ public class Docs {
     _builder.append("Instead use the Doctrine\\Common\\Util\\Debug::dump($data) method which reduces");
     _builder.newLine();
     _builder.append("the output to reasonable information.");
-    _builder.newLine();
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append(" Since Zikula 1.3.6 there is also");
+        _builder.newLineIfNotEmpty();
+        _builder.append("a shortcut method available in System::dump($var, $maxDepth = 2, $stripTags = true).");
+      }
+    }
+    _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("Read more about Doctrine at http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/index.html");
     _builder.newLine();

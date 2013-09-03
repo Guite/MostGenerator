@@ -144,8 +144,11 @@ public class ModelUtil {
         _builder.append("\\Util;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use Base\\ModelUtil as BaseModelUtil;");
-        _builder.newLine();
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Util\\Base\\ModelUtil as BaseModelUtil;");
+        _builder.newLineIfNotEmpty();
         _builder.newLine();
       }
     }

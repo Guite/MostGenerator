@@ -1791,8 +1791,11 @@ public class AbstractObjectSelector {
         _builder.append("\\Form\\Plugin;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use Base\\AbstractObjectSelector as BaseAbstractObjectSelector;");
-        _builder.newLine();
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Form\\Plugin\\Base\\AbstractObjectSelector as BaseAbstractObjectSelector;");
+        _builder.newLineIfNotEmpty();
         _builder.newLine();
       }
     }

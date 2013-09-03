@@ -431,8 +431,11 @@ public class GeoInput {
         _builder.append("\\Form\\Plugin;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use Base\\GeoInput as BaseGeoInput;");
-        _builder.newLine();
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Form\\Plugin\\Base\\GeoInput as BaseGeoInput;");
+        _builder.newLineIfNotEmpty();
         _builder.newLine();
       }
     }

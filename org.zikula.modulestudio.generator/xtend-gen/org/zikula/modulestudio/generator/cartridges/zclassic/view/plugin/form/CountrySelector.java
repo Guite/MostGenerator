@@ -299,8 +299,11 @@ public class CountrySelector {
         _builder.append("\\Form\\Plugin;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use Base\\CountrySelector as BaseCountrySelector;");
-        _builder.newLine();
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Form\\Plugin\\Base\\CountrySelector as BaseCountrySelector;");
+        _builder.newLineIfNotEmpty();
         _builder.newLine();
       }
     }

@@ -447,7 +447,7 @@ class WorkflowUtil {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Util;
 
-            use Base\WorkflowUtil as BaseWorkflowUtil;
+            use «appNamespace»\Util\Base\WorkflowUtil as BaseWorkflowUtil;
 
         «ENDIF»
         /**

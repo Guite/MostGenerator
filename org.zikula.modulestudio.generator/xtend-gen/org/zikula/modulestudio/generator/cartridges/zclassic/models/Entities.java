@@ -531,6 +531,9 @@ public class Entities {
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(app);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Entity\\");
         {
           boolean _isInheriting = this._modelInheritanceExtensions.isInheriting(it);
           if (_isInheriting) {
@@ -609,8 +612,8 @@ public class Entities {
             _builder.append(_formatForCodeCapital_4, " ");
           } else {
             _builder.append("\\");
-            String _appNamespace_1 = this._utils.appNamespace(app);
-            _builder.append(_appNamespace_1, " ");
+            String _appNamespace_2 = this._utils.appNamespace(app);
+            _builder.append(_appNamespace_2, " ");
             _builder.append("\\Entity\\Repository\\");
             String _name_6 = it.getName();
             String _formatForCodeCapital_5 = this._formattingExtensions.formatForCodeCapital(_name_6);

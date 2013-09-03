@@ -155,7 +155,7 @@ public class Search {
         _builder.append("use Zikula_View;");
         _builder.newLine();
         _builder.newLine();
-        _builder.append("use Users\\Entity\\SearchResultEntity;");
+        _builder.append("use Zikula\\Module\\SearchModule\\Entity\\SearchResultEntity;");
         _builder.newLine();
         _builder.newLine();
       }
@@ -834,8 +834,11 @@ public class Search {
         _builder.append("\\Api;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use Base\\SearchApi as BaseSearchApi;");
-        _builder.newLine();
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Api\\Base\\SearchApi as BaseSearchApi;");
+        _builder.newLineIfNotEmpty();
         _builder.newLine();
       }
     }

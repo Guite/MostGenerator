@@ -693,7 +693,7 @@ class AbstractObjectSelector {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin;
 
-            use Base\AbstractObjectSelector as BaseAbstractObjectSelector;
+            use «appNamespace»\Form\Plugin\Base\AbstractObjectSelector as BaseAbstractObjectSelector;
 
         «ENDIF»
         /**

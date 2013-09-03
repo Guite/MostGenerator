@@ -157,7 +157,7 @@ class GeoInput {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin;
 
-            use Base\GeoInput as BaseGeoInput;
+            use «appNamespace»\Form\Plugin\Base\GeoInput as BaseGeoInput;
 
         «ENDIF»
         /**

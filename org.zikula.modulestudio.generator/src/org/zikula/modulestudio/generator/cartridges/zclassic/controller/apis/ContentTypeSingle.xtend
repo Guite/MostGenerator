@@ -211,7 +211,7 @@ class ContentTypeSingle {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\ContentType;
 
-            use Base\Item as BaseItem;
+            use «appNamespace»\ContentType\Base\Item as BaseItem;
 
         «ENDIF»
         /**

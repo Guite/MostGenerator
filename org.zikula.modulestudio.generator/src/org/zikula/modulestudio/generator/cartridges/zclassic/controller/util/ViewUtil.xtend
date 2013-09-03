@@ -328,7 +328,7 @@ class ViewUtil {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Util;
 
-            use Base\ViewUtil as BaseViewUtil;
+            use «appNamespace»\Util\Base\ViewUtil as BaseViewUtil;
 
         «ENDIF»
         /**

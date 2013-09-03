@@ -110,7 +110,7 @@ class CountrySelector {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin;
 
-            use Base\CountrySelector as BaseCountrySelector;
+            use «appNamespace»\Form\Plugin\Base\CountrySelector as BaseCountrySelector;
 
         «ENDIF»
         /**

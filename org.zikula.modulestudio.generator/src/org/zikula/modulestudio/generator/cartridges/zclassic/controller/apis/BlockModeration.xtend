@@ -154,7 +154,7 @@ class BlockModeration {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Block;
 
-            use Base\ModerationBlock as BaseModerationBlock;
+            use «appNamespace»\Block\Base\ModerationBlock as BaseModerationBlock;
 
         «ENDIF»
         /**

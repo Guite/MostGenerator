@@ -41,7 +41,7 @@ class RelationSelectorAutoComplete {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin\Base;
 
-            use «vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Form\Plugin\AbstractObjectSelector as BaseAbstractObjectSelector;
+            use «appNamespace»\Form\Plugin\AbstractObjectSelector as BaseAbstractObjectSelector;
 
             use DataUtil;
             use Zikula_Form_View;
@@ -213,7 +213,7 @@ class RelationSelectorAutoComplete {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin;
 
-            use Base\RelationSelectorAutoComplete as BaseRelationSelectorAutoComplete;
+            use «appNamespace»\Form\Plugin\Base\RelationSelectorAutoComplete as BaseRelationSelectorAutoComplete;
 
         «ENDIF»
         /**

@@ -631,7 +631,7 @@ public class Scribite {
     _builder.append("* @param {String} n Name of the control to create.");
     _builder.newLine();
     _builder.append("         ");
-    _builder.append("* @param {tinymce.ControlManager} cm Control manager to use inorder to create new control.");
+    _builder.append("* @param {tinymce.ControlManager} cm Control manager to use in order to create new control.");
     _builder.newLine();
     _builder.append("         ");
     _builder.append("* @return {tinymce.ui.Control} New control instance or null if no control was created.");

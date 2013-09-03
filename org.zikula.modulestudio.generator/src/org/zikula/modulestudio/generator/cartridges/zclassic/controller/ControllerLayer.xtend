@@ -343,7 +343,7 @@ class ControllerLayer {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Controller;
 
-            use Base\«name.formatForCodeCapital»Controller as Base«name.formatForCodeCapital»Controller;
+            use «app.appNamespace»\Controller\Base\«name.formatForCodeCapital»Controller as Base«name.formatForCodeCapital»Controller;
 
         «ENDIF»
         /**
@@ -467,7 +467,7 @@ class ControllerLayer {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Api;
 
-            use Base\«name.formatForCodeCapital»Api as Base«name.formatForCodeCapital»Api;
+            use «app.appNamespace»\Api\Base\«name.formatForCodeCapital»Api as Base«name.formatForCodeCapital»Api;
 
         «ENDIF»
         /**

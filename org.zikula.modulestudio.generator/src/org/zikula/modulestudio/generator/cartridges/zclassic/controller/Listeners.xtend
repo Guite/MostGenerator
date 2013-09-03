@@ -85,7 +85,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use Base\CoreListener as BaseCoreListener;
+                use «appNamespace»\Listener\Base\CoreListener as BaseCoreListener;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
         «ENDIF»
@@ -108,7 +108,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use Base\FrontControllerListener as BaseFrontControllerListener;
+                use «appNamespace»\Listener\Base\FrontControllerListener as BaseFrontControllerListener;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -132,7 +132,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use Base\InstallerListener as BaseInstallerListener;
+                use «appNamespace»\Listener\Base\InstallerListener as BaseInstallerListener;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -156,7 +156,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use Base\ModuleDispatchListener as BaseModuleDispatchListener;
+                use «appNamespace»\Listener\Base\ModuleDispatchListener as BaseModuleDispatchListener;
             «ENDIF»
             «IF isBase»
                 use ModUtil;
@@ -183,7 +183,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use Base\MailerListener as BaseMailerListener;
+                use «appNamespace»\Listener\Base\MailerListener as BaseMailerListener;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -207,7 +207,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use Base\PageListener as BasePageListener;
+                use «appNamespace»\Listener\Base\PageListener as BasePageListener;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -231,7 +231,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use Base\ErrorsListener as BaseErrorsListener;
+                use «appNamespace»\Listener\Base\ErrorsListener as BaseErrorsListener;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -255,7 +255,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use Base\ThemeListener as BaseThemeListener;
+                use «appNamespace»\Listener\Base\ThemeListener as BaseThemeListener;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -279,7 +279,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use Base\ViewListener as BaseViewListener;
+                use «appNamespace»\Listener\Base\ViewListener as BaseViewListener;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -303,7 +303,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use Base\UserLoginListener as BaseUserLoginListener;
+                use «appNamespace»\Listener\Base\UserLoginListener as BaseUserLoginListener;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -327,7 +327,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use Base\UserLogoutListener as BaseUserLogoutListener;
+                use «appNamespace»\Listener\Base\UserLogoutListener as BaseUserLogoutListener;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -356,7 +356,7 @@ class Listeners {
                     use ServiceUtil;
                 «ENDIF»
             «ELSE»
-                use Base\UserListener as BaseUserListener;
+                use «appNamespace»\Listener\Base\UserListener as BaseUserListener;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -380,7 +380,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use Base\UserRegistrationListener as BaseUserRegistrationListener;
+                use «appNamespace»\Listener\Base\UserRegistrationListener as BaseUserRegistrationListener;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -404,7 +404,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use Base\UsersListener as BaseUsersListener;
+                use «appNamespace»\Listener\Base\UsersListener as BaseUsersListener;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -428,7 +428,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use Base\GroupListener as BaseGroupListener;
+                use «appNamespace»\Listener\Base\GroupListener as BaseGroupListener;
             «ENDIF»
             use Zikula\Core\Event\GenericEvent;
 
@@ -452,7 +452,7 @@ class Listeners {
             namespace «appNamespace»\Listener«IF isBase»\Base«ENDIF»;
 
             «IF !isBase»
-                use Base\ThirdPartyListener as BaseThirdPartyListener;
+                use «appNamespace»\Listener\Base\ThirdPartyListener as BaseThirdPartyListener;
             «ELSE»
                 «IF needsApproval»
                     use «appNamespace»\Util\WorkflowUtil;

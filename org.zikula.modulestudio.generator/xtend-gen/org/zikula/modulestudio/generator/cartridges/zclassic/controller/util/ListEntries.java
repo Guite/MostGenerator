@@ -359,7 +359,7 @@ public class ListEntries {
     _builder.append("if ($listValues[0] == \'\') {");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("// use array_shift insteaf of unset for proper key reindexing");
+    _builder.append("// use array_shift instead of unset for proper key reindexing");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("// keys must start with 0, otherwise the dropdownlist form plugin gets confused");
@@ -832,8 +832,11 @@ public class ListEntries {
         _builder.append("\\Util;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use Base\\ListEntriesUtil as BaseListEntriesUtil;");
-        _builder.newLine();
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Util\\Base\\ListEntriesUtil as BaseListEntriesUtil;");
+        _builder.newLineIfNotEmpty();
         _builder.newLine();
       }
     }

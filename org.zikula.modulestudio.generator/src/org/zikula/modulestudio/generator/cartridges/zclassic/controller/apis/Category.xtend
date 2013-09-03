@@ -274,7 +274,7 @@ class Category {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Api;
 
-            use Base\CategoryApi as BaseCategoryApi;
+            use «appNamespace»\Api\Base\CategoryApi as BaseCategoryApi;
 
         «ENDIF»
         /**

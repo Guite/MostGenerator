@@ -285,7 +285,7 @@ class ExternalController {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Controller;
 
-            use Base\ExternalController as BaseExternalController;
+            use «appNamespace»\Controller\Base\ExternalController as BaseExternalController;
 
         «ENDIF»
         /**

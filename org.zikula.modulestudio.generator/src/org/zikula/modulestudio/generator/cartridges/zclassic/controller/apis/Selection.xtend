@@ -263,7 +263,7 @@ class Selection {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Api;
 
-            use Base\SelectionApi as BaseSelectionApi;
+            use «appNamespace»\Api\Base\SelectionApi as BaseSelectionApi;
 
         «ENDIF»
         /**

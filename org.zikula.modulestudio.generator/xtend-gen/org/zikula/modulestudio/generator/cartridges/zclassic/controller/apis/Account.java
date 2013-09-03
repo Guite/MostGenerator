@@ -410,8 +410,11 @@ public class Account {
         _builder.append("\\Api;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use Base\\AccountApi as BaseAccountApi;");
-        _builder.newLine();
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Api\\Base\\AccountApi as BaseAccountApi;");
+        _builder.newLineIfNotEmpty();
         _builder.newLine();
       }
     }

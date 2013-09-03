@@ -47,7 +47,7 @@ class ModuleFile {
     def private moduleInfoImpl(Application it) '''
         namespace «appNamespace»;
 
-        use Base\«appName» as Base«appName»;
+        use «appNamespace»\Base\«appName» as Base«appName»;
 
         /**
          * Module implementation class.

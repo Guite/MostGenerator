@@ -210,7 +210,7 @@ class ItemSelector {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin;
 
-            use Base\ItemSelector as BaseItemSelector;
+            use «appNamespace»\Form\Plugin\Base\ItemSelector as BaseItemSelector;
 
         «ENDIF»
         /**

@@ -830,8 +830,11 @@ public class Translatable {
         _builder.append("\\Util;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use Base\\TranslatableUtil as BaseTranslatableUtil;");
-        _builder.newLine();
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Util\\Base\\TranslatableUtil as BaseTranslatableUtil;");
+        _builder.newLineIfNotEmpty();
         _builder.newLine();
       }
     }

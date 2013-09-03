@@ -551,8 +551,15 @@ public class Config {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use Base\\ConfigHandler as BaseConfigHandler;");
-        _builder.newLine();
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Form\\Handler\\");
+        String _configController_1 = this._controllerExtensions.configController(it);
+        String _firstUpper_1 = StringExtensions.toFirstUpper(_configController_1);
+        _builder.append(_firstUpper_1, "");
+        _builder.append("\\Base\\ConfigHandler as BaseConfigHandler;");
+        _builder.newLineIfNotEmpty();
         _builder.newLine();
       }
     }
@@ -571,16 +578,16 @@ public class Config {
         String _appName = this._utils.appName(it);
         _builder.append(_appName, "");
         _builder.append("_Form_Handler_");
-        String _configController_1 = this._controllerExtensions.configController(it);
-        String _firstUpper_1 = StringExtensions.toFirstUpper(_configController_1);
-        _builder.append(_firstUpper_1, "");
+        String _configController_2 = this._controllerExtensions.configController(it);
+        String _firstUpper_2 = StringExtensions.toFirstUpper(_configController_2);
+        _builder.append(_firstUpper_2, "");
         _builder.append("_Config extends ");
         String _appName_1 = this._utils.appName(it);
         _builder.append(_appName_1, "");
         _builder.append("_Form_Handler_");
-        String _configController_2 = this._controllerExtensions.configController(it);
-        String _firstUpper_2 = StringExtensions.toFirstUpper(_configController_2);
-        _builder.append(_firstUpper_2, "");
+        String _configController_3 = this._controllerExtensions.configController(it);
+        String _firstUpper_3 = StringExtensions.toFirstUpper(_configController_3);
+        _builder.append(_firstUpper_3, "");
         _builder.append("_Base_Config");
         _builder.newLineIfNotEmpty();
       } else {

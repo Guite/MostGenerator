@@ -476,7 +476,7 @@ class Validator {
         «IF !targets('1.3.5')»
             namespace «appNamespace»;
 
-            use Base\AbstractValidator as BaseAbstractValidator;
+            use «appNamespace»\Base\AbstractValidator as BaseAbstractValidator;
 
         «ENDIF»
         /**
@@ -552,9 +552,9 @@ class Validator {
                 use ZLanguage;
             «ENDIF»
             «IF isInheriting»
-                use «app.appName»\Entity\Validator\«parentType.name.formatForCodeCapital»Validator as Base«parentType.name.formatForCodeCapital»Validator
+                use «app.appNamespace»\Entity\Validator\«parentType.name.formatForCodeCapital»Validator as Base«parentType.name.formatForCodeCapital»Validator
             «ELSE»
-                use Base\«name.formatForCodeCapital»Validator as Base«name.formatForCodeCapital»Validator
+                use «app.appNamespace»\Entity\Validator\Base\«name.formatForCodeCapital»Validator as Base«name.formatForCodeCapital»Validator
             «ENDIF»
 
         «ENDIF»

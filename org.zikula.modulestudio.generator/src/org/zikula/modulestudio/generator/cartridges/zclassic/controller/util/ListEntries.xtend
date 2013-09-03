@@ -129,7 +129,7 @@ class ListEntries {
                 unset($listValues[$numValues-1]);
             }
             if ($listValues[0] == '') {
-                // use array_shift insteaf of unset for proper key reindexing
+                // use array_shift instead of unset for proper key reindexing
                 // keys must start with 0, otherwise the dropdownlist form plugin gets confused
                 array_shift($listValues);
             }
@@ -254,7 +254,7 @@ class ListEntries {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Util;
 
-            use Base\ListEntriesUtil as BaseListEntriesUtil;
+            use «appNamespace»\Util\Base\ListEntriesUtil as BaseListEntriesUtil;
 
         «ENDIF»
         /**

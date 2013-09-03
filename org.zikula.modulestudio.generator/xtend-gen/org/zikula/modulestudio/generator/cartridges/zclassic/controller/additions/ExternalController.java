@@ -855,8 +855,11 @@ public class ExternalController {
         _builder.append("\\Controller;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use Base\\ExternalController as BaseExternalController;");
-        _builder.newLine();
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Controller\\Base\\ExternalController as BaseExternalController;");
+        _builder.newLineIfNotEmpty();
         _builder.newLine();
       }
     }

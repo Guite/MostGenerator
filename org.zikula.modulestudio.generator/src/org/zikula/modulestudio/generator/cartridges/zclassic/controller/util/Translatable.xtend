@@ -267,7 +267,7 @@ class Translatable {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Util;
 
-            use Base\TranslatableUtil as BaseTranslatableUtil;
+            use «appNamespace»\Util\Base\TranslatableUtil as BaseTranslatableUtil;
 
         «ENDIF»
         /**

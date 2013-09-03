@@ -122,7 +122,7 @@ class Account {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Api;
 
-            use Base\AccountApi as BaseAccountApi;
+            use «appNamespace»\Api\Base\AccountApi as BaseAccountApi;
 
         «ENDIF»
         /**

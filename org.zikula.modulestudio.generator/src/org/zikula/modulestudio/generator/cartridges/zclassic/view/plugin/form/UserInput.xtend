@@ -198,7 +198,7 @@ class UserInput {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin;
 
-            use Base\UserInput as BaseUserInput;
+            use «appNamespace»\Form\Plugin\Base\UserInput as BaseUserInput;
 
         «ENDIF»
         /**

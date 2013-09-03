@@ -151,7 +151,7 @@ class Tag {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\TaggedObjectMeta;
 
-            use Base\«appName» as Base«appName»;
+            use «appNamespace»\TaggedObjectMeta\Base\«appName» as Base«appName»;
 
         «ENDIF»
         /**

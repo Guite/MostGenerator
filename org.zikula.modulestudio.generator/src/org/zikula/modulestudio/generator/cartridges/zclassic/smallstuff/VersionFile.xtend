@@ -159,7 +159,7 @@ class VersionFile {
         «IF !targets('1.3.5')»
             namespace «appNamespace»;
 
-            use Base\«name.formatForCodeCapital»ModuleVersion as Base«name.formatForCodeCapital»ModuleVersion;
+            use «appNamespace»\Base\«name.formatForCodeCapital»ModuleVersion as Base«name.formatForCodeCapital»ModuleVersion;
 
         «ENDIF»
         /**

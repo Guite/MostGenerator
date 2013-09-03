@@ -1505,8 +1505,11 @@ public class ContentTypeList {
         _builder.append("\\ContentType;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use Base\\ItemList as BaseItemList;");
-        _builder.newLine();
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\ContentType\\Base\\ItemList as BaseItemList;");
+        _builder.newLineIfNotEmpty();
         _builder.newLine();
       }
     }

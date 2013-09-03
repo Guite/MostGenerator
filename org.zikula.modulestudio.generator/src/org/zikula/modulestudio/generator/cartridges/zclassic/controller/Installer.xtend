@@ -370,7 +370,7 @@ class Installer {
         «IF !targets('1.3.5')»
             namespace «appNamespace»;
 
-            use Base\«name.formatForCodeCapital»ModuleInstaller as Base«name.formatForCodeCapital»ModuleInstaller;
+            use «appNamespace»\Base\«name.formatForCodeCapital»ModuleInstaller as Base«name.formatForCodeCapital»ModuleInstaller;
 
         «ENDIF»
         /**
@@ -390,7 +390,7 @@ class Installer {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Controller;
 
-            use Base\InteractiveInstaller as BaseInteractiveInstaller;
+            use «appNamespace»\Controller\Base\InteractiveInstaller as BaseInteractiveInstaller;
 
         «ENDIF»
         /**

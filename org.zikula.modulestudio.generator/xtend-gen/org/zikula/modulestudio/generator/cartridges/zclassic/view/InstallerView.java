@@ -386,22 +386,40 @@ public class InstallerView {
     _builder.append(_appName_5, "    ");
     _builder.append(" with Content. There is a corresponding content type available.\'}</dd>");
     _builder.newLineIfNotEmpty();
-    _builder.append("    ");
-    _builder.append("<dd>{gt text=\'There is also a Mailz plugin for getting ");
-    String _appName_6 = this._utils.appName(it);
-    _builder.append(_appName_6, "    ");
-    _builder.append(" content into mailings and newsletters.\'}</dd>");
-    _builder.newLineIfNotEmpty();
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append("    ");
+        _builder.append("<dd>{gt text=\'There is also a Mailz plugin for getting ");
+        String _appName_6 = this._utils.appName(it);
+        _builder.append(_appName_6, "    ");
+        _builder.append(" content into mailings and newsletters.\'}</dd>");
+        _builder.newLineIfNotEmpty();
+      } else {
+        _builder.append("    ");
+        _builder.append("<dd>{gt text=\'There are also Newsletter and Mailz plugins for getting ");
+        String _appName_7 = this._utils.appName(it);
+        _builder.append(_appName_7, "    ");
+        _builder.append(" content into mailings and newsletters.\'}</dd>");
+        _builder.newLineIfNotEmpty();
+      }
+    }
     _builder.append("    ");
     _builder.append("<dd>{gt text=\'All these artifacts reuse the same templates for easier customisation. They can be extended by overriding and the addition of other template sets.\'}</dd>");
     _builder.newLine();
+    _builder.append("    ");
+    _builder.append("<dd>{gt text=\'");
+    String _appName_8 = this._utils.appName(it);
+    _builder.append(_appName_8, "    ");
+    _builder.append(" integrates into the Zikula search module, too, of course.\'}</dd>");
+    _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("<dt>{gt text=\'State-of-the-art technology\'}</dt>");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("<dd>{gt text=\'All parts of ");
-    String _appName_7 = this._utils.appName(it);
-    _builder.append(_appName_7, "    ");
+    String _appName_9 = this._utils.appName(it);
+    _builder.append(_appName_9, "    ");
     _builder.append(" are always up to the latest version of the Zikula core.\'}</dd>");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -413,8 +431,8 @@ public class InstallerView {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("<a href=\"{modurl modname=\'");
-    String _appName_8 = this._utils.appName(it);
-    _builder.append(_appName_8, "    ");
+    String _appName_10 = this._utils.appName(it);
+    _builder.append(_appName_10, "    ");
     _builder.append("\' type=\'init\' func=\'interactiveinitstep");
     {
       boolean _needsConfig = this._utils.needsConfig(it);

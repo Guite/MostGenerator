@@ -502,7 +502,7 @@ class ContentTypeList {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\ContentType;
 
-            use Base\ItemList as BaseItemList;
+            use «appNamespace»\ContentType\Base\ItemList as BaseItemList;
 
         «ENDIF»
         /**

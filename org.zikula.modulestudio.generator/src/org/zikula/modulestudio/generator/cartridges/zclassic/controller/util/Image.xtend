@@ -142,7 +142,7 @@ class Image {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Util;
 
-            use Base\ImageUtil as BaseImageUtil;
+            use «appNamespace»\Util\Base\ImageUtil as BaseImageUtil;
 
         «ENDIF»
         /**

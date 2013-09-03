@@ -4394,6 +4394,9 @@ public class Repository {
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(this.app);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Entity\\Repository\\");
         {
           boolean _isInheriting = this._modelInheritanceExtensions.isInheriting(it);
           if (_isInheriting) {

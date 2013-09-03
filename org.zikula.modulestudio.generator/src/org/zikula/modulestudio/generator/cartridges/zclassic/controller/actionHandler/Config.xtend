@@ -186,7 +186,7 @@ class Config {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Handler\«configController.toFirstUpper»;
 
-            use Base\ConfigHandler as BaseConfigHandler;
+            use «appNamespace»\Form\Handler\«configController.toFirstUpper»\Base\ConfigHandler as BaseConfigHandler;
 
         «ENDIF»
         /**

@@ -740,8 +740,11 @@ public class Selection {
         _builder.append("\\Api;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use Base\\SelectionApi as BaseSelectionApi;");
-        _builder.newLine();
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Api\\Base\\SelectionApi as BaseSelectionApi;");
+        _builder.newLineIfNotEmpty();
         _builder.newLine();
       }
     }

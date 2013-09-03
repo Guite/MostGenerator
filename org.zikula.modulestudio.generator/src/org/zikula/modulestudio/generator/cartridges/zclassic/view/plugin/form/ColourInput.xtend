@@ -186,7 +186,7 @@ class ColourInput {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin;
 
-            use Base\ColourInput as BaseColourInput;
+            use «appNamespace»\Form\Plugin\Base\ColourInput as BaseColourInput;
 
         «ENDIF»
         /**

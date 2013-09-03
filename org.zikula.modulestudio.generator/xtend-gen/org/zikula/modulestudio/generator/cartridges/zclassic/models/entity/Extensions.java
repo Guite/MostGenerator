@@ -1769,6 +1769,9 @@ public class Extensions {
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(app);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Entity\\");
         {
           boolean _isInheriting = this._modelInheritanceExtensions.isInheriting(it);
           if (_isInheriting) {
@@ -2255,6 +2258,9 @@ public class Extensions {
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(app);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Entity\\Repository\\");
         {
           boolean _isInheriting = this._modelInheritanceExtensions.isInheriting(it);
           if (_isInheriting) {

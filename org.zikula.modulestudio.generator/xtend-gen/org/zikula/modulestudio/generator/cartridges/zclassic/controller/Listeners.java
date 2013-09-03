@@ -256,8 +256,11 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            _builder.append("use Base\\CoreListener as BaseCoreListener;");
-            _builder.newLine();
+            _builder.append("use ");
+            String _appNamespace_1 = this._utils.appNamespace(it);
+            _builder.append(_appNamespace_1, "");
+            _builder.append("\\Listener\\Base\\CoreListener as BaseCoreListener;");
+            _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
@@ -343,8 +346,11 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            _builder.append("use Base\\FrontControllerListener as BaseFrontControllerListener;");
-            _builder.newLine();
+            _builder.append("use ");
+            String _appNamespace_1 = this._utils.appNamespace(it);
+            _builder.append(_appNamespace_1, "");
+            _builder.append("\\Listener\\Base\\FrontControllerListener as BaseFrontControllerListener;");
+            _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
@@ -431,8 +437,11 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            _builder.append("use Base\\InstallerListener as BaseInstallerListener;");
-            _builder.newLine();
+            _builder.append("use ");
+            String _appNamespace_1 = this._utils.appNamespace(it);
+            _builder.append(_appNamespace_1, "");
+            _builder.append("\\Listener\\Base\\InstallerListener as BaseInstallerListener;");
+            _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
@@ -519,8 +528,11 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            _builder.append("use Base\\ModuleDispatchListener as BaseModuleDispatchListener;");
-            _builder.newLine();
+            _builder.append("use ");
+            String _appNamespace_1 = this._utils.appNamespace(it);
+            _builder.append(_appNamespace_1, "");
+            _builder.append("\\Listener\\Base\\ModuleDispatchListener as BaseModuleDispatchListener;");
+            _builder.newLineIfNotEmpty();
           }
         }
         {
@@ -613,8 +625,11 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            _builder.append("use Base\\MailerListener as BaseMailerListener;");
-            _builder.newLine();
+            _builder.append("use ");
+            String _appNamespace_1 = this._utils.appNamespace(it);
+            _builder.append(_appNamespace_1, "");
+            _builder.append("\\Listener\\Base\\MailerListener as BaseMailerListener;");
+            _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
@@ -701,8 +716,11 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            _builder.append("use Base\\PageListener as BasePageListener;");
-            _builder.newLine();
+            _builder.append("use ");
+            String _appNamespace_1 = this._utils.appNamespace(it);
+            _builder.append(_appNamespace_1, "");
+            _builder.append("\\Listener\\Base\\PageListener as BasePageListener;");
+            _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
@@ -789,8 +807,11 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            _builder.append("use Base\\ErrorsListener as BaseErrorsListener;");
-            _builder.newLine();
+            _builder.append("use ");
+            String _appNamespace_1 = this._utils.appNamespace(it);
+            _builder.append(_appNamespace_1, "");
+            _builder.append("\\Listener\\Base\\ErrorsListener as BaseErrorsListener;");
+            _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
@@ -877,8 +898,11 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            _builder.append("use Base\\ThemeListener as BaseThemeListener;");
-            _builder.newLine();
+            _builder.append("use ");
+            String _appNamespace_1 = this._utils.appNamespace(it);
+            _builder.append(_appNamespace_1, "");
+            _builder.append("\\Listener\\Base\\ThemeListener as BaseThemeListener;");
+            _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
@@ -965,8 +989,11 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            _builder.append("use Base\\ViewListener as BaseViewListener;");
-            _builder.newLine();
+            _builder.append("use ");
+            String _appNamespace_1 = this._utils.appNamespace(it);
+            _builder.append(_appNamespace_1, "");
+            _builder.append("\\Listener\\Base\\ViewListener as BaseViewListener;");
+            _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
@@ -1053,8 +1080,11 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            _builder.append("use Base\\UserLoginListener as BaseUserLoginListener;");
-            _builder.newLine();
+            _builder.append("use ");
+            String _appNamespace_1 = this._utils.appNamespace(it);
+            _builder.append(_appNamespace_1, "");
+            _builder.append("\\Listener\\Base\\UserLoginListener as BaseUserLoginListener;");
+            _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
@@ -1141,8 +1171,11 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            _builder.append("use Base\\UserLogoutListener as BaseUserLogoutListener;");
-            _builder.newLine();
+            _builder.append("use ");
+            String _appNamespace_1 = this._utils.appNamespace(it);
+            _builder.append(_appNamespace_1, "");
+            _builder.append("\\Listener\\Base\\UserLogoutListener as BaseUserLogoutListener;");
+            _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
@@ -1245,8 +1278,11 @@ public class Listeners {
               }
             }
           } else {
-            _builder.append("use Base\\UserListener as BaseUserListener;");
-            _builder.newLine();
+            _builder.append("use ");
+            String _appNamespace_1 = this._utils.appNamespace(it);
+            _builder.append(_appNamespace_1, "");
+            _builder.append("\\Listener\\Base\\UserListener as BaseUserListener;");
+            _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
@@ -1333,8 +1369,11 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            _builder.append("use Base\\UserRegistrationListener as BaseUserRegistrationListener;");
-            _builder.newLine();
+            _builder.append("use ");
+            String _appNamespace_1 = this._utils.appNamespace(it);
+            _builder.append(_appNamespace_1, "");
+            _builder.append("\\Listener\\Base\\UserRegistrationListener as BaseUserRegistrationListener;");
+            _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
@@ -1421,8 +1460,11 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            _builder.append("use Base\\UsersListener as BaseUsersListener;");
-            _builder.newLine();
+            _builder.append("use ");
+            String _appNamespace_1 = this._utils.appNamespace(it);
+            _builder.append(_appNamespace_1, "");
+            _builder.append("\\Listener\\Base\\UsersListener as BaseUsersListener;");
+            _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
@@ -1509,8 +1551,11 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            _builder.append("use Base\\GroupListener as BaseGroupListener;");
-            _builder.newLine();
+            _builder.append("use ");
+            String _appNamespace_1 = this._utils.appNamespace(it);
+            _builder.append(_appNamespace_1, "");
+            _builder.append("\\Listener\\Base\\GroupListener as BaseGroupListener;");
+            _builder.newLineIfNotEmpty();
           }
         }
         _builder.append("use Zikula\\Core\\Event\\GenericEvent;");
@@ -1589,15 +1634,18 @@ public class Listeners {
         {
           boolean _not_1 = (!(isBase).booleanValue());
           if (_not_1) {
-            _builder.append("use Base\\ThirdPartyListener as BaseThirdPartyListener;");
-            _builder.newLine();
+            _builder.append("use ");
+            String _appNamespace_1 = this._utils.appNamespace(it);
+            _builder.append(_appNamespace_1, "");
+            _builder.append("\\Listener\\Base\\ThirdPartyListener as BaseThirdPartyListener;");
+            _builder.newLineIfNotEmpty();
           } else {
             {
               boolean _needsApproval = this._workflowExtensions.needsApproval(it);
               if (_needsApproval) {
                 _builder.append("use ");
-                String _appNamespace_1 = this._utils.appNamespace(it);
-                _builder.append(_appNamespace_1, "");
+                String _appNamespace_2 = this._utils.appNamespace(it);
+                _builder.append(_appNamespace_2, "");
                 _builder.append("\\Util\\WorkflowUtil;");
                 _builder.newLineIfNotEmpty();
                 _builder.append("use ServiceUtil;");

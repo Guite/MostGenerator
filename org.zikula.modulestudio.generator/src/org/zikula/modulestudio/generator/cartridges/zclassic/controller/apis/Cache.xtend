@@ -165,7 +165,7 @@ class Cache {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Api;
 
-            use Base\CacheApi as BaseCacheApi;
+            use «appNamespace»\Api\Base\CacheApi as BaseCacheApi;
 
         «ENDIF»
         /**

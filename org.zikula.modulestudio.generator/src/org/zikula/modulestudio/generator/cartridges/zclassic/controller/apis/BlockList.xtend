@@ -446,7 +446,7 @@ class BlockList {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Block;
 
-            use Base\ItemListBlock as BaseItemListBlock;
+            use «appNamespace»\Block\Base\ItemListBlock as BaseItemListBlock;
 
         «ENDIF»
         /**

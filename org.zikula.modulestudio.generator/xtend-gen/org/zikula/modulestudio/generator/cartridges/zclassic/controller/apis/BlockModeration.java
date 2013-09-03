@@ -444,8 +444,11 @@ public class BlockModeration {
         _builder.append("\\Block;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use Base\\ModerationBlock as BaseModerationBlock;");
-        _builder.newLine();
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Block\\Base\\ModerationBlock as BaseModerationBlock;");
+        _builder.newLineIfNotEmpty();
         _builder.newLine();
       }
     }

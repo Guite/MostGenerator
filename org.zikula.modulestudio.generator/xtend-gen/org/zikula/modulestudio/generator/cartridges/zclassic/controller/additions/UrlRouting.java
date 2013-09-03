@@ -877,8 +877,11 @@ public class UrlRouting {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use Base\\RouterFacade as BaseRouterFacade;");
-        _builder.newLine();
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Base\\RouterFacade as BaseRouterFacade;");
+        _builder.newLineIfNotEmpty();
         _builder.newLine();
       }
     }

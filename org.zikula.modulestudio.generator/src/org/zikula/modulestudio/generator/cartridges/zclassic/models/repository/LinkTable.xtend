@@ -71,7 +71,7 @@ class LinkTable {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity\Repository;
 
-            use Base\«refClass.formatForCodeCapital» as Base«refClass.formatForCodeCapital»;
+            use «app.appNamespace»\Entity\Repository\Base\«refClass.formatForCodeCapital» as Base«refClass.formatForCodeCapital»;
 
         «ENDIF»
         /**

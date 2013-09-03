@@ -45,7 +45,7 @@ class TreeSelector {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin\Base;
 
-            use «vendor.formatForCodeCapital»\«name.formatForCodeCapital»Module\Form\Plugin\AbstractObjectSelector as BaseAbstractObjectSelector;
+            use «appNamespace»\Form\Plugin\AbstractObjectSelector as BaseAbstractObjectSelector;
 
             use ModUtil;
             use ServiceUtil;
@@ -207,7 +207,7 @@ class TreeSelector {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Form\Plugin;
 
-            use Base\TreeSelector as BaseTreeSelector;
+            use «appNamespace»\Form\Plugin\Base\TreeSelector as BaseTreeSelector;
 
         «ENDIF»
         /**

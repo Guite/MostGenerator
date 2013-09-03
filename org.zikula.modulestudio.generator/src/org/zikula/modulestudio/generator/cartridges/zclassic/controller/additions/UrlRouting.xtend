@@ -293,7 +293,7 @@ class UrlRouting {
         «IF !targets('1.3.5')»
             namespace «appNamespace»;
 
-            use Base\RouterFacade as BaseRouterFacade;
+            use «appNamespace»\Base\RouterFacade as BaseRouterFacade;
 
         «ENDIF»
         /**

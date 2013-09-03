@@ -107,14 +107,9 @@ public class RelationSelectorAutoComplete {
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         _builder.append("use ");
-        String _vendor = it.getVendor();
-        String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_vendor);
-        _builder.append(_formatForCodeCapital, "");
-        _builder.append("\\");
-        String _name = it.getName();
-        String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name);
-        _builder.append(_formatForCodeCapital_1, "");
-        _builder.append("Module\\Form\\Plugin\\AbstractObjectSelector as BaseAbstractObjectSelector;");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Form\\Plugin\\AbstractObjectSelector as BaseAbstractObjectSelector;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         _builder.append("use DataUtil;");
@@ -589,8 +584,11 @@ public class RelationSelectorAutoComplete {
         _builder.append("\\Form\\Plugin;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use Base\\RelationSelectorAutoComplete as BaseRelationSelectorAutoComplete;");
-        _builder.newLine();
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Form\\Plugin\\Base\\RelationSelectorAutoComplete as BaseRelationSelectorAutoComplete;");
+        _builder.newLineIfNotEmpty();
         _builder.newLine();
       }
     }

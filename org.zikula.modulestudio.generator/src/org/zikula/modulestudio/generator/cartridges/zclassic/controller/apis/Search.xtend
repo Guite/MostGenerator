@@ -53,7 +53,7 @@ class Search {
             use Zikula_AbstractApi;
             use Zikula_View;
 
-            use Users\Entity\SearchResultEntity;
+            use Zikula\Module\SearchModule\Entity\SearchResultEntity;
 
         «ENDIF»
         /**
@@ -272,7 +272,7 @@ class Search {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Api;
 
-            use Base\SearchApi as BaseSearchApi;
+            use «appNamespace»\Api\Base\SearchApi as BaseSearchApi;
 
         «ENDIF»
         /**

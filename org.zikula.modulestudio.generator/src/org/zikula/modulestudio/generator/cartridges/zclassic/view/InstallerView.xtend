@@ -74,8 +74,13 @@ class InstallerView {
             <dt>{gt text='Integration'}</dt>
             <dd>{gt text='«appName» offers a generic block allowing you to display arbitrary content elements in a block.'}</dd>
             <dd>{gt text='It is possible to integrate «appName» with Content. There is a corresponding content type available.'}</dd>
+            «IF targets('1.3.5')»
             <dd>{gt text='There is also a Mailz plugin for getting «appName» content into mailings and newsletters.'}</dd>
+            «ELSE»
+            <dd>{gt text='There are also Newsletter and Mailz plugins for getting «appName» content into mailings and newsletters.'}</dd>
+            «ENDIF»
             <dd>{gt text='All these artifacts reuse the same templates for easier customisation. They can be extended by overriding and the addition of other template sets.'}</dd>
+            <dd>{gt text='«appName» integrates into the Zikula search module, too, of course.'}</dd>
             <dt>{gt text='State-of-the-art technology'}</dt>
             <dd>{gt text='All parts of «appName» are always up to the latest version of the Zikula core.'}</dd>
             <dd>{gt text='Entities, controllers, hooks, templates, plugins and more.'}</dd>

@@ -1130,7 +1130,10 @@ public class ControllerLayer {
         _builder.append("\\Controller;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use Base\\");
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(app);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Controller\\Base\\");
         String _name = it.getName();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
         _builder.append(_formatForCodeCapital, "");
@@ -1621,7 +1624,10 @@ public class ControllerLayer {
         _builder.append("\\Api;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use Base\\");
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(app);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Api\\Base\\");
         String _name = it.getName();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
         _builder.append(_formatForCodeCapital, "");

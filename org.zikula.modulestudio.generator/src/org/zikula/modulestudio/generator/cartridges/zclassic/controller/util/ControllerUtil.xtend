@@ -372,7 +372,7 @@ class ControllerUtil {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Util;
 
-            use Base\ControllerUtil as BaseControllerUtil;
+            use «appNamespace»\Util\Base\ControllerUtil as BaseControllerUtil;
 
         «ENDIF»
         /**

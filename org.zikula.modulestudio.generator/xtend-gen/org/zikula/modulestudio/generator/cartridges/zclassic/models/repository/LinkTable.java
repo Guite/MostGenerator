@@ -219,7 +219,10 @@ public class LinkTable {
         _builder.append("\\Entity\\Repository;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use Base\\");
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(app);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Entity\\Repository\\Base\\");
         String _refClass = it.getRefClass();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_refClass);
         _builder.append(_formatForCodeCapital, "");

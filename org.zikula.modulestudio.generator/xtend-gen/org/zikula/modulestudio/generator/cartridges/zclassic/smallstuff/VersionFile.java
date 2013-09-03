@@ -556,7 +556,10 @@ public class VersionFile {
         _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use Base\\");
+        _builder.append("use ");
+        String _appNamespace_1 = this._utils.appNamespace(it);
+        _builder.append(_appNamespace_1, "");
+        _builder.append("\\Base\\");
         String _name = it.getName();
         String _formatForCodeCapital = this._formattingExtensions.formatForCodeCapital(_name);
         _builder.append(_formatForCodeCapital, "");

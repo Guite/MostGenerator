@@ -1128,7 +1128,7 @@ class FormHandler {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»;
 
-            use Base\«actionName.formatForCodeCapital»Handler as Base«actionName.formatForCodeCapital»Handler;
+            use «app.appNamespace»\Form\Handler\«name.formatForCodeCapital»\Base\«actionName.formatForCodeCapital»Handler as Base«actionName.formatForCodeCapital»Handler;
 
         «ENDIF»
         /**
@@ -1287,7 +1287,7 @@ class FormHandler {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Form\Handler\«controller.name.formatForCodeCapital»\«name.formatForCodeCapital»;
 
-            use Base\«actionName.formatForCodeCapital»Handler as Base«actionName.formatForCodeCapital»Handler;
+            use «app.appNamespace»\Form\Handler\«controller.name.formatForCodeCapital»\«name.formatForCodeCapital»\Base\«actionName.formatForCodeCapital»Handler as Base«actionName.formatForCodeCapital»Handler;
 
         «ENDIF»
         /**
