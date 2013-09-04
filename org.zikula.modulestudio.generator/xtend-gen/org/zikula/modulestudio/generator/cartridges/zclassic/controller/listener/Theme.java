@@ -271,13 +271,31 @@ public class Theme {
     _builder.append("*");
     _builder.newLine();
     _builder.append(" ");
-    _builder.append("* @param Zikula_Event $event The event instance.");
-    _builder.newLine();
+    _builder.append("* @param ");
+    {
+      boolean _targets_8 = this._utils.targets(it, "1.3.5");
+      if (_targets_8) {
+        _builder.append("Zikula_Event");
+      } else {
+        _builder.append("GenericEvent");
+      }
+    }
+    _builder.append(" $event The event instance.");
+    _builder.newLineIfNotEmpty();
     _builder.append(" ");
     _builder.append("*/");
     _builder.newLine();
-    _builder.append("public static function postFetch(Zikula_Event $event)");
-    _builder.newLine();
+    _builder.append("public static function postFetch(");
+    {
+      boolean _targets_9 = this._utils.targets(it, "1.3.5");
+      if (_targets_9) {
+        _builder.append("Zikula_Event");
+      } else {
+        _builder.append("GenericEvent");
+      }
+    }
+    _builder.append(" $event)");
+    _builder.newLineIfNotEmpty();
     _builder.append("{");
     _builder.newLine();
     {
