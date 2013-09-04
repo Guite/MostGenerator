@@ -565,6 +565,7 @@ public class Entities {
             _builder.append("Entity");
           }
         }
+        _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
       }
