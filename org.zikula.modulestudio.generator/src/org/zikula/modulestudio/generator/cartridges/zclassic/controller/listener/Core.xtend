@@ -33,9 +33,9 @@ class Core {
          *
          * Occurs after the config.php is loaded.
          *
-         * @param Zikula_Event $event The event instance.
+         * @param «IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event The event instance.
          */
-        public static function preInit(Zikula_Event $event)
+        public static function preInit(«IF targets('1.3.5')»Zikula_Event«ELSE»GenericEvent«ENDIF» $event)
         {
             «IF !isBase»
                 parent::preInit($event);
