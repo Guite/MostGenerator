@@ -179,10 +179,10 @@ public class Entities {
   public void generate(final Application it, final IFileSystemAccess fsa) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Procedure1<Entity> _function = new Procedure1<Entity>() {
-        public void apply(final Entity e) {
-          Entities.this.generate(e, it, fsa);
-        }
-      };
+      public void apply(final Entity e) {
+        Entities.this.generate(e, it, fsa);
+      }
+    };
     IterableExtensions.<Entity>forEach(_allEntities, _function);
     Validator _validator = new Validator();
     final Validator validator = _validator;
@@ -950,16 +950,16 @@ public class Entities {
       _xifexpression = _plus_1;
     } else {
       String _vendor = app.getVendor();
-      String _formatForCode_1 = this._formattingExtensions.formatForCode(_vendor);
-      String _plus_2 = ("\\" + _formatForCode_1);
+      String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_vendor);
+      String _plus_2 = ("\\" + _formatForCodeCapital_1);
       String _plus_3 = (_plus_2 + "\\");
       String _name_2 = app.getName();
-      String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_2);
-      String _plus_4 = (_plus_3 + _formatForCode_2);
+      String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_2);
+      String _plus_4 = (_plus_3 + _formatForCodeCapital_2);
       String _plus_5 = (_plus_4 + "Module\\Entity\\Validator\\");
       String _name_3 = it.getName();
-      String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_3);
-      String _plus_6 = (_plus_5 + _formatForCodeCapital_1);
+      String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_3);
+      String _plus_6 = (_plus_5 + _formatForCodeCapital_3);
       String _plus_7 = (_plus_6 + "Validator");
       _xifexpression = _plus_7;
     }
@@ -1274,8 +1274,8 @@ public class Entities {
     Iterable<DerivedField> _primaryKeyFields = this._modelExtensions.getPrimaryKeyFields(it);
     DerivedField _head = IterableExtensions.<DerivedField>head(_primaryKeyFields);
     String _name_4 = _head.getName();
-    String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_4);
-    _builder.append(_formatForCode_3, "        ");
+    String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_4);
+    _builder.append(_formatForCode_1, "        ");
     _builder.append("\',");
     _builder.newLineIfNotEmpty();
     _builder.append("        ");
@@ -1332,19 +1332,19 @@ public class Entities {
           for(final EmailField emailField : emailFields) {
             _builder.append("if (strpos($this[\'");
             String _name_5 = emailField.getName();
-            String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_5);
-            _builder.append(_formatForCode_4, "");
+            String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_5);
+            _builder.append(_formatForCode_2, "");
             _builder.append("\'], \'&#\') !== false) {");
             _builder.newLineIfNotEmpty();
             _builder.append("    ");
             _builder.append("$this[\'");
             String _name_6 = emailField.getName();
-            String _formatForCode_5 = this._formattingExtensions.formatForCode(_name_6);
-            _builder.append(_formatForCode_5, "    ");
+            String _formatForCode_3 = this._formattingExtensions.formatForCode(_name_6);
+            _builder.append(_formatForCode_3, "    ");
             _builder.append("\'] = html_entity_decode($this[\'");
             String _name_7 = emailField.getName();
-            String _formatForCode_6 = this._formattingExtensions.formatForCode(_name_7);
-            _builder.append(_formatForCode_6, "    ");
+            String _formatForCode_4 = this._formattingExtensions.formatForCode(_name_7);
+            _builder.append(_formatForCode_4, "    ");
             _builder.append("\']);");
             _builder.newLineIfNotEmpty();
             _builder.append("}");
@@ -1495,8 +1495,8 @@ public class Entities {
                 _builder.append("    ");
                 _builder.append("\'url\' => array(\'type\' => \'user\', \'func\' => \'display\', \'arguments\' => array(\'ot\' => \'");
                 String _name_8 = it.getName();
-                String _formatForCode_7 = this._formattingExtensions.formatForCode(_name_8);
-                _builder.append(_formatForCode_7, "                ");
+                String _formatForCode_5 = this._formattingExtensions.formatForCode(_name_8);
+                _builder.append(_formatForCode_5, "                ");
                 _builder.append("\'");
                 CharSequence _modUrlPrimaryKeyParams = this._urlExtensions.modUrlPrimaryKeyParams(it, "this", Boolean.valueOf(false));
                 _builder.append(_modUrlPrimaryKeyParams, "                ");
@@ -1555,8 +1555,8 @@ public class Entities {
                 _builder.append(_formattedName_1, "                ");
                 _builder.append("\', \'func\' => \'display\', \'arguments\' => array(\'ot\' => \'");
                 String _name_9 = it.getName();
-                String _formatForCode_8 = this._formattingExtensions.formatForCode(_name_9);
-                _builder.append(_formatForCode_8, "                ");
+                String _formatForCode_6 = this._formattingExtensions.formatForCode(_name_9);
+                _builder.append(_formatForCode_6, "                ");
                 _builder.append("\'");
                 CharSequence _modUrlPrimaryKeyParams_1 = this._urlExtensions.modUrlPrimaryKeyParams(it, "this", Boolean.valueOf(false));
                 _builder.append(_modUrlPrimaryKeyParams_1, "                ");
@@ -1584,8 +1584,8 @@ public class Entities {
                   if (_tripleNotEquals) {
                     _builder.append("str_replace(\'\"\', \'\', $this[\'");
                     String _name_10 = leadingField.getName();
-                    String _formatForCode_9 = this._formattingExtensions.formatForCode(_name_10);
-                    _builder.append(_formatForCode_9, "                ");
+                    String _formatForCode_7 = this._formattingExtensions.formatForCode(_name_10);
+                    _builder.append(_formatForCode_7, "                ");
                     _builder.append("\'])");
                   } else {
                     _builder.append("__(\'Open detail page\', $dom)");
@@ -1652,8 +1652,8 @@ public class Entities {
                 _builder.append(appName, "            ");
                 _builder.append(":");
                 String _name_11 = it.getName();
-                String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_name_11);
-                _builder.append(_formatForCodeCapital_2, "            ");
+                String _formatForCodeCapital_4 = this._formattingExtensions.formatForCodeCapital(_name_11);
+                _builder.append(_formatForCodeCapital_4, "            ");
                 _builder.append(":\';");
                 _builder.newLineIfNotEmpty();
                 _builder.append("    ");
@@ -1750,8 +1750,8 @@ public class Entities {
                 _builder.append(_formattedName_2, "                    ");
                 _builder.append("\', \'func\' => \'delete\', \'arguments\' => array(\'ot\' => \'");
                 String _name_12 = it.getName();
-                String _formatForCode_10 = this._formattingExtensions.formatForCode(_name_12);
-                _builder.append(_formatForCode_10, "                    ");
+                String _formatForCode_8 = this._formattingExtensions.formatForCode(_name_12);
+                _builder.append(_formatForCode_8, "                    ");
                 _builder.append("\'");
                 CharSequence _modUrlPrimaryKeyParams_2 = this._urlExtensions.modUrlPrimaryKeyParams(it, "this", Boolean.valueOf(false));
                 _builder.append(_modUrlPrimaryKeyParams_2, "                    ");
@@ -1818,8 +1818,8 @@ public class Entities {
                 _builder.append(_formattedName_3, "                ");
                 _builder.append("\', \'func\' => \'view\', \'arguments\' => array(\'ot\' => \'");
                 String _name_13 = it.getName();
-                String _formatForCode_11 = this._formattingExtensions.formatForCode(_name_13);
-                _builder.append(_formatForCode_11, "                ");
+                String _formatForCode_9 = this._formattingExtensions.formatForCode(_name_13);
+                _builder.append(_formatForCode_9, "                ");
                 _builder.append("\')),");
                 _builder.newLineIfNotEmpty();
                 _builder.append("    ");
@@ -1892,12 +1892,12 @@ public class Entities {
             _builder.append("    ");
             _builder.append("$args[\'");
             String _name_14 = pkField.getName();
-            String _formatForCode_12 = this._formattingExtensions.formatForCode(_name_14);
-            _builder.append(_formatForCode_12, "    ");
+            String _formatForCode_10 = this._formattingExtensions.formatForCode(_name_14);
+            _builder.append(_formatForCode_10, "    ");
             _builder.append("\'] = $this[\'");
             String _name_15 = pkField.getName();
-            String _formatForCode_13 = this._formattingExtensions.formatForCode(_name_15);
-            _builder.append(_formatForCode_13, "    ");
+            String _formatForCode_11 = this._formattingExtensions.formatForCode(_name_15);
+            _builder.append(_formatForCode_11, "    ");
             _builder.append("\'];");
             _builder.newLineIfNotEmpty();
           }
@@ -1907,13 +1907,13 @@ public class Entities {
         _builder.append("$args[\'");
         DerivedField _firstPrimaryKey = this._modelExtensions.getFirstPrimaryKey(it);
         String _name_16 = _firstPrimaryKey.getName();
-        String _formatForCode_14 = this._formattingExtensions.formatForCode(_name_16);
-        _builder.append(_formatForCode_14, "    ");
+        String _formatForCode_12 = this._formattingExtensions.formatForCode(_name_16);
+        _builder.append(_formatForCode_12, "    ");
         _builder.append("\'] = $this[\'");
         DerivedField _firstPrimaryKey_1 = this._modelExtensions.getFirstPrimaryKey(it);
         String _name_17 = _firstPrimaryKey_1.getName();
-        String _formatForCode_15 = this._formattingExtensions.formatForCode(_name_17);
-        _builder.append(_formatForCode_15, "    ");
+        String _formatForCode_13 = this._formattingExtensions.formatForCode(_name_17);
+        _builder.append(_formatForCode_13, "    ");
         _builder.append("\'];");
         _builder.newLineIfNotEmpty();
       }
@@ -1965,8 +1965,8 @@ public class Entities {
             _builder.append("    ");
             _builder.append("$itemId .= ((!empty($itemId)) ? \'_\' : \'\') . $this[\'");
             String _name_18 = pkField_1.getName();
-            String _formatForCode_16 = this._formattingExtensions.formatForCode(_name_18);
-            _builder.append(_formatForCode_16, "    ");
+            String _formatForCode_14 = this._formattingExtensions.formatForCode(_name_18);
+            _builder.append(_formatForCode_14, "    ");
             _builder.append("\'];");
             _builder.newLineIfNotEmpty();
           }
@@ -1976,8 +1976,8 @@ public class Entities {
         _builder.append("$itemId = $this[\'");
         DerivedField _firstPrimaryKey_2 = this._modelExtensions.getFirstPrimaryKey(it);
         String _name_19 = _firstPrimaryKey_2.getName();
-        String _formatForCode_17 = this._formattingExtensions.formatForCode(_name_19);
-        _builder.append(_formatForCode_17, "    ");
+        String _formatForCode_15 = this._formattingExtensions.formatForCode(_name_19);
+        _builder.append(_formatForCode_15, "    ");
         _builder.append("\'];");
         _builder.newLineIfNotEmpty();
       }
@@ -2299,11 +2299,11 @@ public class Entities {
       if (_isIndexByTarget) {
         Iterable<JoinRelationship> _incomingJoinRelations = this._modelJoinExtensions.getIncomingJoinRelations(it);
         final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-            public Boolean apply(final JoinRelationship e) {
-              boolean _isIndexed = Entities.this._modelJoinExtensions.isIndexed(e);
-              return Boolean.valueOf(_isIndexed);
-            }
-          };
+          public Boolean apply(final JoinRelationship e) {
+            boolean _isIndexed = Entities.this._modelJoinExtensions.isIndexed(e);
+            return Boolean.valueOf(_isIndexed);
+          }
+        };
         Iterable<JoinRelationship> _filter = IterableExtensions.<JoinRelationship>filter(_incomingJoinRelations, _function);
         final JoinRelationship indexRelation = IterableExtensions.<JoinRelationship>head(_filter);
         _builder.newLineIfNotEmpty();
@@ -2421,46 +2421,46 @@ public class Entities {
     }
     Iterable<DerivedField> _derivedFields = this._modelExtensions.getDerivedFields(it);
     final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-        public Boolean apply(final DerivedField e) {
-          boolean _and = false;
-          boolean _isMandatory = e.isMandatory();
-          if (!_isMandatory) {
-            _and = false;
-          } else {
-            boolean _isPrimaryKey = e.isPrimaryKey();
-            boolean _not = (!_isPrimaryKey);
-            _and = (_isMandatory && _not);
-          }
-          return Boolean.valueOf(_and);
+      public Boolean apply(final DerivedField e) {
+        boolean _and = false;
+        boolean _isMandatory = e.isMandatory();
+        if (!_isMandatory) {
+          _and = false;
+        } else {
+          boolean _isPrimaryKey = e.isPrimaryKey();
+          boolean _not = (!_isPrimaryKey);
+          _and = (_isMandatory && _not);
         }
-      };
+        return Boolean.valueOf(_and);
+      }
+    };
     final Iterable<DerivedField> mandatoryFields = IterableExtensions.<DerivedField>filter(_derivedFields, _function);
     _builder.newLineIfNotEmpty();
     {
       Iterable<IntegerField> _filter = Iterables.<IntegerField>filter(mandatoryFields, IntegerField.class);
       final Function1<IntegerField,Boolean> _function_1 = new Function1<IntegerField,Boolean>() {
-          public Boolean apply(final IntegerField e) {
-            boolean _or = false;
-            boolean _or_1 = false;
-            String _defaultValue = e.getDefaultValue();
-            boolean _tripleEquals = (_defaultValue == null);
-            if (_tripleEquals) {
-              _or_1 = true;
-            } else {
-              String _defaultValue_1 = e.getDefaultValue();
-              boolean _equals = Objects.equal(_defaultValue_1, "");
-              _or_1 = (_tripleEquals || _equals);
-            }
-            if (_or_1) {
-              _or = true;
-            } else {
-              String _defaultValue_2 = e.getDefaultValue();
-              boolean _equals_1 = Objects.equal(_defaultValue_2, "0");
-              _or = (_or_1 || _equals_1);
-            }
-            return Boolean.valueOf(_or);
+        public Boolean apply(final IntegerField e) {
+          boolean _or = false;
+          boolean _or_1 = false;
+          String _defaultValue = e.getDefaultValue();
+          boolean _tripleEquals = (_defaultValue == null);
+          if (_tripleEquals) {
+            _or_1 = true;
+          } else {
+            String _defaultValue_1 = e.getDefaultValue();
+            boolean _equals = Objects.equal(_defaultValue_1, "");
+            _or_1 = (_tripleEquals || _equals);
           }
-        };
+          if (_or_1) {
+            _or = true;
+          } else {
+            String _defaultValue_2 = e.getDefaultValue();
+            boolean _equals_1 = Objects.equal(_defaultValue_2, "0");
+            _or = (_or_1 || _equals_1);
+          }
+          return Boolean.valueOf(_or);
+        }
+      };
       Iterable<IntegerField> _filter_1 = IterableExtensions.<IntegerField>filter(_filter, _function_1);
       for(final IntegerField mandatoryField : _filter_1) {
         _builder.append("$this->");
@@ -2474,28 +2474,28 @@ public class Entities {
     {
       Iterable<UserField> _filter_2 = Iterables.<UserField>filter(mandatoryFields, UserField.class);
       final Function1<UserField,Boolean> _function_2 = new Function1<UserField,Boolean>() {
-          public Boolean apply(final UserField e) {
-            boolean _or = false;
-            boolean _or_1 = false;
-            String _defaultValue = e.getDefaultValue();
-            boolean _tripleEquals = (_defaultValue == null);
-            if (_tripleEquals) {
-              _or_1 = true;
-            } else {
-              String _defaultValue_1 = e.getDefaultValue();
-              boolean _equals = Objects.equal(_defaultValue_1, "");
-              _or_1 = (_tripleEquals || _equals);
-            }
-            if (_or_1) {
-              _or = true;
-            } else {
-              String _defaultValue_2 = e.getDefaultValue();
-              boolean _equals_1 = Objects.equal(_defaultValue_2, "0");
-              _or = (_or_1 || _equals_1);
-            }
-            return Boolean.valueOf(_or);
+        public Boolean apply(final UserField e) {
+          boolean _or = false;
+          boolean _or_1 = false;
+          String _defaultValue = e.getDefaultValue();
+          boolean _tripleEquals = (_defaultValue == null);
+          if (_tripleEquals) {
+            _or_1 = true;
+          } else {
+            String _defaultValue_1 = e.getDefaultValue();
+            boolean _equals = Objects.equal(_defaultValue_1, "");
+            _or_1 = (_tripleEquals || _equals);
           }
-        };
+          if (_or_1) {
+            _or = true;
+          } else {
+            String _defaultValue_2 = e.getDefaultValue();
+            boolean _equals_1 = Objects.equal(_defaultValue_2, "0");
+            _or = (_or_1 || _equals_1);
+          }
+          return Boolean.valueOf(_or);
+        }
+      };
       Iterable<UserField> _filter_3 = IterableExtensions.<UserField>filter(_filter_2, _function_2);
       for(final UserField mandatoryField_1 : _filter_3) {
         _builder.append("$this->");
@@ -2509,28 +2509,28 @@ public class Entities {
     {
       Iterable<DecimalField> _filter_4 = Iterables.<DecimalField>filter(mandatoryFields, DecimalField.class);
       final Function1<DecimalField,Boolean> _function_3 = new Function1<DecimalField,Boolean>() {
-          public Boolean apply(final DecimalField e) {
-            boolean _or = false;
-            boolean _or_1 = false;
-            String _defaultValue = e.getDefaultValue();
-            boolean _tripleEquals = (_defaultValue == null);
-            if (_tripleEquals) {
-              _or_1 = true;
-            } else {
-              String _defaultValue_1 = e.getDefaultValue();
-              boolean _equals = Objects.equal(_defaultValue_1, "");
-              _or_1 = (_tripleEquals || _equals);
-            }
-            if (_or_1) {
-              _or = true;
-            } else {
-              String _defaultValue_2 = e.getDefaultValue();
-              boolean _equals_1 = Objects.equal(_defaultValue_2, "0");
-              _or = (_or_1 || _equals_1);
-            }
-            return Boolean.valueOf(_or);
+        public Boolean apply(final DecimalField e) {
+          boolean _or = false;
+          boolean _or_1 = false;
+          String _defaultValue = e.getDefaultValue();
+          boolean _tripleEquals = (_defaultValue == null);
+          if (_tripleEquals) {
+            _or_1 = true;
+          } else {
+            String _defaultValue_1 = e.getDefaultValue();
+            boolean _equals = Objects.equal(_defaultValue_1, "");
+            _or_1 = (_tripleEquals || _equals);
           }
-        };
+          if (_or_1) {
+            _or = true;
+          } else {
+            String _defaultValue_2 = e.getDefaultValue();
+            boolean _equals_1 = Objects.equal(_defaultValue_2, "0");
+            _or = (_or_1 || _equals_1);
+          }
+          return Boolean.valueOf(_or);
+        }
+      };
       Iterable<DecimalField> _filter_5 = IterableExtensions.<DecimalField>filter(_filter_4, _function_3);
       for(final DecimalField mandatoryField_2 : _filter_5) {
         _builder.append("$this->");
@@ -2544,29 +2544,29 @@ public class Entities {
     {
       Iterable<AbstractDateField> _filter_6 = Iterables.<AbstractDateField>filter(mandatoryFields, AbstractDateField.class);
       final Function1<AbstractDateField,Boolean> _function_4 = new Function1<AbstractDateField,Boolean>() {
-          public Boolean apply(final AbstractDateField e) {
-            boolean _or = false;
-            boolean _or_1 = false;
-            String _defaultValue = e.getDefaultValue();
-            boolean _tripleEquals = (_defaultValue == null);
-            if (_tripleEquals) {
-              _or_1 = true;
-            } else {
-              String _defaultValue_1 = e.getDefaultValue();
-              boolean _equals = Objects.equal(_defaultValue_1, "");
-              _or_1 = (_tripleEquals || _equals);
-            }
-            if (_or_1) {
-              _or = true;
-            } else {
-              String _defaultValue_2 = e.getDefaultValue();
-              int _length = _defaultValue_2.length();
-              boolean _equals_1 = (_length == 0);
-              _or = (_or_1 || _equals_1);
-            }
-            return Boolean.valueOf(_or);
+        public Boolean apply(final AbstractDateField e) {
+          boolean _or = false;
+          boolean _or_1 = false;
+          String _defaultValue = e.getDefaultValue();
+          boolean _tripleEquals = (_defaultValue == null);
+          if (_tripleEquals) {
+            _or_1 = true;
+          } else {
+            String _defaultValue_1 = e.getDefaultValue();
+            boolean _equals = Objects.equal(_defaultValue_1, "");
+            _or_1 = (_tripleEquals || _equals);
           }
-        };
+          if (_or_1) {
+            _or = true;
+          } else {
+            String _defaultValue_2 = e.getDefaultValue();
+            int _length = _defaultValue_2.length();
+            boolean _equals_1 = (_length == 0);
+            _or = (_or_1 || _equals_1);
+          }
+          return Boolean.valueOf(_or);
+        }
+      };
       Iterable<AbstractDateField> _filter_7 = IterableExtensions.<AbstractDateField>filter(_filter_6, _function_4);
       for(final AbstractDateField mandatoryField_3 : _filter_7) {
         _builder.append("$this->");
@@ -2583,28 +2583,28 @@ public class Entities {
     {
       Iterable<FloatField> _filter_8 = Iterables.<FloatField>filter(mandatoryFields, FloatField.class);
       final Function1<FloatField,Boolean> _function_5 = new Function1<FloatField,Boolean>() {
-          public Boolean apply(final FloatField e) {
-            boolean _or = false;
-            boolean _or_1 = false;
-            String _defaultValue = e.getDefaultValue();
-            boolean _tripleEquals = (_defaultValue == null);
-            if (_tripleEquals) {
-              _or_1 = true;
-            } else {
-              String _defaultValue_1 = e.getDefaultValue();
-              boolean _equals = Objects.equal(_defaultValue_1, "");
-              _or_1 = (_tripleEquals || _equals);
-            }
-            if (_or_1) {
-              _or = true;
-            } else {
-              String _defaultValue_2 = e.getDefaultValue();
-              boolean _equals_1 = Objects.equal(_defaultValue_2, "0");
-              _or = (_or_1 || _equals_1);
-            }
-            return Boolean.valueOf(_or);
+        public Boolean apply(final FloatField e) {
+          boolean _or = false;
+          boolean _or_1 = false;
+          String _defaultValue = e.getDefaultValue();
+          boolean _tripleEquals = (_defaultValue == null);
+          if (_tripleEquals) {
+            _or_1 = true;
+          } else {
+            String _defaultValue_1 = e.getDefaultValue();
+            boolean _equals = Objects.equal(_defaultValue_1, "");
+            _or_1 = (_tripleEquals || _equals);
           }
-        };
+          if (_or_1) {
+            _or = true;
+          } else {
+            String _defaultValue_2 = e.getDefaultValue();
+            boolean _equals_1 = Objects.equal(_defaultValue_2, "0");
+            _or = (_or_1 || _equals_1);
+          }
+          return Boolean.valueOf(_or);
+        }
+      };
       Iterable<FloatField> _filter_9 = IterableExtensions.<FloatField>filter(_filter_8, _function_5);
       for(final FloatField mandatoryField_4 : _filter_9) {
         _builder.append("$this->");
@@ -2623,11 +2623,11 @@ public class Entities {
         EList<Relationship> _incoming = it.getIncoming();
         Iterable<JoinRelationship> _filter_10 = Iterables.<JoinRelationship>filter(_incoming, JoinRelationship.class);
         final Function1<JoinRelationship,Boolean> _function_6 = new Function1<JoinRelationship,Boolean>() {
-            public Boolean apply(final JoinRelationship e) {
-              boolean _isIndexed = Entities.this._modelJoinExtensions.isIndexed(e);
-              return Boolean.valueOf(_isIndexed);
-            }
-          };
+          public Boolean apply(final JoinRelationship e) {
+            boolean _isIndexed = Entities.this._modelJoinExtensions.isIndexed(e);
+            return Boolean.valueOf(_isIndexed);
+          }
+        };
         Iterable<JoinRelationship> _filter_11 = IterableExtensions.<JoinRelationship>filter(_filter_10, _function_6);
         final JoinRelationship indexRelation = IterableExtensions.<JoinRelationship>head(_filter_11);
         _builder.newLineIfNotEmpty();
@@ -3056,20 +3056,20 @@ public class Entities {
     {
       Iterable<DerivedField> _derivedFields = this._modelExtensions.getDerivedFields(it);
       final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-          public Boolean apply(final DerivedField e) {
-            boolean _and = false;
-            boolean _isPrimaryKey = e.isPrimaryKey();
-            boolean _not = (!_isPrimaryKey);
-            if (!_not) {
-              _and = false;
-            } else {
-              String _name = e.getName();
-              boolean _notEquals = (!Objects.equal(_name, "workflowState"));
-              _and = (_not && _notEquals);
-            }
-            return Boolean.valueOf(_and);
+        public Boolean apply(final DerivedField e) {
+          boolean _and = false;
+          boolean _isPrimaryKey = e.isPrimaryKey();
+          boolean _not = (!_isPrimaryKey);
+          if (!_not) {
+            _and = false;
+          } else {
+            String _name = e.getName();
+            boolean _notEquals = (!Objects.equal(_name, "workflowState"));
+            _and = (_not && _notEquals);
           }
-        };
+          return Boolean.valueOf(_and);
+        }
+      };
       Iterable<DerivedField> _filter = IterableExtensions.<DerivedField>filter(_derivedFields, _function);
       for(final DerivedField field_2 : _filter) {
         _builder.append("        ");

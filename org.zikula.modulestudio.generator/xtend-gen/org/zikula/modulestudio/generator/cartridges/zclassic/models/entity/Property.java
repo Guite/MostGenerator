@@ -303,7 +303,8 @@ public class Property {
     _builder.newLineIfNotEmpty();
     _builder.append(" ");
     _builder.append("* @ORM\\Column(");
-    CharSequence _persistentPropertyImpl = this.persistentPropertyImpl(it, type);
+    String _lowerCase = type.toLowerCase();
+    CharSequence _persistentPropertyImpl = this.persistentPropertyImpl(it, _lowerCase);
     _builder.append(_persistentPropertyImpl, " ");
     {
       boolean _isUnique = it.isUnique();
@@ -729,11 +730,11 @@ public class Property {
     {
       EList<ListFieldItem> _items = it.getItems();
       final Function1<ListFieldItem,Boolean> _function = new Function1<ListFieldItem,Boolean>() {
-          public Boolean apply(final ListFieldItem e) {
-            boolean _isDefault = e.isDefault();
-            return Boolean.valueOf(_isDefault);
-          }
-        };
+        public Boolean apply(final ListFieldItem e) {
+          boolean _isDefault = e.isDefault();
+          return Boolean.valueOf(_isDefault);
+        }
+      };
       Iterable<ListFieldItem> _filter = IterableExtensions.<ListFieldItem>filter(_items, _function);
       boolean _hasElements = false;
       for(final ListFieldItem defaultItem : _filter) {

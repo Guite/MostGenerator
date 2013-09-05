@@ -692,7 +692,7 @@ class ModelExtensions {
             ListField: 'string'
             ArrayField: 'array'
             ObjectField: 'object'
-            DatetimeField: 'datetime'
+            DatetimeField: 'DateTime'
             DateField: 'date'
             TimeField: 'time'
             FloatField: 'float'

@@ -104,7 +104,7 @@ class Property {
           «ENDIF»
         «ENDIF»
         «new Extensions().columnExtensions(it)»
-         * @ORM\Column(«persistentPropertyImpl(type)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
+         * @ORM\Column(«persistentPropertyImpl(type.toLowerCase)»«IF unique», unique=true«ENDIF»«IF nullable», nullable=true«ENDIF»)
         «persistentPropertyAdditions»
          * @var «type» $«name.formatForCode».
          */
