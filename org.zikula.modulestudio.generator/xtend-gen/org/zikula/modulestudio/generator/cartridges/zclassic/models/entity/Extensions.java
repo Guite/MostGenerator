@@ -1201,12 +1201,12 @@ public class Extensions {
     if (_hasTrees) {
       Iterable<Entity> _treeEntities = this._modelBehaviourExtensions.getTreeEntities(it);
       final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-          public Boolean apply(final Entity e) {
-            EntityTreeType _tree = e.getTree();
-            boolean _equals = Objects.equal(_tree, EntityTreeType.CLOSURE);
-            return Boolean.valueOf(_equals);
-          }
-        };
+        public Boolean apply(final Entity e) {
+          EntityTreeType _tree = e.getTree();
+          boolean _equals = Objects.equal(_tree, EntityTreeType.CLOSURE);
+          return Boolean.valueOf(_equals);
+        }
+      };
       Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_treeEntities, _function);
       for (final Entity entity_2 : _filter) {
         this.extensionClasses(entity_2, it, "closure", fsa);
@@ -1811,7 +1811,7 @@ public class Extensions {
             _builder.append(_formatForCodeCapital_7, "");
           }
         }
-        _builder.append("Entity");
+        _builder.append("Entity;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
       }
