@@ -2295,6 +2295,7 @@ public class Extensions {
         }
         String _formatForCodeCapital_6 = this._formattingExtensions.formatForCodeCapital(classType);
         _builder.append(_formatForCodeCapital_6, "");
+        _builder.append(";");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
       }
