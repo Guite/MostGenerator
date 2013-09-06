@@ -112,7 +112,7 @@ public class ViewUtil {
         _builder.append("use ");
         String _appNamespace_1 = this._utils.appNamespace(it);
         _builder.append(_appNamespace_1, "");
-        _builder.append("\\Util\\ControllerUtil;");
+        _builder.append("\\Util\\ControllerUtil as ConcreteControllerUtil;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         _builder.append("use DataUtil;");
@@ -710,7 +710,7 @@ public class ViewUtil {
         _builder.append(_appName, "    ");
         _builder.append("_Util_Controller");
       } else {
-        _builder.append("ControllerUtil");
+        _builder.append("ConcreteControllerUtil");
       }
     }
     _builder.append("($this->serviceManager");

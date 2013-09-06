@@ -40,7 +40,7 @@ class ViewUtil {
         «IF !targets('1.3.5')»
             namespace «appNamespace»\Util\Base;
 
-            use «appNamespace»\Util\ControllerUtil;
+            use «appNamespace»\Util\ControllerUtil as ConcreteControllerUtil;
 
             use DataUtil;
             use FormUtil;
@@ -249,7 +249,7 @@ class ViewUtil {
             // then the surrounding
             $output = $view->fetch('include_pdfheader.tpl') . $output . '</body></html>';
 
-            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
+            $controllerHelper = new «IF targets('1.3.5')»«appName»_Util_Controller«ELSE»ConcreteControllerUtil«ENDIF»($this->serviceManager«IF !targets('1.3.5')», ModUtil::getModule($this->name)«ENDIF»);
             // create name of the pdf output file
             $fileTitle = $controllerHelper->formatPermalink(System::getVar('sitename'))
                        . '-'
