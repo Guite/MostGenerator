@@ -548,9 +548,9 @@ class Validator {
             namespace «app.appNamespace»\Entity\Validator;
 
             «IF isInheriting»
-                use «app.appNamespace»\Entity\Validator\«parentType.name.formatForCodeCapital»Validator as Base«parentType.name.formatForCodeCapital»Validator
+                use «app.appNamespace»\Entity\Validator\«parentType.name.formatForCodeCapital»Validator as Base«parentType.name.formatForCodeCapital»Validator;
             «ELSE»
-                use «app.appNamespace»\Entity\Validator\Base\«name.formatForCodeCapital»Validator as Base«name.formatForCodeCapital»Validator
+                use «app.appNamespace»\Entity\Validator\Base\«name.formatForCodeCapital»Validator as Base«name.formatForCodeCapital»Validator;
             «ENDIF»
             «IF isInheriting»
 

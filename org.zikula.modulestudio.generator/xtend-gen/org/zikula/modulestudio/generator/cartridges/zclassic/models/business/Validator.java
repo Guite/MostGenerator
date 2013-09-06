@@ -1414,16 +1414,16 @@ public class Validator {
         _builder.append("\\Entity\\Validator\\Base;");
         _builder.newLineIfNotEmpty();
         _builder.newLine();
-        _builder.append("use ServiceUtil;");
-        _builder.newLine();
-        _builder.append("use ZLanguage;");
-        _builder.newLine();
-        _builder.newLine();
         _builder.append("use ");
         String _appNamespace_1 = this._utils.appNamespace(app);
         _builder.append(_appNamespace_1, "");
         _builder.append("\\AbstractValidator as BaseAbstractValidator;");
         _builder.newLineIfNotEmpty();
+        _builder.newLine();
+        _builder.append("use ServiceUtil;");
+        _builder.newLine();
+        _builder.append("use ZLanguage;");
+        _builder.newLine();
         _builder.newLine();
       }
     }
@@ -1491,19 +1491,10 @@ public class Validator {
         _builder.append(_appNamespace, "");
         _builder.append("\\Entity\\Validator;");
         _builder.newLineIfNotEmpty();
+        _builder.newLine();
         {
           boolean _isInheriting = this._modelInheritanceExtensions.isInheriting(it);
           if (_isInheriting) {
-            _builder.newLine();
-            _builder.append("use ServiceUtil;");
-            _builder.newLine();
-            _builder.append("use ZLanguage;");
-            _builder.newLine();
-          }
-        }
-        {
-          boolean _isInheriting_1 = this._modelInheritanceExtensions.isInheriting(it);
-          if (_isInheriting_1) {
             _builder.append("use ");
             String _appNamespace_1 = this._utils.appNamespace(app);
             _builder.append(_appNamespace_1, "");
@@ -1517,7 +1508,7 @@ public class Validator {
             String _name_1 = _parentType_1.getName();
             String _formatForCodeCapital_1 = this._formattingExtensions.formatForCodeCapital(_name_1);
             _builder.append(_formatForCodeCapital_1, "");
-            _builder.append("Validator");
+            _builder.append("Validator;");
             _builder.newLineIfNotEmpty();
           } else {
             _builder.append("use ");
@@ -1531,8 +1522,18 @@ public class Validator {
             String _name_3 = it.getName();
             String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_3);
             _builder.append(_formatForCodeCapital_3, "");
-            _builder.append("Validator");
+            _builder.append("Validator;");
             _builder.newLineIfNotEmpty();
+          }
+        }
+        {
+          boolean _isInheriting_1 = this._modelInheritanceExtensions.isInheriting(it);
+          if (_isInheriting_1) {
+            _builder.newLine();
+            _builder.append("use ServiceUtil;");
+            _builder.newLine();
+            _builder.append("use ZLanguage;");
+            _builder.newLine();
           }
         }
         _builder.newLine();
