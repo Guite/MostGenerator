@@ -186,7 +186,10 @@ public class Config {
       List<Variables> _sortedVariableContainers_1 = this._utils.getSortedVariableContainers(it);
       for(final Variables varContainer : _sortedVariableContainers_1) {
         boolean _hasMultipleConfigSections_1 = this._utils.hasMultipleConfigSections(it);
-        CharSequence _configSection = this.configSection(varContainer, Boolean.valueOf(_hasMultipleConfigSections_1));
+        List<Variables> _sortedVariableContainers_2 = this._utils.getSortedVariableContainers(it);
+        Variables _head_2 = IterableExtensions.<Variables>head(_sortedVariableContainers_2);
+        boolean _equals_1 = Objects.equal(varContainer, _head_2);
+        CharSequence _configSection = this.configSection(varContainer, it, Boolean.valueOf(_hasMultipleConfigSections_1), Boolean.valueOf(_equals_1));
         _builder.append(_configSection, "            ");
       }
     }
@@ -225,8 +228,8 @@ public class Config {
     {
       String _configController_3 = this._controllerExtensions.configController(it);
       String _formatForDB_5 = this._formattingExtensions.formatForDB(_configController_3);
-      boolean _equals_1 = Objects.equal(_formatForDB_5, "admin");
-      if (_equals_1) {
+      boolean _equals_2 = Objects.equal(_formatForDB_5, "admin");
+      if (_equals_2) {
       } else {
         _builder.append("    ");
         _builder.append("</div>");
@@ -298,7 +301,7 @@ public class Config {
     return _builder;
   }
   
-  private CharSequence configSection(final Variables it, final Boolean hasMultipleConfigSections) {
+  private CharSequence configSection(final Variables it, final Application app, final Boolean hasMultipleConfigSections, final Boolean isPrimaryVarContainer) {
     StringConcatenation _builder = new StringConcatenation();
     {
       if ((hasMultipleConfigSections).booleanValue()) {
@@ -314,62 +317,63 @@ public class Config {
     }
     _builder.append("<fieldset>");
     _builder.newLine();
+    _builder.append("    ");
+    _builder.append("<legend>");
+    String _name_1 = it.getName();
+    String _formatForDisplayCapital_1 = this._formattingExtensions.formatForDisplayCapital(_name_1);
+    _builder.append(_formatForDisplayCapital_1, "    ");
+    _builder.append("</legend>");
+    _builder.newLineIfNotEmpty();
+    _builder.newLine();
     {
-      if ((hasMultipleConfigSections).booleanValue()) {
+      boolean _and = false;
+      String _documentation = it.getDocumentation();
+      boolean _tripleNotEquals = (_documentation != null);
+      if (!_tripleNotEquals) {
+        _and = false;
+      } else {
+        String _documentation_1 = it.getDocumentation();
+        boolean _notEquals = (!Objects.equal(_documentation_1, ""));
+        _and = (_tripleNotEquals && _notEquals);
+      }
+      if (_and) {
+        _builder.append("    ");
+        _builder.append("<p class=\"");
         {
-          boolean _and = false;
-          String _documentation = it.getDocumentation();
-          boolean _tripleNotEquals = (_documentation != null);
-          if (!_tripleNotEquals) {
-            _and = false;
+          boolean _targets = this._utils.targets(app, "1.3.5");
+          if (_targets) {
+            _builder.append("z-confirmationmsg");
           } else {
-            String _documentation_1 = it.getDocumentation();
-            boolean _notEquals = (!Objects.equal(_documentation_1, ""));
-            _and = (_tripleNotEquals && _notEquals);
-          }
-          if (_and) {
-            _builder.append("    ");
-            _builder.append("<legend>{gt text=\'");
-            String _documentation_2 = it.getDocumentation();
-            String _replaceAll = _documentation_2.replaceAll("\'", "");
-            _builder.append(_replaceAll, "    ");
-            _builder.append("\'}</legend>");
-            _builder.newLineIfNotEmpty();
-          } else {
-            _builder.append("    ");
-            _builder.append("<legend>{gt text=\'");
-            String _name_1 = it.getName();
-            String _formatForDisplayCapital_1 = this._formattingExtensions.formatForDisplayCapital(_name_1);
-            _builder.append(_formatForDisplayCapital_1, "    ");
-            _builder.append("\'}</legend>");
-            _builder.newLineIfNotEmpty();
+            _builder.append("alert alert-info");
           }
         }
+        _builder.append("\">{gt text=\'");
+        String _documentation_2 = it.getDocumentation();
+        String _replaceAll = _documentation_2.replaceAll("\'", "");
+        _builder.append(_replaceAll, "    ");
+        _builder.append("\'|nl2br}</p>");
+        _builder.newLineIfNotEmpty();
       } else {
-        {
-          boolean _and_1 = false;
-          String _documentation_3 = it.getDocumentation();
-          boolean _tripleNotEquals_1 = (_documentation_3 != null);
-          if (!_tripleNotEquals_1) {
-            _and_1 = false;
-          } else {
-            String _documentation_4 = it.getDocumentation();
-            boolean _notEquals_1 = (!Objects.equal(_documentation_4, ""));
-            _and_1 = (_tripleNotEquals_1 && _notEquals_1);
+        boolean _or = false;
+        boolean _not = (!(hasMultipleConfigSections).booleanValue());
+        if (_not) {
+          _or = true;
+        } else {
+          _or = (_not || (isPrimaryVarContainer).booleanValue());
+        }
+        if (_or) {
+          _builder.append("    ");
+          _builder.append("<p class=\"");
+          {
+            boolean _targets_1 = this._utils.targets(app, "1.3.5");
+            if (_targets_1) {
+              _builder.append("z-confirmationmsg");
+            } else {
+              _builder.append("alert alert-info");
+            }
           }
-          if (_and_1) {
-            _builder.append("    ");
-            _builder.append("<legend>{gt text=\'");
-            String _documentation_5 = it.getDocumentation();
-            String _replaceAll_1 = _documentation_5.replaceAll("\'", "");
-            _builder.append(_replaceAll_1, "    ");
-            _builder.append("\'}</legend>");
-            _builder.newLineIfNotEmpty();
-          } else {
-            _builder.append("    ");
-            _builder.append("<legend>{gt text=\'Here you can manage all basic settings for this application.\'}</legend>");
-            _builder.newLine();
-          }
+          _builder.append("\">{gt text=\'Here you can manage all basic settings for this application.\'}</p>");
+          _builder.newLineIfNotEmpty();
         }
       }
     }

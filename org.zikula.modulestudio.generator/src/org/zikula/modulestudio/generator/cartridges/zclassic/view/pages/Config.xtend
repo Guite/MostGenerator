@@ -50,7 +50,7 @@ class Config {
                     «IF hasMultipleConfigSections»
                         {formtabbedpanelset}
                     «ENDIF»
-                    «FOR varContainer : getSortedVariableContainers»«varContainer.configSection(hasMultipleConfigSections)»«ENDFOR»
+                    «FOR varContainer : getSortedVariableContainers»«varContainer.configSection(it, hasMultipleConfigSections, varContainer == getSortedVariableContainers.head)»«ENDFOR»
                     «IF hasMultipleConfigSections»
                         {/formtabbedpanelset}
                     «ENDIF»
@@ -78,24 +78,18 @@ class Config {
         «ENDIF»
     '''
 
-    def private configSection(Variables it, Boolean hasMultipleConfigSections) '''
+    def private configSection(Variables it, Application app, Boolean hasMultipleConfigSections, Boolean isPrimaryVarContainer) '''
         «IF hasMultipleConfigSections»
             {gt text='«name.formatForDisplayCapital»' assign='tabTitle'}
             {formtabbedpanel title=$tabTitle}
         «ENDIF»
         <fieldset>
-            «IF hasMultipleConfigSections»
-                «IF documentation !== null && documentation != ''»
-                    <legend>{gt text='«documentation.replaceAll("'", "")»'}</legend>
-                «ELSE»
-                    <legend>{gt text='«name.formatForDisplayCapital»'}</legend>
-                «ENDIF»
-            «ELSE»
-                «IF documentation !== null && documentation != ''»
-                    <legend>{gt text='«documentation.replaceAll("'", "")»'}</legend>
-                «ELSE»
-                    <legend>{gt text='Here you can manage all basic settings for this application.'}</legend>
-                «ENDIF»
+            <legend>«name.formatForDisplayCapital»</legend>
+
+            «IF documentation !== null && documentation != ''»
+                <p class="«IF app.targets('1.3.5')»z-confirmationmsg«ELSE»alert alert-info«ENDIF»">{gt text='«documentation.replaceAll("'", "")»'|nl2br}</p>
+            «ELSEIF !hasMultipleConfigSections || isPrimaryVarContainer»
+                <p class="«IF app.targets('1.3.5')»z-confirmationmsg«ELSE»alert alert-info«ENDIF»">{gt text='Here you can manage all basic settings for this application.'}</p>
             «ENDIF»
 
             «FOR modvar : vars»«modvar.formRow»«ENDFOR»
