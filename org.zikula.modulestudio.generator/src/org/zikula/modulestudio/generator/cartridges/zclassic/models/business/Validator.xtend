@@ -522,10 +522,10 @@ class Validator {
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity\Validator\Base;
 
+            use «app.appNamespace»\AbstractValidator as BaseAbstractValidator;
+
             use ServiceUtil;
             use ZLanguage;
-
-            use «app.appNamespace»\AbstractValidator as BaseAbstractValidator;
 
         «ENDIF»
         /**
@@ -546,15 +546,16 @@ class Validator {
     def private validatorImpl(Entity it, Application app) '''
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Entity\Validator;
-            «IF isInheriting»
 
-                use ServiceUtil;
-                use ZLanguage;
-            «ENDIF»
             «IF isInheriting»
                 use «app.appNamespace»\Entity\Validator\«parentType.name.formatForCodeCapital»Validator as Base«parentType.name.formatForCodeCapital»Validator
             «ELSE»
                 use «app.appNamespace»\Entity\Validator\Base\«name.formatForCodeCapital»Validator as Base«name.formatForCodeCapital»Validator
+            «ENDIF»
+            «IF isInheriting»
+
+                use ServiceUtil;
+                use ZLanguage;
             «ENDIF»
 
         «ENDIF»
