@@ -868,7 +868,7 @@ public class ExampleData {
     _builder.append("} catch(\\Exception $e) {");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("LogUtil::registerError($this->__(\'Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!\'));");
+    _builder.append("LogUtil::registerWarning($this->__(\'Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!\'));");
     _builder.newLine();
     _builder.append("}");
     _builder.newLine();
