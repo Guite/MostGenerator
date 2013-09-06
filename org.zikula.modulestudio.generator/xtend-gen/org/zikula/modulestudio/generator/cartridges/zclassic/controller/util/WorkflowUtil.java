@@ -1060,6 +1060,12 @@ public class WorkflowUtil {
     _builder.append("    ");
     _builder.append("$amounts = array();");
     _builder.newLine();
+    _builder.append("    ");
+    _builder.append("$modname = \'");
+    String _appName = this._utils.appName(it);
+    _builder.append(_appName, "    ");
+    _builder.append("\';");
+    _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("    ");
     final Iterable<Entity> entitiesStandard = this._workflowExtensions.getEntitiesForWorkflow(it, EntityWorkflowType.STANDARD);

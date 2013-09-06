@@ -366,6 +366,7 @@ class WorkflowUtil {
         public function collectAmountOfModerationItems()
         {
             $amounts = array();
+            $modname = '«appName»';
 
             «val entitiesStandard = getEntitiesForWorkflow(EntityWorkflowType::STANDARD)»
             «val entitiesEnterprise = getEntitiesForWorkflow(EntityWorkflowType::ENTERPRISE)»
