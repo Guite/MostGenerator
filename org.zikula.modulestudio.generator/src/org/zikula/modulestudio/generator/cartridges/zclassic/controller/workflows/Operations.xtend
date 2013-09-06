@@ -112,7 +112,7 @@ class Operations {
             $entityManager->flush();
             //});
             $result = true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             LogUtil::registerError($e->getMessage());
         }
     '''
@@ -127,7 +127,7 @@ class Operations {
             $entityManager->remove($entity);
             $entityManager->flush();
             $result = true;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             LogUtil::registerError($e->getMessage());
         }
     '''

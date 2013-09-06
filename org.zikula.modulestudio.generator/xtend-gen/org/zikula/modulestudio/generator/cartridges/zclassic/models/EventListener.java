@@ -1413,7 +1413,7 @@ public class EventListener {
     _builder.append("\');");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
-    _builder.append("} catch (Exception $e) {");
+    _builder.append("} catch (\\Exception $e) {");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("return LogUtil::registerError($e->getMessage());");

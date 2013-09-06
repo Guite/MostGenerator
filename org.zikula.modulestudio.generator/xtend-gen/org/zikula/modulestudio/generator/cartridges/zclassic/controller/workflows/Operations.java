@@ -246,7 +246,7 @@ public class Operations {
     _builder.append("    ");
     _builder.append("$result = true;");
     _builder.newLine();
-    _builder.append("} catch (Exception $e) {");
+    _builder.append("} catch (\\Exception $e) {");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("LogUtil::registerError($e->getMessage());");
@@ -278,7 +278,7 @@ public class Operations {
     _builder.append("    ");
     _builder.append("$result = true;");
     _builder.newLine();
-    _builder.append("} catch (Exception $e) {");
+    _builder.append("} catch (\\Exception $e) {");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("LogUtil::registerError($e->getMessage());");

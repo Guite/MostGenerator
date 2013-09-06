@@ -445,7 +445,7 @@ class EventListener {
         if (!empty($this['«realName»'])) {
             try {
                 $basePath = $controllerHelper->getFileBaseFolder('«entity.name.formatForCode»', '«realName»');
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 return LogUtil::registerError($e->getMessage());
             }
             $fullPath = $basePath .  $this['«realName»'];
