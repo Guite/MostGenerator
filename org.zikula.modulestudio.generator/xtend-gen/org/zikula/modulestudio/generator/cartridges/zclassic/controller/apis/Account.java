@@ -269,18 +269,18 @@ public class Account {
         {
           EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
           final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-              public Boolean apply(final Entity e) {
-                boolean _and = false;
-                boolean _isStandardFields = e.isStandardFields();
-                if (!_isStandardFields) {
-                  _and = false;
-                } else {
-                  boolean _isOwnerPermission = e.isOwnerPermission();
-                  _and = (_isStandardFields && _isOwnerPermission);
-                }
-                return Boolean.valueOf(_and);
+            public Boolean apply(final Entity e) {
+              boolean _and = false;
+              boolean _isStandardFields = e.isStandardFields();
+              if (!_isStandardFields) {
+                _and = false;
+              } else {
+                boolean _isOwnerPermission = e.isOwnerPermission();
+                _and = (_isStandardFields && _isOwnerPermission);
               }
-            };
+              return Boolean.valueOf(_and);
+            }
+          };
           Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
           for(final Entity entity : _filter) {
             _builder.append("    ");

@@ -241,21 +241,21 @@ public class Validation {
     {
       EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
       final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-          public Boolean apply(final Entity e) {
-            Iterable<DerivedField> _uniqueDerivedFields = Validation.this._modelExtensions.getUniqueDerivedFields(e);
-            final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-                public Boolean apply(final DerivedField f) {
-                  boolean _isPrimaryKey = f.isPrimaryKey();
-                  boolean _not = (!_isPrimaryKey);
-                  return Boolean.valueOf(_not);
-                }
-              };
-            Iterable<DerivedField> _filter = IterableExtensions.<DerivedField>filter(_uniqueDerivedFields, _function);
-            int _size = IterableExtensions.size(_filter);
-            boolean _greaterThan = (_size > 0);
-            return Boolean.valueOf(_greaterThan);
-          }
-        };
+        public Boolean apply(final Entity e) {
+          Iterable<DerivedField> _uniqueDerivedFields = Validation.this._modelExtensions.getUniqueDerivedFields(e);
+          final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
+            public Boolean apply(final DerivedField f) {
+              boolean _isPrimaryKey = f.isPrimaryKey();
+              boolean _not = (!_isPrimaryKey);
+              return Boolean.valueOf(_not);
+            }
+          };
+          Iterable<DerivedField> _filter = IterableExtensions.<DerivedField>filter(_uniqueDerivedFields, _function);
+          int _size = IterableExtensions.size(_filter);
+          boolean _greaterThan = (_size > 0);
+          return Boolean.valueOf(_greaterThan);
+        }
+      };
       boolean _exists = IterableExtensions.<Entity>exists(_allEntities, _function);
       if (_exists) {
         _builder.newLine();
@@ -513,11 +513,11 @@ public class Validation {
       if (_not_1) {
         {
           final Function1<DatetimeField,Boolean> _function_1 = new Function1<DatetimeField,Boolean>() {
-              public Boolean apply(final DatetimeField e) {
-                boolean _isPast = e.isPast();
-                return Boolean.valueOf(_isPast);
-              }
-            };
+            public Boolean apply(final DatetimeField e) {
+              boolean _isPast = e.isPast();
+              return Boolean.valueOf(_isPast);
+            }
+          };
           boolean _exists_1 = IterableExtensions.<DatetimeField>exists(datetimeFields, _function_1);
           if (_exists_1) {
             _builder.append("        ");
@@ -556,11 +556,11 @@ public class Validation {
         }
         {
           final Function1<DatetimeField,Boolean> _function_2 = new Function1<DatetimeField,Boolean>() {
-              public Boolean apply(final DatetimeField e) {
-                boolean _isFuture = e.isFuture();
-                return Boolean.valueOf(_isFuture);
-              }
-            };
+            public Boolean apply(final DatetimeField e) {
+              boolean _isFuture = e.isFuture();
+              return Boolean.valueOf(_isFuture);
+            }
+          };
           boolean _exists_2 = IterableExtensions.<DatetimeField>exists(datetimeFields, _function_2);
           if (_exists_2) {
             _builder.append("        ");
@@ -609,11 +609,11 @@ public class Validation {
       if (_not_2) {
         {
           final Function1<DateField,Boolean> _function_3 = new Function1<DateField,Boolean>() {
-              public Boolean apply(final DateField e) {
-                boolean _isPast = e.isPast();
-                return Boolean.valueOf(_isPast);
-              }
-            };
+            public Boolean apply(final DateField e) {
+              boolean _isPast = e.isPast();
+              return Boolean.valueOf(_isPast);
+            }
+          };
           boolean _exists_3 = IterableExtensions.<DateField>exists(dateFields, _function_3);
           if (_exists_3) {
             _builder.append("        ");
@@ -652,11 +652,11 @@ public class Validation {
         }
         {
           final Function1<DateField,Boolean> _function_4 = new Function1<DateField,Boolean>() {
-              public Boolean apply(final DateField e) {
-                boolean _isFuture = e.isFuture();
-                return Boolean.valueOf(_isFuture);
-              }
-            };
+            public Boolean apply(final DateField e) {
+              boolean _isFuture = e.isFuture();
+              return Boolean.valueOf(_isFuture);
+            }
+          };
           boolean _exists_4 = IterableExtensions.<DateField>exists(dateFields, _function_4);
           if (_exists_4) {
             _builder.append("        ");
@@ -705,11 +705,11 @@ public class Validation {
       if (_not_3) {
         {
           final Function1<TimeField,Boolean> _function_5 = new Function1<TimeField,Boolean>() {
-              public Boolean apply(final TimeField e) {
-                boolean _isPast = e.isPast();
-                return Boolean.valueOf(_isPast);
-              }
-            };
+            public Boolean apply(final TimeField e) {
+              boolean _isPast = e.isPast();
+              return Boolean.valueOf(_isPast);
+            }
+          };
           boolean _exists_5 = IterableExtensions.<TimeField>exists(timeFields, _function_5);
           if (_exists_5) {
             _builder.append("        ");
@@ -741,11 +741,11 @@ public class Validation {
         }
         {
           final Function1<TimeField,Boolean> _function_6 = new Function1<TimeField,Boolean>() {
-              public Boolean apply(final TimeField e) {
-                boolean _isFuture = e.isFuture();
-                return Boolean.valueOf(_isFuture);
-              }
-            };
+            public Boolean apply(final TimeField e) {
+              boolean _isFuture = e.isFuture();
+              return Boolean.valueOf(_isFuture);
+            }
+          };
           boolean _exists_6 = IterableExtensions.<TimeField>exists(timeFields, _function_6);
           if (_exists_6) {
             _builder.append("        ");
@@ -902,21 +902,21 @@ public class Validation {
     {
       EList<Entity> _allEntities_2 = this._modelExtensions.getAllEntities(it);
       final Function1<Entity,Boolean> _function_7 = new Function1<Entity,Boolean>() {
-          public Boolean apply(final Entity e) {
-            Iterable<DerivedField> _uniqueDerivedFields = Validation.this._modelExtensions.getUniqueDerivedFields(e);
-            final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-                public Boolean apply(final DerivedField f) {
-                  boolean _isPrimaryKey = f.isPrimaryKey();
-                  boolean _not = (!_isPrimaryKey);
-                  return Boolean.valueOf(_not);
-                }
-              };
-            Iterable<DerivedField> _filter = IterableExtensions.<DerivedField>filter(_uniqueDerivedFields, _function);
-            int _size = IterableExtensions.size(_filter);
-            boolean _greaterThan = (_size > 0);
-            return Boolean.valueOf(_greaterThan);
-          }
-        };
+        public Boolean apply(final Entity e) {
+          Iterable<DerivedField> _uniqueDerivedFields = Validation.this._modelExtensions.getUniqueDerivedFields(e);
+          final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
+            public Boolean apply(final DerivedField f) {
+              boolean _isPrimaryKey = f.isPrimaryKey();
+              boolean _not = (!_isPrimaryKey);
+              return Boolean.valueOf(_not);
+            }
+          };
+          Iterable<DerivedField> _filter = IterableExtensions.<DerivedField>filter(_uniqueDerivedFields, _function);
+          int _size = IterableExtensions.size(_filter);
+          boolean _greaterThan = (_size > 0);
+          return Boolean.valueOf(_greaterThan);
+        }
+      };
       boolean _exists_7 = IterableExtensions.<Entity>exists(_allEntities_2, _function_7);
       if (_exists_7) {
         _builder.append("        ");

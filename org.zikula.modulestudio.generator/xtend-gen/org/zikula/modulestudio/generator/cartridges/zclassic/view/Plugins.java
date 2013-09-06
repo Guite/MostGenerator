@@ -137,11 +137,11 @@ public class Plugins {
     }
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _isGeographical = e.isGeographical();
-          return Boolean.valueOf(_isGeographical);
-        }
-      };
+      public Boolean apply(final Entity e) {
+        boolean _isGeographical = e.isGeographical();
+        return Boolean.valueOf(_isGeographical);
+      }
+    };
     boolean _exists = IterableExtensions.<Entity>exists(_allEntities, _function);
     if (_exists) {
       FormatGeoData _formatGeoData = new FormatGeoData();
@@ -174,11 +174,11 @@ public class Plugins {
     }
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _isGeographical = e.isGeographical();
-          return Boolean.valueOf(_isGeographical);
-        }
-      };
+      public Boolean apply(final Entity e) {
+        boolean _isGeographical = e.isGeographical();
+        return Boolean.valueOf(_isGeographical);
+      }
+    };
     boolean _exists = IterableExtensions.<Entity>exists(_allEntities, _function);
     if (_exists) {
       GeoInput _geoInput = new GeoInput();
@@ -186,11 +186,11 @@ public class Plugins {
     }
     EList<Models> _models = it.getModels();
     final Function1<Models,EList<Relationship>> _function_1 = new Function1<Models,EList<Relationship>>() {
-        public EList<Relationship> apply(final Models e) {
-          EList<Relationship> _relations = e.getRelations();
-          return _relations;
-        }
-      };
+      public EList<Relationship> apply(final Models e) {
+        EList<Relationship> _relations = e.getRelations();
+        return _relations;
+      }
+    };
     List<EList<Relationship>> _map = ListExtensions.<Models, EList<Relationship>>map(_models, _function_1);
     Iterable<Relationship> _flatten = Iterables.<Relationship>concat(_map);
     List<Relationship> _list = IterableExtensions.<Relationship>toList(_flatten);
@@ -214,11 +214,11 @@ public class Plugins {
     }
     EList<Models> _models_1 = it.getModels();
     final Function1<Models,EList<Relationship>> _function_2 = new Function1<Models,EList<Relationship>>() {
-        public EList<Relationship> apply(final Models e) {
-          EList<Relationship> _relations = e.getRelations();
-          return _relations;
-        }
-      };
+      public EList<Relationship> apply(final Models e) {
+        EList<Relationship> _relations = e.getRelations();
+        return _relations;
+      }
+    };
     List<EList<Relationship>> _map_1 = ListExtensions.<Models, EList<Relationship>>map(_models_1, _function_2);
     Iterable<Relationship> _flatten_1 = Iterables.<Relationship>concat(_map_1);
     List<Relationship> _list_1 = IterableExtensions.<Relationship>toList(_flatten_1);

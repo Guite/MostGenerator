@@ -137,18 +137,18 @@ public class Repository {
     this.app = it;
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _isMappedSuperClass = e.isMappedSuperClass();
-          boolean _not = (!_isMappedSuperClass);
-          return Boolean.valueOf(_not);
-        }
-      };
+      public Boolean apply(final Entity e) {
+        boolean _isMappedSuperClass = e.isMappedSuperClass();
+        boolean _not = (!_isMappedSuperClass);
+        return Boolean.valueOf(_not);
+      }
+    };
     Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
     final Procedure1<Entity> _function_1 = new Procedure1<Entity>() {
-        public void apply(final Entity e) {
-          Repository.this.generate(e);
-        }
-      };
+      public void apply(final Entity e) {
+        Repository.this.generate(e);
+      }
+    };
     IterableExtensions.<Entity>forEach(_filter, _function_1);
     LinkTable _linkTable = new LinkTable();
     final LinkTable linkTable = _linkTable;
@@ -573,32 +573,32 @@ public class Repository {
     EList<EntityField> _fields_1 = it.getFields();
     Iterable<TextField> _filter = Iterables.<TextField>filter(_fields_1, TextField.class);
     final Function1<TextField,Boolean> _function = new Function1<TextField,Boolean>() {
-        public Boolean apply(final TextField e) {
-          boolean _isLeading = e.isLeading();
-          boolean _not = (!_isLeading);
-          return Boolean.valueOf(_not);
-        }
-      };
+      public Boolean apply(final TextField e) {
+        boolean _isLeading = e.isLeading();
+        boolean _not = (!_isLeading);
+        return Boolean.valueOf(_not);
+      }
+    };
     final Iterable<TextField> textFields = IterableExtensions.<TextField>filter(_filter, _function);
     _builder.newLineIfNotEmpty();
     _builder.append("        ");
     EList<EntityField> _fields_2 = it.getFields();
     Iterable<StringField> _filter_1 = Iterables.<StringField>filter(_fields_2, StringField.class);
     final Function1<StringField,Boolean> _function_1 = new Function1<StringField,Boolean>() {
-        public Boolean apply(final StringField e) {
-          boolean _and = false;
-          boolean _isLeading = e.isLeading();
-          boolean _not = (!_isLeading);
-          if (!_not) {
-            _and = false;
-          } else {
-            boolean _isPassword = e.isPassword();
-            boolean _not_1 = (!_isPassword);
-            _and = (_not && _not_1);
-          }
-          return Boolean.valueOf(_and);
+      public Boolean apply(final StringField e) {
+        boolean _and = false;
+        boolean _isLeading = e.isLeading();
+        boolean _not = (!_isLeading);
+        if (!_not) {
+          _and = false;
+        } else {
+          boolean _isPassword = e.isPassword();
+          boolean _not_1 = (!_isPassword);
+          _and = (_not && _not_1);
         }
-      };
+        return Boolean.valueOf(_and);
+      }
+    };
     final Iterable<StringField> stringFields = IterableExtensions.<StringField>filter(_filter_1, _function_1);
     _builder.newLineIfNotEmpty();
     {
@@ -3077,21 +3077,21 @@ public class Repository {
     _builder.append("    ");
     Iterable<DerivedField> _displayFields = this._modelExtensions.getDisplayFields(it);
     final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-        public Boolean apply(final DerivedField e) {
-          boolean _isContainedInTextualSearch = Repository.this.isContainedInTextualSearch(e);
-          return Boolean.valueOf(_isContainedInTextualSearch);
-        }
-      };
+      public Boolean apply(final DerivedField e) {
+        boolean _isContainedInTextualSearch = Repository.this.isContainedInTextualSearch(e);
+        return Boolean.valueOf(_isContainedInTextualSearch);
+      }
+    };
     final Iterable<DerivedField> searchFields = IterableExtensions.<DerivedField>filter(_displayFields, _function);
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     Iterable<DerivedField> _displayFields_1 = this._modelExtensions.getDisplayFields(it);
     final Function1<DerivedField,Boolean> _function_1 = new Function1<DerivedField,Boolean>() {
-        public Boolean apply(final DerivedField e) {
-          boolean _isContainedInNumericSearch = Repository.this.isContainedInNumericSearch(e);
-          return Boolean.valueOf(_isContainedInNumericSearch);
-        }
-      };
+      public Boolean apply(final DerivedField e) {
+        boolean _isContainedInNumericSearch = Repository.this.isContainedInNumericSearch(e);
+        return Boolean.valueOf(_isContainedInNumericSearch);
+      }
+    };
     final Iterable<DerivedField> searchFieldsNumeric = IterableExtensions.<DerivedField>filter(_displayFields_1, _function_1);
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
@@ -3907,16 +3907,16 @@ public class Repository {
           EList<Relationship> _incoming = _entity.getIncoming();
           Iterable<JoinRelationship> _filter = Iterables.<JoinRelationship>filter(_incoming, JoinRelationship.class);
           final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-              public Boolean apply(final JoinRelationship e) {
-                String[] _sourceFields = Repository.this._modelJoinExtensions.getSourceFields(e);
-                String _head = IterableExtensions.<String>head(((Iterable<String>)Conversions.doWrapArray(_sourceFields)));
-                String _formatForDB = Repository.this._formattingExtensions.formatForDB(_head);
-                String _name = _derivedField.getName();
-                String _formatForDB_1 = Repository.this._formattingExtensions.formatForDB(_name);
-                boolean _equals = Objects.equal(_formatForDB, _formatForDB_1);
-                return Boolean.valueOf(_equals);
-              }
-            };
+            public Boolean apply(final JoinRelationship e) {
+              String[] _sourceFields = Repository.this._modelJoinExtensions.getSourceFields(e);
+              String _head = IterableExtensions.<String>head(((Iterable<String>)Conversions.doWrapArray(_sourceFields)));
+              String _formatForDB = Repository.this._formattingExtensions.formatForDB(_head);
+              String _name = _derivedField.getName();
+              String _formatForDB_1 = Repository.this._formattingExtensions.formatForDB(_name);
+              boolean _equals = Objects.equal(_formatForDB, _formatForDB_1);
+              return Boolean.valueOf(_equals);
+            }
+          };
           final Iterable<JoinRelationship> joins = IterableExtensions.<JoinRelationship>filter(_filter, _function);
           CharSequence _xifexpression = null;
           boolean _isEmpty = IterableExtensions.isEmpty(joins);

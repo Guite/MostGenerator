@@ -286,11 +286,11 @@ public class Search {
     {
       EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
       final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-          public Boolean apply(final Entity e) {
-            boolean _hasAbstractStringFieldsEntity = Search.this._modelExtensions.hasAbstractStringFieldsEntity(e);
-            return Boolean.valueOf(_hasAbstractStringFieldsEntity);
-          }
-        };
+        public Boolean apply(final Entity e) {
+          boolean _hasAbstractStringFieldsEntity = Search.this._modelExtensions.hasAbstractStringFieldsEntity(e);
+          return Boolean.valueOf(_hasAbstractStringFieldsEntity);
+        }
+      };
       Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
       for(final Entity entity : _filter) {
         _builder.append("    ");
@@ -451,11 +451,11 @@ public class Search {
     {
       EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
       final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-          public Boolean apply(final Entity e) {
-            boolean _hasAbstractStringFieldsEntity = Search.this._modelExtensions.hasAbstractStringFieldsEntity(e);
-            return Boolean.valueOf(_hasAbstractStringFieldsEntity);
-          }
-        };
+        public Boolean apply(final Entity e) {
+          boolean _hasAbstractStringFieldsEntity = Search.this._modelExtensions.hasAbstractStringFieldsEntity(e);
+          return Boolean.valueOf(_hasAbstractStringFieldsEntity);
+        }
+      };
       Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
       for(final Entity entity : _filter) {
         _builder.append("            ");
@@ -566,11 +566,11 @@ public class Search {
     _builder.append("        ");
     Iterable<UserController> _allUserControllers = this._controllerExtensions.getAllUserControllers(it);
     final Function1<UserController,Boolean> _function_1 = new Function1<UserController,Boolean>() {
-        public Boolean apply(final UserController e) {
-          boolean _hasActions = Search.this._controllerExtensions.hasActions(e, "display");
-          return Boolean.valueOf(_hasActions);
-        }
-      };
+      public Boolean apply(final UserController e) {
+        boolean _hasActions = Search.this._controllerExtensions.hasActions(e, "display");
+        return Boolean.valueOf(_hasActions);
+      }
+    };
     Iterable<UserController> _filter_1 = IterableExtensions.<UserController>filter(_allUserControllers, _function_1);
     boolean _isEmpty = IterableExtensions.isEmpty(_filter_1);
     final boolean hasUserDisplay = (!_isEmpty);
@@ -788,11 +788,11 @@ public class Search {
     _builder.append("    ");
     Iterable<UserController> _allUserControllers = this._controllerExtensions.getAllUserControllers(it);
     final Function1<UserController,Boolean> _function = new Function1<UserController,Boolean>() {
-        public Boolean apply(final UserController e) {
-          boolean _hasActions = Search.this._controllerExtensions.hasActions(e, "display");
-          return Boolean.valueOf(_hasActions);
-        }
-      };
+      public Boolean apply(final UserController e) {
+        boolean _hasActions = Search.this._controllerExtensions.hasActions(e, "display");
+        return Boolean.valueOf(_hasActions);
+      }
+    };
     Iterable<UserController> _filter = IterableExtensions.<UserController>filter(_allUserControllers, _function);
     boolean _isEmpty = IterableExtensions.isEmpty(_filter);
     final boolean hasUserDisplay = (!_isEmpty);

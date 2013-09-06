@@ -169,11 +169,11 @@ public class InstallerView {
         {
           EList<Models> _models = it.getModels();
           final Function1<Models,EList<Relationship>> _function = new Function1<Models,EList<Relationship>>() {
-              public EList<Relationship> apply(final Models e) {
-                EList<Relationship> _relations = e.getRelations();
-                return _relations;
-              }
-            };
+            public EList<Relationship> apply(final Models e) {
+              EList<Relationship> _relations = e.getRelations();
+              return _relations;
+            }
+          };
           List<EList<Relationship>> _map = ListExtensions.<Models, EList<Relationship>>map(_models, _function);
           int _size_1 = _map.size();
           boolean _greaterThan_1 = (_size_1 > 1);
@@ -315,18 +315,18 @@ public class InstallerView {
     {
       EList<Controller> _allControllers = this._controllerExtensions.getAllControllers(it);
       final Function1<Controller,Boolean> _function_1 = new Function1<Controller,Boolean>() {
-          public Boolean apply(final Controller e) {
-            boolean _or = false;
-            boolean _hasActions = InstallerView.this._controllerExtensions.hasActions(e, "view");
-            if (_hasActions) {
-              _or = true;
-            } else {
-              boolean _hasActions_1 = InstallerView.this._controllerExtensions.hasActions(e, "display");
-              _or = (_hasActions || _hasActions_1);
-            }
-            return Boolean.valueOf(_or);
+        public Boolean apply(final Controller e) {
+          boolean _or = false;
+          boolean _hasActions = InstallerView.this._controllerExtensions.hasActions(e, "view");
+          if (_hasActions) {
+            _or = true;
+          } else {
+            boolean _hasActions_1 = InstallerView.this._controllerExtensions.hasActions(e, "display");
+            _or = (_hasActions || _hasActions_1);
           }
-        };
+          return Boolean.valueOf(_or);
+        }
+      };
       Iterable<Controller> _filter = IterableExtensions.<Controller>filter(_allControllers, _function_1);
       boolean _isEmpty = IterableExtensions.isEmpty(_filter);
       boolean _not_1 = (!_isEmpty);
@@ -340,11 +340,11 @@ public class InstallerView {
         {
           EList<Controller> _allControllers_1 = this._controllerExtensions.getAllControllers(it);
           final Function1<Controller,Boolean> _function_2 = new Function1<Controller,Boolean>() {
-              public Boolean apply(final Controller e) {
-                boolean _hasActions = InstallerView.this._controllerExtensions.hasActions(e, "view");
-                return Boolean.valueOf(_hasActions);
-              }
-            };
+            public Boolean apply(final Controller e) {
+              boolean _hasActions = InstallerView.this._controllerExtensions.hasActions(e, "view");
+              return Boolean.valueOf(_hasActions);
+            }
+          };
           Iterable<Controller> _filter_1 = IterableExtensions.<Controller>filter(_allControllers_1, _function_2);
           boolean _isEmpty_1 = IterableExtensions.isEmpty(_filter_1);
           boolean _not_2 = (!_isEmpty_1);
@@ -355,11 +355,11 @@ public class InstallerView {
         {
           EList<Controller> _allControllers_2 = this._controllerExtensions.getAllControllers(it);
           final Function1<Controller,Boolean> _function_3 = new Function1<Controller,Boolean>() {
-              public Boolean apply(final Controller e) {
-                boolean _hasActions = InstallerView.this._controllerExtensions.hasActions(e, "display");
-                return Boolean.valueOf(_hasActions);
-              }
-            };
+            public Boolean apply(final Controller e) {
+              boolean _hasActions = InstallerView.this._controllerExtensions.hasActions(e, "display");
+              return Boolean.valueOf(_hasActions);
+            }
+          };
           Iterable<Controller> _filter_2 = IterableExtensions.<Controller>filter(_allControllers_2, _function_3);
           boolean _isEmpty_2 = IterableExtensions.isEmpty(_filter_2);
           boolean _not_3 = (!_isEmpty_2);

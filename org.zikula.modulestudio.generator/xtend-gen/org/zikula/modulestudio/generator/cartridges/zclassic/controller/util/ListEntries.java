@@ -428,11 +428,11 @@ public class ListEntries {
     {
       EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
       final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-          public Boolean apply(final Entity e) {
-            boolean _hasListFieldsEntity = ListEntries.this._modelExtensions.hasListFieldsEntity(e);
-            return Boolean.valueOf(_hasListFieldsEntity);
-          }
-        };
+        public Boolean apply(final Entity e) {
+          boolean _hasListFieldsEntity = ListEntries.this._modelExtensions.hasListFieldsEntity(e);
+          return Boolean.valueOf(_hasListFieldsEntity);
+        }
+      };
       Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
       for(final Entity entity : _filter) {
         _builder.append("        ");
@@ -544,11 +544,11 @@ public class ListEntries {
     {
       EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
       final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-          public Boolean apply(final Entity e) {
-            boolean _hasListFieldsEntity = ListEntries.this._modelExtensions.hasListFieldsEntity(e);
-            return Boolean.valueOf(_hasListFieldsEntity);
-          }
-        };
+        public Boolean apply(final Entity e) {
+          boolean _hasListFieldsEntity = ListEntries.this._modelExtensions.hasListFieldsEntity(e);
+          return Boolean.valueOf(_hasListFieldsEntity);
+        }
+      };
       Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
       for(final Entity entity : _filter) {
         _builder.append("        ");
@@ -672,20 +672,20 @@ public class ListEntries {
         _builder.append("    ");
         EList<ListFieldItem> _items = it.getItems();
         final Function1<ListFieldItem,Boolean> _function = new Function1<ListFieldItem,Boolean>() {
-            public Boolean apply(final ListFieldItem e) {
-              boolean _and = false;
-              String _value = e.getValue();
-              boolean _notEquals = (!Objects.equal(_value, "initial"));
-              if (!_notEquals) {
-                _and = false;
-              } else {
-                String _value_1 = e.getValue();
-                boolean _notEquals_1 = (!Objects.equal(_value_1, "deleted"));
-                _and = (_notEquals && _notEquals_1);
-              }
-              return Boolean.valueOf(_and);
+          public Boolean apply(final ListFieldItem e) {
+            boolean _and = false;
+            String _value = e.getValue();
+            boolean _notEquals = (!Objects.equal(_value, "initial"));
+            if (!_notEquals) {
+              _and = false;
+            } else {
+              String _value_1 = e.getValue();
+              boolean _notEquals_1 = (!Objects.equal(_value_1, "deleted"));
+              _and = (_notEquals && _notEquals_1);
             }
-          };
+            return Boolean.valueOf(_and);
+          }
+        };
         final Iterable<ListFieldItem> visibleStates = IterableExtensions.<ListFieldItem>filter(_items, _function);
         _builder.newLineIfNotEmpty();
         _builder.append("    ");

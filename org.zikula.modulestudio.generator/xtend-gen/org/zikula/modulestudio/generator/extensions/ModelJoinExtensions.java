@@ -179,11 +179,11 @@ public class ModelJoinExtensions {
   public Iterable<JoinRelationship> getBidirectionalIncomingJoinRelations(final Entity it) {
     Iterable<JoinRelationship> _incomingJoinRelations = this.getIncomingJoinRelations(it);
     final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          boolean _isBidirectional = e.isBidirectional();
-          return Boolean.valueOf(_isBidirectional);
-        }
-      };
+      public Boolean apply(final JoinRelationship e) {
+        boolean _isBidirectional = e.isBidirectional();
+        return Boolean.valueOf(_isBidirectional);
+      }
+    };
     Iterable<JoinRelationship> _filter = IterableExtensions.<JoinRelationship>filter(_incomingJoinRelations, _function);
     return _filter;
   }
@@ -206,11 +206,11 @@ public class ModelJoinExtensions {
   public Iterable<JoinRelationship> getBidirectionalIncomingJoinRelationsWithOneSource(final Entity it) {
     Iterable<JoinRelationship> _incomingJoinRelationsWithOneSource = this.getIncomingJoinRelationsWithOneSource(it);
     final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          boolean _isBidirectional = e.isBidirectional();
-          return Boolean.valueOf(_isBidirectional);
-        }
-      };
+      public Boolean apply(final JoinRelationship e) {
+        boolean _isBidirectional = e.isBidirectional();
+        return Boolean.valueOf(_isBidirectional);
+      }
+    };
     Iterable<JoinRelationship> _filter = IterableExtensions.<JoinRelationship>filter(_incomingJoinRelationsWithOneSource, _function);
     return _filter;
   }
@@ -248,12 +248,12 @@ public class ModelJoinExtensions {
     Iterable<ManyToManyRelationship> _filter_1 = Iterables.<ManyToManyRelationship>filter(_incoming, ManyToManyRelationship.class);
     Iterable<JoinRelationship> _plus = Iterables.<JoinRelationship>concat(_filter, _filter_1);
     final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          boolean _isBidirectional = e.isBidirectional();
-          boolean _equals = (_isBidirectional == true);
-          return Boolean.valueOf(_equals);
-        }
-      };
+      public Boolean apply(final JoinRelationship e) {
+        boolean _isBidirectional = e.isBidirectional();
+        boolean _equals = (_isBidirectional == true);
+        return Boolean.valueOf(_equals);
+      }
+    };
     Iterable<JoinRelationship> _filter_2 = IterableExtensions.<JoinRelationship>filter(_plus, _function);
     return _filter_2;
   }
@@ -315,12 +315,12 @@ public class ModelJoinExtensions {
     } else {
       EList<EntityField> _fields = it.getFields();
       final Function1<EntityField,Boolean> _function = new Function1<EntityField,Boolean>() {
-          public Boolean apply(final EntityField e) {
-            String _name = e.getName();
-            boolean _equals = Objects.equal(_name, refField);
-            return Boolean.valueOf(_equals);
-          }
-        };
+        public Boolean apply(final EntityField e) {
+          String _name = e.getName();
+          boolean _equals = Objects.equal(_name, refField);
+          return Boolean.valueOf(_equals);
+        }
+      };
       EntityField _findFirst = IterableExtensions.<EntityField>findFirst(_fields, _function);
       String _name_1 = _findFirst.getName();
       String _formatForCode = this._formattingExtensions.formatForCode(_name_1);
@@ -536,20 +536,20 @@ public class ModelJoinExtensions {
   public boolean isIndexByTarget(final Entity it) {
     EList<Relationship> _incoming = it.getIncoming();
     final Function1<Relationship,Boolean> _function = new Function1<Relationship,Boolean>() {
-        public Boolean apply(final Relationship e) {
-          boolean _and = false;
-          String _indexByField = ModelJoinExtensions.this.getIndexByField(e);
-          boolean _tripleNotEquals = (_indexByField != null);
-          if (!_tripleNotEquals) {
-            _and = false;
-          } else {
-            String _indexByField_1 = ModelJoinExtensions.this.getIndexByField(e);
-            boolean _notEquals = (!Objects.equal(_indexByField_1, ""));
-            _and = (_tripleNotEquals && _notEquals);
-          }
-          return Boolean.valueOf(_and);
+      public Boolean apply(final Relationship e) {
+        boolean _and = false;
+        String _indexByField = ModelJoinExtensions.this.getIndexByField(e);
+        boolean _tripleNotEquals = (_indexByField != null);
+        if (!_tripleNotEquals) {
+          _and = false;
+        } else {
+          String _indexByField_1 = ModelJoinExtensions.this.getIndexByField(e);
+          boolean _notEquals = (!Objects.equal(_indexByField_1, ""));
+          _and = (_tripleNotEquals && _notEquals);
         }
-      };
+        return Boolean.valueOf(_and);
+      }
+    };
     Iterable<Relationship> _filter = IterableExtensions.<Relationship>filter(_incoming, _function);
     boolean _isEmpty = IterableExtensions.isEmpty(_filter);
     boolean _not = (!_isEmpty);
@@ -564,13 +564,13 @@ public class ModelJoinExtensions {
     Entity _entity = it.getEntity();
     EList<Relationship> _incoming = _entity.getIncoming();
     final Function1<Relationship,Boolean> _function = new Function1<Relationship,Boolean>() {
-        public Boolean apply(final Relationship e) {
-          String _indexByField = ModelJoinExtensions.this.getIndexByField(e);
-          String _name = it.getName();
-          boolean _equals = Objects.equal(_indexByField, _name);
-          return Boolean.valueOf(_equals);
-        }
-      };
+      public Boolean apply(final Relationship e) {
+        String _indexByField = ModelJoinExtensions.this.getIndexByField(e);
+        String _name = it.getName();
+        boolean _equals = Objects.equal(_indexByField, _name);
+        return Boolean.valueOf(_equals);
+      }
+    };
     Iterable<Relationship> _filter = IterableExtensions.<Relationship>filter(_incoming, _function);
     boolean _isEmpty = IterableExtensions.isEmpty(_filter);
     boolean _not = (!_isEmpty);
@@ -663,20 +663,20 @@ public class ModelJoinExtensions {
       EList<Relationship> _outgoing = _entity.getOutgoing();
       Iterable<OneToManyRelationship> _filter = Iterables.<OneToManyRelationship>filter(_outgoing, OneToManyRelationship.class);
       final Function1<OneToManyRelationship,Boolean> _function = new Function1<OneToManyRelationship,Boolean>() {
-          public Boolean apply(final OneToManyRelationship e) {
-            boolean _and = false;
-            boolean _isBidirectional = e.isBidirectional();
-            if (!_isBidirectional) {
-              _and = false;
-            } else {
-              String _targetAlias = e.getTargetAlias();
-              String _head = IterableExtensions.<String>head(((Iterable<String>)Conversions.doWrapArray(aggregateDetails)));
-              boolean _equals = Objects.equal(_targetAlias, _head);
-              _and = (_isBidirectional && _equals);
-            }
-            return Boolean.valueOf(_and);
+        public Boolean apply(final OneToManyRelationship e) {
+          boolean _and = false;
+          boolean _isBidirectional = e.isBidirectional();
+          if (!_isBidirectional) {
+            _and = false;
+          } else {
+            String _targetAlias = e.getTargetAlias();
+            Object _head = IterableExtensions.<Object>head(((Iterable<Object>)Conversions.doWrapArray(aggregateDetails)));
+            boolean _equals = Objects.equal(_targetAlias, _head);
+            _and = (_isBidirectional && _equals);
           }
-        };
+          return Boolean.valueOf(_and);
+        }
+      };
       OneToManyRelationship _findFirst = IterableExtensions.<OneToManyRelationship>findFirst(_filter, _function);
       _xblockexpression = (_findFirst);
     }
@@ -711,13 +711,13 @@ public class ModelJoinExtensions {
       EList<EntityField> _fields = _aggregateTargetEntity.getFields();
       Iterable<DerivedField> _filter = Iterables.<DerivedField>filter(_fields, DerivedField.class);
       final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-          public Boolean apply(final DerivedField e) {
-            String _name = e.getName();
-            String _get = aggregateDetails[1];
-            boolean _equals = Objects.equal(_name, _get);
-            return Boolean.valueOf(_equals);
-          }
-        };
+        public Boolean apply(final DerivedField e) {
+          String _name = e.getName();
+          Object _get = aggregateDetails[1];
+          boolean _equals = Objects.equal(_name, _get);
+          return Boolean.valueOf(_equals);
+        }
+      };
       DerivedField _findFirst = IterableExtensions.<DerivedField>findFirst(_filter, _function);
       _xblockexpression = (_findFirst);
     }
@@ -732,32 +732,32 @@ public class ModelJoinExtensions {
     EList<Relationship> _incoming = _entity.getIncoming();
     Iterable<OneToManyRelationship> _filter = Iterables.<OneToManyRelationship>filter(_incoming, OneToManyRelationship.class);
     final Function1<OneToManyRelationship,Boolean> _function = new Function1<OneToManyRelationship,Boolean>() {
-        public Boolean apply(final OneToManyRelationship e) {
-          Entity _source = e.getSource();
-          Iterable<IntegerField> _aggregateFields = ModelJoinExtensions.this._modelExtensions.getAggregateFields(_source);
-          boolean _isEmpty = IterableExtensions.isEmpty(_aggregateFields);
-          boolean _not = (!_isEmpty);
-          return Boolean.valueOf(_not);
-        }
-      };
+      public Boolean apply(final OneToManyRelationship e) {
+        Entity _source = e.getSource();
+        Iterable<IntegerField> _aggregateFields = ModelJoinExtensions.this._modelExtensions.getAggregateFields(_source);
+        boolean _isEmpty = IterableExtensions.isEmpty(_aggregateFields);
+        boolean _not = (!_isEmpty);
+        return Boolean.valueOf(_not);
+      }
+    };
     Iterable<OneToManyRelationship> _filter_1 = IterableExtensions.<OneToManyRelationship>filter(_filter, _function);
     final Function1<OneToManyRelationship,Boolean> _function_1 = new Function1<OneToManyRelationship,Boolean>() {
-        public Boolean apply(final OneToManyRelationship e) {
-          Entity _source = e.getSource();
-          Iterable<IntegerField> _aggregateFields = ModelJoinExtensions.this._modelExtensions.getAggregateFields(_source);
-          final Function1<IntegerField,Boolean> _function = new Function1<IntegerField,Boolean>() {
-              public Boolean apply(final IntegerField f) {
-                DerivedField _aggregateTargetField = ModelJoinExtensions.this.getAggregateTargetField(f);
-                boolean _equals = Objects.equal(_aggregateTargetField, it);
-                return Boolean.valueOf(_equals);
-              }
-            };
-          Iterable<IntegerField> _filter = IterableExtensions.<IntegerField>filter(_aggregateFields, _function);
-          boolean _isEmpty = IterableExtensions.isEmpty(_filter);
-          boolean _not = (!_isEmpty);
-          return Boolean.valueOf(_not);
-        }
-      };
+      public Boolean apply(final OneToManyRelationship e) {
+        Entity _source = e.getSource();
+        Iterable<IntegerField> _aggregateFields = ModelJoinExtensions.this._modelExtensions.getAggregateFields(_source);
+        final Function1<IntegerField,Boolean> _function = new Function1<IntegerField,Boolean>() {
+          public Boolean apply(final IntegerField f) {
+            DerivedField _aggregateTargetField = ModelJoinExtensions.this.getAggregateTargetField(f);
+            boolean _equals = Objects.equal(_aggregateTargetField, it);
+            return Boolean.valueOf(_equals);
+          }
+        };
+        Iterable<IntegerField> _filter = IterableExtensions.<IntegerField>filter(_aggregateFields, _function);
+        boolean _isEmpty = IterableExtensions.isEmpty(_filter);
+        boolean _not = (!_isEmpty);
+        return Boolean.valueOf(_not);
+      }
+    };
     Iterable<OneToManyRelationship> _filter_2 = IterableExtensions.<OneToManyRelationship>filter(_filter_1, _function_1);
     return _filter_2;
   }
@@ -768,13 +768,13 @@ public class ModelJoinExtensions {
   public Iterable<DerivedField> getAggregators(final Entity it) {
     Iterable<DerivedField> _derivedFields = this._modelExtensions.getDerivedFields(it);
     final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-        public Boolean apply(final DerivedField e) {
-          Iterable<OneToManyRelationship> _aggregatingRelationships = ModelJoinExtensions.this.getAggregatingRelationships(e);
-          boolean _isEmpty = IterableExtensions.isEmpty(_aggregatingRelationships);
-          boolean _not = (!_isEmpty);
-          return Boolean.valueOf(_not);
-        }
-      };
+      public Boolean apply(final DerivedField e) {
+        Iterable<OneToManyRelationship> _aggregatingRelationships = ModelJoinExtensions.this.getAggregatingRelationships(e);
+        boolean _isEmpty = IterableExtensions.isEmpty(_aggregatingRelationships);
+        boolean _not = (!_isEmpty);
+        return Boolean.valueOf(_not);
+      }
+    };
     Iterable<DerivedField> _filter = IterableExtensions.<DerivedField>filter(_derivedFields, _function);
     return _filter;
   }

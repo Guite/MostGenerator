@@ -254,20 +254,20 @@ public class Config {
     {
       List<Variable> _allVariables = this._utils.getAllVariables(it);
       final Function1<Variable,Boolean> _function = new Function1<Variable,Boolean>() {
-          public Boolean apply(final Variable e) {
-            boolean _and = false;
-            String _documentation = e.getDocumentation();
-            boolean _tripleNotEquals = (_documentation != null);
-            if (!_tripleNotEquals) {
-              _and = false;
-            } else {
-              String _documentation_1 = e.getDocumentation();
-              boolean _notEquals = (!Objects.equal(_documentation_1, ""));
-              _and = (_tripleNotEquals && _notEquals);
-            }
-            return Boolean.valueOf(_and);
+        public Boolean apply(final Variable e) {
+          boolean _and = false;
+          String _documentation = e.getDocumentation();
+          boolean _tripleNotEquals = (_documentation != null);
+          if (!_tripleNotEquals) {
+            _and = false;
+          } else {
+            String _documentation_1 = e.getDocumentation();
+            boolean _notEquals = (!Objects.equal(_documentation_1, ""));
+            _and = (_tripleNotEquals && _notEquals);
           }
-        };
+          return Boolean.valueOf(_and);
+        }
+      };
       Iterable<Variable> _filter = IterableExtensions.<Variable>filter(_allVariables, _function);
       boolean _isEmpty = IterableExtensions.isEmpty(_filter);
       boolean _not = (!_isEmpty);

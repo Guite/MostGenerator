@@ -796,11 +796,11 @@ public class Styles {
     {
       EList<Controller> _allControllers = this._controllerExtensions.getAllControllers(it);
       final Function1<Controller,Boolean> _function = new Function1<Controller,Boolean>() {
-          public Boolean apply(final Controller e) {
-            boolean _hasActions = Styles.this._controllerExtensions.hasActions(e, "view");
-            return Boolean.valueOf(_hasActions);
-          }
-        };
+        public Boolean apply(final Controller e) {
+          boolean _hasActions = Styles.this._controllerExtensions.hasActions(e, "view");
+          return Boolean.valueOf(_hasActions);
+        }
+      };
       List<Boolean> _map = ListExtensions.<Controller, Boolean>map(_allControllers, _function);
       boolean _isEmpty = _map.isEmpty();
       boolean _not = (!_isEmpty);

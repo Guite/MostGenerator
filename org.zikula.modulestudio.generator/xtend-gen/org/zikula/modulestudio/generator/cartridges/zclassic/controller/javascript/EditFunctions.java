@@ -119,14 +119,14 @@ public class EditFunctions {
     {
       EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
       final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-          public Boolean apply(final Entity e) {
-            Iterable<DerivedField> _derivedFields = EditFunctions.this._modelExtensions.getDerivedFields(e);
-            Iterable<AbstractDateField> _filter = Iterables.<AbstractDateField>filter(_derivedFields, AbstractDateField.class);
-            boolean _isEmpty = IterableExtensions.isEmpty(_filter);
-            boolean _not = (!_isEmpty);
-            return Boolean.valueOf(_not);
-          }
-        };
+        public Boolean apply(final Entity e) {
+          Iterable<DerivedField> _derivedFields = EditFunctions.this._modelExtensions.getDerivedFields(e);
+          Iterable<AbstractDateField> _filter = Iterables.<AbstractDateField>filter(_derivedFields, AbstractDateField.class);
+          boolean _isEmpty = IterableExtensions.isEmpty(_filter);
+          boolean _not = (!_isEmpty);
+          return Boolean.valueOf(_not);
+        }
+      };
       Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
       boolean _isEmpty = IterableExtensions.isEmpty(_filter);
       boolean _not = (!_isEmpty);

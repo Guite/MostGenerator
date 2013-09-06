@@ -104,21 +104,21 @@ public class PersistenceTransformer {
       final ModulestudioFactory factory = ModulestudioFactory.eINSTANCE;
       IntegerField _createIntegerField = factory.createIntegerField();
       final Procedure1<IntegerField> _function = new Procedure1<IntegerField>() {
-          public void apply(final IntegerField it) {
-            String _xifexpression = null;
-            if ((isPrimary).booleanValue()) {
-              _xifexpression = "id";
-            } else {
-              String _formatForCode = PersistenceTransformer.this._formattingExtensions.formatForCode(colName);
-              String _plus = (_formatForCode + "_id");
-              _xifexpression = _plus;
-            }
-            it.setName(_xifexpression);
-            it.setLength(9);
-            it.setPrimaryKey((isPrimary).booleanValue());
-            it.setUnique((isPrimary).booleanValue());
+        public void apply(final IntegerField it) {
+          String _xifexpression = null;
+          if ((isPrimary).booleanValue()) {
+            _xifexpression = "id";
+          } else {
+            String _formatForCode = PersistenceTransformer.this._formattingExtensions.formatForCode(colName);
+            String _plus = (_formatForCode + "_id");
+            _xifexpression = _plus;
           }
-        };
+          it.setName(_xifexpression);
+          it.setLength(9);
+          it.setPrimaryKey((isPrimary).booleanValue());
+          it.setUnique((isPrimary).booleanValue());
+        }
+      };
       final IntegerField idField = ObjectExtensions.<IntegerField>operator_doubleArrow(_createIntegerField, _function);
       _xblockexpression = (idField);
     }
@@ -136,25 +136,25 @@ public class PersistenceTransformer {
       final ModulestudioFactory factory = ModulestudioFactory.eINSTANCE;
       ListField _createListField = factory.createListField();
       final Procedure1<ListField> _function = new Procedure1<ListField>() {
-          public void apply(final ListField it) {
-            it.setName("workflowState");
-            it.setDocumentation("the current workflow state");
-            it.setLength(20);
-            it.setDefaultValue("initial");
-            it.setMultiple(false);
-          }
-        };
+        public void apply(final ListField it) {
+          it.setName("workflowState");
+          it.setDocumentation("the current workflow state");
+          it.setLength(20);
+          it.setDefaultValue("initial");
+          it.setMultiple(false);
+        }
+      };
       final ListField listField = ObjectExtensions.<ListField>operator_doubleArrow(_createListField, _function);
       EList<ListFieldItem> _items = listField.getItems();
       ListFieldItem _createListFieldItem = factory.createListFieldItem();
       final Procedure1<ListFieldItem> _function_1 = new Procedure1<ListFieldItem>() {
-          public void apply(final ListFieldItem it) {
-            it.setName("Initial");
-            it.setValue("initial");
-            it.setDocumentation("Pseudo-state for content which is just created and not persisted yet.");
-            it.setDefault(true);
-          }
-        };
+        public void apply(final ListFieldItem it) {
+          it.setName("Initial");
+          it.setValue("initial");
+          it.setDocumentation("Pseudo-state for content which is just created and not persisted yet.");
+          it.setDefault(true);
+        }
+      };
       ListFieldItem _doubleArrow = ObjectExtensions.<ListFieldItem>operator_doubleArrow(_createListFieldItem, _function_1);
       _items.add(_doubleArrow);
       boolean _isOwnerPermission = entity.isOwnerPermission();
@@ -162,12 +162,12 @@ public class PersistenceTransformer {
         EList<ListFieldItem> _items_1 = listField.getItems();
         ListFieldItem _createListFieldItem_1 = factory.createListFieldItem();
         final Procedure1<ListFieldItem> _function_2 = new Procedure1<ListFieldItem>() {
-            public void apply(final ListFieldItem it) {
-              it.setName("Deferred");
-              it.setValue("deferred");
-              it.setDocumentation("Content has not been submitted yet or has been waiting, but was rejected.");
-            }
-          };
+          public void apply(final ListFieldItem it) {
+            it.setName("Deferred");
+            it.setValue("deferred");
+            it.setDocumentation("Content has not been submitted yet or has been waiting, but was rejected.");
+          }
+        };
         ListFieldItem _doubleArrow_1 = ObjectExtensions.<ListFieldItem>operator_doubleArrow(_createListFieldItem_1, _function_2);
         _items_1.add(_doubleArrow_1);
       }
@@ -177,12 +177,12 @@ public class PersistenceTransformer {
         EList<ListFieldItem> _items_2 = listField.getItems();
         ListFieldItem _createListFieldItem_2 = factory.createListFieldItem();
         final Procedure1<ListFieldItem> _function_3 = new Procedure1<ListFieldItem>() {
-            public void apply(final ListFieldItem it) {
-              it.setName("Waiting");
-              it.setValue("waiting");
-              it.setDocumentation("Content has been submitted and waits for approval.");
-            }
-          };
+          public void apply(final ListFieldItem it) {
+            it.setName("Waiting");
+            it.setValue("waiting");
+            it.setDocumentation("Content has been submitted and waits for approval.");
+          }
+        };
         ListFieldItem _doubleArrow_2 = ObjectExtensions.<ListFieldItem>operator_doubleArrow(_createListFieldItem_2, _function_3);
         _items_2.add(_doubleArrow_2);
         EntityWorkflowType _workflow_1 = entity.getWorkflow();
@@ -191,12 +191,12 @@ public class PersistenceTransformer {
           EList<ListFieldItem> _items_3 = listField.getItems();
           ListFieldItem _createListFieldItem_3 = factory.createListFieldItem();
           final Procedure1<ListFieldItem> _function_4 = new Procedure1<ListFieldItem>() {
-              public void apply(final ListFieldItem it) {
-                it.setName("Accepted");
-                it.setValue("accepted");
-                it.setDocumentation("Content has been submitted and accepted, but still waits for approval.");
-              }
-            };
+            public void apply(final ListFieldItem it) {
+              it.setName("Accepted");
+              it.setValue("accepted");
+              it.setDocumentation("Content has been submitted and accepted, but still waits for approval.");
+            }
+          };
           ListFieldItem _doubleArrow_3 = ObjectExtensions.<ListFieldItem>operator_doubleArrow(_createListFieldItem_3, _function_4);
           _items_3.add(_doubleArrow_3);
         }
@@ -204,12 +204,12 @@ public class PersistenceTransformer {
       EList<ListFieldItem> _items_4 = listField.getItems();
       ListFieldItem _createListFieldItem_4 = factory.createListFieldItem();
       final Procedure1<ListFieldItem> _function_5 = new Procedure1<ListFieldItem>() {
-          public void apply(final ListFieldItem it) {
-            it.setName("Approved");
-            it.setValue("approved");
-            it.setDocumentation("Content has been approved and is available online.");
-          }
-        };
+        public void apply(final ListFieldItem it) {
+          it.setName("Approved");
+          it.setValue("approved");
+          it.setDocumentation("Content has been approved and is available online.");
+        }
+      };
       ListFieldItem _doubleArrow_4 = ObjectExtensions.<ListFieldItem>operator_doubleArrow(_createListFieldItem_4, _function_5);
       _items_4.add(_doubleArrow_4);
       boolean _isHasTray = entity.isHasTray();
@@ -217,12 +217,12 @@ public class PersistenceTransformer {
         EList<ListFieldItem> _items_5 = listField.getItems();
         ListFieldItem _createListFieldItem_5 = factory.createListFieldItem();
         final Procedure1<ListFieldItem> _function_6 = new Procedure1<ListFieldItem>() {
-            public void apply(final ListFieldItem it) {
-              it.setName("Suspended");
-              it.setValue("suspended");
-              it.setDocumentation("Content has been approved, but is temporarily offline.");
-            }
-          };
+          public void apply(final ListFieldItem it) {
+            it.setName("Suspended");
+            it.setValue("suspended");
+            it.setDocumentation("Content has been approved, but is temporarily offline.");
+          }
+        };
         ListFieldItem _doubleArrow_5 = ObjectExtensions.<ListFieldItem>operator_doubleArrow(_createListFieldItem_5, _function_6);
         _items_5.add(_doubleArrow_5);
       }
@@ -231,12 +231,12 @@ public class PersistenceTransformer {
         EList<ListFieldItem> _items_6 = listField.getItems();
         ListFieldItem _createListFieldItem_6 = factory.createListFieldItem();
         final Procedure1<ListFieldItem> _function_7 = new Procedure1<ListFieldItem>() {
-            public void apply(final ListFieldItem it) {
-              it.setName("Archived");
-              it.setValue("archived");
-              it.setDocumentation("Content has reached the end and became archived.");
-            }
-          };
+          public void apply(final ListFieldItem it) {
+            it.setName("Archived");
+            it.setValue("archived");
+            it.setDocumentation("Content has reached the end and became archived.");
+          }
+        };
         ListFieldItem _doubleArrow_6 = ObjectExtensions.<ListFieldItem>operator_doubleArrow(_createListFieldItem_6, _function_7);
         _items_6.add(_doubleArrow_6);
       }
@@ -245,42 +245,42 @@ public class PersistenceTransformer {
         EList<ListFieldItem> _items_7 = listField.getItems();
         ListFieldItem _createListFieldItem_7 = factory.createListFieldItem();
         final Procedure1<ListFieldItem> _function_8 = new Procedure1<ListFieldItem>() {
-            public void apply(final ListFieldItem it) {
-              it.setName("Trashed");
-              it.setValue("trashed");
-              it.setDocumentation("Content has been marked as deleted, but is still persisted in the database.");
-            }
-          };
+          public void apply(final ListFieldItem it) {
+            it.setName("Trashed");
+            it.setValue("trashed");
+            it.setDocumentation("Content has been marked as deleted, but is still persisted in the database.");
+          }
+        };
         ListFieldItem _doubleArrow_7 = ObjectExtensions.<ListFieldItem>operator_doubleArrow(_createListFieldItem_7, _function_8);
         _items_7.add(_doubleArrow_7);
       }
       EList<ListFieldItem> _items_8 = listField.getItems();
       ListFieldItem _createListFieldItem_8 = factory.createListFieldItem();
       final Procedure1<ListFieldItem> _function_9 = new Procedure1<ListFieldItem>() {
-          public void apply(final ListFieldItem it) {
-            it.setName("Deleted");
-            it.setValue("deleted");
-            it.setDocumentation("Pseudo-state for content which has been deleted from the database.");
-          }
-        };
+        public void apply(final ListFieldItem it) {
+          it.setName("Deleted");
+          it.setValue("deleted");
+          it.setDocumentation("Pseudo-state for content which has been deleted from the database.");
+        }
+      };
       ListFieldItem _doubleArrow_8 = ObjectExtensions.<ListFieldItem>operator_doubleArrow(_createListFieldItem_8, _function_9);
       _items_8.add(_doubleArrow_8);
       EList<EntityField> _fields = entity.getFields();
       _fields.add(1, listField);
       EntityIndex _createEntityIndex = factory.createEntityIndex();
       final Procedure1<EntityIndex> _function_10 = new Procedure1<EntityIndex>() {
-          public void apply(final EntityIndex it) {
-            it.setName("workflowStateIndex");
-          }
-        };
+        public void apply(final EntityIndex it) {
+          it.setName("workflowStateIndex");
+        }
+      };
       final EntityIndex wfIndex = ObjectExtensions.<EntityIndex>operator_doubleArrow(_createEntityIndex, _function_10);
       EList<EntityIndexItem> _items_9 = wfIndex.getItems();
       EntityIndexItem _createEntityIndexItem = factory.createEntityIndexItem();
       final Procedure1<EntityIndexItem> _function_11 = new Procedure1<EntityIndexItem>() {
-          public void apply(final EntityIndexItem it) {
-            it.setName("workflowState");
-          }
-        };
+        public void apply(final EntityIndexItem it) {
+          it.setName("workflowState");
+        }
+      };
       EntityIndexItem _doubleArrow_9 = ObjectExtensions.<EntityIndexItem>operator_doubleArrow(_createEntityIndexItem, _function_11);
       _items_9.add(_doubleArrow_9);
       EList<EntityIndex> _indexes = entity.getIndexes();

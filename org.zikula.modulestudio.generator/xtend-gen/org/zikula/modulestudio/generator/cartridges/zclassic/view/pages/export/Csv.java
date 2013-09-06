@@ -112,12 +112,12 @@ public class Csv {
     {
       Iterable<DerivedField> _displayFields = this._modelExtensions.getDisplayFields(it);
       final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-          public Boolean apply(final DerivedField e) {
-            String _name = e.getName();
-            boolean _notEquals = (!Objects.equal(_name, "workflowState"));
-            return Boolean.valueOf(_notEquals);
-          }
-        };
+        public Boolean apply(final DerivedField e) {
+          String _name = e.getName();
+          boolean _notEquals = (!Objects.equal(_name, "workflowState"));
+          return Boolean.valueOf(_notEquals);
+        }
+      };
       Iterable<DerivedField> _filter = IterableExtensions.<DerivedField>filter(_displayFields, _function);
       boolean _hasElements = false;
       for(final DerivedField field : _filter) {
@@ -156,11 +156,11 @@ public class Csv {
       EList<Relationship> _incoming = it.getIncoming();
       Iterable<OneToManyRelationship> _filter_1 = Iterables.<OneToManyRelationship>filter(_incoming, OneToManyRelationship.class);
       final Function1<OneToManyRelationship,Boolean> _function_1 = new Function1<OneToManyRelationship,Boolean>() {
-          public Boolean apply(final OneToManyRelationship e) {
-            boolean _isBidirectional = e.isBidirectional();
-            return Boolean.valueOf(_isBidirectional);
-          }
-        };
+        public Boolean apply(final OneToManyRelationship e) {
+          boolean _isBidirectional = e.isBidirectional();
+          return Boolean.valueOf(_isBidirectional);
+        }
+      };
       Iterable<OneToManyRelationship> _filter_2 = IterableExtensions.<OneToManyRelationship>filter(_filter_1, _function_1);
       for(final OneToManyRelationship relation : _filter_2) {
         CharSequence _headerLineRelation = this.headerLineRelation(relation, Boolean.valueOf(false));
@@ -181,11 +181,11 @@ public class Csv {
       EList<Relationship> _incoming_1 = it.getIncoming();
       Iterable<ManyToManyRelationship> _filter_4 = Iterables.<ManyToManyRelationship>filter(_incoming_1, ManyToManyRelationship.class);
       final Function1<ManyToManyRelationship,Boolean> _function_2 = new Function1<ManyToManyRelationship,Boolean>() {
-          public Boolean apply(final ManyToManyRelationship e) {
-            boolean _isBidirectional = e.isBidirectional();
-            return Boolean.valueOf(_isBidirectional);
-          }
-        };
+        public Boolean apply(final ManyToManyRelationship e) {
+          boolean _isBidirectional = e.isBidirectional();
+          return Boolean.valueOf(_isBidirectional);
+        }
+      };
       Iterable<ManyToManyRelationship> _filter_5 = IterableExtensions.<ManyToManyRelationship>filter(_filter_4, _function_2);
       for(final ManyToManyRelationship relation_2 : _filter_5) {
         CharSequence _headerLineRelation_2 = this.headerLineRelation(relation_2, Boolean.valueOf(false));
@@ -222,12 +222,12 @@ public class Csv {
     {
       Iterable<DerivedField> _displayFields_1 = this._modelExtensions.getDisplayFields(it);
       final Function1<DerivedField,Boolean> _function_3 = new Function1<DerivedField,Boolean>() {
-          public Boolean apply(final DerivedField e) {
-            String _name = e.getName();
-            boolean _notEquals = (!Objects.equal(_name, "workflowState"));
-            return Boolean.valueOf(_notEquals);
-          }
-        };
+        public Boolean apply(final DerivedField e) {
+          String _name = e.getName();
+          boolean _notEquals = (!Objects.equal(_name, "workflowState"));
+          return Boolean.valueOf(_notEquals);
+        }
+      };
       Iterable<DerivedField> _filter_8 = IterableExtensions.<DerivedField>filter(_displayFields_1, _function_3);
       boolean _hasElements_1 = false;
       for(final DerivedField field_1 : _filter_8) {
@@ -276,11 +276,11 @@ public class Csv {
       EList<Relationship> _incoming_2 = it.getIncoming();
       Iterable<OneToManyRelationship> _filter_9 = Iterables.<OneToManyRelationship>filter(_incoming_2, OneToManyRelationship.class);
       final Function1<OneToManyRelationship,Boolean> _function_4 = new Function1<OneToManyRelationship,Boolean>() {
-          public Boolean apply(final OneToManyRelationship e) {
-            boolean _isBidirectional = e.isBidirectional();
-            return Boolean.valueOf(_isBidirectional);
-          }
-        };
+        public Boolean apply(final OneToManyRelationship e) {
+          boolean _isBidirectional = e.isBidirectional();
+          return Boolean.valueOf(_isBidirectional);
+        }
+      };
       Iterable<OneToManyRelationship> _filter_10 = IterableExtensions.<OneToManyRelationship>filter(_filter_9, _function_4);
       for(final OneToManyRelationship relation_5 : _filter_10) {
         CharSequence _displayRelatedEntry = this.displayRelatedEntry(relation_5, controller, Boolean.valueOf(false));
@@ -303,11 +303,11 @@ public class Csv {
       EList<Relationship> _incoming_3 = it.getIncoming();
       Iterable<ManyToManyRelationship> _filter_12 = Iterables.<ManyToManyRelationship>filter(_incoming_3, ManyToManyRelationship.class);
       final Function1<ManyToManyRelationship,Boolean> _function_5 = new Function1<ManyToManyRelationship,Boolean>() {
-          public Boolean apply(final ManyToManyRelationship e) {
-            boolean _isBidirectional = e.isBidirectional();
-            return Boolean.valueOf(_isBidirectional);
-          }
-        };
+        public Boolean apply(final ManyToManyRelationship e) {
+          boolean _isBidirectional = e.isBidirectional();
+          return Boolean.valueOf(_isBidirectional);
+        }
+      };
       Iterable<ManyToManyRelationship> _filter_13 = IterableExtensions.<ManyToManyRelationship>filter(_filter_12, _function_5);
       for(final ManyToManyRelationship relation_7 : _filter_13) {
         CharSequence _displayRelatedEntries = this.displayRelatedEntries(relation_7, controller, Boolean.valueOf(false));

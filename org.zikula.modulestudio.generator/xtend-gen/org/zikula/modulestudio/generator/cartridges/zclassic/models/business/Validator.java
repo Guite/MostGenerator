@@ -1680,12 +1680,12 @@ public class Validator {
     {
       Iterable<DerivedField> _uniqueDerivedFields = this._modelExtensions.getUniqueDerivedFields(it);
       final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-          public Boolean apply(final DerivedField e) {
-            boolean _isPrimaryKey = e.isPrimaryKey();
-            boolean _not = (!_isPrimaryKey);
-            return Boolean.valueOf(_not);
-          }
-        };
+        public Boolean apply(final DerivedField e) {
+          boolean _isPrimaryKey = e.isPrimaryKey();
+          boolean _not = (!_isPrimaryKey);
+          return Boolean.valueOf(_not);
+        }
+      };
       Iterable<DerivedField> _filter = IterableExtensions.<DerivedField>filter(_uniqueDerivedFields, _function);
       for(final DerivedField udf : _filter) {
         _builder.append("    ");
@@ -2048,13 +2048,13 @@ public class Validator {
     EList<Relationship> _incoming = _entity.getIncoming();
     Iterable<JoinRelationship> _filter = Iterables.<JoinRelationship>filter(_incoming, JoinRelationship.class);
     final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          String _targetField = e.getTargetField();
-          String _name = it.getName();
-          boolean _equals = Objects.equal(_targetField, _name);
-          return Boolean.valueOf(_equals);
-        }
-      };
+      public Boolean apply(final JoinRelationship e) {
+        String _targetField = e.getTargetField();
+        String _name = it.getName();
+        boolean _equals = Objects.equal(_targetField, _name);
+        return Boolean.valueOf(_equals);
+      }
+    };
     Iterable<JoinRelationship> _filter_1 = IterableExtensions.<JoinRelationship>filter(_filter, _function);
     boolean _isEmpty = IterableExtensions.isEmpty(_filter_1);
     if (!_isEmpty) {
@@ -2064,13 +2064,13 @@ public class Validator {
       EList<Relationship> _outgoing = _entity_1.getOutgoing();
       Iterable<JoinRelationship> _filter_2 = Iterables.<JoinRelationship>filter(_outgoing, JoinRelationship.class);
       final Function1<JoinRelationship,Boolean> _function_1 = new Function1<JoinRelationship,Boolean>() {
-          public Boolean apply(final JoinRelationship e) {
-            String _sourceField = e.getSourceField();
-            String _name = it.getName();
-            boolean _equals = Objects.equal(_sourceField, _name);
-            return Boolean.valueOf(_equals);
-          }
-        };
+        public Boolean apply(final JoinRelationship e) {
+          String _sourceField = e.getSourceField();
+          String _name = it.getName();
+          boolean _equals = Objects.equal(_sourceField, _name);
+          return Boolean.valueOf(_equals);
+        }
+      };
       Iterable<JoinRelationship> _filter_3 = IterableExtensions.<JoinRelationship>filter(_filter_2, _function_1);
       boolean _isEmpty_1 = IterableExtensions.isEmpty(_filter_3);
       _and = (_isEmpty && _isEmpty_1);
@@ -2090,13 +2090,13 @@ public class Validator {
       EList<Relationship> _incoming = _entity.getIncoming();
       Iterable<JoinRelationship> _filter = Iterables.<JoinRelationship>filter(_incoming, JoinRelationship.class);
       final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-          public Boolean apply(final JoinRelationship e) {
-            String _targetField = e.getTargetField();
-            String _name = it.getName();
-            boolean _equals = Objects.equal(_targetField, _name);
-            return Boolean.valueOf(_equals);
-          }
-        };
+        public Boolean apply(final JoinRelationship e) {
+          String _targetField = e.getTargetField();
+          String _name = it.getName();
+          boolean _equals = Objects.equal(_targetField, _name);
+          return Boolean.valueOf(_equals);
+        }
+      };
       Iterable<JoinRelationship> _filter_1 = IterableExtensions.<JoinRelationship>filter(_filter, _function);
       boolean _isEmpty = IterableExtensions.isEmpty(_filter_1);
       if (!_isEmpty) {
@@ -2106,13 +2106,13 @@ public class Validator {
         EList<Relationship> _outgoing = _entity_1.getOutgoing();
         Iterable<JoinRelationship> _filter_2 = Iterables.<JoinRelationship>filter(_outgoing, JoinRelationship.class);
         final Function1<JoinRelationship,Boolean> _function_1 = new Function1<JoinRelationship,Boolean>() {
-            public Boolean apply(final JoinRelationship e) {
-              String _sourceField = e.getSourceField();
-              String _name = it.getName();
-              boolean _equals = Objects.equal(_sourceField, _name);
-              return Boolean.valueOf(_equals);
-            }
-          };
+          public Boolean apply(final JoinRelationship e) {
+            String _sourceField = e.getSourceField();
+            String _name = it.getName();
+            boolean _equals = Objects.equal(_sourceField, _name);
+            return Boolean.valueOf(_equals);
+          }
+        };
         Iterable<JoinRelationship> _filter_3 = IterableExtensions.<JoinRelationship>filter(_filter_2, _function_1);
         boolean _isEmpty_1 = IterableExtensions.isEmpty(_filter_3);
         _and = (_isEmpty && _isEmpty_1);

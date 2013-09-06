@@ -419,24 +419,24 @@ public class Rss {
     EList<EntityField> _fields = it.getFields();
     Iterable<TextField> _filter = Iterables.<TextField>filter(_fields, TextField.class);
     final Function1<TextField,Boolean> _function = new Function1<TextField,Boolean>() {
-        public Boolean apply(final TextField e) {
-          boolean _isLeading = e.isLeading();
-          boolean _not = (!_isLeading);
-          return Boolean.valueOf(_not);
-        }
-      };
+      public Boolean apply(final TextField e) {
+        boolean _isLeading = e.isLeading();
+        boolean _not = (!_isLeading);
+        return Boolean.valueOf(_not);
+      }
+    };
     final Iterable<TextField> textFields = IterableExtensions.<TextField>filter(_filter, _function);
     _builder.newLineIfNotEmpty();
     _builder.append("        ");
     EList<EntityField> _fields_1 = it.getFields();
     Iterable<StringField> _filter_1 = Iterables.<StringField>filter(_fields_1, StringField.class);
     final Function1<StringField,Boolean> _function_1 = new Function1<StringField,Boolean>() {
-        public Boolean apply(final StringField e) {
-          boolean _isLeading = e.isLeading();
-          boolean _not = (!_isLeading);
-          return Boolean.valueOf(_not);
-        }
-      };
+      public Boolean apply(final StringField e) {
+        boolean _isLeading = e.isLeading();
+        boolean _not = (!_isLeading);
+        return Boolean.valueOf(_not);
+      }
+    };
     final Iterable<StringField> stringFields = IterableExtensions.<StringField>filter(_filter_1, _function_1);
     _builder.newLineIfNotEmpty();
     _builder.append("        ");

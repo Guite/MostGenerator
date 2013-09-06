@@ -359,13 +359,13 @@ public class Scribite {
     _builder.append("title : \'");
     String _appName = this._utils.appName(it);
     _builder.append(_appName, "    ");
-    _builder.append("-Objekt einf\u00FCgen\',");
+    _builder.append("-Objekt einfügen\',");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
     _builder.append("alt: \'");
     String _appName_1 = this._utils.appName(it);
     _builder.append(_appName_1, "    ");
-    _builder.append("-Objekt einf\u00FCgen\'");
+    _builder.append("-Objekt einfügen\'");
     _builder.newLineIfNotEmpty();
     _builder.append("});");
     _builder.newLine();
@@ -743,7 +743,7 @@ public class Scribite {
     _builder.append("desc : \'");
     String _appName = this._utils.appName(it);
     _builder.append(_appName, "    ");
-    _builder.append("-Objekt einf\u00FCgen\'");
+    _builder.append("-Objekt einfügen\'");
     _builder.newLineIfNotEmpty();
     _builder.append("});");
     _builder.newLine();

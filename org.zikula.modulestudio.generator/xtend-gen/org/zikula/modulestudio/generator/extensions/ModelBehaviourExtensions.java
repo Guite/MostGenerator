@@ -55,11 +55,11 @@ public class ModelBehaviourExtensions {
   public Iterable<Entity> getLoggableEntities(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _isLoggable = e.isLoggable();
-          return Boolean.valueOf(_isLoggable);
-        }
-      };
+      public Boolean apply(final Entity e) {
+        boolean _isLoggable = e.isLoggable();
+        return Boolean.valueOf(_isLoggable);
+      }
+    };
     Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
     return _filter;
   }
@@ -80,11 +80,11 @@ public class ModelBehaviourExtensions {
   public Iterable<Entity> getGeographicalEntities(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _isGeographical = e.isGeographical();
-          return Boolean.valueOf(_isGeographical);
-        }
-      };
+      public Boolean apply(final Entity e) {
+        boolean _isGeographical = e.isGeographical();
+        return Boolean.valueOf(_isGeographical);
+      }
+    };
     Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
     return _filter;
   }
@@ -95,11 +95,11 @@ public class ModelBehaviourExtensions {
   public boolean hasSluggable(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _hasSluggableFields = ModelBehaviourExtensions.this.hasSluggableFields(e);
-          return Boolean.valueOf(_hasSluggableFields);
-        }
-      };
+      public Boolean apply(final Entity e) {
+        boolean _hasSluggableFields = ModelBehaviourExtensions.this.hasSluggableFields(e);
+        return Boolean.valueOf(_hasSluggableFields);
+      }
+    };
     boolean _exists = IterableExtensions.<Entity>exists(_allEntities, _function);
     return _exists;
   }
@@ -110,11 +110,11 @@ public class ModelBehaviourExtensions {
   public boolean hasSoftDeleteable(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _isSoftDeleteable = e.isSoftDeleteable();
-          return Boolean.valueOf(_isSoftDeleteable);
-        }
-      };
+      public Boolean apply(final Entity e) {
+        boolean _isSoftDeleteable = e.isSoftDeleteable();
+        return Boolean.valueOf(_isSoftDeleteable);
+      }
+    };
     boolean _exists = IterableExtensions.<Entity>exists(_allEntities, _function);
     return _exists;
   }
@@ -125,11 +125,11 @@ public class ModelBehaviourExtensions {
   public boolean hasSortable(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _hasSortableFields = ModelBehaviourExtensions.this.hasSortableFields(e);
-          return Boolean.valueOf(_hasSortableFields);
-        }
-      };
+      public Boolean apply(final Entity e) {
+        boolean _hasSortableFields = ModelBehaviourExtensions.this.hasSortableFields(e);
+        return Boolean.valueOf(_hasSortableFields);
+      }
+    };
     boolean _exists = IterableExtensions.<Entity>exists(_allEntities, _function);
     return _exists;
   }
@@ -140,11 +140,11 @@ public class ModelBehaviourExtensions {
   public boolean hasTimestampable(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _hasTimestampableFields = ModelBehaviourExtensions.this.hasTimestampableFields(e);
-          return Boolean.valueOf(_hasTimestampableFields);
-        }
-      };
+      public Boolean apply(final Entity e) {
+        boolean _hasTimestampableFields = ModelBehaviourExtensions.this.hasTimestampableFields(e);
+        return Boolean.valueOf(_hasTimestampableFields);
+      }
+    };
     boolean _exists = IterableExtensions.<Entity>exists(_allEntities, _function);
     return _exists;
   }
@@ -165,11 +165,11 @@ public class ModelBehaviourExtensions {
   public Iterable<Entity> getTranslatableEntities(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _hasTranslatableFields = ModelBehaviourExtensions.this.hasTranslatableFields(e);
-          return Boolean.valueOf(_hasTranslatableFields);
-        }
-      };
+      public Boolean apply(final Entity e) {
+        boolean _hasTranslatableFields = ModelBehaviourExtensions.this.hasTranslatableFields(e);
+        return Boolean.valueOf(_hasTranslatableFields);
+      }
+    };
     Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
     return _filter;
   }
@@ -190,12 +190,12 @@ public class ModelBehaviourExtensions {
   public Iterable<Entity> getTreeEntities(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          EntityTreeType _tree = e.getTree();
-          boolean _notEquals = (!Objects.equal(_tree, EntityTreeType.NONE));
-          return Boolean.valueOf(_notEquals);
-        }
-      };
+      public Boolean apply(final Entity e) {
+        EntityTreeType _tree = e.getTree();
+        boolean _notEquals = (!Objects.equal(_tree, EntityTreeType.NONE));
+        return Boolean.valueOf(_notEquals);
+      }
+    };
     Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
     return _filter;
   }
@@ -216,11 +216,11 @@ public class ModelBehaviourExtensions {
   public Iterable<Entity> getCategorisableEntities(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _isCategorisable = e.isCategorisable();
-          return Boolean.valueOf(_isCategorisable);
-        }
-      };
+      public Boolean apply(final Entity e) {
+        boolean _isCategorisable = e.isCategorisable();
+        return Boolean.valueOf(_isCategorisable);
+      }
+    };
     Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
     return _filter;
   }
@@ -241,11 +241,11 @@ public class ModelBehaviourExtensions {
   public Iterable<Entity> getMetaDataEntities(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _isMetaData = e.isMetaData();
-          return Boolean.valueOf(_isMetaData);
-        }
-      };
+      public Boolean apply(final Entity e) {
+        boolean _isMetaData = e.isMetaData();
+        return Boolean.valueOf(_isMetaData);
+      }
+    };
     Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
     return _filter;
   }
@@ -266,11 +266,11 @@ public class ModelBehaviourExtensions {
   public Iterable<Entity> getAttributableEntities(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _isAttributable = e.isAttributable();
-          return Boolean.valueOf(_isAttributable);
-        }
-      };
+      public Boolean apply(final Entity e) {
+        boolean _isAttributable = e.isAttributable();
+        return Boolean.valueOf(_isAttributable);
+      }
+    };
     Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
     return _filter;
   }
@@ -291,11 +291,11 @@ public class ModelBehaviourExtensions {
   public Iterable<Entity> getStandardFieldEntities(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _isStandardFields = e.isStandardFields();
-          return Boolean.valueOf(_isStandardFields);
-        }
-      };
+      public Boolean apply(final Entity e) {
+        boolean _isStandardFields = e.isStandardFields();
+        return Boolean.valueOf(_isStandardFields);
+      }
+    };
     Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
     return _filter;
   }
@@ -317,19 +317,19 @@ public class ModelBehaviourExtensions {
     Iterable<DerivedField> _derivedFields = this._modelExtensions.getDerivedFields(it);
     Iterable<AbstractStringField> _filter = Iterables.<AbstractStringField>filter(_derivedFields, AbstractStringField.class);
     final Function1<AbstractStringField,Boolean> _function = new Function1<AbstractStringField,Boolean>() {
-        public Boolean apply(final AbstractStringField e) {
-          int _sluggablePosition = e.getSluggablePosition();
-          boolean _greaterThan = (_sluggablePosition > 0);
-          return Boolean.valueOf(_greaterThan);
-        }
-      };
+      public Boolean apply(final AbstractStringField e) {
+        int _sluggablePosition = e.getSluggablePosition();
+        boolean _greaterThan = (_sluggablePosition > 0);
+        return Boolean.valueOf(_greaterThan);
+      }
+    };
     Iterable<AbstractStringField> _filter_1 = IterableExtensions.<AbstractStringField>filter(_filter, _function);
     final Function1<AbstractStringField,Integer> _function_1 = new Function1<AbstractStringField,Integer>() {
-        public Integer apply(final AbstractStringField e) {
-          int _sluggablePosition = e.getSluggablePosition();
-          return Integer.valueOf(_sluggablePosition);
-        }
-      };
+      public Integer apply(final AbstractStringField e) {
+        int _sluggablePosition = e.getSluggablePosition();
+        return Integer.valueOf(_sluggablePosition);
+      }
+    };
     List<AbstractStringField> _sortBy = IterableExtensions.<AbstractStringField, Integer>sortBy(_filter_1, _function_1);
     return _sortBy;
   }
@@ -351,12 +351,12 @@ public class ModelBehaviourExtensions {
     EList<EntityField> _fields = it.getFields();
     Iterable<IntegerField> _filter = Iterables.<IntegerField>filter(_fields, IntegerField.class);
     final Function1<IntegerField,Boolean> _function = new Function1<IntegerField,Boolean>() {
-        public Boolean apply(final IntegerField e) {
-          boolean _isSortablePosition = e.isSortablePosition();
-          boolean _equals = (_isSortablePosition == true);
-          return Boolean.valueOf(_equals);
-        }
-      };
+      public Boolean apply(final IntegerField e) {
+        boolean _isSortablePosition = e.isSortablePosition();
+        boolean _equals = (_isSortablePosition == true);
+        return Boolean.valueOf(_equals);
+      }
+    };
     Iterable<IntegerField> _filter_1 = IterableExtensions.<IntegerField>filter(_filter, _function);
     return _filter_1;
   }
@@ -378,12 +378,12 @@ public class ModelBehaviourExtensions {
     EList<EntityField> _fields = it.getFields();
     Iterable<AbstractDateField> _filter = Iterables.<AbstractDateField>filter(_fields, AbstractDateField.class);
     final Function1<AbstractDateField,Boolean> _function = new Function1<AbstractDateField,Boolean>() {
-        public Boolean apply(final AbstractDateField e) {
-          EntityTimestampableType _timestampable = e.getTimestampable();
-          boolean _notEquals = (!Objects.equal(_timestampable, EntityTimestampableType.NONE));
-          return Boolean.valueOf(_notEquals);
-        }
-      };
+      public Boolean apply(final AbstractDateField e) {
+        EntityTimestampableType _timestampable = e.getTimestampable();
+        boolean _notEquals = (!Objects.equal(_timestampable, EntityTimestampableType.NONE));
+        return Boolean.valueOf(_notEquals);
+      }
+    };
     Iterable<AbstractDateField> _filter_1 = IterableExtensions.<AbstractDateField>filter(_filter, _function);
     return _filter_1;
   }
@@ -404,11 +404,11 @@ public class ModelBehaviourExtensions {
   public Iterable<DerivedField> getTranslatableFields(final Entity it) {
     Iterable<DerivedField> _derivedFields = this._modelExtensions.getDerivedFields(it);
     final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-        public Boolean apply(final DerivedField e) {
-          boolean _isTranslatable = e.isTranslatable();
-          return Boolean.valueOf(_isTranslatable);
-        }
-      };
+      public Boolean apply(final DerivedField e) {
+        boolean _isTranslatable = e.isTranslatable();
+        return Boolean.valueOf(_isTranslatable);
+      }
+    };
     Iterable<DerivedField> _filter = IterableExtensions.<DerivedField>filter(_derivedFields, _function);
     return _filter;
   }
@@ -419,11 +419,11 @@ public class ModelBehaviourExtensions {
   public Iterable<DerivedField> getEditableTranslatableFields(final Entity it) {
     List<DerivedField> _editableFields = this._modelExtensions.getEditableFields(it);
     final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-        public Boolean apply(final DerivedField e) {
-          boolean _isTranslatable = e.isTranslatable();
-          return Boolean.valueOf(_isTranslatable);
-        }
-      };
+      public Boolean apply(final DerivedField e) {
+        boolean _isTranslatable = e.isTranslatable();
+        return Boolean.valueOf(_isTranslatable);
+      }
+    };
     Iterable<DerivedField> _filter = IterableExtensions.<DerivedField>filter(_editableFields, _function);
     return _filter;
   }
@@ -434,12 +434,12 @@ public class ModelBehaviourExtensions {
   public Iterable<DerivedField> getEditableNonTranslatableFields(final Entity it) {
     List<DerivedField> _editableFields = this._modelExtensions.getEditableFields(it);
     final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-        public Boolean apply(final DerivedField e) {
-          boolean _isTranslatable = e.isTranslatable();
-          boolean _not = (!_isTranslatable);
-          return Boolean.valueOf(_not);
-        }
-      };
+      public Boolean apply(final DerivedField e) {
+        boolean _isTranslatable = e.isTranslatable();
+        boolean _not = (!_isTranslatable);
+        return Boolean.valueOf(_not);
+      }
+    };
     Iterable<DerivedField> _filter = IterableExtensions.<DerivedField>filter(_editableFields, _function);
     return _filter;
   }
@@ -450,11 +450,11 @@ public class ModelBehaviourExtensions {
   public boolean hasTranslatableSlug(final Entity it) {
     List<AbstractStringField> _sluggableFields = this.getSluggableFields(it);
     final Function1<AbstractStringField,Boolean> _function = new Function1<AbstractStringField,Boolean>() {
-        public Boolean apply(final AbstractStringField e) {
-          boolean _isTranslatable = e.isTranslatable();
-          return Boolean.valueOf(_isTranslatable);
-        }
-      };
+      public Boolean apply(final AbstractStringField e) {
+        boolean _isTranslatable = e.isTranslatable();
+        return Boolean.valueOf(_isTranslatable);
+      }
+    };
     Iterable<AbstractStringField> _filter = IterableExtensions.<AbstractStringField>filter(_sluggableFields, _function);
     boolean _isEmpty = IterableExtensions.isEmpty(_filter);
     boolean _not = (!_isEmpty);

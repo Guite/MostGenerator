@@ -14,13 +14,13 @@ public class FormattingExtensions {
    * @return String without special characters.
    */
   public String replaceSpecialChars(final String s) {
-    String _replace = s.replace("\u00C4", "Ae");
-    String _replace_1 = _replace.replace("\u00E4", "ae");
-    String _replace_2 = _replace_1.replace("\u00D6", "Oe");
-    String _replace_3 = _replace_2.replace("\u00F6", "oe");
-    String _replace_4 = _replace_3.replace("\u00DC", "Ue");
-    String _replace_5 = _replace_4.replace("\u00FC", "ue");
-    String _replace_6 = _replace_5.replace("\u00DF", "ss");
+    String _replace = s.replace("Ä", "Ae");
+    String _replace_1 = _replace.replace("ä", "ae");
+    String _replace_2 = _replace_1.replace("Ö", "Oe");
+    String _replace_3 = _replace_2.replace("ö", "oe");
+    String _replace_4 = _replace_3.replace("Ü", "Ue");
+    String _replace_5 = _replace_4.replace("ü", "ue");
+    String _replace_6 = _replace_5.replace("ß", "ss");
     String _replaceAll = _replace_6.replaceAll("[\\W]", "");
     return _replaceAll;
   }

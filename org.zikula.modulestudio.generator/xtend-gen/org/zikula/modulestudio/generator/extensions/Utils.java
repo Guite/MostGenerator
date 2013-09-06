@@ -189,11 +189,11 @@ public class Utils {
   public List<Variables> getSortedVariableContainers(final Application it) {
     List<Variables> _allVariableContainers = this.getAllVariableContainers(it);
     final Function1<Variables,Integer> _function = new Function1<Variables,Integer>() {
-        public Integer apply(final Variables e) {
-          int _sortOrder = e.getSortOrder();
-          return Integer.valueOf(_sortOrder);
-        }
-      };
+      public Integer apply(final Variables e) {
+        int _sortOrder = e.getSortOrder();
+        return Integer.valueOf(_sortOrder);
+      }
+    };
     List<Variables> _sortBy = IterableExtensions.<Variables, Integer>sortBy(_allVariableContainers, _function);
     return _sortBy;
   }
@@ -208,11 +208,11 @@ public class Utils {
   public List<Variables> getAllVariableContainers(final Application it) {
     EList<Models> _models = it.getModels();
     final Function1<Models,EList<Variables>> _function = new Function1<Models,EList<Variables>>() {
-        public EList<Variables> apply(final Models e) {
-          EList<Variables> _variables = e.getVariables();
-          return _variables;
-        }
-      };
+      public EList<Variables> apply(final Models e) {
+        EList<Variables> _variables = e.getVariables();
+        return _variables;
+      }
+    };
     List<EList<Variables>> _map = ListExtensions.<Models, EList<Variables>>map(_models, _function);
     Iterable<Variables> _flatten = Iterables.<Variables>concat(_map);
     List<Variables> _list = IterableExtensions.<Variables>toList(_flatten);
@@ -229,11 +229,11 @@ public class Utils {
   public List<Variable> getAllVariables(final Application it) {
     List<Variables> _allVariableContainers = this.getAllVariableContainers(it);
     final Function1<Variables,EList<Variable>> _function = new Function1<Variables,EList<Variable>>() {
-        public EList<Variable> apply(final Variables e) {
-          EList<Variable> _vars = e.getVars();
-          return _vars;
-        }
-      };
+      public EList<Variable> apply(final Variables e) {
+        EList<Variable> _vars = e.getVars();
+        return _vars;
+      }
+    };
     List<EList<Variable>> _map = ListExtensions.<Variables, EList<Variable>>map(_allVariableContainers, _function);
     Iterable<Variable> _flatten = Iterables.<Variable>concat(_map);
     List<Variable> _list = IterableExtensions.<Variable>toList(_flatten);

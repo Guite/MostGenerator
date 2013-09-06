@@ -113,10 +113,10 @@ public class ControllerLayer {
     this.app = it;
     EList<Controller> _allControllers = this._controllerExtensions.getAllControllers(it);
     final Procedure1<Controller> _function = new Procedure1<Controller>() {
-        public void apply(final Controller e) {
-          ControllerLayer.this.generate(e, fsa);
-        }
-      };
+      public void apply(final Controller e) {
+        ControllerLayer.this.generate(e, fsa);
+      }
+    };
     IterableExtensions.<Controller>forEach(_allControllers, _function);
     ExternalController _externalController = new ExternalController();
     _externalController.generate(it, fsa);

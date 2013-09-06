@@ -109,11 +109,11 @@ public class ViewExtensions {
         EList<Relationship> _incoming = it.getIncoming();
         Iterable<JoinRelationship> _filter = Iterables.<JoinRelationship>filter(_incoming, JoinRelationship.class);
         final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-            public Boolean apply(final JoinRelationship e) {
-              boolean _isPartOfEditForm = ViewExtensions.this.isPartOfEditForm(e, Boolean.valueOf(true));
-              return Boolean.valueOf(_isPartOfEditForm);
-            }
-          };
+          public Boolean apply(final JoinRelationship e) {
+            boolean _isPartOfEditForm = ViewExtensions.this.isPartOfEditForm(e, Boolean.valueOf(true));
+            return Boolean.valueOf(_isPartOfEditForm);
+          }
+        };
         Iterable<JoinRelationship> _filter_1 = IterableExtensions.<JoinRelationship>filter(_filter, _function);
         int _size = IterableExtensions.size(_filter_1);
         boolean _greaterThan = (_size > 1);
@@ -131,11 +131,11 @@ public class ViewExtensions {
         EList<Relationship> _outgoing = it.getOutgoing();
         Iterable<JoinRelationship> _filter_2 = Iterables.<JoinRelationship>filter(_outgoing, JoinRelationship.class);
         final Function1<JoinRelationship,Boolean> _function_1 = new Function1<JoinRelationship,Boolean>() {
-            public Boolean apply(final JoinRelationship e) {
-              boolean _isPartOfEditForm = ViewExtensions.this.isPartOfEditForm(e, Boolean.valueOf(false));
-              return Boolean.valueOf(_isPartOfEditForm);
-            }
-          };
+          public Boolean apply(final JoinRelationship e) {
+            boolean _isPartOfEditForm = ViewExtensions.this.isPartOfEditForm(e, Boolean.valueOf(false));
+            return Boolean.valueOf(_isPartOfEditForm);
+          }
+        };
         Iterable<JoinRelationship> _filter_3 = IterableExtensions.<JoinRelationship>filter(_filter_2, _function_1);
         int _size_1 = IterableExtensions.size(_filter_3);
         boolean _greaterThan_1 = (_size_1 > 1);

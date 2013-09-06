@@ -533,7 +533,7 @@ public class ControllerUtil {
     _builder.append("{");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$name = str_replace(array(\'\u00E4\', \'\u00F6\', \'\u00FC\', \'\u00C4\', \'\u00D6\', \'\u00DC\', \'\u00DF\', \'.\', \'?\', \'\"\', \'/\', \':\', \'\u00E9\', \'\u00E8\', \'\u00E2\'),");
+    _builder.append("$name = str_replace(array(\'ä\', \'ö\', \'ü\', \'Ä\', \'Ö\', \'Ü\', \'ß\', \'.\', \'?\', \'\"\', \'/\', \':\', \'é\', \'è\', \'â\'),");
     _builder.newLine();
     _builder.append("                        ");
     _builder.append("array(\'ae\', \'oe\', \'ue\', \'Ae\', \'Oe\', \'Ue\', \'ss\', \'\', \'\', \'\', \'-\', \'-\', \'e\', \'e\', \'a\'),");

@@ -179,14 +179,14 @@ public class RelationPresets {
   private Iterable<JoinRelationship> getOwningAssociations(final Entity it, final Application refApp) {
     Iterable<JoinRelationship> _incomingJoinRelations = this._modelJoinExtensions.getIncomingJoinRelations(it);
     final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          Entity _source = e.getSource();
-          Models _container = _source.getContainer();
-          Application _application = _container.getApplication();
-          boolean _equals = Objects.equal(_application, refApp);
-          return Boolean.valueOf(_equals);
-        }
-      };
+      public Boolean apply(final JoinRelationship e) {
+        Entity _source = e.getSource();
+        Models _container = _source.getContainer();
+        Application _application = _container.getApplication();
+        boolean _equals = Objects.equal(_application, refApp);
+        return Boolean.valueOf(_equals);
+      }
+    };
     Iterable<JoinRelationship> _filter = IterableExtensions.<JoinRelationship>filter(_incomingJoinRelations, _function);
     return _filter;
   }
@@ -195,14 +195,14 @@ public class RelationPresets {
     Iterable<JoinRelationship> _outgoingJoinRelations = this._modelJoinExtensions.getOutgoingJoinRelations(it);
     Iterable<ManyToManyRelationship> _filter = Iterables.<ManyToManyRelationship>filter(_outgoingJoinRelations, ManyToManyRelationship.class);
     final Function1<ManyToManyRelationship,Boolean> _function = new Function1<ManyToManyRelationship,Boolean>() {
-        public Boolean apply(final ManyToManyRelationship e) {
-          Entity _source = e.getSource();
-          Models _container = _source.getContainer();
-          Application _application = _container.getApplication();
-          boolean _equals = Objects.equal(_application, refApp);
-          return Boolean.valueOf(_equals);
-        }
-      };
+      public Boolean apply(final ManyToManyRelationship e) {
+        Entity _source = e.getSource();
+        Models _container = _source.getContainer();
+        Application _application = _container.getApplication();
+        boolean _equals = Objects.equal(_application, refApp);
+        return Boolean.valueOf(_equals);
+      }
+    };
     Iterable<ManyToManyRelationship> _filter_1 = IterableExtensions.<ManyToManyRelationship>filter(_filter, _function);
     return _filter_1;
   }
@@ -218,22 +218,22 @@ public class RelationPresets {
     StringConcatenation _builder = new StringConcatenation();
     Iterable<JoinRelationship> _owningAssociations = this.getOwningAssociations(it, app);
     final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          boolean _isEditable = RelationPresets.this.isEditable(e, Boolean.valueOf(false));
-          boolean _not = (!_isEditable);
-          return Boolean.valueOf(_not);
-        }
-      };
+      public Boolean apply(final JoinRelationship e) {
+        boolean _isEditable = RelationPresets.this.isEditable(e, Boolean.valueOf(false));
+        boolean _not = (!_isEditable);
+        return Boolean.valueOf(_not);
+      }
+    };
     final Iterable<JoinRelationship> owningAssociationsNonEditable = IterableExtensions.<JoinRelationship>filter(_owningAssociations, _function);
     _builder.newLineIfNotEmpty();
     Iterable<ManyToManyRelationship> _ownedMMAssociations = this.getOwnedMMAssociations(it, app);
     final Function1<ManyToManyRelationship,Boolean> _function_1 = new Function1<ManyToManyRelationship,Boolean>() {
-        public Boolean apply(final ManyToManyRelationship e) {
-          boolean _isEditable = RelationPresets.this.isEditable(e, Boolean.valueOf(true));
-          boolean _not = (!_isEditable);
-          return Boolean.valueOf(_not);
-        }
-      };
+      public Boolean apply(final ManyToManyRelationship e) {
+        boolean _isEditable = RelationPresets.this.isEditable(e, Boolean.valueOf(true));
+        boolean _not = (!_isEditable);
+        return Boolean.valueOf(_not);
+      }
+    };
     final Iterable<ManyToManyRelationship> ownedMMAssociationsNonEditable = IterableExtensions.<ManyToManyRelationship>filter(_ownedMMAssociations, _function_1);
     _builder.newLineIfNotEmpty();
     {

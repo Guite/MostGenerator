@@ -2739,11 +2739,11 @@ public class FormHandler {
         } else {
           EList<Entity> _allEntities = this._modelExtensions.getAllEntities(this.app);
           final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-              public Boolean apply(final Entity e) {
-                boolean _isSlugUpdatable = e.isSlugUpdatable();
-                return Boolean.valueOf(_isSlugUpdatable);
-              }
-            };
+            public Boolean apply(final Entity e) {
+              boolean _isSlugUpdatable = e.isSlugUpdatable();
+              return Boolean.valueOf(_isSlugUpdatable);
+            }
+          };
           Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
           boolean _isEmpty = IterableExtensions.isEmpty(_filter);
           boolean _not = (!_isEmpty);

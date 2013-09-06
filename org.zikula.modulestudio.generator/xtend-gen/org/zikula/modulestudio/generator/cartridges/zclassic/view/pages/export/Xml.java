@@ -236,11 +236,11 @@ public class Xml {
     {
       Iterable<DerivedField> _derivedFields = this._modelExtensions.getDerivedFields(it);
       final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-          public Boolean apply(final DerivedField e) {
-            boolean _isPrimaryKey = e.isPrimaryKey();
-            return Boolean.valueOf(_isPrimaryKey);
-          }
-        };
+        public Boolean apply(final DerivedField e) {
+          boolean _isPrimaryKey = e.isPrimaryKey();
+          return Boolean.valueOf(_isPrimaryKey);
+        }
+      };
       Iterable<DerivedField> _filter = IterableExtensions.<DerivedField>filter(_derivedFields, _function);
       for(final DerivedField field : _filter) {
         CharSequence _displayEntry = this.displayEntry(field, controller);
@@ -252,20 +252,20 @@ public class Xml {
     {
       Iterable<DerivedField> _derivedFields_1 = this._modelExtensions.getDerivedFields(it);
       final Function1<DerivedField,Boolean> _function_1 = new Function1<DerivedField,Boolean>() {
-          public Boolean apply(final DerivedField e) {
-            boolean _and = false;
-            boolean _isPrimaryKey = e.isPrimaryKey();
-            boolean _not = (!_isPrimaryKey);
-            if (!_not) {
-              _and = false;
-            } else {
-              String _name = e.getName();
-              boolean _notEquals = (!Objects.equal(_name, "workflowState"));
-              _and = (_not && _notEquals);
-            }
-            return Boolean.valueOf(_and);
+        public Boolean apply(final DerivedField e) {
+          boolean _and = false;
+          boolean _isPrimaryKey = e.isPrimaryKey();
+          boolean _not = (!_isPrimaryKey);
+          if (!_not) {
+            _and = false;
+          } else {
+            String _name = e.getName();
+            boolean _notEquals = (!Objects.equal(_name, "workflowState"));
+            _and = (_not && _notEquals);
           }
-        };
+          return Boolean.valueOf(_and);
+        }
+      };
       Iterable<DerivedField> _filter_1 = IterableExtensions.<DerivedField>filter(_derivedFields_1, _function_1);
       for(final DerivedField field_1 : _filter_1) {
         CharSequence _displayEntry_1 = this.displayEntry(field_1, controller);
@@ -314,11 +314,11 @@ public class Xml {
       EList<Relationship> _incoming = it.getIncoming();
       Iterable<OneToManyRelationship> _filter_2 = Iterables.<OneToManyRelationship>filter(_incoming, OneToManyRelationship.class);
       final Function1<OneToManyRelationship,Boolean> _function_2 = new Function1<OneToManyRelationship,Boolean>() {
-          public Boolean apply(final OneToManyRelationship e) {
-            boolean _isBidirectional = e.isBidirectional();
-            return Boolean.valueOf(_isBidirectional);
-          }
-        };
+        public Boolean apply(final OneToManyRelationship e) {
+          boolean _isBidirectional = e.isBidirectional();
+          return Boolean.valueOf(_isBidirectional);
+        }
+      };
       Iterable<OneToManyRelationship> _filter_3 = IterableExtensions.<OneToManyRelationship>filter(_filter_2, _function_2);
       for(final OneToManyRelationship relation : _filter_3) {
         CharSequence _displayRelatedEntry = this.displayRelatedEntry(relation, controller, Boolean.valueOf(false));
@@ -341,11 +341,11 @@ public class Xml {
       EList<Relationship> _incoming_1 = it.getIncoming();
       Iterable<ManyToManyRelationship> _filter_5 = Iterables.<ManyToManyRelationship>filter(_incoming_1, ManyToManyRelationship.class);
       final Function1<ManyToManyRelationship,Boolean> _function_3 = new Function1<ManyToManyRelationship,Boolean>() {
-          public Boolean apply(final ManyToManyRelationship e) {
-            boolean _isBidirectional = e.isBidirectional();
-            return Boolean.valueOf(_isBidirectional);
-          }
-        };
+        public Boolean apply(final ManyToManyRelationship e) {
+          boolean _isBidirectional = e.isBidirectional();
+          return Boolean.valueOf(_isBidirectional);
+        }
+      };
       Iterable<ManyToManyRelationship> _filter_6 = IterableExtensions.<ManyToManyRelationship>filter(_filter_5, _function_3);
       for(final ManyToManyRelationship relation_2 : _filter_6) {
         CharSequence _displayRelatedEntries = this.displayRelatedEntries(relation_2, controller, Boolean.valueOf(false));

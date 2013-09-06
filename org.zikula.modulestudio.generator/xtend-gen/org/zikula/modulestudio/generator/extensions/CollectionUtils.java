@@ -17,11 +17,11 @@ public class CollectionUtils {
     Iterable<Object> _xblockexpression = null;
     {
       final Function1<Class<? extends Object>,Predicate<Object>> _function = new Function1<Class<? extends Object>,Predicate<Object>>() {
-          public Predicate<Object> apply(final Class<? extends Object> it) {
-            Predicate<Object> _instanceOf = Predicates.instanceOf(it);
-            return _instanceOf;
-          }
-        };
+        public Predicate<Object> apply(final Class<? extends Object> it) {
+          Predicate<Object> _instanceOf = Predicates.instanceOf(it);
+          return _instanceOf;
+        }
+      };
       List<Predicate<Object>> _map = ListExtensions.<Class<? extends Object>, Predicate<Object>>map(((List<Class<? extends Object>>)Conversions.doWrapArray(types)), _function);
       final Predicate<Object> typeFilter = Predicates.<Object>or(_map);
       Iterable<Object> _filter = IterableExtensions.<Object>filter(unfiltered, new Function1<Object,Boolean>() {

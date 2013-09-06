@@ -42,12 +42,12 @@ public class MostGenerator implements IGenerator {
     final Entity firstEntity = IterableExtensions.<Entity>head(_allEntities);
     EList<EntityField> _fields = firstEntity.getFields();
     final Function1<EntityField,Boolean> _function = new Function1<EntityField,Boolean>() {
-        public Boolean apply(final EntityField e) {
-          String _name = e.getName();
-          boolean _equals = Objects.equal(_name, "id");
-          return Boolean.valueOf(_equals);
-        }
-      };
+      public Boolean apply(final EntityField e) {
+        String _name = e.getName();
+        boolean _equals = Objects.equal(_name, "id");
+        return Boolean.valueOf(_equals);
+      }
+    };
     final Iterable<EntityField> pkFields = IterableExtensions.<EntityField>filter(_fields, _function);
     boolean _isEmpty = IterableExtensions.isEmpty(pkFields);
     if (_isEmpty) {

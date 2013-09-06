@@ -199,20 +199,20 @@ public class ContentTypeListView {
         EList<EntityField> _fields_1 = it.getFields();
         Iterable<StringField> _filter = Iterables.<StringField>filter(_fields_1, StringField.class);
         final Function1<StringField,Boolean> _function = new Function1<StringField,Boolean>() {
-            public Boolean apply(final StringField e) {
-              boolean _and = false;
-              boolean _isLeading = e.isLeading();
-              boolean _not = (!_isLeading);
-              if (!_not) {
-                _and = false;
-              } else {
-                boolean _isPassword = e.isPassword();
-                boolean _not_1 = (!_isPassword);
-                _and = (_not && _not_1);
-              }
-              return Boolean.valueOf(_and);
+          public Boolean apply(final StringField e) {
+            boolean _and = false;
+            boolean _isLeading = e.isLeading();
+            boolean _not = (!_isLeading);
+            if (!_not) {
+              _and = false;
+            } else {
+              boolean _isPassword = e.isPassword();
+              boolean _not_1 = (!_isPassword);
+              _and = (_not && _not_1);
             }
-          };
+            return Boolean.valueOf(_and);
+          }
+        };
         final Iterable<StringField> stringFields = IterableExtensions.<StringField>filter(_filter, _function);
         _builder.newLineIfNotEmpty();
         {

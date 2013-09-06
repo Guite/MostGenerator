@@ -1369,15 +1369,15 @@ public class Forms {
       Entity _entity = it.getEntity();
       Iterable<JoinRelationship> _incomingJoinRelations = this._modelJoinExtensions.getIncomingJoinRelations(_entity);
       final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-          public Boolean apply(final JoinRelationship e) {
-            String[] _sourceFields = Forms.this._modelJoinExtensions.getSourceFields(e);
-            String _head = IterableExtensions.<String>head(((Iterable<String>)Conversions.doWrapArray(_sourceFields)));
-            String _name = it.getName();
-            String _formatForDB = Forms.this._formattingExtensions.formatForDB(_name);
-            boolean _equals = Objects.equal(_head, _formatForDB);
-            return Boolean.valueOf(_equals);
-          }
-        };
+        public Boolean apply(final JoinRelationship e) {
+          String[] _sourceFields = Forms.this._modelJoinExtensions.getSourceFields(e);
+          String _head = IterableExtensions.<String>head(((Iterable<String>)Conversions.doWrapArray(_sourceFields)));
+          String _name = it.getName();
+          String _formatForDB = Forms.this._formattingExtensions.formatForDB(_name);
+          boolean _equals = Objects.equal(_head, _formatForDB);
+          return Boolean.valueOf(_equals);
+        }
+      };
       Iterable<JoinRelationship> _filter = IterableExtensions.<JoinRelationship>filter(_incomingJoinRelations, _function);
       boolean _isEmpty = IterableExtensions.isEmpty(_filter);
       if (_isEmpty) {

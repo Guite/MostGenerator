@@ -322,19 +322,19 @@ public class Bootstrap {
     StringConcatenation _builder = new StringConcatenation();
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _and = false;
-          boolean _isHasArchive = e.isHasArchive();
-          if (!_isHasArchive) {
-            _and = false;
-          } else {
-            AbstractDateField _endDateField = Bootstrap.this._modelExtensions.getEndDateField(e);
-            boolean _tripleNotEquals = (_endDateField != null);
-            _and = (_isHasArchive && _tripleNotEquals);
-          }
-          return Boolean.valueOf(_and);
+      public Boolean apply(final Entity e) {
+        boolean _and = false;
+        boolean _isHasArchive = e.isHasArchive();
+        if (!_isHasArchive) {
+          _and = false;
+        } else {
+          AbstractDateField _endDateField = Bootstrap.this._modelExtensions.getEndDateField(e);
+          boolean _tripleNotEquals = (_endDateField != null);
+          _and = (_isHasArchive && _tripleNotEquals);
         }
-      };
+        return Boolean.valueOf(_and);
+      }
+    };
     final Iterable<Entity> entitiesWithArchive = IterableExtensions.<Entity>filter(_allEntities, _function);
     _builder.newLineIfNotEmpty();
     {

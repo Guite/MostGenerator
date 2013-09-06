@@ -658,13 +658,13 @@ public class ExternalView {
         {
           EList<Entity> _allEntities_1 = this._modelExtensions.getAllEntities(app);
           final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-              public Boolean apply(final Entity e) {
-                String _name = e.getName();
-                String _name_1 = it.getName();
-                boolean _notEquals = (!Objects.equal(_name, _name_1));
-                return Boolean.valueOf(_notEquals);
-              }
-            };
+            public Boolean apply(final Entity e) {
+              String _name = e.getName();
+              String _name_1 = it.getName();
+              boolean _notEquals = (!Objects.equal(_name, _name_1));
+              return Boolean.valueOf(_notEquals);
+            }
+          };
           Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities_1, _function);
           boolean _hasElements = false;
           for(final Entity entity : _filter) {

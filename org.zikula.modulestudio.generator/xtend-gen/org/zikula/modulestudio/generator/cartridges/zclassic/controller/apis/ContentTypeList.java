@@ -1374,7 +1374,7 @@ public class ContentTypeList {
         _builder.append("array_push($this->view->plugins_dir, \'modules/");
         String _viewPath = this._namingExtensions.getViewPath(it);
         _builder.append(_viewPath, "    ");
-        _builder.append("\u00BB/plugins\');");
+        _builder.append("»/plugins\');");
         _builder.newLineIfNotEmpty();
       }
     }

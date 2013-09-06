@@ -198,11 +198,11 @@ public class ControllerExtensions {
   public Iterable<EditAction> getEditActions(final Application it) {
     EList<Controller> _allControllers = this.getAllControllers(it);
     final Function1<Controller,EList<Action>> _function = new Function1<Controller,EList<Action>>() {
-        public EList<Action> apply(final Controller e) {
-          EList<Action> _actions = e.getActions();
-          return _actions;
-        }
-      };
+      public EList<Action> apply(final Controller e) {
+        EList<Action> _actions = e.getActions();
+        return _actions;
+      }
+    };
     List<EList<Action>> _map = ListExtensions.<Controller, EList<Action>>map(_allControllers, _function);
     Iterable<Action> _flatten = Iterables.<Action>concat(_map);
     Iterable<EditAction> _filter = Iterables.<EditAction>filter(_flatten, EditAction.class);

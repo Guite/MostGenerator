@@ -241,18 +241,18 @@ public class PermissionCheck {
     _builder.append("    ");
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(this.app);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _and = false;
-          boolean _isStandardFields = e.isStandardFields();
-          if (!_isStandardFields) {
-            _and = false;
-          } else {
-            boolean _isOwnerPermission = e.isOwnerPermission();
-            _and = (_isStandardFields && _isOwnerPermission);
-          }
-          return Boolean.valueOf(_and);
+      public Boolean apply(final Entity e) {
+        boolean _and = false;
+        boolean _isStandardFields = e.isStandardFields();
+        if (!_isStandardFields) {
+          _and = false;
+        } else {
+          boolean _isOwnerPermission = e.isOwnerPermission();
+          _and = (_isStandardFields && _isOwnerPermission);
         }
-      };
+        return Boolean.valueOf(_and);
+      }
+    };
     final Iterable<Entity> entitiesWithOwnerPermission = IterableExtensions.<Entity>filter(_allEntities, _function);
     _builder.newLineIfNotEmpty();
     {

@@ -47,12 +47,12 @@ public class WorkflowExtensions {
   public Iterable<Entity> getEntitiesForWorkflow(final Application it, final EntityWorkflowType wfType) {
     EList<Entity> _allEntities = this._modelWorkflowExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          EntityWorkflowType _workflow = e.getWorkflow();
-          boolean _equals = Objects.equal(_workflow, wfType);
-          return Boolean.valueOf(_equals);
-        }
-      };
+      public Boolean apply(final Entity e) {
+        EntityWorkflowType _workflow = e.getWorkflow();
+        boolean _equals = Objects.equal(_workflow, wfType);
+        return Boolean.valueOf(_equals);
+      }
+    };
     Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
     return _filter;
   }
@@ -143,11 +143,11 @@ public class WorkflowExtensions {
     } else {
       Iterable<Entity> _entitiesForWorkflow = this.getEntitiesForWorkflow(it, wfType);
       final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-          public Boolean apply(final Entity e) {
-            boolean _hasWorkflowStateEntity = WorkflowExtensions.this.hasWorkflowStateEntity(e, state);
-            return Boolean.valueOf(_hasWorkflowStateEntity);
-          }
-        };
+        public Boolean apply(final Entity e) {
+          boolean _hasWorkflowStateEntity = WorkflowExtensions.this.hasWorkflowStateEntity(e, state);
+          return Boolean.valueOf(_hasWorkflowStateEntity);
+        }
+      };
       Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_entitiesForWorkflow, _function);
       boolean _isEmpty = IterableExtensions.isEmpty(_filter);
       boolean _not = (!_isEmpty);
@@ -162,11 +162,11 @@ public class WorkflowExtensions {
   public boolean hasWorkflowState(final Application it, final String state) {
     EList<Entity> _allEntities = this._modelWorkflowExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _hasWorkflowStateEntity = WorkflowExtensions.this.hasWorkflowStateEntity(e, state);
-          return Boolean.valueOf(_hasWorkflowStateEntity);
-        }
-      };
+      public Boolean apply(final Entity e) {
+        boolean _hasWorkflowStateEntity = WorkflowExtensions.this.hasWorkflowStateEntity(e, state);
+        return Boolean.valueOf(_hasWorkflowStateEntity);
+      }
+    };
     Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
     boolean _isEmpty = IterableExtensions.isEmpty(_filter);
     boolean _not = (!_isEmpty);
@@ -240,12 +240,12 @@ public class WorkflowExtensions {
     EList<EntityField> _fields = it.getFields();
     Iterable<ListField> _filter = Iterables.<ListField>filter(_fields, ListField.class);
     final Function1<ListField,Boolean> _function = new Function1<ListField,Boolean>() {
-        public Boolean apply(final ListField e) {
-          String _name = e.getName();
-          boolean _equals = Objects.equal(_name, "workflowState");
-          return Boolean.valueOf(_equals);
-        }
-      };
+      public Boolean apply(final ListField e) {
+        String _name = e.getName();
+        boolean _equals = Objects.equal(_name, "workflowState");
+        return Boolean.valueOf(_equals);
+      }
+    };
     Iterable<ListField> _filter_1 = IterableExtensions.<ListField>filter(_filter, _function);
     ListField _head = IterableExtensions.<ListField>head(_filter_1);
     return _head;
@@ -277,13 +277,13 @@ public class WorkflowExtensions {
     ListField _workflowStateField = this.getWorkflowStateField(it);
     EList<ListFieldItem> _items = _workflowStateField.getItems();
     final Function1<ListFieldItem,Boolean> _function = new Function1<ListFieldItem,Boolean>() {
-        public Boolean apply(final ListFieldItem e) {
-          String _value = e.getValue();
-          String _lowerCase = state.toLowerCase();
-          boolean _equals = Objects.equal(_value, _lowerCase);
-          return Boolean.valueOf(_equals);
-        }
-      };
+      public Boolean apply(final ListFieldItem e) {
+        String _value = e.getValue();
+        String _lowerCase = state.toLowerCase();
+        boolean _equals = Objects.equal(_value, _lowerCase);
+        return Boolean.valueOf(_equals);
+      }
+    };
     Iterable<ListFieldItem> _filter = IterableExtensions.<ListFieldItem>filter(_items, _function);
     return _filter;
   }

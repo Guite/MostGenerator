@@ -14,7 +14,7 @@ public class ReplaceOperations {
     _builder.newLine();
     _builder.append("// initialize transformation parameters");
     _builder.newLine();
-    _builder.append("$special1 = \'\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF\';");
+    _builder.append("$special1 = \'ÄÖÜäöüß\';");
     _builder.newLine();
     _builder.append("$special2 = \'AOUaous\';");
     _builder.newLine();

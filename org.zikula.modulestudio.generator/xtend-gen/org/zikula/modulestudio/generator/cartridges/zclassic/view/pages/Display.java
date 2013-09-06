@@ -174,30 +174,30 @@ public class Display {
     _builder.newLineIfNotEmpty();
     Iterable<JoinRelationship> _outgoingJoinRelations = this._modelJoinExtensions.getOutgoingJoinRelations(it);
     final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          Entity _target = e.getTarget();
-          Models _container = _target.getContainer();
-          Application _application = _container.getApplication();
-          Models _container_1 = it.getContainer();
-          Application _application_1 = _container_1.getApplication();
-          boolean _equals = Objects.equal(_application, _application_1);
-          return Boolean.valueOf(_equals);
-        }
-      };
+      public Boolean apply(final JoinRelationship e) {
+        Entity _target = e.getTarget();
+        Models _container = _target.getContainer();
+        Application _application = _container.getApplication();
+        Models _container_1 = it.getContainer();
+        Application _application_1 = _container_1.getApplication();
+        boolean _equals = Objects.equal(_application, _application_1);
+        return Boolean.valueOf(_equals);
+      }
+    };
     Iterable<JoinRelationship> _filter = IterableExtensions.<JoinRelationship>filter(_outgoingJoinRelations, _function);
     EList<Relationship> _incoming = it.getIncoming();
     Iterable<ManyToManyRelationship> _filter_1 = Iterables.<ManyToManyRelationship>filter(_incoming, ManyToManyRelationship.class);
     final Function1<ManyToManyRelationship,Boolean> _function_1 = new Function1<ManyToManyRelationship,Boolean>() {
-        public Boolean apply(final ManyToManyRelationship e) {
-          Entity _source = e.getSource();
-          Models _container = _source.getContainer();
-          Application _application = _container.getApplication();
-          Models _container_1 = it.getContainer();
-          Application _application_1 = _container_1.getApplication();
-          boolean _equals = Objects.equal(_application, _application_1);
-          return Boolean.valueOf(_equals);
-        }
-      };
+      public Boolean apply(final ManyToManyRelationship e) {
+        Entity _source = e.getSource();
+        Models _container = _source.getContainer();
+        Application _application = _container.getApplication();
+        Models _container_1 = it.getContainer();
+        Application _application_1 = _container_1.getApplication();
+        boolean _equals = Objects.equal(_application, _application_1);
+        return Boolean.valueOf(_equals);
+      }
+    };
     Iterable<ManyToManyRelationship> _filter_2 = IterableExtensions.<ManyToManyRelationship>filter(_filter_1, _function_1);
     final Iterable<JoinRelationship> refedElems = Iterables.<JoinRelationship>concat(_filter, _filter_2);
     _builder.newLineIfNotEmpty();
@@ -544,11 +544,11 @@ public class Display {
       EList<Relationship> _incoming = it.getIncoming();
       Iterable<OneToManyRelationship> _filter = Iterables.<OneToManyRelationship>filter(_incoming, OneToManyRelationship.class);
       final Function1<OneToManyRelationship,Boolean> _function = new Function1<OneToManyRelationship,Boolean>() {
-          public Boolean apply(final OneToManyRelationship e) {
-            boolean _isBidirectional = e.isBidirectional();
-            return Boolean.valueOf(_isBidirectional);
-          }
-        };
+        public Boolean apply(final OneToManyRelationship e) {
+          boolean _isBidirectional = e.isBidirectional();
+          return Boolean.valueOf(_isBidirectional);
+        }
+      };
       Iterable<OneToManyRelationship> _filter_1 = IterableExtensions.<OneToManyRelationship>filter(_filter, _function);
       for(final OneToManyRelationship relation : _filter_1) {
         CharSequence _displayEntry_1 = this.displayEntry(relation, controller, Boolean.valueOf(false));

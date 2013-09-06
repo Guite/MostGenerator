@@ -371,11 +371,11 @@ public class TreeJS {
     {
       EList<Controller> _allControllers = this._controllerExtensions.getAllControllers(it);
       final Function1<Controller,Boolean> _function = new Function1<Controller,Boolean>() {
-          public Boolean apply(final Controller e) {
-            boolean _hasActions = TreeJS.this._controllerExtensions.hasActions(e, "edit");
-            return Boolean.valueOf(_hasActions);
-          }
-        };
+        public Boolean apply(final Controller e) {
+          boolean _hasActions = TreeJS.this._controllerExtensions.hasActions(e, "edit");
+          return Boolean.valueOf(_hasActions);
+        }
+      };
       Iterable<Controller> _filter = IterableExtensions.<Controller>filter(_allControllers, _function);
       for(final Controller controller : _filter) {
         _builder.append("case \'");

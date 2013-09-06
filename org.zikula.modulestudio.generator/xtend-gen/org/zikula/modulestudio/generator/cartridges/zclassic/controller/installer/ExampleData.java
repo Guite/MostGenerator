@@ -172,12 +172,12 @@ public class ExampleData {
         {
           EList<Entity> _entities_1 = it.getEntities();
           final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-              public Boolean apply(final Entity e) {
-                EntityTreeType _tree = e.getTree();
-                boolean _notEquals = (!Objects.equal(_tree, EntityTreeType.NONE));
-                return Boolean.valueOf(_notEquals);
-              }
-            };
+            public Boolean apply(final Entity e) {
+              EntityTreeType _tree = e.getTree();
+              boolean _notEquals = (!Objects.equal(_tree, EntityTreeType.NONE));
+              return Boolean.valueOf(_notEquals);
+            }
+          };
           Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_entities_1, _function);
           boolean _isEmpty = IterableExtensions.isEmpty(_filter);
           boolean _not = (!_isEmpty);
@@ -269,11 +269,11 @@ public class ExampleData {
     _builder.newLineIfNotEmpty();
     {
       final Function1<AbstractDateField,Boolean> _function = new Function1<AbstractDateField,Boolean>() {
-          public Boolean apply(final AbstractDateField e) {
-            boolean _isPast = e.isPast();
-            return Boolean.valueOf(_isPast);
-          }
-        };
+        public Boolean apply(final AbstractDateField e) {
+          boolean _isPast = e.isPast();
+          return Boolean.valueOf(_isPast);
+        }
+      };
       Iterable<AbstractDateField> _filter = IterableExtensions.<AbstractDateField>filter(fields, _function);
       boolean _isEmpty = IterableExtensions.isEmpty(_filter);
       boolean _not = (!_isEmpty);
@@ -286,11 +286,11 @@ public class ExampleData {
     }
     {
       final Function1<AbstractDateField,Boolean> _function_1 = new Function1<AbstractDateField,Boolean>() {
-          public Boolean apply(final AbstractDateField e) {
-            boolean _isFuture = e.isFuture();
-            return Boolean.valueOf(_isFuture);
-          }
-        };
+        public Boolean apply(final AbstractDateField e) {
+          boolean _isFuture = e.isFuture();
+          return Boolean.valueOf(_isFuture);
+        }
+      };
       Iterable<AbstractDateField> _filter_1 = IterableExtensions.<AbstractDateField>filter(fields, _function_1);
       boolean _isEmpty_1 = IterableExtensions.isEmpty(_filter_1);
       boolean _not_1 = (!_isEmpty_1);
@@ -311,11 +311,11 @@ public class ExampleData {
         {
           Iterable<DatetimeField> _filter_3 = Iterables.<DatetimeField>filter(fields, DatetimeField.class);
           final Function1<DatetimeField,Boolean> _function_2 = new Function1<DatetimeField,Boolean>() {
-              public Boolean apply(final DatetimeField e) {
-                boolean _isPast = e.isPast();
-                return Boolean.valueOf(_isPast);
-              }
-            };
+            public Boolean apply(final DatetimeField e) {
+              boolean _isPast = e.isPast();
+              return Boolean.valueOf(_isPast);
+            }
+          };
           Iterable<DatetimeField> _filter_4 = IterableExtensions.<DatetimeField>filter(_filter_3, _function_2);
           boolean _isEmpty_3 = IterableExtensions.isEmpty(_filter_4);
           boolean _not_3 = (!_isEmpty_3);
@@ -327,11 +327,11 @@ public class ExampleData {
         {
           Iterable<DatetimeField> _filter_5 = Iterables.<DatetimeField>filter(fields, DatetimeField.class);
           final Function1<DatetimeField,Boolean> _function_3 = new Function1<DatetimeField,Boolean>() {
-              public Boolean apply(final DatetimeField e) {
-                boolean _isFuture = e.isFuture();
-                return Boolean.valueOf(_isFuture);
-              }
-            };
+            public Boolean apply(final DatetimeField e) {
+              boolean _isFuture = e.isFuture();
+              return Boolean.valueOf(_isFuture);
+            }
+          };
           Iterable<DatetimeField> _filter_6 = IterableExtensions.<DatetimeField>filter(_filter_5, _function_3);
           boolean _isEmpty_4 = IterableExtensions.isEmpty(_filter_6);
           boolean _not_4 = (!_isEmpty_4);
@@ -352,11 +352,11 @@ public class ExampleData {
         {
           Iterable<DateField> _filter_8 = Iterables.<DateField>filter(fields, DateField.class);
           final Function1<DateField,Boolean> _function_4 = new Function1<DateField,Boolean>() {
-              public Boolean apply(final DateField e) {
-                boolean _isPast = e.isPast();
-                return Boolean.valueOf(_isPast);
-              }
-            };
+            public Boolean apply(final DateField e) {
+              boolean _isPast = e.isPast();
+              return Boolean.valueOf(_isPast);
+            }
+          };
           Iterable<DateField> _filter_9 = IterableExtensions.<DateField>filter(_filter_8, _function_4);
           boolean _isEmpty_6 = IterableExtensions.isEmpty(_filter_9);
           boolean _not_6 = (!_isEmpty_6);
@@ -368,11 +368,11 @@ public class ExampleData {
         {
           Iterable<DateField> _filter_10 = Iterables.<DateField>filter(fields, DateField.class);
           final Function1<DateField,Boolean> _function_5 = new Function1<DateField,Boolean>() {
-              public Boolean apply(final DateField e) {
-                boolean _isFuture = e.isFuture();
-                return Boolean.valueOf(_isFuture);
-              }
-            };
+            public Boolean apply(final DateField e) {
+              boolean _isFuture = e.isFuture();
+              return Boolean.valueOf(_isFuture);
+            }
+          };
           Iterable<DateField> _filter_11 = IterableExtensions.<DateField>filter(_filter_10, _function_5);
           boolean _isEmpty_7 = IterableExtensions.isEmpty(_filter_11);
           boolean _not_7 = (!_isEmpty_7);
@@ -393,11 +393,11 @@ public class ExampleData {
         {
           Iterable<TimeField> _filter_13 = Iterables.<TimeField>filter(fields, TimeField.class);
           final Function1<TimeField,Boolean> _function_6 = new Function1<TimeField,Boolean>() {
-              public Boolean apply(final TimeField e) {
-                boolean _isPast = e.isPast();
-                return Boolean.valueOf(_isPast);
-              }
-            };
+            public Boolean apply(final TimeField e) {
+              boolean _isPast = e.isPast();
+              return Boolean.valueOf(_isPast);
+            }
+          };
           Iterable<TimeField> _filter_14 = IterableExtensions.<TimeField>filter(_filter_13, _function_6);
           boolean _isEmpty_9 = IterableExtensions.isEmpty(_filter_14);
           boolean _not_9 = (!_isEmpty_9);
@@ -409,11 +409,11 @@ public class ExampleData {
         {
           Iterable<TimeField> _filter_15 = Iterables.<TimeField>filter(fields, TimeField.class);
           final Function1<TimeField,Boolean> _function_7 = new Function1<TimeField,Boolean>() {
-              public Boolean apply(final TimeField e) {
-                boolean _isFuture = e.isFuture();
-                return Boolean.valueOf(_isFuture);
-              }
-            };
+            public Boolean apply(final TimeField e) {
+              boolean _isFuture = e.isFuture();
+              return Boolean.valueOf(_isFuture);
+            }
+          };
           Iterable<TimeField> _filter_16 = IterableExtensions.<TimeField>filter(_filter_15, _function_7);
           boolean _isEmpty_10 = IterableExtensions.isEmpty(_filter_16);
           boolean _not_10 = (!_isEmpty_10);
@@ -611,14 +611,14 @@ public class ExampleData {
           EList<Relationship> _outgoing = it.getOutgoing();
           Iterable<OneToOneRelationship> _filter = Iterables.<OneToOneRelationship>filter(_outgoing, OneToOneRelationship.class);
           final Function1<OneToOneRelationship,Boolean> _function = new Function1<OneToOneRelationship,Boolean>() {
-              public Boolean apply(final OneToOneRelationship e) {
-                Entity _target = e.getTarget();
-                Models _container = _target.getContainer();
-                Application _application = _container.getApplication();
-                boolean _equals = Objects.equal(_application, app);
-                return Boolean.valueOf(_equals);
-              }
-            };
+            public Boolean apply(final OneToOneRelationship e) {
+              Entity _target = e.getTarget();
+              Models _container = _target.getContainer();
+              Application _application = _container.getApplication();
+              boolean _equals = Objects.equal(_application, app);
+              return Boolean.valueOf(_equals);
+            }
+          };
           Iterable<OneToOneRelationship> _filter_1 = IterableExtensions.<OneToOneRelationship>filter(_filter, _function);
           for(final OneToOneRelationship relation : _filter_1) {
             CharSequence _exampleRowAssignmentOutgoing = this.exampleRowAssignmentOutgoing(relation, entityName, number);
@@ -631,14 +631,14 @@ public class ExampleData {
           EList<Relationship> _outgoing_1 = it.getOutgoing();
           Iterable<ManyToOneRelationship> _filter_2 = Iterables.<ManyToOneRelationship>filter(_outgoing_1, ManyToOneRelationship.class);
           final Function1<ManyToOneRelationship,Boolean> _function_1 = new Function1<ManyToOneRelationship,Boolean>() {
-              public Boolean apply(final ManyToOneRelationship e) {
-                Entity _target = e.getTarget();
-                Models _container = _target.getContainer();
-                Application _application = _container.getApplication();
-                boolean _equals = Objects.equal(_application, app);
-                return Boolean.valueOf(_equals);
-              }
-            };
+            public Boolean apply(final ManyToOneRelationship e) {
+              Entity _target = e.getTarget();
+              Models _container = _target.getContainer();
+              Application _application = _container.getApplication();
+              boolean _equals = Objects.equal(_application, app);
+              return Boolean.valueOf(_equals);
+            }
+          };
           Iterable<ManyToOneRelationship> _filter_3 = IterableExtensions.<ManyToOneRelationship>filter(_filter_2, _function_1);
           for(final ManyToOneRelationship relation_1 : _filter_3) {
             CharSequence _exampleRowAssignmentOutgoing_1 = this.exampleRowAssignmentOutgoing(relation_1, entityName, number);
@@ -650,21 +650,21 @@ public class ExampleData {
           EList<Relationship> _incoming = it.getIncoming();
           Iterable<OneToManyRelationship> _filter_4 = Iterables.<OneToManyRelationship>filter(_incoming, OneToManyRelationship.class);
           final Function1<OneToManyRelationship,Boolean> _function_2 = new Function1<OneToManyRelationship,Boolean>() {
-              public Boolean apply(final OneToManyRelationship e) {
-                boolean _isBidirectional = e.isBidirectional();
-                return Boolean.valueOf(_isBidirectional);
-              }
-            };
+            public Boolean apply(final OneToManyRelationship e) {
+              boolean _isBidirectional = e.isBidirectional();
+              return Boolean.valueOf(_isBidirectional);
+            }
+          };
           Iterable<OneToManyRelationship> _filter_5 = IterableExtensions.<OneToManyRelationship>filter(_filter_4, _function_2);
           final Function1<OneToManyRelationship,Boolean> _function_3 = new Function1<OneToManyRelationship,Boolean>() {
-              public Boolean apply(final OneToManyRelationship e) {
-                Entity _source = e.getSource();
-                Models _container = _source.getContainer();
-                Application _application = _container.getApplication();
-                boolean _equals = Objects.equal(_application, app);
-                return Boolean.valueOf(_equals);
-              }
-            };
+            public Boolean apply(final OneToManyRelationship e) {
+              Entity _source = e.getSource();
+              Models _container = _source.getContainer();
+              Application _application = _container.getApplication();
+              boolean _equals = Objects.equal(_application, app);
+              return Boolean.valueOf(_equals);
+            }
+          };
           Iterable<OneToManyRelationship> _filter_6 = IterableExtensions.<OneToManyRelationship>filter(_filter_5, _function_3);
           for(final OneToManyRelationship relation_2 : _filter_6) {
             CharSequence _exampleRowAssignmentIncoming = this.exampleRowAssignmentIncoming(relation_2, entityName, number);
@@ -934,11 +934,11 @@ public class ExampleData {
         EList<Relationship> _incoming = it.getIncoming();
         Iterable<JoinRelationship> _filter = Iterables.<JoinRelationship>filter(_incoming, JoinRelationship.class);
         final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-            public Boolean apply(final JoinRelationship e) {
-              boolean _isIndexed = ExampleData.this._modelJoinExtensions.isIndexed(e);
-              return Boolean.valueOf(_isIndexed);
-            }
-          };
+          public Boolean apply(final JoinRelationship e) {
+            boolean _isIndexed = ExampleData.this._modelJoinExtensions.isIndexed(e);
+            return Boolean.valueOf(_isIndexed);
+          }
+        };
         Iterable<JoinRelationship> _filter_1 = IterableExtensions.<JoinRelationship>filter(_filter, _function);
         final JoinRelationship indexRelation = IterableExtensions.<JoinRelationship>head(_filter_1);
         _builder.newLineIfNotEmpty();
@@ -948,12 +948,12 @@ public class ExampleData {
         _builder.newLineIfNotEmpty();
         Iterable<DerivedField> _derivedFields = this._modelExtensions.getDerivedFields(it);
         final Function1<DerivedField,Boolean> _function_1 = new Function1<DerivedField,Boolean>() {
-            public Boolean apply(final DerivedField e) {
-              String _name = e.getName();
-              boolean _equals = Objects.equal(_name, indexBy);
-              return Boolean.valueOf(_equals);
-            }
-          };
+          public Boolean apply(final DerivedField e) {
+            String _name = e.getName();
+            boolean _equals = Objects.equal(_name, indexBy);
+            return Boolean.valueOf(_equals);
+          }
+        };
         final DerivedField indexByField = IterableExtensions.<DerivedField>findFirst(_derivedFields, _function_1);
         _builder.newLineIfNotEmpty();
         Object _exampleRowsConstructorArgument = this.exampleRowsConstructorArgument(indexByField, number);

@@ -224,21 +224,21 @@ public class ValidationError {
     {
       EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
       final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-          public Boolean apply(final Entity e) {
-            Iterable<DerivedField> _uniqueDerivedFields = ValidationError.this._modelExtensions.getUniqueDerivedFields(e);
-            final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-                public Boolean apply(final DerivedField f) {
-                  boolean _isPrimaryKey = f.isPrimaryKey();
-                  boolean _not = (!_isPrimaryKey);
-                  return Boolean.valueOf(_not);
-                }
-              };
-            Iterable<DerivedField> _filter = IterableExtensions.<DerivedField>filter(_uniqueDerivedFields, _function);
-            int _size = IterableExtensions.size(_filter);
-            boolean _greaterThan = (_size > 0);
-            return Boolean.valueOf(_greaterThan);
-          }
-        };
+        public Boolean apply(final Entity e) {
+          Iterable<DerivedField> _uniqueDerivedFields = ValidationError.this._modelExtensions.getUniqueDerivedFields(e);
+          final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
+            public Boolean apply(final DerivedField f) {
+              boolean _isPrimaryKey = f.isPrimaryKey();
+              boolean _not = (!_isPrimaryKey);
+              return Boolean.valueOf(_not);
+            }
+          };
+          Iterable<DerivedField> _filter = IterableExtensions.<DerivedField>filter(_uniqueDerivedFields, _function);
+          int _size = IterableExtensions.size(_filter);
+          boolean _greaterThan = (_size > 0);
+          return Boolean.valueOf(_greaterThan);
+        }
+      };
       boolean _exists = IterableExtensions.<Entity>exists(_allEntities, _function);
       if (_exists) {
         _builder.append("        ");

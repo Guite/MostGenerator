@@ -88,11 +88,11 @@ public class SearchView {
     {
       EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
       final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-          public Boolean apply(final Entity e) {
-            boolean _hasAbstractStringFieldsEntity = SearchView.this._modelExtensions.hasAbstractStringFieldsEntity(e);
-            return Boolean.valueOf(_hasAbstractStringFieldsEntity);
-          }
-        };
+        public Boolean apply(final Entity e) {
+          boolean _hasAbstractStringFieldsEntity = SearchView.this._modelExtensions.hasAbstractStringFieldsEntity(e);
+          return Boolean.valueOf(_hasAbstractStringFieldsEntity);
+        }
+      };
       Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
       for(final Entity entity : _filter) {
         String _nameMultiple = entity.getNameMultiple();
