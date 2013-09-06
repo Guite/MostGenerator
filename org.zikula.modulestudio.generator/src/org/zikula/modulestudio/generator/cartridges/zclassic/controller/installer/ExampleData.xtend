@@ -208,7 +208,7 @@ class ExampleData {
         try {
             «FOR entity : entities»«entity.persistEntities(application)»«ENDFOR»
         } catch(\Exception $e) {
-            LogUtil::registerWarning($this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
+            LogUtil::register«IF application.targets('1.3.5')»Error«ELSE»Warning«ENDIF»($this->__('Sorry, but an unknown error occured during example data creation. Possibly not all data could be created properly!'));
         }
     '''
 
