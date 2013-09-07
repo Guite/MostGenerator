@@ -12,13 +12,13 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class Section {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ViewExtensions = new ViewExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ViewExtensions = new ViewExtensions
+    @Inject extension Utils = new Utils
 
-    Relations relationHelper = new Relations()
+    Relations relationHelper = new Relations
 
     /**
      * Entry point for edit sections beside the actual fields.

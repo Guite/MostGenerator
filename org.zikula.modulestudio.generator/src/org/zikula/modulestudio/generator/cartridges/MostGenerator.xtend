@@ -11,7 +11,7 @@ import org.zikula.modulestudio.generator.extensions.transformation.PersistenceTr
 import org.eclipse.core.runtime.IProgressMonitor
 
 class MostGenerator implements IGenerator {
-    @Inject extension ModelExtensions = new ModelExtensions()
+    @Inject extension ModelExtensions = new ModelExtensions
 
     String cartridge = ''
 
@@ -23,7 +23,7 @@ class MostGenerator implements IGenerator {
         val firstEntity = app.getAllEntities.head
         val pkFields = firstEntity.fields.filter(e|e.name == 'id')
 
-        if (pkFields.isEmpty)
+        if (pkFields.empty)
             app.transform
 
         if (cartridge == 'zclassic')

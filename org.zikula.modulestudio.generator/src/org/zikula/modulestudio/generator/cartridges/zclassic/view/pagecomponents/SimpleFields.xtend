@@ -19,9 +19,9 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class SimpleFields {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension Utils = new Utils
 
     def dispatch displayField(EntityField it, String objName, String page) '''
         {$«objName».«name.formatForCode»«IF page == 'viewcsv'»|replace:"\"":""«ENDIF»}'''

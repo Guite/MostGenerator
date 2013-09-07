@@ -17,8 +17,8 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
  * Entry point for the Util class creation.
  */
 class UtilMethods {
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
 
     def generate(Application it, IFileSystemAccess fsa) {
         new ModelUtil().generate(it, fsa)

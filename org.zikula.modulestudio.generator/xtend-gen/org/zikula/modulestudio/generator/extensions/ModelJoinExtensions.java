@@ -390,7 +390,7 @@ public class ModelJoinExtensions {
   
   /**
    * Checks for whether a certain relationship side has a multiplicity of one or many.
-   * Special version used in view::pagecomponents::Relations to decide about template visibility.
+   * Special version used in view.pagecomponents.Relations to decide about template visibility.
    */
   public boolean isManySideDisplay(final JoinRelationship it, final boolean useTarget) {
     boolean _switchResult = false;

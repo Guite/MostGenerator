@@ -38,21 +38,21 @@ import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Entities {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
-    @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension UrlExtensions = new UrlExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
+    @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension UrlExtensions = new UrlExtensions
+    @Inject extension Utils = new Utils
 
-    FileHelper fh = new FileHelper()
-    Association thAssoc = new Association()
-    Extensions thExt = new Extensions()
-    EventListener thEvLi = new EventListener()
-    Property thProp = new Property()
+    FileHelper fh = new FileHelper
+    Association thAssoc = new Association
+    Extensions thExt = new Extensions
+    EventListener thEvLi = new EventListener
+    Property thProp = new Property
 
     /**
      * Entry point for Doctrine entity classes.
@@ -190,7 +190,7 @@ class Entities {
          «ELSE»
           * @ORM\Entity(repositoryClass="«IF app.targets('1.3.5')»«app.appName»_Entity_Repository_«name.formatForCodeCapital»«ELSE»\«app.appNamespace»\Entity\Repository\«name.formatForCodeCapital»«ENDIF»"«IF readOnly», readOnly=true«ENDIF»)
          «ENDIF»
-         «IF indexes.isEmpty»
+         «IF indexes.empty»
           * @ORM\Table(name="«fullEntityTableName»")
          «ELSE»
           * @ORM\Table(name="«fullEntityTableName»",
@@ -746,7 +746,7 @@ class Entities {
         /**
          * Clone interceptor implementation.
          * This method is for example called by the reuse functionality.
-         «IF joinsIn.isEmpty && joinsOut.isEmpty»
+         «IF joinsIn.empty && joinsOut.empty»
          * Performs a quite simple shallow copy.
          «ELSE»
          * Performs a deep copy. 
@@ -778,7 +778,7 @@ class Entities {
                     $entity->set«field.name.formatForCodeCapital»($this->get«field.name.formatForCodeCapital»());
                 «ENDFOR»
 
-                «IF !joinsIn.isEmpty || !joinsOut.isEmpty»
+                «IF !joinsIn.empty || !joinsOut.empty»
                     // handle related objects
                     // prevent shared references by doing a deep copy - see (2) and (3) for more information
                     «FOR relation : joinsIn»

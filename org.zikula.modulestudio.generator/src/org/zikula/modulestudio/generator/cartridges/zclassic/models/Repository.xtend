@@ -33,16 +33,16 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Repository {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
-    @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
+    @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
     IFileSystemAccess fsa
-    FileHelper fh = new FileHelper()
+    FileHelper fh = new FileHelper
     Application app
 
     /**
@@ -186,9 +186,9 @@ class Repository {
            {
                 «val textFields = fields.filter(TextField).filter(e|!e.leading)»
                 «val stringFields = fields.filter(StringField).filter(e|!e.leading && !e.password)»
-                «IF !textFields.isEmpty»
+                «IF !textFields.empty»
                     $fieldName = '«textFields.head.name.formatForCode»';
-                «ELSEIF !stringFields.isEmpty»
+                «ELSEIF !stringFields.empty»
                     $fieldName = '«stringFields.head.name.formatForCode»';
                 «ELSE»
                     $fieldName = '';
@@ -243,7 +243,7 @@ class Repository {
             «selectWherePaginated»
 
             «selectSearch»
-            «IF !getUniqueDerivedFields.isEmpty»
+            «IF !getUniqueDerivedFields.empty»
 
                 «selectCount»
             «ENDIF»
@@ -357,7 +357,7 @@ class Repository {
             «IF categorisable»
                 $parameters['catIdList'] = ModUtil::apiFunc('«container.application.appName»', 'category', 'retrieveCategoriesFromRequest', array('ot' => '«name.formatForCode»', 'source' => 'GET', 'controllerArgs' => $this->controllerArguments));
             «ENDIF»
-            «IF !getBidirectionalIncomingJoinRelationsWithOneSource.isEmpty»
+            «IF !getBidirectionalIncomingJoinRelationsWithOneSource.empty»
                 «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
                     «val sourceAliasName = relation.getRelationAliasName(false)»
                     $parameters['«sourceAliasName»'] = isset($this->controllerArguments['«sourceAliasName»']) ? $this->controllerArguments['«sourceAliasName»'] : FormUtil::getPassedValue('«sourceAliasName»', 0, 'GET');
@@ -729,7 +729,7 @@ class Repository {
                 // count the total number of affected items
                 $count = Paginate::getTotalQueryResults($query);
 
-                «IF !(outgoing.filter(JoinRelationship).isEmpty && incoming.filter(JoinRelationship).isEmpty)»
+                «IF !(outgoing.filter(JoinRelationship).empty && incoming.filter(JoinRelationship).empty)»
                     // prefetch unique relationship ids for given pagination frame
                     $query = Paginate::getPaginateQuery($query, $offset, $resultsPerPage);
                 «ELSE»
@@ -764,7 +764,7 @@ class Repository {
             «IF app.targets('1.3.5')»
             $result = $query->getResult();
             «ELSE»
-                «IF !(outgoing.filter(JoinRelationship).isEmpty && incoming.filter(JoinRelationship).isEmpty)»
+                «IF !(outgoing.filter(JoinRelationship).empty && incoming.filter(JoinRelationship).empty)»
                     $paginator = new Paginator($query, true);
                 «ELSE»
                     $paginator = new Paginator($query, false);
@@ -939,7 +939,7 @@ class Repository {
             «IF app.targets('1.3.5')»
             $result = $query->getResult();
             «ELSE»
-                «IF !(outgoing.filter(JoinRelationship).isEmpty && incoming.filter(JoinRelationship).isEmpty)»
+                «IF !(outgoing.filter(JoinRelationship).empty && incoming.filter(JoinRelationship).empty)»
                     $paginator = new Paginator($query, true);
                 «ELSE»
                     $paginator = new Paginator($query, false);
@@ -1258,7 +1258,7 @@ class Repository {
         switch it {
             DerivedField : {
                 val joins = entity.incoming.filter(JoinRelationship).filter(e|formatForDB(e.getSourceFields.head) == name.formatForDB)
-                if (!joins.isEmpty) '''
+                if (!joins.empty) '''
                      '«joins.head.source.name.formatForCode»',
                      '''
                 else '''

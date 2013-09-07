@@ -14,17 +14,17 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
  * Workflow operations.
  */
 class Operations {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension WorkflowExtensions = new WorkflowExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension WorkflowExtensions = new WorkflowExtensions
+    @Inject extension Utils = new Utils
 
     Application app
     //EntityWorkflowType wfType
 
     IFileSystemAccess fsa
     String outputPath
-    FileHelper fh = new FileHelper()
+    FileHelper fh = new FileHelper
 
     /**
      * Entry point for workflow operations.

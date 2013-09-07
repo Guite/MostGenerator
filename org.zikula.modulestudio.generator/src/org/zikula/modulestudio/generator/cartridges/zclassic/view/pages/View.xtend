@@ -31,17 +31,17 @@ import org.zikula.modulestudio.generator.extensions.ViewExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class View {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension UrlExtensions = new UrlExtensions()
-    @Inject extension Utils = new Utils()
-    @Inject extension ViewExtensions = new ViewExtensions()
-    @Inject extension WorkflowExtensions = new WorkflowExtensions()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension UrlExtensions = new UrlExtensions
+    @Inject extension Utils = new Utils
+    @Inject extension ViewExtensions = new ViewExtensions
+    @Inject extension WorkflowExtensions = new WorkflowExtensions
 
-    SimpleFields fieldHelper = new SimpleFields()
+    SimpleFields fieldHelper = new SimpleFields
 
     Integer listType
 
@@ -356,7 +356,7 @@ class View {
 
     def private headerSortingLinkParameters(Entity it) ''' sortdir=$sdir all=$all own=$own«IF categorisable» catidMain=$catIdListMainString«ENDIF»«sortParamsForIncomingRelations»«sortParamsForListFields»«sortParamsForUserFields»«sortParamsForCountryFields»«sortParamsForLanguageFields»«IF hasAbstractStringFieldsEntity» searchterm=$searchterm«ENDIF» pageSize=$pageSize«sortParamsForBooleanFields»'''
 
-    def private sortParamsForIncomingRelations(Entity it) '''«IF !getIncomingJoinRelationsWithOneSource.isEmpty»«FOR relation: getIncomingJoinRelationsWithOneSource»«val sourceAliasName = relation.getRelationAliasName(false).formatForCode» «sourceAliasName»=$«sourceAliasName»«ENDFOR»«ENDIF»'''
+    def private sortParamsForIncomingRelations(Entity it) '''«IF !getIncomingJoinRelationsWithOneSource.empty»«FOR relation: getIncomingJoinRelationsWithOneSource»«val sourceAliasName = relation.getRelationAliasName(false).formatForCode» «sourceAliasName»=$«sourceAliasName»«ENDFOR»«ENDIF»'''
     def private sortParamsForListFields(Entity it) '''«IF hasListFieldsEntity»«FOR field : getListFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
     def private sortParamsForUserFields(Entity it) '''«IF hasUserFieldsEntity»«FOR field : getUserFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''
     def private sortParamsForCountryFields(Entity it) '''«IF hasCountryFieldsEntity»«FOR field : getCountryFieldsEntity»«val fieldName = field.name.formatForCode» «fieldName»=$«fieldName»«ENDFOR»«ENDIF»'''

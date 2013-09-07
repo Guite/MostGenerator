@@ -26,17 +26,17 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class Forms {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
-    @Inject extension ViewExtensions = new ViewExtensions()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
+    @Inject extension ViewExtensions = new ViewExtensions
 
-    SimpleFields fieldHelper = new SimpleFields()
-    Relations relationHelper = new Relations()
+    SimpleFields fieldHelper = new SimpleFields
+    Relations relationHelper = new Relations
 
     def generate(Application it, IFileSystemAccess fsa) {
         for (controller : getAllControllers) {
@@ -124,7 +124,7 @@ class Forms {
             {«app.appName.formatForDB»FormFrame}
 «/*            {*formvalidationsummary*}
             {*formerrormessage id='error'*}*/»
-            «IF !getEditableFields.isEmpty»
+            «IF !getEditableFields.empty»
                 {formsetinitialfocus inputId='«(getEditableFields.head).name.formatForCode»'}
 «/*            {formsetinitialfocus inputId='PluginId' doSelect=true} <-- for dropdown lists (performs input.select())*/»
             «ENDIF»
@@ -180,7 +180,7 @@ class Forms {
             {/formvolatile}
         «ENDIF»
         «IF !hasTranslatableFields
-          || (hasTranslatableFields && (!getEditableNonTranslatableFields.isEmpty || (hasSluggableFields && !hasTranslatableSlug)))
+          || (hasTranslatableFields && (!getEditableNonTranslatableFields.empty || (hasSluggableFields && !hasTranslatableSlug)))
           || geographical»
             <fieldset>
                 <legend>{gt text='«IF hasTranslatableFields»Further properties«ELSE»Content«ENDIF»'}</legend>
@@ -339,7 +339,7 @@ class Forms {
 
             document.observe('dom:loaded', function() {
                 «val userFields = getUserFieldsEntity»
-                «IF !userFields.isEmpty»
+                «IF !userFields.empty»
                     // initialise auto completion for user fields
                     «FOR userField : userFields»
                         «val realName = userField.name.formatForCode»
@@ -382,7 +382,7 @@ class Forms {
 
     def private fieldWrapper(DerivedField it, String groupSuffix, String idSuffix) '''
         «/*No input fields for foreign keys, relations are processed further down*/»
-        «IF entity.getIncomingJoinRelations.filter(e|e.getSourceFields.head == name.formatForDB).isEmpty»
+        «IF entity.getIncomingJoinRelations.filter(e|e.getSourceFields.head == name.formatForDB).empty»
             <div class="z-formrow">
                 «fieldHelper.formRow(it, groupSuffix, idSuffix)»
             </div>

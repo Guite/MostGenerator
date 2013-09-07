@@ -14,10 +14,10 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Config {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
         println('Generating config template')
@@ -67,7 +67,7 @@ class Config {
             «ENDIF»
         </div>
         {include file='«IF targets('1.3.5')»«configController.formatForDB»«ELSE»«configController.formatForDB.toFirstUpper»«ENDIF»/footer.tpl'}
-        «IF !getAllVariables.filter(e|e.documentation !== null && e.documentation != '').isEmpty»
+        «IF !getAllVariables.filter(e|e.documentation !== null && e.documentation != '').empty»
             <script type="text/javascript">
             /* <![CDATA[ */
                 document.observe('dom:loaded', function() {

@@ -14,13 +14,13 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class WorkflowUtil {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
-    @Inject extension WorkflowExtensions = new WorkflowExtensions()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
+    @Inject extension WorkflowExtensions = new WorkflowExtensions
 
-    FileHelper fh = new FileHelper()
+    FileHelper fh = new FileHelper
 
     /**
      * Entry point for the utility class creation.
@@ -371,11 +371,11 @@ class WorkflowUtil {
             «val entitiesStandard = getEntitiesForWorkflow(EntityWorkflowType::STANDARD)»
             «val entitiesEnterprise = getEntitiesForWorkflow(EntityWorkflowType::ENTERPRISE)»
             «val entitiesNotNone = entitiesStandard + entitiesEnterprise»
-            «IF entitiesNotNone.isEmpty»
+            «IF entitiesNotNone.empty»
                 // nothing required here as no entities use enhanced workflows including approval actions
             «ELSE»
 
-                // check if objects are waiting for«IF !entitiesEnterprise.isEmpty» acceptance or«ENDIF» approval
+                // check if objects are waiting for«IF !entitiesEnterprise.empty» acceptance or«ENDIF» approval
                 $state = 'waiting';
                 «FOR entity : entitiesStandard»
                     «entity.readAmountForObjectTypeAndState('approval')»
@@ -383,7 +383,7 @@ class WorkflowUtil {
                 «FOR entity : entitiesEnterprise»
                     «entity.readAmountForObjectTypeAndState('acceptance')»
                 «ENDFOR»
-                «IF !entitiesEnterprise.isEmpty»
+                «IF !entitiesEnterprise.empty»
                     // check if objects are waiting for approval
                     $state = 'accepted';
                     «FOR entity : entitiesEnterprise»

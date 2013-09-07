@@ -4,7 +4,7 @@ import com.google.inject.Inject
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 
 class ControllerHelper {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension FormattingExtensions = new FormattingExtensions
 
     def controllerPostInitialize(Object it, Boolean caching, String additionalCommands) '''
         /**

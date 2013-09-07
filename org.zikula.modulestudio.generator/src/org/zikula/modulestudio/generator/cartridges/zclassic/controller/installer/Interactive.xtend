@@ -10,8 +10,8 @@ import org.zikula.modulestudio.generator.cartridges.zclassic.controller.Controll
  * Entry point for interactive installer implementation.
  */
 class Interactive {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension Utils = new Utils
 
     def generate(Application it) '''
         «new ControllerHelper().controllerPostInitialize(it, false, '')»

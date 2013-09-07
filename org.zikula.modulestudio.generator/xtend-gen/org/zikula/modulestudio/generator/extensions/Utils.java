@@ -278,14 +278,9 @@ public class Utils {
    * @return String The current timestamp.
    */
   public String timestamp() {
-    String _xblockexpression = null;
-    {
-      final long currentTime = System.currentTimeMillis();
-      Date _date = new Date(currentTime);
-      final Date d = _date;
-      String _string = d.toString();
-      _xblockexpression = (_string);
-    }
-    return _xblockexpression;
+    long _currentTimeMillis = System.currentTimeMillis();
+    Date _date = new Date(_currentTimeMillis);
+    String _string = _date.toString();
+    return _string;
   }
 }

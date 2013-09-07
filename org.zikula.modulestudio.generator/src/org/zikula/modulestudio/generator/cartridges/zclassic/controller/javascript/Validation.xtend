@@ -12,10 +12,10 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Validation {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
     /**
      * Entry point for the javascript file with validation functionality.
@@ -162,7 +162,7 @@ class Validation {
                 }],
                 «ENDIF»
                 «val datetimeFields = getAllEntityFields.filter(DatetimeField)»
-                «IF !datetimeFields.isEmpty»
+                «IF !datetimeFields.empty»
                     «IF datetimeFields.exists(e|e.past)»
                         ['validate-datetime-past', Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var valStr, cmpVal;
@@ -181,7 +181,7 @@ class Validation {
                     «ENDIF»
                 «ENDIF»
                 «val dateFields = getAllEntityFields.filter(DateField)»
-                «IF !dateFields.isEmpty»
+                «IF !dateFields.empty»
                     «IF dateFields.exists(e|e.past)»
                         ['validate-date-past', Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var valStr, cmpVal;
@@ -200,7 +200,7 @@ class Validation {
                     «ENDIF»
                 «ENDIF»
                 «val timeFields = getAllEntityFields.filter(TimeField)»
-                «IF !timeFields.isEmpty»
+                «IF !timeFields.empty»
                     «IF timeFields.exists(e|e.past)»
                         ['validate-time-past', Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var cmpVal;

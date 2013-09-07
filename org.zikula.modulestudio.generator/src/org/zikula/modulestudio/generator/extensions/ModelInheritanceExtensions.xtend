@@ -20,7 +20,7 @@ class ModelInheritanceExtensions {
      * Checks if this entity has a parent.
      */
     def isInheriting(Entity it) {
-        !outgoing.filter(InheritanceRelationship).isEmpty
+        !outgoing.filter(InheritanceRelationship).empty
     }
 
     /**
@@ -41,7 +41,7 @@ class ModelInheritanceExtensions {
      * Checks if this entity has at least one child.
      */
     def isInheriter(Entity it) {
-        !getChildRelations.isEmpty
+        !getChildRelations.empty
     }
 
     /**
@@ -56,8 +56,8 @@ class ModelInheritanceExtensions {
      */
     def asConstant(InheritanceStrategyType inheritanceType) {
         switch inheritanceType {
-            case InheritanceStrategyType::SINGLE_TABLE       : 'SINGLE_TABLE'
-            case InheritanceStrategyType::JOINED             : 'JOINED'
+            case InheritanceStrategyType.SINGLE_TABLE   : 'SINGLE_TABLE'
+            case InheritanceStrategyType.JOINED         : 'JOINED'
             default: ''
         }
     }

@@ -12,12 +12,12 @@ import de.guite.modulestudio.metamodel.modulestudio.ListField
 import de.guite.modulestudio.metamodel.modulestudio.ListFieldItem
 
 class ListEntries {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
-    FileHelper fh = new FileHelper()
+    FileHelper fh = new FileHelper
 
     /**
      * Entry point for the utility class creation.

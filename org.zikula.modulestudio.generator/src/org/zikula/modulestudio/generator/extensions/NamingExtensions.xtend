@@ -14,17 +14,17 @@ class NamingExtensions {
     /**
      * Extensions related to the controller layer.
      */
-    @Inject extension ControllerExtensions = new ControllerExtensions()
+    @Inject extension ControllerExtensions = new ControllerExtensions
 
     /**
      * Extensions used for formatting element names.
      */
-    @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension FormattingExtensions = new FormattingExtensions
 
     /**
      * Additional utility methods.
      */
-    @Inject extension Utils = new Utils()
+    @Inject extension Utils = new Utils
 
     /**
      * Concatenates two strings being used for a template path.
@@ -54,7 +54,7 @@ class NamingExtensions {
      * Returns the full template file path for given controller action and entity.
      */
     def templateFile(Controller it, String entityName, String actionName) {
-        templateFileBase(entityName, actionName) + templateSuffix()
+        templateFileBase(entityName, actionName) + templateSuffix
     }
 
     /**

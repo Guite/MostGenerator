@@ -23,7 +23,7 @@ import java.util.ArrayList
  * This class contains controller related extension methods.
  */
 class ControllerExtensions {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension FormattingExtensions = new FormattingExtensions
 
     /**
      * Makes a controller name lowercase. 
@@ -42,7 +42,7 @@ class ControllerExtensions {
      * Checks whether the application has an user controller or not.
      */
     def hasUserController(Application it) {
-        !getAllUserControllers.isEmpty
+        !getAllUserControllers.empty
     }
     /**
      * Returns the default user controller.
@@ -77,12 +77,12 @@ class ControllerExtensions {
      */
     def hasActions(Controller it, String type) {
         switch (type) {
-            case 'index'    : !actions.filter(MainAction).isEmpty 
-            case 'view'     : !actions.filter(ViewAction).isEmpty 
-            case 'display'  : !actions.filter(DisplayAction).isEmpty 
-            case 'edit'     : !actions.filter(EditAction).isEmpty
-            case 'delete'   : !actions.filter(DeleteAction).isEmpty
-            case 'custom'   : !actions.filter(CustomAction).isEmpty 
+            case 'index'    : !actions.filter(MainAction).empty 
+            case 'view'     : !actions.filter(ViewAction).empty 
+            case 'display'  : !actions.filter(DisplayAction).empty 
+            case 'edit'     : !actions.filter(EditAction).empty
+            case 'delete'   : !actions.filter(DeleteAction).empty
+            case 'custom'   : !actions.filter(CustomAction).empty 
             default : false
         }
     }
@@ -91,7 +91,7 @@ class ControllerExtensions {
      * Checks whether the application has at least one edit action or not.
      */
     def hasEditActions(Application it) {
-        !getEditActions.isEmpty
+        !getEditActions.empty
     }
 
     /**
@@ -170,10 +170,10 @@ class ControllerExtensions {
      * Determines the controller in which the config action is living.
      */
     def configController(Application it) {
-        if (!getAllAdminControllers.isEmpty)
+        if (!getAllAdminControllers.empty)
             getAllAdminControllers.head.formattedName
         else
-            if (!getAllUserControllers.isEmpty)
+            if (!getAllUserControllers.empty)
                 getMainUserController.formattedName
             else
                 getAllControllers.head.formattedName
@@ -197,17 +197,17 @@ class ControllerExtensions {
      */
     def dispatch getEditStageCode(JoinRelationship it, Boolean incoming) {
         switch editType {
-            case RelationEditType::ACTIVE_NONE_PASSIVE_CHOOSE:
+            case RelationEditType.ACTIVE_NONE_PASSIVE_CHOOSE:
                 if (!incoming) 0 else 1
-            case RelationEditType::ACTIVE_NONE_PASSIVE_EDIT:
+            case RelationEditType.ACTIVE_NONE_PASSIVE_EDIT:
                 if (!incoming) 0 else 3
-            case RelationEditType::ACTIVE_CHOOSE_PASSIVE_NONE:
+            case RelationEditType.ACTIVE_CHOOSE_PASSIVE_NONE:
                 if (!incoming) 2 else 3 // invalid --> default as fallback
-            case RelationEditType::ACTIVE_EDIT_PASSIVE_CHOOSE:
+            case RelationEditType.ACTIVE_EDIT_PASSIVE_CHOOSE:
                 if (!incoming) 2 else 1
-            case RelationEditType::ACTIVE_EDIT_PASSIVE_EDIT:
+            case RelationEditType.ACTIVE_EDIT_PASSIVE_EDIT:
                 if (!incoming) 2 else 3 // default
-            case RelationEditType::ACTIVE_EDIT_PASSIVE_NONE:
+            case RelationEditType.ACTIVE_EDIT_PASSIVE_NONE:
                 if (!incoming) 2 else 3 // invalid --> default as fallback
             default:
                 if (!incoming) 2 else 3
@@ -225,17 +225,17 @@ class ControllerExtensions {
      */
     def dispatch getEditStageCode(ManyToManyRelationship it, Boolean incoming) {
         switch editType {
-            case RelationEditType::ACTIVE_NONE_PASSIVE_CHOOSE:
+            case RelationEditType.ACTIVE_NONE_PASSIVE_CHOOSE:
                 if (!incoming) 0 else 1
-            case RelationEditType::ACTIVE_NONE_PASSIVE_EDIT:
+            case RelationEditType.ACTIVE_NONE_PASSIVE_EDIT:
                 if (!incoming) 0 else 3
-            case RelationEditType::ACTIVE_CHOOSE_PASSIVE_NONE:
+            case RelationEditType.ACTIVE_CHOOSE_PASSIVE_NONE:
                 if (!incoming) 1 else 0
-            case RelationEditType::ACTIVE_EDIT_PASSIVE_CHOOSE:
+            case RelationEditType.ACTIVE_EDIT_PASSIVE_CHOOSE:
                 if (!incoming) 3 else 1
-            case RelationEditType::ACTIVE_EDIT_PASSIVE_EDIT:
+            case RelationEditType.ACTIVE_EDIT_PASSIVE_EDIT:
                 if (!incoming) 3 else 3 // default
-            case RelationEditType::ACTIVE_EDIT_PASSIVE_NONE:
+            case RelationEditType.ACTIVE_EDIT_PASSIVE_NONE:
                 if (!incoming) 3 else 0
             default:
                 if (!incoming) 3 else 3
@@ -248,7 +248,7 @@ class ControllerExtensions {
      * Used for creating a certain amount of example data.
      */
     def getListForCounter(Integer amount) {
-        val theList = new ArrayList<Integer>()
+        val theList = new ArrayList<Integer>
         var i = 1
         while (i <= amount) {
             theList.add(i)

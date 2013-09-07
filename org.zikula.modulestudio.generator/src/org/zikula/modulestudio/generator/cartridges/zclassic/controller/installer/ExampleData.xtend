@@ -37,13 +37,13 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ExampleData {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
-    @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
+    @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
     /**
      * Entry point for example data used by the installer.
@@ -65,7 +65,7 @@ class ExampleData {
     def private exampleRowImpl(Models it) '''
         «FOR entity : entities»«entity.truncateTable»«ENDFOR»
         «IF numExampleRows > 0»
-            «IF !entities.filter(e|e.tree != EntityTreeType::NONE).isEmpty»
+            «IF !entities.filter(e|e.tree != EntityTreeType::NONE).empty»
                 $treeCounterRoot = 1;
             «ENDIF»
             «createExampleRows»
@@ -91,38 +91,38 @@ class ExampleData {
 
     def private initDateValues(Models it) '''
         «val fields = getModelEntityFields.filter(AbstractDateField)»
-        «IF !fields.filter(e|e.past).isEmpty»
+        «IF !fields.filter(e|e.past).empty»
             $lastMonth = mktime(date('s'), date('H'), date('i'), date('m')-1, date('d'), date('Y'));
             $lastHour = mktime(date('s'), date('H')-1, date('i'), date('m'), date('d'), date('Y'));
         «ENDIF»
-        «IF !fields.filter(e|e.future).isEmpty»
+        «IF !fields.filter(e|e.future).empty»
             $nextMonth = mktime(date('s'), date('H'), date('i'), date('m')+1, date('d'), date('Y'));
             $nextHour = mktime(date('s'), date('H')+1, date('i'), date('m'), date('d'), date('Y'));
         «ENDIF»
-        «IF !fields.filter(DatetimeField).isEmpty»
+        «IF !fields.filter(DatetimeField).empty»
             $dtNow = date('Y-m-d H:i:s');
-            «IF !fields.filter(DatetimeField).filter(e|e.past).isEmpty»
+            «IF !fields.filter(DatetimeField).filter(e|e.past).empty»
                 $dtPast = date('Y-m-d H:i:s', $lastMonth);
             «ENDIF»
-            «IF !fields.filter(DatetimeField).filter(e|e.future).isEmpty»
+            «IF !fields.filter(DatetimeField).filter(e|e.future).empty»
                 $dtFuture = date('Y-m-d H:i:s', $nextMonth);
             «ENDIF»
         «ENDIF»
-        «IF !fields.filter(DateField).isEmpty»
+        «IF !fields.filter(DateField).empty»
             $dNow = date('Y-m-d');
-            «IF !fields.filter(DateField).filter(e|e.past).isEmpty»
+            «IF !fields.filter(DateField).filter(e|e.past).empty»
                 $dPast = date('Y-m-d', $lastMonth);
             «ENDIF»
-            «IF !fields.filter(DateField).filter(e|e.future).isEmpty»
+            «IF !fields.filter(DateField).filter(e|e.future).empty»
                 $dFuture = date('Y-m-d', $nextMonth);
             «ENDIF»
         «ENDIF»
-        «IF !fields.filter(TimeField).isEmpty»
+        «IF !fields.filter(TimeField).empty»
             $tNow = date('H:i:s');
-            «IF !fields.filter(TimeField).filter(e|e.past).isEmpty»
+            «IF !fields.filter(TimeField).filter(e|e.past).empty»
                 $tPast = date('H:i:s', $lastHour);
             «ENDIF»
-            «IF !fields.filter(TimeField).filter(e|e.future).isEmpty»
+            «IF !fields.filter(TimeField).filter(e|e.future).empty»
                 $tFuture = date('H:i:s', $nextHour);
             «ENDIF»
         «ENDIF»

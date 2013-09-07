@@ -20,12 +20,12 @@ public class WorkflowSettings {
     /**
      * List of available cartridges.
      */
-    ArrayList<String> availableCartridges = new ArrayList<String>()
+    ArrayList<String> availableCartridges = new ArrayList<String>
 
     /**
      * List of selected cartridges.
      */
-    ArrayList<Object> selectedCartridges = new ArrayList<Object>()
+    ArrayList<Object> selectedCartridges = new ArrayList<Object>
 
     /**
      * The output path.
@@ -82,7 +82,7 @@ public class WorkflowSettings {
     /**
      * List of available reports.
      */
-    ArrayList<String> availableReports = new ArrayList<String>()
+    ArrayList<String> availableReports = new ArrayList<String>
 
     /**
      * List of selected reports.
@@ -120,11 +120,11 @@ public class WorkflowSettings {
      *             In case something goes wrong.
      */
     def private collectAvailableReports() throws Exception {
-        var resources = FileLocator::findEntries(
-                Platform::getBundle(Activator::PLUGIN_ID), new Path('/src' //$NON-NLS-1$
+        var resources = FileLocator.findEntries(
+                Platform.getBundle(Activator.PLUGIN_ID), new Path('/src' //$NON-NLS-1$
                         + reportPath))
-        val resourcesExported = FileLocator::findEntries(
-                Platform::getBundle(Activator::PLUGIN_ID), new Path(reportPath))
+        val resourcesExported = FileLocator.findEntries(
+                Platform.getBundle(Activator.PLUGIN_ID), new Path(reportPath))
         if (resources.size == 0) {
             resources = resourcesExported
         }
@@ -134,8 +134,8 @@ public class WorkflowSettings {
         }
 
         try {
-            val reportDir = new File(FileLocator::toFileURL(resources.head).toURI)
-            for (file : reportDir.list(new ReportFilenameFilter())) {
+            val reportDir = new File(FileLocator.toFileURL(resources.head).toURI)
+            for (file : reportDir.list(new ReportFilenameFilter)) {
                 availableReports.add(file.replace('.rptdesign', '')) //$NON-NLS-1$ //$NON-NLS-2$
             }
 

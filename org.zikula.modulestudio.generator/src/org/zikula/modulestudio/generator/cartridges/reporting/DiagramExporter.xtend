@@ -108,7 +108,7 @@ class DiagramExporter {
             val resourceUri = resource.getURI.toString
             if (resourceUri.endsWith('mostdiagram') && resource instanceof GMFResource) { //$NON-NLS-1$
                 // look for all contained diagrams, too
-                // inputDiagram = resource.getContents().head as Diagram
+                // inputDiagram = resource.contents.head as Diagram
                 for (resourceElement : resource.contents) {
                     if (resourceElement instanceof Diagram) {
                         if (!saveCurrentDiagramInAllFormats((resourceElement as Diagram))) {
@@ -147,12 +147,12 @@ class DiagramExporter {
 
         var result = false
         try {
-            result = saveCurrentDiagramAs(ImageFileFormat::BMP, inputDiagram)
-            result = saveCurrentDiagramAs(ImageFileFormat::GIF, inputDiagram)
-            result = saveCurrentDiagramAs(ImageFileFormat::JPG, inputDiagram)
-            result = saveCurrentDiagramAs(ImageFileFormat::PDF, inputDiagram)
-            result = saveCurrentDiagramAs(ImageFileFormat::PNG, inputDiagram)
-            result = saveCurrentDiagramAs(ImageFileFormat::SVG, inputDiagram)
+            result = saveCurrentDiagramAs(ImageFileFormat.BMP, inputDiagram)
+            result = saveCurrentDiagramAs(ImageFileFormat.GIF, inputDiagram)
+            result = saveCurrentDiagramAs(ImageFileFormat.JPG, inputDiagram)
+            result = saveCurrentDiagramAs(ImageFileFormat.PDF, inputDiagram)
+            result = saveCurrentDiagramAs(ImageFileFormat.PNG, inputDiagram)
+            result = saveCurrentDiagramAs(ImageFileFormat.SVG, inputDiagram)
         } catch (CoreException e) {
             // TODO Auto-generated catch block
             e.printStackTrace

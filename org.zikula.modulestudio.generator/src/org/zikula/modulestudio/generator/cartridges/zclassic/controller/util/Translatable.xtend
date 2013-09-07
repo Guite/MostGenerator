@@ -22,12 +22,12 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Translatable {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
-    FileHelper fh = new FileHelper()
+    FileHelper fh = new FileHelper
 
     /**
      * Entry point for the utility class creation.

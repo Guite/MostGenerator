@@ -18,13 +18,13 @@ class ModelBehaviourExtensions {
     /**
      * Extensions related to the model layer.
      */
-    @Inject extension ModelExtensions = new ModelExtensions()
+    @Inject extension ModelExtensions = new ModelExtensions
 
     /**
      * Checks whether the application contains at least one entity with the loggable extension enabled.
      */
     def hasLoggable(Application it) {
-        !getLoggableEntities.isEmpty
+        !getLoggableEntities.empty
     }
 
     /**
@@ -38,7 +38,7 @@ class ModelBehaviourExtensions {
      * Checks whether the application contains at least one entity with the geographical extension enabled.
      */
     def hasGeographical(Application it) {
-        !getGeographicalEntities.isEmpty
+        !getGeographicalEntities.empty
     }
 
     /**
@@ -80,7 +80,7 @@ class ModelBehaviourExtensions {
      * Checks whether the application contains at least one entity with the translatable extension enabled.
      */
     def hasTranslatable(Application it) {
-        !getTranslatableEntities.isEmpty
+        !getTranslatableEntities.empty
     }
 
     /**
@@ -94,21 +94,21 @@ class ModelBehaviourExtensions {
      * Checks whether the application contains at least one entity with the tree extension enabled.
      */
     def hasTrees(Application it) {
-        !getTreeEntities.isEmpty
+        !getTreeEntities.empty
     }
 
     /**
      * Returns a list of all entities with the tree extension enabled.
      */
     def getTreeEntities(Application it) {
-        getAllEntities.filter(e|e.tree != EntityTreeType::NONE)
+        getAllEntities.filter(e|e.tree != EntityTreeType.NONE)
     }
 
     /**
      * Checks whether the application contains at least one entity with the categorisable extension enabled.
      */
     def hasCategorisableEntities(Application it) {
-        !getCategorisableEntities.isEmpty
+        !getCategorisableEntities.empty
     }
 
     /**
@@ -122,7 +122,7 @@ class ModelBehaviourExtensions {
      * Checks whether the application contains at least one entity with the meta data extension enabled.
      */
     def hasMetaDataEntities(Application it) {
-        !getMetaDataEntities.isEmpty
+        !getMetaDataEntities.empty
     }
 
     /**
@@ -136,7 +136,7 @@ class ModelBehaviourExtensions {
      * Checks whether the application contains at least one entity with the attributable extension enabled.
      */
     def hasAttributableEntities(Application it) {
-        !getAttributableEntities.isEmpty
+        !getAttributableEntities.empty
     }
 
     /**
@@ -150,7 +150,7 @@ class ModelBehaviourExtensions {
      * Checks whether the application contains at least one entity with the standard field extension enabled.
      */
     def hasStandardFieldEntities(Application it) {
-        !getStandardFieldEntities.isEmpty
+        !getStandardFieldEntities.empty
     }
 
     /**
@@ -166,7 +166,7 @@ class ModelBehaviourExtensions {
      * Checks whether the entity contains at least one field with the sluggable extension enabled.
      */
     def hasSluggableFields(Entity it) {
-        !getSluggableFields.isEmpty
+        !getSluggableFields.empty
     }
 
     /**
@@ -180,7 +180,7 @@ class ModelBehaviourExtensions {
      * Checks whether the entity contains at least one field with the sortable extension enabled.
      */
     def hasSortableFields(Entity it) {
-        !getSortableFields.isEmpty
+        !getSortableFields.empty
     }
 
     /**
@@ -194,21 +194,21 @@ class ModelBehaviourExtensions {
      * Checks whether the entity contains at least one field with the timestampable extension enabled.
      */
     def hasTimestampableFields(Entity it) {
-        !getTimestampableFields.isEmpty
+        !getTimestampableFields.empty
     }
 
     /**
      * Returns a list of all derived fields with the timestampable extension enabled.
      */
     def getTimestampableFields(Entity it) {
-        fields.filter(AbstractDateField).filter(e|e.timestampable != EntityTimestampableType::NONE)
+        fields.filter(AbstractDateField).filter(e|e.timestampable != EntityTimestampableType.NONE)
     }
 
     /**
      * Checks whether the entity contains at least one field with the translatable extension enabled.
      */
     def hasTranslatableFields(Entity it) {
-        !getTranslatableFields.isEmpty
+        !getTranslatableFields.empty
     }
 
     /**
@@ -236,7 +236,7 @@ class ModelBehaviourExtensions {
      * Checks whether the entity contains at least one field with the translatable extension enabled.
      */
     def hasTranslatableSlug(Entity it) {
-        !getSluggableFields.filter(e|e.translatable).isEmpty
+        !getSluggableFields.filter(e|e.translatable).empty
     }
 
     /**
@@ -244,9 +244,9 @@ class ModelBehaviourExtensions {
      */
     def dispatch asConstant(EntitySlugStyle slugStyle) {
         switch slugStyle {
-            case EntitySlugStyle::LOWERCASE                  : 'lower'
-            case EntitySlugStyle::UPPERCASE                  : 'upper'
-            case EntitySlugStyle::CAMEL                      : 'camel'
+            case EntitySlugStyle.LOWERCASE  : 'lower'
+            case EntitySlugStyle.UPPERCASE  : 'upper'
+            case EntitySlugStyle.CAMEL      : 'camel'
             default: 'default'
         }
     }
@@ -256,9 +256,9 @@ class ModelBehaviourExtensions {
      */
     def dispatch asConstant(EntityTimestampableType tsType) {
         switch tsType {
-            case EntityTimestampableType::UPDATE             : 'update'
-            case EntityTimestampableType::CREATE             : 'create'
-            case EntityTimestampableType::CHANGE             : 'change'
+            case EntityTimestampableType.UPDATE : 'update'
+            case EntityTimestampableType.CREATE : 'create'
+            case EntityTimestampableType.CHANGE : 'change'
             default: 'update'
         }
     }
@@ -268,9 +268,9 @@ class ModelBehaviourExtensions {
      */
     def dispatch asConstant(EntityTreeType treeType) {
         switch treeType {
-            case EntityTreeType::NONE                        : ''
-            case EntityTreeType::NESTED                      : 'nested'
-            case EntityTreeType::CLOSURE                     : 'closure'
+            case EntityTreeType.NONE    : ''
+            case EntityTreeType.NESTED  : 'nested'
+            case EntityTreeType.CLOSURE : 'closure'
             default: ''
         }
     }

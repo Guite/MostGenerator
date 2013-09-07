@@ -6,8 +6,8 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class EventListener {
-    @Inject extension FormattingExtensions = new FormattingExtensions();
-    @Inject extension Utils = new Utils()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension Utils = new Utils
 
     /**
      * Entry point for event listeners registered by the installer.

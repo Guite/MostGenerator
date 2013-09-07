@@ -23,15 +23,15 @@ import org.zikula.modulestudio.generator.extensions.ViewExtensions
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class Display {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension UrlExtensions = new UrlExtensions()
-    @Inject extension Utils = new Utils()
-    @Inject extension ViewExtensions = new ViewExtensions()
-    @Inject extension WorkflowExtensions = new WorkflowExtensions()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension UrlExtensions = new UrlExtensions
+    @Inject extension Utils = new Utils
+    @Inject extension ViewExtensions = new ViewExtensions
+    @Inject extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' display templates for entity "' + name.formatForDisplay + '"')
@@ -45,7 +45,7 @@ class Display {
         {* purpose of this template: «nameMultiple.formatForDisplay» display view in «controller.formattedName» area *}
         {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
         «val refedElems = getOutgoingJoinRelations.filter(e|e.target.container.application == it.container.application) + incoming.filter(ManyToManyRelationship).filter(e|e.source.container.application == it.container.application)»
-        <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display«IF !refedElems.isEmpty» withrightbox«ENDIF»">
+        <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display«IF !refedElems.empty» withrightbox«ENDIF»">
         «val objName = name.formatForCode»
         «val leadingField = getLeadingField»
         {gt text='«name.formatForDisplayCapital»' assign='templateTitle'}
@@ -55,10 +55,10 @@ class Display {
         {pagesetvar name='title' value=$templateTitle|@html_entity_decode}
         «controller.templateHeader(it, appName)»
 
-        «IF !refedElems.isEmpty»
+        «IF !refedElems.empty»
             {if !isset($smarty.get.theme) || $smarty.get.theme ne 'Printer'}
                 <div class="«appName.toLowerCase»rightbox">
-                    «val relationHelper = new Relations()»
+                    «val relationHelper = new Relations»
                     «FOR elem : refedElems»«relationHelper.displayRelatedItems(elem, appName, controller, it)»«ENDFOR»
                 </div>
             {/if}
@@ -85,7 +85,7 @@ class Display {
             «IF useGroupingPanels('display')»
                 </div>«/* panels */»
             «ENDIF»
-            «IF !refedElems.isEmpty»
+            «IF !refedElems.empty»
                 <br style="clear: right" />
             «ENDIF»
         {/if}

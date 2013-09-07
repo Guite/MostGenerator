@@ -32,9 +32,9 @@ class WorkflowStart {
      */
     private String currentCartridge = ''
 
-    public WorkflowSettings settings = new WorkflowSettings()
+    public WorkflowSettings settings = new WorkflowSettings
 
-    public WorkflowPreProcess preProcess = new WorkflowPreProcess()
+    public WorkflowPreProcess preProcess = new WorkflowPreProcess
 
     /**
      * Reference to the model's {@link Resource} object.
@@ -54,23 +54,23 @@ class WorkflowStart {
 		val progressMonitor = settings.progressMonitor
 		progressMonitor.beginTask('Validating "' + settings.appName + ' ' + settings.appVersion + '" ...', -1)
     	
-    	var diag = Diagnostician::INSTANCE.validate(getModel.contents.head)
+    	var diag = Diagnostician.INSTANCE.validate(getModel.contents.head)
     	
     	switch  diag.getSeverity {
-    		case Diagnostic::ERROR: {
+    		case Diagnostic.ERROR: {
     			progressMonitor.subTask("Errors: \n" + validatorMessage(diag))
     			progressMonitor.done
-    			return ErrorState::ERROR
+    			return ErrorState.ERROR
     		}
-    		case Diagnostic::WARNING: {
+    		case Diagnostic.WARNING: {
     			progressMonitor.subTask("Warnings: \n" + validatorMessage(diag))
     			progressMonitor.done
-    			return ErrorState::WARN
+    			return ErrorState.WARN
     		}
     		default: {
     			progressMonitor.subTask('Valid')
     			progressMonitor.done
-    			return ErrorState::OK
+    			return ErrorState.OK
     		}
     	}
 	}
@@ -146,7 +146,7 @@ class WorkflowStart {
     def private getModel() {
         // do not read in the model again after validation did it already
     	if (model === null) {
-        	val reader = new ModelReader()
+        	val reader = new ModelReader
         	reader.uri = settings.modelPath
         	if (injector !== null) {
         	   reader.injector = injector

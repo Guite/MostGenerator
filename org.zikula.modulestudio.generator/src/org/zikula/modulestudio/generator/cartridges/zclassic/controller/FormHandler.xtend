@@ -20,17 +20,17 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class FormHandler {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
-    @Inject extension WorkflowExtensions = new WorkflowExtensions()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
+    @Inject extension WorkflowExtensions = new WorkflowExtensions
 
-    FileHelper fh = new FileHelper()
-    Redirect redirectHelper = new Redirect()
-    RelationPresets relationPresetsHelper = new RelationPresets()
+    FileHelper fh = new FileHelper
+    Redirect redirectHelper = new Redirect
+    RelationPresets relationPresetsHelper = new RelationPresets
 
     Application app
     Controller controller
@@ -951,7 +951,7 @@ class FormHandler {
             // get treated entity reference from persisted member var
             $entity = $this->entityRef;
 
-            «IF app.hasUserFields || app.hasUploads || app.hasListFields || (app.hasSluggable && !app.getAllEntities.filter(e|e.slugUpdatable).isEmpty)»
+            «IF app.hasUserFields || app.hasUploads || app.hasListFields || (app.hasSluggable && !app.getAllEntities.filter(e|e.slugUpdatable).empty)»
 
                 if ($args['commandName'] != 'cancel') {
                     «IF app.hasUserFields»

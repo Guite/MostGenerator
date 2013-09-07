@@ -32,7 +32,7 @@ import org.eclipse.xtext.junit4.IRegistryConfigurator
 class GuiceSpecCreator extends AbstractSpecCreator {
     var Injector injector
 
-    var static MostDslInjectorProvider injectorProvider = new MostDslInjectorProvider()
+    var static MostDslInjectorProvider injectorProvider = new MostDslInjectorProvider
 
     override <T> T create(Class<T> klass) {
         if (injector == null) {

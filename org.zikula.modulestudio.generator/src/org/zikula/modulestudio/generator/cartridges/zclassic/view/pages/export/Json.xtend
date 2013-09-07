@@ -9,9 +9,9 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class Json {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
 
     def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' json view templates for entity "' + name.formatForDisplay + '"')

@@ -14,12 +14,12 @@ import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 
 class DisplayFunctions {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
     /**
      * Entry point for the javascript file with display functionality.
@@ -33,11 +33,11 @@ class DisplayFunctions {
         'use strict';
 
         «initItemActions»
-        «IF !getAllControllers.map(e|e.hasActions('view')).isEmpty»
+        «IF !getAllControllers.map(e|e.hasActions('view')).empty»
 
             «initQuickNavigation»
         «ENDIF»
-        «IF !getJoinRelations.isEmpty»
+        «IF !getJoinRelations.empty»
 
             «initRelationWindow»
         «ENDIF»
@@ -187,7 +187,7 @@ class DisplayFunctions {
 
     def private initQuickNavigationEntity(Entity it) '''
         case '«name.formatForCode»':
-            «IF !getBidirectionalIncomingJoinRelationsWithOneSource.isEmpty»
+            «IF !getBidirectionalIncomingJoinRelationsWithOneSource.empty»
                 «FOR relation: getBidirectionalIncomingJoinRelationsWithOneSource»
                     «relation.jsInit»
                 «ENDFOR»

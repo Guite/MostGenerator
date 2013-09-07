@@ -20,12 +20,12 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class Xml {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
 
-    SimpleFields fieldHelper = new SimpleFields()
+    SimpleFields fieldHelper = new SimpleFields
 
     def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' xml view templates for entity "' + name.formatForDisplay + '"')

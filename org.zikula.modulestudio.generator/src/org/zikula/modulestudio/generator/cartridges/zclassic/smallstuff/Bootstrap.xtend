@@ -10,11 +10,11 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Bootstrap {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
         fsa.generateFile(getAppSourcePath + 'bootstrap.php', bootstrapFile)
@@ -37,7 +37,7 @@ class Bootstrap {
          * and $path is the path to the containing folder.
          */
         «initExtensions»
-        «IF !referredApplications.isEmpty»
+        «IF !referredApplications.empty»
 
             «FOR referredApp : referredApplications»
                 if (ModUtil::available('«referredApp.name.formatForCodeCapital»')) {
@@ -96,7 +96,7 @@ class Bootstrap {
 
     def private archiveObjectsCall(Application it) '''
         «val entitiesWithArchive = getAllEntities.filter(e|e.hasArchive && e.getEndDateField !== null)»
-        «IF !entitiesWithArchive.isEmpty»
+        «IF !entitiesWithArchive.empty»
             «prefix()»PerformRegularAmendments();
             
             function «prefix()»PerformRegularAmendments()

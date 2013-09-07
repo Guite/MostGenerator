@@ -12,10 +12,10 @@ import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class RelationPresets {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
 
     def memberFields(Controller it) '''
 
@@ -29,7 +29,7 @@ class RelationPresets {
 
     def initPresets(Entity it) '''
         «val owningAssociations = getOwningAssociations(it.container.application)»
-        «IF !owningAssociations.isEmpty»
+        «IF !owningAssociations.empty»
 
             // assign identifiers of predefined incoming relationships
             «FOR relation : owningAssociations»
@@ -45,7 +45,7 @@ class RelationPresets {
             «ENDFOR»
         «ENDIF»
         «val ownedMMAssociations = getOwnedMMAssociations(it.container.application)»
-        «IF !ownedMMAssociations.isEmpty»
+        «IF !ownedMMAssociations.empty»
 
             // assign identifiers of predefined outgoing many to many relationships
             «FOR relation : ownedMMAssociations»
@@ -85,16 +85,16 @@ class RelationPresets {
     def saveNonEditablePresets(Entity it, Application app) '''
         «val owningAssociationsNonEditable = getOwningAssociations(app).filter(e|!e.isEditable(false))»
         «val ownedMMAssociationsNonEditable = getOwnedMMAssociations(app).filter(e|!e.isEditable(true))»
-        «IF !owningAssociationsNonEditable.isEmpty || !ownedMMAssociationsNonEditable.isEmpty»
+        «IF !owningAssociationsNonEditable.empty || !ownedMMAssociationsNonEditable.empty»
 
             if ($args['commandName'] == 'create') {
-                «IF !owningAssociationsNonEditable.isEmpty»
+                «IF !owningAssociationsNonEditable.empty»
                 // save predefined incoming relationship from parent entity
                 «FOR relation : owningAssociationsNonEditable»
                     «relation.saveSinglePreset(false)»
                 «ENDFOR»
                 «ENDIF»
-                «IF !ownedMMAssociationsNonEditable.isEmpty»
+                «IF !ownedMMAssociationsNonEditable.empty»
                 // save predefined outgoing relationship to child entity
                 «FOR relation : ownedMMAssociationsNonEditable»
                     «relation.saveSinglePreset(true)»

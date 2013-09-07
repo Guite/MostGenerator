@@ -11,10 +11,10 @@ import de.guite.modulestudio.metamodel.modulestudio.AdminController
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ViewHierarchy {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
     def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' tree view templates for entity "' + name.formatForDisplay + '"')

@@ -33,13 +33,13 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Validator {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
-    FileHelper fh = new FileHelper()
+    FileHelper fh = new FileHelper
 
     /**
      * Creates a base validator class encapsulating common checks.
@@ -691,13 +691,13 @@ class Validator {
         «ENDIF»
     '''
     def private dispatch validationCalls(AbstractIntegerField it) {
-        if (entity.incoming.filter(JoinRelationship).filter(e|e.targetField == name).isEmpty
-         && entity.outgoing.filter(JoinRelationship).filter(e|e.sourceField == name).isEmpty)
+        if (entity.incoming.filter(JoinRelationship).filter(e|e.targetField == name).empty
+         && entity.outgoing.filter(JoinRelationship).filter(e|e.sourceField == name).empty)
             validationCallsInteger
     }
     def private dispatch validationCalls(IntegerField it) '''
-        «IF entity.incoming.filter(JoinRelationship).filter(e|e.targetField == name).isEmpty
-         && entity.outgoing.filter(JoinRelationship).filter(e|e.sourceField == name).isEmpty»
+        «IF entity.incoming.filter(JoinRelationship).filter(e|e.targetField == name).empty
+         && entity.outgoing.filter(JoinRelationship).filter(e|e.sourceField == name).empty»
             «validationCallsInteger»
             «IF minValue.toString != '0'»
                 if (!$this->isIntegerNotLowerThan('«name.formatForCode»', «minValue»)) {

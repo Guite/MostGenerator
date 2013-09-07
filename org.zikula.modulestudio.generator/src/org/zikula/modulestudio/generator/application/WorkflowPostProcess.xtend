@@ -41,13 +41,14 @@ class WorkflowPostProcess {
     def private copyModelFiles() {
         val srcPath = settings.modelPath.replaceFirst("file:", "")
         val modelFileName = new File(srcPath).name
-        val copier = new ModelFileCopier()
-        copier.setSourceModelFile(srcPath)
-        copier.setTargetModelFile(settings.outputPath + '/model/' + modelFileName)
-        copier.setSourceModelFileEnriched(srcPath.replace('.mostapp', '_enriched.mostapp'))
-        copier.setTargetModelFileEnriched(settings.outputPath + '/model/' + modelFileName.replace('.mostapp', '_enriched.mostapp'))
-        copier.setSourceDiagramFile(srcPath.replace('.mostapp', '.mostdiagram'))
-        copier.setTargetDiagramFile(settings.outputPath + '/model/' + modelFileName.replace('.mostapp', '.mostdiagram'))
+        val copier = new ModelFileCopier => [
+            sourceModelFile = srcPath
+            targetModelFile = settings.outputPath + '/model/' + modelFileName
+            sourceModelFileEnriched = srcPath.replace('.mostapp', '_enriched.mostapp')
+            targetModelFileEnriched = settings.outputPath + '/model/' + modelFileName.replace('.mostapp', '_enriched.mostapp')
+            sourceDiagramFile = srcPath.replace('.mostapp', '.mostdiagram')
+            targetDiagramFile = settings.outputPath + '/model/' + modelFileName.replace('.mostapp', '.mostdiagram')
+        ]
         copier.invoke
     }
 
@@ -55,28 +56,28 @@ class WorkflowPostProcess {
      * Copies the admin image for zclassic cartridge.
      */
     def private copyAdminImage() {
-        val fileCopy = new FileCopy()
-        val bundle = Platform::getBundle(Activator::PLUGIN_ID)
-        var resources = FileLocator::findEntries(bundle, new Path('/src/resources/images/MOST_48.png'))
-        val resourcesExported = FileLocator::findEntries(bundle, new Path('/resources/images/MOST_48.png'))
+        val fileCopy = new FileCopy
+        val bundle = Platform.getBundle(Activator.PLUGIN_ID)
+        var resources = FileLocator.findEntries(bundle, new Path('/src/resources/images/MOST_48.png'))
+        val resourcesExported = FileLocator.findEntries(bundle, new Path('/resources/images/MOST_48.png'))
         if (resources.size == 0) {
             resources = resourcesExported
         }
         if (resources.size > 0) {
             try {
                 val url = resources.head
-                val fileUrl = FileLocator::toFileURL(url)
+                val fileUrl = FileLocator.toFileURL(url)
                 val file = new File(fileUrl.getPath)
                 fileCopy.sourceFile = file.absolutePath
 
                 val targetBasePath = settings.outputPath + '/zclassic/' + settings.appName.toFirstUpper + '/'
                 var imageFolder = settings.appVendor.toFirstUpper + '/' + settings.appName.toFirstUpper + 'Module/Resources/public/images'
                 var targetFolder = new File(targetBasePath + imageFolder)
-                if (!targetFolder.exists()) {
+                if (!targetFolder.exists) {
                     imageFolder = 'src/modules/' + settings.appName.toFirstUpper + '/images' // BC support for 1.3.5
                     targetFolder = new File(targetBasePath + imageFolder)
                 }
-                if (targetFolder.exists()) {
+                if (targetFolder.exists) {
                     fileCopy.targetFile = targetBasePath + imageFolder + '/admin.png'
                     fileCopy.invoke(null)
                 }
@@ -92,15 +93,15 @@ class WorkflowPostProcess {
      */
     def private exportBirtReports() {
         try {
-            val bundle = Platform::getBundle(Activator::PLUGIN_ID)
-            var resources = FileLocator::findEntries(bundle, new Path(settings.getReportPath))
-            val resourcesExported = FileLocator::findEntries(bundle, new Path('src/' + settings.getReportPath))
+            val bundle = Platform.getBundle(Activator.PLUGIN_ID)
+            var resources = FileLocator.findEntries(bundle, new Path(settings.getReportPath))
+            val resourcesExported = FileLocator.findEntries(bundle, new Path('src/' + settings.getReportPath))
             if (resources.size < 1) {
                 resources = resourcesExported
             }
-            var File dir = new File(FileLocator::toFileURL(resources.head).toURI)
+            var File dir = new File(FileLocator.toFileURL(resources.head).toURI)
 
-            val reportingFacade = new ReportingFacade()
+            val reportingFacade = new ReportingFacade
             reportingFacade.outputPath = settings.getOutputPath
             reportingFacade.modelPath = settings.getModelPath.replaceFirst('file:', '')
             reportingFacade.setUp

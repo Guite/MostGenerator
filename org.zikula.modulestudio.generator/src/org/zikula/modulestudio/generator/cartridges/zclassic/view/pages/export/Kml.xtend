@@ -11,9 +11,9 @@ import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class Kml {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
 
     def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' kml view templates for entity "' + name.formatForDisplay + '"')
@@ -32,7 +32,7 @@ class Kml {
         {foreach item='item' from=$items}
             <Placemark>
                 «val stringFields = fields.filter(StringField) + fields.filter(TextField)»
-                <name>«IF !stringFields.isEmpty»{$item->get«stringFields.head.name.formatForCodeCapital»()}«ELSE»{gt text='«name.formatForDisplayCapital»'}«ENDIF»</name>
+                <name>«IF !stringFields.empty»{$item->get«stringFields.head.name.formatForCodeCapital»()}«ELSE»{gt text='«name.formatForDisplayCapital»'}«ENDIF»</name>
                 <Point>
                     <coordinates>{$item->getLongitude()}, {$item->getLatitude()}, 0</coordinates>
                 </Point>
@@ -51,7 +51,7 @@ class Kml {
         <Document>
             <Placemark>
                 «val stringFields = fields.filter(StringField) + fields.filter(TextField)»
-                <name>«IF !stringFields.isEmpty»{$«objName»->get«stringFields.head.name.formatForCodeCapital»()}«ELSE»{gt text='«name.formatForDisplayCapital»'}«ENDIF»</name>
+                <name>«IF !stringFields.empty»{$«objName»->get«stringFields.head.name.formatForCodeCapital»()}«ELSE»{gt text='«name.formatForDisplayCapital»'}«ENDIF»</name>
                 <Point>
                     <coordinates>{$«objName»->getLongitude()}, {$«objName»->getLatitude()}, 0</coordinates>
                 </Point>

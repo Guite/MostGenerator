@@ -15,12 +15,12 @@ import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Ajax {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
+    @Inject extension Utils = new Utils
 
     def dispatch additionalAjaxFunctions(Controller it, Application app) {
     }
@@ -30,12 +30,12 @@ class Ajax {
 
         «getItemListFinder(app)»
         «val joinRelations = app.getJoinRelations»
-        «IF !joinRelations.isEmpty»
+        «IF !joinRelations.empty»
 
             «getItemListAutoCompletion(app)»
         «ENDIF»
         «IF app.getAllEntities.exists(e|e.getUniqueDerivedFields.filter(f|!f.primaryKey).size > 0)
-        || (app.hasSluggable && !app.getAllEntities.filter(e|e.hasSluggableFields && e.slugUnique).isEmpty)»
+        || (app.hasSluggable && !app.getAllEntities.filter(e|e.hasSluggableFields && e.slugUnique).empty)»
 
             «checkForDuplicate(app)»
         «ENDIF»
@@ -51,7 +51,7 @@ class Ajax {
 
     def private userSelectors(AjaxController it, Application app) '''
         «val userFields = app.getAllUserFields»
-        «IF !userFields.isEmpty»
+        «IF !userFields.empty»
             «FOR userField : userFields»
 
                 public function get«userField.entity.name.formatForCodeCapital»«userField.name.formatForCodeCapital»Users«IF !app.targets('1.3.5')»Action«ENDIF»()
@@ -343,9 +343,9 @@ class Ajax {
             switch ($objectType) {
                 «FOR entity : app.getAllEntities»
                     «val uniqueFields = entity.getUniqueDerivedFields.filter(e|!e.primaryKey)»
-                    «IF !uniqueFields.isEmpty || (entity.hasSluggableFields && entity.slugUnique)»
+                    «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
                         case '«entity.name.formatForCode»':
-                                $uniqueFields = array(«FOR uniqueField : uniqueFields SEPARATOR ', '»'«uniqueField.name.formatForCode»'«ENDFOR»«IF entity.hasSluggableFields && entity.slugUnique»«IF !uniqueFields.isEmpty», «ENDIF»'slug'«ENDIF»);
+                                $uniqueFields = array(«FOR uniqueField : uniqueFields SEPARATOR ', '»'«uniqueField.name.formatForCode»'«ENDFOR»«IF entity.hasSluggableFields && entity.slugUnique»«IF !uniqueFields.empty», «ENDIF»'slug'«ENDIF»);
                                 break;
                     «ENDIF»
                 «ENDFOR»
@@ -355,7 +355,7 @@ class Ajax {
             }
 
             $exclude = $this->request->request->get('ex', '');
-            «IF !container.application.getAllEntities.filter(e|e.hasCompositeKeys).isEmpty»
+            «IF !container.application.getAllEntities.filter(e|e.hasCompositeKeys).empty»
             if (strpos($exclude, '_') !== false) {
                 $exclude = explode('_', $exclude);
             }
@@ -372,13 +372,13 @@ class Ajax {
             switch ($objectType) {
             «FOR entity : app.getAllEntities»
                 «val uniqueFields = entity.getUniqueDerivedFields.filter(e|!e.primaryKey)»
-                «IF !uniqueFields.isEmpty || (entity.hasSluggableFields && entity.slugUnique)»
+                «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
                     case '«entity.name.formatForCode»':
                         $repository = $this->entityManager->getRepository($entityClass);
                         switch ($fieldName) {
                         «FOR uniqueField : uniqueFields»
                             case '«uniqueField.name.formatForCode»':
-                                    $result = $repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude«IF !container.application.getAllEntities.filter(e|e.hasCompositeKeys).isEmpty»[0]«ENDIF»);
+                                    $result = $repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude«IF !container.application.getAllEntities.filter(e|e.hasCompositeKeys).empty»[0]«ENDIF»);
                                     break;
                         «ENDFOR»
                         «IF entity.hasSluggableFields && entity.slugUnique»
@@ -526,13 +526,13 @@ class Ajax {
                 «FOR entity : app.getTreeEntities»
                     case '«entity.name.formatForCode»':
                         «val stringFields = entity.fields.filter(StringField).filter(e|e.length >= 20 && !e.nospace && !e.country && !e.htmlcolour && !e.language)»
-                            $titleFieldName = '«IF !stringFields.isEmpty»«stringFields.head.name.formatForCode»«ENDIF»';
+                            $titleFieldName = '«IF !stringFields.empty»«stringFields.head.name.formatForCode»«ENDIF»';
                             «val textFields = entity.fields.filter(TextField).filter(e|!e.leading && e.length >= 50)»
-                            «IF !textFields.isEmpty»
+                            «IF !textFields.empty»
                             $descriptionFieldName = '«textFields.head.name.formatForCode»';
                             «ELSE»
                                 «val textStringFields = entity.fields.filter(StringField).filter(e|!e.leading && e.length >= 50 && !e.nospace && !e.country && !e.htmlcolour && !e.language)»
-                                «IF !textStringFields.isEmpty»
+                                «IF !textStringFields.empty»
                                 $descriptionFieldName = '«textStringFields.head.name.formatForCode»';
                                 «ENDIF»
                             «ENDIF»

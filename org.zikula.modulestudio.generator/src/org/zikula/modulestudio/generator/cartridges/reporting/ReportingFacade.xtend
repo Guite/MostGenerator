@@ -49,9 +49,9 @@ public class ReportingFacade {
         try {
             // http://wiki.eclipse.org/RCP_Example_%28BIRT%29_2.1
             // http://wiki.eclipse.org/Simple_Execute_%28BIRT%29_2.1
-            config = new EngineConfig()
+            config = new EngineConfig
             val hm = config.appContext
-            hm.put(EngineConstants::APPCONTEXT_CLASSLOADER_KEY,
+            hm.put(EngineConstants.APPCONTEXT_CLASSLOADER_KEY,
                     ReportEngine.classLoader)
             config.appContext = hm
             val reportPath = outputPath + '/reporting/' //$NON-NLS-1$
@@ -60,10 +60,10 @@ public class ReportingFacade {
                 reportPathDir.mkdir
             }
             config.setLogConfig(reportPath, //$NON-NLS-1$
-                    Level::WARNING)
+                    Level.WARNING)
 
-            Platform::startup(config)
-            val factory = Platform::createFactoryObject(IReportEngineFactory::EXTENSION_REPORT_ENGINE_FACTORY) as IReportEngineFactory
+            Platform.startup(config)
+            val factory = Platform.createFactoryObject(IReportEngineFactory.EXTENSION_REPORT_ENGINE_FACTORY) as IReportEngineFactory
             engine = factory.createReportEngine(config)
         } catch (Exception ex) {
             ex.printStackTrace
@@ -104,7 +104,7 @@ public class ReportingFacade {
         task.setParameterValue('diagramPath', //$NON-NLS-1$
                 'file:' + (outputPath + '/diagrams/')) //$NON-NLS-1$ //$NON-NLS-2$
 
-        var RenderOption renderOptions = new RenderOption()
+        var RenderOption renderOptions = new RenderOption
         renderOptions.outputFileName = outputPath + '/reporting/' + outputName + '.' + fileExtension //$NON-NLS-1$
         renderOptions.outputFormat = fileExtension
         task.renderOption = renderOptions
@@ -118,7 +118,7 @@ public class ReportingFacade {
     def shutDown() {
         try {
             engine.destroy
-            Platform::shutdown
+            Platform.shutdown
         } catch (Exception ex) {
             ex.printStackTrace
         }

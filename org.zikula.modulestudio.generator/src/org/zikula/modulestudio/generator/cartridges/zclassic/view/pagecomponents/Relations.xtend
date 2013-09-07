@@ -21,14 +21,14 @@ import de.guite.modulestudio.metamodel.modulestudio.DatetimeField
 import de.guite.modulestudio.metamodel.modulestudio.TimeField
 
 class Relations {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension UrlExtensions = new UrlExtensions()
-    @Inject extension Utils = new Utils()
-    @Inject extension ViewExtensions = new ViewExtensions()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension UrlExtensions = new UrlExtensions
+    @Inject extension Utils = new Utils
+    @Inject extension ViewExtensions = new ViewExtensions
 
     def displayItemList(Entity it, Application app, Controller controller, Boolean many, IFileSystemAccess fsa) {
         fsa.generateFile(templateFile(controller, name, 'include_displayItemList' + (if (many) 'Many' else 'One')), '''

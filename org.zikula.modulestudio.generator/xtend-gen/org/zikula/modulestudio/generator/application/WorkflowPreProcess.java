@@ -53,11 +53,11 @@ public class WorkflowPreProcess {
     boolean _tripleNotEquals = (files != null);
     if (_tripleNotEquals) {
       for (final File file : files) {
-        boolean _isDirectory = file.isDirectory();
-        if (_isDirectory) {
-          this.emptyDir(file);
-          file.delete();
-        } else {
+        {
+          boolean _isDirectory = file.isDirectory();
+          if (_isDirectory) {
+            this.emptyDir(file);
+          }
           file.delete();
         }
       }

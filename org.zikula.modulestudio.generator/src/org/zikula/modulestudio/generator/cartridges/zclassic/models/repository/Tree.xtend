@@ -7,7 +7,7 @@ import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 
 class Tree {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension FormattingExtensions = new FormattingExtensions
 
     def generate(Entity it, Application app) '''
         «IF tree != EntityTreeType::NONE»

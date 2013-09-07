@@ -14,12 +14,12 @@ import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ContentTypeListView {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension UrlExtensions = new UrlExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension UrlExtensions = new UrlExtensions
+    @Inject extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + (if (targets('1.3.5')) 'contenttype' else 'ContentType') + '/'
@@ -41,13 +41,13 @@ class ContentTypeListView {
                     <dt>{gt text='«name.formatForDisplayCapital»'}</dt>
                 «ENDIF»
                 «val textFields = fields.filter(TextField)»
-                «IF !textFields.isEmpty»
+                «IF !textFields.empty»
                     {if $«name.formatForCode».«textFields.head.name.formatForCode»}
                         <dd>{$«name.formatForCode».«textFields.head.name.formatForCode»|truncate:200:"..."}</dd>
                     {/if}
                 «ELSE»
                     «val stringFields = fields.filter(StringField).filter(e|!e.leading && !e.password)»
-                    «IF !stringFields.isEmpty»
+                    «IF !stringFields.empty»
                         {if $«name.formatForCode».«stringFields.head.name.formatForCode»}
                             <dd>{$«name.formatForCode».«stringFields.head.name.formatForCode»|truncate:200:"..."}</dd>
                         {/if}

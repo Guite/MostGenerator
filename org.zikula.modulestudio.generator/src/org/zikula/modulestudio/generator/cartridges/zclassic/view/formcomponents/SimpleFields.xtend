@@ -23,11 +23,11 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class SimpleFields {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension Utils = new Utils
 
-    Validation validationHelper = new Validation()
+    Validation validationHelper = new Validation
 
     def formRow(DerivedField it, String groupSuffix, String idSuffix) '''
         «formLabel(groupSuffix, idSuffix)»

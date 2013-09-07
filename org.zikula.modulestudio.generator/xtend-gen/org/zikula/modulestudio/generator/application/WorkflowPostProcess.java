@@ -14,6 +14,8 @@ import org.eclipse.emf.mwe.utils.FileCopy;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
+import org.eclipse.xtext.xbase.lib.ObjectExtensions;
+import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.osgi.framework.Bundle;
 import org.zikula.modulestudio.generator.application.Activator;
@@ -59,26 +61,30 @@ public class WorkflowPostProcess {
     File _file = new File(srcPath);
     final String modelFileName = _file.getName();
     ModelFileCopier _modelFileCopier = new ModelFileCopier();
-    final ModelFileCopier copier = _modelFileCopier;
-    copier.setSourceModelFile(srcPath);
-    String _outputPath = this.settings.getOutputPath();
-    String _plus = (_outputPath + "/model/");
-    String _plus_1 = (_plus + modelFileName);
-    copier.setTargetModelFile(_plus_1);
-    String _replace = srcPath.replace(".mostapp", "_enriched.mostapp");
-    copier.setSourceModelFileEnriched(_replace);
-    String _outputPath_1 = this.settings.getOutputPath();
-    String _plus_2 = (_outputPath_1 + "/model/");
-    String _replace_1 = modelFileName.replace(".mostapp", "_enriched.mostapp");
-    String _plus_3 = (_plus_2 + _replace_1);
-    copier.setTargetModelFileEnriched(_plus_3);
-    String _replace_2 = srcPath.replace(".mostapp", ".mostdiagram");
-    copier.setSourceDiagramFile(_replace_2);
-    String _outputPath_2 = this.settings.getOutputPath();
-    String _plus_4 = (_outputPath_2 + "/model/");
-    String _replace_3 = modelFileName.replace(".mostapp", ".mostdiagram");
-    String _plus_5 = (_plus_4 + _replace_3);
-    copier.setTargetDiagramFile(_plus_5);
+    final Procedure1<ModelFileCopier> _function = new Procedure1<ModelFileCopier>() {
+      public void apply(final ModelFileCopier it) {
+        it.setSourceModelFile(srcPath);
+        String _outputPath = WorkflowPostProcess.this.settings.getOutputPath();
+        String _plus = (_outputPath + "/model/");
+        String _plus_1 = (_plus + modelFileName);
+        it.setTargetModelFile(_plus_1);
+        String _replace = srcPath.replace(".mostapp", "_enriched.mostapp");
+        it.setSourceModelFileEnriched(_replace);
+        String _outputPath_1 = WorkflowPostProcess.this.settings.getOutputPath();
+        String _plus_2 = (_outputPath_1 + "/model/");
+        String _replace_1 = modelFileName.replace(".mostapp", "_enriched.mostapp");
+        String _plus_3 = (_plus_2 + _replace_1);
+        it.setTargetModelFileEnriched(_plus_3);
+        String _replace_2 = srcPath.replace(".mostapp", ".mostdiagram");
+        it.setSourceDiagramFile(_replace_2);
+        String _outputPath_2 = WorkflowPostProcess.this.settings.getOutputPath();
+        String _plus_4 = (_outputPath_2 + "/model/");
+        String _replace_3 = modelFileName.replace(".mostapp", ".mostdiagram");
+        String _plus_5 = (_plus_4 + _replace_3);
+        it.setTargetDiagramFile(_plus_5);
+      }
+    };
+    final ModelFileCopier copier = ObjectExtensions.<ModelFileCopier>operator_doubleArrow(_modelFileCopier, _function);
     copier.invoke();
   }
   

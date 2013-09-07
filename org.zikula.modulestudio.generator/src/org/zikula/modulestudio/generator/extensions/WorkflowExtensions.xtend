@@ -13,13 +13,13 @@ class WorkflowExtensions {
     /**
      * Extensions related to the model layer.
      */
-	@Inject extension ModelWorkflowExtensions = new ModelWorkflowExtensions()
+	@Inject extension ModelWorkflowExtensions = new ModelWorkflowExtensions
 
     /**
      * Determines whether any entity in the given application uses a certain workflow type.
      */
     def hasWorkflow(Application it, EntityWorkflowType wfType) {
-        !getEntitiesForWorkflow(wfType).isEmpty
+        !getEntitiesForWorkflow(wfType).empty
     }
 
     /**
@@ -33,7 +33,7 @@ class WorkflowExtensions {
      * Checks whether any entity has another workflow than none.
      */
     def needsApproval(Application it) {
-        hasWorkflow(EntityWorkflowType::STANDARD) || hasWorkflow(EntityWorkflowType::ENTERPRISE)
+        hasWorkflow(EntityWorkflowType.STANDARD) || hasWorkflow(EntityWorkflowType.ENTERPRISE)
     }
 
     /**
@@ -74,14 +74,14 @@ class WorkflowExtensions {
      * Determines whether any entity in the given application using a certain workflow can have the given state.
      */
     def hasWorkflowState(Application it, EntityWorkflowType wfType, String state) {
-        hasWorkflow(wfType) && !getEntitiesForWorkflow(wfType).filter(e|e.hasWorkflowStateEntity(state)).isEmpty
+        hasWorkflow(wfType) && !getEntitiesForWorkflow(wfType).filter(e|e.hasWorkflowStateEntity(state)).empty
     }
 
     /**
      * Determines whether any entity in the given application can have the given state.
      */
     def hasWorkflowState(Application it, String state) {
-        !getAllEntities.filter(e|e.hasWorkflowStateEntity(state)).isEmpty
+        !getAllEntities.filter(e|e.hasWorkflowStateEntity(state)).empty
     }
 
     /**
@@ -89,9 +89,9 @@ class WorkflowExtensions {
      */
     def textualName(EntityWorkflowType wfType) {
         switch wfType {
-            case EntityWorkflowType::NONE                        : 'none'
-            case EntityWorkflowType::STANDARD                    : 'standard'
-            case EntityWorkflowType::ENTERPRISE                  : 'enterprise'
+            case EntityWorkflowType.NONE                        : 'none'
+            case EntityWorkflowType.STANDARD                    : 'standard'
+            case EntityWorkflowType.ENTERPRISE                  : 'enterprise'
             default: ''
         }
     }
@@ -101,9 +101,9 @@ class WorkflowExtensions {
      */
     def approvalType(EntityWorkflowType wfType) {
         switch wfType {
-            case EntityWorkflowType::NONE                        : 'no'
-            case EntityWorkflowType::STANDARD                    : 'single'
-            case EntityWorkflowType::ENTERPRISE                  : 'double'
+            case EntityWorkflowType.NONE                        : 'no'
+            case EntityWorkflowType.STANDARD                    : 'single'
+            case EntityWorkflowType.ENTERPRISE                  : 'double'
             default: ''
         }
     }
@@ -119,7 +119,7 @@ class WorkflowExtensions {
      * Determines whether the given entity has the given workflow state or not.
      */
     def hasWorkflowStateEntity(Entity it, String state) {
-        !getWorkflowStateItems(state).isEmpty
+        !getWorkflowStateItems(state).empty
     }
 
     /**
@@ -142,7 +142,7 @@ class WorkflowExtensions {
     def getWorkflowActionDescription(EntityWorkflowType wfType, String actionTitle) {
         switch (actionTitle) {
             case 'Defer':               return 'Defer content for later submission.'
-            case 'Submit':              return if (wfType == EntityWorkflowType::NONE) 'Submit content.' else 'Submit content for acceptance by a moderator.'
+            case 'Submit':              return if (wfType == EntityWorkflowType.NONE) 'Submit content.' else 'Submit content for acceptance by a moderator.'
             case 'Update':              return 'Update content.'
             case 'Reject':              return 'Reject content and require improvements.'
             case 'Accept':              return 'Accept content for editors approval.'
@@ -164,6 +164,6 @@ class WorkflowExtensions {
      * Determines whether workflow state field should be visible for the given entity or not.
      */
     def hasVisibleWorkflow(Entity it) {
-        workflow != EntityWorkflowType::NONE || ownerPermission || hasTray || hasArchive || softDeleteable
+        workflow != EntityWorkflowType.NONE || ownerPermission || hasTray || hasArchive || softDeleteable
     }
 }

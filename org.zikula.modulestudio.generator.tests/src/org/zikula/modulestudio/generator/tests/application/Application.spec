@@ -81,7 +81,7 @@ describe 'Tests for generator application classes' {
     }
 
     def private checkTextFile(String fileName, String content) {
-        val filePath = IFileSystemAccess::DEFAULT_OUTPUT + fileName
+        val filePath = IFileSystemAccess.DEFAULT_OUTPUT + fileName
         fsa.textFiles.containsKey(filePath) should be true
         fsa.textFiles.get(filePath).toString should be content
     }

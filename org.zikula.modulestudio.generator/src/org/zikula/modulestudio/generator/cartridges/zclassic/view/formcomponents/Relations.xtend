@@ -17,14 +17,14 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.ViewExtensions
 
 class Relations {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension UrlExtensions = new UrlExtensions()
-    @Inject extension ViewExtensions = new ViewExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension UrlExtensions = new UrlExtensions
+    @Inject extension ViewExtensions = new ViewExtensions
+    @Inject extension Utils = new Utils
 
     /**
      * This method creates the templates to be included into the edit forms.
@@ -215,7 +215,7 @@ class Relations {
     def initJs(Entity it, Application app, Boolean insideLoader) '''
         «val incomingJoins = getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app && e.usesAutoCompletion(false))»
         «val outgoingJoins = outgoingJoinRelations.filter(e|e.target.container.application == app && e.usesAutoCompletion(true))»
-        «IF !incomingJoins.isEmpty || !outgoingJoins.isEmpty»
+        «IF !incomingJoins.empty || !outgoingJoins.empty»
             «IF !insideLoader»
                 var editImage = '<img src="{{$editImageArray.src}}" width="16" height="16" alt="" />';
                 var removeImage = '<img src="{{$deleteImageArray.src}}" width="16" height="16" alt="" />';

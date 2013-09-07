@@ -12,17 +12,17 @@ class UrlExtensions {
     /**
      * Extensions used for formatting element names.
      */
-    @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension FormattingExtensions = new FormattingExtensions
 
     /**
      * Extensions related to behavioural aspects of the model layer.
      */
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
 
     /**
      * Extensions related to the model layer.
      */
-    @Inject extension ModelExtensions = new ModelExtensions()
+    @Inject extension ModelExtensions = new ModelExtensions
 
     /**
      * Creates the parameters for a modurl call relating a given entity,

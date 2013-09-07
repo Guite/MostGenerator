@@ -12,12 +12,12 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import de.guite.modulestudio.metamodel.modulestudio.Variable
 
 class InstallerView {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
     def generate(Application it, IFileSystemAccess fsa) {
         val templatePath = getViewPath + (if (targets('1.3.5')) 'init' else 'Init') + '/'
@@ -67,9 +67,9 @@ class InstallerView {
             <dd>{gt text='Tree structures can be managed in a hierarchy view with the help of ajax.'}</dd>
         «ENDIF»
         «ENDIF»
-        «IF !getAllControllers.filter(e|e.hasActions('view') || e.hasActions('display')).isEmpty»
+        «IF !getAllControllers.filter(e|e.hasActions('view') || e.hasActions('display')).empty»
             <dt>{gt text='Output formats'}</dt>
-            <dd>{gt text='Beside the normal templates «appName» includes also templates for various other output formats, like for example xml (which is only accessible for administrators per default), json«IF !getAllControllers.filter(e|e.hasActions('view')).isEmpty», rss, atom«ENDIF»«IF !getAllControllers.filter(e|e.hasActions('display')).isEmpty», csv«ENDIF».'}</dd>
+            <dd>{gt text='Beside the normal templates «appName» includes also templates for various other output formats, like for example xml (which is only accessible for administrators per default), json«IF !getAllControllers.filter(e|e.hasActions('view')).empty», rss, atom«ENDIF»«IF !getAllControllers.filter(e|e.hasActions('display')).empty», csv«ENDIF».'}</dd>
         «ENDIF»
             <dt>{gt text='Integration'}</dt>
             <dd>{gt text='«appName» offers a generic block allowing you to display arbitrary content elements in a block.'}</dd>

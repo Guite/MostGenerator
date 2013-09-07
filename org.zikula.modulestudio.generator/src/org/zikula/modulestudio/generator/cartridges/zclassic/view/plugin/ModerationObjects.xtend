@@ -11,10 +11,10 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class ModerationObjects {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
-    @Inject extension WorkflowExtensions = new WorkflowExtensions()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
+    @Inject extension WorkflowExtensions = new WorkflowExtensions
 
     def generate(Application it, IFileSystemAccess fsa) {
         fsa.generateFile(viewPluginFilePath('function', 'ModerationObjects'), moderationObjectsFile)

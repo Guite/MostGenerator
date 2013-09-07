@@ -13,7 +13,7 @@ class Utils {
     /**
      * Extensions used for formatting element names.
      */
-    @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension FormattingExtensions = new FormattingExtensions
 
     /**
      * Returns the version number of ModuleStudio.
@@ -78,9 +78,9 @@ class Utils {
      */
     def targets(Application it, String version) {
         switch (targetCoreVersion) {
-            case CoreVersion::ZK135:
+            case CoreVersion.ZK135:
                 (version == '1.3.5')
-            case CoreVersion::ZK136:
+            case CoreVersion.ZK136:
                 (version != '1.3.5')
             default:
                 (version != '1.3.5')
@@ -95,7 +95,7 @@ class Utils {
      * @return Boolean The result.
      */
     def needsConfig(Application it) {
-        !getAllVariables.isEmpty
+        !getAllVariables.empty
     }
 
     /**
@@ -163,8 +163,6 @@ class Utils {
      * @return String The current timestamp.
      */
     def timestamp() {
-        val currentTime = System::currentTimeMillis()
-        val d = new Date(currentTime)
-        d.toString
+        new Date(System.currentTimeMillis).toString
     }
 }

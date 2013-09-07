@@ -23,12 +23,12 @@ class ModelJoinExtensions {
     /**
      * Extensions used for formatting element names.
      */
-    @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension FormattingExtensions = new FormattingExtensions
 
     /**
      * Extensions related to the model layer.
      */
-    @Inject extension ModelExtensions = new ModelExtensions()
+    @Inject extension ModelExtensions = new ModelExtensions
 
     /**
      * Returns the table name for a certain join side, including the application specific prefix.
@@ -132,14 +132,14 @@ class ModelJoinExtensions {
      * Checks for whether the entity has outgoing join relations which are either one2many or many2many.
      */
     def hasOutgoingCollections(Entity it) {
-        !getOutgoingCollections.isEmpty
+        !getOutgoingCollections.empty
     }
 
     /**
      * Checks for whether the entity has incoming join relations which are either many2one or many2many.
      */
     def hasIncomingCollections(Entity it) {
-        !getIncomingCollections.isEmpty
+        !getIncomingCollections.empty
     }
 
     /**
@@ -147,7 +147,7 @@ class ModelJoinExtensions {
      * one2many or many2many, or incoming join relations which are either many2one or many2many.
      */
     def hasCollections(Entity it) {
-        !getCollections.isEmpty
+        !getCollections.empty
     }
 
 
@@ -191,7 +191,7 @@ class ModelJoinExtensions {
 
     /**
      * Checks for whether a certain relationship side has a multiplicity of one or many.
-     * Special version used in view::pagecomponents::Relations to decide about template visibility.
+     * Special version used in view.pagecomponents.Relations to decide about template visibility.
      */
     def isManySideDisplay(JoinRelationship it, boolean useTarget) {
         switch it {
@@ -231,10 +231,10 @@ class ModelJoinExtensions {
      */
     def usesAutoCompletion(JoinRelationship it, boolean useTarget) {
         switch it.useAutoCompletion {
-            case RelationAutoCompletionUsage::NONE: false
-            case RelationAutoCompletionUsage::ONLY_SOURCE_SIDE: !useTarget
-            case RelationAutoCompletionUsage::ONLY_TARGET_SIDE: useTarget
-            case RelationAutoCompletionUsage::BOTH_SIDES: true
+            case RelationAutoCompletionUsage.NONE: false
+            case RelationAutoCompletionUsage.ONLY_SOURCE_SIDE: !useTarget
+            case RelationAutoCompletionUsage.ONLY_TARGET_SIDE: useTarget
+            case RelationAutoCompletionUsage.BOTH_SIDES: true
             default: false
         }
     }
@@ -244,7 +244,7 @@ class ModelJoinExtensions {
      * That is true if at least one incoming relation has an indexBy field set. 
      */
     def isIndexByTarget(Entity it) {
-        !incoming.filter(e|e.getIndexByField !== null && e.getIndexByField != '').isEmpty
+        !incoming.filter(e|e.getIndexByField !== null && e.getIndexByField != '').empty
     }
 
     /**
@@ -252,7 +252,7 @@ class ModelJoinExtensions {
      * That is true if at least one incoming relation of it's entity has an indexBy field set to it's name. 
      */
     def isIndexByField(DerivedField it) {
-        !entity.incoming.filter(e|e.getIndexByField == name).isEmpty
+        !entity.incoming.filter(e|e.getIndexByField == name).empty
     }
 
     /**
@@ -310,22 +310,22 @@ class ModelJoinExtensions {
      */
     def getAggregatingRelationships(DerivedField it) {
         entity.incoming.filter(OneToManyRelationship)
-                     .filter(e|!e.source.getAggregateFields.isEmpty)
-                     .filter(e|!e.source.getAggregateFields.filter(f|f.getAggregateTargetField == it).isEmpty)
+                     .filter(e|!e.source.getAggregateFields.empty)
+                     .filter(e|!e.source.getAggregateFields.filter(f|f.getAggregateTargetField == it).empty)
     }
 
     /**
      * Returns a list of all incoming relationships aggregating any fields of this entity. 
      */
     def getAggregators(Entity it) {
-        getDerivedFields.filter(e|!e.getAggregatingRelationships.isEmpty)
+        getDerivedFields.filter(e|!e.getAggregatingRelationships.empty)
     }
 
     /**
      * Checks whether there is at least one field used as aggregate field. 
      */
     def isAggregated(Entity it) {
-        !getAggregators.isEmpty
+        !getAggregators.empty
     }
 
     /**
@@ -333,9 +333,9 @@ class ModelJoinExtensions {
      */
     def asConstant(RelationFetchType fetchType) {
         switch (fetchType) {
-            case RelationFetchType::LAZY        : 'LAZY'
-            case RelationFetchType::EAGER       : 'EAGER'
-            case RelationFetchType::EXTRA_LAZY  : 'EXTRA_LAZY'
+            case RelationFetchType.LAZY        : 'LAZY'
+            case RelationFetchType.EAGER       : 'EAGER'
+            case RelationFetchType.EXTRA_LAZY  : 'EXTRA_LAZY'
             default: 'LAZY'
         }
     }

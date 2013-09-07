@@ -13,8 +13,8 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
  * Utility methods for the installer.
  */
 class ModVars {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
 
     def valFromSession(Variable it) {
         switch it {

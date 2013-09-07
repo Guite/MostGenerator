@@ -10,8 +10,8 @@ import org.zikula.modulestudio.generator.extensions.Utils
  * Upload processing functions for edit form handlers.
  */
 class UploadProcessing {
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension Utils = new Utils
 
     def generate(Controller it) {
         if (container.application.hasUploads)

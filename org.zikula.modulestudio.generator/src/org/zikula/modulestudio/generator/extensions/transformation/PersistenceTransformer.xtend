@@ -16,12 +16,12 @@ class PersistenceTransformer {
     /**
      * Extension methods for formatting names.
      */
-    @Inject extension FormattingExtensions = new FormattingExtensions()
+    @Inject extension FormattingExtensions = new FormattingExtensions
 
     /**
      * Extension methods related to the model layer.
      */
-    @Inject extension ModelExtensions = new ModelExtensions()
+    @Inject extension ModelExtensions = new ModelExtensions
 
     /**
      * Transformation entry point consuming the application instance.
@@ -48,7 +48,7 @@ class PersistenceTransformer {
     def private void handleEntity(Entity it) {
         //println('Transforming entity ' + name)
         //println('Field size before: ' + fields.size + ' fields')
-        if (getPrimaryKeyFields.isEmpty) addPrimaryKey
+        if (getPrimaryKeyFields.empty) addPrimaryKey
         //println('Added primary key, field size now: ' + fields.size + ' fields')
         addWorkflowState
     }
@@ -70,7 +70,7 @@ class PersistenceTransformer {
      * @return IntegerField The created column object.
      */
     def private createIdColumn(String colName, Boolean isPrimary) {
-        val factory = ModulestudioFactory::eINSTANCE
+        val factory = ModulestudioFactory.eINSTANCE
         val idField = factory.createIntegerField => [
             name = if (isPrimary) 'id' else colName.formatForCode + '_id'
             length = 9
@@ -86,7 +86,7 @@ class PersistenceTransformer {
      * @param entity The given {@link Entity} instance
      */
     def private addWorkflowState(Entity entity) {
-        val factory = ModulestudioFactory::eINSTANCE
+        val factory = ModulestudioFactory.eINSTANCE
         val listField = factory.createListField => [
             name = 'workflowState'
             documentation = 'the current workflow state'
@@ -113,7 +113,7 @@ class PersistenceTransformer {
             )
         }
 
-        if (entity.workflow != EntityWorkflowType::NONE) {
+        if (entity.workflow != EntityWorkflowType.NONE) {
             listField.items.add(
                 factory.createListFieldItem => [
                     name = 'Waiting'
@@ -122,7 +122,7 @@ class PersistenceTransformer {
                 ]
             )
 
-            if (entity.workflow == EntityWorkflowType::ENTERPRISE) {
+            if (entity.workflow == EntityWorkflowType.ENTERPRISE) {
                 listField.items.add(
                     factory.createListFieldItem => [
                         name = 'Accepted'

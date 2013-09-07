@@ -5,7 +5,7 @@ import com.google.inject.Inject
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Theme {
-    @Inject extension Utils = new Utils()
+    @Inject extension Utils = new Utils
 
     def generate(Application it, Boolean isBase) '''
         /**

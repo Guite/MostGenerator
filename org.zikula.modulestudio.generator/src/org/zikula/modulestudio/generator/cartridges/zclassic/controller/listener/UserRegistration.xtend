@@ -5,7 +5,7 @@ import de.guite.modulestudio.metamodel.modulestudio.Application
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class UserRegistration {
-    @Inject extension Utils = new Utils()
+    @Inject extension Utils = new Utils
 
     def generate(Application it, Boolean isBase) '''
         /**

@@ -14,10 +14,10 @@ import de.guite.modulestudio.metamodel.modulestudio.FloatField
 import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 
 class FileHelper {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
+    @Inject extension Utils = new Utils
 
     def phpFileHeader(Application it) '''
         <?php
@@ -111,11 +111,11 @@ class FileHelper {
 
     def private setterAssignmentNumeric(DerivedField it, String name, String type) '''
         «val aggregators = getAggregatingRelationships»
-        «IF !aggregators.isEmpty»
+        «IF !aggregators.empty»
             $diff = abs($this->«name» - $«name»);
         «ENDIF»
         $this->«name» = $«name»;
-        «IF !aggregators.isEmpty»
+        «IF !aggregators.empty»
             «FOR aggregator : aggregators»
             $this->«aggregator.sourceAlias.formatForCode»->add«name.formatForCodeCapital»Without«entity.name.formatForCodeCapital»($diff);
             «ENDFOR»

@@ -45,9 +45,9 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class ZclassicGenerator implements IGenerator {
 
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension WorkflowExtensions = new WorkflowExtensions()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension WorkflowExtensions = new WorkflowExtensions
 
     override doGenerate(Resource resource, IFileSystemAccess fsa) {
         generate(resource.contents.head as Application, fsa)
@@ -134,7 +134,7 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Additions: Cache api')
         println('Generating cache api')
         new Cache().generate(it, fsa)
-        if (!getAllEntities.filter(e|e.hasAbstractStringFieldsEntity).isEmpty) {
+        if (!getAllEntities.filter(e|e.hasAbstractStringFieldsEntity).empty) {
             pm?.subTask('Additions: Search api')
             println('Generating search api')
             new Search().generate(it, fsa)
@@ -145,7 +145,7 @@ class ZclassicGenerator implements IGenerator {
             new Uploads().generate(it, fsa)
         }
         if ((hasUserController && getMainUserController.hasActions('display'))
-            || (!getAllAdminControllers.isEmpty && getAllAdminControllers.head.hasActions('display'))) {
+            || (!getAllAdminControllers.empty && getAllAdminControllers.head.hasActions('display'))) {
             pm?.subTask('Additions: Tag support')
             println('Generating tag support')
             new Tag().generate(it, fsa)

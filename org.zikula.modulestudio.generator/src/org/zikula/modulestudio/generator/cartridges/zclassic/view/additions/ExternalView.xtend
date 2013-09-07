@@ -13,14 +13,14 @@ import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ExternalView {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension UrlExtensions = new UrlExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension UrlExtensions = new UrlExtensions
+    @Inject extension Utils = new Utils
 
-    private SimpleFields fieldHelper = new SimpleFields()
+    private SimpleFields fieldHelper = new SimpleFields
 
     def generate(Application it, IFileSystemAccess fsa) {
         for (entity : getAllEntities) {
@@ -276,7 +276,7 @@ class ExternalView {
             /* ]]> */
             </script>
 
-            «IF !app.getAllAdminControllers.isEmpty»
+            «IF !app.getAllAdminControllers.empty»
                 {*
                 <div class="«app.prefix()»form">
                     <fieldset>

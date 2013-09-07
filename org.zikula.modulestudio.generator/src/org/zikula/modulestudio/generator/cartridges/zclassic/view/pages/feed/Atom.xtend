@@ -14,12 +14,12 @@ import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Atom {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension UrlExtensions = new UrlExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension UrlExtensions = new UrlExtensions
+    @Inject extension Utils = new Utils
 
     def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' atom view templates for entity "' + name.formatForDisplay + '"')
@@ -94,9 +94,9 @@ class Atom {
                 «val stringFields = fields.filter(StringField).filter(e|!e.leading)»
                 <summary type="html">
                     <![CDATA[
-                    «IF !textFields.isEmpty»
+                    «IF !textFields.empty»
                         {$«objName».«textFields.head.name.formatForCode»|truncate:150:"&hellip;"|default:'-'}
-                    «ELSEIF !stringFields.isEmpty»
+                    «ELSEIF !stringFields.empty»
                         {$«objName».«stringFields.head.name.formatForCode»|truncate:150:"&hellip;"|default:'-'}
                     «ELSE»
                         «IF leadingField !== null»
@@ -109,7 +109,7 @@ class Atom {
                     <![CDATA[
                     «IF textFields.size > 1»
                         {$«objName».«textFields.tail.head.name.formatForCode»|replace:'<br>':'<br />'}
-                    «ELSEIF !textFields.isEmpty && !stringFields.isEmpty»
+                    «ELSEIF !textFields.empty && !stringFields.empty»
                         {$«objName».«stringFields.head.name.formatForCode»|replace:'<br>':'<br />'}
                     «ELSEIF stringFields.size > 1»
                         {$«objName».«stringFields.tail.head.name.formatForCode»|replace:'<br>':'<br />'}

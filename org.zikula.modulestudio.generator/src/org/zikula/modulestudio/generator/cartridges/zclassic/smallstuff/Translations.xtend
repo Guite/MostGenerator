@@ -7,8 +7,8 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Translations {
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()   
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
     
     /**
      * Entry point for module language defines.

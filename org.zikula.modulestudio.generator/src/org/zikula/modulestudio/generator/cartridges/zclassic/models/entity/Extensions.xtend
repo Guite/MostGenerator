@@ -19,14 +19,14 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField
 
 class Extensions {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
-    @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
-    FileHelper fh = new FileHelper()
+    FileHelper fh = new FileHelper
 
     def imports(Entity it) '''
         use Gedmo\Mapping\Annotation as Gedmo;

@@ -9,35 +9,34 @@ import org.eclipse.core.runtime.Path
 
 class GitRevision {
 	def static read() throws IOException {
-		val bundle = Activator.getDefault().getBundle()
-		var url = FileLocator.find(bundle, new Path("gitrevision.txt"), null)
+		val bundle = Activator.getDefault.bundle
+		var url = FileLocator.find(bundle, new Path('gitrevision.txt'), null)
 		
 		if (url === null) {
-			url = FileLocator.find(bundle, new Path("src/gitrevision.txt"), null)
+			url = FileLocator.find(bundle, new Path('src/gitrevision.txt'), null)
 			if (url === null) {
-				return "error reading data."
+				return 'error reading data.'
 			}
 		}
 
 		var BufferedReader br
 		try {
 			var fileUrl = FileLocator.toFileURL(url)
-			val file = new File(fileUrl.getPath())
+			val file = new File(fileUrl.path)
 			br = new BufferedReader(new FileReader(file))
-			val commit = br.readLine()
+			val commit = br.readLine
 			if (commit === null) {
-				return "error reading data."
+				return 'error reading data.'
 			}
 			commit
 		}
 		catch (IOException e) {
 			// Will happen if the file cannot be read for some reason
 			e.printStackTrace
-			return "error reading data."
+			return 'error reading data.'
 		}
 		finally {
-			br?.close()
+			br?.close
 		}
-
 	}
 }

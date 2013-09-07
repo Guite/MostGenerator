@@ -17,11 +17,11 @@ import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
  * Workflow permission checks.
  */
 class PermissionCheck {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
-    @Inject extension WorkflowExtensions = new WorkflowExtensions()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
+    @Inject extension WorkflowExtensions = new WorkflowExtensions
 
     Application app
     EntityWorkflowType wfType
@@ -29,7 +29,7 @@ class PermissionCheck {
 
     IFileSystemAccess fsa
     String outputPath
-    FileHelper fh = new FileHelper()
+    FileHelper fh = new FileHelper
 
     /**
      * Entry point for workflow permission checks.
@@ -95,7 +95,7 @@ class PermissionCheck {
             // now perform the permission check
             $result = SecurityUtil::checkPermission($component, $instance, $permLevel, $currentUser);
             «val entitiesWithOwnerPermission = app.getAllEntities.filter(e|e.standardFields && e.ownerPermission)»
-            «IF !entitiesWithOwnerPermission.isEmpty»
+            «IF !entitiesWithOwnerPermission.empty»
 
                 // check whether the current user is the owner
                 if (!$result && isset($obj['createdUserId']) && $obj['createdUserId'] == $currentUser) {

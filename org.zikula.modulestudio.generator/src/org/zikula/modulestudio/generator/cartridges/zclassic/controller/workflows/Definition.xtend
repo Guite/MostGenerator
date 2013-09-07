@@ -14,9 +14,9 @@ import java.util.ArrayList
  * Workflow definitions in xml format.
  */
 class Definition {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension WorkflowExtensions = new WorkflowExtensions()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension WorkflowExtensions = new WorkflowExtensions
 
     Application app
     EntityWorkflowType wfType

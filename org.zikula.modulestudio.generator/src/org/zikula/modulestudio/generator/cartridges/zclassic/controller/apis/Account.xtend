@@ -11,13 +11,13 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Account {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
-    FileHelper fh = new FileHelper()
+    FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
         val apiPath = getAppSourceLibPath + 'Api/'
@@ -87,7 +87,7 @@ class Account {
             }
 
             // Create an array of links to return
-            «IF !getAllUserControllers.isEmpty && getMainUserController.hasActions('view')»
+            «IF !getAllUserControllers.empty && getMainUserController.hasActions('view')»
                 «FOR entity : getAllEntities.filter(e|e.standardFields && e.ownerPermission)»
                     $objectType = '«entity.name.formatForCode»';
                     if (SecurityUtil::checkPermission($this->name . ':' . ucwords($objectType) . ':', '::', ACCESS_READ)) {
@@ -101,7 +101,7 @@ class Account {
                     }
                 «ENDFOR»
             «ENDIF»
-            «IF !getAllAdminControllers.isEmpty»
+            «IF !getAllAdminControllers.empty»
                 if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
                     $items[] = array(
                         'url'   => ModUtil::url($this->name, 'admin', '«IF targets('1.3.5')»main«ELSE»index«ENDIF»'),

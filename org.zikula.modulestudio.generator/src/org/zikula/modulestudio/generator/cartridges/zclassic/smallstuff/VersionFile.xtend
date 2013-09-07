@@ -15,14 +15,14 @@ import org.zikula.modulestudio.generator.extensions.Utils
 import org.zikula.modulestudio.generator.extensions.WorkflowExtensions
 
 class VersionFile {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
-    @Inject extension WorkflowExtensions = new WorkflowExtensions()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
+    @Inject extension WorkflowExtensions = new WorkflowExtensions
 
-    FileHelper fh = new FileHelper()
+    FileHelper fh = new FileHelper
 
     def generate(Application it, IFileSystemAccess fsa) {
         val versionPrefix = if (!targets('1.3.5')) name.formatForCodeCapital + 'Module' else ''
@@ -46,7 +46,7 @@ class VersionFile {
             namespace «appNamespace»\Base;
 
             use HookUtil;
-            «IF !referredApplications.isEmpty»
+            «IF !referredApplications.empty»
                 use ModUtil;
             «ENDIF»
             use Zikula_AbstractVersion;
@@ -98,7 +98,7 @@ class VersionFile {
                 // permission schema
                 «permissionSchema»
 
-                «IF !referredApplications.isEmpty»
+                «IF !referredApplications.empty»
                     // module dependencies
                     $meta['dependencies'] = array(
                         «FOR referredApp : referredApplications SEPARATOR ','»«appDependency(referredApp)»«ENDFOR»
@@ -210,7 +210,7 @@ class VersionFile {
     def private permissionSchema(Entity it, String appName) '''
         '«appName»:«name.formatForCodeCapital»:' => '«name.formatForCodeCapital» ID::',
         «val incomingRelations = getIncomingJoinRelations/*.filter(e|e.source.container == it.container)*/»
-        «IF !incomingRelations.isEmpty»
+        «IF !incomingRelations.empty»
             «FOR relation : incomingRelations»«relation.permissionSchema(appName)»«ENDFOR»
         «ENDIF»
     '''

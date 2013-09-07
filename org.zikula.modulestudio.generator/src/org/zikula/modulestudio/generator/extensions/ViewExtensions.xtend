@@ -10,7 +10,7 @@ import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
  * This class contains view related extension methods.
  */
 class ViewExtensions {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
+    @Inject extension ControllerExtensions = new ControllerExtensions
 
     /**
      * Temporary hack due to Zikula core bug with theme parameter in short urls
@@ -71,7 +71,7 @@ class ViewExtensions {
         if (metaData) weight = weight + 1
         if (standardFields) weight = weight + 1
         if (geographical) weight = weight + 1
-        //if (tree != EntityTreeType::NONE) weight = weight + 1
+        //if (tree != EntityTreeType.NONE) weight = weight + 1
         weight
     }
 }

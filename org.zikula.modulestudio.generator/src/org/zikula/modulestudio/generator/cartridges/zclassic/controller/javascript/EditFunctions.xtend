@@ -12,12 +12,12 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class EditFunctions {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
     /**
      * Entry point for the javascript file with edit functionality.
@@ -39,7 +39,7 @@ class EditFunctions {
             «initUploadField»
 
         «ENDIF»
-        «IF !getAllEntities.filter(e|!e.getDerivedFields.filter(AbstractDateField).isEmpty).isEmpty»
+        «IF !getAllEntities.filter(e|!e.getDerivedFields.filter(AbstractDateField).empty).empty»
             «resetDateField»
 
             «initDateField»
@@ -175,7 +175,7 @@ class EditFunctions {
     '''
 
     def private relationFunctionsPreparation(Application it) '''
-        «IF !getJoinRelations.isEmpty»
+        «IF !getJoinRelations.empty»
 
             /**
              * Override method of Scriptaculous auto completer method.
@@ -223,7 +223,7 @@ class EditFunctions {
     '''
 
     def private relationFunctions(Application it) '''
-        «IF !getJoinRelations.isEmpty»
+        «IF !getJoinRelations.empty»
             «toggleRelatedItemForm»
 
             «resetRelatedItemForm»

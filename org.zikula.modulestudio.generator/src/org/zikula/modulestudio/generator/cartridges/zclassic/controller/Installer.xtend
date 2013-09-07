@@ -17,13 +17,13 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Installer {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
-    FileHelper fh = new FileHelper()
+    FileHelper fh = new FileHelper
 
     /**
      * Entry point for application installer.
@@ -106,7 +106,7 @@ class Installer {
                 use ModUtil;
             «ENDIF»
             use SecurityUtil;
-            «IF !getAllVariableContainers.isEmpty»
+            «IF !getAllVariableContainers.empty»
                 use SessionUtil;
             «ENDIF»
             use Zikula_Controller_AbstractInteractiveInstaller;
@@ -162,7 +162,7 @@ class Installer {
                 }
                 return LogUtil::registerError($returnMessage);
             }
-            «IF !getAllVariableContainers.isEmpty»
+            «IF !getAllVariableContainers.empty»
 
                 // set up all our vars with initial values
                 «val modvarHelper = new ModVars()»
@@ -303,7 +303,7 @@ class Installer {
                 // unregister hook provider bundles
                 HookUtil::unregisterProviderBundles($this->version->getHookProviderBundles());
             */»
-            «IF !getAllVariables.isEmpty»
+            «IF !getAllVariables.empty»
 
                 // remove all module vars
                 $this->delVars();

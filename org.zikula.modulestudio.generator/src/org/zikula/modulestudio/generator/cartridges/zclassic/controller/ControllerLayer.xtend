@@ -27,14 +27,14 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ControllerLayer {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
-    FileHelper fh = new FileHelper()
+    FileHelper fh = new FileHelper
     Application app
 
     /**
@@ -125,7 +125,7 @@ class ControllerLayer {
 
             «IF isAjaxController»
                 use DataUtil;
-                «IF !app.getAllUserFields.isEmpty»
+                «IF !app.getAllUserFields.empty»
                     use Doctrine\ORM\AbstractQuery;
                 «ENDIF»
             «ENDIF»
@@ -427,7 +427,7 @@ class ControllerLayer {
 
     def private menuLinksBetweenControllers(Controller it) {
         switch it {
-            AdminController case !container.getUserControllers.isEmpty: '''
+            AdminController case !container.getUserControllers.empty: '''
                     «val userController = container.getUserControllers.head»
                     if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_READ)) {
                         $links[] = array('url' => ModUtil::url($this->name, '«userController.formattedName»', «userController.indexUrlDetails»),
@@ -436,7 +436,7 @@ class ControllerLayer {
                                          'class' => 'z-icon-es-home');
                     }
                     '''
-            UserController case !container.getAdminControllers.isEmpty: '''
+            UserController case !container.getAdminControllers.empty: '''
                     «val adminController = container.getAdminControllers.head»
                     if (SecurityUtil::checkPermission($this->name . '::', '::', ACCESS_ADMIN)) {
                         $links[] = array('url' => ModUtil::url($this->name, '«adminController.formattedName»', «adminController.indexUrlDetails»),
@@ -450,7 +450,7 @@ class ControllerLayer {
 
     def private menuLinksPermissionLevel(Controller it) {
         switch it {
-            AdminController case !container.getUserControllers.isEmpty: 'ADMIN'
+            AdminController case !container.getUserControllers.empty: 'ADMIN'
             default: 'READ'
         }
     }

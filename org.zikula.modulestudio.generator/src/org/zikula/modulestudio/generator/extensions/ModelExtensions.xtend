@@ -36,11 +36,11 @@ import java.util.List
  * TODO document class and methods.
  */
 class ModelExtensions {
-    @Inject extension CollectionUtils = new CollectionUtils()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions()
-    @Inject extension Utils = new Utils()
-    @Inject extension WorkflowExtensions = new WorkflowExtensions()
+    @Inject extension CollectionUtils = new CollectionUtils
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelInheritanceExtensions = new ModelInheritanceExtensions
+    @Inject extension Utils = new Utils
+    @Inject extension WorkflowExtensions = new WorkflowExtensions
 
     /**
      * Returns a list of all entities in this application.
@@ -105,7 +105,7 @@ class ModelExtensions {
      * Checks whether the application contains at least one entity with at least one upload field.
      */
     def hasUploads(Application it) {
-        !getUploadEntities.isEmpty
+        !getUploadEntities.empty
     }
 
     /**
@@ -126,7 +126,7 @@ class ModelExtensions {
      * Checks whether the application contains at least one user field.
      */
     def boolean hasUserFields(Application it) {
-        !getAllUserFields.isEmpty
+        !getAllUserFields.empty
     }
 
     /**
@@ -140,7 +140,7 @@ class ModelExtensions {
      * Checks whether the application contains at least one list field.
      */
     def hasListFields(Application it) {
-        !getAllListFields.isEmpty
+        !getAllListFields.empty
     }
 
     /**
@@ -155,7 +155,7 @@ class ModelExtensions {
      * Checks whether the application contains at least one entity with at least one boolean field having ajax toggle enabled.
      */
     def hasBooleansWithAjaxToggle(Application it) {
-        !getEntitiesWithAjaxToggle.isEmpty
+        !getEntitiesWithAjaxToggle.empty
     }
 
     /**
@@ -202,28 +202,28 @@ class ModelExtensions {
      * Checks whether this entity has at least one normal (non-unique) index.
      */
     def hasNormalIndexes(Entity it) {
-        !getNormalIndexes.isEmpty
+        !getNormalIndexes.empty
     }
 
     /**
      * Returns a list of all normal (non-unique) indexes for this entity.
      */
     def getNormalIndexes(Entity it) {
-        indexes.filter(e|e.type == EntityIndexType::NORMAL)
+        indexes.filter(e|e.type == EntityIndexType.NORMAL)
     }
 
     /**
      * Checks whether this entity has at least one unique index.
      */
     def hasUniqueIndexes(Entity it) {
-        !getUniqueIndexes.isEmpty
+        !getUniqueIndexes.empty
     }
 
     /**
      * Returns a list of all unique indexes for this entity.
      */
     def getUniqueIndexes(Entity it) {
-        indexes.filter(e|e.type == EntityIndexType::UNIQUE)
+        indexes.filter(e|e.type == EntityIndexType.UNIQUE)
     }
 
     /**
@@ -244,7 +244,7 @@ class ModelExtensions {
      * Returns the field having leading = true of this entity.
      */
     def DerivedField getLeadingField(Entity it) {
-        if (!getDerivedFields.isEmpty)
+        if (!getDerivedFields.empty)
             getDerivedFields.findFirst(e|e.leading == true)
         else if (isInheriting)
             parentType.getLeadingField
@@ -296,7 +296,7 @@ class ModelExtensions {
      */
     def getDisplayFields(Entity it) {
         var fields = getDerivedFields
-        if (it.identifierStrategy != EntityIdentifierStrategy::NONE) {
+        if (it.identifierStrategy != EntityIdentifierStrategy.NONE) {
             fields = fields.filter(e|!e.primaryKey)
         }
         if (!hasVisibleWorkflow) {
@@ -331,7 +331,7 @@ class ModelExtensions {
      */
     def getEditableFields(Entity it) {
         var fields = getDerivedFields.filter(e|e.name != 'workflowState')
-        if (it.identifierStrategy != EntityIdentifierStrategy::NONE) {
+        if (it.identifierStrategy != EntityIdentifierStrategy.NONE) {
             fields = fields.filter(e|!e.primaryKey)
         }
         val wantedFields = fields.exclude(ArrayField).exclude(ObjectField)
@@ -351,7 +351,7 @@ class ModelExtensions {
      * Checks whether this entity has at least one user field.
      */
     def hasUserFieldsEntity(Entity it) {
-        !getUserFieldsEntity.isEmpty;
+        !getUserFieldsEntity.empty;
     }
 
     /**
@@ -365,7 +365,7 @@ class ModelExtensions {
      * Checks whether this entity has at least one upload field.
      */
     def hasUploadFieldsEntity(Entity it) {
-        !getUploadFieldsEntity.isEmpty
+        !getUploadFieldsEntity.empty
     }
 
     /**
@@ -379,7 +379,7 @@ class ModelExtensions {
      * Checks whether this entity has at least one list field.
      */
     def hasListFieldsEntity(Entity it) {
-        !getListFieldsEntity.isEmpty
+        !getListFieldsEntity.empty
     }
 
     /**
@@ -407,7 +407,7 @@ class ModelExtensions {
      * Checks whether this entity has at least one image field.
      */
     def hasImageFieldsEntity(Entity it) {
-        !getImageFieldsEntity.isEmpty
+        !getImageFieldsEntity.empty
     }
 
     /**
@@ -421,7 +421,7 @@ class ModelExtensions {
      * Checks whether this entity has at least one colour field.
      */
     def hasColourFieldsEntity(Entity it) {
-        !getColourFieldsEntity.isEmpty
+        !getColourFieldsEntity.empty
     }
 
     /**
@@ -435,7 +435,7 @@ class ModelExtensions {
      * Checks whether this entity has at least one country field.
      */
     def hasCountryFieldsEntity(Entity it) {
-        !getCountryFieldsEntity.isEmpty
+        !getCountryFieldsEntity.empty
     }
 
     /**
@@ -449,7 +449,7 @@ class ModelExtensions {
      * Checks whether this entity has at least one language field.
      */
     def hasLanguageFieldsEntity(Entity it) {
-        !getLanguageFieldsEntity.isEmpty
+        !getLanguageFieldsEntity.empty
     }
 
     /**
@@ -463,7 +463,7 @@ class ModelExtensions {
      * Checks whether this entity has at least one textual field.
      */
     def hasAbstractStringFieldsEntity(Entity it) {
-        !getAbstractStringFieldsEntity.isEmpty
+        !getAbstractStringFieldsEntity.empty
     }
 
     /**
@@ -477,7 +477,7 @@ class ModelExtensions {
      * Checks whether this entity has at least one string field.
      */
     def hasStringFieldsEntity(Entity it) {
-        !getStringFieldsEntity.isEmpty
+        !getStringFieldsEntity.empty
     }
 
     /**
@@ -491,7 +491,7 @@ class ModelExtensions {
      * Checks whether this entity has at least one text field.
      */
     def hasTextFieldsEntity(Entity it) {
-        !getTextFieldsEntity.isEmpty
+        !getTextFieldsEntity.empty
     }
 
     /**
@@ -513,14 +513,14 @@ class ModelExtensions {
      * Checks whether this entity has at least one boolean field.
      */
     def hasBooleanFieldsEntity(Entity it) {
-        !getBooleanFieldsEntity.isEmpty
+        !getBooleanFieldsEntity.empty
     }
 
     /**
      * Checks whether this entity has at least one boolean field having ajax toggle enabled.
      */
     def hasBooleansWithAjaxToggleEntity(Entity it) {
-        !getBooleansWithAjaxToggleEntity.isEmpty
+        !getBooleansWithAjaxToggleEntity.empty
     }
 
     /**
@@ -550,9 +550,9 @@ class ModelExtensions {
      */
     def namingSchemeAsInt(UploadField it) {
         switch (namingScheme) {
-            case UploadNamingScheme::ORIGINALWITHCOUNTER    : '0'
-            case UploadNamingScheme::RANDOMCHECKSUM         : '1'
-            case UploadNamingScheme::FIELDNAMEWITHCOUNTER   : '2'
+            case UploadNamingScheme.ORIGINALWITHCOUNTER    : '0'
+            case UploadNamingScheme.RANDOMCHECKSUM         : '1'
+            case UploadNamingScheme.FIELDNAMEWITHCOUNTER   : '2'
             default: '0'
         }
     }
@@ -562,13 +562,13 @@ class ModelExtensions {
      */
     def asConstant(EntityIdentifierStrategy strategy) {
         switch (strategy) {
-            case EntityIdentifierStrategy::NONE                     : ''
-            case EntityIdentifierStrategy::AUTO                     : 'AUTO'
-            case EntityIdentifierStrategy::SEQUENCE                 : 'SEQUENCE'
-            case EntityIdentifierStrategy::TABLE                    : 'TABLE'
-            case EntityIdentifierStrategy::IDENTITY                 : 'IDENTITY'
-            case EntityIdentifierStrategy::UUID                     : 'UUID'
-            case EntityIdentifierStrategy::CUSTOM                   : 'CUSTOM'
+            case EntityIdentifierStrategy.NONE                     : ''
+            case EntityIdentifierStrategy.AUTO                     : 'AUTO'
+            case EntityIdentifierStrategy.SEQUENCE                 : 'SEQUENCE'
+            case EntityIdentifierStrategy.TABLE                    : 'TABLE'
+            case EntityIdentifierStrategy.IDENTITY                 : 'IDENTITY'
+            case EntityIdentifierStrategy.UUID                     : 'UUID'
+            case EntityIdentifierStrategy.CUSTOM                   : 'CUSTOM'
             default: ''
         }
     }
@@ -578,9 +578,9 @@ class ModelExtensions {
      */
     def asConstant(EntityChangeTrackingPolicy policy) {
         switch (policy) {
-            case EntityChangeTrackingPolicy::DEFERRED_IMPLICIT      : 'DEFERRED_IMPLICIT'
-            case EntityChangeTrackingPolicy::DEFERRED_EXPLICIT      : 'DEFERRED_EXPLICIT'
-            case EntityChangeTrackingPolicy::NOTIFY                 : 'NOTIFY'
+            case EntityChangeTrackingPolicy.DEFERRED_IMPLICIT      : 'DEFERRED_IMPLICIT'
+            case EntityChangeTrackingPolicy.DEFERRED_EXPLICIT      : 'DEFERRED_EXPLICIT'
+            case EntityChangeTrackingPolicy.NOTIFY                 : 'NOTIFY'
             default: 'DEFERRED_IMPLICIT'
         }
     }
@@ -590,43 +590,43 @@ class ModelExtensions {
      */
     def asConstant(EntityLockType lockType) {
         switch (lockType) {
-            case EntityLockType::NONE                       : ''
-            case EntityLockType::OPTIMISTIC                 : 'OPTIMISTIC'
-            case EntityLockType::PESSIMISTIC_READ           : 'PESSIMISTIC_READ'
-            case EntityLockType::PESSIMISTIC_WRITE          : 'PESSIMISTIC_WRITE'
-            case EntityLockType::PAGELOCK                   : ''
-            case EntityLockType::PAGELOCK_OPTIMISTIC        : 'OPTIMISTIC'
-            case EntityLockType::PAGELOCK_PESSIMISTIC_READ  : 'PESSIMISTIC_READ'
-            case EntityLockType::PAGELOCK_PESSIMISTIC_WRITE : 'PESSIMISTIC_WRITE'
+            case EntityLockType.NONE                       : ''
+            case EntityLockType.OPTIMISTIC                 : 'OPTIMISTIC'
+            case EntityLockType.PESSIMISTIC_READ           : 'PESSIMISTIC_READ'
+            case EntityLockType.PESSIMISTIC_WRITE          : 'PESSIMISTIC_WRITE'
+            case EntityLockType.PAGELOCK                   : ''
+            case EntityLockType.PAGELOCK_OPTIMISTIC        : 'OPTIMISTIC'
+            case EntityLockType.PAGELOCK_PESSIMISTIC_READ  : 'PESSIMISTIC_READ'
+            case EntityLockType.PAGELOCK_PESSIMISTIC_WRITE : 'PESSIMISTIC_WRITE'
             default: ''
         }
     }
 
     def hasNotifyPolicy(Entity it) {
-        (changeTrackingPolicy == EntityChangeTrackingPolicy::NOTIFY)
+        (changeTrackingPolicy == EntityChangeTrackingPolicy.NOTIFY)
     }
 
     def hasOptimisticLock(Entity it) {
-        (lockType == EntityLockType::OPTIMISTIC || lockType == EntityLockType::PAGELOCK_OPTIMISTIC)
+        (lockType == EntityLockType.OPTIMISTIC || lockType == EntityLockType.PAGELOCK_OPTIMISTIC)
     }
     def hasPessimisticReadLock(Entity it) {
-        (lockType == EntityLockType::PESSIMISTIC_READ || lockType == EntityLockType::PAGELOCK_PESSIMISTIC_READ)
+        (lockType == EntityLockType.PESSIMISTIC_READ || lockType == EntityLockType.PAGELOCK_PESSIMISTIC_READ)
     }
     def hasPessimisticWriteLock(Entity it) {
-        (lockType == EntityLockType::PESSIMISTIC_WRITE || lockType == EntityLockType::PAGELOCK_PESSIMISTIC_WRITE)
+        (lockType == EntityLockType.PESSIMISTIC_WRITE || lockType == EntityLockType.PAGELOCK_PESSIMISTIC_WRITE)
     }
     def hasPageLockSupport(Entity it) {
-        (lockType == EntityLockType::PAGELOCK || lockType == EntityLockType::PAGELOCK_OPTIMISTIC
-         || lockType == EntityLockType::PAGELOCK_PESSIMISTIC_READ || lockType == EntityLockType::PAGELOCK_PESSIMISTIC_WRITE)
+        (lockType == EntityLockType.PAGELOCK || lockType == EntityLockType.PAGELOCK_OPTIMISTIC
+         || lockType == EntityLockType.PAGELOCK_PESSIMISTIC_READ || lockType == EntityLockType.PAGELOCK_PESSIMISTIC_WRITE)
     }
 
     def getVersionField(Entity it) {
         val intVersions = fields.filter(IntegerField).filter(e|e.version)
-        if (!intVersions.isEmpty)
+        if (!intVersions.empty)
             intVersions.head
         else {
             val datetimeVersions = fields.filter(DatetimeField).filter(e|e.version)
-            if (!datetimeVersions.isEmpty)
+            if (!datetimeVersions.empty)
                 datetimeVersions.head
         }
     }
@@ -646,22 +646,22 @@ class ModelExtensions {
 
     def getStartDateField(Entity it) {
         val datetimeFields = fields.filter(DatetimeField).filter(e|e.startDate)
-        if (!datetimeFields.isEmpty)
+        if (!datetimeFields.empty)
             datetimeFields.head
         else {
             val dateFields = fields.filter(DateField).filter(e|e.startDate)
-            if (!dateFields.isEmpty)
+            if (!dateFields.empty)
                 dateFields.head
         }
     }
 
     def getEndDateField(Entity it) {
         val datetimeFields = fields.filter(DatetimeField).filter(e|e.endDate)
-        if (!datetimeFields.isEmpty)
+        if (!datetimeFields.empty)
             datetimeFields.head
         else {
             val dateFields = fields.filter(DateField).filter(e|e.endDate)
-            if (!dateFields.isEmpty)
+            if (!dateFields.empty)
                 dateFields.head
         }
     }

@@ -9,9 +9,9 @@ import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 
 class Joins {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
 
     def generate(Entity it, Application app) '''
         /**

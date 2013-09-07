@@ -17,13 +17,13 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Association {
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
-    FileHelper fh = new FileHelper()
+    FileHelper fh = new FileHelper
 
     /**
      * If we have an outgoing association useTarget is true; for an incoming one it is false.
@@ -379,7 +379,7 @@ class Association {
     def private dispatch addParameters(JoinRelationship it, Boolean useTarget, String name, String type) '''
         «IF !container.application.targets('1.3.5')»\«ENDIF»«type» $«name»'''
     def private dispatch addParameters(OneToManyRelationship it, Boolean useTarget, String name, String type) '''
-        «IF !useTarget && !source.getAggregateFields.isEmpty»
+        «IF !useTarget && !source.getAggregateFields.empty»
             «val targetField = source.getAggregateFields.head.getAggregateTargetField»
             «IF !container.application.targets('1.3.5')»\«ENDIF»«targetField.fieldTypeAsString» $«targetField.name.formatForCode»
         «ELSE»«IF !container.application.targets('1.3.5')»\«ENDIF»«type» $«name»«ENDIF»'''
@@ -393,7 +393,7 @@ class Association {
     def private dispatch addAssignment(OneToManyRelationship it, Boolean selfIsMany, Boolean useTarget, String name, String nameSingle) '''
         «IF !useTarget && indexBy !== null && indexBy != ''»
             $this->«name»[$«nameSingle»->get«indexBy.formatForCodeCapital»()] = $«nameSingle»;
-        «ELSEIF !useTarget && !source.getAggregateFields.isEmpty»
+        «ELSEIF !useTarget && !source.getAggregateFields.empty»
             «val sourceField = source.getAggregateFields.head»
             «val targetField = sourceField.getAggregateTargetField»
             $«getRelationAliasName(true)» = new «target.entityClassName('', false)»($this, $«targetField.name.formatForCode»);

@@ -12,13 +12,13 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Styles {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions()
-    @Inject extension ModelJoinExtensions = new ModelJoinExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension ModelBehaviourExtensions = new ModelBehaviourExtensions
+    @Inject extension ModelJoinExtensions = new ModelJoinExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension Utils = new Utils
 
     /**
      * Entry point for application styles.
@@ -118,10 +118,10 @@ class Styles {
         «val hasUserFields = hasUserFields»
         «val hasImageFields = hasImageFields»
         «val joinRelations = getJoinRelations»
-        «IF !joinRelations.isEmpty || hasUserFields»
+        «IF !joinRelations.empty || hasUserFields»
 
             /* edit pages */
-            «IF !joinRelations.isEmpty»
+            «IF !joinRelations.empty»
                 div.«prefix»RelationLeftSide {
                     float: left;
                     width: 25%;
@@ -216,7 +216,7 @@ class Styles {
                 background-color: #ffb;
             }
 
-            «IF hasImageFields || !joinRelations.isEmpty»
+            «IF hasImageFields || !joinRelations.empty»
                 div.«prefix»AutoComplete ul li div.itemtitle«IF hasImageFields»,
                 div.«prefix»AutoCompleteWithImage ul li div.itemtitle«ENDIF» {
                     font-weight: 700;
@@ -229,7 +229,7 @@ class Styles {
                     color: #888;
                 }
 
-                «IF !joinRelations.isEmpty»
+                «IF !joinRelations.empty»
                     button.«prefix»InlineButton {
                         margin-top: 1em;
                     }
@@ -240,7 +240,7 @@ class Styles {
     '''
 
     def private viewFilterForm(Application it) '''
-        «IF !getAllControllers.map(e|e.hasActions('view')).isEmpty»
+        «IF !getAllControllers.map(e|e.hasActions('view')).empty»
             div.«appName.toLowerCase»-view form.«prefix»QuickNavForm {
                 margin: 10px 0;
                 padding: 8px 12px;

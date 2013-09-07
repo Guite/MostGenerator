@@ -14,12 +14,12 @@ import org.zikula.modulestudio.generator.extensions.UrlExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class Rss {
-    @Inject extension ControllerExtensions = new ControllerExtensions()
-    @Inject extension FormattingExtensions = new FormattingExtensions()
-    @Inject extension ModelExtensions = new ModelExtensions()
-    @Inject extension NamingExtensions = new NamingExtensions()
-    @Inject extension UrlExtensions = new UrlExtensions()
-    @Inject extension Utils = new Utils()
+    @Inject extension ControllerExtensions = new ControllerExtensions
+    @Inject extension FormattingExtensions = new FormattingExtensions
+    @Inject extension ModelExtensions = new ModelExtensions
+    @Inject extension NamingExtensions = new NamingExtensions
+    @Inject extension UrlExtensions = new UrlExtensions
+    @Inject extension Utils = new Utils
 
     def generate(Entity it, String appName, Controller controller, IFileSystemAccess fsa) {
         println('Generating ' + controller.formattedName + ' rss view templates for entity "' + name.formatForDisplay + '"')
@@ -93,9 +93,9 @@ class Rss {
                 «val stringFields = fields.filter(StringField).filter(e|!e.leading)»
                 <description>
                     <![CDATA[
-                    «IF !textFields.isEmpty»
+                    «IF !textFields.empty»
                         {$«objName».«textFields.head.name.formatForCode»|replace:'<br>':'<br />'}
-                    «ELSEIF !stringFields.isEmpty»
+                    «ELSEIF !stringFields.empty»
                         {$«objName».«stringFields.head.name.formatForCode»|replace:'<br>':'<br />'}
                     «ELSE»
                         «IF leadingField !== null»
