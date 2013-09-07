@@ -39,7 +39,7 @@ class EditFunctions {
             «initUploadField»
 
         «ENDIF»
-        «IF !getAllEntities.filter(e|!e.getDerivedFields.filter(typeof(AbstractDateField)).isEmpty).isEmpty»
+        «IF !getAllEntities.filter(e|!e.getDerivedFields.filter(AbstractDateField).isEmpty).isEmpty»
             «resetDateField»
 
             «initDateField»

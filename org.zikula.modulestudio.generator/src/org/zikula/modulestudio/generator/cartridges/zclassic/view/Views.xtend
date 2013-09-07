@@ -86,7 +86,7 @@ class Views {
                     for (entity : getAllEntities) pageHelper.generate(entity, appName, controller, fsa)
                 }
                 var customHelper = new Custom()
-                for (action : controller.actions.filter(typeof(CustomAction))) customHelper.generate(action, it, controller, fsa)
+                for (action : controller.actions.filter(CustomAction)) customHelper.generate(action, it, controller, fsa)
 
                 if (controller.hasActions('display')) {
                     // TODO: use relations to generate only required ones (???)

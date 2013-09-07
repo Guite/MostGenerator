@@ -44,7 +44,7 @@ class Display {
     def private displayView(Entity it, String appName, Controller controller) '''
         {* purpose of this template: «nameMultiple.formatForDisplay» display view in «controller.formattedName» area *}
         {include file='«IF container.application.targets('1.3.5')»«controller.formattedName»«ELSE»«controller.formattedName.toFirstUpper»«ENDIF»/header.tpl'}
-        «val refedElems = getOutgoingJoinRelations.filter(e|e.target.container.application == it.container.application) + incoming.filter(typeof(ManyToManyRelationship)).filter(e|e.source.container.application == it.container.application)»
+        «val refedElems = getOutgoingJoinRelations.filter(e|e.target.container.application == it.container.application) + incoming.filter(ManyToManyRelationship).filter(e|e.source.container.application == it.container.application)»
         <div class="«appName.toLowerCase»-«name.formatForDB» «appName.toLowerCase»-display«IF !refedElems.isEmpty» withrightbox«ENDIF»">
         «val objName = name.formatForCode»
         «val leadingField = getLeadingField»
@@ -133,8 +133,8 @@ class Display {
                 <dt>{gt text='Deleted at'}</dt>
                 <dd>{$«name.formatForCode».deletedAt|dateformat:'datebrief'}</dd>
             «ENDIF»
-            «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.displayEntry(controller, false)»«ENDFOR»
-            «/*«FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.displayEntry(controller, true)»«ENDFOR»*/»
+            «FOR relation : incoming.filter(OneToManyRelationship).filter(e|e.bidirectional)»«relation.displayEntry(controller, false)»«ENDFOR»
+            «/*«FOR relation : outgoing.filter(OneToOneRelationship)»«relation.displayEntry(controller, true)»«ENDFOR»*/»
         </dl>
     '''
 

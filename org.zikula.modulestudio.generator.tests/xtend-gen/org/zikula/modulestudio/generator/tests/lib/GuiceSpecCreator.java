@@ -13,14 +13,14 @@ import org.zikula.modulestudio.generator.tests.lib.MostDslInjectorProvider;
  * and https://groups.google.com/forum/#!msg/jnario/U_jVMQKC5wA/IUQ1N3HGTK8J
  * 
  * This allows using
- *     @CreateWith(typeof(GuiceSpecCreator))
+ *     @CreateWith(GuiceSpecCreator)
  * as a replacement for
  *     // JUnit 4 Runner, backups and restores EMF Registries
- *     @RunWith(typeof(XtextRunner)) // There is also ParameterizedXtextRunner
+ *     @RunWith(XtextRunner) // There is also ParameterizedXtextRunner
  *     // Google Guice Injector
- *     @InjectWith(typeof(MostDslUiInjectorProvider))
+ *     @InjectWith(MostDslUiInjectorProvider)
  * 
- * Detailed explaination:
+ * Detailed explanation:
  * Xtext offers a specific org.junit.runner.Runner. This allows in combination with a
  * org.eclipse.xtext.junit4.IInjectorProvider language specific injections within the test.
  * 
@@ -28,9 +28,9 @@ import org.zikula.modulestudio.generator.tests.lib.MostDslInjectorProvider;
  * Xtext already generated the class org.xtext.example.mydsl.MyDslInjectorProvider.
  * 
  * To wire these things up we annotate your Test with
- *     @RunWith(typeof(XtextRunner))
+ *     @RunWith(XtextRunner)
  * and
- *     @InjectWith(typeof(MyDslInjectorProvider))
+ *     @InjectWith(MyDslInjectorProvider)
  */
 @SuppressWarnings("all")
 public class GuiceSpecCreator extends AbstractSpecCreator {

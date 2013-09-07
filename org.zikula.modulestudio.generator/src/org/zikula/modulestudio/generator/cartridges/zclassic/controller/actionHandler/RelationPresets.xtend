@@ -74,7 +74,7 @@ class RelationPresets {
 
     def private getOwnedMMAssociations(Entity it, Application refApp) {
         getOutgoingJoinRelations
-            .filter(typeof(ManyToManyRelationship))
+            .filter(ManyToManyRelationship)
             .filter(e|e.source.container.application == refApp)
     }
 

@@ -364,7 +364,7 @@ class Entities {
                 return;
             }
 
-        «val emailFields = getDerivedFields().filter(typeof(EmailField))»
+        «val emailFields = getDerivedFields.filter(EmailField)»
         «IF emailFields.size > 0»
                 // decode possibly encoded mail addresses (#201)
             «FOR emailField : emailFields»
@@ -634,24 +634,24 @@ class Entities {
             «ENDFOR»
         «ENDIF»
         «val mandatoryFields = getDerivedFields.filter(e|e.mandatory && !e.primaryKey)»
-        «FOR mandatoryField : mandatoryFields.filter(typeof(IntegerField)).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue == '0')»
+        «FOR mandatoryField : mandatoryFields.filter(IntegerField).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue == '0')»
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(typeof(UserField)).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue == '0')»
+        «FOR mandatoryField : mandatoryFields.filter(UserField).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue == '0')»
             $this->«mandatoryField.name.formatForCode» = UserUtil::getVar('uid');
         «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(typeof(DecimalField)).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue == '0')»
+        «FOR mandatoryField : mandatoryFields.filter(DecimalField).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue == '0')»
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(typeof(AbstractDateField)).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue.length == 0)»
+        «FOR mandatoryField : mandatoryFields.filter(AbstractDateField).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue.length == 0)»
             $this->«mandatoryField.name.formatForCode» = «mandatoryField.defaultAssignment»;
         «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(typeof(FloatField)).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue == '0')»
+        «FOR mandatoryField : mandatoryFields.filter(FloatField).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue == '0')»
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
         $this->workflowState = 'initial';
         «IF isIndexByTarget»
-            «val indexRelation = incoming.filter(typeof(JoinRelationship)).filter(e|e.isIndexed).head»
+            «val indexRelation = incoming.filter(JoinRelationship).filter(e|e.isIndexed).head»
             «val sourceAlias = getRelationAliasName(indexRelation, false)»
             «val targetAlias = getRelationAliasName(indexRelation, true)»
             «val indexBy = indexRelation.getIndexByField»

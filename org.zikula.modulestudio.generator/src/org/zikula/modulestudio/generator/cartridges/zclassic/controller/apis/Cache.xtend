@@ -119,7 +119,7 @@ class Cache {
                 $cacheIds[] = 'delete';
             «ENDIF*/»
             «IF getMainUserController.hasActions('custom')»
-                «FOR customAction : getMainUserController.actions.filter(typeof(CustomAction))»
+                «FOR customAction : getMainUserController.actions.filter(CustomAction)»
                     $cacheIds[] = '«customAction.name.formatForCode.toFirstLower»';
                 «ENDFOR»
             «ENDIF»
@@ -151,7 +151,7 @@ class Cache {
                 $cacheIds[] = '«appName»/user/delete/' . $objectType; // delete function (forms)
             «ENDIF*/»
             «IF getMainUserController.hasActions('custom')»
-                «FOR customAction : getMainUserController.actions.filter(typeof(CustomAction))»
+                «FOR customAction : getMainUserController.actions.filter(CustomAction)»
                     $cacheIds[] = '«appName»/user/«customAction.name.formatForCode.toFirstLower»'; // «customAction.name.formatForDisplay» function
                 «ENDFOR»
             «ENDIF»

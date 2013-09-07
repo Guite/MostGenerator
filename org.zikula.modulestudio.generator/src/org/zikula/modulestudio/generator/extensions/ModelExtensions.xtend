@@ -119,7 +119,7 @@ class ModelExtensions {
      * Returns a list of all user fields in this application.
      */
     def getAllUserFields(Application it) {
-        getAllEntityFields.filter(typeof(UserField))
+        getAllEntityFields.filter(UserField)
     }
 
     /**
@@ -133,7 +133,7 @@ class ModelExtensions {
      * Returns a list of all list fields in this application.
      */
     def getAllListFields(Application it) {
-        getAllEntityFields.filter(typeof(ListField))
+        getAllEntityFields.filter(ListField)
     }
 
     /**
@@ -230,7 +230,7 @@ class ModelExtensions {
      * Returns a list of all derived fields (excluding calculated fields) of the given entity.
      */
     def getDerivedFields(Entity it) {
-        fields.filter(typeof(DerivedField))
+        fields.filter(DerivedField)
     }
 
     /**
@@ -287,7 +287,7 @@ class ModelExtensions {
      * Returns a list of all fields which should be displayed.
      */
     def getDisplayFieldsForView(Entity it) {
-        var fields = getDisplayFields.exclude(typeof(ArrayField)).exclude(typeof(ObjectField))
+        var fields = getDisplayFields.exclude(ArrayField).exclude(ObjectField)
         fields.toList as List<DerivedField>
     }
 
@@ -334,7 +334,7 @@ class ModelExtensions {
         if (it.identifierStrategy != EntityIdentifierStrategy::NONE) {
             fields = fields.filter(e|!e.primaryKey)
         }
-        val wantedFields = fields.exclude(typeof(ArrayField)).exclude(typeof(ObjectField))
+        val wantedFields = fields.exclude(ArrayField).exclude(ObjectField)
         wantedFields.toList as List<DerivedField>
     }
 
@@ -343,7 +343,7 @@ class ModelExtensions {
      * At the moment instances of UploadField are excluded.
      */
     def getFieldsForExampleData(Entity it) {
-        val exampleFields = getDerivedFields.filter(e|!e.primaryKey).exclude(typeof(UploadField))
+        val exampleFields = getDerivedFields.filter(e|!e.primaryKey).exclude(UploadField)
         exampleFields.toList as List<DerivedField>
     }
 
@@ -358,7 +358,7 @@ class ModelExtensions {
      * Returns a list of all user fields of this entity.
      */
     def getUserFieldsEntity(Entity it) {
-        fields.filter(typeof(UserField))
+        fields.filter(UserField)
     }
 
     /**
@@ -372,7 +372,7 @@ class ModelExtensions {
      * Returns a list of all upload fields of this entity.
      */
     def getUploadFieldsEntity(Entity it) {
-        fields.filter(typeof(UploadField))
+        fields.filter(UploadField)
     }
 
     /**
@@ -386,7 +386,7 @@ class ModelExtensions {
      * Returns a list of all list fields of this entity.
      */
     def getListFieldsEntity(Entity it) {
-        fields.filter(typeof(ListField))
+        fields.filter(ListField)
     }
 
     /**
@@ -428,7 +428,7 @@ class ModelExtensions {
      * Returns a list of all colour fields of this entity.
      */
     def getColourFieldsEntity(Entity it) {
-        getDerivedFields.filter(typeof(StringField)).filter(e|e.htmlcolour)
+        getDerivedFields.filter(StringField).filter(e|e.htmlcolour)
     }
 
     /**
@@ -442,7 +442,7 @@ class ModelExtensions {
      * Returns a list of all country fields of this entity.
      */
     def getCountryFieldsEntity(Entity it) {
-        getDerivedFields.filter(typeof(StringField)).filter(e|e.country == true)
+        getDerivedFields.filter(StringField).filter(e|e.country == true)
     }
 
     /**
@@ -456,7 +456,7 @@ class ModelExtensions {
      * Returns a list of all language fields of this entity.
      */
     def getLanguageFieldsEntity(Entity it) {
-        getDerivedFields.filter(typeof(StringField)).filter(e|e.language == true)
+        getDerivedFields.filter(StringField).filter(e|e.language == true)
     }
 
     /**
@@ -470,7 +470,7 @@ class ModelExtensions {
      * Returns a list of all textual fields of this entity.
      */
     def getAbstractStringFieldsEntity(Entity it) {
-        getDerivedFields.filter(typeof(AbstractStringField))
+        getDerivedFields.filter(AbstractStringField)
     }
 
     /**
@@ -484,7 +484,7 @@ class ModelExtensions {
      * Returns a list of all string fields of this entity.
      */
     def getStringFieldsEntity(Entity it) {
-        getDerivedFields.filter(typeof(StringField))
+        getDerivedFields.filter(StringField)
     }
 
     /**
@@ -498,7 +498,7 @@ class ModelExtensions {
      * Returns a list of all text fields of this entity.
      */
     def getTextFieldsEntity(Entity it) {
-        getDerivedFields.filter(typeof(TextField))
+        getDerivedFields.filter(TextField)
     }
 
 
@@ -506,7 +506,7 @@ class ModelExtensions {
      * Returns a list of all boolean fields of this entity.
      */
     def getBooleanFieldsEntity(Entity it) {
-        fields.filter(typeof(BooleanField))
+        fields.filter(BooleanField)
     }
 
     /**
@@ -534,7 +534,7 @@ class ModelExtensions {
      * Returns a list of all integer fields which are used as aggregates.
      */
     def getAggregateFields(Entity it) {
-        fields.filter(typeof(IntegerField)).filter(e|e.aggregateFor !== null && e.aggregateFor != '')
+        fields.filter(IntegerField).filter(e|e.aggregateFor !== null && e.aggregateFor != '')
     }
 
     /**
@@ -621,11 +621,11 @@ class ModelExtensions {
     }
 
     def getVersionField(Entity it) {
-        val intVersions = fields.filter(typeof(IntegerField)).filter(e|e.version)
+        val intVersions = fields.filter(IntegerField).filter(e|e.version)
         if (!intVersions.isEmpty)
             intVersions.head
         else {
-            val datetimeVersions = fields.filter(typeof(DatetimeField)).filter(e|e.version)
+            val datetimeVersions = fields.filter(DatetimeField).filter(e|e.version)
             if (!datetimeVersions.isEmpty)
                 datetimeVersions.head
         }
@@ -645,22 +645,22 @@ class ModelExtensions {
     }
 
     def getStartDateField(Entity it) {
-        val datetimeFields = fields.filter(typeof(DatetimeField)).filter(e|e.startDate)
+        val datetimeFields = fields.filter(DatetimeField).filter(e|e.startDate)
         if (!datetimeFields.isEmpty)
             datetimeFields.head
         else {
-            val dateFields = fields.filter(typeof(DateField)).filter(e|e.startDate)
+            val dateFields = fields.filter(DateField).filter(e|e.startDate)
             if (!dateFields.isEmpty)
                 dateFields.head
         }
     }
 
     def getEndDateField(Entity it) {
-        val datetimeFields = fields.filter(typeof(DatetimeField)).filter(e|e.endDate)
+        val datetimeFields = fields.filter(DatetimeField).filter(e|e.endDate)
         if (!datetimeFields.isEmpty)
             datetimeFields.head
         else {
-            val dateFields = fields.filter(typeof(DateField)).filter(e|e.endDate)
+            val dateFields = fields.filter(DateField).filter(e|e.endDate)
             if (!dateFields.isEmpty)
                 dateFields.head
         }

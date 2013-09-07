@@ -36,7 +36,7 @@ class ControllerExtensions {
      * Returns a list of all user controllers in the given application.
      */
     def getAllUserControllers(Application it) {
-        getAllControllers.filter(typeof(UserController))
+        getAllControllers.filter(UserController)
     }
     /**
      * Checks whether the application has an user controller or not.
@@ -55,21 +55,21 @@ class ControllerExtensions {
      * Returns a list of all admin controllers in the given application.
      */
     def getAllAdminControllers(Application it) {
-        getAllControllers.filter(typeof(AdminController))
+        getAllControllers.filter(AdminController)
     }
 
     /**
      * Returns a list of all user controllers in the given container.
      */
     def getUserControllers(Controllers it) {
-        controllers.filter(typeof(UserController))
+        controllers.filter(UserController)
     }
 
     /**
      * Returns a list of all admin controllers in the given container.
      */
     def getAdminControllers(Controllers it) {
-        controllers.filter(typeof(AdminController))
+        controllers.filter(AdminController)
     }
 
     /**
@@ -77,12 +77,12 @@ class ControllerExtensions {
      */
     def hasActions(Controller it, String type) {
         switch (type) {
-            case 'index'    : !actions.filter(typeof(MainAction)).isEmpty 
-            case 'view'     : !actions.filter(typeof(ViewAction)).isEmpty 
-            case 'display'  : !actions.filter(typeof(DisplayAction)).isEmpty 
-            case 'edit'     : !actions.filter(typeof(EditAction)).isEmpty
-            case 'delete'   : !actions.filter(typeof(DeleteAction)).isEmpty
-            case 'custom'   : !actions.filter(typeof(CustomAction)).isEmpty 
+            case 'index'    : !actions.filter(MainAction).isEmpty 
+            case 'view'     : !actions.filter(ViewAction).isEmpty 
+            case 'display'  : !actions.filter(DisplayAction).isEmpty 
+            case 'edit'     : !actions.filter(EditAction).isEmpty
+            case 'delete'   : !actions.filter(DeleteAction).isEmpty
+            case 'custom'   : !actions.filter(CustomAction).isEmpty 
             default : false
         }
     }
@@ -98,7 +98,7 @@ class ControllerExtensions {
      * Returns a list of all edit actions in the given application.
      */
     def getEditActions(Application it) {
-        getAllControllers.map(e|e.actions).flatten.filter(typeof(EditAction))
+        getAllControllers.map(e|e.actions).flatten.filter(EditAction)
     }
 
     /**
@@ -116,7 +116,7 @@ class ControllerExtensions {
      */
     def getAdminAndUserControllers(Application it) {
         var allControllers = getAllControllers
-        allControllers.filter(typeof(AdminController)) + allControllers.filter(typeof(UserController))
+        allControllers.filter(AdminController) + allControllers.filter(UserController)
     }
 
     /**

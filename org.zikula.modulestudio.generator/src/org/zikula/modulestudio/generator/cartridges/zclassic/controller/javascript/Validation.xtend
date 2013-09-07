@@ -161,7 +161,7 @@ class Validation {
                     return allowedExtensions.test(val);
                 }],
                 «ENDIF»
-                «val datetimeFields = getAllEntityFields.filter(typeof(DatetimeField))»
+                «val datetimeFields = getAllEntityFields.filter(DatetimeField)»
                 «IF !datetimeFields.isEmpty»
                     «IF datetimeFields.exists(e|e.past)»
                         ['validate-datetime-past', Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'), function(val, elem) {
@@ -180,7 +180,7 @@ class Validation {
                         }],
                     «ENDIF»
                 «ENDIF»
-                «val dateFields = getAllEntityFields.filter(typeof(DateField))»
+                «val dateFields = getAllEntityFields.filter(DateField)»
                 «IF !dateFields.isEmpty»
                     «IF dateFields.exists(e|e.past)»
                         ['validate-date-past', Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'), function(val, elem) {
@@ -199,7 +199,7 @@ class Validation {
                         }],
                     «ENDIF»
                 «ENDIF»
-                «val timeFields = getAllEntityFields.filter(typeof(TimeField))»
+                «val timeFields = getAllEntityFields.filter(TimeField)»
                 «IF !timeFields.isEmpty»
                     «IF timeFields.exists(e|e.past)»
                         ['validate-time-past', Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'), function(val, elem) {

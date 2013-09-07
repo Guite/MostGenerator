@@ -112,7 +112,7 @@ class WorkflowExtensions {
      * Returns the list field storing the possible workflow states for the given entity. 
      */
     def getWorkflowStateField(Entity it) {
-        fields.filter(typeof(ListField)).filter(e|e.name == 'workflowState').head
+        fields.filter(ListField).filter(e|e.name == 'workflowState').head
     }
 
     /**

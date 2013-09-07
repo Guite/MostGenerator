@@ -63,21 +63,21 @@ class ModelJoinExtensions {
      * Returns a list of all join relations (excluding inheritance).
      */
     def getJoinRelations(Models it) {
-        relations.filter(typeof(JoinRelationship))
+        relations.filter(JoinRelationship)
     }
 
     /**
      * Returns a list of all outgoing join relations (excluding inheritance).
      */
     def getOutgoingJoinRelations(Entity it) {
-        outgoing.filter(typeof(JoinRelationship))
+        outgoing.filter(JoinRelationship)
     }
 
     /**
      * Returns a list of all incoming join relations (excluding inheritance).
      */
     def getIncomingJoinRelations(Entity it) {
-        incoming.filter(typeof(JoinRelationship))
+        incoming.filter(JoinRelationship)
     }
 
     /**
@@ -91,7 +91,7 @@ class ModelJoinExtensions {
      * Returns a list of all incoming join relations which are either one2one or one2many.
      */
     def getIncomingJoinRelationsWithOneSource(Entity it) {
-        incoming.filter(typeof(OneToOneRelationship)) + incoming.filter(typeof(OneToManyRelationship))
+        incoming.filter(OneToOneRelationship) + incoming.filter(OneToManyRelationship)
     }
     /**
      * Returns a list of all incoming bidirectional join relations which are either one2one or one2many.
@@ -103,23 +103,21 @@ class ModelJoinExtensions {
      * Returns a list of all incoming join relations which are either one2one, one2many or many2one.
      */
     def getIncomingJoinRelationsWithoutManyToMany(Entity it) {
-        getIncomingJoinRelationsWithOneSource + incoming.filter(typeof(ManyToOneRelationship))
+        getIncomingJoinRelationsWithOneSource + incoming.filter(ManyToOneRelationship)
     }
 
     /**
      * Returns a list of all outgoing join relations which are either one2many or many2many.
      */
     def getOutgoingCollections(Entity it) {
-        outgoing.filter(typeof(OneToManyRelationship)) + outgoing.filter(typeof(ManyToManyRelationship))
+        outgoing.filter(OneToManyRelationship) + outgoing.filter(ManyToManyRelationship)
     }
 
     /**
      * Returns a list of all incoming join relations which are either many2one or many2many.
      */
     def getIncomingCollections(Entity it) {
-        (outgoing.filter(typeof(ManyToOneRelationship)) + 
-            incoming.filter(typeof(ManyToManyRelationship))
-        ).filter(e|e.bidirectional == true)
+        (outgoing.filter(ManyToOneRelationship) + incoming.filter(ManyToManyRelationship)).filter(e|e.bidirectional == true)
     }
 
     /**
@@ -284,7 +282,7 @@ class ModelJoinExtensions {
      */
     def getAggregateRelationship(IntegerField it) {
         val aggregateDetails = aggregateFor.split('#')
-        entity.outgoing.filter(typeof(OneToManyRelationship)).findFirst(e|e.bidirectional && e.targetAlias == aggregateDetails.head)
+        entity.outgoing.filter(OneToManyRelationship).findFirst(e|e.bidirectional && e.targetAlias == aggregateDetails.head)
     }
 
     /**
@@ -304,14 +302,14 @@ class ModelJoinExtensions {
      */
     def dispatch getAggregateTargetField(IntegerField it) {
         val aggregateDetails = aggregateFor.split('#')
-        getAggregateTargetEntity.fields.filter(typeof(DerivedField)).findFirst(e|e.name == aggregateDetails.get(1))
+        getAggregateTargetEntity.fields.filter(DerivedField).findFirst(e|e.name == aggregateDetails.get(1))
     }
 
     /**
      * Returns a list of all incoming relationships aggregating this field. 
      */
     def getAggregatingRelationships(DerivedField it) {
-        entity.incoming.filter(typeof(OneToManyRelationship))
+        entity.incoming.filter(OneToManyRelationship)
                      .filter(e|!e.source.getAggregateFields.isEmpty)
                      .filter(e|!e.source.getAggregateFields.filter(f|f.getAggregateTargetField == it).isEmpty)
     }
@@ -335,9 +333,9 @@ class ModelJoinExtensions {
      */
     def asConstant(RelationFetchType fetchType) {
         switch (fetchType) {
-            case RelationFetchType::LAZY                     : 'LAZY'
-            case RelationFetchType::EAGER                    : 'EAGER'
-            case RelationFetchType::EXTRA_LAZY               : 'EXTRA_LAZY'
+            case RelationFetchType::LAZY        : 'LAZY'
+            case RelationFetchType::EAGER       : 'EAGER'
+            case RelationFetchType::EXTRA_LAZY  : 'EXTRA_LAZY'
             default: 'LAZY'
         }
     }

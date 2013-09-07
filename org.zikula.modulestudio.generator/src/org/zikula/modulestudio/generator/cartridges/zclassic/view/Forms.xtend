@@ -40,7 +40,7 @@ class Forms {
 
     def generate(Application it, IFileSystemAccess fsa) {
         for (controller : getAllControllers) {
-            for (action : controller.actions.filter(typeof(EditAction))) action.generate(it, fsa)
+            for (action : controller.actions.filter(EditAction)) action.generate(it, fsa)
         }
     }
 

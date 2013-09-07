@@ -59,17 +59,17 @@ class WorkflowStart {
     	switch  diag.getSeverity {
     		case Diagnostic::ERROR: {
     			progressMonitor.subTask("Errors: \n" + validatorMessage(diag))
-    			progressMonitor.done()
+    			progressMonitor.done
     			return ErrorState::ERROR
     		}
     		case Diagnostic::WARNING: {
     			progressMonitor.subTask("Warnings: \n" + validatorMessage(diag))
-    			progressMonitor.done()
+    			progressMonitor.done
     			return ErrorState::WARN
     		}
     		default: {
-    			progressMonitor.subTask("Valid")
-    			progressMonitor.done()
+    			progressMonitor.subTask('Valid')
+    			progressMonitor.done
     			return ErrorState::OK
     		}
     	}
@@ -135,7 +135,7 @@ class WorkflowStart {
         val Injector injector = setup.createInjectorAndDoEMFRegistration
 
         val configuredFileSystemAccess = injector
-                .getInstance(typeof(JavaIoFileSystemAccess))
+                .getInstance(JavaIoFileSystemAccess)
 
         configuredFileSystemAccess.setOutputPath(
             'DEFAULT_OUTPUT', settings.getOutputPath + '/' + currentCartridge + '/' + settings.getAppName + '/');
@@ -158,11 +158,9 @@ class WorkflowStart {
 
     def readSettingsFromModel() {
     	val model = getModel
-    	val app = model.contents.head as Application;
+    	val app = model.contents.head as Application
     	settings.appName = app.name
 		settings.appVersion = app.version
     	return
     }
-    
-    
 }

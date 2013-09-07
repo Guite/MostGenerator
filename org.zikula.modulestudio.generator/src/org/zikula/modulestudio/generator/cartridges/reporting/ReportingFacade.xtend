@@ -52,7 +52,7 @@ public class ReportingFacade {
             config = new EngineConfig()
             val hm = config.appContext
             hm.put(EngineConstants::APPCONTEXT_CLASSLOADER_KEY,
-                    typeof(ReportEngine).classLoader)
+                    ReportEngine.classLoader)
             config.appContext = hm
             val reportPath = outputPath + '/reporting/' //$NON-NLS-1$
             val reportPathDir = new File(reportPath)

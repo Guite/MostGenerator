@@ -40,13 +40,13 @@ class ContentTypeListView {
                 «ELSE»
                     <dt>{gt text='«name.formatForDisplayCapital»'}</dt>
                 «ENDIF»
-                «val textFields = fields.filter(typeof(TextField))»
+                «val textFields = fields.filter(TextField)»
                 «IF !textFields.isEmpty»
                     {if $«name.formatForCode».«textFields.head.name.formatForCode»}
                         <dd>{$«name.formatForCode».«textFields.head.name.formatForCode»|truncate:200:"..."}</dd>
                     {/if}
                 «ELSE»
-                    «val stringFields = fields.filter(typeof(StringField)).filter(e|!e.leading && !e.password)»
+                    «val stringFields = fields.filter(StringField).filter(e|!e.leading && !e.password)»
                     «IF !stringFields.isEmpty»
                         {if $«name.formatForCode».«stringFields.head.name.formatForCode»}
                             <dd>{$«name.formatForCode».«stringFields.head.name.formatForCode»|truncate:200:"..."}</dd>

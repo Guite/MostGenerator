@@ -20,14 +20,14 @@ class ModelInheritanceExtensions {
      * Checks if this entity has a parent.
      */
     def isInheriting(Entity it) {
-        !outgoing.filter(typeof(InheritanceRelationship)).isEmpty
+        !outgoing.filter(InheritanceRelationship).isEmpty
     }
 
     /**
      * Returns the relationship pointing to the parent.
      */
     def getRelationToParentType(Entity it) {
-        outgoing.filter(typeof(InheritanceRelationship)).head
+        outgoing.filter(InheritanceRelationship).head
     }
 
     /**
@@ -48,7 +48,7 @@ class ModelInheritanceExtensions {
      * Returns a list of all child relationships.
      */
     def getChildRelations(Entity it) {
-        incoming.filter(typeof(InheritanceRelationship))
+        incoming.filter(InheritanceRelationship)
     }
 
     /**

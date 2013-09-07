@@ -525,13 +525,13 @@ class Ajax {
             switch ($objectType) {
                 «FOR entity : app.getTreeEntities»
                     case '«entity.name.formatForCode»':
-                        «val stringFields = entity.fields.filter(typeof(StringField)).filter(e|e.length >= 20 && !e.nospace && !e.country && !e.htmlcolour && !e.language)»
+                        «val stringFields = entity.fields.filter(StringField).filter(e|e.length >= 20 && !e.nospace && !e.country && !e.htmlcolour && !e.language)»
                             $titleFieldName = '«IF !stringFields.isEmpty»«stringFields.head.name.formatForCode»«ENDIF»';
-                            «val textFields = entity.fields.filter(typeof(TextField)).filter(e|!e.leading && e.length >= 50)»
+                            «val textFields = entity.fields.filter(TextField).filter(e|!e.leading && e.length >= 50)»
                             «IF !textFields.isEmpty»
                             $descriptionFieldName = '«textFields.head.name.formatForCode»';
                             «ELSE»
-                                «val textStringFields = entity.fields.filter(typeof(StringField)).filter(e|!e.leading && e.length >= 50 && !e.nospace && !e.country && !e.htmlcolour && !e.language)»
+                                «val textStringFields = entity.fields.filter(StringField).filter(e|!e.leading && e.length >= 50 && !e.nospace && !e.country && !e.htmlcolour && !e.language)»
                                 «IF !textStringFields.isEmpty»
                                 $descriptionFieldName = '«textStringFields.head.name.formatForCode»';
                                 «ENDIF»

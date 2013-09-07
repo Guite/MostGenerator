@@ -90,7 +90,7 @@ class ExampleData {
     '''
 
     def private initDateValues(Models it) '''
-        «val fields = getModelEntityFields.filter(typeof(AbstractDateField))»
+        «val fields = getModelEntityFields.filter(AbstractDateField)»
         «IF !fields.filter(e|e.past).isEmpty»
             $lastMonth = mktime(date('s'), date('H'), date('i'), date('m')-1, date('d'), date('Y'));
             $lastHour = mktime(date('s'), date('H')-1, date('i'), date('m'), date('d'), date('Y'));
@@ -99,30 +99,30 @@ class ExampleData {
             $nextMonth = mktime(date('s'), date('H'), date('i'), date('m')+1, date('d'), date('Y'));
             $nextHour = mktime(date('s'), date('H')+1, date('i'), date('m'), date('d'), date('Y'));
         «ENDIF»
-        «IF !fields.filter(typeof(DatetimeField)).isEmpty»
+        «IF !fields.filter(DatetimeField).isEmpty»
             $dtNow = date('Y-m-d H:i:s');
-            «IF !fields.filter(typeof(DatetimeField)).filter(e|e.past).isEmpty»
+            «IF !fields.filter(DatetimeField).filter(e|e.past).isEmpty»
                 $dtPast = date('Y-m-d H:i:s', $lastMonth);
             «ENDIF»
-            «IF !fields.filter(typeof(DatetimeField)).filter(e|e.future).isEmpty»
+            «IF !fields.filter(DatetimeField).filter(e|e.future).isEmpty»
                 $dtFuture = date('Y-m-d H:i:s', $nextMonth);
             «ENDIF»
         «ENDIF»
-        «IF !fields.filter(typeof(DateField)).isEmpty»
+        «IF !fields.filter(DateField).isEmpty»
             $dNow = date('Y-m-d');
-            «IF !fields.filter(typeof(DateField)).filter(e|e.past).isEmpty»
+            «IF !fields.filter(DateField).filter(e|e.past).isEmpty»
                 $dPast = date('Y-m-d', $lastMonth);
             «ENDIF»
-            «IF !fields.filter(typeof(DateField)).filter(e|e.future).isEmpty»
+            «IF !fields.filter(DateField).filter(e|e.future).isEmpty»
                 $dFuture = date('Y-m-d', $nextMonth);
             «ENDIF»
         «ENDIF»
-        «IF !fields.filter(typeof(TimeField)).isEmpty»
+        «IF !fields.filter(TimeField).isEmpty»
             $tNow = date('H:i:s');
-            «IF !fields.filter(typeof(TimeField)).filter(e|e.past).isEmpty»
+            «IF !fields.filter(TimeField).filter(e|e.past).isEmpty»
                 $tPast = date('H:i:s', $lastHour);
             «ENDIF»
-            «IF !fields.filter(typeof(TimeField)).filter(e|e.future).isEmpty»
+            «IF !fields.filter(TimeField).filter(e|e.future).isEmpty»
                 $tFuture = date('H:i:s', $nextHour);
             «ENDIF»
         «ENDIF»
@@ -158,9 +158,9 @@ class ExampleData {
                 $«entityName»«number»->setRgt(«IF number == 1»«container.numExampleRows*2»«ELSE»«((number-1)*2)+1»«ENDIF»);
                 $«entityName»«number»->setRoot($treeCounterRoot);
             «ENDIF»
-            «FOR relation : outgoing.filter(typeof(OneToOneRelationship)).filter(e|e.target.container.application == app)»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR» 
-            «FOR relation : outgoing.filter(typeof(ManyToOneRelationship)).filter(e|e.target.container.application == app)»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR»
-            «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional).filter(e|e.source.container.application == app)»«relation.exampleRowAssignmentIncoming(entityName, number)»«ENDFOR»
+            «FOR relation : outgoing.filter(OneToOneRelationship).filter(e|e.target.container.application == app)»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR» 
+            «FOR relation : outgoing.filter(ManyToOneRelationship).filter(e|e.target.container.application == app)»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR»
+            «FOR relation : incoming.filter(OneToManyRelationship).filter(e|e.bidirectional).filter(e|e.source.container.application == app)»«relation.exampleRowAssignmentIncoming(entityName, number)»«ENDFOR»
             «IF categorisable»
                 // create category assignment
                 $«entityName»«number»->getCategories()->add(new «IF app.targets('1.3.5')»\«app.appName»_Entity_«name.formatForCodeCapital»Category«ELSE»\«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»CategoryEntity«ENDIF»($categoryRegistryIdsPerEntity['«name.formatForCode»'], $category, $«entityName»«number»));
@@ -227,7 +227,7 @@ class ExampleData {
 
     def private exampleRowsConstructorArguments(Entity it, Integer number) '''
         «IF isIndexByTarget»
-            «val indexRelation = incoming.filter(typeof(JoinRelationship)).filter(e|e.isIndexed).head»
+            «val indexRelation = incoming.filter(JoinRelationship).filter(e|e.isIndexed).head»
             «val sourceAlias = getRelationAliasName(indexRelation, false)»
             «val indexBy = indexRelation.getIndexByField»
             «val indexByField = getDerivedFields.findFirst(e|e.name == indexBy)»

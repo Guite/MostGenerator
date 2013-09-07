@@ -63,8 +63,8 @@ class ViewExtensions {
         var weight = 1
         //if (fields.size > 5) weight = weight + 1
         //if (fields.size > 10) weight = weight + 1
-        if (page == 'edit' && incoming.filter(typeof(JoinRelationship)).filter(e|e.isPartOfEditForm(true)).size > 1) weight = weight + 1
-        if (page == 'edit' && outgoing.filter(typeof(JoinRelationship)).filter(e|e.isPartOfEditForm(false)).size > 1) weight = weight + 1
+        if (page == 'edit' && incoming.filter(JoinRelationship).filter(e|e.isPartOfEditForm(true)).size > 1) weight = weight + 1
+        if (page == 'edit' && outgoing.filter(JoinRelationship).filter(e|e.isPartOfEditForm(false)).size > 1) weight = weight + 1
 
         if (attributable) weight = weight + 1
         if (categorisable) weight = weight + 1

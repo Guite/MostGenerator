@@ -55,7 +55,7 @@ class Repository {
         getAllEntities.filter(e|!e.mappedSuperClass).forEach(e|e.generate)
 
         val linkTable = new LinkTable()
-        for (relation : getJoinRelations.filter(typeof(ManyToManyRelationship))) linkTable.generate(relation, it, fsa)
+        for (relation : getJoinRelations.filter(ManyToManyRelationship)) linkTable.generate(relation, it, fsa)
     }
 
     /**
@@ -184,8 +184,8 @@ class Repository {
              */
             public function getDescriptionFieldName()
            {
-                «val textFields = fields.filter(typeof(TextField)).filter(e|!e.leading)»
-                «val stringFields = fields.filter(typeof(StringField)).filter(e|!e.leading && !e.password)»
+                «val textFields = fields.filter(TextField).filter(e|!e.leading)»
+                «val stringFields = fields.filter(StringField).filter(e|!e.leading && !e.password)»
                 «IF !textFields.isEmpty»
                     $fieldName = '«textFields.head.name.formatForCode»';
                 «ELSEIF !stringFields.isEmpty»
@@ -729,7 +729,7 @@ class Repository {
                 // count the total number of affected items
                 $count = Paginate::getTotalQueryResults($query);
 
-                «IF !(outgoing.filter(typeof(JoinRelationship)).isEmpty && incoming.filter(typeof(JoinRelationship)).isEmpty)»
+                «IF !(outgoing.filter(JoinRelationship).isEmpty && incoming.filter(JoinRelationship).isEmpty)»
                     // prefetch unique relationship ids for given pagination frame
                     $query = Paginate::getPaginateQuery($query, $offset, $resultsPerPage);
                 «ELSE»
@@ -764,7 +764,7 @@ class Repository {
             «IF app.targets('1.3.5')»
             $result = $query->getResult();
             «ELSE»
-                «IF !(outgoing.filter(typeof(JoinRelationship)).isEmpty && incoming.filter(typeof(JoinRelationship)).isEmpty)»
+                «IF !(outgoing.filter(JoinRelationship).isEmpty && incoming.filter(JoinRelationship).isEmpty)»
                     $paginator = new Paginator($query, true);
                 «ELSE»
                     $paginator = new Paginator($query, false);
@@ -939,7 +939,7 @@ class Repository {
             «IF app.targets('1.3.5')»
             $result = $query->getResult();
             «ELSE»
-                «IF !(outgoing.filter(typeof(JoinRelationship)).isEmpty && incoming.filter(typeof(JoinRelationship)).isEmpty)»
+                «IF !(outgoing.filter(JoinRelationship).isEmpty && incoming.filter(JoinRelationship).isEmpty)»
                     $paginator = new Paginator($query, true);
                 «ELSE»
                     $paginator = new Paginator($query, false);
@@ -1257,7 +1257,7 @@ class Repository {
     def private singleSortingField(EntityField it) {
         switch it {
             DerivedField : {
-                val joins = entity.incoming.filter(typeof(JoinRelationship)).filter(e|formatForDB(e.getSourceFields.head) == name.formatForDB)
+                val joins = entity.incoming.filter(JoinRelationship).filter(e|formatForDB(e.getSourceFields.head) == name.formatForDB)
                 if (!joins.isEmpty) '''
                      '«joins.head.source.name.formatForCode»',
                      '''

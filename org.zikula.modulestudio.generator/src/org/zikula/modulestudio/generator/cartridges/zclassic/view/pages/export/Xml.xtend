@@ -71,11 +71,11 @@ class Xml {
                 <deletedAt>{$item.deletedAt|dateformat:'datebrief'}</deletedAt>
             «ENDIF»
             <workflowState>{$item.workflowState|«appName.formatForDB»ObjectState:false|lower}</workflowState>
-            «FOR relation : incoming.filter(typeof(OneToManyRelationship)).filter(e|e.bidirectional)»«relation.displayRelatedEntry(controller, false)»«ENDFOR»
-            «FOR relation : outgoing.filter(typeof(OneToOneRelationship))»«relation.displayRelatedEntry(controller, true)»«ENDFOR»
-            «FOR relation : incoming.filter(typeof(ManyToManyRelationship)).filter(e|e.bidirectional)»«relation.displayRelatedEntries(controller, false)»«ENDFOR»
-            «FOR relation : outgoing.filter(typeof(OneToManyRelationship))»«relation.displayRelatedEntries(controller, true)»«ENDFOR»
-            «FOR relation : outgoing.filter(typeof(ManyToManyRelationship))»«relation.displayRelatedEntries(controller, true)»«ENDFOR»
+            «FOR relation : incoming.filter(OneToManyRelationship).filter(e|e.bidirectional)»«relation.displayRelatedEntry(controller, false)»«ENDFOR»
+            «FOR relation : outgoing.filter(OneToOneRelationship)»«relation.displayRelatedEntry(controller, true)»«ENDFOR»
+            «FOR relation : incoming.filter(ManyToManyRelationship).filter(e|e.bidirectional)»«relation.displayRelatedEntries(controller, false)»«ENDFOR»
+            «FOR relation : outgoing.filter(OneToManyRelationship)»«relation.displayRelatedEntries(controller, true)»«ENDFOR»
+            «FOR relation : outgoing.filter(ManyToManyRelationship)»«relation.displayRelatedEntries(controller, true)»«ENDFOR»
         </«name.formatForDB»>
     '''
 

@@ -31,7 +31,7 @@ class Kml {
         <Document>
         {foreach item='item' from=$items}
             <Placemark>
-                «val stringFields = fields.filter(typeof(StringField)) + fields.filter(typeof(TextField))»
+                «val stringFields = fields.filter(StringField) + fields.filter(TextField)»
                 <name>«IF !stringFields.isEmpty»{$item->get«stringFields.head.name.formatForCodeCapital»()}«ELSE»{gt text='«name.formatForDisplayCapital»'}«ENDIF»</name>
                 <Point>
                     <coordinates>{$item->getLongitude()}, {$item->getLatitude()}, 0</coordinates>
@@ -50,7 +50,7 @@ class Kml {
         <kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
         <Document>
             <Placemark>
-                «val stringFields = fields.filter(typeof(StringField)) + fields.filter(typeof(TextField))»
+                «val stringFields = fields.filter(StringField) + fields.filter(TextField)»
                 <name>«IF !stringFields.isEmpty»{$«objName»->get«stringFields.head.name.formatForCodeCapital»()}«ELSE»{gt text='«name.formatForDisplayCapital»'}«ENDIF»</name>
                 <Point>
                     <coordinates>{$«objName»->getLongitude()}, {$«objName»->getLatitude()}, 0</coordinates>

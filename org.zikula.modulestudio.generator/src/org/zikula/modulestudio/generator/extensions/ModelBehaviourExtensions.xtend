@@ -173,7 +173,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all string type fields with the sluggable extension enabled.
      */
     def getSluggableFields(Entity it) {
-        getDerivedFields.filter(typeof(AbstractStringField)).filter(e|e.sluggablePosition > 0).sortBy(e|e.sluggablePosition)
+        getDerivedFields.filter(AbstractStringField).filter(e|e.sluggablePosition > 0).sortBy(e|e.sluggablePosition)
     }
 
     /**
@@ -187,7 +187,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all derived fields with the sortable extension enabled.
      */
     def getSortableFields(Entity it) {
-        fields.filter(typeof(IntegerField)).filter(e|e.sortablePosition == true)
+        fields.filter(IntegerField).filter(e|e.sortablePosition == true)
     }
 
     /**
@@ -201,7 +201,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all derived fields with the timestampable extension enabled.
      */
     def getTimestampableFields(Entity it) {
-        fields.filter(typeof(AbstractDateField)).filter(e|e.timestampable != EntityTimestampableType::NONE)
+        fields.filter(AbstractDateField).filter(e|e.timestampable != EntityTimestampableType::NONE)
     }
 
     /**

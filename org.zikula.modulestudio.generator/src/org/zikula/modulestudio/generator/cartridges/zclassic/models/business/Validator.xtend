@@ -691,13 +691,13 @@ class Validator {
         «ENDIF»
     '''
     def private dispatch validationCalls(AbstractIntegerField it) {
-        if (entity.incoming.filter(typeof(JoinRelationship)).filter(e|e.targetField == name).isEmpty
-         && entity.outgoing.filter(typeof(JoinRelationship)).filter(e|e.sourceField == name).isEmpty)
+        if (entity.incoming.filter(JoinRelationship).filter(e|e.targetField == name).isEmpty
+         && entity.outgoing.filter(JoinRelationship).filter(e|e.sourceField == name).isEmpty)
             validationCallsInteger
     }
     def private dispatch validationCalls(IntegerField it) '''
-        «IF entity.incoming.filter(typeof(JoinRelationship)).filter(e|e.targetField == name).isEmpty
-         && entity.outgoing.filter(typeof(JoinRelationship)).filter(e|e.sourceField == name).isEmpty»
+        «IF entity.incoming.filter(JoinRelationship).filter(e|e.targetField == name).isEmpty
+         && entity.outgoing.filter(JoinRelationship).filter(e|e.sourceField == name).isEmpty»
             «validationCallsInteger»
             «IF minValue.toString != '0'»
                 if (!$this->isIntegerNotLowerThan('«name.formatForCode»', «minValue»)) {
