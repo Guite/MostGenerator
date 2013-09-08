@@ -7,7 +7,6 @@ import de.guite.modulestudio.metamodel.modulestudio.UserController;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.generator.IFileSystemAccess;
-import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Extension;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper;
@@ -186,8 +185,8 @@ public class Newsletter {
     _builder.append("return $this->__(\'Latest ");
     {
       EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
-      int _length = ((Object[])Conversions.unwrapArray(_allEntities, Object.class)).length;
-      boolean _lessThan = (_length < 2);
+      int _size = _allEntities.size();
+      boolean _lessThan = (_size < 2);
       if (_lessThan) {
         _builder.append(itemDesc, "    ");
       } else {
@@ -224,8 +223,8 @@ public class Newsletter {
     _builder.append(itemDesc, "    ");
     {
       EList<Entity> _allEntities_1 = this._modelExtensions.getAllEntities(it);
-      int _length_1 = ((Object[])Conversions.unwrapArray(_allEntities_1, Object.class)).length;
-      boolean _greaterThan = (_length_1 > 1);
+      int _size_1 = _allEntities_1.size();
+      boolean _greaterThan = (_size_1 > 1);
       if (_greaterThan) {
         _builder.append(" and other ");
         String _appName_1 = this._utils.appName(it);
@@ -261,8 +260,8 @@ public class Newsletter {
     _builder.append(itemDesc, "    ");
     {
       EList<Entity> _allEntities_2 = this._modelExtensions.getAllEntities(it);
-      int _length_2 = ((Object[])Conversions.unwrapArray(_allEntities_2, Object.class)).length;
-      boolean _greaterThan_1 = (_length_2 > 1);
+      int _size_2 = _allEntities_2.size();
+      boolean _greaterThan_1 = (_size_2 > 1);
       if (_greaterThan_1) {
         _builder.append(" and other items");
       }

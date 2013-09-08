@@ -60,7 +60,7 @@ class Newsletter {
          */
         public function getTitle()
         {
-            return $this->__('Latest «IF getAllEntities.length < 2»«itemDesc»«ELSE»«appName» items«ENDIF»');
+            return $this->__('Latest «IF getAllEntities.size < 2»«itemDesc»«ELSE»«appName» items«ENDIF»');
         }
 
         /**
@@ -70,7 +70,7 @@ class Newsletter {
          */
         public function getDisplayName()
         {
-            return $this->__('List of «itemDesc»«IF getAllEntities.length > 1» and other «appName» items«ENDIF»');
+            return $this->__('List of «itemDesc»«IF getAllEntities.size > 1» and other «appName» items«ENDIF»');
         }
 
         /**
@@ -80,7 +80,7 @@ class Newsletter {
          */
         public function getDescription()
         {
-            return $this->__('This plugin shows a list of «itemDesc»«IF getAllEntities.length > 1» and other items«ENDIF» of the «appName» module.');
+            return $this->__('This plugin shows a list of «itemDesc»«IF getAllEntities.size > 1» and other items«ENDIF» of the «appName» module.');
         }
 
         /**
