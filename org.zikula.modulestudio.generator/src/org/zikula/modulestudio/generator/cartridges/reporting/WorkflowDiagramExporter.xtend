@@ -12,7 +12,7 @@ class WorkflowDiagramExporter {
     /**
      * Constructor accepting the workflow settings.
      *
-     * @param WorkflowSettings settings
+     * @param settings Given workflow settings.
      */
     new(WorkflowSettings settings) {
         this.settings = settings
