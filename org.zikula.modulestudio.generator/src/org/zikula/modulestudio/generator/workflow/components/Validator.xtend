@@ -8,7 +8,7 @@ import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext
 /**
  * Workflow component for running validation on input model.
  */
-public class Validator extends WorkflowComponentWithSlot {
+class Validator extends WorkflowComponentWithSlot {
 
     /**
      * Whether validation should be executed or not.

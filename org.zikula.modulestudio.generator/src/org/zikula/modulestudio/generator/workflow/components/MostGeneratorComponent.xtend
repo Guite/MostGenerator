@@ -17,7 +17,7 @@ import org.zikula.modulestudio.generator.cartridges.MostGenerator
 /**
  * Workflow component class for invoking the generator.
  */
-public class MostGeneratorComponent extends GeneratorComponent implements
+class MostGeneratorComponent extends GeneratorComponent implements
         IWorkflowComponent {
 
     /**

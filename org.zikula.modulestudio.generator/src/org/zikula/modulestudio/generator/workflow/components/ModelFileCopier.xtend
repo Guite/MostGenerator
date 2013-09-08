@@ -11,7 +11,7 @@ import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext
 /**
  * Workflow component class for copying model files into the output folder.
  */
-public class ModelFileCopier implements IWorkflowComponent {
+class ModelFileCopier implements IWorkflowComponent {
 
     /**
      * Whether copying should be executed or not.

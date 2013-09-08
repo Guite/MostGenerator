@@ -7,7 +7,7 @@ import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext
  * Workflow component class for a stop watch observing how long certain actions
  * last.
  */
-public class StopWatch implements IWorkflowComponent {
+class StopWatch implements IWorkflowComponent {
 
     /**
      * The start time stamp.

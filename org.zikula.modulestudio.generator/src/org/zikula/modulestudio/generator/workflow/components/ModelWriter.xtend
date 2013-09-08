@@ -10,7 +10,7 @@ import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext
  * Workflow component class for writing the enriched model for debugging
  * purposes after m2m transformation has been applied.
  */
-public class ModelWriter extends WorkflowComponentWithSlot {
+class ModelWriter extends WorkflowComponentWithSlot {
 
     /**
      * The treated uri.

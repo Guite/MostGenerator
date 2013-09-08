@@ -7,7 +7,7 @@ import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext
 /**
  * Workflow component class for cleaning a certain directory.
  */
-public class DirectoryCreator implements IWorkflowComponent {
+class DirectoryCreator implements IWorkflowComponent {
 
     /**
      * The treated directory.

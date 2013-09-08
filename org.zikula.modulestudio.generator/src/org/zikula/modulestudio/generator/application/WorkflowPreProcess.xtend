@@ -8,7 +8,7 @@ import org.zikula.modulestudio.generator.exceptions.NoCartridgesSelected
 /**
  * Pre processing providing convenience methods for single cartridges.
  */
-public class WorkflowPreProcess {
+class WorkflowPreProcess {
     WorkflowSettings settings
 
     def run(WorkflowSettings settings) throws ExceptionBase {

@@ -15,7 +15,7 @@ import org.zikula.modulestudio.generator.cartridges.reporting.ReportFilenameFilt
 /**
  * This class collects required workflow properties.
  */
-public class WorkflowSettings {
+class WorkflowSettings {
 
     /**
      * List of available cartridges.

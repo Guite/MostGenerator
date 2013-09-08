@@ -3,7 +3,7 @@ package org.zikula.modulestudio.generator.exceptions
 /**
  * Base exception class used by the generator.
  */
-public class ExceptionBase extends Exception {
+class ExceptionBase extends Exception {
 
     /**
      * The constructor.

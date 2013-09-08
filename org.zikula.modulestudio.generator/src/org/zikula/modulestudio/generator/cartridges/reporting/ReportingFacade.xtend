@@ -15,7 +15,7 @@ import org.eclipse.birt.report.engine.api.EngineException
 /**
  * Facade class for the reporting cartridge.
  */
-public class ReportingFacade {
+class ReportingFacade {
 
     /**
      * The output path.

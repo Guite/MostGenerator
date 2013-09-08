@@ -14,7 +14,7 @@ import org.eclipse.xtext.resource.XtextResourceSet
 /**
  * Workflow component class for reading the input model.
  */
-public class ModelReader extends WorkflowComponentWithSlot {
+class ModelReader extends WorkflowComponentWithSlot {
 
     /**
      * Whether we are inside a manual mwe workflow or OSGi.

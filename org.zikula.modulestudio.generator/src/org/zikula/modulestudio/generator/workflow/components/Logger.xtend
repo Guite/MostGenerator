@@ -6,7 +6,7 @@ import org.eclipse.emf.mwe2.runtime.workflow.IWorkflowContext
 /**
  * Workflow component class for logging some messages.
  */
-public class Logger implements IWorkflowComponent {
+class Logger implements IWorkflowComponent {
 
     /**
      * Currently stored message.
