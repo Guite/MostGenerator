@@ -94,101 +94,82 @@ class PersistenceTransformer {
             defaultValue = 'initial'
             multiple = false
         ]
-        listField.items.add(
-            factory.createListFieldItem => [
-                name = 'Initial'
-                value = 'initial'
-                documentation = 'Pseudo-state for content which is just created and not persisted yet.'
-                ^default = true
-            ]
-        )
+        listField.items += factory.createListFieldItem => [
+            name = 'Initial'
+            value = 'initial'
+            documentation = 'Pseudo-state for content which is just created and not persisted yet.'
+            ^default = true
+        ]
 
         if (entity.ownerPermission) {
-            listField.items.add(
-                factory.createListFieldItem => [
-                    name = 'Deferred'
-                    value = 'deferred'
-                    documentation = 'Content has not been submitted yet or has been waiting, but was rejected.'
-                ]
-            )
+            listField.items += factory.createListFieldItem => [
+                name = 'Deferred'
+                value = 'deferred'
+                documentation = 'Content has not been submitted yet or has been waiting, but was rejected.'
+            ]
         }
 
         if (entity.workflow != EntityWorkflowType.NONE) {
-            listField.items.add(
-                factory.createListFieldItem => [
-                    name = 'Waiting'
-                    value = 'waiting'
-                    documentation = 'Content has been submitted and waits for approval.'
-                ]
-            )
+            listField.items += factory.createListFieldItem => [
+                name = 'Waiting'
+                value = 'waiting'
+                documentation = 'Content has been submitted and waits for approval.'
+            ]
 
             if (entity.workflow == EntityWorkflowType.ENTERPRISE) {
-                listField.items.add(
-                    factory.createListFieldItem => [
-                        name = 'Accepted'
-                        value = 'accepted'
-                        documentation = 'Content has been submitted and accepted, but still waits for approval.'
-                    ]
-                )
+                listField.items += factory.createListFieldItem => [
+                    name = 'Accepted'
+                    value = 'accepted'
+                    documentation = 'Content has been submitted and accepted, but still waits for approval.'
+                ]
             }
         }
 
-        listField.items.add(
-            factory.createListFieldItem => [
-                name = 'Approved'
-                value = 'approved'
-                documentation = 'Content has been approved and is available online.'
-            ]
-        )
+        listField.items += factory.createListFieldItem => [
+            name = 'Approved'
+            value = 'approved'
+            documentation = 'Content has been approved and is available online.'
+        ]
 
         if (entity.hasTray) {
-            listField.items.add(
-                factory.createListFieldItem => [
-                    name = 'Suspended'
-                    value = 'suspended'
-                    documentation = 'Content has been approved, but is temporarily offline.'
-                ]
-            )
+            listField.items += factory.createListFieldItem => [
+                name = 'Suspended'
+                value = 'suspended'
+                documentation = 'Content has been approved, but is temporarily offline.'
+            ]
         }
 
         if (entity.hasArchive) {
-            listField.items.add(
-                factory.createListFieldItem => [
-                    name = 'Archived'
-                    value = 'archived'
-                    documentation = 'Content has reached the end and became archived.'
-                ]
-            )
+            listField.items += factory.createListFieldItem => [
+                name = 'Archived'
+                value = 'archived'
+                documentation = 'Content has reached the end and became archived.'
+            ]
         }
 
         if (entity.softDeleteable) {
-            listField.items.add(
-                factory.createListFieldItem => [
-                    name = 'Trashed'
-                    value = 'trashed'
-                    documentation = 'Content has been marked as deleted, but is still persisted in the database.'
-                ]
-            )
+            listField.items += factory.createListFieldItem => [
+                name = 'Trashed'
+                value = 'trashed'
+                documentation = 'Content has been marked as deleted, but is still persisted in the database.'
+            ]
         }
 
-        listField.items.add(
-            factory.createListFieldItem => [
-                name = 'Deleted'
-                value = 'deleted'
-                documentation = 'Pseudo-state for content which has been deleted from the database.'
-            ]
-        )
+        listField.items += factory.createListFieldItem => [
+            name = 'Deleted'
+            value = 'deleted'
+            documentation = 'Pseudo-state for content which has been deleted from the database.'
+        ]
 
         entity.fields.add(1, listField)
 
         val wfIndex = factory.createEntityIndex => [
             name = 'workflowStateIndex'
         ]
-        wfIndex.items.add(
-            factory.createEntityIndexItem => [
-                name = 'workflowState'
-            ]
-        )
-        entity.indexes.add(wfIndex)
+        wfIndex.items += factory.createEntityIndexItem => [
+            name = 'workflowState'
+        ]
+
+        entity.indexes += wfIndex
     }
 }
