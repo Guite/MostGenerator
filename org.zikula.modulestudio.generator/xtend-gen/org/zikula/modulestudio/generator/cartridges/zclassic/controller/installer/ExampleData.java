@@ -32,15 +32,14 @@ import de.guite.modulestudio.metamodel.modulestudio.TimeField;
 import de.guite.modulestudio.metamodel.modulestudio.UploadField;
 import de.guite.modulestudio.metamodel.modulestudio.UrlField;
 import de.guite.modulestudio.metamodel.modulestudio.UserField;
-import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Extension;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
+import org.eclipse.xtext.xbase.lib.IntegerRange;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions;
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions;
 import org.zikula.modulestudio.generator.extensions.ModelExtensions;
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions;
@@ -50,15 +49,6 @@ import org.zikula.modulestudio.generator.extensions.Utils;
 
 @SuppressWarnings("all")
 public class ExampleData {
-  @Inject
-  @Extension
-  private ControllerExtensions _controllerExtensions = new Function0<ControllerExtensions>() {
-    public ControllerExtensions apply() {
-      ControllerExtensions _controllerExtensions = new ControllerExtensions();
-      return _controllerExtensions;
-    }
-  }.apply();
-  
   @Inject
   @Extension
   private FormattingExtensions _formattingExtensions = new Function0<FormattingExtensions>() {
@@ -429,12 +419,11 @@ public class ExampleData {
   
   private CharSequence initExampleObjects(final Entity it, final Application app) {
     StringConcatenation _builder = new StringConcatenation();
-    Models _container = it.getContainer();
-    int _numExampleRows = _container.getNumExampleRows();
-    ArrayList<Integer> exampleNumbers = this._controllerExtensions.getListForCounter(Integer.valueOf(_numExampleRows));
-    _builder.newLineIfNotEmpty();
     {
-      for(final Integer number : exampleNumbers) {
+      Models _container = it.getContainer();
+      int _numExampleRows = _container.getNumExampleRows();
+      IntegerRange _upTo = new IntegerRange(1, _numExampleRows);
+      for(final Integer number : _upTo) {
         _builder.append("$");
         String _name = it.getName();
         String _formatForCode = this._formattingExtensions.formatForCode(_name);
@@ -483,10 +472,6 @@ public class ExampleData {
     String _name = it.getName();
     final String entityName = this._formattingExtensions.formatForCode(_name);
     _builder.newLineIfNotEmpty();
-    Models _container = it.getContainer();
-    int _numExampleRows = _container.getNumExampleRows();
-    ArrayList<Integer> exampleNumbers = this._controllerExtensions.getListForCounter(Integer.valueOf(_numExampleRows));
-    _builder.newLineIfNotEmpty();
     {
       boolean _isCategorisable = it.isCategorisable();
       if (_isCategorisable) {
@@ -506,7 +491,10 @@ public class ExampleData {
       }
     }
     {
-      for(final Integer number : exampleNumbers) {
+      Models _container = it.getContainer();
+      int _numExampleRows = _container.getNumExampleRows();
+      IntegerRange _upTo = new IntegerRange(1, _numExampleRows);
+      for(final Integer number : _upTo) {
         {
           boolean _isInheriting = this._modelInheritanceExtensions.isInheriting(it);
           if (_isInheriting) {
@@ -887,12 +875,11 @@ public class ExampleData {
   
   private CharSequence persistEntities(final Entity it, final Application app) {
     StringConcatenation _builder = new StringConcatenation();
-    Models _container = it.getContainer();
-    int _numExampleRows = _container.getNumExampleRows();
-    ArrayList<Integer> exampleNumbers = this._controllerExtensions.getListForCounter(Integer.valueOf(_numExampleRows));
-    _builder.newLineIfNotEmpty();
     {
-      for(final Integer number : exampleNumbers) {
+      Models _container = it.getContainer();
+      int _numExampleRows = _container.getNumExampleRows();
+      IntegerRange _upTo = new IntegerRange(1, _numExampleRows);
+      for(final Integer number : _upTo) {
         _builder.append("$success = $workflowHelper->executeAction($");
         String _name = it.getName();
         String _formatForCode = this._formattingExtensions.formatForCode(_name);

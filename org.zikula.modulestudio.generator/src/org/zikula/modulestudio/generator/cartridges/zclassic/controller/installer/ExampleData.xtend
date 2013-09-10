@@ -28,7 +28,6 @@ import de.guite.modulestudio.metamodel.modulestudio.TimeField
 import de.guite.modulestudio.metamodel.modulestudio.UploadField
 import de.guite.modulestudio.metamodel.modulestudio.UrlField
 import de.guite.modulestudio.metamodel.modulestudio.UserField
-import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
@@ -37,7 +36,6 @@ import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
 
 class ExampleData {
-    @Inject extension ControllerExtensions = new ControllerExtensions
     @Inject extension FormattingExtensions = new FormattingExtensions
     @Inject extension ModelExtensions = new ModelExtensions
     @Inject extension ModelJoinExtensions = new ModelJoinExtensions
@@ -129,8 +127,7 @@ class ExampleData {
     '''
 
     def private initExampleObjects(Entity it, Application app) '''
-        «var exampleNumbers = getListForCounter(container.numExampleRows)»
-        «FOR number : exampleNumbers»
+        «FOR number : 1..container.numExampleRows»
             $«name.formatForCode»«number» = new «IF app.targets('1.3.5')»\«app.appName»_Entity_«name.formatForCodeCapital»«ELSE»\«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»Entity«ENDIF»(«exampleRowsConstructorArguments(number)»);
         «ENDFOR»
         «/* this last line is on purpose */»
@@ -138,12 +135,11 @@ class ExampleData {
 
     def private createExampleRows(Entity it, Application app) '''
         «val entityName = name.formatForCode»
-        «var exampleNumbers = getListForCounter(container.numExampleRows)»
         «IF categorisable»
             $categoryId = 41; // Business and work
             $category = $this->entityManager->find('Zikula«IF app.targets('1.3.5')»_Doctrine2_Entity_Category«ELSE»\Core\Doctrine\Entity\CategoryEntity«ENDIF»', $categoryId);
         «ENDIF»
-        «FOR number : exampleNumbers»
+        «FOR number : 1..container.numExampleRows»
             «IF isInheriting»
                 «FOR field : parentType.getFieldsForExampleData»«exampleRowAssignment(field, it, entityName, number)»«ENDFOR»
             «ENDIF»
@@ -213,8 +209,7 @@ class ExampleData {
     '''
 
     def private persistEntities(Entity it, Application app) '''
-        «var exampleNumbers = getListForCounter(container.numExampleRows)»
-        «FOR number : exampleNumbers»
+        «FOR number : 1..container.numExampleRows»
             $success = $workflowHelper->executeAction($«name.formatForCode»«number», $action);
         «ENDFOR»
     '''

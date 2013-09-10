@@ -21,7 +21,6 @@ import de.guite.modulestudio.metamodel.modulestudio.Models;
 import de.guite.modulestudio.metamodel.modulestudio.RelationEditType;
 import de.guite.modulestudio.metamodel.modulestudio.UserController;
 import de.guite.modulestudio.metamodel.modulestudio.ViewAction;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.eclipse.emf.common.util.EList;
@@ -596,33 +595,6 @@ public class ControllerExtensions {
       _switchResult = _xifexpression_6;
     }
     return _switchResult;
-  }
-  
-  /**
-   * Returns a list of numbers based on a given count variable.
-   * This is a helper method allowing a while loop inside the template syntax.
-   * Used for creating a certain amount of example data.
-   */
-  public ArrayList<Integer> getListForCounter(final Integer amount) {
-    ArrayList<Integer> _xblockexpression = null;
-    {
-      ArrayList<Integer> _arrayList = new ArrayList<Integer>();
-      final ArrayList<Integer> theList = _arrayList;
-      int i = 1;
-      boolean _lessEqualsThan = (i <= (amount).intValue());
-      boolean _while = _lessEqualsThan;
-      while (_while) {
-        {
-          theList.add(Integer.valueOf(i));
-          int _plus = (i + 1);
-          i = _plus;
-        }
-        boolean _lessEqualsThan_1 = (i <= (amount).intValue());
-        _while = _lessEqualsThan_1;
-      }
-      _xblockexpression = (theList);
-    }
-    return _xblockexpression;
   }
   
   public int getEditStageCode(final JoinRelationship it, final Boolean incoming) {
