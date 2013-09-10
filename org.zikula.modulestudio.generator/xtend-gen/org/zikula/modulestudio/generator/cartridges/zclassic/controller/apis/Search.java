@@ -507,7 +507,7 @@ public class Search {
       if (_targets_2) {
         _builder.append("Search_Api_User");
       } else {
-        _builder.append("\\Search\\Api\\UserApi");
+        _builder.append("\\Zikula\\Module\\Search\\Api\\UserApi");
       }
     }
     _builder.append("::construct_where($args, $whereArray, $languageField);");
