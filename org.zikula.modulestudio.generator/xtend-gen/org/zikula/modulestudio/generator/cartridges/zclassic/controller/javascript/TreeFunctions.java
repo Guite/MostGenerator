@@ -520,12 +520,21 @@ public class TreeFunctions {
     _builder.append("request = new Zikula.Ajax.Request(");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("Zikula.Config.baseURL + \'ajax.php?module=");
+    _builder.append("Zikula.Config.baseURL + \'");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append("ajax");
+      } else {
+        _builder.append("index");
+      }
+    }
+    _builder.append(".php?module=");
     String _appName_1 = this._utils.appName(it);
     _builder.append(_appName_1, "        ");
     {
-      boolean _targets = this._utils.targets(it, "1.3.5");
-      boolean _not = (!_targets);
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_1);
       if (_not) {
         _builder.append("&type=ajax");
       }
@@ -690,12 +699,21 @@ public class TreeFunctions {
     _builder.append("request = new Zikula.Ajax.Request(");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("Zikula.Config.baseURL + \'ajax.php?module=");
+    _builder.append("Zikula.Config.baseURL + \'");
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      if (_targets) {
+        _builder.append("ajax");
+      } else {
+        _builder.append("index");
+      }
+    }
+    _builder.append(".php?module=");
     String _appName = this._utils.appName(it);
     _builder.append(_appName, "        ");
     {
-      boolean _targets = this._utils.targets(it, "1.3.5");
-      boolean _not = (!_targets);
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets_1);
       if (_not) {
         _builder.append("&type=ajax");
       }

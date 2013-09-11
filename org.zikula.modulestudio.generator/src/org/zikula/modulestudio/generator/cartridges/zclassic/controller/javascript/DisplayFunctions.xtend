@@ -292,7 +292,7 @@ class DisplayFunctions {
             var pars = 'ot=' + objectType + '&field=' + fieldName + '&id=' + itemId;
 
             new Zikula.Ajax.Request(
-                Zikula.Config.baseURL + 'ajax.php?module=«appName»«IF !targets('1.3.5')»&type=ajax«ENDIF»&func=toggleFlag',
+                Zikula.Config.baseURL + '«IF targets('1.3.5')»ajax«ELSE»index«ENDIF».php?module=«appName»«IF !targets('1.3.5')»&type=ajax«ENDIF»&func=toggleFlag',
                 {
                     method: 'post',
                     parameters: pars,
