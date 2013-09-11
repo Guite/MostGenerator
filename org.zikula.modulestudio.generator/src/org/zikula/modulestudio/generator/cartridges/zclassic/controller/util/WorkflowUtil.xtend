@@ -313,6 +313,9 @@ class WorkflowUtil {
         {
             $objectType = $entity['_objectType'];
             $schemaName = $this->getWorkflowName($objectType);
+
+            $entity->initWorkflow();
+            $idcolumn = $entity['__WORKFLOW__']['obj_idcolumn'];
             «IF !targets('1.3.5')»
 
                 $this->normaliseWorkflowData($entity);

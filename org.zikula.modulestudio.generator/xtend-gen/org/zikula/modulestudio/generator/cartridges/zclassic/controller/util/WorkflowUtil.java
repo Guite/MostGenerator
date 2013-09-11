@@ -931,6 +931,13 @@ public class WorkflowUtil {
     _builder.append("    ");
     _builder.append("$schemaName = $this->getWorkflowName($objectType);");
     _builder.newLine();
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("$entity->initWorkflow();");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("$idcolumn = $entity[\'__WORKFLOW__\'][\'obj_idcolumn\'];");
+    _builder.newLine();
     {
       boolean _targets = this._utils.targets(it, "1.3.5");
       boolean _not = (!_targets);
