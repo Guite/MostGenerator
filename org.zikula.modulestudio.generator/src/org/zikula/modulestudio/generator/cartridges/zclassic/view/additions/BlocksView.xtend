@@ -88,7 +88,7 @@ class BlocksView {
         <div id="customtemplatearea" class="z-formrow z-hide">
             <label for="«appName»_customtemplate">{gt text='Custom template'}:</label>
             <input type="text" id="«appName»__customtemplate" name="customtemplate" size="40" maxlength="80" value="{$customTemplate|default:''}" />
-            <span class="z-sub z-formnote">{gt text='Example'}: <em>itemlist_{objecttype}_display.tpl</em></span>
+            <span class="z-sub z-formnote">{gt text='Example'}: <em>itemlist_{$objecttype}_display.tpl</em></span>
         </div>
 
         <div class="z-formrow z-hide"«/* TODO: wait until FilterUtil is ready for Doctrine 2 - see https://github.com/zikula/core/issues/118 */»>

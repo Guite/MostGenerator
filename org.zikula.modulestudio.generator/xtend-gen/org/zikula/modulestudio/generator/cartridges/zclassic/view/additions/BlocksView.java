@@ -293,7 +293,7 @@ public class BlocksView {
     _builder.append("__customtemplate\" name=\"customtemplate\" size=\"40\" maxlength=\"80\" value=\"{$customTemplate|default:\'\'}\" />");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
-    _builder.append("<span class=\"z-sub z-formnote\">{gt text=\'Example\'}: <em>itemlist_{objecttype}_display.tpl</em></span>");
+    _builder.append("<span class=\"z-sub z-formnote\">{gt text=\'Example\'}: <em>itemlist_{$objecttype}_display.tpl</em></span>");
     _builder.newLine();
     _builder.append("</div>");
     _builder.newLine();
