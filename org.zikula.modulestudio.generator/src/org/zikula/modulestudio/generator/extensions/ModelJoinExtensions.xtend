@@ -11,9 +11,9 @@ import de.guite.modulestudio.metamodel.modulestudio.ManyToOneRelationship
 import de.guite.modulestudio.metamodel.modulestudio.Models
 import de.guite.modulestudio.metamodel.modulestudio.OneToManyRelationship
 import de.guite.modulestudio.metamodel.modulestudio.OneToOneRelationship
+import de.guite.modulestudio.metamodel.modulestudio.RelationAutoCompletionUsage
 import de.guite.modulestudio.metamodel.modulestudio.RelationFetchType
 import de.guite.modulestudio.metamodel.modulestudio.Relationship
-import de.guite.modulestudio.metamodel.modulestudio.RelationAutoCompletionUsage
 
 /**
  * This class contains model join relationship related extension methods.
@@ -84,7 +84,7 @@ class ModelJoinExtensions {
      * Returns a list of all incoming bidirectional join relations (excluding inheritance).
      */
     def getBidirectionalIncomingJoinRelations(Entity it) {
-        getIncomingJoinRelations.filter(e|e.bidirectional)
+        getIncomingJoinRelations.filter[bidirectional]
     }
 
     /**
@@ -97,7 +97,7 @@ class ModelJoinExtensions {
      * Returns a list of all incoming bidirectional join relations which are either one2one or one2many.
      */
     def getBidirectionalIncomingJoinRelationsWithOneSource(Entity it) {
-        getIncomingJoinRelationsWithOneSource.filter(e|e.bidirectional)
+        getIncomingJoinRelationsWithOneSource.filter[bidirectional]
     }
     /**
      * Returns a list of all incoming join relations which are either one2one, one2many or many2one.
@@ -117,7 +117,7 @@ class ModelJoinExtensions {
      * Returns a list of all incoming join relations which are either many2one or many2many.
      */
     def getIncomingCollections(Entity it) {
-        (outgoing.filter(ManyToOneRelationship) + incoming.filter(ManyToManyRelationship)).filter(e|e.bidirectional == true)
+        (outgoing.filter(ManyToOneRelationship) + incoming.filter(ManyToManyRelationship)).filter[bidirectional]
     }
 
     /**
@@ -159,7 +159,7 @@ class ModelJoinExtensions {
         if (isDefaultIdFieldName(refField))
             name.formatForDB + '_id'
         else
-            fields.findFirst(e|e.name == refField).name.formatForCode
+            fields.findFirst[name == refField]?.name.formatForCode ?: ''
     }
 
     /**
@@ -244,7 +244,7 @@ class ModelJoinExtensions {
      * That is true if at least one incoming relation has an indexBy field set. 
      */
     def isIndexByTarget(Entity it) {
-        !incoming.filter(e|e.getIndexByField !== null && e.getIndexByField != '').empty
+        !incoming.filter[getIndexByField !== null && getIndexByField != ''].empty
     }
 
     /**
@@ -252,7 +252,7 @@ class ModelJoinExtensions {
      * That is true if at least one incoming relation of it's entity has an indexBy field set to it's name. 
      */
     def isIndexByField(DerivedField it) {
-        !entity.incoming.filter(e|e.getIndexByField == name).empty
+        !entity.incoming.filter[e|e.getIndexByField == name].empty
     }
 
     /**
@@ -282,7 +282,7 @@ class ModelJoinExtensions {
      */
     def getAggregateRelationship(IntegerField it) {
         val aggregateDetails = aggregateFor.split('#')
-        entity.outgoing.filter(OneToManyRelationship).findFirst(e|e.bidirectional && e.targetAlias == aggregateDetails.head)
+        entity.outgoing.filter(OneToManyRelationship).findFirst[bidirectional && targetAlias == aggregateDetails.head]
     }
 
     /**
@@ -302,7 +302,7 @@ class ModelJoinExtensions {
      */
     def dispatch getAggregateTargetField(IntegerField it) {
         val aggregateDetails = aggregateFor.split('#')
-        getAggregateTargetEntity.fields.filter(DerivedField).findFirst(e|e.name == aggregateDetails.get(1))
+        getAggregateTargetEntity.fields.filter(DerivedField).findFirst[name == aggregateDetails.get(1)]
     }
 
     /**
@@ -310,15 +310,15 @@ class ModelJoinExtensions {
      */
     def getAggregatingRelationships(DerivedField it) {
         entity.incoming.filter(OneToManyRelationship)
-                     .filter(e|!e.source.getAggregateFields.empty)
-                     .filter(e|!e.source.getAggregateFields.filter(f|f.getAggregateTargetField == it).empty)
+                     .filter[!source.getAggregateFields.empty]
+                     .filter[!source.getAggregateFields.filter[getAggregateTargetField == it].empty]
     }
 
     /**
      * Returns a list of all incoming relationships aggregating any fields of this entity. 
      */
     def getAggregators(Entity it) {
-        getDerivedFields.filter(e|!e.getAggregatingRelationships.empty)
+        getDerivedFields.filter[getAggregatingRelationships.empty]
     }
 
     /**

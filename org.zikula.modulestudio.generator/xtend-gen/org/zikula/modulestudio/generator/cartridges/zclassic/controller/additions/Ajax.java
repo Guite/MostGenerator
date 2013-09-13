@@ -114,11 +114,11 @@ public class Ajax {
       boolean _or = false;
       EList<Entity> _allEntities = this._modelExtensions.getAllEntities(app);
       final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          Iterable<DerivedField> _uniqueDerivedFields = Ajax.this._modelExtensions.getUniqueDerivedFields(e);
+        public Boolean apply(final Entity it) {
+          Iterable<DerivedField> _uniqueDerivedFields = Ajax.this._modelExtensions.getUniqueDerivedFields(it);
           final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-            public Boolean apply(final DerivedField f) {
-              boolean _isPrimaryKey = f.isPrimaryKey();
+            public Boolean apply(final DerivedField it) {
+              boolean _isPrimaryKey = it.isPrimaryKey();
               boolean _not = (!_isPrimaryKey);
               return Boolean.valueOf(_not);
             }
@@ -140,13 +140,13 @@ public class Ajax {
         } else {
           EList<Entity> _allEntities_1 = this._modelExtensions.getAllEntities(app);
           final Function1<Entity,Boolean> _function_1 = new Function1<Entity,Boolean>() {
-            public Boolean apply(final Entity e) {
+            public Boolean apply(final Entity it) {
               boolean _and = false;
-              boolean _hasSluggableFields = Ajax.this._modelBehaviourExtensions.hasSluggableFields(e);
+              boolean _hasSluggableFields = Ajax.this._modelBehaviourExtensions.hasSluggableFields(it);
               if (!_hasSluggableFields) {
                 _and = false;
               } else {
-                boolean _isSlugUnique = e.isSlugUnique();
+                boolean _isSlugUnique = it.isSlugUnique();
                 _and = (_hasSluggableFields && _isSlugUnique);
               }
               return Boolean.valueOf(_and);
@@ -1287,8 +1287,8 @@ public class Ajax {
         _builder.append("        ");
         Iterable<DerivedField> _uniqueDerivedFields = this._modelExtensions.getUniqueDerivedFields(entity);
         final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-          public Boolean apply(final DerivedField e) {
-            boolean _isPrimaryKey = e.isPrimaryKey();
+          public Boolean apply(final DerivedField it) {
+            boolean _isPrimaryKey = it.isPrimaryKey();
             boolean _not = (!_isPrimaryKey);
             return Boolean.valueOf(_not);
           }
@@ -1398,8 +1398,8 @@ public class Ajax {
       Application _application = _container.getApplication();
       EList<Entity> _allEntities_1 = this._modelExtensions.getAllEntities(_application);
       final Function1<Entity,Boolean> _function_1 = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _hasCompositeKeys = Ajax.this._modelExtensions.hasCompositeKeys(e);
+        public Boolean apply(final Entity it) {
+          boolean _hasCompositeKeys = Ajax.this._modelExtensions.hasCompositeKeys(it);
           return Boolean.valueOf(_hasCompositeKeys);
         }
       };
@@ -1459,8 +1459,8 @@ public class Ajax {
         _builder.append("    ");
         Iterable<DerivedField> _uniqueDerivedFields_1 = this._modelExtensions.getUniqueDerivedFields(entity_1);
         final Function1<DerivedField,Boolean> _function_2 = new Function1<DerivedField,Boolean>() {
-          public Boolean apply(final DerivedField e) {
-            boolean _isPrimaryKey = e.isPrimaryKey();
+          public Boolean apply(final DerivedField it) {
+            boolean _isPrimaryKey = it.isPrimaryKey();
             boolean _not = (!_isPrimaryKey);
             return Boolean.valueOf(_not);
           }
@@ -1523,8 +1523,8 @@ public class Ajax {
                   Application _application_1 = _container_1.getApplication();
                   EList<Entity> _allEntities_3 = this._modelExtensions.getAllEntities(_application_1);
                   final Function1<Entity,Boolean> _function_3 = new Function1<Entity,Boolean>() {
-                    public Boolean apply(final Entity e) {
-                      boolean _hasCompositeKeys = Ajax.this._modelExtensions.hasCompositeKeys(e);
+                    public Boolean apply(final Entity it) {
+                      boolean _hasCompositeKeys = Ajax.this._modelExtensions.hasCompositeKeys(it);
                       return Boolean.valueOf(_hasCompositeKeys);
                     }
                   };
@@ -2116,38 +2116,38 @@ public class Ajax {
         EList<EntityField> _fields = entity.getFields();
         Iterable<StringField> _filter = Iterables.<StringField>filter(_fields, StringField.class);
         final Function1<StringField,Boolean> _function = new Function1<StringField,Boolean>() {
-          public Boolean apply(final StringField e) {
+          public Boolean apply(final StringField it) {
             boolean _and = false;
             boolean _and_1 = false;
             boolean _and_2 = false;
             boolean _and_3 = false;
-            int _length = e.getLength();
+            int _length = it.getLength();
             boolean _greaterEqualsThan = (_length >= 20);
             if (!_greaterEqualsThan) {
               _and_3 = false;
             } else {
-              boolean _isNospace = e.isNospace();
+              boolean _isNospace = it.isNospace();
               boolean _not = (!_isNospace);
               _and_3 = (_greaterEqualsThan && _not);
             }
             if (!_and_3) {
               _and_2 = false;
             } else {
-              boolean _isCountry = e.isCountry();
+              boolean _isCountry = it.isCountry();
               boolean _not_1 = (!_isCountry);
               _and_2 = (_and_3 && _not_1);
             }
             if (!_and_2) {
               _and_1 = false;
             } else {
-              boolean _isHtmlcolour = e.isHtmlcolour();
+              boolean _isHtmlcolour = it.isHtmlcolour();
               boolean _not_2 = (!_isHtmlcolour);
               _and_1 = (_and_2 && _not_2);
             }
             if (!_and_1) {
               _and = false;
             } else {
-              boolean _isLanguage = e.isLanguage();
+              boolean _isLanguage = it.isLanguage();
               boolean _not_3 = (!_isLanguage);
               _and = (_and_1 && _not_3);
             }
@@ -2176,14 +2176,14 @@ public class Ajax {
         EList<EntityField> _fields_1 = entity.getFields();
         Iterable<TextField> _filter_1 = Iterables.<TextField>filter(_fields_1, TextField.class);
         final Function1<TextField,Boolean> _function_1 = new Function1<TextField,Boolean>() {
-          public Boolean apply(final TextField e) {
+          public Boolean apply(final TextField it) {
             boolean _and = false;
-            boolean _isLeading = e.isLeading();
+            boolean _isLeading = it.isLeading();
             boolean _not = (!_isLeading);
             if (!_not) {
               _and = false;
             } else {
-              int _length = e.getLength();
+              int _length = it.getLength();
               boolean _greaterEqualsThan = (_length >= 50);
               _and = (_not && _greaterEqualsThan);
             }
@@ -2211,46 +2211,46 @@ public class Ajax {
             EList<EntityField> _fields_2 = entity.getFields();
             Iterable<StringField> _filter_2 = Iterables.<StringField>filter(_fields_2, StringField.class);
             final Function1<StringField,Boolean> _function_2 = new Function1<StringField,Boolean>() {
-              public Boolean apply(final StringField e) {
+              public Boolean apply(final StringField it) {
                 boolean _and = false;
                 boolean _and_1 = false;
                 boolean _and_2 = false;
                 boolean _and_3 = false;
                 boolean _and_4 = false;
-                boolean _isLeading = e.isLeading();
+                boolean _isLeading = it.isLeading();
                 boolean _not = (!_isLeading);
                 if (!_not) {
                   _and_4 = false;
                 } else {
-                  int _length = e.getLength();
+                  int _length = it.getLength();
                   boolean _greaterEqualsThan = (_length >= 50);
                   _and_4 = (_not && _greaterEqualsThan);
                 }
                 if (!_and_4) {
                   _and_3 = false;
                 } else {
-                  boolean _isNospace = e.isNospace();
+                  boolean _isNospace = it.isNospace();
                   boolean _not_1 = (!_isNospace);
                   _and_3 = (_and_4 && _not_1);
                 }
                 if (!_and_3) {
                   _and_2 = false;
                 } else {
-                  boolean _isCountry = e.isCountry();
+                  boolean _isCountry = it.isCountry();
                   boolean _not_2 = (!_isCountry);
                   _and_2 = (_and_3 && _not_2);
                 }
                 if (!_and_2) {
                   _and_1 = false;
                 } else {
-                  boolean _isHtmlcolour = e.isHtmlcolour();
+                  boolean _isHtmlcolour = it.isHtmlcolour();
                   boolean _not_3 = (!_isHtmlcolour);
                   _and_1 = (_and_2 && _not_3);
                 }
                 if (!_and_1) {
                   _and = false;
                 } else {
-                  boolean _isLanguage = e.isLanguage();
+                  boolean _isLanguage = it.isLanguage();
                   boolean _not_4 = (!_isLanguage);
                   _and = (_and_1 && _not_4);
                 }

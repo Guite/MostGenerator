@@ -1109,7 +1109,7 @@ public class ContentTypeList {
     _builder.append("$template = \'\';");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("if ($this->view->template_exists(\'");
+    _builder.append("if ($this->view->template_exists[\'");
     {
       boolean _targets_3 = this._utils.targets(it, "1.3.5");
       if (_targets_3) {
@@ -1133,7 +1133,7 @@ public class ContentTypeList {
     _builder.append("/\' . $templateForObjectType;");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
-    _builder.append("} elseif ($this->view->template_exists(\'");
+    _builder.append("} elseif ($this->view->template_exists[\'");
     {
       boolean _targets_5 = this._utils.targets(it, "1.3.5");
       if (_targets_5) {

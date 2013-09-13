@@ -209,7 +209,7 @@ class Entities {
          «IF isTopSuperClass»
           * @ORM\InheritanceType("«getChildRelations.head.strategy.asConstant»")
           * @ORM\DiscriminatorColumn(name="«getChildRelations.head.discriminatorColumn.formatForCode»"«/*, type="string"*/»)
-          * @ORM\DiscriminatorMap({"«name.formatForCode»" = "«entityClassName('', false)»"«FOR relation : getChildRelations»«relation.discriminatorInfo»«ENDFOR»})
+          * @ORM\Discriminatormap[{"«name.formatForCode»" = "«entityClassName('', false)»"«FOR relation : getChildRelations»«relation.discriminatorInfo»«ENDFOR»})
          «ENDIF»
          «IF changeTrackingPolicy != EntityChangeTrackingPolicy::DEFERRED_IMPLICIT»
           * @ORM\ChangeTrackingPolicy("«changeTrackingPolicy.asConstant»")
@@ -603,7 +603,7 @@ class Entities {
 
     def private constructorArguments(Entity it, Boolean withTypeHints) '''
         «IF isIndexByTarget»
-            «val indexRelation = getIncomingJoinRelations.filter(e|e.isIndexed).head»
+            «val indexRelation = getIncomingJoinRelations.filter[isIndexed].head»
             «val sourceAlias = getRelationAliasName(indexRelation, false)»
             «val indexBy = indexRelation.getIndexByField»
             $«indexBy.formatForCode»,«IF withTypeHints» «indexRelation.source.entityClassName('', false)»«ENDIF» $«sourceAlias.formatForCode»«constructorArgumentsDefault(true)»
@@ -633,25 +633,25 @@ class Entities {
                 $this->«pkField.name.formatForCode» = $«pkField.name.formatForCode»;
             «ENDFOR»
         «ENDIF»
-        «val mandatoryFields = getDerivedFields.filter(e|e.mandatory && !e.primaryKey)»
-        «FOR mandatoryField : mandatoryFields.filter(IntegerField).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue == '0')»
+        «val mandatoryFields = getDerivedFields.filter[mandatory && !primaryKey]»
+        «FOR mandatoryField : mandatoryFields.filter(IntegerField).filter[defaultValue === null || defaultValue == '' || defaultValue == '0']»
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(UserField).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue == '0')»
+        «FOR mandatoryField : mandatoryFields.filter(UserField).filter[defaultValue === null || defaultValue == '' || defaultValue == '0']»
             $this->«mandatoryField.name.formatForCode» = UserUtil::getVar('uid');
         «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(DecimalField).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue == '0')»
+        «FOR mandatoryField : mandatoryFields.filter(DecimalField).filter[defaultValue === null || defaultValue == '' || defaultValue == '0']»
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(AbstractDateField).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue.length == 0)»
+        «FOR mandatoryField : mandatoryFields.filter(AbstractDateField).filter[defaultValue === null || defaultValue == '' || defaultValue.length == 0]»
             $this->«mandatoryField.name.formatForCode» = «mandatoryField.defaultAssignment»;
         «ENDFOR»
-        «FOR mandatoryField : mandatoryFields.filter(FloatField).filter(e|e.defaultValue === null || e.defaultValue == '' || e.defaultValue == '0')»
+        «FOR mandatoryField : mandatoryFields.filter(FloatField).filter[defaultValue === null || defaultValue == '' || defaultValue == '0']»
             $this->«mandatoryField.name.formatForCode» = 1;
         «ENDFOR»
         $this->workflowState = 'initial';
         «IF isIndexByTarget»
-            «val indexRelation = incoming.filter(JoinRelationship).filter(e|e.isIndexed).head»
+            «val indexRelation = incoming.filter(JoinRelationship).filter[isIndexed].head»
             «val sourceAlias = getRelationAliasName(indexRelation, false)»
             «val targetAlias = getRelationAliasName(indexRelation, true)»
             «val indexBy = indexRelation.getIndexByField»
@@ -774,7 +774,7 @@ class Entities {
                 $entity->set_hasUniqueSlug($this->get_hasUniqueSlug());
                 $entity->set_actions($this->get_actions());
                 $entity->initValidator();
-                «FOR field : getDerivedFields.filter(e|!e.primaryKey && e.name != 'workflowState')»
+                «FOR field : getDerivedFields.filter[!primaryKey && name != 'workflowState']»
                     $entity->set«field.name.formatForCodeCapital»($this->get«field.name.formatForCodeCapital»());
                 «ENDFOR»
 

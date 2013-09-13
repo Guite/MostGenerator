@@ -428,8 +428,8 @@ public class ListEntries {
     {
       EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
       final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _hasListFieldsEntity = ListEntries.this._modelExtensions.hasListFieldsEntity(e);
+        public Boolean apply(final Entity it) {
+          boolean _hasListFieldsEntity = ListEntries.this._modelExtensions.hasListFieldsEntity(it);
           return Boolean.valueOf(_hasListFieldsEntity);
         }
       };
@@ -544,8 +544,8 @@ public class ListEntries {
     {
       EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
       final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _hasListFieldsEntity = ListEntries.this._modelExtensions.hasListFieldsEntity(e);
+        public Boolean apply(final Entity it) {
+          boolean _hasListFieldsEntity = ListEntries.this._modelExtensions.hasListFieldsEntity(it);
           return Boolean.valueOf(_hasListFieldsEntity);
         }
       };
@@ -672,14 +672,14 @@ public class ListEntries {
         _builder.append("    ");
         EList<ListFieldItem> _items = it.getItems();
         final Function1<ListFieldItem,Boolean> _function = new Function1<ListFieldItem,Boolean>() {
-          public Boolean apply(final ListFieldItem e) {
+          public Boolean apply(final ListFieldItem it) {
             boolean _and = false;
-            String _value = e.getValue();
+            String _value = it.getValue();
             boolean _notEquals = (!Objects.equal(_value, "initial"));
             if (!_notEquals) {
               _and = false;
             } else {
-              String _value_1 = e.getValue();
+              String _value_1 = it.getValue();
               boolean _notEquals_1 = (!Objects.equal(_value_1, "deleted"));
               _and = (_notEquals && _notEquals_1);
             }

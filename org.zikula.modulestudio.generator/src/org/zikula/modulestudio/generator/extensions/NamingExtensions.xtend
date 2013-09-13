@@ -3,8 +3,8 @@ package org.zikula.modulestudio.generator.extensions
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Controller
-import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import de.guite.modulestudio.metamodel.modulestudio.Entity
+import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 
 /**
  * Extension methods for naming classes and building file pathes.

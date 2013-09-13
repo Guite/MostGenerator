@@ -63,42 +63,42 @@ class ModelExtensions {
      * Returns a list of all entity fields in this application.
      */
     def getAllEntityFields(Application it) {
-        getAllEntities.map(e|e.fields).flatten.toList
+        getAllEntities.map[fields].flatten.toList
     }
 
     /**
      * Returns a list of all entity fields in a certain model container.
      */
     def getModelEntityFields(Models it) {
-        entities.map(e|e.fields).flatten.toList
+        entities.map[fields].flatten.toList
     }
 
     /**
      * Returns the leading entity in the primary model container.
      */
     def getLeadingEntity(Application it) {
-        getEntitiesFromDefaultDataSource.findFirst(e|e.leading)
+        getEntitiesFromDefaultDataSource.findFirst[leading]
     }
 
     /**
      * Checks whether the application contains at least one entity with at least one image field.
      */
     def hasImageFields(Application it) {
-        getAllEntities.exists(e|e.hasImageFieldsEntity)
+        getAllEntities.exists[hasImageFieldsEntity]
     }
 
     /**
      * Checks whether the application contains at least one entity with at least one colour field.
      */
     def hasColourFields(Application it) {
-        getAllEntities.exists(e|e.hasColourFieldsEntity)
+        getAllEntities.exists[hasColourFieldsEntity]
     }
 
     /**
      * Checks whether the application contains at least one entity with at least one country field.
      */
     def hasCountryFields(Application it) {
-        getAllEntities.exists(e|e.hasCountryFieldsEntity)
+        getAllEntities.exists[hasCountryFieldsEntity]
     }
 
     /**
@@ -112,7 +112,7 @@ class ModelExtensions {
      * Returns a list of all entities with at least one upload field.
      */
     def getUploadEntities(Application it) {
-        getAllEntities.filter(e|e.hasUploadFieldsEntity)
+        getAllEntities.filter[hasUploadFieldsEntity]
     }
 
     /**
@@ -147,7 +147,7 @@ class ModelExtensions {
      * Returns a list of all entities with at least one list field.
      */
     def getListEntities(Application it) {
-        getAllEntities.filter(e|e.hasListFieldsEntity)
+        getAllEntities.filter[hasListFieldsEntity]
     }
 
 
@@ -162,14 +162,14 @@ class ModelExtensions {
      * Returns a list of all entities with at least one boolean field having ajax toggle enabled.
      */
     def getEntitiesWithAjaxToggle(Application it) {
-        getAllEntities.filter(e|e.hasBooleansWithAjaxToggleEntity)
+        getAllEntities.filter[hasBooleansWithAjaxToggleEntity]
     }
 
     /**
      * Returns the first model container which is default data source.
      */
     def getDefaultDataSource(Application it) {
-        models.findFirst(e|e.defaultDataSource == true)
+        models.findFirst[defaultDataSource]
     }
 
     /**
@@ -209,7 +209,7 @@ class ModelExtensions {
      * Returns a list of all normal (non-unique) indexes for this entity.
      */
     def getNormalIndexes(Entity it) {
-        indexes.filter(e|e.type == EntityIndexType.NORMAL)
+        indexes.filter[type == EntityIndexType.NORMAL]
     }
 
     /**
@@ -223,7 +223,7 @@ class ModelExtensions {
      * Returns a list of all unique indexes for this entity.
      */
     def getUniqueIndexes(Entity it) {
-        indexes.filter(e|e.type == EntityIndexType.UNIQUE)
+        indexes.filter[type == EntityIndexType.UNIQUE]
     }
 
     /**
@@ -237,7 +237,7 @@ class ModelExtensions {
      * Returns a list of all derived and unique fields of the given entity
      */
     def getUniqueDerivedFields(Entity it) {
-        getDerivedFields.filter(e|e.unique)
+        getDerivedFields.filter[unique]
     }
 
     /**
@@ -245,7 +245,7 @@ class ModelExtensions {
      */
     def DerivedField getLeadingField(Entity it) {
         if (!getDerivedFields.empty)
-            getDerivedFields.findFirst(e|e.leading == true)
+            getDerivedFields.findFirst[leading]
         else if (isInheriting)
             parentType.getLeadingField
     }
@@ -254,14 +254,14 @@ class ModelExtensions {
      * Returns a list of all derived and primary key fields of the given entity.
      */
     def getPrimaryKeyFields(Entity it) {
-        getDerivedFields.filter(e|e.primaryKey == true)
+        getDerivedFields.filter[primaryKey]
     }
 
     /**
      * Returns the first derived and primary key field of the given entity.
      */
     def getFirstPrimaryKey(Entity it) {
-        getDerivedFields.findFirst(e|e.primaryKey == true)
+        getDerivedFields.findFirst[primaryKey]
     }
 
     /**
@@ -297,10 +297,10 @@ class ModelExtensions {
     def getDisplayFields(Entity it) {
         var fields = getDerivedFields
         if (it.identifierStrategy != EntityIdentifierStrategy.NONE) {
-            fields = fields.filter(e|!e.primaryKey)
+            fields = fields.filter[!primaryKey]
         }
         if (!hasVisibleWorkflow) {
-            fields = fields.filter(e|e.name != 'workflowState')
+            fields = fields.filter[name != 'workflowState']
         }
         fields
     }
@@ -309,9 +309,9 @@ class ModelExtensions {
      * Returns a list of all fields which should be displayed.
      */
     def getLeadingDisplayFields(Entity it) {
-        var fields = getDisplayFields.filter(e|e.name != 'workflowState')
+        var fields = getDisplayFields.filter[name != 'workflowState']
         if (leadingField !== null && leadingField.showLeadingFieldInTitle) {
-            fields = fields.filter(e|!e.leading)
+            fields = fields.filter[!leading]
         }
         fields
     }
@@ -330,9 +330,9 @@ class ModelExtensions {
      * At the moment instances of ArrayField and ObjectField are excluded.
      */
     def getEditableFields(Entity it) {
-        var fields = getDerivedFields.filter(e|e.name != 'workflowState')
+        var fields = getDerivedFields.filter[name != 'workflowState']
         if (it.identifierStrategy != EntityIdentifierStrategy.NONE) {
-            fields = fields.filter(e|!e.primaryKey)
+            fields = fields.filter[!primaryKey]
         }
         val wantedFields = fields.exclude(ArrayField).exclude(ObjectField)
         wantedFields.toList as List<DerivedField>
@@ -343,7 +343,7 @@ class ModelExtensions {
      * At the moment instances of UploadField are excluded.
      */
     def getFieldsForExampleData(Entity it) {
-        val exampleFields = getDerivedFields.filter(e|!e.primaryKey).exclude(UploadField)
+        val exampleFields = getDerivedFields.filter[!primaryKey].exclude(UploadField)
         exampleFields.toList as List<DerivedField>
     }
 
@@ -351,7 +351,7 @@ class ModelExtensions {
      * Checks whether this entity has at least one user field.
      */
     def hasUserFieldsEntity(Entity it) {
-        !getUserFieldsEntity.empty;
+        !getUserFieldsEntity.empty
     }
 
     /**
@@ -393,14 +393,14 @@ class ModelExtensions {
      * Returns a list of all default items of this list.
      */
     def getDefaultItems(ListField it) {
-        items.filter(e|e.^default)
+        items.filter[^default]
     }
 
     /**
      * Returns a list of all default items of this list.
      */
     def getDefaultItems(ListVar it) {
-        items.filter(e|e.^default)
+        items.filter[^default]
     }
 
     /**
@@ -414,7 +414,7 @@ class ModelExtensions {
      * Returns a list of all image fields of this entity.
      */
     def getImageFieldsEntity(Entity it) {
-        getUploadFieldsEntity.filter(e|e.allowedExtensions.split(", ").forall(ext|ext == 'gif' || ext == 'jpeg' || ext == 'jpg' || ext == 'png'))
+        getUploadFieldsEntity.filter[allowedExtensions.split(', ').forall[it == 'gif' || it == 'jpeg' || it == 'jpg' || it == 'png']]
     }
 
     /**
@@ -428,7 +428,7 @@ class ModelExtensions {
      * Returns a list of all colour fields of this entity.
      */
     def getColourFieldsEntity(Entity it) {
-        getDerivedFields.filter(StringField).filter(e|e.htmlcolour)
+        getDerivedFields.filter(StringField).filter[htmlcolour]
     }
 
     /**
@@ -442,7 +442,7 @@ class ModelExtensions {
      * Returns a list of all country fields of this entity.
      */
     def getCountryFieldsEntity(Entity it) {
-        getDerivedFields.filter(StringField).filter(e|e.country == true)
+        getDerivedFields.filter(StringField).filter[country]
     }
 
     /**
@@ -456,7 +456,7 @@ class ModelExtensions {
      * Returns a list of all language fields of this entity.
      */
     def getLanguageFieldsEntity(Entity it) {
-        getDerivedFields.filter(StringField).filter(e|e.language == true)
+        getDerivedFields.filter(StringField).filter[language]
     }
 
     /**
@@ -527,14 +527,14 @@ class ModelExtensions {
      * Returns a list of all boolean fields having ajax toggle enabled.
      */
     def getBooleansWithAjaxToggleEntity(Entity it) {
-        getBooleanFieldsEntity.filter(e|e.ajaxTogglability)
+        getBooleanFieldsEntity.filter[ajaxTogglability]
     }
 
     /**
      * Returns a list of all integer fields which are used as aggregates.
      */
     def getAggregateFields(Entity it) {
-        fields.filter(IntegerField).filter(e|e.aggregateFor !== null && e.aggregateFor != '')
+        fields.filter(IntegerField).filter[aggregateFor !== null && aggregateFor != '']
     }
 
     /**
@@ -621,11 +621,11 @@ class ModelExtensions {
     }
 
     def getVersionField(Entity it) {
-        val intVersions = fields.filter(IntegerField).filter(e|e.version)
+        val intVersions = fields.filter(IntegerField).filter[version]
         if (!intVersions.empty)
             intVersions.head
         else {
-            val datetimeVersions = fields.filter(DatetimeField).filter(e|e.version)
+            val datetimeVersions = fields.filter(DatetimeField).filter[version]
             if (!datetimeVersions.empty)
                 datetimeVersions.head
         }
@@ -641,26 +641,26 @@ class ModelExtensions {
     }
 
     def boolean containsDefaultIdField(Iterable<String> l, Entity entity) {
-        isDefaultIdFieldName(entity, l.head) || (l.size > 1 && containsDefaultIdField(l.tail, entity));
+        isDefaultIdFieldName(entity, l.head) || (l.size > 1 && containsDefaultIdField(l.tail, entity))
     }
 
     def getStartDateField(Entity it) {
-        val datetimeFields = fields.filter(DatetimeField).filter(e|e.startDate)
+        val datetimeFields = fields.filter(DatetimeField).filter[startDate]
         if (!datetimeFields.empty)
             datetimeFields.head
         else {
-            val dateFields = fields.filter(DateField).filter(e|e.startDate)
+            val dateFields = fields.filter(DateField).filter[startDate]
             if (!dateFields.empty)
                 dateFields.head
         }
     }
 
     def getEndDateField(Entity it) {
-        val datetimeFields = fields.filter(DatetimeField).filter(e|e.endDate)
+        val datetimeFields = fields.filter(DatetimeField).filter[endDate]
         if (!datetimeFields.empty)
             datetimeFields.head
         else {
-            val dateFields = fields.filter(DateField).filter(e|e.endDate)
+            val dateFields = fields.filter(DateField).filter[endDate]
             if (!dateFields.empty)
                 dateFields.head
         }

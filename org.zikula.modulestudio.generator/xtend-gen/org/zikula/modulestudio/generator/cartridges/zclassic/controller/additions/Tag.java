@@ -308,7 +308,7 @@ public class Tag {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("if (method_exists($entity, \'getCreatedUserId\')) {");
+    _builder.append("if (method_exists[$entity, \'getCreatedUserId\')) {");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("$this->setObjectAuthor(UserUtil::getVar(\'uname\', $entity[\'createdUserId\']));");

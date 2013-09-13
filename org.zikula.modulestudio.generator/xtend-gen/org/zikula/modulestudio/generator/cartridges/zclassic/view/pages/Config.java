@@ -257,14 +257,14 @@ public class Config {
     {
       List<Variable> _allVariables = this._utils.getAllVariables(it);
       final Function1<Variable,Boolean> _function = new Function1<Variable,Boolean>() {
-        public Boolean apply(final Variable e) {
+        public Boolean apply(final Variable it) {
           boolean _and = false;
-          String _documentation = e.getDocumentation();
+          String _documentation = it.getDocumentation();
           boolean _tripleNotEquals = (_documentation != null);
           if (!_tripleNotEquals) {
             _and = false;
           } else {
-            String _documentation_1 = e.getDocumentation();
+            String _documentation_1 = it.getDocumentation();
             boolean _notEquals = (!Objects.equal(_documentation_1, ""));
             _and = (_tripleNotEquals && _notEquals);
           }

@@ -277,7 +277,7 @@ public class ViewUtil {
     _builder.append("$tpl = (isset($args[\'tpl\']) && !empty($args[\'tpl\'])) ? $args[\'tpl\'] : FormUtil::getPassedValue(\'tpl\', \'\', \'GETPOST\', FILTER_SANITIZE_STRING);");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("if (!empty($tpl) && $view->template_exists($template . \'_\' . DataUtil::formatForOS($tpl) . \'.\' . $templateExtension)) {");
+    _builder.append("if (!empty($tpl) && $view->template_exists[$template . \'_\' . DataUtil::formatForOS($tpl) . \'.\' . $templateExtension)) {");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("$template .= \'_\' . DataUtil::formatForOS($tpl);");

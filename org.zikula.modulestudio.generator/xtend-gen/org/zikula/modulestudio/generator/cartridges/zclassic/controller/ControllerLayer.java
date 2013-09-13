@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller;
 import com.google.inject.Inject;
 import de.guite.modulestudio.metamodel.modulestudio.Action;
 import de.guite.modulestudio.metamodel.modulestudio.AdminController;
+import de.guite.modulestudio.metamodel.modulestudio.AjaxController;
 import de.guite.modulestudio.metamodel.modulestudio.Application;
 import de.guite.modulestudio.metamodel.modulestudio.Controller;
 import de.guite.modulestudio.metamodel.modulestudio.Controllers;
@@ -113,8 +114,8 @@ public class ControllerLayer {
     this.app = it;
     EList<Controller> _allControllers = this._controllerExtensions.getAllControllers(it);
     final Procedure1<Controller> _function = new Procedure1<Controller>() {
-      public void apply(final Controller e) {
-        ControllerLayer.this.generate(e, fsa);
+      public void apply(final Controller it) {
+        ControllerLayer.this.generate(it, fsa);
       }
     };
     IterableExtensions.<Controller>forEach(_allControllers, _function);
@@ -258,6 +259,10 @@ public class ControllerLayer {
   
   private CharSequence controllerBaseImpl(final Controller it) {
     StringConcatenation _builder = new StringConcatenation();
+    final boolean isAdminController = (it instanceof AdminController);
+    _builder.newLineIfNotEmpty();
+    final boolean isAjaxController = (it instanceof AjaxController);
+    _builder.newLineIfNotEmpty();
     {
       boolean _targets = this._utils.targets(this.app, "1.3.5");
       boolean _not = (!_targets);
@@ -297,12 +302,11 @@ public class ControllerLayer {
         _builder.newLineIfNotEmpty();
         {
           boolean _and_1 = false;
-          boolean _isAjaxController = this._controllerExtensions.isAjaxController(it);
-          if (!_isAjaxController) {
+          if (!isAjaxController) {
             _and_1 = false;
           } else {
             boolean _hasImageFields = this._modelExtensions.hasImageFields(this.app);
-            _and_1 = (_isAjaxController && _hasImageFields);
+            _and_1 = (isAjaxController && _hasImageFields);
           }
           if (_and_1) {
             _builder.append("use ");
@@ -314,12 +318,11 @@ public class ControllerLayer {
         }
         {
           boolean _and_2 = false;
-          boolean _isAjaxController_1 = this._controllerExtensions.isAjaxController(it);
-          if (!_isAjaxController_1) {
+          if (!isAjaxController) {
             _and_2 = false;
           } else {
             boolean _hasListFields = this._modelExtensions.hasListFields(this.app);
-            _and_2 = (_isAjaxController_1 && _hasListFields);
+            _and_2 = (isAjaxController && _hasListFields);
           }
           if (_and_2) {
             _builder.append("use ");
@@ -338,12 +341,11 @@ public class ControllerLayer {
           boolean _or = false;
           boolean _or_1 = false;
           boolean _and_3 = false;
-          boolean _isAjaxController_2 = this._controllerExtensions.isAjaxController(it);
-          if (!_isAjaxController_2) {
+          if (!isAjaxController) {
             _and_3 = false;
           } else {
             boolean _hasTrees = this._modelBehaviourExtensions.hasTrees(this.app);
-            _and_3 = (_isAjaxController_2 && _hasTrees);
+            _and_3 = (isAjaxController && _hasTrees);
           }
           if (_and_3) {
             _or_1 = true;
@@ -353,8 +355,7 @@ public class ControllerLayer {
             if (!_hasActions) {
               _and_4 = false;
             } else {
-              boolean _isAdminController = this._controllerExtensions.isAdminController(it);
-              _and_4 = (_hasActions && _isAdminController);
+              _and_4 = (_hasActions && isAdminController);
             }
             _or_1 = (_and_3 || _and_4);
           }
@@ -374,8 +375,7 @@ public class ControllerLayer {
         }
         _builder.newLine();
         {
-          boolean _isAjaxController_3 = this._controllerExtensions.isAjaxController(it);
-          if (_isAjaxController_3) {
+          if (isAjaxController) {
             _builder.append("use DataUtil;");
             _builder.newLine();
             {
@@ -410,8 +410,7 @@ public class ControllerLayer {
           if (!_hasActions_3) {
             _and_5 = false;
           } else {
-            boolean _isAdminController_1 = this._controllerExtensions.isAdminController(it);
-            _and_5 = (_hasActions_3 && _isAdminController_1);
+            _and_5 = (_hasActions_3 && isAdminController);
           }
           if (_and_5) {
             _builder.append("use System;");
@@ -420,8 +419,7 @@ public class ControllerLayer {
         }
         _builder.append("use Zikula_");
         {
-          boolean _isAjaxController_4 = this._controllerExtensions.isAjaxController(it);
-          boolean _not_2 = (!_isAjaxController_4);
+          boolean _not_2 = (!isAjaxController);
           if (_not_2) {
             _builder.append("AbstractController");
           } else {
@@ -441,8 +439,7 @@ public class ControllerLayer {
           if (!_hasActions_4) {
             _and_6 = false;
           } else {
-            boolean _isAdminController_2 = this._controllerExtensions.isAdminController(it);
-            _and_6 = (_hasActions_4 && _isAdminController_2);
+            _and_6 = (_hasActions_4 && isAdminController);
           }
           if (_and_6) {
             _or_2 = true;
@@ -462,8 +459,7 @@ public class ControllerLayer {
         _builder.append("use Zikula\\Core\\ModUrl;");
         _builder.newLine();
         {
-          boolean _isAjaxController_5 = this._controllerExtensions.isAjaxController(it);
-          if (_isAjaxController_5) {
+          if (isAjaxController) {
             _builder.append("use Zikula\\Core\\Response\\Ajax\\AjaxResponse;");
             _builder.newLine();
             _builder.append("use Zikula\\Core\\Response\\Ajax\\BadDataResponse;");
@@ -511,8 +507,7 @@ public class ControllerLayer {
     }
     _builder.append(" extends Zikula_");
     {
-      boolean _isAjaxController_6 = this._controllerExtensions.isAjaxController(it);
-      boolean _not_3 = (!_isAjaxController_6);
+      boolean _not_3 = (!isAjaxController);
       if (_not_3) {
         _builder.append("AbstractController");
       } else {
@@ -523,14 +518,15 @@ public class ControllerLayer {
     _builder.append("{");
     _builder.newLine();
     {
-      boolean _isAjaxController_7 = this._controllerExtensions.isAjaxController(it);
-      if (_isAjaxController_7) {
+      if (isAjaxController) {
         _builder.newLine();
       } else {
         _builder.append("    ");
+        final boolean isUserController = (it instanceof UserController);
+        _builder.newLineIfNotEmpty();
+        _builder.append("    ");
         ControllerHelper _controllerHelper = new ControllerHelper();
-        boolean _isUserController = this._controllerExtensions.isUserController(it);
-        CharSequence _controllerPostInitialize = _controllerHelper.controllerPostInitialize(it, Boolean.valueOf(_isUserController), "");
+        CharSequence _controllerPostInitialize = _controllerHelper.controllerPostInitialize(it, Boolean.valueOf(isUserController), "");
         _builder.append(_controllerPostInitialize, "    ");
         _builder.newLineIfNotEmpty();
       }
@@ -555,8 +551,7 @@ public class ControllerLayer {
       if (!_hasActions_6) {
         _and_7 = false;
       } else {
-        boolean _isAdminController_3 = this._controllerExtensions.isAdminController(it);
-        _and_7 = (_hasActions_6 && _isAdminController_3);
+        _and_7 = (_hasActions_6 && isAdminController);
       }
       if (_and_7) {
         _builder.newLine();
@@ -1203,6 +1198,10 @@ public class ControllerLayer {
     Controllers _container = it.getContainer();
     final Application app = _container.getApplication();
     _builder.newLineIfNotEmpty();
+    final boolean isUserController = (it instanceof UserController);
+    _builder.newLineIfNotEmpty();
+    final boolean isAjaxController = (it instanceof AjaxController);
+    _builder.newLineIfNotEmpty();
     {
       boolean _targets = this._utils.targets(app, "1.3.5");
       boolean _not = (!_targets);
@@ -1214,8 +1213,7 @@ public class ControllerLayer {
         _builder.newLineIfNotEmpty();
         _builder.newLine();
         {
-          boolean _isUserController = this._controllerExtensions.isUserController(it);
-          if (_isUserController) {
+          if (isUserController) {
             _builder.append("use ");
             String _appNamespace_1 = this._utils.appNamespace(app);
             _builder.append(_appNamespace_1, "");
@@ -1235,8 +1233,7 @@ public class ControllerLayer {
         _builder.append("use SecurityUtil;");
         _builder.newLine();
         {
-          boolean _isUserController_1 = this._controllerExtensions.isUserController(it);
-          if (_isUserController_1) {
+          if (isUserController) {
             _builder.append("use System;");
             _builder.newLine();
           }
@@ -1279,8 +1276,7 @@ public class ControllerLayer {
     _builder.append("{");
     _builder.newLine();
     {
-      boolean _isAjaxController = this._controllerExtensions.isAjaxController(it);
-      boolean _not_1 = (!_isAjaxController);
+      boolean _not_1 = (!isAjaxController);
       if (_not_1) {
         _builder.append("    ");
         _builder.append("/**");

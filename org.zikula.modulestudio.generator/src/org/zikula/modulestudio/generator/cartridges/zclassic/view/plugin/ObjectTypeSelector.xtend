@@ -43,7 +43,7 @@ class ObjectTypeSelector {
 
             «entityEntries»
 
-            if (array_key_exists('assign', $params)) {
+            if (array_key_exists['assign', $params)) {
                 $view->assign($params['assign'], $result);
 
                 return;

@@ -139,8 +139,8 @@ public class ModelExtensions {
   public List<EntityField> getAllEntityFields(final Application it) {
     EList<Entity> _allEntities = this.getAllEntities(it);
     final Function1<Entity,EList<EntityField>> _function = new Function1<Entity,EList<EntityField>>() {
-      public EList<EntityField> apply(final Entity e) {
-        EList<EntityField> _fields = e.getFields();
+      public EList<EntityField> apply(final Entity it) {
+        EList<EntityField> _fields = it.getFields();
         return _fields;
       }
     };
@@ -156,8 +156,8 @@ public class ModelExtensions {
   public List<EntityField> getModelEntityFields(final Models it) {
     EList<Entity> _entities = it.getEntities();
     final Function1<Entity,EList<EntityField>> _function = new Function1<Entity,EList<EntityField>>() {
-      public EList<EntityField> apply(final Entity e) {
-        EList<EntityField> _fields = e.getFields();
+      public EList<EntityField> apply(final Entity it) {
+        EList<EntityField> _fields = it.getFields();
         return _fields;
       }
     };
@@ -173,8 +173,8 @@ public class ModelExtensions {
   public Entity getLeadingEntity(final Application it) {
     EList<Entity> _entitiesFromDefaultDataSource = this.getEntitiesFromDefaultDataSource(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _isLeading = e.isLeading();
+      public Boolean apply(final Entity it) {
+        boolean _isLeading = it.isLeading();
         return Boolean.valueOf(_isLeading);
       }
     };
@@ -188,8 +188,8 @@ public class ModelExtensions {
   public boolean hasImageFields(final Application it) {
     EList<Entity> _allEntities = this.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _hasImageFieldsEntity = ModelExtensions.this.hasImageFieldsEntity(e);
+      public Boolean apply(final Entity it) {
+        boolean _hasImageFieldsEntity = ModelExtensions.this.hasImageFieldsEntity(it);
         return Boolean.valueOf(_hasImageFieldsEntity);
       }
     };
@@ -203,8 +203,8 @@ public class ModelExtensions {
   public boolean hasColourFields(final Application it) {
     EList<Entity> _allEntities = this.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _hasColourFieldsEntity = ModelExtensions.this.hasColourFieldsEntity(e);
+      public Boolean apply(final Entity it) {
+        boolean _hasColourFieldsEntity = ModelExtensions.this.hasColourFieldsEntity(it);
         return Boolean.valueOf(_hasColourFieldsEntity);
       }
     };
@@ -218,8 +218,8 @@ public class ModelExtensions {
   public boolean hasCountryFields(final Application it) {
     EList<Entity> _allEntities = this.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _hasCountryFieldsEntity = ModelExtensions.this.hasCountryFieldsEntity(e);
+      public Boolean apply(final Entity it) {
+        boolean _hasCountryFieldsEntity = ModelExtensions.this.hasCountryFieldsEntity(it);
         return Boolean.valueOf(_hasCountryFieldsEntity);
       }
     };
@@ -243,8 +243,8 @@ public class ModelExtensions {
   public Iterable<Entity> getUploadEntities(final Application it) {
     EList<Entity> _allEntities = this.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _hasUploadFieldsEntity = ModelExtensions.this.hasUploadFieldsEntity(e);
+      public Boolean apply(final Entity it) {
+        boolean _hasUploadFieldsEntity = ModelExtensions.this.hasUploadFieldsEntity(it);
         return Boolean.valueOf(_hasUploadFieldsEntity);
       }
     };
@@ -296,8 +296,8 @@ public class ModelExtensions {
   public Iterable<Entity> getListEntities(final Application it) {
     EList<Entity> _allEntities = this.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _hasListFieldsEntity = ModelExtensions.this.hasListFieldsEntity(e);
+      public Boolean apply(final Entity it) {
+        boolean _hasListFieldsEntity = ModelExtensions.this.hasListFieldsEntity(it);
         return Boolean.valueOf(_hasListFieldsEntity);
       }
     };
@@ -321,8 +321,8 @@ public class ModelExtensions {
   public Iterable<Entity> getEntitiesWithAjaxToggle(final Application it) {
     EList<Entity> _allEntities = this.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _hasBooleansWithAjaxToggleEntity = ModelExtensions.this.hasBooleansWithAjaxToggleEntity(e);
+      public Boolean apply(final Entity it) {
+        boolean _hasBooleansWithAjaxToggleEntity = ModelExtensions.this.hasBooleansWithAjaxToggleEntity(it);
         return Boolean.valueOf(_hasBooleansWithAjaxToggleEntity);
       }
     };
@@ -336,10 +336,9 @@ public class ModelExtensions {
   public Models getDefaultDataSource(final Application it) {
     EList<Models> _models = it.getModels();
     final Function1<Models,Boolean> _function = new Function1<Models,Boolean>() {
-      public Boolean apply(final Models e) {
-        boolean _isDefaultDataSource = e.isDefaultDataSource();
-        boolean _equals = (_isDefaultDataSource == true);
-        return Boolean.valueOf(_equals);
+      public Boolean apply(final Models it) {
+        boolean _isDefaultDataSource = it.isDefaultDataSource();
+        return Boolean.valueOf(_isDefaultDataSource);
       }
     };
     Models _findFirst = IterableExtensions.<Models>findFirst(_models, _function);
@@ -414,8 +413,8 @@ public class ModelExtensions {
   public Iterable<EntityIndex> getNormalIndexes(final Entity it) {
     EList<EntityIndex> _indexes = it.getIndexes();
     final Function1<EntityIndex,Boolean> _function = new Function1<EntityIndex,Boolean>() {
-      public Boolean apply(final EntityIndex e) {
-        EntityIndexType _type = e.getType();
+      public Boolean apply(final EntityIndex it) {
+        EntityIndexType _type = it.getType();
         boolean _equals = Objects.equal(_type, EntityIndexType.NORMAL);
         return Boolean.valueOf(_equals);
       }
@@ -440,8 +439,8 @@ public class ModelExtensions {
   public Iterable<EntityIndex> getUniqueIndexes(final Entity it) {
     EList<EntityIndex> _indexes = it.getIndexes();
     final Function1<EntityIndex,Boolean> _function = new Function1<EntityIndex,Boolean>() {
-      public Boolean apply(final EntityIndex e) {
-        EntityIndexType _type = e.getType();
+      public Boolean apply(final EntityIndex it) {
+        EntityIndexType _type = it.getType();
         boolean _equals = Objects.equal(_type, EntityIndexType.UNIQUE);
         return Boolean.valueOf(_equals);
       }
@@ -465,8 +464,8 @@ public class ModelExtensions {
   public Iterable<DerivedField> getUniqueDerivedFields(final Entity it) {
     Iterable<DerivedField> _derivedFields = this.getDerivedFields(it);
     final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-      public Boolean apply(final DerivedField e) {
-        boolean _isUnique = e.isUnique();
+      public Boolean apply(final DerivedField it) {
+        boolean _isUnique = it.isUnique();
         return Boolean.valueOf(_isUnique);
       }
     };
@@ -485,10 +484,9 @@ public class ModelExtensions {
     if (_not) {
       Iterable<DerivedField> _derivedFields_1 = this.getDerivedFields(it);
       final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-        public Boolean apply(final DerivedField e) {
-          boolean _isLeading = e.isLeading();
-          boolean _equals = (_isLeading == true);
-          return Boolean.valueOf(_equals);
+        public Boolean apply(final DerivedField it) {
+          boolean _isLeading = it.isLeading();
+          return Boolean.valueOf(_isLeading);
         }
       };
       DerivedField _findFirst = IterableExtensions.<DerivedField>findFirst(_derivedFields_1, _function);
@@ -512,10 +510,9 @@ public class ModelExtensions {
   public Iterable<DerivedField> getPrimaryKeyFields(final Entity it) {
     Iterable<DerivedField> _derivedFields = this.getDerivedFields(it);
     final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-      public Boolean apply(final DerivedField e) {
-        boolean _isPrimaryKey = e.isPrimaryKey();
-        boolean _equals = (_isPrimaryKey == true);
-        return Boolean.valueOf(_equals);
+      public Boolean apply(final DerivedField it) {
+        boolean _isPrimaryKey = it.isPrimaryKey();
+        return Boolean.valueOf(_isPrimaryKey);
       }
     };
     Iterable<DerivedField> _filter = IterableExtensions.<DerivedField>filter(_derivedFields, _function);
@@ -528,10 +525,9 @@ public class ModelExtensions {
   public DerivedField getFirstPrimaryKey(final Entity it) {
     Iterable<DerivedField> _derivedFields = this.getDerivedFields(it);
     final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-      public Boolean apply(final DerivedField e) {
-        boolean _isPrimaryKey = e.isPrimaryKey();
-        boolean _equals = (_isPrimaryKey == true);
-        return Boolean.valueOf(_equals);
+      public Boolean apply(final DerivedField it) {
+        boolean _isPrimaryKey = it.isPrimaryKey();
+        return Boolean.valueOf(_isPrimaryKey);
       }
     };
     DerivedField _findFirst = IterableExtensions.<DerivedField>findFirst(_derivedFields, _function);
@@ -638,8 +634,8 @@ public class ModelExtensions {
       boolean _notEquals = (!Objects.equal(_identifierStrategy, EntityIdentifierStrategy.NONE));
       if (_notEquals) {
         final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-          public Boolean apply(final DerivedField e) {
-            boolean _isPrimaryKey = e.isPrimaryKey();
+          public Boolean apply(final DerivedField it) {
+            boolean _isPrimaryKey = it.isPrimaryKey();
             boolean _not = (!_isPrimaryKey);
             return Boolean.valueOf(_not);
           }
@@ -651,8 +647,8 @@ public class ModelExtensions {
       boolean _not = (!_hasVisibleWorkflow);
       if (_not) {
         final Function1<DerivedField,Boolean> _function_1 = new Function1<DerivedField,Boolean>() {
-          public Boolean apply(final DerivedField e) {
-            String _name = e.getName();
+          public Boolean apply(final DerivedField it) {
+            String _name = it.getName();
             boolean _notEquals = (!Objects.equal(_name, "workflowState"));
             return Boolean.valueOf(_notEquals);
           }
@@ -673,8 +669,8 @@ public class ModelExtensions {
     {
       Iterable<DerivedField> _displayFields = this.getDisplayFields(it);
       final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-        public Boolean apply(final DerivedField e) {
-          String _name = e.getName();
+        public Boolean apply(final DerivedField it) {
+          String _name = it.getName();
           boolean _notEquals = (!Objects.equal(_name, "workflowState"));
           return Boolean.valueOf(_notEquals);
         }
@@ -692,8 +688,8 @@ public class ModelExtensions {
       }
       if (_and) {
         final Function1<DerivedField,Boolean> _function_1 = new Function1<DerivedField,Boolean>() {
-          public Boolean apply(final DerivedField e) {
-            boolean _isLeading = e.isLeading();
+          public Boolean apply(final DerivedField it) {
+            boolean _isLeading = it.isLeading();
             boolean _not = (!_isLeading);
             return Boolean.valueOf(_not);
           }
@@ -745,8 +741,8 @@ public class ModelExtensions {
     {
       Iterable<DerivedField> _derivedFields = this.getDerivedFields(it);
       final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-        public Boolean apply(final DerivedField e) {
-          String _name = e.getName();
+        public Boolean apply(final DerivedField it) {
+          String _name = it.getName();
           boolean _notEquals = (!Objects.equal(_name, "workflowState"));
           return Boolean.valueOf(_notEquals);
         }
@@ -756,8 +752,8 @@ public class ModelExtensions {
       boolean _notEquals = (!Objects.equal(_identifierStrategy, EntityIdentifierStrategy.NONE));
       if (_notEquals) {
         final Function1<DerivedField,Boolean> _function_1 = new Function1<DerivedField,Boolean>() {
-          public Boolean apply(final DerivedField e) {
-            boolean _isPrimaryKey = e.isPrimaryKey();
+          public Boolean apply(final DerivedField it) {
+            boolean _isPrimaryKey = it.isPrimaryKey();
             boolean _not = (!_isPrimaryKey);
             return Boolean.valueOf(_not);
           }
@@ -782,8 +778,8 @@ public class ModelExtensions {
     {
       Iterable<DerivedField> _derivedFields = this.getDerivedFields(it);
       final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-        public Boolean apply(final DerivedField e) {
-          boolean _isPrimaryKey = e.isPrimaryKey();
+        public Boolean apply(final DerivedField it) {
+          boolean _isPrimaryKey = it.isPrimaryKey();
           boolean _not = (!_isPrimaryKey);
           return Boolean.valueOf(_not);
         }
@@ -859,8 +855,8 @@ public class ModelExtensions {
   public Iterable<ListFieldItem> getDefaultItems(final ListField it) {
     EList<ListFieldItem> _items = it.getItems();
     final Function1<ListFieldItem,Boolean> _function = new Function1<ListFieldItem,Boolean>() {
-      public Boolean apply(final ListFieldItem e) {
-        boolean _isDefault = e.isDefault();
+      public Boolean apply(final ListFieldItem it) {
+        boolean _isDefault = it.isDefault();
         return Boolean.valueOf(_isDefault);
       }
     };
@@ -874,8 +870,8 @@ public class ModelExtensions {
   public Iterable<ListVarItem> getDefaultItems(final ListVar it) {
     EList<ListVarItem> _items = it.getItems();
     final Function1<ListVarItem,Boolean> _function = new Function1<ListVarItem,Boolean>() {
-      public Boolean apply(final ListVarItem e) {
-        boolean _isDefault = e.isDefault();
+      public Boolean apply(final ListVarItem it) {
+        boolean _isDefault = it.isDefault();
         return Boolean.valueOf(_isDefault);
       }
     };
@@ -899,31 +895,31 @@ public class ModelExtensions {
   public Iterable<UploadField> getImageFieldsEntity(final Entity it) {
     Iterable<UploadField> _uploadFieldsEntity = this.getUploadFieldsEntity(it);
     final Function1<UploadField,Boolean> _function = new Function1<UploadField,Boolean>() {
-      public Boolean apply(final UploadField e) {
-        String _allowedExtensions = e.getAllowedExtensions();
+      public Boolean apply(final UploadField it) {
+        String _allowedExtensions = it.getAllowedExtensions();
         String[] _split = _allowedExtensions.split(", ");
         final Function1<String,Boolean> _function = new Function1<String,Boolean>() {
-          public Boolean apply(final String ext) {
+          public Boolean apply(final String it) {
             boolean _or = false;
             boolean _or_1 = false;
             boolean _or_2 = false;
-            boolean _equals = Objects.equal(ext, "gif");
+            boolean _equals = Objects.equal(it, "gif");
             if (_equals) {
               _or_2 = true;
             } else {
-              boolean _equals_1 = Objects.equal(ext, "jpeg");
+              boolean _equals_1 = Objects.equal(it, "jpeg");
               _or_2 = (_equals || _equals_1);
             }
             if (_or_2) {
               _or_1 = true;
             } else {
-              boolean _equals_2 = Objects.equal(ext, "jpg");
+              boolean _equals_2 = Objects.equal(it, "jpg");
               _or_1 = (_or_2 || _equals_2);
             }
             if (_or_1) {
               _or = true;
             } else {
-              boolean _equals_3 = Objects.equal(ext, "png");
+              boolean _equals_3 = Objects.equal(it, "png");
               _or = (_or_1 || _equals_3);
             }
             return Boolean.valueOf(_or);
@@ -954,8 +950,8 @@ public class ModelExtensions {
     Iterable<DerivedField> _derivedFields = this.getDerivedFields(it);
     Iterable<StringField> _filter = Iterables.<StringField>filter(_derivedFields, StringField.class);
     final Function1<StringField,Boolean> _function = new Function1<StringField,Boolean>() {
-      public Boolean apply(final StringField e) {
-        boolean _isHtmlcolour = e.isHtmlcolour();
+      public Boolean apply(final StringField it) {
+        boolean _isHtmlcolour = it.isHtmlcolour();
         return Boolean.valueOf(_isHtmlcolour);
       }
     };
@@ -980,10 +976,9 @@ public class ModelExtensions {
     Iterable<DerivedField> _derivedFields = this.getDerivedFields(it);
     Iterable<StringField> _filter = Iterables.<StringField>filter(_derivedFields, StringField.class);
     final Function1<StringField,Boolean> _function = new Function1<StringField,Boolean>() {
-      public Boolean apply(final StringField e) {
-        boolean _isCountry = e.isCountry();
-        boolean _equals = (_isCountry == true);
-        return Boolean.valueOf(_equals);
+      public Boolean apply(final StringField it) {
+        boolean _isCountry = it.isCountry();
+        return Boolean.valueOf(_isCountry);
       }
     };
     Iterable<StringField> _filter_1 = IterableExtensions.<StringField>filter(_filter, _function);
@@ -1007,10 +1002,9 @@ public class ModelExtensions {
     Iterable<DerivedField> _derivedFields = this.getDerivedFields(it);
     Iterable<StringField> _filter = Iterables.<StringField>filter(_derivedFields, StringField.class);
     final Function1<StringField,Boolean> _function = new Function1<StringField,Boolean>() {
-      public Boolean apply(final StringField e) {
-        boolean _isLanguage = e.isLanguage();
-        boolean _equals = (_isLanguage == true);
-        return Boolean.valueOf(_equals);
+      public Boolean apply(final StringField it) {
+        boolean _isLanguage = it.isLanguage();
+        return Boolean.valueOf(_isLanguage);
       }
     };
     Iterable<StringField> _filter_1 = IterableExtensions.<StringField>filter(_filter, _function);
@@ -1109,8 +1103,8 @@ public class ModelExtensions {
   public Iterable<BooleanField> getBooleansWithAjaxToggleEntity(final Entity it) {
     Iterable<BooleanField> _booleanFieldsEntity = this.getBooleanFieldsEntity(it);
     final Function1<BooleanField,Boolean> _function = new Function1<BooleanField,Boolean>() {
-      public Boolean apply(final BooleanField e) {
-        boolean _isAjaxTogglability = e.isAjaxTogglability();
+      public Boolean apply(final BooleanField it) {
+        boolean _isAjaxTogglability = it.isAjaxTogglability();
         return Boolean.valueOf(_isAjaxTogglability);
       }
     };
@@ -1125,14 +1119,14 @@ public class ModelExtensions {
     EList<EntityField> _fields = it.getFields();
     Iterable<IntegerField> _filter = Iterables.<IntegerField>filter(_fields, IntegerField.class);
     final Function1<IntegerField,Boolean> _function = new Function1<IntegerField,Boolean>() {
-      public Boolean apply(final IntegerField e) {
+      public Boolean apply(final IntegerField it) {
         boolean _and = false;
-        String _aggregateFor = e.getAggregateFor();
+        String _aggregateFor = it.getAggregateFor();
         boolean _tripleNotEquals = (_aggregateFor != null);
         if (!_tripleNotEquals) {
           _and = false;
         } else {
-          String _aggregateFor_1 = e.getAggregateFor();
+          String _aggregateFor_1 = it.getAggregateFor();
           boolean _notEquals = (!Objects.equal(_aggregateFor_1, ""));
           _and = (_tripleNotEquals && _notEquals);
         }
@@ -1430,8 +1424,8 @@ public class ModelExtensions {
       EList<EntityField> _fields = it.getFields();
       Iterable<IntegerField> _filter = Iterables.<IntegerField>filter(_fields, IntegerField.class);
       final Function1<IntegerField,Boolean> _function = new Function1<IntegerField,Boolean>() {
-        public Boolean apply(final IntegerField e) {
-          boolean _isVersion = e.isVersion();
+        public Boolean apply(final IntegerField it) {
+          boolean _isVersion = it.isVersion();
           return Boolean.valueOf(_isVersion);
         }
       };
@@ -1448,8 +1442,8 @@ public class ModelExtensions {
           EList<EntityField> _fields_1 = it.getFields();
           Iterable<DatetimeField> _filter_1 = Iterables.<DatetimeField>filter(_fields_1, DatetimeField.class);
           final Function1<DatetimeField,Boolean> _function_1 = new Function1<DatetimeField,Boolean>() {
-            public Boolean apply(final DatetimeField e) {
-              boolean _isVersion = e.isVersion();
+            public Boolean apply(final DatetimeField it) {
+              boolean _isVersion = it.isVersion();
               return Boolean.valueOf(_isVersion);
             }
           };
@@ -1518,8 +1512,8 @@ public class ModelExtensions {
       EList<EntityField> _fields = it.getFields();
       Iterable<DatetimeField> _filter = Iterables.<DatetimeField>filter(_fields, DatetimeField.class);
       final Function1<DatetimeField,Boolean> _function = new Function1<DatetimeField,Boolean>() {
-        public Boolean apply(final DatetimeField e) {
-          boolean _isStartDate = e.isStartDate();
+        public Boolean apply(final DatetimeField it) {
+          boolean _isStartDate = it.isStartDate();
           return Boolean.valueOf(_isStartDate);
         }
       };
@@ -1536,8 +1530,8 @@ public class ModelExtensions {
           EList<EntityField> _fields_1 = it.getFields();
           Iterable<DateField> _filter_1 = Iterables.<DateField>filter(_fields_1, DateField.class);
           final Function1<DateField,Boolean> _function_1 = new Function1<DateField,Boolean>() {
-            public Boolean apply(final DateField e) {
-              boolean _isStartDate = e.isStartDate();
+            public Boolean apply(final DateField it) {
+              boolean _isStartDate = it.isStartDate();
               return Boolean.valueOf(_isStartDate);
             }
           };
@@ -1564,8 +1558,8 @@ public class ModelExtensions {
       EList<EntityField> _fields = it.getFields();
       Iterable<DatetimeField> _filter = Iterables.<DatetimeField>filter(_fields, DatetimeField.class);
       final Function1<DatetimeField,Boolean> _function = new Function1<DatetimeField,Boolean>() {
-        public Boolean apply(final DatetimeField e) {
-          boolean _isEndDate = e.isEndDate();
+        public Boolean apply(final DatetimeField it) {
+          boolean _isEndDate = it.isEndDate();
           return Boolean.valueOf(_isEndDate);
         }
       };
@@ -1582,8 +1576,8 @@ public class ModelExtensions {
           EList<EntityField> _fields_1 = it.getFields();
           Iterable<DateField> _filter_1 = Iterables.<DateField>filter(_fields_1, DateField.class);
           final Function1<DateField,Boolean> _function_1 = new Function1<DateField,Boolean>() {
-            public Boolean apply(final DateField e) {
-              boolean _isEndDate = e.isEndDate();
+            public Boolean apply(final DateField it) {
+              boolean _isEndDate = it.isEndDate();
               return Boolean.valueOf(_isEndDate);
             }
           };

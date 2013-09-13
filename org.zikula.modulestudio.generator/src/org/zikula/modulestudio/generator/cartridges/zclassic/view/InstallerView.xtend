@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.view
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.modulestudio.Variable
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -9,7 +10,6 @@ import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import de.guite.modulestudio.metamodel.modulestudio.Variable
 
 class InstallerView {
     @Inject extension ControllerExtensions = new ControllerExtensions
@@ -37,7 +37,7 @@ class InstallerView {
         <p>{gt text='Many features are contained in «appName» as for example:'}</p>
         <dl id="«name.formatForDB»featurelist">
             <dt>{gt text='«getLeadingEntity.name.formatForDisplayCapital» management.'}</dt>
-            <dd>{gt text='Easy management of «getLeadingEntity.nameMultiple.formatForDisplay»«IF getAllEntities.size > 1» and «IF models.map(e|e.relations).size > 1»related«ELSE»other«ENDIF» artifacts«ENDIF».'}</dd>
+            <dd>{gt text='Easy management of «getLeadingEntity.nameMultiple.formatForDisplay»«IF getAllEntities.size > 1» and «IF models.map[relations].size > 1»related«ELSE»other«ENDIF» artifacts«ENDIF».'}</dd>
             <dd>{gt text='Included workflow support.'}</dd>
         «IF hasAttributableEntities || hasCategorisableEntities || !hasGeographical
          || hasLoggable || hasMetaDataEntities || hasSortable || hasStandardFieldEntities || hasTranslatable || hasTrees»
@@ -67,9 +67,9 @@ class InstallerView {
             <dd>{gt text='Tree structures can be managed in a hierarchy view with the help of ajax.'}</dd>
         «ENDIF»
         «ENDIF»
-        «IF !getAllControllers.filter(e|e.hasActions('view') || e.hasActions('display')).empty»
+        «IF !getAllControllers.filter[hasActions('view') || hasActions('display')].empty»
             <dt>{gt text='Output formats'}</dt>
-            <dd>{gt text='Beside the normal templates «appName» includes also templates for various other output formats, like for example xml (which is only accessible for administrators per default), json«IF !getAllControllers.filter(e|e.hasActions('view')).empty», rss, atom«ENDIF»«IF !getAllControllers.filter(e|e.hasActions('display')).empty», csv«ENDIF».'}</dd>
+            <dd>{gt text='Beside the normal templates «appName» includes also templates for various other output formats, like for example xml (which is only accessible for administrators per default), json«IF !getAllControllers.filter[hasActions('view')].empty», rss, atom«ENDIF»«IF !getAllControllers.filter[hasActions('display')].empty», csv«ENDIF».'}</dd>
         «ENDIF»
             <dt>{gt text='Integration'}</dt>
             <dd>{gt text='«appName» offers a generic block allowing you to display arbitrary content elements in a block.'}</dd>

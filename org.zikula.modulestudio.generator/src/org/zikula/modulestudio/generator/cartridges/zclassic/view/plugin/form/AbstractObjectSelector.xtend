@@ -391,14 +391,14 @@ class AbstractObjectSelector {
         {
             $newValue = null;
             if ($this->selectionMode == 'single') {
-                if ($value instanceof Zikula_EntityAccess && method_exists($value, 'createCompositeIdentifier')) {
+                if ($value instanceof Zikula_EntityAccess && method_exists[$value, 'createCompositeIdentifier')) {
                     $newValue = $value->createCompositeIdentifier();
                 }
             } else {
                 $newValue = array();
                 if (is_array($value) || $value instanceof Collection) {
                     foreach ($value as $entity) {
-                        if ($entity instanceof Zikula_EntityAccess && method_exists($entity, 'createCompositeIdentifier')) {
+                        if ($entity instanceof Zikula_EntityAccess && method_exists[$entity, 'createCompositeIdentifier')) {
                             $newValue[] = $entity->createCompositeIdentifier();
                         }
                     }
@@ -546,7 +546,7 @@ class AbstractObjectSelector {
                 if (!$many) {
                     // check if we are assigning the parent (1-side) of a bidirectional 1:n relationship
                     $inverseAddMethod = 'add' . ucwords($this->aliasReverse);
-                    if (method_exists($relatedItem, $inverseAddMethod)) {
+                    if (method_exists[$relatedItem, $inverseAddMethod)) {
                         // call the inverse method which calls the method in $entity
                         $relatedItem->$inverseAddMethod($entity);
                         continue;

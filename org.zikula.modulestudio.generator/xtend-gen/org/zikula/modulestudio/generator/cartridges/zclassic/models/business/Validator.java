@@ -794,7 +794,7 @@ public class Validator {
     _builder.append("{");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("$languageMap = ZLanguage::languageMap();");
+    _builder.append("$languageMap = ZLanguage::languagemap[);");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("$result = in_array($this->entity[$fieldName], array_keys($languageMap));        ");
@@ -844,7 +844,7 @@ public class Validator {
     _builder.append("{");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("$countryMap = ZLanguage::countryMap();");
+    _builder.append("$countryMap = ZLanguage::countrymap[);");
     _builder.newLine();
     _builder.newLine();
     _builder.append("        ");
@@ -1681,8 +1681,8 @@ public class Validator {
     {
       Iterable<DerivedField> _uniqueDerivedFields = this._modelExtensions.getUniqueDerivedFields(it);
       final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-        public Boolean apply(final DerivedField e) {
-          boolean _isPrimaryKey = e.isPrimaryKey();
+        public Boolean apply(final DerivedField it) {
+          boolean _isPrimaryKey = it.isPrimaryKey();
           boolean _not = (!_isPrimaryKey);
           return Boolean.valueOf(_not);
         }

@@ -2,14 +2,14 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.util
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.modulestudio.ListField
+import de.guite.modulestudio.metamodel.modulestudio.ListFieldItem
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
 import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import de.guite.modulestudio.metamodel.modulestudio.ListField
-import de.guite.modulestudio.metamodel.modulestudio.ListFieldItem
 
 class ListEntries {
     @Inject extension FormattingExtensions = new FormattingExtensions
@@ -156,7 +156,7 @@ class ListEntries {
 
             $result = false;
             switch ($objectType) {
-                «FOR entity : getAllEntities.filter(e|e.hasListFieldsEntity)»
+                «FOR entity : getAllEntities.filter[hasListFieldsEntity]»
                     case '«entity.name.formatForCode»':
                         switch ($fieldName) {
                             «FOR listField : entity.getListFieldsEntity»
@@ -191,7 +191,7 @@ class ListEntries {
 
             $entries = array();
             switch ($objectType) {
-                «FOR entity : getAllEntities.filter(e|e.hasListFieldsEntity)»
+                «FOR entity : getAllEntities.filter[hasListFieldsEntity]»
                     case '«entity.name.formatForCode»':
                         switch ($fieldName) {
                             «FOR listField : entity.getListFieldsEntity»
@@ -225,7 +225,7 @@ class ListEntries {
         {
             $states = array();
             «IF name == 'workflowState'»
-                «val visibleStates = items.filter(e|e.value != 'initial' && e.value != 'deleted')»
+                «val visibleStates = items.filter[value != 'initial' && value != 'deleted']»
                 «FOR item : visibleStates»«item.entryInfo»«ENDFOR»
                 «FOR item : visibleStates»«item.entryInfoNegative»«ENDFOR»
             «ELSE»

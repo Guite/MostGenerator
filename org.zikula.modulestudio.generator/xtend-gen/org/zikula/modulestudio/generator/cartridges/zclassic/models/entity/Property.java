@@ -730,8 +730,8 @@ public class Property {
     {
       EList<ListFieldItem> _items = it.getItems();
       final Function1<ListFieldItem,Boolean> _function = new Function1<ListFieldItem,Boolean>() {
-        public Boolean apply(final ListFieldItem e) {
-          boolean _isDefault = e.isDefault();
+        public Boolean apply(final ListFieldItem it) {
+          boolean _isDefault = it.isDefault();
           return Boolean.valueOf(_isDefault);
         }
       };

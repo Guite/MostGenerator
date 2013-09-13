@@ -2739,8 +2739,8 @@ public class FormHandler {
         } else {
           EList<Entity> _allEntities = this._modelExtensions.getAllEntities(this.app);
           final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-            public Boolean apply(final Entity e) {
-              boolean _isSlugUpdatable = e.isSlugUpdatable();
+            public Boolean apply(final Entity it) {
+              boolean _isSlugUpdatable = it.isSlugUpdatable();
               return Boolean.valueOf(_isSlugUpdatable);
             }
           };
@@ -3154,7 +3154,7 @@ public class FormHandler {
         _builder.append("AbstractObjectSelector");
       }
     }
-    _builder.append(" && method_exists($plugin, \'assignRelatedItemsToEntity\')) {");
+    _builder.append(" && method_exists[$plugin, \'assignRelatedItemsToEntity\')) {");
     _builder.newLineIfNotEmpty();
     _builder.append("            ");
     _builder.append("$entityData = $plugin->assignRelatedItemsToEntity($entity, $entityData);");
@@ -3226,7 +3226,7 @@ public class FormHandler {
         _builder.append("AbstractObjectSelector");
       }
     }
-    _builder.append(" && method_exists($plugin, \'persistRelatedItems\')) {");
+    _builder.append(" && method_exists[$plugin, \'persistRelatedItems\')) {");
     _builder.newLineIfNotEmpty();
     _builder.append("            ");
     _builder.append("$plugin->persistRelatedItems();");

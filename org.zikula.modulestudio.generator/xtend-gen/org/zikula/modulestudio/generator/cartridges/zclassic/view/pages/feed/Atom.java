@@ -491,8 +491,8 @@ public class Atom {
     EList<EntityField> _fields = it.getFields();
     Iterable<TextField> _filter = Iterables.<TextField>filter(_fields, TextField.class);
     final Function1<TextField,Boolean> _function = new Function1<TextField,Boolean>() {
-      public Boolean apply(final TextField e) {
-        boolean _isLeading = e.isLeading();
+      public Boolean apply(final TextField it) {
+        boolean _isLeading = it.isLeading();
         boolean _not = (!_isLeading);
         return Boolean.valueOf(_not);
       }
@@ -503,8 +503,8 @@ public class Atom {
     EList<EntityField> _fields_1 = it.getFields();
     Iterable<StringField> _filter_1 = Iterables.<StringField>filter(_fields_1, StringField.class);
     final Function1<StringField,Boolean> _function_1 = new Function1<StringField,Boolean>() {
-      public Boolean apply(final StringField e) {
-        boolean _isLeading = e.isLeading();
+      public Boolean apply(final StringField it) {
+        boolean _isLeading = it.isLeading();
         boolean _not = (!_isLeading);
         return Boolean.valueOf(_not);
       }

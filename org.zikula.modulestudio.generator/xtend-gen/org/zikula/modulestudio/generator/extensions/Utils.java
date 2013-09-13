@@ -189,8 +189,8 @@ public class Utils {
   public List<Variables> getSortedVariableContainers(final Application it) {
     List<Variables> _allVariableContainers = this.getAllVariableContainers(it);
     final Function1<Variables,Integer> _function = new Function1<Variables,Integer>() {
-      public Integer apply(final Variables e) {
-        int _sortOrder = e.getSortOrder();
+      public Integer apply(final Variables it) {
+        int _sortOrder = it.getSortOrder();
         return Integer.valueOf(_sortOrder);
       }
     };
@@ -208,8 +208,8 @@ public class Utils {
   public List<Variables> getAllVariableContainers(final Application it) {
     EList<Models> _models = it.getModels();
     final Function1<Models,EList<Variables>> _function = new Function1<Models,EList<Variables>>() {
-      public EList<Variables> apply(final Models e) {
-        EList<Variables> _variables = e.getVariables();
+      public EList<Variables> apply(final Models it) {
+        EList<Variables> _variables = it.getVariables();
         return _variables;
       }
     };
@@ -229,8 +229,8 @@ public class Utils {
   public List<Variable> getAllVariables(final Application it) {
     List<Variables> _allVariableContainers = this.getAllVariableContainers(it);
     final Function1<Variables,EList<Variable>> _function = new Function1<Variables,EList<Variable>>() {
-      public EList<Variable> apply(final Variables e) {
-        EList<Variable> _vars = e.getVars();
+      public EList<Variable> apply(final Variables it) {
+        EList<Variable> _vars = it.getVars();
         return _vars;
       }
     };

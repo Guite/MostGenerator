@@ -70,8 +70,8 @@ public class Joins {
     {
       Iterable<JoinRelationship> _bidirectionalIncomingJoinRelations = this._modelJoinExtensions.getBidirectionalIncomingJoinRelations(it);
       final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          Entity _source = e.getSource();
+        public Boolean apply(final JoinRelationship it) {
+          Entity _source = it.getSource();
           Models _container = _source.getContainer();
           Application _application = _container.getApplication();
           boolean _equals = Objects.equal(_application, app);
@@ -87,8 +87,8 @@ public class Joins {
     {
       Iterable<JoinRelationship> _outgoingJoinRelations = this._modelJoinExtensions.getOutgoingJoinRelations(it);
       final Function1<JoinRelationship,Boolean> _function_1 = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          Entity _target = e.getTarget();
+        public Boolean apply(final JoinRelationship it) {
+          Entity _target = it.getTarget();
           Models _container = _target.getContainer();
           Application _application = _container.getApplication();
           boolean _equals = Objects.equal(_application, app);
@@ -106,8 +106,8 @@ public class Joins {
     {
       Iterable<JoinRelationship> _bidirectionalIncomingJoinRelations_1 = this._modelJoinExtensions.getBidirectionalIncomingJoinRelations(it);
       final Function1<JoinRelationship,Boolean> _function_2 = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          Entity _source = e.getSource();
+        public Boolean apply(final JoinRelationship it) {
+          Entity _source = it.getSource();
           Models _container = _source.getContainer();
           Application _application = _container.getApplication();
           boolean _notEquals = (!Objects.equal(_application, app));
@@ -141,8 +141,8 @@ public class Joins {
     {
       Iterable<JoinRelationship> _outgoingJoinRelations_1 = this._modelJoinExtensions.getOutgoingJoinRelations(it);
       final Function1<JoinRelationship,Boolean> _function_3 = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          Entity _target = e.getTarget();
+        public Boolean apply(final JoinRelationship it) {
+          Entity _target = it.getTarget();
           Models _container = _target.getContainer();
           Application _application = _container.getApplication();
           boolean _notEquals = (!Objects.equal(_application, app));
@@ -217,8 +217,8 @@ public class Joins {
     {
       Iterable<JoinRelationship> _bidirectionalIncomingJoinRelations_2 = this._modelJoinExtensions.getBidirectionalIncomingJoinRelations(it);
       final Function1<JoinRelationship,Boolean> _function_4 = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          Entity _source = e.getSource();
+        public Boolean apply(final JoinRelationship it) {
+          Entity _source = it.getSource();
           Models _container = _source.getContainer();
           Application _application = _container.getApplication();
           boolean _equals = Objects.equal(_application, app);
@@ -236,8 +236,8 @@ public class Joins {
     {
       Iterable<JoinRelationship> _outgoingJoinRelations_2 = this._modelJoinExtensions.getOutgoingJoinRelations(it);
       final Function1<JoinRelationship,Boolean> _function_5 = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          Entity _target = e.getTarget();
+        public Boolean apply(final JoinRelationship it) {
+          Entity _target = it.getTarget();
           Models _container = _target.getContainer();
           Application _application = _container.getApplication();
           boolean _equals = Objects.equal(_application, app);
@@ -254,8 +254,8 @@ public class Joins {
     {
       Iterable<JoinRelationship> _bidirectionalIncomingJoinRelations_3 = this._modelJoinExtensions.getBidirectionalIncomingJoinRelations(it);
       final Function1<JoinRelationship,Boolean> _function_6 = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          Entity _source = e.getSource();
+        public Boolean apply(final JoinRelationship it) {
+          Entity _source = it.getSource();
           Models _container = _source.getContainer();
           Application _application = _container.getApplication();
           boolean _notEquals = (!Objects.equal(_application, app));
@@ -287,8 +287,8 @@ public class Joins {
     {
       Iterable<JoinRelationship> _outgoingJoinRelations_3 = this._modelJoinExtensions.getOutgoingJoinRelations(it);
       final Function1<JoinRelationship,Boolean> _function_7 = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          Entity _target = e.getTarget();
+        public Boolean apply(final JoinRelationship it) {
+          Entity _target = it.getTarget();
           Models _container = _target.getContainer();
           Application _application = _container.getApplication();
           boolean _notEquals = (!Objects.equal(_application, app));

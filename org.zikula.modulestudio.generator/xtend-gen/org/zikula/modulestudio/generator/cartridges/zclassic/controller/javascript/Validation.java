@@ -241,11 +241,11 @@ public class Validation {
     {
       EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
       final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          Iterable<DerivedField> _uniqueDerivedFields = Validation.this._modelExtensions.getUniqueDerivedFields(e);
+        public Boolean apply(final Entity it) {
+          Iterable<DerivedField> _uniqueDerivedFields = Validation.this._modelExtensions.getUniqueDerivedFields(it);
           final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-            public Boolean apply(final DerivedField f) {
-              boolean _isPrimaryKey = f.isPrimaryKey();
+            public Boolean apply(final DerivedField it) {
+              boolean _isPrimaryKey = it.isPrimaryKey();
               boolean _not = (!_isPrimaryKey);
               return Boolean.valueOf(_not);
             }
@@ -522,8 +522,8 @@ public class Validation {
       if (_not_1) {
         {
           final Function1<DatetimeField,Boolean> _function_1 = new Function1<DatetimeField,Boolean>() {
-            public Boolean apply(final DatetimeField e) {
-              boolean _isPast = e.isPast();
+            public Boolean apply(final DatetimeField it) {
+              boolean _isPast = it.isPast();
               return Boolean.valueOf(_isPast);
             }
           };
@@ -565,8 +565,8 @@ public class Validation {
         }
         {
           final Function1<DatetimeField,Boolean> _function_2 = new Function1<DatetimeField,Boolean>() {
-            public Boolean apply(final DatetimeField e) {
-              boolean _isFuture = e.isFuture();
+            public Boolean apply(final DatetimeField it) {
+              boolean _isFuture = it.isFuture();
               return Boolean.valueOf(_isFuture);
             }
           };
@@ -618,8 +618,8 @@ public class Validation {
       if (_not_2) {
         {
           final Function1<DateField,Boolean> _function_3 = new Function1<DateField,Boolean>() {
-            public Boolean apply(final DateField e) {
-              boolean _isPast = e.isPast();
+            public Boolean apply(final DateField it) {
+              boolean _isPast = it.isPast();
               return Boolean.valueOf(_isPast);
             }
           };
@@ -661,8 +661,8 @@ public class Validation {
         }
         {
           final Function1<DateField,Boolean> _function_4 = new Function1<DateField,Boolean>() {
-            public Boolean apply(final DateField e) {
-              boolean _isFuture = e.isFuture();
+            public Boolean apply(final DateField it) {
+              boolean _isFuture = it.isFuture();
               return Boolean.valueOf(_isFuture);
             }
           };
@@ -714,8 +714,8 @@ public class Validation {
       if (_not_3) {
         {
           final Function1<TimeField,Boolean> _function_5 = new Function1<TimeField,Boolean>() {
-            public Boolean apply(final TimeField e) {
-              boolean _isPast = e.isPast();
+            public Boolean apply(final TimeField it) {
+              boolean _isPast = it.isPast();
               return Boolean.valueOf(_isPast);
             }
           };
@@ -750,8 +750,8 @@ public class Validation {
         }
         {
           final Function1<TimeField,Boolean> _function_6 = new Function1<TimeField,Boolean>() {
-            public Boolean apply(final TimeField e) {
-              boolean _isFuture = e.isFuture();
+            public Boolean apply(final TimeField it) {
+              boolean _isFuture = it.isFuture();
               return Boolean.valueOf(_isFuture);
             }
           };
@@ -911,11 +911,11 @@ public class Validation {
     {
       EList<Entity> _allEntities_2 = this._modelExtensions.getAllEntities(it);
       final Function1<Entity,Boolean> _function_7 = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          Iterable<DerivedField> _uniqueDerivedFields = Validation.this._modelExtensions.getUniqueDerivedFields(e);
+        public Boolean apply(final Entity it) {
+          Iterable<DerivedField> _uniqueDerivedFields = Validation.this._modelExtensions.getUniqueDerivedFields(it);
           final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-            public Boolean apply(final DerivedField f) {
-              boolean _isPrimaryKey = f.isPrimaryKey();
+            public Boolean apply(final DerivedField it) {
+              boolean _isPrimaryKey = it.isPrimaryKey();
               boolean _not = (!_isPrimaryKey);
               return Boolean.valueOf(_not);
             }

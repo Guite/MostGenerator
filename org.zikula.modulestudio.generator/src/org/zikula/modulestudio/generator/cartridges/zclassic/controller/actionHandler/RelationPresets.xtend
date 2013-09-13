@@ -69,13 +69,13 @@ class RelationPresets {
 
     def private getOwningAssociations(Entity it, Application refApp) {
         getIncomingJoinRelations
-            .filter(e|e.source.container.application == refApp)
+            .filter[source.container.application == refApp]
     }
 
     def private getOwnedMMAssociations(Entity it, Application refApp) {
         getOutgoingJoinRelations
             .filter(ManyToManyRelationship)
-            .filter(e|e.source.container.application == refApp)
+            .filter[source.container.application == refApp]
     }
 
     def private isEditable(JoinRelationship it, Boolean useTarget) {
@@ -83,8 +83,8 @@ class RelationPresets {
     }
 
     def saveNonEditablePresets(Entity it, Application app) '''
-        «val owningAssociationsNonEditable = getOwningAssociations(app).filter(e|!e.isEditable(false))»
-        «val ownedMMAssociationsNonEditable = getOwnedMMAssociations(app).filter(e|!e.isEditable(true))»
+        «val owningAssociationsNonEditable = getOwningAssociations(app).filter[!isEditable(false)]»
+        «val ownedMMAssociationsNonEditable = getOwnedMMAssociations(app).filter[!isEditable(true)]»
         «IF !owningAssociationsNonEditable.empty || !ownedMMAssociationsNonEditable.empty»
 
             if ($args['commandName'] == 'create') {

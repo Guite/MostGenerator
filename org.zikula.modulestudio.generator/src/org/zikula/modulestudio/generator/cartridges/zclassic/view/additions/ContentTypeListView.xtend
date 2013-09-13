@@ -46,7 +46,7 @@ class ContentTypeListView {
                         <dd>{$«name.formatForCode».«textFields.head.name.formatForCode»|truncate:200:"..."}</dd>
                     {/if}
                 «ELSE»
-                    «val stringFields = fields.filter(StringField).filter(e|!e.leading && !e.password)»
+                    «val stringFields = fields.filter(StringField).filter[!leading && !password]»
                     «IF !stringFields.empty»
                         {if $«name.formatForCode».«stringFields.head.name.formatForCode»}
                             <dd>{$«name.formatForCode».«stringFields.head.name.formatForCode»|truncate:200:"..."}</dd>

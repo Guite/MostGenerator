@@ -52,9 +52,9 @@ class Repository {
     def generate(Application it, IFileSystemAccess fsa) {
         this.fsa = fsa
         app = it
-        getAllEntities.filter(e|!e.mappedSuperClass).forEach(e|e.generate)
+        getAllEntities.filter[mappedSuperClass].forEach(e|e.generate)
 
-        val linkTable = new LinkTable()
+        val linkTable = new LinkTable
         for (relation : getJoinRelations.filter(ManyToManyRelationship)) linkTable.generate(relation, it, fsa)
     }
 
@@ -184,8 +184,8 @@ class Repository {
              */
             public function getDescriptionFieldName()
            {
-                «val textFields = fields.filter(TextField).filter(e|!e.leading)»
-                «val stringFields = fields.filter(StringField).filter(e|!e.leading && !e.password)»
+                «val textFields = fields.filter(TextField).filter[!leading]»
+                «val stringFields = fields.filter(StringField).filter[!leading && !password]»
                 «IF !textFields.empty»
                     $fieldName = '«textFields.head.name.formatForCode»';
                 «ELSEIF !stringFields.empty»
@@ -969,8 +969,8 @@ class Repository {
             $fragment = DataUtil::formatForStore($fragment);
             $fragmentIsNumeric = is_numeric($fragment);
 
-            «val searchFields = getDisplayFields.filter(e|e.isContainedInTextualSearch)»
-            «val searchFieldsNumeric = getDisplayFields.filter(e|e.isContainedInNumericSearch)»
+            «val searchFields = getDisplayFields.filter[isContainedInTextualSearch]»
+            «val searchFieldsNumeric = getDisplayFields.filter[isContainedInNumericSearch]»
             $where = '';
             if (!$fragmentIsNumeric) {
             «FOR field : searchFields»
@@ -1257,7 +1257,7 @@ class Repository {
     def private singleSortingField(EntityField it) {
         switch it {
             DerivedField : {
-                val joins = entity.incoming.filter(JoinRelationship).filter(e|formatForDB(e.getSourceFields.head) == name.formatForDB)
+                val joins = entity.incoming.filter(JoinRelationship).filter[e|formatForDB(e.getSourceFields.head) == name.formatForDB]
                 if (!joins.empty) '''
                      '«joins.head.source.name.formatForCode»',
                      '''

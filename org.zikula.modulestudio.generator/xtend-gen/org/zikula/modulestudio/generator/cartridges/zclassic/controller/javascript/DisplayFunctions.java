@@ -110,8 +110,8 @@ public class DisplayFunctions {
     {
       EList<Controller> _allControllers = this._controllerExtensions.getAllControllers(it);
       final Function1<Controller,Boolean> _function = new Function1<Controller,Boolean>() {
-        public Boolean apply(final Controller e) {
-          boolean _hasActions = DisplayFunctions.this._controllerExtensions.hasActions(e, "view");
+        public Boolean apply(final Controller it) {
+          boolean _hasActions = DisplayFunctions.this._controllerExtensions.hasActions(it, "view");
           return Boolean.valueOf(_hasActions);
         }
       };

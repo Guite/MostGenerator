@@ -39,13 +39,13 @@ class WorkflowStart {
     /**
      * Reference to the model's {@link Resource} object.
      */
-    private Resource model = null;
+    private Resource model = null
 
     /**
      * The Guice injector instance which may be provided
      * if the generator is executed inside MOST.
      */
-    public Injector injector = null;
+    public Injector injector = null
 
 	/**
 	 * Validates the model.
@@ -83,7 +83,7 @@ class WorkflowStart {
 		'''
 
     /**
-     * Executes the workflow; preProcess.run() has already been called.
+     * Executes the workflow, preProcess.run() has already been called.
      */
     def run() throws ExceptionBase {
         performM2T
@@ -138,7 +138,7 @@ class WorkflowStart {
                 .getInstance(JavaIoFileSystemAccess)
 
         configuredFileSystemAccess.setOutputPath(
-            'DEFAULT_OUTPUT', settings.getOutputPath + '/' + currentCartridge + '/' + settings.getAppName + '/');
+            'DEFAULT_OUTPUT', settings.getOutputPath + '/' + currentCartridge + '/' + settings.getAppName + '/')
 
         configuredFileSystemAccess
     }

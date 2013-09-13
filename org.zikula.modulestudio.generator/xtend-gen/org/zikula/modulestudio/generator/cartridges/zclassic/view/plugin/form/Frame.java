@@ -237,7 +237,7 @@ public class Frame {
     _builder.append("{");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("$this->useTabs = (array_key_exists(\'useTabs\', $params) ? $params[\'useTabs\'] : false);");
+    _builder.append("$this->useTabs = (array_key_exists[\'useTabs\', $params) ? $params[\'useTabs\'] : false);");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("}");

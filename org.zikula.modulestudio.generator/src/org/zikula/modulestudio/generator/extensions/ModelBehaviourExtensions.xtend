@@ -1,14 +1,14 @@
 package org.zikula.modulestudio.generator.extensions
 
 import com.google.inject.Inject
+import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
+import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.IntegerField
-import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.EntitySlugStyle
 import de.guite.modulestudio.metamodel.modulestudio.EntityTimestampableType
 import de.guite.modulestudio.metamodel.modulestudio.EntityTreeType
-import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField
+import de.guite.modulestudio.metamodel.modulestudio.IntegerField
 
 /**
  * This class contains model behaviour related extension methods.
@@ -31,7 +31,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the loggable extension enabled.
      */
     def getLoggableEntities(Application it) {
-        getAllEntities.filter(e|e.loggable)
+        getAllEntities.filter[loggable]
     }
 
     /**
@@ -45,35 +45,35 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the geographical extension enabled.
      */
     def getGeographicalEntities(Application it) {
-        getAllEntities.filter(e|e.geographical)
+        getAllEntities.filter[geographical]
     }
 
     /**
      * Checks whether the application contains at least one entity with the sluggable extension enabled.
      */
     def hasSluggable(Application it) {
-        getAllEntities.exists(e|e.hasSluggableFields)
+        getAllEntities.exists[hasSluggableFields]
     }
 
     /**
      * Checks whether the application contains at least one entity with the softDeletable extension enabled.
      */
     def hasSoftDeleteable(Application it) {
-        getAllEntities.exists(e|e.softDeleteable)
+        getAllEntities.exists[softDeleteable]
     }
 
     /**
      * Checks whether the application contains at least one entity with the sortable extension enabled.
      */
     def hasSortable(Application it) {
-        getAllEntities.exists(e|e.hasSortableFields)
+        getAllEntities.exists[hasSortableFields]
     }
 
     /**
      * Checks whether the application contains at least one entity with the timestampable extension enabled.
      */
     def hasTimestampable(Application it) {
-        getAllEntities.exists(e|e.hasTimestampableFields)
+        getAllEntities.exists[hasTimestampableFields]
     }
 
     /**
@@ -87,7 +87,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the translatable extension enabled.
      */
     def getTranslatableEntities(Application it) {
-        getAllEntities.filter(e|e.hasTranslatableFields)
+        getAllEntities.filter[hasTranslatableFields]
     }
 
     /**
@@ -101,7 +101,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the tree extension enabled.
      */
     def getTreeEntities(Application it) {
-        getAllEntities.filter(e|e.tree != EntityTreeType.NONE)
+        getAllEntities.filter[tree != EntityTreeType.NONE]
     }
 
     /**
@@ -115,7 +115,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the categorisable extension enabled.
      */
     def getCategorisableEntities(Application it) {
-        getAllEntities.filter(e|e.categorisable)
+        getAllEntities.filter[categorisable]
     }
 
     /**
@@ -129,7 +129,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the meta data extension enabled.
      */
     def getMetaDataEntities(Application it) {
-        getAllEntities.filter(e|e.metaData)
+        getAllEntities.filter[metaData]
     }
 
     /**
@@ -143,7 +143,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the attributable extension enabled.
      */
     def getAttributableEntities(Application it) {
-        getAllEntities.filter(e|e.attributable)
+        getAllEntities.filter[attributable]
     }
 
     /**
@@ -157,7 +157,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all entities with the standard field extension enabled.
      */
     def getStandardFieldEntities(Application it) {
-        getAllEntities.filter(e|e.standardFields)
+        getAllEntities.filter[standardFields]
     }
 
 
@@ -173,7 +173,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all string type fields with the sluggable extension enabled.
      */
     def getSluggableFields(Entity it) {
-        getDerivedFields.filter(AbstractStringField).filter(e|e.sluggablePosition > 0).sortBy(e|e.sluggablePosition)
+        getDerivedFields.filter(AbstractStringField).filter[sluggablePosition > 0].sortBy[sluggablePosition]
     }
 
     /**
@@ -187,7 +187,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all derived fields with the sortable extension enabled.
      */
     def getSortableFields(Entity it) {
-        fields.filter(IntegerField).filter(e|e.sortablePosition == true)
+        fields.filter(IntegerField).filter[sortablePosition]
     }
 
     /**
@@ -201,7 +201,7 @@ class ModelBehaviourExtensions {
      * Returns a list of all derived fields with the timestampable extension enabled.
      */
     def getTimestampableFields(Entity it) {
-        fields.filter(AbstractDateField).filter(e|e.timestampable != EntityTimestampableType.NONE)
+        fields.filter(AbstractDateField).filter[timestampable != EntityTimestampableType.NONE]
     }
 
     /**
@@ -215,28 +215,28 @@ class ModelBehaviourExtensions {
      * Returns a list of all derived fields with the translatable extension enabled.
      */
     def getTranslatableFields(Entity it) {
-        getDerivedFields.filter(e|e.translatable)
+        getDerivedFields.filter[translatable]
     }
 
     /**
      * Returns a list of all editable fields with the translatable extension enabled.
      */
     def getEditableTranslatableFields(Entity it) {
-        getEditableFields.filter(e|e.translatable)
+        getEditableFields.filter[translatable]
     }
 
     /**
      * Returns a list of all editable fields with the translatable extension disabled.
      */
     def getEditableNonTranslatableFields(Entity it) {
-        getEditableFields.filter(e|!e.translatable)
+        getEditableFields.filter[!translatable]
     }
 
     /**
      * Checks whether the entity contains at least one field with the translatable extension enabled.
      */
     def hasTranslatableSlug(Entity it) {
-        !getSluggableFields.filter(e|e.translatable).empty
+        !getSluggableFields.filter[translatable].empty
     }
 
     /**

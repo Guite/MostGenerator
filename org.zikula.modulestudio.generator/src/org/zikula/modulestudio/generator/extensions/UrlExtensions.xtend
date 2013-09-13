@@ -1,8 +1,8 @@
 package org.zikula.modulestudio.generator.extensions
 
 import com.google.inject.Inject
-import de.guite.modulestudio.metamodel.modulestudio.Entity
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
+import de.guite.modulestudio.metamodel.modulestudio.Entity
 
 /**
  * This class contains extension methods for building urls, i.e. modurl calls.
@@ -231,6 +231,6 @@ class UrlExtensions {
     def getSingleParamForTemplate(Iterable<DerivedField> it, String objName, String customVarName) {
         if (size == 0) ''
         else ' ' + customVarName + '=$' + objName + '.' + head.name.formatForDB
-         + tail.getSingleParamForTemplate(objName);
+         + tail.getSingleParamForTemplate(objName)
     }
 }

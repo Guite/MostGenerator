@@ -1,7 +1,9 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
+import de.guite.modulestudio.metamodel.modulestudio.AjaxController;
 import de.guite.modulestudio.metamodel.modulestudio.Application;
 import de.guite.modulestudio.metamodel.modulestudio.Controller;
 import de.guite.modulestudio.metamodel.modulestudio.Entity;
@@ -210,8 +212,8 @@ public class Redirect {
     {
       Iterable<JoinRelationship> _incomingJoinRelationsWithOneSource = this._modelJoinExtensions.getIncomingJoinRelationsWithOneSource(it);
       final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          Entity _source = e.getSource();
+        public Boolean apply(final JoinRelationship it) {
+          Entity _source = it.getSource();
           Models _container = _source.getContainer();
           Application _application = _container.getApplication();
           boolean _equals = Objects.equal(_application, app);
@@ -527,15 +529,8 @@ public class Redirect {
     _builder.newLine();
     {
       EList<Controller> _allControllers = this._controllerExtensions.getAllControllers(app);
-      final Function1<Controller,Boolean> _function = new Function1<Controller,Boolean>() {
-        public Boolean apply(final Controller e) {
-          boolean _isAjaxController = Redirect.this._controllerExtensions.isAjaxController(e);
-          boolean _not = (!_isAjaxController);
-          return Boolean.valueOf(_not);
-        }
-      };
-      Iterable<Controller> _filter = IterableExtensions.<Controller>filter(_allControllers, _function);
-      for(final Controller someController : _filter) {
+      Iterable<AjaxController> _filter = Iterables.<AjaxController>filter(_allControllers, AjaxController.class);
+      for(final AjaxController someController : _filter) {
         _builder.append("        ");
         final String controllerName = this._controllerExtensions.formattedName(someController);
         _builder.newLineIfNotEmpty();
@@ -624,16 +619,16 @@ public class Redirect {
     }
     {
       Iterable<JoinRelationship> _incomingJoinRelationsWithOneSource = this._modelJoinExtensions.getIncomingJoinRelationsWithOneSource(it);
-      final Function1<JoinRelationship,Boolean> _function_1 = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          Entity _source = e.getSource();
+      final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
+        public Boolean apply(final JoinRelationship it) {
+          Entity _source = it.getSource();
           Models _container = _source.getContainer();
           Application _application = _container.getApplication();
           boolean _equals = Objects.equal(_application, app);
           return Boolean.valueOf(_equals);
         }
       };
-      Iterable<JoinRelationship> _filter_1 = IterableExtensions.<JoinRelationship>filter(_incomingJoinRelationsWithOneSource, _function_1);
+      Iterable<JoinRelationship> _filter_1 = IterableExtensions.<JoinRelationship>filter(_incomingJoinRelationsWithOneSource, _function);
       for(final JoinRelationship incomingRelation : _filter_1) {
         _builder.append("        ");
         final Entity sourceEntity = incomingRelation.getSource();
@@ -645,15 +640,8 @@ public class Redirect {
           if (_notEquals) {
             {
               EList<Controller> _allControllers_1 = this._controllerExtensions.getAllControllers(app);
-              final Function1<Controller,Boolean> _function_2 = new Function1<Controller,Boolean>() {
-                public Boolean apply(final Controller e) {
-                  boolean _isAjaxController = Redirect.this._controllerExtensions.isAjaxController(e);
-                  boolean _not = (!_isAjaxController);
-                  return Boolean.valueOf(_not);
-                }
-              };
-              Iterable<Controller> _filter_2 = IterableExtensions.<Controller>filter(_allControllers_1, _function_2);
-              for(final Controller someController_1 : _filter_2) {
+              Iterable<AjaxController> _filter_2 = Iterables.<AjaxController>filter(_allControllers_1, AjaxController.class);
+              for(final AjaxController someController_1 : _filter_2) {
                 _builder.append("        ");
                 final String controllerName_1 = this._controllerExtensions.formattedName(someController_1);
                 _builder.newLineIfNotEmpty();

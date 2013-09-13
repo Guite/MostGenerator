@@ -55,8 +55,8 @@ public class ModelBehaviourExtensions {
   public Iterable<Entity> getLoggableEntities(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _isLoggable = e.isLoggable();
+      public Boolean apply(final Entity it) {
+        boolean _isLoggable = it.isLoggable();
         return Boolean.valueOf(_isLoggable);
       }
     };
@@ -80,8 +80,8 @@ public class ModelBehaviourExtensions {
   public Iterable<Entity> getGeographicalEntities(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _isGeographical = e.isGeographical();
+      public Boolean apply(final Entity it) {
+        boolean _isGeographical = it.isGeographical();
         return Boolean.valueOf(_isGeographical);
       }
     };
@@ -95,8 +95,8 @@ public class ModelBehaviourExtensions {
   public boolean hasSluggable(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _hasSluggableFields = ModelBehaviourExtensions.this.hasSluggableFields(e);
+      public Boolean apply(final Entity it) {
+        boolean _hasSluggableFields = ModelBehaviourExtensions.this.hasSluggableFields(it);
         return Boolean.valueOf(_hasSluggableFields);
       }
     };
@@ -110,8 +110,8 @@ public class ModelBehaviourExtensions {
   public boolean hasSoftDeleteable(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _isSoftDeleteable = e.isSoftDeleteable();
+      public Boolean apply(final Entity it) {
+        boolean _isSoftDeleteable = it.isSoftDeleteable();
         return Boolean.valueOf(_isSoftDeleteable);
       }
     };
@@ -125,8 +125,8 @@ public class ModelBehaviourExtensions {
   public boolean hasSortable(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _hasSortableFields = ModelBehaviourExtensions.this.hasSortableFields(e);
+      public Boolean apply(final Entity it) {
+        boolean _hasSortableFields = ModelBehaviourExtensions.this.hasSortableFields(it);
         return Boolean.valueOf(_hasSortableFields);
       }
     };
@@ -140,8 +140,8 @@ public class ModelBehaviourExtensions {
   public boolean hasTimestampable(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _hasTimestampableFields = ModelBehaviourExtensions.this.hasTimestampableFields(e);
+      public Boolean apply(final Entity it) {
+        boolean _hasTimestampableFields = ModelBehaviourExtensions.this.hasTimestampableFields(it);
         return Boolean.valueOf(_hasTimestampableFields);
       }
     };
@@ -165,8 +165,8 @@ public class ModelBehaviourExtensions {
   public Iterable<Entity> getTranslatableEntities(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _hasTranslatableFields = ModelBehaviourExtensions.this.hasTranslatableFields(e);
+      public Boolean apply(final Entity it) {
+        boolean _hasTranslatableFields = ModelBehaviourExtensions.this.hasTranslatableFields(it);
         return Boolean.valueOf(_hasTranslatableFields);
       }
     };
@@ -190,8 +190,8 @@ public class ModelBehaviourExtensions {
   public Iterable<Entity> getTreeEntities(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        EntityTreeType _tree = e.getTree();
+      public Boolean apply(final Entity it) {
+        EntityTreeType _tree = it.getTree();
         boolean _notEquals = (!Objects.equal(_tree, EntityTreeType.NONE));
         return Boolean.valueOf(_notEquals);
       }
@@ -216,8 +216,8 @@ public class ModelBehaviourExtensions {
   public Iterable<Entity> getCategorisableEntities(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _isCategorisable = e.isCategorisable();
+      public Boolean apply(final Entity it) {
+        boolean _isCategorisable = it.isCategorisable();
         return Boolean.valueOf(_isCategorisable);
       }
     };
@@ -241,8 +241,8 @@ public class ModelBehaviourExtensions {
   public Iterable<Entity> getMetaDataEntities(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _isMetaData = e.isMetaData();
+      public Boolean apply(final Entity it) {
+        boolean _isMetaData = it.isMetaData();
         return Boolean.valueOf(_isMetaData);
       }
     };
@@ -266,8 +266,8 @@ public class ModelBehaviourExtensions {
   public Iterable<Entity> getAttributableEntities(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _isAttributable = e.isAttributable();
+      public Boolean apply(final Entity it) {
+        boolean _isAttributable = it.isAttributable();
         return Boolean.valueOf(_isAttributable);
       }
     };
@@ -291,8 +291,8 @@ public class ModelBehaviourExtensions {
   public Iterable<Entity> getStandardFieldEntities(final Application it) {
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _isStandardFields = e.isStandardFields();
+      public Boolean apply(final Entity it) {
+        boolean _isStandardFields = it.isStandardFields();
         return Boolean.valueOf(_isStandardFields);
       }
     };
@@ -317,16 +317,16 @@ public class ModelBehaviourExtensions {
     Iterable<DerivedField> _derivedFields = this._modelExtensions.getDerivedFields(it);
     Iterable<AbstractStringField> _filter = Iterables.<AbstractStringField>filter(_derivedFields, AbstractStringField.class);
     final Function1<AbstractStringField,Boolean> _function = new Function1<AbstractStringField,Boolean>() {
-      public Boolean apply(final AbstractStringField e) {
-        int _sluggablePosition = e.getSluggablePosition();
+      public Boolean apply(final AbstractStringField it) {
+        int _sluggablePosition = it.getSluggablePosition();
         boolean _greaterThan = (_sluggablePosition > 0);
         return Boolean.valueOf(_greaterThan);
       }
     };
     Iterable<AbstractStringField> _filter_1 = IterableExtensions.<AbstractStringField>filter(_filter, _function);
     final Function1<AbstractStringField,Integer> _function_1 = new Function1<AbstractStringField,Integer>() {
-      public Integer apply(final AbstractStringField e) {
-        int _sluggablePosition = e.getSluggablePosition();
+      public Integer apply(final AbstractStringField it) {
+        int _sluggablePosition = it.getSluggablePosition();
         return Integer.valueOf(_sluggablePosition);
       }
     };
@@ -351,10 +351,9 @@ public class ModelBehaviourExtensions {
     EList<EntityField> _fields = it.getFields();
     Iterable<IntegerField> _filter = Iterables.<IntegerField>filter(_fields, IntegerField.class);
     final Function1<IntegerField,Boolean> _function = new Function1<IntegerField,Boolean>() {
-      public Boolean apply(final IntegerField e) {
-        boolean _isSortablePosition = e.isSortablePosition();
-        boolean _equals = (_isSortablePosition == true);
-        return Boolean.valueOf(_equals);
+      public Boolean apply(final IntegerField it) {
+        boolean _isSortablePosition = it.isSortablePosition();
+        return Boolean.valueOf(_isSortablePosition);
       }
     };
     Iterable<IntegerField> _filter_1 = IterableExtensions.<IntegerField>filter(_filter, _function);
@@ -378,8 +377,8 @@ public class ModelBehaviourExtensions {
     EList<EntityField> _fields = it.getFields();
     Iterable<AbstractDateField> _filter = Iterables.<AbstractDateField>filter(_fields, AbstractDateField.class);
     final Function1<AbstractDateField,Boolean> _function = new Function1<AbstractDateField,Boolean>() {
-      public Boolean apply(final AbstractDateField e) {
-        EntityTimestampableType _timestampable = e.getTimestampable();
+      public Boolean apply(final AbstractDateField it) {
+        EntityTimestampableType _timestampable = it.getTimestampable();
         boolean _notEquals = (!Objects.equal(_timestampable, EntityTimestampableType.NONE));
         return Boolean.valueOf(_notEquals);
       }
@@ -404,8 +403,8 @@ public class ModelBehaviourExtensions {
   public Iterable<DerivedField> getTranslatableFields(final Entity it) {
     Iterable<DerivedField> _derivedFields = this._modelExtensions.getDerivedFields(it);
     final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-      public Boolean apply(final DerivedField e) {
-        boolean _isTranslatable = e.isTranslatable();
+      public Boolean apply(final DerivedField it) {
+        boolean _isTranslatable = it.isTranslatable();
         return Boolean.valueOf(_isTranslatable);
       }
     };
@@ -419,8 +418,8 @@ public class ModelBehaviourExtensions {
   public Iterable<DerivedField> getEditableTranslatableFields(final Entity it) {
     List<DerivedField> _editableFields = this._modelExtensions.getEditableFields(it);
     final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-      public Boolean apply(final DerivedField e) {
-        boolean _isTranslatable = e.isTranslatable();
+      public Boolean apply(final DerivedField it) {
+        boolean _isTranslatable = it.isTranslatable();
         return Boolean.valueOf(_isTranslatable);
       }
     };
@@ -434,8 +433,8 @@ public class ModelBehaviourExtensions {
   public Iterable<DerivedField> getEditableNonTranslatableFields(final Entity it) {
     List<DerivedField> _editableFields = this._modelExtensions.getEditableFields(it);
     final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-      public Boolean apply(final DerivedField e) {
-        boolean _isTranslatable = e.isTranslatable();
+      public Boolean apply(final DerivedField it) {
+        boolean _isTranslatable = it.isTranslatable();
         boolean _not = (!_isTranslatable);
         return Boolean.valueOf(_not);
       }
@@ -450,8 +449,8 @@ public class ModelBehaviourExtensions {
   public boolean hasTranslatableSlug(final Entity it) {
     List<AbstractStringField> _sluggableFields = this.getSluggableFields(it);
     final Function1<AbstractStringField,Boolean> _function = new Function1<AbstractStringField,Boolean>() {
-      public Boolean apply(final AbstractStringField e) {
-        boolean _isTranslatable = e.isTranslatable();
+      public Boolean apply(final AbstractStringField it) {
+        boolean _isTranslatable = it.isTranslatable();
         return Boolean.valueOf(_isTranslatable);
       }
     };

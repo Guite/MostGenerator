@@ -117,7 +117,7 @@ class Utils {
      * @return List<Variables> The selected list.
      */
     def getSortedVariableContainers(Application it) {
-        getAllVariableContainers.sortBy(e|e.sortOrder)
+        getAllVariableContainers.sortBy[sortOrder]
     }
 
     /**
@@ -128,7 +128,7 @@ class Utils {
      * @return List<Variables> The selected list.
      */
     def getAllVariableContainers(Application it) {
-        models.map(e|e.variables).flatten.toList
+        models.map[variables].flatten.toList
     }
 
     /**
@@ -139,7 +139,7 @@ class Utils {
      * @return List<Variable> The selected list.
      */
     def getAllVariables(Application it) {
-        getAllVariableContainers.map(e|e.vars).flatten.toList
+        getAllVariableContainers.map[vars].flatten.toList
     }
 
     /**

@@ -137,10 +137,9 @@ public class Repository {
     this.app = it;
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _isMappedSuperClass = e.isMappedSuperClass();
-        boolean _not = (!_isMappedSuperClass);
-        return Boolean.valueOf(_not);
+      public Boolean apply(final Entity it) {
+        boolean _isMappedSuperClass = it.isMappedSuperClass();
+        return Boolean.valueOf(_isMappedSuperClass);
       }
     };
     Iterable<Entity> _filter = IterableExtensions.<Entity>filter(_allEntities, _function);
@@ -573,8 +572,8 @@ public class Repository {
     EList<EntityField> _fields_1 = it.getFields();
     Iterable<TextField> _filter = Iterables.<TextField>filter(_fields_1, TextField.class);
     final Function1<TextField,Boolean> _function = new Function1<TextField,Boolean>() {
-      public Boolean apply(final TextField e) {
-        boolean _isLeading = e.isLeading();
+      public Boolean apply(final TextField it) {
+        boolean _isLeading = it.isLeading();
         boolean _not = (!_isLeading);
         return Boolean.valueOf(_not);
       }
@@ -585,14 +584,14 @@ public class Repository {
     EList<EntityField> _fields_2 = it.getFields();
     Iterable<StringField> _filter_1 = Iterables.<StringField>filter(_fields_2, StringField.class);
     final Function1<StringField,Boolean> _function_1 = new Function1<StringField,Boolean>() {
-      public Boolean apply(final StringField e) {
+      public Boolean apply(final StringField it) {
         boolean _and = false;
-        boolean _isLeading = e.isLeading();
+        boolean _isLeading = it.isLeading();
         boolean _not = (!_isLeading);
         if (!_not) {
           _and = false;
         } else {
-          boolean _isPassword = e.isPassword();
+          boolean _isPassword = it.isPassword();
           boolean _not_1 = (!_isPassword);
           _and = (_not && _not_1);
         }
@@ -3077,8 +3076,8 @@ public class Repository {
     _builder.append("    ");
     Iterable<DerivedField> _displayFields = this._modelExtensions.getDisplayFields(it);
     final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-      public Boolean apply(final DerivedField e) {
-        boolean _isContainedInTextualSearch = Repository.this.isContainedInTextualSearch(e);
+      public Boolean apply(final DerivedField it) {
+        boolean _isContainedInTextualSearch = Repository.this.isContainedInTextualSearch(it);
         return Boolean.valueOf(_isContainedInTextualSearch);
       }
     };
@@ -3087,8 +3086,8 @@ public class Repository {
     _builder.append("    ");
     Iterable<DerivedField> _displayFields_1 = this._modelExtensions.getDisplayFields(it);
     final Function1<DerivedField,Boolean> _function_1 = new Function1<DerivedField,Boolean>() {
-      public Boolean apply(final DerivedField e) {
-        boolean _isContainedInNumericSearch = Repository.this.isContainedInNumericSearch(e);
+      public Boolean apply(final DerivedField it) {
+        boolean _isContainedInNumericSearch = Repository.this.isContainedInNumericSearch(it);
         return Boolean.valueOf(_isContainedInNumericSearch);
       }
     };

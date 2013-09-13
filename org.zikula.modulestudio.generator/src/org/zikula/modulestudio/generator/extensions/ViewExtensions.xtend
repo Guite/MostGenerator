@@ -1,10 +1,10 @@
 package org.zikula.modulestudio.generator.extensions
 
+import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
-import de.guite.modulestudio.metamodel.modulestudio.UserController
-import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
+import de.guite.modulestudio.metamodel.modulestudio.UserController
 
 /**
  * This class contains view related extension methods.
@@ -63,8 +63,8 @@ class ViewExtensions {
         var weight = 1
         //if (fields.size > 5) weight = weight + 1
         //if (fields.size > 10) weight = weight + 1
-        if (page == 'edit' && incoming.filter(JoinRelationship).filter(e|e.isPartOfEditForm(true)).size > 1) weight = weight + 1
-        if (page == 'edit' && outgoing.filter(JoinRelationship).filter(e|e.isPartOfEditForm(false)).size > 1) weight = weight + 1
+        if (page == 'edit' && incoming.filter(JoinRelationship).filter[isPartOfEditForm(true)].size > 1) weight = weight + 1
+        if (page == 'edit' && outgoing.filter(JoinRelationship).filter[isPartOfEditForm(false)].size > 1) weight = weight + 1
 
         if (attributable) weight = weight + 1
         if (categorisable) weight = weight + 1

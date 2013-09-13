@@ -30,8 +30,8 @@ class Relations {
      * This method creates the templates to be included into the edit forms.
      */
     def generateInclusionTemplate(Entity it, Application app, Controller controller, IFileSystemAccess fsa) '''
-        «FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app)»«relation.generate(app, controller, false, true, fsa)»«ENDFOR»
-        «FOR relation : getOutgoingJoinRelations.filter(e|e.target.container.application == app)»«relation.generate(app, controller, false, false, fsa)»«ENDFOR»
+        «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.container.application == app]»«relation.generate(app, controller, false, true, fsa)»«ENDFOR»
+        «FOR relation : getOutgoingJoinRelations.filter[target.container.application == app]»«relation.generate(app, controller, false, false, fsa)»«ENDFOR»
     '''
 
     /**
@@ -39,8 +39,8 @@ class Relations {
      * This method creates the Smarty include statement.
      */
     def generateIncludeStatement(Entity it, Application app, Controller controller, IFileSystemAccess fsa) '''
-        «FOR relation : getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app)»«relation.generate(app, controller, true, true, fsa)»«ENDFOR»
-        «FOR relation : getOutgoingJoinRelations.filter(e|e.target.container.application == app)»«relation.generate(app, controller, true, false, fsa)»«ENDFOR»
+        «FOR relation : getBidirectionalIncomingJoinRelations.filter[source.container.application == app]»«relation.generate(app, controller, true, true, fsa)»«ENDFOR»
+        «FOR relation : getOutgoingJoinRelations.filter[target.container.application == app]»«relation.generate(app, controller, true, false, fsa)»«ENDFOR»
     '''
 
     def private generate(JoinRelationship it, Application app, Controller controller, Boolean onlyInclude, Boolean incoming, IFileSystemAccess fsa) {
@@ -213,8 +213,8 @@ class Relations {
     '''
 
     def initJs(Entity it, Application app, Boolean insideLoader) '''
-        «val incomingJoins = getBidirectionalIncomingJoinRelations.filter(e|e.source.container.application == app && e.usesAutoCompletion(false))»
-        «val outgoingJoins = outgoingJoinRelations.filter(e|e.target.container.application == app && e.usesAutoCompletion(true))»
+        «val incomingJoins = getBidirectionalIncomingJoinRelations.filter[source.container.application == app && usesAutoCompletion(false)]»
+        «val outgoingJoins = outgoingJoinRelations.filter[target.container.application == app && usesAutoCompletion(true)]»
         «IF !incomingJoins.empty || !outgoingJoins.empty»
             «IF !insideLoader»
                 var editImage = '<img src="{{$editImageArray.src}}" width="16" height="16" alt="" />';

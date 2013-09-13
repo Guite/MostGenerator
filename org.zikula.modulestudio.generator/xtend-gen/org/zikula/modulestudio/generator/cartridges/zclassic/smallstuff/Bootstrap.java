@@ -322,13 +322,13 @@ public class Bootstrap {
     StringConcatenation _builder = new StringConcatenation();
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
+      public Boolean apply(final Entity it) {
         boolean _and = false;
-        boolean _isHasArchive = e.isHasArchive();
+        boolean _isHasArchive = it.isHasArchive();
         if (!_isHasArchive) {
           _and = false;
         } else {
-          AbstractDateField _endDateField = Bootstrap.this._modelExtensions.getEndDateField(e);
+          AbstractDateField _endDateField = Bootstrap.this._modelExtensions.getEndDateField(it);
           boolean _tripleNotEquals = (_endDateField != null);
           _and = (_isHasArchive && _tripleNotEquals);
         }

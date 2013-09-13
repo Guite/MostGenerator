@@ -74,14 +74,14 @@ class ValidationError {
                 case 'validate-date-future':        $message = $view->__('Please select a value in the future.'); break;
                 case 'validate-time-past':          $message = $view->__('Please select a value in the past.'); break;
                 case 'validate-time-future':        $message = $view->__('Please select a value in the future.'); break;
-                «IF getAllEntities.exists(e|e.getUniqueDerivedFields.filter(f|!f.primaryKey).size > 0)»
+                «IF getAllEntities.exists[getUniqueDerivedFields.filter[primaryKey].size > 0]»
                 case 'validate-unique':             $message = $view->__('This value is already assigned, but must be unique. Please change it.'); break;
                 «ENDIF»
             }
 
             $message = '<div id="advice-' . $class . '-' . $id . '" class="validation-advice z-formnote" style="display: none">' . $message . '</div>';
 
-            if (array_key_exists('assign', $params)) {
+            if (array_key_exists['assign', $params)) {
                 $view->assign($params['assign'], $message);
 
                 return;

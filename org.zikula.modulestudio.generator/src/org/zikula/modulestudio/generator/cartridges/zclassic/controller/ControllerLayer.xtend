@@ -2,6 +2,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AdminController
+import de.guite.modulestudio.metamodel.modulestudio.AjaxController
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.UserController
@@ -42,7 +43,7 @@ class ControllerLayer {
      */
     def void generate(Application it, IFileSystemAccess fsa) {
         this.app = it
-        getAllControllers.forEach(e|e.generate(fsa))
+        getAllControllers.forEach[generate(fsa)]
         // controller for external calls
         new ExternalController().generate(it, fsa)
         // selection api
@@ -105,6 +106,8 @@ class ControllerLayer {
     '''
 
     def private controllerBaseImpl(Controller it) '''
+        «val isAdminController = (it instanceof AdminController)»
+        «val isAjaxController = (it instanceof AjaxController)»
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Controller\Base;
 
@@ -166,6 +169,7 @@ class ControllerLayer {
             «IF isAjaxController»
 
             «ELSE»
+                «val isUserController = (it instanceof UserController)»
                 «new ControllerHelper().controllerPostInitialize(it, isUserController, '')»
             «ENDIF»
 
@@ -363,6 +367,8 @@ class ControllerLayer {
 
     def private apiBaseImpl(Controller it) '''
         «val app = container.application»
+        «val isUserController = (it instanceof UserController)»
+        «val isAjaxController = (it instanceof AjaxController)»
         «IF !app.targets('1.3.5')»
             namespace «app.appNamespace»\Api\Base;
 

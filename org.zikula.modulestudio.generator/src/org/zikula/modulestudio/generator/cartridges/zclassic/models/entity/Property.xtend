@@ -163,7 +163,7 @@ class Property {
         }
     }
 
-    def private defaultFieldDataItems(ListField it) '''«FOR defaultItem : items.filter(e|e.^default) SEPARATOR '###'»«defaultItem.value»«ENDFOR»'''
+    def private defaultFieldDataItems(ListField it) '''«FOR defaultItem : items.filter[^default] SEPARATOR '###'»«defaultItem.value»«ENDFOR»'''
 
     def private fieldAccessorDefault(DerivedField it) '''
         «IF isIndexByField»

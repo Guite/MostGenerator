@@ -741,7 +741,7 @@ public class Entities {
         _builder.append(")");
         _builder.newLineIfNotEmpty();
         _builder.append(" ");
-        _builder.append("* @ORM\\DiscriminatorMap({\"");
+        _builder.append("* @ORM\\Discriminatormap[{\"");
         String _name_7 = it.getName();
         String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_7);
         _builder.append(_formatForCode_1, " ");
@@ -2299,8 +2299,8 @@ public class Entities {
       if (_isIndexByTarget) {
         Iterable<JoinRelationship> _incomingJoinRelations = this._modelJoinExtensions.getIncomingJoinRelations(it);
         final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-          public Boolean apply(final JoinRelationship e) {
-            boolean _isIndexed = Entities.this._modelJoinExtensions.isIndexed(e);
+          public Boolean apply(final JoinRelationship it) {
+            boolean _isIndexed = Entities.this._modelJoinExtensions.isIndexed(it);
             return Boolean.valueOf(_isIndexed);
           }
         };
@@ -2421,13 +2421,13 @@ public class Entities {
     }
     Iterable<DerivedField> _derivedFields = this._modelExtensions.getDerivedFields(it);
     final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-      public Boolean apply(final DerivedField e) {
+      public Boolean apply(final DerivedField it) {
         boolean _and = false;
-        boolean _isMandatory = e.isMandatory();
+        boolean _isMandatory = it.isMandatory();
         if (!_isMandatory) {
           _and = false;
         } else {
-          boolean _isPrimaryKey = e.isPrimaryKey();
+          boolean _isPrimaryKey = it.isPrimaryKey();
           boolean _not = (!_isPrimaryKey);
           _and = (_isMandatory && _not);
         }
@@ -2439,22 +2439,22 @@ public class Entities {
     {
       Iterable<IntegerField> _filter = Iterables.<IntegerField>filter(mandatoryFields, IntegerField.class);
       final Function1<IntegerField,Boolean> _function_1 = new Function1<IntegerField,Boolean>() {
-        public Boolean apply(final IntegerField e) {
+        public Boolean apply(final IntegerField it) {
           boolean _or = false;
           boolean _or_1 = false;
-          String _defaultValue = e.getDefaultValue();
+          String _defaultValue = it.getDefaultValue();
           boolean _tripleEquals = (_defaultValue == null);
           if (_tripleEquals) {
             _or_1 = true;
           } else {
-            String _defaultValue_1 = e.getDefaultValue();
+            String _defaultValue_1 = it.getDefaultValue();
             boolean _equals = Objects.equal(_defaultValue_1, "");
             _or_1 = (_tripleEquals || _equals);
           }
           if (_or_1) {
             _or = true;
           } else {
-            String _defaultValue_2 = e.getDefaultValue();
+            String _defaultValue_2 = it.getDefaultValue();
             boolean _equals_1 = Objects.equal(_defaultValue_2, "0");
             _or = (_or_1 || _equals_1);
           }
@@ -2474,22 +2474,22 @@ public class Entities {
     {
       Iterable<UserField> _filter_2 = Iterables.<UserField>filter(mandatoryFields, UserField.class);
       final Function1<UserField,Boolean> _function_2 = new Function1<UserField,Boolean>() {
-        public Boolean apply(final UserField e) {
+        public Boolean apply(final UserField it) {
           boolean _or = false;
           boolean _or_1 = false;
-          String _defaultValue = e.getDefaultValue();
+          String _defaultValue = it.getDefaultValue();
           boolean _tripleEquals = (_defaultValue == null);
           if (_tripleEquals) {
             _or_1 = true;
           } else {
-            String _defaultValue_1 = e.getDefaultValue();
+            String _defaultValue_1 = it.getDefaultValue();
             boolean _equals = Objects.equal(_defaultValue_1, "");
             _or_1 = (_tripleEquals || _equals);
           }
           if (_or_1) {
             _or = true;
           } else {
-            String _defaultValue_2 = e.getDefaultValue();
+            String _defaultValue_2 = it.getDefaultValue();
             boolean _equals_1 = Objects.equal(_defaultValue_2, "0");
             _or = (_or_1 || _equals_1);
           }
@@ -2509,22 +2509,22 @@ public class Entities {
     {
       Iterable<DecimalField> _filter_4 = Iterables.<DecimalField>filter(mandatoryFields, DecimalField.class);
       final Function1<DecimalField,Boolean> _function_3 = new Function1<DecimalField,Boolean>() {
-        public Boolean apply(final DecimalField e) {
+        public Boolean apply(final DecimalField it) {
           boolean _or = false;
           boolean _or_1 = false;
-          String _defaultValue = e.getDefaultValue();
+          String _defaultValue = it.getDefaultValue();
           boolean _tripleEquals = (_defaultValue == null);
           if (_tripleEquals) {
             _or_1 = true;
           } else {
-            String _defaultValue_1 = e.getDefaultValue();
+            String _defaultValue_1 = it.getDefaultValue();
             boolean _equals = Objects.equal(_defaultValue_1, "");
             _or_1 = (_tripleEquals || _equals);
           }
           if (_or_1) {
             _or = true;
           } else {
-            String _defaultValue_2 = e.getDefaultValue();
+            String _defaultValue_2 = it.getDefaultValue();
             boolean _equals_1 = Objects.equal(_defaultValue_2, "0");
             _or = (_or_1 || _equals_1);
           }
@@ -2544,22 +2544,22 @@ public class Entities {
     {
       Iterable<AbstractDateField> _filter_6 = Iterables.<AbstractDateField>filter(mandatoryFields, AbstractDateField.class);
       final Function1<AbstractDateField,Boolean> _function_4 = new Function1<AbstractDateField,Boolean>() {
-        public Boolean apply(final AbstractDateField e) {
+        public Boolean apply(final AbstractDateField it) {
           boolean _or = false;
           boolean _or_1 = false;
-          String _defaultValue = e.getDefaultValue();
+          String _defaultValue = it.getDefaultValue();
           boolean _tripleEquals = (_defaultValue == null);
           if (_tripleEquals) {
             _or_1 = true;
           } else {
-            String _defaultValue_1 = e.getDefaultValue();
+            String _defaultValue_1 = it.getDefaultValue();
             boolean _equals = Objects.equal(_defaultValue_1, "");
             _or_1 = (_tripleEquals || _equals);
           }
           if (_or_1) {
             _or = true;
           } else {
-            String _defaultValue_2 = e.getDefaultValue();
+            String _defaultValue_2 = it.getDefaultValue();
             int _length = _defaultValue_2.length();
             boolean _equals_1 = (_length == 0);
             _or = (_or_1 || _equals_1);
@@ -2583,22 +2583,22 @@ public class Entities {
     {
       Iterable<FloatField> _filter_8 = Iterables.<FloatField>filter(mandatoryFields, FloatField.class);
       final Function1<FloatField,Boolean> _function_5 = new Function1<FloatField,Boolean>() {
-        public Boolean apply(final FloatField e) {
+        public Boolean apply(final FloatField it) {
           boolean _or = false;
           boolean _or_1 = false;
-          String _defaultValue = e.getDefaultValue();
+          String _defaultValue = it.getDefaultValue();
           boolean _tripleEquals = (_defaultValue == null);
           if (_tripleEquals) {
             _or_1 = true;
           } else {
-            String _defaultValue_1 = e.getDefaultValue();
+            String _defaultValue_1 = it.getDefaultValue();
             boolean _equals = Objects.equal(_defaultValue_1, "");
             _or_1 = (_tripleEquals || _equals);
           }
           if (_or_1) {
             _or = true;
           } else {
-            String _defaultValue_2 = e.getDefaultValue();
+            String _defaultValue_2 = it.getDefaultValue();
             boolean _equals_1 = Objects.equal(_defaultValue_2, "0");
             _or = (_or_1 || _equals_1);
           }
@@ -2623,8 +2623,8 @@ public class Entities {
         EList<Relationship> _incoming = it.getIncoming();
         Iterable<JoinRelationship> _filter_10 = Iterables.<JoinRelationship>filter(_incoming, JoinRelationship.class);
         final Function1<JoinRelationship,Boolean> _function_6 = new Function1<JoinRelationship,Boolean>() {
-          public Boolean apply(final JoinRelationship e) {
-            boolean _isIndexed = Entities.this._modelJoinExtensions.isIndexed(e);
+          public Boolean apply(final JoinRelationship it) {
+            boolean _isIndexed = Entities.this._modelJoinExtensions.isIndexed(it);
             return Boolean.valueOf(_isIndexed);
           }
         };
@@ -3056,14 +3056,14 @@ public class Entities {
     {
       Iterable<DerivedField> _derivedFields = this._modelExtensions.getDerivedFields(it);
       final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-        public Boolean apply(final DerivedField e) {
+        public Boolean apply(final DerivedField it) {
           boolean _and = false;
-          boolean _isPrimaryKey = e.isPrimaryKey();
+          boolean _isPrimaryKey = it.isPrimaryKey();
           boolean _not = (!_isPrimaryKey);
           if (!_not) {
             _and = false;
           } else {
-            String _name = e.getName();
+            String _name = it.getName();
             boolean _notEquals = (!Objects.equal(_name, "workflowState"));
             _and = (_not && _notEquals);
           }

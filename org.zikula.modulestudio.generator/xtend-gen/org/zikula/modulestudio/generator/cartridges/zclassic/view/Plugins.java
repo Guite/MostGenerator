@@ -137,8 +137,8 @@ public class Plugins {
     }
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _isGeographical = e.isGeographical();
+      public Boolean apply(final Entity it) {
+        boolean _isGeographical = it.isGeographical();
         return Boolean.valueOf(_isGeographical);
       }
     };
@@ -174,8 +174,8 @@ public class Plugins {
     }
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _isGeographical = e.isGeographical();
+      public Boolean apply(final Entity it) {
+        boolean _isGeographical = it.isGeographical();
         return Boolean.valueOf(_isGeographical);
       }
     };
@@ -186,8 +186,8 @@ public class Plugins {
     }
     EList<Models> _models = it.getModels();
     final Function1<Models,EList<Relationship>> _function_1 = new Function1<Models,EList<Relationship>>() {
-      public EList<Relationship> apply(final Models e) {
-        EList<Relationship> _relations = e.getRelations();
+      public EList<Relationship> apply(final Models it) {
+        EList<Relationship> _relations = it.getRelations();
         return _relations;
       }
     };
@@ -212,19 +212,7 @@ public class Plugins {
       TreeSelector _treeSelector = new TreeSelector();
       _treeSelector.generate(it, fsa);
     }
-    EList<Models> _models_1 = it.getModels();
-    final Function1<Models,EList<Relationship>> _function_2 = new Function1<Models,EList<Relationship>>() {
-      public EList<Relationship> apply(final Models e) {
-        EList<Relationship> _relations = e.getRelations();
-        return _relations;
-      }
-    };
-    List<EList<Relationship>> _map_1 = ListExtensions.<Models, EList<Relationship>>map(_models_1, _function_2);
-    Iterable<Relationship> _flatten_1 = Iterables.<Relationship>concat(_map_1);
-    List<Relationship> _list_1 = IterableExtensions.<Relationship>toList(_flatten_1);
-    boolean _isEmpty_1 = _list_1.isEmpty();
-    boolean _not = (!_isEmpty_1);
-    if (_not) {
+    if (hasRelations) {
       RelationSelectorList _relationSelectorList = new RelationSelectorList();
       _relationSelectorList.generate(it, fsa);
       RelationSelectorAutoComplete _relationSelectorAutoComplete = new RelationSelectorAutoComplete();

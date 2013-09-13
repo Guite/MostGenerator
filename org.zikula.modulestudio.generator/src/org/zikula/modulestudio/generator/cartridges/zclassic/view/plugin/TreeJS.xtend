@@ -118,7 +118,7 @@ class TreeJS {
             // get output result
             $result = $tree->getHTML();
 
-            if (array_key_exists('assign', $params)) {
+            if (array_key_exists['assign', $params)) {
                 $view->assign($params['assign'], $result);
 
                 return;
@@ -129,7 +129,7 @@ class TreeJS {
     '''
 
     def private controllerEditActionFlags(Application it) '''
-        «FOR controller : getAllControllers.filter(e|e.hasActions('edit'))»
+        «FOR controller : getAllControllers.filter[hasActions('edit')]»
             case '«controller.formattedName»': $controllerHasEditAction = true; break;
         «ENDFOR»
     '''

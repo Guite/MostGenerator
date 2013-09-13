@@ -83,7 +83,7 @@ class Validation {
                 return newVal;
             }
         }
-        «IF getAllEntities.exists(e|e.getUniqueDerivedFields.filter(f|!f.primaryKey).size > 0)»
+        «IF getAllEntities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
 
             /**
              * Performs a duplicate check for unique fields
@@ -163,7 +163,7 @@ class Validation {
                 «ENDIF»
                 «val datetimeFields = getAllEntityFields.filter(DatetimeField)»
                 «IF !datetimeFields.empty»
-                    «IF datetimeFields.exists(e|e.past)»
+                    «IF datetimeFields.exists[past]»
                         ['validate-datetime-past', Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var valStr, cmpVal;
                             valStr = new String(val);
@@ -171,7 +171,7 @@ class Validation {
                             return Validation.get('IsEmpty').test(val) || (cmpVal < «prefix»Today('datetime'));
                         }],
                     «ENDIF»
-                    «IF datetimeFields.exists(e|e.future)»
+                    «IF datetimeFields.exists[future]»
                         ['validate-datetime-future', Zikula.__('Please select a value in the future.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var valStr, cmpVal;
                             valStr = new String(val);
@@ -182,7 +182,7 @@ class Validation {
                 «ENDIF»
                 «val dateFields = getAllEntityFields.filter(DateField)»
                 «IF !dateFields.empty»
-                    «IF dateFields.exists(e|e.past)»
+                    «IF dateFields.exists[past]»
                         ['validate-date-past', Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var valStr, cmpVal;
                             valStr = new String(val);
@@ -190,7 +190,7 @@ class Validation {
                             return Validation.get('IsEmpty').test(val) || (cmpVal < «prefix»Today('date'));
                         }],
                     «ENDIF»
-                    «IF dateFields.exists(e|e.future)»
+                    «IF dateFields.exists[future]»
                         ['validate-date-future', Zikula.__('Please select a value in the future.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var valStr, cmpVal;
                             valStr = new String(val);
@@ -201,14 +201,14 @@ class Validation {
                 «ENDIF»
                 «val timeFields = getAllEntityFields.filter(TimeField)»
                 «IF !timeFields.empty»
-                    «IF timeFields.exists(e|e.past)»
+                    «IF timeFields.exists[past]»
                         ['validate-time-past', Zikula.__('Please select a value in the past.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var cmpVal;
                             cmpVal = new String(val);
                             return Validation.get('IsEmpty').test(val) || (cmpVal < «prefix»Today('time'));
                         }],
                     «ENDIF»
-                    «IF timeFields.exists(e|e.future)»
+                    «IF timeFields.exists[future]»
                         ['validate-time-future', Zikula.__('Please select a value in the future.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                             var cmpVal;
                             cmpVal = new String(val);
@@ -240,7 +240,7 @@ class Validation {
                         }],
                     «ENDIF»
                 «ENDFOR»
-                «IF getAllEntities.exists(e|e.getUniqueDerivedFields.filter(f|!f.primaryKey).size > 0)»
+                «IF getAllEntities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]»
                 ['validate-unique', Zikula.__('This value is already assigned, but must be unique. Please change it.', 'module_«appName.formatForDB»_js'), function(val, elem) {
                     return «prefix»UniqueCheck('«name.formatForCode»', val, elem, id);
                 }]

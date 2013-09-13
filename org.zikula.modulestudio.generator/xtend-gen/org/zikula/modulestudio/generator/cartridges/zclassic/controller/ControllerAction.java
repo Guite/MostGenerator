@@ -732,8 +732,7 @@ public class ControllerAction {
   private CharSequence _actionImplBody(final ViewAction it) {
     StringConcatenation _builder = new StringConcatenation();
     Controller _controller = it.getController();
-    boolean _isAjaxController = this._controllerExtensions.isAjaxController(_controller);
-    final boolean hasView = (!_isAjaxController);
+    final boolean hasView = (!(_controller instanceof AjaxController));
     _builder.newLineIfNotEmpty();
     {
       boolean _targets = this._utils.targets(this.app, "1.3.5");
@@ -844,8 +843,7 @@ public class ControllerAction {
     _builder.newLine();
     {
       Controller _controller_2 = it.getController();
-      boolean _isAjaxController_1 = this._controllerExtensions.isAjaxController(_controller_2);
-      if (_isAjaxController_1) {
+      if ((_controller_2 instanceof AjaxController)) {
         _builder.append("$where = (isset($args[\'where\']) && !empty($args[\'where\'])) ? $args[\'where\'] : $this->request->query->filter(\'where\', \'\');");
         _builder.newLine();
         _builder.append("$where = str_replace(\'\"\', \'\', $where);");
@@ -2119,8 +2117,7 @@ public class ControllerAction {
     _builder.newLine();
     {
       Controller _controller_2 = it.getController();
-      boolean _isAjaxController = this._controllerExtensions.isAjaxController(_controller_2);
-      if (_isAjaxController) {
+      if ((_controller_2 instanceof AjaxController)) {
         _builder.append("return new ");
         {
           boolean _targets = this._utils.targets(this.app, "1.3.5");

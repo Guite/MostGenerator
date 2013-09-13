@@ -295,7 +295,7 @@ class Validator {
              */
             public function isValidLanguage($fieldName, $onlyInstalled = false)
             {
-                $languageMap = ZLanguage::languageMap();
+                $languageMap = ZLanguage::languagemap[);
                 $result = in_array($this->entity[$fieldName], array_keys($languageMap));        
                 if (!$result || !$onlyInstalled) {
                     return $result;
@@ -313,7 +313,7 @@ class Validator {
              */
             public function isValidCountry($fieldName)
             {
-                $countryMap = ZLanguage::countryMap();
+                $countryMap = ZLanguage::countrymap[);
 
                 return in_array($this->entity[$fieldName], array_keys($countryMap));
             }
@@ -594,7 +594,7 @@ class Validator {
                 «validationCalls(df)»
             «ENDFOR»
             «validationCallDateRange»
-            «FOR udf : getUniqueDerivedFields.filter(e|!e.primaryKey)»
+            «FOR udf : getUniqueDerivedFields.filter[!primaryKey]»
                 «validationCallUnique(udf)»
             «ENDFOR»
 
@@ -691,13 +691,13 @@ class Validator {
         «ENDIF»
     '''
     def private dispatch validationCalls(AbstractIntegerField it) {
-        if (entity.incoming.filter(JoinRelationship).filter(e|e.targetField == name).empty
-         && entity.outgoing.filter(JoinRelationship).filter(e|e.sourceField == name).empty)
+        if (entity.incoming.filter(JoinRelationship).filter[e|e.targetField == name].empty
+         && entity.outgoing.filter(JoinRelationship).filter[e|e.sourceField == name].empty)
             validationCallsInteger
     }
     def private dispatch validationCalls(IntegerField it) '''
-        «IF entity.incoming.filter(JoinRelationship).filter(e|e.targetField == name).empty
-         && entity.outgoing.filter(JoinRelationship).filter(e|e.sourceField == name).empty»
+        «IF entity.incoming.filter(JoinRelationship).filter[e|e.targetField == name].empty
+         && entity.outgoing.filter(JoinRelationship).filter[e|e.sourceField == name].empty»
             «validationCallsInteger»
             «IF minValue.toString != '0'»
                 if (!$this->isIntegerNotLowerThan('«name.formatForCode»', «minValue»)) {

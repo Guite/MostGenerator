@@ -1201,8 +1201,8 @@ public class Extensions {
     if (_hasTrees) {
       Iterable<Entity> _treeEntities = this._modelBehaviourExtensions.getTreeEntities(it);
       final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          EntityTreeType _tree = e.getTree();
+        public Boolean apply(final Entity it) {
+          EntityTreeType _tree = it.getTree();
           boolean _equals = Objects.equal(_tree, EntityTreeType.CLOSURE);
           return Boolean.valueOf(_equals);
         }

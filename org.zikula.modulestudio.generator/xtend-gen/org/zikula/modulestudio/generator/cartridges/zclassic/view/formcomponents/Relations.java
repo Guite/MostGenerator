@@ -109,8 +109,8 @@ public class Relations {
     {
       Iterable<JoinRelationship> _bidirectionalIncomingJoinRelations = this._modelJoinExtensions.getBidirectionalIncomingJoinRelations(it);
       final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          Entity _source = e.getSource();
+        public Boolean apply(final JoinRelationship it) {
+          Entity _source = it.getSource();
           Models _container = _source.getContainer();
           Application _application = _container.getApplication();
           boolean _equals = Objects.equal(_application, app);
@@ -127,8 +127,8 @@ public class Relations {
     {
       Iterable<JoinRelationship> _outgoingJoinRelations = this._modelJoinExtensions.getOutgoingJoinRelations(it);
       final Function1<JoinRelationship,Boolean> _function_1 = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          Entity _target = e.getTarget();
+        public Boolean apply(final JoinRelationship it) {
+          Entity _target = it.getTarget();
           Models _container = _target.getContainer();
           Application _application = _container.getApplication();
           boolean _equals = Objects.equal(_application, app);
@@ -154,8 +154,8 @@ public class Relations {
     {
       Iterable<JoinRelationship> _bidirectionalIncomingJoinRelations = this._modelJoinExtensions.getBidirectionalIncomingJoinRelations(it);
       final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          Entity _source = e.getSource();
+        public Boolean apply(final JoinRelationship it) {
+          Entity _source = it.getSource();
           Models _container = _source.getContainer();
           Application _application = _container.getApplication();
           boolean _equals = Objects.equal(_application, app);
@@ -172,8 +172,8 @@ public class Relations {
     {
       Iterable<JoinRelationship> _outgoingJoinRelations = this._modelJoinExtensions.getOutgoingJoinRelations(it);
       final Function1<JoinRelationship,Boolean> _function_1 = new Function1<JoinRelationship,Boolean>() {
-        public Boolean apply(final JoinRelationship e) {
-          Entity _target = e.getTarget();
+        public Boolean apply(final JoinRelationship it) {
+          Entity _target = it.getTarget();
           Models _container = _target.getContainer();
           Application _application = _container.getApplication();
           boolean _equals = Objects.equal(_application, app);
@@ -1005,16 +1005,16 @@ public class Relations {
     StringConcatenation _builder = new StringConcatenation();
     Iterable<JoinRelationship> _bidirectionalIncomingJoinRelations = this._modelJoinExtensions.getBidirectionalIncomingJoinRelations(it);
     final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-      public Boolean apply(final JoinRelationship e) {
+      public Boolean apply(final JoinRelationship it) {
         boolean _and = false;
-        Entity _source = e.getSource();
+        Entity _source = it.getSource();
         Models _container = _source.getContainer();
         Application _application = _container.getApplication();
         boolean _equals = Objects.equal(_application, app);
         if (!_equals) {
           _and = false;
         } else {
-          boolean _usesAutoCompletion = Relations.this._modelJoinExtensions.usesAutoCompletion(e, false);
+          boolean _usesAutoCompletion = Relations.this._modelJoinExtensions.usesAutoCompletion(it, false);
           _and = (_equals && _usesAutoCompletion);
         }
         return Boolean.valueOf(_and);
@@ -1024,16 +1024,16 @@ public class Relations {
     _builder.newLineIfNotEmpty();
     Iterable<JoinRelationship> _outgoingJoinRelations = this._modelJoinExtensions.getOutgoingJoinRelations(it);
     final Function1<JoinRelationship,Boolean> _function_1 = new Function1<JoinRelationship,Boolean>() {
-      public Boolean apply(final JoinRelationship e) {
+      public Boolean apply(final JoinRelationship it) {
         boolean _and = false;
-        Entity _target = e.getTarget();
+        Entity _target = it.getTarget();
         Models _container = _target.getContainer();
         Application _application = _container.getApplication();
         boolean _equals = Objects.equal(_application, app);
         if (!_equals) {
           _and = false;
         } else {
-          boolean _usesAutoCompletion = Relations.this._modelJoinExtensions.usesAutoCompletion(e, true);
+          boolean _usesAutoCompletion = Relations.this._modelJoinExtensions.usesAutoCompletion(it, true);
           _and = (_equals && _usesAutoCompletion);
         }
         return Boolean.valueOf(_and);

@@ -94,7 +94,7 @@ class PermissionCheck {
 
             // now perform the permission check
             $result = SecurityUtil::checkPermission($component, $instance, $permLevel, $currentUser);
-            «val entitiesWithOwnerPermission = app.getAllEntities.filter(e|e.standardFields && e.ownerPermission)»
+            «val entitiesWithOwnerPermission = app.getAllEntities.filter[standardFields && ownerPermission]»
             «IF !entitiesWithOwnerPermission.empty»
 
                 // check whether the current user is the owner

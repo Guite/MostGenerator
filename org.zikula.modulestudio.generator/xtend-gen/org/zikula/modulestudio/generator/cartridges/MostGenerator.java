@@ -42,8 +42,8 @@ public class MostGenerator implements IGenerator {
     final Entity firstEntity = IterableExtensions.<Entity>head(_allEntities);
     EList<EntityField> _fields = firstEntity.getFields();
     final Function1<EntityField,Boolean> _function = new Function1<EntityField,Boolean>() {
-      public Boolean apply(final EntityField e) {
-        String _name = e.getName();
+      public Boolean apply(final EntityField it) {
+        String _name = it.getName();
         boolean _equals = Objects.equal(_name, "id");
         return Boolean.valueOf(_equals);
       }

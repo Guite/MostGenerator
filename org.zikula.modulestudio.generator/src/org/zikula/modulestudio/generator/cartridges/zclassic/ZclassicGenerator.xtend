@@ -134,7 +134,7 @@ class ZclassicGenerator implements IGenerator {
         pm?.subTask('Additions: Cache api')
         println('Generating cache api')
         new Cache().generate(it, fsa)
-        if (!getAllEntities.filter(e|e.hasAbstractStringFieldsEntity).empty) {
+        if (!getAllEntities.filter[hasAbstractStringFieldsEntity].empty) {
             pm?.subTask('Additions: Search api')
             println('Generating search api')
             new Search().generate(it, fsa)

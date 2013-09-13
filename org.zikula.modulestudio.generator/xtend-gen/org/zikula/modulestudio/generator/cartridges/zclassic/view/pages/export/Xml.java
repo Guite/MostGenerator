@@ -236,8 +236,8 @@ public class Xml {
     {
       Iterable<DerivedField> _derivedFields = this._modelExtensions.getDerivedFields(it);
       final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-        public Boolean apply(final DerivedField e) {
-          boolean _isPrimaryKey = e.isPrimaryKey();
+        public Boolean apply(final DerivedField it) {
+          boolean _isPrimaryKey = it.isPrimaryKey();
           return Boolean.valueOf(_isPrimaryKey);
         }
       };
@@ -252,14 +252,14 @@ public class Xml {
     {
       Iterable<DerivedField> _derivedFields_1 = this._modelExtensions.getDerivedFields(it);
       final Function1<DerivedField,Boolean> _function_1 = new Function1<DerivedField,Boolean>() {
-        public Boolean apply(final DerivedField e) {
+        public Boolean apply(final DerivedField it) {
           boolean _and = false;
-          boolean _isPrimaryKey = e.isPrimaryKey();
+          boolean _isPrimaryKey = it.isPrimaryKey();
           boolean _not = (!_isPrimaryKey);
           if (!_not) {
             _and = false;
           } else {
-            String _name = e.getName();
+            String _name = it.getName();
             boolean _notEquals = (!Objects.equal(_name, "workflowState"));
             _and = (_not && _notEquals);
           }
@@ -314,8 +314,8 @@ public class Xml {
       EList<Relationship> _incoming = it.getIncoming();
       Iterable<OneToManyRelationship> _filter_2 = Iterables.<OneToManyRelationship>filter(_incoming, OneToManyRelationship.class);
       final Function1<OneToManyRelationship,Boolean> _function_2 = new Function1<OneToManyRelationship,Boolean>() {
-        public Boolean apply(final OneToManyRelationship e) {
-          boolean _isBidirectional = e.isBidirectional();
+        public Boolean apply(final OneToManyRelationship it) {
+          boolean _isBidirectional = it.isBidirectional();
           return Boolean.valueOf(_isBidirectional);
         }
       };
@@ -341,8 +341,8 @@ public class Xml {
       EList<Relationship> _incoming_1 = it.getIncoming();
       Iterable<ManyToManyRelationship> _filter_5 = Iterables.<ManyToManyRelationship>filter(_incoming_1, ManyToManyRelationship.class);
       final Function1<ManyToManyRelationship,Boolean> _function_3 = new Function1<ManyToManyRelationship,Boolean>() {
-        public Boolean apply(final ManyToManyRelationship e) {
-          boolean _isBidirectional = e.isBidirectional();
+        public Boolean apply(final ManyToManyRelationship it) {
+          boolean _isBidirectional = it.isBidirectional();
           return Boolean.valueOf(_isBidirectional);
         }
       };

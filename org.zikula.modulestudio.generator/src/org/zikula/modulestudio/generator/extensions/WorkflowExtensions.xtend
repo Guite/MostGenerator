@@ -26,7 +26,7 @@ class WorkflowExtensions {
      * Returns all entities using the given workflow type.
      */
     def getEntitiesForWorkflow(Application it, EntityWorkflowType wfType) {
-        getAllEntities.filter(e|e.workflow == wfType)
+        getAllEntities.filter[workflow == wfType]
     }
 
     /**
@@ -74,14 +74,14 @@ class WorkflowExtensions {
      * Determines whether any entity in the given application using a certain workflow can have the given state.
      */
     def hasWorkflowState(Application it, EntityWorkflowType wfType, String state) {
-        hasWorkflow(wfType) && !getEntitiesForWorkflow(wfType).filter(e|e.hasWorkflowStateEntity(state)).empty
+        hasWorkflow(wfType) && !getEntitiesForWorkflow(wfType).filter[hasWorkflowStateEntity(state)].empty
     }
 
     /**
      * Determines whether any entity in the given application can have the given state.
      */
     def hasWorkflowState(Application it, String state) {
-        !getAllEntities.filter(e|e.hasWorkflowStateEntity(state)).empty
+        !getAllEntities.filter[hasWorkflowStateEntity(state)].empty
     }
 
     /**
@@ -112,7 +112,7 @@ class WorkflowExtensions {
      * Returns the list field storing the possible workflow states for the given entity. 
      */
     def getWorkflowStateField(Entity it) {
-        fields.filter(ListField).filter(e|e.name == 'workflowState').head
+        fields.filter(ListField).filter[name == 'workflowState'].head
     }
 
     /**
@@ -133,7 +133,7 @@ class WorkflowExtensions {
      * Determines a list of desired workflow states.
      */
     def private getWorkflowStateItems(Entity it, String state) {
-        getWorkflowStateField.items.filter(e|e.value == state.toLowerCase)
+        getWorkflowStateField.items.filter[value == state.toLowerCase]
     }
 
     /**

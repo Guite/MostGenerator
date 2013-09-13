@@ -84,7 +84,7 @@ class Frame {
              */
             public function create(Zikula_Form_View $view, &$params)
             {
-                $this->useTabs = (array_key_exists('useTabs', $params) ? $params['useTabs'] : false);
+                $this->useTabs = (array_key_exists['useTabs', $params) ? $params['useTabs'] : false);
             }
 
             /**

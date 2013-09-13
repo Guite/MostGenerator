@@ -82,7 +82,7 @@ class CountrySelector {
             {
                 $this->validCountryList = array();
                 $isFiltered = false;
-                if (array_key_exists('validCountryList', $params)) {
+                if (array_key_exists['validCountryList', $params)) {
                     if (is_array($params['validCountryList']) && count($params['validCountryList']) > 0) {
                         $this->validCountryList = $params['validCountryList'];
                         $isFiltered = true;
@@ -94,7 +94,7 @@ class CountrySelector {
                     $this->addItem('---', null);
                 }
 
-                $allCountries = ZLanguage::countryMap();
+                $allCountries = ZLanguage::countrymap[);
                 foreach ($allCountries as $countryCode => $countryName) {
                     if (!$isFiltered || in_array($countryCode, $this->validCountryList)) {
                         $this->addItem($countryName, $countryCode);

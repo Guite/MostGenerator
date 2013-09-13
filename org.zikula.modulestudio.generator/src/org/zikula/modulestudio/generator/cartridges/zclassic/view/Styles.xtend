@@ -240,7 +240,7 @@ class Styles {
     '''
 
     def private viewFilterForm(Application it) '''
-        «IF !getAllControllers.map(e|e.hasActions('view')).empty»
+        «IF !getAllControllers.filter[hasActions('view')].empty»
             div.«appName.toLowerCase»-view form.«prefix»QuickNavForm {
                 margin: 10px 0;
                 padding: 8px 12px;

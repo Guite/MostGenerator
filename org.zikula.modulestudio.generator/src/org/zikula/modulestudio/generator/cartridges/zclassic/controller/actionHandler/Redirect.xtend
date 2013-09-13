@@ -1,6 +1,7 @@
 package org.zikula.modulestudio.generator.cartridges.zclassic.controller.actionHandler
 
 import com.google.inject.Inject
+import de.guite.modulestudio.metamodel.modulestudio.AjaxController
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Entity
@@ -63,7 +64,7 @@ class Redirect {
         protected function getRedirectCodes()
         {
             $codes = parent::getRedirectCodes();
-            «FOR incomingRelation : getIncomingJoinRelationsWithOneSource.filter(e|e.source.container.application == app)»
+            «FOR incomingRelation : getIncomingJoinRelationsWithOneSource.filter[source.container.application == app]»
                 «val sourceEntity = incomingRelation.source»
                 «IF sourceEntity.name != it.name»
                     «FOR someController : app.getAllControllers»
@@ -156,7 +157,7 @@ class Redirect {
 
             // parse given redirect code and return corresponding url
             switch ($this->returnTo) {
-                «FOR someController : app.getAllControllers.filter(e|!e.isAjaxController)»
+                «FOR someController : app.getAllControllers.filter(AjaxController)»
                     «val controllerName = someController.formattedName»
                     «IF someController.hasActions('index')»
                         case '«controllerName»':
@@ -177,10 +178,10 @@ class Redirect {
                                     return $this->getDefaultReturnUrl($args);
                     «ENDIF»
                 «ENDFOR»
-                «FOR incomingRelation : getIncomingJoinRelationsWithOneSource.filter(e|e.source.container.application == app)»
+                «FOR incomingRelation : getIncomingJoinRelationsWithOneSource.filter[source.container.application == app]»
                     «val sourceEntity = incomingRelation.source»
                     «IF sourceEntity.name != it.name»
-                        «FOR someController : app.getAllControllers.filter(e|!e.isAjaxController)»
+                        «FOR someController : app.getAllControllers.filter(AjaxController)»
                             «val controllerName = someController.formattedName»
                             «IF someController.hasActions('view')»
                                 case '«controllerName»View«sourceEntity.name.formatForCodeCapital»':

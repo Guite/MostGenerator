@@ -94,7 +94,7 @@ class WorkflowSettings {
      * Path containing the report files.
      */
     @Property
-    String reportPath = '/org/zikula/modulestudio/generator/cartridges/reporting/reports'; //$NON-NLS-1$
+    String reportPath = '/org/zikula/modulestudio/generator/cartridges/reporting/reports' //$NON-NLS-1$
 
     /**
      * The constructor.

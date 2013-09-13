@@ -210,10 +210,10 @@ class DiagramExporter {
      */
     def private getResourceSetFromApp(Application app) {
         // get eResource from EObject
-        val resource = app.eResource;
+        val resource = app.eResource
 
         // get ResourceSet from eResource
-        val resourceSet = resource.resourceSet;
+        val resourceSet = resource.resourceSet
 
         // get editing domain
         //val domain = TransactionalEditingDomain_Factory.INSTANCE.createEditingDomain(resourceSet)

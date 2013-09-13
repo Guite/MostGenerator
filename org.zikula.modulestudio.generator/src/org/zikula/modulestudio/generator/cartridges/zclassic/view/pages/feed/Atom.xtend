@@ -90,8 +90,8 @@ class Atom {
                     {/if}
                 «ENDIF»
 
-                «val textFields = fields.filter(TextField).filter(e|!e.leading)»
-                «val stringFields = fields.filter(StringField).filter(e|!e.leading)»
+                «val textFields = fields.filter(TextField).filter[!leading]»
+                «val stringFields = fields.filter(StringField).filter[!leading]»
                 <summary type="html">
                     <![CDATA[
                     «IF !textFields.empty»

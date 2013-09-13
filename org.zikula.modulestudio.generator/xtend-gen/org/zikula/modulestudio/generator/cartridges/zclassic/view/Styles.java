@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import de.guite.modulestudio.metamodel.modulestudio.Application;
 import de.guite.modulestudio.metamodel.modulestudio.Controller;
 import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship;
-import java.util.List;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.generator.IFileSystemAccess;
@@ -12,7 +11,6 @@ import org.eclipse.xtext.xbase.lib.Extension;
 import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.eclipse.xtext.xbase.lib.Functions.Function1;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
-import org.eclipse.xtext.xbase.lib.ListExtensions;
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions;
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions;
 import org.zikula.modulestudio.generator.extensions.ModelBehaviourExtensions;
@@ -796,13 +794,13 @@ public class Styles {
     {
       EList<Controller> _allControllers = this._controllerExtensions.getAllControllers(it);
       final Function1<Controller,Boolean> _function = new Function1<Controller,Boolean>() {
-        public Boolean apply(final Controller e) {
-          boolean _hasActions = Styles.this._controllerExtensions.hasActions(e, "view");
+        public Boolean apply(final Controller it) {
+          boolean _hasActions = Styles.this._controllerExtensions.hasActions(it, "view");
           return Boolean.valueOf(_hasActions);
         }
       };
-      List<Boolean> _map = ListExtensions.<Controller, Boolean>map(_allControllers, _function);
-      boolean _isEmpty = _map.isEmpty();
+      Iterable<Controller> _filter = IterableExtensions.<Controller>filter(_allControllers, _function);
+      boolean _isEmpty = IterableExtensions.isEmpty(_filter);
       boolean _not = (!_isEmpty);
       if (_not) {
         _builder.append("div.");

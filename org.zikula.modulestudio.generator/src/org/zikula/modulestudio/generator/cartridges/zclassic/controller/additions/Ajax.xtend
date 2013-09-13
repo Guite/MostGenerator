@@ -34,8 +34,8 @@ class Ajax {
 
             «getItemListAutoCompletion(app)»
         «ENDIF»
-        «IF app.getAllEntities.exists(e|e.getUniqueDerivedFields.filter(f|!f.primaryKey).size > 0)
-        || (app.hasSluggable && !app.getAllEntities.filter(e|e.hasSluggableFields && e.slugUnique).empty)»
+        «IF app.getAllEntities.exists[getUniqueDerivedFields.filter[!primaryKey].size > 0]
+        || (app.hasSluggable && !app.getAllEntities.filter[hasSluggableFields && slugUnique].empty)»
 
             «checkForDuplicate(app)»
         «ENDIF»
@@ -342,7 +342,7 @@ class Ajax {
             $uniqueFields = array();
             switch ($objectType) {
                 «FOR entity : app.getAllEntities»
-                    «val uniqueFields = entity.getUniqueDerivedFields.filter(e|!e.primaryKey)»
+                    «val uniqueFields = entity.getUniqueDerivedFields.filter[!primaryKey]»
                     «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
                         case '«entity.name.formatForCode»':
                                 $uniqueFields = array(«FOR uniqueField : uniqueFields SEPARATOR ', '»'«uniqueField.name.formatForCode»'«ENDFOR»«IF entity.hasSluggableFields && entity.slugUnique»«IF !uniqueFields.empty», «ENDIF»'slug'«ENDIF»);
@@ -355,7 +355,7 @@ class Ajax {
             }
 
             $exclude = $this->request->request->get('ex', '');
-            «IF !container.application.getAllEntities.filter(e|e.hasCompositeKeys).empty»
+            «IF !container.application.getAllEntities.filter[hasCompositeKeys].empty»
             if (strpos($exclude, '_') !== false) {
                 $exclude = explode('_', $exclude);
             }
@@ -371,14 +371,14 @@ class Ajax {
             $result = false;
             switch ($objectType) {
             «FOR entity : app.getAllEntities»
-                «val uniqueFields = entity.getUniqueDerivedFields.filter(e|!e.primaryKey)»
+                «val uniqueFields = entity.getUniqueDerivedFields.filter[!primaryKey]»
                 «IF !uniqueFields.empty || (entity.hasSluggableFields && entity.slugUnique)»
                     case '«entity.name.formatForCode»':
                         $repository = $this->entityManager->getRepository($entityClass);
                         switch ($fieldName) {
                         «FOR uniqueField : uniqueFields»
                             case '«uniqueField.name.formatForCode»':
-                                    $result = $repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude«IF !container.application.getAllEntities.filter(e|e.hasCompositeKeys).empty»[0]«ENDIF»);
+                                    $result = $repository->detectUniqueState('«uniqueField.name.formatForCode»', $value, $exclude«IF !container.application.getAllEntities.filter[hasCompositeKeys].empty»[0]«ENDIF»);
                                     break;
                         «ENDFOR»
                         «IF entity.hasSluggableFields && entity.slugUnique»
@@ -525,13 +525,13 @@ class Ajax {
             switch ($objectType) {
                 «FOR entity : app.getTreeEntities»
                     case '«entity.name.formatForCode»':
-                        «val stringFields = entity.fields.filter(StringField).filter(e|e.length >= 20 && !e.nospace && !e.country && !e.htmlcolour && !e.language)»
+                        «val stringFields = entity.fields.filter(StringField).filter[length >= 20 && !nospace && !country && !htmlcolour && !language]»
                             $titleFieldName = '«IF !stringFields.empty»«stringFields.head.name.formatForCode»«ENDIF»';
-                            «val textFields = entity.fields.filter(TextField).filter(e|!e.leading && e.length >= 50)»
+                            «val textFields = entity.fields.filter(TextField).filter[!leading && length >= 50]»
                             «IF !textFields.empty»
                             $descriptionFieldName = '«textFields.head.name.formatForCode»';
                             «ELSE»
-                                «val textStringFields = entity.fields.filter(StringField).filter(e|!e.leading && e.length >= 50 && !e.nospace && !e.country && !e.htmlcolour && !e.language)»
+                                «val textStringFields = entity.fields.filter(StringField).filter[!leading && length >= 50 && !nospace && !country && !htmlcolour && !language]»
                                 «IF !textStringFields.empty»
                                 $descriptionFieldName = '«textStringFields.head.name.formatForCode»';
                                 «ENDIF»

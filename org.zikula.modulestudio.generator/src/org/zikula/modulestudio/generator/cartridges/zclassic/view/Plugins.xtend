@@ -64,7 +64,7 @@ class Plugins {
         if (hasListFields) {
             new GetListEntry().generate(it, fsa)
         }
-        if (getAllEntities.exists(e|e.geographical)) {
+        if (getAllEntities.exists[geographical]) {
             new FormatGeoData().generate(it, fsa)
         }
         if (hasTrees) {
@@ -83,17 +83,17 @@ class Plugins {
         if (hasCountryFields) {
             new CountrySelector().generate(it, fsa)
         }
-        if (getAllEntities.exists(e|e.geographical)) {
+        if (getAllEntities.exists[geographical]) {
             new GeoInput().generate(it, fsa)
         }
-        val hasRelations = (!models.map(e|e.relations).flatten.toList.empty)
+        val hasRelations = (!models.map[relations].flatten.toList.empty)
         if (hasTrees || hasRelations) {
             new AbstractObjectSelector().generate(it, fsa)
         }
         if (hasTrees) {
             new TreeSelector().generate(it, fsa)
         }
-        if (!models.map(e|e.relations).flatten.toList.empty) {
+        if (hasRelations) {
             new RelationSelectorList().generate(it, fsa)
             new RelationSelectorAutoComplete().generate(it, fsa)
         }

@@ -2,7 +2,6 @@ package org.zikula.modulestudio.generator.extensions
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AdminController
-import de.guite.modulestudio.metamodel.modulestudio.AjaxController
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.Controller
 import de.guite.modulestudio.metamodel.modulestudio.Controllers
@@ -97,7 +96,7 @@ class ControllerExtensions {
      * Returns a list of all edit actions in the given application.
      */
     def getEditActions(Application it) {
-        getAllControllers.map(e|e.actions).flatten.filter(EditAction)
+        getAllControllers.map[actions].flatten.filter(EditAction)
     }
 
     /**
@@ -116,36 +115,6 @@ class ControllerExtensions {
     def getAdminAndUserControllers(Application it) {
         var allControllers = getAllControllers
         allControllers.filter(AdminController) + allControllers.filter(UserController)
-    }
-
-    /**
-     * Checks whether a given controller is instance of AjaxController.
-     */
-    def isAjaxController(Controller it) {
-        switch it {
-            AjaxController: true
-            default: false
-        }
-    }
-
-    /**
-     * Checks whether a given controller is instance of AdminController.
-     */
-    def isAdminController(Controller it) {
-        switch it {
-            AdminController: true
-            default: false
-        }
-    }
-
-    /**
-     * Checks whether a given controller is instance of UserController.
-     */
-    def isUserController(Controller it) {
-        switch it {
-            UserController: true
-            default: false
-        }
     }
 
     /**

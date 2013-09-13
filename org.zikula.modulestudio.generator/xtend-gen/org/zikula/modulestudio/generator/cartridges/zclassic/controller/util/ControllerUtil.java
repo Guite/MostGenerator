@@ -875,7 +875,7 @@ public class ControllerUtil {
     _builder.append("htaccessTemplate\';");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
-    _builder.append("if (!file_exists($htaccessFilePath) && file_exists($htaccessFileTemplate)) {");
+    _builder.append("if (!file_exists[$htaccessFilePath) && file_exists[$htaccessFileTemplate)) {");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("$extensions = str_replace(\',\', \'|\', str_replace(\' \', \'\', $allowedExtensions));");

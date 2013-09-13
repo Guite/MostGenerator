@@ -131,7 +131,7 @@ public class WorkflowStart {
   }
   
   /**
-   * Executes the workflow; preProcess.run() has already been called.
+   * Executes the workflow, preProcess.run() has already been called.
    */
   public void run() throws ExceptionBase {
     this.performM2T();

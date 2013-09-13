@@ -109,8 +109,8 @@ public class ViewExtensions {
         EList<Relationship> _incoming = it.getIncoming();
         Iterable<JoinRelationship> _filter = Iterables.<JoinRelationship>filter(_incoming, JoinRelationship.class);
         final Function1<JoinRelationship,Boolean> _function = new Function1<JoinRelationship,Boolean>() {
-          public Boolean apply(final JoinRelationship e) {
-            boolean _isPartOfEditForm = ViewExtensions.this.isPartOfEditForm(e, Boolean.valueOf(true));
+          public Boolean apply(final JoinRelationship it) {
+            boolean _isPartOfEditForm = ViewExtensions.this.isPartOfEditForm(it, Boolean.valueOf(true));
             return Boolean.valueOf(_isPartOfEditForm);
           }
         };
@@ -131,8 +131,8 @@ public class ViewExtensions {
         EList<Relationship> _outgoing = it.getOutgoing();
         Iterable<JoinRelationship> _filter_2 = Iterables.<JoinRelationship>filter(_outgoing, JoinRelationship.class);
         final Function1<JoinRelationship,Boolean> _function_1 = new Function1<JoinRelationship,Boolean>() {
-          public Boolean apply(final JoinRelationship e) {
-            boolean _isPartOfEditForm = ViewExtensions.this.isPartOfEditForm(e, Boolean.valueOf(false));
+          public Boolean apply(final JoinRelationship it) {
+            boolean _isPartOfEditForm = ViewExtensions.this.isPartOfEditForm(it, Boolean.valueOf(false));
             return Boolean.valueOf(_isPartOfEditForm);
           }
         };

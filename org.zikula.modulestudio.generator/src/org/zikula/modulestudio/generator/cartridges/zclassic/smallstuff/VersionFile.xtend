@@ -209,7 +209,7 @@ class VersionFile {
 
     def private permissionSchema(Entity it, String appName) '''
         '«appName»:«name.formatForCodeCapital»:' => '«name.formatForCodeCapital» ID::',
-        «val incomingRelations = getIncomingJoinRelations/*.filter(e|e.source.container == it.container)*/»
+        «val incomingRelations = getIncomingJoinRelations/*.filter[e|e.source.container == it.container]*/»
         «IF !incomingRelations.empty»
             «FOR relation : incomingRelations»«relation.permissionSchema(appName)»«ENDFOR»
         «ENDIF»

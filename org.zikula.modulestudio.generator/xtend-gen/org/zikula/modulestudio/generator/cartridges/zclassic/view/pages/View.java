@@ -622,8 +622,8 @@ public class View {
     EList<Relationship> _incoming = it.getIncoming();
     Iterable<OneToManyRelationship> _filter = Iterables.<OneToManyRelationship>filter(_incoming, OneToManyRelationship.class);
     final Function1<OneToManyRelationship,Boolean> _function = new Function1<OneToManyRelationship,Boolean>() {
-      public Boolean apply(final OneToManyRelationship e) {
-        boolean _isBidirectional = e.isBidirectional();
+      public Boolean apply(final OneToManyRelationship it) {
+        boolean _isBidirectional = it.isBidirectional();
         return Boolean.valueOf(_isBidirectional);
       }
     };

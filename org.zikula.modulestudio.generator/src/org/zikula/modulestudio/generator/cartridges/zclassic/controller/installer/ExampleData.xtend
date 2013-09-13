@@ -63,7 +63,7 @@ class ExampleData {
     def private exampleRowImpl(Models it) '''
         «FOR entity : entities»«entity.truncateTable»«ENDFOR»
         «IF numExampleRows > 0»
-            «IF !entities.filter(e|e.tree != EntityTreeType::NONE).empty»
+            «IF !entities.filter[tree != EntityTreeType::NONE].empty»
                 $treeCounterRoot = 1;
             «ENDIF»
             «createExampleRows»
@@ -89,38 +89,38 @@ class ExampleData {
 
     def private initDateValues(Models it) '''
         «val fields = getModelEntityFields.filter(AbstractDateField)»
-        «IF !fields.filter(e|e.past).empty»
+        «IF !fields.filter[past].empty»
             $lastMonth = mktime(date('s'), date('H'), date('i'), date('m')-1, date('d'), date('Y'));
             $lastHour = mktime(date('s'), date('H')-1, date('i'), date('m'), date('d'), date('Y'));
         «ENDIF»
-        «IF !fields.filter(e|e.future).empty»
+        «IF !fields.filter[future].empty»
             $nextMonth = mktime(date('s'), date('H'), date('i'), date('m')+1, date('d'), date('Y'));
             $nextHour = mktime(date('s'), date('H')+1, date('i'), date('m'), date('d'), date('Y'));
         «ENDIF»
         «IF !fields.filter(DatetimeField).empty»
             $dtNow = date('Y-m-d H:i:s');
-            «IF !fields.filter(DatetimeField).filter(e|e.past).empty»
+            «IF !fields.filter(DatetimeField).filter[past].empty»
                 $dtPast = date('Y-m-d H:i:s', $lastMonth);
             «ENDIF»
-            «IF !fields.filter(DatetimeField).filter(e|e.future).empty»
+            «IF !fields.filter(DatetimeField).filter[future].empty»
                 $dtFuture = date('Y-m-d H:i:s', $nextMonth);
             «ENDIF»
         «ENDIF»
         «IF !fields.filter(DateField).empty»
             $dNow = date('Y-m-d');
-            «IF !fields.filter(DateField).filter(e|e.past).empty»
+            «IF !fields.filter(DateField).filter[past].empty»
                 $dPast = date('Y-m-d', $lastMonth);
             «ENDIF»
-            «IF !fields.filter(DateField).filter(e|e.future).empty»
+            «IF !fields.filter(DateField).filter[future].empty»
                 $dFuture = date('Y-m-d', $nextMonth);
             «ENDIF»
         «ENDIF»
         «IF !fields.filter(TimeField).empty»
             $tNow = date('H:i:s');
-            «IF !fields.filter(TimeField).filter(e|e.past).empty»
+            «IF !fields.filter(TimeField).filter[past].empty»
                 $tPast = date('H:i:s', $lastHour);
             «ENDIF»
-            «IF !fields.filter(TimeField).filter(e|e.future).empty»
+            «IF !fields.filter(TimeField).filter[future].empty»
                 $tFuture = date('H:i:s', $nextHour);
             «ENDIF»
         «ENDIF»
@@ -154,9 +154,9 @@ class ExampleData {
                 $«entityName»«number»->setRgt(«IF number == 1»«container.numExampleRows*2»«ELSE»«((number-1)*2)+1»«ENDIF»);
                 $«entityName»«number»->setRoot($treeCounterRoot);
             «ENDIF»
-            «FOR relation : outgoing.filter(OneToOneRelationship).filter(e|e.target.container.application == app)»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR» 
-            «FOR relation : outgoing.filter(ManyToOneRelationship).filter(e|e.target.container.application == app)»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR»
-            «FOR relation : incoming.filter(OneToManyRelationship).filter(e|e.bidirectional).filter(e|e.source.container.application == app)»«relation.exampleRowAssignmentIncoming(entityName, number)»«ENDFOR»
+            «FOR relation : outgoing.filter(OneToOneRelationship).filter[target.container.application == app]»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR» 
+            «FOR relation : outgoing.filter(ManyToOneRelationship).filter[target.container.application == app]»«relation.exampleRowAssignmentOutgoing(entityName, number)»«ENDFOR»
+            «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional].filter[source.container.application == app]»«relation.exampleRowAssignmentIncoming(entityName, number)»«ENDFOR»
             «IF categorisable»
                 // create category assignment
                 $«entityName»«number»->getCategories()->add(new «IF app.targets('1.3.5')»\«app.appName»_Entity_«name.formatForCodeCapital»Category«ELSE»\«app.vendor.formatForCodeCapital»\«app.name.formatForCodeCapital»Module\Entity\«name.formatForCodeCapital»CategoryEntity«ENDIF»($categoryRegistryIdsPerEntity['«name.formatForCode»'], $category, $«entityName»«number»));
@@ -222,10 +222,10 @@ class ExampleData {
 
     def private exampleRowsConstructorArguments(Entity it, Integer number) '''
         «IF isIndexByTarget»
-            «val indexRelation = incoming.filter(JoinRelationship).filter(e|e.isIndexed).head»
+            «val indexRelation = incoming.filter(JoinRelationship).filter[isIndexed].head»
             «val sourceAlias = getRelationAliasName(indexRelation, false)»
             «val indexBy = indexRelation.getIndexByField»
-            «val indexByField = getDerivedFields.findFirst(e|e.name == indexBy)»
+            «val indexByField = getDerivedFields.findFirst[name == indexBy]»
             «indexByField.exampleRowsConstructorArgument(number)», $«sourceAlias.formatForCode»«number»«exampleRowsConstructorArgumentsDefault(true, number)»
         «ELSEIF isAggregated»
             «FOR aggregator : getAggregators SEPARATOR ', '»

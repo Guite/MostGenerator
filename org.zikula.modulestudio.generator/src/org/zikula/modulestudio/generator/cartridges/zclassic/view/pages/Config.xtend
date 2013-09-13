@@ -67,7 +67,7 @@ class Config {
             «ENDIF»
         </div>
         {include file='«IF targets('1.3.5')»«configController.formatForDB»«ELSE»«configController.formatForDB.toFirstUpper»«ENDIF»/footer.tpl'}
-        «IF !getAllVariables.filter(e|e.documentation !== null && e.documentation != '').empty»
+        «IF !getAllVariables.filter[documentation !== null && documentation != ''].empty»
             <script type="text/javascript">
             /* <![CDATA[ */
                 document.observe('dom:loaded', function() {

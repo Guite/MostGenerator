@@ -3,6 +3,7 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.models.entity
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.AbstractDateField
 import de.guite.modulestudio.metamodel.modulestudio.AbstractIntegerField
+import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField
 import de.guite.modulestudio.metamodel.modulestudio.Application
 import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
@@ -16,7 +17,6 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelInheritanceExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import de.guite.modulestudio.metamodel.modulestudio.AbstractStringField
 
 class Extensions {
     @Inject extension FormattingExtensions = new FormattingExtensions
@@ -334,7 +334,7 @@ class Extensions {
         }
         if (hasTrees) {
             // tree closure domain object
-            for (entity : getTreeEntities.filter(e|e.tree == EntityTreeType::CLOSURE)) entity.extensionClasses(it, 'closure', fsa)
+            for (entity : getTreeEntities.filter[tree == EntityTreeType::CLOSURE]) entity.extensionClasses(it, 'closure', fsa)
         }
         if (hasMetaDataEntities) {
             for (entity : getMetaDataEntities) entity.extensionClasses(it, 'metaData', fsa)

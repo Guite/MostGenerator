@@ -243,8 +243,8 @@ public class ZclassicGenerator implements IGenerator {
     _cache.generate(it, fsa);
     EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
     final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-      public Boolean apply(final Entity e) {
-        boolean _hasAbstractStringFieldsEntity = ZclassicGenerator.this._modelExtensions.hasAbstractStringFieldsEntity(e);
+      public Boolean apply(final Entity it) {
+        boolean _hasAbstractStringFieldsEntity = ZclassicGenerator.this._modelExtensions.hasAbstractStringFieldsEntity(it);
         return Boolean.valueOf(_hasAbstractStringFieldsEntity);
       }
     };

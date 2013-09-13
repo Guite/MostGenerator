@@ -147,7 +147,7 @@ class ExternalView {
         <body>
             «IF app.getAllEntities.size > 1»
                 <p>{gt text='Switch to'}:
-                «FOR entity : app.getAllEntities.filter(e|e.name != name) SEPARATOR ' | '»
+                «FOR entity : app.getAllEntities.filter[e|e.name != name] SEPARATOR ' | '»
                     <a href="{modurl modname='«app.appName»' type='external' func='finder' objectType='«entity.name.formatForCode»' editor=$editorName}" title="{gt text='Search and select «entity.name.formatForDisplay»'}">{gt text='«entity.nameMultiple.formatForDisplayCapital»'}</a>
                 «ENDFOR»
                 </p>

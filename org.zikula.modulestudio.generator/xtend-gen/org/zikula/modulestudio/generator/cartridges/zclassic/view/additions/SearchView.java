@@ -88,8 +88,8 @@ public class SearchView {
     {
       EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
       final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          boolean _hasAbstractStringFieldsEntity = SearchView.this._modelExtensions.hasAbstractStringFieldsEntity(e);
+        public Boolean apply(final Entity it) {
+          boolean _hasAbstractStringFieldsEntity = SearchView.this._modelExtensions.hasAbstractStringFieldsEntity(it);
           return Boolean.valueOf(_hasAbstractStringFieldsEntity);
         }
       };

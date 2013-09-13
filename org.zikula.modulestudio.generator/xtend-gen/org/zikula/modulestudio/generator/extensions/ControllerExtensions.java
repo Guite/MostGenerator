@@ -5,7 +5,6 @@ import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
 import de.guite.modulestudio.metamodel.modulestudio.Action;
 import de.guite.modulestudio.metamodel.modulestudio.AdminController;
-import de.guite.modulestudio.metamodel.modulestudio.AjaxController;
 import de.guite.modulestudio.metamodel.modulestudio.Application;
 import de.guite.modulestudio.metamodel.modulestudio.Controller;
 import de.guite.modulestudio.metamodel.modulestudio.Controllers;
@@ -197,8 +196,8 @@ public class ControllerExtensions {
   public Iterable<EditAction> getEditActions(final Application it) {
     EList<Controller> _allControllers = this.getAllControllers(it);
     final Function1<Controller,EList<Action>> _function = new Function1<Controller,EList<Action>>() {
-      public EList<Action> apply(final Controller e) {
-        EList<Action> _actions = e.getActions();
+      public EList<Action> apply(final Controller it) {
+        EList<Action> _actions = it.getActions();
         return _actions;
       }
     };
@@ -241,63 +240,6 @@ public class ControllerExtensions {
       _xblockexpression = (_plus);
     }
     return _xblockexpression;
-  }
-  
-  /**
-   * Checks whether a given controller is instance of AjaxController.
-   */
-  public boolean isAjaxController(final Controller it) {
-    boolean _switchResult = false;
-    boolean _matched = false;
-    if (!_matched) {
-      if (it instanceof AjaxController) {
-        final AjaxController _ajaxController = (AjaxController)it;
-        _matched=true;
-        _switchResult = true;
-      }
-    }
-    if (!_matched) {
-      _switchResult = false;
-    }
-    return _switchResult;
-  }
-  
-  /**
-   * Checks whether a given controller is instance of AdminController.
-   */
-  public boolean isAdminController(final Controller it) {
-    boolean _switchResult = false;
-    boolean _matched = false;
-    if (!_matched) {
-      if (it instanceof AdminController) {
-        final AdminController _adminController = (AdminController)it;
-        _matched=true;
-        _switchResult = true;
-      }
-    }
-    if (!_matched) {
-      _switchResult = false;
-    }
-    return _switchResult;
-  }
-  
-  /**
-   * Checks whether a given controller is instance of UserController.
-   */
-  public boolean isUserController(final Controller it) {
-    boolean _switchResult = false;
-    boolean _matched = false;
-    if (!_matched) {
-      if (it instanceof UserController) {
-        final UserController _userController = (UserController)it;
-        _matched=true;
-        _switchResult = true;
-      }
-    }
-    if (!_matched) {
-      _switchResult = false;
-    }
-    return _switchResult;
   }
   
   /**

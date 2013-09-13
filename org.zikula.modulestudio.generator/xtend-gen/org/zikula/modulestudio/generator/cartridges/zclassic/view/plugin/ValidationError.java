@@ -224,13 +224,12 @@ public class ValidationError {
     {
       EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);
       final Function1<Entity,Boolean> _function = new Function1<Entity,Boolean>() {
-        public Boolean apply(final Entity e) {
-          Iterable<DerivedField> _uniqueDerivedFields = ValidationError.this._modelExtensions.getUniqueDerivedFields(e);
+        public Boolean apply(final Entity it) {
+          Iterable<DerivedField> _uniqueDerivedFields = ValidationError.this._modelExtensions.getUniqueDerivedFields(it);
           final Function1<DerivedField,Boolean> _function = new Function1<DerivedField,Boolean>() {
-            public Boolean apply(final DerivedField f) {
-              boolean _isPrimaryKey = f.isPrimaryKey();
-              boolean _not = (!_isPrimaryKey);
-              return Boolean.valueOf(_not);
+            public Boolean apply(final DerivedField it) {
+              boolean _isPrimaryKey = it.isPrimaryKey();
+              return Boolean.valueOf(_isPrimaryKey);
             }
           };
           Iterable<DerivedField> _filter = IterableExtensions.<DerivedField>filter(_uniqueDerivedFields, _function);
@@ -255,7 +254,7 @@ public class ValidationError {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("if (array_key_exists(\'assign\', $params)) {");
+    _builder.append("if (array_key_exists[\'assign\', $params)) {");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("$view->assign($params[\'assign\'], $message);");

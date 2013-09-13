@@ -228,7 +228,7 @@ class ControllerAction {
     }
 
     def private dispatch actionImplBody(ViewAction it) '''
-        «val hasView = !controller.isAjaxController»
+        «val hasView = !(controller instanceof AjaxController)»
         «IF app.targets('1.3.5')»
             $entityClass = $this->name . '_Entity_' . ucwords($objectType);
         «ELSE»
@@ -265,7 +265,7 @@ class ControllerAction {
         // convenience vars to make code clearer
         $currentUrlArgs = array('ot' => $objectType);
 
-        «IF controller.isAjaxController»
+        «IF controller instanceof AjaxController»
             $where = (isset($args['where']) && !empty($args['where'])) ? $args['where'] : $this->request->query->filter('where', '');
             $where = str_replace('"', '', $where);
         «ELSE»
@@ -701,7 +701,7 @@ class ControllerAction {
             /** TODO: custom logic */
         «ENDIF»
 
-        «IF controller.isAjaxController»
+        «IF controller instanceof AjaxController»
             return new «IF app.targets('1.3.5')»Zikula_Response_Ajax«ELSE»AjaxResponse«ENDIF»(array('result' => true));
         «ELSE»
             // return template

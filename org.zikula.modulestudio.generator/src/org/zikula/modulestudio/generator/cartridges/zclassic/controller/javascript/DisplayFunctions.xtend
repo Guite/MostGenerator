@@ -2,7 +2,9 @@ package org.zikula.modulestudio.generator.cartridges.zclassic.controller.javascr
 
 import com.google.inject.Inject
 import de.guite.modulestudio.metamodel.modulestudio.Application
+import de.guite.modulestudio.metamodel.modulestudio.DerivedField
 import de.guite.modulestudio.metamodel.modulestudio.Entity
+import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.extensions.ControllerExtensions
 import org.zikula.modulestudio.generator.extensions.FormattingExtensions
@@ -10,8 +12,6 @@ import org.zikula.modulestudio.generator.extensions.ModelExtensions
 import org.zikula.modulestudio.generator.extensions.ModelJoinExtensions
 import org.zikula.modulestudio.generator.extensions.NamingExtensions
 import org.zikula.modulestudio.generator.extensions.Utils
-import de.guite.modulestudio.metamodel.modulestudio.DerivedField
-import de.guite.modulestudio.metamodel.modulestudio.JoinRelationship
 
 class DisplayFunctions {
     @Inject extension ControllerExtensions = new ControllerExtensions
@@ -33,7 +33,7 @@ class DisplayFunctions {
         'use strict';
 
         «initItemActions»
-        «IF !getAllControllers.map(e|e.hasActions('view')).empty»
+        «IF !getAllControllers.map[hasActions('view')].empty»
 
             «initQuickNavigation»
         «ENDIF»

@@ -345,7 +345,7 @@ public class TreeJS {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("if (array_key_exists(\'assign\', $params)) {");
+    _builder.append("if (array_key_exists[\'assign\', $params)) {");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("$view->assign($params[\'assign\'], $result);");
@@ -371,8 +371,8 @@ public class TreeJS {
     {
       EList<Controller> _allControllers = this._controllerExtensions.getAllControllers(it);
       final Function1<Controller,Boolean> _function = new Function1<Controller,Boolean>() {
-        public Boolean apply(final Controller e) {
-          boolean _hasActions = TreeJS.this._controllerExtensions.hasActions(e, "edit");
+        public Boolean apply(final Controller it) {
+          boolean _hasActions = TreeJS.this._controllerExtensions.hasActions(it, "edit");
           return Boolean.valueOf(_hasActions);
         }
       };

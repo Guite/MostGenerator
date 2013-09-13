@@ -60,8 +60,8 @@ class Xml {
     def private xmlInclude(Entity it, String appName, Controller controller) '''
         {* purpose of this template: «nameMultiple.formatForDisplay» xml inclusion template in «controller.formattedName» area *}
         <«name.formatForDB»«FOR pkField : getPrimaryKeyFields» «pkField.name.formatForCode»="{$item.«pkField.name.formatForCode»}"«ENDFOR»«IF standardFields» createdon="{$item.createdDate|dateformat}" updatedon="{$item.updatedDate|dateformat}"«ENDIF»>
-            «FOR field : getDerivedFields.filter(e|e.primaryKey)»«field.displayEntry(controller)»«ENDFOR»
-            «FOR field : getDerivedFields.filter(e|!e.primaryKey && e.name != 'workflowState')»«field.displayEntry(controller)»«ENDFOR»
+            «FOR field : getDerivedFields.filter[primaryKey]»«field.displayEntry(controller)»«ENDFOR»
+            «FOR field : getDerivedFields.filter[!primaryKey && name != 'workflowState']»«field.displayEntry(controller)»«ENDFOR»
             «IF geographical»
                 «FOR geoFieldName : newArrayList('latitude', 'longitude')»
                     <«geoFieldName»>{$item.«geoFieldName»|«appName.formatForDB»FormatGeoData}</«geoFieldName»>
@@ -71,9 +71,9 @@ class Xml {
                 <deletedAt>{$item.deletedAt|dateformat:'datebrief'}</deletedAt>
             «ENDIF»
             <workflowState>{$item.workflowState|«appName.formatForDB»ObjectState:false|lower}</workflowState>
-            «FOR relation : incoming.filter(OneToManyRelationship).filter(e|e.bidirectional)»«relation.displayRelatedEntry(controller, false)»«ENDFOR»
+            «FOR relation : incoming.filter(OneToManyRelationship).filter[bidirectional]»«relation.displayRelatedEntry(controller, false)»«ENDFOR»
             «FOR relation : outgoing.filter(OneToOneRelationship)»«relation.displayRelatedEntry(controller, true)»«ENDFOR»
-            «FOR relation : incoming.filter(ManyToManyRelationship).filter(e|e.bidirectional)»«relation.displayRelatedEntries(controller, false)»«ENDFOR»
+            «FOR relation : incoming.filter(ManyToManyRelationship).filter[bidirectional]»«relation.displayRelatedEntries(controller, false)»«ENDFOR»
             «FOR relation : outgoing.filter(OneToManyRelationship)»«relation.displayRelatedEntries(controller, true)»«ENDFOR»
             «FOR relation : outgoing.filter(ManyToManyRelationship)»«relation.displayRelatedEntries(controller, true)»«ENDFOR»
         </«name.formatForDB»>

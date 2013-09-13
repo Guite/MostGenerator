@@ -104,7 +104,7 @@ class Search {
 
             $view = Zikula_View::getInstance($this->name);
 
-            «FOR entity : getAllEntities.filter(e|e.hasAbstractStringFieldsEntity)»
+            «FOR entity : getAllEntities.filter[hasAbstractStringFieldsEntity]»
                 «val fieldName = 'active_' + entity.name.formatForCode»
                 $view->assign('«fieldName»', (!isset($args['«fieldName»']) || isset($args['active']['«fieldName»'])));
             «ENDFOR»
@@ -151,7 +151,7 @@ class Search {
                 $whereArray = array();
                 $languageField = null;
                 switch ($objectType) {
-                    «FOR entity : getAllEntities.filter(e|e.hasAbstractStringFieldsEntity)»
+                    «FOR entity : getAllEntities.filter[hasAbstractStringFieldsEntity]»
                         case '«entity.name.formatForCode»':
                             «FOR field : entity.getAbstractStringFieldsEntity»
                                 $whereArray[] = 'tbl.«field.name.formatForCode»';
@@ -181,7 +181,7 @@ class Search {
                 $idFields = ModUtil::apiFunc($this->name, 'selection', 'getIdFields', array('ot' => $objectType));
                 $titleField = $repository->getTitleFieldName();
                 $descriptionField = $repository->getDescriptionFieldName();
-                «val hasUserDisplay = !getAllUserControllers.filter(e|e.hasActions('display')).empty»
+                «val hasUserDisplay = !getAllUserControllers.filter[hasActions('display')].empty»
                 foreach ($entities as $entity) {
                     «IF hasUserDisplay»
                         $urlArgs = array('ot' => $objectType);
@@ -256,7 +256,7 @@ class Search {
          */
         public function search_check(array $args = array())
         {
-            «val hasUserDisplay = !getAllUserControllers.filter(e|e.hasActions('display')).empty»
+            «val hasUserDisplay = !getAllUserControllers.filter[hasActions('display')].empty»
             «IF hasUserDisplay»
                 $datarow = &$args['datarow'];
                 $urlArgs = unserialize($datarow['extra']);

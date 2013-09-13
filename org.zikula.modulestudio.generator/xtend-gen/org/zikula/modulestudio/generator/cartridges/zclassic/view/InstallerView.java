@@ -169,8 +169,8 @@ public class InstallerView {
         {
           EList<Models> _models = it.getModels();
           final Function1<Models,EList<Relationship>> _function = new Function1<Models,EList<Relationship>>() {
-            public EList<Relationship> apply(final Models e) {
-              EList<Relationship> _relations = e.getRelations();
+            public EList<Relationship> apply(final Models it) {
+              EList<Relationship> _relations = it.getRelations();
               return _relations;
             }
           };
@@ -315,13 +315,13 @@ public class InstallerView {
     {
       EList<Controller> _allControllers = this._controllerExtensions.getAllControllers(it);
       final Function1<Controller,Boolean> _function_1 = new Function1<Controller,Boolean>() {
-        public Boolean apply(final Controller e) {
+        public Boolean apply(final Controller it) {
           boolean _or = false;
-          boolean _hasActions = InstallerView.this._controllerExtensions.hasActions(e, "view");
+          boolean _hasActions = InstallerView.this._controllerExtensions.hasActions(it, "view");
           if (_hasActions) {
             _or = true;
           } else {
-            boolean _hasActions_1 = InstallerView.this._controllerExtensions.hasActions(e, "display");
+            boolean _hasActions_1 = InstallerView.this._controllerExtensions.hasActions(it, "display");
             _or = (_hasActions || _hasActions_1);
           }
           return Boolean.valueOf(_or);
@@ -340,8 +340,8 @@ public class InstallerView {
         {
           EList<Controller> _allControllers_1 = this._controllerExtensions.getAllControllers(it);
           final Function1<Controller,Boolean> _function_2 = new Function1<Controller,Boolean>() {
-            public Boolean apply(final Controller e) {
-              boolean _hasActions = InstallerView.this._controllerExtensions.hasActions(e, "view");
+            public Boolean apply(final Controller it) {
+              boolean _hasActions = InstallerView.this._controllerExtensions.hasActions(it, "view");
               return Boolean.valueOf(_hasActions);
             }
           };
@@ -355,8 +355,8 @@ public class InstallerView {
         {
           EList<Controller> _allControllers_2 = this._controllerExtensions.getAllControllers(it);
           final Function1<Controller,Boolean> _function_3 = new Function1<Controller,Boolean>() {
-            public Boolean apply(final Controller e) {
-              boolean _hasActions = InstallerView.this._controllerExtensions.hasActions(e, "display");
+            public Boolean apply(final Controller it) {
+              boolean _hasActions = InstallerView.this._controllerExtensions.hasActions(it, "display");
               return Boolean.valueOf(_hasActions);
             }
           };
