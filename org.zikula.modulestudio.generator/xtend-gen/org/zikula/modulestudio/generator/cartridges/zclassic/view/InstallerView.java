@@ -278,7 +278,7 @@ public class InstallerView {
         {
           boolean _hasLoggable_1 = this._modelBehaviourExtensions.hasLoggable(it);
           if (_hasLoggable_1) {
-            _builder.append("<dd>{gt text=\'Entity changes can be logged automatically by creating corresponding version log entries.\'}</dd>");
+            _builder.append("<dd>{gt text=\'Entity changes can be tracked automatically by creating corresponding version log entries.\'}</dd>");
             _builder.newLine();
           }
         }

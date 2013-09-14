@@ -58,6 +58,8 @@ class Extensions {
      * Column annotations.
      */
     def private columnExtensionsDefault(DerivedField it) '''
+        «IF entity.loggable» * @Gedmo\Versioned
+        «ENDIF»
         «IF translatable» * @Gedmo\Translatable
         «ENDIF»
         «IF it instanceof AbstractStringField && (it as AbstractStringField).sluggablePosition > 0 && entity.container.application.targets('1.3.5')» * @Gedmo\Sluggable(slugField="slug", position=«(it as AbstractStringField).sluggablePosition»)
@@ -94,6 +96,9 @@ class Extensions {
             /**
              * The coordinate's latitude part.
              *
+             «IF loggable»
+                 * @Gedmo\Versioned
+             «ENDIF»
              * @ORM\Column(type="decimal", precision=10, scale=7)
              * @var decimal $latitude.
              */
@@ -102,6 +107,9 @@ class Extensions {
             /**
              * The coordinate's longitude part.
              *
+             «IF loggable»
+                 * @Gedmo\Versioned
+             «ENDIF»
              * @ORM\Column(type="decimal", precision=10, scale=7)
              * @var decimal $longitude.
              */
@@ -112,6 +120,9 @@ class Extensions {
             /**
              * Date of when this item has been marked as deleted.
              *
+             «IF loggable»
+                 * @Gedmo\Versioned
+             «ENDIF»
              * @ORM\Column(type="datetime", nullable=true)
              * @var datetime $deletedAt.
              */
@@ -120,6 +131,9 @@ class Extensions {
         «IF hasSluggableFields»
 
             /**
+             «IF loggable»
+                 * @Gedmo\Versioned
+             «ENDIF»
              «IF hasTranslatableSlug»
                  * @Gedmo\Translatable
              «ENDIF»
@@ -139,6 +153,9 @@ class Extensions {
              * Field for storing the locale of this entity.
              * Overrides the locale set in translationListener (as pointed out in https://github.com/l3pp4rd/DoctrineExtensions/issues/130#issuecomment-1790206 ).
              *
+             «IF loggable»
+                 * @Gedmo\Versioned
+             «ENDIF»
              * @Gedmo\Locale«/*the same as @Gedmo\Language*/»
              * @var string $locale.
              */
@@ -147,6 +164,9 @@ class Extensions {
         «IF tree != EntityTreeType::NONE»
 
             /**
+             «IF loggable»
+                 * @Gedmo\Versioned
+             «ENDIF»
              * @Gedmo\TreeLeft
              * @ORM\Column(type="integer")
              * @var integer $lft.
@@ -154,6 +174,9 @@ class Extensions {
             protected $lft;
 
             /**
+             «IF loggable»
+                 * @Gedmo\Versioned
+             «ENDIF»
              * @Gedmo\TreeLevel
              * @ORM\Column(type="integer")
              * @var integer $lvl.
@@ -161,6 +184,9 @@ class Extensions {
             protected $lvl;
 
             /**
+             «IF loggable»
+                 * @Gedmo\Versioned
+             «ENDIF»
              * @Gedmo\TreeRight
              * @ORM\Column(type="integer")
              * @var integer $rgt.
@@ -168,6 +194,9 @@ class Extensions {
             protected $rgt;
 
             /**
+             «IF loggable»
+                 * @Gedmo\Versioned
+             «ENDIF»
              * @Gedmo\TreeRoot
              * @ORM\Column(type="integer", nullable=true)
              * @var integer $root.
@@ -233,6 +262,9 @@ class Extensions {
             protected $createdUserId;
 
             /**
+             «IF loggable»
+                 * @Gedmo\Versioned
+             «ENDIF»
              * @ORM\Column(type="integer")
              * @ZK\StandardFields(type="userid", on="update")
              * @var integer $updatedUserId.
@@ -247,6 +279,9 @@ class Extensions {
             protected $createdDate;
 
             /**
+             «IF loggable»
+                 * @Gedmo\Versioned
+             «ENDIF»
              * @ORM\Column(type="datetime")
              * @Gedmo\Timestampable(on="update")
              * @var datetime $updatedDate.

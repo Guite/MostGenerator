@@ -212,6 +212,14 @@ public class Extensions {
   private CharSequence columnExtensionsDefault(final DerivedField it) {
     StringConcatenation _builder = new StringConcatenation();
     {
+      Entity _entity = it.getEntity();
+      boolean _isLoggable = _entity.isLoggable();
+      if (_isLoggable) {
+        _builder.append(" * @Gedmo\\Versioned");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    {
       boolean _isTranslatable = it.isTranslatable();
       if (_isTranslatable) {
         _builder.append(" * @Gedmo\\Translatable");
@@ -231,8 +239,8 @@ public class Extensions {
       if (!_and_1) {
         _and = false;
       } else {
-        Entity _entity = it.getEntity();
-        Models _container = _entity.getContainer();
+        Entity _entity_1 = it.getEntity();
+        Models _container = _entity_1.getContainer();
         Application _application = _container.getApplication();
         boolean _targets = this._utils.targets(_application, "1.3.5");
         _and = (_and_1 && _targets);
@@ -363,6 +371,14 @@ public class Extensions {
         _builder.append(" ");
         _builder.append("*");
         _builder.newLine();
+        {
+          boolean _isLoggable = it.isLoggable();
+          if (_isLoggable) {
+            _builder.append(" ");
+            _builder.append("* @Gedmo\\Versioned");
+            _builder.newLine();
+          }
+        }
         _builder.append(" ");
         _builder.append("* @ORM\\Column(type=\"decimal\", precision=10, scale=7)");
         _builder.newLine();
@@ -383,6 +399,14 @@ public class Extensions {
         _builder.append(" ");
         _builder.append("*");
         _builder.newLine();
+        {
+          boolean _isLoggable_1 = it.isLoggable();
+          if (_isLoggable_1) {
+            _builder.append(" ");
+            _builder.append("* @Gedmo\\Versioned");
+            _builder.newLine();
+          }
+        }
         _builder.append(" ");
         _builder.append("* @ORM\\Column(type=\"decimal\", precision=10, scale=7)");
         _builder.newLine();
@@ -408,6 +432,14 @@ public class Extensions {
         _builder.append(" ");
         _builder.append("*");
         _builder.newLine();
+        {
+          boolean _isLoggable_2 = it.isLoggable();
+          if (_isLoggable_2) {
+            _builder.append(" ");
+            _builder.append("* @Gedmo\\Versioned");
+            _builder.newLine();
+          }
+        }
         _builder.append(" ");
         _builder.append("* @ORM\\Column(type=\"datetime\", nullable=true)");
         _builder.newLine();
@@ -427,6 +459,14 @@ public class Extensions {
         _builder.newLine();
         _builder.append("/**");
         _builder.newLine();
+        {
+          boolean _isLoggable_3 = it.isLoggable();
+          if (_isLoggable_3) {
+            _builder.append(" ");
+            _builder.append("* @Gedmo\\Versioned");
+            _builder.newLine();
+          }
+        }
         {
           boolean _hasTranslatableSlug = this._modelBehaviourExtensions.hasTranslatableSlug(it);
           if (_hasTranslatableSlug) {
@@ -548,6 +588,14 @@ public class Extensions {
         _builder.append(" ");
         _builder.append("*");
         _builder.newLine();
+        {
+          boolean _isLoggable_4 = it.isLoggable();
+          if (_isLoggable_4) {
+            _builder.append(" ");
+            _builder.append("* @Gedmo\\Versioned");
+            _builder.newLine();
+          }
+        }
         _builder.append(" ");
         _builder.append("* @Gedmo\\Locale");
         _builder.newLine();
@@ -568,6 +616,14 @@ public class Extensions {
         _builder.newLine();
         _builder.append("/**");
         _builder.newLine();
+        {
+          boolean _isLoggable_5 = it.isLoggable();
+          if (_isLoggable_5) {
+            _builder.append(" ");
+            _builder.append("* @Gedmo\\Versioned");
+            _builder.newLine();
+          }
+        }
         _builder.append(" ");
         _builder.append("* @Gedmo\\TreeLeft");
         _builder.newLine();
@@ -585,6 +641,14 @@ public class Extensions {
         _builder.newLine();
         _builder.append("/**");
         _builder.newLine();
+        {
+          boolean _isLoggable_6 = it.isLoggable();
+          if (_isLoggable_6) {
+            _builder.append(" ");
+            _builder.append("* @Gedmo\\Versioned");
+            _builder.newLine();
+          }
+        }
         _builder.append(" ");
         _builder.append("* @Gedmo\\TreeLevel");
         _builder.newLine();
@@ -602,6 +666,14 @@ public class Extensions {
         _builder.newLine();
         _builder.append("/**");
         _builder.newLine();
+        {
+          boolean _isLoggable_7 = it.isLoggable();
+          if (_isLoggable_7) {
+            _builder.append(" ");
+            _builder.append("* @Gedmo\\Versioned");
+            _builder.newLine();
+          }
+        }
         _builder.append(" ");
         _builder.append("* @Gedmo\\TreeRight");
         _builder.newLine();
@@ -619,6 +691,14 @@ public class Extensions {
         _builder.newLine();
         _builder.append("/**");
         _builder.newLine();
+        {
+          boolean _isLoggable_8 = it.isLoggable();
+          if (_isLoggable_8) {
+            _builder.append(" ");
+            _builder.append("* @Gedmo\\Versioned");
+            _builder.newLine();
+          }
+        }
         _builder.append(" ");
         _builder.append("* @Gedmo\\TreeRoot");
         _builder.newLine();
@@ -921,6 +1001,14 @@ public class Extensions {
         _builder.newLine();
         _builder.append("/**");
         _builder.newLine();
+        {
+          boolean _isLoggable_9 = it.isLoggable();
+          if (_isLoggable_9) {
+            _builder.append(" ");
+            _builder.append("* @Gedmo\\Versioned");
+            _builder.newLine();
+          }
+        }
         _builder.append(" ");
         _builder.append("* @ORM\\Column(type=\"integer\")");
         _builder.newLine();
@@ -955,6 +1043,14 @@ public class Extensions {
         _builder.newLine();
         _builder.append("/**");
         _builder.newLine();
+        {
+          boolean _isLoggable_10 = it.isLoggable();
+          if (_isLoggable_10) {
+            _builder.append(" ");
+            _builder.append("* @Gedmo\\Versioned");
+            _builder.newLine();
+          }
+        }
         _builder.append(" ");
         _builder.append("* @ORM\\Column(type=\"datetime\")");
         _builder.newLine();

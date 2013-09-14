@@ -52,7 +52,7 @@ class InstallerView {
             <dd>{gt text='Coordinates handling including html5 geolocation support.'}</dd>
         «ENDIF»
         «IF hasLoggable»
-            <dd>{gt text='Entity changes can be logged automatically by creating corresponding version log entries.'}</dd>
+            <dd>{gt text='Entity changes can be tracked automatically by creating corresponding version log entries.'}</dd>
         «ENDIF»
         «IF hasMetaDataEntities»
             <dd>{gt text='Automatic handling of attached meta data.'}</dd>
