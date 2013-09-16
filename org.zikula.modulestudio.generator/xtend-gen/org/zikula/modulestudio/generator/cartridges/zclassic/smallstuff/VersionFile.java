@@ -701,7 +701,8 @@ public class VersionFile {
         _builder.append("      ");
         _builder.append("\'reason\'     => \'");
         String _documentation = it.getDocumentation();
-        _builder.append(_documentation, "      ");
+        String _replaceAll = _documentation.replaceAll("\'", "");
+        _builder.append(_replaceAll, "      ");
         _builder.append("\'");
       }
     }

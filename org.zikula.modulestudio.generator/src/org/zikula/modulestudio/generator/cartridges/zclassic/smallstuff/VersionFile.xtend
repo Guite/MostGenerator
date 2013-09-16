@@ -196,7 +196,7 @@ class VersionFile {
               'minversion' => '«minVersion»',
               'maxversion' => '«maxVersion»',
               'status'     => ModUtil::DEPENDENCY_«appDependencyType»«IF !app.targets('1.3.5')»,
-              'reason'     => '«documentation»'«ENDIF»)
+              'reason'     => '«documentation.replaceAll("'", "")»'«ENDIF»)
     '''
 
     def private appDependencyType(ReferredApplication it) {
