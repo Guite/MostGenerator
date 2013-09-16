@@ -69,9 +69,17 @@ class TreeFunctions {
                     contextMenu.addItem({
                         label: '<img src="' + Zikula.Config.baseURL + 'images/icons/extrasmall/kview.png" width="16" height="16" alt="' + Zikula.__('Display', 'module_«appName.formatForDB»_js') + '" /> '
                              + Zikula.__('Display', 'module_«appName.formatForDB»_js'),
-                        callback: function () {
+                        callback: function (selectedMenuItem, isRightClick) {
+                            var url;
+
                             currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                            window.location = Zikula.Config.baseURL + 'index.php?module=«appName»&type=' + controller + '&func=display&ot=' + objectType + '&id=' + currentNodeId;
+                            url = Zikula.Config.baseURL + 'index.php?module=«appName»&type=' + controller + '&func=display&ot=' + objectType + '&id=' + currentNodeId;
+
+                            if (isRightClick) {
+                                window.open(url);
+                            } else {
+                                window.location = url;
+                            }
                         }
                     });
                 }
@@ -79,9 +87,17 @@ class TreeFunctions {
                     contextMenu.addItem({
                         label: '<img src="' + Zikula.Config.baseURL + 'images/icons/extrasmall/edit.png" width="16" height="16" alt="' + Zikula.__('Edit', 'module_«appName.formatForDB»_js') + '" /> '
                              + Zikula.__('Edit', 'module_«appName.formatForDB»_js'),
-                        callback: function () {
+                        callback: function (selectedMenuItem, isRightClick) {
+                            var url;
+
                             currentNodeId = liRef.id.replace('tree' + rootId + 'node_', '');
-                            window.location = Zikula.Config.baseURL + 'index.php?module=«appName»&type=' + controller + '&func=edit&ot=' + objectType + '&id=' + currentNodeId;
+                            url = Zikula.Config.baseURL + 'index.php?module=«appName»&type=' + controller + '&func=edit&ot=' + objectType + '&id=' + currentNodeId;
+
+                            if (isRightClick) {
+                                window.open(url);
+                            } else {
+                                window.location = url;
+                            }
                         }
                     });
                 }
