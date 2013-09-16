@@ -1307,6 +1307,15 @@ public class FormHandler {
     _builder.append("        ");
     _builder.append("$entity = $this->initEntityForEdit();");
     _builder.newLine();
+    _builder.append("        ");
+    _builder.append("if (!is_object($entity)) {");
+    _builder.newLine();
+    _builder.append("            ");
+    _builder.append("return LogUtil::registerError($this->__(\'No such item.\'));");
+    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("}");
+    _builder.newLine();
     _builder.newLine();
     _builder.append("        ");
     _builder.append("if ($this->hasPageLockSupport === true && ModUtil::available(\'PageLock\')) {");

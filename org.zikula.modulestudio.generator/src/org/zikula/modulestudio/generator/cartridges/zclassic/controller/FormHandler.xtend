@@ -437,6 +437,9 @@ class FormHandler {
                 }
 
                 $entity = $this->initEntityForEdit();
+                if (!is_object($entity)) {
+                    return LogUtil::registerError($this->__('No such item.'));
+                }
 
                 if ($this->hasPageLockSupport === true && ModUtil::available('PageLock')) {
                     // try to guarantee that only one person at a time can be editing this entity
