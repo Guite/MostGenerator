@@ -226,7 +226,7 @@ public class CountrySelector {
     _builder.append("$isFiltered = false;");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("if (array_key_exists[\'validCountryList\', $params)) {");
+    _builder.append("if (array_key_exists(\'validCountryList\', $params)) {");
     _builder.newLine();
     _builder.append("            ");
     _builder.append("if (is_array($params[\'validCountryList\']) && count($params[\'validCountryList\']) > 0) {");

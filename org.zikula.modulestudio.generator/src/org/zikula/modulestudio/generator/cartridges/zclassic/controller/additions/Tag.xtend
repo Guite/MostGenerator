@@ -108,7 +108,7 @@ class Tag {
                 $this->setObjectDate('');
             }
 
-            if (method_exists[$entity, 'getCreatedUserId')) {
+            if (method_exists($entity, 'getCreatedUserId')) {
                 $this->setObjectAuthor(UserUtil::getVar('uname', $entity['createdUserId']));
             } else {
                 $this->setObjectAuthor('');

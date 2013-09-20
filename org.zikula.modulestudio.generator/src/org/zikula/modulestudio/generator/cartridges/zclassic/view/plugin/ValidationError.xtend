@@ -81,7 +81,7 @@ class ValidationError {
 
             $message = '<div id="advice-' . $class . '-' . $id . '" class="validation-advice z-formnote" style="display: none">' . $message . '</div>';
 
-            if (array_key_exists['assign', $params)) {
+            if (array_key_exists('assign', $params)) {
                 $view->assign($params['assign'], $message);
 
                 return;

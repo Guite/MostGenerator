@@ -780,7 +780,8 @@ public class ModelJoinExtensions {
       public Boolean apply(final DerivedField it) {
         Iterable<OneToManyRelationship> _aggregatingRelationships = ModelJoinExtensions.this.getAggregatingRelationships(it);
         boolean _isEmpty = IterableExtensions.isEmpty(_aggregatingRelationships);
-        return Boolean.valueOf(_isEmpty);
+        boolean _not = (!_isEmpty);
+        return Boolean.valueOf(_not);
       }
     };
     Iterable<DerivedField> _filter = IterableExtensions.<DerivedField>filter(_derivedFields, _function);

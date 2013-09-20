@@ -1077,7 +1077,7 @@ class FormHandler {
         protected function writeRelationDataToEntity_rec($entity, $entityData, $plugins)
         {
             foreach ($plugins as $plugin) {
-                if ($plugin instanceof «IF app.targets('1.3.5')»«app.appName»_Form_Plugin_AbstractObjectSelector«ELSE»AbstractObjectSelector«ENDIF» && method_exists[$plugin, 'assignRelatedItemsToEntity')) {
+                if ($plugin instanceof «IF app.targets('1.3.5')»«app.appName»_Form_Plugin_AbstractObjectSelector«ELSE»AbstractObjectSelector«ENDIF» && method_exists($plugin, 'assignRelatedItemsToEntity')) {
                     $entityData = $plugin->assignRelatedItemsToEntity($entity, $entityData);
                 }
                 $entityData = $this->writeRelationDataToEntity_rec($entity, $entityData, $plugin->plugins);
@@ -1102,7 +1102,7 @@ class FormHandler {
         protected function persistRelationData_rec($plugins)
         {
             foreach ($plugins as $plugin) {
-                if ($plugin instanceof «IF app.targets('1.3.5')»«app.appName»_Form_Plugin_AbstractObjectSelector«ELSE»AbstractObjectSelector«ENDIF» && method_exists[$plugin, 'persistRelatedItems')) {
+                if ($plugin instanceof «IF app.targets('1.3.5')»«app.appName»_Form_Plugin_AbstractObjectSelector«ELSE»AbstractObjectSelector«ENDIF» && method_exists($plugin, 'persistRelatedItems')) {
                     $plugin->persistRelatedItems();
                 }
                 $this->persistRelationData_rec($plugin->plugins);

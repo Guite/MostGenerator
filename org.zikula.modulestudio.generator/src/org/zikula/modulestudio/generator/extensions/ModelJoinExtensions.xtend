@@ -318,7 +318,7 @@ class ModelJoinExtensions {
      * Returns a list of all incoming relationships aggregating any fields of this entity. 
      */
     def getAggregators(Entity it) {
-        getDerivedFields.filter[getAggregatingRelationships.empty]
+        getDerivedFields.filter[!getAggregatingRelationships.empty]
     }
 
     /**

@@ -994,7 +994,7 @@ public class AbstractObjectSelector {
     _builder.append("if ($this->selectionMode == \'single\') {");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("if ($value instanceof Zikula_EntityAccess && method_exists[$value, \'createCompositeIdentifier\')) {");
+    _builder.append("if ($value instanceof Zikula_EntityAccess && method_exists($value, \'createCompositeIdentifier\')) {");
     _builder.newLine();
     _builder.append("            ");
     _builder.append("$newValue = $value->createCompositeIdentifier();");
@@ -1015,7 +1015,7 @@ public class AbstractObjectSelector {
     _builder.append("foreach ($value as $entity) {");
     _builder.newLine();
     _builder.append("                ");
-    _builder.append("if ($entity instanceof Zikula_EntityAccess && method_exists[$entity, \'createCompositeIdentifier\')) {");
+    _builder.append("if ($entity instanceof Zikula_EntityAccess && method_exists($entity, \'createCompositeIdentifier\')) {");
     _builder.newLine();
     _builder.append("                    ");
     _builder.append("$newValue[] = $entity->createCompositeIdentifier();");
@@ -1408,7 +1408,7 @@ public class AbstractObjectSelector {
     _builder.append("$inverseAddMethod = \'add\' . ucwords($this->aliasReverse);");
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("if (method_exists[$relatedItem, $inverseAddMethod)) {");
+    _builder.append("if (method_exists($relatedItem, $inverseAddMethod)) {");
     _builder.newLine();
     _builder.append("                ");
     _builder.append("// call the inverse method which calls the method in $entity");

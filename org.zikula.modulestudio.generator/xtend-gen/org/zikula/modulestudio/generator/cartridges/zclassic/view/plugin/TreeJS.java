@@ -345,7 +345,7 @@ public class TreeJS {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("if (array_key_exists[\'assign\', $params)) {");
+    _builder.append("if (array_key_exists(\'assign\', $params)) {");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("$view->assign($params[\'assign\'], $result);");

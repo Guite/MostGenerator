@@ -3163,7 +3163,7 @@ public class FormHandler {
         _builder.append("AbstractObjectSelector");
       }
     }
-    _builder.append(" && method_exists[$plugin, \'assignRelatedItemsToEntity\')) {");
+    _builder.append(" && method_exists($plugin, \'assignRelatedItemsToEntity\')) {");
     _builder.newLineIfNotEmpty();
     _builder.append("            ");
     _builder.append("$entityData = $plugin->assignRelatedItemsToEntity($entity, $entityData);");
@@ -3235,7 +3235,7 @@ public class FormHandler {
         _builder.append("AbstractObjectSelector");
       }
     }
-    _builder.append(" && method_exists[$plugin, \'persistRelatedItems\')) {");
+    _builder.append(" && method_exists($plugin, \'persistRelatedItems\')) {");
     _builder.newLineIfNotEmpty();
     _builder.append("            ");
     _builder.append("$plugin->persistRelatedItems();");
