@@ -794,7 +794,7 @@ public class Validator {
     _builder.append("{");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("$languageMap = ZLanguage::languagemap[);");
+    _builder.append("$languageMap = ZLanguage::languagemap();");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("$result = in_array($this->entity[$fieldName], array_keys($languageMap));        ");
@@ -844,7 +844,7 @@ public class Validator {
     _builder.append("{");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("$countryMap = ZLanguage::countrymap[);");
+    _builder.append("$countryMap = ZLanguage::countrymap();");
     _builder.newLine();
     _builder.newLine();
     _builder.append("        ");

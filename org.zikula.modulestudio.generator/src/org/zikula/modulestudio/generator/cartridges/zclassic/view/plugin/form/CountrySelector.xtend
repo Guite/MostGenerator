@@ -94,7 +94,7 @@ class CountrySelector {
                     $this->addItem('---', null);
                 }
 
-                $allCountries = ZLanguage::countrymap[);
+                $allCountries = ZLanguage::countrymap();
                 foreach ($allCountries as $countryCode => $countryName) {
                     if (!$isFiltered || in_array($countryCode, $this->validCountryList)) {
                         $this->addItem($countryName, $countryCode);

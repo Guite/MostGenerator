@@ -295,7 +295,7 @@ class Validator {
              */
             public function isValidLanguage($fieldName, $onlyInstalled = false)
             {
-                $languageMap = ZLanguage::languagemap[);
+                $languageMap = ZLanguage::languagemap();
                 $result = in_array($this->entity[$fieldName], array_keys($languageMap));        
                 if (!$result || !$onlyInstalled) {
                     return $result;
@@ -313,7 +313,7 @@ class Validator {
              */
             public function isValidCountry($fieldName)
             {
-                $countryMap = ZLanguage::countrymap[);
+                $countryMap = ZLanguage::countrymap();
 
                 return in_array($this->entity[$fieldName], array_keys($countryMap));
             }

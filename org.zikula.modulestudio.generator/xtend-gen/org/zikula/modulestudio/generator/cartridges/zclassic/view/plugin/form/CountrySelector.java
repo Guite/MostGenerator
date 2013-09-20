@@ -258,7 +258,7 @@ public class CountrySelector {
     _builder.newLine();
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("$allCountries = ZLanguage::countrymap[);");
+    _builder.append("$allCountries = ZLanguage::countrymap();");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("foreach ($allCountries as $countryCode => $countryName) {");
