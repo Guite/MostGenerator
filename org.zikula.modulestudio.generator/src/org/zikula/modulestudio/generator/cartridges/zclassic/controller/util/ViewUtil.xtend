@@ -97,7 +97,7 @@ class ViewUtil {
 
             // check whether a special template is used
             $tpl = (isset($args['tpl']) && !empty($args['tpl'])) ? $args['tpl'] : FormUtil::getPassedValue('tpl', '', 'GETPOST', FILTER_SANITIZE_STRING);
-            if (!empty($tpl) && $view->template_exists[$template . '_' . DataUtil::formatForOS($tpl) . '.' . $templateExtension)) {
+            if (!empty($tpl) && $view->template_exists($template . '_' . DataUtil::formatForOS($tpl) . '.' . $templateExtension)) {
                 $template .= '_' . DataUtil::formatForOS($tpl);
             }
             $template .= '.' . $templateExtension;

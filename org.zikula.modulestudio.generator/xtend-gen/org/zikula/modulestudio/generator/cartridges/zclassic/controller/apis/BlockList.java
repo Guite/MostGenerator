@@ -868,7 +868,7 @@ public class BlockList {
     _builder.append("$template = \'\';");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("if ($this->view->template_exists[\'");
+    _builder.append("if ($this->view->template_exists(\'");
     {
       boolean _targets_4 = this._utils.targets(it, "1.3.5");
       if (_targets_4) {
@@ -892,7 +892,7 @@ public class BlockList {
     _builder.append("/\' . $templateForObjectType;");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
-    _builder.append("} elseif ($this->view->template_exists[\'");
+    _builder.append("} elseif ($this->view->template_exists(\'");
     {
       boolean _targets_6 = this._utils.targets(it, "1.3.5");
       if (_targets_6) {
@@ -916,7 +916,7 @@ public class BlockList {
     _builder.append("/\' . $templateForObjectType;");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
-    _builder.append("} elseif ($this->view->template_exists[\'");
+    _builder.append("} elseif ($this->view->template_exists(\'");
     {
       boolean _targets_8 = this._utils.targets(it, "1.3.5");
       if (_targets_8) {
@@ -940,7 +940,7 @@ public class BlockList {
     _builder.append("/\' . $templateFile;");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
-    _builder.append("} elseif ($this->view->template_exists[\'");
+    _builder.append("} elseif ($this->view->template_exists(\'");
     {
       boolean _targets_10 = this._utils.targets(it, "1.3.5");
       if (_targets_10) {

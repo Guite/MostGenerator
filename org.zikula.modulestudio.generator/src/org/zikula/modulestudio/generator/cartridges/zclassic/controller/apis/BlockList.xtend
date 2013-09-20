@@ -281,13 +281,13 @@ class BlockList {
             $templateForObjectType = str_replace('itemlist_', 'itemlist_' . DataUtil::formatForOS($vars['objectType']) . '_', $templateFile);
 
             $template = '';
-            if ($this->view->template_exists['«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType)) {
+            if ($this->view->template_exists('«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType)) {
                 $template = '«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/' . $templateForObjectType;
-            } elseif ($this->view->template_exists['«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/' . $templateForObjectType)) {
+            } elseif ($this->view->template_exists('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/' . $templateForObjectType)) {
                 $template = '«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/' . $templateForObjectType;
-            } elseif ($this->view->template_exists['«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile)) {
+            } elseif ($this->view->template_exists('«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile)) {
                 $template = '«IF targets('1.3.5')»contenttype«ELSE»ContentType«ENDIF»/' . $templateFile;
-            } elseif ($this->view->template_exists['«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/' . $templateFile)) {
+            } elseif ($this->view->template_exists('«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/' . $templateFile)) {
                 $template = '«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/' . $templateFile;
             } else {
                 $template = '«IF targets('1.3.5')»block«ELSE»Block«ENDIF»/itemlist.tpl';
