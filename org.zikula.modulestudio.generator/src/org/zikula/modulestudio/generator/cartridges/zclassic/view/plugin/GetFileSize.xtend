@@ -39,7 +39,7 @@ class GetFileSize {
                 $size = (int) $size;
             }
             if (!$size) {
-                if (empty($filepath) || !file_exists[$filepath)) {
+                if (empty($filepath) || !file_exists($filepath)) {
                     return '';
                 }
                 $size = filesize($filepath);

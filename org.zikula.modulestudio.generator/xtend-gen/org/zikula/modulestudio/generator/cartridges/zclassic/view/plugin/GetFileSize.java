@@ -114,7 +114,7 @@ public class GetFileSize {
     _builder.append("if (!$size) {");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("if (empty($filepath) || !file_exists[$filepath)) {");
+    _builder.append("if (empty($filepath) || !file_exists($filepath)) {");
     _builder.newLine();
     _builder.append("            ");
     _builder.append("return \'\';");

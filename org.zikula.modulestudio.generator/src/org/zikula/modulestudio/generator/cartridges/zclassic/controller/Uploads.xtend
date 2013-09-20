@@ -436,7 +436,7 @@ class Uploads {
                     $fileName = $fieldName . mt_rand(1, 999999) . '.' . $extension;
                 }
             }
-            while (file_exists[$basePath . $fileName)); // repeat until we have a new name
+            while (file_exists($basePath . $fileName)); // repeat until we have a new name
 
             // return the new file name
             return $fileName;

@@ -1279,7 +1279,7 @@ public class Uploads {
     _builder.append("}");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("while (file_exists[$basePath . $fileName)); // repeat until we have a new name");
+    _builder.append("while (file_exists($basePath . $fileName)); // repeat until we have a new name");
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
