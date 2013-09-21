@@ -243,6 +243,8 @@ class Repository {
             «selectWherePaginated»
 
             «selectSearch»
+
+            «retrieveCollectionResult»
             «IF !getUniqueDerivedFields.empty»
 
                 «selectCount»
@@ -252,16 +254,12 @@ class Repository {
 
             «detectUniqueState»
 
-            «intBaseQuery»
+            «genericBaseQuery»
 
-            «intBaseQueryWhere»
+            «genericBaseQueryWhere»
 
-            «intBaseQueryOrderBy»
+            «genericBaseQueryOrderBy»
 
-            «IF !hasCompositeKeys»«/* id list shuffling is not supported for composite keys yet */»
-                «getIdentifierListForRandomSorting»
-
-            «ENDIF»
             «intGetQueryFromBuilder»
 
             «new Joins().generate(it, app)»
@@ -704,7 +702,7 @@ class Repository {
 
             $query = $this->getQueryFromBuilder($qb);
 
-            return $query->getResult();
+            return $this->retrieveCollectionResult($query, $orderBy, false);
         }
     '''
 
@@ -740,6 +738,7 @@ class Repository {
                 $query->setFirstResult($offset)
                       ->setMaxResults($resultsPerPage);
                 $count = 0; // will be set at a later stage (in calling method)
+                «/* TODO remove $count from this method together with 1.3.5 support #260 */»
             «ENDIF»
 
             return array($query, $count);
@@ -763,19 +762,12 @@ class Repository {
             list($query, $count) = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
 
             «IF app.targets('1.3.5')»
-            $result = $query->getResult();
+                $result = $this->retrieveCollectionResult($query, $orderBy, true);
+
+                return array($result, $count);
             «ELSE»
-                «IF !(outgoing.filter(JoinRelationship).empty && incoming.filter(JoinRelationship).empty)»
-                    $paginator = new Paginator($query, true);
-                «ELSE»
-                    $paginator = new Paginator($query, false);
-                «ENDIF»
-
-                $count = count($paginator);
-                $result = $paginator;
+                return $this->retrieveCollectionResult($query, $orderBy, true);
             «ENDIF»
-
-            return array($result, $count);
         }
 
         /**
@@ -935,19 +927,12 @@ class Repository {
             list($query, $count) = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
 
             «IF app.targets('1.3.5')»
-            $result = $query->getResult();
+                $result = $this->retrieveCollectionResult($query, $orderBy, true);
+
+                return array($result, $count);
             «ELSE»
-                «IF !(outgoing.filter(JoinRelationship).empty && incoming.filter(JoinRelationship).empty)»
-                    $paginator = new Paginator($query, true);
-                «ELSE»
-                    $paginator = new Paginator($query, false);
-                «ENDIF»
-
-                $count = count($paginator);
-                $result = $paginator;
+                return $this->retrieveCollectionResult($query, $orderBy, true);
             «ENDIF»
-
-            return array($result, $count);
         }
 
         /**
@@ -970,21 +955,71 @@ class Repository {
             «val searchFieldsNumeric = getDisplayFields.filter[isContainedInNumericSearch]»
             $where = '';
             if (!$fragmentIsNumeric) {
-            «FOR field : searchFields»
-                $where .= ((!empty($where)) ? ' OR ' : '');
-                $where .= 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE \'%' . $fragment . '%\''«ELSE»= \'' . $fragment . '\''«ENDIF»;
-            «ENDFOR»
+                «FOR field : searchFields»
+                    $where .= ((!empty($where)) ? ' OR ' : '');
+                    $where .= 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE \'%' . $fragment . '%\''«ELSE»= \'' . $fragment . '\''«ENDIF»;
+                «ENDFOR»
             } else {
-            «FOR field : searchFieldsNumeric»
-                $where .= ((!empty($where)) ? ' OR ' : '');
-                $where .= 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE \'%' . $fragment . '%\''«ELSE»= \'' . $fragment . '\''«ENDIF»;
-            «ENDFOR»
+                «FOR field : searchFieldsNumeric»
+                    $where .= ((!empty($where)) ? ' OR ' : '');
+                    $where .= 'tbl.«field.name.formatForCode» «IF field.isTextSearch»LIKE \'%' . $fragment . '%\''«ELSE»= \'' . $fragment . '\''«ENDIF»;
+                «ENDFOR»
             }
             $where = '(' . $where . ')';
 
             $qb->andWhere($where);
 
             return $qb;
+        }
+    '''
+
+    def private retrieveCollectionResult(Entity it) '''
+        /**
+         * Performs a given database selection and post-processed the results.
+         *
+         * @param Doctrine\ORM\Query $query       The Query instance to be executed.
+         * @param string             $orderBy     The order-by clause to use when retrieving the collection (optional) (default='').
+         * @param boolean            $isPaginated Whether the given query uses a paginator or not (optional) (default=false).
+         *
+         * @return Array with retrieved collection«IF !app.targets('1.3.5')» and (for paginated queries) the amount of total records affected«ENDIF».
+         */
+        protected function retrieveCollectionResult(Query $query, $orderBy = '', $isPaginated = false)
+        {
+            «IF app.targets('1.3.5')»
+                $result = $query->getResult();
+            «ELSE»
+                if (!$isPaginated) {
+                    $result = $query->getResult();
+                } else {
+                    «IF !(outgoing.filter(JoinRelationship).empty && incoming.filter(JoinRelationship).empty)»
+                        $paginator = new Paginator($query, true);
+                    «ELSE»
+                        $paginator = new Paginator($query, false);
+                    «ENDIF»
+
+                    $count = count($paginator);
+                    $result = $paginator;
+                }
+            «ENDIF»
+
+            if ($orderBy == 'RAND()') {
+                // each entry in $result looks like array(0 => actualRecord, 'randomIdentifiers' => randomId)
+                $resRaw = array();
+                foreach ($result as $resultRow) {
+                    $resRaw[] = $resultRow[0];
+                }
+                $result = $resRaw;
+            }
+
+            «IF app.targets('1.3.5')»
+                return $result;
+            «ELSE»
+                if (!$isPaginated) {
+                    return $result;
+                } else {
+                    return array($result, $count);
+                }
+            «ENDIF»
         }
     '''
 
@@ -1070,7 +1105,7 @@ class Repository {
         }
     '''
 
-    def private intBaseQuery(Entity it) '''
+    def private genericBaseQuery(Entity it) '''
         /**
          * Builds a generic Doctrine query supporting WHERE and ORDER BY.
          *
@@ -1119,7 +1154,7 @@ class Repository {
         }
     '''
 
-    def private intBaseQueryWhere(Entity it) '''
+    def private genericBaseQueryWhere(Entity it) '''
         /**
          * Adds WHERE clause to given query builder.
          *
@@ -1147,7 +1182,7 @@ class Repository {
         }
     '''
 
-    def private intBaseQueryOrderBy(Entity it) '''
+    def private genericBaseQueryOrderBy(Entity it) '''
         /**
          * Adds ORDER BY clause to given query builder.
          *
@@ -1160,15 +1195,8 @@ class Repository {
         {
             if ($orderBy == 'RAND()') {
                 // random selection
-                «IF hasCompositeKeys»
-                    // not supported for composite keys yet
-                «ELSE»
-                    $idValues = $this->getIdentifierListForRandomSorting();
-                    $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» IN (:idValues)')
-                       ->setParameter('idValues', $idValues);
-                «ENDIF»
-
-                // no specific ordering in the main query for random items
+                $qb->addSelect('MOD(tbl.«getFirstPrimaryKey.name.formatForCode», ' . mt_rand(2, 15) . ') AS randomIdentifiers')
+                   ->add('orderBy', 'randomIdentifiers');
                 $orderBy = '';
             }
 
@@ -1181,34 +1209,6 @@ class Repository {
             }
 
             return $qb;
-        }
-    '''
-
-    def private getIdentifierListForRandomSorting(Entity it) '''
-        /**
-         * Retrieves a random list of identifiers.
-         *
-         * @return array Collected identifiers.
-         */
-        protected function getIdentifierListForRandomSorting()
-        {
-            $idList = array();
-
-            // query all primary keys in slim mode without any joins
-            $allEntities = $this->selectWhere('', '', false, true);
-
-            if (!$allEntities || !is_array($allEntities) || !count($allEntities)) {
-                return $idList;
-            }
-
-            foreach ($allEntities as $entity) {
-                $idList[] = $entity['«getFirstPrimaryKey.name.formatForCode»'];
-            }
-
-            // shuffle the id array
-            shuffle($idList);
-
-            return $idList;
         }
     '''
 

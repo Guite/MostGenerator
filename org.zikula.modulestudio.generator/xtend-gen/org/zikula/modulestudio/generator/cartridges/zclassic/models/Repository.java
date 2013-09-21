@@ -802,6 +802,11 @@ public class Repository {
     CharSequence _selectSearch = this.selectSearch(it);
     _builder.append(_selectSearch, "    ");
     _builder.newLineIfNotEmpty();
+    _builder.newLine();
+    _builder.append("    ");
+    CharSequence _retrieveCollectionResult = this.retrieveCollectionResult(it);
+    _builder.append(_retrieveCollectionResult, "    ");
+    _builder.newLineIfNotEmpty();
     {
       Iterable<DerivedField> _uniqueDerivedFields = this._modelExtensions.getUniqueDerivedFields(it);
       boolean _isEmpty_2 = IterableExtensions.isEmpty(_uniqueDerivedFields);
@@ -827,31 +832,20 @@ public class Repository {
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("    ");
-    CharSequence _intBaseQuery = this.intBaseQuery(it);
-    _builder.append(_intBaseQuery, "    ");
+    CharSequence _genericBaseQuery = this.genericBaseQuery(it);
+    _builder.append(_genericBaseQuery, "    ");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("    ");
-    CharSequence _intBaseQueryWhere = this.intBaseQueryWhere(it);
-    _builder.append(_intBaseQueryWhere, "    ");
+    CharSequence _genericBaseQueryWhere = this.genericBaseQueryWhere(it);
+    _builder.append(_genericBaseQueryWhere, "    ");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
     _builder.append("    ");
-    CharSequence _intBaseQueryOrderBy = this.intBaseQueryOrderBy(it);
-    _builder.append(_intBaseQueryOrderBy, "    ");
+    CharSequence _genericBaseQueryOrderBy = this.genericBaseQueryOrderBy(it);
+    _builder.append(_genericBaseQueryOrderBy, "    ");
     _builder.newLineIfNotEmpty();
     _builder.newLine();
-    {
-      boolean _hasCompositeKeys = this._modelExtensions.hasCompositeKeys(it);
-      boolean _not_5 = (!_hasCompositeKeys);
-      if (_not_5) {
-        _builder.append("    ");
-        CharSequence _identifierListForRandomSorting = this.getIdentifierListForRandomSorting(it);
-        _builder.append(_identifierListForRandomSorting, "    ");
-        _builder.newLineIfNotEmpty();
-        _builder.newLine();
-      }
-    }
     _builder.append("    ");
     CharSequence _intGetQueryFromBuilder = this.intGetQueryFromBuilder(it);
     _builder.append(_intGetQueryFromBuilder, "    ");
@@ -2261,7 +2255,7 @@ public class Repository {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("return $query->getResult();");
+    _builder.append("return $this->retrieveCollectionResult($query, $orderBy, false);");
     _builder.newLine();
     _builder.append("}");
     _builder.newLine();
@@ -2363,6 +2357,8 @@ public class Repository {
         _builder.append("    ");
         _builder.append("$count = 0; // will be set at a later stage (in calling method)");
         _builder.newLine();
+        _builder.append("    ");
+        _builder.newLine();
       }
     }
     _builder.newLine();
@@ -2422,46 +2418,18 @@ public class Repository {
       boolean _targets_1 = this._utils.targets(this.app, "1.3.5");
       if (_targets_1) {
         _builder.append("    ");
-        _builder.append("$result = $query->getResult();");
+        _builder.append("$result = $this->retrieveCollectionResult($query, $orderBy, true);");
+        _builder.newLine();
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("return array($result, $count);");
         _builder.newLine();
       } else {
-        {
-          boolean _and_1 = false;
-          EList<Relationship> _outgoing_1 = it.getOutgoing();
-          Iterable<JoinRelationship> _filter_2 = Iterables.<JoinRelationship>filter(_outgoing_1, JoinRelationship.class);
-          boolean _isEmpty_2 = IterableExtensions.isEmpty(_filter_2);
-          if (!_isEmpty_2) {
-            _and_1 = false;
-          } else {
-            EList<Relationship> _incoming_1 = it.getIncoming();
-            Iterable<JoinRelationship> _filter_3 = Iterables.<JoinRelationship>filter(_incoming_1, JoinRelationship.class);
-            boolean _isEmpty_3 = IterableExtensions.isEmpty(_filter_3);
-            _and_1 = (_isEmpty_2 && _isEmpty_3);
-          }
-          boolean _not_1 = (!_and_1);
-          if (_not_1) {
-            _builder.append("    ");
-            _builder.append("$paginator = new Paginator($query, true);");
-            _builder.newLine();
-          } else {
-            _builder.append("    ");
-            _builder.append("$paginator = new Paginator($query, false);");
-            _builder.newLine();
-          }
-        }
-        _builder.newLine();
         _builder.append("    ");
-        _builder.append("$count = count($paginator);");
-        _builder.newLine();
-        _builder.append("    ");
-        _builder.append("$result = $paginator;");
+        _builder.append("return $this->retrieveCollectionResult($query, $orderBy, true);");
         _builder.newLine();
       }
     }
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("return array($result, $count);");
-    _builder.newLine();
     _builder.append("}");
     _builder.newLine();
     _builder.newLine();
@@ -2981,46 +2949,18 @@ public class Repository {
       boolean _targets = this._utils.targets(this.app, "1.3.5");
       if (_targets) {
         _builder.append("    ");
-        _builder.append("$result = $query->getResult();");
+        _builder.append("$result = $this->retrieveCollectionResult($query, $orderBy, true);");
+        _builder.newLine();
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("return array($result, $count);");
         _builder.newLine();
       } else {
-        {
-          boolean _and = false;
-          EList<Relationship> _outgoing = it.getOutgoing();
-          Iterable<JoinRelationship> _filter = Iterables.<JoinRelationship>filter(_outgoing, JoinRelationship.class);
-          boolean _isEmpty = IterableExtensions.isEmpty(_filter);
-          if (!_isEmpty) {
-            _and = false;
-          } else {
-            EList<Relationship> _incoming = it.getIncoming();
-            Iterable<JoinRelationship> _filter_1 = Iterables.<JoinRelationship>filter(_incoming, JoinRelationship.class);
-            boolean _isEmpty_1 = IterableExtensions.isEmpty(_filter_1);
-            _and = (_isEmpty && _isEmpty_1);
-          }
-          boolean _not = (!_and);
-          if (_not) {
-            _builder.append("    ");
-            _builder.append("$paginator = new Paginator($query, true);");
-            _builder.newLine();
-          } else {
-            _builder.append("    ");
-            _builder.append("$paginator = new Paginator($query, false);");
-            _builder.newLine();
-          }
-        }
-        _builder.newLine();
         _builder.append("    ");
-        _builder.append("$count = count($paginator);");
-        _builder.newLine();
-        _builder.append("    ");
-        _builder.append("$result = $paginator;");
+        _builder.append("return $this->retrieveCollectionResult($query, $orderBy, true);");
         _builder.newLine();
       }
     }
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("return array($result, $count);");
-    _builder.newLine();
     _builder.append("}");
     _builder.newLine();
     _builder.newLine();
@@ -3093,14 +3033,14 @@ public class Repository {
     _builder.newLine();
     {
       for(final DerivedField field : searchFields) {
-        _builder.append("    ");
+        _builder.append("        ");
         _builder.append("$where .= ((!empty($where)) ? \' OR \' : \'\');");
         _builder.newLine();
-        _builder.append("    ");
+        _builder.append("        ");
         _builder.append("$where .= \'tbl.");
         String _name_1 = field.getName();
         String _formatForCode_1 = this._formattingExtensions.formatForCode(_name_1);
-        _builder.append(_formatForCode_1, "    ");
+        _builder.append(_formatForCode_1, "        ");
         _builder.append(" ");
         {
           boolean _isTextSearch = this.isTextSearch(field);
@@ -3119,14 +3059,14 @@ public class Repository {
     _builder.newLine();
     {
       for(final DerivedField field_1 : searchFieldsNumeric) {
-        _builder.append("    ");
+        _builder.append("        ");
         _builder.append("$where .= ((!empty($where)) ? \' OR \' : \'\');");
         _builder.newLine();
-        _builder.append("    ");
+        _builder.append("        ");
         _builder.append("$where .= \'tbl.");
         String _name_2 = field_1.getName();
         String _formatForCode_2 = this._formattingExtensions.formatForCode(_name_2);
-        _builder.append(_formatForCode_2, "    ");
+        _builder.append(_formatForCode_2, "        ");
         _builder.append(" ");
         {
           boolean _isTextSearch_1 = this.isTextSearch(field_1);
@@ -3154,6 +3094,160 @@ public class Repository {
     _builder.append("    ");
     _builder.append("return $qb;");
     _builder.newLine();
+    _builder.append("}");
+    _builder.newLine();
+    return _builder;
+  }
+  
+  private CharSequence retrieveCollectionResult(final Entity it) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("/**");
+    _builder.newLine();
+    _builder.append(" ");
+    _builder.append("* Performs a given database selection and post-processed the results.");
+    _builder.newLine();
+    _builder.append(" ");
+    _builder.append("*");
+    _builder.newLine();
+    _builder.append(" ");
+    _builder.append("* @param Doctrine\\ORM\\Query $query       The Query instance to be executed.");
+    _builder.newLine();
+    _builder.append(" ");
+    _builder.append("* @param string             $orderBy     The order-by clause to use when retrieving the collection (optional) (default=\'\').");
+    _builder.newLine();
+    _builder.append(" ");
+    _builder.append("* @param boolean            $isPaginated Whether the given query uses a paginator or not (optional) (default=false).");
+    _builder.newLine();
+    _builder.append(" ");
+    _builder.append("*");
+    _builder.newLine();
+    _builder.append(" ");
+    _builder.append("* @return Array with retrieved collection");
+    {
+      boolean _targets = this._utils.targets(this.app, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.append(" and (for paginated queries) the amount of total records affected");
+      }
+    }
+    _builder.append(".");
+    _builder.newLineIfNotEmpty();
+    _builder.append(" ");
+    _builder.append("*/");
+    _builder.newLine();
+    _builder.append("protected function retrieveCollectionResult(Query $query, $orderBy = \'\', $isPaginated = false)");
+    _builder.newLine();
+    _builder.append("{");
+    _builder.newLine();
+    {
+      boolean _targets_1 = this._utils.targets(this.app, "1.3.5");
+      if (_targets_1) {
+        _builder.append("    ");
+        _builder.append("$result = $query->getResult();");
+        _builder.newLine();
+      } else {
+        _builder.append("    ");
+        _builder.append("if (!$isPaginated) {");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("    ");
+        _builder.append("$result = $query->getResult();");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("} else {");
+        _builder.newLine();
+        {
+          boolean _and = false;
+          EList<Relationship> _outgoing = it.getOutgoing();
+          Iterable<JoinRelationship> _filter = Iterables.<JoinRelationship>filter(_outgoing, JoinRelationship.class);
+          boolean _isEmpty = IterableExtensions.isEmpty(_filter);
+          if (!_isEmpty) {
+            _and = false;
+          } else {
+            EList<Relationship> _incoming = it.getIncoming();
+            Iterable<JoinRelationship> _filter_1 = Iterables.<JoinRelationship>filter(_incoming, JoinRelationship.class);
+            boolean _isEmpty_1 = IterableExtensions.isEmpty(_filter_1);
+            _and = (_isEmpty && _isEmpty_1);
+          }
+          boolean _not_1 = (!_and);
+          if (_not_1) {
+            _builder.append("    ");
+            _builder.append("    ");
+            _builder.append("$paginator = new Paginator($query, true);");
+            _builder.newLine();
+          } else {
+            _builder.append("    ");
+            _builder.append("    ");
+            _builder.append("$paginator = new Paginator($query, false);");
+            _builder.newLine();
+          }
+        }
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("    ");
+        _builder.append("$count = count($paginator);");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("    ");
+        _builder.append("$result = $paginator;");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("}");
+        _builder.newLine();
+      }
+    }
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("if ($orderBy == \'RAND()\') {");
+    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("// each entry in $result looks like array(0 => actualRecord, \'randomIdentifiers\' => randomId)");
+    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("$resRaw = array();");
+    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("foreach ($result as $resultRow) {");
+    _builder.newLine();
+    _builder.append("            ");
+    _builder.append("$resRaw[] = $resultRow[0];");
+    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("}");
+    _builder.newLine();
+    _builder.append("        ");
+    _builder.append("$result = $resRaw;");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("}");
+    _builder.newLine();
+    _builder.newLine();
+    {
+      boolean _targets_2 = this._utils.targets(this.app, "1.3.5");
+      if (_targets_2) {
+        _builder.append("    ");
+        _builder.append("return $result;");
+        _builder.newLine();
+      } else {
+        _builder.append("    ");
+        _builder.append("if (!$isPaginated) {");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("    ");
+        _builder.append("return $result;");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("} else {");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("    ");
+        _builder.append("return array($result, $count);");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("}");
+        _builder.newLine();
+      }
+    }
     _builder.append("}");
     _builder.newLine();
     return _builder;
@@ -3391,7 +3485,7 @@ public class Repository {
     return _builder;
   }
   
-  private CharSequence intBaseQuery(final Entity it) {
+  private CharSequence genericBaseQuery(final Entity it) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("/**");
     _builder.newLine();
@@ -3534,7 +3628,7 @@ public class Repository {
     return _builder;
   }
   
-  private CharSequence intBaseQueryWhere(final Entity it) {
+  private CharSequence genericBaseQueryWhere(final Entity it) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("/**");
     _builder.newLine();
@@ -3608,7 +3702,7 @@ public class Repository {
     return _builder;
   }
   
-  private CharSequence intBaseQueryOrderBy(final Entity it) {
+  private CharSequence genericBaseQueryOrderBy(final Entity it) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("/**");
     _builder.newLine();
@@ -3643,33 +3737,16 @@ public class Repository {
     _builder.append("        ");
     _builder.append("// random selection");
     _builder.newLine();
-    {
-      boolean _hasCompositeKeys = this._modelExtensions.hasCompositeKeys(it);
-      if (_hasCompositeKeys) {
-        _builder.append("        ");
-        _builder.append("// not supported for composite keys yet");
-        _builder.newLine();
-      } else {
-        _builder.append("        ");
-        _builder.append("$idValues = $this->getIdentifierListForRandomSorting();");
-        _builder.newLine();
-        _builder.append("        ");
-        _builder.append("$qb->andWhere(\'tbl.");
-        DerivedField _firstPrimaryKey = this._modelExtensions.getFirstPrimaryKey(it);
-        String _name = _firstPrimaryKey.getName();
-        String _formatForCode = this._formattingExtensions.formatForCode(_name);
-        _builder.append(_formatForCode, "        ");
-        _builder.append(" IN (:idValues)\')");
-        _builder.newLineIfNotEmpty();
-        _builder.append("        ");
-        _builder.append("   ");
-        _builder.append("->setParameter(\'idValues\', $idValues);");
-        _builder.newLine();
-      }
-    }
-    _builder.newLine();
     _builder.append("        ");
-    _builder.append("// no specific ordering in the main query for random items");
+    _builder.append("$qb->addSelect(\'MOD(tbl.");
+    DerivedField _firstPrimaryKey = this._modelExtensions.getFirstPrimaryKey(it);
+    String _name = _firstPrimaryKey.getName();
+    String _formatForCode = this._formattingExtensions.formatForCode(_name);
+    _builder.append(_formatForCode, "        ");
+    _builder.append(", \' . mt_rand(2, 15) . \') AS randomIdentifiers\')");
+    _builder.newLineIfNotEmpty();
+    _builder.append("           ");
+    _builder.append("->add(\'orderBy\', \'randomIdentifiers\');");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("$orderBy = \'\';");
@@ -3702,77 +3779,6 @@ public class Repository {
     _builder.newLine();
     _builder.append("    ");
     _builder.append("return $qb;");
-    _builder.newLine();
-    _builder.append("}");
-    _builder.newLine();
-    return _builder;
-  }
-  
-  private CharSequence getIdentifierListForRandomSorting(final Entity it) {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("/**");
-    _builder.newLine();
-    _builder.append(" ");
-    _builder.append("* Retrieves a random list of identifiers.");
-    _builder.newLine();
-    _builder.append(" ");
-    _builder.append("*");
-    _builder.newLine();
-    _builder.append(" ");
-    _builder.append("* @return array Collected identifiers.");
-    _builder.newLine();
-    _builder.append(" ");
-    _builder.append("*/");
-    _builder.newLine();
-    _builder.append("protected function getIdentifierListForRandomSorting()");
-    _builder.newLine();
-    _builder.append("{");
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("$idList = array();");
-    _builder.newLine();
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("// query all primary keys in slim mode without any joins");
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("$allEntities = $this->selectWhere(\'\', \'\', false, true);");
-    _builder.newLine();
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("if (!$allEntities || !is_array($allEntities) || !count($allEntities)) {");
-    _builder.newLine();
-    _builder.append("        ");
-    _builder.append("return $idList;");
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("}");
-    _builder.newLine();
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("foreach ($allEntities as $entity) {");
-    _builder.newLine();
-    _builder.append("        ");
-    _builder.append("$idList[] = $entity[\'");
-    DerivedField _firstPrimaryKey = this._modelExtensions.getFirstPrimaryKey(it);
-    String _name = _firstPrimaryKey.getName();
-    String _formatForCode = this._formattingExtensions.formatForCode(_name);
-    _builder.append(_formatForCode, "        ");
-    _builder.append("\'];");
-    _builder.newLineIfNotEmpty();
-    _builder.append("    ");
-    _builder.append("}");
-    _builder.newLine();
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("// shuffle the id array");
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("shuffle($idList);");
-    _builder.newLine();
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("return $idList;");
     _builder.newLine();
     _builder.append("}");
     _builder.newLine();
