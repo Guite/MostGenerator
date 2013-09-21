@@ -87,9 +87,10 @@ class Ajax {
                 «ELSE»
                 ModUtil::initOOModule('ZikulaUsersModule');
 
-                $dql = "SELECT u FROM Zikula\Module\UsersModule\Entity\UserEntity u WHERE u.uname LIKE '% " . DataUtil::formatForStore($fragment) . "%'";
+                $dql = 'SELECT u FROM Zikula\Module\UsersModule\Entity\UserEntity u WHERE u.uname LIKE :fragment';
                 $query = $this->entityManager->createQuery($dql);
-                $results = $query->getResult(AbstractQuery::HYDRATE_ARRAY);
+                $query->setParameter('fragment', '%' . $fragment . '%');
+                $results = $query->getArrayResult();
                 «ENDIF»
 
                 $out = '<ul>';

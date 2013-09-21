@@ -446,7 +446,7 @@ class Repository {
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->delete('«entityClassName('', false)»', 'tbl')
                ->where('tbl.createdUserId = :creator')
-               ->setParameter('creator', DataUtil::formatForStore($userId));
+               ->setParameter('creator', $userId);
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -471,7 +471,7 @@ class Repository {
             $qb = $this->getEntityManager()->createQueryBuilder();
             $qb->delete('«entityClassName('', false)»', 'tbl')
                ->where('tbl.updatedUserId = :editor')
-               ->setParameter('editor', DataUtil::formatForStore($userId));
+               ->setParameter('editor', $userId);
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -499,7 +499,7 @@ class Repository {
             $qb->update('«entityClassName('', false)»', 'tbl')
                ->set('tbl.createdUserId', $newUserId)
                ->where('tbl.createdUserId = :creator')
-               ->setParameter('creator', DataUtil::formatForStore($userId));
+               ->setParameter('creator', $userId);
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -527,7 +527,7 @@ class Repository {
             $qb->update('«entityClassName('', false)»', 'tbl')
                ->set('tbl.updatedUserId', $newUserId)
                ->where('tbl.updatedUserId = :editor')
-               ->setParameter('editor', DataUtil::formatForStore($userId));
+               ->setParameter('editor', $userId);
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -564,7 +564,7 @@ class Repository {
             $qb->update('«entityClassName('', false)»', 'tbl')
                ->set('tbl.' . $userFieldName, $newUserId)
                ->where('tbl.' . $userFieldName . ' = :user')
-               ->setParameter('user', DataUtil::formatForStore($userId));
+               ->setParameter('user', $userId);
             $query = $qb->getQuery();
             «IF hasPessimisticWriteLock»
                 $query->setLockMode(LockMode::«lockType.asConstant»);
@@ -588,11 +588,11 @@ class Repository {
             if (is_array($id)) {
                 foreach ($id as $fieldName => $fieldValue) {
                     $qb->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
-                       ->setParameter($fieldName, DataUtil::formatForStore($fieldValue));
+                       ->setParameter($fieldName, $fieldValue);
                 }
             } else {
                 $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» = :id')
-                   ->setParameter('id', DataUtil::formatForStore($id));
+                   ->setParameter('id', $id);
             }
             return $qb;
         }
@@ -613,7 +613,7 @@ class Repository {
                 return LogUtil::registerArgsError();
             }
 
-            $qb = $this->_intBaseQuery('', '', $useJoins, $slimMode);
+            $qb = $this->genericBaseQuery('', '', $useJoins, $slimMode);
 
             $qb = $this->addIdFilter($id, $qb);
 
@@ -642,10 +642,10 @@ class Repository {
                 return LogUtil::registerArgsError();
             }
 
-            $qb = $this->_intBaseQuery('', '', $useJoins, $slimMode);
+            $qb = $this->genericBaseQuery('', '', $useJoins, $slimMode);
 
             $qb->andWhere('tbl.slug = :slug')
-               ->setParameter('slug', DataUtil::formatForStore($slugTitle));
+               ->setParameter('slug', $slugTitle);
 
             $qb = $this->addExclusion($qb, $excludeId);
 
@@ -671,14 +671,14 @@ class Repository {
                 if (is_array($excludeId)) {
                     foreach ($id as $fieldName => $fieldValue) {
                         $qb->andWhere('tbl.' . $fieldName . ' != :' . $fieldName)
-                           ->setParameter($fieldName, DataUtil::formatForStore($fieldValue));
+                           ->setParameter($fieldName, $fieldValue);
                     }
                 } elseif ($excludeId > 0) {
             «ELSE»
                 if ($excludeId > 0) {
             «ENDIF»
                 $qb->andWhere('tbl.id != :excludeId')
-                   ->setParameter('excludeId', DataUtil::formatForStore($excludeId));
+                   ->setParameter('excludeId', $excludeId);
             }
             return $qb;
         }
@@ -697,7 +697,7 @@ class Repository {
          */
         public function selectWhere($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
         {
-            $qb = $this->_intBaseQuery($where, $orderBy, $useJoins, $slimMode);
+            $qb = $this->genericBaseQuery($where, $orderBy, $useJoins, $slimMode);
             if (!$useJoins || !$slimMode) {
                 $qb = $this->addCommonViewFilters($qb);
             }
@@ -753,12 +753,13 @@ class Repository {
          * @param integer $currentPage    Where to start selection
          * @param integer $resultsPerPage Amount of items to select
          * @param boolean $useJoins       Whether to include joining related objects (optional) (default=true).
+         * @param boolean $slimMode       If activated only some basic fields are selected without using any joins (optional) (default=false).
          *
          * @return Array with retrieved collection and amount of total records affected by this query.
          */
-        public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
+        public function selectWherePaginated($where = '', $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true, $slimMode = false)
         {
-            $qb = $this->_intBaseQuery($where, $orderBy, $useJoins);
+            $qb = $this->genericBaseQuery($where, $orderBy, $useJoins, $slimMode);
             list($query, $count) = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
 
             «IF app.targets('1.3.5')»
@@ -784,7 +785,7 @@ class Repository {
          *
          * @return Doctrine\ORM\QueryBuilder Enriched query builder instance.
          */
-        protected function addCommonViewFilters(QueryBuilder $qb)
+        public function addCommonViewFilters(QueryBuilder $qb)
         {
             /* commented out to allow default filters also for other calls, like content types and mailz
             $currentFunc = FormUtil::getPassedValue('func', '«IF app.targets('1.3.5')»main«ELSE»index«ENDIF»', 'GETPOST');
@@ -798,18 +799,15 @@ class Repository {
                     // single category filter
                     if ($v > 0) {
                         $qb->andWhere('tblCategories.category = :category')
-                           ->setParameter('category', DataUtil::formatForStore($v));
+                           ->setParameter('category', $v);
                     }
                 } elseif ($k == 'catIdList') {
                     // multi category filter
                     /* old
-                    $qb->andWhereIn('tblCategories.category IN (:categories)')
-                       ->setParameter('categories', DataUtil::formatForStore($v));
+                    $qb->andWhere('tblCategories.category IN (:categories)')
+                       ->setParameter('categories', $v);
                      */
-                    $categoryFiltersPerRegistry = ModUtil::apiFunc('«container.application.appName»', 'category', 'buildFilterClauses', array('ot' => '«name.formatForCode»', 'catids' => $v));
-                    if (count($categoryFiltersPerRegistry) > 0) {
-                        $qb->andWhere('(' . implode(' OR ', $categoryFiltersPerRegistry) . ')');
-                    }
+                    $qb = ModUtil::apiFunc('«container.application.appName»', 'category', 'buildFilterClauses', array('qb' => $qb, 'ot' => '«name.formatForCode»', 'catids' => $v));
                 } elseif ($k == 'searchterm') {
                     // quick search
                     if (!empty($v)) {
@@ -829,13 +827,13 @@ class Repository {
                     if ($v != '' || (is_numeric($v) && $v > 0)) {
                         if ($k == 'workflowState' && substr($v, 0, 1) == '!') {
                             $qb->andWhere('tbl.' . $k . ' != :' . $k)
-                               ->setParameter($k, DataUtil::formatForStore(substr($v, 1, strlen($v)-1)));
+                               ->setParameter($k, substr($v, 1, strlen($v)-1));
                         } elseif (substr($v, 0, 1) == '%') {
                             $qb->andWhere('tbl.' . $k . ' LIKE :' . $k)
-                               ->setParameter($k, '%' . DataUtil::formatForStore($v) . '%');
+                               ->setParameter($k, '%' . $v . '%');
                         } else {
                             $qb->andWhere('tbl.' . $k . ' = :' . $k)
-                               ->setParameter($k, DataUtil::formatForStore($v));
+                               ->setParameter($k, $v);
                        }
                     }
                 }
@@ -873,7 +871,7 @@ class Repository {
                     }
                 «ENDIF»
                 $qb->andWhere('tbl.workflowState IN (:onlineStates)')
-                   ->setParameter('onlineStates', DataUtil::formatForStore($onlineStates));
+                   ->setParameter('onlineStates', $onlineStates);
             }
             «applyDefaultDateRangeFilter»
 
@@ -925,11 +923,11 @@ class Repository {
          */
         public function selectSearch($fragment = '', $exclude = array(), $orderBy = '', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)
         {
-            $qb = $this->_intBaseQuery('', $orderBy, $useJoins);
+            $qb = $this->genericBaseQuery('', $orderBy, $useJoins);
             if (count($exclude) > 0) {
                 $exclude = implode(', ', $exclude);
                 $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» NOT IN (:excludeList)')«/* TODO fix composite keys */»
-                   ->setParameter('excludeList', DataUtil::formatForStore($exclude));
+                   ->setParameter('excludeList', $exclude);
             }
 
             $qb = $this->addSearchFilter($qb, $fragment);
@@ -966,7 +964,6 @@ class Repository {
                 return $qb;
             }
 
-            $fragment = DataUtil::formatForStore($fragment);
             $fragmentIsNumeric = is_numeric($fragment);
 
             «val searchFields = getDisplayFields.filter[isContainedInTextualSearch]»
@@ -1058,7 +1055,7 @@ class Repository {
         {
             $qb = $this->getCountQuery('', false);
             $qb->andWhere('tbl.' . $fieldName . ' = :' . $fieldName)
-               ->setParameter($fieldName, DataUtil::formatForStore($fieldValue));
+               ->setParameter($fieldName, $fieldValue);
 
             $qb = $this->addExclusion($qb, $excludeId);
 
@@ -1084,7 +1081,7 @@ class Repository {
          *
          * @return Doctrine\ORM\QueryBuilder query builder instance to be further processed
          */
-        protected function _intBaseQuery($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
+        public function genericBaseQuery($where = '', $orderBy = '', $useJoins = true, $slimMode = false)
         {
             // normally we select the whole table
             $selection = 'tbl';
@@ -1115,8 +1112,8 @@ class Repository {
                 $this->addJoinsToFrom($qb);
             }
 
-            $this->_intBaseQueryAddWhere($qb, $where);
-            $this->_intBaseQueryAddOrderBy($qb, $orderBy);
+            $this->genericBaseQueryAddWhere($qb, $where);
+            $this->genericBaseQueryAddOrderBy($qb, $orderBy);
 
             return $qb;
         }
@@ -1131,7 +1128,7 @@ class Repository {
          *
          * @return Doctrine\ORM\QueryBuilder query builder instance to be further processed
          */
-        protected function _intBaseQueryAddWhere(QueryBuilder $qb, $where = '')
+        protected function genericBaseQueryAddWhere(QueryBuilder $qb, $where = '')
         {
             if (!empty($where)) {
                 $qb->where($where);
@@ -1142,7 +1139,7 @@ class Repository {
                 if ($onlyOwn == 1) {
                     $uid = UserUtil::getVar('uid');
                     $qb->andWhere('tbl.createdUserId = :creator')
-                       ->setParameter('creator', DataUtil::formatForStore($uid));
+                       ->setParameter('creator', $uid);
                 }
             «ENDIF»
 
@@ -1159,7 +1156,7 @@ class Repository {
          *
          * @return Doctrine\ORM\QueryBuilder query builder instance to be further processed
          */
-        protected function _intBaseQueryAddOrderBy(QueryBuilder $qb, $orderBy = '')
+        protected function genericBaseQueryAddOrderBy(QueryBuilder $qb, $orderBy = '')
         {
             if ($orderBy == 'RAND()') {
                 // random selection
@@ -1168,7 +1165,7 @@ class Repository {
                 «ELSE»
                     $idValues = $this->getIdentifierListForRandomSorting();
                     $qb->andWhere('tbl.«getFirstPrimaryKey.name.formatForCode» IN (:idValues)')
-                       ->setParameter('idValues', DataUtil::formatForStore($idValues));
+                       ->setParameter('idValues', $idValues);
                 «ENDIF»
 
                 // no specific ordering in the main query for random items
@@ -1223,7 +1220,7 @@ class Repository {
          *
          * @return Doctrine\ORM\Query query instance to be further processed
          */
-        protected function getQueryFromBuilder(QueryBuilder $qb)
+        public function getQueryFromBuilder(QueryBuilder $qb)
         {
             $query = $qb->getQuery();
 
@@ -1336,7 +1333,7 @@ class Repository {
                 $today = date('Y-m-d') . ' 00:00:00';
             «ENDIF»
 
-            $qb = $this->_intBaseQuery('', '', false);
+            $qb = $this->genericBaseQuery('', '', false);
 
             /*$qb->andWhere('tbl.workflowState != :archivedState')
                ->setParameter('archivedState', 'archived');*/

@@ -320,13 +320,16 @@ public class Ajax {
             _builder.newLine();
             _builder.newLine();
             _builder.append("    ");
-            _builder.append("$dql = \"SELECT u FROM Zikula\\Module\\UsersModule\\Entity\\UserEntity u WHERE u.uname LIKE \'% \" . DataUtil::formatForStore($fragment) . \"%\'\";");
+            _builder.append("$dql = \'SELECT u FROM Zikula\\Module\\UsersModule\\Entity\\UserEntity u WHERE u.uname LIKE :fragment\';");
             _builder.newLine();
             _builder.append("    ");
             _builder.append("$query = $this->entityManager->createQuery($dql);");
             _builder.newLine();
             _builder.append("    ");
-            _builder.append("$results = $query->getResult(AbstractQuery::HYDRATE_ARRAY);");
+            _builder.append("$query->setParameter(\'fragment\', \'%\' . $fragment . \'%\');");
+            _builder.newLine();
+            _builder.append("    ");
+            _builder.append("$results = $query->getArrayResult();");
             _builder.newLine();
           }
         }

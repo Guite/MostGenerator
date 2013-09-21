@@ -98,6 +98,8 @@ public class AbstractObjectSelector {
     }
     _builder.append("use Doctrine\\Common\\Collections\\Collection;");
     _builder.newLine();
+    _builder.append("use Doctrine\\ORM\\QueryBuilder;");
+    _builder.newLine();
     {
       boolean _targets_1 = this._utils.targets(it, "1.3.5");
       if (_targets_1) {
@@ -1276,23 +1278,55 @@ public class AbstractObjectSelector {
     _builder.newLine();
     _builder.append("{");
     _builder.newLine();
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      if (_targets_1) {
+        _builder.append("    ");
+        _builder.append("$entityClass = \'");
+        String _appName = this._utils.appName(it);
+        _builder.append(_appName, "    ");
+        _builder.append("_Entity_\' . ucwords($this->objectType);");
+        _builder.newLineIfNotEmpty();
+      } else {
+        _builder.append("    ");
+        _builder.append("$entityClass = \'\\\\");
+        String _vendor_1 = it.getVendor();
+        String _formatForCodeCapital_2 = this._formattingExtensions.formatForCodeCapital(_vendor_1);
+        _builder.append(_formatForCodeCapital_2, "    ");
+        _builder.append("\\\\");
+        String _name_1 = it.getName();
+        String _formatForCodeCapital_3 = this._formattingExtensions.formatForCodeCapital(_name_1);
+        _builder.append(_formatForCodeCapital_3, "    ");
+        _builder.append("Module\\\\Entity\\\\\' . ucwords($this->objectType) . \'Entity\';");
+        _builder.newLineIfNotEmpty();
+      }
+    }
     _builder.append("    ");
-    _builder.append("$selectionArgs = array(");
-    _builder.newLine();
-    _builder.append("        ");
-    _builder.append("\'ot\' => $this->objectType,");
-    _builder.newLine();
-    _builder.append("        ");
-    _builder.append("\'where\' => $this->buildWhereClause($inputValue),");
-    _builder.newLine();
-    _builder.append("        ");
-    _builder.append("\'orderBy\' => $this->orderBy");
+    _builder.append("$serviceManager = ServiceUtil::getManager();");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append(");");
+    _builder.append("$entityManager = $serviceManager->getService(\'doctrine.entitymanager\');");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$relatedItems = ModUtil::apiFunc($this->name, \'selection\', \'getEntities\', $selectionArgs);");
+    _builder.append("$repository = $entityManager->getRepository($entityClass);");
+    _builder.newLine();
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("$qb = $repository->genericBaseQuery(\'\', $this->orderBy);");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("$qb = $this->buildWhereClause($inputValue, $qb);");
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("//$qb = $repository->addCommonViewFilters($qb);");
+    _builder.newLine();
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("$query = $repository->getQueryFromBuilder($qb);");
+    _builder.newLine();
+    _builder.newLine();
+    _builder.append("    ");
+    _builder.append("$relatedItems = $query->getResult();");
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
@@ -1470,7 +1504,7 @@ public class AbstractObjectSelector {
   
   private CharSequence buildWhereClause(final Application it) {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("protected function buildWhereClause($inputValue)");
+    _builder.append("protected function buildWhereClause($inputValue, QueryBuilder $qb)");
     _builder.newLine();
     _builder.append("{");
     _builder.newLine();
@@ -1512,9 +1546,6 @@ public class AbstractObjectSelector {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$where = \'\';");
-    _builder.newLine();
-    _builder.append("    ");
     _builder.append("if (count($this->idFields) > 1) {");
     _builder.newLine();
     _builder.append("        ");
@@ -1524,16 +1555,10 @@ public class AbstractObjectSelector {
     _builder.append("foreach ($this->idFields as $idField) {");
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("if (!empty($where)) {");
+    _builder.append("$qb->andWhere(\'tbl.\' . $idField . \' IN (:\' . $idField . \'Ids)\')");
     _builder.newLine();
-    _builder.append("                ");
-    _builder.append("$where .= \' AND \';");
-    _builder.newLine();
-    _builder.append("            ");
-    _builder.append("}");
-    _builder.newLine();
-    _builder.append("            ");
-    _builder.append("$where .= \'tbl.\' . $idField . \' IN (\' . DataUtil::formatForStore(implode(\', \', $idsPerField[$idField])) . \')\';");
+    _builder.append("               ");
+    _builder.append("->setParameter($idField . \'Ids\', $idsPerField[$idField]);");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("}");
@@ -1551,13 +1576,19 @@ public class AbstractObjectSelector {
     _builder.append("if ($many) {");
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("$where .= \'tbl.\' . $idField . \' IN (\' . DataUtil::formatForStore(implode(\', \', $inputValue)) . \')\';");
+    _builder.append("$qb->andWhere(\'tbl.\' . $idField . \' IN (:\' . $idField . \'Ids)\')");
+    _builder.newLine();
+    _builder.append("               ");
+    _builder.append("->setParameter($idField . \'Ids\', $inputValue);");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("} else {");
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("$where .= \'tbl.\' . $idField . \' = \\\'\' . DataUtil::formatForStore(array_shift($inputValue)) . \'\\\'\';");
+    _builder.append("$qb->andWhere(\'tbl.\' . $idField . \' = :\' . $idField)");
+    _builder.newLine();
+    _builder.append("               ");
+    _builder.append("->setParameter($idField, $inputValue);");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("}");
@@ -1569,14 +1600,14 @@ public class AbstractObjectSelector {
     _builder.append("if (!empty($this->where)) {");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("$where .= \' AND \' . $this->where;");
+    _builder.append("$qb->andWhere($this->where);");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("}");
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("return $where;");
+    _builder.append("return $qb;");
     _builder.newLine();
     _builder.append("}");
     _builder.newLine();

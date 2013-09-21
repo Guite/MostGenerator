@@ -289,23 +289,6 @@ class ContentTypeList {
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
 
-            $where = $this->filter;
-            «IF hasCategorisableEntities»
-
-                // apply category filters
-                if (in_array($this->objectType, $this->categorisableObjectTypes)) {
-                    if (is_array($this->catIds) && count($this->catIds) > 0) {
-                        $categoryFiltersPerRegistry = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', array('ot' => $this->objectType, 'catids' => $this->catIds));
-                        if (count($categoryFiltersPerRegistry) > 0) {
-                            if (!empty($where)) {
-                                $where .= ' AND ';
-                            }
-                            $where .= '(' . implode(' OR ', $categoryFiltersPerRegistry) . ')';
-                        }
-                    }
-                }
-            «ENDIF»
-
             // ensure that the view does not look for templates in the Content module (#218)
             $this->view->toplevelmodule = '«appName»';
 
@@ -329,17 +312,25 @@ class ContentTypeList {
                 return $this->view->fetch($template);
             }
 
-            $resultsPerPage = (isset($this->amount) ? $this->amount : 1);
+            // create query
+            $where = $this->filter;
+            $orderBy = $this->getSortParam($repository);
+            $qb = $repository->genericBaseQuery($where, $orderBy);
+            «IF hasCategorisableEntities»
+
+                // apply category filters
+                if (in_array($this->objectType, $this->categorisableObjectTypes)) {
+                    if (is_array($this->catIds) && count($this->catIds) > 0) {
+                        $qb = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', array('qb' => $qb, 'ot' => $this->objectType, 'catids' => $this->catIds));
+                    }
+                }
+            «ENDIF»
 
             // get objects from database
-            $selectionArgs = array(
-                'ot' => $this->objectType,
-                'where' => $where,
-                'orderBy' => $this->getSortParam($repository),
-                'currentPage' => 1,
-                'resultsPerPage' => $resultsPerPage
-            );
-            list($entities, $objectCount) = ModUtil::apiFunc('«appName»', 'selection', 'getEntitiesPaginated', $selectionArgs);
+            $currentPage = 1;
+            $resultsPerPage = (isset($this->amount) ? $this->amount : 1);
+            list($query, $count) = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
+            $entities = $query->getResult();
 
             $data = array('objectType' => $this->objectType,
                           'catids' => $this->catIds,

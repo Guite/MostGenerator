@@ -46,8 +46,8 @@ class Category {
             use DataUtil;
             use ModUtil;
             use Zikula_AbstractApi;
-
         «ENDIF»
+
         /**
          * Category api base class.
          */
@@ -155,28 +155,44 @@ class Category {
         }
 
         /**
-         * Builds a list of where clauses for a given list of categories.
+         * Adds a list of where clauses for a certain list of categories to a given query builder.
          *
-         * @param string $args['ot']     The object type to be treated (optional)
-         * @param string $args['catids'] Category ids grouped by property name
+         * @param Doctrine\ORM\QueryBuilder $args['qb']     Query builder instance to be enhanced.
+         * @param string                    $args['ot']     The object type to be treated (optional)
+         * @param string                    $args['catids'] Category ids grouped by property name
          *
-         * @return array List of where clauses per registry / property.
+         * @return Doctrine\ORM\QueryBuilder The enriched query builder instance.
          */
         public function buildFilterClauses(array $args = array())
         {
+            $qb = $args['qb'];
+
             $properties = $this->getAllProperties($args);
             $catIds = $args['catids'];
-            $result = array();
+
+            $filtersPerRegistry = array();
+            $filterParameters = array('values' => array(), 'registries' => array());
 
             foreach ($properties as $propertyName => $propertyId) {
                 if (!isset($catIds[$propertyName]) || !is_array($catIds[$propertyName]) || !count($catIds[$propertyName])) {
                     continue;
                 }
 
-                $result[] = '(tblCategories.category IN (' . DataUtil::formatForStore(implode(', ', $catIds[$propertyName])) . ') AND tblCategories.categoryRegistryId = ' . $propertyId . ')';
+                $filterParameters['values'][$propertyName] = $catIds[$propertyName];
+                $filterParameters['registries'][$propertyName] = $propertyId;
+                $filtersPerRegistry[] = '(tblCategories.category IN (:propName' . $propertyName . ') AND tblCategories.categoryRegistryId = :propId' . $propertyName . ')';
             }
 
-            return $result;
+            if (count($filtersPerRegistry) > 0) {
+«/* See http://stackoverflow.com/questions/9815047/chaining-orx-in-doctrine2-query-builder */»
+                $qb->andWhere($qb->expr()->orX()->addMultiple($filtersPerRegistry));
+                foreach ($filterParameters as $propertyName => $filterValue) {
+                    $qb->setParameter('propName' . $propertyName, $filterValue)
+                       ->setParameter('propId' . $propertyName, $filterParameters['registries'][$propertyName]);
+                }
+            }
+
+            return $qb;
         }
 
         /**

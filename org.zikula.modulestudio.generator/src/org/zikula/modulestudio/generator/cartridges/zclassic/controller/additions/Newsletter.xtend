@@ -215,23 +215,24 @@ class Newsletter {
             $entityManager = $serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
 
+            // create query
             $where = (isset($args['filter']) ? $args['filter'] : '');
+            $orderBy = $this->getSortParam($args, $repository);
+            $qb = $repository->genericBaseQuery($where, $orderBy);
+
             if ($filtAfterDate) {
                 $startDateFieldName = $repository->getStartDateFieldName();
                 if ($startDateFieldName == 'createdDate') {
-                    $where .= (!empty($where) ? ' AND ' : '') . 'tbl.createdDate > ' . DataUtil::formatForStore($filtAfterDate);
+                    $qb->andWhere('tbl.createdDate > :afterDate')
+                       ->setParameter('afterDate', $filtAfterDate);
                 }
             }
 
             // get objects from database
-            $selectionArgs = array(
-                'ot' => $objectType,
-                'where' => $where,
-                'orderBy' => $this->getSortParam($args, $repository),
-                'currentPage' => 1,
-                'resultsPerPage' => isset($args['amount']) && is_numeric($args['amount']) ? $args['amount'] : $this->nItems
-            );
-            list($entities, $objectCount) = ModUtil::apiFunc($this->modname, 'selection', 'getEntitiesPaginated', $selectionArgs);
+            $currentPage = 1;
+            $resultsPerPage = isset($args['amount']) && is_numeric($args['amount']) ? $args['amount'] : $this->nItems;
+            list($query, $count) = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
+            $entities = $query->getResult();
 
             // post processing
             $titleFieldName = $repository->getTitleFieldName();

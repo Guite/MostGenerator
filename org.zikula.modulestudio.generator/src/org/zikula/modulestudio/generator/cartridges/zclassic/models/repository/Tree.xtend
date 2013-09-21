@@ -63,7 +63,7 @@ class Tree {
             $slimMode = false;
 
             // get all root nodes
-            $qb = $this->_intBaseQuery('tbl.lvl = 0', '', $useJoins, $slimMode);
+            $qb = $this->genericBaseQuery('tbl.lvl = 0', '', $useJoins, $slimMode);
             $query = $this->getQueryFromBuilder($qb);
             $rootNodes = $query->getResult();
 

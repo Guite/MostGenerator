@@ -190,27 +190,6 @@ class BlockList {
             $entityManager = $this->serviceManager->getService('doctrine.entitymanager');
             $repository = $entityManager->getRepository($entityClass);
 
-            $where = $vars['filter'];
-            «IF hasCategorisableEntities»
-                $properties = null;
-                if (in_array($vars['objectType'], $this->categorisableObjectTypes)) {
-                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
-                }
-
-                // apply category filters
-                if (in_array($objectType, $this->categorisableObjectTypes)) {
-                    if (is_array($vars['catIds']) && count($vars['catIds']) > 0) {
-                        $categoryFiltersPerRegistry = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', array('ot' => $objectType, 'catids' => $vars['catIds']));
-                        if (count($categoryFiltersPerRegistry) > 0) {
-                            if (!empty($where)) {
-                                $where .= ' AND ';
-                            }
-                            $where .= '(' . implode(' OR ', $categoryFiltersPerRegistry) . ')';
-                        }
-                    }
-                }
-            «ENDIF»
-
             $this->view->setCaching(Zikula_View::CACHE_ENABLED);
             // set cache id
             $component = '«appName»:' . ucwords($objectType) . ':';
@@ -232,15 +211,30 @@ class BlockList {
                 return BlockUtil::themeBlock($blockinfo);
             }
 
+            // create query
+            $where = $vars['filter'];
+            $orderBy = $this->getSortParam($vars, $repository);
+            $qb = $repository->genericBaseQuery($where, $orderBy);
+            «IF hasCategorisableEntities»
+
+                $properties = null;
+                if (in_array($vars['objectType'], $this->categorisableObjectTypes)) {
+                    $properties = ModUtil::apiFunc('«appName»', 'category', 'getAllProperties', array('ot' => $objectType));
+                }
+
+                // apply category filters
+                if (in_array($objectType, $this->categorisableObjectTypes)) {
+                    if (is_array($vars['catIds']) && count($vars['catIds']) > 0) {
+                        $qb = ModUtil::apiFunc('«appName»', 'category', 'buildFilterClauses', array('qb' => $qb, 'ot' => $objectType, 'catids' => $vars['catIds']));
+                    }
+                }
+            «ENDIF»
+
             // get objects from database
-            $selectionArgs = array(
-                'ot' => $objectType,
-                'where' => $where,
-                'orderBy' => $this->getSortParam($vars, $repository),
-                'currentPage' => 1,
-                'resultsPerPage' => $vars['amount']
-            );
-            list($entities, $objectCount) = ModUtil::apiFunc('«appName»', 'selection', 'getEntitiesPaginated', $selectionArgs);
+            $currentPage = 1;
+            $resultsPerPage = $vars['amount'];
+            list($query, $count) = $repository->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);
+            $entities = $query->getResult();
 
             // assign block vars and fetched data
             $this->view->assign('vars', $vars)

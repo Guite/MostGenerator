@@ -1509,7 +1509,7 @@ public class Repository {
         _builder.append("->where(\'tbl.createdUserId = :creator\')");
         _builder.newLine();
         _builder.append("       ");
-        _builder.append("->setParameter(\'creator\', DataUtil::formatForStore($userId));");
+        _builder.append("->setParameter(\'creator\', $userId);");
         _builder.newLine();
         _builder.append("    ");
         _builder.append("$query = $qb->getQuery();");
@@ -1582,7 +1582,7 @@ public class Repository {
         _builder.append("->where(\'tbl.updatedUserId = :editor\')");
         _builder.newLine();
         _builder.append("       ");
-        _builder.append("->setParameter(\'editor\', DataUtil::formatForStore($userId));");
+        _builder.append("->setParameter(\'editor\', $userId);");
         _builder.newLine();
         _builder.append("    ");
         _builder.append("$query = $qb->getQuery();");
@@ -1664,7 +1664,7 @@ public class Repository {
         _builder.append("->where(\'tbl.createdUserId = :creator\')");
         _builder.newLine();
         _builder.append("       ");
-        _builder.append("->setParameter(\'creator\', DataUtil::formatForStore($userId));");
+        _builder.append("->setParameter(\'creator\', $userId);");
         _builder.newLine();
         _builder.append("    ");
         _builder.append("$query = $qb->getQuery();");
@@ -1746,7 +1746,7 @@ public class Repository {
         _builder.append("->where(\'tbl.updatedUserId = :editor\')");
         _builder.newLine();
         _builder.append("       ");
-        _builder.append("->setParameter(\'editor\', DataUtil::formatForStore($userId));");
+        _builder.append("->setParameter(\'editor\', $userId);");
         _builder.newLine();
         _builder.append("    ");
         _builder.append("$query = $qb->getQuery();");
@@ -1870,7 +1870,7 @@ public class Repository {
         _builder.append("->where(\'tbl.\' . $userFieldName . \' = :user\')");
         _builder.newLine();
         _builder.append("       ");
-        _builder.append("->setParameter(\'user\', DataUtil::formatForStore($userId));");
+        _builder.append("->setParameter(\'user\', $userId);");
         _builder.newLine();
         _builder.append("    ");
         _builder.append("$query = $qb->getQuery();");
@@ -1936,7 +1936,7 @@ public class Repository {
     _builder.append("$qb->andWhere(\'tbl.\' . $fieldName . \' = :\' . $fieldName)");
     _builder.newLine();
     _builder.append("               ");
-    _builder.append("->setParameter($fieldName, DataUtil::formatForStore($fieldValue));");
+    _builder.append("->setParameter($fieldName, $fieldValue);");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("}");
@@ -1953,7 +1953,7 @@ public class Repository {
     _builder.append(" = :id\')");
     _builder.newLineIfNotEmpty();
     _builder.append("           ");
-    _builder.append("->setParameter(\'id\', DataUtil::formatForStore($id));");
+    _builder.append("->setParameter(\'id\', $id);");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("}");
@@ -2014,7 +2014,7 @@ public class Repository {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$qb = $this->_intBaseQuery(\'\', \'\', $useJoins, $slimMode);");
+    _builder.append("$qb = $this->genericBaseQuery(\'\', \'\', $useJoins, $slimMode);");
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
@@ -2090,14 +2090,14 @@ public class Repository {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$qb = $this->_intBaseQuery(\'\', \'\', $useJoins, $slimMode);");
+    _builder.append("$qb = $this->genericBaseQuery(\'\', \'\', $useJoins, $slimMode);");
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
     _builder.append("$qb->andWhere(\'tbl.slug = :slug\')");
     _builder.newLine();
     _builder.append("       ");
-    _builder.append("->setParameter(\'slug\', DataUtil::formatForStore($slugTitle));");
+    _builder.append("->setParameter(\'slug\', $slugTitle);");
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
@@ -2173,7 +2173,7 @@ public class Repository {
         _builder.newLine();
         _builder.append("    ");
         _builder.append("           ");
-        _builder.append("->setParameter($fieldName, DataUtil::formatForStore($fieldValue));");
+        _builder.append("->setParameter($fieldName, $fieldValue);");
         _builder.newLine();
         _builder.append("    ");
         _builder.append("    ");
@@ -2192,7 +2192,7 @@ public class Repository {
     _builder.append("$qb->andWhere(\'tbl.id != :excludeId\')");
     _builder.newLine();
     _builder.append("           ");
-    _builder.append("->setParameter(\'excludeId\', DataUtil::formatForStore($excludeId));");
+    _builder.append("->setParameter(\'excludeId\', $excludeId);");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("}");
@@ -2244,7 +2244,7 @@ public class Repository {
     _builder.append("{");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$qb = $this->_intBaseQuery($where, $orderBy, $useJoins, $slimMode);");
+    _builder.append("$qb = $this->genericBaseQuery($where, $orderBy, $useJoins, $slimMode);");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("if (!$useJoins || !$slimMode) {");
@@ -2396,6 +2396,9 @@ public class Repository {
     _builder.append("* @param boolean $useJoins       Whether to include joining related objects (optional) (default=true).");
     _builder.newLine();
     _builder.append(" ");
+    _builder.append("* @param boolean $slimMode       If activated only some basic fields are selected without using any joins (optional) (default=false).");
+    _builder.newLine();
+    _builder.append(" ");
     _builder.append("*");
     _builder.newLine();
     _builder.append(" ");
@@ -2404,12 +2407,12 @@ public class Repository {
     _builder.append(" ");
     _builder.append("*/");
     _builder.newLine();
-    _builder.append("public function selectWherePaginated($where = \'\', $orderBy = \'\', $currentPage = 1, $resultsPerPage = 25, $useJoins = true)");
+    _builder.append("public function selectWherePaginated($where = \'\', $orderBy = \'\', $currentPage = 1, $resultsPerPage = 25, $useJoins = true, $slimMode = false)");
     _builder.newLine();
     _builder.append("{");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$qb = $this->_intBaseQuery($where, $orderBy, $useJoins);");
+    _builder.append("$qb = $this->genericBaseQuery($where, $orderBy, $useJoins, $slimMode);");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("list($query, $count) = $this->getSelectWherePaginatedQuery($qb, $currentPage, $resultsPerPage);");
@@ -2482,7 +2485,7 @@ public class Repository {
     _builder.append(" ");
     _builder.append("*/");
     _builder.newLine();
-    _builder.append("protected function addCommonViewFilters(QueryBuilder $qb)");
+    _builder.append("public function addCommonViewFilters(QueryBuilder $qb)");
     _builder.newLine();
     _builder.append("{");
     _builder.newLine();
@@ -2530,7 +2533,7 @@ public class Repository {
     _builder.append("$qb->andWhere(\'tblCategories.category = :category\')");
     _builder.newLine();
     _builder.append("                   ");
-    _builder.append("->setParameter(\'category\', DataUtil::formatForStore($v));");
+    _builder.append("->setParameter(\'category\', $v);");
     _builder.newLine();
     _builder.append("            ");
     _builder.append("}");
@@ -2545,35 +2548,26 @@ public class Repository {
     _builder.append("/* old");
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("$qb->andWhereIn(\'tblCategories.category IN (:categories)\')");
+    _builder.append("$qb->andWhere(\'tblCategories.category IN (:categories)\')");
     _builder.newLine();
     _builder.append("               ");
-    _builder.append("->setParameter(\'categories\', DataUtil::formatForStore($v));");
+    _builder.append("->setParameter(\'categories\', $v);");
     _builder.newLine();
     _builder.append("             ");
     _builder.append("*/");
     _builder.newLine();
     _builder.append("            ");
-    _builder.append("$categoryFiltersPerRegistry = ModUtil::apiFunc(\'");
+    _builder.append("$qb = ModUtil::apiFunc(\'");
     Models _container = it.getContainer();
     Application _application = _container.getApplication();
     String _appName = this._utils.appName(_application);
     _builder.append(_appName, "            ");
-    _builder.append("\', \'category\', \'buildFilterClauses\', array(\'ot\' => \'");
+    _builder.append("\', \'category\', \'buildFilterClauses\', array(\'qb\' => $qb, \'ot\' => \'");
     String _name = it.getName();
     String _formatForCode = this._formattingExtensions.formatForCode(_name);
     _builder.append(_formatForCode, "            ");
     _builder.append("\', \'catids\' => $v));");
     _builder.newLineIfNotEmpty();
-    _builder.append("            ");
-    _builder.append("if (count($categoryFiltersPerRegistry) > 0) {");
-    _builder.newLine();
-    _builder.append("                ");
-    _builder.append("$qb->andWhere(\'(\' . implode(\' OR \', $categoryFiltersPerRegistry) . \')\');");
-    _builder.newLine();
-    _builder.append("            ");
-    _builder.append("}");
-    _builder.newLine();
     _builder.append("        ");
     _builder.append("} elseif ($k == \'searchterm\') {");
     _builder.newLine();
@@ -2654,7 +2648,7 @@ public class Repository {
     _builder.append("$qb->andWhere(\'tbl.\' . $k . \' != :\' . $k)");
     _builder.newLine();
     _builder.append("                       ");
-    _builder.append("->setParameter($k, DataUtil::formatForStore(substr($v, 1, strlen($v)-1)));");
+    _builder.append("->setParameter($k, substr($v, 1, strlen($v)-1));");
     _builder.newLine();
     _builder.append("                ");
     _builder.append("} elseif (substr($v, 0, 1) == \'%\') {");
@@ -2663,7 +2657,7 @@ public class Repository {
     _builder.append("$qb->andWhere(\'tbl.\' . $k . \' LIKE :\' . $k)");
     _builder.newLine();
     _builder.append("                       ");
-    _builder.append("->setParameter($k, \'%\' . DataUtil::formatForStore($v) . \'%\');");
+    _builder.append("->setParameter($k, \'%\' . $v . \'%\');");
     _builder.newLine();
     _builder.append("                ");
     _builder.append("} else {");
@@ -2672,7 +2666,7 @@ public class Repository {
     _builder.append("$qb->andWhere(\'tbl.\' . $k . \' = :\' . $k)");
     _builder.newLine();
     _builder.append("                       ");
-    _builder.append("->setParameter($k, DataUtil::formatForStore($v));");
+    _builder.append("->setParameter($k, $v);");
     _builder.newLine();
     _builder.append("               ");
     _builder.append("}");
@@ -2787,7 +2781,7 @@ public class Repository {
     _builder.append("$qb->andWhere(\'tbl.workflowState IN (:onlineStates)\')");
     _builder.newLine();
     _builder.append("           ");
-    _builder.append("->setParameter(\'onlineStates\', DataUtil::formatForStore($onlineStates));");
+    _builder.append("->setParameter(\'onlineStates\', $onlineStates);");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("}");
@@ -2952,7 +2946,7 @@ public class Repository {
     _builder.append("{");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$qb = $this->_intBaseQuery(\'\', $orderBy, $useJoins);");
+    _builder.append("$qb = $this->genericBaseQuery(\'\', $orderBy, $useJoins);");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("if (count($exclude) > 0) {");
@@ -2969,7 +2963,7 @@ public class Repository {
     _builder.append(" NOT IN (:excludeList)\')");
     _builder.newLineIfNotEmpty();
     _builder.append("           ");
-    _builder.append("->setParameter(\'excludeList\', DataUtil::formatForStore($exclude));");
+    _builder.append("->setParameter(\'excludeList\', $exclude);");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("}");
@@ -3066,9 +3060,6 @@ public class Repository {
     _builder.append("    ");
     _builder.append("}");
     _builder.newLine();
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("$fragment = DataUtil::formatForStore($fragment);");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("$fragmentIsNumeric = is_numeric($fragment);");
@@ -3365,7 +3356,7 @@ public class Repository {
     _builder.append("$qb->andWhere(\'tbl.\' . $fieldName . \' = :\' . $fieldName)");
     _builder.newLine();
     _builder.append("       ");
-    _builder.append("->setParameter($fieldName, DataUtil::formatForStore($fieldValue));");
+    _builder.append("->setParameter($fieldName, $fieldValue);");
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
@@ -3431,7 +3422,7 @@ public class Repository {
     _builder.append(" ");
     _builder.append("*/");
     _builder.newLine();
-    _builder.append("protected function _intBaseQuery($where = \'\', $orderBy = \'\', $useJoins = true, $slimMode = false)");
+    _builder.append("public function genericBaseQuery($where = \'\', $orderBy = \'\', $useJoins = true, $slimMode = false)");
     _builder.newLine();
     _builder.append("{");
     _builder.newLine();
@@ -3529,10 +3520,10 @@ public class Repository {
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$this->_intBaseQueryAddWhere($qb, $where);");
+    _builder.append("$this->genericBaseQueryAddWhere($qb, $where);");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$this->_intBaseQueryAddOrderBy($qb, $orderBy);");
+    _builder.append("$this->genericBaseQueryAddOrderBy($qb, $orderBy);");
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");
@@ -3568,7 +3559,7 @@ public class Repository {
     _builder.append(" ");
     _builder.append("*/");
     _builder.newLine();
-    _builder.append("protected function _intBaseQueryAddWhere(QueryBuilder $qb, $where = \'\')");
+    _builder.append("protected function genericBaseQueryAddWhere(QueryBuilder $qb, $where = \'\')");
     _builder.newLine();
     _builder.append("{");
     _builder.newLine();
@@ -3601,7 +3592,7 @@ public class Repository {
         _builder.newLine();
         _builder.append("    ");
         _builder.append("       ");
-        _builder.append("->setParameter(\'creator\', DataUtil::formatForStore($uid));");
+        _builder.append("->setParameter(\'creator\', $uid);");
         _builder.newLine();
         _builder.append("    ");
         _builder.append("}");
@@ -3642,7 +3633,7 @@ public class Repository {
     _builder.append(" ");
     _builder.append("*/");
     _builder.newLine();
-    _builder.append("protected function _intBaseQueryAddOrderBy(QueryBuilder $qb, $orderBy = \'\')");
+    _builder.append("protected function genericBaseQueryAddOrderBy(QueryBuilder $qb, $orderBy = \'\')");
     _builder.newLine();
     _builder.append("{");
     _builder.newLine();
@@ -3672,7 +3663,7 @@ public class Repository {
         _builder.newLineIfNotEmpty();
         _builder.append("        ");
         _builder.append("   ");
-        _builder.append("->setParameter(\'idValues\', DataUtil::formatForStore($idValues));");
+        _builder.append("->setParameter(\'idValues\', $idValues);");
         _builder.newLine();
       }
     }
@@ -3810,7 +3801,7 @@ public class Repository {
     _builder.append(" ");
     _builder.append("*/");
     _builder.newLine();
-    _builder.append("protected function getQueryFromBuilder(QueryBuilder $qb)");
+    _builder.append("public function getQueryFromBuilder(QueryBuilder $qb)");
     _builder.newLine();
     _builder.append("{");
     _builder.newLine();
@@ -4171,7 +4162,7 @@ public class Repository {
     }
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$qb = $this->_intBaseQuery(\'\', \'\', false);");
+    _builder.append("$qb = $this->genericBaseQuery(\'\', \'\', false);");
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");

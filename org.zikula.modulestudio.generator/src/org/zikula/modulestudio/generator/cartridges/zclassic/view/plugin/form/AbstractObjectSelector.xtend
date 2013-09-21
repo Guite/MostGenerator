@@ -38,6 +38,7 @@ class AbstractObjectSelector {
             use DataUtil;
         «ENDIF»
         use Doctrine\Common\Collections\Collection;
+        use Doctrine\ORM\QueryBuilder;
         «IF targets('1.3.5')»
 
         «ELSE»
@@ -497,12 +498,22 @@ class AbstractObjectSelector {
          */
         protected function fetchRelatedItems($view, $inputValue)
         {
-            $selectionArgs = array(
-                'ot' => $this->objectType,
-                'where' => $this->buildWhereClause($inputValue),
-                'orderBy' => $this->orderBy
-            );
-            $relatedItems = ModUtil::apiFunc($this->name, 'selection', 'getEntities', $selectionArgs);
+            «IF targets('1.3.5')»
+                $entityClass = '«appName»_Entity_' . ucwords($this->objectType);
+            «ELSE»
+                $entityClass = '\\«vendor.formatForCodeCapital»\\«name.formatForCodeCapital»Module\\Entity\\' . ucwords($this->objectType) . 'Entity';
+            «ENDIF»
+            $serviceManager = ServiceUtil::getManager();
+            $entityManager = $serviceManager->getService('doctrine.entitymanager');
+            $repository = $entityManager->getRepository($entityClass);
+
+            $qb = $repository->genericBaseQuery('', $this->orderBy);
+            $qb = $this->buildWhereClause($inputValue, $qb);
+            //$qb = $repository->addCommonViewFilters($qb);
+
+            $query = $repository->getQueryFromBuilder($qb);
+
+            $relatedItems = $query->getResult();
 
             return $relatedItems;
         }
@@ -572,7 +583,7 @@ class AbstractObjectSelector {
     '''
 
     def private buildWhereClause(Application it) '''
-        protected function buildWhereClause($inputValue)
+        protected function buildWhereClause($inputValue, QueryBuilder $qb)
         {
             if (!$this->mandatory) {
                 // remove empty option if it has been selected
@@ -587,29 +598,28 @@ class AbstractObjectSelector {
                 $inputValue[] = 0;
             }
 
-            $where = '';
             if (count($this->idFields) > 1) {
                 $idsPerField = $this->decodeCompositeIdentifier($inputValue);
                 foreach ($this->idFields as $idField) {
-                    if (!empty($where)) {
-                        $where .= ' AND ';
-                    }
-                    $where .= 'tbl.' . $idField . ' IN (' . DataUtil::formatForStore(implode(', ', $idsPerField[$idField])) . ')';
+                    $qb->andWhere('tbl.' . $idField . ' IN (:' . $idField . 'Ids)')
+                       ->setParameter($idField . 'Ids', $idsPerField[$idField]);
                 }
             } else {
                 $many = ($this->selectionMode == 'multiple');
                 $idField = reset($this->idFields);
                 if ($many) {
-                    $where .= 'tbl.' . $idField . ' IN (' . DataUtil::formatForStore(implode(', ', $inputValue)) . ')';
+                    $qb->andWhere('tbl.' . $idField . ' IN (:' . $idField . 'Ids)')
+                       ->setParameter($idField . 'Ids', $inputValue);
                 } else {
-                    $where .= 'tbl.' . $idField . ' = \'' . DataUtil::formatForStore(array_shift($inputValue)) . '\'';
+                    $qb->andWhere('tbl.' . $idField . ' = :' . $idField)
+                       ->setParameter($idField, $inputValue);
                 }
             }
             if (!empty($this->where)) {
-                $where .= ' AND ' . $this->where;
+                $qb->andWhere($this->where);
             }
 
-            return $where;
+            return $qb;
         }
     '''
 

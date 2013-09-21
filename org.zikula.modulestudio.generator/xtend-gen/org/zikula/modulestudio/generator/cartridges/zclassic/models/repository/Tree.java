@@ -154,7 +154,7 @@ public class Tree {
     _builder.append("// get all root nodes");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("$qb = $this->_intBaseQuery(\'tbl.lvl = 0\', \'\', $useJoins, $slimMode);");
+    _builder.append("$qb = $this->genericBaseQuery(\'tbl.lvl = 0\', \'\', $useJoins, $slimMode);");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("$query = $this->getQueryFromBuilder($qb);");
