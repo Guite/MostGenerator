@@ -1591,10 +1591,7 @@ public class Uploads {
     _builder.append("$fileExtension = FileUtil::getExtension($fileName, false);");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("// FIXME the following code causes an error due since SystemPlugin_Imagine_Image needs the original image for the getMTime method.");
-    _builder.newLine();
-    _builder.append("    ");
-    _builder.append("/*if (in_array($fileExtension, $this->imageFileTypes) && $fileExtension != \'swf\') {");
+    _builder.append("if (in_array($fileExtension, $this->imageFileTypes) && $fileExtension != \'swf\') {");
     _builder.newLine();
     _builder.append("        ");
     _builder.append("// remove thumbnail images as well");
@@ -1615,7 +1612,7 @@ public class Uploads {
     _builder.append("$manager->removeImageThumbs($filePath, $fullObjectId);");
     _builder.newLine();
     _builder.append("    ");
-    _builder.append("}*/");
+    _builder.append("}");
     _builder.newLine();
     _builder.newLine();
     _builder.append("    ");

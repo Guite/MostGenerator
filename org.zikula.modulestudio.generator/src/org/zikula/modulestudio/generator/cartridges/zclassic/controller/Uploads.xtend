@@ -540,14 +540,13 @@ class Uploads {
 
             // check whether we have to consider thumbnails, too
             $fileExtension = FileUtil::getExtension($fileName, false);
-            // FIXME the following code causes an error due since SystemPlugin_Imagine_Image needs the original image for the getMTime method.
-            /*if (in_array($fileExtension, $this->imageFileTypes) && $fileExtension != 'swf') {
+            if (in_array($fileExtension, $this->imageFileTypes) && $fileExtension != 'swf') {
                 // remove thumbnail images as well
                 $manager = ServiceUtil::getManager()->getService('systemplugin.imagine.manager');
                 $manager->setModule('«appName»');
                 $fullObjectId = $objectType . '-' . $objectId;
                 $manager->removeImageThumbs($filePath, $fullObjectId);
-            }*/
+            }
 
             // remove original file
             if (!unlink($filePath)) {
