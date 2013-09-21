@@ -122,18 +122,9 @@ public class Uploads {
         boolean _greaterThan = (_size > 1);
         if (_greaterThan) {
           for (final UploadField uploadField : uploadFields) {
-            {
-              String _subFolderPathSegment = this._modelExtensions.subFolderPathSegment(uploadField);
-              String _plus_3 = (subFolderName + _subFolderPathSegment);
-              this.uploadFolder(uploadField, _plus_3);
-              String _appUploadPath_2 = this._namingExtensions.getAppUploadPath(it);
-              String _plus_4 = (_appUploadPath_2 + subFolderName);
-              String _subFolderPathSegment_1 = this._modelExtensions.subFolderPathSegment(uploadField);
-              String _plus_5 = (_plus_4 + _subFolderPathSegment_1);
-              String _plus_6 = (_plus_5 + "/tmb/index.html");
-              String _msUrl_2 = this._utils.msUrl();
-              this.fsa.generateFile(_plus_6, _msUrl_2);
-            }
+            String _subFolderPathSegment = this._modelExtensions.subFolderPathSegment(uploadField);
+            String _plus_3 = (subFolderName + _subFolderPathSegment);
+            this.uploadFolder(uploadField, _plus_3);
           }
         } else {
           int _size_1 = IterableExtensions.size(uploadFields);
@@ -141,17 +132,9 @@ public class Uploads {
           if (_greaterThan_1) {
             UploadField _head = IterableExtensions.<UploadField>head(uploadFields);
             UploadField _head_1 = IterableExtensions.<UploadField>head(uploadFields);
-            String _subFolderPathSegment = this._modelExtensions.subFolderPathSegment(_head_1);
-            String _plus_3 = (subFolderName + _subFolderPathSegment);
-            this.uploadFolder(_head, _plus_3);
-            String _appUploadPath_2 = this._namingExtensions.getAppUploadPath(it);
-            String _plus_4 = (_appUploadPath_2 + subFolderName);
-            UploadField _head_2 = IterableExtensions.<UploadField>head(uploadFields);
-            String _subFolderPathSegment_1 = this._modelExtensions.subFolderPathSegment(_head_2);
-            String _plus_5 = (_plus_4 + _subFolderPathSegment_1);
-            String _plus_6 = (_plus_5 + "/tmb/index.html");
-            String _msUrl_2 = this._utils.msUrl();
-            this.fsa.generateFile(_plus_6, _msUrl_2);
+            String _subFolderPathSegment_1 = this._modelExtensions.subFolderPathSegment(_head_1);
+            String _plus_4 = (subFolderName + _subFolderPathSegment_1);
+            this.uploadFolder(_head, _plus_4);
           }
         }
       }

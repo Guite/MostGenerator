@@ -50,11 +50,9 @@ class Uploads {
             if (uploadFields.size > 1) {
                 for (uploadField : uploadFields) {
                     uploadField.uploadFolder(subFolderName + uploadField.subFolderPathSegment)
-                    fsa.generateFile(getAppUploadPath + subFolderName + uploadField.subFolderPathSegment + '/tmb/index.html', msUrl)
                 }
             } else if (uploadFields.size > 0) {
                 uploadFields.head.uploadFolder(subFolderName + uploadFields.head.subFolderPathSegment)
-                fsa.generateFile(getAppUploadPath + subFolderName + uploadFields.head.subFolderPathSegment + '/tmb/index.html', msUrl)
             }
         }
         val docPath = (if (targets('1.3.5')) getAppSourcePath + 'docs/' else getAppDocPath)
