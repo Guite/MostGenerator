@@ -390,8 +390,8 @@ public class VersionFile {
     _builder.append("    ");
     _builder.append("{");
     _builder.newLine();
-    String _name_4 = it.getName();
-    final String appName = this._formattingExtensions.formatForDB(_name_4);
+    String _appName_1 = this._utils.appName(it);
+    final String appName = this._formattingExtensions.formatForDB(_appName_1);
     _builder.newLineIfNotEmpty();
     {
       EList<Entity> _allEntities = this._modelExtensions.getAllEntities(it);

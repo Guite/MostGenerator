@@ -113,7 +113,7 @@ class VersionFile {
              */
             protected function setupHookBundles()
             {
-        «val appName = name.formatForDB»
+        «val appName = appName.formatForDB»
                 «FOR entity : getAllEntities»
                     «/* we register one hook subscriber bundle foreach entity type */»
                     «val areaName = entity.nameMultiple.formatForDB»

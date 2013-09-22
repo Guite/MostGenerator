@@ -16,6 +16,7 @@ import org.eclipse.xtext.xbase.lib.Functions.Function0;
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.EventListener;
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.ExampleData;
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.Interactive;
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.MigrationHelper;
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.ModVars;
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper;
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.InstallerView;
@@ -782,7 +783,7 @@ public class Installer {
     _builder.append("}");
     _builder.newLine();
     _builder.append("                ");
-    _builder.append("return LogUtil::registerError($this->__f(\'An error was encountered while dropping the tables for the %s extension.\', array($this->getName())));");
+    _builder.append("return LogUtil::registerError($this->__f(\'An error was encountered while updating tables for the %s extension.\', array($this->getName())));");
     _builder.newLine();
     _builder.append("            ");
     _builder.append("}");
@@ -790,6 +791,38 @@ public class Installer {
     _builder.append("    ");
     _builder.append("}");
     _builder.newLine();
+    {
+      boolean _targets = this._utils.targets(it, "1.3.5");
+      boolean _not = (!_targets);
+      if (_not) {
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("// Note there are several helpers available for making migration of your extension easier.");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("// The following convenience methods are each responsible for a single aspect of upgrading to Zikula 1.3.6.");
+        _builder.newLine();
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("// here is a possible usage example");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("// of course 1.2.3 should match the number you used for the last stable 1.3.5 module version.");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("/* if ($oldVersion = 1.2.3) {");
+        _builder.newLine();
+        _builder.append("    ");
+        _builder.append("    ");
+        MigrationHelper _migrationHelper = new MigrationHelper();
+        CharSequence _generateUsageExample = _migrationHelper.generateUsageExample(it);
+        _builder.append(_generateUsageExample, "        ");
+        _builder.newLineIfNotEmpty();
+        _builder.append("    ");
+        _builder.append("} */");
+        _builder.newLine();
+      }
+    }
     _builder.append("*/");
     _builder.newLine();
     _builder.newLine();
@@ -801,6 +834,17 @@ public class Installer {
     _builder.newLine();
     _builder.append("}");
     _builder.newLine();
+    {
+      boolean _targets_1 = this._utils.targets(it, "1.3.5");
+      boolean _not_1 = (!_targets_1);
+      if (_not_1) {
+        _builder.newLine();
+        MigrationHelper _migrationHelper_1 = new MigrationHelper();
+        CharSequence _generate = _migrationHelper_1.generate(it);
+        _builder.append(_generate, "");
+        _builder.newLineIfNotEmpty();
+      }
+    }
     return _builder;
   }
   
@@ -862,7 +906,7 @@ public class Installer {
     _builder.append("}");
     _builder.newLine();
     _builder.append("        ");
-    _builder.append("return LogUtil::registerError($this->__f(\'An error was encountered while dropping the tables for the %s extension.\', array($this->name)));");
+    _builder.append("return LogUtil::registerError($this->__f(\'An error was encountered while dropping tables for the %s extension.\', array($this->name)));");
     _builder.newLine();
     _builder.append("    ");
     _builder.append("}");

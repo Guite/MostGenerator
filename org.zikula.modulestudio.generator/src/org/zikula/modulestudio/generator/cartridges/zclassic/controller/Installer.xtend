@@ -7,6 +7,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.EventListener
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.ExampleData
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.Interactive
+import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.MigrationHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.controller.installer.ModVars
 import org.zikula.modulestudio.generator.cartridges.zclassic.smallstuff.FileHelper
 import org.zikula.modulestudio.generator.cartridges.zclassic.view.InstallerView
@@ -261,14 +262,29 @@ class Installer {
                         if (System::isDevelopmentMode()) {
                             LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                         }
-                        return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %s extension.', array($this->getName())));
+                        return LogUtil::registerError($this->__f('An error was encountered while updating tables for the %s extension.', array($this->getName())));
                     }
             }
+            «IF !targets('1.3.5')»
+
+                // Note there are several helpers available for making migration of your extension easier.
+                // The following convenience methods are each responsible for a single aspect of upgrading to Zikula 1.3.6.
+
+                // here is a possible usage example
+                // of course 1.2.3 should match the number you used for the last stable 1.3.5 module version.
+                /* if ($oldVersion = 1.2.3) {
+                    «new MigrationHelper().generateUsageExample(it)»
+                } */
+            «ENDIF»
         */
 
             // update successful
             return true;
         }
+        «IF !targets('1.3.5')»
+
+            «new MigrationHelper().generate(it)»
+        «ENDIF»
     '''
 
     def private funcDelete(Application it) '''
@@ -291,7 +307,7 @@ class Installer {
                 if (System::isDevelopmentMode()) {
                     LogUtil::registerError($this->__('Doctrine Exception: ') . $e->getMessage());
                 }
-                return LogUtil::registerError($this->__f('An error was encountered while dropping the tables for the %s extension.', array($this->name)));
+                return LogUtil::registerError($this->__f('An error was encountered while dropping tables for the %s extension.', array($this->name)));
             }
 
             // unregister persistent event handlers
